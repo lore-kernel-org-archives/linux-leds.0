@@ -1,50 +1,51 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] leds: ss4200: Fix incorrect placement of __initdata
-Date: Wed, 7 Aug 2013 14:07:58 -0700
-Message-ID: <CAK5ve-KX2e0DGAQBwUnoo6gvu5FDHk0KDq+f5Z+rNpN-MR7yuw@mail.gmail.com>
-References: <1375867843-19162-1-git-send-email-sachin.kamat@linaro.org> <1375867843-19162-2-git-send-email-sachin.kamat@linaro.org>
+From: Ian Pilcher <arequipeno@gmail.com>
+Subject: Registering GPIO LEDs
+Date: Wed, 07 Aug 2013 17:51:03 -0500
+Message-ID: <ktuj0g$qci$1@ger.gmane.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:34898 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933311Ab3HGVIT (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 7 Aug 2013 17:08:19 -0400
-Received: by mail-la0-f49.google.com with SMTP id ev20so1548792lab.22
-        for <linux-leds@vger.kernel.org>; Wed, 07 Aug 2013 14:08:18 -0700 (PDT)
-In-Reply-To: <1375867843-19162-2-git-send-email-sachin.kamat@linaro.org>
+Received: from plane.gmane.org ([80.91.229.3]:40713 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933451Ab3HGWzI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:55:08 -0400
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <gll-linux-leds@m.gmane.org>)
+	id 1V7CdE-0005Ze-7p
+	for linux-leds@vger.kernel.org; Thu, 08 Aug 2013 00:55:04 +0200
+Received: from pool-71-252-209-206.dllstx.fios.verizon.net ([71.252.209.206])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-leds@vger.kernel.org>; Thu, 08 Aug 2013 00:55:04 +0200
+Received: from arequipeno by pool-71-252-209-206.dllstx.fios.verizon.net with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-leds@vger.kernel.org>; Thu, 08 Aug 2013 00:55:04 +0200
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Dave Hansen <dave@sr71.net>
+To: linux-leds@vger.kernel.org
 
-On Wed, Aug 7, 2013 at 2:30 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> __initdata should be placed between the variable name and equal
-> sign for the variable to be placed in the intended section.
->
+I've discovered that it's quite simple to control the drive activity
+LEDs on my Thecus N5550 with the standard gpio_ich module.  AFAIK, this
+means that I should be able to use them with the leds_gpio module.  I
+just need to register them.
 
-Merged, thanks.
--Bryan
+I've found this page that gives an example:
 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Dave Hansen <dave@sr71.net>
-> ---
->  drivers/leds/leds-ss4200.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-> index 51bb0ee..5b8f938 100644
-> --- a/drivers/leds/leds-ss4200.c
-> +++ b/drivers/leds/leds-ss4200.c
-> @@ -91,7 +91,7 @@ MODULE_PARM_DESC(nodetect, "Skip DMI-based hardware detection");
->   * detected as working, but in reality it is not) as low as
->   * possible.
->   */
-> -static struct dmi_system_id __initdata nas_led_whitelist[] = {
-> +static struct dmi_system_id nas_led_whitelist[] __initdata = {
->         {
->                 .callback = ss4200_led_dmi_callback,
->                 .ident = "Intel SS4200-E",
-> --
-> 1.7.9.5
->
+  http://fabiobaltieri.com/2011/09/21/linux-led-subsystem/
+
+I'm confused, however, about the .gpio member of the struct gpio_led.
+I'm guessing that it's the GPIO number, but (at least in the case of
+gpio_ich) that number can vary depending on the base number for that
+chip.
+
+Am I missing something?
+
+Thanks!
+
+-- 
+========================================================================
+Ian Pilcher                                         arequipeno@gmail.com
+Sometimes there's nothing left to do but crash and burn...or die trying.
+========================================================================
+
