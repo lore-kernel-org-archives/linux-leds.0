@@ -1,55 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] Documentation: leds: Fix a typo
-Date: Thu,  8 Aug 2013 10:37:59 +0530
-Message-ID: <1375938479-5021-1-git-send-email-sachin.kamat@linaro.org>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: [PATCH 00/10] leds: lp5521,5523: restore device attributes for running LED patterns
+Date: Thu,  8 Aug 2013 16:59:44 +0900
+Message-ID: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:47800 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755948Ab3HHFYq (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Aug 2013 01:24:46 -0400
-Received: by mail-pd0-f174.google.com with SMTP id 10so2186674pdc.19
-        for <linux-leds@vger.kernel.org>; Wed, 07 Aug 2013 22:24:45 -0700 (PDT)
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:60200 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757642Ab3HHIAT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Aug 2013 04:00:19 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-doc@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: cooloney@gmail.com, rob@landley.net, sachin.kamat@linaro.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Milo Kim <milo.kim@ti.com>
 
-__initdata should be placed between the variable name and equal
-sign for the variable to be placed in the intended section.
-Fix the example.
+This patch-set resolves the application conflict by restoring sysfs files.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- Documentation/leds/leds-lm3556.txt |    2 +-
- Documentation/leds/leds-lp3944.txt |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+For LP5521
+  engine1/2/3_mode
+  engine1/2/3_load
 
-diff --git a/Documentation/leds/leds-lm3556.txt b/Documentation/leds/leds-lm3556.txt
-index d9eb91b..62278e8 100644
---- a/Documentation/leds/leds-lm3556.txt
-+++ b/Documentation/leds/leds-lm3556.txt
-@@ -71,7 +71,7 @@ To register the chip at address 0x63 on specific adapter, set the platform data
- according to include/linux/platform_data/leds-lm3556.h, set the i2c board info
- 
- Example:
--	static struct i2c_board_info __initdata board_i2c_ch4[]	= {
-+	static struct i2c_board_info board_i2c_ch4[] __initdata = {
- 		{
- 			 I2C_BOARD_INFO(LM3556_NAME, 0x63),
- 			 .platform_data = &lm3556_pdata,
-diff --git a/Documentation/leds/leds-lp3944.txt b/Documentation/leds/leds-lp3944.txt
-index c6eda18..e88ac3b 100644
---- a/Documentation/leds/leds-lp3944.txt
-+++ b/Documentation/leds/leds-lp3944.txt
-@@ -37,7 +37,7 @@ registered using the i2c_board_info mechanism.
- To register the chip at address 0x60 on adapter 0, set the platform data
- according to include/linux/leds-lp3944.h, set the i2c board info:
- 
--	static struct i2c_board_info __initdata a910_i2c_board_info[] = {
-+	static struct i2c_board_info a910_i2c_board_info[] __initdata = {
- 		{
- 			I2C_BOARD_INFO("lp3944", 0x60),
- 			.platform_data = &a910_lp3944_leds,
+For LP5523
+  engine1/2/3_mode
+  engine1/2/3_load
+  engine1/2/3_leds
+
+Those attributes are accessed when LED pattern is run by custom application.
+Those were removed when LED pattern interface was changed to generic firmware
+interface. Please refer to commits below.
+
+  git commit 9ce7cb170f97f83a78dc948bf7d25690f15e1328
+  (leds-lp5521: use generic firmware interface)
+
+  git commit db6eaf8388a413a5ee1b4547ce78506b9c6456b0
+  (leds-lp5523: use generic firmware interface)
+
+Necessary attributes are restored in this patch-set.
+
+(Other changes)
+New data structure is added for handling values from/to an application.
+Few code fixes for reducing writing I2C commands.
+Add LP55xx common macros for code refactoring.
+Documentation updates.
+
+You can also pull from the location below
+This branch is based on 'for-next' of linux-leds.
+
+  https://github.com/milokim/lp55xx.git resolve-missing-sysfs
+
+Milo Kim (10):
+  leds: lp55xx: add common data structure for program
+  leds: lp55xx: add common macros for device attributes
+  leds: lp5521: restore legacy device attributes
+  leds: lp5521: remove unnecessary writing commands
+  leds: lp5523: make separate API for loading engine
+  leds: lp5523: LED MUX configuration on initializing
+  leds: lp5523: restore legacy device attributes
+  leds: lp5523: remove unnecessary writing commands
+  Documentation: leds-lp5521,lp5523: update device attribute
+    information
+  leds: lp5562: use LP55xx common macros for device attributes
+
+ Documentation/leds/leds-lp5521.txt |   20 ++-
+ Documentation/leds/leds-lp5523.txt |   21 ++-
+ drivers/leds/leds-lp5521.c         |  114 +++++++++++--
+ drivers/leds/leds-lp5523.c         |  321 ++++++++++++++++++++++++++++++++++--
+ drivers/leds/leds-lp5562.c         |    4 +-
+ drivers/leds/leds-lp55xx-common.h  |   66 ++++++++
+ 6 files changed, 511 insertions(+), 35 deletions(-)
+
 -- 
 1.7.9.5
 
