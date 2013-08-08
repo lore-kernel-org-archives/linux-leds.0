@@ -1,173 +1,163 @@
-From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 03/10] leds: lp5521: restore legacy device attributes
-Date: Thu,  8 Aug 2013 16:59:47 +0900
-Message-ID: <1375948794-6286-4-git-send-email-milo.kim@ti.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH 3/3] leds-pca9633: Add mutex to the ledout register
+Date: Thu,  8 Aug 2013 10:47:04 +0200
+Message-ID: <1375951624-15186-4-git-send-email-ricardo.ribalda@gmail.com>
+References: <1375951624-15186-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
+In-Reply-To: <1375951624-15186-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Milo Kim <milo.kim@ti.com>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Meerwald <p.meerwald@bct-electronic.com>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-git commit 9ce7cb170f97f83a78dc948bf7d25690f15e1328
-may cause an application confict, engineN_mode and engineN_load.
-This interface should be maintained for compatibility.
+To update an LED a register has to be read, updated and writen. If
+another LED whas been updated at the same time, this could lead into
+wrong updates.
 
-Restored device attributes are 'engineN_mode' and 'engineN_load'.
-A 'selftest' attribute macro is replaced with LP55xx common macro.
+This patch addes a common mutex to all the leds of the same chip to
+protect the ledout register.
 
-Use a mutex in lp5521_update_program_memory()
-: This function is called when an user-application writes a 'engineN_load' file
-or pattern data is loaded from generic firmware interface.
-So, writing program memory should be protected.
-If an error occurs on accessing this area, just it returns as -EINVAL quickly.
-This error code is exact same as old driver function, lp5521_do_store_load()
-because it should be kept for an user-application compatibility.
-Even the driver is changed, we can use the application without re-compiling
-sources.
-
-'led_pattern' attribute is not included
-: engineN_mode and _load were created for custom user-application.
-'led_pattern' is an exception. I added this attribute not for custom application
-but for simple test. Now it is used only in LP5562 driver, not LP5521.
-
-Signed-off-by: Milo Kim <milo.kim@ti.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/leds/leds-lp5521.c |  104 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 100 insertions(+), 4 deletions(-)
+ drivers/leds/leds-pca9633.c |   63 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 41 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 9e28dd0..c00f922 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -251,10 +251,20 @@ static int lp5521_update_program_memory(struct lp55xx_chip *chip,
- 		goto err;
- 
- 	program_size = i;
--	for (i = 0; i < program_size; i++)
--		lp55xx_write(chip, addr[idx] + i, pattern[i]);
- 
--	return 0;
-+	mutex_lock(&chip->lock);
-+
-+	for (i = 0; i < program_size; i++) {
-+		ret = lp55xx_write(chip, addr[idx] + i, pattern[i]);
-+		if (ret) {
-+			mutex_unlock(&chip->lock);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return size;
- 
- err:
- 	dev_err(&chip->cl->dev, "wrong pattern format\n");
-@@ -365,6 +375,80 @@ static void lp5521_led_brightness_work(struct work_struct *work)
- 	mutex_unlock(&chip->lock);
- }
- 
-+static ssize_t show_engine_mode(struct device *dev,
-+				struct device_attribute *attr,
-+				char *buf, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	enum lp55xx_engine_mode mode = chip->engines[nr - 1].mode;
-+
-+	switch (mode) {
-+	case LP55XX_ENGINE_RUN:
-+		return sprintf(buf, "run\n");
-+	case LP55XX_ENGINE_LOAD:
-+		return sprintf(buf, "load\n");
-+	case LP55XX_ENGINE_DISABLED:
-+	default:
-+		return sprintf(buf, "disabled\n");
-+	}
-+}
-+show_mode(1)
-+show_mode(2)
-+show_mode(3)
-+
-+static ssize_t store_engine_mode(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	struct lp55xx_engine *engine = &chip->engines[nr - 1];
-+
-+	mutex_lock(&chip->lock);
-+
-+	chip->engine_idx = nr;
-+
-+	if (!strncmp(buf, "run", 3)) {
-+		lp5521_run_engine(chip, true);
-+		engine->mode = LP55XX_ENGINE_RUN;
-+	} else if (!strncmp(buf, "load", 4)) {
-+		lp5521_stop_engine(chip);
-+		lp5521_load_engine(chip);
-+		engine->mode = LP55XX_ENGINE_LOAD;
-+	} else if (!strncmp(buf, "disabled", 8)) {
-+		lp5521_stop_engine(chip);
-+		engine->mode = LP55XX_ENGINE_DISABLED;
-+	}
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return len;
-+}
-+store_mode(1)
-+store_mode(2)
-+store_mode(3)
-+
-+static ssize_t store_engine_load(struct device *dev,
-+			     struct device_attribute *attr,
-+			     const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+
-+	mutex_lock(&chip->lock);
-+
-+	chip->engine_idx = nr;
-+	lp5521_load_engine(chip);
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return lp5521_update_program_memory(chip, buf, len);
-+}
-+store_load(1)
-+store_load(2)
-+store_load(3)
-+
- static ssize_t lp5521_selftest(struct device *dev,
- 			       struct device_attribute *attr,
- 			       char *buf)
-@@ -381,9 +465,21 @@ static ssize_t lp5521_selftest(struct device *dev,
- }
- 
- /* device attributes */
--static DEVICE_ATTR(selftest, S_IRUGO, lp5521_selftest, NULL);
-+static LP55XX_DEV_ATTR_RW(engine1_mode, show_engine1_mode, store_engine1_mode);
-+static LP55XX_DEV_ATTR_RW(engine2_mode, show_engine2_mode, store_engine2_mode);
-+static LP55XX_DEV_ATTR_RW(engine3_mode, show_engine3_mode, store_engine3_mode);
-+static LP55XX_DEV_ATTR_WO(engine1_load, store_engine1_load);
-+static LP55XX_DEV_ATTR_WO(engine2_load, store_engine2_load);
-+static LP55XX_DEV_ATTR_WO(engine3_load, store_engine3_load);
-+static LP55XX_DEV_ATTR_RO(selftest, lp5521_selftest);
- 
- static struct attribute *lp5521_attributes[] = {
-+	&dev_attr_engine1_mode.attr,
-+	&dev_attr_engine2_mode.attr,
-+	&dev_attr_engine3_mode.attr,
-+	&dev_attr_engine1_load.attr,
-+	&dev_attr_engine2_load.attr,
-+	&dev_attr_engine3_load.attr,
- 	&dev_attr_selftest.attr,
- 	NULL
+diff --git a/drivers/leds/leds-pca9633.c b/drivers/leds/leds-pca9633.c
+index 4dd7793..5e3d36f 100644
+--- a/drivers/leds/leds-pca9633.c
++++ b/drivers/leds/leds-pca9633.c
+@@ -65,9 +65,17 @@ static const struct i2c_device_id pca9633_id[] = {
  };
+ MODULE_DEVICE_TABLE(i2c, pca9633_id);
+ 
+-struct pca9633_led {
+-	struct i2c_client *client;
++struct pca9633_led;
++
++struct pca9633 {
+ 	struct pca9633_chipdef *chipdef;
++	struct mutex mutex;
++	struct i2c_client *client;
++	struct pca9633_led *leds;
++};
++
++struct pca9633_led {
++	struct pca9633 *chip;
+ 	struct work_struct work;
+ 	enum led_brightness brightness;
+ 	struct led_classdev led_cdev;
+@@ -79,29 +87,32 @@ static void pca9633_led_work(struct work_struct *work)
+ {
+ 	struct pca9633_led *pca9633 = container_of(work,
+ 		struct pca9633_led, work);
+-	u8 ledout_addr = pca9633->chipdef->ledout_base + (pca9633->led_num / 4);
++	u8 ledout_addr = pca9633->chip->chipdef->ledout_base
++		+ (pca9633->led_num / 4);
+ 	u8 ledout;
+ 	int shift = 2 * (pca9633->led_num % 4);
+ 	u8 mask = 0x3 << shift;
+ 
+-	ledout = i2c_smbus_read_byte_data(pca9633->client, ledout_addr);
++	mutex_lock(&pca9633->chip->mutex);
++	ledout = i2c_smbus_read_byte_data(pca9633->chip->client, ledout_addr);
+ 	switch (pca9633->brightness) {
+ 	case LED_FULL:
+-		i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
++		i2c_smbus_write_byte_data(pca9633->chip->client, ledout_addr,
+ 			(ledout & ~mask) | (PCA9633_LED_ON << shift));
+ 		break;
+ 	case LED_OFF:
+-		i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
++		i2c_smbus_write_byte_data(pca9633->chip->client, ledout_addr,
+ 			ledout & ~mask);
+ 		break;
+ 	default:
+-		i2c_smbus_write_byte_data(pca9633->client,
++		i2c_smbus_write_byte_data(pca9633->chip->client,
+ 			PCA9633_PWM_BASE + pca9633->led_num,
+ 			pca9633->brightness);
+-		i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
++		i2c_smbus_write_byte_data(pca9633->chip->client, ledout_addr,
+ 			(ledout & ~mask) | (PCA9633_LED_PWM << shift));
+ 		break;
+ 	}
++	mutex_unlock(&pca9633->chip->mutex);
+ }
+ 
+ static void pca9633_led_set(struct led_classdev *led_cdev,
+@@ -123,6 +134,7 @@ static void pca9633_led_set(struct led_classdev *led_cdev,
+ static int pca9633_probe(struct i2c_client *client,
+ 					const struct i2c_device_id *id)
+ {
++	struct pca9633 *pca9633_chip;
+ 	struct pca9633_led *pca9633;
+ 	struct pca9633_platform_data *pdata;
+ 	struct pca9633_chipdef *chip;
+@@ -138,17 +150,30 @@ static int pca9633_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
+ 
++	pca9633_chip = devm_kzalloc(&client->dev, sizeof(*pca9633_chip),
++								GFP_KERNEL);
++	if (!pca9633_chip)
++		return -ENOMEM;
+ 	pca9633 = devm_kzalloc(&client->dev, chip->n_leds * sizeof(*pca9633),
+ 								GFP_KERNEL);
+ 	if (!pca9633)
+ 		return -ENOMEM;
+ 
+-	i2c_set_clientdata(client, pca9633);
++	i2c_set_clientdata(client, pca9633_chip);
++
++	mutex_init(&pca9633_chip->mutex);
++	pca9633_chip->chipdef = chip;
++	pca9633_chip->client = client;
++	pca9633_chip->leds = pca9633;
++
++	/* Turn off LEDs by default*/
++	i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
++	if (chip->n_leds > 4)
++		i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
+ 
+ 	for (i = 0; i < chip->n_leds; i++) {
+-		pca9633[i].client = client;
+ 		pca9633[i].led_num = i;
+-		pca9633[i].chipdef = chip;
++		pca9633[i].chip = pca9633_chip;
+ 
+ 		/* Platform data can specify LED names and default triggers */
+ 		if (pdata && i < pdata->leds.num_leds) {
+@@ -182,11 +207,6 @@ static int pca9633_probe(struct i2c_client *client,
+ 	if (pdata && pdata->outdrv == PCA9633_OPEN_DRAIN)
+ 		i2c_smbus_write_byte_data(client, PCA9633_MODE2, 0x01);
+ 
+-	/* Turn off LEDs */
+-	i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
+-	if (chip->n_leds > 4)
+-		i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
+-
+ 	return 0;
+ 
+ exit:
+@@ -200,14 +220,13 @@ exit:
+ 
+ static int pca9633_remove(struct i2c_client *client)
+ {
+-	struct pca9633_led *pca9633 = i2c_get_clientdata(client);
++	struct pca9633 *pca9633 = i2c_get_clientdata(client);
+ 	int i;
+ 
+-	for (i = 0; i < pca9633->chipdef->n_leds; i++)
+-		if (pca9633[i].client != NULL) {
+-			led_classdev_unregister(&pca9633[i].led_cdev);
+-			cancel_work_sync(&pca9633[i].work);
+-		}
++	for (i = 0; i < pca9633->chipdef->n_leds; i++) {
++		led_classdev_unregister(&pca9633->leds[i].led_cdev);
++		cancel_work_sync(&pca9633->leds[i].work);
++	}
+ 
+ 	return 0;
+ }
 -- 
-1.7.9.5
+1.7.10.4
