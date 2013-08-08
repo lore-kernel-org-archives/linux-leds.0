@@ -1,7 +1,7 @@
 From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 02/10] leds: lp55xx: add common macros for device attributes
-Date: Thu,  8 Aug 2013 16:59:46 +0900
-Message-ID: <1375948794-6286-3-git-send-email-milo.kim@ti.com>
+Subject: [PATCH 05/10] leds: lp5523: make separate API for loading engine
+Date: Thu,  8 Aug 2013 16:59:49 +0900
+Message-ID: <1375948794-6286-6-git-send-email-milo.kim@ti.com>
 References: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
@@ -10,84 +10,59 @@ To: Bryan Wu <cooloney@gmail.com>
 Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Milo Kim <milo.kim@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch provides common macros for LP5521 and LP5523 device attributes and
-functions.
+lp5523_load_engine()
+  It is called whenever the operation mode is changed to 'load'.
+  It is used for simple operation mode change.
+  It will be used when engine mode and LED selection is updated in later patch.
 
-(Device attributes)
-LP5521: 'mode', 'load' and 'selftest'
-LP5523: 'mode', 'load', 'leds' and 'selftest'
-
-(Permissions)
-mode: R/W
-load: Write-only
-leds: R/W
-selftest: Read-only
-
-Couple of lines are duplicate, so use these macros for adding device attributes
-in LP5521 and LP5523 drivers.
+lp5523_load_engine_and_select_page()
+  Change the operation mode to 'load' and select program page number.
+  This is used for programming a LED pattern at a time.
+  So load_engine() is replaced with new API, load_engine_and_select_page()
+  in lp5523_firmware_loaded().
 
 Signed-off-by: Milo Kim <milo.kim@ti.com>
 ---
- drivers/leds/leds-lp55xx-common.h |   47 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ drivers/leds/leds-lp5523.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index 04c1d4f..cceab48 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -29,6 +29,53 @@ enum lp55xx_engine_mode {
- 	LP55XX_ENGINE_RUN,
- };
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 72c10e2..b509480 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -152,15 +152,21 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
+ 		[LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
+ 	};
  
-+#define LP55XX_DEV_ATTR_RW(name, show, store)	\
-+	DEVICE_ATTR(name, S_IRUGO | S_IWUSR, show, store)
-+#define LP55XX_DEV_ATTR_RO(name, show)		\
-+	DEVICE_ATTR(name, S_IRUGO, show, NULL)
-+#define LP55XX_DEV_ATTR_WO(name, store)		\
-+	DEVICE_ATTR(name, S_IWUSR, NULL, store)
++	lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], val[idx]);
 +
-+#define show_mode(nr)							\
-+static ssize_t show_engine##nr##_mode(struct device *dev,		\
-+				    struct device_attribute *attr,	\
-+				    char *buf)				\
-+{									\
-+	return show_engine_mode(dev, attr, buf, nr);			\
++	lp5523_wait_opmode_done();
 +}
 +
-+#define store_mode(nr)							\
-+static ssize_t store_engine##nr##_mode(struct device *dev,		\
-+				     struct device_attribute *attr,	\
-+				     const char *buf, size_t len)	\
-+{									\
-+	return store_engine_mode(dev, attr, buf, len, nr);		\
-+}
-+
-+#define show_leds(nr)							\
-+static ssize_t show_engine##nr##_leds(struct device *dev,		\
-+			    struct device_attribute *attr,		\
-+			    char *buf)					\
-+{									\
-+	return show_engine_leds(dev, attr, buf, nr);			\
-+}
-+
-+#define store_leds(nr)						\
-+static ssize_t store_engine##nr##_leds(struct device *dev,	\
-+			     struct device_attribute *attr,	\
-+			     const char *buf, size_t len)	\
-+{								\
-+	return store_engine_leds(dev, attr, buf, len, nr);	\
-+}
-+
-+#define store_load(nr)							\
-+static ssize_t store_engine##nr##_load(struct device *dev,		\
-+				     struct device_attribute *attr,	\
-+				     const char *buf, size_t len)	\
-+{									\
-+	return store_engine_load(dev, attr, buf, len, nr);		\
-+}
-+
- struct lp55xx_led;
- struct lp55xx_chip;
++static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
++{
++	enum lp55xx_engine_index idx = chip->engine_idx;
+ 	u8 page_sel[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
+ 		[LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
+ 		[LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
+ 	};
+ 
+-	lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], val[idx]);
+-
+-	lp5523_wait_opmode_done();
++	lp5523_load_engine(chip);
+ 
+ 	lp55xx_write(chip, LP5523_REG_PROG_PAGE_SEL, page_sel[idx]);
+ }
+@@ -290,7 +296,7 @@ static void lp5523_firmware_loaded(struct lp55xx_chip *chip)
+ 	 *  2) write firmware data into program memory
+ 	 */
+ 
+-	lp5523_load_engine(chip);
++	lp5523_load_engine_and_select_page(chip);
+ 	lp5523_update_program_memory(chip, fw->data, fw->size);
+ }
  
 -- 
 1.7.9.5
