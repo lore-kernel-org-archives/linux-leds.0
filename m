@@ -1,8 +1,11 @@
 From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 08/10] leds: lp5523: remove unnecessary writing commands
-Date: Thu,  8 Aug 2013 16:59:52 +0900
-Message-ID: <1375948794-6286-9-git-send-email-milo.kim@ti.com>
+Subject: [PATCH 09/10] Documentation: leds-lp5521,lp5523: update device attribute information
+Date: Thu,  8 Aug 2013 16:59:53 +0900
+Message-ID: <1375948794-6286-10-git-send-email-milo.kim@ti.com>
 References: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -10,57 +13,87 @@ To: Bryan Wu <cooloney@gmail.com>
 Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Milo Kim <milo.kim@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch reduces the number of programming commands.
+Now, all legacy application interfaces are restored.
+Each driver documentation is updated.
 
-(Count of sending commands)
-Old code: 32 + program size (32 counts for clearing program memory)
-New code: 32
-
-Pattern buffer is initialized to 0 in this function.
-Just update new program data and remaining buffers are filled with 0.
-So it's needless to clear whole area.
-
+Cc: Pali Roh=C3=A1r <pali.rohar@gmail.com>
 Signed-off-by: Milo Kim <milo.kim@ti.com>
 ---
- drivers/leds/leds-lp5523.c |   14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ Documentation/leds/leds-lp5521.txt |   20 +++++++++++++++++++-
+ Documentation/leds/leds-lp5523.txt |   21 ++++++++++++++++++++-
+ 2 files changed, 39 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 9b8be6f6..fe3bcbb 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -312,17 +312,11 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
- 	unsigned cmd;
- 	char c[3];
--	int update_size;
- 	int nrchars;
--	int offset = 0;
- 	int ret;
--	int i;
--
--	/* clear program memory before updating */
--	for (i = 0; i < LP5523_PROGRAM_LENGTH; i++)
--		lp55xx_write(chip, LP5523_REG_PROG_MEM + i, 0);
-+	int offset = 0;
-+	int i = 0;
- 
--	i = 0;
- 	while ((offset < size - 1) && (i < LP5523_PROGRAM_LENGTH)) {
- 		/* separate sscanfs because length is working only for %s */
- 		ret = sscanf(data + offset, "%2s%n ", c, &nrchars);
-@@ -342,11 +336,9 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 	if (i % 2)
- 		goto err;
- 
--	update_size = i;
--
- 	mutex_lock(&chip->lock);
- 
--	for (i = 0; i < update_size; i++) {
-+	for (i = 0; i < LP5523_PROGRAM_LENGTH; i++) {
- 		ret = lp55xx_write(chip, LP5523_REG_PROG_MEM + i, pattern[i]);
- 		if (ret) {
- 			mutex_unlock(&chip->lock);
--- 
+diff --git a/Documentation/leds/leds-lp5521.txt b/Documentation/leds/le=
+ds-lp5521.txt
+index 79e4c2e..d08d8c1 100644
+--- a/Documentation/leds/leds-lp5521.txt
++++ b/Documentation/leds/leds-lp5521.txt
+@@ -18,7 +18,25 @@ All three channels can be also controlled using the =
+engine micro programs.
+ More details of the instructions can be found from the public data she=
+et.
+=20
+ LP5521 has the internal program memory for running various LED pattern=
+s.
+-For the details, please refer to 'firmware' section in leds-lp55xx.txt
++There are two ways to run LED patterns.
++
++1) Legacy interface - enginex_mode and enginex_load
++  Control interface for the engines:
++  x is 1 .. 3
++  enginex_mode : disabled, load, run
++  enginex_load : store program (visible only in engine load mode)
++
++  Example (start to blink the channel 2 led):
++  cd   /sys/class/leds/lp5521:channel2/device
++  echo "load" > engine3_mode
++  echo "037f4d0003ff6000" > engine3_load
++  echo "run" > engine3_mode
++
++  To stop the engine:
++  echo "disabled" > engine3_mode
++
++2) Firmware interface - LP55xx common interface
++  For the details, please refer to 'firmware' section in leds-lp55xx.t=
+xt
+=20
+ sysfs contains a selftest entry.
+ The test communicates with the chip and checks that
+diff --git a/Documentation/leds/leds-lp5523.txt b/Documentation/leds/le=
+ds-lp5523.txt
+index 899fdad..5b3e91d 100644
+--- a/Documentation/leds/leds-lp5523.txt
++++ b/Documentation/leds/leds-lp5523.txt
+@@ -28,7 +28,26 @@ If both fields are NULL, 'lp5523' is used by default=
+=2E
+ /sys/class/leds/lp5523:channelN  (N: 0 ~ 8)
+=20
+ LP5523 has the internal program memory for running various LED pattern=
+s.
+-For the details, please refer to 'firmware' section in leds-lp55xx.txt
++There are two ways to run LED patterns.
++
++1) Legacy interface - enginex_mode, enginex_load and enginex_leds
++  Control interface for the engines:
++  x is 1 .. 3
++  enginex_mode : disabled, load, run
++  enginex_load : microcode load (visible only in load mode)
++  enginex_leds : led mux control (visible only in load mode)
++
++  cd /sys/class/leds/lp5523:channel2/device
++  echo "load" > engine3_mode
++  echo "9d80400004ff05ff437f0000" > engine3_load
++  echo "111111111" > engine3_leds
++  echo "run" > engine3_mode
++
++  To stop the engine:
++  echo "disabled" > engine3_mode
++
++2) Firmware interface - LP55xx common interface
++  For the details, please refer to 'firmware' section in leds-lp55xx.t=
+xt
+=20
+ Selftest uses always the current from the platform data.
+=20
+--=20
 1.7.9.5
