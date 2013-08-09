@@ -1,54 +1,42 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 1/3] leds-pca9633: Add support for PCA9634
-Date: Thu, 8 Aug 2013 15:49:17 -0700
-Message-ID: <CAK5ve-L3XKMYMRjX8MX=i4ppNixZB=2FjO48_pxRnXvaco_DWg@mail.gmail.com>
-References: <1375980335-19943-1-git-send-email-ricardo.ribalda@gmail.com>
- <1375980335-19943-2-git-send-email-ricardo.ribalda@gmail.com>
- <CAK5ve-+nnAGAnFNb6=QuekDMQwJ7w7h7k67dES0=wTN07n-9NA@mail.gmail.com> <alpine.DEB.2.01.1308090013440.21412@pmeerw.net>
+From: "Kim, Milo" <Milo.Kim@ti.com>
+Subject: RE: Registering GPIO LEDs
+Date: Fri, 9 Aug 2013 02:08:44 +0000
+Message-ID: <A874F61F95741C4A9BA573A70FE3998F82E868B9@DQHE06.ent.ti.com>
+References: <ktuj0g$qci$1@ger.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:49080 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966810Ab3HHWtj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Aug 2013 18:49:39 -0400
-In-Reply-To: <alpine.DEB.2.01.1308090013440.21412@pmeerw.net>
+Received: from bear.ext.ti.com ([192.94.94.41]:37128 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030205Ab3HICIv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Aug 2013 22:08:51 -0400
+In-Reply-To: <ktuj0g$qci$1@ger.gmane.org>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Peter Meerwald <p.meerwald@bct-electronic.com>
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Ian Pilcher <arequipeno@gmail.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Thu, Aug 8, 2013 at 3:36 PM, Peter Meerwald
-<p.meerwald@bct-electronic.com> wrote:
-> Hello,
->
->> > Add support for PCA9634 chip, which belongs to the same family as the
->> > 9633 but with support for 8 outputs instead of 4.
->
->> Basically I like this method to add a new chip supporting. Please find
->> my comments below.
->
-> me too :)
->
->> What about just rename the whole file to leds-pca963x.c. And rename
->> some pca9633 to pca963x in the driver.
->
-> there are other, similar I2C LED driver chips which might be
-> handled with the current pca9633 driver, e.g. the pca9685 (which is
-> supported under pwm/ by the way)
->
-> people have argued that the numbering scheme of chips is hard to
-> predict; hence, the driver name should be determined by the first
-> device supported to avoid subsequent renaming -- but I have no strong
-> feelings about this
->
+Hi Ian,
 
-Giving a more generic and meaningful name of this driver should be a
-easier for people to understand. So if pca9685 is coming, we can use
-leds-pca96xx.c and pca96xx for this pca96xx chip family, as long as
-they can share this driver code.
+> I've discovered that it's quite simple to control the drive activity
+> LEDs on my Thecus N5550 with the standard gpio_ich module.  AFAIK, this
+> means that I should be able to use them with the leds_gpio module.  I
+> just need to register them.
+> 
+> I've found this page that gives an example:
+> 
+>   http://fabiobaltieri.com/2011/09/21/linux-led-subsystem/
+> 
+> I'm confused, however, about the .gpio member of the struct gpio_led.
+> I'm guessing that it's the GPIO number, but (at least in the case of
+> gpio_ich) that number can vary depending on the base number for that
+> chip.
 
-Please take a look at Milo did in leds-lp55xx drivers.
+>From the viewpoint of a GPIO consumer, we don't care the base GPIO number.
+That is required when a GPIO controller is added.
+Just check '/sys/kernel/debug/gpio' and use available GPIOs for LEDs.
 
-Thanks a lot,
--Bryan
+Regards,
+Milo
