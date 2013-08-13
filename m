@@ -1,58 +1,58 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/1] Documentation: leds: Fix a typo
-Date: Tue, 13 Aug 2013 14:07:19 -0700
-Message-ID: <CAK5ve-JTvx1MHreN8opG7CgD1mi6WPJ51nG-0Hv7Jrq4r-Mipg@mail.gmail.com>
-References: <1375938479-5021-1-git-send-email-sachin.kamat@linaro.org>
+From: Ian Pilcher <arequipeno@gmail.com>
+Subject: Re: Registering GPIO LEDs
+Date: Tue, 13 Aug 2013 18:35:06 -0500
+Message-ID: <kuefr3$4li$1@ger.gmane.org>
+References: <ktuj0g$qci$1@ger.gmane.org> <A874F61F95741C4A9BA573A70FE3998F82E868B9@DQHE06.ent.ti.com> <52046755.7010602@gmail.com> <A874F61F95741C4A9BA573A70FE3998F82E86950@DQHE06.ent.ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1375938479-5021-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Rob Landley <rob@landley.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from plane.gmane.org ([80.91.229.3]:60912 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758072Ab3HMXfT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 13 Aug 2013 19:35:19 -0400
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <gll-linux-leds@m.gmane.org>)
+	id 1V9O7S-00005B-Bk
+	for linux-leds@vger.kernel.org; Wed, 14 Aug 2013 01:35:18 +0200
+Received: from pool-71-252-209-206.dllstx.fios.verizon.net ([71.252.209.206])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-leds@vger.kernel.org>; Wed, 14 Aug 2013 01:35:18 +0200
+Received: from arequipeno by pool-71-252-209-206.dllstx.fios.verizon.net with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-leds@vger.kernel.org>; Wed, 14 Aug 2013 01:35:18 +0200
+In-Reply-To: <A874F61F95741C4A9BA573A70FE3998F82E86950@DQHE06.ent.ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-On Wed, Aug 7, 2013 at 10:07 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> __initdata should be placed between the variable name and equal
-> sign for the variable to be placed in the intended section.
-> Fix the example.
->
+On 08/09/2013 12:26 AM, Kim, Milo wrote:
+> It sounds you want to make the LED platform data flexible, right?
 
-Thanks, merged it.
--Bryan
+Yes, but only to the extent that it can handle this particular hardware.
+I'm mostly concerned that something like a kernel upgrade, BIOS upgrade,
+or loading additional modules will cause the "magic" GPIO numbers to
+change.
 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  Documentation/leds/leds-lm3556.txt |    2 +-
->  Documentation/leds/leds-lp3944.txt |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/leds/leds-lm3556.txt b/Documentation/leds/leds-lm3556.txt
-> index d9eb91b..62278e8 100644
-> --- a/Documentation/leds/leds-lm3556.txt
-> +++ b/Documentation/leds/leds-lm3556.txt
-> @@ -71,7 +71,7 @@ To register the chip at address 0x63 on specific adapter, set the platform data
->  according to include/linux/platform_data/leds-lm3556.h, set the i2c board info
->
->  Example:
-> -       static struct i2c_board_info __initdata board_i2c_ch4[] = {
-> +       static struct i2c_board_info board_i2c_ch4[] __initdata = {
->                 {
->                          I2C_BOARD_INFO(LM3556_NAME, 0x63),
->                          .platform_data = &lm3556_pdata,
-> diff --git a/Documentation/leds/leds-lp3944.txt b/Documentation/leds/leds-lp3944.txt
-> index c6eda18..e88ac3b 100644
-> --- a/Documentation/leds/leds-lp3944.txt
-> +++ b/Documentation/leds/leds-lp3944.txt
-> @@ -37,7 +37,7 @@ registered using the i2c_board_info mechanism.
->  To register the chip at address 0x60 on adapter 0, set the platform data
->  according to include/linux/leds-lp3944.h, set the i2c board info:
->
-> -       static struct i2c_board_info __initdata a910_i2c_board_info[] = {
-> +       static struct i2c_board_info a910_i2c_board_info[] __initdata = {
->                 {
->                         I2C_BOARD_INFO("lp3944", 0x60),
->                         .platform_data = &a910_lp3944_leds,
-> --
-> 1.7.9.5
->
+> If you can use .dtb file in your system, it may be possible to use just offset
+> values with GPIO controller, ich_gpio. Then, no hardcoded GPIO is required.
+
+I'm fairly sure that device tree is not an option in most x86_64
+distros.  (And the whole reason I'm doing this is to used such a
+"mainstream" distro on this hardware, rather than the NAS vendor's
+"firmware".)
+
+For now, I think I'll go the kernel module route.  If necessary, user-
+space can use sysfs to find the GPIO base of the ICH and pass it in.  I
+suspect there's a way to do this entirely in the kernel, but I also
+suspect that it's too much trouble to be worth the effort right now.
+
+Thanks!
+
+-- 
+========================================================================
+Ian Pilcher                                         arequipeno@gmail.com
+Sometimes there's nothing left to do but crash and burn...or die trying.
+========================================================================
+
