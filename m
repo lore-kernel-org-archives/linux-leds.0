@@ -1,94 +1,104 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 01/10] leds: lp55xx: add common data structure for program
-Date: Tue, 13 Aug 2013 11:56:14 -0700
-Message-ID: <CAK5ve-K10M3+=ctxu+5hU=pPz1_x6p1JgQS6jEin-LfxnP8Hog@mail.gmail.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-2-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH 02/10] leds: lp55xx: add common macros for device attributes
+Date: Tue, 13 Aug 2013 12:12:26 -0700
+Message-ID: <CAK5ve-KgqN7Lo3XPjC5zDRdgkFuHdx=Tm=Bub9cUub7ZB-iP0g@mail.gmail.com>
+References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-3-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:42422 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758109Ab3HMS4g (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 14:56:36 -0400
-In-Reply-To: <1375948794-6286-2-git-send-email-milo.kim@ti.com>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:42535 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757039Ab3HMTMu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 15:12:50 -0400
+In-Reply-To: <1375948794-6286-3-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Milo Kim <woogyom.kim@gmail.com>
 Cc: =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Milo Kim <milo.kim@ti.com>
 
 On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim <woogyom.kim@gmail.com> wrote:
-> LP55xx family devices have internal three program engines which are used for
-> loading LED patterns.
-> To maintain legacy device attributes, specific data structure is used, 'mode'
-> and 'led_mux'.
-> The mode is used for showing/storing current engine mode such like disabled,
-> load and run.
-> Then led_mux is used for showing/storing current output LED selection.
-> This is only for LP5523/55231.
+> This patch provides common macros for LP5521 and LP5523 device attributes and
+> functions.
+>
+> (Device attributes)
+> LP5521: 'mode', 'load' and 'selftest'
+> LP5523: 'mode', 'load', 'leds' and 'selftest'
+>
+> (Permissions)
+> mode: R/W
+> load: Write-only
+> leds: R/W
+> selftest: Read-only
+>
+> Couple of lines are duplicate, so use these macros for adding device attributes
+> in LP5521 and LP5523 drivers.
 >
 
-This patch looks good to me, but the commit message format is little
-bit odd to me. I will fix that and merge into my tree.
-
-Thanks,
+Good, I will merge this.
 -Bryan
-
 
 > Signed-off-by: Milo Kim <milo.kim@ti.com>
 > ---
->  drivers/leds/leds-lp55xx-common.h |   19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+>  drivers/leds/leds-lp55xx-common.h |   47 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
 >
 > diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-> index dbbf86d..04c1d4f 100644
+> index 04c1d4f..cceab48 100644
 > --- a/drivers/leds/leds-lp55xx-common.h
 > +++ b/drivers/leds/leds-lp55xx-common.h
-> @@ -20,6 +20,13 @@ enum lp55xx_engine_index {
->         LP55XX_ENGINE_1,
->         LP55XX_ENGINE_2,
->         LP55XX_ENGINE_3,
-> +       LP55XX_ENGINE_MAX = LP55XX_ENGINE_3,
-> +};
-> +
-> +enum lp55xx_engine_mode {
-> +       LP55XX_ENGINE_DISABLED,
-> +       LP55XX_ENGINE_LOAD,
-> +       LP55XX_ENGINE_RUN,
+> @@ -29,6 +29,53 @@ enum lp55xx_engine_mode {
+>         LP55XX_ENGINE_RUN,
 >  };
 >
+> +#define LP55XX_DEV_ATTR_RW(name, show, store)  \
+> +       DEVICE_ATTR(name, S_IRUGO | S_IWUSR, show, store)
+> +#define LP55XX_DEV_ATTR_RO(name, show)         \
+> +       DEVICE_ATTR(name, S_IRUGO, show, NULL)
+> +#define LP55XX_DEV_ATTR_WO(name, store)                \
+> +       DEVICE_ATTR(name, S_IWUSR, NULL, store)
+> +
+> +#define show_mode(nr)                                                  \
+> +static ssize_t show_engine##nr##_mode(struct device *dev,              \
+> +                                   struct device_attribute *attr,      \
+> +                                   char *buf)                          \
+> +{                                                                      \
+> +       return show_engine_mode(dev, attr, buf, nr);                    \
+> +}
+> +
+> +#define store_mode(nr)                                                 \
+> +static ssize_t store_engine##nr##_mode(struct device *dev,             \
+> +                                    struct device_attribute *attr,     \
+> +                                    const char *buf, size_t len)       \
+> +{                                                                      \
+> +       return store_engine_mode(dev, attr, buf, len, nr);              \
+> +}
+> +
+> +#define show_leds(nr)                                                  \
+> +static ssize_t show_engine##nr##_leds(struct device *dev,              \
+> +                           struct device_attribute *attr,              \
+> +                           char *buf)                                  \
+> +{                                                                      \
+> +       return show_engine_leds(dev, attr, buf, nr);                    \
+> +}
+> +
+> +#define store_leds(nr)                                         \
+> +static ssize_t store_engine##nr##_leds(struct device *dev,     \
+> +                            struct device_attribute *attr,     \
+> +                            const char *buf, size_t len)       \
+> +{                                                              \
+> +       return store_engine_leds(dev, attr, buf, len, nr);      \
+> +}
+> +
+> +#define store_load(nr)                                                 \
+> +static ssize_t store_engine##nr##_load(struct device *dev,             \
+> +                                    struct device_attribute *attr,     \
+> +                                    const char *buf, size_t len)       \
+> +{                                                                      \
+> +       return store_engine_load(dev, attr, buf, len, nr);              \
+> +}
+> +
 >  struct lp55xx_led;
-> @@ -72,6 +79,16 @@ struct lp55xx_device_config {
->  };
->
->  /*
-> + * struct lp55xx_engine
-> + * @mode       : Engine mode
-> + * @led_mux    : Mux bits for LED selection. Only used in LP5523
-> + */
-> +struct lp55xx_engine {
-> +       enum lp55xx_engine_mode mode;
-> +       u16 led_mux;
-> +};
-> +
-> +/*
->   * struct lp55xx_chip
->   * @cl         : I2C communication for access registers
->   * @pdata      : Platform specific data
-> @@ -79,6 +96,7 @@ struct lp55xx_device_config {
->   * @num_leds   : Number of registered LEDs
->   * @cfg        : Device specific configuration data
->   * @engine_idx : Selected engine number
-> + * @engines    : Engine structure for the device attribute R/W interface
->   * @fw         : Firmware data for running a LED pattern
->   */
->  struct lp55xx_chip {
-> @@ -89,6 +107,7 @@ struct lp55xx_chip {
->         int num_leds;
->         struct lp55xx_device_config *cfg;
->         enum lp55xx_engine_index engine_idx;
-> +       struct lp55xx_engine engines[LP55XX_ENGINE_MAX];
->         const struct firmware *fw;
->  };
+>  struct lp55xx_chip;
 >
 > --
 > 1.7.9.5
