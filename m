@@ -1,78 +1,229 @@
-From: Manfred Schlaegl <manfred.schlaegl@gmx.at>
-Subject: [PATCH] leds: trigger: ledtrig-backlight: Fix invalid memory access
- in fb_event notification callback
-Date: Tue, 13 Aug 2013 13:17:05 +0200
-Message-ID: <520A15B1.2030401@gmx.at>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v3 1/4] leds-pca9633: Add support for PCA9634
+Date: Tue, 13 Aug 2013 16:49:46 +0200
+Message-ID: <CAPybu_1D0mywdj9xhCRfg95J9SRMGnGeUJ9YG-=QKYgnQhFvdw@mail.gmail.com>
+References: <1376030744-22645-1-git-send-email-ricardo.ribalda@gmail.com> <1376030744-22645-2-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jg1.han@samsung.com>, "Milo(Woogyom) Kim" <milo.kim@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:36697 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757554Ab3HMOuI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 10:50:08 -0400
+In-Reply-To: <1376030744-22645-2-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Peter Meerwald <p.meerwald@bct-electronic.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-fb_notifier_callback is called on any event fired by fb_notifier_call_chain. Events may, or may not contain some data (fb_event.data).
-In case of FB_EVENT_BLANK fb_event.data contains a pointer to an integer holding the blank state. The Problem is, that in ledtrig-backlight.c - fb_notifier_callback the pointer to blank state is
-dereferenced BEFORE the event-type is checked.
-Obviously this leads to problems with other events than FB_EVENT_BLANK, where fb_event.data is undefined or NULL.
-It seems, that this problem existed ever since the driver was added.
+Hello Bryan
 
-Like in drivers/video/backlight/backlight.c line 43 I would suggest to return immediately on events other than FB_EVENT_BLANK.
+Did you have a chance to look at the new series?
 
-Signed-off-by: Manfred Schlaegl <manfred.schlaegl@gmx.at>
----
+Thanks!
 
-Background information:
-I'm currently working on a IMX53(ARM) based hardware and Linux 3.11-rc5 and detected a problem in drivers/leds/trigger/ledtrig-backlight.c
-ledtrig is used on our hardware (besides pwm-backlight) to switch off a gpio-line connected to display-supply enable-line, when the display is blanked.
-On first boot after configuring ledtrig I detected an invalid memory access in ledtrig-backlight.c - fb_notifier_callback. In my special case the segfault was caused by an FB_EVENT_FB_REGISTERED,
-fired with undefined fb_event.data in drivers/video/fbmem.c line 1653.
+On Fri, Aug 9, 2013 at 8:45 AM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Add support for PCA9634 chip, which belongs to the same family as the
+> 9633 but with support for 8 outputs instead of 4.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/leds/Kconfig        |    7 ++--
+>  drivers/leds/leds-pca9633.c |   74 +++++++++++++++++++++++++++++++------------
+>  2 files changed, 58 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index e43402d..023af58 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -280,12 +280,13 @@ config LEDS_PCA955X
+>           devices include PCA9550, PCA9551, PCA9552, and PCA9553.
+>
+>  config LEDS_PCA9633
+> -       tristate "LED support for PCA9633 I2C chip"
+> +       tristate "LED support for PCA963x I2C chip"
+>         depends on LEDS_CLASS
+>         depends on I2C
+>         help
+> -         This option enables support for LEDs connected to the PCA9633
+> -         LED driver chip accessed via the I2C bus.
+> +         This option enables support for LEDs connected to the PCA963x
+> +         LED driver chip accessed via the I2C bus. Supported
+> +         devices include PCA9633 and PCA9634
+>
+>  config LEDS_WM831X_STATUS
+>         tristate "LED support for status LEDs on WM831x PMICs"
+> diff --git a/drivers/leds/leds-pca9633.c b/drivers/leds/leds-pca9633.c
+> index 9aae567..070358a 100644
+> --- a/drivers/leds/leds-pca9633.c
+> +++ b/drivers/leds/leds-pca9633.c
+> @@ -1,7 +1,9 @@
+>  /*
+>   * Copyright 2011 bct electronic GmbH
+> + * Copyright 2013 Qtechnology/AS
+>   *
+>   * Author: Peter Meerwald <p.meerwald@bct-electronic.com>
+> + * Author: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+>   *
+>   * Based on leds-pca955x.c
+>   *
+> @@ -10,6 +12,7 @@
+>   * directory of this archive for more details.
+>   *
+>   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
+> + * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
+>   *
+>   */
+>
+> @@ -33,20 +36,42 @@
+>  #define PCA9633_MODE1          0x00
+>  #define PCA9633_MODE2          0x01
+>  #define PCA9633_PWM_BASE       0x02
+> -#define PCA9633_LEDOUT         0x08
+> +
+> +enum pca9633_type {
+> +       pca9633,
+> +       pca9634,
+> +};
+> +
+> +struct pca9633_chipdef {
+> +       u8                      ledout_base;
+> +       int                     n_leds;
+> +};
+> +
+> +static struct pca9633_chipdef pca9633_chipdefs[] = {
+> +       [pca9633] = {
+> +               .ledout_base    = 0x8,
+> +               .n_leds         = 4,
+> +       },
+> +       [pca9634] = {
+> +               .ledout_base    = 0xc,
+> +               .n_leds         = 8,
+> +       },
+> +};
+>
+>  static const struct i2c_device_id pca9633_id[] = {
+> -       { "pca9633", 0 },
+> +       { "pca9633", pca9633 },
+> +       { "pca9634", pca9634 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, pca9633_id);
+>
+>  struct pca9633_led {
+>         struct i2c_client *client;
+> +       struct pca9633_chipdef *chipdef;
+>         struct work_struct work;
+>         enum led_brightness brightness;
+>         struct led_classdev led_cdev;
+> -       int led_num; /* 0 .. 3 potentially */
+> +       int led_num; /* 0 .. 7 potentially */
+>         char name[32];
+>  };
+>
+> @@ -54,24 +79,26 @@ static void pca9633_led_work(struct work_struct *work)
+>  {
+>         struct pca9633_led *pca9633 = container_of(work,
+>                 struct pca9633_led, work);
+> -       u8 ledout = i2c_smbus_read_byte_data(pca9633->client, PCA9633_LEDOUT);
+> -       int shift = 2 * pca9633->led_num;
+> +       u8 ledout_addr = pca9633->chipdef->ledout_base + (pca9633->led_num / 4);
+> +       u8 ledout;
+> +       int shift = 2 * (pca9633->led_num % 4);
+>         u8 mask = 0x3 << shift;
+>
+> +       ledout = i2c_smbus_read_byte_data(pca9633->client, ledout_addr);
+>         switch (pca9633->brightness) {
+>         case LED_FULL:
+> -               i2c_smbus_write_byte_data(pca9633->client, PCA9633_LEDOUT,
+> +               i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
+>                         (ledout & ~mask) | (PCA9633_LED_ON << shift));
+>                 break;
+>         case LED_OFF:
+> -               i2c_smbus_write_byte_data(pca9633->client, PCA9633_LEDOUT,
+> +               i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
+>                         ledout & ~mask);
+>                 break;
+>         default:
+>                 i2c_smbus_write_byte_data(pca9633->client,
+>                         PCA9633_PWM_BASE + pca9633->led_num,
+>                         pca9633->brightness);
+> -               i2c_smbus_write_byte_data(pca9633->client, PCA9633_LEDOUT,
+> +               i2c_smbus_write_byte_data(pca9633->client, ledout_addr,
+>                         (ledout & ~mask) | (PCA9633_LED_PWM << shift));
+>                 break;
+>         }
+> @@ -98,26 +125,30 @@ static int pca9633_probe(struct i2c_client *client,
+>  {
+>         struct pca9633_led *pca9633;
+>         struct pca9633_platform_data *pdata;
+> +       struct pca9633_chipdef *chip;
+>         int i, err;
+>
+> +       chip = &pca9633_chipdefs[id->driver_data];
+>         pdata = client->dev.platform_data;
+>
+> -       if (pdata) {
+> -               if (pdata->leds.num_leds <= 0 || pdata->leds.num_leds > 4) {
+> -                       dev_err(&client->dev, "board info must claim at most 4 LEDs");
+> -                       return -EINVAL;
+> -               }
+> +       if (pdata && (pdata->leds.num_leds < 1 ||
+> +                                pdata->leds.num_leds > chip->n_leds)) {
+> +               dev_err(&client->dev, "board info must claim 1-%d LEDs",
+> +                                                               chip->n_leds);
+> +               return -EINVAL;
+>         }
+>
+> -       pca9633 = devm_kzalloc(&client->dev, 4 * sizeof(*pca9633), GFP_KERNEL);
+> +       pca9633 = devm_kzalloc(&client->dev, chip->n_leds * sizeof(*pca9633),
+> +                                                               GFP_KERNEL);
+>         if (!pca9633)
+>                 return -ENOMEM;
+>
+>         i2c_set_clientdata(client, pca9633);
+>
+> -       for (i = 0; i < 4; i++) {
+> +       for (i = 0; i < chip->n_leds; i++) {
+>                 pca9633[i].client = client;
+>                 pca9633[i].led_num = i;
+> +               pca9633[i].chipdef = chip;
+>
+>                 /* Platform data can specify LED names and default triggers */
+>                 if (pdata && i < pdata->leds.num_leds) {
+> @@ -151,7 +182,9 @@ static int pca9633_probe(struct i2c_client *client,
+>                 i2c_smbus_write_byte_data(client, PCA9633_MODE2, 0x01);
+>
+>         /* Turn off LEDs */
+> -       i2c_smbus_write_byte_data(client, PCA9633_LEDOUT, 0x00);
+> +       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
+> +       if (chip->n_leds > 4)
+> +               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
+>
+>         return 0;
+>
+> @@ -169,10 +202,11 @@ static int pca9633_remove(struct i2c_client *client)
+>         struct pca9633_led *pca9633 = i2c_get_clientdata(client);
+>         int i;
+>
+> -       for (i = 0; i < 4; i++) {
+> -               led_classdev_unregister(&pca9633[i].led_cdev);
+> -               cancel_work_sync(&pca9633[i].work);
+> -       }
+> +       for (i = 0; i < pca9633->chipdef->n_leds; i++)
+> +               if (pca9633[i].client != NULL) {
+> +                       led_classdev_unregister(&pca9633[i].led_cdev);
+> +                       cancel_work_sync(&pca9633[i].work);
+> +               }
+>
+>         return 0;
+>  }
+> --
+> 1.7.10.4
+>
 
 
-diff --git a/drivers/leds/trigger/ledtrig-backlight.c b/drivers/leds/trigger/ledtrig-backlight.c
-index 3c9c88a..2538dbe 100644
---- a/drivers/leds/trigger/ledtrig-backlight.c
-+++ b/drivers/leds/trigger/ledtrig-backlight.c
-@@ -36,26 +36,28 @@ static int fb_notifier_callback(struct notifier_block *p,
- 					struct bl_trig_notifier, notifier);
- 	struct led_classdev *led = n->led;
- 	struct fb_event *fb_event = data;
--	int *blank = fb_event->data;
--	int new_status = *blank ? BLANK : UNBLANK;
-+	int *blank;
-+	int new_status;
-+
-+	/* If we aren't interested in this event, skip it immediately ... */
-+	if (event != FB_EVENT_BLANK)
-+		return 0;
 
--	switch (event) {
--	case FB_EVENT_BLANK:
--		if (new_status == n->old_status)
--			break;
-+	blank = fb_event->data;
-+	new_status = *blank ? BLANK : UNBLANK;
-
--		if ((n->old_status == UNBLANK) ^ n->invert) {
--			n->brightness = led->brightness;
--			__led_set_brightness(led, LED_OFF);
--		} else {
--			__led_set_brightness(led, n->brightness);
--		}
-+	if (new_status == n->old_status)
-+		return 0;
-
--		n->old_status = new_status;
--
--		break;
-+	if ((n->old_status == UNBLANK) ^ n->invert) {
-+		n->brightness = led->brightness;
-+		__led_set_brightness(led, LED_OFF);
-+	} else {
-+		__led_set_brightness(led, n->brightness);
- 	}
-
-+	n->old_status = new_status;
-+
- 	return 0;
- }
+-- 
+Ricardo Ribalda
