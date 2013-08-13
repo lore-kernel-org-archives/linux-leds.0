@@ -1,17 +1,17 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 06/10] leds: lp5523: LED MUX configuration on initializing
-Date: Tue, 13 Aug 2013 13:56:50 -0700
-Message-ID: <CAK5ve-LZH_iEt1i72tOF-RWs0OW0PO-EQSoBf9oc5=Vs4OdTBQ@mail.gmail.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-7-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH 07/10] leds: lp5523: restore legacy device attributes
+Date: Tue, 13 Aug 2013 13:58:06 -0700
+Message-ID: <CAK5ve-LgBj7byAtO9CME6X18hGSRHx-ewzvsTcummXWTRBe3_Q@mail.gmail.com>
+References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-8-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:40277 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759081Ab3HMU5M convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 16:57:12 -0400
-In-Reply-To: <1375948794-6286-7-git-send-email-milo.kim@ti.com>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:54555 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758898Ab3HMU63 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 16:58:29 -0400
+In-Reply-To: <1375948794-6286-8-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Milo Kim <woogyom.kim@gmail.com>
@@ -19,149 +19,333 @@ Cc: =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Linux LED Subsystem <l
 
 On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim <woogyom.kim@gmail.com> wrote=
 :
-> LED MUX start and stop address should be updated in the program memor=
-y
-> on LP5523 initialization.
-> LED pattern doesn't work without additional MUX address configuration=
-=2E
-> This handling is done by new function, lp5523_init_program_engine().
-> Eventually, it's called during device initialization, lp5523_post_ini=
-t_device().
+> git commit db6eaf8388a413a5ee1b4547ce78506b9c6456b0
+> (leds-lp5523: use generic firmware interface) causes an application c=
+onflict.
+> This interface should be maintained for compatibility.
 >
-> This is a conflict after git commit 632418bf65503405df3f9a6a1616f5a95=
-f91db85
-> (leds-lp5523: clean up lp5523_configure()).
-> So it should be fixed.
+> Restored device attributes are 'engineN_mode', 'engineN_load' and
+> 'engineN_leds'. (N =3D 1, 2 or 3)
+> A 'selftest' attribute macro is replaced with LP55xx common macro.
+> Those are accessed when a LED pattern is run by an application.
+>
+> Use a mutex in lp5523_update_program_memory()
+> : This function is called when an user-application writes a 'engineN_=
+load' file
+> or pattern data is loaded from generic firmware interface.
+> So, writing program memory should be protected.
+> If an error occurs on accessing this area, just it returns as -EINVAL=
+ quickly.
+> This error code is exact same as old driver function, lp5523_do_store=
+_load()
+> because it should be kept for an user-application compatibility.
+> Even the driver is changed, we can use the application without re-com=
+piling
+> sources.
 >
 
 Good, I will merge this.
 
 -Bryan
 
-> Cc: Pali Roh=E1r <pali.rohar@gmail.com>
+> Reported-by: Pali Roh=E1r <pali.rohar@gmail.com>
 > Signed-off-by: Milo Kim <milo.kim@ti.com>
 > ---
->  drivers/leds/leds-lp5523.c |   70 ++++++++++++++++++++++++++++++++++=
+>  drivers/leds/leds-lp5523.c |  227 ++++++++++++++++++++++++++++++++++=
 +++++++++-
->  1 file changed, 69 insertions(+), 1 deletion(-)
+>  1 file changed, 223 insertions(+), 4 deletions(-)
 >
 > diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-> index b509480..29c8b19 100644
+> index 29c8b19..9b8be6f6 100644
 > --- a/drivers/leds/leds-lp5523.c
 > +++ b/drivers/leds/leds-lp5523.c
-> @@ -49,6 +49,9 @@
->  #define LP5523_REG_RESET               0x3D
->  #define LP5523_REG_LED_TEST_CTRL       0x41
->  #define LP5523_REG_LED_TEST_ADC                0x42
-> +#define LP5523_REG_CH1_PROG_START      0x4C
-> +#define LP5523_REG_CH2_PROG_START      0x4D
-> +#define LP5523_REG_CH3_PROG_START      0x4E
->  #define LP5523_REG_PROG_PAGE_SEL       0x4F
->  #define LP5523_REG_PROG_MEM            0x50
->
-> @@ -65,6 +68,7 @@
->  #define LP5523_RESET                   0xFF
->  #define LP5523_ADC_SHORTCIRC_LIM       80
->  #define LP5523_EXT_CLK_USED            0x08
-> +#define LP5523_ENG_STATUS_MASK         0x07
->
->  /* Memory Page Selection */
+> @@ -74,6 +74,9 @@
 >  #define LP5523_PAGE_ENG1               0
-> @@ -99,6 +103,8 @@ enum lp5523_chip_id {
+>  #define LP5523_PAGE_ENG2               1
+>  #define LP5523_PAGE_ENG3               2
+> +#define LP5523_PAGE_MUX1               3
+> +#define LP5523_PAGE_MUX2               4
+> +#define LP5523_PAGE_MUX3               5
+>
+>  /* Program Memory Operations */
+>  #define LP5523_MODE_ENG1_M             0x30    /* Operation Mode Reg=
+ister */
+> @@ -98,6 +101,8 @@
+>  #define LP5523_RUN_ENG2                        0x08
+>  #define LP5523_RUN_ENG3                        0x02
+>
+> +#define LED_ACTIVE(mux, led)           (!!(mux & (0x0001 << led)))
+> +
+>  enum lp5523_chip_id {
+>         LP5523,
 >         LP55231,
->  };
+> @@ -338,10 +343,20 @@ static int lp5523_update_program_memory(struct =
+lp55xx_chip *chip,
+>                 goto err;
 >
-> +static int lp5523_init_program_engine(struct lp55xx_chip *chip);
-> +
->  static inline void lp5523_wait_opmode_done(void)
->  {
->         usleep_range(1000, 2000);
-> @@ -134,7 +140,11 @@ static int lp5523_post_init_device(struct lp55xx=
-_chip *chip)
->         if (ret)
->                 return ret;
+>         update_size =3D i;
+> -       for (i =3D 0; i < update_size; i++)
+> -               lp55xx_write(chip, LP5523_REG_PROG_MEM + i, pattern[i=
+]);
 >
-> -       return lp55xx_write(chip, LP5523_REG_ENABLE_LEDS_LSB, 0xff);
-> +       ret =3D lp55xx_write(chip, LP5523_REG_ENABLE_LEDS_LSB, 0xff);
-> +       if (ret)
-> +               return ret;
+> -       return 0;
+> +       mutex_lock(&chip->lock);
 > +
-> +       return lp5523_init_program_engine(chip);
->  }
->
->  static void lp5523_load_engine(struct lp55xx_chip *chip)
-> @@ -233,6 +243,64 @@ static void lp5523_run_engine(struct lp55xx_chip=
- *chip, bool start)
->         lp55xx_update_bits(chip, LP5523_REG_ENABLE, LP5523_EXEC_M, ex=
-ec);
->  }
->
-> +static int lp5523_init_program_engine(struct lp55xx_chip *chip)
-> +{
-> +       int i;
-> +       int j;
-> +       int ret;
-> +       u8 status;
-> +       /* one pattern per engine setting LED MUX start and stop addr=
-esses */
-> +       static const u8 pattern[][LP5523_PROGRAM_LENGTH] =3D  {
-> +               { 0x9c, 0x30, 0x9c, 0xb0, 0x9d, 0x80, 0xd8, 0x00, 0},
-> +               { 0x9c, 0x40, 0x9c, 0xc0, 0x9d, 0x80, 0xd8, 0x00, 0},
-> +               { 0x9c, 0x50, 0x9c, 0xd0, 0x9d, 0x80, 0xd8, 0x00, 0},
-> +       };
-> +
-> +       /* hardcode 32 bytes of memory for each engine from program m=
-emory */
-> +       ret =3D lp55xx_write(chip, LP5523_REG_CH1_PROG_START, 0x00);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D lp55xx_write(chip, LP5523_REG_CH2_PROG_START, 0x10);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D lp55xx_write(chip, LP5523_REG_CH3_PROG_START, 0x20);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* write LED MUX address space for each engine */
-> +       for (i =3D LP55XX_ENGINE_1; i <=3D LP55XX_ENGINE_3; i++) {
-> +               chip->engine_idx =3D i;
-> +               lp5523_load_engine_and_select_page(chip);
-> +
-> +               for (j =3D 0; j < LP5523_PROGRAM_LENGTH; j++) {
-> +                       ret =3D lp55xx_write(chip, LP5523_REG_PROG_ME=
-M + j,
-> +                                       pattern[i - 1][j]);
-> +                       if (ret)
-> +                               goto out;
+> +       for (i =3D 0; i < update_size; i++) {
+> +               ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM + i, p=
+attern[i]);
+> +               if (ret) {
+> +                       mutex_unlock(&chip->lock);
+> +                       return -EINVAL;
 > +               }
 > +       }
 > +
-> +       lp5523_run_engine(chip, true);
+> +       mutex_unlock(&chip->lock);
 > +
-> +       /* Let the programs run for couple of ms and check the engine=
- status */
-> +       usleep_range(3000, 6000);
-> +       lp55xx_read(chip, LP5523_REG_STATUS, &status);
-> +       status &=3D LP5523_ENG_STATUS_MASK;
+> +       return size;
+>
+>  err:
+>         dev_err(&chip->cl->dev, "wrong pattern format\n");
+> @@ -368,6 +383,192 @@ static void lp5523_firmware_loaded(struct lp55x=
+x_chip *chip)
+>         lp5523_update_program_memory(chip, fw->data, fw->size);
+>  }
+>
+> +static ssize_t show_engine_mode(struct device *dev,
+> +                               struct device_attribute *attr,
+> +                               char *buf, int nr)
+> +{
+> +       struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(d=
+ev));
+> +       struct lp55xx_chip *chip =3D led->chip;
+> +       enum lp55xx_engine_mode mode =3D chip->engines[nr - 1].mode;
 > +
-> +       if (status !=3D LP5523_ENG_STATUS_MASK) {
-> +               dev_err(&chip->cl->dev,
-> +                       "cound not configure LED engine, status =3D 0=
-x%.2x\n",
-> +                       status);
-> +               ret =3D -1;
+> +       switch (mode) {
+> +       case LP55XX_ENGINE_RUN:
+> +               return sprintf(buf, "run\n");
+> +       case LP55XX_ENGINE_LOAD:
+> +               return sprintf(buf, "load\n");
+> +       case LP55XX_ENGINE_DISABLED:
+> +       default:
+> +               return sprintf(buf, "disabled\n");
+> +       }
+> +}
+> +show_mode(1)
+> +show_mode(2)
+> +show_mode(3)
+> +
+> +static ssize_t store_engine_mode(struct device *dev,
+> +                                struct device_attribute *attr,
+> +                                const char *buf, size_t len, int nr)
+> +{
+> +       struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(d=
+ev));
+> +       struct lp55xx_chip *chip =3D led->chip;
+> +       struct lp55xx_engine *engine =3D &chip->engines[nr - 1];
+> +
+> +       mutex_lock(&chip->lock);
+> +
+> +       chip->engine_idx =3D nr;
+> +
+> +       if (!strncmp(buf, "run", 3)) {
+> +               lp5523_run_engine(chip, true);
+> +               engine->mode =3D LP55XX_ENGINE_RUN;
+> +       } else if (!strncmp(buf, "load", 4)) {
+> +               lp5523_stop_engine(chip);
+> +               lp5523_load_engine(chip);
+> +               engine->mode =3D LP55XX_ENGINE_LOAD;
+> +       } else if (!strncmp(buf, "disabled", 8)) {
+> +               lp5523_stop_engine(chip);
+> +               engine->mode =3D LP55XX_ENGINE_DISABLED;
 > +       }
 > +
-> +out:
-> +       lp5523_stop_engine(chip);
-> +       return ret;
+> +       mutex_unlock(&chip->lock);
+> +
+> +       return len;
+> +}
+> +store_mode(1)
+> +store_mode(2)
+> +store_mode(3)
+> +
+> +static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
+> +{
+> +       u16 tmp_mux =3D 0;
+> +       int i;
+> +
+> +       len =3D min_t(int, len, LP5523_MAX_LEDS);
+> +
+> +       for (i =3D 0; i < len; i++) {
+> +               switch (buf[i]) {
+> +               case '1':
+> +                       tmp_mux |=3D (1 << i);
+> +                       break;
+> +               case '0':
+> +                       break;
+> +               case '\n':
+> +                       i =3D len;
+> +                       break;
+> +               default:
+> +                       return -1;
+> +               }
+> +       }
+> +       *mux =3D tmp_mux;
+> +
+> +       return 0;
 > +}
 > +
->  static int lp5523_update_program_memory(struct lp55xx_chip *chip,
->                                         const u8 *data, size_t size)
->  {
+> +static void lp5523_mux_to_array(u16 led_mux, char *array)
+> +{
+> +       int i, pos =3D 0;
+> +       for (i =3D 0; i < LP5523_MAX_LEDS; i++)
+> +               pos +=3D sprintf(array + pos, "%x", LED_ACTIVE(led_mu=
+x, i));
+> +
+> +       array[pos] =3D '\0';
+> +}
+> +
+> +static ssize_t show_engine_leds(struct device *dev,
+> +                           struct device_attribute *attr,
+> +                           char *buf, int nr)
+> +{
+> +       struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(d=
+ev));
+> +       struct lp55xx_chip *chip =3D led->chip;
+> +       char mux[LP5523_MAX_LEDS + 1];
+> +
+> +       lp5523_mux_to_array(chip->engines[nr - 1].led_mux, mux);
+> +
+> +       return sprintf(buf, "%s\n", mux);
+> +}
+> +show_leds(1)
+> +show_leds(2)
+> +show_leds(3)
+> +
+> +static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr=
+)
+> +{
+> +       struct lp55xx_engine *engine =3D &chip->engines[nr - 1];
+> +       int ret;
+> +       u8 mux_page[] =3D {
+> +               [LP55XX_ENGINE_1] =3D LP5523_PAGE_MUX1,
+> +               [LP55XX_ENGINE_2] =3D LP5523_PAGE_MUX2,
+> +               [LP55XX_ENGINE_3] =3D LP5523_PAGE_MUX3,
+> +       };
+> +
+> +       lp5523_load_engine(chip);
+> +
+> +       ret =3D lp55xx_write(chip, LP5523_REG_PROG_PAGE_SEL, mux_page=
+[nr]);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> =
+8));
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM + 1, (u8)(mux)=
+);
+> +       if (ret)
+> +               return ret;
+> +
+> +       engine->led_mux =3D mux;
+> +       return 0;
+> +}
+> +
+> +static ssize_t store_engine_leds(struct device *dev,
+> +                            struct device_attribute *attr,
+> +                            const char *buf, size_t len, int nr)
+> +{
+> +       struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(d=
+ev));
+> +       struct lp55xx_chip *chip =3D led->chip;
+> +       struct lp55xx_engine *engine =3D &chip->engines[nr - 1];
+> +       u16 mux =3D 0;
+> +       ssize_t ret;
+> +
+> +       if (lp5523_mux_parse(buf, &mux, len))
+> +               return -EINVAL;
+> +
+> +       mutex_lock(&chip->lock);
+> +
+> +       chip->engine_idx =3D nr;
+> +       ret =3D -EINVAL;
+> +
+> +       if (engine->mode !=3D LP55XX_ENGINE_LOAD)
+> +               goto leave;
+> +
+> +       if (lp5523_load_mux(chip, mux, nr))
+> +               goto leave;
+> +
+> +       ret =3D len;
+> +leave:
+> +       mutex_unlock(&chip->lock);
+> +       return ret;
+> +}
+> +store_leds(1)
+> +store_leds(2)
+> +store_leds(3)
+> +
+> +static ssize_t store_engine_load(struct device *dev,
+> +                            struct device_attribute *attr,
+> +                            const char *buf, size_t len, int nr)
+> +{
+> +       struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(d=
+ev));
+> +       struct lp55xx_chip *chip =3D led->chip;
+> +
+> +       mutex_lock(&chip->lock);
+> +
+> +       chip->engine_idx =3D nr;
+> +       lp5523_load_engine_and_select_page(chip);
+> +
+> +       mutex_unlock(&chip->lock);
+> +
+> +       return lp5523_update_program_memory(chip, buf, len);
+> +}
+> +store_load(1)
+> +store_load(2)
+> +store_load(3)
+> +
+>  static ssize_t lp5523_selftest(struct device *dev,
+>                                struct device_attribute *attr,
+>                                char *buf)
+> @@ -467,9 +668,27 @@ static void lp5523_led_brightness_work(struct wo=
+rk_struct *work)
+>         mutex_unlock(&chip->lock);
+>  }
+>
+> -static DEVICE_ATTR(selftest, S_IRUGO, lp5523_selftest, NULL);
+> +static LP55XX_DEV_ATTR_RW(engine1_mode, show_engine1_mode, store_eng=
+ine1_mode);
+> +static LP55XX_DEV_ATTR_RW(engine2_mode, show_engine2_mode, store_eng=
+ine2_mode);
+> +static LP55XX_DEV_ATTR_RW(engine3_mode, show_engine3_mode, store_eng=
+ine3_mode);
+> +static LP55XX_DEV_ATTR_RW(engine1_leds, show_engine1_leds, store_eng=
+ine1_leds);
+> +static LP55XX_DEV_ATTR_RW(engine2_leds, show_engine2_leds, store_eng=
+ine2_leds);
+> +static LP55XX_DEV_ATTR_RW(engine3_leds, show_engine3_leds, store_eng=
+ine3_leds);
+> +static LP55XX_DEV_ATTR_WO(engine1_load, store_engine1_load);
+> +static LP55XX_DEV_ATTR_WO(engine2_load, store_engine2_load);
+> +static LP55XX_DEV_ATTR_WO(engine3_load, store_engine3_load);
+> +static LP55XX_DEV_ATTR_RO(selftest, lp5523_selftest);
+>
+>  static struct attribute *lp5523_attributes[] =3D {
+> +       &dev_attr_engine1_mode.attr,
+> +       &dev_attr_engine2_mode.attr,
+> +       &dev_attr_engine3_mode.attr,
+> +       &dev_attr_engine1_load.attr,
+> +       &dev_attr_engine2_load.attr,
+> +       &dev_attr_engine3_load.attr,
+> +       &dev_attr_engine1_leds.attr,
+> +       &dev_attr_engine2_leds.attr,
+> +       &dev_attr_engine3_leds.attr,
+>         &dev_attr_selftest.attr,
+>         NULL,
+>  };
 > --
 > 1.7.9.5
 >
