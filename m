@@ -1,78 +1,81 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 04/10] leds: lp5521: remove unnecessary writing commands
-Date: Tue, 13 Aug 2013 13:42:39 -0700
-Message-ID: <CAK5ve-Lr6-P2nyGtGoxQZewS-m9ySQMfaE=tng0p6hJKnj+9mA@mail.gmail.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-5-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH 05/10] leds: lp5523: make separate API for loading engine
+Date: Tue, 13 Aug 2013 13:54:08 -0700
+Message-ID: <CAK5ve-KT6x-OyyWmAHOsF9jfRctQ2U9d_GZGz6q9E4LQKSMmxA@mail.gmail.com>
+References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <1375948794-6286-6-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:37338 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759208Ab3HMUnA (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 16:43:00 -0400
-In-Reply-To: <1375948794-6286-5-git-send-email-milo.kim@ti.com>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:39118 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759076Ab3HMUya (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Aug 2013 16:54:30 -0400
+In-Reply-To: <1375948794-6286-6-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Milo Kim <woogyom.kim@gmail.com>
 Cc: =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Milo Kim <milo.kim@ti.com>
 
 On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim <woogyom.kim@gmail.com> wrote:
-> This patch reduces the number of programming commands.
+> lp5523_load_engine()
+>   It is called whenever the operation mode is changed to 'load'.
+>   It is used for simple operation mode change.
+>   It will be used when engine mode and LED selection is updated in later patch.
 >
-> (Count of sending commands)
-> Old code: 32 + program size (32 counts for clearing program memory)
-> New code: 32
->
-> Pattern buffer is initialized to 0 in this function.
-> Just update new program data and remaining buffers are filled with 0.
-> So it's needless to clear whole area.
+> lp5523_load_engine_and_select_page()
+>   Change the operation mode to 'load' and select program page number.
+>   This is used for programming a LED pattern at a time.
+>   So load_engine() is replaced with new API, load_engine_and_select_page()
+>   in lp5523_firmware_loaded().
 >
 
-Good, I will merge this.
+Looks good, please make sure these functions are called with mutex lock hold.
+Thanks,
 -Bryan
 
 > Signed-off-by: Milo Kim <milo.kim@ti.com>
 > ---
->  drivers/leds/leds-lp5521.c |   14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
+>  drivers/leds/leds-lp5523.c |   14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-> index c00f922..0518835 100644
-> --- a/drivers/leds/leds-lp5521.c
-> +++ b/drivers/leds/leds-lp5521.c
-> @@ -220,17 +220,11 @@ static int lp5521_update_program_memory(struct lp55xx_chip *chip,
+> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+> index 72c10e2..b509480 100644
+> --- a/drivers/leds/leds-lp5523.c
+> +++ b/drivers/leds/leds-lp5523.c
+> @@ -152,15 +152,21 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
+>                 [LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
 >         };
->         unsigned cmd;
->         char c[3];
-> -       int program_size;
->         int nrchars;
-> -       int offset = 0;
->         int ret;
-> -       int i;
+>
+> +       lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], val[idx]);
+> +
+> +       lp5523_wait_opmode_done();
+> +}
+> +
+> +static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
+> +{
+> +       enum lp55xx_engine_index idx = chip->engine_idx;
+>         u8 page_sel[] = {
+>                 [LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
+>                 [LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
+>                 [LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
+>         };
+>
+> -       lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], val[idx]);
 > -
-> -       /* clear program memory before updating */
-> -       for (i = 0; i < LP5521_PROGRAM_LENGTH; i++)
-> -               lp55xx_write(chip, addr[idx] + i, 0);
-> +       int offset = 0;
-> +       int i = 0;
+> -       lp5523_wait_opmode_done();
+> +       lp5523_load_engine(chip);
 >
-> -       i = 0;
->         while ((offset < size - 1) && (i < LP5521_PROGRAM_LENGTH)) {
->                 /* separate sscanfs because length is working only for %s */
->                 ret = sscanf(data + offset, "%2s%n ", c, &nrchars);
-> @@ -250,11 +244,9 @@ static int lp5521_update_program_memory(struct lp55xx_chip *chip,
->         if (i % 2)
->                 goto err;
+>         lp55xx_write(chip, LP5523_REG_PROG_PAGE_SEL, page_sel[idx]);
+>  }
+> @@ -290,7 +296,7 @@ static void lp5523_firmware_loaded(struct lp55xx_chip *chip)
+>          *  2) write firmware data into program memory
+>          */
 >
-> -       program_size = i;
-> -
->         mutex_lock(&chip->lock);
+> -       lp5523_load_engine(chip);
+> +       lp5523_load_engine_and_select_page(chip);
+>         lp5523_update_program_memory(chip, fw->data, fw->size);
+>  }
 >
-> -       for (i = 0; i < program_size; i++) {
-> +       for (i = 0; i < LP5521_PROGRAM_LENGTH; i++) {
->                 ret = lp55xx_write(chip, addr[idx] + i, pattern[i]);
->                 if (ret) {
->                         mutex_unlock(&chip->lock);
 > --
 > 1.7.9.5
 >
