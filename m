@@ -1,63 +1,64 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v4 0/5] PCA9633: Add support to PCA9634 and fix some problems
-Date: Fri, 16 Aug 2013 17:17:06 -0700
-Message-ID: <CAK5ve-J7mZqK6uZSa1dx+4sfq77zXK4iF0Z1Y=rWBJ5KG8OcLQ@mail.gmail.com>
-References: <1376515431-9504-1-git-send-email-ricardo.ribalda@gmail.com>
+From: "Kim, Milo" <Milo.Kim@ti.com>
+Subject: RE: [PATCH 01/10] leds: lp55xx: add common data structure for
+ program
+Date: Sun, 18 Aug 2013 22:57:09 +0000
+Message-ID: <A874F61F95741C4A9BA573A70FE3998F82E888D0@DQHE06.ent.ti.com>
+References: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
+ <1375948794-6286-2-git-send-email-milo.kim@ti.com>
+ <CAK5ve-K10M3+=ctxu+5hU=pPz1_x6p1JgQS6jEin-LfxnP8Hog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376515431-9504-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Peter Meerwald <p.meerwald@bct-electronic.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:40367 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754996Ab3HRW5Q convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 18 Aug 2013 18:57:16 -0400
+In-Reply-To: <CAK5ve-K10M3+=ctxu+5hU=pPz1_x6p1JgQS6jEin-LfxnP8Hog@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: =?iso-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Milo Kim <woogyom.kim@gmail.com>
 
-On Wed, Aug 14, 2013 at 2:23 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> Add Support for the PCA9634 chip. Simimart to the 9633, but with 8 outputs instead of 4.
-> Fix bug when 2 chips where present on the system, the ledclass will fail and the chip wont probe.
-> Protect ledout register with a mutex to support updates of more than leds at the same time
-> Fix device tree parsing
->
-> v5: Contains feedback from Bryan Wu
-> Bryan: Fix device tree bindings documentation
->
+Hi Bryan,
 
-Thanks, I've already merged this new patchset into my tree.
+> -----Original Message-----
+> From: Bryan Wu [mailto:cooloney@gmail.com]
+> Sent: Wednesday, August 14, 2013 3:56 AM
+> To: Milo Kim
+> Cc: Pali Roh=E1r; Linux LED Subsystem; lkml; Kim, Milo
+> Subject: Re: [PATCH 01/10] leds: lp55xx: add common data structure fo=
+r
+> program
+>=20
+> On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim <woogyom.kim@gmail.com> wro=
+te:
+> > LP55xx family devices have internal three program engines which are
+> > used for loading LED patterns.
+> > To maintain legacy device attributes, specific data structure is us=
+ed,
+> 'mode'
+> > and 'led_mux'.
+> > The mode is used for showing/storing current engine mode such like
+> > disabled, load and run.
+> > Then led_mux is used for showing/storing current output LED selecti=
+on.
+> > This is only for LP5523/55231.
+> >
+>=20
+> This patch looks good to me, but the commit message format is little =
+bit odd
+> to me. I will fix that and merge into my tree.
 
--Bryan
+Thanks for your help.
+Can I get more detailed information about this format problem?
+I need to check my configurations.
 
-> v4: Rebase to latest leds-next and new patch to Fix the dt parsing
->
-> v3: Contains feedback from Bryan Wu
-> Bryan: Rename pca9633 to pca963x
->
-> v2: Contains feedback from Peter Meerwald
-> Peter: Fix typo on commit message. Add bus number to name
->
-> Ricardo Ribalda Delgado (5):
->   leds-pca9633: Add support for PCA9634
->   leds-pca9633: Unique naming of the LEDs
->   leds-pca9633: Add mutex to the ledout register
->   leds-pca9633: Rename to leds-pca963x
->   leds-pca963x: Fix device tree parsing
->
->  Documentation/devicetree/bindings/leds/pca9633.txt |   46 --
->  Documentation/devicetree/bindings/leds/pca963x.txt |   47 ++
->  drivers/leds/Kconfig                               |    9 +-
->  drivers/leds/Makefile                              |    2 +-
->  drivers/leds/leds-pca9633.c                        |  393 -----------------
->  drivers/leds/leds-pca963x.c                        |  461 ++++++++++++++++++++
->  include/linux/platform_data/leds-pca9633.h         |   41 --
->  include/linux/platform_data/leds-pca963x.h         |   42 ++
->  8 files changed, 556 insertions(+), 485 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/leds/pca9633.txt
->  create mode 100644 Documentation/devicetree/bindings/leds/pca963x.txt
->  delete mode 100644 drivers/leds/leds-pca9633.c
->  create mode 100644 drivers/leds/leds-pca963x.c
->  delete mode 100644 include/linux/platform_data/leds-pca9633.h
->  create mode 100644 include/linux/platform_data/leds-pca963x.h
->
-> --
-> 1.7.10.4
->
+Thanks,
+Milo-
+--
+To unsubscribe from this list: send the line "unsubscribe linux-leds" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
