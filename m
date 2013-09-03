@@ -1,48 +1,44 @@
-From: Ian Pilcher <arequipeno@gmail.com>
-Subject: Re: Make PCA9532 LEDs blink?
-Date: Sun, 01 Sep 2013 23:52:17 -0500
-Message-ID: <l015hp$ad5$1@ger.gmane.org>
-References: <kvuq4v$ckc$1@ger.gmane.org>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH] MIPS: sead3: Select NEW_LEDS, LEDS_CLASS and I2C symbols
+Date: Tue, 3 Sep 2013 16:58:39 +0200
+Message-ID: <20130903145839.GA14258@linux-mips.org>
+References: <1378218420-28011-1-git-send-email-markos.chandras@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:33001 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753322Ab3IBEwc (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 2 Sep 2013 00:52:32 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <gll-linux-leds@m.gmane.org>)
-	id 1VGM7p-00008N-8Q
-	for linux-leds@vger.kernel.org; Mon, 02 Sep 2013 06:52:29 +0200
-Received: from pool-71-252-209-206.dllstx.fios.verizon.net ([71.252.209.206])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-leds@vger.kernel.org>; Mon, 02 Sep 2013 06:52:29 +0200
-Received: from arequipeno by pool-71-252-209-206.dllstx.fios.verizon.net with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-leds@vger.kernel.org>; Mon, 02 Sep 2013 06:52:29 +0200
-In-Reply-To: <kvuq4v$ckc$1@ger.gmane.org>
+Received: from eddie.linux-mips.org ([78.24.191.182]:56734 "EHLO
+	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753664Ab3ICO6u (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 3 Sep 2013 10:58:50 -0400
+Received: from localhost.localdomain ([127.0.0.1]:59033 "EHLO linux-mips.org"
+        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
+        id S6827343Ab3ICO6tI64qR (ORCPT <rfc822;linux-leds@vger.kernel.org>
+        + 1 other); Tue, 3 Sep 2013 16:58:49 +0200
+Content-Disposition: inline
+In-Reply-To: <1378218420-28011-1-git-send-email-markos.chandras@imgtec.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
+To: Markos Chandras <markos.chandras@imgtec.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 
-On 09/01/2013 02:25 AM, Ian Pilcher wrote:
-> How can I make PCA9532-controlled LEDs blink (without continually
-> turning them on and off in my application)?
+On Tue, Sep 03, 2013 at 03:27:00PM +0100, Markos Chandras wrote:
+
+> Select NEW_LEDS and LEDS_CLASS since they export symbols
+> needed by leds-sead3.c. Fixes the following build problem:
 > 
-> I know that the hardware is capable, and I can see that the driver has
-> a blink_set function, but I can't figure out how to access it from
-> userspace.  (This may be more of a general API question than PCA9532-
-> specific.)
+> leds-sead3.c:(.text+0xf0c): undefined
+> reference to `led_classdev_unregister'
+> leds-sead3.c:(.text+0xf18): undefined
+> reference to `led_classdev_unregister'
+> 
+> Also select I2C since it's needed by sead3-pic32-i2c-drv.c
+> Fixes the following build problem:
+> arch/mips/mti-sead3/sead3-pic32-i2c-drv.c:350:2: error:
+> implicit declaration of
+> function 'i2c_add_numbered_adapter'
 
-And the answer is the timer trigger ... as mentioned in leds-class.txt.
+You probably should setup a bus like all the other callers of
+i2c_add_numbered_adapter() in drivers/i2c/busses/; similar for the LED
+issue.
 
-Sorry for the noise.  :-|
-
--- 
-========================================================================
-Ian Pilcher                                         arequipeno@gmail.com
-Sometimes there's nothing left to do but crash and burn...or die trying.
-========================================================================
-
+  Ralf
