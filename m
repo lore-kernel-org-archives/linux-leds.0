@@ -1,73 +1,93 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/1] leds: blinkm: Remove redundant break
-Date: Thu, 12 Sep 2013 18:37:11 -0700
-Message-ID: <CAK5ve-J9a5hf=8csb63rMVi9Ke2_kGA-SG64k2HC41-oK-z3gw@mail.gmail.com>
-References: <1378959629-19523-1-git-send-email-sachin.kamat@linaro.org> <1410181.xU4E5WGzpD@aragorn.auenland.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:36518 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756862Ab3IMBhd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Sep 2013 21:37:33 -0400
-Received: by mail-la0-f44.google.com with SMTP id eo20so477921lab.17
-        for <linux-leds@vger.kernel.org>; Thu, 12 Sep 2013 18:37:32 -0700 (PDT)
-In-Reply-To: <1410181.xU4E5WGzpD@aragorn.auenland.lan>
-Sender: linux-leds-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] leds: lp55xx: enable setting default trigger
+Date: Sun, 15 Sep 2013 12:50:17 +0200
+Message-ID: <1379242217-32398-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Kim Milo <Milo.Kim-l0cyMroinI0@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: =?ISO-8859-1?Q?Jan=2DSimon_M=F6ller?= <dl9pf@gmx.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Thu, Sep 12, 2013 at 12:33 AM, Jan-Simon M=F6ller <dl9pf@gmx.de> wro=
-te:
-> Acked-by.
->
-> --
->
-> Dipl.-Ing.
-> Jan-Simon M=F6ller
->
-> jansimon.moeller@gmx.de
-> On Thursday 12 September 2013 09:50:29 Sachin Kamat wrote:
->> 'break' after return is redundant. Remove it.
->>
+This enables setting a default trigger on an LP55xx channel,
+either from platform data or device tree. This mechanism is
+identical to the mechanism for GPIO LEDs and references the
+common LEDs device tree bindings.
 
-Sure, I will merge that with Jan-Simon's Ack and queue it for 3.13 kern=
-el.
+Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ Documentation/devicetree/bindings/leds/leds-lp55xx.txt | 10 +++++++---
+ drivers/leds/leds-lp55xx-common.c                      |  3 +++
+ include/linux/platform_data/leds-lp55xx.h              |  1 +
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
-Thanks,
--Bryan
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+index a61727f..d221e75 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+@@ -17,12 +17,15 @@ Optional properties:
+          2: D1~6 with VOUT, D7~9 with VDD
+          3: D1~9 are connected to VOUT
+ 
+-Alternatively, each child can have specific channel name
+-- chan-name: Name of each channel name
++Alternatively, each child can have a specific channel name and trigger:
++- chan-name (optional): name of channel
++- linux,default-trigger (optional): see
++  Documentation/devicetree/bindings/leds/common.txt
+ 
+ example 1) LP5521
+ 3 LED channels, external clock used. Channel names are 'lp5521_pri:channel0',
+-'lp5521_pri:channel1' and 'lp5521_pri:channel2'
++'lp5521_pri:channel1' and 'lp5521_pri:channel2', with a heartbeat trigger
++on channel 0.
+ 
+ lp5521@32 {
+ 	compatible = "national,lp5521";
+@@ -33,6 +36,7 @@ lp5521@32 {
+ 	chan0 {
+ 		led-cur = /bits/ 8 <0x2f>;
+ 		max-cur = /bits/ 8 <0x5f>;
++		linux,default-trigger = "heartbeat";
+ 	};
+ 
+ 	chan1 {
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 351825b..075acf5 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -165,6 +165,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+ 	led->led_current = pdata->led_config[chan].led_current;
+ 	led->max_current = pdata->led_config[chan].max_current;
+ 	led->chan_nr = pdata->led_config[chan].chan_nr;
++	led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
+ 
+ 	if (led->chan_nr >= max_channel) {
+ 		dev_err(dev, "Use channel numbers between 0 and %d\n",
+@@ -586,6 +587,8 @@ int lp55xx_of_populate_pdata(struct device *dev, struct device_node *np)
+ 		of_property_read_string(child, "chan-name", &cfg[i].name);
+ 		of_property_read_u8(child, "led-cur", &cfg[i].led_current);
+ 		of_property_read_u8(child, "max-cur", &cfg[i].max_current);
++		cfg[i].default_trigger =
++			of_get_property(child, "linux,default-trigger", NULL);
+ 
+ 		i++;
+ 	}
+diff --git a/include/linux/platform_data/leds-lp55xx.h b/include/linux/platform_data/leds-lp55xx.h
+index 51a2ff5..c32de4d 100644
+--- a/include/linux/platform_data/leds-lp55xx.h
++++ b/include/linux/platform_data/leds-lp55xx.h
+@@ -22,6 +22,7 @@
+ 
+ struct lp55xx_led_config {
+ 	const char *name;
++	const char *default_trigger;
+ 	u8 chan_nr;
+ 	u8 led_current; /* mA x10, 0 if led is not connected */
+ 	u8 max_current;
+-- 
+1.8.3.1
 
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
->>  drivers/leds/leds-blinkm.c |    3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
->> index a502678..66d0a57 100644
->> --- a/drivers/leds/leds-blinkm.c
->> +++ b/drivers/leds/leds-blinkm.c
->> @@ -161,13 +161,10 @@ static ssize_t show_color_common(struct device=
- *dev,
->> char *buf, int color) switch (color) {
->>       case RED:
->>               return scnprintf(buf, PAGE_SIZE, "%02X\n", data->red);
->> -             break;
->>       case GREEN:
->>               return scnprintf(buf, PAGE_SIZE, "%02X\n", data->green=
-);
->> -             break;
->>       case BLUE:
->>               return scnprintf(buf, PAGE_SIZE, "%02X\n", data->blue)=
-;
->> -             break;
->>       default:
->>               return -EINVAL;
->>       }
->
 --
-To unsubscribe from this list: send the line "unsubscribe linux-leds" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
