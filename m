@@ -1,65 +1,79 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: V2: Agenda for the Edinburgh mini-summit
-Date: Mon, 23 Sep 2013 22:27:06 +0200
-Message-ID: <5240A41A.6050207@gmail.com>
-References: <201309101134.32883.hansverk@cisco.com> <52405427.6000002@samsung.com> <52406E5C.2020709@schinagl.nl>
+From: Josh Wu <josh.wu@atmel.com>
+Subject: [PATCH] leds-gpio: of: led should not be created if its status is disabled
+Date: Tue, 24 Sep 2013 16:04:22 +0800
+Message-ID: <1380009863-6454-1-git-send-email-josh.wu@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:46561 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752125Ab3IWU1K (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 23 Sep 2013 16:27:10 -0400
-In-Reply-To: <52406E5C.2020709@schinagl.nl>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:16935 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882Ab3IXIGb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 24 Sep 2013 04:06:31 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Oliver Schinagl <oliver+list@schinagl.nl>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hansverk@cisco.com>, "media-workshop@linuxtv.org" <media-workshop@linuxtv.org>, Sakari Ailus <sakari.ailus@iki.fi>, Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <bryan.wu@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Josh Wu <josh.wu@atmel.com>
 
-On 09/23/2013 06:37 PM, Oliver Schinagl wrote:
-> On 09/23/13 16:45, Sylwester Nawrocki wrote:
->> Hi,
->>
->> I would like to have a short discussion on LED flash devices support
->> in the kernel. Currently there are two APIs: the V4L2 and LED class
->> API exposed by the kernel, which I believe is not good from user space
->> POV. Generic applications will need to implement both APIs. I think we
->> should decide whether to extend the led class API to add support for
->> more advanced LED controllers there or continue to use the both APIs
->> with overlapping functionality.
->> There has been some discussion about this on the ML, but without any
->> consensus reached [1].
->
-> What about the linux-pwm framework and its support for the backlight via
-> dts?
->
-> Or am I talking way to uninformed here. Copying backlight to flashlight
-> with some minor modification sounds sensible in a way...
+now the leds-gpio driver will create every child led node without
+checking the status is disabled or not.
 
-I'd assume we don't need yet another user interface for the LEDs ;) AFAICS
-the PWM subsystem exposes pretty much raw interface in sysfs. The PWM LED
-controllers are already handled in the leds-class API, there is the 
-leds_pwm
-driver (drivers/leds/leds-pwm.c).
+for example, if we have a led node like d3, and its status is disabled:
+	leds {
+		d3 {
+			label = "d3";
+			gpios = <&pioE 24 0>;
+			status = "disabled";
+		};
+	};
 
-I'm adding linux-pwm and linux-leds maintainers at Cc so someone may correct
-me if I got anything wrong.
+we except the d3 should not be created. And the gpios should not be
+request as well.
 
-Presumably, what we need is a few enhancements to support in a standard way
-devices like MAX77693, LM3560 or MAX8997.  There is already a led class 
-driver
-for the MAX8997 LED controller (drivers/leds/leds-max8997.c), but it 
-uses some
-device-specific sysfs attributes.
+But current driver will create d3 and request its gpio.
 
-Thus similar devices are currently being handled by different subsystems.
-The split between the V4L2 Flash and the leds class API WRT to Flash LED
-controller drivers is included in RFC [1], it seems still up to date.
+This patch fix this by using for_each_available_child_of_node() to
+enumerate all child nodes. So the disabled node will be inavilable.
 
+Signed-off-by: Josh Wu <josh.wu@atmel.com>
+---
+ drivers/leds/leds-gpio.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
->> [1] http://www.spinics.net/lists/linux-leds/msg00899.html
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index e8b01e5..9bb4e04 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -167,23 +167,23 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node, *child;
+ 	struct gpio_leds_priv *priv;
+-	int count, ret;
++	int count = 0, ret;
+ 
+ 	/* count LEDs in this device, so we know how much to allocate */
+-	count = of_get_child_count(np);
+-	if (!count)
+-		return ERR_PTR(-ENODEV);
+-
+-	for_each_child_of_node(np, child)
++	for_each_available_child_of_node(np, child) {
++		count++;
+ 		if (of_get_gpio(child, 0) == -EPROBE_DEFER)
+ 			return ERR_PTR(-EPROBE_DEFER);
++	}
++	if (!count)
++		return ERR_PTR(-ENODEV);
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof_gpio_leds_priv(count),
+ 			GFP_KERNEL);
+ 	if (!priv)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	for_each_child_of_node(np, child) {
++	for_each_available_child_of_node(np, child) {
+ 		struct gpio_led led = {};
+ 		enum of_gpio_flags flags;
+ 		const char *state;
+-- 
+1.7.9.5
 
---
-Thanks,
-Sylwester
