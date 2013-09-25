@@ -1,90 +1,43 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds-gpio: of: led should not be created if its status is disabled
-Date: Tue, 24 Sep 2013 10:35:50 -0700
-Message-ID: <CAK5ve-K3Kmnai_mCyJGxeYhzWUk+O38pyxwPeTNiMb5+Ujp3zg@mail.gmail.com>
-References: <1380009863-6454-1-git-send-email-josh.wu@atmel.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: leds-pwm: issue in  __led_pwm_set()
+Date: Wed, 25 Sep 2013 22:00:13 +0200
+Message-ID: <524340CD.4060403@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:49726 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753566Ab3IXRgZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 24 Sep 2013 13:36:25 -0400
-In-Reply-To: <1380009863-6454-1-git-send-email-josh.wu@atmel.com>
+Received: from top.free-electrons.com ([176.31.233.9]:39859 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751315Ab3IYUAQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Sep 2013 16:00:16 -0400
+Received: from [192.168.1.55] (128-79-216-144.hfc.dyn.abo.bbox.fr [128.79.216.144])
+	by mail.free-electrons.com (Postfix) with ESMTPSA id 896DA8B1
+	for <linux-leds@vger.kernel.org>; Wed, 25 Sep 2013 22:00:19 +0200 (CEST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Josh Wu <josh.wu@atmel.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-On Tue, Sep 24, 2013 at 1:04 AM, Josh Wu <josh.wu@atmel.com> wrote:
-> now the leds-gpio driver will create every child led node without
-> checking the status is disabled or not.
->
-> for example, if we have a led node like d3, and its status is disabled:
->         leds {
->                 d3 {
->                         label = "d3";
->                         gpios = <&pioE 24 0>;
->                         status = "disabled";
->                 };
->         };
->
-> we except the d3 should not be created. And the gpios should not be
-> request as well.
->
-> But current driver will create d3 and request its gpio.
->
-> This patch fix this by using for_each_available_child_of_node() to
-> enumerate all child nodes. So the disabled node will be inavilable.
->
-> Signed-off-by: Josh Wu <josh.wu@atmel.com>
-> ---
->  drivers/leds/leds-gpio.c |   14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index e8b01e5..9bb4e04 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -167,23 +167,23 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
->  {
->         struct device_node *np = pdev->dev.of_node, *child;
->         struct gpio_leds_priv *priv;
-> -       int count, ret;
-> +       int count = 0, ret;
->
->         /* count LEDs in this device, so we know how much to allocate */
-> -       count = of_get_child_count(np);
+Hi,
 
-Can we invent a new API named of_get_available_child_count()? So we
-just need to replace the API here? Besides this, I'm OK for this patch
-actually.
+I'm using leds-pwm on an atmel sama5d31 based board. I have one
+question/issue. In __led_pwm_set(), if the duty cycle is 0,
+pwm_disable() is called. This won't work fine on that platform. What
+happens is that pwm_config() correctly sets the duty cycle to 0 which is
+behaving correctly with that controller (and in my case, putting the
+line low). But the call to pwm_disable() is making the pwm controller
+release the line and then it is set to high.
 
-Thanks,
--Bryan
+I've tried various configurations, like configuring a pull-down on the
+pin but I still observe the same behavior. For now, I have a workaround
+in atmel-pwm (I activate the output overdrive when duty cycle is 0). But
+I believe, we should find another way to do that.
 
-> -       if (!count)
-> -               return ERR_PTR(-ENODEV);
-> -
-> -       for_each_child_of_node(np, child)
-> +       for_each_available_child_of_node(np, child) {
-> +               count++;
->                 if (of_get_gpio(child, 0) == -EPROBE_DEFER)
->                         return ERR_PTR(-EPROBE_DEFER);
-> +       }
-> +       if (!count)
-> +               return ERR_PTR(-ENODEV);
->
->         priv = devm_kzalloc(&pdev->dev, sizeof_gpio_leds_priv(count),
->                         GFP_KERNEL);
->         if (!priv)
->                 return ERR_PTR(-ENOMEM);
->
-> -       for_each_child_of_node(np, child) {
-> +       for_each_available_child_of_node(np, child) {
->                 struct gpio_led led = {};
->                 enum of_gpio_flags flags;
->                 const char *state;
-> --
-> 1.7.9.5
->
+Any input is appreciated.
+
+Regards,
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
