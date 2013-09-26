@@ -1,44 +1,75 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: leds-pwm: issue in  __led_pwm_set()
-Date: Thu, 26 Sep 2013 09:48:29 +0200
-Message-ID: <5243E6CD.4070402@free-electrons.com>
-References: <524340CD.4060403@free-electrons.com> <52437FA4.8090501@ti.com> <5243DEB3.5020405@free-electrons.com> <5243E38C.4090006@ti.com>
+From: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH][resend] leds-gpio: of: led should not be created if its status is disabled
+Date: Thu, 26 Sep 2013 19:27:56 +0800
+Message-ID: <1380194876-25821-1-git-send-email-josh.wu@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:42149 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755754Ab3IZHsh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Sep 2013 03:48:37 -0400
-In-Reply-To: <5243E38C.4090006@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: linux-leds@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 
-On 26/09/2013 09:34, Milo Kim wrote:
->
-> Ah, I didn't mean the pinctrl subsystem. Sorry for confusing you.
->
-> I just want to know the reason why 'atmel_pwm_disable()' releases the
-> PWM pin.
-> I can't find it in the driver. Am I missing something?
->
+now the leds-gpio driver will create every child led node without
+checking the status is disabled or not.
 
-Hum, maybe my wording was wrong. What I meant is that when that
-disabling the PWM channel by using the PWM_DIS
- register, the PWM is not driving the pin anymore. Then, the level goes
-from low (which is correct) to high. Also, the datasheet specifies that
-the pwm has to be enabled to get the correct level when duty == 0 or
-duty == period.
+for example, if we have a led node like d3, and its status is disabled:
+	leds {
+		d3 {
+			label = "d3";
+			gpios = <&pioE 24 0>;
+			status = "disabled";
+		};
+	};
 
-IIRC, this is not the same on TI SoC where duty == 0 don't give you the
-expected behavior and I can understand why there is a pwm_disable()
-there. Maybe we have to have a way to differentiate both cases ?
+we except the d3 should not be created. And the gpios should not be
+request as well.
 
+But current driver will create d3 and request its gpio.
+
+This patch fix this by using for_each_available_child_of_node() and
+of_get_available_child_count() to enumerate all child nodes. So the
+disabled node will be inavailable.
+
+Signed-off-by: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+---
+resend this patch based on the patch:
+ - http://www.spinics.net/lists/devicetree/msg05903.html
+
+ drivers/leds/leds-gpio.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index e8b01e5..62bfc3a 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -170,11 +170,11 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+ 	int count, ret;
+ 
+ 	/* count LEDs in this device, so we know how much to allocate */
+-	count = of_get_child_count(np);
++	count = of_get_available_child_count(np);
+ 	if (!count)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	for_each_child_of_node(np, child)
++	for_each_available_child_of_node(np, child)
+ 		if (of_get_gpio(child, 0) == -EPROBE_DEFER)
+ 			return ERR_PTR(-EPROBE_DEFER);
+ 
+@@ -183,7 +183,7 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+ 	if (!priv)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	for_each_child_of_node(np, child) {
++	for_each_available_child_of_node(np, child) {
+ 		struct gpio_led led = {};
+ 		enum of_gpio_flags flags;
+ 		const char *state;
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.7.9.5
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
