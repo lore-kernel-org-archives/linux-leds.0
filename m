@@ -1,75 +1,38 @@
-From: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH][resend] leds-gpio: of: led should not be created if its status is disabled
-Date: Thu, 26 Sep 2013 19:27:56 +0800
-Message-ID: <1380194876-25821-1-git-send-email-josh.wu@atmel.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/6] leds: gpio: Include linux/of.h header
+Date: Fri, 27 Sep 2013 17:06:58 +0530
+Message-ID: <1380281823-13487-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:38223 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751049Ab3I0LhK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Sep 2013 07:37:10 -0400
+Received: by mail-pa0-f44.google.com with SMTP id lf10so2680202pab.17
+        for <linux-leds@vger.kernel.org>; Fri, 27 Sep 2013 04:37:09 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: cooloney@gmail.com, sachin.kamat@linaro.org
 
-now the leds-gpio driver will create every child led node without
-checking the status is disabled or not.
+'of_match_ptr' is defined in linux/of.h. Include it explicitly.
 
-for example, if we have a led node like d3, and its status is disabled:
-	leds {
-		d3 {
-			label = "d3";
-			gpios = <&pioE 24 0>;
-			status = "disabled";
-		};
-	};
-
-we except the d3 should not be created. And the gpios should not be
-request as well.
-
-But current driver will create d3 and request its gpio.
-
-This patch fix this by using for_each_available_child_of_node() and
-of_get_available_child_count() to enumerate all child nodes. So the
-disabled node will be inavailable.
-
-Signed-off-by: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
-resend this patch based on the patch:
- - http://www.spinics.net/lists/devicetree/msg05903.html
-
- drivers/leds/leds-gpio.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/leds/leds-gpio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index e8b01e5..62bfc3a 100644
+index e8b01e5..7ccafde 100644
 --- a/drivers/leds/leds-gpio.c
 +++ b/drivers/leds/leds-gpio.c
-@@ -170,11 +170,11 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
- 	int count, ret;
- 
- 	/* count LEDs in this device, so we know how much to allocate */
--	count = of_get_child_count(np);
-+	count = of_get_available_child_count(np);
- 	if (!count)
- 		return ERR_PTR(-ENODEV);
- 
--	for_each_child_of_node(np, child)
-+	for_each_available_child_of_node(np, child)
- 		if (of_get_gpio(child, 0) == -EPROBE_DEFER)
- 			return ERR_PTR(-EPROBE_DEFER);
- 
-@@ -183,7 +183,7 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
- 	if (!priv)
- 		return ERR_PTR(-ENOMEM);
- 
--	for_each_child_of_node(np, child) {
-+	for_each_available_child_of_node(np, child) {
- 		struct gpio_led led = {};
- 		enum of_gpio_flags flags;
- 		const char *state;
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/leds.h>
++#include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_gpio.h>
+ #include <linux/slab.h>
 -- 
 1.7.9.5
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
