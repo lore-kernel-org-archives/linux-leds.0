@@ -1,45 +1,103 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: leds-pwm: issue in  __led_pwm_set()
-Date: Fri, 27 Sep 2013 21:46:34 +0200
-Message-ID: <5245E09A.2030400@free-electrons.com>
-References: <524340CD.4060403@free-electrons.com> <52437FA4.8090501@ti.com> <5243DEB3.5020405@free-electrons.com> <5243E38C.4090006@ti.com> <5243E6CD.4070402@free-electrons.com> <5245A997.1070305@ti.com> <5245AF24.9070700@free-electrons.com> <5245BF02.80804@ti.com> <5245C161.6060704@ti.com> <5245CFC7.9070506@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] leds: Include linux/of.h header
+Date: Sat, 28 Sep 2013 15:06:43 +0530
+Message-ID: <1380361003-4661-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:47333 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753911Ab3I0Tqh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Sep 2013 15:46:37 -0400
-In-Reply-To: <5245CFC7.9070506@free-electrons.com>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:34111 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752533Ab3I1Jgx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 28 Sep 2013 05:36:53 -0400
+Received: by mail-pa0-f41.google.com with SMTP id bj1so3803146pad.0
+        for <linux-leds@vger.kernel.org>; Sat, 28 Sep 2013 02:36:52 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: linux-leds@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Bo Shen <voice.shen@atmel.com>
+To: linux-leds@vger.kernel.org
+Cc: cooloney@gmail.com, sachin.kamat@linaro.org
 
-On 27/09/2013 20:34, Alexandre Belloni wrote:
->
-> Ok, I tested that and it seems to be working fine.
->
+'of_match_ptr' is defined in linux/of.h. Include it explicitly.
 
-One last question though. What about power management ?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/leds/leds-gpio.c   |    1 +
+ drivers/leds/leds-lp5523.c |    1 +
+ drivers/leds/leds-lp5562.c |    1 +
+ drivers/leds/leds-lp8501.c |    1 +
+ drivers/leds/leds-ns2.c    |    1 +
+ drivers/leds/leds-pwm.c    |    1 +
+ 6 files changed, 6 insertions(+)
 
-For example, in pwm_bl, pwm_backlight_suspend calls:
-
-    pwm_config(pb->pwm, 0, pb->period);
-    pwm_disable(pb->pwm);
-
-Which is fine because it will correctly set up the PWM to a low level.
-Then, to disable the pwm itself and its clock, I suppose we would have
-to define some pm_ops in atmel_pwm, am I right ?
-
-So we will have to be extra careful to correctly set a low level on the
-pin at that time.
-
-Thanks,
-
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index e8b01e5..7ccafde 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/leds.h>
++#include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_gpio.h>
+ #include <linux/slab.h>
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index fe3bcbb..6b553d9 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -29,6 +29,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index 2585cfd..bf006f4 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -17,6 +17,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+index 8d55a780..f1c704f 100644
+--- a/drivers/leds/leds-lp8501.c
++++ b/drivers/leds/leds-lp8501.c
+@@ -18,6 +18,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+index 141f134..c7a4230 100644
+--- a/drivers/leds/leds-ns2.c
++++ b/drivers/leds/leds-ns2.c
+@@ -30,6 +30,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/platform_data/leds-kirkwood-ns2.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ 
+ /*
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index bb6f948..990f57e 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -24,6 +24,7 @@
+ #include <linux/leds_pwm.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
++#include <linux/of.h>
+ 
+ struct led_pwm_data {
+ 	struct led_classdev	cdev;
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.7.9.5
 
