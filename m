@@ -1,42 +1,90 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2] leds: pwm: Remove redundant of_match_ptr
-Date: Sat, 28 Sep 2013 17:08:31 +0530
-Message-ID: <1380368311-27529-2-git-send-email-sachin.kamat@linaro.org>
-References: <1380368311-27529-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH Resend 1/2] leds: Include linux/of.h header
+Date: Sat, 28 Sep 2013 17:08:30 +0530
+Message-ID: <1380368311-27529-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:38397 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753722Ab3I1Lil (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 28 Sep 2013 07:38:41 -0400
-Received: by mail-pd0-f178.google.com with SMTP id w10so3695664pde.9
-        for <linux-leds@vger.kernel.org>; Sat, 28 Sep 2013 04:38:41 -0700 (PDT)
-In-Reply-To: <1380368311-27529-1-git-send-email-sachin.kamat@linaro.org>
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:40551 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481Ab3I1Lij (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 28 Sep 2013 07:38:39 -0400
+Received: by mail-pd0-f169.google.com with SMTP id r10so3692402pdi.0
+        for <linux-leds@vger.kernel.org>; Sat, 28 Sep 2013 04:38:39 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: cooloney@gmail.com, sachin.kamat@linaro.org
 
-The data structure of_match_ptr() protects is always compiled in.
-Hence of_match_ptr() is not needed.
+'of_match_ptr' is defined in linux/of.h. Include it explicitly.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- drivers/leds/leds-pwm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-gpio.c   |    1 +
+ drivers/leds/leds-lp5523.c |    1 +
+ drivers/leds/leds-lp5562.c |    1 +
+ drivers/leds/leds-lp8501.c |    1 +
+ drivers/leds/leds-ns2.c    |    1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index bb6f948..2848171 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -232,7 +232,7 @@ static struct platform_driver led_pwm_driver = {
- 	.driver		= {
- 		.name	= "leds_pwm",
- 		.owner	= THIS_MODULE,
--		.of_match_table = of_match_ptr(of_pwm_leds_match),
-+		.of_match_table = of_pwm_leds_match,
- 	},
- };
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index e8b01e5..7ccafde 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/leds.h>
++#include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_gpio.h>
+ #include <linux/slab.h>
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index fe3bcbb..6b553d9 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -29,6 +29,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
  
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index 2585cfd..bf006f4 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -17,6 +17,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+index 8d55a780..f1c704f 100644
+--- a/drivers/leds/leds-lp8501.c
++++ b/drivers/leds/leds-lp8501.c
+@@ -18,6 +18,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_data/leds-lp55xx.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+index 141f134..c7a4230 100644
+--- a/drivers/leds/leds-ns2.c
++++ b/drivers/leds/leds-ns2.c
+@@ -30,6 +30,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/platform_data/leds-kirkwood-ns2.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ 
+ /*
 -- 
 1.7.9.5
 
