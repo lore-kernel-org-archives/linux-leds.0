@@ -1,59 +1,99 @@
-From: Milo Kim <milo.kim@ti.com>
-Subject: Re: leds-pwm: issue in  __led_pwm_set()
-Date: Sat, 28 Sep 2013 22:29:45 +0900
-Message-ID: <5246D9C9.80600@ti.com>
-References: <524340CD.4060403@free-electrons.com> <52437FA4.8090501@ti.com> <5243DEB3.5020405@free-electrons.com> <5243E38C.4090006@ti.com> <5243E6CD.4070402@free-electrons.com> <5245A997.1070305@ti.com> <5245AF24.9070700@free-electrons.com> <5245BF02.80804@ti.com> <5245C161.6060704@ti.com> <5245CFC7.9070506@free-electrons.com> <5245E09A.2030400@free-electrons.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH Resend 1/2] leds: Include linux/of.h header
+Date: Wed, 2 Oct 2013 14:12:43 -0700
+Message-ID: <CAK5ve-+RZpYyFjQws42=7pQ7vAh3K6py6NDaktkwwGy66Ezk-g@mail.gmail.com>
+References: <1380368311-27529-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:58052 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753537Ab3I1N3x (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sat, 28 Sep 2013 09:29:53 -0400
-In-Reply-To: <5245E09A.2030400@free-electrons.com>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:45358 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753385Ab3JBVNF (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Oct 2013 17:13:05 -0400
+Received: by mail-lb0-f181.google.com with SMTP id u14so1252447lbd.40
+        for <linux-leds@vger.kernel.org>; Wed, 02 Oct 2013 14:13:03 -0700 (PDT)
+In-Reply-To: <1380368311-27529-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-leds@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Bo Shen <voice.shen@atmel.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On 09/28/2013 04:46 AM, Alexandre Belloni wrote:
-> On 27/09/2013 20:34, Alexandre Belloni wrote:
->>
->> Ok, I tested that and it seems to be working fine.
->>
+On Sat, Sep 28, 2013 at 4:38 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> 'of_match_ptr' is defined in linux/of.h. Include it explicitly.
 >
-> One last question though. What about power management ?
+
+Applied into my tree,
+Thanks,
+
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  drivers/leds/leds-gpio.c   |    1 +
+>  drivers/leds/leds-lp5523.c |    1 +
+>  drivers/leds/leds-lp5562.c |    1 +
+>  drivers/leds/leds-lp8501.c |    1 +
+>  drivers/leds/leds-ns2.c    |    1 +
+>  5 files changed, 5 insertions(+)
 >
-> For example, in pwm_bl, pwm_backlight_suspend calls:
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index e8b01e5..7ccafde 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/gpio.h>
+>  #include <linux/leds.h>
+> +#include <linux/of.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/slab.h>
+> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+> index fe3bcbb..6b553d9 100644
+> --- a/drivers/leds/leds-lp5523.c
+> +++ b/drivers/leds/leds-lp5523.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_data/leds-lp55xx.h>
+>  #include <linux/slab.h>
 >
->      pwm_config(pb->pwm, 0, pb->period);
->      pwm_disable(pb->pwm);
+> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+> index 2585cfd..bf006f4 100644
+> --- a/drivers/leds/leds-lp5562.c
+> +++ b/drivers/leds/leds-lp5562.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_data/leds-lp55xx.h>
+>  #include <linux/slab.h>
 >
-> Which is fine because it will correctly set up the PWM to a low level.
-
-OK.
-
-> Then, to disable the pwm itself and its clock, I suppose we would have
-> to define some pm_ops in atmel_pwm, am I right ?
-
-Maybe the suspend/resume() can be handled by the PWM driver.
-However, not every PWM consumer of atmel-pwm needs the PM code.
-I think it would be better if those are handled by each the PWM consumer.
-
-> So we will have to be extra careful to correctly set a low level on the
-> pin at that time.
-
-If you only care about the leds-pwm, then no additional handling is 
-required.
-The LED subsystem provides a 'LED_CORE_SUSPENDRESUME' flag which enables 
-the PM automatically.
-The brightness is set to 0 forcedly on the suspend, and the stored 
-brightness is recovered on the resume.
-The leds-pwm driver enables this flag.
-On the suspend mode, pwm_config() and pwm_disable() are called in 
-__led_pwm_set(). That's exactly what you need.
-
-Best regards,
-Milo
-
+> diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+> index 8d55a780..f1c704f 100644
+> --- a/drivers/leds/leds-lp8501.c
+> +++ b/drivers/leds/leds-lp8501.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_data/leds-lp55xx.h>
+>  #include <linux/slab.h>
+>
+> diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+> index 141f134..c7a4230 100644
+> --- a/drivers/leds/leds-ns2.c
+> +++ b/drivers/leds/leds-ns2.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_data/leds-kirkwood-ns2.h>
+> +#include <linux/of.h>
+>  #include <linux/of_gpio.h>
+>
+>  /*
+> --
+> 1.7.9.5
+>
