@@ -1,176 +1,334 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC 0/2] V4L2 API for exposing flash subdevs as LED class device
-Date: Sun, 13 Oct 2013 11:56:20 +0300
-Message-ID: <20131013085619.GB7584@valkosipuli.retiisi.org.uk>
-References: <1367832828-30771-1-git-send-email-a.hajda@samsung.com>
- <A874F61F95741C4A9BA573A70FE3998F82E5C879@DQHE06.ent.ti.com>
- <1958801.k4UEk5OhXt@avalon>
- <5189FF81.5030405@samsung.com>
- <20130512211244.GC6748@valkosipuli.retiisi.org.uk>
- <519B31AD.90408@samsung.com>
- <20130521105436.GB2041@valkosipuli.retiisi.org.uk>
- <CAK5ve-LLkGtG9hVcsJgbgT+O-rdhOLNEw-eONSbJWs7aNJ0NOQ@mail.gmail.com>
+From: Maximilian =?ISO-8859-1?Q?G=FCntner?=
+	<maximilian.guentner@gmail.com>
+Subject: [PATCH] leds: Added driver for the NXP PCA9685 I2C chip
+Date: Mon, 14 Oct 2013 19:31:38 +0200
+Message-ID: <2819232.mPNW6mO2uH@titan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-LLkGtG9hVcsJgbgT+O-rdhOLNEw-eONSbJWs7aNJ0NOQ@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "Kim, Milo" <Milo.Kim@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "hj210.choi@samsung.com" <hj210.choi@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Bryan,
+The NXP PCA9685 supports 16 channels/leds using a 12-bit PWM (4095
+levels of brightness)
+This driver supports configuration using platform_data.
 
-On Thu, Oct 10, 2013 at 05:07:22PM -0700, Bryan Wu wrote:
-> On Tue, May 21, 2013 at 3:54 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > Hi Andrzej,
-> >
-> > On Tue, May 21, 2013 at 10:34:53AM +0200, Andrzej Hajda wrote:
-> >> On 12.05.2013 23:12, Sakari Ailus wrote:
-> >> > On Wed, May 08, 2013 at 09:32:17AM +0200, Andrzej Hajda wrote:
-> >> >> On 07.05.2013 17:07, Laurent Pinchart wrote:
-> >> >>> On Tuesday 07 May 2013 02:11:27 Kim, Milo wrote:
-> >> >>>> On Monday, May 06, 2013 6:34 PM Andrzej Hajda wrote:
-> >> >>>>> This RFC proposes generic API for exposing flash subdevices via LED
-> >> >>>>> framework.
-> >> >>>>>
-> >> >>>>> Rationale
-> >> >>>>>
-> >> >>>>> Currently there are two frameworks which are used for exposing LED
-> >> >>>>> flash to user space:
-> >> >>>>> - V4L2 flash controls,
-> >> >>>>> - LED framework(with custom sysfs attributes).
-> >> >>>>>
-> >> >>>>> The list below shows flash drivers in mainline kernel with initial
-> >> >>>>> commit date and typical chip application (according to producer):
-> >> >>>>>
-> >> >>>>> LED API:
-> >> >>>>>     lm3642: 2012-09-12, Cameras
-> >> >>>>>     lm355x: 2012-09-05, Cameras
-> >> >>>>>     max8997: 2011-12-14, Cameras (?)
-> >> >>>>>     lp3944: 2009-06-19, Cameras, Lights, Indicators, Toys
-> >> >>>>>     pca955x: 2008-07-16, Cameras, Indicators (?)
-> >> >>>>>
-> >> >>>>> V4L2 API:
-> >> >>>>>     as3645a:  2011-05-05, Cameras
-> >> >>>>>     adp1653: 2011-05-05, Cameras
-> >> >>>>>
-> >> >>>>> V4L2 provides richest functionality, but there is often demand from
-> >> >>>>> application developers to provide already established LED API. We would
-> >> >>>>> like to have an unified user interface for flash devices. Some of devices
-> >> >>>>> already have the LED API driver exposing limited set of a Flash IC
-> >> >>>>> functionality. In order to support all required features the LED API
-> >> >>>>> would have to be extended or the V4L2 API would need to be used. However
-> >> >>>>> when switching from a LED to a V4L2 Flash driver existing LED API
-> >> >>>>> interface would need to be retained.
-> >> >>>>>
-> >> >>>>> Proposed solution
-> >> >>>>>
-> >> >>>>> This patch adds V4L2 helper functions to register existing V4L2 flash
-> >> >>>>> subdev as LED class device. After registration via v4l2_leddev_register
-> >> >>>>> appropriate entry in /sys/class/leds/ is created. During registration all
-> >> >>>>> V4L2 flash controls are enumerated and corresponding attributes are added.
-> >> >>>>>
-> >> >>>>> I have attached also patch with new max77693-led driver using v4l2_leddev.
-> >> >>>>> This patch requires presence of the patch "max77693: added device tree
-> >> >>>>> support": https://patchwork.kernel.org/patch/2414351/ .
-> >> >>>>>
-> >> >>>>> Additional features
-> >> >>>>>
-> >> >>>>> - simple API to access all V4L2 flash controls via sysfs,
-> >> >>>>> - V4L2 subdevice should not be registered by V4L2 device to use it,
-> >> >>>>> - LED triggers API can be used to control the device,
-> >> >>>>> - LED device is optional - it will be created only if V4L2_LEDDEV
-> >> >>>>>   configuration option is enabled and the subdev driver calls
-> >> >>>>>   v4l2_leddev_register.
-> >> >>>>>
-> >> >>>>> Doubts
-> >> >>>>>
-> >> >>>>> This RFC is a result of a uncertainty which API developers should expose
-> >> >>>>> by their flash drivers. It is a try to gluing together both APIs. I am not
-> >> >>>>> sure if it is the best solution, but I hope there will be some discussion
-> >> >>>>> and hopefully some decisions will be taken which way we should follow.
-> >> >>>> The LED subsystem provides similar APIs for the Camera driver.
-> >> >>>> With LED trigger event, flash and torch are enabled/disabled.
-> >> >>>> I'm not sure this is applicable for you.
-> >> >>>> Could you take a look at LED camera trigger feature?
-> >> >>>>
-> >> >>>> For the camera LED trigger,
-> >> >>>> https://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-leds.git/commit/
-> >> >>>> ?h=f or-next&id=48a1d032c954b9b06c3adbf35ef4735dd70ab757
-> >> >>>>
-> >> >>>> Example of camera flash driver,
-> >> >>>> https://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-leds.git/commit/
-> >> >>>> ?h=f or-next&id=313bf0b1a0eaeaac17ea8c4b748f16e28fce8b7a
-> >> >>> I think we should decide on one API. Implementing two APIs for a single device
-> >> >>> is usually messy, and will result in different feature sets (and different
-> >> >>> bugs) being implemented through each API, depending on the driver.
-> >> >>> Interactions between the APIs are also a pain point on the kernel side to
-> >> >>> properly synchronize calls.
-> >> > I don't like having two APIs either. Especially we shouldn't have multiple
-> >> > drivers implementing different APIs for the same device.
-> >> >
-> >> > That said, I wonder if it's possible to support camera-related use cases
-> >> > using the LED API: it's originally designed for quite different devices.
-> >> > Even if you could handle flash strobing using the LED API, the functionality
-> >> > provided by the Media controller and subdev APIs will always be missing:
-> >> > device enumeration and association with the right camera.
-> >> Is there a generic way to associate flash and camera subdevs in
-> >> current V4L2 API? The only ways I see now are:
-> >> - both belongs to the same media controller, but this is not enough if there
-> >> is more than one camera subdev in that controller,
-> >
-> > Yes, there is. That's the group_id field in struct media_entity_desc. The
-> > lens subdev is associated to the rest of the devices the same way.
-> >
-> >> - using media links/pads - at first sight it seems to be overkill/abuse...
-> >
-> > No. Links describe the flow of data, not relations between entities.
-> >
-> > ...
-> >
-> >> >>> The LED API is too limited for torch and flash usage, but I'm definitely open
-> >> >>> to moving flash devices to the LED API is we can extend it in a way that it
-> >> >>> covers all the use cases.
-> >> >>>
-> >> >> Extending LED API IMHO seems to be quite straightforward - by adding
-> >> >> attributes for supported functionalities. We just need a specification for
-> >> >> standard flash/torch attributes.
-> >> >> I could prepare an RFC about it if there is a will to explore this
-> >> >> direction.
-> >> > I'm leaning towards providing a wrapper that provides torch functionality
-> >> > using V4L2 flash API unless it's really proven to be insane. ;-) The code
-> >> > supporting that in an individual flash driver should be minimal --- which is
-> >> > what the patchset essentially already does.
-> >> Providing only torch functionality do not require adding new attributes
-> >> (besides the ones already present in the led_classdev), so the patch will
-> >> be much simpler.
-> >
-> > Yes. Attributes could be added later on to the LED API to support flash and
-> > the wrapper could be extended accordingly. My thinking is however that the
-> > main use case is torch, not strobing flash, so it would be fulfilled already
-> > without extensions to the LED API.
-> >
-> 
-> Sorry for replying so late.
-> 
-> I think Milo Kim did some work in our LED subsystem by add LED Flash
-> trigger for camera device. I agree it doesn't satisfy the usage of
-> V4L2 Flash API and what I'm thinking about is expanding the LED Flash
-> trigger driver to export a well defined sysfs interface, so user space
-> libv4l2 can wrap it for applications.
+Signed-off-by: Maximilian G=FCntner <maximilian.guentner@gmail.com>
+---
+ drivers/leds/Kconfig                       |  10 ++
+ drivers/leds/Makefile                      |   1 +
+ drivers/leds/leds-pca9685.c                | 219 +++++++++++++++++++++=
+++++++++
+ include/linux/platform_data/leds-pca9685.h |  34 +++++
+ 4 files changed, 264 insertions(+)
+ create mode 100644 drivers/leds/leds-pca9685.c
+ create mode 100644 include/linux/platform_data/leds-pca9685.h
 
-libv4l2 currently provides a V4L2 API only, not V4L2 subdev API which is
-implemented by the existing flash drivers which in turn are used in embedded
-systems where the user space accesses V4L2 subdev API directly.
-
-So using libv4l2 could be workable but only in a subset of use cases for
-those chips (where regular V4L2 API is sufficient). I think we'd need to
-cover all to avoid writing double set of drivers.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 875bbe4..98268b3 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -300,6 +300,16 @@ config LEDS_PCA963X
+ 	  LED driver chip accessed via the I2C bus. Supported
+ 	  devices include PCA9633 and PCA9634
+=20
++config LEDS_PCA9685
++	tristate "LED support for PCA9685 I2C chip"
++	depends on LEDS_CLASS
++	depends on I2C
++	help
++	  This option enables support for LEDs connected to the PCA9685
++	  LED driver chips accessed via the I2C bus.
++	  The PCA9685 offers 12-bit PWM (4095 levels of brightness) on
++	  16 individual channels.
++
+ config LEDS_WM831X_STATUS
+ 	tristate "LED support for status LEDs on WM831x PMICs"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 8979b0b..3cd76db 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_LEDS_OT200)		+=3D leds-ot200.o
+ obj-$(CONFIG_LEDS_FSG)			+=3D leds-fsg.o
+ obj-$(CONFIG_LEDS_PCA955X)		+=3D leds-pca955x.o
+ obj-$(CONFIG_LEDS_PCA963X)		+=3D leds-pca963x.o
++obj-$(CONFIG_LEDS_PCA9685)		+=3D leds-pca9685.o
+ obj-$(CONFIG_LEDS_DA903X)		+=3D leds-da903x.o
+ obj-$(CONFIG_LEDS_DA9052)		+=3D leds-da9052.o
+ obj-$(CONFIG_LEDS_WM831X_STATUS)	+=3D leds-wm831x-status.o
+diff --git a/drivers/leds/leds-pca9685.c b/drivers/leds/leds-pca9685.c
+new file mode 100644
+index 0000000..a2078bf
+--- /dev/null
++++ b/drivers/leds/leds-pca9685.c
+@@ -0,0 +1,219 @@
++/*
++ * Copyright 2013 Maximilian G=FCntner <maximilian.guentner@gmail.com>
++ *
++ * This file is subject to the terms and conditions of version 2 of
++ * the GNU General Public License.  See the file COPYING in the main
++ * directory of this archive for more details.
++ *
++ * Based on leds-pca963x.c driver by
++ * Peter Meerwald <p.meerwald@bct-electronic.com>
++ *
++ * Driver for the NXP PCA9685 12-Bit I2C chip.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/string.h>
++#include <linux/delay.h>
++#include <linux/ctype.h>
++#include <linux/leds.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/workqueue.h>
++#include <linux/slab.h>
++
++#include <linux/platform_data/leds-pca9685.h>
++
++/* Register Addresses */
++#define PCA9685_MODE1 0x00
++#define PCA9685_MODE2 0x01
++#define PCA9685_LED0_ON_L 0x06
++#define PCA9685_ALL_LED_ON_L 0xFA
++
++/* MODE1 Register */
++#define PCA9685_ALLCALL 0x00
++#define PCA9685_SLEEP   0x04
++#define PCA9685_AI      0x05
++
++/* MODE2 Register */
++#define PCA9685_INVRT   0x04
++#define PCA9685_OUTDRV  0x02
++
++static const struct i2c_device_id pca9685_id[] =3D {
++	{ "pca9685", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, pca9685_id);
++
++struct pca9685_led {
++	struct i2c_client *client;
++	struct work_struct work;
++	u16 brightness;
++	struct led_classdev led_cdev;
++	int led_num; /* 0-15 */
++	char name[32];
++};
++
++static void pca9685_write_msg(struct i2c_client *client, u8 *buf, u8 l=
+en)
++{
++	struct i2c_msg msg =3D {
++		.addr =3D client->addr,
++		.flags =3D 0x00,
++		.len =3D len,
++		.buf =3D buf
++	};
++	i2c_transfer(client->adapter, &msg, 1);
++}
++
++static void pca9685_all_off(struct i2c_client *client)
++{
++	u8 i2c_buffer[5] =3D {PCA9685_ALL_LED_ON_L, 0x00, 0x00, 0x00, 0x10};
++	pca9685_write_msg(client, i2c_buffer, 5);
++}
++
++static void pca9685_led_work(struct work_struct *work)
++{
++	struct pca9685_led *pca9685;
++	u16 brightness;
++	u8 i2c_buffer[5];
++	pca9685 =3D container_of(work, struct pca9685_led, work);
++	/*
++	 * 4095 is the maximum brightness, so we set the ON time to 0x1000
++	 * which disables the PWM generator for that LED
++	 */
++	if (pca9685->brightness =3D=3D 4095)
++		brightness =3D 4096;
++	else
++		brightness =3D pca9685->brightness;
++
++	i2c_buffer[0] =3D PCA9685_LED0_ON_L + 4 * pca9685->led_num;
++
++	if (brightness =3D=3D 4096)
++		*((u16 *)(i2c_buffer+1)) =3D cpu_to_le16(0x1000);
++	else
++		*((u16 *)(i2c_buffer+1)) =3D 0x0000;
++	if (brightness =3D=3D 0)
++		*((u16 *)(i2c_buffer+3)) =3D cpu_to_le16(0x1000);
++	else if (brightness =3D=3D 4096)
++		*((u16 *)(i2c_buffer+3)) =3D 0x0000;
++	else
++		*((u16 *)(i2c_buffer+3)) =3D cpu_to_le16(brightness);
++
++	pca9685_write_msg(pca9685->client, i2c_buffer, 5);
++}
++
++static void pca9685_led_set(struct led_classdev *led_cdev,
++		enum led_brightness value)
++{
++	struct pca9685_led *pca9685;
++	pca9685 =3D container_of(led_cdev, struct pca9685_led, led_cdev);
++	pca9685->brightness =3D value;
++
++	schedule_work(&pca9685->work);
++}
++
++static int pca9685_probe(struct i2c_client *client,
++		const struct i2c_device_id *id)
++{
++	struct pca9685_led *pca9685;
++	struct pca9685_platform_data *pdata;
++	int err;
++	u8 i;
++
++	pdata =3D dev_get_platdata(&client->dev);
++
++	if (pdata) {
++		if (pdata->leds.num_leds < 1 || pdata->leds.num_leds > 15) {
++			dev_err(&client->dev, "board info must claim 1-16 LEDs");
++			return -EINVAL;
++		}
++	}
++
++	pca9685 =3D devm_kzalloc(&client->dev, 16 * sizeof(*pca9685), GFP_KER=
+NEL);
++
++	if (!pca9685)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, pca9685);
++	pca9685_all_off(client);
++
++	for (i =3D 0; i < 16; i++) {
++		pca9685[i].client =3D client;
++		pca9685[i].led_num =3D i;
++		pca9685[i].name[0] =3D '\0';
++		if (pdata && i < pdata->leds.num_leds) {
++			if (pdata->leds.leds[i].name)
++				strncpy(pca9685[i].name,
++					pdata->leds.leds[i].name,
++					sizeof(pca9685[i].name)-1);
++			if (pdata->leds.leds[i].default_trigger)
++				pca9685[i].led_cdev.default_trigger =3D
++					pdata->leds.leds[i].default_trigger;
++		}
++		if (strlen(pca9685[i].name) =3D=3D 0) {
++			/*
++			 * Write adapter and address to the name as well.
++			 * Otherwise multiple chips attached to one host would
++			 * not work.
++			 */
++			snprintf(pca9685[i].name, sizeof(pca9685[i].name),
++					"pca9685:%d:x%.2x:%d",
++					client->adapter->nr, client->addr, i);
++		}
++		pca9685[i].led_cdev.name =3D pca9685[i].name;
++		pca9685[i].led_cdev.max_brightness =3D 0xfff;
++		pca9685[i].led_cdev.brightness_set =3D pca9685_led_set;
++
++		INIT_WORK(&pca9685[i].work, pca9685_led_work);
++		err =3D led_classdev_register(&client->dev, &pca9685[i].led_cdev);
++		if (err < 0)
++			goto exit;
++	}
++	if (pdata)
++		i2c_smbus_write_byte_data(client, PCA9685_MODE2,
++			pdata->outdrv << PCA9685_OUTDRV |
++			pdata->inverted << PCA9685_INVRT);
++	else
++		i2c_smbus_write_byte_data(client, PCA9685_MODE2,
++			PCA9685_TOTEM_POLE << PCA9685_OUTDRV);
++	/* Enable Auto-Increment, enable oscillator, ALLCALL/SUBADDR disabled=
+ */
++	i2c_smbus_write_byte_data(client, PCA9685_MODE1, 1 << PCA9685_AI);
++
++	return 0;
++
++exit:
++	while (i--) {
++		led_classdev_unregister(&pca9685[i].led_cdev);
++		cancel_work_sync(&pca9685[i].work);
++	}
++	return err;
++}
++
++static int pca9685_remove(struct i2c_client *client)
++{
++	struct pca9685_led *pca9685 =3D i2c_get_clientdata(client);
++	u8 i;
++
++	for (i =3D 0; i < 16; i++) {
++		led_classdev_unregister(&pca9685[i].led_cdev);
++		cancel_work_sync(&pca9685[i].work);
++	}
++	pca9685_all_off(client);
++	return 0;
++}
++
++static struct i2c_driver pca9685_driver =3D {
++	.driver =3D {
++		.name =3D "leds-pca9685",
++		.owner =3D THIS_MODULE,
++	},
++	.probe =3D pca9685_probe,
++	.remove =3D pca9685_remove,
++	.id_table =3D pca9685_id,
++};
++
++module_i2c_driver(pca9685_driver);
++
++MODULE_AUTHOR("Maximilian G=FCntner <maximilian.guentner@gmail.com>");
++MODULE_DESCRIPTION("PCA9685 LED Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/platform_data/leds-pca9685.h b/include/linux=
+/platform_data/leds-pca9685.h
+new file mode 100644
+index 0000000..cce28b8
+--- /dev/null
++++ b/include/linux/platform_data/leds-pca9685.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright 2013 Maximilian G=FCntner <maximilian.guentner@gmail.com>
++ *
++ * This file is subject to the terms and conditions of version 2 of
++ * the GNU General Public License.  See the file COPYING in the main
++ * directory of this archive for more details.
++ *
++ * Based on leds-pca963x.h by Peter Meerwald <p.meerwald@bct-electroni=
+c.com>
++ *
++ * LED driver for the NXP PCA9685 PWM chip
++ *
++ */
++
++#ifndef __LINUX_PCA9685_H
++#define __LINUX_PCA9685_H
++#include <linux/leds.h>
++
++enum pca9685_outdrv {
++	PCA9685_OPEN_DRAIN,
++	PCA9685_TOTEM_POLE,
++};
++
++enum pca9685_inverted {
++	PCA9685_NOT_INVERTED,
++	PCA9685_INVERTED,
++};
++
++struct pca9685_platform_data {
++	struct led_platform_data leds;
++	enum pca9685_outdrv outdrv;
++	enum pca9685_inverted inverted;
++};
++
++#endif /* __LINUX_PCA9685_H */
+--=20
+1.8.4
