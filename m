@@ -1,33 +1,36 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [media-workshop] V2: Agenda for the Edinburgh mini-summit
-Date: Tue, 22 Oct 2013 09:50:11 +0000
-Message-ID: <52664A53.7090807@xs4all.nl>
-References: <201309101134.32883.hansverk@cisco.com> <3335821.8epFKWiJXY@avalon> <CAK5ve-JHEaNrNiYwdMdEiEsD0LnqHG-MEAQv4D-962fYK0=g4A@mail.gmail.com> <2523390.YEHU3IBNqR@avalon> <CAK5ve-+N=GyNk-ryR0LbiUcT0TErFTwK60-vHNEf7112dNyh_A@mail.gmail.com> <525DF0C7.9090407@ti.com> <CAK5ve-K481KMXZJW9Ah8N_NaOYNNgdxABvewqiTOhquUAzr-UA@mail.gmail.com> <525F2311.8000509@ti.com> <1381968755.1905.25.camel@palomino.walls.org> <CAK5ve-Jnbr2C-LPfS9KKNcv8KH-7gkZyp+tj4Qt9-pE=nch8gg@mail.gmail.com> <CAPybu_2KRF_VHkjCEV8d7YOaZo27QJ=TxGTsUOeWO5X_tp8Ozw@mail.gmail.com> <CAK5ve-+PiRDEriYrCpbWq5WTPTq=n-xYZM0D46mDRAZWZi2GWw@mail.gmail.com> <526577FA.7070602@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <526577FA.7070602@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Oliver Schinagl <oliver+list@schinagl.nl>, Milo Kim <milo.kim@ti.com>, Paul Walmsley <paul@pwsan.com>, Andy Walls <awalls@md.metrocast.net>, linux-pwm@vger.kernel.org, "media-workshop@linuxtv.org" <media-workshop@linuxtv.org>, Hans Verkuil <hansverk@cisco.com>, Thierry Reding <thierry.reding@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <bryan.wu@canonical.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+From: Sebastian Reichel <sre@debian.org>
+Subject: [PATCH 0/2] Add lp5523 DT support
+Date: Tue, 22 Oct 2013 15:01:34 +0200
+Message-ID: <1382446896-28436-1-git-send-email-sre@debian.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sebastian Reichel <sre@ring0.de>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Milo Kim <milo.kim@ti.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, Sebastian Reichel <sre@debian.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 10/21/2013 06:52 PM, Hans Verkuil wrote:
-> On 10/21/2013 06:40 PM, Bryan Wu wrote:
->> Is the time and location of media mini-summit fixed? My colleague
->> might show up if it's not conflicted with ARM mini-summit.
-> 
-> It's in the Glamis room on Wednesday. We start at 9 am and the LED topic
-> is currently scheduled as the second topic so I expect that it will be
-> discussed between 9 and 10 am.
+Hi,
 
+This patchset adds device tree support for the enable-pin
+of the lp55xx. The second part adds support for the LP5523
+to the Nokia N900's DTS file.
 
-I just posted the final (at least, I really hope it will be the final) version of
-the agenda to linux-media and media-workshop. The LED topic moved to a somewhat
-later slot and is currently scheduled for 10:50. All these times are tentative so
-for this topic you should probably be there at 10:30 to be safe.
+I have tested the patchset only using DT boot, since
+non-DT boot is currently broken for me.
 
-Regards,
+-- Sebastian
 
-	Hans
+Sebastian Reichel (2):
+  leds: lp55xx: handle enable pin in driver
+  DTS: ARM: OMAP3-N900: Add LP5523 support
+
+ .../devicetree/bindings/leds/leds-lp55xx.txt       |  1 +
+ arch/arm/boot/dts/omap3-n900.dts                   | 61 ++++++++++++++++++++++
+ arch/arm/mach-omap2/board-rx51-peripherals.c       | 20 +------
+ arch/arm/mach-ux500/board-mop500.c                 |  2 +
+ drivers/leds/leds-lp55xx-common.c                  | 25 ++++-----
+ include/linux/platform_data/leds-lp55xx.h          |  6 +--
+ 6 files changed, 80 insertions(+), 35 deletions(-)
+
+-- 
+1.8.4.rc3
+
