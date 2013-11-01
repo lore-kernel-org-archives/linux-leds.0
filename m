@@ -1,145 +1,95 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 00/10] leds: lp5521,5523: restore device attributes for
- running LED patterns
-Date: Tue, 29 Oct 2013 16:17:11 -0700
-Message-ID: <CAK5ve-JN=xkaiYJU7f-4Kt5edxNU7_L8UMUBEtwXv9p2yPp7qw@mail.gmail.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com>
- <201310251838.32001@pali> <CAK5ve-JrQhpwx9ZG1Kyhuxdc=dqfAaA6YBOMkDWYWrefeoeUxw@mail.gmail.com>
- <201310252021.51846@pali>
+From: NeilBrown <neilb@suse.de>
+Subject: [PATCH 1/2] LEDS: tca6507 - fix bugs in parsing of device-tree
+ configuration.
+Date: Fri, 1 Nov 2013 13:33:45 +1100
+Message-ID: <20131101133345.03db24ec@notabene.brown>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/8jZqc8GGKo7RkSEz=K1uMUw"; protocol="application/pgp-signature"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:42662 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751330Ab3J2XRe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 29 Oct 2013 19:17:34 -0400
-In-Reply-To: <201310252021.51846@pali>
+Received: from cantor2.suse.de ([195.135.220.15]:34886 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754369Ab3KACd7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 31 Oct 2013 22:33:59 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Milo Kim <woogyom.kim@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Milo Kim <milo.kim@ti.com>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
 
-On Fri, Oct 25, 2013 at 11:21 AM, Pali Roh=E1r <pali.rohar@gmail.com> w=
-rote:
-> On Friday 25 October 2013 19:10:07 Bryan Wu wrote:
->> On Fri, Oct 25, 2013 at 9:38 AM, Pali Roh=E1r
-> <pali.rohar@gmail.com> wrote:
->> > On Tuesday 13 August 2013 23:04:14 Bryan Wu wrote:
->> >> On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim
-> <woogyom.kim@gmail.com> wrote:
->> >> > This patch-set resolves the application conflict by
->> >> > restoring sysfs files.
->> >> >
->> >> > For LP5521
->> >> >
->> >> >   engine1/2/3_mode
->> >> >   engine1/2/3_load
->> >> >
->> >> > For LP5523
->> >> >
->> >> >   engine1/2/3_mode
->> >> >   engine1/2/3_load
->> >> >   engine1/2/3_leds
->> >> >
->> >> > Those attributes are accessed when LED pattern is run by
->> >> > custom application. Those were removed when LED pattern
->> >> > interface was changed to generic firmware interface.
->> >> > Please refer to commits below.
->> >> >
->> >> >   git commit 9ce7cb170f97f83a78dc948bf7d25690f15e1328
->> >> >   (leds-lp5521: use generic firmware interface)
->> >> >
->> >> >   git commit db6eaf8388a413a5ee1b4547ce78506b9c6456b0
->> >> >   (leds-lp5523: use generic firmware interface)
->> >> >
->> >> > Necessary attributes are restored in this patch-set.
->> >> >
->> >> > (Other changes)
->> >> > New data structure is added for handling values from/to
->> >> > an application. Few code fixes for reducing writing I2C
->> >> > commands.
->> >> > Add LP55xx common macros for code refactoring.
->> >> > Documentation updates.
->> >> >
->> >> > You can also pull from the location below
->> >> > This branch is based on 'for-next' of linux-leds.
->> >> >
->> >> >   https://github.com/milokim/lp55xx.git
->> >> >   resolve-missing-sysfs
->> >>
->> >> Thanks, I've already merged the whole patchset in my -devel
->> >> branch [1].
->> >>
->> >> Pali, could you please help to test it on your hardware?
->> >> Just grab my -devel branch and build then run.
->> >>
->> >> Thanks,
->> >> -Bryan
->> >
->> > Hi, I see that all your patches are part of 3.12-rc5 kernel.
->> >
->> > Now I tested this example led program:
->> >     # Clearing LED-state to be sure
->> >     echo "disabled" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode echo
->> >     "disabled" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode echo 0
->> >     > /sys/class/leds/lp5523:r/brightness
->> >     echo 0 > /sys/class/leds/lp5523:g/brightness
->> >     echo 0 > /sys/class/leds/lp5523:b/brightness
->> >
->> >     # Setting yellow light pattern and running it
->> >     echo "load" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode echo
->> >     "000001100" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine1_leds echo
->> >     "9d804000427f0d7f7f007f0042000000" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine1_load echo
->> >     "load" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode echo
->> >     "000000000" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine2_leds echo
->> >     "9d800000" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine2_load echo
->> >     "run" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode echo
->> >     "run" >
->> >     /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode echo
->> >     20 > /sys/class/leds/lp5523:r/led_current
->> >     echo 2 > /sys/class/leds/lp5523:g/led_current
->> >     echo 0 > /sys/class/leds/lp5523:b/led_current
->> >
->> > All sysfs entries exists and every echo returned 0.
->> >
->> > But led does not start blinking that yellow ligh pattern.
->> > So it not working on 3.12-rc5 kernel :-(
->>
->> OK, great! Do you still remember which kernel version works on
->> you system? Milo, do you have time to take a look? I bet it's
->> a regression somewhere.
->>
->> Thanks,
->> -Bryan
->
-> I do not know which version. Now I tried pattern example from
-> Documentation/leds/leds-lp55xx.txt which using new API.
->
-> echo 2 > /sys/class/i2c-adapter/i2c-2/2-0032/select_engine
-> echo 1 > /sys/class/firmware/lp5523/loading
-> echo "9d80400004ff05ff437f0000" > /sys/class/firmware/lp5523/data
-> echo 0 > /sys/class/firmware/lp5523/loading
-> echo 1 > /sys/class/i2c-adapter/i2c-2/2-0032/run_engine
->
-> But it failed at second command. In directory /sys/class/firmware/
-> I have only one file with name timeout. Nothing more, no lp5523
-> folder.
->
-> Any idea who and when creating that lp5523 folder?
+--Sig_/8jZqc8GGKo7RkSEz=K1uMUw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Milo,
 
-Do you have time to take a look at this?
 
-Thanks,
--Bryan
+1/ The led_info array must be allocated to allow the full number
+  of LEDs even if not all are present.  The array maybe be sparsely
+  filled but it is indexed by device address so we must at least
+  allocate as many slots as the highest address used.  It is easiest
+  just to allocate all 7.
+
+2/ range check the 'reg' value properly.
+
+3/ led.flags must be initialised to zero, else all leds could
+   be treated as GPIOs (depending on what happens to be on the stack).
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index 8cc304f36728..f5063f447463 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -682,7 +682,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+ 		return ERR_PTR(-ENODEV);
+=20
+ 	tca_leds =3D devm_kzalloc(&client->dev,
+-			sizeof(struct led_info) * count, GFP_KERNEL);
++			sizeof(struct led_info) * NUM_LEDS, GFP_KERNEL);
+ 	if (!tca_leds)
+ 		return ERR_PTR(-ENOMEM);
+=20
+@@ -695,9 +695,9 @@ tca6507_led_dt_init(struct i2c_client *client)
+ 			of_get_property(child, "label", NULL) ? : child->name;
+ 		led.default_trigger =3D
+ 			of_get_property(child, "linux,default-trigger", NULL);
+-
++		led.flags =3D 0;
+ 		ret =3D of_property_read_u32(child, "reg", &reg);
+-		if (ret !=3D 0)
++		if (ret !=3D 0 || reg < 0 || reg >=3D NUM_LEDS)
+ 			continue;
+=20
+ 		tca_leds[reg] =3D led;
+@@ -708,7 +708,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+ 		return ERR_PTR(-ENOMEM);
+=20
+ 	pdata->leds.leds =3D tca_leds;
+-	pdata->leds.num_leds =3D count;
++	pdata->leds.num_leds =3D NUM_LEDS;
+=20
+ 	return pdata;
+ }
+
+--Sig_/8jZqc8GGKo7RkSEz=K1uMUw
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIVAwUBUnMTCTnsnt1WYoG5AQIMXA//Z3LE5msVq/1wka707oAQFWJZ2eM+xUFa
+XPCi8xuc7CutpgV26lTfGkFA4nVQyATImJmCWgDucjsRU8mEBWg/dVFooFZ8+oMJ
+5m+UjFXD536LtkmOo/pKnRPSMaD/SzN7mI04gK3nJ1JngFnRXDSTg4xIfUJ17hn+
+aHJ+R67mlqYrA/VorncyWg0M/dU+rR6Rmr8GyX2Z3upEV05zZ1QcbkiRv5EJPJdC
++ft/W+1FqD1VwUyvpdWPNcwXU2B1Ju2jd5vwvVlUaeI6OawoxOV6wVKCBSlfBjJd
+gHqMQicQmwZy+EyH3Om10nj8IhAubu3jF92P+GIM7EonxbM4KVqj55gKWKN2IQLI
+BpgFXuRe0SjvxftXS4Ktm59pz0CpZyZsZgq3UoHR3oqAc326iAgxUvPE1B5GtUG2
+MDZe9jN3MQSQ16Vf/3O4M4LNg8lhlo6iQ3WtF/fftzi6T4VGV8jNIj2ToMDy7acp
+p1esB/rtnxozjUpSp8N/HhI3UUwrso0jEYzNA+eCAHdYtg123+n1j8b0iJ0wYgpj
+ZRUKJ/XFRQ1HEc9mR30dlO9iZymcIKq1gTbr+RlrFiuDyPuKOFOUErWHO+XocznV
+G9rFbOmNwebklT9E4opIdEm5TKj5sdskDMKTMs+DWR6EdN96gI30ZjYyT1fEL65p
+P2PTpuNQf8E=
+=BY91
+-----END PGP SIGNATURE-----
+
+--Sig_/8jZqc8GGKo7RkSEz=K1uMUw--
