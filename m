@@ -1,73 +1,143 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/2] LEDS: tca6507 - fix bugs in parsing of device-tree configuration.
-Date: Thu, 7 Nov 2013 14:55:54 -0800
-Message-ID: <CAK5ve-JO3-f53SpfJb5P4kK+z3rATsS8cXAjnDr5RmCAZEPKjA@mail.gmail.com>
-References: <20131101133345.03db24ec@notabene.brown>
+Subject: Re: [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO configuration.
+Date: Thu, 7 Nov 2013 15:39:00 -0800
+Message-ID: <CAK5ve-LzYLr0xuvNA3MX=pECPPfAkDFqExPpmQt8GF+9jf5uHg@mail.gmail.com>
+References: <20131101134120.13a44225@notabene.brown>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:43872 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752690Ab3KGW4P (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Nov 2013 17:56:15 -0500
-In-Reply-To: <20131101133345.03db24ec@notabene.brown>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:62497 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755805Ab3KGXjW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Nov 2013 18:39:22 -0500
+In-Reply-To: <20131101134120.13a44225@notabene.brown>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: NeilBrown <neilb@suse.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Oct 31, 2013 at 7:33 PM, NeilBrown <neilb@suse.de> wrote:
+On Thu, Oct 31, 2013 at 7:41 PM, NeilBrown <neilb@suse.de> wrote:
 >
+
+[PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO configuration.
+
+I think it should be tca6507, right? Typo?
+
+For other parts of this patch, I'm OK for them.
+
+And just a quick scan of the leds-tca6507, I found bunch of typos in
+the comments:
+
+* An led-tca6507 device must be provided with platform data.  This data
+ * lists for each output: the name, default trigger, and whether the signal
+ * is being used as a GPiO rather than an led.  'struct led_plaform_data'
+
+Can we unify to use GPIO and gpio?
+
+ * is used for this.  If 'name' is NULL, the output isn't used.  If 'flags'
+ * is TCA6507_MAKE_CPIO, the output is a GPO.
+
+Here should be TCA6507_MAKE_GPIO and GPIO instead of GPO
+
+ * The "struct led_platform_data" can be embedded in a
+ * "struct tca6507_platform_data" which adds a 'gpio_base' for the GPiOs,
+ * and a 'setup' callback which is called once the GPiOs are available.
+
+Don't use GPiO, please.
+
+Could you please review the code again and submit a cleanup patch to
+fix those typos?
+
+Thanks,
+-Bryan
+
+
+> The 7 lines driven by the TCA6507 can either drive LEDs or act as output-only
+> GPIOs.
 >
-> 1/ The led_info array must be allocated to allow the full number
->   of LEDs even if not all are present.  The array maybe be sparsely
->   filled but it is indexed by device address so we must at least
->   allocate as many slots as the highest address used.  It is easiest
->   just to allocate all 7.
+> To make this distinction in devicetree we use the "compatible" property.
 >
-> 2/ range check the 'reg' value properly.
->
-> 3/ led.flags must be initialised to zero, else all leds could
->    be treated as GPIOs (depending on what happens to be on the stack).
+> If the device attached to a line is "compatible" with "gpio", we treat it
+> like a GPIO.  If it is "compatible" with "led" (or if no "compatible" value
+> is set) we treat it like an LED.
 >
 > Signed-off-by: NeilBrown <neilb@suse.de>
 >
-
-Thanks, queued into devel branch of my tree for 3.14 kernel.
-
--Bryan
-
+> diff --git a/Documentation/devicetree/bindings/leds/tca6507.txt b/Documentation/devicetree/bindings/leds/tca6507.txt
+> index 80ff3dfb1f32..d7221b84987c 100644
+> --- a/Documentation/devicetree/bindings/leds/tca6507.txt
+> +++ b/Documentation/devicetree/bindings/leds/tca6507.txt
+> @@ -2,6 +2,13 @@ LEDs connected to tca6507
+>
+>  Required properties:
+>  - compatible : should be : "ti,tca6507".
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
+> +- reg: typically 0x45.
+> +
+> +Optional properties:
+> +- gpio-controller: allows lines to be used as output-only GPIOs.
+> +- #gpio-cells: if present, must be 0.
+>
+>  Each led is represented as a sub-node of the ti,tca6507 device.
+>
+> @@ -10,6 +17,7 @@ LED sub-node properties:
+>  - reg : number of LED line (could be from 0 to 6)
+>  - linux,default-trigger : (optional)
+>     see Documentation/devicetree/bindings/leds/common.txt
+> +- compatible: either "led" (the default) or "gpio".
+>
+>  Examples:
+>
+> @@ -19,6 +27,9 @@ tca6507@45 {
+>         #size-cells = <0>;
+>         reg = <0x45>;
+>
+> +       gpio-controller;
+> +       #gpio-cells = <2>;
+> +
+>         led0: red-aux@0 {
+>                 label = "red:aux";
+>                 reg = <0x0>;
+> @@ -29,5 +40,10 @@ tca6507@45 {
+>                 reg = <0x5>;
+>                 linux,default-trigger = "default-on";
+>         };
+> +
+> +       wifi-reset@6 {
+> +               reg = <0x6>;
+> +               compatible = "gpio";
+> +       };
+>  };
+>
 > diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index 8cc304f36728..f5063f447463 100644
+> index f5063f447463..93a2b1759054 100644
 > --- a/drivers/leds/leds-tca6507.c
 > +++ b/drivers/leds/leds-tca6507.c
-> @@ -682,7 +682,7 @@ tca6507_led_dt_init(struct i2c_client *client)
->                 return ERR_PTR(-ENODEV);
->
->         tca_leds = devm_kzalloc(&client->dev,
-> -                       sizeof(struct led_info) * count, GFP_KERNEL);
-> +                       sizeof(struct led_info) * NUM_LEDS, GFP_KERNEL);
->         if (!tca_leds)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -695,9 +695,9 @@ tca6507_led_dt_init(struct i2c_client *client)
->                         of_get_property(child, "label", NULL) ? : child->name;
+> @@ -638,6 +638,9 @@ static int tca6507_probe_gpios(struct i2c_client *client,
+>         tca->gpio.direction_output = tca6507_gpio_direction_output;
+>         tca->gpio.set = tca6507_gpio_set_value;
+>         tca->gpio.dev = &client->dev;
+> +#ifdef CONFIG_OF_GPIO
+> +       tca->gpio.of_node = of_node_get(client->dev.of_node);
+> +#endif
+>         err = gpiochip_add(&tca->gpio);
+>         if (err) {
+>                 tca->gpio.ngpio = 0;
+> @@ -696,6 +699,8 @@ tca6507_led_dt_init(struct i2c_client *client)
 >                 led.default_trigger =
 >                         of_get_property(child, "linux,default-trigger", NULL);
-> -
-> +               led.flags = 0;
+>                 led.flags = 0;
+> +               if (of_property_match_string(child, "compatible", "gpio") >= 0)
+> +                       led.flags |= TCA6507_MAKE_GPIO;
 >                 ret = of_property_read_u32(child, "reg", &reg);
-> -               if (ret != 0)
-> +               if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
+>                 if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
 >                         continue;
->
->                 tca_leds[reg] = led;
-> @@ -708,7 +708,7 @@ tca6507_led_dt_init(struct i2c_client *client)
->                 return ERR_PTR(-ENOMEM);
+> @@ -709,6 +714,7 @@ tca6507_led_dt_init(struct i2c_client *client)
 >
 >         pdata->leds.leds = tca_leds;
-> -       pdata->leds.num_leds = count;
-> +       pdata->leds.num_leds = NUM_LEDS;
+>         pdata->leds.num_leds = NUM_LEDS;
+> +       pdata->gpio_base = -1;
 >
 >         return pdata;
 >  }
