@@ -1,135 +1,73 @@
-From: NeilBrown <neilb@suse.de>
-Subject: [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO
- configuration.
-Date: Fri, 1 Nov 2013 13:41:20 +1100
-Message-ID: <20131101134120.13a44225@notabene.brown>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/2] LEDS: tca6507 - fix bugs in parsing of device-tree configuration.
+Date: Thu, 7 Nov 2013 14:55:54 -0800
+Message-ID: <CAK5ve-JO3-f53SpfJb5P4kK+z3rATsS8cXAjnDr5RmCAZEPKjA@mail.gmail.com>
+References: <20131101133345.03db24ec@notabene.brown>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/uGx.DUPKp9iolnOvMxY21Jz"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:43872 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752690Ab3KGW4P (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Nov 2013 17:56:15 -0500
+In-Reply-To: <20131101133345.03db24ec@notabene.brown>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: NeilBrown <neilb@suse.de>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
 
---Sig_/uGx.DUPKp9iolnOvMxY21Jz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 31, 2013 at 7:33 PM, NeilBrown <neilb@suse.de> wrote:
+>
+>
+> 1/ The led_info array must be allocated to allow the full number
+>   of LEDs even if not all are present.  The array maybe be sparsely
+>   filled but it is indexed by device address so we must at least
+>   allocate as many slots as the highest address used.  It is easiest
+>   just to allocate all 7.
+>
+> 2/ range check the 'reg' value properly.
+>
+> 3/ led.flags must be initialised to zero, else all leds could
+>    be treated as GPIOs (depending on what happens to be on the stack).
+>
+> Signed-off-by: NeilBrown <neilb@suse.de>
+>
 
+Thanks, queued into devel branch of my tree for 3.14 kernel.
 
-The 7 lines driven by the TCA6507 can either drive LEDs or act as output-on=
-ly
-GPIOs.
+-Bryan
 
-To make this distinction in devicetree we use the "compatible" property.
-
-If the device attached to a line is "compatible" with "gpio", we treat it
-like a GPIO.  If it is "compatible" with "led" (or if no "compatible" value
-is set) we treat it like an LED.
-
-Signed-off-by: NeilBrown <neilb@suse.de>
-
-diff --git a/Documentation/devicetree/bindings/leds/tca6507.txt b/Documenta=
-tion/devicetree/bindings/leds/tca6507.txt
-index 80ff3dfb1f32..d7221b84987c 100644
---- a/Documentation/devicetree/bindings/leds/tca6507.txt
-+++ b/Documentation/devicetree/bindings/leds/tca6507.txt
-@@ -2,6 +2,13 @@ LEDs connected to tca6507
-=20
- Required properties:
- - compatible : should be : "ti,tca6507".
-+- #address-cells: must be 1
-+- #size-cells: must be 0
-+- reg: typically 0x45.
-+
-+Optional properties:
-+- gpio-controller: allows lines to be used as output-only GPIOs.
-+- #gpio-cells: if present, must be 0.
-=20
- Each led is represented as a sub-node of the ti,tca6507 device.
-=20
-@@ -10,6 +17,7 @@ LED sub-node properties:
- - reg : number of LED line (could be from 0 to 6)
- - linux,default-trigger : (optional)
-    see Documentation/devicetree/bindings/leds/common.txt
-+- compatible: either "led" (the default) or "gpio".
-=20
- Examples:
-=20
-@@ -19,6 +27,9 @@ tca6507@45 {
- 	#size-cells =3D <0>;
- 	reg =3D <0x45>;
-=20
-+	gpio-controller;
-+	#gpio-cells =3D <2>;
-+
- 	led0: red-aux@0 {
- 		label =3D "red:aux";
- 		reg =3D <0x0>;
-@@ -29,5 +40,10 @@ tca6507@45 {
- 		reg =3D <0x5>;
- 		linux,default-trigger =3D "default-on";
- 	};
-+
-+	wifi-reset@6 {
-+		reg =3D <0x6>;
-+		compatible =3D "gpio";
-+	};
- };
-=20
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index f5063f447463..93a2b1759054 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -638,6 +638,9 @@ static int tca6507_probe_gpios(struct i2c_client *clien=
-t,
- 	tca->gpio.direction_output =3D tca6507_gpio_direction_output;
- 	tca->gpio.set =3D tca6507_gpio_set_value;
- 	tca->gpio.dev =3D &client->dev;
-+#ifdef CONFIG_OF_GPIO
-+	tca->gpio.of_node =3D of_node_get(client->dev.of_node);
-+#endif
- 	err =3D gpiochip_add(&tca->gpio);
- 	if (err) {
- 		tca->gpio.ngpio =3D 0;
-@@ -696,6 +699,8 @@ tca6507_led_dt_init(struct i2c_client *client)
- 		led.default_trigger =3D
- 			of_get_property(child, "linux,default-trigger", NULL);
- 		led.flags =3D 0;
-+		if (of_property_match_string(child, "compatible", "gpio") >=3D 0)
-+			led.flags |=3D TCA6507_MAKE_GPIO;
- 		ret =3D of_property_read_u32(child, "reg", &reg);
- 		if (ret !=3D 0 || reg < 0 || reg >=3D NUM_LEDS)
- 			continue;
-@@ -709,6 +714,7 @@ tca6507_led_dt_init(struct i2c_client *client)
-=20
- 	pdata->leds.leds =3D tca_leds;
- 	pdata->leds.num_leds =3D NUM_LEDS;
-+	pdata->gpio_base =3D -1;
-=20
- 	return pdata;
- }
-
---Sig_/uGx.DUPKp9iolnOvMxY21Jz
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIVAwUBUnMU0Tnsnt1WYoG5AQLRbBAAnHQSSOQNdhdCMgyYRvXPes9Na28V1zQY
-qal2QDXr+kx2Y51IDm/ji1GRTecfLenK3fZEUNYdkJjYAg3QxwB5rkj7wucZ1E3Z
-bSUuB3J+W8ycuKk8i4f0mDstnSjjEgvGw1GQRgFrEgdB/3DWxsPa3COdNN8XIOf8
-mJcKG5EnKukW5wPsMcKHeNq3uQ0LoSfZpgOyoJfhzKDAMzfF+0mDfjxzqDe90d8X
-etCLyiVMX96ElndE/N2ApVYLQWdBYYHc2t9hh43PAOJbzaD2APMbeioiueZl9Slj
-h7TpsJmkSTOun20vs7Fj+gRLngvOJqWZhoBINtLNUhn0N62d4fbK9gFSbzhuju+r
-ymmte0l+9+EeE/fiJnotcoTX+bKdDY1wVVuBVMmw1iDoJnMhwdABOIpVQ5OdqC5b
-wfe8txqBxKWiBMUAQ0LYfSjegvonIT6ZoxpUEXuSDGKp3fWQ7p4DSE4p+D5wz418
-XYSsghsBoYwnnoEjrLg1oOttqeLJYKsY0hThxDW/13PpL9ruHtQ7wB/OSNR7nKJX
-70+fw5bM5JeUkgRQbGSHLmqR7rDXPiu6SEEhRqavOzM2Ow4TPt3T6sT6vlrdkd3z
-iQTMSJ2U6naBaSAjkqBVHLqRYce4IzfqGMROjgKn821+2Yy3ACHb/N1qy0f8KTCY
-bI9IizLHr+4=
-=Hlpj
------END PGP SIGNATURE-----
-
---Sig_/uGx.DUPKp9iolnOvMxY21Jz--
+> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+> index 8cc304f36728..f5063f447463 100644
+> --- a/drivers/leds/leds-tca6507.c
+> +++ b/drivers/leds/leds-tca6507.c
+> @@ -682,7 +682,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+>                 return ERR_PTR(-ENODEV);
+>
+>         tca_leds = devm_kzalloc(&client->dev,
+> -                       sizeof(struct led_info) * count, GFP_KERNEL);
+> +                       sizeof(struct led_info) * NUM_LEDS, GFP_KERNEL);
+>         if (!tca_leds)
+>                 return ERR_PTR(-ENOMEM);
+>
+> @@ -695,9 +695,9 @@ tca6507_led_dt_init(struct i2c_client *client)
+>                         of_get_property(child, "label", NULL) ? : child->name;
+>                 led.default_trigger =
+>                         of_get_property(child, "linux,default-trigger", NULL);
+> -
+> +               led.flags = 0;
+>                 ret = of_property_read_u32(child, "reg", &reg);
+> -               if (ret != 0)
+> +               if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
+>                         continue;
+>
+>                 tca_leds[reg] = led;
+> @@ -708,7 +708,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+>                 return ERR_PTR(-ENOMEM);
+>
+>         pdata->leds.leds = tca_leds;
+> -       pdata->leds.num_leds = count;
+> +       pdata->leds.num_leds = NUM_LEDS;
+>
+>         return pdata;
+>  }
