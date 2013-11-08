@@ -1,149 +1,122 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO configuration.
-Date: Thu, 7 Nov 2013 15:46:10 -0800
-Message-ID: <CAK5ve-LCD1keP+cimRcXSQwFAH6OKpU-ABBQS5LkptgANmDWsQ@mail.gmail.com>
-References: <20131101134120.13a44225@notabene.brown> <CAK5ve-LzYLr0xuvNA3MX=pECPPfAkDFqExPpmQt8GF+9jf5uHg@mail.gmail.com>
+From: NeilBrown <neilb@suse.de>
+Subject: PATCH] LEDS: tca6507 - fix up some comments.
+Date: Fri, 8 Nov 2013 14:20:04 +1100
+Message-ID: <20131108142004.10e31655@notabene.brown>
+References: <20131101134120.13a44225@notabene.brown>
+	<CAK5ve-LzYLr0xuvNA3MX=pECPPfAkDFqExPpmQt8GF+9jf5uHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/35mmyz68LUF1WSnJ4UzQUfW"; protocol="application/pgp-signature"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:37545 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754057Ab3KGXqe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Nov 2013 18:46:34 -0500
+Received: from cantor2.suse.de ([195.135.220.15]:52549 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752935Ab3KHDUS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 7 Nov 2013 22:20:18 -0500
 In-Reply-To: <CAK5ve-LzYLr0xuvNA3MX=pECPPfAkDFqExPpmQt8GF+9jf5uHg@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: NeilBrown <neilb@suse.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
 
-On Thu, Nov 7, 2013 at 3:39 PM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Thu, Oct 31, 2013 at 7:41 PM, NeilBrown <neilb@suse.de> wrote:
->>
->
-> [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO configuration.
->
-> I think it should be tca6507, right? Typo?
->
+--Sig_/35mmyz68LUF1WSnJ4UzQUfW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I fixed this typo and queue up this patch in my devel branch.
 
--Bryan
+In particular fix the capitalisation of GPIO and LED and
+correct TCA6507_MAKE_CPIO, but also rewrite the comment about
+platform-data to include reference to devicetree.
 
-> For other parts of this patch, I'm OK for them.
->
-> And just a quick scan of the leds-tca6507, I found bunch of typos in
-> the comments:
->
-> * An led-tca6507 device must be provided with platform data.  This data
->  * lists for each output: the name, default trigger, and whether the signal
->  * is being used as a GPiO rather than an led.  'struct led_plaform_data'
->
-> Can we unify to use GPIO and gpio?
->
->  * is used for this.  If 'name' is NULL, the output isn't used.  If 'flags'
->  * is TCA6507_MAKE_CPIO, the output is a GPO.
->
-> Here should be TCA6507_MAKE_GPIO and GPIO instead of GPO
->
->  * The "struct led_platform_data" can be embedded in a
->  * "struct tca6507_platform_data" which adds a 'gpio_base' for the GPiOs,
->  * and a 'setup' callback which is called once the GPiOs are available.
->
-> Don't use GPiO, please.
->
-> Could you please review the code again and submit a cleanup patch to
-> fix those typos?
->
-> Thanks,
-> -Bryan
->
->
->> The 7 lines driven by the TCA6507 can either drive LEDs or act as output-only
->> GPIOs.
->>
->> To make this distinction in devicetree we use the "compatible" property.
->>
->> If the device attached to a line is "compatible" with "gpio", we treat it
->> like a GPIO.  If it is "compatible" with "led" (or if no "compatible" value
->> is set) we treat it like an LED.
->>
->> Signed-off-by: NeilBrown <neilb@suse.de>
->>
->> diff --git a/Documentation/devicetree/bindings/leds/tca6507.txt b/Documentation/devicetree/bindings/leds/tca6507.txt
->> index 80ff3dfb1f32..d7221b84987c 100644
->> --- a/Documentation/devicetree/bindings/leds/tca6507.txt
->> +++ b/Documentation/devicetree/bindings/leds/tca6507.txt
->> @@ -2,6 +2,13 @@ LEDs connected to tca6507
->>
->>  Required properties:
->>  - compatible : should be : "ti,tca6507".
->> +- #address-cells: must be 1
->> +- #size-cells: must be 0
->> +- reg: typically 0x45.
->> +
->> +Optional properties:
->> +- gpio-controller: allows lines to be used as output-only GPIOs.
->> +- #gpio-cells: if present, must be 0.
->>
->>  Each led is represented as a sub-node of the ti,tca6507 device.
->>
->> @@ -10,6 +17,7 @@ LED sub-node properties:
->>  - reg : number of LED line (could be from 0 to 6)
->>  - linux,default-trigger : (optional)
->>     see Documentation/devicetree/bindings/leds/common.txt
->> +- compatible: either "led" (the default) or "gpio".
->>
->>  Examples:
->>
->> @@ -19,6 +27,9 @@ tca6507@45 {
->>         #size-cells = <0>;
->>         reg = <0x45>;
->>
->> +       gpio-controller;
->> +       #gpio-cells = <2>;
->> +
->>         led0: red-aux@0 {
->>                 label = "red:aux";
->>                 reg = <0x0>;
->> @@ -29,5 +40,10 @@ tca6507@45 {
->>                 reg = <0x5>;
->>                 linux,default-trigger = "default-on";
->>         };
->> +
->> +       wifi-reset@6 {
->> +               reg = <0x6>;
->> +               compatible = "gpio";
->> +       };
->>  };
->>
->> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
->> index f5063f447463..93a2b1759054 100644
->> --- a/drivers/leds/leds-tca6507.c
->> +++ b/drivers/leds/leds-tca6507.c
->> @@ -638,6 +638,9 @@ static int tca6507_probe_gpios(struct i2c_client *client,
->>         tca->gpio.direction_output = tca6507_gpio_direction_output;
->>         tca->gpio.set = tca6507_gpio_set_value;
->>         tca->gpio.dev = &client->dev;
->> +#ifdef CONFIG_OF_GPIO
->> +       tca->gpio.of_node = of_node_get(client->dev.of_node);
->> +#endif
->>         err = gpiochip_add(&tca->gpio);
->>         if (err) {
->>                 tca->gpio.ngpio = 0;
->> @@ -696,6 +699,8 @@ tca6507_led_dt_init(struct i2c_client *client)
->>                 led.default_trigger =
->>                         of_get_property(child, "linux,default-trigger", NULL);
->>                 led.flags = 0;
->> +               if (of_property_match_string(child, "compatible", "gpio") >= 0)
->> +                       led.flags |= TCA6507_MAKE_GPIO;
->>                 ret = of_property_read_u32(child, "reg", &reg);
->>                 if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
->>                         continue;
->> @@ -709,6 +714,7 @@ tca6507_led_dt_init(struct i2c_client *client)
->>
->>         pdata->leds.leds = tca_leds;
->>         pdata->leds.num_leds = NUM_LEDS;
->> +       pdata->gpio_base = -1;
->>
->>         return pdata;
->>  }
+Reported-by: Bryan Wu <cooloney@gmail.com>
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index 93a2b1759054..80c9d69e2bdd 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -8,7 +8,7 @@
+  * double-blink.
+  *
+  * This driver can configure each line either as a 'GPIO' which is out-only
+- * (no pull-up) or as an LED with variable brightness and hardware-assisted
++ * (pull-up resistor required) or as an LED with variable brightness and h=
+ardware-assisted
+  * blinking.
+  *
+  * Apart from OFF and ON there are three programmable brightness levels wh=
+ich
+@@ -60,21 +60,26 @@
+  * and LEDs using the blink.  It can only be reprogrammed when the appropr=
+iate
+  * counter is zero.  The MASTER level has a single usage count.
+  *
+- * Each Led has programmable 'on' and 'off' time as milliseconds.  With ea=
+ch
++ * Each LED has programmable 'on' and 'off' time as milliseconds.  With ea=
+ch
+  * there is a flag saying if it was explicitly requested or defaulted.
+  * Similarly the banks know if each time was explicit or a default.  Defau=
+lts
+  * are permitted to be changed freely - they are not recognised when match=
+ing.
+  *
+  *
+- * An led-tca6507 device must be provided with platform data.  This data
+- * lists for each output: the name, default trigger, and whether the signal
+- * is being used as a GPiO rather than an led.  'struct led_plaform_data'
+- * is used for this.  If 'name' is NULL, the output isn't used.  If 'flags'
+- * is TCA6507_MAKE_CPIO, the output is a GPO.
+- * The "struct led_platform_data" can be embedded in a
+- * "struct tca6507_platform_data" which adds a 'gpio_base' for the GPiOs,
+- * and a 'setup' callback which is called once the GPiOs are available.
++ * An led-tca6507 device must be provided with platform data or configured
++ * via devicetree.
++ * The platform-data lists for each output: the name, default trigger,
++ * and whether the signal is being used as a GPIO rather than an LED.
++ * 'struct led_plaform_data' is used for this.  If 'name' is NULL, the
++ * output isn't used.  If 'flags' is TCA6507_MAKE_GPIO, the output is
++ * a GPO.  The "struct led_platform_data" can be embedded in a "struct
++ * tca6507_platform_data" which adds a 'gpio_base' for the GPIOs, and
++ * a 'setup' callback which is called once the GPIOs are available.
+  *
++ * When configured via devicetree there is one child for each output.
++ * The "reg" determines the output number and "compatible" determines
++ * whether it is an LED or a GPIO.  "linux,default-trigger" can set a
++ * default trigger.
+  */
+=20
+ #include <linux/module.h>
+@@ -309,7 +314,7 @@ static void set_level(struct tca6507_chip *tca, int ban=
+k, int level)
+ 	tca->bank[bank].level =3D level;
+ }
+=20
+-/* Record all relevant time code for a given bank */
++/* Record all relevant time codes for a given bank */
+ static void set_times(struct tca6507_chip *tca, int bank)
+ {
+ 	int c1, c2;
+
+--Sig_/35mmyz68LUF1WSnJ4UzQUfW
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIVAwUBUnxYZDnsnt1WYoG5AQJ3UA/7Bv1503iG+UJrfHGukYyYUxvWSrmfO8MU
+244E8zXSxImkrtLrd1ok12GGBbmLrG/XJL1FUUMVUZcTMJ3y0RCpbeNbCSjhuLtB
+zKl9r7TeixXLePXVQSwzHxagjQtcOZmQgGItTLzEWBq5Ue8J3eHSr7l9S30dB2MC
+RdUr1/2sISGon1rvZtCZRjoYFxQ6iCCnJru8vMeJEmmRaZFolmc4wmOEOCmrnpIJ
+Od8LfJHJa8xWh1Ug5HEAv+IXVx7r7dgTrQH1WOehlM108MX/rmUnCCKZmex7nnhG
+TerriMNTESGEHgFRLHZ25e4GJ9FNQ9p+c1uvx27zzPwYS2TuKQ1xJFx53uY8sc3n
+0TubzxpyNx0hufrGx2BlBeHdiclOAnqV9vpinH1oA8PGqnOjhD0NYT2cN3paF9wt
+5rGRPuLyat16ODIdyRxdpXwPsFTTbCKupWfDQ8vZM4pVGT3QsZAA4aV0lpEFAip+
+k+cNsBhoE6dEld6t9Oc9WuVjY8hX2QBceG/0Ec8gkijRmTTVANTRDNal79ybhGsu
+8FQzon7gP3BpRKesMUPvkv3uOHcBoMRTHvWmSjDwL3eom0DlByw5kVILHaoWGZUJ
+wOo39SSAilSxBMTHhUKsniununN8B5PXit+y0cNRfAiP69jaT4VXuIYZsUfGti4i
+41S4wuMpWUg=
+=N1uo
+-----END PGP SIGNATURE-----
+
+--Sig_/35mmyz68LUF1WSnJ4UzQUfW--
