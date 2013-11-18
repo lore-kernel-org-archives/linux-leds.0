@@ -1,54 +1,123 @@
-From: elise51823@googlemail.com
-Subject: Re: Guaranteed Top 10 Google Placements mail-archive.com In 100 Days
-Date: Fri, 15 Nov 2013 01:14:32 +0530
-Message-ID: <5285281d.8aa3420a.2e82.30da@mx.google.com>
-Reply-To: DIANA68371@gmail.com
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO
+ configuration.
+Date: Mon, 18 Nov 2013 11:55:12 +0000
+Message-ID: <20131118115512.GF30853@e106331-lin.cambridge.arm.com>
+References: <20131101134120.13a44225@notabene.brown>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:58802 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755342Ab3KNToa (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 14 Nov 2013 14:44:30 -0500
-Received: by mail-pa0-f67.google.com with SMTP id rd3so676027pab.6
-        for <linux-leds@vger.kernel.org>; Thu, 14 Nov 2013 11:44:30 -0800 (PST)
-Received: from localhost.localdomain ([124.253.29.188])
-        by mx.google.com with ESMTPSA id yi10sm894956pab.8.2013.11.14.11.44.27
-        for <linux-leds@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Thu, 14 Nov 2013 11:44:29 -0800 (PST)
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48972 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751171Ab3KRLz3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Mon, 18 Nov 2013 06:55:29 -0500
+Content-Disposition: inline
+In-Reply-To: <20131101134120.13a44225@notabene.brown>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
+To: NeilBrown <neilb@suse.de>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hello Sir / Mam,
+On Fri, Nov 01, 2013 at 02:41:20AM +0000, NeilBrown wrote:
+> 
+> The 7 lines driven by the TCA6507 can either drive LEDs or act as output-only
+> GPIOs.
+> 
+> To make this distinction in devicetree we use the "compatible" property.
+> 
+> If the device attached to a line is "compatible" with "gpio", we treat it
+> like a GPIO.  If it is "compatible" with "led" (or if no "compatible" value
+> is set) we treat it like an LED.
 
-We would like to have a chance to work on your website and get it positioned top 10 on major search engines around the world ( Google & Bing ). We are presently working with 500+ clients world wide and we have made sure all our clients rank top 10 for their best keywords. None of our clients have been caught in any of the recent google updates. We only use ethical white hat methods to deliver rankings. Our search engine packages include both onsite & off optimization, we provide complete SEO solution to our clients and not just link building packages.
+I'm nto sure I understand the purpose of this.
 
-We understand there are many SEO Scam companies mailing you each day over and over again and I am also sure you have been robbed off a few times in past with no results at all. To make sure you we show you our WORTH, we have launched 15 DAY FREE SEO TRIAL service. We want to build your faith in our service and make sure you see results before paying for our service.
+Are these lines all GPIOs, some of which happen to by attached to LEDs?
 
-Is 15 days Enough time to deliver results ?
+If so, why is handlnig the device as a gpio-controller and using the
+gpio-leds binding not sufficient?
 
-15 days is good enough a time to show you huge movements in rankings for all your keywords. We start with A) choosing the best keywords for your website, B)  Approve a final list of keywords, C) Make onsite changes D) Build links for your website. If in these 15 days you are not happy with our performance, you can cancel or decide to opt-out. You will not be billed a single dime for these 15 days.
+THanksm
+Mark.
 
-Post Trial Pricing & Package
-
-In the 15 days trial, we only work for 10 keywords so that we can show best possible results in the time span. Once the trial is over you pick one of the packages listed below :
-
-Package A ) $99 / month (10 keywords optimized ) Package B ) $149 / month ( 20 keywords optimized ) Package C ) $199 / month ( 30 keywords optimized )
-
-To Sign up for our free trial email us back with the information below so we can send you our sign up link.
-
-1) " Website You Want To Optimize "
-2) Keywords ( Optional )
-3) SEO Done Before ( Yes / No )
-
-Looking forward working with you, let us know if you would like to have more information about our company and procedures.
-Regards
-
-Vince G
-SEO Manager : T.O.B
-7 B Green Avenue, Amritsar Punjab
-
-----------------------------------------------------------------------------------------------------------------
-
-
-Our email above is not intended to waste your time or fill your inbox with spam. If you would not like to hear from us, email us back with NOT INTERESTED. We will never email you again.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/tca6507.txt b/Documentation/devicetree/bindings/leds/tca6507.txt
+> index 80ff3dfb1f32..d7221b84987c 100644
+> --- a/Documentation/devicetree/bindings/leds/tca6507.txt
+> +++ b/Documentation/devicetree/bindings/leds/tca6507.txt
+> @@ -2,6 +2,13 @@ LEDs connected to tca6507
+>  
+>  Required properties:
+>  - compatible : should be : "ti,tca6507".
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
+> +- reg: typically 0x45.
+> +
+> +Optional properties:
+> +- gpio-controller: allows lines to be used as output-only GPIOs.
+> +- #gpio-cells: if present, must be 0.
+>  
+>  Each led is represented as a sub-node of the ti,tca6507 device.
+>  
+> @@ -10,6 +17,7 @@ LED sub-node properties:
+>  - reg : number of LED line (could be from 0 to 6)
+>  - linux,default-trigger : (optional)
+>     see Documentation/devicetree/bindings/leds/common.txt
+> +- compatible: either "led" (the default) or "gpio".
+>  
+>  Examples:
+>  
+> @@ -19,6 +27,9 @@ tca6507@45 {
+>  	#size-cells = <0>;
+>  	reg = <0x45>;
+>  
+> +	gpio-controller;
+> +	#gpio-cells = <2>;
+> +
+>  	led0: red-aux@0 {
+>  		label = "red:aux";
+>  		reg = <0x0>;
+> @@ -29,5 +40,10 @@ tca6507@45 {
+>  		reg = <0x5>;
+>  		linux,default-trigger = "default-on";
+>  	};
+> +
+> +	wifi-reset@6 {
+> +		reg = <0x6>;
+> +		compatible = "gpio";
+> +	};
+>  };
+>  
+> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+> index f5063f447463..93a2b1759054 100644
+> --- a/drivers/leds/leds-tca6507.c
+> +++ b/drivers/leds/leds-tca6507.c
+> @@ -638,6 +638,9 @@ static int tca6507_probe_gpios(struct i2c_client *client,
+>  	tca->gpio.direction_output = tca6507_gpio_direction_output;
+>  	tca->gpio.set = tca6507_gpio_set_value;
+>  	tca->gpio.dev = &client->dev;
+> +#ifdef CONFIG_OF_GPIO
+> +	tca->gpio.of_node = of_node_get(client->dev.of_node);
+> +#endif
+>  	err = gpiochip_add(&tca->gpio);
+>  	if (err) {
+>  		tca->gpio.ngpio = 0;
+> @@ -696,6 +699,8 @@ tca6507_led_dt_init(struct i2c_client *client)
+>  		led.default_trigger =
+>  			of_get_property(child, "linux,default-trigger", NULL);
+>  		led.flags = 0;
+> +		if (of_property_match_string(child, "compatible", "gpio") >= 0)
+> +			led.flags |= TCA6507_MAKE_GPIO;
+>  		ret = of_property_read_u32(child, "reg", &reg);
+>  		if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
+>  			continue;
+> @@ -709,6 +714,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+>  
+>  	pdata->leds.leds = tca_leds;
+>  	pdata->leds.num_leds = NUM_LEDS;
+> +	pdata->gpio_base = -1;
+>  
+>  	return pdata;
+>  }
