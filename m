@@ -1,189 +1,305 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: [PATCH 2/2] LEDS: tca6502: add device-tree support for GPIO
- configuration.
-Date: Tue, 19 Nov 2013 09:50:01 +1100
-Message-ID: <20131119095001.610e47c5@notabene.brown>
-References: <20131101134120.13a44225@notabene.brown>
-	<20131118115512.GF30853@e106331-lin.cambridge.arm.com>
+From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH 00/10] leds: lp5521,5523: restore device attributes for running LED patterns
+Date: Tue, 19 Nov 2013 11:35:47 +0100
+Message-ID: <201311191135.54553@pali>
+References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <527C7384.1040103@ti.com> <CAK5ve-KQPxc-xWs1rh6KTgGK8VdLOgHqMLT8D90+mYt8P+xaew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/pzni9iv9=k+.qudDBdJBewZ"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:43729 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751301Ab3KRWuT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 18 Nov 2013 17:50:19 -0500
-In-Reply-To: <20131118115512.GF30853@e106331-lin.cambridge.arm.com>
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:33602 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750823Ab3KSKf7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Nov 2013 05:35:59 -0500
+In-Reply-To: <CAK5ve-KQPxc-xWs1rh6KTgGK8VdLOgHqMLT8D90+mYt8P+xaew@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Belisko Marek <marek.belisko@gmail.com>, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Milo Kim <milo.kim@ti.com>, Milo Kim <woogyom.kim@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
---Sig_/pzni9iv9=k+.qudDBdJBewZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Mon, 18 Nov 2013 11:55:12 +0000 Mark Rutland <mark.rutland@arm.com> wrot=
-e:
+now I tested that patch on top of 3.12-rc5 with this led example:
 
-> On Fri, Nov 01, 2013 at 02:41:20AM +0000, NeilBrown wrote:
-> >=20
-> > The 7 lines driven by the TCA6507 can either drive LEDs or act as outpu=
-t-only
-> > GPIOs.
-> >=20
-> > To make this distinction in devicetree we use the "compatible" property.
-> >=20
-> > If the device attached to a line is "compatible" with "gpio", we treat =
-it
-> > like a GPIO.  If it is "compatible" with "led" (or if no "compatible" v=
-alue
-> > is set) we treat it like an LED.
+    # Clearing LED-state to be sure
+    echo "disabled" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+    echo "disabled" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+    echo 0 > /sys/class/leds/lp5523:r/brightness
+    echo 0 > /sys/class/leds/lp5523:g/brightness
+    echo 0 > /sys/class/leds/lp5523:b/brightness
+
+    # Setting yellow light pattern and running it
+    echo "load" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+    echo "000001100" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_leds
+    echo "9d804000427f0d7f7f007f0042000000" > /sys/class/i2c-adapter/i2=
+c-2/2-0032/engine1_load
+    echo "load" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+    echo "000000000" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_leds
+    echo "9d800000" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_load
+    echo "run" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+    echo "run" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+    echo 20 > /sys/class/leds/lp5523:r/led_current
+    echo 2 > /sys/class/leds/lp5523:g/led_current
+    echo 0 > /sys/class/leds/lp5523:b/led_current
+
+And now it working, led blinks :-) I also tested Maemo
+application for managing lp5523 led and now it working too.
+
+But new interface via request_firmware still not working.
+Directory /sys/class/firmware/lp5523/data not exists.
+
+I think that there can be race condition with udev which is
+responsible for firmware loading... Anyway main problem solved,
+old interface is working again and old applications too.
+
+On Tuesday 19 November 2013 02:13:49 Bryan Wu wrote:
+> Pali,
 >=20
-> I'm nto sure I understand the purpose of this.
+> Could you please test Milo's patch?
 >=20
-> Are these lines all GPIOs, some of which happen to by attached to LEDs?
+> Thanks,
+> -Bryan
 >=20
-> If so, why is handlnig the device as a gpio-controller and using the
-> gpio-leds binding not sufficient?
-
-No, all the lines are designed to drives LEDs but can happen to be wired up
-like GPIOs.  This configuration is explicitly described in the data sheets
-for the chip, and is actually used in my board.
-
-The 7 pins either float or sink current. They can switch between the two
-modes in various ways under hardware control with a PWM which can have a
-varying duty cycle.
-So they are very suitable for driving LEDs as the PWM can adjust the appare=
-nt
-brightness and the varying duty cycle can effect a 'blink' pattern.
-
-But the pins can also be fixed in one state of the other - either never on =
-or
-always on.  Floating or constantly sinking current.
-
-This mode combined with a pull-up resistor makes an effective output-only
-GPIO.  The same action that would turn the LED on, will pull the GPIO low.
-The action that would turn the LED off, will allow the GPIO to go high.
-
-So the device connected to each pin can be treated as an LED or as a GPIO.
-
-I hope that clarifies the situation.
-
-Thanks,
-NeilBrown
-
-
->=20
-> THanksm
-> Mark.
->=20
+> On Thu, Nov 7, 2013 at 9:15 PM, Milo Kim <milo.kim@ti.com> wrote:
+> > Hi Pali,
 > >=20
-> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > Sorry for the late reply.
 > >=20
-> > diff --git a/Documentation/devicetree/bindings/leds/tca6507.txt b/Docum=
-entation/devicetree/bindings/leds/tca6507.txt
-> > index 80ff3dfb1f32..d7221b84987c 100644
-> > --- a/Documentation/devicetree/bindings/leds/tca6507.txt
-> > +++ b/Documentation/devicetree/bindings/leds/tca6507.txt
-> > @@ -2,6 +2,13 @@ LEDs connected to tca6507
-> > =20
-> >  Required properties:
-> >  - compatible : should be : "ti,tca6507".
-> > +- #address-cells: must be 1
-> > +- #size-cells: must be 0
-> > +- reg: typically 0x45.
+> > On 10/26/2013 03:21 AM, Pali Roh=C3=A1r wrote:
+> >> On Friday 25 October 2013 19:10:07 Bryan Wu wrote:
+> >>> On Fri, Oct 25, 2013 at 9:38 AM, Pali Roh=C3=A1r
+> >>=20
+> >> <pali.rohar@gmail.com> wrote:
+> >>> On Tuesday 13 August 2013 23:04:14 Bryan Wu wrote:
+> >>>>> On Thu, Aug 8, 2013 at 12:59 AM, Milo Kim
+> >>>>=20
+> >>>> <woogyom.kim@gmail.com> wrote:
+> >>>  This patch-set resolves the application conflict by
+> >>> =20
+> >>>>>> restoring sysfs files.
+> >>>>>>=20
+> >>>>>> For LP5521
+> >>>>>>=20
+> >>>>>>    engine1/2/3_mode
+> >>>>>>    engine1/2/3_load
+> >>>>>>=20
+> >>>>>> For LP5523
+> >>>>>>=20
+> >>>>>>    engine1/2/3_mode
+> >>>>>>    engine1/2/3_load
+> >>>>>>    engine1/2/3_leds
+> >>>>>>=20
+> >>>>>> Those attributes are accessed when LED pattern is run
+> >>>>>> by custom application. Those were removed when LED
+> >>>>>> pattern interface was changed to generic firmware
+> >>>>>> interface. Please refer to commits below.
+> >>>>>>=20
+> >>>>>>    git commit 9ce7cb170f97f83a78dc948bf7d25690f15e1328
+> >>>>>>    (leds-lp5521: use generic firmware interface)
+> >>>>>>   =20
+> >>>>>>    git commit db6eaf8388a413a5ee1b4547ce78506b9c6456b0
+> >>>>>>    (leds-lp5523: use generic firmware interface)
+> >>>>>>=20
+> >>>>>> Necessary attributes are restored in this patch-set.
+> >>>>>>=20
+> >>>>>> (Other changes)
+> >>>>>> New data structure is added for handling values from/to
+> >>>>>> an application. Few code fixes for reducing writing I2C
+> >>>>>> commands.
+> >>>>>> Add LP55xx common macros for code refactoring.
+> >>>>>> Documentation updates.
+> >>>>>>=20
+> >>>>>> You can also pull from the location below
+> >>>>>> This branch is based on 'for-next' of linux-leds.
+> >>>>>>=20
+> >>>>>>    https://github.com/milokim/lp55xx.git
+> >>>>>>    resolve-missing-sysfs
+> >>>>>=20
+> >>>>> Thanks, I've already merged the whole patchset in my
+> >>>>> -devel branch [1].
+> >>>>>=20
+> >>>>> Pali, could you please help to test it on your hardware?
+> >>>>> Just grab my -devel branch and build then run.
+> >>>>>=20
+> >>>>> Thanks,
+> >>>>> -Bryan
+> >>>>=20
+> >>>> Hi, I see that all your patches are part of 3.12-rc5
+> >>>> kernel.
+> >>>>=20
+> >>>> Now I tested this example led program:
+> >>>>      # Clearing LED-state to be sure
+> >>>>      echo "disabled" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+> >>>>      echo "disabled" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+> >>>>      echo 0
+> >>>>     =20
+> >>>>      > /sys/class/leds/lp5523:r/brightness
+> >>>>     =20
+> >>>>      echo 0 > /sys/class/leds/lp5523:g/brightness
+> >>>>      echo 0 > /sys/class/leds/lp5523:b/brightness
+> >>>>     =20
+> >>>>      # Setting yellow light pattern and running it
+> >>>>      echo "load" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+> >>>>      echo "000001100" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine1_leds
+> >>>>      echo "9d804000427f0d7f7f007f0042000000" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine1_load
+> >>>>      echo "load" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+> >>>>      echo "000000000" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine2_leds
+> >>>>      echo "9d800000" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine2_load
+> >>>>      echo "run" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
+> >>>>      echo "run" >
+> >>>>      /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
+> >>>>      echo 20 > /sys/class/leds/lp5523:r/led_current
+> >>>>      echo 2 > /sys/class/leds/lp5523:g/led_current
+> >>>>      echo 0 > /sys/class/leds/lp5523:b/led_current
+> >=20
+> > In the latest LP5523 driver, I just found wrong operation
+> > mode setting in case of multiple engine used. (please find
+> > a patch below)
+> >=20
+> >>>> All sysfs entries exists and every echo returned 0.
+> >>>>=20
+> >>>> But led does not start blinking that yellow ligh pattern.
+> >>>> So it not working on 3.12-rc5 kernel :-(
+> >>>=20
+> >>> OK, great! Do you still remember which kernel version
+> >>> works on you system? Milo, do you have time to take a
+> >>> look? I bet it's a regression somewhere.
+> >>>=20
+> >>> Thanks,
+> >>> -Bryan
+> >>=20
+> >> I do not know which version. Now I tried pattern example
+> >> from Documentation/leds/leds-lp55xx.txt which using new
+> >> API.
+> >>=20
+> >> echo 2 > /sys/class/i2c-adapter/i2c-2/2-0032/select_engine
+> >> echo 1 > /sys/class/firmware/lp5523/loading
+> >> echo "9d80400004ff05ff437f0000" >
+> >> /sys/class/firmware/lp5523/data echo 0 >
+> >> /sys/class/firmware/lp5523/loading
+> >> echo 1 > /sys/class/i2c-adapter/i2c-2/2-0032/run_engine
+> >>=20
+> >> But it failed at second command. In directory
+> >> /sys/class/firmware/ I have only one file with name
+> >> timeout. Nothing more, no lp5523 folder.
+> >=20
+> > I can't reproduce this issue but I found some duplicated
+> > mutex problem. But in my case, I could found
+> > /sys/class/firmware/lp5523 directory. Is any permission
+> > issue? Anyway, I've added fixed mutex code below.
+> >=20
+> > Could you check this patch below?
+> > If it's resolved, then I'll send official patch-set.
+> >=20
+> > -------------------- 8< ---------------- 8<
+> > ---------------------------
+> >=20
+> > From dad27e0d834a5635232116569aaa1fa471ac46bf Mon Sep 17
+> > 00:00:00 2001 From: Milo Kim <milo.kim@ti.com>
+> > Date: Fri, 8 Nov 2013 13:43:33 +0900
+> > Subject: [PATCH] leds: lp5523: Fix multiple engine usage bug
+> > and remove
+> >=20
+> >  duplicated mutex
+> >=20
+> > Fix multiple engine usage bug:
+> >   Whenever the engine is loaded by the user-application, the
+> >   operation
+> >=20
+> > mode is
+> >=20
+> >   reset first. But it has a problem in case of multiple
+> >   engine used because previous engine settings are cleared.
+> >   The driver should update not whole 8bits but each engine
+> >   bits by masking.
+> >=20
+> > Remove duplicate mutex:
+> >   It can be a problem when a pattern is loaded via the
+> >   firmware interface. LP55xx common driver has already
+> >   locked the mutex in 'lp55xx_firmware_loaded()'.
+> >   So it should be deleted.
+> >=20
+> > Signed-off-by: Milo Kim <milo.kim@ti.com>
+> > ---
+> >=20
+> >  drivers/leds/leds-lp5523.c |   14 +++++++++-----
+> >  1 file changed, 9 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/leds/leds-lp5523.c
+> > b/drivers/leds/leds-lp5523.c index fe3bcbb..c00f55e 100644
+> > --- a/drivers/leds/leds-lp5523.c
+> > +++ b/drivers/leds/leds-lp5523.c
+> > @@ -188,7 +188,15 @@ static void
+> > lp5523_load_engine_and_select_page(struct lp55xx_chip
+> > *chip)
+> >=20
+> >  static void lp5523_stop_engine(struct lp55xx_chip *chip)
+> >  {
+> >=20
+> > -       lp55xx_write(chip, LP5523_REG_OP_MODE, 0);
+> > +       enum lp55xx_engine_index idx =3D chip->engine_idx;
+> > +       u8 mask[] =3D {
+> > +               [LP55XX_ENGINE_1] =3D LP5523_MODE_ENG1_M,
+> > +               [LP55XX_ENGINE_2] =3D LP5523_MODE_ENG2_M,
+> > +               [LP55XX_ENGINE_3] =3D LP5523_MODE_ENG3_M,
+> > +       };
 > > +
-> > +Optional properties:
-> > +- gpio-controller: allows lines to be used as output-only GPIOs.
-> > +- #gpio-cells: if present, must be 0.
+> > +       lp55xx_update_bits(chip, LP5523_REG_OP_MODE,
+> > mask[idx], 0); +
+> >=20
+> >         lp5523_wait_opmode_done();
 > > =20
-> >  Each led is represented as a sub-node of the ti,tca6507 device.
-> > =20
-> > @@ -10,6 +17,7 @@ LED sub-node properties:
-> >  - reg : number of LED line (could be from 0 to 6)
-> >  - linux,default-trigger : (optional)
-> >     see Documentation/devicetree/bindings/leds/common.txt
-> > +- compatible: either "led" (the default) or "gpio".
-> > =20
-> >  Examples:
-> > =20
-> > @@ -19,6 +27,9 @@ tca6507@45 {
-> >  	#size-cells =3D <0>;
-> >  	reg =3D <0x45>;
-> > =20
-> > +	gpio-controller;
-> > +	#gpio-cells =3D <2>;
-> > +
-> >  	led0: red-aux@0 {
-> >  		label =3D "red:aux";
-> >  		reg =3D <0x0>;
-> > @@ -29,5 +40,10 @@ tca6507@45 {
-> >  		reg =3D <0x5>;
-> >  		linux,default-trigger =3D "default-on";
-> >  	};
-> > +
-> > +	wifi-reset@6 {
-> > +		reg =3D <0x6>;
-> > +		compatible =3D "gpio";
-> > +	};
-> >  };
-> > =20
-> > diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> > index f5063f447463..93a2b1759054 100644
-> > --- a/drivers/leds/leds-tca6507.c
-> > +++ b/drivers/leds/leds-tca6507.c
-> > @@ -638,6 +638,9 @@ static int tca6507_probe_gpios(struct i2c_client *c=
-lient,
-> >  	tca->gpio.direction_output =3D tca6507_gpio_direction_output;
-> >  	tca->gpio.set =3D tca6507_gpio_set_value;
-> >  	tca->gpio.dev =3D &client->dev;
-> > +#ifdef CONFIG_OF_GPIO
-> > +	tca->gpio.of_node =3D of_node_get(client->dev.of_node);
-> > +#endif
-> >  	err =3D gpiochip_add(&tca->gpio);
-> >  	if (err) {
-> >  		tca->gpio.ngpio =3D 0;
-> > @@ -696,6 +699,8 @@ tca6507_led_dt_init(struct i2c_client *client)
-> >  		led.default_trigger =3D
-> >  			of_get_property(child, "linux,default-trigger", NULL);
-> >  		led.flags =3D 0;
-> > +		if (of_property_match_string(child, "compatible", "gpio") >=3D 0)
-> > +			led.flags |=3D TCA6507_MAKE_GPIO;
-> >  		ret =3D of_property_read_u32(child, "reg", &reg);
-> >  		if (ret !=3D 0 || reg < 0 || reg >=3D NUM_LEDS)
-> >  			continue;
-> > @@ -709,6 +714,7 @@ tca6507_led_dt_init(struct i2c_client *client)
-> > =20
-> >  	pdata->leds.leds =3D tca_leds;
-> >  	pdata->leds.num_leds =3D NUM_LEDS;
-> > +	pdata->gpio_base =3D -1;
-> > =20
-> >  	return pdata;
 > >  }
->=20
+> >=20
+> > @@ -336,8 +344,6 @@ static int
+> > lp5523_update_program_memory(struct lp55xx_chip *chip,
+> >=20
+> >         if (i % 2)
+> >        =20
+> >                 goto err;
+> >=20
+> > -       mutex_lock(&chip->lock);
+> > -
+> >=20
+> >         for (i =3D 0; i < LP5523_PROGRAM_LENGTH; i++) {
+> >        =20
+> >                 ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM
+> >                 + i,
+> >=20
+> > pattern[i]);
+> >=20
+> >                 if (ret) {
+> >=20
+> > @@ -346,8 +352,6 @@ static int
+> > lp5523_update_program_memory(struct lp55xx_chip *chip,
+> >=20
+> >                 }
+> >        =20
+> >         }
+> >=20
+> > -       mutex_unlock(&chip->lock);
+> > -
+> >=20
+> >         return size;
+> > =20
+> >  err:
+> > --
+> > 1.7.9.5
+> > -------------------- 8< ---------------- 8<
+> > ---------------------------
+> >=20
+> > Best regards,
+> > Milo
 
-
---Sig_/pzni9iv9=k+.qudDBdJBewZ
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIVAwUBUoqZmTnsnt1WYoG5AQLoNQ/+N8ZWQ5hq/0azLK0wbZT7A7nvU3N3eMyR
-OfgsPU7yBoUEtYyHvZR2eepf94fmXyD4eyP586u6xPiybbU9ne12RzPCTao3h5rX
-3YYg0eo8o+DPkMHuPEw+x/P7wj3rRnaNIIT6iKfKqK29z1/cSJZ0Psp1kROHEjd4
-N7WJdQEIyAAq9J6dCcYkjRTCnbpQEpIVA/SaUuZApG05fLWaCoTgbQDwvgLzk9J7
-Yk+fBo0mUDu7D8J7FXJM8z6qV8VMBzfPlav02FPsL187H9uBkxInUFMsOCxiKgAY
-UNgI5oaZFZZUUHjS7KlGXCo2xjxn5+AFd1ZsGSEuO4LqZk+pqZZ+QZLYTJul2m86
-sz/peZO2pI5iJhEom46cxz35Sq7avJmLFu7WgYyFLSLMfTOixXAt/kEKf6B8cj5d
-JMeHTqdVm+SHmwiMSPv2kTICSnqpT01JpvqxUhu1dFpW7L3Kd/pnh8KjXXsqtmBF
-n6Zc3OynNrZeDiF9KH2S1ZVaHriWxxb/v6L2U/uh7MzJNzR2i36tgS//AusfBtXD
-M7M36Jb1jIx02j08gBM4MUpxbO04S3e80S3OxR+E5eXHEkohVpzbsWzXf61J9KQL
-EPNJhBTXFgamOr6cumFLmShvInknnsRNYof/TdbHIp5iSNJN9EmK3VpBuK42rnv2
-oBxgdF8c6zM=
-=drnJ
------END PGP SIGNATURE-----
-
---Sig_/pzni9iv9=k+.qudDBdJBewZ--
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
