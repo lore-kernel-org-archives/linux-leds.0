@@ -1,72 +1,134 @@
 From: Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH 00/10] leds: lp5521,5523: restore device attributes for
- running LED patterns
-Date: Wed, 20 Nov 2013 07:33:11 +0900
-Message-ID: <528BE727.6090703@ti.com>
-References: <1375948794-6286-1-git-send-email-milo.kim@ti.com> <527C7384.1040103@ti.com> <CAK5ve-KQPxc-xWs1rh6KTgGK8VdLOgHqMLT8D90+mYt8P+xaew@mail.gmail.com> <201311191135.54553@pali> <CAK5ve-+JfWRAy+jm35tTcH_jjG2bbrYaBtku=VjheY=wZ7Y1vQ@mail.gmail.com>
+Subject: [PATCH 1/3] leds: lp5521/5523: Fix multiple engine usage bug
+Date: Thu, 21 Nov 2013 15:13:34 +0900
+Message-ID: <1385014414-6400-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:48547 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751788Ab3KSWdP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 19 Nov 2013 17:33:15 -0500
-In-Reply-To: <CAK5ve-+JfWRAy+jm35tTcH_jjG2bbrYaBtku=VjheY=wZ7Y1vQ@mail.gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:53270 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751761Ab3KUGOA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Nov 2013 01:14:00 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>
-Cc: =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Milo Kim <milo.kim@ti.com>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
 
-Hi Bryan,
+Whenever the engine is loaded by the user-application, the operation mo=
+de is
+reset first. But it has a problem in case of multiple engine used becau=
+se
+previous engine settings are cleared.
+The driver should update not whole 8bits but each engine bit by masking=
+=2E
 
-On 11/20/2013 04:20 AM, Bryan Wu wrote:
-> On Tue, Nov 19, 2013 at 2:35 AM, Pali Roh=E1r<pali.rohar@gmail.com>  =
-wrote:
->> >Hello,
->> >
->> >now I tested that patch on top of 3.12-rc5 with this led example:
->> >
->> >     # Clearing LED-state to be sure
->> >     echo "disabled" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_=
-mode
->> >     echo "disabled" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_=
-mode
->> >     echo 0 > /sys/class/leds/lp5523:r/brightness
->> >     echo 0 > /sys/class/leds/lp5523:g/brightness
->> >     echo 0 > /sys/class/leds/lp5523:b/brightness
->> >
->> >     # Setting yellow light pattern and running it
->> >     echo "load" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
->> >     echo "000001100" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1=
-_leds
->> >     echo "9d804000427f0d7f7f007f0042000000" > /sys/class/i2c-adapt=
-er/i2c-2/2-0032/engine1_load
->> >     echo "load" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
->> >     echo "000000000" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2=
-_leds
->> >     echo "9d800000" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_=
-load
->> >     echo "run" > /sys/class/i2c-adapter/i2c-2/2-0032/engine2_mode
->> >     echo "run" > /sys/class/i2c-adapter/i2c-2/2-0032/engine1_mode
->> >     echo 20 > /sys/class/leds/lp5523:r/led_current
->> >     echo 2 > /sys/class/leds/lp5523:g/led_current
->> >     echo 0 > /sys/class/leds/lp5523:b/led_current
->> >
->> >And now it working, led blinks :-) I also tested Maemo
->> >application for managing lp5523 led and now it working too.
->> >
-> That's good. We can post this fixing patch to stable tree as well as
-> latest upstream kernel.
->
-> Milo, do you need to update your patch, if not I'm going to take it
-> into my tree and for stable tree.
+On the other hands, whole engines should be reset when the driver is un=
+loaded
+and on initializing the LP5523 driver.
+So, new functions are used for this handling - lp5521/5523_stop_all_eng=
+ines().
 
-I'll send the patch-set again because LP5521 is also required to be fix=
-ed.
-And _remove() also needs to be updated.
-I can send it by tomorrow.
+Cc: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+Signed-off-by: Milo Kim <milo.kim@ti.com>
+---
+ drivers/leds/leds-lp5521.c |   18 ++++++++++++++++--
+ drivers/leds/leds-lp5523.c |   20 +++++++++++++++++---
+ 2 files changed, 33 insertions(+), 5 deletions(-)
 
-Thanks,
-- Milo
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 0518835..26f89ac 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -152,12 +152,26 @@ static void lp5521_load_engine(struct lp55xx_chip=
+ *chip)
+ 	lp5521_wait_opmode_done();
+ }
+=20
+-static void lp5521_stop_engine(struct lp55xx_chip *chip)
++static void lp5521_stop_all_engines(struct lp55xx_chip *chip)
+ {
+ 	lp55xx_write(chip, LP5521_REG_OP_MODE, 0);
+ 	lp5521_wait_opmode_done();
+ }
+=20
++static void lp5521_stop_engine(struct lp55xx_chip *chip)
++{
++	enum lp55xx_engine_index idx =3D chip->engine_idx;
++	u8 mask[] =3D {
++		[LP55XX_ENGINE_1] =3D LP5521_MODE_R_M,
++		[LP55XX_ENGINE_2] =3D LP5521_MODE_G_M,
++		[LP55XX_ENGINE_3] =3D LP5521_MODE_B_M,
++	};
++
++	lp55xx_update_bits(chip, LP5521_REG_OP_MODE, mask[idx], 0);
++
++	lp5521_wait_opmode_done();
++}
++
+ static void lp5521_run_engine(struct lp55xx_chip *chip, bool start)
+ {
+ 	int ret;
+@@ -568,7 +582,7 @@ static int lp5521_remove(struct i2c_client *client)
+ 	struct lp55xx_led *led =3D i2c_get_clientdata(client);
+ 	struct lp55xx_chip *chip =3D led->chip;
+=20
+-	lp5521_stop_engine(chip);
++	lp5521_stop_all_engines(chip);
+ 	lp55xx_unregister_sysfs(chip);
+ 	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 6b553d9..2ce1723 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -187,12 +187,26 @@ static void lp5523_load_engine_and_select_page(st=
+ruct lp55xx_chip *chip)
+ 	lp55xx_write(chip, LP5523_REG_PROG_PAGE_SEL, page_sel[idx]);
+ }
+=20
+-static void lp5523_stop_engine(struct lp55xx_chip *chip)
++static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
+ {
+ 	lp55xx_write(chip, LP5523_REG_OP_MODE, 0);
+ 	lp5523_wait_opmode_done();
+ }
+=20
++static void lp5523_stop_engine(struct lp55xx_chip *chip)
++{
++	enum lp55xx_engine_index idx =3D chip->engine_idx;
++	u8 mask[] =3D {
++		[LP55XX_ENGINE_1] =3D LP5523_MODE_ENG1_M,
++		[LP55XX_ENGINE_2] =3D LP5523_MODE_ENG2_M,
++		[LP55XX_ENGINE_3] =3D LP5523_MODE_ENG3_M,
++	};
++
++	lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], 0);
++
++	lp5523_wait_opmode_done();
++}
++
+ static void lp5523_turn_off_channels(struct lp55xx_chip *chip)
+ {
+ 	int i;
+@@ -303,7 +317,7 @@ static int lp5523_init_program_engine(struct lp55xx=
+_chip *chip)
+ 	}
+=20
+ out:
+-	lp5523_stop_engine(chip);
++	lp5523_stop_all_engines(chip);
+ 	return ret;
+ }
+=20
+@@ -778,7 +792,7 @@ static int lp5523_remove(struct i2c_client *client)
+ 	struct lp55xx_led *led =3D i2c_get_clientdata(client);
+ 	struct lp55xx_chip *chip =3D led->chip;
+=20
+-	lp5523_stop_engine(chip);
++	lp5523_stop_all_engines(chip);
+ 	lp55xx_unregister_sysfs(chip);
+ 	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+--=20
+1.7.9.5
