@@ -1,140 +1,56 @@
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH] leds: pwm: Fix for deferred probe in DT booted mode
-Date: Thu, 28 Nov 2013 11:06:38 +0200
-Message-ID: <1385629598-16205-1-git-send-email-peter.ujfalusi@ti.com>
+From: WESTERN UNOIN <f.kreeft1@upcmail.nl>
+Subject: PICK UP YOUR$5,000.00USDNOW
+Date: Fri, 29 Nov 2013 09:45:12 +0100 (CET)
+Message-ID: <693130098.877406.1385714712640.open-xchange__3540.64888456396$1385716129$gmane$org@upcmail.upc.nl>
+Reply-To: wtransferrmoney90@qdwxs.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:58559 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151Ab3K1JGv (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Nov 2013 04:06:51 -0500
+Received: from fep28.mx.upcmail.net ([62.179.121.48]:51197 "EHLO
+	fep28.mx.upcmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240Ab3K2JIc (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 29 Nov 2013 04:08:32 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>
 
-We need to make sure that the error code from devm_of_pwm_get() is the one
-the module returns in case of failure.
-Restructure the code to make this possible for DT booted case.
-With this patch the driver can ask for deferred probing when the board is
-booted with DT.
-Fixes for example omap4-sdp board's keyboard backlight led.
+Good Day Beneficiary:
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
+I write to inform you that we have been given the mandate to transfer your
+full compensation payment of $1,800,000.00 USD via western union by this
+government.
 
-Hi,
+We tried to give you the Western Union Instructions through phone, but we
+could not locate your numbers in our database to reach you last week even
+this morning.
 
-it would be good if this can make it to 3.13 since with -rc1 the keypad led does
-not work.
+So, I decided to email you the MTCN and Sender Names so that you can pick
+up the USD5,000.00 to enable us send another USD5,000.00 by tomorrow as
+you knows we will be sending you only USD5,000.00 per day.
 
-Regards,
-Peter
+Please pick up this information and run to any western union in your country
+to pick up the USD5,000.00 and send us email back to send you another payment
+tomorrow.
 
- drivers/leds/leds-pwm.c | 53 ++++++++++++++++++++++++-------------------------
- 1 file changed, 26 insertions(+), 27 deletions(-)
+Manager Mrs.Anita Daniel
+Email: wtransferrmoney90@qdwxs.com
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 2848171..b31d8e9 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -82,22 +82,12 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
- 		      (sizeof(struct led_pwm_data) * num_leds);
- }
- 
--static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
-+static int led_pwm_create_of(struct platform_device *pdev,
-+			     struct led_pwm_priv *priv)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct device_node *child;
--	struct led_pwm_priv *priv;
--	int count, ret;
--
--	/* count LEDs in this device, so we know how much to allocate */
--	count = of_get_child_count(node);
--	if (!count)
--		return NULL;
--
--	priv = devm_kzalloc(&pdev->dev, sizeof_pwm_leds_priv(count),
--			    GFP_KERNEL);
--	if (!priv)
--		return NULL;
-+	int ret;
- 
- 	for_each_child_of_node(node, child) {
- 		struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
-@@ -109,6 +99,7 @@ static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
- 		if (IS_ERR(led_dat->pwm)) {
- 			dev_err(&pdev->dev, "unable to request PWM for %s\n",
- 				led_dat->cdev.name);
-+			ret = PTR_ERR(led_dat->pwm);
- 			goto err;
- 		}
- 		/* Get the period from PWM core when n*/
-@@ -137,28 +128,36 @@ static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
- 		priv->num_leds++;
- 	}
- 
--	return priv;
-+	return 0;
- err:
- 	while (priv->num_leds--)
- 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
- 
--	return NULL;
-+	return ret;
- }
- 
- static int led_pwm_probe(struct platform_device *pdev)
- {
- 	struct led_pwm_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct led_pwm_priv *priv;
--	int i, ret = 0;
-+	int count, i;
-+	int ret = 0;
-+
-+	if (pdata)
-+		count = pdata->num_leds;
-+	else
-+		count = of_get_child_count(pdev->dev.of_node);
-+
-+	if (!count)
-+		return -EINVAL;
- 
--	if (pdata && pdata->num_leds) {
--		priv = devm_kzalloc(&pdev->dev,
--				    sizeof_pwm_leds_priv(pdata->num_leds),
--				    GFP_KERNEL);
--		if (!priv)
--			return -ENOMEM;
-+	priv = devm_kzalloc(&pdev->dev, sizeof_pwm_leds_priv(count),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
- 
--		for (i = 0; i < pdata->num_leds; i++) {
-+	if (pdata) {
-+		for (i = 0; i < count; i++) {
- 			struct led_pwm *cur_led = &pdata->leds[i];
- 			struct led_pwm_data *led_dat = &priv->leds[i];
- 
-@@ -188,11 +187,11 @@ static int led_pwm_probe(struct platform_device *pdev)
- 			if (ret < 0)
- 				goto err;
- 		}
--		priv->num_leds = pdata->num_leds;
-+		priv->num_leds = count;
- 	} else {
--		priv = led_pwm_create_of(pdev);
--		if (!priv)
--			return -ENODEV;
-+		ret = led_pwm_create_of(pdev, priv);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	platform_set_drvdata(pdev, priv);
--- 
-1.8.4.2
+email us once you picked up this USD5,000.00 today.
+
+Here is the western union information to pick up the USD5,000.00,
+
+https://wumt.westernunion.com/asp/orderstatus.asp?country=global
+
+Sender Name: Jason   Callahan
+MTCN: 074-137-0142
+Question= What Color
+Answer= White
+Amount Sent: $5000.00
+City:Abuja
+Country:Nigeria
+
+I am waiting for your email once you pick up USD5,000.00,
+
+Thanks!
+Mrs.Anita Daniel
+Western Union Online Coordinator
