@@ -1,56 +1,142 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/3] leds/pwm: Don't disable pwm when setting brightness
- to 0
-Date: Mon, 2 Dec 2013 14:18:07 +0100
-Message-ID: <20131202131807.GC29721@pengutronix.de>
-References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1385412225-29740-3-git-send-email-u.kleine-koenig@pengutronix.de>
- <20131202123318.GC12793@ulmo.nvidia.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/3] leds: lp5521/5523: Fix multiple engine usage bug
+Date: Mon, 2 Dec 2013 11:37:52 -0800
+Message-ID: <CAK5ve-+kY=1g+NKbkueZnO9-KvZxWz+gBuUnsz1emNpmFqrRqg@mail.gmail.com>
+References: <1385014414-6400-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:39700 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751039Ab3LBNSM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Dec 2013 08:18:12 -0500
-Content-Disposition: inline
-In-Reply-To: <20131202123318.GC12793@ulmo.nvidia.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1385014414-6400-1-git-send-email-milo.kim@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Milo Kim <milo.kim@ti.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
 
-On Mon, Dec 02, 2013 at 01:33:19PM +0100, Thierry Reding wrote:
-> On Mon, Nov 25, 2013 at 09:43:44PM +0100, Uwe Kleine-K=F6nig wrote:
-> > This fixes disabling the LED on i.MX28. The PWM hardware delays usi=
-ng
-> > the newly set pwm-config until the beginning of a new period. It's =
-very
-> > likely that pwm_disable is called before the current period ends. I=
-n
-> > case the LED was on brightness=3Dmax before the LED stays on becaus=
-e in
-> > the disabled PWM block the period never ends.
-> >=20
-> > Also only call pwm_enable only once in the probe call back and the
-> > matching pwm_disable in .remove(). Moreover the pwm is explicitly
-> > initialized to off.
->=20
-> While I do understand the reasoning behind this, if this is really th=
-e
-> behaviour that we need then there's no use in having pwm_enable() and
-> pwm_disable() at all. They can just be folded into pwm_get() and
-> pwm_put(), respectively.
-So after the first pwm_get the pwm starts with an unspecified duty
-cycle? That's not that nice, is it?
+On Wed, Nov 20, 2013 at 10:13 PM, Milo Kim <milo.kim@ti.com> wrote:
+> Whenever the engine is loaded by the user-application, the operation =
+mode is
+> reset first. But it has a problem in case of multiple engine used bec=
+ause
+> previous engine settings are cleared.
+> The driver should update not whole 8bits but each engine bit by maski=
+ng.
+>
+> On the other hands, whole engines should be reset when the driver is =
+unloaded
+> and on initializing the LP5523 driver.
+> So, new functions are used for this handling - lp5521/5523_stop_all_e=
+ngines().
+>
 
-Best regards
-Uwe
+This one looks good to me, I will merge it.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Thanks,
+-Bryan
+
+> Cc: Pali Roh=E1r <pali.rohar@gmail.com>
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> ---
+>  drivers/leds/leds-lp5521.c |   18 ++++++++++++++++--
+>  drivers/leds/leds-lp5523.c |   20 +++++++++++++++++---
+>  2 files changed, 33 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+> index 0518835..26f89ac 100644
+> --- a/drivers/leds/leds-lp5521.c
+> +++ b/drivers/leds/leds-lp5521.c
+> @@ -152,12 +152,26 @@ static void lp5521_load_engine(struct lp55xx_ch=
+ip *chip)
+>         lp5521_wait_opmode_done();
+>  }
+>
+> -static void lp5521_stop_engine(struct lp55xx_chip *chip)
+> +static void lp5521_stop_all_engines(struct lp55xx_chip *chip)
+>  {
+>         lp55xx_write(chip, LP5521_REG_OP_MODE, 0);
+>         lp5521_wait_opmode_done();
+>  }
+>
+> +static void lp5521_stop_engine(struct lp55xx_chip *chip)
+> +{
+> +       enum lp55xx_engine_index idx =3D chip->engine_idx;
+> +       u8 mask[] =3D {
+> +               [LP55XX_ENGINE_1] =3D LP5521_MODE_R_M,
+> +               [LP55XX_ENGINE_2] =3D LP5521_MODE_G_M,
+> +               [LP55XX_ENGINE_3] =3D LP5521_MODE_B_M,
+> +       };
+> +
+> +       lp55xx_update_bits(chip, LP5521_REG_OP_MODE, mask[idx], 0);
+> +
+> +       lp5521_wait_opmode_done();
+> +}
+> +
+>  static void lp5521_run_engine(struct lp55xx_chip *chip, bool start)
+>  {
+>         int ret;
+> @@ -568,7 +582,7 @@ static int lp5521_remove(struct i2c_client *clien=
+t)
+>         struct lp55xx_led *led =3D i2c_get_clientdata(client);
+>         struct lp55xx_chip *chip =3D led->chip;
+>
+> -       lp5521_stop_engine(chip);
+> +       lp5521_stop_all_engines(chip);
+>         lp55xx_unregister_sysfs(chip);
+>         lp55xx_unregister_leds(led, chip);
+>         lp55xx_deinit_device(chip);
+> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+> index 6b553d9..2ce1723 100644
+> --- a/drivers/leds/leds-lp5523.c
+> +++ b/drivers/leds/leds-lp5523.c
+> @@ -187,12 +187,26 @@ static void lp5523_load_engine_and_select_page(=
+struct lp55xx_chip *chip)
+>         lp55xx_write(chip, LP5523_REG_PROG_PAGE_SEL, page_sel[idx]);
+>  }
+>
+> -static void lp5523_stop_engine(struct lp55xx_chip *chip)
+> +static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
+>  {
+>         lp55xx_write(chip, LP5523_REG_OP_MODE, 0);
+>         lp5523_wait_opmode_done();
+>  }
+>
+> +static void lp5523_stop_engine(struct lp55xx_chip *chip)
+> +{
+> +       enum lp55xx_engine_index idx =3D chip->engine_idx;
+> +       u8 mask[] =3D {
+> +               [LP55XX_ENGINE_1] =3D LP5523_MODE_ENG1_M,
+> +               [LP55XX_ENGINE_2] =3D LP5523_MODE_ENG2_M,
+> +               [LP55XX_ENGINE_3] =3D LP5523_MODE_ENG3_M,
+> +       };
+> +
+> +       lp55xx_update_bits(chip, LP5523_REG_OP_MODE, mask[idx], 0);
+> +
+> +       lp5523_wait_opmode_done();
+> +}
+> +
+>  static void lp5523_turn_off_channels(struct lp55xx_chip *chip)
+>  {
+>         int i;
+> @@ -303,7 +317,7 @@ static int lp5523_init_program_engine(struct lp55=
+xx_chip *chip)
+>         }
+>
+>  out:
+> -       lp5523_stop_engine(chip);
+> +       lp5523_stop_all_engines(chip);
+>         return ret;
+>  }
+>
+> @@ -778,7 +792,7 @@ static int lp5523_remove(struct i2c_client *clien=
+t)
+>         struct lp55xx_led *led =3D i2c_get_clientdata(client);
+>         struct lp55xx_chip *chip =3D led->chip;
+>
+> -       lp5523_stop_engine(chip);
+> +       lp5523_stop_all_engines(chip);
+>         lp55xx_unregister_sysfs(chip);
+>         lp55xx_unregister_leds(led, chip);
+>         lp55xx_deinit_device(chip);
+> --
+> 1.7.9.5
+>
