@@ -1,131 +1,149 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 3/3] leds: lp5523: Support LED MUX configuration on
- running a pattern
-Date: Mon, 2 Dec 2013 11:43:34 -0800
-Message-ID: <CAK5ve-KYMoqVikDKLiXp0uoyRPc4uKZicM2he3wcM1W528XRCw@mail.gmail.com>
-References: <1385014474-6487-1-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH] leds: pwm: Fix for deferred probe in DT booted mode
+Date: Mon, 2 Dec 2013 11:51:29 -0800
+Message-ID: <CAK5ve-+XQw9hk+hB_yXTjaAUA4LHOyQyhRA8=X0Ppf0K1pUSUw@mail.gmail.com>
+References: <1385629598-16205-1-git-send-email-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385014474-6487-1-git-send-email-milo.kim@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:38698 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755770Ab3LBTvv (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Dec 2013 14:51:51 -0500
+In-Reply-To: <1385629598-16205-1-git-send-email-peter.ujfalusi@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>
 
-On Wed, Nov 20, 2013 at 10:14 PM, Milo Kim <milo.kim@ti.com> wrote:
-> There are two ways to run a pattern in LP5523.
-> One is using legacy sysfs files such as 'enginex_mode','enginex_load'=
- and
-> 'enginex_leds'. ('x' is from 1 to 3).
-> Among them, 'enginex_leds' are used for selecting specific LED channe=
-l MUX.
-> (MUX means which LEDs are used for running a pattern from LED 1 to 9.=
-)
+On Thu, Nov 28, 2013 at 1:06 AM, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> We need to make sure that the error code from devm_of_pwm_get() is the one
+> the module returns in case of failure.
+> Restructure the code to make this possible for DT booted case.
+> With this patch the driver can ask for deferred probing when the board is
+> booted with DT.
+> Fixes for example omap4-sdp board's keyboard backlight led.
 >
-> The other way is using the firmware interface.
-> In this mode, the default LED MUX strings are used.
-> In other words, LED MUX is not configurable on the fly.
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
 >
-> This patch enables dynamic LED MUX configuration when the firmware is=
- loaded.
-> By accessing the sysfs file 'enginex_leds', the LED channels can be c=
-onfigured.
-> To synchronize the operation mode, each engine mode should be set to =
-'LOAD'.
+> Hi,
 >
-> The documentation is updated as well.
+> it would be good if this can make it to 3.13 since with -rc1 the keypad led does
+> not work.
 >
 
-Thanks, I will merge this one.
+Thanks, I will try to send out this patch to Linus for 3.13 release.
 
 -Bryan
 
-> Cc: Pali Roh=E1r <pali.rohar@gmail.com>
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> ---
->  Documentation/leds/leds-lp55xx.txt |   10 +++++++++-
->  drivers/leds/leds-lp55xx-common.c  |    2 ++
->  2 files changed, 11 insertions(+), 1 deletion(-)
+> Regards,
+> Peter
 >
-> diff --git a/Documentation/leds/leds-lp55xx.txt b/Documentation/leds/=
-leds-lp55xx.txt
-> index 82713ff..bcea12a 100644
-> --- a/Documentation/leds/leds-lp55xx.txt
-> +++ b/Documentation/leds/leds-lp55xx.txt
-> @@ -73,6 +73,10 @@ select_engine : Select which engine is used for ru=
-nning program
->  run_engine    : Start program which is loaded via the firmware inter=
-face
->  firmware      : Load program data
+>  drivers/leds/leds-pwm.c | 53 ++++++++++++++++++++++++-------------------------
+>  1 file changed, 26 insertions(+), 27 deletions(-)
 >
-> +In case of LP5523, one more command is required, 'enginex_leds'.
-> +It is used for selecting LED output(s) at each engine number.
-> +In more details, please refer to 'leds-lp5523.txt'.
-> +
->  For example, run blinking pattern in engine #1 of LP5521
->  echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
->  echo 1 > /sys/class/firmware/lp5521/loading
-> @@ -81,10 +85,12 @@ echo 0 > /sys/class/firmware/lp5521/loading
->  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 2848171..b31d8e9 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -82,22 +82,12 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+>                       (sizeof(struct led_pwm_data) * num_leds);
+>  }
 >
->  For example, run blinking pattern in engine #3 of LP55231
-> +Two LEDs are configured as pattern output channels.
->  echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
->  echo 1 > /sys/class/firmware/lp55231/loading
->  echo "9d0740ff7e0040007e00a0010000" > /sys/class/firmware/lp55231/da=
-ta
->  echo 0 > /sys/class/firmware/lp55231/loading
-> +echo "000001100" > /sys/bus/i2c/devices/xxxx/engine3_leds
->  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
->
->  To start blinking patterns in engine #2 and #3 simultaneously,
-> @@ -99,17 +105,19 @@ done
->  echo 1 > /sys/class/leds/red/device/run_engine
->
->  Here is another example for LP5523.
-> +Full LED strings are selected by 'engine2_leds'.
->  echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
->  echo 1 > /sys/class/firmware/lp5523/loading
->  echo "9d80400004ff05ff437f0000" > /sys/class/firmware/lp5523/data
->  echo 0 > /sys/class/firmware/lp5523/loading
-> +echo "111111111" > /sys/bus/i2c/devices/xxxx/engine2_leds
->  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
->
->  As soon as 'loading' is set to 0, registered callback is called.
->  Inside the callback, the selected engine is loaded and memory is upd=
-ated.
->  To run programmed pattern, 'run_engine' attribute should be enabled.
->
-> -The pattern sqeuence of LP8501 is same as LP5523.
-> +The pattern sqeuence of LP8501 is similar to LP5523.
->  However pattern data is specific.
->  Ex 1) Engine 1 is used
->  echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
-> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp=
-55xx-common.c
-> index 9acc6bb..88317b4 100644
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -210,6 +210,7 @@ static void lp55xx_firmware_loaded(const struct f=
-irmware *fw, void *context)
+> -static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
+> +static int led_pwm_create_of(struct platform_device *pdev,
+> +                            struct led_pwm_priv *priv)
 >  {
->         struct lp55xx_chip *chip =3D context;
->         struct device *dev =3D &chip->cl->dev;
-> +       enum lp55xx_engine_index idx =3D chip->engine_idx;
+>         struct device_node *node = pdev->dev.of_node;
+>         struct device_node *child;
+> -       struct led_pwm_priv *priv;
+> -       int count, ret;
+> -
+> -       /* count LEDs in this device, so we know how much to allocate */
+> -       count = of_get_child_count(node);
+> -       if (!count)
+> -               return NULL;
+> -
+> -       priv = devm_kzalloc(&pdev->dev, sizeof_pwm_leds_priv(count),
+> -                           GFP_KERNEL);
+> -       if (!priv)
+> -               return NULL;
+> +       int ret;
 >
->         if (!fw) {
->                 dev_err(dev, "firmware request failed\n");
-> @@ -219,6 +220,7 @@ static void lp55xx_firmware_loaded(const struct f=
-irmware *fw, void *context)
->         /* handling firmware data is chip dependent */
->         mutex_lock(&chip->lock);
+>         for_each_child_of_node(node, child) {
+>                 struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
+> @@ -109,6 +99,7 @@ static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
+>                 if (IS_ERR(led_dat->pwm)) {
+>                         dev_err(&pdev->dev, "unable to request PWM for %s\n",
+>                                 led_dat->cdev.name);
+> +                       ret = PTR_ERR(led_dat->pwm);
+>                         goto err;
+>                 }
+>                 /* Get the period from PWM core when n*/
+> @@ -137,28 +128,36 @@ static struct led_pwm_priv *led_pwm_create_of(struct platform_device *pdev)
+>                 priv->num_leds++;
+>         }
 >
-> +       chip->engines[idx - 1].mode =3D LP55XX_ENGINE_LOAD;
->         chip->fw =3D fw;
->         if (chip->cfg->firmware_cb)
->                 chip->cfg->firmware_cb(chip);
+> -       return priv;
+> +       return 0;
+>  err:
+>         while (priv->num_leds--)
+>                 led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+>
+> -       return NULL;
+> +       return ret;
+>  }
+>
+>  static int led_pwm_probe(struct platform_device *pdev)
+>  {
+>         struct led_pwm_platform_data *pdata = dev_get_platdata(&pdev->dev);
+>         struct led_pwm_priv *priv;
+> -       int i, ret = 0;
+> +       int count, i;
+> +       int ret = 0;
+> +
+> +       if (pdata)
+> +               count = pdata->num_leds;
+> +       else
+> +               count = of_get_child_count(pdev->dev.of_node);
+> +
+> +       if (!count)
+> +               return -EINVAL;
+>
+> -       if (pdata && pdata->num_leds) {
+> -               priv = devm_kzalloc(&pdev->dev,
+> -                                   sizeof_pwm_leds_priv(pdata->num_leds),
+> -                                   GFP_KERNEL);
+> -               if (!priv)
+> -                       return -ENOMEM;
+> +       priv = devm_kzalloc(&pdev->dev, sizeof_pwm_leds_priv(count),
+> +                           GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+>
+> -               for (i = 0; i < pdata->num_leds; i++) {
+> +       if (pdata) {
+> +               for (i = 0; i < count; i++) {
+>                         struct led_pwm *cur_led = &pdata->leds[i];
+>                         struct led_pwm_data *led_dat = &priv->leds[i];
+>
+> @@ -188,11 +187,11 @@ static int led_pwm_probe(struct platform_device *pdev)
+>                         if (ret < 0)
+>                                 goto err;
+>                 }
+> -               priv->num_leds = pdata->num_leds;
+> +               priv->num_leds = count;
+>         } else {
+> -               priv = led_pwm_create_of(pdev);
+> -               if (!priv)
+> -                       return -ENODEV;
+> +               ret = led_pwm_create_of(pdev, priv);
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         platform_set_drvdata(pdev, priv);
 > --
-> 1.7.9.5
+> 1.8.4.2
 >
