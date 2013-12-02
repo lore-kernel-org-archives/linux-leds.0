@@ -1,95 +1,131 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/3] leds: lp5521/5523: Remove duplicate mutex
-Date: Mon, 2 Dec 2013 11:40:10 -0800
-Message-ID: <CAK5ve-JEsBy6gd+oVwpnzkQe7eTmW6qkK-Rb4cM-JkKHPdiC9g@mail.gmail.com>
-References: <1385014460-6443-1-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH 3/3] leds: lp5523: Support LED MUX configuration on
+ running a pattern
+Date: Mon, 2 Dec 2013 11:43:34 -0800
+Message-ID: <CAK5ve-KYMoqVikDKLiXp0uoyRPc4uKZicM2he3wcM1W528XRCw@mail.gmail.com>
+References: <1385014474-6487-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:39750 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754484Ab3LBTkc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Dec 2013 14:40:32 -0500
-In-Reply-To: <1385014460-6443-1-git-send-email-milo.kim@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1385014474-6487-1-git-send-email-milo.kim@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Milo Kim <milo.kim@ti.com>
 Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
+List-Id: linux-leds@vger.kernel.org
 
 On Wed, Nov 20, 2013 at 10:14 PM, Milo Kim <milo.kim@ti.com> wrote:
-> It can be a problem when a pattern is loaded via the firmware interfa=
-ce.
-> LP55xx common driver has already locked the mutex in 'lp55xx_firmware=
-_loaded()'.
-> So it should be deleted.
+> There are two ways to run a pattern in LP5523.
+> One is using legacy sysfs files such as 'enginex_mode','enginex_load'=
+ and
+> 'enginex_leds'. ('x' is from 1 to 3).
+> Among them, 'enginex_leds' are used for selecting specific LED channe=
+l MUX.
+> (MUX means which LEDs are used for running a pattern from LED 1 to 9.=
+)
+>
+> The other way is using the firmware interface.
+> In this mode, the default LED MUX strings are used.
+> In other words, LED MUX is not configurable on the fly.
+>
+> This patch enables dynamic LED MUX configuration when the firmware is=
+ loaded.
+> By accessing the sysfs file 'enginex_leds', the LED channels can be c=
+onfigured.
+> To synchronize the operation mode, each engine mode should be set to =
+'LOAD'.
+>
+> The documentation is updated as well.
 >
 
-Looks like lp5521_update_program_memory() will be called by
-store_engine_load() without holding a lock after this change, is this
-correct? I think you need also update store_engine_load() to hold the
-lock when calling lp5521_update_program_memory().
+Thanks, I will merge this one.
 
-Thanks,
 -Bryan
 
 > Cc: Pali Roh=E1r <pali.rohar@gmail.com>
 > Signed-off-by: Milo Kim <milo.kim@ti.com>
 > ---
->  drivers/leds/leds-lp5521.c |    4 ----
->  drivers/leds/leds-lp5523.c |    4 ----
->  2 files changed, 8 deletions(-)
+>  Documentation/leds/leds-lp55xx.txt |   10 +++++++++-
+>  drivers/leds/leds-lp55xx-common.c  |    2 ++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-> index 26f89ac..4c45ed9 100644
-> --- a/drivers/leds/leds-lp5521.c
-> +++ b/drivers/leds/leds-lp5521.c
-> @@ -258,8 +258,6 @@ static int lp5521_update_program_memory(struct lp=
-55xx_chip *chip,
->         if (i % 2)
->                 goto err;
+> diff --git a/Documentation/leds/leds-lp55xx.txt b/Documentation/leds/=
+leds-lp55xx.txt
+> index 82713ff..bcea12a 100644
+> --- a/Documentation/leds/leds-lp55xx.txt
+> +++ b/Documentation/leds/leds-lp55xx.txt
+> @@ -73,6 +73,10 @@ select_engine : Select which engine is used for ru=
+nning program
+>  run_engine    : Start program which is loaded via the firmware inter=
+face
+>  firmware      : Load program data
 >
-> -       mutex_lock(&chip->lock);
-> -
->         for (i =3D 0; i < LP5521_PROGRAM_LENGTH; i++) {
->                 ret =3D lp55xx_write(chip, addr[idx] + i, pattern[i])=
-;
->                 if (ret) {
-> @@ -268,8 +266,6 @@ static int lp5521_update_program_memory(struct lp=
-55xx_chip *chip,
->                 }
->         }
+> +In case of LP5523, one more command is required, 'enginex_leds'.
+> +It is used for selecting LED output(s) at each engine number.
+> +In more details, please refer to 'leds-lp5523.txt'.
+> +
+>  For example, run blinking pattern in engine #1 of LP5521
+>  echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
+>  echo 1 > /sys/class/firmware/lp5521/loading
+> @@ -81,10 +85,12 @@ echo 0 > /sys/class/firmware/lp5521/loading
+>  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
 >
-> -       mutex_unlock(&chip->lock);
-> -
->         return size;
+>  For example, run blinking pattern in engine #3 of LP55231
+> +Two LEDs are configured as pattern output channels.
+>  echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
+>  echo 1 > /sys/class/firmware/lp55231/loading
+>  echo "9d0740ff7e0040007e00a0010000" > /sys/class/firmware/lp55231/da=
+ta
+>  echo 0 > /sys/class/firmware/lp55231/loading
+> +echo "000001100" > /sys/bus/i2c/devices/xxxx/engine3_leds
+>  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
 >
->  err:
-> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-> index 2ce1723..7a3b369 100644
-> --- a/drivers/leds/leds-lp5523.c
-> +++ b/drivers/leds/leds-lp5523.c
-> @@ -351,8 +351,6 @@ static int lp5523_update_program_memory(struct lp=
-55xx_chip *chip,
->         if (i % 2)
->                 goto err;
+>  To start blinking patterns in engine #2 and #3 simultaneously,
+> @@ -99,17 +105,19 @@ done
+>  echo 1 > /sys/class/leds/red/device/run_engine
 >
-> -       mutex_lock(&chip->lock);
-> -
->         for (i =3D 0; i < LP5523_PROGRAM_LENGTH; i++) {
->                 ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM + i, p=
-attern[i]);
->                 if (ret) {
-> @@ -361,8 +359,6 @@ static int lp5523_update_program_memory(struct lp=
-55xx_chip *chip,
->                 }
->         }
+>  Here is another example for LP5523.
+> +Full LED strings are selected by 'engine2_leds'.
+>  echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
+>  echo 1 > /sys/class/firmware/lp5523/loading
+>  echo "9d80400004ff05ff437f0000" > /sys/class/firmware/lp5523/data
+>  echo 0 > /sys/class/firmware/lp5523/loading
+> +echo "111111111" > /sys/bus/i2c/devices/xxxx/engine2_leds
+>  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
 >
-> -       mutex_unlock(&chip->lock);
-> -
->         return size;
+>  As soon as 'loading' is set to 0, registered callback is called.
+>  Inside the callback, the selected engine is loaded and memory is upd=
+ated.
+>  To run programmed pattern, 'run_engine' attribute should be enabled.
 >
->  err:
+> -The pattern sqeuence of LP8501 is same as LP5523.
+> +The pattern sqeuence of LP8501 is similar to LP5523.
+>  However pattern data is specific.
+>  Ex 1) Engine 1 is used
+>  echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp=
+55xx-common.c
+> index 9acc6bb..88317b4 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -210,6 +210,7 @@ static void lp55xx_firmware_loaded(const struct f=
+irmware *fw, void *context)
+>  {
+>         struct lp55xx_chip *chip =3D context;
+>         struct device *dev =3D &chip->cl->dev;
+> +       enum lp55xx_engine_index idx =3D chip->engine_idx;
+>
+>         if (!fw) {
+>                 dev_err(dev, "firmware request failed\n");
+> @@ -219,6 +220,7 @@ static void lp55xx_firmware_loaded(const struct f=
+irmware *fw, void *context)
+>         /* handling firmware data is chip dependent */
+>         mutex_lock(&chip->lock);
+>
+> +       chip->engines[idx - 1].mode =3D LP55XX_ENGINE_LOAD;
+>         chip->fw =3D fw;
+>         if (chip->cfg->firmware_cb)
+>                 chip->cfg->firmware_cb(chip);
 > --
 > 1.7.9.5
 >
