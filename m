@@ -1,125 +1,37 @@
 From: Milo Kim <milo.kim@ti.com>
-Subject: [PATCH v2] leds: lp5521/5523: Remove duplicate mutex
-Date: Tue, 3 Dec 2013 10:21:44 +0900
-Message-ID: <1386033704-4117-1-git-send-email-milo.kim@ti.com>
+Subject: Re: [PATCH 2/3] leds: lp5521/5523: Remove duplicate mutex
+Date: Tue, 3 Dec 2013 10:24:12 +0900
+Message-ID: <529D32BC.2020504@ti.com>
+References: <1385014460-6443-1-git-send-email-milo.kim@ti.com> <CAK5ve-JEsBy6gd+oVwpnzkQe7eTmW6qkK-Rb4cM-JkKHPdiC9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:50718 "EHLO bear.ext.ti.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:34153 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752291Ab3LCBWB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 2 Dec 2013 20:22:01 -0500
+	id S1751821Ab3LCBYP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 2 Dec 2013 20:24:15 -0500
+In-Reply-To: <CAK5ve-JEsBy6gd+oVwpnzkQe7eTmW6qkK-Rb4cM-JkKHPdiC9g@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Milo Kim <milo.kim@ti.com>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
 
-It can be a problem when a pattern is loaded via the firmware interface=
-=2E
-LP55xx common driver has already locked the mutex in 'lp55xx_firmware_l=
-oaded()'.
-So it should be deleted.
+Hi Bryan,
 
-On the other hand, locks are required in store_engine_load()
-on updating program memory.
+On 12/03/2013 04:40 AM, Bryan Wu wrote:
+> On Wed, Nov 20, 2013 at 10:14 PM, Milo Kim <milo.kim@ti.com> wrote:
+>> It can be a problem when a pattern is loaded via the firmware interface.
+>> LP55xx common driver has already locked the mutex in 'lp55xx_firmware_loaded()'.
+>> So it should be deleted.
+>>
+>
+> Looks like lp5521_update_program_memory() will be called by
+> store_engine_load() without holding a lock after this change, is this
+> correct? I think you need also update store_engine_load() to hold the
+> lock when calling lp5521_update_program_memory().
 
-Cc: Pali Roh=C3=A1r <pali.rohar@gmail.com>
-Signed-off-by: Milo Kim <milo.kim@ti.com>
----
- drivers/leds/leds-lp5521.c |   12 ++++--------
- drivers/leds/leds-lp5523.c |   12 ++++--------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+Thanks, good point! I've just sent the patch-v2.
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 26f89ac..2ec34cf 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -258,18 +258,12 @@ static int lp5521_update_program_memory(struct lp=
-55xx_chip *chip,
- 	if (i % 2)
- 		goto err;
-=20
--	mutex_lock(&chip->lock);
--
- 	for (i =3D 0; i < LP5521_PROGRAM_LENGTH; i++) {
- 		ret =3D lp55xx_write(chip, addr[idx] + i, pattern[i]);
--		if (ret) {
--			mutex_unlock(&chip->lock);
-+		if (ret)
- 			return -EINVAL;
--		}
- 	}
-=20
--	mutex_unlock(&chip->lock);
--
- 	return size;
-=20
- err:
-@@ -441,15 +435,17 @@ static ssize_t store_engine_load(struct device *d=
-ev,
- {
- 	struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(dev));
- 	struct lp55xx_chip *chip =3D led->chip;
-+	int ret;
-=20
- 	mutex_lock(&chip->lock);
-=20
- 	chip->engine_idx =3D nr;
- 	lp5521_load_engine(chip);
-+	ret =3D lp5521_update_program_memory(chip, buf, len);
-=20
- 	mutex_unlock(&chip->lock);
-=20
--	return lp5521_update_program_memory(chip, buf, len);
-+	return ret;
- }
- store_load(1)
- store_load(2)
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 2ce1723..bf21852 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -351,18 +351,12 @@ static int lp5523_update_program_memory(struct lp=
-55xx_chip *chip,
- 	if (i % 2)
- 		goto err;
-=20
--	mutex_lock(&chip->lock);
--
- 	for (i =3D 0; i < LP5523_PROGRAM_LENGTH; i++) {
- 		ret =3D lp55xx_write(chip, LP5523_REG_PROG_MEM + i, pattern[i]);
--		if (ret) {
--			mutex_unlock(&chip->lock);
-+		if (ret)
- 			return -EINVAL;
--		}
- 	}
-=20
--	mutex_unlock(&chip->lock);
--
- 	return size;
-=20
- err:
-@@ -562,15 +556,17 @@ static ssize_t store_engine_load(struct device *d=
-ev,
- {
- 	struct lp55xx_led *led =3D i2c_get_clientdata(to_i2c_client(dev));
- 	struct lp55xx_chip *chip =3D led->chip;
-+	int ret;
-=20
- 	mutex_lock(&chip->lock);
-=20
- 	chip->engine_idx =3D nr;
- 	lp5523_load_engine_and_select_page(chip);
-+	ret =3D lp5523_update_program_memory(chip, buf, len);
-=20
- 	mutex_unlock(&chip->lock);
-=20
--	return lp5523_update_program_memory(chip, buf, len);
-+	return ret;
- }
- store_load(1)
- store_load(2)
---=20
-1.7.9.5
+Best regards,
+   Milo
