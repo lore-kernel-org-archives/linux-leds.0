@@ -1,37 +1,63 @@
-From: Milo Kim <milo.kim@ti.com>
-Subject: Re: [PATCH 2/3] leds: lp5521/5523: Remove duplicate mutex
-Date: Tue, 3 Dec 2013 10:24:12 +0900
-Message-ID: <529D32BC.2020504@ti.com>
-References: <1385014460-6443-1-git-send-email-milo.kim@ti.com> <CAK5ve-JEsBy6gd+oVwpnzkQe7eTmW6qkK-Rb4cM-JkKHPdiC9g@mail.gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/3] leds/pwm: Don't disable pwm when setting brightness
+ to 0
+Date: Thu, 5 Dec 2013 22:26:41 +0100
+Message-ID: <20131205212641.GC4707@pengutronix.de>
+References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <1385412225-29740-3-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20131202123318.GC12793@ulmo.nvidia.com>
+ <20131202131807.GC29721@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:34153 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751821Ab3LCBYP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 2 Dec 2013 20:24:15 -0500
-In-Reply-To: <CAK5ve-JEsBy6gd+oVwpnzkQe7eTmW6qkK-Rb4cM-JkKHPdiC9g@mail.gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:40874 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750877Ab3LEV0r (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 5 Dec 2013 16:26:47 -0500
+Content-Disposition: inline
+In-Reply-To: <20131202131807.GC29721@pengutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
 
-Hi Bryan,
+Hello Thierry,
 
-On 12/03/2013 04:40 AM, Bryan Wu wrote:
-> On Wed, Nov 20, 2013 at 10:14 PM, Milo Kim <milo.kim@ti.com> wrote:
->> It can be a problem when a pattern is loaded via the firmware interface.
->> LP55xx common driver has already locked the mutex in 'lp55xx_firmware_loaded()'.
->> So it should be deleted.
->>
->
-> Looks like lp5521_update_program_memory() will be called by
-> store_engine_load() without holding a lock after this change, is this
-> correct? I think you need also update store_engine_load() to hold the
-> lock when calling lp5521_update_program_memory().
+On Mon, Dec 02, 2013 at 02:18:07PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Mon, Dec 02, 2013 at 01:33:19PM +0100, Thierry Reding wrote:
+> > On Mon, Nov 25, 2013 at 09:43:44PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > This fixes disabling the LED on i.MX28. The PWM hardware delays u=
+sing
+> > > the newly set pwm-config until the beginning of a new period. It'=
+s very
+> > > likely that pwm_disable is called before the current period ends.=
+ In
+> > > case the LED was on brightness=3Dmax before the LED stays on beca=
+use in
+> > > the disabled PWM block the period never ends.
+> > >=20
+> > > Also only call pwm_enable only once in the probe call back and th=
+e
+> > > matching pwm_disable in .remove(). Moreover the pwm is explicitly
+> > > initialized to off.
+> >=20
+> > While I do understand the reasoning behind this, if this is really =
+the
+> > behaviour that we need then there's no use in having pwm_enable() a=
+nd
+> > pwm_disable() at all. They can just be folded into pwm_get() and
+> > pwm_put(), respectively.
+> So after the first pwm_get the pwm starts with an unspecified duty
+> cycle? That's not that nice, is it?
+How can we come forward here? After all it's a real bug being fixed.
 
-Thanks, good point! I've just sent the patch-v2.
+Best regards
+Uwe
 
-Best regards,
-   Milo
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
