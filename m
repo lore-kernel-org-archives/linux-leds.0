@@ -1,332 +1,71 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/3] leds: leds-mc13783: Add devicetree support
-Date: Sat, 07 Dec 2013 12:47:18 +0100
-Message-ID: <4531338.dvjMOzW3sA@flatron>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAzLzNdIGxlZHM6IGxlZHMtbWMxMzc4MzogQWRkIGRldmlj?=
+ =?UTF-8?B?ZXRyZWUgc3VwcG9ydA==?=
+Date: Sat, 07 Dec 2013 16:08:41 +0400
+Message-ID: <1386418121.30063489@f424.i.mail.ru>
 References: <1386397464-31033-1-git-send-email-shc_work@mail.ru>
+ <4531338.dvjMOzW3sA@flatron>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ea0-f180.google.com ([209.85.215.180]:64817 "EHLO
-	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754212Ab3LGLrY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 7 Dec 2013 06:47:24 -0500
-In-Reply-To: <1386397464-31033-1-git-send-email-shc_work@mail.ru>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4531338.dvjMOzW3sA@flatron>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?VG9tYXN6IEZpZ2E=?= <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, =?UTF-8?B?U2FtdWVsIE9ydGl6?= <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, =?UTF-8?B?TGVlIEpvbmVz?= <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?B?UGhpbGlwcGUgUsOpdG9ybmF6?= <philippe.retornaz-p8DiymsW2f8@public.gmane.org>, =?UTF-8?B?U2FzY2hhIEhhdWVy?= <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?UGF3ZWwgTW9sbA==?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?B?SWFuIENhbXBiZWxs?= <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, =?UTF-8?B?S3VtYXIgR2FsYQ==?= <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, =?UTF-8?B?R3JhbnQgTGlrZWx5?= <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Philippe =?ISO-8859-1?Q?R=E9tornaz?= <philippe.retornaz@epfl.ch>, Sascha Hauer <kernel@pengutronix.de>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 
-Hi Alexander,
-
-Please see my comments inline.
-
-On Saturday 07 of December 2013 10:24:24 Alexander Shiyan wrote:
-> This patch adds devicetree support for the MC13XXX LED driver.
-> 
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> ---
->  Documentation/devicetree/bindings/mfd/mc13xxx.txt |  38 +++++
->  drivers/leds/leds-mc13783.c                       | 161 ++++++++++++++--------
->  2 files changed, 143 insertions(+), 56 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/mc13xxx.txt b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-> index abd9e3c..bdf31e8 100644
-> --- a/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-> +++ b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-> @@ -10,9 +10,37 @@ Optional properties:
->  - fsl,mc13xxx-uses-touch : Indicate the touchscreen controller is being used
->  
->  Sub-nodes:
-> +- leds : Contain the led nodes and initial register values in property
-> +  "led_control". Number of register depends of used IC, for MC13783 is 6,
-> +  for MC13892 is 4. See datasheet for bits definitions of these register.
-
-Can't the driver somehow derive correct register values from LEDs listed
-as subnodes of this node? If not, I'd say that more fine grained
-properties should be used instead. What kind of configuration do these
-register control?
-
-Also s/_/-/ in property names.
-
-> +  Each led node should contain "reg", which used as LED ID (described below).
-> +  Optional properties "label" and "linux,default-trigger" is described in
-> +  Documentation/devicetree/bindings/leds/common.txt.
->  - regulators : Contain the regulator nodes. The regulators are bound using
->    their names as listed below with their registers and bits for enabling.
->  
-> +MC13783 LED IDs:
-> +    0  : Main display
-> +    1  : AUX display
-> +    2  : Keypad
-> +    3  : Red 1
-> +    4  : Green 1
-> +    5  : Blue 1
-> +    6  : Red 2
-> +    7  : Green 2
-> +    8  : Blue 2
-> +    9  : Red 3
-> +    10 : Green 3
-> +    11 : Blue 3
-> +
-> +MC13892 LED IDs:
-> +    12 : Main display
-> +    13 : AUX display
-> +    14 : Keypad
-> +    15 : Red
-> +    16 : Green
-> +    17 : Blue
-
-This looks a bit strange. Does the numbering relate to hardware design
-in any way? From what I can see, those are just enums values from Linux
-driver, which doesn't seem the right namespace to export to DT.
-
-> +
->  MC13783 regulators:
->      sw1a      : regulator SW1A      (register 24, bit 0)
->      sw1b      : regulator SW1B      (register 25, bit 0)
-> @@ -89,6 +117,16 @@ ecspi@70010000 { /* ECSPI1 */
->  		interrupt-parent = <&gpio0>;
->  		interrupts = <8>;
->  
-> +		leds {
-> +			led_control = <0x000 0x000 0x0e0 0x000>;
-> +
-> +			system_led {
-
-s/_/-/ in node name and also whenever reg property is present, node name
-should be followed by @unit-address suffix where unit-address is the
-value of first address in reg property.
-
-> +				reg = <15>;
-> +				label = "system:red:live";
-> +				linux,default-trigger = "heartbeat";
-> +			};
-> +		};
-> +
->  		regulators {
->  			sw1_reg: mc13892__sw1 {
->  				regulator-min-microvolt = <600000>;
-> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-> index ca87a1b..bc3ea2b 100644
-> --- a/drivers/leds/leds-mc13783.c
-> +++ b/drivers/leds/leds-mc13783.c
-> @@ -20,26 +20,27 @@
->  #include <linux/init.h>
->  #include <linux/platform_device.h>
->  #include <linux/leds.h>
-> +#include <linux/of.h>
->  #include <linux/workqueue.h>
->  #include <linux/mfd/mc13xxx.h>
->  
-> -#define MC13XXX_REG_LED_CONTROL(x)	(51 + (x))
-> -
-
-This and related changes qualify for a separate patch that would be
-a simple refactoring.
-
->  struct mc13xxx_led_devtype {
->  	int	led_min;
->  	int	led_max;
->  	int	num_regs;
-> +	u32	ledctrl_base;
->  };
->  
->  struct mc13xxx_led {
->  	struct led_classdev	cdev;
->  	struct work_struct	work;
-> -	struct mc13xxx		*master;
->  	enum led_brightness	new_brightness;
->  	int			id;
-> +	struct mc13xxx_leds	*leds;
->  };
->  
->  struct mc13xxx_leds {
-> +	struct mc13xxx			*master;
->  	struct mc13xxx_led_devtype	*devtype;
->  	int				num_leds;
->  	struct mc13xxx_led		led[0];
-> @@ -48,23 +49,24 @@ struct mc13xxx_leds {
->  static void mc13xxx_led_work(struct work_struct *work)
->  {
->  	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
-> -	int reg, mask, value, bank, off, shift;
-> +	struct mc13xxx_leds *leds = led->leds;
-> +	unsigned int reg, mask, value, bank, off, shift;
->  
->  	switch (led->id) {
->  	case MC13783_LED_MD:
-> -		reg = MC13XXX_REG_LED_CONTROL(2);
-> +		reg = 2;
->  		shift = 9;
->  		mask = 0x0f;
->  		value = led->new_brightness >> 4;
->  		break;
->  	case MC13783_LED_AD:
-> -		reg = MC13XXX_REG_LED_CONTROL(2);
-> +		reg = 2;
->  		shift = 13;
->  		mask = 0x0f;
->  		value = led->new_brightness >> 4;
->  		break;
->  	case MC13783_LED_KP:
-> -		reg = MC13XXX_REG_LED_CONTROL(2);
-> +		reg = 2;
->  		shift = 17;
->  		mask = 0x0f;
->  		value = led->new_brightness >> 4;
-> @@ -80,25 +82,25 @@ static void mc13xxx_led_work(struct work_struct *work)
->  	case MC13783_LED_B3:
->  		off = led->id - MC13783_LED_R1;
->  		bank = off / 3;
-> -		reg = MC13XXX_REG_LED_CONTROL(3) + bank;
-> +		reg = 3 + bank;
->  		shift = (off - bank * 3) * 5 + 6;
->  		value = led->new_brightness >> 3;
->  		mask = 0x1f;
->  		break;
->  	case MC13892_LED_MD:
-> -		reg = MC13XXX_REG_LED_CONTROL(0);
-> +		reg = 0;
->  		shift = 3;
->  		mask = 0x3f;
->  		value = led->new_brightness >> 2;
->  		break;
->  	case MC13892_LED_AD:
-> -		reg = MC13XXX_REG_LED_CONTROL(0);
-> +		reg = 0;
->  		shift = 15;
->  		mask = 0x3f;
->  		value = led->new_brightness >> 2;
->  		break;
->  	case MC13892_LED_KP:
-> -		reg = MC13XXX_REG_LED_CONTROL(1);
-> +		reg = 1;
->  		shift = 3;
->  		mask = 0x3f;
->  		value = led->new_brightness >> 2;
-> @@ -108,7 +110,7 @@ static void mc13xxx_led_work(struct work_struct *work)
->  	case MC13892_LED_B:
->  		off = led->id - MC13892_LED_R;
->  		bank = off / 2;
-> -		reg = MC13XXX_REG_LED_CONTROL(2) + bank;
-> +		reg = 2 + bank;
->  		shift = (off - bank * 2) * 12 + 3;
->  		value = led->new_brightness >> 2;
->  		mask = 0x3f;
-> @@ -117,7 +119,8 @@ static void mc13xxx_led_work(struct work_struct *work)
->  		BUG();
->  	}
->  
-> -	mc13xxx_reg_rmw(led->master, reg, mask << shift, value << shift);
-> +	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
-> +			mask << shift, value << shift);
->  }
->  
->  static void mc13xxx_led_set(struct led_classdev *led_cdev,
-> @@ -130,80 +133,121 @@ static void mc13xxx_led_set(struct led_classdev *led_cdev,
->  	schedule_work(&led->work);
->  }
->  
-> +static int __init mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
-> +				       struct device_node *parent)
-> +{
-> +#ifdef CONFIG_OF
-> +	struct device_node *child;
-> +	int ret, i = 0;
-> +
-> +	for_each_child_of_node(parent, child) {
-> +		ret = of_property_read_u32(child, "reg", &leds->led[i].id);
-> +		if (ret)
-> +			return ret;
-> +		leds->led[i].cdev.name = of_get_property(child, "label", NULL);
-> +		leds->led[i].cdev.default_trigger =
-> +			of_get_property(child, "linux,default-trigger", NULL);
-> +		i++;
-> +	}
-> +
-> +	return 0;
-> +#else
-> +	return -ENOTSUPP;
-> +#endif
-> +}
-
-I believe the preferred way to use conditional compilation is:
-
-#ifdef CONFIG_OF
-static int __init mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
-				       struct device_node *parent)
-{
-	/* enabled variant */
-}
-#else
-static inline int mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
-				       struct device_node *parent)
-{
-	return -ENOTSUPP;
-}
-#endif
-
-This doesn't pollute function body with #ifdefs and allows explicitly
-marking the disabled variant inline.
-
-> +
->  static int __init mc13xxx_led_probe(struct platform_device *pdev)
->  {
-> -	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> -	struct mc13xxx *mcdev = dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(dev);
-> +	struct mc13xxx *mcdev = dev_get_drvdata(dev->parent);
->  	struct mc13xxx_led_devtype *devtype =
->  		(struct mc13xxx_led_devtype *)pdev->id_entry->driver_data;
-> +	int i, num_leds = 0, ret = 0;
-> +	struct device_node *parent;
->  	struct mc13xxx_leds *leds;
-> -	int i, id, num_leds, ret = -ENODATA;
-> -	u32 reg, init_led = 0;
-> -
-> -	if (!pdata) {
-> -		dev_err(&pdev->dev, "Missing platform data\n");
-> -		return -ENODEV;
-> +	u32 *ctrls = NULL, init_led = 0;
-> +
-> +	of_node_get(dev->parent->of_node);
-> +	parent = of_find_node_by_name(dev->parent->of_node, "leds");
-
-Both lines above should be executed only if the device has been
-instantiated using DT.
-
-Also of_find_node_by_name() is not the correct function to use. Please
-refer to its documentation to learn why. The function that should be used
-here is of_get_child_by_name().
-
-> +
-> +	if (pdata) {
-> +		num_leds = pdata->num_leds;
-> +		ctrls = pdata->led_control;
-> +	} else if (parent) {
-> +		num_leds = of_get_child_count(parent);
-> +		ret = of_property_read_u32_array(parent, "led_control", ctrls,
-> +						 devtype->num_regs);
-
-Huh? Does this even work? The argument in place of ctrls is supposed to be
-the destination memory for read array. Your code sets ctrls to NULL above
-and then passes it to this function.
-
-> +		if (ret)
-> +			goto out_node_put;
-> +	} else {
-> +		return -ENODATA;
->  	}
-
-In general, I would rather adopt a completely different approach to DT
-enablement in this driver. Instead of splitting the probe into two almost
-completely different code paths in large if blocks, what about making
-mc13xxx_led_setup_of() allocate a platform data structure and fill it
-in with data parsed from DT, so the driver would then proceed normally as
-if the platform data were available? IMHO this should make the code much
-simpler and more readable.
-
-Best regards,
-Tomasz
+PiBIaSBBbGV4YW5kZXIsCj4gCj4gUGxlYXNlIHNlZSBteSBjb21tZW50cyBpbmxpbmUuCj4gCj4g
+T24gU2F0dXJkYXkgMDcgb2YgRGVjZW1iZXIgMjAxMyAxMDoyNDoyNCBBbGV4YW5kZXIgU2hpeWFu
+IHdyb3RlOgo+ID4gVGhpcyBwYXRjaCBhZGRzIGRldmljZXRyZWUgc3VwcG9ydCBmb3IgdGhlIE1D
+MTNYWFggTEVEIGRyaXZlci4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogQWxleGFuZGVyIFNoaXlh
+biA8c2hjX3dvcmtAbWFpbC5ydT4KPiA+IC0tLQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9tZmQvbWMxM3h4eC50eHQgfCAgMzggKysrKysKPiA+ICBkcml2ZXJzL2xlZHMv
+bGVkcy1tYzEzNzgzLmMgICAgICAgICAgICAgICAgICAgICAgIHwgMTYxICsrKysrKysrKysrKysr
+LS0tLS0tLS0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDE0MyBpbnNlcnRpb25zKCspLCA1NiBkZWxl
+dGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9tZmQvbWMxM3h4eC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvbWZkL21jMTN4eHgudHh0Cj4gPiBpbmRleCBhYmQ5ZTNjLi5iZGYzMWU4IDEwMDY0NAo+ID4g
+LS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9tYzEzeHh4LnR4dAo+
+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9tYzEzeHh4LnR4
+dAo+ID4gQEAgLTEwLDkgKzEwLDM3IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6Cj4gPiAgLSBmc2ws
+bWMxM3h4eC11c2VzLXRvdWNoIDogSW5kaWNhdGUgdGhlIHRvdWNoc2NyZWVuIGNvbnRyb2xsZXIg
+aXMgYmVpbmcgdXNlZAo+ID4gIAo+ID4gIFN1Yi1ub2RlczoKPiA+ICstIGxlZHMgOiBDb250YWlu
+IHRoZSBsZWQgbm9kZXMgYW5kIGluaXRpYWwgcmVnaXN0ZXIgdmFsdWVzIGluIHByb3BlcnR5Cj4g
+PiArICAibGVkX2NvbnRyb2wiLiBOdW1iZXIgb2YgcmVnaXN0ZXIgZGVwZW5kcyBvZiB1c2VkIElD
+LCBmb3IgTUMxMzc4MyBpcyA2LAo+ID4gKyAgZm9yIE1DMTM4OTIgaXMgNC4gU2VlIGRhdGFzaGVl
+dCBmb3IgYml0cyBkZWZpbml0aW9ucyBvZiB0aGVzZSByZWdpc3Rlci4KPiAKPiBDYW4ndCB0aGUg
+ZHJpdmVyIHNvbWVob3cgZGVyaXZlIGNvcnJlY3QgcmVnaXN0ZXIgdmFsdWVzIGZyb20gTEVEcyBs
+aXN0ZWQKPiBhcyBzdWJub2RlcyBvZiB0aGlzIG5vZGU/IElmIG5vdCwgSSdkIHNheSB0aGF0IG1v
+cmUgZmluZSBncmFpbmVkCj4gcHJvcGVydGllcyBzaG91bGQgYmUgdXNlZCBpbnN0ZWFkLiBXaGF0
+IGtpbmQgb2YgY29uZmlndXJhdGlvbiBkbyB0aGVzZQo+IHJlZ2lzdGVyIGNvbnRyb2w/CgpSZWdp
+c3RlcnMgY29udGFpbiB0aGUgYmFzaWMgc3RhdGUgZm9yIExFRCAoaGlnaCBjdXJyZW50IG1vZGUs
+IGN1cnJlbnQsCmR1dHkgY3ljbGUsIHJhbXAgZXRjLikuIFByZXNlbmNlIGFuZCBiaXQgcG9zaXRp
+b24gZm9yIGVhY2ggTEVEIGlzIGluZGl2aWR1YWxseS4KU28gSSBkZWNpZGVkIHRoYXQgdGhlIHVz
+ZSBvZiBhIHNpbXBsZSBpbml0aWFsIHNldHVwIGlzIGJldHRlciwgZXNwZWNpYWxseSBzaW5jZQp0
+aGVzZSB3aWxsIG5vdCBiZSBjaGFuZ2VkIGR1cmluZyBvcGVyYXRpb24uCgo+ID4gKyAgRWFjaCBs
+ZWQgbm9kZSBzaG91bGQgY29udGFpbiAicmVnIiwgd2hpY2ggdXNlZCBhcyBMRUQgSUQgKGRlc2Ny
+aWJlZCBiZWxvdykuCj4gPiArICBPcHRpb25hbCBwcm9wZXJ0aWVzICJsYWJlbCIgYW5kICJsaW51
+eCxkZWZhdWx0LXRyaWdnZXIiIGlzIGRlc2NyaWJlZCBpbgo+ID4gKyAgRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvY29tbW9uLnR4dC4KPiA+ICAtIHJlZ3VsYXRvcnMgOiBD
+b250YWluIHRoZSByZWd1bGF0b3Igbm9kZXMuIFRoZSByZWd1bGF0b3JzIGFyZSBib3VuZCB1c2lu
+Zwo+ID4gICAgdGhlaXIgbmFtZXMgYXMgbGlzdGVkIGJlbG93IHdpdGggdGhlaXIgcmVnaXN0ZXJz
+IGFuZCBiaXRzIGZvciBlbmFibGluZy4KPiA+ICAKPiA+ICtNQzEzNzgzIExFRCBJRHM6Cj4gPiAr
+ICAgIDAgIDogTWFpbiBkaXNwbGF5Cj4gPiArICAgIDEgIDogQVVYIGRpc3BsYXkKPiA+ICsgICAg
+MiAgOiBLZXlwYWQKPiA+ICsgICAgMyAgOiBSZWQgMQo+ID4gKyAgICA0ICA6IEdyZWVuIDEKPiA+
+ICsgICAgNSAgOiBCbHVlIDEKPiA+ICsgICAgNiAgOiBSZWQgMgo+ID4gKyAgICA3ICA6IEdyZWVu
+IDIKPiA+ICsgICAgOCAgOiBCbHVlIDIKPiA+ICsgICAgOSAgOiBSZWQgMwo+ID4gKyAgICAxMCA6
+IEdyZWVuIDMKPiA+ICsgICAgMTEgOiBCbHVlIDMKPiA+ICsKPiA+ICtNQzEzODkyIExFRCBJRHM6
+Cj4gPiArICAgIDEyIDogTWFpbiBkaXNwbGF5Cj4gPiArICAgIDEzIDogQVVYIGRpc3BsYXkKPiA+
+ICsgICAgMTQgOiBLZXlwYWQKPiA+ICsgICAgMTUgOiBSZWQKPiA+ICsgICAgMTYgOiBHcmVlbgo+
+ID4gKyAgICAxNyA6IEJsdWUKPiAKPiBUaGlzIGxvb2tzIGEgYml0IHN0cmFuZ2UuIERvZXMgdGhl
+IG51bWJlcmluZyByZWxhdGUgdG8gaGFyZHdhcmUgZGVzaWduCj4gaW4gYW55IHdheT8gRnJvbSB3
+aGF0IEkgY2FuIHNlZSwgdGhvc2UgYXJlIGp1c3QgZW51bXMgdmFsdWVzIGZyb20gTGludXgKPiBk
+cml2ZXIsIHdoaWNoIGRvZXNuJ3Qgc2VlbSB0aGUgcmlnaHQgbmFtZXNwYWNlIHRvIGV4cG9ydCB0
+byBEVC4KCldoaWNoIGEgYmV0dGVyIHNvbHV0aW9uIGhlcmU/IE1ha2UgbmFtZXMgYXMgd2VsbCBh
+cyBmb3IgcmVndWxhdG9ycz8KVGhhbmtzLgoKLS0tCg==
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
