@@ -1,63 +1,76 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/3] leds/pwm: Don't disable pwm when setting brightness
- to 0
-Date: Thu, 5 Dec 2013 22:26:41 +0100
-Message-ID: <20131205212641.GC4707@pengutronix.de>
-References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1385412225-29740-3-git-send-email-u.kleine-koenig@pengutronix.de>
- <20131202123318.GC12793@ulmo.nvidia.com>
- <20131202131807.GC29721@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH 2/3] leds: leds-mc13783: Remove unneeded mc13xxx_{un}lock
+Date: Sat,  7 Dec 2013 10:22:19 +0400
+Message-ID: <1386397339-30972-2-git-send-email-shc_work@mail.ru>
+References: <1386397339-30972-1-git-send-email-shc_work@mail.ru>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:40874 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750877Ab3LEV0r (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 5 Dec 2013 16:26:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20131202131807.GC29721@pengutronix.de>
+Received: from fallback7.mail.ru ([94.100.176.135]:40675 "EHLO
+	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751563Ab3LGGXB (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 7 Dec 2013 01:23:01 -0500
+Received: from smtp38.i.mail.ru (smtp38.i.mail.ru [94.100.177.98])
+	by fallback7.mail.ru (mPOP.Fallback_MX) with ESMTP id 7BA35F07E2AD
+	for <linux-leds@vger.kernel.org>; Sat,  7 Dec 2013 10:22:59 +0400 (MSK)
+In-Reply-To: <1386397339-30972-1-git-send-email-shc_work@mail.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
+To: linux-leds@vger.kernel.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, =?UTF-8?q?Philippe=20R=C3=A9tornaz?= <philippe.retornaz@epfl.ch>, Sascha Hauer <kernel@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>
 
-Hello Thierry,
+LED registers are used only in this driver, so no additional
+locking is needed. Read-Modify-Write cycle in workqueue is already
+protected by regmap.
 
-On Mon, Dec 02, 2013 at 02:18:07PM +0100, Uwe Kleine-K=F6nig wrote:
-> On Mon, Dec 02, 2013 at 01:33:19PM +0100, Thierry Reding wrote:
-> > On Mon, Nov 25, 2013 at 09:43:44PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > This fixes disabling the LED on i.MX28. The PWM hardware delays u=
-sing
-> > > the newly set pwm-config until the beginning of a new period. It'=
-s very
-> > > likely that pwm_disable is called before the current period ends.=
- In
-> > > case the LED was on brightness=3Dmax before the LED stays on beca=
-use in
-> > > the disabled PWM block the period never ends.
-> > >=20
-> > > Also only call pwm_enable only once in the probe call back and th=
-e
-> > > matching pwm_disable in .remove(). Moreover the pwm is explicitly
-> > > initialized to off.
-> >=20
-> > While I do understand the reasoning behind this, if this is really =
-the
-> > behaviour that we need then there's no use in having pwm_enable() a=
-nd
-> > pwm_disable() at all. They can just be folded into pwm_get() and
-> > pwm_put(), respectively.
-> So after the first pwm_get the pwm starts with an unspecified duty
-> cycle? That's not that nice, is it?
-How can we come forward here? After all it's a real bug being fixed.
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+---
+ drivers/leds/leds-mc13783.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+index ec704f2..ca87a1b 100644
+--- a/drivers/leds/leds-mc13783.c
++++ b/drivers/leds/leds-mc13783.c
+@@ -117,9 +117,7 @@ static void mc13xxx_led_work(struct work_struct *work)
+ 		BUG();
+ 	}
+ 
+-	mc13xxx_lock(led->master);
+ 	mc13xxx_reg_rmw(led->master, reg, mask << shift, value << shift);
+-	mc13xxx_unlock(led->master);
+ }
+ 
+ static void mc13xxx_led_set(struct led_classdev *led_cdev,
+@@ -164,19 +162,12 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ 	leds->num_leds = num_leds;
+ 	platform_set_drvdata(pdev, leds);
+ 
+-	mc13xxx_lock(mcdev);
+ 	for (i = 0; i < devtype->num_regs; i++) {
+ 		reg = pdata->led_control[i];
+ 		WARN_ON(reg >= (1 << 24));
+ 		ret = mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), reg);
+ 		if (ret)
+-			break;
+-	}
+-	mc13xxx_unlock(mcdev);
+-
+-	if (ret) {
+-		dev_err(&pdev->dev, "Unable to init LED driver\n");
+-		return ret;
++			return ret;
+ 	}
+ 
+ 	for (i = 0; i < num_leds; i++) {
+@@ -237,10 +228,8 @@ static int mc13xxx_led_remove(struct platform_device *pdev)
+ 		cancel_work_sync(&leds->led[i].work);
+ 	}
+ 
+-	mc13xxx_lock(mcdev);
+ 	for (i = 0; i < leds->devtype->num_regs; i++)
+ 		mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), 0);
+-	mc13xxx_unlock(mcdev);
+ 
+ 	return 0;
+ }
+-- 
+1.8.3.2
