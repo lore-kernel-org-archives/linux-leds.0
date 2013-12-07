@@ -1,264 +1,332 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH 1/3] leds: leds-mc13783: Remove duplicate field in platform data
-Date: Sat,  7 Dec 2013 10:22:18 +0400
-Message-ID: <1386397339-30972-1-git-send-email-shc_work@mail.ru>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 3/3] leds: leds-mc13783: Add devicetree support
+Date: Sat, 07 Dec 2013 12:47:18 +0100
+Message-ID: <4531338.dvjMOzW3sA@flatron>
+References: <1386397464-31033-1-git-send-email-shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fallback6.mail.ru ([94.100.176.134]:38343 "EHLO
-	fallback6.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833Ab3LGGah (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 7 Dec 2013 01:30:37 -0500
-Received: from smtp38.i.mail.ru (smtp38.i.mail.ru [94.100.177.98])
-	by fallback6.mail.ru (mPOP.Fallback_MX) with ESMTP id 710DF27DD797
-	for <linux-leds@vger.kernel.org>; Sat,  7 Dec 2013 10:22:53 +0400 (MSK)
+Received: from mail-ea0-f180.google.com ([209.85.215.180]:64817 "EHLO
+	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754212Ab3LGLrY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 7 Dec 2013 06:47:24 -0500
+In-Reply-To: <1386397464-31033-1-git-send-email-shc_work@mail.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, =?UTF-8?q?Philippe=20R=C3=A9tornaz?= <philippe.retornaz@epfl.ch>, Sascha Hauer <kernel@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Philippe =?ISO-8859-1?Q?R=E9tornaz?= <philippe.retornaz@epfl.ch>, Sascha Hauer <kernel@pengutronix.de>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 
-LED platform data are overwhelmed by excessive field "max_cur"
-which just replicates few bits of "led_control" field.
-This patch removes this field and adds a definition for the
-current settings in the header.
+Hi Alexander,
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- arch/arm/mach-imx/mach-mx31moboard.c | 16 ++++----
- drivers/leds/leds-mc13783.c          | 76 ------------------------------------
- include/linux/mfd/mc13xxx.h          | 37 +++++++++++++-----
- 3 files changed, 36 insertions(+), 93 deletions(-)
+Please see my comments inline.
 
-diff --git a/arch/arm/mach-imx/mach-mx31moboard.c b/arch/arm/mach-imx/mach-mx31moboard.c
-index 6f424ec..b3738e6 100644
---- a/arch/arm/mach-imx/mach-mx31moboard.c
-+++ b/arch/arm/mach-imx/mach-mx31moboard.c
-@@ -236,32 +236,26 @@ static struct mc13xxx_led_platform_data moboard_led[] = {
- 	{
- 		.id = MC13783_LED_R1,
- 		.name = "coreboard-led-4:red",
--		.max_current = 2,
- 	},
- 	{
- 		.id = MC13783_LED_G1,
- 		.name = "coreboard-led-4:green",
--		.max_current = 2,
- 	},
- 	{
- 		.id = MC13783_LED_B1,
- 		.name = "coreboard-led-4:blue",
--		.max_current = 2,
- 	},
- 	{
- 		.id = MC13783_LED_R2,
- 		.name = "coreboard-led-5:red",
--		.max_current = 3,
- 	},
- 	{
- 		.id = MC13783_LED_G2,
- 		.name = "coreboard-led-5:green",
--		.max_current = 3,
- 	},
- 	{
- 		.id = MC13783_LED_B2,
- 		.name = "coreboard-led-5:blue",
--		.max_current = 3,
- 	},
- };
- 
-@@ -271,8 +265,14 @@ static struct mc13xxx_leds_platform_data moboard_leds = {
- 	.led_control[0]	= MC13783_LED_C0_ENABLE | MC13783_LED_C0_ABMODE(0),
- 	.led_control[1]	= MC13783_LED_C1_SLEWLIM,
- 	.led_control[2]	= MC13783_LED_C2_SLEWLIM,
--	.led_control[3]	= MC13783_LED_C3_PERIOD(0),
--	.led_control[4]	= MC13783_LED_C3_PERIOD(0),
-+	.led_control[3]	= MC13783_LED_C3_PERIOD(0) |
-+			  MC13783_LED_C3_CURRENT_R1(2) |
-+			  MC13783_LED_C3_CURRENT_G1(2) |
-+			  MC13783_LED_C3_CURRENT_B1(2),
-+	.led_control[4]	= MC13783_LED_C4_PERIOD(0) |
-+			  MC13783_LED_C4_CURRENT_R2(3) |
-+			  MC13783_LED_C4_CURRENT_G2(3) |
-+			  MC13783_LED_C4_CURRENT_B2(3),
- };
- 
- static struct mc13xxx_buttons_platform_data moboard_buttons = {
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index fa9b439..ec704f2 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -132,75 +132,6 @@ static void mc13xxx_led_set(struct led_classdev *led_cdev,
- 	schedule_work(&led->work);
- }
- 
--static int __init mc13xxx_led_setup(struct mc13xxx_led *led, int max_current)
--{
--	int shift, mask, reg, ret, bank;
--
--	switch (led->id) {
--	case MC13783_LED_MD:
--		reg = MC13XXX_REG_LED_CONTROL(2);
--		shift = 0;
--		mask = 0x07;
--		break;
--	case MC13783_LED_AD:
--		reg = MC13XXX_REG_LED_CONTROL(2);
--		shift = 3;
--		mask = 0x07;
--		break;
--	case MC13783_LED_KP:
--		reg = MC13XXX_REG_LED_CONTROL(2);
--		shift = 6;
--		mask = 0x07;
--		break;
--	case MC13783_LED_R1:
--	case MC13783_LED_G1:
--	case MC13783_LED_B1:
--	case MC13783_LED_R2:
--	case MC13783_LED_G2:
--	case MC13783_LED_B2:
--	case MC13783_LED_R3:
--	case MC13783_LED_G3:
--	case MC13783_LED_B3:
--		bank = (led->id - MC13783_LED_R1) / 3;
--		reg = MC13XXX_REG_LED_CONTROL(3) + bank;
--		shift = ((led->id - MC13783_LED_R1) - bank * 3) * 2;
--		mask = 0x03;
--		break;
--	case MC13892_LED_MD:
--		reg = MC13XXX_REG_LED_CONTROL(0);
--		shift = 9;
--		mask = 0x07;
--		break;
--	case MC13892_LED_AD:
--		reg = MC13XXX_REG_LED_CONTROL(0);
--		shift = 21;
--		mask = 0x07;
--		break;
--	case MC13892_LED_KP:
--		reg = MC13XXX_REG_LED_CONTROL(1);
--		shift = 9;
--		mask = 0x07;
--		break;
--	case MC13892_LED_R:
--	case MC13892_LED_G:
--	case MC13892_LED_B:
--		bank = (led->id - MC13892_LED_R) / 2;
--		reg = MC13XXX_REG_LED_CONTROL(2) + bank;
--		shift = ((led->id - MC13892_LED_R) - bank * 2) * 12 + 9;
--		mask = 0x07;
--		break;
--	default:
--		BUG();
--	}
--
--	mc13xxx_lock(led->master);
--	ret = mc13xxx_reg_rmw(led->master, reg, mask << shift,
--			      max_current << shift);
--	mc13xxx_unlock(led->master);
--
--	return ret;
--}
--
- static int __init mc13xxx_led_probe(struct platform_device *pdev)
- {
- 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
-@@ -250,14 +181,12 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < num_leds; i++) {
- 		const char *name, *trig;
--		char max_current;
- 
- 		ret = -EINVAL;
- 
- 		id = pdata->led[i].id;
- 		name = pdata->led[i].name;
- 		trig = pdata->led[i].default_trigger;
--		max_current = pdata->led[i].max_current;
- 
- 		if ((id > devtype->led_max) || (id < devtype->led_min)) {
- 			dev_err(&pdev->dev, "Invalid ID %i\n", id);
-@@ -280,11 +209,6 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 
- 		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
- 
--		ret = mc13xxx_led_setup(&leds->led[i], max_current);
--		if (ret) {
--			dev_err(&pdev->dev, "Unable to setup LED %i\n", id);
--			break;
--		}
- 		ret = led_classdev_register(pdev->dev.parent,
- 					    &leds->led[i].cdev);
- 		if (ret) {
-diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
-index 67c17b5..ac22305 100644
---- a/include/linux/mfd/mc13xxx.h
-+++ b/include/linux/mfd/mc13xxx.h
-@@ -112,9 +112,6 @@ struct mc13xxx_led_platform_data {
- 	int id;
- 	const char *name;
- 	const char *default_trigger;
--
--/* Three or two bits current selection depending on the led */
--	char max_current;
- };
- 
- #define MAX_LED_CONTROL_REGS	6
-@@ -123,7 +120,7 @@ struct mc13xxx_leds_platform_data {
- 	struct mc13xxx_led_platform_data *led;
- 	int num_leds;
- 
--/* LED Control 0 */
-+/* MC13783 LED Control 0 */
- #define MC13783_LED_C0_ENABLE		(1 << 0)
- #define MC13783_LED_C0_TRIODE_MD	(1 << 7)
- #define MC13783_LED_C0_TRIODE_AD	(1 << 8)
-@@ -131,21 +128,43 @@ struct mc13xxx_leds_platform_data {
- #define MC13783_LED_C0_BOOST		(1 << 10)
- #define MC13783_LED_C0_ABMODE(x)	(((x) & 0x7) << 11)
- #define MC13783_LED_C0_ABREF(x)		(((x) & 0x3) << 14)
--/* LED Control 1 */
-+/* MC13783 LED Control 1 */
- #define MC13783_LED_C1_TC1HALF		(1 << 18)
- #define MC13783_LED_C1_SLEWLIM		(1 << 23)
--/* LED Control 2 */
-+/* MC13783 LED Control 2 */
-+#define MC13783_LED_C2_CURRENT_MD(x)	(((x) & 0x7) << 0)
-+#define MC13783_LED_C2_CURRENT_AD(x)	(((x) & 0x7) << 3)
-+#define MC13783_LED_C2_CURRENT_KP(x)	(((x) & 0x7) << 6)
- #define MC13783_LED_C2_PERIOD(x)	(((x) & 0x3) << 21)
- #define MC13783_LED_C2_SLEWLIM		(1 << 23)
--/* LED Control 3 */
-+/* MC13783 LED Control 3 */
-+#define MC13783_LED_C3_CURRENT_R1(x)	(((x) & 0x3) << 0)
-+#define MC13783_LED_C3_CURRENT_G1(x)	(((x) & 0x3) << 2)
-+#define MC13783_LED_C3_CURRENT_B1(x)	(((x) & 0x3) << 4)
- #define MC13783_LED_C3_PERIOD(x)	(((x) & 0x3) << 21)
- #define MC13783_LED_C3_TRIODE_TC1	(1 << 23)
--/* LED Control 4 */
-+/* MC13783 LED Control 4 */
-+#define MC13783_LED_C4_CURRENT_R2(x)	(((x) & 0x3) << 0)
-+#define MC13783_LED_C4_CURRENT_G2(x)	(((x) & 0x3) << 2)
-+#define MC13783_LED_C4_CURRENT_B2(x)	(((x) & 0x3) << 4)
- #define MC13783_LED_C4_PERIOD(x)	(((x) & 0x3) << 21)
- #define MC13783_LED_C4_TRIODE_TC2	(1 << 23)
--/* LED Control 5 */
-+/* MC13783 LED Control 5 */
-+#define MC13783_LED_C5_CURRENT_R3(x)	(((x) & 0x3) << 0)
-+#define MC13783_LED_C5_CURRENT_G3(x)	(((x) & 0x3) << 2)
-+#define MC13783_LED_C5_CURRENT_B3(x)	(((x) & 0x3) << 4)
- #define MC13783_LED_C5_PERIOD(x)	(((x) & 0x3) << 21)
- #define MC13783_LED_C5_TRIODE_TC3	(1 << 23)
-+/* MC13892 LED Control 0 */
-+#define MC13892_LED_C0_CURRENT_MD(x)	(((x) & 0x7) << 9)
-+#define MC13892_LED_C0_CURRENT_AD(x)	(((x) & 0x7) << 21)
-+/* MC13892 LED Control 1 */
-+#define MC13892_LED_C1_CURRENT_KP(x)	(((x) & 0x7) << 9)
-+/* MC13892 LED Control 2 */
-+#define MC13892_LED_C2_CURRENT_R(x)	(((x) & 0x7) << 9)
-+#define MC13892_LED_C2_CURRENT_G(x)	(((x) & 0x7) << 21)
-+/* MC13892 LED Control 3 */
-+#define MC13892_LED_C3_CURRENT_B(x)	(((x) & 0x7) << 9)
- 	u32 led_control[MAX_LED_CONTROL_REGS];
- };
- 
--- 
-1.8.3.2
+On Saturday 07 of December 2013 10:24:24 Alexander Shiyan wrote:
+> This patch adds devicetree support for the MC13XXX LED driver.
+> 
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> ---
+>  Documentation/devicetree/bindings/mfd/mc13xxx.txt |  38 +++++
+>  drivers/leds/leds-mc13783.c                       | 161 ++++++++++++++--------
+>  2 files changed, 143 insertions(+), 56 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/mc13xxx.txt b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
+> index abd9e3c..bdf31e8 100644
+> --- a/Documentation/devicetree/bindings/mfd/mc13xxx.txt
+> +++ b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
+> @@ -10,9 +10,37 @@ Optional properties:
+>  - fsl,mc13xxx-uses-touch : Indicate the touchscreen controller is being used
+>  
+>  Sub-nodes:
+> +- leds : Contain the led nodes and initial register values in property
+> +  "led_control". Number of register depends of used IC, for MC13783 is 6,
+> +  for MC13892 is 4. See datasheet for bits definitions of these register.
+
+Can't the driver somehow derive correct register values from LEDs listed
+as subnodes of this node? If not, I'd say that more fine grained
+properties should be used instead. What kind of configuration do these
+register control?
+
+Also s/_/-/ in property names.
+
+> +  Each led node should contain "reg", which used as LED ID (described below).
+> +  Optional properties "label" and "linux,default-trigger" is described in
+> +  Documentation/devicetree/bindings/leds/common.txt.
+>  - regulators : Contain the regulator nodes. The regulators are bound using
+>    their names as listed below with their registers and bits for enabling.
+>  
+> +MC13783 LED IDs:
+> +    0  : Main display
+> +    1  : AUX display
+> +    2  : Keypad
+> +    3  : Red 1
+> +    4  : Green 1
+> +    5  : Blue 1
+> +    6  : Red 2
+> +    7  : Green 2
+> +    8  : Blue 2
+> +    9  : Red 3
+> +    10 : Green 3
+> +    11 : Blue 3
+> +
+> +MC13892 LED IDs:
+> +    12 : Main display
+> +    13 : AUX display
+> +    14 : Keypad
+> +    15 : Red
+> +    16 : Green
+> +    17 : Blue
+
+This looks a bit strange. Does the numbering relate to hardware design
+in any way? From what I can see, those are just enums values from Linux
+driver, which doesn't seem the right namespace to export to DT.
+
+> +
+>  MC13783 regulators:
+>      sw1a      : regulator SW1A      (register 24, bit 0)
+>      sw1b      : regulator SW1B      (register 25, bit 0)
+> @@ -89,6 +117,16 @@ ecspi@70010000 { /* ECSPI1 */
+>  		interrupt-parent = <&gpio0>;
+>  		interrupts = <8>;
+>  
+> +		leds {
+> +			led_control = <0x000 0x000 0x0e0 0x000>;
+> +
+> +			system_led {
+
+s/_/-/ in node name and also whenever reg property is present, node name
+should be followed by @unit-address suffix where unit-address is the
+value of first address in reg property.
+
+> +				reg = <15>;
+> +				label = "system:red:live";
+> +				linux,default-trigger = "heartbeat";
+> +			};
+> +		};
+> +
+>  		regulators {
+>  			sw1_reg: mc13892__sw1 {
+>  				regulator-min-microvolt = <600000>;
+> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+> index ca87a1b..bc3ea2b 100644
+> --- a/drivers/leds/leds-mc13783.c
+> +++ b/drivers/leds/leds-mc13783.c
+> @@ -20,26 +20,27 @@
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/leds.h>
+> +#include <linux/of.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/mfd/mc13xxx.h>
+>  
+> -#define MC13XXX_REG_LED_CONTROL(x)	(51 + (x))
+> -
+
+This and related changes qualify for a separate patch that would be
+a simple refactoring.
+
+>  struct mc13xxx_led_devtype {
+>  	int	led_min;
+>  	int	led_max;
+>  	int	num_regs;
+> +	u32	ledctrl_base;
+>  };
+>  
+>  struct mc13xxx_led {
+>  	struct led_classdev	cdev;
+>  	struct work_struct	work;
+> -	struct mc13xxx		*master;
+>  	enum led_brightness	new_brightness;
+>  	int			id;
+> +	struct mc13xxx_leds	*leds;
+>  };
+>  
+>  struct mc13xxx_leds {
+> +	struct mc13xxx			*master;
+>  	struct mc13xxx_led_devtype	*devtype;
+>  	int				num_leds;
+>  	struct mc13xxx_led		led[0];
+> @@ -48,23 +49,24 @@ struct mc13xxx_leds {
+>  static void mc13xxx_led_work(struct work_struct *work)
+>  {
+>  	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
+> -	int reg, mask, value, bank, off, shift;
+> +	struct mc13xxx_leds *leds = led->leds;
+> +	unsigned int reg, mask, value, bank, off, shift;
+>  
+>  	switch (led->id) {
+>  	case MC13783_LED_MD:
+> -		reg = MC13XXX_REG_LED_CONTROL(2);
+> +		reg = 2;
+>  		shift = 9;
+>  		mask = 0x0f;
+>  		value = led->new_brightness >> 4;
+>  		break;
+>  	case MC13783_LED_AD:
+> -		reg = MC13XXX_REG_LED_CONTROL(2);
+> +		reg = 2;
+>  		shift = 13;
+>  		mask = 0x0f;
+>  		value = led->new_brightness >> 4;
+>  		break;
+>  	case MC13783_LED_KP:
+> -		reg = MC13XXX_REG_LED_CONTROL(2);
+> +		reg = 2;
+>  		shift = 17;
+>  		mask = 0x0f;
+>  		value = led->new_brightness >> 4;
+> @@ -80,25 +82,25 @@ static void mc13xxx_led_work(struct work_struct *work)
+>  	case MC13783_LED_B3:
+>  		off = led->id - MC13783_LED_R1;
+>  		bank = off / 3;
+> -		reg = MC13XXX_REG_LED_CONTROL(3) + bank;
+> +		reg = 3 + bank;
+>  		shift = (off - bank * 3) * 5 + 6;
+>  		value = led->new_brightness >> 3;
+>  		mask = 0x1f;
+>  		break;
+>  	case MC13892_LED_MD:
+> -		reg = MC13XXX_REG_LED_CONTROL(0);
+> +		reg = 0;
+>  		shift = 3;
+>  		mask = 0x3f;
+>  		value = led->new_brightness >> 2;
+>  		break;
+>  	case MC13892_LED_AD:
+> -		reg = MC13XXX_REG_LED_CONTROL(0);
+> +		reg = 0;
+>  		shift = 15;
+>  		mask = 0x3f;
+>  		value = led->new_brightness >> 2;
+>  		break;
+>  	case MC13892_LED_KP:
+> -		reg = MC13XXX_REG_LED_CONTROL(1);
+> +		reg = 1;
+>  		shift = 3;
+>  		mask = 0x3f;
+>  		value = led->new_brightness >> 2;
+> @@ -108,7 +110,7 @@ static void mc13xxx_led_work(struct work_struct *work)
+>  	case MC13892_LED_B:
+>  		off = led->id - MC13892_LED_R;
+>  		bank = off / 2;
+> -		reg = MC13XXX_REG_LED_CONTROL(2) + bank;
+> +		reg = 2 + bank;
+>  		shift = (off - bank * 2) * 12 + 3;
+>  		value = led->new_brightness >> 2;
+>  		mask = 0x3f;
+> @@ -117,7 +119,8 @@ static void mc13xxx_led_work(struct work_struct *work)
+>  		BUG();
+>  	}
+>  
+> -	mc13xxx_reg_rmw(led->master, reg, mask << shift, value << shift);
+> +	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
+> +			mask << shift, value << shift);
+>  }
+>  
+>  static void mc13xxx_led_set(struct led_classdev *led_cdev,
+> @@ -130,80 +133,121 @@ static void mc13xxx_led_set(struct led_classdev *led_cdev,
+>  	schedule_work(&led->work);
+>  }
+>  
+> +static int __init mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
+> +				       struct device_node *parent)
+> +{
+> +#ifdef CONFIG_OF
+> +	struct device_node *child;
+> +	int ret, i = 0;
+> +
+> +	for_each_child_of_node(parent, child) {
+> +		ret = of_property_read_u32(child, "reg", &leds->led[i].id);
+> +		if (ret)
+> +			return ret;
+> +		leds->led[i].cdev.name = of_get_property(child, "label", NULL);
+> +		leds->led[i].cdev.default_trigger =
+> +			of_get_property(child, "linux,default-trigger", NULL);
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +#else
+> +	return -ENOTSUPP;
+> +#endif
+> +}
+
+I believe the preferred way to use conditional compilation is:
+
+#ifdef CONFIG_OF
+static int __init mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
+				       struct device_node *parent)
+{
+	/* enabled variant */
+}
+#else
+static inline int mc13xxx_led_setup_of(struct mc13xxx_leds *leds,
+				       struct device_node *parent)
+{
+	return -ENOTSUPP;
+}
+#endif
+
+This doesn't pollute function body with #ifdefs and allows explicitly
+marking the disabled variant inline.
+
+> +
+>  static int __init mc13xxx_led_probe(struct platform_device *pdev)
+>  {
+> -	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> -	struct mc13xxx *mcdev = dev_get_drvdata(pdev->dev.parent);
+> +	struct device *dev = &pdev->dev;
+> +	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(dev);
+> +	struct mc13xxx *mcdev = dev_get_drvdata(dev->parent);
+>  	struct mc13xxx_led_devtype *devtype =
+>  		(struct mc13xxx_led_devtype *)pdev->id_entry->driver_data;
+> +	int i, num_leds = 0, ret = 0;
+> +	struct device_node *parent;
+>  	struct mc13xxx_leds *leds;
+> -	int i, id, num_leds, ret = -ENODATA;
+> -	u32 reg, init_led = 0;
+> -
+> -	if (!pdata) {
+> -		dev_err(&pdev->dev, "Missing platform data\n");
+> -		return -ENODEV;
+> +	u32 *ctrls = NULL, init_led = 0;
+> +
+> +	of_node_get(dev->parent->of_node);
+> +	parent = of_find_node_by_name(dev->parent->of_node, "leds");
+
+Both lines above should be executed only if the device has been
+instantiated using DT.
+
+Also of_find_node_by_name() is not the correct function to use. Please
+refer to its documentation to learn why. The function that should be used
+here is of_get_child_by_name().
+
+> +
+> +	if (pdata) {
+> +		num_leds = pdata->num_leds;
+> +		ctrls = pdata->led_control;
+> +	} else if (parent) {
+> +		num_leds = of_get_child_count(parent);
+> +		ret = of_property_read_u32_array(parent, "led_control", ctrls,
+> +						 devtype->num_regs);
+
+Huh? Does this even work? The argument in place of ctrls is supposed to be
+the destination memory for read array. Your code sets ctrls to NULL above
+and then passes it to this function.
+
+> +		if (ret)
+> +			goto out_node_put;
+> +	} else {
+> +		return -ENODATA;
+>  	}
+
+In general, I would rather adopt a completely different approach to DT
+enablement in this driver. Instead of splitting the probe into two almost
+completely different code paths in large if blocks, what about making
+mc13xxx_led_setup_of() allocate a platform data structure and fill it
+in with data parsed from DT, so the driver would then proceed normally as
+if the platform data were available? IMHO this should make the code much
+simpler and more readable.
+
+Best regards,
+Tomasz
