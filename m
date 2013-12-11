@@ -1,48 +1,44 @@
-From: Chen Gang <gang.chen.5i5j@gmail.com>
-Subject: Re: [PATCH] drivers: leds: leds-tca6507: check CONFIG_GPIOLIB whether
- defined for 'gpio_base'
-Date: Tue, 10 Dec 2013 09:58:05 +0800
-Message-ID: <52A6752D.4000302@gmail.com>
-References: <52A54A01.60107@gmail.com> <CAK5ve-K9mVnsOUAQCC2byXRzK3-PyZnxc1rr09p4-xz4oNKa3g@mail.gmail.com>
+From: Xiubo Li <Li.Xiubo@freescale.com>
+Subject: [PATCH] leds: leds-pwm: fix duty time overflow.
+Date: Wed, 11 Dec 2013 17:19:42 +0800
+Message-ID: <1386753582-16009-1-git-send-email-Li.Xiubo@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:39127 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746Ab3LJB4C (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Dec 2013 20:56:02 -0500
-Received: by mail-pd0-f177.google.com with SMTP id q10so6269259pdj.36
-        for <linux-leds@vger.kernel.org>; Mon, 09 Dec 2013 17:56:01 -0800 (PST)
-In-Reply-To: <CAK5ve-K9mVnsOUAQCC2byXRzK3-PyZnxc1rr09p4-xz4oNKa3g@mail.gmail.com>
+Received: from [207.46.163.24] ([207.46.163.24]:38348 "EHLO
+	co9outboundpool.messaging.microsoft.com" rhost-flags-FAIL-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751294Ab3LKKM4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Wed, 11 Dec 2013 05:12:56 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, James Hogan <james.hogan@imgtec.com>
+To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, b47053@freescale.com
 
-On 12/10/2013 02:24 AM, Bryan Wu wrote:
-> On Sun, Dec 8, 2013 at 8:41 PM, Chen Gang <gang.chen.5i5j@gmail.com> wrote:
->>
->> Need check CONFIG_GPIOLIB whether defined, just like another area has
->> done within this file. Or can not pass compiling when CONFIG_GPIOLIB
->> disabled.
->>
->> The related error (with allmodconfig for metag):
->>
->>     CC [M]  drivers/leds/leds-tca6507.o
->>   drivers/leds/leds-tca6507.c: In function 'tca6507_led_dt_init':
->>   drivers/leds/leds-tca6507.c:731: error: 'struct tca6507_platform_data' has no member named 'gpio_base'
->>
->>
-> 
-> Good, I merged it into my tree.
-> Thanks,
-> -Bryan
->
+Overflow maybe occurs when calculates the duty time. For instance,
+the period time is 990000000ns, and the max_brightness is 127, when
+setting the brightness to 12, the duty value will be 25906026ns, but
+it should be 93543307ns.
+---
+ drivers/leds/leds-pwm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thank you too.
-
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index bb6f948..7cb2cd8 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -66,9 +66,11 @@ static void led_pwm_set(struct led_classdev *led_cdev,
+ 	struct led_pwm_data *led_dat =
+ 		container_of(led_cdev, struct led_pwm_data, cdev);
+ 	unsigned int max = led_dat->cdev.max_brightness;
+-	unsigned int period =  led_dat->period;
++	unsigned long long duty =  led_dat->period;
+ 
+-	led_dat->duty = brightness * period / max;
++	duty *= brightness;
++	do_div(duty, max);
++	led_dat->duty = duty;
+ 
+ 	if (led_dat->can_sleep)
+ 		schedule_work(&led_dat->work);
 -- 
-Chen Gang
-
-Open, share, and attitude like air, water and life which God blessed
+1.8.4
