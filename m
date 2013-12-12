@@ -1,63 +1,163 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: pwm: Remove a warning on non-DT platforms
-Date: Thu, 12 Dec 2013 09:35:39 -0800
-Message-ID: <CAK5ve-J9LB3ESCnuT9euqO9JUCHeK6DZUVFJK4cJEG2fhXXBvQ@mail.gmail.com>
-References: <1386807102-15397-1-git-send-email-olof@lixom.net>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/3] leds/pwm: Don't disable pwm when setting brightness
+ to 0
+Date: Thu, 12 Dec 2013 22:10:50 +0100
+Message-ID: <20131212211050.GC12238@pengutronix.de>
+References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <1385412225-29740-3-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20131202123318.GC12793@ulmo.nvidia.com>
+ <20131202131807.GC29721@pengutronix.de>
+ <20131205212641.GC4707@pengutronix.de>
+ <20131211153050.GE31617@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:34451 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809Ab3LLRgB (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Dec 2013 12:36:01 -0500
-In-Reply-To: <1386807102-15397-1-git-send-email-olof@lixom.net>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:34687 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751527Ab3LLVK5 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Dec 2013 16:10:57 -0500
+Content-Disposition: inline
+In-Reply-To: <20131211153050.GE31617@ulmo.nvidia.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
 
-On Wed, Dec 11, 2013 at 4:11 PM, Olof Johansson <olof@lixom.net> wrote:
-> This removes a warning on non-DT-enabled platforms:
->
-> drivers/leds/leds-pwm.c: In function 'led_pwm_create_of':
-> drivers/leds/leds-pwm.c:88:22: warning: unused variable 'node'
->
-> Really caused by the local variable that is assigned to and then never
-> used. Just do away with the local var, it's not needed.
->
-> Technically this code path can never be entered without DT enabled,
-> since there's an earlier check about number of children in the calling
-> function, but the compiler can't see that.
->
+Hello Thierry,
 
-Great, actually we got an 0-Day kbuild warning about this. I'll merge
-this fixing.
+first of all thanks for your reply.
 
-Thanks,
--Bryan
+On Wed, Dec 11, 2013 at 04:30:51PM +0100, Thierry Reding wrote:
+> On Thu, Dec 05, 2013 at 10:26:41PM +0100, Uwe Kleine-K=F6nig wrote:
+> > Hello Thierry,
+> >=20
+> > On Mon, Dec 02, 2013 at 02:18:07PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > On Mon, Dec 02, 2013 at 01:33:19PM +0100, Thierry Reding wrote:
+> > > > On Mon, Nov 25, 2013 at 09:43:44PM +0100, Uwe Kleine-K=F6nig wr=
+ote:
+> > > > > This fixes disabling the LED on i.MX28. The PWM hardware dela=
+ys using
+> > > > > the newly set pwm-config until the beginning of a new period.=
+ It's very
+> > > > > likely that pwm_disable is called before the current period e=
+nds. In
+> > > > > case the LED was on brightness=3Dmax before the LED stays on =
+because in
+> > > > > the disabled PWM block the period never ends.
+> > > > >=20
+> > > > > Also only call pwm_enable only once in the probe call back an=
+d the
+> > > > > matching pwm_disable in .remove(). Moreover the pwm is explic=
+itly
+> > > > > initialized to off.
+> > > >=20
+> > > > While I do understand the reasoning behind this, if this is rea=
+lly the
+> > > > behaviour that we need then there's no use in having pwm_enable=
+() and
+> > > > pwm_disable() at all. They can just be folded into pwm_get() an=
+d
+> > > > pwm_put(), respectively.
+> > > So after the first pwm_get the pwm starts with an unspecified dut=
+y
+> > > cycle? That's not that nice, is it?
+> > How can we come forward here? After all it's a real bug being fixed=
+=2E
+>=20
+> I've thought about this some more, and this isn't actually fixing a b=
+ug.
+> Rather it's working around some quirk of the hardware in your setup. =
+So
+<pedantic>
+Yes, it does fix a bug. Without my patch setting the brightness of the
+LED in question to zero doesn't work most of the time, with my patch it
+works. Also I wouldn't call it quirk as that has a negative connotation
+(at least for me). I'd call it a nice feature, that is missing from the
+other pwms I know, but I don't care much how you call it.
+</pedantic>
 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
->  drivers/leds/leds-pwm.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index b31d8e99..bf49547 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -85,11 +85,10 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
->  static int led_pwm_create_of(struct platform_device *pdev,
->                              struct led_pwm_priv *priv)
->  {
-> -       struct device_node *node = pdev->dev.of_node;
->         struct device_node *child;
->         int ret;
->
-> -       for_each_child_of_node(node, child) {
-> +       for_each_child_of_node(pdev->dev.of_node, child) {
->                 struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
->
->                 led_dat->cdev.name = of_get_property(child, "label",
-> --
-> 1.7.10.4
->
+> in the long run I think the best option would have to be to define th=
+e
+> behaviour of the PWM subsystem, and then make sure in drivers that th=
+ey
+> behave accordingly. So if we define, or rather keep with the existing
+> implied behaviour, that the configuration is active when pwm_config()
+> returns, we can easily write generic client drivers because it means
+> they can rely on said behaviour. If a driver doesn't behave according=
+ly
+> it needs to be fixed.
+This definition doesn't fix the problem at hand. (It would fix it for
+i.MX28, but not in general.) leds-pwm is doing:
+
+	pwm_config(led_dat->pwm, new_duty, led_dat->period);
+	if (new_duty =3D=3D 0)
+		pwm_disable(led_dat->pwm);
+	else
+		pwm_enable(led_dat->pwm);
+
+=2E The problem is not that i.MX28 takes some time until it works with =
+the
+new config, but that it does something on pwm_disable that the author o=
+f
+leds-pwm didn't take into account.
+The only thing special on i.MX28 is that currently pwm_config might
+return before the new config is active and that is the reason why the
+state after pwm_disable is undefined for a different reason than on
+other platforms (probably).
+
+There are several things I can imagine that happen with the pin on
+pwm_disable:
+
+ - constant 0
+ - constant 1
+ - constant what it currently is
+ - high-z
+
+leds-pwm seems to assume the first option, the i.MX28 hardware behaves
+according to the third option. I don't think either of them is an
+assumption you should put in the API. I still think my suggestion is
+sane.
+
+> If that means that a particular PWM controller applies the configurat=
+ion
+> only after the current period has expired, then that's something only
+> the driver can now and therefore the driver should handle this by onl=
+y
+> returning from pwm_config() when that's actually happened.
+>=20
+> That seems to me the only reasonable approach. Otherwise we'll have t=
+o
+> keep changing API whenever some new controller comes around that beha=
+ves
+> slightly differently.
+Currently even in the presence of the mentioned problems I'd say the
+i.MX28 pwm driver "conforms" to the current pwm API/documentation. The
+problem is that there are some things not formalized yet. And if there
+are different implementations behaving differently obviously you must
+specify more details if the users of the API need more
+control/information (and then fix the implementations that became wrong
+by the new details and fix the users that assumed wrong).
+
+The two changes in question here are:
+
+ - After pwm_config returns the new setting must already be active.
+   This would result in the need to add a delay to the mxs-pwm driver
+   (and maybe others). There is probably no need to fix users.
+   I'm not yet convinced that this specification is necessary, at least
+   it didn't bite yet and I cannot imagine a use case where it would
+   matter.
+ - Explicitly make the state of the pwm pin after pwm_disable
+   implementation defined.
+   There is probably no need to fix implementers, but at least leds-pwm
+   as suggested in my patches.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
