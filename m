@@ -1,52 +1,52 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: leds-pwm: fix duty time overflow.
-Date: Wed, 11 Dec 2013 11:07:53 -0800
-Message-ID: <CAK5ve-JQEX5yOCW7vxu1yq7RrCUH0aWSrEJ0eBqSoOtMnjHEVg@mail.gmail.com>
-References: <1386753582-16009-1-git-send-email-Li.Xiubo@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386753582-16009-1-git-send-email-Li.Xiubo@freescale.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Xiubo Li <Li.Xiubo@freescale.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, b47053@freescale.com
+From: Olof Johansson <olof@lixom.net>
+Subject: [PATCH] leds: pwm: Remove a warning on non-DT platforms
+Date: Wed, 11 Dec 2013 16:11:42 -0800
+Message-ID: <1386807102-15397-1-git-send-email-olof@lixom.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:50428 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076Ab3LLAKp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 11 Dec 2013 19:10:45 -0500
+Received: by mail-pd0-f179.google.com with SMTP id r10so10542650pdi.10
+        for <linux-leds@vger.kernel.org>; Wed, 11 Dec 2013 16:10:45 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: cooloney@gmail.com
+Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Wed, Dec 11, 2013 at 1:19 AM, Xiubo Li <Li.Xiubo@freescale.com> wrote:
-> Overflow maybe occurs when calculates the duty time. For instance,
-> the period time is 990000000ns, and the max_brightness is 127, when
-> setting the brightness to 12, the duty value will be 25906026ns, but
-> it should be 93543307ns.
+This removes a warning on non-DT-enabled platforms:
 
-This looks good to me. Good catch. I will merge this.
+drivers/leds/leds-pwm.c: In function 'led_pwm_create_of':
+drivers/leds/leds-pwm.c:88:22: warning: unused variable 'node'
 
-Thanks,
--Bryan
+Really caused by the local variable that is assigned to and then never
+used. Just do away with the local var, it's not needed.
 
+Technically this code path can never be entered without DT enabled,
+since there's an earlier check about number of children in the calling
+function, but the compiler can't see that.
 
-> ---
->  drivers/leds/leds-pwm.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index bb6f948..7cb2cd8 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -66,9 +66,11 @@ static void led_pwm_set(struct led_classdev *led_cdev,
->         struct led_pwm_data *led_dat =
->                 container_of(led_cdev, struct led_pwm_data, cdev);
->         unsigned int max = led_dat->cdev.max_brightness;
-> -       unsigned int period =  led_dat->period;
-> +       unsigned long long duty =  led_dat->period;
->
-> -       led_dat->duty = brightness * period / max;
-> +       duty *= brightness;
-> +       do_div(duty, max);
-> +       led_dat->duty = duty;
->
->         if (led_dat->can_sleep)
->                 schedule_work(&led_dat->work);
-> --
-> 1.8.4
->
->
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ drivers/leds/leds-pwm.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index b31d8e99..bf49547 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -85,11 +85,10 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+ static int led_pwm_create_of(struct platform_device *pdev,
+ 			     struct led_pwm_priv *priv)
+ {
+-	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *child;
+ 	int ret;
+ 
+-	for_each_child_of_node(node, child) {
++	for_each_child_of_node(pdev->dev.of_node, child) {
+ 		struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
+ 
+ 		led_dat->cdev.name = of_get_property(child, "label",
+-- 
+1.7.10.4
