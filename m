@@ -1,339 +1,232 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH 1/5] leds: leds-mc13783: Add MC34708 LED support
-Date: Sat, 14 Dec 2013 15:00:47 +0400
-Message-ID: <1387018850-6974-1-git-send-email-shc_work@mail.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: dt.tangr@gmail.com
+Subject: [PATCH 1/3] leds: add support for LSI Zevio LED controller
+Date: Sun, 15 Dec 2013 20:54:11 +1100
+Message-ID: <1387101253-30804-1-git-send-email-dt.tangr@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fallback6.mail.ru ([94.100.176.134]:34150 "EHLO
-	fallback6.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab3LNLF5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 14 Dec 2013 06:05:57 -0500
-Received: from smtp40.i.mail.ru (smtp40.i.mail.ru [94.100.177.100])
-	by fallback6.mail.ru (mPOP.Fallback_MX) with ESMTP id 78AAD28E022F
-	for <linux-leds@vger.kernel.org>; Sat, 14 Dec 2013 15:05:55 +0400 (MSK)
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:50428 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753138Ab3LOJy0 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 15 Dec 2013 04:54:26 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Philippe Retornaz <philippe.retornaz@epfl.ch>, Alexander Shiyan <shc_work@mail.ru>
+Cc: Daniel Tang <dt.tangr@gmail.com>, linux-kernel@vger.kernel.org
 
-This patch adds support for two LEDs on MC34708 PMIC.
+From: Daniel Tang <dt.tangr@gmail.com>
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+This adds initial support for the LED controller found on the LSI Zevio SoC.
+
+Signed-off-by: Daniel Tang <dt.tangr@gmail.com>
 ---
- drivers/leds/Kconfig        |  2 +-
- drivers/leds/leds-mc13783.c | 98 ++++++++++++++++++++++---------------=
---------
- include/linux/mfd/mc13xxx.h |  6 +++
- 3 files changed, 55 insertions(+), 51 deletions(-)
+ drivers/leds/Kconfig      |    7 ++
+ drivers/leds/Makefile     |    1 +
+ drivers/leds/leds-zevio.c |  168 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/leds/leds-zevio.c
 
 diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 6e3ca59..9c719fd 100644
+index 72156c1..ec8b565 100644
 --- a/drivers/leds/Kconfig
 +++ b/drivers/leds/Kconfig
-@@ -413,7 +413,7 @@ config LEDS_MC13783
- 	depends on MFD_MC13XXX
- 	help
- 	  This option enable support for on-chip LED drivers found
--	  on Freescale Semiconductor MC13783/MC13892 PMIC.
-+	  on Freescale Semiconductor MC13783/MC13892/MC34708 PMIC.
-=20
- config LEDS_NS2
- 	tristate "LED support for Network Space v2 GPIO LEDs"
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index ca87a1b..e61bdb5 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -1,5 +1,5 @@
- /*
-- * LEDs driver for Freescale MC13783/MC13892
-+ * LEDs driver for Freescale MC13783/MC13892/MC34708
-  *
-  * Copyright (C) 2010 Philippe R=C3=A9tornaz
-  *
-@@ -23,23 +23,23 @@
- #include <linux/workqueue.h>
- #include <linux/mfd/mc13xxx.h>
-=20
--#define MC13XXX_REG_LED_CONTROL(x)	(51 + (x))
--
- struct mc13xxx_led_devtype {
- 	int	led_min;
- 	int	led_max;
- 	int	num_regs;
-+	u32	ledctrl_base;
- };
-=20
- struct mc13xxx_led {
- 	struct led_classdev	cdev;
- 	struct work_struct	work;
--	struct mc13xxx		*master;
- 	enum led_brightness	new_brightness;
- 	int			id;
-+	struct mc13xxx_leds	*leds;
- };
-=20
- struct mc13xxx_leds {
-+	struct mc13xxx			*master;
- 	struct mc13xxx_led_devtype	*devtype;
- 	int				num_leds;
- 	struct mc13xxx_led		led[0];
-@@ -48,24 +48,15 @@ struct mc13xxx_leds {
- static void mc13xxx_led_work(struct work_struct *work)
- {
- 	struct mc13xxx_led *led =3D container_of(work, struct mc13xxx_led, wo=
-rk);
--	int reg, mask, value, bank, off, shift;
-+	struct mc13xxx_leds *leds =3D led->leds;
-+	unsigned int reg, mask, value, bank, off, shift;
-=20
- 	switch (led->id) {
- 	case MC13783_LED_MD:
--		reg =3D MC13XXX_REG_LED_CONTROL(2);
--		shift =3D 9;
--		mask =3D 0x0f;
--		value =3D led->new_brightness >> 4;
--		break;
- 	case MC13783_LED_AD:
--		reg =3D MC13XXX_REG_LED_CONTROL(2);
--		shift =3D 13;
--		mask =3D 0x0f;
--		value =3D led->new_brightness >> 4;
--		break;
- 	case MC13783_LED_KP:
--		reg =3D MC13XXX_REG_LED_CONTROL(2);
--		shift =3D 17;
-+		reg =3D 2;
-+		shift =3D 9 + (led->id - MC13783_LED_MD) * 4;
- 		mask =3D 0x0f;
- 		value =3D led->new_brightness >> 4;
- 		break;
-@@ -80,26 +71,16 @@ static void mc13xxx_led_work(struct work_struct *wo=
-rk)
- 	case MC13783_LED_B3:
- 		off =3D led->id - MC13783_LED_R1;
- 		bank =3D off / 3;
--		reg =3D MC13XXX_REG_LED_CONTROL(3) + bank;
-+		reg =3D 3 + bank;
- 		shift =3D (off - bank * 3) * 5 + 6;
- 		value =3D led->new_brightness >> 3;
- 		mask =3D 0x1f;
- 		break;
- 	case MC13892_LED_MD:
--		reg =3D MC13XXX_REG_LED_CONTROL(0);
--		shift =3D 3;
--		mask =3D 0x3f;
--		value =3D led->new_brightness >> 2;
--		break;
- 	case MC13892_LED_AD:
--		reg =3D MC13XXX_REG_LED_CONTROL(0);
--		shift =3D 15;
--		mask =3D 0x3f;
--		value =3D led->new_brightness >> 2;
--		break;
- 	case MC13892_LED_KP:
--		reg =3D MC13XXX_REG_LED_CONTROL(1);
--		shift =3D 3;
-+		reg =3D (led->id - MC13892_LED_MD) / 2;
-+		shift =3D 3 + (led->id - MC13892_LED_MD) * 12;
- 		mask =3D 0x3f;
- 		value =3D led->new_brightness >> 2;
- 		break;
-@@ -108,16 +89,24 @@ static void mc13xxx_led_work(struct work_struct *w=
-ork)
- 	case MC13892_LED_B:
- 		off =3D led->id - MC13892_LED_R;
- 		bank =3D off / 2;
--		reg =3D MC13XXX_REG_LED_CONTROL(2) + bank;
-+		reg =3D 2 + bank;
- 		shift =3D (off - bank * 2) * 12 + 3;
- 		value =3D led->new_brightness >> 2;
- 		mask =3D 0x3f;
- 		break;
-+	case MC34708_LED_R:
-+	case MC34708_LED_G:
-+		reg =3D 0;
-+		shift =3D 3 + (led->id - MC34708_LED_R) * 12;
-+		value =3D led->new_brightness >> 2;
-+		mask =3D 0x3f;
-+		break;
- 	default:
- 		BUG();
- 	}
-=20
--	mc13xxx_reg_rmw(led->master, reg, mask << shift, value << shift);
-+	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
-+			mask << shift, value << shift);
- }
-=20
- static void mc13xxx_led_set(struct led_classdev *led_cdev,
-@@ -132,16 +121,17 @@ static void mc13xxx_led_set(struct led_classdev *=
-led_cdev,
-=20
- static int __init mc13xxx_led_probe(struct platform_device *pdev)
- {
--	struct mc13xxx_leds_platform_data *pdata =3D dev_get_platdata(&pdev->=
-dev);
--	struct mc13xxx *mcdev =3D dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev =3D &pdev->dev;
-+	struct mc13xxx_leds_platform_data *pdata =3D dev_get_platdata(dev);
-+	struct mc13xxx *mcdev =3D dev_get_drvdata(dev->parent);
- 	struct mc13xxx_led_devtype *devtype =3D
- 		(struct mc13xxx_led_devtype *)pdev->id_entry->driver_data;
- 	struct mc13xxx_leds *leds;
- 	int i, id, num_leds, ret =3D -ENODATA;
--	u32 reg, init_led =3D 0;
-+	u32 init_led =3D 0;
-=20
- 	if (!pdata) {
--		dev_err(&pdev->dev, "Missing platform data\n");
-+		dev_err(dev, "Missing platform data\n");
- 		return -ENODEV;
- 	}
-=20
-@@ -149,23 +139,23 @@ static int __init mc13xxx_led_probe(struct platfo=
-rm_device *pdev)
-=20
- 	if ((num_leds < 1) ||
- 	    (num_leds > (devtype->led_max - devtype->led_min + 1))) {
--		dev_err(&pdev->dev, "Invalid LED count %d\n", num_leds);
-+		dev_err(dev, "Invalid LED count %d\n", num_leds);
- 		return -EINVAL;
- 	}
-=20
--	leds =3D devm_kzalloc(&pdev->dev, num_leds * sizeof(struct mc13xxx_le=
-d) +
-+	leds =3D devm_kzalloc(dev, num_leds * sizeof(struct mc13xxx_led) +
- 			    sizeof(struct mc13xxx_leds), GFP_KERNEL);
- 	if (!leds)
- 		return -ENOMEM;
-=20
- 	leds->devtype =3D devtype;
- 	leds->num_leds =3D num_leds;
-+	leds->master =3D mcdev;
- 	platform_set_drvdata(pdev, leds);
-=20
- 	for (i =3D 0; i < devtype->num_regs; i++) {
--		reg =3D pdata->led_control[i];
--		WARN_ON(reg >=3D (1 << 24));
--		ret =3D mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), reg);
-+		ret =3D mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i,
-+					pdata->led_control[i]);
- 		if (ret)
- 			return ret;
- 	}
-@@ -180,19 +170,18 @@ static int __init mc13xxx_led_probe(struct platfo=
-rm_device *pdev)
- 		trig =3D pdata->led[i].default_trigger;
-=20
- 		if ((id > devtype->led_max) || (id < devtype->led_min)) {
--			dev_err(&pdev->dev, "Invalid ID %i\n", id);
-+			dev_err(dev, "Invalid ID %i\n", id);
- 			break;
- 		}
-=20
- 		if (init_led & (1 << id)) {
--			dev_warn(&pdev->dev,
--				 "LED %i already initialized\n", id);
-+			dev_warn(dev, "LED %i already initialized\n", id);
- 			break;
- 		}
-=20
- 		init_led |=3D 1 << id;
- 		leds->led[i].id =3D id;
--		leds->led[i].master =3D mcdev;
-+		leds->led[i].leds =3D leds;
- 		leds->led[i].cdev.name =3D name;
- 		leds->led[i].cdev.default_trigger =3D trig;
- 		leds->led[i].cdev.brightness_set =3D mc13xxx_led_set;
-@@ -200,10 +189,9 @@ static int __init mc13xxx_led_probe(struct platfor=
-m_device *pdev)
-=20
- 		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
-=20
--		ret =3D led_classdev_register(pdev->dev.parent,
--					    &leds->led[i].cdev);
-+		ret =3D led_classdev_register(dev, &leds->led[i].cdev);
- 		if (ret) {
--			dev_err(&pdev->dev, "Failed to register LED %i\n", id);
-+			dev_err(dev, "Failed to register LED %i\n", id);
- 			break;
- 		}
- 	}
-@@ -219,8 +207,8 @@ static int __init mc13xxx_led_probe(struct platform=
-_device *pdev)
-=20
- static int mc13xxx_led_remove(struct platform_device *pdev)
- {
--	struct mc13xxx *mcdev =3D dev_get_drvdata(pdev->dev.parent);
- 	struct mc13xxx_leds *leds =3D platform_get_drvdata(pdev);
-+	struct mc13xxx *mcdev =3D leds->master;
- 	int i;
-=20
- 	for (i =3D 0; i < leds->num_leds; i++) {
-@@ -229,7 +217,7 @@ static int mc13xxx_led_remove(struct platform_devic=
-e *pdev)
- 	}
-=20
- 	for (i =3D 0; i < leds->devtype->num_regs; i++)
--		mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), 0);
-+		mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i, 0);
-=20
- 	return 0;
- }
-@@ -238,17 +226,27 @@ static const struct mc13xxx_led_devtype mc13783_l=
-ed_devtype =3D {
- 	.led_min	=3D MC13783_LED_MD,
- 	.led_max	=3D MC13783_LED_B3,
- 	.num_regs	=3D 6,
-+	.ledctrl_base	=3D 51,
- };
-=20
- static const struct mc13xxx_led_devtype mc13892_led_devtype =3D {
- 	.led_min	=3D MC13892_LED_MD,
- 	.led_max	=3D MC13892_LED_B,
- 	.num_regs	=3D 4,
-+	.ledctrl_base	=3D 51,
+@@ -487,6 +487,13 @@ config LEDS_BLINKM
+ 	  This option enables support for the BlinkM RGB LED connected
+ 	  through I2C. Say Y to enable support for the BlinkM LED.
+ 
++config LEDS_ZEVIO
++	tristate "LED support for LSI Zevio LED controller"
++	depends on LEDS_CLASS
++	help
++	  This option enables support for the LSI Zevio LED controller.
++	  Say Y to enable support for the LSI Zevio LED controller.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 3cd76db..85c4b54 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -54,6 +54,7 @@ obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
+ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+ obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
+ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
++obj-$(CONFIG_LEDS_ZEVIO)		+= leds-zevio.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-zevio.c b/drivers/leds/leds-zevio.c
+new file mode 100644
+index 0000000..017ebf0
+--- /dev/null
++++ b/drivers/leds/leds-zevio.c
+@@ -0,0 +1,168 @@
++/*
++ *	Copyright (C) 2013 Daniel Tang <tangrs@tangrs.id.au>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/device.h>
++#include <linux/of_address.h>
++#include <linux/io.h>
++#include <linux/leds.h>
++
++#define LED_CONTROL		0x00
++
++#define LED_GREEN		(1 << 4)
++#define LED_RED			(1 << 5)
++
++struct zevio_led {
++	void __iomem *base;
++
++	struct led_classdev zevio_red_led;
++	struct led_classdev zevio_green_led;
++
++	spinlock_t lock;
 +};
 +
-+static const struct mc13xxx_led_devtype mc34708_led_devtype =3D {
-+	.led_min	=3D MC34708_LED_R,
-+	.led_max	=3D MC34708_LED_G,
-+	.num_regs	=3D 1,
-+	.ledctrl_base	=3D 54,
- };
-=20
- static const struct platform_device_id mc13xxx_led_id_table[] =3D {
- 	{ "mc13783-led", (kernel_ulong_t)&mc13783_led_devtype, },
- 	{ "mc13892-led", (kernel_ulong_t)&mc13892_led_devtype, },
-+	{ "mc34708-led", (kernel_ulong_t)&mc34708_led_devtype, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, mc13xxx_led_id_table);
-diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
-index ac22305..f1b13b3 100644
---- a/include/linux/mfd/mc13xxx.h
-+++ b/include/linux/mfd/mc13xxx.h
-@@ -106,6 +106,9 @@ enum {
- 	MC13892_LED_R,
- 	MC13892_LED_G,
- 	MC13892_LED_B,
-+	/* MC34708 LED IDs */
-+	MC34708_LED_R,
-+	MC34708_LED_G,
- };
-=20
- struct mc13xxx_led_platform_data {
-@@ -165,6 +168,9 @@ struct mc13xxx_leds_platform_data {
- #define MC13892_LED_C2_CURRENT_G(x)	(((x) & 0x7) << 21)
- /* MC13892 LED Control 3 */
- #define MC13892_LED_C3_CURRENT_B(x)	(((x) & 0x7) << 9)
-+/* MC34708 LED Control 0 */
-+#define MC34708_LED_C0_CURRENT_R(x)	(((x) & 0x3) << 9)
-+#define MC34708_LED_C0_CURRENT_G(x)	(((x) & 0x3) << 21)
- 	u32 led_control[MAX_LED_CONTROL_REGS];
- };
-=20
---=20
-1.8.3.2
++static void zevio_led_set(struct zevio_led *priv, unsigned long mask)
++{
++	u32 reg;
++
++	spin_lock(&priv->lock);
++
++	reg = readl(priv->base + LED_CONTROL);
++	writel(reg | mask, priv->base + LED_CONTROL);
++
++	spin_unlock(&priv->lock);
++}
++
++static void zevio_led_clr(struct zevio_led *priv, unsigned long mask)
++{
++	u32 reg;
++
++	spin_lock(&priv->lock);
++
++	reg = readl(priv->base + LED_CONTROL);
++	writel(reg & ~mask, priv->base + LED_CONTROL);
++
++	spin_unlock(&priv->lock);
++}
++
++static void zevio_red_set(struct led_classdev *led_cdev,
++			   enum led_brightness brightness)
++{
++	struct zevio_led *priv = container_of(led_cdev, struct zevio_led,
++					       zevio_red_led);
++
++	if (brightness == 0)
++		zevio_led_clr(priv, LED_RED);
++	else
++		zevio_led_set(priv, LED_RED);
++}
++
++static void zevio_green_set(struct led_classdev *led_cdev,
++			     enum led_brightness brightness)
++{
++	struct zevio_led *priv = container_of(led_cdev, struct zevio_led,
++					       zevio_green_led);
++
++	if (brightness == 0)
++		zevio_led_clr(priv, LED_GREEN);
++	else
++		zevio_led_set(priv, LED_GREEN);
++}
++
++static int zevio_led_probe(struct platform_device *pdev)
++{
++	struct device_node *of_node = pdev->dev.of_node;
++	struct zevio_led *priv;
++	int ret;
++	u32 reg;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->base = of_iomap(of_node, 0);
++	if (!priv->base)
++		return -EINVAL;
++
++	spin_lock_init(&priv->lock);
++
++	reg = readl(priv->base + LED_CONTROL);
++	writel(~reg, priv->base + LED_CONTROL);
++	if (readl(priv->base + LED_CONTROL) == reg) {
++		dev_warn(&pdev->dev, "led registers appear to be read-only");
++	}
++
++	writel(0, priv->base + LED_CONTROL);
++
++	priv->zevio_red_led.name		= "zevio::red_led";
++	priv->zevio_red_led.default_trigger	= "default-on",
++	priv->zevio_red_led.max_brightness	= 1;
++	priv->zevio_red_led.brightness_set	= zevio_red_set;
++	priv->zevio_red_led.flags		= LED_CORE_SUSPENDRESUME;
++
++	priv->zevio_green_led.name		= "zevio::green_led";
++	priv->zevio_green_led.default_trigger	= "default-on",
++	priv->zevio_green_led.max_brightness	= 1;
++	priv->zevio_green_led.brightness_set	= zevio_green_set;
++	priv->zevio_green_led.flags		= LED_CORE_SUSPENDRESUME;
++
++	ret = led_classdev_register(&pdev->dev, &priv->zevio_red_led);
++	if (ret)
++		goto err_unmap;
++
++	ret = led_classdev_register(&pdev->dev, &priv->zevio_green_led);
++	if (ret)
++		goto err;
++
++	platform_set_drvdata(pdev, priv);
++
++	return 0;
++
++err:
++	led_classdev_unregister(&priv->zevio_red_led);
++
++err_unmap:
++	iounmap(priv->base);
++
++	return ret;
++}
++
++static int zevio_led_remove(struct platform_device *pdev)
++{
++	struct zevio_led *priv = platform_get_drvdata(pdev);
++
++	led_classdev_unregister(&priv->zevio_red_led);
++	led_classdev_unregister(&priv->zevio_green_led);
++
++	iounmap(priv->base);
++
++	return 0;
++}
++
++static const struct of_device_id zevio_led_dt_match[] = {
++	{ .compatible = "lsi,zevio-led" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, zevio_led_dt_match);
++
++static struct platform_driver zevio_led_driver = {
++	.driver = {
++		.name = "zevio-led",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(zevio_led_dt_match),
++	},
++	.probe = zevio_led_probe,
++	.remove = zevio_led_remove,
++};
++
++module_platform_driver(zevio_led_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("LSI Zevio LED Driver");
+-- 
+1.7.10.4
