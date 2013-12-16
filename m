@@ -1,149 +1,59 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 3/5] leds: leds-mc13783: Use proper "max_brightness" value
- for LEDs
-Date: Mon, 16 Dec 2013 12:28:11 -0800
-Message-ID: <CAK5ve-+nv6rYeN9pZS+4oDJR3kB4hpsv82w6thdHKVYFEwJxag@mail.gmail.com>
-References: <1387018850-6974-1-git-send-email-shc_work@mail.ru> <1387018850-6974-3-git-send-email-shc_work@mail.ru>
+Subject: Re: [PATCH 4/5] leds: leds-mc13783: Remove unnecessary cleaning of
+ registers on exit
+Date: Mon, 16 Dec 2013 12:29:21 -0800
+Message-ID: <CAK5ve-JGG2TP2R==dPYQPT0mG3+sjE_gU+sMXVfL5yOcwczcdA@mail.gmail.com>
+References: <1387018850-6974-1-git-send-email-shc_work@mail.ru> <1387018850-6974-4-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=KOI8-R
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:54960 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751465Ab3LPU2d (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Dec 2013 15:28:33 -0500
-Received: by mail-lb0-f174.google.com with SMTP id p9so1069482lbv.19
-        for <linux-leds@vger.kernel.org>; Mon, 16 Dec 2013 12:28:32 -0800 (PST)
-In-Reply-To: <1387018850-6974-3-git-send-email-shc_work@mail.ru>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:55187 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751102Ab3LPU3n (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Dec 2013 15:29:43 -0500
+Received: by mail-la0-f54.google.com with SMTP id b8so2934512lan.13
+        for <linux-leds@vger.kernel.org>; Mon, 16 Dec 2013 12:29:41 -0800 (PST)
+In-Reply-To: <1387018850-6974-4-git-send-email-shc_work@mail.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Alexander Shiyan <shc_work@mail.ru>
 Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Philippe Retornaz <philippe.retornaz@epfl.ch>
 
 On Sat, Dec 14, 2013 at 3:00 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> Instead of using maximum value of 255 and shift it to appropriate
-> LED duty cycle, this patch introduce a helper to use proper maximum
-> value for each LED.
+> LED core switches each LED to OFF-state on exit, so there is no need
+> for resetting registers.
 >
 > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 > ---
->  drivers/leds/leds-mc13783.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
+>  drivers/leds/leds-mc13783.c | 4 ----
+>  1 file changed, 4 deletions(-)
 >
 > diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-> index 670b936..40e4de0 100644
+> index 40e4de0..b5a8357 100644
 > --- a/drivers/leds/leds-mc13783.c
 > +++ b/drivers/leds/leds-mc13783.c
-> @@ -45,11 +45,35 @@ struct mc13xxx_leds {
->         struct mc13xxx_led              led[0];
->  };
+> @@ -224,7 +224,6 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+>  static int mc13xxx_led_remove(struct platform_device *pdev)
+>  {
+>         struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
+> -       struct mc13xxx *mcdev = leds->master;
+>         int i;
 >
-> +static unsigned int mc13xxx_max_brightness(int id)
-> +{
-> +       switch (id) {
-> +       case MC13783_LED_MD:
-> +       case MC13783_LED_AD:
-> +       case MC13783_LED_KP:
-> +               return 0x0f;
-> +       case MC13783_LED_R1:
-> +       case MC13783_LED_G1:
-> +       case MC13783_LED_B1:
-> +       case MC13783_LED_R2:
-> +       case MC13783_LED_G2:
-> +       case MC13783_LED_B2:
-> +       case MC13783_LED_R3:
-> +       case MC13783_LED_G3:
-> +       case MC13783_LED_B3:
-> +               return 0x1f;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       return 0x3f;
+>         for (i = 0; i < leds->num_leds; i++) {
+> @@ -232,9 +231,6 @@ static int mc13xxx_led_remove(struct platform_device *pdev)
+>                 cancel_work_sync(&leds->led[i].work);
+>         }
+>
+> -       for (i = 0; i < leds->devtype->num_regs; i++)
+> -               mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i, 0);
+> -
 
-I think we can do this:
-
-if (id >= MC13783_LED_MD && id <= MC13783_LED_KP)
-        return 0x0f;
-else if (id >= MC13783_LED_R1 && id <= MC13783_LED_B3)
-        return 0x1f;
-else
-        return 0x3f;
-
-Thanks,
+This one looks good to me,
 -Bryan
 
 
-
-> +}
-> +
->  static void mc13xxx_led_work(struct work_struct *work)
->  {
->         struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
->         struct mc13xxx_leds *leds = led->leds;
-> -       unsigned int reg, mask, value, bank, off, shift;
-> +       unsigned int reg, bank, off, shift;
->
->         switch (led->id) {
->         case MC13783_LED_MD:
-> @@ -57,8 +81,6 @@ static void mc13xxx_led_work(struct work_struct *work)
->         case MC13783_LED_KP:
->                 reg = 2;
->                 shift = 9 + (led->id - MC13783_LED_MD) * 4;
-> -               mask = 0x0f;
-> -               value = led->new_brightness >> 4;
->                 break;
->         case MC13783_LED_R1:
->         case MC13783_LED_G1:
-> @@ -73,16 +95,12 @@ static void mc13xxx_led_work(struct work_struct *work)
->                 bank = off / 3;
->                 reg = 3 + bank;
->                 shift = (off - bank * 3) * 5 + 6;
-> -               value = led->new_brightness >> 3;
-> -               mask = 0x1f;
->                 break;
->         case MC13892_LED_MD:
->         case MC13892_LED_AD:
->         case MC13892_LED_KP:
->                 reg = (led->id - MC13892_LED_MD) / 2;
->                 shift = 3 + (led->id - MC13892_LED_MD) * 12;
-> -               mask = 0x3f;
-> -               value = led->new_brightness >> 2;
->                 break;
->         case MC13892_LED_R:
->         case MC13892_LED_G:
-> @@ -91,22 +109,19 @@ static void mc13xxx_led_work(struct work_struct *work)
->                 bank = off / 2;
->                 reg = 2 + bank;
->                 shift = (off - bank * 2) * 12 + 3;
-> -               value = led->new_brightness >> 2;
-> -               mask = 0x3f;
->                 break;
->         case MC34708_LED_R:
->         case MC34708_LED_G:
->                 reg = 0;
->                 shift = 3 + (led->id - MC34708_LED_R) * 12;
-> -               value = led->new_brightness >> 2;
-> -               mask = 0x3f;
->                 break;
->         default:
->                 BUG();
->         }
->
->         mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
-> -                       mask << shift, value << shift);
-> +                       mc13xxx_max_brightness(led->id) << shift,
-> +                       led->new_brightness << shift);
+>         return 0;
 >  }
->
->  static void mc13xxx_led_set(struct led_classdev *led_cdev,
-> @@ -186,7 +201,7 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
->                 leds->led[i].cdev.default_trigger = trig;
->                 leds->led[i].cdev.flags |= LED_CORE_SUSPENDRESUME;
->                 leds->led[i].cdev.brightness_set = mc13xxx_led_set;
-> -               leds->led[i].cdev.brightness = LED_OFF;
-> +               leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
->
->                 INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
 >
 > --
 > 1.8.3.2
