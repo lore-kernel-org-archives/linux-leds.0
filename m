@@ -1,46 +1,42 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/5] leds: leds-mc13783: Use LED core PM functions
-Date: Mon, 16 Dec 2013 12:10:53 -0800
-Message-ID: <CAK5ve-KeB+tX33Wo-X+y1LEdy8+f-S_wrzqz_PpUi=y8q9S+Jw@mail.gmail.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzVdIGxlZHM6IGxlZHMtbWMxMzc4MzogQWRkIE1DMzQ3?=
+ =?UTF-8?B?MDggTEVEIHN1cHBvcnQ=?=
+Date: Tue, 17 Dec 2013 00:00:48 +0400
+Message-ID: <1387224048.36808317@f242.i.mail.ru>
 References: <1387018850-6974-1-git-send-email-shc_work@mail.ru>
- <1387018850-6974-2-git-send-email-shc_work@mail.ru> <CAK5ve-J9Vwn=ACMPjQqw=WhJVGnR7ezLTpn+MokLn4jjMYsdKg@mail.gmail.com>
- <1387224404.165109904@f242.i.mail.ru>
+ <CAK5ve-JZoECYYwefKVRFgf6tXzr1hOtPtQatk2FcYyqNc7-npQ@mail.gmail.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=KOI8-R
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:40627 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751991Ab3LPULO (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Dec 2013 15:11:14 -0500
-Received: by mail-la0-f45.google.com with SMTP id eh20so2898144lab.4
-        for <linux-leds@vger.kernel.org>; Mon, 16 Dec 2013 12:11:13 -0800 (PST)
-In-Reply-To: <1387224404.165109904@f242.i.mail.ru>
+Received: from fallback2.mail.ru ([94.100.176.87]:57018 "EHLO
+	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803Ab3LPUTG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Dec 2013 15:19:06 -0500
+Received: from f242.i.mail.ru (f242.i.mail.ru [94.100.185.84])
+	by fallback2.mail.ru (mPOP.Fallback_MX) with ESMTP id 79410F7ECE75
+	for <linux-leds@vger.kernel.org>; Tue, 17 Dec 2013 00:01:01 +0400 (MSK)
+In-Reply-To: <CAK5ve-JZoECYYwefKVRFgf6tXzr1hOtPtQatk2FcYyqNc7-npQ@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Philippe Retornaz <philippe.retornaz@epfl.ch>
+To: =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney@gmail.com>
+Cc: =?UTF-8?B?TGludXggTEVEIFN1YnN5c3RlbQ==?= <linux-leds@vger.kernel.org>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie@rpsys.net>, =?UTF-8?B?UGhpbGlwcGUgUmV0b3JuYXo=?= <philippe.retornaz@epfl.ch>
 
-On Mon, Dec 16, 2013 at 12:06 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
->> On Sat, Dec 14, 2013 at 3:00 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
->> > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
->> > ---
->> >  drivers/leds/leds-mc13783.c | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
->> > index e61bdb5..670b936 100644
->> > --- a/drivers/leds/leds-mc13783.c
->> > +++ b/drivers/leds/leds-mc13783.c
->> > @@ -184,6 +184,7 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
->> >                 leds->led[i].leds = leds;
->> >                 leds->led[i].cdev.name = name;
->> >                 leds->led[i].cdev.default_trigger = trig;
->> > +               leds->led[i].cdev.flags |= LED_CORE_SUSPENDRESUME;
->>
->> Looks good, I will merge that later.
->
-> Now I see useless "|" (OR) in assignment. Can you drop it during merge?
->
-Sure, please update this patchset. I will review it later.
-
--Bryan
+SGVsbG8uCgo+IE9uIFNhdCwgRGVjIDE0LCAyMDEzIGF0IDM6MDAgQU0sIEFsZXhhbmRlciBTaGl5
+YW4gPHNoY193b3JrQG1haWwucnU+IHdyb3RlOgo+ID4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQg
+Zm9yIHR3byBMRURzIG9uIE1DMzQ3MDggUE1JQy4KPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4
+YW5kZXIgU2hpeWFuIDxzaGNfd29ya0BtYWlsLnJ1Pgo+ID4gLS0tCi4uLgo+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbGVkcy9sZWRzLW1jMTM3ODMuYyBiL2RyaXZlcnMvbGVkcy9sZWRzLW1jMTM3
+ODMuYwo+ID4gaW5kZXggY2E4N2ExYi4uZTYxYmRiNSAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMv
+bGVkcy9sZWRzLW1jMTM3ODMuYwo+ID4gKysrIGIvZHJpdmVycy9sZWRzL2xlZHMtbWMxMzc4My5j
+Ci4uLgo+ID4gLSAgICAgICAgICAgICAgIHJldCA9IGxlZF9jbGFzc2Rldl9yZWdpc3RlcihwZGV2
+LT5kZXYucGFyZW50LAo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAmbGVkcy0+bGVkW2ldLmNkZXYpOwo+ID4gKyAgICAgICAgICAgICAgIHJldCA9IGxlZF9j
+bGFzc2Rldl9yZWdpc3RlcihkZXYsICZsZWRzLT5sZWRbaV0uY2Rldik7Cj4gCj4gSXMgdGhpcyBj
+b3JyZWN0IGNoYW5naW5nPyBJIHRoaW5rIGl0IHNob3VsZCBiZQo+IHJldCA9IGxlZF9jbGFzc2Rl
+dl9yZWdpc3RlcihkZXYtPnBhcmVudCwgJmxlZHMtPmxlZFtpXS5jZGV2KTsKPiAKPiBCZXNpZGVz
+IHRoaXMsIHRoaXMgcGF0Y2ggaXMgZ29vZCB0byBtZS4KClllcy4gTEVEcyBwYXJlbnQgc2hvdWxk
+IGJlIG91ciBuZXcgcGxhdGZvcm0gZGV2aWNlIGkuZS4gJnBkZXYtPmRldiwKbm90IHRoZSBtYzEz
+eHh4IE1GRCBjb3JlIGRldmljZS4gSSB0aGluayBpdCB3YXMgYSB0eXBvIGluaXRpYWxseS4KSXMg
+bm90IGl0PwpUaGFua3MuCgotLS0K
