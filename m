@@ -1,87 +1,60 @@
-From: Florian Vaussard <florian.vaussard@epfl.ch>
-Subject: Re: [PATCH v2 5/5] leds: leds-mc13783: Add devicetree support
-Date: Mon, 23 Dec 2013 10:10:08 +0100
-Message-ID: <52B7FDF0.9000404@epfl.ch>
-References: <1387600347-22673-1-git-send-email-shc_work@mail.ru> <1387786706.300080155@f79.i.mail.ru> <52B7F4F8.3050907@epfl.ch> <1387788147.985598723@f413.i.mail.ru>
-Reply-To: florian.vaussard@epfl.ch
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiA1LzVdIGxlZHM6IGxlZHMtbWMxMzc4MzogQWRkIGRl?=
+ =?UTF-8?B?dmljZXRyZWUgc3VwcG9ydA==?=
+Date: Mon, 23 Dec 2013 13:19:13 +0400
+Message-ID: <1387790353.234451581@f434.i.mail.ru>
+References: <1387600347-22673-1-git-send-email-shc_work@mail.ru>
+ <1387788147.985598723@f413.i.mail.ru>
+ <52B7FDF0.9000404@epfl.ch>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp5.epfl.ch ([128.178.224.8]:55342 "EHLO smtp5.epfl.ch"
+Received: from f434.i.mail.ru ([185.5.136.105]:47052 "EHLO f434.i.mail.ru"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752982Ab3LWJKN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 23 Dec 2013 04:10:13 -0500
-In-Reply-To: <1387788147.985598723@f413.i.mail.ru>
+	id S1757153Ab3LWJTQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 23 Dec 2013 04:19:16 -0500
+In-Reply-To: <52B7FDF0.9000404@epfl.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, =?ISO-8859-1?Q?Philippe_R=E9tornaz?= <philippe.retornaz@epfl.ch>
+To: florian.vaussard@epfl.ch
+Cc: linux-leds@vger.kernel.org, =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney@gmail.com>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie@rpsys.net>, =?UTF-8?B?UGhpbGlwcGUgUsOpdG9ybmF6?= <philippe.retornaz@epfl.ch>
 
-
-
-On 12/23/2013 09:42 AM, Alexander Shiyan wrote:
->>>> On 12/21/2013 05:32 AM, Alexander Shiyan wrote:
->>>>> This patch adds devicetree support for the MC13XXX LED driver.
-> ...
->>>>> +	ret = of_property_read_u32_array(parent, "led-control", ctrls,
->>>>> +					 leds->devtype->num_regs);
->>>>> +	if (ret)
->>>>> +		goto out_node_put;
->>>>> +
->>>>> +	for (i = 0; i < leds->devtype->num_regs; i++) {
->>>>> +		ret = mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i,
->>>>> +					ctrls[i]);
->>>>
->>>> Code duplicated from the regular probe.
->>>
->>> Yes. This was done based on the comments to the previous version:
->>> http://www.spinics.net/lists/devicetree/msg14933.html
->>>
->>
->> From what I understand, Tomasz is suggesting exactly the same as
->> what I am saying:
->>
->> "what about making
->> mc13xxx_led_setup_of() allocate a platform data structure and fill it
->> in with data parsed from DT, so the driver would then proceed normally as
->> if the platform data were available? IMHO this should make the code much
->> simpler and more readable."
->>
->> This is not what you have done IMHO, you are cloning the probe
->> into a separate DT-only function.
-> 
-> I do not fully understand what you mean. When we had an universal procedure,
-> I was told to divide them into DT and non-DT. I separated it - now we have duplicate code.
-> Merge back?
-> 
-
-No, do in-between. Look at leds-lp5521.c for example. What you have to
-do is roughly:
-
-mc13xxx_led_probe
-{
-	struct mc13xxx_leds_platform_data *pdata = NULL;
-
-	if (devicetree)
-		mc13xxx_of_populate_pdata(pdev->dev.of_node, &pdata);
-	else
-		pdata = dev_get_platdata(&pdev->dev);
-
-	if (!pdata)
-		oops...
-
-	-> regular probe here <-
-}
-
-Your function mc13xxx_of_populate_pdata() will look for DT properties,
-and only fill the platform data. All the rest is done as usual by your probe
-function. No code is duplicated, but the DT logic is encapsulated inside its
-own function.
-
-Look at other drivers if you are not familiar with such an approach, it
-is pretty common.
-
-Regards,
-
-Florian
+PiA+Pj4+IE9uIDEyLzIxLzIwMTMgMDU6MzIgQU0sIEFsZXhhbmRlciBTaGl5YW4gd3JvdGU6Cj4g
+Pj4+Pj4gVGhpcyBwYXRjaCBhZGRzIGRldmljZXRyZWUgc3VwcG9ydCBmb3IgdGhlIE1DMTNYWFgg
+TEVEIGRyaXZlci4KPiA+IC4uLgo+ID4+Pj4+ICsJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzJf
+YXJyYXkocGFyZW50LCAibGVkLWNvbnRyb2wiLCBjdHJscywKPiA+Pj4+PiArCQkJCQkgbGVkcy0+
+ZGV2dHlwZS0+bnVtX3JlZ3MpOwo+ID4+Pj4+ICsJaWYgKHJldCkKPiA+Pj4+PiArCQlnb3RvIG91
+dF9ub2RlX3B1dDsKPiA+Pj4+PiArCj4gPj4+Pj4gKwlmb3IgKGkgPSAwOyBpIDwgbGVkcy0+ZGV2
+dHlwZS0+bnVtX3JlZ3M7IGkrKykgewo+ID4+Pj4+ICsJCXJldCA9IG1jMTN4eHhfcmVnX3dyaXRl
+KG1jZGV2LCBsZWRzLT5kZXZ0eXBlLT5sZWRjdHJsX2Jhc2UgKyBpLAo+ID4+Pj4+ICsJCQkJCWN0
+cmxzW2ldKTsKPiA+Pj4+Cj4gPj4+PiBDb2RlIGR1cGxpY2F0ZWQgZnJvbSB0aGUgcmVndWxhciBw
+cm9iZS4KPiA+Pj4KPiA+Pj4gWWVzLiBUaGlzIHdhcyBkb25lIGJhc2VkIG9uIHRoZSBjb21tZW50
+cyB0byB0aGUgcHJldmlvdXMgdmVyc2lvbjoKPiA+Pj4gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9s
+aXN0cy9kZXZpY2V0cmVlL21zZzE0OTMzLmh0bWwKPiA+Pj4KPiA+Pgo+ID4+IEZyb20gd2hhdCBJ
+IHVuZGVyc3RhbmQsIFRvbWFzeiBpcyBzdWdnZXN0aW5nIGV4YWN0bHkgdGhlIHNhbWUgYXMKPiA+
+PiB3aGF0IEkgYW0gc2F5aW5nOgo+ID4+Cj4gPj4gIndoYXQgYWJvdXQgbWFraW5nCj4gPj4gbWMx
+M3h4eF9sZWRfc2V0dXBfb2YoKSBhbGxvY2F0ZSBhIHBsYXRmb3JtIGRhdGEgc3RydWN0dXJlIGFu
+ZCBmaWxsIGl0Cj4gPj4gaW4gd2l0aCBkYXRhIHBhcnNlZCBmcm9tIERULCBzbyB0aGUgZHJpdmVy
+IHdvdWxkIHRoZW4gcHJvY2VlZCBub3JtYWxseSBhcwo+ID4+IGlmIHRoZSBwbGF0Zm9ybSBkYXRh
+IHdlcmUgYXZhaWxhYmxlPyBJTUhPIHRoaXMgc2hvdWxkIG1ha2UgdGhlIGNvZGUgbXVjaAo+ID4+
+IHNpbXBsZXIgYW5kIG1vcmUgcmVhZGFibGUuIgo+ID4+Cj4gPj4gVGhpcyBpcyBub3Qgd2hhdCB5
+b3UgaGF2ZSBkb25lIElNSE8sIHlvdSBhcmUgY2xvbmluZyB0aGUgcHJvYmUKPiA+PiBpbnRvIGEg
+c2VwYXJhdGUgRFQtb25seSBmdW5jdGlvbi4KPiA+IAo+ID4gSSBkbyBub3QgZnVsbHkgdW5kZXJz
+dGFuZCB3aGF0IHlvdSBtZWFuLiBXaGVuIHdlIGhhZCBhbiB1bml2ZXJzYWwgcHJvY2VkdXJlLAo+
+ID4gSSB3YXMgdG9sZCB0byBkaXZpZGUgdGhlbSBpbnRvIERUIGFuZCBub24tRFQuIEkgc2VwYXJh
+dGVkIGl0IC0gbm93IHdlIGhhdmUgZHVwbGljYXRlIGNvZGUuCj4gPiBNZXJnZSBiYWNrPwo+ID4g
+Cj4gCj4gTm8sIGRvIGluLWJldHdlZW4uIExvb2sgYXQgbGVkcy1scDU1MjEuYyBmb3IgZXhhbXBs
+ZS4gV2hhdCB5b3UgaGF2ZSB0bwo+IGRvIGlzIHJvdWdobHk6Cj4gCj4gbWMxM3h4eF9sZWRfcHJv
+YmUKPiB7Cj4gCXN0cnVjdCBtYzEzeHh4X2xlZHNfcGxhdGZvcm1fZGF0YSAqcGRhdGEgPSBOVUxM
+Owo+IAo+IAlpZiAoZGV2aWNldHJlZSkKPiAJCW1jMTN4eHhfb2ZfcG9wdWxhdGVfcGRhdGEocGRl
+di0+ZGV2Lm9mX25vZGUsICZwZGF0YSk7Cj4gCWVsc2UKPiAJCXBkYXRhID0gZGV2X2dldF9wbGF0
+ZGF0YSgmcGRldi0+ZGV2KTsKPiAKPiAJaWYgKCFwZGF0YSkKPiAJCW9vcHMuLi4KPiAKPiAJLT4g
+cmVndWxhciBwcm9iZSBoZXJlIDwtCj4gfQo+IAo+IFlvdXIgZnVuY3Rpb24gbWMxM3h4eF9vZl9w
+b3B1bGF0ZV9wZGF0YSgpIHdpbGwgbG9vayBmb3IgRFQgcHJvcGVydGllcywKPiBhbmQgb25seSBm
+aWxsIHRoZSBwbGF0Zm9ybSBkYXRhLiBBbGwgdGhlIHJlc3QgaXMgZG9uZSBhcyB1c3VhbCBieSB5
+b3VyIHByb2JlCj4gZnVuY3Rpb24uIE5vIGNvZGUgaXMgZHVwbGljYXRlZCwgYnV0IHRoZSBEVCBs
+b2dpYyBpcyBlbmNhcHN1bGF0ZWQgaW5zaWRlIGl0cwo+IG93biBmdW5jdGlvbi4KCnBkYXRhIGlz
+IHRoZSBleGNlc3MgdmFyaWFibGUgZm9yIERULWNhc2UsIGJ1dCBPSywgd2lsbCBkby4KCkJyeWFu
+LCBjYW4gcGFydHMgMS00IGJlIGFwcGxpZWQ/CgotLS0K
