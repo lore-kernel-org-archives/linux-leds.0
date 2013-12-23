@@ -1,46 +1,87 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiA1LzVdIGxlZHM6IGxlZHMtbWMxMzc4MzogQWRkIGRl?=
- =?UTF-8?B?dmljZXRyZWUgc3VwcG9ydA==?=
-Date: Mon, 23 Dec 2013 12:42:27 +0400
-Message-ID: <1387788147.985598723@f413.i.mail.ru>
-References: <1387600347-22673-1-git-send-email-shc_work@mail.ru>
- <1387786706.300080155@f79.i.mail.ru>
- <52B7F4F8.3050907@epfl.ch>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+From: Florian Vaussard <florian.vaussard@epfl.ch>
+Subject: Re: [PATCH v2 5/5] leds: leds-mc13783: Add devicetree support
+Date: Mon, 23 Dec 2013 10:10:08 +0100
+Message-ID: <52B7FDF0.9000404@epfl.ch>
+References: <1387600347-22673-1-git-send-email-shc_work@mail.ru> <1387786706.300080155@f79.i.mail.ru> <52B7F4F8.3050907@epfl.ch> <1387788147.985598723@f413.i.mail.ru>
+Reply-To: florian.vaussard@epfl.ch
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B7F4F8.3050907-p8DiymsW2f8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: florian.vaussard-p8DiymsW2f8@public.gmane.org
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?UGhpbGlwcGUgUsOpdG9ybmF6?= <philippe.retornaz-p8DiymsW2f8@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp5.epfl.ch ([128.178.224.8]:55342 "EHLO smtp5.epfl.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752982Ab3LWJKN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 23 Dec 2013 04:10:13 -0500
+In-Reply-To: <1387788147.985598723@f413.i.mail.ru>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, =?ISO-8859-1?Q?Philippe_R=E9tornaz?= <philippe.retornaz@epfl.ch>
 
-PiA+PiBPbiAxMi8yMS8yMDEzIDA1OjMyIEFNLCBBbGV4YW5kZXIgU2hpeWFuIHdyb3RlOgo+ID4+
-PiBUaGlzIHBhdGNoIGFkZHMgZGV2aWNldHJlZSBzdXBwb3J0IGZvciB0aGUgTUMxM1hYWCBMRUQg
-ZHJpdmVyLgouLi4KPiA+Pj4gKwlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9hcnJheShwYXJl
-bnQsICJsZWQtY29udHJvbCIsIGN0cmxzLAo+ID4+PiArCQkJCQkgbGVkcy0+ZGV2dHlwZS0+bnVt
-X3JlZ3MpOwo+ID4+PiArCWlmIChyZXQpCj4gPj4+ICsJCWdvdG8gb3V0X25vZGVfcHV0Owo+ID4+
-PiArCj4gPj4+ICsJZm9yIChpID0gMDsgaSA8IGxlZHMtPmRldnR5cGUtPm51bV9yZWdzOyBpKysp
-IHsKPiA+Pj4gKwkJcmV0ID0gbWMxM3h4eF9yZWdfd3JpdGUobWNkZXYsIGxlZHMtPmRldnR5cGUt
-PmxlZGN0cmxfYmFzZSArIGksCj4gPj4+ICsJCQkJCWN0cmxzW2ldKTsKPiA+Pgo+ID4+IENvZGUg
-ZHVwbGljYXRlZCBmcm9tIHRoZSByZWd1bGFyIHByb2JlLgo+ID4gCj4gPiBZZXMuIFRoaXMgd2Fz
-IGRvbmUgYmFzZWQgb24gdGhlIGNvbW1lbnRzIHRvIHRoZSBwcmV2aW91cyB2ZXJzaW9uOgo+ID4g
-aHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kZXZpY2V0cmVlL21zZzE0OTMzLmh0bWwKPiA+
-IAo+IAo+IEZyb20gd2hhdCBJIHVuZGVyc3RhbmQsIFRvbWFzeiBpcyBzdWdnZXN0aW5nIGV4YWN0
-bHkgdGhlIHNhbWUgYXMKPiB3aGF0IEkgYW0gc2F5aW5nOgo+IAo+ICJ3aGF0IGFib3V0IG1ha2lu
-Zwo+IG1jMTN4eHhfbGVkX3NldHVwX29mKCkgYWxsb2NhdGUgYSBwbGF0Zm9ybSBkYXRhIHN0cnVj
-dHVyZSBhbmQgZmlsbCBpdAo+IGluIHdpdGggZGF0YSBwYXJzZWQgZnJvbSBEVCwgc28gdGhlIGRy
-aXZlciB3b3VsZCB0aGVuIHByb2NlZWQgbm9ybWFsbHkgYXMKPiBpZiB0aGUgcGxhdGZvcm0gZGF0
-YSB3ZXJlIGF2YWlsYWJsZT8gSU1ITyB0aGlzIHNob3VsZCBtYWtlIHRoZSBjb2RlIG11Y2gKPiBz
-aW1wbGVyIGFuZCBtb3JlIHJlYWRhYmxlLiIKPiAKPiBUaGlzIGlzIG5vdCB3aGF0IHlvdSBoYXZl
-IGRvbmUgSU1ITywgeW91IGFyZSBjbG9uaW5nIHRoZSBwcm9iZQo+IGludG8gYSBzZXBhcmF0ZSBE
-VC1vbmx5IGZ1bmN0aW9uLgoKSSBkbyBub3QgZnVsbHkgdW5kZXJzdGFuZCB3aGF0IHlvdSBtZWFu
-LiBXaGVuIHdlIGhhZCBhbiB1bml2ZXJzYWwgcHJvY2VkdXJlLApJIHdhcyB0b2xkIHRvIGRpdmlk
-ZSB0aGVtIGludG8gRFQgYW5kIG5vbi1EVC4gSSBzZXBhcmF0ZWQgaXQgLSBub3cgd2UgaGF2ZSBk
-dXBsaWNhdGUgY29kZS4KTWVyZ2UgYmFjaz8KCi0tLQo=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+On 12/23/2013 09:42 AM, Alexander Shiyan wrote:
+>>>> On 12/21/2013 05:32 AM, Alexander Shiyan wrote:
+>>>>> This patch adds devicetree support for the MC13XXX LED driver.
+> ...
+>>>>> +	ret = of_property_read_u32_array(parent, "led-control", ctrls,
+>>>>> +					 leds->devtype->num_regs);
+>>>>> +	if (ret)
+>>>>> +		goto out_node_put;
+>>>>> +
+>>>>> +	for (i = 0; i < leds->devtype->num_regs; i++) {
+>>>>> +		ret = mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i,
+>>>>> +					ctrls[i]);
+>>>>
+>>>> Code duplicated from the regular probe.
+>>>
+>>> Yes. This was done based on the comments to the previous version:
+>>> http://www.spinics.net/lists/devicetree/msg14933.html
+>>>
+>>
+>> From what I understand, Tomasz is suggesting exactly the same as
+>> what I am saying:
+>>
+>> "what about making
+>> mc13xxx_led_setup_of() allocate a platform data structure and fill it
+>> in with data parsed from DT, so the driver would then proceed normally as
+>> if the platform data were available? IMHO this should make the code much
+>> simpler and more readable."
+>>
+>> This is not what you have done IMHO, you are cloning the probe
+>> into a separate DT-only function.
+> 
+> I do not fully understand what you mean. When we had an universal procedure,
+> I was told to divide them into DT and non-DT. I separated it - now we have duplicate code.
+> Merge back?
+> 
+
+No, do in-between. Look at leds-lp5521.c for example. What you have to
+do is roughly:
+
+mc13xxx_led_probe
+{
+	struct mc13xxx_leds_platform_data *pdata = NULL;
+
+	if (devicetree)
+		mc13xxx_of_populate_pdata(pdev->dev.of_node, &pdata);
+	else
+		pdata = dev_get_platdata(&pdev->dev);
+
+	if (!pdata)
+		oops...
+
+	-> regular probe here <-
+}
+
+Your function mc13xxx_of_populate_pdata() will look for DT properties,
+and only fill the platform data. All the rest is done as usual by your probe
+function. No code is duplicated, but the DT logic is encapsulated inside its
+own function.
+
+Look at other drivers if you are not familiar with such an approach, it
+is pretty common.
+
+Regards,
+
+Florian
