@@ -1,60 +1,35 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
 Subject: Re: [PATCH] Add the LED burst trigger
-Date: Fri, 27 Dec 2013 10:57:05 +0100
-Message-ID: <20131227095705.GC17143@amd.pavel.ucw.cz>
+Date: Fri, 27 Dec 2013 11:57:46 +0000
+Message-ID: <20131227115746.4cbd9523@alan.etchedpixels.co.uk>
 References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>
- <20131225230935.GB13593@amd.pavel.ucw.cz>
- <BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
- <20131226142607.GA15225@amd.pavel.ucw.cz>
- <BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+	<20131225230935.GB13593@amd.pavel.ucw.cz>
+	<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33272 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754169Ab3L0J5J (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Dec 2013 04:57:09 -0500
-Content-Disposition: inline
-In-Reply-To: <BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:55287 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754452Ab3L0L6N (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Dec 2013 06:58:13 -0500
+In-Reply-To: <BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Joe Xue <lgxue@hotmail.com>
-Cc: "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-Hi!
+On Wed, 25 Dec 2013 20:02:33 -0500
+Joe Xue <lgxue@hotmail.com> wrote:
 
-> I'm writing the Morse code trigger.
-> what about this
->=20
-> echo "-.-. *"> patten
-> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 a long on then a off
-> .=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 a short on then a off
-> space=A0=A0=A0=A0 a long off
-> *=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mean repeat the patten
-> s=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mean indicate the patten just o=
-ne time then stop
+> Hi,
+> 
+> Yes, Morse code can indicate any means. But when we look at the LEDs, would we like to also have a Morse code book in hand?
+> 
+> The burst led blink idea is because it is easy to use and easy to describe. Mostly when users on site are describing the LEDs states to the support engineer.
 
-Actually, that's a bit more complex that it needs to be.
-
-Make it
-
-"#" -- LED on
-
-" " -- LED off.
-
-To do morse -.-., you use "### # ### #    " pattern. But this is more
-flexible, you can for example do "led mostly on, two blinks to off per
-cycle" using
-
-"########### ## ###########"
-
-pattern.
-
-Hmm?
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
-/blog.html
+Sure but 
+- Why bother putting it into the kernel when you can do it in user space
+- Why use morse code when you are probably better using something that
+  can be decoded in software off a phone video and so has FEC (viterbi or
+  similar) on it ?
