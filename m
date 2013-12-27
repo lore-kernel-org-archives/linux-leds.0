@@ -1,30 +1,68 @@
-From: Rob Landley <rob@landley.net>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH] Add the LED burst trigger
-Date: Fri, 27 Dec 2013 06:39:55 -0600
-Message-ID: <52BD751B.4060307@landley.net>
-References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>,<20131225230935.GB13593@amd.pavel.ucw.cz>,<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>,<20131226142607.GA15225@amd.pavel.ucw.cz>,<BLU172-W3236C029069708048D5697ACC20@phx.gbl> <BLU172-W413E574F382D098B5F9028ACC20@phx.gbl>
+Date: Fri, 27 Dec 2013 13:57:25 +0100
+Message-ID: <20131227125725.GA21506@amd.pavel.ucw.cz>
+References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>
+ <20131225230935.GB13593@amd.pavel.ucw.cz>
+ <BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
+ <20131227115746.4cbd9523@alan.etchedpixels.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <BLU172-W413E574F382D098B5F9028ACC20@phx.gbl>
-Sender: linux-doc-owner@vger.kernel.org
-To: Joe Xue <lgxue@hotmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34873 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752813Ab3L0M51 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Dec 2013 07:57:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20131227115746.4cbd9523@alan.etchedpixels.co.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Cc: Joe Xue <lgxue@hotmail.com>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-On 12/26/13 10:58, Joe Xue wrote:
-> Hi all,
->
-> I think Pavel's suggestion is a good idea, I'm starting to write another trigger named Morse code trigger.
+Hi!
 
-Those who don't know history are doomed to fail the class and have to 
-retake it with the same instructor next year:
+> > Yes, Morse code can indicate any means. But when we look at the LEDs, would we like to also have a Morse code book in hand?
+> > 
+> > The burst led blink idea is because it is easy to use and easy to describe. Mostly when users on site are describing the LEDs states to the support engineer.
+> 
+> Sure but 
+> - Why bother putting it into the kernel when you can do it in user
+> space
 
-https://lkml.org/lkml/2003/1/30/43
+At least nokia N900 actually has "hardware acceleration" for LED
+blinking. (Tiny CPU connected over i2c, able to control 3 LEDs, turing
+complete with something like 20 _bits_ of storage and 30 program
+steps). Apparently, it makes more stable patterns (timing is very hard
+to guarantee from userspace) and better power consumption (no need to
+wake the CPU to blink the LEDs).
 
-And it didn't go very far because a decade ago not many people actually 
-knew morse code anymore, even back then. (And I think that was back 
-before they finally dropped the requirement to get a ham radio license...)
+Now, wins from going userspace->kernel will not be too huge. But "If
+the hardware can accelerate it, kernel should offer it even on
+hardware that can not do it, for consistency".
 
-Rob
+[Ok, I should mention that N900 can actually do 3-colored LED with PWM
+and synchronization between the colors -- so it can do smooth power
+ramp ups. Proposed interface does not cover that.
+
+Actually even better interface might be:
+
+integer: time in msec for each step
+pattern: binary string, with each u8 being intensity in 0-255 range
+
+That would cover N900 features that are easy to emulate while being
+practical to do on machines that do not have hardware acceleration for
+LEDs. But it still does not cover synchronization between the three
+RGB channels :-(.]
+
+> - Why use morse code when you are probably better using something that
+>   can be decoded in software off a phone video and so has FEC (viterbi or
+>   similar) on it ?
+
+I'd say decoding "3 blinks" -- dishwasher lacks water is easier than
+pulling than installing decoding app on a phone.
+
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
