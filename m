@@ -1,98 +1,101 @@
 From: Joe Xue <lgxue@hotmail.com>
 Subject: RE: [PATCH] Add the LED burst trigger
-Date: Thu, 26 Dec 2013 11:58:47 -0500
-Message-ID: <BLU172-W413E574F382D098B5F9028ACC20@phx.gbl>
-References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>,<20131225230935.GB13593@amd.pavel.ucw.cz>,<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>,<20131226142607.GA15225@amd.pavel.ucw.cz>,<BLU172-W3236C029069708048D5697ACC20@phx.gbl>
+Date: Thu, 26 Dec 2013 19:31:40 -0500
+Message-ID: <BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>,<20131225230935.GB13593@amd.pavel.ucw.cz>,<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>,<20131226142607.GA15225@amd.pavel.ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <BLU172-W3236C029069708048D5697ACC20@phx.gbl>
-Sender: linux-doc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from blu0-omc4-s27.blu0.hotmail.com ([65.55.111.166]:7295 "EHLO
+	blu0-omc4-s27.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751229Ab3L0Abl convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 26 Dec 2013 19:31:41 -0500
+In-Reply-To: <20131226142607.GA15225@amd.pavel.ucw.cz>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
 Cc: "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-List-Id: linux-leds@vger.kernel.org
 
-Hi all,
+Hi,
 
-I think Pavel's suggestion is a good idea, I'm starting to write another trigger named Morse code trigger.
+I'm writing the Morse code trigger.
+what about this
 
-I prefer to keeping this burst trigger and add another Morse code trigger for different application. But I know the Morse code trigger will be the super set of the burst. Say the patten ... Morse code is same as the 3 times burst blinking.
+echo "-.-. *"> patten
+-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 a long on then a off
+=2E=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 a short on then a off
+space=A0=A0=A0=A0 a long off
+*=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mean repeat the patten
+s=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mean indicate the patten just one=
+ time then stop
 
-Anyway, after I finish that trigger, let community to decide which one will be adapted, or both.
+Do we also need a  "step_length_ms" as Pavel's suggestion?
+If so, we can define long on as 2*step_length_ms and short on as 1*step=
+_length_ms.
 
-Any suggestion about the new Morse trigger, please let me know.
+Any other parameters do you guys think we should add?
 
-Thank you Pavel.
+Any suggestion is very appreciated.
+
+Thanks
 
 Joe
 
+
+
 ----------------------------------------
-> From: lgxue@hotmail.com
-> To: pavel@ucw.cz
-> CC: cooloney@gmail.com; rpurdie@rpsys.net; rob@landley.net; milo.kim@ti.com; linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org
-> Subject: RE: [PATCH] Add the LED burst trigger
-> Date: Thu, 26 Dec 2013 10:02:38 -0500
+> Date: Thu, 26 Dec 2013 15:26:08 +0100
+> From: pavel@ucw.cz
+> To: lgxue@hotmail.com
+> CC: cooloney@gmail.com; rpurdie@rpsys.net; rob@landley.net; milo.kim@=
+ti.com; linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; linux=
+-doc@vger.kernel.org
+> Subject: Re: [PATCH] Add the LED burst trigger
 >
-> Hi Pavel,
+> Hi!
 >
-> Yes, your suggest looks reasonable. Only issue maybe is not easy to called by program. After all, the interface is called by program more ofter then by human being.
->
-> I would like to change the way what you suggest, let see if other guys agree with your idea.
->
-> Before that, I'll submit another change as per Geert's suggest that change HZ to Hz.
->
-> Joe
->
-> ----------------------------------------
->> Date: Thu, 26 Dec 2013 15:26:08 +0100
->> From: pavel@ucw.cz
->> To: lgxue@hotmail.com
->> CC: cooloney@gmail.com; rpurdie@rpsys.net; rob@landley.net; milo.kim@ti.com; linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org
->> Subject: Re: [PATCH] Add the LED burst trigger
+>> Yes, Morse code can indicate any means. But when we look at the LEDs=
+, would we like to also have a Morse code book in hand?
 >>
->> Hi!
+>> The burst led blink idea is because it is easy to use and easy to de=
+scribe. Mostly when users on site are describing the LEDs states to the=
+ support engineer.
 >>
->>> Yes, Morse code can indicate any means. But when we look at the LEDs, would we like to also have a Morse code book in hand?
+>
+> Well.. above 7 or so blinks, people will be unable to count. "one
+> short, one long" will help to extend that.
+>
+> Plus, there may be patterns such as "keep it ON, count number of brie=
+f
+> OFFs"...
+>
+> That's why I suggested:
+>
+>>> echo 40> step_length_ms
+>>> echo "- - - "> pattern
 >>>
->>> The burst led blink idea is because it is easy to use and easy to describe. Mostly when users on site are describing the LEDs states to the support engineer.
+>>> do the same trick?
 >>>
->>
->> Well.. above 7 or so blinks, people will be unable to count. "one
->> short, one long" will help to extend that.
->>
->> Plus, there may be patterns such as "keep it ON, count number of brief
->> OFFs"...
->>
->> That's why I suggested:
->>
->>>> echo 40> step_length_ms
->>>> echo "- - - "> pattern
->>>>
->>>> do the same trick?
->>>>
->>>> Plus, you could for example do
->>>>
->>>> echo "- --- "> pattern
->>>>
->>>> to do morse code...
->>
->> Interface
->>
->> (Note that your client stripped some spaces out of it).
->>
->> With that, it should be very easy to program all the reasonable
->> blinking patterns for single LED without PWM.
->> Pavel
->> --
->> (english) http://www.livejournal.com/~pavelmachek
->> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at http://www.tux.org/lkml/ --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at http://www.tux.org/lkml/ 		 	   		  
+>>> Plus, you could for example do
+>>>
+>>> echo "- --- "> pattern
+>>>
+>>> to do morse code...
+>
+> Interface
+>
+> (Note that your client stripped some spaces out of it).
+>
+> With that, it should be very easy to program all the reasonable
+> blinking patterns for single LED without PWM.
+> Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/hors=
+es/blog.html 		 	   		  --
+To unsubscribe from this list: send the line "unsubscribe linux-leds" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
