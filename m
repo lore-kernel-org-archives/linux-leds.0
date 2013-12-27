@@ -1,35 +1,38 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH] Add the LED burst trigger
-Date: Fri, 27 Dec 2013 11:57:46 +0000
-Message-ID: <20131227115746.4cbd9523@alan.etchedpixels.co.uk>
+Date: Fri, 27 Dec 2013 13:33:36 +0100
+Message-ID: <CAMuHMdWKa92mKsNtrj-eKdhz=CFf2LfoSmC6=p4-QyEX54LFUw@mail.gmail.com>
 References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>
 	<20131225230935.GB13593@amd.pavel.ucw.cz>
 	<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
+	<20131226142607.GA15225@amd.pavel.ucw.cz>
+	<BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:55287 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754452Ab3L0L6N (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Dec 2013 06:58:13 -0500
-In-Reply-To: <BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+Sender: linux-doc-owner@vger.kernel.org
 To: Joe Xue <lgxue@hotmail.com>
 Cc: Pavel Machek <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+List-Id: linux-leds@vger.kernel.org
 
-On Wed, 25 Dec 2013 20:02:33 -0500
-Joe Xue <lgxue@hotmail.com> wrote:
+On Fri, Dec 27, 2013 at 1:31 AM, Joe Xue <lgxue@hotmail.com> wrote:
+> echo "-.-. *"> patten
+> -              a long on then a off
+> .              a short on then a off
+> space     a long off
+> *             mean repeat the patten
+> s             mean indicate the patten just one time then stop
 
-> Hi,
-> 
-> Yes, Morse code can indicate any means. But when we look at the LEDs, would we like to also have a Morse code book in hand?
-> 
-> The burst led blink idea is because it is easy to use and easy to describe. Mostly when users on site are describing the LEDs states to the support engineer.
+Why both "*" and "s"? What happens if none of them is specified?
 
-Sure but 
-- Why bother putting it into the kernel when you can do it in user space
-- Why use morse code when you are probably better using something that
-  can be decoded in software off a phone video and so has FEC (viterbi or
-  similar) on it ?
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
