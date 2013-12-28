@@ -1,69 +1,53 @@
-From: ZHAO Gang <gamerh2o@gmail.com>
-Subject: [PATCH] leds: replace list_for_each with list_for_each_entry
-Date: Sat, 28 Dec 2013 23:00:26 +0800
-Message-ID: <510322a941c9364485d9f5cd883a81fa74365a7a.1388238995.git.gamerh2o@gmail.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:45826 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755400Ab3L1PBE (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 28 Dec 2013 10:01:04 -0500
-Received: by mail-pb0-f43.google.com with SMTP id rq2so10143690pbb.30
-        for <linux-leds@vger.kernel.org>; Sat, 28 Dec 2013 07:01:03 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] Add the LED burst trigger
+Date: Sat, 28 Dec 2013 19:51:59 +0100
+Message-ID: <CAMuHMdVz7FWgYZRVHy6pK+g_2QKxTW00N8jmjWHe05m5CJvPOw@mail.gmail.com>
+References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>
+	<20131225230935.GB13593@amd.pavel.ucw.cz>
+	<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>
+	<20131226142607.GA15225@amd.pavel.ucw.cz>
+	<BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+	<20131227095705.GC17143@amd.pavel.ucw.cz>
+	<BLU172-W8D850A8DEA8C0D87FBF45ACCC0@phx.gbl>
+	<20131228101622.GA13564@amd.pavel.ucw.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20131228101622.GA13564@amd.pavel.ucw.cz>
+Sender: linux-doc-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Joe Xue <lgxue@hotmail.com>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: linux-leds <linux-leds@vger.kernel.org>
 
-Use the more convenient macro.
+On Sat, Dec 28, 2013 at 11:16 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>> Good idea.
+>> I have finished but I'll change it to this way soon and test it in next some days.
+>>
+>> What the idea about the character to indicate stop?
+>>
+>> I mean this patten maybe indicate just once maybe indicate repeatedly until the next patten.
+>>
+>> What about "/"?
+>> If there is a "/" at end then stop it else repeat it?
+>
+> Actually, I'd put a do_repeat attribute somewhere instead of using
+> magic character for automatic repeats.
+>
+> And while " " for pause and "#" for light would work. Maybe we chould
+> do "\0" for pause and "\177" for light... and interpret everything
+> between as an intensity. That will make it useful for LEDs with
+> variable intensites, too...
 
-Signed-off-by: ZHAO Gang <gamerh2o@gmail.com>
----
- drivers/leds/led-triggers.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Sysfs is meant to be human-readable/writable, so please use plain ASCII
+numbers in strings instead.
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 3c972b2..e387f41 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -242,18 +242,14 @@ EXPORT_SYMBOL_GPL(led_trigger_unregister);
- void led_trigger_event(struct led_trigger *trig,
- 			enum led_brightness brightness)
- {
--	struct list_head *entry;
-+	struct led_classdev *led_cdev;
- 
- 	if (!trig)
- 		return;
- 
- 	read_lock(&trig->leddev_list_lock);
--	list_for_each(entry, &trig->led_cdevs) {
--		struct led_classdev *led_cdev;
--
--		led_cdev = list_entry(entry, struct led_classdev, trig_list);
-+	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list)
- 		led_set_brightness(led_cdev, brightness);
--	}
- 	read_unlock(&trig->leddev_list_lock);
- }
- EXPORT_SYMBOL_GPL(led_trigger_event);
-@@ -264,16 +260,13 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
- 			     int oneshot,
- 			     int invert)
- {
--	struct list_head *entry;
-+	struct led_classdev *led_cdev;
- 
- 	if (!trig)
- 		return;
- 
- 	read_lock(&trig->leddev_list_lock);
--	list_for_each(entry, &trig->led_cdevs) {
--		struct led_classdev *led_cdev;
--
--		led_cdev = list_entry(entry, struct led_classdev, trig_list);
-+	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
- 		if (oneshot)
- 			led_blink_set_oneshot(led_cdev, delay_on, delay_off,
- 					      invert);
--- 
-1.8.4.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
