@@ -1,56 +1,78 @@
-From: Joe Xue <lgxue@hotmail.com>
-Subject: RE: [PATCH] Add the LED burst trigger
-Date: Sat, 28 Dec 2013 19:23:47 -0500
-Message-ID: <BLU172-W44367CDA588A7077F0987ACCF0@phx.gbl>
-References: <1387895407-28031-1-git-send-email-lgxue@hotmail.com>,<20131225230935.GB13593@amd.pavel.ucw.cz>,<BLU172-W52032BFEF4512123D7516EACC20@phx.gbl>,<20131226142607.GA15225@amd.pavel.ucw.cz>,<BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>,<20131227095705.GC17143@amd.pavel.ucw.cz>,<BLU172-W8D850A8DEA8C0D87FBF45ACCC0@phx.gbl>,<20131228101622.GA13564@amd.pavel.ucw.cz>,<BLU172-W7ED2FA23CAA436EA47FCBACCC0@phx.gbl>,<20131228192630.GA28026@amd.pavel.ucw.cz>
+From: Greg KH <greg@kroah.com>
+Subject: Re: how to represent sequence of brightnesses in /sys (was Re:
+ [PATCH] Add the LED burst trigger)
+Date: Sat, 28 Dec 2013 17:43:24 -0800
+Message-ID: <20131229014324.GB18455@kroah.com>
+References: <BLU172-W30E6E7C0BC2B6C08FA0552ACCD0@phx.gbl>
+ <20131227095705.GC17143@amd.pavel.ucw.cz>
+ <BLU172-W8D850A8DEA8C0D87FBF45ACCC0@phx.gbl>
+ <20131228101622.GA13564@amd.pavel.ucw.cz>
+ <CAMuHMdVz7FWgYZRVHy6pK+g_2QKxTW00N8jmjWHe05m5CJvPOw@mail.gmail.com>
+ <20131228192935.GA28119@amd.pavel.ucw.cz>
+ <CAMuHMdXDJ6uhe6srV-+0a8=cpBUgP+VakG+_wyLwAuiQSRVhqQ@mail.gmail.com>
+ <20131228212523.GA8733@amd.pavel.ucw.cz>
+ <20131228215042.GA7048@kroah.com>
+ <20131228235045.GA8786@amd.pavel.ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20131228192630.GA28026@amd.pavel.ucw.cz>
-Sender: linux-doc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20131228235045.GA8786@amd.pavel.ucw.cz>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Joe Xue <lgxue@hotmail.com>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
+On Sun, Dec 29, 2013 at 12:50:46AM +0100, Pavel Machek wrote:
+> On Sat 2013-12-28 13:50:42, Greg KH wrote:
+> > On Sat, Dec 28, 2013 at 10:25:23PM +0100, Pavel Machek wrote:
+> > > Hi!
+> > > 
+> > > > >> Sysfs is meant to be human-readable/writable, so please use plain ASCII
+> > > > >> numbers in strings instead.
+> > > > >
+> > > > > Actually, sysfs is meant to be one value per file, and it is
+> > > > 
+> > > > Ideally, yes.
+> > > > 
+> > > > > understood that data that are "natively blob" are just passed as
+> > > > > blob. (I believe this qualifies).
+> > > > 
+> > > > But it doesn't buy us much here, does it? It will make e.g. shell scripts
+> > > > needlessly complicated.
+> > > 
+> > > echo -ne '\012' is not that bad, and parsing array of integers from
+> > > kernel will be an ugly piece of code.
+> > 
+> > Ick, no.  What are you trying to do here?  Have the kernel intrepret a
+> > sequence of bytes to flash an LED?  I thought we have frameworks in
+> > userspace already to handle this type of thing.  Please don't invent new
+> > ways of doing stuff...
+> 
+> Idea would be "sequence of brigtnesses" (one file) and "delay between
+> changes" (second file).
 
-I have finished the patten trigger and have tested it.
-Do you mind me putting your name as suggest-by? For part idea is from you.
+Ick.
 
-Joe
-----------------------------------------
-> Date: Sat, 28 Dec 2013 20:26:30 +0100
-> From: pavel@ucw.cz
-> To: lgxue@hotmail.com
-> CC: cooloney@gmail.com; rpurdie@rpsys.net; rob@landley.net; milo.kim@ti.com; linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org
-> Subject: Re: [PATCH] Add the LED burst trigger
->
-> Hi!
->
->>> And while " " for pause and "#" for light would work. Maybe we chould
->>> do "\0" for pause and "\177" for light... and interpret everything
->>> between as an intensity. That will make it useful for LEDs with
->>> variable intensites, too...
->>
->> "\0" is not easy to give if application is a script.
->> intensity is a good idea, but makes it more complex, and user need to convert the "\num" to a ASCII code.
->>
->
->
-> OTOH it is easier for C programs _and_ we can support different
-> brightness levels.
->
-> It is not that bad from script:
->
-> echo -ne '\0\051\0377'> foo...
->
-> Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at http://www.tux.org/lkml/ 		 	   		  
+> Reason to do it in kernel is that some machines actually have
+> "coprocessor" on i2c that can do it while main CPU is suspended. (For
+> more reasons, see beggining of thread).
+
+Ick ick.
+
+> Binary attribute with array of bytes should be acceptable, rights?
+
+Not at all.
+
+> (IOW write(..., buf, size) )
+> 
+> Ascii array of decimal integers -- no so, right?
+> 
+> (IOW printf("%d %d ..", buf[0], buf[1]) )
+
+Use an ioctl with a structure to get things correct as a character
+device.  As odds are, you aren't going to be able to create a "generic"
+format for all of this for all types of devices that support such a
+"co-processor".
+
+greg k-h
