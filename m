@@ -1,115 +1,79 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH] Add LED pattern trigger
-Date: Mon, 30 Dec 2013 16:21:58 +0000
-Message-ID: <20131230162158.7420e811@alan.etchedpixels.co.uk>
+Date: Mon, 30 Dec 2013 19:33:03 +0100
+Message-ID: <20131230183302.GA28430@amd.pavel.ucw.cz>
 References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
 Sender: linux-doc-owner@vger.kernel.org
 To: Joe Xue <lgxue@hotmail.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, rob@landley.net, milo.kim@ti.com, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, rob@landley.net, milo.kim@ti.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-> + * Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
-> + * ledtrig-heartbeat.c and Shuah Khan's ledtrig-transient.c
+Hi!
 
-I stil think this belongs in user space except for platforms with hardware
-acceleration for it.
+> The LED pattern trigger allows LEDs blink in user defined pattern.
+> 
+> 	new file:   Documentation/leds/ledtrig-pattern.txt
+> 	modified:   drivers/leds/trigger/Kconfig
+> 	modified:   drivers/leds/trigger/Makefile
+> 	new file:   drivers/leds/trigger/ledtrig-pattern.c
+> 
+> Suggested-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Joe Xue <lgxue@hotmail.com>
 
-> +#define MAX_PATTEN_LEN	255
+> +     echo pattern > trigger
+> +     echo "# ## /"
+> +
+> +     The behaviour is like below:
+> +
+> +     on(125ms)off(125ms)on(250ms)off
 
-Arbitary limits that are not needed if it was in userspace, and not it
-seems a sensible one - why not use 256 ?
 
-> +static ssize_t pattern_delay_unit_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t size)
+> +static void pattern_timer_function(unsigned long data)
 > +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_classdev *led_cdev = (struct led_classdev *) data;
 > +	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
-> +	unsigned long state;
-> +	ssize_t ret = -EINVAL;
 > +
-> +	ret = kstrtoul(buf, 10, &state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pattern_data->delay_unit = state;
-
-What happens if this is zero ?
-
-> +static ssize_t pattern_pattern_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t size)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
-> +	int i;
-> +	ssize_t ret = -EINVAL;
-> +
-> +	int len = (size > MAX_PATTEN_LEN) ? MAX_PATTEN_LEN : (size - 1);
-> +
-> +	/* legality check */
-> +	for (i = 0; i < len; i++) {
-> +		if (buf[i] != ' ' && buf[i] != '#' && buf[i] != '/')
-> +			return ret;
+> +	if (pattern_data->pattern[pattern_data->count] == '#') {
+> +		__led_set_brightness(led_cdev, pattern_data->brightness_on);
+> +		mod_timer(&pattern_data->timer,
+> +			jiffies + msecs_to_jiffies(pattern_data->delay_unit));
+> +	} else if (pattern_data->pattern[pattern_data->count] == ' ') {
+> +		__led_set_brightness(led_cdev, LED_OFF);
+> +		mod_timer(&pattern_data->timer,
+> +			jiffies + msecs_to_jiffies(pattern_data->delay_unit));
+> +	/* stop blinking */
+> +	} else if (pattern_data->pattern[pattern_data->count] == '/') {
+> +		return;
 > +	}
-> +
-> +	del_timer_sync(&pattern_data->timer);
-> +
-> +	memcpy(pattern_data->pattern, buf, len);
-> +	pattern_data->pattern[len] = '\0';
-> +	pattern_data->pattern_len = len;
-> +	pattern_data->count = 0;
-> +
-> +	mod_timer(&pattern_data->timer, jiffies + 1);
 
-What if the pattern isn't currently active ?
+What about something like this?
 
-> +	return size;
+Not shcheduling timer when nothing changed should save a bit of power/cpu...
 
-You only consumed len bytes so you should return len here.
+  	if (pattern_data->pattern[pattern_data->count] == '/') {
+		return;
+	}
 
-> +}
-> +
-> +static DEVICE_ATTR(pattern, 0644, pattern_pattern_show, pattern_pattern_store);
-> +static DEVICE_ATTR(delay_unit, 0644,
-> +		pattern_delay_unit_show, pattern_delay_unit_store);
+	this = pattern_data->pattern[pattern_data->count]
+	if (this == '#')
+		new_brigtness = pattern_data->brightness_on;
+	if (this == ' ')
+		new_brigtness = LED_OFF;
+	repeat = 1;
+	while (pattern_data->pattern[pattern_data->count + repeat] == this)
+	      repeat++;
 
-Why are these world readable. If patterns tell you an action is due they
-provide information that other processes shouldn't have access to.
-
-> +	memset(tdata->pattern, 0, MAX_PATTEN_LEN + 1);
-
-Why +1, you don't need a zero terminator you know the length
-
-Why allocate a fixed 256 byte blob when you can make the data the end of
-the struct (ie pattern[0] in the declaration) and not waste memory.
-
-> +static void pattern_trig_deactivate(struct led_classdev *led_cdev)
-> +{
-> +	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
-> +
-> +	if (led_cdev->activated) {
-> +		del_timer_sync(&pattern_data->timer);
-> +		device_remove_file(led_cdev->dev, &dev_attr_pattern);
-> +		device_remove_file(led_cdev->dev, &dev_attr_delay_unit);
-
-This doesn't as far as I can see do what you think. If I have the file
-currently open then device_remove_file will not remove my existing access
-to it, but you just released the pattern data so I now write to free
-memory.
-
-> +		led_cdev->trigger_data = NULL;
-> +		led_cdev->activated = false;
-> +		kfree(pattern_data);
-> +	}
-> +	__led_set_brightness(led_cdev, LED_OFF);
-> +}
-> +
-> +static struct led_trigger pattern_trigger = {
-
-const ?
+	mod_timer(&pattern_data->timer,
+		jiffies + msecs_to_jiffies(pattern_data->delay_unit * repeat));
 
 
+Thanks,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
