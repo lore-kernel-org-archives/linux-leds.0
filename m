@@ -1,29 +1,54 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+From: David Lang <david@lang.hm>
 Subject: Re: [PATCH] Add LED pattern trigger
-Date: Wed, 1 Jan 2014 20:11:31 +0000
-Message-ID: <20140101201131.575a6337@alan.etchedpixels.co.uk>
-References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
-	<20131230183302.GA28430@amd.pavel.ucw.cz>
-	<BLU172-W18A7B97F4E688F416C5DABACC90@phx.gbl>
-	<20131231113352.GA4233@amd.pavel.ucw.cz>
-	<CAFLxGvy31K9cgiuQKPmcbbr8QpMmj3vxmA1opNWT01qDUaLR0Q@mail.gmail.com>
-	<20131231190304.GA15451@amd.pavel.ucw.cz>
+Date: Wed, 1 Jan 2014 14:44:58 -0800 (PST)
+Message-ID: <alpine.DEB.2.02.1401011423180.27645@nftneq.ynat.uz>
+References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com> <20131230162158.7420e811@alan.etchedpixels.co.uk> <BLU172-W451DF59115DB2B0A7F694AACC90@phx.gbl> <20140101201053.12be7d27@alan.etchedpixels.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20131231190304.GA15451@amd.pavel.ucw.cz>
-Sender: linux-doc-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>, Joe Xue <lgxue@hotmail.com>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.lang.hm ([64.81.33.126]:33658 "EHLO bifrost.lang.hm"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754686AbaAAWyV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 1 Jan 2014 17:54:21 -0500
+In-Reply-To: <20140101201053.12be7d27@alan.etchedpixels.co.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Cc: Joe Xue <lgxue@hotmail.com>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-> > Why do we need this within the kernel?
-> > Patterns can easily created using a simple user space program.
-> 
-> Some machines (N900) can do blinking in hardware, and we want
-> consistent kernel-user interface. See the mailing list.
+On Wed, 1 Jan 2014, One Thousand Gnomes wrote:
 
-We have things called "libraries", see the mailing list.
+> On Tue, 31 Dec 2013 13:48:50 -0500
+> Joe Xue <lgxue@hotmail.com> wrote:
+>
+>>>> + * Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
+>>>> + * ledtrig-heartbeat.c and Shuah Khan's ledtrig-transient.c
+>>>
+>>> I stil think this belongs in user space except for platforms with hardware
+>>> acceleration for it.
+>>
+>> This can free the user space application from loop or thread.
+>
+> Which is not a good reason for putting it in the kernel. I could make the
+> same argument for putting firefox in the kernel ...
+>
 
-Alan
+I agree with you that this isn't a good reason, but I think the performance 
+could be a reason.
+
+whatever mechanism is created for toggling LEDs should be able to toggle 
+arbitrary GPIO pins, and there is a problem with the speed of the standard 
+access mechanisms in /sysfs. see this post on hackaday for an example
+
+http://hackaday.com/2013/12/07/speeding-up-beaglebone-black-gpio-a-thousand-times/
+
+now, it may be that telling people to access /dev/mem is deemed a better option, 
+but I would hope not.
+
+Also, since there are a number of cases where this is hardware accelerated, it 
+seems like there should be an abstration that userspace can use that doesn't 
+care if or how it's accelerated, setup the output and tell the system to do it 
+without worrying about the specific hardware details. Isn't that a large part of 
+what the kernel is supposed to be doing?
+
+David Lang
