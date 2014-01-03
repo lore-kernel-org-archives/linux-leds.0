@@ -1,64 +1,43 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH V2] leds: s3c24xx: Fix build failure
-Date: Thu, 2 Jan 2014 22:19:38 -0800
-Message-ID: <CAK5ve-K0aCVTo+21G47M0aYT8f-vkqLAd9etWxSY+ieib8KfMQ@mail.gmail.com>
-References: <1388394595-1347-1-git-send-email-tushar.behera@linaro.org> <1388726757-7387-1-git-send-email-tushar.behera@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1388726757-7387-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] leds: s3c24xx: Remove hardware.h inclusion
+Date: Fri,  3 Jan 2014 12:00:04 +0530
+Message-ID: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:60370 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750812AbaACGdy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 3 Jan 2014 01:33:54 -0500
+Received: by mail-pd0-f182.google.com with SMTP id v10so15021072pde.13
+        for <linux-leds@vger.kernel.org>; Thu, 02 Jan 2014 22:33:53 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: cooloney@gmail.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On Thu, Jan 2, 2014 at 9:25 PM, Tushar Behera <tushar.behera@linaro.org=
-> wrote:
-> Commit c67d0f29262b ("ARM: s3c24xx: get rid of custom <mach/gpio.h>")
-> removed the usage of mach/gpio.h file, but we need to include
-> plat/gpio-cfg.h to avoid following build error.
->
-> Fixes following build error.
-> drivers/leds/leds-s3c24xx.c: In function =91s3c24xx_led_probe=92:
-> drivers/leds/leds-s3c24xx.c:100:2: error: implicit declaration of
-> function =91s3c_gpio_setpull=92 [-Werror=3Dimplicit-function-declarat=
-ion]
->
+The contents of this header file is not referenced in the led driver.
+Remove its inclusion. While at it, re-arrange the headers as per the
+category.
 
-I think this patch should go with Linus's patchset.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/leds/leds-s3c24xx.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
--Bryan
-
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
-> Changes for V2:
-> * Updated commit message
->
-> Bryan,
->
-> I should have been more explicit regarding this patch. This patch fix=
-es
-> build error on linux-next after the above patch was merged.
->
-> Tested at next-20131224.
->
->  drivers/leds/leds-s3c24xx.c |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.=
-c
-> index 76483fb..87cf215 100644
-> --- a/drivers/leds/leds-s3c24xx.c
-> +++ b/drivers/leds/leds-s3c24xx.c
-> @@ -21,6 +21,7 @@
->
->  #include <mach/hardware.h>
->  #include <mach/regs-gpio.h>
-> +#include <plat/gpio-cfg.h>
->  #include <linux/platform_data/leds-s3c24xx.h>
->
->  /* our context */
-> --
-> 1.7.9.5
->
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 76483fb5ee45..b7876eb09e8c 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -18,10 +18,9 @@
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+-#include <linux/platform_data/leds-s3c24xx.h>
+ 
+ /* our context */
+ 
+-- 
+1.7.9.5
