@@ -1,43 +1,37 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] leds: s3c24xx: Remove hardware.h inclusion
-Date: Fri,  3 Jan 2014 12:00:04 +0530
-Message-ID: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:60370 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750812AbaACGdy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 3 Jan 2014 01:33:54 -0500
-Received: by mail-pd0-f182.google.com with SMTP id v10so15021072pde.13
-        for <linux-leds@vger.kernel.org>; Thu, 02 Jan 2014 22:33:53 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: [PATCH] Add LED pattern trigger
+Date: Fri, 3 Jan 2014 10:33:51 +0100
+Message-ID: <CAFLxGvwmS790goxNhO33p63MAic_bV8dpY+iMVFhuCUrxCWcbw@mail.gmail.com>
+References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
+	<20131230162158.7420e811@alan.etchedpixels.co.uk>
+	<BLU172-W451DF59115DB2B0A7F694AACC90@phx.gbl>
+	<20140101201053.12be7d27@alan.etchedpixels.co.uk>
+	<alpine.DEB.2.02.1401011423180.27645@nftneq.ynat.uz>
+	<20140101230135.48f6f781@alan.etchedpixels.co.uk>
+	<alpine.DEB.2.02.1401011547340.27645@nftneq.ynat.uz>
+	<CAK5ve-KTQvJeLXmJt-NgPy6Ju+kBzWVoSQB7TKR9TW+mfD=bxg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-KTQvJeLXmJt-NgPy6Ju+kBzWVoSQB7TKR9TW+mfD=bxg@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: David Lang <david@lang.hm>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: cooloney@gmail.com, sachin.kamat@linaro.org, patches@linaro.org
 
-The contents of this header file is not referenced in the led driver.
-Remove its inclusion. While at it, re-arrange the headers as per the
-category.
+On Fri, Jan 3, 2014 at 1:14 AM, Bryan Wu <cooloney@gmail.com> wrote:
+> IMHO, firstly we should take this trigger into kernel, most time it
+> works as a module. But we need to define a good interface between
+> kernel and user space.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/leds/leds-s3c24xx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Put it in first place into the kernel such that it becomes ABI and
+nobody is allowed
+to remove it later?
 
-diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
-index 76483fb5ee45..b7876eb09e8c 100644
---- a/drivers/leds/leds-s3c24xx.c
-+++ b/drivers/leds/leds-s3c24xx.c
-@@ -18,10 +18,9 @@
- #include <linux/gpio.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/platform_data/leds-s3c24xx.h>
- 
--#include <mach/hardware.h>
- #include <mach/regs-gpio.h>
--#include <linux/platform_data/leds-s3c24xx.h>
- 
- /* our context */
- 
+Better design a sane interface such that such complex LED operations
+can be achieved
+in userspace using an helper library.
+
 -- 
-1.7.9.5
+Thanks,
+//richard
