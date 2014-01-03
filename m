@@ -1,63 +1,40 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: how to represent sequence of brightnesses in /sys (was Re:
- [PATCH] Add the LED burst trigger)
-Date: Thu, 2 Jan 2014 16:16:38 -0800
-Message-ID: <CAK5ve-LOFE6h5w=+pSgfYMaW5GZQfayVfpRzP0NAfMPWZkk5iw@mail.gmail.com>
-References: <20131227095705.GC17143@amd.pavel.ucw.cz> <BLU172-W8D850A8DEA8C0D87FBF45ACCC0@phx.gbl>
- <20131228101622.GA13564@amd.pavel.ucw.cz> <CAMuHMdVz7FWgYZRVHy6pK+g_2QKxTW00N8jmjWHe05m5CJvPOw@mail.gmail.com>
- <20131228192935.GA28119@amd.pavel.ucw.cz> <CAMuHMdXDJ6uhe6srV-+0a8=cpBUgP+VakG+_wyLwAuiQSRVhqQ@mail.gmail.com>
- <20131228212523.GA8733@amd.pavel.ucw.cz> <20131228215042.GA7048@kroah.com>
- <20131228235045.GA8786@amd.pavel.ucw.cz> <20131229014324.GB18455@kroah.com> <20131229112101.GB26295@amd.pavel.ucw.cz>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] leds: s3c24xx: Fix build failure
+Date: Fri, 3 Jan 2014 10:35:02 +0530
+Message-ID: <CAHbNUh3eC7dhEL9Ek4doGT-R=oPeMDm4N7dtE5fNSaXRKCz3mg@mail.gmail.com>
+References: <1388394595-1347-1-git-send-email-tushar.behera@linaro.org>
+	<CAK5ve-L9RxRouoS=F8CywGW_s_tw4eZzLc4O0=_HdYtaMBVMuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131229112101.GB26295@amd.pavel.ucw.cz>
+In-Reply-To: <CAK5ve-L9RxRouoS=F8CywGW_s_tw4eZzLc4O0=_HdYtaMBVMuQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg KH <greg@kroah.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Dec 29, 2013 at 3:21 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
+On 3 January 2014 04:12, Bryan Wu <cooloney@gmail.com> wrote:
+> On Mon, Dec 30, 2013 at 1:09 AM, Tushar Behera <tushar.behera@linaro.=
+org> wrote:
+>> Fixes following build error.
+>> drivers/leds/leds-s3c24xx.c: In function =E2=80=98s3c24xx_led_probe=E2=
+=80=99:
+>> drivers/leds/leds-s3c24xx.c:100:2: error: implicit declaration of
+>> function =E2=80=98s3c_gpio_setpull=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+>>
 >
->> > Idea would be "sequence of brigtnesses" (one file) and "delay between
->> > changes" (second file).
->>
->> Ick.
->>
->> > Reason to do it in kernel is that some machines actually have
->> > "coprocessor" on i2c that can do it while main CPU is suspended. (For
->> > more reasons, see beggining of thread).
->>
->> Ick ick.
->>
->> > Binary attribute with array of bytes should be acceptable, rights?
->>
->> Not at all.
->>
->> > (IOW write(..., buf, size) )
->> >
->> > Ascii array of decimal integers -- no so, right?
->> >
->> > (IOW printf("%d %d ..", buf[0], buf[1]) )
->>
->> Use an ioctl with a structure to get things correct as a character
->> device.  As odds are, you aren't going to be able to create a "generic"
->> format for all of this for all types of devices that support such a
->> "co-processor".
->
-> Well, we already do have hw-specific driver in the tree,
-> drivers/leds/leds-lp55xx-common.c . But the interface is
-> "interesting" and I believe we should have generic interface and it
-> should use existing trigger framework -- array of brightnesses does
-> not seem too complicated.
->
-> Do you have suggestion how to pass the brightnesses over sysfs?
+> I don't see any building error with s3c2410_defconfig. Actually this
+> <plat/gpio-cfg.h> is included in
+> arch/arm/mach-s3c24xx/include/mach/gpio.h which is in
+> arch/arm/include/asm/gpio.h, then <linux/gpio.h>
 >
 
-What about send those binary stuff as firmware through kernel firmware
-interface and LED trigger sysfs is just for parameters setup and
-enable/disable controlling.
+This requires that CONFIG_NEED_MACH_GPIO_H is defined. Following
+commit has removed this option for s3c24xx platform.
 
-Thanks,
--Bryan
+c67d0f29262b ("ARM: s3c24xx: get rid of custom <mach/gpio.h>").
+
+--=20
+Tushar Behera
