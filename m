@@ -1,76 +1,375 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: how to represent sequence of brightnesses in /sys (was Re:
- [PATCH] Add the LED burst trigger)
-Date: Mon, 6 Jan 2014 01:37:14 +0100
-Message-ID: <20140106003714.GD27517@amd.pavel.ucw.cz>
-References: <20131228101622.GA13564@amd.pavel.ucw.cz>
- <CAMuHMdVz7FWgYZRVHy6pK+g_2QKxTW00N8jmjWHe05m5CJvPOw@mail.gmail.com>
- <20131228192935.GA28119@amd.pavel.ucw.cz>
- <CAMuHMdXDJ6uhe6srV-+0a8=cpBUgP+VakG+_wyLwAuiQSRVhqQ@mail.gmail.com>
- <20131228212523.GA8733@amd.pavel.ucw.cz>
- <20131228215042.GA7048@kroah.com>
- <20131228235045.GA8786@amd.pavel.ucw.cz>
- <20131229014324.GB18455@kroah.com>
- <20131229112101.GB26295@amd.pavel.ucw.cz>
- <CAK5ve-LOFE6h5w=+pSgfYMaW5GZQfayVfpRzP0NAfMPWZkk5iw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-LOFE6h5w=+pSgfYMaW5GZQfayVfpRzP0NAfMPWZkk5iw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Greg KH <greg@kroah.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+From: lgxue@hotmail.com
+Subject: [PATCH v3 1/1] leds: Add LED pattern trigger
+Date: Mon,  6 Jan 2014 16:47:14 -0500
+Message-ID: <1389044834-22870-1-git-send-email-lgxue@hotmail.com>
+References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from 173-195-60.141.tel-ott.com ([173.195.60.141]:34989 "EHLO kokopo"
+	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756482AbaAFVqx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 6 Jan 2014 16:46:53 -0500
+In-Reply-To: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net, rob@landley.net, milo.kim@ti.com, pavel@ucw.cz
+Cc: Joe Xue <lgxue@hotmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 
-Hi!
+From: Joe Xue <lgxue@hotmail.com>
 
-> >> > Reason to do it in kernel is that some machines actually have
-> >> > "coprocessor" on i2c that can do it while main CPU is suspended. (For
-> >> > more reasons, see beggining of thread).
-> >>
-> >> Ick ick.
-> >>
-> >> > Binary attribute with array of bytes should be acceptable, rights?
-> >>
-> >> Not at all.
-> >>
-> >> > (IOW write(..., buf, size) )
-> >> >
-> >> > Ascii array of decimal integers -- no so, right?
-> >> >
-> >> > (IOW printf("%d %d ..", buf[0], buf[1]) )
-> >>
-> >> Use an ioctl with a structure to get things correct as a character
-> >> device.  As odds are, you aren't going to be able to create a "generic"
-> >> format for all of this for all types of devices that support such a
-> >> "co-processor".
-> >
-> > Well, we already do have hw-specific driver in the tree,
-> > drivers/leds/leds-lp55xx-common.c . But the interface is
-> > "interesting" and I believe we should have generic interface and it
-> > should use existing trigger framework -- array of brightnesses does
-> > not seem too complicated.
-> >
-> > Do you have suggestion how to pass the brightnesses over sysfs?
-> >
-> 
-> What about send those binary stuff as firmware through kernel firmware
-> interface and LED trigger sysfs is just for parameters setup and
-> enable/disable controlling.
+The LED pattern trigger allows LEDs blink in user defined pattern.
 
-That might be a bit too heavy. LED patterns do change quite often.
+v2: Change the pattern memory from fixed static to malloc
+    Change the timer schedule way to save cpu time
+    Add the mutex to protect the pattern operation
 
-lp5523 driver uses this to push binary data through /sys. (It is code
-for lp5523 processor in this case). Something like that would still be
-better than firmware loader... 
+v3: Tiny fix, add the missed parameter in example of document
 
-cd /sys/class/i2c-adapter/i2c-2/2-0032 
-echo load > engine1_mode 
-echo cd /sys/class/i2c-adapter/i2c-2/2-0032 
-echo 9d804000427f0d7f7f007f0042000000  > engine1_load 
-echo run > engine1_mode
-									Pavel
+	new file:   Documentation/leds/ledtrig-pattern.txt
+	modified:   drivers/leds/trigger/Kconfig
+	modified:   drivers/leds/trigger/Makefile
+	new file:   drivers/leds/trigger/ledtrig-pattern.c
+
+Signed-off-by: Joe Xue <lgxue@hotmail.com>
+---
+ Documentation/leds/ledtrig-pattern.txt |  60 +++++++++
+ drivers/leds/trigger/Kconfig           |   9 ++
+ drivers/leds/trigger/Makefile          |   1 +
+ drivers/leds/trigger/ledtrig-pattern.c | 233 +++++++++++++++++++++++++++++++++
+ 4 files changed, 303 insertions(+)
+ create mode 100644 Documentation/leds/ledtrig-pattern.txt
+ create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+
+diff --git a/Documentation/leds/ledtrig-pattern.txt b/Documentation/leds/ledtrig-pattern.txt
+new file mode 100644
+index 0000000..ac0877c
+--- /dev/null
++++ b/Documentation/leds/ledtrig-pattern.txt
+@@ -0,0 +1,60 @@
++LED Pattern Trigger
++===================
++
++0. Introduction
++
++LED Pattern trigger is designed to let LEDs indicate the patterns defined by
++users. This is very useful for those scenarios where only one non-color led
++needs to indicate different states.
++
++1. How to use
++
++Pattern trigger can be enabled and disabled from user space on led class
++devices that support this trigger as shown below:
++
++     echo pattern > trigger
++
++When the pattern trigger is activated, it will get the current brightness as
++its brightness if the led is on. Otherwise, it will use the maximum brightness.
++
++If the led supports different values rather than ON/OFF, the brightness can be
++set in advance before enabling the trigger.
++
++     echo 128 > brightness
++     echo pattern > trigger
++
++Two properties are exported. They are delay_unit and pattern.
++
++     delay_unit - a delay time unit, default value is 125 ms
++     pattern    - blink pattern, includes three legal characters
++                  '#', ' '(space), and '/'
++                  '#' let LED on and last delay_unit long time
++                  ' ' let LED off and last delay_unit long time
++                  '/' stop pattern
++                      pattern will be repeated without it
++
++3. Examples
++
++     Example 1
++
++     echo pattern > trigger
++     echo "# ## /" > pattern
++
++     The behaviour is like below:
++
++     on(125ms)off(125ms)on(250ms)off
++     This is Morse code 'A'
++
++     Example 2
++
++     echo pattern > trigger
++     echo 200 > delay_unit
++     echo "# #    " > pattern
++
++     The behaviour is like below:
++
++     on(200ms)off(200ms)on(200ms)off(800ms)
++     on(200ms)off(200ms)on(200ms)off(800ms)
++     ...(Repeat)
++
++     This is 2 times burst blinking.
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 49794b4..23d0967 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -108,4 +108,13 @@ config LEDS_TRIGGER_CAMERA
+ 	  This enables direct flash/torch on/off by the driver, kernel space.
+ 	  If unsure, say Y.
+ 
++config LEDS_TRIGGER_PATTERN
++	tristate "LED Pattern Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  This allows LEDs to blink in a user defined pattern controlled via
++          sysfs. It's useful to notify different states by using one led.
++	  For more details read Documentation/leds/leds-pattern.txt.
++	  If unsure, say Y.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 1abf48d..a739429 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
+ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
++obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+new file mode 100644
+index 0000000..9c688e7
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -0,0 +1,233 @@
++/*
++ * LED Kernel Morse Code Trigger
++ *
++ * Copyright (C) 2013 Joe Xue <lgxue@hotmail.com>
++ *
++ * Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
++ * ledtrig-heartbeat.c and Shuah Khan's ledtrig-transient.c
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/slab.h>
++#include <linux/timer.h>
++#include <linux/leds.h>
++#include "../leds.h"
++
++struct pattern_trig_data {
++	unsigned long delay_unit;
++	unsigned long pattern_len;
++	unsigned long count;
++	int brightness_on;
++	char *pattern;
++	struct timer_list timer;
++	struct mutex pattern_mutex;
++};
++
++static void pattern_timer_function(unsigned long data)
++{
++	int repeat = 1;
++	struct led_classdev *led_cdev = (struct led_classdev *) data;
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++	char this = pattern_data->pattern[pattern_data->count];
++
++	if (this == '#') {
++		__led_set_brightness(led_cdev, pattern_data->brightness_on);
++	} else if (this == ' ') {
++		__led_set_brightness(led_cdev, LED_OFF);
++	/* stop blinking */
++	} else if (this == '/') {
++		return;
++	}
++
++	while (pattern_data->pattern[pattern_data->count + repeat] == this)
++		repeat++;
++
++	mod_timer(&pattern_data->timer,
++		jiffies + msecs_to_jiffies(pattern_data->delay_unit * repeat));
++
++	pattern_data->count += repeat;
++	if (pattern_data->count == pattern_data->pattern_len)
++		pattern_data->count = 0;
++}
++
++static ssize_t pattern_delay_unit_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++
++	return sprintf(buf, "%lu\n", pattern_data->delay_unit);
++}
++
++static ssize_t pattern_delay_unit_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++	unsigned long state;
++	ssize_t ret = -EINVAL;
++
++	ret = kstrtoul(buf, 10, &state);
++	if (ret)
++		return ret;
++
++	/* this value can't be 0 */
++	if (state == 0)
++		return -EINVAL;
++
++	pattern_data->delay_unit = state;
++
++	return size;
++}
++
++static ssize_t pattern_pattern_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++
++	if (pattern_data->pattern)
++		return scnprintf(buf, PAGE_SIZE, "%s\n",
++				pattern_data->pattern);
++	return 0;
++}
++
++static ssize_t pattern_pattern_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++	int i, len;
++	ssize_t ret = -EINVAL;
++
++	len = 0;
++
++	/* legality check */
++	for (i = 0; i < size; i++) {
++		if (buf[i] != ' ' && buf[i] != '#' && buf[i] != '/')
++			break;
++		len++;
++	}
++
++	if (len == 0)
++		return ret;
++
++	mutex_lock(&pattern_data->pattern_mutex);
++	kfree(pattern_data->pattern);
++	pattern_data->pattern = NULL;
++
++	pattern_data->pattern = kzalloc(len + 1, GFP_KERNEL);
++	if (!pattern_data->pattern) {
++		len = -ENOMEM;
++		goto unlock;
++	}
++	scnprintf(pattern_data->pattern, len + 1, "%s", buf);
++
++	del_timer_sync(&pattern_data->timer);
++
++	pattern_data->pattern_len = len;
++	pattern_data->count = 0;
++
++	mod_timer(&pattern_data->timer, jiffies + 1);
++unlock:
++	mutex_unlock(&pattern_data->pattern_mutex);
++	return size;
++}
++
++static DEVICE_ATTR(pattern, 0644, pattern_pattern_show, pattern_pattern_store);
++static DEVICE_ATTR(delay_unit, 0644,
++		pattern_delay_unit_show, pattern_delay_unit_store);
++
++static void pattern_trig_activate(struct led_classdev *led_cdev)
++{
++	int rc;
++	struct pattern_trig_data *tdata;
++
++	tdata = kzalloc(sizeof(struct pattern_trig_data), GFP_KERNEL);
++	if (!tdata) {
++		dev_err(led_cdev->dev,
++			"unable to allocate pattern trigger\n");
++		return;
++	}
++
++	led_cdev->trigger_data = tdata;
++
++	mutex_init(&tdata->pattern_mutex);
++
++	rc = device_create_file(led_cdev->dev, &dev_attr_pattern);
++	if (rc)
++		goto err_out;
++
++	rc = device_create_file(led_cdev->dev, &dev_attr_delay_unit);
++	if (rc)
++		goto err_out_delay_unit;
++
++	/* default delay_unit 125ms */
++	tdata->delay_unit = 125;
++
++	setup_timer(&tdata->timer, pattern_timer_function,
++		    (unsigned long) led_cdev);
++
++	tdata->brightness_on = led_get_brightness(led_cdev);
++	if (tdata->brightness_on == LED_OFF)
++		tdata->brightness_on = led_cdev->max_brightness;
++
++	__led_set_brightness(led_cdev, LED_OFF);
++	led_cdev->activated = true;
++
++	return;
++
++err_out_delay_unit:
++	device_remove_file(led_cdev->dev, &dev_attr_pattern);
++err_out:
++	dev_err(led_cdev->dev, "unable to register pattern trigger\n");
++	led_cdev->trigger_data = NULL;
++	kfree(tdata);
++}
++
++static void pattern_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *pattern_data = led_cdev->trigger_data;
++
++	if (led_cdev->activated) {
++		del_timer_sync(&pattern_data->timer);
++		device_remove_file(led_cdev->dev, &dev_attr_pattern);
++		device_remove_file(led_cdev->dev, &dev_attr_delay_unit);
++		led_cdev->trigger_data = NULL;
++		led_cdev->activated = false;
++		kfree(pattern_data->pattern);
++		kfree(pattern_data);
++	}
++	__led_set_brightness(led_cdev, LED_OFF);
++}
++
++static struct led_trigger pattern_trigger = {
++	.name     = "pattern",
++	.activate = pattern_trig_activate,
++	.deactivate = pattern_trig_deactivate,
++};
++
++static int __init pattern_trig_init(void)
++{
++	return led_trigger_register(&pattern_trigger);
++}
++
++static void __exit pattern_trig_exit(void)
++{
++	led_trigger_unregister(&pattern_trigger);
++}
++
++module_init(pattern_trig_init);
++module_exit(pattern_trig_exit);
++
++MODULE_AUTHOR("Joe Xue <lgxue@hotmail.com");
++MODULE_DESCRIPTION("Pattern LED trigger");
++MODULE_LICENSE("GPL");
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.8.1.2
