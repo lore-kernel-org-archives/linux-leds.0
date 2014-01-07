@@ -1,40 +1,44 @@
-From: Joe Xue <lgxue@hotmail.com>
-Subject: RE: [PATCH v3 1/1] leds: Add LED pattern trigger
-Date: Mon, 6 Jan 2014 17:10:34 -0500
-Message-ID: <BLU172-W27FA5477DF3AA1C93A75C0ACB70@phx.gbl>
-References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>,<1389044834-22870-1-git-send-email-lgxue@hotmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: n900 led compiler (was Re: [PATCH] Add LED pattern trigger)
+Date: Tue, 7 Jan 2014 16:40:06 +0100
+Message-ID: <CACRpkdZT+fd0nZmzqwO+PVZWG_4M4Fas1SqG9CRAho6LwSAFgQ@mail.gmail.com>
+References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
+	<20131230162158.7420e811@alan.etchedpixels.co.uk>
+	<BLU172-W451DF59115DB2B0A7F694AACC90@phx.gbl>
+	<20140101201053.12be7d27@alan.etchedpixels.co.uk>
+	<alpine.DEB.2.02.1401011423180.27645@nftneq.ynat.uz>
+	<20140101230135.48f6f781@alan.etchedpixels.co.uk>
+	<alpine.DEB.2.02.1401011547340.27645@nftneq.ynat.uz>
+	<CAK5ve-KTQvJeLXmJt-NgPy6Ju+kBzWVoSQB7TKR9TW+mfD=bxg@mail.gmail.com>
+	<20140103152313.4fd5c48f@alan.etchedpixels.co.uk>
+	<20140105222346.GA25152@amd.pavel.ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1389044834-22870-1-git-send-email-lgxue@hotmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "milo.kim@ti.com" <milo.kim@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:63595 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751551AbaAGPkK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 10:40:10 -0500
+Received: by mail-ob0-f172.google.com with SMTP id gq1so311417obb.17
+        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2014 07:40:09 -0800 (PST)
+In-Reply-To: <20140105222346.GA25152@amd.pavel.ucw.cz>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@ring0.de>, "Kim, Milo" <milo.kim@ti.com>, Bryan Wu <cooloney@gmail.com>, David Lang <david@lang.hm>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-> From: Joe Xue <lgxue@hotmail.com>
->
-> The LED pattern trigger allows LEDs blink in user defined pattern.
->
-> v2: Change the pattern memory from fixed static to malloc
-> Change the timer schedule way to save cpu time
-> Add the mutex to protect the pattern operation
->
-> v3: Tiny fix, add the missed parameter in example of document
->
-> new file: Documentation/leds/ledtrig-pattern.txt
-> modified: drivers/leds/trigger/Kconfig
-> modified: drivers/leds/trigger/Makefile
-> new file: drivers/leds/trigger/ledtrig-pattern.c
->
-> Signed-off-by: Joe Xue <lgxue@hotmail.com>
-> ---
+On Sun, Jan 5, 2014 at 11:23 PM, Pavel Machek <pavel@ucw.cz> wrote:
 
-Forgot to add suggested-by line:
+> I implemented compiler for it (should we put it into tools/ somewhere?)
 
-Suggested-by: Pavel Machek <pavel@ucw.cz>
+We have a precedent for putting firmware compilers into the kernel
+tree:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/aic7xxx/aicasm
 
-I would like to give too much credit to this buddy.
+But that one used FLEX. And I think the assumption is that then
+you store the firmware source with the driver, and the sysfs (or similar)
+interface would just load and trigger one of the pre-defined firmware
+programs, not have it be sent in from userspace.
 
-Joe 		 	   		  
+Yours,
+Linus Walleij
