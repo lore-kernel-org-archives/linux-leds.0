@@ -1,45 +1,134 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH V2] leds: s3c24xx: Fix build failure
-Date: Tue, 7 Jan 2014 09:43:09 -0800
-Message-ID: <CAK5ve-+05zO0CjFnb0hJoy_txys6q3orRoqdaXLWv91O0=cdpQ@mail.gmail.com>
-References: <1388394595-1347-1-git-send-email-tushar.behera@linaro.org>
- <1388726757-7387-1-git-send-email-tushar.behera@linaro.org>
- <CAK5ve-K0aCVTo+21G47M0aYT8f-vkqLAd9etWxSY+ieib8KfMQ@mail.gmail.com> <CACRpkdbqDHHb+z2eV-hYbQsdVfYYCHajQZ2=63ab4uDfqRaWmg@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Broken locking in leds-lp5523.c
+Date: Tue, 7 Jan 2014 21:42:33 +0100
+Message-ID: <20140107204233.GA22413@amd.pavel.ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:59264 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753388AbaAGRnb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 12:43:31 -0500
-In-Reply-To: <CACRpkdbqDHHb+z2eV-hYbQsdVfYYCHajQZ2=63ab4uDfqRaWmg@mail.gmail.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35588 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753339AbaAGUmf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 15:42:35 -0500
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tushar Behera <tushar.behera@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, milo.kim@ti.com
+Cc: pali.rohar@gmail.com, sre@debian.org, sre@ring0.de, kernel list <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 7, 2014 at 9:41 AM, Linus Walleij <linus.walleij@linaro.org=
-> wrote:
-> On Fri, Jan 3, 2014 at 7:19 AM, Bryan Wu <cooloney@gmail.com> wrote:
->> On Thu, Jan 2, 2014 at 9:25 PM, Tushar Behera <tushar.behera@linaro.=
-org> wrote:
->>> Commit c67d0f29262b ("ARM: s3c24xx: get rid of custom <mach/gpio.h>=
-")
->>> removed the usage of mach/gpio.h file, but we need to include
->>> plat/gpio-cfg.h to avoid following build error.
->>>
->>> Fixes following build error.
->>> drivers/leds/leds-s3c24xx.c: In function =91s3c24xx_led_probe=92:
->>> drivers/leds/leds-s3c24xx.c:100:2: error: implicit declaration of
->>> function =91s3c_gpio_setpull=92 [-Werror=3Dimplicit-function-declar=
-ation]
->>>
->>
->> I think this patch should go with Linus's patchset.
->
-> Patch applied to the GPIO tree. I added your ACK Bryan since
-> that seems to be implied above ...
->
-Sure, thanks.
--Bryan
+Hi!
+
+There's some locking weirdness, and few missing comments in lp5523
+driver.
+
+Now, this is untested patch from my reverse-engineering. I hope I
+understood things right...
+
+In particular, there's unbalanced unlock in
+lp5523_update_program_memory, and lp5523_update_program_memory needs
+to be protected by the lock.
+
+Comments? Does someone maintain this?
+
+Thanks,
+								Pavel
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index c00f55e4..e8b83e9 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -34,7 +34,15 @@
+ 
+ #include "leds-lp55xx-common.h"
+ 
+-#define LP5523_PROGRAM_LENGTH		32
++#define LP5523_PROGRAM_LENGTH		32	/* bytes */
++/* Memory is used like this:
++   0x00 engine 1 program
++   0x10 engine 2 program
++   0x20 engine 3 program
++   0x30 engine 1 muxing info
++   0x40 engine 2 muxing info
++   0x50 engine 3 muxing info
++   ...and offsets are hard-coded all around :-( */
+ #define LP5523_MAX_LEDS			9
+ 
+ /* Registers */
+@@ -265,20 +273,25 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
+ 	/* one pattern per engine setting LED MUX start and stop addresses */
+ 	static const u8 pattern[][LP5523_PROGRAM_LENGTH] =  {
+ 		{ 0x9c, 0x30, 0x9c, 0xb0, 0x9d, 0x80, 0xd8, 0x00, 0},
++		/* 9c30 -- mux_map_start(0x30)
++		   9cb0 -- mux_ld_end(0x50)
++		   9d80 -- mux_sel???(0x00)
++		   d800 -- invalid?? */
+ 		{ 0x9c, 0x40, 0x9c, 0xc0, 0x9d, 0x80, 0xd8, 0x00, 0},
+ 		{ 0x9c, 0x50, 0x9c, 0xd0, 0x9d, 0x80, 0xd8, 0x00, 0},
+ 	};
+ 
+-	/* hardcode 32 bytes of memory for each engine from program memory */
++	/* hardcode LP5523_PROGRAM_LENGTH bytes of memory for each
++	   engine from program memory */
+ 	ret = lp55xx_write(chip, LP5523_REG_CH1_PROG_START, 0x00);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = lp55xx_write(chip, LP5523_REG_CH2_PROG_START, 0x10);
++	ret = lp55xx_write(chip, LP5523_REG_CH2_PROG_START, LP5523_PROGRAM_LENGTH / 2);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = lp55xx_write(chip, LP5523_REG_CH3_PROG_START, 0x20);
++	ret = lp55xx_write(chip, LP5523_REG_CH3_PROG_START, LP5523_PROGRAM_LENGTH);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -346,10 +359,8 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
+ 
+ 	for (i = 0; i < LP5523_PROGRAM_LENGTH; i++) {
+ 		ret = lp55xx_write(chip, LP5523_REG_PROG_MEM + i, pattern[i]);
+-		if (ret) {
+-			mutex_unlock(&chip->lock);
++		if (ret)
+ 			return -EINVAL;
+-		}
+ 	}
+ 
+ 	return size;
+@@ -551,15 +562,17 @@ static ssize_t store_engine_load(struct device *dev,
+ {
+ 	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
+ 	struct lp55xx_chip *chip = led->chip;
++	ssize_t res;
+ 
+ 	mutex_lock(&chip->lock);
+ 
+ 	chip->engine_idx = nr;
+ 	lp5523_load_engine_and_select_page(chip);
+ 
++	res = lp5523_update_program_memory(chip, buf, len);
+ 	mutex_unlock(&chip->lock);
+ 
+-	return lp5523_update_program_memory(chip, buf, len);
++	return res;
+ }
+ store_load(1)
+ store_load(2)
+diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+index 8d55a780..ae5c6fe 100644
+--- a/drivers/leds/leds-lp8501.c
++++ b/drivers/leds/leds-lp8501.c
+@@ -262,7 +262,7 @@ static void lp8501_firmware_loaded(struct lp55xx_chip *chip)
+ 	}
+ 
+ 	/*
+-	 * Program momery sequence
++	 * Program memory sequence
+ 	 *  1) set engine mode to "LOAD"
+ 	 *  2) write firmware data into program memory
+ 	 */
+
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
