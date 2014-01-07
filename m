@@ -1,44 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: n900 led compiler (was Re: [PATCH] Add LED pattern trigger)
-Date: Tue, 7 Jan 2014 16:40:06 +0100
-Message-ID: <CACRpkdZT+fd0nZmzqwO+PVZWG_4M4Fas1SqG9CRAho6LwSAFgQ@mail.gmail.com>
-References: <1388362275-1618-1-git-send-email-lgxue@hotmail.com>
-	<20131230162158.7420e811@alan.etchedpixels.co.uk>
-	<BLU172-W451DF59115DB2B0A7F694AACC90@phx.gbl>
-	<20140101201053.12be7d27@alan.etchedpixels.co.uk>
-	<alpine.DEB.2.02.1401011423180.27645@nftneq.ynat.uz>
-	<20140101230135.48f6f781@alan.etchedpixels.co.uk>
-	<alpine.DEB.2.02.1401011547340.27645@nftneq.ynat.uz>
-	<CAK5ve-KTQvJeLXmJt-NgPy6Ju+kBzWVoSQB7TKR9TW+mfD=bxg@mail.gmail.com>
-	<20140103152313.4fd5c48f@alan.etchedpixels.co.uk>
-	<20140105222346.GA25152@amd.pavel.ucw.cz>
+Subject: Re: [PATCH V2] leds: s3c24xx: Fix build failure
+Date: Tue, 7 Jan 2014 18:41:43 +0100
+Message-ID: <CACRpkdbqDHHb+z2eV-hYbQsdVfYYCHajQZ2=63ab4uDfqRaWmg@mail.gmail.com>
+References: <1388394595-1347-1-git-send-email-tushar.behera@linaro.org>
+	<1388726757-7387-1-git-send-email-tushar.behera@linaro.org>
+	<CAK5ve-K0aCVTo+21G47M0aYT8f-vkqLAd9etWxSY+ieib8KfMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:63595 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751551AbaAGPkK (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 10:40:10 -0500
-Received: by mail-ob0-f172.google.com with SMTP id gq1so311417obb.17
-        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2014 07:40:09 -0800 (PST)
-In-Reply-To: <20140105222346.GA25152@amd.pavel.ucw.cz>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:59270 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752485AbaAGRln convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 12:41:43 -0500
+Received: by mail-ob0-f176.google.com with SMTP id vb8so501025obc.35
+        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2014 09:41:43 -0800 (PST)
+In-Reply-To: <CAK5ve-K0aCVTo+21G47M0aYT8f-vkqLAd9etWxSY+ieib8KfMQ@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@ring0.de>, "Kim, Milo" <milo.kim@ti.com>, Bryan Wu <cooloney@gmail.com>, David Lang <david@lang.hm>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "rob@landley.net" <rob@landley.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
-On Sun, Jan 5, 2014 at 11:23 PM, Pavel Machek <pavel@ucw.cz> wrote:
+On Fri, Jan 3, 2014 at 7:19 AM, Bryan Wu <cooloney@gmail.com> wrote:
+> On Thu, Jan 2, 2014 at 9:25 PM, Tushar Behera <tushar.behera@linaro.o=
+rg> wrote:
+>> Commit c67d0f29262b ("ARM: s3c24xx: get rid of custom <mach/gpio.h>"=
+)
+>> removed the usage of mach/gpio.h file, but we need to include
+>> plat/gpio-cfg.h to avoid following build error.
+>>
+>> Fixes following build error.
+>> drivers/leds/leds-s3c24xx.c: In function =91s3c24xx_led_probe=92:
+>> drivers/leds/leds-s3c24xx.c:100:2: error: implicit declaration of
+>> function =91s3c_gpio_setpull=92 [-Werror=3Dimplicit-function-declara=
+tion]
+>>
+>
+> I think this patch should go with Linus's patchset.
 
-> I implemented compiler for it (should we put it into tools/ somewhere?)
-
-We have a precedent for putting firmware compilers into the kernel
-tree:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/aic7xxx/aicasm
-
-But that one used FLEX. And I think the assumption is that then
-you store the firmware source with the driver, and the sysfs (or similar)
-interface would just load and trigger one of the pre-defined firmware
-programs, not have it be sent in from userspace.
+Patch applied to the GPIO tree. I added your ACK Bryan since
+that seems to be implied above ...
 
 Yours,
 Linus Walleij
