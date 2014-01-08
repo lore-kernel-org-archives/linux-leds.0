@@ -1,20 +1,20 @@
 From: Bryan Wu <cooloney@gmail.com>
 Subject: Re: Broken locking in leds-lp5523.c
-Date: Tue, 7 Jan 2014 15:57:37 -0800
-Message-ID: <CAK5ve-Ju70iOXQXG1B1wVpyDRKjAw_cvmBR5YDM=frppA3iu4A@mail.gmail.com>
+Date: Tue, 7 Jan 2014 16:32:15 -0800
+Message-ID: <CAK5ve-Kk9BuH=56F98aZOgPS+w-=8iF0HtpOYWNjRN8am2Zqjg@mail.gmail.com>
 References: <20140107204233.GA22413@amd.pavel.ucw.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:58560 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754136AbaAGX57 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 18:57:59 -0500
+Received: from mail-la0-f47.google.com ([209.85.215.47]:46891 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753875AbaAHAch (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 19:32:37 -0500
 In-Reply-To: <20140107204233.GA22413@amd.pavel.ucw.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, milo kim <milo.kim@ti.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@debian.org>, Sebastian Reichel <sre@ring0.de>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, milo kim <milo.kim@ti.com>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@debian.org>, Sebastian Reichel <sre@ring0.de>
 
 On Tue, Jan 7, 2014 at 12:42 PM, Pavel Machek <pavel@ucw.cz> wrote:
 > Hi!
@@ -32,7 +32,8 @@ On Tue, Jan 7, 2014 at 12:42 PM, Pavel Machek <pavel@ucw.cz> wrote:
 > Comments? Does someone maintain this?
 >
 
-I think Milo Kim is maintaining this driver for the LP55xx chip family.
+Actually the locking issue was fixed in my for-next branch,
+http://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-leds.git/commit/?h=for-next&id=0d70bdb957cde2c25a4b3e4c93d0d33403795be9
 
 Thanks,
 -Bryan
