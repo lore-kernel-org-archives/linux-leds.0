@@ -1,143 +1,55 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: Broken locking in leds-lp5523.c
-Date: Tue, 7 Jan 2014 16:32:15 -0800
-Message-ID: <CAK5ve-Kk9BuH=56F98aZOgPS+w-=8iF0HtpOYWNjRN8am2Zqjg@mail.gmail.com>
-References: <20140107204233.GA22413@amd.pavel.ucw.cz>
+Subject: Re: [PATCH 1/1] leds: s3c24xx: Remove hardware.h inclusion
+Date: Tue, 7 Jan 2014 16:34:23 -0800
+Message-ID: <CAK5ve-Lhj+axbQTz7nHo6E-QmPA4c3Eb8j+67RGer6qmRG+-rQ@mail.gmail.com>
+References: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:46891 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753875AbaAHAch (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 19:32:37 -0500
-In-Reply-To: <20140107204233.GA22413@amd.pavel.ucw.cz>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:42312 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751350AbaAHAep (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 19:34:45 -0500
+Received: by mail-la0-f46.google.com with SMTP id eh20so662193lab.33
+        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2014 16:34:44 -0800 (PST)
+In-Reply-To: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, milo kim <milo.kim@ti.com>, =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@debian.org>, Sebastian Reichel <sre@ring0.de>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, patches@linaro.org
 
-On Tue, Jan 7, 2014 at 12:42 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
->
-> There's some locking weirdness, and few missing comments in lp5523
-> driver.
->
-> Now, this is untested patch from my reverse-engineering. I hope I
-> understood things right...
->
-> In particular, there's unbalanced unlock in
-> lp5523_update_program_memory, and lp5523_update_program_memory needs
-> to be protected by the lock.
->
-> Comments? Does someone maintain this?
+On Thu, Jan 2, 2014 at 10:30 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> The contents of this header file is not referenced in the led driver.
+> Remove its inclusion. While at it, re-arrange the headers as per the
+> category.
 >
 
-Actually the locking issue was fixed in my for-next branch,
-http://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-leds.git/commit/?h=for-next&id=0d70bdb957cde2c25a4b3e4c93d0d33403795be9
+OK, applied to my tree.
 
 Thanks,
 -Bryan
 
-> Thanks,
->                                                                 Pavel
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  drivers/leds/leds-s3c24xx.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
+> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+> index 76483fb5ee45..b7876eb09e8c 100644
+> --- a/drivers/leds/leds-s3c24xx.c
+> +++ b/drivers/leds/leds-s3c24xx.c
+> @@ -18,10 +18,9 @@
+>  #include <linux/gpio.h>
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+> +#include <linux/platform_data/leds-s3c24xx.h>
 >
-> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-> index c00f55e4..e8b83e9 100644
-> --- a/drivers/leds/leds-lp5523.c
-> +++ b/drivers/leds/leds-lp5523.c
-> @@ -34,7 +34,15 @@
+> -#include <mach/hardware.h>
+>  #include <mach/regs-gpio.h>
+> -#include <linux/platform_data/leds-s3c24xx.h>
 >
->  #include "leds-lp55xx-common.h"
->
-> -#define LP5523_PROGRAM_LENGTH          32
-> +#define LP5523_PROGRAM_LENGTH          32      /* bytes */
-> +/* Memory is used like this:
-> +   0x00 engine 1 program
-> +   0x10 engine 2 program
-> +   0x20 engine 3 program
-> +   0x30 engine 1 muxing info
-> +   0x40 engine 2 muxing info
-> +   0x50 engine 3 muxing info
-> +   ...and offsets are hard-coded all around :-( */
->  #define LP5523_MAX_LEDS                        9
->
->  /* Registers */
-> @@ -265,20 +273,25 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
->         /* one pattern per engine setting LED MUX start and stop addresses */
->         static const u8 pattern[][LP5523_PROGRAM_LENGTH] =  {
->                 { 0x9c, 0x30, 0x9c, 0xb0, 0x9d, 0x80, 0xd8, 0x00, 0},
-> +               /* 9c30 -- mux_map_start(0x30)
-> +                  9cb0 -- mux_ld_end(0x50)
-> +                  9d80 -- mux_sel???(0x00)
-> +                  d800 -- invalid?? */
->                 { 0x9c, 0x40, 0x9c, 0xc0, 0x9d, 0x80, 0xd8, 0x00, 0},
->                 { 0x9c, 0x50, 0x9c, 0xd0, 0x9d, 0x80, 0xd8, 0x00, 0},
->         };
->
-> -       /* hardcode 32 bytes of memory for each engine from program memory */
-> +       /* hardcode LP5523_PROGRAM_LENGTH bytes of memory for each
-> +          engine from program memory */
->         ret = lp55xx_write(chip, LP5523_REG_CH1_PROG_START, 0x00);
->         if (ret)
->                 return ret;
->
-> -       ret = lp55xx_write(chip, LP5523_REG_CH2_PROG_START, 0x10);
-> +       ret = lp55xx_write(chip, LP5523_REG_CH2_PROG_START, LP5523_PROGRAM_LENGTH / 2);
->         if (ret)
->                 return ret;
->
-> -       ret = lp55xx_write(chip, LP5523_REG_CH3_PROG_START, 0x20);
-> +       ret = lp55xx_write(chip, LP5523_REG_CH3_PROG_START, LP5523_PROGRAM_LENGTH);
->         if (ret)
->                 return ret;
->
-> @@ -346,10 +359,8 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
->
->         for (i = 0; i < LP5523_PROGRAM_LENGTH; i++) {
->                 ret = lp55xx_write(chip, LP5523_REG_PROG_MEM + i, pattern[i]);
-> -               if (ret) {
-> -                       mutex_unlock(&chip->lock);
-> +               if (ret)
->                         return -EINVAL;
-> -               }
->         }
->
->         return size;
-> @@ -551,15 +562,17 @@ static ssize_t store_engine_load(struct device *dev,
->  {
->         struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
->         struct lp55xx_chip *chip = led->chip;
-> +       ssize_t res;
->
->         mutex_lock(&chip->lock);
->
->         chip->engine_idx = nr;
->         lp5523_load_engine_and_select_page(chip);
->
-> +       res = lp5523_update_program_memory(chip, buf, len);
->         mutex_unlock(&chip->lock);
->
-> -       return lp5523_update_program_memory(chip, buf, len);
-> +       return res;
->  }
->  store_load(1)
->  store_load(2)
-> diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-> index 8d55a780..ae5c6fe 100644
-> --- a/drivers/leds/leds-lp8501.c
-> +++ b/drivers/leds/leds-lp8501.c
-> @@ -262,7 +262,7 @@ static void lp8501_firmware_loaded(struct lp55xx_chip *chip)
->         }
->
->         /*
-> -        * Program momery sequence
-> +        * Program memory sequence
->          *  1) set engine mode to "LOAD"
->          *  2) write firmware data into program memory
->          */
+>  /* our context */
 >
 > --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> 1.7.9.5
+>
