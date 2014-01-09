@@ -1,55 +1,71 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/1] leds: s3c24xx: Remove hardware.h inclusion
-Date: Tue, 7 Jan 2014 16:34:23 -0800
-Message-ID: <CAK5ve-Lhj+axbQTz7nHo6E-QmPA4c3Eb8j+67RGer6qmRG+-rQ@mail.gmail.com>
-References: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
+From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar@gmail.com>
+Subject: Re: Broken locking in leds-lp5523.c
+Date: Thu, 9 Jan 2014 15:24:53 +0100
+Message-ID: <201401091524.53417@pali>
+References: <20140107204233.GA22413@amd.pavel.ucw.cz> <CAK5ve-Kk9BuH=56F98aZOgPS+w-=8iF0HtpOYWNjRN8am2Zqjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:42312 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751350AbaAHAep (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2014 19:34:45 -0500
-Received: by mail-la0-f46.google.com with SMTP id eh20so662193lab.33
-        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2014 16:34:44 -0800 (PST)
-In-Reply-To: <1388730604-32329-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed;
+  boundary="nextPart2342032.7oLgp7sGUA";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-Kk9BuH=56F98aZOgPS+w-=8iF0HtpOYWNjRN8am2Zqjg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, milo kim <milo.kim@ti.com>, Sebastian Reichel <sre@debian.org>, Sebastian Reichel <sre@ring0.de>
 List-Id: linux-leds@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, patches@linaro.org
 
-On Thu, Jan 2, 2014 at 10:30 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> The contents of this header file is not referenced in the led driver.
-> Remove its inclusion. While at it, re-arrange the headers as per the
-> category.
->
+--nextPart2342032.7oLgp7sGUA
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK, applied to my tree.
+On Wednesday 08 January 2014 01:32:15 Bryan Wu wrote:
+> On Tue, Jan 7, 2014 at 12:42 PM, Pavel Machek <pavel@ucw.cz>=20
+wrote:
+> > Hi!
+> >=20
+> > There's some locking weirdness, and few missing comments in
+> > lp5523 driver.
+> >=20
+> > Now, this is untested patch from my reverse-engineering. I
+> > hope I understood things right...
+> >=20
+> > In particular, there's unbalanced unlock in
+> > lp5523_update_program_memory, and
+> > lp5523_update_program_memory needs to be protected by the
+> > lock.
+> >=20
+> > Comments? Does someone maintain this?
+>=20
+> Actually the locking issue was fixed in my for-next branch,
+> http://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-led
+> s.git/commit/?h=3Dfor-next&id=3D0d70bdb957cde2c25a4b3e4c93d0d33403
+> 795be9
+>=20
+> Thanks,
+> -Bryan
+>=20
 
-Thanks,
--Bryan
+Now, with linus tree lp5523 driver does not work without above=20
+commit on Nokia N900 device. I think that commit should go to=20
+3.13 and stable... What do you think?
 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  drivers/leds/leds-s3c24xx.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
-> index 76483fb5ee45..b7876eb09e8c 100644
-> --- a/drivers/leds/leds-s3c24xx.c
-> +++ b/drivers/leds/leds-s3c24xx.c
-> @@ -18,10 +18,9 @@
->  #include <linux/gpio.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
-> +#include <linux/platform_data/leds-s3c24xx.h>
->
-> -#include <mach/hardware.h>
->  #include <mach/regs-gpio.h>
-> -#include <linux/platform_data/leds-s3c24xx.h>
->
->  /* our context */
->
-> --
-> 1.7.9.5
->
+=2D-=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--nextPart2342032.7oLgp7sGUA
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEABECAAYFAlLOsTUACgkQi/DJPQPkQ1LPMQCgw+1ISSh9sKHacsx9nIQ+esd+
+ITIAoIwil0UvJFvkN7Dp+STjDRPG8+Cx
+=4WNb
+-----END PGP SIGNATURE-----
+
+--nextPart2342032.7oLgp7sGUA--
