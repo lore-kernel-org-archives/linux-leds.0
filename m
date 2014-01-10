@@ -1,58 +1,50 @@
-From: franklinbuthelezi1@yahoo.com
-Subject: =?UTF-8?Q?DiePresse.com_Mein_Freund,_der_Fahrradh=C3=A4ndler?=
-Date: Fri, 10 Jan 2014 13:34:30 +0100 (CET)
-Message-ID: <1878797810.1389357270548.JavaMail.root@dpoportal4.diepresse.apa.net>
-Reply-To: franklinbuthelezi1@yahoo.com
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [GIT PULL] LED fix for 3.13
+Date: Fri, 10 Jan 2014 14:59:52 -0800
+Message-ID: <CAK5ve-LLdzEErKdDFoAb8kCLx7GMX5nXvO6opLzm4ZR0M-3dhw@mail.gmail.com>
+References: <CAK5ve-L4=uJmJfF67pR+jL1L532XP28FVmn=CTwWbDY2pUiPoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from dpocron.diepresse.apa.net ([194.232.102.6]:42147 "EHLO
-	dpocron.diepresse.apa.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753254AbaAJMol convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Jan 2014 07:44:41 -0500
-Received: from dpoportal4.diepresse.apa.net (dpoportal4.diepresse.local [192.168.0.20])
-	by dpocron.diepresse.apa.net (Postfix) with ESMTP id 88D6A447A0
-	for <linux-leds@vger.kernel.org>; Fri, 10 Jan 2014 13:34:30 +0100 (CET)
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-L4=uJmJfF67pR+jL1L532XP28FVmn=CTwWbDY2pUiPoA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
 
-=46olgender Artikel auf http://diepresse.com wird Ihnen von Franklin Bu=
-thelezi empfohlen:
+My email was bounced back by LKML and Linux LED mail list. I forget to
+use plain text mode. So I forward it again.
 
-Mein Freund, der Fahrradh=C3=A4ndler
-Manche Dinge ver=C3=A4ndern sich =C3=BCber die langen Wintermonate hinw=
-eg.=20
+Thanks,
+-Bryan
 
-http://diepresse.com/home/leben/mode/kolumnezumtag/548717/index.do
-
-Notiz:
-Dear friend,
-=20
-I am the international operations manager of ABSA bank South Africa. My=
- name is Franklin Buthelezi. I have a sensitive and private offer from =
-the top executive to seek your partnership in re-profiling some offshor=
-e investment funds worth 11.5M U.S.D (Eleven Million five hundred thous=
-and United States Dollars) I am constrained however to withhold most of=
- the details for now. This is a legitimate transaction.=20
-=20
-If we agree on the terms you will be given 15% of the total funds, if y=
-ou are interested please write back via email providing me your persona=
-l details and phone number for further directives.
-=20
-If you are interested and willing to render your assistance please resp=
-ond via my private email address stated below.
-=20
-I look forward to your response.
-=20
-Best regards
-=46ranklin Buthelezi
-Email: franklinbuthelezi1@yahoo.com
-
-
-------------------------------------
-DiePresse.com =C3=BCbernimmt keine Haftung f=C3=BCr den Inhalt der pers=
-=C3=B6nlichen Nachricht.
-
-=C2=A9 DiePresse.com - http://diepresse.com
+On Fri, Jan 10, 2014 at 2:57 PM, Bryan Wu <cooloney@gmail.com> wrote:
+>
+> Hi Linus,
+>
+> Pali Roh=E1r and Pavel Machek reported the LED of Nokia N900 doesn't =
+work with our latest 3.13-rc6 kernel. Milo fixed the regression here.
+>
+> So please consider the following changes since commit 802eee95bde72fd=
+0cd0f3a5b2098375a487d1eda:
+>
+>   Linux 3.13-rc6 (2013-12-29 16:01:33 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.g=
+it leds-fixes-for-3.13
+>
+> for you to fetch changes up to e70988d1aaf73221355e06125c9937bd4b2776=
+1c:
+>
+>   leds: lp5521/5523: Remove duplicate mutex (2014-01-10 14:48:07 -080=
+0)
+>
+> ----------------------------------------------------------------
+> Milo Kim (1):
+>       leds: lp5521/5523: Remove duplicate mutex
+>
+>  drivers/leds/leds-lp5521.c | 12 ++++--------
+>  drivers/leds/leds-lp5523.c | 12 ++++--------
+>  2 files changed, 8 insertions(+), 16 deletions(-)
