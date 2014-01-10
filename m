@@ -1,57 +1,58 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: [trivial] Comment improvements for lp5523 and friend
-Date: Fri, 10 Jan 2014 00:13:39 +0100
-Message-ID: <20140109231339.GA20157@amd.pavel.ucw.cz>
-References: <20140107204233.GA22413@amd.pavel.ucw.cz>
+From: franklinbuthelezi1@yahoo.com
+Subject: =?UTF-8?Q?DiePresse.com_Mein_Freund,_der_Fahrradh=C3=A4ndler?=
+Date: Fri, 10 Jan 2014 13:34:30 +0100 (CET)
+Message-ID: <1878797810.1389357270548.JavaMail.root@dpoportal4.diepresse.apa.net>
+Reply-To: franklinbuthelezi1@yahoo.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140107204233.GA22413@amd.pavel.ucw.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, milo.kim@ti.com
-Cc: pali.rohar@gmail.com, sre@debian.org, sre@ring0.de
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from dpocron.diepresse.apa.net ([194.232.102.6]:42147 "EHLO
+	dpocron.diepresse.apa.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753254AbaAJMol convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Jan 2014 07:44:41 -0500
+Received: from dpoportal4.diepresse.apa.net (dpoportal4.diepresse.local [192.168.0.20])
+	by dpocron.diepresse.apa.net (Postfix) with ESMTP id 88D6A447A0
+	for <linux-leds@vger.kernel.org>; Fri, 10 Jan 2014 13:34:30 +0100 (CET)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-Add some comments that are not obvious from first look at the driver
-to lp5523, fix typo in lp8501.
+=46olgender Artikel auf http://diepresse.com wird Ihnen von Franklin Bu=
+thelezi empfohlen:
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Mein Freund, der Fahrradh=C3=A4ndler
+Manche Dinge ver=C3=A4ndern sich =C3=BCber die langen Wintermonate hinw=
+eg.=20
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index c00f55e4..ac64ebc 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -34,7 +34,15 @@
- 
- #include "leds-lp55xx-common.h"
- 
--#define LP5523_PROGRAM_LENGTH		32
-+#define LP5523_PROGRAM_LENGTH		32	/* bytes */
-+/* Memory is used like this:
-+   0x00 engine 1 program
-+   0x10 engine 2 program
-+   0x20 engine 3 program
-+   0x30 engine 1 muxing info
-+   0x40 engine 2 muxing info
-+   0x50 engine 3 muxing info
-+*/
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-index 8d55a780..ae5c6fe 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -262,7 +262,7 @@ static void lp8501_firmware_loaded(struct lp55xx_chip *chip)
- 	}
- 
- 	/*
--	 * Program momery sequence
-+	 * Program memory sequence
- 	 *  1) set engine mode to "LOAD"
- 	 *  2) write firmware data into program memory
- 	 */
+http://diepresse.com/home/leben/mode/kolumnezumtag/548717/index.do
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Notiz:
+Dear friend,
+=20
+I am the international operations manager of ABSA bank South Africa. My=
+ name is Franklin Buthelezi. I have a sensitive and private offer from =
+the top executive to seek your partnership in re-profiling some offshor=
+e investment funds worth 11.5M U.S.D (Eleven Million five hundred thous=
+and United States Dollars) I am constrained however to withhold most of=
+ the details for now. This is a legitimate transaction.=20
+=20
+If we agree on the terms you will be given 15% of the total funds, if y=
+ou are interested please write back via email providing me your persona=
+l details and phone number for further directives.
+=20
+If you are interested and willing to render your assistance please resp=
+ond via my private email address stated below.
+=20
+I look forward to your response.
+=20
+Best regards
+=46ranklin Buthelezi
+Email: franklinbuthelezi1@yahoo.com
+
+
+------------------------------------
+DiePresse.com =C3=BCbernimmt keine Haftung f=C3=BCr den Inhalt der pers=
+=C3=B6nlichen Nachricht.
+
+=C2=A9 DiePresse.com - http://diepresse.com
