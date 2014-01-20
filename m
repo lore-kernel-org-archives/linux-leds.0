@@ -1,50 +1,76 @@
-From: Robin Gong <b38343@freescale.com>
-Subject: [PATCH v1 2/2] update binding doc of leds-gpio.txt
-Date: Mon, 20 Jan 2014 19:41:27 +0800
-Message-ID: <1390218087-14597-2-git-send-email-b38343@freescale.com>
-References: <1390218087-14597-1-git-send-email-b38343@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1390218087-14597-1-git-send-email-b38343@freescale.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, cooloney@gmail.com, rpurdie@rpsys.net, grant.likely@linaro.org
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+From: brigitte85842@googlemail.com
+Subject: RE: LOCAL MAP OPTIMIZATION FOR : mail-archive.com (Less Than
+ $99/Month)
+Date: Mon, 20 Jan 2014 23:16:49 +0530
+Message-ID: <52dd6107.23c8440a.42ec.ffffdced@mx.google.com>
+Reply-To: LORI76557@gmail.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:42511 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751285AbaATRqs (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jan 2014 12:46:48 -0500
+Received: by mail-pa0-f65.google.com with SMTP id kq14so5337592pab.8
+        for <linux-leds@vger.kernel.org>; Mon, 20 Jan 2014 09:46:48 -0800 (PST)
+Received: from localhost.localdomain ([124.253.33.120])
+        by mx.google.com with ESMTPSA id jp3sm4479877pbc.36.2014.01.20.09.46.46
+        for <linux-leds@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Mon, 20 Jan 2014 09:46:47 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-Update the binding doc for new property: "retain-state-suspended"
+Good Morning Sir / Mam
 
-Signed-off-by: Robin Gong <b38343@freescale.com>
----
- .../devicetree/bindings/leds/leds-gpio.txt         |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+Is your business ranking in local maps shown on PAGE 1 of google ? With new
+google policies they have specifically asked local business owners to
+optimize their website for local maps rather than JUST organics. Do you know
+the reason why you are not ranked well on google MAPs or why there is drop
+in your website rankings? Prime reason for bad rankings for a busniess is
+lack of local presence and local citations ie getting your business listed
+on directories like YELP, MANTA & Many more. These websites not just give
+your business a push but also help you Maintain a good Online Reputation.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-index df1b308..f77148f 100644
---- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-@@ -21,6 +21,8 @@ LED sub-node properties:
-   on).  The "keep" setting will keep the LED at whatever its current
-   state is, without producing a glitch.  The default is off if this
-   property is not present.
-+- retain-state-suspended: (optional) The suspend state can be retained.Such
-+  as charge-led gpio.
- 
- Examples:
- 
-@@ -50,3 +52,13 @@ run-control {
- 		default-state = "on";
- 	};
- };
-+
-+leds {
-+	compatible = "gpio-leds";
-+
-+	charger-led {
-+		gpios = <&gpio1 2 0>;
-+		linux,default-trigger = "max8903-charger-charging";
-+		retain-state-suspended;
-+	};
-+};
--- 
-1.7.5.4
+Why you need to optimize your website for local MAP Listings ?
+
+- MAP listings get 10 times more clicks than organic listings
+- Increased conversions because of real reviews posted on your Google Plus
+Page
+- Every year there is 30% increase in searches for local keywords
+- Increases legitimacy of a Business
+
+We will help you get your website ranked well on google for the related
+keywords in your niche. We specialize in LOCAL SEARCH ENGINE OPTIMIZATION
+increasing visibility for small businesses by ranking them for
+geographically-related keywords. Say for eg-: you want to search a plumber
+in your city, You will be typing in keywords like Plumbers + City Or
+Plumbers + IN + City. We make sure your website comes in google MAP listings
+shown on page 1 for each such keyword.
+
+Now Google believes in - BE ORIGINAL, HAVE ORIGINAL AND GIVE ORIGINAL which
+means that google wants to end up that frustrating experience of users who
+are searching for Service Or Product and seeing the results that are not
+even close to what they are looking for. Google only wants to give their
+user original and relevant results. This makes it even more important that
+we showcase our business in the best possible way and make sure our website
+in valued high by google.
+
+We at TheLOCALIST will make google feel the importance of your business by
+following their guidelines thus ranking your website higher in serach
+results. We are presently offering LOCAL OPTIMIZATION to more than 400
+websites and they all rank page 1 for all possible keywords !!! Each month
+your website is submitted to more than 50 citations and social presence is
+controlled by posting videos and blogs all over the web.
+
+Email us back with your website & phone number so we can discuss this
+further with you. Our Packages start from as low as 99$/month.
+
+
+Thanks For Taking Time To Read Our Email
+
+Polly Martin
+Local SEO Manager ( THE Localist )
+Address : 24 ST Suite 32 Downtown Provo Utah
+
+-------------------
+NOT INTERESTED ? REPLY WITH NOT INTERESTED IN THE SUBJECT LINE 
