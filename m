@@ -1,50 +1,41 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [GIT PULL] LED fix for 3.13
-Date: Fri, 10 Jan 2014 14:59:52 -0800
-Message-ID: <CAK5ve-LLdzEErKdDFoAb8kCLx7GMX5nXvO6opLzm4ZR0M-3dhw@mail.gmail.com>
-References: <CAK5ve-L4=uJmJfF67pR+jL1L532XP28FVmn=CTwWbDY2pUiPoA@mail.gmail.com>
+From: Robin Gong <b38343@freescale.com>
+Subject: [PATCH v1 1/2] leds: leds-gpio: add retain-state-suspended property
+Date: Mon, 20 Jan 2014 19:41:26 +0800
+Message-ID: <1390218087-14597-1-git-send-email-b38343@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK5ve-L4=uJmJfF67pR+jL1L532XP28FVmn=CTwWbDY2pUiPoA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from co1ehsobe006.messaging.microsoft.com ([216.32.180.189]:9536
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750797AbaATLgI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Mon, 20 Jan 2014 06:36:08 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, cooloney@gmail.com, rpurdie@rpsys.net, grant.likely@linaro.org
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-My email was bounced back by LKML and Linux LED mail list. I forget to
-use plain text mode. So I forward it again.
+Some gpio-leds need retain the state even in suspend, such as charger led.
+But this property missed in devicetree, add it.
 
-Thanks,
--Bryan
+Signed-off-by: Robin Gong <b38343@freescale.com>
+---
+ drivers/leds/leds-gpio.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-On Fri, Jan 10, 2014 at 2:57 PM, Bryan Wu <cooloney@gmail.com> wrote:
->
-> Hi Linus,
->
-> Pali Roh=E1r and Pavel Machek reported the LED of Nokia N900 doesn't =
-work with our latest 3.13-rc6 kernel. Milo fixed the regression here.
->
-> So please consider the following changes since commit 802eee95bde72fd=
-0cd0f3a5b2098375a487d1eda:
->
->   Linux 3.13-rc6 (2013-12-29 16:01:33 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.g=
-it leds-fixes-for-3.13
->
-> for you to fetch changes up to e70988d1aaf73221355e06125c9937bd4b2776=
-1c:
->
->   leds: lp5521/5523: Remove duplicate mutex (2014-01-10 14:48:07 -080=
-0)
->
-> ----------------------------------------------------------------
-> Milo Kim (1):
->       leds: lp5521/5523: Remove duplicate mutex
->
->  drivers/leds/leds-lp5521.c | 12 ++++--------
->  drivers/leds/leds-lp5523.c | 12 ++++--------
->  2 files changed, 8 insertions(+), 16 deletions(-)
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 78b0e27..1bb3f1a 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -204,6 +204,9 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+ 				led.default_state = LEDS_GPIO_DEFSTATE_OFF;
+ 		}
+ 
++		if (of_get_property(child, "retain-state-suspended", NULL))
++			led.retain_state_suspended = 1;
++
+ 		ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
+ 				      &pdev->dev, NULL);
+ 		if (ret < 0) {
+-- 
+1.7.5.4
