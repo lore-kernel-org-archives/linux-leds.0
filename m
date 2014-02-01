@@ -1,253 +1,117 @@
-From: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: [PATCH v3 5/5] leds: leds-mc13783: Add devicetree support
-Date: Sat,  1 Feb 2014 10:37:23 +0400
-Message-ID: <1391236643-16585-1-git-send-email-shc_work@mail.ru>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH v3 3/5] leds: leds-mc13783: Use proper "max_brightness" value fo LEDs
+Date: Sat,  1 Feb 2014 10:36:30 +0400
+Message-ID: <1391236591-16540-3-git-send-email-shc_work@mail.ru>
+References: <1391236591-16540-1-git-send-email-shc_work@mail.ru>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from fallback4.mail.ru ([94.100.176.42]:42469 "EHLO
+	fallback4.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbaBAGhq (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 1 Feb 2014 01:37:46 -0500
+Received: from smtp31.i.mail.ru (smtp31.i.mail.ru [94.100.177.91])
+	by fallback4.mail.ru (mPOP.Fallback_MX) with ESMTP id A03EB1D9917
+	for <linux-leds@vger.kernel.org>; Sat,  1 Feb 2014 10:36:56 +0400 (MSK)
+In-Reply-To: <1391236591-16540-1-git-send-email-shc_work@mail.ru>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Alexander Shiyan <shc_work@mail.ru>
 
-This patch adds devicetree support for the MC13XXX LED driver.
+Instead of using maximum value of 255 and shift it to appropriate
+LED duty cycle, this patch introduce a helper to use proper maximum
+value for each LED.
 
-Signed-off-by: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 ---
- Documentation/devicetree/bindings/mfd/mc13xxx.txt |  47 +++++++++
- drivers/leds/leds-mc13783.c                       | 112 ++++++++++++++++++----
- 2 files changed, 140 insertions(+), 19 deletions(-)
+ drivers/leds/leds-mc13783.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/mc13xxx.txt b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-index abd9e3c..1413f39 100644
---- a/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-+++ b/Documentation/devicetree/bindings/mfd/mc13xxx.txt
-@@ -10,9 +10,44 @@ Optional properties:
- - fsl,mc13xxx-uses-touch : Indicate the touchscreen controller is being used
- 
- Sub-nodes:
-+- leds : Contain the led nodes and initial register values in property
-+  "led-control". Number of register depends of used IC, for MC13783 is 6,
-+  for MC13892 is 4, for MC34708 is 1. See datasheet for bits definitions of
-+  these registers.
-+  - #address-cells: Must be 1.
-+  - #size-cells: Must be 0.
-+  Each led node should contain "reg", which used as LED ID (described below).
-+  Optional properties "label" and "linux,default-trigger" is described in
-+  Documentation/devicetree/bindings/leds/common.txt.
- - regulators : Contain the regulator nodes. The regulators are bound using
-   their names as listed below with their registers and bits for enabling.
- 
-+MC13783 LED IDs:
-+    0  : Main display
-+    1  : AUX display
-+    2  : Keypad
-+    3  : Red 1
-+    4  : Green 1
-+    5  : Blue 1
-+    6  : Red 2
-+    7  : Green 2
-+    8  : Blue 2
-+    9  : Red 3
-+    10 : Green 3
-+    11 : Blue 3
-+
-+MC13892 LED IDs:
-+    0  : Main display
-+    1  : AUX display
-+    2  : Keypad
-+    3  : Red
-+    4  : Green
-+    5  : Blue
-+
-+MC34708 LED IDs:
-+    0  : Charger Red
-+    1  : Charger Green
-+
- MC13783 regulators:
-     sw1a      : regulator SW1A      (register 24, bit 0)
-     sw1b      : regulator SW1B      (register 25, bit 0)
-@@ -89,6 +124,18 @@ ecspi@70010000 { /* ECSPI1 */
- 		interrupt-parent = <&gpio0>;
- 		interrupts = <8>;
- 
-+		leds {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			led-control = <0x000 0x000 0x0e0 0x000>;
-+
-+			sysled {
-+				reg = <3>;
-+				label = "system:red:live";
-+				linux,default-trigger = "heartbeat";
-+			};
-+		};
-+
- 		regulators {
- 			sw1_reg: mc13892__sw1 {
- 				regulator-min-microvolt = <600000>;
 diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index 4cfcfde..e4e4ef5 100644
+index c8bd8a8..2360eca 100644
 --- a/drivers/leds/leds-mc13783.c
 +++ b/drivers/leds/leds-mc13783.c
-@@ -19,6 +19,7 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
-+#include <linux/of.h>
- #include <linux/workqueue.h>
- #include <linux/mfd/mc13xxx.h>
- 
-@@ -41,7 +42,7 @@ struct mc13xxx_leds {
- 	struct mc13xxx			*master;
- 	struct mc13xxx_led_devtype	*devtype;
- 	int				num_leds;
--	struct mc13xxx_led		led[0];
-+	struct mc13xxx_led		*led;
+@@ -44,11 +44,21 @@ struct mc13xxx_leds {
+ 	struct mc13xxx_led		led[0];
  };
  
- static unsigned int mc13xxx_max_brightness(int id)
-@@ -119,6 +120,74 @@ static void mc13xxx_led_set(struct led_classdev *led_cdev,
- 	schedule_work(&led->work);
- }
- 
-+#ifdef CONFIG_OF
-+static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
-+	struct platform_device *pdev)
++static unsigned int mc13xxx_max_brightness(int id)
 +{
-+	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
-+	struct mc13xxx_leds_platform_data *pdata;
-+	struct device_node *parent, *child;
-+	struct device *dev = &pdev->dev;
-+	int i = 0, ret = -ENODATA;
++	if (id >= MC13783_LED_MD && id <= MC13783_LED_KP)
++		return 0x0f;
++	else if (id >= MC13783_LED_R1 && id <= MC13783_LED_B3)
++		return 0x1f;
 +
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	of_node_get(dev->parent->of_node);
-+
-+	parent = of_find_node_by_name(dev->parent->of_node, "leds");
-+	if (!parent)
-+		goto out_node_put;
-+
-+	ret = of_property_read_u32_array(parent, "led-control",
-+					 pdata->led_control,
-+					 leds->devtype->num_regs);
-+	if (ret)
-+		goto out_node_put;
-+
-+	pdata->num_leds = of_get_child_count(parent);
-+
-+	pdata->led = devm_kzalloc(dev, pdata->num_leds * sizeof(*pdata->led),
-+				  GFP_KERNEL);
-+	if (!pdata->led) {
-+		ret = -ENOMEM;
-+		goto out_node_put;
-+	}
-+
-+	for_each_child_of_node(parent, child) {
-+		const char *str;
-+		u32 tmp;
-+
-+		if (of_property_read_u32(child, "reg", &tmp))
-+			continue;
-+		pdata->led[i].id = leds->devtype->led_min + tmp;
-+
-+		if (!of_property_read_string(child, "label", &str))
-+			pdata->led[i].name = str;
-+		if (!of_property_read_string(child, "linux,default-trigger",
-+					     &str))
-+			pdata->led[i].default_trigger = str;
-+
-+		i++;
-+	};
-+
-+	pdata->num_leds = i;
-+	ret = i > 0 ? 0 : -ENODATA;
-+
-+out_node_put:
-+	of_node_put(parent);
-+
-+	return ret ? ERR_PTR(ret) : pdata;
++	return 0x3f;
 +}
-+#else
-+static inline struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
-+	struct platform_device *pdev)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+#endif
 +
- static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ static void mc13xxx_led_work(struct work_struct *work)
  {
- 	struct device *dev = &pdev->dev;
-@@ -127,32 +196,37 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 	struct mc13xxx_led_devtype *devtype =
- 		(struct mc13xxx_led_devtype *)pdev->id_entry->driver_data;
- 	struct mc13xxx_leds *leds;
--	int i, id, num_leds, ret = -ENODATA;
-+	int i, id, ret = -ENODATA;
- 	u32 init_led = 0;
+ 	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
+ 	struct mc13xxx_leds *leds = led->leds;
+-	unsigned int reg, mask, value, bank, off, shift;
++	unsigned int reg, bank, off, shift;
  
--	if (!pdata) {
--		dev_err(dev, "Missing platform data\n");
--		return -ENODEV;
--	}
--
--	num_leds = pdata->num_leds;
--
--	if ((num_leds < 1) ||
--	    (num_leds > (devtype->led_max - devtype->led_min + 1))) {
--		dev_err(dev, "Invalid LED count %d\n", num_leds);
--		return -EINVAL;
--	}
--
--	leds = devm_kzalloc(dev, num_leds * sizeof(struct mc13xxx_led) +
--			    sizeof(struct mc13xxx_leds), GFP_KERNEL);
-+	leds = devm_kzalloc(dev, sizeof(*leds), GFP_KERNEL);
- 	if (!leds)
- 		return -ENOMEM;
- 
- 	leds->devtype = devtype;
--	leds->num_leds = num_leds;
- 	leds->master = mcdev;
- 	platform_set_drvdata(pdev, leds);
- 
-+	if (dev->parent->of_node) {
-+		pdata = mc13xxx_led_probe_dt(pdev);
-+		if (IS_ERR(pdata))
-+			return PTR_ERR(pdata);
-+	} else if (!pdata)
-+		return -ENODATA;
-+
-+	leds->num_leds = pdata->num_leds;
-+
-+	if ((leds->num_leds < 1) ||
-+	    (leds->num_leds > (devtype->led_max - devtype->led_min + 1))) {
-+		dev_err(dev, "Invalid LED count %d\n", leds->num_leds);
-+		return -EINVAL;
-+	}
-+
-+	leds->led = devm_kzalloc(dev, leds->num_leds * sizeof(*leds->led),
-+				 GFP_KERNEL);
-+	if (!leds->led)
-+		return -ENOMEM;
-+
- 	for (i = 0; i < devtype->num_regs; i++) {
- 		ret = mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i,
- 					pdata->led_control[i]);
-@@ -160,7 +234,7 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 			return ret;
+ 	switch (led->id) {
+ 	case MC13783_LED_MD:
+@@ -56,8 +66,6 @@ static void mc13xxx_led_work(struct work_struct *work)
+ 	case MC13783_LED_KP:
+ 		reg = 2;
+ 		shift = 9 + (led->id - MC13783_LED_MD) * 4;
+-		mask = 0x0f;
+-		value = led->new_brightness >> 4;
+ 		break;
+ 	case MC13783_LED_R1:
+ 	case MC13783_LED_G1:
+@@ -72,16 +80,12 @@ static void mc13xxx_led_work(struct work_struct *work)
+ 		bank = off / 3;
+ 		reg = 3 + bank;
+ 		shift = (off - bank * 3) * 5 + 6;
+-		value = led->new_brightness >> 3;
+-		mask = 0x1f;
+ 		break;
+ 	case MC13892_LED_MD:
+ 	case MC13892_LED_AD:
+ 	case MC13892_LED_KP:
+ 		reg = (led->id - MC13892_LED_MD) / 2;
+ 		shift = 3 + (led->id - MC13892_LED_MD) * 12;
+-		mask = 0x3f;
+-		value = led->new_brightness >> 2;
+ 		break;
+ 	case MC13892_LED_R:
+ 	case MC13892_LED_G:
+@@ -90,22 +94,19 @@ static void mc13xxx_led_work(struct work_struct *work)
+ 		bank = off / 2;
+ 		reg = 2 + bank;
+ 		shift = (off - bank * 2) * 12 + 3;
+-		value = led->new_brightness >> 2;
+-		mask = 0x3f;
+ 		break;
+ 	case MC34708_LED_R:
+ 	case MC34708_LED_G:
+ 		reg = 0;
+ 		shift = 3 + (led->id - MC34708_LED_R) * 12;
+-		value = led->new_brightness >> 2;
+-		mask = 0x3f;
+ 		break;
+ 	default:
+ 		BUG();
  	}
  
--	for (i = 0; i < num_leds; i++) {
-+	for (i = 0; i < leds->num_leds; i++) {
- 		const char *name, *trig;
+ 	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
+-			mask << shift, value << shift);
++			mc13xxx_max_brightness(led->id) << shift,
++			led->new_brightness << shift);
+ }
  
- 		ret = -EINVAL;
+ static void mc13xxx_led_set(struct led_classdev *led_cdev,
+@@ -185,7 +186,7 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ 		leds->led[i].cdev.default_trigger = trig;
+ 		leds->led[i].cdev.flags = LED_CORE_SUSPENDRESUME;
+ 		leds->led[i].cdev.brightness_set = mc13xxx_led_set;
+-		leds->led[i].cdev.brightness = LED_OFF;
++		leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
+ 
+ 		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
+ 
 -- 
 1.8.3.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
