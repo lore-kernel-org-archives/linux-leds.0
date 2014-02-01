@@ -1,78 +1,339 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: [GIT PULL] LED updates for 3.14
-Date: Mon, 27 Jan 2014 17:32:29 -0800
-Message-ID: <CAK5ve-JFvsN5RM3TY-p=LWVNK0cYcjH3FWMiZd-PuUtnVnTMnA@mail.gmail.com>
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH v3 1/5] leds: leds-mc13783: Add MC34708 LED support
+Date: Sat,  1 Feb 2014 10:36:28 +0400
+Message-ID: <1391236591-16540-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:44051 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753334AbaA1Bcv (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jan 2014 20:32:51 -0500
+Received: from fallback5.mail.ru ([94.100.176.59]:33911 "EHLO
+	fallback5.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821AbaBAGg4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 1 Feb 2014 01:36:56 -0500
+Received: from smtp31.i.mail.ru (smtp31.i.mail.ru [94.100.177.91])
+	by fallback5.mail.ru (mPOP.Fallback_MX) with ESMTP id 6731610B97DD7
+	for <linux-leds@vger.kernel.org>; Sat,  1 Feb 2014 10:36:51 +0400 (MSK)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Alexander Shiyan <shc_work@mail.ru>
 
-Hi Linus
+This patch adds support for two LEDs on MC34708 PMIC.
 
-Basically this cycle is most cleanup for LED subsystem.
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+---
+ drivers/leds/Kconfig        |  2 +-
+ drivers/leds/leds-mc13783.c | 98 ++++++++++++++++++++++---------------=
+--------
+ include/linux/mfd/mc13xxx.h |  6 +++
+ 3 files changed, 55 insertions(+), 51 deletions(-)
 
-Please consider the following changes since commit
-802eee95bde72fd0cd0f3a5b2098375a487d1eda:
-
-  Linux 3.13-rc6 (2013-12-29 16:01:33 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
-
-for you to fetch changes up to 3cb6f44aedf519dce4a9106dec675b94d675c539:
-
-  leds: s3c24xx: Remove hardware.h inclusion (2014-01-27 17:28:53 -0800)
-
-----------------------------------------------------------------
-Alexander Shiyan (2):
-      leds: leds-mc13783: Remove duplicate field in platform data
-      leds: leds-mc13783: Remove unneeded mc13xxx_{un}lock
-
-Chen Gang (1):
-      drivers: leds: leds-tca6507: check CONFIG_GPIOLIB whether
-defined for 'gpio_base'
-
-Milo Kim (2):
-      leds: lp5521/5523: Fix multiple engine usage bug
-      leds: lp5523: Support LED MUX configuration on running a pattern
-
-NeilBrown (3):
-      LEDS: tca6507 - fix bugs in parsing of device-tree configuration.
-      LEDS: tca6507: add device-tree support for GPIO configuration.
-      LEDS: tca6507 - fix up some comments.
-
-Olof Johansson (1):
-      leds: pwm: Remove a warning on non-DT platforms
-
-Sachin Kamat (2):
-      leds: kirkwood: Cleanup in header files
-      leds: s3c24xx: Remove hardware.h inclusion
-
-Xiubo Li (1):
-      leds: leds-pwm: fix duty time overflow.
-
-ZHAO Gang (1):
-      leds: replace list_for_each with list_for_each_entry
-
- Documentation/devicetree/bindings/leds/tca6507.txt |  16 ++
- Documentation/leds/leds-lp55xx.txt                 |  10 +-
- arch/arm/mach-imx/mach-mx31moboard.c               |  16 +-
- drivers/leds/led-triggers.c                        |  15 +-
- drivers/leds/leds-lp5521.c                         |  18 +-
- drivers/leds/leds-lp5523.c                         |  20 +-
- drivers/leds/leds-lp55xx-common.c                  |   2 +
- drivers/leds/leds-mc13783.c                        |  89 +--------
- drivers/leds/leds-pwm.c                            |   9 +-
- drivers/leds/leds-s3c24xx.c                        |   3 +-
- drivers/leds/leds-tca6507.c                        | 207 ++++++++++++---------
- include/linux/mfd/mc13xxx.h                        |  37 +++-
- .../linux/platform_data/leds-kirkwood-netxbig.h    |   8 +-
- include/linux/platform_data/leds-kirkwood-ns2.h    |   8 +-
- 14 files changed, 227 insertions(+), 231 deletions(-)
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e3ca59..9c719fd 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -413,7 +413,7 @@ config LEDS_MC13783
+ 	depends on MFD_MC13XXX
+ 	help
+ 	  This option enable support for on-chip LED drivers found
+-	  on Freescale Semiconductor MC13783/MC13892 PMIC.
++	  on Freescale Semiconductor MC13783/MC13892/MC34708 PMIC.
+=20
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+index dca34c7..5534002 100644
+--- a/drivers/leds/leds-mc13783.c
++++ b/drivers/leds/leds-mc13783.c
+@@ -1,5 +1,5 @@
+ /*
+- * LEDs driver for Freescale MC13783/MC13892
++ * LEDs driver for Freescale MC13783/MC13892/MC34708
+  *
+  * Copyright (C) 2010 Philippe R=C3=A9tornaz
+  *
+@@ -22,23 +22,23 @@
+ #include <linux/workqueue.h>
+ #include <linux/mfd/mc13xxx.h>
+=20
+-#define MC13XXX_REG_LED_CONTROL(x)	(51 + (x))
+-
+ struct mc13xxx_led_devtype {
+ 	int	led_min;
+ 	int	led_max;
+ 	int	num_regs;
++	u32	ledctrl_base;
+ };
+=20
+ struct mc13xxx_led {
+ 	struct led_classdev	cdev;
+ 	struct work_struct	work;
+-	struct mc13xxx		*master;
+ 	enum led_brightness	new_brightness;
+ 	int			id;
++	struct mc13xxx_leds	*leds;
+ };
+=20
+ struct mc13xxx_leds {
++	struct mc13xxx			*master;
+ 	struct mc13xxx_led_devtype	*devtype;
+ 	int				num_leds;
+ 	struct mc13xxx_led		led[0];
+@@ -47,24 +47,15 @@ struct mc13xxx_leds {
+ static void mc13xxx_led_work(struct work_struct *work)
+ {
+ 	struct mc13xxx_led *led =3D container_of(work, struct mc13xxx_led, wo=
+rk);
+-	int reg, mask, value, bank, off, shift;
++	struct mc13xxx_leds *leds =3D led->leds;
++	unsigned int reg, mask, value, bank, off, shift;
+=20
+ 	switch (led->id) {
+ 	case MC13783_LED_MD:
+-		reg =3D MC13XXX_REG_LED_CONTROL(2);
+-		shift =3D 9;
+-		mask =3D 0x0f;
+-		value =3D led->new_brightness >> 4;
+-		break;
+ 	case MC13783_LED_AD:
+-		reg =3D MC13XXX_REG_LED_CONTROL(2);
+-		shift =3D 13;
+-		mask =3D 0x0f;
+-		value =3D led->new_brightness >> 4;
+-		break;
+ 	case MC13783_LED_KP:
+-		reg =3D MC13XXX_REG_LED_CONTROL(2);
+-		shift =3D 17;
++		reg =3D 2;
++		shift =3D 9 + (led->id - MC13783_LED_MD) * 4;
+ 		mask =3D 0x0f;
+ 		value =3D led->new_brightness >> 4;
+ 		break;
+@@ -79,26 +70,16 @@ static void mc13xxx_led_work(struct work_struct *wo=
+rk)
+ 	case MC13783_LED_B3:
+ 		off =3D led->id - MC13783_LED_R1;
+ 		bank =3D off / 3;
+-		reg =3D MC13XXX_REG_LED_CONTROL(3) + bank;
++		reg =3D 3 + bank;
+ 		shift =3D (off - bank * 3) * 5 + 6;
+ 		value =3D led->new_brightness >> 3;
+ 		mask =3D 0x1f;
+ 		break;
+ 	case MC13892_LED_MD:
+-		reg =3D MC13XXX_REG_LED_CONTROL(0);
+-		shift =3D 3;
+-		mask =3D 0x3f;
+-		value =3D led->new_brightness >> 2;
+-		break;
+ 	case MC13892_LED_AD:
+-		reg =3D MC13XXX_REG_LED_CONTROL(0);
+-		shift =3D 15;
+-		mask =3D 0x3f;
+-		value =3D led->new_brightness >> 2;
+-		break;
+ 	case MC13892_LED_KP:
+-		reg =3D MC13XXX_REG_LED_CONTROL(1);
+-		shift =3D 3;
++		reg =3D (led->id - MC13892_LED_MD) / 2;
++		shift =3D 3 + (led->id - MC13892_LED_MD) * 12;
+ 		mask =3D 0x3f;
+ 		value =3D led->new_brightness >> 2;
+ 		break;
+@@ -107,16 +88,24 @@ static void mc13xxx_led_work(struct work_struct *w=
+ork)
+ 	case MC13892_LED_B:
+ 		off =3D led->id - MC13892_LED_R;
+ 		bank =3D off / 2;
+-		reg =3D MC13XXX_REG_LED_CONTROL(2) + bank;
++		reg =3D 2 + bank;
+ 		shift =3D (off - bank * 2) * 12 + 3;
+ 		value =3D led->new_brightness >> 2;
+ 		mask =3D 0x3f;
+ 		break;
++	case MC34708_LED_R:
++	case MC34708_LED_G:
++		reg =3D 0;
++		shift =3D 3 + (led->id - MC34708_LED_R) * 12;
++		value =3D led->new_brightness >> 2;
++		mask =3D 0x3f;
++		break;
+ 	default:
+ 		BUG();
+ 	}
+=20
+-	mc13xxx_reg_rmw(led->master, reg, mask << shift, value << shift);
++	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
++			mask << shift, value << shift);
+ }
+=20
+ static void mc13xxx_led_set(struct led_classdev *led_cdev,
+@@ -131,16 +120,17 @@ static void mc13xxx_led_set(struct led_classdev *=
+led_cdev,
+=20
+ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ {
+-	struct mc13xxx_leds_platform_data *pdata =3D dev_get_platdata(&pdev->=
+dev);
+-	struct mc13xxx *mcdev =3D dev_get_drvdata(pdev->dev.parent);
++	struct device *dev =3D &pdev->dev;
++	struct mc13xxx_leds_platform_data *pdata =3D dev_get_platdata(dev);
++	struct mc13xxx *mcdev =3D dev_get_drvdata(dev->parent);
+ 	struct mc13xxx_led_devtype *devtype =3D
+ 		(struct mc13xxx_led_devtype *)pdev->id_entry->driver_data;
+ 	struct mc13xxx_leds *leds;
+ 	int i, id, num_leds, ret =3D -ENODATA;
+-	u32 reg, init_led =3D 0;
++	u32 init_led =3D 0;
+=20
+ 	if (!pdata) {
+-		dev_err(&pdev->dev, "Missing platform data\n");
++		dev_err(dev, "Missing platform data\n");
+ 		return -ENODEV;
+ 	}
+=20
+@@ -148,23 +138,23 @@ static int __init mc13xxx_led_probe(struct platfo=
+rm_device *pdev)
+=20
+ 	if ((num_leds < 1) ||
+ 	    (num_leds > (devtype->led_max - devtype->led_min + 1))) {
+-		dev_err(&pdev->dev, "Invalid LED count %d\n", num_leds);
++		dev_err(dev, "Invalid LED count %d\n", num_leds);
+ 		return -EINVAL;
+ 	}
+=20
+-	leds =3D devm_kzalloc(&pdev->dev, num_leds * sizeof(struct mc13xxx_le=
+d) +
++	leds =3D devm_kzalloc(dev, num_leds * sizeof(struct mc13xxx_led) +
+ 			    sizeof(struct mc13xxx_leds), GFP_KERNEL);
+ 	if (!leds)
+ 		return -ENOMEM;
+=20
+ 	leds->devtype =3D devtype;
+ 	leds->num_leds =3D num_leds;
++	leds->master =3D mcdev;
+ 	platform_set_drvdata(pdev, leds);
+=20
+ 	for (i =3D 0; i < devtype->num_regs; i++) {
+-		reg =3D pdata->led_control[i];
+-		WARN_ON(reg >=3D (1 << 24));
+-		ret =3D mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), reg);
++		ret =3D mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i,
++					pdata->led_control[i]);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -179,19 +169,18 @@ static int __init mc13xxx_led_probe(struct platfo=
+rm_device *pdev)
+ 		trig =3D pdata->led[i].default_trigger;
+=20
+ 		if ((id > devtype->led_max) || (id < devtype->led_min)) {
+-			dev_err(&pdev->dev, "Invalid ID %i\n", id);
++			dev_err(dev, "Invalid ID %i\n", id);
+ 			break;
+ 		}
+=20
+ 		if (init_led & (1 << id)) {
+-			dev_warn(&pdev->dev,
+-				 "LED %i already initialized\n", id);
++			dev_warn(dev, "LED %i already initialized\n", id);
+ 			break;
+ 		}
+=20
+ 		init_led |=3D 1 << id;
+ 		leds->led[i].id =3D id;
+-		leds->led[i].master =3D mcdev;
++		leds->led[i].leds =3D leds;
+ 		leds->led[i].cdev.name =3D name;
+ 		leds->led[i].cdev.default_trigger =3D trig;
+ 		leds->led[i].cdev.brightness_set =3D mc13xxx_led_set;
+@@ -199,10 +188,9 @@ static int __init mc13xxx_led_probe(struct platfor=
+m_device *pdev)
+=20
+ 		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
+=20
+-		ret =3D led_classdev_register(pdev->dev.parent,
+-					    &leds->led[i].cdev);
++		ret =3D led_classdev_register(dev->parent, &leds->led[i].cdev);
+ 		if (ret) {
+-			dev_err(&pdev->dev, "Failed to register LED %i\n", id);
++			dev_err(dev, "Failed to register LED %i\n", id);
+ 			break;
+ 		}
+ 	}
+@@ -218,8 +206,8 @@ static int __init mc13xxx_led_probe(struct platform=
+_device *pdev)
+=20
+ static int mc13xxx_led_remove(struct platform_device *pdev)
+ {
+-	struct mc13xxx *mcdev =3D dev_get_drvdata(pdev->dev.parent);
+ 	struct mc13xxx_leds *leds =3D platform_get_drvdata(pdev);
++	struct mc13xxx *mcdev =3D leds->master;
+ 	int i;
+=20
+ 	for (i =3D 0; i < leds->num_leds; i++) {
+@@ -228,7 +216,7 @@ static int mc13xxx_led_remove(struct platform_devic=
+e *pdev)
+ 	}
+=20
+ 	for (i =3D 0; i < leds->devtype->num_regs; i++)
+-		mc13xxx_reg_write(mcdev, MC13XXX_REG_LED_CONTROL(i), 0);
++		mc13xxx_reg_write(mcdev, leds->devtype->ledctrl_base + i, 0);
+=20
+ 	return 0;
+ }
+@@ -237,17 +225,27 @@ static const struct mc13xxx_led_devtype mc13783_l=
+ed_devtype =3D {
+ 	.led_min	=3D MC13783_LED_MD,
+ 	.led_max	=3D MC13783_LED_B3,
+ 	.num_regs	=3D 6,
++	.ledctrl_base	=3D 51,
+ };
+=20
+ static const struct mc13xxx_led_devtype mc13892_led_devtype =3D {
+ 	.led_min	=3D MC13892_LED_MD,
+ 	.led_max	=3D MC13892_LED_B,
+ 	.num_regs	=3D 4,
++	.ledctrl_base	=3D 51,
++};
++
++static const struct mc13xxx_led_devtype mc34708_led_devtype =3D {
++	.led_min	=3D MC34708_LED_R,
++	.led_max	=3D MC34708_LED_G,
++	.num_regs	=3D 1,
++	.ledctrl_base	=3D 54,
+ };
+=20
+ static const struct platform_device_id mc13xxx_led_id_table[] =3D {
+ 	{ "mc13783-led", (kernel_ulong_t)&mc13783_led_devtype, },
+ 	{ "mc13892-led", (kernel_ulong_t)&mc13892_led_devtype, },
++	{ "mc34708-led", (kernel_ulong_t)&mc34708_led_devtype, },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, mc13xxx_led_id_table);
+diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
+index ac39d91..a326c85 100644
+--- a/include/linux/mfd/mc13xxx.h
++++ b/include/linux/mfd/mc13xxx.h
+@@ -104,6 +104,9 @@ enum {
+ 	MC13892_LED_R,
+ 	MC13892_LED_G,
+ 	MC13892_LED_B,
++	/* MC34708 LED IDs */
++	MC34708_LED_R,
++	MC34708_LED_G,
+ };
+=20
+ struct mc13xxx_led_platform_data {
+@@ -163,6 +166,9 @@ struct mc13xxx_leds_platform_data {
+ #define MC13892_LED_C2_CURRENT_G(x)	(((x) & 0x7) << 21)
+ /* MC13892 LED Control 3 */
+ #define MC13892_LED_C3_CURRENT_B(x)	(((x) & 0x7) << 9)
++/* MC34708 LED Control 0 */
++#define MC34708_LED_C0_CURRENT_R(x)	(((x) & 0x3) << 9)
++#define MC34708_LED_C0_CURRENT_G(x)	(((x) & 0x3) << 21)
+ 	u32 led_control[MAX_LED_CONTROL_REGS];
+ };
+=20
+--=20
+1.8.3.2
