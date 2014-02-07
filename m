@@ -1,369 +1,142 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 54/73] drivers/leds: delete non-required instances of
- include <linux/init.h>
-Date: Thu, 6 Feb 2014 11:46:38 -0800
-Message-ID: <CAK5ve-+aS-yb_Lx1yhNcqSgdZWdEhnLTuZvtuhk7veMs32Z+3w@mail.gmail.com>
-References: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>
- <1390339396-3479-55-git-send-email-paul.gortmaker@windriver.com>
- <CAK5ve-J+G6yH-E6bde-DXP7vNvdcevrH6nwvkot0n3cGi19WmA@mail.gmail.com> <52F3E527.3090804@windriver.com>
+Subject: Re: Implementing a platform driver w/ LEDs
+Date: Fri, 7 Feb 2014 10:31:45 -0800
+Message-ID: <CAK5ve-Jr+Hg1XXL0=E8i9iXP=rTLcQ4=Kdz3Yf_i3A-yxc6Pnw@mail.gmail.com>
+References: <52F28640.8080907@dell.com> <CAK5ve-K53uBu-7aCF9=FZdKBDcRN=1EeA-hdR8S2+L_mrvFTBA@mail.gmail.com>
+ <52F29AB1.1020707@dell.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <52F3E527.3090804@windriver.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:34922 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750993AbaBGScH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 7 Feb 2014 13:32:07 -0500
+Received: by mail-la0-f50.google.com with SMTP id ec20so2909912lab.23
+        for <linux-leds@vger.kernel.org>; Fri, 07 Feb 2014 10:32:06 -0800 (PST)
+In-Reply-To: <52F29AB1.1020707@dell.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Mario Limonciello <mario_limonciello@dell.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Thu, Feb 6, 2014 at 11:40 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On 14-02-06 02:28 PM, Bryan Wu wrote:
->> On Tue, Jan 21, 2014 at 1:22 PM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->>> None of these files are actually using any __init type directives
->>> and hence don't need to include <linux/init.h>.  Most are just a
->>> left over from __devinit and __cpuinit removal, or simply due to
->>> code getting copied from one driver to the next.
->>>
+On Wed, Feb 5, 2014 at 12:10 PM, Mario Limonciello
+<mario_limonciello@dell.com> wrote:
+> On 02/05/2014 01:25 PM, Bryan Wu wrote:
 >>
->> I will take this patch. Thanks,
->> -Bryan
+>>
+>> I think for this use case, we need 2 drivers:
+>>
+>> 1. LED device driver for each lighting zone, it will supports red,
+>> blue, green and brightness operation.
+>>
+>> 2. LED trigger driver provides events trigger when system running,
+>> booting and suspended. It can send out event to your Alienware LED
+>> device driver to do proper LED operations.
+>>
+>> So the basic concept is splitting out real LED operations and event
+>> triggers.
 >
-> The patches that weren't taken by maintainers before 3.14-rc1 were
-> encompassed in the cleanup pull request to Linus sent Tuesday.
->
-> http://www.spinics.net/lists/arm-kernel/msg304864.html
->
-> So, assuming he does pull it, you'll not have to do anything.
+> Sorry, I should have clarified - the LEDs operations themselves are BIOS
+> controlled.  I don't think there should be any trigger operation necessary.
+> It's a different WMI BIOS call to configure the LEDs in each different
+> state.
 >
 
-Sure, I will wait Linus pull and rebase my tree, then everything should be fine.
+OK, I got it. So you might just need to write a LED device driver
+which implements some interface like .brightness_set() and also you
+can provide your own sysfs interface in the same driver.
+
+Take a look at drivers/leds/dell-led.c, I think the idea is similar
+and you just need to think about support your multiple zones and sysfs
+interface.
+
+Actually I think your fully custom driver here should also work since
+BIOS controls when to blink and how to blink. Normally, the LED device
+driver deals with how to blink no matter it's software control or
+hardware control and LED trigger driver deals with when to blink and
+what pattern to blink. But looks like your driver just simple setting
+and let BIOS to handle everything.
 
 Thanks,
 -Bryan
 
-> --
+>>> When I first started to implement this using the LED class I create it
+>>> with
+>>> 36 different LED nodes:
+>>>
+>>> alienware-wmi::running::head_red
+>>> alienware-wmi::running::head_blue
+>>> alienware-wmi::running::head_green
+>>> alienware-wmi::running::head_brightness
+>>> alienware-wmi::running::left_red
+>>> alienware-wmi::running::left_blue
+>>> alienware-wmi::running::left_green
+>>> alienware-wmi::running::left_brightness
+>>> alienware-wmi::running::right_red
+>>> alienware-wmi::running::right_blue
+>>> alienware-wmi::running::right_green
+>>> alienware-wmi::running::right_brightness
+>>>
+>>> alienware-wmi::booting::head_red
+>>> alienware-wmi::booting::head_blue
+>>> alienware-wmi::booting::head_green
+>>> alienware-wmi::booting::head_brightness
+>>> alienware-wmi::booting::left_red
+>>> alienware-wmi::booting::left_blue
+>>> alienware-wmi::booting::left_green
+>>> alienware-wmi::booting::left_brightness
+>>> alienware-wmi::booting::right_red
+>>> alienware-wmi::booting::right_blue
+>>> alienware-wmi::booting::right_green
+>>> alienware-wmi::booting::right_brightness
+>>>
+>>> alienware-wmi::suspend::head_red
+>>> alienware-wmi::suspend::head_blue
+>>> alienware-wmi::suspend::head_green
+>>> alienware-wmi::suspend::head_brightness
+>>> alienware-wmi::suspend::left_red
+>>> alienware-wmi::suspend::left_blue
+>>> alienware-wmi::suspend::left_green
+>>> alienware-wmi::suspend::left_brightness
+>>> alienware-wmi::suspend::right_red
+>>> alienware-wmi::suspend::right_blue
+>>> alienware-wmi::suspend::right_green
+>>> alienware-wmi::suspend::right_brightness
+>>>
+>>> I thought this was rather confusing though because each individual node
+>>> only
+>>> has a single "brightness" member which doesn't really identify what is
+>>> being
+>>> changed.  The brightness node changes the overall brightness of the whole
+>>> zone.  The color shades selected for each node are mixed to come up with
+>>> the
+>>> overall color for the zone.
+>>>
+>>> The three different modes (running/booting/suspend) all modify the same
+>>> LEDs
+>>> too, so it didn't seem to make sense to me that they had their own nodes.
+>>>
+>>> So given all of that, can you advise how you think this should be
+>>> implemented?  Would it make sense to extend the LED class to better adapt
+>>> to
+>>> this?  Or do you think this is better suited for a custom sysfs interface
+>>> as
+>>> I've already done?  I'll attach the patch for the driver so you can see
+>>> how
+>>> I put it together with the custom sysfs interface.
+>>>
+>> I just went through the patch you attached quickly, but failed to find
+>> anything related to system booting/running/suspended. So you plan to
+>> do that by using user space script to talk with those sysfs interface?
 >
->>
->>> Cc: Bryan Wu <cooloney@gmail.com>
->>> Cc: Richard Purdie <rpurdie@rpsys.net>
->>> Cc: linux-leds@vger.kernel.org
->>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->>> ---
->>>  drivers/leds/led-triggers.c       | 1 -
->>>  drivers/leds/leds-88pm860x.c      | 1 -
->>>  drivers/leds/leds-adp5520.c       | 1 -
->>>  drivers/leds/leds-asic3.c         | 1 -
->>>  drivers/leds/leds-blinkm.c        | 1 -
->>>  drivers/leds/leds-cobalt-qube.c   | 1 -
->>>  drivers/leds/leds-da903x.c        | 1 -
->>>  drivers/leds/leds-da9052.c        | 1 -
->>>  drivers/leds/leds-fsg.c           | 1 -
->>>  drivers/leds/leds-gpio.c          | 1 -
->>>  drivers/leds/leds-hp6xx.c         | 1 -
->>>  drivers/leds/leds-lm3533.c        | 1 -
->>>  drivers/leds/leds-lp5521.c        | 1 -
->>>  drivers/leds/leds-lp5523.c        | 1 -
->>>  drivers/leds/leds-lp5562.c        | 1 -
->>>  drivers/leds/leds-lt3593.c        | 1 -
->>>  drivers/leds/leds-mc13783.c       | 1 -
->>>  drivers/leds/leds-netxbig.c       | 1 -
->>>  drivers/leds/leds-ns2.c           | 1 -
->>>  drivers/leds/leds-ot200.c         | 1 -
->>>  drivers/leds/leds-pwm.c           | 1 -
->>>  drivers/leds/leds-s3c24xx.c       | 1 -
->>>  drivers/leds/leds-wm831x-status.c | 1 -
->>>  drivers/leds/leds-wm8350.c        | 1 -
->>>  24 files changed, 24 deletions(-)
->>>
->>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
->>> index e387f41..df1a7c1 100644
->>> --- a/drivers/leds/led-triggers.c
->>> +++ b/drivers/leds/led-triggers.c
->>> @@ -13,7 +13,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/list.h>
->>>  #include <linux/spinlock.h>
->>>  #include <linux/device.h>
->>> diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
->>> index 5f588c0..d1e1bca 100644
->>> --- a/drivers/leds/leds-88pm860x.c
->>> +++ b/drivers/leds/leds-88pm860x.c
->>> @@ -11,7 +11,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/of.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/i2c.h>
->>> diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
->>> index 7e311a1..86b5bdb 100644
->>> --- a/drivers/leds/leds-adp5520.c
->>> +++ b/drivers/leds/leds-adp5520.c
->>> @@ -15,7 +15,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/workqueue.h>
->>> diff --git a/drivers/leds/leds-asic3.c b/drivers/leds/leds-asic3.c
->>> index 6de216a..70c74a7 100644
->>> --- a/drivers/leds/leds-asic3.c
->>> +++ b/drivers/leds/leds-asic3.c
->>> @@ -7,7 +7,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/slab.h>
->>> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
->>> index 66d0a57..0c50860 100644
->>> --- a/drivers/leds/leds-blinkm.c
->>> +++ b/drivers/leds/leds-blinkm.c
->>> @@ -18,7 +18,6 @@
->>>   */
->>>
->>>  #include <linux/module.h>
->>> -#include <linux/init.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/jiffies.h>
->>>  #include <linux/i2c.h>
->>> diff --git a/drivers/leds/leds-cobalt-qube.c b/drivers/leds/leds-cobalt-qube.c
->>> index 8abcb66..910339d 100644
->>> --- a/drivers/leds/leds-cobalt-qube.c
->>> +++ b/drivers/leds/leds-cobalt-qube.c
->>> @@ -3,7 +3,6 @@
->>>   *
->>>   * Control the Cobalt Qube/RaQ front LED
->>>   */
->>> -#include <linux/init.h>
->>>  #include <linux/io.h>
->>>  #include <linux/ioport.h>
->>>  #include <linux/leds.h>
->>> diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
->>> index 2a4b87f..35dffb1 100644
->>> --- a/drivers/leds/leds-da903x.c
->>> +++ b/drivers/leds/leds-da903x.c
->>> @@ -14,7 +14,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/workqueue.h>
->>> diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
->>> index 865d4fa..01486ad 100644
->>> --- a/drivers/leds/leds-da9052.c
->>> +++ b/drivers/leds/leds-da9052.c
->>> @@ -14,7 +14,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/workqueue.h>
->>> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
->>> index b4d5a44..2b4dc73 100644
->>> --- a/drivers/leds/leds-fsg.c
->>> +++ b/drivers/leds/leds-fsg.c
->>> @@ -16,7 +16,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/module.h>
->>> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
->>> index 78b0e27..3f65a08 100644
->>> --- a/drivers/leds/leds-gpio.c
->>> +++ b/drivers/leds/leds-gpio.c
->>> @@ -11,7 +11,6 @@
->>>   *
->>>   */
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/gpio.h>
->>>  #include <linux/leds.h>
->>> diff --git a/drivers/leds/leds-hp6xx.c b/drivers/leds/leds-hp6xx.c
->>> index 366b605..d61a988 100644
->>> --- a/drivers/leds/leds-hp6xx.c
->>> +++ b/drivers/leds/leds-hp6xx.c
->>> @@ -12,7 +12,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <asm/hd64461.h>
->>> diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
->>> index 027ede7..e2c642c11 100644
->>> --- a/drivers/leds/leds-lm3533.c
->>> +++ b/drivers/leds/leds-lm3533.c
->>> @@ -12,7 +12,6 @@
->>>   */
->>>
->>>  #include <linux/module.h>
->>> -#include <linux/init.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/mfd/core.h>
->>>  #include <linux/mutex.h>
->>> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
->>> index 2ec34cf..8ca197a 100644
->>> --- a/drivers/leds/leds-lp5521.c
->>> +++ b/drivers/leds/leds-lp5521.c
->>> @@ -25,7 +25,6 @@
->>>  #include <linux/delay.h>
->>>  #include <linux/firmware.h>
->>>  #include <linux/i2c.h>
->>> -#include <linux/init.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/module.h>
->>>  #include <linux/mutex.h>
->>> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
->>> index 4ade66a..cb5ed82 100644
->>> --- a/drivers/leds/leds-lp5523.c
->>> +++ b/drivers/leds/leds-lp5523.c
->>> @@ -25,7 +25,6 @@
->>>  #include <linux/delay.h>
->>>  #include <linux/firmware.h>
->>>  #include <linux/i2c.h>
->>> -#include <linux/init.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/module.h>
->>>  #include <linux/mutex.h>
->>> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
->>> index bf006f4..315d3ca 100644
->>> --- a/drivers/leds/leds-lp5562.c
->>> +++ b/drivers/leds/leds-lp5562.c
->>> @@ -13,7 +13,6 @@
->>>  #include <linux/delay.h>
->>>  #include <linux/firmware.h>
->>>  #include <linux/i2c.h>
->>> -#include <linux/init.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/module.h>
->>>  #include <linux/mutex.h>
->>> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
->>> index 3417e5b..059f5b1 100644
->>> --- a/drivers/leds/leds-lt3593.c
->>> +++ b/drivers/leds/leds-lt3593.c
->>> @@ -17,7 +17,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/workqueue.h>
->>> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
->>> index ca87a1b..dca34c7 100644
->>> --- a/drivers/leds/leds-mc13783.c
->>> +++ b/drivers/leds/leds-mc13783.c
->>> @@ -17,7 +17,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/workqueue.h>
->>> diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
->>> index 2f9f141..e97f443 100644
->>> --- a/drivers/leds/leds-netxbig.c
->>> +++ b/drivers/leds/leds-netxbig.c
->>> @@ -21,7 +21,6 @@
->>>   */
->>>
->>>  #include <linux/module.h>
->>> -#include <linux/init.h>
->>>  #include <linux/irq.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/spinlock.h>
->>> diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
->>> index c7a4230..efa6258 100644
->>> --- a/drivers/leds/leds-ns2.c
->>> +++ b/drivers/leds/leds-ns2.c
->>> @@ -23,7 +23,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/gpio.h>
->>> diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
->>> index 98cae52..c9d9060 100644
->>> --- a/drivers/leds/leds-ot200.c
->>> +++ b/drivers/leds/leds-ot200.c
->>> @@ -8,7 +8,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/leds.h>
->>> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
->>> index 6050474..dd17873 100644
->>> --- a/drivers/leds/leds-pwm.c
->>> +++ b/drivers/leds/leds-pwm.c
->>> @@ -14,7 +14,6 @@
->>>
->>>  #include <linux/module.h>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/of_platform.h>
->>>  #include <linux/fb.h>
->>> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
->>> index 98174e7..28988b7 100644
->>> --- a/drivers/leds/leds-s3c24xx.c
->>> +++ b/drivers/leds/leds-s3c24xx.c
->>> @@ -12,7 +12,6 @@
->>>  */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/gpio.h>
->>> diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
->>> index 0a1a13f..e72c974 100644
->>> --- a/drivers/leds/leds-wm831x-status.c
->>> +++ b/drivers/leds/leds-wm831x-status.c
->>> @@ -10,7 +10,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/leds.h>
->>> diff --git a/drivers/leds/leds-wm8350.c b/drivers/leds/leds-wm8350.c
->>> index 3f75fd2..4133ffe 100644
->>> --- a/drivers/leds/leds-wm8350.c
->>> +++ b/drivers/leds/leds-wm8350.c
->>> @@ -10,7 +10,6 @@
->>>   */
->>>
->>>  #include <linux/kernel.h>
->>> -#include <linux/init.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/leds.h>
->>>  #include <linux/err.h>
->>> --
->>> 1.8.4.1
->>>
+> It's already in there enum LIGHTING_CONTROL_STATE defines the three
+> different states.  There's a sysfs node called lighting_control_state that
+> was made to control it.
+>
+> static DEVICE_ATTR(lighting_control_state, S_IRUGO | S_IWUSR,
+>                    show_control_state, set_control_state);
+>
+> The idea here should be that later a userspace GUI will be able to toggle
+> lighting_control_state to the right enum and then make any lighting color
+> change requests.  The BIOS would handle the actual implementation of the
+> right time it would be effective for.
