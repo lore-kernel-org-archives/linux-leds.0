@@ -1,85 +1,73 @@
-From: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: [PATCH RFC 1/2] leds: add DT support for LEDs wired to supply and
- default brightness
-Date: Tue, 18 Feb 2014 13:09:28 +0000
-Message-ID: <E1WFkQS-0005JS-L5@rmk-PC.arm.linux.org.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 0/3] leds/pwm: don't call pwm_disable when setting
+ brightness
+Date: Fri, 21 Feb 2014 15:15:07 +0100
+Message-ID: <20140221141507.GB12555@pengutronix.de>
+References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:36230 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755191AbaBUOPQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 21 Feb 2014 09:15:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
 
-Some PWM outputs are wired such that the LED they're controlling is
-connected to supply rather than ground.  Therefore, the duty cycle
-needs to be inverted to make the LED behave as it should do.
+On Mon, Nov 25, 2013 at 09:43:42PM +0100, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> some time ago I pointed out a problem with leds-pwm on i.MX28, becaus=
+e
+> on this SoC it can happen that after:
+>=20
+> 	pwm_config(pwm, 0, period);
+> 	pwm_disable(pwm);
+>=20
+> the connected LED stays on. The mail thread is available at
+>=20
+> 	http://thread.gmane.org/gmane.linux.kernel/1381289
+>=20
+> This series implements the outcome that didn't get any opposition, i.=
+e.
+> the pin state is explicitly undefined after pwm_disable. The first pa=
+tch
+> adds this fact to the general pwm docs, the second patch fixes the
+> leds-pwm driver accordingly. The third patch is just a trivial fix th=
+at
+> I noticed while patching the leds-pwm driver and not really related t=
+o
+> any problem.
+>=20
+> Best regards
+> Uwe
+Ping. Even if patches 1 and 2 are maybe controversal, patch 3 should be
+ok.
 
-We also provide a way to specify the default brightness when a
-trigger is not specified.
+Do you still have the problem addressed by the first two patches on you=
+r
+radar?
 
-Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-=-DO NOT APPLY-=
- Documentation/devicetree/bindings/leds/leds-pwm.txt |  3 +++
- drivers/leds/leds-pwm.c                             | 15 +++++++++++----
- 2 files changed, 14 insertions(+), 4 deletions(-)
+Best regards
+Uwe
+=20
+> Uwe Kleine-K=F6nig (3):
+>   pwm/doc: Clearify that the pin state after pwm_disable is undefined
+>   leds/pwm: Don't disable pwm when setting brightness to 0
+>   leds/pwm: fix driver description and make license match the header
+>=20
+>  Documentation/pwm.txt   |  5 +++++
+>  drivers/leds/leds-pwm.c | 14 +++++++-------
+>  2 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Documentation/devicetree/bindings/leds/leds-pwm.txt
-index 7297107cf832..ffcb74ab61fd 100644
-=-DO NOT APPLY-= a/Documentation/devicetree/bindings/leds/leds-pwm.txt
-=+DO NOT APPLY+= b/Documentation/devicetree/bindings/leds/leds-pwm.txt
-@@ -13,6 +13,9 @@ node's name represents the name of the corresponding LED.
-   For the pwms and pwm-names property please refer to:
-   Documentation/devicetree/bindings/pwm/pwm.txt
- - max-brightness : Maximum brightness possible for the LED
-=+DO NOT APPLY+=- default-brightness : (optional) Default brightness for the LED
-=+DO NOT APPLY+=- active-low : (optional) For PWMs where the LED is wired to supply
-=+DO NOT APPLY+=  rather than ground.
- - label :  (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
- - linux,default-trigger :  (optional)
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 605047428b5a..fe2cd849b593 100644
-=-DO NOT APPLY-= a/drivers/leds/leds-pwm.c
-=+DO NOT APPLY+= b/drivers/leds/leds-pwm.c
-@@ -70,6 +70,10 @@ static void led_pwm_set(struct led_classdev *led_cdev,
- 
- 	duty *= brightness;
- 	do_div(duty, max);
-=+DO NOT APPLY+=
-=+DO NOT APPLY+=	if (led_dat->active_low)
-=+DO NOT APPLY+=		duty = led_dat->period - duty;
-=+DO NOT APPLY+=
- 	led_dat->duty = duty;
- 
- 	if (led_dat->can_sleep)
-@@ -93,6 +97,10 @@ static int led_pwm_create_of(struct platform_device *pdev,
- 	for_each_child_of_node(pdev->dev.of_node, child) {
- 		struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
- 
-=+DO NOT APPLY+=		led_dat->cdev.brightness_set = led_pwm_set;
-=+DO NOT APPLY+=		led_dat->cdev.brightness = LED_OFF;
-=+DO NOT APPLY+=		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-=+DO NOT APPLY+=
- 		led_dat->cdev.name = of_get_property(child, "label",
- 						     NULL) ? : child->name;
- 
-@@ -110,10 +118,9 @@ static int led_pwm_create_of(struct platform_device *pdev,
- 						"linux,default-trigger", NULL);
- 		of_property_read_u32(child, "max-brightness",
- 				     &led_dat->cdev.max_brightness);
--
--		led_dat->cdev.brightness_set = led_pwm_set;
--		led_dat->cdev.brightness = LED_OFF;
--		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-=+DO NOT APPLY+=		of_property_read_u32(child, "default-brightness",
-=+DO NOT APPLY+=				     &led_dat->cdev.brightness);
-=+DO NOT APPLY+=		led_dat->active_low = of_property_read_bool(child, "active-low");
- 
- 		led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
- 		if (led_dat->can_sleep)
--- 
-1.8.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
