@@ -1,54 +1,57 @@
-From: Jan-Simon =?ISO-8859-1?Q?M=F6ller?= <dl9pf@gmx.de>
-Subject: Re: [PATCH 5/5] leds: blinkm: remove unnecessary spaces
-Date: Wed, 26 Feb 2014 07:25:40 +0100
-Message-ID: <2477568.SBlftA00dv@samweis.auenland.lan>
-References: <000b01cf32b0$eb62fe40$c228fac0$%han@samsung.com> <000f01cf32b1$dd460ef0$97d22cd0$%han@samsung.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 4/5] leds: clevo-mail: fix incorrect placement of
+ __initdata marker
+Date: Wed, 26 Feb 2014 09:30:37 +0100
+Message-ID: <20140226083037.GB6865@pengutronix.de>
+References: <000b01cf32b0$eb62fe40$c228fac0$%han@samsung.com>
+ <000e01cf32b1$ac754340$055fc9c0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.21]:49329 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750712AbaBZGZ6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 26 Feb 2014 01:25:58 -0500
-Received: from samweis.auenland.lan ([46.193.142.205]) by mail.gmx.com
- (mrgmx003) with ESMTPSA (Nemesis) id 0MJSQ7-1WGcGW05Sl-0033HB for
- <linux-leds@vger.kernel.org>; Wed, 26 Feb 2014 07:25:56 +0100
-In-Reply-To: <000f01cf32b1$dd460ef0$97d22cd0$%han@samsung.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:35035 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbaBZIal (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 26 Feb 2014 03:30:41 -0500
+Content-Disposition: inline
+In-Reply-To: <000e01cf32b1$ac754340$055fc9c0$%han@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bryan Wu' <cooloney@gmail.com>, linux-leds@vger.kernel.org, 'Richard Purdie' <rpurdie@rpsys.net>
+Cc: 'Bryan Wu' <cooloney@gmail.com>, linux-leds@vger.kernel.org, 'Richard Purdie' <rpurdie@rpsys.net>, =?iso-8859-1?Q?'M=E1rton_N=E9meth'?= <nm127@freemail.hu>, 'Ondrej Zary' <linux@rainbow-software.org>
 
-Acked-by: Jan-Simon M=F6ller <dl9pf@gmx.de>
+Hello,
+
+On Wed, Feb 26, 2014 at 02:14:49PM +0900, Jingoo Han wrote:
+> diff --git a/drivers/leds/leds-clevo-mail.c b/drivers/leds/leds-clevo=
+-mail.c
+> index d93e245..5974810 100644
+> --- a/drivers/leds/leds-clevo-mail.c
+> +++ b/drivers/leds/leds-clevo-mail.c
+> @@ -19,7 +19,7 @@ MODULE_AUTHOR("M=E1rton N=E9meth <nm127@freemail.hu=
+>");
+>  MODULE_DESCRIPTION("Clevo mail LED driver");
+>  MODULE_LICENSE("GPL");
+> =20
+> -static bool __initdata nodetect;
+> +static bool nodetect __initdata;
+>  module_param_named(nodetect, nodetect, bool, 0);
+>  MODULE_PARM_DESC(nodetect, "Skip DMI hardware detection");
+not sure why I'm on Cc, but yes, the change is in line with gcc docs.
+But I wonder if __initdata is ok for a variable backing a module
+parameter as it appears in /sys. Does
+
+	cat /sys/module/leds-clevo-mail/parameters/nodetect
+
+result in an oops? If yes, better drop the __initdata instead of moving
+it.
+
+Best regards
+Uwe
 
 --=20
-
-Dipl.-Ing.
-Jan-Simon M=F6ller
-
-jansimon.moeller@gmx.de
-Am Mittwoch, 26. Februar 2014, 14:16:11 schrieb Jingoo Han:
-> Remove unnecessary space in order to fix the following
-> checkpatch issues.
->=20
->   WARNING: space prohibited before semicolon
->=20
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  drivers/leds/leds-blinkm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-> index 0c50860..d0452b0 100644
-> --- a/drivers/leds/leds-blinkm.c
-> +++ b/drivers/leds/leds-blinkm.c
-> @@ -443,7 +443,7 @@ static void led_work(struct work_struct *work)
->  {
->  	int ret;
->  	struct blinkm_led *led;
-> -	struct blinkm_data *data ;
-> +	struct blinkm_data *data;
->  	struct blinkm_work *blm_work =3D work_to_blmwork(work);
->=20
->  	led =3D blm_work->blinkm_led;
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
