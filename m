@@ -1,36 +1,67 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAyLzNdIEFSTS9sZWRzOiBtb3ZlIEFSTSBWZXJzYXRpbGUg?=
- =?UTF-8?B?TEVEIGRyaXZlciB0byBsZWRzIHN1YnN5c3RlbQ==?=
-Date: Thu, 27 Feb 2014 18:07:55 +0400
-Message-ID: <1393510075.460580224@f137.i.mail.ru>
-References: <1393509500-26002-1-git-send-email-linus.walleij@linaro.org>
- <1393509500-26002-2-git-send-email-linus.walleij@linaro.org>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/1] leds: leds-s3c24xx: Trivial cleanup in header file
+Date: Thu, 27 Feb 2014 09:57:37 -0800
+Message-ID: <CAK5ve-KhJXq5QJG6pU7+ZpWCPJAq2uhZcJet6_FPnMWXchqJaA@mail.gmail.com>
+References: <1392359829-12493-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1393509500-26002-2-git-send-email-linus.walleij@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?UnVzc2VsbCBLaW5n?= <linux@arm.linux.org.uk>, =?UTF-8?B?UGF3ZWwgTW9sbA==?= <pawel.moll@arm.com>, =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney@gmail.com>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:59473 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751384AbaB0R56 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 27 Feb 2014 12:57:58 -0500
+Received: by mail-lb0-f173.google.com with SMTP id p9so1939705lbv.32
+        for <linux-leds@vger.kernel.org>; Thu, 27 Feb 2014 09:57:57 -0800 (PST)
+In-Reply-To: <1392359829-12493-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Jiri Kosina <trivial@kernel.org>
 
-0KfQtdGC0LLQtdGA0LMsIDI3INGE0LXQstGA0LDQu9GPIDIwMTQsIDE0OjU4ICswMTowMCDQvtGC
-IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz46Cj4gTm93IHRoYXQgd2Ug
-aGF2ZSBjb252ZXJ0ZWQgdGhpcyBkcml2ZXIgdG8gYSByZWFsIHBsYXRmb3JtIGRldmljZQo+IG1v
-ZHVsZS1iYXNlZCB0aGluZywgd2UgbW92ZSB0aGUgZHJpdmVyIGRvd24gaW50byB0aGUgTEVEcwo+
-IHN1YnN5c3RlbSBhbmQgcmVuYW1lIHRoZSBjb25maWcgb3B0aW9uIHRvIExFRFNfVkVSU0FUSUxF
-LgoKSW4gZmFjdCwgaXQgY2FuIGJlIGNvbnZlcnRlZCB0byB1c2UgYmFzaWMtbW1pby1ncGlvID0+
-IGxlZHMtZ3Bpby4KCi0tLQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Thu, Feb 13, 2014 at 10:37 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Commit 436d42c61c3e ("ARM: samsung: move platform_data definitions")
+> moved the files to the current location but forgot to remove the pointer
+> to its previous location. Clean it up. While at it also change the header
+> file protection macros appropriately.
+>
+
+Thanks, merged.
+
+-Bryan
+
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  include/linux/platform_data/leds-s3c24xx.h |    9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/platform_data/leds-s3c24xx.h b/include/linux/platform_data/leds-s3c24xx.h
+> index d8a7672519b6..441a6f290649 100644
+> --- a/include/linux/platform_data/leds-s3c24xx.h
+> +++ b/include/linux/platform_data/leds-s3c24xx.h
+> @@ -1,5 +1,4 @@
+> -/* arch/arm/mach-s3c2410/include/mach/leds-gpio.h
+> - *
+> +/*
+>   * Copyright (c) 2006 Simtec Electronics
+>   *     http://armlinux.simtec.co.uk/
+>   *     Ben Dooks <ben@simtec.co.uk>
+> @@ -11,8 +10,8 @@
+>   * published by the Free Software Foundation.
+>  */
+>
+> -#ifndef __ASM_ARCH_LEDSGPIO_H
+> -#define __ASM_ARCH_LEDSGPIO_H "leds-gpio.h"
+> +#ifndef __LEDS_S3C24XX_H
+> +#define __LEDS_S3C24XX_H
+>
+>  #define S3C24XX_LEDF_ACTLOW    (1<<0)          /* LED is on when GPIO low */
+>  #define S3C24XX_LEDF_TRISTATE  (1<<1)          /* tristate to turn off */
+> @@ -25,4 +24,4 @@ struct s3c24xx_led_platdata {
+>         char                    *def_trigger;
+>  };
+>
+> -#endif /* __ASM_ARCH_LEDSGPIO_H */
+> +#endif /* __LEDS_S3C24XX_H */
+> --
+> 1.7.9.5
+>
