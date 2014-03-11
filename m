@@ -1,59 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] mfd: max8997: use regmap to access registers
-Date: Tue, 11 Mar 2014 16:20:11 +0100
-Message-ID: <1394551211.24263.34.camel@AMDC1943>
-References: <1394546304-15191-1-git-send-email-r.baldyga@samsung.com>
- <1394546304-15191-2-git-send-email-r.baldyga@samsung.com>
- <1394548336.24263.7.camel@AMDC1943> <531F24C0.3070603@samsung.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] leds-ot200: Fix dependencies
+Date: Tue, 11 Mar 2014 17:30:53 +0100
+Message-ID: <20140311173053.7b030522@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <531F24C0.3070603@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Baldyga <r.baldyga@samsung.com>
-Cc: sameo@linux.intel.com, lee.jones@linaro.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:58928 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753306AbaCKQa4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 11 Mar 2014 12:30:56 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-On Tue, 2014-03-11 at 15:59 +0100, Robert Baldyga wrote:
-> >> @@ -180,12 +167,12 @@ static struct irq_chip max8997_irq_chip = { 
-> >> static irqreturn_t max8997_irq_thread(int irq, void *data) {
-> >> struct max8997_dev *max8997 = data; -	u8
-> >> irq_reg[MAX8997_IRQ_GROUP_NR] = {}; -	u8 irq_src; +	unsigned int
-> >> irq_reg[MAX8997_IRQ_GROUP_NR] = {}; +	unsigned int irq_src; int
-> >> ret; int i, cur_irq;
-> >> 
-> >> -	ret = max8997_read_reg(max8997->i2c, MAX8997_REG_INTSRC, 
-> >> &irq_src); +	ret = regmap_read(max8997->regmap,
-> >> MAX8997_REG_INTSRC, &irq_src); if (ret < 0) { dev_err(max8997->dev,
-> >> "Failed to read interrupt source: %d\n", ret); @@ -194,8 +181,9 @@
-> >> static irqreturn_t max8997_irq_thread(int irq, void *data)
-> >> 
-> >> if (irq_src & MAX8997_IRQSRC_PMIC) { /* PMIC INT1 ~ INT4 */ - 
-> >> max8997_bulk_read(max8997->i2c, MAX8997_REG_INT1, 4, - 
-> >> &irq_reg[PMIC_INT1]); +		for (i = 0; i < 4; ++i) + 
-> >> regmap_read(max8997->regmap, +				MAX8997_REG_INT1+i, 
-> >> &irq_reg[PMIC_INT1+i]);
-> > 
-> > Can't you use here one bulk read instead of 4xregmap_read()?
-> 
-> Mixing regmap_read and regmap_bulk_read is not good idea, because the
-> first function returns register value as unsigned int, but the second
-> returns reg value to each single byte. So it would need to do some
-> additional operations, and makes things more complicated.
+The Bachmann OT200 is a Geode-based device, so OT200-specific drivers
+are only useful on X86_32, except for build testing.
 
-The only mixing I see would be in reading FLASHSTATUS register which
-could be resolved with:
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ drivers/leds/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-if (irq_src & MAX8997_IRQSRC_FLASH) {
-       /* Flash Status Interrupt */
-       unsigned int data;
-       ret = regmap_read(max8997->regmap, MAX8997_REG_FLASHSTATUS,
-		       &data);
-       irq_reg[FLASH_STATUS] = data;
-}
+--- linux-3.14-rc6.orig/drivers/leds/Kconfig	2014-03-11 17:20:25.505429515 +0100
++++ linux-3.14-rc6/drivers/leds/Kconfig	2014-03-11 17:21:57.843560506 +0100
+@@ -474,7 +474,7 @@ config LEDS_LM355x
+ 
+ config LEDS_OT200
+ 	tristate "LED support for the Bachmann OT200"
+-	depends on LEDS_CLASS && HAS_IOMEM
++	depends on LEDS_CLASS && HAS_IOMEM && (X86_32 || COMPILE_TEST)
+ 	help
+ 	  This option enables support for the LEDs on the Bachmann OT200.
+ 	  Say Y to enable LEDs on the Bachmann OT200.
 
-This isn't more complicated than replacing bulk read with a loop :).
 
-Best regards,
-Krzysztof
+-- 
+Jean Delvare
+SUSE L3 Support
