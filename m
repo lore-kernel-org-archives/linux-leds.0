@@ -1,56 +1,47 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: Re: [PATCH v2] mfd: max8997: use regmap to access registers
-Date: Fri, 07 Mar 2014 15:40:44 +0100
-Message-ID: <5319DA6C.1050204@samsung.com>
-References: <1394031497-16648-1-git-send-email-r.baldyga@samsung.com>
- <20140305185439.GC5453@core.coreip.homeip.net> <531818D6.3080500@samsung.com>
- <20140306162951.GA14318@core.coreip.homeip.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] ARM/leds: move ARM Versatile LED driver to leds subsystem
+Date: Tue, 11 Mar 2014 13:18:19 +0100
+Message-ID: <CACRpkdb+nLnjM7PUtkzmSJLjEC7FOH65sgOB6m-BUPB8YMzxiA@mail.gmail.com>
+References: <1393509500-26002-1-git-send-email-linus.walleij@linaro.org>
+	<1393509500-26002-2-git-send-email-linus.walleij@linaro.org>
+	<1393510075.460580224@f137.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=KOI8-R
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31523 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750930AbaCGOkt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 7 Mar 2014 09:40:49 -0500
-In-reply-to: <20140306162951.GA14318@core.coreip.homeip.net>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:33686 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754071AbaCKMST convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Mar 2014 08:18:19 -0400
+Received: by mail-oa0-f47.google.com with SMTP id i11so8415341oag.6
+        for <linux-leds@vger.kernel.org>; Tue, 11 Mar 2014 05:18:19 -0700 (PDT)
+In-Reply-To: <1393510075.460580224@f137.i.mail.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: sameo@linux.intel.com, lee.jones@linaro.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pawel Moll <pawel.moll@arm.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 03/06/2014 05:29 PM, Dmitry Torokhov wrote:
-> On Thu, Mar 06, 2014 at 07:42:30AM +0100, Robert Baldyga wrote:
->> Hi,
->>
->> On 03/05/2014 07:54 PM, Dmitry Torokhov wrote:
->>> Hi Robert,
->>>
->>> On Wed, Mar 05, 2014 at 03:58:17PM +0100, Robert Baldyga wrote:
->>>>  
->>>> -int max8997_write_reg(struct i2c_client *i2c, u8 reg, u8 value)
->>>> +int max8997_write_reg(struct regmap *map, u8 reg, u8 value)
->>>
->>> Why don't you make read/write reg to take struct max8997_dev as argument
->>> instead of regmap? regmap seems to be the current implementation du jur,
->>> but that is core's detail, functions do not need to care.
->>>
->>> Thanks.
->>>
->>
->> It's because there are few regmaps in max8997_dev, and read/write reg
->> functions has no way to check which regmap should be used. I think it
->> would be clearer if I remove this functions and use regmap_read and
->> regmap_write instead, because there is no particular purpose for them.
-> 
-> I see.. Then another question - why do the regmaps belong to the core
-> of the driver instead of individual functions? Why haptic regmap, for
-> example, can not be initialized in haptic code instead?
-> 
+On Thu, Feb 27, 2014 at 3:07 PM, Alexander Shiyan <shc_work@mail.ru> wr=
+ote:
+> =FE=C5=D4=D7=C5=D2=C7, 27 =C6=C5=D7=D2=C1=CC=D1 2014, 14:58 +01:00 =CF=
+=D4 Linus Walleij <linus.walleij@linaro.org>:
+>> Now that we have converted this driver to a real platform device
+>> module-based thing, we move the driver down into the LEDs
+>> subsystem and rename the config option to LEDS_VERSATILE.
+>
+> In fact, it can be converted to use basic-mmio-gpio =3D> leds-gpio.
 
-It looks like it would not be a big problem. I will try to prepare new
-version of this patch including this.
+Hm, yeah I see what you mean. However this register is not described
+as a GPIO register, and on all Versatile/RealView boards these signals
+are soldered to LEDs, so they are not general purpose at all.
 
-Best regards
-Robert Baldyga
-Samsung R&D Institute Poland
+On some systems without "real" GPIO the above would lead to
+compiling in the entire gpiolib (149 KB) just to do this.
+
+I would agree more with inventing something like leds-mmio as a
+separate refactoring after this, i.e. a driver for any memory-mapped
+LED, which should cover a few cases. What do you think about this
+idea?
+
+Yours,
+Linus Walleij
