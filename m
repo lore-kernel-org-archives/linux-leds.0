@@ -1,51 +1,58 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix dependencies
-Date: Tue, 11 Mar 2014 10:30:16 -0700
-Message-ID: <CAK5ve-KbcyJfa12rUhN=EJyj-7KNf81b2kEyRP8uyWU+NEBC9A@mail.gmail.com>
-References: <20140311173053.7b030522@endymion.delvare>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Robert Baldyga <r.baldyga@samsung.com>
+Subject: [PATCH v2 0/3] mfd: max8997: add regmap support
+Date: Wed, 12 Mar 2014 14:37:43 +0100
+Message-ID: <1394631466-6429-1-git-send-email-r.baldyga@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:36357 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753306AbaCKRah (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Mar 2014 13:30:37 -0400
-Received: by mail-la0-f44.google.com with SMTP id hr13so5904322lab.31
-        for <linux-leds@vger.kernel.org>; Tue, 11 Mar 2014 10:30:36 -0700 (PDT)
-In-Reply-To: <20140311173053.7b030522@endymion.delvare>
+Received: from mailout2.samsung.com ([203.254.224.25]:36717 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752898AbaCLNiH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 12 Mar 2014 09:38:07 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>
+To: sameo@linux.intel.com, lee.jones@linaro.org
+Cc: myungjoo.ham@samsung.com, cw00.choi@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com, Robert Baldyga <r.baldyga@samsung.com>
 
-On Tue, Mar 11, 2014 at 9:30 AM, Jean Delvare <jdelvare@suse.de> wrote:
-> The Bachmann OT200 is a Geode-based device, so OT200-specific drivers
-> are only useful on X86_32, except for build testing.
->
+Hi,
 
-Thanks, merged
--Bryan
+This patchset modifies max8997 driver and associated function drivers to use
+register maps instead of operating directly on i2c bus. This change allowed
+to simplify irq handling, and to move some initializations to individual
+function drivers. Hence now when some functions are not enabled, their i2c
+clients, regmaps and irqs are not registered.
 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  drivers/leds/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> --- linux-3.14-rc6.orig/drivers/leds/Kconfig    2014-03-11 17:20:25.505429515 +0100
-> +++ linux-3.14-rc6/drivers/leds/Kconfig 2014-03-11 17:21:57.843560506 +0100
-> @@ -474,7 +474,7 @@ config LEDS_LM355x
->
->  config LEDS_OT200
->         tristate "LED support for the Bachmann OT200"
-> -       depends on LEDS_CLASS && HAS_IOMEM
-> +       depends on LEDS_CLASS && HAS_IOMEM && (X86_32 || COMPILE_TEST)
->         help
->           This option enables support for the LEDs on the Bachmann OT200.
->           Say Y to enable LEDs on the Bachmann OT200.
->
->
-> --
-> Jean Delvare
-> SUSE L3 Support
+Best regards
+Robert Baldyga
+Samsung R&D Institute Poland
+
+Changelog:
+
+v2:
+- rebase patches on Lee Jones' MFD tree
+- add missing selects in Kconfig
+- add missing deinitializations
+- add interrupt disabling when suspend
+- few minor changes and typo fixes
+
+v1: https://lkml.org/lkml/2014/3/11/291
+
+Robert Baldyga (3):
+  mfd: max8997: use regmap to access registers
+  mfd: max8997: handle IRQs using regmap
+  mfd: max8997: move regmap handling to function drivers
+
+ drivers/extcon/extcon-max8997.c     |  176 +++++++++++++---
+ drivers/input/misc/max8997_haptic.c |  121 +++++++++--
+ drivers/leds/leds-max8997.c         |   13 +-
+ drivers/mfd/Kconfig                 |    3 +-
+ drivers/mfd/Makefile                |    2 +-
+ drivers/mfd/max8997-irq.c           |  387 -----------------------------------
+ drivers/mfd/max8997.c               |  237 +++++++--------------
+ drivers/power/max8997_charger.c     |   33 +--
+ drivers/regulator/max8997.c         |   87 ++++----
+ drivers/rtc/rtc-max8997.c           |  102 ++++++---
+ include/linux/mfd/max8997-private.h |   88 ++++++--
+ 11 files changed, 528 insertions(+), 721 deletions(-)
+ delete mode 100644 drivers/mfd/max8997-irq.c
+
+-- 
+1.7.9.5
