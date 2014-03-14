@@ -1,61 +1,82 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: clevo-mail: Make probe function __init
-Date: Thu, 13 Mar 2014 16:16:02 -0700
-Message-ID: <CAK5ve-KjqJfPf+b2vTYzvfPhDKUHqRy_VeypUTt1Y5MOB0yAtA@mail.gmail.com>
-References: <20140313185624.4eb87d4f@endymion.delvare>
+From: Robert Baldyga <r.baldyga@samsung.com>
+Subject: Re: [PATCH v3 2/4] mfd: max8997: handle IRQs using regmap
+Date: Fri, 14 Mar 2014 09:33:35 +0100
+Message-ID: <5322BEDF.4080408@samsung.com>
+References: <1394703532-494-1-git-send-email-r.baldyga@samsung.com>
+ <1394703532-494-3-git-send-email-r.baldyga@samsung.com>
+ <53218C30.9000707@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:48087 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755006AbaCMXQX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 13 Mar 2014 19:16:23 -0400
-Received: by mail-la0-f45.google.com with SMTP id hr17so1198569lab.4
-        for <linux-leds@vger.kernel.org>; Thu, 13 Mar 2014 16:16:22 -0700 (PDT)
-In-Reply-To: <20140313185624.4eb87d4f@endymion.delvare>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <53218C30.9000707@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: sameo@linux.intel.com, lee.jones@linaro.org, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
 List-Id: linux-leds@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>
 
-On Thu, Mar 13, 2014 at 10:56 AM, Jean Delvare <jdelvare@suse.de> wrote:
-> One of the benefits of platform_driver_probe() is that you can make
-> the probe function __init.
->
+On 03/13/2014 11:45 AM, Chanwoo Choi wrote:
+> Hi Robert,
+> 
+> On 03/13/2014 06:38 PM, Robert Baldyga wrote:
+>> This patch modifies mfd driver to use regmap for handling interrupts.
+>> It allows to simplify irq handling process. This modifications needed
+>> to make small changes in function drivers, which use interrupts.
+>>
+>> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
 
-Thanks, merged.
--Bryan
+(...)
 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
-> Build tested only, no hardware.
->
->  drivers/leds/leds-clevo-mail.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> --- linux-3.14-rc6.orig/drivers/leds/leds-clevo-mail.c  2014-01-20 03:40:07.000000000 +0100
-> +++ linux-3.14-rc6/drivers/leds/leds-clevo-mail.c       2014-03-13 18:29:24.597849128 +0100
-> @@ -153,7 +153,7 @@ static struct led_classdev clevo_mail_le
->         .flags                  = LED_CORE_SUSPENDRESUME,
->  };
->
-> -static int clevo_mail_led_probe(struct platform_device *pdev)
-> +static int __init clevo_mail_led_probe(struct platform_device *pdev)
->  {
->         return led_classdev_register(&pdev->dev, &clevo_mail_led);
->  }
-> @@ -165,7 +165,6 @@ static int clevo_mail_led_remove(struct
->  }
->
->  static struct platform_driver clevo_mail_led_driver = {
-> -       .probe          = clevo_mail_led_probe,
->         .remove         = clevo_mail_led_remove,
->         .driver         = {
->                 .name           = KBUILD_MODNAME,
->
->
-> --
-> Jean Delvare
-> SUSE L3 Support
+>> @@ -468,8 +560,11 @@ static int max8997_suspend(struct device *dev)
+>>  	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
+>>  	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+>>  
+>> -	if (device_may_wakeup(dev))
+>> -		irq_set_irq_wake(max8997->irq, 1);
+>> +	if (device_may_wakeup(dev)) {
+>> +		enable_irq_wake(max8997->irq);
+>> +		disable_irq(max8997->irq);
+> 
+> irq_set_irq_wake() is same as enable_irq_wake().
+
+It's more intuitive name and makes code reading easier.
+
+> Why is it necessary for disable_irq(max8997->irq)?
+
+It's because we don't want to get interrupts before i2c controller will
+be ready. So we disable irq in drivers suspend, and enable in resume.
+
+If some iqr will come before enable_irq() call, it will be noticed, and
+IRQ_PENDING flag will be set. In this case irq will be handled
+immediately after enable_irq() call.
+
+In previous version there was call of max8997_irq_resume() in resume
+function, which caused forced interrupt handling, which has similar effect.
+
+> 
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -478,9 +573,12 @@ static int max8997_resume(struct device *dev)
+>>  	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
+>>  	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+>>  
+>> -	if (device_may_wakeup(dev))
+>> -		irq_set_irq_wake(max8997->irq, 0);
+>> -	return max8997_irq_resume(max8997);
+>> +	if (device_may_wakeup(dev)) {
+>> +		disable_irq_wake(max8997->irq);
+>> +		enable_irq(max8997->irq);
+> 
+> ditto.
+> 
+>> +	}
+>> +
+>> +	return 0;
+>>  }
+>>  
+
+Thanks,
+Robert Baldyga
