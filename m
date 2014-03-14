@@ -1,82 +1,56 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: Re: [PATCH v3 2/4] mfd: max8997: handle IRQs using regmap
-Date: Fri, 14 Mar 2014 09:33:35 +0100
-Message-ID: <5322BEDF.4080408@samsung.com>
-References: <1394703532-494-1-git-send-email-r.baldyga@samsung.com>
- <1394703532-494-3-git-send-email-r.baldyga@samsung.com>
- <53218C30.9000707@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] ARM/leds: move ARM Versatile LED driver to leds subsystem
+Date: Fri, 14 Mar 2014 10:55:24 +0100
+Message-ID: <CACRpkdYhFO+ur-RpwC6geBpuzMa-nghc86oWdCiVMiB2-BsrmQ@mail.gmail.com>
+References: <1393509500-26002-1-git-send-email-linus.walleij@linaro.org>
+	<1393509500-26002-2-git-send-email-linus.walleij@linaro.org>
+	<1393510075.460580224@f137.i.mail.ru>
+	<CACRpkdb+nLnjM7PUtkzmSJLjEC7FOH65sgOB6m-BUPB8YMzxiA@mail.gmail.com>
+	<1394540634.21334.27.camel@hornet>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-reply-to: <53218C30.9000707@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: sameo@linux.intel.com, lee.jones@linaro.org, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:43101 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752926AbaCNJzZ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Mar 2014 05:55:25 -0400
+Received: by mail-ob0-f174.google.com with SMTP id wo20so2303116obc.19
+        for <linux-leds@vger.kernel.org>; Fri, 14 Mar 2014 02:55:24 -0700 (PDT)
+In-Reply-To: <1394540634.21334.27.camel@hornet>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pawel Moll <pawel.moll@arm.com>
+Cc: Alexander Shiyan <shc_work@mail.ru>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 03/13/2014 11:45 AM, Chanwoo Choi wrote:
-> Hi Robert,
-> 
-> On 03/13/2014 06:38 PM, Robert Baldyga wrote:
->> This patch modifies mfd driver to use regmap for handling interrupts.
->> It allows to simplify irq handling process. This modifications needed
->> to make small changes in function drivers, which use interrupts.
+On Tue, Mar 11, 2014 at 1:23 PM, Pawel Moll <pawel.moll@arm.com> wrote:
+> On Tue, 2014-03-11 at 12:18 +0000, Linus Walleij wrote:
+
+>> On some systems without "real" GPIO the above would lead to
+>> compiling in the entire gpiolib (149 KB) just to do this.
 >>
->> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+>> I would agree more with inventing something like leds-mmio as a
+>> separate refactoring after this, i.e. a driver for any memory-mapped
+>> LED, which should cover a few cases. What do you think about this
+>> idea?
+>
+> Something like this?
+> http://thread.gmane.org/gmane.linux.kernel/1387110 ;-)
 
-(...)
+Yes.
 
->> @@ -468,8 +560,11 @@ static int max8997_suspend(struct device *dev)
->>  	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
->>  	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
->>  
->> -	if (device_may_wakeup(dev))
->> -		irq_set_irq_wake(max8997->irq, 1);
->> +	if (device_may_wakeup(dev)) {
->> +		enable_irq_wake(max8997->irq);
->> +		disable_irq(max8997->irq);
-> 
-> irq_set_irq_wake() is same as enable_irq_wake().
+The current GPIO maintainer is not aligned with the statements
+that this is "some kind of GPIO".
 
-It's more intuitive name and makes code reading easier.
+Also the fact that this adds some hundred KB of code just to do
+this simple thing wasn't brought up.
 
-> Why is it necessary for disable_irq(max8997->irq)?
+> But seriously speaking, I did exactly what Alexander mentioned on VE,
+> considering the SYS_LED & alikes as "pseudo-gpios".
 
-It's because we don't want to get interrupts before i2c controller will
-be ready. So we disable irq in drivers suspend, and enable in resume.
+I just don't agree with that. They aren't GPIO's until used as
+such, and push in a huge abstraction layer inbetween the driver
+and its hardware for no good reason whatsoever I think.
+This is not keeping things simple, it is making things obscure.
 
-If some iqr will come before enable_irq() call, it will be noticed, and
-IRQ_PENDING flag will be set. In this case irq will be handled
-immediately after enable_irq() call.
-
-In previous version there was call of max8997_irq_resume() in resume
-function, which caused forced interrupt handling, which has similar effect.
-
-> 
->> +	}
->> +
->>  	return 0;
->>  }
->>  
->> @@ -478,9 +573,12 @@ static int max8997_resume(struct device *dev)
->>  	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
->>  	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
->>  
->> -	if (device_may_wakeup(dev))
->> -		irq_set_irq_wake(max8997->irq, 0);
->> -	return max8997_irq_resume(max8997);
->> +	if (device_may_wakeup(dev)) {
->> +		disable_irq_wake(max8997->irq);
->> +		enable_irq(max8997->irq);
-> 
-> ditto.
-> 
->> +	}
->> +
->> +	return 0;
->>  }
->>  
-
-Thanks,
-Robert Baldyga
+Yours,
+Linus Walleij
