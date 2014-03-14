@@ -1,56 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] ARM/leds: move ARM Versatile LED driver to leds subsystem
-Date: Fri, 14 Mar 2014 10:55:24 +0100
-Message-ID: <CACRpkdYhFO+ur-RpwC6geBpuzMa-nghc86oWdCiVMiB2-BsrmQ@mail.gmail.com>
-References: <1393509500-26002-1-git-send-email-linus.walleij@linaro.org>
-	<1393509500-26002-2-git-send-email-linus.walleij@linaro.org>
-	<1393510075.460580224@f137.i.mail.ru>
-	<CACRpkdb+nLnjM7PUtkzmSJLjEC7FOH65sgOB6m-BUPB8YMzxiA@mail.gmail.com>
-	<1394540634.21334.27.camel@hornet>
+From: Robert Baldyga <r.baldyga@samsung.com>
+Subject: Re: [PATCH v3 4/4] mfd: max8997: move regmap handling to function
+ drivers
+Date: Fri, 14 Mar 2014 12:21:55 +0100
+Message-ID: <5322E653.90107@samsung.com>
+References: <1394703532-494-1-git-send-email-r.baldyga@samsung.com>
+ <1394703532-494-5-git-send-email-r.baldyga@samsung.com>
+ <532191E6.6080108@samsung.com> <20140313125504.GA10356@lee--X1>
+ <20140313140901.GW366@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:43101 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752926AbaCNJzZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Mar 2014 05:55:25 -0400
-Received: by mail-ob0-f174.google.com with SMTP id wo20so2303116obc.19
-        for <linux-leds@vger.kernel.org>; Fri, 14 Mar 2014 02:55:24 -0700 (PDT)
-In-Reply-To: <1394540634.21334.27.camel@hornet>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36254 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751618AbaCNLWA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Mar 2014 07:22:00 -0400
+In-reply-to: <20140313140901.GW366@sirena.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Alexander Shiyan <shc_work@mail.ru>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, sameo@linux.intel.com, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
 
-On Tue, Mar 11, 2014 at 1:23 PM, Pawel Moll <pawel.moll@arm.com> wrote:
-> On Tue, 2014-03-11 at 12:18 +0000, Linus Walleij wrote:
+Hi,
 
->> On some systems without "real" GPIO the above would lead to
->> compiling in the entire gpiolib (149 KB) just to do this.
->>
->> I would agree more with inventing something like leds-mmio as a
->> separate refactoring after this, i.e. a driver for any memory-mapped
->> LED, which should cover a few cases. What do you think about this
->> idea?
->
-> Something like this?
-> http://thread.gmane.org/gmane.linux.kernel/1387110 ;-)
+On 03/13/2014 03:09 PM, Mark Brown wrote:
+> On Thu, Mar 13, 2014 at 12:55:04PM +0000, Lee Jones wrote:
+>>> Is it necessary? If previous mfd driver has various i2c line, previous mfd driver
+>>> initialize regmap/i2c setting on mfd driver.
+>>> I'm not sure that regmap/i2c setting code move from mfd driver to each driver.
+>>>
+>>> Dear Lee Jones,
+>>> I need your opinion about moving regmap/i2c code from mfd driver to each driver.
+> 
+>> I'd rather take advice from Mark on this one.
+> 
+> I don't really case that much; I'm having a hard time seeing it as
+> particularly useful to do the refactoring but if it makes people
+> happy...  Keeping things in the core would help promote reusability I
+> guess but I'm not sure that's likely to actually happen with this sort
+> of driver/device.
+> 
 
-Yes.
+If you think it's not needed, you can ignore this patch. I prepared it
+due to Dmitry Torokhov suggestion. If you think it's useless it doesn't
+make me unhappy :)
 
-The current GPIO maintainer is not aligned with the statements
-that this is "some kind of GPIO".
-
-Also the fact that this adds some hundred KB of code just to do
-this simple thing wasn't brought up.
-
-> But seriously speaking, I did exactly what Alexander mentioned on VE,
-> considering the SYS_LED & alikes as "pseudo-gpios".
-
-I just don't agree with that. They aren't GPIO's until used as
-such, and push in a huge abstraction layer inbetween the driver
-and its hardware for no good reason whatsoever I think.
-This is not keeping things simple, it is making things obscure.
-
-Yours,
-Linus Walleij
+Best regards
+Robert Baldyga
