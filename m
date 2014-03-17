@@ -1,373 +1,41 @@
-From: Alex Hung <alex.hung@canonical.com>
-Subject: Re: [PATCH] dell-led: add mic mute led interface
-Date: Mon, 17 Mar 2014 16:30:16 +0800
-Message-ID: <CAJ=jqubpS0GDA3rdNMShc5opAEnd4RqGKiowTbXwqwjEODpTrA@mail.gmail.com>
-References: <1394097685-24815-1-git-send-email-alex.hung@canonical.com>
-	<CAK5ve-JQ68MQ=Veki+k+DP06xkcLPXikEYs0223YmZ05broUEQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH] leds: pwm: set polarity on non DT platforms
+Date: Mon, 17 Mar 2014 19:38:41 +0100
+Message-ID: <1395081521-16568-1-git-send-email-alexandre.belloni@free-electrons.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qc0-f177.google.com ([209.85.216.177]:60281 "EHLO
-	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932442AbaCQIga (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Mar 2014 04:36:30 -0400
-Received: by mail-qc0-f177.google.com with SMTP id w7so5434105qcr.8
-        for <linux-leds@vger.kernel.org>; Mon, 17 Mar 2014 01:36:29 -0700 (PDT)
-In-Reply-To: <CAK5ve-JQ68MQ=Veki+k+DP06xkcLPXikEYs0223YmZ05broUEQ@mail.gmail.com>
+Received: from top.free-electrons.com ([176.31.233.9]:60095 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932214AbaCQSiu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Mar 2014 14:38:50 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Hi Bryan,
+Set inversed polarity when .active_low is set in the platform_data. With device
+tree, this is taken care of by of_pwm_xlate_with_flags(), called from
+of_pwm_get().
 
-Thanks for the comments. I will modify accordingly. Please also see
-inline comments.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/leds/leds-pwm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-On Fri, Mar 7, 2014 at 7:10 AM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Thu, Mar 6, 2014 at 1:21 AM, Alex Hung <alex.hung@canonical.com> wrote:
->> This patch provides similar led functional of
->>
->>   420f973 thinkpad-acpi: Add mute and mic-mute LED functionality
->>
->
-> Good, basically I don't have any major problem for this patch. Some
-> picky comments as bellow
->
->> Signed-off-by: Alex Hung <alex.hung@canonical.com>
->> ---
->>  drivers/leds/dell-led.c  | 180 +++++++++++++++++++++++++++++++++++++++++++++--
->>  include/linux/dell-led.h |  10 +++
->>  2 files changed, 183 insertions(+), 7 deletions(-)
->>  create mode 100644 include/linux/dell-led.h
->>
->> diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
->> index e5c5738..cbbd8e0 100644
->> --- a/drivers/leds/dell-led.c
->> +++ b/drivers/leds/dell-led.c
->> @@ -15,12 +15,15 @@
->>  #include <linux/leds.h>
->>  #include <linux/slab.h>
->>  #include <linux/module.h>
->> +#include <linux/dmi.h>
->> +#include <linux/dell-led.h>
->>
->>  MODULE_AUTHOR("Louis Davis/Jim Dailey");
->>  MODULE_DESCRIPTION("Dell LED Control Driver");
->>  MODULE_LICENSE("GPL");
->>
->>  #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
->> +#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
->>  MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
->>
->>  /* Error Result Codes: */
->> @@ -39,6 +42,155 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
->>  #define CMD_LED_OFF    17
->>  #define CMD_LED_BLINK  18
->>
->> +struct app_wmi_args {
->> +       u16 class;
->> +       u16 selector;
->> +       u32 arg1;
->> +       u32 arg2;
->> +       u32 arg3;
->> +       u32 arg4;
->> +       u32 res1;
->> +       u32 res2;
->> +       u32 res3;
->> +       u32 res4;
->> +       char dummy[92];
->> +};
->> +
->> +#define GLOBAL_MIC_MUTE_ENABLE 0x364
->> +#define GLOBAL_MIC_MUTE_DISABLE        0x365
->
-> Don't mixed with space or tab between words. Please unify them.
->
->> +
->> +struct dell_bios_data_token {
->> +       u16 tokenid;
->> +       u16 location;
->> +       u16 value;
->> +};
->> +
->> +struct __attribute__ ((__packed__)) dell_bios_calling_interface {
->> +       struct  dmi_header header;
->> +       u16     cmd_io_addr;
->> +       u8      cmd_io_code;
->> +       u32     supported_cmds;
->> +       struct  dell_bios_data_token damap[];
->> +};
->> +
->> +static struct dell_bios_data_token dell_mic_tokens[2];
->> +
->> +static int dell_wmi_perform_query(struct app_wmi_args *args)
->> +{
->> +       struct app_wmi_args *bios_return;
->> +       union acpi_object *obj;
->> +       struct acpi_buffer input;
->> +       struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
->> +       u32 rc;
->> +       acpi_status status;
->> +
->> +       input.length = 128;
->> +       input.pointer = args;
->> +
->> +       status = wmi_evaluate_method(DELL_APP_GUID, 0, 1, &input, &output);
->> +       if (!ACPI_SUCCESS(status))
->> +               return -EINVAL;
->> +
->> +       obj = output.pointer;
->> +
->> +       if (!obj) {
->> +               return -EINVAL;
->> +       } else if (obj->type != ACPI_TYPE_BUFFER) {
->> +               kfree(obj);
->> +               return -EINVAL;
->> +       }
->> +
->> +       bios_return = (struct app_wmi_args *)obj->buffer.pointer;
->> +       rc = bios_return->res1;
->> +
->> +       if (rc) {
->> +               kfree(obj);
->> +               return rc;
->> +       }
->> +
->> +       memcpy(args, bios_return, sizeof(struct app_wmi_args));
->> +       kfree(obj);
->> +
->> +       return 0;
->> +}
->
-> The error exiting code looks a little bit uncomfortable to me. How
-> about this, no functional change at all:
-> ---
-> diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-> index cbbd8e0..2dad3f8 100644
-> --- a/drivers/leds/dell-led.c
-> +++ b/drivers/leds/dell-led.c
-> @@ -81,7 +81,7 @@ static int dell_wmi_perform_query(struct app_wmi_args *args)
->         union acpi_object *obj;
->         struct acpi_buffer input;
->         struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-> -       u32 rc;
-> +       u32 rc = -EINVAL;
->         acpi_status status;
->
->         input.length = 128;
-> @@ -89,29 +89,27 @@ static int dell_wmi_perform_query(struct app_wmi_args *args)
->
->         status = wmi_evaluate_method(DELL_APP_GUID, 0, 1, &input, &output);
->         if (!ACPI_SUCCESS(status))
-> -               return -EINVAL;
-> +               goto err_out0
->
->         obj = output.pointer;
-> +       if (!obj)
-> +               goto err_out0;
->
-> -       if (!obj) {
-> -               return -EINVAL;
-> -       } else if (obj->type != ACPI_TYPE_BUFFER) {
-> -               kfree(obj);
-> -               return -EINVAL;
-> -       }
-> +       if (obj->type != ACPI_TYPE_BUFFER)
-> +               goto err_out1;
->
->         bios_return = (struct app_wmi_args *)obj->buffer.pointer;
->         rc = bios_return->res1;
-> -
-> -       if (rc) {
-> -               kfree(obj);
-> -               return rc;
-> -       }
-> +       if (rc)
-> +               goto err_out1;
->
->         memcpy(args, bios_return, sizeof(struct app_wmi_args));
-> -       kfree(obj);
-> +       rc = 0
->
-> -       return 0;
-> +err_out1:
-> +       kfree(obj);
-> +err_out0:
-> +       return rc;
->  }
->
->  static void __init find_micmute_tokens(const struct dmi_header *dm,
-> void *dummy)
-> ---
->
->
->> +
->> +static void __init find_micmute_tokens(const struct dmi_header *dm, void *dummy)
->> +{
->> +       struct dell_bios_calling_interface *calling_interface;
->> +       struct dell_bios_data_token *token;
->> +       int token_size = sizeof(struct dell_bios_data_token);
->> +       int i = 0;
->> +
->> +       if (dm->type == 0xda && dm->length > 17) {
->> +               calling_interface = container_of(dm,
->> +                               struct dell_bios_calling_interface, header);
->> +
->> +               token = &calling_interface->damap[i];
->> +               while (token->tokenid != 0xffff) {
->> +                       if (token->tokenid == GLOBAL_MIC_MUTE_DISABLE)
->> +                               memcpy(&dell_mic_tokens[0], token, token_size);
->> +                       else if (token->tokenid == GLOBAL_MIC_MUTE_ENABLE)
->> +                               memcpy(&dell_mic_tokens[1], token, token_size);
->> +
->> +                       i++;
->> +                       token = &calling_interface->damap[i];
->> +               }
-> Will this loop be an endless loop? For example, there is no 0xffff
-> tokenid in the chain.
-
-The document states "with the last token having a value of FFFFh to
-indicate end-of-table".
-
-
->
->> +       }
->> +}
->> +
->> +static int dell_micmute_led_set(int state)
->> +{
->> +       struct app_wmi_args args;
->> +       struct dell_bios_data_token *token;
->> +
->> +       if (!wmi_has_guid(DELL_APP_GUID))
->> +               return -ENODEV;
->> +
->> +       if (state == 0 || state == 1)
->> +               token = &dell_mic_tokens[state];
->> +       else
->> +               return -EINVAL;
->> +
->> +       memset(&args, 0, sizeof(struct app_wmi_args));
->> +
->> +       args.class = 1;
->> +       args.arg1 = token->location;
->> +       args.arg2 = token->value;
->> +
->> +       dell_wmi_perform_query(&args);
->> +
->> +       return state;
->> +}
->> +
->> +int dell_app_wmi_led_set(int whichled, int on)
->> +{
->> +       int state = 0;
->> +
->> +       switch (whichled) {
->> +       case DELL_LED_MICMUTE:
->> +               state = dell_micmute_led_set(on);
->> +               break;
->> +       default:
->> +               pr_warn("led type %x is not supported\n", whichled);
->> +               break;
->> +       }
->> +
->> +       return state;
->> +}
->> +EXPORT_SYMBOL_GPL(dell_app_wmi_led_set);
-> Looks like this is the API for other modules, is the return value right?
-> By default, it will return 0, I think this means succeed.
-
-A return of 0 means succeed. This is indeed an API for other modules.
-It is similar totpacpi_led_set in thinkpad_acpi.c.
-
->
->> +
->> +static int __init dell_micmute_led_init(void)
->> +{
->> +       memset(dell_mic_tokens, 0, sizeof(struct dell_bios_data_token) * 2);
->> +       dmi_walk(find_micmute_tokens, NULL);
->> +
->> +       return 0;
->> +}
->> +
->> +static void __exit dell_micmute_led_exit(void)
->> +{
->> +}
->> +
-> Actually we don't need this empty function if we don't call it.
->
->>  struct bios_args {
->>         unsigned char length;
->>         unsigned char result_code;
->> @@ -181,21 +333,35 @@ static int __init dell_led_init(void)
->>  {
->>         int error = 0;
->>
->> -       if (!wmi_has_guid(DELL_LED_BIOS_GUID))
->> +       if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
->>                 return -ENODEV;
->>
->> -       error = led_off();
->> -       if (error != 0)
->> -               return -ENODEV;
->> +       if (wmi_has_guid(DELL_APP_GUID))
->> +               error = dell_micmute_led_init();
->> +
->> +       if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
->> +               error = led_off();
->> +               if (error != 0)
->> +                       return -ENODEV;
->> +
->> +               error = led_classdev_register(NULL, &dell_led);
->> +       }
->>
->> -       return led_classdev_register(NULL, &dell_led);
->> +       return error;
->>  }
->>
->>  static void __exit dell_led_exit(void)
->>  {
->> -       led_classdev_unregister(&dell_led);
->> +       int error = 0;
->>
->> -       led_off();
->> +       if (wmi_has_guid(DELL_APP_GUID))
->> +               dell_micmute_led_exit();
-> No need to call the empty function.
->
->
->> +
->> +       if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
->> +               error = led_off();
->> +               if (error == 0)
->> +                       led_classdev_unregister(&dell_led);
->> +       }
->>  }
->>
->>  module_init(dell_led_init);
->> diff --git a/include/linux/dell-led.h b/include/linux/dell-led.h
->> new file mode 100644
->> index 0000000..7009b8b
->> --- /dev/null
->> +++ b/include/linux/dell-led.h
->> @@ -0,0 +1,10 @@
->> +#ifndef __DELL_LED_H__
->> +#define __DELL_LED_H__
->> +
->> +enum {
->> +       DELL_LED_MICMUTE,
->> +};
->> +
->> +int dell_app_wmi_led_set(int whichled, int on);
->> +
->> +#endif
->> --
->> 1.8.1.2
->>
-
-
-
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 605047428b5a..09681556a6aa 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -180,6 +180,11 @@ static int led_pwm_probe(struct platform_device *pdev)
+ 			led_dat->cdev.max_brightness = cur_led->max_brightness;
+ 			led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+ 
++			if (led_dat->active_low)
++				if (pwm_set_polarity(led_dat->pwm,
++						 PWM_POLARITY_INVERSED))
++					dev_err(&pdev->dev, "impossible to change polarity");
++
+ 			led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
+ 			if (led_dat->can_sleep)
+ 				INIT_WORK(&led_dat->work, led_pwm_work);
 -- 
-Cheers,
-Alex Hung
+1.8.3.2
