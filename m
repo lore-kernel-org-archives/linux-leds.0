@@ -1,55 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 4/4] mfd: max8997: move regmap handling to function
- drivers
-Date: Tue, 18 Mar 2014 08:50:39 +0000
-Message-ID: <20140318085039.GF25478@lee--X1>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 1/4] mfd: max8997: use regmap to access registers
+Date: Tue, 18 Mar 2014 18:51:05 +0900
+Message-ID: <53281709.5010102@samsung.com>
 References: <1394703532-494-1-git-send-email-r.baldyga@samsung.com>
- <1394703532-494-5-git-send-email-r.baldyga@samsung.com>
- <532191E6.6080108@samsung.com>
- <20140313125504.GA10356@lee--X1>
- <20140313140901.GW366@sirena.org.uk>
- <5322E653.90107@samsung.com>
+ <1394703532-494-2-git-send-email-r.baldyga@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5322E653.90107@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <1394703532-494-2-git-send-email-r.baldyga@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
 To: Robert Baldyga <r.baldyga@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, sameo@linux.intel.com, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
+Cc: sameo@linux.intel.com, lee.jones@linaro.org, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
 List-Id: linux-leds@vger.kernel.org
 
-> >>> Is it necessary? If previous mfd driver has various i2c line, pre=
-vious mfd driver
-> >>> initialize regmap/i2c setting on mfd driver.
-> >>> I'm not sure that regmap/i2c setting code move from mfd driver to=
- each driver.
-> >>>
-> >>> Dear Lee Jones,
-> >>> I need your opinion about moving regmap/i2c code from mfd driver =
-to each driver.
-> >=20
-> >> I'd rather take advice from Mark on this one.
-> >=20
-> > I don't really case that much; I'm having a hard time seeing it as
-> > particularly useful to do the refactoring but if it makes people
-> > happy...  Keeping things in the core would help promote reusability=
- I
-> > guess but I'm not sure that's likely to actually happen with this s=
-ort
-> > of driver/device.
->=20
-> If you think it's not needed, you can ignore this patch. I prepared i=
-t
-> due to Dmitry Torokhov suggestion. If you think it's useless it doesn=
-'t
-> make me unhappy :)
+On 03/13/2014 06:38 PM, Robert Baldyga wrote:
+> This patch modifies max8997 driver and each associated function driver,
+> to use regmap instead of operating directly on i2c bus. It will allow to
+> simplify IRQ handling using regmap-irq.
+> 
+> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/extcon/extcon-max8997.c     |   31 ++++----
+>  drivers/input/misc/max8997_haptic.c |   34 +++++----
+>  drivers/leds/leds-max8997.c         |   13 ++--
+>  drivers/mfd/Kconfig                 |    1 +
+>  drivers/mfd/max8997-irq.c           |   64 +++++++---------
+>  drivers/mfd/max8997.c               |  141 ++++++++++++++++-------------------
+>  drivers/power/max8997_charger.c     |   33 ++++----
+>  drivers/regulator/max8997.c         |   87 +++++++++++----------
+>  drivers/rtc/rtc-max8997.c           |   56 +++++++-------
+>  include/linux/mfd/max8997-private.h |   17 ++---
+>  10 files changed, 228 insertions(+), 249 deletions(-)
+> 
 
-Ignored, thanks. ;)
+For extcon part,
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Thanks,
+Chanwoo Choi
+
