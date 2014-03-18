@@ -1,41 +1,55 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH] leds: pwm: set polarity on non DT platforms
-Date: Mon, 17 Mar 2014 19:38:41 +0100
-Message-ID: <1395081521-16568-1-git-send-email-alexandre.belloni@free-electrons.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:60095 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932214AbaCQSiu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Mar 2014 14:38:50 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 4/4] mfd: max8997: move regmap handling to function
+ drivers
+Date: Tue, 18 Mar 2014 08:50:39 +0000
+Message-ID: <20140318085039.GF25478@lee--X1>
+References: <1394703532-494-1-git-send-email-r.baldyga@samsung.com>
+ <1394703532-494-5-git-send-email-r.baldyga@samsung.com>
+ <532191E6.6080108@samsung.com>
+ <20140313125504.GA10356@lee--X1>
+ <20140313140901.GW366@sirena.org.uk>
+ <5322E653.90107@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5322E653.90107@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Robert Baldyga <r.baldyga@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, sameo@linux.intel.com, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, a.zummo@towertech.it, paul.gortmaker@windriver.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, rtc-linux@googlegroups.com, m.szyprowski@samsung.com, k.kozlowski@samsung.com
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Set inversed polarity when .active_low is set in the platform_data. With device
-tree, this is taken care of by of_pwm_xlate_with_flags(), called from
-of_pwm_get().
+> >>> Is it necessary? If previous mfd driver has various i2c line, pre=
+vious mfd driver
+> >>> initialize regmap/i2c setting on mfd driver.
+> >>> I'm not sure that regmap/i2c setting code move from mfd driver to=
+ each driver.
+> >>>
+> >>> Dear Lee Jones,
+> >>> I need your opinion about moving regmap/i2c code from mfd driver =
+to each driver.
+> >=20
+> >> I'd rather take advice from Mark on this one.
+> >=20
+> > I don't really case that much; I'm having a hard time seeing it as
+> > particularly useful to do the refactoring but if it makes people
+> > happy...  Keeping things in the core would help promote reusability=
+ I
+> > guess but I'm not sure that's likely to actually happen with this s=
+ort
+> > of driver/device.
+>=20
+> If you think it's not needed, you can ignore this patch. I prepared i=
+t
+> due to Dmitry Torokhov suggestion. If you think it's useless it doesn=
+'t
+> make me unhappy :)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/leds/leds-pwm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Ignored, thanks. ;)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 605047428b5a..09681556a6aa 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -180,6 +180,11 @@ static int led_pwm_probe(struct platform_device *pdev)
- 			led_dat->cdev.max_brightness = cur_led->max_brightness;
- 			led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 
-+			if (led_dat->active_low)
-+				if (pwm_set_polarity(led_dat->pwm,
-+						 PWM_POLARITY_INVERSED))
-+					dev_err(&pdev->dev, "impossible to change polarity");
-+
- 			led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
- 			if (led_dat->can_sleep)
- 				INIT_WORK(&led_dat->work, led_pwm_work);
--- 
-1.8.3.2
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
