@@ -1,98 +1,84 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 2/8] leds: Improve and export led_update_brightness function
-Date: Thu, 20 Mar 2014 15:51:04 +0100
-Message-ID: <1395327070-20215-3-git-send-email-j.anaszewski@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH/RFC 6/8] leds: Add support for max77693 mfd flash cell
+Date: Thu, 20 Mar 2014 15:34:43 +0000
+Message-ID: <20140320153443.GD8207@lee--X1>
 References: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
+ <1395327070-20215-7-git-send-email-j.anaszewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <1395327070-20215-7-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-led_update_brightness helper function used to be exploited
-only locally in the led-class.c module, where its result was
-being passed to the brightness_show sysfs callback. With the
-introduction of v4l2-flash subdevice the same functionality
-became required for checking the current flash strobe status.
-This patch adds checking brightness_get callback error code
-and adds the function to the LED subsystem public API.
+On Thu, 20 Mar 2014, Jacek Anaszewski wrote:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- drivers/leds/led-class.c |    6 ------
- drivers/leds/led-core.c  |   17 +++++++++++++++++
- include/linux/leds.h     |   10 ++++++++++
- 3 files changed, 27 insertions(+), 6 deletions(-)
+> This patch adds led-flash support to Maxim max77693 chipset.
+> Device can be exposed to user space through LED subsystem
+> sysfs interface or through V4L2 subdevice when the support
+> for Multimedia Framework is enabled. Device supports up to
+> two leds which can work in flash and torch mode. Leds can
+> be triggered externally or by software.
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: SangYoung Son <hello.son@smasung.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/leds/Kconfig         |    9 +
+>  drivers/leds/Makefile        |    1 +
+>  drivers/leds/leds-max77693.c |  768 ++++++++++++++++++++++++++++++++=
+++++++++++
+>  drivers/mfd/max77693.c       |   21 +-
+>  include/linux/mfd/max77693.h |   32 ++
+>  5 files changed, 825 insertions(+), 6 deletions(-)
+>  create mode 100644 drivers/leds/leds-max77693.c
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 0510532..04de352 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -27,12 +27,6 @@
- 
- static struct class *leds_class;
- 
--static void led_update_brightness(struct led_classdev *led_cdev)
--{
--	if (led_cdev->brightness_get)
--		led_cdev->brightness = led_cdev->brightness_get(led_cdev);
--}
--
- static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 093703c..21ceda1 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -166,6 +166,23 @@ void led_set_brightness(struct led_classdev *led_cdev,
- }
- EXPORT_SYMBOL(led_set_brightness);
- 
-+int led_update_brightness(struct led_classdev *led_cdev)
-+{
-+	int ret;
-+
-+	if (led_cdev->brightness_get == NULL)
-+		return -EINVAL;
-+
-+	ret = led_cdev->brightness_get(led_cdev);
-+	if (ret >= 0)
-+		led_cdev->brightness = ret;
-+	else
-+		return ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(led_update_brightness);
-+
- int led_set_flash_mode(struct led_classdev *led_cdev,
- 			bool flash_mode)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 1bf0ab3..5bf05cc 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -190,6 +190,16 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
- extern void led_set_brightness(struct led_classdev *led_cdev,
- 			       enum led_brightness brightness);
- /**
-+ * led_update_brightness - update LED brightness
-+ * @led_cdev: the LED to query about
-+ *
-+ * Get an LED's current brightness and update led_cdev->brightness
-+ * member with the obtained value.
-+ *
-+ * Returns: 0 on success or negative error value on failure
-+ */
-+extern int led_update_brightness(struct led_classdev *led_cdev);
-+
- /**
-  * led_set_flash_mode - set LED flash mode
-  * @led_cdev: the LED to set
--- 
-1.7.9.5
+[...]
+
+> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+> index c5535f0..6fa92d3 100644
+> --- a/drivers/mfd/max77693.c
+> +++ b/drivers/mfd/max77693.c
+> @@ -41,12 +41,21 @@
+>  #define I2C_ADDR_MUIC	(0x4A >> 1)
+>  #define I2C_ADDR_HAPTIC	(0x90 >> 1)
+> =20
+> -static const struct mfd_cell max77693_devs[] =3D {
+> -	{ .name =3D "max77693-pmic", },
+> -	{ .name =3D "max77693-charger", },
+> -	{ .name =3D "max77693-flash", },
+> -	{ .name =3D "max77693-muic", },
+> -	{ .name =3D "max77693-haptic", },
+> +enum mfd_devs_idx {
+> +	IDX_PMIC,
+> +	IDX_CHARGER,
+> +	IDX_LED,
+> +	IDX_MUIC,
+> +	IDX_HAPTIC,
+> +};
+> +
+> +static struct mfd_cell max77693_devs[] =3D {
+> +	[IDX_PMIC]      =3D { .name =3D "max77693-pmic", },
+> +	[IDX_CHARGER]   =3D { .name =3D "max77693-charger", },
+> +	[IDX_LED]       =3D { .name =3D "max77693-led",
+> +			    .of_compatible =3D "maxim,max77693-led"},
+> +	[IDX_MUIC]      =3D { .name =3D "max77693-muic", },
+> +	[IDX_HAPTIC]    =3D { .name =3D "max77693-haptic", },
+>  };
+
+What is the purpose of this change?
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
