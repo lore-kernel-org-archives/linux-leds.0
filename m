@@ -1,57 +1,42 @@
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-Subject: Re: [PATCH/RFC 1/8] leds: Add sysfs and kernel internal API for
- flash LEDs
-Date: Thu, 20 Mar 2014 15:28:21 +0000
-Message-ID: <1395329301.27611.4.camel@ted>
-References: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
-	 <1395327070-20215-2-git-send-email-j.anaszewski@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 14/16] backlight: atmel-pwm-bl: remove obsolete driver
+Date: Fri, 21 Mar 2014 09:51:16 +0900
+Message-ID: <000101cf449f$aa609960$ff21cc20$%han@samsung.com>
+References: <1395234209-15546-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1395234209-15546-15-git-send-email-alexandre.belloni@free-electrons.com>
+ <20140319142231.GF20872@samfundet.no>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from dan.rpsys.net ([93.97.175.187]:57477 "EHLO dan.rpsys.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752083AbaCTPgL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 20 Mar 2014 11:36:11 -0400
-In-Reply-To: <1395327070-20215-2-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140319142231.GF20872@samfundet.no>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Hans-Christian Egtvedt' <egtvedt@samfundet.no>, 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Nicolas Ferre' <nicolas.ferre@atmel.com>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Haavard Skinnemoen' <hskinnemoen@gmail.com>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>
 
-On Thu, 2014-03-20 at 15:51 +0100, Jacek Anaszewski wrote:
-> Some LED devices support two operation modes - torch and
-> flash. This patch provides support for flash LED devices
-> in the LED subsystem by introducing new sysfs attributes
-> and kernel internal interface. The attributes being
-> introduced are: flash_mode, flash_timeout, max_flash_timeout,
-> flash_fault and hw_triggered.
-> The modifications aim to be compatible with V4L2 framework
-> requirements related to the flash devices management. The
-> design assumes that V4L2 driver can take of the LED class
-> device control and communicate with it through the kernel
-> internal interface. The LED sysfs interface is made
-> unavailable then.
+On Wednesday, March 19, 2014 11:23 PM, Hans-Christian Egtvedt wrote:
+> Around Wed 19 Mar 2014 14:03:27 +0100 or thereabout, Alexandre Belloni wrote:
+> > The atmel-pwm-bl driver is now obsolete. It is not used by any mainlined boards
+> > and is replaced by the generic pwm_bl with the pawm-atmel driver using the
+> > generic PWM framework.
+> >
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  drivers/leds/led-class.c    |  216 +++++++++++++++++++++++++++++++++++++++++--
->  drivers/leds/led-core.c     |  124 +++++++++++++++++++++++--
->  drivers/leds/led-triggers.c |   17 +++-
->  drivers/leds/leds.h         |    9 ++
->  include/linux/leds.h        |  136 +++++++++++++++++++++++++++
->  5 files changed, 486 insertions(+), 16 deletions(-)
+> Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
 
-It seems rather sad to have to insert that amount of code into the core
-LED files for something which only a small number of LEDs actually use.
-This will increase the footprint of the core LED code significantly.
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-Is it not possible to add this as a module/extension to the LED core
-rather than completely entangling them?
+Best regards,
+Jingoo Han
 
-Cheers,
-
-Richard
+> 
+> > ---
+> >  drivers/video/backlight/Kconfig        |  11 --
+> >  drivers/video/backlight/Makefile       |   1 -
+> >  drivers/video/backlight/atmel-pwm-bl.c | 223 ---------------------------------
+> >  include/linux/atmel-pwm-bl.h           |  43 -------
+> >  4 files changed, 278 deletions(-)
+> >  delete mode 100644 drivers/video/backlight/atmel-pwm-bl.c
+> >  delete mode 100644 include/linux/atmel-pwm-bl.h
