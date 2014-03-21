@@ -1,42 +1,92 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 14/16] backlight: atmel-pwm-bl: remove obsolete driver
-Date: Fri, 21 Mar 2014 09:51:16 +0900
-Message-ID: <000101cf449f$aa609960$ff21cc20$%han@samsung.com>
-References: <1395234209-15546-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1395234209-15546-15-git-send-email-alexandre.belloni@free-electrons.com>
- <20140319142231.GF20872@samfundet.no>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC 6/8] leds: Add support for max77693 mfd flash cell
+Date: Fri, 21 Mar 2014 09:22:59 +0100
+Message-ID: <532BF6E3.10003@samsung.com>
+References: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
+ <1395327070-20215-7-git-send-email-j.anaszewski@samsung.com>
+ <20140320153443.GD8207@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140319142231.GF20872@samfundet.no>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Hans-Christian Egtvedt' <egtvedt@samfundet.no>, 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Nicolas Ferre' <nicolas.ferre@atmel.com>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Haavard Skinnemoen' <hskinnemoen@gmail.com>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36149 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751756AbaCUIXJ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 21 Mar 2014 04:23:09 -0400
+In-reply-to: <20140320153443.GD8207@lee--X1>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Wednesday, March 19, 2014 11:23 PM, Hans-Christian Egtvedt wrote:
-> Around Wed 19 Mar 2014 14:03:27 +0100 or thereabout, Alexandre Belloni wrote:
-> > The atmel-pwm-bl driver is now obsolete. It is not used by any mainlined boards
-> > and is replaced by the generic pwm_bl with the pawm-atmel driver using the
-> > generic PWM framework.
-> >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> 
-> Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+On 03/20/2014 04:34 PM, Lee Jones wrote:
+> On Thu, 20 Mar 2014, Jacek Anaszewski wrote:
+>
+>> This patch adds led-flash support to Maxim max77693 chipset.
+>> Device can be exposed to user space through LED subsystem
+>> sysfs interface or through V4L2 subdevice when the support
+>> for Multimedia Framework is enabled. Device supports up to
+>> two leds which can work in flash and torch mode. Leds can
+>> be triggered externally or by software.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Bryan Wu <cooloney@gmail.com>
+>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>> Cc: SangYoung Son <hello.son@smasung.com>
+>> Cc: Samuel Ortiz <sameo@linux.intel.com>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> ---
+>>   drivers/leds/Kconfig         |    9 +
+>>   drivers/leds/Makefile        |    1 +
+>>   drivers/leds/leds-max77693.c |  768 ++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/mfd/max77693.c       |   21 +-
+>>   include/linux/mfd/max77693.h |   32 ++
+>>   5 files changed, 825 insertions(+), 6 deletions(-)
+>>   create mode 100644 drivers/leds/leds-max77693.c
+>
+> [...]
+>
+>> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+>> index c5535f0..6fa92d3 100644
+>> --- a/drivers/mfd/max77693.c
+>> +++ b/drivers/mfd/max77693.c
+>> @@ -41,12 +41,21 @@
+>>   #define I2C_ADDR_MUIC	(0x4A >> 1)
+>>   #define I2C_ADDR_HAPTIC	(0x90 >> 1)
+>>
+>> -static const struct mfd_cell max77693_devs[] = {
+>> -	{ .name = "max77693-pmic", },
+>> -	{ .name = "max77693-charger", },
+>> -	{ .name = "max77693-flash", },
+>> -	{ .name = "max77693-muic", },
+>> -	{ .name = "max77693-haptic", },
+>> +enum mfd_devs_idx {
+>> +	IDX_PMIC,
+>> +	IDX_CHARGER,
+>> +	IDX_LED,
+>> +	IDX_MUIC,
+>> +	IDX_HAPTIC,
+>> +};
+>> +
+>> +static struct mfd_cell max77693_devs[] = {
+>> +	[IDX_PMIC]      = { .name = "max77693-pmic", },
+>> +	[IDX_CHARGER]   = { .name = "max77693-charger", },
+>> +	[IDX_LED]       = { .name = "max77693-led",
+>> +			    .of_compatible = "maxim,max77693-led"},
+>> +	[IDX_MUIC]      = { .name = "max77693-muic", },
+>> +	[IDX_HAPTIC]    = { .name = "max77693-haptic", },
+>>   };
+>
+> What is the purpose of this change?
+>
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Introducing mfd_devs_idx itself is a cosmetic change, which
+actually could be avoided. Initialization of the of_compatible field
+is required for the led driver to get matched properly. And as I've
+just realized also max77693-flash name should be preserved.
+I will fix this in the next version of the patch.
 
-Best regards,
-Jingoo Han
-
-> 
-> > ---
-> >  drivers/video/backlight/Kconfig        |  11 --
-> >  drivers/video/backlight/Makefile       |   1 -
-> >  drivers/video/backlight/atmel-pwm-bl.c | 223 ---------------------------------
-> >  include/linux/atmel-pwm-bl.h           |  43 -------
-> >  4 files changed, 278 deletions(-)
-> >  delete mode 100644 drivers/video/backlight/atmel-pwm-bl.c
-> >  delete mode 100644 include/linux/atmel-pwm-bl.h
+Thanks,
+Jacek Anaszewski
