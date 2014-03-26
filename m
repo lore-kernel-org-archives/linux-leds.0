@@ -1,64 +1,252 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 14/16] backlight: atmel-pwm-bl: remove obsolete driver
-Date: Tue, 25 Mar 2014 09:15:39 +0900
-Message-ID: <001501cf47bf$5a88e3c0$0f9aab40$%han@samsung.com>
-References: <1395234209-15546-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1395234209-15546-15-git-send-email-alexandre.belloni@free-electrons.com>
- <20140319142231.GF20872@samfundet.no>
- <000101cf449f$aa609960$ff21cc20$%han@samsung.com>
- <20140324155412.GA9083@piout.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Alex Hung <alex.hung@canonical.com>
+Subject: [PATCH v2] dell-led: add mic mute led interface
+Date: Wed, 26 Mar 2014 17:27:02 +0800
+Message-ID: <1395826022-11372-1-git-send-email-alex.hung@canonical.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29810 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751121AbaCYAPm (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 24 Mar 2014 20:15:42 -0400
-In-reply-to: <20140324155412.GA9083@piout.net>
-Content-language: ko
+Received: from youngberry.canonical.com ([91.189.89.112]:60163 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792AbaCZJ05 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 26 Mar 2014 05:26:57 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: 'Alexandre Belloni' <alexandre.belloni@free-electrons.com>, 'Thierry Reding' <thierry.reding@gmail.com>
-Cc: 'Hans-Christian Egtvedt' <egtvedt@samfundet.no>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Nicolas Ferre' <nicolas.ferre@atmel.com>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Haavard Skinnemoen' <hskinnemoen@gmail.com>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, alex.hung@canonical.com
 
-On Tuesday, March 25, 2014 12:54 AM, Alexandre Belloni wrote:
-> On 21/03/2014 at 09:51:16 +0900, Jingoo Han wrote :
-> > On Wednesday, March 19, 2014 11:23 PM, Hans-Christian Egtvedt wrote:
-> > > Around Wed 19 Mar 2014 14:03:27 +0100 or thereabout, Alexandre Belloni wrote:
-> > > > The atmel-pwm-bl driver is now obsolete. It is not used by any mainlined boards
-> > > > and is replaced by the generic pwm_bl with the pawm-atmel driver using the
-> > > > generic PWM framework.
-> > > >
-> > > > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > >
-> > > Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-> >
-> > Acked-by: Jingoo Han <jg1.han@samsung.com>
-> >
-> 
-> You didn't comment on patch 08/16, are you fine with it ? I guess this
-> is the only one holding back the full series.
+This patch provides similar led functional of
 
-'drivers/video/backlight/pwm_bl.c' is Thierry Reding's domain,
-as follows.
+  420f973 thinkpad-acpi: Add mute and mic-mute LED functionality
 
-  PWM SUBSYSTEM
-  M:      Thierry Reding <thierry.reding@gmail.com>
-  L:      linux-pwm@vger.kernel.org
-  S:      Maintained
-  .....
-  F:      drivers/video/backlight/pwm_bl.c
+Signed-off-by: Alex Hung <alex.hung@canonical.com>
+---
+ drivers/leds/dell-led.c  | 171 +++++++++++++++++++++++++++++++++++++++++++++--
+ include/linux/dell-led.h |  10 +++
+ 2 files changed, 174 insertions(+), 7 deletions(-)
+ create mode 100644 include/linux/dell-led.h
 
-So, it is required to get Ack from Thierry Reding.
-
-Best regards,
-Jingoo Han
-
-> 
-> Regards,
-> 
-> --
-> Alexandre Belloni, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+index e5c5738..c36acaf 100644
+--- a/drivers/leds/dell-led.c
++++ b/drivers/leds/dell-led.c
+@@ -15,12 +15,15 @@
+ #include <linux/leds.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/dmi.h>
++#include <linux/dell-led.h>
+ 
+ MODULE_AUTHOR("Louis Davis/Jim Dailey");
+ MODULE_DESCRIPTION("Dell LED Control Driver");
+ MODULE_LICENSE("GPL");
+ 
+ #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
++#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
+ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ 
+ /* Error Result Codes: */
+@@ -39,6 +42,149 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ #define CMD_LED_OFF	17
+ #define CMD_LED_BLINK	18
+ 
++struct app_wmi_args {
++	u16 class;
++	u16 selector;
++	u32 arg1;
++	u32 arg2;
++	u32 arg3;
++	u32 arg4;
++	u32 res1;
++	u32 res2;
++	u32 res3;
++	u32 res4;
++	char dummy[92];
++};
++
++#define GLOBAL_MIC_MUTE_ENABLE	0x364
++#define GLOBAL_MIC_MUTE_DISABLE	0x365
++
++struct dell_bios_data_token {
++	u16 tokenid;
++	u16 location;
++	u16 value;
++};
++
++struct __attribute__ ((__packed__)) dell_bios_calling_interface {
++	struct	dmi_header header;
++	u16	cmd_io_addr;
++	u8	cmd_io_code;
++	u32	supported_cmds;
++	struct	dell_bios_data_token damap[];
++};
++
++static struct dell_bios_data_token dell_mic_tokens[2];
++
++static int dell_wmi_perform_query(struct app_wmi_args *args)
++{
++	struct app_wmi_args *bios_return;
++	union acpi_object *obj;
++	struct acpi_buffer input;
++	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
++	acpi_status status;
++	u32 rc = -EINVAL;
++
++	input.length = 128;
++	input.pointer = args;
++
++	status = wmi_evaluate_method(DELL_APP_GUID, 0, 1, &input, &output);
++	if (!ACPI_SUCCESS(status))
++		goto err_out0;
++
++	obj = output.pointer;
++	if (!obj)
++		goto err_out0;
++
++	if (obj->type != ACPI_TYPE_BUFFER)
++		goto err_out1;
++
++	bios_return = (struct app_wmi_args *)obj->buffer.pointer;
++	rc = bios_return->res1;
++	if (rc)
++		goto err_out1;
++
++	memcpy(args, bios_return, sizeof(struct app_wmi_args));
++	rc = 0;
++
++ err_out1:
++	kfree(obj);
++ err_out0:
++	return rc;
++}
++
++static void __init find_micmute_tokens(const struct dmi_header *dm, void *dummy)
++{
++	struct dell_bios_calling_interface *calling_interface;
++	struct dell_bios_data_token *token;
++	int token_size = sizeof(struct dell_bios_data_token);
++	int i = 0;
++
++	if (dm->type == 0xda && dm->length > 17) {
++		calling_interface = container_of(dm,
++				struct dell_bios_calling_interface, header);
++
++		token = &calling_interface->damap[i];
++		while (token->tokenid != 0xffff) {
++			if (token->tokenid == GLOBAL_MIC_MUTE_DISABLE)
++				memcpy(&dell_mic_tokens[0], token, token_size);
++			else if (token->tokenid == GLOBAL_MIC_MUTE_ENABLE)
++				memcpy(&dell_mic_tokens[1], token, token_size);
++
++			i++;
++			token = &calling_interface->damap[i];
++		}
++	}
++}
++
++static int dell_micmute_led_set(int state)
++{
++	struct app_wmi_args args;
++	struct dell_bios_data_token *token;
++
++	if (!wmi_has_guid(DELL_APP_GUID))
++		return -ENODEV;
++
++	if (state == 0 || state == 1)
++		token = &dell_mic_tokens[state];
++	else
++		return -EINVAL;
++
++	memset(&args, 0, sizeof(struct app_wmi_args));
++
++	args.class = 1;
++	args.arg1 = token->location;
++	args.arg2 = token->value;
++
++	dell_wmi_perform_query(&args);
++
++	return state;
++}
++
++int dell_app_wmi_led_set(int whichled, int on)
++{
++	int state = 0;
++
++	switch (whichled) {
++	case DELL_LED_MICMUTE:
++		state = dell_micmute_led_set(on);
++		break;
++	default:
++		pr_warn("led type %x is not supported\n", whichled);
++		break;
++	}
++
++	return state;
++}
++EXPORT_SYMBOL_GPL(dell_app_wmi_led_set);
++
++static int __init dell_micmute_led_init(void)
++{
++	memset(dell_mic_tokens, 0, sizeof(struct dell_bios_data_token) * 2);
++	dmi_walk(find_micmute_tokens, NULL);
++
++	return 0;
++}
++
+ struct bios_args {
+ 	unsigned char length;
+ 	unsigned char result_code;
+@@ -181,21 +327,32 @@ static int __init dell_led_init(void)
+ {
+ 	int error = 0;
+ 
+-	if (!wmi_has_guid(DELL_LED_BIOS_GUID))
++	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
+ 		return -ENODEV;
+ 
+-	error = led_off();
+-	if (error != 0)
+-		return -ENODEV;
++	if (wmi_has_guid(DELL_APP_GUID))
++		error = dell_micmute_led_init();
+ 
+-	return led_classdev_register(NULL, &dell_led);
++	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
++		error = led_off();
++		if (error != 0)
++			return -ENODEV;
++
++		error = led_classdev_register(NULL, &dell_led);
++	}
++
++	return error;
+ }
+ 
+ static void __exit dell_led_exit(void)
+ {
+-	led_classdev_unregister(&dell_led);
++	int error = 0;
+ 
+-	led_off();
++	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
++		error = led_off();
++		if (error == 0)
++			led_classdev_unregister(&dell_led);
++	}
+ }
+ 
+ module_init(dell_led_init);
+diff --git a/include/linux/dell-led.h b/include/linux/dell-led.h
+new file mode 100644
+index 0000000..7009b8b
+--- /dev/null
++++ b/include/linux/dell-led.h
+@@ -0,0 +1,10 @@
++#ifndef __DELL_LED_H__
++#define __DELL_LED_H__
++
++enum {
++	DELL_LED_MICMUTE,
++};
++
++int dell_app_wmi_led_set(int whichled, int on);
++
++#endif
+-- 
+1.8.1.2
