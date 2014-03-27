@@ -1,286 +1,223 @@
-From: Joe Xue <lgxue@hotmail.com>
-Subject: RE: [PATCH v2] dell-led: add mic mute led interface
-Date: Thu, 27 Mar 2014 09:34:23 -0400
-Message-ID: <BLU172-W206A70FCC089C89E5E2AABAC670@phx.gbl>
-References: <1395826022-11372-1-git-send-email-alex.hung@canonical.com>,<CAK5ve-L1rCR2DOW7yZJ9qDd9vdN6BCGKtCXZkOvfe14sEab5QQ@mail.gmail.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 15/16] leds: atmel-pwm: remove obsolete driver
+Date: Thu, 27 Mar 2014 10:27:43 -0700
+Message-ID: <CAK5ve-JibixcUPvDM9AGquUXmBKWYG2E8PzwBbb_XBS9sRjDyw@mail.gmail.com>
+References: <1395234209-15546-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1395234209-15546-16-git-send-email-alexandre.belloni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from blu0-omc1-s38.blu0.hotmail.com ([65.55.116.49]:1072 "EHLO
-	blu0-omc1-s38.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751469AbaC0Njb convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 27 Mar 2014 09:39:31 -0400
-In-Reply-To: <CAK5ve-L1rCR2DOW7yZJ9qDd9vdN6BCGKtCXZkOvfe14sEab5QQ@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1395234209-15546-16-git-send-email-alexandre.belloni@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Richard Purdie <rpurdie@rpsys.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-pwm@vger.kernel.org, FBDEV list <linux-fbdev@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Alex Hung <alex.hung@canonical.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Bryan,
-
-What about the ledtrigger-pattern?
-Do we need to change some or just give it up.
-
-Joe
-
-
-----------------------------------------
-> From: cooloney@gmail.com
-> Date: Wed, 26 Mar 2014 16:59:49 -0700
-> Subject: Re: [PATCH v2] dell-led: add mic mute led interface
-> To: alex.hung@canonical.com
-> CC: rpurdie@rpsys.net; linux-leds@vger.kernel.org
+On Wed, Mar 19, 2014 at 6:03 AM, Alexandre Belloni
+<alexandre.belloni@free-electrons.com> wrote:
+> The leds-atmel-pwmdriver is now obsolete. It is not used by any mainlined boards
+> and is replaced by the generic leds_pwm with the pawm-atmel driver using the
+> generic PWM framework.
 >
-> On Wed, Mar 26, 2014 at 2:27 AM, Alex Hung <alex.hung@canonical.com> wrote:
->> This patch provides similar led functional of
->>
->> 420f973 thinkpad-acpi: Add mute and mic-mute LED functionality
->>
+
+Good to remove.
+
+Acked-by: Bryan Wu <cooloney@gmail.com>
+
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+>  drivers/leds/Kconfig          |   8 ---
+>  drivers/leds/Makefile         |   1 -
+>  drivers/leds/leds-atmel-pwm.c | 149 ------------------------------------------
+>  3 files changed, 158 deletions(-)
+>  delete mode 100644 drivers/leds/leds-atmel-pwm.c
 >
-> Thanks for the update. I merged it into my -devel branch which targets
-> for 3.15, since right now it's 3.14-rc8 time frame.
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 72156c123033..e7aca5f1e396 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -32,14 +32,6 @@ config LEDS_88PM860X
+>           This option enables support for on-chip LED drivers found on Marvell
+>           Semiconductor 88PM8606 PMIC.
 >
-> -Bryan
+> -config LEDS_ATMEL_PWM
+> -       tristate "LED Support using Atmel PWM outputs"
+> -       depends on LEDS_CLASS
+> -       depends on ATMEL_PWM
+> -       help
+> -         This option enables support for LEDs driven using outputs
+> -         of the dedicated PWM controller found on newer Atmel SOCs.
+> -
+>  config LEDS_LM3530
+>         tristate "LCD Backlight driver for LM3530"
+>         depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 3cd76dbd9be2..6ee06559db45 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -6,7 +6,6 @@ obj-$(CONFIG_LEDS_TRIGGERS)             += led-triggers.o
 >
->> Signed-off-by: Alex Hung <alex.hung@canonical.com>
->> ---
->> drivers/leds/dell-led.c | 171 +++++++++++++++++++++++++++++++++++++++++++++--
->> include/linux/dell-led.h | 10 +++
->> 2 files changed, 174 insertions(+), 7 deletions(-)
->> create mode 100644 include/linux/dell-led.h
->>
->> diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
->> index e5c5738..c36acaf 100644
->> --- a/drivers/leds/dell-led.c
->> +++ b/drivers/leds/dell-led.c
->> @@ -15,12 +15,15 @@
->> #include <linux/leds.h>
->> #include <linux/slab.h>
->> #include <linux/module.h>
->> +#include <linux/dmi.h>
->> +#include <linux/dell-led.h>
->>
->> MODULE_AUTHOR("Louis Davis/Jim Dailey");
->> MODULE_DESCRIPTION("Dell LED Control Driver");
->> MODULE_LICENSE("GPL");
->>
->> #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
->> +#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
->> MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
->>
->> /* Error Result Codes: */
->> @@ -39,6 +42,149 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
->> #define CMD_LED_OFF 17
->> #define CMD_LED_BLINK 18
->>
->> +struct app_wmi_args {
->> + u16 class;
->> + u16 selector;
->> + u32 arg1;
->> + u32 arg2;
->> + u32 arg3;
->> + u32 arg4;
->> + u32 res1;
->> + u32 res2;
->> + u32 res3;
->> + u32 res4;
->> + char dummy[92];
->> +};
->> +
->> +#define GLOBAL_MIC_MUTE_ENABLE 0x364
->> +#define GLOBAL_MIC_MUTE_DISABLE 0x365
->> +
->> +struct dell_bios_data_token {
->> + u16 tokenid;
->> + u16 location;
->> + u16 value;
->> +};
->> +
->> +struct __attribute__ ((__packed__)) dell_bios_calling_interface {
->> + struct dmi_header header;
->> + u16 cmd_io_addr;
->> + u8 cmd_io_code;
->> + u32 supported_cmds;
->> + struct dell_bios_data_token damap[];
->> +};
->> +
->> +static struct dell_bios_data_token dell_mic_tokens[2];
->> +
->> +static int dell_wmi_perform_query(struct app_wmi_args *args)
->> +{
->> + struct app_wmi_args *bios_return;
->> + union acpi_object *obj;
->> + struct acpi_buffer input;
->> + struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
->> + acpi_status status;
->> + u32 rc = -EINVAL;
->> +
->> + input.length = 128;
->> + input.pointer = args;
->> +
->> + status = wmi_evaluate_method(DELL_APP_GUID, 0, 1, &input, &output);
->> + if (!ACPI_SUCCESS(status))
->> + goto err_out0;
->> +
->> + obj = output.pointer;
->> + if (!obj)
->> + goto err_out0;
->> +
->> + if (obj->type != ACPI_TYPE_BUFFER)
->> + goto err_out1;
->> +
->> + bios_return = (struct app_wmi_args *)obj->buffer.pointer;
->> + rc = bios_return->res1;
->> + if (rc)
->> + goto err_out1;
->> +
->> + memcpy(args, bios_return, sizeof(struct app_wmi_args));
->> + rc = 0;
->> +
->> + err_out1:
->> + kfree(obj);
->> + err_out0:
->> + return rc;
->> +}
->> +
->> +static void __init find_micmute_tokens(const struct dmi_header *dm, void *dummy)
->> +{
->> + struct dell_bios_calling_interface *calling_interface;
->> + struct dell_bios_data_token *token;
->> + int token_size = sizeof(struct dell_bios_data_token);
->> + int i = 0;
->> +
->> + if (dm->type == 0xda && dm->length> 17) {
->> + calling_interface = container_of(dm,
->> + struct dell_bios_calling_interface, header);
->> +
->> + token = &calling_interface->damap[i];
->> + while (token->tokenid != 0xffff) {
->> + if (token->tokenid == GLOBAL_MIC_MUTE_DISABLE)
->> + memcpy(&dell_mic_tokens[0], token, token_size);
->> + else if (token->tokenid == GLOBAL_MIC_MUTE_ENABLE)
->> + memcpy(&dell_mic_tokens[1], token, token_size);
->> +
->> + i++;
->> + token = &calling_interface->damap[i];
->> + }
->> + }
->> +}
->> +
->> +static int dell_micmute_led_set(int state)
->> +{
->> + struct app_wmi_args args;
->> + struct dell_bios_data_token *token;
->> +
->> + if (!wmi_has_guid(DELL_APP_GUID))
->> + return -ENODEV;
->> +
->> + if (state == 0 || state == 1)
->> + token = &dell_mic_tokens[state];
->> + else
->> + return -EINVAL;
->> +
->> + memset(&args, 0, sizeof(struct app_wmi_args));
->> +
->> + args.class = 1;
->> + args.arg1 = token->location;
->> + args.arg2 = token->value;
->> +
->> + dell_wmi_perform_query(&args);
->> +
->> + return state;
->> +}
->> +
->> +int dell_app_wmi_led_set(int whichled, int on)
->> +{
->> + int state = 0;
->> +
->> + switch (whichled) {
->> + case DELL_LED_MICMUTE:
->> + state = dell_micmute_led_set(on);
->> + break;
->> + default:
->> + pr_warn("led type %x is not supported\n", whichled);
->> + break;
->> + }
->> +
->> + return state;
->> +}
->> +EXPORT_SYMBOL_GPL(dell_app_wmi_led_set);
->> +
->> +static int __init dell_micmute_led_init(void)
->> +{
->> + memset(dell_mic_tokens, 0, sizeof(struct dell_bios_data_token) * 2);
->> + dmi_walk(find_micmute_tokens, NULL);
->> +
->> + return 0;
->> +}
->> +
->> struct bios_args {
->> unsigned char length;
->> unsigned char result_code;
->> @@ -181,21 +327,32 @@ static int __init dell_led_init(void)
->> {
->> int error = 0;
->>
->> - if (!wmi_has_guid(DELL_LED_BIOS_GUID))
->> + if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
->> return -ENODEV;
->>
->> - error = led_off();
->> - if (error != 0)
->> - return -ENODEV;
->> + if (wmi_has_guid(DELL_APP_GUID))
->> + error = dell_micmute_led_init();
->>
->> - return led_classdev_register(NULL, &dell_led);
->> + if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
->> + error = led_off();
->> + if (error != 0)
->> + return -ENODEV;
->> +
->> + error = led_classdev_register(NULL, &dell_led);
->> + }
->> +
->> + return error;
->> }
->>
->> static void __exit dell_led_exit(void)
->> {
->> - led_classdev_unregister(&dell_led);
->> + int error = 0;
->>
->> - led_off();
->> + if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
->> + error = led_off();
->> + if (error == 0)
->> + led_classdev_unregister(&dell_led);
->> + }
->> }
->>
->> module_init(dell_led_init);
->> diff --git a/include/linux/dell-led.h b/include/linux/dell-led.h
->> new file mode 100644
->> index 0000000..7009b8b
->> --- /dev/null
->> +++ b/include/linux/dell-led.h
->> @@ -0,0 +1,10 @@
->> +#ifndef __DELL_LED_H__
->> +#define __DELL_LED_H__
->> +
->> +enum {
->> + DELL_LED_MICMUTE,
->> +};
->> +
->> +int dell_app_wmi_led_set(int whichled, int on);
->> +
->> +#endif
->> --
->> 1.8.1.2
->>
+>  # LED Platform Drivers
+>  obj-$(CONFIG_LEDS_88PM860X)            += leds-88pm860x.o
+> -obj-$(CONFIG_LEDS_ATMEL_PWM)           += leds-atmel-pwm.o
+>  obj-$(CONFIG_LEDS_BD2802)              += leds-bd2802.o
+>  obj-$(CONFIG_LEDS_LOCOMO)              += leds-locomo.o
+>  obj-$(CONFIG_LEDS_LM3530)              += leds-lm3530.o
+> diff --git a/drivers/leds/leds-atmel-pwm.c b/drivers/leds/leds-atmel-pwm.c
+> deleted file mode 100644
+> index 56cec8d6a2ac..000000000000
+> --- a/drivers/leds/leds-atmel-pwm.c
+> +++ /dev/null
+> @@ -1,149 +0,0 @@
+> -#include <linux/kernel.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/leds.h>
+> -#include <linux/io.h>
+> -#include <linux/atmel_pwm.h>
+> -#include <linux/slab.h>
+> -#include <linux/module.h>
+> -
+> -
+> -struct pwmled {
+> -       struct led_classdev     cdev;
+> -       struct pwm_channel      pwmc;
+> -       struct gpio_led         *desc;
+> -       u32                     mult;
+> -       u8                      active_low;
+> -};
+> -
+> -
+> -/*
+> - * For simplicity, we use "brightness" as if it were a linear function
+> - * of PWM duty cycle.  However, a logarithmic function of duty cycle is
+> - * probably a better match for perceived brightness: two is half as bright
+> - * as four, four is half as bright as eight, etc
+> - */
+> -static void pwmled_brightness(struct led_classdev *cdev, enum led_brightness b)
+> -{
+> -       struct pwmled            *led;
+> -
+> -       /* update the duty cycle for the *next* period */
+> -       led = container_of(cdev, struct pwmled, cdev);
+> -       pwm_channel_writel(&led->pwmc, PWM_CUPD, led->mult * (unsigned) b);
+> -}
+> -
+> -/*
+> - * NOTE:  we reuse the platform_data structure of GPIO leds,
+> - * but repurpose its "gpio" number as a PWM channel number.
+> - */
+> -static int pwmled_probe(struct platform_device *pdev)
+> -{
+> -       const struct gpio_led_platform_data     *pdata;
+> -       struct pwmled                           *leds;
+> -       int                                     i;
+> -       int                                     status;
+> -
+> -       pdata = dev_get_platdata(&pdev->dev);
+> -       if (!pdata || pdata->num_leds < 1)
+> -               return -ENODEV;
+> -
+> -       leds = devm_kzalloc(&pdev->dev, pdata->num_leds * sizeof(*leds),
+> -                       GFP_KERNEL);
+> -       if (!leds)
+> -               return -ENOMEM;
+> -
+> -       for (i = 0; i < pdata->num_leds; i++) {
+> -               struct pwmled           *led = leds + i;
+> -               const struct gpio_led   *dat = pdata->leds + i;
+> -               u32                     tmp;
+> -
+> -               led->cdev.name = dat->name;
+> -               led->cdev.brightness = LED_OFF;
+> -               led->cdev.brightness_set = pwmled_brightness;
+> -               led->cdev.default_trigger = dat->default_trigger;
+> -
+> -               led->active_low = dat->active_low;
+> -
+> -               status = pwm_channel_alloc(dat->gpio, &led->pwmc);
+> -               if (status < 0)
+> -                       goto err;
+> -
+> -               /*
+> -                * Prescale clock by 2^x, so PWM counts in low MHz.
+> -                * Start each cycle with the LED active, so increasing
+> -                * the duty cycle gives us more time on (== brighter).
+> -                */
+> -               tmp = 5;
+> -               if (!led->active_low)
+> -                       tmp |= PWM_CPR_CPOL;
+> -               pwm_channel_writel(&led->pwmc, PWM_CMR, tmp);
+> -
+> -               /*
+> -                * Pick a period so PWM cycles at 100+ Hz; and a multiplier
+> -                * for scaling duty cycle:  brightness * mult.
+> -                */
+> -               tmp = (led->pwmc.mck / (1 << 5)) / 100;
+> -               tmp /= 255;
+> -               led->mult = tmp;
+> -               pwm_channel_writel(&led->pwmc, PWM_CDTY,
+> -                               led->cdev.brightness * 255);
+> -               pwm_channel_writel(&led->pwmc, PWM_CPRD,
+> -                               LED_FULL * tmp);
+> -
+> -               pwm_channel_enable(&led->pwmc);
+> -
+> -               /* Hand it over to the LED framework */
+> -               status = led_classdev_register(&pdev->dev, &led->cdev);
+> -               if (status < 0) {
+> -                       pwm_channel_free(&led->pwmc);
+> -                       goto err;
+> -               }
+> -       }
+> -
+> -       platform_set_drvdata(pdev, leds);
+> -       return 0;
+> -
+> -err:
+> -       if (i > 0) {
+> -               for (i = i - 1; i >= 0; i--) {
+> -                       led_classdev_unregister(&leds[i].cdev);
+> -                       pwm_channel_free(&leds[i].pwmc);
+> -               }
+> -       }
+> -
+> -       return status;
+> -}
+> -
+> -static int pwmled_remove(struct platform_device *pdev)
+> -{
+> -       const struct gpio_led_platform_data     *pdata;
+> -       struct pwmled                           *leds;
+> -       unsigned                                i;
+> -
+> -       pdata = dev_get_platdata(&pdev->dev);
+> -       leds = platform_get_drvdata(pdev);
+> -
+> -       for (i = 0; i < pdata->num_leds; i++) {
+> -               struct pwmled           *led = leds + i;
+> -
+> -               led_classdev_unregister(&led->cdev);
+> -               pwm_channel_free(&led->pwmc);
+> -       }
+> -
+> -       return 0;
+> -}
+> -
+> -static struct platform_driver pwmled_driver = {
+> -       .driver = {
+> -               .name =         "leds-atmel-pwm",
+> -               .owner =        THIS_MODULE,
+> -       },
+> -       /* REVISIT add suspend() and resume() methods */
+> -       .probe =        pwmled_probe,
+> -       .remove =       pwmled_remove,
+> -};
+> -
+> -module_platform_driver(pwmled_driver);
+> -
+> -MODULE_DESCRIPTION("Driver for LEDs with PWM-controlled brightness");
+> -MODULE_LICENSE("GPL");
+> -MODULE_ALIAS("platform:leds-atmel-pwm");
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html 		 	   		  
+> 1.8.3.2
+>
