@@ -1,92 +1,85 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v2 5/8] DT: Add documentation for the mfd Maxim max77693
- flash cell
-Date: Fri, 28 Mar 2014 16:29:02 +0100
-Message-ID: <1396020545-15727-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v2 3/8] Documentation: leds: Add description of flash mode
+Date: Fri, 28 Mar 2014 16:29:00 +0100
+Message-ID: <1396020545-15727-4-git-send-email-j.anaszewski@samsung.com>
 References: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds device tree binding documentation for
-the flash cell of the Maxim max77693 multifunctional device.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/devicetree/bindings/mfd/max77693.txt |   47 ++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ Documentation/leds/leds-class.txt |   52 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
-index 11921cc..7a9a4d5 100644
---- a/Documentation/devicetree/bindings/mfd/max77693.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-@@ -27,6 +27,43 @@ Optional properties:
+diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+index 62261c0..ea50d27 100644
+--- a/Documentation/leds/leds-class.txt
++++ b/Documentation/leds/leds-class.txt
+@@ -8,6 +8,58 @@ LED is defined in max_brightness file. The brightness file will set the brightne
+ of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
+ brightness support so will just be turned on for non-zero brightness settings.
  
- 	[*] refer Documentation/devicetree/bindings/regulator/regulator.txt
- 
-+Optional node:
-+- led-flash : the LED submodule device node
++Some LED devices support two modes - torch and flash. In order to enable
++support for flash LEDs the CONFIG_LEDS_CLASS_FLASH symbol must be defined
++in the kernel config. A flash LED driver must initialize the "flash" field
++of the led_classdev structure (see <linux/leds_flash.h>) to enable flash
++related features of the LED subsystem for the driver.
 +
-+Required properties of "led-flash" node:
-+- compatible : must be "maxim,max77693-flash"
++There are seven sysfs attributes dedicated specifically to the flash LED devices:
 +
-+Optional properties of "led-flash" node:
-+- maxim,iout : Array of four maximum intensities in microampheres of the current
-+	in order: flash1, flash2, torch1, torch2.
-+	Range:
-+		flash - 15625 - 1000000,
-+		torch - 15625 - 250000.
-+- maxim,trigger : Array of flags indicating which trigger can activate given led
-+	in order: flash1, flash2, torch1, torch2.
-+	Possible flag values (can be combined):
-+		1 - FLASH pin of the chip,
-+		2 - TORCH pin of the chip,
-+		4 - software via I2C command.
-+- maxim,trigger-type : Array of trigger types in order: flash, torch.
-+	Possible trigger types:
-+		0 - Rising edge of the signal triggers the flash/torch,
-+		1 - Signal level controls duration of the flash/torch.
-+- maxim,timeout : Array of timeouts in microseconds after which leds are
-+	turned off in order: flash, torch.
-+	Range:
-+		flash: 62500 - 1000000,
-+		torch: 0 (no timeout) - 15728000.
-+- maxim,boost-mode : Array of the flash boost modes in order: flash1, flash2.
-+	Possible values:
-+		0 - no boost,
-+		1 - adaptive mode,
-+		2 - fixed mode.
-+- maxim,boost-vout : Output voltage of the boost module in millivolts.
-+- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
-+	if chip estimates that system voltage could drop below this level due
-+	to flash power consumption.
++	- flash_brightness - flash LED brightness in milliampers (RW)
++	- max_flash_brightness - maximum available flash LED brightness (RO)
++	- flash_timeout - flash strobe duration in milliseconds (RW)
++	- max_flash_timeout - maximum available flash strobe duration (RO)
++	- flash_strobe - flash strobe state (RW)
++	- flash_fault - bitmask of flash faults that may have occured, possible
++			flags are:
++		* 0x01 - flash controller voltage to the flash LED has exceeded
++			 the limit specific to the flash controller
++		* 0x02 - the flash strobe was still on when the timeout set by
++			 the user has expired; not all flash controllers may set
++			 this in all such conditions
++		* 0x04 - the flash controller has overheated
++		* 0x08 - the short circuit protection of the flash controller
++			 has been triggered
++		* 0x10 - current in the LED power supply has exceeded the limit
++			 specific to the flash controller
++		* 0x40 - flash controller voltage to the flash LED has been below
++			 the minimum limit specific to the flash
++		* 0x80 - the input voltage of the flash controller is below
++			 the limit under which strobing the flash at full current
++			 will not be possible. The condition persists until this
++			 flag is no longer set
++		* 0x100 - the temperature of the LED has exceeded its allowed
++			  upper limit
++	- hw_triggered - some devices expose dedicated hardware pins for
++			 triggering a flash LED - the attribute allows to set
++			 this mode (RW)
 +
- Example:
- 	max77693@66 {
- 		compatible = "maxim,max77693";
-@@ -52,4 +89,14 @@ Example:
- 					regulator-boot-on;
- 			};
- 		};
-+		led_flash: led-flash {
-+			compatible = "maxim,max77693-flash";
-+			maxim,iout = <625000 625000 250000 250000>;
-+			maxim,trigger = <5 5 6 6>;
-+			maxim,trigger-type = <0 1>;
-+			maxim,timeout = <500000 0>;
-+			maxim,boost-mode = <1 1>;
-+			maxim,boost-vout = <5000>;
-+			maxim,vsys-min = <2400>;
-+		};
- 	};
++The LED subsystem driver can be controlled also from the level of
++the VideoForLinux2 subsystem. In order to enable this the CONFIG_V4L2_FLASH
++symbol has to be defined in the kernel config. The driver must
++initialize v4l2_flash_ctrl_config structure and pass it to the v4l2_flash_init
++function. On remove v4l2_flash_release has to be called (see <media/v4l2-flash.h>).
++After proper initialization V4L2 Flash sub-device is created. The sub-device
++must be registered by a V4L2 video device to become available for the user
++space. This is accomplished with use of asynchronous sub-device registration
++mechanism (see <media/v4l2-async.h>).
++A V4l2 Flash sub-device exposes a number of V4L2 controls.
++When the V4L2_CID_FLASH_LED_MODE control is set to V4L2_FLASH_LED_MODE_TORCH
++or V4L2_FLASH_LED_MODE_FLASH the LED subsystem sysfs interface becomes
++unavailable. The interface can be unlocked by setting the mode back
++to V4L2_FLASH_LED_MODE_NONE.
++
+ The class also introduces the optional concept of an LED trigger. A trigger
+ is a kernel based source of led events. Triggers can either be simple or
+ complex. A simple trigger isn't configurable and is designed to slot into
 -- 
 1.7.9.5
