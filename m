@@ -1,70 +1,106 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/2] leds: add DT support for LEDs wired to supply and
- default brightness
-Date: Thu, 27 Mar 2014 16:36:19 -0700
-Message-ID: <CAK5ve-+QU-k2ezKoeAbgb8-htfTBjt9+SsHOXW+D6D28848EkQ@mail.gmail.com>
-References: <E1WJUvl-0003wc-0S@rmk-PC.arm.linux.org.uk> <CAK5ve-+K+R=c7Lp+JaTCOcq9LYHTszQQg9Xp1fQHxqcQ2cVHHw@mail.gmail.com>
- <20140327225752.GD15793@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v2 0/8] LED / flash API integration
+Date: Fri, 28 Mar 2014 16:28:57 +0100
+Message-ID: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:45275 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755279AbaC0Xgl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 27 Mar 2014 19:36:41 -0400
-In-Reply-To: <20140327225752.GD15793@pengutronix.de>
+Received: from mailout1.samsung.com ([203.254.224.24]:40144 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750974AbaC1P3T (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 28 Mar 2014 11:29:19 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>, Thierry Reding <thierry.reding@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Thu, Mar 27, 2014 at 3:57 PM, Uwe Kleine-K=F6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Thu, Mar 27, 2014 at 03:28:32PM -0700, Bryan Wu wrote:
->> On Fri, Feb 28, 2014 at 1:25 PM, Russell King
->> <rmk+kernel@arm.linux.org.uk> wrote:
->> > Some PWM outputs are wired such that the LED they're controlling i=
-s
->> > connected to supply rather than ground.  Therefore, the duty cycle
->> > needs to be inverted to make the LED behave as it should do.
->> >
->> > We also provide a way to specify the default brightness when a
->> > trigger is not specified.
->> >
->> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
->> > ---
->> >  Documentation/devicetree/bindings/leds/leds-pwm.txt |  3 +++
->> >  drivers/leds/leds-pwm.c                             | 15 ++++++++=
-+++----
->> >  2 files changed, 14 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b=
-/Documentation/devicetree/bindings/leds/leds-pwm.txt
->> > index 7297107cf832..ffcb74ab61fd 100644
->> > --- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
->> > +++ b/Documentation/devicetree/bindings/leds/leds-pwm.txt
->> > @@ -13,6 +13,9 @@ node's name represents the name of the correspon=
-ding LED.
->> >    For the pwms and pwm-names property please refer to:
->> >    Documentation/devicetree/bindings/pwm/pwm.txt
->> >  - max-brightness : Maximum brightness possible for the LED
->> > +- default-brightness : (optional) Default brightness for the LED
->> > +- active-low : (optional) For PWMs where the LED is wired to supp=
-ly
->> > +  rather than ground.
->> >  - label :  (optional)
->> >    see Documentation/devicetree/bindings/leds/common.txt
->> >  - linux,default-trigger :  (optional)
->>
->> Why remove "max-brightness", "label" and "linux,default-trigger" her=
-e?
-> They are not removed, they are just unchanged list items after litera=
-l
-> '-'s in the context of the patch.
->
+This is is a second version of the patch series being a follow up
+of the discussion on Media summit 2013-10-23, related to the
+LED / flash API integration (the notes from the discussion were
+enclosed in the message [1], paragraph 5).
+The series is based on linux-next next-20140328 and contains
+significant number of modifications in comparison to its first
+version (Lee, Richard and Sakari - thanks for the review).
 
-Sorry, my bad. please ignore my question then.
+In order to show the exemplary usage of the proposed mechanism
+the patch series includes implementation of a Flash LED device
+driver along with the suitable modifications in a media controller
+driver.
+
+Description of the proposed modifications according to
+the kernel components they are relevant to:
+    - LED subsystem modifications
+        * added led_flash module which, when enabled in the config,
+	  registers flash specific sysfs attributes:
+            - flash_brightness
+	    - max_flash_brightness
+            - flash_timeout
+            - max_flash_timeout
+	    - flash_strobe
+            - flash_fault
+            - hw_triggered
+	and exposes kernel internal API
+            - led_set_flash_strobe
+            - led_get_flash_strobe
+            - led_set_flash_brightness
+            - led_update_flash_brightness
+            - led_set_flash_timeout
+            - led_get_flash_fault
+            - led_set_hw_triggered
+            - led_sysfs_lock
+            - led_sysfs_unlock
+    - Addition of a V4L2 Flash sub-device registration helpers
+        * added v4l2-flash.c and v4l2-flash.h files with helper
+          functions that facilitate registration/unregistration
+          of a subdevice, which wrapps a LED subsystem device and
+          exposes V4L2 Flash control interface
+    - exynos4-is media controller modifications
+    - Addition of a driver for the flash cell of the MAX77693 mfd
+        * the driver exploits the newly introduced mechanism
+    - Update of the samsung-fimc.txt DT bindings documentation
+    - Update of the max77693.txt DT bindings documentation
+    - Update of the LED subsystem documentation
 
 Thanks,
--Bryan
+Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/linux-media/msg69253.html
+
+Jacek Anaszewski (8):
+  leds: Add sysfs and kernel internal API for flash LEDs
+  leds: Improve and export led_update_brightness function
+  Documentation: leds: Add description of flash mode
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693 flash cell
+  media: Add registration helpers for V4L2 flash sub-devices
+  media: exynos4-is: Add support for v4l2-flash subdevs
+  DT: Add documentation for exynos4-is camera-flash property
+
+ .../devicetree/bindings/media/samsung-fimc.txt     |    3 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   47 ++
+ Documentation/leds/leds-class.txt                  |   52 ++
+ drivers/leds/Kconfig                               |   18 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/led-class.c                           |   62 +-
+ drivers/leds/led-core.c                            |   17 +
+ drivers/leds/led-flash.c                           |  375 +++++++++
+ drivers/leds/led-triggers.c                        |   16 +-
+ drivers/leds/leds-max77693.c                       |  864 ++++++++++++++++++++
+ drivers/leds/leds.h                                |    3 +
+ drivers/media/platform/exynos4-is/media-dev.c      |   34 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   14 +-
+ drivers/media/v4l2-core/Kconfig                    |   10 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  302 +++++++
+ drivers/mfd/max77693.c                             |    3 +-
+ include/linux/leds.h                               |   34 +-
+ include/linux/leds_flash.h                         |  189 +++++
+ include/linux/mfd/max77693.h                       |   32 +
+ include/media/v4l2-flash.h                         |  104 +++
+ 21 files changed, 2157 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/leds/led-flash.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/linux/leds_flash.h
+ create mode 100644 include/media/v4l2-flash.h
+
+-- 
+1.7.9.5
