@@ -1,150 +1,213 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC 4/8] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Mon, 31 Mar 2014 12:37:21 +0300
-Message-ID: <20140331093721.GC4522@valkosipuli.retiisi.org.uk>
-References: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
- <1395327070-20215-5-git-send-email-j.anaszewski@samsung.com>
- <20140324000834.GC2054@valkosipuli.retiisi.org.uk>
- <533595A9.8000904@samsung.com>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+Subject: Re: [PATCH/RFC v2 1/8] leds: Add sysfs and kernel internal API for
+ flash LEDs
+Date: Mon, 31 Mar 2014 11:16:21 +0100
+Message-ID: <1396260981.14790.65.camel@ted>
+References: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
+	 <1396020545-15727-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:34357 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753740AbaCaJhz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Mon, 31 Mar 2014 05:37:55 -0400
-Content-Disposition: inline
-In-Reply-To: <533595A9.8000904@samsung.com>
+Received: from dan.rpsys.net ([93.97.175.187]:64848 "EHLO dan.rpsys.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753256AbaCaKQw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 31 Mar 2014 06:16:52 -0400
+In-Reply-To: <1396020545-15727-2-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>
 
-Hi jacek,
-
-On Fri, Mar 28, 2014 at 04:30:49PM +0100, Jacek Anaszewski wrote:
-...
-> >>+static int v4l2_flash_set_intensity(struct v4l2_flash *flash,
-> >>+				    unsigned int intensity)
-> >>+{
-> >>+	struct led_classdev *led_cdev = flash->led_cdev;
-> >>+	unsigned int fault;
-> >>+	int ret;
-> >>+
-> >>+	ret = led_get_flash_fault(led_cdev, &fault);
-> >>+	if (ret < 0 || fault)
-> >>+		return -EINVAL;
-> >
-> >Is it meaningful to check the faults here?
-> >
-> >The existing flash controller drivers mostly do not. The responsibility is
-> >left to the user --- something the user should probably do after the strobe
-> >has expectedly finished. This isn't particularly very well documented in the
-> >spec, though.
+On Fri, 2014-03-28 at 16:28 +0100, Jacek Anaszewski wrote:
+> Some LED devices support two operation modes - torch and
+> flash. This patch provides support for flash LED devices
+> in the LED subsystem by introducing new sysfs attributes
+> and kernel internal interface. The attributes being
+> introduced are: flash_brightness, flash_strobe, flash_timeout,
+> max_flash_timeout, max_flash_brightness, flash_fault and
+> hw_triggered. All the flash related features are placed
+> in a separate module.
+> The modifications aim to be compatible with V4L2 framework
+> requirements related to the flash devices management. The
+> design assumes that V4L2 sub-device can take of the LED class
+> device control and communicate with it through the kernel
+> internal interface. The LED sysfs interface is made
+> unavailable then.
 > 
-> I was influenced by the documentation which says that sometimes strobing
-> the flash may not be possible due to faults. But I agree that checking
-> the faults should be user's responsibility.
-
-What that means is that the presence of the fault *on the chip* may limit
-the device's willingness to actually strobe. The driver does not need to
-enforce it; the chip does.
-
-> >Also, the presence of every fault does not prevent using the flash.
-> >
-> >>+	led_set_brightness(led_cdev, intensity);
-> >
-> >Where do you convert between the LED framework brightness and the value used
-> >by the V4L2 controls?
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
+>  drivers/leds/Kconfig        |    8 +
+>  drivers/leds/Makefile       |    1 +
+>  drivers/leds/led-class.c    |   56 +++++--
+>  drivers/leds/led-flash.c    |  375 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/leds/led-triggers.c |   16 +-
+>  drivers/leds/leds.h         |    3 +
+>  include/linux/leds.h        |   24 ++-
+>  include/linux/leds_flash.h  |  189 ++++++++++++++++++++++
+>  8 files changed, 658 insertions(+), 14 deletions(-)
+>  create mode 100644 drivers/leds/led-flash.c
+>  create mode 100644 include/linux/leds_flash.h
 > 
-> I think that there is no need for conversion. AFAIK the LED subsystem
-> doesn't specify units of the brightness. It specifies LED_FULL enum
-> value but not all LED drivers stick to it. Moreover it limits
-> brightness resolution to 256 levels.
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2062682..1e1c81f 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -19,6 +19,14 @@ config LEDS_CLASS
+>  	  This option enables the led sysfs class in /sys/class/leds.  You'll
+>  	  need this to do anything useful with LEDs.  If unsure, say N.
+>  
+> +config LEDS_CLASS_FLASH
+> +	tristate "Flash LEDs Support"
+> +	depends on LEDS_CLASS
+> +	help
+> +	  This option enables support for flash LED devices. Say Y if you
+> +	  want to use flash specific features of a LED device, if they
+> +	  are supported.
+> +
+>  comment "LED drivers"
+>  
+>  config LEDS_88PM860X
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 3cd76db..8861b86 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -2,6 +2,7 @@
+>  # LED Core
+>  obj-$(CONFIG_NEW_LEDS)			+= led-core.o
+>  obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+> +obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-flash.o
+>  obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+>  
+>  # LED Platform Drivers
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index f37d63c..5bac140 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -9,16 +9,18 @@
+>   * published by the Free Software Foundation.
+>   */
+>  
+> -#include <linux/module.h>
+> -#include <linux/kernel.h>
+> +#include <linux/ctype.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+>  #include <linux/init.h>
+> +#include <linux/kernel.h>
+>  #include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> -#include <linux/device.h>
+>  #include <linux/timer.h>
+> -#include <linux/err.h>
+> -#include <linux/ctype.h>
+>  #include <linux/leds.h>
+> +#include <linux/leds_flash.h>
+>  #include "leds.h"
+>  
+>  static struct class *leds_class;
+> @@ -45,28 +47,38 @@ static ssize_t brightness_store(struct device *dev,
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>  	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret;
+> +
+> +	mutex_lock(&led_cdev->led_lock);
+> +
+> +	if (led_sysfs_is_locked(led_cdev)) {
+> +		ret = -EBUSY;
+> +		goto unlock;
+> +	}
+>  
+>  	ret = kstrtoul(buf, 10, &state);
+>  	if (ret)
+> -		return ret;
+> +		goto unlock;
+>  
+>  	if (state == LED_OFF)
+>  		led_trigger_remove(led_cdev);
+>  	__led_set_brightness(led_cdev, state);
+> +	ret = size;
+>  
+> -	return size;
+> +unlock:
+> +	mutex_unlock(&led_cdev->led_lock);
+> +	return ret;
+>  }
+>  static DEVICE_ATTR_RW(brightness);
+>  
+> -static ssize_t led_max_brightness_show(struct device *dev,
+> +static ssize_t max_brightness_show(struct device *dev,
+>  		struct device_attribute *attr, char *buf)
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>  
+>  	return sprintf(buf, "%u\n", led_cdev->max_brightness);
+>  }
+> -static DEVICE_ATTR(max_brightness, 0444, led_max_brightness_show, NULL);
+> +static DEVICE_ATTR_RO(max_brightness);
+>  
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+> @@ -173,7 +185,15 @@ EXPORT_SYMBOL_GPL(led_classdev_suspend);
+>   */
+>  void led_classdev_resume(struct led_classdev *led_cdev)
+>  {
+> +	struct led_flash *flash = led_cdev->flash;
+> +
+>  	led_cdev->brightness_set(led_cdev, led_cdev->brightness);
+> +	if (flash) {
+> +		call_flash_op(brightness_set, led_cdev,
+> +				flash->brightness);
+> +		call_flash_op(timeout_set, led_cdev,
+> +				&flash->timeout);
+> +	}
+>  	led_cdev->flags &= ~LED_SUSPENDED;
+>  }
+>  EXPORT_SYMBOL_GPL(led_classdev_resume);
+> @@ -210,14 +230,24 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
+>   */
+>  int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>  {
+> +	int ret;
+> +
+>  	led_cdev->dev = device_create(leds_class, parent, 0, led_cdev,
+>  				      "%s", led_cdev->name);
+>  	if (IS_ERR(led_cdev->dev))
+>  		return PTR_ERR(led_cdev->dev);
+>  
+> +	ret = led_classdev_init_flash(led_cdev);
+> +	if (ret < 0) {
+> +		dev_dbg(parent,
+> +			"Flash LED initialization failed for the %s\n device", led_cdev->name);
+> +		goto error_flash_init;
+> +	}
+> +
 
-The V4L2 control's unit is mA. Does this mean that the unit in the LED API
-also becomes mA then?
+Thanks for moving things to the separate file, I think it is cleaner.
+The trouble is that because of the above call to
+led_classdev_init_flash(), you can't have the led core loaded without
+the flash module too. There are a few other calls which also give the
+same end result.
 
-> >>+
-> >>+	return ret;
-> >>+}
-> >>+
-> >>+static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
-> >>+{
-> >>+	struct v4l2_flash *flash = ctrl_to_flash(c);
-> >>+	struct led_classdev *led_cdev = flash->led_cdev;
-> >>+	int ret = 0;
-> >>+
-> >>+	switch (c->id) {
-> >>+	case V4L2_CID_FLASH_LED_MODE:
-> >>+		switch (c->val) {
-> >>+		case V4L2_FLASH_LED_MODE_NONE:
-> >>+			/* clear flash mode on releae */
-> >
-> >It's not uncommon for the user to leave the mode to something else than none
-> >when the user goes away. Could there be other ways to mediate access?
-> 
-> IMHO user space application should release the mode on exit as any other
-> resource it acquires. However if it is terminated unexpectedly
+I guess what I'm wondering is whether this can work the other way
+around, the flash class wraps around the led core and extends it for
+those devices with flash capable LEDs? There may be some internals need
+accessing from led-core but it would mean you can have one module loaded
+without the other. This would mean a new registration function for flash
+capable LED devices but in reality that shouldn't be much of an issue?
 
-The application's resources are released by the kernel when the application
-exists but V4L2 control's don't behave that way.
+I appreciate this may seem like a small issue since RAM is cheap and who
+cares about the kernel size, but these small pieces all mount up. I wish
+more people thought about how to make the kernel modules work more
+effectively...
 
-> the sysfs will remain locked forever. Maybe a dedicated sysfs
-> attribute should be provided in the LED subsystem for controlling the
-> sysfs lock state? It would have to be always available for the user
-> though.
+Cheers,
 
-How about using the information on open file handles to the flash sub-device
-instead? If someone holds a file handle there, sure then the device is in
-use by that program? The advantage compared to the control value is that the
-file handles are released when the application quits whether or not any
-cleanup is performed by the application. I don't immediately see other
-reasons to keep a file handle to a V4L2 flash sub-device open, except, well,
-to find about its capabilities.
-
-> >>+static int v4l2_flash_init_controls(struct v4l2_flash *flash,
-> >>+				struct v4l2_flash_ctrl_config *config)
-> >>+
-> >>+{
-> >>+	unsigned int mask;
-> >>+	struct v4l2_ctrl *ctrl;
-> >>+	struct v4l2_ctrl_config *ctrl_cfg;
-> >>+	bool has_flash = config->flags & V4L2_FLASH_CFG_LED_FLASH;
-> >>+	bool has_torch = config->flags & V4L2_FLASH_CFG_LED_TORCH;
-> >>+	int ret, num_ctrls;
-> >>+
-> >>+	if (!has_flash && !has_torch)
-> >>+		return -EINVAL;
-> >>+
-> >>+	num_ctrls = has_flash ? 8 : 2;
-> >>+	if (config->flags & V4L2_FLASH_CFG_FAULTS_MASK)
-> >>+		++num_ctrls;
-> >>+
-> >>+	v4l2_ctrl_handler_init(&flash->hdl, num_ctrls);
-> >>+
-> >>+	mask = 1 << V4L2_FLASH_LED_MODE_NONE;
-> >>+	if (has_flash)
-> >>+		mask |= 1 << V4L2_FLASH_LED_MODE_FLASH;
-> >>+	if (has_torch)
-> >>+		mask |= 1 << V4L2_FLASH_LED_MODE_TORCH;
-> >
-> >I don't expect to see this on LED flash devices. :-)
-> 
-> I don't get your point here. Could you be more specific? :)
-> Torch only mode is supported by V4L2_CID_FLASH_LED_MODE control,
-> isn't it?
-
-Have you seen a LED flash controller which does not implement the torch
-mode?
-
-I have no objections to keeping the check though, but there were more
-important things missing at the time.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Richard
