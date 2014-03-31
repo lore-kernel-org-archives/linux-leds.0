@@ -1,112 +1,97 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v2 4/8] leds: Add support for max77693 mfd flash cell
-Date: Mon, 31 Mar 2014 08:48:08 +0100
-Message-ID: <20140331074808.GM17779@lee--X1>
-References: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
- <1396020545-15727-5-git-send-email-j.anaszewski@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC 1/8] leds: Add sysfs and kernel internal API for
+ flash LEDs
+Date: Mon, 31 Mar 2014 12:26:40 +0300
+Message-ID: <20140331092640.GB4522@valkosipuli.retiisi.org.uk>
+References: <1395327070-20215-1-git-send-email-j.anaszewski@samsung.com>
+ <1395327070-20215-2-git-send-email-j.anaszewski@samsung.com>
+ <20140323231833.GA2054@valkosipuli.retiisi.org.uk>
+ <5335958B.80107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:34311 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753520AbaCaJ0p (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Mon, 31 Mar 2014 05:26:45 -0400
 Content-Disposition: inline
-In-Reply-To: <1396020545-15727-5-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
+In-Reply-To: <5335958B.80107@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-On Fri, 28 Mar 2014, Jacek Anaszewski wrote:
+Hi Jacek,
 
-> This patch adds led-flash support to Maxim max77693 chipset.
-> Device can be exposed to user space through LED subsystem
-> sysfs interface or through V4L2 subdevice when the support
-> for Multimedia Framework is enabled. Device supports up to
-> two leds which can work in flash and torch mode. Leds can
-> be triggered externally or by software.
->=20
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: SangYoung Son <hello.son@smasung.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/leds/Kconfig         |   10 +
->  drivers/leds/Makefile        |    1 +
->  drivers/leds/leds-max77693.c |  864 ++++++++++++++++++++++++++++++++=
-++++++++++
->  drivers/mfd/max77693.c       |    3 +-
->  include/linux/mfd/max77693.h |   32 ++
->  5 files changed, 909 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/leds/leds-max77693.c
+On Fri, Mar 28, 2014 at 04:30:19PM +0100, Jacek Anaszewski wrote:
+> Hi Sakari,
+> 
+> Thanks for the review.
+> 
+> On 03/24/2014 12:18 AM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >Thanks for the patchset. It's very nice in general. I have a few comments
+> >below.
+> 
+> [...]
+> 
+> >>diff --git a/include/linux/leds.h b/include/linux/leds.h
+> >>index 0287ab2..1bf0ab3 100644
+> >>--- a/include/linux/leds.h
+> >>+++ b/include/linux/leds.h
+> >>@@ -17,6 +17,14 @@
+> >>  #include <linux/rwsem.h>
+> >>  #include <linux/timer.h>
+> >>  #include <linux/workqueue.h>
+> >>+#include <linux/mutex.h>
+> >
+> >mutex.h should be earlier in the list of included files.
+> >
+> >>+#include <media/v4l2-device.h>
+> >>+
+> >>+#define LED_FAULT_OVER_VOLTAGE		(1 << 0)
+> >>+#define LED_FAULT_TIMEOUT		(1 << 1)
+> >>+#define LED_FAULT_OVER_TEMPERATURE	(1 << 2)
+> >>+#define LED_FAULT_SHORT_CIRCUIT		(1 << 3)
+> >>+#define LED_FAULT_OVER_CURRENT		(1 << 4)
+> >
+> >This patch went in to the media-tree some time ago. I wonder if the relevant
+> >bits should be added here now as well.
+> >
+> >commit 935aa6b2e8a911e81baecec0537dd7e478dc8c91
+> >Author: Daniel Jeong <gshark.jeong@gmail.com>
+> >Date:   Mon Mar 3 06:52:08 2014 -0300
+> >
+> >     [media] v4l2-controls.h: Add addtional Flash fault bits
+> >
+> >     Three Flash fault are added. V4L2_FLASH_FAULT_UNDER_VOLTAGE for the case low
+> >     voltage below the min. limit. V4L2_FLASH_FAULT_INPUT_VOLTAGE for the case
+> >     falling input voltage and chip adjust flash current not occur under voltage
+> >     event. V4L2_FLASH_FAULT_LED_OVER_TEMPERATURE for the case the temperature
+> >     exceed the maximun limit
+> >
+> >     Signed-off-by: Daniel Jeong <gshark.jeong@gmail.com>
+> >     Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
+> >     Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
+> 
+> As it will not cause a build break and any runtime problems, even if
+> the patch is not merged, I added these bits to my implementation.
+> 
+> BTW I have doubts about V4L2_FLASH_FAULT_INDICATOR and
+> V4L2_CID_FLASH_INDICATOR_INTENSITY control. I did not take them
+> into account in my implementation because it is not clear for
+> me how an indicator led is related to a torch led. There is
+> a control for setting indicator intensity but there is not
+> one for enabling it. Could you shed some light on this issue?
 
-[...]
+The indicator isn't related to the torch mode in any way. Some flash
+controllers contain an additional output for indicator, also called privacy
+led. These faults are related to that.
 
-> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-> index c5535f0..d53c497 100644
-> --- a/drivers/mfd/max77693.c
-> +++ b/drivers/mfd/max77693.c
-> @@ -44,7 +44,8 @@
->  static const struct mfd_cell max77693_devs[] =3D {
->  	{ .name =3D "max77693-pmic", },
->  	{ .name =3D "max77693-charger", },
-> -	{ .name =3D "max77693-flash", },
-> +	{ .name =3D "max77693-flash",
-> +	  .of_compatible =3D "maxim,max77693-flash", },
+-- 
+Regards,
 
-On one line please.
-
->  	{ .name =3D "max77693-muic", },
->  	{ .name =3D "max77693-haptic", },
->  };
-> diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max7769=
-3.h
-> index 3f3dc45..5859698 100644
-> --- a/include/linux/mfd/max77693.h
-> +++ b/include/linux/mfd/max77693.h
-> @@ -63,6 +63,37 @@ struct max77693_muic_platform_data {
->  	int path_uart;
->  };
-> =20
-> +/* MAX77693 led flash */
-> +
-> +/* triggers */
-> +#define MAX77693_LED_TRIG_OFF	0
-> +#define MAX77693_LED_TRIG_FLASH	1
-> +#define MAX77693_LED_TRIG_TORCH	2
-> +#define MAX77693_LED_TRIG_EXT	(MAX77693_LED_TRIG_FLASH |\
-> +				MAX77693_LED_TRIG_TORCH)
-> +#define MAX77693_LED_TRIG_SOFT	4
-> +
-> +/* trigger types */
-> +#define MAX77693_LED_TRIG_TYPE_EDGE	0
-> +#define MAX77693_LED_TRIG_TYPE_LEVEL	1
-> +
-> +/* boost modes */
-> +#define MAX77693_LED_BOOST_NONE		0
-> +#define MAX77693_LED_BOOST_ADAPTIVE	1
-> +#define MAX77693_LED_BOOST_FIXED	2
-
-I think it would be better to enum all of the above.
-
-> +struct max77693_led_platform_data {
-> +	u32 iout[4];
-> +	u32 trigger[4];
-> +	u32 trigger_type[2];
-> +	u32 timeout[2];
-> +	u32 boost_mode[2];
-> +	u32 boost_vout;
-> +	u32 low_vsys;
-> +};
-
-I'll leave this LED stuff to the expert(s).
-
-[...]
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
