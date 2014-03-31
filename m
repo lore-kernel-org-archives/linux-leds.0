@@ -1,85 +1,112 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v2 3/8] Documentation: leds: Add description of flash mode
-Date: Fri, 28 Mar 2014 16:29:00 +0100
-Message-ID: <1396020545-15727-4-git-send-email-j.anaszewski@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH/RFC v2 4/8] leds: Add support for max77693 mfd flash cell
+Date: Mon, 31 Mar 2014 08:48:08 +0100
+Message-ID: <20140331074808.GM17779@lee--X1>
 References: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1396020545-15727-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+ <1396020545-15727-5-git-send-email-j.anaszewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1396020545-15727-5-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- Documentation/leds/leds-class.txt |   52 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+On Fri, 28 Mar 2014, Jacek Anaszewski wrote:
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index 62261c0..ea50d27 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -8,6 +8,58 @@ LED is defined in max_brightness file. The brightness file will set the brightne
- of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
- brightness support so will just be turned on for non-zero brightness settings.
- 
-+Some LED devices support two modes - torch and flash. In order to enable
-+support for flash LEDs the CONFIG_LEDS_CLASS_FLASH symbol must be defined
-+in the kernel config. A flash LED driver must initialize the "flash" field
-+of the led_classdev structure (see <linux/leds_flash.h>) to enable flash
-+related features of the LED subsystem for the driver.
-+
-+There are seven sysfs attributes dedicated specifically to the flash LED devices:
-+
-+	- flash_brightness - flash LED brightness in milliampers (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- flash_timeout - flash strobe duration in milliseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- flash_fault - bitmask of flash faults that may have occured, possible
-+			flags are:
-+		* 0x01 - flash controller voltage to the flash LED has exceeded
-+			 the limit specific to the flash controller
-+		* 0x02 - the flash strobe was still on when the timeout set by
-+			 the user has expired; not all flash controllers may set
-+			 this in all such conditions
-+		* 0x04 - the flash controller has overheated
-+		* 0x08 - the short circuit protection of the flash controller
-+			 has been triggered
-+		* 0x10 - current in the LED power supply has exceeded the limit
-+			 specific to the flash controller
-+		* 0x40 - flash controller voltage to the flash LED has been below
-+			 the minimum limit specific to the flash
-+		* 0x80 - the input voltage of the flash controller is below
-+			 the limit under which strobing the flash at full current
-+			 will not be possible. The condition persists until this
-+			 flag is no longer set
-+		* 0x100 - the temperature of the LED has exceeded its allowed
-+			  upper limit
-+	- hw_triggered - some devices expose dedicated hardware pins for
-+			 triggering a flash LED - the attribute allows to set
-+			 this mode (RW)
-+
-+The LED subsystem driver can be controlled also from the level of
-+the VideoForLinux2 subsystem. In order to enable this the CONFIG_V4L2_FLASH
-+symbol has to be defined in the kernel config. The driver must
-+initialize v4l2_flash_ctrl_config structure and pass it to the v4l2_flash_init
-+function. On remove v4l2_flash_release has to be called (see <media/v4l2-flash.h>).
-+After proper initialization V4L2 Flash sub-device is created. The sub-device
-+must be registered by a V4L2 video device to become available for the user
-+space. This is accomplished with use of asynchronous sub-device registration
-+mechanism (see <media/v4l2-async.h>).
-+A V4l2 Flash sub-device exposes a number of V4L2 controls.
-+When the V4L2_CID_FLASH_LED_MODE control is set to V4L2_FLASH_LED_MODE_TORCH
-+or V4L2_FLASH_LED_MODE_FLASH the LED subsystem sysfs interface becomes
-+unavailable. The interface can be unlocked by setting the mode back
-+to V4L2_FLASH_LED_MODE_NONE.
-+
- The class also introduces the optional concept of an LED trigger. A trigger
- is a kernel based source of led events. Triggers can either be simple or
- complex. A simple trigger isn't configurable and is designed to slot into
--- 
-1.7.9.5
+> This patch adds led-flash support to Maxim max77693 chipset.
+> Device can be exposed to user space through LED subsystem
+> sysfs interface or through V4L2 subdevice when the support
+> for Multimedia Framework is enabled. Device supports up to
+> two leds which can work in flash and torch mode. Leds can
+> be triggered externally or by software.
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: SangYoung Son <hello.son@smasung.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/leds/Kconfig         |   10 +
+>  drivers/leds/Makefile        |    1 +
+>  drivers/leds/leds-max77693.c |  864 ++++++++++++++++++++++++++++++++=
+++++++++++
+>  drivers/mfd/max77693.c       |    3 +-
+>  include/linux/mfd/max77693.h |   32 ++
+>  5 files changed, 909 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/leds/leds-max77693.c
+
+[...]
+
+> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+> index c5535f0..d53c497 100644
+> --- a/drivers/mfd/max77693.c
+> +++ b/drivers/mfd/max77693.c
+> @@ -44,7 +44,8 @@
+>  static const struct mfd_cell max77693_devs[] =3D {
+>  	{ .name =3D "max77693-pmic", },
+>  	{ .name =3D "max77693-charger", },
+> -	{ .name =3D "max77693-flash", },
+> +	{ .name =3D "max77693-flash",
+> +	  .of_compatible =3D "maxim,max77693-flash", },
+
+On one line please.
+
+>  	{ .name =3D "max77693-muic", },
+>  	{ .name =3D "max77693-haptic", },
+>  };
+> diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max7769=
+3.h
+> index 3f3dc45..5859698 100644
+> --- a/include/linux/mfd/max77693.h
+> +++ b/include/linux/mfd/max77693.h
+> @@ -63,6 +63,37 @@ struct max77693_muic_platform_data {
+>  	int path_uart;
+>  };
+> =20
+> +/* MAX77693 led flash */
+> +
+> +/* triggers */
+> +#define MAX77693_LED_TRIG_OFF	0
+> +#define MAX77693_LED_TRIG_FLASH	1
+> +#define MAX77693_LED_TRIG_TORCH	2
+> +#define MAX77693_LED_TRIG_EXT	(MAX77693_LED_TRIG_FLASH |\
+> +				MAX77693_LED_TRIG_TORCH)
+> +#define MAX77693_LED_TRIG_SOFT	4
+> +
+> +/* trigger types */
+> +#define MAX77693_LED_TRIG_TYPE_EDGE	0
+> +#define MAX77693_LED_TRIG_TYPE_LEVEL	1
+> +
+> +/* boost modes */
+> +#define MAX77693_LED_BOOST_NONE		0
+> +#define MAX77693_LED_BOOST_ADAPTIVE	1
+> +#define MAX77693_LED_BOOST_FIXED	2
+
+I think it would be better to enum all of the above.
+
+> +struct max77693_led_platform_data {
+> +	u32 iout[4];
+> +	u32 trigger[4];
+> +	u32 trigger_type[2];
+> +	u32 timeout[2];
+> +	u32 boost_mode[2];
+> +	u32 boost_vout;
+> +	u32 low_vsys;
+> +};
+
+I'll leave this LED stuff to the expert(s).
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
