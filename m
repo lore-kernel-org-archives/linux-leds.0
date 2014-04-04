@@ -1,104 +1,37 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: brightness units
-Date: Thu, 03 Apr 2014 16:54:28 +0200
-Message-ID: <533D7624.3010407@samsung.com>
-References: <533A6905.3010600@samsung.com>
- <CAK5ve-LNU_BGUB_HxsbgiO4baM-39C7PWHRVx0DL=JTYfJGSuA@mail.gmail.com>
- <20140402151754.GG4522@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] leds: 88pm860x: Use of_get_child_by_name
+Date: Fri, 04 Apr 2014 09:51:19 +0200
+Message-ID: <1396597880-2325-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:47230 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752255AbaDCOyd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Apr 2014 10:54:33 -0400
-In-reply-to: <20140402151754.GG4522@valkosipuli.retiisi.org.uk>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15135 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752337AbaDDHvb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Apr 2014 03:51:31 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Bryan Wu <cooloney@gmail.com>, milo kim <milo.kim@ti.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-media@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Bryan, Milo and Sakari,
+Use of_get_child_by_name to obtain reference to charger node instead of
+of_find_node_by_name which can walk outside of the parent node.
 
-Thanks for the replies.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/leds/leds-88pm860x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 04/02/2014 05:17 PM, Sakari Ailus wrote:
-> Hi Bryan,
->
-> On Tue, Apr 01, 2014 at 03:09:55PM -0700, Bryan Wu wrote:
->> On Tue, Apr 1, 2014 at 12:21 AM, Jacek Anaszewski
->> <j.anaszewski@samsung.com> wrote:
->>> I am currently integrating LED subsystem and V4L2 Flash API.
->>> V4L2 Flash API defines units of torch and flash intensity
->>> in milliampers. In the LED subsystem documentation I can't
->>> find any reference to the brightness units. On the other
->>> hand there is led_brightness enum defined in the <linux/leds.h>
->>> header, with LED_FULL = 255, but not all leds drivers use it.
->>> I am aware that there are LEDs that can be only turned on/off
->>> without any possibility to set the current and in such cases
->>> LED_FULL doesn't reflect the current set.
->>>
->>
->> Actually led_brightness is an logic concept not like milliampers,
->> since different led drivers has different implementation which is
->> hardware related. Like PWM led driver, it will be converted to duty
->> cycles.
->>
->> For current control I do see some specific driver like LP55xx have it
->> but not for every one.
->>
->>> So far I've assumed that brightness is expressed in milliampers
->>> and I don't stick to the LED_FULL limit. It allows for passing
->>> flash/torch intensity from V4L2 controls to the leds API
->>> without conversion. I am not sure if the units should be
->>> fixed to milliampers in the LED subsystem or not. It would
->>> clarify the situation, but if the existing LED drivers don't
->>> stick to this unit then it would make a confusion.
->>>
->>
->> We probably need to convert those intensity to brightness numbers, for
->> example mapping the intensity value to 0 ~ 255 brightness level and
->> pass it to LED subsystem.
->
-> I think for some devices it wouldn't matter much, but on those that
-> generally are used as flash the current is known, and thus it should also be
-> visible in the interface. The conversion from mA to native units could be
-> done directly, or indirectly through the LED API.
->
-> There are a few things to consider though: besides minimum and maximum
-> values for the current, the V4L2 controls have a step parameter that would
-> still need to be passed to the control handler when creating the control.
-> That essentially tells the user space how many levels does the control have.
->
-> Care must be taken if converting to LED API units in between mA and native
-> units so that the values will get through unchanged. On the other hand, I
-> don't expect to get more levels than 256 either. But even this assumes that
-> the current selection would be linear.
->
-
-After analyzing the problem I decided to implement it this way:
-
-1. V4L2 Flash control will use existing LED API for setting/getting
-    torch brightness
-	- V4L2 Flash control handler will take care of
-	  mA <-> enum led_brightness conversion
-2. New API for flash leds will use mA with int primitive
-    as its type
-	- min, max and step parameters will not be used on the
-	  LED subsystem level to keep it as simple as possible -
-	  instead each flash driver will align the brightness
-	  according to the device constraints; the adjusted value
-	  will be made available for the LED subsystem after calling
-	  led_update_flash_brightness function
-	- min, max and step parameters will be passed to the
-	  v4l2-flash in the v4l2_flash_ctrl_config structure -
-	  it was introduced in my RFC.
-3. New API for indicator LEDs will be introduced in the led_flash
-    module - it will define its units as uA with int primitive
-    as the type
-
-If you have any comments please let me know.
-
-Thanks,
-Jacek Anaszewski
+diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+index 5f588c0a376e..2f9ee538f30d 100644
+--- a/drivers/leds/leds-88pm860x.c
++++ b/drivers/leds/leds-88pm860x.c
+@@ -134,7 +134,7 @@ static int pm860x_led_dt_init(struct platform_device *pdev,
+ 	nproot = of_node_get(pdev->dev.parent->of_node);
+ 	if (!nproot)
+ 		return -ENODEV;
+-	nproot = of_find_node_by_name(nproot, "leds");
++	nproot = of_get_child_by_name(nproot, "leds");
+ 	if (!nproot) {
+ 		dev_err(&pdev->dev, "failed to find leds node\n");
+ 		return -ENODEV;
+-- 
+1.7.9.5
