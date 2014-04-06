@@ -1,50 +1,54 @@
 From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 4/5] leds: leds-pwm: implement PWM inversion
-Date: Sun, 06 Apr 2014 23:20:18 +0100
-Message-ID: <E1WWvQI-00049e-Vl@rmk-PC.arm.linux.org.uk>
+Subject: [PATCH 5/5] leds: leds-pwm: add DT support for LEDs wired to supply
+Date: Sun, 06 Apr 2014 23:20:24 +0100
+Message-ID: <E1WWvQO-00049j-36@rmk-PC.arm.linux.org.uk>
 References: <20140406221854.GS7528@n2100.arm.linux.org.uk>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51982 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754121AbaDFWUU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 18:20:20 -0400
+Return-path: <linux-doc-owner@vger.kernel.org>
 In-Reply-To: <20140406221854.GS7528@n2100.arm.linux.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-doc-owner@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-leds@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-Some PWM outputs are wired such that the LED they're controlling is
-connected to supply rather than ground.  These PWMs may not support
-output inversion, or when they do, disabling the PWM may set the
-PWM output low, causing a "brightness" value of zero to turn the LED
-fully on.
+The non-DT driver allowed an active low property to be specified, but DT
+is missing this in its description.  Add the property to the DT binding
+document, making it optional.  It defaults to active high, which retains
+compatibility with existing descriptions.
 
-The platform data for this driver already indicates that this was
-thought about, and we have the "active_low" property there already.
-However, the implementation for this is missing.
-
-Add the trivial implementation for this feature.
+This should only be used for causes where the LED is wired to supply,
+and the PWM does not sensibly support its own inversion.
 
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- drivers/leds/leds-pwm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/leds/leds-pwm.txt | 2 ++
+ drivers/leds/leds-pwm.c                             | 1 +
+ 2 files changed, 3 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Documentation/devicetree/bindings/leds/leds-pwm.txt
+index 7297107cf832..6c6583c35f2f 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pwm.txt
+@@ -13,6 +13,8 @@ node's name represents the name of the corresponding LED.
+   For the pwms and pwm-names property please refer to:
+   Documentation/devicetree/bindings/pwm/pwm.txt
+ - max-brightness : Maximum brightness possible for the LED
++- active-low : (optional) For PWMs where the LED is wired to supply
++  rather than ground.
+ - label :  (optional)
+   see Documentation/devicetree/bindings/leds/common.txt
+ - linux,default-trigger :  (optional)
 diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index e1b4c23a409a..1d47742c551f 100644
+index 1d47742c551f..fb1eafe09324 100644
 --- a/drivers/leds/leds-pwm.c
 +++ b/drivers/leds/leds-pwm.c
-@@ -70,6 +70,10 @@ static void led_pwm_set(struct led_classdev *led_cdev,
+@@ -155,6 +155,7 @@ static int led_pwm_create_of(struct device *dev, struct led_pwm_priv *priv)
  
- 	duty *= brightness;
- 	do_div(duty, max);
-+
-+	if (led_dat->active_low)
-+		duty = led_dat->period - duty;
-+
- 	led_dat->duty = duty;
+ 		led.default_trigger = of_get_property(child,
+ 						"linux,default-trigger", NULL);
++		led.active_low = of_property_read_bool(child, "active-low");
+ 		of_property_read_u32(child, "max-brightness",
+ 				     &led.max_brightness);
  
- 	if (led_dat->can_sleep)
 -- 
 1.8.3.1
+
