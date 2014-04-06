@@ -1,148 +1,145 @@
 From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 2/5] leds: leds-pwm: provide a common function to setup a
- single led-pwm device
-Date: Sun, 06 Apr 2014 23:20:08 +0100
-Message-ID: <E1WWvQ8-00049T-NP@rmk-PC.arm.linux.org.uk>
+Subject: [PATCH 3/5] leds: leds-pwm: convert OF parsing code to use
+ led_pwm_add()
+Date: Sun, 06 Apr 2014 23:20:13 +0100
+Message-ID: <E1WWvQD-00049a-Qr@rmk-PC.arm.linux.org.uk>
 References: <20140406221854.GS7528@n2100.arm.linux.org.uk>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51973 "EHLO
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51978 "EHLO
 	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754121AbaDFWUK (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 18:20:10 -0400
+	by vger.kernel.org with ESMTP id S1754121AbaDFWUR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 18:20:17 -0400
 In-Reply-To: <20140406221854.GS7528@n2100.arm.linux.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 
-Provide a common function to setup a single led-pwm device, replacing
-the platform data initialisation path with this function.  This allows
-us to have a common method of creating these devices in a consistent
-manner, which then allows us to place the probe failure cleanup in one
-place.
+Convert the OF parsing code to use the common PWM LED registration code,
+which means we have a consistent method, and single point where the
+registration happens for both paths.
 
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- drivers/leds/leds-pwm.c | 85 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 46 insertions(+), 39 deletions(-)
+ drivers/leds/leds-pwm.c | 62 ++++++++++++++++++-------------------------------
+ 1 file changed, 23 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index a7b369fc3554..2e6b6c5ca0e9 100644
+index 2e6b6c5ca0e9..e1b4c23a409a 100644
 --- a/drivers/leds/leds-pwm.c
 +++ b/drivers/leds/leds-pwm.c
-@@ -93,6 +93,44 @@ static void led_pwm_cleanup(struct led_pwm_priv *priv)
- 	}
+@@ -94,7 +94,7 @@ static void led_pwm_cleanup(struct led_pwm_priv *priv)
  }
  
-+static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
-+		       struct led_pwm *led)
-+{
-+	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
-+	int ret;
-+
-+	led_data->active_low = led->active_low;
-+	led_data->period = led->pwm_period_ns;
-+	led_data->cdev.name = led->name;
-+	led_data->cdev.default_trigger = led->default_trigger;
-+	led_data->cdev.brightness_set = led_pwm_set;
-+	led_data->cdev.brightness = LED_OFF;
-+	led_data->cdev.max_brightness = led->max_brightness;
-+	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
-+
-+	led_data->pwm = devm_pwm_get(dev, led->name);
-+	if (IS_ERR(led_data->pwm)) {
-+		ret = PTR_ERR(led_data->pwm);
-+		dev_err(dev, "unable to request PWM for %s: %d\n",
-+			led->name, ret);
-+		return ret;
-+	}
-+
-+	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
-+	if (led_data->can_sleep)
-+		INIT_WORK(&led_data->work, led_pwm_work);
-+
-+	ret = led_classdev_register(dev, &led_data->cdev);
-+	if (ret == 0) {
-+		priv->num_leds++;
-+	} else {
-+		dev_err(dev, "failed to register PWM led for %s: %d\n",
-+			led->name, ret);
-+	}
-+
-+	return ret;
-+}
-+
- static int led_pwm_create_of(struct platform_device *pdev,
- 			     struct led_pwm_priv *priv)
+ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+-		       struct led_pwm *led)
++		       struct led_pwm *led, struct device_node *child)
  {
-@@ -140,8 +178,6 @@ static int led_pwm_create_of(struct platform_device *pdev,
+ 	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
+ 	int ret;
+@@ -108,7 +108,10 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	led_data->cdev.max_brightness = led->max_brightness;
+ 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
  
- 	return 0;
- err:
--	led_pwm_cleanup(priv);
--
+-	led_data->pwm = devm_pwm_get(dev, led->name);
++	if (child)
++		led_data->pwm = devm_of_pwm_get(dev, child, NULL);
++	else
++		led_data->pwm = devm_pwm_get(dev, led->name);
+ 	if (IS_ERR(led_data->pwm)) {
+ 		ret = PTR_ERR(led_data->pwm);
+ 		dev_err(dev, "unable to request PWM for %s: %d\n",
+@@ -116,6 +119,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		return ret;
+ 	}
+ 
++	if (child)
++		led_data->period = pwm_get_period(led_data->pwm);
++
+ 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+ 	if (led_data->can_sleep)
+ 		INIT_WORK(&led_data->work, led_pwm_work);
+@@ -131,53 +137,30 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
  	return ret;
  }
  
-@@ -167,51 +203,22 @@ static int led_pwm_probe(struct platform_device *pdev)
+-static int led_pwm_create_of(struct platform_device *pdev,
+-			     struct led_pwm_priv *priv)
++static int led_pwm_create_of(struct device *dev, struct led_pwm_priv *priv)
+ {
+ 	struct device_node *child;
+-	int ret;
+-
+-	for_each_child_of_node(pdev->dev.of_node, child) {
+-		struct led_pwm_data *led_dat = &priv->leds[priv->num_leds];
++	struct led_pwm led;
++	int ret = 0;
+ 
+-		led_dat->cdev.name = of_get_property(child, "label",
+-						     NULL) ? : child->name;
++	memset(&led, 0, sizeof(led));
+ 
+-		led_dat->pwm = devm_of_pwm_get(&pdev->dev, child, NULL);
+-		if (IS_ERR(led_dat->pwm)) {
+-			dev_err(&pdev->dev, "unable to request PWM for %s\n",
+-				led_dat->cdev.name);
+-			ret = PTR_ERR(led_dat->pwm);
+-			goto err;
+-		}
+-		/* Get the period from PWM core when n*/
+-		led_dat->period = pwm_get_period(led_dat->pwm);
++	for_each_child_of_node(dev->of_node, child) {
++		led.name = of_get_property(child, "label", NULL) ? :
++			   child->name;
+ 
+-		led_dat->cdev.default_trigger = of_get_property(child,
++		led.default_trigger = of_get_property(child,
+ 						"linux,default-trigger", NULL);
+ 		of_property_read_u32(child, "max-brightness",
+-				     &led_dat->cdev.max_brightness);
+-
+-		led_dat->cdev.brightness_set = led_pwm_set;
+-		led_dat->cdev.brightness = LED_OFF;
+-		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+-
+-		led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
+-		if (led_dat->can_sleep)
+-			INIT_WORK(&led_dat->work, led_pwm_work);
++				     &led.max_brightness);
+ 
+-		ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to register for %s\n",
+-				led_dat->cdev.name);
++		ret = led_pwm_add(dev, priv, &led, child);
++		if (ret) {
+ 			of_node_put(child);
+-			goto err;
++			break;
+ 		}
+-		priv->num_leds++;
+ 	}
+ 
+-	return 0;
+-err:
+ 	return ret;
+ }
+ 
+@@ -203,12 +186,13 @@ static int led_pwm_probe(struct platform_device *pdev)
  
  	if (pdata) {
  		for (i = 0; i < count; i++) {
--			struct led_pwm *cur_led = &pdata->leds[i];
--			struct led_pwm_data *led_dat = &priv->leds[i];
--
--			led_dat->pwm = devm_pwm_get(&pdev->dev, cur_led->name);
--			if (IS_ERR(led_dat->pwm)) {
--				ret = PTR_ERR(led_dat->pwm);
--				dev_err(&pdev->dev,
--					"unable to request PWM for %s\n",
--					cur_led->name);
--				goto err;
--			}
--
--			led_dat->cdev.name = cur_led->name;
--			led_dat->cdev.default_trigger = cur_led->default_trigger;
--			led_dat->active_low = cur_led->active_low;
--			led_dat->period = cur_led->pwm_period_ns;
--			led_dat->cdev.brightness_set = led_pwm_set;
--			led_dat->cdev.brightness = LED_OFF;
--			led_dat->cdev.max_brightness = cur_led->max_brightness;
--			led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
--
--			led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
--			if (led_dat->can_sleep)
--				INIT_WORK(&led_dat->work, led_pwm_work);
--
--			ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
--			if (ret < 0)
--				goto err;
-+			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i]);
-+			if (ret)
-+				break;
+-			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i]);
++			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i],
++					  NULL);
+ 			if (ret)
+ 				break;
  		}
--		priv->num_leds = count;
  	} else {
- 		ret = led_pwm_create_of(pdev, priv);
--		if (ret)
--			return ret;
-+	}
-+
-+	if (ret) {
-+		led_pwm_cleanup(priv);
-+		return ret;
+-		ret = led_pwm_create_of(pdev, priv);
++		ret = led_pwm_create_of(&pdev->dev, priv);
  	}
  
- 	platform_set_drvdata(pdev, priv);
- 
- 	return 0;
--
--err:
--	priv->num_leds = i;
--	led_pwm_cleanup(priv);
--
--	return ret;
- }
- 
- static int led_pwm_remove(struct platform_device *pdev)
+ 	if (ret) {
 -- 
 1.8.3.1
