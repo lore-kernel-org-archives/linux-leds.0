@@ -1,67 +1,41 @@
-From: =?ISO-8859-1?Q?Maximilian_G=FCntner?=
-	<maximilian.guentner@gmail.com>
-Subject: Re: [PATCH RFC] leds: pca9685: Remove leds-pca9685 driver
-Date: Sun, 6 Apr 2014 13:12:30 +0200
-Message-ID: <CAKSnaae5onmE4QnvTnN7TSC9iLb4DLaL561GMMsDwaPxzd8jTw@mail.gmail.com>
-References: <1396754381.13341.4.camel@phoenix>
-	<20140406093053.GH12170@pengutronix.de>
-	<CAFRkauBRAmCpF+84bRhqB3hJinnt0apo4dpV+VfUELVXSr8+rg@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: leds-pwm - does anyone care for it?
+Date: Sun, 6 Apr 2014 15:12:58 +0100
+Message-ID: <20140406141257.GR7528@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:45112 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751621AbaDFLMb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 07:12:31 -0400
-In-Reply-To: <CAFRkauBRAmCpF+84bRhqB3hJinnt0apo4dpV+VfUELVXSr8+rg@mail.gmail.com>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51553 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750856AbaDFON3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 10:13:29 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-2014-04-06 12:40 GMT+02:00 Axel Lin <axel.lin@ingics.com>:
-> 2014-04-06 17:30 GMT+08:00 Steffen Trumtrar <s.trumtrar@pengutronix.de>:
->> Hi!
+So during the last three months, I've sent a patch twice for leds-pwm,
+and both times it's been completely ignored.
 
-Hello,
+Today, I find that OMAP4430 SDP fails to boot due to an oops caused by
+this driver in the workqueue code - it frees structures which contain
+queued workqueues if we're booting with DT and it can't find the PWM
+device.
 
->> This confused me for a second, as there was no driver to replace when I wrote
->> the pwm-pca9685 driver and I thought I missed something. But it seems I didn't
->> and the pwm-pca9685 is actually older.
->
-> Ah.. right, leds-pca9685 is a newer driver.
->
-> 2013-10-22 leds: Added driver for the NXP PCA9685 I2C chip
-> 2013-05-30 pwm: add pca9685 driver
->
-True. I wrote this driver in April 2013 since there was no driver
-available for the PCA9685 at this point.
-When I submitted it in October I only checked 'drivers/leds/' for
-support but not 'drivers/pwm'.
+If I look closer at this driver, I find that it doesn't of_node_put()
+the OF node in the case of devm_of_pwm_get() failure... I'm sure these
+aren't the only problems.
 
->>
->>> Use git grep to check current tree and found there is no user uses leds-pca9685.
->>> So this patch removes leds-pca9685 driver.
->>>
->>
->> If the platform setup is needed, maybe this can be integrated into the pwm driver
->> instead of completely dropping it. I don't care for platform code, but if someone
->> does, I don't want him to lose the support for it.
->
-> Given the fact there is no user in current tree uses leds-pca9685,
-> I suspect if we need to add platform setup to pwm-pca9685.
-> ( I think the trend is to use DT, not the reverse )
->
->>
->> Otherwise I am okay with this drop (okay, I'm completely biased of course ;-)).
->> But technically the pca9685 is not solely a LED driver IC, but a PWM IC, so it
->> is in the wrong place anyhow.
->
-> I also think PWM subsystem is better for this chip which is a PWM IC.
-+1
+Then there's the three entirely separately coded cleanup paths - the
+removal function, the cleanup for failure in the OF code, and the
+cleanup for failure in the non-OF case.  This is where the oops stems
+from because the author of the patch adding the work queue only fixed
+up two of these sites - the ones which applied to his case and never
+bothered with the third.
 
-I also ACK the drop of leds-pca9685 in favor of pwm-pca9685.
+I'm going to fix this latest failure in the driver, and send a patch
+later today, and I will hope for a timely response.
 
-Thanks,
-
-Maximilian
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
