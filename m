@@ -1,80 +1,350 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: [PATCH] leds: make sure we unregister a trigger only once
-Date: Fri,  4 Apr 2014 13:01:13 -0400
-Message-ID: <1396630873-17372-1-git-send-email-sasha.levin@oracle.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH RFC] leds: pca9685: Remove leds-pca9685 driver
+Date: Sun, 06 Apr 2014 11:19:41 +0800
+Message-ID: <1396754381.13341.4.camel@phoenix>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:43527 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753790AbaDDRBc (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Apr 2014 13:01:32 -0400
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:47494 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754045AbaDFDTr (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 5 Apr 2014 23:19:47 -0400
+Received: by mail-pa0-f44.google.com with SMTP id bj1so5228079pad.3
+        for <linux-leds@vger.kernel.org>; Sat, 05 Apr 2014 20:19:46 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Maximilian =?ISO-8859-1?Q?G=FCntner?= <maximilian.guentner@gmail.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Currently, we may attempt to unregister a trigger more than once, for
-example when we receive two consecutive reboot notifications, or when
-we do a regular unregistration plus reboot notification.
+This driver is replaced by pwm-pca9685 driver and there is no user uses=
+ this
+driver in current tree. So remove it.
 
-This leads to the following error since we try to delete the list node
-twice:
-
-[ 2780.254922] WARNING: CPU: 0 PID: 13764 at lib/list_debug.c:53 __list_del_entry+0x3e/0xe0()
-[ 2780.265559] list_del corruption, ffffffffa5eb6470->next is LIST_POISON1 (dead000000100100)
-[ 2780.271710] Modules linked in:
-[ 2780.274156] CPU: 0 PID: 13764 Comm: kworker/0:2 Tainted: G        W     3.14.0-next-20140403-sasha-00012-gef5fa7d-dirty #373
-[ 2780.283063] Workqueue: events do_poweroff
-[ 2780.285644]  0000000000000009 ffff8800330dbb38 ffffffffa34bfa33 0000000000002fe0
-[ 2780.291571]  ffff8800330dbb88 ffff8800330dbb78 ffffffffa015a37c ffff8800330dbb68
-[ 2780.296670]  ffffffffa5eb6470 0000000000000000 ffffffffa5eb6400 ffffffffa5ad7430
-[ 2780.299756] Call Trace:
-[ 2780.301530] dump_stack (lib/dump_stack.c:52)
-[ 2780.303802] warn_slowpath_common (kernel/panic.c:418)
-[ 2780.306151] warn_slowpath_fmt (kernel/panic.c:433)
-[ 2780.308156] __list_del_entry (lib/list_debug.c:51 (discriminator 1))
-[ 2780.310800] list_del (lib/list_debug.c:78)
-[ 2780.313175] led_trigger_unregister (drivers/leds/led-triggers.c:225)
-[ 2780.315599] heartbeat_reboot_notifier (drivers/leds/trigger/ledtrig-heartbeat.c:119)
-[ 2780.317247] notifier_call_chain (kernel/notifier.c:95)
-[ 2780.320014] __blocking_notifier_call_chain (kernel/notifier.c:316)
-[ 2780.323263] blocking_notifier_call_chain (kernel/notifier.c:326)
-[ 2780.326096] kernel_power_off (include/linux/kmod.h:95 kernel/reboot.c:153 kernel/reboot.c:179)
-[ 2780.327883] do_poweroff (kernel/power/poweroff.c:23)
-[ 2780.330748] process_one_work (kernel/workqueue.c:2221 include/linux/jump_label.h:105 include/trace/events/workqueue.h:111 kernel/workqueue.c:2226)
-[ 2780.333027] ? process_one_work (include/linux/workqueue.h:186 kernel/workqueue.c:611 kernel/workqueue.c:638 kernel/workqueue.c:2214)
-[ 2780.335487] process_scheduled_works (include/linux/list.h:188 kernel/workqueue.c:2277)
-[ 2780.337101] worker_thread (kernel/workqueue.c:2352)
-[ 2780.338712] ? rescuer_thread (kernel/workqueue.c:2297)
-[ 2780.341326] kthread (kernel/kthread.c:219)
-[ 2780.343446] ? kthread_create_on_node (kernel/kthread.c:185)
-[ 2780.345733] ret_from_fork (arch/x86/kernel/entry_64.S:555)
-[ 2780.347168] ? kthread_create_on_node (kernel/kthread.c:185)
-
-Prevent it by making sure we don't attempt to unregister a trigger that
-is not in the triggers list.
-
-Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/leds/led-triggers.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi,
+I found there is a modalias conflict between leds-pca9685.ko and pwm-pc=
+a9685.ko.
+I think this conflict will cause problem.
+After checking the code, I think leds-pca9685 is replaced by pwm-pca968=
+5.
+Use git grep to check current tree and found there is no user uses leds=
+-pca9685.
+So this patch removes leds-pca9685 driver.
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index df1a7c1..c3734f1 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -219,9 +219,12 @@ void led_trigger_unregister(struct led_trigger *trig)
- {
- 	struct led_classdev *led_cdev;
- 
-+	if (list_empty_careful(&trig->next_trig))
-+		return;
-+
- 	/* Remove from the list of led triggers */
- 	down_write(&triggers_list_lock);
--	list_del(&trig->next_trig);
-+	list_del_init(&trig->next_trig);
- 	up_write(&triggers_list_lock);
- 
- 	/* Remove anyone actively using this trigger */
--- 
-1.7.10.4
+(I forgot to CC mailing list, so here is a resend)
+Regards,
+Axel
+ drivers/leds/Kconfig                       |  10 --
+ drivers/leds/Makefile                      |   1 -
+ drivers/leds/leds-pca9685.c                | 213 ---------------------=
+--------
+ include/linux/platform_data/leds-pca9685.h |  35 -----
+ 4 files changed, 259 deletions(-)
+ delete mode 100644 drivers/leds/leds-pca9685.c
+ delete mode 100644 include/linux/platform_data/leds-pca9685.h
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 2062682..3e8a92b 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -297,16 +297,6 @@ config LEDS_PCA963X
+ 	  LED driver chip accessed via the I2C bus. Supported
+ 	  devices include PCA9633 and PCA9634
+=20
+-config LEDS_PCA9685
+-	tristate "LED support for PCA9685 I2C chip"
+-	depends on LEDS_CLASS
+-	depends on I2C
+-	help
+-	  This option enables support for LEDs connected to the PCA9685
+-	  LED driver chip accessed via the I2C bus.
+-	  The PCA9685 offers 12-bit PWM (4095 levels of brightness) on
+-	  16 individual channels.
+-
+ config LEDS_WM831X_STATUS
+ 	tristate "LED support for status LEDs on WM831x PMICs"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 3cd76db..8979b0b 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -36,7 +36,6 @@ obj-$(CONFIG_LEDS_OT200)		+=3D leds-ot200.o
+ obj-$(CONFIG_LEDS_FSG)			+=3D leds-fsg.o
+ obj-$(CONFIG_LEDS_PCA955X)		+=3D leds-pca955x.o
+ obj-$(CONFIG_LEDS_PCA963X)		+=3D leds-pca963x.o
+-obj-$(CONFIG_LEDS_PCA9685)		+=3D leds-pca9685.o
+ obj-$(CONFIG_LEDS_DA903X)		+=3D leds-da903x.o
+ obj-$(CONFIG_LEDS_DA9052)		+=3D leds-da9052.o
+ obj-$(CONFIG_LEDS_WM831X_STATUS)	+=3D leds-wm831x-status.o
+diff --git a/drivers/leds/leds-pca9685.c b/drivers/leds/leds-pca9685.c
+deleted file mode 100644
+index 6e1ef3a..0000000
+--- a/drivers/leds/leds-pca9685.c
++++ /dev/null
+@@ -1,213 +0,0 @@
+-/*
+- * Copyright 2013 Maximilian G=C3=BCntner <maximilian.guentner@gmail.c=
+om>
+- *
+- * This file is subject to the terms and conditions of version 2 of
+- * the GNU General Public License.  See the file COPYING in the main
+- * directory of this archive for more details.
+- *
+- * Based on leds-pca963x.c driver by
+- * Peter Meerwald <p.meerwald@bct-electronic.com>
+- *
+- * Driver for the NXP PCA9685 12-Bit PWM LED driver chip.
+- *
+- */
+-
+-#include <linux/ctype.h>
+-#include <linux/delay.h>
+-#include <linux/err.h>
+-#include <linux/i2c.h>
+-#include <linux/leds.h>
+-#include <linux/module.h>
+-#include <linux/slab.h>
+-#include <linux/string.h>
+-#include <linux/workqueue.h>
+-
+-#include <linux/platform_data/leds-pca9685.h>
+-
+-/* Register Addresses */
+-#define PCA9685_MODE1 0x00
+-#define PCA9685_MODE2 0x01
+-#define PCA9685_LED0_ON_L 0x06
+-#define PCA9685_ALL_LED_ON_L 0xFA
+-
+-/* MODE1 Register */
+-#define PCA9685_ALLCALL 0x00
+-#define PCA9685_SLEEP   0x04
+-#define PCA9685_AI      0x05
+-
+-/* MODE2 Register */
+-#define PCA9685_INVRT   0x04
+-#define PCA9685_OUTDRV  0x02
+-
+-static const struct i2c_device_id pca9685_id[] =3D {
+-	{ "pca9685", 0 },
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(i2c, pca9685_id);
+-
+-struct pca9685_led {
+-	struct i2c_client *client;
+-	struct work_struct work;
+-	u16 brightness;
+-	struct led_classdev led_cdev;
+-	int led_num; /* 0-15 */
+-	char name[32];
+-};
+-
+-static void pca9685_write_msg(struct i2c_client *client, u8 *buf, u8 l=
+en)
+-{
+-	struct i2c_msg msg =3D {
+-		.addr =3D client->addr,
+-		.flags =3D 0x00,
+-		.len =3D len,
+-		.buf =3D buf
+-	};
+-	i2c_transfer(client->adapter, &msg, 1);
+-}
+-
+-static void pca9685_all_off(struct i2c_client *client)
+-{
+-	u8 i2c_buffer[5] =3D {PCA9685_ALL_LED_ON_L, 0x00, 0x00, 0x00, 0x10};
+-	pca9685_write_msg(client, i2c_buffer, 5);
+-}
+-
+-static void pca9685_led_work(struct work_struct *work)
+-{
+-	struct pca9685_led *pca9685;
+-	u8 i2c_buffer[5];
+-
+-	pca9685 =3D container_of(work, struct pca9685_led, work);
+-	i2c_buffer[0] =3D PCA9685_LED0_ON_L + 4 * pca9685->led_num;
+-	/*
+-	 * 4095 is the maximum brightness, so we set the ON time to 0x1000
+-	 * which disables the PWM generator for that LED
+-	 */
+-	if (pca9685->brightness =3D=3D 4095)
+-		*((__le16 *)(i2c_buffer+1)) =3D cpu_to_le16(0x1000);
+-	else
+-		*((__le16 *)(i2c_buffer+1)) =3D 0x0000;
+-
+-	if (pca9685->brightness =3D=3D 0)
+-		*((__le16 *)(i2c_buffer+3)) =3D cpu_to_le16(0x1000);
+-	else if (pca9685->brightness =3D=3D 4095)
+-		*((__le16 *)(i2c_buffer+3)) =3D 0x0000;
+-	else
+-		*((__le16 *)(i2c_buffer+3)) =3D cpu_to_le16(pca9685->brightness);
+-
+-	pca9685_write_msg(pca9685->client, i2c_buffer, 5);
+-}
+-
+-static void pca9685_led_set(struct led_classdev *led_cdev,
+-		enum led_brightness value)
+-{
+-	struct pca9685_led *pca9685;
+-	pca9685 =3D container_of(led_cdev, struct pca9685_led, led_cdev);
+-	pca9685->brightness =3D value;
+-
+-	schedule_work(&pca9685->work);
+-}
+-
+-static int pca9685_probe(struct i2c_client *client,
+-		const struct i2c_device_id *id)
+-{
+-	struct pca9685_led *pca9685;
+-	struct pca9685_platform_data *pdata;
+-	int err;
+-	u8 i;
+-
+-	pdata =3D dev_get_platdata(&client->dev);
+-	if (pdata) {
+-		if (pdata->leds.num_leds < 1 || pdata->leds.num_leds > 15) {
+-			dev_err(&client->dev, "board info must claim 1-16 LEDs");
+-			return -EINVAL;
+-		}
+-	}
+-
+-	pca9685 =3D devm_kzalloc(&client->dev, 16 * sizeof(*pca9685), GFP_KER=
+NEL);
+-	if (!pca9685)
+-		return -ENOMEM;
+-
+-	i2c_set_clientdata(client, pca9685);
+-	pca9685_all_off(client);
+-
+-	for (i =3D 0; i < 16; i++) {
+-		pca9685[i].client =3D client;
+-		pca9685[i].led_num =3D i;
+-		pca9685[i].name[0] =3D '\0';
+-		if (pdata && i < pdata->leds.num_leds) {
+-			if (pdata->leds.leds[i].name)
+-				strncpy(pca9685[i].name,
+-					pdata->leds.leds[i].name,
+-					sizeof(pca9685[i].name)-1);
+-			if (pdata->leds.leds[i].default_trigger)
+-				pca9685[i].led_cdev.default_trigger =3D
+-					pdata->leds.leds[i].default_trigger;
+-		}
+-		if (strlen(pca9685[i].name) =3D=3D 0) {
+-			/*
+-			 * Write adapter and address to the name as well.
+-			 * Otherwise multiple chips attached to one host would
+-			 * not work.
+-			 */
+-			snprintf(pca9685[i].name, sizeof(pca9685[i].name),
+-					"pca9685:%d:x%.2x:%d",
+-					client->adapter->nr, client->addr, i);
+-		}
+-		pca9685[i].led_cdev.name =3D pca9685[i].name;
+-		pca9685[i].led_cdev.max_brightness =3D 0xfff;
+-		pca9685[i].led_cdev.brightness_set =3D pca9685_led_set;
+-
+-		INIT_WORK(&pca9685[i].work, pca9685_led_work);
+-		err =3D led_classdev_register(&client->dev, &pca9685[i].led_cdev);
+-		if (err < 0)
+-			goto exit;
+-	}
+-
+-	if (pdata)
+-		i2c_smbus_write_byte_data(client, PCA9685_MODE2,
+-			pdata->outdrv << PCA9685_OUTDRV |
+-			pdata->inverted << PCA9685_INVRT);
+-	else
+-		i2c_smbus_write_byte_data(client, PCA9685_MODE2,
+-			PCA9685_TOTEM_POLE << PCA9685_OUTDRV);
+-	/* Enable Auto-Increment, enable oscillator, ALLCALL/SUBADDR disabled=
+ */
+-	i2c_smbus_write_byte_data(client, PCA9685_MODE1, BIT(PCA9685_AI));
+-
+-	return 0;
+-
+-exit:
+-	while (i--) {
+-		led_classdev_unregister(&pca9685[i].led_cdev);
+-		cancel_work_sync(&pca9685[i].work);
+-	}
+-	return err;
+-}
+-
+-static int pca9685_remove(struct i2c_client *client)
+-{
+-	struct pca9685_led *pca9685 =3D i2c_get_clientdata(client);
+-	u8 i;
+-
+-	for (i =3D 0; i < 16; i++) {
+-		led_classdev_unregister(&pca9685[i].led_cdev);
+-		cancel_work_sync(&pca9685[i].work);
+-	}
+-	pca9685_all_off(client);
+-	return 0;
+-}
+-
+-static struct i2c_driver pca9685_driver =3D {
+-	.driver =3D {
+-		.name =3D "leds-pca9685",
+-		.owner =3D THIS_MODULE,
+-	},
+-	.probe =3D pca9685_probe,
+-	.remove =3D pca9685_remove,
+-	.id_table =3D pca9685_id,
+-};
+-
+-module_i2c_driver(pca9685_driver);
+-
+-MODULE_AUTHOR("Maximilian G=C3=BCntner <maximilian.guentner@gmail.com>=
+");
+-MODULE_DESCRIPTION("PCA9685 LED Driver");
+-MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/platform_data/leds-pca9685.h b/include/linux=
+/platform_data/leds-pca9685.h
+deleted file mode 100644
+index 778e9e4..0000000
+--- a/include/linux/platform_data/leds-pca9685.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Copyright 2013 Maximilian G=C3=BCntner <maximilian.guentner@gmail.c=
+om>
+- *
+- * This file is subject to the terms and conditions of version 2 of
+- * the GNU General Public License.  See the file COPYING in the main
+- * directory of this archive for more details.
+- *
+- * Based on leds-pca963x.h by Peter Meerwald <p.meerwald@bct-electroni=
+c.com>
+- *
+- * LED driver for the NXP PCA9685 PWM chip
+- *
+- */
+-
+-#ifndef __LINUX_PCA9685_H
+-#define __LINUX_PCA9685_H
+-
+-#include <linux/leds.h>
+-
+-enum pca9685_outdrv {
+-	PCA9685_OPEN_DRAIN,
+-	PCA9685_TOTEM_POLE,
+-};
+-
+-enum pca9685_inverted {
+-	PCA9685_NOT_INVERTED,
+-	PCA9685_INVERTED,
+-};
+-
+-struct pca9685_platform_data {
+-	struct led_platform_data leds;
+-	enum pca9685_outdrv outdrv;
+-	enum pca9685_inverted inverted;
+-};
+-
+-#endif /* __LINUX_PCA9685_H */
+--=20
+1.8.3.2
