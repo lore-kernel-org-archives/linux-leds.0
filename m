@@ -1,41 +1,148 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCH 0/5] Fix various issues with leds-pwm
-Date: Sun, 6 Apr 2014 23:18:54 +0100
-Message-ID: <20140406221854.GS7528@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH 2/5] leds: leds-pwm: provide a common function to setup a
+ single led-pwm device
+Date: Sun, 06 Apr 2014 23:20:08 +0100
+Message-ID: <E1WWvQ8-00049T-NP@rmk-PC.arm.linux.org.uk>
+References: <20140406221854.GS7528@n2100.arm.linux.org.uk>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51961 "EHLO
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51973 "EHLO
 	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754266AbaDFWTb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 18:19:31 -0400
-Content-Disposition: inline
+	by vger.kernel.org with ESMTP id S1754121AbaDFWUK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 6 Apr 2014 18:20:10 -0400
+In-Reply-To: <20140406221854.GS7528@n2100.arm.linux.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-leds@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org
 
-This patch series fixes various problems with leds-pwm.
+Provide a common function to setup a single led-pwm device, replacing
+the platform data initialisation path with this function.  This allows
+us to have a common method of creating these devices in a consistent
+manner, which then allows us to place the probe failure cleanup in one
+place.
 
-The first patch is very important to solve a boot time oops on OMAP
-boards (and probably others) which has recently shown its face.
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ drivers/leds/leds-pwm.c | 85 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 46 insertions(+), 39 deletions(-)
 
-The next two clean up leds-pwm so that we can avoid the madness of
-having entirely separate initialisation paths for DT and non-DT, which
-I believe is the core cause of the initial problem.
-
-The last two patches add support for LEDs connected in the opposite
-sense to PWM outputs, where either the PWM does not support inversion,
-or does not support it in a way that works sanely with leds-pwm.  These
-add a new property to leds-pwm, hence why that patch (and this cover)
-copies the DT people.
-
-The first patch is an absolute must for going.
-
- .../devicetree/bindings/leds/leds-pwm.txt          |   2 +
- drivers/leds/leds-pwm.c                            | 161 ++++++++++-----------
- 2 files changed, 82 insertions(+), 81 deletions(-)
-
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index a7b369fc3554..2e6b6c5ca0e9 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -93,6 +93,44 @@ static void led_pwm_cleanup(struct led_pwm_priv *priv)
+ 	}
+ }
+ 
++static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
++		       struct led_pwm *led)
++{
++	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
++	int ret;
++
++	led_data->active_low = led->active_low;
++	led_data->period = led->pwm_period_ns;
++	led_data->cdev.name = led->name;
++	led_data->cdev.default_trigger = led->default_trigger;
++	led_data->cdev.brightness_set = led_pwm_set;
++	led_data->cdev.brightness = LED_OFF;
++	led_data->cdev.max_brightness = led->max_brightness;
++	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
++
++	led_data->pwm = devm_pwm_get(dev, led->name);
++	if (IS_ERR(led_data->pwm)) {
++		ret = PTR_ERR(led_data->pwm);
++		dev_err(dev, "unable to request PWM for %s: %d\n",
++			led->name, ret);
++		return ret;
++	}
++
++	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
++	if (led_data->can_sleep)
++		INIT_WORK(&led_data->work, led_pwm_work);
++
++	ret = led_classdev_register(dev, &led_data->cdev);
++	if (ret == 0) {
++		priv->num_leds++;
++	} else {
++		dev_err(dev, "failed to register PWM led for %s: %d\n",
++			led->name, ret);
++	}
++
++	return ret;
++}
++
+ static int led_pwm_create_of(struct platform_device *pdev,
+ 			     struct led_pwm_priv *priv)
+ {
+@@ -140,8 +178,6 @@ static int led_pwm_create_of(struct platform_device *pdev,
+ 
+ 	return 0;
+ err:
+-	led_pwm_cleanup(priv);
+-
+ 	return ret;
+ }
+ 
+@@ -167,51 +203,22 @@ static int led_pwm_probe(struct platform_device *pdev)
+ 
+ 	if (pdata) {
+ 		for (i = 0; i < count; i++) {
+-			struct led_pwm *cur_led = &pdata->leds[i];
+-			struct led_pwm_data *led_dat = &priv->leds[i];
+-
+-			led_dat->pwm = devm_pwm_get(&pdev->dev, cur_led->name);
+-			if (IS_ERR(led_dat->pwm)) {
+-				ret = PTR_ERR(led_dat->pwm);
+-				dev_err(&pdev->dev,
+-					"unable to request PWM for %s\n",
+-					cur_led->name);
+-				goto err;
+-			}
+-
+-			led_dat->cdev.name = cur_led->name;
+-			led_dat->cdev.default_trigger = cur_led->default_trigger;
+-			led_dat->active_low = cur_led->active_low;
+-			led_dat->period = cur_led->pwm_period_ns;
+-			led_dat->cdev.brightness_set = led_pwm_set;
+-			led_dat->cdev.brightness = LED_OFF;
+-			led_dat->cdev.max_brightness = cur_led->max_brightness;
+-			led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+-
+-			led_dat->can_sleep = pwm_can_sleep(led_dat->pwm);
+-			if (led_dat->can_sleep)
+-				INIT_WORK(&led_dat->work, led_pwm_work);
+-
+-			ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
+-			if (ret < 0)
+-				goto err;
++			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i]);
++			if (ret)
++				break;
+ 		}
+-		priv->num_leds = count;
+ 	} else {
+ 		ret = led_pwm_create_of(pdev, priv);
+-		if (ret)
+-			return ret;
++	}
++
++	if (ret) {
++		led_pwm_cleanup(priv);
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	return 0;
+-
+-err:
+-	priv->num_leds = i;
+-	led_pwm_cleanup(priv);
+-
+-	return ret;
+ }
+ 
+ static int led_pwm_remove(struct platform_device *pdev)
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+1.8.3.1
