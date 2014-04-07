@@ -1,61 +1,82 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 4/5] leds: leds-pwm: implement PWM inversion
-Date: Mon, 7 Apr 2014 16:01:53 +0100
-Message-ID: <20140407150153.GF7528@n2100.arm.linux.org.uk>
-References: <20140406221854.GS7528@n2100.arm.linux.org.uk> <E1WWvQI-00049e-Vl@rmk-PC.arm.linux.org.uk> <20140407084651.GA30127@piout.net> <20140407111003.GA26985@ulmo> <20140407113547.GB7528@n2100.arm.linux.org.uk> <20140407120143.GF26985@ulmo> <20140407123750.GC7528@n2100.arm.linux.org.uk> <20140407133758.GA25556@ulmo> <20140407142024.GX30127@piout.net>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH RFC] leds: pca9685: Remove leds-pca9685 driver
+Date: Mon, 7 Apr 2014 14:26:17 -0700
+Message-ID: <CAK5ve-JjFShyyLys3ZNVa4s+y1+ac-oDYraC8vF+H1rEnDSfxQ@mail.gmail.com>
+References: <1396754381.13341.4.camel@phoenix> <20140406093053.GH12170@pengutronix.de>
+ <CAFRkauBRAmCpF+84bRhqB3hJinnt0apo4dpV+VfUELVXSr8+rg@mail.gmail.com> <CAKSnaae5onmE4QnvTnN7TSC9iLb4DLaL561GMMsDwaPxzd8jTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:52787 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753143AbaDGPC1 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Apr 2014 11:02:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20140407142024.GX30127@piout.net>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:38403 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754637AbaDGV1Q convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Apr 2014 17:27:16 -0400
+In-Reply-To: <CAKSnaae5onmE4QnvTnN7TSC9iLb4DLaL561GMMsDwaPxzd8jTw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+To: =?ISO-8859-1?Q?Maximilian_G=FCntner?= <maximilian.guentner@gmail.com>
+Cc: Axel Lin <axel.lin@ingics.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Mon, Apr 07, 2014 at 04:20:24PM +0200, Alexandre Belloni wrote:
-> Point taken. I'm still a bit afraid about people then setting both the
-> inverted polarity on the PWM and active-low. Or not knowing when to
-> choose which one. I would expect that inverting the PWM is still the
-> better choice as it allows to disable the PWM.
+On Sun, Apr 6, 2014 at 4:12 AM, Maximilian G=FCntner
+<maximilian.guentner@gmail.com> wrote:
+> 2014-04-06 12:40 GMT+02:00 Axel Lin <axel.lin@ingics.com>:
+>> 2014-04-06 17:30 GMT+08:00 Steffen Trumtrar <s.trumtrar@pengutronix.=
+de>:
+>>> Hi!
+>
+> Hello,
+>
+>>> This confused me for a second, as there was no driver to replace wh=
+en I wrote
+>>> the pwm-pca9685 driver and I thought I missed something. But it see=
+ms I didn't
+>>> and the pwm-pca9685 is actually older.
+>>
+>> Ah.. right, leds-pca9685 is a newer driver.
+>>
+>> 2013-10-22 leds: Added driver for the NXP PCA9685 I2C chip
+>> 2013-05-30 pwm: add pca9685 driver
+>>
+> True. I wrote this driver in April 2013 since there was no driver
+> available for the PCA9685 at this point.
+> When I submitted it in October I only checked 'drivers/leds/' for
+> support but not 'drivers/pwm'.
+>
+>>>
+>>>> Use git grep to check current tree and found there is no user uses=
+ leds-pca9685.
+>>>> So this patch removes leds-pca9685 driver.
+>>>>
+>>>
+>>> If the platform setup is needed, maybe this can be integrated into =
+the pwm driver
+>>> instead of completely dropping it. I don't care for platform code, =
+but if someone
+>>> does, I don't want him to lose the support for it.
+>>
+>> Given the fact there is no user in current tree uses leds-pca9685,
+>> I suspect if we need to add platform setup to pwm-pca9685.
+>> ( I think the trend is to use DT, not the reverse )
+>>
+>>>
+>>> Otherwise I am okay with this drop (okay, I'm completely biased of =
+course ;-)).
+>>> But technically the pca9685 is not solely a LED driver IC, but a PW=
+M IC, so it
+>>> is in the wrong place anyhow.
+>>
+>> I also think PWM subsystem is better for this chip which is a PWM IC=
+=2E
+> +1
+>
+> I also ACK the drop of leds-pca9685 in favor of pwm-pca9685.
+>
+> Thanks,
+>
+> Maximilian
 
-That depends.  Consider the case that I have - a LED connected between
-supply and the PWM output.  The PWM controller, when disabled, sets the
-output to ground.  When when the PWM controller supports output inversion,
-when the controller is disabled, it still sets the output to ground.
+OK, great, I will merge this change with Maximilian and Steffen's acks.
 
-That's the root of my problem - the iMX6 "inversion" isn't a real
-inversion of the output itself, it's a change in the way the logic
-inside the PWM works.
-
-The design appears to be:
-
-1. A counter which resets to zero, and then increments to a programmable
-   maximum value.
-2. A comparitor which compares the counter output with the sample value.
-3. A set-reset flip flop on the output
-4. Muxes on the set and reset input to select which signals are routed
-   to the flip-flop.
-
-What this means is that when the counter is reset to zero, the output
-flip flop can be either set or cleared.  When the counter reaches the
-sample value, the output can be either cleared or set.
-
-While the PWM is running, this results in apparant polarity changes as
-per the description in linux/pwm.h.  However, when disabled, the output
-is always forced to zero.
-
-What is not clearly specified is what happens at enable time.  The
-documentations use of "the output pin is set to start a new period"
-is rather ambiguous when they've already shown that there's a set-reset
-latch - does it mean that a pulse is always sent to the 'set' input
-causing the output to go high when the PWM is enabled... which would
-mean it would end up remaining high until the end of the first period.
-
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Thanks,
+-Bryan
