@@ -1,61 +1,93 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 0/5] Fix various issues with leds-pwm
-Date: Mon, 7 Apr 2014 14:36:26 -0700
-Message-ID: <CAK5ve-KMLvxZgwFiks7eQHdBfakfMUPqUiuY0+KFmGLat8VhPA@mail.gmail.com>
-References: <20140406221854.GS7528@n2100.arm.linux.org.uk> <CAK5ve-JijCvD8cZMpx+zG7YAjce3hnhpwTHCJr+zzfMKmJPt=g@mail.gmail.com>
- <20140407213337.GL7528@n2100.arm.linux.org.uk>
+Subject: Re: [PATCH] leds: make sure we unregister a trigger only once
+Date: Mon, 7 Apr 2014 15:08:15 -0700
+Message-ID: <CAK5ve-KGQJbWPO0N6rWJG4Z+aoEtr4+Whv5UkVCVyk8PzjNyvw@mail.gmail.com>
+References: <1396630873-17372-1-git-send-email-sasha.levin@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:63204 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753119AbaDGVgs (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Apr 2014 17:36:48 -0400
-In-Reply-To: <20140407213337.GL7528@n2100.arm.linux.org.uk>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:42841 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755919AbaDGWIh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Apr 2014 18:08:37 -0400
+In-Reply-To: <1396630873-17372-1-git-send-email-sasha.levin@oracle.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Richard Purdie <rpurdie@rpsys.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Sasha Levin <sasha.levin@oracle.com>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 7, 2014 at 2:33 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Apr 07, 2014 at 02:31:00PM -0700, Bryan Wu wrote:
->> On Sun, Apr 6, 2014 at 3:18 PM, Russell King - ARM Linux
->> <linux@arm.linux.org.uk> wrote:
->> > This patch series fixes various problems with leds-pwm.
->> >
->> > The first patch is very important to solve a boot time oops on OMAP
->> > boards (and probably others) which has recently shown its face.
->> >
->> > The next two clean up leds-pwm so that we can avoid the madness of
->> > having entirely separate initialisation paths for DT and non-DT, which
->> > I believe is the core cause of the initial problem.
->> >
->> > The last two patches add support for LEDs connected in the opposite
->> > sense to PWM outputs, where either the PWM does not support inversion,
->> > or does not support it in a way that works sanely with leds-pwm.  These
->> > add a new property to leds-pwm, hence why that patch (and this cover)
->> > copies the DT people.
->> >
->> > The first patch is an absolute must for going.
->> >
->>
->> Cool, I think Thierry is good for this patchset. I'm going to merge it
->> with Thierry's ack and queue it for 3.16 merge window.
+On Fri, Apr 4, 2014 at 10:01 AM, Sasha Levin <sasha.levin@oracle.com> wrote:
+> Currently, we may attempt to unregister a trigger more than once, for
+> example when we receive two consecutive reboot notifications, or when
+> we do a regular unregistration plus reboot notification.
 >
-> I don't mind the majority of the patch set being queued for the next
-> merge window, but I object to the first patch being delayed.  The
-> first patch is a very necessary bug fix for a regression that has
-> cropped up since -rc7.
+> This leads to the following error since we try to delete the list node
+> twice:
 >
-> It may not be the fault of leds-pwm, but it's leds-pwm which is most
-> certainly buggy.  kfree'ing a work_struct which is active is *not*
-> on.
+> [ 2780.254922] WARNING: CPU: 0 PID: 13764 at lib/list_debug.c:53 __list_del_entry+0x3e/0xe0()
+> [ 2780.265559] list_del corruption, ffffffffa5eb6470->next is LIST_POISON1 (dead000000100100)
+> [ 2780.271710] Modules linked in:
+> [ 2780.274156] CPU: 0 PID: 13764 Comm: kworker/0:2 Tainted: G        W     3.14.0-next-20140403-sasha-00012-gef5fa7d-dirty #373
+> [ 2780.283063] Workqueue: events do_poweroff
+> [ 2780.285644]  0000000000000009 ffff8800330dbb38 ffffffffa34bfa33 0000000000002fe0
+> [ 2780.291571]  ffff8800330dbb88 ffff8800330dbb78 ffffffffa015a37c ffff8800330dbb68
+> [ 2780.296670]  ffffffffa5eb6470 0000000000000000 ffffffffa5eb6400 ffffffffa5ad7430
+> [ 2780.299756] Call Trace:
+> [ 2780.301530] dump_stack (lib/dump_stack.c:52)
+> [ 2780.303802] warn_slowpath_common (kernel/panic.c:418)
+> [ 2780.306151] warn_slowpath_fmt (kernel/panic.c:433)
+> [ 2780.308156] __list_del_entry (lib/list_debug.c:51 (discriminator 1))
+> [ 2780.310800] list_del (lib/list_debug.c:78)
+> [ 2780.313175] led_trigger_unregister (drivers/leds/led-triggers.c:225)
+> [ 2780.315599] heartbeat_reboot_notifier (drivers/leds/trigger/ledtrig-heartbeat.c:119)
+> [ 2780.317247] notifier_call_chain (kernel/notifier.c:95)
+> [ 2780.320014] __blocking_notifier_call_chain (kernel/notifier.c:316)
+> [ 2780.323263] blocking_notifier_call_chain (kernel/notifier.c:326)
+> [ 2780.326096] kernel_power_off (include/linux/kmod.h:95 kernel/reboot.c:153 kernel/reboot.c:179)
+> [ 2780.327883] do_poweroff (kernel/power/poweroff.c:23)
+> [ 2780.330748] process_one_work (kernel/workqueue.c:2221 include/linux/jump_label.h:105 include/trace/events/workqueue.h:111 kernel/workqueue.c:2226)
+> [ 2780.333027] ? process_one_work (include/linux/workqueue.h:186 kernel/workqueue.c:611 kernel/workqueue.c:638 kernel/workqueue.c:2214)
+> [ 2780.335487] process_scheduled_works (include/linux/list.h:188 kernel/workqueue.c:2277)
+> [ 2780.337101] worker_thread (kernel/workqueue.c:2352)
+> [ 2780.338712] ? rescuer_thread (kernel/workqueue.c:2297)
+> [ 2780.341326] kthread (kernel/kthread.c:219)
+> [ 2780.343446] ? kthread_create_on_node (kernel/kthread.c:185)
+> [ 2780.345733] ret_from_fork (arch/x86/kernel/entry_64.S:555)
+> [ 2780.347168] ? kthread_create_on_node (kernel/kthread.c:185)
+>
+> Prevent it by making sure we don't attempt to unregister a trigger that
+> is not in the triggers list.
 >
 
-Sure, actually just after I sent out my previous email, I think I need
-add your first patch into my git pull request for 3.15 merge window.
-So no worries, I will do that.
+Looks good to me literally, could you please provide some simple test
+case for me? I need verify it on my side.
 
 Thanks,
 -Bryan
+
+> Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+> ---
+>  drivers/leds/led-triggers.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index df1a7c1..c3734f1 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -219,9 +219,12 @@ void led_trigger_unregister(struct led_trigger *trig)
+>  {
+>         struct led_classdev *led_cdev;
+>
+> +       if (list_empty_careful(&trig->next_trig))
+> +               return;
+> +
+>         /* Remove from the list of led triggers */
+>         down_write(&triggers_list_lock);
+> -       list_del(&trig->next_trig);
+> +       list_del_init(&trig->next_trig);
+>         up_write(&triggers_list_lock);
+>
+>         /* Remove anyone actively using this trigger */
+> --
+> 1.7.10.4
+>
