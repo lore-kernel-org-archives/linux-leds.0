@@ -1,76 +1,53 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: Re: [PATCH] leds: make sure we unregister a trigger only once
-Date: Mon, 07 Apr 2014 18:30:25 -0400
-Message-ID: <53432701.8020403@oracle.com>
-References: <1396630873-17372-1-git-send-email-sasha.levin@oracle.com> <CAK5ve-KGQJbWPO0N6rWJG4Z+aoEtr4+Whv5UkVCVyk8PzjNyvw@mail.gmail.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: MX28: leds/pwm: Using pwm driven led as heartbeat leads to
+ kernel warning
+Date: Tue, 8 Apr 2014 15:34:04 +0800
+Message-ID: <20140408073402.GC2438@dragon>
+References: <53345C93.9040005@i2se.com>
+ <533EB9AC.6040708@i2se.com>
+ <20140404142656.GA16383@dragon>
+ <20140404164446.GI4883@piout.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:16468 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754698AbaDGWaj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Apr 2014 18:30:39 -0400
-In-Reply-To: <CAK5ve-KGQJbWPO0N6rWJG4Z+aoEtr4+Whv5UkVCVyk8PzjNyvw@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140404164446.GI4883@piout.net>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Fabio Estevam <fabio.estevam@freescale.com>, Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sascha Hauer <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On 04/07/2014 06:08 PM, Bryan Wu wrote:
-> On Fri, Apr 4, 2014 at 10:01 AM, Sasha Levin <sasha.levin@oracle.com> wrote:
->> Currently, we may attempt to unregister a trigger more than once, for
->> example when we receive two consecutive reboot notifications, or when
->> we do a regular unregistration plus reboot notification.
->>
->> This leads to the following error since we try to delete the list node
->> twice:
->>
->> [ 2780.254922] WARNING: CPU: 0 PID: 13764 at lib/list_debug.c:53 __list_del_entry+0x3e/0xe0()
->> [ 2780.265559] list_del corruption, ffffffffa5eb6470->next is LIST_POISON1 (dead000000100100)
->> [ 2780.271710] Modules linked in:
->> [ 2780.274156] CPU: 0 PID: 13764 Comm: kworker/0:2 Tainted: G        W     3.14.0-next-20140403-sasha-00012-gef5fa7d-dirty #373
->> [ 2780.283063] Workqueue: events do_poweroff
->> [ 2780.285644]  0000000000000009 ffff8800330dbb38 ffffffffa34bfa33 0000000000002fe0
->> [ 2780.291571]  ffff8800330dbb88 ffff8800330dbb78 ffffffffa015a37c ffff8800330dbb68
->> [ 2780.296670]  ffffffffa5eb6470 0000000000000000 ffffffffa5eb6400 ffffffffa5ad7430
->> [ 2780.299756] Call Trace:
->> [ 2780.301530] dump_stack (lib/dump_stack.c:52)
->> [ 2780.303802] warn_slowpath_common (kernel/panic.c:418)
->> [ 2780.306151] warn_slowpath_fmt (kernel/panic.c:433)
->> [ 2780.308156] __list_del_entry (lib/list_debug.c:51 (discriminator 1))
->> [ 2780.310800] list_del (lib/list_debug.c:78)
->> [ 2780.313175] led_trigger_unregister (drivers/leds/led-triggers.c:225)
->> [ 2780.315599] heartbeat_reboot_notifier (drivers/leds/trigger/ledtrig-heartbeat.c:119)
->> [ 2780.317247] notifier_call_chain (kernel/notifier.c:95)
->> [ 2780.320014] __blocking_notifier_call_chain (kernel/notifier.c:316)
->> [ 2780.323263] blocking_notifier_call_chain (kernel/notifier.c:326)
->> [ 2780.326096] kernel_power_off (include/linux/kmod.h:95 kernel/reboot.c:153 kernel/reboot.c:179)
->> [ 2780.327883] do_poweroff (kernel/power/poweroff.c:23)
->> [ 2780.330748] process_one_work (kernel/workqueue.c:2221 include/linux/jump_label.h:105 include/trace/events/workqueue.h:111 kernel/workqueue.c:2226)
->> [ 2780.333027] ? process_one_work (include/linux/workqueue.h:186 kernel/workqueue.c:611 kernel/workqueue.c:638 kernel/workqueue.c:2214)
->> [ 2780.335487] process_scheduled_works (include/linux/list.h:188 kernel/workqueue.c:2277)
->> [ 2780.337101] worker_thread (kernel/workqueue.c:2352)
->> [ 2780.338712] ? rescuer_thread (kernel/workqueue.c:2297)
->> [ 2780.341326] kthread (kernel/kthread.c:219)
->> [ 2780.343446] ? kthread_create_on_node (kernel/kthread.c:185)
->> [ 2780.345733] ret_from_fork (arch/x86/kernel/entry_64.S:555)
->> [ 2780.347168] ? kthread_create_on_node (kernel/kthread.c:185)
->>
->> Prevent it by making sure we don't attempt to unregister a trigger that
->> is not in the triggers list.
->>
+On Fri, Apr 04, 2014 at 06:44:47PM +0200, Alexandre Belloni wrote:
+> On 04/04/2014 at 22:26:58 +0800, Shawn Guo wrote :
+> > On Fri, Apr 04, 2014 at 03:54:52PM +0200, Stefan Wahren wrote:
+> > > the problem is still reproducable in Mainline 3.14.0 and gives the same
+> > > warning message.
+> > > Also i add linux-leds in CC.
+> > > 
+> > > Are there any advices to narrow down the problem?
+> > > 
+> > > Is this problem specific to i.MX28 PWM (i don't have other kind of
+> > > hardware)?
+> > 
+> > I don't think it's specific to i.MX28 PWM.  Since the .config hook of
+> > pwm_ops will be called from interrupt context in this case, any pwm
+> > drivers that do sleeping calls in the hook will have this problem, e.g.
+> > the clk APIs that hold mutex like clk_prepare() and clk_get_rate() etc.
+> > 
 > 
-> Looks good to me literally, could you please provide some simple test
-> case for me? I need verify it on my side.
+> Yeah, I'm wondering whether we should set pwm->chip->can_sleep then.
 
-First, make sure you test it on a kernel with list debugging enabled,
-otherwise there won't be noticeable result unless you end up corrupting
-something important in the memory.
+Right, per kerneldoc of struct pwm_chip, we should set can_sleep.
 
-Try calling reboot() and unregistering a device that has a led trigger
-at the same time (from two different threads) and hope you hit that race.
+/**
+ * struct pwm_chip - abstract a PWM controller
+ * ...
+ * @can_sleep: must be true if the .config(), .enable() or .disable()
+ *             operations may sleep
+ */
 
+But how does setting the flag make a difference there?  I see pwm core
+does nothing about the flag, or am I missing something?
 
-Thanks,
-Sasha
+Shawn
+
