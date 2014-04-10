@@ -1,55 +1,121 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: MX28: leds/pwm: Using pwm driven led as heartbeat leads to
- kernel warning
-Date: Tue, 8 Apr 2014 11:04:43 +0200
-Message-ID: <20140408090443.GD30127@piout.net>
-References: <53345C93.9040005@i2se.com>
- <533EB9AC.6040708@i2se.com>
- <20140404142656.GA16383@dragon>
- <20140404164446.GI4883@piout.net>
- <20140408073402.GC2438@dragon>
- <20140408075916.GA30127@piout.net>
- <20140408081848.GH2438@dragon>
- <20140408084150.GC30127@piout.net>
- <20140408084951.GI2438@dragon>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED updates for 3.15
+Date: Wed, 9 Apr 2014 17:37:23 -0700
+Message-ID: <CAK5ve-JC2He351jeLBX_8KRAnHbxVm3hMZMskn9Gv_kSyQvvOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140408084951.GI2438@dragon>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@freescale.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Fabio Estevam <fabio.estevam@freescale.com>, Thierry Reding <thierry.reding@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sascha Hauer <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:61390 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932847AbaDJAhp convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 9 Apr 2014 20:37:45 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On 08/04/2014 at 16:49:52 +0800, Shawn Guo wrote :
-> On Tue, Apr 08, 2014 at 10:41:50AM +0200, Alexandre Belloni wrote:
-> > On 08/04/2014 at 16:18:49 +0800, Shawn Guo wrote :
-> > > On Tue, Apr 08, 2014 at 09:59:16AM +0200, Alexandre Belloni wrote:
-> > > > The driver using the PWM should test the flag, have a look at:
-> > > > http://lxr.free-electrons.com/source/drivers/leds/leds-pwm.c#L183
-> > > 
-> > > Ah, right, that' how the flag works.  Thanks, Alexandre.  I send a patch
-> > > to set the flag for pwm-mxs driver shortly.
-> > > 
-> > 
-> > Actually, I had a closer look and I believe using clk_prepare_enable()
-> > in .config is wrong. Let me prepare a patch.
-> 
-> Yes, we can split clk_prepare_enable() into clk_prepare() and
-> clk_enable(), call the former in .probe() and only the later in .config
-> hook.
-> 
-> But it only fixes the problem partially.  If you look at Stefan's report
-> closely, you can see the warning actually comes from the clk_get_rate()
-> call which holds a mutex too.
-> 
+Hi Linus:
 
-Right, I missed that one. I would say it is still worth doing that
-change anyway as using test_bit(PWMF_ENABLED, &pwm->flags) is
-unnecessary because clk_enable()/clk_disable() maintain a usage count.
+This cycle we got:
+ - new driver for leds-mc13783
+ - bug fixes
+ - code cleanup.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Please consider the following changes since commit
+cfbf8d4857c26a8a307fb7cd258074c9dcd8c691:
+
+  Linux 3.14-rc4 (2014-02-23 17:40:03 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git=
+ for-next
+
+for you to fetch changes up to 14f5716bc23cebb627b40a2808e9f04eb77ab206=
+:
+
+  leds: make sure we unregister a trigger only once (2014-04-07 14:47:2=
+5 -0700)
+
+----------------------------------------------------------------
+Alexander Shiyan (5):
+      leds: leds-mc13783: Add MC34708 LED support
+      leds: leds-mc13783: Use LED core PM functions
+      leds: leds-mc13783: Use proper "max_brightness" value fo LEDs
+      leds: leds-mc13783: Remove unnecessary cleaning of registers on e=
+xit
+      leds: leds-mc13783: Add devicetree support
+
+Jean Delvare (2):
+      leds-ot200: Fix dependencies
+      leds: clevo-mail: Make probe function __init
+
+Jingoo Han (5):
+      leds: leds-ss4200: remove DEFINE_PCI_DEVICE_TABLE macro
+      leds: lp5562: remove unnecessary parentheses
+      leds: blinkm: remove unnecessary spaces
+      leds: leds-ss4200: remove __initdata marker
+      leds: clevo-mail: remove __initdata marker
+
+Paolo Pisati (1):
+      leds-gpio: of: introduce MODULE_DEVICE_TABLE for module autoloadi=
+ng
+
+Paul Gortmaker (1):
+      drivers/leds: delete non-required instances of include <linux/ini=
+t.h>
+
+Pawel Moll (1):
+      ledtrig-cpu: Handle CPU hot(un)plugging
+
+Robin Gong (1):
+      leds: leds-gpio: add retain-state-suspended property
+
+Russell King (1):
+      leds: leds-pwm: properly clean up after probe failure
+
+Sachin Kamat (1):
+      leds: leds-s3c24xx: Trivial cleanup in header file
+
+Sasha Levin (1):
+      leds: make sure we unregister a trigger only once
+
+Stefan S=F8rensen (1):
+      leds: Turn off led if blinking is disabled
+
+ .../devicetree/bindings/leds/leds-gpio.txt         |  12 ++
+ Documentation/devicetree/bindings/mfd/mc13xxx.txt  |  47 +++++
+ drivers/leds/Kconfig                               |   4 +-
+ drivers/leds/led-core.c                            |   6 +-
+ drivers/leds/led-triggers.c                        |   6 +-
+ drivers/leds/leds-88pm860x.c                       |   1 -
+ drivers/leds/leds-adp5520.c                        |   1 -
+ drivers/leds/leds-asic3.c                          |   1 -
+ drivers/leds/leds-blinkm.c                         |   3 +-
+ drivers/leds/leds-clevo-mail.c                     |   5 +-
+ drivers/leds/leds-cobalt-qube.c                    |   1 -
+ drivers/leds/leds-da903x.c                         |   1 -
+ drivers/leds/leds-da9052.c                         |   1 -
+ drivers/leds/leds-fsg.c                            |   1 -
+ drivers/leds/leds-gpio.c                           |   6 +-
+ drivers/leds/leds-hp6xx.c                          |   1 -
+ drivers/leds/leds-lm3533.c                         |   1 -
+ drivers/leds/leds-lp5521.c                         |   1 -
+ drivers/leds/leds-lp5523.c                         |   1 -
+ drivers/leds/leds-lp5562.c                         |   7 +-
+ drivers/leds/leds-lt3593.c                         |   1 -
+ drivers/leds/leds-mc13783.c                        | 223 +++++++++++++=
++-------
+ drivers/leds/leds-netxbig.c                        |   1 -
+ drivers/leds/leds-ns2.c                            |   1 -
+ drivers/leds/leds-ot200.c                          |   1 -
+ drivers/leds/leds-pwm.c                            |  24 ++-
+ drivers/leds/leds-s3c24xx.c                        |   1 -
+ drivers/leds/leds-ss4200.c                         |   4 +-
+ drivers/leds/leds-wm831x-status.c                  |   1 -
+ drivers/leds/leds-wm8350.c                         |   1 -
+ drivers/leds/trigger/ledtrig-cpu.c                 |  24 +++
+ include/linux/mfd/mc13xxx.h                        |   6 +
+ include/linux/platform_data/leds-s3c24xx.h         |   9 +-
+ 33 files changed, 275 insertions(+), 129 deletions(-)
