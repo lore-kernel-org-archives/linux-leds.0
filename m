@@ -1,77 +1,121 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: make sure we unregister a trigger only once
-Date: Wed, 9 Apr 2014 17:38:41 -0700
-Message-ID: <CAK5ve-JiOCwXS5BWTBc-n3+bO7DJckd=H8T7Ey8WjzfqHDy_sA@mail.gmail.com>
-References: <1396630873-17372-1-git-send-email-sasha.levin@oracle.com>
- <CAK5ve-KGQJbWPO0N6rWJG4Z+aoEtr4+Whv5UkVCVyk8PzjNyvw@mail.gmail.com> <53432701.8020403@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53432701.8020403@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sasha Levin <sasha.levin@oracle.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v3 0/5] LED / flash API integration
+Date: Fri, 11 Apr 2014 16:56:51 +0200
+Message-ID: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:14518 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950AbaDKO5S (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Apr 2014 10:57:18 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Mon, Apr 7, 2014 at 3:30 PM, Sasha Levin <sasha.levin@oracle.com> wrote:
-> On 04/07/2014 06:08 PM, Bryan Wu wrote:
->> On Fri, Apr 4, 2014 at 10:01 AM, Sasha Levin <sasha.levin@oracle.com> wrote:
->>> Currently, we may attempt to unregister a trigger more than once, for
->>> example when we receive two consecutive reboot notifications, or when
->>> we do a regular unregistration plus reboot notification.
->>>
->>> This leads to the following error since we try to delete the list node
->>> twice:
->>>
->>> [ 2780.254922] WARNING: CPU: 0 PID: 13764 at lib/list_debug.c:53 __list_del_entry+0x3e/0xe0()
->>> [ 2780.265559] list_del corruption, ffffffffa5eb6470->next is LIST_POISON1 (dead000000100100)
->>> [ 2780.271710] Modules linked in:
->>> [ 2780.274156] CPU: 0 PID: 13764 Comm: kworker/0:2 Tainted: G        W     3.14.0-next-20140403-sasha-00012-gef5fa7d-dirty #373
->>> [ 2780.283063] Workqueue: events do_poweroff
->>> [ 2780.285644]  0000000000000009 ffff8800330dbb38 ffffffffa34bfa33 0000000000002fe0
->>> [ 2780.291571]  ffff8800330dbb88 ffff8800330dbb78 ffffffffa015a37c ffff8800330dbb68
->>> [ 2780.296670]  ffffffffa5eb6470 0000000000000000 ffffffffa5eb6400 ffffffffa5ad7430
->>> [ 2780.299756] Call Trace:
->>> [ 2780.301530] dump_stack (lib/dump_stack.c:52)
->>> [ 2780.303802] warn_slowpath_common (kernel/panic.c:418)
->>> [ 2780.306151] warn_slowpath_fmt (kernel/panic.c:433)
->>> [ 2780.308156] __list_del_entry (lib/list_debug.c:51 (discriminator 1))
->>> [ 2780.310800] list_del (lib/list_debug.c:78)
->>> [ 2780.313175] led_trigger_unregister (drivers/leds/led-triggers.c:225)
->>> [ 2780.315599] heartbeat_reboot_notifier (drivers/leds/trigger/ledtrig-heartbeat.c:119)
->>> [ 2780.317247] notifier_call_chain (kernel/notifier.c:95)
->>> [ 2780.320014] __blocking_notifier_call_chain (kernel/notifier.c:316)
->>> [ 2780.323263] blocking_notifier_call_chain (kernel/notifier.c:326)
->>> [ 2780.326096] kernel_power_off (include/linux/kmod.h:95 kernel/reboot.c:153 kernel/reboot.c:179)
->>> [ 2780.327883] do_poweroff (kernel/power/poweroff.c:23)
->>> [ 2780.330748] process_one_work (kernel/workqueue.c:2221 include/linux/jump_label.h:105 include/trace/events/workqueue.h:111 kernel/workqueue.c:2226)
->>> [ 2780.333027] ? process_one_work (include/linux/workqueue.h:186 kernel/workqueue.c:611 kernel/workqueue.c:638 kernel/workqueue.c:2214)
->>> [ 2780.335487] process_scheduled_works (include/linux/list.h:188 kernel/workqueue.c:2277)
->>> [ 2780.337101] worker_thread (kernel/workqueue.c:2352)
->>> [ 2780.338712] ? rescuer_thread (kernel/workqueue.c:2297)
->>> [ 2780.341326] kthread (kernel/kthread.c:219)
->>> [ 2780.343446] ? kthread_create_on_node (kernel/kthread.c:185)
->>> [ 2780.345733] ret_from_fork (arch/x86/kernel/entry_64.S:555)
->>> [ 2780.347168] ? kthread_create_on_node (kernel/kthread.c:185)
->>>
->>> Prevent it by making sure we don't attempt to unregister a trigger that
->>> is not in the triggers list.
->>>
->>
->> Looks good to me literally, could you please provide some simple test
->> case for me? I need verify it on my side.
->
-> First, make sure you test it on a kernel with list debugging enabled,
-> otherwise there won't be noticeable result unless you end up corrupting
-> something important in the memory.
->
-> Try calling reboot() and unregistering a device that has a led trigger
-> at the same time (from two different threads) and hope you hit that race.
->
->
+This is is the third version of the patch series being a follow up
+of the discussion on Media summit 2013-10-23, related to the
+LED / flash API integration (the notes from the discussion were
+enclosed in the message [1], paragraph 5).
+The series is based on linux-next next-20140328
 
-Good, I hit that race and this patch solves the issue. Applied and
-sent out to Linus.
+Description of the proposed modifications according to
+the kernel components they are relevant to:
+    - LED subsystem modifications
+        * added led_flash module which, when enabled in the config,
+	  registers flash specific sysfs attributes:
+            - flash_brightness
+	    - max_flash_brightness
+	    - indicator_brightness
+	    - max_indicator_brightness
+            - flash_timeout
+            - max_flash_timeout
+	    - flash_strobe
+            - flash_fault
+            - external_strobe
+	and exposes kernel internal API
+            - led_set_flash_strobe
+            - led_get_flash_strobe
+            - led_set_indicator_brightness
+            - led_update_indicator_brightness
+            - led_set_flash_timeout
+            - led_get_flash_fault
+            - led_set_external_strobe
+            - led_sysfs_lock
+            - led_sysfs_unlock
+    - Addition of a V4L2 Flash sub-device registration helpers
+        * added v4l2-flash.c and v4l2-flash.h files with helper
+          functions that facilitate registration/unregistration
+          of a subdevice, which wrapps a LED subsystem device and
+          exposes V4L2 Flash control interface
+    - Addition of a driver for the flash cell of the MAX77693 mfd
+        * the driver exploits the newly introduced mechanism
+    - Update of the max77693.txt DT bindings documentation
+
+================
+Changes since v2
+================
+
+    - refactored the code so that it is possible to build
+      led-core without led-flash module
+    - added v4l2-flash ops which slackens dependency from
+      the led-flash module
+    - implemented led_clamp_align_val function and led_ctrl
+      structure which allows to align led control values
+      in the manner compatible with V4L2 Flash controls;
+      the flash brightness and timeout units have been defined
+      as microamperes and microseconds respectively to properly
+      support devices which define current and time levels
+      as fractions of 1/1000.
+    - added support for the flash privacy leds
+    - modified LED sysfs locking mechanism - now it locks/unlocks
+      the interface on V4L2 Flash sub-device file open/close
+    - changed hw_triggered attribute name to external_strobe,
+      which maps on the V4L2_FLASH_STROBE_SOURCE_EXTERNAL name 
+      more intuitively
+    - made external_strobe and indicator related sysfs attributes
+      created optionally only if related features are declared
+      by the led device driver
+    - removed from the series patches modifying exynos4-is media
+      controller - a proposal for "flash manager" which will take
+      care of flash devices registration is due to be submitted
+    - removed modifications to the LED class devices documentation,
+      it will be covered after the whole functionality is accepted
 
 Thanks,
--Bryan
+Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/linux-media/msg69253.html
+
+Jacek Anaszewski (5):
+  leds: Add sysfs and kernel internal API for flash LEDs
+  leds: Improve and export led_update_brightness function
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693 flash cell
+  media: Add registration helpers for V4L2 flash sub-devices
+
+ Documentation/devicetree/bindings/mfd/max77693.txt |   57 ++
+ drivers/leds/Kconfig                               |   18 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/led-class.c                           |   42 +-
+ drivers/leds/led-core.c                            |   16 +
+ drivers/leds/led-flash.c                           |  627 ++++++++++++++++
+ drivers/leds/led-triggers.c                        |   16 +-
+ drivers/leds/leds-max77693.c                       |  794 ++++++++++++++++++++
+ drivers/leds/leds.h                                |    6 +
+ drivers/media/v4l2-core/Kconfig                    |   10 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  393 ++++++++++
+ drivers/mfd/max77693.c                             |    2 +-
+ include/linux/leds.h                               |   60 +-
+ include/linux/leds_flash.h                         |  252 +++++++
+ include/linux/mfd/max77693.h                       |   38 +
+ include/media/v4l2-flash.h                         |  119 +++
+ 17 files changed, 2433 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/leds/led-flash.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/linux/leds_flash.h
+ create mode 100644 include/media/v4l2-flash.h
+
+-- 
+1.7.9.5
