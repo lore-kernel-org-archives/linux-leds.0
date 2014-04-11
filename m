@@ -1,102 +1,96 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v3 4/5] DT: Add documentation for the mfd Maxim max77693
- flash cell
-Date: Fri, 11 Apr 2014 16:56:55 +0200
-Message-ID: <1397228216-6657-5-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v3 2/5] leds: Improve and export led_update_brightness
+ function
+Date: Fri, 11 Apr 2014 16:56:53 +0200
+Message-ID: <1397228216-6657-3-git-send-email-j.anaszewski@samsung.com>
 References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds device tree binding documentation for
-the flash cell of the Maxim max77693 multifunctional device.
+led_update_brightness helper function used to be exploited
+only locally in the led-class.c module, where its result was
+being passed to the brightness_show sysfs callback. With the
+introduction of v4l2-flash subdevice the same functionality
+became required for reading current brightness from a LED
+device. This patch adds checking brightness_get callback
+error code and adds the function to the LED subsystem
+public API.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/devicetree/bindings/mfd/max77693.txt |   57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/leds/led-class.c |    6 ------
+ drivers/leds/led-core.c  |   16 ++++++++++++++++
+ include/linux/leds.h     |   10 ++++++++++
+ 3 files changed, 26 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
-index 11921cc..f58d192 100644
---- a/Documentation/devicetree/bindings/mfd/max77693.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-@@ -27,6 +27,53 @@ Optional properties:
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 58f16c3..7f285d7 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -24,12 +24,6 @@
  
- 	[*] refer Documentation/devicetree/bindings/regulator/regulator.txt
+ static struct class *leds_class;
  
-+Optional node:
-+- led-flash : the LED submodule device node
+-static void led_update_brightness(struct led_classdev *led_cdev)
+-{
+-	if (led_cdev->brightness_get)
+-		led_cdev->brightness = led_cdev->brightness_get(led_cdev);
+-}
+-
+ static ssize_t brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 71b40d3..376166c 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -126,3 +126,19 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ 	__led_set_brightness(led_cdev, brightness);
+ }
+ EXPORT_SYMBOL(led_set_brightness);
 +
-+Required properties of "led-flash" node:
-+- compatible : must be "maxim,max77693-flash"
++int led_update_brightness(struct led_classdev *led_cdev)
++{
++	int ret = 0;
 +
-+Optional properties of "led-flash" node:
-+- maxim,iout : Array of four maximum intensities in microamperes of the current
-+	in order: flash1, flash2, torch1, torch2.
-+	Range:
-+		flash - 15625 - 1000000 (max 625000 if boost mode
-+					 is enabled for both outputs),
-+		torch - 15625 - 250000.
-+- maxim,trigger : Array of flags indicating which trigger can activate given led
-+	in order: flash1, flash2, torch1, torch2.
-+	Possible flag values (can be combined):
-+		1 - FLASH pin of the chip,
-+		2 - TORCH pin of the chip,
-+		4 - software via I2C command.
-+- maxim,trigger-type : Array of trigger types in order: flash, torch.
-+	Possible trigger types:
-+		0 - Rising edge of the signal triggers the flash/torch,
-+		1 - Signal level controls duration of the flash/torch.
-+- maxim,timeout : Array of timeouts in microseconds after which leds are
-+	turned off in order: flash, torch.
-+	Range:
-+		flash: 62500 - 1000000,
-+		torch: 0 (no timeout) - 15728000.
-+- maxim,boost-mode : Array of the flash boost modes in order: flash1, flash2.
-+	If both current outputs are connected then the same non-zero value
-+	has to be set for them. This setting influences also maximum
-+	current value for torch and flash modes:
-+		flash1 and flash2 set to 1 or 2:
-+			- max flash current: 1250 mA (625 mA on each output)
-+			- max torch current: 500 mA (250 mA on each output)
-+		flash1 or flash2 set to 0:
-+			- max flash current: 1000 mA
-+			- max torch current: 250 mA
-+	Possible values:
-+		0 - no boost,
-+		1 - adaptive mode,
-+		2 - fixed mode.
-+- maxim,boost-vout : Output voltage of the boost module in millivolts.
-+- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
-+	if chip estimates that system voltage could drop below this level due
-+	to flash power consumption.
++	if (led_cdev->brightness_get) {
++		ret = led_cdev->brightness_get(led_cdev);
++		if (ret >= 0) {
++			led_cdev->brightness = ret;
++			return 0;
++		}
++	}
 +
- Example:
- 	max77693@66 {
- 		compatible = "maxim,max77693";
-@@ -52,4 +99,14 @@ Example:
- 					regulator-boot-on;
- 			};
- 		};
-+		led_flash: led-flash {
-+			compatible = "maxim,max77693-flash";
-+			maxim,iout = <625000 625000 250000 250000>;
-+			maxim,trigger = <5 5 6 6>;
-+			maxim,trigger-type = <0 1>;
-+			maxim,timeout = <500000 0>;
-+			maxim,boost-mode = <1 1>;
-+			maxim,boost-vout = <5000>;
-+			maxim,vsys-min = <2400>;
-+		};
- 	};
++	return ret;
++}
++EXPORT_SYMBOL(led_update_brightness);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index a794817..d085c21 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -174,6 +174,16 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+  */
+ extern void led_set_brightness(struct led_classdev *led_cdev,
+ 			       enum led_brightness brightness);
++/**
++ * led_update_brightness - update LED brightness
++ * @led_cdev: the LED to query
++ *
++ * Get an LED's current brightness and update led_cdev->brightness
++ * member with the obtained value.
++ *
++ * Returns: 0 on success or negative error value on failure
++ */
++extern int led_update_brightness(struct led_classdev *led_cdev);
+ 
+ /**
+  * led_sysfs_is_locked
 -- 
 1.7.9.5
