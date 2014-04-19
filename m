@@ -1,139 +1,46 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v3 0/5] LED / flash API integration
-Date: Fri, 18 Apr 2014 10:54:33 -0700
-Message-ID: <CAK5ve-Ks_YVsM2YEbLMgnAS4jnF-McH7iDY+=hYQ-PaHTzcDOw@mail.gmail.com>
-References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/2] leds: 88pm860x: Use of_get_child_by_name
+Date: Fri, 18 Apr 2014 18:02:58 -0700
+Message-ID: <CAK5ve-JfGY0CbRXAuHYgp6i=VJObLKtbMcjaHgzFgpwJRdsCMA@mail.gmail.com>
+References: <1396597880-2325-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:44072 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751205AbaDRRyz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 18 Apr 2014 13:54:55 -0400
-In-Reply-To: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1396597880-2325-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Fri, Apr 11, 2014 at 7:56 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> This is is the third version of the patch series being a follow up
-> of the discussion on Media summit 2013-10-23, related to the
-> LED / flash API integration (the notes from the discussion were
-> enclosed in the message [1], paragraph 5).
-> The series is based on linux-next next-20140328
->
-> Description of the proposed modifications according to
-> the kernel components they are relevant to:
->     - LED subsystem modifications
->         * added led_flash module which, when enabled in the config,
->           registers flash specific sysfs attributes:
->             - flash_brightness
->             - max_flash_brightness
->             - indicator_brightness
->             - max_indicator_brightness
->             - flash_timeout
->             - max_flash_timeout
->             - flash_strobe
->             - flash_fault
->             - external_strobe
->         and exposes kernel internal API
->             - led_set_flash_strobe
->             - led_get_flash_strobe
->             - led_set_indicator_brightness
->             - led_update_indicator_brightness
->             - led_set_flash_timeout
->             - led_get_flash_fault
->             - led_set_external_strobe
->             - led_sysfs_lock
->             - led_sysfs_unlock
->     - Addition of a V4L2 Flash sub-device registration helpers
->         * added v4l2-flash.c and v4l2-flash.h files with helper
->           functions that facilitate registration/unregistration
->           of a subdevice, which wrapps a LED subsystem device and
->           exposes V4L2 Flash control interface
->     - Addition of a driver for the flash cell of the MAX77693 mfd
->         * the driver exploits the newly introduced mechanism
->     - Update of the max77693.txt DT bindings documentation
->
-> ================
-> Changes since v2
-> ================
->
->     - refactored the code so that it is possible to build
->       led-core without led-flash module
->     - added v4l2-flash ops which slackens dependency from
->       the led-flash module
->     - implemented led_clamp_align_val function and led_ctrl
->       structure which allows to align led control values
->       in the manner compatible with V4L2 Flash controls;
->       the flash brightness and timeout units have been defined
->       as microamperes and microseconds respectively to properly
->       support devices which define current and time levels
->       as fractions of 1/1000.
->     - added support for the flash privacy leds
->     - modified LED sysfs locking mechanism - now it locks/unlocks
->       the interface on V4L2 Flash sub-device file open/close
->     - changed hw_triggered attribute name to external_strobe,
->       which maps on the V4L2_FLASH_STROBE_SOURCE_EXTERNAL name
->       more intuitively
->     - made external_strobe and indicator related sysfs attributes
->       created optionally only if related features are declared
->       by the led device driver
->     - removed from the series patches modifying exynos4-is media
->       controller - a proposal for "flash manager" which will take
->       care of flash devices registration is due to be submitted
->     - removed modifications to the LED class devices documentation,
->       it will be covered after the whole functionality is accepted
+On Fri, Apr 4, 2014 at 12:51 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Use of_get_child_by_name to obtain reference to charger node instead of
+> of_find_node_by_name which can walk outside of the parent node.
 >
 
-Thanks a lot for pushing this, I'm trapping in some other urgent tasks
-and will review it soon when I'm free.
-
+Looks good to me, applied to my for-next branch.
+Thanks,
 -Bryan
 
 
-> Thanks,
-> Jacek Anaszewski
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/leds/leds-88pm860x.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> [1] http://www.spinics.net/lists/linux-media/msg69253.html
->
-> Jacek Anaszewski (5):
->   leds: Add sysfs and kernel internal API for flash LEDs
->   leds: Improve and export led_update_brightness function
->   leds: Add support for max77693 mfd flash cell
->   DT: Add documentation for the mfd Maxim max77693 flash cell
->   media: Add registration helpers for V4L2 flash sub-devices
->
->  Documentation/devicetree/bindings/mfd/max77693.txt |   57 ++
->  drivers/leds/Kconfig                               |   18 +
->  drivers/leds/Makefile                              |    2 +
->  drivers/leds/led-class.c                           |   42 +-
->  drivers/leds/led-core.c                            |   16 +
->  drivers/leds/led-flash.c                           |  627 ++++++++++++++++
->  drivers/leds/led-triggers.c                        |   16 +-
->  drivers/leds/leds-max77693.c                       |  794 ++++++++++++++++++++
->  drivers/leds/leds.h                                |    6 +
->  drivers/media/v4l2-core/Kconfig                    |   10 +
->  drivers/media/v4l2-core/Makefile                   |    2 +
->  drivers/media/v4l2-core/v4l2-flash.c               |  393 ++++++++++
->  drivers/mfd/max77693.c                             |    2 +-
->  include/linux/leds.h                               |   60 +-
->  include/linux/leds_flash.h                         |  252 +++++++
->  include/linux/mfd/max77693.h                       |   38 +
->  include/media/v4l2-flash.h                         |  119 +++
->  17 files changed, 2433 insertions(+), 21 deletions(-)
->  create mode 100644 drivers/leds/led-flash.c
->  create mode 100644 drivers/leds/leds-max77693.c
->  create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
->  create mode 100644 include/linux/leds_flash.h
->  create mode 100644 include/media/v4l2-flash.h
->
+> diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+> index 5f588c0a376e..2f9ee538f30d 100644
+> --- a/drivers/leds/leds-88pm860x.c
+> +++ b/drivers/leds/leds-88pm860x.c
+> @@ -134,7 +134,7 @@ static int pm860x_led_dt_init(struct platform_device *pdev,
+>         nproot = of_node_get(pdev->dev.parent->of_node);
+>         if (!nproot)
+>                 return -ENODEV;
+> -       nproot = of_find_node_by_name(nproot, "leds");
+> +       nproot = of_get_child_by_name(nproot, "leds");
+>         if (!nproot) {
+>                 dev_err(&pdev->dev, "failed to find leds node\n");
+>                 return -ENODEV;
 > --
 > 1.7.9.5
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
