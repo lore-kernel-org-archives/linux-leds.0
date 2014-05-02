@@ -1,43 +1,79 @@
-From: Xiubo Li <Li.Xiubo@freescale.com>
-Subject: [PATCH 3/6] leds: da9052: Remove duplicated OOM message for individual driver
-Date: Wed, 30 Apr 2014 16:07:22 +0800
-Message-ID: <1398845245-26344-4-git-send-email-Li.Xiubo@freescale.com>
-References: <1398845245-26344-1-git-send-email-Li.Xiubo@freescale.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v3 5/5] media: Add registration helpers for V4L2
+ flash sub-devices
+Date: Fri, 2 May 2014 14:06:51 +0300
+Message-ID: <20140502110651.GX8753@valkosipuli.retiisi.org.uk>
+References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
+ <1397228216-6657-6-git-send-email-j.anaszewski@samsung.com>
+ <20140416182141.GG8753@valkosipuli.retiisi.org.uk>
+ <534F9044.6080508@samsung.com>
+ <20140423152435.GJ8753@valkosipuli.retiisi.org.uk>
+ <535E3A95.6010206@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from [207.46.163.140] ([207.46.163.140]:23409 "EHLO
-	na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754070AbaD3JI0 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 30 Apr 2014 05:08:26 -0400
-In-Reply-To: <1398845245-26344-1-git-send-email-Li.Xiubo@freescale.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <535E3A95.6010206@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, michael.hennerich@analog.com
-Cc: Xiubo Li <Li.Xiubo@freescale.com>
 
-The OOM message of individual driver is unnecessary, and this is
-duplicate the memory subsystem generic OOM message.
+Hi Jacek,
 
-Signed-off-by: Xiubo Li <Li.Xiubo@freescale.com>
----
- drivers/leds/leds-da9052.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Mon, Apr 28, 2014 at 01:25:09PM +0200, Jacek Anaszewski wrote:
+> Hi Sakari,
+> 
+> On 04/23/2014 05:24 PM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >On Thu, Apr 17, 2014 at 10:26:44AM +0200, Jacek Anaszewski wrote:
+> >>Hi Sakari,
+> >>
+> >>Thanks for the review.
+> >>
+> >>On 04/16/2014 08:21 PM, Sakari Ailus wrote:
+> >>>Hi Jacek,
+> >>>
+> >>>Thanks for the update!
+> >>>
+> >>[...]
+> >>>>+static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
+> >>>>+					struct led_ctrl *config,
+> >>>>+					u32 intensity)
+> >>>
+> >>>Fits on a single line.
+> >>>
+> >>>>+{
+> >>>>+	return intensity / config->step;
+> >>>
+> >>>Shouldn't you first decrement the minimum before the division?
+> >>
+> >>Brightness level 0 means that led is off. Let's consider following case:
+> >>
+> >>intensity - 15625
+> >>config->step - 15625
+> >>intensity / config->step = 1 (the lowest possible current level)
+> >
+> >In V4L2 controls the minimum is not off, and zero might not be a possible
+> >value since minimum isn't divisible by step.
+> >
+> >I wonder how to best take that into account.
+> 
+> I've assumed that in MODE_TORCH a led is always on. Switching
+> the mode to MODE_FLASH or MODE_OFF turns the led off.
+> This way we avoid the problem with converting 0 uA value to
+> led_brightness, as available torch brightness levels start from
+> the minimum current level value and turning the led off is
+> accomplished on transition to MODE_OFF or MODE_FLASH, by
+> calling brightness_set op with led_brightness = 0.
 
-diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
-index 865d4fa..5aa7e31 100644
---- a/drivers/leds/leds-da9052.c
-+++ b/drivers/leds/leds-da9052.c
-@@ -127,8 +127,7 @@ static int da9052_led_probe(struct platform_device *pdev)
- 	led = devm_kzalloc(&pdev->dev,
- 			   sizeof(struct da9052_led) * pled->num_leds,
- 			   GFP_KERNEL);
--	if (led == NULL) {
--		dev_err(&pdev->dev, "Failed to alloc memory\n");
-+	if (!led) {
- 		error = -ENOMEM;
- 		goto err;
- 	}
+I'm not sure if we understood the issue the same way. My concern was that if
+the intensity isn't a multiple of step (but intensity - min is), the above
+formula won't return a valid result (unless I miss something).
+
 -- 
-1.8.4
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
