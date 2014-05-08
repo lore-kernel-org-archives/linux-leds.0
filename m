@@ -1,45 +1,129 @@
-From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
-Subject: RE: [PATCH 0/6] leds: Remove duplicated OOM message for individual
- driver
-Date: Thu, 8 May 2014 03:36:39 +0000
-Message-ID: <5612b92758bd48a79f7967d224d73e49@BY2PR03MB505.namprd03.prod.outlook.com>
-References: <1398845245-26344-1-git-send-email-Li.Xiubo@freescale.com>
- <CAK5ve-KcKCGtwptnWNqP4s_pqDV=aN2sD5h+JOq-m-yTzPXCyQ@mail.gmail.com>
+From: Xiubo Li <Li.Xiubo@freescale.com>
+Subject: [PATCH] leds: Remove duplicated OOM message for individual driver
+Date: Thu, 8 May 2014 11:25:52 +0800
+Message-ID: <1399519552-10344-1-git-send-email-Li.Xiubo@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-bl2lp0211.outbound.protection.outlook.com ([207.46.163.211]:23649
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+Received: from mail-bn1blp0181.outbound.protection.outlook.com ([207.46.163.181]:51737
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752755AbaEHDgy (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 7 May 2014 23:36:54 -0400
-In-Reply-To: <CAK5ve-KcKCGtwptnWNqP4s_pqDV=aN2sD5h+JOq-m-yTzPXCyQ@mail.gmail.com>
-Content-Language: en-US
+	id S1751103AbaEHEOq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 8 May 2014 00:14:46 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "Hennerich, Michael" <michael.hennerich@analog.com>
+To: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, michael.hennerich@analog.com
+Cc: linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>
 
-PiBPbiBXZWQsIEFwciAzMCwgMjAxNCBhdCAxOjA3IEFNLCBYaXVibyBMaSA8TGkuWGl1Ym9AZnJl
-ZXNjYWxlLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBYaXVibyBMaSAoNik6DQo+ID4gICBsZWRzOiBi
-ZDI4MDI6IFJlbW92ZSBkdXBsaWNhdGVkIE9PTSBtZXNzYWdlIGZvciBpbmRpdmlkdWFsIGRyaXZl
-cg0KPiA+ICAgbGVkczogZGE5MDN4OiBSZW1vdmUgZHVwbGljYXRlZCBPT00gbWVzc2FnZSBmb3Ig
-aW5kaXZpZHVhbCBkcml2ZXINCj4gPiAgIGxlZHM6IGRhOTA1MjogUmVtb3ZlIGR1cGxpY2F0ZWQg
-T09NIG1lc3NhZ2UgZm9yIGluZGl2aWR1YWwgZHJpdmVyDQo+ID4gICBsZWRzOiBzM2MyNHh4OiBS
-ZW1vdmUgZHVwbGljYXRlZCBPT00gbWVzc2FnZSBmb3IgaW5kaXZpZHVhbCBkcml2ZXINCj4gPiAg
-IGxlZHM6IHN1bmZpcmU6IFJlbW92ZSBkdXBsaWNhdGVkIE9PTSBtZXNzYWdlIGZvciBpbmRpdmlk
-dWFsIGRyaXZlcg0KPiA+ICAgbGVkczogYWRwNTUyMDogUmVtb3ZlIGR1cGxpY2F0ZWQgT09NIG1l
-c3NhZ2UgZm9yIGluZGl2aWR1YWwgZHJpdmVyDQo+ID4NCj4gDQo+IFRoaXMgcGF0Y2hzZXQgbG9v
-a3MgZ29vZCB0byBtZSwgY291bGQgeW91IHBsZWFzZSBmb2xkIHRoZW0gdG9nZXRoZXI/IEkNCj4g
-Y2FuIGFwcGx5IGl0IGluIG9uZSBzaG90Pw0KPiANCg0KU3VyZSwgSSBqdXN0IHRob3VnaHQgdGhl
-eSBtYXliZSBhY2tlZCBvciByZXZpZXdlZCBieSBkaWZmZXJlbnQgb3duZXJzLg0KU2luY2UgeW91
-IGhhdmUgYWdyZWVkIG9mIHRoZXNlIGNoYW5naW5nLCBJIHdpbGwgZm9sZCB0aGVtIHRvZ2V0aGVy
-IGFuZA0KUmVzZW50IGl0Lg0KDQpUaGFua3MsDQoNCkJScw0KWGl1Ym8NCg0KDQoNCg0KPiBUaGFu
-a3MsDQo+IC1Ccnlhbg0KPiANCj4gPiAgZHJpdmVycy9sZWRzL2xlZHMtYWRwNTUyMC5jIHwgNSAr
-LS0tLQ0KPiA+ICBkcml2ZXJzL2xlZHMvbGVkcy1iZDI4MDIuYyAgfCA0ICstLS0NCj4gPiAgZHJp
-dmVycy9sZWRzL2xlZHMtZGE5MDN4LmMgIHwgNCArLS0tDQo+ID4gIGRyaXZlcnMvbGVkcy9sZWRz
-LWRhOTA1Mi5jICB8IDMgKy0tDQo+ID4gIGRyaXZlcnMvbGVkcy9sZWRzLXMzYzI0eHguYyB8IDQg
-Ky0tLQ0KPiA+ICBkcml2ZXJzL2xlZHMvbGVkcy1zdW5maXJlLmMgfCA0ICstLS0NCj4gPiAgNiBm
-aWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4g
-LS0NCj4gPiAxLjguNA0KPiA+DQo=
+The OOM message of individual driver is unnecessary, and this is
+duplicate the memory subsystem generic OOM message.
+
+Signed-off-by: Xiubo Li <Li.Xiubo@freescale.com>
+---
+ drivers/leds/leds-adp5520.c | 5 +----
+ drivers/leds/leds-bd2802.c  | 4 +---
+ drivers/leds/leds-da903x.c  | 4 +---
+ drivers/leds/leds-da9052.c  | 3 +--
+ drivers/leds/leds-s3c24xx.c | 4 +---
+ drivers/leds/leds-sunfire.c | 4 +---
+ 6 files changed, 6 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
+index 7e311a1..9982691 100644
+--- a/drivers/leds/leds-adp5520.c
++++ b/drivers/leds/leds-adp5520.c
+@@ -121,13 +121,10 @@ static int adp5520_led_probe(struct platform_device *pdev)
+ 
+ 	led = devm_kzalloc(&pdev->dev, sizeof(*led) * pdata->num_leds,
+ 				GFP_KERNEL);
+-	if (led == NULL) {
+-		dev_err(&pdev->dev, "failed to alloc memory\n");
++	if (!led)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = adp5520_led_prepare(pdev);
+-
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to write\n");
+ 		return ret;
+diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
+index fb5a347..6078c15 100644
+--- a/drivers/leds/leds-bd2802.c
++++ b/drivers/leds/leds-bd2802.c
+@@ -678,10 +678,8 @@ static int bd2802_probe(struct i2c_client *client,
+ 	int ret, i;
+ 
+ 	led = devm_kzalloc(&client->dev, sizeof(struct bd2802_led), GFP_KERNEL);
+-	if (!led) {
+-		dev_err(&client->dev, "failed to allocate driver data\n");
++	if (!led)
+ 		return -ENOMEM;
+-	}
+ 
+ 	led->client = client;
+ 	pdata = led->pdata = dev_get_platdata(&client->dev);
+diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
+index 2a4b87f..180bbd8 100644
+--- a/drivers/leds/leds-da903x.c
++++ b/drivers/leds/leds-da903x.c
+@@ -109,10 +109,8 @@ static int da903x_led_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	led = devm_kzalloc(&pdev->dev, sizeof(struct da903x_led), GFP_KERNEL);
+-	if (led == NULL) {
+-		dev_err(&pdev->dev, "failed to alloc memory for LED%d\n", id);
++	if (!led)
+ 		return -ENOMEM;
+-	}
+ 
+ 	led->cdev.name = pdata->name;
+ 	led->cdev.default_trigger = pdata->default_trigger;
+diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
+index 865d4fa..5aa7e31 100644
+--- a/drivers/leds/leds-da9052.c
++++ b/drivers/leds/leds-da9052.c
+@@ -127,8 +127,7 @@ static int da9052_led_probe(struct platform_device *pdev)
+ 	led = devm_kzalloc(&pdev->dev,
+ 			   sizeof(struct da9052_led) * pled->num_leds,
+ 			   GFP_KERNEL);
+-	if (led == NULL) {
+-		dev_err(&pdev->dev, "Failed to alloc memory\n");
++	if (!led) {
+ 		error = -ENOMEM;
+ 		goto err;
+ 	}
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 98174e7..37a6a92 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -77,10 +77,8 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 
+ 	led = devm_kzalloc(&dev->dev, sizeof(struct s3c24xx_gpio_led),
+ 			   GFP_KERNEL);
+-	if (led == NULL) {
+-		dev_err(&dev->dev, "No memory for device\n");
++	if (!led)
+ 		return -ENOMEM;
+-	}
+ 
+ 	platform_set_drvdata(dev, led);
+ 
+diff --git a/drivers/leds/leds-sunfire.c b/drivers/leds/leds-sunfire.c
+index 388632d..0b8cc4a 100644
+--- a/drivers/leds/leds-sunfire.c
++++ b/drivers/leds/leds-sunfire.c
+@@ -135,10 +135,8 @@ static int sunfire_led_generic_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	p = devm_kzalloc(&pdev->dev, sizeof(*p), GFP_KERNEL);
+-	if (!p) {
+-		dev_err(&pdev->dev, "Could not allocate struct sunfire_drvdata\n");
++	if (!p)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < NUM_LEDS_PER_BOARD; i++) {
+ 		struct led_classdev *lp = &p->leds[i].led_cdev;
+-- 
+1.8.4
