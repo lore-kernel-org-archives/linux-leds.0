@@ -1,48 +1,45 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 0/6] leds: Remove duplicated OOM message for individual driver
-Date: Wed, 7 May 2014 18:58:33 -0700
-Message-ID: <CAK5ve-KcKCGtwptnWNqP4s_pqDV=aN2sD5h+JOq-m-yTzPXCyQ@mail.gmail.com>
+From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
+Subject: RE: [PATCH 0/6] leds: Remove duplicated OOM message for individual
+ driver
+Date: Thu, 8 May 2014 03:36:39 +0000
+Message-ID: <5612b92758bd48a79f7967d224d73e49@BY2PR03MB505.namprd03.prod.outlook.com>
 References: <1398845245-26344-1-git-send-email-Li.Xiubo@freescale.com>
+ <CAK5ve-KcKCGtwptnWNqP4s_pqDV=aN2sD5h+JOq-m-yTzPXCyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:45439 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751841AbaEHB6y (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 7 May 2014 21:58:54 -0400
-Received: by mail-lb0-f173.google.com with SMTP id 10so2555144lbg.4
-        for <linux-leds@vger.kernel.org>; Wed, 07 May 2014 18:58:53 -0700 (PDT)
-In-Reply-To: <1398845245-26344-1-git-send-email-Li.Xiubo@freescale.com>
+Received: from mail-bl2lp0211.outbound.protection.outlook.com ([207.46.163.211]:23649
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752755AbaEHDgy (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 7 May 2014 23:36:54 -0400
+In-Reply-To: <CAK5ve-KcKCGtwptnWNqP4s_pqDV=aN2sD5h+JOq-m-yTzPXCyQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Xiubo Li <Li.Xiubo@freescale.com>
+To: Bryan Wu <cooloney@gmail.com>
 Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "Hennerich, Michael" <michael.hennerich@analog.com>
 
-On Wed, Apr 30, 2014 at 1:07 AM, Xiubo Li <Li.Xiubo@freescale.com> wrote:
->
-> Xiubo Li (6):
->   leds: bd2802: Remove duplicated OOM message for individual driver
->   leds: da903x: Remove duplicated OOM message for individual driver
->   leds: da9052: Remove duplicated OOM message for individual driver
->   leds: s3c24xx: Remove duplicated OOM message for individual driver
->   leds: sunfire: Remove duplicated OOM message for individual driver
->   leds: adp5520: Remove duplicated OOM message for individual driver
->
-
-This patchset looks good to me, could you please fold them together? I
-can apply it in one shot?
-
-Thanks,
--Bryan
-
->  drivers/leds/leds-adp5520.c | 5 +----
->  drivers/leds/leds-bd2802.c  | 4 +---
->  drivers/leds/leds-da903x.c  | 4 +---
->  drivers/leds/leds-da9052.c  | 3 +--
->  drivers/leds/leds-s3c24xx.c | 4 +---
->  drivers/leds/leds-sunfire.c | 4 +---
->  6 files changed, 6 insertions(+), 18 deletions(-)
->
-> --
-> 1.8.4
->
+PiBPbiBXZWQsIEFwciAzMCwgMjAxNCBhdCAxOjA3IEFNLCBYaXVibyBMaSA8TGkuWGl1Ym9AZnJl
+ZXNjYWxlLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBYaXVibyBMaSAoNik6DQo+ID4gICBsZWRzOiBi
+ZDI4MDI6IFJlbW92ZSBkdXBsaWNhdGVkIE9PTSBtZXNzYWdlIGZvciBpbmRpdmlkdWFsIGRyaXZl
+cg0KPiA+ICAgbGVkczogZGE5MDN4OiBSZW1vdmUgZHVwbGljYXRlZCBPT00gbWVzc2FnZSBmb3Ig
+aW5kaXZpZHVhbCBkcml2ZXINCj4gPiAgIGxlZHM6IGRhOTA1MjogUmVtb3ZlIGR1cGxpY2F0ZWQg
+T09NIG1lc3NhZ2UgZm9yIGluZGl2aWR1YWwgZHJpdmVyDQo+ID4gICBsZWRzOiBzM2MyNHh4OiBS
+ZW1vdmUgZHVwbGljYXRlZCBPT00gbWVzc2FnZSBmb3IgaW5kaXZpZHVhbCBkcml2ZXINCj4gPiAg
+IGxlZHM6IHN1bmZpcmU6IFJlbW92ZSBkdXBsaWNhdGVkIE9PTSBtZXNzYWdlIGZvciBpbmRpdmlk
+dWFsIGRyaXZlcg0KPiA+ICAgbGVkczogYWRwNTUyMDogUmVtb3ZlIGR1cGxpY2F0ZWQgT09NIG1l
+c3NhZ2UgZm9yIGluZGl2aWR1YWwgZHJpdmVyDQo+ID4NCj4gDQo+IFRoaXMgcGF0Y2hzZXQgbG9v
+a3MgZ29vZCB0byBtZSwgY291bGQgeW91IHBsZWFzZSBmb2xkIHRoZW0gdG9nZXRoZXI/IEkNCj4g
+Y2FuIGFwcGx5IGl0IGluIG9uZSBzaG90Pw0KPiANCg0KU3VyZSwgSSBqdXN0IHRob3VnaHQgdGhl
+eSBtYXliZSBhY2tlZCBvciByZXZpZXdlZCBieSBkaWZmZXJlbnQgb3duZXJzLg0KU2luY2UgeW91
+IGhhdmUgYWdyZWVkIG9mIHRoZXNlIGNoYW5naW5nLCBJIHdpbGwgZm9sZCB0aGVtIHRvZ2V0aGVy
+IGFuZA0KUmVzZW50IGl0Lg0KDQpUaGFua3MsDQoNCkJScw0KWGl1Ym8NCg0KDQoNCg0KPiBUaGFu
+a3MsDQo+IC1Ccnlhbg0KPiANCj4gPiAgZHJpdmVycy9sZWRzL2xlZHMtYWRwNTUyMC5jIHwgNSAr
+LS0tLQ0KPiA+ICBkcml2ZXJzL2xlZHMvbGVkcy1iZDI4MDIuYyAgfCA0ICstLS0NCj4gPiAgZHJp
+dmVycy9sZWRzL2xlZHMtZGE5MDN4LmMgIHwgNCArLS0tDQo+ID4gIGRyaXZlcnMvbGVkcy9sZWRz
+LWRhOTA1Mi5jICB8IDMgKy0tDQo+ID4gIGRyaXZlcnMvbGVkcy9sZWRzLXMzYzI0eHguYyB8IDQg
+Ky0tLQ0KPiA+ICBkcml2ZXJzL2xlZHMvbGVkcy1zdW5maXJlLmMgfCA0ICstLS0NCj4gPiAgNiBm
+aWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4g
+LS0NCj4gPiAxLjguNA0KPiA+DQo=
