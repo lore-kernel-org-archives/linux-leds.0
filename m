@@ -1,113 +1,44 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v3 5/5] media: Add registration helpers for V4L2
- flash sub-devices
-Date: Wed, 7 May 2014 10:58:28 +0300
-Message-ID: <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
-References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
- <1397228216-6657-6-git-send-email-j.anaszewski@samsung.com>
- <20140416182141.GG8753@valkosipuli.retiisi.org.uk>
- <534F9044.6080508@samsung.com>
- <20140423152435.GJ8753@valkosipuli.retiisi.org.uk>
- <535E3A95.6010206@samsung.com>
- <20140502110651.GX8753@valkosipuli.retiisi.org.uk>
- <536884D9.4050104@samsung.com>
- <20140506091059.GB8753@valkosipuli.retiisi.org.uk>
- <5369DEB1.2060803@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] leds: lp55xx: add DT bindings for LP55231
+Date: Wed, 7 May 2014 18:55:01 -0700
+Message-ID: <CAK5ve-JES=nYPN2336SyBBJ7_K3AuhPh8yzPCsd-kShKQUBCBg@mail.gmail.com>
+References: <1399290414-27983-1-git-send-email-zonque@gmail.com> <53696BB7.1080507@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38156 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750910AbaEGH7D (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 7 May 2014 03:59:03 -0400
-Content-Disposition: inline
-In-Reply-To: <5369DEB1.2060803@samsung.com>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:33979 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751506AbaEHBzX (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 7 May 2014 21:55:23 -0400
+Received: by mail-lb0-f179.google.com with SMTP id c11so2606721lbj.10
+        for <linux-leds@vger.kernel.org>; Wed, 07 May 2014 18:55:21 -0700 (PDT)
+In-Reply-To: <53696BB7.1080507@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+To: Milo Kim <milo.kim@ti.com>
+Cc: Daniel Mack <zonque@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, samu.p.onkalo@nokia.com, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Jacek,
+On Tue, May 6, 2014 at 4:09 PM, Milo Kim <milo.kim@ti.com> wrote:
+> On 05/05/2014 08:46 PM, Daniel Mack wrote:
+>>
+>> The TI55231 appears to be fully compatible to the 5523 model from
+>> National Semicondutor. This patch just adds DT bindings for it.
+>>
+>> Signed-off-by: Daniel Mack <zonque@gmail.com>
+>
+>
+> Acked-by: Milo Kim <milo.kim@ti.com>
+>
 
-On Wed, May 07, 2014 at 09:20:17AM +0200, Jacek Anaszewski wrote:
-> On 05/06/2014 11:10 AM, Sakari Ailus wrote:
-> >Hi Jacek,
-> >
-> >On Tue, May 06, 2014 at 08:44:41AM +0200, Jacek Anaszewski wrote:
-> >>Hi Sakari,
-> >>
-> >>On 05/02/2014 01:06 PM, Sakari Ailus wrote:
-> >>
-> >>>>>>[...]
-> >>>>>>>>+static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
-> >>>>>>>>+					struct led_ctrl *config,
-> >>>>>>>>+					u32 intensity)
-> >>>>>>>
-> >>>>>>>Fits on a single line.
-> >>>>>>>
-> >>>>>>>>+{
-> >>>>>>>>+	return intensity / config->step;
-> >>>>>>>
-> >>>>>>>Shouldn't you first decrement the minimum before the division?
-> >>>>>>
-> >>>>>>Brightness level 0 means that led is off. Let's consider following case:
-> >>>>>>
-> >>>>>>intensity - 15625
-> >>>>>>config->step - 15625
-> >>>>>>intensity / config->step = 1 (the lowest possible current level)
-> >>>>>
-> >>>>>In V4L2 controls the minimum is not off, and zero might not be a possible
-> >>>>>value since minimum isn't divisible by step.
-> >>>>>
-> >>>>>I wonder how to best take that into account.
-> >>>>
-> >>>>I've assumed that in MODE_TORCH a led is always on. Switching
-> >>>>the mode to MODE_FLASH or MODE_OFF turns the led off.
-> >>>>This way we avoid the problem with converting 0 uA value to
-> >>>>led_brightness, as available torch brightness levels start from
-> >>>>the minimum current level value and turning the led off is
-> >>>>accomplished on transition to MODE_OFF or MODE_FLASH, by
-> >>>>calling brightness_set op with led_brightness = 0.
-> >>>
-> >>>I'm not sure if we understood the issue the same way. My concern was that if
-> >>>the intensity isn't a multiple of step (but intensity - min is), the above
-> >>>formula won't return a valid result (unless I miss something).
-> >>>
-> >>
-> >>Please note that v4l2_flash_intensity_to_led_brightness is called only
-> >>from s_ctrl callback, and thus it expects to get the intensity aligned
-> >>to the step value, so it will always be a multiple of step.
-> >>Is it possible that s_ctrl callback would be passed a non-aligned
-> >>control value?
-> >
-> >In a nutshell: value - min is aligned but value is not. Please see
-> >validate_new() in drivers/media/v4l2-core/v4l2-ctrls.c .
-> >
-> 
-> Still, to my mind, value is aligned.
-> 
-> Below I execute the calculation steps one by one
-> according to the V4L2_CTRL_TYPE_INTEGER case in the
-> validate_new function:
-> 
-> c->value = 35000
-> 
-> val = c->value + step / 2;       // 35000 + 15625 / 2 = 42812
-> val = clamp(val, min, max);      // val = 42812
-> offset = val - min;              // 42812 - 15625 = 27187
-> offset = step * (offset / step); // 15625 * (27187 / 15625) = 15625
-> c->value = min + offset;         // 15625 + 15625 = 31250
-> 
-> Value is aligned to the nearest step.
-> 
-> Please spot any discrepancies in my way of thinking if there
-> are any :)
+Applied with Milo's ACK,
+Thanks,
+-Bryan
 
-min is aligned to step above. This is not necessarily the case. And if min
-is not aligned, neither is value.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> Thanks!
+> You got a good point. Vendor name is correct because LP55231 was released
+> not by National but by TI.
+>
+> Best regards,
+> Milo
+>
+>
