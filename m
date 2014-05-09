@@ -1,136 +1,134 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: Remove duplicated OOM message for individual driver
-Date: Wed, 7 May 2014 21:49:35 -0700
-Message-ID: <CAK5ve-+CO+MCM9P=on0kRbg5okCj8jKqbbVvXhpWB_dDuFfbZQ@mail.gmail.com>
-References: <1399519552-10344-1-git-send-email-Li.Xiubo@freescale.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v3 5/5] media: Add registration helpers for V4L2 flash
+ sub-devices
+Date: Fri, 09 May 2014 09:18:55 +0200
+Message-ID: <536C815F.8060906@samsung.com>
+References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
+ <1397228216-6657-6-git-send-email-j.anaszewski@samsung.com>
+ <20140416182141.GG8753@valkosipuli.retiisi.org.uk>
+ <534F9044.6080508@samsung.com>
+ <20140423152435.GJ8753@valkosipuli.retiisi.org.uk>
+ <535E3A95.6010206@samsung.com>
+ <20140502110651.GX8753@valkosipuli.retiisi.org.uk>
+ <536884D9.4050104@samsung.com>
+ <20140506091059.GB8753@valkosipuli.retiisi.org.uk>
+ <5369DEB1.2060803@samsung.com>
+ <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:43941 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751483AbaEHEt5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 May 2014 00:49:57 -0400
-In-Reply-To: <1399519552-10344-1-git-send-email-Li.Xiubo@freescale.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57580 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172AbaEIHSs (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 May 2014 03:18:48 -0400
+In-reply-to: <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Xiubo Li <Li.Xiubo@freescale.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "Hennerich, Michael" <michael.hennerich@analog.com>, lkml <linux-kernel@vger.kernel.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
 
-On Wed, May 7, 2014 at 8:25 PM, Xiubo Li <Li.Xiubo@freescale.com> wrote:
-> The OOM message of individual driver is unnecessary, and this is
-> duplicate the memory subsystem generic OOM message.
+Hi Sakari,
+
+On 05/07/2014 09:58 AM, Sakari Ailus wrote:
+> Hi Jacek,
+>
+> On Wed, May 07, 2014 at 09:20:17AM +0200, Jacek Anaszewski wrote:
+>> On 05/06/2014 11:10 AM, Sakari Ailus wrote:
+>>> Hi Jacek,
+>>>
+>>> On Tue, May 06, 2014 at 08:44:41AM +0200, Jacek Anaszewski wrote:
+>>>> Hi Sakari,
+>>>>
+>>>> On 05/02/2014 01:06 PM, Sakari Ailus wrote:
+>>>>
+>>>>>>>> [...]
+>>>>>>>>>> +static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
+>>>>>>>>>> +					struct led_ctrl *config,
+>>>>>>>>>> +					u32 intensity)
+>>>>>>>>>
+>>>>>>>>> Fits on a single line.
+>>>>>>>>>
+>>>>>>>>>> +{
+>>>>>>>>>> +	return intensity / config->step;
+>>>>>>>>>
+>>>>>>>>> Shouldn't you first decrement the minimum before the division?
+>>>>>>>>
+>>>>>>>> Brightness level 0 means that led is off. Let's consider following case:
+>>>>>>>>
+>>>>>>>> intensity - 15625
+>>>>>>>> config->step - 15625
+>>>>>>>> intensity / config->step = 1 (the lowest possible current level)
+>>>>>>>
+>>>>>>> In V4L2 controls the minimum is not off, and zero might not be a possible
+>>>>>>> value since minimum isn't divisible by step.
+>>>>>>>
+>>>>>>> I wonder how to best take that into account.
+>>>>>>
+>>>>>> I've assumed that in MODE_TORCH a led is always on. Switching
+>>>>>> the mode to MODE_FLASH or MODE_OFF turns the led off.
+>>>>>> This way we avoid the problem with converting 0 uA value to
+>>>>>> led_brightness, as available torch brightness levels start from
+>>>>>> the minimum current level value and turning the led off is
+>>>>>> accomplished on transition to MODE_OFF or MODE_FLASH, by
+>>>>>> calling brightness_set op with led_brightness = 0.
+>>>>>
+>>>>> I'm not sure if we understood the issue the same way. My concern was that if
+>>>>> the intensity isn't a multiple of step (but intensity - min is), the above
+>>>>> formula won't return a valid result (unless I miss something).
+>>>>>
+>>>>
+>>>> Please note that v4l2_flash_intensity_to_led_brightness is called only
+>>> >from s_ctrl callback, and thus it expects to get the intensity aligned
+>>>> to the step value, so it will always be a multiple of step.
+>>>> Is it possible that s_ctrl callback would be passed a non-aligned
+>>>> control value?
+>>>
+>>> In a nutshell: value - min is aligned but value is not. Please see
+>>> validate_new() in drivers/media/v4l2-core/v4l2-ctrls.c .
+>>>
+>>
+>> Still, to my mind, value is aligned.
+>>
+>> Below I execute the calculation steps one by one
+>> according to the V4L2_CTRL_TYPE_INTEGER case in the
+>> validate_new function:
+>>
+>> c->value = 35000
+>>
+>> val = c->value + step / 2;       // 35000 + 15625 / 2 = 42812
+>> val = clamp(val, min, max);      // val = 42812
+>> offset = val - min;              // 42812 - 15625 = 27187
+>> offset = step * (offset / step); // 15625 * (27187 / 15625) = 15625
+>> c->value = min + offset;         // 15625 + 15625 = 31250
+>>
+>> Value is aligned to the nearest step.
+>>
+>> Please spot any discrepancies in my way of thinking if there
+>> are any :)
+>
+> min is aligned to step above. This is not necessarily the case. And if min
+> is not aligned, neither is value.
 >
 
-Thanks, applied.
--Bryan
+Thanks for spotting this. Below are improved versions of the conversion
+functions. Please let me know if you have any comments.
 
-> Signed-off-by: Xiubo Li <Li.Xiubo@freescale.com>
-> ---
->  drivers/leds/leds-adp5520.c | 5 +----
->  drivers/leds/leds-bd2802.c  | 4 +---
->  drivers/leds/leds-da903x.c  | 4 +---
->  drivers/leds/leds-da9052.c  | 3 +--
->  drivers/leds/leds-s3c24xx.c | 4 +---
->  drivers/leds/leds-sunfire.c | 4 +---
->  6 files changed, 6 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
-> index 7e311a1..9982691 100644
-> --- a/drivers/leds/leds-adp5520.c
-> +++ b/drivers/leds/leds-adp5520.c
-> @@ -121,13 +121,10 @@ static int adp5520_led_probe(struct platform_device *pdev)
->
->         led = devm_kzalloc(&pdev->dev, sizeof(*led) * pdata->num_leds,
->                                 GFP_KERNEL);
-> -       if (led == NULL) {
-> -               dev_err(&pdev->dev, "failed to alloc memory\n");
-> +       if (!led)
->                 return -ENOMEM;
-> -       }
->
->         ret = adp5520_led_prepare(pdev);
-> -
->         if (ret) {
->                 dev_err(&pdev->dev, "failed to write\n");
->                 return ret;
-> diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
-> index fb5a347..6078c15 100644
-> --- a/drivers/leds/leds-bd2802.c
-> +++ b/drivers/leds/leds-bd2802.c
-> @@ -678,10 +678,8 @@ static int bd2802_probe(struct i2c_client *client,
->         int ret, i;
->
->         led = devm_kzalloc(&client->dev, sizeof(struct bd2802_led), GFP_KERNEL);
-> -       if (!led) {
-> -               dev_err(&client->dev, "failed to allocate driver data\n");
-> +       if (!led)
->                 return -ENOMEM;
-> -       }
->
->         led->client = client;
->         pdata = led->pdata = dev_get_platdata(&client->dev);
-> diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
-> index 2a4b87f..180bbd8 100644
-> --- a/drivers/leds/leds-da903x.c
-> +++ b/drivers/leds/leds-da903x.c
-> @@ -109,10 +109,8 @@ static int da903x_led_probe(struct platform_device *pdev)
->         }
->
->         led = devm_kzalloc(&pdev->dev, sizeof(struct da903x_led), GFP_KERNEL);
-> -       if (led == NULL) {
-> -               dev_err(&pdev->dev, "failed to alloc memory for LED%d\n", id);
-> +       if (!led)
->                 return -ENOMEM;
-> -       }
->
->         led->cdev.name = pdata->name;
->         led->cdev.default_trigger = pdata->default_trigger;
-> diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
-> index 865d4fa..5aa7e31 100644
-> --- a/drivers/leds/leds-da9052.c
-> +++ b/drivers/leds/leds-da9052.c
-> @@ -127,8 +127,7 @@ static int da9052_led_probe(struct platform_device *pdev)
->         led = devm_kzalloc(&pdev->dev,
->                            sizeof(struct da9052_led) * pled->num_leds,
->                            GFP_KERNEL);
-> -       if (led == NULL) {
-> -               dev_err(&pdev->dev, "Failed to alloc memory\n");
-> +       if (!led) {
->                 error = -ENOMEM;
->                 goto err;
->         }
-> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
-> index 98174e7..37a6a92 100644
-> --- a/drivers/leds/leds-s3c24xx.c
-> +++ b/drivers/leds/leds-s3c24xx.c
-> @@ -77,10 +77,8 @@ static int s3c24xx_led_probe(struct platform_device *dev)
->
->         led = devm_kzalloc(&dev->dev, sizeof(struct s3c24xx_gpio_led),
->                            GFP_KERNEL);
-> -       if (led == NULL) {
-> -               dev_err(&dev->dev, "No memory for device\n");
-> +       if (!led)
->                 return -ENOMEM;
-> -       }
->
->         platform_set_drvdata(dev, led);
->
-> diff --git a/drivers/leds/leds-sunfire.c b/drivers/leds/leds-sunfire.c
-> index 388632d..0b8cc4a 100644
-> --- a/drivers/leds/leds-sunfire.c
-> +++ b/drivers/leds/leds-sunfire.c
-> @@ -135,10 +135,8 @@ static int sunfire_led_generic_probe(struct platform_device *pdev,
->         }
->
->         p = devm_kzalloc(&pdev->dev, sizeof(*p), GFP_KERNEL);
-> -       if (!p) {
-> -               dev_err(&pdev->dev, "Could not allocate struct sunfire_drvdata\n");
-> +       if (!p)
->                 return -ENOMEM;
-> -       }
->
->         for (i = 0; i < NUM_LEDS_PER_BOARD; i++) {
->                 struct led_classdev *lp = &p->leds[i].led_cdev;
-> --
-> 1.8.4
->
+static inline
+enum led_brightnessv4l2_flash_intensity_to_led_brightness(
+                                         struct led_ctrl *config,
+                                         u32 intensity)
+{
+         return ((intensity - config->min) / config->step) + 1;
+}
+
+static inline
+u32 v4l2_flash_led_brightness_to_intensity(
+                                         struct led_ctrl *config,
+                                         enum led_brightness brightness)
+{
+         return ((brightness - 1) * config->step) + config->min;
+}
+
+Regards,
+Jacek Anaszewski
