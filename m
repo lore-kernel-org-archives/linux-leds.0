@@ -1,134 +1,102 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v3 5/5] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Fri, 09 May 2014 09:18:55 +0200
-Message-ID: <536C815F.8060906@samsung.com>
-References: <1397228216-6657-1-git-send-email-j.anaszewski@samsung.com>
- <1397228216-6657-6-git-send-email-j.anaszewski@samsung.com>
- <20140416182141.GG8753@valkosipuli.retiisi.org.uk>
- <534F9044.6080508@samsung.com>
- <20140423152435.GJ8753@valkosipuli.retiisi.org.uk>
- <535E3A95.6010206@samsung.com>
- <20140502110651.GX8753@valkosipuli.retiisi.org.uk>
- <536884D9.4050104@samsung.com>
- <20140506091059.GB8753@valkosipuli.retiisi.org.uk>
- <5369DEB1.2060803@samsung.com>
- <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
+Subject: "LED / flash API integration" related improvements
+Date: Fri, 09 May 2014 16:28:44 +0200
+Message-ID: <536CE61C.8010205@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57580 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:19920 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172AbaEIHSs (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 May 2014 03:18:48 -0400
-In-reply-to: <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
+	with ESMTP id S1753305AbaEIO2d (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 May 2014 10:28:33 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5B007C69JHVQ90@mailout1.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 09 May 2014 15:28:29 +0100 (BST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+To: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Sakari,
+During review of "LED / flash API integration" patch sets two issues
+requiring modifications in the LED subsystem core emerged.
+I would like to consult possible ways of solving them:
 
-On 05/07/2014 09:58 AM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> On Wed, May 07, 2014 at 09:20:17AM +0200, Jacek Anaszewski wrote:
->> On 05/06/2014 11:10 AM, Sakari Ailus wrote:
->>> Hi Jacek,
->>>
->>> On Tue, May 06, 2014 at 08:44:41AM +0200, Jacek Anaszewski wrote:
->>>> Hi Sakari,
->>>>
->>>> On 05/02/2014 01:06 PM, Sakari Ailus wrote:
->>>>
->>>>>>>> [...]
->>>>>>>>>> +static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
->>>>>>>>>> +					struct led_ctrl *config,
->>>>>>>>>> +					u32 intensity)
->>>>>>>>>
->>>>>>>>> Fits on a single line.
->>>>>>>>>
->>>>>>>>>> +{
->>>>>>>>>> +	return intensity / config->step;
->>>>>>>>>
->>>>>>>>> Shouldn't you first decrement the minimum before the division?
->>>>>>>>
->>>>>>>> Brightness level 0 means that led is off. Let's consider following case:
->>>>>>>>
->>>>>>>> intensity - 15625
->>>>>>>> config->step - 15625
->>>>>>>> intensity / config->step = 1 (the lowest possible current level)
->>>>>>>
->>>>>>> In V4L2 controls the minimum is not off, and zero might not be a possible
->>>>>>> value since minimum isn't divisible by step.
->>>>>>>
->>>>>>> I wonder how to best take that into account.
->>>>>>
->>>>>> I've assumed that in MODE_TORCH a led is always on. Switching
->>>>>> the mode to MODE_FLASH or MODE_OFF turns the led off.
->>>>>> This way we avoid the problem with converting 0 uA value to
->>>>>> led_brightness, as available torch brightness levels start from
->>>>>> the minimum current level value and turning the led off is
->>>>>> accomplished on transition to MODE_OFF or MODE_FLASH, by
->>>>>> calling brightness_set op with led_brightness = 0.
->>>>>
->>>>> I'm not sure if we understood the issue the same way. My concern was that if
->>>>> the intensity isn't a multiple of step (but intensity - min is), the above
->>>>> formula won't return a valid result (unless I miss something).
->>>>>
->>>>
->>>> Please note that v4l2_flash_intensity_to_led_brightness is called only
->>> >from s_ctrl callback, and thus it expects to get the intensity aligned
->>>> to the step value, so it will always be a multiple of step.
->>>> Is it possible that s_ctrl callback would be passed a non-aligned
->>>> control value?
->>>
->>> In a nutshell: value - min is aligned but value is not. Please see
->>> validate_new() in drivers/media/v4l2-core/v4l2-ctrls.c .
->>>
->>
->> Still, to my mind, value is aligned.
->>
->> Below I execute the calculation steps one by one
->> according to the V4L2_CTRL_TYPE_INTEGER case in the
->> validate_new function:
->>
->> c->value = 35000
->>
->> val = c->value + step / 2;       // 35000 + 15625 / 2 = 42812
->> val = clamp(val, min, max);      // val = 42812
->> offset = val - min;              // 42812 - 15625 = 27187
->> offset = step * (offset / step); // 15625 * (27187 / 15625) = 15625
->> c->value = min + offset;         // 15625 + 15625 = 31250
->>
->> Value is aligned to the nearest step.
->>
->> Please spot any discrepancies in my way of thinking if there
->> are any :)
->
-> min is aligned to step above. This is not necessarily the case. And if min
-> is not aligned, neither is value.
->
+1.
+==================================================================
 
-Thanks for spotting this. Below are improved versions of the conversion
-functions. Please let me know if you have any comments.
+Some LED devices allow to control multiple LEDs independently.
+Currently there is no direct support for this in the LED subsystem
+and existing drivers register separate devices for each LED.
 
-static inline
-enum led_brightnessv4l2_flash_intensity_to_led_brightness(
-                                         struct led_ctrl *config,
-                                         u32 intensity)
-{
-         return ((intensity - config->min) / config->step) + 1;
-}
+LED / flash API integration effort is a good opportunity to provide
+support for exposing multiple LEDs by a single LED class device.
 
-static inline
-u32 v4l2_flash_led_brightness_to_intensity(
-                                         struct led_ctrl *config,
-                                         enum led_brightness brightness)
-{
-         return ((brightness - 1) * config->step) + config->min;
-}
+I would like to add following API:
 
-Regards,
+/**
+  * led_get_sub_leds_number - get the number of exposed LEDs
+  * @led_cdev: the LED to query
+  * @num_leds: number of exposed leds
+  *
+  * Get the number of leds exposed by the device.
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+int led_get_sub_leds_number(struct led_classdev *led_cdev,
+                         int *num_leds);
+
+/**
+  * led_select_sub_led - select sub led to control
+  * @led_cdev: the LED to set
+  * @led_id: id of the sub led to control
+  *
+  * Set the sub led to be the target of the LED class API calls.
+  * Maximum led_id equals num_leds - 1.
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+int led_select_sub_led(struct led_classdev *led_cdev,
+                     int led_id);
+
+/**
+  * led_get_sub_led - get currently selected sub led
+  * @led_cdev: the LED to set
+  * @led_id: id of currently selected sub led
+  *
+  * Get id of the sub led chosen as the target of LED class
+  * API calls. Maximum led_id equals num_leds - 1.
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+int led_get_target_led(struct led_classdev *led_cdev,
+                         int* led_id);
+
+The functions functions would be mapped on the sysfs attributes:
+- available_leds - RO
+- sub_led_id - RW
+
+The attributes would be created only if the related callbacks
+are registered by the driver.
+
+2.
+==================================================================
+
+The second issue, refers to the work queues being used in the
+brightness_set callbacks of the LED subsystem drivers. It interferes
+with the way how V4L2 Flash controls work, which expect that setting
+flash brightness has immediate effect.
+
+Proposed solutions:
+- move work queues out from the drivers to the LED core.
+- add brightness_set_now callback to be registered by
+   the LED drivers and intended for call by v4l2-flash driver;
+   it wouldn't schedule a work but do the job immediately
+
+==================================================================
+
+I'd be glad to hear any comments on this.
+
+Thanks,
 Jacek Anaszewski
