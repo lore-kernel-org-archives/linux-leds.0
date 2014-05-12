@@ -1,102 +1,94 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: "LED / flash API integration" related improvements
-Date: Fri, 09 May 2014 16:28:44 +0200
-Message-ID: <536CE61C.8010205@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCHv2 00/11] improve PWM lookup support without device tree
+Date: Mon, 12 May 2014 17:04:51 +0200
+Message-ID: <20140512150451.GD29318@piout.net>
+References: <1397512793-10325-1-git-send-email-alexandre.belloni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19920 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753305AbaEIO2d (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 May 2014 10:28:33 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5B007C69JHVQ90@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 09 May 2014 15:28:29 +0100 (BST)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1397512793-10325-1-git-send-email-alexandre.belloni@free-electrons.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Bryan Wu <cooloney@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-During review of "LED / flash API integration" patch sets two issues
-requiring modifications in the LED subsystem core emerged.
-I would like to consult possible ways of solving them:
 
-1.
-==================================================================
+Hello Thierry,
 
-Some LED devices allow to control multiple LEDs independently.
-Currently there is no direct support for this in the LED subsystem
-and existing drivers register separate devices for each LED.
+Do you know when you will have some time to review that patch series ?
 
-LED / flash API integration effort is a good opportunity to provide
-support for exposing multiple LEDs by a single LED class device.
+On 14/04/2014 at 23:59:42 +0200, Alexandre Belloni wrote :
+> Hi,
+> 
+> A patch set as suggested by Thierry to make lookup with the lookup table
+> instead of device tree behave more like when using device tree.
+> 
+> The first patch adds a period and a polarity member to the lookup table and use
+> those to set period and polarity.
+> 
+> Patch 2, 4 and 5 are making use of those new members from the board files.
+> Patch 3 removes useless code since setting the polarity is now handled by the
+> PWM core.
+> 
+> I couldn't decide on a good name for the extended PWM_LOOKUP macro and I believe
+> we won't have to add members to that structure soon so:
+> Patch 6 modifies the PWM_LOOKUP macro to also initialize period and polarity
+> and
+> Patch 7-9 are making use of the new PWM_LOOKUP macro in the board files
+> 
+> Patch 10 and 11 are making the leds-pwm and pwm_bl drivers get the period from
+> the PWM before using pwm_period_ns if it is not already set.
+> 
+> Patch 10 will obviously conflict with the series of Russell reworking the
+> leds-pwm probing. I can rebase if necessary
+> 
+> The final goal would be to get rid of .pwm_period_ns in leds-pwm and pwm_bl
+> after moving all the remaining users (still around 25) to pwm_lookup.
+> 
+> Changes in v2:
+>  - correctly unlock the pwm_lookup_lock mutex before returning.
+>  - don't change PWM_LOOKUP atomically
+>  - remove tpu_pwm_platform_data and the associated header file
+>  - make the leds-pwm and pwm_bl drivers get the period from the PWM
+> 
+> Alexandre Belloni (11):
+>   pwm: add period and polarity to struct pwm_lookup
+>   ARM: shmobile: Armadillo 800 EVA: initialize all struct pwm_lookup
+>     members
+>   pwm: renesas-tpu: remove useless struct tpu_pwm_platform_data
+>   ARM: OMAP3: Beagle: initialize all the struct pwm_lookup members
+>   ARM: pxa: hx4700: initialize all the struct pwm_lookup members
+>   pwm: modify PWM_LOOKUP to initialize all struct pwm_lookup members
+>   ARM: OMAP3: Beagle: use PWM_LOOKUP to initialize struct pwm_lookup
+>   ARM: shmobile: Armadillo 800 EVA: use PWM_LOOKUP to initialize struct
+>     pwm_lookup
+>   ARM: pxa: hx4700: use PWM_LOOKUP to initialize struct pwm_lookup
+>   leds: leds-pwm: retrieve configured pwm period
+>   backlight: pwm_bl: retrieve configured pwm period
+> 
+>  Documentation/pwm.txt                          |  3 ++-
+>  arch/arm/mach-omap2/board-omap3beagle.c        |  3 ++-
+>  arch/arm/mach-pxa/hx4700.c                     |  3 ++-
+>  arch/arm/mach-shmobile/board-armadillo800eva.c | 14 +++-----------
+>  drivers/leds/leds-pwm.c                        |  5 ++++-
+>  drivers/pwm/core.c                             |  8 +++++++-
+>  drivers/pwm/pwm-renesas-tpu.c                  | 19 +++----------------
+>  drivers/video/backlight/pwm_bl.c               |  8 +++++---
+>  include/linux/platform_data/pwm-renesas-tpu.h  | 16 ----------------
+>  include/linux/pwm.h                            |  6 +++++-
+>  10 files changed, 33 insertions(+), 52 deletions(-)
+>  delete mode 100644 include/linux/platform_data/pwm-renesas-tpu.h
+> 
+> -- 
+> 1.8.3.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I would like to add following API:
-
-/**
-  * led_get_sub_leds_number - get the number of exposed LEDs
-  * @led_cdev: the LED to query
-  * @num_leds: number of exposed leds
-  *
-  * Get the number of leds exposed by the device.
-  *
-  * Returns: 0 on success or negative error value on failure
-  */
-int led_get_sub_leds_number(struct led_classdev *led_cdev,
-                         int *num_leds);
-
-/**
-  * led_select_sub_led - select sub led to control
-  * @led_cdev: the LED to set
-  * @led_id: id of the sub led to control
-  *
-  * Set the sub led to be the target of the LED class API calls.
-  * Maximum led_id equals num_leds - 1.
-  *
-  * Returns: 0 on success or negative error value on failure
-  */
-int led_select_sub_led(struct led_classdev *led_cdev,
-                     int led_id);
-
-/**
-  * led_get_sub_led - get currently selected sub led
-  * @led_cdev: the LED to set
-  * @led_id: id of currently selected sub led
-  *
-  * Get id of the sub led chosen as the target of LED class
-  * API calls. Maximum led_id equals num_leds - 1.
-  *
-  * Returns: 0 on success or negative error value on failure
-  */
-int led_get_target_led(struct led_classdev *led_cdev,
-                         int* led_id);
-
-The functions functions would be mapped on the sysfs attributes:
-- available_leds - RO
-- sub_led_id - RW
-
-The attributes would be created only if the related callbacks
-are registered by the driver.
-
-2.
-==================================================================
-
-The second issue, refers to the work queues being used in the
-brightness_set callbacks of the LED subsystem drivers. It interferes
-with the way how V4L2 Flash controls work, which expect that setting
-flash brightness has immediate effect.
-
-Proposed solutions:
-- move work queues out from the drivers to the LED core.
-- add brightness_set_now callback to be registered by
-   the LED drivers and intended for call by v4l2-flash driver;
-   it wouldn't schedule a work but do the job immediately
-
-==================================================================
-
-I'd be glad to hear any comments on this.
-
-Thanks,
-Jacek Anaszewski
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
