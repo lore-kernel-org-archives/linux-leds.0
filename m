@@ -1,120 +1,206 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCHv2 resend 00/11] improve PWM lookup support without device
- tree
-Date: Tue, 20 May 2014 02:55:54 +0200
-Message-ID: <1902427.MlnO7xrXmN@avalon>
-References: <1400532162-29483-1-git-send-email-alexandre.belloni@free-electrons.com>
- <20140519223913.GE20590@verge.net.au>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: Re: [PATCH 1/3] drivers/mfd/menf21bmc: introduce MEN 14F021P00 BMC
+ MFD Core driver
+Date: Tue, 20 May 2014 09:47:49 +0200
+Message-ID: <20140520074748.GC398@awelinux>
+References: <cover.1400258021.git.andreas.werner@men.de>
+ <58de41a38511a107941d9c3b2cea314c0becfff7.1400258021.git.andreas.werner@men.de>
+ <5377849E.7020001@roeck-us.net>
+ <20140519124324.GB398@awelinux>
+ <537A05D4.6080308@roeck-us.net>
+ <20140519173953.GA20874@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140519223913.GE20590@verge.net.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Eric Miao <eric.y.miao@gmail.com>, linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Bryan Wu <cooloney@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-leds@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140519173953.GA20874@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Andreas Werner <andreas.werner@men.de>, linux-kernel@vger.kernel.org, sameo@linux.intel.com, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, johannes.thumshirn@men.de, thomas.schnuerer@men.de, wernerandy@gmx.de
 List-Id: linux-leds@vger.kernel.org
 
-Hi Alexandre and Simon,
+aOn Mon, May 19, 2014 at 06:39:53PM +0100, Lee Jones wrote:
+> On Mon, 19 May 2014, Guenter Roeck wrote:
+>=20
+> > On 05/19/2014 05:43 AM, Andreas Werner wrote:
+> > >aOn Sat, May 17, 2014 at 08:47:42AM -0700, Guenter Roeck wrote:
+> > >>On 05/16/2014 09:37 AM, Andreas Werner wrote:
+> > >>>The MEN 14F021P00 Board Management Controller provides an
+> > >>>I2C interface to the host to access the feature implemented in t=
+he BMC.
+> > >>>The BMC is a PIC Microntroller assembled on CPCI Card from MEN M=
+ikroelektronik
+> > >>>and on a few Box/Display Computer.
+> > >>>
+> > >>>Added MFD Core driver, supporting the I2C communication to the d=
+evice.
+> > >>>
+> > >>>The MFD driver currently supports the following features:
+> > >>>	- Watchdog
+> > >>>	- LEDs
+> > >>>
+> > >>>Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> > >>>---
+> > >>>  drivers/mfd/Kconfig           |  12 +++
+> > >>>  drivers/mfd/Makefile          |   1 +
+> > >>>  drivers/mfd/menf21bmc.c       | 193 ++++++++++++++++++++++++++=
+++++++++++++++++
+> > >>>  include/linux/mfd/menf21bmc.h |  32 +++++++
+> > >>>  4 files changed, 238 insertions(+)
+> > >>>  create mode 100644 drivers/mfd/menf21bmc.c
+> > >>>  create mode 100644 include/linux/mfd/menf21bmc.h
+> > >>>
+> > >>>diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > >>>index ab5a43c..7c2e8d2 100644
+> > >>>--- a/drivers/mfd/Kconfig
+> > >>>+++ b/drivers/mfd/Kconfig
+> > >>>@@ -427,6 +427,18 @@ config MFD_MAX8998
+> > >>>  	  additional drivers must be enabled in order to use the func=
+tionality
+> > >>>  	  of the device.
+> > >>>
+> > >>>+config MFD_MENF21BMC
+> > >>>+	tristate "MEN 14F021P00 Board Management Controller Support"
+> > >>>+	depends on I2C=3Dy
+> > >>>+	select MFD_CORE
+> > >>>+	help
+> > >>>+	  Say yes here to add support for the MEN 14F021P00 BMC
+> > >>>+	  which is a Board Management Controller connected to the I2C =
+bus.
+> > >>>+	  This driver provides common support for accessing the device=
+s;
+> > >>>+	  additional drivers must be enabled in order to use the
+> > >>>+	  functionality of the BMC device.
+> > >>>+
+> > >>>+
+> > >>>  config EZX_PCAP
+> > >>>  	bool "Motorola EZXPCAP Support"
+> > >>>  	depends on SPI_MASTER
+> > >>>diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > >>>index 5913208..8f2be38 100644
+> > >>>--- a/drivers/mfd/Makefile
+> > >>>+++ b/drivers/mfd/Makefile
+> > >>>@@ -167,3 +167,4 @@ obj-$(CONFIG_MFD_AS3711)	+=3D as3711.o
+> > >>>  obj-$(CONFIG_MFD_AS3722)	+=3D as3722.o
+> > >>>  obj-$(CONFIG_MFD_STW481X)	+=3D stw481x.o
+> > >>>  obj-$(CONFIG_MFD_IPAQ_MICRO)	+=3D ipaq-micro.o
+> > >>>+obj-$(CONFIG_MFD_MENF21BMC)	+=3D menf21bmc.o
+> > >>>diff --git a/drivers/mfd/menf21bmc.c b/drivers/mfd/menf21bmc.c
+> > >>>new file mode 100644
+> > >>>index 0000000..77de1a8
+> > >>>--- /dev/null
+> > >>>+++ b/drivers/mfd/menf21bmc.c
+> > >>>@@ -0,0 +1,193 @@
+> > >>>+/*
+> > >>>+ *  MEN 14F021P00 Board Management Controller (BMC) MFD Core Dr=
+iver.
+> > >>>+ *
+> > >>>+ *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
+> > >>>+ *  Author: Andreas Werner <andreas.werner@men.de>
+> > >>>+ *  All rights reserved.
+> > >>>+ *
+> > >>>+ *  This program is free software; you can redistribute  it and=
+/or modify it
+> > >>>+ *  under  the terms of  the GNU General  Public License as pub=
+lished by the
+> > >>>+ *  Free Software Foundation;  either version 2 of the  License=
+, or (at your
+> > >>>+ *  option) any later version.
+> > >>>+ *
+> > >>>+ */
+> > >>>+
+> > >>>+#include <linux/kernel.h>
+> > >>>+#include <linux/device.h>
+> > >>>+#include <linux/module.h>
+> > >>>+#include <linux/i2c.h>
+> > >>>+#include <linux/mfd/core.h>
+> > >>>+#include <linux/mfd/menf21bmc.h>
+> > >>>+
+> > >>>+#define BMC_CMD_REV_MAJOR	0x80
+> > >>>+#define BMC_CMD_REV_MINOR	0x81
+> > >>>+#define BMC_CMD_REV_MAIN	0x82
+> > >>>+#define BMC_CMD_REV_BUILD	0x83
+> > >>>+#define BMC_CMD_REV_VERI	0x84
+> > >>>+
+> > >>>+static struct mfd_cell menf21bmc_cell[] =3D {
+> > >>>+	{
+> > >>>+		.name =3D "menf21bmc_wd",
+> > >>>+	},
+> > >>>+	{
+> > >>>+		.name =3D "menf21bmc_led",
+> > >>>+	},
+> > >>>+};
+> > >>>+
+> > >>>+static int
+> > >>>+menf21bmc_read_byte_data(struct i2c_client *client, u8 reg, uin=
+t8_t *val)
+> > >>>+{
+> > >>>+	int ret;
+> > >>>+	struct menf21bmc *data =3D i2c_get_clientdata(client);
+> > >>>+
+> > >>>+	mutex_lock(&data->lock);
+> > >>>+	ret =3D i2c_smbus_read_byte_data(client, reg);
+> > >>>+	mutex_unlock(&data->lock);
+> > >>>+
+> > >>>+	if (ret < 0) {
+> > >>>+		dev_err(&client->dev, "failed to read byte at 0x%02x\n", reg)=
+;
+> > >>>+		return ret;
+> > >>>+	}
+> > >>>+
+> > >>>+	*val =3D (uint8_t)ret;
+> > >>>+
+> > >>>+	return 0;
+> > >>>+}
+> > >>>+
+> > >>I personally would prefer if you would retain the original API, w=
+hich returns both value
+> > >>and error code as return value. I don't see the benefit of changi=
+ng the API as you did -
+> > >>it just complicates the code.
+> > >>
+> > >>Thanks,
+> > >>Guenter
+> > >>
+> > >I think it is ok for a wrapper like this because it does not reall=
+y change an API because
+> > >it is menf21bmc related.
+> > >
+> > >I did the same in rtc-rx8581, and it was already done in rtc_ds130=
+7.c.
+> > >
+> > >I personally prefer this way because the return of the function an=
+d the return
+> > >value of the i2c_smbus_read - which is the value read from the dev=
+ice - are seperated.
+> > >
+> > >If it is a no go for the mfd/wdt core i can change it back to the =
+original i2c_smbus API.
+> > >If it is ok on your side for a wrapper like this, we can let it as=
+ it is.
+> > >
+> >=20
+> > Not my call to make; depends on the mfd maintainer. I would not acc=
+ept it, as I see it
+> > as unnecessary, adding complexity, and pointless. Sure, you can alw=
+ays find examples
+> > for everything somewhere in the kernel, but that doesn't make it be=
+tter.
+>=20
+> I'm inclined to agree with Guenter, this patch is just noise.
 
-On Tuesday 20 May 2014 07:39:13 Simon Horman wrote:
-> [ CCed Laurent Pinchart ]
-> 
-> The renesas and shmobile portions of this seem reasonable to me
-> and I have checked that there do not seem to be any conflicts
-> with changes I already have queued up for v3.16 (and v3.17).
-> 
-> I have CCed Laurent Pinchart as I believe he most recently
-> did work on the renesas and shmobile code in question.
+Ok no problem, i will fix it and resend the patch.
+=46or now I know it for the future :-)
 
-The series look sane to me. For the three patches that Simon has acked below,
+Any other comments about the patch series?
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>=20
+> --=20
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
 
-> On Mon, May 19, 2014 at 10:42:31PM +0200, Alexandre Belloni wrote:
-> > Hi,
-> > 
-> > Originally sent on Apr 14th, note that this series is blocking another 16
-> > patches series, I would like it to be taken in 3.16 if we can agree on
-> > this implementation.
-> > 
-> > A patch set as suggested by Thierry to make lookup with the lookup table
-> > instead of device tree behave more like when using device tree.
-> > 
-> > The first patch adds a period and a polarity member to the lookup table
-> > and use those to set period and polarity.
-> > 
-> > Patch 2, 4 and 5 are making use of those new members from the board files.
-> > Patch 3 removes useless code since setting the polarity is now handled by
-> > the PWM core.
-> > 
-> > I couldn't decide on a good name for the extended PWM_LOOKUP macro and I
-> > believe we won't have to add members to that structure soon so:
-> > Patch 6 modifies the PWM_LOOKUP macro to also initialize period and
-> > polarity and Patch 7-9 are making use of the new PWM_LOOKUP macro in the
-> > board files
-> > 
-> > Patch 10 and 11 are making the leds-pwm and pwm_bl drivers get the period
-> > from the PWM before using pwm_period_ns if it is not already set.
-> > 
-> > Patch 10 will obviously conflict with the series of Russell reworking the
-> > leds-pwm probing. I can rebase if necessary
-> > 
-> > The final goal would be to get rid of .pwm_period_ns in leds-pwm and
-> > pwm_bl after moving all the remaining users (still around 25) to
-> > pwm_lookup.
-> > 
-> > Changes in v2:
-> >  - correctly unlock the pwm_lookup_lock mutex before returning.
-> >  - don't change PWM_LOOKUP atomically
-> >  - remove tpu_pwm_platform_data and the associated header file
-> >  - make the leds-pwm and pwm_bl drivers get the period from the PWM
-> > 
-> > Alexandre Belloni (11):
-> >   pwm: add period and polarity to struct pwm_lookup
-> >   ARM: shmobile: Armadillo 800 EVA: initialize all struct pwm_lookup
-> >     members
-> >   pwm: renesas-tpu: remove useless struct tpu_pwm_platform_data
-> 
-> The above two patches:
-> Acked-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> >   ARM: OMAP3: Beagle: initialize all the struct pwm_lookup members
-> >   ARM: pxa: hx4700: initialize all the struct pwm_lookup members
-> >   pwm: modify PWM_LOOKUP to initialize all struct pwm_lookup members
-> >   ARM: OMAP3: Beagle: use PWM_LOOKUP to initialize struct pwm_lookup
-> >   ARM: shmobile: Armadillo 800 EVA: use PWM_LOOKUP to initialize struct
-> >     pwm_lookup
-> 
-> The above patch:
-> Acked-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> >   ARM: pxa: hx4700: use PWM_LOOKUP to initialize struct pwm_lookup
-> >   leds: leds-pwm: retrieve configured pwm period
-> >   backlight: pwm_bl: retrieve configured pwm period
-> >  
-> >  Documentation/pwm.txt                          |  3 ++-
-> >  arch/arm/mach-omap2/board-omap3beagle.c        |  3 ++-
-> >  arch/arm/mach-pxa/hx4700.c                     |  3 ++-
-> >  arch/arm/mach-shmobile/board-armadillo800eva.c | 14 +++-----------
-> >  drivers/leds/leds-pwm.c                        |  5 ++++-
-> >  drivers/pwm/core.c                             |  8 +++++++-
-> >  drivers/pwm/pwm-renesas-tpu.c                  | 19 +++----------------
-> >  drivers/video/backlight/pwm_bl.c               |  8 +++++---
-> >  include/linux/platform_data/pwm-renesas-tpu.h  | 16 ----------------
-> >  include/linux/pwm.h                            |  6 +++++-
-> >  10 files changed, 33 insertions(+), 52 deletions(-)
-> >  delete mode 100644 include/linux/platform_data/pwm-renesas-tpu.h
-
--- 
-Regards,
-
-Laurent Pinchart
+Regards
+Andy
