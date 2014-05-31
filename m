@@ -1,108 +1,298 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Sat, 31 May 2014 15:19:14 +0300
-Message-ID: <20140531121914.GM15585@mwanda>
-References: <20140530094025.3b78301e@canb.auug.org.au>
- <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
- <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
- <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
- <5388C0F1.90503@gmail.com> <5388CB1B.3090802@metafoo.de>
- <20140530232922.GD25854@kroah.com> <5389864B.4000107@metafoo.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <5389864B.4000107@metafoo.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Linux MIPS Mailing List <linux-mips@linux-mips.org>, David Daney <ddaney.cavm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, platform-driver-x86@vger.kernel.org, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, Alexandre Courbot <gnurou@gmail.com>, patches@opensource.wolfsonmicro.com, linux-samsungsoc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, spear-devel@list.st.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, m@bues.ch, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel@vger.kernel.o
+From: Janne Kanniainen <janne.kanniainen@gmail.com>
+Subject: [PATCH] leds: USB: Add support for MSI GT683R led panels
+Date: Sat, 31 May 2014 18:46:44 +0300
+Message-ID: <1401551204-6399-1-git-send-email-janne.kanniainen@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Sat, May 31, 2014 at 09:35:39AM +0200, Lars-Peter Clausen wrote:
-> On 05/31/2014 01:29 AM, Greg KH wrote:
-> >On Fri, May 30, 2014 at 08:16:59PM +0200, Lars-Peter Clausen wrote:
-> >>On 05/30/2014 07:33 PM, David Daney wrote:
-> >>>On 05/30/2014 04:39 AM, Geert Uytterhoeven wrote:
-> >>>>On Fri, May 30, 2014 at 1:30 PM, abdoulaye berthe <berthe.ab@gmail.com>
-> >>>>wrote:
-> >>>>>--- a/drivers/gpio/gpiolib.c
-> >>>>>+++ b/drivers/gpio/gpiolib.c
-> >>>>>@@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct
-> >>>>>gpio_chip *gpiochip);
-> >>>>>   *
-> >>>>>   * A gpio_chip with any GPIOs still requested may not be removed.
-> >>>>>   */
-> >>>>>-int gpiochip_remove(struct gpio_chip *chip)
-> >>>>>+void gpiochip_remove(struct gpio_chip *chip)
-> >>>>>  {
-> >>>>>         unsigned long   flags;
-> >>>>>-       int             status = 0;
-> >>>>>         unsigned        id;
-> >>>>>
-> >>>>>         acpi_gpiochip_remove(chip);
-> >>>>>@@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
-> >>>>>         of_gpiochip_remove(chip);
-> >>>>>
-> >>>>>         for (id = 0; id < chip->ngpio; id++) {
-> >>>>>-               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
-> >>>>>-                       status = -EBUSY;
-> >>>>>-                       break;
-> >>>>>-               }
-> >>>>>-       }
-> >>>>>-       if (status == 0) {
-> >>>>>-               for (id = 0; id < chip->ngpio; id++)
-> >>>>>-                       chip->desc[id].chip = NULL;
-> >>>>>-
-> >>>>>-               list_del(&chip->list);
-> >>>>>+               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-> >>>>>+                       panic("gpio: removing gpiochip with gpios still
-> >>>>>requested\n");
-> >>>>
-> >>>>panic?
-> >>>
-> >>>NACK to the patch for this reason.  The strongest thing you should do here
-> >>>is WARN.
-> >>>
-> >>>That said, I am not sure why we need this whole patch set in the first place.
-> >>
-> >>Well, what currently happens when you remove a device that is a provider of
-> >>a gpio_chip which is still in use, is that the kernel crashes. Probably with
-> >>a rather cryptic error message. So this patch doesn't really change the
-> >>behavior, but makes it more explicit what is actually wrong. And even if you
-> >>replace the panic() by a WARN() it will again just crash slightly later.
-> >>
-> >>This is a design flaw in the GPIO subsystem that needs to be fixed.
-> >
-> >Then fix the GPIO code properly, don't add a new panic() to the kernel.
-> 
-> Until somebody comes up with a patch that fixes this for good I
-> think that patch is still an improvement over the current situation.
-> Rather than keeping the kernel running in a inconsistent state,
-> which might cause all kinds of undefined behavior and which will
-> lead to a crash eventually, we might as well just crash the kernel
-> at the cause of the inconsistent state. This will make it obvious
-> why it crashed (compared to a random stacktrace) and will also
-> prevent the kernel from running in a undefined state.
-> 
+This driver adds support for USB controlled led panels that exist in MSI GT683R laptop.
 
-Really, adding a panic here is not ok.  With a WARN() then you have
-time to save the dmesg to a file.
+Signed-off-by: Janne Kanniainen <janne.kanniainen@gmail.com>
+---
+ drivers/leds/Kconfig       |   6 ++
+ drivers/leds/Makefile      |   1 +
+ drivers/leds/leds-gt683r.c | 241 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 248 insertions(+)
+ create mode 100644 drivers/leds/leds-gt683r.c
 
-This CC list is way too huge.  We're all wondering how often this stuff
-crashes anyway?  Have you tried to fix the bug instead of just calling
-panic()?  Is there a bugzilla entry or something?  Is there a thread on
-the list?
-
-Just add a WARN() and fix the bug then cleanup the error handling.
-
-regards,
-dan carpenter
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6de9dfb..2cffa0c 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -487,6 +487,12 @@ config LEDS_BLINKM
+ 	  This option enables support for the BlinkM RGB LED connected
+ 	  through I2C. Say Y to enable support for the BlinkM LED.
+ 
++config LEDS_GT683R
++       tristate "LED support for the MSI GT683R"
++       depends on LEDS_CLASS && USB
++       help
++         This option enables support for the MSI GT683R LEDS
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 3cd76db..af5fb4e 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -54,6 +54,7 @@ obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
+ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+ obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
+ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
++obj-$(CONFIG_LEDS_GT683R)		+= leds-gt683r.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-gt683r.c b/drivers/leds/leds-gt683r.c
+new file mode 100644
+index 0000000..d67709c
+--- /dev/null
++++ b/drivers/leds/leds-gt683r.c
+@@ -0,0 +1,241 @@
++/*
++ * MSI GT683R led driver
++ *
++ * Copyright (c) 2014 Janne Kanniainen <janne.kanniainen@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/usb.h>
++#include <linux/slab.h>
++#include <linux/leds.h>
++
++#define USB_DEVICE_ID_MSI_GT683R_LED_PANEL 0xff00
++#define USB_VENDOR_ID_MSI 0x1770
++
++#define GT683R_LED_MSG_TYPE_CTRL 0
++#define GT683R_LED_MSG_TYPE_INT 1
++
++#define GT683R_LED_FRONT 4
++#define GT683R_LED_SIDE 2
++#define GT683R_LED_BACK 1
++#define GT683R_LED_NORMAL 5
++#define GT683R_LED_BREATHING 3
++#define GT683R_LED_AUDIO 2
++#define GT683R_LED_OFF 0
++
++struct gt683r_led {
++	struct usb_device *usb_dev;
++
++	struct usb_endpoint_descriptor *ctrl_out_ep;
++	int ctrl_out_buffer_size;
++	char *ctrl_out_buffer;
++	struct usb_ctrlrequest *ctrl_out_request;
++	struct urb *ctrl_out_urb;
++
++	struct led_classdev led_dev;
++	struct mutex lock;
++	struct work_struct work;
++
++	enum led_brightness brightness;
++};
++
++static const struct usb_device_id gt683r_led_id[] = {
++	{ USB_DEVICE(USB_VENDOR_ID_MSI, USB_DEVICE_ID_MSI_GT683R_LED_PANEL) },
++	{ }
++};
++
++static char gt683r_led_select_leds[8] = {0x01, 0x02, 0x30, 0x00,
++					 0x00, 0x00, 0x00, 0x00};
++static char gt683r_led_select_type[8] = {0x01, 0x02, 0x20, 0x00,
++					 0x01, 0x00, 0x00, 0x00};
++
++static void gt683r_brightness_set(struct led_classdev *led_cdev,
++				  enum led_brightness brightness)
++{
++	struct gt683r_led *led =
++			container_of(led_cdev, struct gt683r_led, led_dev);
++
++	led->brightness = brightness;
++
++	schedule_work(&led->work);
++}
++
++static void gt683r_led_msg_snd_complete(struct urb *urb)
++{
++	usb_free_urb(urb);
++}
++
++static int gt683r_led_snd_msg(struct gt683r_led *led, char *msg)
++{
++	int result;
++
++	if (strlen(msg) > led->ctrl_out_buffer_size) {
++		dev_err(&led->usb_dev->dev, "Message to be send to device is too long\n");
++		return -EMSGSIZE;
++	}
++
++	led->ctrl_out_urb = usb_alloc_urb(0, GFP_KERNEL);
++	strcpy(led->ctrl_out_buffer, msg);
++	usb_fill_control_urb(led->ctrl_out_urb,
++			     led->usb_dev,
++			     usb_sndctrlpipe(led->usb_dev, led->ctrl_out_ep->bEndpointAddress),
++			     (unsigned char *) led->ctrl_out_request,
++			     led->ctrl_out_buffer,
++			     led->ctrl_out_buffer_size,
++			     gt683r_led_msg_snd_complete,
++			     led);
++
++	result = usb_submit_urb(led->ctrl_out_urb, GFP_KERNEL);
++
++	if (result) {
++		dev_err(&led->usb_dev->dev, "Failed to submit urb\n");
++		return -ECOMM;
++	}
++
++	return 0;
++}
++
++static void gt683r_led_set(struct gt683r_led *led, char leds, char type)
++{
++	gt683r_led_select_leds[3] = leds;
++	gt683r_led_select_type[3] = type;
++	gt683r_led_snd_msg(led, gt683r_led_select_leds);
++	gt683r_led_snd_msg(led, gt683r_led_select_type);
++}
++
++static void gt683r_led_work(struct work_struct *work)
++{
++	struct gt683r_led *led =
++			container_of(work, struct gt683r_led, work);
++
++	mutex_lock(&led->lock);
++
++	if (led->brightness)
++		gt683r_led_set(led, GT683R_LED_FRONT|GT683R_LED_SIDE|
++			       GT683R_LED_BACK, GT683R_LED_NORMAL);
++	else
++		gt683r_led_set(led, GT683R_LED_FRONT|GT683R_LED_SIDE|
++			       GT683R_LED_BACK, GT683R_LED_OFF);
++
++	mutex_unlock(&led->lock);
++}
++
++static struct led_classdev gt683r_led_dev = {
++	.name = "gt683r-led",
++	.brightness_set = gt683r_brightness_set,
++	.max_brightness = 1,
++	.flags = LED_CORE_SUSPENDRESUME,
++};
++
++static int gt683r_led_probe(struct usb_interface *intf,
++			    const struct usb_device_id *id)
++{
++	int ret = 0;
++	struct usb_endpoint_descriptor *endpoint;
++
++	struct gt683r_led *led = kzalloc(sizeof(struct gt683r_led), GFP_KERNEL);
++
++	if (!led) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	led->usb_dev = interface_to_usbdev(intf);
++	usb_set_intfdata(intf, led);
++	endpoint = &led->usb_dev->ep0.desc;
++
++	if (!led->ctrl_out_ep &&
++	    usb_endpoint_xfer_control(endpoint) &&
++	    usb_endpoint_dir_out(endpoint)) {
++		led->ctrl_out_ep = endpoint;
++		led->ctrl_out_buffer_size = endpoint->wMaxPacketSize;
++		led->ctrl_out_buffer = kmalloc(led->ctrl_out_buffer_size,
++					       GFP_KERNEL);
++		if (!led->ctrl_out_buffer) {
++			ret = -ENOMEM;
++			goto fail;
++		}
++		led->ctrl_out_request = kmalloc(sizeof(struct usb_ctrlrequest),
++						     GFP_KERNEL);
++		if (!led->ctrl_out_request) {
++			ret = -ENOMEM;
++			goto fail;
++		}
++		led->ctrl_out_request->bRequestType = 0x22;
++		led->ctrl_out_request->bRequest = 0x09;
++		led->ctrl_out_request->wValue = cpu_to_le16(0x0301);
++		led->ctrl_out_request->wIndex = cpu_to_le16(0x0000);
++		led->ctrl_out_request->wLength = cpu_to_le16(0x0008);
++	}
++
++	if (!led->ctrl_out_ep) {
++		dev_err(&led->usb_dev->dev, "Could not find ctrl-out endpoint\n");
++		ret = -EIO;
++		goto fail;
++	}
++
++	led->led_dev = gt683r_led_dev;
++	ret = led_classdev_register(&led->usb_dev->dev, &led->led_dev);
++	if (ret) {
++		dev_err(&led->usb_dev->dev, "Could not register led_classdev\n");
++		goto fail;
++	}
++
++	mutex_init(&led->lock);
++	INIT_WORK(&led->work, gt683r_led_work);
++
++	return 0;
++fail:
++	kfree(led->ctrl_out_buffer);
++	led->ctrl_out_buffer = NULL;
++
++	kfree(led->ctrl_out_request);
++	led->ctrl_out_request = NULL;
++
++	kfree(led);
++	led = NULL;
++
++	return ret;
++}
++
++static void gt683r_led_disconnect(struct usb_interface *intf)
++{
++	struct gt683r_led *led = usb_get_intfdata(intf);
++
++	led_classdev_unregister(&led->led_dev);
++	msleep(500);
++
++	kfree(led->ctrl_out_buffer);
++	led->ctrl_out_buffer = NULL;
++
++	kfree(led->ctrl_out_request);
++	led->ctrl_out_request = NULL;
++
++	kfree(led);
++	led = NULL;
++}
++
++static struct usb_driver gt683r_led_driver = {
++	.probe = gt683r_led_probe,
++	.disconnect = gt683r_led_disconnect,
++	.name = "GT683R Led Driver",
++	.id_table = gt683r_led_id,
++};
++
++module_usb_driver(gt683r_led_driver);
++
++MODULE_AUTHOR("Janne Kanniainen");
++MODULE_DESCRIPTION("MSI GT683R led driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.2
