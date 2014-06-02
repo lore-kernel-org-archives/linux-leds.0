@@ -1,298 +1,115 @@
-From: Janne Kanniainen <janne.kanniainen@gmail.com>
-Subject: [PATCH] leds: USB: Add support for MSI GT683R led panels
-Date: Sat, 31 May 2014 18:46:44 +0300
-Message-ID: <1401551204-6399-1-git-send-email-janne.kanniainen@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: Re: [PATCH v2 1/3] drivers/mfd/menf21bmc: introduce MEN 14F021P00
+ BMC MFD Core driver
+Date: Mon, 2 Jun 2014 10:06:36 +0200
+Message-ID: <20140602080635.GA364@awelinux>
+References: <cover.1401181010.git.andreas.werner@men.de>
+ <a3cd43562effd2580d0174c56eff5584791217ac.1401181010.git.andreas.werner@men.de>
+ <20140527150547.GA4227@lee--X1>
+ <20140528070222.GA24101@jtlinux>
+ <20140528082404.GA10803@lee--X1>
+ <20140528115159.GA2090@awelinux>
+ <5385E4C9.2010204@roeck-us.net>
+ <5385EA38.9090200@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.150]:8513 "EHLO
+	mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751442AbaFBHON (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Jun 2014 03:14:13 -0400
+Content-Disposition: inline
+In-Reply-To: <5385EA38.9090200@roeck-us.net>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andreas Werner <andreas.werner@men.de>, Lee Jones <lee.jones@linaro.org>, Johannes Thumshirn <johannes.thumshirn@men.de>, linux-kernel@vger.kernel.org, sameo@linux.intel.com, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-This driver adds support for USB controlled led panels that exist in MSI GT683R laptop.
+On Wed, May 28, 2014 at 06:52:56AM -0700, Guenter Roeck wrote:
+> On 05/28/2014 06:29 AM, Guenter Roeck wrote:
+> >On 05/28/2014 04:51 AM, Andreas Werner wrote:
+> >>aOn Wed, May 28, 2014 at 09:24:05AM +0100, Lee Jones wrote:
+> >>>>>>The MEN 14F021P00 Board Management Controller provides an
+> >>>>>>I2C interface to the host to access the feature implemented in the BMC.
+> >>>>>>The BMC is a PIC Microntroller assembled on CPCI Card from MEN Mikroelektronik
+> >>>>>>and on a few Box/Display Computer.
+> >>>>>>
+> >>>>>>Added MFD Core driver, supporting the I2C communication to the device.
+> >>>>>>
+> >>>>>>The MFD driver currently supports the following features:
+> >>>>>>    - Watchdog
+> >>>>>>    - LEDs
+> >>>>>>
+> >>>>>>Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> >>>>>>---
+> >>>>>>  drivers/mfd/Kconfig           |  12 +++
+> >>>>>>  drivers/mfd/Makefile          |   1 +
+> >>>>>>  drivers/mfd/menf21bmc.c       | 220 ++++++++++++++++++++++++++++++++++++++++++
+> >>>>>>  include/linux/mfd/menf21bmc.h |  31 ++++++
+> >>>>>>  4 files changed, 264 insertions(+)
+> >>>>>>  create mode 100644 drivers/mfd/menf21bmc.c
+> >>>>>>  create mode 100644 include/linux/mfd/menf21bmc.h
+> >>>
+> >>>[...]
+> >>>
+> >>>>>>+static int menf21bmc_write_byte(struct i2c_client *client, u8 val)
+> >>>>>>+{
+> >>>>>>+    int ret;
+> >>>>>>+    struct menf21bmc *data = i2c_get_clientdata(client);
+> >>>>>>+
+> >>>>>>+    mutex_lock(&data->lock);
+> >>>>>>+    ret = i2c_smbus_write_byte(client, val);
+> >>>>>>+    mutex_unlock(&data->lock);
+> >>>>>>+
+> >>>>>>+    return ret;
+> >>>>>>+}
+> >>>>>
+> >>>>>Didn't we ask you to remove these?  Just make the i2c_smbus_* calls
+> >>>>>from within the driver.  The I2C subsystem conducts its own locking.
+> >>>>>I'm really starting to frown on aggregation for the sake of
+> >>>>>aggregation.  It's just overhead.
+> >>>>>
+> >>>>
+> >>>>Correct me if I'm wrong but as far as I remember Guenther asked to retain the
+> >>>>original API, not the remove the "abstraction layer". Once we build a board with
+> >>>>one of these BMCs attached via e.g. SPI we would have to reintroduce it anyways,
+> >>>>in order to re-use these drivers.
+> >>>
+> >>>If there are two or more possible interfaces then I agree, these
+> >>>aggregations would be the best approach.  However, as it stands, that's
+> >>>not currently the case.
+> >>>
+> >>>Genuine question; are Men on the verge of building such a board, or
+> >>>are we talking about 'ifs' and 'maybes'?
+> >>>
+> >>
+> >>I think it was a missunderstanding. I also thought that i just
+> >>have to adapt the wrapper to the original API, that is what I did in the patch,
+> >>and not to delete the functions completly.
+> >>
+> >>Anayway, we currently have another project which use a STM32 MCR connected to USB.
+> >>A nice feature of this STM is to update the firmware using the USB interface.
+> >>This is easy to implement and fast.
+> >>
+> >>We want to use such a functionality in all of our MCRs to easily update the firmware
+> >>at the customer if we found a bug.
+> >>
+> >>We also plan to have a BMC connected to USB. Then we have i2c and USB.
+> >>
+> >
+> >Even more likely that you would have to change the API in that case to be less
+> >I2C centric.
+> >
+> 
+> ... especially since you have "struct i2c_client *client" in your API function.
+> 
+> Guenter
+> 
+> 
+Ok I agree. I will change that and delete the wrapper functions completley.
+I will prepare and send a v3.
 
-Signed-off-by: Janne Kanniainen <janne.kanniainen@gmail.com>
----
- drivers/leds/Kconfig       |   6 ++
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-gt683r.c | 241 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 248 insertions(+)
- create mode 100644 drivers/leds/leds-gt683r.c
+Thanks for the discussion.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 6de9dfb..2cffa0c 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -487,6 +487,12 @@ config LEDS_BLINKM
- 	  This option enables support for the BlinkM RGB LED connected
- 	  through I2C. Say Y to enable support for the BlinkM LED.
- 
-+config LEDS_GT683R
-+       tristate "LED support for the MSI GT683R"
-+       depends on LEDS_CLASS && USB
-+       help
-+         This option enables support for the MSI GT683R LEDS
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 3cd76db..af5fb4e 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -54,6 +54,7 @@ obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
- obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
- obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
- obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
-+obj-$(CONFIG_LEDS_GT683R)		+= leds-gt683r.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-gt683r.c b/drivers/leds/leds-gt683r.c
-new file mode 100644
-index 0000000..d67709c
---- /dev/null
-+++ b/drivers/leds/leds-gt683r.c
-@@ -0,0 +1,241 @@
-+/*
-+ * MSI GT683R led driver
-+ *
-+ * Copyright (c) 2014 Janne Kanniainen <janne.kanniainen@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/usb.h>
-+#include <linux/slab.h>
-+#include <linux/leds.h>
-+
-+#define USB_DEVICE_ID_MSI_GT683R_LED_PANEL 0xff00
-+#define USB_VENDOR_ID_MSI 0x1770
-+
-+#define GT683R_LED_MSG_TYPE_CTRL 0
-+#define GT683R_LED_MSG_TYPE_INT 1
-+
-+#define GT683R_LED_FRONT 4
-+#define GT683R_LED_SIDE 2
-+#define GT683R_LED_BACK 1
-+#define GT683R_LED_NORMAL 5
-+#define GT683R_LED_BREATHING 3
-+#define GT683R_LED_AUDIO 2
-+#define GT683R_LED_OFF 0
-+
-+struct gt683r_led {
-+	struct usb_device *usb_dev;
-+
-+	struct usb_endpoint_descriptor *ctrl_out_ep;
-+	int ctrl_out_buffer_size;
-+	char *ctrl_out_buffer;
-+	struct usb_ctrlrequest *ctrl_out_request;
-+	struct urb *ctrl_out_urb;
-+
-+	struct led_classdev led_dev;
-+	struct mutex lock;
-+	struct work_struct work;
-+
-+	enum led_brightness brightness;
-+};
-+
-+static const struct usb_device_id gt683r_led_id[] = {
-+	{ USB_DEVICE(USB_VENDOR_ID_MSI, USB_DEVICE_ID_MSI_GT683R_LED_PANEL) },
-+	{ }
-+};
-+
-+static char gt683r_led_select_leds[8] = {0x01, 0x02, 0x30, 0x00,
-+					 0x00, 0x00, 0x00, 0x00};
-+static char gt683r_led_select_type[8] = {0x01, 0x02, 0x20, 0x00,
-+					 0x01, 0x00, 0x00, 0x00};
-+
-+static void gt683r_brightness_set(struct led_classdev *led_cdev,
-+				  enum led_brightness brightness)
-+{
-+	struct gt683r_led *led =
-+			container_of(led_cdev, struct gt683r_led, led_dev);
-+
-+	led->brightness = brightness;
-+
-+	schedule_work(&led->work);
-+}
-+
-+static void gt683r_led_msg_snd_complete(struct urb *urb)
-+{
-+	usb_free_urb(urb);
-+}
-+
-+static int gt683r_led_snd_msg(struct gt683r_led *led, char *msg)
-+{
-+	int result;
-+
-+	if (strlen(msg) > led->ctrl_out_buffer_size) {
-+		dev_err(&led->usb_dev->dev, "Message to be send to device is too long\n");
-+		return -EMSGSIZE;
-+	}
-+
-+	led->ctrl_out_urb = usb_alloc_urb(0, GFP_KERNEL);
-+	strcpy(led->ctrl_out_buffer, msg);
-+	usb_fill_control_urb(led->ctrl_out_urb,
-+			     led->usb_dev,
-+			     usb_sndctrlpipe(led->usb_dev, led->ctrl_out_ep->bEndpointAddress),
-+			     (unsigned char *) led->ctrl_out_request,
-+			     led->ctrl_out_buffer,
-+			     led->ctrl_out_buffer_size,
-+			     gt683r_led_msg_snd_complete,
-+			     led);
-+
-+	result = usb_submit_urb(led->ctrl_out_urb, GFP_KERNEL);
-+
-+	if (result) {
-+		dev_err(&led->usb_dev->dev, "Failed to submit urb\n");
-+		return -ECOMM;
-+	}
-+
-+	return 0;
-+}
-+
-+static void gt683r_led_set(struct gt683r_led *led, char leds, char type)
-+{
-+	gt683r_led_select_leds[3] = leds;
-+	gt683r_led_select_type[3] = type;
-+	gt683r_led_snd_msg(led, gt683r_led_select_leds);
-+	gt683r_led_snd_msg(led, gt683r_led_select_type);
-+}
-+
-+static void gt683r_led_work(struct work_struct *work)
-+{
-+	struct gt683r_led *led =
-+			container_of(work, struct gt683r_led, work);
-+
-+	mutex_lock(&led->lock);
-+
-+	if (led->brightness)
-+		gt683r_led_set(led, GT683R_LED_FRONT|GT683R_LED_SIDE|
-+			       GT683R_LED_BACK, GT683R_LED_NORMAL);
-+	else
-+		gt683r_led_set(led, GT683R_LED_FRONT|GT683R_LED_SIDE|
-+			       GT683R_LED_BACK, GT683R_LED_OFF);
-+
-+	mutex_unlock(&led->lock);
-+}
-+
-+static struct led_classdev gt683r_led_dev = {
-+	.name = "gt683r-led",
-+	.brightness_set = gt683r_brightness_set,
-+	.max_brightness = 1,
-+	.flags = LED_CORE_SUSPENDRESUME,
-+};
-+
-+static int gt683r_led_probe(struct usb_interface *intf,
-+			    const struct usb_device_id *id)
-+{
-+	int ret = 0;
-+	struct usb_endpoint_descriptor *endpoint;
-+
-+	struct gt683r_led *led = kzalloc(sizeof(struct gt683r_led), GFP_KERNEL);
-+
-+	if (!led) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	led->usb_dev = interface_to_usbdev(intf);
-+	usb_set_intfdata(intf, led);
-+	endpoint = &led->usb_dev->ep0.desc;
-+
-+	if (!led->ctrl_out_ep &&
-+	    usb_endpoint_xfer_control(endpoint) &&
-+	    usb_endpoint_dir_out(endpoint)) {
-+		led->ctrl_out_ep = endpoint;
-+		led->ctrl_out_buffer_size = endpoint->wMaxPacketSize;
-+		led->ctrl_out_buffer = kmalloc(led->ctrl_out_buffer_size,
-+					       GFP_KERNEL);
-+		if (!led->ctrl_out_buffer) {
-+			ret = -ENOMEM;
-+			goto fail;
-+		}
-+		led->ctrl_out_request = kmalloc(sizeof(struct usb_ctrlrequest),
-+						     GFP_KERNEL);
-+		if (!led->ctrl_out_request) {
-+			ret = -ENOMEM;
-+			goto fail;
-+		}
-+		led->ctrl_out_request->bRequestType = 0x22;
-+		led->ctrl_out_request->bRequest = 0x09;
-+		led->ctrl_out_request->wValue = cpu_to_le16(0x0301);
-+		led->ctrl_out_request->wIndex = cpu_to_le16(0x0000);
-+		led->ctrl_out_request->wLength = cpu_to_le16(0x0008);
-+	}
-+
-+	if (!led->ctrl_out_ep) {
-+		dev_err(&led->usb_dev->dev, "Could not find ctrl-out endpoint\n");
-+		ret = -EIO;
-+		goto fail;
-+	}
-+
-+	led->led_dev = gt683r_led_dev;
-+	ret = led_classdev_register(&led->usb_dev->dev, &led->led_dev);
-+	if (ret) {
-+		dev_err(&led->usb_dev->dev, "Could not register led_classdev\n");
-+		goto fail;
-+	}
-+
-+	mutex_init(&led->lock);
-+	INIT_WORK(&led->work, gt683r_led_work);
-+
-+	return 0;
-+fail:
-+	kfree(led->ctrl_out_buffer);
-+	led->ctrl_out_buffer = NULL;
-+
-+	kfree(led->ctrl_out_request);
-+	led->ctrl_out_request = NULL;
-+
-+	kfree(led);
-+	led = NULL;
-+
-+	return ret;
-+}
-+
-+static void gt683r_led_disconnect(struct usb_interface *intf)
-+{
-+	struct gt683r_led *led = usb_get_intfdata(intf);
-+
-+	led_classdev_unregister(&led->led_dev);
-+	msleep(500);
-+
-+	kfree(led->ctrl_out_buffer);
-+	led->ctrl_out_buffer = NULL;
-+
-+	kfree(led->ctrl_out_request);
-+	led->ctrl_out_request = NULL;
-+
-+	kfree(led);
-+	led = NULL;
-+}
-+
-+static struct usb_driver gt683r_led_driver = {
-+	.probe = gt683r_led_probe,
-+	.disconnect = gt683r_led_disconnect,
-+	.name = "GT683R Led Driver",
-+	.id_table = gt683r_led_id,
-+};
-+
-+module_usb_driver(gt683r_led_driver);
-+
-+MODULE_AUTHOR("Janne Kanniainen");
-+MODULE_DESCRIPTION("MSI GT683R led driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.2
+Regards
+Andy
