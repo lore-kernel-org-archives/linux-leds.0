@@ -1,63 +1,89 @@
-From: Janne Kanniainen <janne.kanniainen@gmail.com>
-Subject: Re: [PATCH v2] leds: USB: Add support for MSI GT683R led panels
-Date: Sat, 7 Jun 2014 13:12:39 +0300
-Message-ID: <CAEEjW04UAsi7yOdmF3FZ3sLE7m7B-VAH0prDPYjaMXarAfNwcw@mail.gmail.com>
-References: <1402003746-6354-1-git-send-email-janne.kanniainen@gmail.com>
-	<20140606094752.GB9307@localhost>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Mon, 9 Jun 2014 00:18:23 +0100
+Message-ID: <20140608231823.GB10112@trinity.fluff.org>
+References: <20140530094025.3b78301e@canb.auug.org.au>
+ <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
+ <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
+ <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
+ <5388C0F1.90503@gmail.com>
+ <5388CB1B.3090802@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:53619 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751755AbaFGKMk (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 7 Jun 2014 06:12:40 -0400
-In-Reply-To: <20140606094752.GB9307@localhost>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <5388CB1B.3090802@metafoo.de>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: David Daney <ddaney.cavm@gmail.com>, abdoulaye berthe <berthe.ab@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, m@bues.ch, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Linux-sh list <linux-sh@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, patches@opensource.wolfsonmicro.com, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Bryan Wu <cooloney@gmail.com>, rpurdie@rpsys.net, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
 
-> First of all, please reply to the original thread and make sure to not
-> drop people or lists from CC.
+On Fri, May 30, 2014 at 08:16:59PM +0200, Lars-Peter Clausen wrote:
+> On 05/30/2014 07:33 PM, David Daney wrote:
+> >On 05/30/2014 04:39 AM, Geert Uytterhoeven wrote:
+> >>On Fri, May 30, 2014 at 1:30 PM, abdoulaye berthe <berthe.ab@gmail.com>
+> >>wrote:
+> >>>--- a/drivers/gpio/gpiolib.c
+> >>>+++ b/drivers/gpio/gpiolib.c
+> >>>@@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct
+> >>>gpio_chip *gpiochip);
+> >>>   *
+> >>>   * A gpio_chip with any GPIOs still requested may not be removed.
+> >>>   */
+> >>>-int gpiochip_remove(struct gpio_chip *chip)
+> >>>+void gpiochip_remove(struct gpio_chip *chip)
+> >>>  {
+> >>>         unsigned long   flags;
+> >>>-       int             status = 0;
+> >>>         unsigned        id;
+> >>>
+> >>>         acpi_gpiochip_remove(chip);
+> >>>@@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
+> >>>         of_gpiochip_remove(chip);
+> >>>
+> >>>         for (id = 0; id < chip->ngpio; id++) {
+> >>>-               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+> >>>-                       status = -EBUSY;
+> >>>-                       break;
+> >>>-               }
+> >>>-       }
+> >>>-       if (status == 0) {
+> >>>-               for (id = 0; id < chip->ngpio; id++)
+> >>>-                       chip->desc[id].chip = NULL;
+> >>>-
+> >>>-               list_del(&chip->list);
+> >>>+               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+> >>>+                       panic("gpio: removing gpiochip with gpios still
+> >>>requested\n");
+> >>
+> >>panic?
+> >
+> >NACK to the patch for this reason.  The strongest thing you should do here
+> >is WARN.
+> >
+> >That said, I am not sure why we need this whole patch set in the first place.
+> 
+> Well, what currently happens when you remove a device that is a
+> provider of a gpio_chip which is still in use, is that the kernel
+> crashes. Probably with a rather cryptic error message. So this patch
+> doesn't really change the behavior, but makes it more explicit what
+> is actually wrong. And even if you replace the panic() by a WARN()
+> it will again just crash slightly later.
+> 
+> This is a design flaw in the GPIO subsystem that needs to be fixed.
 
-Sorry this is my first patch and i didn't know that. Now I know.
+Surely then the best way is to error out to the module unload and
+stop the driver being unloaded?
 
-> For arrays you can use the ARRAY_SIZE() macro if that was the reason for
-> this change. I should have mentioned that when I pointed out that you
-> cannot use strlen().
+-- 
+Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
 
-That wasn't the reason. I just thought it might be better to use u64
-than char[8]. I know why I can't use strlen and that was only careless
-error. And there was lot of them :( I will be more careful next time.
-
-> Where did you get these (HID report) values from by the way?
-
-I got them by reverse engineering.
-
->> +
->> +static void gt683r_brightness_set(struct led_classdev *led_cdev,
->> +                               enum led_brightness brightness)
->> +{
->> +     struct gt683r_led *led =
->> +                     container_of(led_cdev, struct gt683r_led, led_dev);
->> +
->> +     mutex_lock(&led->lock);
->
-> You cannot grab a mutex here since this function can be called from
-> interrupt context (if I remember correctly). Either way, you shouldn't
-> be holding the lock until the work task has finished...
-
-I thought use asked me to put some lock there:
-
->> +
->> +static void gt683r_brightness_set(struct led_classdev *led_cdev,
->> +                               enum led_brightness brightness)
->> +{
->> +     struct gt683r_led *led =
->> +                     container_of(led_cdev, struct gt683r_led, led_dev);
->> +
->> +     led->brightness = brightness;
->
-> Missing locking?
-
-Janne
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
