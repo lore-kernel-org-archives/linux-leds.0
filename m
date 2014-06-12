@@ -1,96 +1,86 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/5] Fix various issues with leds-pwm
-Date: Thu, 12 Jun 2014 19:03:34 +0100
-Message-ID: <20140612180333.GM23430@n2100.arm.linux.org.uk>
-References: <20140406221854.GS7528@n2100.arm.linux.org.uk> <CAK5ve-JijCvD8cZMpx+zG7YAjce3hnhpwTHCJr+zzfMKmJPt=g@mail.gmail.com> <20140407213337.GL7528@n2100.arm.linux.org.uk> <CAK5ve-KMLvxZgwFiks7eQHdBfakfMUPqUiuY0+KFmGLat8VhPA@mail.gmail.com> <20140612171206.GA12123@n2100.arm.linux.org.uk> <CAK5ve-+j75g_cTDHAEF3F9fqHQqe9iGFQ+XfssS=dNn0sa+bmg@mail.gmail.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED updates for 3.16
+Date: Thu, 12 Jun 2014 11:10:10 -0700
+Message-ID: <CAK5ve-+H7xamv9brhfJzDSi=6XiOo_UPn4BE5QXtc4X7C+RKqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:56214 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751864AbaFLSDl (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Thu, 12 Jun 2014 14:03:41 -0400
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-+j75g_cTDHAEF3F9fqHQqe9iGFQ+XfssS=dNn0sa+bmg@mail.gmail.com>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:44996 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbaFLSKd (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Jun 2014 14:10:33 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-On Thu, Jun 12, 2014 at 10:37:43AM -0700, Bryan Wu wrote:
-> > So, I see this commit in mainline:
-> >
-> > commit e81d372ff9f694e13fa46e8b5aaed505c7fd2a1f
-> > Merge: 75e300c8ba58 2f05e1d4458f
-> > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > Date:   Sat Dec 15 12:52:42 2012 -0800
-> 
-> Are you sure? this was a git pull in 2012. At that time I didn't get
-> any patch from you.
+Hi Linus,
 
-Yes, it's the wrong commit, sorry.
+I just found merge window is open and I'm quite busy and almost forget
+to send out this pull request. Thanks Russell and Alexandre ping me
+about this.
 
-> The rest of them are queued in my tree
-> http://git.kernel.org/cgit/linux/kernel/git/cooloney/linux-leds.git/log/?h=for-next
-> 
-> And I will send them out during 3.16 merge window but now mainline is
-> still 3.15-rc8. I believe this is what we talked about before.
+So basically we got some clean up and leds-pwm fixing patches from Russell.
 
-I'm not sure why you think that.
+Please consider the following changes since commit
+89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd:
 
-First, the merge window is almost over - it opened one week early when
--rc8 was released:
+  Linux 3.15-rc4 (2014-05-04 18:14:42 -0700)
 
-https://lkml.org/lkml/2014/6/1/264
+are available in the git repository at:
 
-Date	Sun, 1 Jun 2014 19:37:20 -0700
-Subject	Linux 3.15-rc8 ... and merge window for 3.16
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
 
-Secondly, 3.15 was released last Sunday:
+for you to fetch changes up to 0c9a03b68511daf078256367e7a98d7ff3b7dfcb:
 
-Date	Sun, 8 Jun 2014 11:52:27 -0700
-Subject	Linux 3.15 .. and continuation of merge window
+  leds: Remove duplicated OOM message for individual driver
+(2014-05-08 14:28:08 +0800)
 
-> Oh, no, I'm sorry, I messed up 3.16 merge window which is before
-> 3.15-rc1 with 3.17 merge window. And I really mean 3.17 merge window
-> which is before 3.16-rc1. My bad, I will definitely send them all out
-> during 3.17 merge window.
+----------------------------------------------------------------
+Alex Hung (1):
+      dell-led: add mic mute led interface
 
-Sorry, I sent the patches in /good/ time for the 3.16 merge window -
-two months before the current merge window opened... and now you seem
-to be saying that you intended to get them *not* into the merge window
-two months away from that point, but *five* months away from the point
-that you claimed to accept them?
+Axel Lin (1):
+      leds: pca9685: Remove leds-pca9685 driver
 
-I'm also told that my patches are in next-20140528, and indeed in the
-last linux-next, they are still there:
+Christoph Lameter (1):
+      drivers/leds: Replace __get_cpu_var use through this_cpu_ptr
 
-http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/drivers/leds/leds-pwm.c
+Daniel Mack (1):
+      leds: lp55xx: add DT bindings for LP55231
 
-So you /can/ send them right now to Linus - the merge window is still
-open for 3.16.
+Krzysztof Kozlowski (2):
+      leds: 88pm860x: Use of_get_child_by_name
+      leds: 88pm860x: Fix missing refcount decrement for parent of_node
 
-As for which merge window... here's a lesson.  This is how it normally
-works:
+Russell King (4):
+      leds: leds-pwm: provide a common function to setup a single led-pwm device
+      leds: leds-pwm: convert OF parsing code to use led_pwm_add()
+      leds: leds-pwm: implement PWM inversion
+      leds: leds-pwm: add DT support for LEDs wired to supply
 
-3.15-rc8
-3.15
-<merge window for 3.16>
-3.16-rc1
-3.16-rc2
-3.16-rc3
-...
-3.16-rc7
-...
-3.16
-<merge window for 3.17>
-3.17-rc1
+Xiubo Li (1):
+      leds: Remove duplicated OOM message for individual driver
 
-So, your statement "3.16 merge window which is before 3.15-rc1" is
-totally wrong.  The 3.X merge window happens immediately before
-3.X-rc1 is released, for any X.
-
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+ .../devicetree/bindings/leds/leds-lp55xx.txt       |   8 +-
+ .../devicetree/bindings/leds/leds-pwm.txt          |   2 +
+ drivers/leds/Kconfig                               |  10 -
+ drivers/leds/Makefile                              |   1 -
+ drivers/leds/dell-led.c                            | 171 ++++++++++++++++-
+ drivers/leds/leds-88pm860x.c                       |   5 +-
+ drivers/leds/leds-adp5520.c                        |   5 +-
+ drivers/leds/leds-bd2802.c                         |   4 +-
+ drivers/leds/leds-da903x.c                         |   4 +-
+ drivers/leds/leds-da9052.c                         |   3 +-
+ drivers/leds/leds-lp5523.c                         |   3 +-
+ drivers/leds/leds-pca9685.c                        | 213 ---------------------
+ drivers/leds/leds-pwm.c                            | 144 +++++++-------
+ drivers/leds/leds-s3c24xx.c                        |   4 +-
+ drivers/leds/leds-sunfire.c                        |   4 +-
+ drivers/leds/trigger/ledtrig-cpu.c                 |   2 +-
+ include/linux/dell-led.h                           |  10 +
+ include/linux/platform_data/leds-pca9685.h         |  35 ----
+ 18 files changed, 264 insertions(+), 364 deletions(-)
+ delete mode 100644 drivers/leds/leds-pca9685.c
+ create mode 100644 include/linux/dell-led.h
+ delete mode 100644 include/linux/platform_data/leds-pca9685.h
