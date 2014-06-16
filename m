@@ -1,59 +1,131 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v5] leds: USB: HID: Add support for MSI GT683R led panels
-Date: Mon, 16 Jun 2014 09:45:03 +0200
-Message-ID: <20140616074503.GB20636@localhost>
-References: <20140612090636.GK10256@localhost>
- <1402605252-9620-1-git-send-email-janne.kanniainen@gmail.com>
- <20140614224222.GE1389@xo-6d-61-c0.localdomain>
- <CAEEjW04wA3PT2=oE4Z=tP-RWkmyiWpM5NzCH5Owwh8vCRbqMTA@mail.gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: "LED / flash API integration" related improvements
+Date: Mon, 16 Jun 2014 11:53:22 +0300
+Message-ID: <20140616085321.GP2073@valkosipuli.retiisi.org.uk>
+References: <536CE61C.8010205@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:46910 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751890AbaFPHpo (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Jun 2014 03:45:44 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAEEjW04wA3PT2=oE4Z=tP-RWkmyiWpM5NzCH5Owwh8vCRbqMTA@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <536CE61C.8010205@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Janne Kanniainen <janne.kanniainen@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Jiri Kosina <jkosina@suse.cz>, Johan Hovold <johan@kernel.org>, Bryan Wu <cooloney@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org
 
-On Sun, Jun 15, 2014 at 02:23:25AM +0300, Janne Kanniainen wrote:
-> > Hi!
-> 
-> Hi.
-> 
-> >> --- /dev/null
-> >> +++ b/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
-> >> @@ -0,0 +1,10 @@
-> >> +What:                /sys/class/hidraw/<hidraw>/device/state
-> >> +Date:                Jun 2014
-> >> +KernelVersion:       3.15
-> >> +Contact:     Janne Kanniainen <janne.kanniainen@gmail.com>
-> >> +Description:
-> >> +             Set the mode of LEDs
-> >> +
-> >> +             0 - normal
-> >> +             1 - audio
-> >> +             2 - breathing
-> >
-> > THat's some strange interface. Don't we normally use led triggers
-> > for this?
-> 
-> I can implement it that way, if you all think that it is correct way.
-> What do Jiri and Johan thinks of it?
-> 
-> > And the mode of the LED should really be in /sys/class/leds, not in
-> > hidraw somewhere...
-> 
-> The problem is that all panels can only be in one mode at the time.
-> For example front panel can't be in breathing mode while side panel is
-> in normal mode.
+Hi Jacek and others,
 
-As Janne explained above, it's really an attribute of the parent device
-and not the individual LEDs. The latter could still use the software
-timer trigger to blink independently.
+Comments from the LED API folks would be highly appreciated.
 
-Johan
+(Cc linux-media as well.)
+
+My comments below.
+
+On Fri, May 09, 2014 at 04:28:44PM +0200, Jacek Anaszewski wrote:
+> During review of "LED / flash API integration" patch sets two issues
+> requiring modifications in the LED subsystem core emerged.
+> I would like to consult possible ways of solving them:
+> 
+> 1.
+> ==================================================================
+> 
+> Some LED devices allow to control multiple LEDs independently.
+> Currently there is no direct support for this in the LED subsystem
+> and existing drivers register separate devices for each LED.
+> 
+> LED / flash API integration effort is a good opportunity to provide
+> support for exposing multiple LEDs by a single LED class device.
+> 
+> I would like to add following API:
+> 
+> /**
+>  * led_get_sub_leds_number - get the number of exposed LEDs
+>  * @led_cdev: the LED to query
+>  * @num_leds: number of exposed leds
+>  *
+>  * Get the number of leds exposed by the device.
+>  *
+>  * Returns: 0 on success or negative error value on failure
+>  */
+> int led_get_sub_leds_number(struct led_classdev *led_cdev,
+>                         int *num_leds);
+> 
+> /**
+>  * led_select_sub_led - select sub led to control
+>  * @led_cdev: the LED to set
+>  * @led_id: id of the sub led to control
+>  *
+>  * Set the sub led to be the target of the LED class API calls.
+>  * Maximum led_id equals num_leds - 1.
+>  *
+>  * Returns: 0 on success or negative error value on failure
+>  */
+> int led_select_sub_led(struct led_classdev *led_cdev,
+>                     int led_id);
+
+Instead of this, how about using an array indexed by LED for the other
+functions?
+
+The problem with this is that often the registers to control LED specific
+properties contain the same configuration for another LED. The driver should
+thus cache the information until it needs to be applied, and I don't think
+configuring everything for every LED separately makes sense for either the
+user nor the driver.
+
+Caching the configuration before applying it should still be done since this
+way extra register accesses can be avoided: registers often share different
+kind of configurations such as timeout and current as well. The
+configuration should be applied once an apply fonction is called.
+
+> /**
+>  * led_get_sub_led - get currently selected sub led
+>  * @led_cdev: the LED to set
+>  * @led_id: id of currently selected sub led
+>  *
+>  * Get id of the sub led chosen as the target of LED class
+>  * API calls. Maximum led_id equals num_leds - 1.
+>  *
+>  * Returns: 0 on success or negative error value on failure
+>  */
+> int led_get_target_led(struct led_classdev *led_cdev,
+>                         int* led_id);
+> 
+> The functions functions would be mapped on the sysfs attributes:
+> - available_leds - RO
+> - sub_led_id - RW
+
+This kind of interface isn't going to be compatible with existing
+applications. If you want to keep the compatibility, the LEDs would probably
+need to be exposed as separate devices. If that's not a requirement, I'd use
+an array here as well.
+
+The V4L2 driver would still expose the device as a single sub-device.
+Controls that apply to individual LEDs would be array controls.
+
+> The attributes would be created only if the related callbacks
+> are registered by the driver.
+> 
+> 2.
+> ==================================================================
+> 
+> The second issue, refers to the work queues being used in the
+> brightness_set callbacks of the LED subsystem drivers. It interferes
+> with the way how V4L2 Flash controls work, which expect that setting
+> flash brightness has immediate effect.
+> 
+> Proposed solutions:
+> - move work queues out from the drivers to the LED core.
+> - add brightness_set_now callback to be registered by
+>   the LED drivers and intended for call by v4l2-flash driver;
+>   it wouldn't schedule a work but do the job immediately
+
+I favour the former, but the latter could be used to leave the existing
+callback as a compatibility means until all drivers are converted. This
+would probably be more work in total though than doing everything in a
+single patchset.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
