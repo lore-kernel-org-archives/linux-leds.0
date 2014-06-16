@@ -1,11 +1,11 @@
 From: Janne Kanniainen <janne.kanniainen@gmail.com>
 Subject: [PATCH v6] leds: USB: HID: Add support for MSI GT683R led panels
-Date: Mon, 16 Jun 2014 20:23:35 +0300
-Message-ID: <1402939415-32056-1-git-send-email-janne.kanniainen@gmail.com>
-References: <20140613075411.GG10940@localhost>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140613075411.GG10940@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
+Date: Tue, 17 Jun 2014 01:01:55 +0300
+Message-ID: <1402956115-1280-1-git-send-email-janne.kanniainen@gmail.com>
+References: <1402939415-32056-1-git-send-email-janne.kanniainen@gmail.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1402939415-32056-1-git-send-email-janne.kanniainen@gmail.com>
+Sender: linux-input-owner@vger.kernel.org
 To: jkosina@suse.cz
 Cc: johan@kernel.org, cooloney@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>
 List-Id: linux-leds@vger.kernel.org
@@ -40,6 +40,8 @@ Changes in v6:
 	- flush_work added
 	- using hid device name instead of hard coded gt683r
 	- allocating name buffers with devm_kzalloc
+
+There was a bug with "for", so I fixed it.
 
  .../ABI/testing/sysfs-class-hid-driver-gt683r      |  14 +
  drivers/hid/Kconfig                                |  16 ++
@@ -126,7 +128,7 @@ index da52279..ec88fdb 100644
  	{ HID_USB_DEVICE(USB_VENDOR_ID_NTRIG, USB_DEVICE_ID_NTRIG_TOUCH_SCREEN_2) },
 diff --git a/drivers/hid/hid-gt683r.c b/drivers/hid/hid-gt683r.c
 new file mode 100644
-index 0000000..132cc54
+index 0000000..1b16250
 --- /dev/null
 +++ b/drivers/hid/hid-gt683r.c
 @@ -0,0 +1,318 @@
@@ -416,7 +418,7 @@ index 0000000..132cc54
 +	return 0;
 +
 +fail2:
-+	for (; i > 0; i--)
++	for (; i >= 0; i--)
 +		led_classdev_unregister(&led->led_devs[i]);
 +	hid_hw_stop(hdev);
 +fail:
@@ -476,3 +478,4 @@ index 8e4ddb3..c640e1d 100644
  	{ USB_VENDOR_ID_PIXART, USB_DEVICE_ID_PIXART_OPTICAL_TOUCH_SCREEN, HID_QUIRK_NO_INIT_REPORTS },
 -- 
 1.9.2
+
