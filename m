@@ -1,63 +1,216 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH RFC 07/11] leds: Remove ARCH_KIRKWOOD dependency
-Date: Wed, 25 Jun 2014 16:08:35 -0700
-Message-ID: <CAK5ve-K0DN0QX1r5thRcajfN4xV6hk6xaEniPDzBF+kaZSPCeQ@mail.gmail.com>
-References: <1400163836-9831-1-git-send-email-andrew@lunn.ch> <1400163836-9831-12-git-send-email-andrew@lunn.ch>
+Subject: Re: [PATCH v2 3/3] drivers/leds/leds-menf21bmc: introduce MEN
+ 14F021P00 BMC LED driver
+Date: Wed, 25 Jun 2014 16:10:55 -0700
+Message-ID: <CAK5ve-LaiqT8xy_LN7O6FeUSvCcJj3kGu1u5AQz2OH2Q4gGMyQ@mail.gmail.com>
+References: <cover.1401181010.git.andreas.werner@men.de> <d06aca002784396a95beac921f296d812e1eeb4b.1401181010.git.andreas.werner@men.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:45011 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757066AbaFYXI5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jun 2014 19:08:57 -0400
-Received: by mail-la0-f47.google.com with SMTP id s18so1292590lam.34
-        for <linux-leds@vger.kernel.org>; Wed, 25 Jun 2014 16:08:55 -0700 (PDT)
-In-Reply-To: <1400163836-9831-12-git-send-email-andrew@lunn.ch>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:60239 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753356AbaFYXLR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jun 2014 19:11:17 -0400
+In-Reply-To: <d06aca002784396a95beac921f296d812e1eeb4b.1401181010.git.andreas.werner@men.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux ARM <linux-arm-kernel@lists.infradead.org>, Jason Cooper <jason@lakedaemon.net>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Andreas Werner <andreas.werner@men.de>
+Cc: lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, wim@iguana.be, linux-watchdog@vger.kernel.org, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, johannes.thumshirn@men.de
 
-On Thu, May 15, 2014 at 7:23 AM, Andrew Lunn <andrew@lunn.ch> wrote:
-> mach-kirkwood has been removed, now that kirkwood lives in mach-mvebu.
+On Tue, May 27, 2014 at 2:08 AM, Andreas Werner <andreas.werner@men.de> wrote:
+> Added driver to support the 14F021P00 BMC LEDs.
+> The BMC is a Board Management Controll include four LEDs which
+> can be switched on and off.
+>
+> This driver use the I2C interface to the BMC using the menf21bmc MFD Core driver.
 >
 
-Sorry for the delay.
+Will you submit v2 patch based on Lee and others' review? I prefer to
+review the new one.
 
-Please take my Ack for merging this change.
+Thanks,
+-Bryan
 
-Acked-by: Bryan Wu <cooloney@gmail.com>
-
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: linux-leds@vger.kernel.org
+> Signed-off-by: Andreas Werner <andreas.werner@men.de>
 > ---
->  drivers/leds/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/leds/Kconfig          |   6 ++
+>  drivers/leds/Makefile         |   2 +-
+>  drivers/leds/leds-menf21bmc.c | 136 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 143 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/leds/leds-menf21bmc.c
 >
 > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 6de9dfbf61c1..01ebebfcc891 100644
+> index 1e81d7a..8f98e0f 100644
 > --- a/drivers/leds/Kconfig
 > +++ b/drivers/leds/Kconfig
-> @@ -421,7 +421,7 @@ config LEDS_MC13783
->  config LEDS_NS2
->         tristate "LED support for Network Space v2 GPIO LEDs"
->         depends on LEDS_CLASS
-> -       depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
-> +       depends on MACH_KIRKWOOD
->         default y
->         help
->           This option enable support for the dual-GPIO LED found on the
-> @@ -431,7 +431,7 @@ config LEDS_NS2
->  config LEDS_NETXBIG
->         tristate "LED support for Big Network series LEDs"
->         depends on LEDS_CLASS
-> -       depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
-> +       depends on MACH_KIRKWOOD
->         default y
->         help
->           This option enable support for LEDs found on the LaCie 2Big
+> @@ -466,6 +466,12 @@ config LEDS_OT200
+>           This option enables support for the LEDs on the Bachmann OT200.
+>           Say Y to enable LEDs on the Bachmann OT200.
+>
+> +config LEDS_MENF21BMC
+> +       tristate "LED support for the MEN 14F021P00 BMC"
+> +       depends on LEDS_CLASS && MFD_MENF21BMC
+> +       help
+> +         Say Y here to include support for the MEN 14F021P00 BMC LEDs.
+> +
+>  comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
+>
+>  config LEDS_BLINKM
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 79c5155..1c465fe 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -54,7 +54,7 @@ obj-$(CONFIG_LEDS_MAX8997)            += leds-max8997.o
+>  obj-$(CONFIG_LEDS_LM355x)              += leds-lm355x.o
+>  obj-$(CONFIG_LEDS_BLINKM)              += leds-blinkm.o
+>  obj-$(CONFIG_LEDS_VERSATILE)           += leds-versatile.o
+> -
+> +obj-$(CONFIG_LEDS_MENF21BMC)           += leds-menf21bmc.o
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_DAC124S085)          += leds-dac124s085.o
+>
+> diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
+> new file mode 100644
+> index 0000000..6099524
+> --- /dev/null
+> +++ b/drivers/leds/leds-menf21bmc.c
+> @@ -0,0 +1,136 @@
+> +/*
+> + *  MEN 14F021P00 Board Management Controller (BMC) LEDs Driver.
+> + *
+> + *  This is the core LED driver of the MEN 14F021P00 BMC.
+> + *  There are four LEDs available which can be switched on and off.
+> + *  STATUS LED, HOT SWAP LED, USER LED 1, USER LED 2
+> + *
+> + *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
+> + *  Author: Andreas Werner <andreas.werner@men.de>
+> + *  All rights reserved.
+> + *
+> + *  This program is free software; you can redistribute  it and/or modify it
+> + *  under  the terms of  the GNU General  Public License as published by the
+> + *  Free Software Foundation;  either version 2 of the  License, or (at your
+> + *  option) any later version.
+> + *
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/menf21bmc.h>
+> +
+> +#define BMC_CMD_LED_GET_SET    0xA0
+> +#define BMC_BIT_LED_STATUS     BIT(0)
+> +#define BMC_BIT_LED_HOTSWAP    BIT(1)
+> +#define BMC_BIT_LED_USER1      BIT(2)
+> +#define BMC_BIT_LED_USER2      BIT(3)
+> +
+> +struct menf21bmc_led_data {
+> +       struct led_classdev cdev;
+> +       struct menf21bmc *menf21bmc;
+> +       u8 led_bit;
+> +       const char *name;
+> +};
+> +
+> +static struct menf21bmc_led_data leds[] = {
+> +       {
+> +               .name = "menf21bmc:led_status",
+> +               .led_bit = BMC_BIT_LED_STATUS,
+> +       },
+> +       {
+> +               .name = "menf21bmc:led_hotswap",
+> +               .led_bit = BMC_BIT_LED_HOTSWAP,
+> +       },
+> +       {
+> +               .name = "menf21bmc:led_user1",
+> +               .led_bit = BMC_BIT_LED_USER1,
+> +       },
+> +       {
+> +               .name = "menf21bmc:led_user2",
+> +               .led_bit = BMC_BIT_LED_USER2,
+> +       }
+> +};
+> +
+> +static DEFINE_MUTEX(led_lock);
+> +
+> +static void
+> +menf21bmc_led_set(struct led_classdev *led_cdev, enum led_brightness value)
+> +{
+> +       int led_val;
+> +       struct menf21bmc_led_data *led = container_of(led_cdev,
+> +                                       struct menf21bmc_led_data, cdev);
+> +       struct menf21bmc *menf21bmc = led->menf21bmc;
+> +
+> +       mutex_lock(&led_lock);
+> +       led_val = menf21bmc->read_byte_data(menf21bmc->client,
+> +                                               BMC_CMD_LED_GET_SET);
+> +       if (led_val < 0)
+> +               goto err_out;
+> +
+> +       if (value == LED_OFF)
+> +               led_val &= ~led->led_bit;
+> +       else
+> +               led_val |= led->led_bit;
+> +
+> +       menf21bmc->write_byte_data(menf21bmc->client,
+> +                                       BMC_CMD_LED_GET_SET, led_val);
+> +err_out:
+> +       mutex_unlock(&led_lock);
+> +}
+> +
+> +static int menf21bmc_led_probe(struct platform_device *pdev)
+> +{
+> +       int i;
+> +       int ret;
+> +       struct menf21bmc *menf21bmc = dev_get_drvdata(pdev->dev.parent);
+> +
+> +       for (i = 0; i < ARRAY_SIZE(leds); i++) {
+> +               leds[i].cdev.name = leds[i].name;
+> +               leds[i].cdev.brightness_set = menf21bmc_led_set;
+> +               leds[i].menf21bmc = menf21bmc;
+> +
+> +               ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
+> +               if (ret < 0)
+> +                       goto err_free_leds;
+> +       }
+> +       dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
+> +
+> +       return 0;
+> +
+> +err_free_leds:
+> +       dev_err(&pdev->dev, "failed to register LED devicei\n");
+> +
+> +       for (i = i - 1; i >= 0; i--)
+> +               led_classdev_unregister(&leds[i].cdev);
+> +
+> +       return ret;
+> +}
+> +
+> +static int menf21bmc_led_remove(struct platform_device *pdev)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(leds); i++)
+> +               led_classdev_unregister(&leds[i].cdev);
+> +
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver menf21bmc_led = {
+> +       .probe          = menf21bmc_led_probe,
+> +       .remove         = menf21bmc_led_remove,
+> +       .driver         = {
+> +               .name           = "menf21bmc_led",
+> +               .owner          = THIS_MODULE,
+> +       },
+> +};
+> +
+> +module_platform_driver(menf21bmc_led);
+> +
+> +MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
+> +MODULE_DESCRIPTION("MEN 14F021P00 BMC led driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:menf21bmc_led");
 > --
-> 2.0.0.rc2
+> 1.9.3
 >
