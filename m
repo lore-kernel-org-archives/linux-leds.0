@@ -1,37 +1,63 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2 v2] HID: leds: Use attribute-groups in MSI GT683R driver
-Date: Wed, 25 Jun 2014 15:55:10 -0700
-Message-ID: <CAK5ve-JnqpogKaG1V=mfvKEHMPb8ma4Zeyz9rF4kT-W2Gj=p0A@mail.gmail.com>
-References: <20140625115541.GA1409@localhost> <1403711966-13003-1-git-send-email-janne.kanniainen@gmail.com>
- <20140625174109.GE1409@localhost> <alpine.LNX.2.00.1406252107070.15939@pobox.suse.cz>
+Subject: Re: [PATCH RFC 07/11] leds: Remove ARCH_KIRKWOOD dependency
+Date: Wed, 25 Jun 2014 16:08:35 -0700
+Message-ID: <CAK5ve-K0DN0QX1r5thRcajfN4xV6hk6xaEniPDzBF+kaZSPCeQ@mail.gmail.com>
+References: <1400163836-9831-1-git-send-email-andrew@lunn.ch> <1400163836-9831-12-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1406252107070.15939@pobox.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Johan Hovold <johan@kernel.org>, Janne Kanniainen <janne.kanniainen@gmail.com>, Greg Kroah-Hartman <greg@kroah.com>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-usb@vger.kernel.org, linux-input@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:45011 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757066AbaFYXI5 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jun 2014 19:08:57 -0400
+Received: by mail-la0-f47.google.com with SMTP id s18so1292590lam.34
+        for <linux-leds@vger.kernel.org>; Wed, 25 Jun 2014 16:08:55 -0700 (PDT)
+In-Reply-To: <1400163836-9831-12-git-send-email-andrew@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux ARM <linux-arm-kernel@lists.infradead.org>, Jason Cooper <jason@lakedaemon.net>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Wed, Jun 25, 2014 at 12:09 PM, Jiri Kosina <jkosina@suse.cz> wrote:
-> On Wed, 25 Jun 2014, Johan Hovold wrote:
->
->> Did you see the attribute-race series I posted? Not sure how best to
->> handle the dependency, as those patches should probably go in through
->> the LEDs tree, while the first patch in that series (adding the groups
->> field) is a dependency for this patch.
->>
->> Jiri, how would this best be solved?
->
-> I think the best course of action here is to gather Acks from the
-> respective maintainers, and take the whole lot trough a single tree
-> (probably the leds tree in this case) to avoid unnecessary intra-tree
-> dependencies in a rather straighforward situation like this.
+On Thu, May 15, 2014 at 7:23 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> mach-kirkwood has been removed, now that kirkwood lives in mach-mvebu.
 >
 
-I think the better place is HID/input tree, since this patch depends
-on the initial one which is not in my tree.
-I'm going to merge Johan's whole patchset and this patch probably
-depends Johan's work too.
+Sorry for the delay.
 
--Bryan
+Please take my Ack for merging this change.
+
+Acked-by: Bryan Wu <cooloney@gmail.com>
+
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: linux-leds@vger.kernel.org
+> ---
+>  drivers/leds/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 6de9dfbf61c1..01ebebfcc891 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -421,7 +421,7 @@ config LEDS_MC13783
+>  config LEDS_NS2
+>         tristate "LED support for Network Space v2 GPIO LEDs"
+>         depends on LEDS_CLASS
+> -       depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
+> +       depends on MACH_KIRKWOOD
+>         default y
+>         help
+>           This option enable support for the dual-GPIO LED found on the
+> @@ -431,7 +431,7 @@ config LEDS_NS2
+>  config LEDS_NETXBIG
+>         tristate "LED support for Big Network series LEDs"
+>         depends on LEDS_CLASS
+> -       depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
+> +       depends on MACH_KIRKWOOD
+>         default y
+>         help
+>           This option enable support for LEDs found on the LaCie 2Big
+> --
+> 2.0.0.rc2
+>
