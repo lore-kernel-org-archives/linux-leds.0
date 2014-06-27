@@ -1,28 +1,99 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH 00/13] leds: fix attribute-creation races
-Date: Fri, 27 Jun 2014 12:05:46 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1406271204480.21386@pobox.suse.cz>
-References: <1403716136-32694-1-git-send-email-johan@kernel.org> <CAK5ve-JVBoeW+a+1PKcfCwNOC+HOdKUD=1iFrTJAZ_tqh10yuQ@mail.gmail.com> <20140626232506.GA26949@kroah.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 11/13] input: lm8323: fix attribute-creation race
+Date: Fri, 27 Jun 2014 11:50:23 -0700
+Message-ID: <CAKdAkRSaurygSeXdt09MpLGaXojJ1YW3SzTn1pBz2076hF514Q@mail.gmail.com>
+References: <1403716136-32694-1-git-send-email-johan@kernel.org>
+	<1403716136-32694-12-git-send-email-johan@kernel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20140626232506.GA26949@kroah.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Johan Hovold <johan@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Janne Kanniainen <janne.kanniainen@gmail.com>, =?ISO-8859-15?Q?Bj=F8rn_Mork?= <bjorn@mork.no>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:61900 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751231AbaF0SuY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Jun 2014 14:50:24 -0400
+In-Reply-To: <1403716136-32694-12-git-send-email-johan@kernel.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
 
-On Thu, 26 Jun 2014, Greg Kroah-Hartman wrote:
+On Wed, Jun 25, 2014 at 10:08 AM, Johan Hovold <johan@kernel.org> wrote:
+> Use the attribute groups of the led-class to create the time attribute
+> during probe in order to avoid racing with userspace.
+>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-> > Thanks a lot for driving this. I will applied this patchset into my
-> > -devel branch. After I got the Ack from Input guys, I will apply it to
-> > my for-next branch then.
-> 
-> Series looks good to me, Johan, thanks for doing this work.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Yeah, looks good to me as well, thanks. The lm8323 change should be Acked 
-by Dmitry though, as it's in his area.
+> ---
+>  drivers/input/keyboard/lm8323.c | 22 +++++++++-------------
+>  1 file changed, 9 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
+> index 0b42118cbf8f..cb32e2b506b7 100644
+> --- a/drivers/input/keyboard/lm8323.c
+> +++ b/drivers/input/keyboard/lm8323.c
+> @@ -558,6 +558,12 @@ static ssize_t lm8323_pwm_store_time(struct device *dev,
+>  }
+>  static DEVICE_ATTR(time, 0644, lm8323_pwm_show_time, lm8323_pwm_store_time);
+>
+> +static struct attribute *lm8323_pwm_attrs[] = {
+> +       &dev_attr_time.attr,
+> +       NULL
+> +};
+> +ATTRIBUTE_GROUPS(lm8323_pwm);
+> +
+>  static int init_pwm(struct lm8323_chip *lm, int id, struct device *dev,
+>                     const char *name)
+>  {
+> @@ -580,16 +586,11 @@ static int init_pwm(struct lm8323_chip *lm, int id, struct device *dev,
+>         if (name) {
+>                 pwm->cdev.name = name;
+>                 pwm->cdev.brightness_set = lm8323_pwm_set_brightness;
+> +               pwm->cdev.groups = lm8323_pwm_groups;
+>                 if (led_classdev_register(dev, &pwm->cdev) < 0) {
+>                         dev_err(dev, "couldn't register PWM %d\n", id);
+>                         return -1;
+>                 }
+> -               if (device_create_file(pwm->cdev.dev,
+> -                                       &dev_attr_time) < 0) {
+> -                       dev_err(dev, "couldn't register time attribute\n");
+> -                       led_classdev_unregister(&pwm->cdev);
+> -                       return -1;
+> -               }
+>                 pwm->enabled = true;
+>         }
+>
+> @@ -753,11 +754,8 @@ fail3:
+>         device_remove_file(&client->dev, &dev_attr_disable_kp);
+>  fail2:
+>         while (--pwm >= 0)
+> -               if (lm->pwm[pwm].enabled) {
+> -                       device_remove_file(lm->pwm[pwm].cdev.dev,
+> -                                          &dev_attr_time);
+> +               if (lm->pwm[pwm].enabled)
+>                         led_classdev_unregister(&lm->pwm[pwm].cdev);
+> -               }
+>  fail1:
+>         input_free_device(idev);
+>         kfree(lm);
+> @@ -777,10 +775,8 @@ static int lm8323_remove(struct i2c_client *client)
+>         device_remove_file(&lm->client->dev, &dev_attr_disable_kp);
+>
+>         for (i = 0; i < 3; i++)
+> -               if (lm->pwm[i].enabled) {
+> -                       device_remove_file(lm->pwm[i].cdev.dev, &dev_attr_time);
+> +               if (lm->pwm[i].enabled)
+>                         led_classdev_unregister(&lm->pwm[i].cdev);
+> -               }
+>
+>         kfree(lm);
+>
+> --
+> 1.8.5.5
+>
+
+Thanks.
 
 -- 
-Jiri Kosina
-SUSE Labs
+Dmitry
