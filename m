@@ -1,99 +1,52 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 11/13] input: lm8323: fix attribute-creation race
-Date: Fri, 27 Jun 2014 11:50:23 -0700
-Message-ID: <CAKdAkRSaurygSeXdt09MpLGaXojJ1YW3SzTn1pBz2076hF514Q@mail.gmail.com>
-References: <1403716136-32694-1-git-send-email-johan@kernel.org>
-	<1403716136-32694-12-git-send-email-johan@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH 08/13] leds: Replace ARCH_KIRKWOOD dependency
+Date: Sun, 29 Jun 2014 22:59:57 +0200
+Message-ID: <1404075603-31838-11-git-send-email-andrew@lunn.ch>
+References: <1404075603-31838-1-git-send-email-andrew@lunn.ch>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:61900 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751231AbaF0SuY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Jun 2014 14:50:24 -0400
-In-Reply-To: <1403716136-32694-12-git-send-email-johan@kernel.org>
+Received: from vps0.lunn.ch ([178.209.37.122]:38832 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752940AbaF2VE4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 29 Jun 2014 17:04:56 -0400
+In-Reply-To: <1404075603-31838-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To: Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>, rmk+kernel@arm.linux.org.uk, Andrew Lunn <andrew@lunn.ch>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-On Wed, Jun 25, 2014 at 10:08 AM, Johan Hovold <johan@kernel.org> wrote:
-> Use the attribute groups of the led-class to create the time attribute
-> during probe in order to avoid racing with userspace.
->
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+mach-kirkwood has been removed, now that kirkwood SoC lives in
+mach-mvebu. Use MACH_KIRKWOOD which will be set when kirkwood is built
+as part of mach-mvebu.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org
+---
+ drivers/leds/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/input/keyboard/lm8323.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
-> index 0b42118cbf8f..cb32e2b506b7 100644
-> --- a/drivers/input/keyboard/lm8323.c
-> +++ b/drivers/input/keyboard/lm8323.c
-> @@ -558,6 +558,12 @@ static ssize_t lm8323_pwm_store_time(struct device *dev,
->  }
->  static DEVICE_ATTR(time, 0644, lm8323_pwm_show_time, lm8323_pwm_store_time);
->
-> +static struct attribute *lm8323_pwm_attrs[] = {
-> +       &dev_attr_time.attr,
-> +       NULL
-> +};
-> +ATTRIBUTE_GROUPS(lm8323_pwm);
-> +
->  static int init_pwm(struct lm8323_chip *lm, int id, struct device *dev,
->                     const char *name)
->  {
-> @@ -580,16 +586,11 @@ static int init_pwm(struct lm8323_chip *lm, int id, struct device *dev,
->         if (name) {
->                 pwm->cdev.name = name;
->                 pwm->cdev.brightness_set = lm8323_pwm_set_brightness;
-> +               pwm->cdev.groups = lm8323_pwm_groups;
->                 if (led_classdev_register(dev, &pwm->cdev) < 0) {
->                         dev_err(dev, "couldn't register PWM %d\n", id);
->                         return -1;
->                 }
-> -               if (device_create_file(pwm->cdev.dev,
-> -                                       &dev_attr_time) < 0) {
-> -                       dev_err(dev, "couldn't register time attribute\n");
-> -                       led_classdev_unregister(&pwm->cdev);
-> -                       return -1;
-> -               }
->                 pwm->enabled = true;
->         }
->
-> @@ -753,11 +754,8 @@ fail3:
->         device_remove_file(&client->dev, &dev_attr_disable_kp);
->  fail2:
->         while (--pwm >= 0)
-> -               if (lm->pwm[pwm].enabled) {
-> -                       device_remove_file(lm->pwm[pwm].cdev.dev,
-> -                                          &dev_attr_time);
-> +               if (lm->pwm[pwm].enabled)
->                         led_classdev_unregister(&lm->pwm[pwm].cdev);
-> -               }
->  fail1:
->         input_free_device(idev);
->         kfree(lm);
-> @@ -777,10 +775,8 @@ static int lm8323_remove(struct i2c_client *client)
->         device_remove_file(&lm->client->dev, &dev_attr_disable_kp);
->
->         for (i = 0; i < 3; i++)
-> -               if (lm->pwm[i].enabled) {
-> -                       device_remove_file(lm->pwm[i].cdev.dev, &dev_attr_time);
-> +               if (lm->pwm[i].enabled)
->                         led_classdev_unregister(&lm->pwm[i].cdev);
-> -               }
->
->         kfree(lm);
->
-> --
-> 1.8.5.5
->
-
-Thanks.
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a1b044e7eaad..2d7c380f79ce 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -411,7 +411,7 @@ config LEDS_MC13783
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+ 	depends on LEDS_CLASS
+-	depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD
+ 	default y
+ 	help
+ 	  This option enable support for the dual-GPIO LED found on the
+@@ -421,7 +421,7 @@ config LEDS_NS2
+ config LEDS_NETXBIG
+ 	tristate "LED support for Big Network series LEDs"
+ 	depends on LEDS_CLASS
+-	depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD
+ 	default y
+ 	help
+ 	  This option enable support for LEDs found on the LaCie 2Big
 -- 
-Dmitry
+2.0.0
