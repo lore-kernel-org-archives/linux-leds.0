@@ -1,34 +1,85 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [alsa-devel] [PATCH 00/13] Remove mach-kirkwood and mach-dove
-Date: Mon, 30 Jun 2014 11:00:49 +0100
-Message-ID: <20140630100048.GU32514@n2100.arm.linux.org.uk>
-References: <1404075603-31838-1-git-send-email-andrew@lunn.ch> <20140629213510.GR32514@n2100.arm.linux.org.uk> <20140630091643.2df3b0fb@armhf> <20140630084918.GS32514@n2100.arm.linux.org.uk> <20140630114701.1368d49e@armhf>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 2/2 v3] HID: leds: move led_mode attribute to led-class
+ devices in MSI GT683R driver
+Date: Mon, 30 Jun 2014 12:39:11 +0200
+Message-ID: <20140630103911.GA2486@localhost>
+References: <20140625174109.GE1409@localhost>
+ <1403719989-19989-1-git-send-email-janne.kanniainen@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ide-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140630114701.1368d49e@armhf>
-Sender: linux-ide-owner@vger.kernel.org
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-ide@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, alsa-devel@alsa-project.org, Bryan Wu <cooloney@gmail.com>, Jason Cooper <jason@lakedaemon.net>, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Tejun Heo <tj@kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-pci@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, Zhang Rui <rui.zhang@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org, linux-watchdog@vger.kernel.org
+In-Reply-To: <1403719989-19989-1-git-send-email-janne.kanniainen@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Janne Kanniainen <janne.kanniainen@gmail.com>
+Cc: johan@kernel.org, jkosina@suse.cz, greg@kroah.com, bjorn@mork.no, cooloney@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 11:47:01AM +0200, Jean-Francois Moine wrote:
-> Have you declared the LCD clock in dove.dtsi?
+On Wed, Jun 25, 2014 at 09:13:09PM +0300, Janne Kanniainen wrote:
+> Move led_mode attribute from HID device to led-class devices and rename it
+> msi_mode. This will also fix race condition by using attribute-groups.
 > 
->  	lcdclk: fixed-clock {
-> 		compatible = "fixed-clock";
->  		#clock-cells = <0>;
->  		clock-frequency = <400000000>;
->  	};
+> Signed-off-by: Janne Kanniainen <janne.kanniainen@gmail.com>
+> ---
+> 
+> Changes in v3:
+> 	- Style fixes
+> 	- Rename sysfs-class-hid-driver-gt683r to sysfs-class-leds-driver-gt683r
+> 
+>  .../ABI/testing/sysfs-class-hid-driver-gt683r      | 14 -----------
+>  .../ABI/testing/sysfs-class-leds-driver-gt683r     | 16 +++++++++++++
+>  drivers/hid/hid-gt683r.c                           | 28 ++++++++++++----------
+>  3 files changed, 32 insertions(+), 26 deletions(-)
+>  delete mode 100644 Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-leds-driver-gt683r
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r b/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
+> deleted file mode 100644
+> index 317e9d5..0000000
+> --- a/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -What:		/sys/class/hidraw/<hidraw>/device/leds_mode
+> -Date:		Jun 2014
+> -KernelVersion:	3.17
+> -Contact:	Janne Kanniainen <janne.kanniainen@gmail.com>
+> -Description:
+> -		Set the mode of LEDs
+> -
+> -		0 - normal
+> -		1 - audio
+> -		2 - breathing
+> -
+> -		Normal: LEDs are fully on when enabled
+> -		Audio:  LEDs brightness depends on sound level
+> -		Breathing: LEDs brightness varies at human breathing rate
+> \ No newline at end of file
+> diff --git a/Documentation/ABI/testing/sysfs-class-leds-driver-gt683r b/Documentation/ABI/testing/sysfs-class-leds-driver-gt683r
+> new file mode 100644
+> index 0000000..29769fb
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-leds-driver-gt683r
+> @@ -0,0 +1,16 @@
+> +What:		/sys/class/leds/<led>/msi_mode
 
-And what difference would that make - this would not be used.
+The ABI-file name now sort of matches the attribute path and there are
+examples of attributes being documented in this particular way, but
+naming is far from consistent in Documentation/ABI.
 
-The clock used for the LCD controller somes from the Si5351.  The internal
-clocks are not used as they are unsuitable for generating the resolutions
-we require.  The other clocks used by the LCD controller (AXI clock and
-PLL clock) are both fundamental clocks in the SoC, neither are 400MHz.
+Perhaps we should use the name field of the attribute group and kill two
+birds with one stone by making the sysfs file name match the attribute
+path, while also making it even more obvious that the mode attribute is a
+driver specific attribute (and not a common led class one) by placing it
+in a subdirectory.
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+That is, if you set the .name field to "gt683r" (and rename the
+attribute and ABI-file again) then the file name and attribute path
+could match:
+
+	Documentation/ABI/testing/sysfs-class-leds-gt683r
+
+	What:		/sys/class/leds/<led>/gt683r/mode
+
+Both patches look good otherwise.
+
+Johan
