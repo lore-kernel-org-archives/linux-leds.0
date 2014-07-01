@@ -1,77 +1,92 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 2/2 v4] HID: leds: move led_mode attribute to led-class
- devices in MSI GT683R driver
-Date: Tue, 1 Jul 2014 22:16:27 +0200
-Message-ID: <20140701201627.GA30605@localhost>
-References: <20140630103911.GA2486@localhost>
- <1404237054-12906-1-git-send-email-janne.kanniainen@gmail.com>
+From: Jan-Simon =?ISO-8859-1?Q?M=F6ller?= <dl9pf@gmx.de>
+Subject: Re: [PATCH 1/1] leds: blinkm: Remove unused variable
+Date: Tue, 01 Jul 2014 23:50:29 +0200
+Message-ID: <3261853.AEHXRXfVcs@samweis.auenland.lan>
+References: <1404216443-21177-1-git-send-email-sachin.kamat@samsung.com> <CAK5ve-KYwnDuB0YooOo7zsZ_EH8VuJ_9ex_919CDEtJqiNrp=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1404237054-12906-1-git-send-email-janne.kanniainen@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Janne Kanniainen <janne.kanniainen@gmail.com>
-Cc: johan@kernel.org, cooloney@gmail.com, jkosina@suse.cz, greg@kroah.com, bjorn@mork.no, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.15.15]:53545 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965094AbaGAWDW convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Jul 2014 18:03:22 -0400
+In-Reply-To: <CAK5ve-KYwnDuB0YooOo7zsZ_EH8VuJ_9ex_919CDEtJqiNrp=g@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Sachin Kamat <sachin.kamat@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, spk.linux@gmail.com
 
-On Tue, Jul 01, 2014 at 08:50:54PM +0300, Janne Kanniainen wrote:
-  
-> -static DEVICE_ATTR_RW(leds_mode);
-> +static DEVICE_ATTR_RW(mode);
-> +
-> +static struct attribute *gt683r_led_attrs[] = {
-> +	&dev_attr_mode.attr,
-> +	NULL
-> +};
-> +
-> +ATTRIBUTE_GROUPS(gt683r_led);
+Nighttime here. I'll look tomorrow.
+--=20
 
-I was referring to the name field of struct attribute_group (and not of
-struct hid_driver). Specifically, that means that you cannot use the
-ATTRIBUTE_GROUPS macro (which leaves the name field unset), but rather
-should define the two corresponding structs directly as follows:
+Dipl.-Ing.
+Jan-Simon M=F6ller
 
-	static const struct attribute_group gt683r_led_group = {
-	       .name = "gt683r",
-	       .attrs = gt683r_led_attrs,
-	};
-	
-	static const struct attribute_group *gt683r_led_groups[] = {
-	       &gt683r_led_group,
-	       NULL
-	};
-
-That way the mode attribute will be created in a subdirectory (named
-gt683r) of the led class device.
-
->  static int gt683r_led_probe(struct hid_device *hdev,
->  			const struct hid_device_id *id)
-> @@ -261,6 +270,8 @@ static int gt683r_led_probe(struct hid_device *hdev,
->  		led->led_devs[i].name = name;
->  		led->led_devs[i].max_brightness = 1;
->  		led->led_devs[i].brightness_set = gt683r_brightness_set;
-> +		led->led_devs[i].groups = gt683r_led_groups;
-> +
->  		ret = led_classdev_register(&hdev->dev, &led->led_devs[i]);
->  		if (ret) {
->  			hid_err(hdev, "could not register led device\n");
-> @@ -268,12 +279,6 @@ static int gt683r_led_probe(struct hid_device *hdev,
->  		}
->  	}
-
-<snip>
-
-> @@ -298,7 +302,7 @@ static void gt683r_led_remove(struct hid_device *hdev)
->  static struct hid_driver gt683r_led_driver = {
->  	.probe = gt683r_led_probe,
->  	.remove = gt683r_led_remove,
-> -	.name = "gt683r_led",
-> +	.name = "gt683r",
-
-So you should skip this bit.
-
->  	.id_table = gt683r_led_id,
->  };
-
-Johan
+jansimon.moeller@gmx.de
+Am Dienstag, 1. Juli 2014, 08:54:27 schrieb Bryan Wu:
+> On Tue, Jul 1, 2014 at 5:07 AM, Sachin Kamat <sachin.kamat@samsung.co=
+m>=20
+wrote:
+> > 'ret' is not used in the function. Remove it.
+>=20
+> Removing it is easy but I guess we should check the return error stat=
+us
+> here. Jan-Simon, what's your opinion then?
+>=20
+> Thanks,
+> -Bryan
+>=20
+> > Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+> > ---
+> >=20
+> >  drivers/leds/leds-blinkm.c |    8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.=
+c
+> > index d0452b099aee..f07f920ac0ac 100644
+> > --- a/drivers/leds/leds-blinkm.c
+> > +++ b/drivers/leds/leds-blinkm.c
+> > @@ -441,14 +441,13 @@ static int blinkm_transfer_hw(struct i2c_clie=
+nt
+> > *client, int cmd)>=20
+> >  static void led_work(struct work_struct *work)
+> >  {
+> >=20
+> > -       int ret;
+> >=20
+> >         struct blinkm_led *led;
+> >         struct blinkm_data *data;
+> >         struct blinkm_work *blm_work =3D work_to_blmwork(work);
+> >        =20
+> >         led =3D blm_work->blinkm_led;
+> >         data =3D i2c_get_clientdata(led->i2c_client);
+> >=20
+> > -       ret =3D blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
+> > +       blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
+> >=20
+> >         atomic_dec(&led->active);
+> >         dev_dbg(&led->i2c_client->dev,
+> >        =20
+> >                         "# DONE # next_red =3D %d, next_green =3D %=
+d,"
+> >=20
+> > @@ -546,9 +545,8 @@ static void blinkm_led_blue_set(struct led_clas=
+sdev
+> > *led_cdev,>=20
+> >  static void blinkm_init_hw(struct i2c_client *client)
+> >  {
+> >=20
+> > -       int ret;
+> > -       ret =3D blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
+> > -       ret =3D blinkm_transfer_hw(client, BLM_GO_RGB);
+> > +       blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
+> > +       blinkm_transfer_hw(client, BLM_GO_RGB);
+> >=20
+> >  }
+> > =20
+> >  static int blinkm_test_run(struct i2c_client *client)
+> >=20
+> > --
+> > 1.7.9.5
