@@ -1,176 +1,113 @@
-From: Janne Kanniainen <janne.kanniainen@gmail.com>
-Subject: [PATCH 2/2 v5] HID: leds: move led_mode attribute to led-class devices in MSI GT683R driver
-Date: Wed,  2 Jul 2014 20:37:59 +0300
-Message-ID: <1404322679-19521-1-git-send-email-janne.kanniainen@gmail.com>
-References: <20140701201627.GA30605@localhost>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/2] leds:pca963x: Add support for PCA9635 LED driver chip
+Date: Wed, 2 Jul 2014 16:40:56 -0700
+Message-ID: <CAK5ve-Kt_jLoeSZxRRDn9p3Pv95_eaHnJ2=MfaoNVfpYYHD76Q@mail.gmail.com>
+References: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:34700 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751150AbaGBRiQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Jul 2014 13:38:16 -0400
-In-Reply-To: <20140701201627.GA30605@localhost>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:51966 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750920AbaGBXlS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Jul 2014 19:41:18 -0400
+Received: by mail-la0-f41.google.com with SMTP id hz20so7580039lab.14
+        for <linux-leds@vger.kernel.org>; Wed, 02 Jul 2014 16:41:16 -0700 (PDT)
+In-Reply-To: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: johan@kernel.org
-Cc: cooloney@gmail.com, jkosina@suse.cz, greg@kroah.com, bjorn@mork.no, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, Janne Kanniainen <janne.kanniainen@gmail.com>
+To: Peter Meerwald <pmeerw@pmeerw.net>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
-Move led_mode attribute from HID device to led-class devices. This will also fix race condition by using attribute-groups.
+On Wed, Jul 2, 2014 at 1:00 AM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
+> From: Peter Meerwald <p.meerwald@bct-electronic.com>
+>
+> supports 16 PWM-controlled LEDs
+>
+> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
+> ---
+>  drivers/leds/leds-pca963x.c |   18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+> index 82589c0..70e3825 100644
+> --- a/drivers/leds/leds-pca963x.c
+> +++ b/drivers/leds/leds-pca963x.c
+> @@ -12,7 +12,7 @@
+>   * directory of this archive for more details.
+>   *
+>   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
+> - * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
+> + * LED driver for the PCA9634/5 I2C LED driver (7-bit slave address set by hw.)
+>   *
+>   * Note that hardware blinking violates the leds infrastructure driver
+>   * interface since the hardware only supports blinking all LEDs with the
+> @@ -52,6 +52,7 @@
+>  enum pca963x_type {
+>         pca9633,
+>         pca9634,
+> +       pca9635,
+>  };
+>
+>  struct pca963x_chipdef {
+> @@ -74,6 +75,12 @@ static struct pca963x_chipdef pca963x_chipdefs[] = {
+>                 .ledout_base    = 0xc,
+>                 .n_leds         = 8,
+>         },
+> +       [pca9635] = {
+> +               .grppwm         = 0x12,
+> +               .grpfreq        = 0x13,
+> +               .ledout_base    = 0x14,
+> +               .n_leds         = 16,
+> +       },
+>  };
+>
+>  /* Total blink period in milliseconds */
+> @@ -84,6 +91,7 @@ static const struct i2c_device_id pca963x_id[] = {
+>         { "pca9632", pca9633 },
+>         { "pca9633", pca9633 },
+>         { "pca9634", pca9634 },
+> +       { "pca9635", pca9635 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, pca963x_id);
+> @@ -107,7 +115,7 @@ struct pca963x_led {
+>         struct work_struct work;
+>         enum led_brightness brightness;
+>         struct led_classdev led_cdev;
+> -       int led_num; /* 0 .. 7 potentially */
+> +       int led_num; /* 0 .. 15 potentially */
+>         enum pca963x_cmd cmd;
+>         char name[32];
+>         u8 gdc;
+> @@ -321,6 +329,7 @@ static const struct of_device_id of_pca963x_match[] = {
+>         { .compatible = "nxp,pca9632", },
+>         { .compatible = "nxp,pca9633", },
+>         { .compatible = "nxp,pca9634", },
+> +       { .compatible = "nxp,pca9635", },
+>         {},
+>  };
+>  #else
+> @@ -375,9 +384,8 @@ static int pca963x_probe(struct i2c_client *client,
+>         pca963x_chip->leds = pca963x;
+>
+>         /* Turn off LEDs by default*/
+> -       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
+> -       if (chip->n_leds > 4)
+> -               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
+> +       for (i = 0; i < chip->n_leds; i++)
+> +               i2c_smbus_write_byte_data(client, chip->ledout_base + i, 0x00);
+>
 
-Signed-off-by: Janne Kanniainen <janne.kanniainen@gmail.com>
----
+This change looks like a bug fixing. The previous one just turn off
+the first and the second LEDs.
 
-Changes in v3:
-	- Style fixes
-	- Rename sysfs-class-hid-driver-gt683r to sysfs-class-leds-driver-gt683r
+If yes, please add some description into the commit message.
 
-Changes in v4:
-	- Rename sysfs-class-leds-driver-gt683r to sysfs-class-leds-gt683r
-	- Change "What: " to /sys/class/leds/<led>/gt683r/mode
-	- Change .name from gt683r_led to gt683r
+Other than this, this patch looks good to me.
+-Bryan
 
-Changes in v5:
-	- Move mode attribute to gt683r/mode
-
- .../ABI/testing/sysfs-class-hid-driver-gt683r      | 14 ---------
- Documentation/ABI/testing/sysfs-class-leds-gt683r  | 16 ++++++++++
- drivers/hid/hid-gt683r.c                           | 36 ++++++++++++++--------
- 3 files changed, 40 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
- create mode 100644 Documentation/ABI/testing/sysfs-class-leds-gt683r
-
-diff --git a/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r b/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
-deleted file mode 100644
-index 317e9d5..0000000
---- a/Documentation/ABI/testing/sysfs-class-hid-driver-gt683r
-+++ /dev/null
-@@ -1,14 +0,0 @@
--What:		/sys/class/hidraw/<hidraw>/device/leds_mode
--Date:		Jun 2014
--KernelVersion:	3.17
--Contact:	Janne Kanniainen <janne.kanniainen@gmail.com>
--Description:
--		Set the mode of LEDs
--
--		0 - normal
--		1 - audio
--		2 - breathing
--
--		Normal: LEDs are fully on when enabled
--		Audio:  LEDs brightness depends on sound level
--		Breathing: LEDs brightness varies at human breathing rate
-\ No newline at end of file
-diff --git a/Documentation/ABI/testing/sysfs-class-leds-gt683r b/Documentation/ABI/testing/sysfs-class-leds-gt683r
-new file mode 100644
-index 0000000..e4fae60
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-leds-gt683r
-@@ -0,0 +1,16 @@
-+What:		/sys/class/leds/<led>/gt683r/mode
-+Date:		Jun 2014
-+KernelVersion:	3.17
-+Contact:	Janne Kanniainen <janne.kanniainen@gmail.com>
-+Description:
-+		Set the mode of LEDs. You should notice that changing the mode
-+		of one LED will update the mode of its two sibling devices as
-+		well.
-+
-+		0 - normal
-+		1 - audio
-+		2 - breathing
-+
-+		Normal: LEDs are fully on when enabled
-+		Audio:  LEDs brightness depends on sound level
-+		Breathing: LEDs brightness varies at human breathing rate
-\ No newline at end of file
-diff --git a/drivers/hid/hid-gt683r.c b/drivers/hid/hid-gt683r.c
-index 073bd80..0d6f135 100644
---- a/drivers/hid/hid-gt683r.c
-+++ b/drivers/hid/hid-gt683r.c
-@@ -84,12 +84,13 @@ static void gt683r_brightness_set(struct led_classdev *led_cdev,
- 	}
- }
- 
--static ssize_t leds_mode_show(struct device *dev,
-+static ssize_t mode_show(struct device *dev,
- 				struct device_attribute *attr,
- 				char *buf)
- {
- 	u8 sysfs_mode;
--	struct hid_device *hdev = container_of(dev, struct hid_device, dev);
-+	struct hid_device *hdev = container_of(dev->parent,
-+					struct hid_device, dev);
- 	struct gt683r_led *led = hid_get_drvdata(hdev);
- 
- 	if (led->mode == GT683R_LED_NORMAL)
-@@ -102,12 +103,13 @@ static ssize_t leds_mode_show(struct device *dev,
- 	return scnprintf(buf, PAGE_SIZE, "%u\n", sysfs_mode);
- }
- 
--static ssize_t leds_mode_store(struct device *dev,
-+static ssize_t mode_store(struct device *dev,
- 				struct device_attribute *attr,
- 				const char *buf, size_t count)
- {
- 	u8 sysfs_mode;
--	struct hid_device *hdev = container_of(dev, struct hid_device, dev);
-+	struct hid_device *hdev = container_of(dev->parent,
-+					struct hid_device, dev);
- 	struct gt683r_led *led = hid_get_drvdata(hdev);
- 
- 
-@@ -212,7 +214,22 @@ fail:
- 	mutex_unlock(&led->lock);
- }
- 
--static DEVICE_ATTR_RW(leds_mode);
-+static DEVICE_ATTR_RW(mode);
-+
-+static struct attribute *gt683r_led_attrs[] = {
-+	&dev_attr_mode.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group gt683r_led_group = {
-+	.name = "gt683r",
-+	.attrs = gt683r_led_attrs,
-+};
-+
-+static const struct attribute_group *gt683r_led_groups[] = {
-+	&gt683r_led_group,
-+	NULL
-+};
- 
- static int gt683r_led_probe(struct hid_device *hdev,
- 			const struct hid_device_id *id)
-@@ -261,6 +278,8 @@ static int gt683r_led_probe(struct hid_device *hdev,
- 		led->led_devs[i].name = name;
- 		led->led_devs[i].max_brightness = 1;
- 		led->led_devs[i].brightness_set = gt683r_brightness_set;
-+		led->led_devs[i].groups = gt683r_led_groups;
-+
- 		ret = led_classdev_register(&hdev->dev, &led->led_devs[i]);
- 		if (ret) {
- 			hid_err(hdev, "could not register led device\n");
-@@ -268,12 +287,6 @@ static int gt683r_led_probe(struct hid_device *hdev,
- 		}
- 	}
- 
--	ret = device_create_file(&led->hdev->dev, &dev_attr_leds_mode);
--	if (ret) {
--		hid_err(hdev, "could not make mode attribute file\n");
--		goto fail;
--	}
--
- 	return 0;
- 
- fail:
-@@ -288,7 +301,6 @@ static void gt683r_led_remove(struct hid_device *hdev)
- 	int i;
- 	struct gt683r_led *led = hid_get_drvdata(hdev);
- 
--	device_remove_file(&hdev->dev, &dev_attr_leds_mode);
- 	for (i = 0; i < GT683R_LED_COUNT; i++)
- 		led_classdev_unregister(&led->led_devs[i]);
- 	flush_work(&led->work);
--- 
-1.9.2
+>         for (i = 0; i < chip->n_leds; i++) {
+>                 pca963x[i].led_num = i;
+> --
+> 1.7.9.5
+>
