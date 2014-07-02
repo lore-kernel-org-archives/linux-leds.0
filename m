@@ -1,18 +1,18 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/2] leds:pca963x: Add support for PCA9635 LED driver chip
-Date: Wed, 2 Jul 2014 16:40:56 -0700
-Message-ID: <CAK5ve-Kt_jLoeSZxRRDn9p3Pv95_eaHnJ2=MfaoNVfpYYHD76Q@mail.gmail.com>
-References: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net>
+Subject: Re: [PATCH 2/2] leds:pca963x: Always initialize MODE2 register
+Date: Wed, 2 Jul 2014 16:42:29 -0700
+Message-ID: <CAK5ve-+9eP=k4UHDGD2FX6NOOSWMHitq1zFLoffeedA6vBWjNg@mail.gmail.com>
+References: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net> <1404288046-26661-2-git-send-email-pmeerw@pmeerw.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:51966 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750920AbaGBXlS (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Jul 2014 19:41:18 -0400
-Received: by mail-la0-f41.google.com with SMTP id hz20so7580039lab.14
-        for <linux-leds@vger.kernel.org>; Wed, 02 Jul 2014 16:41:16 -0700 (PDT)
-In-Reply-To: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:33566 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750890AbaGBXmu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Jul 2014 19:42:50 -0400
+Received: by mail-la0-f52.google.com with SMTP id ty20so7466793lab.39
+        for <linux-leds@vger.kernel.org>; Wed, 02 Jul 2014 16:42:49 -0700 (PDT)
+In-Reply-To: <1404288046-26661-2-git-send-email-pmeerw@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Peter Meerwald <pmeerw@pmeerw.net>
@@ -21,93 +21,44 @@ Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurd
 On Wed, Jul 2, 2014 at 1:00 AM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
 > From: Peter Meerwald <p.meerwald@bct-electronic.com>
 >
-> supports 16 PWM-controlled LEDs
+> PCA9632 defaults to open-drain
+> PCA9633/4/5 defaults to totem-pole
 >
-> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
-> ---
->  drivers/leds/leds-pca963x.c |   18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> index 82589c0..70e3825 100644
-> --- a/drivers/leds/leds-pca963x.c
-> +++ b/drivers/leds/leds-pca963x.c
-> @@ -12,7 +12,7 @@
->   * directory of this archive for more details.
->   *
->   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
-> - * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
-> + * LED driver for the PCA9634/5 I2C LED driver (7-bit slave address set by hw.)
->   *
->   * Note that hardware blinking violates the leds infrastructure driver
->   * interface since the hardware only supports blinking all LEDs with the
-> @@ -52,6 +52,7 @@
->  enum pca963x_type {
->         pca9633,
->         pca9634,
-> +       pca9635,
->  };
->
->  struct pca963x_chipdef {
-> @@ -74,6 +75,12 @@ static struct pca963x_chipdef pca963x_chipdefs[] = {
->                 .ledout_base    = 0xc,
->                 .n_leds         = 8,
->         },
-> +       [pca9635] = {
-> +               .grppwm         = 0x12,
-> +               .grpfreq        = 0x13,
-> +               .ledout_base    = 0x14,
-> +               .n_leds         = 16,
-> +       },
->  };
->
->  /* Total blink period in milliseconds */
-> @@ -84,6 +91,7 @@ static const struct i2c_device_id pca963x_id[] = {
->         { "pca9632", pca9633 },
->         { "pca9633", pca9633 },
->         { "pca9634", pca9634 },
-> +       { "pca9635", pca9635 },
->         { }
->  };
->  MODULE_DEVICE_TABLE(i2c, pca963x_id);
-> @@ -107,7 +115,7 @@ struct pca963x_led {
->         struct work_struct work;
->         enum led_brightness brightness;
->         struct led_classdev led_cdev;
-> -       int led_num; /* 0 .. 7 potentially */
-> +       int led_num; /* 0 .. 15 potentially */
->         enum pca963x_cmd cmd;
->         char name[32];
->         u8 gdc;
-> @@ -321,6 +329,7 @@ static const struct of_device_id of_pca963x_match[] = {
->         { .compatible = "nxp,pca9632", },
->         { .compatible = "nxp,pca9633", },
->         { .compatible = "nxp,pca9634", },
-> +       { .compatible = "nxp,pca9635", },
->         {},
->  };
->  #else
-> @@ -375,9 +384,8 @@ static int pca963x_probe(struct i2c_client *client,
->         pca963x_chip->leds = pca963x;
->
->         /* Turn off LEDs by default*/
-> -       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
-> -       if (chip->n_leds > 4)
-> -               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
-> +       for (i = 0; i < chip->n_leds; i++)
-> +               i2c_smbus_write_byte_data(client, chip->ledout_base + i, 0x00);
+> the driver assumed that totem-pole default and didn't actively set
+> the value; the MODE2 register is now written if platform
+> data indicating the mode is given
 >
 
-This change looks like a bug fixing. The previous one just turn off
-the first and the second LEDs.
+This one looks good to me.
 
-If yes, please add some description into the commit message.
-
-Other than this, this patch looks good to me.
 -Bryan
 
->         for (i = 0; i < chip->n_leds; i++) {
->                 pca963x[i].led_num = i;
+> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
+> ---
+>  drivers/leds/leds-pca963x.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+> index 70e3825..2214648 100644
+> --- a/drivers/leds/leds-pca963x.c
+> +++ b/drivers/leds/leds-pca963x.c
+> @@ -423,9 +423,13 @@ static int pca963x_probe(struct i2c_client *client,
+>         /* Disable LED all-call address and set normal mode */
+>         i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
+>
+> -       /* Configure output: open-drain or totem pole (push-pull) */
+> -       if (pdata && pdata->outdrv == PCA963X_OPEN_DRAIN)
+> -               i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
+> +       if (pdata) {
+> +               /* Configure output: open-drain or totem pole (push-pull) */
+> +               if (pdata->outdrv == PCA963X_OPEN_DRAIN)
+> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
+> +               else
+> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
+> +       }
+>
+>         return 0;
+>
 > --
 > 1.7.9.5
 >
