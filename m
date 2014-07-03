@@ -1,60 +1,65 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 2/3] leds:pca963x: Always initialize MODE2 register
-Date: Thu, 3 Jul 2014 11:56:41 -0700
-Message-ID: <CAK5ve-+Da=RVLgK+tmqq-udiY=R2j6KzLMwtC705wJnFbFeXgA@mail.gmail.com>
-References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net> <1404366636-25469-2-git-send-email-pmeerw@pmeerw.net>
+Subject: Re: [PATCH v2 3/3] leds:pca963x: Update for PCA9635 and correct
+ statement about MODE2 OUTDRV default
+Date: Thu, 3 Jul 2014 11:59:14 -0700
+Message-ID: <CAK5ve-JfUOD5u_oJ85+QMB9sSCzq5OKqw554XJniv1_p4P-ERw@mail.gmail.com>
+References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net> <1404366636-25469-3-git-send-email-pmeerw@pmeerw.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:56802 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698AbaGCS5D (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:57:03 -0400
-Received: by mail-la0-f45.google.com with SMTP id hr17so487267lab.32
-        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:57:01 -0700 (PDT)
-In-Reply-To: <1404366636-25469-2-git-send-email-pmeerw@pmeerw.net>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:36766 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751698AbaGCS7g (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:59:36 -0400
+Received: by mail-la0-f48.google.com with SMTP id el20so482937lab.21
+        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:59:35 -0700 (PDT)
+In-Reply-To: <1404366636-25469-3-git-send-email-pmeerw@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Peter Meerwald <pmeerw@pmeerw.net>
 Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
 On Wed, Jul 2, 2014 at 10:50 PM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
-> PCA9632 defaults to open-drain
-> PCA9633/4/5 defaults to totem-pole
+> mention support for 16 LED PCA9635 chip
 >
-> the driver assumed that totem-pole default and didn't actively set
-> the value; the MODE2 register is now written if platform
-> data indicating the mode is given
+> the default of MODE2's OUTDRV was incorrectly stated
 >
-> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
 
-Applied. thanks,
+Applied. Thanks,
 -Bryan
 
+> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
 > ---
->  drivers/leds/leds-pca963x.c |   10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+>  Documentation/devicetree/bindings/leds/pca963x.txt |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> index 4438be9..f110b4c 100644
-> --- a/drivers/leds/leds-pca963x.c
-> +++ b/drivers/leds/leds-pca963x.c
-> @@ -423,9 +423,13 @@ static int pca963x_probe(struct i2c_client *client,
->         /* Disable LED all-call address and set normal mode */
->         i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
+> diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
+> index aece3ea..dafbe99 100644
+> --- a/Documentation/devicetree/bindings/leds/pca963x.txt
+> +++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+> @@ -1,18 +1,19 @@
+>  LEDs connected to pca9632, pca9633 or pca9634
 >
-> -       /* Configure output: open-drain or totem pole (push-pull) */
-> -       if (pdata && pdata->outdrv == PCA963X_OPEN_DRAIN)
-> -               i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
-> +       if (pdata) {
-> +               /* Configure output: open-drain or totem pole (push-pull) */
-> +               if (pdata->outdrv == PCA963X_OPEN_DRAIN)
-> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
-> +               else
-> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
-> +       }
+>  Required properties:
+> -- compatible : should be : "nxp,pca9632", "nxp,pca9633" or "nxp,pca9634"
+> +- compatible : should be : "nxp,pca9632", "nxp,pca9633", "nxp,pca9634" or "nxp,pca9635"
 >
->         return 0;
+>  Optional properties:
+> -- nxp,totem-pole : use totem pole (push-pull) instead of default open-drain
+> +- nxp,totem-pole : use totem pole (push-pull) instead of open-drain (pca9632 defaults
+> +  to open-drain, newer chips to totem pole)
+>  - nxp,hw-blink : use hardware blinking instead of software blinking
+>
+>  Each led is represented as a sub-node of the nxp,pca963x device.
+>
+>  LED sub-node properties:
+>  - label : (optional) see Documentation/devicetree/bindings/leds/common.txt
+> -- reg : number of LED line (could be from 0 to 3  in pca9632 or pca9633
+> -               or 0 to 7 in pca9634)
+> +- reg : number of LED line (could be from 0 to 3 in pca9632 or pca9633,
+> +               0 to 7 in pca9634, or 0 to 15 in pca9635)
+>  - linux,default-trigger : (optional)
+>     see Documentation/devicetree/bindings/leds/common.txt
 >
 > --
 > 1.7.9.5
