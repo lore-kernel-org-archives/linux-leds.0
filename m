@@ -1,109 +1,61 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 1/3] leds:pca963x: Add support for PCA9635 LED driver chip
-Date: Thu, 3 Jul 2014 11:54:36 -0700
-Message-ID: <CAK5ve-KV6mhJxWMXED0jBzfuXUYmKQxvE7AYpdqp9ZFZWhqw6A@mail.gmail.com>
-References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
+Subject: Re: [PATCH v2 2/3] leds:pca963x: Always initialize MODE2 register
+Date: Thu, 3 Jul 2014 11:56:41 -0700
+Message-ID: <CAK5ve-+Da=RVLgK+tmqq-udiY=R2j6KzLMwtC705wJnFbFeXgA@mail.gmail.com>
+References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net> <1404366636-25469-2-git-send-email-pmeerw@pmeerw.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:55970 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752864AbaGCSy5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:54:57 -0400
-Received: by mail-la0-f41.google.com with SMTP id hz20so484501lab.28
-        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:54:56 -0700 (PDT)
-In-Reply-To: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
+Received: from mail-la0-f45.google.com ([209.85.215.45]:56802 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751698AbaGCS5D (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:57:03 -0400
+Received: by mail-la0-f45.google.com with SMTP id hr17so487267lab.32
+        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:57:01 -0700 (PDT)
+In-Reply-To: <1404366636-25469-2-git-send-email-pmeerw@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Peter Meerwald <pmeerw@pmeerw.net>
 Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
 On Wed, Jul 2, 2014 at 10:50 PM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
-> supports 16 PWM-controlled LEDs
+> PCA9632 defaults to open-drain
+> PCA9633/4/5 defaults to totem-pole
 >
+> the driver assumed that totem-pole default and didn't actively set
+> the value; the MODE2 register is now written if platform
+> data indicating the mode is given
+>
+> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
 
-OK, good. merged.
-
+Applied. thanks,
 -Bryan
 
-> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
 > ---
-> v2: fix code to turn off all leds initially
-> ---
->  drivers/leds/leds-pca963x.c |   18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
+>  drivers/leds/leds-pca963x.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 >
 > diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> index 82589c0..4438be9 100644
+> index 4438be9..f110b4c 100644
 > --- a/drivers/leds/leds-pca963x.c
 > +++ b/drivers/leds/leds-pca963x.c
-> @@ -12,7 +12,7 @@
->   * directory of this archive for more details.
->   *
->   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
-> - * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
-> + * LED driver for the PCA9634/5 I2C LED driver (7-bit slave address set by hw.)
->   *
->   * Note that hardware blinking violates the leds infrastructure driver
->   * interface since the hardware only supports blinking all LEDs with the
-> @@ -52,6 +52,7 @@
->  enum pca963x_type {
->         pca9633,
->         pca9634,
-> +       pca9635,
->  };
+> @@ -423,9 +423,13 @@ static int pca963x_probe(struct i2c_client *client,
+>         /* Disable LED all-call address and set normal mode */
+>         i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
 >
->  struct pca963x_chipdef {
-> @@ -74,6 +75,12 @@ static struct pca963x_chipdef pca963x_chipdefs[] = {
->                 .ledout_base    = 0xc,
->                 .n_leds         = 8,
->         },
-> +       [pca9635] = {
-> +               .grppwm         = 0x12,
-> +               .grpfreq        = 0x13,
-> +               .ledout_base    = 0x14,
-> +               .n_leds         = 16,
-> +       },
->  };
+> -       /* Configure output: open-drain or totem pole (push-pull) */
+> -       if (pdata && pdata->outdrv == PCA963X_OPEN_DRAIN)
+> -               i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
+> +       if (pdata) {
+> +               /* Configure output: open-drain or totem pole (push-pull) */
+> +               if (pdata->outdrv == PCA963X_OPEN_DRAIN)
+> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
+> +               else
+> +                       i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
+> +       }
 >
->  /* Total blink period in milliseconds */
-> @@ -84,6 +91,7 @@ static const struct i2c_device_id pca963x_id[] = {
->         { "pca9632", pca9633 },
->         { "pca9633", pca9633 },
->         { "pca9634", pca9634 },
-> +       { "pca9635", pca9635 },
->         { }
->  };
->  MODULE_DEVICE_TABLE(i2c, pca963x_id);
-> @@ -107,7 +115,7 @@ struct pca963x_led {
->         struct work_struct work;
->         enum led_brightness brightness;
->         struct led_classdev led_cdev;
-> -       int led_num; /* 0 .. 7 potentially */
-> +       int led_num; /* 0 .. 15 potentially */
->         enum pca963x_cmd cmd;
->         char name[32];
->         u8 gdc;
-> @@ -321,6 +329,7 @@ static const struct of_device_id of_pca963x_match[] = {
->         { .compatible = "nxp,pca9632", },
->         { .compatible = "nxp,pca9633", },
->         { .compatible = "nxp,pca9634", },
-> +       { .compatible = "nxp,pca9635", },
->         {},
->  };
->  #else
-> @@ -375,9 +384,8 @@ static int pca963x_probe(struct i2c_client *client,
->         pca963x_chip->leds = pca963x;
+>         return 0;
 >
->         /* Turn off LEDs by default*/
-> -       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
-> -       if (chip->n_leds > 4)
-> -               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
-> +       for (i = 0; i < chip->n_leds / 4; i++)
-> +               i2c_smbus_write_byte_data(client, chip->ledout_base + i, 0x00);
->
->         for (i = 0; i < chip->n_leds; i++) {
->                 pca963x[i].led_num = i;
 > --
 > 1.7.9.5
 >
