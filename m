@@ -1,129 +1,55 @@
 From: Peter Meerwald <pmeerw@pmeerw.net>
-Subject: Re: [PATCH 1/2] leds:pca963x: Add support for PCA9635 LED driver
- chip
-Date: Thu, 3 Jul 2014 07:38:54 +0200 (CEST)
-Message-ID: <alpine.DEB.2.01.1407030732380.13292@pmeerw.net>
-References: <1404288046-26661-1-git-send-email-pmeerw@pmeerw.net> <CAK5ve-Kt_jLoeSZxRRDn9p3Pv95_eaHnJ2=MfaoNVfpYYHD76Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: [PATCH v2 3/3] leds:pca963x: Update for PCA9635 and correct statement about MODE2 OUTDRV default
+Date: Thu,  3 Jul 2014 07:50:36 +0200
+Message-ID: <1404366636-25469-3-git-send-email-pmeerw@pmeerw.net>
+References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from ns.pmeerw.net ([87.118.82.44]:38591 "EHLO pmeerw.net"
+Received: from ns.pmeerw.net ([87.118.82.44]:38743 "EHLO pmeerw.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750817AbaGCFi4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 3 Jul 2014 01:38:56 -0400
-In-Reply-To: <CAK5ve-Kt_jLoeSZxRRDn9p3Pv95_eaHnJ2=MfaoNVfpYYHD76Q@mail.gmail.com>
+	id S1750937AbaGCFv2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 3 Jul 2014 01:51:28 -0400
+In-Reply-To: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+To: linux-leds@vger.kernel.org
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, Peter Meerwald <pmeerw@pmeerw.net>
 
-Hello Bryan,
+mention support for 16 LED PCA9635 chip
 
-thanks you for reviewing; my reply below
+the default of MODE2's OUTDRV was incorrectly stated
 
-regards, p.
+Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
+---
+ Documentation/devicetree/bindings/leds/pca963x.txt |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> > supports 16 PWM-controlled LEDs
-> >
-> > Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
-> > ---
-> >  drivers/leds/leds-pca963x.c |   18 +++++++++++++-----
-> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> > index 82589c0..70e3825 100644
-> > --- a/drivers/leds/leds-pca963x.c
-> > +++ b/drivers/leds/leds-pca963x.c
-> > @@ -12,7 +12,7 @@
-> >   * directory of this archive for more details.
-> >   *
-> >   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
-> > - * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
-> > + * LED driver for the PCA9634/5 I2C LED driver (7-bit slave address set by hw.)
-> >   *
-> >   * Note that hardware blinking violates the leds infrastructure driver
-> >   * interface since the hardware only supports blinking all LEDs with the
-> > @@ -52,6 +52,7 @@
-> >  enum pca963x_type {
-> >         pca9633,
-> >         pca9634,
-> > +       pca9635,
-> >  };
-> >
-> >  struct pca963x_chipdef {
-> > @@ -74,6 +75,12 @@ static struct pca963x_chipdef pca963x_chipdefs[] = {
-> >                 .ledout_base    = 0xc,
-> >                 .n_leds         = 8,
-> >         },
-> > +       [pca9635] = {
-> > +               .grppwm         = 0x12,
-> > +               .grpfreq        = 0x13,
-> > +               .ledout_base    = 0x14,
-> > +               .n_leds         = 16,
-> > +       },
-> >  };
-> >
-> >  /* Total blink period in milliseconds */
-> > @@ -84,6 +91,7 @@ static const struct i2c_device_id pca963x_id[] = {
-> >         { "pca9632", pca9633 },
-> >         { "pca9633", pca9633 },
-> >         { "pca9634", pca9634 },
-> > +       { "pca9635", pca9635 },
-> >         { }
-> >  };
-> >  MODULE_DEVICE_TABLE(i2c, pca963x_id);
-> > @@ -107,7 +115,7 @@ struct pca963x_led {
-> >         struct work_struct work;
-> >         enum led_brightness brightness;
-> >         struct led_classdev led_cdev;
-> > -       int led_num; /* 0 .. 7 potentially */
-> > +       int led_num; /* 0 .. 15 potentially */
-> >         enum pca963x_cmd cmd;
-> >         char name[32];
-> >         u8 gdc;
-> > @@ -321,6 +329,7 @@ static const struct of_device_id of_pca963x_match[] = {
-> >         { .compatible = "nxp,pca9632", },
-> >         { .compatible = "nxp,pca9633", },
-> >         { .compatible = "nxp,pca9634", },
-> > +       { .compatible = "nxp,pca9635", },
-> >         {},
-> >  };
-> >  #else
-> > @@ -375,9 +384,8 @@ static int pca963x_probe(struct i2c_client *client,
-> >         pca963x_chip->leds = pca963x;
-> >
-> >         /* Turn off LEDs by default*/
-> > -       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
-> > -       if (chip->n_leds > 4)
-> > -               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
-> > +       for (i = 0; i < chip->n_leds; i++)
-> > +               i2c_smbus_write_byte_data(client, chip->ledout_base + i, 0x00);
-> >
-> 
-> This change looks like a bug fixing. The previous one just turn off
-> the first and the second LEDs.
-> 
-> If yes, please add some description into the commit message.
-
-the LEDOUT registers have two status bits for each LED, hence for 16 LEDs 
-4 such registers are needed; the code just becomes more generic by using a 
-loop
-
-the line
-      for (i = 0; i < chip->n_leds; i++)
-should have been
-      for (i = 0; i < chip->n_leds / 4; i++)
-
-I'll send out a v2
-
-> >         for (i = 0; i < chip->n_leds; i++) {
-> >                 pca963x[i].led_num = i;
-> > --
-> > 1.7.9.5
-> >
-> 
-
+diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
+index aece3ea..dafbe99 100644
+--- a/Documentation/devicetree/bindings/leds/pca963x.txt
++++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+@@ -1,18 +1,19 @@
+ LEDs connected to pca9632, pca9633 or pca9634
+ 
+ Required properties:
+-- compatible : should be : "nxp,pca9632", "nxp,pca9633" or "nxp,pca9634"
++- compatible : should be : "nxp,pca9632", "nxp,pca9633", "nxp,pca9634" or "nxp,pca9635"
+ 
+ Optional properties:
+-- nxp,totem-pole : use totem pole (push-pull) instead of default open-drain
++- nxp,totem-pole : use totem pole (push-pull) instead of open-drain (pca9632 defaults
++  to open-drain, newer chips to totem pole)
+ - nxp,hw-blink : use hardware blinking instead of software blinking
+ 
+ Each led is represented as a sub-node of the nxp,pca963x device.
+ 
+ LED sub-node properties:
+ - label : (optional) see Documentation/devicetree/bindings/leds/common.txt
+-- reg : number of LED line (could be from 0 to 3  in pca9632 or pca9633
+-		or 0 to 7 in pca9634)
++- reg : number of LED line (could be from 0 to 3 in pca9632 or pca9633,
++		0 to 7 in pca9634, or 0 to 15 in pca9635)
+ - linux,default-trigger : (optional)
+    see Documentation/devicetree/bindings/leds/common.txt
+ 
 -- 
-
-Peter Meerwald
-+43-664-2444418 (mobile)
+1.7.9.5
