@@ -1,46 +1,109 @@
-From: Janne Kanniainen <janne.kanniainen@gmail.com>
-Subject: Re: [PATCH 2/2 v6] HID: gt683r: move mode attribute to led-class devices
-Date: Thu, 3 Jul 2014 21:28:23 +0300
-Message-ID: <CAEEjW04+GAc_vXO_=UMzEmL4dLeKQ7jyFakYs=WsVmBLwYfcNw@mail.gmail.com>
-References: <20140703082830.GB16590@localhost>
-	<1404407829-1815-1-git-send-email-janne.kanniainen@gmail.com>
-	<1404407829-1815-2-git-send-email-janne.kanniainen@gmail.com>
-	<20140703174017.GP16590@localhost>
-	<CAK5ve-LBU72Z_dnV9XUyMTVgFF2C1xRhKNhC_cziO5GMx__zhA@mail.gmail.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2 1/3] leds:pca963x: Add support for PCA9635 LED driver chip
+Date: Thu, 3 Jul 2014 11:54:36 -0700
+Message-ID: <CAK5ve-KV6mhJxWMXED0jBzfuXUYmKQxvE7AYpdqp9ZFZWhqw6A@mail.gmail.com>
+References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <CAK5ve-LBU72Z_dnV9XUyMTVgFF2C1xRhKNhC_cziO5GMx__zhA@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Greg Kroah-Hartman <greg@kroah.com>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-usb@vger.kernel.org, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:55970 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752864AbaGCSy5 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:54:57 -0400
+Received: by mail-la0-f41.google.com with SMTP id hz20so484501lab.28
+        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:54:56 -0700 (PDT)
+In-Reply-To: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Peter Meerwald <pmeerw@pmeerw.net>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
-2014-07-03 21:17 GMT+03:00 Bryan Wu <cooloney@gmail.com>:
-> On Thu, Jul 3, 2014 at 10:40 AM, Johan Hovold <johan@kernel.org> wrote:
->> On Thu, Jul 03, 2014 at 08:17:09PM +0300, Janne Kanniainen wrote:
->>> Move led_mode attribute from HID device to led-class devices and rename
->>> it msi_mode. This will also fix race condition by using
->>
->> There's a typo here (s/msi_mode/mode) but perhaps Bryan can just fix
->> that up before applying?
->>
->>> attribute-groups.
->>>
->>> Signed-off-by: Janne Kanniainen <janne.kanniainen@gmail.com>
->>
->> Reviewed-by: Johan Hovold <johan@kernel.org>
->>
->> Otherwise both patches (v6) are ready to be merged, Bryan.
->>
->> Thanks, Janne!
->>
+On Wed, Jul 2, 2014 at 10:50 PM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
+> supports 16 PWM-controlled LEDs
 >
-> No problem. I fixed the typo and merged it.
+
+OK, good. merged.
+
+-Bryan
+
+> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
+> ---
+> v2: fix code to turn off all leds initially
+> ---
+>  drivers/leds/leds-pca963x.c |   18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
 >
-> Thanks,
-> -Bryan
-
-Thanks again to both of you!
-
-Janne
+> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+> index 82589c0..4438be9 100644
+> --- a/drivers/leds/leds-pca963x.c
+> +++ b/drivers/leds/leds-pca963x.c
+> @@ -12,7 +12,7 @@
+>   * directory of this archive for more details.
+>   *
+>   * LED driver for the PCA9633 I2C LED driver (7-bit slave address 0x62)
+> - * LED driver for the PCA9634 I2C LED driver (7-bit slave address set by hw.)
+> + * LED driver for the PCA9634/5 I2C LED driver (7-bit slave address set by hw.)
+>   *
+>   * Note that hardware blinking violates the leds infrastructure driver
+>   * interface since the hardware only supports blinking all LEDs with the
+> @@ -52,6 +52,7 @@
+>  enum pca963x_type {
+>         pca9633,
+>         pca9634,
+> +       pca9635,
+>  };
+>
+>  struct pca963x_chipdef {
+> @@ -74,6 +75,12 @@ static struct pca963x_chipdef pca963x_chipdefs[] = {
+>                 .ledout_base    = 0xc,
+>                 .n_leds         = 8,
+>         },
+> +       [pca9635] = {
+> +               .grppwm         = 0x12,
+> +               .grpfreq        = 0x13,
+> +               .ledout_base    = 0x14,
+> +               .n_leds         = 16,
+> +       },
+>  };
+>
+>  /* Total blink period in milliseconds */
+> @@ -84,6 +91,7 @@ static const struct i2c_device_id pca963x_id[] = {
+>         { "pca9632", pca9633 },
+>         { "pca9633", pca9633 },
+>         { "pca9634", pca9634 },
+> +       { "pca9635", pca9635 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, pca963x_id);
+> @@ -107,7 +115,7 @@ struct pca963x_led {
+>         struct work_struct work;
+>         enum led_brightness brightness;
+>         struct led_classdev led_cdev;
+> -       int led_num; /* 0 .. 7 potentially */
+> +       int led_num; /* 0 .. 15 potentially */
+>         enum pca963x_cmd cmd;
+>         char name[32];
+>         u8 gdc;
+> @@ -321,6 +329,7 @@ static const struct of_device_id of_pca963x_match[] = {
+>         { .compatible = "nxp,pca9632", },
+>         { .compatible = "nxp,pca9633", },
+>         { .compatible = "nxp,pca9634", },
+> +       { .compatible = "nxp,pca9635", },
+>         {},
+>  };
+>  #else
+> @@ -375,9 +384,8 @@ static int pca963x_probe(struct i2c_client *client,
+>         pca963x_chip->leds = pca963x;
+>
+>         /* Turn off LEDs by default*/
+> -       i2c_smbus_write_byte_data(client, chip->ledout_base, 0x00);
+> -       if (chip->n_leds > 4)
+> -               i2c_smbus_write_byte_data(client, chip->ledout_base + 1, 0x00);
+> +       for (i = 0; i < chip->n_leds / 4; i++)
+> +               i2c_smbus_write_byte_data(client, chip->ledout_base + i, 0x00);
+>
+>         for (i = 0; i < chip->n_leds; i++) {
+>                 pca963x[i].led_num = i;
+> --
+> 1.7.9.5
+>
