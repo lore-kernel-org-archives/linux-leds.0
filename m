@@ -1,66 +1,195 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 3/3] leds:pca963x: Update for PCA9635 and correct
- statement about MODE2 OUTDRV default
-Date: Thu, 3 Jul 2014 11:59:14 -0700
-Message-ID: <CAK5ve-JfUOD5u_oJ85+QMB9sSCzq5OKqw554XJniv1_p4P-ERw@mail.gmail.com>
-References: <1404366636-25469-1-git-send-email-pmeerw@pmeerw.net> <1404366636-25469-3-git-send-email-pmeerw@pmeerw.net>
+Subject: Re: [PATCH] leds: convert blink timer to workqueue
+Date: Thu, 3 Jul 2014 12:02:00 -0700
+Message-ID: <CAK5ve-JSn8Ugx3vN7Zz5rx0eF5VB3n5BwLwDLVbM878YLwagNQ@mail.gmail.com>
+References: <1402737700-2830-1-git-send-email-vincent.donnefort@seagate.com>
+ <CAK5ve-JWGqUpZ-WpZjAs4LiJU66BkSyw5FbP7RYbdBpsi0anDw@mail.gmail.com>
+ <20140626090055.GA31066@ns3274321.ip-5-39-88.eu> <20140703090538.GA9503@ns3274321.ip-5-39-88.eu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:36766 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698AbaGCS7g (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 14:59:36 -0400
-Received: by mail-la0-f48.google.com with SMTP id el20so482937lab.21
-        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 11:59:35 -0700 (PDT)
-In-Reply-To: <1404366636-25469-3-git-send-email-pmeerw@pmeerw.net>
+Received: from mail-la0-f45.google.com ([209.85.215.45]:46807 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336AbaGCTCW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jul 2014 15:02:22 -0400
+Received: by mail-la0-f45.google.com with SMTP id hr17so491726lab.32
+        for <linux-leds@vger.kernel.org>; Thu, 03 Jul 2014 12:02:21 -0700 (PDT)
+In-Reply-To: <20140703090538.GA9503@ns3274321.ip-5-39-88.eu>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Peter Meerwald <pmeerw@pmeerw.net>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+To: Vincent Donnefort <vdonnefort@gmail.com>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Wed, Jul 2, 2014 at 10:50 PM, Peter Meerwald <pmeerw@pmeerw.net> wrote:
-> mention support for 16 LED PCA9635 chip
+On Thu, Jul 3, 2014 at 2:05 AM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
+> On Thu, Jun 26, 2014 at 11:00:55AM +0200, Vincent Donnefort wrote:
+>> On Wed, Jun 25, 2014 at 03:52:33PM -0700, Bryan Wu wrote:
+>> > On Sat, Jun 14, 2014 at 2:21 AM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
+>> > > From: Vincent Donnefort <vdonnefort@gmail.com>
+>> > >
+>> > > This patch converts the blink timer from led-core to workqueue which is more
+>> > > suitable for this kind of non-priority operations. Moreover, timer may lead to
+>> > > errors when a LED setting function use a scheduling function such as pinctrl
+>> > > which is using mutex.
+>> > >
+>> >
+>> > Actually I prefer to use workqueue here, too. But I'd like to know
+>> > more details about the error you mentioned here.
+>>
+>> There is for now none driver using pinctrl, this example was bad since taken on a
+>> driver which has not been merged yet.
+>>
+>> However the same problem appears for drivers which needs gpio_cansleep
+>> and so needs their own workqueue.
+>>
 >
-> the default of MODE2's OUTDRV was incorrectly stated
+> Do you need more precisions? Do you want me to change the commit message?
 >
 
-Applied. Thanks,
+I will merge this into my devel branch and let people do some testing.
+If there is no problem, I will move it to for-next branch.
+
+Thanks,
 -Bryan
 
-> Signed-off-by: Peter Meerwald <pmeerw@pmeerw.net>
-> ---
->  Documentation/devicetree/bindings/leds/pca963x.txt |    9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+> Regards,
+> Vincent.
 >
-> diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
-> index aece3ea..dafbe99 100644
-> --- a/Documentation/devicetree/bindings/leds/pca963x.txt
-> +++ b/Documentation/devicetree/bindings/leds/pca963x.txt
-> @@ -1,18 +1,19 @@
->  LEDs connected to pca9632, pca9633 or pca9634
->
->  Required properties:
-> -- compatible : should be : "nxp,pca9632", "nxp,pca9633" or "nxp,pca9634"
-> +- compatible : should be : "nxp,pca9632", "nxp,pca9633", "nxp,pca9634" or "nxp,pca9635"
->
->  Optional properties:
-> -- nxp,totem-pole : use totem pole (push-pull) instead of default open-drain
-> +- nxp,totem-pole : use totem pole (push-pull) instead of open-drain (pca9632 defaults
-> +  to open-drain, newer chips to totem pole)
->  - nxp,hw-blink : use hardware blinking instead of software blinking
->
->  Each led is represented as a sub-node of the nxp,pca963x device.
->
->  LED sub-node properties:
->  - label : (optional) see Documentation/devicetree/bindings/leds/common.txt
-> -- reg : number of LED line (could be from 0 to 3  in pca9632 or pca9633
-> -               or 0 to 7 in pca9634)
-> +- reg : number of LED line (could be from 0 to 3 in pca9632 or pca9633,
-> +               0 to 7 in pca9634, or 0 to 15 in pca9635)
->  - linux,default-trigger : (optional)
->     see Documentation/devicetree/bindings/leds/common.txt
->
-> --
-> 1.7.9.5
->
+>> >
+>> > Any test case?
+>> >
+>> > Thanks,
+>> > -Bryan
+>> >
+>> > > Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+>> > >
+>> > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> > > index f37d63c..0567a24 100644
+>> > > --- a/drivers/leds/led-class.c
+>> > > +++ b/drivers/leds/led-class.c
+>> > > @@ -15,10 +15,10 @@
+>> > >  #include <linux/list.h>
+>> > >  #include <linux/spinlock.h>
+>> > >  #include <linux/device.h>
+>> > > -#include <linux/timer.h>
+>> > >  #include <linux/err.h>
+>> > >  #include <linux/ctype.h>
+>> > >  #include <linux/leds.h>
+>> > > +#include <linux/workqueue.h>
+>> > >  #include "leds.h"
+>> > >
+>> > >  static struct class *leds_class;
+>> > > @@ -97,9 +97,10 @@ static const struct attribute_group *led_groups[] = {
+>> > >         NULL,
+>> > >  };
+>> > >
+>> > > -static void led_timer_function(unsigned long data)
+>> > > +static void led_work_function(struct work_struct *ws)
+>> > >  {
+>> > > -       struct led_classdev *led_cdev = (void *)data;
+>> > > +       struct led_classdev *led_cdev =
+>> > > +               container_of(ws, struct led_classdev, blink_work.work);
+>> > >         unsigned long brightness;
+>> > >         unsigned long delay;
+>> > >
+>> > > @@ -143,7 +144,8 @@ static void led_timer_function(unsigned long data)
+>> > >                 }
+>> > >         }
+>> > >
+>> > > -       mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
+>> > > +       queue_delayed_work(system_wq, &led_cdev->blink_work,
+>> > > +                          msecs_to_jiffies(delay));
+>> > >  }
+>> > >
+>> > >  static void set_brightness_delayed(struct work_struct *ws)
+>> > > @@ -230,9 +232,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>> > >
+>> > >         INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+>> > >
+>> > > -       init_timer(&led_cdev->blink_timer);
+>> > > -       led_cdev->blink_timer.function = led_timer_function;
+>> > > -       led_cdev->blink_timer.data = (unsigned long)led_cdev;
+>> > > +       INIT_DELAYED_WORK(&led_cdev->blink_work, led_work_function);
+>> > >
+>> > >  #ifdef CONFIG_LEDS_TRIGGERS
+>> > >         led_trigger_set_default(led_cdev);
+>> > > diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> > > index 71b40d3..4bb1168 100644
+>> > > --- a/drivers/leds/led-core.c
+>> > > +++ b/drivers/leds/led-core.c
+>> > > @@ -16,6 +16,7 @@
+>> > >  #include <linux/module.h>
+>> > >  #include <linux/rwsem.h>
+>> > >  #include <linux/leds.h>
+>> > > +#include <linux/workqueue.h>
+>> > >  #include "leds.h"
+>> > >
+>> > >  DECLARE_RWSEM(leds_list_lock);
+>> > > @@ -51,7 +52,7 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>> > >                 return;
+>> > >         }
+>> > >
+>> > > -       mod_timer(&led_cdev->blink_timer, jiffies + 1);
+>> > > +       queue_delayed_work(system_wq, &led_cdev->blink_work, 1);
+>> > >  }
+>> > >
+>> > >
+>> > > @@ -75,7 +76,7 @@ void led_blink_set(struct led_classdev *led_cdev,
+>> > >                    unsigned long *delay_on,
+>> > >                    unsigned long *delay_off)
+>> > >  {
+>> > > -       del_timer_sync(&led_cdev->blink_timer);
+>> > > +       cancel_delayed_work_sync(&led_cdev->blink_work);
+>> > >
+>> > >         led_cdev->flags &= ~LED_BLINK_ONESHOT;
+>> > >         led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+>> > > @@ -90,7 +91,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
+>> > >                            int invert)
+>> > >  {
+>> > >         if ((led_cdev->flags & LED_BLINK_ONESHOT) &&
+>> > > -            timer_pending(&led_cdev->blink_timer))
+>> > > +            delayed_work_pending(&led_cdev->blink_work))
+>> > >                 return;
+>> > >
+>> > >         led_cdev->flags |= LED_BLINK_ONESHOT;
+>> > > @@ -107,7 +108,7 @@ EXPORT_SYMBOL(led_blink_set_oneshot);
+>> > >
+>> > >  void led_stop_software_blink(struct led_classdev *led_cdev)
+>> > >  {
+>> > > -       del_timer_sync(&led_cdev->blink_timer);
+>> > > +       cancel_delayed_work_sync(&led_cdev->blink_work);
+>> > >         led_cdev->blink_delay_on = 0;
+>> > >         led_cdev->blink_delay_off = 0;
+>> > >  }
+>> > > @@ -116,7 +117,7 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+>> > >  void led_set_brightness(struct led_classdev *led_cdev,
+>> > >                         enum led_brightness brightness)
+>> > >  {
+>> > > -       /* delay brightness setting if need to stop soft-blink timer */
+>> > > +       /* delay brightness setting if need to stop soft-blink work */
+>> > >         if (led_cdev->blink_delay_on || led_cdev->blink_delay_off) {
+>> > >                 led_cdev->delayed_set_value = brightness;
+>> > >                 schedule_work(&led_cdev->set_brightness_work);
+>> > > diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> > > index 0287ab2..89af7b8 100644
+>> > > --- a/include/linux/leds.h
+>> > > +++ b/include/linux/leds.h
+>> > > @@ -15,7 +15,6 @@
+>> > >  #include <linux/list.h>
+>> > >  #include <linux/spinlock.h>
+>> > >  #include <linux/rwsem.h>
+>> > > -#include <linux/timer.h>
+>> > >  #include <linux/workqueue.h>
+>> > >
+>> > >  struct device;
+>> > > @@ -67,7 +66,7 @@ struct led_classdev {
+>> > >         const char              *default_trigger;       /* Trigger to use */
+>> > >
+>> > >         unsigned long            blink_delay_on, blink_delay_off;
+>> > > -       struct timer_list        blink_timer;
+>> > > +       struct delayed_work      blink_work;
+>> > >         int                      blink_brightness;
+>> > >
+>> > >         struct work_struct      set_brightness_work;
+>> > > --
+>> > > 1.9.1
+>> > >
