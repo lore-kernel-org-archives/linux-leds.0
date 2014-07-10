@@ -1,179 +1,142 @@
-From: Jan-Simon =?ISO-8859-1?Q?M=F6ller?= <dl9pf@gmx.de>
-Subject: Re: [PATCH 1/1] leds: blinkm: Remove unused variable
-Date: Wed, 09 Jul 2014 14:34:34 +0200
-Message-ID: <3676295.nUINk5lfjs@aragorn>
-References: <1404216443-21177-1-git-send-email-sachin.kamat@samsung.com> <CAK5ve-KYwnDuB0YooOo7zsZ_EH8VuJ_9ex_919CDEtJqiNrp=g@mail.gmail.com> <3261853.AEHXRXfVcs@samweis.auenland.lan>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v3 5/5] media: Add registration helpers for V4L2
+ flash sub-devices
+Date: Thu, 10 Jul 2014 21:40:17 +0300
+Message-ID: <20140710184017.GJ16460@valkosipuli.retiisi.org.uk>
+References: <20140416182141.GG8753@valkosipuli.retiisi.org.uk>
+ <534F9044.6080508@samsung.com>
+ <20140423152435.GJ8753@valkosipuli.retiisi.org.uk>
+ <535E3A95.6010206@samsung.com>
+ <20140502110651.GX8753@valkosipuli.retiisi.org.uk>
+ <536884D9.4050104@samsung.com>
+ <20140506091059.GB8753@valkosipuli.retiisi.org.uk>
+ <5369DEB1.2060803@samsung.com>
+ <20140507075828.GD8753@valkosipuli.retiisi.org.uk>
+ <536C815F.8060906@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="nextPart6116426.k1Ey6s7Vhy"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:60617 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755576AbaGIMei (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 9 Jul 2014 08:34:38 -0400
-In-Reply-To: <3261853.AEHXRXfVcs@samweis.auenland.lan>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38503 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751753AbaGJSk3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Thu, 10 Jul 2014 14:40:29 -0400
+Content-Disposition: inline
+In-Reply-To: <536C815F.8060906@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Sachin Kamat <sachin.kamat@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, spk.linux@gmail.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
 
-This is a multi-part message in MIME format.
+Hi Jacek,
 
---nextPart6116426.k1Ey6s7Vhy
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+On Fri, May 09, 2014 at 09:18:55AM +0200, Jacek Anaszewski wrote:
+> Hi Sakari,
+> 
+> On 05/07/2014 09:58 AM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >On Wed, May 07, 2014 at 09:20:17AM +0200, Jacek Anaszewski wrote:
+> >>On 05/06/2014 11:10 AM, Sakari Ailus wrote:
+> >>>Hi Jacek,
+> >>>
+> >>>On Tue, May 06, 2014 at 08:44:41AM +0200, Jacek Anaszewski wrote:
+> >>>>Hi Sakari,
+> >>>>
+> >>>>On 05/02/2014 01:06 PM, Sakari Ailus wrote:
+> >>>>
+> >>>>>>>>[...]
+> >>>>>>>>>>+static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
+> >>>>>>>>>>+					struct led_ctrl *config,
+> >>>>>>>>>>+					u32 intensity)
+> >>>>>>>>>
+> >>>>>>>>>Fits on a single line.
+> >>>>>>>>>
+> >>>>>>>>>>+{
+> >>>>>>>>>>+	return intensity / config->step;
+> >>>>>>>>>
+> >>>>>>>>>Shouldn't you first decrement the minimum before the division?
+> >>>>>>>>
+> >>>>>>>>Brightness level 0 means that led is off. Let's consider following case:
+> >>>>>>>>
+> >>>>>>>>intensity - 15625
+> >>>>>>>>config->step - 15625
+> >>>>>>>>intensity / config->step = 1 (the lowest possible current level)
+> >>>>>>>
+> >>>>>>>In V4L2 controls the minimum is not off, and zero might not be a possible
+> >>>>>>>value since minimum isn't divisible by step.
+> >>>>>>>
+> >>>>>>>I wonder how to best take that into account.
+> >>>>>>
+> >>>>>>I've assumed that in MODE_TORCH a led is always on. Switching
+> >>>>>>the mode to MODE_FLASH or MODE_OFF turns the led off.
+> >>>>>>This way we avoid the problem with converting 0 uA value to
+> >>>>>>led_brightness, as available torch brightness levels start from
+> >>>>>>the minimum current level value and turning the led off is
+> >>>>>>accomplished on transition to MODE_OFF or MODE_FLASH, by
+> >>>>>>calling brightness_set op with led_brightness = 0.
+> >>>>>
+> >>>>>I'm not sure if we understood the issue the same way. My concern was that if
+> >>>>>the intensity isn't a multiple of step (but intensity - min is), the above
+> >>>>>formula won't return a valid result (unless I miss something).
+> >>>>>
+> >>>>
+> >>>>Please note that v4l2_flash_intensity_to_led_brightness is called only
+> >>>>from s_ctrl callback, and thus it expects to get the intensity aligned
+> >>>>to the step value, so it will always be a multiple of step.
+> >>>>Is it possible that s_ctrl callback would be passed a non-aligned
+> >>>>control value?
+> >>>
+> >>>In a nutshell: value - min is aligned but value is not. Please see
+> >>>validate_new() in drivers/media/v4l2-core/v4l2-ctrls.c .
+> >>>
+> >>
+> >>Still, to my mind, value is aligned.
+> >>
+> >>Below I execute the calculation steps one by one
+> >>according to the V4L2_CTRL_TYPE_INTEGER case in the
+> >>validate_new function:
+> >>
+> >>c->value = 35000
+> >>
+> >>val = c->value + step / 2;       // 35000 + 15625 / 2 = 42812
+> >>val = clamp(val, min, max);      // val = 42812
+> >>offset = val - min;              // 42812 - 15625 = 27187
+> >>offset = step * (offset / step); // 15625 * (27187 / 15625) = 15625
+> >>c->value = min + offset;         // 15625 + 15625 = 31250
+> >>
+> >>Value is aligned to the nearest step.
+> >>
+> >>Please spot any discrepancies in my way of thinking if there
+> >>are any :)
+> >
+> >min is aligned to step above. This is not necessarily the case. And if min
+> >is not aligned, neither is value.
+> >
+> 
+> Thanks for spotting this. Below are improved versions of the conversion
+> functions. Please let me know if you have any comments.
+> 
+> static inline
+> enum led_brightnessv4l2_flash_intensity_to_led_brightness(
+>                                         struct led_ctrl *config,
+>                                         u32 intensity)
+> {
+>         return ((intensity - config->min) / config->step) + 1;
+> }
+> 
+> static inline
+> u32 v4l2_flash_led_brightness_to_intensity(
+>                                         struct led_ctrl *config,
+>                                         enum led_brightness brightness)
+> {
+>         return ((brightness - 1) * config->step) + config->min;
 
-What about this ...
+V4L2 control integer values are signed, thus s32 instead of u32. Otherwise
+looks good to me.
 
+-- 
+Regards,
 
---=20
-
-Dipl.-Ing.
-Jan-Simon M=F6ller
-
-jansimon.moeller@gmx.de
-Am Dienstag, 1. Juli 2014, 23:50:29 schrieb Jan-Simon M=F6ller:
-> Nighttime here. I'll look tomorrow.
->=20
-> > On Tue, Jul 1, 2014 at 5:07 AM, Sachin Kamat <sachin.kamat@samsung.=
-com>
->=20
-> wrote:
-> > > 'ret' is not used in the function. Remove it.
-> >=20
-> > Removing it is easy but I guess we should check the return error st=
-atus
-> > here. Jan-Simon, what's your opinion then?
-> >=20
-> > Thanks,
-> > -Bryan
-> >=20
-> > > Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> > > ---
-> > >=20
-> > >  drivers/leds/leds-blinkm.c |    8 +++-----
-> > >  1 file changed, 3 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blink=
-m.c
-> > > index d0452b099aee..f07f920ac0ac 100644
-> > > --- a/drivers/leds/leds-blinkm.c
-> > > +++ b/drivers/leds/leds-blinkm.c
-> > > @@ -441,14 +441,13 @@ static int blinkm_transfer_hw(struct i2c_cl=
-ient
-> > > *client, int cmd)>
-> > >=20
-> > >  static void led_work(struct work_struct *work)
-> > >  {
-> > >=20
-> > > -       int ret;
-> > >=20
-> > >         struct blinkm_led *led;
-> > >         struct blinkm_data *data;
-> > >         struct blinkm_work *blm_work =3D work_to_blmwork(work);
-> > >        =20
-> > >         led =3D blm_work->blinkm_led;
-> > >         data =3D i2c_get_clientdata(led->i2c_client);
-> > >=20
-> > > -       ret =3D blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
-> > > +       blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
-> > >=20
-> > >         atomic_dec(&led->active);
-> > >         dev_dbg(&led->i2c_client->dev,
-> > >        =20
-> > >                         "# DONE # next_red =3D %d, next_green =3D=
- %d,"
-> > >=20
-> > > @@ -546,9 +545,8 @@ static void blinkm_led_blue_set(struct led_cl=
-assdev
-> > > *led_cdev,>
-> > >=20
-> > >  static void blinkm_init_hw(struct i2c_client *client)
-> > >  {
-> > >=20
-> > > -       int ret;
-> > > -       ret =3D blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
-> > > -       ret =3D blinkm_transfer_hw(client, BLM_GO_RGB);
-> > > +       blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
-> > > +       blinkm_transfer_hw(client, BLM_GO_RGB);
-> > >=20
-> > >  }
-> > > =20
-> > >  static int blinkm_test_run(struct i2c_client *client)
-> > >=20
-> > > --
-> > > 1.7.9.5
-
---nextPart6116426.k1Ey6s7Vhy
-Content-Disposition: attachment; filename="0001-Enhance-error-checking-and-remove-sequence-handling.patch"
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/x-patch; charset="UTF-8"; name="0001-Enhance-error-checking-and-remove-sequence-handling.patch"
-
->From 652251115033be83c3626b260d9f1fdf0e479b73 Mon Sep 17 00:00:00 2001
-From: =3D?UTF-8?q?Jan-Simon=3D20M=3DC3=3DB6ller?=3D <dl9pf@gmx.de>
-Date: Wed, 9 Jul 2014 14:26:53 +0200
-Subject: [PATCH] Enhance error-checking and remove sequence handling.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
-
-Signed-off-by: Jan-Simon M=C3=B6ller <dl9pf@gmx.de>
----
- drivers/leds/leds-blinkm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-index d0452b0..9e7b988 100644
---- a/drivers/leds/leds-blinkm.c
-+++ b/drivers/leds/leds-blinkm.c
-@@ -449,6 +449,8 @@ static void led_work(struct work_struct *work)
- =09led =3D blm_work->blinkm_led;
- =09data =3D i2c_get_clientdata(led->i2c_client);
- =09ret =3D blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
-+        if(ret)
-+            dev_err(&led->i2c_client->dev, "BlinkM: HW transfer error\=
-n");
- =09atomic_dec(&led->active);
- =09dev_dbg(&led->i2c_client->dev,
- =09=09=09"# DONE # next_red =3D %d, next_green =3D %d,"
-@@ -548,7 +550,11 @@ static void blinkm_init_hw(struct i2c_client *clie=
-nt)
- {
- =09int ret;
- =09ret =3D blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
-+        if(ret)
-+            dev_err(&client->dev, "BlinkM: HW transfer error\n");
- =09ret =3D blinkm_transfer_hw(client, BLM_GO_RGB);
-+        if(ret)
-+            dev_err(&client->dev, "BlinkM: HW transfer error\n");
- }
-=20
- static int blinkm_test_run(struct i2c_client *client)
-@@ -747,6 +753,8 @@ static int blinkm_remove(struct i2c_client *client)=
-
-=20
- =09/* make sure no workqueue entries are pending */
- =09for (i =3D 0; i < 3; i++) {
-+=09=09//imbalance active counter to prevent further work
-+=09=09atomic_inc(&data->blinkm_leds[i].active);
- =09=09flush_scheduled_work();
- =09=09led_classdev_unregister(&data->blinkm_leds[i].led_cdev);
- =09}
-@@ -780,6 +788,10 @@ static int blinkm_remove(struct i2c_client *client=
-)
- =09=09dev_err(&client->dev, "Failure in blinkm_remove ignored. Continu=
-ing.\n");
-=20
- =09sysfs_remove_group(&client->dev.kobj, &blinkm_group);
-+
-+        // make sure all is done before returning
-+=09flush_scheduled_work();
-+
- =09return 0;
- }
-=20
---=20
-1.8.4.5
-
-
---nextPart6116426.k1Ey6s7Vhy--
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
