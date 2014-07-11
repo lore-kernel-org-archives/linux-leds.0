@@ -1,160 +1,38 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v4 09/21] Documentation: leds: Add description of LED Flash
- Class extension
-Date: Fri, 11 Jul 2014 16:04:12 +0200
-Message-ID: <1405087464-13762-10-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v4 07/21] of: add of_node_ncmp wrapper
+Date: Fri, 11 Jul 2014 16:04:10 +0200
+Message-ID: <1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Grant Likely <grant.likely@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Simek <monstr@monstr.eu>
 List-Id: linux-leds@vger.kernel.org
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes. There are also
-chapters devoted specifically to the Flash Manager feature.
+The wrapper for strnicmp is required for checking whether a node has
+expected prefix.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Grant Likely <grant.likely@linaro.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michal Simek <monstr@monstr.eu>
 ---
- Documentation/leds/leds-class-flash.txt |  126 +++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+ include/linux/of.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..0927804
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,126 @@
-+
-+Flash LED handling under Linux
-+==============================
-+
-+Some LED devices support two modes - torch and flash. In order to enable
-+support for flash LEDs the CONFIG_LEDS_CLASS_FLASH symbol must be defined
-+in the kernel config. A flash LED driver must register in the LED subsystem
-+with led_classdev_flash_register to gain flash capabilities.
-+
-+Following sysfs attributes are exposed for controlling flash led devices:
-+
-+	- flash_brightness - flash LED brightness in microamperes (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- indicator_brightness - privacy LED brightness in microamperes (RW)
-+	- max_indicator_brightness - maximum privacy LED brightness in
-+				     microamperes (RO)
-+	- flash_timeout - flash strobe duration in microseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- external_strobe - some devices expose dedicated hardware pins for
-+			    triggering a flash LED - this attribute allows to
-+			    set this mode (RW)
-+	- flash_fault - bitmask of flash faults that may have occurred,
-+			possible flags are:
-+		* 0x01 - flash controller voltage to the flash LED has exceeded
-+			 the limit specific to the flash controller
-+		* 0x02 - the flash strobe was still on when the timeout set by
-+			 the user has expired; not all flash controllers may
-+			 set this in all such conditions
-+		* 0x04 - the flash controller has overheated
-+		* 0x08 - the short circuit protection of the flash controller
-+			 has been triggered
-+		* 0x10 - current in the LED power supply has exceeded the limit
-+			 specific to the flash controller
-+		* 0x40 - flash controller voltage to the flash LED has been
-+			 below the minimum limit specific to the flash
-+		* 0x80 - the input voltage of the flash controller is below
-+			 the limit under which strobing the flash at full
-+			 current will not be possible. The condition persists
-+			 until this flag is no longer set
-+		* 0x100 - the temperature of the LED has exceeded its allowed
-+			  upper limit
-+
-+The LED subsystem driver can be controlled also from the level of VideoForLinux2
-+subsystem. In order to enable this the CONFIG_V4L2_FLASH_LED_CLASS symbol has to
-+be defined in the kernel config. The driver must call v4l2_flash_init function
-+to get registered in the V4L2 subsystem. On remove v4l2_flash_release function
-+has to be called (see <media/v4l2-flash.h>).
-+
-+After proper initialization V4L2 Flash sub-device is created. The sub-device
-+exposes a number of V4L2 controls. When the V4L2_CID_FLASH_LED_MODE control
-+is set to V4L2_FLASH_LED_MODE_TORCH or V4L2_FLASH_LED_MODE_FLASH the
-+LED subsystem sysfs interface becomes unavailable. The interface can be unlocked
-+by setting the mode back to V4L2_FLASH_LED_MODE_NONE.
-+
-+
-+Flash Manager
-+=============
-+
-+Flash LED devices often provide two ways of strobing the flash: software
-+(e.g. by setting a bit in a register) and hardware, by asserting dedicated pin,
-+which is usually connected to a camera sensor device. There are also flash led
-+devices which support only hardware strobing - in such cases a multiplexer
-+device is employed to route the flash strobe signal either from the SoC GPIO or
-+from the external strobe signal provider, e.g. camera sensor.
-+Use of multiplexers allows also to change the flash-sensor connection
-+dynamically if there is more than one flash or external strobe signal provider
-+available on the board.
-+
-+In order to address the aforementioned cases the Flash Manager functionality
-+has been introduced. Flash Manager is a part of LED Flash Class. It maintains
-+information about flashes, software and external strobe signal providers and
-+multiplexers that route strobe signals among them.
-+
-+To register a LED Flash Class device in the flash manager the device_node
-+of a flash device has to be passed as the third argument to the
-+led_classdev_flash_register function. The device_node is expected to include one
-+gate-software-strobe subnode and at least one gate-external-strobeN subnode.
-+Besides that there must defined a flash_muxes node aggregating all the
-+multiplexers that can be referenced to by the flash led devices.
-+(for mote details see Documentation/devicetree/bindings/leds/
-+leds-flash-manager.txt).
-+
-+Flash manager adds following sysfs attributes to the LED Flash Clash
-+device sysfs interface:
-+
-+	- strobe_provider - id of the external strobe signal provider associated
-+                            with the flash led device. It is created only if
-+			    there is more than one external strobe signal
-+			    provider defined (RW).
-+	- strobe_providerN - names of the strobe signal providers available
-+			     for the flash led device, where N is the
-+			     identifier of a strobe signal provider (RO)
-+	- blocking_strobe - informs if enabling either software or external
-+			    strobe will block the caller for the expected
-+			    time of strobing (1 - true, 0 - false). The call
-+			    needs to be blocking if the multiplexers involved
-+			    in the strobe signal routing are connected to more
-+			    than one flash led device. In such a case flash
-+			    manager becomes locked for the expected time of
-+			    strobing to prevent reconfigurarion of multiplexers
-+			    by the other flash led devices willing to strobe
-+			    in the same time (RO).
-+
-+
-+LED Flash Class multiplexers
-+============================
-+
-+Multiplexers are an indispensable part of the Flash Manager. Flash Manager has
-+its own led_flash_gpio_mux* helpers for creating, releasing and operating on
-+the simple gpio driven multiplexers (the ones whose lines are selected by
-+changing the state of its selector pins) and the user doesn't have to bother
-+with it.
-+
-+It is however possible that a more advanced device will be used for routing
-+strobe signals. This kind of devices are known to the Flash Manager as
-+"asynchronous muxes" and can be registered in runtime with use of
-+led_flash_manager_bind_async_mux API and unregistered with
-+led_flash_manager_unbind_async_mux. (see Documentation/leds/leds-async-mux.c
-+for the exemplary implementation of the async mux driver).
-+
-+If a LED Flash Class device declares dependency on an async mux, then strobing
-+the flash, or setting external strobe, will succeed only wnen the async mux
-+has been bound to the Flash Manager. Async mux module, once bound, can be
-+removed only after all LED Flash Class devices depending on it are unregistered
-+from the Flash Manager.
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 692b56c..9a53eea 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -199,6 +199,7 @@ static inline unsigned long of_read_ulong(const __be32 *cell, int size)
+ #define of_compat_cmp(s1, s2, l)	strcasecmp((s1), (s2))
+ #define of_prop_cmp(s1, s2)		strcmp((s1), (s2))
+ #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
++#define of_node_ncmp(s1, s2, n)		strnicmp((s1), (s2), (n))
+ #endif
+ 
+ /* flag descriptions */
 -- 
 1.7.9.5
