@@ -1,60 +1,52 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v4 21/21] ARM: dts: add aat1290 current regulator device
- node
-Date: Fri, 11 Jul 2014 16:04:24 +0200
-Message-ID: <1405087464-13762-22-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v4 20/21] DT: Add documentation for the Skyworks AAT1290
+Date: Fri, 11 Jul 2014 16:04:23 +0200
+Message-ID: <1405087464-13762-21-git-send-email-j.anaszewski@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add device node for AAT1290 1.5A Step-Up Current Regulator
-for Flash LEDs along with flash_muxes node containing
-information about a multiplexer that is used for switching
-between software and external strobe signal source.
+This patch adds device tree binding documentation for
+1.5A Step-Up Current Regulator for Flash LEDs.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 7787844..cbb76ba 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -785,4 +785,28 @@
- 		pulldown-ohm = <100000>; /* 100K */
- 		io-channels = <&adc 2>;  /* Battery temperature */
- 	};
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+new file mode 100644
+index 0000000..9a9ad15
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -0,0 +1,17 @@
++* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
 +
-+	flash_muxes {
-+		flash_mux1: mux1 {
-+			gpios = <&gpj1 0 0>;
-+		};
-+	};
++Required properties:
 +
-+	aat1290 {
-+		compatible = "skyworks,aat1290";
-+		gpios = <&gpj1 1 0>, <&gpj1 2 0>;
-+		flash-timeout = <1940000>;
-+		status = "okay";
++- compatible : should be "skyworks,aat1290"
++- gpios : two gpio pins in order FLEN, EN/SET
++- skyworks,flash-timeout : maximum flash timeout in microseconds -
++			   it can be calculated using following formula:
++			   T = 8.82 * 10^9 * Ct
 +
-+		gate-software-strobe {
-+			mux = <&flash_mux1>;
-+			mux-line-id = <0>;
-+		};
++Example:
 +
-+		gate-external-strobe {
-+			strobe-provider = <&s5c73m3_spi>;
-+			mux = <&flash_mux1>;
-+			mux-line-id = <1>;
-+		};
-+	};
- };
++flash_led: flash-led {
++	compatible = "skyworks,aat1290";
++	gpios = <&gpj1 1 0>, <&gpj1 2 0>;
++	flash-timeout = <1940000>;
++}
 -- 
 1.7.9.5
