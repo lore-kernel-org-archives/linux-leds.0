@@ -1,42 +1,41 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v4 01/21] leds: make brightness type consistent across
- whole subsystem
-Date: Fri, 11 Jul 2014 16:04:04 +0200
-Message-ID: <1405087464-13762-2-git-send-email-j.anaszewski@samsung.com>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 00/12] Remove mach-kirkwood
+Date: Fri, 11 Jul 2014 10:52:03 -0400
+Message-ID: <20140711145203.GD27706@htj.dyndns.org>
+References: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:38835 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752377AbaGKOwH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Jul 2014 10:52:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jason Cooper <jason@lakedaemon.net>, linux ARM <linux-arm-kernel@lists.infradead.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-ide@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org
 
-Documentations states that brightness units type is enum led_brightness
-and this is the type used by the led API functions. Adjust the type
-of brightness variables in the struct led_classdev accordingly.
+On Thu, Jul 10, 2014 at 11:36:20PM +0200, Andrew Lunn wrote:
+> This patchset removes arch/arm/mach-kirkwood.  This SoCs is now
+> supported in arch/arm/mach-mvebu using device tree.
+> 
+> V1 of this patchset also removed mach-dove. However it has been
+> decided to leave it alone for a while to aid some developers get out
+> of tree patches merged.
+>                                                                          
+> Change the dependencies for a number of drivers, either to use
+> ARCH_MVEBU where the drivers are generic, or MACH_KIRKWOOD and where
+> the drivers are specific to the SoC.
+> 
+> Once Jason Cooper has Acked these patches, we would prefer that
+> individual subsystem maintainers take these patches through their own
+> trees.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- include/linux/leds.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please let me know when I can take the libata part.
 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index e436864..995f933 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -31,8 +31,8 @@ enum led_brightness {
- 
- struct led_classdev {
- 	const char		*name;
--	int			 brightness;
--	int			 max_brightness;
-+	enum led_brightness	 brightness;
-+	enum led_brightness	 max_brightness;
- 	int			 flags;
- 
- 	/* Lower 16 bits reflect status */
+Thanks.
+
 -- 
-1.7.9.5
+tejun
