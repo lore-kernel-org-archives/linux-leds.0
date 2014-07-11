@@ -1,134 +1,102 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v4 13/21] v4l2-device: add v4l2_device_register_subdev_node
- API
-Date: Fri, 11 Jul 2014 16:04:16 +0200
-Message-ID: <1405087464-13762-14-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v4 10/21] Documentation: leds: add exemplary asynchronous
+ mux driver
+Date: Fri, 11 Jul 2014 16:04:13 +0200
+Message-ID: <1405087464-13762-11-git-send-email-j.anaszewski@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26527 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753880AbaGKOFW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Jul 2014 10:05:22 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:59423 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753857AbaGKOFI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Jul 2014 10:05:08 -0400
 In-reply-to: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-Extract the code executed for each entry of the subdev list
-and put it to the separate function. Export it as a public API.
-It allows for registering single sub-device at a time.
+Exemplary driver showing usage of the Flash Manager API
+for registering/unregistering asynchronous multiplexers
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- drivers/media/v4l2-core/v4l2-device.c |   63 +++++++++++++++++++--------------
- include/media/v4l2-device.h           |    7 ++++
- 2 files changed, 44 insertions(+), 26 deletions(-)
+ Documentation/leds/leds-async-mux.c |   65 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/leds/leds-async-mux.c
 
-diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-index 015f92a..0e91ef7 100644
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -216,9 +216,43 @@ static void v4l2_device_release_subdev_node(struct video_device *vdev)
- 	kfree(vdev);
- }
- 
--int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
-+int v4l2_device_register_subdev_node(struct v4l2_subdev *sd,
-+				     struct v4l2_device *v4l2_dev)
- {
- 	struct video_device *vdev;
-+	int err;
+diff --git a/Documentation/leds/leds-async-mux.c b/Documentation/leds/leds-async-mux.c
+new file mode 100644
+index 0000000..ee35d2f
+--- /dev/null
++++ b/Documentation/leds/leds-async-mux.c
+@@ -0,0 +1,65 @@
++/*
++ * Exemplary driver showing usage of the Flash Manager API
++ * for registering/unregistering asynchronous multiplexers.
++ *
++ *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
++ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ */
 +
-+	if (!(sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE))
-+		return 0;
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/led-class-flash.h>
++#include <linux/led-flash-manager.h>
++#include <linux/leds.h>
++#include <linux/of.h>
 +
-+	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
-+	if (!vdev)
-+		return -ENOMEM;
-+
-+	video_set_drvdata(vdev, sd);
-+	strlcpy(vdev->name, sd->name, sizeof(vdev->name));
-+	vdev->v4l2_dev = v4l2_dev;
-+	vdev->fops = &v4l2_subdev_fops;
-+	vdev->release = v4l2_device_release_subdev_node;
-+	vdev->ctrl_handler = sd->ctrl_handler;
-+	err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
-+				      sd->owner);
-+	if (err < 0) {
-+		kfree(vdev);
-+		return err;
-+	}
-+#if defined(CONFIG_MEDIA_CONTROLLER)
-+	sd->entity.info.v4l.major = VIDEO_MAJOR;
-+	sd->entity.info.v4l.minor = vdev->minor;
-+#endif
-+	sd->devnode = vdev;
-+
++static int led_async_mux_select_line(u32 line_id, void *mux)
++{
++	pr_info("led_async_mux_select_line line_id: %d\n", line_id);
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(v4l2_device_register_subdev_node);
 +
-+int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
++struct led_flash_mux_ops mux_ops = {
++	.select_line = led_async_mux_select_line,
++};
++
++static int led_async_mux_probe(struct platform_device *pdev)
 +{
- 	struct v4l2_subdev *sd;
- 	int err;
- 
-@@ -226,32 +260,9 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
- 	 * V4L2_SUBDEV_FL_HAS_DEVNODE flag.
- 	 */
- 	list_for_each_entry(sd, &v4l2_dev->subdevs, list) {
--		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE))
--			continue;
--
--		vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
--		if (!vdev) {
--			err = -ENOMEM;
--			goto clean_up;
--		}
--
--		video_set_drvdata(vdev, sd);
--		strlcpy(vdev->name, sd->name, sizeof(vdev->name));
--		vdev->v4l2_dev = v4l2_dev;
--		vdev->fops = &v4l2_subdev_fops;
--		vdev->release = v4l2_device_release_subdev_node;
--		vdev->ctrl_handler = sd->ctrl_handler;
--		err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
--					      sd->owner);
--		if (err < 0) {
--			kfree(vdev);
-+		err = v4l2_device_register_subdev_node(sd, v4l2_dev);
-+		if (err < 0)
- 			goto clean_up;
--		}
--#if defined(CONFIG_MEDIA_CONTROLLER)
--		sd->entity.info.v4l.major = VIDEO_MAJOR;
--		sd->entity.info.v4l.minor = vdev->minor;
--#endif
--		sd->devnode = vdev;
- 	}
- 	return 0;
- 
-diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
-index ffb69da..76594fc 100644
---- a/include/media/v4l2-device.h
-+++ b/include/media/v4l2-device.h
-@@ -114,6 +114,13 @@ int __must_check v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
-    wasn't registered. In that case it will do nothing. */
- void v4l2_device_unregister_subdev(struct v4l2_subdev *sd);
- 
-+/* Register device node for the subdev of the v4l2 device if it is marked with
-+ * the V4L2_SUBDEV_FL_HAS_DEVNODE flag.
-+ */
-+int __must_check
-+v4l2_device_register_subdev_node(struct v4l2_subdev *sd,
-+					struct v4l2_device *v4l2_dev);
++	struct led_flash_mux mux;
 +
- /* Register device nodes for all subdev of the v4l2 device that are marked with
-  * the V4L2_SUBDEV_FL_HAS_DEVNODE flag.
-  */
++	mux.ops = &mux_ops;
++	mux.owner = THIS_MODULE;
++	mux.node = pdev->dev->of_node;
++
++	return led_flash_manager_bind_async_mux(&mux);
++}
++
++static int led_async_mux_remove(struct platform_device *pdev)
++{
++	return led_flash_manager_unbind_async_mux(pdev->dev->of_node);
++}
++
++static struct of_device_id led_async_mux_dt_match[] = {
++	{.compatible = "led-async-mux"},
++	{},
++};
++
++static struct platform_driver led_async_mux_driver = {
++	.probe		= led_async_mux_probe,
++	.remove		= led_async_mux_remove,
++	.driver		= {
++		.name		= "led-async-mux",
++		.owner		= THIS_MODULE,
++		.of_match_table = led_async_mux_dt_match,
++	},
++};
++
++module_platform_driver(led_async_mux_driver);
++
++MODULE_AUTHOR("Jacek Anaszewski <j.anaszewski@samsung.com>");
++MODULE_DESCRIPTION("LED async mux");
++MODULE_LICENSE("GPL");
 -- 
 1.7.9.5
