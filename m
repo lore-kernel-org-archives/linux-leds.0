@@ -1,102 +1,96 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v4 10/21] Documentation: leds: add exemplary asynchronous
- mux driver
-Date: Fri, 11 Jul 2014 16:04:13 +0200
-Message-ID: <1405087464-13762-11-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v4 03/21] leds: Improve and export led_update_brightness
+Date: Fri, 11 Jul 2014 16:04:06 +0200
+Message-ID: <1405087464-13762-4-git-send-email-j.anaszewski@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59423 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753857AbaGKOFI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Jul 2014 10:05:08 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+List-Id: linux-leds@vger.kernel.org
 
-Exemplary driver showing usage of the Flash Manager API
-for registering/unregistering asynchronous multiplexers
+led_update_brightness helper function used to be exploited only locally
+in the led-class.c module, where its result was being passed to the
+brightness_show sysfs callback. With the introduction of v4l2-flash
+subdevice the same functionality became required for reading current
+brightness from a LED device. This patch adds checking of return value
+of the brightness_get callback and moves the led_update_brightness()
+function to the LED subsystem public API.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/leds/leds-async-mux.c |   65 +++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/leds/leds-async-mux.c
+ drivers/leds/led-class.c |    6 ------
+ drivers/leds/led-core.c  |   15 +++++++++++++++
+ include/linux/leds.h     |   10 ++++++++++
+ 3 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/leds/leds-async-mux.c b/Documentation/leds/leds-async-mux.c
-new file mode 100644
-index 0000000..ee35d2f
---- /dev/null
-+++ b/Documentation/leds/leds-async-mux.c
-@@ -0,0 +1,65 @@
-+/*
-+ * Exemplary driver showing usage of the Flash Manager API
-+ * for registering/unregistering asynchronous multiplexers.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index ea04891..da79bbb 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -23,12 +23,6 @@
+ 
+ static struct class *leds_class;
+ 
+-static void led_update_brightness(struct led_classdev *led_cdev)
+-{
+-	if (led_cdev->brightness_get)
+-		led_cdev->brightness = led_cdev->brightness_get(led_cdev);
+-}
+-
+ static ssize_t brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 4d7cb31..0ac06ed 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -127,6 +127,21 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ }
+ EXPORT_SYMBOL(led_set_brightness);
+ 
++int led_update_brightness(struct led_classdev *led_cdev)
++{
++	int ret = 0;
++
++	if (led_cdev->brightness_get) {
++		ret = led_cdev->brightness_get(led_cdev);
++		if (ret >= 0) {
++			led_cdev->brightness = ret;
++			return 0;
++		}
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(led_update_brightness);
+ /* Caller must ensure led_cdev->led_lock held */
+ void led_sysfs_lock(struct led_classdev *led_cdev)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index da7c6b5..e9b025d 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -146,6 +146,16 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+ extern void led_set_brightness(struct led_classdev *led_cdev,
+ 			       enum led_brightness brightness);
+ /**
++ * led_update_brightness - update LED brightness
++ * @led_cdev: the LED to query
 + *
-+ *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
-+ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
++ * Get an LED's current brightness and update led_cdev->brightness
++ * member with the obtained value.
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
++ * Returns: 0 on success or negative error value on failure
 + */
++extern int led_update_brightness(struct led_classdev *led_cdev);
 +
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/led-flash-manager.h>
-+#include <linux/leds.h>
-+#include <linux/of.h>
-+
-+static int led_async_mux_select_line(u32 line_id, void *mux)
-+{
-+	pr_info("led_async_mux_select_line line_id: %d\n", line_id);
-+	return 0;
-+}
-+
-+struct led_flash_mux_ops mux_ops = {
-+	.select_line = led_async_mux_select_line,
-+};
-+
-+static int led_async_mux_probe(struct platform_device *pdev)
-+{
-+	struct led_flash_mux mux;
-+
-+	mux.ops = &mux_ops;
-+	mux.owner = THIS_MODULE;
-+	mux.node = pdev->dev->of_node;
-+
-+	return led_flash_manager_bind_async_mux(&mux);
-+}
-+
-+static int led_async_mux_remove(struct platform_device *pdev)
-+{
-+	return led_flash_manager_unbind_async_mux(pdev->dev->of_node);
-+}
-+
-+static struct of_device_id led_async_mux_dt_match[] = {
-+	{.compatible = "led-async-mux"},
-+	{},
-+};
-+
-+static struct platform_driver led_async_mux_driver = {
-+	.probe		= led_async_mux_probe,
-+	.remove		= led_async_mux_remove,
-+	.driver		= {
-+		.name		= "led-async-mux",
-+		.owner		= THIS_MODULE,
-+		.of_match_table = led_async_mux_dt_match,
-+	},
-+};
-+
-+module_platform_driver(led_async_mux_driver);
-+
-+MODULE_AUTHOR("Jacek Anaszewski <j.anaszewski@samsung.com>");
-+MODULE_DESCRIPTION("LED async mux");
-+MODULE_LICENSE("GPL");
+  * led_sysfs_lock - lock LED sysfs interface
+  * @led_cdev: the LED to set
+  *
 -- 
 1.7.9.5
