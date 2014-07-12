@@ -1,41 +1,203 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 00/12] Remove mach-kirkwood
-Date: Fri, 11 Jul 2014 10:52:03 -0400
-Message-ID: <20140711145203.GD27706@htj.dyndns.org>
-References: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] leds: add driver for the iPAQ micro
+Date: Sat, 12 Jul 2014 11:32:31 +0200
+Message-ID: <1405157551-10480-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:38835 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752377AbaGKOwH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Jul 2014 10:52:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:42374 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752307AbaGLJci (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 12 Jul 2014 05:32:38 -0400
+Received: by mail-wg0-f45.google.com with SMTP id x12so2037962wgg.28
+        for <linux-leds@vger.kernel.org>; Sat, 12 Jul 2014 02:32:37 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jason Cooper <jason@lakedaemon.net>, linux ARM <linux-arm-kernel@lists.infradead.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-ide@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Jul 10, 2014 at 11:36:20PM +0200, Andrew Lunn wrote:
-> This patchset removes arch/arm/mach-kirkwood.  This SoCs is now
-> supported in arch/arm/mach-mvebu using device tree.
-> 
-> V1 of this patchset also removed mach-dove. However it has been
-> decided to leave it alone for a while to aid some developers get out
-> of tree patches merged.
->                                                                          
-> Change the dependencies for a number of drivers, either to use
-> ARCH_MVEBU where the drivers are generic, or MACH_KIRKWOOD and where
-> the drivers are specific to the SoC.
-> 
-> Once Jason Cooper has Acked these patches, we would prefer that
-> individual subsystem maintainers take these patches through their own
-> trees.
+This adds a driver for the iPAQ microcontroller LED.
 
-Please let me know when I can take the libata part.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/leds/Kconfig           |   7 +++
+ drivers/leds/Makefile          |   1 +
+ drivers/leds/leds-ipaq-micro.c | 139 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 147 insertions(+)
+ create mode 100644 drivers/leds/leds-ipaq-micro.c
 
-Thanks.
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a1b044e7eaad..30e82860567a 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -143,6 +143,13 @@ config LEDS_SUNFIRE
+ 	  This option enables support for the Left, Middle, and Right
+ 	  LEDs on the I/O and CPU boards of SunFire UltraSPARC servers.
+ 
++config LEDS_IPAQ_MICRO
++	tristate "LED Support for the Compaq iPAQ h3xxx"
++	depends on MFD_IPAQ_MICRO
++	help
++	  Choose this option if you want to use the notification LED on
++	  Compaq/HP iPAQ h3100 and h3600.
++
+ config LEDS_HP6XX
+ 	tristate "LED Support for the HP Jornada 6xx"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 79c5155199a7..b2a62959ff8f 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
+ obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
++obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+ obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+ obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
+ obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
+new file mode 100644
+index 000000000000..a716ec27f066
+--- /dev/null
++++ b/drivers/leds/leds-ipaq-micro.c
+@@ -0,0 +1,139 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * h3xxx atmel micro companion support, notification LED subdevice
++ *
++ * Author : Linus Walleij <linus.walleij@linaro.org>
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/ipaq-micro.h>
++#include <linux/leds.h>
++
++#define LED_YELLOW	0x00
++#define LED_GREEN	0x01
++
++#define LED_EN          (1 << 4)        /* LED ON/OFF 0:off, 1:on                       */
++#define LED_AUTOSTOP    (1 << 5)        /* LED ON/OFF auto stop set 0:disable, 1:enable */
++#define LED_ALWAYS      (1 << 6)        /* LED Interrupt Mask 0:No mask, 1:mask         */
++
++static void micro_leds_brightness_set(struct led_classdev *led_cdev,
++				      enum led_brightness value)
++{
++	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
++	/*
++	 * In this message:
++	 * Byte 0 = LED color: 0 = yellow, 1 = green
++	 *          yellow LED is always ~30 blinks per minute
++	 * Byte 1 = duration (flags?) appears to be ignored
++	 * Byte 2 = green ontime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 second
++	 * Byte 3 = green offtime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 seconds
++	 */
++	struct ipaq_micro_msg msg = {
++		.id = MSG_NOTIFY_LED,
++		.tx_len = 4,
++	};
++
++	msg.tx_data[0] = LED_GREEN;
++	msg.tx_data[1] = 0;
++	if (value) {
++		msg.tx_data[2] = 0; /* Duty cycle 256 */
++		msg.tx_data[3] = 1;
++	} else {
++		msg.tx_data[2] = 1;
++		msg.tx_data[3] = 0; /* Duty cycle 256 */
++	}
++	ipaq_micro_tx_msg_sync(micro, &msg);
++}
++
++/* Maximum duty cycle in ms 256/10 sec = 25600 ms */
++#define IPAQ_LED_MAX_DUTY 25600
++
++static int micro_leds_blink_set(struct led_classdev *led_cdev,
++				unsigned long *delay_on,
++				unsigned long *delay_off)
++{
++	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
++	/*
++	 * In this message:
++	 * Byte 0 = LED color: 0 = yellow, 1 = green
++	 *          yellow LED is always ~30 blinks per minute
++	 * Byte 1 = duration (flags?) appears to be ignored
++	 * Byte 2 = green ontime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 second
++	 * Byte 3 = green offtime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 seconds
++	 */
++	struct ipaq_micro_msg msg = {
++		.id = MSG_NOTIFY_LED,
++		.tx_len = 4,
++	};
++
++	msg.tx_data[0] = LED_GREEN;
++        if (*delay_on > IPAQ_LED_MAX_DUTY ||
++	    *delay_off > IPAQ_LED_MAX_DUTY)
++                return -EINVAL;
++
++        if (*delay_on == 0 && *delay_off == 0) {
++                *delay_on = 100;
++                *delay_off = 100;
++        }
++
++	msg.tx_data[1] = 0;
++	if (*delay_on >= IPAQ_LED_MAX_DUTY)
++		msg.tx_data[2] = 0;
++	else
++		msg.tx_data[2] = (u8) DIV_ROUND_CLOSEST(*delay_on, 100);
++	if (*delay_off >= IPAQ_LED_MAX_DUTY)
++		msg.tx_data[3] = 0;
++	else
++		msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
++	return ipaq_micro_tx_msg_sync(micro, &msg);
++}
++
++static struct led_classdev micro_led = {
++	.name			= "notify",
++	.brightness_set		= micro_leds_brightness_set,
++	.blink_set		= micro_leds_blink_set,
++	.flags			= LED_CORE_SUSPENDRESUME,
++};
++
++static int micro_leds_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = led_classdev_register(&pdev->dev, &micro_led);
++	if (ret)
++		dev_err(&pdev->dev, "registering led failed: %d\n", ret);
++	dev_info(&pdev->dev, "iPAQ micro notification LED driver\n");
++
++	return 0;
++}
++
++static int micro_leds_remove(struct platform_device *pdev)
++{
++	led_classdev_unregister(&micro_led);
++	return 0;
++}
++
++struct platform_driver micro_leds_device_driver = {
++	.driver = {
++		.name    = "ipaq-micro-leds",
++	},
++	.probe   = micro_leds_probe,
++	.remove  = micro_leds_remove,
++};
++module_platform_driver(micro_leds_device_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("driver for iPAQ Atmel micro leds");
++MODULE_ALIAS("platform:ipaq-micro-leds");
 -- 
-tejun
+1.9.3
