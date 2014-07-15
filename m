@@ -1,149 +1,218 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v2 00/12] Remove mach-kirkwood
-Date: Sun, 13 Jul 2014 17:59:24 -0400
-Message-ID: <20140713215924.GG13108@titan.lakedaemon.net>
-References: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] leds: add driver for the iPAQ micro
+Date: Mon, 14 Jul 2014 17:46:12 -0700
+Message-ID: <CAK5ve-L8vY-DozPhEp1FTSq2vxb0ya3JEJB5WYaOqshK=BCOOg@mail.gmail.com>
+References: <1405157551-10480-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1405028192-9623-1-git-send-email-andrew@lunn.ch>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-ide@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, alsa-devel@alsa-project.org, Bryan Wu <cooloney@gmail.com>, linux-watchdog@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Tejun Heo <tj@kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, Zhang Rui <rui.zhang@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:39002 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752373AbaGOAqe (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 14 Jul 2014 20:46:34 -0400
+Received: by mail-lb0-f179.google.com with SMTP id v6so1017418lbi.24
+        for <linux-leds@vger.kernel.org>; Mon, 14 Jul 2014 17:46:32 -0700 (PDT)
+In-Reply-To: <1405157551-10480-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-All driver/sub-system maintainers:
+On Sat, Jul 12, 2014 at 2:32 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds a driver for the iPAQ microcontroller LED.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/leds/Kconfig           |   7 +++
+>  drivers/leds/Makefile          |   1 +
+>  drivers/leds/leds-ipaq-micro.c | 139 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 147 insertions(+)
+>  create mode 100644 drivers/leds/leds-ipaq-micro.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index a1b044e7eaad..30e82860567a 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -143,6 +143,13 @@ config LEDS_SUNFIRE
+>           This option enables support for the Left, Middle, and Right
+>           LEDs on the I/O and CPU boards of SunFire UltraSPARC servers.
+>
+> +config LEDS_IPAQ_MICRO
+> +       tristate "LED Support for the Compaq iPAQ h3xxx"
+> +       depends on MFD_IPAQ_MICRO
+> +       help
+> +         Choose this option if you want to use the notification LED on
+> +         Compaq/HP iPAQ h3100 and h3600.
+> +
+>  config LEDS_HP6XX
+>         tristate "LED Support for the HP Jornada 6xx"
+>         depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 79c5155199a7..b2a62959ff8f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)             += leds-lp8501.o
+>  obj-$(CONFIG_LEDS_LP8788)              += leds-lp8788.o
+>  obj-$(CONFIG_LEDS_TCA6507)             += leds-tca6507.o
+>  obj-$(CONFIG_LEDS_CLEVO_MAIL)          += leds-clevo-mail.o
+> +obj-$(CONFIG_LEDS_IPAQ_MICRO)          += leds-ipaq-micro.o
+>  obj-$(CONFIG_LEDS_HP6XX)               += leds-hp6xx.o
+>  obj-$(CONFIG_LEDS_OT200)               += leds-ot200.o
+>  obj-$(CONFIG_LEDS_FSG)                 += leds-fsg.o
+> diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
+> new file mode 100644
+> index 000000000000..a716ec27f066
+> --- /dev/null
+> +++ b/drivers/leds/leds-ipaq-micro.c
+> @@ -0,0 +1,139 @@
+> +/*
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * h3xxx atmel micro companion support, notification LED subdevice
+> + *
+> + * Author : Linus Walleij <linus.walleij@linaro.org>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/ipaq-micro.h>
+> +#include <linux/leds.h>
+> +
+> +#define LED_YELLOW     0x00
+> +#define LED_GREEN      0x01
+> +
+> +#define LED_EN          (1 << 4)        /* LED ON/OFF 0:off, 1:on                       */
+> +#define LED_AUTOSTOP    (1 << 5)        /* LED ON/OFF auto stop set 0:disable, 1:enable */
+> +#define LED_ALWAYS      (1 << 6)        /* LED Interrupt Mask 0:No mask, 1:mask         */
+> +
+> +static void micro_leds_brightness_set(struct led_classdev *led_cdev,
+> +                                     enum led_brightness value)
+> +{
+> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
+> +       /*
+> +        * In this message:
+> +        * Byte 0 = LED color: 0 = yellow, 1 = green
+> +        *          yellow LED is always ~30 blinks per minute
+> +        * Byte 1 = duration (flags?) appears to be ignored
+> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 second
+> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 seconds
+> +        */
+> +       struct ipaq_micro_msg msg = {
+> +               .id = MSG_NOTIFY_LED,
+> +               .tx_len = 4,
+> +       };
+> +
+> +       msg.tx_data[0] = LED_GREEN;
+> +       msg.tx_data[1] = 0;
+> +       if (value) {
+> +               msg.tx_data[2] = 0; /* Duty cycle 256 */
+> +               msg.tx_data[3] = 1;
+> +       } else {
+> +               msg.tx_data[2] = 1;
+> +               msg.tx_data[3] = 0; /* Duty cycle 256 */
+> +       }
+> +       ipaq_micro_tx_msg_sync(micro, &msg);
+> +}
+> +
+> +/* Maximum duty cycle in ms 256/10 sec = 25600 ms */
+> +#define IPAQ_LED_MAX_DUTY 25600
+> +
+> +static int micro_leds_blink_set(struct led_classdev *led_cdev,
+> +                               unsigned long *delay_on,
+> +                               unsigned long *delay_off)
+> +{
+> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
+> +       /*
+> +        * In this message:
+> +        * Byte 0 = LED color: 0 = yellow, 1 = green
+> +        *          yellow LED is always ~30 blinks per minute
+> +        * Byte 1 = duration (flags?) appears to be ignored
+> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 second
+> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 seconds
+> +        */
+> +       struct ipaq_micro_msg msg = {
+> +               .id = MSG_NOTIFY_LED,
+> +               .tx_len = 4,
+> +       };
+> +
+> +       msg.tx_data[0] = LED_GREEN;
+> +        if (*delay_on > IPAQ_LED_MAX_DUTY ||
+> +           *delay_off > IPAQ_LED_MAX_DUTY)
+> +                return -EINVAL;
+> +
+> +        if (*delay_on == 0 && *delay_off == 0) {
+> +                *delay_on = 100;
+> +                *delay_off = 100;
+> +        }
+> +
+> +       msg.tx_data[1] = 0;
+> +       if (*delay_on >= IPAQ_LED_MAX_DUTY)
+> +               msg.tx_data[2] = 0;
+> +       else
+> +               msg.tx_data[2] = (u8) DIV_ROUND_CLOSEST(*delay_on, 100);
+> +       if (*delay_off >= IPAQ_LED_MAX_DUTY)
+> +               msg.tx_data[3] = 0;
+> +       else
+> +               msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
+> +       return ipaq_micro_tx_msg_sync(micro, &msg);
 
-On Thu, Jul 10, 2014 at 11:36:20PM +0200, Andrew Lunn wrote:
-> This patchset removes arch/arm/mach-kirkwood.  This SoCs is now
-> supported in arch/arm/mach-mvebu using device tree.
-> 
-> V1 of this patchset also removed mach-dove. However it has been
-> decided to leave it alone for a while to aid some developers get out
-> of tree patches merged.
->                                                                          
-> Change the dependencies for a number of drivers, either to use
-> ARCH_MVEBU where the drivers are generic, or MACH_KIRKWOOD and where
-> the drivers are specific to the SoC.
-> 
-> Once Jason Cooper has Acked these patches, we would prefer that
-> individual subsystem maintainers take these patches through their own
-> trees.
-> 
-> Thanks
-> 	Andrew
-> 
-> Andrew Lunn (12):
->   ARM: Kirkwood: Remove mach-kirkwood
->   ARM: Kirkwood: Remove kirkwood_defconfig
->   ASoC: kirkwood: Remove unused drivers
->   ASoC: kirkwood: Remove ARCH_KIRKWOOD dependency
->   cpuidle: kirkwood: Remove ARCH_KIRKWOOD dependency
->   ata: Remove ARCH_KIRKWOOD dependency
->   thermal: Remove ARCH_KIRKWOOD dependency
->   leds: Remove ARCH_KIRKWOOD dependency
->   PCI: Remove ARCH_KIRKWOOD dependency
->   phy: Remove ARCH_KIRKWOOD dependency
->   rtc: Remove ARCH_KIRKWOOD dependency
->   watchdog: Remove ARCH_KIRKWOOD dependency
-> 
->  arch/arm/Kconfig                                  |  18 -
->  arch/arm/Kconfig.debug                            |   6 +-
->  arch/arm/Makefile                                 |   1 -
->  arch/arm/boot/dts/Makefile                        |   5 +-
->  arch/arm/configs/kirkwood_defconfig               | 181 ------
->  arch/arm/mach-kirkwood/Kconfig                    | 111 ----
->  arch/arm/mach-kirkwood/Makefile                   |  14 -
->  arch/arm/mach-kirkwood/Makefile.boot              |   3 -
->  arch/arm/mach-kirkwood/board-dt.c                 | 223 -------
->  arch/arm/mach-kirkwood/common.c                   | 746 ----------------------
->  arch/arm/mach-kirkwood/common.h                   |  74 ---
->  arch/arm/mach-kirkwood/d2net_v2-setup.c           | 231 -------
->  arch/arm/mach-kirkwood/include/mach/bridge-regs.h |  86 ---
->  arch/arm/mach-kirkwood/include/mach/entry-macro.S |  34 -
->  arch/arm/mach-kirkwood/include/mach/hardware.h    |  14 -
->  arch/arm/mach-kirkwood/include/mach/irqs.h        |  65 --
->  arch/arm/mach-kirkwood/include/mach/kirkwood.h    | 142 ----
->  arch/arm/mach-kirkwood/include/mach/uncompress.h  |  46 --
->  arch/arm/mach-kirkwood/irq.c                      |  82 ---
->  arch/arm/mach-kirkwood/lacie_v2-common.c          | 114 ----
->  arch/arm/mach-kirkwood/lacie_v2-common.h          |  16 -
->  arch/arm/mach-kirkwood/mpp.c                      |  43 --
->  arch/arm/mach-kirkwood/mpp.h                      | 348 ----------
->  arch/arm/mach-kirkwood/netxbig_v2-setup.c         | 422 ------------
->  arch/arm/mach-kirkwood/openrd-setup.c             | 255 --------
->  arch/arm/mach-kirkwood/pcie.c                     | 296 ---------
->  arch/arm/mach-kirkwood/pm.c                       |  76 ---
->  arch/arm/mach-kirkwood/pm.h                       |  26 -
->  arch/arm/mach-kirkwood/rd88f6192-nas-setup.c      |  89 ---
->  arch/arm/mach-kirkwood/rd88f6281-setup.c          | 128 ----
->  arch/arm/mach-kirkwood/t5325-setup.c              | 216 -------
->  arch/arm/mach-kirkwood/ts219-setup.c              | 142 ----
->  arch/arm/mach-kirkwood/ts41x-setup.c              | 186 ------
->  arch/arm/mach-kirkwood/tsx1x-common.c             | 113 ----
->  arch/arm/mach-kirkwood/tsx1x-common.h             |   7 -
->  arch/arm/mm/Kconfig                               |   2 +-
->  drivers/ata/Kconfig                               |   2 +-
->  drivers/cpuidle/Kconfig.arm                       |   2 +-
->  drivers/leds/Kconfig                              |   4 +-
->  drivers/pci/host/Kconfig                          |   2 +-
->  drivers/phy/Kconfig                               |   2 +-
->  drivers/rtc/Kconfig                               |   2 +-
->  drivers/thermal/Kconfig                           |   2 +-
->  drivers/watchdog/Kconfig                          |   2 +-
->  sound/soc/kirkwood/Kconfig                        |  19 +-
->  sound/soc/kirkwood/Makefile                       |   4 -
->  sound/soc/kirkwood/kirkwood-openrd.c              | 109 ----
->  sound/soc/kirkwood/kirkwood-t5325.c               | 116 ----
->  48 files changed, 14 insertions(+), 4813 deletions(-)
->  delete mode 100644 arch/arm/configs/kirkwood_defconfig
->  delete mode 100644 arch/arm/mach-kirkwood/Kconfig
->  delete mode 100644 arch/arm/mach-kirkwood/Makefile
->  delete mode 100644 arch/arm/mach-kirkwood/Makefile.boot
->  delete mode 100644 arch/arm/mach-kirkwood/board-dt.c
->  delete mode 100644 arch/arm/mach-kirkwood/common.c
->  delete mode 100644 arch/arm/mach-kirkwood/common.h
->  delete mode 100644 arch/arm/mach-kirkwood/d2net_v2-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/bridge-regs.h
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/entry-macro.S
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/hardware.h
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/irqs.h
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/kirkwood.h
->  delete mode 100644 arch/arm/mach-kirkwood/include/mach/uncompress.h
->  delete mode 100644 arch/arm/mach-kirkwood/irq.c
->  delete mode 100644 arch/arm/mach-kirkwood/lacie_v2-common.c
->  delete mode 100644 arch/arm/mach-kirkwood/lacie_v2-common.h
->  delete mode 100644 arch/arm/mach-kirkwood/mpp.c
->  delete mode 100644 arch/arm/mach-kirkwood/mpp.h
->  delete mode 100644 arch/arm/mach-kirkwood/netxbig_v2-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/openrd-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/pcie.c
->  delete mode 100644 arch/arm/mach-kirkwood/pm.c
->  delete mode 100644 arch/arm/mach-kirkwood/pm.h
->  delete mode 100644 arch/arm/mach-kirkwood/rd88f6192-nas-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/rd88f6281-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/t5325-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/ts219-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/ts41x-setup.c
->  delete mode 100644 arch/arm/mach-kirkwood/tsx1x-common.c
->  delete mode 100644 arch/arm/mach-kirkwood/tsx1x-common.h
->  delete mode 100644 sound/soc/kirkwood/kirkwood-openrd.c
->  delete mode 100644 sound/soc/kirkwood/kirkwood-t5325.c
+Do we need to use workqueue for both .brightness_set and .blink_set?
 
-For all the driver changes:
+> +}
+> +
+> +static struct led_classdev micro_led = {
+> +       .name                   = "notify",
 
-Acked-by: Jason Cooper <jason@lakedaemon.net>
+I don't think this is a good name, I prefer like "leds-ipaq-micro".
 
-thx,
+> +       .brightness_set         = micro_leds_brightness_set,
+> +       .blink_set              = micro_leds_blink_set,
+> +       .flags                  = LED_CORE_SUSPENDRESUME,
+> +};
+> +
+> +static int micro_leds_probe(struct platform_device *pdev)
+> +{
+> +       int ret;
+> +
+> +       ret = led_classdev_register(&pdev->dev, &micro_led);
+> +       if (ret)
+> +               dev_err(&pdev->dev, "registering led failed: %d\n", ret);
 
-Jason.
+Shouldn't we return error status here instead of continuing.
+
+> +       dev_info(&pdev->dev, "iPAQ micro notification LED driver\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int micro_leds_remove(struct platform_device *pdev)
+> +{
+> +       led_classdev_unregister(&micro_led);
+> +       return 0;
+> +}
+> +
+> +struct platform_driver micro_leds_device_driver = {
+> +       .driver = {
+> +               .name    = "ipaq-micro-leds",
+> +       },
+> +       .probe   = micro_leds_probe,
+> +       .remove  = micro_leds_remove,
+> +};
+> +module_platform_driver(micro_leds_device_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("driver for iPAQ Atmel micro leds");
+> +MODULE_ALIAS("platform:ipaq-micro-leds");
+> --
+> 1.9.3
+>
