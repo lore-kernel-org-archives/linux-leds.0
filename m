@@ -1,65 +1,29 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v4 06/21] leds: add API for setting torch brightness
-Date: Thu, 17 Jul 2014 00:54:44 +0300
-Message-ID: <20140716215444.GK16460@valkosipuli.retiisi.org.uk>
+From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+Subject: Re: [PATCH/RFC v4 07/21] of: add of_node_ncmp wrapper
+Date: Thu, 17 Jul 2014 01:00:45 +0300
+Message-ID: <20140716220045.GL16460@valkosipuli.retiisi.org.uk>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-7-git-send-email-j.anaszewski@samsung.com>
+ <1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:33553 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751907AbaGPVzU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Wed, 16 Jul 2014 17:55:20 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1405087464-13762-7-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <1405087464-13762-8-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Michal Simek <monstr-pSz03upnqPeHXe+LvDLADg@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-Hi Jacek,
+On Fri, Jul 11, 2014 at 04:04:10PM +0200, Jacek Anaszewski wrote:
+> The wrapper for strnicmp is required for checking whether a node has
+> expected prefix.
 
-Jacek Anaszewski wrote:
-...
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 1a130cc..9bea9e6 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -44,11 +44,21 @@ struct led_classdev {
->   #define LED_BLINK_ONESHOT_STOP	(1 << 18)
->   #define LED_BLINK_INVERT	(1 << 19)
->   #define LED_SYSFS_LOCK		(1 << 20)
-> +#define LED_DEV_CAP_TORCH	(1 << 21)
->
->   	/* Set LED brightness level */
->   	/* Must not sleep, use a workqueue if needed */
->   	void		(*brightness_set)(struct led_classdev *led_cdev,
->   					  enum led_brightness brightness);
-> +	/*
-> +	 * Set LED brightness immediately - it is required for flash led
-> +	 * devices as they require setting torch brightness to have immediate
-> +	 * effect. brightness_set op cannot be used for this purpose because
-> +	 * the led drivers schedule a work queue task in it to allow for
-> +	 * being called from led-triggers, i.e. from the timer irq context.
-> +	 */
-
-Do we need to classify actual devices based on this? I think it's rather 
-a different API behaviour between the LED and the V4L2 APIs.
-
-On devices that are slow to control, the behaviour should be asynchronous
-over the LED API and synchronous when accessed through the V4L2 API. How
-about implementing the work queue, as I have suggested, in the framework, so
-that individual drivers don't need to care about this and just implement the
-synchronous variant of this op? A flag could be added to distinguish devices
-that are fast so that the work queue isn't needed.
-
-It'd be nice to avoid individual drivers having to implement multiple ops to
-do the same thing, just for differing user space interfacs.
+Acked-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 
 -- 
-Kind regards,
-
 Sakari Ailus
-e-mail: sakari.ailus@iki.fi     XMPP: sailus@retiisi.org.uk
+e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
