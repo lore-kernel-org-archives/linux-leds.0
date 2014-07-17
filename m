@@ -1,29 +1,65 @@
-From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Subject: Re: [PATCH/RFC v4 07/21] of: add of_node_ncmp wrapper
-Date: Thu, 17 Jul 2014 01:00:45 +0300
-Message-ID: <20140716220045.GL16460@valkosipuli.retiisi.org.uk>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: [PATCH v3 0/3] Introduce MEN 14F021P BMC driver series
+Date: Thu, 17 Jul 2014 15:17:39 +0200
+Message-ID: <cover.1405602280.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail1.bemta3.messagelabs.com ([195.245.230.171]:9577 "EHLO
+	mail1.bemta3.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756162AbaGQMcn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Thu, 17 Jul 2014 08:32:43 -0400
 Content-Disposition: inline
-In-Reply-To: <1405087464-13762-8-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Michal Simek <monstr-pSz03upnqPeHXe+LvDLADg@public.gmane.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, wim@iguana.be, linux-watchdog@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 04:04:10PM +0200, Jacek Anaszewski wrote:
-> The wrapper for strnicmp is required for checking whether a node has
-> expected prefix.
+This patch set add support for the MEN 14F021P00 Board Management called BMC.
 
-Acked-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+The BMC is a PIC Mikrocontroller which assembled on almost all of our
+3U Compact PCI CPU board and a few Box PCs.
+The main part of the BMC is to start and monitor the board, but there are a
+lot more features which can be accessed using an I2C Host interface
+ 
+Features supported in this Patchset:
+         - Watchdog
+         - LEDs
+
+The Patchset includes a MFD Core driver, Watchdog and LEDs driver.
+
+Changes in v3:
+	- deleted i2c_smbus wrapper functions and use native one
+	- some cosmentics and variable renaming to be more clear
+	- renamed "leave production" mode to "exit production mode"
+
+Changes in v2:
+	- changed i2c_smbus_read wrapper function to return both, value
+	  and error.
+	- moved "leave production mode" from Watchdog driver to mfd core.
+	- fixed some return values in the watchdog driver to return the original
+	  error value instead of -EIO.
+
+Andreas Werner (3):
+  drivers/mfd/menf21bmc: introduce MEN 14F021P00 BMC MFD Core driver
+  drivers/watchdog/menf21bmc_wdt: introduce MEN 14F021P00 BMC Watchdog
+    driver
+  drivers/leds/leds-menf21bmc: introduce MEN 14F021P00 BMC LED driver
+
+ drivers/leds/Kconfig             |   6 ++
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 134 +++++++++++++++++++++++++
+ drivers/mfd/Kconfig              |  12 +++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 136 ++++++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |   7 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 206 +++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 504 insertions(+)
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.0.1
