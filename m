@@ -1,201 +1,248 @@
-From: Andreas Werner <andreas.werner@men.de>
-Subject: [PATCH v3 3/3] drivers/leds/leds-menf21bmc: introduce MEN 14F021P00
- BMC LED driver
-Date: Thu, 17 Jul 2014 15:18:51 +0200
-Message-ID: <fec81db0dd6e08e1e07d3b7c00cb933b2ab63ab3.1405602280.git.andreas.werner@men.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/3] drivers/mfd/menf21bmc: introduce MEN 14F021P00
+ BMC MFD Core driver
+Date: Thu, 17 Jul 2014 13:41:56 +0100
+Message-ID: <20140717124156.GF30888@lee--X1>
 References: <cover.1405602280.git.andreas.werner@men.de>
+ <e035a8a5211769e610a1337dc786f2fcc8dfd14d.1405602280.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1405602280.git.andreas.werner@men.de>
+In-Reply-To: <e035a8a5211769e610a1337dc786f2fcc8dfd14d.1405602280.git.andreas.werner@men.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, wim@iguana.be, linux-watchdog@vger.kernel.org
+To: Andreas Werner <andreas.werner@men.de>
+Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, wim@iguana.be, linux-watchdog@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Added driver to support the 14F021P00 BMC LEDs.
-The BMC is a Board Management Controll include four LEDs which
-can be switched on and off.
+On Thu, 17 Jul 2014, Andreas Werner wrote:
+> The MEN 14F021P00 Board Management Controller provides an
+> I2C interface to the host to access the feature implemented in the BM=
+C.
+> The BMC is a PIC Microntroller assembled on CPCI Card from MEN Mikroe=
+lektronik
+> and on a few Box/Display Computer.
+>=20
+> Added MFD Core driver, supporting the I2C communication to the device=
+=2E
+>=20
+> The MFD driver currently supports the following features:
+>  	- Watchdog
+>  	- LEDs
+>=20
+> Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> ---
+>  drivers/mfd/Kconfig     |  12 +++++
+>  drivers/mfd/Makefile    |   1 +
+>  drivers/mfd/menf21bmc.c | 136 ++++++++++++++++++++++++++++++++++++++=
+++++++++++
+>  3 files changed, 149 insertions(+)
+>  create mode 100644 drivers/mfd/menf21bmc.c
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b8d9ca0..6e2cd14 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -453,6 +453,18 @@ config MFD_MAX8998
+>  	  additional drivers must be enabled in order to use the functional=
+ity
+>  	  of the device.
+> =20
+> +config MFD_MENF21BMC
+> +	tristate "MEN 14F021P00 Board Management Controller Support"
+> +	depends on I2C=3Dy
+> +	select MFD_CORE
+> +	help
+> +	  Say yes here to add support for the MEN 14F021P00 BMC
+> +	  which is a Board Management Controller connected to the I2C bus.
+> +	  The device supports multiple sub-devices like LED and WDT.
+> +	  This driver provides common support for accessing the devices;
+> +	  additional drivers must be enabled in order to use the
+> +	  functionality of the BMC device.
 
-This driver use the I2C interface to the BMC using the menf21bmc MFD Core driver.
+Can you mention what those devices are here in the help text?
 
-Signed-off-by: Andreas Werner <andreas.werner@men.de>
----
- drivers/leds/Kconfig          |   6 ++
- drivers/leds/Makefile         |   1 +
- drivers/leds/leds-menf21bmc.c | 134 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 drivers/leds/leds-menf21bmc.c
+>  config EZX_PCAP
+>  	bool "Motorola EZXPCAP Support"
+>  	depends on SPI_MASTER
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 4e2bc25..37bf336 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -169,6 +169,7 @@ obj-$(CONFIG_MFD_AS3711)	+=3D as3711.o
+>  obj-$(CONFIG_MFD_AS3722)	+=3D as3722.o
+>  obj-$(CONFIG_MFD_STW481X)	+=3D stw481x.o
+>  obj-$(CONFIG_MFD_IPAQ_MICRO)	+=3D ipaq-micro.o
+> +obj-$(CONFIG_MFD_MENF21BMC)	+=3D menf21bmc.o
+> =20
+>  intel-soc-pmic-objs		:=3D intel_soc_pmic_core.o intel_soc_pmic_crc.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC)	+=3D intel-soc-pmic.o
+> diff --git a/drivers/mfd/menf21bmc.c b/drivers/mfd/menf21bmc.c
+> new file mode 100644
+> index 0000000..76f94cd
+> --- /dev/null
+> +++ b/drivers/mfd/menf21bmc.c
+> @@ -0,0 +1,136 @@
+> +/*
+> + *  MEN 14F021P00 Board Management Controller (BMC) MFD Core Driver.
+> + *
+> + *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
+> + *  Author: Andreas Werner <andreas.werner@men.de>
+> + *  All rights reserved.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 27cf0cd..d38ff3f 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -458,6 +458,12 @@ config LEDS_OT200
- 	  This option enables support for the LEDs on the Bachmann OT200.
- 	  Say Y to enable LEDs on the Bachmann OT200.
- 
-+config LEDS_MENF21BMC
-+	tristate "LED support for the MEN 14F021P00 BMC"
-+	depends on LEDS_CLASS && MFD_MENF21BMC
-+	help
-+	  Say Y here to include support for the MEN 14F021P00 BMC LEDs.
-+
- comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
- 
- config LEDS_BLINKM
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 3c03666..cadc433 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -53,6 +53,7 @@ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
- obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
- obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
- obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
-+obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
-new file mode 100644
-index 0000000..5eaa119
---- /dev/null
-+++ b/drivers/leds/leds-menf21bmc.c
-@@ -0,0 +1,134 @@
-+/*
-+ *  MEN 14F021P00 Board Management Controller (BMC) LEDs Driver.
-+ *
-+ *  This is the core LED driver of the MEN 14F021P00 BMC.
-+ *  There are four LEDs available which can be switched on and off.
-+ *  STATUS LED, HOT SWAP LED, USER LED 1, USER LED 2
-+ *
-+ *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
-+ *  Author: Andreas Werner <andreas.werner@men.de>
-+ *  All rights reserved.
-+ *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/leds.h>
-+#include <linux/i2c.h>
-+
-+#define BMC_CMD_LED_GET_SET	0xA0
-+#define BMC_BIT_LED_STATUS	BIT(0)
-+#define BMC_BIT_LED_HOTSWAP	BIT(1)
-+#define BMC_BIT_LED_USER1	BIT(2)
-+#define BMC_BIT_LED_USER2	BIT(3)
-+
-+struct menf21bmc_led {
-+	struct led_classdev cdev;
-+	u8 led_bit;
-+	const char *name;
-+	struct i2c_client *i2c_client;
-+};
-+
-+static struct menf21bmc_led leds[] = {
-+	{
-+		.name = "menf21bmc:led_status",
-+		.led_bit = BMC_BIT_LED_STATUS,
-+	},
-+	{
-+		.name = "menf21bmc:led_hotswap",
-+		.led_bit = BMC_BIT_LED_HOTSWAP,
-+	},
-+	{
-+		.name = "menf21bmc:led_user1",
-+		.led_bit = BMC_BIT_LED_USER1,
-+	},
-+	{
-+		.name = "menf21bmc:led_user2",
-+		.led_bit = BMC_BIT_LED_USER2,
-+	}
-+};
-+
-+static DEFINE_MUTEX(led_lock);
-+
-+static void
-+menf21bmc_led_set(struct led_classdev *led_cdev, enum led_brightness value)
-+{
-+	int led_val;
-+	struct menf21bmc_led *led = container_of(led_cdev,
-+					struct menf21bmc_led, cdev);
-+
-+	mutex_lock(&led_lock);
-+	led_val = i2c_smbus_read_byte_data(led->i2c_client,
-+						BMC_CMD_LED_GET_SET);
-+	if (led_val < 0)
-+		goto err_out;
-+
-+	if (value == LED_OFF)
-+		led_val &= ~led->led_bit;
-+	else
-+		led_val |= led->led_bit;
-+
-+	i2c_smbus_write_byte_data(led->i2c_client,
-+					BMC_CMD_LED_GET_SET, led_val);
-+err_out:
-+	mutex_unlock(&led_lock);
-+}
-+
-+static int menf21bmc_led_probe(struct platform_device *pdev)
-+{
-+	int i;
-+	int ret;
-+	struct i2c_client *i2c_client = to_i2c_client(pdev->dev.parent);
-+
-+	for (i = 0; i < ARRAY_SIZE(leds); i++) {
-+		leds[i].cdev.name = leds[i].name;
-+		leds[i].cdev.brightness_set = menf21bmc_led_set;
-+		leds[i].i2c_client = i2c_client;
-+		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
-+		if (ret < 0)
-+			goto err_free_leds;
-+	}
-+	dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
-+
-+	return 0;
-+
-+err_free_leds:
-+	dev_err(&pdev->dev, "failed to register LED device\n");
-+
-+	for (i = i - 1; i >= 0; i--)
-+		led_classdev_unregister(&leds[i].cdev);
-+
-+	return ret;
-+}
-+
-+static int menf21bmc_led_remove(struct platform_device *pdev)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(leds); i++)
-+		led_classdev_unregister(&leds[i].cdev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver menf21bmc_led = {
-+	.probe		= menf21bmc_led_probe,
-+	.remove		= menf21bmc_led_remove,
-+	.driver		= {
-+		.name		= "menf21bmc_led",
-+		.owner		= THIS_MODULE,
-+	},
-+};
-+
-+module_platform_driver(menf21bmc_led);
-+
-+MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
-+MODULE_DESCRIPTION("MEN 14F021P00 BMC led driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:menf21bmc_led");
--- 
-2.0.1
+This normally resides wit the company, rather than the author.
+
+> + *  This program is free software; you can redistribute  it and/or m=
+odify it
+> + *  under  the terms of  the GNU General  Public License as publishe=
+d by the
+> + *  Free Software Foundation;  either version 2 of the  License, or =
+(at your
+> + *  option) any later version.
+> + *
+
+Remove this line.
+
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mfd/core.h>
+> +
+> +#define BMC_CMD_REV_MAJOR	0x80
+> +#define BMC_CMD_REV_MINOR	0x81
+> +#define BMC_CMD_REV_MAIN	0x82
+> +#define BMC_CMD_WDT_EXIT_PROD	0x18
+> +#define BMC_CMD_WDT_PROD_STAT	0x19
+
+If these are in the same address space, can you order them by number.
+
+> +static struct mfd_cell menf21bmc_cell[] =3D {
+> +	{ .name =3D "menf21bmc_wdt", },
+> +	{ .name =3D "menf21bmc_led", },
+> +};
+> +
+> +static int menf21bmc_wdt_exit_prod_mode(struct i2c_client *client)
+> +{
+> +	int val, ret;
+> +
+> +	val =3D i2c_smbus_read_byte_data(client, BMC_CMD_WDT_PROD_STAT);
+> +	if (val < 0)
+> +		return val;
+> +
+> +	/*
+> +	 * Production mode should be not active after delivery of the Board=
+=2E
+> +	 * To be sure we check it, inform the user and exit the mode
+> +	 * if active.
+> +	 */
+> +	if (val =3D=3D 0x00) {
+> +		dev_info(&client->dev,
+> +			"BMC in production mode. Exit production mode\n");
+> +
+> +		ret =3D i2c_smbus_write_byte(client, BMC_CMD_WDT_EXIT_PROD);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +menf21bmc_probe(struct i2c_client *client, const struct i2c_device_i=
+d *ids)
+> +{
+> +	int ret;
+> +	int rev_major, rev_minor, rev_main;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_BYTE_DATA |
+> +				     I2C_FUNC_SMBUS_WORD_DATA |
+> +				     I2C_FUNC_SMBUS_BYTE))
+
+Can you take the function call out of the if() please?
+
+> +		return -ENODEV;
+> +
+> +	rev_major =3D i2c_smbus_read_word_data(client, BMC_CMD_REV_MAJOR);
+> +	if (rev_major < 0) {
+> +		dev_err(&client->dev, "failed to get BMC major revision\n");
+> +		return rev_major;
+> +	}
+> +
+> +	rev_minor =3D i2c_smbus_read_word_data(client, BMC_CMD_REV_MINOR);
+> +	if (rev_minor < 0) {
+> +		dev_err(&client->dev, "failed to get BMC minor revision\n");
+> +		return rev_minor;
+> +	}
+> +
+> +	rev_main =3D i2c_smbus_read_word_data(client, BMC_CMD_REV_MAIN);
+> +	if (rev_main < 0) {
+> +		dev_err(&client->dev, "failed to get BMC main revision\n");
+> +		return rev_main;
+> +	}
+> +
+> +	dev_info(&client->dev, "FW Revision: %02d.%02d.%02d\n",
+> +					rev_major, rev_minor, rev_main);
+> +
+> +	/*
+> +	 * We have to exit the Production Mode of the BMC to activate the
+> +	 * Watchdog functionality and the BIOS life sign monitoring.
+> +	 */
+> +	ret =3D menf21bmc_wdt_exit_prod_mode(client);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to leave production mode\n");
+> +		return ret;
+> +	}
+> +
+> +	ret =3D mfd_add_devices(&client->dev, 0, menf21bmc_cell,
+> +				ARRAY_SIZE(menf21bmc_cell), NULL, 0, NULL);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to add BMC sub-devices\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int menf21bmc_remove(struct i2c_client *client)
+> +{
+> +	mfd_remove_devices(&client->dev);
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id menf21bmc_id_table[] =3D {
+> +	{ "menf21bmc", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, menf21bmc_id_table);
+> +
+> +static struct i2c_driver menf21bmc_driver =3D {
+> +	.driver		=3D {
+> +		.name	=3D "menf21bmc",
+> +		.owner	=3D THIS_MODULE,
+
+Remove this line, it's handled elsewhere.
+
+> +	},
+> +	.id_table	=3D menf21bmc_id_table,
+> +	.probe		=3D menf21bmc_probe,
+> +	.remove		=3D menf21bmc_remove,
+> +};
+> +
+> +module_i2c_driver(menf21bmc_driver);
+> +
+> +MODULE_DESCRIPTION("MEN 14F021P00 BMC mfd core driver");
+> +MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
+> +MODULE_LICENSE("GPL");
+
+The header says that this is GPL v2.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
