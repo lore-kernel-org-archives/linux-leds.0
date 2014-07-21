@@ -1,846 +1,281 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v4 15/21] media: Add registration helpers for V4L2
- flash
-Date: Mon, 21 Jul 2014 14:12:30 +0300
-Message-ID: <53CCF59E.3070200@iki.fi>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com> <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v4 16/21] leds: Add support for max77693 mfd flash
+ cell
+Date: Mon, 21 Jul 2014 17:12:17 +0300
+Message-ID: <53CD1FC1.4020100@iki.fi>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com> <1405087464-13762-17-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1405087464-13762-17-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
 Hi Jacek,
 
+Thanks for the patchset.
+
 Jacek Anaszewski wrote:
-> This patch adds helper functions for registering/unregistering
-> LED class flash devices as V4L2 subdevs. The functions should
-> be called from the LED subsystem device driver. In case the
-> support for V4L2 Flash sub-devices is disabled in the kernel
-> config the functions' empty versions will be used.
+> This patch adds led-flash support to Maxim max77693 chipset.
+> A device can be exposed to user space through LED subsystem
+> sysfs interface or through V4L2 subdevice when the support
+> for V4L2 Flash sub-devices is enabled. Device supports up to
+> two leds which can work in flash and torch mode. Leds can
+> be triggered externally or by software.
 > 
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: Hans Verkuil <hans.verkuil@cisco.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: SangYoung Son <hello.son@smasung.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
 > ---
->  drivers/media/v4l2-core/Kconfig      |   11 +
->  drivers/media/v4l2-core/Makefile     |    2 +
->  drivers/media/v4l2-core/v4l2-flash.c |  580 ++++++++++++++++++++++++++++++++++
->  include/media/v4l2-flash.h           |  137 ++++++++
->  4 files changed, 730 insertions(+)
->  create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
->  create mode 100644 include/media/v4l2-flash.h
+>  drivers/leds/Kconfig         |    9 +
+>  drivers/leds/Makefile        |    1 +
+>  drivers/leds/leds-max77693.c | 1070 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/mfd/max77693.c       |    5 +-
+>  include/linux/mfd/max77693.h |   40 ++
+>  5 files changed, 1124 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/leds/leds-max77693.c
 > 
-> diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
-> index 9ca0f8d..3ae3f0f 100644
-> --- a/drivers/media/v4l2-core/Kconfig
-> +++ b/drivers/media/v4l2-core/Kconfig
-> @@ -35,6 +35,17 @@ config V4L2_MEM2MEM_DEV
->          tristate
->          depends on VIDEOBUF2_CORE
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 5032c6f..794055e 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -457,6 +457,15 @@ config LEDS_TCA6507
+>  	  LED driver chips accessed via the I2C bus.
+>  	  Driver support brightness control and hardware-assisted blinking.
 >  
-> +# Used by LED subsystem flash drivers
-> +config V4L2_FLASH_LED_CLASS
-> +	bool "Enable support for Flash sub-devices"
-> +	depends on VIDEO_V4L2_SUBDEV_API
+> +config LEDS_MAX77693
+> +	tristate "LED support for MAX77693 Flash"
 > +	depends on LEDS_CLASS_FLASH
-> +	---help---
-> +	  Say Y here to enable support for Flash sub-devices, which allow
-> +	  to control LED class devices with use of V4L2 Flash controls.
+> +	depends on MFD_MAX77693
+> +	help
+> +	  This option enables support for the flash part of the MAX77693
+> +	  multifunction device. It has build in control for two leds in flash
+> +	  and torch mode.
 > +
-> +	  When in doubt, say N.
-> +
->  # Used by drivers that need Videobuf modules
->  config VIDEOBUF_GEN
->  	tristate
-> diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-> index 63d29f2..44e858c 100644
-> --- a/drivers/media/v4l2-core/Makefile
-> +++ b/drivers/media/v4l2-core/Makefile
-> @@ -22,6 +22,8 @@ obj-$(CONFIG_VIDEO_TUNER) += tuner.o
->  
->  obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
->  
-> +obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash.o
-> +
->  obj-$(CONFIG_VIDEOBUF_GEN) += videobuf-core.o
->  obj-$(CONFIG_VIDEOBUF_DMA_SG) += videobuf-dma-sg.o
->  obj-$(CONFIG_VIDEOBUF_DMA_CONTIG) += videobuf-dma-contig.o
-> diff --git a/drivers/media/v4l2-core/v4l2-flash.c b/drivers/media/v4l2-core/v4l2-flash.c
+>  config LEDS_MAX8997
+>  	tristate "LED support for MAX8997 PMIC"
+>  	depends on LEDS_CLASS && MFD_MAX8997
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 237c5ba..da1a4ba 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -55,6 +55,7 @@ obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
+>  obj-$(CONFIG_LEDS_NS2)			+= leds-ns2.o
+>  obj-$(CONFIG_LEDS_NETXBIG)		+= leds-netxbig.o
+>  obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
+> +obj-$(CONFIG_LEDS_MAX77693)		+= leds-max77693.o
+>  obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+>  obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
+>  obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
+> diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
 > new file mode 100644
-> index 0000000..21080c6
+> index 0000000..38a2398
 > --- /dev/null
-> +++ b/drivers/media/v4l2-core/v4l2-flash.c
-> @@ -0,0 +1,580 @@
+> +++ b/drivers/leds/leds-max77693.c
+> @@ -0,0 +1,1070 @@
 > +/*
-> + * V4L2 Flash LED sub-device registration helpers.
+> + * LED Flash Class driver for the flash cell of max77693 mfd.
 > + *
-> + *	Copyright (C) 2014 Samsung Electronics Co., Ltd
-> + *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> + *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
 > + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation."
+> + *	Authors: Jacek Anaszewski <j.anaszewski@samsung.com>
+> + *		 Andrzej Hajda <a.hajda@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
 > + */
 > +
+> +#include <asm/div64.h>
 > +#include <linux/led-class-flash.h>
+> +#include <linux/led-flash-manager.h>
+> +#include <linux/mfd/max77693.h>
+> +#include <linux/mfd/max77693-private.h>
+> +#include <linux/module.h>
 > +#include <linux/mutex.h>
-> +#include <linux/of_led_flash_manager.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
 > +#include <linux/slab.h>
+> +#include <linux/workqueue.h>
 > +#include <media/v4l2-flash.h>
 > +
-> +#define call_flash_op(v4l2_flash, op, args...)			\
-> +		(v4l2_flash->ops->op  ?				\
-> +			v4l2_flash->ops->op(args) :		\
-> +			-EINVAL)
+> +#define MAX77693_LED_NAME_1		"max77693-flash_1"
+> +#define MAX77693_LED_NAME_2		"max77693-flash_2"
 > +
-> +static struct v4l2_device *v4l2_dev;
-> +static int registered_flashes;
+> +#define MAX77693_TORCH_IOUT_BITS	4
 > +
-> +static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
-> +					struct v4l2_ctrl_config *config,
-> +					s32 intensity)
+> +#define MAX77693_TORCH_NO_TIMER		0x40
+> +#define MAX77693_FLASH_TIMER_LEVEL	0x80
+> +
+> +#define MAX77693_FLASH_EN_OFF		0
+> +#define MAX77693_FLASH_EN_FLASH		1
+> +#define MAX77693_FLASH_EN_TORCH		2
+> +#define MAX77693_FLASH_EN_ON		3
+> +
+> +#define MAX77693_FLASH_EN1_SHIFT	6
+> +#define MAX77693_FLASH_EN2_SHIFT	4
+> +#define MAX77693_TORCH_EN1_SHIFT	2
+> +#define MAX77693_TORCH_EN2_SHIFT	0
+
+Which registers are these definitions related to? Could they be defined
+next to the registers instead?
+
+You could parameterise these macros, e.g.
+
+#define MAX77693_FLASH_EN_SHIFT(a)	(6 - ((a) - 1) * 2)
+
+> +#define MAX77693_FLASH_LOW_BATTERY_EN	0x80
+> +
+> +#define MAX77693_FLASH_BOOST_FIXED	0x04
+> +#define MAX77693_FLASH_BOOST_LEDNUM_2	0x80
+> +
+> +#define MAX77693_FLASH_TIMEOUT_MIN	62500
+> +#define MAX77693_FLASH_TIMEOUT_MAX	1000000
+> +#define MAX77693_FLASH_TIMEOUT_STEP	62500
+> +
+> +#define MAX77693_TORCH_TIMEOUT_MIN	262000
+> +#define MAX77693_TORCH_TIMEOUT_MAX	15728000
+> +
+> +#define MAX77693_FLASH_IOUT_MIN		15625
+> +#define MAX77693_FLASH_IOUT_MAX_1LED	1000000
+> +#define MAX77693_FLASH_IOUT_MAX_2LEDS	625000
+> +#define MAX77693_FLASH_IOUT_STEP	15625
+> +
+> +#define MAX77693_TORCH_IOUT_MIN		15625
+> +#define MAX77693_TORCH_IOUT_MAX		250000
+> +#define MAX77693_TORCH_IOUT_STEP	15625
+> +
+> +#define MAX77693_FLASH_VSYS_MIN		2400
+> +#define MAX77693_FLASH_VSYS_MAX		3400
+> +#define MAX77693_FLASH_VSYS_STEP	33
+> +
+> +#define MAX77693_FLASH_VOUT_MIN		3300
+> +#define MAX77693_FLASH_VOUT_MAX		5500
+> +#define MAX77693_FLASH_VOUT_STEP	25
+> +#define MAX77693_FLASH_VOUT_RMIN	0x0c
+> +
+> +#define MAX77693_LED_STATUS_FLASH_ON	(1 << 3)
+> +#define MAX77693_LED_STATUS_TORCH_ON	(1 << 2)
+> +
+> +#define MAX77693_LED_FLASH_INT_FLED2_OPEN	(1 << 0)
+> +#define MAX77693_LED_FLASH_INT_FLED2_SHORT	(1 << 1)
+> +#define MAX77693_LED_FLASH_INT_FLED1_OPEN	(1 << 2)
+> +#define MAX77693_LED_FLASH_INT_FLED1_SHORT	(1 << 3)
+> +#define MAX77693_LED_FLASH_INT_OVER_CURRENT	(1 << 4)
+> +
+> +#define MAX77693_MODE_OFF			0
+> +#define MAX77693_MODE_FLASH1			(1 << 0)
+> +#define MAX77693_MODE_FLASH2			(1 << 1)
+> +#define MAX77693_MODE_TORCH1			(1 << 2)
+> +#define MAX77693_MODE_TORCH2			(1 << 3)
+> +#define MAX77693_MODE_FLASH_EXTERNAL1		(1 << 4)
+> +#define MAX77693_MODE_FLASH_EXTERNAL2		(1 << 5)
+> +
+> +enum {
+> +	FLED1,
+> +	FLED2
+> +};
+> +
+> +enum {
+> +	FLASH,
+> +	TORCH
+> +};
+> +
+> +struct max77693_led {
+> +	struct regmap *regmap;
+> +	struct platform_device *pdev;
+> +	struct max77693_led_platform_data *pdata;
+> +	struct mutex lock;
+> +
+> +	struct led_classdev_flash ldev1;
+> +	struct work_struct work1_brightness_set;
+> +	struct v4l2_flash *v4l2_flash1;
+> +
+> +	struct led_classdev_flash ldev2;
+> +	struct work_struct work2_brightness_set;
+> +	struct v4l2_flash *v4l2_flash2;
+> +
+> +	unsigned int torch1_brightness;
+> +	unsigned int torch2_brightness;
+> +	unsigned int flash1_timeout;
+> +	unsigned int flash2_timeout;
+
+Could you use e.g. an array of structs instead? You could remove a lot
+of redundant code operating on the other led.
+
+> +	unsigned int current_flash_timeout;
+> +	unsigned int mode_flags;
+> +	u8 torch_iout_reg;
+> +	bool iout_joint;
+> +};
+
+...
+
+> +static int max77693_led_probe(struct platform_device *pdev)
 > +{
-> +	return ((intensity - config->min) / config->step) + 1;
-> +}
-> +
-> +static inline s32 v4l2_flash_led_brightness_to_intensity(
-> +					struct v4l2_ctrl_config *config,
-> +					enum led_brightness brightness)
-> +{
-> +	return ((brightness - 1) * config->step) + config->min;
-> +}
-> +
-> +static int v4l2_flash_g_volatile_ctrl(struct v4l2_ctrl *c)
-> +
-> +{
-> +	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +	struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
-> +	struct v4l2_flash_ctrl *ctrl = &v4l2_flash->ctrl;
-> +	bool is_strobing;
+> +	struct device *dev = &pdev->dev;
+> +	struct max77693_dev *iodev = dev_get_drvdata(dev->parent);
+> +	struct max77693_led *led;
+> +	struct max77693_led_platform_data *p;
 > +	int ret;
 > +
-> +	switch (c->id) {
-> +	case V4L2_CID_FLASH_TORCH_INTENSITY:
-> +		/*
-> +		 * Update torch brightness only if in TORCH_MODE,
-> +		 * as otherwise brightness_update op returns 0,
-> +		 * which would spuriously inform user space that
-> +		 * V4L2_CID_FLASH_TORCH_INTENSITY control value
-> +		 * has changed.
-> +		 */
-> +		if (ctrl->led_mode->val == V4L2_FLASH_LED_MODE_TORCH) {
-> +			ret = call_flash_op(v4l2_flash, torch_brightness_update,
-> +							led_cdev);
-> +			if (ret < 0)
-> +				return ret;
-> +			ctrl->torch_intensity->val =
-> +				v4l2_flash_led_brightness_to_intensity(
-> +						&config->torch_intensity,
-> +						led_cdev->brightness);
-> +		}
-> +		return 0;
-> +	case V4L2_CID_FLASH_INTENSITY:
-> +		ret = call_flash_op(v4l2_flash, flash_brightness_update,
-> +					flash);
-> +		if (ret < 0)
-> +			return ret;
-> +		/* no conversion is needed */
-> +		c->val = flash->brightness.val;
-> +		return 0;
-> +	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
-> +		ret = call_flash_op(v4l2_flash, indicator_brightness_update,
-> +						flash);
-> +		if (ret < 0)
-> +			return ret;
-> +		/* no conversion is needed */
-> +		c->val = flash->indicator_brightness->val;
-> +		return 0;
-> +	case V4L2_CID_FLASH_STROBE_STATUS:
-> +		ret = call_flash_op(v4l2_flash, strobe_get, flash,
-> +							&is_strobing);
-> +		if (ret < 0)
-> +			return ret;
-> +		c->val = is_strobing;
-> +		return 0;
-> +	case V4L2_CID_FLASH_FAULT:
-> +		/* led faults map directly to V4L2 flash faults */
-> +		ret = call_flash_op(v4l2_flash, fault_get, flash, &c->val);
+> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->pdev = pdev;
+> +	led->regmap = iodev->regmap;
+> +	platform_set_drvdata(pdev, led);
+> +	ret = max77693_led_get_platform_data(led);
+> +	if (ret < 0)
+> +		return -EINVAL;
+> +
+> +	p = led->pdata;
+> +	mutex_init(&led->lock);
+> +
+> +	if (p->num_leds == 1 && p->fleds[FLED1] && p->fleds[FLED2])
+> +		led->iout_joint = true;
+> +
+> +	ret = max77693_setup(led);
+> +	if (ret < 0)
 > +		return ret;
-> +	case V4L2_CID_FLASH_STROBE_SOURCE:
-> +		c->val = flash->external_strobe;
-> +		return 0;
-> +	case V4L2_CID_FLASH_STROBE_PROVIDER:
-> +		c->val = flash->strobe_provider_id;
-> +		return 0;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
-> +{
-> +	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct v4l2_flash_ctrl *ctrl = &v4l2_flash->ctrl;
-> +	struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
-> +	enum led_brightness torch_brightness;
-> +	bool external_strobe;
-> +	int ret;
-> +
-> +	switch (c->id) {
-> +	case V4L2_CID_FLASH_LED_MODE:
-> +		switch (c->val) {
-> +		case V4L2_FLASH_LED_MODE_NONE:
-> +			call_flash_op(v4l2_flash, torch_brightness_set,
-> +							&flash->led_cdev, 0);
-> +			return call_flash_op(v4l2_flash, strobe_set, flash,
-> +							false);
-> +		case V4L2_FLASH_LED_MODE_FLASH:
-> +			/* Turn off torch LED */
-> +			call_flash_op(v4l2_flash, torch_brightness_set,
-> +							&flash->led_cdev, 0);
-> +			external_strobe = (ctrl->source->val ==
-> +					V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
-> +			return call_flash_op(v4l2_flash, external_strobe_set,
-> +						flash, external_strobe);
-> +		case V4L2_FLASH_LED_MODE_TORCH:
-> +			/* Stop flash strobing */
-> +			ret = call_flash_op(v4l2_flash, strobe_set, flash,
-> +							false);
-> +			if (ret)
-> +				return ret;
-> +
-> +			torch_brightness =
-> +				v4l2_flash_intensity_to_led_brightness(
-> +						&config->torch_intensity,
-> +						ctrl->torch_intensity->val);
-> +			call_flash_op(v4l2_flash, torch_brightness_set,
-> +					&flash->led_cdev, torch_brightness);
-> +			return ret;
-> +		}
-> +		break;
-> +	case V4L2_CID_FLASH_STROBE_SOURCE:
-> +		external_strobe = (c->val == V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
 
-Is the external_strobe argument match exactly to the strobe source
-control? You seem to assume that in g_volatile_ctrl() above. I think
-having it the either way is fine but not both. :-)
+goto err_register_led1;
 
-> +		return call_flash_op(v4l2_flash, external_strobe_set, flash,
-> +							external_strobe);
-> +	case V4L2_CID_FLASH_STROBE:
-> +		if (ctrl->led_mode->val != V4L2_FLASH_LED_MODE_FLASH ||
-> +		    ctrl->source->val != V4L2_FLASH_STROBE_SOURCE_SOFTWARE)
-> +			return -EINVAL;
-> +		return call_flash_op(v4l2_flash, strobe_set, flash, true);
-> +	case V4L2_CID_FLASH_STROBE_STOP:
-
-Should we check the flash mode here? I guess so. How about strobe source
-as well?
-
-> +		return call_flash_op(v4l2_flash, strobe_set, flash, false);
-> +	case V4L2_CID_FLASH_TIMEOUT:
-> +		return call_flash_op(v4l2_flash, timeout_set, flash, c->val);
-> +	case V4L2_CID_FLASH_INTENSITY:
-> +		/* no conversion is needed */
-> +		return call_flash_op(v4l2_flash, flash_brightness_set, flash,
-> +								c->val);
-> +	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
-> +		/* no conversion is needed */
-> +		return call_flash_op(v4l2_flash, indicator_brightness_set,
-> +						flash, c->val);
-> +	case V4L2_CID_FLASH_TORCH_INTENSITY:
-> +		/*
-> +		 * If not in MODE_TORCH don't call led-class brightness_set
-> +		 * op, as it would result in turning the torch led on.
-> +		 * Instead the value is cached only and will be written
-> +		 * to the device upon transition to MODE_TORCH.
-> +		 */
-> +		if (ctrl->led_mode->val == V4L2_FLASH_LED_MODE_TORCH) {
-> +			torch_brightness =
-> +				v4l2_flash_intensity_to_led_brightness(
-> +						&config->torch_intensity,
-> +						ctrl->torch_intensity->val);
-> +			call_flash_op(v4l2_flash, torch_brightness_set,
-> +					&flash->led_cdev, torch_brightness);
-> +		}
-> +		return 0;
-> +	case V4L2_CID_FLASH_STROBE_PROVIDER:
-> +		flash->strobe_provider_id = c->val;
-> +		return 0;
+> +	if (led->iout_joint || p->fleds[FLED1]) {
+> +		ret = max77693_register_led1(led);
+> +		if (ret < 0)
+> +			goto err_register_led1;
 > +	}
 > +
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct v4l2_ctrl_ops v4l2_flash_ctrl_ops = {
-> +	.g_volatile_ctrl = v4l2_flash_g_volatile_ctrl,
-> +	.s_ctrl = v4l2_flash_s_ctrl,
-> +};
-> +
-> +static int v4l2_flash_init_strobe_providers_menu(struct v4l2_flash *v4l2_flash)
-> +{
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct led_flash_strobe_provider *provider;
-> +	struct v4l2_ctrl *ctrl;
-> +	int i = 0;
-> +
-> +	v4l2_flash->strobe_providers_menu =
-> +			kzalloc(sizeof(char *) * (flash->num_strobe_providers),
-> +					GFP_KERNEL);
-> +	if (!v4l2_flash->strobe_providers_menu)
-> +		return -ENOMEM;
-> +
-> +	list_for_each_entry(provider, &flash->strobe_providers, list)
-> +		v4l2_flash->strobe_providers_menu[i++] =
-> +						(char *) provider->name;
-> +
-> +	ctrl = v4l2_ctrl_new_std_menu_items(
-> +		&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +		V4L2_CID_FLASH_STROBE_PROVIDER,
-> +		flash->num_strobe_providers - 1,
-> +		0, 0,
-> +		(const char * const *) v4l2_flash->strobe_providers_menu);
-> +
-> +	if (ctrl)
-> +		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-> +
-> +	return 0;
-> +}
-> +
-> +static int v4l2_flash_init_controls(struct v4l2_flash *v4l2_flash)
-> +
-> +{
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	const struct led_flash_ops *flash_ops = flash->ops;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +	struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
-> +	struct v4l2_ctrl *ctrl;
-> +	struct v4l2_ctrl_config *ctrl_cfg;
-> +	bool has_flash = led_cdev->flags & LED_DEV_CAP_FLASH;
-> +	bool has_indicator = led_cdev->flags & LED_DEV_CAP_INDICATOR;
-> +	bool has_strobe_providers = (flash->num_strobe_providers > 1);
-> +	unsigned int mask;
-> +	int ret, max, num_ctrls;
-> +
-> +	num_ctrls = has_flash ? 5 : 2;
-> +	if (has_flash) {
-> +		if (flash_ops->flash_brightness_set)
-> +			++num_ctrls;
-> +		if (flash_ops->timeout_set)
-> +			++num_ctrls;
-> +		if (flash_ops->strobe_get)
-> +			++num_ctrls;
-> +		if (has_indicator)
-> +			++num_ctrls;
-> +		if (config->flash_faults)
-> +			++num_ctrls;
-> +		if (has_strobe_providers)
-> +			++num_ctrls;
+> +	if (!led->iout_joint && p->fleds[FLED2]) {
+> +		ret = max77693_register_led2(led);
+> +		if (ret < 0)
+> +			goto err_register_led2;
 > +	}
-> +
-> +	v4l2_ctrl_handler_init(&v4l2_flash->hdl, num_ctrls);
-> +
-> +	mask = 1 << V4L2_FLASH_LED_MODE_NONE |
-> +	       1 << V4L2_FLASH_LED_MODE_TORCH;
-> +	if (flash)
-> +		mask |= 1 << V4L2_FLASH_LED_MODE_FLASH;
-> +
-> +	/* Configure FLASH_LED_MODE ctrl */
-> +	v4l2_flash->ctrl.led_mode = v4l2_ctrl_new_std_menu(
-> +			&v4l2_flash->hdl,
-> +			&v4l2_flash_ctrl_ops, V4L2_CID_FLASH_LED_MODE,
-> +			V4L2_FLASH_LED_MODE_TORCH, ~mask,
-> +			V4L2_FLASH_LED_MODE_NONE);
-> +
-> +	/* Configure TORCH_INTENSITY ctrl */
-> +	ctrl_cfg = &config->torch_intensity;
-> +	ctrl = v4l2_ctrl_new_std(&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +				 V4L2_CID_FLASH_TORCH_INTENSITY,
-> +				 ctrl_cfg->min, ctrl_cfg->max,
-> +				 ctrl_cfg->step, ctrl_cfg->def);
-> +	if (ctrl)
-> +		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-> +	v4l2_flash->ctrl.torch_intensity = ctrl;
-> +
-> +	if (has_flash) {
-> +		/* Configure FLASH_STROBE_SOURCE ctrl */
-> +		mask = 1 << V4L2_FLASH_STROBE_SOURCE_SOFTWARE;
-> +
-> +		if (flash->has_external_strobe) {
-> +			mask |= 1 << V4L2_FLASH_STROBE_SOURCE_EXTERNAL;
-> +			max = V4L2_FLASH_STROBE_SOURCE_EXTERNAL;
-> +		} else {
-> +			max = V4L2_FLASH_STROBE_SOURCE_SOFTWARE;
-> +		}
-> +
-> +		v4l2_flash->ctrl.source = v4l2_ctrl_new_std_menu(
-> +					&v4l2_flash->hdl,
-> +					&v4l2_flash_ctrl_ops,
-> +					V4L2_CID_FLASH_STROBE_SOURCE,
-> +					max,
-> +					~mask,
-> +					V4L2_FLASH_STROBE_SOURCE_SOFTWARE);
-> +		if (v4l2_flash->ctrl.source)
-> +			v4l2_flash->ctrl.source->flags |=
-> +						V4L2_CTRL_FLAG_VOLATILE;
-> +
-> +		/* Configure FLASH_STROBE ctrl */
-> +		ctrl = v4l2_ctrl_new_std(&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +					  V4L2_CID_FLASH_STROBE, 0, 1, 1, 0);
-> +
-> +		/* Configure FLASH_STROBE_STOP ctrl */
-> +		ctrl = v4l2_ctrl_new_std(&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +					  V4L2_CID_FLASH_STROBE_STOP,
-> +					  0, 1, 1, 0);
-> +
-> +		/* Configure FLASH_STROBE_STATUS ctrl */
-> +		ctrl = v4l2_ctrl_new_std(&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +					 V4L2_CID_FLASH_STROBE_STATUS,
-> +					 0, 1, 1, 1);
-
-I think you only should implement the strobe status control if you
-really can know it, i.e. have strobe_get().
-
-> +		if (flash_ops->strobe_get)
-> +			if (ctrl)
-> +				ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
-> +					       V4L2_CTRL_FLAG_READ_ONLY;
-> +
-> +		if (flash_ops->timeout_set) {
-> +			/* Configure FLASH_TIMEOUT ctrl */
-> +			ctrl_cfg = &config->flash_timeout;
-> +			ctrl = v4l2_ctrl_new_std(
-> +					&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +					V4L2_CID_FLASH_TIMEOUT, ctrl_cfg->min,
-> +					ctrl_cfg->max, ctrl_cfg->step,
-> +					ctrl_cfg->def);
-> +			if (ctrl)
-> +				ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-> +		}
-> +
-> +		if (flash_ops->flash_brightness_set) {
-> +			/* Configure FLASH_INTENSITY ctrl */
-> +			ctrl_cfg = &config->flash_intensity;
-> +			ctrl = v4l2_ctrl_new_std(
-> +					&v4l2_flash->hdl,
-> +					&v4l2_flash_ctrl_ops,
-> +					V4L2_CID_FLASH_INTENSITY,
-> +					ctrl_cfg->min, ctrl_cfg->max,
-> +					ctrl_cfg->step, ctrl_cfg->def);
-> +			if (ctrl)
-> +				ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-> +		}
-> +
-> +		if (config->flash_faults) {
-> +			/* Configure FLASH_FAULT ctrl */
-> +			ctrl = v4l2_ctrl_new_std(&v4l2_flash->hdl,
-> +						 &v4l2_flash_ctrl_ops,
-> +						 V4L2_CID_FLASH_FAULT, 0,
-> +						 config->flash_faults,
-> +						 0, 0);
-> +			if (ctrl)
-> +				ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
-> +					       V4L2_CTRL_FLAG_READ_ONLY;
-> +		}
-> +		if (has_indicator) {
-> +			/* Configure FLASH_INDICATOR_INTENSITY ctrl */
-> +			ctrl_cfg = &config->indicator_intensity;
-> +			ctrl = v4l2_ctrl_new_std(
-> +					&v4l2_flash->hdl, &v4l2_flash_ctrl_ops,
-> +					V4L2_CID_FLASH_INDICATOR_INTENSITY,
-> +					ctrl_cfg->min, ctrl_cfg->max,
-> +					ctrl_cfg->step, ctrl_cfg->def);
-> +			if (ctrl)
-> +				ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-> +		}
-
-Could you implement the above in a loop? You're essentially repeating
-the same but with different parameters.
-
-> +		if (has_strobe_providers) {
-> +			/* Configure V4L2_CID_FLASH_STROBE_PROVIDERS ctrl */
-> +			ret = v4l2_flash_init_strobe_providers_menu(v4l2_flash);
-> +			if (ret < 0)
-> +				goto error_free_handler;
-> +		}
-> +	}
-> +
-> +	if (v4l2_flash->hdl.error) {
-> +		ret = v4l2_flash->hdl.error;
-> +		goto error_free_handler;
-> +	}
-> +
-> +	ret = v4l2_ctrl_handler_setup(&v4l2_flash->hdl);
-> +	if (ret < 0)
-> +		goto error_free_handler;
-> +
-> +	v4l2_flash->sd.ctrl_handler = &v4l2_flash->hdl;
 > +
 > +	return 0;
 > +
-> +error_free_handler:
-> +	v4l2_ctrl_handler_free(&v4l2_flash->hdl);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * V4L2 subdev internal operations
-> + */
-> +
-> +static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> +{
-> +	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +
-> +	mutex_lock(&led_cdev->led_lock);
-> +	call_flash_op(v4l2_flash, sysfs_lock, led_cdev);
-
-What if you have the device open through multiple file handles? I
-believe v4l2_subdev_fh_is_singular(&fh->vfh) would prove helpful here.
-
-> +	mutex_unlock(&led_cdev->led_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int v4l2_flash_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> +{
-> +	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +
-> +	mutex_lock(&led_cdev->led_lock);
-> +	call_flash_op(v4l2_flash, sysfs_unlock, led_cdev);
-> +	mutex_unlock(&led_cdev->led_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +int v4l2_flash_register(struct v4l2_flash *v4l2_flash)
-
-Do you expect to call this from elsewhere than this file?
-
-> +{
-> +	struct led_classdev_flash *flash = v4l2_flash->flash;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +	int ret;
-> +
-> +	if (!v4l2_dev) {
-> +		v4l2_dev = kzalloc(sizeof(*v4l2_dev), GFP_KERNEL);
-> +		if (!v4l2_dev)
-> +			return -ENOMEM;
-> +
-> +		strlcpy(v4l2_dev->name, "v4l2-flash-manager",
-> +						sizeof(v4l2_dev->name));
-> +		ret = v4l2_device_register(NULL, v4l2_dev);
-> +		if (ret < 0) {
-> +			dev_err(led_cdev->dev->parent,
-> +				 "Failed to register v4l2_device: %d\n", ret);
-> +			goto err_v4l2_device_register;
-> +		}
-> +	}
-> +
-> +	ret = v4l2_device_register_subdev(v4l2_dev, &v4l2_flash->sd);
-> +	if (ret < 0) {
-> +		dev_err(led_cdev->dev->parent,
-> +			 "Failed to register v4l2_subdev: %d\n", ret);
-> +		goto err_v4l2_device_register;
-> +	}
-> +
-> +	ret = v4l2_device_register_subdev_node(&v4l2_flash->sd, v4l2_dev);
-> +	if (ret < 0) {
-> +		dev_err(led_cdev->dev->parent,
-> +			 "Failed to register v4l2_subdev node: %d\n", ret);
-> +		goto err_register_subdev_node;
-> +	}
-
-This way you can create a V4L2 sub-device node. However, flash devices
-are seldom alone in the system. They are physically close to a sensor,
-and this connection is shown in the Media controller interface. This
-means that the flash sub-device (entity) should be part of the Media
-device created by the driver in control of it. This can be achieved by
-the master driver creating the sub-device. You should register an async
-sub-device here.
-
-This results in the sub-device not being registered if there's no such
-master driver, but I wouldn't expect that to be an issue since the V4L2
-flash API is mostly relevant in such cases.
-
-> +	++registered_flashes;
-> +
-> +	return 0;
-> +
-> +err_register_subdev_node:
-> +	v4l2_device_unregister_subdev(&v4l2_flash->sd);
-> +err_v4l2_device_register:
-> +	kfree(v4l2_flash->strobe_providers_menu);
-> +	if (v4l2_dev && registered_flashes == 0) {
-> +		v4l2_device_unregister(v4l2_dev);
-> +		kfree(v4l2_dev);
-> +		v4l2_dev = NULL;
-> +	}
+> +err_register_led2:
+> +	if (!p->fleds[FLED1])
+> +		goto err_register_led1;
+> +	v4l2_flash_release(led->v4l2_flash1);
+> +	led_classdev_flash_unregister(&led->ldev1);
+> +err_register_led1:
+> +	mutex_destroy(&led->lock);
 > +
 > +	return ret;
 > +}
-> +
-> +static void v4l2_flash_unregister(struct v4l2_flash *v4l2_flash)
-> +{
-> +	if (registered_flashes == 0)
-> +		return;
-> +
-> +	v4l2_device_unregister_subdev(&v4l2_flash->sd);
-> +
-> +	--registered_flashes;
-> +
-> +	if (registered_flashes == 0) {
-> +		v4l2_device_unregister(v4l2_dev);
-> +		kfree(v4l2_dev);
-> +		v4l2_dev = NULL;
-> +	}
-> +}
-> +
-> +static const struct v4l2_subdev_internal_ops v4l2_flash_subdev_internal_ops = {
-> +	.open = v4l2_flash_open,
-> +	.close = v4l2_flash_close,
-> +};
-> +
-> +static const struct v4l2_subdev_core_ops v4l2_flash_core_ops = {
-> +	.queryctrl = v4l2_subdev_queryctrl,
-> +	.querymenu = v4l2_subdev_querymenu,
-> +};
-> +
-> +static const struct v4l2_subdev_ops v4l2_flash_subdev_ops = {
-> +	.core = &v4l2_flash_core_ops,
-> +};
-> +
-> +int v4l2_flash_init(struct led_classdev_flash *flash,
-> +		    struct v4l2_flash_ctrl_config *config,
-> +		    const struct v4l2_flash_ops *flash_ops,
-> +		    struct v4l2_flash **out_flash)
-> +{
-> +	struct v4l2_flash *v4l2_flash;
-> +	struct led_classdev *led_cdev = &flash->led_cdev;
-> +	struct v4l2_subdev *sd;
-> +	int ret;
-> +
-> +	if (!flash || !config || !out_flash)
-> +		return -EINVAL;
-> +
-> +	v4l2_flash = kzalloc(sizeof(*v4l2_flash), GFP_KERNEL);
-> +	if (!v4l2_flash)
-> +		return -ENOMEM;
-> +
-> +	sd = &v4l2_flash->sd;
-> +	v4l2_flash->flash = flash;
-> +	v4l2_flash->ops = flash_ops;
-> +	sd->dev = led_cdev->dev->parent;
-> +	v4l2_subdev_init(sd, &v4l2_flash_subdev_ops);
-> +	sd->internal_ops = &v4l2_flash_subdev_internal_ops;
-> +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	snprintf(sd->name, sizeof(sd->name), led_cdev->name);
-> +
-> +	v4l2_flash->config = *config;
-> +	ret = v4l2_flash_init_controls(v4l2_flash);
-> +	if (ret < 0)
-> +		goto err_init_controls;
-> +
-> +	ret = media_entity_init(&sd->entity, 0, NULL, 0);
-> +	if (ret < 0)
-> +		goto err_init_entity;
-> +
-> +	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_FLASH;
-> +
-> +	ret = v4l2_flash_register(v4l2_flash);
-> +	if (ret < 0)
-> +		goto err_init_entity;
-> +
-> +	*out_flash = v4l2_flash;
 
-How about returning the pointer instead?
-
-> +	return 0;
-> +
-> +err_init_entity:
-> +	media_entity_cleanup(&sd->entity);
-> +err_init_controls:
-> +	v4l2_ctrl_handler_free(sd->ctrl_handler);
-> +	kfree(v4l2_flash);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_flash_init);
-> +
-> +void v4l2_flash_release(struct v4l2_flash *v4l2_flash)
-> +{
-> +	if (!v4l2_flash)
-> +		return;
-> +
-> +	v4l2_flash_unregister(v4l2_flash);
-> +	v4l2_ctrl_handler_free(v4l2_flash->sd.ctrl_handler);
-> +	media_entity_cleanup(&v4l2_flash->sd.entity);
-> +	kfree(v4l2_flash->strobe_providers_menu);
-> +	kfree(v4l2_flash);
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_flash_release);
-> diff --git a/include/media/v4l2-flash.h b/include/media/v4l2-flash.h
-> new file mode 100644
-> index 0000000..effa46b
-> --- /dev/null
-> +++ b/include/media/v4l2-flash.h
-> @@ -0,0 +1,137 @@
-> +/*
-> + * V4L2 Flash LED sub-device registration helpers.
-> + *
-> + *	Copyright (C) 2014 Samsung Electronics Co., Ltd
-> + *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation."
-> + */
-> +
-> +#ifndef _V4L2_FLASH_H
-> +#define _V4L2_FLASH_H
-> +
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-dev.h>
-> +#include <media/v4l2-event.h>
-> +#include <media/v4l2-ioctl.h>
-> +
-> +struct led_classdev_flash;
-> +struct led_classdev;
-> +enum led_brightness;
-> +
-> +struct v4l2_flash_ops {
-> +	int (*torch_brightness_set)(struct led_classdev *led_cdev,
-> +					enum led_brightness brightness);
-> +	int (*torch_brightness_update)(struct led_classdev *led_cdev);
-> +	int (*flash_brightness_set)(struct led_classdev_flash *flash,
-> +					u32 brightness);
-> +	int (*flash_brightness_update)(struct led_classdev_flash *flash);
-> +	int (*strobe_set)(struct led_classdev_flash *flash, bool state);
-> +	int (*strobe_get)(struct led_classdev_flash *flash, bool *state);
-> +	int (*timeout_set)(struct led_classdev_flash *flash, u32 timeout);
-> +	int (*indicator_brightness_set)(struct led_classdev_flash *flash,
-> +					u32 brightness);
-> +	int (*indicator_brightness_update)(struct led_classdev_flash *flash);
-> +	int (*external_strobe_set)(struct led_classdev_flash *flash,
-> +					bool enable);
-> +	int (*fault_get)(struct led_classdev_flash *flash, u32 *fault);
-> +	void (*sysfs_lock)(struct led_classdev *led_cdev);
-> +	void (*sysfs_unlock)(struct led_classdev *led_cdev);
-
-These functions are not driver specific and there's going to be just one
-implementation (I suppose). Could you refresh my memory regarding why
-the LED framework functions aren't called directly?
-
-> +};
-> +
-> +/**
-> + * struct v4l2_flash_ctrl - controls that define the sub-dev's state
-> + * @source:		V4L2_CID_FLASH_STROBE_SOURCE control
-> + * @led_mode:		V4L2_CID_FLASH_LED_MODE control
-> + * @torch_intensity:	V4L2_CID_FLASH_TORCH_INTENSITY control
-> + */
-> +struct v4l2_flash_ctrl {
-> +	struct v4l2_ctrl *source;
-> +	struct v4l2_ctrl *led_mode;
-> +	struct v4l2_ctrl *torch_intensity;
-> +};
-> +
-> +/**
-> + * struct v4l2_flash_ctrl_config - V4L2 Flash controls initialization data
-> + * @torch_intensity:		V4L2_CID_FLASH_TORCH_INTENSITY constraints
-> + * @flash_intensity:		V4L2_CID_FLASH_INTENSITY constraints
-> + * @indicator_intensity:	V4L2_CID_FLASH_INDICATOR_INTENSITY constraints
-> + * @flash_timeout:		V4L2_CID_FLASH_TIMEOUT constraints
-> + * @flash_fault:		possible flash faults
-> + */
-> +struct v4l2_flash_ctrl_config {
-> +	struct v4l2_ctrl_config torch_intensity;
-> +	struct v4l2_ctrl_config flash_intensity;
-> +	struct v4l2_ctrl_config indicator_intensity;
-> +	struct v4l2_ctrl_config flash_timeout;
-> +	u32 flash_faults;
-> +};
-> +
-> +/**
-> + * struct v4l2_flash - Flash sub-device context
-> + * @flash:		LED Flash Class device controlled by this sub-device
-> + * @ops:		LED Flash Class device ops
-> + * @sd:			V4L2 sub-device
-> + * @hdl:		flash controls handler
-> + * @ctrl:		state defining controls
-> + * @config:		V4L2 Flash controlsrconfiguration data
-> + * @software_strobe_gates: route to the software strobe signal
-> + * @external_strobe_gates: route to the external strobe signal
-> + * @sensors:		available external strobe sources
-> + */
-> +struct v4l2_flash {
-> +	struct led_classdev_flash *flash;
-> +	const struct v4l2_flash_ops *ops;
-> +
-> +	struct v4l2_subdev sd;
-> +	struct v4l2_ctrl_handler hdl;
-> +	struct v4l2_flash_ctrl ctrl;
-> +	struct v4l2_flash_ctrl_config config;
-> +	char **strobe_providers_menu;
-> +};
-> +
-> +static inline struct v4l2_flash *v4l2_subdev_to_v4l2_flash(
-> +							struct v4l2_subdev *sd)
-> +{
-> +	return container_of(sd, struct v4l2_flash, sd);
-> +}
-> +
-> +static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
-> +{
-> +	return container_of(c->handler, struct v4l2_flash, hdl);
-> +}
-> +
-> +#ifdef CONFIG_V4L2_FLASH_LED_CLASS
-> +/**
-> + * v4l2_flash_init - initialize V4L2 flash led sub-device
-> + * @led_fdev:	the LED Flash Class device to wrap
-> + * @config:	initialization data for V4L2 Flash controls
-> + * @flash_ops:	V4L2 Flash device ops
-> + * @out_flash:	handler to the new V4L2 Flash device
-> + *
-> + * Create V4L2 subdev wrapping given LED subsystem device.
-> +
-> + * Returns: 0 on success or negative error value on failure
-> + */
-> +int v4l2_flash_init(struct led_classdev_flash *led_fdev,
-> +		    struct v4l2_flash_ctrl_config *config,
-> +		    const struct v4l2_flash_ops *flash_ops,
-> +		    struct v4l2_flash **out_flash);
-> +
-> +/**
-> + * v4l2_flash_release - release V4L2 Flash sub-device
-> + * @flash: the V4L2 Flash device to release
-> + *
-> + * Release V4L2 flash led subdev.
-> + */
-> +void v4l2_flash_release(struct v4l2_flash *v4l2_flash);
-> +
-> +#else
-> +#define v4l2_flash_init(led_cdev, config, flash_ops, out_flash) (0)
-> +#define v4l2_flash_release(v4l2_flash)
-> +#endif /* CONFIG_V4L2_FLASH_LED_CLASS */
-> +
-> +#endif /* _V4L2_FLASH_H */
-> 
+...
 
 -- 
 Kind regards,
