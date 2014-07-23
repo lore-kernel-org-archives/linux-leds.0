@@ -1,284 +1,209 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v4 16/21] leds: Add support for max77693 mfd flash
- cell
-Date: Mon, 21 Jul 2014 17:12:17 +0300
-Message-ID: <53CD1FC1.4020100@iki.fi>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com> <1405087464-13762-17-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1405087464-13762-17-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2] leds: add driver for the iPAQ micro
+Date: Wed, 23 Jul 2014 14:36:00 +0200
+Message-ID: <1406118960-28340-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-we0-f178.google.com ([74.125.82.178]:63318 "EHLO
+	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751753AbaGWMgK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Jul 2014 08:36:10 -0400
+Received: by mail-we0-f178.google.com with SMTP id w61so1119033wes.23
+        for <linux-leds@vger.kernel.org>; Wed, 23 Jul 2014 05:36:08 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Jacek,
+This adds a driver for the iPAQ microcontroller LED.
 
-Thanks for the patchset.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Rename the classdev to "led-ipaq-micro"
+- Bail out properly on probe error
+---
+ drivers/leds/Kconfig           |   7 ++
+ drivers/leds/Makefile          |   1 +
+ drivers/leds/leds-ipaq-micro.c | 141 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+ create mode 100644 drivers/leds/leds-ipaq-micro.c
 
-Jacek Anaszewski wrote:
-> This patch adds led-flash support to Maxim max77693 chipset.
-> A device can be exposed to user space through LED subsystem
-> sysfs interface or through V4L2 subdevice when the support
-> for V4L2 Flash sub-devices is enabled. Device supports up to
-> two leds which can work in flash and torch mode. Leds can
-> be triggered externally or by software.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: SangYoung Son <hello.son@smasung.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> ---
->  drivers/leds/Kconfig         |    9 +
->  drivers/leds/Makefile        |    1 +
->  drivers/leds/leds-max77693.c | 1070 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/mfd/max77693.c       |    5 +-
->  include/linux/mfd/max77693.h |   40 ++
->  5 files changed, 1124 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/leds/leds-max77693.c
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 5032c6f..794055e 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -457,6 +457,15 @@ config LEDS_TCA6507
->  	  LED driver chips accessed via the I2C bus.
->  	  Driver support brightness control and hardware-assisted blinking.
->  
-> +config LEDS_MAX77693
-> +	tristate "LED support for MAX77693 Flash"
-> +	depends on LEDS_CLASS_FLASH
-> +	depends on MFD_MAX77693
-> +	help
-> +	  This option enables support for the flash part of the MAX77693
-> +	  multifunction device. It has build in control for two leds in flash
-> +	  and torch mode.
-> +
->  config LEDS_MAX8997
->  	tristate "LED support for MAX8997 PMIC"
->  	depends on LEDS_CLASS && MFD_MAX8997
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 237c5ba..da1a4ba 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -55,6 +55,7 @@ obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
->  obj-$(CONFIG_LEDS_NS2)			+= leds-ns2.o
->  obj-$(CONFIG_LEDS_NETXBIG)		+= leds-netxbig.o
->  obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
-> +obj-$(CONFIG_LEDS_MAX77693)		+= leds-max77693.o
->  obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
->  obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
->  obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
-> diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
-> new file mode 100644
-> index 0000000..38a2398
-> --- /dev/null
-> +++ b/drivers/leds/leds-max77693.c
-> @@ -0,0 +1,1070 @@
-> +/*
-> + * LED Flash Class driver for the flash cell of max77693 mfd.
-> + *
-> + *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
-> + *
-> + *	Authors: Jacek Anaszewski <j.anaszewski@samsung.com>
-> + *		 Andrzej Hajda <a.hajda@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * version 2 as published by the Free Software Foundation.
-> + */
-> +
-> +#include <asm/div64.h>
-> +#include <linux/led-class-flash.h>
-> +#include <linux/led-flash-manager.h>
-> +#include <linux/mfd/max77693.h>
-> +#include <linux/mfd/max77693-private.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/workqueue.h>
-> +#include <media/v4l2-flash.h>
-> +
-> +#define MAX77693_LED_NAME_1		"max77693-flash_1"
-> +#define MAX77693_LED_NAME_2		"max77693-flash_2"
-> +
-> +#define MAX77693_TORCH_IOUT_BITS	4
-> +
-> +#define MAX77693_TORCH_NO_TIMER		0x40
-> +#define MAX77693_FLASH_TIMER_LEVEL	0x80
-> +
-> +#define MAX77693_FLASH_EN_OFF		0
-> +#define MAX77693_FLASH_EN_FLASH		1
-> +#define MAX77693_FLASH_EN_TORCH		2
-> +#define MAX77693_FLASH_EN_ON		3
-> +
-> +#define MAX77693_FLASH_EN1_SHIFT	6
-> +#define MAX77693_FLASH_EN2_SHIFT	4
-> +#define MAX77693_TORCH_EN1_SHIFT	2
-> +#define MAX77693_TORCH_EN2_SHIFT	0
-
-Which registers are these definitions related to? Could they be defined
-next to the registers instead?
-
-You could parameterise these macros, e.g.
-
-#define MAX77693_FLASH_EN_SHIFT(a)	(6 - ((a) - 1) * 2)
-
-> +#define MAX77693_FLASH_LOW_BATTERY_EN	0x80
-> +
-> +#define MAX77693_FLASH_BOOST_FIXED	0x04
-> +#define MAX77693_FLASH_BOOST_LEDNUM_2	0x80
-> +
-> +#define MAX77693_FLASH_TIMEOUT_MIN	62500
-> +#define MAX77693_FLASH_TIMEOUT_MAX	1000000
-> +#define MAX77693_FLASH_TIMEOUT_STEP	62500
-> +
-> +#define MAX77693_TORCH_TIMEOUT_MIN	262000
-> +#define MAX77693_TORCH_TIMEOUT_MAX	15728000
-> +
-> +#define MAX77693_FLASH_IOUT_MIN		15625
-> +#define MAX77693_FLASH_IOUT_MAX_1LED	1000000
-> +#define MAX77693_FLASH_IOUT_MAX_2LEDS	625000
-> +#define MAX77693_FLASH_IOUT_STEP	15625
-> +
-> +#define MAX77693_TORCH_IOUT_MIN		15625
-> +#define MAX77693_TORCH_IOUT_MAX		250000
-> +#define MAX77693_TORCH_IOUT_STEP	15625
-> +
-> +#define MAX77693_FLASH_VSYS_MIN		2400
-> +#define MAX77693_FLASH_VSYS_MAX		3400
-> +#define MAX77693_FLASH_VSYS_STEP	33
-> +
-> +#define MAX77693_FLASH_VOUT_MIN		3300
-> +#define MAX77693_FLASH_VOUT_MAX		5500
-> +#define MAX77693_FLASH_VOUT_STEP	25
-> +#define MAX77693_FLASH_VOUT_RMIN	0x0c
-> +
-> +#define MAX77693_LED_STATUS_FLASH_ON	(1 << 3)
-> +#define MAX77693_LED_STATUS_TORCH_ON	(1 << 2)
-> +
-> +#define MAX77693_LED_FLASH_INT_FLED2_OPEN	(1 << 0)
-> +#define MAX77693_LED_FLASH_INT_FLED2_SHORT	(1 << 1)
-> +#define MAX77693_LED_FLASH_INT_FLED1_OPEN	(1 << 2)
-> +#define MAX77693_LED_FLASH_INT_FLED1_SHORT	(1 << 3)
-> +#define MAX77693_LED_FLASH_INT_OVER_CURRENT	(1 << 4)
-> +
-> +#define MAX77693_MODE_OFF			0
-> +#define MAX77693_MODE_FLASH1			(1 << 0)
-> +#define MAX77693_MODE_FLASH2			(1 << 1)
-> +#define MAX77693_MODE_TORCH1			(1 << 2)
-> +#define MAX77693_MODE_TORCH2			(1 << 3)
-> +#define MAX77693_MODE_FLASH_EXTERNAL1		(1 << 4)
-> +#define MAX77693_MODE_FLASH_EXTERNAL2		(1 << 5)
-> +
-> +enum {
-> +	FLED1,
-> +	FLED2
-> +};
-> +
-> +enum {
-> +	FLASH,
-> +	TORCH
-> +};
-> +
-> +struct max77693_led {
-> +	struct regmap *regmap;
-> +	struct platform_device *pdev;
-> +	struct max77693_led_platform_data *pdata;
-> +	struct mutex lock;
-> +
-> +	struct led_classdev_flash ldev1;
-> +	struct work_struct work1_brightness_set;
-> +	struct v4l2_flash *v4l2_flash1;
-> +
-> +	struct led_classdev_flash ldev2;
-> +	struct work_struct work2_brightness_set;
-> +	struct v4l2_flash *v4l2_flash2;
-> +
-> +	unsigned int torch1_brightness;
-> +	unsigned int torch2_brightness;
-> +	unsigned int flash1_timeout;
-> +	unsigned int flash2_timeout;
-
-Could you use e.g. an array of structs instead? You could remove a lot
-of redundant code operating on the other led.
-
-> +	unsigned int current_flash_timeout;
-> +	unsigned int mode_flags;
-> +	u8 torch_iout_reg;
-> +	bool iout_joint;
-> +};
-
-...
-
-> +static int max77693_led_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct max77693_dev *iodev = dev_get_drvdata(dev->parent);
-> +	struct max77693_led *led;
-> +	struct max77693_led_platform_data *p;
-> +	int ret;
-> +
-> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	led->pdev = pdev;
-> +	led->regmap = iodev->regmap;
-> +	platform_set_drvdata(pdev, led);
-> +	ret = max77693_led_get_platform_data(led);
-> +	if (ret < 0)
-> +		return -EINVAL;
-> +
-> +	p = led->pdata;
-> +	mutex_init(&led->lock);
-> +
-> +	if (p->num_leds == 1 && p->fleds[FLED1] && p->fleds[FLED2])
-> +		led->iout_joint = true;
-> +
-> +	ret = max77693_setup(led);
-> +	if (ret < 0)
-> +		return ret;
-
-goto err_register_led1;
-
-> +	if (led->iout_joint || p->fleds[FLED1]) {
-> +		ret = max77693_register_led1(led);
-> +		if (ret < 0)
-> +			goto err_register_led1;
-> +	}
-> +
-> +	if (!led->iout_joint && p->fleds[FLED2]) {
-> +		ret = max77693_register_led2(led);
-> +		if (ret < 0)
-> +			goto err_register_led2;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_register_led2:
-> +	if (!p->fleds[FLED1])
-> +		goto err_register_led1;
-> +	v4l2_flash_release(led->v4l2_flash1);
-> +	led_classdev_flash_unregister(&led->ldev1);
-> +err_register_led1:
-> +	mutex_destroy(&led->lock);
-> +
-> +	return ret;
-> +}
-
-...
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a1b044e7eaad..30e82860567a 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -143,6 +143,13 @@ config LEDS_SUNFIRE
+ 	  This option enables support for the Left, Middle, and Right
+ 	  LEDs on the I/O and CPU boards of SunFire UltraSPARC servers.
+ 
++config LEDS_IPAQ_MICRO
++	tristate "LED Support for the Compaq iPAQ h3xxx"
++	depends on MFD_IPAQ_MICRO
++	help
++	  Choose this option if you want to use the notification LED on
++	  Compaq/HP iPAQ h3100 and h3600.
++
+ config LEDS_HP6XX
+ 	tristate "LED Support for the HP Jornada 6xx"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 79c5155199a7..b2a62959ff8f 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
+ obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
++obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+ obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+ obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
+ obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
+new file mode 100644
+index 000000000000..3210a47f0812
+--- /dev/null
++++ b/drivers/leds/leds-ipaq-micro.c
+@@ -0,0 +1,141 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * h3xxx atmel micro companion support, notification LED subdevice
++ *
++ * Author : Linus Walleij <linus.walleij@linaro.org>
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/ipaq-micro.h>
++#include <linux/leds.h>
++
++#define LED_YELLOW	0x00
++#define LED_GREEN	0x01
++
++#define LED_EN          (1 << 4)        /* LED ON/OFF 0:off, 1:on                       */
++#define LED_AUTOSTOP    (1 << 5)        /* LED ON/OFF auto stop set 0:disable, 1:enable */
++#define LED_ALWAYS      (1 << 6)        /* LED Interrupt Mask 0:No mask, 1:mask         */
++
++static void micro_leds_brightness_set(struct led_classdev *led_cdev,
++				      enum led_brightness value)
++{
++	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
++	/*
++	 * In this message:
++	 * Byte 0 = LED color: 0 = yellow, 1 = green
++	 *          yellow LED is always ~30 blinks per minute
++	 * Byte 1 = duration (flags?) appears to be ignored
++	 * Byte 2 = green ontime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 second
++	 * Byte 3 = green offtime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 seconds
++	 */
++	struct ipaq_micro_msg msg = {
++		.id = MSG_NOTIFY_LED,
++		.tx_len = 4,
++	};
++
++	msg.tx_data[0] = LED_GREEN;
++	msg.tx_data[1] = 0;
++	if (value) {
++		msg.tx_data[2] = 0; /* Duty cycle 256 */
++		msg.tx_data[3] = 1;
++	} else {
++		msg.tx_data[2] = 1;
++		msg.tx_data[3] = 0; /* Duty cycle 256 */
++	}
++	ipaq_micro_tx_msg_sync(micro, &msg);
++}
++
++/* Maximum duty cycle in ms 256/10 sec = 25600 ms */
++#define IPAQ_LED_MAX_DUTY 25600
++
++static int micro_leds_blink_set(struct led_classdev *led_cdev,
++				unsigned long *delay_on,
++				unsigned long *delay_off)
++{
++	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
++	/*
++	 * In this message:
++	 * Byte 0 = LED color: 0 = yellow, 1 = green
++	 *          yellow LED is always ~30 blinks per minute
++	 * Byte 1 = duration (flags?) appears to be ignored
++	 * Byte 2 = green ontime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 second
++	 * Byte 3 = green offtime in 1/10 sec (deciseconds)
++	 *          1 = 1/10 second
++	 *          0 = 256/10 seconds
++	 */
++	struct ipaq_micro_msg msg = {
++		.id = MSG_NOTIFY_LED,
++		.tx_len = 4,
++	};
++
++	msg.tx_data[0] = LED_GREEN;
++        if (*delay_on > IPAQ_LED_MAX_DUTY ||
++	    *delay_off > IPAQ_LED_MAX_DUTY)
++                return -EINVAL;
++
++        if (*delay_on == 0 && *delay_off == 0) {
++                *delay_on = 100;
++                *delay_off = 100;
++        }
++
++	msg.tx_data[1] = 0;
++	if (*delay_on >= IPAQ_LED_MAX_DUTY)
++		msg.tx_data[2] = 0;
++	else
++		msg.tx_data[2] = (u8) DIV_ROUND_CLOSEST(*delay_on, 100);
++	if (*delay_off >= IPAQ_LED_MAX_DUTY)
++		msg.tx_data[3] = 0;
++	else
++		msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
++	return ipaq_micro_tx_msg_sync(micro, &msg);
++}
++
++static struct led_classdev micro_led = {
++	.name			= "led-ipaq-micro",
++	.brightness_set		= micro_leds_brightness_set,
++	.blink_set		= micro_leds_blink_set,
++	.flags			= LED_CORE_SUSPENDRESUME,
++};
++
++static int micro_leds_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = led_classdev_register(&pdev->dev, &micro_led);
++	if (ret) {
++		dev_err(&pdev->dev, "registering led failed: %d\n", ret);
++		return ret;
++	}
++	dev_info(&pdev->dev, "iPAQ micro notification LED driver\n");
++
++	return 0;
++}
++
++static int micro_leds_remove(struct platform_device *pdev)
++{
++	led_classdev_unregister(&micro_led);
++	return 0;
++}
++
++struct platform_driver micro_leds_device_driver = {
++	.driver = {
++		.name    = "ipaq-micro-leds",
++	},
++	.probe   = micro_leds_probe,
++	.remove  = micro_leds_remove,
++};
++module_platform_driver(micro_leds_device_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("driver for iPAQ Atmel micro leds");
++MODULE_ALIAS("platform:ipaq-micro-leds");
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@iki.fi
+1.9.3
