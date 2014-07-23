@@ -1,41 +1,220 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] leds: add driver for the iPAQ micro
-Date: Wed, 23 Jul 2014 14:32:04 +0200
-Message-ID: <CACRpkdZ88siWX8O1zP3apUG-6XSYwTCr7KArURREdAvXALnojA@mail.gmail.com>
-References: <1405157551-10480-1-git-send-email-linus.walleij@linaro.org>
-	<CAK5ve-L8vY-DozPhEp1FTSq2vxb0ya3JEJB5WYaOqshK=BCOOg@mail.gmail.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2] leds: add driver for the iPAQ micro
+Date: Wed, 23 Jul 2014 13:34:30 -0700
+Message-ID: <CAK5ve-+xAckGPNKZ1ntkG7gaz6P4OTitHGrdERJGZb9pSnvz-A@mail.gmail.com>
+References: <1406118960-28340-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:36393 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbaGWMix (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Jul 2014 08:38:53 -0400
-Received: by mail-oa0-f48.google.com with SMTP id m1so1470972oag.21
-        for <linux-leds@vger.kernel.org>; Wed, 23 Jul 2014 05:38:52 -0700 (PDT)
-In-Reply-To: <CAK5ve-L8vY-DozPhEp1FTSq2vxb0ya3JEJB5WYaOqshK=BCOOg@mail.gmail.com>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:35643 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932975AbaGWUew (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Jul 2014 16:34:52 -0400
+Received: by mail-lb0-f175.google.com with SMTP id 10so1419709lbg.34
+        for <linux-leds@vger.kernel.org>; Wed, 23 Jul 2014 13:34:50 -0700 (PDT)
+In-Reply-To: <1406118960-28340-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Tue, Jul 15, 2014 at 2:46 AM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Sat, Jul 12, 2014 at 2:32 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-
->> +       if (*delay_off >= IPAQ_LED_MAX_DUTY)
->> +               msg.tx_data[3] = 0;
->> +       else
->> +               msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
->> +       return ipaq_micro_tx_msg_sync(micro, &msg);
+On Wed, Jul 23, 2014 at 5:36 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds a driver for the iPAQ microcontroller LED.
 >
-> Do we need to use workqueue for both .brightness_set and .blink_set?
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Rename the classdev to "led-ipaq-micro"
+> - Bail out properly on probe error
 
-The LED message is basically just that you send a message
-and this sync function waits for an ACK to be returned
-from a completion after an interrupt. It really does not involve
-a workqueue, it's a message queue.
+Good, applied already.
 
-Fixed up the rest, sending v2 soon...
+-Bryan
 
-Yours,
-Linus Walleij
+> ---
+>  drivers/leds/Kconfig           |   7 ++
+>  drivers/leds/Makefile          |   1 +
+>  drivers/leds/leds-ipaq-micro.c | 141 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 149 insertions(+)
+>  create mode 100644 drivers/leds/leds-ipaq-micro.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index a1b044e7eaad..30e82860567a 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -143,6 +143,13 @@ config LEDS_SUNFIRE
+>           This option enables support for the Left, Middle, and Right
+>           LEDs on the I/O and CPU boards of SunFire UltraSPARC servers.
+>
+> +config LEDS_IPAQ_MICRO
+> +       tristate "LED Support for the Compaq iPAQ h3xxx"
+> +       depends on MFD_IPAQ_MICRO
+> +       help
+> +         Choose this option if you want to use the notification LED on
+> +         Compaq/HP iPAQ h3100 and h3600.
+> +
+>  config LEDS_HP6XX
+>         tristate "LED Support for the HP Jornada 6xx"
+>         depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 79c5155199a7..b2a62959ff8f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)             += leds-lp8501.o
+>  obj-$(CONFIG_LEDS_LP8788)              += leds-lp8788.o
+>  obj-$(CONFIG_LEDS_TCA6507)             += leds-tca6507.o
+>  obj-$(CONFIG_LEDS_CLEVO_MAIL)          += leds-clevo-mail.o
+> +obj-$(CONFIG_LEDS_IPAQ_MICRO)          += leds-ipaq-micro.o
+>  obj-$(CONFIG_LEDS_HP6XX)               += leds-hp6xx.o
+>  obj-$(CONFIG_LEDS_OT200)               += leds-ot200.o
+>  obj-$(CONFIG_LEDS_FSG)                 += leds-fsg.o
+> diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
+> new file mode 100644
+> index 000000000000..3210a47f0812
+> --- /dev/null
+> +++ b/drivers/leds/leds-ipaq-micro.c
+> @@ -0,0 +1,141 @@
+> +/*
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * h3xxx atmel micro companion support, notification LED subdevice
+> + *
+> + * Author : Linus Walleij <linus.walleij@linaro.org>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/ipaq-micro.h>
+> +#include <linux/leds.h>
+> +
+> +#define LED_YELLOW     0x00
+> +#define LED_GREEN      0x01
+> +
+> +#define LED_EN          (1 << 4)        /* LED ON/OFF 0:off, 1:on                       */
+> +#define LED_AUTOSTOP    (1 << 5)        /* LED ON/OFF auto stop set 0:disable, 1:enable */
+> +#define LED_ALWAYS      (1 << 6)        /* LED Interrupt Mask 0:No mask, 1:mask         */
+> +
+> +static void micro_leds_brightness_set(struct led_classdev *led_cdev,
+> +                                     enum led_brightness value)
+> +{
+> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
+> +       /*
+> +        * In this message:
+> +        * Byte 0 = LED color: 0 = yellow, 1 = green
+> +        *          yellow LED is always ~30 blinks per minute
+> +        * Byte 1 = duration (flags?) appears to be ignored
+> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 second
+> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 seconds
+> +        */
+> +       struct ipaq_micro_msg msg = {
+> +               .id = MSG_NOTIFY_LED,
+> +               .tx_len = 4,
+> +       };
+> +
+> +       msg.tx_data[0] = LED_GREEN;
+> +       msg.tx_data[1] = 0;
+> +       if (value) {
+> +               msg.tx_data[2] = 0; /* Duty cycle 256 */
+> +               msg.tx_data[3] = 1;
+> +       } else {
+> +               msg.tx_data[2] = 1;
+> +               msg.tx_data[3] = 0; /* Duty cycle 256 */
+> +       }
+> +       ipaq_micro_tx_msg_sync(micro, &msg);
+> +}
+> +
+> +/* Maximum duty cycle in ms 256/10 sec = 25600 ms */
+> +#define IPAQ_LED_MAX_DUTY 25600
+> +
+> +static int micro_leds_blink_set(struct led_classdev *led_cdev,
+> +                               unsigned long *delay_on,
+> +                               unsigned long *delay_off)
+> +{
+> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
+> +       /*
+> +        * In this message:
+> +        * Byte 0 = LED color: 0 = yellow, 1 = green
+> +        *          yellow LED is always ~30 blinks per minute
+> +        * Byte 1 = duration (flags?) appears to be ignored
+> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 second
+> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
+> +        *          1 = 1/10 second
+> +        *          0 = 256/10 seconds
+> +        */
+> +       struct ipaq_micro_msg msg = {
+> +               .id = MSG_NOTIFY_LED,
+> +               .tx_len = 4,
+> +       };
+> +
+> +       msg.tx_data[0] = LED_GREEN;
+> +        if (*delay_on > IPAQ_LED_MAX_DUTY ||
+> +           *delay_off > IPAQ_LED_MAX_DUTY)
+> +                return -EINVAL;
+> +
+> +        if (*delay_on == 0 && *delay_off == 0) {
+> +                *delay_on = 100;
+> +                *delay_off = 100;
+> +        }
+> +
+> +       msg.tx_data[1] = 0;
+> +       if (*delay_on >= IPAQ_LED_MAX_DUTY)
+> +               msg.tx_data[2] = 0;
+> +       else
+> +               msg.tx_data[2] = (u8) DIV_ROUND_CLOSEST(*delay_on, 100);
+> +       if (*delay_off >= IPAQ_LED_MAX_DUTY)
+> +               msg.tx_data[3] = 0;
+> +       else
+> +               msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
+> +       return ipaq_micro_tx_msg_sync(micro, &msg);
+> +}
+> +
+> +static struct led_classdev micro_led = {
+> +       .name                   = "led-ipaq-micro",
+> +       .brightness_set         = micro_leds_brightness_set,
+> +       .blink_set              = micro_leds_blink_set,
+> +       .flags                  = LED_CORE_SUSPENDRESUME,
+> +};
+> +
+> +static int micro_leds_probe(struct platform_device *pdev)
+> +{
+> +       int ret;
+> +
+> +       ret = led_classdev_register(&pdev->dev, &micro_led);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "registering led failed: %d\n", ret);
+> +               return ret;
+> +       }
+> +       dev_info(&pdev->dev, "iPAQ micro notification LED driver\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int micro_leds_remove(struct platform_device *pdev)
+> +{
+> +       led_classdev_unregister(&micro_led);
+> +       return 0;
+> +}
+> +
+> +struct platform_driver micro_leds_device_driver = {
+> +       .driver = {
+> +               .name    = "ipaq-micro-leds",
+> +       },
+> +       .probe   = micro_leds_probe,
+> +       .remove  = micro_leds_remove,
+> +};
+> +module_platform_driver(micro_leds_device_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("driver for iPAQ Atmel micro leds");
+> +MODULE_ALIAS("platform:ipaq-micro-leds");
+> --
+> 1.9.3
+>
