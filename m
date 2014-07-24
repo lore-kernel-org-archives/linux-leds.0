@@ -1,220 +1,372 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2] leds: add driver for the iPAQ micro
-Date: Wed, 23 Jul 2014 13:34:30 -0700
-Message-ID: <CAK5ve-+xAckGPNKZ1ntkG7gaz6P4OTitHGrdERJGZb9pSnvz-A@mail.gmail.com>
-References: <1406118960-28340-1-git-send-email-linus.walleij@linaro.org>
+From: Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: [PATCH] leds: Add driver for PCA9622 LED driver chip.
+Date: Thu, 24 Jul 2014 14:02:16 +0200
+Message-ID: <20140724120216.4845.99048.stgit@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:35643 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932975AbaGWUew (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Jul 2014 16:34:52 -0400
-Received: by mail-lb0-f175.google.com with SMTP id 10so1419709lbg.34
-        for <linux-leds@vger.kernel.org>; Wed, 23 Jul 2014 13:34:50 -0700 (PDT)
-In-Reply-To: <1406118960-28340-1-git-send-email-linus.walleij@linaro.org>
+Received: from mta1.parkeon.com ([91.121.43.66]:45313 "EHLO mta1.parkeon.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756834AbaGXMZN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 24 Jul 2014 08:25:13 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-On Wed, Jul 23, 2014 at 5:36 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This adds a driver for the iPAQ microcontroller LED.
->
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Rename the classdev to "led-ipaq-micro"
-> - Bail out properly on probe error
+Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
+---
+ Documentation/devicetree/bindings/leds/pca9622.txt |   35 +++
+ drivers/leds/Kconfig                               |    8 +
+ drivers/leds/Makefile                              |    1 
+ drivers/leds/leds-pca9622.c                        |  268 ++++++++++++++++++++
+ 4 files changed, 312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/pca9622.txt
+ create mode 100644 drivers/leds/leds-pca9622.c
 
-Good, applied already.
-
--Bryan
-
-> ---
->  drivers/leds/Kconfig           |   7 ++
->  drivers/leds/Makefile          |   1 +
->  drivers/leds/leds-ipaq-micro.c | 141 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 drivers/leds/leds-ipaq-micro.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index a1b044e7eaad..30e82860567a 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -143,6 +143,13 @@ config LEDS_SUNFIRE
->           This option enables support for the Left, Middle, and Right
->           LEDs on the I/O and CPU boards of SunFire UltraSPARC servers.
->
-> +config LEDS_IPAQ_MICRO
-> +       tristate "LED Support for the Compaq iPAQ h3xxx"
-> +       depends on MFD_IPAQ_MICRO
-> +       help
-> +         Choose this option if you want to use the notification LED on
-> +         Compaq/HP iPAQ h3100 and h3600.
-> +
->  config LEDS_HP6XX
->         tristate "LED Support for the HP Jornada 6xx"
->         depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 79c5155199a7..b2a62959ff8f 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)             += leds-lp8501.o
->  obj-$(CONFIG_LEDS_LP8788)              += leds-lp8788.o
->  obj-$(CONFIG_LEDS_TCA6507)             += leds-tca6507.o
->  obj-$(CONFIG_LEDS_CLEVO_MAIL)          += leds-clevo-mail.o
-> +obj-$(CONFIG_LEDS_IPAQ_MICRO)          += leds-ipaq-micro.o
->  obj-$(CONFIG_LEDS_HP6XX)               += leds-hp6xx.o
->  obj-$(CONFIG_LEDS_OT200)               += leds-ot200.o
->  obj-$(CONFIG_LEDS_FSG)                 += leds-fsg.o
-> diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-> new file mode 100644
-> index 000000000000..3210a47f0812
-> --- /dev/null
-> +++ b/drivers/leds/leds-ipaq-micro.c
-> @@ -0,0 +1,141 @@
-> +/*
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * h3xxx atmel micro companion support, notification LED subdevice
-> + *
-> + * Author : Linus Walleij <linus.walleij@linaro.org>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/ipaq-micro.h>
-> +#include <linux/leds.h>
-> +
-> +#define LED_YELLOW     0x00
-> +#define LED_GREEN      0x01
-> +
-> +#define LED_EN          (1 << 4)        /* LED ON/OFF 0:off, 1:on                       */
-> +#define LED_AUTOSTOP    (1 << 5)        /* LED ON/OFF auto stop set 0:disable, 1:enable */
-> +#define LED_ALWAYS      (1 << 6)        /* LED Interrupt Mask 0:No mask, 1:mask         */
-> +
-> +static void micro_leds_brightness_set(struct led_classdev *led_cdev,
-> +                                     enum led_brightness value)
-> +{
-> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
-> +       /*
-> +        * In this message:
-> +        * Byte 0 = LED color: 0 = yellow, 1 = green
-> +        *          yellow LED is always ~30 blinks per minute
-> +        * Byte 1 = duration (flags?) appears to be ignored
-> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
-> +        *          1 = 1/10 second
-> +        *          0 = 256/10 second
-> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
-> +        *          1 = 1/10 second
-> +        *          0 = 256/10 seconds
-> +        */
-> +       struct ipaq_micro_msg msg = {
-> +               .id = MSG_NOTIFY_LED,
-> +               .tx_len = 4,
-> +       };
-> +
-> +       msg.tx_data[0] = LED_GREEN;
-> +       msg.tx_data[1] = 0;
-> +       if (value) {
-> +               msg.tx_data[2] = 0; /* Duty cycle 256 */
-> +               msg.tx_data[3] = 1;
-> +       } else {
-> +               msg.tx_data[2] = 1;
-> +               msg.tx_data[3] = 0; /* Duty cycle 256 */
-> +       }
-> +       ipaq_micro_tx_msg_sync(micro, &msg);
-> +}
-> +
-> +/* Maximum duty cycle in ms 256/10 sec = 25600 ms */
-> +#define IPAQ_LED_MAX_DUTY 25600
-> +
-> +static int micro_leds_blink_set(struct led_classdev *led_cdev,
-> +                               unsigned long *delay_on,
-> +                               unsigned long *delay_off)
-> +{
-> +       struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
-> +       /*
-> +        * In this message:
-> +        * Byte 0 = LED color: 0 = yellow, 1 = green
-> +        *          yellow LED is always ~30 blinks per minute
-> +        * Byte 1 = duration (flags?) appears to be ignored
-> +        * Byte 2 = green ontime in 1/10 sec (deciseconds)
-> +        *          1 = 1/10 second
-> +        *          0 = 256/10 second
-> +        * Byte 3 = green offtime in 1/10 sec (deciseconds)
-> +        *          1 = 1/10 second
-> +        *          0 = 256/10 seconds
-> +        */
-> +       struct ipaq_micro_msg msg = {
-> +               .id = MSG_NOTIFY_LED,
-> +               .tx_len = 4,
-> +       };
-> +
-> +       msg.tx_data[0] = LED_GREEN;
-> +        if (*delay_on > IPAQ_LED_MAX_DUTY ||
-> +           *delay_off > IPAQ_LED_MAX_DUTY)
-> +                return -EINVAL;
-> +
-> +        if (*delay_on == 0 && *delay_off == 0) {
-> +                *delay_on = 100;
-> +                *delay_off = 100;
-> +        }
-> +
-> +       msg.tx_data[1] = 0;
-> +       if (*delay_on >= IPAQ_LED_MAX_DUTY)
-> +               msg.tx_data[2] = 0;
-> +       else
-> +               msg.tx_data[2] = (u8) DIV_ROUND_CLOSEST(*delay_on, 100);
-> +       if (*delay_off >= IPAQ_LED_MAX_DUTY)
-> +               msg.tx_data[3] = 0;
-> +       else
-> +               msg.tx_data[3] = (u8) DIV_ROUND_CLOSEST(*delay_off, 100);
-> +       return ipaq_micro_tx_msg_sync(micro, &msg);
-> +}
-> +
-> +static struct led_classdev micro_led = {
-> +       .name                   = "led-ipaq-micro",
-> +       .brightness_set         = micro_leds_brightness_set,
-> +       .blink_set              = micro_leds_blink_set,
-> +       .flags                  = LED_CORE_SUSPENDRESUME,
-> +};
-> +
-> +static int micro_leds_probe(struct platform_device *pdev)
-> +{
-> +       int ret;
-> +
-> +       ret = led_classdev_register(&pdev->dev, &micro_led);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "registering led failed: %d\n", ret);
-> +               return ret;
-> +       }
-> +       dev_info(&pdev->dev, "iPAQ micro notification LED driver\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static int micro_leds_remove(struct platform_device *pdev)
-> +{
-> +       led_classdev_unregister(&micro_led);
-> +       return 0;
-> +}
-> +
-> +struct platform_driver micro_leds_device_driver = {
-> +       .driver = {
-> +               .name    = "ipaq-micro-leds",
-> +       },
-> +       .probe   = micro_leds_probe,
-> +       .remove  = micro_leds_remove,
-> +};
-> +module_platform_driver(micro_leds_device_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("driver for iPAQ Atmel micro leds");
-> +MODULE_ALIAS("platform:ipaq-micro-leds");
-> --
-> 1.9.3
->
+diff --git a/Documentation/devicetree/bindings/leds/pca9622.txt b/Documentation/devicetree/bindings/leds/pca9622.txt
+new file mode 100644
+index 0000000..ac4f2f9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/pca9622.txt
+@@ -0,0 +1,35 @@
++LEDs connected to pca9622
++
++Required properties:
++- compatible : must be : "nxp,pca9622"
++- reg : i2c address
++
++Optional properties:
++- name-prefix : name prepended to label in /sys/class/leds defaults to "pca9622"
++
++Each led is represented as a sub-node of the nxp,pca922 device.
++
++LED sub-node properties:
++- reg : number of LED line (0 - 15)
++- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger : (optional)
++   see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++leds@60 {
++	compatible = "nxp,pca9622";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	reg = <0x60>;
++	name-prefix = "antenna-board";
++	out0 {
++		label = "blue:target-3";
++		reg = <0>;
++	};
++	out3 {
++		label = "red:target-3";
++		reg = <3>;
++	};
++};
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a1b044e..afbbc7e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -291,6 +291,14 @@ config LEDS_PCA955X
+ 	  LED driver chips accessed via the I2C bus.  Supported
+ 	  devices include PCA9550, PCA9551, PCA9552, and PCA9553.
+ 
++config LEDS_PCA9622
++	tristate "LED support for PCA9622 I2C chip"
++	depends on LEDS_CLASS
++	depends on I2C
++	help
++	  This option enables support for LEDs connected to the PCA9622
++	  LED driver chip accessed via the I2C bus.
++
+ config LEDS_PCA963X
+ 	tristate "LED support for PCA963x I2C chip"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 79c5155..adbd075 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -35,6 +35,7 @@ obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+ obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
+ obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+ obj-$(CONFIG_LEDS_PCA955X)		+= leds-pca955x.o
++obj-$(CONFIG_LEDS_PCA9622)		+= leds-pca9622.o
+ obj-$(CONFIG_LEDS_PCA963X)		+= leds-pca963x.o
+ obj-$(CONFIG_LEDS_DA903X)		+= leds-da903x.o
+ obj-$(CONFIG_LEDS_DA9052)		+= leds-da9052.o
+diff --git a/drivers/leds/leds-pca9622.c b/drivers/leds/leds-pca9622.c
+new file mode 100644
+index 0000000..3a19433
+--- /dev/null
++++ b/drivers/leds/leds-pca9622.c
+@@ -0,0 +1,268 @@
++/*
++ * Copyright 2014 Parkeon
++ *
++ * Author: Martin Fuzzey <mfuzzey@parkeon.com>
++ *
++ * Based on leds-pca9622.c
++ *
++ * This file is subject to the terms and conditions of version 2 of
++ * the GNU General Public License.  See the file COPYING in the main
++ * directory of this archive for more details.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/string.h>
++#include <linux/ctype.h>
++#include <linux/leds.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/workqueue.h>
++#include <linux/slab.h>
++
++#define PCA9622_MAX_LEDS	16
++
++/* LED select registers determine the source that drives LED outputs */
++#define PCA9622_LED_OFF		0x0	/* LED driver off */
++#define PCA9622_LED_ON		0x1	/* LED driver on */
++#define PCA9622_LED_PWM		0x2	/* Controlled through PWM */
++#define PCA9622_LED_GRP_PWM	0x3	/* Controlled through PWM/GRPPWM */
++
++#define PCA9622_MODE1		0x00
++#define PCA9622_MODE2		0x01
++#define PCA9622_PWM_BASE	0x02
++#define PCA9622_LEDOUT_BASE	0x14
++
++static const struct i2c_device_id pca9622_id[] = {
++	{ "pca9622", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, pca9622_id);
++
++struct pca9622_led {
++	struct i2c_client *client;
++	struct work_struct work;
++	enum led_brightness brightness;
++	struct led_classdev led_cdev;
++	int led_num; /* 0 .. 15 potentially */
++	char name[32];
++};
++
++static void pca9622_led_work(struct work_struct *work)
++{
++	struct pca9622_led *pca9622 = container_of(work,
++		struct pca9622_led, work);
++	u8 ledout_reg = PCA9622_LEDOUT_BASE + pca9622->led_num / 4;
++	u8 ledout = i2c_smbus_read_byte_data(pca9622->client, ledout_reg);
++	int shift = 2 * (pca9622->led_num % 4);
++	u8 mask = 0x3 << shift;
++
++	switch (pca9622->brightness) {
++	case LED_FULL:
++		i2c_smbus_write_byte_data(pca9622->client, ledout_reg,
++			(ledout & ~mask) | (PCA9622_LED_ON << shift));
++		break;
++	case LED_OFF:
++		i2c_smbus_write_byte_data(pca9622->client, ledout_reg,
++			ledout & ~mask);
++		break;
++	default:
++		i2c_smbus_write_byte_data(pca9622->client,
++			PCA9622_PWM_BASE + pca9622->led_num,
++			pca9622->brightness);
++		i2c_smbus_write_byte_data(pca9622->client, ledout_reg,
++			(ledout & ~mask) | (PCA9622_LED_PWM << shift));
++		break;
++	}
++}
++
++static void pca9622_led_set(struct led_classdev *led_cdev,
++	enum led_brightness value)
++{
++	struct pca9622_led *pca9622;
++
++	pca9622 = container_of(led_cdev, struct pca9622_led, led_cdev);
++
++	pca9622->brightness = value;
++
++	/*
++	 * Must use workqueue for the actual I/O since I2C operations
++	 * can sleep.
++	 */
++	schedule_work(&pca9622->work);
++}
++
++static struct led_platform_data *pca9622_led_pdata_from_dt(struct device *dev)
++{
++	struct led_platform_data *pdata = NULL;
++#ifdef CONFIG_OF
++	struct device_node *np = dev->of_node;
++	struct device_node *child;
++	struct led_info *leds;
++	int num_leds;
++
++	num_leds = of_get_child_count(np);
++	if (num_leds == 0)
++		return NULL;  /* Optional */
++	if (num_leds > PCA9622_MAX_LEDS) {
++		dev_err(dev, "Too many child nodes max=%d\n", PCA9622_MAX_LEDS);
++		return ERR_PTR(-EINVAL);
++	}
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return ERR_PTR(-ENOMEM);
++
++	leds = devm_kzalloc(dev, PCA9622_MAX_LEDS * sizeof(*leds), GFP_KERNEL);
++	if (!leds)
++		return ERR_PTR(-ENOMEM);
++
++	for_each_child_of_node(np, child) {
++		int ret;
++		u32 line;
++		struct led_info led;
++
++		memset(&led, 0, sizeof(led));
++
++		ret = of_property_read_u32(child, "reg", &line);
++		if (ret) {
++			dev_err(dev, "Node '%s' missing line number (reg)\n",
++				child->name);
++			return ERR_PTR(ret);
++		}
++
++		led.name = child->name;
++		of_property_read_string(child, "label", &led.name);
++		of_property_read_string(child, "linux,default-trigger",
++							&led.default_trigger);
++
++		leds[line] = led;
++	}
++
++	pdata->leds = leds;
++	pdata->num_leds = PCA9622_MAX_LEDS;
++#endif
++	return pdata;
++}
++
++static int pca9622_probe(struct i2c_client *client,
++					const struct i2c_device_id *id)
++{
++	const char *name_prefix = "pca9622";
++	struct pca9622_led *pca9622;
++	struct led_platform_data *pdata;
++	int i, ret;
++
++	of_property_read_string(client->dev.of_node, "name-prefix",
++							&name_prefix);
++	pdata = pca9622_led_pdata_from_dt(&client->dev);
++	if (IS_ERR(pdata))
++		return PTR_ERR(pdata);
++
++	if (!pdata) {
++		pdata = client->dev.platform_data;
++		if (pdata && (
++				pdata->num_leds <= 0 ||
++				pdata->num_leds > PCA9622_MAX_LEDS)
++		) {
++			dev_err(&client->dev,
++				"board data must define 0-%d LEDs",
++				PCA9622_MAX_LEDS);
++			return -EINVAL;
++		}
++	}
++
++	ret = i2c_smbus_read_byte_data(client, 0);
++	if (ret < 0)
++		return ret;
++
++	pca9622 = devm_kzalloc(&client->dev,
++			PCA9622_MAX_LEDS * sizeof(*pca9622), GFP_KERNEL);
++	if (!pca9622)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, pca9622);
++
++	for (i = 0; i < PCA9622_MAX_LEDS; i++) {
++		pca9622[i].client = client;
++		pca9622[i].led_num = i;
++
++		/* Platform data can specify LED names and default triggers */
++		if (pdata && i < pdata->num_leds) {
++			if (pdata->leds[i].name)
++				snprintf(pca9622[i].name,
++					 sizeof(pca9622[i].name), "%s:%s",
++					 name_prefix,
++					 pdata->leds[i].name);
++			if (pdata->leds[i].default_trigger)
++				pca9622[i].led_cdev.default_trigger =
++					pdata->leds[i].default_trigger;
++		}
++
++		if (strlen(pca9622[i].name) == 0)
++			snprintf(pca9622[i].name, sizeof(pca9622[i].name),
++						"%s:%d", name_prefix, i);
++
++		pca9622[i].led_cdev.name = pca9622[i].name;
++		pca9622[i].led_cdev.brightness_set = pca9622_led_set;
++
++		INIT_WORK(&pca9622[i].work, pca9622_led_work);
++
++		ret = led_classdev_register(&client->dev, &pca9622[i].led_cdev);
++		if (ret < 0)
++			goto exit;
++	}
++
++	/* Disable LED all-call address and set normal mode */
++	i2c_smbus_write_byte_data(client, PCA9622_MODE1, 0x00);
++
++	/* Turn off LEDs */
++	for (i = 0; i < PCA9622_MAX_LEDS / 4; i++)
++		i2c_smbus_write_byte_data(client, PCA9622_LEDOUT_BASE + i, 0);
++
++	return 0;
++
++exit:
++	while (i--) {
++		led_classdev_unregister(&pca9622[i].led_cdev);
++		cancel_work_sync(&pca9622[i].work);
++	}
++
++	return ret;
++}
++
++static int pca9622_remove(struct i2c_client *client)
++{
++	struct pca9622_led *pca9622 = i2c_get_clientdata(client);
++	int i;
++
++	for (i = 0; i < PCA9622_MAX_LEDS; i++) {
++		led_classdev_unregister(&pca9622[i].led_cdev);
++		cancel_work_sync(&pca9622[i].work);
++	}
++
++	return 0;
++}
++
++static const struct of_device_id of_pca9622_leds_match[] = {
++	{ .compatible =  "nxp,pca9622"},
++	{},
++};
++
++static struct i2c_driver pca9622_driver = {
++	.driver = {
++		.name	= "leds-pca9622",
++		.owner	= THIS_MODULE,
++		.of_match_table = of_match_ptr(of_pca9622_leds_match),
++	},
++	.probe	= pca9622_probe,
++	.remove	= pca9622_remove,
++	.id_table = pca9622_id,
++};
++
++module_i2c_driver(pca9622_driver);
++
++MODULE_AUTHOR("Martin Fuzzey <mfuzzey@parkeon.com>");
++MODULE_DESCRIPTION("PCA9622 LED driver");
++MODULE_LICENSE("GPL v2");
