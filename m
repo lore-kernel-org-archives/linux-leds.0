@@ -1,41 +1,47 @@
-From: weiyj_lk@163.com
-Subject: [PATCH -next] leds: ipaq-micro: fix sparse non static symbol warning
-Date: Mon, 28 Jul 2014 21:15:24 +0800
-Message-ID: <1406553324-29593-1-git-send-email-weiyj_lk@163.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely@linaro.org>
+Subject: Re: [PATCH/RFC v4 07/21] of: add of_node_ncmp wrapper
+Date: Mon, 28 Jul 2014 07:41:00 -0600
+Message-ID: <20140728134100.86C07C408A9@trevor.secretlab.ca>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
+	<1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from m12-15.163.com ([220.181.12.15]:55497 "EHLO m12-15.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753050AbaG1NPh (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 28 Jul 2014 09:15:37 -0400
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:60866 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751703AbaG1NlH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Jul 2014 09:41:07 -0400
+Received: by mail-pa0-f50.google.com with SMTP id et14so10636749pad.9
+        for <linux-leds@vger.kernel.org>; Mon, 28 Jul 2014 06:41:06 -0700 (PDT)
+In-Reply-To: <1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Simek <monstr@monstr.eu>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On Fri, 11 Jul 2014 16:04:10 +0200, Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> The wrapper for strnicmp is required for checking whether a node has
+> expected prefix.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Grant Likely <grant.likely@linaro.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Michal Simek <monstr@monstr.eu>
+> ---
+>  include/linux/of.h |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 692b56c..9a53eea 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -199,6 +199,7 @@ static inline unsigned long of_read_ulong(const __be32 *cell, int size)
+>  #define of_compat_cmp(s1, s2, l)	strcasecmp((s1), (s2))
+>  #define of_prop_cmp(s1, s2)		strcmp((s1), (s2))
+>  #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
+> +#define of_node_ncmp(s1, s2, n)		strnicmp((s1), (s2), (n))
+>  #endif
 
-Fixes the following sparse warnings:
+Don't forget to add an of_node_ncmp() define to
+arch/sparc/include/asm/prom.h. Sparc has its own rules.
 
-drivers/leds/leds-ipaq-micro.c:130:24: warning:
- symbol 'micro_leds_device_driver' was not declared. Should it be static?
-
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/leds/leds-ipaq-micro.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-index 3210a47..3776f51 100644
---- a/drivers/leds/leds-ipaq-micro.c
-+++ b/drivers/leds/leds-ipaq-micro.c
-@@ -127,7 +127,7 @@ static int micro_leds_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--struct platform_driver micro_leds_device_driver = {
-+static struct platform_driver micro_leds_device_driver = {
- 	.driver = {
- 		.name    = "ipaq-micro-leds",
- 	},
+g.
