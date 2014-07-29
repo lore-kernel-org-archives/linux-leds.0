@@ -1,47 +1,21 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH/RFC v4 07/21] of: add of_node_ncmp wrapper
-Date: Mon, 28 Jul 2014 07:41:00 -0600
-Message-ID: <20140728134100.86C07C408A9@trevor.secretlab.ca>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
-	<1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
+From: "Noemi Alvarez" <nimvarez@gmail.com>
+Subject: Hello
+Date: Tue, 29 Jul 2014 10:23:20 +0200
+Message-ID: <adf9c84deea711c6326c744d8c46dc8a.squirrel__20566.9617899277$1406636023$gmane$org@acemedia.mk>
+Reply-To: nimvarez@live.com
+Mime-Version: 1.0
+Content-Type: text/plain;charset=UTF8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:60866 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751703AbaG1NlH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Jul 2014 09:41:07 -0400
-Received: by mail-pa0-f50.google.com with SMTP id et14so10636749pad.9
-        for <linux-leds@vger.kernel.org>; Mon, 28 Jul 2014 06:41:06 -0700 (PDT)
-In-Reply-To: <1405087464-13762-8-git-send-email-j.anaszewski@samsung.com>
+Received: from dns.inelhost.com ([37.26.96.2]:34598 "EHLO inelhost.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753709AbaG2MNH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 29 Jul 2014 08:13:07 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Simek <monstr@monstr.eu>
 
-On Fri, 11 Jul 2014 16:04:10 +0200, Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
-> The wrapper for strnicmp is required for checking whether a node has
-> expected prefix.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Grant Likely <grant.likely@linaro.org>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Michal Simek <monstr@monstr.eu>
-> ---
->  include/linux/of.h |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 692b56c..9a53eea 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -199,6 +199,7 @@ static inline unsigned long of_read_ulong(const __be32 *cell, int size)
->  #define of_compat_cmp(s1, s2, l)	strcasecmp((s1), (s2))
->  #define of_prop_cmp(s1, s2)		strcmp((s1), (s2))
->  #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
-> +#define of_node_ncmp(s1, s2, n)		strnicmp((s1), (s2), (n))
->  #endif
 
-Don't forget to add an of_node_ncmp() define to
-arch/sparc/include/asm/prom.h. Sparc has its own rules.
-
-g.
+I want to keep up with you with hope for friendship if you are interested.
+If you don't mind i will like you to write me back. I am waiting to read
+from you, because i have something important and urgent to discuss with
+you. I will also send some of my beautiful photos to you.
