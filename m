@@ -1,32 +1,101 @@
-From: Fabian Morision <fmorision1@gmail.com>
-Subject: -- Re: Very Urgent............
-Date: Thu, 31 Jul 2014 01:27:03 +0200
-Message-ID: <CABfGM6_nBUSgO_4D4Wi_h67VQOty+jYQXqE0JDvRx0gL-rj_bw__31178.8887753666$1406764486$gmane$org@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v4 06/21] leds: add API for setting torch brightness
+Date: Mon, 04 Aug 2014 14:35:26 +0200
+Message-ID: <53DF7E0E.2060705@samsung.com>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
+ <1405087464-13762-7-git-send-email-j.anaszewski@samsung.com>
+ <20140716215444.GK16460@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qg0-f65.google.com ([209.85.192.65]:59661 "EHLO
-	mail-qg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753321AbaG3Xyh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Jul 2014 19:54:37 -0400
-Received: by mail-qg0-f65.google.com with SMTP id z60so811319qgd.0
-        for <linux-leds@vger.kernel.org>; Wed, 30 Jul 2014 16:54:36 -0700 (PDT)
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64082 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751294AbaHDMfb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 4 Aug 2014 08:35:31 -0400
+In-reply-to: <20140716215444.GK16460@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-Greetings from gulf region
+Hi Sakari,
 
-Thanks for the e-mail. I am very interested on funding lucrative
-business partnership with you acting as the manager and sole
-controller of the investment while i remain a silent investor for a
-period of ten yrs , though I am only looking at investment
-opportunities within the range you specified for a start. You can
-reply me here (fmorision@yahoo.com)
+On 07/16/2014 11:54 PM, Sakari Ailus wrote:
+> Hi Jacek,
+>
+> Jacek Anaszewski wrote:
+> ...
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 1a130cc..9bea9e6 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -44,11 +44,21 @@ struct led_classdev {
+>>   #define LED_BLINK_ONESHOT_STOP    (1 << 18)
+>>   #define LED_BLINK_INVERT    (1 << 19)
+>>   #define LED_SYSFS_LOCK        (1 << 20)
+>> +#define LED_DEV_CAP_TORCH    (1 << 21)
+>>
+>>       /* Set LED brightness level */
+>>       /* Must not sleep, use a workqueue if needed */
+>>       void        (*brightness_set)(struct led_classdev *led_cdev,
+>>                         enum led_brightness brightness);
+>> +    /*
+>> +     * Set LED brightness immediately - it is required for flash led
+>> +     * devices as they require setting torch brightness to have
+>> immediate
+>> +     * effect. brightness_set op cannot be used for this purpose because
+>> +     * the led drivers schedule a work queue task in it to allow for
+>> +     * being called from led-triggers, i.e. from the timer irq context.
+>> +     */
+>
+> Do we need to classify actual devices based on this? I think it's rather
+> a different API behaviour between the LED and the V4L2 APIs.
+>
+> On devices that are slow to control, the behaviour should be asynchronous
+> over the LED API and synchronous when accessed through the V4L2 API. How
+> about implementing the work queue, as I have suggested, in the
+> framework, so
+> that individual drivers don't need to care about this and just implement
+> the
+> synchronous variant of this op? A flag could be added to distinguish
+> devices
+> that are fast so that the work queue isn't needed.
+>
+> It'd be nice to avoid individual drivers having to implement multiple
+> ops to
+> do the same thing, just for differing user space interfacs.
+>
 
-Let me know your thought asap
+It is not only the matter of a device controller speed. If a flash
+device is to be made accessible from the LED subsystem, then it
+should be also compatible with led-triggers. Some of led-triggers
+call brightness_set op from the timer irq context and thus no
+locking in the callback can occur. This requirement cannot be
+met i.e. if i2c bus is to be used. This is probably the primary
+reason for scheduling work queue tasks in brightness_set op.
 
-Regards
+Having the above in mind, setting a brightness in a work queue
+task must be possible for all LED Class Flash drivers, regardless
+whether related devices have fast or slow controller.
 
-Financial Consultant
+Let's recap the cost of possible solutions then:
 
-Mr.Fabian Morision
+1) Moving the work queues to the LED framework
+
+   - it would probably require extending led_set_brightness and
+     __led_set_brightness functions by a parameter indicating whether it
+     should call brightness_set op in the work queue task or directly;
+   - all existing triggers would have to be updated accordingly;
+   - work queues would have to be removed from all the LED drivers;
+
+2) adding led_set_torch_brightness API
+
+   - no modifications in existing drivers and triggers would be required
+   - instead, only the modifications from the discussed patch would
+     be required
+
+Solution 1 looks cleaner but requires much more modifications.
+
+Best Regards,
+Jacek Anaszewski
