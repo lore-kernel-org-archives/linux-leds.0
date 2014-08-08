@@ -1,55 +1,72 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: lp3944: fix sparse warning
-Date: Fri, 8 Aug 2014 09:42:54 -0700
-Message-ID: <CAK5ve-LcEGE6VVn46UAW37prCorG3Dg8+31K7jAt4p0Ovi_azA@mail.gmail.com>
-References: <1407481784-24057-1-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v4 00/21] LED / flash API integration
+Date: Fri, 8 Aug 2014 09:59:24 -0700
+Message-ID: <CAK5ve-+3WmaU+OEX1T_xMWDRDgNxD6YXrqTB-=UyaQxHknVbow@mail.gmail.com>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
+ <CAK5ve-L67=q-EpWvxD5-x+cFT7dh8p0HHuoUbAWA-j5BqCO52A@mail.gmail.com>
+ <CAK5ve-+xyXyjPqejTPRvz=bJ4M5v19Uq1oaVv94QKqBWf1D4dA@mail.gmail.com> <53E47186.5000309@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:51384 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756435AbaHHQnQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 8 Aug 2014 12:43:16 -0400
-Received: by mail-la0-f47.google.com with SMTP id mc6so4792081lab.20
-        for <linux-leds@vger.kernel.org>; Fri, 08 Aug 2014 09:43:15 -0700 (PDT)
-In-Reply-To: <1407481784-24057-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53E47186.5000309@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com
+List-Id: linux-leds@vger.kernel.org
 
-On Fri, Aug 8, 2014 at 12:09 AM, Jacek Anaszewski
+On Thu, Aug 7, 2014 at 11:43 PM, Jacek Anaszewski
 <j.anaszewski@samsung.com> wrote:
-> Fix sparse warning appeared after changing brightness
-> type in the leds.h from int to enum led_brightness.
+> Hi Bryan,
+>
+>
+> On 07/16/2014 07:21 PM, Bryan Wu wrote:
+>>
+>> On Wed, Jul 16, 2014 at 10:19 AM, Bryan Wu <cooloney@gmail.com> wrote:
+>>>
+>>> On Fri, Jul 11, 2014 at 7:04 AM, Jacek Anaszewski
+>>> <j.anaszewski@samsung.com> wrote:
+>>>>
+>>>> This is is the fourth version of the patch series being a follow up
+>>>> of the discussion on Media summit 2013-10-23, related to the
+>>>> LED / flash API integration (the notes from the discussion were
+>>>> enclosed in the message [1], paragraph 5).
+>>>> The series is based on linux-next-20140707
+>>>>
+>>>
+>>> I really apologize that I missed your discussion email in my Gmail
+>>> inbox, it was archived some where. Even in this series some of these
+>>> patches are archived in different tab.
+>>>
+>>> I will start to review and help to push this.
+>>>
+>>
+>> In the mean time, could you please provide an git tree for me to pull?
+>> It's much easier for me to review in my git.
+>
+>
+> Few days ago I sent to your private email the path to the git
+> repository to pull, but I am resending it through the lists to
+> make sure that it will not get filtered somehow again.
+>
+>
+> git://linuxtv.org/snawrocki/samsung.git
+> branch: led_flash_integration_v4
+>
+> gitweb:
+> http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/log/?h=led_flash_integration_v4
 >
 
-OK, merged.
+Yes, I got it. I merged some leds core fixing patches from you
+recently. So could you please split these big patchset into several
+small parts which should be easier for reviewing and discussion.
+ - led core fixing
+ - led flash core patches
+ - led flash manager patches
+ - v4l2 led patches
+ - Documentations
+
+My plan is to review these and merge them to my -devel branch. Then
+invite people for testing.
+
 Thanks,
 -Bryan
-
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  drivers/leds/leds-lp3944.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
-> index 8e1abdc..53144fb 100644
-> --- a/drivers/leds/leds-lp3944.c
-> +++ b/drivers/leds/leds-lp3944.c
-> @@ -335,7 +335,8 @@ static int lp3944_configure(struct i2c_client *client,
->                         }
->
->                         /* to expose the default value to userspace */
-> -                       led->ldev.brightness = led->status;
-> +                       led->ldev.brightness =
-> +                                       (enum led_brightness) led->status;
->
->                         /* Set the default led status */
->                         err = lp3944_led_set(led, led->status);
-> --
-> 1.7.9.5
->
