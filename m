@@ -1,129 +1,107 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v4 06/21] leds: add API for setting torch brightness
-Date: Thu, 07 Aug 2014 15:12:09 +0200
-Message-ID: <53E37B29.2080106@samsung.com>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-7-git-send-email-j.anaszewski@samsung.com>
- <20140716215444.GK16460@valkosipuli.retiisi.org.uk>
- <53DF7E0E.2060705@samsung.com>
- <20140804125019.GA16460@valkosipuli.retiisi.org.uk>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED updates for 3.17
+Date: Thu, 7 Aug 2014 17:11:36 -0700
+Message-ID: <CAK5ve-LY_HNUX0HDEkjahzjTGDgbOYQO-g_jCwECOPwRu42Z-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:62356 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757232AbaHGNMS (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Aug 2014 09:12:18 -0400
-In-reply-to: <20140804125019.GA16460@valkosipuli.retiisi.org.uk>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:45476 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755009AbaHHAL7 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 Aug 2014 20:11:59 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-Hi Sakari,
+Hi Linus,
 
-On 08/04/2014 02:50 PM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> Thank you for your continued efforts on this!
->
-> On Mon, Aug 04, 2014 at 02:35:26PM +0200, Jacek Anaszewski wrote:
->> On 07/16/2014 11:54 PM, Sakari Ailus wrote:
->>> Hi Jacek,
->>>
->>> Jacek Anaszewski wrote:
->>> ...
->>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>>> index 1a130cc..9bea9e6 100644
->>>> --- a/include/linux/leds.h
->>>> +++ b/include/linux/leds.h
->>>> @@ -44,11 +44,21 @@ struct led_classdev {
->>>>   #define LED_BLINK_ONESHOT_STOP    (1 << 18)
->>>>   #define LED_BLINK_INVERT    (1 << 19)
->>>>   #define LED_SYSFS_LOCK        (1 << 20)
->>>> +#define LED_DEV_CAP_TORCH    (1 << 21)
->>>>
->>>>       /* Set LED brightness level */
->>>>       /* Must not sleep, use a workqueue if needed */
->>>>       void        (*brightness_set)(struct led_classdev *led_cdev,
->>>>                         enum led_brightness brightness);
->>>> +    /*
->>>> +     * Set LED brightness immediately - it is required for flash led
->>>> +     * devices as they require setting torch brightness to have
->>>> immediate
->>>> +     * effect. brightness_set op cannot be used for this purpose because
->>>> +     * the led drivers schedule a work queue task in it to allow for
->>>> +     * being called from led-triggers, i.e. from the timer irq context.
->>>> +     */
->>>
->>> Do we need to classify actual devices based on this? I think it's rather
->>> a different API behaviour between the LED and the V4L2 APIs.
->>>
->>> On devices that are slow to control, the behaviour should be asynchronous
->>> over the LED API and synchronous when accessed through the V4L2 API. How
->>> about implementing the work queue, as I have suggested, in the
->>> framework, so
->>> that individual drivers don't need to care about this and just implement
->>> the
->>> synchronous variant of this op? A flag could be added to distinguish
->>> devices
->>> that are fast so that the work queue isn't needed.
->>>
->>> It'd be nice to avoid individual drivers having to implement multiple
->>> ops to
->>> do the same thing, just for differing user space interfacs.
->>>
->>
->> It is not only the matter of a device controller speed. If a flash
->> device is to be made accessible from the LED subsystem, then it
->> should be also compatible with led-triggers. Some of led-triggers
->> call brightness_set op from the timer irq context and thus no
->> locking in the callback can occur. This requirement cannot be
->> met i.e. if i2c bus is to be used. This is probably the primary
->> reason for scheduling work queue tasks in brightness_set op.
->>
->> Having the above in mind, setting a brightness in a work queue
->> task must be possible for all LED Class Flash drivers, regardless
->> whether related devices have fast or slow controller.
->>
->> Let's recap the cost of possible solutions then:
->>
->> 1) Moving the work queues to the LED framework
->>
->>    - it would probably require extending led_set_brightness and
->>      __led_set_brightness functions by a parameter indicating whether it
->>      should call brightness_set op in the work queue task or directly;
->>    - all existing triggers would have to be updated accordingly;
->>    - work queues would have to be removed from all the LED drivers;
->>
->> 2) adding led_set_torch_brightness API
->>
->>    - no modifications in existing drivers and triggers would be required
->>    - instead, only the modifications from the discussed patch would
->>      be required
->>
->> Solution 1 looks cleaner but requires much more modifications.
->
-> How about a combination of the two, i.e. option 1 with the old op remaining
-> there for compatibility with the old drivers (with a comment telling it's
-> deprecated)?
->
-> This way new drivers will benefit from having to implement this just once,
-> and modifications to the existing drivers could be left for later.
+This cycle we got:
+ - a fix of attribute-creation race for the whole leds subsystem
+ - new drivers (HID:GT683R, leds-ipaq-micro)
+ - other fixing and clean up.
 
-It's OK for me, but the opinion from the LED side guys is needed here
-as well.
+Please consider the following changes since commit
+a497c3ba1d97fc69c1e78e7b96435ba8c2cb42ee:
 
-> The downside is that any old drivers wouldn't get V4L2 flash API but that's
-> entirely acceptable in my opinion since these would hardly be needed in use
-> cases that would benefit from V4L2 flash API.
+  Linux 3.16-rc2 (2014-06-21 19:02:54 -1000)
 
-In the version 4 of the patch set I changed the implementation, so that
-a flash led driver must call led_classdev_flash_register to get
-registered as a LED Flash Class device and v4l2_flash_init to get
-V4L2 Flash API. In effect old drivers will have no chance to get V4L2
-Flash API either way.
+are available in the git repository at:
 
-Best Regards,
-Jacek Anaszewski
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
+
+for you to fetch changes up to e661c8978e4833d4148d08b405a2f3175d6f97d9:
+
+  leds: ipaq-micro: fix sparse non static symbol warning (2014-07-29
+10:57:20 -0700)
+
+----------------------------------------------------------------
+Janne Kanniainen (3):
+      HID: add support for MSI GT683R led panels
+      HID: gt683r: fix race condition
+      HID: gt683r: move mode attribute to led-class devices
+
+Johan Hovold (13):
+      leds: add led-class attribute-group support
+      leds: lm3550: fix attribute-creation race
+      leds: lm3533: fix attribute-creation race
+      leds: lm355x: fix attribute-creation race
+      leds: lm3642: fix attribute-creation race
+      leds: max8997: fix attribute-creation race
+      leds: netxbig: fix attribute-creation race
+      leds: ns2: fix attribute-creation race
+      leds: ss4200: fix attribute-creation race
+      leds: wm831x-status: fix attribute-creation race
+      input: lm8323: fix attribute-creation race
+      leds: lp55xx-common: fix sysfs entry leak
+      leds: lp55xx-common: fix attribute-creation race
+
+Linus Walleij (1):
+      leds: add driver for the iPAQ micro
+
+Marek Belisko (1):
+      Documentation: dts: tcs6507: Fix wrong statement about #gpio-cells
+
+Peter Meerwald (3):
+      leds:pca963x: Add support for PCA9635 LED driver chip
+      leds:pca963x: Always initialize MODE2 register
+      leds:pca963x: Update for PCA9635 and correct statement about
+MODE2 OUTDRV default
+
+Vincent Donnefort (1):
+      leds: convert blink timer to workqueue
+
+Wei Yongjun (1):
+      leds: ipaq-micro: fix sparse non static symbol warning
+
+ Documentation/ABI/testing/sysfs-class-leds-gt683r  |  16 +
+ Documentation/devicetree/bindings/leds/pca963x.txt |   9 +-
+ Documentation/devicetree/bindings/leds/tca6507.txt |   2 +-
+ drivers/hid/Kconfig                                |  14 +
+ drivers/hid/Makefile                               |   1 +
+ drivers/hid/hid-core.c                             |   1 +
+ drivers/hid/hid-gt683r.c                           | 321 +++++++++++++++++++++
+ drivers/hid/hid-ids.h                              |   2 +-
+ drivers/hid/usbhid/hid-quirks.c                    |   2 +-
+ drivers/input/keyboard/lm8323.c                    |  22 +-
+ drivers/leds/Kconfig                               |   7 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/led-class.c                           |  19 +-
+ drivers/leds/led-core.c                            |  11 +-
+ drivers/leds/leds-ipaq-micro.c                     | 141 +++++++++
+ drivers/leds/leds-lm3530.c                         |  20 +-
+ drivers/leds/leds-lm3533.c                         |  20 +-
+ drivers/leds/leds-lm355x.c                         |  21 +-
+ drivers/leds/leds-lm3642.c                         |  30 +-
+ drivers/leds/leds-lp55xx-common.c                  |  20 +-
+ drivers/leds/leds-max8997.c                        |  16 +-
+ drivers/leds/leds-netxbig.c                        |  31 +-
+ drivers/leds/leds-ns2.c                            |  16 +-
+ drivers/leds/leds-pca963x.c                        |  28 +-
+ drivers/leds/leds-ss4200.c                         |  14 +-
+ drivers/leds/leds-wm831x-status.c                  |  23 +-
+ include/linux/leds.h                               |   5 +-
+ 27 files changed, 644 insertions(+), 169 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-leds-gt683r
+ create mode 100644 drivers/hid/hid-gt683r.c
+ create mode 100644 drivers/leds/leds-ipaq-micro.c
