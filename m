@@ -1,323 +1,424 @@
-From: Andreas Werner <andreas.werner@men.de>
-Subject: Re: [PATCH v3 3/3] drivers/leds/leds-menf21bmc: introduce MEN
- 14F021P00 BMC LED driver
-Date: Mon, 11 Aug 2014 10:19:49 +0200
-Message-ID: <20140811081948.GA527@awelinux>
-References: <fec81db0dd6e08e1e07d3b7c00cb933b2ab63ab3.1405602280.git.andreas.werner@men.de>
- <CAK5ve-KG=dBgrBLQ2ejZ3XZip-gk2_5PfmpdKi6d6=B9hMDH1g@mail.gmail.com>
- <20140725093728.GA1371@awelinux>
- <20140729211256.GB30849@spo001.leaseweb.com>
- <53D8165C.6000302@roeck-us.net>
- <20140730080839.GA455@awelinux>
- <53D8F9DA.2090607@roeck-us.net>
- <20140808074939.GA451@awelinux>
- <53E4DBDD.1060805@roeck-us.net>
- <20140808143655.GV11710@spo001.leaseweb.com>
+From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+Subject: Re: [PATCH/RFC v4 15/21] media: Add registration helpers for V4L2
+ flash
+Date: Mon, 11 Aug 2014 15:26:29 +0300
+Message-ID: <20140811122628.GG16460@valkosipuli.retiisi.org.uk>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
+ <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
+ <53CCF59E.3070200@iki.fi>
+ <53DF9C2A.8060403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail1.bemta3.messagelabs.com ([195.245.230.171]:52673 "EHLO
-	mail1.bemta3.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752030AbaHKH2A (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Mon, 11 Aug 2014 03:28:00 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140808143655.GV11710@spo001.leaseweb.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <53DF9C2A.8060403-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, Andreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-watchdog@vger.kernel.org
 
-On Fri, Aug 08, 2014 at 04:36:55PM +0200, Wim Van Sebroeck wrote:
-> > On 08/08/2014 12:49 AM, Andreas Werner wrote:
-> > >On Wed, Jul 30, 2014 at 06:57:46AM -0700, Guenter Roeck wrote:
-> > >>On 07/30/2014 01:08 AM, Andreas Werner wrote:
-> > >>>On Tue, Jul 29, 2014 at 02:47:08PM -0700, Guenter Roeck wrote:
-> > >>>>On 07/29/2014 02:12 PM, Wim Van Sebroeck wrote:
-> > >>>>>Hi Andreas,
-> > >>>>>
-> > >>>>>>aOn Thu, Jul 24, 2014 at 03:00:09PM -0700, Bryan Wu wrote:
-> > >>>>>>>On Thu, Jul 17, 2014 at 6:18 AM, Andreas Werner 
-> > >>>>>>><andreas.werner@men.de> wrote:
-> > >>>>>>>>Added driver to support the 14F021P00 BMC LEDs.
-> > >>>>>>>>The BMC is a Board Management Controll include four LEDs which
-> > >>>>>>>>can be switched on and off.
-> > >>>>>>>>
-> > >>>>>>>>This driver use the I2C interface to the BMC using the menf21bmc 
-> > >>>>>>>>MFD Core driver.
-> > >>>>>>>>
-> > >>>>>>>>Signed-off-by: Andreas Werner <andreas.werner@men.de>
-> > >>>>>>>>---
-> > >>>>>>>>  drivers/leds/Kconfig          |   6 ++
-> > >>>>>>>>  drivers/leds/Makefile         |   1 +
-> > >>>>>>>>  drivers/leds/leds-menf21bmc.c | 134 
-> > >>>>>>>>  ++++++++++++++++++++++++++++++++++++++++++
-> > >>>>>>>>  3 files changed, 141 insertions(+)
-> > >>>>>>>>  create mode 100644 drivers/leds/leds-menf21bmc.c
-> > >>>>>>>>
-> > >>>>>>>>diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > >>>>>>>>index 27cf0cd..d38ff3f 100644
-> > >>>>>>>>--- a/drivers/leds/Kconfig
-> > >>>>>>>>+++ b/drivers/leds/Kconfig
-> > >>>>>>>>@@ -458,6 +458,12 @@ config LEDS_OT200
-> > >>>>>>>>           This option enables support for the LEDs on the Bachmann 
-> > >>>>>>>>           OT200.
-> > >>>>>>>>           Say Y to enable LEDs on the Bachmann OT200.
-> > >>>>>>>>
-> > >>>>>>>>+config LEDS_MENF21BMC
-> > >>>>>>>>+       tristate "LED support for the MEN 14F021P00 BMC"
-> > >>>>>>>>+       depends on LEDS_CLASS && MFD_MENF21BMC
-> > >>>>>>>
-> > >>>>>>>I think it also depends on I2C.
-> > >>>>>>
-> > >>>>>>Yes you are right.
-> > >>>>>>
-> > >>>>>>>
-> > >>>>>>>>+       help
-> > >>>>>>>>+         Say Y here to include support for the MEN 14F021P00 BMC 
-> > >>>>>>>>LEDs.
-> > >>>>>>>>+
-> > >>>>>>>>  comment "LED driver for blink(1) USB RGB LED is under Special HID 
-> > >>>>>>>>  drivers (HID_THINGM)"
-> > >>>>>>>>
-> > >>>>>>>>  config LEDS_BLINKM
-> > >>>>>>>>diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > >>>>>>>>index 3c03666..cadc433 100644
-> > >>>>>>>>--- a/drivers/leds/Makefile
-> > >>>>>>>>+++ b/drivers/leds/Makefile
-> > >>>>>>>>@@ -53,6 +53,7 @@ obj-$(CONFIG_LEDS_MAX8997)            += 
-> > >>>>>>>>leds-max8997.o
-> > >>>>>>>>  obj-$(CONFIG_LEDS_LM355x)              += leds-lm355x.o
-> > >>>>>>>>  obj-$(CONFIG_LEDS_BLINKM)              += leds-blinkm.o
-> > >>>>>>>>  obj-$(CONFIG_LEDS_VERSATILE)           += leds-versatile.o
-> > >>>>>>>>+obj-$(CONFIG_LEDS_MENF21BMC)           += leds-menf21bmc.o
-> > >>>>>>>>
-> > >>>>>>>>  # LED SPI Drivers
-> > >>>>>>>>  obj-$(CONFIG_LEDS_DAC124S085)          += leds-dac124s085.o
-> > >>>>>>>>diff --git a/drivers/leds/leds-menf21bmc.c 
-> > >>>>>>>>b/drivers/leds/leds-menf21bmc.c
-> > >>>>>>>>new file mode 100644
-> > >>>>>>>>index 0000000..5eaa119
-> > >>>>>>>>--- /dev/null
-> > >>>>>>>>+++ b/drivers/leds/leds-menf21bmc.c
-> > >>>>>>>>@@ -0,0 +1,134 @@
-> > >>>>>>>>+/*
-> > >>>>>>>>+ *  MEN 14F021P00 Board Management Controller (BMC) LEDs Driver.
-> > >>>>>>>>+ *
-> > >>>>>>>>+ *  This is the core LED driver of the MEN 14F021P00 BMC.
-> > >>>>>>>>+ *  There are four LEDs available which can be switched on and off.
-> > >>>>>>>>+ *  STATUS LED, HOT SWAP LED, USER LED 1, USER LED 2
-> > >>>>>>>>+ *
-> > >>>>>>>>+ *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
-> > >>>>>>>>+ *  Author: Andreas Werner <andreas.werner@men.de>
-> > >>>>>>>>+ *  All rights reserved.
-> > >>>>>>>>+ *
-> > >>>>>>>>+ *  This program is free software; you can redistribute  it and/or 
-> > >>>>>>>>modify it
-> > >>>>>>>>+ *  under  the terms of  the GNU General  Public License as 
-> > >>>>>>>>published by the
-> > >>>>>>>>+ *  Free Software Foundation;  either version 2 of the  License, 
-> > >>>>>>>>or (at your
-> > >>>>>>>>+ *  option) any later version.
-> > >>>>>>>>+ *
-> > >>>>>>>>+ */
-> > >>>>>>>>+
-> > >>>>>>>>+#include <linux/module.h>
-> > >>>>>>>>+#include <linux/kernel.h>
-> > >>>>>>>>+#include <linux/platform_device.h>
-> > >>>>>>>>+#include <linux/leds.h>
-> > >>>>>>>>+#include <linux/i2c.h>
-> > >>>>>>>>+
-> > >>>>>>>>+#define BMC_CMD_LED_GET_SET    0xA0
-> > >>>>>>>>+#define BMC_BIT_LED_STATUS     BIT(0)
-> > >>>>>>>>+#define BMC_BIT_LED_HOTSWAP    BIT(1)
-> > >>>>>>>>+#define BMC_BIT_LED_USER1      BIT(2)
-> > >>>>>>>>+#define BMC_BIT_LED_USER2      BIT(3)
-> > >>>>>>>>+
-> > >>>>>>>>+struct menf21bmc_led {
-> > >>>>>>>>+       struct led_classdev cdev;
-> > >>>>>>>>+       u8 led_bit;
-> > >>>>>>>>+       const char *name;
-> > >>>>>>>>+       struct i2c_client *i2c_client;
-> > >>>>>>>>+};
-> > >>>>>>>>+
-> > >>>>>>>>+static struct menf21bmc_led leds[] = {
-> > >>>>>>>>+       {
-> > >>>>>>>>+               .name = "menf21bmc:led_status",
-> > >>>>>>>>+               .led_bit = BMC_BIT_LED_STATUS,
-> > >>>>>>>>+       },
-> > >>>>>>>>+       {
-> > >>>>>>>>+               .name = "menf21bmc:led_hotswap",
-> > >>>>>>>>+               .led_bit = BMC_BIT_LED_HOTSWAP,
-> > >>>>>>>>+       },
-> > >>>>>>>>+       {
-> > >>>>>>>>+               .name = "menf21bmc:led_user1",
-> > >>>>>>>>+               .led_bit = BMC_BIT_LED_USER1,
-> > >>>>>>>>+       },
-> > >>>>>>>>+       {
-> > >>>>>>>>+               .name = "menf21bmc:led_user2",
-> > >>>>>>>>+               .led_bit = BMC_BIT_LED_USER2,
-> > >>>>>>>>+       }
-> > >>>>>>>>+};
-> > >>>>>>>>+
-> > >>>>>>>>+static DEFINE_MUTEX(led_lock);
-> > >>>>>>>>+
-> > >>>>>>>>+static void
-> > >>>>>>>>+menf21bmc_led_set(struct led_classdev *led_cdev, enum 
-> > >>>>>>>>led_brightness value)
-> > >>>>>>>>+{
-> > >>>>>>>>+       int led_val;
-> > >>>>>>>>+       struct menf21bmc_led *led = container_of(led_cdev,
-> > >>>>>>>>+                                       struct menf21bmc_led, cdev);
-> > >>>>>>>>+
-> > >>>>>>>>+       mutex_lock(&led_lock);
-> > >>>>>>>>+       led_val = i2c_smbus_read_byte_data(led->i2c_client,
-> > >>>>>>>>+                                               
-> > >>>>>>>>BMC_CMD_LED_GET_SET);
-> > >>>>>>>>+       if (led_val < 0)
-> > >>>>>>>>+               goto err_out;
-> > >>>>>>>>+
-> > >>>>>>>>+       if (value == LED_OFF)
-> > >>>>>>>>+               led_val &= ~led->led_bit;
-> > >>>>>>>>+       else
-> > >>>>>>>>+               led_val |= led->led_bit;
-> > >>>>>>>>+
-> > >>>>>>>>+       i2c_smbus_write_byte_data(led->i2c_client,
-> > >>>>>>>>+                                       BMC_CMD_LED_GET_SET, 
-> > >>>>>>>>led_val);
-> > >>>>>>>>+err_out:
-> > >>>>>>>>+       mutex_unlock(&led_lock);
-> > >>>>>>>>+}
-> > >>>>>>>>+
-> > >>>>>>>>+static int menf21bmc_led_probe(struct platform_device *pdev)
-> > >>>>>>>>+{
-> > >>>>>>>>+       int i;
-> > >>>>>>>>+       int ret;
-> > >>>>>>>>+       struct i2c_client *i2c_client = 
-> > >>>>>>>>to_i2c_client(pdev->dev.parent);
-> > >>>>>>>>+
-> > >>>>>>>>+       for (i = 0; i < ARRAY_SIZE(leds); i++) {
-> > >>>>>>>>+               leds[i].cdev.name = leds[i].name;
-> > >>>>>>>>+               leds[i].cdev.brightness_set = menf21bmc_led_set;
-> > >>>>>>>>+               leds[i].i2c_client = i2c_client;
-> > >>>>>>>>+               ret = led_classdev_register(&pdev->dev, 
-> > >>>>>>>>&leds[i].cdev);
-> > >>>>>>>>+               if (ret < 0)
-> > >>>>>>>>+                       goto err_free_leds;
-> > >>>>>>>>+       }
-> > >>>>>>>>+       dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device 
-> > >>>>>>>>enabled\n");
-> > >>>>>>>>+
-> > >>>>>>>>+       return 0;
-> > >>>>>>>>+
-> > >>>>>>>>+err_free_leds:
-> > >>>>>>>>+       dev_err(&pdev->dev, "failed to register LED device\n");
-> > >>>>>>>>+
-> > >>>>>>>>+       for (i = i - 1; i >= 0; i--)
-> > >>>>>>>>+               led_classdev_unregister(&leds[i].cdev);
-> > >>>>>>>>+
-> > >>>>>>>>+       return ret;
-> > >>>>>>>>+}
-> > >>>>>>>>+
-> > >>>>>>>>+static int menf21bmc_led_remove(struct platform_device *pdev)
-> > >>>>>>>>+{
-> > >>>>>>>>+       int i;
-> > >>>>>>>>+
-> > >>>>>>>>+       for (i = 0; i < ARRAY_SIZE(leds); i++)
-> > >>>>>>>>+               led_classdev_unregister(&leds[i].cdev);
-> > >>>>>>>>+
-> > >>>>>>>>+       return 0;
-> > >>>>>>>>+}
-> > >>>>>>>>+
-> > >>>>>>>>+static struct platform_driver menf21bmc_led = {
-> > >>>>>>>>+       .probe          = menf21bmc_led_probe,
-> > >>>>>>>>+       .remove         = menf21bmc_led_remove,
-> > >>>>>>>>+       .driver         = {
-> > >>>>>>>>+               .name           = "menf21bmc_led",
-> > >>>>>>>>+               .owner          = THIS_MODULE,
-> > >>>>>>>>+       },
-> > >>>>>>>>+};
-> > >>>>>>>>+
-> > >>>>>>>
-> > >>>>>>>This is not a normal platform driver, it should be a I2C driver.
-> > >>>>>>>
-> > >>>>>>>>+module_platform_driver(menf21bmc_led);
-> > >>>>>>>
-> > >>>>>>>So please move to use module_i2c_driver.
-> > >>>>>>
-> > >>>>>>Ok, but then I have to change that in the watchdog driver too, which
-> > >>>>>>is quite the same as here.
-> > >>>>>>
-> > >>>>>>Lee, Guenther what do you think regarding the watchdog driver?
-> > >>>>>
-> > >>>>>If the watchdog part is indeed also i2c alike device then the watchdog 
-> > >>>>>part should also be an i2c driver...
-> > >>>>>
-> > >>>>
-> > >>>>Isn't this all the same chip ? If so, there should be only one i2c 
-> > >>>>driver.
-> > >>>>Unless the i2c access is too complicated, it might make sense to use 
-> > >>>>regmap
-> > >>>>to access the chip, and pass the regmap pointer to the mfd slave drivers
-> > >>>>to handle the actual communication with the chip.
-> > >>>>
-> > >>>>Guenter
-> > >>>>
-> > >>>
-> > >>>Yes this is all the same chip which has different features like LEDs and 
-> > >>>Watchdog.
-> > >>>This is why the mfd is the i2c_driver which instantiates the slave 
-> > >>>devices which
-> > >>>are platform drivers.
-> > >>>
-> > >>>Is that not the normal way to handle those device?
-> > >>>Is it really necessary to handle this to regmap?
-> > >>>
-> > >>
-> > >>Not really sure if 'necessary' is the right term, it is just convenient.
-> > >>Regmap takes care of register caching, for example, so you would not have 
-> > >>to
-> > >>re-read register values again and again from the chip just to modify a bit
-> > >>of a register.
-> > >>You can pass the regmap pointer in the platform data, or you can pass the
-> > >>pointer to the i2c client. Using regmap makes the client driver 
-> > >>independent
-> > >>of the i2c subsystem. The one thing you can _not_ do is to declare the 
-> > >>client
-> > >>drivers to be i2c drivers.
-> > >>
-> > >>Guenter
-> > >>
-> > >I've checked out the regmap and it really sounds good.
-> > >Before I will made those changes which is almost a complete replacement
-> > >of the interface, i would like to know exactly why the slaves are no 
-> > >platform
-> > >devices.
-> > >
-> > Did I say that ?
+
+Hi Jacek,
+
+On Mon, Aug 04, 2014 at 04:43:54PM +0200, Jacek Anaszewski wrote:
+> Hi Sakari,
 > 
-> What we wanted to say was:
-> 1) if your multifunctional device is working as entity's of its own and these "standalone" devices are an i2c device then they should be configured as a i2c device driver.
-> 2) is the multifunctional device has different functionality (like watchdog, gpio, ...) and it works as a block (thus there are overlaps) and you have no clean i2c or pci or usb boundaries then you normally use platform device drivers.
+> Thanks for the review.
+
+You're welcome! :)
+
+> On 07/21/2014 01:12 PM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >Jacek Anaszewski wrote:
+> >>This patch adds helper functions for registering/unregistering
+> >>LED class flash devices as V4L2 subdevs. The functions should
+> >>be called from the LED subsystem device driver. In case the
+> >>support for V4L2 Flash sub-devices is disabled in the kernel
+> >>config the functions' empty versions will be used.
+> >>
+> >>Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>Cc: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+> >>Cc: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+> >>---
+> >>  drivers/media/v4l2-core/Kconfig      |   11 +
+> >>  drivers/media/v4l2-core/Makefile     |    2 +
+> >>  drivers/media/v4l2-core/v4l2-flash.c |  580 ++++++++++++++++++++++++++++++++++
+> >>  include/media/v4l2-flash.h           |  137 ++++++++
+> >>  4 files changed, 730 insertions(+)
+> >>  create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+> >>  create mode 100644 include/media/v4l2-flash.h
+> >>
+> >>diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
+> >>index 9ca0f8d..3ae3f0f 100644
+> >>--- a/drivers/media/v4l2-core/Kconfig
+> >>+++ b/drivers/media/v4l2-core/Kconfig
+> >>@@ -35,6 +35,17 @@ config V4L2_MEM2MEM_DEV
+> >>          tristate
+> >>          depends on VIDEOBUF2_CORE
+> >>
+> >>+# Used by LED subsystem flash drivers
+> >>+config V4L2_FLASH_LED_CLASS
+> >>+	bool "Enable support for Flash sub-devices"
+> >>+	depends on VIDEO_V4L2_SUBDEV_API
+> >>+	depends on LEDS_CLASS_FLASH
+> >>+	---help---
+> >>+	  Say Y here to enable support for Flash sub-devices, which allow
+> >>+	  to control LED class devices with use of V4L2 Flash controls.
+> >>+
+> >>+	  When in doubt, say N.
+> >>+
+> >>  # Used by drivers that need Videobuf modules
+> >>  config VIDEOBUF_GEN
+> >>  	tristate
+> >>diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+> >>index 63d29f2..44e858c 100644
+> >>--- a/drivers/media/v4l2-core/Makefile
+> >>+++ b/drivers/media/v4l2-core/Makefile
+> >>@@ -22,6 +22,8 @@ obj-$(CONFIG_VIDEO_TUNER) += tuner.o
+> >>
+> >>  obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
+> >>
+> >>+obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash.o
+> >>+
+> >>  obj-$(CONFIG_VIDEOBUF_GEN) += videobuf-core.o
+> >>  obj-$(CONFIG_VIDEOBUF_DMA_SG) += videobuf-dma-sg.o
+> >>  obj-$(CONFIG_VIDEOBUF_DMA_CONTIG) += videobuf-dma-contig.o
+> >>diff --git a/drivers/media/v4l2-core/v4l2-flash.c b/drivers/media/v4l2-core/v4l2-flash.c
+> >>new file mode 100644
+> >>index 0000000..21080c6
+> >>--- /dev/null
+> >>+++ b/drivers/media/v4l2-core/v4l2-flash.c
+> >>@@ -0,0 +1,580 @@
+> >>+/*
+> >>+ * V4L2 Flash LED sub-device registration helpers.
+> >>+ *
+> >>+ *	Copyright (C) 2014 Samsung Electronics Co., Ltd
+> >>+ *	Author: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>+ *
+> >>+ * This program is free software; you can redistribute it and/or modify
+> >>+ * it under the terms of the GNU General Public License version 2 as
+> >>+ * published by the Free Software Foundation."
+> >>+ */
+> >>+
+> >>+#include <linux/led-class-flash.h>
+> >>+#include <linux/mutex.h>
+> >>+#include <linux/of_led_flash_manager.h>
+> >>+#include <linux/slab.h>
+> >>+#include <media/v4l2-flash.h>
+> >>+
+> >>+#define call_flash_op(v4l2_flash, op, args...)			\
+> >>+		(v4l2_flash->ops->op  ?				\
+> >>+			v4l2_flash->ops->op(args) :		\
+> >>+			-EINVAL)
+> >>+
+> >>+static struct v4l2_device *v4l2_dev;
+> >>+static int registered_flashes;
+> >>+
+> >>+static inline enum led_brightness v4l2_flash_intensity_to_led_brightness(
+> >>+					struct v4l2_ctrl_config *config,
+> >>+					s32 intensity)
+> >>+{
+> >>+	return ((intensity - config->min) / config->step) + 1;
+> >>+}
+> >>+
+> >>+static inline s32 v4l2_flash_led_brightness_to_intensity(
+> >>+					struct v4l2_ctrl_config *config,
+> >>+					enum led_brightness brightness)
+> >>+{
+> >>+	return ((brightness - 1) * config->step) + config->min;
+> >>+}
+> >>+
+> >>+static int v4l2_flash_g_volatile_ctrl(struct v4l2_ctrl *c)
+> >>+
+> >>+{
+> >>+	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
+> >>+	struct led_classdev_flash *flash = v4l2_flash->flash;
+> >>+	struct led_classdev *led_cdev = &flash->led_cdev;
+> >>+	struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
+> >>+	struct v4l2_flash_ctrl *ctrl = &v4l2_flash->ctrl;
+> >>+	bool is_strobing;
+> >>+	int ret;
+> >>+
+> >>+	switch (c->id) {
+> >>+	case V4L2_CID_FLASH_TORCH_INTENSITY:
+> >>+		/*
+> >>+		 * Update torch brightness only if in TORCH_MODE,
+> >>+		 * as otherwise brightness_update op returns 0,
+> >>+		 * which would spuriously inform user space that
+> >>+		 * V4L2_CID_FLASH_TORCH_INTENSITY control value
+> >>+		 * has changed.
+> >>+		 */
+> >>+		if (ctrl->led_mode->val == V4L2_FLASH_LED_MODE_TORCH) {
+> >>+			ret = call_flash_op(v4l2_flash, torch_brightness_update,
+> >>+							led_cdev);
+> >>+			if (ret < 0)
+> >>+				return ret;
+> >>+			ctrl->torch_intensity->val =
+> >>+				v4l2_flash_led_brightness_to_intensity(
+> >>+						&config->torch_intensity,
+> >>+						led_cdev->brightness);
+> >>+		}
+> >>+		return 0;
+> >>+	case V4L2_CID_FLASH_INTENSITY:
+> >>+		ret = call_flash_op(v4l2_flash, flash_brightness_update,
+> >>+					flash);
+> >>+		if (ret < 0)
+> >>+			return ret;
+> >>+		/* no conversion is needed */
+> >>+		c->val = flash->brightness.val;
+> >>+		return 0;
+> >>+	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
+> >>+		ret = call_flash_op(v4l2_flash, indicator_brightness_update,
+> >>+						flash);
+> >>+		if (ret < 0)
+> >>+			return ret;
+> >>+		/* no conversion is needed */
+> >>+		c->val = flash->indicator_brightness->val;
+> >>+		return 0;
+> >>+	case V4L2_CID_FLASH_STROBE_STATUS:
+> >>+		ret = call_flash_op(v4l2_flash, strobe_get, flash,
+> >>+							&is_strobing);
+> >>+		if (ret < 0)
+> >>+			return ret;
+> >>+		c->val = is_strobing;
+> >>+		return 0;
+> >>+	case V4L2_CID_FLASH_FAULT:
+> >>+		/* led faults map directly to V4L2 flash faults */
+> >>+		ret = call_flash_op(v4l2_flash, fault_get, flash, &c->val);
+> >>+		return ret;
+> >>+	case V4L2_CID_FLASH_STROBE_SOURCE:
+> >>+		c->val = flash->external_strobe;
+> >>+		return 0;
+> >>+	case V4L2_CID_FLASH_STROBE_PROVIDER:
+> >>+		c->val = flash->strobe_provider_id;
+> >>+		return 0;
+> >>+	default:
+> >>+		return -EINVAL;
+> >>+	}
+> >>+}
+> >>+
+> >>+static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
+> >>+{
+> >>+	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
+> >>+	struct led_classdev_flash *flash = v4l2_flash->flash;
+> >>+	struct v4l2_flash_ctrl *ctrl = &v4l2_flash->ctrl;
+> >>+	struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
+> >>+	enum led_brightness torch_brightness;
+> >>+	bool external_strobe;
+> >>+	int ret;
+> >>+
+> >>+	switch (c->id) {
+> >>+	case V4L2_CID_FLASH_LED_MODE:
+> >>+		switch (c->val) {
+> >>+		case V4L2_FLASH_LED_MODE_NONE:
+> >>+			call_flash_op(v4l2_flash, torch_brightness_set,
+> >>+							&flash->led_cdev, 0);
+> >>+			return call_flash_op(v4l2_flash, strobe_set, flash,
+> >>+							false);
+> >>+		case V4L2_FLASH_LED_MODE_FLASH:
+> >>+			/* Turn off torch LED */
+> >>+			call_flash_op(v4l2_flash, torch_brightness_set,
+> >>+							&flash->led_cdev, 0);
+> >>+			external_strobe = (ctrl->source->val ==
+> >>+					V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
+> >>+			return call_flash_op(v4l2_flash, external_strobe_set,
+> >>+						flash, external_strobe);
+> >>+		case V4L2_FLASH_LED_MODE_TORCH:
+> >>+			/* Stop flash strobing */
+> >>+			ret = call_flash_op(v4l2_flash, strobe_set, flash,
+> >>+							false);
+> >>+			if (ret)
+> >>+				return ret;
+> >>+
+> >>+			torch_brightness =
+> >>+				v4l2_flash_intensity_to_led_brightness(
+> >>+						&config->torch_intensity,
+> >>+						ctrl->torch_intensity->val);
+> >>+			call_flash_op(v4l2_flash, torch_brightness_set,
+> >>+					&flash->led_cdev, torch_brightness);
+> >>+			return ret;
+> >>+		}
+> >>+		break;
+> >>+	case V4L2_CID_FLASH_STROBE_SOURCE:
+> >>+		external_strobe = (c->val == V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
+> >
+> >Is the external_strobe argument match exactly to the strobe source
+> >control? You seem to assume that in g_volatile_ctrl() above. I think
+> >having it the either way is fine but not both. :-)
 > 
-> Apart from that it would in this case also be nice to use the regmap api.
+> The STROBE_SOURCE_EXTERNAL control state is volatile if a flash device
+> depends on muxes that route strobe signals to more then one flash
+> device. In such a case it behaves similarly to FLASH_STROBE control,
+> i.e. it activates external strobe only for the flash timeout period.
+> I touched this issue in the cover letter of this patch series,
+> paragraph 2.
+
+I meant that flash->external_strobe is directly used as
+V4L2_CID_FLASH_STROBE_SOURCE. Are the two guaranteed to be the same?
+
+...
+
+> >>+/*
+> >>+ * V4L2 subdev internal operations
+> >>+ */
+> >>+
+> >>+static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+> >>+{
+> >>+	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
+> >>+	struct led_classdev_flash *flash = v4l2_flash->flash;
+> >>+	struct led_classdev *led_cdev = &flash->led_cdev;
+> >>+
+> >>+	mutex_lock(&led_cdev->led_lock);
+> >>+	call_flash_op(v4l2_flash, sysfs_lock, led_cdev);
+> >
+> >What if you have the device open through multiple file handles? I
+> >believe v4l2_subdev_fh_is_singular(&fh->vfh) would prove helpful here.
 > 
-> Sorry that it got "complicated".
+> I assume you propose to implement such a function? I don't see it in
+> the mainline kernel.
+
+Uh, I thought of v4l2_subdev_fh_is_singular() but what I really meant was
+v4l2_fh_is_singular(). There's no sub-device variant of it, as the
+sub-device file handle struct embeds struct v4l2_fh.
+
+...
+
+> >>+{
+> >>+	struct led_classdev_flash *flash = v4l2_flash->flash;
+> >>+	struct led_classdev *led_cdev = &flash->led_cdev;
+> >>+	int ret;
+> >>+
+> >>+	if (!v4l2_dev) {
+> >>+		v4l2_dev = kzalloc(sizeof(*v4l2_dev), GFP_KERNEL);
+> >>+		if (!v4l2_dev)
+> >>+			return -ENOMEM;
+> >>+
+> >>+		strlcpy(v4l2_dev->name, "v4l2-flash-manager",
+> >>+						sizeof(v4l2_dev->name));
+> >>+		ret = v4l2_device_register(NULL, v4l2_dev);
+> >>+		if (ret < 0) {
+> >>+			dev_err(led_cdev->dev->parent,
+> >>+				 "Failed to register v4l2_device: %d\n", ret);
+> >>+			goto err_v4l2_device_register;
+> >>+		}
+> >>+	}
+> >>+
+> >>+	ret = v4l2_device_register_subdev(v4l2_dev, &v4l2_flash->sd);
+> >>+	if (ret < 0) {
+> >>+		dev_err(led_cdev->dev->parent,
+> >>+			 "Failed to register v4l2_subdev: %d\n", ret);
+> >>+		goto err_v4l2_device_register;
+> >>+	}
+> >>+
+> >>+	ret = v4l2_device_register_subdev_node(&v4l2_flash->sd, v4l2_dev);
+> >>+	if (ret < 0) {
+> >>+		dev_err(led_cdev->dev->parent,
+> >>+			 "Failed to register v4l2_subdev node: %d\n", ret);
+> >>+		goto err_register_subdev_node;
+> >>+	}
+> >
+> >This way you can create a V4L2 sub-device node. However, flash devices
+> >are seldom alone in the system. They are physically close to a sensor,
+> >and this connection is shown in the Media controller interface. This
+> >means that the flash sub-device (entity) should be part of the Media
+> >device created by the driver in control of it. This can be achieved by
+> >the master driver creating the sub-device. You should register an async
+> >sub-device here.
+> >
+> >This results in the sub-device not being registered if there's no such
+> >master driver, but I wouldn't expect that to be an issue since the V4L2
+> >flash API is mostly relevant in such cases.
 > 
-> Kind regards,
-> Wim.
+> I addressed this issue in the cover letter of this patch series,
+> paragraph 1. If strobe signals are routed to a flash device through
+> a multiplexer then assignment of the related V4L2 Flash sub-device
+> to a particular media controller may dynamically change in time.
+> Actually, if a flash device can be shared between media systems
+> (i.e. it can be configured to react on strobe signals from different
+> camera sensors, basing on muxes configuration), than it becomes
+> bound to a particular media system only for the time of strobing.
+> Please refer to [1].
+
+Replied to the cover letter.
+
+...
+
+> >>diff --git a/include/media/v4l2-flash.h b/include/media/v4l2-flash.h
+> >>new file mode 100644
+> >>index 0000000..effa46b
+> >>--- /dev/null
+> >>+++ b/include/media/v4l2-flash.h
+> >>@@ -0,0 +1,137 @@
+> >>+/*
+> >>+ * V4L2 Flash LED sub-device registration helpers.
+> >>+ *
+> >>+ *	Copyright (C) 2014 Samsung Electronics Co., Ltd
+> >>+ *	Author: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>+ *
+> >>+ * This program is free software; you can redistribute it and/or modify
+> >>+ * it under the terms of the GNU General Public License version 2 as
+> >>+ * published by the Free Software Foundation."
+> >>+ */
+> >>+
+> >>+#ifndef _V4L2_FLASH_H
+> >>+#define _V4L2_FLASH_H
+> >>+
+> >>+#include <media/v4l2-ctrls.h>
+> >>+#include <media/v4l2-device.h>
+> >>+#include <media/v4l2-dev.h>
+> >>+#include <media/v4l2-event.h>
+> >>+#include <media/v4l2-ioctl.h>
+> >>+
+> >>+struct led_classdev_flash;
+> >>+struct led_classdev;
+> >>+enum led_brightness;
+> >>+
+> >>+struct v4l2_flash_ops {
+> >>+	int (*torch_brightness_set)(struct led_classdev *led_cdev,
+> >>+					enum led_brightness brightness);
+> >>+	int (*torch_brightness_update)(struct led_classdev *led_cdev);
+> >>+	int (*flash_brightness_set)(struct led_classdev_flash *flash,
+> >>+					u32 brightness);
+> >>+	int (*flash_brightness_update)(struct led_classdev_flash *flash);
+> >>+	int (*strobe_set)(struct led_classdev_flash *flash, bool state);
+> >>+	int (*strobe_get)(struct led_classdev_flash *flash, bool *state);
+> >>+	int (*timeout_set)(struct led_classdev_flash *flash, u32 timeout);
+> >>+	int (*indicator_brightness_set)(struct led_classdev_flash *flash,
+> >>+					u32 brightness);
+> >>+	int (*indicator_brightness_update)(struct led_classdev_flash *flash);
+> >>+	int (*external_strobe_set)(struct led_classdev_flash *flash,
+> >>+					bool enable);
+> >>+	int (*fault_get)(struct led_classdev_flash *flash, u32 *fault);
+> >>+	void (*sysfs_lock)(struct led_classdev *led_cdev);
+> >>+	void (*sysfs_unlock)(struct led_classdev *led_cdev);
+> >
+> >These functions are not driver specific and there's going to be just one
+> >implementation (I suppose). Could you refresh my memory regarding why
+> >the LED framework functions aren't called directly?
 > 
+> These ops are required to make possible building led-class-flash as
+> a kernel module.
 
-The chip is like you described in 2). This is why the slaves are platform device.
-It is not "complicated" it was just a little confuse.
-Thanks for the nice explanation.
+Assuming you'd use the actual implementation directly, what would be the
+dependencies? I don't think the LED flash framework has any callbacks
+towards the V4L2 (LED) flash framework, does it? Please correct my
+understanding if I'm missing something. In Makefile format, assume all
+targets are .PHONY:
 
-Next time if i develope a driver like this, i will use regmap but for the bmc i
-will let it as it is.
+led-flash-api: led-api
 
-I will send a v4 with the little remarks from your guys, in the next days.
+v4l2-flash: led-flash-api
 
-Thanks.
+driver: led-flash-api v4l2-flash
 
-Regards
-Andy
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
