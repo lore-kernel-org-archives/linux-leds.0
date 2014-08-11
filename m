@@ -1,90 +1,89 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v4 15/21] media: Add registration helpers for V4L2 flash
-Date: Mon, 11 Aug 2014 15:45:27 +0200
-Message-ID: <53E8C8F7.2070101@samsung.com>
+Subject: Re: [PATCH/RFC v4 00/21] LED / flash API integration
+Date: Mon, 11 Aug 2014 16:24:35 +0200
+Message-ID: <53E8D223.4000407@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
- <53CCF59E.3070200@iki.fi> <53DF9C2A.8060403@samsung.com>
- <20140811122628.GG16460@valkosipuli.retiisi.org.uk>
- <53E8C4BA.6050805@samsung.com>
+ <CAK5ve-L67=q-EpWvxD5-x+cFT7dh8p0HHuoUbAWA-j5BqCO52A@mail.gmail.com>
+ <CAK5ve-+xyXyjPqejTPRvz=bJ4M5v19Uq1oaVv94QKqBWf1D4dA@mail.gmail.com>
+ <53E47186.5000309@samsung.com>
+ <CAK5ve-+3WmaU+OEX1T_xMWDRDgNxD6YXrqTB-=UyaQxHknVbow@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53E8C4BA.6050805@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:28133 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753492AbaHKOYj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Aug 2014 10:24:39 -0400
+In-reply-to: <CAK5ve-+3WmaU+OEX1T_xMWDRDgNxD6YXrqTB-=UyaQxHknVbow@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com
 
-> On 08/11/2014 02:26 PM, Sakari Ailus wrote:
+Hi Bryan,
+
+On 08/08/2014 06:59 PM, Bryan Wu wrote:
+> On Thu, Aug 7, 2014 at 11:43 PM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> Hi Bryan,
 >>
->> Hi Jacek,
 >>
-
-...
-
->>>>> +static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
->>>>> +{
->>>>> +    struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
->>>>> +    struct led_classdev_flash *flash = v4l2_flash->flash;
->>>>> +    struct v4l2_flash_ctrl *ctrl = &v4l2_flash->ctrl;
->>>>> +    struct v4l2_flash_ctrl_config *config = &v4l2_flash->config;
->>>>> +    enum led_brightness torch_brightness;
->>>>> +    bool external_strobe;
->>>>> +    int ret;
->>>>> +
->>>>> +    switch (c->id) {
->>>>> +    case V4L2_CID_FLASH_LED_MODE:
->>>>> +        switch (c->val) {
->>>>> +        case V4L2_FLASH_LED_MODE_NONE:
->>>>> +            call_flash_op(v4l2_flash, torch_brightness_set,
->>>>> +                            &flash->led_cdev, 0);
->>>>> +            return call_flash_op(v4l2_flash, strobe_set, flash,
->>>>> +                            false);
->>>>> +        case V4L2_FLASH_LED_MODE_FLASH:
->>>>> +            /* Turn off torch LED */
->>>>> +            call_flash_op(v4l2_flash, torch_brightness_set,
->>>>> +                            &flash->led_cdev, 0);
->>>>> +            external_strobe = (ctrl->source->val ==
->>>>> +                    V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
->>>>> +            return call_flash_op(v4l2_flash, external_strobe_set,
->>>>> +                        flash, external_strobe);
->>>>> +        case V4L2_FLASH_LED_MODE_TORCH:
->>>>> +            /* Stop flash strobing */
->>>>> +            ret = call_flash_op(v4l2_flash, strobe_set, flash,
->>>>> +                            false);
->>>>> +            if (ret)
->>>>> +                return ret;
->>>>> +
->>>>> +            torch_brightness =
->>>>> +                v4l2_flash_intensity_to_led_brightness(
->>>>> +                        &config->torch_intensity,
->>>>> +                        ctrl->torch_intensity->val);
->>>>> +            call_flash_op(v4l2_flash, torch_brightness_set,
->>>>> +                    &flash->led_cdev, torch_brightness);
->>>>> +            return ret;
->>>>> +        }
->>>>> +        break;
->>>>> +    case V4L2_CID_FLASH_STROBE_SOURCE:
->>>>> +        external_strobe = (c->val ==
->>>>> V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
->>>>
->>>> Is the external_strobe argument match exactly to the strobe source
->>>> control? You seem to assume that in g_volatile_ctrl() above. I think
->>>> having it the either way is fine but not both. :-)
+>> On 07/16/2014 07:21 PM, Bryan Wu wrote:
 >>>
->>> The STROBE_SOURCE_EXTERNAL control state is volatile if a flash device
->>> depends on muxes that route strobe signals to more then one flash
->>> device. In such a case it behaves similarly to FLASH_STROBE control,
->>> i.e. it activates external strobe only for the flash timeout period.
->>> I touched this issue in the cover letter of this patch series,
->>> paragraph 2.
+>>> On Wed, Jul 16, 2014 at 10:19 AM, Bryan Wu <cooloney@gmail.com> wrote:
+>>>>
+>>>> On Fri, Jul 11, 2014 at 7:04 AM, Jacek Anaszewski
+>>>> <j.anaszewski@samsung.com> wrote:
+>>>>>
+>>>>> This is is the fourth version of the patch series being a follow up
+>>>>> of the discussion on Media summit 2013-10-23, related to the
+>>>>> LED / flash API integration (the notes from the discussion were
+>>>>> enclosed in the message [1], paragraph 5).
+>>>>> The series is based on linux-next-20140707
+>>>>>
+>>>>
+>>>> I really apologize that I missed your discussion email in my Gmail
+>>>> inbox, it was archived some where. Even in this series some of these
+>>>> patches are archived in different tab.
+>>>>
+>>>> I will start to review and help to push this.
+>>>>
+>>>
+>>> In the mean time, could you please provide an git tree for me to pull?
+>>> It's much easier for me to review in my git.
 >>
->> I meant that flash->external_strobe is directly used as
->> V4L2_CID_FLASH_STROBE_SOURCE. Are the two guaranteed to be the same?
+>>
+>> Few days ago I sent to your private email the path to the git
+>> repository to pull, but I am resending it through the lists to
+>> make sure that it will not get filtered somehow again.
+>>
+>>
+>> git://linuxtv.org/snawrocki/samsung.git
+>> branch: led_flash_integration_v4
+>>
+>> gitweb:
+>> http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/log/?h=led_flash_integration_v4
+>>
+>
+> Yes, I got it. I merged some leds core fixing patches from you
+> recently. So could you please split these big patchset into several
+> small parts which should be easier for reviewing and discussion.
+>   - led core fixing
+>   - led flash core patches
+>   - led flash manager patches
+>   - v4l2 led patches
+>   - Documentations
+>
+> My plan is to review these and merge them to my -devel branch. Then
+> invite people for testing.
 
-Yes, the external_strobe sysfs attribute is mapped to it.
+Thanks for merging the fixes. I will come up with a new patch sets,
+in the form as you requested, but I would like to apply as many
+improvements, in comparison to the version 4, as possible. Therefore
+I'd be grateful if you could express your opinion in the discussion [1].
 
 Best Regards,
 Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/linux-media/msg79400.html
