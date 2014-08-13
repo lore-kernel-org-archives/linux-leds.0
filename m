@@ -1,89 +1,77 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v4 00/21] LED / flash API integration
-Date: Mon, 11 Aug 2014 16:24:35 +0200
-Message-ID: <53E8D223.4000407@samsung.com>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <CAK5ve-L67=q-EpWvxD5-x+cFT7dh8p0HHuoUbAWA-j5BqCO52A@mail.gmail.com>
- <CAK5ve-+xyXyjPqejTPRvz=bJ4M5v19Uq1oaVv94QKqBWf1D4dA@mail.gmail.com>
- <53E47186.5000309@samsung.com>
- <CAK5ve-+3WmaU+OEX1T_xMWDRDgNxD6YXrqTB-=UyaQxHknVbow@mail.gmail.com>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: [PATCH v4 0/4] Introduce MEN 14F021P BMC driver series
+Date: Wed, 13 Aug 2014 10:38:20 +0200
+Message-ID: <cover.1407918792.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:28133 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753492AbaHKOYj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Aug 2014 10:24:39 -0400
-In-reply-to: <CAK5ve-+3WmaU+OEX1T_xMWDRDgNxD6YXrqTB-=UyaQxHknVbow@mail.gmail.com>
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.145]:56938 "EHLO
+	mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750707AbaHMHqd (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Wed, 13 Aug 2014 03:46:33 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com
+To: linux-kernel@vger.kernel.org
+Cc: andreas.werner@men.de, sameo@linux.intel.com, lee.jones@linaro.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jdelvare@suse.de, linux@roeck-us.net, lm-sensors@lm-sensors.org
 
-Hi Bryan,
+This patch set add support for the MEN 14F021P00 Board Management called BMC.
 
-On 08/08/2014 06:59 PM, Bryan Wu wrote:
-> On Thu, Aug 7, 2014 at 11:43 PM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> Hi Bryan,
->>
->>
->> On 07/16/2014 07:21 PM, Bryan Wu wrote:
->>>
->>> On Wed, Jul 16, 2014 at 10:19 AM, Bryan Wu <cooloney@gmail.com> wrote:
->>>>
->>>> On Fri, Jul 11, 2014 at 7:04 AM, Jacek Anaszewski
->>>> <j.anaszewski@samsung.com> wrote:
->>>>>
->>>>> This is is the fourth version of the patch series being a follow up
->>>>> of the discussion on Media summit 2013-10-23, related to the
->>>>> LED / flash API integration (the notes from the discussion were
->>>>> enclosed in the message [1], paragraph 5).
->>>>> The series is based on linux-next-20140707
->>>>>
->>>>
->>>> I really apologize that I missed your discussion email in my Gmail
->>>> inbox, it was archived some where. Even in this series some of these
->>>> patches are archived in different tab.
->>>>
->>>> I will start to review and help to push this.
->>>>
->>>
->>> In the mean time, could you please provide an git tree for me to pull?
->>> It's much easier for me to review in my git.
->>
->>
->> Few days ago I sent to your private email the path to the git
->> repository to pull, but I am resending it through the lists to
->> make sure that it will not get filtered somehow again.
->>
->>
->> git://linuxtv.org/snawrocki/samsung.git
->> branch: led_flash_integration_v4
->>
->> gitweb:
->> http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/log/?h=led_flash_integration_v4
->>
->
-> Yes, I got it. I merged some leds core fixing patches from you
-> recently. So could you please split these big patchset into several
-> small parts which should be easier for reviewing and discussion.
->   - led core fixing
->   - led flash core patches
->   - led flash manager patches
->   - v4l2 led patches
->   - Documentations
->
-> My plan is to review these and merge them to my -devel branch. Then
-> invite people for testing.
+The BMC is a PIC Mikrocontroller which assembled on almost all of our
+3U Compact PCI CPU board and a few Box PCs.
+main part of the BMC is to start and monitor the board, but there are a
+lot more features which can be accessed using an I2C Host interface
 
-Thanks for merging the fixes. I will come up with a new patch sets,
-in the form as you requested, but I would like to apply as many
-improvements, in comparison to the version 4, as possible. Therefore
-I'd be grateful if you could express your opinion in the discussion [1].
+Features supported in this Patchset:
+        - Watchdog
+        - LEDs
+	- HWMON
 
-Best Regards,
-Jacek Anaszewski
+The Patchset includes a MFD Core driver, Watchdog, hwmon  and LEDs driver.
 
-[1] http://www.spinics.net/lists/linux-media/msg79400.html
+Changes in v4:
+	- fixed some style issues
+	- fixed GPL license version
+	- added hwmon voltage monitoring slave driver
+
+Changes in v3:
+        - deleted i2c_smbus wrapper functions and use native one
+        - some cosmentics and variable renaming to be more clear
+        - renamed "leave production" mode to "exit production mode"
+
+Changes in v2:
+        - changed i2c_smbus_read wrapper function to return both, value
+          and error.
+        - moved "leave production mode" from Watchdog driver to mfd core.
+        - fixed some return values in the watchdog driver to return the original
+          error value instead of -EIO.
+
+
+Andreas Werner (4):
+  drivers/mfd/menf21bmc: introduce MEN 14F021P00 BMC MFD Core driver
+  drivers/watchdog/menf21bmc_wdt: introduce MEN 14F021P00 BMC Watchdog
+    driver
+  drivers/leds/leds-menf21bmc: introduce MEN 14F021P00 BMC LED driver
+  drivers/hwmon/menf21bmc_hwmon: introduce MEN14F021P00 BMC HWMON driver
+
+ drivers/hwmon/Kconfig            |   7 ++
+ drivers/hwmon/Makefile           |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c  | 238 +++++++++++++++++++++++++++++++++++++++
+ drivers/leds/Kconfig             |   6 +
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 131 +++++++++++++++++++++
+ drivers/mfd/Kconfig              |  12 ++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |   7 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 203 +++++++++++++++++++++++++++++++++
+ 12 files changed, 740 insertions(+)
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
+
+-- 
+2.0.4
