@@ -1,157 +1,100 @@
 From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH/RFC v4 15/21] media: Add registration helpers for V4L2 flash
-Date: Thu, 14 Aug 2014 10:25:28 +0200
-Message-ID: <53EC7278.6040101@samsung.com>
+Subject: Re: [PATCH/RFC v4 00/21] LED / flash API integration
+Date: Thu, 14 Aug 2014 12:35:05 +0200
+Message-ID: <53EC90D9.6080702@samsung.com>
 References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
- <53CCF59E.3070200@iki.fi> <53DF9C2A.8060403@samsung.com>
- <20140811122628.GG16460@valkosipuli.retiisi.org.uk>
- <53E8C4BA.6050805@samsung.com>
- <20140814043436.GM16460@valkosipuli.retiisi.org.uk>
+ <20140806065358.GC16460@valkosipuli.retiisi.org.uk>
+ <53E336FA.2050306@samsung.com>
+ <20140814050338.GO16460@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20140814043436.GM16460-S+BSfZ9RZZmRSg0ZkenSGLdO1Tsj/99ntUK59QYPAWc@public.gmane.org>
+In-reply-to: <20140814050338.GO16460-S+BSfZ9RZZmRSg0ZkenSGLdO1Tsj/99ntUK59QYPAWc@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On 08/14/2014 06:34 AM, Sakari Ailus wrote:
+On 08/14/2014 07:03 AM, Sakari Ailus wrote:
 > Hi Jacek,
 >
-> On Mon, Aug 11, 2014 at 03:27:22PM +0200, Jacek Anaszewski wrote:
->
-> ...
->
->>>>>> diff --git a/include/media/v4l2-flash.h b/include/media/v4l2-flash.h
->>>>>> new file mode 100644
->>>>>> index 0000000..effa46b
->>>>>> --- /dev/null
->>>>>> +++ b/include/media/v4l2-flash.h
->>>>>> @@ -0,0 +1,137 @@
->>>>>> +/*
->>>>>> + * V4L2 Flash LED sub-device registration helpers.
->>>>>> + *
->>>>>> + *	Copyright (C) 2014 Samsung Electronics Co., Ltd
->>>>>> + *	Author: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>> + *
->>>>>> + * This program is free software; you can redistribute it and/or modify
->>>>>> + * it under the terms of the GNU General Public License version 2 as
->>>>>> + * published by the Free Software Foundation."
->>>>>> + */
->>>>>> +
->>>>>> +#ifndef _V4L2_FLASH_H
->>>>>> +#define _V4L2_FLASH_H
->>>>>> +
->>>>>> +#include <media/v4l2-ctrls.h>
->>>>>> +#include <media/v4l2-device.h>
->>>>>> +#include <media/v4l2-dev.h>le
->>>>>> +#include <media/v4l2-event.h>
->>>>>> +#include <media/v4l2-ioctl.h>
->>>>>> +
->>>>>> +struct led_classdev_flash;
->>>>>> +struct led_classdev;
->>>>>> +enum led_brightness;
->>>>>> +
->>>>>> +struct v4l2_flash_ops {
->>>>>> +	int (*torch_brightness_set)(struct led_classdev *led_cdev,
->>>>>> +					enum led_brightness brightness);
->>>>>> +	int (*torch_brightness_update)(struct led_classdev *led_cdev);
->>>>>> +	int (*flash_brightness_set)(struct led_classdev_flash *flash,
->>>>>> +					u32 brightness);
->>>>>> +	int (*flash_brightness_update)(struct led_classdev_flash *flash);
->>>>>> +	int (*strobe_set)(struct led_classdev_flash *flash, bool state);
->>>>>> +	int (*strobe_get)(struct led_classdev_flash *flash, bool *state);
->>>>>> +	int (*timeout_set)(struct led_classdev_flash *flash, u32 timeout);
->>>>>> +	int (*indicator_brightness_set)(struct led_classdev_flash *flash,
->>>>>> +					u32 brightness);
->>>>>> +	int (*indicator_brightness_update)(struct led_classdev_flash *flash);
->>>>>> +	int (*external_strobe_set)(struct led_classdev_flash *flash,
->>>>>> +					bool enable);
->>>>>> +	int (*fault_get)(struct led_classdev_flash *flash, u32 *fault);
->>>>>> +	void (*sysfs_lock)(struct led_classdev *led_cdev);
->>>>>> +	void (*sysfs_unlock)(struct led_classdev *led_cdev);
->>>>>
->>>>> These functions are not driver specific and there's going to be just one
->>>>> implementation (I suppose). Could you refresh my memory regarding why
->>>>> the LED framework functions aren't called directly?
+> On Thu, Aug 07, 2014 at 10:21:14AM +0200, Jacek Anaszewski wrote:
+>> On 08/06/2014 08:53 AM, Sakari Ailus wrote:
+>>> Hi Jacek,
+>>>
+>>> On Fri, Jul 11, 2014 at 04:04:03PM +0200, Jacek Anaszewski wrote:
+>>> ...
+>>>> 1) Who should register V4L2 Flash sub-device?
 >>>>
->>>> These ops are required to make possible building led-class-flash as
->>>> a kernel module.
+>>>> LED Flash Class devices, after introduction of the Flash Manager,
+>>>> are not tightly coupled with any media controller. They are maintained
+>>>> by the Flash Manager and made available for dynamic assignment to
+>>>> any media system they are connected to through multiplexing devices.
+>>>>
+>>>> In the proposed rough solution, when support for V4L2 Flash sub-devices
+>>>> is enabled, there is a v4l2_device created for them to register in.
+>>>> This however implies that V4L2 Flash device will not be available
+>>>> in any media controller, which calls its existence into question.
+>>>>
+>>>> Therefore I'd like to consult possible ways of solving this issue.
+>>>> The option I see is implementing a mechanism for moving V4L2 Flash
+>>>> sub-devices between media controllers. A V4L2 Flash sub-device
+>>>> would initially be assigned to one media system in the relevant
+>>>> device tree binding, but it could be dynamically reassigned to
+>>>> the other one. However I'm not sure if media controller design
+>>>> is prepared for dynamic modifications of its graph and how many
+>>>> modifications in the existing drivers this solution would require.
 >>>
->>> Assuming you'd use the actual implementation directly, what would be the
->>> dependencies? I don't think the LED flash framework has any callbacks
->>> towards the V4L2 (LED) flash framework, does it? Please correct my
->>> understanding if I'm missing something. In Makefile format, assume all
->>> targets are .PHONY:
->>>
->>> led-flash-api: led-api
->>>
->>> v4l2-flash: led-flash-api
->>>
->>> driver: led-flash-api v4l2-flash
+>>> Do you have a use case where you would need to strobe a flash from multiple
+>>> media devices at different times, or is this entirely theoretical? Typically
+>>> flash controllers are connected to a single source of hardware strobe (if
+>>> there's one) since the flash LEDs are in fact mounted next to a specific
+>>> camera sensor.
 >>
->> LED Class Flash driver gains V4L2 Flash API when
->> CONFIG_V4L2_FLASH_LED_CLASS is defined. This is accomplished in
->> the probe function by either calling v4l2_flash_init function
->> or the macro of this name, when the CONFIG_V4L2_FLASH_LED_CLASS
->> macro isn't defined.
+>> I took into account such arrangements in response to your message
+>> [1], where you were considering configurations like "one flash but
+>> two
+>> cameras", "one camera and two flashes". And you also called for
+>> proposing generic solution.
 >>
->> If the v4l2-flash.c was to call the LED API directly, then the
->> led-class-flash module symbols would have to be available at
->> v4l2-flash.o linking time.
+>> One flash and two (or more) cameras case is easily conceivable -
+>> You even mentioned stereo cameras. One camera and many flashes
+>> arrangement might be useful in case of some professional devices which
+>> might be designed so that they would be able to apply different scene
+>> lighting. I haven't heard about such devices, but as you said
+>> such a configuration isn't unthinkable.
+>>
+>>> If this is a real issue the way to solve it would be to have a single media
+>>> device instead of many.
+>>
+>> I was considering adding media device, that would be a representation
+>> of a flash manager, gathering all the registered flashes. Nonetheless,
+>> finally I came to conclusion that a v4l2-device alone should suffice,
+>> just to provide a Flash Manager representation allowing for
+>> v4l2-flash sub-devices to register in.
+>> All the features provided by the media device are useless in case
+>> of a set of V4L2 Flash sub-devices. They couldn't have any linkage
+>> in such a device. The only benefit from having media device gathering
+>> V4L2 Flash devices would be possibility of listing them.
 >
-> Is this an issue? EXPORT_SYMBOL_GPL() for the relevant symbols should be
-> enough.
-
-It isn't enough. If I call e.g. led_set_flash_brightness
-directly from v4l2-flash.c and configure led-class-flash to be built as
-a module then I am getting "undefined reference to
-led_set_flash_brightness" error during linking phase.
-
-It happens because the linker doesn't take into account
-led-flash-class.ko symbols. It is reasonable because initially
-the kernel boots up without led-flash-class.ko module and
-the processor wouldn't know the address to jump to in the
-result of calling a led API function.
-The led-class-flash.ko binary code is loaded into memory not
-sooner than after executing "insmod led-class-flash.ko".
-
-After linking dynamically with kernel the LED API function
-addresses are relocated, and the LED Flash Class core can
-initialize the v4l2_flash_ops structure. Then every LED Flash Class
-driver can obtain the address of this structure with
-led_get_v4l2_flash_ops and pass it to the v4l2_flash_init.
-
->> This requirement cannot be met if the led-class-flash is built
->> as a module.
->>
->> Use of function pointers in the v4l2-flash.c allows to compile it
->> into the kernel and enables the possibility of adding the V4L2 Flash
->> support conditionally, during driver probing.
+> Not quite so. The flash is associated to the sensor (and lens) using the
+> group ID in the Media controller. The user space doesn't need to "know" this
+> association.
 >
-> I'd simply decide this during kernel compilation time. If you want
-> something, just enable it. v4l2_flash_init() is called directly by the
-> driver in any case, so unless that is also called through a wrapper the
-> driver is still directly dependent on it.
+> More complex use cases such as the above may need extensions to the Media
+> controller API.
 
-The problem is that v4l2-flash.o would have to depend on
-led-class-flash.o, which when built as a module isn't available
-during v4l2-flash.o linking time. In order to avoid v4l2-flash.o linking
-problem, it would have to be built as a module.
-
-Nevertheless, in this arrangement, the CONFIG_V4L2_FLASH_LED_CLASS
-macro would be defined only in v4l2-flash.ko module, and
-a LED Flash Class driver couldn't check whether V4L2 Flash support
-is enabled. Its dependence on v4l2-flash.o would have to be fixed,
-which is not what we want.
-
-I have tested all these cases.
+I think that I have unnecessarily complicated the issue. Generally
+there will be always one media controller created for all camera
+sensors available in the system. If there is a single media controller
+then we can easily use async subdev registration API. A media-dev
+driver would have to parse list of flash device phandles from
+the ISP device's DT node and register them as async sub-devices.
 
 Best Regards,
 Jacek Anaszewski
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
