@@ -1,274 +1,141 @@
-From: Hugh Dickins <hughd@google.com>
-Subject: 3.17-rc1: leds blink workqueue causes sleeping BUGs
-Date: Sat, 16 Aug 2014 20:27:01 -0700 (PDT)
-Message-ID: <alpine.LSU.2.11.1408161946450.1064@eggly.anvils>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+Subject: Re: [PATCH/RFC v4 06/21] leds: add API for setting torch brightness
+Date: Mon, 18 Aug 2014 20:55:35 +0100
+Message-ID: <1408391735.1669.37.camel@ted>
+References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
+	 <1405087464-13762-7-git-send-email-j.anaszewski@samsung.com>
+	 <20140716215444.GK16460@valkosipuli.retiisi.org.uk>
+	 <53DF7E0E.2060705@samsung.com>
+	 <20140804125019.GA16460@valkosipuli.retiisi.org.uk>
+	 <53E37B29.2080106@samsung.com>
+	 <20140814043925.GN16460@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:35989 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750776AbaHQD2s (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 16 Aug 2014 23:28:48 -0400
-Received: by mail-pa0-f51.google.com with SMTP id ey11so5651915pad.38
-        for <linux-leds@vger.kernel.org>; Sat, 16 Aug 2014 20:28:47 -0700 (PDT)
+Received: from 5751f4a1.skybroadband.com ([87.81.244.161]:57336 "EHLO
+	dan.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751066AbaHRUCE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 18 Aug 2014 16:02:04 -0400
+In-Reply-To: <20140814043925.GN16460@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vincent Donnefort <vdonnefort@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com
 
-Can we safely revert your 8b37e1bef5a6 ("leds: convert blink timer to
-workqueue"), or have there been other changes which now depend upon it?
+On Thu, 2014-08-14 at 07:39 +0300, Sakari Ailus wrote:
+> Bryan and Richard,
+> 
+> Your opinion would be much appreciated to a question myself and Jacek were
+> pondering. Please see below.
+> 
+> On Thu, Aug 07, 2014 at 03:12:09PM +0200, Jacek Anaszewski wrote:
+> > Hi Sakari,
+> > 
+> > On 08/04/2014 02:50 PM, Sakari Ailus wrote:
+> > >Hi Jacek,
+> > >
+> > >Thank you for your continued efforts on this!
+> > >
+> > >On Mon, Aug 04, 2014 at 02:35:26PM +0200, Jacek Anaszewski wrote:
+> > >>On 07/16/2014 11:54 PM, Sakari Ailus wrote:
+> > >>>Hi Jacek,
+> > >>>
+> > >>>Jacek Anaszewski wrote:
+> > >>>...
+> > >>>>diff --git a/include/linux/leds.h b/include/linux/leds.h
+> > >>>>index 1a130cc..9bea9e6 100644
+> > >>>>--- a/include/linux/leds.h
+> > >>>>+++ b/include/linux/leds.h
+> > >>>>@@ -44,11 +44,21 @@ struct led_classdev {
+> > >>>>  #define LED_BLINK_ONESHOT_STOP    (1 << 18)
+> > >>>>  #define LED_BLINK_INVERT    (1 << 19)
+> > >>>>  #define LED_SYSFS_LOCK        (1 << 20)
+> > >>>>+#define LED_DEV_CAP_TORCH    (1 << 21)
+> > >>>>
+> > >>>>      /* Set LED brightness level */
+> > >>>>      /* Must not sleep, use a workqueue if needed */
+> > >>>>      void        (*brightness_set)(struct led_classdev *led_cdev,
+> > >>>>                        enum led_brightness brightness);
+> > >>>>+    /*
+> > >>>>+     * Set LED brightness immediately - it is required for flash led
+> > >>>>+     * devices as they require setting torch brightness to have
+> > >>>>immediate
+> > >>>>+     * effect. brightness_set op cannot be used for this purpose because
+> > >>>>+     * the led drivers schedule a work queue task in it to allow for
+> > >>>>+     * being called from led-triggers, i.e. from the timer irq context.
+> > >>>>+     */
+> > >>>
+> > >>>Do we need to classify actual devices based on this? I think it's rather
+> > >>>a different API behaviour between the LED and the V4L2 APIs.
+> > >>>
+> > >>>On devices that are slow to control, the behaviour should be asynchronous
+> > >>>over the LED API and synchronous when accessed through the V4L2 API. How
+> > >>>about implementing the work queue, as I have suggested, in the
+> > >>>framework, so
+> > >>>that individual drivers don't need to care about this and just implement
+> > >>>the
+> > >>>synchronous variant of this op? A flag could be added to distinguish
+> > >>>devices
+> > >>>that are fast so that the work queue isn't needed.
+> > >>>
+> > >>>It'd be nice to avoid individual drivers having to implement multiple
+> > >>>ops to
+> > >>>do the same thing, just for differing user space interfacs.
+> > >>>
+> > >>
+> > >>It is not only the matter of a device controller speed. If a flash
+> > >>device is to be made accessible from the LED subsystem, then it
+> > >>should be also compatible with led-triggers. Some of led-triggers
+> > >>call brightness_set op from the timer irq context and thus no
+> > >>locking in the callback can occur. This requirement cannot be
+> > >>met i.e. if i2c bus is to be used. This is probably the primary
+> > >>reason for scheduling work queue tasks in brightness_set op.
+> > >>
+> > >>Having the above in mind, setting a brightness in a work queue
+> > >>task must be possible for all LED Class Flash drivers, regardless
+> > >>whether related devices have fast or slow controller.
+> > >>
+> > >>Let's recap the cost of possible solutions then:
+> > >>
+> > >>1) Moving the work queues to the LED framework
+> > >>
+> > >>   - it would probably require extending led_set_brightness and
+> > >>     __led_set_brightness functions by a parameter indicating whether it
+> > >>     should call brightness_set op in the work queue task or directly;
+> > >>   - all existing triggers would have to be updated accordingly;
+> > >>   - work queues would have to be removed from all the LED drivers;
+> > >>
+> > >>2) adding led_set_torch_brightness API
+> > >>
+> > >>   - no modifications in existing drivers and triggers would be required
+> > >>   - instead, only the modifications from the discussed patch would
+> > >>     be required
+> > >>
+> > >>Solution 1 looks cleaner but requires much more modifications.
+> > >
+> > >How about a combination of the two, i.e. option 1 with the old op remaining
+> > >there for compatibility with the old drivers (with a comment telling it's
+> > >deprecated)?
+> > >
+> > >This way new drivers will benefit from having to implement this just once,
+> > >and modifications to the existing drivers could be left for later.
+> > 
+> > It's OK for me, but the opinion from the LED side guys is needed here
+> > as well.
+> 
+> Ping.
 
-Your commit comment says:
-This patch converts the blink timer from led-core to workqueue which is
-more suitable for this kind of non-priority operations. Moreover, timer
-may lead to errors when a LED setting function use a scheduling function
-such as pinctrl which is using mutex.
+I'm not a fan of forcing everything to the lowest common denominator. At
+a basic level an LED is a binary on/off so the shear levels of
+complexity we end up going through is kind of scary. Forcing everything
+through a workqueue due to their being some hardware out there can can't
+do it in interrupt context is kind of sad and wasn't where the API set
+out from.
 
-Which sounds like a good change, except led_blink_set() itself may now
-sleep, and at least one established user calls it while holding a lock.
+So personally I'd prefer not to see the API changed like that however I
+appreciate I've been more distant from the code of late.
 
-I have CONFIG_DEBUG_ATOMIC_SLEEP=y, plus lockdep: once wireless comes up,
-I get the stream of messages below.  Reverting 8b37e1bef5a6 works for me,
-but perhaps something else would need to be reverted too?
+Cheers,
 
-Hugh
-
-BUG: sleeping function called from invalid context at kernel/workqueue.c:2650
-in_atomic(): 1, irqs_disabled(): 0, pid: 332, name: wpa_supplicant
-7 locks held by wpa_supplicant/332:
- #0:  (cb_lock){++++++}, at: [<ffffffff814a32b3>] genl_rcv+0x14/0x32
- #1:  (genl_mutex){+.+.+.}, at: [<ffffffff814a2820>] genl_lock+0x12/0x14
- #2:  (rtnl_mutex){+.+.+.}, at: [<ffffffff81491a7e>] rtnl_lock+0x12/0x14
- #3:  (&wdev->mtx){+.+.+.}, at: [<ffffffff81559faf>] nl80211_authenticate+0x20f/0x2ad
- #4:  (&local->mtx){+.+.+.}, at: [<ffffffff815a0bc5>] ieee80211_prep_connection+0x37a/0xbe9
- #5:  (&local->chanctx_mtx){+.+.+.}, at: [<ffffffff8159ea88>] ieee80211_vif_use_channel+0x6c/0x21e
- #6:  (&trig->leddev_list_lock){.+.+..}, at: [<ffffffff815a8653>] tpt_trig_timer+0xd0/0x11b
-Preemption disabled at:[<ffffffff815a8653>] tpt_trig_timer+0xd0/0x11b
-
-CPU: 3 PID: 332 Comm: wpa_supplicant Not tainted 3.17.0-rc1 #2
-Hardware name: LENOVO 4174EH1/4174EH1, BIOS 8CET51WW (1.31 ) 11/29/2011
- 0000000000000000 ffff8800b359b5e8 ffffffff815b4eb1 0000000000000000
- ffff8800b359b610 ffffffff810a2f46 ffff8800b34051b0 ffff8800b34051d0
- 0000000ffffffff1 ffff8800b359b6d8 ffffffff8109966f ffffffff81099610
-Call Trace:
- [<ffffffff815b4eb1>] dump_stack+0x4e/0x7a
- [<ffffffff810a2f46>] __might_sleep+0x1fa/0x201
- [<ffffffff8109966f>] flush_work+0x5f/0x213
- [<ffffffff81099610>] ? mod_delayed_work_on+0x75/0x75
- [<ffffffff810bda17>] ? __lock_acquire+0x10ec/0x17e8
- [<ffffffff810bc4ec>] ? mark_held_locks+0x50/0x6e
- [<ffffffff8109a5b7>] ? __cancel_work_timer+0x9d/0xec
- [<ffffffff810bc64c>] ? trace_hardirqs_on_caller+0x142/0x19e
- [<ffffffff8109a5c3>] __cancel_work_timer+0xa9/0xec
- [<ffffffff8109a621>] cancel_delayed_work_sync+0xe/0x10
- [<ffffffff8145a9fb>] led_blink_set+0x1d/0x39
- [<ffffffff815a866f>] tpt_trig_timer+0xec/0x11b
- [<ffffffff815a8b17>] ieee80211_mod_tpt_led_trig+0x103/0x130
- [<ffffffff8158125b>] __ieee80211_recalc_idle+0xcf/0x122
- [<ffffffff815814e9>] ieee80211_idle_off+0xe/0x10
- [<ffffffff8159c296>] ieee80211_add_chanctx+0x65/0x110
- [<ffffffff8159d20c>] ieee80211_new_chanctx+0x6c/0xcb
- [<ffffffff8159eb79>] ieee80211_vif_use_channel+0x15d/0x21e
- [<ffffffff815a0bd3>] ieee80211_prep_connection+0x388/0xbe9
- [<ffffffff815a5c7c>] ieee80211_mgd_auth+0x1db/0x266
- [<ffffffff815519b9>] ? cfg80211_get_bss+0x196/0x1b2
- [<ffffffff81587868>] ieee80211_auth+0x13/0x15
- [<ffffffff81566b61>] cfg80211_mlme_auth+0x123/0x171
- [<ffffffff8155a00f>] nl80211_authenticate+0x26f/0x2ad
- [<ffffffff814a34c4>] genl_family_rcv_msg+0x1f3/0x254
- [<ffffffff814a3560>] genl_rcv_msg+0x3b/0x5c
- [<ffffffff814a3525>] ? genl_family_rcv_msg+0x254/0x254
- [<ffffffff814a3525>] ? genl_family_rcv_msg+0x254/0x254
- [<ffffffff814a25fc>] netlink_rcv_skb+0x3c/0x88
- [<ffffffff814a32c2>] genl_rcv+0x23/0x32
- [<ffffffff814a203f>] netlink_unicast+0xf4/0x19c
- [<ffffffff814a248b>] netlink_sendmsg+0x325/0x37b
- [<ffffffff8146cc82>] sock_sendmsg+0x69/0x7a
- [<ffffffff81125a20>] ? might_fault+0x9c/0xa1
- [<ffffffff811259d7>] ? might_fault+0x53/0xa1
- [<ffffffff8147a5e6>] ? verify_iovec+0x64/0xb6
- [<ffffffff8146db03>] ___sys_sendmsg+0x1f4/0x272
- [<ffffffff81272a7e>] ? debug_smp_processor_id+0x17/0x19
- [<ffffffff81177ad9>] ? __fget_light+0xb3/0xda
- [<ffffffff8146fa65>] __sys_sendmsg+0x3d/0x5e
- [<ffffffff8146fa93>] SyS_sendmsg+0xd/0x19
- [<ffffffff815bef52>] system_call_fastpath+0x16/0x1b
-wlp3s0: send auth to c0:3f:0e:ad:ff:ee (try 1/3)
-wlp3s0: authenticated
-wlp3s0: associate with c0:3f:0e:ad:ff:ee (try 1/3)
-wlp3s0: RX AssocResp from c0:3f:0e:ad:ff:ee (capab=0x411 status=0 aid=4)
-wlp3s0: associated
-IPv6: ADDRCONF(NETDEV_CHANGE): wlp3s0: link becomes ready
-
-=================================
-[ INFO: inconsistent lock state ]
-3.17.0-rc1 #2 Not tainted
----------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-swapper/3/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
- ((&(&led_cdev->blink_work)->work)){+.?...}, at: [<ffffffff81099610>] flush_work+0x0/0x213
-{SOFTIRQ-ON-W} state was registered at:
-  [<ffffffff810bcf41>] __lock_acquire+0x616/0x17e8
-  [<ffffffff810be752>] lock_acquire+0x61/0x78
-  [<ffffffff81099648>] flush_work+0x38/0x213
-  [<ffffffff8109a5c3>] __cancel_work_timer+0xa9/0xec
-  [<ffffffff8109a621>] cancel_delayed_work_sync+0xe/0x10
-  [<ffffffff8145a9fb>] led_blink_set+0x1d/0x39
-  [<ffffffff815a866f>] tpt_trig_timer+0xec/0x11b
-  [<ffffffff815a8b17>] ieee80211_mod_tpt_led_trig+0x103/0x130
-  [<ffffffff8158125b>] __ieee80211_recalc_idle+0xcf/0x122
-  [<ffffffff815814e9>] ieee80211_idle_off+0xe/0x10
-  [<ffffffff8159c296>] ieee80211_add_chanctx+0x65/0x110
-  [<ffffffff8159d20c>] ieee80211_new_chanctx+0x6c/0xcb
-  [<ffffffff8159eb79>] ieee80211_vif_use_channel+0x15d/0x21e
-  [<ffffffff815a0bd3>] ieee80211_prep_connection+0x388/0xbe9
-  [<ffffffff815a5c7c>] ieee80211_mgd_auth+0x1db/0x266
-  [<ffffffff81587868>] ieee80211_auth+0x13/0x15
-  [<ffffffff81566b61>] cfg80211_mlme_auth+0x123/0x171
-  [<ffffffff8155a00f>] nl80211_authenticate+0x26f/0x2ad
-  [<ffffffff814a34c4>] genl_family_rcv_msg+0x1f3/0x254
-  [<ffffffff814a3560>] genl_rcv_msg+0x3b/0x5c
-  [<ffffffff814a25fc>] netlink_rcv_skb+0x3c/0x88
-  [<ffffffff814a32c2>] genl_rcv+0x23/0x32
-  [<ffffffff814a203f>] netlink_unicast+0xf4/0x19c
-  [<ffffffff814a248b>] netlink_sendmsg+0x325/0x37b
-  [<ffffffff8146cc82>] sock_sendmsg+0x69/0x7a
-  [<ffffffff8146db03>] ___sys_sendmsg+0x1f4/0x272
-  [<ffffffff8146fa65>] __sys_sendmsg+0x3d/0x5e
-  [<ffffffff8146fa93>] SyS_sendmsg+0xd/0x19
-  [<ffffffff815bef52>] system_call_fastpath+0x16/0x1b
-irq event stamp: 45440
-hardirqs last  enabled at (45440): [<ffffffff8109a5b7>] __cancel_work_timer+0x9d/0xec
-hardirqs last disabled at (45439): [<ffffffff810991eb>] try_to_grab_pending+0x21/0x14d
-softirqs last  enabled at (45432): [<ffffffff81087d06>] _local_bh_enable+0x3e/0x40
-softirqs last disabled at (45433): [<ffffffff810886c3>] irq_exit+0x3d/0x92
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock((&(&led_cdev->blink_work)->work));
-  <Interrupt>
-    lock((&(&led_cdev->blink_work)->work));
-*** DEADLOCK ***
-
-2 locks held by swapper/3/0:
- #0:  (((&tpt_trig->timer))){+.-...}, at: [<ffffffff810d5c55>] call_timer_fn+0x0/0xd4
- #1:  (&trig->leddev_list_lock){.+.?..}, at: [<ffffffff815a8653>] tpt_trig_timer+0xd0/0x11b
-stack backtrace:
-CPU: 3 PID: 0 Comm: swapper/3 Not tainted 3.17.0-rc1 #2
-Hardware name: LENOVO 4174EH1/4174EH1, BIOS 8CET51WW (1.31 ) 11/29/2011
- 0000000000000000 ffff88023e383b98 ffffffff815b4eb1 ffff8802339ac310
- ffff88023e383be8 ffffffff815b1351 0000000000000001 0000000000000001
- ffff880200000000 ffff8802339acb28 0000000000000004 0000000000000006
-Call Trace:
- <IRQ>  [<ffffffff815b4eb1>] dump_stack+0x4e/0x7a
- [<ffffffff815b1351>] print_usage_bug+0x2ac/0x2bd
- [<ffffffff810bb609>] ? print_irq_inversion_bug+0x1cc/0x1cc
- [<ffffffff810bc256>] mark_lock+0x348/0x58e
- [<ffffffff810bceca>] __lock_acquire+0x59f/0x17e8
- [<ffffffff810bb6b4>] ? check_usage_forwards+0xab/0xe7
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff810be752>] lock_acquire+0x61/0x78
- [<ffffffff81099610>] ? mod_delayed_work_on+0x75/0x75
- [<ffffffff81099648>] flush_work+0x38/0x213
- [<ffffffff81099610>] ? mod_delayed_work_on+0x75/0x75
- [<ffffffff810bda17>] ? __lock_acquire+0x10ec/0x17e8
- [<ffffffff810bc161>] ? mark_lock+0x253/0x58e
- [<ffffffff810bc4ec>] ? mark_held_locks+0x50/0x6e
- [<ffffffff8109a5b7>] ? __cancel_work_timer+0x9d/0xec
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff810bc699>] ? trace_hardirqs_on_caller+0x18f/0x19e
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff8109a5c3>] __cancel_work_timer+0xa9/0xec
- [<ffffffff8109a621>] cancel_delayed_work_sync+0xe/0x10
- [<ffffffff8145a9fb>] led_blink_set+0x1d/0x39
- [<ffffffff815a866f>] tpt_trig_timer+0xec/0x11b
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff810d5cbc>] call_timer_fn+0x67/0xd4
- [<ffffffff810d5c55>] ? process_timeout+0xb/0xb
- [<ffffffff810d6819>] run_timer_softirq+0x1aa/0x1f2
- [<ffffffff810883a9>] __do_softirq+0xfc/0x21f
- [<ffffffff810886c3>] irq_exit+0x3d/0x92
- [<ffffffff81052fe4>] smp_apic_timer_interrupt+0x3f/0x4b
- [<ffffffff815bfe1c>] apic_timer_interrupt+0x6c/0x80
- <EOI>  [<ffffffff81444829>] ? cpuidle_enter_state+0x44/0xa0
- [<ffffffff81444835>] ? cpuidle_enter_state+0x50/0xa0
- [<ffffffff81444926>] cpuidle_enter+0x12/0x14
- [<ffffffff810b633c>] cpu_startup_entry+0x183/0x23f
- [<ffffffff81051860>] start_secondary+0x1b0/0x1b5
-BUG: sleeping function called from invalid context at kernel/workqueue.c:2650
-in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/3
-INFO: lockdep is turned off.
-Preemption disabled at:[<ffffffff810b63e8>] cpu_startup_entry+0x22f/0x23f
-
-CPU: 3 PID: 0 Comm: swapper/3 Not tainted 3.17.0-rc1 #2
-Hardware name: LENOVO 4174EH1/4174EH1, BIOS 8CET51WW (1.31 ) 11/29/2011
- 0000000000000000 ffff88023e383cf8 ffffffff815b4eb1 0000000000000000
- ffff88023e383d20 ffffffff810a2f46 ffff8800b34051b0 ffff8800b34051d0
- 0000000ffffffff1 ffff88023e383de8 ffffffff8109966f ffffffff81099610
-Call Trace:
- <IRQ>  [<ffffffff815b4eb1>] dump_stack+0x4e/0x7a
- [<ffffffff810a2f46>] __might_sleep+0x1fa/0x201
- [<ffffffff8109966f>] flush_work+0x5f/0x213
- [<ffffffff81099610>] ? mod_delayed_work_on+0x75/0x75
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff81099206>] ? try_to_grab_pending+0x3c/0x14d
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff8109a5c3>] __cancel_work_timer+0xa9/0xec
- [<ffffffff8109a621>] cancel_delayed_work_sync+0xe/0x10
- [<ffffffff8145a9fb>] led_blink_set+0x1d/0x39
- [<ffffffff815a866f>] tpt_trig_timer+0xec/0x11b
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff810d5cbc>] call_timer_fn+0x67/0xd4
- [<ffffffff810d5c55>] ? process_timeout+0xb/0xb
- [<ffffffff810d6819>] run_timer_softirq+0x1aa/0x1f2
- [<ffffffff810883a9>] __do_softirq+0xfc/0x21f
- [<ffffffff810886c3>] irq_exit+0x3d/0x92
- [<ffffffff81052fe4>] smp_apic_timer_interrupt+0x3f/0x4b
- [<ffffffff815bfe1c>] apic_timer_interrupt+0x6c/0x80
- <EOI>  [<ffffffff81444829>] ? cpuidle_enter_state+0x44/0xa0
- [<ffffffff81444831>] ? cpuidle_enter_state+0x4c/0xa0
- [<ffffffff81444835>] ? cpuidle_enter_state+0x50/0xa0
- [<ffffffff81444926>] cpuidle_enter+0x12/0x14
- [<ffffffff810b633c>] cpu_startup_entry+0x183/0x23f
- [<ffffffff81051860>] start_secondary+0x1b0/0x1b5
-BUG: sleeping function called from invalid context at kernel/workqueue.c:2650
-in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/3
-INFO: lockdep is turned off.
-Preemption disabled at:[<ffffffff810b63e8>] cpu_startup_entry+0x22f/0x23f
-
-CPU: 3 PID: 0 Comm: swapper/3 Not tainted 3.17.0-rc1 #2
-Hardware name: LENOVO 4174EH1/4174EH1, BIOS 8CET51WW (1.31 ) 11/29/2011
- 0000000000000000 ffff88023e383cf8 ffffffff815b4eb1 0000000000000000
- ffff88023e383d20 ffffffff810a2f46 ffff8800b34051b0 ffff8800b34051d0
- 0000000ffffffff1 ffff88023e383de8 ffffffff8109966f ffffffff81099610
-Call Trace:
- <IRQ>  [<ffffffff815b4eb1>] dump_stack+0x4e/0x7a
- [<ffffffff810a2f46>] __might_sleep+0x1fa/0x201
- [<ffffffff8109966f>] flush_work+0x5f/0x213
- [<ffffffff81099610>] ? mod_delayed_work_on+0x75/0x75
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff81099206>] ? try_to_grab_pending+0x3c/0x14d
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff8109a5c3>] __cancel_work_timer+0xa9/0xec
- [<ffffffff8109a621>] cancel_delayed_work_sync+0xe/0x10
- [<ffffffff8145a9fb>] led_blink_set+0x1d/0x39
- [<ffffffff815a866f>] tpt_trig_timer+0xec/0x11b
- [<ffffffff815a8583>] ? __ieee80211_create_tpt_led_trigger+0xf3/0xf3
- [<ffffffff810d5cbc>] call_timer_fn+0x67/0xd4
- [<ffffffff810d5c55>] ? process_timeout+0xb/0xb
- [<ffffffff810d6819>] run_timer_softirq+0x1aa/0x1f2
- [<ffffffff810883a9>] __do_softirq+0xfc/0x21f
- [<ffffffff810886c3>] irq_exit+0x3d/0x92
- [<ffffffff81052fe4>] smp_apic_timer_interrupt+0x3f/0x4b
- [<ffffffff815bfe1c>] apic_timer_interrupt+0x6c/0x80
- <EOI>  [<ffffffff81444829>] ? cpuidle_enter_state+0x44/0xa0
- [<ffffffff81444831>] ? cpuidle_enter_state+0x4c/0xa0
- [<ffffffff81444835>] ? cpuidle_enter_state+0x50/0xa0
- [<ffffffff81444926>] cpuidle_enter+0x12/0x14
- [<ffffffff810b633c>] cpu_startup_entry+0x183/0x23f
- [<ffffffff81051860>] start_secondary+0x1b0/0x1b5
-
-and another such message every second.
+Richard
