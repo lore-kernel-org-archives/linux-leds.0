@@ -1,40 +1,69 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 08/10] of: Add Skyworks Solutions, Inc. vendor prefix
-Date: Wed, 20 Aug 2014 15:44:17 +0200
-Message-ID: <1408542259-415-9-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH/RFC v5 04/10] DT: leds: Add flash led devices related properties
+Date: Wed, 20 Aug 2014 15:44:13 +0200
+Message-ID: <1408542259-415-5-git-send-email-j.anaszewski@samsung.com>
 References: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1408542259-415-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Use "skyworks" as the vendor prefix for the
-Skyworks Solutions, Inc.
+Addition of a LED Flash Class extension entails the need for flash led
+specific device tree properties. The properties being added are:
+iout-torch, iout-flash, iout-indicator and flash-timeout.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
+Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 ---
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/leds/common.txt |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 34cc1bf..e1c6317 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -118,6 +118,7 @@ renesas	Renesas Electronics Corporation
- ricoh	Ricoh Co. Ltd.
- rockchip	Fuzhou Rockchip Electronics Co., Ltd
- samsung	Samsung Semiconductor
-+skyworks	Skyworks Solutions, Inc.
- sbs	Smart Battery System
- schindler	Schindler
- seagate	Seagate Technology PLC
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 2d88816..40f4b9a 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -3,6 +3,17 @@ Common leds properties.
+ Optional properties for child nodes:
+ - label : The label for this LED.  If omitted, the label is
+   taken from the node name (excluding the unit address).
++- iout-torch : Array of maximum intensities in microamperes of the torch
++	led currents in order from sub-led 0 to N-1, where N is the number
++	of torch sub-leds exposed by the device
++- iout-flash : Array of maximum intensities in microamperes of the flash
++	led currents in order from sub-led 0 to N-1, where N is the number
++	of flash sub-leds exposed by the device
++- iout-indicator : Array of maximum intensities in microamperes of
++	the indicator led currents in order from sub-led 0 to N-1,
++	where N is the number of indicator sub-leds exposed by the device
++- flash-timeout : timeout in microseconds after which flash led
++	is turned off
+ 
+ - linux,default-trigger :  This parameter, if present, is a
+     string defining the trigger assigned to the LED.  Current triggers are:
+@@ -19,5 +30,10 @@ Examples:
+ system-status {
+ 	label = "Status";
+ 	linux,default-trigger = "heartbeat";
++	iout-torch = <500 500>;
++	iout-flash = <1000 1000>;
++	iout-indicator = <100 100>;
++	flash-timeout = <1000>;
++
+ 	...
+ };
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
