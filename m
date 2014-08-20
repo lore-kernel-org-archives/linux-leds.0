@@ -1,84 +1,51 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 1/3] v4l2-ctrls: add control for flash strobe signal
- providers
-Date: Wed, 20 Aug 2014 15:43:09 +0200
-Message-ID: <1408542191-335-2-git-send-email-j.anaszewski@samsung.com>
-References: <1408542191-335-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408542191-335-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH/RFC v5 0/3] LED / flash API integration - LED Flash Class
+ drivers
+Date: Wed, 20 Aug 2014 15:43:38 +0200
+Message-ID: <1408542221-375-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add V4L2_CID_STROBE_PROVIDER of type menu, which allows
-for enumerating of available external flash strobe signal
-providers and setting the active one.
+This patch set is the follow-up of the LED / flash API integration
+series [1]. For clarity reasons the patchset has been split into
+five subsets:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
----
- Documentation/DocBook/media/v4l/controls.xml |   11 +++++++++++
- drivers/media/v4l2-core/v4l2-ctrls.c         |    2 ++
- include/uapi/linux/v4l2-controls.h           |    2 ++
- 3 files changed, 15 insertions(+)
+- LED Flash Class
+- Flash Manager
+- V4L2 Flash
+- LED Flash Class drivers
+- Documentation
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index 9f5ffd8..bb18b13 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -4413,6 +4413,17 @@ interface and may change in the future.</para>
-     	    is strobing at the moment or not. This is a read-only
-     	    control.</entry>
-     	  </row>
-+          <row>
-+            <entry spanname="id"><constant>V4L2_CID_FLASH_STROBE_PROVIDER</constant></entry>
-+            <entry>menu</entry>
-+          </row>
-+          <row>
-+            <entry spanname="descr">Provider of the external strobe signal. If a flash
-+            device declares more than one available external strobe signal provider then
-+            this control allows to select the active one. &VIDIOC-QUERYCTRL; has to be
-+            used to get the list of available strobe providers.
-+            </entry>
-+          </row>
-     	  <row>
-     	    <entry spanname="id"><constant>V4L2_CID_FLASH_TIMEOUT</constant></entry>
-     	    <entry>integer</entry>
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index f030d6a..30b6f45 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -844,6 +844,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_FLASH_FAULT:		return "Faults";
- 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
- 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
-+	case V4L2_CID_FLASH_STROBE_PROVIDER:	return "Strobe Provider";
- 
- 	/* JPEG encoder controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -1035,6 +1036,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_TUNE_DEEMPHASIS:
- 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
- 	case V4L2_CID_DETECT_MD_MODE:
-+	case V4L2_CID_FLASH_STROBE_PROVIDER:
- 		*type = V4L2_CTRL_TYPE_MENU;
- 		break;
- 	case V4L2_CID_LINK_FREQ:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index e946e43..b79c4aa 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -832,6 +832,8 @@ enum v4l2_flash_strobe_source {
- #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
- #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
- 
-+#define V4L2_CID_FLASH_STROBE_PROVIDER		(V4L2_CID_FLASH_CLASS_BASE + 13)
-+
- 
- /* JPEG-class control IDs */
- 
+The series is based on linux-next-20140820.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (3):
+  mfd: max77693: Fix register enum name
+  leds: Add support for max77693 mfd flash cell
+  leds: Add driver for AAT1290 current regulator
+
+ drivers/leds/Kconfig                 |   15 +
+ drivers/leds/Makefile                |    2 +
+ drivers/leds/leds-aat1290.c          |  448 +++++++++++++++
+ drivers/leds/leds-max77693.c         | 1048 ++++++++++++++++++++++++++++++++++
+ drivers/mfd/max77693.c               |    5 +-
+ include/linux/mfd/max77693-private.h |   61 +-
+ include/linux/mfd/max77693.h         |   40 ++
+ 7 files changed, 1617 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
