@@ -1,125 +1,53 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 3/4] leds: add API for setting torch brightness
-Date: Wed, 20 Aug 2014 15:41:57 +0200
-Message-ID: <1408542118-32723-4-git-send-email-j.anaszewski@samsung.com>
-References: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 0/2] LED / flash API integration - Flash Manager
+Date: Wed, 20 Aug 2014 15:42:41 +0200
+Message-ID: <1408542163-32764-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch prepares ground for addition of LED Flash Class extension to
-the LED subsystem. Since turning the torch on must have guaranteed
-immediate effect the brightness_set op can't be used for it. Drivers must
-schedule a work queue task in this op to be compatible with led-triggers,
-which call brightess_set from timer irqs. In order to address this
-limitation a torch_brightness_set op and led_set_torch_brightness API
-is introduced. Setting brightness sysfs attribute will result in calling
-brightness_set op for LED Class devices and torch_brightness_set op for
-LED Flash Class devices, whereas triggers will still call brightness
-op in both cases.
+This patch set is the follow-up of the LED / flash API integration
+series [1]. For clarity reasons the patchset has been split into
+five subsets:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- drivers/leds/led-class.c |    9 +++++++--
- drivers/leds/led-core.c  |   14 ++++++++++++++
- include/linux/leds.h     |   21 +++++++++++++++++++++
- 3 files changed, 42 insertions(+), 2 deletions(-)
+- LED Flash Class
+- Flash Manager
+- V4L2 Flash
+- LED Flash Class drivers
+- Documentation
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 0bc0ba9..f640da9 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -56,9 +56,14 @@ static ssize_t brightness_store(struct device *dev,
- 
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
--	__led_set_brightness(led_cdev, state);
- 
--	ret = size;
-+	if (led_cdev->flags & LED_DEV_CAP_TORCH)
-+		ret = led_set_torch_brightness(led_cdev, state);
-+	else
-+		__led_set_brightness(led_cdev, state);
-+
-+	if (!ret)
-+		ret = size;
- unlock:
- #ifdef CONFIG_V4L2_FLASH_LED_CLASS
- 	mutex_unlock(&led_cdev->led_lock);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 4649ea5..093265f 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -144,6 +144,20 @@ int led_update_brightness(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL(led_update_brightness);
- 
-+int led_set_torch_brightness(struct led_classdev *led_cdev,
-+				enum led_brightness brightness)
-+{
-+	int ret = 0;
-+
-+	led_cdev->brightness = min(brightness, led_cdev->max_brightness);
-+
-+	if (!(led_cdev->flags & LED_SUSPENDED))
-+		ret = led_cdev->torch_brightness_set(led_cdev,
-+						     led_cdev->brightness);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(led_set_torch_brightness);
-+
- /* Caller must ensure led_cdev->led_lock held */
- void led_sysfs_lock(struct led_classdev *led_cdev)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ef343f1..df0715c 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -43,11 +43,21 @@ struct led_classdev {
- #define LED_BLINK_ONESHOT_STOP	(1 << 18)
- #define LED_BLINK_INVERT	(1 << 19)
- #define LED_SYSFS_LOCK		(1 << 20)
-+#define LED_DEV_CAP_TORCH	(1 << 21)
- 
- 	/* Set LED brightness level */
- 	/* Must not sleep, use a workqueue if needed */
- 	void		(*brightness_set)(struct led_classdev *led_cdev,
- 					  enum led_brightness brightness);
-+	/*
-+	 * Set LED brightness immediately - it is required for flash led
-+	 * devices as they require setting torch brightness to have immediate
-+	 * effect. brightness_set op cannot be used for this purpose because
-+	 * the led drivers schedule a work queue task in it to allow for
-+	 * being called from led-triggers, i.e. from the timer irq context.
-+	 */
-+	int		(*torch_brightness_set)(struct led_classdev *led_cdev,
-+					enum led_brightness brightness);
- 	/* Get LED brightness level */
- 	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
- 
-@@ -156,6 +166,17 @@ extern void led_set_brightness(struct led_classdev *led_cdev,
- extern int led_update_brightness(struct led_classdev *led_cdev);
- 
- /**
-+ * led_set_torch_brightness - set torch LED brightness
-+ * @led_cdev: the LED to set
-+ * @brightness: the brightness to set it to
-+ *
-+ * Returns: 0 on success or negative error value on failure
-+ *
-+ * Set a torch LED's brightness.
-+ */
-+extern int led_set_torch_brightness(struct led_classdev *led_cdev,
-+					enum led_brightness brightness);
-+/**
-  * led_sysfs_lock - lock LED sysfs interface
-  * @led_cdev: the LED to set
-  *
+The series is based on linux-next-20140820.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (2):
+  of: add of_node_ncmp wrapper
+  leds: Add Flash Manager functionality
+
+ arch/sparc/include/asm/prom.h        |    1 +
+ drivers/leds/Kconfig                 |   11 +
+ drivers/leds/Makefile                |    4 +
+ drivers/leds/led-class-flash.c       |   19 ++
+ drivers/leds/led-flash-gpio-mux.c    |  102 ++++++
+ drivers/leds/led-flash-manager.c     |  590 ++++++++++++++++++++++++++++++++++
+ drivers/leds/of_led_flash_manager.c  |  155 +++++++++
+ include/linux/led-flash-gpio-mux.h   |   68 ++++
+ include/linux/led-flash-manager.h    |  146 +++++++++
+ include/linux/leds.h                 |    1 +
+ include/linux/of.h                   |    1 +
+ include/linux/of_led_flash_manager.h |   80 +++++
+ 12 files changed, 1178 insertions(+)
+ create mode 100644 drivers/leds/led-flash-gpio-mux.c
+ create mode 100644 drivers/leds/led-flash-manager.c
+ create mode 100644 drivers/leds/of_led_flash_manager.c
+ create mode 100644 include/linux/led-flash-gpio-mux.h
+ create mode 100644 include/linux/led-flash-manager.h
+ create mode 100644 include/linux/of_led_flash_manager.h
+
 -- 
 1.7.9.5
