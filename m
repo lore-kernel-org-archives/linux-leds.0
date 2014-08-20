@@ -1,69 +1,60 @@
-From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH/RFC v5 04/10] DT: leds: Add flash led devices related properties
-Date: Wed, 20 Aug 2014 15:44:13 +0200
-Message-ID: <1408542259-415-5-git-send-email-j.anaszewski@samsung.com>
-References: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1408542259-415-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 00/10] LED / flash API integration - documentation
+Date: Wed, 20 Aug 2014 15:44:09 +0200
+Message-ID: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:60798 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752125AbaHTNo3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 Aug 2014 09:44:29 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Addition of a LED Flash Class extension entails the need for flash led
-specific device tree properties. The properties being added are:
-iout-torch, iout-flash, iout-indicator and flash-timeout.
+This patch set is the follow-up of the LED / flash API integration
+series [1]. For clarity reasons the patchset has been split into
+five subsets:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
----
- Documentation/devicetree/bindings/leds/common.txt |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+- LED Flash Class
+- Flash Manager
+- V4L2 Flash
+- LED Flash Class drivers
+- Documentation
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 2d88816..40f4b9a 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -3,6 +3,17 @@ Common leds properties.
- Optional properties for child nodes:
- - label : The label for this LED.  If omitted, the label is
-   taken from the node name (excluding the unit address).
-+- iout-torch : Array of maximum intensities in microamperes of the torch
-+	led currents in order from sub-led 0 to N-1, where N is the number
-+	of torch sub-leds exposed by the device
-+- iout-flash : Array of maximum intensities in microamperes of the flash
-+	led currents in order from sub-led 0 to N-1, where N is the number
-+	of flash sub-leds exposed by the device
-+- iout-indicator : Array of maximum intensities in microamperes of
-+	the indicator led currents in order from sub-led 0 to N-1,
-+	where N is the number of indicator sub-leds exposed by the device
-+- flash-timeout : timeout in microseconds after which flash led
-+	is turned off
- 
- - linux,default-trigger :  This parameter, if present, is a
-     string defining the trigger assigned to the LED.  Current triggers are:
-@@ -19,5 +30,10 @@ Examples:
- system-status {
- 	label = "Status";
- 	linux,default-trigger = "heartbeat";
-+	iout-torch = <500 500>;
-+	iout-flash = <1000 1000>;
-+	iout-indicator = <100 100>;
-+	flash-timeout = <1000>;
-+
- 	...
- };
+The series is based on linux-next-20140820.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (10):
+  Documentation: leds: Add description of LED Flash Class extension
+  Documentation: leds: Add description of Flash Manager
+  Documentation: leds: add exemplary asynchronous mux driver
+  DT: leds: Add flash led devices related properties
+  DT: Add documentation for LED Class Flash Manger
+  DT: Add documentation for exynos4-is 'flashes' property
+  DT: Add documentation for the mfd Maxim max77693
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  ARM: dts: add aat1290 current regulator device node
+
+ Documentation/devicetree/bindings/leds/common.txt  |   16 ++
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   17 ++
+ .../bindings/leds/leds-flash-manager.txt           |  163 ++++++++++++++++++++
+ .../devicetree/bindings/media/samsung-fimc.txt     |    5 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   62 ++++++++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-async-mux.c                |   65 ++++++++
+ Documentation/leds/leds-class-flash.txt            |  118 ++++++++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts            |   24 +++
+ 9 files changed, 471 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-flash-manager.txt
+ create mode 100644 Documentation/leds/leds-async-mux.c
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
