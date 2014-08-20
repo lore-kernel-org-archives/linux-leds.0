@@ -1,200 +1,111 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 05/10] DT: Add documentation for LED Class Flash Manger
-Date: Wed, 20 Aug 2014 15:44:14 +0200
-Message-ID: <1408542259-415-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 07/10] DT: Add documentation for the mfd Maxim max77693
+Date: Wed, 20 Aug 2014 15:44:16 +0200
+Message-ID: <1408542259-415-8-git-send-email-j.anaszewski@samsung.com>
 References: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:40305 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752062AbaHTNpE (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 Aug 2014 09:45:04 -0400
 In-reply-to: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-This patch documents LED Class Flash Manager
-related bindings.
+This patch adds device tree binding documentation for
+the flash cell of the Maxim max77693 multifunctional device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Pawel Moll <pawel.moll@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
 Cc: Kumar Gala <galak@codeaurora.org>
 ---
- .../bindings/leds/leds-flash-manager.txt           |  163 ++++++++++++++++++++
- 1 file changed, 163 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-flash-manager.txt
+ Documentation/devicetree/bindings/mfd/max77693.txt |   62 ++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-flash-manager.txt b/Documentation/devicetree/bindings/leds/leds-flash-manager.txt
-new file mode 100644
-index 0000000..d36aca2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-flash-manager.txt
-@@ -0,0 +1,163 @@
-+* LED Flash Manager
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 11921cc..0c3db3d 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -27,6 +27,55 @@ Optional properties:
+ 
+ 	[*] refer Documentation/devicetree/bindings/regulator/regulator.txt
+ 
++Optional node:
++- led-flash : the LED submodule device node
 +
-+Flash manager is a part of LED Flash Class. It maintains
-+all the flash led devices which have their external strobe
-+signals routed through multiplexing devices.
-+The multiplexers are aggregated in the standalone 'flash_muxes'
-+node as subnodes which are referenced by the flash led devices.
++Required properties of "led-flash" node:
++- compatible : must be "maxim,max77693-flash"
++- maxim,num-leds : number of connected leds
++	Possible values: 1 or 2.
++- maxim,fleds : array of current outputs in order: fled1, fled2
++	Note: both current outputs can be connected to a single led
++	Possible values:
++		0 - the output is left disconnected,
++		1 - a diode is connected to the output.
 +
++Optional properties of "led-flash" node:
++- maxim,boost-mode :
++	In boost mode the device can produce up to 1.2A of total current
++	on both outputs. The maximum current on each output is reduced
++	to 625mA then. If maxim,num-leds == <2> boost must be enabled
++	(it defaults to 1 if not set):
++	Possible values:
++		0 - no boost,
++		1 - adaptive mode,
++		2 - fixed mode.
++- iout-torch : Array of maximum intensities in microamperes of the torch
++	led currents in order: fled1, fled2.
++		15625 - 250000
++- iout-flash : Array of maximum intensities in microamperes of the flash
++	led currents in order: fled1, fled2.
++	Range:
++		15625 - 1000000 (max 625000 if boost mode is enabled)
++- flash-timeout : timeout in microseconds after which flash led
++		  is turned off
++	Range:
++		62500 - 1000000
++- maxim,trigger : Array of flags indicating which trigger can activate given led
++	in order: fled1, fled2
++	Possible flag values (can be combined):
++		1 - FLASH pin of the chip,
++		2 - TORCH pin of the chip,
++		4 - software via I2C command.
++- maxim,trigger-type : Array of trigger types in order: flash, torch.
++	Possible trigger types:
++		0 - Rising edge of the signal triggers the flash/torch,
++		1 - Signal level controls duration of the flash/torch.
++- maxim,boost-vout : Output voltage of the boost module in millivolts.
++- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
++	if chip estimates that system voltage could drop below this level due
++	to flash power consumption.
 +
-+flash_muxes node
-+----------------
-+
-+muxN subnode
-+------------
-+
-+There must be at least one muxN subnode, where N is the identifier
-+of the node, present in the flash_muxes node. One muxN node
-+represents one multiplexer.
-+
-+Required properties (mutually exclusive):
-+- gpios		: specifies the gpio pins used to set the states
-+		  of mux selectors, LSB first
-+- mux-async	: phandle to the node of the multiplexing device
-+
-+
-+
-+flash led device node
-+---------------------
-+
-+Following subnodes must be added to the LED Flash Class device
-+tree node described in Documentation/devicetree/bindings/leds/common.txt.
-+
-+
-+gate-software-strobe subnode
-+----------------------------
-+
-+The node defines multiplexer settings that need to be applied if
-+software strobe signal is to be routed to the flash led device.
-+
-+Required properties:
-+- mux		: phandle to the muxN node defined
-+		  in the flash_muxes node
-+- mux-line-id	: mux line identifier
-+
-+Optional subnodes:
-+- gate-software-strobe : if there are many multiplexers to configure,
-+			 they can be recursively nested.
-+
-+
-+gate-external-strobeN subnode
-+-----------------------------
-+
-+The node defines multiplexer settings that need to be applied if
-+external strobe signal is to be routed to the flash led device.
-+A flash led device can have many external strobe signal sources.
-+
-+Required properties:
-+- mux			: phandle to the muxN node defined
-+			  in the flash_muxes node
-+- mux-line-id		: mux line identifier
-+Optional properties:
-+- strobe-provider	: phandle to the device providing the
-+			  strobe signal. It is expected only
-+			  on the first level node. The referenced
-+			  node is expected to have 'compatible'
-+			  property, as providers are labelled
-+			  with it in the LED subsystem
-+
-+Optional subnodes:
-+- gate-external-strobeN	: if there are many multiplexers to configure,
-+			  they can be recursively nested.
-+
-+
-+Example:
-+
-+Following board configuration is assumed in this example:
-+
-+    ---------- ----------
-+    | FLASH1 | | FLASH2 |
-+    ---------- ----------
-+           \(0)   /(1)
-+          ----------
-+          |  MUX1  |
-+          ----------
-+              |
-+          ----------
-+          |  MUX2  |
-+          ----------
-+           /(0)   \(1)
-+      ----------  --------------------
-+      |  MUX3  |  | SOC FLASHEN GPIO |
-+      ----------  --------------------
-+       /(0)   \(1)
-+----------- -----------
-+| SENSOR1 | | SENSOR2 |
-+----------- -----------
-+
-+
-+dummy_mux: led_mux {
-+	compatible = "led-async-mux";
-+};
-+
-+flash_muxes {
-+	flash_mux1: mux1 {
-+                gpios = <&gpj1 1 0>, <&gpj1 2 0>;
-+	};
-+
-+	flash_mux2: mux2 {
-+		mux-async = <&dummy_mux>;
-+	};
-+
-+	flash_mux3: mux3 {
-+                gpios = <&gpl1 1 0>, <&gpl1 2 0>;
-+	};
-+};
-+
-+max77693-flash {
-+	compatible = "maxim,max77693-flash";
-+
-+	//other device specific properties here
-+
-+	gate-software-strobe {
-+		mux = <&flash_mux1>;
-+		mux-line-id = <0>;
-+
-+		gate-software-strobe {
-+			mux = <&flash_mux2>;
-+			mux-line-id = <1>;
+ Example:
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+@@ -52,4 +101,17 @@ Example:
+ 					regulator-boot-on;
+ 			};
+ 		};
++		led_flash: led-flash {
++			compatible = "maxim,max77693-flash";
++			iout-torch = <500000 0>;
++			iout-flash = <1250000 0>;
++			flash-timeout = <1000000 1000000>;
++			maxim,num-leds = <1>;
++			maxim,fleds = <1 1>;
++			maxim,trigger = <7 7>;
++			maxim,trigger-type = <0 1>;
++			maxim,boost-mode = <1>;
++			maxim,boost-vout = <5000>;
++			maxim,vsys-min = <2400>;
 +		};
-+	};
-+
-+	gate-external-strobe1 {
-+		strobe-provider = <&s5c73m3_spi>;
-+		mux = <&flash_mux1>;
-+		mux-line-id = <0>;
-+
-+		gate-external-strobe1 {
-+			mux = <&flash_mux2>;
-+			mux-line-id = <0>;
-+
-+			gate-external-strobe1 {
-+				mux = <&flash_mux3>;
-+				mux-line-id = <0>;
-+			};
-+		};
-+	};
-+
-+	gate-external-strobe2 {
-+		strobe-provider = <&s5k6a3>;
-+		mux = <&flash_mux1>;
-+		mux-line-id = <0>;
-+
-+		gate-external-strobe2 {
-+			mux = <&flash_mux2>;
-+			mux-line-id = <0>;
-+
-+			gate-external-strobe2 {
-+				mux = <&flash_mux3>;
-+				mux-line-id = <1>;
-+			};
-+		};
-+	};
-+};
+ 	};
 -- 
 1.7.9.5
