@@ -1,131 +1,52 @@
-From: Hugh Dickins <hughd-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] leds: make led_blink_set IRQ safe
-Date: Tue, 19 Aug 2014 18:51:14 -0700 (PDT)
-Message-ID: <alpine.LSU.2.11.1408191835200.3003@eggly.anvils>
-References: <alpine.LSU.2.11.1408161946450.1064@eggly.anvils> <1408453101-30290-1-git-send-email-vdonnefort@gmail.com> <1408453101-30290-2-git-send-email-vdonnefort@gmail.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1408453101-30290-2-git-send-email-vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Valdis.Kletnieks-PjAqaU27lzQ@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH/RFC v5 0/4] LED / flash API integration - LED Flash Class
+Date: Wed, 20 Aug 2014 15:41:54 +0200
+Message-ID: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 19 Aug 2014, Vincent Donnefort wrote:
+This patch set is the follow-up of the LED / flash API integration
+series [1]. For clarity reasons the patchset has been split into
+five subsets:
 
-> This patch introduces a work which take care of reseting the blink workqueue and
-> avoid calling the cancel_delayed_work_sync function which may sleep, from an IRQ
-> context.
-> 
-> Signed-off-by: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+- LED Flash Class
+- Flash Manager
+- V4L2 Flash
+- LED Flash Class drivers
+- Documentation
 
-Thanks.  It does work for me.  Though the problem was more general than
-stated above: not just a problem in IRQ context, but in any atomic context.
-
-I don't suppose it has any effect on Valdis's lockdep issue, which I
-didn't get to see myself; but we should let Valdis report back on that.
-
-May I (most ungratefully!) say that your patch doesn't fill me with
-confidence that it's the right solution: adding yet another work_struct
-to get around the issue seemed dubious to me, I wonder if it might expose
-new races.
-
-But rest assured that I know nothing about this, and I'm not at all
-qualified to review your patch: I hope Bryan and others will do so.
+The series is based on linux-next-20140820.
 
 Thanks,
-Hugh
+Jacek Anaszewski
 
-> 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 129729d..0971554 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -148,6 +148,24 @@ static void led_work_function(struct work_struct *ws)
->  			   msecs_to_jiffies(delay));
->  }
->  
-> +static void reset_blink_work_delayed(struct work_struct *ws)
-> +{
-> +	struct led_classdev *led_cdev =
-> +		container_of(ws, struct led_classdev, reset_blink_work);
-> +
-> +	cancel_delayed_work_sync(&led_cdev->blink_work);
-> +
-> +	if (!led_cdev->blink_delay_on) {
-> +		__led_set_brightness(led_cdev, LED_OFF);
-> +		return;
-> +	} else if (!led_cdev->blink_delay_off) {
-> +		__led_set_brightness(led_cdev, led_cdev->blink_brightness);
-> +		return;
-> +	}
-> +
-> +	queue_delayed_work(system_wq, &led_cdev->blink_work, 1);
-> +}
-> +
->  static void set_brightness_delayed(struct work_struct *ws)
->  {
->  	struct led_classdev *led_cdev =
-> @@ -234,6 +252,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
->  
->  	INIT_DELAYED_WORK(&led_cdev->blink_work, led_work_function);
-> +	INIT_WORK(&led_cdev->reset_blink_work, reset_blink_work_delayed);
->  
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	led_trigger_set_default(led_cdev);
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 4bb1168..959510a 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -40,19 +40,7 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
->  	led_cdev->blink_delay_on = delay_on;
->  	led_cdev->blink_delay_off = delay_off;
->  
-> -	/* never on - just set to off */
-> -	if (!delay_on) {
-> -		__led_set_brightness(led_cdev, LED_OFF);
-> -		return;
-> -	}
-> -
-> -	/* never off - just set to brightness */
-> -	if (!delay_off) {
-> -		__led_set_brightness(led_cdev, led_cdev->blink_brightness);
-> -		return;
-> -	}
-> -
-> -	queue_delayed_work(system_wq, &led_cdev->blink_work, 1);
-> +	schedule_work(&led_cdev->reset_blink_work);
->  }
->  
->  
-> @@ -76,8 +64,6 @@ void led_blink_set(struct led_classdev *led_cdev,
->  		   unsigned long *delay_on,
->  		   unsigned long *delay_off)
->  {
-> -	cancel_delayed_work_sync(&led_cdev->blink_work);
-> -
->  	led_cdev->flags &= ~LED_BLINK_ONESHOT;
->  	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
->  
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 6a599dc..6e5523d 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -69,6 +69,7 @@ struct led_classdev {
->  
->  	unsigned long		 blink_delay_on, blink_delay_off;
->  	struct delayed_work	 blink_work;
-> +	struct work_struct	 reset_blink_work;
->  	int			 blink_brightness;
->  
->  	struct work_struct	set_brightness_work;
-> -- 
-> 1.9.1
-> 
-> 
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (4):
+  leds: Improve and export led_update_brightness
+  leds: implement sysfs interface locking mechanism
+  leds: add API for setting torch brightness
+  leds: Add LED Flash Class wrapper to LED subsystem
+
+ drivers/leds/Kconfig            |   11 +
+ drivers/leds/Makefile           |    1 +
+ drivers/leds/led-class-flash.c  |  645 +++++++++++++++++++++++++++++++++++++++
+ drivers/leds/led-class.c        |   40 ++-
+ drivers/leds/led-core.c         |   48 +++
+ drivers/leds/led-triggers.c     |   20 +-
+ include/linux/led-class-flash.h |  273 +++++++++++++++++
+ include/linux/leds.h            |   66 ++++
+ 8 files changed, 1091 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 include/linux/led-class-flash.h
+
+-- 
+1.7.9.5
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
