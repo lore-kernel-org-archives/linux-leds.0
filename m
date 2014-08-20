@@ -1,51 +1,125 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 1/2] of: add of_node_ncmp wrapper
-Date: Wed, 20 Aug 2014 15:42:42 +0200
-Message-ID: <1408542163-32764-2-git-send-email-j.anaszewski@samsung.com>
-References: <1408542163-32764-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 3/4] leds: add API for setting torch brightness
+Date: Wed, 20 Aug 2014 15:41:57 +0200
+Message-ID: <1408542118-32723-4-git-send-email-j.anaszewski@samsung.com>
+References: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408542163-32764-1-git-send-email-j.anaszewski@samsung.com>
+In-reply-to: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Grant Likely <grant.likely@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Simek <monstr@monstr.eu>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
 
-The wrapper for strnicmp is required for checking whether a node has
-expected prefix.
+This patch prepares ground for addition of LED Flash Class extension to
+the LED subsystem. Since turning the torch on must have guaranteed
+immediate effect the brightness_set op can't be used for it. Drivers must
+schedule a work queue task in this op to be compatible with led-triggers,
+which call brightess_set from timer irqs. In order to address this
+limitation a torch_brightness_set op and led_set_torch_brightness API
+is introduced. Setting brightness sysfs attribute will result in calling
+brightness_set op for LED Class devices and torch_brightness_set op for
+LED Flash Class devices, whereas triggers will still call brightness
+op in both cases.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Grant Likely <grant.likely@linaro.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michal Simek <monstr@monstr.eu>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- arch/sparc/include/asm/prom.h |    1 +
- include/linux/of.h            |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/leds/led-class.c |    9 +++++++--
+ drivers/leds/led-core.c  |   14 ++++++++++++++
+ include/linux/leds.h     |   21 +++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sparc/include/asm/prom.h b/arch/sparc/include/asm/prom.h
-index d955c8d..272f87a 100644
---- a/arch/sparc/include/asm/prom.h
-+++ b/arch/sparc/include/asm/prom.h
-@@ -30,6 +30,7 @@
- #define of_compat_cmp(s1, s2, l)	strncmp((s1), (s2), (l))
- #define of_prop_cmp(s1, s2)		strcasecmp((s1), (s2))
- #define of_node_cmp(s1, s2)		strcmp((s1), (s2))
-+#define of_node_ncmp(s1, s2, n)		strnicmp((s1), (s2), (n))
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 0bc0ba9..f640da9 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -56,9 +56,14 @@ static ssize_t brightness_store(struct device *dev,
  
- struct of_irq_controller {
- 	unsigned int	(*irq_build)(struct device_node *, unsigned int, void *);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 6c4363b..b1e11ba 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -197,6 +197,7 @@ static inline unsigned long of_read_ulong(const __be32 *cell, int size)
- #define of_compat_cmp(s1, s2, l)	strcasecmp((s1), (s2))
- #define of_prop_cmp(s1, s2)		strcmp((s1), (s2))
- #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
-+#define of_node_ncmp(s1, s2, n)		strnicmp((s1), (s2), (n))
- #endif
+ 	if (state == LED_OFF)
+ 		led_trigger_remove(led_cdev);
+-	__led_set_brightness(led_cdev, state);
  
- /* flag descriptions */
+-	ret = size;
++	if (led_cdev->flags & LED_DEV_CAP_TORCH)
++		ret = led_set_torch_brightness(led_cdev, state);
++	else
++		__led_set_brightness(led_cdev, state);
++
++	if (!ret)
++		ret = size;
+ unlock:
+ #ifdef CONFIG_V4L2_FLASH_LED_CLASS
+ 	mutex_unlock(&led_cdev->led_lock);
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 4649ea5..093265f 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -144,6 +144,20 @@ int led_update_brightness(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL(led_update_brightness);
+ 
++int led_set_torch_brightness(struct led_classdev *led_cdev,
++				enum led_brightness brightness)
++{
++	int ret = 0;
++
++	led_cdev->brightness = min(brightness, led_cdev->max_brightness);
++
++	if (!(led_cdev->flags & LED_SUSPENDED))
++		ret = led_cdev->torch_brightness_set(led_cdev,
++						     led_cdev->brightness);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(led_set_torch_brightness);
++
+ /* Caller must ensure led_cdev->led_lock held */
+ void led_sysfs_lock(struct led_classdev *led_cdev)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index ef343f1..df0715c 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -43,11 +43,21 @@ struct led_classdev {
+ #define LED_BLINK_ONESHOT_STOP	(1 << 18)
+ #define LED_BLINK_INVERT	(1 << 19)
+ #define LED_SYSFS_LOCK		(1 << 20)
++#define LED_DEV_CAP_TORCH	(1 << 21)
+ 
+ 	/* Set LED brightness level */
+ 	/* Must not sleep, use a workqueue if needed */
+ 	void		(*brightness_set)(struct led_classdev *led_cdev,
+ 					  enum led_brightness brightness);
++	/*
++	 * Set LED brightness immediately - it is required for flash led
++	 * devices as they require setting torch brightness to have immediate
++	 * effect. brightness_set op cannot be used for this purpose because
++	 * the led drivers schedule a work queue task in it to allow for
++	 * being called from led-triggers, i.e. from the timer irq context.
++	 */
++	int		(*torch_brightness_set)(struct led_classdev *led_cdev,
++					enum led_brightness brightness);
+ 	/* Get LED brightness level */
+ 	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
+ 
+@@ -156,6 +166,17 @@ extern void led_set_brightness(struct led_classdev *led_cdev,
+ extern int led_update_brightness(struct led_classdev *led_cdev);
+ 
+ /**
++ * led_set_torch_brightness - set torch LED brightness
++ * @led_cdev: the LED to set
++ * @brightness: the brightness to set it to
++ *
++ * Returns: 0 on success or negative error value on failure
++ *
++ * Set a torch LED's brightness.
++ */
++extern int led_set_torch_brightness(struct led_classdev *led_cdev,
++					enum led_brightness brightness);
++/**
+  * led_sysfs_lock - lock LED sysfs interface
+  * @led_cdev: the LED to set
+  *
 -- 
 1.7.9.5
