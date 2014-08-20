@@ -1,98 +1,52 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 03/10] Documentation: leds: add exemplary asynchronous
- mux driver
-Date: Wed, 20 Aug 2014 15:44:12 +0200
-Message-ID: <1408542259-415-4-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 06/10] DT: Add documentation for exynos4-is 'flashes'
+ property
+Date: Wed, 20 Aug 2014 15:44:15 +0200
+Message-ID: <1408542259-415-7-git-send-email-j.anaszewski@samsung.com>
 References: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1408542259-415-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Exemplary driver showing usage of the Flash Manager API
-for registering/unregistering asynchronous multiplexers
+This patch adds a description of 'flashes' property
+to the samsung-fimc.txt.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- Documentation/leds/leds-async-mux.c |   65 +++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/leds/leds-async-mux.c
+ .../devicetree/bindings/media/samsung-fimc.txt     |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/leds/leds-async-mux.c b/Documentation/leds/leds-async-mux.c
-new file mode 100644
-index 0000000..ee35d2f
---- /dev/null
-+++ b/Documentation/leds/leds-async-mux.c
-@@ -0,0 +1,65 @@
-+/*
-+ * Exemplary driver showing usage of the Flash Manager API
-+ * for registering/unregistering asynchronous multiplexers.
-+ *
-+ *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
-+ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ */
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+index 922d6f8..387ef3b 100644
+--- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -40,6 +40,10 @@ should be inactive. For the "active-a" state the camera port A must be activated
+ and the port B deactivated and for the state "active-b" it should be the other
+ way around.
+ 
++Optional properties:
 +
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/led-flash-manager.h>
-+#include <linux/leds.h>
-+#include <linux/of.h>
++- flashes - array of phandles to the available flash led devices
 +
-+static int led_async_mux_select_line(u32 line_id, void *mux)
-+{
-+	pr_info("led_async_mux_select_line line_id: %d\n", line_id);
-+	return 0;
-+}
-+
-+struct led_flash_mux_ops mux_ops = {
-+	.select_line = led_async_mux_select_line,
-+};
-+
-+static int led_async_mux_probe(struct platform_device *pdev)
-+{
-+	struct led_flash_mux mux;
-+
-+	mux.ops = &mux_ops;
-+	mux.owner = THIS_MODULE;
-+	mux.node = pdev->dev->of_node;
-+
-+	return led_flash_manager_bind_async_mux(&mux);
-+}
-+
-+static int led_async_mux_remove(struct platform_device *pdev)
-+{
-+	return led_flash_manager_unbind_async_mux(pdev->dev->of_node);
-+}
-+
-+static struct of_device_id led_async_mux_dt_match[] = {
-+	{.compatible = "led-async-mux"},
-+	{},
-+};
-+
-+static struct platform_driver led_async_mux_driver = {
-+	.probe		= led_async_mux_probe,
-+	.remove		= led_async_mux_remove,
-+	.driver		= {
-+		.name		= "led-async-mux",
-+		.owner		= THIS_MODULE,
-+		.of_match_table = led_async_mux_dt_match,
-+	},
-+};
-+
-+module_platform_driver(led_async_mux_driver);
-+
-+MODULE_AUTHOR("Jacek Anaszewski <j.anaszewski@samsung.com>");
-+MODULE_DESCRIPTION("LED async mux");
-+MODULE_LICENSE("GPL");
+ The 'camera' node must include at least one 'fimc' child node.
+ 
+ 
+@@ -166,6 +170,7 @@ Example:
+ 		clock-output-names = "cam_a_clkout", "cam_b_clkout";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_port_a_clk_active>;
++		flashes = <&max77693-flash>, <&aat1290>;
+ 		status = "okay";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
 1.7.9.5
