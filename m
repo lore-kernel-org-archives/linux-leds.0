@@ -1,65 +1,86 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v4 15/21] media: Add registration helpers for V4L2 flash
-Date: Thu, 21 Aug 2014 10:38:34 +0200
-Message-ID: <53F5B00A.8020909@samsung.com>
-References: <1405087464-13762-1-git-send-email-j.anaszewski@samsung.com>
- <1405087464-13762-16-git-send-email-j.anaszewski@samsung.com>
- <53CCF59E.3070200@iki.fi> <53DF9C2A.8060403@samsung.com>
- <20140811122628.GG16460@valkosipuli.retiisi.org.uk>
- <53E8C4BA.6050805@samsung.com>
- <20140814043436.GM16460@valkosipuli.retiisi.org.uk>
- <53EC7278.6040101@samsung.com>
- <20140820144110.GT16460@valkosipuli.retiisi.org.uk>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/4] drivers/mfd/menf21bmc: introduce MEN 14F021P00
+ BMC MFD Core driver
+Date: Thu, 21 Aug 2014 12:30:46 +0100
+Message-ID: <20140821113046.GZ4266@lee--X1>
+References: <cover.1407918792.git.andreas.werner@men.de>
+ <ddd9430eafd8f633a586f9a3cc02ade69ed35817.1407918792.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:43861 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753468AbaHUIim (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Aug 2014 04:38:42 -0400
-In-reply-to: <20140820144110.GT16460@valkosipuli.retiisi.org.uk>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:44132 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753929AbaHULaw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Aug 2014 07:30:52 -0400
+Received: by mail-ig0-f175.google.com with SMTP id uq10so13144886igb.8
+        for <linux-leds@vger.kernel.org>; Thu, 21 Aug 2014 04:30:52 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <ddd9430eafd8f633a586f9a3cc02ade69ed35817.1407918792.git.andreas.werner@men.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+To: Andreas Werner <andreas.werner@men.de>
+Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jdelvare@suse.de, linux@roeck-us.net, lm-sensors@lm-sensors.org
 
-Hi Sakari,
+On Wed, 13 Aug 2014, Andreas Werner wrote:
+> The MEN 14F021P00 Board Management Controller provides an
+> I2C interface to the host to access the feature implemented in the BM=
+C.
+> The BMC is a PIC Microntroller assembled on CPCI Card from MEN Mikroe=
+lektronik
+> and on a few Box/Display Computer.
+>=20
+> Added MFD Core driver, supporting the I2C communication to the device=
+=2E
+>=20
+> The MFD driver currently supports the following features:
+>  	- Watchdog
+>  	- LEDs
+> 	- Hwmon (voltage monitoring)
+>=20
+> Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> ---
+>  drivers/mfd/Kconfig     |  12 +++++
+>  drivers/mfd/Makefile    |   1 +
+>  drivers/mfd/menf21bmc.c | 132 ++++++++++++++++++++++++++++++++++++++=
+++++++++++
+>  3 files changed, 145 insertions(+)
+>  create mode 100644 drivers/mfd/menf21bmc.c
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b8d9ca0..bf155b9 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -453,6 +453,18 @@ config MFD_MAX8998
+>  	  additional drivers must be enabled in order to use the functional=
+ity
+>  	  of the device.
+> =20
+> +config MFD_MENF21BMC
+> +	tristate "MEN 14F021P00 Board Management Controller Support"
+> +	depends on I2C=3Dy
 
-On 08/20/2014 04:41 PM, Sakari Ailus wrote:
-> Hi Jacek,
+Why must I2C be built-in?
 
-[...]
->>>>
->>>> LED Class Flash driver gains V4L2 Flash API when
->>>> CONFIG_V4L2_FLASH_LED_CLASS is defined. This is accomplished in
->>>> the probe function by either calling v4l2_flash_init function
->>>> or the macro of this name, when the CONFIG_V4L2_FLASH_LED_CLASS
->>>> macro isn't defined.
->>>>
->>>> If the v4l2-flash.c was to call the LED API directly, then the
->>>> led-class-flash module symbols would have to be available at
->>>> v4l2-flash.o linking time.
->>>
->>> Is this an issue? EXPORT_SYMBOL_GPL() for the relevant symbols should be
->>> enough.
->>
->> It isn't enough. If I call e.g. led_set_flash_brightness
->> directly from v4l2-flash.c and configure led-class-flash to be built as
->> a module then I am getting "undefined reference to
->> led_set_flash_brightness" error during linking phase.
->
-> You should not. You also should change the check as (unless you've changed
-> it already):
->
-> #if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->
-> This will evaluate to non-zero if the macro arguent or the argument
-> postfixed with "_MODULE" is defined.
+> +	select MFD_CORE
+> +	help
+> +	  Say yes here to add support for the MEN 14F021P00 BMC
+> +	  which is a Board Management Controller connected to the I2C bus.
+> +	  The device supports multiple sub-devices like LED, HWMON  and WDT=
+=2E
+> +	  This driver provides common support for accessing the devices;
+> +	  additional drivers must be enabled in order to use the
+> +	  functionality of the BMC device.
+> +
 
-I've missed this macro. Indeed, it is possible to avoid the need
-for ops with it. I will fix it in the next version of the patch set.
-Thanks for the hint.
+Apart from that the patch looks good to me.
 
-Best Regards,
-Jacek Anaszewski
+I'm assuming this can go in via the MFD tree by itself?
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
