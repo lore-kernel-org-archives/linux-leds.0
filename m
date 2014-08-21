@@ -1,51 +1,55 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v5 2/3] leds: Add support for max77693 mfd flash cell
-Date: Thu, 21 Aug 2014 17:00:54 +0100
-Message-ID: <20140821160054.GQ4266@lee--X1>
+Subject: Re: [PATCH/RFC v5 1/3] mfd: max77693: Fix register enum name
+Date: Thu, 21 Aug 2014 17:02:32 +0100
+Message-ID: <20140821160232.GR4266@lee--X1>
 References: <1408542221-375-1-git-send-email-j.anaszewski@samsung.com>
- <1408542221-375-3-git-send-email-j.anaszewski@samsung.com>
+ <1408542221-375-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:45513 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbaHUQCj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Aug 2014 12:02:39 -0400
+Received: by mail-ie0-f179.google.com with SMTP id rl12so4765953iec.24
+        for <linux-leds@vger.kernel.org>; Thu, 21 Aug 2014 09:02:39 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1408542221-375-3-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
+In-Reply-To: <1408542221-375-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 
 On Wed, 20 Aug 2014, Jacek Anaszewski wrote:
-
-> This patch adds led-flash support to Maxim max77693 chipset.
-> A device can be exposed to user space through LED subsystem
-> sysfs interface or through V4L2 subdevice when the support
-> for V4L2 Flash sub-devices is enabled. Device supports up to
-> two leds which can work in flash and torch mode. Leds can
-> be triggered externally or by software.
+> According to the MAX77693 documentation the name of
+> the register is FLASH_STATUS.
 >=20
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
 > Cc: SangYoung Son <hello.son@smasung.com>
 > Cc: Samuel Ortiz <sameo@linux.intel.com>
 > ---
->  drivers/leds/Kconfig                 |    9 +
->  drivers/leds/Makefile                |    1 +
->  drivers/leds/leds-max77693.c         | 1048 ++++++++++++++++++++++++=
-++++++++++
->  drivers/mfd/max77693.c               |    5 +-
->  include/linux/mfd/max77693-private.h |   59 ++
->  include/linux/mfd/max77693.h         |   40 ++
+>  include/linux/mfd/max77693-private.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please break the MFD changes out into a separate patch, I can't (at
-first glace) see any reason why the changed need to be bundled
-together like this.
+Applied, thanks.
 
-[...]
+> diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd=
+/max77693-private.h
+> index c466ff3..615f121 100644
+> --- a/include/linux/mfd/max77693-private.h
+> +++ b/include/linux/mfd/max77693-private.h
+> @@ -46,7 +46,7 @@ enum max77693_pmic_reg {
+>  	MAX77693_LED_REG_VOUT_FLASH2			=3D 0x0C,
+>  	MAX77693_LED_REG_FLASH_INT			=3D 0x0E,
+>  	MAX77693_LED_REG_FLASH_INT_MASK			=3D 0x0F,
+> -	MAX77693_LED_REG_FLASH_INT_STATUS		=3D 0x10,
+> +	MAX77693_LED_REG_FLASH_STATUS			=3D 0x10,
+> =20
+>  	MAX77693_PMIC_REG_PMIC_ID1			=3D 0x20,
+>  	MAX77693_PMIC_REG_PMIC_ID2			=3D 0x21,
 
 --=20
 Lee Jones
