@@ -1,24 +1,22 @@
-From: Bryan Wu <cooloney@gmail.com>
+From: Michal Sojka <sojka@merica.cz>
 Subject: Re: [PATCH 1/2] leds: usb: Add LED trigger for USB gadget activity
-Date: Fri, 22 Aug 2014 16:41:58 -0700
-Message-ID: <CAK5ve-J263nk0O378-GF9g600MMTkp2nxoDEkp4nKMxNpRwQ4g@mail.gmail.com>
-References: <1408708399-20423-1-git-send-email-sojka@merica.cz>
- <CAK5ve-LaGPgsAVMMMw3=EWpjom5NF29btu0Yxjg=6iwPpioQFg@mail.gmail.com> <20140822214244.GA25922@kroah.com>
+Date: Sat, 23 Aug 2014 01:44:04 +0200
+Message-ID: <87k3609jjv.fsf@steelpick.2x.cz>
+References: <1408708399-20423-1-git-send-email-sojka@merica.cz> <CAK5ve-LaGPgsAVMMMw3=EWpjom5NF29btu0Yxjg=6iwPpioQFg@mail.gmail.com> <20140822214244.GA25922@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:44432 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751748AbaHVXmU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 22 Aug 2014 19:42:20 -0400
+Received: from max.feld.cvut.cz ([147.32.192.36]:33124 "EHLO max.feld.cvut.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751748AbaHVXyZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 22 Aug 2014 19:54:25 -0400
 In-Reply-To: <20140822214244.GA25922@kroah.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michal Sojka <sojka@merica.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, michal.vokac@comap.cz, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@ti.com>, lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bryan Wu <cooloney@gmail.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, michal.vokac@comap.cz, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@ti.com>, lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
 
-On Fri, Aug 22, 2014 at 2:42 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Aug 22 2014, Greg Kroah-Hartman wrote:
 > On Fri, Aug 22, 2014 at 10:39:03AM -0700, Bryan Wu wrote:
 >> On Fri, Aug 22, 2014 at 4:53 AM, Michal Sojka <sojka@merica.cz> wrote:
 >> > With this patch, USB gadget activity can be signaled by blinking a LED.
@@ -28,28 +26,16 @@ On Fri, Aug 22, 2014 at 2:42 PM, Greg Kroah-Hartman
 >> > This patch adds the call only for the musb controller where I can test
 >> > it.
 >> >
->>
+>> 
 >> Generally I think one led trigger for both USB host and USB gadget
 >> activity is good enough. We don't need 2 same led trigger here.
 >
 > What about systems that have both running at the same time?  Don't you
 > want individual control?
->
 
-Actually I wanted to say we don't need 2 same driver for USB host and
-USB gadget but one driver which has 2 led triggers like
-usb_host_ledtrig and usb_gadget_ledtrig.
-
-I think drivers/net/can/led.c is a good example to start.
-
->> And probably you can just put this code in drivers/usb subsystem,
->> since this driver is quite simple to add to USB subsystem.
->
-> I have no objection to that, if the LED people don't mind it.
->
-
-Because logically it's only used by USB subsystem and it can be a core
-component of USB, also drivers/net/can/led.c is a good example.
+Yes, I have a device with two USB connectors (host, device) and a LED
+next to each. From the LEDs it should be clear, which connector is being
+used.
 
 Thanks,
--Bryan
+-Michal
