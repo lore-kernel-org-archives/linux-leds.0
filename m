@@ -1,197 +1,156 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: max77693: improve support for the flash cell
-Date: Fri, 22 Aug 2014 10:30:17 +0100
-Message-ID: <20140822093017.GU4266@lee--X1>
-References: <1408698378-25181-1-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Michal Sojka <sojka@merica.cz>
+Subject: [PATCH 1/2] leds: usb: Add LED trigger for USB gadget activity
+Date: Fri, 22 Aug 2014 13:53:12 +0200
+Message-ID: <1408708399-20423-1-git-send-email-sojka@merica.cz>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:58808 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751207AbaHVJaX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 22 Aug 2014 05:30:23 -0400
-Received: by mail-qa0-f41.google.com with SMTP id j7so9539591qaq.28
-        for <linux-leds@vger.kernel.org>; Fri, 22 Aug 2014 02:30:22 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1408698378-25181-1-git-send-email-j.anaszewski@samsung.com>
+Received: from relay.felk.cvut.cz ([147.32.80.7]:27305 "EHLO
+	relay.felk.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755919AbaHVMaG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 22 Aug 2014 08:30:06 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: linux-leds@vger.kernel.org
+Cc: michal.vokac@comap.cz, Michal Sojka <sojka@merica.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-On Fri, 22 Aug 2014, Jacek Anaszewski wrote:
+With this patch, USB gadget activity can be signaled by blinking a LED.
 
-> This patch improves support for the flash cell of
-> max77693 mfd by adding relevant of_compatible field
-> and a structure for caching related platform data.
-> Added are also FLASH registers related macro definitions.
->=20
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: SangYoung Son <hello.son@smasung.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> ---
->  drivers/mfd/max77693.c               |    5 ++-
->  include/linux/mfd/max77693-private.h |   59 ++++++++++++++++++++++++=
-++++++++++
->  include/linux/mfd/max77693.h         |   40 +++++++++++++++++++++++
->  3 files changed, 103 insertions(+), 1 deletion(-)
+Since there is no generic code where to put the trigger for all USB
+controllers, each USB controller needs to call the trigger individually.
+This patch adds the call only for the musb controller where I can test
+it.
 
-Applied, thanks.
+Signed-off-by: Michal Sojka <sojka@merica.cz>
+---
+ drivers/leds/trigger/Kconfig             |  8 ++++++
+ drivers/leds/trigger/Makefile            |  1 +
+ drivers/leds/trigger/ledtrig-usbgadget.c | 45 ++++++++++++++++++++++++++++++++
+ drivers/usb/musb/musb_gadget.c           |  6 +++--
+ include/linux/leds.h                     |  6 +++++
+ 5 files changed, 64 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/leds/trigger/ledtrig-usbgadget.c
 
-> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-> index 249c139..cf008f4 100644
-> --- a/drivers/mfd/max77693.c
-> +++ b/drivers/mfd/max77693.c
-> @@ -44,9 +44,12 @@
->  static const struct mfd_cell max77693_devs[] =3D {
->  	{ .name =3D "max77693-pmic", },
->  	{ .name =3D "max77693-charger", },
-> -	{ .name =3D "max77693-flash", },
->  	{ .name =3D "max77693-muic", },
->  	{ .name =3D "max77693-haptic", },
-> +	{
-> +		.name =3D "max77693-flash",
-> +		.of_compatible =3D "maxim,max77693-flash",
-> +	},
->  };
-> =20
->  static const struct regmap_config max77693_regmap_config =3D {
-> diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd=
-/max77693-private.h
-> index 615f121..de06377 100644
-> --- a/include/linux/mfd/max77693-private.h
-> +++ b/include/linux/mfd/max77693-private.h
-> @@ -85,6 +85,65 @@ enum max77693_pmic_reg {
->  	MAX77693_PMIC_REG_END,
->  };
-> =20
-> +/* MAX77693 ITORCH register */
-> +#define TORCH_IOUT1_SHIFT	0
-> +#define TORCH_IOUT2_SHIFT	4
-> +#define TORCH_IOUT_MIN		15625
-> +#define TORCH_IOUT_MAX		250000
-> +#define TORCH_IOUT_STEP		15625
-> +
-> +/* MAX77693 IFLASH1 and IFLASH2 registers */
-> +#define FLASH_IOUT_MIN		15625
-> +#define FLASH_IOUT_MAX_1LED	1000000
-> +#define FLASH_IOUT_MAX_2LEDS	625000
-> +#define FLASH_IOUT_STEP		15625
-> +
-> +/* MAX77693 TORCH_TIMER register */
-> +#define TORCH_TMR_NO_TIMER	0x40
-> +#define TORCH_TIMEOUT_MIN	262000
-> +#define TORCH_TIMEOUT_MAX	15728000
-> +
-> +/* MAX77693 FLASH_TIMER register */
-> +#define FLASH_TMR_LEVEL		0x80
-> +#define FLASH_TIMEOUT_MIN	62500
-> +#define FLASH_TIMEOUT_MAX	1000000
-> +#define FLASH_TIMEOUT_STEP	62500
-> +
-> +/* MAX77693 FLASH_EN register */
-> +#define FLASH_EN_OFF		0x0
-> +#define FLASH_EN_FLASH		0x1
-> +#define FLASH_EN_TORCH		0x2
-> +#define FLASH_EN_ON		0x3
-> +#define FLASH_EN_SHIFT(x)	(6 - ((x) - 1) * 2)
-> +#define TORCH_EN_SHIFT(x)	(2 - ((x) - 1) * 2)
-> +
-> +/* MAX77693 MAX_FLASH1 register */
-> +#define MAX_FLASH1_MAX_FL_EN	0x80
-> +#define MAX_FLASH1_VSYS_MIN	2400
-> +#define MAX_FLASH1_VSYS_MAX	3400
-> +#define MAX_FLASH1_VSYS_STEP	33
-> +
-> +/* MAX77693 VOUT_CNTL register */
-> +#define FLASH_BOOST_FIXED	0x04
-> +#define FLASH_BOOST_LEDNUM_2	0x80
-> +
-> +/* MAX77693 VOUT_FLASH1 register */
-> +#define FLASH_VOUT_MIN		3300
-> +#define FLASH_VOUT_MAX		5500
-> +#define FLASH_VOUT_STEP		25
-> +#define FLASH_VOUT_RMIN		0x0c
-> +
-> +/* MAX77693 FLASH_STATUS register */
-> +#define FLASH_STATUS_FLASH_ON	BIT(3)
-> +#define FLASH_STATUS_TORCH_ON	BIT(2)
-> +
-> +/* MAX77693 FLASH_INT register */
-> +#define FLASH_INT_FLED2_OPEN	BIT(0)
-> +#define FLASH_INT_FLED2_SHORT	BIT(1)
-> +#define FLASH_INT_FLED1_OPEN	BIT(2)
-> +#define FLASH_INT_FLED1_SHORT	BIT(3)
-> +#define FLASH_INT_OVER_CURRENT	BIT(4)
-> +
->  /* MAX77693 CHG_CNFG_00 register */
->  #define CHG_CNFG_00_CHG_MASK		0x1
->  #define CHG_CNFG_00_BUCK_MASK		0x4
-> diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max7769=
-3.h
-> index 3f3dc45..f0b6585 100644
-> --- a/include/linux/mfd/max77693.h
-> +++ b/include/linux/mfd/max77693.h
-> @@ -63,6 +63,45 @@ struct max77693_muic_platform_data {
->  	int path_uart;
->  };
-> =20
-> +/* MAX77693 led flash */
-> +
-> +/* triggers */
-> +enum max77693_led_trigger {
-> +	MAX77693_LED_TRIG_OFF,
-> +	MAX77693_LED_TRIG_FLASH,
-> +	MAX77693_LED_TRIG_TORCH,
-> +	MAX77693_LED_TRIG_EXT,
-> +	MAX77693_LED_TRIG_SOFT,
-> +};
-> +
-> +/* trigger types */
-> +enum max77693_led_trigger_type {
-> +	MAX77693_LED_TRIG_TYPE_EDGE,
-> +	MAX77693_LED_TRIG_TYPE_LEVEL,
-> +};
-> +
-> +/* boost modes */
-> +enum max77693_led_boost_mode {
-> +	MAX77693_LED_BOOST_NONE,
-> +	MAX77693_LED_BOOST_ADAPTIVE,
-> +	MAX77693_LED_BOOST_FIXED,
-> +};
-> +
-> +struct max77693_led_platform_data {
-> +	u32 fleds[2];
-> +	u32 iout_torch[2];
-> +	u32 iout_flash[2];
-> +	u32 trigger[2];
-> +	u32 trigger_type[2];
-> +	u32 num_leds;
-> +	u32 boost_mode;
-> +	u32 flash_timeout;
-> +	u32 boost_vout;
-> +	u32 low_vsys;
-> +};
-> +
-> +/* MAX77693 */
-> +
->  struct max77693_platform_data {
->  	/* regulator data */
->  	struct max77693_regulator_data *regulators;
-> @@ -70,5 +109,6 @@ struct max77693_platform_data {
-> =20
->  	/* muic data */
->  	struct max77693_muic_platform_data *muic_data;
-> +	struct max77693_led_platform_data *led_data;
->  };
->  #endif	/* __LINUX_MFD_MAX77693_H */
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 49794b4..9562963 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -41,6 +41,14 @@ config LEDS_TRIGGER_IDE_DISK
+ 	  This allows LEDs to be controlled by IDE disk activity.
+ 	  If unsure, say Y.
+ 
++config LEDS_TRIGGER_USBGADGET
++	bool "LED USB Gadget Trigger"
++	depends on (USB_MUSB_GADGET || USB_MUSB_DUAL_ROLE)
++	depends on LEDS_TRIGGERS
++	help
++	  This allows LEDs to be controlled by USB gadget activity.
++	  If unsure, say Y.
++
+ config LEDS_TRIGGER_HEARTBEAT
+ 	tristate "LED Heartbeat Trigger"
+ 	depends on LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 1abf48d..45917c0 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
+ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
++obj-$(CONFIG_LEDS_TRIGGER_USBGADGET)	+= ledtrig-usbgadget.o
+diff --git a/drivers/leds/trigger/ledtrig-usbgadget.c b/drivers/leds/trigger/ledtrig-usbgadget.c
+new file mode 100644
+index 0000000..1eb90da
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-usbgadget.c
+@@ -0,0 +1,45 @@
++/*
++ * LED Trigger for USB Gadget Activity
++ *
++ * Copyright 2014 Michal Sojka <sojka@merica.cz>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/leds.h>
++
++#define BLINK_DELAY 30
++
++DEFINE_LED_TRIGGER(ledtrig_usbgadget);
++static unsigned long usbgadget_blink_delay = BLINK_DELAY;
++
++void ledtrig_usbgadget_activity(void)
++{
++	led_trigger_blink_oneshot(ledtrig_usbgadget,
++				  &usbgadget_blink_delay, &usbgadget_blink_delay, 0);
++}
++EXPORT_SYMBOL(ledtrig_usbgadget_activity);
++
++static int __init ledtrig_usbgadget_init(void)
++{
++	led_trigger_register_simple("usb-gadget", &ledtrig_usbgadget);
++	return 0;
++}
++
++static void __exit ledtrig_usbgadget_exit(void)
++{
++	led_trigger_unregister_simple(ledtrig_usbgadget);
++}
++
++module_init(ledtrig_usbgadget_init);
++module_exit(ledtrig_usbgadget_exit);
++
++MODULE_AUTHOR("Michal Sojka <sojka@merica.cz>");
++MODULE_DESCRIPTION("LED Trigger for USB Gadget Activity");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index d4aa779..98f8b24 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -42,6 +42,7 @@
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
++#include <linux/leds.h>
+ 
+ #include "musb_core.h"
+ 
+@@ -167,11 +168,12 @@ __acquires(ep->musb->lock)
+ 	if (!dma_mapping_error(&musb->g.dev, request->dma))
+ 		unmap_dma_buffer(req, musb);
+ 
+-	if (request->status == 0)
++	if (request->status == 0) {
+ 		dev_dbg(musb->controller, "%s done request %p,  %d/%d\n",
+ 				ep->end_point.name, request,
+ 				req->request.actual, req->request.length);
+-	else
++		ledtrig_usbgadget_activity();
++	} else
+ 		dev_dbg(musb->controller, "%s request %p, %d/%d fault %d\n",
+ 				ep->end_point.name, request,
+ 				req->request.actual, req->request.length,
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 0287ab2..5d9668e 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -218,6 +218,12 @@ extern void ledtrig_ide_activity(void);
+ static inline void ledtrig_ide_activity(void) {}
+ #endif
+ 
++#ifdef CONFIG_LEDS_TRIGGER_USBGADGET
++extern void ledtrig_usbgadget_activity(void);
++#else
++static inline void ledtrig_usbgadget_activity(void) {}
++#endif
++
+ #if defined(CONFIG_LEDS_TRIGGER_CAMERA) || defined(CONFIG_LEDS_TRIGGER_CAMERA_MODULE)
+ extern void ledtrig_flash_ctrl(bool on);
+ extern void ledtrig_torch_ctrl(bool on);
+-- 
+2.1.0
