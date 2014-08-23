@@ -1,197 +1,77 @@
-From: Michal Sojka <sojka@merica.cz>
-Subject: Re: [PATCH v2 2/3] usb: Add LED trigger for USB host activity
-Date: Sat, 23 Aug 2014 11:52:26 +0200
-Message-ID: <87egw7a5yd.fsf@steelpick.2x.cz>
-References: <87ha149j2z.fsf@steelpick.2x.cz> <1408752502-4162-1-git-send-email-sojka@merica.cz> <1408752502-4162-3-git-send-email-sojka@merica.cz> <CAK5ve-LgeZcR+NHZoLo=rVKCk8TfRjRy-u7KwKRYs1weW==Nqw@mail.gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] leds: make led_blink_set IRQ safe
+Date: Sat, 23 Aug 2014 13:24:56 -0400
+Message-ID: <20140823172456.GH13540@mtj.dyndns.org>
+References: <alpine.LSU.2.11.1408161946450.1064@eggly.anvils>
+ <1408453101-30290-1-git-send-email-vdonnefort@gmail.com>
+ <1408453101-30290-2-git-send-email-vdonnefort@gmail.com>
+ <alpine.LSU.2.11.1408191835200.3003@eggly.anvils>
+ <CAK5ve-Kc8mjdbN0Nn-pGVjp2pj6ZV_FCBpeOtO5N92CkJZX3=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from max.feld.cvut.cz ([147.32.192.36]:38429 "EHLO max.feld.cvut.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752160AbaHWJwk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sat, 23 Aug 2014 05:52:40 -0400
-In-Reply-To: <CAK5ve-LgeZcR+NHZoLo=rVKCk8TfRjRy-u7KwKRYs1weW==Nqw@mail.gmail.com>
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:45779 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372AbaHWRZA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 23 Aug 2014 13:25:00 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5ve-Kc8mjdbN0Nn-pGVjp2pj6ZV_FCBpeOtO5N92CkJZX3=g@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>
-Cc: linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, michal.vokac@comap.cz
+Cc: Hugh Dickins <hughd@google.com>, Vincent Donnefort <vdonnefort@gmail.com>, Valdis.Kletnieks@vt.edu, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
 
-Hi Bryan,
+Hello,
 
-thanks for the review. See some comments below.
+On Fri, Aug 22, 2014 at 05:21:30PM -0700, Bryan Wu wrote:
+> On Tue, Aug 19, 2014 at 6:51 PM, Hugh Dickins <hughd@google.com> wrote:
+> > On Tue, 19 Aug 2014, Vincent Donnefort wrote:
+> >
+> >> This patch introduces a work which take care of reseting the blink workqueue and
+> >> avoid calling the cancel_delayed_work_sync function which may sleep, from an IRQ
+> >> context.
+> >>
+> 
+> Vincent, I'm just wandering can we use cancel_delayed_work() instead
+> of sync version here.
+> cancel_delayed_work() can be called from IRQ context.
 
-On Sat, Aug 23 2014, Bryan Wu wrote:
-> On Fri, Aug 22, 2014 at 5:08 PM, Michal Sojka <sojka@merica.cz> wrote:
->> With this patch, USB host activity can be signaled by blinking a LED.
->>
->> This should work with all host controllers. Tested only with musb.
->>
->> Signed-off-by: Michal Sojka <sojka@merica.cz>
->> ---
->>  drivers/usb/core/Kconfig  |  9 +++++++++
->>  drivers/usb/core/Makefile |  1 +
->>  drivers/usb/core/hcd.c    |  2 ++
->>  drivers/usb/core/led.c    | 38 ++++++++++++++++++++++++++++++++++++++
->>  include/linux/usb/hcd.h   |  6 ++++++
->>  5 files changed, 56 insertions(+)
->>  create mode 100644 drivers/usb/core/led.c
->>
->> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
->> index 1060657..8295f65 100644
->> --- a/drivers/usb/core/Kconfig
->> +++ b/drivers/usb/core/Kconfig
->> @@ -90,3 +90,12 @@ config USB_OTG_FSM
->>           Implements OTG Finite State Machine as specified in On-The-Go
->>           and Embedded Host Supplement to the USB Revision 2.0 Specification.
->>
->> +config USB_HOST_LED
->> +       bool "USB Host LED Trigger"
->> +       depends on LEDS_CLASS
->> +       select LEDS_TRIGGERS
->> +       help
->> +         This option adds a LED trigger for USB host controllers.
->> +
->> +         Say Y here if you are working on a system with led-class supported
->> +         LEDs and you want to use them as USB host activity indicators.
->> diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
->> index 2f6f932..324c8c9 100644
->> --- a/drivers/usb/core/Makefile
->> +++ b/drivers/usb/core/Makefile
->> @@ -9,5 +9,6 @@ usbcore-y += port.o
->>
->>  usbcore-$(CONFIG_PCI)          += hcd-pci.o
->>  usbcore-$(CONFIG_ACPI)         += usb-acpi.o
->> +usbcore-$(CONFIG_USB_HOST_LED) += led.o
->>
->>  obj-$(CONFIG_USB)              += usbcore.o
->> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
->> index 487abcf..46d9f3a 100644
->> --- a/drivers/usb/core/hcd.c
->> +++ b/drivers/usb/core/hcd.c
->> @@ -1664,6 +1664,8 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
->>         usbmon_urb_complete(&hcd->self, urb, status);
->>         usb_anchor_suspend_wakeups(anchor);
->>         usb_unanchor_urb(urb);
->> +       if (status == 0)
->> +               usb_hcd_led_activity();
->>
->>         /* pass ownership to the completion handler */
->>         urb->status = status;
->> diff --git a/drivers/usb/core/led.c b/drivers/usb/core/led.c
->> new file mode 100644
->> index 0000000..49ff76c
->> --- /dev/null
->> +++ b/drivers/usb/core/led.c
->> @@ -0,0 +1,38 @@
->> +/*
->> + * LED Trigger for USB Host Activity
->> + *
->> + * Copyright 2014 Michal Sojka <sojka@merica.cz>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/kernel.h>
->> +#include <linux/init.h>
->> +#include <linux/leds.h>
->> +#include <linux/usb/hcd.h>
->> +
->> +#define BLINK_DELAY 30
->> +
->> +DEFINE_LED_TRIGGER(ledtrig_usb_hcd);
->
-> Add one more trigger named ledtrig_usb_gadget
->
->> +static unsigned long usb_hcd_blink_delay = BLINK_DELAY;
->> +
->> +void usb_hcd_led_activity(void)
->
-> Give an input parameter like emum usb_led_event.
-> USB_LED_EVENT_HOST = 0
-> USB_LED_EVENT_GADGET = 1
->
->
->> +{
->
-> Add case for USB_LED_EVENT_HOST:
->> +       led_trigger_blink_oneshot(ledtrig_usb_hcd,
->> +                                 &usb_hcd_blink_delay, &usb_hcd_blink_delay, 0);
->
-> Add case for USB_LED_EVENT_GADGET:
->  led_trigger_blink_oneshot(ledtrig_usb_gadget,
->                              &usb_gadget_blink_delay,
-> &usb_gadget_blink_delay, 0);
->
->> +}
->> +
->> +int __init ledtrig_usb_hcd_init(void)
->> +{
->> +       led_trigger_register_simple("usb-host", &ledtrig_usb_hcd);
-> register one more trigger for gadget.
+But it doesn't wait for the currently running one to finish.  It
+should wait, right?
 
-This way, the code will be full of #ifdefs. Is the following really what
-you want? If you want to have it without #ifdefs, then I don't think it
-is a good idea to offer users the usb-gadget trigger on systems without
-usb gadget support.
+> > May I (most ungratefully!) say that your patch doesn't fill me with
+> > confidence that it's the right solution: adding yet another work_struct
+> > to get around the issue seemed dubious to me, I wonder if it might expose
+> > new races.
+> 
+> I agree with Hugh about this new cancel work_struct. But if we revert
+> it back, I saw led_blink_set() will call del_timer_sync() which might
+> also sleep and can't be used in IRQ context. Looks like we can't call
+> led_blink_set() in any IRQ/atomic context.
 
-#define BLINK_DELAY 30
+del_timer_sync() doesn't block but it does run from bh.  It naturally
+can't be waited from an IRQ context.  It may be sitting on top of a
+running instance.
 
-static unsigned long usb_blink_delay = BLINK_DELAY;
+> > But rest assured that I know nothing about this, and I'm not at all
+> > qualified to review your patch: I hope Bryan and others will do so.
+> 
+> Let me invite Tejun to give some advice on how to solve this problem.
+> 
+> Tejun, Vincent's commit 8b37e1bef5a6b60e949e28a4db3006e4b00bd758
+> convert a timer into work_struct, but Hugh found it will cause
+> sleeping BUGs [1]. Could you give some opinion about that?
 
-enum usb_led_event {
-	USB_LED_EVENT_HOST = 0,
-	USB_LED_EVENT_GADGET = 1,
-};
+Not knowing the code base, I'm not sure how helpful I can be but if
+something wants to synchronize against another thing which can block,
+that something needs to be able to block too.  There's no way around
+it and it holds the same for timers.  As long as all the work items
+are properly shut down at the end, there's nothing wrong with using
+multiple of them even when they form a dependency chain.
 
-#ifdef CONFIG_USB_GADGET_LED
-DEFINE_LED_TRIGGER(ledtrig_usbgadget);
-#endif
-#ifdef CONFIG_USB_HOST_LED
-DEFINE_LED_TRIGGER(ledtrig_usb_hcd);
-#endif
+Heh, I think I need more specific questions to be actually useful. :)
 
-void usb_led_activity(enum usb_led_event ev)
-{
-	struct led_trigger *trig;
+Thanks.
 
-	switch (ev) {
-#ifdef CONFIG_USB_GADGET_LED
-	case USB_LED_EVENT_GADGET: trig = ledtrig_usb_gadget; break;
-#endif
-#ifdef CONFIG_USB_HOST_LED
-	case USB_LED_EVENT_HOST:   trig = ledtrig_usb_hcd; break;
-#endif
-	default:;
-	}
-	led_trigger_blink_oneshot(trig, &usb_blink_delay, &usb_blink_delay, 0);
-}
-EXPORT_SYMBOL(usb_led_activity);
-
-
-int __init ledtrig_usb_init(void)
-{
-#ifdef CONFIG_USB_GADGET_LED
-	led_trigger_register_simple("usb-gadget", &ledtrig_usbgadget);
-#endif
-#ifdef CONFIG_USB_HOST_LED
-	led_trigger_register_simple("usb-host", &ledtrig_usb_hcd);
-#endif
-	return 0;
-}
-
-void __exit ledtrig_usb_exit(void)
-{
-#ifdef CONFIG_USB_GADGET_LED
-	led_trigger_unregister_simple(ledtrig_usbgadget);
-#endif
-#ifdef CONFIG_USB_HOST_LED
-	led_trigger_unregister_simple(ledtrig_usb_hcd);
-#endif
-}
-
-
--Michal
+-- 
+tejun
