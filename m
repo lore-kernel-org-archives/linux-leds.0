@@ -1,206 +1,149 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 3/4] drivers/leds/leds-menf21bmc: introduce MEN
- 14F021P00 BMC LED driver
-Date: Mon, 25 Aug 2014 12:05:59 -0700
-Message-ID: <20140825190559.GA29112@roeck-us.net>
-References: <cover.1407918792.git.andreas.werner@men.de>
- <b3c6bc75345ba821572b22e05432960f7867bdbb.1407918792.git.andreas.werner@men.de>
- <CAK5ve-KCv=kfkJK-x5m1sFiSBVH9FMUys_tLw5Cup=3rHLZxYQ@mail.gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Subject: Re: 3.17-rc1: leds blink workqueue causes sleeping BUGs
+Date: Mon, 25 Aug 2014 23:13:40 +0200
+Message-ID: <20140825211340.GA22168@kria>
+References: <alpine.LSU.2.11.1408161946450.1064@eggly.anvils>
+ <10857.1408467967@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:33801 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753068AbaHYTGE (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 25 Aug 2014 15:06:04 -0400
+Received: from smtp6-g21.free.fr ([212.27.42.6]:30169 "EHLO smtp6-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755006AbaHYVNw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 25 Aug 2014 17:13:52 -0400
 Content-Disposition: inline
-In-Reply-To: <CAK5ve-KCv=kfkJK-x5m1sFiSBVH9FMUys_tLw5Cup=3rHLZxYQ@mail.gmail.com>
+In-Reply-To: <10857.1408467967@turing-police.cc.vt.edu>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Andreas Werner <andreas.werner@men.de>, lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, wim@iguana.be, linux-watchdog@vger.kernel.org, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, lm-sensors@lm-sensors.org
+To: Valdis.Kletnieks@vt.edu
+Cc: Hugh Dickins <hughd@google.com>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Mon, Aug 25, 2014 at 11:53:32AM -0700, Bryan Wu wrote:
-> On Wed, Aug 13, 2014 at 1:40 AM, Andreas Werner <andreas.werner@men.de> wrote:
-> > Added driver to support the 14F021P00 BMC LEDs.
-> > The BMC is a Board Management Controller including four LEDs which
-> > can be switched on and off.
-> >
-> > Signed-off-by: Andreas Werner <andreas.werner@men.de>
-> > ---
-> >  drivers/leds/Kconfig          |   6 ++
-> >  drivers/leds/Makefile         |   1 +
-> >  drivers/leds/leds-menf21bmc.c | 131 ++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 138 insertions(+)
-> >  create mode 100644 drivers/leds/leds-menf21bmc.c
-> >
-> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > index 27cf0cd..d38ff3f 100644
-> > --- a/drivers/leds/Kconfig
-> > +++ b/drivers/leds/Kconfig
-> > @@ -458,6 +458,12 @@ config LEDS_OT200
-> >           This option enables support for the LEDs on the Bachmann OT200.
-> >           Say Y to enable LEDs on the Bachmann OT200.
-> >
-> > +config LEDS_MENF21BMC
-> > +       tristate "LED support for the MEN 14F021P00 BMC"
-> > +       depends on LEDS_CLASS && MFD_MENF21BMC
-> > +       help
-> > +         Say Y here to include support for the MEN 14F021P00 BMC LEDs.
-> > +
-> >  comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
-> >
-> >  config LEDS_BLINKM
-> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > index 3c03666..cadc433 100644
-> > --- a/drivers/leds/Makefile
-> > +++ b/drivers/leds/Makefile
-> > @@ -53,6 +53,7 @@ obj-$(CONFIG_LEDS_MAX8997)            += leds-max8997.o
-> >  obj-$(CONFIG_LEDS_LM355x)              += leds-lm355x.o
-> >  obj-$(CONFIG_LEDS_BLINKM)              += leds-blinkm.o
-> >  obj-$(CONFIG_LEDS_VERSATILE)           += leds-versatile.o
-> > +obj-$(CONFIG_LEDS_MENF21BMC)           += leds-menf21bmc.o
-> >
-> >  # LED SPI Drivers
-> >  obj-$(CONFIG_LEDS_DAC124S085)          += leds-dac124s085.o
-> > diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
-> > new file mode 100644
-> > index 0000000..4621f72
-> > --- /dev/null
-> > +++ b/drivers/leds/leds-menf21bmc.c
-> > @@ -0,0 +1,131 @@
-> > +/*
-> > + *  MEN 14F021P00 Board Management Controller (BMC) LEDs Driver.
-> > + *
-> > + *  This is the core LED driver of the MEN 14F021P00 BMC.
-> > + *  There are four LEDs available which can be switched on and off.
-> > + *  STATUS LED, HOT SWAP LED, USER LED 1, USER LED 2
-> > + *
-> > + *  Copyright (C) 2014 MEN Mikro Elektronik Nuernberg GmbH
-> > + *
-> > + *  This program is free software; you can redistribute  it and/or modify it
-> > + *  under  the terms of  the GNU General  Public License as published by the
-> > + *  Free Software Foundation;  either version 2 of the  License, or (at your
-> > + *  option) any later version.
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/leds.h>
-> > +#include <linux/i2c.h>
-> > +
-> > +#define BMC_CMD_LED_GET_SET    0xA0
-> > +#define BMC_BIT_LED_STATUS     BIT(0)
-> > +#define BMC_BIT_LED_HOTSWAP    BIT(1)
-> > +#define BMC_BIT_LED_USER1      BIT(2)
-> > +#define BMC_BIT_LED_USER2      BIT(3)
-> > +
-> > +struct menf21bmc_led {
-> > +       struct led_classdev cdev;
-> > +       u8 led_bit;
-> > +       const char *name;
-> > +       struct i2c_client *i2c_client;
-> > +};
-> > +
-> > +static struct menf21bmc_led leds[] = {
-> > +       {
-> > +               .name = "menf21bmc:led_status",
-> > +               .led_bit = BMC_BIT_LED_STATUS,
-> > +       },
-> > +       {
-> > +               .name = "menf21bmc:led_hotswap",
-> > +               .led_bit = BMC_BIT_LED_HOTSWAP,
-> > +       },
-> > +       {
-> > +               .name = "menf21bmc:led_user1",
-> > +               .led_bit = BMC_BIT_LED_USER1,
-> > +       },
-> > +       {
-> > +               .name = "menf21bmc:led_user2",
-> > +               .led_bit = BMC_BIT_LED_USER2,
-> > +       }
-> > +};
-> > +
-> > +static DEFINE_MUTEX(led_lock);
-> > +
-> > +static void
-> > +menf21bmc_led_set(struct led_classdev *led_cdev, enum led_brightness value)
-> > +{
-> > +       int led_val;
-> > +       struct menf21bmc_led *led = container_of(led_cdev,
-> > +                                       struct menf21bmc_led, cdev);
-> > +
-> > +       mutex_lock(&led_lock);
-> > +       led_val = i2c_smbus_read_byte_data(led->i2c_client,
-> > +                                               BMC_CMD_LED_GET_SET);
-> > +       if (led_val < 0)
-> > +               goto err_out;
-> > +
-> > +       if (value == LED_OFF)
-> > +               led_val &= ~led->led_bit;
-> > +       else
-> > +               led_val |= led->led_bit;
-> > +
-> > +       i2c_smbus_write_byte_data(led->i2c_client,
-> > +                                       BMC_CMD_LED_GET_SET, led_val);
-> > +err_out:
-> > +       mutex_unlock(&led_lock);
-> > +}
-> > +
-> > +static int menf21bmc_led_probe(struct platform_device *pdev)
-> > +{
-> > +       int i;
-> > +       int ret;
-> > +       struct i2c_client *i2c_client = to_i2c_client(pdev->dev.parent);
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(leds); i++) {
-> > +               leds[i].cdev.name = leds[i].name;
-> > +               leds[i].cdev.brightness_set = menf21bmc_led_set;
-> > +               leds[i].i2c_client = i2c_client;
-> > +               ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
-> > +               if (ret < 0)
-> > +                       goto err_free_leds;
-> > +       }
-> > +       dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
-> > +
-> > +       return 0;
-> > +
-> > +err_free_leds:
-> > +       dev_err(&pdev->dev, "failed to register LED device\n");
-> > +
-> > +       for (i = i - 1; i >= 0; i--)
-> > +               led_classdev_unregister(&leds[i].cdev);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int menf21bmc_led_remove(struct platform_device *pdev)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(leds); i++)
-> > +               led_classdev_unregister(&leds[i].cdev);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static struct platform_driver menf21bmc_led = {
-> > +       .probe          = menf21bmc_led_probe,
-> > +       .remove         = menf21bmc_led_remove,
-> > +       .driver         = {
-> > +               .name           = "menf21bmc_led",
-> > +               .owner          = THIS_MODULE,
-> > +       },
-> > +};
-> > +
+2014-08-19, 13:06:07 -0400, Valdis.Kletnieks@vt.edu wrote:
+> On Sat, 16 Aug 2014 20:27:01 -0700, Hugh Dickins said:
+> > Can we safely revert your 8b37e1bef5a6 ("leds: convert blink timer to
+> > workqueue"), or have there been other changes which now depend upon it?
 > 
-> I still think this driver should be an I2C driver which is simply than
-> a platform driver.
-> Did I miss some discussion about this in our email?
-> 
-It is not possible to instantiate multiple drivers (watchdog, hwmon, led
-in this case) with a single i2c chip.
+> I suspect there's something else busted.  I hand-reverted that patch, and I *still*
+> see the following lockdep whine that looks related (as it talks about
+> leddev_list_lock).  next-0811 was OK, looks like next-0815 and -0818 had this....
 
-Thanks,
-Guenter
+I've seen this one in linux-next too. It seems to be caused by
+946a4abbcfac ("input: route kbd LEDs through the generic LEDs layer")
+
+I had a look at the code, led_trigger_event calls vt_led_set, which
+calls led_trigger_event again.
+
+CC'ing Samuel Thibault, the author of the commit.
+
+
+> 
+> [    2.473044] iTCO_vendor_support: vendor-support=0
+> [    2.473122] device-mapper: uevent: version 1.0.3
+> 
+> [    2.473145] =============================================
+> [    2.473177] [ INFO: possible recursive locking detected ]
+> [    2.473204] 3.17.0-rc1-next-20140818-dirty #274 Not tainted
+> [    2.473231] ---------------------------------------------
+> [    2.473258] kworker/3:0/25 is trying to acquire lock:
+> [    2.473283]  (&trig->leddev_list_lock){.+.?..}, at: [<ffffffff9344da1b>] led_trigger_event+0x26/0x69
+> [    2.473341]
+> but task is already holding lock:
+> [    2.473370]  (&trig->leddev_list_lock){.+.?..}, at: [<ffffffff9344da1b>] led_trigger_event+0x26/0x69
+> [    2.473425]
+> other info that might help us debug this:
+> [    2.473456]  Possible unsafe locking scenario:
+> 
+> [    2.473485]        CPU0
+> [    2.473498]        ----
+> [    2.473511]   lock(&trig->leddev_list_lock);
+> [    2.473538]   lock(&trig->leddev_list_lock);
+> [    2.473565]
+>  *** DEADLOCK ***
+> 
+> [    2.473594]  May be due to missing lock nesting notation
+> 
+> [    2.473626] 11 locks held by kworker/3:0/25:
+> [    2.473648]  #0:  ("events_long"){.+.+.+}, at: [<ffffffff93054594>] process_one_work+0x1e9/0x4ad
+> [    2.473704]  #1:  (serio_event_work){+.+.+.}, at: [<ffffffff93054594>] process_one_work+0x1e9/0x4ad
+> [    2.473760]  #2:  (serio_mutex){+.+.+.}, at: [<ffffffff933dd7f0>] serio_handle_event+0x19/0x19c
+> [    2.473816]  #3:  (&dev->mutex){......}, at: [<ffffffff9332cec3>] __driver_attach+0x2f/0x7e
+> [    2.473869]  #4:  (&dev->mutex){......}, at: [<ffffffff9332cedb>] __driver_attach+0x47/0x7e
+> [    2.473922]  #5:  (&serio->drv_mutex){+.+.+.}, at: [<ffffffff933dca77>] serio_connect_driver+0x21/0x42
+> [    2.473980]  #6:  (input_mutex){+.+.+.}, at: [<ffffffff933e183a>] input_register_device+0x2a9/0x381
+> [    2.474036]  #7:  (vt_led_registered_lock){+.+.+.}, at: [<ffffffff933e3846>] input_led_connect+0x49/0x1cd
+> [    2.474095]  #8:  (triggers_list_lock){++++.+}, at: [<ffffffff9344dd91>] led_trigger_set_default+0x27/0x87
+> [    2.474154]  #9:  (&led_cdev->trigger_lock){+.+.+.}, at: [<ffffffff9344dd99>] led_trigger_set_default+0x2f/0x87
+> [    2.474214]  #10:  (&trig->leddev_list_lock){.+.?..}, at: [<ffffffff9344da1b>] led_trigger_event+0x26/0x69
+> [    2.474274]
+> stack backtrace:
+> [    2.474297] CPU: 3 PID: 25 Comm: kworker/3:0 Not tainted 3.17.0-rc1-next-20140818-dirty #274
+> [    2.474338] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A15 06/20/2014
+> [    2.474374] Workqueue: events_long serio_handle_event
+> [    2.474401]  0000000000000000 ffff880224ceb960 ffffffff9368ba02 ffffffff945ff130
+> [    2.474447]  ffffffff945ff130 ffff880224ceba20 ffffffff9307b730 0000000a00000246
+> [    2.474492]  0000000000000000 ffffffff945ff130 ffffffff00000003 23605381dcae248d
+> [    2.474538] Call Trace:
+> [    2.474554]  [<ffffffff9368ba02>] dump_stack+0x51/0xaa
+> [    2.474581]  [<ffffffff9307b730>] __lock_acquire+0xd22/0xed1
+> [    2.474611]  [<ffffffff9307b09a>] ? __lock_acquire+0x68c/0xed1
+> [    2.474641]  [<ffffffff9344da1b>] ? led_trigger_event+0x26/0x69
+> [    2.474671]  [<ffffffff9307bc64>] lock_acquire+0xdd/0x16a
+> [    2.474699]  [<ffffffff9307bc64>] ? lock_acquire+0xdd/0x16a
+> [    2.474727]  [<ffffffff9344da1b>] ? led_trigger_event+0x26/0x69
+> [    2.474758]  [<ffffffff93696391>] _raw_read_lock+0x30/0x3f
+> [    2.474786]  [<ffffffff9344da1b>] ? led_trigger_event+0x26/0x69
+> [    2.474816]  [<ffffffff9344da1b>] led_trigger_event+0x26/0x69
+> [    2.474846]  [<ffffffff933e3751>] vt_led_set+0x32/0x34
+> [    2.474873]  [<ffffffff9344d312>] __led_set_brightness+0x1b/0x1d
+> [    2.474904]  [<ffffffff9344d4a8>] led_set_brightness+0x37/0x39
+> [    2.474934]  [<ffffffff9344da3d>] led_trigger_event+0x48/0x69
+> [    2.474965]  [<ffffffff9330b7fb>] kbd_ledstate_trigger_activate+0x47/0x4f
+> [    2.474999]  [<ffffffff9344dbda>] led_trigger_set+0xfd/0x139
+> [    2.475028]  [<ffffffff9344ddcc>] led_trigger_set_default+0x62/0x87
+> [    2.475061]  [<ffffffff9344d87e>] led_classdev_register+0x139/0x144
+> [    2.475093]  [<ffffffff933e3887>] input_led_connect+0x8a/0x1cd
+> [    2.475123]  [<ffffffff933e1901>] input_register_device+0x370/0x381
+> [    2.475154]  [<ffffffff933e848f>] atkbd_connect+0x216/0x269
+> [    2.475182]  [<ffffffff933dca82>] serio_connect_driver+0x2c/0x42
+> [    2.475213]  [<ffffffff933dcab3>] serio_driver_probe+0x1b/0x1d
+> [    2.476508]  [<ffffffff9332cd33>] driver_probe_device+0xda/0x203
+> [    2.477797]  [<ffffffff9332cef0>] __driver_attach+0x5c/0x7e
+> [    2.479081]  [<ffffffff9332ce94>] ? __device_attach+0x38/0x38
+> [    2.480328]  [<ffffffff9332b3bb>] bus_for_each_dev+0x6a/0x82
+> [    2.481604]  [<ffffffff9332c87d>] driver_attach+0x19/0x1b
+> [    2.482874]  [<ffffffff933dd92d>] serio_handle_event+0x156/0x19c
+> [    2.483387] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+> [    2.485373]  [<ffffffff93054636>] process_one_work+0x28b/0x4ad
+> [    2.485976] ata1.00: ACPI cmd ef/10:06:00:00:00:00 (SET FEATURES) succeeded
+> [    2.485979] ata1.00: ACPI cmd f5/00:00:00:00:00:00 (SECURITY FREEZE LOCK) filtered out
+> [    2.485982] ata1.00: ACPI cmd b1/c1:00:00:00:00:00 (DEVICE CONFIGURATION OVERLAY) filtered out
+> [    2.486523] ata1.00: ACPI cmd 00/00:00:00:00:00:a0 (NOP) rejected by device (Stat=0x51 Err=0x04)
+> [    2.489121] ata1.00: ATA-8: ST500LX003-1AC15G, DEM4, max UDMA/133
+> [    2.489123] ata1.00: 976773168 sectors, multi 16: LBA48 NCQ (depth 31/32)
+> [    2.492676] ata1.00: ACPI cmd ef/10:06:00:00:00:00 (SET FEATURES) succeeded
+> [    2.492678] ata1.00: ACPI cmd f5/00:00:00:00:00:00 (SECURITY FREEZE LOCK) filtered out
+> [    2.492681] ata1.00: ACPI cmd b1/c1:00:00:00:00:00 (DEVICE CONFIGURATION OVERLAY) filtered out
+> [    2.493213] ata1.00: ACPI cmd 00/00:00:00:00:00:a0 (NOP) rejected by device (Stat=0x51 Err=0x04)
+> [    2.495797] ata1.00: configured for UDMA/133
+> [    2.497541] scsi 0:0:0:0: Direct-Access     ATA      ST500LX003-1AC15 DEM4 PQ: 0 ANSI: 5
+> [    2.498023] sd 0:0:0:0: [sda] 976773168 512-byte logical blocks: (500 GB/465 GiB)
+> [    2.498026] sd 0:0:0:0: [sda] 4096-byte physical blocks
+> [    2.498169] sd 0:0:0:0: [sda] Write Protect is off
+> [    2.498172] sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
+> [    2.498231] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+> [    2.505326]  sda: sda1 sda2 sda3
+> [    2.506172] sd 0:0:0:0: [sda] Attached SCSI disk
+> [    2.511495]  [<ffffffff93054bd3>] worker_thread+0x351/0x46a
+> [    2.512855]  [<ffffffff93054882>] ? process_scheduled_works+0x2a/0x2a
+> [    2.514195]  [<ffffffff9305967e>] kthread+0xd6/0xde
+> [    2.515521]  [<ffffffff930595a8>] ? __kthread_parkme+0x62/0x62
+> [    2.516814]  [<ffffffff93696dac>] ret_from_fork+0x7c/0xb0
+> [    2.518095]  [<ffffffff930595a8>] ? __kthread_parkme+0x62/0x62
+> [    2.519527] device-mapper: ioctl: 4.27.0-ioctl (2013-10-30) initialised: dm-devel@redhat.com
+> [    2.520836] Intel P-state driver initializing.
+> 
+> (Looks like the lockdep output got intermixed with ata spinning up my disk)
+
+
+-- 
+Sabrina
