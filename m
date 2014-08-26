@@ -1,55 +1,86 @@
-From: Samuel Thibault <samuel.thibault-vYW+cPY1g1pg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCHv2][input-led] Defer input led work to workqueue
-Date: Tue, 26 Aug 2014 15:32:38 +0200
-Message-ID: <20140826133238.GA28108@type.bordeaux.inria.fr>
-References: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
- <20140826091725.GA23293@type.youpi.perso.aquilenet.fr>
- <1409059327.22232.0.camel@jlt4.sipsolutions.net>
- <20140826132410.GD3186@type.bordeaux.inria.fr>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: [PATCH v5 0/4] Introduce MEN 14F021P00 BMC driver series
+Date: Tue, 26 Aug 2014 19:45:24 +0200
+Message-ID: <cover.1409074255.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.152]:38715 "EHLO
+	mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752344AbaHZQxf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Tue, 26 Aug 2014 12:53:35 -0400
 Content-Disposition: inline
-In-Reply-To: <20140826132410.GD3186-hVaJJPvgRkSHR6PIDP45TBlftxrVp6Uy@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Hugh Dickins <hughd-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, Sabrina Dubroca <sd-y1jBWg8GRStKuXlAQpz2QA@public.gmane.org>, Valdis.Kletnieks-PjAqaU27lzQ@public.gmane.org, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: sameo@linux.intel.com, lee.jones@linaro.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jdelvare@suse.de, linux@roeck-us.net, lm-sensors@lm-sensors.org, johannes.thumshirn@men.de
 
-Samuel Thibault, le Tue 26 Aug 2014 15:24:10 +0200, a =E9crit :
-> Johannes Berg, le Tue 26 Aug 2014 15:22:07 +0200, a =E9crit :
-> > On Tue, 2014-08-26 at 11:17 +0200, Samuel Thibault wrote:
-> >=20
-> > > -	led_trigger_event(&vt_led_triggers[led], !!brightness);
-> > > +	vt_led_state[led] =3D !!brightness;
-> > > +	schedule_work(&vt_led_work[led]);
-> >=20
-> >=20
-> > > +static int __init input_led_init(void)
-> > > +{
-> > > +	unsigned i;
-> > > +
-> > > +	for (i =3D 0; i < LED_CNT; i++)
-> > > +		INIT_WORK(&vt_led_work[i], vt_led_cb);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void __exit input_led_exit(void)
-> > > +{
-> > > +}
-> >=20
-> > Come to think of it - don't you need to cancel_work_sync() in exit =
-so
-> > the work struct can't be queued while the module is being unloaded?
->=20
-> Well, this is never built as a module ATM, so it's not a problem.
+This patch set add support for the MEN 14F021P00 Board Management called BMC.
 
-(but I have changed that for future versions of the whole patch, yes)
+The BMC is a PIC Mikrocontroller which assembled on almost all of our
+3U Compact PCI CPU board and a few Box PCs.
+main part of the BMC is to start and monitor the board, but there are a
+lot more features which can be accessed using an I2C Host interface
 
-Samuel
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireles=
-s" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Features supported in this Patchset:
+        - Watchdog
+        - LEDs
+        - HWMON
+
+The Patchset includes a MFD Core driver, Watchdog, hwmon  and LEDs driver.
+
+Changes in v5:
+	- fixed I2C dependency in MFD Kconfig
+	- added correct error handling in update function of the hwmon slave
+	  (Use of ERR_PTR)
+	- add ATTRIBUTE_GROUP Macro in hwmon slave
+	  and deleted platform_set_drvdata
+
+Changes in v4:
+        - fixed some style issues
+        - fixed GPL license version
+        - added hwmon voltage monitoring slave driver
+
+Changes in v3:
+        - deleted i2c_smbus wrapper functions and use native one
+        - some cosmentics and variable renaming to be more clear
+        - renamed "leave production" mode to "exit production mode"
+
+Changes in v2:
+        - changed i2c_smbus_read wrapper function to return both, value
+          and error.
+        - moved "leave production mode" from Watchdog driver to mfd core.
+        - fixed some return values in the watchdog driver to return the original
+          error value instead of -EIO.
+
+
+Andreas Werner (4):
+  drivers/mfd/menf21bmc: introduce MEN 14F021P00 BMC MFD Core driver
+  drivers/watchdog/menf21bmc_wdt: introduce MEN 14F021P00 BMC Watchdog
+    driver
+  drivers/leds/leds-menf21bmc: introduce MEN 14F021P00 BMC LED driver
+  drivers/hwmon/menf21bmc_hwmon: introduce MEN14F021P00 BMC HWMON driver
+
+ Documentation/hwmon/menf21bmc    |  49 +++++++++
+ drivers/hwmon/Kconfig            |   7 ++
+ drivers/hwmon/Makefile           |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c  | 230 +++++++++++++++++++++++++++++++++++++++
+ drivers/leds/Kconfig             |   6 +
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 131 ++++++++++++++++++++++
+ drivers/mfd/Kconfig              |  12 ++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |   7 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 203 ++++++++++++++++++++++++++++++++++
+ 13 files changed, 781 insertions(+)
+ create mode 100644 Documentation/hwmon/menf21bmc
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
+
+-- 
+2.0.4
