@@ -1,40 +1,91 @@
 From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Subject: Re: [PATCH][input-led] Defer input led work to workqueue
-Date: Tue, 26 Aug 2014 11:13:01 +0200
-Message-ID: <20140826091301.GE5235@type.youpi.perso.aquilenet.fr>
+Subject: [PATCHv2][input-led] Defer input led work to workqueue
+Date: Tue, 26 Aug 2014 11:17:25 +0200
+Message-ID: <20140826091725.GA23293@type.youpi.perso.aquilenet.fr>
 References: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
- <1409040095.2489.3.camel@jlt4.sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from toccata.ens-lyon.org ([140.77.166.68]:49053 "EHLO
+Received: from toccata.ens-lyon.fr ([140.77.166.68]:49134 "EHLO
 	toccata.ens-lyon.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934092AbaHZJNI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 26 Aug 2014 05:13:08 -0400
+	with ESMTP id S933975AbaHZJRb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 26 Aug 2014 05:17:31 -0400
 Content-Disposition: inline
-In-Reply-To: <1409040095.2489.3.camel@jlt4.sipsolutions.net>
+In-Reply-To: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, Sabrina Dubroca <sd@queasysnail.net>, Valdis.Kletnieks@vt.edu, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, Sabrina Dubroca <sd@queasysnail.net>, Valdis.Kletnieks@vt.edu, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 
-Johannes Berg, le Tue 26 Aug 2014 10:01:35 +0200, a =E9crit :
-> On Tue, 2014-08-26 at 03:54 +0200, Samuel Thibault wrote:
->=20
-> > +	vt_led_wq =3D alloc_workqueue("input_leds", WQ_UNBOUND, 0);
-> > +	if (!vt_led_wq)
-> > +		return -ENOMEM;
->=20
-> Does this really need a separate workqueue rather than just using
-> schedule_work()? There doesn't seem to be much point in having its ow=
-n
-> workqueue really, to me.
+When the kbd changes its led state (e.g. caps lock), this triggers
+(led_trigger_event) the kbd-capsl trigger, which is by default
+used by the vt::capsl LED, which triggers (led_trigger_event) the
+vt-capsl trigger. These two nested led_trigger_event calls take a
+trig->leddev_list_lock lock and thus lockdep complains.
 
-Ah, yes, probably.  I'm not up to date with this kind of thing (last
-time I used those, they were called tasklets and bottom halves, you
-know... ;) ), so I just followed Documentation/workqueue.txt, which doe=
-s
-not talk about schedule_work.
+Actually the user can make the vt::capsl LED use its own vt-capsl
+trigger and thus build a loop.  This produces an immediate oops.
 
-Samuel
+This changeset defers the second led_trigger_event call into a
+workqueue, which avoids the nested locking altogether.  This does
+not prevent the user from shooting himself in the foot by creating a
+vt::capsl <-> vt-capsl loop, but the only consequence is the workqueue
+threads eating some CPU until the user breaks the loop, which is not too
+bad.
+
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
+---
+
+Difference with v1: uses schedule_work instead of its own workqueue.
+
+--- a/drivers/input/leds.c
++++ b/drivers/input/leds.c
+@@ -100,13 +100,24 @@ static unsigned long vt_led_registered[B
+ /* Number of input devices having each LED */
+ static int vt_led_references[LED_CNT];
+ 
++static int vt_led_state[LED_CNT];
++static struct work_struct vt_led_work[LED_CNT];
++
++static void vt_led_cb(struct work_struct *work)
++{
++	int led = work - vt_led_work;
++
++	led_trigger_event(&vt_led_triggers[led], vt_led_state[led]);
++}
++
+ /* VT LED state change, tell the VT trigger.  */
+ static void vt_led_set(struct led_classdev *cdev,
+ 			  enum led_brightness brightness)
+ {
+ 	int led = cdev - vt_leds;
+ 
+-	led_trigger_event(&vt_led_triggers[led], !!brightness);
++	vt_led_state[led] = !!brightness;
++	schedule_work(&vt_led_work[led]);
+ }
+ 
+ /* LED state change for some keyboard, notify that keyboard.  */
+@@ -244,6 +255,22 @@ void input_led_disconnect(struct input_d
+ 	mutex_unlock(&vt_led_registered_lock);
+ }
+ 
++static int __init input_led_init(void)
++{
++	unsigned i;
++
++	for (i = 0; i < LED_CNT; i++)
++		INIT_WORK(&vt_led_work[i], vt_led_cb);
++
++	return 0;
++}
++
++static void __exit input_led_exit(void)
++{
++}
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("User LED support for input layer");
+ MODULE_AUTHOR("Samuel Thibault <samuel.thibault@ens-lyon.org>");
++module_init(input_led_init);
++module_exit(input_led_exit);
