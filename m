@@ -1,67 +1,62 @@
-From: Valdis.Kletnieks@vt.edu
+From: Valdis.Kletnieks-PjAqaU27lzQ@public.gmane.org
 Subject: Re: [PATCH][input-led] Defer input led work to workqueue
-Date: Tue, 26 Aug 2014 14:49:18 -0400
-Message-ID: <3942.1409078958@turing-police.cc.vt.edu>
-References: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
+Date: Tue, 26 Aug 2014 14:51:10 -0400
+Message-ID: <4017.1409079070@turing-police.cc.vt.edu>
+References: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr> (sfid-20140826_040254_816162_A52F1B31)
+            <1409040095.2489.3.camel@jlt4.sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1409078958_3277P";
+Content-Type: multipart/signed; boundary="==_Exmh_1409079070_3277P";
 	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from omr1.cc.vt.edu ([198.82.141.52]:40815 "EHLO omr1.cc.vt.edu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753365AbaHZSti (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 26 Aug 2014 14:49:38 -0400
-In-Reply-To: Your message of "Tue, 26 Aug 2014 03:54:53 +0200."
-             <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: Your message of "Tue, 26 Aug 2014 10:01:35 +0200."
+             <1409040095.2489.3.camel-8Nb76shvtaUJvtFkdXX2HixXY32XiHfO@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Cc: Samuel Thibault <samuel.thibault-vYW+cPY1g1pg9hUCZPvPmw@public.gmane.org>, Hugh Dickins <hughd-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, Sabrina Dubroca <sd-y1jBWg8GRStKuXlAQpz2QA@public.gmane.org>, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Cc: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, Sabrina Dubroca <sd@queasysnail.net>, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 
---==_Exmh_1409078958_3277P
+--==_Exmh_1409079070_3277P
 Content-Type: text/plain; charset=us-ascii
 
-On Tue, 26 Aug 2014 03:54:53 +0200, Samuel Thibault said:
-> This changeset defers the second led_trigger_event call into a
-> workqueue, which avoids the nested locking altogether.  This does
-> not prevent the user from shooting himself in the foot by creating a
-> vt::capsl <-> vt-capsl loop, but the only consequence is the workqueue
-> threads eating some CPU until the user breaks the loop, which is not too
-> bad.
+On Tue, 26 Aug 2014 10:01:35 +0200, Johannes Berg said:
+> On Tue, 2014-08-26 at 03:54 +0200, Samuel Thibault wrote:
 >
-> Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> > +	vt_led_wq = alloc_workqueue("input_leds", WQ_UNBOUND, 0);
+> > +	if (!vt_led_wq)
+> > +		return -ENOMEM;
 >
-> --- a/drivers/input/leds.c
-> +++ b/drivers/input/leds.c
-> @@ -100,13 +100,25 @@ static unsigned long vt_led_registered[B
+> Does this really need a separate workqueue rather than just using
+> schedule_work()? There doesn't seem to be much point in having its own
+> workqueue really, to me.
 
-I admit having zero understanding of the code, but I can confirm that
-next-20140825 still throws the lockdep whine I was seeing, but the same
-tree with this patch on top of it boots without warning. Soo...
+As I noted in another email, the patch works. Whether it's *correct* I can't
+tell. :)
 
-Tested-By: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-
---==_Exmh_1409078958_3277P
+--==_Exmh_1409079070_3277P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 Comment: Exmh version 2.5 07/13/2001
 
-iQIVAwUBU/zWrgdmEQWDXROgAQLgbA/9EPe/Gp1GWhNacssYXTeeUxyM0wOLBVYm
-6Eeh1VwOOXc4b/P9rEMzGYeF+dPhRCZy2rWUyRy8ZCyG3tV3xtL4t+mvplxWLerD
-A7CIw8BBdl4BTGDqEcCLmXV85wonkOcp/SOAhAZFRMH0ZOpZFm1nF28Lk+pdLe64
-EDYUrbT/W1BlrmEmclpFe+iOwT+0hoZoamu12MgnF17dli41Jurk0ML4izoAIGHC
-a9fu+NmA/OylPe4fc/Q6GKbXpcJ16hSv9RD0e+RPm0VHAChhuqxFSebrcOJI+Cwf
-q0BgdMk1KHWfxPMYFWlc+2mcvvNyQdR/UAFz/H1qbbVqkGBfY5D59WcwaIfkktiz
-ZebpVRQ60MSf8oSUAkGpJNsaw1Q7nxc1gfPZwJZJOOKlZwiXGQsfuwLj1Bzdlp/g
-gud/Awzf1eEOQi6GuPl/fTV7fdLZJCSXL3Nte9HySYTGpBQkB4CqFEh0sHNRMUlm
-kmvia7yBJuJx98YsL1KFwHCq43HyKfRVW/9RY5E+e3FIApy7W+FlDDhIk/wXFw/r
-yK8+r8O/6l85UvdVaHL56an6Y651EWD3YOkRpXAyY5fJauGIXTs/9dzu5xzN8Nbd
-EV6vO0aowTjL8mlTrxXH4FZs2bxitGnU2yi+0aZ3LF6rlPyTDFGEEgrrdByAlJ5q
-fyRkNux2CJw=
-=A81B
+iQIVAwUBU/zXHQdmEQWDXROgAQINFQ//dWiwOqohKLs4RbmF9EHitZl7R3T3K5e1
+Mt2fmsqi923zNt7AsIZPOZ6d5H3u4LIjs0U27zb9Wv2FJ2hJ4/6JZGBr12xsq5WG
+opOBLwOzYmWxo+ADJiNp5r05Y2NlCY8Ab6x9ba855TjUGp4wOO4PjAON33bY3H8e
+qL7HrQb77fQXFauRbY9Wl3ZeIo7xmYwDg9PsXynRrJw1RsatvjpRU01+3uL8KZzc
+VaVEiAGgFJ7kM4/8qgLs6y/h3MHtw60zDG8SGNAKgqfvShbYoryJcUnuhABPj4wC
+4e0Ch4gGg3WL6MpU+Q8/ErDNbyB14YFeEtgyzKOMhhzvAvE8wcEgCzdITtCmpqH3
+PhdgADNgBht3uw0Uau+M7PZveopYUX+LcP8HKPu0mgEWLHyqJRX6IMOfcLENGPQd
+I1oBBoQPoC0WyVw+/FjTavm05VXSXqZ2GMgI2/EN+7j17nMYrSaIU4NZG3/mzXlc
+8AsCrcn/y8Js9nOcySRiiaZM9CaL0I5uTRZsS1H2Lt2sPDLnP/83Nn0A0vNtovI2
+ByQ1a2Rup8f4GRdlYd1X7sWFWGL4E7J36LOrwEYcas0MHbe7ZbBJDilFK9AisX6y
+7tcGhtNCWKvGo1fmt63TbIuSrJQiwtew27JuAQsttwSi4e96BedsW+JPt+Zh5Rz1
+rhB9FxDFwWU=
+=F1N7
 -----END PGP SIGNATURE-----
 
---==_Exmh_1409078958_3277P--
+--==_Exmh_1409079070_3277P--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
