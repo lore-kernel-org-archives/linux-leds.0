@@ -1,62 +1,27 @@
-From: Valdis.Kletnieks-PjAqaU27lzQ@public.gmane.org
-Subject: Re: [PATCHv2][input-led] Defer input led work to workqueue
-Date: Tue, 26 Aug 2014 16:41:49 -0400
-Message-ID: <3469.1409085709@turing-police.cc.vt.edu>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Subject: Re: [PATCH][input-led] Defer input led work to workqueue
+Date: Tue, 26 Aug 2014 23:55:35 +0200
+Message-ID: <20140826215535.GA6581@kria>
 References: <20140826015453.GA5235@type.youpi.perso.aquilenet.fr>
-            <20140826091725.GA23293@type.youpi.perso.aquilenet.fr>
+ <3942.1409078958@turing-police.cc.vt.edu>
+ <20140826200208.GA11247@kria>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1409085709_3249P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: Your message of "Tue, 26 Aug 2014 11:17:25 +0200."
-             <20140826091725.GA23293-ImhJuBFkDxsZRTKc5xlRkz/bP2T7CorvwZZFX4Cs8Hg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Samuel Thibault <samuel.thibault-vYW+cPY1g1pg9hUCZPvPmw@public.gmane.org>
-Cc: Hugh Dickins <hughd-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, Sabrina Dubroca <sd-y1jBWg8GRStKuXlAQpz2QA@public.gmane.org>, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140826200208.GA11247@kria>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Valdis.Kletnieks@vt.edu
+Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>, Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
---==_Exmh_1409085709_3249P
-Content-Type: text/plain; charset=us-ascii
+2014-08-26, 22:02:08 +0200, Sabrina Dubroca wrote:
+> [...]
+> 
+> Tested-by: Sabrina Dubroca <sd@queasysnail.net>
 
-On Tue, 26 Aug 2014 11:17:25 +0200, you said:
+Forgot to mention, this applies to both versions of the patch.
 
->
-> Difference with v1: uses schedule_work instead of its own workqueue.
->
-> --- a/drivers/input/leds.c
-> +++ b/drivers/input/leds.c
-> @@ -100,13 +100,24 @@ static unsigned long vt_led_registered[B
 
-Same thing for B2 - next-20140826 complains, and no complaints with this patch
-on top.
-
-Tested-by: Valdis Kletnieks <valdis.kletnieks-PjAqaU27lzQ@public.gmane.org>
-
---==_Exmh_1409085709_3249P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-Comment: Exmh version 2.5 07/13/2001
-
-iQIVAwUBU/zxDQdmEQWDXROgAQJ3cg/9Hvx/H5aJwYevd+dj6U81mBSm07bO6RJC
-+XhtvhhBEUSFPKmArBlxBY2PyICbnpmtJldvG9E+I2+S1zqPczoIEatQgwR6ttfa
-8BiLhoOxsq3O6IEUFsWpgHHcT9EXUSc5tqEnv5xVxBDkNp4pB+2Uca+5f3IsXuFX
-DNnfh6o9/pCoRVIlWDykUC7cenDagwCR/i5KHQQRSL+b5/YiGFH1Qt/YCGml+WWK
-8McdfW+xbG8Oc28HcIhUw2aoUwsb0wE5TwH/mwuzfl+Ad62XuKZXcuW77VjejzX0
-dF4YPhkQ2YkSto1OrOgpaSPgaKcYXsO1hWylEOntzltwovxhn2dDkt2kSwYCGcTc
-d1A+e+3YpLi4HB4hyJ8rXlYeuMq0w0u6BKA3MymVDsFJiqO3tjFOaj8sNLwZjaXC
-k8AdL2ILirwA4Iovq7FW6YLt3gbwmiBDkAn5O9p3Mk5YMQEZW+cGltLbwUcfgI7e
-BZHZ9PCDjwo2omcoSaiiMzSDd5ggv502AlrSUcPBZVposHVq4ZshHjCldRzRHinf
-FQCjdJm9SWcTLn9E0/2d79Zy9A7zSZsfM500hOKOYBSoK9WKxwvJe+H8akb6/1sX
-/Q+xKnJgFcY6PPXd6atsjMdUFDfK7QZhxrJQCKfXganugNmZhfU9vqt4ouLtdc65
-4T4q0W7Icxg=
-=d9AD
------END PGP SIGNATURE-----
-
---==_Exmh_1409085709_3249P--
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Sabrina
