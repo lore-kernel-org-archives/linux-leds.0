@@ -1,66 +1,91 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v3 1/2] usb: gadget: Refactor request completion
-Date: Wed, 27 Aug 2014 11:03:03 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1408271058010.1460-100000@iolanthe.rowland.org>
-References: <1409144625-25274-2-git-send-email-sojka@merica.cz>
+From: Andreas Werner <andreas.werner@men.de>
+Subject: [PATCH v6 0/4] Introduce MEN 14F021P00 BMC driver series
+Date: Wed, 27 Aug 2014 19:51:23 +0200
+Message-ID: <cover.1409161615.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:53167 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S934477AbaH0PDE (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Aug 2014 11:03:04 -0400
-In-Reply-To: <1409144625-25274-2-git-send-email-sojka@merica.cz>
+Received: from mail1.bemta14.messagelabs.com ([193.109.254.109]:49094 "EHLO
+	mail1.bemta14.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750908AbaH0Q7a (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Wed, 27 Aug 2014 12:59:30 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Michal Sojka <sojka@merica.cz>
-Cc: linux-usb@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
+To: linux-kernel@vger.kernel.org
+Cc: sameo@linux.intel.com, lee.jones@linaro.org, linux@roeck-us.net, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-On Wed, 27 Aug 2014, Michal Sojka wrote:
+This patch set add support for the MEN 14F021P00 Board Management called BMC.
 
-> All USB peripheral controller drivers called completion routines
-> directly. This patch moves the completion call from drivers to
-> usb_gadget_giveback_request(), in order to have a place where common
-> functionality can be added.
-> 
-> All places in drivers/usb/ matching "[-.]complete(" were replaced with a
-> call to usb_gadget_giveback_request(). This was compile-tested with all
-> ARM drivers enabled and runtime-tested for musb.
+The BMC is a PIC Mikrocontroller which assembled on almost all of our
+3U Compact PCI CPU board and a few Box PCs.
+main part of the BMC is to start and monitor the board, but there are a
+lot more features which can be accessed using an I2C Host interface
 
+Features supported in this Patchset:
+        - Watchdog
+        - LEDs
+        - HWMON
 
-> --- a/drivers/usb/gadget/udc/udc-core.c
-> +++ b/drivers/usb/gadget/udc/udc-core.c
-> @@ -102,6 +102,15 @@ void usb_gadget_unmap_request(struct usb_gadget *gadget,
->  }
->  EXPORT_SYMBOL_GPL(usb_gadget_unmap_request);
->  
-> +void usb_gadget_giveback_request(struct usb_ep *ep,
-> +		struct usb_request *req)
-> +{
-> +	/* complete() is from gadget layer,
-> +	 * eg fsg->bulk_in_complete() */
+The Patchset includes a MFD Core driver, Watchdog, hwmon  and LEDs driver.
 
-Wrong format for a multi-line comment.  It should look like this:
+Changes in v6:
+	- fixed some style issues (80 chars, whitespaces, alignment)
+	- fixed error handling in update function of hwmon slave
+	- fixed whitespace error in hwmon documentation
+	- added module name in each of the Kconfigs
 
-	/*
-	 * Blah, blah, blah
-	 * blah, blah, blah
-	 */
+Changes in v5:
+        - fixed I2C dependency in MFD Kconfig
+        - added correct error handling in update function of the hwmon slave
+          (Use of ERR_PTR)
+        - add ATTRIBUTE_GROUP Macro in hwmon slave
+          and deleted platform_set_drvdata
 
-Also, the reference to fsg is obsolete; the File-backed Storage Gadget 
-is no longer in the kernel.  You might as well leave the comment out 
-entirely.
+Changes in v4:
+        - fixed some style issues
+        - fixed GPL license version
+        - added hwmon voltage monitoring slave driver
 
-> +	if (req->complete)
+Changes in v3:
+        - deleted i2c_smbus wrapper functions and use native one
+        - some cosmentics and variable renaming to be more clear
+        - renamed "leave production" mode to "exit production mode"
 
-This test shouldn't be here.  The UDC drivers don't do it, but they
-probably do check the req->complete isn't NULL when the request is
-submitted.  In any case, if req->complete is NULL then we want to know
-about it because it is a bug.  It should not be covered up silently.
+Changes in v2:
+        - changed i2c_smbus_read wrapper function to return both, value
+          and error.
+        - moved "leave production mode" from Watchdog driver to mfd core.
+        - fixed some return values in the watchdog driver to return the original
+          error value instead of -EIO.
 
-> +		req->complete(ep, req);
-> +}
-> +EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
->  #endif	/* CONFIG_HAS_DMA */
+Andreas Werner (4):
+  drivers/mfd/menf21bmc: introduce MEN 14F021P00 BMC MFD Core driver
+  drivers/watchdog/menf21bmc_wdt: introduce MEN 14F021P00 BMC Watchdog
+    driver
+  drivers/leds/leds-menf21bmc: introduce MEN 14F021P00 BMC LED driver
+  drivers/hwmon/menf21bmc_hwmon: introduce MEN14F021P00 BMC HWMON driver
 
-Alan Stern
+ Documentation/hwmon/menf21bmc    |  50 +++++++++
+ drivers/hwmon/Kconfig            |  10 ++
+ drivers/hwmon/Makefile           |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c  | 230 +++++++++++++++++++++++++++++++++++++++
+ drivers/leds/Kconfig             |   9 ++
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 131 ++++++++++++++++++++++
+ drivers/mfd/Kconfig              |  15 +++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |  10 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 203 ++++++++++++++++++++++++++++++++++
+ 13 files changed, 794 insertions(+)
+ create mode 100644 Documentation/hwmon/menf21bmc
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
+
+-- 
+2.0.4
