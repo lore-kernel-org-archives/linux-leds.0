@@ -1,70 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 1/4] drivers/mfd/menf21bmc: introduce MEN 14F021P00
- BMC MFD Core driver
-Date: Wed, 27 Aug 2014 14:46:35 +0100
-Message-ID: <20140827134635.GE6364@lee--X1>
-References: <cover.1409074255.git.andreas.werner@men.de>
- <67faa70de03924edc768002df17b02e47256260c.1409074255.git.andreas.werner@men.de>
- <20140827072633.GY26707@lee--X1>
- <53FDDF0F.2080607@roeck-us.net>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v3 1/2] usb: gadget: Refactor request completion
+Date: Wed, 27 Aug 2014 11:03:03 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1408271058010.1460-100000@iolanthe.rowland.org>
+References: <1409144625-25274-2-git-send-email-sojka@merica.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qc0-f178.google.com ([209.85.216.178]:65511 "EHLO
-	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933802AbaH0Nql (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Aug 2014 09:46:41 -0400
-Received: by mail-qc0-f178.google.com with SMTP id x3so261165qcv.9
-        for <linux-leds@vger.kernel.org>; Wed, 27 Aug 2014 06:46:41 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <53FDDF0F.2080607@roeck-us.net>
+Received: from iolanthe.rowland.org ([192.131.102.54]:53167 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S934477AbaH0PDE (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Aug 2014 11:03:04 -0400
+In-Reply-To: <1409144625-25274-2-git-send-email-sojka@merica.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andreas Werner <andreas.werner@men.de>, linux-kernel@vger.kernel.org, sameo@linux.intel.com, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jdelvare@suse.de, lm-sensors@lm-sensors.org, johannes.thumshirn@men.de
+To: Michal Sojka <sojka@merica.cz>
+Cc: linux-usb@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-On Wed, 27 Aug 2014, Guenter Roeck wrote:
-> On 08/27/2014 12:26 AM, Lee Jones wrote:
-> >On Tue, 26 Aug 2014, Andreas Werner wrote:
-> >>The MEN 14F021P00 Board Management Controller provides an
-> >>I2C interface to the host to access the feature implemented in the =
-BMC.
-> >>The BMC is a PIC Microntroller assembled on CPCI Card from MEN Mikr=
-oelektronik
-> >>and on a few Box/Display Computer.
-> >>
-> >>Added MFD Core driver, supporting the I2C communication to the devi=
-ce.
-> >>
-> >>The MFD driver currently supports the following features:
-> >>  	- Watchdog
-> >>  	- LEDs
-> >>	- Hwmon (voltage monitoring)
-> >>
->=20
-> >>+	{ }
-> >>+};
-> >>+MODULE_DEVICE_TABLE(i2c, menf21bmc_id_table);
-> >>+
-> >>+static struct i2c_driver menf21bmc_driver =3D {
-> >>+	.driver.name	=3D "menf21bmc",
-> >>+	.id_table	=3D menf21bmc_id_table,
-> >>+	.probe		=3D menf21bmc_probe,
-> >>+	.remove		=3D menf21bmc_remove,
-> >>+};
-> >
-> >No DT support?
-> >
-> i2c devices auto-instantiate from dt entries even if there is no
-> explicit devicetree configuration here. The devicetree entry
-> would have to be something like "men,menf21bmc", ie it needs
-> to match the driver name.
+On Wed, 27 Aug 2014, Michal Sojka wrote:
 
-https://patchwork.ozlabs.org/patch/362180/
+> All USB peripheral controller drivers called completion routines
+> directly. This patch moves the completion call from drivers to
+> usb_gadget_giveback_request(), in order to have a place where common
+> functionality can be added.
+> 
+> All places in drivers/usb/ matching "[-.]complete(" were replaced with a
+> call to usb_gadget_giveback_request(). This was compile-tested with all
+> ARM drivers enabled and runtime-tested for musb.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+
+> --- a/drivers/usb/gadget/udc/udc-core.c
+> +++ b/drivers/usb/gadget/udc/udc-core.c
+> @@ -102,6 +102,15 @@ void usb_gadget_unmap_request(struct usb_gadget *gadget,
+>  }
+>  EXPORT_SYMBOL_GPL(usb_gadget_unmap_request);
+>  
+> +void usb_gadget_giveback_request(struct usb_ep *ep,
+> +		struct usb_request *req)
+> +{
+> +	/* complete() is from gadget layer,
+> +	 * eg fsg->bulk_in_complete() */
+
+Wrong format for a multi-line comment.  It should look like this:
+
+	/*
+	 * Blah, blah, blah
+	 * blah, blah, blah
+	 */
+
+Also, the reference to fsg is obsolete; the File-backed Storage Gadget 
+is no longer in the kernel.  You might as well leave the comment out 
+entirely.
+
+> +	if (req->complete)
+
+This test shouldn't be here.  The UDC drivers don't do it, but they
+probably do check the req->complete isn't NULL when the request is
+submitted.  In any case, if req->complete is NULL then we want to know
+about it because it is a bug.  It should not be covered up silently.
+
+> +		req->complete(ep, req);
+> +}
+> +EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
+>  #endif	/* CONFIG_HAS_DMA */
+
+Alan Stern
