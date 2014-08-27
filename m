@@ -1,51 +1,40 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v6 4/4] drivers/hwmon/menf21bmc_hwmon: introduce
- MEN14F021P00 BMC HWMON driver
-Date: Wed, 27 Aug 2014 11:38:43 -0700
-Message-ID: <20140827183843.GC2198@roeck-us.net>
-References: <cover.1409161615.git.andreas.werner@men.de>
- <65074740dfc6363134384b45fcd3acf5f2b4254f.1409161615.git.andreas.werner@men.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 2/2] usb: Add LED triggers for USB activity
+Date: Wed, 27 Aug 2014 12:27:51 -0700
+Message-ID: <20140827192751.GC9620@kroah.com>
+References: <CAK5ve-Jz7=7uZ3_Qg2bAH9BiGRZ36k-Oj9TNZ-_nAvaq6LGbjA@mail.gmail.com>
+ <1409144625-25274-1-git-send-email-sojka@merica.cz>
+ <1409144625-25274-3-git-send-email-sojka@merica.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:36573 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751395AbaH0Sir (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Aug 2014 14:38:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55769 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935238AbaH0T1w (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Aug 2014 15:27:52 -0400
 Content-Disposition: inline
-In-Reply-To: <65074740dfc6363134384b45fcd3acf5f2b4254f.1409161615.git.andreas.werner@men.de>
+In-Reply-To: <1409144625-25274-3-git-send-email-sojka@merica.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andreas Werner <andreas.werner@men.de>
-Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, lee.jones@linaro.org, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
+To: Michal Sojka <sojka@merica.cz>
+Cc: linux-usb@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-On Wed, Aug 27, 2014 at 07:53:06PM +0200, Andreas Werner wrote:
-> Added driver to support the 14F021P00 BMC Hardware Monitoring.
-> The BMC is a Board Management Controller including monitoring of the
-> board voltages.
+On Wed, Aug 27, 2014 at 03:03:45PM +0200, Michal Sojka wrote:
+> With this patch, USB activity can be signaled by blinking a LED. There
+> are two triggers, one for activity on USB host and one for USB gadget.
 > 
-> Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> Both trigger should work with all host/device controllers. Tested only
+> with musb.
+> 
+> Signed-off-by: Michal Sojka <sojka@merica.cz>
+> ---
+>  drivers/usb/Kconfig                           | 11 ++++++
+>  drivers/usb/common/Makefile                   |  5 ++-
+>  drivers/usb/common/{usb-common.c => common.c} |  0
 
-Looks good, though I do have one comment ...
+I don't mind renaming files, but don't "hide" it in this patch, do it in
+a separate patch please, and then base your next patch on this one.
 
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_groups(&pdev->dev,
-> +						   "menf21bmc", drv_data,
-> +						   menf21bmc_hwmon_groups);
-> +	if (IS_ERR(hwmon_dev))
-> +		return PTR_ERR(hwmon_dev);
-> +
-> +	dev_info(&pdev->dev, "MEN 14F021P00 BMC hwmon device enabled");
-> +
-You removed the dev_info from the mfd driver but left it in the client
-drivers.  If you'd drop it here as well, you could use
-'return PTR_ERR_OR_ZERO(hwmon_dev);'.  Just a suggestion, not mandatory.
+thanks,
 
-Either case,
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-I assume this will go in through the mfd tree.
-
-Thanks,
-Guenter
+greg k-h
