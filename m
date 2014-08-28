@@ -1,66 +1,59 @@
-From: Andreas Werner <andreas.werner@men.de>
-Subject: Re: [PATCH v6 4/4] drivers/hwmon/menf21bmc_hwmon: introduce
- MEN14F021P00 BMC HWMON driver
-Date: Thu, 28 Aug 2014 10:16:43 +0200
-Message-ID: <20140828081643.GA27707@awelinux>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 1/4] drivers/mfd/menf21bmc: introduce MEN 14F021P00
+ BMC MFD Core driver
+Date: Thu, 28 Aug 2014 08:37:29 +0100
+Message-ID: <20140828073729.GJ24579@lee--X1>
 References: <cover.1409161615.git.andreas.werner@men.de>
- <65074740dfc6363134384b45fcd3acf5f2b4254f.1409161615.git.andreas.werner@men.de>
- <20140827183843.GC2198@roeck-us.net>
+ <71aa7a1bbed06f0ec840b3a00664dfd8214fa49a.1409161615.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail1.bemta14.messagelabs.com ([193.109.254.119]:48963 "EHLO
-	mail1.bemta14.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S935780AbaH1HYp (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Thu, 28 Aug 2014 03:24:45 -0400
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:49581 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936281AbaH1Hhf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Aug 2014 03:37:35 -0400
+Received: by mail-ig0-f177.google.com with SMTP id r10so462819igi.16
+        for <linux-leds@vger.kernel.org>; Thu, 28 Aug 2014 00:37:34 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20140827183843.GC2198@roeck-us.net>
+In-Reply-To: <71aa7a1bbed06f0ec840b3a00664dfd8214fa49a.1409161615.git.andreas.werner@men.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andreas Werner <andreas.werner@men.de>, linux-kernel@vger.kernel.org, sameo@linux.intel.com, lee.jones@linaro.org, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
+To: Andreas Werner <andreas.werner@men.de>
+Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, linux@roeck-us.net, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-On Wed, Aug 27, 2014 at 11:38:43AM -0700, Guenter Roeck wrote:
-> On Wed, Aug 27, 2014 at 07:53:06PM +0200, Andreas Werner wrote:
-> > Added driver to support the 14F021P00 BMC Hardware Monitoring.
-> > The BMC is a Board Management Controller including monitoring of the
-> > board voltages.
-> > 
-> > Signed-off-by: Andreas Werner <andreas.werner@men.de>
-> 
-> Looks good, though I do have one comment ...
-> 
-> > +
-> > +	hwmon_dev = devm_hwmon_device_register_with_groups(&pdev->dev,
-> > +						   "menf21bmc", drv_data,
-> > +						   menf21bmc_hwmon_groups);
-> > +	if (IS_ERR(hwmon_dev))
-> > +		return PTR_ERR(hwmon_dev);
-> > +
-> > +	dev_info(&pdev->dev, "MEN 14F021P00 BMC hwmon device enabled");
-> > +
-> You removed the dev_info from the mfd driver but left it in the client
-> drivers.  If you'd drop it here as well, you could use
-> 'return PTR_ERR_OR_ZERO(hwmon_dev);'.  Just a suggestion, not mandatory.
-> 
-> Either case,
+On Wed, 27 Aug 2014, Andreas Werner wrote:
 
-It is a nice info for every slave driver which are the drivers for accessing
-the features in the BMC. The mfd is just the driver who will instantiate the
-slaves. For the mfd the most important info is if there was an error.
+> The MEN 14F021P00 Board Management Controller provides an
+> I2C interface to the host to access the feature implemented in the BM=
+C.
+> The BMC is a PIC Microntroller assembled on CPCI Card from MEN Mikroe=
+lektronik
+> and on a few Box/Display Computer.
+>=20
+> Added MFD Core driver, supporting the I2C communication to the device=
+=2E
+>=20
+> The MFD driver currently supports the following features:
+>  	- Watchdog
+>  	- LEDs
+> 	- Hwmon (voltage monitoring)
+>=20
+> Signed-off-by: Andreas Werner <andreas.werner@men.de>
+> ---
+>  drivers/mfd/Kconfig     |  15 ++++++
+>  drivers/mfd/Makefile    |   1 +
+>  drivers/mfd/menf21bmc.c | 132 ++++++++++++++++++++++++++++++++++++++=
+++++++++++
+>  3 files changed, 148 insertions(+)
+>  create mode 100644 drivers/mfd/menf21bmc.c
 
-Anyway good idea with PTR_ERR_OR_ZERO.
+I'd like to take this set through the MFD tree, but for now:
 
-Thanks for the nice review and the comments.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Regards
-Andy
-
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> I assume this will go in through the mfd tree.
-> 
-> Thanks,
-> Guenter
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
