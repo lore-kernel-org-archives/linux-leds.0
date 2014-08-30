@@ -1,45 +1,52 @@
-From: Michal Sojka <sojka@merica.cz>
-Subject: [PATCH v5 2/3] usb: Rename usb-common.c
-Date: Fri, 29 Aug 2014 15:07:42 +0200
-Message-ID: <1409317663-31160-3-git-send-email-sojka@merica.cz>
-References: <87k35rihcc.fsf@steelpick.2x.cz>
- <1409317663-31160-1-git-send-email-sojka@merica.cz>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1409317663-31160-1-git-send-email-sojka@merica.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: Michal Sojka <sojka@merica.cz>, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: [Patch v3] 4/7] leds: Remove ARCH_KIRKWOOD dependency
+Date: Sat, 30 Aug 2014 18:46:09 +0200
+Message-ID: <1409417172-6846-5-git-send-email-andrew@lunn.ch>
+References: <1409417172-6846-1-git-send-email-andrew@lunn.ch>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vps0.lunn.ch ([178.209.37.122]:42034 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751713AbaH3QxC (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sat, 30 Aug 2014 12:53:02 -0400
+In-Reply-To: <1409417172-6846-1-git-send-email-andrew@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Lunn <andrew@lunn.ch>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-In the next commit, we will want the usb-common module to be composed of
-two object files. Since Kbuild cannot "append" another object to an
-existing one, we need to rename usb-common.c to something
-else (common.c) and create usb-common.o by linking the wanted objects
-together. Currently, usb-common.o comprises only common.o.
+mach-kirkwood has been removed, now that kirkwood lives in mach-mvebu.
+Use MACH_KIRKWOOD which will be set when kirkwood is built as part of
+mach-mvebu.
 
-Signed-off-by: Michal Sojka <sojka@merica.cz>
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org
 ---
- drivers/usb/common/Makefile                   | 4 +++-
- drivers/usb/common/{usb-common.c => common.c} | 0
- 2 files changed, 3 insertions(+), 1 deletion(-)
- rename drivers/usb/common/{usb-common.c => common.c} (100%)
+ drivers/leds/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
-index 7526461..052c120 100644
---- a/drivers/usb/common/Makefile
-+++ b/drivers/usb/common/Makefile
-@@ -2,5 +2,7 @@
- # Makefile for the usb common parts.
- #
- 
--obj-$(CONFIG_USB_COMMON) += usb-common.o
-+obj-$(CONFIG_USB_COMMON)	  += usb-common.o
-+usb-common-y			  += common.o
-+
- obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
-diff --git a/drivers/usb/common/usb-common.c b/drivers/usb/common/common.c
-similarity index 100%
-rename from drivers/usb/common/usb-common.c
-rename to drivers/usb/common/common.c
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 8c96e2ddf43b..f6ef7bb2dc11 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -410,7 +410,7 @@ config LEDS_MC13783
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+ 	depends on LEDS_CLASS
+-	depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD
+ 	default y
+ 	help
+ 	  This option enable support for the dual-GPIO LED found on the
+@@ -420,7 +420,7 @@ config LEDS_NS2
+ config LEDS_NETXBIG
+ 	tristate "LED support for Big Network series LEDs"
+ 	depends on LEDS_CLASS
+-	depends on ARCH_KIRKWOOD || MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD
+ 	default y
+ 	help
+ 	  This option enable support for LEDs found on the LaCie 2Big
 -- 
 2.1.0
