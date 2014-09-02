@@ -1,59 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/8 v2] leds: add device tree bindings for register bit LEDs
-Date: Tue, 2 Sep 2014 16:22:59 +0200
-Message-ID: <CAMuHMdXB_6vJpTeDgr4iiA=T_3bK7nQ3anF-HSdnEz=2QqYzaw@mail.gmail.com>
-References: <1409659354-23553-1-git-send-email-linus.walleij@linaro.org>
-	<1409659354-23553-3-git-send-email-linus.walleij@linaro.org>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED fix for 3.17
+Date: Tue, 2 Sep 2014 10:11:30 -0700
+Message-ID: <CAK5ve-JKTYO1tpdv3C52o36KJ7Wi=bft9HzHAwmJJe=A2U2JpA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1409659354-23553-3-git-send-email-linus.walleij@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:63390 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754401AbaIBRLw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 2 Sep 2014 13:11:52 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>, Hugh Dickins <hughd@google.com>, Vincent Donnefort <vdonnefort@gmail.com>
 
 Hi Linus,
 
-On Tue, Sep 2, 2014 at 2:02 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> +LED sub-node properties:
-> +
-> +Required properties:
-> +- compatible : must be "register-bit-led"
-> +- offset : register offset to the register controlling this LED
-> +- mask : bit mask for the bit controlling this LED in the register
+Hugh, Jiri and many other people found a kernel oops due to a LED
+change merged recently. Now the right fix might just revert it and
+unblock the kernel oops. Please check the bug report in the patch
+commit message and consider merge the following changes since commit
+69e273c0b0a3c337a521d083374c918dc52c666f:
 
-Why don't you use a "reg" property with "#address-cells = <2>" and
-"#size-cells = <1>", so you can store offset and mask there?
+  Linux 3.17-rc3 (2014-08-31 18:23:04 -0700)
 
-> +syscon: syscon@10000000 {
-> +       compatible = "arm,realview-pb1176-syscon", "syscon";
-> +       reg = <0x10000000 0x1000>;
-> +
-> +       led@08.0 {
-> +               compatible = "register-bit-led";
-> +               offset = <0x08>;
-> +               mask = <0x01>;
-> +               label = "versatile:0";
-> +               linux,default-trigger = "heartbeat";
-> +               default-state = "on";
-> +       };
+are available in the git repository at:
 
-ePAPR v1.1 says:
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
+leds-fixes-for-3.17
 
-"The unit-address must match the first address specified in the reg property
- of the node. If the node has no reg property, the @ and unit-address must
- be omitted ..."
+for you to fetch changes up to 9067359faf890b3a18ab38c792d458fba77b32b4:
 
-So you cannot have the "@8.0" without a "reg" property.
+  Revert "leds: convert blink timer to workqueue" (2014-09-02 10:02:13 -0700)
 
-Gr{oetje,eeting}s,
+----------------------------------------------------------------
+Jiri Kosina (1):
+      Revert "leds: convert blink timer to workqueue"
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ drivers/leds/led-class.c | 14 +++++++-------
+ drivers/leds/led-core.c  | 11 +++++------
+ include/linux/leds.h     |  3 ++-
+ 3 files changed, 14 insertions(+), 14 deletions(-)
