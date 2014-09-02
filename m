@@ -1,42 +1,59 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 7/8] ARM: l2x0: support associativity from DT
-Date: Tue, 2 Sep 2014 14:17:29 +0100
-Message-ID: <20140902131729.GQ30401@n2100.arm.linux.org.uk>
-References: <1409659354-23553-1-git-send-email-linus.walleij@linaro.org> <1409659354-23553-8-git-send-email-linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/8 v2] leds: add device tree bindings for register bit LEDs
+Date: Tue, 2 Sep 2014 16:22:59 +0200
+Message-ID: <CAMuHMdXB_6vJpTeDgr4iiA=T_3bK7nQ3anF-HSdnEz=2QqYzaw@mail.gmail.com>
+References: <1409659354-23553-1-git-send-email-linus.walleij@linaro.org>
+	<1409659354-23553-3-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1409659354-23553-8-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1409659354-23553-3-git-send-email-linus.walleij@linaro.org>
 Sender: linux-pm-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Sep 02, 2014 at 02:02:33PM +0200, Linus Walleij wrote:
-> The ARM RealView platforms comes with boot loaders that fail
-> to set up cache size, ways and associativity correctly. This
-> complements Florian's patch to set up cache size and sets from
-> the device tree with the possibility to set up associativity
-> on the L2C-220 cache variant.
+Hi Linus,
 
-Do we need this?
+On Tue, Sep 2, 2014 at 2:02 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> +LED sub-node properties:
+> +
+> +Required properties:
+> +- compatible : must be "register-bit-led"
+> +- offset : register offset to the register controlling this LED
+> +- mask : bit mask for the bit controlling this LED in the register
 
-If we have the cache size, the number of sets, and the cache block size
-(cache line size) which are all ePAPR specified properties for a cache,
-then:
+Why don't you use a "reg" property with "#address-cells = <2>" and
+"#size-cells = <1>", so you can store offset and mask there?
 
-	number of cache blocks = cache size / cache block size
-	ways of associativity = number of cache blocks / number of sets
-	way size = cache block size * number of sets
+> +syscon: syscon@10000000 {
+> +       compatible = "arm,realview-pb1176-syscon", "syscon";
+> +       reg = <0x10000000 0x1000>;
+> +
+> +       led@08.0 {
+> +               compatible = "register-bit-led";
+> +               offset = <0x08>;
+> +               mask = <0x01>;
+> +               label = "versatile:0";
+> +               linux,default-trigger = "heartbeat";
+> +               default-state = "on";
+> +       };
 
-It's a tad annoying to have to convert between the two representations,
-but ePAPR decided on size, sets and block size rather than size and
-ways.
+ePAPR v1.1 says:
 
-See arch/powerpc/kernel/cacheinfo.c line 260 for the powerpc
-associativity calculations from these values.
+"The unit-address must match the first address specified in the reg property
+ of the node. If the node has no reg property, the @ and unit-address must
+ be omitted ..."
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+So you cannot have the "@8.0" without a "reg" property.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
