@@ -1,135 +1,56 @@
-From: Roland Stigge <stigge@antcom.de>
-Subject: [PATCH] leds: Add DT support for leds-pca9532
-Date: Tue,  9 Sep 2014 15:28:00 +0200
-Message-ID: <1410269280-8761-1-git-send-email-stigge@antcom.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, riku.voipio@iki.fi, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: Roland Stigge <stigge@antcom.de>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [Patch v3] 0/7] Remove mach-kirkwood
+Date: Tue, 9 Sep 2014 11:10:22 -0400
+Message-ID: <20140909151022.GM30828@titan.lakedaemon.net>
+References: <1409417172-6846-1-git-send-email-andrew@lunn.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1409417172-6846-1-git-send-email-andrew@lunn.ch>
+Sender: linux-pm-owner@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux ARM <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds DT support for leds-pca9532.
+Andrew,
 
-Signed-off-by: Roland Stigge <stigge@antcom.de>
+On Sat, Aug 30, 2014 at 06:46:05PM +0200, Andrew Lunn wrote:
+> This is mostly a resend of these patches, removing mach-kirkwood.  Not
+> all maintainers picked up there patches, which has resulted in some
+> dead kernel configuration in v3.17-rcX.
+> 
+> The patch set has been rebased on v3.17-rc2, and it is intended that
+> Jason Cooper will submit them for inclusion in an RC. Subsystem
+> maintainers do not need to do anything.
+> 
+> The last patch "cpufreq: Remove ARCH_KIRKWOOD dependency" is new,
+> since what it is removing was added during v3.16-rcX. It follows the
+> pattern of all the other patches.
+> 
+> Andrew Lunn (7):
+>   cpuidle: kirkwood: Remove ARCH_KIRKWOOD dependency
+>   ata: Remove ARCH_KIRKWOOD dependency
+>   thermal: Remove ARCH_KIRKWOOD dependency
+>   leds: Remove ARCH_KIRKWOOD dependency
+>   rtc: Remove ARCH_KIRKWOOD dependency
+>   watchdog: Remove ARCH_KIRKWOOD dependency
+>   cpufreq: Remove ARCH_KIRKWOOD dependency
+> 
+>  drivers/ata/Kconfig         | 2 +-
+>  drivers/cpufreq/Kconfig.arm | 2 +-
+>  drivers/cpuidle/Kconfig.arm | 2 +-
+>  drivers/leds/Kconfig        | 4 ++--
+>  drivers/rtc/Kconfig         | 2 +-
+>  drivers/thermal/Kconfig     | 2 +-
+>  drivers/watchdog/Kconfig    | 2 +-
+>  7 files changed, 8 insertions(+), 8 deletions(-)
 
----
-Applies to v3.17-rc4
+Applied to mvebu/fixes for v3.17 with all the various Acks.  Also,
+please don't add the extra ']' in the Subject lines, 'git am' threw a
+gasket on that so I had to manually edit before applying.  Not a big
+deal, just an fyi.
 
- Documentation/devicetree/bindings/leds/leds-pca9532.txt |   43 ++++++++++++++
- drivers/leds/leds-pca9532.c                             |   47 ++++++++++++++++
- 2 files changed, 90 insertions(+)
+thx,
 
---- /dev/null
-+++ linux-2.6/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-@@ -0,0 +1,43 @@
-+NXP PCA9532 LED (incl. GPIO) controller
-+
-+Required properties:
-+- compatible: must be "nxp,pca9532"
-+- reg: I2C address
-+- gpio-controller: Marks the device node as a GPIO controller.
-+- #gpio-cells: Should be 2:
-+   1) pin number
-+   2) optional parameters:
-+      - bit 0 specifies polarity (0 for normal, 1 for inverted)
-+- nxp,typecodes: groups of 2 bits for each of the 16 pins:
-+  0: None
-+  1: LED
-+  2: Beep
-+  3: GPIO
-+- nxp,statecodes: groups of 2 bits for each of the 16 pins:
-+  0: off
-+  1: on
-+  2: pwm0
-+  3: pwm1
-+
-+Optional properties:
-+- nxp,psc: array of 2 numbers: PSC values for the two PWM channels (see datasheet)
-+- nxp,pwm: array of 2 numbers: PWM values for the two PWM channels (see datasheet)
-+
-+Example:
-+
-+	pca9532: pca9532@60 {
-+		compatible = "nxp,pca9532";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		nxp,typecodes = <0xffffffff>;
-+		nxp,statecodes = <0x00000000>;
-+		reg = <0x60>;
-+	};
-+
-+	sd@20098000 {
-+		wp-gpios = <&pca9532 5 0>;
-+		cd-gpios = <&pca9532 4 0>;
-+		cd-inverted;
-+		bus-width = <4>;
-+		status = "okay";
-+	};
---- linux-2.6.orig/drivers/leds/leds-pca9532.c
-+++ linux-2.6/drivers/leds/leds-pca9532.c
-@@ -21,6 +21,7 @@
- #include <linux/workqueue.h>
- #include <linux/leds-pca9532.h>
- #include <linux/gpio.h>
-+#include <linux/of.h>
- 
- /* m =  num_leds*/
- #define PCA9532_REG_INPUT(i)	((i) >> 3)
-@@ -442,6 +443,45 @@ exit:
- 	return err;
- }
- 
-+#ifdef CONFIG_OF
-+static struct pca9532_platform_data *pca9532_parse_dt(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct pca9532_platform_data *pca9532_pdata;
-+	u32 typecodes, statecodes;
-+	u32 pwm[2];
-+	u32 psc[2];
-+	int i;
-+
-+	pca9532_pdata = devm_kzalloc(dev, sizeof(*pca9532_pdata), GFP_KERNEL);
-+	if (!pca9532_pdata)
-+		return NULL;
-+
-+	if (!of_property_read_u32(np, "nxp,typecodes", &typecodes)) {
-+		for (i = 0; i < 16; i++)
-+			pca9532_pdata->leds[i].type =
-+				(typecodes >> (2 * i)) & 0x3;
-+	}
-+	if (!of_property_read_u32(np, "nxp,statecodes", &statecodes)) {
-+		for (i = 0; i < 16; i++)
-+			pca9532_pdata->leds[i].state =
-+				(statecodes >> (2 * i)) & 0x3;
-+	}
-+	if (!of_property_read_u32_array(np, "nxp,pwm", &pwm[0], 2)) {
-+		for (i = 0; i < 2; i++)
-+			pca9532_pdata->pwm[i] = pwm[i];
-+	}
-+	if (!of_property_read_u32_array(np, "nxp,psc", &psc[0], 2)) {
-+		for (i = 0; i < 2; i++)
-+			pca9532_pdata->psc[i] = psc[i];
-+	}
-+
-+	pca9532_pdata->gpio_base = -1; /* dynamically assign gpio base */
-+
-+	return pca9532_pdata;
-+}
-+#endif
-+
- static int pca9532_probe(struct i2c_client *client,
- 	const struct i2c_device_id *id)
- {
-@@ -449,6 +489,11 @@ static int pca9532_probe(struct i2c_clie
- 	struct pca9532_platform_data *pca9532_pdata =
- 			dev_get_platdata(&client->dev);
- 
-+#ifdef CONFIG_OF
-+	if (!pca9532_pdata && client->dev.of_node)
-+		pca9532_pdata = pca9532_parse_dt(&client->dev);
-+#endif
-+
- 	if (!pca9532_pdata)
- 		return -EIO;
- 
+Jason.
