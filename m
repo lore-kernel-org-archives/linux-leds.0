@@ -1,113 +1,266 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] ARM: l2c: parse cache properties from ePAPR definitions
-Date: Tue, 09 Sep 2014 11:45:25 +0200
-Message-ID: <3406797.cZXouO3Pko@wuerfel>
-References: <1410246633-23407-1-git-send-email-linus.walleij@linaro.org> <3750746.eYplbZAGky@wuerfel> <CACRpkdY8314pTi2nw9gXmFJvmr6sdsyi+1iSUFrs2eVVEZ=3RA@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2] ARM: l2c: parse cache properties from ePAPR
+	definitions
+Date: Tue, 9 Sep 2014 11:02:02 +0100
+Message-ID: <20140909100202.GE12361@n2100.arm.linux.org.uk>
+References: <1410246633-23407-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:60882 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756226AbaIIJpl (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Sep 2014 05:45:41 -0400
-In-Reply-To: <CACRpkdY8314pTi2nw9gXmFJvmr6sdsyi+1iSUFrs2eVVEZ=3RA@mail.gmail.com>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:48006 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752981AbaIIKCO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Sep 2014 06:02:14 -0400
+Content-Disposition: inline
+In-Reply-To: <1410246633-23407-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>
 
-On Tuesday 09 September 2014 11:27:55 Linus Walleij wrote:
+On Tue, Sep 09, 2014 at 09:10:33AM +0200, Linus Walleij wrote:
+> When both 'cache-size' and 'cache-sets' are specified for a L2 cache
+> controller node, parse those properties and set up the
+> set size based on which type of L2 cache controller we are using.
 > 
-> >> +     /*
-> >> +      * Special checks for the PL310 that only has two settings and
-> >> +      * cannot be set to fully associative.
-> >> +      */
-> >> +     if (max_associativity == 16) {
-> >> +             if (assoc == 16)
-> >> +                     val |= L310_AUX_CTRL_ASSOCIATIVITY_16;
-> >> +             /* Else bit is left zero == 8 way associativity */
-> >> +     } else {
-> >> +             val |= (assoc << L2X0_AUX_CTRL_ASSOC_SHIFT);
-> >> +     }
-> >
-> > What happens if we set the bit for assoc=8 on pl310? Is that
-> > defined to be ignored or does it have to be zero?
+> Update the L2 cache controller Device Tree binding with the optional
+> 'cache-size', 'cache-sets', 'cache-block-size' and 'cache-line-size'
+> properties. These come from the ePAPR specification.
 > 
-> Only one single bit selects associativity on PL310.
+> Using the cache size, number of sets and cache line size we can
+> calculate desired associativity of the L2 cache. This is done
+> by the calculation:
 > 
-> Bit 16 = 0 -> 8-way associativity
-> Bit 16 = 1 -> 16-way associativity
-> 
-> On L220 there are 1,2,3,4,5,6,7,8 ways of associativity.
+>     set size = cache size / sets
+>     ways = set size / line size
+>     way size = cache size / ways
+>     associativity = way size / line size
 
-I guess the mistake on my side was that I assumed the encoding for
-8-way was compatible. However, 16-way on pl310 is encoded the same
-way as 8-way on l220 and l210, so these have to be separate. I'm
-still not sure if it's a good idea to make the decision based on
-the max_associativity value. I think it should either decide based
-on some ID, or the register encoding should be moved out to the
-caller, and this function just return the way-size and associativity.
+Right, and from that we get:
 
-> >> +     /*
-> >> +      * The l2x0 TRMs call this size "way size" but that is incorrect:
-> >> +      * the thing being configured in these register bits is actually
-> >> +      * the cache set size, so the variable here has the right name
-> >> +      * but the register bit definitions following the TRM are not
-> >> +      * in archaic naming.
-> >> +      */
-> >
-> > No, I think actually the comment and the variable name are wrong here,
-> > and the TRM is right. I'm surprised you get the right results out of
-> > this. The set_size should be a relatively small number, e.g. 256 bytes
-> > in case of an 8-way associative cache with 32 byte lines. What is the
-> > pr_debug output and the properties you pass in for your example system?
+	set_size = cache_size / sets
+	ways = cache_size / (sets * line_size)
+	way_size = cache_size / (cache_size / (sets * line_size))
+	way_size = sets * line_size
+	associativity = sets
+
+the last of which disagrees with arch/powerpc/kernel/cacheinfo.c, which
+calculates associativity as:
+
+	(size / nr_sets) / line_size
+
+which is "ways".
+
+In any case, "ways" refers to the number in "N-way set associative cache".
+
 > 
-> It looks like that:
+> This patch is an extended version based on the initial patch
+> by Florian Fainelli.
 > 
-> L2C OF: override cache size: 131072 bytes (128KB)
-> L2C OF: override set size: 16384 bytes (16 KB)
-> L2C OF: override line size: 32 bytes
-> L2C OF: override ways: 512 ways
-> L2C OF: override way size: 256 bytes
-> L2C OF: override associativity: 8
-
-Ok, I found the two problems:
-
-a) your input is wrong, as I said, "cache-sets" in DT needs to be 512,
-   not 8.
-
-b) "assoc = way_size / linesize;" is wrong. What you are computing here
-   is the same as the "cache-sets" input, i.e. your 'sets' variable.
-   'assoc' is supposed to be the same as 'ways' instead, and you can
-   remove one or the other.
-
-> L2C: DT/platform modifies aux control register: 0x02020fff -> 0x02030fff
-> L2C-220 cache controller enabled, 8 ways, 128 kB
-> L2C-220: CACHE_ID 0x41000486, AUX_CTRL 0x06030fff
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/arm/l2cc.txt |   6 ++
+>  arch/arm/mm/cache-l2x0.c                       | 134 +++++++++++++++++++++++++
+>  2 files changed, 140 insertions(+)
 > 
-> Based on that device tree:
-> 
->         L2: l2-cache {
->             compatible = "arm,l220-cache";
->             reg = <0x10110000 0x1000>;
->             interrupt-parent = <&intc_dc1176>;
->             interrupts = <0 13 IRQ_TYPE_LEVEL_HIGH>;
->             cache-unified;
->             cache-level = <2>;
->             /*
->              * Override default cache size, sets and
->              * associativity as these may be erroneously set
->              * up by boot loader(s).
->              */
->             arm,override-auxreg;
->             cache-size = <131072>; // 128kB
->             cache-sets = <8>;
->             cache-line-size = <32>;
->         };
-> 
-> But I'll take a closer look to make sure we get this right.
+> diff --git a/Documentation/devicetree/bindings/arm/l2cc.txt b/Documentation/devicetree/bindings/arm/l2cc.txt
+> index af527ee111c2..b77343914c66 100644
+> --- a/Documentation/devicetree/bindings/arm/l2cc.txt
+> +++ b/Documentation/devicetree/bindings/arm/l2cc.txt
+> @@ -44,6 +44,12 @@ Optional properties:
+>    I/O coherent mode. Valid only when the arm,pl310-cache compatible
+>    string is used.
+>  - interrupts : 1 combined interrupt.
+> +- cache-size : specifies the size in bytes of the cache
+> +- cache-sets : specifies the number of associativity sets of the cache
+> +- cache-block-size : specifies the size in bytes of a cache block
+> +- cache-line-size : specifies the size in bytes of a line in the cache,
+> +  if this is not specified, the line size is assumed to be equal to the
+> +  cache block size
+>  - cache-id-part: cache id part number to be used if it is not present
+>    on hardware
+>  - wt-override: If present then L2 is forced to Write through mode
+> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> index 5f2c988a06ac..8157b913f3f3 100644
+> --- a/arch/arm/mm/cache-l2x0.c
+> +++ b/arch/arm/mm/cache-l2x0.c
+> @@ -945,6 +945,134 @@ static int l2_wt_override;
+>   * pass it though the device tree */
+>  static u32 cache_id_part_number_from_dt;
+>  
+> +static void __init l2x0_cache_size_of_parse(const struct device_node *np,
+> +					    u32 *aux_val, u32 *aux_mask,
+> +					    u32 max_set_size,
+> +					    u32 max_associativity)
+> +{
+> +	u32 mask = 0, val = 0;
+> +	u32 cache_size = 0, sets = 0;
+> +	u32 set_size = 0, set_size_bits = 1;
+> +	u32 ways = 0, way_size = 0;
+> +	u32 blocksize = 0;
+> +	u32 linesize = 0;
+> +	u32 assoc = 0;
+> +
+> +	of_property_read_u32(np, "cache-size", &cache_size);
+> +	of_property_read_u32(np, "cache-sets", &sets);
+> +	of_property_read_u32(np, "cache-block-size", &blocksize);
+> +	of_property_read_u32(np, "cache-line-size", &linesize);
+> +
+> +	if (!cache_size || !sets)
+> +		return;
+> +
+> +	/* All these l2 caches have the same line = block size actually */
+> +	if (!linesize) {
+> +		if (blocksize) {
+> +			/* If linesize if not given, it is equal to blocksize */
+> +			linesize = blocksize;
+> +		} else {
+> +			/* Fall back to known size */
+> +			linesize = CACHE_LINE_SIZE;
+> +		}
+> +	}
+> +
+> +	if (linesize != CACHE_LINE_SIZE)
+> +		pr_warn("L2C OF: DT supplied line size %d bytes does "
+> +			"not match hardware line size of %d bytes\n",
+> +			linesize,
+> +			CACHE_LINE_SIZE);
+> +
+> +	set_size = cache_size / sets;
+> +	ways = set_size / linesize;
+> +	way_size = cache_size / ways;
+> +
+> +	if (set_size > max_set_size) {
+> +		pr_warn("L2C: set size %dKB is too large\n", set_size >> 10);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * This cache is set associative. By increasing associativity
+> +	 * we increase the number of blocks per set.
+> +	 */
+> +	assoc = way_size / linesize;
+> +	if (assoc > max_associativity) {
+> +		pr_err("L2C OF: cache setting yield too high associativity\n");
+> +		pr_err("L2C OF: %d calculated, max %d\n",
+> +		       assoc, max_associativity);
+> +		return;
+> +	}
+> +	/* This is the PL3x0 case */
+> +	if (max_associativity == 16 && (assoc != 8 && assoc != 16)) {
+> +		pr_err("L2C OF: cache setting yield illegal associativity\n");
+> +		pr_err("L2C OF: %d calculated, only 8 and 16 legal\n", assoc);
+> +		return;
+> +	}
+> +
+> +	mask |= L2X0_AUX_CTRL_ASSOC_MASK;
+> +
+> +	/*
+> +	 * Special checks for the PL310 that only has two settings and
+> +	 * cannot be set to fully associative.
+> +	 */
+> +	if (max_associativity == 16) {
+> +		if (assoc == 16)
+> +			val |= L310_AUX_CTRL_ASSOCIATIVITY_16;
+> +		/* Else bit is left zero == 8 way associativity */
+> +	} else {
+> +		val |= (assoc << L2X0_AUX_CTRL_ASSOC_SHIFT);
+> +	}
+> +
+> +	pr_debug("L2C OF: cache size: %d bytes (%dKB)\n",
+> +		 cache_size, cache_size >> 10);
+> +	pr_debug("L2C OF: set size: %d bytes (%d KB)\n",
+> +		 set_size, set_size >> 10);
+> +	pr_debug("L2C OF: line size: %d bytes\n", linesize);
+> +	pr_debug("L2C OF: ways: %d ways\n", ways);
+> +	pr_debug("L2C OF: way size: %d bytes\n", way_size);
+> +	pr_debug("L2C OF: associativity: %d\n", assoc);
+> +
+> +	switch (set_size >> 10) {
+> +	case 512:
+> +		set_size_bits = 6;
+> +		break;
+> +	case 256:
+> +		set_size_bits = 5;
+> +		break;
+> +	case 128:
+> +		set_size_bits = 4;
+> +		break;
+> +	case 64:
+> +		set_size_bits = 3;
+> +		break;
+> +	case 32:
+> +		set_size_bits = 2;
+> +		break;
+> +	case 16:
+> +		set_size_bits = 1;
+> +		break;
+> +	default:
+> +		pr_err("L2C OF: cache way size: %d KB is not mapped\n",
+> +		       way_size);
+> +		break;
+> +	}
+> +
+> +	/*
+> +	 * The l2x0 TRMs call this size "way size" but that is incorrect:
+> +	 * the thing being configured in these register bits is actually
+> +	 * the cache set size, so the variable here has the right name
+> +	 * but the register bit definitions following the TRM are not
+> +	 * in archaic naming.
+> +	 */
+> +	mask |= L2C_AUX_CTRL_WAY_SIZE_MASK;
+> +	val |= (set_size_bits << L2C_AUX_CTRL_WAY_SIZE_SHIFT);
 
-I think you just copied cache-sets wrong from Florian's original patch.
+This is not correct.  There is no confusion with ARMs terminology, ARMs
+terminology is correct.  This is the way size, and that comes from the
+way_size you calculated above.
 
-	Arnd
+What's slightly confusing is the "associtivity" term, but as I prove
+above, it's exactly the same as "ways" (which is what's used in ARM
+documentation.)
+
+So really all this code can be simplified.
+
+Here's a useful table, for an 8 way cache:
+
+Way size        Tag bits        Index bits      log2(num_sets)	num_sets
+16KB            18              9               9               512
+32KB            17              10              10              1024
+64KB            16              11              11              2048
+128KB           17              12              12              4096
+256KB           18              13              13              8192
+
+The tag/index bits there refer to the virtual address.
+
+Now, since:
+
+	way_size * num_ways = cache_size = set_size * num_sets
+
+and (see the bookshelf below for this...):
+
+	num_ways * num_sets * line_size = cache_size
+
+if we halve the number of ways in a set, keeping the same number of sets
+(hence keeping the same number of index bits), the cache size is halved,
+and the set size is also halved.
+
+So, way size and set size are not the same thing...
+
+
+An easier way to think about this is by thinking of the cache as a
+bookshelf.  Here's a PDF which illustrates this:
+
+http://csillustrated.berkeley.edu/PDFs/handouts/cache-3-associativity-handout.pdf
+
+So:
+
+- the number of slots = number of sets
+- size of each slot = size of each book * number of books
+     slot_size = line_size * num_ways
+- cache size = slot_size * num_slots
+- the number of books in each slot is the number of ways
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
