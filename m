@@ -1,45 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/7 v6] ARM: l2c: parse 'cache-size' and 'cache-sets' properties
-Date: Tue, 9 Sep 2014 09:14:13 +0200
-Message-ID: <CACRpkdapk1t+8DnY_ojWm+76=D=7k-wnrm11J6dbpPDkCM_WhQ@mail.gmail.com>
-References: <1410176286-32533-1-git-send-email-linus.walleij@linaro.org>
-	<4685530.jbNLD4yaA8@wuerfel>
-	<CACRpkdb_bS0P-fGxogiyCzG9CRPhJK1Gro=H3X1Ks_-UoXh52w@mail.gmail.com>
-	<3479071.8nx1ubr8a9@wuerfel>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+Subject: [PATCH 1/2] leds: trigger: gpio: fix warning in gpio trigger for gpios whose accessor function may sleep
+Date: Tue,  9 Sep 2014 09:40:32 +0200
+Message-ID: <1410248433-24005-2-git-send-email-LW@KARO-electronics.de>
+References: <1410248433-24005-1-git-send-email-LW@KARO-electronics.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:40198 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755334AbaIIHOP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Sep 2014 03:14:15 -0400
-Received: by mail-oi0-f48.google.com with SMTP id a141so10533423oig.21
-        for <linux-leds@vger.kernel.org>; Tue, 09 Sep 2014 00:14:15 -0700 (PDT)
-In-Reply-To: <3479071.8nx1ubr8a9@wuerfel>
+Received: from mail.karo-electronics.de ([81.173.242.67]:56882 "EHLO
+	mail.karo-electronics.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932079AbaIIHkl (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Sep 2014 03:40:41 -0400
+In-Reply-To: <1410248433-24005-1-git-send-email-LW@KARO-electronics.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Florian Fainelli <florian@openwrt.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>, =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
 
-On Mon, Sep 8, 2014 at 3:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> [Me]
->> I can add a comment explaining that ARMs terminology does
->> not match the academic terminology or something, and say that
->> the thing we poke into "way-size" is actually "set size", if we agree
->> that is what we're seeing here.
->
-> Let's see again: 16KB way-size * 8 ways = 128KB, that seems correct.
-> 16KB way-size / 32B line-size = 512 sets, that also seems realistic.
-> 128KB cache-size / 512 sets = 256B set-size. 256B / 32B = 8 ways,
-> so everything fits together.
+When using a GPIO driver whose accessor functions may sleep (e.g. an
+I2C GPIO extender like PCA9554) the following warning is issued:
+WARNING: CPU: 0 PID: 665 at drivers/gpio/gpiolib.c:2274 gpiod_get_raw_v=
+alue+0x3c/0x48()
+Modules linked in:
+CPU: 0 PID: 665 Comm: kworker/0:2 Not tainted 3.16.0-karo+ #115
+Workqueue: events gpio_trig_work
+[<c00142cc>] (unwind_backtrace) from [<c00118f8>] (show_stack+0x10/0x14=
+)
+[<c00118f8>] (show_stack) from [<c001bf10>] (warn_slowpath_common+0x64/=
+0x84)
+[<c001bf10>] (warn_slowpath_common) from [<c001bf4c>] (warn_slowpath_nu=
+ll+0x1c/0x24)
+[<c001bf4c>] (warn_slowpath_null) from [<c020a1b8>] (gpiod_get_raw_valu=
+e+0x3c/0x48)
+[<c020a1b8>] (gpiod_get_raw_value) from [<c02f68a0>] (gpio_trig_work+0x=
+1c/0xb0)
+[<c02f68a0>] (gpio_trig_work) from [<c0030c1c>] (process_one_work+0x144=
+/0x38c)
+[<c0030c1c>] (process_one_work) from [<c0030ef8>] (worker_thread+0x60/0=
+x5cc)
+[<c0030ef8>] (worker_thread) from [<c0036dd4>] (kthread+0xb4/0xd0)
+[<c0036dd4>] (kthread) from [<c000f0f0>] (ret_from_fork+0x14/0x24)
+---[ end trace cd51a1dad8b86c9c ]---
 
-I've sent a v2 version of the patch using the terminology and calculations
-from this thread, and it yields the right numbers, for PB1176, I will check
-with the values from other RealView platforms to see if they also give the
-same result back.
+=46ix this by using the _cansleep() variant of gpio_get_value().
 
-I had to squash Florians & my patch, it didn't make sense to have them
-artificially separate.
+Signed-off-by: Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
+---
+ drivers/leds/trigger/ledtrig-gpio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger=
+/ledtrig-gpio.c
+index 35812e3..c86c418 100644
+--- a/drivers/leds/trigger/ledtrig-gpio.c
++++ b/drivers/leds/trigger/ledtrig-gpio.c
+@@ -48,7 +48,7 @@ static void gpio_trig_work(struct work_struct *work)
+ 	if (!gpio_data->gpio)
+ 		return;
+=20
+-	tmp =3D gpio_get_value(gpio_data->gpio);
++	tmp =3D gpio_get_value_cansleep(gpio_data->gpio);
+ 	if (gpio_data->inverted)
+ 		tmp =3D !tmp;
+=20
+--=20
+1.7.10.4
