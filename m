@@ -1,67 +1,122 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] leds: trigger: gpio: make ledtrig-gpio useable with
- GPIO drivers requiring threaded irqs
-Date: Fri, 12 Sep 2014 11:57:40 -0700
-Message-ID: <CAK5ve-+jhyM_rYU_TeFojmFc1BZdEpgoYw2OBXgMv6LOGA7U8g@mail.gmail.com>
-References: <1410248433-24005-1-git-send-email-LW@KARO-electronics.de>
- <1410248433-24005-3-git-send-email-LW@KARO-electronics.de>
- <CAK5ve-+BCvfHZ-JrYD_48KYzaZGE0as=eMe0+XPbgh5DfH9qRw@mail.gmail.com> <20140912090918.6e860198@ipc1.ka-ro>
+Subject: Re: [PATCH/RFC v5 1/4] leds: Improve and export led_update_brightness
+Date: Fri, 12 Sep 2014 14:05:55 -0700
+Message-ID: <CAK5ve-LTXTzV3v_5o5jPVDE_C=RP5+B5OtCUachiy9E8siP6+w@mail.gmail.com>
+References: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
+ <1408542118-32723-2-git-send-email-j.anaszewski@samsung.com> <CAK5ve-K1tu8dRwF2cqdVesZUT+VWp-NnD3ZQh6mXtnXSRJ3hPA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140912090918.6e860198@ipc1.ka-ro>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:36505 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751518AbaILVGS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 12 Sep 2014 17:06:18 -0400
+In-Reply-To: <CAK5ve-K1tu8dRwF2cqdVesZUT+VWp-NnD3ZQh6mXtnXSRJ3hPA@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Richard Purdie <rpurdie@rpsys.net>
 
-On Fri, Sep 12, 2014 at 12:09 AM, Lothar Wa=C3=9Fmann <LW@karo-electron=
-ics.de> wrote:
-> Hi,
+On Fri, Sep 5, 2014 at 2:03 PM, Bryan Wu <cooloney@gmail.com> wrote:
+> On Wed, Aug 20, 2014 at 6:41 AM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> led_update_brightness helper function used to be exploited only loca=
+lly
+>> in the led-class.c module, where its result was being passed to the
+>> brightness_show sysfs callback. With the introduction of v4l2-flash
+>> subdevice the same functionality becomes required for reading curren=
+t
+>> brightness from a LED device. This patch adds checking of return val=
+ue
+>> of the brightness_get callback and moves the led_update_brightness()
+>> function to the LED subsystem public API.
+>>
 >
-> Bryan Wu wrote:
->> On Tue, Sep 9, 2014 at 12:40 AM, Lothar Wa=C3=9Fmann <LW@karo-electr=
-onics.de> wrote:
->> > When trying to use the LED GPIO trigger with e.g. the PCA953x GPIO
->> > driver, request_irq() fails with -EINVAL, because the GPIO driver
->> > requires a nested interrupt handler.
->> >
->> > Use request_any_context_irq() to be able to use any GPIO driver as=
- LED
->> > trigger.
->> >
->>
->> Hmmm, what about use request_thread_irq() and put the gpio_trig_work=
-()
->> in as the thread_func.
->>
->> Felipe, can you take a look at this?
->>
->> Also in the first patch:
->> Actually in gpio_trig_irq(), it said:
->> /* just schedule_work since gpio_get_value can sleep */
->>         schedule_work(&gpio_data->work);
->>
->> Then that means we need to call gpio_get_value_can_sleep() in the
->> gpio_trig_work() instead of gpio_get_value(), right?
->>
-> That's exactly what my first patch does!
+> This one looks good to me.
+> Thanks,
+> -Bryan
 >
 
-Yeah, exactly. I'm just curious about the comment here.
+Merged=EF=BC=8C no need to update this patch then.
 
 -Bryan
 
->
-> Lothar Wa=C3=9Fmann
-> --
-> ___________________________________________________________
->
-> Ka-Ro electronics GmbH | Pascalstra=C3=9Fe 22 | D - 52076 Aachen
-> Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
-> Gesch=C3=A4ftsf=C3=BChrer: Matthias Kaussen
-> Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
->
-> www.karo-electronics.de | info@karo-electronics.de
-> ___________________________________________________________
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Bryan Wu <cooloney@gmail.com>
+>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>> ---
+>>  drivers/leds/led-class.c |    6 ------
+>>  drivers/leds/led-core.c  |   16 ++++++++++++++++
+>>  include/linux/leds.h     |   10 ++++++++++
+>>  3 files changed, 26 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> index f4e5bb4..6f82a76 100644
+>> --- a/drivers/leds/led-class.c
+>> +++ b/drivers/leds/led-class.c
+>> @@ -23,12 +23,6 @@
+>>
+>>  static struct class *leds_class;
+>>
+>> -static void led_update_brightness(struct led_classdev *led_cdev)
+>> -{
+>> -       if (led_cdev->brightness_get)
+>> -               led_cdev->brightness =3D led_cdev->brightness_get(le=
+d_cdev);
+>> -}
+>> -
+>>  static ssize_t brightness_show(struct device *dev,
+>>                 struct device_attribute *attr, char *buf)
+>>  {
+>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> index 8380eb7..466ce5a 100644
+>> --- a/drivers/leds/led-core.c
+>> +++ b/drivers/leds/led-core.c
+>> @@ -127,3 +127,19 @@ void led_set_brightness(struct led_classdev *le=
+d_cdev,
+>>         __led_set_brightness(led_cdev, brightness);
+>>  }
+>>  EXPORT_SYMBOL(led_set_brightness);
+>> +
+>> +int led_update_brightness(struct led_classdev *led_cdev)
+>> +{
+>> +       int ret =3D 0;
+>> +
+>> +       if (led_cdev->brightness_get) {
+>> +               ret =3D led_cdev->brightness_get(led_cdev);
+>> +               if (ret >=3D 0) {
+>> +                       led_cdev->brightness =3D ret;
+>> +                       return 0;
+>> +               }
+>> +       }
+>> +
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL(led_update_brightness);
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index bc221d11..cc85b16 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -139,6 +139,16 @@ extern void led_blink_set_oneshot(struct led_cl=
+assdev *led_cdev,
+>>   */
+>>  extern void led_set_brightness(struct led_classdev *led_cdev,
+>>                                enum led_brightness brightness);
+>> +/**
+>> + * led_update_brightness - update LED brightness
+>> + * @led_cdev: the LED to query
+>> + *
+>> + * Get an LED's current brightness and update led_cdev->brightness
+>> + * member with the obtained value.
+>> + *
+>> + * Returns: 0 on success or negative error value on failure
+>> + */
+>> +extern int led_update_brightness(struct led_classdev *led_cdev);
+>>
+>>  /*
+>>   * LED Triggers
+>> --
+>> 1.7.9.5
+>>
