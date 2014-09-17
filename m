@@ -1,122 +1,48 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v5 1/4] leds: Improve and export led_update_brightness
-Date: Fri, 12 Sep 2014 14:05:55 -0700
-Message-ID: <CAK5ve-LTXTzV3v_5o5jPVDE_C=RP5+B5OtCUachiy9E8siP6+w@mail.gmail.com>
-References: <1408542118-32723-1-git-send-email-j.anaszewski@samsung.com>
- <1408542118-32723-2-git-send-email-j.anaszewski@samsung.com> <CAK5ve-K1tu8dRwF2cqdVesZUT+VWp-NnD3ZQh6mXtnXSRJ3hPA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Michal Sojka <sojka@merica.cz>
+Subject: [PATCH v5 2/3] usb: Rename usb-common.c
+Date: Wed, 17 Sep 2014 09:21:12 +0200
+Message-ID: <1410938473-29385-3-git-send-email-sojka@merica.cz>
+References: <1410938473-29385-1-git-send-email-sojka@merica.cz>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:36505 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751518AbaILVGS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 12 Sep 2014 17:06:18 -0400
-In-Reply-To: <CAK5ve-K1tu8dRwF2cqdVesZUT+VWp-NnD3ZQh6mXtnXSRJ3hPA@mail.gmail.com>
+Received: from relay.felk.cvut.cz ([147.32.80.7]:64734 "EHLO
+	relay.felk.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751468AbaIQHWK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 17 Sep 2014 03:22:10 -0400
+In-Reply-To: <1410938473-29385-1-git-send-email-sojka@merica.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Richard Purdie <rpurdie@rpsys.net>
+To: linux-usb@vger.kernel.org
+Cc: Michal Sojka <sojka@merica.cz>, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-On Fri, Sep 5, 2014 at 2:03 PM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Wed, Aug 20, 2014 at 6:41 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> led_update_brightness helper function used to be exploited only loca=
-lly
->> in the led-class.c module, where its result was being passed to the
->> brightness_show sysfs callback. With the introduction of v4l2-flash
->> subdevice the same functionality becomes required for reading curren=
-t
->> brightness from a LED device. This patch adds checking of return val=
-ue
->> of the brightness_get callback and moves the led_update_brightness()
->> function to the LED subsystem public API.
->>
->
-> This one looks good to me.
-> Thanks,
-> -Bryan
->
+In the next commit, we will want the usb-common module to be composed of
+two object files. Since Kbuild cannot "append" another object to an
+existing one, we need to rename usb-common.c to something
+else (common.c) and create usb-common.o by linking the wanted objects
+together. Currently, usb-common.o comprises only common.o.
 
-Merged=EF=BC=8C no need to update this patch then.
+Signed-off-by: Michal Sojka <sojka@merica.cz>
+---
+ drivers/usb/common/Makefile                   | 4 +++-
+ drivers/usb/common/{usb-common.c => common.c} | 0
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+ rename drivers/usb/common/{usb-common.c => common.c} (100%)
 
--Bryan
-
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> ---
->>  drivers/leds/led-class.c |    6 ------
->>  drivers/leds/led-core.c  |   16 ++++++++++++++++
->>  include/linux/leds.h     |   10 ++++++++++
->>  3 files changed, 26 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index f4e5bb4..6f82a76 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -23,12 +23,6 @@
->>
->>  static struct class *leds_class;
->>
->> -static void led_update_brightness(struct led_classdev *led_cdev)
->> -{
->> -       if (led_cdev->brightness_get)
->> -               led_cdev->brightness =3D led_cdev->brightness_get(le=
-d_cdev);
->> -}
->> -
->>  static ssize_t brightness_show(struct device *dev,
->>                 struct device_attribute *attr, char *buf)
->>  {
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index 8380eb7..466ce5a 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -127,3 +127,19 @@ void led_set_brightness(struct led_classdev *le=
-d_cdev,
->>         __led_set_brightness(led_cdev, brightness);
->>  }
->>  EXPORT_SYMBOL(led_set_brightness);
->> +
->> +int led_update_brightness(struct led_classdev *led_cdev)
->> +{
->> +       int ret =3D 0;
->> +
->> +       if (led_cdev->brightness_get) {
->> +               ret =3D led_cdev->brightness_get(led_cdev);
->> +               if (ret >=3D 0) {
->> +                       led_cdev->brightness =3D ret;
->> +                       return 0;
->> +               }
->> +       }
->> +
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL(led_update_brightness);
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index bc221d11..cc85b16 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -139,6 +139,16 @@ extern void led_blink_set_oneshot(struct led_cl=
-assdev *led_cdev,
->>   */
->>  extern void led_set_brightness(struct led_classdev *led_cdev,
->>                                enum led_brightness brightness);
->> +/**
->> + * led_update_brightness - update LED brightness
->> + * @led_cdev: the LED to query
->> + *
->> + * Get an LED's current brightness and update led_cdev->brightness
->> + * member with the obtained value.
->> + *
->> + * Returns: 0 on success or negative error value on failure
->> + */
->> +extern int led_update_brightness(struct led_classdev *led_cdev);
->>
->>  /*
->>   * LED Triggers
->> --
->> 1.7.9.5
->>
+diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
+index 7526461..052c120 100644
+--- a/drivers/usb/common/Makefile
++++ b/drivers/usb/common/Makefile
+@@ -2,5 +2,7 @@
+ # Makefile for the usb common parts.
+ #
+ 
+-obj-$(CONFIG_USB_COMMON) += usb-common.o
++obj-$(CONFIG_USB_COMMON)	  += usb-common.o
++usb-common-y			  += common.o
++
+ obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
+diff --git a/drivers/usb/common/usb-common.c b/drivers/usb/common/common.c
+similarity index 100%
+rename from drivers/usb/common/usb-common.c
+rename to drivers/usb/common/common.c
+-- 
+2.1.0
