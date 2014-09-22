@@ -1,89 +1,52 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 1/6] Documentation: leds: Add description of LED Flash
- Class extension
-Date: Mon, 22 Sep 2014 17:22:51 +0200
-Message-ID: <1411399376-16497-2-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 3/6] DT: Add documentation for exynos4-is 'flashes'
+ property
+Date: Mon, 22 Sep 2014 17:22:53 +0200
+Message-ID: <1411399376-16497-4-git-send-email-j.anaszewski@samsung.com>
 References: <1411399376-16497-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40628 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753524AbaIVPXK (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Sep 2014 11:23:10 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1411399376-16497-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+List-Id: linux-leds@vger.kernel.org
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes. There are also
-chapters devoted specifically to the Flash Manager feature.
+This patch adds a description of 'flashes' property
+to the samsung-fimc.txt.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- Documentation/leds/leds-class-flash.txt |   51 +++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+ .../devicetree/bindings/media/samsung-fimc.txt     |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..0cf5449a
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,51 @@
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+index 922d6f8..387ef3b 100644
+--- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -40,6 +40,10 @@ should be inactive. For the "active-a" state the camera port A must be activated
+ and the port B deactivated and for the state "active-b" it should be the other
+ way around.
+ 
++Optional properties:
 +
-+Flash LED handling under Linux
-+==============================
++- flashes - array of phandles to the available flash led devices
 +
-+Some LED devices support two modes - torch and flash. In order to enable
-+support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol must be defined
-+in the kernel config. A flash LED driver must register in the LED subsystem
-+with led_classdev_flash_register to gain flash capabilities.
-+
-+Following sysfs attributes are exposed for controlling flash led devices:
-+
-+	- flash_brightness - flash LED brightness in microamperes (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- indicator_brightness - privacy LED brightness in microamperes (RW)
-+	- max_indicator_brightness - maximum privacy LED brightness in
-+				     microamperes (RO)
-+	- flash_timeout - flash strobe duration in microseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- flash_fault - bitmask of flash faults that may have occurred,
-+			possible flags are:
-+		* 0x01 - flash controller voltage to the flash LED has exceeded
-+			 the limit specific to the flash controller
-+		* 0x02 - the flash strobe was still on when the timeout set by
-+			 the user has expired; not all flash controllers may
-+			 set this in all such conditions
-+		* 0x04 - the flash controller has overheated
-+		* 0x08 - the short circuit protection of the flash controller
-+			 has been triggered
-+		* 0x10 - current in the LED power supply has exceeded the limit
-+			 specific to the flash controller
-+		* 0x40 - flash controller voltage to the flash LED has been
-+			 below the minimum limit specific to the flash
-+		* 0x80 - the input voltage of the flash controller is below
-+			 the limit under which strobing the flash at full
-+			 current will not be possible. The condition persists
-+			 until this flag is no longer set
-+		* 0x100 - the temperature of the LED has exceeded its allowed
-+			  upper limit
-+
-+A LED subsystem driver can be controlled also from the level of VideoForLinux2
-+subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
-+be defined in the kernel config. The driver must call v4l2_flash_init function
-+to get registered in the V4L2 subsystem. On remove v4l2_flash_release function
-+has to be called (see <media/v4l2-flash.h>).
-+
-+After proper initialization V4L2 Flash sub-device is created. The sub-device
-+exposes a number of V4L2 controls. When the V4L2_CID_FLASH_LED_MODE control
-+is set to V4L2_FLASH_LED_MODE_TORCH or V4L2_FLASH_LED_MODE_FLASH the
-+LED subsystem sysfs interface becomes unavailable. The interface can be
-+unlocked by setting the mode back to V4L2_FLASH_LED_MODE_NONE.
+ The 'camera' node must include at least one 'fimc' child node.
+ 
+ 
+@@ -166,6 +170,7 @@ Example:
+ 		clock-output-names = "cam_a_clkout", "cam_b_clkout";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_port_a_clk_active>;
++		flashes = <&max77693-flash>, <&aat1290>;
+ 		status = "okay";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
 1.7.9.5
