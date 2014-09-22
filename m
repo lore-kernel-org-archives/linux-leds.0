@@ -1,17 +1,54 @@
-From: Kari Suvanto <kari.tj.suvanto@gmail.com>
-Subject: Re: 3.17-rc1: leds blink workqueue causes sleeping BUGs
-Date: Mon, 22 Sep 2014 12:37:09 +0300
-Message-ID: <541FEDC5.9080405@gmail.com>
-References: <541FD018.107@gmail.com> <20140922073726.GQ3349@type.wlan.youpi.perso.aquilenet.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140922073726.GQ3349@type.wlan.youpi.perso.aquilenet.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Thibault <samuel.thibault@ens-lyon.org>, "Hugh Dickins <hughd@google.com>Sabrina Dubroca" <sd@queasysnail.net>, Valdis.Kletnieks@vt.edu, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 0/3] LED / flash API integration - LED Flash Class
+Date: Mon, 22 Sep 2014 17:21:03 +0200
+Message-ID: <1411399266-16375-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Ok I missed that and it did not show up with my searches. I also tested your patch on top of next-20140922 and it seems to work.  
+This patch set is the follow-up of the LED / flash API integration
+series [1]. For clarity reasons the patchset has been split into
+four subsets:
 
--Kari
+- LED Flash Class
+- V4L2 Flash
+- LED Flash Class drivers
+- Documentation
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+
+Jacek Anaszewski (3):
+  leds: implement sysfs interface locking mechanism
+  leds: add API for setting torch brightness
+  leds: Add LED Flash Class wrapper to LED subsystem
+
+ drivers/leds/Kconfig            |   11 +
+ drivers/leds/Makefile           |    1 +
+ drivers/leds/led-class-flash.c  |  557 +++++++++++++++++++++++++++++++++++++++
+ drivers/leds/led-class.c        |   30 ++-
+ drivers/leds/led-core.c         |   32 +++
+ drivers/leds/led-triggers.c     |   16 +-
+ include/linux/led-class-flash.h |  238 +++++++++++++++++
+ include/linux/leds.h            |   56 ++++
+ 8 files changed, 934 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 include/linux/led-class-flash.h
+
+-- 
+1.7.9.5
