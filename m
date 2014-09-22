@@ -1,45 +1,107 @@
-From: Kari Suvanto <kari.tj.suvanto@gmail.com>
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
 Subject: Re: 3.17-rc1: leds blink workqueue causes sleeping BUGs
-Date: Mon, 22 Sep 2014 10:42:54 +0300
-Message-ID: <541FD2FE.3090102@gmail.com>
+Date: Mon, 22 Sep 2014 09:37:26 +0200
+Message-ID: <20140922073726.GQ3349@type.wlan.youpi.perso.aquilenet.fr>
+References: <541FD018.107@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:34208 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751073AbaIVHm6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Sep 2014 03:42:58 -0400
+Received: from sonata.ens-lyon.org ([140.77.166.138]:33698 "EHLO
+	sonata.ens-lyon.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752536AbaIVHpq (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Sep 2014 03:45:46 -0400
+Content-Disposition: inline
+In-Reply-To: <541FD018.107@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Cc: Hugh Dickins <hughd@google.com>, Sabrina Dubroca <sd@queasysnail.net>, Valdis.Kletnieks@vt.edu, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Kari Suvanto <kari.tj.suvanto@gmail.com>
+Cc: "Hugh Dickins <hughd@google.com>Sabrina Dubroca" <sd@queasysnail.net>, Valdis.Kletnieks@vt.edu, Vincent Donnefort <vdonnefort@gmail.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 
->Ew. I'll have a look.
+Kari Suvanto, le Mon 22 Sep 2014 10:30:32 +0300, a =E9crit :
+> >Ew. I'll have a look.
+>=20
+> Any update on this one?
 
-sorry, sending again, first one had html in it..
+I have already sent it, yes, on Tue, 26 Aug 2014 11:17:25 +0200, here i=
+t
+is again.
 
-Any update on this one?
+Samuel
 
-I'm seeing this in every boot. I patched this by changing led_trigger_register and led_trigger_register_simple as macros which creates a static lock_class_key like this:
--extern int led_trigger_register(struct led_trigger *trigger);
+Subject: [PATCHv2][input-led] Defer input led work to workqueue
+
+When the kbd changes its led state (e.g. caps lock), this triggers
+(led_trigger_event) the kbd-capsl trigger, which is by default
+used by the vt::capsl LED, which triggers (led_trigger_event) the
+vt-capsl trigger. These two nested led_trigger_event calls take a
+trig->leddev_list_lock lock and thus lockdep complains.
+
+Actually the user can make the vt::capsl LED use its own vt-capsl
+trigger and thus build a loop.  This produces an immediate oops.
+
+This changeset defers the second led_trigger_event call into a
+workqueue, which avoids the nested locking altogether.  This does
+not prevent the user from shooting himself in the foot by creating a
+vt::capsl <-> vt-capsl loop, but the only consequence is the workqueue
+threads eating some CPU until the user breaks the loop, which is not to=
+o
+bad.
+
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
+---
+
+Difference with v1: uses schedule_work instead of its own workqueue.
+
+--- a/drivers/input/leds.c
++++ b/drivers/input/leds.c
+@@ -100,13 +100,24 @@ static unsigned long vt_led_registered[B
+ /* Number of input devices having each LED */
+ static int vt_led_references[LED_CNT];
+=20
++static int vt_led_state[LED_CNT];
++static struct work_struct vt_led_work[LED_CNT];
 +
-+extern int __led_trigger_register_key(struct led_trigger *trigger,
-+                                     struct lock_class_key *key);
-+#ifdef CONFIG_LOCKDEP
-+#define led_trigger_register(trigger)                                  \
-+({                                                                     \
-+       static struct lock_class_key __key;                             \
-+                                                                       \
-+       __led_trigger_register_key(trigger, &__key);                    \
-+})
-+#else
-+#define led_trigger_register(trigger)                                  \
-+       __led_trigger_register_key(trigger, NULL)
-+#endif
++static void vt_led_cb(struct work_struct *work)
++{
++	int led =3D work - vt_led_work;
 +
-
-
-But should every trigger has own key? With my patch all the triggers from vt/keyboard.c are using the same key. Is that a problem? I have not seen any problems with that patch and after that I can see this https://lkml.org/lkml/2014/9/5/462.
-
--Kari 
++	led_trigger_event(&vt_led_triggers[led], vt_led_state[led]);
++}
++
+ /* VT LED state change, tell the VT trigger.  */
+ static void vt_led_set(struct led_classdev *cdev,
+ 			  enum led_brightness brightness)
+ {
+ 	int led =3D cdev - vt_leds;
+=20
+-	led_trigger_event(&vt_led_triggers[led], !!brightness);
++	vt_led_state[led] =3D !!brightness;
++	schedule_work(&vt_led_work[led]);
+ }
+=20
+ /* LED state change for some keyboard, notify that keyboard.  */
+@@ -244,6 +255,22 @@ void input_led_disconnect(struct input_d
+ 	mutex_unlock(&vt_led_registered_lock);
+ }
+=20
++static int __init input_led_init(void)
++{
++	unsigned i;
++
++	for (i =3D 0; i < LED_CNT; i++)
++		INIT_WORK(&vt_led_work[i], vt_led_cb);
++
++	return 0;
++}
++
++static void __exit input_led_exit(void)
++{
++}
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("User LED support for input layer");
+ MODULE_AUTHOR("Samuel Thibault <samuel.thibault@ens-lyon.org>");
++module_init(input_led_init);
++module_exit(input_led_exit);
