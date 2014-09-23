@@ -1,145 +1,102 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v3] leds: Add DT support for leds-pca9532
-Date: Mon, 22 Sep 2014 18:02:22 -0700
-Message-ID: <CAK5ve-JF3e4nutBwGin7uib6-6ffWnW--SZH=hfc738uROJE3Q@mail.gmail.com>
-References: <1410362945-30623-1-git-send-email-stigge@antcom.de>
+From: Michal Sojka <sojka@merica.cz>
+Subject: Re: [PATCH v5 1/3] usb: gadget: Refactor request completion
+Date: Tue, 23 Sep 2014 10:09:22 +0200
+Message-ID: <874mvyahcd.fsf@steelpick.2x.cz>
+References: <1410938473-29385-1-git-send-email-sojka@merica.cz> <1410938473-29385-2-git-send-email-sojka@merica.cz> <20140917152801.GD6903@saruman.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410362945-30623-1-git-send-email-stigge@antcom.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Roland Stigge <stigge@antcom.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Riku Voipio <riku.voipio@iki.fi>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from max.feld.cvut.cz ([147.32.192.36]:41838 "EHLO max.feld.cvut.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750744AbaIXFLf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 24 Sep 2014 01:11:35 -0400
+In-Reply-To: <20140917152801.GD6903@saruman.home>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+Cc: linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-On Wed, Sep 10, 2014 at 8:29 AM, Roland Stigge <stigge@antcom.de> wrote:
-> This patch adds DT support for leds-pca9532.
->
-> Signed-off-by: Roland Stigge <stigge@antcom.de>
->
-> ---
-> Applies to v3.17-rc4
->
->  v3: Removed superfluous whitespace
->  v2: Removed #ifdef statements
->
->  Documentation/devicetree/bindings/leds/leds-pca9532.txt |   43 ++++++++++++++
->  drivers/leds/leds-pca9532.c                             |   47 ++++++++++++++++
->  2 files changed, 90 insertions(+)
->
-> --- /dev/null
-> +++ linux-2.6/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-> @@ -0,0 +1,43 @@
-> +NXP PCA9532 LED (incl. GPIO) controller
-> +
-> +Required properties:
-> +- compatible: must be "nxp,pca9532"
-> +- reg: I2C address
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +- #gpio-cells: Should be 2:
-> +   1) pin number
-> +   2) optional parameters:
-> +      - bit 0 specifies polarity (0 for normal, 1 for inverted)
-> +- nxp,typecodes: groups of 2 bits for each of the 16 pins:
-> +  0: None
-> +  1: LED
-> +  2: Beep
-> +  3: GPIO
-> +- nxp,statecodes: groups of 2 bits for each of the 16 pins:
-> +  0: off
-> +  1: on
-> +  2: pwm0
-> +  3: pwm1
-> +
-> +Optional properties:
-> +- nxp,psc: array of 2 numbers: PSC values for the two PWM channels (see datasheet)
-> +- nxp,pwm: array of 2 numbers: PWM values for the two PWM channels (see datasheet)
-> +
-> +Example:
-> +
-> +       pca9532: pca9532@60 {
-> +               compatible = "nxp,pca9532";
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +               nxp,typecodes = <0xffffffff>;
-> +               nxp,statecodes = <0x00000000>;
-> +               reg = <0x60>;
-> +       };
-> +
-> +       sd@20098000 {
-> +               wp-gpios = <&pca9532 5 0>;
-> +               cd-gpios = <&pca9532 4 0>;
-> +               cd-inverted;
-> +               bus-width = <4>;
-> +               status = "okay";
-> +       };
-> --- linux-2.6.orig/drivers/leds/leds-pca9532.c
-> +++ linux-2.6/drivers/leds/leds-pca9532.c
-> @@ -21,6 +21,7 @@
->  #include <linux/workqueue.h>
->  #include <linux/leds-pca9532.h>
->  #include <linux/gpio.h>
-> +#include <linux/of.h>
->
->  /* m =  num_leds*/
->  #define PCA9532_REG_INPUT(i)   ((i) >> 3)
-> @@ -442,6 +443,43 @@ exit:
->         return err;
->  }
->
-> +static struct pca9532_platform_data *pca9532_parse_dt(struct device *dev)
-> +{
-> +       struct device_node *np = dev->of_node;
-> +       struct pca9532_platform_data *pca9532_pdata;
-> +       u32 typecodes, statecodes;
-> +       u32 pwm[2];
-> +       u32 psc[2];
-> +       int i;
-> +
-> +       pca9532_pdata = devm_kzalloc(dev, sizeof(*pca9532_pdata), GFP_KERNEL);
-> +       if (!pca9532_pdata)
-> +               return NULL;
-> +
-> +       if (!of_property_read_u32(np, "nxp,typecodes", &typecodes)) {
+Dear Felipe,
 
-Can we do some error check here and print out warning/error message?
-If this fails (unlikely), will we still continue?
-
--Bryan
-
-> +               for (i = 0; i < 16; i++)
-> +                       pca9532_pdata->leds[i].type =
-> +                               (typecodes >> (2 * i)) & 0x3;
-> +       }
-> +       if (!of_property_read_u32(np, "nxp,statecodes", &statecodes)) {
-> +               for (i = 0; i < 16; i++)
-> +                       pca9532_pdata->leds[i].state =
-> +                               (statecodes >> (2 * i)) & 0x3;
-> +       }
-> +       if (!of_property_read_u32_array(np, "nxp,pwm", &pwm[0], 2)) {
-> +               for (i = 0; i < 2; i++)
-> +                       pca9532_pdata->pwm[i] = pwm[i];
-> +       }
-> +       if (!of_property_read_u32_array(np, "nxp,psc", &psc[0], 2)) {
-> +               for (i = 0; i < 2; i++)
-> +                       pca9532_pdata->psc[i] = psc[i];
-> +       }
-> +
-> +       pca9532_pdata->gpio_base = -1; /* dynamically assign gpio base */
-> +
-> +       return pca9532_pdata;
-> +}
-> +
->  static int pca9532_probe(struct i2c_client *client,
->         const struct i2c_device_id *id)
->  {
-> @@ -449,6 +487,9 @@ static int pca9532_probe(struct i2c_clie
->         struct pca9532_platform_data *pca9532_pdata =
->                         dev_get_platdata(&client->dev);
+On Wed, Sep 17 2014, Felipe Balbi wrote:
+> On Wed, Sep 17, 2014 at 09:21:11AM +0200, Michal Sojka wrote:
+>> All USB peripheral controller drivers called completion routines
+>> directly. This patch moves the completion call from drivers to
+>> usb_gadget_giveback_request(), in order to have a place where common
+>> functionality can be added.
+>> 
+>> All places in drivers/usb/ matching "[-.]complete(" were replaced with a
+>> call to usb_gadget_giveback_request(). This was compile-tested with all
+>> ARM drivers enabled and runtime-tested for musb.
+>> 
+>> Signed-off-by: Michal Sojka <sojka@merica.cz>
+>> ---
+>>  drivers/usb/chipidea/udc.c              |  6 +++---
+>>  drivers/usb/dwc2/gadget.c               |  6 +++---
+>>  drivers/usb/dwc3/gadget.c               |  2 +-
+>>  drivers/usb/gadget/udc/amd5536udc.c     |  2 +-
+>>  drivers/usb/gadget/udc/at91_udc.c       |  2 +-
+>>  drivers/usb/gadget/udc/atmel_usba_udc.c |  4 ++--
+>>  drivers/usb/gadget/udc/bcm63xx_udc.c    |  2 +-
+>>  drivers/usb/gadget/udc/dummy_hcd.c      | 10 +++++-----
+>>  drivers/usb/gadget/udc/fotg210-udc.c    |  2 +-
+>>  drivers/usb/gadget/udc/fsl_qe_udc.c     |  6 +-----
+>>  drivers/usb/gadget/udc/fsl_udc_core.c   |  6 ++----
+>>  drivers/usb/gadget/udc/fusb300_udc.c    |  2 +-
+>>  drivers/usb/gadget/udc/goku_udc.c       |  2 +-
+>>  drivers/usb/gadget/udc/gr_udc.c         |  2 +-
+>>  drivers/usb/gadget/udc/lpc32xx_udc.c    |  2 +-
+>>  drivers/usb/gadget/udc/m66592-udc.c     |  2 +-
+>>  drivers/usb/gadget/udc/mv_u3d_core.c    |  8 ++------
+>>  drivers/usb/gadget/udc/mv_udc_core.c    |  8 ++------
+>>  drivers/usb/gadget/udc/net2272.c        |  2 +-
+>>  drivers/usb/gadget/udc/net2280.c        |  2 +-
+>>  drivers/usb/gadget/udc/omap_udc.c       |  2 +-
+>>  drivers/usb/gadget/udc/pch_udc.c        |  2 +-
+>>  drivers/usb/gadget/udc/pxa25x_udc.c     |  2 +-
+>>  drivers/usb/gadget/udc/pxa27x_udc.c     |  2 +-
+>>  drivers/usb/gadget/udc/r8a66597-udc.c   |  2 +-
+>>  drivers/usb/gadget/udc/s3c-hsudc.c      |  3 +--
+>>  drivers/usb/gadget/udc/s3c2410_udc.c    |  2 +-
+>>  drivers/usb/gadget/udc/udc-core.c       | 19 +++++++++++++++++++
+>>  drivers/usb/musb/musb_gadget.c          |  2 +-
+>>  drivers/usb/renesas_usbhs/mod_gadget.c  |  2 +-
+>>  include/linux/usb/gadget.h              |  8 ++++++++
 >
-> +       if (IS_ENABLED(CONFIG_OF) && !pca9532_pdata && client->dev.of_node)
-> +               pca9532_pdata = pca9532_parse_dt(&client->dev);
-> +
->         if (!pca9532_pdata)
->                 return -EIO;
+> I would rather split this into several patches, btw. With the
+> introduction of usb_gadget_giveback_request() being the first one in the
+> series. It's easier to review that way.
+
+This would be no problem.
+
+>> diff --git a/drivers/usb/gadget/udc/udc-core.c b/drivers/usb/gadget/udc/udc-core.c
+>> index b0d9817..29789f1 100644
+>> --- a/drivers/usb/gadget/udc/udc-core.c
+>> +++ b/drivers/usb/gadget/udc/udc-core.c
+>> @@ -106,6 +106,25 @@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_request);
+>>  
+>>  /* ------------------------------------------------------------------------- */
+>>  
+>> +/**
+>> + * usb_gadget_giveback_request - give the request back to the gadget layer
+>> + * Context: in_interrupt()
+>> + *
+>> + * This is called by device controller drivers in order to return the
+>> + * completed request back to the gadget layer.
+>> + */
+>> +void usb_gadget_giveback_request(struct usb_ep *ep,
+>> +		struct usb_request *req)
+>> +{
+>> +	if (likely(req->complete))
+>> +		req->complete(ep, req);
+>> +	else
+>> +		pr_err("%s : req->complete must not be NULL\n", __func__);
 >
+> let it Oops. We require ->complete to be valid, if there's any gadget
+> driver not setting ->complete, it deserves to oops so we can the
+> error.
+
+The Oops was there before, but I removed it because greg k-h didn't want
+it. See http://marc.info/?l=linux-usb&m=140917381611947&w=2. Do you
+still want the oops here?
+
+-Michal
