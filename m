@@ -1,72 +1,48 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] MFD: Immutable branch between HWMON, LEDs and Watchdog
-Date: Wed, 24 Sep 2014 15:49:36 +0100
-Message-ID: <20140924144936.GL32069@lee--X1>
-References: <cover.1409161615.git.andreas.werner@men.de>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v5 1/3] usb: gadget: Refactor request completion
+Date: Wed, 24 Sep 2014 11:08:16 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
+References: <874mvyahcd.fsf@steelpick.2x.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1409161615.git.andreas.werner@men.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andreas Werner <andreas.werner@men.de>
-Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, linux@roeck-us.net, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:38955 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751600AbaIXPIR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 11:08:17 -0400
+In-Reply-To: <874mvyahcd.fsf@steelpick.2x.cz>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Michal Sojka <sojka@merica.cz>
+Cc: Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-Guenter, Bryan, Wim,
+On Tue, 23 Sep 2014, Michal Sojka wrote:
 
-The following changes since commit 52addcf9d6669fa439387610bc65c92fa098=
-0cef:
- =20
-  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
- =20
-are available in the git repository at:
- =20
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-hw=
-mon-leds-watchdog-v3.18
+> >> +/**
+> >> + * usb_gadget_giveback_request - give the request back to the gadget layer
+> >> + * Context: in_interrupt()
+> >> + *
+> >> + * This is called by device controller drivers in order to return the
+> >> + * completed request back to the gadget layer.
+> >> + */
+> >> +void usb_gadget_giveback_request(struct usb_ep *ep,
+> >> +		struct usb_request *req)
+> >> +{
+> >> +	if (likely(req->complete))
+> >> +		req->complete(ep, req);
+> >> +	else
+> >> +		pr_err("%s : req->complete must not be NULL\n", __func__);
+> >
+> > let it Oops. We require ->complete to be valid, if there's any gadget
+> > driver not setting ->complete, it deserves to oops so we can the
+> > error.
+> 
+> The Oops was there before, but I removed it because greg k-h didn't want
+> it. See http://marc.info/?l=linux-usb&m=140917381611947&w=2. Do you
+> still want the oops here?
 
-for you to fetch changes up to 964356938fcd3c0001a786f55b9f0a0fbe47656a=
-:
+Greg didn't want you to add a BUG() statement, whereas Felipe wants you
+to leave out the "if" test and pr_err().  Just omit both, and everyone
+will be satisfied.
 
-  hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver (2014-09-2=
-4 15:36:33 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, HWMON, LEDs and Watchdog for v3.18
-
-----------------------------------------------------------------
-Andreas Werner (4):
-      mfd: menf21bmc: Introduce MEN 14F021P00 BMC MFD Core driver
-      watchdog: menf21bmc_wdt: Introduce MEN 14F021P00 BMC Watchdog dri=
-ver
-      leds: leds-menf21bmc: Introduce MEN 14F021P00 BMC LED driver
-      hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver
-
- Documentation/hwmon/menf21bmc    |  50 +++++++++
- drivers/hwmon/Kconfig            |  10 ++
- drivers/hwmon/Makefile           |   1 +
- drivers/hwmon/menf21bmc_hwmon.c  | 230 +++++++++++++++++++++++++++++++=
-++++++++
- drivers/leds/Kconfig             |   9 ++
- drivers/leds/Makefile            |   1 +
- drivers/leds/leds-menf21bmc.c    | 131 ++++++++++++++++++++++
- drivers/mfd/Kconfig              |  15 +++
- drivers/mfd/Makefile             |   1 +
- drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
- drivers/watchdog/Kconfig         |  10 ++
- drivers/watchdog/Makefile        |   1 +
- drivers/watchdog/menf21bmc_wdt.c | 203 +++++++++++++++++++++++++++++++=
-+++
- 13 files changed, 794 insertions(+)
- create mode 100644 Documentation/hwmon/menf21bmc
- create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
- create mode 100644 drivers/leds/leds-menf21bmc.c
- create mode 100644 drivers/mfd/menf21bmc.c
- create mode 100644 drivers/watchdog/menf21bmc_wdt.c
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Alan Stern
