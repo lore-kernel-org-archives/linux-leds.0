@@ -1,109 +1,77 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 0/4] Introduce MEN 14F021P00 BMC driver series
-Date: Wed, 24 Sep 2014 19:41:43 +0100
-Message-ID: <20140924184143.GC7113@lee--X1>
-References: <cover.1409161615.git.andreas.werner@men.de>
- <20140924144829.GK32069@lee--X1>
- <20140924154503.GA12403@roeck-us.net>
- <20140924161837.GA7113@lee--X1>
- <CAK5ve-+79oMf0vD-_gzWLPbvFi4ygd1q9pzTCHzzpsXVkjqP9Q@mail.gmail.com>
- <20140924165739.GA31578@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:43062 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753801AbaIXSlu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 14:41:50 -0400
-Received: by mail-ig0-f180.google.com with SMTP id a13so7054045igq.1
-        for <linux-leds@vger.kernel.org>; Wed, 24 Sep 2014 11:41:49 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20140924165739.GA31578@roeck-us.net>
-Sender: linux-leds-owner@vger.kernel.org
+From: Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
+Subject: [PATCH v6 1/4] usb: gadget: Introduce usb_gadget_giveback_request()
+Date: Wed, 24 Sep 2014 22:43:18 +0200
+Message-ID: <1411591401-5874-2-git-send-email-sojka@merica.cz>
+References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
+ <1411591401-5874-1-git-send-email-sojka@merica.cz>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1411591401-5874-1-git-send-email-sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, michal.vokac-veUE7cmDK2A@public.gmane.org, Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Bryan Wu <cooloney@gmail.com>, Andreas Werner <andreas.werner@men.de>, lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Wed, 24 Sep 2014, Guenter Roeck wrote:
+All USB peripheral controller drivers call completion routines directly.
+This patch adds usb_gadget_giveback_request() which will be used instead
+of direct invocation in the next patch. The goal here is to have a place
+where common functionality can be added.
 
-> On Wed, Sep 24, 2014 at 09:33:32AM -0700, Bryan Wu wrote:
-> > On Wed, Sep 24, 2014 at 9:18 AM, Lee Jones <lee.jones@linaro.org> w=
-rote:
-> > > On Wed, 24 Sep 2014, Guenter Roeck wrote:
-> > >
-> > >> On Wed, Sep 24, 2014 at 03:48:29PM +0100, Lee Jones wrote:
-> > >> > Guenter, Bryan, Wim,
-> > >> >
-> > >> > The following changes since commit 52addcf9d6669fa439387610bc6=
-5c92fa0980cef:
-> > >> >
-> > >> >   Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
-> > >> >
-> > >> > are available in the git repository at:
-> > >> >
-> > >> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ta=
-gs/mfd-hwmon-leds-watchdog-v3.18
-> > >> >
-> > >> > for you to fetch changes up to 964356938fcd3c0001a786f55b9f0a0=
-fbe47656a:
-> > >> >
-> > >> >   hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver (=
-2014-09-24 15:36:33 +0100)
-> > >> >
-> > >> > --------------------------------------------------------------=
+Signed-off-by: Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
+---
+ drivers/usb/gadget/udc/udc-core.c | 16 ++++++++++++++++
+ include/linux/usb/gadget.h        |  8 ++++++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/drivers/usb/gadget/udc/udc-core.c b/drivers/usb/gadget/udc/udc-core.c
+index b0d9817..f7b3151 100644
+--- a/drivers/usb/gadget/udc/udc-core.c
++++ b/drivers/usb/gadget/udc/udc-core.c
+@@ -106,6 +106,22 @@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_request);
+ 
+ /* ------------------------------------------------------------------------- */
+ 
++/**
++ * usb_gadget_giveback_request - give the request back to the gadget layer
++ * Context: in_interrupt()
++ *
++ * This is called by device controller drivers in order to return the
++ * completed request back to the gadget layer.
++ */
++void usb_gadget_giveback_request(struct usb_ep *ep,
++		struct usb_request *req)
++{
++	req->complete(ep, req);
++}
++EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
++
++/* ------------------------------------------------------------------------- */
++
+ static void usb_gadget_state_work(struct work_struct *work)
+ {
+ 	struct usb_gadget	*gadget = work_to_gadget(work);
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index c3a6185..f795e95 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -1013,6 +1013,14 @@ extern void usb_gadget_set_state(struct usb_gadget *gadget,
+ 
+ /*-------------------------------------------------------------------------*/
+ 
++/* utility to give requests back to the gadget layer */
++
++extern void usb_gadget_giveback_request(struct usb_ep *ep,
++		struct usb_request *req);
++
++
++/*-------------------------------------------------------------------------*/
++
+ /* utility wrapping a simple endpoint selection policy */
+ 
+ extern struct usb_ep *usb_ep_autoconfig(struct usb_gadget *,
+-- 
+2.1.0
+
 --
-> > >> > Immutable branch between MFD, HWMON, LEDs and Watchdog for v3.=
-18
-> > >> >
-> > >> I assume you'll push it all through mfd, correct ?
-> > >
-> > > The idea is for all the affected Maintainers to pull this branch =
-in to
-> > > their own trees.  If you guys don't, there will be a good chance =
-of
-> > > conflict during the merge-window, which will subsequently upset L=
-inus.
-> > >
-> > > So in answer to your question; yes I'll be taking this, but so sh=
-ould
-> > > each of you.
-> > >
-> >=20
-> > Thanks for this, man. What am I going to do here? Need I pull in al=
-l
-> > the patches here into my LED tree or just one LED patch? I think if
-> > you push this for Linus through MFD tree, I don't need to pull it i=
-nto
-> > my tree, right?
-> >=20
-> I did
->=20
-> git remote add mfd git://git.kernel.org/pub/scm/linux/kernel/git/lee/=
-mfd.git
-> git fetch --tags mfd
-> git merge mfd-hwmon-leds-watchdog-v3.18
->=20
-> in both my hwmon-next and watchdog-next branches. Both are currently =
-building,
-> and already pushed into to my repository at kernel.org.
->=20
-> So, effectively, when I send my pull request to Linus, all patches fr=
-om
-> mfd-hwmon-leds-watchdog-v3.18 will be included, ie the entire series.
-> The same will happen when Lee sends his pull request, and Wim, and yo=
-u.=20
-> I believe that is what Lee is asking for.
-
-That's right.  It's not okay to break this branch up.  If it was, we
-would have been able to apply our respective components into our own
-trees from the beginning, but as there are interdependencies, breaking
-up the branch could have nasty consequences depending on the order in
-which they land in Mainline.  Most likely bisectability will be
-broken, which is not allowed.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
