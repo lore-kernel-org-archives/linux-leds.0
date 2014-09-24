@@ -1,51 +1,76 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v6 2/4] drivers/watchdog/menf21bmc_wdt: introduce MEN
- 14F021P00 BMC Watchdog driver
-Date: Wed, 24 Sep 2014 06:24:34 -0700
-Message-ID: <5422C612.70906@roeck-us.net>
-References: <cover.1409161615.git.andreas.werner@men.de> <f21b275c79866e0aa9bbc59e195ae5424e538300.1409161615.git.andreas.werner@men.de> <20140924123548.GE32069@lee--X1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD, HWMON, LEDs and Watchdog
+Date: Wed, 24 Sep 2014 14:45:40 +0100
+Message-ID: <20140924134540.GF32069@lee--X1>
+References: <cover.1409161615.git.andreas.werner@men.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:47831 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752848AbaIXNYj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 09:24:39 -0400
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1XWmYg-001Mnw-IX
-	for linux-leds@vger.kernel.org; Wed, 24 Sep 2014 13:24:38 +0000
-In-Reply-To: <20140924123548.GE32069@lee--X1>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:62231 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751551AbaIXNpq (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 09:45:46 -0400
+Received: by mail-ig0-f182.google.com with SMTP id hn15so6502889igb.3
+        for <linux-leds@vger.kernel.org>; Wed, 24 Sep 2014 06:45:46 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <cover.1409161615.git.andreas.werner@men.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Andreas Werner <andreas.werner@men.de>
-Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
+To: Andreas Werner <andreas.werner@men.de>
+Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, linux@roeck-us.net, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-On 09/24/2014 05:35 AM, Lee Jones wrote:
-> On Wed, 27 Aug 2014, Andreas Werner wrote:
->
->> Added driver to support the 14F021P00 BMC Watchdog.
->> The BMC is a Board Management Controller including watchdog functionality.
->>
->> Signed-off-by: Andreas Werner <andreas.werner@men.de>
->> ---
->>   drivers/watchdog/Kconfig         |  10 ++
->>   drivers/watchdog/Makefile        |   1 +
->>   drivers/watchdog/menf21bmc_wdt.c | 203 +++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 214 insertions(+)
->>   create mode 100644 drivers/watchdog/menf21bmc_wdt.c
->
-> I see no reason to keep this dragging on.  I'm going to apply this
-> along with the remainder of the set and send a pull-request to all the
-> other Maintainers.  This branch is currently under test.
->
-> Any fix-ups for review comments can go in subsequently.
->
-Tend to agree. I thought I sent it before, but in case I didn't
+The following changes since commit 52addcf9d6669fa439387610bc65c92fa098=
+0cef:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
 
-[ for the watchdog driver ]
+are available in the git repository at:
 
-Guenter
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-hw=
+mon-leds-watchdog-v3.17
+
+for you to fetch changes up to 25b1efbf5ff8a2475e29572065cac3d89cee24b1=
+:
+
+  hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver (2014-09-2=
+4 13:31:20 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, HWMON, LEDs and Watchdog for v3.17
+
+----------------------------------------------------------------
+Andreas Werner (4):
+      mfd: menf21bmc: Introduce MEN 14F021P00 BMC MFD Core driver
+      watchdog: menf21bmc_wdt: Introduce MEN 14F021P00 BMC Watchdog dri=
+ver
+      leds: leds-menf21bmc: Introduce MEN 14F021P00 BMC LED driver
+      hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver
+
+ Documentation/hwmon/menf21bmc    |  50 +++++++++
+ drivers/hwmon/Kconfig            |  10 ++
+ drivers/hwmon/Makefile           |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c  | 230 +++++++++++++++++++++++++++++++=
+++++++++
+ drivers/leds/Kconfig             |   9 ++
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 131 ++++++++++++++++++++++
+ drivers/mfd/Kconfig              |  15 +++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |  10 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 203 +++++++++++++++++++++++++++++++=
++++
+ 13 files changed, 794 insertions(+)
+ create mode 100644 Documentation/hwmon/menf21bmc
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
