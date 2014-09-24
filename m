@@ -1,172 +1,105 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v6 4/4] usb: Add LED triggers for USB activity
-Date: Wed, 24 Sep 2014 15:56:27 -0500
-Message-ID: <20140924205627.GB17997@saruman>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 0/4] LED triggers for USB host and device
+Date: Wed, 24 Sep 2014 15:59:36 -0500
+Message-ID: <20140924205936.GC17997@saruman>
 References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
  <1411591401-5874-1-git-send-email-sojka@merica.cz>
- <1411591401-5874-5-git-send-email-sojka@merica.cz>
-Reply-To: <balbi@ti.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="alCHniwhwUTljuKz"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:50663 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750767AbaIXU4f (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 24 Sep 2014 16:56:35 -0400
+	protocol="application/pgp-signature"; boundary="K3iCROrs1P5jLO0B"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1411591401-5874-5-git-send-email-sojka@merica.cz>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <1411591401-5874-1-git-send-email-sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, michal.vokac-veUE7cmDK2A@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Michal Sojka <sojka@merica.cz>
-Cc: linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
---alCHniwhwUTljuKz
-Content-Type: text/plain; charset=iso-8859-1
+--K3iCROrs1P5jLO0B
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Sep 24, 2014 at 10:43:17PM +0200, Michal Sojka wrote:
+> This adds LED triggers for USB host and device. First two patches
+> refactor UDC drivers as requested by Felipe Balbi, the next renames a
+> file and the last is the actual implementation of the LED triggers.
+>=20
+> Changes from v5:
+> - Refactoring of USB gadget completion split into two patches (Filipe
+>   Balbi)
+> - Removed check for non-NULL req->completion (Filipe Balbi)
+>=20
+> Changes from v4:
+> - Added performance numbers to the commit message of the last patch
+>   (greg k-h).
+> - Replaced BUG_ON with pr_err (Alan Stern, greg k-h).
+> - Used proper coding style for switch statement (greg k-h).
+> - Added comment about NULL argument (greg k-h).
+> - EXPORT_SYMBOL changed to EXPORT_SYMBOL_GPL (greg k-h).
+> - Both triggers are now registerd even if host or gagdet subsystem
+>   is not enabled (Bryan Wu, greg k-h).
+>=20
+> Changes from v3:
+> - usb_gadget_giveback_request() moved outside of CONFIG_HAS_DMA
+>   conditioned block.
+> - Added kernel-doc for usb_gadget_giveback_request() (Felipe Balbi).
+> - Removed outdated comment (Alan Stern).
+> - req->complete =3D=3D NULL is now a bug. Previously, this was ignored
+>   (Alan Stern).
+> - File rename moved to a separate commit (greg k-h).
+>=20
+> Changes from v2:
+> - Host/gadget triggers merged to a single file in usb/common/ (Felipe
+>   Balbi).
+> - UDC drivers refactored so that LED trigger works for all of them.
+>=20
+> Changes from v1:
+> - Moved from drivers/leds/ to drivers/usb/.
+> - Improved Kconfig help.
+> - Linked with other modules rather than being standalone modules.
+>=20
+> Michal Sojka (4):
+>   usb: gadget: Introduce usb_gadget_giveback_request()
+>   usb: gadget: Refactor request completion
+>   usb: Rename usb-common.c
+>   usb: Add LED triggers for USB activity
 
-On Wed, Sep 24, 2014 at 10:43:21PM +0200, Michal Sojka wrote:
-> With this patch, USB activity can be signaled by blinking a LED. There
-> are two triggers, one for activity on USB host and one for USB gadget.
->=20
-> Both triggers should work with all host/device controllers. Tested only
-> with musb.
->=20
-> Performace: I measured performance overheads on ARM Cortex-A8 (TI
-> AM335x) running on 600 MHz.
->=20
-> Duration of usb_led_activity():
-> - with no LED attached to the trigger:        2 =B1 1 =B5s
-> - with one GPIO LED attached to the trigger:  2 =B1 1 =B5s or 8 =B1 2 =B5=
-s (two peaks in histogram)
->=20
-> Duration of functions calling usb_led_activity() (with this patch
-> applied and no LED attached to the trigger):
-> - __usb_hcd_giveback_urb():    10 - 25 =B5s
-> - usb_gadget_giveback_request(): 2 - 6 =B5s
->
-> Signed-off-by: Michal Sojka <sojka@merica.cz>
-> ---
->  drivers/usb/Kconfig               | 10 +++++++
->  drivers/usb/common/Makefile       |  1 +
->  drivers/usb/common/led.c          | 57 +++++++++++++++++++++++++++++++++=
-++++++
->  drivers/usb/core/hcd.c            |  2 ++
->  drivers/usb/gadget/udc/udc-core.c |  4 +++
->  include/linux/usb.h               | 12 +++++++++
->  6 files changed, 86 insertions(+)
->  create mode 100644 drivers/usb/common/led.c
->=20
-> diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-> index cf1b19b..ae481c3 100644
-> --- a/drivers/usb/Kconfig
-> +++ b/drivers/usb/Kconfig
-> @@ -149,4 +149,14 @@ source "drivers/usb/phy/Kconfig"
-> =20
->  source "drivers/usb/gadget/Kconfig"
-> =20
-> +config USB_LED_TRIG
-> +	bool "USB LED Triggers"
-> +	depends on LEDS_CLASS && USB_COMMON && LEDS_TRIGGERS
-> +	help
-> +	  This option adds LED triggers for USB host and/or gadget activity.
-> +
-> +	  Say Y here if you are working on a system with led-class supported
-> +	  LEDs and you want to use them as activity indicators for USB host or
-> +	  gadget.
-> +
->  endif # USB_SUPPORT
-> diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
-> index 052c120..ca2f8bd 100644
-> --- a/drivers/usb/common/Makefile
-> +++ b/drivers/usb/common/Makefile
-> @@ -4,5 +4,6 @@
-> =20
->  obj-$(CONFIG_USB_COMMON)	  +=3D usb-common.o
->  usb-common-y			  +=3D common.o
-> +usb-common-$(CONFIG_USB_LED_TRIG) +=3D led.o
-> =20
->  obj-$(CONFIG_USB_OTG_FSM) +=3D usb-otg-fsm.o
-> diff --git a/drivers/usb/common/led.c b/drivers/usb/common/led.c
-> new file mode 100644
-> index 0000000..df23da0
-> --- /dev/null
-> +++ b/drivers/usb/common/led.c
-> @@ -0,0 +1,57 @@
-> +/*
-> + * LED Triggers for USB Activity
-> + *
-> + * Copyright 2014 Michal Sojka <sojka@merica.cz>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/leds.h>
-> +#include <linux/usb.h>
-> +
-> +#define BLINK_DELAY 30
-> +
-> +static unsigned long usb_blink_delay =3D BLINK_DELAY;
-> +
-> +DEFINE_LED_TRIGGER(ledtrig_usb_gadget);
-> +DEFINE_LED_TRIGGER(ledtrig_usb_host);
-> +
-> +void usb_led_activity(enum usb_led_event ev)
-> +{
-> +	struct led_trigger *trig =3D NULL;
-> +
-> +	switch (ev) {
-> +	case USB_LED_EVENT_GADGET:
-> +		trig =3D ledtrig_usb_gadget;
-> +		break;
-> +	case USB_LED_EVENT_HOST:
-> +		trig =3D ledtrig_usb_host;
-> +		break;
-> +	}
-> +	/* led_trigger_blink_oneshot() handles trig =3D=3D NULL gracefully */
-> +	led_trigger_blink_oneshot(trig, &usb_blink_delay, &usb_blink_delay, 0);
-> +}
-> +EXPORT_SYMBOL_GPL(usb_led_activity);
-> +
-> +
+Greg, how do you want to handle this one as it touched both host and
+gadget ? I could wait until you apply this series to your usb-next and
+based my pull request on that. That'll work as long as it doesn't take
+too long for this to be merged.
 
-minor nit: one blank line only. other than that, this looks pretty good
-to me:
-
-Acked-by: Felipe Balbi <balbi@ti.com>
+cheers
 
 --=20
 balbi
 
---alCHniwhwUTljuKz
+--K3iCROrs1P5jLO0B
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUIy/7AAoJEIaOsuA1yqRE3loP/2n1Hh4OxgIPaa8oijQl90Nc
-cKoM15pv4TCEPcYYY7qJYGveQXQ33kNUgG3LaQBeHKsQykOJdlIrGk/BzgpPS8pV
-DWyU5k4no617Du0Q5cYvO54LO+xWjKIAiqbuWwh8npbLrwSqbjjcX7BnjOpY3TW8
-89nL+VSYRSS5pJQGA3b1+MDFzTO/piwH5kJTdV6Xaufbz0K6BTbJgScMuDinku5r
-LUAi7sAzbQ+9op1nldclqLRl27hU5rsYBloan5UXcV4eGhWYQ21iV3GHJpLoN8BL
-b5NaCLY7g6ZT3eislRc6WmalkLJKjKcZvbVV2Q4gCaCbagFTpBXNDBndNOEaiPbn
-2+LSIKOK1UQkZqJI4LcnkO+K0k7pn17OOWUPRAsfHewYBkusS6OHlih1hj/jRwTd
-9q9PZtsEdqJlB2+D948K6tNFgwcxQJzLZPg6aaz88/gfyzuqyOunJ3XVga3rcUYC
-Av4mbN3MvEZ7dTwbCPPbN0aO+8yFDK7OzfuBK6Jo9FUz33aU4009OvpmSq4A04I2
-UtPZ/sp6tWhR1LeybxDjwgKwZPx46PxHyI3olK7w+WI0cPkSD917JmwKRPSmZYJO
-uXv0pFPIxgYhBeZklpGH//aVNu9Yfdc8Y1xReMmEKBiyCOj0eC5smsARPRD1/N+o
-8Gfxpt0Cq6zYZP6Hit3q
-=/NN5
+iQIcBAEBAgAGBQJUIzC4AAoJEIaOsuA1yqRENIsP/ij0h/0d+LVJkaQ3aRnnA6SG
+2me4trHH4zXGkde52omENJj5GeSQ1G+3tu//iQx7C6u+XtLDnHpEPBIs9h7Dg9MY
+wygp5uRDPLSSXyBFCb6k666VJLeBBk1guTL9ypbWfe4i3AOS+cnY3Q1CuViQ5Bxb
+TjliytztFr6JUuJm3dHZIUexZ7qv9hfZGorw86qhI2FZDfCPgQVEJiEChFLAhdCM
+4H30CscgNWaLrBJXqk5/fx2EgOKvqO7VxkPZZyPUYDQTFgcSCzSr8EZaT6Fwi+BM
+T91Y7CaFwypXwcUIoCt4JCcXY4CTAzyNoArKuU19yzu4ShDlpi1kxkiO7O/+AaBf
+dX9C/yPsMQocj6cbZ1Yn/9Jbuca8Qhvq8TiRAlUyiL5VNBuzvKMtKJMGbfA+5ewr
+qQ6duOwdx4olaqhQQ8/ivbH71HYkQzre8k87cd3lnrVjgBrvcdLn7emuuGTisQ9a
+3Sc+uEGtZJi37oLf5plQopBTR/UhOSvdkflgyLASNNjVOY2825rEfeSW+OcrVOZ9
+fg3Nbgo34Rhaio0BVlJYlivxjFBe7CK9NnvduxpospxhuzktrMc7kAgY7i8Vi4Fo
+tsTS4PCOrPp2F4dLL6QFDwY0XybW7wgwAtjAdQA/8hfn5I6U0kLr/6cFwdMCMkNn
+faVaeq0UaLNfu9cFgG/8
+=6Ghy
 -----END PGP SIGNATURE-----
 
---alCHniwhwUTljuKz--
+--K3iCROrs1P5jLO0B--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
