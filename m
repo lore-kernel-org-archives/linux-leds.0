@@ -1,67 +1,69 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 2/4] drivers/watchdog/menf21bmc_wdt: introduce MEN
- 14F021P00 BMC Watchdog driver
-Date: Wed, 24 Sep 2014 15:14:24 +0100
-Message-ID: <20140924141424.GH32069@lee--X1>
+Subject: Re: [PATCH v6 0/4] Introduce MEN 14F021P00 BMC driver series
+Date: Wed, 24 Sep 2014 15:48:29 +0100
+Message-ID: <20140924144829.GK32069@lee--X1>
 References: <cover.1409161615.git.andreas.werner@men.de>
- <f21b275c79866e0aa9bbc59e195ae5424e538300.1409161615.git.andreas.werner@men.de>
- <20140924123548.GE32069@lee--X1>
- <5422C612.70906@roeck-us.net>
- <20140924141322.GG32069@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:45293 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751577AbaIXOOb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 10:14:31 -0400
-Received: by mail-ig0-f180.google.com with SMTP id a13so6569198igq.1
-        for <linux-leds@vger.kernel.org>; Wed, 24 Sep 2014 07:14:30 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140924141322.GG32069@lee--X1>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <cover.1409161615.git.andreas.werner@men.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andreas Werner <andreas.werner@men.de>
+Cc: linux-kernel@vger.kernel.org, sameo@linux.intel.com, linux@roeck-us.net, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andreas Werner <andreas.werner@men.de>, linux-kernel@vger.kernel.org, sameo@linux.intel.com, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-On Wed, 24 Sep 2014, Lee Jones wrote:
+Guenter, Bryan, Wim,
 
-> On Wed, 24 Sep 2014, Guenter Roeck wrote:
-> > On 09/24/2014 05:35 AM, Lee Jones wrote:
-> > >On Wed, 27 Aug 2014, Andreas Werner wrote:
-> > >
-> > >>Added driver to support the 14F021P00 BMC Watchdog.
-> > >>The BMC is a Board Management Controller including watchdog funct=
-ionality.
-> > >>
-> > >>Signed-off-by: Andreas Werner <andreas.werner@men.de>
-> > >>---
-> > >>  drivers/watchdog/Kconfig         |  10 ++
-> > >>  drivers/watchdog/Makefile        |   1 +
-> > >>  drivers/watchdog/menf21bmc_wdt.c | 203 ++++++++++++++++++++++++=
-+++++++++++++++
-> > >>  3 files changed, 214 insertions(+)
-> > >>  create mode 100644 drivers/watchdog/menf21bmc_wdt.c
-> > >
-> > >I see no reason to keep this dragging on.  I'm going to apply this
-> > >along with the remainder of the set and send a pull-request to all=
- the
-> > >other Maintainers.  This branch is currently under test.
-> > >
-> > >Any fix-ups for review comments can go in subsequently.
-> > >
-> > Tend to agree. I thought I sent it before, but in case I didn't
-> >=20
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> >=20
-> > [ for the watchdog driver ]
->=20
-> Sorry Guenter, the branch is tested, tagged and pushed.
->=20
-> Will be sending a pull-request shortly.
+The following changes since commit 52addcf9d6669fa439387610bc65c92fa098=
+0cef:
 
-Ah, screw it, I'll re-tag and push with your RB.
+  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-hw=
+mon-leds-watchdog-v3.18
+
+for you to fetch changes up to 964356938fcd3c0001a786f55b9f0a0fbe47656a=
+:
+
+  hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver (2014-09-2=
+4 15:36:33 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, HWMON, LEDs and Watchdog for v3.18
+
+----------------------------------------------------------------
+Andreas Werner (4):
+      mfd: menf21bmc: Introduce MEN 14F021P00 BMC MFD Core driver
+      watchdog: menf21bmc_wdt: Introduce MEN 14F021P00 BMC Watchdog dri=
+ver
+      leds: leds-menf21bmc: Introduce MEN 14F021P00 BMC LED driver
+      hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver
+
+ Documentation/hwmon/menf21bmc    |  50 +++++++++
+ drivers/hwmon/Kconfig            |  10 ++
+ drivers/hwmon/Makefile           |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c  | 230 +++++++++++++++++++++++++++++++=
+++++++++
+ drivers/leds/Kconfig             |   9 ++
+ drivers/leds/Makefile            |   1 +
+ drivers/leds/leds-menf21bmc.c    | 131 ++++++++++++++++++++++
+ drivers/mfd/Kconfig              |  15 +++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/menf21bmc.c          | 132 ++++++++++++++++++++++
+ drivers/watchdog/Kconfig         |  10 ++
+ drivers/watchdog/Makefile        |   1 +
+ drivers/watchdog/menf21bmc_wdt.c | 203 +++++++++++++++++++++++++++++++=
++++
+ 13 files changed, 794 insertions(+)
+ create mode 100644 Documentation/hwmon/menf21bmc
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
 
 --=20
 Lee Jones
