@@ -1,125 +1,85 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v6 0/4] LED triggers for USB host and device
-Date: Wed, 24 Sep 2014 18:15:50 -0500
-Message-ID: <20140924231550.GC27672@saruman>
-References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
- <1411591401-5874-1-git-send-email-sojka@merica.cz>
- <20140924205936.GC17997@saruman>
- <20140924214155.GA30689@kroah.com>
- <20140924221830.GA27914@saruman>
-Reply-To: <balbi@ti.com>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH v6 0/4] Introduce MEN 14F021P00 BMC driver series
+Date: Thu, 25 Sep 2014 08:58:05 +0200
+Message-ID: <20140925065805.GB6989@spo001.leaseweb.nl>
+References: <cover.1409161615.git.andreas.werner@men.de> <20140924144829.GK32069@lee--X1> <20140924154503.GA12403@roeck-us.net> <20140924161837.GA7113@lee--X1> <CAK5ve-+79oMf0vD-_gzWLPbvFi4ygd1q9pzTCHzzpsXVkjqP9Q@mail.gmail.com> <20140924165739.GA31578@roeck-us.net> <20140924184143.GC7113@lee--X1>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:40134 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751610AbaIXXP4 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Sep 2014 19:15:56 -0400
+Received: from ns1.pc-advies.be ([83.149.101.17]:44856 "EHLO
+	spo001.leaseweb.nl" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750871AbaIYHPN (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Sep 2014 03:15:13 -0400
 Content-Disposition: inline
-In-Reply-To: <20140924221830.GA27914@saruman>
+In-Reply-To: <20140924184143.GC7113@lee--X1>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Sojka <sojka@merica.cz>, linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Bryan Wu <cooloney@gmail.com>, Andreas Werner <andreas.werner@men.de>, lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lm-sensors@lm-sensors.org, linux-watchdog@vger.kernel.org, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi All,
 
-On Wed, Sep 24, 2014 at 05:18:30PM -0500, Felipe Balbi wrote:
-> On Wed, Sep 24, 2014 at 11:41:55PM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Sep 24, 2014 at 03:59:36PM -0500, Felipe Balbi wrote:
-> > > On Wed, Sep 24, 2014 at 10:43:17PM +0200, Michal Sojka wrote:
-> > > > This adds LED triggers for USB host and device. First two patches
-> > > > refactor UDC drivers as requested by Felipe Balbi, the next renames=
- a
-> > > > file and the last is the actual implementation of the LED triggers.
-> > > >=20
-> > > > Changes from v5:
-> > > > - Refactoring of USB gadget completion split into two patches (Fili=
-pe
-> > > >   Balbi)
-> > > > - Removed check for non-NULL req->completion (Filipe Balbi)
-> > > >=20
-> > > > Changes from v4:
-> > > > - Added performance numbers to the commit message of the last patch
-> > > >   (greg k-h).
-> > > > - Replaced BUG_ON with pr_err (Alan Stern, greg k-h).
-> > > > - Used proper coding style for switch statement (greg k-h).
-> > > > - Added comment about NULL argument (greg k-h).
-> > > > - EXPORT_SYMBOL changed to EXPORT_SYMBOL_GPL (greg k-h).
-> > > > - Both triggers are now registerd even if host or gagdet subsystem
-> > > >   is not enabled (Bryan Wu, greg k-h).
-> > > >=20
-> > > > Changes from v3:
-> > > > - usb_gadget_giveback_request() moved outside of CONFIG_HAS_DMA
-> > > >   conditioned block.
-> > > > - Added kernel-doc for usb_gadget_giveback_request() (Felipe Balbi).
-> > > > - Removed outdated comment (Alan Stern).
-> > > > - req->complete =3D=3D NULL is now a bug. Previously, this was igno=
-red
-> > > >   (Alan Stern).
-> > > > - File rename moved to a separate commit (greg k-h).
-> > > >=20
-> > > > Changes from v2:
-> > > > - Host/gadget triggers merged to a single file in usb/common/ (Feli=
-pe
-> > > >   Balbi).
-> > > > - UDC drivers refactored so that LED trigger works for all of them.
-> > > >=20
-> > > > Changes from v1:
-> > > > - Moved from drivers/leds/ to drivers/usb/.
-> > > > - Improved Kconfig help.
-> > > > - Linked with other modules rather than being standalone modules.
-> > > >=20
-> > > > Michal Sojka (4):
-> > > >   usb: gadget: Introduce usb_gadget_giveback_request()
-> > > >   usb: gadget: Refactor request completion
-> > > >   usb: Rename usb-common.c
-> > > >   usb: Add LED triggers for USB activity
-> > >=20
-> > > Greg, how do you want to handle this one as it touched both host and
-> > > gadget ? I could wait until you apply this series to your usb-next and
-> > > based my pull request on that. That'll work as long as it doesn't take
-> > > too long for this to be merged.
-> >=20
-> > I can just take this now, for 3.18-rc1, you've already sent me your
-> > patches for that release, so there shouldn't be any conflicts, right?
->=20
-> that's better. Can you wait 1 day though ? I can run these through my
-> build tests.
+> On Wed, 24 Sep 2014, Guenter Roeck wrote:
+> 
+> > On Wed, Sep 24, 2014 at 09:33:32AM -0700, Bryan Wu wrote:
+> > > On Wed, Sep 24, 2014 at 9:18 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > > > On Wed, 24 Sep 2014, Guenter Roeck wrote:
+> > > >
+> > > >> On Wed, Sep 24, 2014 at 03:48:29PM +0100, Lee Jones wrote:
+> > > >> > Guenter, Bryan, Wim,
+> > > >> >
+> > > >> > The following changes since commit 52addcf9d6669fa439387610bc65c92fa0980cef:
+> > > >> >
+> > > >> >   Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
+> > > >> >
+> > > >> > are available in the git repository at:
+> > > >> >
+> > > >> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-hwmon-leds-watchdog-v3.18
+> > > >> >
+> > > >> > for you to fetch changes up to 964356938fcd3c0001a786f55b9f0a0fbe47656a:
+> > > >> >
+> > > >> >   hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver (2014-09-24 15:36:33 +0100)
+> > > >> >
+> > > >> > ----------------------------------------------------------------
+> > > >> > Immutable branch between MFD, HWMON, LEDs and Watchdog for v3.18
+> > > >> >
+> > > >> I assume you'll push it all through mfd, correct ?
+> > > >
+> > > > The idea is for all the affected Maintainers to pull this branch in to
+> > > > their own trees.  If you guys don't, there will be a good chance of
+> > > > conflict during the merge-window, which will subsequently upset Linus.
+> > > >
+> > > > So in answer to your question; yes I'll be taking this, but so should
+> > > > each of you.
+> > > >
+> > > 
+> > > Thanks for this, man. What am I going to do here? Need I pull in all
+> > > the patches here into my LED tree or just one LED patch? I think if
+> > > you push this for Linus through MFD tree, I don't need to pull it into
+> > > my tree, right?
+> > > 
+> > I did
+> > 
+> > git remote add mfd git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+> > git fetch --tags mfd
+> > git merge mfd-hwmon-leds-watchdog-v3.18
+> > 
+> > in both my hwmon-next and watchdog-next branches. Both are currently building,
+> > and already pushed into to my repository at kernel.org.
+> > 
+> > So, effectively, when I send my pull request to Linus, all patches from
+> > mfd-hwmon-leds-watchdog-v3.18 will be included, ie the entire series.
+> > The same will happen when Lee sends his pull request, and Wim, and you. 
+> > I believe that is what Lee is asking for.
+> 
+> That's right.  It's not okay to break this branch up.  If it was, we
+> would have been able to apply our respective components into our own
+> trees from the beginning, but as there are interdependencies, breaking
+> up the branch could have nasty consequences depending on the order in
+> which they land in Mainline.  Most likely bisectability will be
+> broken, which is not allowed.
 
-running my build tests on top of v3.17-rc6 + these 4 patches. I'll
-report back tomorrow. From a code perspective, though, they look
-alright.
+Added to linux-watchdog-next.
 
-cheers
-
---=20
-balbi
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUI1CmAAoJEIaOsuA1yqREj5QQAKtpz6MuM3WM/rYQly56y/+s
-8O14N5/vgptpV9UQL77IxEWjaOK61bGWCZ8meVF0S7Fcsuoefg5P0uJhEFre0a/k
-p+plwD1HOXGrrUI854ZG9HXrkMFx9loFte6yXXT2mmr0rhv2Ua7VKTx+E63eyIvJ
-+S26iqLNcV1m53rpyQYffoMIF9b7ybj3vcBtindNiP7KeHD+c3XC/mk29zFZBETU
-GvcjvDsR1ZIh0+gVkGxoG2cn43x4Kbtvd11E7SPOfcbvvdcQPGbU5oWy/EsT0nKm
-pldcfqf4TNsF2xayRpZumIBYrXgN0aCMBbECDL4C9XVB7pPlePxsUgiIQey1ANs4
-UvSZ41QwlTVDCSqPcFdQDOnoA99EMkhgNF2T/RgJEBFBhGnOEPxYVbpIiLcPZDhB
-WPIQJ5J/xhceLaOaW+iLGo3rVeAiq6UM0mzf03SnU4A7RPQnFjq0Go5JpTUhzhxK
-VuJCmQ9dNK12oPDuG6yndXY2HfifFbrvD6igOzYoL+jDfo3uuQBAuYjjSbp4hYmn
-3KcCffNKrR8d4XJWTExn1JK5D2DAKtxgbpQH02BHw3gCvcl5M57eWtDSVynfkft4
-ndbPeZ0L/yrnNQZtdd5hlBXP1iqulXwjuXVhhoxdBhU13Ne90dqk5m92/Gzrydo3
-X75QY9+/ZeNZSKzfhgUv
-=ij49
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
+Kind regards,
+Wim.
