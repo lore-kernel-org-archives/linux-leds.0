@@ -1,120 +1,91 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 0/4] Introduce MEN 14F021P00 BMC driver series
-Date: Thu, 25 Sep 2014 08:42:34 +0100
-Message-ID: <20140925074234.GD7113@lee--X1>
-References: <cover.1409161615.git.andreas.werner@men.de>
- <20140924144829.GK32069@lee--X1>
- <20140924154503.GA12403@roeck-us.net>
- <20140924161837.GA7113@lee--X1>
- <CAK5ve-+79oMf0vD-_gzWLPbvFi4ygd1q9pzTCHzzpsXVkjqP9Q@mail.gmail.com>
- <20140924165739.GA31578@roeck-us.net>
- <20140924184143.GC7113@lee--X1>
- <20140925082611.GA967@awelinux>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 0/4] LED triggers for USB host and device
+Date: Thu, 25 Sep 2014 12:36:23 +0200
+Message-ID: <20140925103623.GA28291@kroah.com>
+References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
+ <1411591401-5874-1-git-send-email-sojka@merica.cz>
+ <20140924205936.GC17997@saruman>
+ <20140924214155.GA30689@kroah.com>
+ <20140924221830.GA27914@saruman>
+ <20140924231550.GC27672@saruman>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58282 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750889AbaIYKhT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Sep 2014 06:37:19 -0400
 Content-Disposition: inline
-In-Reply-To: <20140925082611.GA967@awelinux>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andreas Werner <andreas.werner@men.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Bryan Wu <cooloney@gmail.com>, lkml <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lm-sensors@lm-sensors.org, wim@iguana.be, linux-watchdog@vger.kernel.org, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+In-Reply-To: <20140924231550.GC27672@saruman>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Michal Sojka <sojka@merica.cz>, linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz
 
-On Thu, 25 Sep 2014, Andreas Werner wrote:
-> On Wed, Sep 24, 2014 at 07:41:43PM +0100, Lee Jones wrote:
-> > On Wed, 24 Sep 2014, Guenter Roeck wrote:
-> >=20
-> > > On Wed, Sep 24, 2014 at 09:33:32AM -0700, Bryan Wu wrote:
-> > > > On Wed, Sep 24, 2014 at 9:18 AM, Lee Jones <lee.jones@linaro.or=
-g> wrote:
-> > > > > On Wed, 24 Sep 2014, Guenter Roeck wrote:
-> > > > >
-> > > > >> On Wed, Sep 24, 2014 at 03:48:29PM +0100, Lee Jones wrote:
-> > > > >> > Guenter, Bryan, Wim,
-> > > > >> >
-> > > > >> > The following changes since commit 52addcf9d6669fa43938761=
-0bc65c92fa0980cef:
-> > > > >> >
-> > > > >> >   Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
-> > > > >> >
-> > > > >> > are available in the git repository at:
-> > > > >> >
-> > > > >> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.gi=
-t tags/mfd-hwmon-leds-watchdog-v3.18
-> > > > >> >
-> > > > >> > for you to fetch changes up to 964356938fcd3c0001a786f55b9=
-f0a0fbe47656a:
-> > > > >> >
-> > > > >> >   hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driv=
-er (2014-09-24 15:36:33 +0100)
-> > > > >> >
-> > > > >> > ----------------------------------------------------------=
-------
-> > > > >> > Immutable branch between MFD, HWMON, LEDs and Watchdog for=
- v3.18
-> > > > >> >
-> > > > >> I assume you'll push it all through mfd, correct ?
-> > > > >
-> > > > > The idea is for all the affected Maintainers to pull this bra=
-nch in to
-> > > > > their own trees.  If you guys don't, there will be a good cha=
-nce of
-> > > > > conflict during the merge-window, which will subsequently ups=
-et Linus.
-> > > > >
-> > > > > So in answer to your question; yes I'll be taking this, but s=
-o should
-> > > > > each of you.
-> > > > >
-> > > >=20
-> > > > Thanks for this, man. What am I going to do here? Need I pull i=
-n all
-> > > > the patches here into my LED tree or just one LED patch? I thin=
-k if
-> > > > you push this for Linus through MFD tree, I don't need to pull =
-it into
-> > > > my tree, right?
-> > > >=20
-> > > I did
-> > >=20
-> > > git remote add mfd git://git.kernel.org/pub/scm/linux/kernel/git/=
-lee/mfd.git
-> > > git fetch --tags mfd
-> > > git merge mfd-hwmon-leds-watchdog-v3.18
-> > >=20
-> > > in both my hwmon-next and watchdog-next branches. Both are curren=
-tly building,
-> > > and already pushed into to my repository at kernel.org.
-> > >=20
-> > > So, effectively, when I send my pull request to Linus, all patche=
-s from
-> > > mfd-hwmon-leds-watchdog-v3.18 will be included, ie the entire ser=
-ies.
-> > > The same will happen when Lee sends his pull request, and Wim, an=
-d you.=20
-> > > I believe that is what Lee is asking for.
-> >=20
-> > That's right.  It's not okay to break this branch up.  If it was, w=
-e
-> > would have been able to apply our respective components into our ow=
-n
-> > trees from the beginning, but as there are interdependencies, break=
-ing
-> > up the branch could have nasty consequences depending on the order =
-in
-> > which they land in Mainline.  Most likely bisectability will be
-> > broken, which is not allowed.
-> >=20
->=20
-> Hi,
-> please do not forget the MAINTAINERS Patch for this series.
-> I have send it last week attached to this series.
+On Wed, Sep 24, 2014 at 06:15:50PM -0500, Felipe Balbi wrote:
+> On Wed, Sep 24, 2014 at 05:18:30PM -0500, Felipe Balbi wrote:
+> > On Wed, Sep 24, 2014 at 11:41:55PM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Sep 24, 2014 at 03:59:36PM -0500, Felipe Balbi wrote:
+> > > > On Wed, Sep 24, 2014 at 10:43:17PM +0200, Michal Sojka wrote:
+> > > > > This adds LED triggers for USB host and device. First two patches
+> > > > > refactor UDC drivers as requested by Felipe Balbi, the next renames a
+> > > > > file and the last is the actual implementation of the LED triggers.
+> > > > > 
+> > > > > Changes from v5:
+> > > > > - Refactoring of USB gadget completion split into two patches (Filipe
+> > > > >   Balbi)
+> > > > > - Removed check for non-NULL req->completion (Filipe Balbi)
+> > > > > 
+> > > > > Changes from v4:
+> > > > > - Added performance numbers to the commit message of the last patch
+> > > > >   (greg k-h).
+> > > > > - Replaced BUG_ON with pr_err (Alan Stern, greg k-h).
+> > > > > - Used proper coding style for switch statement (greg k-h).
+> > > > > - Added comment about NULL argument (greg k-h).
+> > > > > - EXPORT_SYMBOL changed to EXPORT_SYMBOL_GPL (greg k-h).
+> > > > > - Both triggers are now registerd even if host or gagdet subsystem
+> > > > >   is not enabled (Bryan Wu, greg k-h).
+> > > > > 
+> > > > > Changes from v3:
+> > > > > - usb_gadget_giveback_request() moved outside of CONFIG_HAS_DMA
+> > > > >   conditioned block.
+> > > > > - Added kernel-doc for usb_gadget_giveback_request() (Felipe Balbi).
+> > > > > - Removed outdated comment (Alan Stern).
+> > > > > - req->complete == NULL is now a bug. Previously, this was ignored
+> > > > >   (Alan Stern).
+> > > > > - File rename moved to a separate commit (greg k-h).
+> > > > > 
+> > > > > Changes from v2:
+> > > > > - Host/gadget triggers merged to a single file in usb/common/ (Felipe
+> > > > >   Balbi).
+> > > > > - UDC drivers refactored so that LED trigger works for all of them.
+> > > > > 
+> > > > > Changes from v1:
+> > > > > - Moved from drivers/leds/ to drivers/usb/.
+> > > > > - Improved Kconfig help.
+> > > > > - Linked with other modules rather than being standalone modules.
+> > > > > 
+> > > > > Michal Sojka (4):
+> > > > >   usb: gadget: Introduce usb_gadget_giveback_request()
+> > > > >   usb: gadget: Refactor request completion
+> > > > >   usb: Rename usb-common.c
+> > > > >   usb: Add LED triggers for USB activity
+> > > > 
+> > > > Greg, how do you want to handle this one as it touched both host and
+> > > > gadget ? I could wait until you apply this series to your usb-next and
+> > > > based my pull request on that. That'll work as long as it doesn't take
+> > > > too long for this to be merged.
+> > > 
+> > > I can just take this now, for 3.18-rc1, you've already sent me your
+> > > patches for that release, so there shouldn't be any conflicts, right?
+> > 
+> > that's better. Can you wait 1 day though ? I can run these through my
+> > build tests.
+> 
+> running my build tests on top of v3.17-rc6 + these 4 patches. I'll
+> report back tomorrow. From a code perspective, though, they look
+> alright.
 
-I'll take this through the MFD tree with everyone's Ack.
+Yes, will wait, thanks.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+greg k-h
