@@ -1,46 +1,70 @@
-From: Junio C Hamano <gitster@pobox.com>
+From: Junio C Hamano <gitster-e+AXbWqSrlAAvxtiuMwx3w@public.gmane.org>
 Subject: Re: project wide: git config entry for [diff] renames=true
-Date: Thu, 25 Sep 2014 11:43:27 -0700
-Message-ID: <xmqq61gbbkxc.fsf@gitster.dls.corp.google.com>
+Date: Thu, 25 Sep 2014 11:53:38 -0700
+Message-ID: <xmqqy4t7a5vx.fsf@gitster.dls.corp.google.com>
 References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
 	<1411591401-5874-1-git-send-email-sojka@merica.cz>
 	<1411591401-5874-4-git-send-email-sojka@merica.cz>
 	<20140925150353.GA15325@kroah.com>
 	<1411660111.4026.24.camel@joe-AO725> <20140925180005.GA11755@peff.net>
-	<1411668391.3460.2.camel@joe-AO725>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp.pobox.com ([208.72.237.35]:64496 "EHLO smtp.pobox.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752317AbaIYSna (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 25 Sep 2014 14:43:30 -0400
-In-Reply-To: <1411668391.3460.2.camel@joe-AO725> (Joe Perches's message of
-	"Thu, 25 Sep 2014 11:06:31 -0700")
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140925180005.GA11755-AdEPDUrAXsQ@public.gmane.org> (Jeff King's message of "Thu,
+	25 Sep 2014 14:00:05 -0400")
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jeff King <peff-AdEPDUrAXsQ@public.gmane.org>
+Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, michal.vokac-veUE7cmDK2A@public.gmane.org, git <git-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Jeff King <peff@peff.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Sojka <sojka@merica.cz>, linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Bryan Wu <cooloney@gmail.com>, Felipe Balbi <balbi@ti.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-kernel@vger.kernel.org, michal.vokac@comap.cz, git <git@vger.kernel.org>
 
-Joe Perches <joe@perches.com> writes:
+Jeff King <peff-AdEPDUrAXsQ@public.gmane.org> writes:
 
-> On Thu, 2014-09-25 at 14:00 -0400, Jeff King wrote:
-> ...
->> diff.renames is probably safe, but any config-sharing mechanism would
->> have to deal with either whitelisting, or providing some mechanism for
->> the puller to review changes before blindly following them.
+> There is no such mechanism within git. We've resisted adding one because
+> of the danger of something like:
 >
-> Another mechanism might be to add a repository
-> top level .gitconfig and add whatever to that.
+>   [diff]
+>     external = rm -rf /
+>
+> diff.renames is probably safe, but any config-sharing mechanism would
+> have to deal with either whitelisting, or providing some mechanism for
+> the puller to review changes before blindly following them.
 
-That could be smaller half of an implementation detail of one of the
-two possibilities Jeff mentioned i.e. "mechanism for the puller to
-review changes before blindly following".  It gives the transfer
-part.  You still need a new mechanism to make that file that is
-tracked in the repository to be used as part of your configuration
-variable set after letting the puller to review and approve.
+It might be useful to add a "safe include" feature, perhaps?  We
+ship a small set of hardcoded default whitelist (diff.renames may be
+included in there), and allow the user who do not want to be
+affected to override it with
 
-A puller who blindly trust the project could use the "include"
-mechanism from your .git/config to include a file with a well-known
-name that is tracked by the project _without_ review or approval.  I
-doubt we would recommend that in an open source setting, though.
+    [include]
+        safe = !diff.renames
+
+or even
+
+    [config]
+    	safe = !*
+
+at the same time allow them to add what we do not hardcode to it
+using the same mechanism, e.g.
+
+    [config]
+    	safe = merge.*
+
+Then
+
+    [include]
+	safe
+    	path = ../project.gitconfig
+
+    [include]
+    	path = $HOME/.gitconfig-variant1
+
+would only allow the variables include.safe deems safe to affect
+us from the in-tree file, and use everything from my personal set in
+my home directory.
+
+
+
+    	
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
