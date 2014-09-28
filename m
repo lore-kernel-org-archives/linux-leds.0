@@ -1,70 +1,56 @@
-From: Junio C Hamano <gitster-e+AXbWqSrlAAvxtiuMwx3w@public.gmane.org>
-Subject: Re: project wide: git config entry for [diff] renames=true
-Date: Thu, 25 Sep 2014 11:53:38 -0700
-Message-ID: <xmqqy4t7a5vx.fsf@gitster.dls.corp.google.com>
-References: <Pine.LNX.4.44L0.1409241106100.1580-100000@iolanthe.rowland.org>
-	<1411591401-5874-1-git-send-email-sojka@merica.cz>
-	<1411591401-5874-4-git-send-email-sojka@merica.cz>
-	<20140925150353.GA15325@kroah.com>
-	<1411660111.4026.24.camel@joe-AO725> <20140925180005.GA11755@peff.net>
+From: Xiubo Li <Li.Xiubo@freescale.com>
+Subject: [PATCH 3/3] leds: gpio: cleanup the leds-gpio driver
+Date: Sun, 28 Sep 2014 16:57:16 +0800
+Message-ID: <1411894636-12360-4-git-send-email-Li.Xiubo@freescale.com>
+References: <1411894636-12360-1-git-send-email-Li.Xiubo@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140925180005.GA11755-AdEPDUrAXsQ@public.gmane.org> (Jeff King's message of "Thu,
-	25 Sep 2014 14:00:05 -0400")
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jeff King <peff-AdEPDUrAXsQ@public.gmane.org>
-Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Michal Sojka <sojka-Knnw/vAvyUalVyrhU4qvOw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, michal.vokac-veUE7cmDK2A@public.gmane.org, git <git-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-by2on0127.outbound.protection.outlook.com ([207.46.100.127]:19488
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751985AbaI1JMV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 28 Sep 2014 05:12:21 -0400
+In-Reply-To: <1411894636-12360-1-git-send-email-Li.Xiubo@freescale.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>
 
-Jeff King <peff-AdEPDUrAXsQ@public.gmane.org> writes:
+Remove stray blank line and space.
 
-> There is no such mechanism within git. We've resisted adding one because
-> of the danger of something like:
->
->   [diff]
->     external = rm -rf /
->
-> diff.renames is probably safe, but any config-sharing mechanism would
-> have to deal with either whitelisting, or providing some mechanism for
-> the puller to review changes before blindly following them.
+Signed-off-by: Xiubo Li <Li.Xiubo@freescale.com>
+---
+ drivers/leds/leds-gpio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It might be useful to add a "safe include" feature, perhaps?  We
-ship a small set of hardcoded default whitelist (diff.renames may be
-included in there), and allow the user who do not want to be
-affected to override it with
-
-    [include]
-        safe = !diff.renames
-
-or even
-
-    [config]
-    	safe = !*
-
-at the same time allow them to add what we do not hardcode to it
-using the same mechanism, e.g.
-
-    [config]
-    	safe = merge.*
-
-Then
-
-    [include]
-	safe
-    	path = ../project.gitconfig
-
-    [include]
-    	path = $HOME/.gitconfig-variant1
-
-would only allow the variables include.safe deems safe to affect
-us from the in-tree file, and use everything from my personal set in
-my home directory.
-
-
-
-    	
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 1b1e617..b4518c8 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -36,7 +36,7 @@ struct gpio_led_data {
+ 
+ static void gpio_led_work(struct work_struct *work)
+ {
+-	struct gpio_led_data	*led_dat =
++	struct gpio_led_data *led_dat =
+ 		container_of(work, struct gpio_led_data, work);
+ 
+ 	if (led_dat->blinking) {
+@@ -235,14 +235,12 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+ }
+ #endif /* CONFIG_OF_GPIO */
+ 
+-
+ static int gpio_led_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct gpio_leds_priv *priv;
+ 	int i, ret = 0;
+ 
+-
+ 	if (pdata && pdata->num_leds) {
+ 		priv = devm_kzalloc(&pdev->dev,
+ 				sizeof_gpio_leds_priv(pdata->num_leds),
+-- 
+2.1.0.27.g96db324
