@@ -1,56 +1,63 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/3] led: gpio: Fix possible ZERO_SIZE_PTR pointer
- dereferencing error.
-Date: Mon, 29 Sep 2014 10:21:35 -0700
-Message-ID: <CAK5ve-KgcekmJizMY9cc+uBrO5i4fsqRDid97GCW347aYdZxuw@mail.gmail.com>
-References: <1411894636-12360-1-git-send-email-Li.Xiubo@freescale.com> <1411894636-12360-3-git-send-email-Li.Xiubo@freescale.com>
+Subject: Re: [PATCH 3/3] leds: gpio: cleanup the leds-gpio driver
+Date: Mon, 29 Sep 2014 10:22:12 -0700
+Message-ID: <CAK5ve-L7WqhD1GZGtqRsE=bLt0r+4SS4VBr5zxGUb8Y2yjhRxQ@mail.gmail.com>
+References: <1411894636-12360-1-git-send-email-Li.Xiubo@freescale.com> <1411894636-12360-4-git-send-email-Li.Xiubo@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:53979 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752591AbaI2RV5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Sep 2014 13:21:57 -0400
-Received: by mail-lb0-f177.google.com with SMTP id w7so1618129lbi.36
-        for <linux-leds@vger.kernel.org>; Mon, 29 Sep 2014 10:21:55 -0700 (PDT)
-In-Reply-To: <1411894636-12360-3-git-send-email-Li.Xiubo@freescale.com>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:52015 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752182AbaI2RWe (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Sep 2014 13:22:34 -0400
+Received: by mail-lb0-f170.google.com with SMTP id n15so6690850lbi.15
+        for <linux-leds@vger.kernel.org>; Mon, 29 Sep 2014 10:22:33 -0700 (PDT)
+In-Reply-To: <1411894636-12360-4-git-send-email-Li.Xiubo@freescale.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Xiubo Li <Li.Xiubo@freescale.com>
 Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
 On Sun, Sep 28, 2014 at 1:57 AM, Xiubo Li <Li.Xiubo@freescale.com> wrote:
-> Since we cannot make sure the 'pdata->num_leds' will always be none
-> zero here, and then if it equals to zero, the kmemdup() will return
-> ZERO_SIZE_PTR, which equals to ((void *)16).
->
-> So this patch fix this with just doing the zero check before calling
-> kmemdup().
+> Remove stray blank line and space.
 >
 
-Thanks, applied.
-
+Good, I will apply it.
 -Bryan
 
 > Signed-off-by: Xiubo Li <Li.Xiubo@freescale.com>
 > ---
->  drivers/leds/leds-gpio-register.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/leds/leds-gpio.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/drivers/leds/leds-gpio-register.c b/drivers/leds/leds-gpio-register.c
-> index fbd8934..75717ba 100644
-> --- a/drivers/leds/leds-gpio-register.c
-> +++ b/drivers/leds/leds-gpio-register.c
-> @@ -28,6 +28,9 @@ struct platform_device *__init gpio_led_register_device(
->         struct platform_device *ret;
->         struct gpio_led_platform_data _pdata = *pdata;
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 1b1e617..b4518c8 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -36,7 +36,7 @@ struct gpio_led_data {
 >
-> +       if (!pdata->num_leds)
-> +               return ERR_PTR(-EINVAL);
-> +
->         _pdata.leds = kmemdup(pdata->leds,
->                         pdata->num_leds * sizeof(*pdata->leds), GFP_KERNEL);
->         if (!_pdata.leds)
+>  static void gpio_led_work(struct work_struct *work)
+>  {
+> -       struct gpio_led_data    *led_dat =
+> +       struct gpio_led_data *led_dat =
+>                 container_of(work, struct gpio_led_data, work);
+>
+>         if (led_dat->blinking) {
+> @@ -235,14 +235,12 @@ static struct gpio_leds_priv *gpio_leds_create_of(struct platform_device *pdev)
+>  }
+>  #endif /* CONFIG_OF_GPIO */
+>
+> -
+>  static int gpio_led_probe(struct platform_device *pdev)
+>  {
+>         struct gpio_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
+>         struct gpio_leds_priv *priv;
+>         int i, ret = 0;
+>
+> -
+>         if (pdata && pdata->num_leds) {
+>                 priv = devm_kzalloc(&pdev->dev,
+>                                 sizeof_gpio_leds_priv(pdata->num_leds),
 > --
 > 2.1.0.27.g96db324
 >
