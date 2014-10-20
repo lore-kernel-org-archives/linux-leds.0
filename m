@@ -1,34 +1,94 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] led: remove use of gpiochip_remove() retval
-Date: Fri, 3 Oct 2014 10:15:21 -0700
-Message-ID: <CAK5ve-+_6sVypk_UTQ5kD4dMx+yqFk_4yQZTY3gOAjCRQ5YO8w@mail.gmail.com>
-References: <1412087707-8313-1-git-send-email-pramod.gurav@smartplayin.com>
- <CAK5ve-KCYHySjs4f+rd+kAvKQmTkJqsq87Muq_j-D0nB7WSYjQ@mail.gmail.com> <CACRpkdZDVPTKX4N9fxYdr1OEBQ_BisU2vXrvNRZ3YXCax4jm+A@mail.gmail.com>
+Subject: [GIT PULL] LED subsystem for 3.18 merge window
+Date: Mon, 20 Oct 2014 10:51:39 -0700
+Message-ID: <CAK5ve-+RmcoQGD=jz8gHUjWHn1_TnUwZ3kBJrYT2tu_HY+WeVA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZDVPTKX4N9fxYdr1OEBQ_BisU2vXrvNRZ3YXCax4jm+A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, lkml <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:49530 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751233AbaJTRwA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Oct 2014 13:52:00 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Thu, Oct 2, 2014 at 12:12 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Sep 30, 2014 at 11:21 PM, Bryan Wu <cooloney@gmail.com> wrote:
->> On Tue, Sep 30, 2014 at 7:35 AM, Pramod Gurav
->> <pramod.gurav@smartplayin.com> wrote:
->>> Get rid of using return value from gpiochip_remove() as it returns
->>> void.
->>
->> Looks good to me. I will merge it.
->
-> Please don't.
->
-> The issue is already fixed through the GPIO tree, where the
-> API change is.
->
+Hi Linus,
 
-Oh, really. I wasn't aware that. Let me drop this change then.
+Sorry for the delay, hope I can still make this merge window.
 
-Thanks,
--Bryan
+Basically we have some bug fixing and clean up and one big thing is we
+start to merge patch to add support LED Flash class. So Please
+consider the following changes since commit
+2ce7598c9a453e0acd0e07be7be3f5eb39608ebd:
+
+  Linux 3.17-rc4 (2014-09-07 16:09:43 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git=
+ for-next
+
+for you to fetch changes up to a4c84e6aafda0ddd8cb004c464cd11e47e211049=
+:
+
+  leds: gpio: cleanup the leds-gpio driver (2014-09-29 10:22:26 -0700)
+
+----------------------------------------------------------------
+Andreas Werner (4):
+      mfd: menf21bmc: Introduce MEN 14F021P00 BMC MFD Core driver
+      watchdog: menf21bmc_wdt: Introduce MEN 14F021P00 BMC Watchdog dri=
+ver
+      leds: leds-menf21bmc: Introduce MEN 14F021P00 BMC LED driver
+      hwmon: (menf21bmc) Introduce MEN14F021P00 BMC HWMON driver
+
+Bryan Wu (1):
+      Merge tag 'mfd-hwmon-leds-watchdog-v3.18' into devel
+
+Jacek Anaszewski (5):
+      leds: Reorder include directives
+      leds: make brightness type consistent across whole subsystem
+      leds: avoid using DEVICE_ATTR macro for max_brightness attribute
+      leds: lp3944: fix sparse warning
+      leds: Improve and export led_update_brightness
+
+Lothar Wa=C3=9Fmann (1):
+      leds: trigger: gpio: fix warning in gpio trigger for gpios whose
+accessor function may sleep
+
+Xiubo Li (3):
+      led: gpio: Sort include headers alphabetically
+      led: gpio: Fix possible ZERO_SIZE_PTR pointer dereferencing error=
+=2E
+      leds: gpio: cleanup the leds-gpio driver
+
+ Documentation/hwmon/menf21bmc       |  50 ++++++++
+ drivers/hwmon/Kconfig               |  10 ++
+ drivers/hwmon/Makefile              |   1 +
+ drivers/hwmon/menf21bmc_hwmon.c     | 230 ++++++++++++++++++++++++++++=
+++++++++
+ drivers/leds/Kconfig                |   9 ++
+ drivers/leds/Makefile               |   1 +
+ drivers/leds/led-class.c            |  23 ++--
+ drivers/leds/led-core.c             |  19 ++-
+ drivers/leds/leds-gpio-register.c   |   5 +-
+ drivers/leds/leds-gpio.c            |  14 +--
+ drivers/leds/leds-lp3944.c          |   3 +-
+ drivers/leds/leds-menf21bmc.c       | 131 ++++++++++++++++++++
+ drivers/leds/trigger/ledtrig-gpio.c |   2 +-
+ drivers/mfd/Kconfig                 |  15 +++
+ drivers/mfd/Makefile                |   1 +
+ drivers/mfd/menf21bmc.c             | 132 +++++++++++++++++++++
+ drivers/watchdog/Kconfig            |  10 ++
+ drivers/watchdog/Makefile           |   1 +
+ drivers/watchdog/menf21bmc_wdt.c    | 203 ++++++++++++++++++++++++++++=
++++
+ include/linux/leds.h                |  16 ++-
+ 20 files changed, 847 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/hwmon/menf21bmc
+ create mode 100644 drivers/hwmon/menf21bmc_hwmon.c
+ create mode 100644 drivers/leds/leds-menf21bmc.c
+ create mode 100644 drivers/mfd/menf21bmc.c
+ create mode 100644 drivers/watchdog/menf21bmc_wdt.c
