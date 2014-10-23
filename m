@@ -1,155 +1,51 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v6 2/3] leds: add API for setting torch brightness
-Date: Mon, 20 Oct 2014 18:05:34 -0700
-Message-ID: <CAK5ve-JH6fSZHaUUQUTu-uwpD2aSsB6Ppo0VdaS3FhdAj1qk=A@mail.gmail.com>
-References: <1411399266-16375-1-git-send-email-j.anaszewski@samsung.com> <1411399266-16375-3-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:41096 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754040AbaJUBFz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Oct 2014 21:05:55 -0400
-In-Reply-To: <1411399266-16375-3-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 1/3] MIPS: SEAD3: Fix LED device registration.
+Date: Fri, 24 Oct 2014 00:41:45 +0200
+Message-ID: <094cb31b3dafa8c614db1e03a0049e566008a2e0.1414108953.git.ralf@linux-mips.org>
+References: <20141023235416.GA7529@linux-mips.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20141023235416.GA7529@linux-mips.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Markos Chandras <markos.chandras@imgtec.com>, linux-mips@linux-mips.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Richard Purdie <rpurdie@rpsys.net>
 
-On Mon, Sep 22, 2014 at 8:21 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> This patch prepares ground for addition of LED Flash Class extension to
-> the LED subsystem. Since turning the torch on must have guaranteed
-> immediate effect the brightness_set op can't be used for it. Drivers must
-> schedule a work queue task in this op to be compatible with led-triggers,
-> which call brightess_set from timer irqs. In order to address this
-> limitation a torch_brightness_set op and led_set_torch_brightness API
-> is introduced. Setting brightness sysfs attribute will result in calling
-> brightness_set op for LED Class devices and torch_brightness_set op for
-> LED Flash Class devices, whereas triggers will still call brightness
-> op in both cases.
->
+This isn't a module and shouldn't be one.
 
-Although this torch API is for torch, but I think we can make it more
-generic and other use case can benefit from this change.
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+---
+ arch/mips/mti-sead3/sead3-leds.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-What about this?
-
-Add 2 flags:
-1. SET_BRIGHTNESS_ASYNC
-2. SET_BRIGHTNESS_SYNC
-
-Then move old API to
-__led_set_brightness(led_cdev, state);
-led_set_brightness_async();
-
-And add a new API like
-led_set_bightness_sync();
-
-Then for torch use case, we use led_set_brightness_sync() API.
-
--Bryan
-
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  drivers/leds/led-class.c |    9 +++++++--
->  drivers/leds/led-core.c  |   14 ++++++++++++++
->  include/linux/leds.h     |   21 +++++++++++++++++++++
->  3 files changed, 42 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index a39ca8f..5a11a07 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -54,9 +54,14 @@ static ssize_t brightness_store(struct device *dev,
->
->         if (state == LED_OFF)
->                 led_trigger_remove(led_cdev);
-> -       __led_set_brightness(led_cdev, state);
->
-> -       ret = size;
-> +       if (led_cdev->flags & LED_DEV_CAP_TORCH)
-> +               ret = led_set_torch_brightness(led_cdev, state);
-> +       else
-> +               __led_set_brightness(led_cdev, state);
-> +
-> +       if (!ret)
-> +               ret = size;
->  unlock:
->         mutex_unlock(&led_cdev->led_access);
->         return ret;
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index cca86ab..c6d8288 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -143,6 +143,20 @@ int led_update_brightness(struct led_classdev *led_cdev)
->  }
->  EXPORT_SYMBOL(led_update_brightness);
->
-> +int led_set_torch_brightness(struct led_classdev *led_cdev,
-> +                               enum led_brightness brightness)
-> +{
-> +       int ret = 0;
-> +
-> +       led_cdev->brightness = min(brightness, led_cdev->max_brightness);
-> +
-> +       if (!(led_cdev->flags & LED_SUSPENDED))
-> +               ret = led_cdev->torch_brightness_set(led_cdev,
-> +                                                    led_cdev->brightness);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(led_set_torch_brightness);
-> +
->  /* Caller must ensure led_cdev->led_access held */
->  void led_sysfs_disable(struct led_classdev *led_cdev)
->  {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 44c8a98..bc2a570 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -44,11 +44,21 @@ struct led_classdev {
->  #define LED_BLINK_ONESHOT_STOP (1 << 18)
->  #define LED_BLINK_INVERT       (1 << 19)
->  #define LED_SYSFS_DISABLE      (1 << 20)
-> +#define LED_DEV_CAP_TORCH      (1 << 21)
->
->         /* Set LED brightness level */
->         /* Must not sleep, use a workqueue if needed */
->         void            (*brightness_set)(struct led_classdev *led_cdev,
->                                           enum led_brightness brightness);
-> +       /*
-> +        * Set LED brightness immediately - it is required for flash led
-> +        * devices as they require setting torch brightness to have immediate
-> +        * effect. brightness_set op cannot be used for this purpose because
-> +        * the led drivers schedule a work queue task in it to allow for
-> +        * being called from led-triggers, i.e. from the timer irq context.
-> +        */
-> +       int             (*torch_brightness_set)(struct led_classdev *led_cdev,
-> +                                       enum led_brightness brightness);
->         /* Get LED brightness level */
->         enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
->
-> @@ -157,6 +167,17 @@ extern void led_set_brightness(struct led_classdev *led_cdev,
->  extern int led_update_brightness(struct led_classdev *led_cdev);
->
->  /**
-> + * led_set_torch_brightness - set torch LED brightness
-> + * @led_cdev: the LED to set
-> + * @brightness: the brightness to set it to
-> + *
-> + * Returns: 0 on success or negative error value on failure
-> + *
-> + * Set a torch LED's brightness.
-> + */
-> +extern int led_set_torch_brightness(struct led_classdev *led_cdev,
-> +                                       enum led_brightness brightness);
-> +/**
->   * led_sysfs_disable - disable LED sysfs interface
->   * @led_cdev: the LED to set
->   *
-> --
-> 1.7.9.5
->
+diff --git a/arch/mips/mti-sead3/sead3-leds.c b/arch/mips/mti-sead3/sead3-leds.c
+index 20102a6..c427c57 100644
+--- a/arch/mips/mti-sead3/sead3-leds.c
++++ b/arch/mips/mti-sead3/sead3-leds.c
+@@ -5,7 +5,7 @@
+  *
+  * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
+  */
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/leds.h>
+ #include <linux/platform_device.h>
+ 
+@@ -76,8 +76,4 @@ static int __init led_init(void)
+ 	return platform_device_register(&fled_device);
+ }
+ 
+-module_init(led_init);
+-
+-MODULE_AUTHOR("Chris Dearman <chris@mips.com>");
+-MODULE_LICENSE("GPL");
+-MODULE_DESCRIPTION("LED probe driver for SEAD-3");
++device_initcall(led_init);
+-- 
+1.9.3
