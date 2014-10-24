@@ -1,124 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] leds: syscon: handle multiple syscon instances
-Date: Fri, 24 Oct 2014 12:57:19 +0200
-Message-ID: <1414148239-13016-1-git-send-email-linus.walleij@linaro.org>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] leds: regulator: Convert to devm_regulator_get_exclusive
+Date: Fri, 24 Oct 2014 22:45:58 +0800
+Message-ID: <1414161958.607.1.camel@phoenix>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:60542 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756497AbaJXK5Z (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Oct 2014 06:57:25 -0400
-Received: by mail-wi0-f169.google.com with SMTP id q5so846972wiv.0
-        for <linux-leds@vger.kernel.org>; Fri, 24 Oct 2014 03:57:24 -0700 (PDT)
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:59163 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756369AbaJXOqD (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Oct 2014 10:46:03 -0400
+Received: by mail-pa0-f50.google.com with SMTP id eu11so1274736pac.9
+        for <linux-leds@vger.kernel.org>; Fri, 24 Oct 2014 07:46:03 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Antonio Ospite <ospite@studenti.unina.it>, Mark Brown <broonie@kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Currently the syscon LED driver will only handle LEDs on the
-first syscon found in the system. But there can be several of
-them, so augment the driver to traverse all syscon nodes and
-check for syscon LEDs on them.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/leds/leds-syscon.c | 67 +++++++++++++++++++++++++---------------------
- 1 file changed, 36 insertions(+), 31 deletions(-)
+ drivers/leds/leds-regulator.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
-index e0ccfc872c2f..6896e2d9ba58 100644
---- a/drivers/leds/leds-syscon.c
-+++ b/drivers/leds/leds-syscon.c
-@@ -66,39 +66,13 @@ static void syscon_led_set(struct led_classdev *led_cdev,
- 		dev_err(sled->cdev.dev, "error updating LED status\n");
- }
- 
--static const struct of_device_id syscon_match[] = {
--	{ .compatible = "syscon", },
--	{},
--};
--
--static int __init syscon_leds_init(void)
-+static int __init syscon_leds_spawn(struct device_node *np,
-+				    struct device *dev,
-+				    struct regmap *map)
- {
--	const struct of_device_id *devid;
--	struct device_node *np;
- 	struct device_node *child;
--	struct regmap *map;
--	struct platform_device *pdev;
--	struct device *dev;
- 	int ret;
- 
--	np = of_find_matching_node_and_match(NULL, syscon_match,
--					     &devid);
--	if (!np)
--		return -ENODEV;
--
--	map = syscon_node_to_regmap(np);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
--
--	/*
--	 * If the map is there, the device should be there, we allocate
--	 * memory on the syscon device's behalf here.
--	 */
--	pdev = of_find_device_by_node(np);
--	if (!pdev)
--		return -ENODEV;
--	dev = &pdev->dev;
--
- 	for_each_available_child_of_node(np, child) {
- 		struct syscon_led *sled;
- 		const char *state;
-@@ -146,7 +120,6 @@ static int __init syscon_leds_init(void)
- 				if (ret < 0)
- 					return ret;
- 			}
--
- 		}
- 		sled->cdev.brightness_set = syscon_led_set;
- 
-@@ -156,7 +129,39 @@ static int __init syscon_leds_init(void)
- 
- 		dev_info(dev, "registered LED %s\n", sled->cdev.name);
+diff --git a/drivers/leds/leds-regulator.c b/drivers/leds/leds-regulator.c
+index 358430d..a6354f1 100644
+--- a/drivers/leds/leds-regulator.c
++++ b/drivers/leds/leds-regulator.c
+@@ -153,24 +153,21 @@ static int regulator_led_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
-+	return 0;
-+}
-+
-+static int __init syscon_leds_init(void)
-+{
-+	struct device_node *np;
-+
-+	for_each_of_allnodes(np) {
-+		struct platform_device *pdev;
-+		struct regmap *map;
-+		int ret;
-+
-+		if (!of_device_is_compatible(np, "syscon"))
-+			continue;
-+
-+		map = syscon_node_to_regmap(np);
-+		if (IS_ERR(map)) {
-+			pr_err("error getting regmap for syscon LEDs\n");
-+			continue;
-+		}
-+
-+		/*
-+		 * If the map is there, the device should be there, we allocate
-+		 * memory on the syscon device's behalf here.
-+		 */
-+		pdev = of_find_device_by_node(np);
-+		if (!pdev)
-+			return -ENODEV;
-+		ret = syscon_leds_spawn(np, &pdev->dev, map);
-+		if (ret)
-+			dev_err(&pdev->dev, "could not spawn syscon LEDs\n");
-+	}
  
--       return 0;
-+	return 0;
+-	vcc = regulator_get_exclusive(&pdev->dev, "vled");
++	vcc = devm_regulator_get_exclusive(&pdev->dev, "vled");
+ 	if (IS_ERR(vcc)) {
+ 		dev_err(&pdev->dev, "Cannot get vcc for %s\n", pdata->name);
+ 		return PTR_ERR(vcc);
+ 	}
+ 
+ 	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
+-	if (led == NULL) {
+-		ret = -ENOMEM;
+-		goto err_vcc;
+-	}
++	if (led == NULL)
++		return -ENOMEM;
+ 
+ 	led->cdev.max_brightness = led_regulator_get_max_brightness(vcc);
+ 	if (pdata->brightness > led->cdev.max_brightness) {
+ 		dev_err(&pdev->dev, "Invalid default brightness %d\n",
+ 				pdata->brightness);
+-		ret = -EINVAL;
+-		goto err_vcc;
++		return -EINVAL;
+ 	}
+ 	led->value = pdata->brightness;
+ 
+@@ -191,7 +188,7 @@ static int regulator_led_probe(struct platform_device *pdev)
+ 	ret = led_classdev_register(&pdev->dev, &led->cdev);
+ 	if (ret < 0) {
+ 		cancel_work_sync(&led->work);
+-		goto err_vcc;
++		return ret;
+ 	}
+ 
+ 	/* to expose the default value to userspace */
+@@ -201,10 +198,6 @@ static int regulator_led_probe(struct platform_device *pdev)
+ 	regulator_led_set_value(led);
+ 
+ 	return 0;
+-
+-err_vcc:
+-	regulator_put(vcc);
+-	return ret;
  }
- device_initcall(syscon_leds_init);
+ 
+ static int regulator_led_remove(struct platform_device *pdev)
+@@ -214,7 +207,6 @@ static int regulator_led_remove(struct platform_device *pdev)
+ 	led_classdev_unregister(&led->cdev);
+ 	cancel_work_sync(&led->work);
+ 	regulator_led_disable(led);
+-	regulator_put(led->vcc);
+ 	return 0;
+ }
+ 
 -- 
-1.9.3
+1.9.1
