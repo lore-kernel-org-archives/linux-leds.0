@@ -1,304 +1,82 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 3/3] LED/MIPS: Move SEAD3 LED driver to where it belongs.
-Date: Fri, 24 Oct 2014 16:19:19 -0700
-Message-ID: <CAK5ve-JcfreXNjcRUTXiuYBx+eNptNKVh77JNQWSQVaxUW=yvA@mail.gmail.com>
-References: <20141023235416.GA7529@linux-mips.org> <1ab02cb057a06c402549ef028e2f0d136fc58279.1414108953.git.ralf@linux-mips.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: [PATCH 00/15] new locomo driver
+Date: Tue, 28 Oct 2014 03:01:53 +0300
+Message-ID: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:37815 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932316AbaJXXTj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Oct 2014 19:19:39 -0400
-Received: by mail-ie0-f179.google.com with SMTP id ar1so3178470iec.24
-        for <linux-leds@vger.kernel.org>; Fri, 24 Oct 2014 16:19:39 -0700 (PDT)
-In-Reply-To: <1ab02cb057a06c402549ef028e2f0d136fc58279.1414108953.git.ralf@linux-mips.org>
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:41475 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752741AbaJ1AC0 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Oct 2014 20:02:26 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Markos Chandras <markos.chandras@imgtec.com>, linux-mips@linux-mips.org, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
 
-On Thu, Oct 23, 2014 at 4:50 PM, Ralf Baechle <ralf@linux-mips.org> wrote:
-> Fixes the following randconfig problem
->
-> leds-sead3.c:(.text+0x7dc): undefined reference to `led_classdev_unregister'
-> leds-sead3.c:(.text+0x7e8): undefined reference to `led_classdev_unregister'
->
+Sharp Zaurus SL-5500 and SL-5600 use special companion Gate Array. Current
+drivers present in Linux kernel has some problems:
 
-I think you can fold these 3 patches into one patch then.
+ * It uses custom bus instead of platform bus/mfd core.
+ * Device drivers are not well layered/separated.
+ * It uses custom gpio accessors instead of using GPIOLIB.
 
-> Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-> ---
->  arch/mips/mti-sead3/Makefile     |  2 +-
->  arch/mips/mti-sead3/leds-sead3.c | 90 ----------------------------------------
->  drivers/leds/Kconfig             |  9 ++++
->  drivers/leds/Makefile            |  1 +
->  drivers/leds/leds-sead3.c        | 90 ++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 101 insertions(+), 91 deletions(-)
->  delete mode 100644 arch/mips/mti-sead3/leds-sead3.c
->  create mode 100644 drivers/leds/leds-sead3.c
->
-> diff --git a/arch/mips/mti-sead3/Makefile b/arch/mips/mti-sead3/Makefile
-> index febf433..aa8a857 100644
-> --- a/arch/mips/mti-sead3/Makefile
-> +++ b/arch/mips/mti-sead3/Makefile
-> @@ -15,7 +15,7 @@ obj-y                         := sead3-lcd.o sead3-display.o sead3-init.o \
->
->  obj-y                          += sead3-i2c-dev.o sead3-i2c.o \
->                                    sead3-pic32-i2c-drv.o sead3-pic32-bus.o \
-> -                                  leds-sead3.o sead3-leds.o
-> +                                  sead3-leds.o
->
->  obj-$(CONFIG_EARLY_PRINTK)     += sead3-console.o
->  obj-$(CONFIG_USB_EHCI_HCD)     += sead3-ehci.o
-> diff --git a/arch/mips/mti-sead3/leds-sead3.c b/arch/mips/mti-sead3/leds-sead3.c
-> deleted file mode 100644
-> index e5632e6..0000000
-> --- a/arch/mips/mti-sead3/leds-sead3.c
-> +++ /dev/null
-> @@ -1,90 +0,0 @@
-> -/*
-> - * This file is subject to the terms and conditions of the GNU General Public
-> - * License.  See the file "COPYING" in the main directory of this archive
-> - * for more details.
-> - *
-> - * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
-> - */
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/leds.h>
-> -#include <linux/err.h>
-> -#include <linux/io.h>
-> -
-> -#define DRVNAME "sead3-led"
-> -
-> -static void sead3_pled_set(struct led_classdev *led_cdev,
-> -               enum led_brightness value)
-> -{
-> -       pr_debug("sead3_pled_set\n");
-> -       writel(value, (void __iomem *)0xBF000210);      /* FIXME */
-> -}
-> -
-> -static void sead3_fled_set(struct led_classdev *led_cdev,
-> -               enum led_brightness value)
-> -{
-> -       pr_debug("sead3_fled_set\n");
-> -       writel(value, (void __iomem *)0xBF000218);      /* FIXME */
-> -}
-> -
-> -static struct led_classdev sead3_pled = {
-> -       .name           = "sead3::pled",
-> -       .brightness_set = sead3_pled_set,
-> -       .flags          = LED_CORE_SUSPENDRESUME,
-> -};
-> -
-> -static struct led_classdev sead3_fled = {
-> -       .name           = "sead3::fled",
-> -       .brightness_set = sead3_fled_set,
-> -       .flags          = LED_CORE_SUSPENDRESUME,
-> -};
-> -
-> -static int sead3_led_probe(struct platform_device *pdev)
-> -{
-> -       int ret;
-> -
-> -       ret = led_classdev_register(&pdev->dev, &sead3_pled);
-> -       if (ret < 0)
-> -               return ret;
-> -
-> -       ret = led_classdev_register(&pdev->dev, &sead3_fled);
-> -       if (ret < 0)
-> -               led_classdev_unregister(&sead3_pled);
-> -
-> -       return ret;
-> -}
-> -
-> -static int sead3_led_remove(struct platform_device *pdev)
-> -{
-> -       led_classdev_unregister(&sead3_pled);
-> -       led_classdev_unregister(&sead3_fled);
-> -       return 0;
-> -}
-> -
-> -static struct platform_driver sead3_led_driver = {
-> -       .probe          = sead3_led_probe,
-> -       .remove         = sead3_led_remove,
-> -       .driver         = {
-> -               .name           = DRVNAME,
-> -               .owner          = THIS_MODULE,
-> -       },
-> -};
-> -
-> -static int __init sead3_led_init(void)
-> -{
-> -       return platform_driver_register(&sead3_led_driver);
-> -}
-> -
-> -static void __exit sead3_led_exit(void)
-> -{
-> -       platform_driver_unregister(&sead3_led_driver);
-> -}
-> -
-> -module_init(sead3_led_init);
-> -module_exit(sead3_led_exit);
-> -
-> -MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
-> -MODULE_DESCRIPTION("SEAD3 LED driver");
-> -MODULE_LICENSE("GPL");
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index a210338..b86aa85 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -477,6 +477,15 @@ config LEDS_MENF21BMC
->           This driver can also be built as a module. If so the module
->           will be called leds-menf21bmc.
->
-> +config LEDS_SEAD3
-> +       tristate "LED support for the MIPS SEAD 3 board"
-> +       depends on LEDS_CLASS && MIPS_SEAD3
-> +       help
-> +         Say Y here to include support for the MEN 14F021P00 BMC LEDs.
-> +
+With this patchset I tried to modernise and restructure the LoCoMo driver.
+Also I added an experimental SPI driver that will be used by mmc-spi on
+Sharp SL-5500 collie devices.
 
-Is this driver similar to drivers/leds/leds-menf21bmc.c? If we can
-reuse the code it should be better.
+----------------------------------------------------------------
+Dmitry Eremin-Solenikov (15):
+      mfd: add new driver for Sharp LoCoMo
+      GPIO: port LoCoMo gpio support from old driver
+      leds: port locomo leds driver to new locomo core
+      input: convert LoCoMo keyboard driver to use new locomo core
+      video: backlight: add new locomo backlight driver
+      video: lcd: add LoCoMo LCD driver
+      video: backlight: drop old locomo bl/lcd driver
+      ARM: sa1100: make collie use new locomo drivers
+      ARM: sa1100: don't preallocate IRQ space for locomo
+      ARM: pxa: poodle: use new LoCoMo driver
+      sound: soc: poodle: make use of new locomo GPIO interface
+      ARM: pxa: poodle: don't preallocate IRQ space for locomo
+      ARM: drop old LoCoMo driver
+      gpio: locomo: implement per-pin irq handling
+      spi: add locomo SPI driver
 
-> +         This driver can also be built as a module. If so the module
-> +         will be called leds-sead3.
-> +
->  comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
->
->  config LEDS_BLINKM
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index a2b1647..4f22241 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -56,6 +56,7 @@ obj-$(CONFIG_LEDS_BLINKM)             += leds-blinkm.o
->  obj-$(CONFIG_LEDS_SYSCON)              += leds-syscon.o
->  obj-$(CONFIG_LEDS_VERSATILE)           += leds-versatile.o
->  obj-$(CONFIG_LEDS_MENF21BMC)           += leds-menf21bmc.o
-> +obj-$(CONFIG_LEDS_SEAD3)               += leds-sead3.o
->
->  # LED SPI Drivers
->  obj-$(CONFIG_LEDS_DAC124S085)          += leds-dac124s085.o
-> diff --git a/drivers/leds/leds-sead3.c b/drivers/leds/leds-sead3.c
-> new file mode 100644
-> index 0000000..0cf79f5
-> --- /dev/null
-> +++ b/drivers/leds/leds-sead3.c
-> @@ -0,0 +1,90 @@
-> +/*
-> + * This file is subject to the terms and conditions of the GNU General Public
-> + * License.  See the file "COPYING" in the main directory of this archive
-> + * for more details.
-> + *
-> + * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/leds.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +
-
-Please reorder this list in alphabetic order.
-
-> +static void sead3_pled_set(struct led_classdev *led_cdev,
-> +               enum led_brightness value)
-> +{
-> +       pr_debug("sead3_pled_set\n");
-
-Don't use pr_debug, please use dev_dbg();
-
-> +       writel(value, (void __iomem *)0xBF000210);      /* FIXME */
-
-Fix this, define some meaningful name of the address.
-
-> +}
-> +
-> +static void sead3_fled_set(struct led_classdev *led_cdev,
-> +               enum led_brightness value)
-> +{
-> +       pr_debug("sead3_fled_set\n");
-Don't use pr_debug, please use dev_dbg();
-
-> +       writel(value, (void __iomem *)0xBF000218);      /* FIXME */
-
-ditto
-
-> +}
-> +
-> +static struct led_classdev sead3_pled = {
-> +       .name           = "sead3::pled",
-> +       .brightness_set = sead3_pled_set,
-> +       .flags          = LED_CORE_SUSPENDRESUME,
-> +};
-> +
-> +static struct led_classdev sead3_fled = {
-> +       .name           = "sead3::fled",
-> +       .brightness_set = sead3_fled_set,
-> +       .flags          = LED_CORE_SUSPENDRESUME,
-> +};
-> +
-
-What's pled and fled? Please give more meaningful name or document it.
-
-> +static int sead3_led_probe(struct platform_device *pdev)
-> +{
-> +       int ret;
-> +
-> +       ret = led_classdev_register(&pdev->dev, &sead3_pled);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret = led_classdev_register(&pdev->dev, &sead3_fled);
-> +       if (ret < 0)
-> +               led_classdev_unregister(&sead3_pled);
-> +
-> +       return ret;
-> +}
-> +
-> +static int sead3_led_remove(struct platform_device *pdev)
-> +{
-> +       led_classdev_unregister(&sead3_pled);
-> +       led_classdev_unregister(&sead3_fled);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver sead3_led_driver = {
-> +       .probe          = sead3_led_probe,
-> +       .remove         = sead3_led_remove,
-> +       .driver         = {
-> +               .name           = "sead3-led",
-> +               .owner          = THIS_MODULE,
-> +       },
-> +};
-> +
-> +static int __init sead3_led_init(void)
-> +{
-> +       return platform_driver_register(&sead3_led_driver);
-> +}
-> +
-> +static void __exit sead3_led_exit(void)
-> +{
-> +       platform_driver_unregister(&sead3_led_driver);
-> +}
-> +
-> +module_init(sead3_led_init);
-> +module_exit(sead3_led_exit);
-> +
-
-You can use module_platform_driver() here.
-
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("SEAD3 LED driver");
-> +MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
-> +MODULE_ALIAS("platform:sead3-led");
-> --
-> 1.9.3
->
+ arch/arm/common/Kconfig                            |   3 -
+ arch/arm/common/Makefile                           |   1 -
+ arch/arm/common/locomo.c                           | 914 ---------------------
+ arch/arm/mach-pxa/Kconfig                          |   1 -
+ arch/arm/mach-pxa/include/mach/poodle.h            |  16 +-
+ arch/arm/mach-pxa/poodle.c                         |  23 +-
+ arch/arm/mach-sa1100/Kconfig                       |   1 -
+ arch/arm/mach-sa1100/collie.c                      | 112 +--
+ arch/arm/mach-sa1100/include/mach/collie.h         |  25 +-
+ arch/arm/mach-sa1100/include/mach/irqs.h           |  19 +-
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-locomo.c                         | 386 +++++++++
+ drivers/input/keyboard/Kconfig                     |   1 -
+ drivers/input/keyboard/locomokbd.c                 | 165 ++--
+ drivers/leds/Kconfig                               |   1 -
+ drivers/leds/leds-locomo.c                         | 104 ++-
+ drivers/mfd/Kconfig                                |   8 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/locomo.c                               | 644 +++++++++++++++
+ drivers/spi/Kconfig                                |   8 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-locomo.c                           | 370 +++++++++
+ drivers/video/backlight/Kconfig                    |  14 +-
+ drivers/video/backlight/Makefile                   |   3 +-
+ drivers/video/backlight/locomo_bl.c                | 171 ++++
+ drivers/video/backlight/locomo_lcd.c               | 224 +++++
+ drivers/video/backlight/locomolcd.c                | 255 ------
+ .../asm/hardware => include/linux/mfd}/locomo.h    | 148 ++--
+ sound/soc/pxa/poodle.c                             |  51 +-
+ 30 files changed, 2185 insertions(+), 1493 deletions(-)
+ delete mode 100644 arch/arm/common/locomo.c
+ create mode 100644 drivers/gpio/gpio-locomo.c
+ create mode 100644 drivers/mfd/locomo.c
+ create mode 100644 drivers/spi/spi-locomo.c
+ create mode 100644 drivers/video/backlight/locomo_bl.c
+ create mode 100644 drivers/video/backlight/locomo_lcd.c
+ delete mode 100644 drivers/video/backlight/locomolcd.c
+ rename {arch/arm/include/asm/hardware => include/linux/mfd}/locomo.h (55%)
