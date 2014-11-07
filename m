@@ -1,67 +1,76 @@
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH] leds: leds-gpio: Fix legacy GPIO number case
-Date: Thu, 06 Nov 2014 18:31:58 +0100
-Message-ID: <545BB08E.60408@intel.com>
-References: <1415273003-27674-1-git-send-email-geert+renesas@glider.be>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH/RFC v6 0/2] LED / flash API integration - V4L2 Flash
+Date: Fri, 7 Nov 2014 14:44:09 -0800
+Message-ID: <CAK5ve-JJykowyAb6CGQfbzO8+6b1LNQxOSfeZe5uWNYnFx70Rg@mail.gmail.com>
+References: <1411399309-16418-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1415273003-27674-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Bryan Wu <cooloney@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:44694 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752293AbaKGWoa (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 7 Nov 2014 17:44:30 -0500
+In-Reply-To: <1411399309-16418-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com
 
-On 11/6/2014 12:23 PM, Geert Uytterhoeven wrote:
-> In the legacy case, led_dat->gpiod is initialized correctly, but
-> overwritten later by template->gpiod, which is NULL, causing leds-gpio
-> to fail with:
+On Mon, Sep 22, 2014 at 8:21 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> This patch set is the follow-up of the LED / flash API integration
+> series [1]. For clarity reasons the patchset has been split into
+> four subsets:
 >
->      gpiod_direction_output: invalid GPIO
->      leds-gpio: probe of leds-gpio failed with error -22
+> - LED Flash Class
+> - V4L2 Flash
+
+Hi Jacek,
+
+For this series I think you'd better get review by V4L2 core
+developer. I don't have much experience about this V4L2 APIs. But
+generally I think you should make sure we merge those 3 patches for
+LED FLASH class firstly. And this wrapper patchset can be merged
+later.
+
+-Bryan
+
+> - LED Flash Class drivers
+> - Documentation
 >
-> Move the initialization of led_dat->gpiod from template->gpiod up, and
-> always use led_dat->gpiod later, to fix this.
+> ========================
+> Changes since version 5:
+> ========================
 >
-> Fixes: 5c51277a9ababfa4 ("leds: leds-gpio: Add support for GPIO descriptors")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Since it fixes a bug in a patch going from my tree, the fix needs to go 
-into my tree as well.
-Thus I'm going to take into my device-properties branch.
-
-Bryan, please let me know if there are any problems with that.
-
-Rafael
-
-
-> ---
->   drivers/leds/leds-gpio.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> - removed flash manager framework - its implementation needs
+>   further thorough discussion.
+> - removed external strobe facilities from the LED Flash Class
+>   and provided external_strobe_set op in v4l2-flash. LED subsystem
+>   should be strobe provider agnostic.
 >
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index ba4698c32bb04bde..b3c5d9d6a42bcd8b 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -92,7 +92,8 @@ static int create_gpio_led(const struct gpio_led *template,
->   {
->   	int ret, state;
->   
-> -	if (!template->gpiod) {
-> +	led_dat->gpiod = template->gpiod;
-> +	if (!led_dat->gpiod) {
->   		/*
->   		 * This is the legacy code path for platform code that
->   		 * still uses GPIO numbers. Ultimately we would like to get
-> @@ -122,8 +123,7 @@ static int create_gpio_led(const struct gpio_led *template,
->   
->   	led_dat->cdev.name = template->name;
->   	led_dat->cdev.default_trigger = template->default_trigger;
-> -	led_dat->gpiod = template->gpiod;
-> -	led_dat->can_sleep = gpiod_cansleep(template->gpiod);
-> +	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
->   	led_dat->blinking = 0;
->   	if (blink_set) {
->   		led_dat->platform_gpio_blink_set = blink_set;
-
+> Thanks,
+> Jacek Anaszewski
+>
+> [1] https://lkml.org/lkml/2014/7/11/914
+>
+> Jacek Anaszewski (2):
+>   media: Add registration helpers for V4L2 flash
+>   exynos4-is: Add support for v4l2-flash subdevs
+>
+>  drivers/media/platform/exynos4-is/media-dev.c |   36 +-
+>  drivers/media/platform/exynos4-is/media-dev.h |   13 +-
+>  drivers/media/v4l2-core/Kconfig               |   11 +
+>  drivers/media/v4l2-core/Makefile              |    2 +
+>  drivers/media/v4l2-core/v4l2-flash.c          |  502 +++++++++++++++++++++++++
+>  include/media/v4l2-flash.h                    |  135 +++++++
+>  6 files changed, 696 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+>  create mode 100644 include/media/v4l2-flash.h
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
