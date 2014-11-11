@@ -1,76 +1,54 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v6 0/2] LED / flash API integration - V4L2 Flash
-Date: Fri, 7 Nov 2014 14:44:09 -0800
-Message-ID: <CAK5ve-JJykowyAb6CGQfbzO8+6b1LNQxOSfeZe5uWNYnFx70Rg@mail.gmail.com>
-References: <1411399309-16418-1-git-send-email-j.anaszewski@samsung.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 02/15] GPIO: port LoCoMo gpio support from old driver
+Date: Tue, 11 Nov 2014 17:16:38 +0400
+Message-ID: <CALT56yPr42FV66USngocw=eWPt81d5R2MJxmzBnv02HOMmXAkA@mail.gmail.com>
+References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
+	<1414454528-24240-3-git-send-email-dbaryshkov@gmail.com>
+	<CACRpkdY7tRadod2vQfEytmw-ubaMAvr_=XTczD5bUMkqie0xkg@mail.gmail.com>
+	<CALT56yOgMUA7o2dzfHph=S2zkDV4zERzMh4ishpPwpAx7Cqj6Q@mail.gmail.com>
+	<CACRpkdb7v3LmOhbhQ9TPk1_bnLnpwizawW6RQvhQRLSjRewAaQ@mail.gmail.com>
+	<CALT56yO9f8wzaArnmfQSDzCM3S+2oT+62anH5kbFY3WdEt_HZg@mail.gmail.com>
+	<20141106060335.GR8509@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:44694 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752293AbaKGWoa (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 7 Nov 2014 17:44:30 -0500
-In-Reply-To: <1411399309-16418-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20141106060335.GR8509@sirena.org.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com
 
-On Mon, Sep 22, 2014 at 8:21 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> This patch set is the follow-up of the LED / flash API integration
-> series [1]. For clarity reasons the patchset has been split into
-> four subsets:
+2014-11-06 9:03 GMT+03:00 Mark Brown <broonie@kernel.org>:
+> On Thu, Nov 06, 2014 at 01:33:24AM +0400, Dmitry Eremin-Solenikov wrote:
+>> 2014-11-03 16:43 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
 >
-> - LED Flash Class
-> - V4L2 Flash
+>> > Yes that's the point: if you use regmap mmio you get the RMW-locking
+>> > for free, with the regmap implementation.
+>
+>> Just to be more concrete. Currently locomo_gpio_ack_irq() function uses
+>> one lock and one unlock for doing 3 consecutive RMW I I convert locomo
+>> to regmap, will that be 3 lock/unlock calls or still one? (Or maybe I'm
+>> trying to be over-protective here and adding more lock/unlock cycles
+>> won't matter that much?)
+>
+> You'll get three lock/unlocks, we could add an interface for bulk
+> updates under one lock if it's important though.
+>
+>> Next question: if I have to export regmap to several subdrivers, is it better
+>> to have one big regmap or to have one-map-per-driver approach?
+>
+> One regmap for the physical register map which is shared between all the
+> users.
 
-Hi Jacek,
+Mark, Linus,
 
-For this series I think you'd better get review by V4L2 core
-developer. I don't have much experience about this V4L2 APIs. But
-generally I think you should make sure we merge those 3 patches for
-LED FLASH class firstly. And this wrapper patchset can be merged
-later.
+Just to better understand your suggestions: do you want me to convert
+to regmap only gpio driver or do you suggest to convert all LoCoMo drivers?
+That is doable, of course, but the amount of changes is overwhelming.
+Also I'm concerned about the performance impact from going through
+regmap layers.
 
--Bryan
 
-> - LED Flash Class drivers
-> - Documentation
->
-> ========================
-> Changes since version 5:
-> ========================
->
-> - removed flash manager framework - its implementation needs
->   further thorough discussion.
-> - removed external strobe facilities from the LED Flash Class
->   and provided external_strobe_set op in v4l2-flash. LED subsystem
->   should be strobe provider agnostic.
->
-> Thanks,
-> Jacek Anaszewski
->
-> [1] https://lkml.org/lkml/2014/7/11/914
->
-> Jacek Anaszewski (2):
->   media: Add registration helpers for V4L2 flash
->   exynos4-is: Add support for v4l2-flash subdevs
->
->  drivers/media/platform/exynos4-is/media-dev.c |   36 +-
->  drivers/media/platform/exynos4-is/media-dev.h |   13 +-
->  drivers/media/v4l2-core/Kconfig               |   11 +
->  drivers/media/v4l2-core/Makefile              |    2 +
->  drivers/media/v4l2-core/v4l2-flash.c          |  502 +++++++++++++++++++++++++
->  include/media/v4l2-flash.h                    |  135 +++++++
->  6 files changed, 696 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
->  create mode 100644 include/media/v4l2-flash.h
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+With best wishes
+Dmitry
