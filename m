@@ -1,59 +1,70 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 02/15] GPIO: port LoCoMo gpio support from old driver
-Date: Tue, 11 Nov 2014 13:23:09 +0000
-Message-ID: <20141111132309.GX3815@sirena.org.uk>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
- <1414454528-24240-3-git-send-email-dbaryshkov@gmail.com>
- <CACRpkdY7tRadod2vQfEytmw-ubaMAvr_=XTczD5bUMkqie0xkg@mail.gmail.com>
- <CALT56yOgMUA7o2dzfHph=S2zkDV4zERzMh4ishpPwpAx7Cqj6Q@mail.gmail.com>
- <CACRpkdb7v3LmOhbhQ9TPk1_bnLnpwizawW6RQvhQRLSjRewAaQ@mail.gmail.com>
- <CALT56yO9f8wzaArnmfQSDzCM3S+2oT+62anH5kbFY3WdEt_HZg@mail.gmail.com>
- <20141106060335.GR8509@sirena.org.uk>
- <CALT56yPr42FV66USngocw=eWPt81d5R2MJxmzBnv02HOMmXAkA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aoyg4DiTWd6DlSDH"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CALT56yPr42FV66USngocw=eWPt81d5R2MJxmzBnv02HOMmXAkA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Robert Baldyga <r.baldyga@samsung.com>
+Subject: [PATCH v5 0/3] mfd: max8997: add regmap support
+Date: Wed, 12 Nov 2014 08:23:13 +0100
+Message-ID: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:12610 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751302AbaKLHXn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 12 Nov 2014 02:23:43 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: sameo@linux.intel.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, Robert Baldyga <r.baldyga@samsung.com>
 
+This patchset modifies max8997 driver and associated function drivers to use
+register maps instead of operating directly on i2c bus. This change allowed
+to simplify irq handling, and to move some initializations to individual
+function drivers. Hence now when some functions are not enabled, their i2c
+clients, regmaps and irqs are not registered.
 
---aoyg4DiTWd6DlSDH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Because patches are under review for very long time and I still don't have
+all needed Acks, I'm resending this series rebased to the latest next branch.
 
-On Tue, Nov 11, 2014 at 05:16:38PM +0400, Dmitry Eremin-Solenikov wrote:
+Best regards
+Robert Baldyga
+Samsung R&D Institute Poland
 
-> Just to better understand your suggestions: do you want me to convert
-> to regmap only gpio driver or do you suggest to convert all LoCoMo drivers?
-> That is doable, of course, but the amount of changes is overwhelming.
-> Also I'm concerned about the performance impact from going through
-> regmap layers.
+Changelog:
 
-I don't care.
+v5:
+- rebase patches to last next branch
 
---aoyg4DiTWd6DlSDH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+v4:
+- remove patch moving regmap handling to function drivers
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+v3: https://lkml.org/lkml/2014/3/13/101
+- fix error handling
+- fix deinitializations order
+- move muic irq enum values renaming to separate patch
 
-iQEcBAEBAgAGBQJUYg28AAoJECTWi3JdVIfQTaoH/iGjgmCTP8zG3hEoAcdhtxyU
-AX6KRZAZ1WHc22bg6NJ2JVLKNHv8vtoM56RWvPfIu53VZn6KSuqNG1F/z8WtVGwU
-dkDEuObJG6/a06W1cAQncQ5/W8XQ8LwkJLKiWzWPfpKZAyJe/g83DZv87paKl3kR
-/n+U/a5mKdY2RU08WE4P3TJRKGXhcMuFYRTU/e5JJY7Xm+hbUc/yrd77f87bbvm+
-Air+k0LCPUdSQ1igtp+kxVSCYgfgwH4M27CJycJDdOkGIy1biugV5gn6KQy1G0Lv
-gF0t28WyIUSG+6Ncd/r+Js6JuDila221JRJbzh13Bx1rjJ/sDUQVuGav/EbTtNI=
-=4zFr
------END PGP SIGNATURE-----
+v2: https://lkml.org/lkml/2014/3/12/237
+- rebase patches on Lee Jones' MFD tree
+- add missing selects in Kconfig
+- add missing deinitializations
+- add interrupt disabling when suspend
+- few minor changes and typo fixes
 
---aoyg4DiTWd6DlSDH--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+v1: https://lkml.org/lkml/2014/3/11/291
+
+Robert Baldyga (3):
+  mfd: max8997: use regmap to access registers
+  mfd: max8997: handle IRQs using regmap
+  mfd: max8997: change irq names to upper case
+
+ drivers/extcon/extcon-max8997.c     |  66 +++---
+ drivers/input/misc/max8997_haptic.c |  34 ++--
+ drivers/leds/leds-max8997.c         |  13 +-
+ drivers/mfd/Kconfig                 |   3 +-
+ drivers/mfd/Makefile                |   2 +-
+ drivers/mfd/max8997-irq.c           | 387 ------------------------------------
+ drivers/mfd/max8997.c               | 245 +++++++++++++++--------
+ drivers/power/max8997_charger.c     |  33 +--
+ drivers/regulator/max8997.c         |  87 ++++----
+ drivers/rtc/rtc-max8997.c           |  58 +++---
+ include/linux/mfd/max8997-private.h |  82 ++++++--
+ 11 files changed, 381 insertions(+), 629 deletions(-)
+ delete mode 100644 drivers/mfd/max8997-irq.c
+
+-- 
+1.9.1
