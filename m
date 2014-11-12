@@ -1,72 +1,70 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v7 3/3] Documentation: leds: Add description of LED Flash
- Class extension
-Date: Wed, 12 Nov 2014 17:09:17 +0100
-Message-ID: <1415808557-29557-4-git-send-email-j.anaszewski@samsung.com>
-References: <1415808557-29557-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1415808557-29557-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-media@vger.kernel.org, sakari.ailus@linux.intel.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v5 1/3] mfd: max8997: use regmap to access registers
+Date: Wed, 12 Nov 2014 18:01:44 +0100
+Message-ID: <20141112170144.GB27681@earth.universe>
+References: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
+ <1415776996-11569-2-git-send-email-r.baldyga@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1415776996-11569-2-git-send-email-r.baldyga@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Robert Baldyga <r.baldyga@samsung.com>
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com
 List-Id: linux-leds@vger.kernel.org
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- Documentation/leds/leds-class-flash.txt |   39 +++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+--qcHopEYAB45HaUaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..0164329
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,39 @@
-+
-+Flash LED handling under Linux
-+==============================
-+
-+Some LED devices support two modes - torch and flash. In order to enable
-+support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol must be defined
-+in the kernel config. A flash LED driver must register in the LED subsystem
-+with led_classdev_flash_register to gain flash capabilities.
-+
-+Following sysfs attributes are exposed for controlling flash led devices:
-+
-+	- flash_brightness - flash LED brightness in microamperes (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- indicator_brightness - privacy LED brightness in microamperes (RW)
-+	- max_indicator_brightness - maximum privacy LED brightness in
-+				     microamperes (RO)
-+	- flash_timeout - flash strobe duration in microseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- flash_fault - bitmask of flash faults that may have occurred,
-+			possible flags are:
-+		* 0x01 - flash controller voltage to the flash LED has exceeded
-+			 the limit specific to the flash controller
-+		* 0x02 - the flash strobe was still on when the timeout set by
-+			 the user has expired; not all flash controllers may
-+			 set this in all such conditions
-+		* 0x04 - the flash controller has overheated
-+		* 0x08 - the short circuit protection of the flash controller
-+			 has been triggered
-+		* 0x10 - current in the LED power supply has exceeded the limit
-+			 specific to the flash controller
-+		* 0x40 - flash controller voltage to the flash LED has been
-+			 below the minimum limit specific to the flash
-+		* 0x80 - the input voltage of the flash controller is below
-+			 the limit under which strobing the flash at full
-+			 current will not be possible. The condition persists
-+			 until this flag is no longer set
-+		* 0x100 - the temperature of the LED has exceeded its allowed
-+			  upper limit
--- 
-1.7.9.5
+Hi,
+
+On Wed, Nov 12, 2014 at 08:23:14AM +0100, Robert Baldyga wrote:
+> This patch modifies max8997 driver and each associated function driver,
+> to use regmap instead of operating directly on i2c bus. It will allow to
+> simplify IRQ handling using regmap-irq.
+>=20
+> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+> [For extcon part]
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>=20
+> [For leds part]
+> Acked-by: Bryan Wu <cooloney@gmail.com>
+>=20
+> [For the mfd part]
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+
+[For the power supply part]
+Acked-By: Sebastian Reichel <sre@kernel.org>
+
+-- Sebastian
+
+--qcHopEYAB45HaUaB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJUY5J4AAoJENju1/PIO/qa1/UQAJcZ1SQq0B1MUjO/YKl3l+qz
+NjW8NVf6aZZP1jcHILJZCdb7vafFKVbin4LJgx4B60vVejyy7VEqFtxtl2TgRmlG
+YpnIGVjIDteIVQGO2sOPNJZQCkmwXcojnLUpmDusQ1mf1BOf8RonCy5IHfGnp3EE
+2vZ+8EOJ47mGqK0cuD08W7kvGqwQtcBq/M4pvTmzmPcBSUnaZjv2Wp7e6+MUmp6k
++LBjgiOerlkAnKWZmuDRl+a7D6MhPW8lI5u/Kk9Qzw+WFtiO0HllkXy26+VSB5uI
+3TpeOUQuk5mRilqtiQdNIqrVJLUH2BVEDil6JxGGa3TU7eOQrkg8hZCEW+/FDWW9
+hOCZG3VxsWHNPfOhpdlhGZ7SXTh9Z2oxjftxZYer7CwC9XS7PHUeLCczqIyFchY/
+j86cBXreb6uUOE4icedZDBePNkSvT3oY63Q13VmauXfL5X5LVpp3jANFPszI4QSl
+LxrllmqpSCqCJegctxq+v95g/4YC/+ZpM/m4eWbNrzyvKgJZQ/iVNH3xNUKdoaWr
+cQTfjdZ+7ma298uIS0IIdo/12QVYaQ9hFqKU/Oy+VNfQxmEHVjcWYIZcO6eIcUFf
+1L91G7lLpXz2H9L8u/zAY0LL+RKY8f3aH20VKI3jbXDG/tW7sai5p0C2WnWIlWDA
+gx/ysKjHSMuUhi2tHf40
+=r5Wi
+-----END PGP SIGNATURE-----
+
+--qcHopEYAB45HaUaB--
