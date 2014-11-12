@@ -1,109 +1,66 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: [PATCH v5 3/3] mfd: max8997: change irq names to upper case
-Date: Wed, 12 Nov 2014 08:23:16 +0100
-Message-ID: <1415776996-11569-4-git-send-email-r.baldyga@samsung.com>
-References: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org
-Cc: sameo@linux.intel.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, Robert Baldyga <r.baldyga@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v7 0/3] LED / flash API integration - LED Flash Class
+Date: Wed, 12 Nov 2014 17:09:14 +0100
+Message-ID: <1415808557-29557-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-media@vger.kernel.org, sakari.ailus@linux.intel.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch changes naming convention of MUIC interrupts form CamelCase
-to upper case. It makes names more readable and consistent with another
-interrupt names in max8997 driver.
+This patch set is the follow-up of the LED / flash API integration
+series [1].
 
-Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+========================
+Changes since version 6:
+========================
 
-[For the mfd part]
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/extcon/extcon-max8997.c     | 32 ++++++++++++++++----------------
- include/linux/mfd/max8997-private.h | 16 ++++++++--------
- 2 files changed, 24 insertions(+), 24 deletions(-)
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
 
-diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-index 172dbd6..834b72f 100644
---- a/drivers/extcon/extcon-max8997.c
-+++ b/drivers/extcon/extcon-max8997.c
-@@ -46,15 +46,15 @@ struct max8997_muic_irq {
- };
- 
- static struct max8997_muic_irq muic_irqs[] = {
--	{ MAX8997_MUICIRQ_ADCError,	"muic-ADCERROR" },
--	{ MAX8997_MUICIRQ_ADCLow,	"muic-ADCLOW" },
--	{ MAX8997_MUICIRQ_ADC,		"muic-ADC" },
--	{ MAX8997_MUICIRQ_VBVolt,	"muic-VBVOLT" },
--	{ MAX8997_MUICIRQ_DBChg,	"muic-DBCHG" },
--	{ MAX8997_MUICIRQ_DCDTmr,	"muic-DCDTMR" },
--	{ MAX8997_MUICIRQ_ChgDetRun,	"muic-CHGDETRUN" },
--	{ MAX8997_MUICIRQ_ChgTyp,	"muic-CHGTYP" },
--	{ MAX8997_MUICIRQ_OVP,		"muic-OVP" },
-+	{ MAX8997_MUICIRQ_ADCERROR,	"MUIC-ADCERROR" },
-+	{ MAX8997_MUICIRQ_ADCLOW,	"MUIC-ADCLOW" },
-+	{ MAX8997_MUICIRQ_ADC,		"MUIC-ADC" },
-+	{ MAX8997_MUICIRQ_VBVOLT,	"MUIC-VBVOLT" },
-+	{ MAX8997_MUICIRQ_DBCHG,	"MUIC-DBCHG" },
-+	{ MAX8997_MUICIRQ_DCDTMR,	"MUIC-DCDTMR" },
-+	{ MAX8997_MUICIRQ_CHGDETRUN,	"MUIC-CHGDETRUN" },
-+	{ MAX8997_MUICIRQ_CHGTYP,	"MUIC-CHGTYP" },
-+	{ MAX8997_MUICIRQ_OVP,		"MUIC-OVP" },
- };
- 
- /* Define supported cable type */
-@@ -553,17 +553,17 @@ static void max8997_muic_irq_work(struct work_struct *work)
- 	}
- 
- 	switch (irq_type) {
--	case MAX8997_MUICIRQ_ADCError:
--	case MAX8997_MUICIRQ_ADCLow:
-+	case MAX8997_MUICIRQ_ADCERROR:
-+	case MAX8997_MUICIRQ_ADCLOW:
- 	case MAX8997_MUICIRQ_ADC:
- 		/* Handle all of cable except for charger cable */
- 		ret = max8997_muic_adc_handler(info);
- 		break;
--	case MAX8997_MUICIRQ_VBVolt:
--	case MAX8997_MUICIRQ_DBChg:
--	case MAX8997_MUICIRQ_DCDTmr:
--	case MAX8997_MUICIRQ_ChgDetRun:
--	case MAX8997_MUICIRQ_ChgTyp:
-+	case MAX8997_MUICIRQ_VBVOLT:
-+	case MAX8997_MUICIRQ_DBCHG:
-+	case MAX8997_MUICIRQ_DCDTMR:
-+	case MAX8997_MUICIRQ_CHGDETRUN:
-+	case MAX8997_MUICIRQ_CHGTYP:
- 		/* Handle charger cable */
- 		ret = max8997_muic_chg_handler(info);
- 		break;
-diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8997-private.h
-index f42ea22..2817fa6 100644
---- a/include/linux/mfd/max8997-private.h
-+++ b/include/linux/mfd/max8997-private.h
-@@ -411,14 +411,14 @@ enum max8997_irq {
- 
- enum max8997_irq_muic {
- 	MAX8997_MUICIRQ_ADC,
--	MAX8997_MUICIRQ_ADCLow,
--	MAX8997_MUICIRQ_ADCError,
--
--	MAX8997_MUICIRQ_ChgTyp,
--	MAX8997_MUICIRQ_ChgDetRun,
--	MAX8997_MUICIRQ_DCDTmr,
--	MAX8997_MUICIRQ_DBChg,
--	MAX8997_MUICIRQ_VBVolt,
-+	MAX8997_MUICIRQ_ADCLOW,
-+	MAX8997_MUICIRQ_ADCERROR,
-+
-+	MAX8997_MUICIRQ_CHGTYP,
-+	MAX8997_MUICIRQ_CHGDETRUN,
-+	MAX8997_MUICIRQ_DCDTMR,
-+	MAX8997_MUICIRQ_DBCHG,
-+	MAX8997_MUICIRQ_VBVOLT,
- 
- 	MAX8997_MUICIRQ_OVP,
- 
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+
+Jacek Anaszewski (3):
+  leds: Add support for setting brightness in a synchronous way
+  leds: Add LED Flash Class wrapper to LED subsystem
+  Documentation: leds: Add description of LED Flash Class extension
+
+ Documentation/leds/leds-class-flash.txt   |   39 +++
+ drivers/leds/Kconfig                      |   11 +
+ drivers/leds/Makefile                     |    1 +
+ drivers/leds/led-class-flash.c            |  511 +++++++++++++++++++++++++++++
+ drivers/leds/led-class.c                  |   14 +-
+ drivers/leds/led-core.c                   |   19 +-
+ drivers/leds/leds.h                       |   20 +-
+ drivers/leds/trigger/ledtrig-backlight.c  |    8 +-
+ drivers/leds/trigger/ledtrig-default-on.c |    2 +-
+ drivers/leds/trigger/ledtrig-gpio.c       |    6 +-
+ drivers/leds/trigger/ledtrig-heartbeat.c  |    2 +-
+ drivers/leds/trigger/ledtrig-oneshot.c    |    4 +-
+ drivers/leds/trigger/ledtrig-transient.c  |   10 +-
+ include/linux/led-class-flash.h           |  229 +++++++++++++
+ include/linux/leds.h                      |   11 +
+ 15 files changed, 861 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 include/linux/led-class-flash.h
+
 -- 
-1.9.1
+1.7.9.5
