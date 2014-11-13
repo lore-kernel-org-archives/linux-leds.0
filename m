@@ -1,603 +1,355 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH] leds: lp8860: Introduce TI lp8860 4 channel LED driver
-Date: Thu, 13 Nov 2014 06:35:16 -0600
-Message-ID: <1415882116-4115-1-git-send-email-dmurphy@ti.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH/RFC v7 1/3] leds: Add support for setting brightness in a
+ synchronous way
+Date: Thu, 13 Nov 2014 10:43:58 -0800
+Message-ID: <CAK5ve-JageqCh0SfDv46W-ffWNwf=su_Z6ZZCAH0QeMq2vM5rg@mail.gmail.com>
+References: <1415808557-29557-1-git-send-email-j.anaszewski@samsung.com> <1415808557-29557-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:32812 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932199AbaKMMgD (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 13 Nov 2014 07:36:03 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1415808557-29557-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, sakari.ailus@linux.intel.com, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, Dan Murphy <dmurphy@ti.com>
 
-Introduce the Texas Instruments lp8860
-4 channel LED driver.
+On Wed, Nov 12, 2014 at 8:09 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> There are use cases when setting a LED brightness has to
+> have immediate effect (e.g. setting a torch LED brightness).
+> This patch extends LED subsystem to support such operations.
+> The LED subsystem internal API __led_set_brightness is changed
+> to led_set_brightness_async and new led_set_brightness_sync API
+> is added.
+>
 
-This driver configures the device in display custer mode
-as this seems to be the most used configuration at the
-time of the driver configuration.
+Great, I do like this patch and just one pick coding style as below.
 
-For more product information please see the link below:
-http://www.ti.com/product/lp8860-q1
+Thanks,
+-Bryan
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- .../devicetree/bindings/leds/leds-lp8860.txt       |  29 ++
- drivers/leds/Kconfig                               |  10 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-lp8860.c                         | 491 +++++++++++++++++++++
- 4 files changed, 531 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lp8860.txt
- create mode 100644 drivers/leds/leds-lp8860.c
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
+>  drivers/leds/led-class.c                  |   10 ++++++----
+>  drivers/leds/led-core.c                   |   19 ++++++++++++++++---
+>  drivers/leds/leds.h                       |   20 ++++++++++++++++----
+>  drivers/leds/trigger/ledtrig-backlight.c  |    8 ++++----
+>  drivers/leds/trigger/ledtrig-default-on.c |    2 +-
+>  drivers/leds/trigger/ledtrig-gpio.c       |    6 +++---
+>  drivers/leds/trigger/ledtrig-heartbeat.c  |    2 +-
+>  drivers/leds/trigger/ledtrig-oneshot.c    |    4 ++--
+>  drivers/leds/trigger/ledtrig-transient.c  |   10 ++++++----
+>  include/linux/leds.h                      |    8 ++++++++
+>  10 files changed, 63 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 65722de..dbeebac 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -55,7 +55,7 @@ static ssize_t brightness_store(struct device *dev,
+>
+>         if (state == LED_OFF)
+>                 led_trigger_remove(led_cdev);
+> -       __led_set_brightness(led_cdev, state);
+> +       led_set_brightness(led_cdev, state);
+>
+>         ret = size;
+>  unlock:
+> @@ -109,7 +109,7 @@ static void led_timer_function(unsigned long data)
+>         unsigned long delay;
+>
+>         if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>                 return;
+>         }
+>
+> @@ -132,7 +132,7 @@ static void led_timer_function(unsigned long data)
+>                 delay = led_cdev->blink_delay_off;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       led_set_brightness_async(led_cdev, brightness);
+>
+>         /* Return in next iteration if led is in one-shot mode and we are in
+>          * the final blink state so that the led is toggled each delay_on +
+> @@ -158,7 +158,7 @@ static void set_brightness_delayed(struct work_struct *ws)
+>
+>         led_stop_software_blink(led_cdev);
+>
+> -       __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+> +       led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
+>  }
+>
+>  /**
+> @@ -233,6 +233,8 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>         if (!led_cdev->max_brightness)
+>                 led_cdev->max_brightness = LED_FULL;
+>
+> +       led_cdev->flags |= SET_BRIGHTNESS_ASYNC;
+> +
+>         led_update_brightness(led_cdev);
+>
+>         INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index be6d9fa..a745e32 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -42,13 +42,13 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>
+>         /* never on - just set to off */
+>         if (!delay_on) {
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>                 return;
+>         }
+>
+>         /* never off - just set to brightness */
+>         if (!delay_off) {
+> -               __led_set_brightness(led_cdev, led_cdev->blink_brightness);
+> +               led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
+>                 return;
+>         }
+>
+> @@ -117,6 +117,8 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+>  void led_set_brightness(struct led_classdev *led_cdev,
+>                         enum led_brightness brightness)
+>  {
+> +       int ret = 0;
+> +
+>         /* delay brightness setting if need to stop soft-blink timer */
+>         if (led_cdev->blink_delay_on || led_cdev->blink_delay_off) {
+>                 led_cdev->delayed_set_value = brightness;
+> @@ -124,7 +126,18 @@ void led_set_brightness(struct led_classdev *led_cdev,
+>                 return;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
+> +               led_set_brightness_async(led_cdev, brightness);
+> +               return;
+> +       } else if (led_cdev->flags & SET_BRIGHTNESS_SYNC) {
+> +               ret = led_set_brightness_sync(led_cdev, brightness);
+> +       } else {
+> +               ret = -EINVAL;
+> +       }
+> +
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-new file mode 100644
-index 0000000..aad38dd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-@@ -0,0 +1,29 @@
-+* Texas Instruments - lp8860 4-Channel LED Driver
-+
-+The LP8860-Q1 is an high-efficiency LED
-+driver with boost controller. It has 4 high-precision
-+current sinks that can be controlled by a PWM input
-+signal, a SPI/I2C master, or both.
-+
-+Required properties:
-+	- compatible:
-+		"ti,lp8860"
-+	- reg -  I2C slave address
-+	- label - Used for naming LEDs
-+
-+Optional properties:
-+	- enable-gpio - gpio pin to enable/disable the device.
-+	- supply - "vled" - LED supply
-+
-+Example:
-+
-+leds: leds@6 {
-+	compatible = "ti,lp8860";
-+	reg = <0x2d>;
-+	label = "display_cluster";
-+	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+}
-+
-+For more product information please see the link below:
-+http://www.ti.com/product/lp8860-q1
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a210338..b0dce59 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -250,6 +250,16 @@ config LEDS_LP8788
- 	help
- 	  This option enables support for the Keyboard LEDs on the LP8788 PMIC.
- 
-+config LEDS_LP8860
-+	tristate "LED support for the TI LP8860 4 channel LED driver"
-+	depends on LEDS_CLASS && REGMAP_I2C
-+	help
-+	  If you say yes here you get support for the TI LP8860 4 channel
-+	  LED driver.
-+	  This option enables support for the display cluster LEDs
-+	  on the LP8860 4 channel LED driver using the I2C communication
-+	  bus.
-+
- config LEDS_CLEVO_MAIL
- 	tristate "Mail LED on Clevo notebook"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index a2b1647..1c65a19 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
- obj-$(CONFIG_LEDS_LP5562)		+= leds-lp5562.o
- obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
- obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
-+obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
- obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
- obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
- obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-new file mode 100644
-index 0000000..a91eab9
---- /dev/null
-+++ b/drivers/leds/leds-lp8860.c
-@@ -0,0 +1,491 @@
-+/*
-+ * TI LP8860 4-Channel LED Driver
-+ *
-+ * Copyright (C) 2014 Texas Instruments
-+ *
-+ * Author: Dan Murphy <dmurphy@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/slab.h>
-+
-+#define LP8860_DISP_CL1_BRT_MSB		0x00
-+#define LP8860_DISP_CL1_BRT_LSB		0x01
-+#define LP8860_DISP_CL1_CURR_MSB	0x02
-+#define LP8860_DISP_CL1_CURR_LSB	0x03
-+#define LP8860_CL2_BRT_MSB		0x04
-+#define LP8860_CL2_BRT_LSB		0x05
-+#define LP8860_CL2_CURRENT		0x06
-+#define LP8860_CL3_BRT_MSB		0x07
-+#define LP8860_CL3_BRT_LSB		0x08
-+#define LP8860_CL3_CURRENT		0x09
-+#define LP8860_CL4_BRT_MSB		0x0a
-+#define LP8860_CL4_BRT_LSB		0x0b
-+#define LP8860_CL4_CURRENT		0x0c
-+#define LP8860_CONFIG			0x0d
-+#define LP8860_STATUS			0x0e
-+#define LP8860_FAULT			0x0f
-+#define LP8860_LED_FAULT		0x10
-+#define LP8860_FAULT_CLEAR		0x11
-+#define LP8860_ID			0x12
-+#define LP8860_TEMP_MSB			0x13
-+#define LP8860_TEMP_LSB			0x14
-+#define LP8860_DISP_LED_CURR_MSB	0x15
-+#define LP8860_DISP_LED_CURR_LSB	0x16
-+#define LP8860_DISP_LED_PWM_MSB		0x17
-+#define LP8860_DISP_LED_PWM_LSB		0x18
-+#define LP8860_EEPROM_CNTRL		0x19
-+#define LP8860_EEPROM_UNLOCK		0x1a
-+
-+#define LP8860_EEPROM_REG_0		0x60
-+#define LP8860_EEPROM_REG_1		0x61
-+#define LP8860_EEPROM_REG_2		0x62
-+#define LP8860_EEPROM_REG_3		0x63
-+#define LP8860_EEPROM_REG_4		0x64
-+#define LP8860_EEPROM_REG_5		0x65
-+#define LP8860_EEPROM_REG_6		0x66
-+#define LP8860_EEPROM_REG_7		0x67
-+#define LP8860_EEPROM_REG_8		0x68
-+#define LP8860_EEPROM_REG_9		0x69
-+#define LP8860_EEPROM_REG_10		0x6a
-+#define LP8860_EEPROM_REG_11		0x6b
-+#define LP8860_EEPROM_REG_12		0x6c
-+#define LP8860_EEPROM_REG_13		0x6d
-+#define LP8860_EEPROM_REG_14		0x6e
-+#define LP8860_EEPROM_REG_15		0x6f
-+#define LP8860_EEPROM_REG_16		0x70
-+#define LP8860_EEPROM_REG_17		0x71
-+#define LP8860_EEPROM_REG_18		0x72
-+#define LP8860_EEPROM_REG_19		0x73
-+#define LP8860_EEPROM_REG_20		0x74
-+#define LP8860_EEPROM_REG_21		0x75
-+#define LP8860_EEPROM_REG_22		0x76
-+#define LP8860_EEPROM_REG_23		0x77
-+#define LP8860_EEPROM_REG_24		0x78
-+
-+#define LP8860_LOCK_EEPROM		0x00
-+#define LP8860_UNLOCK_EEPROM		0x01
-+#define LP8860_PROGRAM_EEPROM		0x02
-+#define LP8860_EEPROM_CODE_1		0x08
-+#define LP8860_EEPROM_CODE_2		0xba
-+#define LP8860_EEPROM_CODE_3		0xef
-+
-+#define LP8860_CLEAR_FAULTS		0x01
-+
-+#define LP8860_DISP_LED_NAME		"display_cluster"
-+
-+/**
-+ * struct lp8860_led -
-+ * @lock - Lock for reading/writing the device
-+ * @work - Work item used to off load the brightness register writes
-+ * @client - Pointer to the I2C client
-+ * @led_dev - led class device pointer
-+ * @regmap - Devices register map
-+ * @eeprom_regmap - EEPROM register map
-+ * @enable_gpio - VDDIO/EN gpio to enable communication interface
-+ * @regulator - LED supply regulator pointer
-+ * @brightness - Current brightness value requested
-+ * @label - LED label
-+**/
-+struct lp8860_led {
-+	struct mutex lock;
-+	struct work_struct work;
-+	struct i2c_client *client;
-+	struct led_classdev led_dev;
-+	struct regmap *regmap;
-+	struct regmap *eeprom_regmap;
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	enum led_brightness brightness;
-+	const char *label;
-+};
-+
-+struct lp8860_eeprom_reg {
-+	uint8_t reg;
-+	uint8_t value;
-+};
-+
-+struct lp8860_eeprom_reg lp8860_eeprom_disp_regs[] = {
-+	{ LP8860_EEPROM_REG_0, 0xed },
-+	{ LP8860_EEPROM_REG_1, 0xdf },
-+	{ LP8860_EEPROM_REG_2, 0xdc },
-+	{ LP8860_EEPROM_REG_3, 0xf0 },
-+	{ LP8860_EEPROM_REG_4, 0xdf },
-+	{ LP8860_EEPROM_REG_5, 0xe5 },
-+	{ LP8860_EEPROM_REG_6, 0xf2 },
-+	{ LP8860_EEPROM_REG_7, 0x77 },
-+	{ LP8860_EEPROM_REG_8, 0x77 },
-+	{ LP8860_EEPROM_REG_9, 0x71 },
-+	{ LP8860_EEPROM_REG_10, 0x3f },
-+	{ LP8860_EEPROM_REG_11, 0xb7 },
-+	{ LP8860_EEPROM_REG_12, 0x17 },
-+	{ LP8860_EEPROM_REG_13, 0xef },
-+	{ LP8860_EEPROM_REG_14, 0xb0 },
-+	{ LP8860_EEPROM_REG_15, 0x87 },
-+	{ LP8860_EEPROM_REG_16, 0xce },
-+	{ LP8860_EEPROM_REG_17, 0x72 },
-+	{ LP8860_EEPROM_REG_18, 0xe5 },
-+	{ LP8860_EEPROM_REG_19, 0xdf },
-+	{ LP8860_EEPROM_REG_20, 0x35 },
-+	{ LP8860_EEPROM_REG_21, 0x06 },
-+	{ LP8860_EEPROM_REG_22, 0xdc },
-+	{ LP8860_EEPROM_REG_23, 0x88 },
-+	{ LP8860_EEPROM_REG_24, 0x3E },
-+};
-+
-+static int lp8860_unlock_eeprom(struct lp8860_led *led, int lock)
-+{
-+	int ret;
-+
-+	mutex_lock(&led->lock);
-+
-+	if (lock == LP8860_UNLOCK_EEPROM) {
-+		ret = regmap_write(led->regmap,
-+			LP8860_EEPROM_UNLOCK,
-+			LP8860_EEPROM_CODE_1);
-+		if (ret) {
-+			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
-+			goto out;
-+		}
-+
-+		ret = regmap_write(led->regmap,
-+			LP8860_EEPROM_UNLOCK,
-+			LP8860_EEPROM_CODE_2);
-+		if (ret) {
-+			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
-+			goto out;
-+		}
-+		ret = regmap_write(led->regmap,
-+			LP8860_EEPROM_UNLOCK,
-+			LP8860_EEPROM_CODE_3);
-+		if (ret) {
-+			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
-+			goto out;
-+		}
-+	} else {
-+		ret = regmap_write(led->regmap,
-+			LP8860_EEPROM_UNLOCK,
-+			LP8860_LOCK_EEPROM);
-+	}
-+
-+out:
-+	mutex_unlock(&led->lock);
-+	return ret;
-+}
-+
-+static int lp8860_fault_check(struct lp8860_led *led)
-+{
-+	int ret, fault;
-+	unsigned int read_buf;
-+
-+	ret = regmap_read(led->regmap, LP8860_LED_FAULT, &read_buf);
-+	if (ret)
-+		goto out;
-+
-+	fault = read_buf;
-+
-+	ret = regmap_read(led->regmap, LP8860_FAULT, &read_buf);
-+	if (ret)
-+		goto out;
-+
-+	fault |= read_buf;
-+
-+	/* Attempt to clear any faults */
-+	if (fault)
-+		ret = regmap_write(led->regmap, LP8860_FAULT_CLEAR,
-+			LP8860_CLEAR_FAULTS);
-+out:
-+	return ret;
-+}
-+
-+static void lp8860_led_brightness_work(struct work_struct *work)
-+{
-+	struct lp8860_led *led = container_of(work, struct lp8860_led, work);
-+	int ret;
-+	int disp_brightness = led->brightness * 255;
-+
-+	mutex_lock(&led->lock);
-+
-+	ret = lp8860_fault_check(led);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Cannot read/clear faults\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->regmap, LP8860_DISP_CL1_BRT_MSB,
-+			(disp_brightness & 0xff00) >> 8);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Cannot write CL1 MSB\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->regmap, LP8860_DISP_CL1_BRT_LSB,
-+			disp_brightness & 0xff);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Cannot write CL1 LSB\n");
-+		goto out;
-+	}
-+out:
-+	mutex_unlock(&led->lock);
-+}
-+
-+static void lp8860_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lp8860_led *led =
-+			container_of(led_cdev, struct lp8860_led, led_dev);
-+
-+	led->brightness = brt_val;
-+	schedule_work(&led->work);
-+}
-+
-+static int lp8860_init(struct lp8860_led *led)
-+{
-+	unsigned int read_buf;
-+	int ret, i, reg_count;
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 1);
-+
-+	ret = lp8860_fault_check(led);
-+	if (ret)
-+		goto out;
-+
-+	ret = regmap_read(led->regmap, LP8860_STATUS, &read_buf);
-+	if (ret)
-+		goto out;
-+
-+	ret = lp8860_unlock_eeprom(led, LP8860_UNLOCK_EEPROM);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed unlocking EEPROM\n");
-+		goto out;
-+	}
-+
-+	reg_count = ARRAY_SIZE(lp8860_eeprom_disp_regs) / sizeof(lp8860_eeprom_disp_regs[0]);
-+	for (i = 0; i < reg_count; i++) {
-+		ret = regmap_write(led->eeprom_regmap,
-+				lp8860_eeprom_disp_regs[i].reg,
-+				lp8860_eeprom_disp_regs[i].value);
-+		if (ret) {
-+			dev_err(&led->client->dev, "Failed writing EEPROM\n");
-+			goto out;
-+		}
-+	}
-+
-+	ret = lp8860_unlock_eeprom(led, LP8860_LOCK_EEPROM);
-+	if (ret)
-+		goto out;
-+
-+	ret = regmap_write(led->regmap,
-+			LP8860_EEPROM_CNTRL,
-+			LP8860_PROGRAM_EEPROM);
-+	if (ret)
-+		dev_err(&led->client->dev, "Failed programming EEPROM\n");
-+out:
-+	if (ret)
-+		if (led->enable_gpio)
-+			gpiod_direction_output(led->enable_gpio, 0);
-+	return ret;
-+}
-+
-+static struct reg_default lp8860_reg_defs[] = {
-+	{ LP8860_DISP_CL1_BRT_MSB, 0x00},
-+	{ LP8860_DISP_CL1_BRT_LSB, 0x00},
-+	{ LP8860_DISP_CL1_CURR_MSB, 0x00},
-+	{ LP8860_DISP_CL1_CURR_LSB, 0x00},
-+	{ LP8860_CL2_BRT_MSB, 0x00},
-+	{ LP8860_CL2_BRT_LSB, 0x00},
-+	{ LP8860_CL2_CURRENT, 0x00},
-+	{ LP8860_CL3_BRT_MSB, 0x00},
-+	{ LP8860_CL3_BRT_LSB, 0x00},
-+	{ LP8860_CL3_CURRENT, 0x00},
-+	{ LP8860_CL4_BRT_MSB, 0x00},
-+	{ LP8860_CL4_BRT_LSB, 0x00},
-+	{ LP8860_CL4_CURRENT, 0x00},
-+	{ LP8860_CONFIG, 0x00},
-+	{ LP8860_FAULT_CLEAR, 0x00},
-+	{ LP8860_EEPROM_CNTRL, 0x80},
-+	{ LP8860_EEPROM_UNLOCK, 0x00},
-+};
-+
-+static const struct regmap_config lp8860_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LP8860_EEPROM_UNLOCK,
-+	.reg_defaults = lp8860_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lp8860_reg_defs),
-+	.cache_type = REGCACHE_NONE,
-+};
-+
-+static struct reg_default lp8860_eeprom_defs[] = {
-+	{ LP8860_EEPROM_REG_0, 0x00 },
-+	{ LP8860_EEPROM_REG_1, 0x00 },
-+	{ LP8860_EEPROM_REG_2, 0x00 },
-+	{ LP8860_EEPROM_REG_3, 0x00 },
-+	{ LP8860_EEPROM_REG_4, 0x00 },
-+	{ LP8860_EEPROM_REG_5, 0x00 },
-+	{ LP8860_EEPROM_REG_6, 0x00 },
-+	{ LP8860_EEPROM_REG_7, 0x00 },
-+	{ LP8860_EEPROM_REG_8, 0x00 },
-+	{ LP8860_EEPROM_REG_9, 0x00 },
-+	{ LP8860_EEPROM_REG_10, 0x00 },
-+	{ LP8860_EEPROM_REG_11, 0x00 },
-+	{ LP8860_EEPROM_REG_12, 0x00 },
-+	{ LP8860_EEPROM_REG_13, 0x00 },
-+	{ LP8860_EEPROM_REG_14, 0x00 },
-+	{ LP8860_EEPROM_REG_15, 0x00 },
-+	{ LP8860_EEPROM_REG_16, 0x00 },
-+	{ LP8860_EEPROM_REG_17, 0x00 },
-+	{ LP8860_EEPROM_REG_18, 0x00 },
-+	{ LP8860_EEPROM_REG_19, 0x00 },
-+	{ LP8860_EEPROM_REG_20, 0x00 },
-+	{ LP8860_EEPROM_REG_21, 0x00 },
-+	{ LP8860_EEPROM_REG_22, 0x00 },
-+	{ LP8860_EEPROM_REG_23, 0x00 },
-+	{ LP8860_EEPROM_REG_24, 0x00 },
-+};
-+
-+static const struct regmap_config lp8860_eeprom_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LP8860_EEPROM_REG_24,
-+	.reg_defaults = lp8860_eeprom_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lp8860_eeprom_defs),
-+	.cache_type = REGCACHE_NONE,
-+};
-+
-+static int lp8860_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	int ret;
-+	struct lp8860_led *led;
-+	struct device_node *np = client->dev.of_node;
-+
-+	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	led->label = LP8860_DISP_LED_NAME;
-+
-+	if (client->dev.of_node) {
-+		ret = of_property_read_string(np, "label", &led->label);
-+		if (ret) {
-+			dev_err(&client->dev, "Missing label in dt\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	led->enable_gpio = devm_gpiod_get(&client->dev, "enable");
-+	if (IS_ERR(led->enable_gpio))
-+		led->enable_gpio = NULL;
-+	else
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	led->regulator = devm_regulator_get(&client->dev, "vled");
-+	if (IS_ERR(led->regulator))
-+		led->regulator = NULL;
-+
-+	led->client = client;
-+	led->led_dev.name = led->label;
-+	led->led_dev.max_brightness = LED_FULL;
-+	led->led_dev.brightness_set = lp8860_brightness_set;
-+
-+	mutex_init(&led->lock);
-+	INIT_WORK(&led->work, lp8860_led_brightness_work);
-+
-+	i2c_set_clientdata(client, led);
-+
-+	led->regmap = devm_regmap_init_i2c(client, &lp8860_regmap_config);
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	led->eeprom_regmap = devm_regmap_init_i2c(client, &lp8860_eeprom_regmap_config);
-+	if (IS_ERR(led->eeprom_regmap)) {
-+		ret = PTR_ERR(led->eeprom_regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lp8860_init(led);
-+	if (ret)
-+		return ret;
-+
-+	ret = led_classdev_register(&client->dev, &led->led_dev);
-+	if (ret) {
-+		dev_err(&client->dev, "led register err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lp8860_remove(struct i2c_client *client)
-+{
-+	struct lp8860_led *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	led_classdev_unregister(&led->led_dev);
-+	flush_work(&led->work);
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lp8860_id[] = {
-+	{ "lp8860", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lp8860_id);
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id of_lp8860_leds_match[] = {
-+	{ .compatible = "ti,lp8860", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lp8860_leds_match);
-+#endif
-+
-+static struct i2c_driver lp8860_driver = {
-+	.driver = {
-+		.name	= "lp8860",
-+		.of_match_table = of_match_ptr(of_lp8860_leds_match),
-+	},
-+	.probe		= lp8860_probe,
-+	.remove		= lp8860_remove,
-+	.id_table	= lp8860_id,
-+};
-+module_i2c_driver(lp8860_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LP8860 LED drvier");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+Since there is only one line in the {}, we don't need {} here:
+
++       if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
++               led_set_brightness_async(led_cdev, brightness);
++               return;
++       } else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
++               ret = led_set_brightness_sync(led_cdev, brightness);
++       else
++               ret = -EINVAL;
++
+
+
+
+> +       if (ret < 0)
+> +               dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
+> +                       ret);
+>  }
+>  EXPORT_SYMBOL(led_set_brightness);
+>
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index 4c50365..2348dbd 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -17,16 +17,28 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/leds.h>
+>
+> -static inline void __led_set_brightness(struct led_classdev *led_cdev,
+> +static inline void led_set_brightness_async(struct led_classdev *led_cdev,
+>                                         enum led_brightness value)
+>  {
+> -       if (value > led_cdev->max_brightness)
+> -               value = led_cdev->max_brightness;
+> -       led_cdev->brightness = value;
+> +       led_cdev->brightness = min(value, led_cdev->max_brightness);
+> +
+>         if (!(led_cdev->flags & LED_SUSPENDED))
+>                 led_cdev->brightness_set(led_cdev, value);
+>  }
+>
+> +static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
+> +                                       enum led_brightness value)
+> +{
+> +       int ret = 0;
+> +
+> +       led_cdev->brightness = min(value, led_cdev->max_brightness);
+> +
+> +       if (!(led_cdev->flags & LED_SUSPENDED))
+> +               ret = led_cdev->brightness_set_sync(led_cdev,
+> +                                               led_cdev->brightness);
+> +       return ret;
+> +}
+> +
+>  static inline int led_get_brightness(struct led_classdev *led_cdev)
+>  {
+>         return led_cdev->brightness;
+> diff --git a/drivers/leds/trigger/ledtrig-backlight.c b/drivers/leds/trigger/ledtrig-backlight.c
+> index 47e55aa..59eca17 100644
+> --- a/drivers/leds/trigger/ledtrig-backlight.c
+> +++ b/drivers/leds/trigger/ledtrig-backlight.c
+> @@ -51,9 +51,9 @@ static int fb_notifier_callback(struct notifier_block *p,
+>
+>         if ((n->old_status == UNBLANK) ^ n->invert) {
+>                 n->brightness = led->brightness;
+> -               __led_set_brightness(led, LED_OFF);
+> +               led_set_brightness_async(led, LED_OFF);
+>         } else {
+> -               __led_set_brightness(led, n->brightness);
+> +               led_set_brightness_async(led, n->brightness);
+>         }
+>
+>         n->old_status = new_status;
+> @@ -89,9 +89,9 @@ static ssize_t bl_trig_invert_store(struct device *dev,
+>
+>         /* After inverting, we need to update the LED. */
+>         if ((n->old_status == BLANK) ^ n->invert)
+> -               __led_set_brightness(led, LED_OFF);
+> +               led_set_brightness_async(led, LED_OFF);
+>         else
+> -               __led_set_brightness(led, n->brightness);
+> +               led_set_brightness_async(led, n->brightness);
+>
+>         return num;
+>  }
+> diff --git a/drivers/leds/trigger/ledtrig-default-on.c b/drivers/leds/trigger/ledtrig-default-on.c
+> index 81a91be..6f38f88 100644
+> --- a/drivers/leds/trigger/ledtrig-default-on.c
+> +++ b/drivers/leds/trigger/ledtrig-default-on.c
+> @@ -19,7 +19,7 @@
+>
+>  static void defon_trig_activate(struct led_classdev *led_cdev)
+>  {
+> -       __led_set_brightness(led_cdev, led_cdev->max_brightness);
+> +       led_set_brightness_async(led_cdev, led_cdev->max_brightness);
+>  }
+>
+>  static struct led_trigger defon_led_trigger = {
+> diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
+> index c86c418..4cc7040 100644
+> --- a/drivers/leds/trigger/ledtrig-gpio.c
+> +++ b/drivers/leds/trigger/ledtrig-gpio.c
+> @@ -54,12 +54,12 @@ static void gpio_trig_work(struct work_struct *work)
+>
+>         if (tmp) {
+>                 if (gpio_data->desired_brightness)
+> -                       __led_set_brightness(gpio_data->led,
+> +                       led_set_brightness_async(gpio_data->led,
+>                                            gpio_data->desired_brightness);
+>                 else
+> -                       __led_set_brightness(gpio_data->led, LED_FULL);
+> +                       led_set_brightness_async(gpio_data->led, LED_FULL);
+>         } else {
+> -               __led_set_brightness(gpio_data->led, LED_OFF);
+> +               led_set_brightness_async(gpio_data->led, LED_OFF);
+>         }
+>  }
+>
+> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+> index 5c8464a..fea6871 100644
+> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
+> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+> @@ -74,7 +74,7 @@ static void led_heartbeat_function(unsigned long data)
+>                 break;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       led_set_brightness_async(led_cdev, brightness);
+>         mod_timer(&heartbeat_data->timer, jiffies + delay);
+>  }
+>
+> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+> index cb4c746..fbd02cd 100644
+> --- a/drivers/leds/trigger/ledtrig-oneshot.c
+> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+> @@ -63,9 +63,9 @@ static ssize_t led_invert_store(struct device *dev,
+>         oneshot_data->invert = !!state;
+>
+>         if (oneshot_data->invert)
+> -               __led_set_brightness(led_cdev, LED_FULL);
+> +               led_set_brightness_async(led_cdev, LED_FULL);
+>         else
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>
+>         return size;
+>  }
+> diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+> index e5abc00..3c34de4 100644
+> --- a/drivers/leds/trigger/ledtrig-transient.c
+> +++ b/drivers/leds/trigger/ledtrig-transient.c
+> @@ -41,7 +41,7 @@ static void transient_timer_function(unsigned long data)
+>         struct transient_trig_data *transient_data = led_cdev->trigger_data;
+>
+>         transient_data->activate = 0;
+> -       __led_set_brightness(led_cdev, transient_data->restore_state);
+> +       led_set_brightness_async(led_cdev, transient_data->restore_state);
+>  }
+>
+>  static ssize_t transient_activate_show(struct device *dev,
+> @@ -72,7 +72,8 @@ static ssize_t transient_activate_store(struct device *dev,
+>         if (state == 0 && transient_data->activate == 1) {
+>                 del_timer(&transient_data->timer);
+>                 transient_data->activate = state;
+> -               __led_set_brightness(led_cdev, transient_data->restore_state);
+> +               led_set_brightness_async(led_cdev,
+> +                                       transient_data->restore_state);
+>                 return size;
+>         }
+>
+> @@ -80,7 +81,7 @@ static ssize_t transient_activate_store(struct device *dev,
+>         if (state == 1 && transient_data->activate == 0 &&
+>             transient_data->duration != 0) {
+>                 transient_data->activate = state;
+> -               __led_set_brightness(led_cdev, transient_data->state);
+> +               led_set_brightness_async(led_cdev, transient_data->state);
+>                 transient_data->restore_state =
+>                     (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
+>                 mod_timer(&transient_data->timer,
+> @@ -203,7 +204,8 @@ static void transient_trig_deactivate(struct led_classdev *led_cdev)
+>
+>         if (led_cdev->activated) {
+>                 del_timer_sync(&transient_data->timer);
+> -               __led_set_brightness(led_cdev, transient_data->restore_state);
+> +               led_set_brightness_async(led_cdev,
+> +                                       transient_data->restore_state);
+>                 device_remove_file(led_cdev->dev, &dev_attr_activate);
+>                 device_remove_file(led_cdev->dev, &dev_attr_duration);
+>                 device_remove_file(led_cdev->dev, &dev_attr_state);
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 3737a5a..cfceef3 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -44,11 +44,19 @@ struct led_classdev {
+>  #define LED_BLINK_ONESHOT_STOP (1 << 18)
+>  #define LED_BLINK_INVERT       (1 << 19)
+>  #define LED_SYSFS_DISABLE      (1 << 20)
+> +#define SET_BRIGHTNESS_ASYNC   (1 << 21)
+> +#define SET_BRIGHTNESS_SYNC    (1 << 22)
+>
+>         /* Set LED brightness level */
+>         /* Must not sleep, use a workqueue if needed */
+>         void            (*brightness_set)(struct led_classdev *led_cdev,
+>                                           enum led_brightness brightness);
+> +       /*
+> +        * Set LED brightness level immediately - it can block the caller for
+> +        * the time required for accessing a LED device register.
+> +        */
+> +       int             (*brightness_set_sync)(struct led_classdev *led_cdev,
+> +                                       enum led_brightness brightness);
+>         /* Get LED brightness level */
+>         enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
+>
+> --
+> 1.7.9.5
+>
