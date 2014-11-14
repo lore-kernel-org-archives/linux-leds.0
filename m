@@ -1,45 +1,344 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 01/15] mfd: add new driver for Sharp LoCoMo
-Date: Fri, 14 Nov 2014 19:30:22 +0400
-Message-ID: <CALT56yPkKO=_FYyQvgvnCBA4XU6ETZk_3NNjRu-0mhHy-4aSAQ@mail.gmail.com>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
-	<1414454528-24240-2-git-send-email-dbaryshkov@gmail.com>
-	<CACRpkdbW3NA00zMZr216ZeZpgVkXwKUo30biTVd5kcHKGGtkHg@mail.gmail.com>
-	<CALT56yNX8v4mZn=o1ZoVLHPmg6wq0dgFNowpqNuFtU=eCc+d8w@mail.gmail.com>
-	<CACRpkdaKUZjbSEH75M9xudTF9HefwOCVEe5otv9-9f2UG8=hVg@mail.gmail.com>
-	<CALT56yM8B3ffYb0=EZVbRRGDZSxMci2sRp9XVtjQuLa5abN+cg@mail.gmail.com>
-	<20141105202405.GJ8509@sirena.org.uk>
-	<CALT56yOtjNbYOWM4ba5yP8pz7bNLY5BWpkkpfmv5QZU-7Y5u_g@mail.gmail.com>
-	<20141114151000.GC3815@sirena.org.uk>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v8] leds: Add support for setting brightness in a
+ synchronous way
+Date: Fri, 14 Nov 2014 14:31:49 -0800
+Message-ID: <CAK5ve-LEcZwraO74Pr4=Qdi60y5daYF6B808QO_0ma9rP0+Jrw@mail.gmail.com>
+References: <1415962218-19174-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:59840 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965682AbaKNPaY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Nov 2014 10:30:24 -0500
-In-Reply-To: <20141114151000.GC3815@sirena.org.uk>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:32819 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422662AbaKNWcK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Nov 2014 17:32:10 -0500
+Received: by mail-ig0-f175.google.com with SMTP id h15so525883igd.8
+        for <linux-leds@vger.kernel.org>; Fri, 14 Nov 2014 14:32:10 -0800 (PST)
+In-Reply-To: <1415962218-19174-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Richard Purdie <rpurdie@rpsys.net>
 
-2014-11-14 18:10 GMT+03:00 Mark Brown <broonie@kernel.org>:
-> On Fri, Nov 14, 2014 at 04:47:00PM +0400, Dmitry Eremin-Solenikov wrote:
+On Fri, Nov 14, 2014 at 2:50 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> There are use cases when setting a LED brightness has to
+> have immediate effect (e.g. setting a torch LED brightness).
+> This patch extends LED subsystem to support such operations.
+> The LED subsystem internal API __led_set_brightness is changed
+> to led_set_brightness_async and new led_set_brightness_sync API
+> is added.
 >
->> I'm actually looking at the regulator interface. Since this DAC serves mostly
->> like a (semi-)constant voltage interface, would it be rather logical to use
->> regulator subsystem to drive it?
+
+Thanks, merged!
+-Bryan
+
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
+>  drivers/leds/led-class.c                  |   10 ++++++----
+>  drivers/leds/led-core.c                   |   18 +++++++++++++++---
+>  drivers/leds/leds.h                       |   20 ++++++++++++++++----
+>  drivers/leds/trigger/ledtrig-backlight.c  |    8 ++++----
+>  drivers/leds/trigger/ledtrig-default-on.c |    2 +-
+>  drivers/leds/trigger/ledtrig-gpio.c       |    6 +++---
+>  drivers/leds/trigger/ledtrig-heartbeat.c  |    2 +-
+>  drivers/leds/trigger/ledtrig-oneshot.c    |    4 ++--
+>  drivers/leds/trigger/ledtrig-transient.c  |   10 ++++++----
+>  include/linux/leds.h                      |    8 ++++++++
+>  10 files changed, 62 insertions(+), 26 deletions(-)
 >
-> Possibly...  it's mostly a function of what the consumers of the
-> functionality look like - if that code looks weird calling into the
-> regulator API then it's bad, if that code looks OK it's fine.  I haven't
-> looked at the hardware at all so don't have strong feelings either way
-> so long as the result looks tasteful.
-
-The DAC is used in backlight driver (control brightness) and in ASoC
-machine driver (master joined volume).
-
--- 
-With best wishes
-Dmitry
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 65722de..dbeebac 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -55,7 +55,7 @@ static ssize_t brightness_store(struct device *dev,
+>
+>         if (state == LED_OFF)
+>                 led_trigger_remove(led_cdev);
+> -       __led_set_brightness(led_cdev, state);
+> +       led_set_brightness(led_cdev, state);
+>
+>         ret = size;
+>  unlock:
+> @@ -109,7 +109,7 @@ static void led_timer_function(unsigned long data)
+>         unsigned long delay;
+>
+>         if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>                 return;
+>         }
+>
+> @@ -132,7 +132,7 @@ static void led_timer_function(unsigned long data)
+>                 delay = led_cdev->blink_delay_off;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       led_set_brightness_async(led_cdev, brightness);
+>
+>         /* Return in next iteration if led is in one-shot mode and we are in
+>          * the final blink state so that the led is toggled each delay_on +
+> @@ -158,7 +158,7 @@ static void set_brightness_delayed(struct work_struct *ws)
+>
+>         led_stop_software_blink(led_cdev);
+>
+> -       __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+> +       led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
+>  }
+>
+>  /**
+> @@ -233,6 +233,8 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>         if (!led_cdev->max_brightness)
+>                 led_cdev->max_brightness = LED_FULL;
+>
+> +       led_cdev->flags |= SET_BRIGHTNESS_ASYNC;
+> +
+>         led_update_brightness(led_cdev);
+>
+>         INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index be6d9fa..9886dac 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -42,13 +42,13 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>
+>         /* never on - just set to off */
+>         if (!delay_on) {
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>                 return;
+>         }
+>
+>         /* never off - just set to brightness */
+>         if (!delay_off) {
+> -               __led_set_brightness(led_cdev, led_cdev->blink_brightness);
+> +               led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
+>                 return;
+>         }
+>
+> @@ -117,6 +117,8 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+>  void led_set_brightness(struct led_classdev *led_cdev,
+>                         enum led_brightness brightness)
+>  {
+> +       int ret = 0;
+> +
+>         /* delay brightness setting if need to stop soft-blink timer */
+>         if (led_cdev->blink_delay_on || led_cdev->blink_delay_off) {
+>                 led_cdev->delayed_set_value = brightness;
+> @@ -124,7 +126,17 @@ void led_set_brightness(struct led_classdev *led_cdev,
+>                 return;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
+> +               led_set_brightness_async(led_cdev, brightness);
+> +               return;
+> +       } else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
+> +               ret = led_set_brightness_sync(led_cdev, brightness);
+> +       else
+> +               ret = -EINVAL;
+> +
+> +       if (ret < 0)
+> +               dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
+> +                       ret);
+>  }
+>  EXPORT_SYMBOL(led_set_brightness);
+>
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index 4c50365..2348dbd 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -17,16 +17,28 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/leds.h>
+>
+> -static inline void __led_set_brightness(struct led_classdev *led_cdev,
+> +static inline void led_set_brightness_async(struct led_classdev *led_cdev,
+>                                         enum led_brightness value)
+>  {
+> -       if (value > led_cdev->max_brightness)
+> -               value = led_cdev->max_brightness;
+> -       led_cdev->brightness = value;
+> +       led_cdev->brightness = min(value, led_cdev->max_brightness);
+> +
+>         if (!(led_cdev->flags & LED_SUSPENDED))
+>                 led_cdev->brightness_set(led_cdev, value);
+>  }
+>
+> +static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
+> +                                       enum led_brightness value)
+> +{
+> +       int ret = 0;
+> +
+> +       led_cdev->brightness = min(value, led_cdev->max_brightness);
+> +
+> +       if (!(led_cdev->flags & LED_SUSPENDED))
+> +               ret = led_cdev->brightness_set_sync(led_cdev,
+> +                                               led_cdev->brightness);
+> +       return ret;
+> +}
+> +
+>  static inline int led_get_brightness(struct led_classdev *led_cdev)
+>  {
+>         return led_cdev->brightness;
+> diff --git a/drivers/leds/trigger/ledtrig-backlight.c b/drivers/leds/trigger/ledtrig-backlight.c
+> index 47e55aa..59eca17 100644
+> --- a/drivers/leds/trigger/ledtrig-backlight.c
+> +++ b/drivers/leds/trigger/ledtrig-backlight.c
+> @@ -51,9 +51,9 @@ static int fb_notifier_callback(struct notifier_block *p,
+>
+>         if ((n->old_status == UNBLANK) ^ n->invert) {
+>                 n->brightness = led->brightness;
+> -               __led_set_brightness(led, LED_OFF);
+> +               led_set_brightness_async(led, LED_OFF);
+>         } else {
+> -               __led_set_brightness(led, n->brightness);
+> +               led_set_brightness_async(led, n->brightness);
+>         }
+>
+>         n->old_status = new_status;
+> @@ -89,9 +89,9 @@ static ssize_t bl_trig_invert_store(struct device *dev,
+>
+>         /* After inverting, we need to update the LED. */
+>         if ((n->old_status == BLANK) ^ n->invert)
+> -               __led_set_brightness(led, LED_OFF);
+> +               led_set_brightness_async(led, LED_OFF);
+>         else
+> -               __led_set_brightness(led, n->brightness);
+> +               led_set_brightness_async(led, n->brightness);
+>
+>         return num;
+>  }
+> diff --git a/drivers/leds/trigger/ledtrig-default-on.c b/drivers/leds/trigger/ledtrig-default-on.c
+> index 81a91be..6f38f88 100644
+> --- a/drivers/leds/trigger/ledtrig-default-on.c
+> +++ b/drivers/leds/trigger/ledtrig-default-on.c
+> @@ -19,7 +19,7 @@
+>
+>  static void defon_trig_activate(struct led_classdev *led_cdev)
+>  {
+> -       __led_set_brightness(led_cdev, led_cdev->max_brightness);
+> +       led_set_brightness_async(led_cdev, led_cdev->max_brightness);
+>  }
+>
+>  static struct led_trigger defon_led_trigger = {
+> diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
+> index c86c418..4cc7040 100644
+> --- a/drivers/leds/trigger/ledtrig-gpio.c
+> +++ b/drivers/leds/trigger/ledtrig-gpio.c
+> @@ -54,12 +54,12 @@ static void gpio_trig_work(struct work_struct *work)
+>
+>         if (tmp) {
+>                 if (gpio_data->desired_brightness)
+> -                       __led_set_brightness(gpio_data->led,
+> +                       led_set_brightness_async(gpio_data->led,
+>                                            gpio_data->desired_brightness);
+>                 else
+> -                       __led_set_brightness(gpio_data->led, LED_FULL);
+> +                       led_set_brightness_async(gpio_data->led, LED_FULL);
+>         } else {
+> -               __led_set_brightness(gpio_data->led, LED_OFF);
+> +               led_set_brightness_async(gpio_data->led, LED_OFF);
+>         }
+>  }
+>
+> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+> index 5c8464a..fea6871 100644
+> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
+> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+> @@ -74,7 +74,7 @@ static void led_heartbeat_function(unsigned long data)
+>                 break;
+>         }
+>
+> -       __led_set_brightness(led_cdev, brightness);
+> +       led_set_brightness_async(led_cdev, brightness);
+>         mod_timer(&heartbeat_data->timer, jiffies + delay);
+>  }
+>
+> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+> index cb4c746..fbd02cd 100644
+> --- a/drivers/leds/trigger/ledtrig-oneshot.c
+> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+> @@ -63,9 +63,9 @@ static ssize_t led_invert_store(struct device *dev,
+>         oneshot_data->invert = !!state;
+>
+>         if (oneshot_data->invert)
+> -               __led_set_brightness(led_cdev, LED_FULL);
+> +               led_set_brightness_async(led_cdev, LED_FULL);
+>         else
+> -               __led_set_brightness(led_cdev, LED_OFF);
+> +               led_set_brightness_async(led_cdev, LED_OFF);
+>
+>         return size;
+>  }
+> diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+> index e5abc00..3c34de4 100644
+> --- a/drivers/leds/trigger/ledtrig-transient.c
+> +++ b/drivers/leds/trigger/ledtrig-transient.c
+> @@ -41,7 +41,7 @@ static void transient_timer_function(unsigned long data)
+>         struct transient_trig_data *transient_data = led_cdev->trigger_data;
+>
+>         transient_data->activate = 0;
+> -       __led_set_brightness(led_cdev, transient_data->restore_state);
+> +       led_set_brightness_async(led_cdev, transient_data->restore_state);
+>  }
+>
+>  static ssize_t transient_activate_show(struct device *dev,
+> @@ -72,7 +72,8 @@ static ssize_t transient_activate_store(struct device *dev,
+>         if (state == 0 && transient_data->activate == 1) {
+>                 del_timer(&transient_data->timer);
+>                 transient_data->activate = state;
+> -               __led_set_brightness(led_cdev, transient_data->restore_state);
+> +               led_set_brightness_async(led_cdev,
+> +                                       transient_data->restore_state);
+>                 return size;
+>         }
+>
+> @@ -80,7 +81,7 @@ static ssize_t transient_activate_store(struct device *dev,
+>         if (state == 1 && transient_data->activate == 0 &&
+>             transient_data->duration != 0) {
+>                 transient_data->activate = state;
+> -               __led_set_brightness(led_cdev, transient_data->state);
+> +               led_set_brightness_async(led_cdev, transient_data->state);
+>                 transient_data->restore_state =
+>                     (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
+>                 mod_timer(&transient_data->timer,
+> @@ -203,7 +204,8 @@ static void transient_trig_deactivate(struct led_classdev *led_cdev)
+>
+>         if (led_cdev->activated) {
+>                 del_timer_sync(&transient_data->timer);
+> -               __led_set_brightness(led_cdev, transient_data->restore_state);
+> +               led_set_brightness_async(led_cdev,
+> +                                       transient_data->restore_state);
+>                 device_remove_file(led_cdev->dev, &dev_attr_activate);
+>                 device_remove_file(led_cdev->dev, &dev_attr_duration);
+>                 device_remove_file(led_cdev->dev, &dev_attr_state);
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 3737a5a..cfceef3 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -44,11 +44,19 @@ struct led_classdev {
+>  #define LED_BLINK_ONESHOT_STOP (1 << 18)
+>  #define LED_BLINK_INVERT       (1 << 19)
+>  #define LED_SYSFS_DISABLE      (1 << 20)
+> +#define SET_BRIGHTNESS_ASYNC   (1 << 21)
+> +#define SET_BRIGHTNESS_SYNC    (1 << 22)
+>
+>         /* Set LED brightness level */
+>         /* Must not sleep, use a workqueue if needed */
+>         void            (*brightness_set)(struct led_classdev *led_cdev,
+>                                           enum led_brightness brightness);
+> +       /*
+> +        * Set LED brightness level immediately - it can block the caller for
+> +        * the time required for accessing a LED device register.
+> +        */
+> +       int             (*brightness_set_sync)(struct led_classdev *led_cdev,
+> +                                       enum led_brightness brightness);
+>         /* Get LED brightness level */
+>         enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
+>
+> --
+> 1.7.9.5
+>
