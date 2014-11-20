@@ -1,69 +1,58 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [RFC] adp1653: Add device tree bindings for LED controller
-Date: Thu, 20 Nov 2014 13:48:27 +0100
-Message-ID: <546DE31B.20602@samsung.com>
-References: <20141117145857.GO8907@valkosipuli.retiisi.org.uk>
- <546AFEA5.9020000@samsung.com> <20141118084603.GC4059@amd>
- <546B19C8.2090008@samsung.com> <20141118113256.GA10022@amd>
- <546B40FA.2070409@samsung.com> <20141118132159.GA21089@amd>
- <546B6D86.8090701@samsung.com> <20141118165148.GA11711@amd>
- <546C66A5.6060201@samsung.com> <20141120121202.GA27527@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH] Add attributes neccessary for LED flashes to
+ devicetree/bindings/leds/common.txt
+Date: Thu, 20 Nov 2014 14:17:13 +0100
+Message-ID: <20141120131713.GC27527@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:20284 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750885AbaKTMsc (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Nov 2014 07:48:32 -0500
-In-reply-to: <20141120121202.GA27527@amd>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-doc-owner@vger.kernel.org
+To: j.anaszewski@samsung.com, sakari.ailus@iki.fi, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, pali.rohar@gmail.com, sre@debian.org, sre@ring0.de, kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org, aaro.koskinen@iki.fi, freemangordon@abv.bg, bcousson@baylibre.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Pavel,
 
-On 11/20/2014 01:12 PM, Pavel Machek wrote:
-> Hi!
->
->> I would also swap the segments of a property name to follow the convention
->> as in case of "regulator-max-microamp".
->>
->> Updated version:
->>
->> ==========================================================
->>
->> Optional properties for child nodes:
->> - max-microamp : maximum intensity in microamperes of the LED
->> 		 (torch LED for flash devices)
->> - flash-max-microamp : maximum intensity in microamperes of the
->> 		       flash LED; it is mandatory if the led should
->> 		       support the flash mode
->> - flash-timeout-microsec : timeout in microseconds after which the flash
->> 		           led is turned off
->
-> Works for me. Do you want to submit a patch or should I do it?
+Add attributes neccessary for LED flashes to
+devicetree/bindings/leds/common.txt .
 
-You can submit a patch for leds/common.txt and a separate patch for the
-adp1653 with a reference to the leds/common.txt for the child nodes.
+This will allow me to add device tree support for adp1653 i2c flash
+LED driver, and allow Jacek Anaszewski to add support for more LED
+drivers..
 
->
->> - indicator-pattern : identifier of the blinking pattern for the
->> 		      indicator led
->>
->
-> This would need a bit more documentation, no?
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-- indicator-pattern : identifier of the blinking pattern for the
-  		      indicator led; valid identifiers should be
-		      defined in the documentation of the parent
-		      node.
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 2d88816..e9acbbc 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -14,6 +14,15 @@ Optional properties for child nodes:
+      "ide-disk" - LED indicates disk activity
+      "timer" - LED flashes at a fixed, configurable rate
+ 
++- max-microamp : maximum intensity in microamperes of the LED
++  	         (torch LED for flash devices)
++- flash-max-microamp : maximum intensity in microamperes of the
++                       flash LED; it is mandatory if the LED should
++		       support the flash mode
++- flash-timeout-microsec : timeout in microseconds after which the flash
++                           LED is turned off
++
++
+ Examples:
+ 
+ system-status {
+@@ -21,3 +30,10 @@ system-status {
+ 	linux,default-trigger = "heartbeat";
+ 	...
+ };
++
++camera-flash {
++	label = "Flash";
++	max-microamp = <50000>;
++	flash-max-microamp = <320000>;
++	flash-timeout-microsec = <500000>;
++}
 
-I wouldn't go for pre-defined identifiers as the pattern
-can be a combination of various settings like ramp-up, ramp-down,
-pulse time etc. Drivers should expose only few combinations of
-these settings in my opinion, like e.g. leds-lm355x.c does.
-
-Regards,
-Jacek
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
