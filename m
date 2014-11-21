@@ -1,59 +1,35 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
 Subject: Re: [PATCH] Add attributes neccessary for LED flashes to
  devicetree/bindings/leds/common.txt
-Date: Fri, 21 Nov 2014 08:38:33 +0100
-Message-ID: <546EEBF9.9080006@samsung.com>
+Date: Fri, 21 Nov 2014 09:40:38 +0200
+Message-ID: <20141121074038.GD8907@valkosipuli.retiisi.org.uk>
 References: <20141120131713.GC27527@amd>
  <20141120150349.GZ8907@valkosipuli.retiisi.org.uk>
+ <546EEBF9.9080006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <20141120150349.GZ8907@valkosipuli.retiisi.org.uk>
+Content-Disposition: inline
+In-Reply-To: <546EEBF9.9080006@samsung.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel, Sakari,
+Hi Jacek,
 
-On 11/20/2014 04:03 PM, Sakari Ailus wrote:
-> Hi Pavel,
->
-> On Thu, Nov 20, 2014 at 02:17:13PM +0100, Pavel Machek wrote:
->>
->> Add attributes neccessary for LED flashes to
->> devicetree/bindings/leds/common.txt .
->>
->> This will allow me to add device tree support for adp1653 i2c flash
->> LED driver, and allow Jacek Anaszewski to add support for more LED
->> drivers..
->>
->> Signed-off-by: Pavel Machek <pavel@ucw.cz>
->>
->> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->> index 2d88816..e9acbbc 100644
->> --- a/Documentation/devicetree/bindings/leds/common.txt
->> +++ b/Documentation/devicetree/bindings/leds/common.txt
->> @@ -14,6 +14,15 @@ Optional properties for child nodes:
->>        "ide-disk" - LED indicates disk activity
->>        "timer" - LED flashes at a fixed, configurable rate
->>
->> +- max-microamp : maximum intensity in microamperes of the LED
->> +  	         (torch LED for flash devices)
->> +- flash-max-microamp : maximum intensity in microamperes of the
->> +                       flash LED; it is mandatory if the LED should
->> +		       support the flash mode
->> +- flash-timeout-microsec : timeout in microseconds after which the flash
->> +                           LED is turned off
->
-> It might be good to add a note that these may be arrays, depending on the
-> device.
->
+On Fri, Nov 21, 2014 at 08:38:33AM +0100, Jacek Anaszewski wrote:
+> >It might be good to add a note that these may be arrays, depending on the
+> >device.
+> >
+> 
+> This binding is for a sub-node representing a single led.
+> Do you know devices which would require an array of max currents
+> for a sub-led?
 
-This binding is for a sub-node representing a single led.
-Do you know devices which would require an array of max currents
-for a sub-led?
+Individual LEDs can have different maximum current limits. So if you connect
+two LEDs, one may have a higher limit than the other.
 
-Regards,
-Jacek
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
