@@ -1,42 +1,66 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] leds: lp8860: Fix module dependency
-Date: Fri, 21 Nov 2014 21:48:26 +0800
-Message-ID: <1416577706.16072.1.camel@phoenix>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] Add attributes neccessary for LED flashes to
+ devicetree/bindings/leds/common.txt
+Date: Mon, 24 Nov 2014 23:53:19 +0100
+Message-ID: <20141124225319.GA22383@amd>
+References: <20141120131713.GC27527@amd>
+ <546DEEC3.7090508@samsung.com>
+ <546DFF3A.7020702@samsung.com>
+ <20141120205254.GA19174@amd>
+ <546EF4A3.2000101@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:60920 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751596AbaKUNsb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 21 Nov 2014 08:48:31 -0500
-Received: by mail-pa0-f51.google.com with SMTP id ey11so4964477pad.10
-        for <linux-leds@vger.kernel.org>; Fri, 21 Nov 2014 05:48:30 -0800 (PST)
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60772 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751100AbaKXWxW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 24 Nov 2014 17:53:22 -0500
+Content-Disposition: inline
+In-Reply-To: <546EF4A3.2000101@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Dan Murphy <dmurphy@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: sakari.ailus@iki.fi, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
 
-The driver should select REGMAP_I2C rather than depend on it.
+On Fri 2014-11-21 09:15:31, Jacek Anaszewski wrote:
+> Hi Pavel,
+> 
+> On 11/20/2014 09:52 PM, Pavel Machek wrote:
+> >On Thu 2014-11-20 15:48:26, Jacek Anaszewski wrote:
+> >>On 11/20/2014 02:38 PM, Jacek Anaszewski wrote:
+> >>>Hi Pavel,
+> >>>
+> >>>On 11/20/2014 02:17 PM, Pavel Machek wrote:
+> >>>>
+> >>>>Add attributes neccessary for LED flashes to
+> >>>>devicetree/bindings/leds/common.txt .
+> >>>>
+> >>>>This will allow me to add device tree support for adp1653 i2c flash
+> >>>>LED driver, and allow Jacek Anaszewski to add support for more LED
+> >>>>drivers..
+> >..
+> >>
+> >>Actually, we've agreed with Sakari that we can handle
+> >>indicator-pattern later.
+> >
+> >Good.
+> >
+> >>I would remove references to you, me and adp1653 driver from the commit
+> >>message and mention that this modifications adjust the led common
+> >>bindings to the LED Flash class that is to be added.
+> >
+> >Ok, who can take this patch? Can you edit the changelog, or should I
+> >do it? Anything else that needs changing?
+> 
+> It's your patch :) For me the contents of the patch are ok.
+> It requires device tree maintainer approval anyway.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/leds/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yeah, I was hoping relevant maintainers would speak up. I was not
+asking you to edit the changelog, sorry I was unclear.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index b3c0d8a..59f4228 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -249,7 +249,8 @@ config LEDS_LP8788
- 
- config LEDS_LP8860
- 	tristate "LED support for the TI LP8860 4 channel LED driver"
--	depends on LEDS_CLASS && REGMAP_I2C
-+	depends on LEDS_CLASS && I2C
-+	select REGMAP_I2C
- 	help
- 	  If you say yes here you get support for the TI LP8860 4 channel
- 	  LED driver.
+Bryan Wu, Richard Purdie: You are the maintainers. Can you take the
+patch?
+									Pavel
 -- 
-1.9.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
