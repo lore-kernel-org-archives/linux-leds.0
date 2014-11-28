@@ -1,106 +1,81 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v8 00/14] LED / flash API integration
-Date: Fri, 28 Nov 2014 10:17:52 +0100
-Message-ID: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED Flash
+ class extension
+Date: Fri, 28 Nov 2014 10:17:54 +0100
+Message-ID: <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
+References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch set is a follow-up of the LED / flash API integration
-series [1].
+The documentation being added contains overall description of the
+LED Flash Class and the related sysfs attributes.
 
-========================
-Changes since version 7:
-========================
-
-- removed explicit support for indicator leds from
-  LED Flash class - indicator leds will be registered
-  as a separate LED Flash class devices
-- added flash_sync_strobe sysfs attribute and related
-  V4L2_CID_FLASH_SYNC_STROBE control
-- changed the way of matching V4L2 Flash sub-devices
-  in a media device, which entailed modification in
-  v4l2-async driver
-- modified max77693 DT bindings documentation
-- applied various fixes an cleanups
-
-========================
-Changes since version 6:
-========================
-
-- removed addition of public LED subsystem API for setting
-  torch brightness in favour of internal API for
-  synchronous and asynchronous led brightness level setting
-- fixed possible race condition upon creating LED Flash class
-  related sysfs attributes
-
-========================
-Changes since version 5:
-========================
-
-- removed flash manager framework - its implementation needs
-  further thorough discussion.
-- removed external strobe facilities from the LED Flash Class
-  and provided external_strobe_set op in v4l2-flash. LED subsystem
-  should be strobe provider agnostic.
-
-Thanks,
-Jacek Anaszewski
-
-[1] https://lkml.org/lkml/2014/7/11/914
-
-Jacek Anaszewski (14):
-  leds: Add LED Flash class extension to the LED subsystem
-  Documentation: leds: Add description of LED Flash class extension
-  Documentation: leds: Add description of v4l2-flash sub-device
-  v4l2-async: change custom.match callback argument type
-  v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
-  media: Add registration helpers for V4L2 flash sub-devices
-  exynos4-is: Add support for v4l2-flash subdevs
-  DT: Add documentation for exynos4-is 'flashes' property
-  mfd: max77693: adjust max77693_led_platform_data
-  leds: Add support for max77693 mfd flash cell
-  DT: Add documentation for the mfd Maxim max77693
-  leds: Add driver for AAT1290 current regulator
-  of: Add Skyworks Solutions, Inc. vendor prefix
-  DT: Add documentation for the Skyworks AAT1290
-
- Documentation/DocBook/media/v4l/controls.xml       |    9 +
- .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +
- .../devicetree/bindings/media/samsung-fimc.txt     |    7 +
- Documentation/devicetree/bindings/mfd/max77693.txt |   74 ++
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- Documentation/leds/leds-class-flash.txt            |   61 ++
- drivers/leds/Kconfig                               |   27 +
- drivers/leds/Makefile                              |    3 +
- drivers/leds/led-class-flash.c                     |  446 ++++++++
- drivers/leds/led-class.c                           |    4 +
- drivers/leds/leds-aat1290.c                        |  472 ++++++++
- drivers/leds/leds-max77693.c                       | 1152 ++++++++++++++++++++
- drivers/media/platform/exynos4-is/media-dev.c      |   65 +-
- drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
- drivers/media/v4l2-core/Kconfig                    |   11 +
- drivers/media/v4l2-core/Makefile                   |    2 +
- drivers/media/v4l2-core/v4l2-async.c               |   16 +-
- drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
- drivers/media/v4l2-core/v4l2-flash.c               |  516 +++++++++
- include/linux/led-class-flash.h                    |  198 ++++
- include/linux/leds.h                               |    3 +
- include/linux/mfd/max77693.h                       |    3 +-
- include/media/v4l2-async.h                         |    2 +-
- include/media/v4l2-flash.h                         |  138 +++
- include/uapi/linux/v4l2-controls.h                 |    1 +
- 25 files changed, 3230 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ Documentation/leds/leds-class-flash.txt |   48 +++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
  create mode 100644 Documentation/leds/leds-class-flash.txt
- create mode 100644 drivers/leds/led-class-flash.c
- create mode 100644 drivers/leds/leds-aat1290.c
- create mode 100644 drivers/leds/leds-max77693.c
- create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
- create mode 100644 include/linux/led-class-flash.h
- create mode 100644 include/media/v4l2-flash.h
 
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+new file mode 100644
+index 0000000..d68565c
+--- /dev/null
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -0,0 +1,48 @@
++
++Flash LED handling under Linux
++==============================
++
++Some LED devices support two modes - torch and flash. The modes are
++supported by the LED class (see Documentation/leds/leds-class.txt)
++and LED Flash class respectively.
++
++In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
++must be defined in the kernel config. A flash LED driver must register
++in the LED subsystem with led_classdev_flash_register to gain flash
++capabilities.
++
++Following sysfs attributes are exposed for controlling flash led devices:
++
++	- flash_brightness - flash LED brightness in microamperes (RW)
++	- max_flash_brightness - maximum available flash LED brightness (RO)
++	- indicator_brightness - privacy LED brightness in microamperes (RW)
++	- max_indicator_brightness - maximum privacy LED brightness in
++				     microamperes (RO)
++	- flash_timeout - flash strobe duration in microseconds (RW)
++	- max_flash_timeout - maximum available flash strobe duration (RO)
++	- flash_strobe - flash strobe state (RW)
++	- flash_sync_strobe - one flash device can control more than one
++			      sub-led; when this atrribute is set to 1
++			      the flash led will be strobed synchronously
++			      with the other ones controlled by the same
++			      device (RW)
++	- flash_fault - bitmask of flash faults that may have occurred,
++			possible flags are:
++		* 0x01 - flash controller voltage to the flash LED has exceeded
++			 the limit specific to the flash controller
++		* 0x02 - the flash strobe was still on when the timeout set by
++			 the user has expired; not all flash controllers may
++			 set this in all such conditions
++		* 0x04 - the flash controller has overheated
++		* 0x08 - the short circuit protection of the flash controller
++			 has been triggered
++		* 0x10 - current in the LED power supply has exceeded the limit
++			 specific to the flash controller
++		* 0x40 - flash controller voltage to the flash LED has been
++			 below the minimum limit specific to the flash
++		* 0x80 - the input voltage of the flash controller is below
++			 the limit under which strobing the flash at full
++			 current will not be possible. The condition persists
++			 until this flag is no longer set
++		* 0x100 - the temperature of the LED has exceeded its allowed
++			  upper limit
 -- 
 1.7.9.5
