@@ -1,80 +1,98 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v8 05/14] v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
-Date: Fri, 28 Nov 2014 10:17:57 +0100
-Message-ID: <1417166286-27685-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v8 04/14] v4l2-async: change custom.match callback argument
+ type
+Date: Fri, 28 Nov 2014 10:17:56 +0100
+Message-ID: <1417166286-27685-5-git-send-email-j.anaszewski@samsung.com>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add V4L2_CID_FLASH_SYNC_STROBE control for determining
-whether a flash device strobe has to be synchronized
-with other flash leds controller by the same device.
+It is useful to have an access to the async sub-device
+being matched, not only to the related struct device.
+Change match callback argument from struct device
+to struct v4l2_subdev. It will allow e.g. for matching
+a sub-device by its "name" property.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- Documentation/DocBook/media/v4l/controls.xml |    9 +++++++++
- drivers/media/v4l2-core/v4l2-ctrls.c         |    2 ++
- include/uapi/linux/v4l2-controls.h           |    1 +
- 3 files changed, 12 insertions(+)
+ drivers/media/v4l2-core/v4l2-async.c |   16 ++++++++--------
+ include/media/v4l2-async.h           |    2 +-
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index e013e4b..35e9ea3 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -4563,6 +4563,15 @@ interface and may change in the future.</para>
-     	    after strobe during which another strobe will not be
-     	    possible. This is a read-only control.</entry>
-     	  </row>
-+    	  <row>
-+    	    <entry spanname="id"><constant>V4L2_CID_FLASH_SYNC_STROBE</constant></entry>
-+    	    <entry>boolean</entry>
-+    	  </row>
-+    	  <row>
-+    	    <entry spanname="descr">Synchronized strobe: whether the flash
-+	    should be strobed synchronously with the other ones controlled
-+	    by the same device</entry>
-+    	  </row>
-     	  <row><entry></entry></row>
-     	</tbody>
-           </tgroup>
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 45c5b47..a7cca8c 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -846,6 +846,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_FLASH_FAULT:		return "Faults";
- 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
- 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
-+	case V4L2_CID_FLASH_SYNC_STROBE:	return "Synchronize Strobe";
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 85a6a34..8140992 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -22,10 +22,10 @@
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-subdev.h>
  
- 	/* JPEG encoder controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -949,6 +950,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_FLASH_STROBE_STATUS:
- 	case V4L2_CID_FLASH_CHARGE:
- 	case V4L2_CID_FLASH_READY:
-+	case V4L2_CID_FLASH_SYNC_STROBE:
- 	case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:
- 	case V4L2_CID_MPEG_VIDEO_DECODER_SLICE_INTERFACE:
- 	case V4L2_CID_MPEG_VIDEO_FRAME_RC_ENABLE:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 661f119..5bce13d 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -833,6 +833,7 @@ enum v4l2_flash_strobe_source {
+-static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
++static bool match_i2c(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
+ {
+ #if IS_ENABLED(CONFIG_I2C)
+-	struct i2c_client *client = i2c_verify_client(dev);
++	struct i2c_client *client = i2c_verify_client(sd->dev);
+ 	return client &&
+ 		asd->match.i2c.adapter_id == client->adapter->nr &&
+ 		asd->match.i2c.address == client->addr;
+@@ -34,14 +34,14 @@ static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
+ #endif
+ }
  
- #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
- #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
-+#define V4L2_CID_FLASH_SYNC_STROBE		(V4L2_CID_FLASH_CLASS_BASE + 13)
+-static bool match_devname(struct device *dev, struct v4l2_async_subdev *asd)
++static bool match_devname(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
+ {
+-	return !strcmp(asd->match.device_name.name, dev_name(dev));
++	return !strcmp(asd->match.device_name.name, dev_name(sd->dev));
+ }
  
+-static bool match_of(struct device *dev, struct v4l2_async_subdev *asd)
++static bool match_of(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
+ {
+-	return dev->of_node == asd->match.of.node;
++	return sd->dev->of_node == asd->match.of.node;
+ }
  
- /* JPEG-class control IDs */
+ static LIST_HEAD(subdev_list);
+@@ -52,7 +52,7 @@ static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *
+ 						    struct v4l2_subdev *sd)
+ {
+ 	struct v4l2_async_subdev *asd;
+-	bool (*match)(struct device *, struct v4l2_async_subdev *);
++	bool (*match)(struct v4l2_subdev *, struct v4l2_async_subdev *);
+ 
+ 	list_for_each_entry(asd, &notifier->waiting, list) {
+ 		/* bus_type has been verified valid before */
+@@ -79,7 +79,7 @@ static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *
+ 		}
+ 
+ 		/* match cannot be NULL here */
+-		if (match(sd->dev, asd))
++		if (match(sd, asd))
+ 			return asd;
+ 	}
+ 
+diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+index 7683569..1c0b586 100644
+--- a/include/media/v4l2-async.h
++++ b/include/media/v4l2-async.h
+@@ -51,7 +51,7 @@ struct v4l2_async_subdev {
+ 			unsigned short address;
+ 		} i2c;
+ 		struct {
+-			bool (*match)(struct device *,
++			bool (*match)(struct v4l2_subdev *,
+ 				      struct v4l2_async_subdev *);
+ 			void *priv;
+ 		} custom;
 -- 
 1.7.9.5
