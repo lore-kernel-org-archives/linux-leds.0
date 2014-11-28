@@ -1,56 +1,50 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v8 08/14] DT: Add documentation for exynos4-is 'flashes'
- property
-Date: Fri, 28 Nov 2014 10:18:00 +0100
-Message-ID: <1417166286-27685-9-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v8 09/14] mfd: max77693: adjust max77693_led_platform_data
+Date: Fri, 28 Nov 2014 10:18:01 +0100
+Message-ID: <1417166286-27685-10-git-send-email-j.anaszewski@samsung.com>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds a description of 'flashes' property
-to the samsung-fimc.txt.
+Add "label" array for Device Tree strings with
+the name of a LED device and make flash_timeout
+a two element array, for caching the sub-led
+related flash timeout.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: <devicetree@vger.kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: SangYoung Son <hello.son@smasung.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
 ---
- .../devicetree/bindings/media/samsung-fimc.txt     |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/mfd/max77693.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-index 922d6f8..4b7ed03 100644
---- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-@@ -40,6 +40,12 @@ should be inactive. For the "active-a" state the camera port A must be activated
- and the port B deactivated and for the state "active-b" it should be the other
- way around.
+diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+index f0b6585..30fa19ea 100644
+--- a/include/linux/mfd/max77693.h
++++ b/include/linux/mfd/max77693.h
+@@ -88,14 +88,15 @@ enum max77693_led_boost_mode {
+ };
  
-+Optional properties:
-+
-+- flashes - array of strings with flash led names; the name has to
-+	    be same with the related led label
-+	    (see Documentation/devicetree/bindings/leds/common.txt)
-+
- The 'camera' node must include at least one 'fimc' child node.
- 
- 
-@@ -166,6 +172,7 @@ Example:
- 		clock-output-names = "cam_a_clkout", "cam_b_clkout";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&cam_port_a_clk_active>;
-+		flashes = "max77693-flash1", "max77693-flash2";
- 		status = "okay";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+ struct max77693_led_platform_data {
++	const char *label[2];
+ 	u32 fleds[2];
+ 	u32 iout_torch[2];
+ 	u32 iout_flash[2];
+ 	u32 trigger[2];
+ 	u32 trigger_type[2];
++	u32 flash_timeout[2];
+ 	u32 num_leds;
+ 	u32 boost_mode;
+-	u32 flash_timeout;
+ 	u32 boost_vout;
+ 	u32 low_vsys;
+ };
 -- 
 1.7.9.5
