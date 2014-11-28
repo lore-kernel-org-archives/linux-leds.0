@@ -1,108 +1,106 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: Again about leds-pwm and pwm-mxs
-Date: Thu, 27 Nov 2014 09:50:04 +0100
-Message-ID: <20141127085004.GO30369@pengutronix.de>
-References: <20141126171242.GO4431@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141126171242.GO4431@pengutronix.de>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v8 00/14] LED / flash API integration
+Date: Fri, 28 Nov 2014 10:17:52 +0100
+Message-ID: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Nov 26, 2014 at 06:12:42PM +0100, Uwe Kleine-K=F6nig wrote:
-> Hello,
->=20
-> two years ago I addressed the issue that on i.MX28 a led connected to=
- a
-> pwm-mxs device doesn't go off when brightness is set to 0. I tried ag=
-ain
-> later to find an acceptable solution.
-> (Links to respective threads:
-> http://thread.gmane.org/gmane.linux.ports.arm.kernel/282593/focus=3D2=
-82596)
-> http://thread.gmane.org/gmane.linux.kernel/1381289
-> )
->=20
-> The technical side is well understood: The problem is that leds-pwm d=
-oes
-> the following:
->=20
-> 	pwm_config(led_dat->pwm, new_duty, led_dat->period);
->=20
-> 	if (new_duty =3D=3D 0)
-> 		pwm_disable(led_dat->pwm);
-> 	else
-> 		pwm_enable(led_dat->pwm);
->=20
-> On i.MX28 reconfiguring the duty cycle only takes effect after the
-> current period is over. That means that if the previous configuration
-> was duty=3Dperiod (i.e. "on") the likely outcome of the above sequenc=
-e
-> with new_duty=3D0 is that setting the duty cycle to 0 is scheduled bu=
-t the
-> current period never ends because the clock is stopped. So the led ke=
-eps
-> being on.
->=20
-> Now we need a settlement in which way this should be fixed.
-> There are several possibilities, roughly in order of my preference:
->  a) Declare the pin state after pwm_disable as undefined
->     In this case the leds-pwm driver must not call pwm_disable when
->     expecting a certain brightness (here: off).
->     A nice follow-up is then to patch the drivers that work the way t=
-he
->     leds-pwm author expected to call their equivalent of pwm_disable
->     themselves on new_duty=3D0.
->  b) Let pwm_config return at once, implement the waiting in a new cal=
-l
->     pwm_sync() that either busy-loops or sleeps until the configurati=
-on
->     is=20
->  c) Make the call to pwm_config for pwm-mxs block until the new perio=
-d
->     started.
->  d) Make the call to pwm_config for pwm-mxs sleep until the new perio=
-d
->     started.
->     (Not sure this works nicely because IIRC there is no irq availabl=
-e
->     that triggers accordingly.)
->  e) In pwm_disable detect that there is a reconfiguration pending and
->     block accordingly.
->  f) Extend the PWM-API to differentiate the two variants of pwm_confi=
-g
->     E.g. make pwm_config sleep/busy-looping until the requested confi=
-g is
->     active plus a new function pwm_config_schedule.
->=20
-> Back then Sascha and Matt also prefered a). The obvious downside of a=
-)
-> is that most people expect pwm_disable implying a constant 0. The
-> obvious advantage of a) is that it's the simplest alternative and als=
-o
-> works best when there are board specific inverters involved or the pw=
-m
-> supports built-in inversion.
+This patch set is a follow-up of the LED / flash API integration
+series [1].
 
-I'm still in favor for a). IMO it's the only sane way to solve problems
-with inverted PWMs. A PWM in disabled state has an undefined output on
-some hardwares and we don't even axactly know which value a disabled
-PWM should have. Using a duty cycle of 0% or 100% makes the desired
-output very clear.
+========================
+Changes since version 7:
+========================
 
-Sascha
+- removed explicit support for indicator leds from
+  LED Flash class - indicator leds will be registered
+  as a separate LED Flash class devices
+- added flash_sync_strobe sysfs attribute and related
+  V4L2_CID_FLASH_SYNC_STROBE control
+- changed the way of matching V4L2 Flash sub-devices
+  in a media device, which entailed modification in
+  v4l2-async driver
+- modified max77693 DT bindings documentation
+- applied various fixes an cleanups
 
---=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+========================
+Changes since version 6:
+========================
+
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (14):
+  leds: Add LED Flash class extension to the LED subsystem
+  Documentation: leds: Add description of LED Flash class extension
+  Documentation: leds: Add description of v4l2-flash sub-device
+  v4l2-async: change custom.match callback argument type
+  v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
+  media: Add registration helpers for V4L2 flash sub-devices
+  exynos4-is: Add support for v4l2-flash subdevs
+  DT: Add documentation for exynos4-is 'flashes' property
+  mfd: max77693: adjust max77693_led_platform_data
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add driver for AAT1290 current regulator
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+
+ Documentation/DocBook/media/v4l/controls.xml       |    9 +
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +
+ .../devicetree/bindings/media/samsung-fimc.txt     |    7 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   74 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   61 ++
+ drivers/leds/Kconfig                               |   27 +
+ drivers/leds/Makefile                              |    3 +
+ drivers/leds/led-class-flash.c                     |  446 ++++++++
+ drivers/leds/led-class.c                           |    4 +
+ drivers/leds/leds-aat1290.c                        |  472 ++++++++
+ drivers/leds/leds-max77693.c                       | 1152 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.c      |   65 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-async.c               |   16 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  516 +++++++++
+ include/linux/led-class-flash.h                    |  198 ++++
+ include/linux/leds.h                               |    3 +
+ include/linux/mfd/max77693.h                       |    3 +-
+ include/media/v4l2-async.h                         |    2 +-
+ include/media/v4l2-flash.h                         |  138 +++
+ include/uapi/linux/v4l2-controls.h                 |    1 +
+ 25 files changed, 3230 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/linux/led-class-flash.h
+ create mode 100644 include/media/v4l2-flash.h
+
+-- 
+1.7.9.5
