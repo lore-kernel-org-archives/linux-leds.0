@@ -1,111 +1,86 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH/RFC v8 08/14] DT: Add documentation for exynos4-is
- 'flashes' property
-Date: Fri, 28 Nov 2014 14:38:23 +0000
-Message-ID: <20141128143823.GJ25883@leverpostej>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Sat, 29 Nov 2014 13:58:32 +0100
+Message-ID: <20141129125832.GA315@amd>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-9-git-send-email-j.anaszewski@samsung.com>
- <20141128111404.GB25883@leverpostej>
- <547865EA.5010700@samsung.com>
- <20141128123003.GE25883@leverpostej>
- <54788278.7080101@samsung.com>
+ <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60166 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751502AbaK2M6h (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 29 Nov 2014 07:58:37 -0500
 Content-Disposition: inline
-In-Reply-To: <54788278.7080101-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "pavel-+ZI9xUNit7I@public.gmane.org" <pavel-+ZI9xUNit7I@public.gmane.org>, "cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "sakari.ailus-X3B1VOXEql0@public.gmane.org" <sakari.ailus-X3B1VOXEql0@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-On Fri, Nov 28, 2014 at 02:11:04PM +0000, Jacek Anaszewski wrote:
-> On 11/28/2014 01:30 PM, Mark Rutland wrote:
-> > On Fri, Nov 28, 2014 at 12:09:14PM +0000, Jacek Anaszewski wrote:
-> >> On 11/28/2014 12:14 PM, Mark Rutland wrote:
-> >>> On Fri, Nov 28, 2014 at 09:18:00AM +0000, Jacek Anaszewski wrote:
-> >>>> This patch adds a description of 'flashes' property
-> >>>> to the samsung-fimc.txt.
-> >>>>
-> >>>> Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> >>>> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> >>>> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> >>>> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> >>>> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> >>>> Cc: <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-> >>>> ---
-> >>>>    .../devicetree/bindings/media/samsung-fimc.txt     |    7 +++=
-++++
-> >>>>    1 file changed, 7 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/media/samsung-fim=
-c.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> >>>> index 922d6f8..4b7ed03 100644
-> >>>> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> >>>> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> >>>> @@ -40,6 +40,12 @@ should be inactive. For the "active-a" state =
-the camera port A must be activated
-> >>>>    and the port B deactivated and for the state "active-b" it sh=
-ould be the other
-> >>>>    way around.
-> >>>>
-> >>>> +Optional properties:
-> >>>> +
-> >>>> +- flashes - array of strings with flash led names; the name has=
- to
-> >>>> +	    be same with the related led label
-> >>>> +	    (see Documentation/devicetree/bindings/leds/common.txt)
-> >>>> +
-> >>>
-> >>> Why is this not an array of phandles to the LED nodes? That's muc=
-h
-> >>> better than strings.
-> >>
-> >> This is because a single flash led device can control many sub-led=
-s,
-> >> which are represented by child nodes in the Device Tree.
-> >> Every sub-led is registered as a separate LED Flash class device
-> >> in the LED subsystem, but in fact they share the same struct devic=
-e
-> >> and thus have access only to the parent's phandle.
-> >
-> > But that's a Linux infrastrcture issue, no? You don't have to use t=
-he
-> > node from the struct device to find the relevant phandle.
->=20
-> Right.
->=20
-> >> The LED Flash
-> >> class devices are wrapped by V4L2 sub-devices and register
-> >> asynchronously within a media device. Since the v4l2_subdev struct=
-ure
-> >> has a 'name' field, it is convenient to initialize it with
-> >> parsed 'label' property of a child led node and match the
-> >> sub-devices in the media device basing on it.
-> >
-> > While that might be convenient, I don't think it's fantastic to use=
- that
-> > to describe the relationship, as this leaks Linux internals (e.g. I=
- can
-> > refer to a name that doesn't exist in the DT but happens to be what
-> > Linux used, and it would work). Also, are the labels guaranteed to =
-be
-> > globally unique?
->=20
-> The labels are used for initializing class device name and kernel
-> doesn't allow to initialize two devices with same names.
-> This implies that labels are guaranteed to be globally unique.
+Hi!
 
-On Linux, yes, but that's an implementation detail, not a property of
-the binding=C2=B7
+> +Flash LED handling under Linux
+> +==============================
+> +
+> +Some LED devices support two modes - torch and flash. The modes are
+> +supported by the LED class (see Documentation/leds/leds-class.txt)
+> +and LED Flash class respectively.
+> +
+> +In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
+> +must be defined in the kernel config. A flash LED driver must register
+> +in the LED subsystem with led_classdev_flash_register to gain flash
+> +capabilities.
+> +
+> +Following sysfs attributes are exposed for controlling flash led devices:
+> +
+> +	- flash_brightness - flash LED brightness in microamperes (RW)
+> +	- max_flash_brightness - maximum available flash LED brightness (RO)
+> +	- indicator_brightness - privacy LED brightness in microamperes (RW)
+> +	- max_indicator_brightness - maximum privacy LED brightness in
+> +				     microamperes (RO)
+> +	- flash_timeout - flash strobe duration in microseconds (RW)
+> +	- max_flash_timeout - maximum available flash strobe duration (RO)
+> +	- flash_strobe - flash strobe state (RW)
+> +	- flash_sync_strobe - one flash device can control more than one
+> +			      sub-led; when this atrribute is set to 1
+> +			      the flash led will be strobed synchronously
+> +			      with the other ones controlled by the same
+> +			      device (RW)
 
-Mark.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is not really clear. Does flash_timeout or flash_brightness need
+to be set, first?
+
+Do we really want to have separate indicator brightnesses in uA?
+Should we maybe reuse existing "brightness" parameter for torch and
+indication, maybe adding single (RO) indicator_brightness attribute?
+
+> +	- flash_fault - bitmask of flash faults that may have occurred,
+> +			possible flags are:
+> +		* 0x01 - flash controller voltage to the flash LED has exceeded
+> +			 the limit specific to the flash controller
+> +		* 0x02 - the flash strobe was still on when the timeout set by
+> +			 the user has expired; not all flash controllers may
+> +			 set this in all such conditions
+> +		* 0x04 - the flash controller has overheated
+> +		* 0x08 - the short circuit protection of the flash controller
+> +			 has been triggered
+> +		* 0x10 - current in the LED power supply has exceeded the limit
+> +			 specific to the flash controller
+> +		* 0x40 - flash controller voltage to the flash LED has been
+> +			 below the minimum limit specific to the flash
+> +		* 0x80 - the input voltage of the flash controller is below
+> +			 the limit under which strobing the flash at full
+> +			 current will not be possible. The condition persists
+> +			 until this flag is no longer set
+> +		* 0x100 - the temperature of the LED has exceeded its allowed
+> +			  upper limit
+
+How are faults cleared? Should it be list of strings, instead of
+bitmask? We may want to add new fault modes in future...
+
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
