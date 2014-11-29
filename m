@@ -1,66 +1,64 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v8 12/14] leds: Add driver for AAT1290 current
- regulator
-Date: Sat, 29 Nov 2014 20:05:51 +0100
-Message-ID: <20141129190550.GA17355@amd>
+Subject: Re: [PATCH/RFC v8 11/14] DT: Add documentation for the mfd Maxim
+ max77693
+Date: Sat, 29 Nov 2014 20:26:07 +0100
+Message-ID: <20141129192607.GB17355@amd>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-13-git-send-email-j.anaszewski@samsung.com>
+ <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1417166286-27685-13-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 Hi!
 
-
-> @@ -0,0 +1,472 @@
-> +/*
-> + *	LED Flash class driver for the AAT1290
-> + *	1.5A Step-Up Current Regulator for Flash LEDs
-> + *
-> + *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
-> + *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * version 2 as published by the Free Software Foundation.
-> + */
+> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+> index 01e9f30..50a8dad 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+> @@ -41,6 +41,62 @@ Optional properties:
+>  	 To get more informations, please refer to documentaion.
+>  	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
+>  
+> +- led-flash : the LED submodule device node
 > +
+> +There are two led outputs available - fled1 and fled2. Each of them can
+> +control a separate led or they can be connected together to double
+> +the maximum current for a single connected led. One led is represented
+> +by one child node.
+> +
+> +Required properties:
+> +- compatible : must be "maxim,max77693-flash"
+> +
+> +Optional properties:
+> +- maxim,fleds : array of current outputs in order: fled1, fled2
+> +	Note: both current outputs can be connected to a single led
+> +	Possible values:
+> +		0 - the output is left disconnected,
+> +		1 - a diode is connected to the output.
 
-> +#define AAT1290_MM_TO_FL_1_92	1
-> +#define AAT1290_MM_TO_FL_3_7	2
-> +#define AAT1290_MM_TO_FL_5_5	3
-> +#define AAT1290_MM_TO_FL_7_3	4
-> +#define AAT1290_MM_TO_FL_9	5
-> +#define AAT1290_MM_TO_FL_10_7	6
-> +#define AAT1290_MM_TO_FL_12_4	7
-> +#define AAT1290_MM_TO_FL_14	8
-> +#define AAT1290_MM_TO_FL_15_9	9
-> +#define AAT1290_MM_TO_FL_17_5	10
-> +#define AAT1290_MM_TO_FL_19_1	11
-> +#define AAT1290_MM_TO_FL_20_8	12
-> +#define AAT1290_MM_TO_FL_22_4	13
-> +#define AAT1290_MM_TO_FL_24	14
-> +#define AAT1290_MM_TO_FL_25_6	15
-> +#define AAT1290_MM_TO_FL_OFF	16
+Is this one needed? Just ommit child note if it is not there.
 
-Only one of these defines is unused.
+> +- maxim,trigger-type : Array of trigger types in order: flash, torch
+> +	Possible trigger types:
+> +		0 - Rising edge of the signal triggers the flash/torch,
+> +		1 - Signal level controls duration of the flash/torch.
+> +- maxim,trigger : Array of flags indicating which trigger can activate given led
+> +	in order: fled1, fled2
+> +	Possible flag values (can be combined):
+> +		1 - FLASH pin of the chip,
+> +		2 - TORCH pin of the chip,
+> +		4 - software via I2C command.
 
-> +static struct of_device_id aat1290_led_dt_match[] = {
+Is it good idea to have bitfields like this?
 
-> +	{.compatible = "skyworks,aat1290"},
-
-spaces after { and before } ?
-
-Otherwise looks ok, 
-
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
+Make these required properties of the subnode?
+     									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
