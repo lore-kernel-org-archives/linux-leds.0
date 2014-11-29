@@ -1,64 +1,36 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v8 11/14] DT: Add documentation for the mfd Maxim
- max77693
-Date: Sat, 29 Nov 2014 20:26:07 +0100
-Message-ID: <20141129192607.GB17355@amd>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v8 03/14] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Sun, 30 Nov 2014 01:44:17 +0200
+Message-ID: <20141129234416.GR8907@valkosipuli.retiisi.org.uk>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
+ <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37063 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751735AbaK2Xo4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Sat, 29 Nov 2014 18:44:56 -0500
 Content-Disposition: inline
-In-Reply-To: <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+In-Reply-To: <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
-Hi!
+On Fri, Nov 28, 2014 at 10:17:55AM +0100, Jacek Anaszewski wrote:
+> This patch extends LED Flash class documention by
+> the description of interactions with v4l2-flash sub-device.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
 
-> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
-> index 01e9f30..50a8dad 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-> @@ -41,6 +41,62 @@ Optional properties:
->  	 To get more informations, please refer to documentaion.
->  	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
->  
-> +- led-flash : the LED submodule device node
-> +
-> +There are two led outputs available - fled1 and fled2. Each of them can
-> +control a separate led or they can be connected together to double
-> +the maximum current for a single connected led. One led is represented
-> +by one child node.
-> +
-> +Required properties:
-> +- compatible : must be "maxim,max77693-flash"
-> +
-> +Optional properties:
-> +- maxim,fleds : array of current outputs in order: fled1, fled2
-> +	Note: both current outputs can be connected to a single led
-> +	Possible values:
-> +		0 - the output is left disconnected,
-> +		1 - a diode is connected to the output.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Is this one needed? Just ommit child note if it is not there.
-
-> +- maxim,trigger-type : Array of trigger types in order: flash, torch
-> +	Possible trigger types:
-> +		0 - Rising edge of the signal triggers the flash/torch,
-> +		1 - Signal level controls duration of the flash/torch.
-> +- maxim,trigger : Array of flags indicating which trigger can activate given led
-> +	in order: fled1, fled2
-> +	Possible flag values (can be combined):
-> +		1 - FLASH pin of the chip,
-> +		2 - TORCH pin of the chip,
-> +		4 - software via I2C command.
-
-Is it good idea to have bitfields like this?
-
-Make these required properties of the subnode?
-     									Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
