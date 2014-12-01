@@ -1,79 +1,51 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
- Flash class extension
-Date: Mon, 1 Dec 2014 17:21:42 +0200
-Message-ID: <20141201152142.GT8907@valkosipuli.retiisi.org.uk>
-References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
- <20141129125832.GA315@amd>
- <547C539A.4010500@samsung.com>
- <20141201130437.GB24737@amd>
- <547C7420.4080801@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] leds: lp8860: Fix module dependency
+Date: Mon, 1 Dec 2014 15:26:56 -0800
+Message-ID: <CAK5ve-KVEx0wuN713m-CVqbN-CqxXpQfn=-3yO9d=YKWs9kneQ@mail.gmail.com>
+References: <1416577706.16072.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47318 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753215AbaLAPVu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Dec 2014 10:21:50 -0500
-Content-Disposition: inline
-In-Reply-To: <547C7420.4080801@samsung.com>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:51536 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932631AbaLAX1R (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Dec 2014 18:27:17 -0500
+Received: by mail-ie0-f175.google.com with SMTP id x19so5477749ier.34
+        for <linux-leds@vger.kernel.org>; Mon, 01 Dec 2014 15:27:17 -0800 (PST)
+In-Reply-To: <1416577706.16072.1.camel@phoenix>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Dan Murphy <dmurphy@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Jacek and Pavel,
+On Fri, Nov 21, 2014 at 5:48 AM, Axel Lin <axel.lin@ingics.com> wrote:
+> The driver should select REGMAP_I2C rather than depend on it.
+>
 
-On Mon, Dec 01, 2014 at 02:58:56PM +0100, Jacek Anaszewski wrote:
-> Hi Pavel,
-> 
-> On 12/01/2014 02:04 PM, Pavel Machek wrote:
-> >Hi!
-> >
-> >>>How are faults cleared? Should it be list of strings, instead of
-> >>>bitmask? We may want to add new fault modes in future...
-> >>
-> >>Faults are cleared by reading the attribute. I will add this note.
-> >>There can be more than one fault at a time. I think that the bitmask
-> >>is a flexible solution. I don't see any troubles related to adding
-> >>new fault modes in the future, do you?
-> >
-> >I do not think that "read attribute to clear" is good idea. Normally,
-> >you'd want the error attribute world-readable, but you don't want
-> >non-root users to clear the errors.
-> 
-> This is also V4L2_CID_FLASH_FAULT control semantics.
-> Moreover many devices clear the errors upon reading register.
-> I don't see anything wrong in the fact that an user can clear
-> an error. If the user has a permission to use a device then
-> it also should be allowed to clear the errors.
+Applied. Thanks,
+-Bryan
 
-I agree. Some of these such as the timeout are not hardware related
-problems at all, but others may be. I'd keep the same semantics as V4L2
-already does.
-
-> >I am not sure if bitmask is good solution. I'd return space-separated
-> >strings like "overtemp". That way, there's good chance that other LED
-> >drivers would be able to use similar interface...
-> 
-> The format of a sysfs attribute should be concise.
-> The error codes are generic and map directly to the V4L2 Flash
-> error codes.
-
-I'd guess a single application accesses either of the interfaces. From that
-point of view it doesn't matter what are the bit definitions in V4L2.
-
-The behaviour on sysfs could also be different, e.g. writing the attribute
-would clear the faults. This would need more functionality from drivers.
-The V4L2 behaviour mirrors the typical behaviour of flash controllers ---
-the chips mostly do not operate until the faults have been read, and the
-interface as well as the interface take no stance to that. So when the user
-reads the fault control value, the fault register on the chip is cleared as
-well.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/leds/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index b3c0d8a..59f4228 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -249,7 +249,8 @@ config LEDS_LP8788
+>
+>  config LEDS_LP8860
+>         tristate "LED support for the TI LP8860 4 channel LED driver"
+> -       depends on LEDS_CLASS && REGMAP_I2C
+> +       depends on LEDS_CLASS && I2C
+> +       select REGMAP_I2C
+>         help
+>           If you say yes here you get support for the TI LP8860 4 channel
+>           LED driver.
+> --
+> 1.9.1
+>
+>
+>
