@@ -1,36 +1,68 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v8 03/14] Documentation: leds: Add description of
- v4l2-flash sub-device
-Date: Sun, 30 Nov 2014 01:44:17 +0200
-Message-ID: <20141129234416.GR8907@valkosipuli.retiisi.org.uk>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v8 04/14] v4l2-async: change custom.match callback
+ argument type
+Date: Mon, 01 Dec 2014 10:35:32 +0100
+Message-ID: <547C3664.9090806@samsung.com>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
+ <1417166286-27685-5-git-send-email-j.anaszewski@samsung.com>
+ <5063831.7WQadZaPHh@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37063 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751735AbaK2Xo4 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Sat, 29 Nov 2014 18:44:56 -0500
-Content-Disposition: inline
-In-Reply-To: <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:39545 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752738AbaLAJfh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Dec 2014 04:35:37 -0500
+In-reply-to: <5063831.7WQadZaPHh@avalon>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Mark Rutland <mark.rutland@arm.com>
 
-On Fri, Nov 28, 2014 at 10:17:55AM +0100, Jacek Anaszewski wrote:
-> This patch extends LED Flash class documention by
-> the description of interactions with v4l2-flash sub-device.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
+Hi Laurent,
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+On 11/29/2014 05:38 PM, Laurent Pinchart wrote:
+> Hi Jacek,
+>
+> Thank you for the patch.
+>
+> On Friday 28 November 2014 10:17:56 Jacek Anaszewski wrote:
+>> It is useful to have an access to the async sub-device
+>> being matched, not only to the related struct device.
+>> Change match callback argument from struct device
+>> to struct v4l2_subdev. It will allow e.g. for matching
+>> a sub-device by its "name" property.
+>
+> In principle I agree. However, we will need to reimplement v4l2-async based on
+> the component (drivers/base/component.c) framework at some point. As the
+> component framework is based on struct device, will it still be possible to
+> match on subdev name in that case ? If not, we might need to try to find
+> another approach to the issue.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+There were reservations raised [1] concerning the way of matching
+by name, as the labels are not guaranteed to be globally unique across
+Device Tree. I admit, this issue has to be solved in a different way.
+Especially in view of prospective transition to using
+drivers/base/component.c
+
+I propose to add a new structure:
+
+struct v4l2_asd_match{
+	bool (*match)(struct v4l2_async_subdev *, void *);
+	void *priv;
+}
+
+and a function:
+v4l2_async_register_subdev_with_match(struct v4l2_subdev *sd, struct 
+v4l2_asd_match*).
+
+This way we could pass DT sub-node related to a sub-led in a priv
+field of v4l2_asd_match upon registration.
+
+This is similar approach as in case of drivers/base/component.c.
+
+Best Regards,
+Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/linux-leds/msg02532.html
