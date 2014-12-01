@@ -1,72 +1,80 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v8 12/14] leds: Add driver for AAT1290 current regulator
-Date: Mon, 01 Dec 2014 12:47:12 +0100
-Message-ID: <547C5540.2070304@samsung.com>
+Subject: Re: [PATCH/RFC v8 09/14] mfd: max77693: adjust
+ max77693_led_platform_data
+Date: Mon, 01 Dec 2014 13:49:56 +0100
+Message-ID: <547C63F4.4060203@samsung.com>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-13-git-send-email-j.anaszewski@samsung.com>
- <20141129190550.GA17355@amd>
+ <1417166286-27685-10-git-send-email-j.anaszewski@samsung.com>
+ <20141201113430.GC15845@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141129190550.GA17355@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15588 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752835AbaLAMuA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Dec 2014 07:50:00 -0500
+In-reply-to: <20141201113430.GC15845@x1>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Pavel,
+Hi Lee,
 
-Thanks for a review.
+Thanks for the review.
 
-On 11/29/2014 08:05 PM, Pavel Machek wrote:
-> Hi!
+On 12/01/2014 12:34 PM, Lee Jones wrote:
+> On Fri, 28 Nov 2014, Jacek Anaszewski wrote:
 >
+>> Add "label" array for Device Tree strings with
+>> the name of a LED device and make flash_timeout
+>> a two element array, for caching the sub-led
+>> related flash timeout.
 >
->> @@ -0,0 +1,472 @@
->> +/*
->> + *	LED Flash class driver for the AAT1290
->> + *	1.5A Step-Up Current Regulator for Flash LEDs
->> + *
->> + *	Copyright (C) 2014, Samsung Electronics Co., Ltd.
->> + *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License
->> + * version 2 as published by the Free Software Foundation.
->> + */
->> +
+> <------------------------------------------------------------------------->
 >
->> +#define AAT1290_MM_TO_FL_1_92	1
->> +#define AAT1290_MM_TO_FL_3_7	2
->> +#define AAT1290_MM_TO_FL_5_5	3
->> +#define AAT1290_MM_TO_FL_7_3	4
->> +#define AAT1290_MM_TO_FL_9	5
->> +#define AAT1290_MM_TO_FL_10_7	6
->> +#define AAT1290_MM_TO_FL_12_4	7
->> +#define AAT1290_MM_TO_FL_14	8
->> +#define AAT1290_MM_TO_FL_15_9	9
->> +#define AAT1290_MM_TO_FL_17_5	10
->> +#define AAT1290_MM_TO_FL_19_1	11
->> +#define AAT1290_MM_TO_FL_20_8	12
->> +#define AAT1290_MM_TO_FL_22_4	13
->> +#define AAT1290_MM_TO_FL_24	14
->> +#define AAT1290_MM_TO_FL_25_6	15
->> +#define AAT1290_MM_TO_FL_OFF	16
->
-> Only one of these defines is unused.
+> Please use all of the 75 char buffer.
 
-The only cost of these macros are lines of code and I think
-it is worth of having all the possible settings listed in one place.
+OK.
 
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: SangYoung Son <hello.son@smasung.com>
+>> Cc: Samuel Ortiz <sameo@linux.intel.com>
+>> ---
+>>   include/linux/mfd/max77693.h |    3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+>> index f0b6585..30fa19ea 100644
+>> --- a/include/linux/mfd/max77693.h
+>> +++ b/include/linux/mfd/max77693.h
+>> @@ -88,14 +88,15 @@ enum max77693_led_boost_mode {
+>>   };
+>>
+>>   struct max77693_led_platform_data {
+>> +	const char *label[2];
+>>   	u32 fleds[2];
+>>   	u32 iout_torch[2];
+>>   	u32 iout_flash[2];
+>>   	u32 trigger[2];
+>>   	u32 trigger_type[2];
+>> +	u32 flash_timeout[2];
+>>   	u32 num_leds;
+>>   	u32 boost_mode;
+>> -	u32 flash_timeout;
+>>   	u32 boost_vout;
+>>   	u32 low_vsys;
+>>   };
 >
->> +static struct of_device_id aat1290_led_dt_match[] = {
+> I'm guessing this will effect the other patches in the set?
 >
->> +	{.compatible = "skyworks,aat1290"},
->
-> spaces after { and before } ?
 
-I see both styles in kernel, but ok, I will add spaces.
+max77692 flash driver depends on it and it has to be
+in synch with the related DT bindings patch.
 
-Regards,
-Jacek
+Best Regards,
+Jacek Anaszewski
