@@ -1,61 +1,52 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v8 11/14] DT: Add documentation for the mfd Maxim
- max77693
-Date: Mon, 01 Dec 2014 14:43:51 +0100
-Message-ID: <547C7097.4040907@samsung.com>
+Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Mon, 01 Dec 2014 14:58:56 +0100
+Message-ID: <547C7420.4080801@samsung.com>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
- <20141129192607.GB17355@amd> <547C65F7.4090801@samsung.com>
- <20141201130231.GA24737@amd>
+ <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
+ <20141129125832.GA315@amd> <547C539A.4010500@samsung.com>
+ <20141201130437.GB24737@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20141201130231.GA24737@amd>
-Sender: linux-media-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20141201130437.GB24737@amd>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 List-Id: linux-leds@vger.kernel.org
 
 Hi Pavel,
 
-On 12/01/2014 02:02 PM, Pavel Machek wrote:
+On 12/01/2014 02:04 PM, Pavel Machek wrote:
 > Hi!
 >
->>> Is this one needed? Just ommit child note if it is not there.
+>>> How are faults cleared? Should it be list of strings, instead of
+>>> bitmask? We may want to add new fault modes in future...
 >>
->> It is needed because you can have one led connected two both
->> outputs. This allows to describe such a design.
+>> Faults are cleared by reading the attribute. I will add this note.
+>> There can be more than one fault at a time. I think that the bitmask
+>> is a flexible solution. I don't see any troubles related to adding
+>> new fault modes in the future, do you?
 >
-> Ok.
->
->>>> +- maxim,trigger-type : Array of trigger types in order: flash, torch
->>>> +	Possible trigger types:
->>>> +		0 - Rising edge of the signal triggers the flash/torch,
->>>> +		1 - Signal level controls duration of the flash/torch.
->>>> +- maxim,trigger : Array of flags indicating which trigger can activate given led
->>>> +	in order: fled1, fled2
->>>> +	Possible flag values (can be combined):
->>>> +		1 - FLASH pin of the chip,
->>>> +		2 - TORCH pin of the chip,
->>>> +		4 - software via I2C command.
->>>
->>> Is it good idea to have bitfields like this?
->>>
->>> Make these required properties of the subnode?
->>
->> This is related to a single property: trigger. I think that splitting
->> it to three properties would make unnecessary noise in the
->> binding.
->
-> Well, maybe it is not that much noise, and you'll have useful names
-> (not a bitfield).
+> I do not think that "read attribute to clear" is good idea. Normally,
+> you'd want the error attribute world-readable, but you don't want
+> non-root users to clear the errors.
 
-I think we'd need an opinion of at least one more person :)
+This is also V4L2_CID_FLASH_FAULT control semantics.
+Moreover many devices clear the errors upon reading register.
+I don't see anything wrong in the fact that an user can clear
+an error. If the user has a permission to use a device then
+it also should be allowed to clear the errors.
 
-> Should these properties move to the LED subnode?
+> I am not sure if bitmask is good solution. I'd return space-separated
+> strings like "overtemp". That way, there's good chance that other LED
+> drivers would be able to use similar interface...
 
-I would leave them device specific.
+The format of a sysfs attribute should be concise.
+The error codes are generic and map directly to the V4L2 Flash
+error codes.
 
-Regards,
-Jacek
+Best Regards,
+Jacek Anaszewski
