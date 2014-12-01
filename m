@@ -1,68 +1,172 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v8 04/14] v4l2-async: change custom.match callback
- argument type
-Date: Mon, 01 Dec 2014 10:35:32 +0100
-Message-ID: <547C3664.9090806@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH/RFC v8 11/14] DT: Add documentation for the mfd Maxim
+ max77693
+Date: Mon, 1 Dec 2014 11:15:35 +0000
+Message-ID: <20141201111535.GA15845@x1>
 References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-5-git-send-email-j.anaszewski@samsung.com>
- <5063831.7WQadZaPHh@avalon>
+ <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:39545 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752738AbaLAJfh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Dec 2014 04:35:37 -0500
-In-reply-to: <5063831.7WQadZaPHh@avalon>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1417166286-27685-12-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, SangYoung Son <hello.son@smasung.com>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Mark Rutland <mark.rutland@arm.com>
 
-Hi Laurent,
+On Fri, 28 Nov 2014, Jacek Anaszewski wrote:
 
-On 11/29/2014 05:38 PM, Laurent Pinchart wrote:
-> Hi Jacek,
->
-> Thank you for the patch.
->
-> On Friday 28 November 2014 10:17:56 Jacek Anaszewski wrote:
->> It is useful to have an access to the async sub-device
->> being matched, not only to the related struct device.
->> Change match callback argument from struct device
->> to struct v4l2_subdev. It will allow e.g. for matching
->> a sub-device by its "name" property.
->
-> In principle I agree. However, we will need to reimplement v4l2-async based on
-> the component (drivers/base/component.c) framework at some point. As the
-> component framework is based on struct device, will it still be possible to
-> match on subdev name in that case ? If not, we might need to try to find
-> another approach to the issue.
+> This patch adds device tree binding documentation for
+> the flash cell of the Maxim max77693 multifunctional device.
+>=20
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: SangYoung Son <hello.son@smasung.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
+> Cc: <devicetree@vger.kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/max77693.txt |   74 ++++++++++=
+++++++++++
+>  1 file changed, 74 insertions(+)
 
-There were reservations raised [1] concerning the way of matching
-by name, as the labels are not guaranteed to be globally unique across
-Device Tree. I admit, this issue has to be solved in a different way.
-Especially in view of prospective transition to using
-drivers/base/component.c
+This definitely requires a DT Ack.
 
-I propose to add a new structure:
+> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Doc=
+umentation/devicetree/bindings/mfd/max77693.txt
+> index 01e9f30..50a8dad 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+> @@ -41,6 +41,62 @@ Optional properties:
+>  	 To get more informations, please refer to documentaion.
+>  	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
+> =20
+> +- led-flash : the LED submodule device node
+> +
+> +There are two led outputs available - fled1 and fled2. Each of them =
+can
+> +control a separate led or they can be connected together to double
+> +the maximum current for a single connected led. One led is represent=
+ed
+> +by one child node.
+> +
+> +Required properties:
+> +- compatible : must be "maxim,max77693-flash"
 
-struct v4l2_asd_match{
-	bool (*match)(struct v4l2_async_subdev *, void *);
-	void *priv;
-}
+I'm not sure this compatible string is suitable.  It looks like
+NOR/NAND Flash to me.  Perhaps 'fled', or just 'led' would be better.
 
-and a function:
-v4l2_async_register_subdev_with_match(struct v4l2_subdev *sd, struct 
-v4l2_asd_match*).
+> +Optional properties:
+> +- maxim,fleds : array of current outputs in order: fled1, fled2
 
-This way we could pass DT sub-node related to a sub-led in a priv
-field of v4l2_asd_match upon registration.
+Nit: Sentences start with an uppercase character.
 
-This is similar approach as in case of drivers/base/component.c.
+This is true for all other occurrences.
 
-Best Regards,
-Jacek Anaszewski
+> +	Note: both current outputs can be connected to a single led
+> +	Possible values:
+> +		0 - the output is left disconnected,
+> +		1 - a diode is connected to the output.
+> +- maxim,trigger-type : Array of trigger types in order: flash, torch
+> +	Possible trigger types:
+> +		0 - Rising edge of the signal triggers the flash/torch,
+> +		1 - Signal level controls duration of the flash/torch.
+> +- maxim,trigger : Array of flags indicating which trigger can activa=
+te given led
+> +	in order: fled1, fled2
+> +	Possible flag values (can be combined):
+> +		1 - FLASH pin of the chip,
+> +		2 - TORCH pin of the chip,
+> +		4 - software via I2C command.
+> +- maxim,boost-mode :
+> +	In boost mode the device can produce up to 1.2A of total current
+> +	on both outputs. The maximum current on each output is reduced
+> +	to 625mA then. If there are two child led nodes defined then boost
+> +	is enabled by default.
+> +	Possible values:
+> +		0 - no boost,
+> +		1 - adaptive mode,
+> +		2 - fixed mode.
+> +- maxim,boost-vout : Output voltage of the boost module in millivolt=
+s.
+> +- maxim,vsys-min : Low input voltage level in millivolts. Flash is n=
+ot fired
+> +	if chip estimates that system voltage could drop below this level d=
+ue
+> +	to flash power consumption.
+> +
+> +A child node must be defined per sub-led.
+> +
+> +Required properties of the LED child node:
+> +- label : see Documentation/devicetree/bindings/leds/common.txt
+> +- maxim,fled_id : identifier of the fled output the led is connected=
+ to:
+> +		1 - FLED1,
+> +		2 - FLED2.
 
-[1] http://www.spinics.net/lists/linux-leds/msg02532.html
+Better to define all of these random numbers in include/dt-bindings.
+
+> +Optional properties of the LED child node:
+> +- max-microamp : see Documentation/devicetree/bindings/leds/common.t=
+xt
+> +		Range: 15625 - 250000
+> +- flash-max-microamp : see Documentation/devicetree/bindings/leds/co=
+mmon.txt
+> +		Range: 15625 - 1000000
+> +- flash-timeout-microsec : see Documentation/devicetree/bindings/led=
+s/common.txt
+> +		Range: 62500 - 1000000
+> +
+>  Example:
+>  	max77693@66 {
+>  		compatible =3D "maxim,max77693";
+> @@ -73,4 +129,22 @@ Example:
+>  			pwms =3D <&pwm 0 40000 0>;
+>  			pwm-names =3D "haptic";
+>  		};
+> +
+> +		led_flash: led-flash {
+
+Should both be underscore.  I believe the second portion here should
+be more generic "led" for instance.
+
+> +			compatible =3D "maxim,max77693-flash";
+> +			maxim,fleds =3D <1 0>;
+> +			maxim,trigger =3D <7 0>;
+> +			maxim,trigger-type =3D <0 1>;
+> +			maxim,boost-mode =3D <0>;
+> +			maxim,boost-vout =3D <5000>;
+> +			maxim,vsys-min =3D <2400>;
+
+These will all have to be signed off by a DT maintainer.
+
+> +			camera-flash {
+> +				maxim,fled_id =3D <1>
+> +				label =3D "max77693-flash";
+> +				max-microamp =3D <250000>;
+> +				flash-max-microamp =3D <1000000>;
+> +				flash-timeout-microsec =3D <1000000>;
+> +			}
+
+Missing ';'
+
+You should probably test your example code.
+
+> +		};
+>  	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
