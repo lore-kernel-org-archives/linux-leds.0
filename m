@@ -1,25 +1,25 @@
-From: Bryan Wu <cooloney@gmail.com>
+From: Grant Likely <grant.likely@linaro.org>
 Subject: Re: [PATCH v2] leds: leds-gpio: Fix multiple instances registration
  when 'label' property is absent
-Date: Wed, 3 Dec 2014 14:23:51 -0800
-Message-ID: <CAK5ve-+29+XeYENEy0r2qRukARVrmJSKXazn6a++nSEgRTrsuw@mail.gmail.com>
+Date: Wed, 3 Dec 2014 23:16:33 +0000
+Message-ID: <CACxGe6t9-pVYG9dXaDsm6soHmUyweAiisO4poFXo4eOxk-a-oA@mail.gmail.com>
 References: <1417629453-25719-1-git-send-email-festevam@gmail.com> <CAOMZO5DiKJYM==o5WvVnwimrBVBaCZwWU5Ndi3Ua9YPc_xmKUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:63296 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751794AbaLCWYM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 17:24:12 -0500
-Received: by mail-ie0-f179.google.com with SMTP id rp18so14173225iec.24
-        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 14:24:11 -0800 (PST)
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:53811 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751124AbaLCXQy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 18:16:54 -0500
+Received: by mail-ie0-f173.google.com with SMTP id y20so14798487ier.18
+        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 15:16:53 -0800 (PST)
 In-Reply-To: <CAOMZO5DiKJYM==o5WvVnwimrBVBaCZwWU5Ndi3Ua9YPc_xmKUw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Fabio Estevam <festevam@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>, Grant Likely <grant.likely@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, Dec 3, 2014 at 11:59 AM, Fabio Estevam <festevam@gmail.com> wrote:
+On Wed, Dec 3, 2014 at 7:59 PM, Fabio Estevam <festevam@gmail.com> wrote:
 > On Wed, Dec 3, 2014 at 3:57 PM, Fabio Estevam <festevam@gmail.com> wrote:
 >> From: Fabio Estevam <fabio.estevam@freescale.com>
 >>
@@ -77,10 +77,6 @@ On Wed, Dec 3, 2014 at 11:59 AM, Fabio Estevam <festevam@gmail.com> wrote:
 > Or maybe we should not expose the CONFIG_OF versus CONFIG_ACPI
 > ifdefery to the driver and do something like this instead:
 >
-
-V2 is better than V1 to me. I'd like to see some comments from Grant
-and leds-gpio.c part looks good to me.
-
 > diff --git a/drivers/base/property.c b/drivers/base/property.c
 > index c458458..bdeee26 100644
 > --- a/drivers/base/property.c
@@ -112,6 +108,12 @@ and leds-gpio.c part looks good to me.
 > +}
 > +EXPORT_SYMBOL_GPL(device_get_node_name);
 > +
+
+Instead of a device_get_* variant, for getting the node, I would
+create a fwnode_get_name() helper as it would be usable in a larger
+variety of situations. Besides, you've already got the 'child' value
+to pass into it.
+
 >  /**
 >   * fwnode_handle_put - Drop reference to a device node
 >   * @fwnode: Pointer to the device node to drop the reference to.
@@ -153,5 +155,7 @@ and leds-gpio.c part looks good to me.
 > I am not familiar with ACPI so I don't know if the 'return
 > acpi_dev_name(node)' is the appropriate way to retrieve the equivalent
 > of a dt node name.
->
-> Please advise.
+
+I cannot give good guidance here. I'll leave it to the ACPI folks.
+
+g.
