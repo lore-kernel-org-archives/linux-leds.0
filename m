@@ -1,79 +1,50 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH] leds: netxbig: fix oops at probe time
-Date: Tue,  2 Dec 2014 16:32:10 +0100
-Message-ID: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] leds: netxbig: fix oops at probe time
+Date: Wed, 3 Dec 2014 11:35:32 +0100
+Message-ID: <20141203103532.GD9664@localhost>
+References: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Simon Guinot <simon.guinot@sequanux.org>, Johan Hovold <johan@kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:47924 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751849AbaLCKfk (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 05:35:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Johan Hovold <johan@kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
-this bug, a kernel oops can be observed at probe time on the LaCie 2Big
-and 5Big v2 boards:
+On Tue, Dec 02, 2014 at 04:32:10PM +0100, Simon Guinot wrote:
+> This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
+> this bug, a kernel oops can be observed at probe time on the LaCie 2Big
+> and 5Big v2 boards:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address 00000008
+> [...]
+> [<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
+> [<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
+> [<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
+> [<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
+> [<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
+> [<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
+> [<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
+> [<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
+> [<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
+> [<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
+> [...]
+> 
+> This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
+> ("leds: netxbig: fix attribute-creation race").
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000008
-[...]
-[<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
-[<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
-[<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
-[<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
-[<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
-[<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
-[<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
-[<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
-[<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
-[<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
-[...]
+Ouch.
 
-This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
-("leds: netxbig: fix attribute-creation race").
+> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+> Cc: <stable@vger.kernel.org> # 3.17+
 
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-Cc: <stable@vger.kernel.org> # 3.17+
----
- drivers/leds/leds-netxbig.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Acked-by: Johan Hovold <johan@kernel.org>
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 64fde485dcaa..4c794f15a57f 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -330,18 +330,18 @@ create_netxbig_led(struct platform_device *pdev,
- 	led_dat->sata = 0;
- 	led_dat->cdev.brightness = LED_OFF;
- 	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
--	/*
--	 * If available, expose the SATA activity blink capability through
--	 * a "sata" sysfs attribute.
--	 */
--	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
--		led_dat->cdev.groups = netxbig_led_groups;
- 	led_dat->mode_addr = template->mode_addr;
- 	led_dat->mode_val = template->mode_val;
- 	led_dat->bright_addr = template->bright_addr;
- 	led_dat->bright_max = (1 << pdata->gpio_ext->num_data) - 1;
- 	led_dat->timer = pdata->timer;
- 	led_dat->num_timer = pdata->num_timer;
-+	/*
-+	 * If available, expose the SATA activity blink capability through
-+	 * a "sata" sysfs attribute.
-+	 */
-+	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
-+		led_dat->cdev.groups = netxbig_led_groups;
- 
- 	return led_classdev_register(&pdev->dev, &led_dat->cdev);
- }
--- 
-2.1.1
+Thanks,
+Johan
