@@ -1,83 +1,40 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v9 02/19] Documentation: leds: Add description of LED Flash
- class extension
-Date: Wed, 03 Dec 2014 17:06:37 +0100
-Message-ID: <1417622814-10845-3-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 03/19] mfd: max77693: Modify flash cell name identifiers
+Date: Wed, 03 Dec 2014 17:06:38 +0100
+Message-ID: <1417622814-10845-4-git-send-email-j.anaszewski@samsung.com>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes.
+Change flash cell identifiers from max77693-flash to max77693-led
+to avoid confusion with NOR/NAND Flash.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
- Documentation/leds/leds-class-flash.txt |   50 +++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+ drivers/mfd/max77693.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..82e58b1
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,50 @@
-+
-+Flash LED handling under Linux
-+==============================
-+
-+Some LED devices support two modes - torch and flash. The modes are
-+supported by the LED class (see Documentation/leds/leds-class.txt)
-+and LED Flash class respectively.
-+
-+In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
-+must be defined in the kernel config. A flash LED driver must register
-+in the LED subsystem with led_classdev_flash_register to gain flash
-+capabilities.
-+
-+Following sysfs attributes are exposed for controlling flash led devices:
-+
-+	- flash_brightness - flash LED brightness in microamperes (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- flash_timeout - flash strobe duration in microseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- flash_sync_strobe - one flash device can control more than one
-+			      sub-led; when this atrribute is set to 1
-+			      the flash led will be strobed synchronously
-+			      with the other one controlled by the same
-+			      device; flash timeout setting is inherited
-+			      from the led being strobed explicitly and
-+			      flash brightness setting of a sub-led's
-+			      being synchronized is used (RW)
-+	- flash_fault - bitmask of flash faults that may have occurred
-+			possible flags are:
-+		* 0x01 - flash controller voltage to the flash LED has exceeded
-+			 the limit specific to the flash controller
-+		* 0x02 - the flash strobe was still on when the timeout set by
-+			 the user has expired; not all flash controllers may
-+			 set this in all such conditions
-+		* 0x04 - the flash controller has overheated
-+		* 0x08 - the short circuit protection of the flash controller
-+			 has been triggered
-+		* 0x10 - current in the LED power supply has exceeded the limit
-+			 specific to the flash controller
-+		* 0x40 - flash controller voltage to the flash LED has been
-+			 below the minimum limit specific to the flash
-+		* 0x80 - the input voltage of the flash controller is below
-+			 the limit under which strobing the flash at full
-+			 current will not be possible. The condition persists
-+			 until this flag is no longer set
-+		* 0x100 - the temperature of the LED has exceeded its allowed
-+			  upper limit
-+
-+		Flash faults are cleared by reading the attribute.
+diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+index a159593..cb14afa 100644
+--- a/drivers/mfd/max77693.c
++++ b/drivers/mfd/max77693.c
+@@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
+ 		.of_compatible = "maxim,max77693-haptic",
+ 	},
+ 	{
+-		.name = "max77693-flash",
+-		.of_compatible = "maxim,max77693-flash",
++		.name = "max77693-led",
++		.of_compatible = "maxim,max77693-led",
+ 	},
+ };
+ 
 -- 
 1.7.9.5
