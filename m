@@ -1,51 +1,48 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v9 04/19] mfd: max77693: adjust max77693_led_platform_data
-Date: Wed, 03 Dec 2014 17:06:39 +0100
-Message-ID: <1417622814-10845-5-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 15/19] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Wed, 03 Dec 2014 17:06:50 +0100
+Message-ID: <1417622814-10845-16-git-send-email-j.anaszewski@samsung.com>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add "label" array for Device Tree strings with the name of a LED device
-and make flash_timeout a two element array, for caching the sub-led
-related flash timeout. Added is also an array for caching pointers to the
-sub-nodes representing sub-leds.
+This patch extends LED Flash class documention by
+the description of interactions with v4l2-flash sub-device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- include/linux/mfd/max77693.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
-index f0b6585..c80ee99 100644
---- a/include/linux/mfd/max77693.h
-+++ b/include/linux/mfd/max77693.h
-@@ -88,16 +88,18 @@ enum max77693_led_boost_mode {
- };
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+index 82e58b1..bc3855b 100644
+--- a/Documentation/leds/leds-class-flash.txt
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -48,3 +48,16 @@ Following sysfs attributes are exposed for controlling flash led devices:
+ 			  upper limit
  
- struct max77693_led_platform_data {
-+	const char *label[2];
- 	u32 fleds[2];
- 	u32 iout_torch[2];
- 	u32 iout_flash[2];
- 	u32 trigger[2];
- 	u32 trigger_type[2];
-+	u32 flash_timeout[2];
- 	u32 num_leds;
- 	u32 boost_mode;
--	u32 flash_timeout;
- 	u32 boost_vout;
- 	u32 low_vsys;
-+	struct device_node *sub_nodes[2];
- };
- 
- /* MAX77693 */
+ 		Flash faults are cleared by reading the attribute.
++
++A LED subsystem driver can be controlled also from the level of VideoForLinux2
++subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
++be defined in the kernel config. The driver must call the v4l2_flash_init
++function to get registered in the V4L2 subsystem. On remove the
++v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
++
++After proper initialization a V4L2 Flash sub-device is created. The sub-device
++exposes a number of V4L2 controls, which allow for controlling a LED Flash class
++device with use of its internal kernel API.
++Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
++unavailable. The interface is re-enabled after the V4L2 Flash sub-device
++is closed.
 -- 
 1.7.9.5
