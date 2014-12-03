@@ -1,95 +1,82 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH] Add attributes neccessary for LED flashes to
- devicetree/bindings/leds/common.txt
-Date: Wed, 3 Dec 2014 18:10:41 +0200
-Message-ID: <20141203161041.GL14746@valkosipuli.retiisi.org.uk>
-References: <20141120131713.GC27527@amd>
- <546DEEC3.7090508@samsung.com>
- <546DFF3A.7020702@samsung.com>
- <20141120205254.GA19174@amd>
- <546EF4A3.2000101@samsung.com>
- <20141124225319.GA22383@amd>
- <CAK5ve-+FBoHD+CPy8GmNDOd3BxvTn_6UB0ZOmjCrEJCpWGyAww@mail.gmail.com>
- <20141203155155.GA22783@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40695 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751898AbaLCQLP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 11:11:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20141203155155.GA22783@amd>
-Sender: linux-leds-owner@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 13/19] v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
+Date: Wed, 03 Dec 2014 17:06:48 +0100
+Message-ID: <1417622814-10845-14-git-send-email-j.anaszewski@samsung.com>
+References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Bryan Wu <cooloney@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>
 
-Hi Pavel and Bryan,
+Add V4L2_CID_FLASH_SYNC_STROBE control for determining
+whether a flash device strobe has to be synchronized
+with other flash leds controller by the same device.
 
-On Wed, Dec 03, 2014 at 04:51:55PM +0100, Pavel Machek wrote:
-> On Tue 2014-11-25 22:09:49, Bryan Wu wrote:
-> > On Mon, Nov 24, 2014 at 2:53 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> > > On Fri 2014-11-21 09:15:31, Jacek Anaszewski wrote:
-> > >> Hi Pavel,
-> > >>
-> > >> On 11/20/2014 09:52 PM, Pavel Machek wrote:
-> > >> >On Thu 2014-11-20 15:48:26, Jacek Anaszewski wrote:
-> > >> >>On 11/20/2014 02:38 PM, Jacek Anaszewski wrote:
-> > >> >>>Hi Pavel,
-> > >> >>>
-> > >> >>>On 11/20/2014 02:17 PM, Pavel Machek wrote:
-> > >> >>>>
-> > >> >>>>Add attributes neccessary for LED flashes to
-> > >> >>>>devicetree/bindings/leds/common.txt .
-> > >> >>>>
-> > >> >>>>This will allow me to add device tree support for adp1653 i2c flash
-> > >> >>>>LED driver, and allow Jacek Anaszewski to add support for more LED
-> > >> >>>>drivers..
-> > >> >..
-> > >> >>
-> > >> >>Actually, we've agreed with Sakari that we can handle
-> > >> >>indicator-pattern later.
-> > >> >
-> > >> >Good.
-> > >> >
-> > >> >>I would remove references to you, me and adp1653 driver from the commit
-> > >> >>message and mention that this modifications adjust the led common
-> > >> >>bindings to the LED Flash class that is to be added.
-> > >> >
-> > >> >Ok, who can take this patch? Can you edit the changelog, or should I
-> > >> >do it? Anything else that needs changing?
-> > >>
-> > >> It's your patch :) For me the contents of the patch are ok.
-> > >> It requires device tree maintainer approval anyway.
-> > >
-> > > Yeah, I was hoping relevant maintainers would speak up. I was not
-> > > asking you to edit the changelog, sorry I was unclear.
-> > >
-> > > Bryan Wu, Richard Purdie: You are the maintainers. Can you take the
-> > > patch?
-> > 
-> > I'm OK for this patch, but since Jacek and Sakari are working on
-> > pushing LED Flash class and driver into our LED subsystem. I need you
-> > guys' Ack for this. Then I can take it in my tree.
-> 
-> Jacek acked it (provided I modify changelog).
-> 
-> I can't get Sakari to get explicit ACK, but he was cc-ed on the
-> discussion, and was ok with the idea. That should be enough...?
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ Documentation/DocBook/media/v4l/controls.xml |   11 +++++++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c         |    2 ++
+ include/uapi/linux/v4l2-controls.h           |    1 +
+ 3 files changed, 14 insertions(+)
 
-My apologies for missing this one --- I've gotten too much mail lately. :-P
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-The flash timeout is really a very coarse way to avoid overheating the flash
-(controller or LED) but it's still what is often used in practice. This
-doesn't prevent strobing the flash right after the previous strobe has
-stopped, but is definitely better than nothing; this at least prevents
-accidental overheating of the components.
-
+diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+index e013e4b..20179ab 100644
+--- a/Documentation/DocBook/media/v4l/controls.xml
++++ b/Documentation/DocBook/media/v4l/controls.xml
+@@ -4563,6 +4563,17 @@ interface and may change in the future.</para>
+     	    after strobe during which another strobe will not be
+     	    possible. This is a read-only control.</entry>
+     	  </row>
++    	  <row>
++    	    <entry spanname="id"><constant>V4L2_CID_FLASH_SYNC_STROBE</constant></entry>
++    	    <entry>boolean</entry>
++    	  </row>
++    	  <row>
++    	    <entry spanname="descr">Synchronized strobe: whether the flash
++	    should be strobed synchronously with the other one controlled
++	    by the same device. Flash timeout setting is inherited from the
++	    LED being strobed explicitly and flash intensity setting of a LED
++	    being synchronized is used.</entry>
++    	  </row>
+     	  <row><entry></entry></row>
+     	</tbody>
+           </tgroup>
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 45c5b47..a7cca8c 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -846,6 +846,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_FLASH_FAULT:		return "Faults";
+ 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
+ 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
++	case V4L2_CID_FLASH_SYNC_STROBE:	return "Synchronize Strobe";
+ 
+ 	/* JPEG encoder controls */
+ 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+@@ -949,6 +950,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+ 	case V4L2_CID_FLASH_STROBE_STATUS:
+ 	case V4L2_CID_FLASH_CHARGE:
+ 	case V4L2_CID_FLASH_READY:
++	case V4L2_CID_FLASH_SYNC_STROBE:
+ 	case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:
+ 	case V4L2_CID_MPEG_VIDEO_DECODER_SLICE_INTERFACE:
+ 	case V4L2_CID_MPEG_VIDEO_FRAME_RC_ENABLE:
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 661f119..5bce13d 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -833,6 +833,7 @@ enum v4l2_flash_strobe_source {
+ 
+ #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+ #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
++#define V4L2_CID_FLASH_SYNC_STROBE		(V4L2_CID_FLASH_CLASS_BASE + 13)
+ 
+ 
+ /* JPEG-class control IDs */
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.7.9.5
