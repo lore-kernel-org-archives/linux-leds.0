@@ -1,17 +1,17 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v9 18/19] leds: max77693: add support for V4L2 Flash
+Subject: [PATCH/RFC v9 19/19] leds: aat1290: add support for V4L2 Flash
  sub-device
-Date: Wed, 03 Dec 2014 17:06:53 +0100
-Message-ID: <1417622814-10845-19-git-send-email-j.anaszewski@samsung.com>
+Date: Wed, 03 Dec 2014 17:06:54 +0100
+Message-ID: <1417622814-10845-20-git-send-email-j.anaszewski@samsung.com>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add support for V4L2 Flash sub-device to the max77693 LED Flash class
+Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
 driver. The support allows for V4L2 Flash sub-device to take the control
 of the LED Flash class device.
 
@@ -21,136 +21,42 @@ Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/leds/leds-max77693.c |  133 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 132 insertions(+), 1 deletion(-)
+ drivers/leds/leds-aat1290.c |   61 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
-index 67a2f8f..e93edbd 100644
---- a/drivers/leds/leds-max77693.c
-+++ b/drivers/leds/leds-max77693.c
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 15d969b..81a8f48 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
 @@ -21,6 +21,7 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
+ #include <linux/gpio.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of.h>
 +#include <media/v4l2-flash.h>
+ #include <linux/workqueue.h>
  
- #define MODE_OFF		0
- #define MODE_FLASH1		(1 << 0)
-@@ -49,6 +50,7 @@ enum {
- struct max77693_sub_led {
+ #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
+@@ -63,6 +64,7 @@ struct aat1290_led {
+ 	struct mutex lock;
+ 
  	struct led_classdev_flash ldev;
- 	struct work_struct work_brightness_set;
 +	struct v4l2_flash *v4l2_flash;
  
- 	unsigned int torch_brightness;
- 	unsigned int flash_timeout;
-@@ -602,6 +604,32 @@ unlock:									\
- 	return ret;							\
- }
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+#define MAX77693_LED_FLASH_EXTERNAL_STROBE_SET(ID)			\
-+static int max77693_led##ID##_external_strobe_set(			\
-+				struct v4l2_flash *v4l2_flash,		\
-+				bool enable)				\
-+{									\
-+	struct max77693_led *led =					\
-+			ldev##ID##_to_led(v4l2_flash->flash);		\
-+	int ret;							\
-+									\
-+	mutex_lock(&led->lock);						\
-+									\
-+	if (enable)							\
-+		ret = max77693_add_mode(led, MODE_FLASH_EXTERNAL##ID);	\
-+	else								\
-+		ret = max77693_clear_mode(led,				\
-+					MODE_FLASH_EXTERNAL##ID);	\
-+									\
-+	mutex_unlock(&led->lock);					\
-+									\
-+	return ret;							\
-+}
-+#else
-+#define MAX77693_LED_FLASH_EXTERNAL_STROBE_SET(ID)
-+#endif
-+
- #define MAX77693_LED_FLASH_FAULT_GET(ID)				\
- static int max77693_led##ID##_flash_fault_get(				\
- 				struct led_classdev_flash *flash,	\
-@@ -670,6 +698,7 @@ MAX77693_LED_TORCH_BRIGHTNESS_SET(1)
- MAX77693_LED_FLASH_BRIGHTNESS_SET(1)
- MAX77693_LED_FLASH_STROBE_SET(1)
- MAX77693_LED_FLASH_STROBE_GET(1)
-+MAX77693_LED_FLASH_EXTERNAL_STROBE_SET(1)
- MAX77693_LED_FLASH_TIMEOUT_SET(1)
- MAX77693_LED_FLASH_FAULT_GET(1)
- 
-@@ -679,6 +708,7 @@ MAX77693_LED_TORCH_BRIGHTNESS_SET(2)
- MAX77693_LED_FLASH_BRIGHTNESS_SET(2)
- MAX77693_LED_FLASH_STROBE_SET(2)
- MAX77693_LED_FLASH_STROBE_GET(2)
-+MAX77693_LED_FLASH_EXTERNAL_STROBE_SET(2)
- MAX77693_LED_FLASH_TIMEOUT_SET(2)
- MAX77693_LED_FLASH_FAULT_GET(2)
- 
-@@ -838,9 +868,35 @@ static const struct led_flash_ops flash_ops##ID = {				\
- 	.fault_get		= max77693_led##ID##_flash_fault_get,		\
- }
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+#define MAX77693_LED_V4L2_FLASH_OPS(ID)						\
-+static const struct v4l2_flash_ops v4l2_flash##ID##_ops = {			\
-+	.external_strobe_set = max77693_led##ID##_external_strobe_set,		\
-+}
-+
-+#define MAX77693_LED_GET_V4L2_FLASH_OPS(ID)					\
-+static inline const struct v4l2_flash_ops *get_v4l2_flash##ID##_ops(void)	\
-+{										\
-+	return &v4l2_flash##ID##_ops;						\
-+}
-+#else
-+#define MAX77693_LED_V4L2_FLASH_OPS(ID)
-+
-+#define MAX77693_LED_GET_V4L2_FLASH_OPS(ID)					\
-+static inline const struct v4l2_flash_ops *get_v4l2_flash##ID##_ops(void)	\
-+{										\
-+	return NULL;								\
-+}
-+#endif
-+
- MAX77693_LED_INIT_FLASH_OPS(1);
- MAX77693_LED_INIT_FLASH_OPS(2);
- 
-+MAX77693_LED_V4L2_FLASH_OPS(1);
-+MAX77693_LED_V4L2_FLASH_OPS(2);
-+MAX77693_LED_GET_V4L2_FLASH_OPS(1);
-+MAX77693_LED_GET_V4L2_FLASH_OPS(2);
-+
- static void max77693_init_flash_settings(struct max77693_led *led,
- 					 struct max77693_led_settings *s,
- 					 int led_id)
-@@ -876,18 +932,68 @@ static void max77693_init_flash_settings(struct max77693_led *led,
+ 	int flen_gpio;
+ 	int en_set_gpio;
+@@ -280,11 +282,51 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
  	setting->val = setting->max;
  }
  
 +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+static void max77693_init_v4l2_ctrl_config(struct max77693_led_settings *s,
-+					struct max77693_led_platform_data *p,
-+					struct v4l2_flash_ctrl_config *config,
-+					int led_id)
++static void aat1290_init_v4l2_ctrl_config(struct aat1290_led_settings *s,
++					struct v4l2_flash_ctrl_config *config)
 +{
 +	struct led_flash_setting *setting;
 +	struct v4l2_ctrl_config *c;
 +
 +	c = &config->intensity;
 +	setting = &s->torch_brightness;
-+	c->min = setting->min;
-+	c->max = setting->max;
-+	c->step = setting->step;
-+	c->def = setting->val;
-+
-+	c = &config->flash_intensity;
-+	setting = &s->flash_brightness;
 +	c->min = setting->min;
 +	c->max = setting->max;
 +	c->step = setting->step;
@@ -163,107 +69,81 @@ index 67a2f8f..e93edbd 100644
 +	c->step = setting->step;
 +	c->def = setting->val;
 +
-+	/* Init flash faults config */
-+	config->flash_faults =	V4L2_FLASH_FAULT_OVER_VOLTAGE |
-+				V4L2_FLASH_FAULT_SHORT_CIRCUIT |
-+				V4L2_FLASH_FAULT_OVER_CURRENT;
-+
-+	config->has_external_strobe =
-+			!!(p->trigger[led_id] & MAX77693_LED_TRIG_FLASH);
++	config->has_external_strobe = false;
 +}
 +#else
-+#define max77693_init_v4l2_ctrl_config(s, p, config, led_id)
++#define aat1290_init_v4l2_ctrl_config(s, config)
 +#endif
 +
- static int max77693_register_led(struct max77693_led *led, int id)
+ static const struct led_flash_ops flash_ops = {
+ 	.strobe_set = aat1290_led_flash_strobe_set,
+ 	.timeout_set = aat1290_led_flash_timeout_set,
+ };
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++static const struct v4l2_flash_ops v4l2_flash_ops = {
++	.external_strobe_set = NULL,
++};
++
++static const struct v4l2_flash_ops *get_v4l2_flash_ops(void)
++{
++	return &v4l2_flash_ops;
++}
++#else
++#define get_v4l2_flash_ops() (NULL)
++#endif
++
+ static int aat1290_led_probe(struct platform_device *pdev)
  {
- 	struct platform_device *pdev = led->pdev;
- 	struct led_classdev_flash *flash;
+ 	struct device *dev = &pdev->dev;
+@@ -292,6 +334,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	struct aat1290_led *led;
  	struct led_classdev *led_cdev;
- 	struct max77693_sub_led *sub_leds = led->sub_leds;
+ 	struct led_classdev_flash *flash;
 +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
 +	struct v4l2_flash_ctrl_config v4l2_flash_config;
 +#endif
-+	const struct v4l2_flash_ops *v4l2_flash_ops = NULL;
- 	struct max77693_led_settings settings;
-+	int ret;
+ 	struct aat1290_led_settings settings;
+ 	int flen_gpio, enset_gpio, ret;
  
- 	flash = &sub_leds[id].ldev;
+@@ -344,6 +389,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
  
- 	/* Initialize flash settings */
- 	max77693_init_flash_settings(led, &settings, id);
-+	/* Initialize V4L2 Flash config basing on initialized settings */
-+	max77693_init_v4l2_ctrl_config(&settings, led->pdata,
-+					&v4l2_flash_config, id);
+ 	flash->timeout = settings.flash_timeout;
  
- 	/* Initialize LED Flash class device */
++	/* Init V4L2 Flash controls basing on initialized settings */
++	aat1290_init_v4l2_ctrl_config(&settings, &v4l2_flash_config);
++
+ 	/* Init led class */
  	led_cdev = &flash->led_cdev;
-@@ -901,6 +1007,7 @@ static int max77693_register_led(struct max77693_led *led, int id)
- 		INIT_WORK(&sub_leds[id].work_brightness_set,
- 				max77693_led1_brightness_set_work);
- 		flash->ops = &flash_ops1;
-+		v4l2_flash_ops = get_v4l2_flash1_ops();
- 	} else {
- 		led_cdev->brightness_set = max77693_led2_brightness_set;
- 		led_cdev->brightness_set_sync =
-@@ -908,6 +1015,7 @@ static int max77693_register_led(struct max77693_led *led, int id)
- 		INIT_WORK(&sub_leds[id].work_brightness_set,
- 				max77693_led2_brightness_set_work);
- 		flash->ops = &flash_ops2;
-+		v4l2_flash_ops = get_v4l2_flash2_ops();
- 	}
+ 	led_cdev->name = led->label;
+@@ -361,8 +409,20 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto error_gpio_en_set;
  
- 	led_cdev->max_brightness = settings.torch_brightness.val /
-@@ -921,7 +1029,27 @@ static int max77693_register_led(struct max77693_led *led, int id)
- 	sub_leds[id].flash_timeout = flash->timeout.val;
- 
- 	/* Register in the LED subsystem. */
--	return led_classdev_flash_register(&pdev->dev, flash);
-+	ret = led_classdev_flash_register(&pdev->dev, flash);
-+	if (ret < 0)
-+		return ret;
-+
-+	sub_leds[id].v4l2_flash =
-+		v4l2_flash_init(flash,
-+				v4l2_flash_ops,
-+				led->pdata->sub_nodes[id],
-+				&v4l2_flash_config);
-+
-+	if (IS_ERR(sub_leds[id].v4l2_flash)) {
-+		ret = PTR_ERR(sub_leds[id].v4l2_flash);
-+		goto err_v4l2_flash_init;
++	/* Create V4L2 Flash subdev. */
++	led->v4l2_flash = v4l2_flash_init(flash,
++					  get_v4l2_flash_ops(),
++					  dev_node,
++					  &v4l2_flash_config);
++	if (IS_ERR(led->v4l2_flash)) {
++		ret = PTR_ERR(led->v4l2_flash);
++		goto error_v4l2_flash_init;
 +	}
 +
-+	return 0;
-+
-+err_v4l2_flash_init:
+ 	return 0;
+ 
++error_v4l2_flash_init:
 +	led_classdev_flash_unregister(flash);
-+
-+	return ret;
- }
+ error_gpio_en_set:
+ 	if (gpio_is_valid(enset_gpio))
+ 		gpio_free(enset_gpio);
+@@ -378,6 +438,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
+ {
+ 	struct aat1290_led *led = platform_get_drvdata(pdev);
  
- static int max77693_led_probe(struct platform_device *pdev)
-@@ -972,6 +1100,7 @@ static int max77693_led_probe(struct platform_device *pdev)
- err_register_led2:
- 	if (!p->fleds[FLED1])
- 		goto err_setup;
-+	v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
- 	led_classdev_flash_unregister(&sub_leds[FLED1].ldev);
- err_setup:
- 	mutex_destroy(&led->lock);
-@@ -986,11 +1115,13 @@ static int max77693_led_remove(struct platform_device *pdev)
- 	struct max77693_sub_led *sub_leds = led->sub_leds;
++	v4l2_flash_release(led->v4l2_flash);
+ 	led_classdev_flash_unregister(&led->ldev);
+ 	cancel_work_sync(&led->work_brightness_set);
  
- 	if (led->iout_joint || p->fleds[FLED1]) {
-+		v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
- 		led_classdev_flash_unregister(&sub_leds[FLED1].ldev);
- 		cancel_work_sync(&sub_leds[FLED1].work_brightness_set);
- 	}
- 
- 	if (!led->iout_joint && p->fleds[FLED2]) {
-+		v4l2_flash_release(sub_leds[FLED2].v4l2_flash);
- 		led_classdev_flash_unregister(&sub_leds[FLED2].ldev);
- 		cancel_work_sync(&sub_leds[FLED2].work_brightness_set);
- 	}
 -- 
 1.7.9.5
