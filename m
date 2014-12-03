@@ -1,72 +1,70 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH v2] leds: leds-gpio: Fix multiple instances registration when 'label' property is absent
-Date: Wed,  3 Dec 2014 15:57:33 -0200
-Message-ID: <1417629453-25719-1-git-send-email-festevam@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH w/ acks] DT: leds: Add flash LED devices related properties
+Date: Wed, 3 Dec 2014 19:57:46 +0100
+Message-ID: <20141203185746.GA25267@amd>
+References: <20141120131713.GC27527@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qg0-f51.google.com ([209.85.192.51]:49707 "EHLO
-	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751045AbaLCR5z (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 12:57:55 -0500
-Received: by mail-qg0-f51.google.com with SMTP id l89so11097393qgf.38
-        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 09:57:54 -0800 (PST)
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43482 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751030AbaLCS5t (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 13:57:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20141120131713.GC27527@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com
-Cc: rpurdie@rpsys.net, jean-michel.hautbois@vodalys.com, grant.likely@linaro.org, rafael.j.wysocki@intel.com, mika.westerberg@linux.intel.com, linux-leds@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+To: j.anaszewski@samsung.com, sakari.ailus@iki.fi, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
 
-From: Fabio Estevam <fabio.estevam@freescale.com>
 
-Since commit a43f2cbbb009f96 ("leds: leds-gpio: Make use of device property
-API") it is no longer possible to register multiple gpio leds without passing
-the 'label' property.
+Addition of a LED Flash class extension entails the need for flash LED
+specific device tree properties. The properties being added are:
+max-microamp, flash-max-microamp, flash-timeout-microsec.
 
-According to Documentation/devicetree/bindings/leds/common.txt:
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-"Optional properties for child nodes:
-- label : The label for this LED.  If omitted, the label is
-  taken from the node name (excluding the unit address)."
-
-So retrieve the node name when the 'label' property is absent to keep the old
-behaviour and fix this regression.
-
-Reported-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 ---
-Changes since v1:
-- Consider ACPI case as suggested by Grant
 
- drivers/leds/leds-gpio.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+This will allow me to add device tree support for adp1653 i2c flash
+LED driver, and allow Jacek Anaszewski to add support for more LED
+drivers..
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index fd53968..8a8ba11 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -170,6 +170,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 	struct fwnode_handle *child;
- 	struct gpio_leds_priv *priv;
- 	int count, ret;
-+	struct device_node *np;
+
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 2d88816..e9acbbc 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -14,6 +14,15 @@ Optional properties for child nodes:
+      "ide-disk" - LED indicates disk activity
+      "timer" - LED flashes at a fixed, configurable rate
  
- 	count = device_get_child_node_count(dev);
- 	if (!count)
-@@ -189,7 +190,16 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			goto err;
- 		}
- 
--		fwnode_property_read_string(child, "label", &led.name);
-+		np = of_node(child);
++- max-microamp : maximum intensity in microamperes of the LED
++  	         (torch LED for flash devices)
++- flash-max-microamp : maximum intensity in microamperes of the
++                       flash LED; it is mandatory if the LED should
++		       support the flash mode
++- flash-timeout-microsec : timeout in microseconds after which the flash
++                           LED is turned off
 +
-+		if (fwnode_property_present(child, "label")) {
-+			fwnode_property_read_string(child, "label", &led.name);
-+		} else {
-+			if (IS_ENABLED(CONFIG_OF) && !led.name && np)
-+				led.name = np->name;
-+			if (!led.name)
-+				return ERR_PTR(-EINVAL);
-+		}
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led.default_trigger);
++
+ Examples:
  
+ system-status {
+@@ -21,3 +30,10 @@ system-status {
+ 	linux,default-trigger = "heartbeat";
+ 	...
+ };
++
++camera-flash {
++	label = "Flash";
++	max-microamp = <50000>;
++	flash-max-microamp = <320000>;
++	flash-timeout-microsec = <500000>;
++}
+
+
 -- 
-1.9.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
