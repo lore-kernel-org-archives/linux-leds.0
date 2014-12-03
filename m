@@ -1,50 +1,81 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] leds: netxbig: fix oops at probe time
-Date: Wed, 3 Dec 2014 11:35:32 +0100
-Message-ID: <20141203103532.GD9664@localhost>
-References: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] Add attributes neccessary for LED flashes to
+ devicetree/bindings/leds/common.txt
+Date: Wed, 3 Dec 2014 16:51:55 +0100
+Message-ID: <20141203155155.GA22783@amd>
+References: <20141120131713.GC27527@amd>
+ <546DEEC3.7090508@samsung.com>
+ <546DFF3A.7020702@samsung.com>
+ <20141120205254.GA19174@amd>
+ <546EF4A3.2000101@samsung.com>
+ <20141124225319.GA22383@amd>
+ <CAK5ve-+FBoHD+CPy8GmNDOd3BxvTn_6UB0ZOmjCrEJCpWGyAww@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:47924 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751849AbaLCKfk (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 05:35:40 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49141 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751091AbaLCPv5 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 10:51:57 -0500
 Content-Disposition: inline
-In-Reply-To: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
+In-Reply-To: <CAK5ve-+FBoHD+CPy8GmNDOd3BxvTn_6UB0ZOmjCrEJCpWGyAww@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Johan Hovold <johan@kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>
 
-On Tue, Dec 02, 2014 at 04:32:10PM +0100, Simon Guinot wrote:
-> This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
-> this bug, a kernel oops can be observed at probe time on the LaCie 2Big
-> and 5Big v2 boards:
+On Tue 2014-11-25 22:09:49, Bryan Wu wrote:
+> On Mon, Nov 24, 2014 at 2:53 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> > On Fri 2014-11-21 09:15:31, Jacek Anaszewski wrote:
+> >> Hi Pavel,
+> >>
+> >> On 11/20/2014 09:52 PM, Pavel Machek wrote:
+> >> >On Thu 2014-11-20 15:48:26, Jacek Anaszewski wrote:
+> >> >>On 11/20/2014 02:38 PM, Jacek Anaszewski wrote:
+> >> >>>Hi Pavel,
+> >> >>>
+> >> >>>On 11/20/2014 02:17 PM, Pavel Machek wrote:
+> >> >>>>
+> >> >>>>Add attributes neccessary for LED flashes to
+> >> >>>>devicetree/bindings/leds/common.txt .
+> >> >>>>
+> >> >>>>This will allow me to add device tree support for adp1653 i2c flash
+> >> >>>>LED driver, and allow Jacek Anaszewski to add support for more LED
+> >> >>>>drivers..
+> >> >..
+> >> >>
+> >> >>Actually, we've agreed with Sakari that we can handle
+> >> >>indicator-pattern later.
+> >> >
+> >> >Good.
+> >> >
+> >> >>I would remove references to you, me and adp1653 driver from the commit
+> >> >>message and mention that this modifications adjust the led common
+> >> >>bindings to the LED Flash class that is to be added.
+> >> >
+> >> >Ok, who can take this patch? Can you edit the changelog, or should I
+> >> >do it? Anything else that needs changing?
+> >>
+> >> It's your patch :) For me the contents of the patch are ok.
+> >> It requires device tree maintainer approval anyway.
+> >
+> > Yeah, I was hoping relevant maintainers would speak up. I was not
+> > asking you to edit the changelog, sorry I was unclear.
+> >
+> > Bryan Wu, Richard Purdie: You are the maintainers. Can you take the
+> > patch?
 > 
-> Unable to handle kernel NULL pointer dereference at virtual address 00000008
-> [...]
-> [<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
-> [<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
-> [<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
-> [<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
-> [<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
-> [<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
-> [<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
-> [<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
-> [<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
-> [<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
-> [...]
-> 
-> This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
-> ("leds: netxbig: fix attribute-creation race").
+> I'm OK for this patch, but since Jacek and Sakari are working on
+> pushing LED Flash class and driver into our LED subsystem. I need you
+> guys' Ack for this. Then I can take it in my tree.
 
-Ouch.
+Jacek acked it (provided I modify changelog).
 
-> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> Cc: <stable@vger.kernel.org> # 3.17+
-
-Acked-by: Johan Hovold <johan@kernel.org>
+I can't get Sakari to get explicit ACK, but he was cc-ed on the
+discussion, and was ok with the idea. That should be enough...?
 
 Thanks,
-Johan
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
