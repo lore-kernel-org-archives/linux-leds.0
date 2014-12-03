@@ -1,110 +1,65 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v9 02/19] Documentation: leds: Add description of LED
- Flash class extension
-Date: Wed, 3 Dec 2014 19:08:18 +0200
-Message-ID: <20141203170818.GN14746@valkosipuli.retiisi.org.uk>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-3-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] leds: leds-gpio: Fix multiple instances registration when 'label' property is absent
+Date: Wed,  3 Dec 2014 15:34:33 -0200
+Message-ID: <1417628073-22013-1-git-send-email-festevam@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41448 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750969AbaLCRIW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 12:08:22 -0500
-Content-Disposition: inline
-In-Reply-To: <1417622814-10845-3-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:41238 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730AbaLCRfG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 12:35:06 -0500
+Received: by mail-qa0-f47.google.com with SMTP id s7so10714706qap.34
+        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 09:35:05 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+To: cooloney@gmail.com
+Cc: rpurdie@rpsys.net, jean-michel.hautbois@vodalys.com, grant.likely@linaro.org, rafael.j.wysocki@intel.com, mika.westerberg@linux.intel.com, linux-leds@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-Hi Jacek,
+From: Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, Dec 03, 2014 at 05:06:37PM +0100, Jacek Anaszewski wrote:
-> The documentation being added contains overall description of the
-> LED Flash Class and the related sysfs attributes.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  Documentation/leds/leds-class-flash.txt |   50 +++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/leds/leds-class-flash.txt
-> 
-> diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-> new file mode 100644
-> index 0000000..82e58b1
-> --- /dev/null
-> +++ b/Documentation/leds/leds-class-flash.txt
-> @@ -0,0 +1,50 @@
-> +
-> +Flash LED handling under Linux
-> +==============================
-> +
-> +Some LED devices support two modes - torch and flash. The modes are
-> +supported by the LED class (see Documentation/leds/leds-class.txt)
-> +and LED Flash class respectively.
-> +
-> +In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
-> +must be defined in the kernel config. A flash LED driver must register
-> +in the LED subsystem with led_classdev_flash_register to gain flash
-> +capabilities.
-> +
-> +Following sysfs attributes are exposed for controlling flash led devices:
-> +
-> +	- flash_brightness - flash LED brightness in microamperes (RW)
-> +	- max_flash_brightness - maximum available flash LED brightness (RO)
-> +	- flash_timeout - flash strobe duration in microseconds (RW)
-> +	- max_flash_timeout - maximum available flash strobe duration (RO)
-> +	- flash_strobe - flash strobe state (RW)
-> +	- flash_sync_strobe - one flash device can control more than one
-> +			      sub-led; when this atrribute is set to 1
+Since commit a43f2cbbb009f96 ("leds: leds-gpio: Make use of device property
+API") it is no longer possible to register multiple gpio leds without passing
+the 'label' property.
 
-s/atrribute/attribute/
+According to Documentation/devicetree/bindings/leds/common.txt:
 
-> +			      the flash led will be strobed synchronously
-> +			      with the other one controlled by the same
-> +			      device; flash timeout setting is inherited
-> +			      from the led being strobed explicitly and
-> +			      flash brightness setting of a sub-led's
-> +			      being synchronized is used (RW)
+"Optional properties for child nodes:
+- label : The label for this LED.  If omitted, the label is
+  taken from the node name (excluding the unit address)."
 
-The flash brightness shouldn't be determined by the strobed LED. If this is
-a property of the hardware, then be it, but in general no, it it shouldn't
-be an interface requirement. I think this should just say that the strobe is
-synchronised.
+So retrieve the node name when the 'label' property is absent to keep the old
+behaviour and fix this regression.
 
-How does the user btw. figure out which flash LEDs may be strobed
-synchronously using the LED flash interface?
+Reported-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+ drivers/leds/leds-gpio.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> +	- flash_fault - bitmask of flash faults that may have occurred
-> +			possible flags are:
-> +		* 0x01 - flash controller voltage to the flash LED has exceeded
-> +			 the limit specific to the flash controller
-> +		* 0x02 - the flash strobe was still on when the timeout set by
-> +			 the user has expired; not all flash controllers may
-> +			 set this in all such conditions
-> +		* 0x04 - the flash controller has overheated
-> +		* 0x08 - the short circuit protection of the flash controller
-> +			 has been triggered
-> +		* 0x10 - current in the LED power supply has exceeded the limit
-> +			 specific to the flash controller
-> +		* 0x40 - flash controller voltage to the flash LED has been
-> +			 below the minimum limit specific to the flash
-> +		* 0x80 - the input voltage of the flash controller is below
-> +			 the limit under which strobing the flash at full
-> +			 current will not be possible. The condition persists
-> +			 until this flag is no longer set
-> +		* 0x100 - the temperature of the LED has exceeded its allowed
-> +			  upper limit
-> +
-> +		Flash faults are cleared by reading the attribute.
-
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index fd53968..a635330 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -170,6 +170,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 	struct fwnode_handle *child;
+ 	struct gpio_leds_priv *priv;
+ 	int count, ret;
++	struct device_node *np;
+ 
+ 	count = device_get_child_node_count(dev);
+ 	if (!count)
+@@ -189,7 +190,12 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			goto err;
+ 		}
+ 
+-		fwnode_property_read_string(child, "label", &led.name);
++		np = of_node(child);
++
++		if (fwnode_property_present(child, "label"))
++			fwnode_property_read_string(child, "label", &led.name);
++		else
++			led.name = np->name;
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led.default_trigger);
+ 
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.9.1
