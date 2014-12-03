@@ -1,68 +1,83 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH] Add attributes neccessary for LED flashes to
- devicetree/bindings/leds/common.txt
-Date: Wed, 3 Dec 2014 18:03:52 +0200
-Message-ID: <20141203160352.GK14746@valkosipuli.retiisi.org.uk>
-References: <20141120131713.GC27527@amd>
- <20141120150349.GZ8907@valkosipuli.retiisi.org.uk>
- <546EEBF9.9080006@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <546EEBF9.9080006@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 02/19] Documentation: leds: Add description of LED Flash
+ class extension
+Date: Wed, 03 Dec 2014 17:06:37 +0100
+Message-ID: <1417622814-10845-3-git-send-email-j.anaszewski@samsung.com>
+References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek,
+The documentation being added contains overall description of the
+LED Flash Class and the related sysfs attributes.
 
-On Fri, Nov 21, 2014 at 08:38:33AM +0100, Jacek Anaszewski wrote:
-> Hi Pavel, Sakari,
-> 
-> On 11/20/2014 04:03 PM, Sakari Ailus wrote:
-> >Hi Pavel,
-> >
-> >On Thu, Nov 20, 2014 at 02:17:13PM +0100, Pavel Machek wrote:
-> >>
-> >>Add attributes neccessary for LED flashes to
-> >>devicetree/bindings/leds/common.txt .
-> >>
-> >>This will allow me to add device tree support for adp1653 i2c flash
-> >>LED driver, and allow Jacek Anaszewski to add support for more LED
-> >>drivers..
-> >>
-> >>Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >>
-> >>diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> >>index 2d88816..e9acbbc 100644
-> >>--- a/Documentation/devicetree/bindings/leds/common.txt
-> >>+++ b/Documentation/devicetree/bindings/leds/common.txt
-> >>@@ -14,6 +14,15 @@ Optional properties for child nodes:
-> >>       "ide-disk" - LED indicates disk activity
-> >>       "timer" - LED flashes at a fixed, configurable rate
-> >>
-> >>+- max-microamp : maximum intensity in microamperes of the LED
-> >>+  	         (torch LED for flash devices)
-> >>+- flash-max-microamp : maximum intensity in microamperes of the
-> >>+                       flash LED; it is mandatory if the LED should
-> >>+		       support the flash mode
-> >>+- flash-timeout-microsec : timeout in microseconds after which the flash
-> >>+                           LED is turned off
-> >
-> >It might be good to add a note that these may be arrays, depending on the
-> >device.
-> >
-> 
-> This binding is for a sub-node representing a single led.
-> Do you know devices which would require an array of max currents
-> for a sub-led?
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ Documentation/leds/leds-class-flash.txt |   50 +++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/leds/leds-class-flash.txt
 
-Oops, I missed to reply to this one.
-
-No, if this is just a single LED then I think it's fine.
-
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+new file mode 100644
+index 0000000..82e58b1
+--- /dev/null
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -0,0 +1,50 @@
++
++Flash LED handling under Linux
++==============================
++
++Some LED devices support two modes - torch and flash. The modes are
++supported by the LED class (see Documentation/leds/leds-class.txt)
++and LED Flash class respectively.
++
++In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
++must be defined in the kernel config. A flash LED driver must register
++in the LED subsystem with led_classdev_flash_register to gain flash
++capabilities.
++
++Following sysfs attributes are exposed for controlling flash led devices:
++
++	- flash_brightness - flash LED brightness in microamperes (RW)
++	- max_flash_brightness - maximum available flash LED brightness (RO)
++	- flash_timeout - flash strobe duration in microseconds (RW)
++	- max_flash_timeout - maximum available flash strobe duration (RO)
++	- flash_strobe - flash strobe state (RW)
++	- flash_sync_strobe - one flash device can control more than one
++			      sub-led; when this atrribute is set to 1
++			      the flash led will be strobed synchronously
++			      with the other one controlled by the same
++			      device; flash timeout setting is inherited
++			      from the led being strobed explicitly and
++			      flash brightness setting of a sub-led's
++			      being synchronized is used (RW)
++	- flash_fault - bitmask of flash faults that may have occurred
++			possible flags are:
++		* 0x01 - flash controller voltage to the flash LED has exceeded
++			 the limit specific to the flash controller
++		* 0x02 - the flash strobe was still on when the timeout set by
++			 the user has expired; not all flash controllers may
++			 set this in all such conditions
++		* 0x04 - the flash controller has overheated
++		* 0x08 - the short circuit protection of the flash controller
++			 has been triggered
++		* 0x10 - current in the LED power supply has exceeded the limit
++			 specific to the flash controller
++		* 0x40 - flash controller voltage to the flash LED has been
++			 below the minimum limit specific to the flash
++		* 0x80 - the input voltage of the flash controller is below
++			 the limit under which strobing the flash at full
++			 current will not be possible. The condition persists
++			 until this flag is no longer set
++		* 0x100 - the temperature of the LED has exceeded its allowed
++			  upper limit
++
++		Flash faults are cleared by reading the attribute.
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.7.9.5
