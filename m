@@ -1,40 +1,124 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v9 03/19] mfd: max77693: Modify flash cell name identifiers
-Date: Wed, 03 Dec 2014 17:06:38 +0100
-Message-ID: <1417622814-10845-4-git-send-email-j.anaszewski@samsung.com>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 00/19] LED / flash API integration
+Date: Wed, 03 Dec 2014 17:06:35 +0100
+Message-ID: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Change flash cell identifiers from max77693-flash to max77693-led
-to avoid confusion with NOR/NAND Flash.
+This patch set is a follow-up of the LED / flash API integration
+series [1].
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/max77693.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+========================
+Changes since version 8:
+========================
 
-diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-index a159593..cb14afa 100644
---- a/drivers/mfd/max77693.c
-+++ b/drivers/mfd/max77693.c
-@@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
- 		.of_compatible = "maxim,max77693-haptic",
- 	},
- 	{
--		.name = "max77693-flash",
--		.of_compatible = "maxim,max77693-flash",
-+		.name = "max77693-led",
-+		.of_compatible = "maxim,max77693-led",
- 	},
- };
- 
+- added a new way of registering async sub-device
+- switched to matching flash leds by DT phandles
+- improved Device Tree bindings documentation
+- split the drivers patches to LED Flash class
+  and V4L2 Flash part
+- fixed indicator leds handling in v4l2-flash
+- applied various fixes an cleanups
+
+========================
+Changes since version 7:
+========================
+
+- removed explicit support for indicator leds from
+  LED Flash class - indicator leds will be registered
+  as a separate LED Flash class devices
+- added flash_sync_strobe sysfs attribute and related
+  V4L2_CID_FLASH_SYNC_STROBE control
+- changed the way of matching V4L2 Flash sub-devices
+  in a media device, which entailed modification in
+  v4l2-async driver
+- modified max77693 DT bindings documentation
+- applied various fixes an cleanups
+
+========================
+Changes since version 6:
+========================
+
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+Jacek Anaszewski (19):
+  leds: Add LED Flash class extension to the LED subsystem
+  Documentation: leds: Add description of LED Flash class extension
+  mfd: max77693: Modify flash cell name identifiers
+  mfd: max77693: adjust max77693_led_platform_data
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  dt-binding: mfd: max77693: Add DT binding related macros
+  leds: Add driver for AAT1290 current regulator
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  v4l2-async: change custom.match callback argument type
+  v4l2-async: add V4L2_ASYNC_MATCH_CUSTOM_OF matching type
+  v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  exynos4-is: Add support for v4l2-flash subdevs
+  DT: Add documentation for exynos4-is 'flashes' property
+  leds: max77693: add support for V4L2 Flash sub-device
+  leds: aat1290: add support for V4L2 Flash sub-device
+
+ Documentation/DocBook/media/v4l/controls.xml       |   11 +
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +
+ .../devicetree/bindings/media/samsung-fimc.txt     |    7 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   89 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   63 ++
+ drivers/leds/Kconfig                               |   27 +
+ drivers/leds/Makefile                              |    3 +
+ drivers/leds/led-class-flash.c                     |  446 ++++++++
+ drivers/leds/led-class.c                           |    4 +
+ drivers/leds/leds-aat1290.c                        |  474 ++++++++
+ drivers/leds/leds-max77693.c                       | 1154 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.c      |   42 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-async.c               |  122 ++-
+ drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  546 +++++++++
+ drivers/mfd/max77693.c                             |    4 +-
+ include/dt-bindings/mfd/max77693.h                 |   38 +
+ include/linux/led-class-flash.h                    |  186 ++++
+ include/linux/leds.h                               |    3 +
+ include/linux/mfd/max77693.h                       |    4 +-
+ include/media/v4l2-async.h                         |    6 +-
+ include/media/v4l2-flash.h                         |  139 +++
+ include/uapi/linux/v4l2-controls.h                 |    1 +
+ 27 files changed, 3388 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/dt-bindings/mfd/max77693.h
+ create mode 100644 include/linux/led-class-flash.h
+ create mode 100644 include/media/v4l2-flash.h
+
 -- 
 1.7.9.5
