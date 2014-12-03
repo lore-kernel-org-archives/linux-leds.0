@@ -1,55 +1,51 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v9 10/19] DT: Add documentation for the Skyworks AAT1290
-Date: Wed, 03 Dec 2014 17:06:45 +0100
-Message-ID: <1417622814-10845-11-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v9 04/19] mfd: max77693: adjust max77693_led_platform_data
+Date: Wed, 03 Dec 2014 17:06:39 +0100
+Message-ID: <1417622814-10845-5-git-send-email-j.anaszewski@samsung.com>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds device tree binding documentation for
-1.5A Step-Up Current Regulator for Flash LEDs.
+Add "label" array for Device Tree strings with the name of a LED device
+and make flash_timeout a two element array, for caching the sub-led
+related flash timeout. Added is also an array for caching pointers to the
+sub-nodes representing sub-leds.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: <devicetree@vger.kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
- .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ include/linux/mfd/max77693.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-new file mode 100644
-index 0000000..17b8f05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-@@ -0,0 +1,17 @@
-+* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
-+
-+Required properties:
-+
-+- compatible : Must be "skyworks,aat1290".
-+- gpios : Two gpio pins in order FLEN, EN/SET.
-+- flash-timeout-microsec : Maximum flash timeout in microseconds -
-+			   it can be calculated using following formula:
-+			   T = 8.82 * 10^9 * Ct.
-+
-+Example:
-+
-+flash_led: led {
-+	compatible = "skyworks,aat1290";
-+	gpios = <&gpj1 1 0>, <&gpj1 2 0>;
-+	flash-timeout-microsec = <1940000>;
-+}
+diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+index f0b6585..c80ee99 100644
+--- a/include/linux/mfd/max77693.h
++++ b/include/linux/mfd/max77693.h
+@@ -88,16 +88,18 @@ enum max77693_led_boost_mode {
+ };
+ 
+ struct max77693_led_platform_data {
++	const char *label[2];
+ 	u32 fleds[2];
+ 	u32 iout_torch[2];
+ 	u32 iout_flash[2];
+ 	u32 trigger[2];
+ 	u32 trigger_type[2];
++	u32 flash_timeout[2];
+ 	u32 num_leds;
+ 	u32 boost_mode;
+-	u32 flash_timeout;
+ 	u32 boost_vout;
+ 	u32 low_vsys;
++	struct device_node *sub_nodes[2];
+ };
+ 
+ /* MAX77693 */
 -- 
 1.7.9.5
