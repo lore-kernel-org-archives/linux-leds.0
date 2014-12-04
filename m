@@ -1,62 +1,56 @@
-From: Bryan Wu <cooloney@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
 Subject: Re: [PATCH v2] leds: leds-gpio: Fix multiple instances registration
  when 'label' property is absent
-Date: Wed, 3 Dec 2014 15:59:52 -0800
-Message-ID: <CAK5ve-+_q+DZzgkJNAiFK88+5jg6+Trh9ih7z5pEfdormjx_mQ@mail.gmail.com>
+Date: Wed, 3 Dec 2014 22:12:27 -0200
+Message-ID: <CAOMZO5ARRGzMUuOUPp8VJHuZP5Lh1Cf=xFZqih86RqUjPLQxFA@mail.gmail.com>
 References: <1417629453-25719-1-git-send-email-festevam@gmail.com>
- <CACxGe6srjVUAxXEahDMPGNYKn7O-TqoExwGrGkDE9bb1tiA-jA@mail.gmail.com> <CAOMZO5AEk=oAF4vxNFgd01hZqE7JH30H71OAUeBdSPavELD4aw@mail.gmail.com>
+	<CACxGe6srjVUAxXEahDMPGNYKn7O-TqoExwGrGkDE9bb1tiA-jA@mail.gmail.com>
+	<CAOMZO5AEk=oAF4vxNFgd01hZqE7JH30H71OAUeBdSPavELD4aw@mail.gmail.com>
+	<CAK5ve-+_q+DZzgkJNAiFK88+5jg6+Trh9ih7z5pEfdormjx_mQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:48349 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752443AbaLDAAO (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 19:00:14 -0500
-Received: by mail-ig0-f173.google.com with SMTP id r2so17835251igi.0
-        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 16:00:13 -0800 (PST)
-In-Reply-To: <CAOMZO5AEk=oAF4vxNFgd01hZqE7JH30H71OAUeBdSPavELD4aw@mail.gmail.com>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:63042 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbaLDAM2 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 3 Dec 2014 19:12:28 -0500
+Received: by mail-lb0-f169.google.com with SMTP id p9so13256326lbv.0
+        for <linux-leds@vger.kernel.org>; Wed, 03 Dec 2014 16:12:27 -0800 (PST)
+In-Reply-To: <CAK5ve-+_q+DZzgkJNAiFK88+5jg6+Trh9ih7z5pEfdormjx_mQ@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
+To: Bryan Wu <cooloney@gmail.com>
 Cc: Grant Likely <grant.likely@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, Dec 3, 2014 at 3:28 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> On Wed, Dec 3, 2014 at 9:17 PM, Grant Likely <grant.likely@linaro.org> wrote:
->> On Wed, Dec 3, 2014 at 5:57 PM, Fabio Estevam <festevam@gmail.com> wrote:
->>> From: Fabio Estevam <fabio.estevam@freescale.com>
->>>
->>> Since commit a43f2cbbb009f96 ("leds: leds-gpio: Make use of device property
->>> API") it is no longer possible to register multiple gpio leds without passing
->>> the 'label' property.
->>>
->>> According to Documentation/devicetree/bindings/leds/common.txt:
->>>
->>> "Optional properties for child nodes:
->>> - label : The label for this LED.  If omitted, the label is
->>>   taken from the node name (excluding the unit address)."
->>>
->>> So retrieve the node name when the 'label' property is absent to keep the old
->>> behaviour and fix this regression.
->>>
->>> Reported-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
->>> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
->>
->> Acked-by: Grant Likely <grant.likely@linaro.org>
->>
->> (Assuming that creating a fwnode_get_name() function turns out to be a
->> non-starter.)
+Hi Bryan,
+
+On Wed, Dec 3, 2014 at 9:59 PM, Bryan Wu <cooloney@gmail.com> wrote:
+
+>> Maybe we should go with this v2 patch initially to fix the regression
+>> and then we could consider introducing fwnode_get_name() in a future
+>> patch.
 >
-> Thanks, Grant.
->
-> Maybe we should go with this v2 patch initially to fix the regression
-> and then we could consider introducing fwnode_get_name() in a future
-> patch.
+> I think V1 just touches leds-gpio.c and might be easier to merge as a
+> good fix. And then you can provide a patch to introduce
+> fwnode_get_name().
 
-I think V1 just touches leds-gpio.c and might be easier to merge as a
-good fix. And then you can provide a patch to introduce
-fwnode_get_name().
+Yes, I agree.
 
-Or you update your V2 patch to use fwnode_get_name() and try to merge
-it as a fix.
+Just to make sure we are on the same page: there were two formal
+patches that I submitted:
 
--Bryan
+- v1: which did not take ACPI into account as pointed out by Grant
+- v2: The original one of this thread that does take ACPI into account
+
+Both of them only touch leds-gpio.c.
+
+The one that touches drivers/base/property.c was just a suggestion
+that I sent as a reply to v2. It was not a formal submission. I also
+don't know if such suggestion would work for ACPI, as ACPI is
+something I am not familiar with.
+
+It seems to me that you are calling my [PATCH v2] as v1 and the
+suggested approach that touches drivers/base/property.c as v2, so
+that's the confusion ;-). Sorry about that.
+
+Please let me know.
