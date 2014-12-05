@@ -1,51 +1,69 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v9 06/19] DT: Add documentation for the mfd Maxim
- max77693
-Date: Thu, 4 Dec 2014 17:12:02 +0100
-Message-ID: <20141204161201.GB29080@amd>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-7-git-send-email-j.anaszewski@samsung.com>
- <20141204100706.GP14746@valkosipuli.retiisi.org.uk>
- <54804840.4030202@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Fri, 5 Dec 2014 11:45:57 -0800
+Message-ID: <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
+References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
+ <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
+ <20141129125832.GA315@amd> <547C539A.4010500@samsung.com> <20141201130437.GB24737@amd>
+ <547C7420.4080801@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54804840.4030202@samsung.com>
+In-Reply-To: <547C7420.4080801@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+On Mon, Dec 1, 2014 at 5:58 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Hi Pavel,
+>
+> On 12/01/2014 02:04 PM, Pavel Machek wrote:
+>>
+>> Hi!
+>>
+>>>> How are faults cleared? Should it be list of strings, instead of
+>>>> bitmask? We may want to add new fault modes in future...
+>>>
+>>>
+>>> Faults are cleared by reading the attribute. I will add this note.
+>>> There can be more than one fault at a time. I think that the bitmask
+>>> is a flexible solution. I don't see any troubles related to adding
+>>> new fault modes in the future, do you?
+>>
+>>
+>> I do not think that "read attribute to clear" is good idea. Normally,
+>> you'd want the error attribute world-readable, but you don't want
+>> non-root users to clear the errors.
+>
+>
+> This is also V4L2_CID_FLASH_FAULT control semantics.
+> Moreover many devices clear the errors upon reading register.
+> I don't see anything wrong in the fact that an user can clear
+> an error. If the user has a permission to use a device then
+> it also should be allowed to clear the errors.
+>
+>> I am not sure if bitmask is good solution. I'd return space-separated
+>> strings like "overtemp". That way, there's good chance that other LED
+>> drivers would be able to use similar interface...
+>
+>
+> The format of a sysfs attribute should be concise.
+> The error codes are generic and map directly to the V4L2 Flash
+> error codes.
+>
 
-> >>+- maxim,boost-mode :
-> >>+	In boost mode the device can produce up to 1.2A of total current
-> >>+	on both outputs. The maximum current on each output is reduced
-> >>+	to 625mA then. If there are two child led nodes defined then boost
-> >>+	is enabled by default.
-> >>+	Possible values:
-> >>+		MAX77693_LED_BOOST_OFF - no boost,
-> >>+		MAX77693_LED_BOOST_ADAPTIVE - adaptive mode,
-> >>+		MAX77693_LED_BOOST_FIXED - fixed mode.
-> >>+- maxim,boost-vout : Output voltage of the boost module in millivolts.
-> >>+- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
-> >>+	if chip estimates that system voltage could drop below this level due
-> >>+	to flash power consumption.
-> >>+
-> >>+Required properties of the LED child node:
-> >>+- label : see Documentation/devicetree/bindings/leds/common.txt
-> >>+- maxim,fled_id : Identifier of the fled output the led is connected to;
-> >
-> >I'm pretty sure this will be needed for about every chip that can drive
-> >multiple LEDs. Shouldn't it be documented in the generic documentation?
-> 
-> OK.
+Actually I'd like to see those flash fault code defined in LED
+subsystem. And V4L2 will just include LED flash header file to use it.
+Because flash fault code is not for V4L2 specific but it's a feature
+of LED flash devices.
 
-Well... "fled_id" is not exactly suitable name. On other busses, it
-would be "reg = <1>"?
+For clearing error code of flash devices, I think it depends on the
+hardware. If most of our LED flash is using reading to clear error
+code, we probably can make it simple as this now. But what if some
+other LED flash devices are using writing to clear error code? we
+should provide a API to that?
 
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-Bryan
