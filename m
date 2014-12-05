@@ -1,69 +1,58 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
- Flash class extension
-Date: Fri, 5 Dec 2014 11:45:57 -0800
-Message-ID: <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
-References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
- <20141129125832.GA315@amd> <547C539A.4010500@samsung.com> <20141201130437.GB24737@amd>
- <547C7420.4080801@samsung.com>
+Subject: Re: [PATCH/RFC v8 03/14] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Fri, 5 Dec 2014 11:50:01 -0800
+Message-ID: <CAK5ve-J5QOJvdRs20CaDUT_-gj35QJMPR2fdzb+0=jQV-fKBxQ@mail.gmail.com>
+References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com> <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <547C7420.4080801@samsung.com>
+In-Reply-To: <1417166286-27685-4-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Dec 1, 2014 at 5:58 AM, Jacek Anaszewski
+On Fri, Nov 28, 2014 at 1:17 AM, Jacek Anaszewski
 <j.anaszewski@samsung.com> wrote:
-> Hi Pavel,
+> This patch extends LED Flash class documention by
+> the description of interactions with v4l2-flash sub-device.
 >
-> On 12/01/2014 02:04 PM, Pavel Machek wrote:
->>
->> Hi!
->>
->>>> How are faults cleared? Should it be list of strings, instead of
->>>> bitmask? We may want to add new fault modes in future...
->>>
->>>
->>> Faults are cleared by reading the attribute. I will add this note.
->>> There can be more than one fault at a time. I think that the bitmask
->>> is a flexible solution. I don't see any troubles related to adding
->>> new fault modes in the future, do you?
->>
->>
->> I do not think that "read attribute to clear" is good idea. Normally,
->> you'd want the error attribute world-readable, but you don't want
->> non-root users to clear the errors.
->
->
-> This is also V4L2_CID_FLASH_FAULT control semantics.
-> Moreover many devices clear the errors upon reading register.
-> I don't see anything wrong in the fact that an user can clear
-> an error. If the user has a permission to use a device then
-> it also should be allowed to clear the errors.
->
->> I am not sure if bitmask is good solution. I'd return space-separated
->> strings like "overtemp". That way, there's good chance that other LED
->> drivers would be able to use similar interface...
->
->
-> The format of a sysfs attribute should be concise.
-> The error codes are generic and map directly to the V4L2 Flash
-> error codes.
->
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
 
-Actually I'd like to see those flash fault code defined in LED
-subsystem. And V4L2 will just include LED flash header file to use it.
-Because flash fault code is not for V4L2 specific but it's a feature
-of LED flash devices.
+This patch looks good to me. I will take it with other patches!
 
-For clearing error code of flash devices, I think it depends on the
-hardware. If most of our LED flash is using reading to clear error
-code, we probably can make it simple as this now. But what if some
-other LED flash devices are using writing to clear error code? we
-should provide a API to that?
-
+Thanks,
 -Bryan
+
+>  Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+> index d68565c..1a611ec 100644
+> --- a/Documentation/leds/leds-class-flash.txt
+> +++ b/Documentation/leds/leds-class-flash.txt
+> @@ -46,3 +46,16 @@ Following sysfs attributes are exposed for controlling flash led devices:
+>                          until this flag is no longer set
+>                 * 0x100 - the temperature of the LED has exceeded its allowed
+>                           upper limit
+> +
+> +A LED subsystem driver can be controlled also from the level of VideoForLinux2
+> +subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
+> +be defined in the kernel config. The driver must call the v4l2_flash_init
+> +function to get registered in the V4L2 subsystem. On remove the
+> +v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
+> +
+> +After proper initialization a V4L2 Flash sub-device is created. The sub-device
+> +exposes a number of V4L2 controls, which allow for controlling a LED Flash class
+> +device with use of its internal kernel API.
+> +Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
+> +unavailable. The interface is re-enabled after the V4L2 Flash sub-device
+> +is closed.
+> --
+> 1.7.9.5
+>
