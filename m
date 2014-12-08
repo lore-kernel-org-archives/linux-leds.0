@@ -1,61 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH/RFC v9 06/19] DT: Add documentation for the mfd Maxim
- max77693
-Date: Mon, 08 Dec 2014 11:29:15 +0100
-Message-ID: <54857D7B.8050304@samsung.com>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-7-git-send-email-j.anaszewski@samsung.com>
- <20141204100706.GP14746@valkosipuli.retiisi.org.uk>
- <54804840.4030202@samsung.com> <20141204161201.GB29080@amd>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Mon, 08 Dec 2014 17:55:20 +0100
+Message-ID: <5485D7F8.10807@samsung.com>
+References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
+ <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
+ <20141129125832.GA315@amd> <547C539A.4010500@samsung.com>
+ <20141201130437.GB24737@amd> <547C7420.4080801@samsung.com>
+ <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
+ <20141206124310.GB3411@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20141204161201.GB29080@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20141206124310.GB3411@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
-
-On 12/04/2014 05:12 PM, Pavel Machek wrote:
-> Hi!
+On 12/06/2014 01:43 PM, Pavel Machek wrote:
 >
->>>> +- maxim,boost-mode :
->>>> +	In boost mode the device can produce up to 1.2A of total current
->>>> +	on both outputs. The maximum current on each output is reduced
->>>> +	to 625mA then. If there are two child led nodes defined then boost
->>>> +	is enabled by default.
->>>> +	Possible values:
->>>> +		MAX77693_LED_BOOST_OFF - no boost,
->>>> +		MAX77693_LED_BOOST_ADAPTIVE - adaptive mode,
->>>> +		MAX77693_LED_BOOST_FIXED - fixed mode.
->>>> +- maxim,boost-vout : Output voltage of the boost module in millivolts.
->>>> +- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
->>>> +	if chip estimates that system voltage could drop below this level due
->>>> +	to flash power consumption.
->>>> +
->>>> +Required properties of the LED child node:
->>>> +- label : see Documentation/devicetree/bindings/leds/common.txt
->>>> +- maxim,fled_id : Identifier of the fled output the led is connected to;
+>>> The format of a sysfs attribute should be concise.
+>>> The error codes are generic and map directly to the V4L2 Flash
+>>> error codes.
 >>>
->>> I'm pretty sure this will be needed for about every chip that can drive
->>> multiple LEDs. Shouldn't it be documented in the generic documentation?
 >>
->> OK.
+>> Actually I'd like to see those flash fault code defined in LED
+>> subsystem. And V4L2 will just include LED flash header file to use it.
+>> Because flash fault code is not for V4L2 specific but it's a feature
+>> of LED flash devices.
+>>
+>> For clearing error code of flash devices, I think it depends on the
+>> hardware. If most of our LED flash is using reading to clear error
+>> code, we probably can make it simple as this now. But what if some
+>> other LED flash devices are using writing to clear error code? we
+>> should provide a API to that?
 >
-> Well... "fled_id" is not exactly suitable name. On other busses, it
-> would be "reg = <1>"?
+> Actually, we should provide API that makes sense, and that is easy to
+> use by userspace.
+>
+> I believe "read" is called read because it does not change anything,
+> and it should stay that way in /sysfs. You may want to talk to sysfs
+> maintainers if you plan on doing another semantics.
 
-I'm ok with "reg". This scheme is used for pca963x.txt and is described
-as "number of LED line". We could define it similarly in the common.txt.
-A device would have to specify the range of allowed values though.
-I would add such a note to the generic binding.
+How would you proceed in case of devices which clear their fault
+register upon I2C readout (e.g. AS3645)? In this case read does have
+a side effect. For such devices attribute semantics would have to be
+different than for the devices which don't clear faults on readout.
 
-Regards,
-Jacek
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In case of devices which use writing to clear error code - I'd do that
+after reading flash_fault attribute, in the same callback.
+
+Best Regards,
+Jacek Anaszewski
