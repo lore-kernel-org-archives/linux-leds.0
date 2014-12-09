@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v9 03/19] mfd: max77693: Modify flash cell name
- identifiers
-Date: Tue, 9 Dec 2014 10:02:24 +0000
-Message-ID: <20141209100224.GV3951@x1>
+Subject: Re: [PATCH/RFC v9 04/19] mfd: max77693: adjust
+ max77693_led_platform_data
+Date: Tue, 9 Dec 2014 10:04:13 +0000
+Message-ID: <20141209100413.GW3951@x1>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-4-git-send-email-j.anaszewski@samsung.com>
- <20141209085216.GS3951@x1>
- <5486BE6C.9010408@samsung.com>
+ <1417622814-10845-5-git-send-email-j.anaszewski@samsung.com>
+ <20141209085047.GR3951@x1>
+ <5486BC44.7010602@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:34718 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754197AbaLIKCb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Dec 2014 05:02:31 -0500
-Received: by mail-ie0-f174.google.com with SMTP id rl12so176937iec.33
-        for <linux-leds@vger.kernel.org>; Tue, 09 Dec 2014 02:02:31 -0800 (PST)
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:58428 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754271AbaLIKEU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Dec 2014 05:04:20 -0500
+Received: by mail-ig0-f179.google.com with SMTP id r2so645655igi.0
+        for <linux-leds@vger.kernel.org>; Tue, 09 Dec 2014 02:04:20 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <5486BE6C.9010408@samsung.com>
+In-Reply-To: <5486BC44.7010602@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
@@ -26,46 +26,61 @@ Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.k
 
 On Tue, 09 Dec 2014, Jacek Anaszewski wrote:
 
-> On 12/09/2014 09:52 AM, Lee Jones wrote:
+> On 12/09/2014 09:50 AM, Lee Jones wrote:
 > >On Wed, 03 Dec 2014, Jacek Anaszewski wrote:
 > >
-> >>Change flash cell identifiers from max77693-flash to max77693-led
-> >>to avoid confusion with NOR/NAND Flash.
+> >>Add "label" array for Device Tree strings with the name of a LED de=
+vice
+> >>and make flash_timeout a two element array, for caching the sub-led
+> >>related flash timeout. Added is also an array for caching pointers =
+to the
+> >>sub-nodes representing sub-leds.
 > >>
 > >>Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 > >>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > >>Cc: Chanwoo Choi <cw00.choi@samsung.com>
 > >>Cc: Lee Jones <lee.jones@linaro.org>
 > >>---
-> >>  drivers/mfd/max77693.c |    4 ++--
-> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>  include/linux/mfd/max77693.h |    4 +++-
+> >>  1 file changed, 3 insertions(+), 1 deletion(-)
 > >>
-> >>diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-> >>index a159593..cb14afa 100644
-> >>--- a/drivers/mfd/max77693.c
-> >>+++ b/drivers/mfd/max77693.c
-> >>@@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] =3D =
-{
-> >>  		.of_compatible =3D "maxim,max77693-haptic",
-> >>  	},
-> >>  	{
-> >>-		.name =3D "max77693-flash",
-> >>-		.of_compatible =3D "maxim,max77693-flash",
-> >>+		.name =3D "max77693-led",
-> >>+		.of_compatible =3D "maxim,max77693-led",
+> >>diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77=
+693.h
+> >>index f0b6585..c80ee99 100644
+> >>--- a/include/linux/mfd/max77693.h
+> >>+++ b/include/linux/mfd/max77693.h
+> >>@@ -88,16 +88,18 @@ enum max77693_led_boost_mode {
+> >>  };
+> >>
+> >>  struct max77693_led_platform_data {
+> >>+	const char *label[2];
+> >>  	u32 fleds[2];
+> >>  	u32 iout_torch[2];for_each_available_child_of_node
+> >>  	u32 iout_flash[2];
+> >>  	u32 trigger[2];
+> >>  	u32 trigger_type[2];
+> >>+	u32 flash_timeout[2];
+> >>  	u32 num_leds;
+> >>  	u32 boost_mode;
+> >>-	u32 flash_timeout;
+> >>  	u32 boost_vout;
+> >>  	u32 low_vsys;
+> >>+	struct device_node *sub_nodes[2];
 > >
-> >This is fine by me, so long as you've been through the usual
-> >deprecation procedures or this platform is still WiP.
+> >I haven't seen anyone do this before.  Why can't you use the provide=
+d
+> >OF functions to traverse through your tree?
 >=20
-> It was me who added of_compatible for max77693-flash, but the
-> related led driver has not been yet merged and there are no
-> other drivers depending on it.
+> I use for_each_available_child_of_node when parsing DT node, but I
+> need to cache the pointer to sub-node to be able to use it later
+> when it needs to be passed to V4L2 sub-device which is then
+> asynchronously matched by the phandle to sub-node.
+>=20
+> If it is not well seen to cache it in the platform data then
+> I will find different way to accomplish this.
 
-Very well.
-
-=46or my own reference:
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
+I haven't seen the end-driver for this, but why can't you use that
+device's of_node pointer?
 
 --=20
 Lee Jones
