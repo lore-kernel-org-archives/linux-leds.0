@@ -1,69 +1,54 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v9 04/19] mfd: max77693: adjust
- max77693_led_platform_data
-Date: Tue, 09 Dec 2014 10:09:24 +0100
-Message-ID: <5486BC44.7010602@samsung.com>
+Subject: Re: [PATCH/RFC v9 03/19] mfd: max77693: Modify flash cell name
+ identifiers
+Date: Tue, 09 Dec 2014 10:18:36 +0100
+Message-ID: <5486BE6C.9010408@samsung.com>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-5-git-send-email-j.anaszewski@samsung.com>
- <20141209085047.GR3951@x1>
+ <1417622814-10845-4-git-send-email-j.anaszewski@samsung.com>
+ <20141209085216.GS3951@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141209085047.GR3951@x1>
+In-reply-to: <20141209085216.GS3951@x1>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
 Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 12/09/2014 09:50 AM, Lee Jones wrote:
+On 12/09/2014 09:52 AM, Lee Jones wrote:
 > On Wed, 03 Dec 2014, Jacek Anaszewski wrote:
 >
->> Add "label" array for Device Tree strings with the name of a LED device
->> and make flash_timeout a two element array, for caching the sub-led
->> related flash timeout. Added is also an array for caching pointers to the
->> sub-nodes representing sub-leds.
+>> Change flash cell identifiers from max77693-flash to max77693-led
+>> to avoid confusion with NOR/NAND Flash.
 >>
 >> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 >> Cc: Lee Jones <lee.jones@linaro.org>
 >> ---
->>   include/linux/mfd/max77693.h |    4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>   drivers/mfd/max77693.c |    4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
->> index f0b6585..c80ee99 100644
->> --- a/include/linux/mfd/max77693.h
->> +++ b/include/linux/mfd/max77693.h
->> @@ -88,16 +88,18 @@ enum max77693_led_boost_mode {
->>   };
->>
->>   struct max77693_led_platform_data {
->> +	const char *label[2];
->>   	u32 fleds[2];
->>   	u32 iout_torch[2];for_each_available_child_of_node
->>   	u32 iout_flash[2];
->>   	u32 trigger[2];
->>   	u32 trigger_type[2];
->> +	u32 flash_timeout[2];
->>   	u32 num_leds;
->>   	u32 boost_mode;
->> -	u32 flash_timeout;
->>   	u32 boost_vout;
->>   	u32 low_vsys;
->> +	struct device_node *sub_nodes[2];
+>> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+>> index a159593..cb14afa 100644
+>> --- a/drivers/mfd/max77693.c
+>> +++ b/drivers/mfd/max77693.c
+>> @@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
+>>   		.of_compatible = "maxim,max77693-haptic",
+>>   	},
+>>   	{
+>> -		.name = "max77693-flash",
+>> -		.of_compatible = "maxim,max77693-flash",
+>> +		.name = "max77693-led",
+>> +		.of_compatible = "maxim,max77693-led",
 >
-> I haven't seen anyone do this before.  Why can't you use the provided
-> OF functions to traverse through your tree?
+> This is fine by me, so long as you've been through the usual
+> deprecation procedures or this platform is still WiP.
 
-I use for_each_available_child_of_node when parsing DT node, but I
-need to cache the pointer to sub-node to be able to use it later
-when it needs to be passed to V4L2 sub-device which is then
-asynchronously matched by the phandle to sub-node.
-
-If it is not well seen to cache it in the platform data then
-I will find different way to accomplish this.
+It was me who added of_compatible for max77693-flash, but the
+related led driver has not been yet merged and there are no
+other drivers depending on it.
 
 Best Regards,
 Jacek Anaszewski
