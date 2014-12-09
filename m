@@ -1,69 +1,79 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
- Flash class extension
-Date: Mon, 8 Dec 2014 21:18:55 +0100
-Message-ID: <20141208201855.GA16648@amd>
-References: <1417166286-27685-1-git-send-email-j.anaszewski@samsung.com>
- <1417166286-27685-3-git-send-email-j.anaszewski@samsung.com>
- <20141129125832.GA315@amd>
- <547C539A.4010500@samsung.com>
- <20141201130437.GB24737@amd>
- <547C7420.4080801@samsung.com>
- <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
- <20141206124310.GB3411@amd>
- <5485D7F8.10807@samsung.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
+Date: Mon, 8 Dec 2014 16:22:30 -0800
+Message-ID: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49784 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751119AbaLHUS7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Dec 2014 15:18:59 -0500
-Content-Disposition: inline
-In-Reply-To: <5485D7F8.10807@samsung.com>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:2532 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755493AbaLIAWi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Dec 2014 19:22:38 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>
+Cc: Courtney Cavin <courtney.cavin@sonymobile.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org
 
-On Mon 2014-12-08 17:55:20, Jacek Anaszewski wrote:
-> On 12/06/2014 01:43 PM, Pavel Machek wrote:
-> >
-> >>>The format of a sysfs attribute should be concise.
-> >>>The error codes are generic and map directly to the V4L2 Flash
-> >>>error codes.
-> >>>
-> >>
-> >>Actually I'd like to see those flash fault code defined in LED
-> >>subsystem. And V4L2 will just include LED flash header file to use it.
-> >>Because flash fault code is not for V4L2 specific but it's a feature
-> >>of LED flash devices.
-> >>
-> >>For clearing error code of flash devices, I think it depends on the
-> >>hardware. If most of our LED flash is using reading to clear error
-> >>code, we probably can make it simple as this now. But what if some
-> >>other LED flash devices are using writing to clear error code? we
-> >>should provide a API to that?
-> >
-> >Actually, we should provide API that makes sense, and that is easy to
-> >use by userspace.
-> >
-> >I believe "read" is called read because it does not change anything,
-> >and it should stay that way in /sysfs. You may want to talk to sysfs
-> >maintainers if you plan on doing another semantics.
-> 
-> How would you proceed in case of devices which clear their fault
-> register upon I2C readout (e.g. AS3645)? In this case read does have
-> a side effect. For such devices attribute semantics would have to be
-> different than for the devices which don't clear faults on readout.
+From: Courtney Cavin <courtney.cavin@sonymobile.com>
 
-No, semantics should be same for all devices.
+This adds device tree binding documentation for the WLED ('White' LED)
+block on Qualcomm's PM8941 PMICs.
 
-If device clears fault register during I2C readout, kernel will simply
-gather faults in an variable, and clear them upon write to sysfs file.
+Signed-off-by: Courtney Cavin <courtney.cavin@sonymobile.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+---
+ .../devicetree/bindings/leds/leds-pm8941-wled.txt  | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
 
-Best regards,
-								Pavel
+diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+new file mode 100644
+index 0000000..a85a964
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+@@ -0,0 +1,43 @@
++Binding for Qualcomm PM8941 WLED driver
++
++Required properties:
++- compatible: should be "qcom,pm8941-wled"
++- reg: slave address
++
++Optional properties:
++- label: The label for this led
++  See Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger: Default trigger assigned to the LED
++  See Documentation/devicetree/bindings/leds/common.txt
++- qcom,cs-out: bool; enable current sink output
++- qcom,cabc: bool; enable content adaptive backlight control
++- qcom,ext-gen: bool; use externally generated modulator signal to dim
++- qcom,current-limit: mA; per-string current limit; value from 0 to 25
++	default: 20mA
++- qcom,current-boost-limit: mA; boost current limit; one of:
++	105, 385, 525, 805, 980, 1260, 1400, 1680
++	default: 805mA
++- qcom,switching-freq: kHz; switching frequency; one of:
++	600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
++	1600, 1920, 2400, 3200, 4800, 9600,
++	default: 1600kHz
++- qcom,ovp: V; Over-voltage protection limit; one of:
++	27, 29, 32, 35
++	default: 29V
++- qcom,num-strings: #; number of led strings attached; value from 1 to 3
++	default: 2
++
++Example:
++
++pm8941-wled@d800 {
++	compatible = "qcom,pm8941-wled";
++	reg = <0xd800>;
++	label = "backlight";
++
++	qcom,cs-out;
++	qcom,current-limit = <20>;
++	qcom,current-boost-limit = <805>;
++	qcom,switching-freq = <1600>;
++	qcom,ovp = <29>;
++	qcom,num-strings = <2>;
++};
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.8.2.2
