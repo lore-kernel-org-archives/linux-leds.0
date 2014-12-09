@@ -1,149 +1,109 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v9 01/19] leds: Add LED Flash class extension to the
- LED subsystem
-Date: Tue, 9 Dec 2014 14:36:08 +0200
-Message-ID: <20141209123607.GI15559@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH/RFC v9 02/19] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Tue, 9 Dec 2014 14:38:19 +0200
+Message-ID: <20141209123819.GJ15559@valkosipuli.retiisi.org.uk>
 References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-2-git-send-email-j.anaszewski@samsung.com>
- <20141203165013.GM14746@valkosipuli.retiisi.org.uk>
- <54802966.8060405@samsung.com>
+ <1417622814-10845-3-git-send-email-j.anaszewski@samsung.com>
+ <20141203170818.GN14746@valkosipuli.retiisi.org.uk>
+ <54802C9F.8030101@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:56843 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756257AbaLIMg7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Dec 2014 07:36:59 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <54802966.8060405@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <54802C9F.8030101@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+List-Id: linux-leds@vger.kernel.org
 
 Hi Jacek,
 
-On Thu, Dec 04, 2014 at 10:29:10AM +0100, Jacek Anaszewski wrote:
-...
-> >>+static struct attribute *led_flash_strobe_attrs[] = {
-> >>+	&dev_attr_flash_strobe.attr,
-> >>+	NULL,
-> >>+};
-> >>+
-> >>+static struct attribute *led_flash_timeout_attrs[] = {
-> >>+	&dev_attr_flash_timeout.attr,
-> >>+	&dev_attr_max_flash_timeout.attr,
-> >>+	NULL,
-> >>+};
-> >>+
-> >>+static struct attribute *led_flash_brightness_attrs[] = {
-> >>+	&dev_attr_flash_brightness.attr,
-> >>+	&dev_attr_max_flash_brightness.attr,
-> >>+	NULL,
-> >>+};
-> >>+
-> >>+static struct attribute *led_flash_fault_attrs[] = {
-> >>+	&dev_attr_flash_fault.attr,
-> >>+	NULL,
-> >>+};
-> >>+
-> >>+static struct attribute *led_flash_sync_strobe_attrs[] = {
-> >>+	&dev_attr_flash_sync_strobe.attr,
-> >>+	NULL,
-> >>+};
-> >>+
-> >>+static const struct attribute_group led_flash_strobe_group = {
-> >>+	.attrs = led_flash_strobe_attrs,
-> >>+};
-> >>+
-> >>+static const struct attribute_group led_flash_timeout_group = {
-> >>+	.attrs = led_flash_timeout_attrs,
-> >>+};
-> >>+
-> >>+static const struct attribute_group led_flash_brightness_group = {
-> >>+	.attrs = led_flash_brightness_attrs,
-> >>+};
-> >>+
-> >>+static const struct attribute_group led_flash_fault_group = {
-> >>+	.attrs = led_flash_fault_attrs,
-> >>+};
-> >>+
-> >>+static const struct attribute_group led_flash_sync_strobe_group = {
-> >>+	.attrs = led_flash_sync_strobe_attrs,
-> >>+};
-> >>+
-> >>+static const struct attribute_group *flash_groups[] = {
-> >>+	&led_flash_strobe_group,
-> >>+	NULL,
-> >>+	NULL,
-> >>+	NULL,
-> >>+	NULL,
-> >>+	NULL,
-> >>+	NULL
-> >>+};
-> >>+
-> >>+static void led_flash_resume(struct led_classdev *led_cdev)
-> >>+{
-> >>+	struct led_classdev_flash *flash = lcdev_to_flash(led_cdev);
-> >>+
-> >>+	call_flash_op(flash, flash_brightness_set, flash->brightness.val);
-> >>+	call_flash_op(flash, timeout_set, flash->timeout.val);
-> >>+}
-> >>+
-> >>+static void led_flash_init_sysfs_groups(struct led_classdev_flash *flash)
-> >>+{
-> >>+	struct led_classdev *led_cdev = &flash->led_cdev;
-> >>+	const struct led_flash_ops *ops = flash->ops;
-> >>+	int num_sysfs_groups = 1;
-> >>+
-> >>+	if (ops->flash_brightness_set)
-> >>+		flash_groups[num_sysfs_groups++] = &led_flash_brightness_group;
-> >>+
-> >>+	if (ops->timeout_set)
-> >>+		flash_groups[num_sysfs_groups++] = &led_flash_timeout_group;
-> >>+
-> >>+	if (ops->fault_get)
-> >>+		flash_groups[num_sysfs_groups++] = &led_flash_fault_group;
-> >>+
-> >>+	if (led_cdev->flags & LED_DEV_CAP_COMPOUND)
-> >>+		flash_groups[num_sysfs_groups++] = &led_flash_sync_strobe_group;
-> >>+
-> >>+	led_cdev->groups = flash_groups;
-> >
-> >Shouldn't you have groups local to the device instead? If you register
-> >another flash device bad things will happen if the ops the device supports
-> >are different.
+On Thu, Dec 04, 2014 at 10:42:55AM +0100, Jacek Anaszewski wrote:
+> Hi Sakari,
 > 
-> The groups are local to the device. A LED class device is registered
-> with device_create_with_groups called from led_classdev_register
-> function. It is passed led_cdev->groups in the fifth argument.
-
-The groups pointer will be stored in struct device. If you have another
-driver using different groups, it will affect the groups for all flash
-devices that use the same groups pointer. I'm not sure what exactly would
-follow from that but I'd rather not change them once the device is created.
-
-> >>+}
-> >>+
-> >>+int led_classdev_flash_register(struct device *parent,
-> >>+				struct led_classdev_flash *flash)
-> >>+{
-> >>+	struct led_classdev *led_cdev;
-> >>+	const struct led_flash_ops *ops;
-> >>+	int ret;
-> >>+
-> >>+	if (!flash)
-> >
-> >Do you have a use case for this?
+> Thanks for the review.
 > 
-> This is just a guard against NULL pointer dereference. Maybe it is
-> indeed redundant, as the driver developer can easily check its
-> origin during implementation.
+> On 12/03/2014 06:08 PM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >On Wed, Dec 03, 2014 at 05:06:37PM +0100, Jacek Anaszewski wrote:
+> >>The documentation being added contains overall description of the
+> >>LED Flash Class and the related sysfs attributes.
+> >>
+> >>Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >>Cc: Bryan Wu <cooloney@gmail.com>
+> >>Cc: Richard Purdie <rpurdie@rpsys.net>
+> >>---
+> >>  Documentation/leds/leds-class-flash.txt |   50 +++++++++++++++++++++++++++++++
+> >>  1 file changed, 50 insertions(+)
+> >>  create mode 100644 Documentation/leds/leds-class-flash.txt
+> >>
+> >>diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+> >>new file mode 100644
+> >>index 0000000..82e58b1
+> >>--- /dev/null
+> >>+++ b/Documentation/leds/leds-class-flash.txt
+> >>@@ -0,0 +1,50 @@
+> >>+
+> >>+Flash LED handling under Linux
+> >>+==============================
+> >>+
+> >>+Some LED devices support two modes - torch and flash. The modes are
+> >>+supported by the LED class (see Documentation/leds/leds-class.txt)
+> >>+and LED Flash class respectively.
+> >>+
+> >>+In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
+> >>+must be defined in the kernel config. A flash LED driver must register
+> >>+in the LED subsystem with led_classdev_flash_register to gain flash
+> >>+capabilities.
+> >>+
+> >>+Following sysfs attributes are exposed for controlling flash led devices:
+> >>+
+> >>+	- flash_brightness - flash LED brightness in microamperes (RW)
+> >>+	- max_flash_brightness - maximum available flash LED brightness (RO)
+> >>+	- flash_timeout - flash strobe duration in microseconds (RW)
+> >>+	- max_flash_timeout - maximum available flash strobe duration (RO)
+> >>+	- flash_strobe - flash strobe state (RW)
+> >>+	- flash_sync_strobe - one flash device can control more than one
+> >>+			      sub-led; when this atrribute is set to 1
+> >
+> >s/atrribute/attribute/
+> >
+> >>+			      the flash led will be strobed synchronously
+> >>+			      with the other one controlled by the same
+> >>+			      device; flash timeout setting is inherited
+> >>+			      from the led being strobed explicitly and
+> >>+			      flash brightness setting of a sub-led's
+> >>+			      being synchronized is used (RW)
+> >
+> >The flash brightness shouldn't be determined by the strobed LED. If this is
+> >a property of the hardware, then be it, but in general no, it it shouldn't
+> >be an interface requirement. I think this should just say that the strobe is
+> >synchronised.
+> 
+> I intended this to sound exactly as you laid it out above, but maybe it
+> is obscure English. "and flash brightness setting of a sub-led >>>being
+> synchronized<<< is used" - from my point of view the led being
+> synchronized is the one that isn't strobed explicitly. But I'm ok with
+> confining ourselves only to saying that strobe is synchronized.
 
-Fine for me.
+Agreed.
+
+> >How does the user btw. figure out which flash LEDs may be strobed
+> >synchronously using the LED flash interface?
+> 
+> The flash_sync_strobe argument is absent if synchronized strobe
+> is not available for a LED. The driver defines this by setting
+> newly added LED_DEV_CAP_COMPOUND flag.
+
+I meant that how does the user figure out which LEDs may be strobed
+synchronously, together. Say, if you have two of these chips and four LEDs,
+then how does it work? :-)
 
 -- 
-Regards,
+Kind regards,
 
 Sakari Ailus
 e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
