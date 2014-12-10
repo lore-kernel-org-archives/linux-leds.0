@@ -1,172 +1,149 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v9 19/19] leds: aat1290: add support for V4L2 Flash
- sub-device
-Date: Wed, 10 Dec 2014 15:48:16 +0200
-Message-ID: <20141210134816.GO15559@valkosipuli.retiisi.org.uk>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-20-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Thu, 11 Dec 2014 01:14:32 +0200
+Message-ID: <20141210231431.GP15559@valkosipuli.retiisi.org.uk>
+References: <20141129125832.GA315@amd>
+ <547C539A.4010500@samsung.com>
+ <20141201130437.GB24737@amd>
+ <547C7420.4080801@samsung.com>
+ <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
+ <20141206124310.GB3411@amd>
+ <5485D7F8.10807@samsung.com>
+ <20141208201855.GA16648@amd>
+ <5486B8AE.5000408@samsung.com>
+ <20141209155033.GB21422@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37582 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41485 "EHLO
 	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753017AbaLJNsW (ORCPT
+	by vger.kernel.org with ESMTP id S1758284AbaLJXUd (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>);
-	Wed, 10 Dec 2014 08:48:22 -0500
+	Wed, 10 Dec 2014 18:20:33 -0500
 Content-Disposition: inline
-In-Reply-To: <1417622814-10845-20-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <20141209155033.GB21422@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Jacek,
+Hi Pavel and Jacek,
 
-On Wed, Dec 03, 2014 at 05:06:54PM +0100, Jacek Anaszewski wrote:
-> Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
-> driver. The support allows for V4L2 Flash sub-device to take the control
-> of the LED Flash class device.
+On Tue, Dec 09, 2014 at 04:50:33PM +0100, Pavel Machek wrote:
+> On Tue 2014-12-09 09:54:06, Jacek Anaszewski wrote:
+> > Hi Pavel,
+> > 
+> > On 12/08/2014 09:18 PM, Pavel Machek wrote:
+> > >On Mon 2014-12-08 17:55:20, Jacek Anaszewski wrote:
+> > >>On 12/06/2014 01:43 PM, Pavel Machek wrote:
+> > >>>
+> > >>>>>The format of a sysfs attribute should be concise.
+> > >>>>>The error codes are generic and map directly to the V4L2 Flash
+> > >>>>>error codes.
+> > >>>>>
+> > >>>>
+> > >>>>Actually I'd like to see those flash fault code defined in LED
+> > >>>>subsystem. And V4L2 will just include LED flash header file to use it.
+> > >>>>Because flash fault code is not for V4L2 specific but it's a feature
+> > >>>>of LED flash devices.
+> > >>>>
+> > >>>>For clearing error code of flash devices, I think it depends on the
+> > >>>>hardware. If most of our LED flash is using reading to clear error
+> > >>>>code, we probably can make it simple as this now. But what if some
+> > >>>>other LED flash devices are using writing to clear error code? we
+> > >>>>should provide a API to that?
+> > >>>
+> > >>>Actually, we should provide API that makes sense, and that is easy to
+> > >>>use by userspace.
+> > >>>
+> > >>>I believe "read" is called read because it does not change anything,
+> > >>>and it should stay that way in /sysfs. You may want to talk to sysfs
+> > >>>maintainers if you plan on doing another semantics.
+> > >>
+> > >>How would you proceed in case of devices which clear their fault
+> > >>register upon I2C readout (e.g. AS3645)? In this case read does have
+> > >>a side effect. For such devices attribute semantics would have to be
+> > >>different than for the devices which don't clear faults on readout.
+> > >
+> > >No, semantics should be same for all devices.
+> > >
+> > >If device clears fault register during I2C readout, kernel will simply
+> > >gather faults in an variable, and clear them upon write to sysfs file.
+> > 
+> > This approach would require implementing additional mechanisms on
+> > both sides: LED Flash class core and a LED Flash class driver.
+> > In the former the sysfs attribute write permissions would have
+> > to be decided in the runtime and in the latter caching mechanism
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  drivers/leds/leds-aat1290.c |   61 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
+> Write attributes at runtime? Why? We can emulate sane and consistent
+> behaviour for all the controllers: read gives you list of faults,
+> write clears it. We can do it for all the controllers.
 > 
-> diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-> index 15d969b..81a8f48 100644
-> --- a/drivers/leds/leds-aat1290.c
-> +++ b/drivers/leds/leds-aat1290.c
-> @@ -21,6 +21,7 @@
->  #include <linux/gpio.h>
->  #include <linux/of_gpio.h>
->  #include <linux/of.h>
-> +#include <media/v4l2-flash.h>
->  #include <linux/workqueue.h>
->  
->  #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
-> @@ -63,6 +64,7 @@ struct aat1290_led {
->  	struct mutex lock;
->  
->  	struct led_classdev_flash ldev;
-> +	struct v4l2_flash *v4l2_flash;
->  
->  	int flen_gpio;
->  	int en_set_gpio;
-> @@ -280,11 +282,51 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
->  	setting->val = setting->max;
->  }
->  
-> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-> +static void aat1290_init_v4l2_ctrl_config(struct aat1290_led_settings *s,
-> +					struct v4l2_flash_ctrl_config *config)
-> +{
-> +	struct led_flash_setting *setting;
-> +	struct v4l2_ctrl_config *c;
-> +
-> +	c = &config->intensity;
-> +	setting = &s->torch_brightness;
-> +	c->min = setting->min;
-> +	c->max = setting->max;
-> +	c->step = setting->step;
+> Only cost is few lines of code in the drivers where hardware clears
+> faults at read.
 
-Hmm. How does the intensity get configured over the V4L2 controls? Based on
-an earlier patch, the intensity control looks very much non-linear.
+Please take the time to read this, and consider it.
 
-> +	c->def = setting->val;
-> +
-> +	c = &config->flash_timeout;
-> +	setting = &s->flash_timeout;
-> +	c->min = setting->min;
-> +	c->max = setting->max;
-> +	c->step = setting->step;
-> +	c->def = setting->val;
-> +
-> +	config->has_external_strobe = false;
-> +}
-> +#else
-> +#define aat1290_init_v4l2_ctrl_config(s, config)
-> +#endif
-> +
->  static const struct led_flash_ops flash_ops = {
->  	.strobe_set = aat1290_led_flash_strobe_set,
->  	.timeout_set = aat1290_led_flash_timeout_set,
->  };
->  
-> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-> +static const struct v4l2_flash_ops v4l2_flash_ops = {
-> +	.external_strobe_set = NULL,
-> +};
-> +
-> +static const struct v4l2_flash_ops *get_v4l2_flash_ops(void)
-> +{
-> +	return &v4l2_flash_ops;
+I'd say the cost is I2C register access, not so much a few lines added to
+the drivers. The functionality and behaviour between the flash controllers
+varies. They have different faults, presence of (some) faults may prevent
+strobing, some support reading the flash status and some don't.
 
-You can use v4l2_flash_ops directly, no need for a function to return them.
+Some of the flash faults are mostly relevant in production testing, some can
+be used to find hardware issues during use (rare) and some are produced in
+common use (timeout, for instance).
 
-> +}
-> +#else
-> +#define get_v4l2_flash_ops() (NULL)
-> +#endif
-> +
->  static int aat1290_led_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -292,6 +334,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
->  	struct aat1290_led *led;
->  	struct led_classdev *led_cdev;
->  	struct led_classdev_flash *flash;
-> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-> +	struct v4l2_flash_ctrl_config v4l2_flash_config;
-> +#endif
->  	struct aat1290_led_settings settings;
->  	int flen_gpio, enset_gpio, ret;
->  
-> @@ -344,6 +389,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
->  
->  	flash->timeout = settings.flash_timeout;
->  
-> +	/* Init V4L2 Flash controls basing on initialized settings */
-> +	aat1290_init_v4l2_ctrl_config(&settings, &v4l2_flash_config);
-> +
->  	/* Init led class */
->  	led_cdev = &flash->led_cdev;
->  	led_cdev->name = led->label;
-> @@ -361,8 +409,20 @@ static int aat1290_led_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		goto error_gpio_en_set;
->  
-> +	/* Create V4L2 Flash subdev. */
-> +	led->v4l2_flash = v4l2_flash_init(flash,
-> +					  get_v4l2_flash_ops(),
-> +					  dev_node,
-> +					  &v4l2_flash_config);
+The V4L2 flash API defines that reading the faults clears them, but does not
+state whether presence of faults would prevent further use of the flash.
+This is flash controller chip specific.
 
-Less newlines needed; up to you.
+I think you *could* force a policy on the level of kernel API, for instance
+require that the user clears the faults before strobing again rather than
+relying on the chip requiring this instead.
 
-> +	if (IS_ERR(led->v4l2_flash)) {
-> +		ret = PTR_ERR(led->v4l2_flash);
-> +		goto error_v4l2_flash_init;
-> +	}
-> +
->  	return 0;
->  
-> +error_v4l2_flash_init:
-> +	led_classdev_flash_unregister(flash);
->  error_gpio_en_set:
->  	if (gpio_is_valid(enset_gpio))
->  		gpio_free(enset_gpio);
-> @@ -378,6 +438,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
->  {
->  	struct aat1290_led *led = platform_get_drvdata(pdev);
->  
-> +	v4l2_flash_release(led->v4l2_flash);
->  	led_classdev_flash_unregister(&led->ldev);
->  	cancel_work_sync(&led->work_brightness_set);
->  
+Most of the time there are no faults. When there are, they may appear at
+some point of time after the strobing, but how long? Probably roughly after
+the timeout period the flash should have faults available if there were any
+--- except if the strobe is external such as a sensor timed strobe. In that
+case the software running on the CPU has no knowledge when the flash is
+strobed nor when the faults should be read. So the requirement of checking
+the faults would probably have to be limited to software strobe only. The
+user would still have to be able to check the faults for externally strobed
+pulses. Would it be acceptable that the interface was different there?
+
+So, after the user has strobed, when the user should check the flash faults?
+After the timeout period has passed? Right before strobing again? If this
+was a requirement, it adds an additional I2C access to potentially the place
+which should absolutely have no extra delay --- the flash strobe time. This
+would be highly unwanted.
+
+The faults seldom happened in regular use, but more recent flash controllers
+have LED overtemperature or undervoltage faults, the latter of which isn't
+really a fault, but status information telling that the flash current will
+be limited. Reading the faults in this case is more important than it has
+used to be.
+
+Finally, should the LED flash class enforce such a policy, would the V4L2
+flash API which is provided to the same devices be changed as well? I'm not
+against that if we have
+
+	1) can come up with a good policy that is understood to be
+	   meaningful for all thinkable flash controller implementations and
+
+	2) agreement the behaviour can be changed.
+
+
+Btw. I think I'm slightly leaning towards liking flash faults in form of
+strings better; that's what much of the sysfs interface already uses. V4L2
+is quite a bit different from that; we have a bitmask control for faults
+with well defined meanings for the bits in the spec. The LED class API is
+much more usable from the command line, and using strings for flash faults
+is in line with that. I have no strict stance towards that however;
+hexadecimal numbers have advantages as well such as being slightly more
+practicable to check in a C program. The importance of good documentatation
+increases in that case though, and probably a header file with the bit
+definitions is needed as well.
 
 -- 
 Kind regards,
