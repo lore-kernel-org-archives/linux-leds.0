@@ -1,90 +1,90 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
-Date: Tue, 9 Dec 2014 17:19:10 -0800
-Message-ID: <CAK5ve-+NV2OCKABr16-DfkGre4pM_iEeac8ryY_4ALdEZdeZ1w@mail.gmail.com>
-References: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v9 06/19] DT: Add documentation for the mfd Maxim
+ max77693
+Date: Wed, 10 Dec 2014 11:02:07 +0100
+Message-ID: <54881A1F.2080607@samsung.com>
+References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+ <1417622814-10845-7-git-send-email-j.anaszewski@samsung.com>
+ <20141204100706.GP14746@valkosipuli.retiisi.org.uk>
+ <54804840.4030202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:39158 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753234AbaLJBTb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Dec 2014 20:19:31 -0500
-In-Reply-To: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37833 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752416AbaLJKCL (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Dec 2014 05:02:11 -0500
+In-reply-to: <54804840.4030202@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
 
-On Mon, Dec 8, 2014 at 4:22 PM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
-> From: Courtney Cavin <courtney.cavin@sonymobile.com>
->
-> This adds device tree binding documentation for the WLED ('White' LED)
-> block on Qualcomm's PM8941 PMICs.
->
+Hi Sakari,
 
-Looks good to me, I need device tree reviewer's Ack to merge it.
+On 12/04/2014 12:40 PM, Jacek Anaszewski wrote:
 
-Thanks,
--Bryan
+> On 12/04/2014 11:07 AM, Sakari Ailus wrote:
+>> Hi Jacek,
+>>
+>> On Wed, Dec 03, 2014 at 05:06:41PM +0100, Jacek Anaszewski wrote:
+>>> This patch adds device tree binding documentation for
+>>> the flash cell of the Maxim max77693 multifunctional device.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Cc: Bryan Wu <cooloney@gmail.com>
+>>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Cc: <devicetree@vger.kernel.org>
+>>> ---
+>>>   Documentation/devicetree/bindings/mfd/max77693.txt |   89
+>>> ++++++++++++++++++++
+>>>   1 file changed, 89 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt
+>>> b/Documentation/devicetree/bindings/mfd/max77693.txt
+>>> index 01e9f30..25a6e78 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
+>>> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+>>> @@ -41,7 +41,66 @@ Optional properties:
+>>>        To get more informations, please refer to documentaion.
+>>>       [*] refer Documentation/devicetree/bindings/pwm/pwm.txt
+>>>
+>>> +- led : the LED submodule device node
+>>> +
+>>> +There are two led outputs available - fled1 and fled2. Each of them can
+>>> +control a separate led or they can be connected together to double
+>>> +the maximum current for a single connected led. One led is represented
+>>> +by one child node.
+>>> +
+>>> +Required properties:
+>>> +- compatible : Must be "maxim,max77693-led".
+>>> +
+>>> +Optional properties:
+>>> +- maxim,fleds : Array of current outputs in order: fled1, fled2.
+>>> +    Note: both current outputs can be connected to a single led
+>>> +    Possible values:
+>>> +        MAX77693_LED_FLED_UNUSED - the output is left disconnected,
+>>> +        MAX77693_LED_FLED_USED - a diode is connected to the output.
+>>
+>> As you have a LED sub-nodes for each LED already, isn't this redundant?
+>
+> Well, it seems so :)
 
-> Signed-off-by: Courtney Cavin <courtney.cavin@sonymobile.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> ---
->  .../devicetree/bindings/leds/leds-pm8941-wled.txt  | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-> new file mode 100644
-> index 0000000..a85a964
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-> @@ -0,0 +1,43 @@
-> +Binding for Qualcomm PM8941 WLED driver
-> +
-> +Required properties:
-> +- compatible: should be "qcom,pm8941-wled"
-> +- reg: slave address
-> +
-> +Optional properties:
-> +- label: The label for this led
-> +  See Documentation/devicetree/bindings/leds/common.txt
-> +- linux,default-trigger: Default trigger assigned to the LED
-> +  See Documentation/devicetree/bindings/leds/common.txt
-> +- qcom,cs-out: bool; enable current sink output
-> +- qcom,cabc: bool; enable content adaptive backlight control
-> +- qcom,ext-gen: bool; use externally generated modulator signal to dim
-> +- qcom,current-limit: mA; per-string current limit; value from 0 to 25
-> +       default: 20mA
-> +- qcom,current-boost-limit: mA; boost current limit; one of:
-> +       105, 385, 525, 805, 980, 1260, 1400, 1680
-> +       default: 805mA
-> +- qcom,switching-freq: kHz; switching frequency; one of:
-> +       600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
-> +       1600, 1920, 2400, 3200, 4800, 9600,
-> +       default: 1600kHz
-> +- qcom,ovp: V; Over-voltage protection limit; one of:
-> +       27, 29, 32, 35
-> +       default: 29V
-> +- qcom,num-strings: #; number of led strings attached; value from 1 to 3
-> +       default: 2
-> +
-> +Example:
-> +
-> +pm8941-wled@d800 {
-> +       compatible = "qcom,pm8941-wled";
-> +       reg = <0xd800>;
-> +       label = "backlight";
-> +
-> +       qcom,cs-out;
-> +       qcom,current-limit = <20>;
-> +       qcom,current-boost-limit = <805>;
-> +       qcom,switching-freq = <1600>;
-> +       qcom,ovp = <29>;
-> +       qcom,num-strings = <2>;
-> +};
-> --
-> 1.8.2.2
->
+I agreed here recklessly. This property allows to describe the
+situation when one LED is connected to both outputs. Single sub-node
+can describe two type of designs: one LED connected to a single
+output or one LED connected to both outputs. Therefore additional
+property is needed to assess what is the actual case.
+
+Best Regards,
+Jacek Anaszewski
