@@ -1,152 +1,85 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
- Flash class extension
-Date: Thu, 11 Dec 2014 01:14:32 +0200
-Message-ID: <20141210231431.GP15559@valkosipuli.retiisi.org.uk>
-References: <20141129125832.GA315@amd>
- <547C539A.4010500@samsung.com>
- <20141201130437.GB24737@amd>
- <547C7420.4080801@samsung.com>
- <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
- <20141206124310.GB3411@amd>
- <5485D7F8.10807@samsung.com>
- <20141208201855.GA16648@amd>
- <5486B8AE.5000408@samsung.com>
- <20141209155033.GB21422@amd>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH] leds: netxbig: fix oops at probe time
+Date: Thu, 11 Dec 2014 10:04:00 +0100
+Message-ID: <20141211090400.GB18449@kw.sim.vm.gnt>
+References: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41485 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1758284AbaLJXUd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Wed, 10 Dec 2014 18:20:33 -0500
+Received: from vm1.sequanux.org ([188.165.36.56]:44086 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932268AbaLKJEF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 11 Dec 2014 04:04:05 -0500
 Content-Disposition: inline
-In-Reply-To: <20141209155033.GB21422@amd>
+In-Reply-To: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Hi Pavel and Jacek,
-
-On Tue, Dec 09, 2014 at 04:50:33PM +0100, Pavel Machek wrote:
-> On Tue 2014-12-09 09:54:06, Jacek Anaszewski wrote:
-> > Hi Pavel,
-> > 
-> > On 12/08/2014 09:18 PM, Pavel Machek wrote:
-> > >On Mon 2014-12-08 17:55:20, Jacek Anaszewski wrote:
-> > >>On 12/06/2014 01:43 PM, Pavel Machek wrote:
-> > >>>
-> > >>>>>The format of a sysfs attribute should be concise.
-> > >>>>>The error codes are generic and map directly to the V4L2 Flash
-> > >>>>>error codes.
-> > >>>>>
-> > >>>>
-> > >>>>Actually I'd like to see those flash fault code defined in LED
-> > >>>>subsystem. And V4L2 will just include LED flash header file to use it.
-> > >>>>Because flash fault code is not for V4L2 specific but it's a feature
-> > >>>>of LED flash devices.
-> > >>>>
-> > >>>>For clearing error code of flash devices, I think it depends on the
-> > >>>>hardware. If most of our LED flash is using reading to clear error
-> > >>>>code, we probably can make it simple as this now. But what if some
-> > >>>>other LED flash devices are using writing to clear error code? we
-> > >>>>should provide a API to that?
-> > >>>
-> > >>>Actually, we should provide API that makes sense, and that is easy to
-> > >>>use by userspace.
-> > >>>
-> > >>>I believe "read" is called read because it does not change anything,
-> > >>>and it should stay that way in /sysfs. You may want to talk to sysfs
-> > >>>maintainers if you plan on doing another semantics.
-> > >>
-> > >>How would you proceed in case of devices which clear their fault
-> > >>register upon I2C readout (e.g. AS3645)? In this case read does have
-> > >>a side effect. For such devices attribute semantics would have to be
-> > >>different than for the devices which don't clear faults on readout.
-> > >
-> > >No, semantics should be same for all devices.
-> > >
-> > >If device clears fault register during I2C readout, kernel will simply
-> > >gather faults in an variable, and clear them upon write to sysfs file.
-> > 
-> > This approach would require implementing additional mechanisms on
-> > both sides: LED Flash class core and a LED Flash class driver.
-> > In the former the sysfs attribute write permissions would have
-> > to be decided in the runtime and in the latter caching mechanism
-> 
-> Write attributes at runtime? Why? We can emulate sane and consistent
-> behaviour for all the controllers: read gives you list of faults,
-> write clears it. We can do it for all the controllers.
-> 
-> Only cost is few lines of code in the drivers where hardware clears
-> faults at read.
-
-Please take the time to read this, and consider it.
-
-I'd say the cost is I2C register access, not so much a few lines added to
-the drivers. The functionality and behaviour between the flash controllers
-varies. They have different faults, presence of (some) faults may prevent
-strobing, some support reading the flash status and some don't.
-
-Some of the flash faults are mostly relevant in production testing, some can
-be used to find hardware issues during use (rare) and some are produced in
-common use (timeout, for instance).
-
-The V4L2 flash API defines that reading the faults clears them, but does not
-state whether presence of faults would prevent further use of the flash.
-This is flash controller chip specific.
-
-I think you *could* force a policy on the level of kernel API, for instance
-require that the user clears the faults before strobing again rather than
-relying on the chip requiring this instead.
-
-Most of the time there are no faults. When there are, they may appear at
-some point of time after the strobing, but how long? Probably roughly after
-the timeout period the flash should have faults available if there were any
---- except if the strobe is external such as a sensor timed strobe. In that
-case the software running on the CPU has no knowledge when the flash is
-strobed nor when the faults should be read. So the requirement of checking
-the faults would probably have to be limited to software strobe only. The
-user would still have to be able to check the faults for externally strobed
-pulses. Would it be acceptable that the interface was different there?
-
-So, after the user has strobed, when the user should check the flash faults?
-After the timeout period has passed? Right before strobing again? If this
-was a requirement, it adds an additional I2C access to potentially the place
-which should absolutely have no extra delay --- the flash strobe time. This
-would be highly unwanted.
-
-The faults seldom happened in regular use, but more recent flash controllers
-have LED overtemperature or undervoltage faults, the latter of which isn't
-really a fault, but status information telling that the flash current will
-be limited. Reading the faults in this case is more important than it has
-used to be.
-
-Finally, should the LED flash class enforce such a policy, would the V4L2
-flash API which is provided to the same devices be changed as well? I'm not
-against that if we have
-
-	1) can come up with a good policy that is understood to be
-	   meaningful for all thinkable flash controller implementations and
-
-	2) agreement the behaviour can be changed.
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Johan Hovold <johan@kernel.org>, linux-leds@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>, stable@vger.kernel.org
 
 
-Btw. I think I'm slightly leaning towards liking flash faults in form of
-strings better; that's what much of the sysfs interface already uses. V4L2
-is quite a bit different from that; we have a bitmask control for faults
-with well defined meanings for the bits in the spec. The LED class API is
-much more usable from the command line, and using strings for flash faults
-is in line with that. I have no strict stance towards that however;
-hexadecimal numbers have advantages as well such as being slightly more
-practicable to check in a C program. The importance of good documentatation
-increases in that case though, and probably a header file with the bit
-definitions is needed as well.
+--NMuMz9nt05w80d4+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Kind regards,
+On Tue, Dec 02, 2014 at 04:32:10PM +0100, Simon Guinot wrote:
+> This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
+> this bug, a kernel oops can be observed at probe time on the LaCie 2Big
+> and 5Big v2 boards:
+>=20
+> Unable to handle kernel NULL pointer dereference at virtual address 00000=
+008
+> [...]
+> [<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x=
+4c/0x9c)
+> [<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+=
+0x98/0x25c)
+> [<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8=
+c/0x90)
+> [<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0=
+x94)
+> [<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0=
+x1dc)
+> [<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf=
+8)
+> [<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x=
+1cc)
+> [<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0x=
+e4/0x1b4)
+> [<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0x=
+ec)
+> [<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
+> [...]
+>=20
+> This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
+> ("leds: netxbig: fix attribute-creation race").
+>=20
+> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+> Cc: <stable@vger.kernel.org> # 3.17+
+> ---
+>  drivers/leds/leds-netxbig.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Hi Bryan,
+
+Please apply up this patch.
+
+Thanks.
+
+Simon
+
+--NMuMz9nt05w80d4+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlSJXgAACgkQgtp0PDeOcDow/ACgiF+kALT8hRIW7VVTTQLCiDt8
+h8MAnRtKZb8jn3AAmxeRKCTN2LxqoEVq
+=VcOD
+-----END PGP SIGNATURE-----
+
+--NMuMz9nt05w80d4+--
