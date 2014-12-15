@@ -1,51 +1,68 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v9 08/19] leds: Add driver for AAT1290 current
- regulator
-Date: Thu, 11 Dec 2014 17:52:22 +0200
-Message-ID: <20141211155222.GU15559@valkosipuli.retiisi.org.uk>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-9-git-send-email-j.anaszewski@samsung.com>
- <20141211141648.GR15559@valkosipuli.retiisi.org.uk>
- <5489B995.7080209@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED subsystem for 3.19 merge window
+Date: Mon, 15 Dec 2014 13:36:06 -0800
+Message-ID: <CAK5ve-+vs3vZWH5zBVBKV1+-Uo-v_LZSOy-5Tqojoq_TmvfFrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5489B995.7080209@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:49854 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751022AbaLOVg1 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 15 Dec 2014 16:36:27 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-Hi Jacek,
+Hi Linus,
 
-On Thu, Dec 11, 2014 at 04:34:45PM +0100, Jacek Anaszewski wrote:
-> >>+
-> >>+	/* write address */
-> >>+	for (i = 0; i < addr; ++i) {
-> >>+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-> >>+		gpio_set_value(led->en_set_gpio, 0);
-> >>+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-> >>+		gpio_set_value(led->en_set_gpio, 1);
-> >>+	}
-> >
-> >This is a very interesting approach to bus implementation. It's a bit like
-> >pulse dial on POTS. :-)
-> >
-> >>+
-> >>+	udelay(AAT1290_LATCH_TIME_US);
-> >
-> >How precise does this need to be? Could you use usleep_range() instead?
-> 
-> This is minimal required time, so usleep_range could be used here,
-> which would however make the delay of setting the torch brightness
-> even more unstable.
+We got some cleanup and driver for LP8860 as well as some patches for
+LED Flash Class. So please consider the following changes since commit
+206c5f60a3d902bc4b56dab2de3e88de5eb06108:
 
-True as well. Half a ms isn't that long but then again torch typically isn't
-time critical either. I'd use usleep_range(), up to you.
+  Linux 3.18-rc4 (2014-11-09 14:55:29 -0800)
 
--- 
-Regards,
+are available in the git repository at:
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
+
+for you to fetch changes up to 2969bb18f8895eb4e0fbbc98efe706f15a3acff5:
+
+  leds: lp8860: Fix module dependency (2014-12-01 14:49:42 -0800)
+
+----------------------------------------------------------------
+Axel Lin (2):
+      leds: regulator: Convert to devm_regulator_get_exclusive
+      leds: lp8860: Fix module dependency
+
+Dan Murphy (1):
+      leds: lp8860: Introduce TI lp8860 4 channel LED driver
+
+Jacek Anaszewski (2):
+      leds: implement sysfs interface locking mechanism
+      leds: Add support for setting brightness in a synchronous way
+
+Linus Walleij (2):
+      leds: delete copy/paste mistake
+      leds: syscon: handle multiple syscon instances
+
+ .../devicetree/bindings/leds/leds-lp8860.txt       |  29 ++
+ drivers/leds/Kconfig                               |  11 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/led-class.c                           |  29 +-
+ drivers/leds/led-core.c                            |  36 +-
+ drivers/leds/led-triggers.c                        |  16 +-
+ drivers/leds/leds-lp8860.c                         | 491 +++++++++++++++++++++
+ drivers/leds/leds-regulator.c                      |  18 +-
+ drivers/leds/leds-syscon.c                         |  71 +--
+ drivers/leds/leds.h                                |  20 +-
+ drivers/leds/trigger/ledtrig-backlight.c           |   8 +-
+ drivers/leds/trigger/ledtrig-default-on.c          |   2 +-
+ drivers/leds/trigger/ledtrig-gpio.c                |   6 +-
+ drivers/leds/trigger/ledtrig-heartbeat.c           |   2 +-
+ drivers/leds/trigger/ledtrig-oneshot.c             |   4 +-
+ drivers/leds/trigger/ledtrig-transient.c           |  10 +-
+ include/linux/leds.h                               |  40 ++
+ 17 files changed, 714 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp8860.txt
+ create mode 100644 drivers/leds/leds-lp8860.c
