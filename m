@@ -1,96 +1,282 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
-Date: Tue, 16 Dec 2014 16:54:45 -0800
-Message-ID: <CAK5ve-LhhA08LB6MH4+xdivS2n1YK-vVHy4aMWLF+e1sGU7xAw@mail.gmail.com>
-References: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com> <CAK5ve-+NV2OCKABr16-DfkGre4pM_iEeac8ryY_4ALdEZdeZ1w@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Tue, 16 Dec 2014 17:15:22 -0800
+Message-ID: <5490D92A.3070107@codeaurora.org>
+References: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com> <1418084551-28946-2-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:44060 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750854AbaLQAzG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 16 Dec 2014 19:55:06 -0500
-In-Reply-To: <CAK5ve-+NV2OCKABr16-DfkGre4pM_iEeac8ryY_4ALdEZdeZ1w@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1418084551-28946-2-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>
+Cc: Courtney Cavin <courtney.cavin@sonymobile.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm@vger.kernel.org
 
-On Tue, Dec 9, 2014 at 5:19 PM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Mon, Dec 8, 2014 at 4:22 PM, Bjorn Andersson
-> <bjorn.andersson@sonymobile.com> wrote:
->> From: Courtney Cavin <courtney.cavin@sonymobile.com>
->>
->> This adds device tree binding documentation for the WLED ('White' LED)
->> block on Qualcomm's PM8941 PMICs.
->>
+On 12/08/2014 04:22 PM, Bjorn Andersson wrote:
+> diff --git a/drivers/leds/leds-pm8941-wled.c b/drivers/leds/leds-pm8941-wled.c
+> new file mode 100644
+> index 0000000..aa06d0b
+> --- /dev/null
+> +++ b/drivers/leds/leds-pm8941-wled.c
+> @@ -0,0 +1,466 @@
+> +/* Copyright (c) 2013, Sony Mobile Communications, AB.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+
+Missing <linux/kernel.h> for container_of() macro.
+
+> +
+> +enum pm8941_wled_reg {
+> +	PM8941_WLED_REG_VAL_BASE		= 0x40,
+> +#define PM8941_WLED_REG_VAL_MAX			0xFFF
+> +
+> +	PM8941_WLED_REG_MOD_EN			= 0x46,
+> +#define PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
+> +#define PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
+> +
+> +	PM8941_WLED_REG_SYNC			= 0x47,
+> +#define PM8941_WLED_REG_SYNC_MASK		0x07
+> +#define PM8941_WLED_REG_SYNC_LED1		BIT(0)
+> +#define PM8941_WLED_REG_SYNC_LED2		BIT(1)
+> +#define PM8941_WLED_REG_SYNC_LED3		BIT(2)
+> +#define PM8941_WLED_REG_SYNC_ALL		0x07
+> +#define PM8941_WLED_REG_SYNC_CLEAR		0x00
+> +
+> +	PM8941_WLED_REG_FREQ			= 0x4c,
+> +#define PM8941_WLED_REG_FREQ_MASK		0x0f
+> +
+> +	PM8941_WLED_REG_OVP			= 0x4d,
+> +#define PM8941_WLED_REG_OVP_MASK		0x03
+> +
+> +	PM8941_WLED_REG_BOOST			= 0x4e,
+> +#define PM8941_WLED_REG_BOOST_MASK		0x07
+> +
+> +	PM8941_WLED_REG_SINK			= 0x4f,
+> +#define PM8941_WLED_REG_SINK_MASK		0xe0
+> +#define PM8941_WLED_REG_SINK_SHFT		0x05
+> +
+> +/* Per-'string' registers below */
+> +#define PM8941_WLED_REG_STR_OFFSET		0x10
+> +
+> +	PM8941_WLED_REG_STR_MOD_EN_BASE		= 0x60,
+> +#define PM8941_WLED_REG_STR_MOD_EN		BIT(7)
+> +#define PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
+> +
+> +	PM8941_WLED_REG_STR_SCALE_BASE		= 0x62,
+> +#define PM8941_WLED_REG_STR_SCALE_MASK		0x1f
+> +
+> +	PM8941_WLED_REG_STR_MOD_SRC_BASE	= 0x63,
+> +#define PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
+> +#define PM8941_WLED_REG_STR_MOD_SRC_INT		0x00
+> +#define PM8941_WLED_REG_STR_MOD_SRC_EXT		0x01
+> +
+> +	PM8941_WLED_REG_STR_CABC_BASE		= 0x66,
+> +#define PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
+> +#define PM8941_WLED_REG_STR_CABC_EN		BIT(7)
+> +};
+
+I don't see any value in this enum. It's never used in a switch
+statement so why not just have #defines for the register offsets. It
+would make reading this a lot easier too.
+
+
+> +
+> +static int pm8941_wled_set(struct led_classdev *cdev,
+> +			   enum led_brightness value)
+> +{
+> +	struct pm8941_wled_context *ctx;
+> +	struct pm8941_wled *wled;
+> +	u8 ctrl = 0;
+> +	u16 val;
+> +	int rc;
+> +	int i;
+> +
+> +	wled = container_of(cdev, struct pm8941_wled, cdev);
+> +	ctx = container_of(wled, struct pm8941_wled_context, wled);
+> +
+> +	if (value != 0)
+> +		ctrl = PM8941_WLED_REG_MOD_EN_BIT;
+> +
+> +	val = (value * PM8941_WLED_REG_VAL_MAX) / LED_FULL;
+
+Unnecessary parens here.
+
+> +
+> +	rc = regmap_update_bits(ctx->regmap,
 >
-> Looks good to me, I need device tree reviewer's Ack to merge it.
->
+> +
+> +static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+> +{
+[...]
+> +
+> +	if (dev->of_node == NULL) {
+> +		dev_err(dev, "no OF node!\n");
+> +		return -EINVAL;
+> +	}
 
-Hi Rob, can you help to review it?
+Seems like an unnecessary check. Everything's DT so far.
 
--Bryan
+> +
+> +	rc = of_property_read_u32(dev->of_node, "reg", &val);
+> +	if (rc || val > 0xffff) {
+> +		dev_err(dev, "invalid IO resources\n");
+> +		return rc ? rc : -EINVAL;
+> +	}
+> +	wled->addr = val;
+> +
+> +	rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
+> +	if (rc)
+> +		wled->cdev.name = dev->of_node->name;
+> +
+> +	wled->cdev.default_trigger = of_get_property(dev->of_node,
+> +			"linux,default-trigger", NULL);
+> +
+> +	*cfg = pm8941_wled_config_defaults;
+> +	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
+> +		u32 sel, c;
+> +		int j, rj;
+> +
+> +		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
+> +		if (rc) {
+> +			if (rc != -EINVAL) {
+> +				dev_err(dev, "error reading '%s'\n",
+> +						u32_opts[i].name);
+> +				return rc;
+> +			}
+> +			continue;
+> +		}
+> +
+> +		sel = UINT_MAX;
+> +		rj = -1;
+> +		c = pm8941_wled_values(u32_opts[i].cfg, 0);
+> +		for (j = 0; c != UINT_MAX; ++j) {
+> +			if (c <= val && (sel == UINT_MAX || c >= sel)) {
+> +				sel = c;
+> +				rj = j;
+> +			}
+> +			c = pm8941_wled_values(u32_opts[i].cfg, j + 1);
+> +		}
+> +		if (sel == UINT_MAX) {
+> +			dev_err(dev, "invalid value for '%s'\n",
+> +					u32_opts[i].name);
+> +			return rc;
+> +		}
+> +		if (sel != val) {
+> +			dev_warn(dev, "rounding '%s' down to %u\n",
+> +					u32_opts[i].name, sel);
+> +		}
 
-> Thanks,
-> -Bryan
->
->> Signed-off-by: Courtney Cavin <courtney.cavin@sonymobile.com>
->> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
->> ---
->>  .../devicetree/bindings/leds/leds-pm8941-wled.txt  | 43 ++++++++++++++++++++++
->>  1 file changed, 43 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
->> new file mode 100644
->> index 0000000..a85a964
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
->> @@ -0,0 +1,43 @@
->> +Binding for Qualcomm PM8941 WLED driver
->> +
->> +Required properties:
->> +- compatible: should be "qcom,pm8941-wled"
->> +- reg: slave address
->> +
->> +Optional properties:
->> +- label: The label for this led
->> +  See Documentation/devicetree/bindings/leds/common.txt
->> +- linux,default-trigger: Default trigger assigned to the LED
->> +  See Documentation/devicetree/bindings/leds/common.txt
->> +- qcom,cs-out: bool; enable current sink output
->> +- qcom,cabc: bool; enable content adaptive backlight control
->> +- qcom,ext-gen: bool; use externally generated modulator signal to dim
->> +- qcom,current-limit: mA; per-string current limit; value from 0 to 25
->> +       default: 20mA
->> +- qcom,current-boost-limit: mA; boost current limit; one of:
->> +       105, 385, 525, 805, 980, 1260, 1400, 1680
->> +       default: 805mA
->> +- qcom,switching-freq: kHz; switching frequency; one of:
->> +       600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
->> +       1600, 1920, 2400, 3200, 4800, 9600,
->> +       default: 1600kHz
->> +- qcom,ovp: V; Over-voltage protection limit; one of:
->> +       27, 29, 32, 35
->> +       default: 29V
->> +- qcom,num-strings: #; number of led strings attached; value from 1 to 3
->> +       default: 2
->> +
->> +Example:
->> +
->> +pm8941-wled@d800 {
->> +       compatible = "qcom,pm8941-wled";
->> +       reg = <0xd800>;
->> +       label = "backlight";
->> +
->> +       qcom,cs-out;
->> +       qcom,current-limit = <20>;
->> +       qcom,current-boost-limit = <805>;
->> +       qcom,switching-freq = <1600>;
->> +       qcom,ovp = <29>;
->> +       qcom,num-strings = <2>;
->> +};
->> --
->> 1.8.2.2
->>
+Do we really want to do all this complicated rounding and checking?
+Can't we just assume the DT is correct?
+
+> +		dev_dbg(dev, "'%s' = %u\n", u32_opts[i].name, sel);
+> +		*u32_opts[i].val_ptr = rj;
+> +	};
+> +
+> +	for (i = 0; i < ARRAY_SIZE(bool_opts); ++i) {
+> +		if (of_property_read_bool(dev->of_node, bool_opts[i].name))
+> +			*bool_opts[i].val_ptr = true;
+> +	}
+> +
+> +	cfg->num_strings = cfg->num_strings + 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int pm8941_wled_probe(struct platform_device *pdev)
+> +{
+> +	struct pm8941_wled_context *ctx;
+> +	struct regmap *regmap;
+> +	int rc;
+> +
+> +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!regmap) {
+> +		dev_err(&pdev->dev, "Unable to get regmap\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (ctx == NULL)
+
+Nitpick only because it doesn't match the !regmap style above. Please
+use the !ctx style here as well.
+
+> +		return -ENOMEM;
+> +
+> +	ctx->regmap = regmap;
+> +
+> +	rc = pm8941_wled_configure(&ctx->wled, &pdev->dev);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = pm8941_wled_setup(&ctx->wled);
+> +	if (rc)
+> +		return rc;
+> +
+> +	ctx->wled.cdev.brightness_set = pm8941_wled_set_brightness;
+> +
+> +	rc = led_classdev_register(&pdev->dev, &ctx->wled.cdev);
+> +	if (rc)
+> +		return rc;
+> +
+> +	platform_set_drvdata(pdev, ctx);
+> +	dev_info(&pdev->dev, "registered led \"%s\"\n", ctx->wled.cdev.name);
+
+Please don't spam the log with "I'm alive!" messages.
+
+> +
+> +	return 0;
+> +};
+> +
+> +static int pm8941_wled_remove(struct platform_device *pdev)
+> +{
+> +	struct pm8941_wled_context *ctx;
+> +
+> +	ctx = platform_get_drvdata(pdev);
+> +	led_classdev_unregister(&ctx->wled.cdev);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id pm8941_wled_match_table[] = {
+> +	{ .compatible = "qcom,pm8941-wled" },
+> +	{}
+> +};
+
+MODULE_DEVICE_TABLE?
+
+> +
+> +static struct platform_driver pm8941_wled_driver = {
+> +	.probe	= pm8941_wled_probe,
+> +	.remove = pm8941_wled_remove,
+> +	.driver	= {
+> +		.name		= "pm8941-wled",
+> +		.owner		= THIS_MODULE,
+> +		.of_match_table	= pm8941_wled_match_table,
+> +	},
+> +};
+> +
+> +module_platform_driver(pm8941_wled_driver);
+> +
+> +MODULE_DESCRIPTION("pm8941 wled driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform: pm8941-wled");
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
