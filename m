@@ -1,51 +1,130 @@
 From: Bjorn <bjorn@sonymobile.com>
-Subject: Re: [PATCH 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
-Date: Thu, 18 Dec 2014 15:36:53 -0800
-Message-ID: <20141218233652.GD19036@sonymobile.com>
+Subject: Re: [PATCH 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Thu, 18 Dec 2014 15:43:53 -0800
+Message-ID: <20141218234352.GE19036@sonymobile.com>
 References: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com>
- <5490D949.4@codeaurora.org>
+ <1418084551-28946-2-git-send-email-bjorn.andersson@sonymobile.com>
+ <CAK5ve-LujSrARfyi6nvO1EDLyz_cqso93H2irUf9NPbke1XPdQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:1634 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751158AbaLRXn7 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Thu, 18 Dec 2014 18:43:59 -0500
 Content-Disposition: inline
-In-Reply-To: <5490D949.4@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, "Cavin, Courtney" <Courtney.Cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+In-Reply-To: <CAK5ve-LujSrARfyi6nvO1EDLyz_cqso93H2irUf9NPbke1XPdQ@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, "Cavin, Courtney" <Courtney.Cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 
-On Tue 16 Dec 17:15 PST 2014, Stephen Boyd wrote:
+On Tue 16 Dec 16:54 PST 2014, Bryan Wu wrote:
 
-> On 12/08/2014 04:22 PM, Bjorn Andersson wrote:
-> 
+> On Mon, Dec 8, 2014 at 4:22 PM, Bjorn Andersson
+
 [..]
-> > +- qcom,current-limit: mA; per-string current limit; value from 0 to 25
-> > +	default: 20mA
-> > +- qcom,current-boost-limit: mA; boost current limit; one of:
-> > +	105, 385, 525, 805, 980, 1260, 1400, 1680
-> > +	default: 805mA
+
+> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+
 [..]
-> > +- qcom,ovp: V; Over-voltage protection limit; one of:
-> > +	27, 29, 32, 35
-> > +	default: 29V
-> 
-> It would be nice if the units were part of the property name, i.e.
-> qcom,ovp-V, qcom,current-boost-limit-mA, etc. That way the units are
-> known without having to refer to the documentation.
+
+> > +config LEDS_PM8941_WLED
+> > +       tristate "LED support for the Qualcomm PM8941 WLED block"
+> > +       depends on LEDS_CLASS
+> > +       depends on REGMAP
+> Here should be "select REGMAP"
 > 
 
-That might be useful, on the other hand one probably need to look inte bindings
-docs to figure out valid values anyways.
+Thanks
+> > +       help
+> > +         This option enables support for the 'White' LED block
+> > +         on Qualcomm PM8941 PMICs.
+> > +
 
-> > +- qcom,num-strings: #; number of led strings attached; value from 1 to 3
-> > +	default: 2
+[..]
+
+> > diff --git a/drivers/leds/leds-pm8941-wled.c b/drivers/leds/leds-pm8941-wled.c
+
+[..]
+
+> > +
+> > +struct pm8941_wled_context {
+> > +       struct pm8941_wled wled;
+> > +       struct regmap *regmap;
+> > +};
+> > +
 > 
-> I wonder if qcom,#strings is more appropriate?
+> I think you can just add *regmap into pm8941_wled struct and
+> pm8941_wled_context is redundant to me.
 > 
 
-Checking the other docs indicate that it's far more common to use num- than #
-here, but I haven't found anything written about it - it's more common to name
-this just "qcom,strings" than "qcom,#strings" at least...
+Looks like a development leftover, I will fold it in.
+
+[..]
+
+> > +
+> > +static int pm8941_wled_probe(struct platform_device *pdev)
+> > +{
+> > +       struct pm8941_wled_context *ctx;
+> > +       struct regmap *regmap;
+> > +       int rc;
+> > +
+> > +       regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> > +       if (!regmap) {
+> > +               dev_err(&pdev->dev, "Unable to get regmap\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> 
+> Is this regmap mmio registers or i2c registers? Will the regmap
+> operation sleep?
+> 
+
+It's a spmi regmap, in it's current configuration it's marked as "fast" i.e. it
+will not sleep.
+
+I discussed this with Courtney before sending the patch out and as this is used
+for backlight we don't see a reason calling set_brightness() in atomic context.
+If this changes I would send out a follow up patch.
+
+> > +       ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+> > +       if (ctx == NULL)
+> > +               return -ENOMEM;
+> > +
+> > +       ctx->regmap = regmap;
+> > +
+> > +       rc = pm8941_wled_configure(&ctx->wled, &pdev->dev);
+> > +       if (rc)
+> > +               return rc;
+> > +
+> > +       rc = pm8941_wled_setup(&ctx->wled);
+> > +       if (rc)
+> > +               return rc;
+> > +
+> > +       ctx->wled.cdev.brightness_set = pm8941_wled_set_brightness;
+> > +
+> > +       rc = led_classdev_register(&pdev->dev, &ctx->wled.cdev);
+> > +       if (rc)
+> > +               return rc;
+> > +
+> > +       platform_set_drvdata(pdev, ctx);
+> > +       dev_info(&pdev->dev, "registered led \"%s\"\n", ctx->wled.cdev.name);
+> > +
+> > +       return 0;
+> > +};
+> > +
+
+[..]
+
+> > +MODULE_DESCRIPTION("pm8941 wled driver");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_ALIAS("platform: pm8941-wled");
+> No space after ":"
+> 
+
+Oops.
 
 Regards,
 Bjorn
