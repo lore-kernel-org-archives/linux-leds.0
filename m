@@ -1,53 +1,87 @@
-From: "Ivan T. Ivanov" <iivanov@mm-sol.com>
-Subject: Re: [PATCH 2/2] leds: add Qualcomm PM8941 WLED driver
-Date: Fri, 19 Dec 2014 10:15:29 +0200
-Message-ID: <1418976929.27549.5.camel@mm-sol.com>
-References: <1418084551-28946-1-git-send-email-bjorn.andersson@sonymobile.com>
-	 <1418084551-28946-2-git-send-email-bjorn.andersson@sonymobile.com>
-	 <CAK5ve-LujSrARfyi6nvO1EDLyz_cqso93H2irUf9NPbke1XPdQ@mail.gmail.com>
-	 <20141218234352.GE19036@sonymobile.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH w/ acks] DT: leds: Add flash LED devices related
+ properties
+Date: Sat, 20 Dec 2014 16:02:52 +0100
+Message-ID: <20141220150252.GA8777@amd>
+References: <20141120131713.GC27527@amd>
+ <20141203185746.GA25267@amd>
+ <CAK5ve-JDOMHyu+meKgA8Xs08pio9OENg7p1zNka4NNgy5WOejg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20141218234352.GE19036@sonymobile.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn <bjorn@sonymobile.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, "Cavin, Courtney" <Courtney.Cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK5ve-JDOMHyu+meKgA8Xs08pio9OENg7p1zNka4NNgy5WOejg@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>
 List-Id: linux-leds@vger.kernel.org
 
-
-On Thu, 2014-12-18 at 15:43 -0800, Bjorn wrote:
-> On Tue 16 Dec 16:54 PST 2014, Bryan Wu wrote:
+On Wed 2014-12-03 11:03:59, Bryan Wu wrote:
+> On Wed, Dec 3, 2014 at 10:57 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > Addition of a LED Flash class extension entails the need for flash LED
+> > specific device tree properties. The properties being added are:
+> > max-microamp, flash-max-microamp, flash-timeout-microsec.
+> >
+> > Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >
 > 
-> > On Mon, Dec 8, 2014 at 4:22 PM, Bjorn Andersson
-> 
-> [..]
-> 
-> > > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> 
-> [..]
-> 
-> > > +config LEDS_PM8941_WLED
-> > > +       tristate "LED support for the Qualcomm PM8941 WLED block"
-> > > +       depends on LEDS_CLASS
-> > > +       depends on REGMAP
-> > Here should be "select REGMAP"
-> > 
-> 
-> Thanks
-> > > 
+> Thanks a lot, let me wait for one ack from Device Tree maintainers, as
+> it's a pure device tree patch.
 
+Well, it looks like device tree maintainers don't care. But the patch
+is not obviously bad, because they'd scream bloody murder by now...
 
-If not mistaken the correct way was:
+> Rob, can you help to give a review and ack?
 
-        depends on SPMI
-        select REGMAP_SPMI
+...so can we get it in, please?
 
-or
-        depends on MFD_SPMI_PMIC
+								Pavel
 
-Regards,
-Ivan
+> > This will allow me to add device tree support for adp1653 i2c flash
+> > LED driver, and allow Jacek Anaszewski to add support for more LED
+> > drivers..
+> >
+> >
+> > diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> > index 2d88816..e9acbbc 100644
+> > --- a/Documentation/devicetree/bindings/leds/common.txt
+> > +++ b/Documentation/devicetree/bindings/leds/common.txt
+> > @@ -14,6 +14,15 @@ Optional properties for child nodes:
+> >       "ide-disk" - LED indicates disk activity
+> >       "timer" - LED flashes at a fixed, configurable rate
+> >
+> > +- max-microamp : maximum intensity in microamperes of the LED
+> > +                (torch LED for flash devices)
+> > +- flash-max-microamp : maximum intensity in microamperes of the
+> > +                       flash LED; it is mandatory if the LED should
+> > +                      support the flash mode
+> > +- flash-timeout-microsec : timeout in microseconds after which the flash
+> > +                           LED is turned off
+> > +
+> > +
+> >  Examples:
+> >
+> >  system-status {
+> > @@ -21,3 +30,10 @@ system-status {
+> >         linux,default-trigger = "heartbeat";
+> >         ...
+> >  };
+> > +
+> > +camera-flash {
+> > +       label = "Flash";
+> > +       max-microamp = <50000>;
+> > +       flash-max-microamp = <320000>;
+> > +       flash-timeout-microsec = <500000>;
+> > +}
+> >
+> >
+> > --
+> > (english) http://www.livejournal.com/~pavelmachek
+> > (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 
-https://patchwork.kernel.org/patch/4566591/
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
