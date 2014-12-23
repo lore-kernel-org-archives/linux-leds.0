@@ -1,81 +1,69 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCHv3] DT: leds: Add flash LED devices related properties
- (fwd) (fwd)
-Date: Mon, 22 Dec 2014 14:41:53 -0800
-Message-ID: <CAK5ve-JSv6-jHL5FmDNM1e0_5-+RJok8KXDE90xQnMEn=-Pohw@mail.gmail.com>
-References: <20141222222729.GA19981@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:44665 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751182AbaLVWmO (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Dec 2014 17:42:14 -0500
-In-Reply-To: <20141222222729.GA19981@amd>
-Sender: linux-leds-owner@vger.kernel.org
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH RESEND] leds: netxbig: fix oops at probe time
+Date: Tue, 23 Dec 2014 17:39:24 +0100
+Message-ID: <1419352764-24316-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Johan Hovold <johan@kernel.org>, linux-leds@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, stable@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>
 
-On Mon, Dec 22, 2014 at 2:27 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> Addition of a LED Flash class extension entails the need for flash LED
-> specific device tree properties. The properties being added are:
-> max-microamp, flash-max-microamp, flash-timeout-microsec.
->
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Rob Herring <robh@kernel.org>
->
+This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
+this bug, a kernel oops can be observed at probe time on the LaCie 2Big
+and 5Big v2 boards:
 
-Applied after removing some white spaces, thanks,
--Bryan
+Unable to handle kernel NULL pointer dereference at virtual address 00000008
+[...]
+[<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
+[<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
+[<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
+[<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
+[<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
+[<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
+[<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
+[<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
+[<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
+[<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
+[...]
 
-> ---
->
-> This will allow me to add device tree support for adp1653 i2c flash
-> LED driver, and allow Jacek Anaszewski to add support for more LED
-> drivers..
->
-> Rob Herring requested to change microsec to us.
->
-> Yes, microamp vs. us does look inconsistent, but that's what other
-> subsystems do, and what Rob asked.
->
->
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> index 2d88816..e9acbbc 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -14,6 +14,15 @@ Optional properties for child nodes:
->       "ide-disk" - LED indicates disk activity
->       "timer" - LED flashes at a fixed, configurable rate
->
-> +- max-microamp : maximum intensity in microamperes of the LED
-> +                (torch LED for flash devices)
-> +- flash-max-microamp : maximum intensity in microamperes of the
-> +                       flash LED; it is mandatory if the LED should
-> +                      support the flash mode
-> +- flash-timeout-us : timeout in microseconds after which the flash
-> +                     LED is turned off
-> +
-> +
->  Examples:
->
->  system-status {
-> @@ -21,3 +30,10 @@ system-status {
->         linux,default-trigger = "heartbeat";
->         ...
->  };
-> +
-> +camera-flash {
-> +       label = "Flash";
-> +       max-microamp = <50000>;
-> +       flash-max-microamp = <320000>;
-> +       flash-timeout-us = <500000>;
-> +}
->
->
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
+("leds: netxbig: fix attribute-creation race").
+
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+Cc: <stable@vger.kernel.org> # 3.17+
+Acked-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/leds/leds-netxbig.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 64fde485dcaa..4c794f15a57f 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -330,18 +330,18 @@ create_netxbig_led(struct platform_device *pdev,
+ 	led_dat->sata = 0;
+ 	led_dat->cdev.brightness = LED_OFF;
+ 	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+-	/*
+-	 * If available, expose the SATA activity blink capability through
+-	 * a "sata" sysfs attribute.
+-	 */
+-	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
+-		led_dat->cdev.groups = netxbig_led_groups;
+ 	led_dat->mode_addr = template->mode_addr;
+ 	led_dat->mode_val = template->mode_val;
+ 	led_dat->bright_addr = template->bright_addr;
+ 	led_dat->bright_max = (1 << pdata->gpio_ext->num_data) - 1;
+ 	led_dat->timer = pdata->timer;
+ 	led_dat->num_timer = pdata->num_timer;
++	/*
++	 * If available, expose the SATA activity blink capability through
++	 * a "sata" sysfs attribute.
++	 */
++	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
++		led_dat->cdev.groups = netxbig_led_groups;
+ 
+ 	return led_classdev_register(&pdev->dev, &led_dat->cdev);
+ }
+-- 
+2.1.1
