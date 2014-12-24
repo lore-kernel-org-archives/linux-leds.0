@@ -1,52 +1,57 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: Don't allow brightness values greater than max_brightness
-Date: Tue, 23 Dec 2014 11:02:46 -0800
-Message-ID: <CAK5ve-+CgLNd0R6V21EFwgO-HmbV-RAixXipgxqyPKF9irOzuw@mail.gmail.com>
-References: <1419361163-4762-1-git-send-email-gabriele.mzt@gmail.com>
+From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar@gmail.com>
+Subject: LED: inform userspace about brightness change
+Date: Wed, 24 Dec 2014 21:06:09 +0100
+Message-ID: <201412242106.09959@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed;
+  boundary="nextPart3483831.VSxtC1L7b9";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:38163 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751344AbaLWTDH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 23 Dec 2014 14:03:07 -0500
-In-Reply-To: <1419361163-4762-1-git-send-email-gabriele.mzt@gmail.com>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:64504 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbaLXUGO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Dec 2014 15:06:14 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Gabriele Mazzotta <gabriele.mzt@gmail.com>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Darren Hart <dvhart@infradead.org>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 23, 2014 at 10:59 AM, Gabriele Mazzotta
-<gabriele.mzt@gmail.com> wrote:
-> Since commit 4d71a4a12b13 ("leds: Add support for setting brightness in
-> a synchronous way") the value passed to brightness_set() is no longer
-> limited to max_brightness and can be different from the internally saved
-> brightness value.
->
-Good catch, I will merge this soon.
+--nextPart3483831.VSxtC1L7b9
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
--Bryan
+Hello!
 
-> Signed-off-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
-> ---
->  drivers/leds/leds.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index 2348dbd..79efe57 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -20,7 +20,8 @@
->  static inline void led_set_brightness_async(struct led_classdev *led_cdev,
->                                         enum led_brightness value)
->  {
-> -       led_cdev->brightness = min(value, led_cdev->max_brightness);
-> +       value = min(value, led_cdev->max_brightness);
-> +       led_cdev->brightness = value;
->
->         if (!(led_cdev->flags & LED_SUSPENDED))
->                 led_cdev->brightness_set(led_cdev, value);
-> --
-> 2.1.4
->
+What is preferred way from kernel driver to inform userspace=20
+about LED device brightness change? In /sys/class/leds/<device>/=20
+is file brightness which can be used to read current brightness=20
+or set write new value. But sometimes also firmware (or device)=20
+can change value on its own and thus userspace software which=20
+provides slider for setting brightness will be incorrect.
+
+=46or example on Dell laptops there is driver which support setting=20
+and reading keyboard backlight (via leds kernel interface). But=20
+firmware/BIOS can change brightness (when something happen) and=20
+it can inform running system about this change via ACPI/WMI event=20
+interface. But how to use kernel led interface to inform userpace=20
+about this change? It is possible?
+
+=2D-=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--nextPart3483831.VSxtC1L7b9
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEABECAAYFAlSbHLEACgkQi/DJPQPkQ1I1KwCgox/WYS4Cp0BuOqyXnZRHUUux
+8yIAnjVdqZplFgg/LB9PSIhimxCTWaK+
+=cQSp
+-----END PGP SIGNATURE-----
+
+--nextPart3483831.VSxtC1L7b9--
