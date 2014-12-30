@@ -1,88 +1,92 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH RESEND] leds: netxbig: fix oops at probe time
-Date: Tue, 30 Dec 2014 17:35:15 +0100
-Message-ID: <20141230163515.GD24811@lunn.ch>
-References: <1419352764-24316-1-git-send-email-simon.guinot@sequanux.org>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v9 07/19] dt-binding: mfd: max77693: Add DT binding
+ related macros
+Date: Wed, 31 Dec 2014 00:15:22 +0200
+Message-ID: <20141230221522.GO17565@valkosipuli.retiisi.org.uk>
+References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
+ <1417622814-10845-8-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45718 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751939AbaL3WP7 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Tue, 30 Dec 2014 17:15:59 -0500
 Content-Disposition: inline
-In-Reply-To: <1419352764-24316-1-git-send-email-simon.guinot@sequanux.org>
-Sender: stable-owner@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Johan Hovold <johan@kernel.org>, linux-leds@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>, stable@vger.kernel.org
+In-Reply-To: <1417622814-10845-8-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Dec 23, 2014 at 05:39:24PM +0100, Simon Guinot wrote:
-> This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
-> this bug, a kernel oops can be observed at probe time on the LaCie 2Big
-> and 5Big v2 boards:
+Hi Jacek,
+
+The driver depends on these so I'd rearrange this patch in the set before
+the driver patch.
+
+On Wed, Dec 03, 2014 at 05:06:42PM +0100, Jacek Anaszewski wrote:
+> Add macros for max77693 led part related binding.
 > 
-> Unable to handle kernel NULL pointer dereference at virtual address 00000008
-> [...]
-> [<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
-> [<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
-> [<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
-> [<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
-> [<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
-> [<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
-> [<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
-> [<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
-> [<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
-> [<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
-> [...]
-> 
-> This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
-> ("leds: netxbig: fix attribute-creation race").
-> 
-> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> Cc: <stable@vger.kernel.org> # 3.17+
-> Acked-by: Johan Hovold <johan@kernel.org>
-
-Hi Bryan, Richard
-
-Simon has asked that this be taken via mvebu, since there has not been
-any response from the LED maintainers. I will queue it up as part of
-my next set of fixes for -rc3, and Cc: you on the pull request.
-
-If this is not O.K. with you, please let me know.
-
-Thanks
-	Andrew
-
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  drivers/leds/leds-netxbig.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  include/dt-bindings/mfd/max77693.h |   38 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 include/dt-bindings/mfd/max77693.h
 > 
-> diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-> index 64fde485dcaa..4c794f15a57f 100644
-> --- a/drivers/leds/leds-netxbig.c
-> +++ b/drivers/leds/leds-netxbig.c
-> @@ -330,18 +330,18 @@ create_netxbig_led(struct platform_device *pdev,
->  	led_dat->sata = 0;
->  	led_dat->cdev.brightness = LED_OFF;
->  	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-> -	/*
-> -	 * If available, expose the SATA activity blink capability through
-> -	 * a "sata" sysfs attribute.
-> -	 */
-> -	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
-> -		led_dat->cdev.groups = netxbig_led_groups;
->  	led_dat->mode_addr = template->mode_addr;
->  	led_dat->mode_val = template->mode_val;
->  	led_dat->bright_addr = template->bright_addr;
->  	led_dat->bright_max = (1 << pdata->gpio_ext->num_data) - 1;
->  	led_dat->timer = pdata->timer;
->  	led_dat->num_timer = pdata->num_timer;
-> +	/*
-> +	 * If available, expose the SATA activity blink capability through
-> +	 * a "sata" sysfs attribute.
-> +	 */
-> +	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
-> +		led_dat->cdev.groups = netxbig_led_groups;
->  
->  	return led_classdev_register(&pdev->dev, &led_dat->cdev);
->  }
-> -- 
-> 2.1.1
-> 
+> diff --git a/include/dt-bindings/mfd/max77693.h b/include/dt-bindings/mfd/max77693.h
+> new file mode 100644
+> index 0000000..4011cb47
+> --- /dev/null
+> +++ b/include/dt-bindings/mfd/max77693.h
+> @@ -0,0 +1,38 @@
+> +/*
+> + * This header provides macros for MAX77693 device binding
+> + *
+> + * Copyright (C) 2014, Samsung Electronics Co., Ltd.
+> + *
+> + * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_MAX77693_H__
+> +#define __DT_BINDINGS_MAX77693_H
+> +
+> +/* External control pins */
+> +#define MAX77693_LED_FLED_UNUSED	0
+> +#define MAX77693_LED_FLED_USED		1
+> +
+> +/* FLED pins */
+> +#define MAX77693_LED_FLED1		1
+> +#define MAX77693_LED_FLED2		2
+
+I'd personally simply use numbers for the above but I can't really say to be
+an expert on the topic.
+
+> +/* External trigger type */
+> +#define MAX77693_LED_TRIG_TYPE_EDGE	0
+> +#define MAX77693_LED_TRIG_TYPE_LEVEL	1
+> +
+> +/* Trigger flags */
+> +#define MAX77693_LED_TRIG_FLASHEN	(1 << 0)
+> +#define MAX77693_LED_TRIG_TORCHEN	(1 << 1)
+> +#define MAX77693_LED_TRIG_SOFTWARE	(1 << 2)
+> +
+> +#define MAX77693_LED_TRIG_ALL		(MAX77693_LED_TRIG_FLASHEN | \
+> +					 MAX77693_LED_TRIG_TORCHEN | \
+> +					 MAX77693_LED_TRIG_SOFTWARE)
+> +
+> +/* Boost modes */
+> +#define MAX77693_LED_BOOST_OFF		0
+> +#define MAX77693_LED_BOOST_ADAPTIVE	1
+> +#define MAX77693_LED_BOOST_FIXED	2
+> +
+> +#endif /* __DT_BINDINGS_MAX77693_H */
+
+-- 
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
