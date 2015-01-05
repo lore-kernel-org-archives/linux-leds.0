@@ -1,92 +1,63 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v9 07/19] dt-binding: mfd: max77693: Add DT binding
- related macros
-Date: Wed, 31 Dec 2014 00:15:22 +0200
-Message-ID: <20141230221522.GO17565@valkosipuli.retiisi.org.uk>
-References: <1417622814-10845-1-git-send-email-j.anaszewski@samsung.com>
- <1417622814-10845-8-git-send-email-j.anaszewski@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 14/27] leds: Use setup_timer
+Date: Mon, 5 Jan 2015 11:36:27 -0800
+Message-ID: <CAK5ve-+jiFK+cZbVfg3G1X1y6LbcXw+F1LB+tv3KbsOb7pUuCw@mail.gmail.com>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr> <1419604558-29743-15-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45718 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751939AbaL3WP7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Tue, 30 Dec 2014 17:15:59 -0500
-Content-Disposition: inline
-In-Reply-To: <1417622814-10845-8-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:44473 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753579AbbAETgs (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 5 Jan 2015 14:36:48 -0500
+In-Reply-To: <1419604558-29743-15-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-Hi Jacek,
+On Fri, Dec 26, 2014 at 6:35 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> Convert a call to init_timer and accompanying intializations of
+> the timer's data and function fields to a call to setup_timer.
+>
+> A simplified version of the semantic match that fixes this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> expression t,f,d;
+> @@
+>
+> -init_timer(&t);
+> +setup_timer(&t,f,d);
+> -t.function = f;
+> -t.data = d;
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
 
-The driver depends on these so I'd rearrange this patch in the set before
-the driver patch.
+Thanks, applied.
+-Bryan
 
-On Wed, Dec 03, 2014 at 05:06:42PM +0100, Jacek Anaszewski wrote:
-> Add macros for max77693 led part related binding.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  include/dt-bindings/mfd/max77693.h |   38 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 include/dt-bindings/mfd/max77693.h
-> 
-> diff --git a/include/dt-bindings/mfd/max77693.h b/include/dt-bindings/mfd/max77693.h
-> new file mode 100644
-> index 0000000..4011cb47
-> --- /dev/null
-> +++ b/include/dt-bindings/mfd/max77693.h
-> @@ -0,0 +1,38 @@
-> +/*
-> + * This header provides macros for MAX77693 device binding
-> + *
-> + * Copyright (C) 2014, Samsung Electronics Co., Ltd.
-> + *
-> + * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-> + */
-> +
-> +#ifndef __DT_BINDINGS_MAX77693_H__
-> +#define __DT_BINDINGS_MAX77693_H
-> +
-> +/* External control pins */
-> +#define MAX77693_LED_FLED_UNUSED	0
-> +#define MAX77693_LED_FLED_USED		1
-> +
-> +/* FLED pins */
-> +#define MAX77693_LED_FLED1		1
-> +#define MAX77693_LED_FLED2		2
-
-I'd personally simply use numbers for the above but I can't really say to be
-an expert on the topic.
-
-> +/* External trigger type */
-> +#define MAX77693_LED_TRIG_TYPE_EDGE	0
-> +#define MAX77693_LED_TRIG_TYPE_LEVEL	1
-> +
-> +/* Trigger flags */
-> +#define MAX77693_LED_TRIG_FLASHEN	(1 << 0)
-> +#define MAX77693_LED_TRIG_TORCHEN	(1 << 1)
-> +#define MAX77693_LED_TRIG_SOFTWARE	(1 << 2)
-> +
-> +#define MAX77693_LED_TRIG_ALL		(MAX77693_LED_TRIG_FLASHEN | \
-> +					 MAX77693_LED_TRIG_TORCHEN | \
-> +					 MAX77693_LED_TRIG_SOFTWARE)
-> +
-> +/* Boost modes */
-> +#define MAX77693_LED_BOOST_OFF		0
-> +#define MAX77693_LED_BOOST_ADAPTIVE	1
-> +#define MAX77693_LED_BOOST_FIXED	2
-> +
-> +#endif /* __DT_BINDINGS_MAX77693_H */
-
--- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+>  drivers/leds/led-class.c |    5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index dbeebac..291ca45 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -239,9 +239,8 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>
+>         INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+>
+> -       init_timer(&led_cdev->blink_timer);
+> -       led_cdev->blink_timer.function = led_timer_function;
+> -       led_cdev->blink_timer.data = (unsigned long)led_cdev;
+> +       setup_timer(&led_cdev->blink_timer, led_timer_function,
+> +                   (unsigned long)led_cdev);
+>
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>         led_trigger_set_default(led_cdev);
+>
