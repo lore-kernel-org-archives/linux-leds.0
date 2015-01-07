@@ -1,42 +1,74 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: LED: inform userspace about brightness change
-Date: Tue, 6 Jan 2015 09:55:41 -0800
-Message-ID: <CAK5ve-Ky=8JHs=d3FtYjk46O9uVUGKsfZ3cLwX-h3FckEpmT_g@mail.gmail.com>
-References: <201412242106.09959@pali>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <201412242106.09959@pali>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Darren Hart <dvhart@infradead.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, platform-driver-x86@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+From: Olliver Schinagl <oliver+list@schinagl.nl>
+Subject: [PATCH v1 3/4] leds: Let the binding document example for leds-gpio follow the gpio bindings
+Date: Wed,  7 Jan 2015 10:08:41 +0100
+Message-ID: <1420621722-7428-4-git-send-email-oliver+list@schinagl.nl>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Dec 24, 2014 at 12:06 PM, Pali Roh=C3=A1r <pali.rohar@gmail.com=
-> wrote:
-> Hello!
->
-> What is preferred way from kernel driver to inform userspace
-> about LED device brightness change? In /sys/class/leds/<device>/
-> is file brightness which can be used to read current brightness
-> or set write new value. But sometimes also firmware (or device)
-> can change value on its own and thus userspace software which
-> provides slider for setting brightness will be incorrect.
->
-> For example on Dell laptops there is driver which support setting
-> and reading keyboard backlight (via leds kernel interface). But
-> firmware/BIOS can change brightness (when something happen) and
-> it can inform running system about this change via ACPI/WMI event
-> interface. But how to use kernel led interface to inform userpace
-> about this change? It is possible?
->
+From: Olliver Schinagl <oliver@schinagl.nl>
 
-Sorry for the delay, actually I don't find any possible existing way
-to send brightness change event from LED subsystem to user space.
+In the gpio bindings documents it is requested to use the marco's in
+include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
+drivers don't seem to form an exception, so update the example in the
+document bindings.
 
-I think we can add an udev event in set_brightness API, then when we
-change the brightness, it will send out udev event to user space.
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+---
+ Documentation/devicetree/bindings/leds/leds-gpio.txt | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-Thanks,
--Bryan
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+index f77148f..d544cf1 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+@@ -26,16 +26,18 @@ LED sub-node properties:
+ 
+ Examples:
+ 
++#include <dt-bindings/gpio/gpio.h>
++
+ leds {
+ 	compatible = "gpio-leds";
+ 	hdd {
+ 		label = "IDE Activity";
+-		gpios = <&mcu_pio 0 1>; /* Active low */
++		gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+ 		linux,default-trigger = "ide-disk";
+ 	};
+ 
+ 	fault {
+-		gpios = <&mcu_pio 1 0>;
++		gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
+ 		/* Keep LED on if BIOS detected hardware fault */
+ 		default-state = "keep";
+ 	};
+@@ -44,11 +46,11 @@ leds {
+ run-control {
+ 	compatible = "gpio-leds";
+ 	red {
+-		gpios = <&mpc8572 6 0>;
++		gpios = <&mpc8572 6 GPIO_ACTIVE_HIHG>;
+ 		default-state = "off";
+ 	};
+ 	green {
+-		gpios = <&mpc8572 7 0>;
++		gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
+ 		default-state = "on";
+ 	};
+ };
+@@ -57,7 +59,7 @@ leds {
+ 	compatible = "gpio-leds";
+ 
+ 	charger-led {
+-		gpios = <&gpio1 2 0>;
++		gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+ 		linux,default-trigger = "max8903-charger-charging";
+ 		retain-state-suspended;
+ 	};
+-- 
+2.1.4
