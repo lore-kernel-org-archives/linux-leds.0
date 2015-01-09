@@ -1,54 +1,148 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v10 12/19] DT: Add documentation for the Skyworks AAT1290
-Date: Fri, 09 Jan 2015 16:23:02 +0100
-Message-ID: <1420816989-1808-13-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v10 19/19] leds: aat1290: add support for V4L2 Flash
+ sub-device
+Date: Fri, 09 Jan 2015 16:23:09 +0100
+Message-ID: <1420816989-1808-20-git-send-email-j.anaszewski@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds device tree binding documentation for
-1.5A Step-Up Current Regulator for Flash LEDs.
+Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
+driver. The support allows for V4L2 Flash sub-device to take the control
+of the LED Flash class device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ drivers/leds/leds-aat1290.c |   62 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-new file mode 100644
-index 0000000..880a21d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-@@ -0,0 +1,17 @@
-+* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 0a3c9b4..0974868 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <media/v4l2-flash.h>
+ #include <linux/workqueue.h>
+ 
+ #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
+@@ -67,6 +68,7 @@ struct aat1290_led {
+ 	struct mutex lock;
+ 
+ 	struct led_classdev_flash fled_cdev;
++	struct v4l2_flash *v4l2_flash;
+ 
+ 	int flen_gpio;
+ 	int en_set_gpio;
+@@ -280,11 +282,44 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
+ 	setting->val = setting->max;
+ }
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++static void aat1290_init_v4l2_ctrl_config(struct aat1290_led_settings *s,
++					struct v4l2_flash_ctrl_config *config)
++{
++	struct led_flash_setting *setting;
++	struct v4l2_ctrl_config *c;
 +
-+Required properties:
++	c = &config->intensity;
++	setting = &s->torch_brightness;
++	c->min = setting->min;
++	c->max = setting->max;
++	c->step = setting->step;
++	c->def = setting->val;
 +
-+- compatible : Must be "skyworks,aat1290".
-+- gpios : Two gpio pins in order FLEN, EN/SET.
-+- flash-timeout-us : Maximum flash timeout in microseconds -
-+		     it can be calculated using following formula:
-+		     T = 8.82 * 10^9 * Ct.
++	c = &config->flash_timeout;
++	setting = &s->flash_timeout;
++	c->min = setting->min;
++	c->max = setting->max;
++	c->step = setting->step;
++	c->def = setting->val;
 +
-+Example:
-+
-+flash_led: led {
-+	compatible = "skyworks,aat1290";
-+	gpios = <&gpj1 1 0>, <&gpj1 2 0>;
-+	flash-timeout-us = <1940000>;
++	config->has_external_strobe = false;
 +}
++#else
++#define aat1290_init_v4l2_ctrl_config(s, config)
++#endif
++
+ static const struct led_flash_ops flash_ops = {
+ 	.strobe_set = aat1290_led_flash_strobe_set,
+ 	.timeout_set = aat1290_led_flash_timeout_set,
+ };
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++static const struct v4l2_flash_ops v4l2_flash_ops = {
++	.external_strobe_set = NULL,
++};
++#endif
++
+ static int aat1290_led_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -292,6 +327,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	struct aat1290_led *led;
+ 	struct led_classdev *led_cdev;
+ 	struct led_classdev_flash *fled_cdev;
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	struct v4l2_flash_ctrl_config v4l2_flash_config;
++#endif
+ 	struct aat1290_led_settings settings;
+ 	int flen_gpio, enset_gpio, ret;
+ 
+@@ -342,6 +380,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 
+ 	fled_cdev->timeout = settings.flash_timeout;
+ 
++	/* Init V4L2 Flash controls basing on initialized settings */
++	aat1290_init_v4l2_ctrl_config(&settings, &v4l2_flash_config);
++
+ 	/* Init led class */
+ 	led_cdev = &fled_cdev->led_cdev;
+ 	led_cdev->name = led->label;
+@@ -361,13 +402,34 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 
+ 	mutex_init(&led->lock);
+ 
++	of_node_get(dev_node);
++	led_cdev->dev->of_node = dev_node;
++
++	/* Create V4L2 Flash subdev. */
++	led->v4l2_flash = v4l2_flash_init(fled_cdev,
++					  &v4l2_flash_ops,
++					  &v4l2_flash_config);
++	if (IS_ERR(led->v4l2_flash)) {
++		ret = PTR_ERR(led->v4l2_flash);
++		goto error_v4l2_flash_init;
++	}
++
+ 	return 0;
++
++error_v4l2_flash_init:
++	of_node_put(dev_node);
++	led_classdev_flash_unregister(fled_cdev);
++	mutex_destroy(&led->lock);
++
++	return ret;
+ }
+ 
+ static int aat1290_led_remove(struct platform_device *pdev)
+ {
+ 	struct aat1290_led *led = platform_get_drvdata(pdev);
+ 
++	v4l2_flash_release(led->v4l2_flash);
++	of_node_put(led->fled_cdev.led_cdev.dev->of_node);
+ 	led_classdev_flash_unregister(&led->fled_cdev);
+ 	cancel_work_sync(&led->work_brightness_set);
+ 
 -- 
 1.7.9.5
