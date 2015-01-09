@@ -1,76 +1,74 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v1 4/4] leds: no longer use unnamed gpios
-Date: Thu, 8 Jan 2015 14:12:49 -0800
-Message-ID: <20150108221249.GH23256@dtor-ws>
-References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
- <1420621722-7428-5-git-send-email-oliver+list@schinagl.nl>
- <20150107235522.GA6670@dtor-ws>
- <54AE43A9.3020309@schinagl.nl>
- <CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH 1/2] leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
+Date: Fri,  9 Jan 2015 01:26:17 +0100
+Message-ID: <1420763178-10115-2-git-send-email-andrew@lunn.ch>
+References: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:43843 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754900AbbAHWMz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Jan 2015 17:12:55 -0500
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>
+Received: from vps0.lunn.ch ([178.209.37.122]:48656 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750855AbbAIA21 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 8 Jan 2015 19:28:27 -0500
+In-Reply-To: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Olliver Schinagl <oliver@schinagl.nl>, Olliver Schinagl <oliver+list@schinagl.nl>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.or
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
 
-On Thu, Jan 08, 2015 at 08:40:20AM -0600, Rob Herring wrote:
-> On Thu, Jan 8, 2015 at 2:45 AM, Olliver Schinagl <oliver@schinagl.nl> wrote:
-> > Hey Dmitry,
-> >
-> >
-> > On 08-01-15 00:55, Dmitry Torokhov wrote:
-> >>
-> >> On Wed, Jan 07, 2015 at 10:08:42AM +0100, Olliver Schinagl wrote:
-> >>>
-> >>> From: Olliver Schinagl <oliver@schinagl.nl>
-> >>>
-> >>> The gpio document says we should not use unnamed bindings for gpios.
-> >>> This patch uses the 'led-' prefix to the gpios and updates code and
-> >>> documents. Because the devm_get_gpiod_from_child() falls back to using
-> >>> old-style unnamed gpios, we can update the code first, and update
-> >>> dts files as time allows.
-> 
-> [...]
-> 
-> >>> --- a/drivers/leds/leds-gpio.c
-> >>> +++ b/drivers/leds/leds-gpio.c
-> >>> @@ -184,7 +184,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct
-> >>> platform_device *pdev)
-> >>>                 struct gpio_led led = {};
-> >>>                 const char *state = NULL;
-> >>>   -             led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
-> >>> +               led.gpiod = devm_get_gpiod_from_child(dev, "led", child);
-> >>
-> >> Would not this break existing boards using old bindings? You need to
-> >> handle both cases: if you can't located "led-gpios" then you will have to
-> >> try just "gpios".
-> >
-> > Very true. I was rather even hoping we could update all bindings, I don't
-> > mind going through the available dts files to fix them ... But need to know
-> > that that's the proper way to go before doing the work ;)
-> 
-> That will not work. You cannot make changes that require a new dtb
-> with a new kernel. This would also break for the other way around
-> (i.e. a new dtb and old kernel).
-> 
-> You would have to search for both led-gpios and gpios. I'm not sure if
-> we can do that generically for all GPIOs. If you had a node with both
-> "blah-gpios" and "gpios", it would break. I would hope there are no
-> such cases like that. We also now have to consider how ACPI identifies
-> GPIOs and whether this makes sense.
+Document the binding for the TLC59116 LED driver.
 
-I think only the driver itself can know about such "legacy" mappings and
-make a decision.
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Matthew.Fatheree@belkin.com
+---
+ .../devicetree/bindings/leds/leds-tlc59116.txt     | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
 
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-tlc59116.txt b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+new file mode 100644
+index 000000000000..9526731eda95
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+@@ -0,0 +1,41 @@
++LEDs connected to tcl59116
++
++Required properties
++- compatible: should be "ti,tlc59116"
++- #address-cells: must be 1
++- #size-cells: must be 0
++- reg: typically 0x68
++
++Each led is represented as a sub-node of the ti,,tlc59116.
++See Documentation/devicetree/bindings/leds/common.txt
++
++LED sub-node properties:
++- reg: number of LED line, 0 to 15
++- label: (optional) name of LED
++- linux,default-trigger : (optional)
++
++Examples:
++
++tlc59116@68 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	#gpio-cells = <2>;
++	compatible = "ti,tlc59116";
++	reg = <0x68>;
++
++	wan@0 {
++		label = "wrt1900ac:amber:wan";
++		reg = <0x0>;
++	};
++
++	2g@2 {
++		label = "wrt1900ac:white:2g";
++		reg = <0x2>;
++	};
++
++	alive@9 {
++		label = "wrt1900ac:green:alive";
++		reg = <0x9>;
++		linux,default_trigger = "heartbeat";
++	};
++};
 -- 
-Dmitry
+2.1.3
