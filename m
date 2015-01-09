@@ -1,81 +1,52 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v10 14/19] v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE
- control
-Date: Fri, 09 Jan 2015 16:23:04 +0100
-Message-ID: <1420816989-1808-15-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v10 16/19] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Fri, 09 Jan 2015 16:23:06 +0100
+Message-ID: <1420816989-1808-17-git-send-email-j.anaszewski@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:24608 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757855AbbAIPYz (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jan 2015 10:24:55 -0500
 In-reply-to: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Add V4L2_CID_FLASH_SYNC_STROBE control for determining
-whether a flash device strobe has to be synchronized
-with other flash leds controller by the same device.
+This patch extends LED Flash class documention by
+the description of interactions with v4l2-flash sub-device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/DocBook/media/v4l/controls.xml |    9 +++++++++
- drivers/media/v4l2-core/v4l2-ctrls.c         |    2 ++
- include/uapi/linux/v4l2-controls.h           |    1 +
- 3 files changed, 12 insertions(+)
+ Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index e013e4b..8380b07e 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -4563,6 +4563,15 @@ interface and may change in the future.</para>
-     	    after strobe during which another strobe will not be
-     	    possible. This is a read-only control.</entry>
-     	  </row>
-+    	  <row>
-+            <entry spanname="id"><constant>V4L2_CID_FLASH_SYNC_STROBE</constant></entry>
-+            <entry>menu</entry>
-+    	  </row>
-+    	  <row>
-+    	    <entry spanname="descr">Synchronized strobe: whether the flash
-+	    should be strobed synchronously with the other one controlled
-+	    by the same device.</entry>
-+    	  </row>
-     	  <row><entry></entry></row>
-     	</tbody>
-           </tgroup>
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 45c5b47..4bc7e00 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -846,6 +846,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_FLASH_FAULT:		return "Faults";
- 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
- 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
-+	case V4L2_CID_FLASH_SYNC_STROBE:	return "Synchronize Strobe";
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+index d80096b..2f38627 100644
+--- a/Documentation/leds/leds-class-flash.txt
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -55,3 +55,16 @@ Following sysfs attributes are exposed for controlling flash led devices:
+ 			  upper limit
  
- 	/* JPEG encoder controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -1041,6 +1042,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_TUNE_DEEMPHASIS:
- 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
- 	case V4L2_CID_DETECT_MD_MODE:
-+	case V4L2_CID_FLASH_SYNC_STROBE:
- 		*type = V4L2_CTRL_TYPE_MENU;
- 		break;
- 	case V4L2_CID_LINK_FREQ:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 661f119..5bce13d 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -833,6 +833,7 @@ enum v4l2_flash_strobe_source {
- 
- #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
- #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
-+#define V4L2_CID_FLASH_SYNC_STROBE		(V4L2_CID_FLASH_CLASS_BASE + 13)
- 
- 
- /* JPEG-class control IDs */
+ 		Flash faults are cleared, if possible, by reading the attribute.
++
++A LED subsystem driver can be controlled also from the level of VideoForLinux2
++subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
++be defined in the kernel config. The driver must call the v4l2_flash_init
++function to get registered in the V4L2 subsystem. On remove the
++v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
++
++After proper initialization a V4L2 Flash sub-device is created. The sub-device
++exposes a number of V4L2 controls, which allow for controlling a LED Flash class
++device with use of its internal kernel API.
++Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
++unavailable. The interface is re-enabled after the V4L2 Flash sub-device
++is closed.
 -- 
 1.7.9.5
