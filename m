@@ -1,36 +1,324 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH 0/2] Driver for TI tlc59116 16 Channel i2c LED driver
-Date: Fri,  9 Jan 2015 01:26:16 +0100
-Message-ID: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:48650 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750855AbbAIA2M (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 8 Jan 2015 19:28:12 -0500
-Sender: linux-leds-owner@vger.kernel.org
+From: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+Subject: [PATCH 2/2] leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
+Date: Fri,  9 Jan 2015 01:26:18 +0100
+Message-ID: <1420763178-10115-3-git-send-email-andrew@lunn.ch>
+References: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420763178-10115-1-git-send-email-andrew-g2DYL2Zd6BY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Matthew.Fatheree-REUqjI8E1xrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
 
-This patchset is a driver for the TI tlc59116 16 Channel i2c LED
-driver. This driver is used on the Belkin WRT1900AC access point and
-the C code is derived from code Belkin contributed to OpenWRT.
-However it has been extensively re-written, and a device tree binding
-added to replace platform data.
+The TLC59116 is an I2C bus controlled 16-channel LED driver.  Each LED
+output has its own 8-bit fixed-frequency PWM controller to control the
+brightness of the LED.
 
-Cc: Matthew.Fatheree@belkin.com
+This is based on a driver from Belkin, but has been extensively
+rewritten.
 
-Andrew Lunn (2):
-  leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
-  leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
-
- .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
- drivers/leds/Kconfig                               |   7 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
- 4 files changed, 302 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+Signed-off-by: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+Cc: Matthew.Fatheree-REUqjI8E1xrQT0dZR+AlfA@public.gmane.org
+---
+ drivers/leds/Kconfig         |   7 ++
+ drivers/leds/Makefile        |   1 +
+ drivers/leds/leds-tlc59116.c | 253 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 261 insertions(+)
  create mode 100644 drivers/leds/leds-tlc59116.c
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a6c3d2f153f3..06a24ec60a27 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -457,6 +457,13 @@ config LEDS_TCA6507
+ 	  LED driver chips accessed via the I2C bus.
+ 	  Driver support brightness control and hardware-assisted blinking.
+ 
++config LEDS_TLC59116
++	tristate "LED driver for TLC59116F controllers"
++	depends on LEDS_CLASS && I2C
++	help
++	  This option enables support for Texas Instruments TLC59116F
++	  LED controller.
++
+ config LEDS_MAX8997
+ 	tristate "LED support for MAX8997 PMIC"
+ 	depends on LEDS_CLASS && MFD_MAX8997
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 1c65a191d907..8e7d20acfa7b 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
++obj-$(CONFIG_LEDS_TLC59116)		+= leds-tlc59116.o
+ obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+ obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+ obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+diff --git a/drivers/leds/leds-tlc59116.c b/drivers/leds/leds-tlc59116.c
+new file mode 100644
+index 000000000000..377479af1ba4
+--- /dev/null
++++ b/drivers/leds/leds-tlc59116.c
+@@ -0,0 +1,253 @@
++/*
++ * Copyright 2014 Belkin Inc.
++ * Copyright 2014 Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/module.h>
++#include <linux/i2c.h>
++#include <linux/leds.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/workqueue.h>
++
++#define TLC59116_LEDS		16
++
++#define TLC59116_REG_MODE1	0x00	/* Mode register 0 */
++#define MODE1_RESPON_ADDR_MASK	0xF0
++#define MODE1_NORMAL_MODE	(0 << 4)
++#define MODE1_SPEED_MODE	(1 << 4)
++
++#define TLC59116_REG_MODE2	0x01	/* Mode register 1 */
++#define MODE2_DIM		(0 << 5)
++#define MODE2_BLINK		(1 << 5)
++#define MODE2_OCH_STOP		(0 << 3)
++#define MODE2_OCH_ACK		(1 << 3)
++
++#define TLC59116_REG_PWM(x)	(0x02 + x)
++
++#define TLC59116_REG_GRPPWM	0x12
++#define TLC59116_REG_GRPFREQ	0x13
++
++/* LED Driver Output State, determine the source that drives LED outputs */
++#define TLC59116_REG_LEDOUT(x)	(0x14 + (x >> 2))
++#define TLC59116_LED_OFF	0x0	/* Output LOW */
++#define TLC59116_LED_ON		0x1	/* Output HI-Z */
++#define TLC59116_DIM		0x2	/* Dimming */
++#define TLC59116_BLINK		0x3	/* Blinking */
++#define LED_MASK		0x3
++
++#define ldev_to_led(c)		container_of(c, struct tlc59116_led, ldev)
++#define work_to_led(work)	container_of(work, struct tlc59116_led, work)
++
++struct tlc59116_led {
++	bool active;
++	struct regmap *regmap;
++	int led_no;
++	struct led_classdev ldev;
++	struct work_struct work;
++};
++
++struct tlc59116_priv {
++	struct tlc59116_led leds[TLC59116_LEDS];
++};
++
++static int
++tlc59116_set_mode(struct regmap *regmap, uint8_t mode)
++{
++	uint8_t val = 0;
++
++	if ((mode != MODE2_DIM) && (mode != MODE2_BLINK))
++		mode = MODE2_DIM;
++
++	/* Configure MODE1 register */
++	val &= 0x0;
++	val &= MODE1_RESPON_ADDR_MASK;
++	val |= MODE1_NORMAL_MODE;
++	regmap_write(regmap, TLC59116_REG_MODE1, val);
++
++	/* Configure MODE2 Reg */
++	val &= 0x00;
++	val |= MODE2_OCH_STOP;
++
++	val |= mode;
++
++	regmap_write(regmap, TLC59116_REG_MODE2, val);
++
++	return 0;
++}
++
++static int
++tlc59116_set_led(struct tlc59116_led *led, uint8_t val)
++{
++	struct regmap *regmap = led->regmap;
++	int i = (led->led_no % 4) * 2;
++	char addr = TLC59116_REG_LEDOUT(led->led_no);
++	unsigned int mask = LED_MASK << i;
++
++	val = val << i;
++
++	return regmap_update_bits(regmap, addr, mask, val);
++}
++
++static void
++tlc59116_led_work(struct work_struct *work)
++{
++	struct tlc59116_led *led = work_to_led(work);
++	struct regmap *regmap = led->regmap;
++	uint8_t pwm;
++
++	pwm = TLC59116_REG_PWM(led->led_no);
++	regmap_write(regmap, pwm, led->ldev.brightness);
++}
++
++static void
++tlc59116_led_set(struct led_classdev *led_cdev, enum led_brightness value)
++{
++	struct tlc59116_led *led = ldev_to_led(led_cdev);
++
++	led->ldev.brightness = value;
++	schedule_work(&led->work);
++}
++
++static void
++tlc59116_destroy_devices(struct tlc59116_priv *priv, int i)
++{
++	while (--i >= 0) {
++		if (priv->leds[i].active) {
++			led_classdev_unregister(&priv->leds[i].ldev);
++			cancel_work_sync(&priv->leds[i].work);
++		}
++	}
++}
++
++static int
++tlc59116_configure(struct device *dev,
++		   struct tlc59116_priv *priv,
++		   struct regmap *regmap)
++{
++	int i, err = 0;
++
++	tlc59116_set_mode(regmap, MODE2_DIM);
++	for (i = 0; i < TLC59116_LEDS; i++) {
++		struct tlc59116_led *led = &priv->leds[i];
++
++		if (!led->active)
++			continue;
++
++		led->regmap = regmap;
++		led->led_no = i;
++		led->ldev.brightness_set = tlc59116_led_set;
++		led->ldev.max_brightness = LED_FULL;
++		INIT_WORK(&led->work, tlc59116_led_work);
++		err = led_classdev_register(dev, &led->ldev);
++		if (err < 0) {
++			dev_err(dev, "couldn't register LED %s\n",
++				led->ldev.name);
++			goto exit;
++		}
++		tlc59116_set_led(led, TLC59116_DIM);
++	}
++
++	return 0;
++
++exit:
++	tlc59116_destroy_devices(priv, i);
++	return err;
++}
++
++static const struct regmap_config tlc59116_regmap = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0x1e,
++};
++
++static int
++tlc59116_probe(struct i2c_client *client,
++	       const struct i2c_device_id *id)
++{
++	struct tlc59116_priv *priv = i2c_get_clientdata(client);
++	struct device *dev = &client->dev;
++	struct device_node *np = client->dev.of_node, *child;
++	struct regmap *regmap;
++	int err, count, reg;
++
++	count = of_get_child_count(np);
++	if (!count || count > TLC59116_LEDS)
++		return -EINVAL;
++
++	if (!i2c_check_functionality(client->adapter,
++		I2C_FUNC_SMBUS_BYTE_DATA))
++		return -EIO;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	regmap = devm_regmap_init_i2c(client, &tlc59116_regmap);
++	if (IS_ERR(regmap)) {
++		err = PTR_ERR(regmap);
++		dev_err(dev, "Failed to allocate register map: %d\n", err);
++		return err;
++	}
++
++	i2c_set_clientdata(client, priv);
++
++	for_each_child_of_node(np, child) {
++		err = of_property_read_u32(child, "reg", &reg);
++		if (err)
++			return err;
++		if (reg < 0 || reg >= TLC59116_LEDS)
++			return -EINVAL;
++		if (priv->leds[reg].active)
++			return -EINVAL;
++		priv->leds[reg].active = true;
++		priv->leds[reg].ldev.name =
++			of_get_property(child, "label", NULL) ? : child->name;
++		priv->leds[reg].ldev.default_trigger =
++			of_get_property(child, "linux,default-trigger", NULL);
++	}
++	return tlc59116_configure(dev, priv, regmap);
++}
++
++static int
++tlc59116_remove(struct i2c_client *client)
++{
++	struct tlc59116_priv *priv = i2c_get_clientdata(client);
++
++	tlc59116_destroy_devices(priv, TLC59116_LEDS);
++
++	return 0;
++}
++
++static const struct of_device_id of_tlc59116_leds_match[] = {
++	{ .compatible = "ti,tlc59116", },
++	{},
++};
++
++static const struct i2c_device_id tlc59116_id[] = {
++	{ "tlc59116" },
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, tlc59116_id);
++
++static struct i2c_driver tlc59116_driver = {
++	.driver = {
++		.name = "tlc59116",
++		.of_match_table = of_match_ptr(of_tlc59116_leds_match),
++
++	},
++	.probe = tlc59116_probe,
++	.remove = tlc59116_remove,
++	.id_table = tlc59116_id,
++};
++
++module_i2c_driver(tlc59116_driver);
++
++MODULE_AUTHOR("Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("TLC59116 LED driver");
 -- 
 2.1.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
