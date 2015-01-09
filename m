@@ -1,86 +1,51 @@
-From: Andrew Lunn <andrew@lunn.ch>
+From: "Imre Kaloz" <kaloz@openwrt.org>
 Subject: Re: [PATCH 2/2] leds: tlc59116: Driver for the TI 16 Channel i2c LED
  driver
-Date: Fri, 9 Jan 2015 02:42:15 +0100
-Message-ID: <20150109014215.GC10191@lunn.ch>
+Date: Fri, 09 Jan 2015 13:46:10 +0100
+Message-ID: <op.xr64e8gt2s3iss@ecaz>
 References: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
  <1420763178-10115-3-git-send-email-andrew@lunn.ch>
- <54AF2275.9050600@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:48703 "EHLO vps0.lunn.ch"
+Received: from arrakis.dune.hu ([78.24.191.176]:56662 "EHLO arrakis.dune.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752509AbbAIBoE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 8 Jan 2015 20:44:04 -0500
-Content-Disposition: inline
-In-Reply-To: <54AF2275.9050600@gmail.com>
+	id S1756915AbbAIMqN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 9 Jan 2015 07:46:13 -0500
+In-Reply-To: <1420763178-10115-3-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, Matthew.Fatheree@belkin.com
+To: cooloney@gmail.com, rpurdie@rpsys.net, Andrew Lunn <andrew@lunn.ch>
+Cc: devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com, linux ARM <linux-arm-kernel@lists.infradead.org>, linux-leds@vger.kernel.org
 
-On Fri, Jan 09, 2015 at 06:06:05AM +0530, Varka Bhadram wrote:
-> 
-> On Friday 09 January 2015 05:56 AM, Andrew Lunn wrote:
-> >The TLC59116 is an I2C bus controlled 16-channel LED driver.  Each LED
-> >output has its own 8-bit fixed-frequency PWM controller to control the
-> >brightness of the LED.
-> >
-> >This is based on a driver from Belkin, but has been extensively
-> >rewritten.
-> >
-> >Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> >Cc: Matthew.Fatheree@belkin.com
-> >---
-> >  drivers/leds/Kconfig         |   7 ++
-> >  drivers/leds/Makefile        |   1 +
-> >  drivers/leds/leds-tlc59116.c | 253 +++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 261 insertions(+)
-> >  create mode 100644 drivers/leds/leds-tlc59116.c
-> >
-> (...)
-> 
-> >+static const struct of_device_id of_tlc59116_leds_match[] = {
-> >+	{ .compatible = "ti,tlc59116", },
-> >+	{},
-> >+};
-> >+
-> 
-> Missing MODULE_DEVICE_TABLE(of, ...)..?
+Hi Andrew,
 
-Thanks. I will add it. I was using leds-tca6507.c as my reference. It
-also does not have one, but i will leave that to somebody else to fix.
+On Fri, 09 Jan 2015 01:26:18 +0100, Andrew Lunn <andrew@lunn.ch> wrote:
 
-     Andrew
- 
-> >+static const struct i2c_device_id tlc59116_id[] = {
-> >+	{ "tlc59116" },
-> >+	{},
-> >+};
-> >+MODULE_DEVICE_TABLE(i2c, tlc59116_id);
-> >+
-> >+static struct i2c_driver tlc59116_driver = {
-> >+	.driver = {
-> >+		.name = "tlc59116",
-> >+		.of_match_table = of_match_ptr(of_tlc59116_leds_match),
-> >+
-> 
-> Remove this unnecessary line space...
-> 
-> >+	},
-> >+	.probe = tlc59116_probe,
-> >+	.remove = tlc59116_remove,
-> >+	.id_table = tlc59116_id,
-> >+};
-> >+
-> >+module_i2c_driver(tlc59116_driver);
-> >+
-> >+MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
-> >+MODULE_LICENSE("GPL");
-> >+MODULE_DESCRIPTION("TLC59116 LED driver");
-> 
-> -- 
-> Thanks and Regards,
-> Varka Bhadram.
-> 
+> The TLC59116 is an I2C bus controlled 16-channel LED driver.  Each LED
+> output has its own 8-bit fixed-frequency PWM controller to control the
+> brightness of the LED.
+>
+> This is based on a driver from Belkin, but has been extensively
+> rewritten.
+>
+<snip>
+
+> +config LEDS_TLC59116
+> +	tristate "LED driver for TLC59116F controllers"
+> +	depends on LEDS_CLASS && I2C
+
+I think you need "select REGMAP_I2C" as well.
+
+> +	help
+> +	  This option enables support for Texas Instruments TLC59116F
+> +	  LED controller.
+> +
+>  config LEDS_MAX8997
+>  	tristate "LED support for MAX8997 PMIC"
+>  	depends on LEDS_CLASS && MFD_MAX8997
+
+
+
+Imre
