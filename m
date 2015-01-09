@@ -1,53 +1,42 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v10 04/19] dt-binding: mfd: max77693: Add DT binding
- related macros
-Date: Fri, 09 Jan 2015 16:22:54 +0100
-Message-ID: <1420816989-1808-5-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
+ TORCH_EN_SHIFT macros
+Date: Fri, 09 Jan 2015 16:22:57 +0100
+Message-ID: <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add macros for max77693 led part related binding.
+Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work properly
+when passed enum max77693_fled values (0 for FLED1 and 1 for FLED2)
+from leds-max77693 driver.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
- include/dt-bindings/mfd/max77693.h |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 include/dt-bindings/mfd/max77693.h
+ include/linux/mfd/max77693-private.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/mfd/max77693.h b/include/dt-bindings/mfd/max77693.h
-new file mode 100644
-index 0000000..f53e197
---- /dev/null
-+++ b/include/dt-bindings/mfd/max77693.h
-@@ -0,0 +1,21 @@
-+/*
-+ * This header provides macros for MAX77693 device binding
-+ *
-+ * Copyright (C) 2014, Samsung Electronics Co., Ltd.
-+ *
-+ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_MAX77693_H__
-+#define __DT_BINDINGS_MAX77693_H
-+
-+/* External trigger type */
-+#define MAX77693_LED_TRIG_TYPE_EDGE	0
-+#define MAX77693_LED_TRIG_TYPE_LEVEL	1
-+
-+/* Boost modes */
-+#define MAX77693_LED_BOOST_OFF		0
-+#define MAX77693_LED_BOOST_ADAPTIVE	1
-+#define MAX77693_LED_BOOST_FIXED	2
-+
-+#endif /* __DT_BINDINGS_MAX77693_H */
+diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd/max77693-private.h
+index 08dae01..01799a9 100644
+--- a/include/linux/mfd/max77693-private.h
++++ b/include/linux/mfd/max77693-private.h
+@@ -113,8 +113,8 @@ enum max77693_pmic_reg {
+ #define FLASH_EN_FLASH		0x1
+ #define FLASH_EN_TORCH		0x2
+ #define FLASH_EN_ON		0x3
+-#define FLASH_EN_SHIFT(x)	(6 - ((x) - 1) * 2)
+-#define TORCH_EN_SHIFT(x)	(2 - ((x) - 1) * 2)
++#define FLASH_EN_SHIFT(x)	(6 - (x) * 2)
++#define TORCH_EN_SHIFT(x)	(2 - (x) * 2)
+ 
+ /* MAX77693 MAX_FLASH1 register */
+ #define MAX_FLASH1_MAX_FL_EN	0x80
 -- 
 1.7.9.5
