@@ -1,150 +1,119 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v10 13/19] exynos4-is: Add support for v4l2-flash subdevs
-Date: Fri, 09 Jan 2015 16:23:03 +0100
-Message-ID: <1420816989-1808-14-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v10 09/19] DT: Add documentation for the mfd Maxim max77693
+Date: Fri, 09 Jan 2015 16:22:59 +0100
+Message-ID: <1420816989-1808-10-git-send-email-j.anaszewski@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds suppport for external v4l2-flash devices.
-The support includes parsing camera-flash DT property
-and asynchronous subdevice registration.
+This patch adds device tree binding documentation for
+the flash cell of the Maxim max77693 multifunctional device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- drivers/media/platform/exynos4-is/media-dev.c |   36 +++++++++++++++++++++++--
- drivers/media/platform/exynos4-is/media-dev.h |   13 ++++++++-
- 2 files changed, 46 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/mfd/max77693.txt |   69 ++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index f315ef9..8dd0e5d 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -451,6 +451,25 @@ rpm_put:
- 	return ret;
- }
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 01e9f30..ef184f0 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -41,7 +41,52 @@ Optional properties:
+ 	 To get more informations, please refer to documentaion.
+ 	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
  
-+static void fimc_md_register_flash_entities(struct fimc_md *fmd)
-+{
-+	struct device_node *parent = fmd->pdev->dev.of_node;
-+	struct device_node *np;
-+	int i = 0;
++- led : the LED submodule device node
 +
-+	do {
-+		np = of_parse_phandle(parent, "flashes", i);
-+		if (np) {
-+			fmd->flash[fmd->num_flashes].asd.match_type =
-+							V4L2_ASYNC_MATCH_OF;
-+			fmd->flash[fmd->num_flashes].asd.match.of.node = np;
-+			fmd->num_flashes++;
-+			fmd->async_subdevs[fmd->num_sensors + i] =
-+						&fmd->flash[i].asd;
-+		}
-+	} while (np && (++i < FIMC_MAX_FLASHES));
-+}
++There are two led outputs available - fled1 and fled2. Each of them can
++control a separate led or they can be connected together to double
++the maximum current for a single connected led. One led is represented
++by one child node.
 +
- static int __of_get_csis_id(struct device_node *np)
- {
- 	u32 reg = 0;
-@@ -1275,6 +1294,15 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 	struct fimc_sensor_info *si = NULL;
- 	int i;
- 
-+	/* Register flash subdev if detected any */
-+	for (i = 0; i < ARRAY_SIZE(fmd->flash); i++) {
-+		if (fmd->flash[i].asd.match.of.node == subdev->dev->of_node) {
-+			fmd->flash[i].subdev = subdev;
-+			fmd->num_flashes++;
-+			return 0;
-+		}
-+	}
++Required properties:
++- compatible : Must be "maxim,max77693-led".
 +
- 	/* Find platform data for this sensor subdev */
- 	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
- 		if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
-@@ -1385,6 +1413,8 @@ static int fimc_md_probe(struct platform_device *pdev)
- 		goto err_m_ent;
- 	}
- 
-+	fimc_md_register_flash_entities(fmd);
++Optional properties:
++- maxim,trigger-type : Flash trigger type.
++	Possible trigger types:
++		MAX77693_LED_TRIG_TYPE_EDGE - Rising edge of the signal triggers
++			the flash,
++		MAX77693_LED_TRIG_TYPE_LEVEL - Strobe pulse length controls
++			duration of the flash.
++- maxim,boost-mode :
++	In boost mode the device can produce up to 1.2A of total current
++	on both outputs. The maximum current on each output is reduced
++	to 625mA then. If not enabled explicitly, boost setting defaults to
++	MAX77693_LED_BOOST_FIXED in case both current sources are used.
++	Possible values:
++		MAX77693_LED_BOOST_OFF - no boost,
++		MAX77693_LED_BOOST_ADAPTIVE - adaptive mode,
++		MAX77693_LED_BOOST_FIXED - fixed mode.
++- maxim,boost-vout : Output voltage of the boost module in millivolts.
++- maxim,vsys-min : Low input voltage level in millivolts. Flash is not fired
++	if chip estimates that system voltage could drop below this level due
++	to flash power consumption.
 +
- 	mutex_unlock(&fmd->media_dev.graph_mutex);
- 
- 	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
-@@ -1401,12 +1431,14 @@ static int fimc_md_probe(struct platform_device *pdev)
- 		goto err_attr;
- 	}
- 
--	if (fmd->num_sensors > 0) {
-+	if (fmd->num_sensors > 0 || fmd->num_flashes > 0) {
- 		fmd->subdev_notifier.subdevs = fmd->async_subdevs;
--		fmd->subdev_notifier.num_subdevs = fmd->num_sensors;
-+		fmd->subdev_notifier.num_subdevs = fmd->num_sensors +
-+							fmd->num_flashes;
- 		fmd->subdev_notifier.bound = subdev_notifier_bound;
- 		fmd->subdev_notifier.complete = subdev_notifier_complete;
- 		fmd->num_sensors = 0;
-+		fmd->num_flashes = 0;
- 
- 		ret = v4l2_async_notifier_register(&fmd->v4l2_dev,
- 						&fmd->subdev_notifier);
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 0321454..feff9c8 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -34,6 +34,8 @@
- 
- #define FIMC_MAX_SENSORS	4
- #define FIMC_MAX_CAMCLKS	2
-+#define FIMC_MAX_FLASHES	2
-+#define FIMC_MAX_ASYNC_SUBDEVS (FIMC_MAX_SENSORS + FIMC_MAX_FLASHES)
- #define DEFAULT_SENSOR_CLK_FREQ	24000000U
- 
- /* LCD/ISP Writeback clocks (PIXELASYNCMx) */
-@@ -93,6 +95,11 @@ struct fimc_sensor_info {
- 	struct fimc_dev *host;
- };
- 
-+struct fimc_flash_info {
-+	struct v4l2_subdev *subdev;
-+	struct v4l2_async_subdev asd;
-+};
++Required properties of the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++- led-sources : see Documentation/devicetree/bindings/leds/common.txt
 +
- struct cam_clk {
- 	struct clk_hw hw;
- 	struct fimc_md *fmd;
-@@ -104,6 +111,8 @@ struct cam_clk {
-  * @csis: MIPI CSIS subdevs data
-  * @sensor: array of registered sensor subdevs
-  * @num_sensors: actual number of registered sensors
-+ * @flash: array of registered flash subdevs
-+ * @num_flashes: actual number of registered flashes
-  * @camclk: external sensor clock information
-  * @fimc: array of registered fimc devices
-  * @fimc_is: fimc-is data structure
-@@ -123,6 +132,8 @@ struct fimc_md {
- 	struct fimc_csis_info csis[CSIS_MAX_ENTITIES];
- 	struct fimc_sensor_info sensor[FIMC_MAX_SENSORS];
- 	int num_sensors;
-+	struct fimc_flash_info flash[FIMC_MAX_FLASHES];
-+	int num_flashes;
- 	struct fimc_camclk_info camclk[FIMC_MAX_CAMCLKS];
- 	struct clk *wbclk[FIMC_MAX_WBCLKS];
- 	struct fimc_lite *fimc_lite[FIMC_LITE_MAX_DEVS];
-@@ -149,7 +160,7 @@ struct fimc_md {
- 	} clk_provider;
- 
- 	struct v4l2_async_notifier subdev_notifier;
--	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_SENSORS];
-+	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_ASYNC_SUBDEVS];
- 
- 	bool user_subdev_api;
- 	spinlock_t slock;
++Optional properties of the LED child node:
++- max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 15625 - 250000
++- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 15625 - 1000000
++- flash-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 62500 - 1000000
++
+ Example:
++#include <dt-bindings/mfd/max77693.h>
++
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+ 		reg = <0x66>;
+@@ -73,4 +118,28 @@ Example:
+ 			pwms = <&pwm 0 40000 0>;
+ 			pwm-names = "haptic";
+ 		};
++
++		led {
++			compatible = "maxim,max77693-led";
++			maxim,trigger-type = <MAX77693_LED_TRIG_TYPE_LEVEL>;
++			maxim,boost-mode = <MAX77693_LED_BOOST_FIXED>;
++			maxim,boost-vout = <5000>;
++			maxim,vsys-min = <2400>;
++
++			camera1_flash: led1 {
++				label = "max77693-flash1";
++				led-sources = <1 0>;
++				max-microamp = <250000>;
++				flash-max-microamp = <625000>;
++				flash-timeout-us = <1000000>;
++			};
++
++			camera2_flash: led2 {
++				label = "max77693-flash2";
++				led-sources = <0 1>;
++				max-microamp = <250000>;
++				flash-max-microamp = <625000>;
++				flash-timeout-us = <1000000>;
++			};
++		};
+ 	};
 -- 
 1.7.9.5
