@@ -1,64 +1,146 @@
-From: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
-Subject: Re: [PATCH 2/2] leds: tlc59116: Driver for the TI 16 Channel i2c LED
- driver
-Date: Fri, 9 Jan 2015 14:58:43 +0100
-Message-ID: <20150109135843.GA11399@lunn.ch>
-References: <1420763178-10115-1-git-send-email-andrew@lunn.ch>
- <1420763178-10115-3-git-send-email-andrew@lunn.ch>
- <op.xr64e8gt2s3iss@ecaz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <op.xr64e8gt2s3iss@ecaz>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-Cc: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthew.Fatheree-REUqjI8E1xrQT0dZR+AlfA@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v10 00/19] LED / flash API integration
+Date: Fri, 09 Jan 2015 16:22:50 +0100
+Message-ID: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23308 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754583AbbAIPXY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jan 2015 10:23:24 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Fri, Jan 09, 2015 at 01:46:10PM +0100, Imre Kaloz wrote:
-> Hi Andrew,
-> 
-> On Fri, 09 Jan 2015 01:26:18 +0100, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org> wrote:
-> 
-> >The TLC59116 is an I2C bus controlled 16-channel LED driver.  Each LED
-> >output has its own 8-bit fixed-frequency PWM controller to control the
-> >brightness of the LED.
-> >
-> >This is based on a driver from Belkin, but has been extensively
-> >rewritten.
-> >
-> <snip>
-> 
-> >+config LEDS_TLC59116
-> >+	tristate "LED driver for TLC59116F controllers"
-> >+	depends on LEDS_CLASS && I2C
-> 
-> I think you need "select REGMAP_I2C" as well.
+This patch set is a follow-up of the LED / flash API integration
+series [1]. It is based on linux-next_20150108.
 
-Yes, you are right.
+========================
+Changes since version 9 :
+========================
 
-Thanks
-	Andrew
+- switched to assigning sub-led related of_node to led_cdev->dev->of_node
+  member which allowed for avoiding modifications around v4l-async
+- reimplemented max77693 flash cell driver to avoid extensive use
+  of macros
+- added led-sources DT property and switched to using it
+- switched to reporting flash faults in the LED subsystem in the form
+  of human readable strings
+- added available_sync_leds sysfs attribute to the LED Flash class
+  and changed the semantics of flash_sync_strobe attribute
+- made LED subsystem flash faults not depending on the V4L2 Flash ones
+- applied various fixes and cleanups
 
-> 
-> >+	help
-> >+	  This option enables support for Texas Instruments TLC59116F
-> >+	  LED controller.
-> >+
-> > config LEDS_MAX8997
-> > 	tristate "LED support for MAX8997 PMIC"
-> > 	depends on LEDS_CLASS && MFD_MAX8997
-> 
-> 
-> 
-> Imre
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+========================
+Changes since version 8:
+========================
+
+- added a new way of registering async sub-device
+- switched to matching flash leds by DT phandles
+- improved Device Tree bindings documentation
+- split the drivers patches to LED Flash class
+  and V4L2 Flash part
+- fixed indicator leds handling in v4l2-flash
+- applied various fixes an cleanups
+
+========================
+Changes since version 7:
+========================
+
+- removed explicit support for indicator leds from
+  LED Flash class - indicator leds will be registered
+  as a separate LED Flash class devices
+- added flash_sync_strobe sysfs attribute and related
+  V4L2_CID_FLASH_SYNC_STROBE control
+- changed the way of matching V4L2 Flash sub-devices
+  in a media device, which entailed modification in
+  v4l2-async driver
+- modified max77693 DT bindings documentation
+- applied various fixes an cleanups
+
+========================
+Changes since version 6:
+========================
+
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (19):
+  leds: Add LED Flash class extension to the LED subsystem
+  Documentation: leds: Add description of LED Flash class extension
+  DT: leds: Add led-sources property
+  dt-binding: mfd: max77693: Add DT binding related macros
+  mfd: max77693: Modify flash cell name identifiers
+  mfd: max77693: modifications around max77693_led_platform_data
+  mfd: max77693: Adjust FLASH_EN_SHIFT and TORCH_EN_SHIFT macros
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add driver for AAT1290 current regulator
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  exynos4-is: Add support for v4l2-flash subdevs
+  v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  DT: Add documentation for exynos4-is 'flashes' property
+  leds: max77693: add support for V4L2 Flash sub-device
+  leds: aat1290: add support for V4L2 Flash sub-device
+
+ Documentation/DocBook/media/v4l/controls.xml       |    9 +
+ Documentation/devicetree/bindings/leds/common.txt  |    5 +
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   17 +
+ .../devicetree/bindings/media/samsung-fimc.txt     |    7 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   69 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   70 ++
+ drivers/leds/Kconfig                               |   27 +
+ drivers/leds/Makefile                              |    3 +
+ drivers/leds/led-class-flash.c                     |  486 ++++++++
+ drivers/leds/led-class.c                           |    4 +
+ drivers/leds/leds-aat1290.c                        |  460 ++++++++
+ drivers/leds/leds-max77693.c                       | 1178 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.c      |   36 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  581 ++++++++++
+ drivers/mfd/max77693.c                             |    4 +-
+ include/dt-bindings/mfd/max77693.h                 |   21 +
+ include/linux/led-class-flash.h                    |  207 ++++
+ include/linux/leds.h                               |    3 +
+ include/linux/mfd/max77693-private.h               |    4 +-
+ include/linux/mfd/max77693.h                       |    9 +-
+ include/media/v4l2-flash.h                         |  139 +++
+ include/uapi/linux/v4l2-controls.h                 |    1 +
+ 27 files changed, 3357 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/dt-bindings/mfd/max77693.h
+ create mode 100644 include/linux/led-class-flash.h
+ create mode 100644 include/media/v4l2-flash.h
+
+-- 
+1.7.9.5
