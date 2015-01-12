@@ -1,77 +1,84 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v10 15/19] media: Add registration helpers for V4L2
- flash sub-devices
-Date: Mon, 12 Jan 2015 14:27:26 +0100
-Message-ID: <20150112132726.GB15838@amd>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v10 08/19] leds: Add support for max77693 mfd flash cell
+Date: Mon, 12 Jan 2015 14:46:59 +0100
+Message-ID: <54B3D053.4010300@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-16-git-send-email-j.anaszewski@samsung.com>
- <20150109205432.GP18076@amd>
- <54B397F2.6060205@samsung.com>
+ <1420816989-1808-9-git-send-email-j.anaszewski@samsung.com>
+ <20150109184606.GJ18076@amd> <54B38B55.7080503@samsung.com>
+ <20150112132521.GA15838@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36077 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751175AbbALN1f (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 12 Jan 2015 08:27:35 -0500
-Content-Disposition: inline
-In-Reply-To: <54B397F2.6060205@samsung.com>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45597 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751578AbbALNrD (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 12 Jan 2015 08:47:03 -0500
+In-reply-to: <20150112132521.GA15838@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi!
+On 01/12/2015 02:25 PM, Pavel Machek wrote:
+> Hi!
+>
+>>>> +struct max77693_sub_led {
+>>>> +	/* related FLED output identifier */
+>>>
+>>> ->flash LED, about 4x.
+>>>
+>>>> +/* split composite current @i into two @iout according to @imax weights */
+>>>> +static void __max77693_calc_iout(u32 iout[2], u32 i, u32 imax[2])
+>>>> +{
+>>>> +	u64 t = i;
+>>>> +
+>>>> +	t *= imax[1];
+>>>> +	do_div(t, imax[0] + imax[1]);
+>>>> +
+>>>> +	iout[1] = (u32)t / FLASH_IOUT_STEP * FLASH_IOUT_STEP;
+>>>> +	iout[0] = i - iout[1];
+>>>> +}
+>>>
+>>> Is 64-bit arithmetics neccessary here? Could we do the FLASH_IOUT_STEP
+>>> divisons before t *=, so that 64-bit division is not neccessary?
+>>
+>> It is required. All these operations allow for splitting the composite
+>> current into both outputs according to weights given in the imax
+>> array.
+>
+> I know.
+>
+> What about this?
+>
+> static void __max77693_calc_iout(u32 iout[2], u32 i, u32 imax[2])
+> {
+> 	u32 t = i;
+>
+> 	t *= imax[1] / FLASH_IOUT_STEP;
 
-> >>+	 * the state of V4L2_CID_FLASH_INDICATOR_INTENSITY control only.
-> >>+	 * Therefore it must be possible to set it to 0 level which in
-> >>+	 * the LED subsystem reflects LED_OFF state.
-> >>+	 */
-> >>+	if (cdata_id != INDICATOR_INTENSITY)
-> >>+		++__intensity;
-> >
-> >And normally we'd do i++ instead of ++i, and avoid __ for local
-> >variables...?
-> 
-> Pre-incrementation operator is favourable over the post-incrementation
-> one if we don't want to have an access to the value of a variable before
-> incrementation, which is the case here.
+Let's consider following case:
 
-That may be some old C++ convention, but I'm pretty sure gcc does not
-care.
+t = 1000000
+imax[1] = 1000000
 
-> Maybe gcc detects the cases when the value of a variable is not assigned
-> and doesn't copy it before incrementing, however I haven't found any
-> reference. I see that often in the for loops the i++ version
-> is used, but I am not sure if this is done because developers are
-> aware that gcc will optimize it anyway or it is just an omission.
+multiplication of the above will give 10^12 - much more than
+it is possible to encode on 32 bits.
 
-The code is equivalent, and normally the n++ version is used. gcc will
-get it right.
+> 	t = t / (imax[0] + imax[1]);
+> 	t /= FLASH_IOUT_STEP
+>
+> 	iout[1] = (u32)t;
+> 	iout[0] = i - iout[1];
+> }
+>
+> Does it lack precision?
+>
+> Thanks,
+> 									Pavel
+>
 
-> >>+struct v4l2_flash_ctrl_config {
-> >>+	struct v4l2_ctrl_config intensity;
-> >>+	struct v4l2_ctrl_config flash_intensity;
-> >>+	struct v4l2_ctrl_config flash_timeout;
-> >>+	u32 flash_faults;
-> >>+	bool has_external_strobe:1;
-> >>+	bool indicator_led:1;
-> >>+};
-> >
-> >I don't think you are supposed to do boolean bit arrays.
-> 
-> These bit fields allow to reduce memory usage. If they were not bit
-> fields, the address of the next variable would be aligned to the
-> multiply of the CPU word size.
-> Please look e.g. at struct dev_pm_info in the file include/linux/pm.h.
-> It also contains boolean bit fields.
-
-Looks like you are right. I guess I confused bool foo:1 with int
-foo:1.
-
-Thanks,
-									Pavel
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best Regards,
+Jacek Anaszewski
