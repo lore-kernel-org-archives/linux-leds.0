@@ -1,87 +1,87 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
-Date: Mon, 12 Jan 2015 09:32:02 +0100
-Message-ID: <54B38682.5080605@samsung.com>
+Subject: Re: [PATCH/RFC v10 08/19] leds: Add support for max77693 mfd flash cell
+Date: Mon, 12 Jan 2015 09:52:37 +0100
+Message-ID: <54B38B55.7080503@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-4-git-send-email-j.anaszewski@samsung.com>
- <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
+ <1420816989-1808-9-git-send-email-j.anaszewski@samsung.com>
+ <20150109184606.GJ18076@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24273 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750991AbbALIcG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 12 Jan 2015 03:32:06 -0500
-In-reply-to: <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23159 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751436AbbALIwl (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 12 Jan 2015 03:52:41 -0500
+In-reply-to: <20150109184606.GJ18076@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 01/09/2015 07:33 PM, Rob Herring wrote:
-> On Fri, Jan 9, 2015 at 9:22 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> Add a property for defining the device outputs the LED
->> represented by the DT child node is connected to.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Pawel Moll <pawel.moll@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> Cc: Kumar Gala <galak@codeaurora.org>
->> ---
->>   Documentation/devicetree/bindings/leds/common.txt |    5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->> index a2c3f7a..29295bf 100644
->> --- a/Documentation/devicetree/bindings/leds/common.txt
->> +++ b/Documentation/devicetree/bindings/leds/common.txt
->> @@ -1,6 +1,10 @@
->>   Common leds properties.
->>
->>   Optional properties for child nodes:
->> +- led-sources : Array of bits signifying the LED current regulator outputs the
->> +               LED represented by the child node is connected to (1 - the LED
->> +               is connected to the output, 0 - the LED isn't connected to the
->> +               output).
->
-> Sorry, I just don't understand this.
+Hi Pavel,
 
-In some Flash LED devices one LED can be connected to one or more
-electric current outputs, which allows for multiplying the maximum
-current allowed for the LED. Each sub-LED is represented by a child
-node in the DT binding of the Flash LED device and it needs to declare
-which outputs it is connected to. In the example below the led-sources
-property is a two element array, which means that the flash LED device
-has two current outputs, and the bits signify if the LED is connected
-to the output.
+Thanks for the review.
 
-Do your doubts stem from the ambiguity of the word "current" or the
-form of the description itself is unclear? Probably there should be
-explicit explanation added that the size of the array depends on the
-number of current outputs of the flash LED device.
-
->>   - label : The label for this LED.  If omitted, the label is
->>     taken from the node name (excluding the unit address).
->>
->> @@ -33,6 +37,7 @@ system-status {
->>
->>   camera-flash {
->>          label = "Flash";
->> +       led-sources = <1 0>;
->>          max-microamp = <50000>;
->>          flash-max-microamp = <320000>;
->>          flash-timeout-us = <500000>;
->> --
->> 1.7.9.5
+On 01/09/2015 07:46 PM, Pavel Machek wrote:
+> On Fri 2015-01-09 16:22:58, Jacek Anaszewski wrote:
+>> This patch adds led-flash support to Maxim max77693 chipset.
+>> A device can be exposed to user space through LED subsystem
+>> sysfs interface. Device supports up to two leds which can
+>> work in flash and torch mode. The leds can be triggered
+>> externally or by software.
 >>
 >
+>> +struct max77693_sub_led {
+>> +	/* related FLED output identifier */
+>
+> ->flash LED, about 4x.
+>
+>> +/* split composite current @i into two @iout according to @imax weights */
+>> +static void __max77693_calc_iout(u32 iout[2], u32 i, u32 imax[2])
+>> +{
+>> +	u64 t = i;
+>> +
+>> +	t *= imax[1];
+>> +	do_div(t, imax[0] + imax[1]);
+>> +
+>> +	iout[1] = (u32)t / FLASH_IOUT_STEP * FLASH_IOUT_STEP;
+>> +	iout[0] = i - iout[1];
+>> +}
+>
+> Is 64-bit arithmetics neccessary here? Could we do the FLASH_IOUT_STEP
+> divisons before t *=, so that 64-bit division is not neccessary?
+
+It is required. All these operations allow for splitting the composite
+current into both outputs according to weights given in the imax array.
+
+>> +static int max77693_led_flash_strobe_get(
+>> +				struct led_classdev_flash *fled_cdev,
+>> +				bool *state)
+>> +{
+>> +	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
+>> +	struct max77693_led_device *led = sub_led_to_led(sub_led);
+>> +	int ret;
+>> +
+>> +	if (!state)
+>> +		return -EINVAL;
+>> +
+>> +	mutex_lock(&led->lock);
+>> +
+>> +	ret = max77693_strobe_status_get(led, state);
+>> +
+>> +	*state = !!(*state && (led->strobing_sub_led_id == sub_led->fled_id));
+>> +
+>> +
+>> +	mutex_unlock(&led->lock);
+>> +
+>> +	return ret;
+>> +}
+>
+> Maybe remove some empty lines?
+>
+
+Of course.
 
 -- 
 Best Regards,
