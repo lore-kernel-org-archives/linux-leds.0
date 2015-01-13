@@ -1,7 +1,7 @@
-From: Mark Brown <broonie@kernel.org>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
-Date: Mon, 12 Jan 2015 17:06:44 +0000
-Message-ID: <20150112170644.GO4160@sirena.org.uk>
+Date: Tue, 13 Jan 2015 09:42:41 +0100
+Message-ID: <54B4DA81.7060900@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
  <1420816989-1808-4-git-send-email-j.anaszewski@samsung.com>
  <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
@@ -10,60 +10,115 @@ References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
  <54B3F1EF.4060506@samsung.com>
  <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nLMor0SRtNCuLS/8"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53370 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750782AbbALRG7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 12 Jan 2015 12:06:59 -0500
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, sakari.ailus-X3B1VOXEql0@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-
---nLMor0SRtNCuLS/8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jan 12, 2015 at 10:55:29AM -0600, Rob Herring wrote:
+On 01/12/2015 05:55 PM, Rob Herring wrote:
+> Adding Mark B and Liam...
+>
 > On Mon, Jan 12, 2015 at 10:10 AM, Jacek Anaszewski
-
-> > There are however devices that don't fall into this category, i.e. they
-> > have many outputs, that can be connected to a single LED or to many LEDs
-> > and the driver has to know what is the actual arrangement.
-
+> <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On 01/12/2015 02:52 PM, Rob Herring wrote:
+>>>
+>>> On Mon, Jan 12, 2015 at 2:32 AM, Jacek Anaszewski
+>>> <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> On 01/09/2015 07:33 PM, Rob Herring wrote:
+>>>>> On Fri, Jan 9, 2015 at 9:22 AM, Jacek Anaszewski
+>>>>> <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>>>> Add a property for defining the device outputs the LED
+>>>>>> represented by the DT child node is connected to.
+>
+> [...]
+>
+>>>>>> b/Documentation/devicetree/bindings/leds/common.txt
+>>>>>> index a2c3f7a..29295bf 100644
+>>>>>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>>>>>> @@ -1,6 +1,10 @@
+>>>>>>     Common leds properties.
+>>>>>>
+>>>>>>     Optional properties for child nodes:
+>>>>>> +- led-sources : Array of bits signifying the LED current regulator
+>>>>>> outputs the
+>>>>>> +               LED represented by the child node is connected to (1 -
+>>>>>> the LED
+>>>>>> +               is connected to the output, 0 - the LED isn't connected
+>>>>>> to the
+>>>>>> +               output).
+>>>>>
+>>>>>
+>>>>>
+>>>>> Sorry, I just don't understand this.
+>>>>
+>>>>
+>>>>
+>>>> In some Flash LED devices one LED can be connected to one or more
+>>>> electric current outputs, which allows for multiplying the maximum
+>>>> current allowed for the LED. Each sub-LED is represented by a child
+>>>> node in the DT binding of the Flash LED device and it needs to declare
+>>>> which outputs it is connected to. In the example below the led-sources
+>>>> property is a two element array, which means that the flash LED device
+>>>> has two current outputs, and the bits signify if the LED is connected
+>>>> to the output.
+>>>
+>>>
+>>> Sounds like a regulator for which we already have bindings for and we
+>>> have a driver for regulator based LEDs (but no binding for it).
+>>
+>>
+>> Do you think of drivers/leds/leds-regulator.c driver? This driver just
+>> allows for registering an arbitrary regulator device as a LED subsystem
+>> device.
+>>
+>> There are however devices that don't fall into this category, i.e. they
+>> have many outputs, that can be connected to a single LED or to many LEDs
+>> and the driver has to know what is the actual arrangement.
+>
 > We may need to extend the regulator binding slightly and allow for
 > multiple phandles on a supply property, but wouldn't something like
 > this work:
-
+>
 > led-supply = <&led-reg0>, <&led-reg1>, <&led-reg2>, <&led-reg3>;
-
+>
 > The shared source is already supported by the regulator binding.
 
-What is the reasoning for this?  If a single supply is being supplied by
-multiple regulators then in general those regulators will all know about
-each other at a hardware level and so from a functional and software
-point of view will effectively be one regulator.  If they don't/aren't
-then they tend to interfere with each other.
+I think that we shouldn't split the LED devices into power supply
+providers and consumers as in case of generic regulators. From this
+point of view a LED device current output is a provider and a discrete
+LED element is a consumer. In this approach each discrete LED element
+should have a related driver which is not how LED devices are being
+handled in the LED subsystem, where there is a single binding for a LED
+device and there is a single driver for it which creates separate LED
+class devices for each LED connected to the LED device output. Each
+discrete LED is represented by a child node in the LED device binding.
 
---nLMor0SRtNCuLS/8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I am aware that it may be tempting to treat LED devices as common
+regulators, but they have their specific features which gave a
+reason for introducing LED class for them. Besides, there is already
+drivers/leds/leds-regulator.c driver for LED devices which support only
+turning on/off and setting brightness level.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+In your proposition a separate regulator provider binding would have
+to be created for each current output and a separate binding for
+each discrete LED connected to the LED device. It would create
+unnecessary noise in a dts file.
 
-iQEcBAEBCAAGBQJUs/8jAAoJECTWi3JdVIfQsVgH/0EvbSbMMCak7c7Dv9XJ9++9
-C6ln4JD+REd0SaP5HBEZ/LURh2gNJ+GuwlT6VqPLfEQYVjLs5jzYQG3JAfj11954
-PrNWrUuVrOhCpgkKRut0z4OBnJ+mO1AstTNz8WfcyYeuDgNXnWh79VOfYW87p/D7
-m15nqwk0Qs+N05yhqEoHza9oNu8ZptaZm0njfEAyEp4o+3pVa2AQYkReSfvYTmID
-4c5WIpBv7WZx1ztg/D7LxukKIuZ0TxesGGLg/zj4XN0Ln0IUc0vmmydnwvjs09mM
-+ow6tIvsSKtojAbJNWUvxuvk/E52+mjGKG+UDKzFfBHPNqK4HJM0Q3H4YtR22wI=
-=B3bS
------END PGP SIGNATURE-----
+Moreover, using regulator binding implies that we want to treat it
+as a sheer power supply for our device (which would be a discrete LED
+element in this case), whereas LED devices provide more features like
+blinking pattern and for flash LED devices - flash timeout, external
+strobe and flash faults.
 
---nLMor0SRtNCuLS/8--
+-- 
+Best Regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
