@@ -1,38 +1,31 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: [GIT PULL] LED fix for 3.19
-Date: Tue, 13 Jan 2015 14:16:59 -0800
-Message-ID: <CAK5ve-Kq_x7O-D6--7LBL+GTx5=N15S+y4Ascb5T3-eq1d3CZQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/4] gpio:gpiolib: use static const char const * for a
+ suffixes array
+Date: Wed, 14 Jan 2015 13:35:12 +0100
+Message-ID: <CACRpkdYyaK5JjXEwJxzLgd_-0ccTjb1wEFxVUSdLsppcmTMDoA@mail.gmail.com>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+	<1420621722-7428-2-git-send-email-oliver+list@schinagl.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:37800 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753329AbbAMWRU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Jan 2015 17:17:20 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1420621722-7428-2-git-send-email-oliver+list@schinagl.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: Olliver Schinagl <oliver+list@schinagl.nl>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux
 List-Id: linux-leds@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Linus,
+On Wed, Jan 7, 2015 at 10:08 AM, Olliver Schinagl
+<oliver+list@schinagl.nl> wrote:
 
-Please consider the following changes since commit
-eaa27f34e91a14cdceed26ed6c6793ec1d186115:
+> From: Olliver Schinagl <oliver@schinagl.nl>
+>
+> Checkpatch complains, and probably with good reason that we should use
+> const char const * for the static constant array that never gets
+> changed.
+>
+> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 
-  linux 3.19-rc4 (2015-01-11 12:44:53 -0800)
+Patch applied.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
-leds-fixes-for-3.19
-
-for you to fetch changes up to 0c86ac2c50647451d6a70dc900f8bb0ee3d485d9:
-
-  leds: netxbig: fix oops at probe time (2015-01-13 13:49:01 -0800)
-
-----------------------------------------------------------------
-Simon Guinot (1):
-      leds: netxbig: fix oops at probe time
-
- drivers/leds/leds-netxbig.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Yours,
+Linus Walleij
