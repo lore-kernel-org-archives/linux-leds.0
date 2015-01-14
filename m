@@ -1,52 +1,73 @@
 From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCHv3 0/2] Driver for TI tlc59116 16 Channel i2c LED driver
-Date: Thu, 15 Jan 2015 00:15:05 +0100
-Message-ID: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
+Subject: [PATCHv3 1/2] leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
+Date: Thu, 15 Jan 2015 00:15:06 +0100
+Message-ID: <1421277308-3477-2-git-send-email-andrew@lunn.ch>
+References: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:52180 "EHLO vps0.lunn.ch"
+Received: from vps0.lunn.ch ([178.209.37.122]:52192 "EHLO vps0.lunn.ch"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751260AbbANXRM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 14 Jan 2015 18:17:12 -0500
+	id S1751573AbbANXRU (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 14 Jan 2015 18:17:20 -0500
+In-Reply-To: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: cooloney@gmail.com, rpurdie@rpsys.net
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, kaloz@openwrt.org, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
 
-This patchset is a driver for the TI tlc59116 16 Channel i2c LED
-driver. This driver is used on the Belkin WRT1900AC access point and
-the C code is derived from code Belkin contributed to OpenWRT.
-However it has been extensively re-written, and a device tree binding
-added to replace platform data.
+Document the binding for the TLC59116 LED driver.
 
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Cc: Matthew.Fatheree@belkin.com
-
-Since v2:
-       Remove incorrect /* Mode register ? */ comment
-       Parenthesis around the macro arguments
-       Converted many signed variables into unsigned
-       Saved an initialization
-
-Since v1:
-      s/uint8_t/u8/g
-      Remove empty line
-      Removed #gpio-cells
-      Added select REGMAP_I2C
-      Sorted #includes into alphabetic order
-      Added missing MODULE_DEVICE_TABLE(of, ...)
-      Check return value of regmap_write()
-      Simplified tlc59116_set_mode()
-
-Andrew Lunn (2):
-  leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
-  leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
-
- .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
- drivers/leds/Kconfig                               |   7 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
- 4 files changed, 302 insertions(+)
+---
+ .../devicetree/bindings/leds/leds-tlc59116.txt     | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
- create mode 100644 drivers/leds/leds-tlc59116.c
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-tlc59116.txt b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+new file mode 100644
+index 000000000000..45c2123774d3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+@@ -0,0 +1,40 @@
++LEDs connected to tcl59116
++
++Required properties
++- compatible: should be "ti,tlc59116"
++- #address-cells: must be 1
++- #size-cells: must be 0
++- reg: typically 0x68
++
++Each led is represented as a sub-node of the ti,,tlc59116.
++See Documentation/devicetree/bindings/leds/common.txt
++
++LED sub-node properties:
++- reg: number of LED line, 0 to 15
++- label: (optional) name of LED
++- linux,default-trigger : (optional)
++
++Examples:
++
++tlc59116@68 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "ti,tlc59116";
++	reg = <0x68>;
++
++	wan@0 {
++		label = "wrt1900ac:amber:wan";
++		reg = <0x0>;
++	};
++
++	2g@2 {
++		label = "wrt1900ac:white:2g";
++		reg = <0x2>;
++	};
++
++	alive@9 {
++		label = "wrt1900ac:green:alive";
++		reg = <0x9>;
++		linux,default_trigger = "heartbeat";
++	};
++};
 -- 
-2.1.3
+2.1.4
