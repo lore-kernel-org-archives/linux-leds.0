@@ -1,57 +1,42 @@
-From: Olliver Schinagl <oliver@schinagl.nl>
-Subject: Re: [PATCH v1 4/4] leds: no longer use unnamed gpios
-Date: Wed, 14 Jan 2015 14:20:07 +0100
-Message-ID: <54B66D07.8040807@schinagl.nl>
-References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>	<1420621722-7428-5-git-send-email-oliver+list@schinagl.nl>	<20150107235522.GA6670@dtor-ws>	<54AE43A9.3020309@schinagl.nl>	<CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>	<20150108221249.GH23256@dtor-ws> <CACRpkdZZxAPecNfADzYLSz8S6tNBi9Jr4st==zxnNp2r2gPC2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZZxAPecNfADzYLSz8S6tNBi9Jr4st==zxnNp2r2gPC2g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robherring2@gmail.com>, Olliver Schinagl <oliver+list@schinagl.nl>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-inpu
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] leds: leds-mc13783: Use of_get_child_by_name() instead of refcount hack
+Date: Wed, 14 Jan 2015 14:51:58 +0100
+Message-ID: <1421243519-6257-3-git-send-email-geert+renesas@glider.be>
+References: <1421243519-6257-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1421243519-6257-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jg1.han@samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+of_find_node_by_name() calls of_node_put() on its "from" parameter.
+To counter this, mc13xxx_led_probe_dt() calls of_node_get() first.
 
-On 14-01-15 13:45, Linus Walleij wrote:
-> On Thu, Jan 8, 2015 at 11:12 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->> On Thu, Jan 08, 2015 at 08:40:20AM -0600, Rob Herring wrote:
->>> On Thu, Jan 8, 2015 at 2:45 AM, Olliver Schinagl <oliver@schinagl.nl> wrote:
->>>>>> --- a/drivers/leds/leds-gpio.c
->>>>>> +++ b/drivers/leds/leds-gpio.c
->>>>>> @@ -184,7 +184,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct
->>>>>> platform_device *pdev)
->>>>>>                  struct gpio_led led = {};
->>>>>>                  const char *state = NULL;
->>>>>>    -             led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
->>>>>> +               led.gpiod = devm_get_gpiod_from_child(dev, "led", child);
->>>>> Would not this break existing boards using old bindings? You need to
->>>>> handle both cases: if you can't located "led-gpios" then you will have to
->>>>> try just "gpios".
->>>> Very true. I was rather even hoping we could update all bindings, I don't
->>>> mind going through the available dts files to fix them ... But need to know
->>>> that that's the proper way to go before doing the work ;)
->>> That will not work. You cannot make changes that require a new dtb
->>> with a new kernel. This would also break for the other way around
->>> (i.e. a new dtb and old kernel).
->>>
->>> You would have to search for both led-gpios and gpios. I'm not sure if
->>> we can do that generically for all GPIOs. If you had a node with both
->>> "blah-gpios" and "gpios", it would break. I would hope there are no
->>> such cases like that. We also now have to consider how ACPI identifies
->>> GPIOs and whether this makes sense.
->> I think only the driver itself can know about such "legacy" mappings and
->> make a decision.
-> Yeah leds-gpio.c will need to be patched to check for "led-gpios" first
-> and then fall back to "gpios" if not found.
-yeah I've done the work, just need to double check it and resend a v2.
+Use of_get_child_by_name() instead to get rid of the refcount hack.
 
-Linus, I assume you want the already applied patches omitted from v2?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-leds@vger.kernel.org
+---
+Compile-tested only
+---
+ drivers/leds/leds-mc13783.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Olliver
->
-> Yours,
-> Linus Walleij
-
+diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+index 85c3714e1b5aabba..e2b847fe22a1c934 100644
+--- a/drivers/leds/leds-mc13783.c
++++ b/drivers/leds/leds-mc13783.c
+@@ -134,9 +134,7 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
+ 	if (!pdata)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	of_node_get(dev->parent->of_node);
+-
+-	parent = of_find_node_by_name(dev->parent->of_node, "leds");
++	parent = of_get_child_by_name(dev->parent->of_node, "leds");
+ 	if (!parent)
+ 		goto out_node_put;
+ 
+-- 
+1.9.1
