@@ -1,73 +1,115 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCHv3 1/2] leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
-Date: Thu, 15 Jan 2015 00:15:06 +0100
-Message-ID: <1421277308-3477-2-git-send-email-andrew@lunn.ch>
-References: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
+Date: Thu, 15 Jan 2015 13:33:32 +0100
+Message-ID: <54B7B39C.7080204@samsung.com>
+References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
+ <1420816989-1808-4-git-send-email-j.anaszewski@samsung.com>
+ <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
+ <54B38682.5080605@samsung.com>
+ <CAL_Jsq+UaA41DvawdOMmOib=Fi0hC-nBdKV-+P4DFo+MoOy-bQ@mail.gmail.com>
+ <54B3F1EF.4060506@samsung.com>
+ <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
+ <20150112170644.GO4160@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:52192 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751573AbbANXRU (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 14 Jan 2015 18:17:20 -0500
-In-Reply-To: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:55653 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753780AbbAOMdi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jan 2015 07:33:38 -0500
+In-reply-to: <20150112170644.GO4160@sirena.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, kaloz@openwrt.org, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robherring2@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-Document the binding for the TLC59116 LED driver.
+On 12/01/15 18:06, Mark Brown wrote:
+> On Mon, Jan 12, 2015 at 10:55:29AM -0600, Rob Herring wrote:
+>> > On Mon, Jan 12, 2015 at 10:10 AM, Jacek Anaszewski
+>>> > > There are however devices that don't fall into this category, i.e. they
+>>> > > have many outputs, that can be connected to a single LED or to many LEDs
+>>> > > and the driver has to know what is the actual arrangement.
+>> >
+>> > We may need to extend the regulator binding slightly and allow for
+>> > multiple phandles on a supply property, but wouldn't something like
+>> > this work:
+>> > led-supply = <&led-reg0>, <&led-reg1>, <&led-reg2>, <&led-reg3>;
+>> > The shared source is already supported by the regulator binding.
+>
+> What is the reasoning for this?  If a single supply is being supplied by
+> multiple regulators then in general those regulators will all know about
+> each other at a hardware level and so from a functional and software
+> point of view will effectively be one regulator.  If they don't/aren't
+> then they tend to interfere with each other.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Matthew.Fatheree@belkin.com
----
- .../devicetree/bindings/leds/leds-tlc59116.txt     | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+For LED current regulators like this one [1] we want to be able to 
+communicate to the software the hardware wiring, e.g. if a single LED is 
+connected to only one or both the current regulators.  The device needs 
+to be programmed differently for each configuration, as shown on page 36 
+of the datasheet [2].
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-tlc59116.txt b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
-new file mode 100644
-index 000000000000..45c2123774d3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-tlc59116.txt
-@@ -0,0 +1,40 @@
-+LEDs connected to tcl59116
-+
-+Required properties
-+- compatible: should be "ti,tlc59116"
-+- #address-cells: must be 1
-+- #size-cells: must be 0
-+- reg: typically 0x68
-+
-+Each led is represented as a sub-node of the ti,,tlc59116.
-+See Documentation/devicetree/bindings/leds/common.txt
-+
-+LED sub-node properties:
-+- reg: number of LED line, 0 to 15
-+- label: (optional) name of LED
-+- linux,default-trigger : (optional)
-+
-+Examples:
-+
-+tlc59116@68 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	compatible = "ti,tlc59116";
-+	reg = <0x68>;
-+
-+	wan@0 {
-+		label = "wrt1900ac:amber:wan";
-+		reg = <0x0>;
-+	};
-+
-+	2g@2 {
-+		label = "wrt1900ac:white:2g";
-+		reg = <0x2>;
-+	};
-+
-+	alive@9 {
-+		label = "wrt1900ac:green:alive";
-+		reg = <0x9>;
-+		linux,default_trigger = "heartbeat";
-+	};
-+};
--- 
-2.1.4
+Now, the LED DT binding describes the LEDs (current consumers) as child
+nodes of the LED driver IC (current supplier), e.g. (from [3]):
+
+pca9632@62 {
+        compatible = "nxp,pca9632";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x62>;
+
+        red@0 {
+                label = "red";
+                reg = <0>;
+                linux,default-trigger = "none";
+        };
+        green@1 {
+                label = "green";
+                reg = <1>;
+                linux,default-trigger = "none";
+        };
+	...
+};
+
+What is missing in this binding is the ability to tell that a single LED
+is connected to more than one current source.
+
+We could, for example adopt the multiple phandle in the supply property
+scheme, but not use the kernel regulator API, e.g.
+
+flash-led {
+         compatible = "maxim,max77387";
+
+         current-reg1 { // FLED1
+                 led-output-id = <0>;
+         };
+
+         current-reg2 { // FLED2
+                 led-output-id = <1>;
+         };
+
+         red_led {
+                 led-supply = <&current-reg1>, <&current-reg2>;
+         };
+};
+
+However my feeling is that it is unnecessarily complicated that way.
+
+Perhaps we could use the 'reg' property to describe actual connections,
+I'm not sure if it's better than a LED specific property, e.g.
+
+max77387@52 {
+        compatible = "nxp,max77387";
+        #address-cells = <2>;
+        #size-cells = <0>;
+        reg = <0x52>;
+
+	flash_led {
+		reg = <1 1>;	
+		...
+	};	
+};
+
+[1] http://www.maximintegrated.com/en/products/power/led-drivers/MAX77387.html
+[2] http://datasheets.maximintegrated.com/en/ds/MAX77387.pdf
+[3] Documentation/devicetree/bindings/leds/pca963x.txt
