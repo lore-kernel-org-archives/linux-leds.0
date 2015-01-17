@@ -1,44 +1,83 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCHv3 0/2] Driver for TI tlc59116 16 Channel i2c LED driver
-Date: Fri, 16 Jan 2015 20:17:34 +0100
-Message-ID: <20150116191734.GB31577@lunn.ch>
-References: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
- <54B9259C.3070403@ti.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] leds: netxbig: fix oops at probe time
+Date: Fri, 16 Jan 2015 19:15:33 -0800
+Message-ID: <CAOesGMgPVmX2zTjxMtn0GrbzOuRuUtFdLzL2EZjm5EDeekL+Pg@mail.gmail.com>
+References: <1417534330-13154-1-git-send-email-simon.guinot@sequanux.org>
+	<20141211090400.GB18449@kw.sim.vm.gnt>
+	<CAK5ve-KVSXS3PgafAJjstiYqezpG83p-NChS6Rt=mNMdgsB3GQ@mail.gmail.com>
+	<20150113201602.GI14570@lunn.ch>
+	<CAK5ve-J+wBf08_2-XBiK2qaJ3Uy9ATZG-hZQSs7bHKUFfcnTFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:56717 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757145AbbAPTTf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Fri, 16 Jan 2015 14:19:35 -0500
-Content-Disposition: inline
-In-Reply-To: <54B9259C.3070403@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-J+wBf08_2-XBiK2qaJ3Uy9ATZG-hZQSs7bHKUFfcnTFQ@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Simon Guinot <simon.guinot@sequanux.org>, Richard Purdie <rpurdie@rpsys.net>, Johan Hovold <johan@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Vincent Donnefort <vdonnefort@gmail.com>, stable <stable@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, "R, Vignesh" <vigneshr@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, kaloz@openwrt.org, Matthew.Fatheree@belkin.com, Sekhar Nori <nsekhar@ti.com>
 
-On Fri, Jan 16, 2015 at 04:52:12PM +0200, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 15/01/15 01:15, Andrew Lunn wrote:
-> > This patchset is a driver for the TI tlc59116 16 Channel i2c LED
-> > driver. This driver is used on the Belkin WRT1900AC access point and
-> > the C code is derived from code Belkin contributed to OpenWRT.
-> > However it has been extensively re-written, and a device tree binding
-> > added to replace platform data.
-> 
-> We have a TLC59108 on one of our boards, and with a quick glance it
-> looks about the same as TLC59116, except the amount of outputs.
+On Tue, Jan 13, 2015 at 12:24 PM, Bryan Wu <cooloney@gmail.com> wrote:
+> On Tue, Jan 13, 2015 at 12:16 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> On Tue, Jan 13, 2015 at 12:14:08PM -0800, Bryan Wu wrote:
+>>> On Thu, Dec 11, 2014 at 1:04 AM, Simon Guinot <simon.guinot@sequanux.org> wrote:
+>>> > On Tue, Dec 02, 2014 at 04:32:10PM +0100, Simon Guinot wrote:
+>>> >> This patch fixes a NULL pointer dereference on led_dat->mode_val. Due to
+>>> >> this bug, a kernel oops can be observed at probe time on the LaCie 2Big
+>>> >> and 5Big v2 boards:
+>>> >>
+>>> >> Unable to handle kernel NULL pointer dereference at virtual address 00000008
+>>> >> [...]
+>>> >> [<c03f244c>] (netxbig_led_probe) from [<c02c8c6c>] (platform_drv_probe+0x4c/0x9c)
+>>> >> [<c02c8c6c>] (platform_drv_probe) from [<c02c72d0>] (driver_probe_device+0x98/0x25c)
+>>> >> [<c02c72d0>] (driver_probe_device) from [<c02c7520>] (__driver_attach+0x8c/0x90)
+>>> >> [<c02c7520>] (__driver_attach) from [<c02c5c24>] (bus_for_each_dev+0x68/0x94)
+>>> >> [<c02c5c24>] (bus_for_each_dev) from [<c02c6408>] (bus_add_driver+0x124/0x1dc)
+>>> >> [<c02c6408>] (bus_add_driver) from [<c02c7ac0>] (driver_register+0x78/0xf8)
+>>> >> [<c02c7ac0>] (driver_register) from [<c000888c>] (do_one_initcall+0x80/0x1cc)
+>>> >> [<c000888c>] (do_one_initcall) from [<c0733618>] (kernel_init_freeable+0xe4/0x1b4)
+>>> >> [<c0733618>] (kernel_init_freeable) from [<c058db9c>] (kernel_init+0xc/0xec)
+>>> >> [<c058db9c>] (kernel_init) from [<c0009850>] (ret_from_fork+0x14/0x24)
+>>> >> [...]
+>>> >>
+>>> >> This bug was introduced by commit 588a6a99286ae30afb1339d8bc2163517b1b7dd1
+>>> >> ("leds: netxbig: fix attribute-creation race").
+>>> >>
+>>> >> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+>>> >> Cc: <stable@vger.kernel.org> # 3.17+
+>>> >> ---
+>>> >>  drivers/leds/leds-netxbig.c | 12 ++++++------
+>>> >>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>> >
+>>> > Hi Bryan,
+>>> >
+>>> > Please apply up this patch.
+>>> >
+>>> > Thanks.
+>>> >
+>>> > Simon
+>>>
+>>> Sorry for the delay. I will merge it.
+>>
+>> Hi Bryan
+>>
+>> It has already been sent to arm-soc. If you are going to merge it,
+>> please ask Olof to drop it.
+>>
+>>        Andrew
+>
+> Olof, could you please drop this from your arm-soc tree. I've merged
+> it to my tree. and will send a fix for Linus soon
 
-Hi Tomi
+Sigh. Andrew even told you it's already been merged, and _then_ you
+send up a single patch pull request with _just_ this to Linus after
+having been completely unresponsive for a month?
 
-I took a look at the TLC59108. The hardware designs have not made it
-easy, but it does look similar enough that my driver can be extended
-to cover both. These extensions It will not change the DT binding, it
-will just gain a new compatibility string. So i would prefer my driver
-is first fully reviewed and accepted, and then i will take a stab at
-extending it for the TLC59108. I will need help testing it, but i hope
-you can help there.
+Anyway, dropped the last fixes branch from mvebu now.
 
-    Andrew
+Btw: Andrew, in the future it's useful to get these kind of requests
+cc:d to arm@kernel.org, since I don't monitor my inbox the same way I
+keep an eye on that folder. I didn't notice this until several days
+later. Not your fault, but it'd help me. :-)
+
+
+-Olof
