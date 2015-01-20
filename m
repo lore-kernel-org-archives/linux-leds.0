@@ -1,57 +1,75 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCHv4 0/2] Driver for TI tlc591xx 8/16 Channel i2c LED driver
-Date: Tue, 20 Jan 2015 17:45:40 +0100
-Message-ID: <1421772342-13810-1-git-send-email-andrew@lunn.ch>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:58761 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754707AbbATQsB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 20 Jan 2015 11:48:01 -0500
-Sender: linux-leds-owner@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
+ TORCH_EN_SHIFT macros
+Date: Tue, 20 Jan 2015 16:41:00 +0000
+Message-ID: <20150120164100.GE30656@x1>
+References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
+ <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
+ <20150120111719.GF13701@x1>
+ <54BE51B2.8040209@samsung.com>
+ <54BE6228.5070304@samsung.com>
+ <20150120154029.GC13701@x1>
+ <20150120160056.GA32144@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150120160056.GA32144@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, tomi.valkeinen@ti.com, vigneshr@ti.com, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
 
-This patchset is a driver for the TI tlc59116 16 Channel i2c LED
-driver and tlc59108 8 Channel i2c LED driver. This driver is used on
-the Belkin WRT1900AC access point and the C code is derived from code
-Belkin contributed to OpenWRT.  However it has been extensively
-re-written, and a device tree binding added to replace platform data.
+On Tue, 20 Jan 2015, Pavel Machek wrote:
+> On Tue 2015-01-20 15:40:29, Lee Jones wrote:
+> > On Tue, 20 Jan 2015, Jacek Anaszewski wrote:
+> >=20
+> > > On 01/20/2015 02:01 PM, Jacek Anaszewski wrote:
+> > > >On 01/20/2015 12:17 PM, Lee Jones wrote:
+> > > >>On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
+> > > >>
+> > > >>>Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work proper=
+ly
+> > > >>>when passed enum max77693_fled values (0 for FLED1 and 1 for F=
+LED2)
+> > > >>>from leds-max77693 driver.
+> > > >>
+> > > >>Off-by-one ay?  Wasn't the original code tested?
+> > > >
+> > > >The driver using these macros is a part of LED / flash API integ=
+ration
+> > > >patch series, which still undergoes modifications and it hasn't
+> > > >reached its final state yet, as there are many things to discuss=
+=2E
+> > >=20
+> > > To be more precise: the original code had been tested and was wor=
+king
+> > > properly with the header that is in the mainline. Nonetheless, be=
+cause
+> > > of the modifications in the driver that was requested during code
+> > > review, it turned out that it would be more convenient to redefin=
+e the
+> > > macros.
+> > >=20
+> > > I'd opt for just agreeing about the mfd related patches and merge
+> > > them no sooner than the leds-max77693 driver is merged.
+> >=20
+> > The only way we can guarantee this is to have them go in during
+> > different merge-windows, unless of course they go in via the same t=
+ree.
+>=20
+> Umm. Maintainers should be able to coordinate that. Delaying patch fo=
+r
+> one major release seems rather cruel. Perhaps one maintainer should
+> ack the patch and the second one should merge it...
 
-Cc: Matthew.Fatheree@belkin.com
+Wow, you're just everywhere today. :)
 
-Since v3:
-      Generalized and added support for tlc59108
-      brightness == 0 and brightness == LED_FULL disable PWM and used
-        fixed OFF/ON mode
+Read the part after the comma again.
 
-Since v2:
-      Remove incorrect /* Mode register ? */ comment
-      Parenthesis around the macro arguments
-      Converted many signed variables into unsigned
-      Saved an initialization
-
-Since v1:
-      s/uint8_t/u8/g
-      Remove empty line
-      Removed #gpio-cells
-      Added select REGMAP_I2C
-      Sorted #includes into alphabetic order
-      Added missing MODULE_DEVICE_TABLE(of, ...)
-      Check return value of regmap_write()
-      Simplified tlc59116_set_mode()
-
-Andrew Lunn (2):
-  leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
-  leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
-
- .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
- drivers/leds/Kconfig                               |   7 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
- 4 files changed, 302 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
- create mode 100644 drivers/leds/leds-tlc59116.c
-
--- 
-2.1.3
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
