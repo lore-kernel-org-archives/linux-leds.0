@@ -1,53 +1,153 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
- TORCH_EN_SHIFT macros
-Date: Tue, 20 Jan 2015 11:17:19 +0000
-Message-ID: <20150120111719.GF13701@x1>
+Subject: Re: [PATCH/RFC v10 09/19] DT: Add documentation for the mfd Maxim
+ max77693
+Date: Tue, 20 Jan 2015 11:21:07 +0000
+Message-ID: <20150120112107.GG13701@x1>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
+ <1420816989-1808-10-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1420816989-1808-10-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
 On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
 
-> Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work properly
-> when passed enum max77693_fled values (0 for FLED1 and 1 for FLED2)
-> from leds-max77693 driver.
-
-Off-by-one ay?  Wasn't the original code tested?
-
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> ---
->  include/linux/mfd/max77693-private.h |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This patch adds device tree binding documentation for
+> the flash cell of the Maxim max77693 multifunctional device.
 >=20
-> diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd=
-/max77693-private.h
-> index 08dae01..01799a9 100644
-> --- a/include/linux/mfd/max77693-private.h
-> +++ b/include/linux/mfd/max77693-private.h
-> @@ -113,8 +113,8 @@ enum max77693_pmic_reg {
->  #define FLASH_EN_FLASH		0x1
->  #define FLASH_EN_TORCH		0x2
->  #define FLASH_EN_ON		0x3
-> -#define FLASH_EN_SHIFT(x)	(6 - ((x) - 1) * 2)
-> -#define TORCH_EN_SHIFT(x)	(2 - ((x) - 1) * 2)
-> +#define FLASH_EN_SHIFT(x)	(6 - (x) * 2)
-> +#define TORCH_EN_SHIFT(x)	(2 - (x) * 2)
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/max77693.txt |   69 ++++++++++=
+++++++++++
+>  1 file changed, 69 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Doc=
+umentation/devicetree/bindings/mfd/max77693.txt
+> index 01e9f30..ef184f0 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+> @@ -41,7 +41,52 @@ Optional properties:
+>  	 To get more informations, please refer to documentaion.
+>  	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
 > =20
->  /* MAX77693 MAX_FLASH1 register */
->  #define MAX_FLASH1_MAX_FL_EN	0x80
+> +- led : the LED submodule device node
+> +
+> +There are two led outputs available - fled1 and fled2. Each of them =
+can
+> +control a separate led or they can be connected together to double
+> +the maximum current for a single connected led. One led is represent=
+ed
+> +by one child node.
+> +
+> +Required properties:
+> +- compatible : Must be "maxim,max77693-led".
+> +
+> +Optional properties:
+> +- maxim,trigger-type : Flash trigger type.
+> +	Possible trigger types:
+> +		MAX77693_LED_TRIG_TYPE_EDGE - Rising edge of the signal triggers
+> +			the flash,
+> +		MAX77693_LED_TRIG_TYPE_LEVEL - Strobe pulse length controls
+> +			duration of the flash.
+
+I think you should represent the proper values here instead of the
+defines.
+
+> +- maxim,boost-mode :
+> +	In boost mode the device can produce up to 1.2A of total current
+> +	on both outputs. The maximum current on each output is reduced
+> +	to 625mA then. If not enabled explicitly, boost setting defaults to
+> +	MAX77693_LED_BOOST_FIXED in case both current sources are used.
+> +	Possible values:
+> +		MAX77693_LED_BOOST_OFF - no boost,
+> +		MAX77693_LED_BOOST_ADAPTIVE - adaptive mode,
+> +		MAX77693_LED_BOOST_FIXED - fixed mode.
+
+Same here.
+
+> +- maxim,boost-vout : Output voltage of the boost module in millivolt=
+s.
+
+-mvout?
+-microvout?
+
+> +- maxim,vsys-min : Low input voltage level in millivolts. Flash is n=
+ot fired
+> +	if chip estimates that system voltage could drop below this level d=
+ue
+> +	to flash power consumption.
+
+mvsys?
+microvsys?
+
+> +Required properties of the LED child node:
+> +- label : see Documentation/devicetree/bindings/leds/common.txt
+> +- led-sources : see Documentation/devicetree/bindings/leds/common.tx=
+t
+> +
+> +Optional properties of the LED child node:
+> +- max-microamp : see Documentation/devicetree/bindings/leds/common.t=
+xt
+> +		Range: 15625 - 250000
+> +- flash-max-microamp : see Documentation/devicetree/bindings/leds/co=
+mmon.txt
+> +		Range: 15625 - 1000000
+> +- flash-timeout-us : see Documentation/devicetree/bindings/leds/comm=
+on.txt
+> +		Range: 62500 - 1000000
+> +
+>  Example:
+> +#include <dt-bindings/mfd/max77693.h>
+> +
+>  	max77693@66 {
+>  		compatible =3D "maxim,max77693";
+>  		reg =3D <0x66>;
+> @@ -73,4 +118,28 @@ Example:
+>  			pwms =3D <&pwm 0 40000 0>;
+>  			pwm-names =3D "haptic";
+>  		};
+> +
+> +		led {
+> +			compatible =3D "maxim,max77693-led";
+> +			maxim,trigger-type =3D <MAX77693_LED_TRIG_TYPE_LEVEL>;
+> +			maxim,boost-mode =3D <MAX77693_LED_BOOST_FIXED>;
+> +			maxim,boost-vout =3D <5000>;
+> +			maxim,vsys-min =3D <2400>;
+> +
+> +			camera1_flash: led1 {
+> +				label =3D "max77693-flash1";
+> +				led-sources =3D <1 0>;
+> +				max-microamp =3D <250000>;
+> +				flash-max-microamp =3D <625000>;
+> +				flash-timeout-us =3D <1000000>;
+> +			};
+> +
+> +			camera2_flash: led2 {
+> +				label =3D "max77693-flash2";
+> +				led-sources =3D <0 1>;
+> +				max-microamp =3D <250000>;
+> +				flash-max-microamp =3D <625000>;
+> +				flash-timeout-us =3D <1000000>;
+> +			};
+> +		};
+>  	};
 
 --=20
 Lee Jones
