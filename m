@@ -1,34 +1,44 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCHv3 0/2] Driver for TI tlc59116 16 Channel i2c LED driver
-Date: Tue, 20 Jan 2015 14:40:43 +0100
-Message-ID: <20150120134043.GK2938@lunn.ch>
-References: <1421277308-3477-1-git-send-email-andrew@lunn.ch>
- <54B9259C.3070403@ti.com>
- <20150116191734.GB31577@lunn.ch>
- <54BE258A.10808@ti.com>
- <20150120132613.GJ2938@lunn.ch>
- <54BE58DA.7050707@ti.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
+ TORCH_EN_SHIFT macros
+Date: Tue, 20 Jan 2015 15:11:52 +0100
+Message-ID: <54BE6228.5070304@samsung.com>
+References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
+ <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
+ <20150120111719.GF13701@x1> <54BE51B2.8040209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:58620 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752056AbbATNmu (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 20 Jan 2015 08:42:50 -0500
-Content-Disposition: inline
-In-Reply-To: <54BE58DA.7050707@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <54BE51B2.8040209@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, "R, Vignesh" <vigneshr@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, kaloz@openwrt.org, Matthew.Fatheree@belkin.com, Sekhar Nori <nsekhar@ti.com>
 
-> Right. TLC591xx has the constant output mode which should be used for
-> GPIO. Perhaps that mode could be always used when the brightness is
-> turned to maximum. I haven't read the spec carefully enough to know if
-> there are some downsides.
+On 01/20/2015 02:01 PM, Jacek Anaszewski wrote:
+> On 01/20/2015 12:17 PM, Lee Jones wrote:
+>> On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
+>>
+>>> Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work properly
+>>> when passed enum max77693_fled values (0 for FLED1 and 1 for FLED2)
+>>> from leds-max77693 driver.
+>>
+>> Off-by-one ay?  Wasn't the original code tested?
+>
+> The driver using these macros is a part of LED / flash API integration
+> patch series, which still undergoes modifications and it hasn't
+> reached its final state yet, as there are many things to discuss.
 
-The original Belkin code did use that mode for full brightness. But it
-added complexity to the code which i did not see a need for. Now you
-need gpio support, i can add it back.
+To be more precise: the original code had been tested and was working
+properly with the header that is in the mainline. Nonetheless, because
+of the modifications in the driver that was requested during code
+review, it turned out that it would be more convenient to redefine the
+macros.
 
-     Andrew
+I'd opt for just agreeing about the mfd related patches and merge
+them no sooner than the leds-max77693 driver is merged.
+
+-- 
+Best Regards,
+Jacek Anaszewski
