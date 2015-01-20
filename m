@@ -1,75 +1,79 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
- TORCH_EN_SHIFT macros
-Date: Tue, 20 Jan 2015 16:41:00 +0000
-Message-ID: <20150120164100.GE30656@x1>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
+Date: Tue, 20 Jan 2015 11:29:16 -0600
+Message-ID: <CAL_JsqKoiaUmVhbQdnNveG=AAYh4-OHGS70L+LAgLLoKChUuYQ@mail.gmail.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
- <20150120111719.GF13701@x1>
- <54BE51B2.8040209@samsung.com>
- <54BE6228.5070304@samsung.com>
- <20150120154029.GC13701@x1>
- <20150120160056.GA32144@amd>
+ <1420816989-1808-4-git-send-email-j.anaszewski@samsung.com>
+ <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
+ <54B38682.5080605@samsung.com> <CAL_Jsq+UaA41DvawdOMmOib=Fi0hC-nBdKV-+P4DFo+MoOy-bQ@mail.gmail.com>
+ <54B3F1EF.4060506@samsung.com> <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
+ <54B4DA81.7060900@samsung.com> <CAL_JsqLYxB5hzLAWXpU=uncM5DEMZU78mP673H9oSSNB-cgcYQ@mail.gmail.com>
+ <54B8D4D0.3000904@samsung.com> <CAL_Jsq+EFWzs1HP1tVt6P=p=HZn2AtSPjp55YrmMQi_mE+kNfQ@mail.gmail.com>
+ <54B933D0.1090004@samsung.com> <54BE7DAB.80702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150120160056.GA32144@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:45019 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbbATR3h (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jan 2015 12:29:37 -0500
+In-Reply-To: <54BE7DAB.80702@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-On Tue, 20 Jan 2015, Pavel Machek wrote:
-> On Tue 2015-01-20 15:40:29, Lee Jones wrote:
-> > On Tue, 20 Jan 2015, Jacek Anaszewski wrote:
-> >=20
-> > > On 01/20/2015 02:01 PM, Jacek Anaszewski wrote:
-> > > >On 01/20/2015 12:17 PM, Lee Jones wrote:
-> > > >>On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
-> > > >>
-> > > >>>Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work proper=
-ly
-> > > >>>when passed enum max77693_fled values (0 for FLED1 and 1 for F=
-LED2)
-> > > >>>from leds-max77693 driver.
-> > > >>
-> > > >>Off-by-one ay?  Wasn't the original code tested?
-> > > >
-> > > >The driver using these macros is a part of LED / flash API integ=
-ration
-> > > >patch series, which still undergoes modifications and it hasn't
-> > > >reached its final state yet, as there are many things to discuss=
-=2E
-> > >=20
-> > > To be more precise: the original code had been tested and was wor=
-king
-> > > properly with the header that is in the mainline. Nonetheless, be=
-cause
-> > > of the modifications in the driver that was requested during code
-> > > review, it turned out that it would be more convenient to redefin=
-e the
-> > > macros.
-> > >=20
-> > > I'd opt for just agreeing about the mfd related patches and merge
-> > > them no sooner than the leds-max77693 driver is merged.
-> >=20
-> > The only way we can guarantee this is to have them go in during
-> > different merge-windows, unless of course they go in via the same t=
-ree.
->=20
-> Umm. Maintainers should be able to coordinate that. Delaying patch fo=
-r
-> one major release seems rather cruel. Perhaps one maintainer should
-> ack the patch and the second one should merge it...
+On Tue, Jan 20, 2015 at 10:09 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> On 01/16/2015 04:52 PM, Jacek Anaszewski wrote:
+>>
+>> On 01/16/2015 02:48 PM, Rob Herring wrote:
 
-Wow, you're just everywhere today. :)
+[...]
 
-Read the part after the comma again.
+>>> You may want to add something like led-output-cnt or led-driver-cnt in
+>>> the parent so you know the max list size.
+>>
+>>
+>> Why should we need this? The number of current outputs exposed by the
+>> device is fixed and can be specified in a LED device bindings
+>> documentation.
+>>
+>
+> OK. The led-output-cnt property should be put in each sub-node, as the
+> number of the current outputs each LED can be connected to is variable.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Sorry, I meant this for the parent node meaning how many outputs the
+driver IC has. I did say maybe because you may always know this. It
+can make it easier to allocate memory for led-sources knowing the max
+size up front.
+
+Rob
+
+>
+> New version:
+>
+>  Optional properties for child nodes:
+> +led-sources-cnt : Number of device current outputs the LED is connected to.
+> +- led-sources : List of device current outputs the LED is connected to. The
+> +               outputs are identified by the numbers that must be defined
+> +               in the LED device binding documentation.
+>  - label : The label for this LED.  If omitted, the label is
+>    taken from the node name (excluding the unit address).
+>
+> @@ -33,7 +47,9 @@ system-status {
+>
+>  camera-flash {
+>         label = "Flash";
+> +       led-sources-cnt = <2>;
+> +       led-sources = <0>, <1>;
+>         max-microamp = <50000>;
+>         flash-max-microamp = <320000>;
+>         flash-timeout-us = <500000>;
+> -}
+> +};
+>
+>
+> --
+> Best Regards,
+> Jacek Anaszewski
