@@ -1,269 +1,381 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
-Date: Tue, 20 Jan 2015 17:09:15 +0100
-Message-ID: <54BE7DAB.80702@samsung.com>
-References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-4-git-send-email-j.anaszewski@samsung.com>
- <CAL_JsqJKEp6TWaRhJimg3AWBh+MCCr2Bk9+1o7orLLdp5E+n-g@mail.gmail.com>
- <54B38682.5080605@samsung.com>
- <CAL_Jsq+UaA41DvawdOMmOib=Fi0hC-nBdKV-+P4DFo+MoOy-bQ@mail.gmail.com>
- <54B3F1EF.4060506@samsung.com>
- <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
- <54B4DA81.7060900@samsung.com>
- <CAL_JsqLYxB5hzLAWXpU=uncM5DEMZU78mP673H9oSSNB-cgcYQ@mail.gmail.com>
- <54B8D4D0.3000904@samsung.com>
- <CAL_Jsq+EFWzs1HP1tVt6P=p=HZn2AtSPjp55YrmMQi_mE+kNfQ@mail.gmail.com>
- <54B933D0.1090004@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCHv4 2/2] leds: tlc591xx: Driver for the TI 8/16 Channel i2c LED driver
+Date: Tue, 20 Jan 2015 17:45:42 +0100
+Message-ID: <1421772342-13810-3-git-send-email-andrew@lunn.ch>
+References: <1421772342-13810-1-git-send-email-andrew@lunn.ch>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:49225 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737AbbATQJU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jan 2015 11:09:20 -0500
-In-reply-to: <54B933D0.1090004@samsung.com>
+Received: from vps0.lunn.ch ([178.209.37.122]:58752 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754707AbbATQrz (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 20 Jan 2015 11:47:55 -0500
+In-Reply-To: <1421772342-13810-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, tomi.valkeinen@ti.com, vigneshr@ti.com, Andrew Lunn <andrew@lunn.ch>, Matthew.Fatheree@belkin.com
 
-On 01/16/2015 04:52 PM, Jacek Anaszewski wrote:
-> On 01/16/2015 02:48 PM, Rob Herring wrote:
->> On Fri, Jan 16, 2015 at 3:07 AM, Jacek Anaszewski
->> <j.anaszewski@samsung.com> wrote:
->>> On 01/15/2015 03:24 PM, Rob Herring wrote:
->>>>
->>>> On Tue, Jan 13, 2015 at 2:42 AM, Jacek Anaszewski
->>>> <j.anaszewski@samsung.com> wrote:
->>>>>
->>>>> On 01/12/2015 05:55 PM, Rob Herring wrote:
->>>>>>
->>>>>>
->>>>>> Adding Mark B and Liam...
->>>>>>
->>>>>> On Mon, Jan 12, 2015 at 10:10 AM, Jacek Anaszewski
->>>>>> <j.anaszewski@samsung.com> wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 01/12/2015 02:52 PM, Rob Herring wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On Mon, Jan 12, 2015 at 2:32 AM, Jacek Anaszewski
->>>>>>>> <j.anaszewski@samsung.com> wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On 01/09/2015 07:33 PM, Rob Herring wrote:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> On Fri, Jan 9, 2015 at 9:22 AM, Jacek Anaszewski
->>>>>>>>>> <j.anaszewski@samsung.com> wrote:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> Add a property for defining the device outputs the LED
->>>>>>>>>>> represented by the DT child node is connected to.
->>>>>>
->>>>>>
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>>>>>> b/Documentation/devicetree/bindings/leds/common.txt
->>>>>>>>>>> index a2c3f7a..29295bf 100644
->>>>>>>>>>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>>>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>>>>>>>>>> @@ -1,6 +1,10 @@
->>>>>>>>>>>       Common leds properties.
->>>>>>>>>>>
->>>>>>>>>>>       Optional properties for child nodes:
->>>>>>>>>>> +- led-sources : Array of bits signifying the LED current
->>>>>>>>>>> regulator
->>>>>>>>>>> outputs the
->>>>>>>>>>> +               LED represented by the child node is
->>>>>>>>>>> connected to
->>>>>>>>>>> (1
->>>>>>>>>>> -
->>>>>>>>>>> the LED
->>>>>>>>>>> +               is connected to the output, 0 - the LED isn't
->>>>>>>>>>> connected
->>>>>>>>>>> to the
->>>>>>>>>>> +               output).
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Sorry, I just don't understand this.
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> In some Flash LED devices one LED can be connected to one or more
->>>>>>>>> electric current outputs, which allows for multiplying the maximum
->>>>>>>>> current allowed for the LED. Each sub-LED is represented by a
->>>>>>>>> child
->>>>>>>>> node in the DT binding of the Flash LED device and it needs to
->>>>>>>>> declare
->>>>>>>>> which outputs it is connected to. In the example below the
->>>>>>>>> led-sources
->>>>>>>>> property is a two element array, which means that the flash LED
->>>>>>>>> device
->>>>>>>>> has two current outputs, and the bits signify if the LED is
->>>>>>>>> connected
->>>>>>>>> to the output.
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> Sounds like a regulator for which we already have bindings for
->>>>>>>> and we
->>>>>>>> have a driver for regulator based LEDs (but no binding for it).
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Do you think of drivers/leds/leds-regulator.c driver? This driver
->>>>>>> just
->>>>>>> allows for registering an arbitrary regulator device as a LED
->>>>>>> subsystem
->>>>>>> device.
->>>>>>>
->>>>>>> There are however devices that don't fall into this category,
->>>>>>> i.e. they
->>>>>>> have many outputs, that can be connected to a single LED or to many
->>>>>>> LEDs
->>>>>>> and the driver has to know what is the actual arrangement.
->>>>>>
->>>>>>
->>>>>>
->>>>>> We may need to extend the regulator binding slightly and allow for
->>>>>> multiple phandles on a supply property, but wouldn't something like
->>>>>> this work:
->>>>>>
->>>>>> led-supply = <&led-reg0>, <&led-reg1>, <&led-reg2>, <&led-reg3>;
->>>>>>
->>>>>> The shared source is already supported by the regulator binding.
->>>>>
->>>>>
->>>>>
->>>>> I think that we shouldn't split the LED devices into power supply
->>>>> providers and consumers as in case of generic regulators. From this
->>>>> point of view a LED device current output is a provider and a discrete
->>>>> LED element is a consumer. In this approach each discrete LED element
->>>>> should have a related driver which is not how LED devices are being
->>>>> handled in the LED subsystem, where there is a single binding for a
->>>>> LED
->>>>> device and there is a single driver for it which creates separate LED
->>>>> class devices for each LED connected to the LED device output. Each
->>>>> discrete LED is represented by a child node in the LED device binding.
->>>>>
->>>>> I am aware that it may be tempting to treat LED devices as common
->>>>> regulators, but they have their specific features which gave a
->>>>> reason for introducing LED class for them. Besides, there is already
->>>>> drivers/leds/leds-regulator.c driver for LED devices which support
->>>>> only
->>>>> turning on/off and setting brightness level.
->>>>>
->>>>> In your proposition a separate regulator provider binding would have
->>>>> to be created for each current output and a separate binding for
->>>>> each discrete LED connected to the LED device. It would create
->>>>> unnecessary noise in a dts file.
->>>>>
->>>>> Moreover, using regulator binding implies that we want to treat it
->>>>> as a sheer power supply for our device (which would be a discrete LED
->>>>> element in this case), whereas LED devices provide more features like
->>>>> blinking pattern and for flash LED devices - flash timeout, external
->>>>> strobe and flash faults.
->>>>
->>>>
->>>> Okay, fair enough. Please include some of this explanation in the
->>>> binding description.
->>>>
->>>> I do still have some concerns about led-sources and whether it can
->>>> support other scenarios. It is very much tied to the parent node. Are
->>>> there any cases where we don't want the LEDs to be sub nodes? Perhaps
->>>> the LEDs are on a separate daughterboard from the driver/supply and we
->>>> can have different drivers. It's a stretch maybe.
->>>
->>>
->>> I think it is. Such arrangements would introduce problems also to the
->>> other existing bindings. Probably not only LED subsystem related ones.
->>>
->>>> Or are there cases
->>>> where you need more information than just the connection?
->>>
->>>
->>> Currently I can't think of any.
->>>
->>> Modified rough proposal of the description:
->>>
->>>
->>> -Optional properties for child nodes:
->>> +LED and flash LED devices provide the same basic functionality as
->>> +current regulators, but extended with LED and flash LED specific
->>> +features
->>> like blinking patterns, flash timeout, flash faults and
->>> +external flash strobe mode.
->>> +
->>> +Many LED devices expose more than one current output that can be
->>> +connected to one or more discrete LED component. Since the arrangement
->>> +of connections can influence the way of the LED device initialization,
->>> +the LED components have to be tightly coupled with the LED device
->>> +binding. They are represented in the form of its child nodes.
->>> +
->>> +Optional properties for child nodes (if a LED device exposes only one
->>> +current output the properties can be placed directly in the LED device
->>> +node):
->>
->> Why special case 1 output case? Just always require a child node.
->
-> OK.
->
->>> +- led-sources : Array of connection states between all LED current
->>> +               sources exposed by the device and this LED (1 - this LED
->>> +               is connected to the current output with index N, 0 -
->>> +               this LED isn't connected to the current output with
->>> +               index N); the mapping of N-th element of the array to
->>> +               the physical device output should be defined in the LED
->>> +               driver binding.
->>
->> I think this should be a list of connected output numbers rather than
->> effectively a bitmask.
->>
->> You may want to add something like led-output-cnt or led-driver-cnt in
->> the parent so you know the max list size.
->
-> Why should we need this? The number of current outputs exposed by the
-> device is fixed and can be specified in a LED device bindings
-> documentation.
->
+The TLC59116 is an I2C bus controlled 16-channel LED driver.  The
+TLC59108 is an I2C bus controlled 8-channel LED driver, which is very
+similar to the TLC59116. Each LED output has its own 8-bit
+fixed-frequency PWM controller to control the brightness of the LED.
+The LEDs can also be fixed off and on, making them suitable for use as
+GPOs.
 
-OK. The led-output-cnt property should be put in each sub-node, as the
-number of the current outputs each LED can be connected to is variable.
+This is based on a driver from Belkin, but has been extensively
+rewritten and extended to support both 08 and 16 versions.
 
-New version:
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Matthew.Fatheree@belkin.com
+---
+ drivers/leds/Kconfig         |   8 ++
+ drivers/leds/Makefile        |   1 +
+ drivers/leds/leds-tlc591xx.c | 307 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 316 insertions(+)
+ create mode 100644 drivers/leds/leds-tlc591xx.c
 
-  Optional properties for child nodes:
-+led-sources-cnt : Number of device current outputs the LED is connected to.
-+- led-sources : List of device current outputs the LED is connected to. The
-+               outputs are identified by the numbers that must be defined
-+               in the LED device binding documentation.
-  - label : The label for this LED.  If omitted, the label is
-    taken from the node name (excluding the unit address).
-
-@@ -33,7 +47,9 @@ system-status {
-
-  camera-flash {
-         label = "Flash";
-+       led-sources-cnt = <2>;
-+       led-sources = <0>, <1>;
-         max-microamp = <50000>;
-         flash-max-microamp = <320000>;
-         flash-timeout-us = <500000>;
--}
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a6c3d2f153f3..67cba2032543 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -457,6 +457,14 @@ config LEDS_TCA6507
+ 	  LED driver chips accessed via the I2C bus.
+ 	  Driver support brightness control and hardware-assisted blinking.
+ 
++config LEDS_TLC591XX
++	tristate "LED driver for TLC59108 and TLC59116 controllers"
++	depends on LEDS_CLASS && I2C
++	select REGMAP_I2C
++	help
++	  This option enables support for Texas Instruments TLC59108
++	  and TLC59116 LED controllers.
++
+ config LEDS_MAX8997
+ 	tristate "LED support for MAX8997 PMIC"
+ 	depends on LEDS_CLASS && MFD_MAX8997
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 1c65a191d907..0558117a9407 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
++obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
+ obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+ obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+ obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+new file mode 100644
+index 000000000000..5c46d202788d
+--- /dev/null
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -0,0 +1,307 @@
++/*
++ * Copyright 2014 Belkin Inc.
++ * Copyright 2015 Andrew Lunn <andrew@lunn.ch>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/i2c.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/workqueue.h>
++
++#define TLC59116_LEDS		16
++#define TLC59108_LEDS		8
++
++#define TLC591XX_REG_MODE1	0x00
++#define MODE1_RESPON_ADDR_MASK	0xF0
++#define MODE1_NORMAL_MODE	(0 << 4)
++#define MODE1_SPEED_MODE	(1 << 4)
++
++#define TLC591XX_REG_MODE2	0x01
++#define MODE2_DIM		(0 << 5)
++#define MODE2_BLINK		(1 << 5)
++#define MODE2_OCH_STOP		(0 << 3)
++#define MODE2_OCH_ACK		(1 << 3)
++
++#define TLC591XX_REG_PWM(x)	(0x02 + (x))
++
++#define TLC591XX_REG_GRPPWM	0x12
++#define TLC591XX_REG_GRPFREQ	0x13
++
++/* LED Driver Output State, determine the source that drives LED outputs */
++#define LEDOUT_OFF	0x0	/* Output LOW */
++#define LEDOUT_ON	0x1	/* Output HI-Z */
++#define LEDOUT_DIM	0x2	/* Dimming */
++#define LEDOUT_BLINK	0x3	/* Blinking */
++#define LEDOUT_MASK	0x3
++
++#define ldev_to_led(c)		container_of(c, struct tlc591xx_led, ldev)
++#define work_to_led(work)	container_of(work, struct tlc591xx_led, work)
++
++struct tlc591xx_led {
++	bool active;
++	struct regmap *regmap;
++	unsigned int led_no;
++	struct led_classdev ldev;
++	struct work_struct work;
++	const struct tlc591xx *tlc591xx;
 +};
-
++
++struct tlc591xx_priv {
++	struct tlc591xx_led leds[TLC59116_LEDS];
++};
++
++static int
++tlc59116_reg_ledout(unsigned int led) {
++
++	return (0x14 + (led >> 2));
++}
++
++static int
++tlc59108_reg_ledout(unsigned int led) {
++
++	return (0x0c + (led >> 2));
++}
++
++struct tlc591xx {
++	unsigned int maxleds;
++	int (*reg_ledout)(unsigned int);
++};
++
++static const struct tlc591xx tlc59116 = {
++	.maxleds = TLC59116_LEDS,
++	.reg_ledout = tlc59116_reg_ledout,
++};
++
++static const struct tlc591xx tlc59108 = {
++	.maxleds = TLC59108_LEDS,
++	.reg_ledout = tlc59108_reg_ledout,
++};
++
++static int
++tlc591xx_set_mode(struct regmap *regmap, u8 mode)
++{
++	int err;
++	u8 val;
++
++	if ((mode != MODE2_DIM) && (mode != MODE2_BLINK))
++		mode = MODE2_DIM;
++
++	/* Configure MODE1 register */
++	err = regmap_write(regmap, TLC591XX_REG_MODE1, MODE1_NORMAL_MODE);
++	if (err)
++		return err;
++
++	/* Configure MODE2 Reg */
++	val = MODE2_OCH_STOP | mode;
++
++	return regmap_write(regmap, TLC591XX_REG_MODE2, val);
++}
++
++static int
++tlc591xx_set_ledout(struct tlc591xx_led *led, u8 val)
++{
++	struct regmap *regmap = led->regmap;
++	unsigned int i = (led->led_no % 4) * 2;
++	unsigned int addr = led->tlc591xx->reg_ledout(led->led_no);
++	unsigned int mask = LEDOUT_MASK << i;
++
++	val = val << i;
++
++	return regmap_update_bits(regmap, addr, mask, val);
++}
++
++static int
++tlc591xx_set_pwm(struct tlc591xx_led *led, u8 val)
++{
++	struct regmap *regmap = led->regmap;
++	u8 pwm = TLC591XX_REG_PWM(led->led_no);
++
++	return regmap_write(regmap, pwm, led->ldev.brightness);
++}
++
++static void
++tlc591xx_led_work(struct work_struct *work)
++{
++	struct tlc591xx_led *led = work_to_led(work);
++	int err;
++
++	switch (led->ldev.brightness) {
++	case 0:
++		err = tlc591xx_set_ledout(led, LEDOUT_OFF);
++		break;
++	case LED_FULL:
++		err = tlc591xx_set_ledout(led, LEDOUT_ON);
++		break;
++	default:
++		err = tlc591xx_set_ledout(led, LEDOUT_DIM);
++		if (!err)
++			err = tlc591xx_set_pwm(led, led->ldev.brightness);
++	}
++
++	if (err)
++		dev_err(led->ldev.dev, "Failed setting brightness\n");
++}
++
++static void
++tlc591xx_led_set(struct led_classdev *led_cdev, enum led_brightness value)
++{
++	struct tlc591xx_led *led = ldev_to_led(led_cdev);
++
++	led->ldev.brightness = value;
++	schedule_work(&led->work);
++}
++
++static void
++tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int i)
++{
++	while (--i >= 0) {
++		if (priv->leds[i].active) {
++			led_classdev_unregister(&priv->leds[i].ldev);
++			cancel_work_sync(&priv->leds[i].work);
++		}
++	}
++}
++
++static int
++tlc591xx_configure(struct device *dev,
++		   struct tlc591xx_priv *priv,
++		   struct regmap *regmap,
++		   const struct tlc591xx *tlc591xx)
++{
++	unsigned int i;
++	int err = 0;
++
++	tlc591xx_set_mode(regmap, MODE2_DIM);
++	for (i = 0; i < TLC59116_LEDS; i++) {
++		struct tlc591xx_led *led = &priv->leds[i];
++
++		if (!led->active)
++			continue;
++
++		led->regmap = regmap;
++		led->led_no = i;
++		led->tlc591xx = tlc591xx;
++		led->ldev.brightness_set = tlc591xx_led_set;
++		led->ldev.max_brightness = LED_FULL;
++		INIT_WORK(&led->work, tlc591xx_led_work);
++		err = led_classdev_register(dev, &led->ldev);
++		if (err < 0) {
++			dev_err(dev, "couldn't register LED %s\n",
++				led->ldev.name);
++			goto exit;
++		}
++	}
++
++	return 0;
++
++exit:
++	tlc591xx_destroy_devices(priv, i);
++	return err;
++}
++
++static const struct regmap_config tlc591xx_regmap = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0x1e,
++};
++
++static const struct of_device_id of_tlc591xx_leds_match[] = {
++	{ .compatible = "ti,tlc59116",
++	  .data = &tlc59116 },
++	{ .compatible = "ti,tlc59108",
++	  .data = &tlc59108 },
++	{},
++};
++MODULE_DEVICE_TABLE(of, of_tlc591xx_leds_match);
++
++static int
++tlc591xx_probe(struct i2c_client *client,
++	       const struct i2c_device_id *id)
++{
++	struct device_node *np = client->dev.of_node, *child;
++	struct device *dev = &client->dev;
++	const struct tlc591xx *tlc591xx;
++	struct tlc591xx_priv *priv;
++	struct regmap *regmap;
++	int err, count, reg;
++
++	tlc591xx = of_match_device(of_tlc591xx_leds_match, dev)->data;
++
++	count = of_get_child_count(np);
++	if (!count || count > tlc591xx->maxleds)
++		return -EINVAL;
++
++	if (!i2c_check_functionality(client->adapter,
++		I2C_FUNC_SMBUS_BYTE_DATA))
++		return -EIO;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	regmap = devm_regmap_init_i2c(client, &tlc591xx_regmap);
++	if (IS_ERR(regmap)) {
++		err = PTR_ERR(regmap);
++		dev_err(dev, "Failed to allocate register map: %d\n", err);
++		return err;
++	}
++
++	i2c_set_clientdata(client, priv);
++
++	for_each_child_of_node(np, child) {
++		err = of_property_read_u32(child, "reg", &reg);
++		if (err)
++			return err;
++		if (reg < 0 || reg >= tlc591xx->maxleds)
++			return -EINVAL;
++		if (priv->leds[reg].active)
++			return -EINVAL;
++		priv->leds[reg].active = true;
++		priv->leds[reg].ldev.name =
++			of_get_property(child, "label", NULL) ? : child->name;
++		priv->leds[reg].ldev.default_trigger =
++			of_get_property(child, "linux,default-trigger", NULL);
++	}
++	return tlc591xx_configure(dev, priv, regmap, tlc591xx);
++}
++
++static int
++tlc591xx_remove(struct i2c_client *client)
++{
++	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
++
++	tlc591xx_destroy_devices(priv, TLC59116_LEDS);
++
++	return 0;
++}
++
++static const struct i2c_device_id tlc591xx_id[] = {
++	{ "tlc59116" },
++	{ "tlc59108" },
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, tlc591xx_id);
++
++static struct i2c_driver tlc591xx_driver = {
++	.driver = {
++		.name = "tlc591xx",
++		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
++	},
++	.probe = tlc591xx_probe,
++	.remove = tlc591xx_remove,
++	.id_table = tlc591xx_id,
++};
++
++module_i2c_driver(tlc591xx_driver);
++
++MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("TLC591XX LED driver");
 -- 
-Best Regards,
-Jacek Anaszewski
+2.1.4
