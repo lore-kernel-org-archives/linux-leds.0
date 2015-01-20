@@ -1,61 +1,64 @@
-From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH/RFC v10 05/19] mfd: max77693: Modify flash cell name
- identifiers
-Date: Tue, 20 Jan 2015 13:57:17 +0100
-Message-ID: <54BE50AD.7080801@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v10 07/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
+ TORCH_EN_SHIFT macros
+Date: Tue, 20 Jan 2015 14:01:38 +0100
+Message-ID: <54BE51B2.8040209@samsung.com>
 References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-6-git-send-email-j.anaszewski@samsung.com>
- <20150120111346.GD13701@x1>
+ <1420816989-1808-8-git-send-email-j.anaszewski@samsung.com>
+ <20150120111719.GF13701@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20150120111346.GD13701@x1>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:40891 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753897AbbATNBl (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jan 2015 08:01:41 -0500
+In-reply-to: <20150120111719.GF13701@x1>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 01/20/2015 12:13 PM, Lee Jones wrote:
+On 01/20/2015 12:17 PM, Lee Jones wrote:
 > On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
 >
->> Change flash cell identifiers from max77693-flash to max77693-led
->> to avoid confusion with NOR/NAND Flash.
+>> Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work properly
+>> when passed enum max77693_fled values (0 for FLED1 and 1 for FLED2)
+>> from leds-max77693 driver.
 >
-> This is okay by me, but aren't these ABI yet?
+> Off-by-one ay?  Wasn't the original code tested?
 
-No, the led driver using it hasn't been merged yet.
+The driver using these macros is a part of LED / flash API integration
+patch series, which still undergoes modifications and it hasn't
+reached its final state yet, as there are many things to discuss.
 
->> Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+>> Cc: Lee Jones <lee.jones@linaro.org>
 >> ---
->>   drivers/mfd/max77693.c |    4 ++--
+>>   include/linux/mfd/max77693-private.h |    4 ++--
 >>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
->> index a159593..cb14afa 100644
->> --- a/drivers/mfd/max77693.c
->> +++ b/drivers/mfd/max77693.c
->> @@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
->>   		.of_compatible = "maxim,max77693-haptic",
->>   	},
->>   	{
->> -		.name = "max77693-flash",
->> -		.of_compatible = "maxim,max77693-flash",
->> +		.name = "max77693-led",
->> +		.of_compatible = "maxim,max77693-led",
->>   	},
->>   };
+>> diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd/max77693-private.h
+>> index 08dae01..01799a9 100644
+>> --- a/include/linux/mfd/max77693-private.h
+>> +++ b/include/linux/mfd/max77693-private.h
+>> @@ -113,8 +113,8 @@ enum max77693_pmic_reg {
+>>   #define FLASH_EN_FLASH		0x1
+>>   #define FLASH_EN_TORCH		0x2
+>>   #define FLASH_EN_ON		0x3
+>> -#define FLASH_EN_SHIFT(x)	(6 - ((x) - 1) * 2)
+>> -#define TORCH_EN_SHIFT(x)	(2 - ((x) - 1) * 2)
+>> +#define FLASH_EN_SHIFT(x)	(6 - (x) * 2)
+>> +#define TORCH_EN_SHIFT(x)	(2 - (x) * 2)
 >>
+>>   /* MAX77693 MAX_FLASH1 register */
+>>   #define MAX_FLASH1_MAX_FL_EN	0x80
 >
 
 
 -- 
 Best Regards,
 Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
