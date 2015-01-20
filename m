@@ -1,83 +1,99 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1 4/4] leds: no longer use unnamed gpios
-Date: Mon, 19 Jan 2015 13:09:14 +0900
-Message-ID: <CAAVeFuLjOkfDNn_djKcOQHE8cVbUML8nbM+9PdrBTVZ5bfe4Mg@mail.gmail.com>
-References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
- <1420621722-7428-5-git-send-email-oliver+list@schinagl.nl>
- <20150107235522.GA6670@dtor-ws> <54AE43A9.3020309@schinagl.nl>
- <CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>
- <20150108221249.GH23256@dtor-ws> <CACRpkdZZxAPecNfADzYLSz8S6tNBi9Jr4st==zxnNp2r2gPC2g@mail.gmail.com>
- <54B66D07.8040807@schinagl.nl> <CAAVeFuLGKUb2A1U9YiDmoS23sHC9ihr3h8DcSRbmNEXuu03mqw@mail.gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCHv3 0/2] Driver for TI tlc59116 16 Channel i2c LED driver
+Date: Tue, 20 Jan 2015 11:53:14 +0200
+Message-ID: <54BE258A.10808@ti.com>
+References: <1421277308-3477-1-git-send-email-andrew@lunn.ch> <54B9259C.3070403@ti.com> <20150116191734.GB31577@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLGKUb2A1U9YiDmoS23sHC9ihr3h8DcSRbmNEXuu03mqw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olliver Schinagl <oliver@schinagl.nl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robherring2@gmail.com>, Olliver Schinagl <oliver+list@schinagl.nl>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kern
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="SmIcaVK7xMDQfsSfxcXtpGkE6TMV3HS5G"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:55176 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752357AbbATJyM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 20 Jan 2015 04:54:12 -0500
+In-Reply-To: <20150116191734.GB31577@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, "R, Vignesh" <vigneshr@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>, kaloz@openwrt.org, Matthew.Fatheree@belkin.com, Sekhar Nori <nsekhar@ti.com>
 
-On Mon, Jan 19, 2015 at 12:43 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Jan 14, 2015 at 10:20 PM, Olliver Schinagl <oliver@schinagl.nl> wrote:
->>
->> On 14-01-15 13:45, Linus Walleij wrote:
->>>
->>> On Thu, Jan 8, 2015 at 11:12 PM, Dmitry Torokhov
->>> <dmitry.torokhov@gmail.com> wrote:
->>>>
->>>> On Thu, Jan 08, 2015 at 08:40:20AM -0600, Rob Herring wrote:
->>>>>
->>>>> On Thu, Jan 8, 2015 at 2:45 AM, Olliver Schinagl <oliver@schinagl.nl>
->>>>> wrote:
->>>>>>>>
->>>>>>>> --- a/drivers/leds/leds-gpio.c
->>>>>>>> +++ b/drivers/leds/leds-gpio.c
->>>>>>>> @@ -184,7 +184,7 @@ static struct gpio_leds_priv
->>>>>>>> *gpio_leds_create(struct
->>>>>>>> platform_device *pdev)
->>>>>>>>                  struct gpio_led led = {};
->>>>>>>>                  const char *state = NULL;
->>>>>>>>    -             led.gpiod = devm_get_gpiod_from_child(dev, NULL,
->>>>>>>> child);
->>>>>>>> +               led.gpiod = devm_get_gpiod_from_child(dev, "led",
->>>>>>>> child);
->>>>>>>
->>>>>>> Would not this break existing boards using old bindings? You need to
->>>>>>> handle both cases: if you can't located "led-gpios" then you will have
->>>>>>> to
->>>>>>> try just "gpios".
->>>>>>
->>>>>> Very true. I was rather even hoping we could update all bindings, I
->>>>>> don't
->>>>>> mind going through the available dts files to fix them ... But need to
->>>>>> know
->>>>>> that that's the proper way to go before doing the work ;)
->>>>>
->>>>> That will not work. You cannot make changes that require a new dtb
->>>>> with a new kernel. This would also break for the other way around
->>>>> (i.e. a new dtb and old kernel).
->>>>>
->>>>> You would have to search for both led-gpios and gpios. I'm not sure if
->>>>> we can do that generically for all GPIOs. If you had a node with both
->>>>> "blah-gpios" and "gpios", it would break. I would hope there are no
->>>>> such cases like that. We also now have to consider how ACPI identifies
->>>>> GPIOs and whether this makes sense.
->>>>
->>>> I think only the driver itself can know about such "legacy" mappings and
->>>> make a decision.
->>>
->>> Yeah leds-gpio.c will need to be patched to check for "led-gpios" first
->>> and then fall back to "gpios" if not found.
->>
->> yeah I've done the work, just need to double check it and resend a v2.
->>
->> Linus, I assume you want the already applied patches omitted from v2?
->
-> Yes, please base new revisions on Linus' devel branch, omitting any
-> patches that he has already accepted.
+--SmIcaVK7xMDQfsSfxcXtpGkE6TMV3HS5G
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Actually on top of breaking backward compatibility, I think the case
-of LED GPIOs is one of thoses where it makes sense to not have a name
-(the GPIO usage is obvious from the DT hierarchy, and there cannot be
-another one). So I don't feel like this change is really needed (other
-patches in this series are still useful though).
+On 16/01/15 21:17, Andrew Lunn wrote:
+> On Fri, Jan 16, 2015 at 04:52:12PM +0200, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> On 15/01/15 01:15, Andrew Lunn wrote:
+>>> This patchset is a driver for the TI tlc59116 16 Channel i2c LED
+>>> driver. This driver is used on the Belkin WRT1900AC access point and
+>>> the C code is derived from code Belkin contributed to OpenWRT.
+>>> However it has been extensively re-written, and a device tree binding=
+
+>>> added to replace platform data.
+>>
+>> We have a TLC59108 on one of our boards, and with a quick glance it
+>> looks about the same as TLC59116, except the amount of outputs.
+>=20
+> Hi Tomi
+>=20
+> I took a look at the TLC59108. The hardware designs have not made it
+> easy, but it does look similar enough that my driver can be extended
+> to cover both. These extensions It will not change the DT binding, it
+> will just gain a new compatibility string. So i would prefer my driver
+> is first fully reviewed and accepted, and then i will take a stab at
+> extending it for the TLC59108. I will need help testing it, but i hope
+> you can help there.
+
+Ok.
+
+I'm not familiar with the LED/PWM frameworks, so I want to summarize our
+use case and how I guess this should be done:
+
+We use the TLC59108 to provide backlight to a LCD, but in addition to
+that, it is used as a GPIO expander (or GPO, as it cannot do input). In
+your earlier patch versions there were some 'gpio' leftovers. Does your
+board have such GPIO use also?
+
+So my current thinking is that TLC591xx should be a LED driver (as it
+sounded to me that PWM is not quite suitable for it). On top of that, we
+need generic 'led-backlight' and 'led-gpio' drivers, each of which uses
+the given LED driver to do the hardware manipulation, and they expose a
+backlight device and gpio device, respectively.
+
+Another option would be an mfd device, but that doesn't sound good as I
+think the backlight and gpio functionality here is not related to
+TLC591xx as such, but to a LED device in general.
+
+Does this sound sane?
+
+ Tomi
+
+
+
+--SmIcaVK7xMDQfsSfxcXtpGkE6TMV3HS5G
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUviWKAAoJEPo9qoy8lh712PQP+wZeDpOPMxo9XQ5YSBjCbxFS
+qPZJQHWVlgfSBVT5EHk6iQ8AgA+HenwnTkrPt1tQzgJXdmOhvGtkiWu7vc6sq8n0
+3Q7/ObExPjBzcYnGPlvsMbM1ja4C71eCQk7pZ4+UzC5fwUs+vZZFubpMQrG8994m
+ABemLLmTtWaUtayl1zCt9ENNl3/mvE5pRqlb/cywlCsun9TC5/qly7xNR0aZl3Ce
+wO/wWpya/Khqp+hg9AdiB13Fv6Q1Q7w0gcIZ9r8Ue9UnwhHwBdMv1Tv0xS5EWUl/
+dqlDuntTKM/j9KY168j2dYmQ+4R4hMDtWtUGhU7XPC5zw2E3r7w/4o0cL96nHktB
+sJvAPIiBLRhiIhbvz+1RQAl2HhHhCV7hJUWF8gkBZODSHAsCEIlG8a3rTN4xdpsP
+5NrV4qFCp9Drhzt7MvPYuuNxzwW2kocrcG/0C9yRu0xur4cEOOcwsgplvv76YJrq
+m377jbrv1wFkKUcqaUbVT1BJdrAok61mt9wMZLZLl1i/vtm62TItN7SjW9LZkz0+
+Wt4+ETlpzSq6eqsX5WF0wHgapnktIu0JchDOpsp86M3evCM3kJA1s4dKGAvAfFj7
+ToSP1EvOly93hea+7ibw4UQ5fr4vAcTUsrgnQfg6V97NVvQlIAORwK852ygQoeET
+5Z5lAL9QYNb3EFlXHPGZ
+=TLnM
+-----END PGP SIGNATURE-----
+
+--SmIcaVK7xMDQfsSfxcXtpGkE6TMV3HS5G--
