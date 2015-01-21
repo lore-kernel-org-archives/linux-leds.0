@@ -1,66 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH/RFC v10 17/19] DT: Add documentation for exynos4-is
- 'flashes' property
-Date: Wed, 21 Jan 2015 17:32:57 +0100
-Message-ID: <54BFD4B9.8030707@samsung.com>
-References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
- <1420816989-1808-18-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:36631 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751597AbbAUQdI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jan 2015 11:33:08 -0500
-In-reply-to: <1420816989-1808-18-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Olliver Schinagl <o.schinagl@ultimaker.com>
+Subject: [PATCH v2 1/4] gpio: use sizeof() instead of hardcoded values
+Date: Wed, 21 Jan 2015 22:33:45 +0100
+Message-ID: <1421876028-22799-2-git-send-email-o.schinagl@ultimaker.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi,
+From: Olliver Schinagl <oliver@schinagl.nl>
 
-On 09/01/15 16:23, Jacek Anaszewski wrote:
-> This patch adds a description of 'flashes' property
-> to the samsung-fimc.txt.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+gpiolib uses a fixed string for the suffixes and defines it at 32 bytes.
+Later in the code snprintf is used with this fixed value of 32. Using
+sizeof() is safer in case the size for the suffixes is ever changed.
 
-> ---
->  .../devicetree/bindings/media/samsung-fimc.txt     |    7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> index 922d6f8..22a6b2f 100644
-> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> @@ -40,6 +40,12 @@ should be inactive. For the "active-a" state the camera port A must be activated
->  and the port B deactivated and for the state "active-b" it should be the other
->  way around.
->  
-> +Optional properties:
-> +
-> +- flashes - Array of phandles to flash LED devices, or their sub-nodes
-> +	    representing sub-leds.
-> +	    (see Documentation/devicetree/bindings/leds/common.txt)
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+---
+ drivers/gpio/gpiolib.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-How about renaming this to "illuminators" or something else more generic?
-The "torch" LED (for video recording illumination?) is not really a flash.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c926641..bf6016d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1665,9 +1665,11 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
+ 		if (con_id)
+-			snprintf(prop_name, 32, "%s-%s", con_id, suffixes[i]);
++			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
++							       suffixes[i]);
+ 		else
+-			snprintf(prop_name, 32, "%s", suffixes[i]);
++			snprintf(prop_name, sizeof(prop_name), "%s",
++							       suffixes[i]);
+ 
+ 		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
+ 						&of_flags);
+-- 
+2.1.4
 
-> +
->  The 'camera' node must include at least one 'fimc' child node.
->  
->  
-> @@ -166,6 +172,7 @@ Example:
->  		clock-output-names = "cam_a_clkout", "cam_b_clkout";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&cam_port_a_clk_active>;
-> +		flashes = <&camera_flash>, <&system_torch>;
->  		status = "okay";
->  		#address-cells = <1>;
->  		#size-cells = <1>;
---
-Thanks,
-Sylwester
