@@ -1,62 +1,67 @@
-From: Olliver Schinagl <o.schinagl@ultimaker.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Subject: Re: [PATCH v2 4/4] leds: no longer use unnamed gpios
-Date: Thu, 22 Jan 2015 10:37:46 +0100
-Message-ID: <54C0C4EA.5020404@ultimaker.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com> <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com> <2355733.gZvsF3iKWH@pcimr>
+Date: Thu, 22 Jan 2015 08:33:13 -0800
+Message-ID: <20150122163313.GD18153@dtor-ws>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+ <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <2355733.gZvsF3iKWH@pcimr>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:39357 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901AbbAVQdT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 22 Jan 2015 11:33:19 -0500
+Content-Disposition: inline
+In-Reply-To: <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Olliver Schinagl <o.schinagl@ultimaker.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hey Rojhalat,
+Hi Olliver,
 
-On 22-01-15 10:32, Rojhalat Ibrahim wrote:
-> On Wednesday 21 January 2015 22:33:48 Olliver Schinagl wrote:
->> From: Olliver Schinagl <oliver@schinagl.nl>
->>
->> The gpio document says we should not use unnamed bindings for gpios.
->> This patch uses the 'led-' prefix to the gpios and updates code and
->> documents. Because the devm_get_gpiod_from_child() falls back to usi=
-ng
->> old-style unnamed gpios, we can update the code first, and update
->> dts files as time allows.
->>
->> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> Where does devm_get_gpiod_from_child() fall back "to using old-style
-> unnamed gpios"?
-Your absolutly right, I accidentally forgot a patch that was supposed t=
-o=20
-get squashed into this patchset. The idea is to do the same as in=20
-gpio-keys-polled.c. I'll make sure it sits in v3 of the set! My appolog=
-ies!
+On Wed, Jan 21, 2015 at 10:33:48PM +0100, Olliver Schinagl wrote:
+> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+> index 097d721..eadb472 100644
+> --- a/drivers/input/keyboard/gpio_keys_polled.c
+> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+> @@ -125,15 +125,19 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+>  	device_for_each_child_node(dev, child) {
+>  		struct gpio_desc *desc;
+>  
+> -		desc = devm_get_gpiod_from_child(dev, NULL, child);
+> +		desc = devm_get_gpiod_from_child(dev, "gpio_keys_polled",
+> +						 child);
+>  		if (IS_ERR(desc)) {
+> -			error = PTR_ERR(desc);
+> -			if (error != -EPROBE_DEFER)
+> -				dev_err(dev,
+> -					"Failed to get gpio flags, error: %d\n",
+> -					error);
+> -			fwnode_handle_put(child);
+> -			return ERR_PTR(error);
+> +			desc = devm_get_gpiod_from_child(dev, NULL, child);
+> +			if (IS_ERR(desc)) {
+> +				error = PTR_ERR(desc);
+> +				if (error != -EPROBE_DEFER)
+> +					dev_err(dev,
+> +						"Failed to get gpio flags, error: %d\n",
+> +						error);
+> +				fwnode_handle_put(child);
+> +				return ERR_PTR(error);
+> +			}
+>  		}
+>  
 
-Olliver
->
-> After applying this patch the leds defined in my devicetree do not
-> work anymore.
->
->     Rojhalat
->
->
->
+I do not think this is correct. If devm_get_gpiod_from_child(dev,
+"gpio_keys_polled", child) retruns -EPROBE_DEFER we'll try
+devm_get_gpiod_from_child(dev, NULL, child). If that returns some other
+error we'll fail probing entire driver.
 
---=20
-Met vriendelijke groeten, Kind regards, =E4=B8=8E=E4=BA=B2=E5=88=87=E7=9A=
-=84=E9=97=AE=E5=80=99
+Did I mention how *I HATE* the -EPROBE_DEFER (the error that is not an
+error)?
 
-Olliver Schinagl
-Research & Development
-Ultimaker B.V.
-http://www.ultimaker.com
+Thanks.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Dmitry
