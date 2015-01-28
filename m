@@ -1,80 +1,39 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Reading /sys with side effects (was Re: [PATCH 1/2] Documentation:
- leds: Add description of LED Flash class extension)
-Date: Wed, 28 Jan 2015 09:43:28 +0100
-Message-ID: <54C8A130.8000807@samsung.com>
-References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
- <20150127221958.GA18993@amd>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
+Date: Wed, 28 Jan 2015 09:04:17 +0200
+Message-ID: <20150128070417.GK17565@valkosipuli.retiisi.org.uk>
+References: <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
+ <54B4DA81.7060900@samsung.com>
+ <CAL_JsqLYxB5hzLAWXpU=uncM5DEMZU78mP673H9oSSNB-cgcYQ@mail.gmail.com>
+ <54B8D4D0.3000904@samsung.com>
+ <CAL_Jsq+EFWzs1HP1tVt6P=p=HZn2AtSPjp55YrmMQi_mE+kNfQ@mail.gmail.com>
+ <54B933D0.1090004@samsung.com>
+ <54BE7DAB.80702@samsung.com>
+ <CAL_JsqKoiaUmVhbQdnNveG=AAYh4-OHGS70L+LAgLLoKChUuYQ@mail.gmail.com>
+ <20150120174010.GA2900@amd>
+ <54BF73B9.8060402@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150127221958.GA18993@amd>
+Content-Disposition: inline
+In-Reply-To: <54BF73B9.8060402@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg KH <greg@kroah.com>, kernel list <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robherring2@gmail.com>, linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
+On Wed, Jan 21, 2015 at 10:39:05AM +0100, Jacek Anaszewski wrote:
+> I agree. I think that led-sources-cnt is redundant. A list property
+> can be read using of_prop_next_u32 function. I missed that and thus
+> proposed putting led-sources-cnt in each sub-node to be able to read
+> led-sources list with of_property_read_u32_array.
+> 
+> Effectively, I propose to avoid adding led-sources-cnt property.
 
-On 01/27/2015 11:37 PM, Pavel Machek wrote:
-> Hi!
->
->> +	- flash_fault - list of flash faults that may have occurred:
->> +		* led-over-voltage - flash controller voltage to the flash LED
->> +			has exceededthe limit specific to the flash controller
->> +		* flash-timeout-exceeded - the flash strobe was still on when
->> +			the timeout set by the user has expired; not all flash
->> +			controllers may set this in all such conditions
->> +		* controller-over-temperature - the flash controller has
->> +			overheated
->> +		* controller-short-circuit - the short circuit protection
->> +			of the flash controller has been triggered
->> +		* led-power-supply-over-current - current in the LED power
->> +			supply has exceeded the limit specific to the flash
->> +			controller
->> +		* indicator-led-fault - the flash controller has detected
->> +			a short or open circuit condition on the indicator LED
->> +		* led-under-voltage - flash controller voltage to the flash
->> +			LED has been below the minimum limit specific to
->> +			the flash
->> +		* controller-under-voltage - the input voltage of the flash
->> +			controller is below the limit under which strobing the
->> +			flash at full current will not be possible. The condition
->> +			persists until this flag is no longer set
->> +		* led-over-temperature - the temperature of the LED has exceeded
->> +			its allowed upper limit
->> +
->> +		Flash faults are cleared, if possible, by reading the attribute.
->
-> That's bad. Now you can no longer present flash_fault file as readable
-> to non-root users, and grep -ri foo /sys will interfere with your
-> camera application.
->
-> Bad interface, just fix it.
-
-In my opinion it isn't crucial for the user to be aware of the
-fact that some non-persistent fault happened right after strobing the
-flash (e.g. over temperature).
-
-I cannot see anything harmful in the situation when someone does grep
-on /sys and clears non-persistent fault on a flash LED device.
-
-Also, not all devices may be able to report the faults that happened
-earlier but are not valid at the time of I2C readout. In that case the
-user will never now that the fault has ever occurred, unless they read
-the flash_fault attribute at the proper moment.
-
-In this case we cannot enforce consistent policy for all devices.
-
-Please describe the use case when clearing the fault on read can be
-harmful, if you have any.
-
-Moreover, I don't see your reply to Sakari's message [1], where he
-considers the problem from several perspectives.
-
-[1] http://www.spinics.net/lists/linux-leds/msg02653.html
+You can also read the array size using of_get_property().
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
