@@ -1,58 +1,45 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Reading /sys with side effects (was Re: [PATCH 1/2] Documentation:
- leds: Add description of LED Flash class extension)
-Date: Tue, 27 Jan 2015 23:37:08 +0100
-Message-ID: <20150127221958.GA18993@amd>
-References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] leds: ipaq needs LEDS_CLASS
+Date: Wed, 28 Jan 2015 21:05:50 +0100
+Message-ID: <7354226.f7e3npkAlC@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51798 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932973AbbA0WhM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jan 2015 17:37:12 -0500
-Content-Disposition: inline
-In-Reply-To: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Greg KH <greg@kroah.com>, kernel list <linux-kernel@vger.kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-Hi!
+All other drivers have a dependency on this already, but this one
+does not, which can lead to a link error when LEDS_CLASS is not set.
 
-> +	- flash_fault - list of flash faults that may have occurred:
-> +		* led-over-voltage - flash controller voltage to the flash LED
-> +			has exceededthe limit specific to the flash controller
-> +		* flash-timeout-exceeded - the flash strobe was still on when
-> +			the timeout set by the user has expired; not all flash
-> +			controllers may set this in all such conditions
-> +		* controller-over-temperature - the flash controller has
-> +			overheated
-> +		* controller-short-circuit - the short circuit protection
-> +			of the flash controller has been triggered
-> +		* led-power-supply-over-current - current in the LED power
-> +			supply has exceeded the limit specific to the flash
-> +			controller
-> +		* indicator-led-fault - the flash controller has detected
-> +			a short or open circuit condition on the indicator LED
-> +		* led-under-voltage - flash controller voltage to the flash
-> +			LED has been below the minimum limit specific to
-> +			the flash
-> +		* controller-under-voltage - the input voltage of the flash
-> +			controller is below the limit under which strobing the
-> +			flash at full current will not be possible. The condition
-> +			persists until this flag is no longer set
-> +		* led-over-temperature - the temperature of the LED has exceeded
-> +			its allowed upper limit
-> +
-> +		Flash faults are cleared, if possible, by reading the attribute.
+drivers/built-in.o: In function `micro_leds_remove':
+:(.text+0x13d1bc): undefined reference to `led_classdev_unregister'
+drivers/built-in.o: In function `micro_leds_probe':
+:(.text+0x13d3d0): undefined reference to `led_classdev_register'
 
-That's bad. Now you can no longer present flash_fault file as readable
-to non-root users, and grep -ri foo /sys will interfere with your
-camera application.
+This patch adds the missing dependency.
 
-Bad interface, just fix it.
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 95029dfd311a..927bb4491e1c 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -144,6 +144,7 @@ config LEDS_SUNFIRE
+ 
+ config LEDS_IPAQ_MICRO
+ 	tristate "LED Support for the Compaq iPAQ h3xxx"
++	depends on LEDS_CLASS
+ 	depends on MFD_IPAQ_MICRO
+ 	help
+ 	  Choose this option if you want to use the notification LED on
