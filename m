@@ -1,82 +1,84 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: Re: [PATCH v5 0/3] mfd: max8997: add regmap support
-Date: Wed, 28 Jan 2015 15:20:11 +0100
-Message-ID: <54C8F01B.5030300@samsung.com>
-References: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v10 04/19] dt-binding: mfd: max77693: Add DT binding
+ related macros
+Date: Wed, 28 Jan 2015 10:52:53 +0200
+Message-ID: <20150128085253.GL17565@valkosipuli.retiisi.org.uk>
+References: <1420816989-1808-1-git-send-email-j.anaszewski@samsung.com>
+ <1420816989-1808-5-git-send-email-j.anaszewski@samsung.com>
+ <20150120111243.GC13701@x1>
+ <54BE4FB1.3030209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, dmitry.torokhov@gmail.com, a.zummo@towertech.it
-Cc: sameo@linux.intel.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54BE4FB1.3030209@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Hi Jacek,
 
-The first version of this patchset was send to kernel list almost 9
-months ago and still I don't have all needed Acks. The missing ones are
-for changes in INPUT and RTC subsystems.
+On Tue, Jan 20, 2015 at 01:53:05PM +0100, Jacek Anaszewski wrote:
+> On 01/20/2015 12:12 PM, Lee Jones wrote:
+> >On Fri, 09 Jan 2015, Jacek Anaszewski wrote:
+> >
+> >>Add macros for max77693 led part related binding.
+> >>
+> >>Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >>Cc: Lee Jones <lee.jones@linaro.org>
+> >>Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> >>---
+> >>  include/dt-bindings/mfd/max77693.h |   21 +++++++++++++++++++++
+> >>  1 file changed, 21 insertions(+)
+> >>  create mode 100644 include/dt-bindings/mfd/max77693.h
+> >>
+> >>diff --git a/include/dt-bindings/mfd/max77693.h b/include/dt-bindings/mfd/max77693.h
+> >>new file mode 100644
+> >>index 0000000..f53e197
+> >>--- /dev/null
+> >>+++ b/include/dt-bindings/mfd/max77693.h
+> >>@@ -0,0 +1,21 @@
+> >>+/*
+> >>+ * This header provides macros for MAX77693 device binding
+> >>+ *
+> >>+ * Copyright (C) 2014, Samsung Electronics Co., Ltd.
+> >>+ *
+> >>+ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>+ */
+> >>+
+> >>+#ifndef __DT_BINDINGS_MAX77693_H__
+> >>+#define __DT_BINDINGS_MAX77693_H
+> >>+
+> >>+/* External trigger type */
+> >>+#define MAX77693_LED_TRIG_TYPE_EDGE	0
+> >>+#define MAX77693_LED_TRIG_TYPE_LEVEL	1
+> >>+
+> >>+/* Boost modes */
+> >>+#define MAX77693_LED_BOOST_OFF		0
+> >>+#define MAX77693_LED_BOOST_ADAPTIVE	1
+> >>+#define MAX77693_LED_BOOST_FIXED	2
+> >>+
+> >>+#endif /* __DT_BINDINGS_MAX77693_H */
+> >
+> >These look fairly generic.  Do generic LED defines already exist?  If
+> >not, can they?
+> 
+> I am not entirely sure that they are generic. Different devices
+> may define different trigger types for low current LEDs and flash
+> LEDs. Boost modes could also have different semantics.
+> 
+> Regardless of the above we can consider renaming the file to
+> include/dt-bindings/leds/max77693.h
+> 
+> Bryan - what is your opinion?
 
-Dmitry, Alessandro, could you please have a look at this patches and
-give your Acks?
+At least trigger type can be chosen for lm3555 (as3645a) as well. I'm not
+sure about boost mode.
 
-Best regards,
-Robert Baldyga
+-- 
+Regards,
 
-On 11/12/2014 08:23 AM, Robert Baldyga wrote:
-> This patchset modifies max8997 driver and associated function drivers to use
-> register maps instead of operating directly on i2c bus. This change allowed
-> to simplify irq handling, and to move some initializations to individual
-> function drivers. Hence now when some functions are not enabled, their i2c
-> clients, regmaps and irqs are not registered.
-> 
-> Because patches are under review for very long time and I still don't have
-> all needed Acks, I'm resending this series rebased to the latest next branch.
-> 
-> Best regards
-> Robert Baldyga
-> Samsung R&D Institute Poland
-> 
-> Changelog:
-> 
-> v5:
-> - rebase patches to last next branch
-> 
-> v4:
-> - remove patch moving regmap handling to function drivers
-> 
-> v3: https://lkml.org/lkml/2014/3/13/101
-> - fix error handling
-> - fix deinitializations order
-> - move muic irq enum values renaming to separate patch
-> 
-> v2: https://lkml.org/lkml/2014/3/12/237
-> - rebase patches on Lee Jones' MFD tree
-> - add missing selects in Kconfig
-> - add missing deinitializations
-> - add interrupt disabling when suspend
-> - few minor changes and typo fixes
-> 
-> v1: https://lkml.org/lkml/2014/3/11/291
-> 
-> Robert Baldyga (3):
->   mfd: max8997: use regmap to access registers
->   mfd: max8997: handle IRQs using regmap
->   mfd: max8997: change irq names to upper case
-> 
->  drivers/extcon/extcon-max8997.c     |  66 +++---
->  drivers/input/misc/max8997_haptic.c |  34 ++--
->  drivers/leds/leds-max8997.c         |  13 +-
->  drivers/mfd/Kconfig                 |   3 +-
->  drivers/mfd/Makefile                |   2 +-
->  drivers/mfd/max8997-irq.c           | 387 ------------------------------------
->  drivers/mfd/max8997.c               | 245 +++++++++++++++--------
->  drivers/power/max8997_charger.c     |  33 +--
->  drivers/regulator/max8997.c         |  87 ++++----
->  drivers/rtc/rtc-max8997.c           |  58 +++---
->  include/linux/mfd/max8997-private.h |  82 ++++++--
->  11 files changed, 381 insertions(+), 629 deletions(-)
->  delete mode 100644 drivers/mfd/max8997-irq.c
-> 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
