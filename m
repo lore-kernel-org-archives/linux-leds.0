@@ -1,99 +1,92 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 2/2] DT: leds: Add led-sources property
-Date: Thu, 29 Jan 2015 15:03:12 -0600
-Message-ID: <CAL_JsqK28ZKLrzFH175GM9Ekbem2JcB9GhL-yB2-J4fq0RMCzg@mail.gmail.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: Reading /sys with side effects (was Re: [PATCH 1/2]
+ Documentation: leds: Add description of LED Flash class extension)
+Date: Thu, 29 Jan 2015 22:14:20 +0100
+Message-ID: <20150129211420.GA21140@amd>
 References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
- <1422346028-16739-2-git-send-email-j.anaszewski@samsung.com> <54CA49F8.2030501@samsung.com>
+ <20150127221958.GA18993@amd>
+ <54C8A130.8000807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:51714 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbbA2VDe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 29 Jan 2015 16:03:34 -0500
-In-Reply-To: <54CA49F8.2030501@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <54C8A130.8000807-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, kernel list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, sakari.ailus@iki.fi, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On Thu, Jan 29, 2015 at 8:55 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Rob,
->
-> Have we achieved consensus concerning this patch?
-> If so, can you give your ack?
+Hi!
 
-I think so.
+> >>+	- flash_fault - list of flash faults that may have occurred:
+> >>+		* led-over-voltage - flash controller voltage to the flash LED
+> >>+			has exceededthe limit specific to the flash controller
+> >>+		* flash-timeout-exceeded - the flash strobe was still on when
+> >>+			the timeout set by the user has expired; not all flash
+> >>+			controllers may set this in all such conditions
+> >>+		* controller-over-temperature - the flash controller has
+> >>+			overheated
+> >>+		* controller-short-circuit - the short circuit protection
+> >>+			of the flash controller has been triggered
+> >>+		* led-power-supply-over-current - current in the LED power
+> >>+			supply has exceeded the limit specific to the flash
+> >>+			controller
+> >>+		* indicator-led-fault - the flash controller has detected
+> >>+			a short or open circuit condition on the indicator LED
+> >>+		* led-under-voltage - flash controller voltage to the flash
+> >>+			LED has been below the minimum limit specific to
+> >>+			the flash
+> >>+		* controller-under-voltage - the input voltage of the flash
+> >>+			controller is below the limit under which strobing the
+> >>+			flash at full current will not be possible. The condition
+> >>+			persists until this flag is no longer set
+> >>+		* led-over-temperature - the temperature of the LED has exceeded
+> >>+			its allowed upper limit
+> >>+
+> >>+		Flash faults are cleared, if possible, by reading the attribute.
+> >
+> >That's bad. Now you can no longer present flash_fault file as readable
+> >to non-root users, and grep -ri foo /sys will interfere with your
+> >camera application.
+> >
+> >Bad interface, just fix it.
+> 
+> In my opinion it isn't crucial for the user to be aware of the
+> fact that some non-persistent fault happened right after strobing the
+> flash (e.g. over temperature).
+> 
+> I cannot see anything harmful in the situation when someone does grep
+> on /sys and clears non-persistent fault on a flash LED device.
 
-Acked-by: Rob Herring <robh@kernel.org>
+So why export the faults at all?
 
->
->
-> On 01/27/2015 09:07 AM, Jacek Anaszewski wrote:
->>
->> Add a property for defining device outputs the LED
->> represented by the DT child node is connected to.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Pawel Moll <pawel.moll@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> Cc: Kumar Gala <galak@codeaurora.org>
->> Cc: devicetree@vger.kernel.org
->> ---
->>   Documentation/devicetree/bindings/leds/common.txt |   16
->> +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/leds/common.txt
->> b/Documentation/devicetree/bindings/leds/common.txt
->> index a2c3f7a..34811c5 100644
->> --- a/Documentation/devicetree/bindings/leds/common.txt
->> +++ b/Documentation/devicetree/bindings/leds/common.txt
->> @@ -1,6 +1,19 @@
->>   Common leds properties.
->>
->> +LED and flash LED devices provide the same basic functionality as current
->> +regulators, but extended with LED and flash LED specific features like
->> +blinking patterns, flash timeout, flash faults and external flash strobe
->> mode.
->> +
->> +Many LED devices expose more than one current output that can be
->> connected
->> +to one or more discrete LED component. Since the arrangement of
->> connections
->> +can influence the way of the LED device initialization, the LED
->> components
->> +have to be tightly coupled with the LED device binding. They are
->> represented
->> +by child nodes of the parent LED device binding.
->> +
->>   Optional properties for child nodes:
->> +- led-sources : List of device current outputs the LED is connected to.
->> The
->> +               outputs are identified by the numbers that must be defined
->> +               in the LED device binding documentation.
->>   - label : The label for this LED.  If omitted, the label is
->>     taken from the node name (excluding the unit address).
->>
->> @@ -33,7 +46,8 @@ system-status {
->>
->>   camera-flash {
->>         label = "Flash";
->> +       led-sources = <0>, <1>;
->>         max-microamp = <50000>;
->>         flash-max-microamp = <320000>;
->>         flash-timeout-us = <500000>;
->> -}
->> +};
->>
->
->
-> --
-> Best Regards,
-> Jacek Anaszewski
+I mean... another user can just read the file in loop, and the camera
+application will not get any useful information.
+
+> Also, not all devices may be able to report the faults that happened
+> earlier but are not valid at the time of I2C readout. In that case the
+> user will never now that the fault has ever occurred, unless they read
+> the flash_fault attribute at the proper moment.
+> 
+> In this case we cannot enforce consistent policy for all devices.
+
+Too bad. But lets do a good job at least for devices where we can do a
+good job, ok?
+
+> Please describe the use case when clearing the fault on read can be
+> harmful, if you have any.
+
+while true; grep -ri foo /sys; done
+
+And no, your application trying to read the faults will very probably
+read nothing.
+
+									Pavel
+
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
