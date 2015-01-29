@@ -1,115 +1,109 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v8 02/14] Documentation: leds: Add description of LED
- Flash class extension
-Date: Thu, 29 Jan 2015 22:24:40 +0100
-Message-ID: <20150129212440.GB21140@amd>
-References: <547C539A.4010500@samsung.com>
- <20141201130437.GB24737@amd>
- <547C7420.4080801@samsung.com>
- <CAK5ve-KMNszyz6br_Q_dOhvk=_8ev6Uz-ZhPnYBn-ZvuohQpVA@mail.gmail.com>
- <20141206124310.GB3411@amd>
- <5485D7F8.10807@samsung.com>
- <20141208201855.GA16648@amd>
- <5486B8AE.5000408@samsung.com>
- <20141209155033.GB21422@amd>
- <20141210231431.GP15559@valkosipuli.retiisi.org.uk>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 2/2] DT: leds: Add led-sources property
+Date: Thu, 29 Jan 2015 14:14:54 -0800
+Message-ID: <CAK5ve-LKBfjRzxK_b0ByEF5uWHfAaBGS2OPznOiYNg9+FJP5Gg@mail.gmail.com>
+References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
+ <1422346028-16739-2-git-send-email-j.anaszewski@samsung.com>
+ <54CA49F8.2030501@samsung.com> <CAL_JsqK28ZKLrzFH175GM9Ekbem2JcB9GhL-yB2-J4fq0RMCzg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141210231431.GP15559@valkosipuli.retiisi.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, b.zolnierkie@samsung.com, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:63460 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758825AbbA2WPR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 29 Jan 2015 17:15:17 -0500
+In-Reply-To: <CAL_JsqK28ZKLrzFH175GM9Ekbem2JcB9GhL-yB2-J4fq0RMCzg@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi!
+On Thu, Jan 29, 2015 at 1:03 PM, Rob Herring <robherring2@gmail.com> wrote:
+> On Thu, Jan 29, 2015 at 8:55 AM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> Hi Rob,
+>>
+>> Have we achieved consensus concerning this patch?
+>> If so, can you give your ack?
+>
+> I think so.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+>>
 
-> > > This approach would require implementing additional mechanisms on
-> > > both sides: LED Flash class core and a LED Flash class driver.
-> > > In the former the sysfs attribute write permissions would have
-> > > to be decided in the runtime and in the latter caching mechanism
-> > 
-> > Write attributes at runtime? Why? We can emulate sane and consistent
-> > behaviour for all the controllers: read gives you list of faults,
-> > write clears it. We can do it for all the controllers.
-> > 
-> > Only cost is few lines of code in the drivers where hardware clears
-> > faults at read.
-> 
-> Please take the time to read this, and consider it.
-> 
-> I'd say the cost is I2C register access, not so much a few lines added to
-> the drivers. The functionality and behaviour between the flash controllers
-> varies. They have different faults, presence of (some) faults may prevent
-> strobing, some support reading the flash status and some don't.
-> 
-> Some of the flash faults are mostly relevant in production testing, some can
-> be used to find hardware issues during use (rare) and some are produced in
-> common use (timeout, for instance).
-> 
-> The V4L2 flash API defines that reading the faults clears them, but does not
-> state whether presence of faults would prevent further use of the flash.
-> This is flash controller chip specific.
+OK, I can merge this patch into my tree with you guys Ack.
+Jacek, does this patch depend on the first one which you are still
+discussing with Pavel? Can I merge this one firstly.
 
-Yeah, but we are discussing sysfs reads. V4L2 API can just behave differently.
+-Bryan
 
-> I think you *could* force a policy on the level of kernel API, for instance
-> require that the user clears the faults before strobing again rather than
-> relying on the chip requiring this instead.
 
-Yes, we could do that.
-
-> Most of the time there are no faults. When there are, they may appear at
-> some point of time after the strobing, but how long? Probably roughly after
-> the timeout period the flash should have faults available if there were any
-> --- except if the strobe is external such as a sensor timed strobe. In that
-> case the software running on the CPU has no knowledge when the flash is
-> strobed nor when the faults should be read. So the requirement of checking
-> the faults would probably have to be limited to software strobe only. The
-> user would still have to be able to check the faults for externally strobed
-> pulses. Would it be acceptable that the interface was different
-> there?
-
-Should the user just read the faults before scheduling next strobe?
-
-> So, after the user has strobed, when the user should check the flash faults?
-> After the timeout period has passed? Right before strobing again? If this
-> was a requirement, it adds an additional I2C access to potentially the place
-> which should absolutely have no extra delay --- the flash strobe time. This
-> would be highly unwanted.
-
-I'd do it before strobing again. Not neccessarily "just" before
-strobing again (you claim it is slow ... is it really so slow it matters)?
-
-> Finally, should the LED flash class enforce such a policy, would the V4L2
-> flash API which is provided to the same devices be changed as well? I'm not
-> against that if we have
-> 
-> 	1) can come up with a good policy that is understood to be
-> 	   meaningful for all thinkable flash controller implementations and
-> 
-> 	2) agreement the behaviour can be changed.
-
-I am saying that reading from /sys should not have side effects. For
-V4L2, existing behaviour might be ok.
-
-Each driver should have two operations: read_faults() and
-clear_faults().
-
-On devices where i2c read clears faults, operations will be:
-
-int my_faults
-
-read_faults()
-	my_faults |= read_i2c_faults()
-	return my_faults
-
-clear_faults()
-	my_faults = 0
-
-Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>>
+>> On 01/27/2015 09:07 AM, Jacek Anaszewski wrote:
+>>>
+>>> Add a property for defining device outputs the LED
+>>> represented by the DT child node is connected to.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> Cc: Bryan Wu <cooloney@gmail.com>
+>>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Cc: devicetree@vger.kernel.org
+>>> ---
+>>>   Documentation/devicetree/bindings/leds/common.txt |   16
+>>> +++++++++++++++-
+>>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt
+>>> b/Documentation/devicetree/bindings/leds/common.txt
+>>> index a2c3f7a..34811c5 100644
+>>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>>> @@ -1,6 +1,19 @@
+>>>   Common leds properties.
+>>>
+>>> +LED and flash LED devices provide the same basic functionality as current
+>>> +regulators, but extended with LED and flash LED specific features like
+>>> +blinking patterns, flash timeout, flash faults and external flash strobe
+>>> mode.
+>>> +
+>>> +Many LED devices expose more than one current output that can be
+>>> connected
+>>> +to one or more discrete LED component. Since the arrangement of
+>>> connections
+>>> +can influence the way of the LED device initialization, the LED
+>>> components
+>>> +have to be tightly coupled with the LED device binding. They are
+>>> represented
+>>> +by child nodes of the parent LED device binding.
+>>> +
+>>>   Optional properties for child nodes:
+>>> +- led-sources : List of device current outputs the LED is connected to.
+>>> The
+>>> +               outputs are identified by the numbers that must be defined
+>>> +               in the LED device binding documentation.
+>>>   - label : The label for this LED.  If omitted, the label is
+>>>     taken from the node name (excluding the unit address).
+>>>
+>>> @@ -33,7 +46,8 @@ system-status {
+>>>
+>>>   camera-flash {
+>>>         label = "Flash";
+>>> +       led-sources = <0>, <1>;
+>>>         max-microamp = <50000>;
+>>>         flash-max-microamp = <320000>;
+>>>         flash-timeout-us = <500000>;
+>>> -}
+>>> +};
+>>>
+>>
+>>
+>> --
+>> Best Regards,
+>> Jacek Anaszewski
