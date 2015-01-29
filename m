@@ -1,39 +1,39 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH/RFC v10 03/19] DT: leds: Add led-sources property
-Date: Wed, 28 Jan 2015 09:04:17 +0200
-Message-ID: <20150128070417.GK17565@valkosipuli.retiisi.org.uk>
-References: <CAL_JsqKpJtUG0G6g1GOuSVpc31oe-dp3qdrKJUE0upG-xRDFhA@mail.gmail.com>
- <54B4DA81.7060900@samsung.com>
- <CAL_JsqLYxB5hzLAWXpU=uncM5DEMZU78mP673H9oSSNB-cgcYQ@mail.gmail.com>
- <54B8D4D0.3000904@samsung.com>
- <CAL_Jsq+EFWzs1HP1tVt6P=p=HZn2AtSPjp55YrmMQi_mE+kNfQ@mail.gmail.com>
- <54B933D0.1090004@samsung.com>
- <54BE7DAB.80702@samsung.com>
- <CAL_JsqKoiaUmVhbQdnNveG=AAYh4-OHGS70L+LAgLLoKChUuYQ@mail.gmail.com>
- <20150120174010.GA2900@amd>
- <54BF73B9.8060402@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] leds: ipaq needs LEDS_CLASS
+Date: Thu, 29 Jan 2015 10:24:18 +0100
+Message-ID: <CACRpkdZi9R8f+6cGz8cMmBTdvHpMu5SDG7qwbMvHXNFk=81g2w@mail.gmail.com>
+References: <7354226.f7e3npkAlC@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54BF73B9.8060402@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robherring2@gmail.com>, linux-leds@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:53236 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750807AbbA2JYU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 29 Jan 2015 04:24:20 -0500
+Received: by mail-lb0-f177.google.com with SMTP id p9so25911645lbv.8
+        for <linux-leds@vger.kernel.org>; Thu, 29 Jan 2015 01:24:18 -0800 (PST)
+In-Reply-To: <7354226.f7e3npkAlC@wuerfel>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>
 
-On Wed, Jan 21, 2015 at 10:39:05AM +0100, Jacek Anaszewski wrote:
-> I agree. I think that led-sources-cnt is redundant. A list property
-> can be read using of_prop_next_u32 function. I missed that and thus
-> proposed putting led-sources-cnt in each sub-node to be able to read
-> led-sources list with of_property_read_u32_array.
-> 
-> Effectively, I propose to avoid adding led-sources-cnt property.
+On Wed, Jan 28, 2015 at 9:05 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-You can also read the array size using of_get_property().
+> All other drivers have a dependency on this already, but this one
+> does not, which can lead to a link error when LEDS_CLASS is not set.
+>
+> drivers/built-in.o: In function `micro_leds_remove':
+> :(.text+0x13d1bc): undefined reference to `led_classdev_unregister'
+> drivers/built-in.o: In function `micro_leds_probe':
+> :(.text+0x13d3d0): undefined reference to `led_classdev_register'
+>
+> This patch adds the missing dependency.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
--- 
-Regards,
+Sorry for screwing up...
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Yours,
+Linus Walleij
