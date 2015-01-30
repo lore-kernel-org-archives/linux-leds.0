@@ -1,89 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: Reading /sys with side effects (was Re: [PATCH 1/2]
- Documentation: leds: Add description of LED Flash class extension)
-Date: Fri, 30 Jan 2015 08:40:27 -0800
-Message-ID: <20150130164027.GA25830@kroah.com>
-References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
- <20150127221958.GA18993@amd>
- <54C8A130.8000807@samsung.com>
- <20150129211420.GA21140@amd>
- <54CB4702.1090508@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
+Date: Fri, 30 Jan 2015 11:12:53 -0800
+Message-ID: <CAK5ve-KqC2gojeFx_hSwR6Riv1YPkhO49eqaa2bOxVhChLDtXw@mail.gmail.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+ <1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com> <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54CB4702.1090508@samsung.com>
+In-Reply-To: <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, kernel list <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Olliver Schinagl <o.schinagl@ultimaker.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Jan 30, 2015 at 09:55:30AM +0100, Jacek Anaszewski wrote:
-> Hi Pavel,
-> 
-> On 01/29/2015 10:14 PM, Pavel Machek wrote:
-> >Hi!
-> >
-> >>>>+	- flash_fault - list of flash faults that may have occurred:
-> >>>>+		* led-over-voltage - flash controller voltage to the flash LED
-> >>>>+			has exceededthe limit specific to the flash controller
-> >>>>+		* flash-timeout-exceeded - the flash strobe was still on when
-> >>>>+			the timeout set by the user has expired; not all flash
-> >>>>+			controllers may set this in all such conditions
-> >>>>+		* controller-over-temperature - the flash controller has
-> >>>>+			overheated
-> >>>>+		* controller-short-circuit - the short circuit protection
-> >>>>+			of the flash controller has been triggered
-> >>>>+		* led-power-supply-over-current - current in the LED power
-> >>>>+			supply has exceeded the limit specific to the flash
-> >>>>+			controller
-> >>>>+		* indicator-led-fault - the flash controller has detected
-> >>>>+			a short or open circuit condition on the indicator LED
-> >>>>+		* led-under-voltage - flash controller voltage to the flash
-> >>>>+			LED has been below the minimum limit specific to
-> >>>>+			the flash
-> >>>>+		* controller-under-voltage - the input voltage of the flash
-> >>>>+			controller is below the limit under which strobing the
-> >>>>+			flash at full current will not be possible. The condition
-> >>>>+			persists until this flag is no longer set
-> >>>>+		* led-over-temperature - the temperature of the LED has exceeded
-> >>>>+			its allowed upper limit
-> >>>>+
-> >>>>+		Flash faults are cleared, if possible, by reading the attribute.
-> >>>
-> >>>That's bad. Now you can no longer present flash_fault file as readable
-> >>>to non-root users, and grep -ri foo /sys will interfere with your
-> >>>camera application.
-> >>>
-> >>>Bad interface, just fix it.
-> >>
-> >>In my opinion it isn't crucial for the user to be aware of the
-> >>fact that some non-persistent fault happened right after strobing the
-> >>flash (e.g. over temperature).
-> >>
-> >>I cannot see anything harmful in the situation when someone does grep
-> >>on /sys and clears non-persistent fault on a flash LED device.
-> >
-> >So why export the faults at all?
-> 
-> Faults may prevent strobing the flash in case of some devices.
-> The example of such a device is ADP1663 (drivers/media/i2c/adp1653.c).
-> This driver reads the faults before strobing the flash and if a
-> fault preventing strobing has occurred it returns -EBUSY.
-> 
-> If this driver was made a LED Flash class driver, then it would
-> expose flash_faults attribute. The driver would probably need
-> redesigning - checking the faults before strobing would have to be
-> avoided and it should be left to the userspace.
+On Fri, Jan 30, 2015 at 5:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
+> <o.schinagl@ultimaker.com> wrote:
+>
+>> From: Olliver Schinagl <oliver@schinagl.nl>
+>>
+>> The gpio binding document says that new code should always use named
+>> gpios. Patch 40b73183 added support to parse a list of gpios from child
+>> nodes, but does not make it possible to use named gpios. This patch adds
+>> the con_id property and implements it is done in gpiolib.c, where the
+>> old-style of using unnamed gpios still works.
+>>
+>> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+>> ---
+>>  drivers/gpio/devres.c                     | 18 +++++++++++++++++-
+>>  drivers/input/keyboard/gpio_keys_polled.c |  2 +-
+>>  drivers/leds/leds-gpio.c                  |  2 +-
+>>  include/linux/gpio/consumer.h             |  1 +
+>
+> Alexandre: does this match your vision of how it should work, i.e. ACK?
+>
+> Bryan/Dmitry: can you ACK the oneliners in your subsystems?
 
-That's fine, but Pavel's point is that you shouldn't "clear a fault" by
-reading a sysfs file as you don't control who reads all sysfs files
-(hint, libudev might cache all attributes when they are found / change,
-which could prevent anyone else from seeing that fault.)
+Sure, please take my Ack
+Acked-by: Bryan Wu <cooloney@gmail.com>
 
-So please fix this, make a write to clear a fault or some other such
-explicit action, not a simple read.  That's not an acceptable api.
-
-thanks,
-
-greg k-h
+>
+> Yours,
+> Linus Walleij
