@@ -1,46 +1,122 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] DT: leds: Add led-sources property
-Date: Thu, 29 Jan 2015 14:59:42 -0800
-Message-ID: <CAK5ve-L9W1+jED=jT9UYaU8CeN+QaGskHoo-os+ABZhJqN6n3w@mail.gmail.com>
-References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
- <1422346028-16739-2-git-send-email-j.anaszewski@samsung.com>
- <54CA49F8.2030501@samsung.com> <CAL_JsqK28ZKLrzFH175GM9Ekbem2JcB9GhL-yB2-J4fq0RMCzg@mail.gmail.com>
- <CAK5ve-LKBfjRzxK_b0ByEF5uWHfAaBGS2OPznOiYNg9+FJP5Gg@mail.gmail.com> <20150129223010.GA2110@amd>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 3/3] mfd: max8997: change irq names to upper case
+Date: Fri, 30 Jan 2015 10:00:57 +0900
+Message-ID: <54CAD7C9.3080003@samsung.com>
+References: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
+ <1415776996-11569-4-git-send-email-r.baldyga@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:43839 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752664AbbA2XAD (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 29 Jan 2015 18:00:03 -0500
-In-Reply-To: <20150129223010.GA2110@amd>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1415776996-11569-4-git-send-email-r.baldyga@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Robert Baldyga <r.baldyga@samsung.com>
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Rob Herring <robherring2@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On Thu, Jan 29, 2015 at 2:30 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Thu 2015-01-29 14:14:54, Bryan Wu wrote:
->> On Thu, Jan 29, 2015 at 1:03 PM, Rob Herring <robherring2@gmail.com> wrote:
->> > On Thu, Jan 29, 2015 at 8:55 AM, Jacek Anaszewski
->> > <j.anaszewski@samsung.com> wrote:
->> >> Hi Rob,
->> >>
->> >> Have we achieved consensus concerning this patch?
->> >> If so, can you give your ack?
->> >
->> > I think so.
->> >
->> > Acked-by: Rob Herring <robh@kernel.org>
->> >
->> >>
->>
->> OK, I can merge this patch into my tree with you guys Ack.
->> Jacek, does this patch depend on the first one which you are still
->> discussing with Pavel? Can I merge this one firstly.
->
-> Yes, you can.. they are independend.
->                                                                 Pavel
+Hi Robert,
 
-Applied, thanks.
--Bryan
+For extcon part,
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Thanks,
+Chanwoo Choi
+
+On 11/12/2014 04:23 PM, Robert Baldyga wrote:
+> This patch changes naming convention of MUIC interrupts form CamelCase
+> to upper case. It makes names more readable and consistent with another
+> interrupt names in max8997 driver.
+> 
+> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> [For the mfd part]
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/extcon/extcon-max8997.c     | 32 ++++++++++++++++----------------
+>  include/linux/mfd/max8997-private.h | 16 ++++++++--------
+>  2 files changed, 24 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+> index 172dbd6..834b72f 100644
+> --- a/drivers/extcon/extcon-max8997.c
+> +++ b/drivers/extcon/extcon-max8997.c
+> @@ -46,15 +46,15 @@ struct max8997_muic_irq {
+>  };
+>  
+>  static struct max8997_muic_irq muic_irqs[] = {
+> -	{ MAX8997_MUICIRQ_ADCError,	"muic-ADCERROR" },
+> -	{ MAX8997_MUICIRQ_ADCLow,	"muic-ADCLOW" },
+> -	{ MAX8997_MUICIRQ_ADC,		"muic-ADC" },
+> -	{ MAX8997_MUICIRQ_VBVolt,	"muic-VBVOLT" },
+> -	{ MAX8997_MUICIRQ_DBChg,	"muic-DBCHG" },
+> -	{ MAX8997_MUICIRQ_DCDTmr,	"muic-DCDTMR" },
+> -	{ MAX8997_MUICIRQ_ChgDetRun,	"muic-CHGDETRUN" },
+> -	{ MAX8997_MUICIRQ_ChgTyp,	"muic-CHGTYP" },
+> -	{ MAX8997_MUICIRQ_OVP,		"muic-OVP" },
+> +	{ MAX8997_MUICIRQ_ADCERROR,	"MUIC-ADCERROR" },
+> +	{ MAX8997_MUICIRQ_ADCLOW,	"MUIC-ADCLOW" },
+> +	{ MAX8997_MUICIRQ_ADC,		"MUIC-ADC" },
+> +	{ MAX8997_MUICIRQ_VBVOLT,	"MUIC-VBVOLT" },
+> +	{ MAX8997_MUICIRQ_DBCHG,	"MUIC-DBCHG" },
+> +	{ MAX8997_MUICIRQ_DCDTMR,	"MUIC-DCDTMR" },
+> +	{ MAX8997_MUICIRQ_CHGDETRUN,	"MUIC-CHGDETRUN" },
+> +	{ MAX8997_MUICIRQ_CHGTYP,	"MUIC-CHGTYP" },
+> +	{ MAX8997_MUICIRQ_OVP,		"MUIC-OVP" },
+>  };
+>  
+>  /* Define supported cable type */
+> @@ -553,17 +553,17 @@ static void max8997_muic_irq_work(struct work_struct *work)
+>  	}
+>  
+>  	switch (irq_type) {
+> -	case MAX8997_MUICIRQ_ADCError:
+> -	case MAX8997_MUICIRQ_ADCLow:
+> +	case MAX8997_MUICIRQ_ADCERROR:
+> +	case MAX8997_MUICIRQ_ADCLOW:
+>  	case MAX8997_MUICIRQ_ADC:
+>  		/* Handle all of cable except for charger cable */
+>  		ret = max8997_muic_adc_handler(info);
+>  		break;
+> -	case MAX8997_MUICIRQ_VBVolt:
+> -	case MAX8997_MUICIRQ_DBChg:
+> -	case MAX8997_MUICIRQ_DCDTmr:
+> -	case MAX8997_MUICIRQ_ChgDetRun:
+> -	case MAX8997_MUICIRQ_ChgTyp:
+> +	case MAX8997_MUICIRQ_VBVOLT:
+> +	case MAX8997_MUICIRQ_DBCHG:
+> +	case MAX8997_MUICIRQ_DCDTMR:
+> +	case MAX8997_MUICIRQ_CHGDETRUN:
+> +	case MAX8997_MUICIRQ_CHGTYP:
+>  		/* Handle charger cable */
+>  		ret = max8997_muic_chg_handler(info);
+>  		break;
+> diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8997-private.h
+> index f42ea22..2817fa6 100644
+> --- a/include/linux/mfd/max8997-private.h
+> +++ b/include/linux/mfd/max8997-private.h
+> @@ -411,14 +411,14 @@ enum max8997_irq {
+>  
+>  enum max8997_irq_muic {
+>  	MAX8997_MUICIRQ_ADC,
+> -	MAX8997_MUICIRQ_ADCLow,
+> -	MAX8997_MUICIRQ_ADCError,
+> -
+> -	MAX8997_MUICIRQ_ChgTyp,
+> -	MAX8997_MUICIRQ_ChgDetRun,
+> -	MAX8997_MUICIRQ_DCDTmr,
+> -	MAX8997_MUICIRQ_DBChg,
+> -	MAX8997_MUICIRQ_VBVolt,
+> +	MAX8997_MUICIRQ_ADCLOW,
+> +	MAX8997_MUICIRQ_ADCERROR,
+> +
+> +	MAX8997_MUICIRQ_CHGTYP,
+> +	MAX8997_MUICIRQ_CHGDETRUN,
+> +	MAX8997_MUICIRQ_DCDTMR,
+> +	MAX8997_MUICIRQ_DBCHG,
+> +	MAX8997_MUICIRQ_VBVOLT,
+>  
+>  	MAX8997_MUICIRQ_OVP,
+>  
+> 
+
