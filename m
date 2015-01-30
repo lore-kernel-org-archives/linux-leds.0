@@ -1,122 +1,112 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v5 3/3] mfd: max8997: change irq names to upper case
-Date: Fri, 30 Jan 2015 10:00:57 +0900
-Message-ID: <54CAD7C9.3080003@samsung.com>
-References: <1415776996-11569-1-git-send-email-r.baldyga@samsung.com>
- <1415776996-11569-4-git-send-email-r.baldyga@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: Reading /sys with side effects (was Re: [PATCH 1/2] Documentation:
+ leds: Add description of LED Flash class extension)
+Date: Fri, 30 Jan 2015 09:55:30 +0100
+Message-ID: <54CB4702.1090508@samsung.com>
+References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
+ <20150127221958.GA18993@amd> <54C8A130.8000807@samsung.com>
+ <20150129211420.GA21140@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1415776996-11569-4-git-send-email-r.baldyga@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Robert Baldyga <r.baldyga@samsung.com>
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, myungjoo.ham@samsung.com, dmitry.torokhov@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it, paul.gortmaker@windriver.com, sachin.kamat@linaro.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38140 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752537AbbA3Izf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 30 Jan 2015 03:55:35 -0500
+In-reply-to: <20150129211420.GA21140@amd>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Greg KH <greg@kroah.com>, kernel list <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-Hi Robert,
+Hi Pavel,
 
-For extcon part,
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+On 01/29/2015 10:14 PM, Pavel Machek wrote:
+> Hi!
+>
+>>>> +	- flash_fault - list of flash faults that may have occurred:
+>>>> +		* led-over-voltage - flash controller voltage to the flash LED
+>>>> +			has exceededthe limit specific to the flash controller
+>>>> +		* flash-timeout-exceeded - the flash strobe was still on when
+>>>> +			the timeout set by the user has expired; not all flash
+>>>> +			controllers may set this in all such conditions
+>>>> +		* controller-over-temperature - the flash controller has
+>>>> +			overheated
+>>>> +		* controller-short-circuit - the short circuit protection
+>>>> +			of the flash controller has been triggered
+>>>> +		* led-power-supply-over-current - current in the LED power
+>>>> +			supply has exceeded the limit specific to the flash
+>>>> +			controller
+>>>> +		* indicator-led-fault - the flash controller has detected
+>>>> +			a short or open circuit condition on the indicator LED
+>>>> +		* led-under-voltage - flash controller voltage to the flash
+>>>> +			LED has been below the minimum limit specific to
+>>>> +			the flash
+>>>> +		* controller-under-voltage - the input voltage of the flash
+>>>> +			controller is below the limit under which strobing the
+>>>> +			flash at full current will not be possible. The condition
+>>>> +			persists until this flag is no longer set
+>>>> +		* led-over-temperature - the temperature of the LED has exceeded
+>>>> +			its allowed upper limit
+>>>> +
+>>>> +		Flash faults are cleared, if possible, by reading the attribute.
+>>>
+>>> That's bad. Now you can no longer present flash_fault file as readable
+>>> to non-root users, and grep -ri foo /sys will interfere with your
+>>> camera application.
+>>>
+>>> Bad interface, just fix it.
+>>
+>> In my opinion it isn't crucial for the user to be aware of the
+>> fact that some non-persistent fault happened right after strobing the
+>> flash (e.g. over temperature).
+>>
+>> I cannot see anything harmful in the situation when someone does grep
+>> on /sys and clears non-persistent fault on a flash LED device.
+>
+> So why export the faults at all?
 
-Thanks,
-Chanwoo Choi
+Faults may prevent strobing the flash in case of some devices.
+The example of such a device is ADP1663 (drivers/media/i2c/adp1653.c).
+This driver reads the faults before strobing the flash and if a
+fault preventing strobing has occurred it returns -EBUSY.
 
-On 11/12/2014 04:23 PM, Robert Baldyga wrote:
-> This patch changes naming convention of MUIC interrupts form CamelCase
-> to upper case. It makes names more readable and consistent with another
-> interrupt names in max8997 driver.
-> 
-> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> [For the mfd part]
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/extcon/extcon-max8997.c     | 32 ++++++++++++++++----------------
->  include/linux/mfd/max8997-private.h | 16 ++++++++--------
->  2 files changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-> index 172dbd6..834b72f 100644
-> --- a/drivers/extcon/extcon-max8997.c
-> +++ b/drivers/extcon/extcon-max8997.c
-> @@ -46,15 +46,15 @@ struct max8997_muic_irq {
->  };
->  
->  static struct max8997_muic_irq muic_irqs[] = {
-> -	{ MAX8997_MUICIRQ_ADCError,	"muic-ADCERROR" },
-> -	{ MAX8997_MUICIRQ_ADCLow,	"muic-ADCLOW" },
-> -	{ MAX8997_MUICIRQ_ADC,		"muic-ADC" },
-> -	{ MAX8997_MUICIRQ_VBVolt,	"muic-VBVOLT" },
-> -	{ MAX8997_MUICIRQ_DBChg,	"muic-DBCHG" },
-> -	{ MAX8997_MUICIRQ_DCDTmr,	"muic-DCDTMR" },
-> -	{ MAX8997_MUICIRQ_ChgDetRun,	"muic-CHGDETRUN" },
-> -	{ MAX8997_MUICIRQ_ChgTyp,	"muic-CHGTYP" },
-> -	{ MAX8997_MUICIRQ_OVP,		"muic-OVP" },
-> +	{ MAX8997_MUICIRQ_ADCERROR,	"MUIC-ADCERROR" },
-> +	{ MAX8997_MUICIRQ_ADCLOW,	"MUIC-ADCLOW" },
-> +	{ MAX8997_MUICIRQ_ADC,		"MUIC-ADC" },
-> +	{ MAX8997_MUICIRQ_VBVOLT,	"MUIC-VBVOLT" },
-> +	{ MAX8997_MUICIRQ_DBCHG,	"MUIC-DBCHG" },
-> +	{ MAX8997_MUICIRQ_DCDTMR,	"MUIC-DCDTMR" },
-> +	{ MAX8997_MUICIRQ_CHGDETRUN,	"MUIC-CHGDETRUN" },
-> +	{ MAX8997_MUICIRQ_CHGTYP,	"MUIC-CHGTYP" },
-> +	{ MAX8997_MUICIRQ_OVP,		"MUIC-OVP" },
->  };
->  
->  /* Define supported cable type */
-> @@ -553,17 +553,17 @@ static void max8997_muic_irq_work(struct work_struct *work)
->  	}
->  
->  	switch (irq_type) {
-> -	case MAX8997_MUICIRQ_ADCError:
-> -	case MAX8997_MUICIRQ_ADCLow:
-> +	case MAX8997_MUICIRQ_ADCERROR:
-> +	case MAX8997_MUICIRQ_ADCLOW:
->  	case MAX8997_MUICIRQ_ADC:
->  		/* Handle all of cable except for charger cable */
->  		ret = max8997_muic_adc_handler(info);
->  		break;
-> -	case MAX8997_MUICIRQ_VBVolt:
-> -	case MAX8997_MUICIRQ_DBChg:
-> -	case MAX8997_MUICIRQ_DCDTmr:
-> -	case MAX8997_MUICIRQ_ChgDetRun:
-> -	case MAX8997_MUICIRQ_ChgTyp:
-> +	case MAX8997_MUICIRQ_VBVOLT:
-> +	case MAX8997_MUICIRQ_DBCHG:
-> +	case MAX8997_MUICIRQ_DCDTMR:
-> +	case MAX8997_MUICIRQ_CHGDETRUN:
-> +	case MAX8997_MUICIRQ_CHGTYP:
->  		/* Handle charger cable */
->  		ret = max8997_muic_chg_handler(info);
->  		break;
-> diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8997-private.h
-> index f42ea22..2817fa6 100644
-> --- a/include/linux/mfd/max8997-private.h
-> +++ b/include/linux/mfd/max8997-private.h
-> @@ -411,14 +411,14 @@ enum max8997_irq {
->  
->  enum max8997_irq_muic {
->  	MAX8997_MUICIRQ_ADC,
-> -	MAX8997_MUICIRQ_ADCLow,
-> -	MAX8997_MUICIRQ_ADCError,
-> -
-> -	MAX8997_MUICIRQ_ChgTyp,
-> -	MAX8997_MUICIRQ_ChgDetRun,
-> -	MAX8997_MUICIRQ_DCDTmr,
-> -	MAX8997_MUICIRQ_DBChg,
-> -	MAX8997_MUICIRQ_VBVolt,
-> +	MAX8997_MUICIRQ_ADCLOW,
-> +	MAX8997_MUICIRQ_ADCERROR,
-> +
-> +	MAX8997_MUICIRQ_CHGTYP,
-> +	MAX8997_MUICIRQ_CHGDETRUN,
-> +	MAX8997_MUICIRQ_DCDTMR,
-> +	MAX8997_MUICIRQ_DBCHG,
-> +	MAX8997_MUICIRQ_VBVOLT,
->  
->  	MAX8997_MUICIRQ_OVP,
->  
-> 
+If this driver was made a LED Flash class driver, then it would
+expose flash_faults attribute. The driver would probably need
+redesigning - checking the faults before strobing would have to be
+avoided and it should be left to the userspace.
 
+> I mean... another user can just read the file in loop, and the camera
+> application will not get any useful information.
+
+If the fault is no longer valid at the time of access from camera
+application, then why it should be reported then?
+
+>> Also, not all devices may be able to report the faults that happened
+>> earlier but are not valid at the time of I2C readout. In that case the
+>> user will never now that the fault has ever occurred, unless they read
+>> the flash_fault attribute at the proper moment.
+>>
+>> In this case we cannot enforce consistent policy for all devices.
+>
+> Too bad. But lets do a good job at least for devices where we can do a
+> good job, ok?
+>
+>> Please describe the use case when clearing the fault on read can be
+>> harmful, if you have any.
+>
+> while true; grep -ri foo /sys; done
+>
+> And no, your application trying to read the faults will very probably
+> read nothing.
+
+And this is OK. If a non-persistent fault was read by grep, then it
+will not be reported anymore. If someone wanted to maintain the history
+of flash faults for a device, then they are free to do it on their
+own by periodically reading the attribute, however I don't think
+it would be practical during every day use.
+
+-- 
+Best Regards,
+Jacek Anaszewski
