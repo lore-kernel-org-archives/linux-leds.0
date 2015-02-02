@@ -1,133 +1,47 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Reading /sys with side effects (was Re: [PATCH 1/2] Documentation:
- leds: Add description of LED Flash class extension)
-Date: Mon, 02 Feb 2015 15:51:53 +0100
-Message-ID: <54CF8F09.8020203@samsung.com>
-References: <1422346028-16739-1-git-send-email-j.anaszewski@samsung.com>
- <20150127221958.GA18993@amd> <54C8A130.8000807@samsung.com>
- <20150129211420.GA21140@amd> <54CB4702.1090508@samsung.com>
- <20150130164027.GA25830@kroah.com> <54CF3E36.9000108@samsung.com>
- <20150202094435.GA6686@amd> <54CF65CB.3060207@samsung.com>
- <20150202135103.GB26985@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60440 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751540AbbBBOv5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Feb 2015 09:51:57 -0500
-In-reply-to: <20150202135103.GB26985@amd>
-Sender: linux-leds-owner@vger.kernel.org
+From: <grygorii.strashko@linaro.org>
+Subject: [PATCH] leds: add hibernation callbacks
+Date: Mon,  2 Feb 2015 18:33:06 +0200
+Message-ID: <1422894786-23353-1-git-send-email-grygorii.strashko@linaro.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: sumit.semwal@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Grygorii Strashko <Grygorii.Strashko@linaro.org>
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg KH <greg@kroah.com>, kernel list <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-Hi Pavel,
+From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 
-On 02/02/2015 02:51 PM, Pavel Machek wrote:
-> Hi!
->
->>> [Actually, you could _always_ do two reads on those devices, discard
->>> first result, and return the second. But I'm not sure how hardware
->>> will like that.]
->>
->> This would be the most sensible option.
->>
->>
->> However, let's analyze the typical use cases for flash strobing:
->>
->>
->> -------------------------------------------------------------
->>
->>
->>>>>>>>>> Version without faults caching:
->>
->> ============
->> Driver side:
->> ============
->>
->> read_faults()
->> 	faults = read_i2c(); //read faults
->> 	if faults
->> 		write_i2c(); //clear faults, only for some devices
->> 		faults = read_i2c(); //read faults
->> 	return faults
->>
->> ================
->> User space side:
->> ================
->>
->> 1. faults = `cat flash_faults` //read_faults()
->> 2. if faults then
->> 	print "Unable to strobe the flash LED due to faults"
->>     else
->> 	echo 1 > flash_strobe
->>
->>
->>>>>>>>>> Version with faults caching:
->>
->> ============
->> Driver side:
->> ============
->>
->> read_faults()
->> 	faults |= read_i2c(); //read faults
->>
->> clear_faults()
->> 	write_i2c(); //clear faults
->> 	faults = 0;
->>
->>
->> ================
->> User space side:
->> ================
->>
->> 1. faults = `cat flash_faults` //read_faults()
->> 2. if faults then
->> 	echo 0 > flash_faults  //clear_faults()
->> 	faults = `cat flash_faults` //read_faults()
->> 3, if !faults
->> 	echo 1 > flash_strobe
->>     else
->> 	print "Unable to strobe the flash LED due to faults"
->>
->>
->> -------------------------------------------------------------
->>
->>  From the above it seems that version with clearing faults on read
->> results in the simpler flash strobing procedure on userspace side,
->> by the cost of additional bus access on the driver side.
->
-> I like caching version more (as it will allow by-hand debugging of
-> "why did not flash fire? Aha, lets see in the file, there was fault),
-> but both should be acceptable.
->
->> we don't need additional attribute, just writing the flash_faults
->> attribute can do the clearing.
->
-> Yes, writing flash_faults to clear is acceptable.
+Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
+hibernation callbacks means those pm functions will not be
+called upon hibernation - that leads to system crash on ARM during
+freezing if gpio-led is used in combination with CPU led trigger.
+It may happen after freeze_noirq stage (GPIO is suspended)
+and before syscore_suspend stage (CPU led trigger is suspended)
+- usually when disable_nonboot_cpus() is called.
 
-I've been just inspired with another approach:
-Faults register is read in the strobe_set callback, right after sending
-flash strobe command to the device. The userspace can read the cached
-faults through flash_faults attribute.
+Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
+assigns the suspend and hibernation callbacks.
 
-This way, we avoid reading sysfs attribute with side effect and
-gain the possibility of giving immediate feedback to the user.
+Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
+---
+ drivers/leds/led-class.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Exemplary use case:
-
-1. echo 1 > flash_strobe
-	write_i2c();		//strobe flash
-	faults = read_i2c();	//read faults
-	if faults
-		return -EINVAL;
-	return 0;
-
-2. cat flash_faults
-	return faults;	
-
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index f37d63c..4c03808 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -198,10 +198,7 @@ static int led_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static const struct dev_pm_ops leds_class_dev_pm_ops = {
+-	.suspend        = led_suspend,
+-	.resume         = led_resume,
+-};
++static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+ 
+ /**
+  * led_classdev_register - register a new object of led_classdev class.
 -- 
-Best Regards,
-Jacek Anaszewski
+1.9.1
+
