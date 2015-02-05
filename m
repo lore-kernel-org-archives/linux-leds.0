@@ -1,103 +1,85 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v2] Documentation: leds: Add description of LED Flash class
- extension
-Date: Thu, 05 Feb 2015 09:42:53 +0100
-Message-ID: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
+From: <grygorii.strashko@linaro.org>
+Subject: [PATCH v2] leds: fix hibernation on arm when gpio-led used with CPU led trigger
+Date: Thu,  5 Feb 2015 16:37:04 +0200
+Message-ID: <1423147024-4744-1-git-send-email-grygorii.strashko@linaro.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15683 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755668AbbBEInK (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 5 Feb 2015 03:43:10 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NJA003JJIVX4Z10@mailout4.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 05 Feb 2015 17:43:09 +0900 (KST)
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:58521 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757281AbbBEOhO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 5 Feb 2015 09:37:14 -0500
+Received: by mail-lb0-f180.google.com with SMTP id b6so7784531lbj.11
+        for <linux-leds@vger.kernel.org>; Thu, 05 Feb 2015 06:37:13 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: sumit.semwal@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Grygorii Strashko <Grygorii.Strashko@linaro.org>
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes.
+From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
+hibernation callbacks means those pm functions will not be
+called upon hibernation - that leads to system crash on ARM during
+freezing if gpio-led is used in combination with CPU led trigger.
+It may happen after freeze_noirq stage (GPIO is suspended)
+and before syscore_suspend stage (CPU led trigger is suspended)
+- usually when disable_nonboot_cpus() is called.
+
+Log:
+  PM: noirq freeze of devices complete after 1.425 msecs
+  Disabling non-boot CPUs ...
+    ^ system may crash or stuck here with message (TI AM572x)
+
+  WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148 l3_interrupt_handler+0x22c/0x370()
+  44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode during Functional access
+
+  CPU1: shutdown
+    ^ or here
+
+Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
+assigns the suspend and hibernation callbacks and move
+led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
+build warnings.
+
+Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 ---
- Documentation/leds/leds-class-flash.txt |   63 +++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+This patch actually fixes commit:
+ 73e1ab4 "leds: Convert led class driver from legacy pm ops to dev_pm_ops"
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..16c6187
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,63 @@
-+
-+Flash LED handling under Linux
-+==============================
-+
-+Some LED devices support two modes - torch and flash. In the LED subsystem
-+those modes are supported by LED class (see Documentation/leds/leds-class.txt)
-+and LED Flash class respectively. The torch mode related features are enabled
-+by default and the flash ones only if a driver declares it by setting
-+LED_DEV_CAP_FLASH flag.
-+
-+In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
-+must be defined in the kernel config. A flash LED driver must register
-+in the LED subsystem with led_classdev_flash_register function to gain flash
-+related capabilities.
-+
-+There are flash LED devices which can control more than one LED and allow for
-+strobing the sub-LEDs synchronously. A LED will be strobed synchronously with
-+the one whose identifier is written to the flash_sync_strobe sysfs attribute.
-+The list of available sub-LED identifiers can be read from the available_sync_leds
-+sysfs attribute. In order to enable the related settings the driver must set
-+LED_DEV_CAP_SYNC_STROBE flag.
-+
-+Following sysfs attributes are exposed for controlling flash LED devices:
-+
-+	- flash_brightness - flash LED brightness in microamperes (RW)
-+	- max_flash_brightness - maximum available flash LED brightness (RO)
-+	- flash_timeout - flash strobe duration in microseconds (RW)
-+	- max_flash_timeout - maximum available flash strobe duration (RO)
-+	- flash_strobe - flash strobe state (RW)
-+	- available_sync_leds - list of sub-LEDs available for flash strobe
-+				synchronization (RO)
-+	- flash_sync_strobe - identifier of the sub-LED to synchronize the flash
-+			      strobe with; 0 stands for no synchronization (RW)
-+	- flash_fault - list of flash faults that may have occurred:
-+		* led-over-voltage - flash controller voltage to the flash LED
-+			has exceededthe limit specific to the flash controller
-+		* flash-timeout-exceeded - the flash strobe was still on when
-+			the timeout set by the user has expired; not all flash
-+			controllers may set this in all such conditions
-+		* controller-over-temperature - the flash controller has
-+			overheated
-+		* controller-short-circuit - the short circuit protection
-+			of the flash controller has been triggered
-+		* led-power-supply-over-current - current in the LED power
-+			supply has exceeded the limit specific to the flash
-+			controller
-+		* indicator-led-fault - the flash controller has detected
-+			a short or open circuit condition on the indicator LED
-+		* led-under-voltage - flash controller voltage to the flash
-+			LED has been below the minimum limit specific to
-+			the flash
-+		* controller-under-voltage - the input voltage of the flash
-+			controller is below the limit under which strobing the
-+			flash at full current will not be possible;
-+			the condition persists until this flag is no longer set
-+		* led-over-temperature - the temperature of the LED has exceeded
-+			its allowed upper limit
-+
-+		Flash faults should be read in the strobe_set callback, right
-+		after the instruction initiating the strobe. If a flash LED
-+		device provides an instruction for clearing the faults, then,
-+		in case there were any faults read, it should be also executed
-+		in the callback.
+Changes in v2:
+- fixed compile time warnings when !CONFIG_PM_SLEEP
+- updated commit message
+
+v1:
+- https://lkml.org/lkml/2015/2/2/476
+
+ drivers/leds/led-class.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index dbeebac..5033e0d 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -183,6 +183,7 @@ void led_classdev_resume(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_resume);
+ 
++#ifdef CONFIG_PM_SLEEP
+ static int led_suspend(struct device *dev)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+@@ -202,11 +203,9 @@ static int led_resume(struct device *dev)
+ 
+ 	return 0;
+ }
++#endif
+ 
+-static const struct dev_pm_ops leds_class_dev_pm_ops = {
+-	.suspend        = led_suspend,
+-	.resume         = led_resume,
+-};
++static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+ 
+ /**
+  * led_classdev_register - register a new object of led_classdev class.
 -- 
-1.7.9.5
+1.9.1
