@@ -1,44 +1,65 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
-Date: Mon, 9 Feb 2015 14:24:22 +0900
-Message-ID: <CAAVeFu+7oEz75DdJ0ENAVnRQqUBQGBTKsjccxpGmELdHQH-2Wg@mail.gmail.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
- <1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com> <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash class
+ extension
+Date: Mon, 09 Feb 2015 09:17:03 +0100
+Message-ID: <54D86CFF.7010706@samsung.com>
+References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
+ <CAK5ve-KVQRN-quf9+Uh5HcN_Kh21Hs+2B93zC=ONQaG18k9oUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Olliver Schinagl <o.schinagl@ultimaker.com>, Bryan Wu <cooloney@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-l
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26083 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759542AbbBIIRN (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Feb 2015 03:17:13 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NJH00KSEWJA8130@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 09 Feb 2015 08:21:10 +0000 (GMT)
+In-reply-to: <CAK5ve-KVQRN-quf9+Uh5HcN_Kh21Hs+2B93zC=ONQaG18k9oUA@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Fri, Jan 30, 2015 at 10:46 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
-> <o.schinagl@ultimaker.com> wrote:
->
->> From: Olliver Schinagl <oliver@schinagl.nl>
+On 02/06/2015 07:48 PM, Bryan Wu wrote:
+> On Thu, Feb 5, 2015 at 12:42 AM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> The documentation being added contains overall description of the
+>> LED Flash Class and the related sysfs attributes.
 >>
->> The gpio binding document says that new code should always use named
->> gpios. Patch 40b73183 added support to parse a list of gpios from child
->> nodes, but does not make it possible to use named gpios. This patch adds
->> the con_id property and implements it is done in gpiolib.c, where the
->> old-style of using unnamed gpios still works.
->>
->> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Bryan Wu <cooloney@gmail.com>
+>> Cc: Richard Purdie <rpurdie@rpsys.net>
 >> ---
->>  drivers/gpio/devres.c                     | 18 +++++++++++++++++-
->>  drivers/input/keyboard/gpio_keys_polled.c |  2 +-
->>  drivers/leds/leds-gpio.c                  |  2 +-
->>  include/linux/gpio/consumer.h             |  1 +
 >
-> Alexandre: does this match your vision of how it should work, i.e. ACK?
+> Jacek, I lost the discussion here. Did you change something since V1 patch?
+>
+> Pavel, Is this version OK for you?
 
-Pretty much, yes - as I mentioned in the previous versions there may
-be shortcomings for ACPI, but we need a refactor of the whole thing -
-nothing that this patch should address by itself.
+I changed the instruction on how to proceed with flash faults handling
+in LED Flash class drivers (the part after listing possible flash
+faults, as it is exposed below. There hasn't been any opinion on this
+expressed yet, though.
 
-So this patch:
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>> +               * led-over-temperature - the temperature of the LED has exceeded
+>> +                       its allowed upper limit
+>> +
+>> +               Flash faults should be read in the strobe_set callback, right
+>> +               after the instruction initiating the strobe. If a flash LED
+>> +               device provides an instruction for clearing the faults, then,
+>> +               in case there were any faults read, it should be also executed
+>> +               in the callback.
+>> --
+>> 1.7.9.5
+>>
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
