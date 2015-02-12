@@ -1,59 +1,75 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash
- class extension
-Date: Thu, 12 Feb 2015 10:07:56 +0100
-Message-ID: <20150212090756.GA30508@amd>
-References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
- <20150211215723.GC11313@amd>
- <54DC671E.8010705@samsung.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 2/2] leds/pwm: Don't disable pwm when setting brightness to 0
+Date: Thu, 12 Feb 2015 10:44:50 +0100
+Message-ID: <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40020 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755036AbbBLJH7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 04:07:59 -0500
-Content-Disposition: inline
-In-Reply-To: <54DC671E.8010705@samsung.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:58635 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754985AbbBLJpF (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 04:45:05 -0500
+In-Reply-To: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-Hi!
+This fixes disabling the LED on i.MX28. The PWM hardware delays using
+the newly set pwm-config until the beginning of a new period. It's very
+likely that pwm_disable is called before the current period ends. In
+case the LED was on brightness=3Dmax before the LED stays on because in
+the disabled PWM block the period never ends.
 
-> I can be 0 or 1. Let's make it more precise:
-> 
-> - flash_strobe - flash strobe state (RW):
-> 			semantics on write:
-> 				0: turn the flash LED off
-> 				1: strobe the flash LED
-> 			semantics on read:
-> 				0: flash LED is off
-> 				1: flash LED is strobing
+Also only call pwm_enable only once in the probe call back and the
+matching pwm_disable in .remove(). Moreover the pwm is explicitly
+initialized to off.
 
-Thanks.
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/leds/leds-pwm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> >>+	- available_sync_leds - list of sub-LEDs available for flash strobe
-> >>+				synchronization (RO)
-> >
-> >"space separated"?
-> 
-> - available_sync_leds - space separated list of sub-LEDs available for
-> 			flash strobe synchronization; each sub-LED is
-> 			described in the form of chunks:
-> 			[led_id: led_name]
-> 
-> 
-> >So this will say something like "0 3 5"
-> 
-> Rather e.g.: [0: none] [1: max77693-led1] [2: max77693-led2]
-
-No no, sorry, you can't do that. Sysfs is supposed to be one value per
-file, and this is stretching it. (It would be also difficult to parse;
-for example, you can reasonably have ":" in led name, and perhaps even
-" " or "]"....
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index f668500a2157..5dae0d2dc3dc 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -44,11 +44,6 @@ static void __led_pwm_set(struct led_pwm_data *led_d=
+at)
+ 	int new_duty =3D led_dat->duty;
+=20
+ 	pwm_config(led_dat->pwm, new_duty, led_dat->period);
+-
+-	if (new_duty =3D=3D 0)
+-		pwm_disable(led_dat->pwm);
+-	else
+-		pwm_enable(led_dat->pwm);
+ }
+=20
+ static void led_pwm_work(struct work_struct *work)
+@@ -93,6 +88,7 @@ static void led_pwm_cleanup(struct led_pwm_priv *priv=
+)
+ 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+ 		if (priv->leds[priv->num_leds].can_sleep)
+ 			cancel_work_sync(&priv->leds[priv->num_leds].work);
++		pwm_disable(priv->leds[i].pwm);
+ 	}
+ }
+=20
+@@ -132,6 +128,10 @@ static int led_pwm_add(struct device *dev, struct =
+led_pwm_priv *priv,
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
+ 		led_data->period =3D led->pwm_period_ns;
+=20
++	pwm_config(led_data->pwm, led_data->active_low ? led_data->period: 0,
++		   led_data->period);
++	pwm_enable(led_data->pwm);
++
+ 	ret =3D led_classdev_register(dev, &led_data->cdev);
+ 	if (ret =3D=3D 0) {
+ 		priv->num_leds++;
+--=20
+2.1.4
