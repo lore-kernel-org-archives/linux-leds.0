@@ -1,50 +1,80 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] leds/pwm: Don't disable pwm when setting brightness
- to 0
-Date: Thu, 12 Feb 2015 10:47:53 +0100
-Message-ID: <20150212094753.GB10842@pengutronix.de>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash class
+ extension
+Date: Thu, 12 Feb 2015 11:10:38 +0100
+Message-ID: <54DC7C1E.5020105@samsung.com>
+References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
+ <20150211215723.GC11313@amd> <54DC671E.8010705@samsung.com>
+ <20150212090756.GA30508@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42424 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755370AbbBLJr6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 04:47:58 -0500
-Content-Disposition: inline
-In-Reply-To: <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:51198 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754892AbbBLKKm (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 05:10:42 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NJN00H8HLSFZ6A0@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 12 Feb 2015 10:14:39 +0000 (GMT)
+In-reply-to: <20150212090756.GA30508@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
-Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-On Thu, Feb 12, 2015 at 10:44:50AM +0100, Uwe Kleine-K=F6nig wrote:
-> This fixes disabling the LED on i.MX28. The PWM hardware delays using
-> the newly set pwm-config until the beginning of a new period. It's ve=
-ry
-> likely that pwm_disable is called before the current period ends. In
-> case the LED was on brightness=3Dmax before the LED stays on because =
-in
-> the disabled PWM block the period never ends.
->=20
-> Also only call pwm_enable only once in the probe call back and the
-> matching pwm_disable in .remove(). Moreover the pwm is explicitly
-> initialized to off.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-sigh, I just noticed I did my compile test with LEDS_PWM off. This
-fails to build, but as this patch (soft) depends on patch 1 anyhow, I
-will resend once patch 1 is ok to go in. (I hope to reach this state!)
+On 02/12/2015 10:07 AM, Pavel Machek wrote:
+> Hi!
+>
+>> I can be 0 or 1. Let's make it more precise:
+>>
+>> - flash_strobe - flash strobe state (RW):
+>> 			semantics on write:
+>> 				0: turn the flash LED off
+>> 				1: strobe the flash LED
+>> 			semantics on read:
+>> 				0: flash LED is off
+>> 				1: flash LED is strobing
+>
+> Thanks.
+>
+>>>> +	- available_sync_leds - list of sub-LEDs available for flash strobe
+>>>> +				synchronization (RO)
+>>>
+>>> "space separated"?
+>>
+>> - available_sync_leds - space separated list of sub-LEDs available for
+>> 			flash strobe synchronization; each sub-LED is
+>> 			described in the form of chunks:
+>> 			[led_id: led_name]
+>>
+>>
+>>> So this will say something like "0 3 5"
+>>
+>> Rather e.g.: [0: none] [1: max77693-led1] [2: max77693-led2]
+>
+> No no, sorry, you can't do that. Sysfs is supposed to be one value per
+> file, and this is stretching it. (It would be also difficult to parse;
+> for example, you can reasonably have ":" in led name, and perhaps even
+> " " or "]"....
 
-Best regards
-Uwe
+You acked LED Flash class patch, didn't you? :)
+
+There are many attributes documented in the list fashion, e.g.:
+available_frequencies in the Documentation/ABI/testing/sysfs-class-devfreq.
+
+LED flash class attributes should be also probably added to the
+Documentation/ABI/testing/sysfs-class-led, or a new file
+sysfs-class-flash-led should be created.
+
+If we changed this a bit it would be easily parsed with AWK:
+
+echo "0 none;1 max77693-led1;2 max77693-led2" | awk -F';' '{ for (i=1; 
+i<=NF; i++) print $i}' | awk '{print $1": "$2}'
 
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+-- 
+Best Regards,
+Jacek Anaszewski
