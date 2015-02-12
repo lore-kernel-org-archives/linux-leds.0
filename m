@@ -1,71 +1,91 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: [GIT PULL] LED subsystem for 3.20 merge window
-Date: Thu, 12 Feb 2015 11:04:47 -0800
-Message-ID: <CAK5ve-LiwT5TFm7oy2dJKFi9tNU=L+=DzYymRWjqX7hn+7837w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
+Date: Thu, 12 Feb 2015 11:11:09 -0800
+Message-ID: <CAK5ve-J7orKM379gs0bfRyAjmTywrG4nJR=9jWVXVF8KPmVR1A@mail.gmail.com>
+References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:38312 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751215AbbBLTFI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 14:05:08 -0500
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:34708 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbbBLTLa (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 14:11:30 -0500
+In-Reply-To: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm@vger.kernel.org
 
-Hi Linus,
+On Fri, Jan 23, 2015 at 4:54 PM, Bjorn Andersson
+<bjorn.andersson@sonymobile.com> wrote:
+> From: Courtney Cavin <courtney.cavin@sonymobile.com>
+>
+> This adds device tree binding documentation for the WLED ('White' LED)
+> block on Qualcomm's PM8941 PMICs.
+>
+> Signed-off-by: Courtney Cavin <courtney.cavin@sonymobile.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-The big change of LED subsystem is introducing a new LED class for
-Flash type LEDs which will be used for V4L2 subsystem.
+I will merge this into my branch for next 3.20 release.
 
-Also we got some cleanup and fixes.
+Thanks,
+-Bryan
 
-So please conside the following changes since commit
-188c901941efd43cbf21e8f4f9e9a276536b989c:
 
-  Merge branch 'leds-fixes-for-3.19' of
-git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds
-(2015-01-14 12:22:56 +1300)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
-
-for you to fetch changes up to c6e71f813f7208d80bfe0f435d627fad1b204558:
-
-  leds: leds-gpio: Pass on error codes unmodified (2015-02-02 14:36:10 -0800)
-
-----------------------------------------------------------------
-Gabriele Mazzotta (1):
-      leds: Don't allow brightness values greater than max_brightness
-
-Geert Uytterhoeven (1):
-      leds: leds-mc13783: Use of_get_child_by_name() instead of refcount hack
-
-Jacek Anaszewski (2):
-      leds: Add LED Flash class extension to the LED subsystem
-      DT: leds: Add led-sources property
-
-Julia Lawall (1):
-      leds: Use setup_timer
-
-Pavel Machek (1):
-      DT: leds: Add flash LED devices related properties
-
-Soren Brinkmann (1):
-      leds: leds-gpio: Pass on error codes unmodified
-
- Documentation/devicetree/bindings/leds/common.txt |  30 ++
- drivers/leds/Kconfig                              |  10 +
- drivers/leds/Makefile                             |   1 +
- drivers/leds/led-class-flash.c                    | 486 ++++++++++++++++++++++
- drivers/leds/led-class.c                          |   9 +-
- drivers/leds/leds-gpio.c                          |   3 +-
- drivers/leds/leds-mc13783.c                       |   4 +-
- drivers/leds/leds.h                               |   3 +-
- include/linux/led-class-flash.h                   | 207 +++++++++
- include/linux/leds.h                              |   3 +
- 10 files changed, 748 insertions(+), 8 deletions(-)
- create mode 100644 drivers/leds/led-class-flash.c
- create mode 100644 include/linux/led-class-flash.h
+> ---
+>  .../devicetree/bindings/leds/leds-pm8941-wled.txt  | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+> new file mode 100644
+> index 0000000..a85a964
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+> @@ -0,0 +1,43 @@
+> +Binding for Qualcomm PM8941 WLED driver
+> +
+> +Required properties:
+> +- compatible: should be "qcom,pm8941-wled"
+> +- reg: slave address
+> +
+> +Optional properties:
+> +- label: The label for this led
+> +  See Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger: Default trigger assigned to the LED
+> +  See Documentation/devicetree/bindings/leds/common.txt
+> +- qcom,cs-out: bool; enable current sink output
+> +- qcom,cabc: bool; enable content adaptive backlight control
+> +- qcom,ext-gen: bool; use externally generated modulator signal to dim
+> +- qcom,current-limit: mA; per-string current limit; value from 0 to 25
+> +       default: 20mA
+> +- qcom,current-boost-limit: mA; boost current limit; one of:
+> +       105, 385, 525, 805, 980, 1260, 1400, 1680
+> +       default: 805mA
+> +- qcom,switching-freq: kHz; switching frequency; one of:
+> +       600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
+> +       1600, 1920, 2400, 3200, 4800, 9600,
+> +       default: 1600kHz
+> +- qcom,ovp: V; Over-voltage protection limit; one of:
+> +       27, 29, 32, 35
+> +       default: 29V
+> +- qcom,num-strings: #; number of led strings attached; value from 1 to 3
+> +       default: 2
+> +
+> +Example:
+> +
+> +pm8941-wled@d800 {
+> +       compatible = "qcom,pm8941-wled";
+> +       reg = <0xd800>;
+> +       label = "backlight";
+> +
+> +       qcom,cs-out;
+> +       qcom,current-limit = <20>;
+> +       qcom,current-boost-limit = <805>;
+> +       qcom,switching-freq = <1600>;
+> +       qcom,ovp = <29>;
+> +       qcom,num-strings = <2>;
+> +};
+> --
+> 1.9.1
+>
