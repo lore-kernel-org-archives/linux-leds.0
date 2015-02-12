@@ -1,67 +1,71 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash
- class extension
-Date: Thu, 12 Feb 2015 18:44:44 +0100
-Message-ID: <20150212174444.GA9450@amd>
-References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
- <20150211215723.GC11313@amd>
- <54DC671E.8010705@samsung.com>
- <20150212090756.GA30508@amd>
- <54DC7C1E.5020105@samsung.com>
- <20150212105417.GA10377@amd>
- <54DC8B6F.9080802@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: [GIT PULL] LED subsystem for 3.20 merge window
+Date: Thu, 12 Feb 2015 11:04:47 -0800
+Message-ID: <CAK5ve-LiwT5TFm7oy2dJKFi9tNU=L+=DzYymRWjqX7hn+7837w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57235 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061AbbBLRor (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 12:44:47 -0500
-Content-Disposition: inline
-In-Reply-To: <54DC8B6F.9080802@samsung.com>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:38312 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751215AbbBLTFI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 14:05:08 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi!
+Hi Linus,
 
-> >>You acked LED Flash class patch, didn't you? :)
-> >>
-> >>There are many attributes documented in the list fashion, e.g.:
-> >>available_frequencies in the Documentation/ABI/testing/sysfs-class-devfreq.
-> >
-> >No, sorry, you can't do this. We have this parsing nightmare in /proc,
-> >before, and we don't want it again.
-> >
-> >>If we changed this a bit it would be easily parsed with AWK:
-> >>
-> >>echo "0 none;1 max77693-led1;2 max77693-led2" | awk -F';' '{ for (i=1;
-> >>i<=NF; i++) print $i}' | awk '{print $1": "$2}'
-> >
-> >sysfs is one entry per file. If someone screwed it up in devfreq, it
-> >is not reason to screw it up here. (Space separated lists of integers
-> >might be acceptable. Fixed strings with one marked by []s happen,
-> >too. Maps between ints and names are not.)
-> 
-> "Fixed strings with one marked by []s happen" - I don't quite
-> get this.
+The big change of LED subsystem is introducing a new LED class for
+Flash type LEDs which will be used for V4L2 subsystem.
 
-root@duo:~# cat /sys/power/state
-freeze mem disk
-root@duo:~# cat /sys/power/disk
-[platform] shutdown reboot suspend
-root@duo:~#
+Also we got some cleanup and fixes.
 
-> Could you propose the acceptable format then?
-> The numbers alone are inconvenient to use, we need a human
-> readable description next to them. Or some another way
-> to obtain the name.
+So please conside the following changes since commit
+188c901941efd43cbf21e8f4f9e9a276536b989c:
 
-Files like "0.active", "0.name", "1.active", "1.name"?
+  Merge branch 'leds-fixes-for-3.19' of
+git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds
+(2015-01-14 12:22:56 +1300)
 
-Subdirectories 0/1 with "name" and "active" files?
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
+
+for you to fetch changes up to c6e71f813f7208d80bfe0f435d627fad1b204558:
+
+  leds: leds-gpio: Pass on error codes unmodified (2015-02-02 14:36:10 -0800)
+
+----------------------------------------------------------------
+Gabriele Mazzotta (1):
+      leds: Don't allow brightness values greater than max_brightness
+
+Geert Uytterhoeven (1):
+      leds: leds-mc13783: Use of_get_child_by_name() instead of refcount hack
+
+Jacek Anaszewski (2):
+      leds: Add LED Flash class extension to the LED subsystem
+      DT: leds: Add led-sources property
+
+Julia Lawall (1):
+      leds: Use setup_timer
+
+Pavel Machek (1):
+      DT: leds: Add flash LED devices related properties
+
+Soren Brinkmann (1):
+      leds: leds-gpio: Pass on error codes unmodified
+
+ Documentation/devicetree/bindings/leds/common.txt |  30 ++
+ drivers/leds/Kconfig                              |  10 +
+ drivers/leds/Makefile                             |   1 +
+ drivers/leds/led-class-flash.c                    | 486 ++++++++++++++++++++++
+ drivers/leds/led-class.c                          |   9 +-
+ drivers/leds/leds-gpio.c                          |   3 +-
+ drivers/leds/leds-mc13783.c                       |   4 +-
+ drivers/leds/leds.h                               |   3 +-
+ include/linux/led-class-flash.h                   | 207 +++++++++
+ include/linux/leds.h                              |   3 +
+ 10 files changed, 748 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/leds/led-class-flash.c
+ create mode 100644 include/linux/led-class-flash.h
