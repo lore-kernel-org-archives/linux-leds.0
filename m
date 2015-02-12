@@ -1,136 +1,56 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
-Date: Thu, 12 Feb 2015 11:20:13 -0800
-Message-ID: <CAK5ve-L5VoXAO-XJsc2ewZchcTpXT2n2u---cz=rw3Ocfkq3TQ@mail.gmail.com>
-References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
- <1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>
- <1422535712.28891.3.camel@mm-sol.com> <20150129190753.GN11960@sonymobile.com>
+Subject: Re: [PATCH] leds: leds-pwm: drop one pwm_get_period() call
+Date: Thu, 12 Feb 2015 11:22:56 -0800
+Message-ID: <CAK5ve-Kam0kyCC3w3wssDASoN-YHkqDaMnXJwbVVjj=PHZwfMw@mail.gmail.com>
+References: <1423238640-32202-1-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:34137 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246AbbBLTUe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 14:20:34 -0500
-In-Reply-To: <20150129190753.GN11960@sonymobile.com>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:38083 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbbBLTXV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 14:23:21 -0500
+Received: by iecrd18 with SMTP id rd18so14329441iec.5
+        for <linux-leds@vger.kernel.org>; Thu, 12 Feb 2015 11:23:21 -0800 (PST)
+In-Reply-To: <1423238640-32202-1-git-send-email-bigeasy@linutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, "Cavin, Courtney" <Courtney.Cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Thu, Jan 29, 2015 at 11:07 AM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
-> On Thu 29 Jan 04:48 PST 2015, Ivan T. Ivanov wrote:
+On Fri, Feb 6, 2015 at 8:04 AM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> pwm_get_period() is called twice in case the child parameter is set. I
+> assume retrieving this parameter once is enough therefore this patch
+> removes the conditial invocation of pwm_get_period().
 >
->>
->> Hi Bjorn,
->>
->> Just few nitpick comments.
->>
->
-> Thanks.
->
->> On Fri, 2015-01-23 at 16:54 -0800, Bjorn Andersson wrote:
->> > From: Courtney Cavin cavin@sonymobile.com>
->> >
->> > This adds support for the WLED ('White' LED) block on Qualcomm's
->> > PM8941 PMICs.
->> >
->> > Signed-off-by: Courtney Cavin cavin@sonymobile.com>
->> > Signed-off-by: Bjorn Andersson andersson@sonymobile.com>
 
-
-I'm good with this patch and will merge it into my tree.
-
-Thanks,
+Good catch, I will merge this patch
 -Bryan
 
->> > ---
->> >  drivers/leds/Kconfig            |   8 +
->> >  drivers/leds/Makefile           |   1 +
->> >  drivers/leds/leds-pm8941-wled.c | 459 ++++++++++++++++++++++++++++++++++++++++
->> >  3 files changed, 468 insertions(+)
->> >  create mode 100644 drivers/leds/leds-pm8941-wled.c
->> >
->>
->> <snip>
->>
->> > +
->> > +#define PM8941_WLED_REG_VAL_BASE               0x40
->> > +#define  PM8941_WLED_REG_VAL_MAX               0xFFF
->> > +
->> > +#define PM8941_WLED_REG_MOD_EN                 0x46
->> > +#define  PM8941_WLED_REG_MOD_EN_BIT            BIT(7)
->> > +#define  PM8941_WLED_REG_MOD_EN_MASK           BIT(7)
->>
->> Is it possible bit definitions to have same indentation like registers offsets?
->>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/leds/leds-pwm.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> Well, yes ;)
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index f668500a2157..1d07e3e83d29 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -119,13 +119,10 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>                 dev_err(dev, "unable to request PWM for %s: %d\n",
+>                         led->name, ret);
+>                 return ret;
+>         }
 >
-> But I like the separation, so unless Bryan would like me to change it I prefer
-> to leave it as is.
+> -       if (child)
+> -               led_data->period = pwm_get_period(led_data->pwm);
+> -
+>         led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+>         if (led_data->can_sleep)
+>                 INIT_WORK(&led_data->work, led_pwm_work);
 >
->> >
->> > +struct pm8941_wled_config {
->> > +       u32 i_boost_limit;
->> > +       u32 ovp;
->> > +       u32 switch_freq;
->> > +       u32 num_strings;
->> > +       u32 i_limit;
->> > +       bool cs_out_en;
->> > +       bool ext_gen;
->> > +       bool cabc_en;
->> > +};
->> > +
->>
->> Could this be further squashed to bellow structure?
->>
+>         led_data->period = pwm_get_period(led_data->pwm);
+> --
+> 2.1.4
 >
-> It could, but I see that it would simplify things.
->
->> > +struct pm8941_wled {
->> > +       struct regmap *regmap;
->> > +       u16 addr;
->> > +
->> > +       struct led_classdev cdev;
->> > +
->> > +       struct pm8941_wled_config cfg;
->> > +};
->> > +
->> >
->>
->> <snip>
->>
->> > +static void pm8941_wled_set_brightness(struct led_classdev *cdev,
->> > +                                                                                       enum
->> > led_brightness value)
->> > +{
->> > +       if (pm8941_wled_set(cdev, value)) {
->>
->> pm8941_wled_set() is used only here, could it be merged into this function?
->>
->
-> It could, but that would just mean that we move these lines into the tail of
-> pm8941_wled_set and replace all the returns with a bunch of gotos. So I don't
-> think it's cleaner.
->
->> > +               dev_err(cdev->dev, "Unable to set brightness\n");
->> > +               return;
->> > +       }
->> > +       cdev->brightness = value;
->> > +}
->> > +
->> >
->>
->> Otherwise it looks good. Driver is loaded and device is detected
->> properly (i have added readings for type and subtype registers).
->> Do you know where I can measure result from changing brightness
->> sysfs entry. I am using 8074 dragonboard?
->>
->
-> I'm not sure how this is exposed on the dragonboard. I've tested it on Xperia
-> Z1 (honami) and the display lights up nicely.
->
-> Regards,
-> Bjorn
