@@ -1,131 +1,149 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH] led/led-class: Handle LEDs with the same name
-Date: Thu, 12 Feb 2015 21:45:22 +0100
-Message-ID: <CAPybu_26e3evmHM3W7ZsUXin0LMWJWAbPSf8rFnDnLG821Jwpg@mail.gmail.com>
-References: <1423657572-22299-1-git-send-email-ricardo.ribalda@gmail.com> <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Thu, 12 Feb 2015 20:04:10 -0800
+Message-ID: <54DD77BA.5020808@codeaurora.org>
+References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com> <1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:56735 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750912AbbBLUpp (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Feb 2015 15:45:45 -0500
-In-Reply-To: <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>
+Cc: Courtney Cavin <courtney.cavin@sonymobile.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-Hello Bryan
+On 01/23/15 16:54, Bjorn Andersson wrote:
+> +
+> +static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+> +{
+> +	struct pm8941_wled_config *cfg = &wled->cfg;
+> +	u32 val;
+> +	int rc;
+> +	int i;
+> +
+> +	const struct {
+> +		const char *name;
+> +		u32 *val_ptr;
+> +		const struct pm8941_wled_var_cfg *cfg;
+> +	} u32_opts[] = {
+> +		{
+> +			"qcom,current-boost-limit",
+> +			&cfg->i_boost_limit,
+> +			.cfg = &pm8941_wled_i_boost_limit_cfg,
+> +		},
+> +		{
+> +			"qcom,current-limit",
+> +			&cfg->i_limit,
+> +			.cfg = &pm8941_wled_i_limit_cfg,
+> +		},
+> +		{
+> +			"qcom,ovp",
+> +			&cfg->ovp,
+> +			.cfg = &pm8941_wled_ovp_cfg,
+> +		},
+> +		{
+> +			"qcom,switching-freq",
+> +			&cfg->switch_freq,
+> +			.cfg = &pm8941_wled_switch_freq_cfg,
+> +		},
+> +		{
+> +			"qcom,num-strings",
+> +			&cfg->num_strings,
+> +			.cfg = &pm8941_wled_num_strings_cfg,
+> +		},
+> +	};
+> +	const struct {
+> +		const char *name;
+> +		bool *val_ptr;
+> +	} bool_opts[] = {
+> +		{ "qcom,cs-out", &cfg->cs_out_en, },
+> +		{ "qcom,ext-gen", &cfg->ext_gen, },
+> +		{ "qcom,cabc", &cfg->cabc_en, },
+> +	};
+> +
+> +	rc = of_property_read_u32(dev->of_node, "reg", &val);
+> +	if (rc || val > 0xffff) {
+> +		dev_err(dev, "invalid IO resources\n");
+> +		return rc ? rc : -EINVAL;
+> +	}
+> +	wled->addr = val;
+> +
+> +	rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
+> +	if (rc)
+> +		wled->cdev.name = dev->of_node->name;
+> +
+> +	wled->cdev.default_trigger = of_get_property(dev->of_node,
+> +			"linux,default-trigger", NULL);
+> +
+> +	*cfg = pm8941_wled_config_defaults;
+> +	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
+> +		u32 sel, c;
+> +		int j, rj;
+> +
+> +		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
+> +		if (rc) {
+> +			if (rc != -EINVAL) {
+> +				dev_err(dev, "error reading '%s'\n",
+> +						u32_opts[i].name);
+> +				return rc;
+> +			}
+> +			continue;
+> +		}
+> +
+> +		sel = UINT_MAX;
+> +		rj = -1;
+> +		c = pm8941_wled_values(u32_opts[i].cfg, 0);
+> +		for (j = 0; c != UINT_MAX; ++j) {
+> +			if (c <= val && (sel == UINT_MAX || c >= sel)) {
+> +				sel = c;
+> +				rj = j;
+> +			}
+> +			c = pm8941_wled_values(u32_opts[i].cfg, j + 1);
+> +		}
+> +		if (sel == UINT_MAX) {
+> +			dev_err(dev, "invalid value for '%s'\n",
+> +					u32_opts[i].name);
+> +			return rc;
 
-On Thu, Feb 12, 2015 at 8:48 PM, Bryan Wu <cooloney@gmail.com> wrote:
->
-> Could you please give me some real error message or example about this
-> device tree overlays? Looks like it's not only for LED subsystem and
-> how is it handled in other subsystem?
+Isn't rc always 0 here? Don't we want to return an error?
 
-In my case I have a device tree overlay describing a camera. This
-camera has 3 leds, named red, green and yellow. When I connect the
-second camera, kobject complains about a repeated name. The error is
-REALLY verbose. I am out of the office right now, so I cannot show you
-the error message. You can trigger the same error by trying to
-register two leds with the same name.
+Also, I find this code very convoluted given that we loop through a
+table and match based on nodes and call function pointers, etc. Why
+can't we just have a handful of if statements with of_property_read_u32
+in them? That way we don't have to jump through so many hoops, bouncing
+all around this file to figure out what's going on. If we did I imagine
+we wouldn't have missed out on rc being 0 here.
 
-A similar error can be triggered for example when we want to create
-two misc devices with the same name
+> +
+> +static int pm8941_wled_remove(struct platform_device *pdev)
+> +{
+> +	struct pm8941_wled *wled;
+> +
+> +	wled = platform_get_drvdata(pdev);
+> +	led_classdev_unregister(&wled->cdev);
 
-[106998.862865] ------------[ cut here ]------------
-[106998.862885] WARNING: CPU: 1 PID: 12979 at
-/build/linux-CMiYW9/linux-3.16.7-ckt2/fs/sysfs/dir.c:31
-sysfs_warn_dup+0x5f/0x70()
-[106998.862890] sysfs: cannot create duplicate filename
-'/devices/virtual/misc/eudyptula'
-[106998.862894] Modules linked in: hello(O+) btrfs xor raid6_pq ufs
-qnx4 hfsplus hfs minix ntfs msdos jfs xfs libcrc32c dm_mod bnep
-bluetooth 6lowpan_iphc mmc_block tun ctr ccm binfmt_misc nfsd
-auth_rpcgss oid_registry nfs_acl nfs lockd fscache sunrpc nls_utf8
-nls_cp437 vfat fat x86_pkg_temp_thermal intel_powerclamp intel_rapl
-uvcvideo coretemp videobuf2_vmalloc kvm_intel videobuf2_memops
-videobuf2_core v4l2_common videodev kvm media joydev crc32_pclmul
-ghash_clmulni_intel aesni_intel arc4 aes_x86_64 iwldvm mac80211
-iwlwifi cfg80211 lrw gf128mul glue_helper iTCO_wdt iTCO_vendor_support
-ablk_helper evdev psmouse i915 snd_hda_codec_hdmi cryptd serio_raw
-pcspkr ac shpchp efi_pstore drm_kms_helper snd_hda_codec_conexant
-snd_hda_codec_generic lpc_ich thinkpad_acpi nvram tpm_tis efivars drm
-i2c_algo_bit i2c_i801
-[106998.863005]  snd_hda_intel snd_hda_controller mfd_core mei_me
-snd_hda_codec i2c_core mei wmi snd_hwdep rfkill snd_pcm tpm battery
-snd_timer snd soundcore button video processor fuse parport_pc ppdev
-lp parport autofs4 ext4 crc16 mbcache jbd2 sg sd_mod sr_mod crc_t10dif
-cdrom crct10dif_generic crct10dif_pclmul crct10dif_common crc32c_intel
-ahci libahci libata ehci_pci ehci_hcd scsi_mod sdhci_pci sdhci
-mmc_core e1000e usbcore ptp pps_core usb_common thermal thermal_sys
-[106998.863077] CPU: 1 PID: 12979 Comm: insmod Tainted: G           O
-3.16.0-4-amd64 #1 Debian 3.16.7-ckt2-1
-[106998.863083] Hardware name: LENOVO 4180DY4/4180DY4, BIOS 83ET76WW
-(1.46 ) 07/05/2013
-[106998.863087]  0000000000000009 ffffffff81507263 ffff880021757af8
-ffffffff81065847
-[106998.863096]  ffff880065c6d000 ffff880021757b48 ffff880214c1c820
-0000000000000000
-[106998.863103]  0000000000000000 ffffffff810658ac ffffffff8172ff20
-ffffffff00000028
-[106998.863111] Call Trace:
-[106998.863125]  [<ffffffff81507263>] ? dump_stack+0x41/0x51
-[106998.863137]  [<ffffffff81065847>] ? warn_slowpath_common+0x77/0x90
-[106998.863145]  [<ffffffff810658ac>] ? warn_slowpath_fmt+0x4c/0x50
-[106998.863153]  [<ffffffff81212ae3>] ? kernfs_path+0x43/0x50
-[106998.863161]  [<ffffffff81215f1f>] ? sysfs_warn_dup+0x5f/0x70
-[106998.863169]  [<ffffffff81215fae>] ? sysfs_create_dir_ns+0x7e/0x90
-[106998.863180]  [<ffffffff812a9706>] ? kobject_add_internal+0xc6/0x3e0
-[106998.863190]  [<ffffffff812b0f56>] ? string.isra.7+0x36/0xe0
-[106998.863197]  [<ffffffff812a9e25>] ? kobject_add+0x65/0xb0
-[106998.863204]  [<ffffffff812b1e8e>] ? pointer.isra.18+0x9e/0x470
-[106998.863213]  [<ffffffff8139c584>] ? device_add+0x124/0x610
-[106998.863221]  [<ffffffff8139cc68>] ? device_create_groups_vargs+0xd8/0x100
-[106998.863239]  [<ffffffffa0025000>] ? 0xffffffffa0024fff
-[106998.863247]  [<ffffffff8139ccf1>] ? device_create+0x41/0x50
-[106998.863257]  [<ffffffff812b621e>] ? kasprintf+0x3e/0x40
-[106998.863268]  [<ffffffff8138c6a2>] ? misc_register+0xc2/0x120
-[106998.863277]  [<ffffffffa002500c>] ? hello_init+0xc/0x1000 [hello]
-[106998.863285]  [<ffffffff8100213c>] ? do_one_initcall+0xcc/0x200
-[106998.863295]  [<ffffffff810d8d1a>] ? load_module+0x20da/0x26b0
-[106998.863303]  [<ffffffff810d4900>] ? store_uevent+0x40/0x40
-[106998.863312]  [<ffffffff810d944d>] ? SyS_finit_module+0x7d/0xa0
-[106998.863322]  [<ffffffff8150d32d>] ? system_call_fast_compare_end+0x10/0x15
-[106998.863327] ---[ end trace af819f702b51bbb0 ]---
-[106998.863332] ------------[ cut here ]------------
+Would be nice to have a devm for this one too.
 
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id pm8941_wled_match_table[] = {
+> +	{ .compatible = "qcom,pm8941-wled" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, pm8941_wled_match_table);
+> +
+> +static struct platform_driver pm8941_wled_driver = {
+> +	.probe	= pm8941_wled_probe,
+> +	.remove = pm8941_wled_remove,
+> +	.driver	= {
+> +		.name		= "pm8941-wled",
+> +		.owner		= THIS_MODULE,
 
->> +static int match_child(struct device *dev, void *data)
->> +{
->> +       if (!dev_name(dev))
->> +               return 0;
->> +       return !strcmp(dev_name(dev), (char *)data);
->
-> strncmp instead of strcmp?
-
-I dont think it would make it safer here. You need to know the size of
-the string, and finding out the lenght of the string will produce the
-same access error (if that is what concerns you).
-
-> I still think we need solve this issue in device tree core code not in
-> the user of DT.
-
-Other subsystem do not have the issue of unique naming.
-
-ie, in video4linux the device name is created dynamically (video0,
-video1.....), others like hwmon have a hierarchical name
-(hmon0/input0, hwmon1/input0)
-
-I think this is a problem related to the led subsystem that does not
-have a way to handled repeated names. Before we could blame the system
-designer for choosing the same name for two leds, but with dt overlays
-this is not more in full control of the sys designer. Please correct
-me if I am wrong.
-
-
-Thanks!!!
+THIS_MODULE should be removed.
 
 -- 
-Ricardo Ribalda
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
