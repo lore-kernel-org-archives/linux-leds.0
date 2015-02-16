@@ -1,48 +1,71 @@
-From: "Imre Kaloz" <kaloz@openwrt.org>
-Subject: Re: [PATCHv6 2/2] leds: tlc591xx: Driver for the TI 8/16 Channel i2c
- LED driver
-Date: Mon, 16 Feb 2015 15:11:57 +0100
-Message-ID: <op.xt5lp7ix2s3iss@ecaz>
-References: <1422367161-16487-1-git-send-email-andrew@lunn.ch>
- <1422367161-16487-3-git-send-email-andrew@lunn.ch>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash
+ class extension
+Date: Mon, 16 Feb 2015 20:45:15 +0100
+Message-ID: <20150216194515.GB13497@amd>
+References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
+ <20150211215723.GC11313@amd>
+ <54DC671E.8010705@samsung.com>
+ <20150212090756.GA30508@amd>
+ <54DC7C1E.5020105@samsung.com>
+ <20150212105417.GA10377@amd>
+ <54DC8B6F.9080802@samsung.com>
+ <20150212174444.GA9450@amd>
+ <54E1D218.6020000@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:56842 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755684AbbBPOMA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 16 Feb 2015 09:12:00 -0500
-In-Reply-To: <1422367161-16487-3-git-send-email-andrew@lunn.ch>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52036 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbbBPTpS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Feb 2015 14:45:18 -0500
+Content-Disposition: inline
+In-Reply-To: <54E1D218.6020000@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, Andrew Lunn <andrew@lunn.ch>
-Cc: devicetree@vger.kernel.org, vigneshr@ti.com, Matthew.Fatheree@belkin.com, tomi.valkeinen@ti.com, linux-leds@vger.kernel.org, linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-Hi Andrew,
+Hi!
 
-On Tue, 27 Jan 2015 14:59:21 +0100, Andrew Lunn <andrew@lunn.ch> wrote:
+> >root@duo:~# cat /sys/power/state
+> >freeze mem disk
+> >root@duo:~# cat /sys/power/disk
+> >[platform] shutdown reboot suspend
+> >root@duo:~#
+> >
+> >>Could you propose the acceptable format then?
+> >>The numbers alone are inconvenient to use, we need a human
+> >>readable description next to them. Or some another way
+> >>to obtain the name.
+> >
+> >Files like "0.active", "0.name", "1.active", "1.name"?
+> >
+> >Subdirectories 0/1 with "name" and "active" files?
+> 
+> We have flash_sync_strobe attribute which allows to read currently
+> chosen sync_led. I would simplify this:
+> 
+> Let's assume there are two LED Flash class deviecs:
+> 
+> - max77693-flash1
+> - max77693-flash2
+> 
+> Proposed design described by use cases:
+> 
+> #cd /sys/class/leds/max77693-flash1
+> #cat available_flash_leds
+> #[0.none] 1.max77693-flash2
 
-> The TLC59116 is an I2C bus controlled 16-channel LED driver.  The
-> TLC59108 is an I2C bus controlled 8-channel LED driver, which is very
-> similar to the TLC59116. Each LED output has its own 8-bit
-> fixed-frequency PWM controller to control the brightness of the LED.
-> The LEDs can also be fixed off and on, making them suitable for use as
-> GPOs.
->
-> This is based on a driver from Belkin, but has been extensively
-> rewritten and extended to support both 08 and 16 versions.
->
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> Cc: Matthew.Fatheree@belkin.com
+Yeah. Should not have showed you /sys/power/state, right?
 
-I've tested the driver on the Mamba (WRT1900AC) and it has been integrated  
-to OpenWrt trunk for a while now, and no issues has been reported by the  
-community either.
+state gets away with this, because it uses few fixed strings. No funny
+characters there, and it is "closely guarded". You don't have enough
+control to do this... plus you have put the numbers there.
 
-Please feel free to add Tested-by: Imre Kaloz <kaloz@openwrt.org>.
-
-
-Thanks,
-
-Imre
+No.
+									Pavel
+									
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
