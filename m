@@ -1,71 +1,157 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] Documentation: leds: Add description of LED Flash
- class extension
-Date: Mon, 16 Feb 2015 20:45:15 +0100
-Message-ID: <20150216194515.GB13497@amd>
-References: <1423125773-22751-1-git-send-email-j.anaszewski@samsung.com>
- <20150211215723.GC11313@amd>
- <54DC671E.8010705@samsung.com>
- <20150212090756.GA30508@amd>
- <54DC7C1E.5020105@samsung.com>
- <20150212105417.GA10377@amd>
- <54DC8B6F.9080802@samsung.com>
- <20150212174444.GA9450@amd>
- <54E1D218.6020000@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Tue, 17 Feb 2015 14:14:19 -0800
+Message-ID: <CAK5ve-KJK_aT_8sVmhtnTTJRZpdAvSGc45dtH-XH-E59wB=jXQ@mail.gmail.com>
+References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
+ <1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com> <54DD77BA.5020808@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52036 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbbBPTpS (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Feb 2015 14:45:18 -0500
-Content-Disposition: inline
-In-Reply-To: <54E1D218.6020000@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <54DD77BA.5020808@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, b.zolnierkie@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-Hi!
+On Thu, Feb 12, 2015 at 8:04 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/23/15 16:54, Bjorn Andersson wrote:
 
-> >root@duo:~# cat /sys/power/state
-> >freeze mem disk
-> >root@duo:~# cat /sys/power/disk
-> >[platform] shutdown reboot suspend
-> >root@duo:~#
-> >
-> >>Could you propose the acceptable format then?
-> >>The numbers alone are inconvenient to use, we need a human
-> >>readable description next to them. Or some another way
-> >>to obtain the name.
-> >
-> >Files like "0.active", "0.name", "1.active", "1.name"?
-> >
-> >Subdirectories 0/1 with "name" and "active" files?
-> 
-> We have flash_sync_strobe attribute which allows to read currently
-> chosen sync_led. I would simplify this:
-> 
-> Let's assume there are two LED Flash class deviecs:
-> 
-> - max77693-flash1
-> - max77693-flash2
-> 
-> Proposed design described by use cases:
-> 
-> #cd /sys/class/leds/max77693-flash1
-> #cat available_flash_leds
-> #[0.none] 1.max77693-flash2
+Thanks for the review, Stephen.
+Bjorn, could you please update your patch according to Stephen's review.
 
-Yeah. Should not have showed you /sys/power/state, right?
+-Bryan
 
-state gets away with this, because it uses few fixed strings. No funny
-characters there, and it is "closely guarded". You don't have enough
-control to do this... plus you have put the numbers there.
-
-No.
-									Pavel
-									
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>> +
+>> +static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+>> +{
+>> +     struct pm8941_wled_config *cfg = &wled->cfg;
+>> +     u32 val;
+>> +     int rc;
+>> +     int i;
+>> +
+>> +     const struct {
+>> +             const char *name;
+>> +             u32 *val_ptr;
+>> +             const struct pm8941_wled_var_cfg *cfg;
+>> +     } u32_opts[] = {
+>> +             {
+>> +                     "qcom,current-boost-limit",
+>> +                     &cfg->i_boost_limit,
+>> +                     .cfg = &pm8941_wled_i_boost_limit_cfg,
+>> +             },
+>> +             {
+>> +                     "qcom,current-limit",
+>> +                     &cfg->i_limit,
+>> +                     .cfg = &pm8941_wled_i_limit_cfg,
+>> +             },
+>> +             {
+>> +                     "qcom,ovp",
+>> +                     &cfg->ovp,
+>> +                     .cfg = &pm8941_wled_ovp_cfg,
+>> +             },
+>> +             {
+>> +                     "qcom,switching-freq",
+>> +                     &cfg->switch_freq,
+>> +                     .cfg = &pm8941_wled_switch_freq_cfg,
+>> +             },
+>> +             {
+>> +                     "qcom,num-strings",
+>> +                     &cfg->num_strings,
+>> +                     .cfg = &pm8941_wled_num_strings_cfg,
+>> +             },
+>> +     };
+>> +     const struct {
+>> +             const char *name;
+>> +             bool *val_ptr;
+>> +     } bool_opts[] = {
+>> +             { "qcom,cs-out", &cfg->cs_out_en, },
+>> +             { "qcom,ext-gen", &cfg->ext_gen, },
+>> +             { "qcom,cabc", &cfg->cabc_en, },
+>> +     };
+>> +
+>> +     rc = of_property_read_u32(dev->of_node, "reg", &val);
+>> +     if (rc || val > 0xffff) {
+>> +             dev_err(dev, "invalid IO resources\n");
+>> +             return rc ? rc : -EINVAL;
+>> +     }
+>> +     wled->addr = val;
+>> +
+>> +     rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
+>> +     if (rc)
+>> +             wled->cdev.name = dev->of_node->name;
+>> +
+>> +     wled->cdev.default_trigger = of_get_property(dev->of_node,
+>> +                     "linux,default-trigger", NULL);
+>> +
+>> +     *cfg = pm8941_wled_config_defaults;
+>> +     for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
+>> +             u32 sel, c;
+>> +             int j, rj;
+>> +
+>> +             rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
+>> +             if (rc) {
+>> +                     if (rc != -EINVAL) {
+>> +                             dev_err(dev, "error reading '%s'\n",
+>> +                                             u32_opts[i].name);
+>> +                             return rc;
+>> +                     }
+>> +                     continue;
+>> +             }
+>> +
+>> +             sel = UINT_MAX;
+>> +             rj = -1;
+>> +             c = pm8941_wled_values(u32_opts[i].cfg, 0);
+>> +             for (j = 0; c != UINT_MAX; ++j) {
+>> +                     if (c <= val && (sel == UINT_MAX || c >= sel)) {
+>> +                             sel = c;
+>> +                             rj = j;
+>> +                     }
+>> +                     c = pm8941_wled_values(u32_opts[i].cfg, j + 1);
+>> +             }
+>> +             if (sel == UINT_MAX) {
+>> +                     dev_err(dev, "invalid value for '%s'\n",
+>> +                                     u32_opts[i].name);
+>> +                     return rc;
+>
+> Isn't rc always 0 here? Don't we want to return an error?
+>
+> Also, I find this code very convoluted given that we loop through a
+> table and match based on nodes and call function pointers, etc. Why
+> can't we just have a handful of if statements with of_property_read_u32
+> in them? That way we don't have to jump through so many hoops, bouncing
+> all around this file to figure out what's going on. If we did I imagine
+> we wouldn't have missed out on rc being 0 here.
+>
+>> +
+>> +static int pm8941_wled_remove(struct platform_device *pdev)
+>> +{
+>> +     struct pm8941_wled *wled;
+>> +
+>> +     wled = platform_get_drvdata(pdev);
+>> +     led_classdev_unregister(&wled->cdev);
+>
+> Would be nice to have a devm for this one too.
+>
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static const struct of_device_id pm8941_wled_match_table[] = {
+>> +     { .compatible = "qcom,pm8941-wled" },
+>> +     {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, pm8941_wled_match_table);
+>> +
+>> +static struct platform_driver pm8941_wled_driver = {
+>> +     .probe  = pm8941_wled_probe,
+>> +     .remove = pm8941_wled_remove,
+>> +     .driver = {
+>> +             .name           = "pm8941-wled",
+>> +             .owner          = THIS_MODULE,
+>
+> THIS_MODULE should be removed.
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
