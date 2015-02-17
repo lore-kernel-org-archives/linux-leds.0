@@ -1,157 +1,34 @@
-From: Bryan Wu <cooloney@gmail.com>
+From: Bjorn Andersson <bjorn-UYDU3/A3LUY@public.gmane.org>
 Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
-Date: Tue, 17 Feb 2015 14:14:19 -0800
-Message-ID: <CAK5ve-KJK_aT_8sVmhtnTTJRZpdAvSGc45dtH-XH-E59wB=jXQ@mail.gmail.com>
+Date: Tue, 17 Feb 2015 14:30:33 -0800
+Message-ID: <CAJAp7OgkY+zsp_Yfgnri2H7yv8xrwVMR9UugFv8oEh4x-Fs82g@mail.gmail.com>
 References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
- <1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com> <54DD77BA.5020808@codeaurora.org>
+	<1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>
+	<54DD77BA.5020808@codeaurora.org>
+	<CAK5ve-KJK_aT_8sVmhtnTTJRZpdAvSGc45dtH-XH-E59wB=jXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <54DD77BA.5020808@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAK5ve-KJK_aT_8sVmhtnTTJRZpdAvSGc45dtH-XH-E59wB=jXQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Courtney Cavin <courtney.cavin-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Feb 12, 2015 at 8:04 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/23/15 16:54, Bjorn Andersson wrote:
+On Tue, Feb 17, 2015 at 2:14 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Feb 12, 2015 at 8:04 PM, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+>> On 01/23/15 16:54, Bjorn Andersson wrote:
+>
+> Thanks for the review, Stephen.
+> Bjorn, could you please update your patch according to Stephen's review.
+>
 
-Thanks for the review, Stephen.
-Bjorn, could you please update your patch according to Stephen's review.
+I will do so, do you want me to send a new patch or an incremental
+patch with the changes?
 
--Bryan
-
->> +
->> +static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
->> +{
->> +     struct pm8941_wled_config *cfg = &wled->cfg;
->> +     u32 val;
->> +     int rc;
->> +     int i;
->> +
->> +     const struct {
->> +             const char *name;
->> +             u32 *val_ptr;
->> +             const struct pm8941_wled_var_cfg *cfg;
->> +     } u32_opts[] = {
->> +             {
->> +                     "qcom,current-boost-limit",
->> +                     &cfg->i_boost_limit,
->> +                     .cfg = &pm8941_wled_i_boost_limit_cfg,
->> +             },
->> +             {
->> +                     "qcom,current-limit",
->> +                     &cfg->i_limit,
->> +                     .cfg = &pm8941_wled_i_limit_cfg,
->> +             },
->> +             {
->> +                     "qcom,ovp",
->> +                     &cfg->ovp,
->> +                     .cfg = &pm8941_wled_ovp_cfg,
->> +             },
->> +             {
->> +                     "qcom,switching-freq",
->> +                     &cfg->switch_freq,
->> +                     .cfg = &pm8941_wled_switch_freq_cfg,
->> +             },
->> +             {
->> +                     "qcom,num-strings",
->> +                     &cfg->num_strings,
->> +                     .cfg = &pm8941_wled_num_strings_cfg,
->> +             },
->> +     };
->> +     const struct {
->> +             const char *name;
->> +             bool *val_ptr;
->> +     } bool_opts[] = {
->> +             { "qcom,cs-out", &cfg->cs_out_en, },
->> +             { "qcom,ext-gen", &cfg->ext_gen, },
->> +             { "qcom,cabc", &cfg->cabc_en, },
->> +     };
->> +
->> +     rc = of_property_read_u32(dev->of_node, "reg", &val);
->> +     if (rc || val > 0xffff) {
->> +             dev_err(dev, "invalid IO resources\n");
->> +             return rc ? rc : -EINVAL;
->> +     }
->> +     wled->addr = val;
->> +
->> +     rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
->> +     if (rc)
->> +             wled->cdev.name = dev->of_node->name;
->> +
->> +     wled->cdev.default_trigger = of_get_property(dev->of_node,
->> +                     "linux,default-trigger", NULL);
->> +
->> +     *cfg = pm8941_wled_config_defaults;
->> +     for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
->> +             u32 sel, c;
->> +             int j, rj;
->> +
->> +             rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
->> +             if (rc) {
->> +                     if (rc != -EINVAL) {
->> +                             dev_err(dev, "error reading '%s'\n",
->> +                                             u32_opts[i].name);
->> +                             return rc;
->> +                     }
->> +                     continue;
->> +             }
->> +
->> +             sel = UINT_MAX;
->> +             rj = -1;
->> +             c = pm8941_wled_values(u32_opts[i].cfg, 0);
->> +             for (j = 0; c != UINT_MAX; ++j) {
->> +                     if (c <= val && (sel == UINT_MAX || c >= sel)) {
->> +                             sel = c;
->> +                             rj = j;
->> +                     }
->> +                     c = pm8941_wled_values(u32_opts[i].cfg, j + 1);
->> +             }
->> +             if (sel == UINT_MAX) {
->> +                     dev_err(dev, "invalid value for '%s'\n",
->> +                                     u32_opts[i].name);
->> +                     return rc;
->
-> Isn't rc always 0 here? Don't we want to return an error?
->
-> Also, I find this code very convoluted given that we loop through a
-> table and match based on nodes and call function pointers, etc. Why
-> can't we just have a handful of if statements with of_property_read_u32
-> in them? That way we don't have to jump through so many hoops, bouncing
-> all around this file to figure out what's going on. If we did I imagine
-> we wouldn't have missed out on rc being 0 here.
->
->> +
->> +static int pm8941_wled_remove(struct platform_device *pdev)
->> +{
->> +     struct pm8941_wled *wled;
->> +
->> +     wled = platform_get_drvdata(pdev);
->> +     led_classdev_unregister(&wled->cdev);
->
-> Would be nice to have a devm for this one too.
->
->> +
->> +     return 0;
->> +}
->> +
->> +static const struct of_device_id pm8941_wled_match_table[] = {
->> +     { .compatible = "qcom,pm8941-wled" },
->> +     {}
->> +};
->> +MODULE_DEVICE_TABLE(of, pm8941_wled_match_table);
->> +
->> +static struct platform_driver pm8941_wled_driver = {
->> +     .probe  = pm8941_wled_probe,
->> +     .remove = pm8941_wled_remove,
->> +     .driver = {
->> +             .name           = "pm8941-wled",
->> +             .owner          = THIS_MODULE,
->
-> THIS_MODULE should be removed.
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Regards,
+Bjorn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
