@@ -1,44 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH, RESEND] leds: ipaq needs LEDS_CLASS
-Date: Wed, 18 Feb 2015 22:10:53 +0100
-Message-ID: <6859961.SRiBVu7Ycu@wuerfel>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: 0.led_name 2.other.led.name in /sysfs Re: [PATCH/RFC v11 01/20]
+ leds: flash: document sysfs interface
+Date: Wed, 18 Feb 2015 23:47:47 +0100
+Message-ID: <20150218224747.GA3999@amd>
+References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
+ <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:57576 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726AbbBRVLB (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 16:11:01 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57254 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753293AbbBRWru (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 17:47:50 -0500
+Content-Disposition: inline
+In-Reply-To: <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Greg KH <greg@kroah.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
 
-All other drivers have a dependency on this already, but this one
-does not, which can lead to a link error when LEDS_CLASS is not set.
 
-drivers/built-in.o: In function `micro_leds_remove':
-:(.text+0x13d1bc): undefined reference to `led_classdev_unregister'
-drivers/built-in.o: In function `micro_leds_probe':
-:(.text+0x13d3d0): undefined reference to `led_classdev_register'
+On Wed 2015-02-18 17:20:22, Jacek Anaszewski wrote:
+> Add a documentation of LED Flash class specific sysfs attributes.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
 
-This patch adds the missing dependency.
+NAK-ed-by: Pavel Machek
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-----
-Originally sent on 2015-01-28, but has not appeared in linux-next
+> +What:		/sys/class/leds/<led>/available_sync_leds
+> +Date:		February 2015
+> +KernelVersion:	3.20
+> +Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:	read/write
+> +		Space separated list of LEDs available for flash strobe
+> +		synchronization, displayed in the format:
+> +
+> +		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 95029dfd311a..927bb4491e1c 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -144,6 +144,7 @@ config LEDS_SUNFIRE
- 
- config LEDS_IPAQ_MICRO
- 	tristate "LED Support for the Compaq iPAQ h3xxx"
-+	depends on LEDS_CLASS
- 	depends on MFD_IPAQ_MICRO
- 	help
- 	  Choose this option if you want to use the notification LED on
+Multiple values per file, with all the problems we had in /proc. I
+assume led_id is an integer? What prevents space or dot in led name?
+
+       	      	    	     	  	   	    	       Pavel
+
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
