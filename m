@@ -1,52 +1,60 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 17/20] Documentation: leds: Add description of
- v4l2-flash sub-device
-Date: Wed, 18 Feb 2015 17:20:38 +0100
-Message-ID: <1424276441-3969-18-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 18/20] DT: Add documentation for exynos4-is 'flashes'
+ property
+Date: Wed, 18 Feb 2015 17:20:39 +0100
+Message-ID: <1424276441-3969-19-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24280 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753063AbbBRQ0Q (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:26:16 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:62629 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752519AbbBRQ0a (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:26:30 -0500
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-This patch extends LED Flash class documention by
-the description of interactions with v4l2-flash sub-device.
+This patch adds a description of 'flashes' property
+to the samsung-fimc.txt.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../devicetree/bindings/media/samsung-fimc.txt     |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-index ff03a66..dc46ae0 100644
---- a/Documentation/leds/leds-class-flash.txt
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -30,3 +30,16 @@ Following sysfs attributes are exposed for controlling flash LED devices:
- 	- available_sync_leds
- 	- flash_sync_strobe
- 	- flash_fault
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+index 922d6f8..cb0e263 100644
+--- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -40,6 +40,13 @@ should be inactive. For the "active-a" state the camera port A must be activated
+ and the port B deactivated and for the state "active-b" it should be the other
+ way around.
+ 
++Optional properties:
 +
-+A LED subsystem driver can be controlled also from the level of VideoForLinux2
-+subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
-+be defined in the kernel config. The driver must call the v4l2_flash_init
-+function to get registered in the V4L2 subsystem. On remove the
-+v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
++- flashes - Array of phandles to the flash LEDs that can be controlled by the
++	    sub-devices contained in this media device. Flash LED is
++	    represented by a child node of a flash LED device
++	    (see Documentation/devicetree/bindings/leds/common.txt).
 +
-+After proper initialization a V4L2 Flash sub-device is created. The sub-device
-+exposes a number of V4L2 controls, which allow for controlling a LED Flash class
-+device with use of its internal kernel API.
-+Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
-+unavailable. The interface is re-enabled after the V4L2 Flash sub-device
-+is closed.
+ The 'camera' node must include at least one 'fimc' child node.
+ 
+ 
+@@ -166,6 +173,7 @@ Example:
+ 		clock-output-names = "cam_a_clkout", "cam_b_clkout";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_port_a_clk_active>;
++		flashes = <&camera_flash>, <&system_torch>;
+ 		status = "okay";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
 1.7.9.5
