@@ -1,52 +1,95 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: flash: remove stray include directive
-Date: Tue, 17 Feb 2015 16:30:02 -0800
-Message-ID: <CAK5ve-+V1ngmk3tOQZBE4TSZJwPv8PXYcrtA5OhPyu7DgBWj0w@mail.gmail.com>
-References: <1423843607-3840-1-git-send-email-j.anaszewski@samsung.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH] led/led-class: Handle LEDs with the same name
+Date: Wed, 18 Feb 2015 01:32:14 +0100
+Message-ID: <CAPybu_1hWj_LX_399tXxNWW-bD1bUhv2FESt5t0G5VH9HwS=SQ@mail.gmail.com>
+References: <1423657572-22299-1-git-send-email-ricardo.ribalda@gmail.com>
+ <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
+ <CAPybu_26e3evmHM3W7ZsUXin0LMWJWAbPSf8rFnDnLG821Jwpg@mail.gmail.com>
+ <CAK5ve-Kuj5Z_Mwo7=-z4VPSmwEiv52YH2e=XCQ=7MvPiOErvJA@mail.gmail.com>
+ <CAPybu_2e7P0O+x6Q37crg-T=y2vb05HuC3aE9NwPVjcP3TDQzA@mail.gmail.com>
+ <CAK5ve-JbVX17SK9WBy4dT4g-CFJcPDjiwcUiSi=kssz7SJAsLA@mail.gmail.com>
+ <CAPybu_3e3LRiyuUPzZkMQCsh3VtH8gB5Jhezyq7r4e9V113_XA@mail.gmail.com> <CAK5ve-KWrZL8wZ8UjEbe0cuBHoAxbRw_24wpVOiBd75rp-Jyuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:41390 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753749AbbBRAaX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Feb 2015 19:30:23 -0500
-Received: by iecrd18 with SMTP id rd18so45071689iec.8
-        for <linux-leds@vger.kernel.org>; Tue, 17 Feb 2015 16:30:23 -0800 (PST)
-In-Reply-To: <1423843607-3840-1-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:35690 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754473AbbBRAcg (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Feb 2015 19:32:36 -0500
+In-Reply-To: <CAK5ve-KWrZL8wZ8UjEbe0cuBHoAxbRw_24wpVOiBd75rp-Jyuw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Fri, Feb 13, 2015 at 8:06 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Avoid including v4l2-controls.h, as this is stray code from the early
-> versions of the LED / V4L2 flash API integration patches. LED Flash
-> class doesn't depend on V4L2 subsystem.
+Hello Bryan
+
+On Wed, Feb 18, 2015 at 12:59 AM, Bryan Wu <cooloney@gmail.com> wrote:
 >
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> DT just describe the hardware, so if it's a different hardware, they
+> should have different name.
+> red0 for GPIO 0, red1 for GPIO 1 or choose other good name instead of 0 and 1.
+
+I think I have not managed to explain myself properly.
+
+We have a host computer. with 2 pcie slots. The host is described with
+a DT that looks like:
+
+&axi1 {
+
+pci0{
+  reg = < 0x20000000 0x10000000 >
+}
+
+pci1{
+  reg = < 0x30000000 0x10000000 >
+}
+}
+
+The user can connect anything to the pci slots. (pci0 and pci1)
 
 
-Thanks, I merged it into my tree.
+Lets say that we have a type of add-on card. Described by this DT
+overlay (card.dtb):
 
--Bryan
+&pci {
 
-> ---
->  include/linux/led-class-flash.h |    1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
-> index 5ba2fac..3b5b964 100644
-> --- a/include/linux/led-class-flash.h
-> +++ b/include/linux/led-class-flash.h
-> @@ -13,7 +13,6 @@
->  #define __LINUX_FLASH_LEDS_H_INCLUDED
->
->  #include <linux/leds.h>
-> -#include <uapi/linux/v4l2-controls.h>
->
->  struct device_node;
->  struct led_classdev_flash;
-> --
-> 1.7.9.5
->
+gpio_0: gpio_0 {
+#gpio-cells = <2>;
+compatible = "xlnx,xps-gpio-1.00.a";
+reg = < 0x30040000 010000 >;
+};
+
+
+/*Leds*/
+leds {
+reg = < 0x30040000 010000 >;
+compatible = "gpio-leds";
+red {
+gpios = <&gpio_0 0 0>;
+linux,default-trigger = "drop-qt5023_video0";
+};
+}
+
+}
+
+The user connects two of those cards to the system (at locations pci0 and pci1).
+
+Then we have TWO gpios chip. Each of them have a led named red. When
+the second gpio-led is probed we have an error. Everything else
+(address offset, phandle, device renaming) is handled properly already
+by the kernel.
+
+On this system I cannot control card.dtb, or which type of cards will
+the user connect to the system. The DT is generated in run-time based
+on the hardware connected to the pci slots.
+
+I humbly believe that the issue here is that the subsystem does not
+protect ourselves against name collisions, because a month ago a
+device tree was considered immutable and in full control of the system
+designer, unfortunately this is not the case anymore.
+
+Thanks!
+
+-- 
+Ricardo Ribalda
