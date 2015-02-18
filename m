@@ -1,59 +1,151 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
-Date: Wed, 18 Feb 2015 06:54:30 -0800
-Message-ID: <CAJAp7OjNK5WhZ62x5+z5RZG_GJ8sDoyyHDRq+BBUUkxY_ndjhw@mail.gmail.com>
-References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>
-	<1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>
-	<54DD7CE5.5000302@codeaurora.org>
-	<CAJAp7OgD3+mGZ02o6xAWkJvKoD4BcQWVD1GS87Niw_fcReBMMA@mail.gmail.com>
-	<54E3FCD3.4000304@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <54E3FCD3.4000304@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 00/20] LED / flash API integration
+Date: Wed, 18 Feb 2015 17:20:21 +0100
+Message-ID: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Feb 17, 2015 at 6:45 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 02/17/15 15:02, Bjorn Andersson wrote:
->> On Thu, Feb 12, 2015 at 8:26 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-[..]
->>> This doesn't seem to do anything for the OVP spike mentioned in this
->>> patch[1]. Do you see that problem on your device? I imagine the PMIC is
->>> the same.
->>>
->>> [1]
->>> https://www.codeaurora.org/cgit/quic/la/kernel/msm/commit/?id=fef9e15072562f0f28dc7066dcdd69388df81ed3
->>>
->> That's odd, I can't find that fix in any officially supported releases
->> for 8974 - which Courtney used as reference for this driver.
->>
->> Just to make sure I understand the solution; when disabling the sinks
->> the over-voltage-protection sometimes triggers, so we should detect
->> that and reset the ovp configuration?
->>
->> I presume the side effect would be that the sinks would not give any
->> output until this is done?
->>
->
-> It seems that commit is not very good at describing the problem. From
-> what I can tell, the inductor current may spike when the WLED is turned
-> off and the switch is stuck on (the circuit is a boost convertor). To
-> make sure this doesn't happen, we force an OVP so that the switch is
-> known to be open (i.e. off) and thus can't cause the current spike when
-> we disable.
->
+This patch set is a follow-up of the LED / flash API integration
+series [1]. It is based on linux-next_20150218.
 
-Apparently that commit is only half of the solution, there's another
-commit earlier in history with the same commit message [2].
+========================
+Changes since version 10 :
+========================
 
-With both [1] and [2] in place there are a bunch of different
-operations going on, so I'm not able to fully map these to your
-description - which does make sense.
+- added to the v4l2-flash sub-device driver the support for flash
+  LED devices with non-linear brightness setting
+- improved current setting in the max77693-led driver 
+- added ABI documentation for flash LED sysfs attributes
+- improved synchronized LEDs related sysfs attributes in the
+  LED Flash class
+- applied various fixes and cleanups
 
-[2] https://www.codeaurora.org/cgit/quic/la/kernel/msm/commit/?id=b1a2f61113c69d2aba68c583101ac40a05cb2c5b
+========================
+Changes since version 9 :
+========================
 
-Regards,
-Bjorn
+- switched to assigning sub-led related of_node to led_cdev->dev->of_node
+  member which allowed for avoiding modifications around v4l-async
+- reimplemented max77693 flash cell driver to avoid extensive use
+  of macros
+- added led-sources DT property and switched to using it
+- switched to reporting flash faults in the LED subsystem in the form
+  of human readable strings
+- added available_sync_leds sysfs attribute to the LED Flash class
+  and changed the semantics of flash_sync_strobe attribute
+- made LED subsystem flash faults not depending on the V4L2 Flash ones
+- applied various fixes and cleanups
+
+========================
+Changes since version 8:
+========================
+
+- added a new way of registering async sub-device
+- switched to matching flash leds by DT phandles
+- improved Device Tree bindings documentation
+- split the drivers patches to LED Flash class
+  and V4L2 Flash part
+- fixed indicator leds handling in v4l2-flash
+- applied various fixes an cleanups
+
+========================
+Changes since version 7:
+========================
+
+- removed explicit support for indicator leds from
+  LED Flash class - indicator leds will be registered
+  as a separate LED Flash class devices
+- added flash_sync_strobe sysfs attribute and related
+  V4L2_CID_FLASH_SYNC_STROBE control
+- changed the way of matching V4L2 Flash sub-devices
+  in a media device, which entailed modification in
+  v4l2-async driver
+- modified max77693 DT bindings documentation
+- applied various fixes an cleanups
+
+========================
+Changes since version 6:
+========================
+
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (20):
+  leds: flash: document sysfs interface
+  leds: flash: Improve sync strobe related sysfs attributes
+  Documentation: leds: Add description of LED Flash class extension
+  dt-binding: leds: Add common LED DT bindings macros
+  mfd: max77693: Modify flash cell name identifiers
+  mfd: max77693: Remove struct max77693_led_platform_data
+  mfd: max77693: add TORCH_IOUT_MASK macro
+  mfd: max77693: Adjust FLASH_EN_SHIFT and TORCH_EN_SHIFT macros
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add driver for AAT1290 current regulator
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  exynos4-is: Add support for v4l2-flash subdevs
+  v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE control
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  DT: Add documentation for exynos4-is 'flashes' property
+  leds: max77693: add support for V4L2 Flash sub-device
+  leds: aat1290: add support for V4L2 Flash sub-device
+
+ Documentation/ABI/testing/sysfs-class-led-flash    |  104 ++
+ Documentation/DocBook/media/v4l/controls.xml       |    9 +
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   43 +
+ .../devicetree/bindings/media/samsung-fimc.txt     |    8 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   61 +
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   45 +
+ drivers/leds/Kconfig                               |   17 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/led-class-flash.c                     |    6 +-
+ drivers/leds/leds-aat1290.c                        |  570 ++++++++++
+ drivers/leds/leds-max77693.c                       | 1191 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.c      |   36 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  640 +++++++++++
+ drivers/mfd/max77693.c                             |    4 +-
+ include/dt-bindings/leds/max77693.h                |   21 +
+ include/linux/mfd/max77693-private.h               |    5 +-
+ include/linux/mfd/max77693.h                       |   13 -
+ include/media/v4l2-flash.h                         |  146 +++
+ include/uapi/linux/v4l2-controls.h                 |    1 +
+ 24 files changed, 2928 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/dt-bindings/leds/max77693.h
+ create mode 100644 include/media/v4l2-flash.h
+
+-- 
+1.7.9.5
