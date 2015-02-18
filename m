@@ -1,49 +1,52 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] led/led-class: Handle LEDs with the same name
-Date: Tue, 17 Feb 2015 15:59:01 -0800
-Message-ID: <CAK5ve-KWrZL8wZ8UjEbe0cuBHoAxbRw_24wpVOiBd75rp-Jyuw@mail.gmail.com>
-References: <1423657572-22299-1-git-send-email-ricardo.ribalda@gmail.com>
- <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
- <CAPybu_26e3evmHM3W7ZsUXin0LMWJWAbPSf8rFnDnLG821Jwpg@mail.gmail.com>
- <CAK5ve-Kuj5Z_Mwo7=-z4VPSmwEiv52YH2e=XCQ=7MvPiOErvJA@mail.gmail.com>
- <CAPybu_2e7P0O+x6Q37crg-T=y2vb05HuC3aE9NwPVjcP3TDQzA@mail.gmail.com>
- <CAK5ve-JbVX17SK9WBy4dT4g-CFJcPDjiwcUiSi=kssz7SJAsLA@mail.gmail.com> <CAPybu_3e3LRiyuUPzZkMQCsh3VtH8gB5Jhezyq7r4e9V113_XA@mail.gmail.com>
+Subject: Re: [PATCH] leds: flash: remove stray include directive
+Date: Tue, 17 Feb 2015 16:30:02 -0800
+Message-ID: <CAK5ve-+V1ngmk3tOQZBE4TSZJwPv8PXYcrtA5OhPyu7DgBWj0w@mail.gmail.com>
+References: <1423843607-3840-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:35064 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752945AbbBQX7Y (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Feb 2015 18:59:24 -0500
-In-Reply-To: <CAPybu_3e3LRiyuUPzZkMQCsh3VtH8gB5Jhezyq7r4e9V113_XA@mail.gmail.com>
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:41390 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753749AbbBRAaX (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Feb 2015 19:30:23 -0500
+Received: by iecrd18 with SMTP id rd18so45071689iec.8
+        for <linux-leds@vger.kernel.org>; Tue, 17 Feb 2015 16:30:23 -0800 (PST)
+In-Reply-To: <1423843607-3840-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 
-On Tue, Feb 17, 2015 at 3:47 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> Hi
+On Fri, Feb 13, 2015 at 8:06 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Avoid including v4l2-controls.h, as this is stray code from the early
+> versions of the LED / V4L2 flash API integration patches. LED Flash
+> class doesn't depend on V4L2 subsystem.
 >
-> On Wed, Feb 18, 2015 at 12:35 AM, Bryan Wu <cooloney@gmail.com> wrote:
->
->> So why not use name "red0" and name another one "red1"? since you have
->> multiple different red leds here any way.
->
-> I cannot control how many cameras the user will decide to attach to
-> the system, and if two similar cameras are attached to pciA and pciB,
-> they would try to load the same dt.
->
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-DT just describe the hardware, so if it's a different hardware, they
-should have different name.
-red0 for GPIO 0, red1 for GPIO 1 or choose other good name instead of 0 and 1.
 
-If this is true, you can just name one LED like gpio-led and let the
-kernel to add number after that name. I don't think this is a good
-idea to name the hardware. And These aren't like other devices which
-will create device node like /dev/video0 /dev/video1. This is from
-device tree to describe the hardware.
+Thanks, I merged it into my tree.
 
-Thanks,
 -Bryan
+
+> ---
+>  include/linux/led-class-flash.h |    1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+> index 5ba2fac..3b5b964 100644
+> --- a/include/linux/led-class-flash.h
+> +++ b/include/linux/led-class-flash.h
+> @@ -13,7 +13,6 @@
+>  #define __LINUX_FLASH_LEDS_H_INCLUDED
+>
+>  #include <linux/leds.h>
+> -#include <uapi/linux/v4l2-controls.h>
+>
+>  struct device_node;
+>  struct led_classdev_flash;
+> --
+> 1.7.9.5
+>
