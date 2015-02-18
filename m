@@ -1,43 +1,51 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 05/20] mfd: max77693: Modify flash cell name identifiers
-Date: Wed, 18 Feb 2015 17:20:26 +0100
-Message-ID: <1424276441-3969-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 06/20] mfd: max77693: Remove struct
+ max77693_led_platform_data
+Date: Wed, 18 Feb 2015 17:20:27 +0100
+Message-ID: <1424276441-3969-7-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11000 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783AbbBRQWV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:22:21 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
+List-Id: linux-leds@vger.kernel.org
 
-Change flash cell identifiers from max77693-flash to max77693-led
-to avoid confusion with NOR/NAND Flash.
+The flash part of the max77693 device will depend only on OF, and thus
+will not use board files. Since there are no other users of the
+struct max77693_led_platform_data its existence is unjustified.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/mfd/max77693.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/mfd/max77693.h |   13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-index a159593..cb14afa 100644
---- a/drivers/mfd/max77693.c
-+++ b/drivers/mfd/max77693.c
-@@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
- 		.of_compatible = "maxim,max77693-haptic",
- 	},
- 	{
--		.name = "max77693-flash",
--		.of_compatible = "maxim,max77693-flash",
-+		.name = "max77693-led",
-+		.of_compatible = "maxim,max77693-led",
- 	},
+diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+index f0b6585..ce894b6 100644
+--- a/include/linux/mfd/max77693.h
++++ b/include/linux/mfd/max77693.h
+@@ -87,19 +87,6 @@ enum max77693_led_boost_mode {
+ 	MAX77693_LED_BOOST_FIXED,
  };
  
+-struct max77693_led_platform_data {
+-	u32 fleds[2];
+-	u32 iout_torch[2];
+-	u32 iout_flash[2];
+-	u32 trigger[2];
+-	u32 trigger_type[2];
+-	u32 num_leds;
+-	u32 boost_mode;
+-	u32 flash_timeout;
+-	u32 boost_vout;
+-	u32 low_vsys;
+-};
+-
+ /* MAX77693 */
+ 
+ struct max77693_platform_data {
 -- 
 1.7.9.5
