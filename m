@@ -1,54 +1,43 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 04/20] dt-binding: leds: Add common LED DT bindings
- macros
-Date: Wed, 18 Feb 2015 17:20:25 +0100
-Message-ID: <1424276441-3969-5-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 05/20] mfd: max77693: Modify flash cell name identifiers
+Date: Wed, 18 Feb 2015 17:20:26 +0100
+Message-ID: <1424276441-3969-6-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:11000 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751783AbbBRQWV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:22:21 -0500
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
-List-Id: linux-leds@vger.kernel.org
 
-Add macros for defining boost mode and trigger type properties
-of flash LED devices.
+Change flash cell identifiers from max77693-flash to max77693-led
+to avoid confusion with NOR/NAND Flash.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- include/dt-bindings/leds/max77693.h |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 include/dt-bindings/leds/max77693.h
+ drivers/mfd/max77693.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/leds/max77693.h b/include/dt-bindings/leds/max77693.h
-new file mode 100644
-index 0000000..79fcef7
---- /dev/null
-+++ b/include/dt-bindings/leds/max77693.h
-@@ -0,0 +1,21 @@
-+/*
-+ * This header provides macros for the common LEDs device tree bindings.
-+ *
-+ * Copyright (C) 2015, Samsung Electronics Co., Ltd.
-+ *
-+ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_LEDS_H__
-+#define __DT_BINDINGS_LEDS_H
-+
-+/* External trigger type */
-+#define LEDS_TRIG_TYPE_EDGE	0
-+#define LEDS_TRIG_TYPE_LEVEL	1
-+
-+/* Boost modes */
-+#define LEDS_BOOST_OFF		0
-+#define LEDS_BOOST_ADAPTIVE	1
-+#define LEDS_BOOST_FIXED	2
-+
-+#endif /* __DT_BINDINGS_LEDS_H */
+diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+index a159593..cb14afa 100644
+--- a/drivers/mfd/max77693.c
++++ b/drivers/mfd/max77693.c
+@@ -53,8 +53,8 @@ static const struct mfd_cell max77693_devs[] = {
+ 		.of_compatible = "maxim,max77693-haptic",
+ 	},
+ 	{
+-		.name = "max77693-flash",
+-		.of_compatible = "maxim,max77693-flash",
++		.name = "max77693-led",
++		.of_compatible = "maxim,max77693-led",
+ 	},
+ };
+ 
 -- 
 1.7.9.5
