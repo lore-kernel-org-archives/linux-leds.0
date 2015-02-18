@@ -1,154 +1,84 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 14/20] exynos4-is: Add support for v4l2-flash subdevs
-Date: Wed, 18 Feb 2015 17:20:35 +0100
-Message-ID: <1424276441-3969-15-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 15/20] v4l2-ctrls: Add V4L2_CID_FLASH_SYNC_STROBE
+ control
+Date: Wed, 18 Feb 2015 17:20:36 +0100
+Message-ID: <1424276441-3969-16-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62577 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752660AbbBRQZq (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:25:46 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:24272 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752993AbbBRQZ4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:25:56 -0500
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-This patch adds support for external v4l2-flash devices.
-The support includes parsing "flashes" DT property
-and asynchronous subdevice registration.
+Add V4L2_CID_FLASH_SYNC_STROBE control for determining
+whether a flash device strobe has to be synchronized
+with other flash leds controller by the same device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
 ---
- drivers/media/platform/exynos4-is/media-dev.c |   36 +++++++++++++++++++++++--
- drivers/media/platform/exynos4-is/media-dev.h |   13 ++++++++-
- 2 files changed, 46 insertions(+), 3 deletions(-)
+ Documentation/DocBook/media/v4l/controls.xml |    9 +++++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c         |    2 ++
+ include/uapi/linux/v4l2-controls.h           |    1 +
+ 3 files changed, 12 insertions(+)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index f315ef9..8dd0e5d 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -451,6 +451,25 @@ rpm_put:
- 	return ret;
- }
+diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+index 4e9462f..434d020 100644
+--- a/Documentation/DocBook/media/v4l/controls.xml
++++ b/Documentation/DocBook/media/v4l/controls.xml
+@@ -4562,6 +4562,15 @@ interface and may change in the future.</para>
+     	    after strobe during which another strobe will not be
+     	    possible. This is a read-only control.</entry>
+     	  </row>
++    	  <row>
++            <entry spanname="id"><constant>V4L2_CID_FLASH_SYNC_STROBE</constant></entry>
++            <entry>menu</entry>
++    	  </row>
++    	  <row>
++    	    <entry spanname="descr">Synchronized strobe: whether the flash
++	    should be strobed synchronously with the other one controlled
++	    by the same device.</entry>
++    	  </row>
+     	  <row><entry></entry></row>
+     	</tbody>
+           </tgroup>
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 45c5b47..4bc7e00 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -846,6 +846,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_FLASH_FAULT:		return "Faults";
+ 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
+ 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
++	case V4L2_CID_FLASH_SYNC_STROBE:	return "Synchronize Strobe";
  
-+static void fimc_md_register_flash_entities(struct fimc_md *fmd)
-+{
-+	struct device_node *parent = fmd->pdev->dev.of_node;
-+	struct device_node *np;
-+	int i = 0;
-+
-+	do {
-+		np = of_parse_phandle(parent, "flashes", i);
-+		if (np) {
-+			fmd->flash[fmd->num_flashes].asd.match_type =
-+							V4L2_ASYNC_MATCH_OF;
-+			fmd->flash[fmd->num_flashes].asd.match.of.node = np;
-+			fmd->num_flashes++;
-+			fmd->async_subdevs[fmd->num_sensors + i] =
-+						&fmd->flash[i].asd;
-+		}
-+	} while (np && (++i < FIMC_MAX_FLASHES));
-+}
-+
- static int __of_get_csis_id(struct device_node *np)
- {
- 	u32 reg = 0;
-@@ -1275,6 +1294,15 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 	struct fimc_sensor_info *si = NULL;
- 	int i;
+ 	/* JPEG encoder controls */
+ 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+@@ -1041,6 +1042,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+ 	case V4L2_CID_TUNE_DEEMPHASIS:
+ 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+ 	case V4L2_CID_DETECT_MD_MODE:
++	case V4L2_CID_FLASH_SYNC_STROBE:
+ 		*type = V4L2_CTRL_TYPE_MENU;
+ 		break;
+ 	case V4L2_CID_LINK_FREQ:
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 9f6e108..7084696 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -837,6 +837,7 @@ enum v4l2_flash_strobe_source {
  
-+	/* Register flash subdev if detected any */
-+	for (i = 0; i < ARRAY_SIZE(fmd->flash); i++) {
-+		if (fmd->flash[i].asd.match.of.node == subdev->dev->of_node) {
-+			fmd->flash[i].subdev = subdev;
-+			fmd->num_flashes++;
-+			return 0;
-+		}
-+	}
-+
- 	/* Find platform data for this sensor subdev */
- 	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
- 		if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
-@@ -1385,6 +1413,8 @@ static int fimc_md_probe(struct platform_device *pdev)
- 		goto err_m_ent;
- 	}
+ #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+ #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
++#define V4L2_CID_FLASH_SYNC_STROBE		(V4L2_CID_FLASH_CLASS_BASE + 13)
  
-+	fimc_md_register_flash_entities(fmd);
-+
- 	mutex_unlock(&fmd->media_dev.graph_mutex);
  
- 	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
-@@ -1401,12 +1431,14 @@ static int fimc_md_probe(struct platform_device *pdev)
- 		goto err_attr;
- 	}
- 
--	if (fmd->num_sensors > 0) {
-+	if (fmd->num_sensors > 0 || fmd->num_flashes > 0) {
- 		fmd->subdev_notifier.subdevs = fmd->async_subdevs;
--		fmd->subdev_notifier.num_subdevs = fmd->num_sensors;
-+		fmd->subdev_notifier.num_subdevs = fmd->num_sensors +
-+							fmd->num_flashes;
- 		fmd->subdev_notifier.bound = subdev_notifier_bound;
- 		fmd->subdev_notifier.complete = subdev_notifier_complete;
- 		fmd->num_sensors = 0;
-+		fmd->num_flashes = 0;
- 
- 		ret = v4l2_async_notifier_register(&fmd->v4l2_dev,
- 						&fmd->subdev_notifier);
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 0321454..feff9c8 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -34,6 +34,8 @@
- 
- #define FIMC_MAX_SENSORS	4
- #define FIMC_MAX_CAMCLKS	2
-+#define FIMC_MAX_FLASHES	2
-+#define FIMC_MAX_ASYNC_SUBDEVS (FIMC_MAX_SENSORS + FIMC_MAX_FLASHES)
- #define DEFAULT_SENSOR_CLK_FREQ	24000000U
- 
- /* LCD/ISP Writeback clocks (PIXELASYNCMx) */
-@@ -93,6 +95,11 @@ struct fimc_sensor_info {
- 	struct fimc_dev *host;
- };
- 
-+struct fimc_flash_info {
-+	struct v4l2_subdev *subdev;
-+	struct v4l2_async_subdev asd;
-+};
-+
- struct cam_clk {
- 	struct clk_hw hw;
- 	struct fimc_md *fmd;
-@@ -104,6 +111,8 @@ struct cam_clk {
-  * @csis: MIPI CSIS subdevs data
-  * @sensor: array of registered sensor subdevs
-  * @num_sensors: actual number of registered sensors
-+ * @flash: array of registered flash subdevs
-+ * @num_flashes: actual number of registered flashes
-  * @camclk: external sensor clock information
-  * @fimc: array of registered fimc devices
-  * @fimc_is: fimc-is data structure
-@@ -123,6 +132,8 @@ struct fimc_md {
- 	struct fimc_csis_info csis[CSIS_MAX_ENTITIES];
- 	struct fimc_sensor_info sensor[FIMC_MAX_SENSORS];
- 	int num_sensors;
-+	struct fimc_flash_info flash[FIMC_MAX_FLASHES];
-+	int num_flashes;
- 	struct fimc_camclk_info camclk[FIMC_MAX_CAMCLKS];
- 	struct clk *wbclk[FIMC_MAX_WBCLKS];
- 	struct fimc_lite *fimc_lite[FIMC_LITE_MAX_DEVS];
-@@ -149,7 +160,7 @@ struct fimc_md {
- 	} clk_provider;
- 
- 	struct v4l2_async_notifier subdev_notifier;
--	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_SENSORS];
-+	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_ASYNC_SUBDEVS];
- 
- 	bool user_subdev_api;
- 	spinlock_t slock;
+ /* JPEG-class control IDs */
 -- 
 1.7.9.5
