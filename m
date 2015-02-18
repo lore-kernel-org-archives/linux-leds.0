@@ -1,139 +1,65 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 01/20] leds: flash: document sysfs interface
-Date: Wed, 18 Feb 2015 17:20:22 +0100
-Message-ID: <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 03/20] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Wed, 18 Feb 2015 17:20:24 +0100
+Message-ID: <1424276441-3969-4-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24095 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751897AbbBRQV3 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:21:29 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
-Add a documentation of LED Flash class specific sysfs attributes.
+The documentation being added contains overall description of the
+LED Flash Class and the related sysfs attributes.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/ABI/testing/sysfs-class-led-flash |  104 +++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
+ Documentation/leds/leds-class-flash.txt |   32 +++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/leds/leds-class-flash.txt
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-flash b/Documentation/ABI/testing/sysfs-class-led-flash
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
 new file mode 100644
-index 0000000..c941d21
+index 0000000..ff03a66
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-flash
-@@ -0,0 +1,104 @@
-+What:		/sys/class/leds/<led>/flash_brightness
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Set the brightness of this LED in the flash strobe mode, in
-+		microamperes. The file is created only for the flash LED devices
-+		that support setting flash brightness.
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -0,0 +1,32 @@
 +
-+		The value is between 0 and
-+		/sys/class/leds/<led>/max_flash_brightness.
++Flash LED handling under Linux
++==============================
 +
-+What:		/sys/class/leds/<led>/max_flash_brightness
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Maximum brightness level for this LED in the flash strobe mode,
-+		in microamperes.
++Some LED devices provide two modes - torch and flash. In the LED subsystem
++those modes are supported by LED class (see Documentation/leds/leds-class.txt)
++and LED Flash class respectively. The torch mode related features are enabled
++by default and the flash ones only if a driver declares it by setting
++LED_DEV_CAP_FLASH flag.
 +
-+What:		/sys/class/leds/<led>/flash_timeout
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Hardware timeout for flash, in microseconds. The flash strobe
-+		is stopped after this period of time has passed from the start
-+		of the strobe. The file is created only for the flash LED
-+		devices that support setting flash timeout.
++In order to enable support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
++must be defined in the kernel config. A flash LED driver must register
++in the LED subsystem with led_classdev_flash_register function to gain flash
++related capabilities.
 +
-+What:		/sys/class/leds/<led>/max_flash_timeout
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Maximum flash timeout for this LED, in microseconds.
++There are flash LED devices which can control more than one LED and allow for
++strobing the sub-LEDs synchronously. A LED will be strobed synchronously with
++the one whose identifier is written to the flash_sync_strobe sysfs attribute.
++The list of available sub-LED identifiers can be read from the available_sync_leds
++sysfs attribute. In order to enable the related settings the driver must set
++LED_DEV_CAP_SYNC_STROBE flag.
 +
-+What:		/sys/class/leds/<led>/flash_strobe
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Flash strobe state. When written with 1 it triggers flash strobe
-+		and when written with 0 it turns the flash off.
-+
-+		On read 1 means that flash is currently strobing and 0 means
-+		that flash is off.
-+
-+What:		/sys/class/leds/<led>/flash_sync_strobe
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Identifier of the LED to synchronize the flash strobe with.
-+		0 stands for no synchronization. Usually the LEDs available for
-+		flash strobing are driven by the same flash LED device. The LEDs
-+		available for flash strobe synchronization can be obtained by
-+		reading the /sys/class/leds/<led>/available_sync_leds attribute.
-+
-+		On read the currently selected LED is displayed in the format:
-+		led_id.led_name
-+
-+What:		/sys/class/leds/<led>/available_sync_leds
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Space separated list of LEDs available for flash strobe
-+		synchronization, displayed in the format:
-+
-+		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
-+
-+What:		/sys/class/leds/<led>/flash_fault
-+Date:		February 2015
-+KernelVersion:	3.20
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Space separated list of flash faults that may have occurred.
-+		Flash faults are re-read after strobing the flash. Possible
-+		flash faults:
-+
-+		* led-over-voltage - flash controller voltage to the flash LED
-+			has exceeded the limit specific to the flash controller
-+		* flash-timeout-exceeded - the flash strobe was still on when
-+			the timeout set by the user has expired; not all flash
-+			controllers may set this in all such conditions
-+		* controller-over-temperature - the flash controller has
-+			overheated
-+		* controller-short-circuit - the short circuit protection
-+			of the flash controller has been triggered
-+		* led-power-supply-over-current - current in the LED power
-+			supply has exceeded the limit specific to the flash
-+			controller
-+		* indicator-led-fault - the flash controller has detected
-+			a short or open circuit condition on the indicator LED
-+		* led-under-voltage - flash controller voltage to the flash
-+			LED has been below the minimum limit specific to
-+			the flash
-+		* controller-under-voltage - the input voltage of the flash
-+			controller is below the limit under which strobing the
-+			flash at full current will not be possible;
-+			the condition persists until this flag is no longer set
-+		* led-over-temperature - the temperature of the LED has exceeded
-+			its allowed upper limit
++Following sysfs attributes are exposed for controlling flash LED devices:
++(see Documentation/ABI/testing/sysfs-class-led-flash)
++	- flash_brightness
++	- max_flash_brightness
++	- flash_timeout
++	- max_flash_timeout
++	- flash_strobe
++	- available_sync_leds
++	- flash_sync_strobe
++	- flash_fault
 -- 
 1.7.9.5
