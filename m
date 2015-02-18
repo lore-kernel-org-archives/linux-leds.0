@@ -1,78 +1,90 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: [PATCH] leds: Introduce devres helper for led_classdev_register
-Date: Tue, 17 Feb 2015 18:14:05 -0800
-Message-ID: <1424225645-13996-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Tue, 17 Feb 2015 18:45:39 -0800
+Message-ID: <54E3FCD3.4000304@codeaurora.org>
+References: <1422060853-1067-1-git-send-email-bjorn.andersson@sonymobile.com>	<1422060853-1067-2-git-send-email-bjorn.andersson@sonymobile.com>	<54DD7CE5.5000302@codeaurora.org> <CAJAp7OgD3+mGZ02o6xAWkJvKoD4BcQWVD1GS87Niw_fcReBMMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([212.209.106.2]:18107 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751511AbbBRCOB (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Tue, 17 Feb 2015 21:14:01 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJAp7OgD3+mGZ02o6xAWkJvKoD4BcQWVD1GS87Niw_fcReBMMA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn@kryo.se>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>, Courtney Cavin <courtney.cavin@sonymobile.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
----
- drivers/leds/led-class.c | 28 ++++++++++++++++++++++++++++
- include/linux/leds.h     |  2 ++
- 2 files changed, 30 insertions(+)
+On 02/17/15 15:02, Bjorn Andersson wrote:
+> On Thu, Feb 12, 2015 at 8:26 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 01/23/15 16:54, Bjorn Andersson wrote:
+>>> +
+>>> +static int pm8941_wled_set(struct led_classdev *cdev,
+>>> +                        enum led_brightness value)
+>>> +{
+>>> +     struct pm8941_wled *wled;
+>>> +     u8 ctrl = 0;
+>>> +     u16 val;
+>>> +     int rc;
+>>> +     int i;
+>>> +
+>>> +     wled = container_of(cdev, struct pm8941_wled, cdev);
+>>> +
+>>> +     if (value != 0)
+>>> +             ctrl = PM8941_WLED_REG_MOD_EN_BIT;
+>>> +
+>>> +     val = value * PM8941_WLED_REG_VAL_MAX / LED_FULL;
+>>> +
+>>> +     rc = regmap_update_bits(wled->regmap,
+>>> +                     wled->addr + PM8941_WLED_REG_MOD_EN,
+>>> +                     PM8941_WLED_REG_MOD_EN_MASK, ctrl);
+>>> +     if (rc)
+>>> +             return rc;
+>>> +
+>>> +     for (i = 0; i < wled->cfg.num_strings; ++i) {
+>>> +             u8 v[2] = { val & 0xff, (val >> 8) & 0xf };
+>>> +
+>>> +             rc = regmap_bulk_write(wled->regmap,
+>>> +                             wled->addr + PM8941_WLED_REG_VAL_BASE + 2 * i,
+>>> +                             v, 2);
+>>> +             if (rc)
+>>> +                     return rc;
+>>> +     }
+>>> +
+>>> +     rc = regmap_update_bits(wled->regmap,
+>>> +                     wled->addr + PM8941_WLED_REG_SYNC,
+>>> +                     PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_ALL);
+>>> +     if (rc)
+>>> +             return rc;
+>>> +
+>>> +     rc = regmap_update_bits(wled->regmap,
+>>> +                     wled->addr + PM8941_WLED_REG_SYNC,
+>>> +                     PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_CLEAR);
+>>> +     return rc;
+>>> +}
+>> This doesn't seem to do anything for the OVP spike mentioned in this
+>> patch[1]. Do you see that problem on your device? I imagine the PMIC is
+>> the same.
+>>
+>> [1]
+>> https://www.codeaurora.org/cgit/quic/la/kernel/msm/commit/?id=fef9e15072562f0f28dc7066dcdd69388df81ed3
+>>
+> That's odd, I can't find that fix in any officially supported releases
+> for 8974 - which Courtney used as reference for this driver.
+>
+> Just to make sure I understand the solution; when disabling the sinks
+> the over-voltage-protection sometimes triggers, so we should detect
+> that and reset the ovp configuration?
+>
+> I presume the side effect would be that the sinks would not give any
+> output until this is done?
+>
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index dbeebac..7233f30 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -285,6 +285,34 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_classdev_unregister);
- 
-+static void devm_led_classdev_release(struct device *dev, void *res)
-+{
-+	led_classdev_unregister(*(struct led_classdev **)res);
-+}
-+
-+int devm_led_classdev_register(struct device *parent,
-+			       struct led_classdev *led_cdev)
-+{
-+	struct led_classdev **dr;
-+	int rc;
-+
-+	dr = devres_alloc(devm_led_classdev_release, sizeof(*dr), GFP_KERNEL);
-+	if (!dr)
-+		return -ENOMEM;
-+
-+	rc = led_classdev_register(parent, led_cdev);
-+	if (rc) {
-+		devres_free(dr);
-+		return rc;
-+	}
-+
-+	*dr = led_cdev;
-+	devres_add(parent, dr);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_led_classdev_register);
-+
- static int __init leds_init(void)
- {
- 	leds_class = class_create(THIS_MODULE, "leds");
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index cfceef3..9ed7dec 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -102,6 +102,8 @@ struct led_classdev {
- 
- extern int led_classdev_register(struct device *parent,
- 				 struct led_classdev *led_cdev);
-+extern int devm_led_classdev_register(struct device *parent,
-+				      struct led_classdev *led_cdev);
- extern void led_classdev_unregister(struct led_classdev *led_cdev);
- extern void led_classdev_suspend(struct led_classdev *led_cdev);
- extern void led_classdev_resume(struct led_classdev *led_cdev);
+It seems that commit is not very good at describing the problem. From
+what I can tell, the inductor current may spike when the WLED is turned
+off and the switch is stuck on (the circuit is a boost convertor). To
+make sure this doesn't happen, we force an OVP so that the switch is
+known to be open (i.e. off) and thus can't cause the current spike when
+we disable.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
