@@ -1,43 +1,75 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 12/20] of: Add Skyworks Solutions, Inc. vendor prefix
-Date: Wed, 18 Feb 2015 17:20:33 +0100
-Message-ID: <1424276441-3969-13-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 13/20] DT: Add documentation for the Skyworks AAT1290
+Date: Wed, 18 Feb 2015 17:20:34 +0100
+Message-ID: <1424276441-3969-14-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11191 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752000AbbBRQZZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Feb 2015 11:25:25 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
-Use "skyworks" as the vendor prefix for the Skyworks Solutions, Inc.
+This patch adds device tree binding documentation for
+1.5A Step-Up Current Regulator for Flash LEDs.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   43 ++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 389ca13..9276e7f 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -153,6 +153,7 @@ ricoh	Ricoh Co. Ltd.
- rockchip	Fuzhou Rockchip Electronics Co., Ltd
- samsung	Samsung Semiconductor
- sandisk	Sandisk Corporation
-+skyworks	Skyworks Solutions, Inc.
- sbs	Smart Battery System
- schindler	Schindler
- seagate	Seagate Technology PLC
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+new file mode 100644
+index 0000000..78aa7da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -0,0 +1,43 @@
++* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
++
++The device is controlled through two pins: FL_EN and EN_SET. The pins when,
++asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
++respectively. In order to add a capability of selecting the strobe signal source
++(e.g. GPIO or camera sensor) there is an additional switch required, independent
++of the flash chip.
++
++Such a switch is provided on the exynos4412-trats2 board. The switch is
++configured so that it is possible to change EN_SET and FL_EN signal sources
++simultaneously with one GPIO. This gpio can be provided in the third element
++of 'gpios ' property.
++
++Required properties:
++
++- compatible : Must be "skyworks,aat1290".
++- gpios : Two gpio pins in order FLEN, EN/SET, and optional third
++	  HW_FLASH_EN gpio for controlling the HW_FLASH_SW mux.
++
++The LED connected to the device must be represented by a child node -
++see Documentation/devicetree/bindings/leds/common.txt.
++
++Required properties of the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++- flash-max-microamp : Maximum intensity in microamperes of the flash LED -
++		       it can be calculated using following formula:
++		       I = 1A * 162kohm / Rset
++- flash-timeout-us : Maximum flash timeout in microseconds -
++		     it can be calculated using following formula:
++		     T = 8.82 * 10^9 * Ct.
++
++Example (by Ct = 220nF, Rset = 160kohm)
++
++aat1290 {
++	compatible = "skyworks,aat1290";
++	gpios = <&gpj1 1 0>, <&gpj1 2 0>, <&gpj1 0 0>;
++
++	camera_flash: flash-led {
++		label = "aat1290-flash";
++		flash-max-microamp = <1012500>
++		flash-timeout-us = <1940000>;
++	};
++};
 -- 
 1.7.9.5
