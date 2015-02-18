@@ -1,8 +1,8 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v11 02/20] leds: flash: Improve sync strobe related sysfs
- attributes
-Date: Wed, 18 Feb 2015 17:20:23 +0100
-Message-ID: <1424276441-3969-3-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v11 04/20] dt-binding: leds: Add common LED DT bindings
+ macros
+Date: Wed, 18 Feb 2015 17:20:25 +0100
+Message-ID: <1424276441-3969-5-git-send-email-j.anaszewski@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
@@ -11,44 +11,44 @@ To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.ker
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Current format of synchronized strobe related attributes introduces
-problems when it comes to parsing. Avoding the usage of square brackets
-and colons makes the parsing more convenient.
+Add macros for defining boost mode and trigger type properties
+of flash LED devices.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- drivers/leds/led-class-flash.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/dt-bindings/leds/max77693.h |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 include/dt-bindings/leds/max77693.h
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-index 4a19fd4..a2da52e 100644
---- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -224,11 +224,11 @@ static ssize_t available_sync_leds_show(struct device *dev,
- 	char *pbuf = buf;
- 	int i, buf_len;
- 
--	buf_len = sprintf(pbuf, "[0: none] ");
-+	buf_len = sprintf(pbuf, "0.none ");
- 	pbuf += buf_len;
- 
- 	for (i = 0; i < fled_cdev->num_sync_leds; ++i) {
--		buf_len = sprintf(pbuf, "[%d: %s] ", i + 1,
-+		buf_len = sprintf(pbuf, "%d.%s ", i + 1,
- 				  fled_cdev->sync_leds[i]->led_cdev.name);
- 		pbuf += buf_len;
- 	}
-@@ -281,7 +281,7 @@ static ssize_t flash_sync_strobe_show(struct device *dev,
- 		sync_led_name = (char *)
- 			fled_cdev->sync_leds[sled_id - 1]->led_cdev.name;
- 
--	return sprintf(buf, "[%d: %s]\n", sled_id, sync_led_name);
-+	return sprintf(buf, "%d.%s\n", sled_id, sync_led_name);
- }
- static DEVICE_ATTR_RW(flash_sync_strobe);
- 
+diff --git a/include/dt-bindings/leds/max77693.h b/include/dt-bindings/leds/max77693.h
+new file mode 100644
+index 0000000..79fcef7
+--- /dev/null
++++ b/include/dt-bindings/leds/max77693.h
+@@ -0,0 +1,21 @@
++/*
++ * This header provides macros for the common LEDs device tree bindings.
++ *
++ * Copyright (C) 2015, Samsung Electronics Co., Ltd.
++ *
++ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
++ */
++
++#ifndef __DT_BINDINGS_LEDS_H__
++#define __DT_BINDINGS_LEDS_H
++
++/* External trigger type */
++#define LEDS_TRIG_TYPE_EDGE	0
++#define LEDS_TRIG_TYPE_LEVEL	1
++
++/* Boost modes */
++#define LEDS_BOOST_OFF		0
++#define LEDS_BOOST_ADAPTIVE	1
++#define LEDS_BOOST_FIXED	2
++
++#endif /* __DT_BINDINGS_LEDS_H */
 -- 
 1.7.9.5
