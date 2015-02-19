@@ -1,92 +1,49 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2] led/led-class: Handle LEDs with the same name
-Date: Fri, 20 Feb 2015 00:01:38 +0100
-Message-ID: <1424386898-19021-1-git-send-email-ricardo.ribalda@gmail.com>
+From: Josh Cartwright <joshc@ni.com>
+Subject: Re: [PATCH] led/led-class: Handle LEDs with the same name
+Date: Thu, 19 Feb 2015 17:15:58 -0600
+Message-ID: <20150219231558.GA30417@jcartwri.amer.corp.natinst.com>
+References: <1423657572-22299-1-git-send-email-ricardo.ribalda@gmail.com>
+ <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
+ <CAPybu_26e3evmHM3W7ZsUXin0LMWJWAbPSf8rFnDnLG821Jwpg@mail.gmail.com>
+ <CAK5ve-Kuj5Z_Mwo7=-z4VPSmwEiv52YH2e=XCQ=7MvPiOErvJA@mail.gmail.com>
+ <CAPybu_2e7P0O+x6Q37crg-T=y2vb05HuC3aE9NwPVjcP3TDQzA@mail.gmail.com>
+ <CAK5ve-JbVX17SK9WBy4dT4g-CFJcPDjiwcUiSi=kssz7SJAsLA@mail.gmail.com>
+ <CAPybu_3e3LRiyuUPzZkMQCsh3VtH8gB5Jhezyq7r4e9V113_XA@mail.gmail.com>
+ <CAK5ve-KWrZL8wZ8UjEbe0cuBHoAxbRw_24wpVOiBd75rp-Jyuw@mail.gmail.com>
+ <CAPybu_1hWj_LX_399tXxNWW-bD1bUhv2FESt5t0G5VH9HwS=SQ@mail.gmail.com>
+ <CAK5ve-LNgZpUKhwe8jOPeipWDg7pv8ruQ9SSbjDmyUDDdbi04w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:41980 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752595AbbBSXBn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Feb 2015 18:01:43 -0500
+Received: from skprod2.natinst.com ([130.164.80.23]:43676 "EHLO ni.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752621AbbBSXQL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 19 Feb 2015 18:16:11 -0500
+In-Reply-To: <CAK5ve-LNgZpUKhwe8jOPeipWDg7pv8ruQ9SSbjDmyUDDdbi04w@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Rob Herring <robh+dt@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-The current code expected that every LED had an unique name. This is a
-legit expectation when the device tree can no be modified or extended.
-But with device tree overlays this requirement can be easily broken.
+On Tue, Feb 17, 2015 at 04:52:45PM -0800, Bryan Wu wrote:
+> On Tue, Feb 17, 2015 at 4:32 PM, Ricardo Ribalda Delgado
+[..]
+> > Then we have TWO gpios chip. Each of them have a led named red. When
+> > the second gpio-led is probed we have an error. Everything else
+> > (address offset, phandle, device renaming) is handled properly already
+> > by the kernel.
+> >
+> > On this system I cannot control card.dtb, or which type of cards will
+> > the user connect to the system. The DT is generated in run-time based
+> > on the hardware connected to the pci slots.
+> >
+> So you're supposed to get 2 card.dtb files for 2 PCI cards, right?
+> They should be different and you need to choose different name for the
+> hardware.
 
-This patch finds out if the name is already in use and adds the suffix
-_1, _2... if not.
+Is this solvable by adding support for led properties in an aliases { }
+node?  I suppose that would mean you'd need to also overlay a selection
+of which LED is "red", but I don't know if that is a problem.
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
-v2: Suggested by Bryan Wu <cooloney@gmail.com>
-
--move name search to separated function
--Iterate on class
- drivers/leds/led-class.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 795ec99..5c6505a 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -212,6 +212,29 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
- 	.resume         = led_resume,
- };
- 
-+static int match_name(struct device *dev, const void *data)
-+{
-+	if (!dev_name(dev))
-+		return 0;
-+	return !strcmp(dev_name(dev), (char *)data);
-+}
-+
-+static char *led_classdev_next_name(const char *init_name)
-+{
-+	char *name = (char *) init_name;
-+	int i = 0;
-+
-+	while (class_find_device(leds_class, NULL, name, match_name)) {
-+		if (name != init_name)
-+			kfree(name);
-+		name = kasprintf(GFP_KERNEL, "%s_%d", init_name, ++i);
-+		if (!name)
-+			return NULL;
-+	}
-+
-+	return name;
-+}
-+
- /**
-  * led_classdev_register - register a new object of led_classdev class.
-  * @parent: The device to register.
-@@ -219,12 +242,23 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
-  */
- int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- {
-+	char *name = led_classdev_next_name(led_cdev->name);
-+
-+	if (!name)
-+		return -ENOMEM;
-+
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
--					led_cdev, led_cdev->groups,
--					"%s", led_cdev->name);
-+					led_cdev, led_cdev->groups, name);
-+	if (name != led_cdev->name)
-+		kfree(name);
-+
- 	if (IS_ERR(led_cdev->dev))
- 		return PTR_ERR(led_cdev->dev);
- 
-+	if (name != led_cdev->name)
-+		dev_info(parent, "Led %s renamed to %s due to name collision",
-+				led_cdev->name, dev_name(led_cdev->dev));
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- 	init_rwsem(&led_cdev->trigger_lock);
- #endif
--- 
-2.1.4
+  Josh
