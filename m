@@ -1,65 +1,101 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: 0.led_name 2.other.led.name in /sysfs Re: [PATCH/RFC v11 01/20]
  leds: flash: document sysfs interface
-Date: Fri, 20 Feb 2015 09:16:17 +0100
-Message-ID: <20150220081617.GA14057@amd>
+Date: Fri, 20 Feb 2015 09:55:13 +0100
+Message-ID: <54E6F671.7070500@samsung.com>
 References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
  <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
- <20150218224747.GA3999@amd>
- <20150219090204.GI3915@valkosipuli.retiisi.org.uk>
- <20150219214043.GB29875@kroah.com>
- <54E6E89B.4050404@samsung.com>
+ <20150218224747.GA3999@amd> <20150219090204.GI3915@valkosipuli.retiisi.org.uk>
+ <20150219214043.GB29875@kroah.com> <54E6E89B.4050404@samsung.com>
+ <20150220081617.GA14057@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54E6E89B.4050404@samsung.com>
+In-reply-to: <20150220081617.GA14057@amd>
 Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: Greg KH <greg@kroah.com>, Sakari Ailus <sakari.ailus@iki.fi>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+Hi Pavel,
 
-> >>>>+What:		/sys/class/leds/<led>/available_sync_leds
-> >>>>+Date:		February 2015
-> >>>>+KernelVersion:	3.20
-> >>>>+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-> >>>>+Description:	read/write
-> >>>>+		Space separated list of LEDs available for flash strobe
-> >>>>+		synchronization, displayed in the format:
-> >>>>+
-> >>>>+		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
-> >>>
-> >>>Multiple values per file, with all the problems we had in /proc. I
-> >>>assume led_id is an integer? What prevents space or dot in led name?
-> >>
-> >>Very good point. How about using a newline instead? That'd be a little bit
-> >>easier to parse, too.
-> >
-> >No, please make it one value per-file, which is what sysfs requires.
-> 
-> The purpose of this attribute is only to provide an information about
-> the range of valid identifiers that can be written to the
-> flash_sync_strobe attribute. Wouldn't splitting this to many attributes
-> be an unnecessary inflation of sysfs files?
+On 02/20/2015 09:16 AM, Pavel Machek wrote:
+> Hi!
+>
+>>>>>> +What:		/sys/class/leds/<led>/available_sync_leds
+>>>>>> +Date:		February 2015
+>>>>>> +KernelVersion:	3.20
+>>>>>> +Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
+>>>>>> +Description:	read/write
+>>>>>> +		Space separated list of LEDs available for flash strobe
+>>>>>> +		synchronization, displayed in the format:
+>>>>>> +
+>>>>>> +		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
+>>>>>
+>>>>> Multiple values per file, with all the problems we had in /proc. I
+>>>>> assume led_id is an integer? What prevents space or dot in led name?
+>>>>
+>>>> Very good point. How about using a newline instead? That'd be a little bit
+>>>> easier to parse, too.
+>>>
+>>> No, please make it one value per-file, which is what sysfs requires.
+>>
+>> The purpose of this attribute is only to provide an information about
+>> the range of valid identifiers that can be written to the
+>> flash_sync_strobe attribute. Wouldn't splitting this to many attributes
+>> be an unnecessary inflation of sysfs files?
+>
+> No, it would not. It is required so that we don't end up with broken
+> parsers.
 
-No, it would not. It is required so that we don't end up with broken
-parsers.
- 
-> Apart from it, we have also flash_faults attribute, that currently
-> provides a space separated list of flash faults that have occurred.
-> If we are to stick tightly to the one-value-per-file rule, then how
-> we should approach flash_faults case? Should the separate file be
-> dynamically created for each reported fault?
+Let's discuss the acceptable approach then. I propose a directory
+named synchronized_strobe and containing the files as you proposed
+in one of the previous messages: led_id.active and led_id.name.
+The attribute flash_sync_strobe would be redundant then and should
+be removed.
 
-I think you can get away with flash_faults attribute (since the
-strings are hardcoded).
+Use cases for two LEDs:
 
-Dynamically created files would be extremely ugly interface, but you
-could also have files such as "overvoltage_fault" containing either 0
-or 1 ...
-									Pavel
+- max77693-led1
+- max77693-led2
+
+#cd synchronized_strobe
+#ls
+#0.active 0.name 1.active 1.name
+#cat 0.name
+#max77693-led1
+#cat 0.active
+#0
+#cat 1.name
+#max77693-led2
+#cat 1.active
+#0
+#echo 1 > 0.active
+#cat 0.active
+#1
+#echo 1 > 1.active
+#cat 0.active
+#0
+#cat 1.active
+#1
+
+
+>> Apart from it, we have also flash_faults attribute, that currently
+>> provides a space separated list of flash faults that have occurred.
+>> If we are to stick tightly to the one-value-per-file rule, then how
+>> we should approach flash_faults case? Should the separate file be
+>> dynamically created for each reported fault?
+>
+> I think you can get away with flash_faults attribute (since the
+> strings are hardcoded).
+
+If so, the attribute will be left as is.
+
+> Dynamically created files would be extremely ugly interface, but you
+> could also have files such as "overvoltage_fault" containing either 0
+> or 1 ...
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best Regards,
+Jacek Anaszewski
