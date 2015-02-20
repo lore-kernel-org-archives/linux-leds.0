@@ -1,51 +1,69 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH] led/led-class: Handle LEDs with the same name
-Date: Fri, 20 Feb 2015 00:22:46 +0100
-Message-ID: <CAPybu_1g5=pJwDTUWV_pP58fCuUm-vWU_O9h-Qah7G_wSPyjbA@mail.gmail.com>
-References: <1423657572-22299-1-git-send-email-ricardo.ribalda@gmail.com>
- <CAK5ve-+98h+gzvcso_GmU+39mqhZgvaCnAgcBG0pzdZc1S406g@mail.gmail.com>
- <CAPybu_26e3evmHM3W7ZsUXin0LMWJWAbPSf8rFnDnLG821Jwpg@mail.gmail.com>
- <CAK5ve-Kuj5Z_Mwo7=-z4VPSmwEiv52YH2e=XCQ=7MvPiOErvJA@mail.gmail.com>
- <CAPybu_2e7P0O+x6Q37crg-T=y2vb05HuC3aE9NwPVjcP3TDQzA@mail.gmail.com>
- <CAK5ve-JbVX17SK9WBy4dT4g-CFJcPDjiwcUiSi=kssz7SJAsLA@mail.gmail.com>
- <CAPybu_3e3LRiyuUPzZkMQCsh3VtH8gB5Jhezyq7r4e9V113_XA@mail.gmail.com>
- <CAK5ve-KWrZL8wZ8UjEbe0cuBHoAxbRw_24wpVOiBd75rp-Jyuw@mail.gmail.com>
- <CAPybu_1hWj_LX_399tXxNWW-bD1bUhv2FESt5t0G5VH9HwS=SQ@mail.gmail.com>
- <CAK5ve-LNgZpUKhwe8jOPeipWDg7pv8ruQ9SSbjDmyUDDdbi04w@mail.gmail.com> <20150219231558.GA30417@jcartwri.amer.corp.natinst.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: 0.led_name 2.other.led.name in /sysfs Re: [PATCH/RFC v11 01/20]
+ leds: flash: document sysfs interface
+Date: Fri, 20 Feb 2015 08:56:11 +0100
+Message-ID: <54E6E89B.4050404@samsung.com>
+References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
+ <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
+ <20150218224747.GA3999@amd> <20150219090204.GI3915@valkosipuli.retiisi.org.uk>
+ <20150219214043.GB29875@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:46892 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751459AbbBSXXI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Feb 2015 18:23:08 -0500
-In-Reply-To: <20150219231558.GA30417@jcartwri.amer.corp.natinst.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40364 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752804AbbBTH4P (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Feb 2015 02:56:15 -0500
+In-reply-to: <20150219214043.GB29875@kroah.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Josh Cartwright <joshc@ni.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Rob Herring <robh+dt@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
-Helo Josh
-
-On Fri, Feb 20, 2015 at 12:15 AM, Josh Cartwright <joshc@ni.com> wrote:
+On 02/19/2015 10:40 PM, Greg KH wrote:
+> On Thu, Feb 19, 2015 at 11:02:04AM +0200, Sakari Ailus wrote:
+>> On Wed, Feb 18, 2015 at 11:47:47PM +0100, Pavel Machek wrote:
+>>>
+>>> On Wed 2015-02-18 17:20:22, Jacek Anaszewski wrote:
+>>>> Add a documentation of LED Flash class specific sysfs attributes.
+>>>>
+>>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> Cc: Bryan Wu <cooloney@gmail.com>
+>>>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>>>
+>>> NAK-ed-by: Pavel Machek
+>>>
+>>>> +What:		/sys/class/leds/<led>/available_sync_leds
+>>>> +Date:		February 2015
+>>>> +KernelVersion:	3.20
+>>>> +Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
+>>>> +Description:	read/write
+>>>> +		Space separated list of LEDs available for flash strobe
+>>>> +		synchronization, displayed in the format:
+>>>> +
+>>>> +		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
+>>>
+>>> Multiple values per file, with all the problems we had in /proc. I
+>>> assume led_id is an integer? What prevents space or dot in led name?
+>>
+>> Very good point. How about using a newline instead? That'd be a little bit
+>> easier to parse, too.
 >
-> Is this solvable by adding support for led properties in an aliases { }
-> node?  I suppose that would mean you'd need to also overlay a selection
-> of which LED is "red", but I don't know if that is a problem.
+> No, please make it one value per-file, which is what sysfs requires.
 
-I think there are two concens here. One is to provide an unique name
-when a led is register and the other is to locate the led.
+The purpose of this attribute is only to provide an information about
+the range of valid identifiers that can be written to the
+flash_sync_strobe attribute. Wouldn't splitting this to many attributes
+be an unnecessary inflation of sysfs files?
 
-This patch is just mend for providing unique names, so the led
-subsystem can play nicer with overlays.
-
-The other might be solved with an sysfs symbolic link.... I need to
-check it out, but it is a different issue.
-
->
->   Josh
-
-
+Apart from it, we have also flash_faults attribute, that currently
+provides a space separated list of flash faults that have occurred.
+If we are to stick tightly to the one-value-per-file rule, then how
+we should approach flash_faults case? Should the separate file be
+dynamically created for each reported fault?
 
 -- 
-Ricardo Ribalda
+Best Regards,
+Jacek Anaszewski
