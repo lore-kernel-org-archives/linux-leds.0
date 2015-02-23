@@ -1,203 +1,77 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH 2/3] ARM: Kirkwood: add LED DT entries for netxbig boards
-Date: Mon, 23 Feb 2015 16:04:20 +0100
-Message-ID: <1424703861-20903-3-git-send-email-simon.guinot@sequanux.org>
-References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: "advanced" LED controllers
+Date: Mon, 23 Feb 2015 23:34:57 +0100
+Message-ID: <20150223223457.GA4073@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59771 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752281AbbBWWfD (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 23 Feb 2015 17:35:03 -0500
+Content-Disposition: inline
+In-Reply-To: <20150219211424.GN13603@saruman.tx.rr.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
 
-This patch adds DT entries for the LEDs found on the Kirkwood-based
-LaCie boards 2Big and 5Big Network v2.
+On Thu 2015-02-19 15:14:24, Felipe Balbi wrote:
+> Hi,
+> 
+> Do we have support for LED controllers which can handle patterns of
+> different kinds ? I mean, currently, if we have an LED controller such
+> as TPIC2810 [1] which can control 8 different leds and each LED
+> corresponds to one bit on register 0x44, we could control leds by just
+> "playing" a wave file on the controller and create easy patterns with
+> that.
+> 
+> AFAICT, in linux today we would have to register each of the 8 LEDs as a
+> different LED and have driver magic to write the proper bits on register
+> 0x44, that seems a bit overkill, specially when we want to make
+> patterns: instead of writing 0xff we would have to write 0x80, 0x40,
+> 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 separately and have the driver cache
+> the previous results so we don't end up switching off other LEDs.
+> 
+> IOW, what could be handled with a single write, currently needs 8.
+> 
+> I wonder if there's any work happening to support these slightly more
+> inteligent LED engines.
+> 
+> regards
+> 
+> [1] http://www.ti.com/product/tpic2810
+> 
+> ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
+> have even more advanced pattern engines which can even handle RGB leds.
 
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
----
- arch/arm/boot/dts/kirkwood-net5big.dts  | 60 +++++++++++++++++++++++++
- arch/arm/boot/dts/kirkwood-netxbig.dtsi | 80 +++++++++++++++++++++++++++++++++
- 2 files changed, 140 insertions(+)
+Well... some more advanced pattern engines can actually run code, up
+to and including prime number computation. So yes, this is complex,
+and how to handle it nicely is a question...
 
-diff --git a/arch/arm/boot/dts/kirkwood-net5big.dts b/arch/arm/boot/dts/kirkwood-net5big.dts
-index 36155b749d9f..3cc5e469df06 100644
---- a/arch/arm/boot/dts/kirkwood-net5big.dts
-+++ b/arch/arm/boot/dts/kirkwood-net5big.dts
-@@ -86,6 +86,66 @@
- 			 clock-frequency = <32768>;
- 	       };
- 	};
-+
-+	netxbig-leds {
-+		blue-sata2 {
-+			label = "netxbig:blue:sata2";
-+			mode-addr = <5>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 7
-+				    NETXBIG_LED_SATA 1
-+				    NETXBIG_LED_TIMER1 3>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		red-sata2 {
-+			label = "netxbig:red:sata2";
-+			mode-addr = <5>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		blue-sata3 {
-+			label = "netxbig:blue:sata3";
-+			mode-addr = <6>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 7
-+				    NETXBIG_LED_SATA 1
-+				    NETXBIG_LED_TIMER1 3>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		red-sata3 {
-+			label = "netxbig:red:sata3";
-+			mode-addr = <6>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		blue-sata4 {
-+			label = "netxbig:blue:sata4";
-+			mode-addr = <7>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 7
-+				    NETXBIG_LED_SATA 1
-+				    NETXBIG_LED_TIMER1 3>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		red-sata4 {
-+			label = "netxbig:red:sata4";
-+			mode-addr = <7>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+	};
- };
- 
- &mdio {
-diff --git a/arch/arm/boot/dts/kirkwood-netxbig.dtsi b/arch/arm/boot/dts/kirkwood-netxbig.dtsi
-index b0cfb7cd30b9..5e7ed1c7e1b2 100644
---- a/arch/arm/boot/dts/kirkwood-netxbig.dtsi
-+++ b/arch/arm/boot/dts/kirkwood-netxbig.dtsi
-@@ -13,6 +13,7 @@
-  * warranty of any kind, whether express or implied.
- */
- 
-+#include <dt-bindings/leds/leds-netxbig.h>
- #include "kirkwood.dtsi"
- #include "kirkwood-6281.dtsi"
- 
-@@ -105,6 +106,85 @@
- 			gpio = <&gpio0 16 GPIO_ACTIVE_HIGH>;
- 		};
- 	};
-+
-+	netxbig_gpio_ext: netxbig-gpio-ext {
-+		compatible = "lacie,netxbig-gpio-ext";
-+
-+		addr-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH
-+			      &gpio1 16 GPIO_ACTIVE_HIGH
-+			      &gpio1 17 GPIO_ACTIVE_HIGH>;
-+		data-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH
-+			      &gpio1 13 GPIO_ACTIVE_HIGH
-+			      &gpio1 14 GPIO_ACTIVE_HIGH>;
-+		enable-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	netxbig-leds {
-+		compatible = "lacie,netxbig-leds";
-+
-+		gpio-ext = <&netxbig_gpio_ext>;
-+
-+		timers = <NETXBIG_LED_TIMER1 500 500
-+			  NETXBIG_LED_TIMER2 500 1000>;
-+
-+		blue-power {
-+			label = "netxbig:blue:power";
-+			mode-addr = <0>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 1
-+				    NETXBIG_LED_TIMER1 3
-+				    NETXBIG_LED_TIMER2 7>;
-+			bright-addr = <1>;
-+			bright-max = <7>;
-+		};
-+		red-power {
-+			label = "netxbig:red:power";
-+			mode-addr = <0>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <1>;
-+			bright-max = <7>;
-+		};
-+		blue-sata0 {
-+			label = "netxbig:blue:sata0";
-+			mode-addr = <3>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 7
-+				    NETXBIG_LED_SATA 1
-+				    NETXBIG_LED_TIMER1 3>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		red-sata0 {
-+			label = "netxbig:red:sata0";
-+			mode-addr = <3>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		blue-sata1 {
-+			label = "netxbig:blue:sata1";
-+			mode-addr = <4>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 7
-+				    NETXBIG_LED_SATA 1
-+				    NETXBIG_LED_TIMER1 3>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+		red-sata1 {
-+			label = "netxbig:red:sata1";
-+			mode-addr = <4>;
-+			mode-val = <NETXBIG_LED_OFF 0
-+				    NETXBIG_LED_ON 2
-+				    NETXBIG_LED_TIMER1 4>;
-+			bright-addr = <2>;
-+			bright-max = <7>;
-+		};
-+	};
- };
- 
- &mdio {
+I have "notcc" to compile for that.
+
+#!/usr/bin/python3
+#
+# NOTification Compiler
+#
+# for LP5523 chip.
+#
+# Copyright 2014 Pavel Machek <pavel@ucw.cz>, GPLv3
+#
+# http://wiki.maemo.org/LED_patterns#Lysti_Format_Engine_Patterns_and_Commands
+# http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=lp5523&fileType=pdf
+#
+# Seems to have A,B local variables, C global variable,
+#
+# 2.6.28-omap1 seems to cut execution after 16 steps.
+
+import sys
+
+
+
+									Pavel
 -- 
-2.1.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
