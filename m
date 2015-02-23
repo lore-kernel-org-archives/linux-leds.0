@@ -1,88 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: 0.led_name 2.other.led.name in /sysfs Re: [PATCH/RFC v11 01/20]
- leds: flash: document sysfs interface
-Date: Sat, 21 Feb 2015 11:42:52 -0800
-Message-ID: <20150221194252.GB14032@kroah.com>
-References: <1424276441-3969-1-git-send-email-j.anaszewski@samsung.com>
- <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
- <20150218224747.GA3999@amd>
- <20150219090204.GI3915@valkosipuli.retiisi.org.uk>
- <20150219214043.GB29875@kroah.com>
- <54E6E89B.4050404@samsung.com>
- <20150220153616.GB18111@kroah.com>
- <54E75D8E.40004@samsung.com>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH 0/3] Add DT support for netxbig LEDs
+Date: Mon, 23 Feb 2015 16:04:18 +0100
+Message-ID: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54467 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751903AbbBUTmy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Sat, 21 Feb 2015 14:42:54 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id CBFC62083B
-	for <linux-leds@vger.kernel.org>; Sat, 21 Feb 2015 14:42:53 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <54E75D8E.40004@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
-On Fri, Feb 20, 2015 at 05:15:10PM +0100, Jacek Anaszewski wrote:
-> On 02/20/2015 04:36 PM, Greg KH wrote:
-> >On Fri, Feb 20, 2015 at 08:56:11AM +0100, Jacek Anaszewski wrote:
-> >>On 02/19/2015 10:40 PM, Greg KH wrote:
-> >>>On Thu, Feb 19, 2015 at 11:02:04AM +0200, Sakari Ailus wrote:
-> >>>>On Wed, Feb 18, 2015 at 11:47:47PM +0100, Pavel Machek wrote:
-> >>>>>
-> >>>>>On Wed 2015-02-18 17:20:22, Jacek Anaszewski wrote:
-> >>>>>>Add a documentation of LED Flash class specific sysfs attributes.
-> >>>>>>
-> >>>>>>Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> >>>>>>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>>>>>Cc: Bryan Wu <cooloney@gmail.com>
-> >>>>>>Cc: Richard Purdie <rpurdie@rpsys.net>
-> >>>>>
-> >>>>>NAK-ed-by: Pavel Machek
-> >>>>>
-> >>>>>>+What:		/sys/class/leds/<led>/available_sync_leds
-> >>>>>>+Date:		February 2015
-> >>>>>>+KernelVersion:	3.20
-> >>>>>>+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-> >>>>>>+Description:	read/write
-> >>>>>>+		Space separated list of LEDs available for flash strobe
-> >>>>>>+		synchronization, displayed in the format:
-> >>>>>>+
-> >>>>>>+		led1_id.led1_name led2_id.led2_name led3_id.led3_name etc.
-> >>>>>
-> >>>>>Multiple values per file, with all the problems we had in /proc. I
-> >>>>>assume led_id is an integer? What prevents space or dot in led name?
-> >>>>
-> >>>>Very good point. How about using a newline instead? That'd be a little bit
-> >>>>easier to parse, too.
-> >>>
-> >>>No, please make it one value per-file, which is what sysfs requires.
-> >>
-> >>The purpose of this attribute is only to provide an information about
-> >>the range of valid identifiers that can be written to the
-> >>flash_sync_strobe attribute. Wouldn't splitting this to many attributes
-> >>be an unnecessary inflation of sysfs files?
-> >
-> >Ok a list of allowed values to write is acceptable, as long as it is not
-> >hard to parse and always is space separated.
-> 
-> Is a new line character also acceptable as a delimiter?
+Hello,
 
-No.
+This patch series adds DT support for the LEDs found on the Kirkwood-based
+LaCie boards 2Big and 5Big Network v2.
 
-Again, sysfs files should not need to be "parsed", they are
-one-value-per-file for a good reason.
+Simon
 
-If you want to do something else, wonderful, but don't use sysfs.  It's
-looking like this whole interface should not be using sysfs as it
-doesn't fit there at all.
+Simon Guinot (3):
+  leds: netxbig: add device tree binding
+  ARM: Kirkwood: add LED DT entries for netxbig boards
+  ARM: mvebu: remove static LED setup for netxbig boards
 
-sorry,
+ .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+ .../devicetree/bindings/leds/leds-netxbig.txt      |  90 ++++++++
+ arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
+ arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
+ arch/arm/mach-mvebu/Kconfig                        |   7 -
+ arch/arm/mach-mvebu/Makefile                       |   1 -
+ arch/arm/mach-mvebu/board.h                        |  21 --
+ arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+ arch/arm/mach-mvebu/netxbig.c                      | 191 ----------------
+ drivers/leds/leds-netxbig.c                        | 244 +++++++++++++++++++--
+ include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+ 11 files changed, 493 insertions(+), 245 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+ delete mode 100644 arch/arm/mach-mvebu/board.h
+ delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+ create mode 100644 include/dt-bindings/leds/leds-netxbig.h
 
-greg k-h
+-- 
+2.1.1
