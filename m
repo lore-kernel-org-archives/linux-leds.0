@@ -1,98 +1,80 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH v2] leds: fix hibernation on arm when gpio-led used with
- CPU led trigger
-Date: Tue, 24 Feb 2015 18:12:19 +0200
-Message-ID: <54ECA2E3.8060401@linaro.org>
-References: <1423147024-4744-1-git-send-email-grygorii.strashko@linaro.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 2/2] leds/pwm: Don't disable pwm when setting brightness
+ to 0
+Date: Tue, 24 Feb 2015 19:56:52 +0100 (CET)
+Message-ID: <1151818200.134325.1424804213026.JavaMail.open-xchange@oxbsltgw03.schlund.de>
+References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de> <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
+Reply-To: Stefan Wahren <stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1423147024-4744-1-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
-Cc: sumit.semwal@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "Menon, Nishanth" <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, =?UTF-8?Q?=22Uwe_Kleine-K=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Bryan, all,
+Hi Uwe,
 
-On 02/05/2015 04:37 PM, grygorii.strashko@linaro.org wrote:
-> From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
-> 
-> Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
-> hibernation callbacks means those pm functions will not be
-> called upon hibernation - that leads to system crash on ARM during
-> freezing if gpio-led is used in combination with CPU led trigger.
-> It may happen after freeze_noirq stage (GPIO is suspended)
-> and before syscore_suspend stage (CPU led trigger is suspended)
-> - usually when disable_nonboot_cpus() is called.
-> 
-> Log:
->    PM: noirq freeze of devices complete after 1.425 msecs
->    Disabling non-boot CPUs ...
->      ^ system may crash or stuck here with message (TI AM572x)
-> 
->    WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148 l3_interrupt_handler+0x22c/0x370()
->    44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode during Functional access
-> 
->    CPU1: shutdown
->      ^ or here
-> 
-> Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
-> assigns the suspend and hibernation callbacks and move
-> led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
-> build warnings.
-> 
-> Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
+> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> hat am 12. Feb=
+ruar 2015 um
+> 10:44 geschrieben:
+>
+>
+> This fixes disabling the LED on i.MX28. The PWM hardware delays using
+> the newly set pwm-config until the beginning of a new period. It's ve=
+ry
+> likely that pwm_disable is called before the current period ends. In
+> case the LED was on brightness=3Dmax before the LED stays on because =
+in
+> the disabled PWM block the period never ends.
+>
+> Also only call pwm_enable only once in the probe call back and the
+> matching pwm_disable in .remove(). Moreover the pwm is explicitly
+> initialized to off.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
-> This patch actually fixes commit:
->   73e1ab4 "leds: Convert led class driver from legacy pm ops to dev_pm_ops"
-> 
-> Changes in v2:
-> - fixed compile time warnings when !CONFIG_PM_SLEEP
-> - updated commit message
-> 
-> v1:
-> - https://lkml.org/lkml/2015/2/2/476
-> 
->   drivers/leds/led-class.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index dbeebac..5033e0d 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -183,6 +183,7 @@ void led_classdev_resume(struct led_classdev *led_cdev)
->   }
->   EXPORT_SYMBOL_GPL(led_classdev_resume);
->   
-> +#ifdef CONFIG_PM_SLEEP
->   static int led_suspend(struct device *dev)
->   {
->   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> @@ -202,11 +203,9 @@ static int led_resume(struct device *dev)
->   
->   	return 0;
->   }
-> +#endif
->   
-> -static const struct dev_pm_ops leds_class_dev_pm_ops = {
-> -	.suspend        = led_suspend,
-> -	.resume         = led_resume,
-> -};
-> +static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
->   
->   /**
->    * led_classdev_register - register a new object of led_classdev class.
-> 
+> drivers/leds/leds-pwm.c | 10 +++++-----
+> 1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index f668500a2157..5dae0d2dc3dc 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -44,11 +44,6 @@ static void __led_pwm_set(struct led_pwm_data *led=
+_dat)
+> int new_duty =3D led_dat->duty;
+>
+> pwm_config(led_dat->pwm, new_duty, led_dat->period);
+> -
+> - if (new_duty =3D=3D 0)
+> - pwm_disable(led_dat->pwm);
+> - else
+> - pwm_enable(led_dat->pwm);
+> }
+>
+> static void led_pwm_work(struct work_struct *work)
+> @@ -93,6 +88,7 @@ static void led_pwm_cleanup(struct led_pwm_priv *pr=
+iv)
+> led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+> if (priv->leds[priv->num_leds].can_sleep)
+> cancel_work_sync(&priv->leds[priv->num_leds].work);
+> + pwm_disable(priv->leds[i].pwm);
+> }
+> }
+>
 
-Could you pay attention on this patch, pls? It fixes a real issue for me.
+After replacing "i" with "priv->num_leds" in this patch we are able to =
+use pwm
+led with trigger heartbeat.
 
-Actually, I'd like to note that it fixes regression introduced by commit
-73e1ab41a80d36207e8ea7cc2c9897afdeeef387 
-"leds: Convert led class driver from legacy pm ops to dev_pm_ops" from 
-Shuah Khan <shuah.kh@samsung.com> (Jun 20 2013).
+This is the functional part of this issue, since the warning has been f=
+ixed [1]
 
--- 
-regards,
--grygorii
+Thanks Stefan
+
+[1] -
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-April/244925=
+=2Ehtml
