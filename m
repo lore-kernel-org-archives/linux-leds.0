@@ -1,47 +1,51 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH 2/2] leds/pwm: Don't disable pwm when setting brightness
- to 0
-Date: Wed, 25 Feb 2015 09:13:26 +0100
-Message-ID: <54ED8426.6090401@i2se.com>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de> <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de> <1151818200.134325.1424804213026.JavaMail.open-xchange@oxbsltgw03.schlund.de> <20150224190636.GG7789@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: "advanced" LED controllers
+Date: Wed, 25 Feb 2015 09:25:24 +0100
+Message-ID: <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:64748 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229AbbBYIOx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Feb 2015 03:14:53 -0500
-In-Reply-To: <20150224190636.GG7789@pengutronix.de>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:43449 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771AbbBYIZY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Feb 2015 03:25:24 -0500
+In-Reply-To: <20150219211424.GN13603@saruman.tx.rr.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Bryan Wu <cooloney@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Uwe,
+CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
 
-Am 24.02.2015 um 20:06 schrieb Uwe Kleine-K=F6nig:
-> Hello Stefan,
+On Thu, Feb 19, 2015 at 10:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Do we have support for LED controllers which can handle patterns of
+> different kinds ? I mean, currently, if we have an LED controller such
+> as TPIC2810 [1] which can control 8 different leds and each LED
+> corresponds to one bit on register 0x44, we could control leds by just
+> "playing" a wave file on the controller and create easy patterns with
+> that.
 >
-> On Tue, Feb 24, 2015 at 07:56:52PM +0100, Stefan Wahren wrote:
->> After replacing "i" with "priv->num_leds" in this patch we are able =
-to use pwm
->> led with trigger heartbeat.
-> Right, that's what I did in my tree to to please the build robot :-)
-
-in that case, here is my:
-
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-
->> This is the functional part of this issue, since the warning has bee=
-n fixed [1]
-> Can I interpret this as an Tested-by: for this patch and an Ack for
-> patch 1?
-
-Sorry, but i don't think i'm the right person for acking patch 1.
-
-Stefan
-
-> Best regards
-> Uwe
+> AFAICT, in linux today we would have to register each of the 8 LEDs as a
+> different LED and have driver magic to write the proper bits on register
+> 0x44, that seems a bit overkill, specially when we want to make
+> patterns: instead of writing 0xff we would have to write 0x80, 0x40,
+> 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 separately and have the driver cache
+> the previous results so we don't end up switching off other LEDs.
 >
+> IOW, what could be handled with a single write, currently needs 8.
+>
+> I wonder if there's any work happening to support these slightly more
+> inteligent LED engines.
+>
+> regards
+>
+> [1] http://www.ti.com/product/tpic2810
+>
+> ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
+> have even more advanced pattern engines which can even handle RGB leds.
+>
+> Currently the driver loads patterns as if it was a firmware blob and
+> registers each of R, G and B components as separate LEDs. Each component
+> also has its own brightness controls (something tpic2810 doesn't have,
+> it's either on or off).
