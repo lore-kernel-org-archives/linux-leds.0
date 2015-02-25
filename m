@@ -1,66 +1,62 @@
-From: Alexandre Courbot <gnurou@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: "advanced" LED controllers
-Date: Wed, 25 Feb 2015 18:06:07 +0900
-Message-ID: <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
-References: <20150219211424.GN13603@saruman.tx.rr.com> <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+Date: Wed, 25 Feb 2015 22:49:41 +0100
+Message-ID: <20150225214940.GA29527@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
+ <20150223223457.GA4073@amd>
+ <20150223225836.GB4355@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:47557 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751023AbbBYJG2 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Feb 2015 04:06:28 -0500
-In-Reply-To: <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150223225836.GB4355@saruman.tx.rr.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
+On Mon 2015-02-23 16:58:36, Felipe Balbi wrote:
+> On Mon, Feb 23, 2015 at 11:34:57PM +0100, Pavel Machek wrote:
+> > On Thu 2015-02-19 15:14:24, Felipe Balbi wrote:
+> > > Hi,
+> > > 
+> > > Do we have support for LED controllers which can handle patterns of
+> > > different kinds ? I mean, currently, if we have an LED controller such
+> > > as TPIC2810 [1] which can control 8 different leds and each LED
+> > > corresponds to one bit on register 0x44, we could control leds by just
+> > > "playing" a wave file on the controller and create easy patterns with
+> > > that.
 
-Indeed. The LED core could implement something similar to
-gpiod_set_array() to allow several LEDs to be set in one call. If the
-controller supports it, it would then set all the LEDs at once,
-otherwise the core would apply the values serially.
+> > > [1] http://www.ti.com/product/tpic2810
+> > > 
+> > > ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
+> > > have even more advanced pattern engines which can even handle RGB leds.
+> > 
+> > Well... some more advanced pattern engines can actually run code, up
+> > to and including prime number computation. So yes, this is complex,
+> > and how to handle it nicely is a question...
+> > 
+> > I have "notcc" to compile for that.
+> 
+> right, the point is that this is a solution which only works with lp5523
+> and IMO linux led subsystem should do a little more for such devices.
 
-In leds-gpio.c, this multiple LED setting could be implemented by a
-single call to gpiod_set_array() and the right thing would happen.
+Well, question is what we want. Possibilities I see:
 
->
-> On Thu, Feb 19, 2015 at 10:14 PM, Felipe Balbi <balbi@ti.com> wrote:
->> Do we have support for LED controllers which can handle patterns of
->> different kinds ? I mean, currently, if we have an LED controller such
->> as TPIC2810 [1] which can control 8 different leds and each LED
->> corresponds to one bit on register 0x44, we could control leds by just
->> "playing" a wave file on the controller and create easy patterns with
->> that.
->>
->> AFAICT, in linux today we would have to register each of the 8 LEDs as a
->> different LED and have driver magic to write the proper bits on register
->> 0x44, that seems a bit overkill, specially when we want to make
->> patterns: instead of writing 0xff we would have to write 0x80, 0x40,
->> 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 separately and have the driver cache
->> the previous results so we don't end up switching off other LEDs.
->>
->> IOW, what could be handled with a single write, currently needs 8.
->>
->> I wonder if there's any work happening to support these slightly more
->> inteligent LED engines.
->>
->> regards
->>
->> [1] http://www.ti.com/product/tpic2810
->>
->> ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
->> have even more advanced pattern engines which can even handle RGB leds.
->>
->> Currently the driver loads patterns as if it was a firmware blob and
->> registers each of R, G and B components as separate LEDs. Each component
->> also has its own brightness controls (something tpic2810 doesn't have,
->> it's either on or off).
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1) We won't support all the features, just some common subset. Kernel
+will get commands for LED controller and translate them. Question is
+what reasonable subset is, then.
+
+I guess "delay", "set led brightness to X", "jump" would be minimal
+shared command set. lp5523 can do also "slowly increase/decrease
+brightness to X" (I believe we should support that one), arithmetics,
+conditional jumps, and communications between 3 threads.
+
+2) We want to support all the features. I guess that would mean doing
+compilation in userspace, and having "compiler" for each led
+controller. Having common source code would still be nice.
+
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
