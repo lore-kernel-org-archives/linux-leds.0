@@ -1,57 +1,66 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] leds/pwm: Don't disable pwm when setting brightness
- to 0
-Date: Wed, 25 Feb 2015 09:42:54 +0100
-Message-ID: <20150225084254.GI7789@pengutronix.de>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1423734290-19750-3-git-send-email-u.kleine-koenig@pengutronix.de>
- <1151818200.134325.1424804213026.JavaMail.open-xchange@oxbsltgw03.schlund.de>
- <20150224190636.GG7789@pengutronix.de>
- <54ED8426.6090401@i2se.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: "advanced" LED controllers
+Date: Wed, 25 Feb 2015 18:06:07 +0900
+Message-ID: <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
+References: <20150219211424.GN13603@saruman.tx.rr.com> <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:47497 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753393AbbBYInG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Feb 2015 03:43:06 -0500
-Content-Disposition: inline
-In-Reply-To: <54ED8426.6090401@i2se.com>
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:47557 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751023AbbBYJG2 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Feb 2015 04:06:28 -0500
+In-Reply-To: <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: linux-pwm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Bryan Wu <cooloney@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, linux-leds@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello Stefan,
+On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
 
-On Wed, Feb 25, 2015 at 09:13:26AM +0100, Stefan Wahren wrote:
-> Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Thanks.
+Indeed. The LED core could implement something similar to
+gpiod_set_array() to allow several LEDs to be set in one call. If the
+controller supports it, it would then set all the LEDs at once,
+otherwise the core would apply the values serially.
 
-> >> This is the functional part of this issue, since the warning has b=
-een fixed [1]
-> > Can I interpret this as an Tested-by: for this patch and an Ack for
-> > patch 1?
->=20
-> Sorry, but i don't think i'm the right person for acking patch 1.
-IMHO it doesn't matter who you are for an ack. You can consider it righ=
-t
-and tell it. How much this ack is useful to convince a maintainer to
-take this patch is a different story.
+In leds-gpio.c, this multiple LED setting could be implemented by a
+single call to gpiod_set_array() and the right thing would happen.
 
-But given that I try to fix the problem at hand for >2 years and I'm
-stuck because Thierry isn't convinced that it's a correct way to go
-forward but also doesn't come up with an alternative I'm happy about
-everyone who gives his/her opinion. Still more if the opinion matches
-mine.
-
-Thanks
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+>
+> On Thu, Feb 19, 2015 at 10:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> Do we have support for LED controllers which can handle patterns of
+>> different kinds ? I mean, currently, if we have an LED controller such
+>> as TPIC2810 [1] which can control 8 different leds and each LED
+>> corresponds to one bit on register 0x44, we could control leds by just
+>> "playing" a wave file on the controller and create easy patterns with
+>> that.
+>>
+>> AFAICT, in linux today we would have to register each of the 8 LEDs as a
+>> different LED and have driver magic to write the proper bits on register
+>> 0x44, that seems a bit overkill, specially when we want to make
+>> patterns: instead of writing 0xff we would have to write 0x80, 0x40,
+>> 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 separately and have the driver cache
+>> the previous results so we don't end up switching off other LEDs.
+>>
+>> IOW, what could be handled with a single write, currently needs 8.
+>>
+>> I wonder if there's any work happening to support these slightly more
+>> inteligent LED engines.
+>>
+>> regards
+>>
+>> [1] http://www.ti.com/product/tpic2810
+>>
+>> ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
+>> have even more advanced pattern engines which can even handle RGB leds.
+>>
+>> Currently the driver loads patterns as if it was a firmware blob and
+>> registers each of R, G and B components as separate LEDs. Each component
+>> also has its own brightness controls (something tpic2810 doesn't have,
+>> it's either on or off).
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
