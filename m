@@ -1,62 +1,70 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] leds: lp8860: make use of devm_gpiod_get_optional
-Date: Sun,  1 Mar 2015 22:25:47 +0100
-Message-ID: <1425245147-3521-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: Re: [PATCH 0/3] Add ktd2692 Flash LED driver
+Date: Mon, 02 Mar 2015 16:14:39 +0900
+Message-ID: <54F40DDF.8070708@samsung.com>
+References: <1424998891-25591-1-git-send-email-ingi2.kim@samsung.com>
+ <54F02DF5.1000706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:40052 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751313AbbCAVZ5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 1 Mar 2015 16:25:57 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:33860 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750834AbbCBHOv (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Mar 2015 02:14:51 -0500
+In-reply-to: <54F02DF5.1000706@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: kernel@pengutronix.de, linux-leds@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, cooloney@gmail.com, rpurdie@rpsys.net, treding@nvidia.com, p.zabel@pengutronix.de, andrew@lunn.ch, gregkh@linuxfoundation.org, florian.vaussard@epfl.ch, arno@natisbad.org, kuninori.morimoto.gx@renesas.com, hytszk@gmail.com, antonynpavlov@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>, sw0312.kim@samsung.com, ideal.song@samsung.com
 
-The probe function open coded a bad variant of devm_gpiod_get_optional
-using devm_gpiod_get and just ignoring all errors.
-In contrast to that devm_gpiod_get_optional returns NULL if there was n=
-o
-corresponding gpio specified in the device tree (or ACPI table) and
-fails if there is an error (or GPIOLIB is not enabled).
+Hi Jacek
 
-Moreover since 39b2bbe3d715 (gpio: add flags argument to gpiod_get*()
-functions) which appeared in v3.17-rc1, the gpiod_get* functions take a=
-n
-additional parameter that allows to specify direction and initial value
-for output which allows some simplification.
+On 2015=EB=85=84 02=EC=9B=94 27=EC=9D=BC 17:42, Jacek Anaszewski wrote:
+> Hi Ingi,
+>=20
+> On 02/27/2015 02:01 AM, Ingi Kim wrote:
+>> This patch supports KTD2692 flash LED driver
+>>
+>> Ingi Kim (3):
+>>    of: Add vendor prefix for Kinetic technologies
+>>    leds: ktd2692: add device tree bindings for ktd2692
+>>    leds: Add ktd2692 flash LED driver
+>>
+>>   .../devicetree/bindings/leds/leds-ktd2692.txt      |   19 ++
+>>   .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>>   drivers/leds/Kconfig                               |    8 +
+>>   drivers/leds/Makefile                              |    1 +
+>>   drivers/leds/leds-ktd2692.c                        |  245 ++++++++=
+++++++++++++
+>>   5 files changed, 274 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd=
+2692.txt
+>>   create mode 100644 drivers/leds/leds-ktd2692.c
+>>
+>=20
+> In your device tree binding documentation there is torch-gpio mention=
+ed,
+> but you seem not to use it in the driver.
+>=20
+> We have already LED Flash class (/drivers/leds/led-class-flash.c) for
+> this type of devices, which handles both torch and flash modes
+> (flash_strobe sysfs attribute is provided for strobing the flash).
+>=20
+> The reference drivers using LED Flash class are still pending [1], bu=
+t I
+> think that at least leds-aat1290 driver is almost ready for merging.
+> It controls very similar device to yours.
+>=20
+> Another advantage of using LED Flash class is that it has been design=
+ed
+> to be compatible with Video for Linux 2 subsystem, which will allow f=
+or registering LED Flash class devices as a V4L2 sub-devices.
+>=20
+> Adding Sakari.
+>=20
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- drivers/leds/leds-lp8860.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Ok, I'll check LED Flash class, and add torch-gpio
+Thanks,
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 840e93f3ab3e..f2a29c256d32 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -391,11 +391,13 @@ static int lp8860_probe(struct i2c_client *client=
-,
- 		}
- 	}
-=20
--	led->enable_gpio =3D devm_gpiod_get(&client->dev, "enable");
--	if (IS_ERR(led->enable_gpio))
--		led->enable_gpio =3D NULL;
--	else
--		gpiod_direction_output(led->enable_gpio, 0);
-+	led->enable_gpio =3D devm_gpiod_get_optional(&client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(led->enable_gpio)) {
-+		ret =3D PTR_ERR(led->enable_gpio);
-+		dev_err(&client->dev, "Failed to get enable gpio: %d\n", ret);
-+		return ret;
-+	}
-=20
- 	led->regulator =3D devm_regulator_get(&client->dev, "vled");
- 	if (IS_ERR(led->regulator))
---=20
-2.1.4
+Adding Seung-woo Kim and Inha Song
