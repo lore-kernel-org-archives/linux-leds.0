@@ -1,48 +1,37 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: 0.led_name 2.other.led.name in /sysfs Re: [PATCH/RFC v11 01/20]
- leds: flash: document sysfs interface
-Date: Mon, 2 Mar 2015 16:12:05 +0100
-Message-ID: <20150302151205.GA10376@amd>
-References: <1424276441-3969-2-git-send-email-j.anaszewski@samsung.com>
- <20150218224747.GA3999@amd>
- <20150219090204.GI3915@valkosipuli.retiisi.org.uk>
- <20150219214043.GB29875@kroah.com>
- <54E6E89B.4050404@samsung.com>
- <20150220153616.GB18111@kroah.com>
- <20150220205738.GA28995@amd>
- <20150221105733.GO3915@valkosipuli.retiisi.org.uk>
- <54F0806E.2040309@samsung.com>
- <20150302125414.GS6539@valkosipuli.retiisi.org.uk>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2 3/4] leds: Let the binding document example for
+ leds-gpio follow the gpio bindings
+Date: Mon, 2 Mar 2015 12:03:48 -0800
+Message-ID: <CAK5ve-Lu6=guYAoU1BMWYWtrocxq+8Kc4W7GsuTZTDtNp8N3xg@mail.gmail.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+ <1421876028-22799-4-git-send-email-o.schinagl@ultimaker.com> <CACRpkdZGXQ0ktwLu80ALaQuwB_RFQjpHitiEp+vcnnb0Hv1mKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36817 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754620AbbCBPMR (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 Mar 2015 10:12:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20150302125414.GS6539@valkosipuli.retiisi.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZGXQ0ktwLu80ALaQuwB_RFQjpHitiEp+vcnnb0Hv1mKg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Olliver Schinagl <o.schinagl@ultimaker.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl
 
-Hi!
+On Mon, Mar 2, 2015 at 3:24 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
+> <o.schinagl@ultimaker.com> wrote:
+>
+>> From: Olliver Schinagl <oliver@schinagl.nl>
+>>
+>> In the gpio bindings documents it is requested to use the marco's in
+>> include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
+>> drivers don't seem to form an exception, so update the example in the
+>> document bindings.
+>>
+>> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Bryan: please merge this patch to the LED git tree.
+>
 
-> > Of course the relevant sysfs group could be initialized only with
-> > the needed number of sync leds attributes, but still this is less
-> > than optimal design.
-> > 
-> > It looks like this interface indeed doesn't fit for sysfs.
-> > 
-> > I am leaning towards removing the support for synchronized flash LEDs
-> > from the LED subsystem entirely and leave it only to V4L2.
-> 
-> Perfectly fine for me as well, I guess the synchronised strobe has mostly
-> use on V4L2. It could always be added later on if needed.
+Merged, thanks
 
-Makes sense...
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-Bryan
