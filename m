@@ -1,36 +1,144 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
-Date: Wed, 4 Mar 2015 14:00:14 +0100
-Message-ID: <CACRpkdZBMUsoJKgWpZy9sY55eNQMKyu0FKhdW4A-GRJCsmBMCg@mail.gmail.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
-	<1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421876028-22799-3-git-send-email-o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olliver Schinagl <o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>, Robin Gong <b38343-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Aaron Lu <aaron.lu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds@vger
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH 2/4] ARM: Kirkwood: add modes-map property to ns2-leds nodes
+Date: Wed,  4 Mar 2015 15:52:17 +0100
+Message-ID: <1425480739-2373-3-git-send-email-simon.guinot@sequanux.org>
+References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vm1.sequanux.org ([188.165.36.56]:34747 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758308AbbCDOwX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 4 Mar 2015 09:52:23 -0500
+In-Reply-To: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Vincent Donnefort <vdonnefort@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
-<o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org> wrote:
+From: Vincent Donnefort <vdonnefort@gmail.com>
 
-> From: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
->
-> The gpio binding document says that new code should always use named
-> gpios. Patch 40b73183 added support to parse a list of gpios from child
-> nodes, but does not make it possible to use named gpios. This patch adds
-> the con_id property and implements it is done in gpiolib.c, where the
-> old-style of using unnamed gpios still works.
->
-> Signed-off-by: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+Since the LED modes mapping is no longer hardcoded inside the leds-ns2
+driver, then it must be provided through the modes-map property in the
+ns2-leds nodes.
 
-Patch applied with the ACKs and tags.
+Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+---
+ arch/arm/boot/dts/kirkwood-d2net.dts   | 5 +++++
+ arch/arm/boot/dts/kirkwood-is2.dts     | 5 +++++
+ arch/arm/boot/dts/kirkwood-ns2.dts     | 5 +++++
+ arch/arm/boot/dts/kirkwood-ns2max.dts  | 5 +++++
+ arch/arm/boot/dts/kirkwood-ns2mini.dts | 5 +++++
+ 5 files changed, 25 insertions(+)
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/kirkwood-d2net.dts b/arch/arm/boot/dts/kirkwood-d2net.dts
+index 6b7856025001..e1c25c35e9ce 100644
+--- a/arch/arm/boot/dts/kirkwood-d2net.dts
++++ b/arch/arm/boot/dts/kirkwood-d2net.dts
+@@ -10,6 +10,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/leds-ns2.h>
+ #include "kirkwood-netxbig.dtsi"
+ 
+ / {
+@@ -28,6 +29,10 @@
+ 			label = "d2net_v2:blue:sata";
+ 			slow-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+ 			cmd-gpio = <&gpio0 30 GPIO_ACTIVE_HIGH>;
++			modes-map = <NS_V2_LED_OFF  1 0
++				     NS_V2_LED_ON   0 1
++				     NS_V2_LED_ON   1 1
++				     NS_V2_LED_SATA 0 0>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/kirkwood-is2.dts b/arch/arm/boot/dts/kirkwood-is2.dts
+index da674bbd49a8..4121674abd1c 100644
+--- a/arch/arm/boot/dts/kirkwood-is2.dts
++++ b/arch/arm/boot/dts/kirkwood-is2.dts
+@@ -1,5 +1,6 @@
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/leds-ns2.h>
+ #include "kirkwood-ns2-common.dtsi"
+ 
+ / {
+@@ -27,6 +28,10 @@
+ 			label = "ns2:blue:sata";
+ 			slow-gpio = <&gpio0 29 0>;
+ 			cmd-gpio = <&gpio0 30 0>;
++			modes-map = <NS_V2_LED_OFF  1 0
++				     NS_V2_LED_ON   0 1
++				     NS_V2_LED_ON   1 1
++				     NS_V2_LED_SATA 0 0>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/kirkwood-ns2.dts b/arch/arm/boot/dts/kirkwood-ns2.dts
+index 53368d1022cc..190189d235e6 100644
+--- a/arch/arm/boot/dts/kirkwood-ns2.dts
++++ b/arch/arm/boot/dts/kirkwood-ns2.dts
+@@ -1,5 +1,6 @@
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/leds-ns2.h>
+ #include "kirkwood-ns2-common.dtsi"
+ 
+ / {
+@@ -27,6 +28,10 @@
+ 			label = "ns2:blue:sata";
+ 			slow-gpio = <&gpio0 29 0>;
+ 			cmd-gpio = <&gpio0 30 0>;
++			modes-map = <NS_V2_LED_OFF  1 0
++				     NS_V2_LED_ON   0 1
++				     NS_V2_LED_ON   1 1
++				     NS_V2_LED_SATA 0 0>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/kirkwood-ns2max.dts b/arch/arm/boot/dts/kirkwood-ns2max.dts
+index 72c78d0b1116..55cc41d9c80c 100644
+--- a/arch/arm/boot/dts/kirkwood-ns2max.dts
++++ b/arch/arm/boot/dts/kirkwood-ns2max.dts
+@@ -1,5 +1,6 @@
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/leds-ns2.h>
+ #include "kirkwood-ns2-common.dtsi"
+ 
+ / {
+@@ -46,6 +47,10 @@
+ 			label = "ns2:blue:sata";
+ 			slow-gpio = <&gpio0 29 0>;
+ 			cmd-gpio = <&gpio0 30 0>;
++			modes-map = <NS_V2_LED_OFF  1 0
++				     NS_V2_LED_ON   0 1
++				     NS_V2_LED_ON   1 1
++				     NS_V2_LED_SATA 0 0>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/kirkwood-ns2mini.dts b/arch/arm/boot/dts/kirkwood-ns2mini.dts
+index c441bf62c09f..9935f3ec29b4 100644
+--- a/arch/arm/boot/dts/kirkwood-ns2mini.dts
++++ b/arch/arm/boot/dts/kirkwood-ns2mini.dts
+@@ -1,5 +1,6 @@
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/leds-ns2.h>
+ #include "kirkwood-ns2-common.dtsi"
+ 
+ / {
+@@ -47,6 +48,10 @@
+ 			label = "ns2:blue:sata";
+ 			slow-gpio = <&gpio0 29 0>;
+ 			cmd-gpio = <&gpio0 30 0>;
++			modes-map = <NS_V2_LED_OFF  1 0
++				     NS_V2_LED_ON   0 1
++				     NS_V2_LED_ON   1 1
++				     NS_V2_LED_SATA 0 0>;
+ 		};
+ 	};
+ };
+-- 
+2.1.1
