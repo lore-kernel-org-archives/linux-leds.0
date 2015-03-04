@@ -1,7 +1,8 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v12 02/19] leds: flash: document sysfs interface
-Date: Wed, 04 Mar 2015 17:14:23 +0100
-Message-ID: <1425485680-8417-3-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v12 03/19] Documentation: leds: Add description of LED
+ Flash class extension
+Date: Wed, 04 Mar 2015 17:14:24 +0100
+Message-ID: <1425485680-8417-4-git-send-email-j.anaszewski@samsung.com>
 References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
@@ -10,102 +11,45 @@ To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add a documentation of LED Flash class specific sysfs attributes.
+The documentation being added contains overall description of the
+LED Flash Class and the related sysfs attributes.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/ABI/testing/sysfs-class-led-flash |   80 +++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
+ Documentation/leds/leds-class-flash.txt |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/leds/leds-class-flash.txt
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-flash b/Documentation/ABI/testing/sysfs-class-led-flash
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
 new file mode 100644
-index 0000000..220a027
+index 0000000..19bb673
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-flash
-@@ -0,0 +1,80 @@
-+What:		/sys/class/leds/<led>/flash_brightness
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Set the brightness of this LED in the flash strobe mode, in
-+		microamperes. The file is created only for the flash LED devices
-+		that support setting flash brightness.
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -0,0 +1,22 @@
 +
-+		The value is between 0 and
-+		/sys/class/leds/<led>/max_flash_brightness.
++Flash LED handling under Linux
++==============================
 +
-+What:		/sys/class/leds/<led>/max_flash_brightness
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Maximum brightness level for this LED in the flash strobe mode,
-+		in microamperes.
++Some LED devices provide two modes - torch and flash. In the LED subsystem
++those modes are supported by LED class (see Documentation/leds/leds-class.txt)
++and LED Flash class respectively. The torch mode related features are enabled
++by default and the flash ones only if a driver declares it by setting
++LED_DEV_CAP_FLASH flag.
 +
-+What:		/sys/class/leds/<led>/flash_timeout
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Hardware timeout for flash, in microseconds. The flash strobe
-+		is stopped after this period of time has passed from the start
-+		of the strobe. The file is created only for the flash LED
-+		devices that support setting flash timeout.
++In order to enable the support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
++must be defined in the kernel config. A LED Flash class driver must be
++registered in the LED subsystem with led_classdev_flash_register function.
 +
-+What:		/sys/class/leds/<led>/max_flash_timeout
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Maximum flash timeout for this LED, in microseconds.
-+
-+What:		/sys/class/leds/<led>/flash_strobe
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read/write
-+		Flash strobe state. When written with 1 it triggers flash strobe
-+		and when written with 0 it turns the flash off.
-+
-+		On read 1 means that flash is currently strobing and 0 means
-+		that flash is off.
-+
-+What:		/sys/class/leds/<led>/flash_fault
-+Date:		March 2015
-+KernelVersion:	4.0
-+Contact:	Jacek Anaszewski <j.anaszewski@samsung.com>
-+Description:	read only
-+		Space separated list of flash faults that may have occurred.
-+		Flash faults are re-read after strobing the flash. Possible
-+		flash faults:
-+
-+		* led-over-voltage - flash controller voltage to the flash LED
-+			has exceeded the limit specific to the flash controller
-+		* flash-timeout-exceeded - the flash strobe was still on when
-+			the timeout set by the user has expired; not all flash
-+			controllers may set this in all such conditions
-+		* controller-over-temperature - the flash controller has
-+			overheated
-+		* controller-short-circuit - the short circuit protection
-+			of the flash controller has been triggered
-+		* led-power-supply-over-current - current in the LED power
-+			supply has exceeded the limit specific to the flash
-+			controller
-+		* indicator-led-fault - the flash controller has detected
-+			a short or open circuit condition on the indicator LED
-+		* led-under-voltage - flash controller voltage to the flash
-+			LED has been below the minimum limit specific to
-+			the flash
-+		* controller-under-voltage - the input voltage of the flash
-+			controller is below the limit under which strobing the
-+			flash at full current will not be possible;
-+			the condition persists until this flag is no longer set
-+		* led-over-temperature - the temperature of the LED has exceeded
-+			its allowed upper limit
++Following sysfs attributes are exposed for controlling flash LED devices:
++(see Documentation/ABI/testing/sysfs-class-led-flash)
++	- flash_brightness
++	- max_flash_brightness
++	- flash_timeout
++	- max_flash_timeout
++	- flash_strobe
++	- flash_fault
 -- 
 1.7.9.5
