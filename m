@@ -1,107 +1,54 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v12 10/19] DT: Add documentation for the mfd Maxim max77693
-Date: Wed, 04 Mar 2015 17:14:31 +0100
-Message-ID: <1425485680-8417-11-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v12 04/19] dt-binding: leds: Add common LED DT bindings
+ macros
+Date: Wed, 04 Mar 2015 17:14:25 +0100
+Message-ID: <1425485680-8417-5-git-send-email-j.anaszewski@samsung.com>
 References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds device tree binding documentation for
-the flash cell of the Maxim max77693 multifunctional device.
+Add macros for defining boost mode and trigger type properties
+of flash LED devices.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ include/dt-bindings/leds/max77693.h |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 include/dt-bindings/leds/max77693.h
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
-index 38e6440..ab8fbd5 100644
---- a/Documentation/devicetree/bindings/mfd/max77693.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-@@ -76,7 +76,53 @@ Optional properties:
-     Valid values: 4300000, 4700000, 4800000, 4900000
-     Default: 4300000
- 
-+- led : the LED submodule device node
+diff --git a/include/dt-bindings/leds/max77693.h b/include/dt-bindings/leds/max77693.h
+new file mode 100644
+index 0000000..79fcef7
+--- /dev/null
++++ b/include/dt-bindings/leds/max77693.h
+@@ -0,0 +1,21 @@
++/*
++ * This header provides macros for the common LEDs device tree bindings.
++ *
++ * Copyright (C) 2015, Samsung Electronics Co., Ltd.
++ *
++ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
++ */
 +
-+There are two LED outputs available - FLED1 and FLED2. Each of them can
-+control a separate LED or they can be connected together to double
-+the maximum current for a single connected LED. One LED is represented
-+by one child node.
++#ifndef __DT_BINDINGS_LEDS_H__
++#define __DT_BINDINGS_LEDS_H
 +
-+Required properties:
-+- compatible : Must be "maxim,max77693-led".
++/* External trigger type */
++#define LEDS_TRIG_TYPE_EDGE	0
++#define LEDS_TRIG_TYPE_LEVEL	1
 +
-+Optional properties:
-+- maxim,trigger-type : Flash trigger type.
-+	Possible trigger types:
-+		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
-+			the flash,
-+		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
-+			of the flash.
-+- maxim,boost-mode :
-+	In boost mode the device can produce up to 1.2A of total current
-+	on both outputs. The maximum current on each output is reduced
-+	to 625mA then. If not enabled explicitly, boost setting defaults to
-+	LEDS_BOOST_FIXED in case both current sources are used.
-+	Possible values:
-+		LEDS_BOOST_OFF (0) - no boost,
-+		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
-+		LEDS_BOOST_FIXED (2) - fixed mode.
-+- maxim,boost-mvout : Output voltage of the boost module in millivolts.
-+- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
-+	if chip estimates that system voltage could drop below this level due
-+	to flash power consumption.
++/* Boost modes */
++#define LEDS_BOOST_OFF		0
++#define LEDS_BOOST_ADAPTIVE	1
++#define LEDS_BOOST_FIXED	2
 +
-+Required properties of the LED child node:
-+- label : see Documentation/devicetree/bindings/leds/common.txt
-+- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
-+		device current output identifiers: 0 - FLED1, 1 - FLED2
-+
-+Optional properties of the LED child node:
-+- max-microamp : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 15625 - 250000
-+- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 15625 - 1000000
-+- flash-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 62500 - 1000000
-+
- Example:
-+#include <dt-bindings/leds/max77693.h>
-+
- 	max77693@66 {
- 		compatible = "maxim,max77693";
- 		reg = <0x66>;
-@@ -117,5 +163,20 @@ Example:
- 			maxim,thermal-regulation-celsius = <75>;
- 			maxim,battery-overcurrent-microamp = <3000000>;
- 			maxim,charge-input-threshold-microvolt = <4300000>;
-+
-+		led {
-+			compatible = "maxim,max77693-led";
-+			maxim,trigger-type = <LEDS_TRIG_TYPE_LEVEL>;
-+			maxim,boost-mode = <LEDS_BOOST_FIXED>;
-+			maxim,boost-mvout = <5000>;
-+			maxim,mvsys-min = <2400>;
-+
-+			camera_flash: flash-led {
-+				label = "max77693-flash1";
-+				led-sources = <0>, <1>;
-+				max-microamp = <500000>;
-+				flash-max-microamp = <1250000>;
-+				flash-timeout-us = <1000000>;
-+			};
- 		};
- 	};
++#endif /* __DT_BINDINGS_LEDS_H */
 -- 
 1.7.9.5
