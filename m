@@ -1,51 +1,54 @@
 From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH 0/4] Allow to use leds-ns2 with n090401 boards
-Date: Wed,  4 Mar 2015 15:52:15 +0100
-Message-ID: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+Subject: [PATCH 4/4] leds: leds-ns2: depends on MACH_ARMADA_370
+Date: Wed,  4 Mar 2015 15:52:19 +0100
+Message-ID: <1425480739-2373-5-git-send-email-simon.guinot@sequanux.org>
+References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:34725 "EHLO vm1.sequanux.org"
+Received: from vm1.sequanux.org ([188.165.36.56]:34770 "EHLO vm1.sequanux.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757870AbbCDOwW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 4 Mar 2015 09:52:22 -0500
+	id S1758913AbbCDOwZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 4 Mar 2015 09:52:25 -0500
+In-Reply-To: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Cc: Vincent Donnefort <vdonnefort@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+The leds-ns2 driver is also used by the n090401 board (Seagate NAS
+4-Bay), which is based on the Marvell Armada-370 SoC.
 
-This patch series allows to use the leds-ns2 driver with the n090401
-boards (Seagate NAS 4-Bay), based on an Armada-370 SoC.
+Then this patch allows to select the leds-ns2 driver if MACH_ARMADA_370
+is enabled. Additionally, this also updates the Kconfig help message.
 
-Here is the list changes:
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+---
+ drivers/leds/Kconfig | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-- Allow to configure the LED mode mapping.
-- Handle can_sleep GPIOs. On n090401, the LEDs are connected to an I2C
-  GPIO expander.
-- Make leds-ns2 depends on MACH_ARMADA_370.
-
-Simon
-
-Simon Guinot (2):
-  leds: leds-ns2: handle can_sleep GPIOs
-  leds: leds-ns2: depends on MACH_ARMADA_370
-
-Vincent Donnefort (2):
-  leds: leds-ns2: move LED modes mapping outside of the driver
-  ARM: Kirkwood: add modes-map property to ns2-leds nodes
-
- .../devicetree/bindings/leds/leds-ns2.txt          |   9 ++
- arch/arm/boot/dts/kirkwood-d2net.dts               |   5 +
- arch/arm/boot/dts/kirkwood-is2.dts                 |   5 +
- arch/arm/boot/dts/kirkwood-ns2.dts                 |   5 +
- arch/arm/boot/dts/kirkwood-ns2max.dts              |   5 +
- arch/arm/boot/dts/kirkwood-ns2mini.dts             |   5 +
- drivers/leds/Kconfig                               |  12 +-
- drivers/leds/leds-ns2.c                            | 156 +++++++++++++--------
- include/dt-bindings/leds/leds-ns2.h                |   8 ++
- include/linux/platform_data/leds-kirkwood-ns2.h    |  14 ++
- 10 files changed, 159 insertions(+), 65 deletions(-)
- create mode 100644 include/dt-bindings/leds/leds-ns2.h
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 25b320d64e26..5bdeb6e41b2e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -431,12 +431,16 @@ config LEDS_MC13783
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+ 	depends on LEDS_CLASS
+-	depends on MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD || MACH_ARMADA_370
+ 	default y
+ 	help
+-	  This option enable support for the dual-GPIO LED found on the
+-	  Network Space v2 board (and parents). This include Internet Space v2,
+-	  Network Space (Max) v2 and d2 Network v2 boards.
++	  This option enables support for the dual-GPIO LEDs found on the
++	  following LaCie/Seagate boards:
++
++		Network Space v2 (and parents: Max, Mini)
++		Internet Space v2
++		d2 Network v2
++		n090401 (Seagate NAS 4-Bay)
+ 
+ config LEDS_NETXBIG
+ 	tristate "LED support for Big Network series LEDs"
 -- 
 2.1.1
