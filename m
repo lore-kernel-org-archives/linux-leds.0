@@ -1,35 +1,36 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: "advanced" LED controllers
-Date: Tue, 3 Mar 2015 17:15:29 +0900
-Message-ID: <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
-References: <20150219211424.GN13603@saruman.tx.rr.com> <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com> <20150302092111.GA19233@amd>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
+Date: Wed, 4 Mar 2015 14:00:14 +0100
+Message-ID: <CACRpkdZBMUsoJKgWpZy9sY55eNQMKyu0FKhdW4A-GRJCsmBMCg@mail.gmail.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+	<1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150302092111.GA19233@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421876028-22799-3-git-send-email-o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olliver Schinagl <o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>, Robin Gong <b38343-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Aaron Lu <aaron.lu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds@vger
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Mar 2, 2015 at 6:21 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Wed 2015-02-25 18:06:07, Alexandre Courbot wrote:
->> On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->> > CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
->>
->> Indeed. The LED core could implement something similar to
->> gpiod_set_array() to allow several LEDs to be set in one call. If the
->> controller supports it, it would then set all the LEDs at once,
->> otherwise the core would apply the values serially.
->>
->> In leds-gpio.c, this multiple LED setting could be implemented by a
->> single call to gpiod_set_array() and the right thing would happen.
->
-> Actually, there are two issues: some controlles can set all LEDs at
-> once, and some can program pwm level smoothly using given program (and
-> handle multiple leds in the process).
+On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
+<o.schinagl-U3FVU11NWA554TAoqtyWWQ@public.gmane.org> wrote:
 
-In any case, that would be handled at the controller level and should
-work with a function similar to gpiod_set_array(), wouldn't it?
+> From: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+>
+> The gpio binding document says that new code should always use named
+> gpios. Patch 40b73183 added support to parse a list of gpios from child
+> nodes, but does not make it possible to use named gpios. This patch adds
+> the con_id property and implements it is done in gpiolib.c, where the
+> old-style of using unnamed gpios still works.
+>
+> Signed-off-by: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+
+Patch applied with the ACKs and tags.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
