@@ -1,164 +1,179 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v12 00/19] LED / flash API integration
-Date: Wed, 04 Mar 2015 17:14:21 +0100
-Message-ID: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23647 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932756AbbCDQPh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 4 Mar 2015 11:15:37 -0500
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH/RFC v12 01/19] leds: flash: Remove synchronized flash strobe
+ feature
+Date: Wed, 04 Mar 2015 17:14:22 +0100
+Message-ID: <1425485680-8417-2-git-send-email-j.anaszewski@samsung.com>
+References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
-This patch set is a follow-up of the LED / flash API integration
-series [1]. It is based on linux-next_20150304
+Synchronized flash strobe feature has been considered not fitting
+for LED subsystem sysfs interface and thus is being removed.
 
-========================
-Changes since version 11 :
-========================
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ drivers/leds/led-class-flash.c  |   82 ---------------------------------------
+ include/linux/led-class-flash.h |   14 -------
+ include/linux/leds.h            |    1 -
+ 3 files changed, 97 deletions(-)
 
-- removed synchronized strobe feature from LED Flash class, as it
-  turned out to be not fitting for sysfs interface. The V4L2 part
-  can cover this in the future.
-- Improved external strobe handling for AAT1290
-- added removing led-triggers on v4l2-flash sub-device open
-- applied minor improvements and cleanups
-
-========================
-Changes since version 10 :
-========================
-
-- added to the v4l2-flash sub-device driver the support for flash
-  LED devices with non-linear brightness setting
-- improved current setting in the max77693-led driver 
-- added ABI documentation for flash LED sysfs attributes
-- improved synchronized LEDs related sysfs attributes in the
-  LED Flash class
-- applied various fixes and cleanups
-
-========================
-Changes since version 9 :
-========================
-
-- switched to assigning sub-led related of_node to led_cdev->dev->of_node
-  member which allowed for avoiding modifications around v4l-async
-- reimplemented max77693 flash cell driver to avoid extensive use
-  of macros
-- added led-sources DT property and switched to using it
-- switched to reporting flash faults in the LED subsystem in the form
-  of human readable strings
-- added available_sync_leds sysfs attribute to the LED Flash class
-  and changed the semantics of flash_sync_strobe attribute
-- made LED subsystem flash faults not depending on the V4L2 Flash ones
-- applied various fixes and cleanups
-
-========================
-Changes since version 8:
-========================
-
-- added a new way of registering async sub-device
-- switched to matching flash leds by DT phandles
-- improved Device Tree bindings documentation
-- split the drivers patches to LED Flash class
-  and V4L2 Flash part
-- fixed indicator leds handling in v4l2-flash
-- applied various fixes an cleanups
-
-========================
-Changes since version 7:
-========================
-
-- removed explicit support for indicator leds from
-  LED Flash class - indicator leds will be registered
-  as a separate LED Flash class devices
-- added flash_sync_strobe sysfs attribute and related
-  V4L2_CID_FLASH_SYNC_STROBE control
-- changed the way of matching V4L2 Flash sub-devices
-  in a media device, which entailed modification in
-  v4l2-async driver
-- modified max77693 DT bindings documentation
-- applied various fixes an cleanups
-
-========================
-Changes since version 6:
-========================
-
-- removed addition of public LED subsystem API for setting
-  torch brightness in favour of internal API for
-  synchronous and asynchronous led brightness level setting
-- fixed possible race condition upon creating LED Flash class
-  related sysfs attributes
-
-========================
-Changes since version 5:
-========================
-
-- removed flash manager framework - its implementation needs
-  further thorough discussion.
-- removed external strobe facilities from the LED Flash Class
-  and provided external_strobe_set op in v4l2-flash. LED subsystem
-  should be strobe provider agnostic.
-
-Thanks,
-Jacek Anaszewski
-
-[1] https://lkml.org/lkml/2014/7/11/914
-
-Jacek Anaszewski (19):
-  leds: flash: Remove synchronized flash strobe feature
-  leds: flash: document sysfs interface
-  Documentation: leds: Add description of LED Flash class extension
-  dt-binding: leds: Add common LED DT bindings macros
-  mfd: max77693: Modify flash cell name identifiers
-  mfd: max77693: Remove struct max77693_led_platform_data
-  mfd: max77693: add TORCH_IOUT_MASK macro
-  mfd: max77693: Adjust FLASH_EN_SHIFT and TORCH_EN_SHIFT macros
-  leds: Add support for max77693 mfd flash cell
-  DT: Add documentation for the mfd Maxim max77693
-  leds: Add driver for AAT1290 current regulator
-  of: Add Skyworks Solutions, Inc. vendor prefix
-  DT: Add documentation for the Skyworks AAT1290
-  exynos4-is: Add support for v4l2-flash subdevs
-  media: Add registration helpers for V4L2 flash sub-devices
-  Documentation: leds: Add description of v4l2-flash sub-device
-  DT: Add documentation for exynos4-is 'flashes' property
-  leds: max77693: add support for V4L2 Flash sub-device
-  leds: aat1290: add support for V4L2 Flash sub-device
-
- Documentation/ABI/testing/sysfs-class-led-flash    |   80 ++
- .../devicetree/bindings/leds/leds-aat1290.txt      |   64 ++
- .../devicetree/bindings/media/samsung-fimc.txt     |    8 +
- Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- Documentation/leds/leds-class-flash.txt            |   35 +
- drivers/leds/Kconfig                               |   18 +
- drivers/leds/Makefile                              |    2 +
- drivers/leds/led-class-flash.c                     |   82 --
- drivers/leds/leds-aat1290.c                        |  571 ++++++++++
- drivers/leds/leds-max77693.c                       | 1122 ++++++++++++++++++++
- drivers/media/platform/exynos4-is/media-dev.c      |   36 +-
- drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
- drivers/media/v4l2-core/Kconfig                    |   11 +
- drivers/media/v4l2-core/Makefile                   |    2 +
- drivers/media/v4l2-core/v4l2-flash.c               |  598 +++++++++++
- drivers/mfd/max77693.c                             |    4 +-
- include/dt-bindings/leds/max77693.h                |   21 +
- include/linux/led-class-flash.h                    |   14 -
- include/linux/leds.h                               |    1 -
- include/linux/mfd/max77693-private.h               |    5 +-
- include/linux/mfd/max77693.h                       |   13 -
- include/media/v4l2-flash.h                         |  143 +++
- 23 files changed, 2788 insertions(+), 117 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
- create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
- create mode 100644 Documentation/leds/leds-class-flash.txt
- create mode 100644 drivers/leds/leds-aat1290.c
- create mode 100644 drivers/leds/leds-max77693.c
- create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
- create mode 100644 include/dt-bindings/leds/max77693.h
- create mode 100644 include/media/v4l2-flash.h
-
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 4a19fd4..3b25734 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -216,75 +216,6 @@ static ssize_t flash_fault_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(flash_fault);
+ 
+-static ssize_t available_sync_leds_show(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	char *pbuf = buf;
+-	int i, buf_len;
+-
+-	buf_len = sprintf(pbuf, "[0: none] ");
+-	pbuf += buf_len;
+-
+-	for (i = 0; i < fled_cdev->num_sync_leds; ++i) {
+-		buf_len = sprintf(pbuf, "[%d: %s] ", i + 1,
+-				  fled_cdev->sync_leds[i]->led_cdev.name);
+-		pbuf += buf_len;
+-	}
+-
+-	return sprintf(buf, "%s\n", buf);
+-}
+-static DEVICE_ATTR_RO(available_sync_leds);
+-
+-static ssize_t flash_sync_strobe_store(struct device *dev,
+-		struct device_attribute *attr, const char *buf, size_t size)
+-{
+-	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	unsigned long led_id;
+-	ssize_t ret;
+-
+-	mutex_lock(&led_cdev->led_access);
+-
+-	if (led_sysfs_is_disabled(led_cdev)) {
+-		ret = -EBUSY;
+-		goto unlock;
+-	}
+-
+-	ret = kstrtoul(buf, 10, &led_id);
+-	if (ret)
+-		goto unlock;
+-
+-	if (led_id > fled_cdev->num_sync_leds) {
+-		ret = -ERANGE;
+-		goto unlock;
+-	}
+-
+-	fled_cdev->sync_led_id = led_id;
+-
+-	ret = size;
+-unlock:
+-	mutex_unlock(&led_cdev->led_access);
+-	return ret;
+-}
+-
+-static ssize_t flash_sync_strobe_show(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	int sled_id = fled_cdev->sync_led_id;
+-	char *sync_led_name = "none";
+-
+-	if (fled_cdev->sync_led_id > 0)
+-		sync_led_name = (char *)
+-			fled_cdev->sync_leds[sled_id - 1]->led_cdev.name;
+-
+-	return sprintf(buf, "[%d: %s]\n", sled_id, sync_led_name);
+-}
+-static DEVICE_ATTR_RW(flash_sync_strobe);
+-
+ static struct attribute *led_flash_strobe_attrs[] = {
+ 	&dev_attr_flash_strobe.attr,
+ 	NULL,
+@@ -307,12 +238,6 @@ static struct attribute *led_flash_fault_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct attribute *led_flash_sync_strobe_attrs[] = {
+-	&dev_attr_available_sync_leds.attr,
+-	&dev_attr_flash_sync_strobe.attr,
+-	NULL,
+-};
+-
+ static const struct attribute_group led_flash_strobe_group = {
+ 	.attrs = led_flash_strobe_attrs,
+ };
+@@ -329,10 +254,6 @@ static const struct attribute_group led_flash_fault_group = {
+ 	.attrs = led_flash_fault_attrs,
+ };
+ 
+-static const struct attribute_group led_flash_sync_strobe_group = {
+-	.attrs = led_flash_sync_strobe_attrs,
+-};
+-
+ static void led_flash_resume(struct led_classdev *led_cdev)
+ {
+ 	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+@@ -361,9 +282,6 @@ static void led_flash_init_sysfs_groups(struct led_classdev_flash *fled_cdev)
+ 	if (ops->fault_get)
+ 		flash_groups[num_sysfs_groups++] = &led_flash_fault_group;
+ 
+-	if (led_cdev->flags & LED_DEV_CAP_SYNC_STROBE)
+-		flash_groups[num_sysfs_groups++] = &led_flash_sync_strobe_group;
+-
+ 	led_cdev->groups = flash_groups;
+ }
+ 
+diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+index 3b5b964..21ec91e 100644
+--- a/include/linux/led-class-flash.h
++++ b/include/linux/led-class-flash.h
+@@ -81,20 +81,6 @@ struct led_classdev_flash {
+ 
+ 	/* LED Flash class sysfs groups */
+ 	const struct attribute_group *sysfs_groups[LED_FLASH_MAX_SYSFS_GROUPS];
+-
+-	/* LEDs available for flash strobe synchronization */
+-	struct led_classdev_flash **sync_leds;
+-
+-	/* Number of LEDs available for flash strobe synchronization */
+-	int num_sync_leds;
+-
+-	/*
+-	 * The identifier of the sub-led to synchronize the flash strobe with.
+-	 * Identifiers start from 1, which reflects the first element from the
+-	 * sync_leds array. 0 means that the flash strobe should not be
+-	 * synchronized.
+-	 */
+-	u32 sync_led_id;
+ };
+ 
+ static inline struct led_classdev_flash *lcdev_to_flcdev(
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index f70f84f..351bba5 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -47,7 +47,6 @@ struct led_classdev {
+ #define SET_BRIGHTNESS_ASYNC	(1 << 21)
+ #define SET_BRIGHTNESS_SYNC	(1 << 22)
+ #define LED_DEV_CAP_FLASH	(1 << 23)
+-#define LED_DEV_CAP_SYNC_STROBE	(1 << 24)
+ 
+ 	/* Set LED brightness level */
+ 	/* Must not sleep, use a workqueue if needed */
 -- 
 1.7.9.5
