@@ -1,55 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v12 03/19] Documentation: leds: Add description of LED
- Flash class extension
-Date: Wed, 04 Mar 2015 17:14:24 +0100
-Message-ID: <1425485680-8417-4-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH/RFC v12 06/19] mfd: max77693: Remove struct
+ max77693_led_platform_data
+Date: Wed, 04 Mar 2015 17:14:27 +0100
+Message-ID: <1425485680-8417-7-git-send-email-j.anaszewski@samsung.com>
 References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-The documentation being added contains overall description of the
-LED Flash Class and the related sysfs attributes.
+The flash part of the max77693 device will depend only on OF, and thus
+will not use board files. Since there are no other users of the
+struct max77693_led_platform_data its existence is unjustified.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- Documentation/leds/leds-class-flash.txt |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/leds/leds-class-flash.txt
+ include/linux/mfd/max77693.h |   13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-new file mode 100644
-index 0000000..19bb673
---- /dev/null
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -0,0 +1,22 @@
-+
-+Flash LED handling under Linux
-+==============================
-+
-+Some LED devices provide two modes - torch and flash. In the LED subsystem
-+those modes are supported by LED class (see Documentation/leds/leds-class.txt)
-+and LED Flash class respectively. The torch mode related features are enabled
-+by default and the flash ones only if a driver declares it by setting
-+LED_DEV_CAP_FLASH flag.
-+
-+In order to enable the support for flash LEDs CONFIG_LEDS_CLASS_FLASH symbol
-+must be defined in the kernel config. A LED Flash class driver must be
-+registered in the LED subsystem with led_classdev_flash_register function.
-+
-+Following sysfs attributes are exposed for controlling flash LED devices:
-+(see Documentation/ABI/testing/sysfs-class-led-flash)
-+	- flash_brightness
-+	- max_flash_brightness
-+	- flash_timeout
-+	- max_flash_timeout
-+	- flash_strobe
-+	- flash_fault
+diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+index f0b6585..ce894b6 100644
+--- a/include/linux/mfd/max77693.h
++++ b/include/linux/mfd/max77693.h
+@@ -87,19 +87,6 @@ enum max77693_led_boost_mode {
+ 	MAX77693_LED_BOOST_FIXED,
+ };
+ 
+-struct max77693_led_platform_data {
+-	u32 fleds[2];
+-	u32 iout_torch[2];
+-	u32 iout_flash[2];
+-	u32 trigger[2];
+-	u32 trigger_type[2];
+-	u32 num_leds;
+-	u32 boost_mode;
+-	u32 flash_timeout;
+-	u32 boost_vout;
+-	u32 low_vsys;
+-};
+-
+ /* MAX77693 */
+ 
+ struct max77693_platform_data {
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
