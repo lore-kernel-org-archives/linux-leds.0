@@ -1,186 +1,164 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH 3/4] leds: leds-ns2: handle can_sleep GPIOs
-Date: Wed,  4 Mar 2015 15:52:18 +0100
-Message-ID: <1425480739-2373-4-git-send-email-simon.guinot@sequanux.org>
-References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v12 00/19] LED / flash API integration
+Date: Wed, 04 Mar 2015 17:14:21 +0100
+Message-ID: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:34758 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758502AbbCDOwY (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 4 Mar 2015 09:52:24 -0500
-In-Reply-To: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:23647 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932756AbbCDQPh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 4 Mar 2015 11:15:37 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Vincent Donnefort <vdonnefort@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On the board n090401 (Seagate NAS 4-Bay), some of the LEDs are handled
-by the leds-ns2 driver. This LEDs are connected to an I2C GPIO expander
-(PCA95554PW) which means that GPIO access may sleep. This patch makes
-leds-ns2 compatible with such GPIOs by using the *_cansleep() variant of
-the GPIO functions. As a drawback this functions can't be used safely in
-a timer context (with the timer LED trigger for example). To fix this
-issue, a workqueue mechanism (copied from the leds-gpio driver) is used.
+This patch set is a follow-up of the LED / flash API integration
+series [1]. It is based on linux-next_20150304
 
-Note that this patch also updates slightly the ns2_led_sata_store
-function. The LED state is now retrieved from cached values instead of
-reading the GPIOs previously. This prevents ns2_led_sata_store from
-working with a stale LED state (which may happen when a delayed work
-is pending).
+========================
+Changes since version 11 :
+========================
 
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
----
- drivers/leds/leds-ns2.c | 56 ++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 42 insertions(+), 14 deletions(-)
+- removed synchronized strobe feature from LED Flash class, as it
+  turned out to be not fitting for sysfs interface. The V4L2 part
+  can cover this in the future.
+- Improved external strobe handling for AAT1290
+- added removing led-triggers on v4l2-flash sub-device open
+- applied minor improvements and cleanups
 
-diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index b0bc03539dbb..ea1542db9ba4 100644
---- a/drivers/leds/leds-ns2.c
-+++ b/drivers/leds/leds-ns2.c
-@@ -31,6 +31,7 @@
- #include <linux/platform_data/leds-kirkwood-ns2.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include "leds.h"
- 
- /*
-  * The Network Space v2 dual-GPIO LED is wired to a CPLD. Three different LED
-@@ -43,12 +44,29 @@ struct ns2_led_data {
- 	struct led_classdev	cdev;
- 	unsigned		cmd;
- 	unsigned		slow;
-+	bool			can_sleep;
-+	int			new_mode_index;
- 	unsigned char		sata; /* True when SATA mode active. */
- 	rwlock_t		rw_lock; /* Lock GPIOs. */
-+	struct work_struct	work;
- 	int			num_modes;
- 	struct ns2_led_modval	*modval;
- };
- 
-+static void ns2_led_work(struct work_struct *work)
-+{
-+	struct ns2_led_data *led_dat =
-+		container_of(work, struct ns2_led_data, work);
-+	int i = led_dat->new_mode_index;
-+
-+	write_lock(&led_dat->rw_lock);
-+
-+	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
-+	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
-+
-+	write_unlock(&led_dat->rw_lock);
-+}
-+
- static int ns2_led_get_mode(struct ns2_led_data *led_dat,
- 			    enum ns2_led_modes *mode)
- {
-@@ -59,8 +77,8 @@ static int ns2_led_get_mode(struct ns2_led_data *led_dat,
- 
- 	read_lock_irq(&led_dat->rw_lock);
- 
--	cmd_level = gpio_get_value(led_dat->cmd);
--	slow_level = gpio_get_value(led_dat->slow);
-+	cmd_level = gpio_get_value_cansleep(led_dat->cmd);
-+	slow_level = gpio_get_value_cansleep(led_dat->slow);
- 
- 	for (i = 0; i < led_dat->num_modes; i++) {
- 		if (cmd_level == led_dat->modval[i].cmd_level &&
-@@ -85,7 +103,13 @@ static void ns2_led_set_mode(struct ns2_led_data *led_dat,
- 	write_lock_irqsave(&led_dat->rw_lock, flags);
- 
- 	for (i = 0; i < led_dat->num_modes; i++) {
--		if (mode == led_dat->modval[i].mode) {
-+		if (mode != led_dat->modval[i].mode)
-+			continue;
-+
-+		if (led_dat->can_sleep) {
-+			led_dat->new_mode_index = i;
-+			schedule_work(&led_dat->work);
-+		} else {
- 			gpio_set_value(led_dat->cmd,
- 				       led_dat->modval[i].cmd_level);
- 			gpio_set_value(led_dat->slow,
-@@ -122,7 +146,6 @@ static ssize_t ns2_led_sata_store(struct device *dev,
- 		container_of(led_cdev, struct ns2_led_data, cdev);
- 	int ret;
- 	unsigned long enable;
--	enum ns2_led_modes mode;
- 
- 	ret = kstrtoul(buff, 10, &enable);
- 	if (ret < 0)
-@@ -131,19 +154,19 @@ static ssize_t ns2_led_sata_store(struct device *dev,
- 	enable = !!enable;
- 
- 	if (led_dat->sata == enable)
--		return count;
-+		goto exit;
- 
--	ret = ns2_led_get_mode(led_dat, &mode);
--	if (ret < 0)
--		return ret;
-+	led_dat->sata = enable;
-+
-+	if (!led_get_brightness(led_cdev))
-+		goto exit;
- 
--	if (enable && mode == NS_V2_LED_ON)
-+	if (enable)
- 		ns2_led_set_mode(led_dat, NS_V2_LED_SATA);
--	if (!enable && mode == NS_V2_LED_SATA)
-+	else
- 		ns2_led_set_mode(led_dat, NS_V2_LED_ON);
- 
--	led_dat->sata = enable;
--
-+exit:
- 	return count;
- }
- 
-@@ -173,7 +196,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	enum ns2_led_modes mode;
- 
- 	ret = devm_gpio_request_one(&pdev->dev, template->cmd,
--			gpio_get_value(template->cmd) ?
-+			gpio_get_value_cansleep(template->cmd) ?
- 			GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
- 			template->name);
- 	if (ret) {
-@@ -183,7 +206,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	}
- 
- 	ret = devm_gpio_request_one(&pdev->dev, template->slow,
--			gpio_get_value(template->slow) ?
-+			gpio_get_value_cansleep(template->slow) ?
- 			GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
- 			template->name);
- 	if (ret) {
-@@ -202,6 +225,8 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.groups = ns2_led_groups;
- 	led_dat->cmd = template->cmd;
- 	led_dat->slow = template->slow;
-+	led_dat->can_sleep = gpio_cansleep(led_dat->cmd) |
-+				gpio_cansleep(led_dat->slow);
- 	led_dat->modval = template->modval;
- 	led_dat->num_modes = template->num_modes;
- 
-@@ -214,6 +239,8 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.brightness =
- 		(mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
- 
-+	INIT_WORK(&led_dat->work, ns2_led_work);
-+
- 	ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
- 	if (ret < 0)
- 		return ret;
-@@ -224,6 +251,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- static void delete_ns2_led(struct ns2_led_data *led_dat)
- {
- 	led_classdev_unregister(&led_dat->cdev);
-+	cancel_work_sync(&led_dat->work);
- }
- 
- #ifdef CONFIG_OF_GPIO
+========================
+Changes since version 10 :
+========================
+
+- added to the v4l2-flash sub-device driver the support for flash
+  LED devices with non-linear brightness setting
+- improved current setting in the max77693-led driver 
+- added ABI documentation for flash LED sysfs attributes
+- improved synchronized LEDs related sysfs attributes in the
+  LED Flash class
+- applied various fixes and cleanups
+
+========================
+Changes since version 9 :
+========================
+
+- switched to assigning sub-led related of_node to led_cdev->dev->of_node
+  member which allowed for avoiding modifications around v4l-async
+- reimplemented max77693 flash cell driver to avoid extensive use
+  of macros
+- added led-sources DT property and switched to using it
+- switched to reporting flash faults in the LED subsystem in the form
+  of human readable strings
+- added available_sync_leds sysfs attribute to the LED Flash class
+  and changed the semantics of flash_sync_strobe attribute
+- made LED subsystem flash faults not depending on the V4L2 Flash ones
+- applied various fixes and cleanups
+
+========================
+Changes since version 8:
+========================
+
+- added a new way of registering async sub-device
+- switched to matching flash leds by DT phandles
+- improved Device Tree bindings documentation
+- split the drivers patches to LED Flash class
+  and V4L2 Flash part
+- fixed indicator leds handling in v4l2-flash
+- applied various fixes an cleanups
+
+========================
+Changes since version 7:
+========================
+
+- removed explicit support for indicator leds from
+  LED Flash class - indicator leds will be registered
+  as a separate LED Flash class devices
+- added flash_sync_strobe sysfs attribute and related
+  V4L2_CID_FLASH_SYNC_STROBE control
+- changed the way of matching V4L2 Flash sub-devices
+  in a media device, which entailed modification in
+  v4l2-async driver
+- modified max77693 DT bindings documentation
+- applied various fixes an cleanups
+
+========================
+Changes since version 6:
+========================
+
+- removed addition of public LED subsystem API for setting
+  torch brightness in favour of internal API for
+  synchronous and asynchronous led brightness level setting
+- fixed possible race condition upon creating LED Flash class
+  related sysfs attributes
+
+========================
+Changes since version 5:
+========================
+
+- removed flash manager framework - its implementation needs
+  further thorough discussion.
+- removed external strobe facilities from the LED Flash Class
+  and provided external_strobe_set op in v4l2-flash. LED subsystem
+  should be strobe provider agnostic.
+
+Thanks,
+Jacek Anaszewski
+
+[1] https://lkml.org/lkml/2014/7/11/914
+
+Jacek Anaszewski (19):
+  leds: flash: Remove synchronized flash strobe feature
+  leds: flash: document sysfs interface
+  Documentation: leds: Add description of LED Flash class extension
+  dt-binding: leds: Add common LED DT bindings macros
+  mfd: max77693: Modify flash cell name identifiers
+  mfd: max77693: Remove struct max77693_led_platform_data
+  mfd: max77693: add TORCH_IOUT_MASK macro
+  mfd: max77693: Adjust FLASH_EN_SHIFT and TORCH_EN_SHIFT macros
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add driver for AAT1290 current regulator
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  exynos4-is: Add support for v4l2-flash subdevs
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  DT: Add documentation for exynos4-is 'flashes' property
+  leds: max77693: add support for V4L2 Flash sub-device
+  leds: aat1290: add support for V4L2 Flash sub-device
+
+ Documentation/ABI/testing/sysfs-class-led-flash    |   80 ++
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   64 ++
+ .../devicetree/bindings/media/samsung-fimc.txt     |    8 +
+ Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   35 +
+ drivers/leds/Kconfig                               |   18 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/led-class-flash.c                     |   82 --
+ drivers/leds/leds-aat1290.c                        |  571 ++++++++++
+ drivers/leds/leds-max77693.c                       | 1122 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.c      |   36 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  598 +++++++++++
+ drivers/mfd/max77693.c                             |    4 +-
+ include/dt-bindings/leds/max77693.h                |   21 +
+ include/linux/led-class-flash.h                    |   14 -
+ include/linux/leds.h                               |    1 -
+ include/linux/mfd/max77693-private.h               |    5 +-
+ include/linux/mfd/max77693.h                       |   13 -
+ include/media/v4l2-flash.h                         |  143 +++
+ 23 files changed, 2788 insertions(+), 117 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/leds/leds-class-flash.txt
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/dt-bindings/leds/max77693.h
+ create mode 100644 include/media/v4l2-flash.h
+
 -- 
-2.1.1
+1.7.9.5
