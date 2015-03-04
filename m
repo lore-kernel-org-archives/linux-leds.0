@@ -1,8 +1,7 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v12 08/19] mfd: max77693: Adjust FLASH_EN_SHIFT and
- TORCH_EN_SHIFT macros
-Date: Wed, 04 Mar 2015 17:14:29 +0100
-Message-ID: <1425485680-8417-9-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v12 07/19] mfd: max77693: add TORCH_IOUT_MASK macro
+Date: Wed, 04 Mar 2015 17:14:28 +0100
+Message-ID: <1425485680-8417-8-git-send-email-j.anaszewski@samsung.com>
 References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
@@ -11,34 +10,29 @@ To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Modify FLASH_EN_SHIFT and TORCH_EN_SHIFT macros to work properly
-when passed enum max77693_fled values (0 for FLED1 and 1 for FLED2)
-from leds-max77693 driver. Previous definitions were compatible with
-one of the previous RFC versions of leds-max77693.c driver, which was
-not merged.
+Add a macro for obtaining the mask of ITORCH register bit fields
+related either to FLED1 or FLED2 current output. The expected
+arguments are TORCH_IOUT1_SHIFT or TORCH_IOUT2_SHIFT.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Lee Jones <lee.jones@linaro.org>
 ---
- include/linux/mfd/max77693-private.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/mfd/max77693-private.h |    1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd/max77693-private.h
-index 8770ce1..51633ea 100644
+index 955dd99..8770ce1 100644
 --- a/include/linux/mfd/max77693-private.h
 +++ b/include/linux/mfd/max77693-private.h
-@@ -114,8 +114,8 @@ enum max77693_pmic_reg {
- #define FLASH_EN_FLASH		0x1
- #define FLASH_EN_TORCH		0x2
- #define FLASH_EN_ON		0x3
--#define FLASH_EN_SHIFT(x)	(6 - ((x) - 1) * 2)
--#define TORCH_EN_SHIFT(x)	(2 - ((x) - 1) * 2)
-+#define FLASH_EN_SHIFT(x)	(6 - (x) * 2)
-+#define TORCH_EN_SHIFT(x)	(2 - (x) * 2)
- 
- /* MAX77693 MAX_FLASH1 register */
- #define MAX_FLASH1_MAX_FL_EN	0x80
+@@ -87,6 +87,7 @@ enum max77693_pmic_reg {
+ /* MAX77693 ITORCH register */
+ #define TORCH_IOUT1_SHIFT	0
+ #define TORCH_IOUT2_SHIFT	4
++#define TORCH_IOUT_MASK(x)	(0xf << (x))
+ #define TORCH_IOUT_MIN		15625
+ #define TORCH_IOUT_MAX		250000
+ #define TORCH_IOUT_STEP		15625
 -- 
 1.7.9.5
