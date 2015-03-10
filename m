@@ -1,17 +1,16 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v12 01/19] leds: flash: Remove synchronized flash
- strobe feature
-Date: Mon, 9 Mar 2015 16:23:24 -0700
-Message-ID: <CAK5ve-K-AGcTDa7RN=-O+We1BXka=gjv8QB7+NJdZaTzpbg6pA@mail.gmail.com>
-References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com> <1425485680-8417-2-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v12 02/19] leds: flash: document sysfs interface
+Date: Mon, 9 Mar 2015 17:17:00 -0700
+Message-ID: <CAK5ve-+JW4+bzxPSHCMBPdEDNWW8yWjgL_QyK+tNG_woTT=tLw@mail.gmail.com>
+References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com> <1425485680-8417-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:41818 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750967AbbCIXXq (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2015 19:23:46 -0400
-In-Reply-To: <1425485680-8417-2-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:41437 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751026AbbCJARV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2015 20:17:21 -0400
+In-Reply-To: <1425485680-8417-3-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
@@ -19,176 +18,107 @@ Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.o
 
 On Wed, Mar 4, 2015 at 8:14 AM, Jacek Anaszewski
 <j.anaszewski@samsung.com> wrote:
-> Synchronized flash strobe feature has been considered not fitting
-> for LED subsystem sysfs interface and thus is being removed.
+> Add a documentation of LED Flash class specific sysfs attributes.
 >
 
-OK, I will merge this.
-
+Thanks, merged!
 -Bryan
-
 
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > Cc: Bryan Wu <cooloney@gmail.com>
 > Cc: Richard Purdie <rpurdie@rpsys.net>
 > ---
->  drivers/leds/led-class-flash.c  |   82 ---------------------------------------
->  include/linux/led-class-flash.h |   14 -------
->  include/linux/leds.h            |    1 -
->  3 files changed, 97 deletions(-)
+>  Documentation/ABI/testing/sysfs-class-led-flash |   80 +++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-flash
 >
-> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-> index 4a19fd4..3b25734 100644
-> --- a/drivers/leds/led-class-flash.c
-> +++ b/drivers/leds/led-class-flash.c
-> @@ -216,75 +216,6 @@ static ssize_t flash_fault_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(flash_fault);
->
-> -static ssize_t available_sync_leds_show(struct device *dev,
-> -               struct device_attribute *attr, char *buf)
-> -{
-> -       struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> -       struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> -       char *pbuf = buf;
-> -       int i, buf_len;
-> -
-> -       buf_len = sprintf(pbuf, "[0: none] ");
-> -       pbuf += buf_len;
-> -
-> -       for (i = 0; i < fled_cdev->num_sync_leds; ++i) {
-> -               buf_len = sprintf(pbuf, "[%d: %s] ", i + 1,
-> -                                 fled_cdev->sync_leds[i]->led_cdev.name);
-> -               pbuf += buf_len;
-> -       }
-> -
-> -       return sprintf(buf, "%s\n", buf);
-> -}
-> -static DEVICE_ATTR_RO(available_sync_leds);
-> -
-> -static ssize_t flash_sync_strobe_store(struct device *dev,
-> -               struct device_attribute *attr, const char *buf, size_t size)
-> -{
-> -       struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> -       struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> -       unsigned long led_id;
-> -       ssize_t ret;
-> -
-> -       mutex_lock(&led_cdev->led_access);
-> -
-> -       if (led_sysfs_is_disabled(led_cdev)) {
-> -               ret = -EBUSY;
-> -               goto unlock;
-> -       }
-> -
-> -       ret = kstrtoul(buf, 10, &led_id);
-> -       if (ret)
-> -               goto unlock;
-> -
-> -       if (led_id > fled_cdev->num_sync_leds) {
-> -               ret = -ERANGE;
-> -               goto unlock;
-> -       }
-> -
-> -       fled_cdev->sync_led_id = led_id;
-> -
-> -       ret = size;
-> -unlock:
-> -       mutex_unlock(&led_cdev->led_access);
-> -       return ret;
-> -}
-> -
-> -static ssize_t flash_sync_strobe_show(struct device *dev,
-> -               struct device_attribute *attr, char *buf)
-> -{
-> -       struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> -       struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> -       int sled_id = fled_cdev->sync_led_id;
-> -       char *sync_led_name = "none";
-> -
-> -       if (fled_cdev->sync_led_id > 0)
-> -               sync_led_name = (char *)
-> -                       fled_cdev->sync_leds[sled_id - 1]->led_cdev.name;
-> -
-> -       return sprintf(buf, "[%d: %s]\n", sled_id, sync_led_name);
-> -}
-> -static DEVICE_ATTR_RW(flash_sync_strobe);
-> -
->  static struct attribute *led_flash_strobe_attrs[] = {
->         &dev_attr_flash_strobe.attr,
->         NULL,
-> @@ -307,12 +238,6 @@ static struct attribute *led_flash_fault_attrs[] = {
->         NULL,
->  };
->
-> -static struct attribute *led_flash_sync_strobe_attrs[] = {
-> -       &dev_attr_available_sync_leds.attr,
-> -       &dev_attr_flash_sync_strobe.attr,
-> -       NULL,
-> -};
-> -
->  static const struct attribute_group led_flash_strobe_group = {
->         .attrs = led_flash_strobe_attrs,
->  };
-> @@ -329,10 +254,6 @@ static const struct attribute_group led_flash_fault_group = {
->         .attrs = led_flash_fault_attrs,
->  };
->
-> -static const struct attribute_group led_flash_sync_strobe_group = {
-> -       .attrs = led_flash_sync_strobe_attrs,
-> -};
-> -
->  static void led_flash_resume(struct led_classdev *led_cdev)
->  {
->         struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> @@ -361,9 +282,6 @@ static void led_flash_init_sysfs_groups(struct led_classdev_flash *fled_cdev)
->         if (ops->fault_get)
->                 flash_groups[num_sysfs_groups++] = &led_flash_fault_group;
->
-> -       if (led_cdev->flags & LED_DEV_CAP_SYNC_STROBE)
-> -               flash_groups[num_sysfs_groups++] = &led_flash_sync_strobe_group;
-> -
->         led_cdev->groups = flash_groups;
->  }
->
-> diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
-> index 3b5b964..21ec91e 100644
-> --- a/include/linux/led-class-flash.h
-> +++ b/include/linux/led-class-flash.h
-> @@ -81,20 +81,6 @@ struct led_classdev_flash {
->
->         /* LED Flash class sysfs groups */
->         const struct attribute_group *sysfs_groups[LED_FLASH_MAX_SYSFS_GROUPS];
-> -
-> -       /* LEDs available for flash strobe synchronization */
-> -       struct led_classdev_flash **sync_leds;
-> -
-> -       /* Number of LEDs available for flash strobe synchronization */
-> -       int num_sync_leds;
-> -
-> -       /*
-> -        * The identifier of the sub-led to synchronize the flash strobe with.
-> -        * Identifiers start from 1, which reflects the first element from the
-> -        * sync_leds array. 0 means that the flash strobe should not be
-> -        * synchronized.
-> -        */
-> -       u32 sync_led_id;
->  };
->
->  static inline struct led_classdev_flash *lcdev_to_flcdev(
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index f70f84f..351bba5 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -47,7 +47,6 @@ struct led_classdev {
->  #define SET_BRIGHTNESS_ASYNC   (1 << 21)
->  #define SET_BRIGHTNESS_SYNC    (1 << 22)
->  #define LED_DEV_CAP_FLASH      (1 << 23)
-> -#define LED_DEV_CAP_SYNC_STROBE        (1 << 24)
->
->         /* Set LED brightness level */
->         /* Must not sleep, use a workqueue if needed */
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-flash b/Documentation/ABI/testing/sysfs-class-led-flash
+> new file mode 100644
+> index 0000000..220a027
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-flash
+> @@ -0,0 +1,80 @@
+> +What:          /sys/class/leds/<led>/flash_brightness
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read/write
+> +               Set the brightness of this LED in the flash strobe mode, in
+> +               microamperes. The file is created only for the flash LED devices
+> +               that support setting flash brightness.
+> +
+> +               The value is between 0 and
+> +               /sys/class/leds/<led>/max_flash_brightness.
+> +
+> +What:          /sys/class/leds/<led>/max_flash_brightness
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read only
+> +               Maximum brightness level for this LED in the flash strobe mode,
+> +               in microamperes.
+> +
+> +What:          /sys/class/leds/<led>/flash_timeout
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read/write
+> +               Hardware timeout for flash, in microseconds. The flash strobe
+> +               is stopped after this period of time has passed from the start
+> +               of the strobe. The file is created only for the flash LED
+> +               devices that support setting flash timeout.
+> +
+> +What:          /sys/class/leds/<led>/max_flash_timeout
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read only
+> +               Maximum flash timeout for this LED, in microseconds.
+> +
+> +What:          /sys/class/leds/<led>/flash_strobe
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read/write
+> +               Flash strobe state. When written with 1 it triggers flash strobe
+> +               and when written with 0 it turns the flash off.
+> +
+> +               On read 1 means that flash is currently strobing and 0 means
+> +               that flash is off.
+> +
+> +What:          /sys/class/leds/<led>/flash_fault
+> +Date:          March 2015
+> +KernelVersion: 4.0
+> +Contact:       Jacek Anaszewski <j.anaszewski@samsung.com>
+> +Description:   read only
+> +               Space separated list of flash faults that may have occurred.
+> +               Flash faults are re-read after strobing the flash. Possible
+> +               flash faults:
+> +
+> +               * led-over-voltage - flash controller voltage to the flash LED
+> +                       has exceeded the limit specific to the flash controller
+> +               * flash-timeout-exceeded - the flash strobe was still on when
+> +                       the timeout set by the user has expired; not all flash
+> +                       controllers may set this in all such conditions
+> +               * controller-over-temperature - the flash controller has
+> +                       overheated
+> +               * controller-short-circuit - the short circuit protection
+> +                       of the flash controller has been triggered
+> +               * led-power-supply-over-current - current in the LED power
+> +                       supply has exceeded the limit specific to the flash
+> +                       controller
+> +               * indicator-led-fault - the flash controller has detected
+> +                       a short or open circuit condition on the indicator LED
+> +               * led-under-voltage - flash controller voltage to the flash
+> +                       LED has been below the minimum limit specific to
+> +                       the flash
+> +               * controller-under-voltage - the input voltage of the flash
+> +                       controller is below the limit under which strobing the
+> +                       flash at full current will not be possible;
+> +                       the condition persists until this flag is no longer set
+> +               * led-over-temperature - the temperature of the LED has exceeded
+> +                       its allowed upper limit
 > --
 > 1.7.9.5
 >
