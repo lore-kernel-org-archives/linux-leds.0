@@ -1,75 +1,59 @@
-From: minyard@acm.org
-Subject: [PATCH] leds-gpio: Fix error handling and memory leak
-Date: Mon,  9 Mar 2015 19:43:42 -0500
-Message-ID: <1425948222-7925-1-git-send-email-minyard@acm.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH RFC] leds: Add status code trigger
+Date: Tue, 10 Mar 2015 09:00:42 +0100
+Message-ID: <20150310080042.GA27585@amd>
+References: <1424334377.11286.3.camel@localhost>
+ <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:46356 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751423AbbCJApb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2015 20:45:31 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37406 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751257AbbCJIAp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 10 Mar 2015 04:00:45 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Raphael Assenat <raph@8d.com>
-Cc: linux-leds@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Corey Minyard <cminyard@mvista.com>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: =?iso-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-From: Corey Minyard <cminyard@mvista.com>
+Hi!
 
-The leds-gpio driver would not clean up properly if it failed in some
-places, and it wasn't freeing its private data.
+> > Here is a new trigger. It would allow userspace to make an LED
+> > blink with a pattern to show a status (or error) code to a human.
+> > This is useful for embedded systems without screen or network
+> > access. Obviously, the LED will keep on blinking even if userspace
+> > crashes.
+> 
+> Thanks for bringing up this. We did get similar idea and patches
+> before. The problem is people are seeking more complicated
+> applications like define a script language to do blink such as
+> "~~~xxxxx~x~x" and there is a decoder to translate this script to
+> program the leds.
+> 
+> It was pointed out we need another API between kernel and user space,
+> but I don't have such time to do that.
+> 
+> I will add more people to review this patch and discuss this new
+> feature.
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
----
- drivers/leds/leds-gpio.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+And then there are LEDs that can do smooth brightness transitions, and
+LEDs that provide RGB colors, and programmable LED engines.
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index d26af0a..32f7642 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -198,8 +198,10 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		} else {
- 			if (IS_ENABLED(CONFIG_OF) && !led.name && np)
- 				led.name = np->name;
--			if (!led.name)
--				return ERR_PTR(-EINVAL);
-+			if (!led.name) {
-+				ret = -EINVAL;
-+				goto err;
-+			}
- 		}
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led.default_trigger);
-@@ -217,19 +219,21 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		if (fwnode_property_present(child, "retain-state-suspended"))
- 			led.retain_state_suspended = 1;
- 
--		ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
-+		ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
- 				      dev, NULL);
- 		if (ret < 0) {
- 			fwnode_handle_put(child);
- 			goto err;
- 		}
-+		priv->num_leds++;
- 	}
- 
- 	return priv;
- 
- err:
--	for (count = priv->num_leds - 2; count >= 0; count--)
-+	for (count = priv->num_leds - 1; count >= 0; count--)
- 		delete_gpio_led(&priv->leds[count]);
-+	devm_kfree(dev, priv);
- 	return ERR_PTR(ret);
- }
- 
-@@ -283,6 +287,7 @@ static int gpio_led_remove(struct platform_device *pdev)
- 
- 	for (i = 0; i < priv->num_leds; i++)
- 		delete_gpio_led(&priv->leds[i]);
-+	devm_kfree(&pdev->dev, priv);
- 
- 	return 0;
- }
+I think I have interface to handle most of the issues: array of
+integers in "brightness, length in miliseconds".
+
+So for example slowly blinking LED would be "0 1000msec, 255 1000
+msec". On off pattern would be "0 1000msec, 255 0msec, 255 1000msec, 0
+0msec".
+
+Rapahael, this should be able to do all the stuff you want to do. It
+can also do morse code, slow blinks, and combination of both. Do you
+want to try implementing it?
+
+Thanks,
+									Pavel
 -- 
-1.8.3.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
