@@ -1,59 +1,80 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH RFC] leds: Add status code trigger
-Date: Tue, 10 Mar 2015 09:00:42 +0100
-Message-ID: <20150310080042.GA27585@amd>
-References: <1424334377.11286.3.camel@localhost>
- <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
+Subject: Re: RGB LED control (was Re: "advanced" LED controllers)
+Date: Tue, 10 Mar 2015 09:04:21 +0100
+Message-ID: <20150310080420.GA31091@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
+ <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+ <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
+ <20150302092111.GA19233@amd>
+ <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
+ <20150308205732.GA385@amd>
+ <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
+ <yw1xd24i1ja7.fsf@unicorn.mansr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37406 "EHLO
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37551 "EHLO
 	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751257AbbCJIAp (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 10 Mar 2015 04:00:45 -0400
+	with ESMTP id S1751117AbbCJIEZ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 10 Mar 2015 04:04:25 -0400
 Content-Disposition: inline
-In-Reply-To: <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
+In-Reply-To: <yw1xd24i1ja7.fsf@unicorn.mansr.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: =?iso-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi!
+On Mon 2015-03-09 11:50:56, M=E5ns Rullg=E5rd wrote:
+> Geert Uytterhoeven <geert@linux-m68k.org> writes:
+>=20
+> > Hi Pavel,
+> >
+> > On Sun, Mar 8, 2015 at 9:57 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> >> Ok, so I played with RGB LED a bit, and we have quite a gap in
+> >> documentation: what 50% brightness means is non-trivial and very
+> >> important in case we want to do smooth blinking and color transiti=
+ons.
+> >>
+> >> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> >>
+> >> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documenta=
+tion/ABI/testing/sysfs-class-led
+> >> index 3646ec8..649d7a6 100644
+> >> --- a/Documentation/ABI/testing/sysfs-class-led
+> >> +++ b/Documentation/ABI/testing/sysfs-class-led
+> >> @@ -8,6 +8,11 @@ Description:
+> >>                 non-zero brightness settings. The value is between=
+ 0 and
+> >>                 /sys/class/leds/<led>/max_brightness.
+> >>
+> >> +               If LED supports continuous brightness settings, 50=
+% brightness
+> >> +               should correspond to 50% brightness perceived by h=
+uman, in a similar
+> >> +               manner pixel brightness on monitor does (not 50% P=
+WM).
+> >
+> > How many drivers do it right? How many don't?
+> >
+> > For those that don't, perhaps we handle the conversion between perc=
+eived and
+> > pwm in the core, e.g. by adding a new flag to led_classdev.flags to=
+ indicate
+> > the need for conversion?
+>=20
+> Some LED controllers do the right thing in hardware, so any adjustmen=
+t
+> done in the core needs to be optional.
 
-> > Here is a new trigger. It would allow userspace to make an LED
-> > blink with a pattern to show a status (or error) code to a human.
-> > This is useful for embedded systems without screen or network
-> > access. Obviously, the LED will keep on blinking even if userspace
-> > crashes.
-> 
-> Thanks for bringing up this. We did get similar idea and patches
-> before. The problem is people are seeking more complicated
-> applications like define a script language to do blink such as
-> "~~~xxxxx~x~x" and there is a decoder to translate this script to
-> program the leds.
-> 
-> It was pointed out we need another API between kernel and user space,
-> but I don't have such time to do that.
-> 
-> I will add more people to review this patch and discuss this new
-> feature.
+Do you have example controller that gets it right, btw?
 
-And then there are LEDs that can do smooth brightness transitions, and
-LEDs that provide RGB colors, and programmable LED engines.
-
-I think I have interface to handle most of the issues: array of
-integers in "brightness, length in miliseconds".
-
-So for example slowly blinking LED would be "0 1000msec, 255 1000
-msec". On off pattern would be "0 1000msec, 255 0msec, 255 1000msec, 0
-0msec".
-
-Rapahael, this should be able to do all the stuff you want to do. It
-can also do morse code, slow blinks, and combination of both. Do you
-want to try implementing it?
+Bryan, can you apply the documentation patch so we can start fixing
+the drivers?
 
 Thanks,
 									Pavel
--- 
+--=20
 (english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
+/blog.html
