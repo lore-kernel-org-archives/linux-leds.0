@@ -1,84 +1,75 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH/RFC v12 04/19] dt-binding: leds: Add common LED DT
- bindings macros
-Date: Mon, 9 Mar 2015 17:33:08 -0700
-Message-ID: <CAK5ve-K15jV0Mvkqkg4dAdBs91iu_iPeuDU3RjYNBOfzNLRmow@mail.gmail.com>
-References: <1425485680-8417-1-git-send-email-j.anaszewski@samsung.com>
- <1425485680-8417-5-git-send-email-j.anaszewski@samsung.com> <54F80C2B.20705@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: minyard@acm.org
+Subject: [PATCH] leds-gpio: Fix error handling and memory leak
+Date: Mon,  9 Mar 2015 19:43:42 -0500
+Message-ID: <1425948222-7925-1-git-send-email-minyard@acm.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:37547 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750933AbbCJAda (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2015 20:33:30 -0400
-In-Reply-To: <54F80C2B.20705@samsung.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:46356 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751423AbbCJApb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2015 20:45:31 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Raphael Assenat <raph@8d.com>
+Cc: linux-leds@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Corey Minyard <cminyard@mvista.com>
 
-On Wed, Mar 4, 2015 at 11:56 PM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> On 03/04/2015 05:14 PM, Jacek Anaszewski wrote:
->>
->> Add macros for defining boost mode and trigger type properties
->> of flash LED devices.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> ---
->>   include/dt-bindings/leds/max77693.h |   21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
->>   create mode 100644 include/dt-bindings/leds/max77693.h
->
->
-> This should be obviously include/dt-bindings/leds/common.h.
-> It will affect also max77693-led bindings documentation patch.
-> I'll send the update after receiving review remarks related to the
-> remaining part of the mentioned patches.
->
+From: Corey Minyard <cminyard@mvista.com>
 
-OK, please update them then I will merge this patch.
+The leds-gpio driver would not clean up properly if it failed in some
+places, and it wasn't freeing its private data.
 
-Thanks,
--Bryan
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+---
+ drivers/leds/leds-gpio.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
->
->>
->> diff --git a/include/dt-bindings/leds/max77693.h
->> b/include/dt-bindings/leds/max77693.h
->> new file mode 100644
->> index 0000000..79fcef7
->> --- /dev/null
->> +++ b/include/dt-bindings/leds/max77693.h
->> @@ -0,0 +1,21 @@
->> +/*
->> + * This header provides macros for the common LEDs device tree bindings.
->> + *
->> + * Copyright (C) 2015, Samsung Electronics Co., Ltd.
->> + *
->> + * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
->> + */
->> +
->> +#ifndef __DT_BINDINGS_LEDS_H__
->> +#define __DT_BINDINGS_LEDS_H
->> +
->> +/* External trigger type */
->> +#define LEDS_TRIG_TYPE_EDGE    0
->> +#define LEDS_TRIG_TYPE_LEVEL   1
->> +
->> +/* Boost modes */
->> +#define LEDS_BOOST_OFF         0
->> +#define LEDS_BOOST_ADAPTIVE    1
->> +#define LEDS_BOOST_FIXED       2
->> +
->> +#endif /* __DT_BINDINGS_LEDS_H */
->>
->
->
-> --
-> Best Regards,
-> Jacek Anaszewski
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index d26af0a..32f7642 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -198,8 +198,10 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		} else {
+ 			if (IS_ENABLED(CONFIG_OF) && !led.name && np)
+ 				led.name = np->name;
+-			if (!led.name)
+-				return ERR_PTR(-EINVAL);
++			if (!led.name) {
++				ret = -EINVAL;
++				goto err;
++			}
+ 		}
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led.default_trigger);
+@@ -217,19 +219,21 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		if (fwnode_property_present(child, "retain-state-suspended"))
+ 			led.retain_state_suspended = 1;
+ 
+-		ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
++		ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
+ 				      dev, NULL);
+ 		if (ret < 0) {
+ 			fwnode_handle_put(child);
+ 			goto err;
+ 		}
++		priv->num_leds++;
+ 	}
+ 
+ 	return priv;
+ 
+ err:
+-	for (count = priv->num_leds - 2; count >= 0; count--)
++	for (count = priv->num_leds - 1; count >= 0; count--)
+ 		delete_gpio_led(&priv->leds[count]);
++	devm_kfree(dev, priv);
+ 	return ERR_PTR(ret);
+ }
+ 
+@@ -283,6 +287,7 @@ static int gpio_led_remove(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < priv->num_leds; i++)
+ 		delete_gpio_led(&priv->leds[i]);
++	devm_kfree(&pdev->dev, priv);
+ 
+ 	return 0;
+ }
+-- 
+1.8.3.1
