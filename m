@@ -1,51 +1,87 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Documentation: leds: clarify what 50% brightness means
-Date: Wed, 11 Mar 2015 10:34:26 +0100
-Message-ID: <20150311093425.GA8866@amd>
-References: <20150219211424.GN13603@saruman.tx.rr.com>
- <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
- <20150302092111.GA19233@amd>
- <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
- <20150308205732.GA385@amd>
- <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
- <yw1xd24i1ja7.fsf@unicorn.mansr.com>
- <20150310080420.GA31091@amd>
- <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
+From: =?ISO-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>
+Subject: Re: [PATCH RFC] leds: Add status code trigger
+Date: Wed, 11 Mar 2015 16:10:14 +0100
+Message-ID: <1426086614.59115.14.camel@localhost>
+References: <1424334377.11286.3.camel@localhost>
+	 <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
+	 <20150310080042.GA27585@amd> <BLU172-W3716E59BC9E98F60F424C4AC180@phx.gbl>
+	 <20150310192226.GB11260@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:40006 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751124AbbCKPJP (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 11 Mar 2015 11:09:15 -0400
+In-Reply-To: <20150310192226.GB11260@amd>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Joe Xue <lgxue@hotmail.com>, Bryan Wu <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-I played with RGB LED a bit, and we have quite a gap in
-documentation: what 50% brightness means is non-trivial and very
-important in case we want to do smooth blinking and color
-transitions.
-    
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Le mardi 10 mars 2015 =C3=A0 20:22 +0100, Pavel Machek a =C3=A9crit :
+> Hi!
+>=20
+> > This patch is very similar to mine patten trigger and all features =
+are covered by my patch.
+> > If you are considering to take this feature, could you consider my =
+patch instead?
+> > http://thread.gmane.org/gmane.linux.documentation/19116/focus=3D191=
+35
+>=20
+> That one is indeed better than this patch (as it supports almost
+> arbitrary blinking pattern on single LED, it will not help much with
+> smooth brightness control.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 3646ec8..649d7a6 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -8,6 +8,11 @@ Description:
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
- 
-+		If LED supports continuous brightness settings, 50% brightness
-+		should correspond to 50% brightness perceived by human, in a similar
-+		manner pixel brightness on monitor does (not 50% PWM).
-+
-+
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
- KernelVersion:	2.6.17
+I agree, that patch supports more features than mine, I didn't find it
+while browsing the mailing list archive.
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>=20
+> Would solution below work for you?
+>=20
+> Best regards,
+> 									Pavel
+>=20
+> > > I think I have interface to handle most of the issues: array of
+> > > integers in "brightness, length in miliseconds".
+> > >=20
+> > > So for example slowly blinking LED would be "0 1000msec, 255 1000
+> > > msec". On off pattern would be "0 1000msec, 255 0msec, 255 1000ms=
+ec, 0
+> > > 0msec".
+> > >=20
+> > > Rapahael, this should be able to do all the stuff you want to do.=
+ It
+> > > can also do morse code, slow blinks, and combination of both. Do =
+you
+> > > want to try implementing it?
+> >  		 	   		 =20
+>=20
+
+I could implement it. This is how I'd do it :
+When activated, the trigger would export three
+sysfs attributes : pattern, pattern_repeat, and pattern_once.
+
+	pattern : list of brightness/time couple, separated by newlines
+		For the slowly blinking LED of your example,
+		this attribute would contain :
+		0 1000
+		255 1000
+
+		For a heartbeat-like pattern :
+		0 1000
+		255 100
+		0 100
+		255 100
+
+	pattern_repeat : repeat this pattern indefinitely ?
+		1 -> yes, 0 -> no
+
+	pattern_once : if pattern_repeat =3D 0, writing 1 to this
+		file makes the pattern run once .
+
+Does that seem OK to you?
+
+Regards,
+Rapha=C3=ABl
