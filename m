@@ -1,47 +1,50 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH RFC] leds: Add status code trigger
-Date: Tue, 10 Mar 2015 20:22:26 +0100
-Message-ID: <20150310192226.GB11260@amd>
-References: <1424334377.11286.3.camel@localhost>
- <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
- <20150310080042.GA27585@amd>
- <BLU172-W3716E59BC9E98F60F424C4AC180@phx.gbl>
+Subject: Documentation: leds: clarify what 50% brightness means
+Date: Wed, 11 Mar 2015 10:34:26 +0100
+Message-ID: <20150311093425.GA8866@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
+ <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+ <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
+ <20150302092111.GA19233@amd>
+ <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
+ <20150308205732.GA385@amd>
+ <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
+ <yw1xd24i1ja7.fsf@unicorn.mansr.com>
+ <20150310080420.GA31091@amd>
+ <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <BLU172-W3716E59BC9E98F60F424C4AC180@phx.gbl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Xue <lgxue@hotmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, =?iso-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+I played with RGB LED a bit, and we have quite a gap in
+documentation: what 50% brightness means is non-trivial and very
+important in case we want to do smooth blinking and color
+transitions.
+    
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-> This patch is very similar to mine patten trigger and all features are covered by my patch.
-> If you are considering to take this feature, could you consider my patch instead?
-> http://thread.gmane.org/gmane.linux.documentation/19116/focus=19135
-
-That one is indeed better than this patch (as it supports almost
-arbitrary blinking pattern on single LED, it will not help much with
-smooth brightness control.
-
-Would solution below work for you?
-
-Best regards,
-									Pavel
-
-> > I think I have interface to handle most of the issues: array of
-> > integers in "brightness, length in miliseconds".
-> > 
-> > So for example slowly blinking LED would be "0 1000msec, 255 1000
-> > msec". On off pattern would be "0 1000msec, 255 0msec, 255 1000msec, 0
-> > 0msec".
-> > 
-> > Rapahael, this should be able to do all the stuff you want to do. It
-> > can also do morse code, slow blinks, and combination of both. Do you
-> > want to try implementing it?
->  		 	   		  
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 3646ec8..649d7a6 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -8,6 +8,11 @@ Description:
+ 		non-zero brightness settings. The value is between 0 and
+ 		/sys/class/leds/<led>/max_brightness.
+ 
++		If LED supports continuous brightness settings, 50% brightness
++		should correspond to 50% brightness perceived by human, in a similar
++		manner pixel brightness on monitor does (not 50% PWM).
++
++
+ What:		/sys/class/leds/<led>/max_brightness
+ Date:		March 2006
+ KernelVersion:	2.6.17
 
 -- 
 (english) http://www.livejournal.com/~pavelmachek
