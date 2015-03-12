@@ -1,447 +1,103 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v13 05/13] leds: Add driver for AAT1290 current regulator
-Date: Thu, 12 Mar 2015 16:45:06 +0100
-Message-ID: <1426175114-14876-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v13 07/13] DT: Add documentation for the Skyworks AAT1290
+Date: Thu, 12 Mar 2015 16:45:08 +0100
+Message-ID: <1426175114-14876-8-git-send-email-j.anaszewski@samsung.com>
 References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds a driver for the 1.5A Step-Up Current Regulator
-for Flash LEDs. The device is programmed through a Skyworks proprietary
-AS2Cwire serial digital interface.
+This patch adds device tree binding documentation for
+1.5A Step-Up Current Regulator for Flash LEDs.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- drivers/leds/Kconfig        |    7 +
- drivers/leds/Makefile       |    1 +
- drivers/leds/leds-aat1290.c |  382 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 390 insertions(+)
- create mode 100644 drivers/leds/leds-aat1290.c
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   71 ++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index ccef436..6e141d6 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -42,6 +42,13 @@ config LEDS_88PM860X
- 	  This option enables support for on-chip LED drivers found on Marvell
- 	  Semiconductor 88PM8606 PMIC.
- 
-+config LEDS_AAT1290
-+	tristate "LED support for the AAT1290"
-+	depends on LEDS_CLASS_FLASH
-+	depends on OF
-+	help
-+	 This option enables support for the LEDs on the AAT1290.
-+
- config LEDS_LM3530
- 	tristate "LCD Backlight driver for LM3530"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 57ca62b..b802251 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
- 
- # LED Platform Drivers
- obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
-+obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
- obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
 new file mode 100644
-index 0000000..456f9a9d
+index 0000000..b2a1192
 --- /dev/null
-+++ b/drivers/leds/leds-aat1290.c
-@@ -0,0 +1,382 @@
-+/*
-+ *	LED Flash class driver for the AAT1290
-+ *	1.5A Step-Up Current Regulator for Flash LEDs
-+ *
-+ *	Copyright (C) 2015, Samsung Electronics Co., Ltd.
-+ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ */
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -0,0 +1,71 @@
++* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
 +
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/workqueue.h>
++The device is controlled through two pins: FL_EN and EN_SET. The pins when,
++asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
++respectively. In order to add a capability of selecting the strobe signal source
++(e.g. GPIO or ISP) there is an additional switch required, independent of the
++flash chip. The switch is controlled with pin control.
 +
-+#define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
-+#define AAT1290_MAX_MM_CURR_PERCENT_0	16
-+#define AAT1290_MAX_MM_CURR_PERCENT_100	1
++Required properties:
 +
-+#define AAT1290_FLASH_SAFETY_TIMER_ADDR	18
++- compatible : Must be "skyworks,aat1290".
++- flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
++- enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
 +
-+#define AAT1290_MOVIE_MODE_CONFIG_ADDR	19
-+#define AAT1290_MOVIE_MODE_OFF		1
-+#define AAT1290_MOVIE_MODE_ON		3
++Optional properties:
++- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
++		"default" and "host" must refer to the same pin configuration
++		node, which sets the host as a strobe signal provider. Entry
++		"isp" must refer to the pin configuration node, which sets the
++		ISP as a strobe signal provider.
 +
-+#define AAT1290_MM_CURRENT_RATIO_ADDR	20
-+#define AAT1290_MM_TO_FL_1_92		1
++A discrete LED element connected to the device must be represented by a child
++node - see Documentation/devicetree/bindings/leds/common.txt.
 +
-+#define AAT1290_MM_TO_FL_RATIO		1000 / 1920
-+#define AAT1290_MAX_MM_CURRENT(fl_max)	(fl_max * AAT1290_MM_TO_FL_RATIO)
++Required properties of the LED child node:
++- flash-max-microamp : Maximum intensity in microamperes of the flash LED -
++		       it can be calculated using following formula:
++		       I = 1A * 162kohm / Rset.
++- flash-timeout-us : Maximum flash timeout in microseconds -
++		     it can be calculated using following formula:
++		     T = 8.82 * 10^9 * Ct.
 +
-+#define AAT1290_LATCH_TIME_MIN_US	500
-+#define AAT1290_LATCH_TIME_MAX_US	1000
-+#define AAT1290_EN_SET_TICK_TIME_US	1
-+#define AAT1290_FLEN_OFF_DELAY_TIME_US	10
-+#define AAT1290_FLASH_TM_NUM_LEVELS	16
-+#define AAT1290_MM_CURRENT_SCALE_SIZE	15
++Optional properties of the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
 +
-+#define AAT1290_NAME			"aat1290"
++Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
++a switch that allows for routing strobe signal either from host or from ISP):
 +
++#include "exynos4412.dtsi"
 +
-+struct aat1290_led_settings {
-+	struct led_flash_setting torch_brightness;
-+	struct led_flash_setting flash_timeout;
++aat1290 {
++	compatible = "skyworks,aat1290";
++	gpios = <&gpj1 1 0>, <&gpj1 2 0>;
++	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
++	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
++
++	pinctrl-names = "default", "host", "isp";
++	pinctrl-0 = <&camera_flash_host>;
++	pinctrl-1 = <&camera_flash_host>;
++	pinctrl-2 = <&camera_flash_isp>;
++
++	camera_flash: flash-led {
++		label = "aat1290-flash";
++		flash-max-microamp = <1012500>
++		flash-timeout-us = <1940000>;
++	};
 +};
 +
-+struct aat1290_led {
-+	/* platform device data */
-+	struct platform_device *pdev;
-+	/* secures access to the device */
-+	struct mutex lock;
++&pinctrl_0 {
++	camera_flash_host: camera-flash-host {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <0>;
++	};
 +
-+	/* related LED Flash class device */
-+	struct led_classdev_flash fled_cdev;
-+
-+	/* FLEN pin */
-+	struct gpio_desc *gpio_fl_en;
-+	/* EN|SET pin  */
-+	struct gpio_desc *gpio_en_set;
-+
-+	/* maximum flash timeout */
-+	u32 max_flash_tm;
-+	/* maximum LED current in flash mode */
-+	u32 max_flash_current;
-+	/* device mode */
-+	bool movie_mode;
-+
-+	/* brightness cache */
-+	unsigned int torch_brightness;
-+	/* assures led-triggers compatibility */
-+	struct work_struct work_brightness_set;
++	camera_flash_isp: camera-flash-isp {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <1>;
++	};
 +};
-+
-+static struct aat1290_led *fled_cdev_to_led(
-+				struct led_classdev_flash *fled_cdev)
-+{
-+	return container_of(fled_cdev, struct aat1290_led, fled_cdev);
-+}
-+
-+static void aat1290_as2cwire_write(struct aat1290_led *led, int addr, int value)
-+{
-+	int i;
-+
-+	gpiod_direction_output(led->gpio_fl_en, 0);
-+	gpiod_direction_output(led->gpio_en_set, 0);
-+
-+	udelay(AAT1290_FLEN_OFF_DELAY_TIME_US);
-+
-+	/* write address */
-+	for (i = 0; i < addr; ++i) {
-+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-+		gpiod_direction_output(led->gpio_en_set, 0);
-+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-+		gpiod_direction_output(led->gpio_en_set, 1);
-+	}
-+
-+	usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US);
-+
-+	/* write data */
-+	for (i = 0; i < value; ++i) {
-+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-+		gpiod_direction_output(led->gpio_en_set, 0);
-+		udelay(AAT1290_EN_SET_TICK_TIME_US);
-+		gpiod_direction_output(led->gpio_en_set, 1);
-+	}
-+
-+	usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US);
-+}
-+
-+static void aat1290_set_flash_safety_timer(struct aat1290_led *led,
-+					unsigned int micro_sec)
-+{
-+	struct led_classdev_flash *fled_cdev = &led->fled_cdev;
-+	struct led_flash_setting *flash_tm = &fled_cdev->timeout;
-+	int flash_tm_reg = AAT1290_FLASH_TM_NUM_LEVELS -
-+				(micro_sec / flash_tm->step) + 1;
-+
-+	aat1290_as2cwire_write(led, AAT1290_FLASH_SAFETY_TIMER_ADDR,
-+							flash_tm_reg);
-+}
-+
-+static void aat1290_brightness_set(struct aat1290_led *led,
-+					enum led_brightness brightness)
-+{
-+	mutex_lock(&led->lock);
-+
-+	if (brightness == 0) {
-+		gpiod_direction_output(led->gpio_fl_en, 0);
-+		gpiod_direction_output(led->gpio_en_set, 0);
-+		led->movie_mode = false;
-+		goto unlock;
-+	}
-+
-+	if (!led->movie_mode) {
-+		aat1290_as2cwire_write(led, AAT1290_MM_CURRENT_RATIO_ADDR,
-+					AAT1290_MM_TO_FL_1_92);
-+		led->movie_mode = true;
-+	}
-+
-+	aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CURRENT_ADDR,
-+				AAT1290_MAX_MM_CURR_PERCENT_0 - brightness);
-+	aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CONFIG_ADDR,
-+				AAT1290_MOVIE_MODE_ON);
-+unlock:
-+	mutex_unlock(&led->lock);
-+}
-+
-+/* LED subsystem callbacks */
-+
-+static void aat1290_brightness_set_work(struct work_struct *work)
-+{
-+	struct aat1290_led *led =
-+		container_of(work, struct aat1290_led, work_brightness_set);
-+
-+	aat1290_brightness_set(led, led->torch_brightness);
-+}
-+
-+static void aat1290_led_brightness_set(struct led_classdev *led_cdev,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+
-+	led->torch_brightness = brightness;
-+	schedule_work(&led->work_brightness_set);
-+}
-+
-+static int aat1290_led_brightness_set_sync(struct led_classdev *led_cdev,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+
-+	aat1290_brightness_set(led, brightness);
-+
-+	return 0;
-+}
-+
-+static int aat1290_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
-+					 bool state)
-+
-+{
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct led_flash_setting *timeout = &fled_cdev->timeout;
-+
-+	mutex_lock(&led->lock);
-+
-+	if (state == 0) {
-+		gpiod_direction_output(led->gpio_fl_en, 0);
-+		gpiod_direction_output(led->gpio_en_set, 0);
-+		goto done;
-+	}
-+
-+	aat1290_set_flash_safety_timer(led, timeout->val);
-+
-+	gpiod_direction_output(led->gpio_fl_en, 1);
-+
-+done:
-+	/*
-+	 * To reenter movie mode after a flash event the part must be cycled
-+	 * off and back on to reset the movie mode and reprogrammed via the
-+	 * AS2Cwire. Therefore the brightness and movie_mode properties needs
-+	 * to be updated here to reflect the actual state.
-+	 */
-+	led_cdev->brightness = 0;
-+	led->movie_mode = false;
-+
-+	mutex_unlock(&led->lock);
-+
-+	return 0;
-+}
-+
-+static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
-+						u32 timeout)
-+{
-+	/*
-+	 * Don't do anything - flash timeout is cached in the led-class-flash
-+	 * core and will be applied in the strobe_set op, as writing the
-+	 * safety timer register spuriously turns the torch mode on.
-+	 */
-+
-+	return 0;
-+}
-+
-+static int aat1290_led_parse_dt(struct aat1290_led *led)
-+{
-+	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
-+	struct device *dev = &led->pdev->dev;
-+	struct device_node *child_node;
-+	int ret = 0;
-+
-+	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
-+	if (IS_ERR(led->gpio_fl_en)) {
-+		ret = PTR_ERR(led->gpio_fl_en);
-+		dev_err(dev, "Unable to claim gpio \"flen\".\n");
-+		return ret;
-+	}
-+
-+	led->gpio_en_set = devm_gpiod_get(dev, "enset");
-+	if (IS_ERR(led->gpio_en_set)) {
-+		ret = PTR_ERR(led->gpio_en_set);
-+		dev_err(dev, "Unable to claim gpio \"enset\".\n");
-+		return ret;
-+	}
-+
-+	child_node = of_get_next_available_child(dev->of_node, NULL);
-+	if (!child_node) {
-+		dev_err(dev, "No DT child node found for connected LED.\n");
-+		return -EINVAL;
-+	}
-+
-+	of_property_read_string(child_node, "label",
-+				(const char **) &led_cdev->name);
-+
-+	ret = of_property_read_u32(child_node, "flash-max-microamp",
-+				&led->max_flash_current);
-+	if (ret < 0) {
-+		dev_err(dev,
-+			"Error reading \"flash-max-microamp\" DT property\n");
-+		return ret;
-+	}
-+
-+	ret = of_property_read_u32(child_node, "flash-timeout-us",
-+				&led->max_flash_tm);
-+	if (ret < 0) {
-+		dev_err(dev,
-+			"Error reading \"flash-timeout-us\" DT property\n");
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static void aat1290_init_flash_settings(struct aat1290_led *led,
-+					 struct aat1290_led_settings *s)
-+{
-+	struct led_flash_setting *setting;
-+
-+	/* Init flash timeout setting */
-+	setting = &s->flash_timeout;
-+	setting->min = led->max_flash_tm / AAT1290_FLASH_TM_NUM_LEVELS;
-+	setting->max = setting->min * AAT1290_FLASH_TM_NUM_LEVELS;
-+	setting->step = setting->min;
-+	setting->val = setting->max;
-+}
-+
-+static const struct led_flash_ops flash_ops = {
-+	.strobe_set = aat1290_led_flash_strobe_set,
-+	.timeout_set = aat1290_led_flash_timeout_set,
-+};
-+
-+static int aat1290_led_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct aat1290_led *led;
-+	struct led_classdev *led_cdev;
-+	struct led_classdev_flash *fled_cdev;
-+	struct aat1290_led_settings settings;
-+	int ret;
-+
-+	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	led->pdev = pdev;
-+	platform_set_drvdata(pdev, led);
-+
-+	fled_cdev = &led->fled_cdev;
-+	led_cdev = &fled_cdev->led_cdev;
-+
-+	ret = aat1290_led_parse_dt(led);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!led_cdev->name)
-+		led_cdev->name = AAT1290_NAME;
-+
-+	/* Init flash settings */
-+	aat1290_init_flash_settings(led, &settings);
-+
-+	fled_cdev->timeout = settings.flash_timeout;
-+	fled_cdev->ops = &flash_ops;
-+
-+	/* Init LED class */
-+	led_cdev->brightness_set = aat1290_led_brightness_set;
-+	led_cdev->brightness_set_sync = aat1290_led_brightness_set_sync;
-+	led_cdev->max_brightness = AAT1290_MM_CURRENT_SCALE_SIZE;
-+	led_cdev->flags |= LED_DEV_CAP_FLASH;
-+
-+	INIT_WORK(&led->work_brightness_set, aat1290_brightness_set_work);
-+
-+	/* Register in the LED subsystem. */
-+	ret = led_classdev_flash_register(&pdev->dev, fled_cdev);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_init(&led->lock);
-+
-+	return 0;
-+}
-+
-+static int aat1290_led_remove(struct platform_device *pdev)
-+{
-+	struct aat1290_led *led = platform_get_drvdata(pdev);
-+
-+	led_classdev_flash_unregister(&led->fled_cdev);
-+	cancel_work_sync(&led->work_brightness_set);
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id aat1290_led_dt_match[] = {
-+	{.compatible = "skyworks,aat1290"},
-+	{},
-+};
-+
-+static struct platform_driver aat1290_led_driver = {
-+	.probe		= aat1290_led_probe,
-+	.remove		= aat1290_led_remove,
-+	.driver		= {
-+		.name	= "aat1290",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = aat1290_led_dt_match,
-+	},
-+};
-+
-+module_platform_driver(aat1290_led_driver);
-+
-+MODULE_AUTHOR("Jacek Anaszewski <j.anaszewski@samsung.com>");
-+MODULE_DESCRIPTION("Skyworks Current Regulator for Flash LEDs");
-+MODULE_LICENSE("GPL v2");
 -- 
 1.7.9.5
