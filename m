@@ -1,345 +1,514 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v13 13/13] leds: aat1290: add support for V4L2 Flash
- sub-device
-Date: Thu, 12 Mar 2015 16:45:14 +0100
-Message-ID: <1426175114-14876-14-git-send-email-j.anaszewski@samsung.com>
-References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH v4 2/2] leds: add Qualcomm PM8941 WLED driver
+Date: Thu, 12 Mar 2015 08:47:08 -0700
+Message-ID: <1426175228-29208-2-git-send-email-bjorn.andersson@sonymobile.com>
+References: <1426175228-29208-1-git-send-email-bjorn.andersson@sonymobile.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1426175228-29208-1-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@linaro.org>
+Cc: Courtney Cavin <courtney.cavin@sonymobile.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
-driver. The support allows for V4L2 Flash sub-device to take the control
-of the LED Flash class device.
+From: Courtney Cavin <courtney.cavin@sonymobile.com>
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
+This adds support for the WLED ('White' LED) block on Qualcomm's
+PM8941 PMICs.
+
+Signed-off-by: Courtney Cavin <courtney.cavin@sonymobile.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 ---
- drivers/leds/Kconfig        |    1 +
- drivers/leds/leds-aat1290.c |  186 ++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 185 insertions(+), 2 deletions(-)
+Changes since v3:
+- Use devres helper
+
+Changes since v2:
+- Fix of parser return value on error
+- Dropped THIS_MODULE
+
+Changes since v1:
+- Replace enum blob with defines
+- Merged wled_context and wled structs
+- Some style updates
+
+ drivers/leds/Kconfig            |   8 +
+ drivers/leds/Makefile           |   1 +
+ drivers/leds/leds-pm8941-wled.c | 435 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 444 insertions(+)
+ create mode 100644 drivers/leds/leds-pm8941-wled.c
 
 diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 6e141d6..986876e 100644
+index 25b320d..966b960 100644
 --- a/drivers/leds/Kconfig
 +++ b/drivers/leds/Kconfig
-@@ -46,6 +46,7 @@ config LEDS_AAT1290
- 	tristate "LED support for the AAT1290"
- 	depends on LEDS_CLASS_FLASH
- 	depends on OF
-+	depends on PINCTRL
- 	help
- 	 This option enables support for the LEDs on the AAT1290.
+@@ -526,6 +526,14 @@ config LEDS_VERSATILE
+ 	  This option enabled support for the LEDs on the ARM Versatile
+ 	  and RealView boards. Say Y to enabled these.
  
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index 456f9a9d..6100b6b 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -17,9 +17,11 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-+#include <media/v4l2-flash.h>
- 
- #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
- #define AAT1290_MAX_MM_CURR_PERCENT_0	16
-@@ -46,6 +48,11 @@
- 
- #define AAT1290_NAME			"aat1290"
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+/* Number of AAT1290 devices in the system. */
-+static unsigned int dev_count;
-+#endif
++config LEDS_PM8941_WLED
++	tristate "LED support for the Qualcomm PM8941 WLED block"
++	depends on LEDS_CLASS
++	select REGMAP
++	help
++	  This option enables support for the 'White' LED block
++	  on Qualcomm PM8941 PMICs.
 +
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
  
- struct aat1290_led_settings {
- 	struct led_flash_setting torch_brightness;
-@@ -60,11 +67,17 @@ struct aat1290_led {
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index cbba921..bf46093 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -58,6 +58,7 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
+ obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
+ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
++obj-$(CONFIG_LEDS_PM8941_WLED)		+= leds-pm8941-wled.o
  
- 	/* related LED Flash class device */
- 	struct led_classdev_flash fled_cdev;
-+	/* V4L2 Flash device */
-+	struct v4l2_flash *v4l2_flash;
- 
- 	/* FLEN pin */
- 	struct gpio_desc *gpio_fl_en;
- 	/* EN|SET pin  */
- 	struct gpio_desc *gpio_en_set;
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	/* movie mode current scale */
-+	int *mm_current_scale;
-+#endif
- 
- 	/* maximum flash timeout */
- 	u32 max_flash_tm;
-@@ -231,11 +244,16 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
- 	return 0;
- }
- 
--static int aat1290_led_parse_dt(struct aat1290_led *led)
-+static int aat1290_led_parse_dt(struct aat1290_led *led,
-+			struct device_node **sub_node,
-+			struct v4l2_flash_ctrl_config *v4l2_flash_config)
- {
- 	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
- 	struct device *dev = &led->pdev->dev;
- 	struct device_node *child_node;
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	struct pinctrl *pinctrl;
-+#endif
- 	int ret = 0;
- 
- 	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
-@@ -252,6 +270,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led)
- 		return ret;
- 	}
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
-+	if (IS_ERR(pinctrl)) {
-+		v4l2_flash_config->has_external_strobe = false;
-+		dev_info(dev,
-+			 "No support for external strobe detected.\n");
-+	} else {
-+		v4l2_flash_config->has_external_strobe = true;
-+	}
-+#endif
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-pm8941-wled.c b/drivers/leds/leds-pm8941-wled.c
+new file mode 100644
+index 0000000..b4f46db
+--- /dev/null
++++ b/drivers/leds/leds-pm8941-wled.c
+@@ -0,0 +1,435 @@
++/* Copyright (c) 2015, Sony Mobile Communications, AB.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- 	child_node = of_get_next_available_child(dev->of_node, NULL);
- 	if (!child_node) {
- 		dev_err(dev, "No DT child node found for connected LED.\n");
-@@ -277,6 +306,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led)
- 		return ret;
- 	}
- 
-+	*sub_node = child_node;
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/regmap.h>
 +
- 	return ret;
- }
- 
-@@ -285,6 +316,15 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
- {
- 	struct led_flash_setting *setting;
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	/* Init flash intensity setting */
-+	setting = &s->torch_brightness;
-+	setting->min = led->mm_current_scale[0];
-+	setting->max = led->mm_current_scale[AAT1290_MM_CURRENT_SCALE_SIZE - 1];
-+	setting->step = 1;
-+	setting->val = setting->max;
-+#endif
++#define PM8941_WLED_REG_VAL_BASE		0x40
++#define  PM8941_WLED_REG_VAL_MAX		0xFFF
 +
- 	/* Init flash timeout setting */
- 	setting = &s->flash_timeout;
- 	setting->min = led->max_flash_tm / AAT1290_FLASH_TM_NUM_LEVELS;
-@@ -293,6 +333,113 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
- 	setting->val = setting->max;
- }
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+enum led_brightness aat1290_intensity_to_brightness(
-+					struct v4l2_flash *v4l2_flash,
-+					s32 intensity)
++#define PM8941_WLED_REG_MOD_EN			0x46
++#define  PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
++#define  PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
++
++#define PM8941_WLED_REG_SYNC			0x47
++#define  PM8941_WLED_REG_SYNC_MASK		0x07
++#define  PM8941_WLED_REG_SYNC_LED1		BIT(0)
++#define  PM8941_WLED_REG_SYNC_LED2		BIT(1)
++#define  PM8941_WLED_REG_SYNC_LED3		BIT(2)
++#define  PM8941_WLED_REG_SYNC_ALL		0x07
++#define  PM8941_WLED_REG_SYNC_CLEAR		0x00
++
++#define PM8941_WLED_REG_FREQ			0x4c
++#define  PM8941_WLED_REG_FREQ_MASK		0x0f
++
++#define PM8941_WLED_REG_OVP			0x4d
++#define  PM8941_WLED_REG_OVP_MASK		0x03
++
++#define PM8941_WLED_REG_BOOST			0x4e
++#define  PM8941_WLED_REG_BOOST_MASK		0x07
++
++#define PM8941_WLED_REG_SINK			0x4f
++#define  PM8941_WLED_REG_SINK_MASK		0xe0
++#define  PM8941_WLED_REG_SINK_SHFT		0x05
++
++/* Per-'string' registers below */
++#define PM8941_WLED_REG_STR_OFFSET		0x10
++
++#define PM8941_WLED_REG_STR_MOD_EN_BASE		0x60
++#define  PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
++#define  PM8941_WLED_REG_STR_MOD_EN		BIT(7)
++
++#define PM8941_WLED_REG_STR_SCALE_BASE		0x62
++#define  PM8941_WLED_REG_STR_SCALE_MASK		0x1f
++
++#define PM8941_WLED_REG_STR_MOD_SRC_BASE	0x63
++#define  PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
++#define  PM8941_WLED_REG_STR_MOD_SRC_INT	0x00
++#define  PM8941_WLED_REG_STR_MOD_SRC_EXT	0x01
++
++#define PM8941_WLED_REG_STR_CABC_BASE		0x66
++#define  PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
++#define  PM8941_WLED_REG_STR_CABC_EN		BIT(7)
++
++struct pm8941_wled_config {
++	u32 i_boost_limit;
++	u32 ovp;
++	u32 switch_freq;
++	u32 num_strings;
++	u32 i_limit;
++	bool cs_out_en;
++	bool ext_gen;
++	bool cabc_en;
++};
++
++struct pm8941_wled {
++	struct regmap *regmap;
++	u16 addr;
++
++	struct led_classdev cdev;
++
++	struct pm8941_wled_config cfg;
++};
++
++static int pm8941_wled_set(struct led_classdev *cdev,
++			   enum led_brightness value)
 +{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
++	struct pm8941_wled *wled;
++	u8 ctrl = 0;
++	u16 val;
++	int rc;
 +	int i;
 +
-+	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
-+		if (intensity >= led->mm_current_scale[i])
-+			return i + 1;
++	wled = container_of(cdev, struct pm8941_wled, cdev);
 +
-+	return 1;
++	if (value != 0)
++		ctrl = PM8941_WLED_REG_MOD_EN_BIT;
++
++	val = value * PM8941_WLED_REG_VAL_MAX / LED_FULL;
++
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_MOD_EN,
++			PM8941_WLED_REG_MOD_EN_MASK, ctrl);
++	if (rc)
++		return rc;
++
++	for (i = 0; i < wled->cfg.num_strings; ++i) {
++		u8 v[2] = { val & 0xff, (val >> 8) & 0xf };
++
++		rc = regmap_bulk_write(wled->regmap,
++				wled->addr + PM8941_WLED_REG_VAL_BASE + 2 * i,
++				v, 2);
++		if (rc)
++			return rc;
++	}
++
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_SYNC,
++			PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_ALL);
++	if (rc)
++		return rc;
++
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_SYNC,
++			PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_CLEAR);
++	return rc;
 +}
 +
-+s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
-+					enum led_brightness brightness)
++static void pm8941_wled_set_brightness(struct led_classdev *cdev,
++				       enum led_brightness value)
 +{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+
-+	return led->mm_current_scale[brightness - 1];
++	if (pm8941_wled_set(cdev, value)) {
++		dev_err(cdev->dev, "Unable to set brightness\n");
++		return;
++	}
++	cdev->brightness = value;
 +}
 +
-+static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
-+						bool enable)
++static int pm8941_wled_setup(struct pm8941_wled *wled)
 +{
-+	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct pinctrl *pinctrl;
++	int rc;
++	int i;
 +
-+	gpiod_direction_output(led->gpio_fl_en, 0);
-+	gpiod_direction_output(led->gpio_en_set, 0);
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_OVP,
++			PM8941_WLED_REG_OVP_MASK, wled->cfg.ovp);
++	if (rc)
++		return rc;
 +
-+	led->movie_mode = false;
-+	led_cdev->brightness = 0;
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_BOOST,
++			PM8941_WLED_REG_BOOST_MASK, wled->cfg.i_boost_limit);
++	if (rc)
++		return rc;
 +
-+	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
-+						enable ? "isp" : "host");
-+	if (IS_ERR(pinctrl)) {
-+		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
-+		return PTR_ERR(pinctrl);
++	rc = regmap_update_bits(wled->regmap,
++			wled->addr + PM8941_WLED_REG_FREQ,
++			PM8941_WLED_REG_FREQ_MASK, wled->cfg.switch_freq);
++	if (rc)
++		return rc;
++
++	if (wled->cfg.cs_out_en) {
++		u8 all = (BIT(wled->cfg.num_strings) - 1)
++				<< PM8941_WLED_REG_SINK_SHFT;
++
++		rc = regmap_update_bits(wled->regmap,
++				wled->addr + PM8941_WLED_REG_SINK,
++				PM8941_WLED_REG_SINK_MASK, all);
++		if (rc)
++			return rc;
++	}
++
++	for (i = 0; i < wled->cfg.num_strings; ++i) {
++		u16 addr = wled->addr + PM8941_WLED_REG_STR_OFFSET * i;
++
++		rc = regmap_update_bits(wled->regmap,
++				addr + PM8941_WLED_REG_STR_MOD_EN_BASE,
++				PM8941_WLED_REG_STR_MOD_MASK,
++				PM8941_WLED_REG_STR_MOD_EN);
++		if (rc)
++			return rc;
++
++		if (wled->cfg.ext_gen) {
++			rc = regmap_update_bits(wled->regmap,
++					addr + PM8941_WLED_REG_STR_MOD_SRC_BASE,
++					PM8941_WLED_REG_STR_MOD_SRC_MASK,
++					PM8941_WLED_REG_STR_MOD_SRC_EXT);
++			if (rc)
++				return rc;
++		}
++
++		rc = regmap_update_bits(wled->regmap,
++				addr + PM8941_WLED_REG_STR_SCALE_BASE,
++				PM8941_WLED_REG_STR_SCALE_MASK,
++				wled->cfg.i_limit);
++		if (rc)
++			return rc;
++
++		rc = regmap_update_bits(wled->regmap,
++				addr + PM8941_WLED_REG_STR_CABC_BASE,
++				PM8941_WLED_REG_STR_CABC_MASK,
++				wled->cfg.cabc_en ?
++					PM8941_WLED_REG_STR_CABC_EN : 0);
++		if (rc)
++			return rc;
 +	}
 +
 +	return 0;
 +}
 +
-+int init_mm_current_scale(struct aat1290_led *led)
-+{
-+	int max_mm_current_percent[] = { 20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
-+						63, 71, 79, 89, 100 };
-+	int i, max_mm_current = AAT1290_MAX_MM_CURRENT(led->max_flash_current);
++static const struct pm8941_wled_config pm8941_wled_config_defaults = {
++	.i_boost_limit = 3,
++	.i_limit = 20,
++	.ovp = 2,
++	.switch_freq = 5,
++	.num_strings = 0,
++	.cs_out_en = false,
++	.ext_gen = false,
++	.cabc_en = false,
++};
 +
-+	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
-+						sizeof(max_mm_current_percent),
-+						GFP_KERNEL);
-+	if (!led->mm_current_scale)
++struct pm8941_wled_var_cfg {
++	const u32 *values;
++	u32 (*fn)(u32);
++	int size;
++};
++
++static const u32 pm8941_wled_i_boost_limit_values[] = {
++	105, 385, 525, 805, 980, 1260, 1400, 1680,
++};
++
++static const struct pm8941_wled_var_cfg pm8941_wled_i_boost_limit_cfg = {
++	.values = pm8941_wled_i_boost_limit_values,
++	.size = ARRAY_SIZE(pm8941_wled_i_boost_limit_values),
++};
++
++static const u32 pm8941_wled_ovp_values[] = {
++	35, 32, 29, 27,
++};
++
++static const struct pm8941_wled_var_cfg pm8941_wled_ovp_cfg = {
++	.values = pm8941_wled_ovp_values,
++	.size = ARRAY_SIZE(pm8941_wled_ovp_values),
++};
++
++static u32 pm8941_wled_num_strings_values_fn(u32 idx)
++{
++	return idx + 1;
++}
++
++static const struct pm8941_wled_var_cfg pm8941_wled_num_strings_cfg = {
++	.fn = pm8941_wled_num_strings_values_fn,
++	.size = 3,
++};
++
++static u32 pm8941_wled_switch_freq_values_fn(u32 idx)
++{
++	return 19200 / (2 * (1 + idx));
++}
++
++static const struct pm8941_wled_var_cfg pm8941_wled_switch_freq_cfg = {
++	.fn = pm8941_wled_switch_freq_values_fn,
++	.size = 16,
++};
++
++static const struct pm8941_wled_var_cfg pm8941_wled_i_limit_cfg = {
++	.size = 26,
++};
++
++static u32 pm8941_wled_values(const struct pm8941_wled_var_cfg *cfg, u32 idx)
++{
++	if (idx >= cfg->size)
++		return UINT_MAX;
++	if (cfg->fn)
++		return cfg->fn(idx);
++	if (cfg->values)
++		return cfg->values[idx];
++	return idx;
++}
++
++static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
++{
++	struct pm8941_wled_config *cfg = &wled->cfg;
++	u32 val;
++	int rc;
++	u32 c;
++	int i;
++	int j;
++
++	const struct {
++		const char *name;
++		u32 *val_ptr;
++		const struct pm8941_wled_var_cfg *cfg;
++	} u32_opts[] = {
++		{
++			"qcom,current-boost-limit",
++			&cfg->i_boost_limit,
++			.cfg = &pm8941_wled_i_boost_limit_cfg,
++		},
++		{
++			"qcom,current-limit",
++			&cfg->i_limit,
++			.cfg = &pm8941_wled_i_limit_cfg,
++		},
++		{
++			"qcom,ovp",
++			&cfg->ovp,
++			.cfg = &pm8941_wled_ovp_cfg,
++		},
++		{
++			"qcom,switching-freq",
++			&cfg->switch_freq,
++			.cfg = &pm8941_wled_switch_freq_cfg,
++		},
++		{
++			"qcom,num-strings",
++			&cfg->num_strings,
++			.cfg = &pm8941_wled_num_strings_cfg,
++		},
++	};
++	const struct {
++		const char *name;
++		bool *val_ptr;
++	} bool_opts[] = {
++		{ "qcom,cs-out", &cfg->cs_out_en, },
++		{ "qcom,ext-gen", &cfg->ext_gen, },
++		{ "qcom,cabc", &cfg->cabc_en, },
++	};
++
++	rc = of_property_read_u32(dev->of_node, "reg", &val);
++	if (rc || val > 0xffff) {
++		dev_err(dev, "invalid IO resources\n");
++		return rc ? rc : -EINVAL;
++	}
++	wled->addr = val;
++
++	rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
++	if (rc)
++		wled->cdev.name = dev->of_node->name;
++
++	wled->cdev.default_trigger = of_get_property(dev->of_node,
++			"linux,default-trigger", NULL);
++
++	*cfg = pm8941_wled_config_defaults;
++	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
++		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
++		if (rc == -EINVAL) {
++			continue;
++		} else if (rc) {
++			dev_err(dev, "error reading '%s'\n", u32_opts[i].name);
++			return rc;
++		}
++
++		c = UINT_MAX;
++		for (j = 0; c != val; j++) {
++			c = pm8941_wled_values(u32_opts[i].cfg, j);
++			if (c == UINT_MAX) {
++				dev_err(dev, "invalid value for '%s'\n",
++					u32_opts[i].name);
++				return -EINVAL;
++			}
++		}
++
++		dev_dbg(dev, "'%s' = %u\n", u32_opts[i].name, c);
++		*u32_opts[i].val_ptr = j;
++	};
++
++	for (i = 0; i < ARRAY_SIZE(bool_opts); ++i) {
++		if (of_property_read_bool(dev->of_node, bool_opts[i].name))
++			*bool_opts[i].val_ptr = true;
++	}
++
++	cfg->num_strings = cfg->num_strings + 1;
++
++	return 0;
++}
++
++static int pm8941_wled_probe(struct platform_device *pdev)
++{
++	struct pm8941_wled *wled;
++	struct regmap *regmap;
++	int rc;
++
++	regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!regmap) {
++		dev_err(&pdev->dev, "Unable to get regmap\n");
++		return -EINVAL;
++	}
++
++	wled = devm_kzalloc(&pdev->dev, sizeof(*wled), GFP_KERNEL);
++	if (!wled)
 +		return -ENOMEM;
 +
-+	for (i = 0; i < AAT1290_MM_CURRENT_SCALE_SIZE; ++i)
-+		led->mm_current_scale[i] = max_mm_current *
-+					  max_mm_current_percent[i] / 100;
++	wled->regmap = regmap;
++
++	rc = pm8941_wled_configure(wled, &pdev->dev);
++	if (rc)
++		return rc;
++
++	rc = pm8941_wled_setup(wled);
++	if (rc)
++		return rc;
++
++	wled->cdev.brightness_set = pm8941_wled_set_brightness;
++
++	rc = devm_led_classdev_register(&pdev->dev, &wled->cdev);
++	if (rc)
++		return rc;
++
++	platform_set_drvdata(pdev, wled);
 +
 +	return 0;
-+}
-+
-+static void aat1290_init_v4l2_ctrl_config(struct aat1290_led *led,
-+					struct aat1290_led_settings *s,
-+					struct v4l2_flash_ctrl_config *config)
-+{
-+	struct led_flash_setting *setting;
-+	struct v4l2_ctrl_config *c;
-+	char suffix[10];
-+
-+	if (++dev_count > 1)
-+		snprintf(suffix, sizeof(suffix), "_%d", dev_count);
-+
-+	snprintf(config->dev_name, sizeof(config->dev_name), "%s%s",
-+		 AAT1290_NAME, dev_count > 1 ? suffix : "");
-+
-+	c = &config->intensity;
-+	setting = &s->torch_brightness;
-+	c->min = setting->min;
-+	c->max = setting->max;
-+	c->step = setting->step;
-+	c->def = setting->val;
-+
-+	c = &config->flash_timeout;
-+	setting = &s->flash_timeout;
-+	c->min = setting->min;
-+	c->max = setting->max;
-+	c->step = setting->step;
-+	c->def = setting->val;
-+}
-+
-+static const struct v4l2_flash_ops v4l2_flash_ops = {
-+	.external_strobe_set = aat1290_led_external_strobe_set,
-+	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
-+	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
 +};
-+#else
-+#define aat1290_init_v4l2_ctrl_config(led, s, config)
-+#define init_mm_current_scale(led) (0)
-+#endif
 +
- static const struct led_flash_ops flash_ops = {
- 	.strobe_set = aat1290_led_flash_strobe_set,
- 	.timeout_set = aat1290_led_flash_timeout_set,
-@@ -301,10 +448,12 @@ static const struct led_flash_ops flash_ops = {
- static int aat1290_led_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct device_node *sub_node = NULL;
- 	struct aat1290_led *led;
- 	struct led_classdev *led_cdev;
- 	struct led_classdev_flash *fled_cdev;
- 	struct aat1290_led_settings settings;
-+	struct v4l2_flash_ctrl_config v4l2_flash_config = {};
- 	int ret;
- 
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-@@ -317,16 +466,27 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	fled_cdev = &led->fled_cdev;
- 	led_cdev = &fled_cdev->led_cdev;
- 
--	ret = aat1290_led_parse_dt(led);
-+	ret = aat1290_led_parse_dt(led, &sub_node, &v4l2_flash_config);
- 	if (ret < 0)
- 		return ret;
- 
- 	if (!led_cdev->name)
- 		led_cdev->name = AAT1290_NAME;
- 
-+	/*
-+	 * Init non-linear movie mode current scale basing
-+	 * on the max flash current from Device Tree binding.
-+	 */
-+	ret = init_mm_current_scale(led);
-+	if (ret < 0)
-+		return ret;
++static const struct of_device_id pm8941_wled_match_table[] = {
++	{ .compatible = "qcom,pm8941-wled" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, pm8941_wled_match_table);
 +
- 	/* Init flash settings */
- 	aat1290_init_flash_settings(led, &settings);
- 
-+	/* Init V4L2 Flash controls basing on initialized settings */
-+	aat1290_init_v4l2_ctrl_config(led, &settings, &v4l2_flash_config);
++static struct platform_driver pm8941_wled_driver = {
++	.probe = pm8941_wled_probe,
++	.driver	= {
++		.name = "pm8941-wled",
++		.of_match_table	= pm8941_wled_match_table,
++	},
++};
 +
- 	fled_cdev->timeout = settings.flash_timeout;
- 	fled_cdev->ops = &flash_ops;
- 
-@@ -345,18 +505,40 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 
- 	mutex_init(&led->lock);
- 
-+	led_cdev->dev->of_node = sub_node;
++module_platform_driver(pm8941_wled_driver);
 +
-+	/* Create V4L2 Flash subdev. */
-+	led->v4l2_flash = v4l2_flash_init(fled_cdev,
-+					  &v4l2_flash_ops,
-+					  &v4l2_flash_config);
-+	if (IS_ERR(led->v4l2_flash)) {
-+		ret = PTR_ERR(led->v4l2_flash);
-+		goto error_v4l2_flash_init;
-+	}
-+
- 	return 0;
-+
-+error_v4l2_flash_init:
-+	led_classdev_flash_unregister(fled_cdev);
-+	mutex_destroy(&led->lock);
-+
-+	return ret;
- }
- 
- static int aat1290_led_remove(struct platform_device *pdev)
- {
- 	struct aat1290_led *led = platform_get_drvdata(pdev);
- 
-+	v4l2_flash_release(led->v4l2_flash);
- 	led_classdev_flash_unregister(&led->fled_cdev);
- 	cancel_work_sync(&led->work_brightness_set);
- 
- 	mutex_destroy(&led->lock);
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	--dev_count;
-+#endif
-+
- 	return 0;
- }
- 
++MODULE_DESCRIPTION("pm8941 wled driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:pm8941-wled");
 -- 
-1.7.9.5
+1.8.2.2
