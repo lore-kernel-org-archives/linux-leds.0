@@ -1,89 +1,345 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: [PATCH v4 1/2] leds: add DT binding for Qualcomm PM8941 WLED block
-Date: Thu, 12 Mar 2015 08:47:07 -0700
-Message-ID: <1426175228-29208-1-git-send-email-bjorn.andersson@sonymobile.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Courtney Cavin <courtney.cavin-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v13 13/13] leds: aat1290: add support for V4L2 Flash
+ sub-device
+Date: Thu, 12 Mar 2015 16:45:14 +0100
+Message-ID: <1426175114-14876-14-git-send-email-j.anaszewski@samsung.com>
+References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-From: Courtney Cavin <courtney.cavin-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
+driver. The support allows for V4L2 Flash sub-device to take the control
+of the LED Flash class device.
 
-This adds device tree binding documentation for the WLED ('White' LED)
-block on Qualcomm's PM8941 PMICs.
-
-Signed-off-by: Courtney Cavin <courtney.cavin-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
 ---
-Changes since v3:
-- None
+ drivers/leds/Kconfig        |    1 +
+ drivers/leds/leds-aat1290.c |  186 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 185 insertions(+), 2 deletions(-)
 
-Changes since v2:
-- None
-
-Changes since v1:
-- None
-
- .../devicetree/bindings/leds/leds-pm8941-wled.txt  | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-new file mode 100644
-index 0000000..a85a964
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-@@ -0,0 +1,43 @@
-+Binding for Qualcomm PM8941 WLED driver
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e141d6..986876e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -46,6 +46,7 @@ config LEDS_AAT1290
+ 	tristate "LED support for the AAT1290"
+ 	depends on LEDS_CLASS_FLASH
+ 	depends on OF
++	depends on PINCTRL
+ 	help
+ 	 This option enables support for the LEDs on the AAT1290.
+ 
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 456f9a9d..6100b6b 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -17,9 +17,11 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
++#include <media/v4l2-flash.h>
+ 
+ #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
+ #define AAT1290_MAX_MM_CURR_PERCENT_0	16
+@@ -46,6 +48,11 @@
+ 
+ #define AAT1290_NAME			"aat1290"
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++/* Number of AAT1290 devices in the system. */
++static unsigned int dev_count;
++#endif
 +
-+Required properties:
-+- compatible: should be "qcom,pm8941-wled"
-+- reg: slave address
+ 
+ struct aat1290_led_settings {
+ 	struct led_flash_setting torch_brightness;
+@@ -60,11 +67,17 @@ struct aat1290_led {
+ 
+ 	/* related LED Flash class device */
+ 	struct led_classdev_flash fled_cdev;
++	/* V4L2 Flash device */
++	struct v4l2_flash *v4l2_flash;
+ 
+ 	/* FLEN pin */
+ 	struct gpio_desc *gpio_fl_en;
+ 	/* EN|SET pin  */
+ 	struct gpio_desc *gpio_en_set;
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	/* movie mode current scale */
++	int *mm_current_scale;
++#endif
+ 
+ 	/* maximum flash timeout */
+ 	u32 max_flash_tm;
+@@ -231,11 +244,16 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
+ 	return 0;
+ }
+ 
+-static int aat1290_led_parse_dt(struct aat1290_led *led)
++static int aat1290_led_parse_dt(struct aat1290_led *led,
++			struct device_node **sub_node,
++			struct v4l2_flash_ctrl_config *v4l2_flash_config)
+ {
+ 	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
+ 	struct device *dev = &led->pdev->dev;
+ 	struct device_node *child_node;
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	struct pinctrl *pinctrl;
++#endif
+ 	int ret = 0;
+ 
+ 	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
+@@ -252,6 +270,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led)
+ 		return ret;
+ 	}
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
++	if (IS_ERR(pinctrl)) {
++		v4l2_flash_config->has_external_strobe = false;
++		dev_info(dev,
++			 "No support for external strobe detected.\n");
++	} else {
++		v4l2_flash_config->has_external_strobe = true;
++	}
++#endif
 +
-+Optional properties:
-+- label: The label for this led
-+  See Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger: Default trigger assigned to the LED
-+  See Documentation/devicetree/bindings/leds/common.txt
-+- qcom,cs-out: bool; enable current sink output
-+- qcom,cabc: bool; enable content adaptive backlight control
-+- qcom,ext-gen: bool; use externally generated modulator signal to dim
-+- qcom,current-limit: mA; per-string current limit; value from 0 to 25
-+	default: 20mA
-+- qcom,current-boost-limit: mA; boost current limit; one of:
-+	105, 385, 525, 805, 980, 1260, 1400, 1680
-+	default: 805mA
-+- qcom,switching-freq: kHz; switching frequency; one of:
-+	600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
-+	1600, 1920, 2400, 3200, 4800, 9600,
-+	default: 1600kHz
-+- qcom,ovp: V; Over-voltage protection limit; one of:
-+	27, 29, 32, 35
-+	default: 29V
-+- qcom,num-strings: #; number of led strings attached; value from 1 to 3
-+	default: 2
+ 	child_node = of_get_next_available_child(dev->of_node, NULL);
+ 	if (!child_node) {
+ 		dev_err(dev, "No DT child node found for connected LED.\n");
+@@ -277,6 +306,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led)
+ 		return ret;
+ 	}
+ 
++	*sub_node = child_node;
 +
-+Example:
+ 	return ret;
+ }
+ 
+@@ -285,6 +316,15 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
+ {
+ 	struct led_flash_setting *setting;
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	/* Init flash intensity setting */
++	setting = &s->torch_brightness;
++	setting->min = led->mm_current_scale[0];
++	setting->max = led->mm_current_scale[AAT1290_MM_CURRENT_SCALE_SIZE - 1];
++	setting->step = 1;
++	setting->val = setting->max;
++#endif
 +
-+pm8941-wled@d800 {
-+	compatible = "qcom,pm8941-wled";
-+	reg = <0xd800>;
-+	label = "backlight";
+ 	/* Init flash timeout setting */
+ 	setting = &s->flash_timeout;
+ 	setting->min = led->max_flash_tm / AAT1290_FLASH_TM_NUM_LEVELS;
+@@ -293,6 +333,113 @@ static void aat1290_init_flash_settings(struct aat1290_led *led,
+ 	setting->val = setting->max;
+ }
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++enum led_brightness aat1290_intensity_to_brightness(
++					struct v4l2_flash *v4l2_flash,
++					s32 intensity)
++{
++	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
++	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
++	int i;
 +
-+	qcom,cs-out;
-+	qcom,current-limit = <20>;
-+	qcom,current-boost-limit = <805>;
-+	qcom,switching-freq = <1600>;
-+	qcom,ovp = <29>;
-+	qcom,num-strings = <2>;
++	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
++		if (intensity >= led->mm_current_scale[i])
++			return i + 1;
++
++	return 1;
++}
++
++s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
++					enum led_brightness brightness)
++{
++	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
++	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
++
++	return led->mm_current_scale[brightness - 1];
++}
++
++static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
++						bool enable)
++{
++	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
++	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
++	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
++	struct pinctrl *pinctrl;
++
++	gpiod_direction_output(led->gpio_fl_en, 0);
++	gpiod_direction_output(led->gpio_en_set, 0);
++
++	led->movie_mode = false;
++	led_cdev->brightness = 0;
++
++	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
++						enable ? "isp" : "host");
++	if (IS_ERR(pinctrl)) {
++		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
++		return PTR_ERR(pinctrl);
++	}
++
++	return 0;
++}
++
++int init_mm_current_scale(struct aat1290_led *led)
++{
++	int max_mm_current_percent[] = { 20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
++						63, 71, 79, 89, 100 };
++	int i, max_mm_current = AAT1290_MAX_MM_CURRENT(led->max_flash_current);
++
++	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
++						sizeof(max_mm_current_percent),
++						GFP_KERNEL);
++	if (!led->mm_current_scale)
++		return -ENOMEM;
++
++	for (i = 0; i < AAT1290_MM_CURRENT_SCALE_SIZE; ++i)
++		led->mm_current_scale[i] = max_mm_current *
++					  max_mm_current_percent[i] / 100;
++
++	return 0;
++}
++
++static void aat1290_init_v4l2_ctrl_config(struct aat1290_led *led,
++					struct aat1290_led_settings *s,
++					struct v4l2_flash_ctrl_config *config)
++{
++	struct led_flash_setting *setting;
++	struct v4l2_ctrl_config *c;
++	char suffix[10];
++
++	if (++dev_count > 1)
++		snprintf(suffix, sizeof(suffix), "_%d", dev_count);
++
++	snprintf(config->dev_name, sizeof(config->dev_name), "%s%s",
++		 AAT1290_NAME, dev_count > 1 ? suffix : "");
++
++	c = &config->intensity;
++	setting = &s->torch_brightness;
++	c->min = setting->min;
++	c->max = setting->max;
++	c->step = setting->step;
++	c->def = setting->val;
++
++	c = &config->flash_timeout;
++	setting = &s->flash_timeout;
++	c->min = setting->min;
++	c->max = setting->max;
++	c->step = setting->step;
++	c->def = setting->val;
++}
++
++static const struct v4l2_flash_ops v4l2_flash_ops = {
++	.external_strobe_set = aat1290_led_external_strobe_set,
++	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
++	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
 +};
++#else
++#define aat1290_init_v4l2_ctrl_config(led, s, config)
++#define init_mm_current_scale(led) (0)
++#endif
++
+ static const struct led_flash_ops flash_ops = {
+ 	.strobe_set = aat1290_led_flash_strobe_set,
+ 	.timeout_set = aat1290_led_flash_timeout_set,
+@@ -301,10 +448,12 @@ static const struct led_flash_ops flash_ops = {
+ static int aat1290_led_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct device_node *sub_node = NULL;
+ 	struct aat1290_led *led;
+ 	struct led_classdev *led_cdev;
+ 	struct led_classdev_flash *fled_cdev;
+ 	struct aat1290_led_settings settings;
++	struct v4l2_flash_ctrl_config v4l2_flash_config = {};
+ 	int ret;
+ 
+ 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+@@ -317,16 +466,27 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	fled_cdev = &led->fled_cdev;
+ 	led_cdev = &fled_cdev->led_cdev;
+ 
+-	ret = aat1290_led_parse_dt(led);
++	ret = aat1290_led_parse_dt(led, &sub_node, &v4l2_flash_config);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	if (!led_cdev->name)
+ 		led_cdev->name = AAT1290_NAME;
+ 
++	/*
++	 * Init non-linear movie mode current scale basing
++	 * on the max flash current from Device Tree binding.
++	 */
++	ret = init_mm_current_scale(led);
++	if (ret < 0)
++		return ret;
++
+ 	/* Init flash settings */
+ 	aat1290_init_flash_settings(led, &settings);
+ 
++	/* Init V4L2 Flash controls basing on initialized settings */
++	aat1290_init_v4l2_ctrl_config(led, &settings, &v4l2_flash_config);
++
+ 	fled_cdev->timeout = settings.flash_timeout;
+ 	fled_cdev->ops = &flash_ops;
+ 
+@@ -345,18 +505,40 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 
+ 	mutex_init(&led->lock);
+ 
++	led_cdev->dev->of_node = sub_node;
++
++	/* Create V4L2 Flash subdev. */
++	led->v4l2_flash = v4l2_flash_init(fled_cdev,
++					  &v4l2_flash_ops,
++					  &v4l2_flash_config);
++	if (IS_ERR(led->v4l2_flash)) {
++		ret = PTR_ERR(led->v4l2_flash);
++		goto error_v4l2_flash_init;
++	}
++
+ 	return 0;
++
++error_v4l2_flash_init:
++	led_classdev_flash_unregister(fled_cdev);
++	mutex_destroy(&led->lock);
++
++	return ret;
+ }
+ 
+ static int aat1290_led_remove(struct platform_device *pdev)
+ {
+ 	struct aat1290_led *led = platform_get_drvdata(pdev);
+ 
++	v4l2_flash_release(led->v4l2_flash);
+ 	led_classdev_flash_unregister(&led->fled_cdev);
+ 	cancel_work_sync(&led->work_brightness_set);
+ 
+ 	mutex_destroy(&led->lock);
+ 
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++	--dev_count;
++#endif
++
+ 	return 0;
+ }
+ 
 -- 
-1.8.2.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
