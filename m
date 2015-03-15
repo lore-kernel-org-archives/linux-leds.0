@@ -1,80 +1,47 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Sat, 14 Mar 2015 00:05:39 +0100
-Message-ID: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] leds: pca963x: Add missing initialiation of struct led_info.flags
+Date: Sun, 15 Mar 2015 11:41:52 +0100
+Message-ID: <1426416112-27477-1-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:32829 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554AbbCOKl4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 15 Mar 2015 06:41:56 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-The current code expected that every LED had an unique name. This is a
-legit expectation when the device tree can no be modified or extended.
-But with device tree overlays this requirement can be easily broken.
+drivers/leds/leds-pca963x.c: In function =E2=80=98pca963x_dt_init=E2=80=
+=99:
+drivers/leds/leds-pca963x.c:303: warning: =E2=80=98led.flags=E2=80=99 i=
+s used uninitialized in this function
 
-This patch finds out if the name is already in use and adds the suffix
-_1, _2... if not.
+Only the name and default_trigger fields are initialized.
+Other fields (currently flags only) contain random stack data.
+Pre-initialize the led structure completely to fix this.
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-v3: Suggested by Bryan Wu <cooloney@gmail.com>
+ drivers/leds/leds-pca963x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Do not allocate dynamically the name
- drivers/leds/led-class.c | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 768d33a..4ca37b8 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -212,6 +212,26 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
- 	.resume         = led_resume,
- };
- 
-+static int match_name(struct device *dev, const void *data)
-+{
-+	if (!dev_name(dev))
-+		return 0;
-+	return !strcmp(dev_name(dev), (char *)data);
-+}
-+
-+static int led_classdev_next_name(const char *init_name, char *name,
-+				  size_t len)
-+{
-+	int i = 0;
-+
-+	strncpy(name, init_name, len);
-+
-+	while (class_find_device(leds_class, NULL, name, match_name))
-+		snprintf(name, len, "%s_%d", init_name, ++i);
-+
-+	return i;
-+}
-+
- /**
-  * led_classdev_register - register a new object of led_classdev class.
-  * @parent: The device to register.
-@@ -219,12 +239,19 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
-  */
- int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- {
-+	char name[64];
-+	int ret;
-+
-+	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
--					led_cdev, led_cdev->groups,
--					"%s", led_cdev->name);
-+					led_cdev, led_cdev->groups, name);
- 	if (IS_ERR(led_cdev->dev))
- 		return PTR_ERR(led_cdev->dev);
- 
-+	if (ret)
-+		dev_info(parent, "Led %s renamed to %s due to name collision",
-+				led_cdev->name, dev_name(led_cdev->dev));
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- 	init_rwsem(&led_cdev->trigger_lock);
- #endif
--- 
-2.1.4
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index f110b4c456baa77f..bee3e1ab27fd92fd 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -289,7 +289,7 @@ pca963x_dt_init(struct i2c_client *client, struct p=
+ca963x_chipdef *chip)
+ 		return ERR_PTR(-ENOMEM);
+=20
+ 	for_each_child_of_node(np, child) {
+-		struct led_info led;
++		struct led_info led =3D {};
+ 		u32 reg;
+ 		int res;
+=20
+--=20
+1.9.1
