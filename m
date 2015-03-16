@@ -1,46 +1,88 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH] leds: Add arbitrary pattern trigger
-Date: Mon, 16 Mar 2015 13:40:18 +0100
-Message-ID: <1426509618.26437.43.camel@x220>
-References: <1424334377.11286.3.camel@localhost>
-	 <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
-	 <20150310080042.GA27585@amd> <BLU172-W3716E59BC9E98F60F424C4AC180@phx.gbl>
-	 <20150310192226.GB11260@amd> <1426086614.59115.14.camel@localhost>
-	 <20150311190255.GA20247@amd> <1426500410.11707.6.camel@localhost>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 0/4] Allow to use leds-ns2 with n090401 boards
+Date: Mon, 16 Mar 2015 16:52:24 +0100
+Message-ID: <5506FC38.3020904@free-electrons.com>
+References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org> <20150313094433.GU1509@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:60784 "EHLO
-	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751170AbbCPMkV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Mon, 16 Mar 2015 08:40:21 -0400
-In-Reply-To: <1426500410.11707.6.camel@localhost>
+Received: from down.free-electrons.com ([37.187.137.238]:35159 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S935101AbbCPPyA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Mar 2015 11:54:00 -0400
+In-Reply-To: <20150313094433.GU1509@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?ISO-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Bryan Wu <cooloney@gmail.com>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Just a license nit.
+Hi Simon, Bryan,
 
-On Mon, 2015-03-16 at 11:06 +0100, Rapha=C3=ABl Teysseyre wrote:
-> --- /dev/null
-> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+On 13/03/2015 10:44, Simon Guinot wrote:
+> On Wed, Mar 04, 2015 at 03:52:15PM +0100, Simon Guinot wrote:
+>> Hello,
+>>
+>> This patch series allows to use the leds-ns2 driver with the n090401
+>> boards (Seagate NAS 4-Bay), based on an Armada-370 SoC.
+>>
+>> Here is the list changes:
+>>
+>> - Allow to configure the LED mode mapping.
+>> - Handle can_sleep GPIOs. On n090401, the LEDs are connected to an I2C
+>>   GPIO expander.
+>> - Make leds-ns2 depends on MACH_ARMADA_370.
+> 
+> Hi Brian,
+> 
+> Please consider applying the leds-ns2 patches of this serie.
 
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Let me know when this will be applied so I will be able to
+apply the patch 3. I will also need a stable tag for the dependency.
 
-This states that the license is GPL v2.
+Thanks,
 
-> +MODULE_LICENSE("GPL");
-
-And
-    MODULE_LICENSE("GPL v2");
-
-would match that statement.
+Gregory
 
 
-Paul Bolle
+> 
+> Thanks in advance.
+> 
+> Simon
+> 
+>> Simon Guinot (2):
+>>   leds: leds-ns2: handle can_sleep GPIOs
+>>   leds: leds-ns2: depends on MACH_ARMADA_370
+>>
+>> Vincent Donnefort (2):
+>>   leds: leds-ns2: move LED modes mapping outside of the driver
+>>   ARM: Kirkwood: add modes-map property to ns2-leds nodes
+>>
+>>  .../devicetree/bindings/leds/leds-ns2.txt          |   9 ++
+>>  arch/arm/boot/dts/kirkwood-d2net.dts               |   5 +
+>>  arch/arm/boot/dts/kirkwood-is2.dts                 |   5 +
+>>  arch/arm/boot/dts/kirkwood-ns2.dts                 |   5 +
+>>  arch/arm/boot/dts/kirkwood-ns2max.dts              |   5 +
+>>  arch/arm/boot/dts/kirkwood-ns2mini.dts             |   5 +
+>>  drivers/leds/Kconfig                               |  12 +-
+>>  drivers/leds/leds-ns2.c                            | 156 +++++++++++++--------
+>>  include/dt-bindings/leds/leds-ns2.h                |   8 ++
+>>  include/linux/platform_data/leds-kirkwood-ns2.h    |  14 ++
+>>  10 files changed, 159 insertions(+), 65 deletions(-)
+>>  create mode 100644 include/dt-bindings/leds/leds-ns2.h
+>>
+>> -- 
+>> 2.1.1
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
