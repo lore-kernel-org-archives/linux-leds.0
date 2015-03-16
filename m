@@ -1,101 +1,26 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
-Date: Mon, 16 Mar 2015 17:01:10 +0100
-Message-ID: <5506FE46.4000405@free-electrons.com>
-References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org> <20150309094107.GL1509@kw.sim.vm.gnt>
+From: =?ISO-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>
+Subject: Re: [PATCH] leds: Add arbitrary pattern trigger
+Date: Mon, 16 Mar 2015 17:49:22 +0100
+Message-ID: <1426524562.11707.17.camel@localhost>
+References: <1424334377.11286.3.camel@localhost>
+	 <CAK5ve-KTmkh4XBLAEhvUFme+qmTb9hFKxQnvisxySw1skTLr1w@mail.gmail.com>
+	 <20150310080042.GA27585@amd> <BLU172-W3716E59BC9E98F60F424C4AC180@phx.gbl>
+	 <20150310192226.GB11260@amd> <1426086614.59115.14.camel@localhost>
+	 <20150311190255.GA20247@amd> <1426500410.11707.6.camel@localhost>
+	 <20150316115547.GA9347@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:35283 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S933806AbbCPQGP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Mar 2015 12:06:15 -0400
-In-Reply-To: <20150309094107.GL1509@kw.sim.vm.gnt>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150316115547.GA9347@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Bryan Wu <cooloney@gmail.com>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Hi all,
+> Got this while playing with my hid-sony patches:
 
-On 09/03/2015 10:41, Simon Guinot wrote:
-> On Mon, Feb 23, 2015 at 04:04:18PM +0100, Simon Guinot wrote:
->> Hello,
->>
->> This patch series adds DT support for the LEDs found on the Kirkwood-based
->> LaCie boards 2Big and 5Big Network v2.
->>
->> Simon
->>
->> Simon Guinot (3):
->>   leds: netxbig: add device tree binding
->>   ARM: Kirkwood: add LED DT entries for netxbig boards
->>   ARM: mvebu: remove static LED setup for netxbig boards
-> 
-> Hi Brian,
-> 
-> Please, consider merging the first patch of this serie.
+Sorry about that, it's me being dumb and using a mutex in an atomic con=
+text...
 
-Brian,
-
-here again let me know when this patch will be merged, and I will
-also need a stable tag as patch 2 depends on this one.
-
-Andrew, Jason,
-
-patch 2 and 3 looks OK for me. What is your opinion about it?
-
-
-Thanks,
-
-Gregory
-
-
-
-
-> 
-> Thanks in advance.
-> 
-> Simon
-> 
->>
->>  .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
->>  .../devicetree/bindings/leds/leds-netxbig.txt      |  90 ++++++++
->>  arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
->>  arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
->>  arch/arm/mach-mvebu/Kconfig                        |   7 -
->>  arch/arm/mach-mvebu/Makefile                       |   1 -
->>  arch/arm/mach-mvebu/board.h                        |  21 --
->>  arch/arm/mach-mvebu/kirkwood.c                     |   4 -
->>  arch/arm/mach-mvebu/netxbig.c                      | 191 ----------------
->>  drivers/leds/leds-netxbig.c                        | 244 +++++++++++++++++++--
->>  include/dt-bindings/leds/leds-netxbig.h            |  18 ++
->>  11 files changed, 493 insertions(+), 245 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
->>  delete mode 100644 arch/arm/mach-mvebu/board.h
->>  delete mode 100644 arch/arm/mach-mvebu/netxbig.c
->>  create mode 100644 include/dt-bindings/leds/leds-netxbig.h
->>
->> -- 
->> 2.1.1
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Rapha=C3=ABl
