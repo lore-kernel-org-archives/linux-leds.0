@@ -1,119 +1,66 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v13 07/13] DT: Add documentation for the Skyworks
- AAT1290
-Date: Wed, 18 Mar 2015 11:28:17 +0100
-Message-ID: <55095341.1040502@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v13 10/13] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Wed, 18 Mar 2015 14:39:57 +0200
+Message-ID: <20150318123957.GH11954@valkosipuli.retiisi.org.uk>
 References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
- <1426175114-14876-8-git-send-email-j.anaszewski@samsung.com>
+ <1426175114-14876-11-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1426175114-14876-8-git-send-email-j.anaszewski@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <1426175114-14876-11-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 List-Id: linux-leds@vger.kernel.org
 
-On 03/12/2015 04:45 PM, Jacek Anaszewski wrote:
-> This patch adds device tree binding documentation for
-> 1.5A Step-Up Current Regulator for Flash LEDs.
->
+Hi Jacek,
+
+On Thu, Mar 12, 2015 at 04:45:11PM +0100, Jacek Anaszewski wrote:
+> This patch extends LED Flash class documention by
+> the description of interactions with v4l2-flash sub-device.
+> 
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
 > Cc: Bryan Wu <cooloney@gmail.com>
 > Cc: Richard Purdie <rpurdie@rpsys.net>
 > ---
->   .../devicetree/bindings/leds/leds-aat1290.txt      |   71 ++++++++++++++++++++
->   1 file changed, 71 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-> new file mode 100644
-> index 0000000..b2a1192
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-> @@ -0,0 +1,71 @@
-> +* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
+>  Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+> index 19bb673..8623413 100644
+> --- a/Documentation/leds/leds-class-flash.txt
+> +++ b/Documentation/leds/leds-class-flash.txt
+> @@ -20,3 +20,16 @@ Following sysfs attributes are exposed for controlling flash LED devices:
+>  	- max_flash_timeout
+>  	- flash_strobe
+>  	- flash_fault
 > +
-> +The device is controlled through two pins: FL_EN and EN_SET. The pins when,
-> +asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
-> +respectively. In order to add a capability of selecting the strobe signal source
-> +(e.g. GPIO or ISP) there is an additional switch required, independent of the
-> +flash chip. The switch is controlled with pin control.
+> +A LED subsystem driver can be controlled also from the level of VideoForLinux2
+> +subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
+> +be defined in the kernel config. The driver must call the v4l2_flash_init
+> +function to get registered in the V4L2 subsystem. On remove the
+> +v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
 > +
-> +Required properties:
-> +
-> +- compatible : Must be "skyworks,aat1290".
-> +- flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
-> +- enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
-> +
-> +Optional properties:
-> +- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
-> +		"default" and "host" must refer to the same pin configuration
-> +		node, which sets the host as a strobe signal provider. Entry
-> +		"isp" must refer to the pin configuration node, which sets the
-> +		ISP as a strobe signal provider.
-> +
-> +A discrete LED element connected to the device must be represented by a child
-> +node - see Documentation/devicetree/bindings/leds/common.txt.
-> +
-> +Required properties of the LED child node:
-> +- flash-max-microamp : Maximum intensity in microamperes of the flash LED -
-> +		       it can be calculated using following formula:
-> +		       I = 1A * 162kohm / Rset.
-> +- flash-timeout-us : Maximum flash timeout in microseconds -
-> +		     it can be calculated using following formula:
-> +		     T = 8.82 * 10^9 * Ct.
-> +
-> +Optional properties of the LED child node:
-> +- label : see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
-> +a switch that allows for routing strobe signal either from host or from ISP):
-> +
-> +#include "exynos4412.dtsi"
-> +
-> +aat1290 {
-> +	compatible = "skyworks,aat1290";
-> +	gpios = <&gpj1 1 0>, <&gpj1 2 0>;
+> +After proper initialization a V4L2 Flash sub-device is created. The sub-device
+> +exposes a number of V4L2 controls, which allow for controlling a LED Flash class
 
-gpios are here mistake - to be removed.
+Over 80 characters per line.
 
-> +	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
-> +	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
-> +
-> +	pinctrl-names = "default", "host", "isp";
-> +	pinctrl-0 = <&camera_flash_host>;
-> +	pinctrl-1 = <&camera_flash_host>;
-> +	pinctrl-2 = <&camera_flash_isp>;
-> +
-> +	camera_flash: flash-led {
-> +		label = "aat1290-flash";
-> +		flash-max-microamp = <1012500>
+With this fixed,
 
-missing semicolon - will be added in the next version.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-> +		flash-timeout-us = <1940000>;
-> +	};
-> +};
-> +
-> +&pinctrl_0 {
-> +	camera_flash_host: camera-flash-host {
-> +		samsung,pins = "gpj1-0";
-> +		samsung,pin-function = <1>;
-> +		samsung,pin-val = <0>;
-> +	};
-> +
-> +	camera_flash_isp: camera-flash-isp {
-> +		samsung,pins = "gpj1-0";
-> +		samsung,pin-function = <1>;
-> +		samsung,pin-val = <1>;
-> +	};
-> +};
->
-
+> +device with use of its internal kernel API.
+> +Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
+> +unavailable. The interface is re-enabled after the V4L2 Flash sub-device
+> +is closed.
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
