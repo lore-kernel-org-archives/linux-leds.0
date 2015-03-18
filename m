@@ -1,83 +1,66 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v2 2/3] leds: ktd2692: add device tree bindings for ktd2692
-Date: Wed, 18 Mar 2015 07:40:33 +0900
-Message-ID: <5508AD61.1060005@samsung.com>
-References: <1426581951-11869-1-git-send-email-ingi2.kim@samsung.com>
- <1426581951-11869-3-git-send-email-ingi2.kim@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH/RFC v13 02/13] dt-binding: leds: Add common LED DT
+ bindings macros
+Date: Tue, 17 Mar 2015 18:33:51 -0700
+Message-ID: <CAK5ve-JrWXr08vfaERsU5jDqnW9vu-dOCmWqMfs4D_e8cyqgEQ@mail.gmail.com>
+References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com> <1426175114-14876-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54894 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752081AbbCQWkg (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Mar 2015 18:40:36 -0400
-In-reply-to: <1426581951-11869-3-git-send-email-ingi2.kim@samsung.com>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:36144 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932506AbbCRBeM (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 17 Mar 2015 21:34:12 -0400
+In-Reply-To: <1426175114-14876-3-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 03/17/2015 05:45 PM, Ingi Kim wrote:
-> This patch adds the device tree bindings for ktd2692 flash LEDs.
-> Add optional properties 'flash-timeout-us' to control flash timeout
-> and 'vin-supply' for flash-led regulator
-> 
-> Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+On Thu, Mar 12, 2015 at 8:45 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Add macros for defining boost mode and trigger type properties
+> of flash LED devices.
+>
+Applied, thanks,
+-Bryan
+
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
 > ---
->  .../devicetree/bindings/leds/leds-ktd2692.txt      | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-ktd2692.txt b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+>  include/dt-bindings/leds/common.h |   21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 include/dt-bindings/leds/common.h
+>
+> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
 > new file mode 100644
-> index 0000000..1b44225
+> index 0000000..79fcef7
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-> @@ -0,0 +1,37 @@
-> +* Kinetic Technologies - KTD2692 Flash LED Driver
+> +++ b/include/dt-bindings/leds/common.h
+> @@ -0,0 +1,21 @@
+> +/*
+> + * This header provides macros for the common LEDs device tree bindings.
+> + *
+> + * Copyright (C) 2015, Samsung Electronics Co., Ltd.
+> + *
+> + * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> + */
 > +
-> +KTD2692 is the ideal power solution for high-power flash LEDs.
-> +It uses ExpressWire single-wire programming for maximum flexibility.
+> +#ifndef __DT_BINDINGS_LEDS_H__
+> +#define __DT_BINDINGS_LEDS_H
 > +
-> +The ExpressWire interface through CTRL pin can control LED on/off and
-> +enable/disable the IC, Movie/Flash mode current, Flash timeout,
-> +LVP(low voltage protection).
+> +/* External trigger type */
+> +#define LEDS_TRIG_TYPE_EDGE    0
+> +#define LEDS_TRIG_TYPE_LEVEL   1
 > +
-> +Required properties:
-> +	- compatible: "kinetic,ktd2692"
-> +	- ctrl-gpio : gpio pin in order control ktd2692 flash led.
-> +		There is an internal 300kOhm pull-down resistor at this pin
-> +	- supply : "vin" LED supply
+> +/* Boost modes */
+> +#define LEDS_BOOST_OFF         0
+> +#define LEDS_BOOST_ADAPTIVE    1
+> +#define LEDS_BOOST_FIXED       2
 > +
-> +Optional property:
-> +	- flash-timeout-us : Maximum flash timeout in microseconds.
-> +			flash timeout ranges from 0 to 1835000us and
-> +			default is 1049000us.
-> +
-> +Example:
-> +
-> +vbat: fixedregulator@0 {
-> +	compatible = "regulator-fixed";
-> +	regulator-name = "vbat-supply";
-> +	regulator-min-microvolt = <5000000>;
-> +	regulator-max-microvolt = <5000000>;
-> +	gpio = <>;
-
-gpio = <> ? What do you mean?
-And this is described at Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-I'm not sure whether this example really needs.
-
-Best Regards,
-Jaehoon Chung
-
-> +	regulator-always-on;
-> +};
-> +
-> +flash-led {
-> +	compatible = "kinetic,ktd2692";
-> +	ctrl-gpio = <&gpc0 1 0>;
-> +	flash-timeout-us = <1835000>;
-> +	vin-supply = <&vbat>;
-> +};
-> 
+> +#endif /* __DT_BINDINGS_LEDS_H */
+> --
+> 1.7.9.5
+>
