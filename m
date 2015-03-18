@@ -1,84 +1,103 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v13 10/13] Documentation: leds: Add description of
- v4l2-flash sub-device
-Date: Wed, 18 Mar 2015 15:36:05 +0100
-Message-ID: <55098D55.6050101@samsung.com>
-References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
- <1426175114-14876-11-git-send-email-j.anaszewski@samsung.com>
- <20150318123957.GH11954@valkosipuli.retiisi.org.uk>
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [PATCH v2] leds: fix hibernation on arm when gpio-led used with
+ CPU led trigger
+Date: Wed, 18 Mar 2015 21:39:13 +0200
+Message-ID: <5509D461.3090703@linaro.org>
+References: <1423147024-4744-1-git-send-email-grygorii.strashko@linaro.org> <54ECA2E3.8060401@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:51200 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755008AbbCROgJ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Mar 2015 10:36:09 -0400
-In-reply-to: <20150318123957.GH11954@valkosipuli.retiisi.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <54ECA2E3.8060401@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: sumit.semwal@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "Menon, Nishanth" <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, cooloney@gmail.com
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
-Hi Sakari,
+Hi All,
 
-On 03/18/2015 01:39 PM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> On Thu, Mar 12, 2015 at 04:45:11PM +0100, Jacek Anaszewski wrote:
->> This patch extends LED Flash class documention by
->> the description of interactions with v4l2-flash sub-device.
+On 02/24/2015 06:12 PM, Grygorii.Strashko@linaro.org wrote:
+> On 02/05/2015 04:37 PM, grygorii.strashko@linaro.org wrote:
+>> From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 >>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
+>> Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
+>> hibernation callbacks means those pm functions will not be
+>> called upon hibernation - that leads to system crash on ARM during
+>> freezing if gpio-led is used in combination with CPU led trigger.
+>> It may happen after freeze_noirq stage (GPIO is suspended)
+>> and before syscore_suspend stage (CPU led trigger is suspended)
+>> - usually when disable_nonboot_cpus() is called.
+>>
+>> Log:
+>>     PM: noirq freeze of devices complete after 1.425 msecs
+>>     Disabling non-boot CPUs ...
+>>       ^ system may crash or stuck here with message (TI AM572x)
+>>
+>>     WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148 l3_interrupt_handler+0x22c/0x370()
+>>     44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode during Functional access
+>>
+>>     CPU1: shutdown
+>>       ^ or here
+>>
+>> Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
+>> assigns the suspend and hibernation callbacks and move
+>> led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
+>> build warnings.
+>>
+>> Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 >> ---
->>   Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
->>   1 file changed, 13 insertions(+)
+>> This patch actually fixes commit:
+>>    73e1ab4 "leds: Convert led class driver from legacy pm ops to dev_pm_ops"
 >>
->> diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
->> index 19bb673..8623413 100644
->> --- a/Documentation/leds/leds-class-flash.txt
->> +++ b/Documentation/leds/leds-class-flash.txt
->> @@ -20,3 +20,16 @@ Following sysfs attributes are exposed for controlling flash LED devices:
->>   	- max_flash_timeout
->>   	- flash_strobe
->>   	- flash_fault
->> +
->> +A LED subsystem driver can be controlled also from the level of VideoForLinux2
->> +subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
->> +be defined in the kernel config. The driver must call the v4l2_flash_init
->> +function to get registered in the V4L2 subsystem. On remove the
->> +v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
->> +
->> +After proper initialization a V4L2 Flash sub-device is created. The sub-device
->> +exposes a number of V4L2 controls, which allow for controlling a LED Flash class
+On 02/24/2015 06:12 PM, Grygorii.Strashko@linaro.org wrote:
+>> Changes in v2:
+>> - fixed compile time warnings when !CONFIG_PM_SLEEP
+>> - updated commit message
+>>
+>> v1:
+>> - https://lkml.org/lkml/2015/2/2/476
+>>
+>>    drivers/leds/led-class.c | 7 +++----
+>>    1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> index dbeebac..5033e0d 100644
+>> --- a/drivers/leds/led-class.c
+>> +++ b/drivers/leds/led-class.c
+>> @@ -183,6 +183,7 @@ void led_classdev_resume(struct led_classdev *led_cdev)
+>>    }
+>>    EXPORT_SYMBOL_GPL(led_classdev_resume);
+>>
+>> +#ifdef CONFIG_PM_SLEEP
+>>    static int led_suspend(struct device *dev)
+>>    {
+>>    	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>> @@ -202,11 +203,9 @@ static int led_resume(struct device *dev)
+>>
+>>    	return 0;
+>>    }
+>> +#endif
+>>
+>> -static const struct dev_pm_ops leds_class_dev_pm_ops = {
+>> -	.suspend        = led_suspend,
+>> -	.resume         = led_resume,
+>> -};
+>> +static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+>>
+>>    /**
+>>     * led_classdev_register - register a new object of led_classdev class.
+>>
 >
-> Over 80 characters per line.
-
-This line has exactly 80 characters, probably you checked the
-length in the patch, which includes leading '+' character.
-
+> Could you pay attention on this patch, pls? It fixes a real issue for me.
 >
-> With this fixed,
->
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-Probably I inadvertently changed the Acked-by email.
-Bryan, please apply the patch with:
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
->
->> +device with use of its internal kernel API.
->> +Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
->> +unavailable. The interface is re-enabled after the V4L2 Flash sub-device
->> +is closed.
+> Actually, I'd like to note that it fixes regression introduced by commit
+> 73e1ab41a80d36207e8ea7cc2c9897afdeeef387
+> "leds: Convert led class driver from legacy pm ops to dev_pm_ops" from
+> Shuah Khan <shuah.kh@samsung.com> (Jun 20 2013).
 >
 
+Gentle reminder. Any comments on this?
 
 -- 
-Best Regards,
-Jacek Anaszewski
+regards,
+-grygorii
