@@ -1,50 +1,65 @@
 From: Stewart Smith <stewart@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] powerpc/powernv: Add OPAL interfaces for accessing and modifying system LED states
-Date: Thu, 19 Mar 2015 14:35:11 -0700
-Message-ID: <m37fucpt68.fsf@oc8180480414.ibm.com>
-References: <20150308110558.3759.72635.stgit@localhost.localdomain> <20150308111408.3759.70606.stgit@localhost.localdomain>
+Subject: Re: [PATCH 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Thu, 19 Mar 2015 14:35:32 -0700
+Message-ID: <m34mpgpt5n.fsf@oc8180480414.ibm.com>
+References: <20150308110558.3759.72635.stgit@localhost.localdomain> <20150308111435.3759.75840.stgit@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e35.co.us.ibm.com ([32.97.110.153]:44851 "EHLO
-	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940AbbCSVfX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Mar 2015 17:35:23 -0400
+Received: from e37.co.us.ibm.com ([32.97.110.158]:38943 "EHLO
+	e37.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbbCTCx0 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Mar 2015 22:53:26 -0400
 Received: from /spool/local
-	by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
 	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
-	Thu, 19 Mar 2015 15:35:22 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-	by d03dlp01.boulder.ibm.com (Postfix) with ESMTP id 01C41C40003
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 15:26:32 -0600 (MDT)
-Received: from d03av01.boulder.ibm.com (d03av01.boulder.ibm.com [9.17.195.167])
-	by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t2JLZK1M47382710
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 14:35:20 -0700
-Received: from d03av01.boulder.ibm.com (localhost [127.0.0.1])
-	by d03av01.boulder.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t2JLZJEl012287
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 15:35:20 -0600
-In-Reply-To: <20150308111408.3759.70606.stgit@localhost.localdomain>
+	Thu, 19 Mar 2015 20:53:25 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+	by d03dlp02.boulder.ibm.com (Postfix) with ESMTP id 2950D3E4003F
+	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 20:53:23 -0600 (MDT)
+Received: from d03av02.boulder.ibm.com (d03av02.boulder.ibm.com [9.17.195.168])
+	by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t2K2rDFp34603150
+	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 19:53:13 -0700
+Received: from d03av02.boulder.ibm.com (localhost [127.0.0.1])
+	by d03av02.boulder.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t2K2rLHf026818
+	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 20:53:22 -0600
+In-Reply-To: <20150308111435.3759.75840.stgit@localhost.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org
 Cc: cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
 Vasant Hegde <hegdevasant@linux.vnet.ibm.com> writes:
+
 > From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 >
-> This patch registers the following two new OPAL interfaces calls
-> for the platform LED subsystem. With the help of these new OPAL calls,
-> the kernel will be able to get or set the state of various individual
-> LEDs on the system at any given location code which is passed through
-> the LED specific device tree nodes.
+> This patch implements LED driver for PowerNV platform using the existing
+> generic LED class framework. It registers classdev structures for all
+> individual LEDs detected on the system through LED specific device tree
+> nodes. Device tree nodes specify what all kind of LEDs present on the
+> same location code. It registers LED classdev structure for each of them.
 >
-> 	(1) OPAL_LEDS_GET_INDICATOR     opal_leds_get_ind
-> 	(2) OPAL_LEDS_SET_INDICATOR     opal_leds_set_ind
+> The platform level implementation of LED get and set state has been
+> achieved through OPAL calls. These calls are made available for the
+> driver by exporting from architecture specific codes.
+>
+> As per the LED class framework, the 'brightness_set' function should not
+> sleep. Hence these functions have been implemented through global work
+> queue tasks which might sleep on OPAL async call completion.
+>
+> All the system LEDs can be found in the same regular path /sys/class/leds/.
+> There are two different kind of LEDs present for the same location code,
+> one being the identify indicator and other one being the fault indicator.
+> We don't use LED colors. Hence our LEDs have names in this format.
+>
+>         <location_code>:<IDENTIFY|FAULT>
+>
+> Any positive brightness value would turn on the LED and a zero value
+> would turn off the LED. The driver will return LED_FULL (255) for any
+> turned on LED and LED_OFF for any turned off LED.
 >
 > Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 > Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-
-I also just merged the skiboot side of these calls.
 
 Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
 Tested-by: Stewart Smith <stewart@linux.vnet.ibm.com>
