@@ -1,111 +1,106 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
-Date: Fri, 20 Mar 2015 16:03:22 +0100
-Message-ID: <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v1 05/11] DT: Add documentation for the Skyworks AAT1290
+Date: Fri, 20 Mar 2015 16:03:25 +0100
+Message-ID: <1426863811-12516-6-git-send-email-j.anaszewski@samsung.com>
 References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12889 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993AbbCTPDy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Mar 2015 11:03:54 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:42307 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751575AbbCTPEE (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Mar 2015 11:04:04 -0400
 In-reply-to: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
 This patch adds device tree binding documentation for
-the flash cell of the Maxim max77693 multifunctional device.
+1.5A Step-Up Current Regulator for Flash LEDs.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   70 ++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
-index 38e6440..15c546e 100644
---- a/Documentation/devicetree/bindings/mfd/max77693.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-@@ -76,7 +76,53 @@ Optional properties:
-     Valid values: 4300000, 4700000, 4800000, 4900000
-     Default: 4300000
- 
-+- led : the LED submodule device node
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+new file mode 100644
+index 0000000..c3df4e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -0,0 +1,70 @@
++* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
 +
-+There are two LED outputs available - FLED1 and FLED2. Each of them can
-+control a separate LED or they can be connected together to double
-+the maximum current for a single connected LED. One LED is represented
-+by one child node.
++The device is controlled through two pins: FL_EN and EN_SET. The pins when,
++asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
++respectively. In order to add a capability of selecting the strobe signal source
++(e.g. GPIO or ISP) there is an additional switch required, independent of the
++flash chip. The switch is controlled with pin control.
 +
 +Required properties:
-+- compatible : Must be "maxim,max77693-led".
++
++- compatible : Must be "skyworks,aat1290".
++- flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
++- enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
 +
 +Optional properties:
-+- maxim,trigger-type : Flash trigger type.
-+	Possible trigger types:
-+		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
-+			the flash,
-+		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
-+			of the flash.
-+- maxim,boost-mode :
-+	In boost mode the device can produce up to 1.2A of total current
-+	on both outputs. The maximum current on each output is reduced
-+	to 625mA then. If not enabled explicitly, boost setting defaults to
-+	LEDS_BOOST_FIXED in case both current sources are used.
-+	Possible values:
-+		LEDS_BOOST_OFF (0) - no boost,
-+		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
-+		LEDS_BOOST_FIXED (2) - fixed mode.
-+- maxim,boost-mvout : Output voltage of the boost module in millivolts.
-+- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
-+	if chip estimates that system voltage could drop below this level due
-+	to flash power consumption.
++- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
++		"default" and "host" must refer to the same pin configuration
++		node, which sets the host as a strobe signal provider. Entry
++		"isp" must refer to the pin configuration node, which sets the
++		ISP as a strobe signal provider.
++
++A discrete LED element connected to the device must be represented by a child
++node - see Documentation/devicetree/bindings/leds/common.txt.
 +
 +Required properties of the LED child node:
-+- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
-+		device current output identifiers: 0 - FLED1, 1 - FLED2
++- flash-max-microamp : Maximum intensity in microamperes of the flash LED -
++		       it can be calculated using following formula:
++		       I = 1A * 162kohm / Rset.
++- flash-timeout-us : Maximum flash timeout in microseconds -
++		     it can be calculated using following formula:
++		     T = 8.82 * 10^9 * Ct.
 +
 +Optional properties of the LED child node:
 +- label : see Documentation/devicetree/bindings/leds/common.txt
-+- max-microamp : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 15625 - 250000
-+- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 15625 - 1000000
-+- flash-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
-+		Range: 62500 - 1000000
 +
- Example:
-+#include <dt-bindings/leds/common.h>
++Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
++a switch that allows for routing strobe signal either from host or from ISP):
 +
- 	max77693@66 {
- 		compatible = "maxim,max77693";
- 		reg = <0x66>;
-@@ -117,5 +163,20 @@ Example:
- 			maxim,thermal-regulation-celsius = <75>;
- 			maxim,battery-overcurrent-microamp = <3000000>;
- 			maxim,charge-input-threshold-microvolt = <4300000>;
++#include "exynos4412.dtsi"
 +
-+		led {
-+			compatible = "maxim,max77693-led";
-+			maxim,trigger-type = <LEDS_TRIG_TYPE_LEVEL>;
-+			maxim,boost-mode = <LEDS_BOOST_FIXED>;
-+			maxim,boost-mvout = <5000>;
-+			maxim,mvsys-min = <2400>;
++aat1290 {
++	compatible = "skyworks,aat1290";
++	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
++	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
 +
-+			camera_flash: flash-led {
-+				label = "max77693-flash";
-+				led-sources = <0>, <1>;
-+				max-microamp = <500000>;
-+				flash-max-microamp = <1250000>;
-+				flash-timeout-us = <1000000>;
-+			};
- 		};
- 	};
++	pinctrl-names = "default", "host", "isp";
++	pinctrl-0 = <&camera_flash_host>;
++	pinctrl-1 = <&camera_flash_host>;
++	pinctrl-2 = <&camera_flash_isp>;
++
++	camera_flash: flash-led {
++		label = "aat1290-flash";
++		flash-max-microamp = <1012500>;
++		flash-timeout-us = <1940000>;
++	};
++};
++
++&pinctrl_0 {
++	camera_flash_host: camera-flash-host {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <0>;
++	};
++
++	camera_flash_isp: camera-flash-isp {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <1>;
++	};
++};
 -- 
 1.7.9.5
