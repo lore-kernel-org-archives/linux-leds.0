@@ -1,68 +1,46 @@
-From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: [PATCH v3 2/3] leds: ktd2692: add device tree bindings for ktd2692
-Date: Fri, 20 Mar 2015 14:31:05 +0900
-Message-ID: <1426829466-13559-3-git-send-email-ingi2.kim@samsung.com>
-References: <1426829466-13559-1-git-send-email-ingi2.kim@samsung.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 1/2] powerpc/powernv: Add OPAL interfaces for accessing
+ and modifying system LED states
+Date: Fri, 20 Mar 2015 17:23:45 +1100
+Message-ID: <1426832625.2581.3.camel@ellerman.id.au>
+References: <20150308110558.3759.72635.stgit@localhost.localdomain>
+	 <20150308111408.3759.70606.stgit@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:43464 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751196AbbCTFbP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Mar 2015 01:31:15 -0400
-In-reply-to: <1426829466-13559-1-git-send-email-ingi2.kim@samsung.com>
+Received: from ozlabs.org ([103.22.144.67]:49534 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750905AbbCTGXr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 20 Mar 2015 02:23:47 -0400
+In-Reply-To: <20150308111408.3759.70606.stgit@localhost.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com, cooloney@gmail.com, rpurdie@rpsys.net, benh@kernel.crashing.org
 
-This patch adds the device tree bindings for ktd2692 flash LEDs.
-Add optional properties 'flash-timeout-us' to control flash timeout
-and 'vin-supply' for flash-led regulator
+On Sun, 2015-03-08 at 16:44 +0530, Vasant Hegde wrote:
+> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> 
+> This patch registers the following two new OPAL interfaces calls
+> for the platform LED subsystem. With the help of these new OPAL calls,
+> the kernel will be able to get or set the state of various individual
+> LEDs on the system at any given location code which is passed through
+> the LED specific device tree nodes.
+> 
+> 	(1) OPAL_LEDS_GET_INDICATOR     opal_leds_get_ind
+> 	(2) OPAL_LEDS_SET_INDICATOR     opal_leds_set_ind
+> 
+> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/include/asm/opal.h                |   19 +++++++++++++------
 
-Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
----
- .../devicetree/bindings/leds/leds-ktd2692.txt      | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+We've split opal.h in next.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-ktd2692.txt b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-new file mode 100644
-index 0000000..75e16f8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-@@ -0,0 +1,34 @@
-+* Kinetic Technologies - KTD2692 Flash LED Driver
-+
-+KTD2692 is the ideal power solution for high-power flash LEDs.
-+It uses ExpressWire single-wire programming for maximum flexibility.
-+
-+The ExpressWire interface through CTRL pin can control LED on/off and
-+enable/disable the IC, Movie(max 1/3 of Flash current) / Flash mode current,
-+Flash timeout, LVP(low voltage protection).
-+
-+Also, When the AUX pin is pulled high while CTRL pin is high,
-+LED current will be ramped up to the flash-mode current level.
-+
-+Required properties:
-+	- compatible: "kinetic,ktd2692"
-+	- ctrl-gpio, aux-gpio : gpio pin in order control ktd2692 flash led.
-+		There is an internal 300kOhm pull-down resistor at each pin
-+	- supply : "vin" LED supply (2.7V to 5.5V)
-+		See Documentation/devicetree/bindings/regulator/regulator.txt
-+
-+Optional property:
-+	- flash-timeout-us : Maximum flash timeout in microseconds.
-+			flash timeout ranges from 0 to 1835000us and
-+			default is 1049000us.
-+
-+Example:
-+
-+flash-led {
-+	compatible = "kinetic,ktd2692";
-+	ctrl-gpio = <&gpc0 1 0>;
-+	aux-gpio = <&gpc0 2 0>;
-+	flash-timeout-us = <1835000>;
-+	vin-supply = <&vbat>;
-+};
-+
--- 
-2.0.5
+Can you please rebase on top of it:
+
+https://git.kernel.org/cgit/linux/kernel/git/mpe/linux.git/log/?h=next
+
+
+cheers
