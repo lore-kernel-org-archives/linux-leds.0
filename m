@@ -1,533 +1,673 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 3/3] leds: Add ktd2692 flash LED driver
-Date: Fri, 20 Mar 2015 17:26:16 +0100
-Message-ID: <550C4A28.2010601@samsung.com>
-References: <1426829466-13559-1-git-send-email-ingi2.kim@samsung.com>
- <1426829466-13559-4-git-send-email-ingi2.kim@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2] leds: Add arbitrary pattern trigger
+Date: Fri, 20 Mar 2015 13:42:38 -0700
+Message-ID: <CAK5ve-L7zLZ=L-3U12y65VD_Xv=mDC8YuJp+Nix7SfzRxCb7MQ@mail.gmail.com>
+References: <1426862522.48232.3.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1426829466-13559-4-git-send-email-ingi2.kim@samsung.com>
+In-Reply-To: <1426862522.48232.3.camel@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sakari.ailus@iki.fi, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: =?UTF-8?Q?Rapha=C3=ABl_Teysseyre?= <rteysseyre@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Joe Xue <lgxue@hotmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Ingi,
-
-Thanks for the update.
-
-On 03/20/2015 06:31 AM, Ingi Kim wrote:
-> This patch adds a driver to support the ktd2692 flash LEDs.
-> ktd2692 can control flash current by ExpressWire interface.
+On Fri, Mar 20, 2015 at 7:42 AM, Rapha=C3=ABl Teysseyre <rteysseyre@gma=
+il.com> wrote:
+> Hi all,
 >
-> Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+> Following your comments about [PATCH] leds: Add arbitrary pattern tri=
+gger,
+> here is a revised version of this patch.
+>
+> This is intended for embedded systems without screen or network acces=
+s
+> to show a status (or error) code to a human.
+>
+> It's been tested on an ARM architecture (Xilinx Zynq 7010 SoC,
+> which CPU is a dual ARM Cortex-A9), with a non-mainline
+> kernel (xilinx-v2014.4, based of a 3.17.0 kernel).
+> Unfortunately, I don't have other hardware to test it on.
+> It compiles fine in a 3.19.0-rc1 source tree.
+> Additional testing and comments would be appreciated.
+>
+> Changes since version 1:
+>  - Fixed typos in documentation and comments.
+>  - Fixed MODULE_LICENSE string.
+>  - No more mutex in atomic context.
+>  - Return EINVAL when invalid patterns are written to the "pattern" a=
+ttribute.
+>
+>
+>
+> Add a new led trigger supporting arbitrary patterns.
+> This is useful for embedded systems with no screen or network access.
+>
+> Export two sysfs attributes: "pattern", and "repeat".
+>
+> When "repeat"=3D-1, repeat the pattern indefinitely. Otherwise,
+> repeat it the specified number of times. "pattern" specifies
+> the pattern as comma separated couples of "brightness duration"
+> values. See detailled documentation in patch.
+>
+
+Thanks for pushing this. But as we discussed in previous patches
+provided by Joe Xue, we won't merge this kind of complex trigger patch
+into kernel. I think we need to think about a new LED API to user
+space and make it easier to handle.
+
+-Bryan.
+
+> Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
 > ---
->   drivers/leds/Kconfig        |   9 +
->   drivers/leds/Makefile       |   1 +
->   drivers/leds/leds-ktd2692.c | 438 ++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 448 insertions(+)
->   create mode 100644 drivers/leds/leds-ktd2692.c
+>  Documentation/leds/ledtrig-pattern.txt |   86 +++++++
+>  drivers/leds/trigger/Kconfig           |   10 +
+>  drivers/leds/trigger/Makefile          |    1 +
+>  drivers/leds/trigger/ledtrig-pattern.c |  432 ++++++++++++++++++++++=
+++++++++++
+>  4 files changed, 529 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/leds/ledtrig-pattern.txt
+>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
 >
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 25b320d..9311cfc4 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -498,6 +498,15 @@ config LEDS_MENF21BMC
->   	  This driver can also be built as a module. If so the module
->   	  will be called leds-menf21bmc.
->
-> +config LEDS_KTD2692
-> +	tristate "Flash LED support for the KTD2692 Driver"
-> +	depends on LEDS_CLASS_FLASH && GPIOLIB
-> +	help
-> +	  This option enables support for the KTD2692 connected through
-> +	  ExpressWire Interface. Say Y to enabled these.
-> +	  It depends on LEDS_CLASS_FLASH for using flash led (strobe) and
-> +	  GPIOLIB for using gpio pin to control Expresswire interface
-> +
->   comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
->
->   config LEDS_BLINKM
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index cbba921..289513b 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -58,6 +58,7 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
->   obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
->   obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
->   obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
-> +obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+> diff --git a/Documentation/leds/ledtrig-pattern.txt b/Documentation/l=
+eds/ledtrig-pattern.txt
 > new file mode 100644
-> index 0000000..38d6145
+> index 0000000..579295e
 > --- /dev/null
-> +++ b/drivers/leds/leds-ktd2692.c
-> @@ -0,0 +1,438 @@
+> +++ b/Documentation/leds/ledtrig-pattern.txt
+> @@ -0,0 +1,86 @@
+> +LED Pattern Trigger
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +This is a LED trigger allowing arbitrary pattern execution. It can d=
+o gradual
+> +dimming. This trigger can be configured to repeat the pattern a numb=
+er of
+> +times or indefinitely. This is intended as a way of communication fo=
+r embedded
+> +systems with no screen.
+> +
+> +The trigger can be activated from user space on LED class devices as=
+ shown
+> +below:
+> +
+> +  echo pattern > trigger
+> +
+> +This adds the following sysfs attributes to the LED:
+> +
+> +  pattern - specifies the pattern. See syntax below.
+> +
+> +  repeat - number of times the pattern must be repeated.
+> +       writing -1 to this file will make the pattern
+> +       repeat indefinitely.
+> +
+> +The pattern will be restarted each time a new value is written to
+> +the pattern or repeat attribute. When dimming, the LED brightness
+> +is set every 50 ms.
+> +
+> +pattern syntax:
+> +The pattern is specified in the pattern attribute with an array of c=
+omma-
+> +separated "brightness/length in miliseconds" values. The two compone=
+nts
+> +of each value are to be separated by a space.
+> +
+> +For example, assuming the driven LED supports
+> +intensity value from 0 to 255:
+> +
+> +  echo 0 1000, 255 2000 > pattern
+> +
+> +Or:
+> +
+> +  echo 0 1000, 255 2000, > pattern
+> +
+> +Will make the LED go gradually from zero-intensity to max (255) inte=
+nsity
+> +in 1000 milliseconds, then back to zero intensity in 2000 millisecon=
+ds:
+> +
+> +LED brightness
+> +    ^
+> +255-|       / \            / \            /
+> +    |      /    \         /    \         /
+> +    |     /       \      /       \      /
+> +    |    /          \   /          \   /
+> +  0-|   /             \/             \/
+> +    +---0----1----2----3----4----5----6------------> time (s)
+> +
+> +
+> +
+> +To make the LED go instantly from one brigntess value to another,
+> +use zero-time lengths. For example:
+> +
+> +  echo 0 1000, 0 0, 255 2000, 255 0 > pattern
+> +
+> +Will make the LED stay off for one second, then stay at max brightne=
+ss
+> +for two seconds:
+> +
+> +LED brightness
+> +    ^
+> +255-|        +---------+    +---------+
+> +    |        |         |    |         |
+> +    |        |         |    |         |
+> +    |        |         |    |         |
+> +  0-|   -----+         +----+         +----
+> +    +---0----1----2----3----4----5----6------------> time (s)
+> +
+> +
+> +Notes:
+> +
+> +Patterns with invalid syntax are reported with EINVAL, the
+> +resulting LED brightness is undefined. Reading the pattern
+> +back returns an empty string.
+> +
+> +Patterns with less than two values, no value with time length > 50
+> +milliseconds, or no two values with differing brightnesses
+> +result in the LED being set at the brightness of the first value,
+> +or zero if the pattern contains no value. EINVAL is returned,
+> +and reading the pattern back returns an empty string.
+> +
+> +Because sysfs is used to define the pattern, patterns that need more=
+ than
+> +PAGE_SIZE characters to describe aren't supported. PAGE_SIZE is syst=
+em
+> +dependent.
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kcon=
+fig
+> index 49794b4..ce27bdb 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -108,4 +108,14 @@ config LEDS_TRIGGER_CAMERA
+>           This enables direct flash/torch on/off by the driver, kerne=
+l space.
+>           If unsure, say Y.
+>
+> +config LEDS_TRIGGER_PATTERN
+> +       tristate "LED Pattern Trigger"
+> +       depends on LEDS_TRIGGERS
+> +       help
+> +         This allows LEDs blinking with an arbitrary pattern. Can be=
+ useful
+> +         on embedded systems with no screen to give out a status cod=
+e to
+> +         a human.
+> +
+> +         If unsure, say N
+> +
+>  endif # LEDS_TRIGGERS
+> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Mak=
+efile
+> index 1abf48d..a739429 100644
+> --- a/drivers/leds/trigger/Makefile
+> +++ b/drivers/leds/trigger/Makefile
+> @@ -8,3 +8,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CPU)          +=3D ledtrig-=
+cpu.o
+>  obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)  +=3D ledtrig-default-on.o
+>  obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)   +=3D ledtrig-transient.o
+>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)      +=3D ledtrig-camera.o
+> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)     +=3D ledtrig-pattern.o
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/tr=
+igger/ledtrig-pattern.c
+> new file mode 100644
+> index 0000000..fdf231d
+> --- /dev/null
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -0,0 +1,432 @@
 > +/*
-> + * LED driver : leds-ktd2692.c
+> + * Arbitrary pattern trigger
 > + *
-> + * Copyright (C) 2015 Samsung Electronics
-> + * Ingi Kim <ingi2.kim@samsung.com>
+> + * Copyright 2015, Epsiline
 > + *
-> + * This program is free software; you can redistribute it and/or modify
+> + * Author : Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
+> + *
+> + * Idea discussed with Pavel Machek <pavel@ucw.cz> on
+> + * <linux-leds@vger.kernel.org> (march 2015, thread title
+> + * [PATCH RFC] leds: Add status code trigger)
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
+> + *
 > + */
 > +
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/led-class-flash.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +#include <linux/leds.h>
 > +#include <linux/module.h>
 > +#include <linux/mutex.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/workqueue.h>
+> +#include "../leds.h"
 > +
-> +#define GET_BIT(bit, val)			(((val) >> (bit)) & 0x01)
-> +
-> +/* Value related the flash mode */
-> +#define KTD2692_FLASH_MODE_TIMEOUT_LEVELS	8
-> +#define KTD2692_FLASH_MODE_TIMEOUT_DISABLE	0
-> +#define KTD2692_FLASH_MODE_TIMEOUT_DEFAULT_US	1049000
-> +#define KTD2692_FLASH_MODE_TIMEOUT_MAX_US	1835000
-> +#define KTD2692_FLASH_MODE_CURR_PERCENT(x)	(((x) * 16) / 100)
-> +
-> +/* Macro for getting offset of flash timeout */
-> +#define GET_TIMEOUT_OFFSET(timeout, step)	((timeout) / (step))
-> +
-> +/* Adjust a multiple of brightness */
-> +#define KTD2692_BRIGHTNESS_RANGE_255_TO_16(x)	(((x) >> 4) & 0x0F)
-> +#define KTD2692_BRIGHTNESS_RANGE_255_TO_8(x)	(((x) >> 5) & 0x0F)
-> +#define KTD2692_BRIGHTNESS_RANGE_255_TO_4(x)	(((x) >> 6) & 0x0F)
-> +
-> +/* Base register address */
-> +#define KTD2692_REG_LVP_BASE			0x00
-> +#define KTD2692_REG_FLASH_TIMEOUT_BASE		0x20
-> +#define KTD2692_REG_MIN_CURRENT_SET_BASE	0x40
-> +#define KTD2692_REG_MOVIE_CURRENT_BASE		0x60
-> +#define KTD2692_REG_FLASH_CURRENT_BASE		0x80
-> +#define KTD2692_REG_MODE_BASE			0xA0
-> +
-> +/* Set bit coding time for expresswire interface */
-> +#define KTD2692_TIME_RESET_US			700
-> +#define KTD2692_TIME_DATA_START_TIME_US		10
-> +#define KTD2692_TIME_HIGH_END_OF_DATA_US	350
-> +#define KTD2692_TIME_LOW_END_OF_DATA_US		10
-> +#define KTD2692_TIME_SHORT_BITSET_US		4
-> +#define KTD2692_TIME_LONG_BITSET_US		12
-> +
-> +/* KTD2692 default length of name */
-> +#define KTD2692_NAME_LENGTH			20
-> +
-> +/* KTD2692 default name */
-> +#define KTD2692_DEFAULT_NAME			"ktd2692"
-> +
-> +enum ktd2692_bitset {
-> +	KTD2692_LOW = 0,
-> +	KTD2692_HIGH,
+> +struct pattern_step {
+> +       int brightness;
+> +       int time_ms;
 > +};
 > +
-> +/* Movie / Flash Mode Control */
-> +enum ktd2692_led_mode {
-> +	KTD2692_MODE_DISABLE = 0,	/* default */
-> +	KTD2692_MODE_MOVIE,
-> +	KTD2692_MODE_FLASH,
+> +struct pattern_trig_data {
+> +       struct pattern_step *steps; /* Array describing the pattern *=
+/
+> +       struct mutex lock;
+> +       char is_sane;
+> +       struct pattern_step *curr;
+> +       struct pattern_step *next;
+> +       int time_ms; /* Time in current step */
+> +       int nsteps;  /* Number of steps */
+> +       int repeat;  /* < 0 means repeat indefinitely */
+> +       struct workqueue_struct *queue;
+> +       struct delayed_work dwork;
+> +       struct led_classdev *led_cdev; /* Needed by pattern_trig_upda=
+te() */
 > +};
 > +
-> +struct ktd2692_flash_timeout_setting {
-> +	struct led_flash_setting flash_timeout;
+> +#define UPDATE_INTERVAL 50
+> +/* When doing gradual dimming, the led brightness
+> +   will be updated every UPDATE_INTERVAL milliseconds */
+> +
+> +#define PATTERN_SEPARATOR ","
+> +
+> +#define MAX_NSTEPS (PAGE_SIZE/4)
+> +/* The "pattern" attribute contains at most PAGE_SIZE characters.
+> +   Each pattern step in this attribute needs at least 4 characters
+> +   (a 1-digit number for the led brighntess, a space,
+> +   a 1-digit number for the time, a PATTERN_SEPARATOR).
+> +   Therefore, there is at most PAGE_SIZE/4 steps. */
+> +
+> +static int pattern_trig_initialize_data(struct pattern_trig_data *da=
+ta)
+> +{
+> +       mutex_init(&data->lock);
+> +       mutex_lock(&data->lock);
+> +
+> +       data->is_sane =3D 0;
+> +       data->steps =3D kzalloc(MAX_NSTEPS*sizeof(struct pattern_step=
+),
+> +                       GFP_KERNEL);
+> +       if (!data->steps)
+> +               return -ENOMEM;
+> +
+> +       data->curr =3D NULL;
+> +       data->next =3D NULL;
+> +       data->time_ms =3D 0;
+> +       data->nsteps =3D 0;
+> +       data->repeat =3D -1;
+> +       mutex_unlock(&data->lock);
+> +       return 0;
+> +}
+> +
+> +static void pattern_trig_clear_data(struct pattern_trig_data *data)
+> +{
+> +       data->is_sane =3D 0;
+> +       kfree(data->steps);
+> +}
+> +
+> +/*
+> + *  is_sane : pattern checking.
+> + *  A pattern satisfying these three conditions is reported as sane =
+:
+> + *    - At least two steps
+> + *    - At least one step with time >=3D UPDATE_INTERVAL
+> + *    - At least two steps with differing brightnesses
+> + *  When @data->pattern isn't sane, a sensible brightness
+> + *  default is suggested in @brightness
+> + *
+> + * DO NOT call pattern_trig_update() on a not-sane pattern
+> + * with is_sane =3D 1, you'll be punished with an infinite
+> + * loop in the kernel.
+> + */
+> +static int is_sane(struct pattern_trig_data *data, int *brightness)
+> +{
+> +       int i;
+> +       char stept_ok =3D 0;
+> +       char stepb_ok =3D 0;
+> +
+> +       *brightness =3D 0;
+> +       if (data->nsteps < 1)
+> +               return 0;
+> +
+> +       *brightness =3D data->steps[0].brightness;
+> +       if (data->nsteps < 2)
+> +               return 0;
+> +
+> +       for (i =3D 0; i < data->nsteps; i++) {
+> +               if (data->steps[i].time_ms >=3D UPDATE_INTERVAL) {
+> +                       if (stepb_ok)
+> +                               return 1;
+> +                       stept_ok =3D 1;
+> +               }
+> +               if (data->steps[i].brightness !=3D data->steps[0].bri=
+ghtness) {
+> +                       if (stept_ok)
+> +                               return 1;
+> +                       stepb_ok =3D 1;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int reset_pattern(struct pattern_trig_data *data,
+> +                       struct led_classdev *led_cdev)
+> +{
+> +       int brightness;
+> +
+> +       mutex_lock(&data->lock);
+> +       data->is_sane =3D 0; /* Prevent pattern_trig_update()
+> +                             from scheduling new work */
+> +       mutex_unlock(&data->lock);
+> +
+> +       flush_workqueue(data->queue);
+> +
+> +       mutex_lock(&data->lock);
+> +       if (is_sane(data, &brightness)) {
+> +               data->curr =3D data->steps;
+> +               data->next =3D data->steps + 1;
+> +               data->time_ms =3D 0;
+> +               data->is_sane =3D 1;
+> +               queue_delayed_work(data->queue, &data->dwork, 0);
+> +               mutex_unlock(&data->lock);
+> +               return 0;
+> +       }
+> +
+> +       mutex_unlock(&data->lock);
+> +       led_set_brightness(led_cdev, brightness);
+> +       return -EINVAL;
+> +}
+> +
+> +/* --- Sysfs handling --- */
+> +
+> +static ssize_t pattern_trig_show_repeat(
+> +       struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +       struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> +       struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> +
+> +       return scnprintf(buf, PAGE_SIZE, "%d\n", data->repeat);
+> +}
+> +
+> +static ssize_t pattern_trig_store_repeat(
+> +       struct device *dev, struct device_attribute *attr,
+> +       const char *buf, size_t count)
+> +{
+> +       struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> +       struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> +       long res;
+> +       int err;
+> +
+> +       err =3D kstrtol(buf, 10, &res);
+> +       if (err)
+> +               return err;
+> +
+> +       mutex_lock(&data->lock);
+> +       data->repeat =3D res < 0 ? -1 : res;
+> +       mutex_unlock(&data->lock);
+> +
+> +       reset_pattern(data, led_cdev);
+> +
+> +       return count;
+> +}
+> +
+> +DEVICE_ATTR(repeat, S_IRUGO | S_IWUSR,
+> +       pattern_trig_show_repeat, pattern_trig_store_repeat);
+> +
+> +static ssize_t pattern_trig_show_pattern(
+> +       struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +       struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> +       struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> +       ssize_t count =3D 0;
+> +       int i;
+> +
+> +       if (!data->steps || !data->nsteps)
+> +               return 0;
+> +
+> +       for (i =3D 0; i < data->nsteps; i++)
+> +               count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+> +                               "%d %d" PATTERN_SEPARATOR,
+> +                               data->steps[i].brightness,
+> +                               data->steps[i].time_ms);
+> +       buf[count - 1] =3D '\n';
+> +       buf[count] =3D '\0';
+> +
+> +       return count + 1;
+> +}
+> +
+> +static ssize_t pattern_trig_store_pattern(
+> +       struct device *dev, struct device_attribute *attr,
+> +       const char *buf, size_t count)
+> +{
+> +       struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> +       struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> +       int cr =3D 0;  /* Characters read after a successful sscanf c=
+all */
+> +       int ccr =3D 0; /* Characters read before looking for PATTERN_=
+SEPARATOR */
+> +       int tcr =3D 0; /* Total characters read in buf */
+> +       int ccount;  /* Number of successful conversions in a sscanf =
+call */
+> +
+> +       mutex_lock(&data->lock);
+> +       data->is_sane =3D 0;
+> +
+> +       for (data->nsteps =3D 0; data->nsteps < MAX_NSTEPS; data->nst=
+eps++) {
+> +               cr =3D 0;
+> +               ccount =3D sscanf(buf + tcr, " %d %d %n" PATTERN_SEPA=
+RATOR " %n",
+> +                               &data->steps[data->nsteps].brightness=
+,
+> +                               &data->steps[data->nsteps].time_ms, &=
+ccr, &cr);
+> +
+> +               if (!cr) { /* PATTERN_SEPARATOR not reached */
+> +                       if (ccount =3D=3D 2) {
+> +                               /* Successful conversion before
+> +                                  looking for PATTERN_SEPARATOR. */
+> +                               data->nsteps++;
+> +                               tcr +=3D ccr;
+> +                       }
+> +
+> +                       if (tcr !=3D count) {
+> +                               /* Invalid syntax */
+> +                               data->nsteps =3D 0;
+> +                               mutex_unlock(&data->lock);
+> +                               return -EINVAL;
+> +                       }
+> +
+> +                       mutex_unlock(&data->lock);
+> +
+> +                       if (reset_pattern(data, led_cdev)) {
+> +                               /* Invalid pattern */
+> +                               data->nsteps =3D 0;
+> +                               return -EINVAL;
+> +                       }
+> +
+> +                       return count;
+> +               }
+> +
+> +               tcr +=3D cr;
+> +       }
+> +
+> +       /* Shouldn't reach that */
+> +       WARN(1, "MAX_NSTEP too small. Please report\n");
+> +       data->nsteps =3D 0;
+> +       mutex_unlock(&data->lock);
+> +       return -EINVAL;
+> +}
+> +
+> +DEVICE_ATTR(pattern, S_IRUGO | S_IWUSR,
+> +       pattern_trig_show_pattern, pattern_trig_store_pattern);
+> +
+> +static int pattern_trig_create_sysfs_files(struct device *dev)
+> +{
+> +       int err;
+> +
+> +       err =3D device_create_file(dev, &dev_attr_repeat);
+> +       if (err)
+> +               return err;
+> +
+> +       err =3D device_create_file(dev, &dev_attr_pattern);
+> +       if (err)
+> +               device_remove_file(dev, &dev_attr_repeat);
+> +
+> +       return err;
+> +}
+> +
+> +static void pattern_trig_remove_sysfs_files(struct device *dev)
+> +{
+> +       device_remove_file(dev, &dev_attr_pattern);
+> +       device_remove_file(dev, &dev_attr_repeat);
+> +}
+> +
+> +/* --- Led intensity updating --- */
+> +
+> +static int compute_brightness(struct pattern_trig_data *data)
+> +{
+> +       if (data->time_ms =3D=3D 0)
+> +               return data->curr->brightness;
+> +
+> +       if (data->curr->time_ms =3D=3D 0) /* Don't divide by zero */
+> +               return data->next->brightness;
+> +
+> +       return data->curr->brightness + data->time_ms
+> +               * (data->next->brightness - data->curr->brightness)
+> +               / data->curr->time_ms;
+> +}
+> +
+> +static void update_to_next_step(struct pattern_trig_data *data)
+> +{
+> +       data->curr =3D data->next;
+> +       if (data->curr =3D=3D data->steps)
+> +               data->repeat--;
+> +
+> +       if (data->next =3D=3D data->steps + data->nsteps - 1)
+> +               data->next =3D data->steps;
+> +       else
+> +               data->next++;
+> +
+> +       data->time_ms =3D 0;
+> +}
+> +
+> +static void pattern_trig_update(struct work_struct *work)
+> +{
+> +       struct delayed_work *dwork =3D to_delayed_work(work);
+> +       struct pattern_trig_data *data =3D
+> +               container_of(dwork, struct pattern_trig_data, dwork);
+> +
+> +       mutex_lock(&data->lock);
+> +
+> +       if (!data->is_sane || !data->repeat) {
+> +               mutex_unlock(&data->lock);
+> +               return;
+> +       }
+> +
+> +       if (data->time_ms > data->curr->time_ms)
+> +               update_to_next_step(data);
+> +
+> +       /* is_sane() checked that there is at least
+> +          one step with time_ms >=3D UPDATE_INTERVAL
+> +          so we won't go in an infinite loop */
+> +       while (data->curr->time_ms < UPDATE_INTERVAL)
+> +               update_to_next_step(data);
+> +
+> +       if (data->next->brightness =3D=3D data->curr->brightness) {
+> +               /* Constant brightness for this step */
+> +               led_set_brightness(data->led_cdev, data->curr->bright=
+ness);
+> +               queue_delayed_work(data->queue, &data->dwork,
+> +                               msecs_to_jiffies(data->curr->time_ms)=
+);
+> +               update_to_next_step(data);
+> +       } else {
+> +               /* Gradual dimming */
+> +               led_set_brightness(data->led_cdev, compute_brightness=
+(data));
+> +               data->time_ms +=3D UPDATE_INTERVAL;
+> +               queue_delayed_work(data->queue, &data->dwork,
+> +                               msecs_to_jiffies(UPDATE_INTERVAL));
+> +       }
+> +
+> +       mutex_unlock(&data->lock);
+> +}
+> +
+> +/* --- Trigger activation --- */
+> +
+> +static void pattern_trig_activate(struct led_classdev *led_cdev)
+> +{
+> +       struct pattern_trig_data *data =3D NULL;
+> +       int err;
+> +
+> +       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return;
+> +
+> +       err =3D pattern_trig_initialize_data(data);
+> +       if (err) {
+> +               kfree(data);
+> +               return;
+> +       }
+> +
+> +       led_cdev->trigger_data =3D data;
+> +       data->led_cdev =3D led_cdev;
+> +       data->queue =3D alloc_ordered_workqueue("pattern trigger on %=
+s", 0,
+> +                                       led_cdev->name ? led_cdev->na=
+me : "?");
+> +       INIT_DELAYED_WORK(&data->dwork, pattern_trig_update);
+> +       pattern_trig_create_sysfs_files(led_cdev->dev);
+> +}
+> +
+> +static void pattern_trig_deactivate(struct led_classdev *led_cdev)
+> +{
+> +       struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> +
+> +       if (data) {
+> +               pattern_trig_remove_sysfs_files(led_cdev->dev);
+> +
+> +               mutex_lock(&data->lock);
+> +               data->is_sane =3D 0; /* Prevent pattern_trig_update()
+> +                                     from scheduling new work */
+> +               mutex_unlock(&data->lock);
+> +
+> +               flush_workqueue(data->queue);
+> +               destroy_workqueue(data->queue);
+> +
+> +               led_set_brightness(led_cdev, LED_OFF);
+> +               pattern_trig_clear_data(data);
+> +               kfree(data);
+> +
+> +               led_cdev->trigger_data =3D NULL;
+> +       }
+> +}
+> +
+> +static struct led_trigger pattern_led_trigger =3D {
+> +       .name =3D "pattern",
+> +       .activate =3D pattern_trig_activate,
+> +       .deactivate =3D pattern_trig_deactivate,
 > +};
-
-You don't need to nest these structures like that.
-You probably followed previous version of the leds-aat1290 driver
-patch from my LED/flash API integration patch set, but the parent
-structure was named aat1290_led_settings and was intended for gathering
-two settings (torch setting was added in the patch adding support
-for V4L2 Flash API).
-
-
-> +struct ktd2692_context {
-> +	/* Related LED Flash class device */
-> +	struct led_classdev_flash fled_cdev;
 > +
-> +	struct mutex lock;
-> +	struct regulator *regulator;
-> +	struct work_struct work_brightness_set;
+> +/* --- Module loading/unloading --- */
 > +
-> +	int aux_gpio;
-> +	int ctrl_gpio;
-> +
-> +	enum ktd2692_led_mode mode;
-> +	enum led_brightness torch_brightness;
-> +};
-> +
-> +static struct ktd2692_context *fled_cdev_to_led(
-> +				struct led_classdev_flash *fled_cdev)
+> +static int __init pattern_trig_init(void)
 > +{
-> +	return container_of(fled_cdev, struct ktd2692_context, fled_cdev);
+> +       return led_trigger_register(&pattern_led_trigger);
 > +}
 > +
-> +static int ktd2692_led_regulator_enable(struct ktd2692_context *led)
+> +static void __exit pattern_trig_exit(void)
 > +{
-> +	struct led_classdev_flash *fled_cdev = &led->fled_cdev;
-> +	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-> +	int ret;
-> +
-> +	if (regulator_is_enabled(led->regulator) > 0)
-> +		return 0;
-> +
-> +	ret = regulator_enable(led->regulator);
-> +	if (ret)
-> +		dev_err(led_cdev->dev, "Failed to enable vin:%d\n", ret);
-> +
-> +	return ret;
+> +       led_trigger_unregister(&pattern_led_trigger);
 > +}
 > +
-> +static void ktd2692_led_regulator_disable(struct ktd2692_context *led)
-> +{
-> +	struct led_classdev_flash *fled_cdev = &led->fled_cdev;
-> +	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-> +	int ret;
+> +module_init(pattern_trig_init);
+> +module_exit(pattern_trig_exit);
 > +
-> +	if (!regulator_is_enabled(led->regulator))
-> +		return;
-> +
-> +	ret = regulator_disable(led->regulator);
-> +	if (ret)
-> +		dev_err(led_cdev->dev, "Failed to disable vin:%d\n", ret);
-> +}
-> +
-> +static void ktd2692_expresswire_start(struct ktd2692_context *led)
-> +{
-> +	gpio_set_value(led->ctrl_gpio, KTD2692_HIGH);
-> +	udelay(KTD2692_TIME_DATA_START_TIME_US);
-> +}
-> +
-> +static void ktd2692_expresswire_reset(struct ktd2692_context *led)
-> +{
-> +	gpio_set_value(led->ctrl_gpio, KTD2692_LOW);
-> +	udelay(KTD2692_TIME_RESET_US);
-> +}
-> +
-> +static void ktd2692_expresswire_end(struct ktd2692_context *led)
-> +{
-> +	gpio_set_value(led->ctrl_gpio, KTD2692_LOW);
-> +	udelay(KTD2692_TIME_LOW_END_OF_DATA_US);
-> +	gpio_set_value(led->ctrl_gpio, KTD2692_HIGH);
-> +	udelay(KTD2692_TIME_HIGH_END_OF_DATA_US);
-> +}
-> +
-> +static void ktd2692_expresswire_set_bit(struct ktd2692_context *led, bool bit)
-> +{
-> +	if (bit) {
-> +		gpio_set_value(led->ctrl_gpio, KTD2692_LOW);
-> +		udelay(KTD2692_TIME_SHORT_BITSET_US);
-> +		gpio_set_value(led->ctrl_gpio, KTD2692_HIGH);
-> +		udelay(KTD2692_TIME_LONG_BITSET_US);
-> +	} else {
-> +		gpio_set_value(led->ctrl_gpio, KTD2692_LOW);
-> +		udelay(KTD2692_TIME_LONG_BITSET_US);
-> +		gpio_set_value(led->ctrl_gpio, KTD2692_HIGH);
-> +		udelay(KTD2692_TIME_SHORT_BITSET_US);
-> +	}
-> +}
-> +
-> +static void ktd2692_expresswire_write(struct ktd2692_context *led, u8 value)
-> +{
-> +	int i;
-> +
-> +	ktd2692_expresswire_start(led);
-> +	for (i = 7; i >= 0; i--)
-> +		ktd2692_expresswire_set_bit(led, GET_BIT(i, value));
-> +	ktd2692_expresswire_end(led);
-> +}
-> +
-> +static void ktd2692_brightness_set(struct ktd2692_context *led,
-> +					enum led_brightness brightness)
-> +{
-> +	mutex_lock(&led->lock);
-> +
-> +	if (brightness == LED_OFF) {
-> +		led->mode = KTD2692_MODE_DISABLE;
-> +		gpio_set_value(led->aux_gpio, KTD2692_LOW);
-> +		goto out;
-> +	}
-> +
-> +	if (brightness < LED_OFF) {
-> +		dev_err(led->fled_cdev.led_cdev.dev,
-> +			"Invalid brightness %d\n", brightness);
-> +		goto unlock;
-> +	}
-
-You don't need to do this. It is not possible to get value less than
-0 from brightness_store callback.
-
-> +	ktd2692_expresswire_write(led, KTD2692_REG_MOVIE_CURRENT_BASE |
-> +				KTD2692_BRIGHTNESS_RANGE_255_TO_8(brightness));
-> +	led->mode = KTD2692_MODE_MOVIE;
-> +
-> +out:
-> +	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
-> +unlock:
-> +	mutex_unlock(&led->lock);
-> +}
-> +
-> +static void ktd2692_brightness_set_work(struct work_struct *work)
-> +{
-> +	struct ktd2692_context *led =
-> +		container_of(work, struct ktd2692_context, work_brightness_set);
-> +
-> +	ktd2692_brightness_set(led, led->torch_brightness);
-> +}
-> +
-> +static void ktd2692_led_brightness_set(struct led_classdev *led_cdev,
-> +					enum led_brightness brightness)
-> +{
-> +	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> +	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-> +
-> +	led->torch_brightness = brightness;
-> +	schedule_work(&led->work_brightness_set);
-> +}
-> +
-> +static int ktd2692_led_brightness_set_sync(struct led_classdev *led_cdev,
-> +					enum led_brightness brightness)
-> +{
-> +	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-> +	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-> +
-> +	ktd2692_brightness_set(led, brightness);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ktd2692_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
-> +						bool state)
-> +{
-> +	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-> +	struct led_flash_setting *timeout = &fled_cdev->timeout;
-> +	u32 flash_tm_reg;
-> +
-> +	mutex_lock(&led->lock);
-> +
-> +	if (state == 0) {
-> +		led->mode = KTD2692_MODE_DISABLE;
-> +		gpio_set_value(led->aux_gpio, KTD2692_LOW);
-> +		goto done;
-> +	}
-> +
-> +	flash_tm_reg = GET_TIMEOUT_OFFSET(timeout->val, timeout->step);
-> +	ktd2692_expresswire_write(led, flash_tm_reg
-> +			| KTD2692_REG_FLASH_TIMEOUT_BASE);
-> +
-> +	led->mode = KTD2692_MODE_FLASH;
-> +	gpio_set_value(led->aux_gpio, KTD2692_HIGH);
-> +
-> +done:
-> +	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
-> +
-> +	fled_cdev->led_cdev.brightness = LED_OFF;
-> +	led->mode = KTD2692_MODE_DISABLE;
-> +
-> +	mutex_unlock(&led->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ktd2692_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
-> +						u32 timeout)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void ktd2692_init_flash_timeout_set(u32 flash_timeout_us,
-> +					struct ktd2692_flash_timeout_setting *s)
-> +{
-> +	struct led_flash_setting *setting;
-> +
-> +	setting = &s->flash_timeout;
-> +	setting->min = KTD2692_FLASH_MODE_TIMEOUT_DISABLE;
-> +	setting->max = KTD2692_FLASH_MODE_TIMEOUT_MAX_US;
-> +	setting->step = KTD2692_FLASH_MODE_TIMEOUT_MAX_US
-> +			/ (KTD2692_FLASH_MODE_TIMEOUT_LEVELS - 1);
-> +	setting->val = flash_timeout_us;
-> +}
-
-Please skip the '_set' postfix from the function name and pass directly 
-a pointer to struct led_flash_setting.
-
-We can change it to something more generic when more settings will
-need initialization to pass them to v4l2 Flash sub-device.
-
-> +static void ktd2692_init_flash_register_set(struct ktd2692_context *led)
-> +{
-> +	led->mode = KTD2692_MODE_DISABLE;
-> +	ktd2692_expresswire_reset(led);
-> +	gpio_set_value(led->aux_gpio, KTD2692_LOW);
-> +
-> +	ktd2692_expresswire_write(led, KTD2692_FLASH_MODE_CURR_PERCENT(45)
-> +					 | KTD2692_REG_FLASH_CURRENT_BASE);
-> +}
-
-I'd call this function ktd2692_setup().
-
-> +static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
-> +				u32 *flash_timeout_us)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +
-> +	int ret;
-> +
-> +	led->ctrl_gpio = of_get_named_gpio(np, "ctrl-gpio", 0);
-> +	if (!gpio_is_valid(led->ctrl_gpio)) {
-> +		dev_err(dev, "no ctrl-gpio property found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	led->aux_gpio = of_get_named_gpio(np, "aux-gpio", 0);
-> +	if (!gpio_is_valid(led->aux_gpio)) {
-> +		dev_err(dev, "no aux-gpio property found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = devm_gpio_request_one(dev, led->ctrl_gpio,
-> +					GPIOF_OPEN_SOURCE, "ctrl-gpio");
-> +	if (ret) {
-> +		dev_err(dev, "failed to request ctrl-gpio %d error %d\n",
-> +				led->ctrl_gpio, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_gpio_request_one(dev, led->aux_gpio,
-> +					GPIOF_OPEN_SOURCE, "aux-gpio");
-> +	if (ret) {
-> +		dev_err(dev, "failed to request aux-gpio %d error %d\n",
-> +				led->aux_gpio, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_u32(np, "flash-timeout-us", flash_timeout_us);
-> +	/* default setting */
-> +	if (ret)
-> +		*flash_timeout_us = KTD2692_FLASH_MODE_TIMEOUT_DEFAULT_US;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct led_flash_ops flash_ops = {
-> +	.strobe_set = ktd2692_led_flash_strobe_set,
-> +	.timeout_set = ktd2692_led_flash_timeout_set,
-> +};
-> +
-> +static int ktd2692_probe(struct platform_device *pdev)
-> +{
-> +	struct ktd2692_context *led;
-> +	struct led_classdev *led_cdev;
-> +	struct led_classdev_flash *fled_cdev;
-> +	struct ktd2692_flash_timeout_setting timeout_setting;
-> +	u32 flash_timeout_us;
-> +	int ret;
-> +
-> +	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	if (!pdev->dev.of_node)
-> +		return -ENXIO;
-> +
-> +	fled_cdev = &led->fled_cdev;
-> +	led_cdev = &fled_cdev->led_cdev;
-> +	platform_set_drvdata(pdev, led);
-> +
-> +	ret = ktd2692_parse_dt(led, &pdev->dev, &flash_timeout_us);
-> +	if (ret)
-> +		return ret;
-> +
-> +	led->regulator = devm_regulator_get(&pdev->dev, "vin");
-> +	if (IS_ERR(led->regulator)) {
-> +		dev_err(&pdev->dev, "regulator get failed\n");
-> +		ret = PTR_ERR(led->regulator);
-> +		led->regulator = NULL;
-> +		return ret;
-> +	}
-> +
-> +	ret = ktd2692_led_regulator_enable(led);
-> +	if (ret)
-> +		goto err_regulator;
-> +
-> +	ktd2692_init_flash_timeout_set(flash_timeout_us, &timeout_setting);
-> +
-> +	fled_cdev->timeout = timeout_setting.flash_timeout;
-> +	fled_cdev->ops = &flash_ops;
-> +
-> +	led_cdev->name = KTD2692_DEFAULT_NAME;
-> +	led_cdev->brightness_set = ktd2692_led_brightness_set;
-> +	led_cdev->brightness_set_sync = ktd2692_led_brightness_set_sync;
-> +	led_cdev->flags |= LED_CORE_SUSPENDRESUME;
-> +	led_cdev->flags |= LED_DEV_CAP_FLASH;
-> +
-> +	INIT_WORK(&led->work_brightness_set, ktd2692_brightness_set_work);
-> +
-> +	ret = led_classdev_flash_register(&pdev->dev, fled_cdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "can't register LED %s\n", led_cdev->name);
-> +		goto err_register;
-> +	}
-> +
-> +	ktd2692_init_flash_register_set(led);
-> +
-> +	mutex_init(&led->lock);
-> +
-> +	return 0;
-> +err_register:
-> +	cancel_work_sync(&led->work_brightness_set);
-> +err_regulator:
-> +	ktd2692_led_regulator_disable(led);
-> +	platform_set_drvdata(pdev, NULL);
-> +	return ret;
-> +}
-> +
-> +static int ktd2692_remove(struct platform_device *pdev)
-> +{
-> +	struct ktd2692_context *led = platform_get_drvdata(pdev);
-> +
-> +	cancel_work_sync(&led->work_brightness_set);
-> +	led_classdev_flash_unregister(&led->fled_cdev);
-> +	ktd2692_led_regulator_disable(led);
-> +
-> +	mutex_destroy(&led->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id ktd2692_match[] = {
-> +	{ .compatible = "kinetic,ktd2692", },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static struct platform_driver ktd2692_driver = {
-> +	.driver = {
-> +		.name  = "leds-ktd2692",
-> +		.of_match_table = ktd2692_match,
-> +	},
-> +	.probe  = ktd2692_probe,
-> +	.remove = ktd2692_remove,
-> +};
-> +
-> +module_platform_driver(ktd2692_driver);
-> +
-> +MODULE_AUTHOR("Ingi Kim <ingi2.kim@samsung.com>");
-> +MODULE_DESCRIPTION("Kinetic KTD2692 LED driver");
+> +MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
+> +MODULE_DESCRIPTION("Statuscode LED trigger");
 > +MODULE_LICENSE("GPL v2");
+> --
+> 1.7.1
 >
-
-
--- 
-Best Regards,
-Jacek Anaszewski
+>
+>
