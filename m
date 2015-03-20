@@ -1,69 +1,38 @@
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Thu, 19 Mar 2015 14:35:32 -0700
-Message-ID: <m34mpgpt5n.fsf@oc8180480414.ibm.com>
-References: <20150308110558.3759.72635.stgit@localhost.localdomain> <20150308111435.3759.75840.stgit@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e37.co.us.ibm.com ([32.97.110.158]:38943 "EHLO
-	e37.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750734AbbCTCx0 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Mar 2015 22:53:26 -0400
-Received: from /spool/local
-	by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
-	Thu, 19 Mar 2015 20:53:25 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-	by d03dlp02.boulder.ibm.com (Postfix) with ESMTP id 2950D3E4003F
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 20:53:23 -0600 (MDT)
-Received: from d03av02.boulder.ibm.com (d03av02.boulder.ibm.com [9.17.195.168])
-	by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t2K2rDFp34603150
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 19:53:13 -0700
-Received: from d03av02.boulder.ibm.com (localhost [127.0.0.1])
-	by d03av02.boulder.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t2K2rLHf026818
-	for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2015 20:53:22 -0600
-In-Reply-To: <20150308111435.3759.75840.stgit@localhost.localdomain>
-Sender: linux-leds-owner@vger.kernel.org
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: [PATCH v3 0/3] Add ktd2692 Flash LED driver using LED Flash class
+Date: Fri, 20 Mar 2015 14:31:03 +0900
+Message-ID: <1426829466-13559-1-git-send-email-ingi2.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-Vasant Hegde <hegdevasant@linux.vnet.ibm.com> writes:
+This patch adds ktd2692 Flash LED driver with LED Flash class
 
-> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->
-> This patch implements LED driver for PowerNV platform using the existing
-> generic LED class framework. It registers classdev structures for all
-> individual LEDs detected on the system through LED specific device tree
-> nodes. Device tree nodes specify what all kind of LEDs present on the
-> same location code. It registers LED classdev structure for each of them.
->
-> The platform level implementation of LED get and set state has been
-> achieved through OPAL calls. These calls are made available for the
-> driver by exporting from architecture specific codes.
->
-> As per the LED class framework, the 'brightness_set' function should not
-> sleep. Hence these functions have been implemented through global work
-> queue tasks which might sleep on OPAL async call completion.
->
-> All the system LEDs can be found in the same regular path /sys/class/leds/.
-> There are two different kind of LEDs present for the same location code,
-> one being the identify indicator and other one being the fault indicator.
-> We don't use LED colors. Hence our LEDs have names in this format.
->
->         <location_code>:<IDENTIFY|FAULT>
->
-> Any positive brightness value would turn on the LED and a zero value
-> would turn off the LED. The driver will return LED_FULL (255) for any
-> turned on LED and LED_OFF for any turned off LED.
->
-> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Change in v3:
+	- Clean up the code
+	- Add aux gpio pin to control Flash LED
 
-Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Tested-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Change in v2:
+	- Introduction of LED Flash class as Jacek's comment
+	- Supplement of binding documentation
+	- Rename gpio control pin and remove unused pin
+	- Add regulator for the Flash LED
 
+Ingi Kim (3):
+  of: Add vendor prefix for Kinetic technologies
+  leds: ktd2692: add device tree bindings for ktd2692
+  leds: Add ktd2692 flash LED driver
 
-(well, it boots, interacts with firmware. I didn't go and look at the
-LEDs themselves).
+ .../devicetree/bindings/leds/leds-ktd2692.txt      |  34 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ drivers/leds/Kconfig                               |   9 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-ktd2692.c                        | 438 +++++++++++++++++++++
+ 5 files changed, 483 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+ create mode 100644 drivers/leds/leds-ktd2692.c
+
+-- 
+2.0.5
