@@ -1,770 +1,635 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Fri, 20 Mar 2015 16:34:53 +0530
-Message-ID: <20150320110328.14866.98225.stgit@localhost.localdomain>
-References: <20150320105921.14866.83209.stgit@localhost.localdomain>
+From: =?ISO-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>
+Subject: [PATCH v2] leds: Add arbitrary pattern trigger
+Date: Fri, 20 Mar 2015 15:42:02 +0100
+Message-ID: <1426862522.48232.3.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp08.au.ibm.com ([202.81.31.141]:51850 "EHLO
-	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777AbbCTLFt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Mar 2015 07:05:49 -0400
-Received: from /spool/local
-	by e23smtp08.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Fri, 20 Mar 2015 21:05:47 +1000
-Received: from d23relay07.au.ibm.com (d23relay07.au.ibm.com [9.190.26.37])
-	by d23dlp03.au.ibm.com (Postfix) with ESMTP id 5862C3578047
-	for <linux-leds@vger.kernel.org>; Fri, 20 Mar 2015 22:05:45 +1100 (EST)
-Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
-	by d23relay07.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t2KB5bvp12451932
-	for <linux-leds@vger.kernel.org>; Fri, 20 Mar 2015 22:05:45 +1100
-Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
-	by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t2KB5Brc015842
-	for <linux-leds@vger.kernel.org>; Fri, 20 Mar 2015 22:05:11 +1100
-In-Reply-To: <20150320105921.14866.83209.stgit@localhost.localdomain>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Joe Xue <lgxue@hotmail.com>, Bryan Wu <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org
-Cc: stewart@linux.vnet.ibm.com, mpe@ellerman.id.au, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Hi all,
 
-This patch implements LED driver for PowerNV platform using the existing
-generic LED class framework. It registers classdev structures for all
-individual LEDs detected on the system through LED specific device tree
-nodes. Device tree nodes specify what all kind of LEDs present on the
-same location code. It registers LED classdev structure for each of them.
+=46ollowing your comments about [PATCH] leds: Add arbitrary pattern tri=
+gger,
+here is a revised version of this patch.
 
-The platform level implementation of LED get and set state has been
-achieved through OPAL calls. These calls are made available for the
-driver by exporting from architecture specific codes.
+This is intended for embedded systems without screen or network access
+to show a status (or error) code to a human.
 
-As per the LED class framework, the 'brightness_set' function should not
-sleep. Hence these functions have been implemented through global work
-queue tasks which might sleep on OPAL async call completion.
+It's been tested on an ARM architecture (Xilinx Zynq 7010 SoC,
+which CPU is a dual ARM Cortex-A9), with a non-mainline
+kernel (xilinx-v2014.4, based of a 3.17.0 kernel).
+Unfortunately, I don't have other hardware to test it on.
+It compiles fine in a 3.19.0-rc1 source tree.
+Additional testing and comments would be appreciated.
 
-All the system LEDs can be found in the same regular path /sys/class/leds/.
-There are two different kind of LEDs present for the same location code,
-one being the identify indicator and other one being the fault indicator.
-We don't use LED colors. Hence our LEDs have names in this format.
+Changes since version 1:
+ - Fixed typos in documentation and comments.
+ - Fixed MODULE_LICENSE string.
+ - No more mutex in atomic context.
+ - Return EINVAL when invalid patterns are written to the "pattern" att=
+ribute.
 
-        <location_code>:<ATTENTION|IDENTIFY|FAULT>
 
-Any positive brightness value would turn on the LED and a zero value
-would turn off the LED. The driver will return LED_FULL (255) for any
-turned on LED and LED_OFF for any turned off LED.
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Tested-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Add a new led trigger supporting arbitrary patterns.
+This is useful for embedded systems with no screen or network access.
+
+Export two sysfs attributes: "pattern", and "repeat".
+
+When "repeat"=3D-1, repeat the pattern indefinitely. Otherwise,
+repeat it the specified number of times. "pattern" specifies
+the pattern as comma separated couples of "brightness duration"
+values. See detailled documentation in patch.
+
+Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
 ---
-Changes in v2:
-  - Added System Attention indicator support
-  - Moved common code to powernv_led_set_queue()
+ Documentation/leds/ledtrig-pattern.txt |   86 +++++++
+ drivers/leds/trigger/Kconfig           |   10 +
+ drivers/leds/trigger/Makefile          |    1 +
+ drivers/leds/trigger/ledtrig-pattern.c |  432 ++++++++++++++++++++++++=
+++++++++
+ 4 files changed, 529 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/leds/ledtrig-pattern.txt
+ create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
 
--Vasant
-
-
- arch/powerpc/platforms/powernv/opal.c |   12 +
- drivers/leds/Kconfig                  |    9 
- drivers/leds/Makefile                 |    1 
- drivers/leds/leds-powernv.c           |  620 +++++++++++++++++++++++++++++++++
- 4 files changed, 641 insertions(+), 1 deletion(-)
- create mode 100644 drivers/leds/leds-powernv.c
-
-diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-index 142a08a..fbfd9c1 100644
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -746,7 +746,7 @@ static void __init opal_irq_init(struct device_node *dn)
- 
- static int __init opal_init(void)
- {
--	struct device_node *np, *consoles;
-+	struct device_node *np, *consoles, *led;
- 	int rc;
- 
- 	opal_node = of_find_node_by_path("/ibm,opal");
-@@ -772,6 +772,13 @@ static int __init opal_init(void)
- 	/* Create i2c platform devices */
- 	opal_i2c_create_devs();
- 
-+	/* Create led platform devices */
-+	led = of_find_node_by_path("/ibm,opal/led");
-+	if (led) {
-+		of_platform_device_create(led, "opal_led", NULL);
-+		of_node_put(led);
-+	}
-+
- 	/* Find all OPAL interrupts and request them */
- 	opal_irq_init(opal_node);
- 
-@@ -904,3 +911,6 @@ EXPORT_SYMBOL_GPL(opal_rtc_write);
- EXPORT_SYMBOL_GPL(opal_tpo_read);
- EXPORT_SYMBOL_GPL(opal_tpo_write);
- EXPORT_SYMBOL_GPL(opal_i2c_request);
-+/* Export these symbols for PowerNV LED class driver */
-+EXPORT_SYMBOL_GPL(opal_leds_get_ind);
-+EXPORT_SYMBOL_GPL(opal_leds_set_ind);
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 25b320d..a93223c 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -508,6 +508,15 @@ config LEDS_BLINKM
- 	  This option enables support for the BlinkM RGB LED connected
- 	  through I2C. Say Y to enable support for the BlinkM LED.
- 
-+config LEDS_POWERNV
-+	tristate "LED support for PowerNV Platform"
-+	depends on LEDS_CLASS
-+	depends on PPC_POWERNV
-+	help
-+	  This option enables support for the system LEDs present on
-+	  PowerNV platforms. Say 'y' to enable this support in kernel.
-+	  Say 'm' enable this support as module.
-+
- config LEDS_SYSCON
- 	bool "LED support for LEDs on system controllers"
- 	depends on LEDS_CLASS=y
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index cbba921..604ffc9 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
- obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
- obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
- obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
-+obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+diff --git a/Documentation/leds/ledtrig-pattern.txt b/Documentation/led=
+s/ledtrig-pattern.txt
 new file mode 100644
-index 0000000..0c9f958
+index 0000000..579295e
 --- /dev/null
-+++ b/drivers/leds/leds-powernv.c
-@@ -0,0 +1,620 @@
++++ b/Documentation/leds/ledtrig-pattern.txt
+@@ -0,0 +1,86 @@
++LED Pattern Trigger
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++This is a LED trigger allowing arbitrary pattern execution. It can do =
+gradual
++dimming. This trigger can be configured to repeat the pattern a number=
+ of
++times or indefinitely. This is intended as a way of communication for =
+embedded
++systems with no screen.
++
++The trigger can be activated from user space on LED class devices as s=
+hown
++below:
++
++  echo pattern > trigger
++
++This adds the following sysfs attributes to the LED:
++
++  pattern - specifies the pattern. See syntax below.
++
++  repeat - number of times the pattern must be repeated.
++	writing -1 to this file will make the pattern
++	repeat indefinitely.
++
++The pattern will be restarted each time a new value is written to
++the pattern or repeat attribute. When dimming, the LED brightness
++is set every 50 ms.
++
++pattern syntax:
++The pattern is specified in the pattern attribute with an array of com=
+ma-
++separated "brightness/length in miliseconds" values. The two component=
+s
++of each value are to be separated by a space.
++
++For example, assuming the driven LED supports
++intensity value from 0 to 255:
++
++  echo 0 1000, 255 2000 > pattern
++
++Or:
++
++  echo 0 1000, 255 2000, > pattern
++
++Will make the LED go gradually from zero-intensity to max (255) intens=
+ity
++in 1000 milliseconds, then back to zero intensity in 2000 milliseconds=
+:
++
++LED brightness
++    ^
++255-|       / \            / \            /
++    |      /    \         /    \         /
++    |     /       \      /       \      /
++    |    /          \   /          \   /
++  0-|   /             \/             \/
++    +---0----1----2----3----4----5----6------------> time (s)
++
++
++
++To make the LED go instantly from one brigntess value to another,
++use zero-time lengths. For example:
++
++  echo 0 1000, 0 0, 255 2000, 255 0 > pattern
++
++Will make the LED stay off for one second, then stay at max brightness
++for two seconds:
++
++LED brightness
++    ^
++255-|        +---------+    +---------+
++    |        |         |    |         |
++    |        |         |    |         |
++    |        |         |    |         |
++  0-|   -----+         +----+         +----
++    +---0----1----2----3----4----5----6------------> time (s)
++
++
++Notes:
++
++Patterns with invalid syntax are reported with EINVAL, the
++resulting LED brightness is undefined. Reading the pattern
++back returns an empty string.
++
++Patterns with less than two values, no value with time length > 50
++milliseconds, or no two values with differing brightnesses
++result in the LED being set at the brightness of the first value,
++or zero if the pattern contains no value. EINVAL is returned,
++and reading the pattern back returns an empty string.
++
++Because sysfs is used to define the pattern, patterns that need more t=
+han
++PAGE_SIZE characters to describe aren't supported. PAGE_SIZE is system
++dependent.
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfi=
+g
+index 49794b4..ce27bdb 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -108,4 +108,14 @@ config LEDS_TRIGGER_CAMERA
+ 	  This enables direct flash/torch on/off by the driver, kernel space.
+ 	  If unsure, say Y.
+=20
++config LEDS_TRIGGER_PATTERN
++	tristate "LED Pattern Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  This allows LEDs blinking with an arbitrary pattern. Can be useful
++	  on embedded systems with no screen to give out a status code to
++	  a human.
++
++	  If unsure, say N
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makef=
+ile
+index 1abf48d..a739429 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+=3D ledtrig-cpu.o
+ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+=3D ledtrig-default-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+=3D ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+=3D ledtrig-camera.o
++obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+=3D ledtrig-pattern.o
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trig=
+ger/ledtrig-pattern.c
+new file mode 100644
+index 0000000..fdf231d
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -0,0 +1,432 @@
 +/*
-+ * PowerNV LED Driver
++ * Arbitrary pattern trigger
 + *
-+ * Copyright IBM Corp. 2015
++ * Copyright 2015, Epsiline
 + *
-+ * Author: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-+ * Author: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
++ * Author : Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the License, or (at your option) any later version.
++ * Idea discussed with Pavel Machek <pavel@ucw.cz> on
++ * <linux-leds@vger.kernel.org> (march 2015, thread title
++ * [PATCH RFC] leds: Add status code trigger)
++ *
++ * This program is free software; you can redistribute it and/or modif=
+y
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
 + */
 +
-+#define PREFIX		"POWERNV_LED"
-+#define pr_fmt(fmt)	PREFIX ": " fmt
-+
-+#include <linux/platform_device.h>
++#include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
 +#include <linux/leds.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
++#include <linux/mutex.h>
++#include "../leds.h"
 +
-+#include <asm/opal.h>
-+
-+#define LED_STR_ATTENTION	":ATTENTION"
-+#define LED_STR_IDENT		":IDENTIFY"
-+#define LED_STR_FAULT		":FAULT"
-+
-+/*
-+ * LED operation state
-+ *
-+ * led_classdev_unregister resets the brightness values. However
-+ * we want to retain the LED state across boot. Hence disable
-+ * LED operation before calling led_classdev_unregister.
-+ */
-+static bool led_disabled = false;
-+
-+/*
-+ * LED type map
-+ *
-+ * Converts LED event type into it's description.
-+ */
-+static const char *led_type_map[OPAL_SLOT_LED_TYPE_MAX] = {
-+	"Attention", "Identify", "Fault"
++struct pattern_step {
++	int brightness;
++	int time_ms;
 +};
 +
-+/*
-+ * LED set routines have been implemented as work queue tasks scheduled
-+ * on the global work queue. Individual task calls OPAL interface to set
-+ * the LED state which might sleep for some time. A lot of work queue
-+ * tasks attempting to set the LED states can prevent each other from
-+ * completing their task. So there is a need to restrict the total number
-+ * of work queue tasks at any point in time related to LED.
-+ */
-+#define MAX_LED_REQ_COUNT	100
-+static int led_req_count;
-+
-+/*
-+ * LED classdev
-+ *
-+ * Each LED classdev structure registered on the platform will be put into
-+ * a list which will be eventually used for de-registration purpose.
-+ */
-+struct powernv_led {
-+	struct led_classdev cdev;
-+	struct list_head    link;
++struct pattern_trig_data {
++	struct pattern_step *steps; /* Array describing the pattern */
++	struct mutex lock;
++	char is_sane;
++	struct pattern_step *curr;
++	struct pattern_step *next;
++	int time_ms; /* Time in current step */
++	int nsteps;  /* Number of steps */
++	int repeat;  /* < 0 means repeat indefinitely */
++	struct workqueue_struct *queue;
++	struct delayed_work dwork;
++	struct led_classdev *led_cdev; /* Needed by pattern_trig_update() */
 +};
-+static LIST_HEAD(powernv_led_list);
-+static DEFINE_SPINLOCK(powernv_led_spinlock);
 +
-+/*
-+ * LED set state command
-+ *
-+ * Each set LED state request will be saved and put into a list to be
-+ * processed later by a work queue task.
-+ */
-+struct powernv_led_cmd {
-+	struct led_classdev *led_cdev; /* Points to classdev structure */
-+	enum led_brightness value;     /* Brightness value */
-+	u64                 led_type;  /* Identify or Fault */
-+	struct list_head    link;
-+};
-+static LIST_HEAD(powernv_led_cmd_list);
-+static DEFINE_SPINLOCK(powernv_led_cmd_spinlock);
++#define UPDATE_INTERVAL 50
++/* When doing gradual dimming, the led brightness
++   will be updated every UPDATE_INTERVAL milliseconds */
 +
-+/*
-+ * LED set state task
-+ *
-+ * Each set LED state request added into the request list for post
-+ * processing will be followed by one of this structure. The work
-+ * struct here will be scheduled on the global work queue to process
-+ * one of the requests from the request list. Though the order of
-+ * execution is not guaraneteed.
-+ */
-+struct powernv_led_work {
-+	struct work_struct work;      /* Individual task */
-+	bool               deletion;  /* Need deletion */
-+	struct list_head   link;
-+};
-+static LIST_HEAD(powernv_led_work_list);
-+static DEFINE_SPINLOCK(powernv_led_work_spinlock);
++#define PATTERN_SEPARATOR ","
 +
-+/*
-+ * powernv_led_compact_work_list
-+ *
-+ * This function goes through the entire list of scheduled powernv_led_work
-+ * nodes and removes the nodes which have already processed one set LED
-+ * state request from request list and has been marked for deletion. This is
-+ * essential for cleaning the list before adding new elements into it. This
-+ * also tracks the total number of pending tasks. Once it reaches the
-+ * threshold the function will throttle till all the scheduled tasks completes
-+ * execution during which the user space thread will block and will be
-+ * prevented from queuing up more LED state change requests.
-+ */
-+static void powernv_led_compact_work_list(void)
++#define MAX_NSTEPS (PAGE_SIZE/4)
++/* The "pattern" attribute contains at most PAGE_SIZE characters.
++   Each pattern step in this attribute needs at least 4 characters
++   (a 1-digit number for the led brighntess, a space,
++   a 1-digit number for the time, a PATTERN_SEPARATOR).
++   Therefore, there is at most PAGE_SIZE/4 steps. */
++
++static int pattern_trig_initialize_data(struct pattern_trig_data *data=
+)
 +{
-+	struct powernv_led_work *pwork, *pwork_ne;
-+	unsigned long flags;
++	mutex_init(&data->lock);
++	mutex_lock(&data->lock);
 +
-+	spin_lock_irqsave(&powernv_led_work_spinlock, flags);
-+	led_req_count = 0;
-+	list_for_each_entry_safe(pwork, pwork_ne,
-+				 &powernv_led_work_list, link) {
-+		if (pwork->deletion) {
-+			list_del(&pwork->link);
-+			kfree(pwork);
-+			continue;
++	data->is_sane =3D 0;
++	data->steps =3D kzalloc(MAX_NSTEPS*sizeof(struct pattern_step),
++			GFP_KERNEL);
++	if (!data->steps)
++		return -ENOMEM;
++
++	data->curr =3D NULL;
++	data->next =3D NULL;
++	data->time_ms =3D 0;
++	data->nsteps =3D 0;
++	data->repeat =3D -1;
++	mutex_unlock(&data->lock);
++	return 0;
++}
++
++static void pattern_trig_clear_data(struct pattern_trig_data *data)
++{
++	data->is_sane =3D 0;
++	kfree(data->steps);
++}
++
++/*
++ *  is_sane : pattern checking.
++ *  A pattern satisfying these three conditions is reported as sane :
++ *    - At least two steps
++ *    - At least one step with time >=3D UPDATE_INTERVAL
++ *    - At least two steps with differing brightnesses
++ *  When @data->pattern isn't sane, a sensible brightness
++ *  default is suggested in @brightness
++ *
++ * DO NOT call pattern_trig_update() on a not-sane pattern
++ * with is_sane =3D 1, you'll be punished with an infinite
++ * loop in the kernel.
++ */
++static int is_sane(struct pattern_trig_data *data, int *brightness)
++{
++	int i;
++	char stept_ok =3D 0;
++	char stepb_ok =3D 0;
++
++	*brightness =3D 0;
++	if (data->nsteps < 1)
++		return 0;
++
++	*brightness =3D data->steps[0].brightness;
++	if (data->nsteps < 2)
++		return 0;
++
++	for (i =3D 0; i < data->nsteps; i++) {
++		if (data->steps[i].time_ms >=3D UPDATE_INTERVAL) {
++			if (stepb_ok)
++				return 1;
++			stept_ok =3D 1;
 +		}
-+		led_req_count++;
++		if (data->steps[i].brightness !=3D data->steps[0].brightness) {
++			if (stept_ok)
++				return 1;
++			stepb_ok =3D 1;
++		}
 +	}
-+	spin_unlock_irqrestore(&powernv_led_work_spinlock, flags);
-+
-+	/* Throttle if the threshold reached */
-+	if (led_req_count == MAX_LED_REQ_COUNT) {
-+		list_for_each_entry(pwork, &powernv_led_work_list, link)
-+			flush_work(&pwork->work);
-+	}
-+}
-+
-+/*
-+ * powernv_led_set
-+ *
-+ * This commits the state change of the requested LED through an OPAL call.
-+ * This function is called from work queue task context when ever it gets
-+ * scheduled. This function can sleep at opal_async_wait_response call.
-+ */
-+static void powernv_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value, u64 led_type)
-+{
-+	char *loc_code;
-+	int rc, token;
-+	u64 led_mask, max_led_type, led_value = 0;
-+	struct opal_msg msg;
-+
-+	/* Location code of the LED */
-+	loc_code = kasprintf(GFP_KERNEL, "%s", led_cdev->name);
-+	if (!loc_code) {
-+		pr_err(PREFIX "Memory allocation failed at %s\n", __func__);
-+		return;
-+	}
-+
-+	switch (led_type) {
-+	case OPAL_SLOT_LED_TYPE_ATTN:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_ATTENTION)] = '\0';
-+		break;
-+	case OPAL_SLOT_LED_TYPE_ID:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_IDENT)] = '\0';
-+		break;
-+	case OPAL_SLOT_LED_TYPE_FAULT:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_FAULT)] = '\0';
-+		break;
-+	default:	/* Unknown LED type */
-+		goto out_loc;
-+	}
-+
-+	/* Prepare for the OPAL call */
-+	max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
-+	led_mask = OPAL_SLOT_LED_STATE_ON << led_type;
-+	if (value)
-+		led_value = OPAL_SLOT_LED_STATE_ON << led_type;
-+
-+	/* OPAL async call */
-+	token = opal_async_get_token_interruptible();
-+	if (token < 0) {
-+		if (token != -ERESTARTSYS)
-+			pr_err("%s: Couldn't get the token, returning\n",
-+			       __func__);
-+		goto out_loc;
-+	}
-+
-+	rc = opal_leds_set_ind(token, loc_code,
-+			       led_mask, led_value, &max_led_type);
-+	if (rc != OPAL_ASYNC_COMPLETION) {
-+		pr_err("OPAL call opal_leds_set_ind failed for %s with %d\n",
-+		       loc_code, rc);
-+		goto out_token;
-+	}
-+
-+	rc = opal_async_wait_response(token, &msg);
-+	if (rc) {
-+		pr_err("%s: Failed to wait for the async response, %d\n",
-+			__func__, rc);
-+		goto out_token;
-+	}
-+
-+	rc = be64_to_cpu(msg.params[1]);
-+	if (rc != OPAL_SUCCESS)
-+		pr_err("Async call returned with failed status: %d\n", rc);
-+
-+out_token:
-+	opal_async_release_token(token);
-+
-+out_loc:
-+	kfree(loc_code);
-+}
-+
-+/*
-+ * powernv_led_get
-+ *
-+ * This function fetches the LED state for a given LED type for
-+ * mentioned LED classdev structure.
-+ */
-+static enum led_brightness powernv_led_get(struct led_classdev *led_cdev,
-+					   u64 led_type)
-+{
-+	char *loc_code;
-+	int rc;
-+	u64 led_mask, led_value, max_led_type;
-+
-+	/* LED location code */
-+	loc_code = kasprintf(GFP_KERNEL, "%s", led_cdev->name);
-+	if (!loc_code) {
-+		pr_err("Memory allocation failed at: %s\n", __func__);
-+		return -ENOMEM;
-+	}
-+
-+	switch (led_type) {
-+	case OPAL_SLOT_LED_TYPE_ATTN:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_ATTENTION)] = '\0';
-+		break;
-+	case OPAL_SLOT_LED_TYPE_ID:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_IDENT)] = '\0';
-+		break;
-+	case OPAL_SLOT_LED_TYPE_FAULT:
-+		loc_code[strlen(loc_code) - strlen(LED_STR_FAULT)] = '\0';
-+		break;
-+	default:	/* Unsupported LED type */
-+		goto led_fail;
-+	}
-+
-+	/* Fetch all LED status */
-+	led_mask = cpu_to_be64(0);
-+	led_value = cpu_to_be64(0);
-+	max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
-+
-+	rc = opal_leds_get_ind(loc_code, &led_mask, &led_value, &max_led_type);
-+	if (rc != OPAL_SUCCESS && rc != OPAL_PARTIAL) {
-+		pr_err("OPAL call opal_leds_get_ind failed with %d\n", rc);
-+		goto led_fail;
-+	}
-+
-+	led_mask = be64_to_cpu(led_mask);
-+	led_value = be64_to_cpu(led_value);
-+
-+	/* LED status available */
-+	if (!((led_mask >> led_type) & OPAL_SLOT_LED_STATE_ON)) {
-+		pr_err("%s LED status not available for %s\n",
-+		       led_type_map[led_type], loc_code);
-+		goto led_fail;
-+	}
-+
-+	/* LED status value */
-+	if ((led_value >> led_type) & OPAL_SLOT_LED_STATE_ON) {
-+		kfree(loc_code);
-+		return LED_FULL;
-+	}
-+
-+led_fail:
-+	kfree(loc_code);
-+	return LED_OFF;
-+}
-+
-+/*
-+ * powernv_led_work_func
-+ *
-+ * This the function which will be executed by any LED work task on the
-+ * global work queue. This function de-queues one of the request node
-+ * from the request list, processes it and then deletes the request node.
-+ * This also accesses it's own work list node and sets the deletion flag
-+ * in there making itself a candidate for removal the next time the
-+ * compact function gets called.
-+ */
-+static void powernv_led_work_func(struct work_struct *work)
-+{
-+	struct powernv_led_work *pwork;
-+	struct powernv_led_cmd *req;
-+	unsigned long flags;
-+
-+	/* De-queue one request, process it and then delete */
-+	spin_lock_irqsave(&powernv_led_cmd_spinlock, flags);
-+	if (list_empty(&powernv_led_cmd_list)) {
-+		pr_err("Request list empty, but work queue task queued\n");
-+		spin_unlock_irqrestore(&powernv_led_cmd_spinlock, flags);
-+		return;
-+	}
-+
-+	req = list_first_entry(&powernv_led_cmd_list,
-+			       struct powernv_led_cmd, link);
-+	list_del(&req->link);
-+	spin_unlock_irqrestore(&powernv_led_cmd_spinlock, flags);
-+
-+	powernv_led_set(req->led_cdev, req->value, req->led_type);
-+	kfree(req);
-+
-+	/* Mark the work queue task for deletion */
-+	spin_lock_irqsave(&powernv_led_work_spinlock, flags);
-+	pwork = container_of(work, struct powernv_led_work, work);
-+	pwork->deletion = true;
-+	spin_unlock_irqrestore(&powernv_led_work_spinlock, flags);
-+}
-+
-+/*
-+ * powernv_led_set_queue
-+ *
-+ * LED classdev 'brightness_set' function for LEDs
-+ */
-+static void powernv_led_set_queue(struct led_classdev *led_cdev,
-+				  enum led_brightness value, u64 led_type)
-+{
-+	struct powernv_led_work *pwork;
-+	struct powernv_led_cmd *attn;
-+	unsigned long flags;
-+
-+	if (led_disabled)
-+		return;
-+
-+	/* Allocate the request */
-+	attn = kzalloc(sizeof(struct powernv_led_cmd), GFP_KERNEL);
-+	if (!attn) {
-+		pr_err("Memory allocation failed at: %s\n", __func__);
-+		return;
-+	}
-+
-+	/* Allocate the work */
-+	pwork = kzalloc(sizeof(struct powernv_led_work), GFP_KERNEL);
-+	if (!pwork) {
-+		pr_err("Memory allocation failed at: %s\n", __func__);
-+		kfree(attn);
-+		return;
-+	}
-+
-+	/* Prepare the request */
-+	attn->led_cdev = led_cdev;
-+	attn->value = value;
-+	attn->led_type = led_type;
-+
-+	/* Queue the request */
-+	spin_lock_irqsave(&powernv_led_cmd_spinlock, flags);
-+	list_add_tail(&attn->link, &powernv_led_cmd_list);
-+	spin_unlock_irqrestore(&powernv_led_cmd_spinlock, flags);
-+
-+	/* Compact the work list */
-+	powernv_led_compact_work_list();
-+
-+	/* Add the new task into the work list */
-+	spin_lock_irqsave(&powernv_led_work_spinlock, flags);
-+	list_add_tail(&pwork->link, &powernv_led_work_list);
-+	spin_unlock_irqrestore(&powernv_led_work_spinlock, flags);
-+
-+	/* Schedule the new task */
-+	INIT_WORK(&pwork->work, powernv_led_work_func);
-+	schedule_work(&pwork->work);
-+}
-+/*
-+ * powernv_led_set_attn
-+ *
-+ * LED classdev 'brightness_set' function for attention LED.
-+ */
-+static void powernv_led_set_attn(struct led_classdev *led_cdev,
-+				  enum led_brightness value)
-+{
-+	return powernv_led_set_queue(led_cdev, value,
-+				     OPAL_SLOT_LED_TYPE_ATTN);
-+}
-+
-+/*
-+ * powernv_led_get_attn
-+ *
-+ * LED classdev 'brightness_get' function for attention LED.
-+ */
-+static enum led_brightness powernv_led_get_attn(struct led_classdev *led_cdev)
-+{
-+	return powernv_led_get(led_cdev, OPAL_SLOT_LED_TYPE_ATTN);
-+}
-+
-+/*
-+ * powernv_led_set_ident
-+ *
-+ * LED classdev 'brightness_set' function for identify LED types.
-+ */
-+static void powernv_led_set_ident(struct led_classdev *led_cdev,
-+				  enum led_brightness value)
-+{
-+	return powernv_led_set_queue(led_cdev, value, OPAL_SLOT_LED_TYPE_ID);
-+}
-+
-+/*
-+ * powernv_led_get_ident
-+ *
-+ * LED classdev 'brightness_get' function for identify LED types.
-+ */
-+static enum led_brightness powernv_led_get_ident(struct led_classdev *led_cdev)
-+{
-+	return powernv_led_get(led_cdev, OPAL_SLOT_LED_TYPE_ID);
-+}
-+
-+/*
-+ * powernv_led_set_fault
-+ *
-+ * LED classdev 'brightness_set' function for fault LED types.
-+ */
-+static void powernv_led_set_fault(struct led_classdev *led_cdev,
-+				  enum led_brightness value)
-+{
-+	return powernv_led_set_queue(led_cdev, value,
-+				     OPAL_SLOT_LED_TYPE_FAULT);
-+}
-+
-+/*
-+ * powernv_led_get_fault
-+ *
-+ * LED classdev 'brightness_get' function for fault LED types.
-+ */
-+static enum led_brightness powernv_led_get_fault(struct led_classdev *led_cdev)
-+{
-+	return powernv_led_get(led_cdev, OPAL_SLOT_LED_TYPE_FAULT);
-+}
-+
-+/*
-+ * has_led_type
-+ *
-+ * This function verifies whether the child LED device node supports certain
-+ * type of LED or not. This will be used to register LEDclassdev structures
-+ * for that particual type of LED for a given device tree node.
-+ */
-+static bool has_led_type(struct device_node *cled, const char *led_type)
-+{
-+	bool result = false;
-+
-+	if (of_property_match_string(cled, "led-types", led_type) >= 0)
-+		result = true;
-+
-+	return result;
-+}
-+
-+/*
-+ * power_led_classdev
-+ *
-+ * This function registers classdev structure for any given type of LED on
-+ * a given child LED device node.
-+ */
-+static int power_led_classdev(struct platform_device *pdev,
-+			      struct device_node *cled, u64 led_type)
-+{
-+	int rc;
-+	unsigned long flags;
-+	struct powernv_led *cpled;
-+
-+	cpled = kzalloc(sizeof(struct powernv_led), GFP_KERNEL);
-+	if (!cpled) {
-+		pr_err("Memory allocation failed at %s\n", __func__);
-+		return -ENOMEM;
-+	}
-+
-+	/* Create the name for classdev */
-+	switch (led_type) {
-+	case OPAL_SLOT_LED_TYPE_ATTN:
-+		cpled->cdev.name = kasprintf(GFP_KERNEL, "%s%s",
-+					     cled->name, LED_STR_ATTENTION);
-+		cpled->cdev.brightness_set = powernv_led_set_attn;
-+		cpled->cdev.brightness_get = powernv_led_get_attn;
-+		break;
-+	case OPAL_SLOT_LED_TYPE_ID:
-+		cpled->cdev.name = kasprintf(GFP_KERNEL, "%s%s",
-+					     cled->name, LED_STR_IDENT);
-+		cpled->cdev.brightness_set = powernv_led_set_ident;
-+		cpled->cdev.brightness_get = powernv_led_get_ident;
-+		break;
-+	case OPAL_SLOT_LED_TYPE_FAULT:
-+		cpled->cdev.name = kasprintf(GFP_KERNEL, "%s%s",
-+						cled->name, LED_STR_FAULT);
-+		cpled->cdev.brightness_set = powernv_led_set_fault;
-+		cpled->cdev.brightness_get = powernv_led_get_fault;
-+		break;
-+	default: /* Unsupported LED type */
-+		return -EINVAL;
-+	}
-+
-+	if (!cpled->cdev.name) {
-+		pr_err("Memory allocation failed for classdev name\n");
-+		return -ENOMEM;
-+	}
-+
-+	cpled->cdev.brightness = LED_OFF;
-+	cpled->cdev.max_brightness = LED_FULL;
-+	cpled->cdev.flags = LED_CORE_SUSPENDRESUME;
-+
-+	/* Register the classdev */
-+	rc = led_classdev_register(&pdev->dev, &cpled->cdev);
-+	if (rc) {
-+		pr_err("Classdev registration failed for %s\n",
-+		       cpled->cdev.name);
-+	} else {
-+		spin_lock_irqsave(&powernv_led_spinlock, flags);
-+		list_add_tail(&cpled->link, &powernv_led_list);
-+		spin_unlock_irqrestore(&powernv_led_spinlock, flags);
-+		pr_debug("Classdev registration successful for %s\n",
-+			 cpled->cdev.name);
-+	}
-+	return rc;
-+}
-+
-+/* Platform driver probe */
-+static int powernv_led_probe(struct platform_device *pdev)
-+{
-+	struct device_node *led, *cled;
-+	int rc = 0;
-+
-+	led = of_find_node_by_path("/ibm,opal/led");
-+	if (!led) {
-+		pr_err("LED parent device node not found\n");
-+		return -EINVAL;
-+	}
-+
-+	for_each_child_of_node(led, cled) {
-+		if (has_led_type(cled, LED_TYPE_ATTENTION))
-+			rc = power_led_classdev(pdev, cled,
-+						OPAL_SLOT_LED_TYPE_ATTN);
-+
-+		if (has_led_type(cled, LED_TYPE_IDENTIFY))
-+			rc = power_led_classdev(pdev, cled,
-+						OPAL_SLOT_LED_TYPE_ID);
-+
-+		if (has_led_type(cled, LED_TYPE_FAULT))
-+			rc = power_led_classdev(pdev, cled,
-+						OPAL_SLOT_LED_TYPE_FAULT);
-+	}
-+	return rc;
-+}
-+
-+/* Platform driver remove */
-+static int powernv_led_remove(struct platform_device *pdev)
-+{
-+	struct powernv_led *pled;
-+	struct powernv_led_work *pwork;
-+	unsigned long flags;
-+
-+	/* Disable LED operation */
-+	led_disabled = true;
-+
-+	pr_info("Unregister all classdev structures\n");
-+	list_for_each_entry(pled, &powernv_led_list, link)
-+		led_classdev_unregister(&pled->cdev);
-+
-+	pr_info("Wait for all work tasks to finish\n");
-+	list_for_each_entry(pwork, &powernv_led_work_list, link)
-+		flush_work(&pwork->work);
-+
-+	/* Free nodes from the work list */
-+	powernv_led_compact_work_list();
-+
-+	/* Free nodes from the classdev list */
-+	spin_lock_irqsave(&powernv_led_spinlock, flags);
-+	while (!list_empty(&powernv_led_list)) {
-+		pled = list_first_entry(&powernv_led_list,
-+					struct powernv_led, link);
-+		list_del(&pled->link);
-+		kfree(pled);
-+	}
-+	spin_unlock_irqrestore(&powernv_led_spinlock, flags);
-+
-+	/* Check for memory leaks */
-+	if (!list_empty(&powernv_led_work_list))
-+		pr_warn("Work list not empty, memory leak\n");
-+
-+	if (!list_empty(&powernv_led_cmd_list))
-+		pr_warn("Request list not empty, memory leak\n");
-+
-+	if (!list_empty(&powernv_led_list))
-+		pr_warn("Classdev list not empty, memory leak\n");
 +
 +	return 0;
 +}
 +
-+/* Platform driver property match */
-+static const struct of_device_id powernv_led_match[] = {
-+	{
-+		.compatible	= "ibm,opal-v3-led",
-+	},
-+	{},
++static int reset_pattern(struct pattern_trig_data *data,
++			struct led_classdev *led_cdev)
++{
++	int brightness;
++
++	mutex_lock(&data->lock);
++	data->is_sane =3D 0; /* Prevent pattern_trig_update()
++			      from scheduling new work */
++	mutex_unlock(&data->lock);
++
++	flush_workqueue(data->queue);
++
++	mutex_lock(&data->lock);
++	if (is_sane(data, &brightness)) {
++		data->curr =3D data->steps;
++		data->next =3D data->steps + 1;
++		data->time_ms =3D 0;
++		data->is_sane =3D 1;
++		queue_delayed_work(data->queue, &data->dwork, 0);
++		mutex_unlock(&data->lock);
++		return 0;
++	}
++
++	mutex_unlock(&data->lock);
++	led_set_brightness(led_cdev, brightness);
++	return -EINVAL;
++}
++
++/* --- Sysfs handling --- */
++
++static ssize_t pattern_trig_show_repeat(
++	struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct pattern_trig_data *data =3D led_cdev->trigger_data;
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", data->repeat);
++}
++
++static ssize_t pattern_trig_store_repeat(
++	struct device *dev, struct device_attribute *attr,
++	const char *buf, size_t count)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct pattern_trig_data *data =3D led_cdev->trigger_data;
++	long res;
++	int err;
++
++	err =3D kstrtol(buf, 10, &res);
++	if (err)
++		return err;
++
++	mutex_lock(&data->lock);
++	data->repeat =3D res < 0 ? -1 : res;
++	mutex_unlock(&data->lock);
++
++	reset_pattern(data, led_cdev);
++
++	return count;
++}
++
++DEVICE_ATTR(repeat, S_IRUGO | S_IWUSR,
++	pattern_trig_show_repeat, pattern_trig_store_repeat);
++
++static ssize_t pattern_trig_show_pattern(
++	struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct pattern_trig_data *data =3D led_cdev->trigger_data;
++	ssize_t count =3D 0;
++	int i;
++
++	if (!data->steps || !data->nsteps)
++		return 0;
++
++	for (i =3D 0; i < data->nsteps; i++)
++		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
++				"%d %d" PATTERN_SEPARATOR,
++				data->steps[i].brightness,
++				data->steps[i].time_ms);
++	buf[count - 1] =3D '\n';
++	buf[count] =3D '\0';
++
++	return count + 1;
++}
++
++static ssize_t pattern_trig_store_pattern(
++	struct device *dev, struct device_attribute *attr,
++	const char *buf, size_t count)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct pattern_trig_data *data =3D led_cdev->trigger_data;
++	int cr =3D 0;  /* Characters read after a successful sscanf call */
++	int ccr =3D 0; /* Characters read before looking for PATTERN_SEPARATO=
+R */
++	int tcr =3D 0; /* Total characters read in buf */
++	int ccount;  /* Number of successful conversions in a sscanf call */
++
++	mutex_lock(&data->lock);
++	data->is_sane =3D 0;
++
++	for (data->nsteps =3D 0; data->nsteps < MAX_NSTEPS; data->nsteps++) {
++		cr =3D 0;
++		ccount =3D sscanf(buf + tcr, " %d %d %n" PATTERN_SEPARATOR " %n",
++				&data->steps[data->nsteps].brightness,
++				&data->steps[data->nsteps].time_ms, &ccr, &cr);
++
++		if (!cr) { /* PATTERN_SEPARATOR not reached */
++			if (ccount =3D=3D 2) {
++				/* Successful conversion before
++				   looking for PATTERN_SEPARATOR. */
++				data->nsteps++;
++				tcr +=3D ccr;
++			}
++
++			if (tcr !=3D count) {
++				/* Invalid syntax */
++				data->nsteps =3D 0;
++				mutex_unlock(&data->lock);
++				return -EINVAL;
++			}
++
++			mutex_unlock(&data->lock);
++
++			if (reset_pattern(data, led_cdev)) {
++				/* Invalid pattern */
++				data->nsteps =3D 0;
++				return -EINVAL;
++			}
++
++			return count;
++		}
++
++		tcr +=3D cr;
++	}
++
++	/* Shouldn't reach that */
++	WARN(1, "MAX_NSTEP too small. Please report\n");
++	data->nsteps =3D 0;
++	mutex_unlock(&data->lock);
++	return -EINVAL;
++}
++
++DEVICE_ATTR(pattern, S_IRUGO | S_IWUSR,
++	pattern_trig_show_pattern, pattern_trig_store_pattern);
++
++static int pattern_trig_create_sysfs_files(struct device *dev)
++{
++	int err;
++
++	err =3D device_create_file(dev, &dev_attr_repeat);
++	if (err)
++		return err;
++
++	err =3D device_create_file(dev, &dev_attr_pattern);
++	if (err)
++		device_remove_file(dev, &dev_attr_repeat);
++
++	return err;
++}
++
++static void pattern_trig_remove_sysfs_files(struct device *dev)
++{
++	device_remove_file(dev, &dev_attr_pattern);
++	device_remove_file(dev, &dev_attr_repeat);
++}
++
++/* --- Led intensity updating --- */
++
++static int compute_brightness(struct pattern_trig_data *data)
++{
++	if (data->time_ms =3D=3D 0)
++		return data->curr->brightness;
++
++	if (data->curr->time_ms =3D=3D 0) /* Don't divide by zero */
++		return data->next->brightness;
++
++	return data->curr->brightness + data->time_ms
++		* (data->next->brightness - data->curr->brightness)
++		/ data->curr->time_ms;
++}
++
++static void update_to_next_step(struct pattern_trig_data *data)
++{
++	data->curr =3D data->next;
++	if (data->curr =3D=3D data->steps)
++		data->repeat--;
++
++	if (data->next =3D=3D data->steps + data->nsteps - 1)
++		data->next =3D data->steps;
++	else
++		data->next++;
++
++	data->time_ms =3D 0;
++}
++
++static void pattern_trig_update(struct work_struct *work)
++{
++	struct delayed_work *dwork =3D to_delayed_work(work);
++	struct pattern_trig_data *data =3D
++		container_of(dwork, struct pattern_trig_data, dwork);
++
++	mutex_lock(&data->lock);
++
++	if (!data->is_sane || !data->repeat) {
++		mutex_unlock(&data->lock);
++		return;
++	}
++
++	if (data->time_ms > data->curr->time_ms)
++		update_to_next_step(data);
++
++	/* is_sane() checked that there is at least
++	   one step with time_ms >=3D UPDATE_INTERVAL
++	   so we won't go in an infinite loop */
++	while (data->curr->time_ms < UPDATE_INTERVAL)
++		update_to_next_step(data);
++
++	if (data->next->brightness =3D=3D data->curr->brightness) {
++		/* Constant brightness for this step */
++		led_set_brightness(data->led_cdev, data->curr->brightness);
++		queue_delayed_work(data->queue, &data->dwork,
++				msecs_to_jiffies(data->curr->time_ms));
++		update_to_next_step(data);
++	} else {
++		/* Gradual dimming */
++		led_set_brightness(data->led_cdev, compute_brightness(data));
++		data->time_ms +=3D UPDATE_INTERVAL;
++		queue_delayed_work(data->queue, &data->dwork,
++				msecs_to_jiffies(UPDATE_INTERVAL));
++	}
++
++	mutex_unlock(&data->lock);
++}
++
++/* --- Trigger activation --- */
++
++static void pattern_trig_activate(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *data =3D NULL;
++	int err;
++
++	data =3D kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return;
++
++	err =3D pattern_trig_initialize_data(data);
++	if (err) {
++		kfree(data);
++		return;
++	}
++
++	led_cdev->trigger_data =3D data;
++	data->led_cdev =3D led_cdev;
++	data->queue =3D alloc_ordered_workqueue("pattern trigger on %s", 0,
++					led_cdev->name ? led_cdev->name : "?");
++	INIT_DELAYED_WORK(&data->dwork, pattern_trig_update);
++	pattern_trig_create_sysfs_files(led_cdev->dev);
++}
++
++static void pattern_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *data =3D led_cdev->trigger_data;
++
++	if (data) {
++		pattern_trig_remove_sysfs_files(led_cdev->dev);
++
++		mutex_lock(&data->lock);
++		data->is_sane =3D 0; /* Prevent pattern_trig_update()
++				      from scheduling new work */
++		mutex_unlock(&data->lock);
++
++		flush_workqueue(data->queue);
++		destroy_workqueue(data->queue);
++
++		led_set_brightness(led_cdev, LED_OFF);
++		pattern_trig_clear_data(data);
++		kfree(data);
++
++		led_cdev->trigger_data =3D NULL;
++	}
++}
++
++static struct led_trigger pattern_led_trigger =3D {
++	.name =3D "pattern",
++	.activate =3D pattern_trig_activate,
++	.deactivate =3D pattern_trig_deactivate,
 +};
-+MODULE_DEVICE_TABLE(of, powernv_led_match);
 +
-+static struct platform_driver powernv_led_driver = {
-+	.probe	= powernv_led_probe,
-+	.remove = powernv_led_remove,
-+	.driver = {
-+		.name = "powernv-led-driver",
-+		.owner = THIS_MODULE,
-+		.of_match_table = powernv_led_match,
-+	},
-+};
++/* --- Module loading/unloading --- */
 +
-+module_platform_driver(powernv_led_driver);
++static int __init pattern_trig_init(void)
++{
++	return led_trigger_register(&pattern_led_trigger);
++}
 +
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PowerNV LED driver");
-+MODULE_AUTHOR("Anshuman Khandual <khandual@linux.vnet.ibm.com>");
++static void __exit pattern_trig_exit(void)
++{
++	led_trigger_unregister(&pattern_led_trigger);
++}
++
++module_init(pattern_trig_init);
++module_exit(pattern_trig_exit);
++
++MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
++MODULE_DESCRIPTION("Statuscode LED trigger");
++MODULE_LICENSE("GPL v2");
+--=20
+1.7.1
