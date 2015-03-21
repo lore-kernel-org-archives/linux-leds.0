@@ -1,19 +1,19 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1 01/11] leds: Add support for max77693 mfd flash cell
-Date: Sun, 22 Mar 2015 00:44:37 +0200
-Message-ID: <20150321224437.GD16613@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
+Date: Sun, 22 Mar 2015 00:49:03 +0200
+Message-ID: <20150321224903.GE16613@valkosipuli.retiisi.org.uk>
 References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-2-git-send-email-j.anaszewski@samsung.com>
+ <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47208 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47240 "EHLO
 	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751691AbbCUWoo (ORCPT
+	by vger.kernel.org with ESMTP id S1751832AbbCUWtG (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>);
-	Sat, 21 Mar 2015 18:44:44 -0400
+	Sat, 21 Mar 2015 18:49:06 -0400
 Content-Disposition: inline
-In-Reply-To: <1426863811-12516-2-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
@@ -21,24 +21,21 @@ Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.ker
 
 Hi Jacek,
 
-On Fri, Mar 20, 2015 at 04:03:21PM +0100, Jacek Anaszewski wrote:
-> This patch adds led-flash support to Maxim max77693 chipset.
-> A device can be exposed to user space through LED subsystem
-> sysfs interface. Device supports up to two leds which can
-> work in flash and torch mode. The leds can be triggered
-> externally or by software.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+On Fri, Mar 20, 2015 at 04:03:22PM +0100, Jacek Anaszewski wrote:
+> +Optional properties of the LED child node:
+> +- label : see Documentation/devicetree/bindings/leds/common.txt
 
-Thanks for the update once again!
+I'm still not comfortable using the label field as-is as the entity name in
+the later patches, there's one important problem: it is not guaranteed to be
+unique in the system.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Do you think this could be added to
+Documentation/devicetree/bindings/leds/common.txt, with perhaps enforcing it
+in the LED framework? Bryan, what do you think?
+
+The alternative would be to simply ignore it in the entity name, but then
+the name of the device would be different in the LED framework and Media
+controller.
 
 -- 
 Kind regards,
