@@ -1,70 +1,108 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
-Date: Mon, 23 Mar 2015 10:54:11 +0100
-Message-ID: <550FE2C3.7090702@samsung.com>
-References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
- <20150321224903.GE16613@valkosipuli.retiisi.org.uk>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
+Date: Mon, 23 Mar 2015 11:31:39 +0100
+Message-ID: <20150323103138.GP1509@kw.sim.vm.gnt>
+References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
+ <20150309094107.GL1509@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pbf06CWejC5c8J2q"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:60385 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752013AbbCWJyQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 23 Mar 2015 05:54:16 -0400
-In-reply-to: <20150321224903.GE16613@valkosipuli.retiisi.org.uk>
+Received: from vm1.sequanux.org ([188.165.36.56]:51266 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752144AbbCWKbm (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 23 Mar 2015 06:31:42 -0400
+Content-Disposition: inline
+In-Reply-To: <20150309094107.GL1509@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
-
-Hi Sakari,
-
-On 03/21/2015 11:49 PM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> On Fri, Mar 20, 2015 at 04:03:22PM +0100, Jacek Anaszewski wrote:
->> +Optional properties of the LED child node:
->> +- label : see Documentation/devicetree/bindings/leds/common.txt
->
-> I'm still not comfortable using the label field as-is as the entity name in
-> the later patches, there's one important problem: it is not guaranteed to be
-> unique in the system.
-
-I don't use it as-is in my patches. For max77603-led the i2c adapter id
-and client address is added to it, and for aat1290 there is '_n' suffix
-added. Nonetheless I didn't notice that the patch [1] was already
-merged. It checks if a LED class device with given name isn't already
-registered and adds a '_n" suffix if there was any. If it was exported
-I could use it in the leds-aat1290 driver and avoid depending on the
-static variable.
-
-Whereas for I2C devices the problem doesn't exist (it is guaranteed that
-no more than one I2C client with an address can be present on the
-same bus), for devices driven through GPIOs we haven't stable unique
-identifier.
-
-I thought that we agreed on #v4l about adding numerical postfixes
-in case of such devices.
-
-> Do you think this could be added to
-> Documentation/devicetree/bindings/leds/common.txt, with perhaps enforcing it
-> in the LED framework? Bryan, what do you think?
-
-The patch [1] seems to address the issue.
-
-> The alternative would be to simply ignore it in the entity name, but then
-> the name of the device would be different in the LED framework and Media
-> controller.
->
-
-This is the case currently - the names are different. The post fixes
-are added only to media entity name. Perhaps they should be unified.
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>
 
 
-[1] http://www.spinics.net/lists/linux-leds/msg03137.html
+--pbf06CWejC5c8J2q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best Regards,
-Jacek Anaszewski
+On Mon, Mar 09, 2015 at 10:41:08AM +0100, Simon Guinot wrote:
+> On Mon, Feb 23, 2015 at 04:04:18PM +0100, Simon Guinot wrote:
+> > Hello,
+> >=20
+> > This patch series adds DT support for the LEDs found on the Kirkwood-ba=
+sed
+> > LaCie boards 2Big and 5Big Network v2.
+> >=20
+> > Simon
+> >=20
+> > Simon Guinot (3):
+> >   leds: netxbig: add device tree binding
+> >   ARM: Kirkwood: add LED DT entries for netxbig boards
+> >   ARM: mvebu: remove static LED setup for netxbig boards
+>=20
+> Hi Brian,
+>=20
+> Please, consider merging the first patch of this serie.
+
+Hi Brian,
+
+It would be nice to have this patches for the incoming release.
+Please, consider picking them.
+
+Thanks,
+
+Simon
+
+> >=20
+> >  .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+> >  .../devicetree/bindings/leds/leds-netxbig.txt      |  90 ++++++++
+> >  arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
+> >  arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
+> >  arch/arm/mach-mvebu/Kconfig                        |   7 -
+> >  arch/arm/mach-mvebu/Makefile                       |   1 -
+> >  arch/arm/mach-mvebu/board.h                        |  21 --
+> >  arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+> >  arch/arm/mach-mvebu/netxbig.c                      | 191 -------------=
+---
+> >  drivers/leds/leds-netxbig.c                        | 244 +++++++++++++=
+++++++--
+> >  include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+> >  11 files changed, 493 insertions(+), 245 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio=
+-ext.txt
+> >  create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig=
+=2Etxt
+> >  delete mode 100644 arch/arm/mach-mvebu/board.h
+> >  delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+> >  create mode 100644 include/dt-bindings/leds/leds-netxbig.h
+> >=20
+> > --=20
+> > 2.1.1
+> >=20
+> >=20
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+--pbf06CWejC5c8J2q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlUP64oACgkQgtp0PDeOcDpf0wCggs6pagfDHsb2/0OjQ0xVcWtp
+JvAAn1GzKyagwJM1ENtAez/3v6OkSgWO
+=W83W
+-----END PGP SIGNATURE-----
+
+--pbf06CWejC5c8J2q--
