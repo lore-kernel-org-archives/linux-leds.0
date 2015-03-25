@@ -1,95 +1,43 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v1 09/11] DT: Add documentation for exynos4-is 'flashes'
- property
-Date: Wed, 25 Mar 2015 09:52:02 +0100
-Message-ID: <55127732.7020004@samsung.com>
-References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
- <20150325010641.GI18321@valkosipuli.retiisi.org.uk>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
+Date: Wed, 25 Mar 2015 10:20:59 +0100
+Message-ID: <CAPybu_0ho2FhPXjhcWw7L=7o5OivRbOgrzFcB9-iKLfy9OpONQ@mail.gmail.com>
+References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com> <20150325005429.GF18321@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37133 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751278AbbCYIwG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Mar 2015 04:52:06 -0400
-In-reply-to: <20150325010641.GI18321@valkosipuli.retiisi.org.uk>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:36706 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751084AbbCYJVU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 25 Mar 2015 05:21:20 -0400
+In-Reply-To: <20150325005429.GF18321@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, j.anaszewski@samsung.com
 
-Hi Sakari,
+Hi Sakari
 
-On 03/25/2015 02:06 AM, Sakari Ailus wrote:
-> Hi Jacek,
+On Wed, Mar 25, 2015 at 1:54 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> I'd use dev_warn() or even WARN_ON(ret). This is a rather serious issue as
+> now the probe order defines the name of the device. There might be something
+> better such as the I2C bus/address.
+
+I have no problem in sending a dev_warn, WARN_ON looks too much to me.
+
+In my example (dt overlays), it is perfectly ok to have duplicated names.
+
 >
-> On Fri, Mar 20, 2015 at 04:03:29PM +0100, Jacek Anaszewski wrote:
->> This patch adds a description of 'flashes' property
->> to the samsung-fimc.txt.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>   .../devicetree/bindings/media/samsung-fimc.txt     |    8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> index 922d6f8..cb0e263 100644
->> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> @@ -40,6 +40,13 @@ should be inactive. For the "active-a" state the camera port A must be activated
->>   and the port B deactivated and for the state "active-b" it should be the other
->>   way around.
->>
->> +Optional properties:
->> +
->> +- flashes - Array of phandles to the flash LEDs that can be controlled by the
->> +	    sub-devices contained in this media device. Flash LED is
->> +	    represented by a child node of a flash LED device
->
-> This should be in
-> Documentation/devicetree/bindings/media/video-interfaces.txt.
->
-> Should flash devices be associated with sensors somehow rather than ISPs?
-> That's how they commonly are arranged, however that doesn't limit placing
-> them in silly places.
->
-> I'm not necessarily saying the flashes-property should be present in
-> sensor's DT nodes, but it'd be good to be able to make the association if
-> it's there.
+> If the registration order for some reason changes, that'd revert the device
+> names. In Media controller this is part of the user space API.
 
-I know of a SoC, which drives the flash from its on-chip ISP. The GPIO
-connected to the flash controller's external strobe pin can be
-configured so that the signal is routed to it from the ISP or from
-CPU (for software strobe mode).
-
-I think that Sylwester could say more in this subject.
+Would it be possible for media controller leds to have a name based on
+their address?
 
 
->> +	    (see Documentation/devicetree/bindings/leds/common.txt).
->> +
->>   The 'camera' node must include at least one 'fimc' child node.
->>
->>
->> @@ -166,6 +173,7 @@ Example:
->>   		clock-output-names = "cam_a_clkout", "cam_b_clkout";
->>   		pinctrl-names = "default";
->>   		pinctrl-0 = <&cam_port_a_clk_active>;
->> +		flashes = <&camera_flash>, <&system_torch>;
->>   		status = "okay";
->>   		#address-cells = <1>;
->>   		#size-cells = <1>;
->
-> There will be other kind of devices that have somewhat similar relationship.
-> They just haven't been defined yet. Lens controllers or EEPROM for instance.
-> The two are an integral part of a module, something which is not modelled in
-> DT in any way, but perhaps should be.
+Regarding s/dev_info/dev_warn : Do you want to send the patch or I should do it?
 
-Do you suggest using more generic name than 'flashes'?
+Regards!
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Ricardo Ribalda
