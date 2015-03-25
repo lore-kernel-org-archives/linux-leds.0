@@ -1,84 +1,46 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1 09/11] DT: Add documentation for exynos4-is 'flashes'
- property
-Date: Wed, 25 Mar 2015 03:06:41 +0200
-Message-ID: <20150325010641.GI18321@valkosipuli.retiisi.org.uk>
-References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: [PATCH v4 0/3] Add ktd2692 Flash LED driver using LED Flash class
+Date: Wed, 25 Mar 2015 10:30:41 +0900
+Message-ID: <1427247044-3748-1-git-send-email-ingi2.kim@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46857 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752012AbbCYBGr (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Tue, 24 Mar 2015 21:06:47 -0400
-Content-Disposition: inline
-In-Reply-To: <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:54961 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752801AbbCYBay (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 24 Mar 2015 21:30:54 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Jacek,
+This patch adds ktd2692 Flash LED driver with LED Flash class
 
-On Fri, Mar 20, 2015 at 04:03:29PM +0100, Jacek Anaszewski wrote:
-> This patch adds a description of 'flashes' property
-> to the samsung-fimc.txt.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/media/samsung-fimc.txt     |    8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> index 922d6f8..cb0e263 100644
-> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> @@ -40,6 +40,13 @@ should be inactive. For the "active-a" state the camera port A must be activated
->  and the port B deactivated and for the state "active-b" it should be the other
->  way around.
->  
-> +Optional properties:
-> +
-> +- flashes - Array of phandles to the flash LEDs that can be controlled by the
-> +	    sub-devices contained in this media device. Flash LED is
-> +	    represented by a child node of a flash LED device
+Change in v4:
+	- Clean up the code
+	- Modify binding documentation of ktd2692
 
-This should be in
-Documentation/devicetree/bindings/media/video-interfaces.txt.
+Change in v3:
+	- Clean up the code
+	- Add aux gpio pin to control Flash LED
 
-Should flash devices be associated with sensors somehow rather than ISPs?
-That's how they commonly are arranged, however that doesn't limit placing
-them in silly places.
+Change in v2:
+	- Introduction of LED Flash class as Jacek's comment
+	- Supplement of binding documentation
+	- Rename gpio control pin and remove unused pin
+	- Add regulator for the Flash LED
 
-I'm not necessarily saying the flashes-property should be present in
-sensor's DT nodes, but it'd be good to be able to make the association if
-it's there.
+Ingi Kim (3):
+  of: Add vendor prefix for Kinetic technologies
+  leds: ktd2692: add device tree bindings for ktd2692
+  leds: Add ktd2692 flash LED driver
 
-> +	    (see Documentation/devicetree/bindings/leds/common.txt).
-> +
->  The 'camera' node must include at least one 'fimc' child node.
->  
->  
-> @@ -166,6 +173,7 @@ Example:
->  		clock-output-names = "cam_a_clkout", "cam_b_clkout";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&cam_port_a_clk_active>;
-> +		flashes = <&camera_flash>, <&system_torch>;
->  		status = "okay";
->  		#address-cells = <1>;
->  		#size-cells = <1>;
-
-There will be other kind of devices that have somewhat similar relationship.
-They just haven't been defined yet. Lens controllers or EEPROM for instance.
-The two are an integral part of a module, something which is not modelled in
-DT in any way, but perhaps should be.
+ .../devicetree/bindings/leds/leds-ktd2692.txt      |  33 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ drivers/leds/Kconfig                               |   9 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-ktd2692.c                        | 412 +++++++++++++++++++++
+ 5 files changed, 456 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+ create mode 100644 drivers/leds/leds-ktd2692.c
 
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+2.0.5
