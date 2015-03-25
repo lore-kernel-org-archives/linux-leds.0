@@ -1,113 +1,70 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Wed, 25 Mar 2015 02:54:29 +0200
-Message-ID: <20150325005429.GF18321@valkosipuli.retiisi.org.uk>
-References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
+Date: Wed, 25 Mar 2015 02:55:43 +0200
+Message-ID: <20150325005542.GG18321@valkosipuli.retiisi.org.uk>
+References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
+ <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
+ <20150321224903.GE16613@valkosipuli.retiisi.org.uk>
+ <550FE2C3.7090702@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46725 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46748 "EHLO
 	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751928AbbCYAzG (ORCPT
+	by vger.kernel.org with ESMTP id S1752698AbbCYA4P (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>);
-	Tue, 24 Mar 2015 20:55:06 -0400
+	Tue, 24 Mar 2015 20:56:15 -0400
 Content-Disposition: inline
-In-Reply-To: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <550FE2C3.7090702@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, j.anaszewski@samsung.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Ricardo,
+Hi Jacek,
 
-(Cc Jacek.)
-
-I had similar thoughts when reviewing Jacek's V4L2 flash API patches. See
-below.
-
-On Sat, Mar 14, 2015 at 12:05:39AM +0100, Ricardo Ribalda Delgado wrote:
-> The current code expected that every LED had an unique name. This is a
-> legit expectation when the device tree can no be modified or extended.
-> But with device tree overlays this requirement can be easily broken.
+On Mon, Mar 23, 2015 at 10:54:11AM +0100, Jacek Anaszewski wrote:
+> Hi Sakari,
 > 
-> This patch finds out if the name is already in use and adds the suffix
-> _1, _2... if not.
+> On 03/21/2015 11:49 PM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >On Fri, Mar 20, 2015 at 04:03:22PM +0100, Jacek Anaszewski wrote:
+> >>+Optional properties of the LED child node:
+> >>+- label : see Documentation/devicetree/bindings/leds/common.txt
+> >
+> >I'm still not comfortable using the label field as-is as the entity name in
+> >the later patches, there's one important problem: it is not guaranteed to be
+> >unique in the system.
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> v3: Suggested by Bryan Wu <cooloney@gmail.com>
+> I don't use it as-is in my patches. For max77603-led the i2c adapter id
+> and client address is added to it, and for aat1290 there is '_n' suffix
+> added. Nonetheless I didn't notice that the patch [1] was already
+> merged. It checks if a LED class device with given name isn't already
+> registered and adds a '_n" suffix if there was any. If it was exported
+> I could use it in the leds-aat1290 driver and avoid depending on the
+> static variable.
 > 
-> -Do not allocate dynamically the name
->  drivers/leds/led-class.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
+> Whereas for I2C devices the problem doesn't exist (it is guaranteed that
+> no more than one I2C client with an address can be present on the
+> same bus), for devices driven through GPIOs we haven't stable unique
+> identifier.
 > 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 768d33a..4ca37b8 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -212,6 +212,26 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
->  	.resume         = led_resume,
->  };
->  
-> +static int match_name(struct device *dev, const void *data)
-> +{
-> +	if (!dev_name(dev))
-> +		return 0;
-> +	return !strcmp(dev_name(dev), (char *)data);
-> +}
-> +
-> +static int led_classdev_next_name(const char *init_name, char *name,
-> +				  size_t len)
-> +{
-> +	int i = 0;
-> +
-> +	strncpy(name, init_name, len);
-> +
-> +	while (class_find_device(leds_class, NULL, name, match_name))
-> +		snprintf(name, len, "%s_%d", init_name, ++i);
-> +
-> +	return i;
-> +}
-> +
->  /**
->   * led_classdev_register - register a new object of led_classdev class.
->   * @parent: The device to register.
-> @@ -219,12 +239,19 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
->   */
->  int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  {
-> +	char name[64];
-> +	int ret;
-> +
-> +	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->  	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
-> -					led_cdev, led_cdev->groups,
-> -					"%s", led_cdev->name);
-> +					led_cdev, led_cdev->groups, name);
->  	if (IS_ERR(led_cdev->dev))
->  		return PTR_ERR(led_cdev->dev);
->  
-> +	if (ret)
-> +		dev_info(parent, "Led %s renamed to %s due to name collision",
-> +				led_cdev->name, dev_name(led_cdev->dev));
+> I thought that we agreed on #v4l about adding numerical postfixes
+> in case of such devices.
+> 
+> >Do you think this could be added to
+> >Documentation/devicetree/bindings/leds/common.txt, with perhaps enforcing it
+> >in the LED framework? Bryan, what do you think?
+> 
+> The patch [1] seems to address the issue.
 
-I'd use dev_warn() or even WARN_ON(ret). This is a rather serious issue as
-now the probe order defines the name of the device. There might be something
-better such as the I2C bus/address.
+Replied to that, you're cc'd.
 
-If the registration order for some reason changes, that'd revert the device
-names. In Media controller this is part of the user space API.
+For this patch:
 
-I suggested Jacek adding the uniqueness requirement to documentation as
-well, ePAPR by itself does not require it for label properties.
-
-> +
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	init_rwsem(&led_cdev->trigger_lock);
->  #endif
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-Kind regards,
-
 Sakari Ailus
 e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
