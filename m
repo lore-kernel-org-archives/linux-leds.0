@@ -1,64 +1,84 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1 07/11] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Wed, 25 Mar 2015 03:00:37 +0200
-Message-ID: <20150325010037.GH18321@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v1 09/11] DT: Add documentation for exynos4-is 'flashes'
+ property
+Date: Wed, 25 Mar 2015 03:06:41 +0200
+Message-ID: <20150325010641.GI18321@valkosipuli.retiisi.org.uk>
 References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-8-git-send-email-j.anaszewski@samsung.com>
- <20150322002229.GG16613@valkosipuli.retiisi.org.uk>
- <55102C5A.8060206@samsung.com>
- <20150323223546.GQ16613@valkosipuli.retiisi.org.uk>
- <551121B9.10905@samsung.com>
+ <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46857 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752012AbbCYBGr (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Tue, 24 Mar 2015 21:06:47 -0400
 Content-Disposition: inline
-In-Reply-To: <551121B9.10905@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+In-Reply-To: <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
 Hi Jacek,
 
-On Tue, Mar 24, 2015 at 09:35:05AM +0100, Jacek Anaszewski wrote:
-...
-> >>>>diff --git a/drivers/media/v4l2-core/v4l2-flash.c b/drivers/media/v4l2-core/v4l2-flash.c
-> >>>>new file mode 100644
-> >>>>index 0000000..804c2e4
-> >>>>--- /dev/null
-> >>>>+++ b/drivers/media/v4l2-core/v4l2-flash.c
-> >>>>@@ -0,0 +1,607 @@
-> >>>>+/*
-> >>>>+ * V4L2 Flash LED sub-device registration helpers.
-> >>>>+ *
-> >>>>+ *	Copyright (C) 2015 Samsung Electronics Co., Ltd
-> >>>>+ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-> >>>>+ *
-> >>>>+ * This program is free software; you can redistribute it and/or modify
-> >>>>+ * it under the terms of the GNU General Public License version 2 as
-> >>>>+ * published by the Free Software Foundation.
-> >>>>+ */
-> >>>>+
-> >>>>+#include <linux/led-class-flash.h>
-> >>>>+#include <linux/module.h>
-> >>>>+#include <linux/mutex.h>
-> >>>>+#include <linux/of.h>
-> >>>>+#include <linux/slab.h>
-> >>>>+#include <linux/types.h>
-> >>>>+#include <media/v4l2-flash.h>
-> >>>>+#include "../../leds/leds.h"
-> >>>
-> >>>What do you need from leds.h? Shouldn't this be e.g. under include/linux
-> >>>instead?
+On Fri, Mar 20, 2015 at 04:03:29PM +0100, Jacek Anaszewski wrote:
+> This patch adds a description of 'flashes' property
+> to the samsung-fimc.txt.
 > 
-> I need led_trigger_remove function.
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/media/samsung-fimc.txt     |    8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> index 922d6f8..cb0e263 100644
+> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> @@ -40,6 +40,13 @@ should be inactive. For the "active-a" state the camera port A must be activated
+>  and the port B deactivated and for the state "active-b" it should be the other
+>  way around.
+>  
+> +Optional properties:
+> +
+> +- flashes - Array of phandles to the flash LEDs that can be controlled by the
+> +	    sub-devices contained in this media device. Flash LED is
+> +	    represented by a child node of a flash LED device
 
-It's exported but defined in what is obviously a private header file to the
-framework. Could it be moved to include/linux/leds.h instead?
+This should be in
+Documentation/devicetree/bindings/media/video-interfaces.txt.
+
+Should flash devices be associated with sensors somehow rather than ISPs?
+That's how they commonly are arranged, however that doesn't limit placing
+them in silly places.
+
+I'm not necessarily saying the flashes-property should be present in
+sensor's DT nodes, but it'd be good to be able to make the association if
+it's there.
+
+> +	    (see Documentation/devicetree/bindings/leds/common.txt).
+> +
+>  The 'camera' node must include at least one 'fimc' child node.
+>  
+>  
+> @@ -166,6 +173,7 @@ Example:
+>  		clock-output-names = "cam_a_clkout", "cam_b_clkout";
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&cam_port_a_clk_active>;
+> +		flashes = <&camera_flash>, <&system_torch>;
+>  		status = "okay";
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+
+There will be other kind of devices that have somewhat similar relationship.
+They just haven't been defined yet. Lens controllers or EEPROM for instance.
+The two are an integral part of a module, something which is not modelled in
+DT in any way, but perhaps should be.
 
 -- 
-Regards,
+Kind regards,
 
 Sakari Ailus
 e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
