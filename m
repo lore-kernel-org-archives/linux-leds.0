@@ -1,70 +1,64 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
-Date: Wed, 25 Mar 2015 02:55:43 +0200
-Message-ID: <20150325005542.GG18321@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v1 07/11] media: Add registration helpers for V4L2 flash
+ sub-devices
+Date: Wed, 25 Mar 2015 03:00:37 +0200
+Message-ID: <20150325010037.GH18321@valkosipuli.retiisi.org.uk>
 References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
- <20150321224903.GE16613@valkosipuli.retiisi.org.uk>
- <550FE2C3.7090702@samsung.com>
+ <1426863811-12516-8-git-send-email-j.anaszewski@samsung.com>
+ <20150322002229.GG16613@valkosipuli.retiisi.org.uk>
+ <55102C5A.8060206@samsung.com>
+ <20150323223546.GQ16613@valkosipuli.retiisi.org.uk>
+ <551121B9.10905@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46748 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752698AbbCYA4P (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Tue, 24 Mar 2015 20:56:15 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <550FE2C3.7090702@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <551121B9.10905@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+List-Id: linux-leds@vger.kernel.org
 
 Hi Jacek,
 
-On Mon, Mar 23, 2015 at 10:54:11AM +0100, Jacek Anaszewski wrote:
-> Hi Sakari,
+On Tue, Mar 24, 2015 at 09:35:05AM +0100, Jacek Anaszewski wrote:
+...
+> >>>>diff --git a/drivers/media/v4l2-core/v4l2-flash.c b/drivers/media/v4l2-core/v4l2-flash.c
+> >>>>new file mode 100644
+> >>>>index 0000000..804c2e4
+> >>>>--- /dev/null
+> >>>>+++ b/drivers/media/v4l2-core/v4l2-flash.c
+> >>>>@@ -0,0 +1,607 @@
+> >>>>+/*
+> >>>>+ * V4L2 Flash LED sub-device registration helpers.
+> >>>>+ *
+> >>>>+ *	Copyright (C) 2015 Samsung Electronics Co., Ltd
+> >>>>+ *	Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>>>+ *
+> >>>>+ * This program is free software; you can redistribute it and/or modify
+> >>>>+ * it under the terms of the GNU General Public License version 2 as
+> >>>>+ * published by the Free Software Foundation.
+> >>>>+ */
+> >>>>+
+> >>>>+#include <linux/led-class-flash.h>
+> >>>>+#include <linux/module.h>
+> >>>>+#include <linux/mutex.h>
+> >>>>+#include <linux/of.h>
+> >>>>+#include <linux/slab.h>
+> >>>>+#include <linux/types.h>
+> >>>>+#include <media/v4l2-flash.h>
+> >>>>+#include "../../leds/leds.h"
+> >>>
+> >>>What do you need from leds.h? Shouldn't this be e.g. under include/linux
+> >>>instead?
 > 
-> On 03/21/2015 11:49 PM, Sakari Ailus wrote:
-> >Hi Jacek,
-> >
-> >On Fri, Mar 20, 2015 at 04:03:22PM +0100, Jacek Anaszewski wrote:
-> >>+Optional properties of the LED child node:
-> >>+- label : see Documentation/devicetree/bindings/leds/common.txt
-> >
-> >I'm still not comfortable using the label field as-is as the entity name in
-> >the later patches, there's one important problem: it is not guaranteed to be
-> >unique in the system.
-> 
-> I don't use it as-is in my patches. For max77603-led the i2c adapter id
-> and client address is added to it, and for aat1290 there is '_n' suffix
-> added. Nonetheless I didn't notice that the patch [1] was already
-> merged. It checks if a LED class device with given name isn't already
-> registered and adds a '_n" suffix if there was any. If it was exported
-> I could use it in the leds-aat1290 driver and avoid depending on the
-> static variable.
-> 
-> Whereas for I2C devices the problem doesn't exist (it is guaranteed that
-> no more than one I2C client with an address can be present on the
-> same bus), for devices driven through GPIOs we haven't stable unique
-> identifier.
-> 
-> I thought that we agreed on #v4l about adding numerical postfixes
-> in case of such devices.
-> 
-> >Do you think this could be added to
-> >Documentation/devicetree/bindings/leds/common.txt, with perhaps enforcing it
-> >in the LED framework? Bryan, what do you think?
-> 
-> The patch [1] seems to address the issue.
+> I need led_trigger_remove function.
 
-Replied to that, you're cc'd.
-
-For this patch:
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+It's exported but defined in what is obviously a private header file to the
+framework. Could it be moved to include/linux/leds.h instead?
 
 -- 
+Regards,
+
 Sakari Ailus
 e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
