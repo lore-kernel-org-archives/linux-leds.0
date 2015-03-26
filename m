@@ -1,41 +1,43 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH] DT: leds: Add uniqueness requirement for 'label' property.
-Date: Thu, 26 Mar 2015 22:59:03 +0200
-Message-ID: <55147317.8010009@iki.fi>
-References: <1427378590-24219-1-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
+Date: Fri, 27 Mar 2015 01:30:25 +0200
+Message-ID: <20150326233025.GR18321@valkosipuli.retiisi.org.uk>
+References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37489 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752530AbbCZU7v (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Thu, 26 Mar 2015 16:59:51 -0400
-In-Reply-To: <1427378590-24219-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org
 
-Hi Jacek,
+Hi Ricardo,
 
-Jacek Anaszewski wrote:
-> Label is used for naming LED class devices. Since ePAPR
-> doesn't require uniqueness for label properties, it has to be
-> explicitly required in the LEDs common bindings documentation.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: devicetree@vger.kernel.org
+On Sat, Mar 14, 2015 at 12:05:39AM +0100, Ricardo Ribalda Delgado wrote:
+> @@ -219,12 +239,19 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
+>   */
+>  int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>  {
+> +	char name[64];
+> +	int ret;
+> +
+> +	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+>  	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
+> -					led_cdev, led_cdev->groups,
+> -					"%s", led_cdev->name);
+> +					led_cdev, led_cdev->groups, name);
 
-Thanks for the patch!
+I just realised there was another issue --- the name is now interpreted as
+format string. Bad things will happen if there's e.g. %s in the name itself
+--- perhaps unlikely, but possible.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Now that I was about to submit a patch, I'll submit one for this one as
+well. :-)
 
 -- 
+Regards,
+
 Sakari Ailus
-sakari.ailus@iki.fi
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
