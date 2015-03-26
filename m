@@ -1,58 +1,48 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Subject: Re: [PATCH] leds: start numerating duplicated devices from 2
-Date: Thu, 26 Mar 2015 15:39:13 +0100
-Message-ID: <55141A11.3020703@samsung.com>
+Date: Thu, 26 Mar 2015 15:43:31 +0100
+Message-ID: <CAPybu_3=xQT0WO6mFMMYWhFoAdAj3OXTgLn5eRP_nEL98jJ1pA@mail.gmail.com>
 References: <1427378590-24219-1-git-send-email-j.anaszewski@samsung.com>
  <1427378590-24219-2-git-send-email-j.anaszewski@samsung.com>
- <CAPybu_2uPvZayywBuUbZ=JV7Fk5sBWeWqu3-AC35FcsA3kMXEg@mail.gmail.com>
+ <CAPybu_2uPvZayywBuUbZ=JV7Fk5sBWeWqu3-AC35FcsA3kMXEg@mail.gmail.com> <55141A11.3020703@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47535 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753023AbbCZOjQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Mar 2015 10:39:16 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NLT00GYSQ87EE00@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 26 Mar 2015 14:43:19 +0000 (GMT)
-In-reply-to: <CAPybu_2uPvZayywBuUbZ=JV7Fk5sBWeWqu3-AC35FcsA3kMXEg@mail.gmail.com>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:32959 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752677AbbCZOnx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Mar 2015 10:43:53 -0400
+Received: by lbcmq2 with SMTP id mq2so42590098lbc.0
+        for <linux-leds@vger.kernel.org>; Thu, 26 Mar 2015 07:43:52 -0700 (PDT)
+In-Reply-To: <55141A11.3020703@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>
 
-Hi Ricardo,
+Hi Jacek
 
-On 03/26/2015 03:22 PM, Ricardo Ribalda Delgado wrote:
-> Hello
->
-> I thought real programmers count from zero :), Jokes aside, I think it
-> is the convention in the kernel to start from 0 (video0, mmc0....)
->
-> Also the patch is wrong, it will always show the info message "led
-> renamed to...", becase led_classdev_register expects 0 when the device
-> has not been renamed, with this patch you will return 1.
->
-> Best Regards
->
-> Nacked-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->
+On Thu, Mar 26, 2015 at 3:39 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
 
-Oops, I didn't notice this :-/
+>
+> For LED subsystem having devices e.g. aat1290 and aat1290_1 would
+> be confusing IMO.
 
-Getting back to numeration - in the LED subsystem devices don't
-get numerical suffixes, if they are not duplicated.
+It the error is fixed I have no strong opinion here. I prefer from _1,
+but if the consensus is different I would not object.
 
-For V4L2 case every device name begins from 'video' so adding
-the numbers from 0 is reasonable.
+Send a v2 of the patch, and lets see what Bryan has to say :)
 
-For LED subsystem having devices e.g. aat1290 and aat1290_1 would
-be confusing IMO.
+Regards!
+
+>
+>
+> --
+> Best Regards,
+> Jacek Anaszewski
+
 
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Ricardo Ribalda
