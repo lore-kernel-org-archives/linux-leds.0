@@ -1,131 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v1 02/11] DT: Add documentation for the mfd Maxim max77693
-Date: Thu, 26 Mar 2015 14:06:38 +0000
-Message-ID: <20150326140638.GM5951@x1>
-References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
- <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH] leds: start numerating duplicated devices from 2
+Date: Thu, 26 Mar 2015 15:22:57 +0100
+Message-ID: <CAPybu_2uPvZayywBuUbZ=JV7Fk5sBWeWqu3-AC35FcsA3kMXEg@mail.gmail.com>
+References: <1427378590-24219-1-git-send-email-j.anaszewski@samsung.com> <1427378590-24219-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1426863811-12516-3-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:32784 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751533AbbCZOXT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Mar 2015 10:23:19 -0400
+Received: by labto5 with SMTP id to5so46937733lab.0
+        for <linux-leds@vger.kernel.org>; Thu, 26 Mar 2015 07:23:17 -0700 (PDT)
+In-Reply-To: <1427378590-24219-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>
 
-On Fri, 20 Mar 2015, Jacek Anaszewski wrote:
+Hello
 
-> This patch adds device tree binding documentation for
-> the flash cell of the Maxim max77693 multifunctional device.
->=20
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++++++++++=
-++++++++++
->  1 file changed, 61 insertions(+)
+I thought real programmers count from zero :), Jokes aside, I think it
+is the convention in the kernel to start from 0 (video0, mmc0....)
 
-Bryan and/or one of the DT folks really need to Ack this.
+Also the patch is wrong, it will always show the info message "led
+renamed to...", becase led_classdev_register expects 0 when the device
+has not been renamed, with this patch you will return 1.
 
-> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Doc=
-umentation/devicetree/bindings/mfd/max77693.txt
-> index 38e6440..15c546e 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
-> @@ -76,7 +76,53 @@ Optional properties:
->      Valid values: 4300000, 4700000, 4800000, 4900000
->      Default: 4300000
-> =20
-> +- led : the LED submodule device node
-> +
-> +There are two LED outputs available - FLED1 and FLED2. Each of them =
-can
-> +control a separate LED or they can be connected together to double
-> +the maximum current for a single connected LED. One LED is represent=
-ed
-> +by one child node.
-> +
-> +Required properties:
-> +- compatible : Must be "maxim,max77693-led".
-> +
-> +Optional properties:
-> +- maxim,trigger-type : Flash trigger type.
-> +	Possible trigger types:
-> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
-> +			the flash,
-> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
-> +			of the flash.
-> +- maxim,boost-mode :
-> +	In boost mode the device can produce up to 1.2A of total current
-> +	on both outputs. The maximum current on each output is reduced
-> +	to 625mA then. If not enabled explicitly, boost setting defaults to
-> +	LEDS_BOOST_FIXED in case both current sources are used.
-> +	Possible values:
-> +		LEDS_BOOST_OFF (0) - no boost,
-> +		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
-> +		LEDS_BOOST_FIXED (2) - fixed mode.
-> +- maxim,boost-mvout : Output voltage of the boost module in millivol=
-ts.
-> +- maxim,mvsys-min : Low input voltage level in millivolts. Flash is =
-not fired
-> +	if chip estimates that system voltage could drop below this level d=
-ue
-> +	to flash power consumption.
-> +
-> +Required properties of the LED child node:
-> +- led-sources : see Documentation/devicetree/bindings/leds/common.tx=
-t;
-> +		device current output identifiers: 0 - FLED1, 1 - FLED2
-> +
-> +Optional properties of the LED child node:
-> +- label : see Documentation/devicetree/bindings/leds/common.txt
-> +- max-microamp : see Documentation/devicetree/bindings/leds/common.t=
-xt
-> +		Range: 15625 - 250000
-> +- flash-max-microamp : see Documentation/devicetree/bindings/leds/co=
-mmon.txt
-> +		Range: 15625 - 1000000
-> +- flash-timeout-us : see Documentation/devicetree/bindings/leds/comm=
-on.txt
-> +		Range: 62500 - 1000000
-> +
->  Example:
-> +#include <dt-bindings/leds/common.h>
-> +
->  	max77693@66 {
->  		compatible =3D "maxim,max77693";
->  		reg =3D <0x66>;
-> @@ -117,5 +163,20 @@ Example:
->  			maxim,thermal-regulation-celsius =3D <75>;
->  			maxim,battery-overcurrent-microamp =3D <3000000>;
->  			maxim,charge-input-threshold-microvolt =3D <4300000>;
-> +
-> +		led {
-> +			compatible =3D "maxim,max77693-led";
-> +			maxim,trigger-type =3D <LEDS_TRIG_TYPE_LEVEL>;
-> +			maxim,boost-mode =3D <LEDS_BOOST_FIXED>;
-> +			maxim,boost-mvout =3D <5000>;
-> +			maxim,mvsys-min =3D <2400>;
-> +
-> +			camera_flash: flash-led {
-> +				label =3D "max77693-flash";
-> +				led-sources =3D <0>, <1>;
-> +				max-microamp =3D <500000>;
-> +				flash-max-microamp =3D <1250000>;
-> +				flash-timeout-us =3D <1000000>;
-> +			};
->  		};
->  	};
+Best Regards
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Nacked-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+
+-- 
+Ricardo Ribalda
