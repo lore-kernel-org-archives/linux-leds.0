@@ -1,43 +1,39 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Fri, 27 Mar 2015 01:30:25 +0200
-Message-ID: <20150326233025.GR18321@valkosipuli.retiisi.org.uk>
-References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] leds: Don't treat the LED name as a format string
+Date: Fri, 27 Mar 2015 01:42:06 +0200
+Message-ID: <1427413326-11811-3-git-send-email-sakari.ailus@iki.fi>
+References: <1427413326-11811-1-git-send-email-sakari.ailus@iki.fi>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38463 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753475AbbCZXmm (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Thu, 26 Mar 2015 19:42:42 -0400
+In-Reply-To: <1427413326-11811-1-git-send-email-sakari.ailus@iki.fi>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: ricardo.ribalda@gmail.com
+Cc: linux-leds@vger.kernel.org, cooloney@gmail.com
 
-Hi Ricardo,
+The LED name was wrongly interpreted as format string. Stop doing that.
 
-On Sat, Mar 14, 2015 at 12:05:39AM +0100, Ricardo Ribalda Delgado wrote:
-> @@ -219,12 +239,19 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
->   */
->  int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  {
-> +	char name[64];
-> +	int ret;
-> +
-> +	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->  	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
-> -					led_cdev, led_cdev->groups,
-> -					"%s", led_cdev->name);
-> +					led_cdev, led_cdev->groups, name);
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/leds/led-class.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I just realised there was another issue --- the name is now interpreted as
-format string. Bad things will happen if there's e.g. %s in the name itself
---- perhaps unlikely, but possible.
-
-Now that I was about to submit a patch, I'll submit one for this one as
-well. :-)
-
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index bbe0294..ebf6dad4f 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -244,7 +244,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 
+ 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+ 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
+-					led_cdev, led_cdev->groups, name);
++				led_cdev, led_cdev->groups, "%s", name);
+ 	if (IS_ERR(led_cdev->dev))
+ 		return PTR_ERR(led_cdev->dev);
+ 
 -- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.7.10.4
