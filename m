@@ -1,85 +1,57 @@
-From: Corey Minyard <cminyard@mvista.com>
-Subject: Re: [PATCH] leds-gpio: Fix error handling and memory leak
-Date: Thu, 26 Mar 2015 09:55:59 -0500
-Message-ID: <55141DFF.5020905@mvista.com>
-References: <1425948222-7925-1-git-send-email-minyard@acm.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v2] leds: start numerating duplicated devices from 2
+Date: Thu, 26 Mar 2015 15:59:49 +0100
+Message-ID: <1427381989-17365-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:34119 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752391AbbCZO4H (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Mar 2015 10:56:07 -0400
-Received: by oigz129 with SMTP id z129so6322149oig.1
-        for <linux-leds@vger.kernel.org>; Thu, 26 Mar 2015 07:56:06 -0700 (PDT)
-In-Reply-To: <1425948222-7925-1-git-send-email-minyard@acm.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:43924 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752934AbbCZPAK (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Mar 2015 11:00:10 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NLT004RMR08K750@mailout2.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 27 Mar 2015 00:00:09 +0900 (KST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: minyard@acm.org, Raphael Assenat <raph@8d.com>
-Cc: linux-leds@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>
 
-Ping.  This is a rather obvious fix and can result in an oops.
+Duplicated devices are currently given numerical suffixes
+starting from 1. Since duplication means that one instance
+of a device already exists in the system, then it is more
+intuitive for the next device to get the suffix "_2".
 
--corey
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+---
+ drivers/leds/led-class.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 03/09/2015 07:43 PM, minyard@acm.org wrote:
-> From: Corey Minyard <cminyard@mvista.com>
->
-> The leds-gpio driver would not clean up properly if it failed in some
-> places, and it wasn't freeing its private data.
->
-> Signed-off-by: Corey Minyard <cminyard@mvista.com>
-> ---
->  drivers/leds/leds-gpio.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index d26af0a..32f7642 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -198,8 +198,10 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  		} else {
->  			if (IS_ENABLED(CONFIG_OF) && !led.name && np)
->  				led.name = np->name;
-> -			if (!led.name)
-> -				return ERR_PTR(-EINVAL);
-> +			if (!led.name) {
-> +				ret = -EINVAL;
-> +				goto err;
-> +			}
->  		}
->  		fwnode_property_read_string(child, "linux,default-trigger",
->  					    &led.default_trigger);
-> @@ -217,19 +219,21 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  		if (fwnode_property_present(child, "retain-state-suspended"))
->  			led.retain_state_suspended = 1;
->  
-> -		ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
-> +		ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
->  				      dev, NULL);
->  		if (ret < 0) {
->  			fwnode_handle_put(child);
->  			goto err;
->  		}
-> +		priv->num_leds++;
->  	}
->  
->  	return priv;
->  
->  err:
-> -	for (count = priv->num_leds - 2; count >= 0; count--)
-> +	for (count = priv->num_leds - 1; count >= 0; count--)
->  		delete_gpio_led(&priv->leds[count]);
-> +	devm_kfree(dev, priv);
->  	return ERR_PTR(ret);
->  }
->  
-> @@ -283,6 +287,7 @@ static int gpio_led_remove(struct platform_device *pdev)
->  
->  	for (i = 0; i < priv->num_leds; i++)
->  		delete_gpio_led(&priv->leds[i]);
-> +	devm_kfree(&pdev->dev, priv);
->  
->  	return 0;
->  }
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 4ca37b8..07fcb35 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -222,14 +222,14 @@ static int match_name(struct device *dev, const void *data)
+ static int led_classdev_next_name(const char *init_name, char *name,
+ 				  size_t len)
+ {
+-	int i = 0;
++	int i = 1;
+ 
+ 	strncpy(name, init_name, len);
+ 
+ 	while (class_find_device(leds_class, NULL, name, match_name))
+ 		snprintf(name, len, "%s_%d", init_name, ++i);
+ 
+-	return i;
++	return i > 1 ? i : 0;
+ }
+ 
+ /**
+-- 
+1.7.9.5
