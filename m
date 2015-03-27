@@ -1,115 +1,42 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 0/2] leds/pwm: don't call pwm_disable when setting
- brightness
-Date: Fri, 27 Mar 2015 09:59:43 +0100
-Message-ID: <20150327085942.GA10906@pengutronix.de>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20150325101428.GB32677@pengutronix.de>
- <20150325120039.GA16310@ulmo.nvidia.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 0/2] Fix a few LED naming related issues
+Date: Fri, 27 Mar 2015 12:07:44 +0200
+Message-ID: <20150327100744.GS18321@valkosipuli.retiisi.org.uk>
+References: <1427413326-11811-1-git-send-email-sakari.ailus@iki.fi>
+ <CAK5ve-KmJUZCC6fyOHdXsNEGihxNtD4dHJBEdznJyEJ=3tiXHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41733 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752306AbbC0KIW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Fri, 27 Mar 2015 06:08:22 -0400
 Content-Disposition: inline
-In-Reply-To: <20150325120039.GA16310@ulmo.nvidia.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel@pengutronix.de, Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <CAK5ve-KmJUZCC6fyOHdXsNEGihxNtD4dHJBEdznJyEJ=3tiXHw@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hello Thierry,
+On Thu, Mar 26, 2015 at 06:07:44PM -0700, Bryan Wu wrote:
+> On Thu, Mar 26, 2015 at 4:42 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> > Hi guys,
+> >
+> > Just two more patches for LED naming --- change the log level from info to
+> > warn, and fix a relatively minor-looking format string vulnerability.
+> >
+> 
+> Looks good to me, I will merge them
 
-On Wed, Mar 25, 2015 at 01:00:40PM +0100, Thierry Reding wrote:
-> On Wed, Mar 25, 2015 at 11:14:28AM +0100, Uwe Kleine-K=F6nig wrote:
-> > On Thu, Feb 12, 2015 at 10:44:48AM +0100, Uwe Kleine-K=F6nig wrote:
-> > > on arm/i.MX28 the leds connected to a pwm are still broken and it=
-'s more
-> > > than three years ago that I came up with these patches. I still c=
-onsider
-> > > them to do the right thing and they fix a real bug.
-> > I'm really frustrated here. I want to fix a real bug, made several
-> > suggestions (with patches) how to fix it and still have to include =
-my
-> > local patches in each project that uses leds on i.MX28's pwm output=
-=2E
-> >=20
-> > Thierry, how can we get this resolved?
->=20
-> We have a couple of other drivers already solving similar issues. Loo=
-k
-> for example at the pwm-bcm-kona driver. It explicitly sets the duty
-> cycle to 0 on ->disable() and then waits for some time before actuall=
-y
-> disabling the clock (specifically to avoid a similar than you seem to
-> have on i.MX). See also the notes near the top of the driver source
-> file.
->=20
-> Another example is pwm-samsung. It also has code specifically aimed a=
-t
-> making sure the signal doesn't unexpectedly stay high after calling
-> pwm_disable(). See also the commit message of:
->=20
-> 	6da89312a39b pwm: samsung: Fix output race on disabling
->=20
-> Both of these examples sound very similar to what you're describing, =
-so
-> I think it'd be best to follow these examples and fix the i.MX driver=
- to
-> behave as expected.
-Seeing that more hardware behaves like the mxs pwm makes me still more
-convinced that the pwm core should be aware of things like double
-buffering and different behaviour for disabling. Adding code to fulfil
-the API/user expectation to all three (and maybe more?) drivers seems
-wrong, don't you think?
+Oh, there's one thing I forgot. The patches are simple, but I haven't tested
+them. I still need to find hardware I can use for testing which also has LED
+devices.
 
-There are IMHO two possibilities to define the outcome of
-pwm_config(duty=3D0) + pwm_disable():
+Thanks.
 
- a) the output must be 0
- b) the output is undefined
+-- 
+Regards,
 
-=46or a) there are two further cases:
-
- a1) each driver has to assert a) on its own
- a2) the pwm framework knows about a few common behaviours and can
-     handle them.
-
-Currently we are at a1) (which is undocumented in Documentation/pwm.txt
-btw). IMHO a1) is the worst of the three alternatives!
-
-BTW, what is the (expected but also undocumented) outcome of
-
-	pwm_set_polarity(polarity=3DPWM_POLARITY_INVERSED);
-	pwm_config(duty=3D0)
-	pwm_disable()
-
-?
-
-> Irrespective of the behaviour of current drivers, the assumptions are
-> already codified in the user drivers and they all assume that calling
-> pwm_disable() means the PWM is off.
-Well, if you call pwm_disable for the mxs pwm, it is disabled
-instantly. Disabling just doesn't imply that the output goes to 0.
-
-The problem at hand is updating the configuration doesn't end the
-current period. And then stopping the clock lets the output keep the
-last driven value.
-
-Considering
-
-	$ git grep \\\<pwm_disable | wc -l
-	34
-
-going through all callers and fixing them up for changed semantics
-doesn't seem too hard. Still more as there are several false hits
-(approx 50%).
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
