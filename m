@@ -1,165 +1,86 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/2] leds/pwm: don't call pwm_disable when setting
- brightness
-Date: Fri, 27 Mar 2015 12:26:08 +0100
-Message-ID: <20150327112607.GD5440@ulmo.nvidia.com>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20150325101428.GB32677@pengutronix.de>
- <20150325120039.GA16310@ulmo.nvidia.com>
- <20150327085942.GA10906@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BRE3mIcgqKzpedwo"
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v2 00/11] LED / flash API integration
+Date: Fri, 27 Mar 2015 14:49:34 +0100
+Message-ID: <1427464185-27950-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:33299 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752467AbbC0L0N (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Mar 2015 07:26:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20150327085942.GA10906@pengutronix.de>
+Received: from mailout1.samsung.com ([203.254.224.24]:30374 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752778AbbC0NuC (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Mar 2015 09:50:02 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-pwm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel@pengutronix.de, Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
+This is a second non-RFC version of LED / flash API integration
+series [1]. It is based on linux-next_20150327.
 
---BRE3mIcgqKzpedwo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+================
+Changes since v1
+================
 
-On Fri, Mar 27, 2015 at 09:59:43AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Thierry,
->=20
-> On Wed, Mar 25, 2015 at 01:00:40PM +0100, Thierry Reding wrote:
-> > On Wed, Mar 25, 2015 at 11:14:28AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Thu, Feb 12, 2015 at 10:44:48AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > > on arm/i.MX28 the leds connected to a pwm are still broken and it's=
- more
-> > > > than three years ago that I came up with these patches. I still con=
-sider
-> > > > them to do the right thing and they fix a real bug.
-> > > I'm really frustrated here. I want to fix a real bug, made several
-> > > suggestions (with patches) how to fix it and still have to include my
-> > > local patches in each project that uses leds on i.MX28's pwm output.
-> > >=20
-> > > Thierry, how can we get this resolved?
-> >=20
-> > We have a couple of other drivers already solving similar issues. Look
-> > for example at the pwm-bcm-kona driver. It explicitly sets the duty
-> > cycle to 0 on ->disable() and then waits for some time before actually
-> > disabling the clock (specifically to avoid a similar than you seem to
-> > have on i.MX). See also the notes near the top of the driver source
-> > file.
-> >=20
-> > Another example is pwm-samsung. It also has code specifically aimed at
-> > making sure the signal doesn't unexpectedly stay high after calling
-> > pwm_disable(). See also the commit message of:
-> >=20
-> > 	6da89312a39b pwm: samsung: Fix output race on disabling
-> >=20
-> > Both of these examples sound very similar to what you're describing, so
-> > I think it'd be best to follow these examples and fix the i.MX driver to
-> > behave as expected.
-> Seeing that more hardware behaves like the mxs pwm makes me still more
-> convinced that the pwm core should be aware of things like double
-> buffering and different behaviour for disabling. Adding code to fulfil
-> the API/user expectation to all three (and maybe more?) drivers seems
-> wrong, don't you think?
+- excluded exynos4-is media device related patches, as there is
+  consenus required related to flash devices handling in media device
+  DT bindings
+- modifications around LED Flash class settings and v4l2 flash config
+  initialization in LED Flash class drivers and v4l2-flash wrapper
+- switched to using DT node name as a device name for leds-max77693
+  and leds-aat1290 drivers, in case DT 'label' property is absent
+- dropped OF dependecy for v4l2-flash wrapper
+- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
+- allowed for multiple clients of v4l2-flash sub-device
 
-Erm... no. The whole point of a generic API is to abstract these kinds
-of differences between various drivers. The goal is that users of the
-API don't have to worry about the differences anymore and can expect a
-certain behaviour.
+======================
+Changes since RFC v13:
+======================
 
-> There are IMHO two possibilities to define the outcome of
-> pwm_config(duty=3D0) + pwm_disable():
->=20
->  a) the output must be 0
->  b) the output is undefined
->=20
-> For a) there are two further cases:
->=20
->  a1) each driver has to assert a) on its own
->  a2) the pwm framework knows about a few common behaviours and can
->      handle them.
->=20
-> Currently we are at a1) (which is undocumented in Documentation/pwm.txt
-> btw). IMHO a1) is the worst of the three alternatives!
+- reduced number of patches - some of them have been merged
+- slightly modified max77693-led device naming
+- fixed issues in v4l2-flash helpers detected with yavta
+- cleaned up AAT1290 device tree documentation
+- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
 
-Why do you think it is the worst? If we define the behaviour as b) what
-does that gain us? Why would users want to call these functions if their
-behaviour is undefined? What that will result in is that code happens to
-work with some PWM drivers but not with others. Then drivers will go and
-implement workarounds that work only for specific drivers and so on.
+Thanks,
+Jacek Anaszewski
 
-a2) isn't much better. It hides the specifics from the users, but at the
-same time it complicates the core because you're trying to generically
-describe something that's inherently not generic. Device-specific code
-belongs in drivers, not in the framework.
+[1] http://www.spinics.net/lists/kernel/msg1944538.html
 
-> BTW, what is the (expected but also undocumented) outcome of
->=20
-> 	pwm_set_polarity(polarity=3DPWM_POLARITY_INVERSED);
-> 	pwm_config(duty=3D0)
-> 	pwm_disable()
+Jacek Anaszewski (11):
+  leds: unify the location of led-trigger API
+  leds: add uapi header file
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add driver for AAT1290 flash LED controller
+  of: Add Skyworks Solutions, Inc. vendor prefix
+  DT: Add documentation for the Skyworks AAT1290
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  leds: max77693: add support for V4L2 Flash sub-device
+  leds: aat1290: add support for V4L2 Flash sub-device
 
-I would expect the PWM signal to be constant high after that. With
-normal polarity duty-cycle of 0 and disable means constant low, so
-inversing that gives constant 1, doesn't it?
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   70 ++
+ Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ Documentation/leds/leds-class-flash.txt            |   13 +
+ drivers/leds/Kconfig                               |   19 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/leds-aat1290.c                        |  518 ++++++++++
+ drivers/leds/leds-max77693.c                       | 1086 ++++++++++++++++++++
+ drivers/leds/leds.h                                |   24 -
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  619 +++++++++++
+ include/linux/led-class-flash.h                    |   16 +-
+ include/linux/leds.h                               |   24 +
+ include/media/v4l2-flash.h                         |  144 +++
+ include/uapi/linux/leds.h                          |   34 +
+ 16 files changed, 2605 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/media/v4l2-flash.h
+ create mode 100644 include/uapi/linux/leds.h
 
-> > Irrespective of the behaviour of current drivers, the assumptions are
-> > already codified in the user drivers and they all assume that calling
-> > pwm_disable() means the PWM is off.
-> Well, if you call pwm_disable for the mxs pwm, it is disabled
-> instantly. Disabling just doesn't imply that the output goes to 0.
-
-Right, and that's precisely what other drivers have extra code for to
-handle. If you look at the pwm-bcm-kona driver it has an extra delay of
-400 ns to make sure that the waveform is really updated.
-
-> The problem at hand is updating the configuration doesn't end the
-> current period. And then stopping the clock lets the output keep the
-> last driven value.
-
-So why can't you just block in ->disable() until you know the output is
-actually what's been requested? If you can't read that out from the
-hardware, then simply wait for a whole period before stopping the clock.
-
-> Considering
->=20
-> 	$ git grep \\\<pwm_disable | wc -l
-> 	34
->=20
-> going through all callers and fixing them up for changed semantics
-> doesn't seem too hard. Still more as there are several false hits
-> (approx 50%).
-
-Keep in mind that you'd need to retest all combinations of these users
-with all PWM drivers to make sure you're not inadvertently breaking
-existing setups.
-
-Thierry
-
---BRE3mIcgqKzpedwo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVFT5MAAoJEN0jrNd/PrOh4cMQALehWdOqXa2rtlr+xNUdT3BT
-I1BC3gn04fsb9JU1RwqbfgnV6XJm29IlJc0fuqmAl5NpXxO+gg55PyO0gkFlEtI0
-WbOhYWPRE7qQwTJxg3svK+2/tQX+ryklKpPBcRC4VtbRzcBMDBO0d4bX8DJmurPy
-NGdVozPDJlUPvza9vXFF6LIW1i/wtdy/yq8VueiXq9nl+juTDi4Cohpvcb30xsWR
-IsFeeUdTI2YZArqA3TcXowyyptFRs8rqRUgpeR0J8f4mG1jWtxCsue4X2jrd3pYD
-4s8WW1/0d0DAr5Frkde6cfmAEMu5+9G7AEWlGhiwWuHayHtPl4Iw5M6A5syKHm7W
-yrXvWmXqJU8sw1VksfaRcQGj0wmyDKILV8IBz5JqpLMnzmp6RnTpAczQHgvomsUi
-xp04HKBUKC7+ygQiIsoNLMtZbxIMqhuJPmv2NGVhXKQZczxWDRmsYx23tv5MvlVS
-SJuAQ0b7C/OuXxe5scdhLnax60narulA4ron/m2ByAXbBNgCIyHuXT9+W6kSTkvy
-Qf/y/XrUa3yBCkEv7HllEqwySmrbdUhgTJAdKNn6R+n6GbkJO/bKZeX5aVgVoaII
-bmEmXWSaKPsBh5ECW0eYzM/fK/xx5oVF1kBRTty5lTmhgH72kXdl7vFiy4DnFQwX
-C2qHzw+Gym7iliv3v3e8
-=z3iJ
------END PGP SIGNATURE-----
-
---BRE3mIcgqKzpedwo--
+-- 
+1.7.9.5
