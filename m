@@ -1,75 +1,95 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 0/2] leds/pwm: don't call pwm_disable when setting
- brightness
-Date: Fri, 27 Mar 2015 19:49:01 +0100
-Message-ID: <20150327184901.GY9742@pengutronix.de>
-References: <1423734290-19750-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20150325101428.GB32677@pengutronix.de>
- <20150325120039.GA16310@ulmo.nvidia.com>
- <20150327085942.GA10906@pengutronix.de>
- <20150327112607.GD5440@ulmo.nvidia.com>
- <20150327143559.GZ32677@pengutronix.de>
- <20150327154301.GA27626@ulmo.nvidia.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
+Date: Sat, 28 Mar 2015 09:07:05 +0800
+Message-ID: <20150328010705.GB3891@wfg-t540p.sh.intel.com>
+References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
+ <20150326233025.GR18321@valkosipuli.retiisi.org.uk>
+ <CAPybu_1thjCfz3Xomzpvc3Hpw2j_z8rXpmp28WnuRBDE0DYAtA@mail.gmail.com>
+ <CAK5ve-KLmETc1Ym1xvwTuvG7f5O1w6s=u3fgdGcYT8GHCWT+VA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150327154301.GA27626@ulmo.nvidia.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Andrew Morton <akpm@linux-foundation.org>, linux-leds@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tim Kryger <tim.kryger@linaro.org>, Alex Elder <elder@linaro.org>, Markus Mayer <markus.mayer@linaro.org>
+In-Reply-To: <CAK5ve-KLmETc1Ym1xvwTuvG7f5O1w6s=u3fgdGcYT8GHCWT+VA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Li <sparse@chrisli.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Mar 27, 2015 at 04:43:03PM +0100, Thierry Reding wrote:
-> On Fri, Mar 27, 2015 at 03:35:59PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > Why do you think it is the worst? If we define the behaviour as b=
-) what
-> > > does that gain us? Why would users want to call these functions i=
-f their
-> > The gain is that the three (or more?) pwm drivers don't need to spe=
-cial
-> > case an artificial requirement of the framework. OK, users have to
-> > adapt, but it's as simple as substituting all questionable calls to
-> > pwm_disable by a call to pwm_config(duty=3D0).
->=20
-> There is no gain. If users suddenly have to care about hardware
-> specifics I call that a loss. Equivalently if the PWM core framework
-> needs to know about these specifics that's also a loss because it put=
-s
-> complexity in the core where device-specific properties clearly
-> shouldn't be handled.
++ Kees Cook
 
-The easy way out for PWM users, the core and the driver is:
+On Fri, Mar 27, 2015 at 10:24:53AM -0700, Bryan Wu wrote:
+> On Fri, Mar 27, 2015 at 1:09 AM, Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+> > Hi Sakari
+> >
+> > cc: adding Greg (core and FormatGuard) and Chistopher (sparse)
+> >>
+> >> I just realised there was another issue --- the name is now interpreted as
+> >> format string. Bad things will happen if there's e.g. %s in the name itself
+> >> --- perhaps unlikely, but possible.
+> >
+> > Good catch!
+> >
+> > Would it be possible to add a sparse check to avoid this in all the kernel?
+> >
+> > And what about a macro protection like FormatGuard?
+> >
+> > https://www.usenix.org/legacy/events/sec01/full_papers/cowanbarringer/cowanbarringer.pdf
+> >
+> >
+> 
+> I think Fengguang's 0-DAY kernel test infrastructure can help this.
 
-Declare the output status of a disabled PWM as undefined.
+Kees' format-security branch has a check on dynamic printf format
+string, which has been effective in finding errors like:
 
-The core is not affected by this change. The users are even simplified
-by this change, because at the moment they all have to special case in
-some way if (duty =3D=3D 0) pwm_disable(pwm);, this code could be remov=
-ed.
-The PWM drivers could be simplified aswell since they no longer have to
-care about getting the PWM in a well defined state and don't have to
-take care about the correct disabled state of inverted PWMs. If a PWM
-driver wishes it can do some special casing for 0 and 100% duty cycle i=
-n
-order to save some power, but that would only be a bonus. As an
-additional bonus inverted PWMs could be completely software emulated in
-the core, then this code could also be removed from the drivers.
-PWM Users generally don't want to disable or enable the PWMs, instead
-they want a duty cycle of 0 or 100%. If they really don't care about th=
-e
-output status then they can call pwm_disable().
+   drivers/tty/serial/sb1250-duart.c: In function 'sbd_map_port':
+>> drivers/tty/serial/sb1250-duart.c:680:3: error: format not a string literal and no format arguments [-Werror=format-security]
+      printk(err);                                                                                                              
+      ^           
 
-Sascha
+I wonder if Kees has the plan to include the patch into upstream and
+make it a kconfig option. For your convenience, the patch is pasted
+below. 
 
+Thanks,
+Fengguang
+---
 
---=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+commit 95420c349194d1b570270ba1b1567d85461761c3
+Author:     Kees Cook <keescook@chromium.org>
+AuthorDate: Mon Sep 16 11:15:54 2013 -0700
+Commit:     Kees Cook <keescook@chromium.org>
+CommitDate: Wed Mar 4 14:07:18 2015 -0800
+
+    Make all format string problems fail the build
+    
+    In an effort to stop format strings from leaking into various callers,
+    have gcc stop the build when this gets detected.
+    
+    Signed-off-by: Kees Cook <keescook@chromium.org>
+
+diff --git a/Makefile b/Makefile
+index e6a9b1b..b7684d2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -402,7 +402,6 @@ KBUILD_CPPFLAGS := -D__KERNEL__
+ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+                   -fno-strict-aliasing -fno-common \
+                   -Werror-implicit-function-declaration \
+-                  -Wno-format-security \
+                   -std=gnu89
+ 
+ KBUILD_AFLAGS_KERNEL :=
+@@ -752,6 +751,11 @@ endif
+ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+ CHECKFLAGS     += $(NOSTDINC_FLAGS)
+ 
++# Enable format-security when it can stop the build, otherwise disable.
++KBUILD_CFLAGS  += $(call cc-option,\
++                       -Wformat -Wformat-security -Werror=format-security,\
++                       -Wno-format-security)
++
+ # warn about C99 declaration after statement
+ KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
