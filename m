@@ -1,35 +1,63 @@
-From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Subject: Re: [PATCH v2 02/11] leds: add uapi header file
-Date: Sun, 29 Mar 2015 00:35:11 +0200
-Message-ID: <20150328223510.GX18321@valkosipuli.retiisi.org.uk>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v2 03/11] leds: Add support for max77693 mfd flash cell
+Date: Sun, 29 Mar 2015 00:45:55 +0200
+Message-ID: <20150328224555.GY18321@valkosipuli.retiisi.org.uk>
 References: <1427464185-27950-1-git-send-email-j.anaszewski@samsung.com>
- <1427464185-27950-3-git-send-email-j.anaszewski@samsung.com>
+ <1427464185-27950-4-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1427464185-27950-3-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <1427464185-27950-4-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 Hi Jacek,
 
-On Fri, Mar 27, 2015 at 02:49:36PM +0100, Jacek Anaszewski wrote:
-> This patch adds header file for LED subsystem definitions and
-> declarations. The initial need for the header is allowing the
-> user space to discover the semantics of flash fault bits.
+On Fri, Mar 27, 2015 at 02:49:37PM +0100, Jacek Anaszewski wrote:
+> This patch adds led-flash support to Maxim max77693 chipset.
+> A device can be exposed to user space through LED subsystem
+> sysfs interface. Device supports up to two leds which can
+> work in flash and torch mode. The leds can be triggered
+> externally or by software.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 
-Where does the user space need these? The fault codes are strings in the
-sysfs interface.
+...
+
+> diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+> new file mode 100644
+> index 0000000..65c910d
+> --- /dev/null
+> +++ b/drivers/leds/leds-max77693.c
+> @@ -0,0 +1,973 @@
+> +/*
+> + * LED Flash class driver for the flash cell of max77693 mfd.
+> + *
+> + *	Copyright (C) 2015, Samsung Electronics Co., Ltd.
+> + *
+> + *	Authors: Jacek Anaszewski <j.anaszewski@samsung.com>
+> + *		 Andrzej Hajda <a.hajda@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
+> + */
+> +
+> +#include <asm/div64.h>
+
+You might not need this anymore.
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-Regards,
-
 Sakari Ailus
-e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
