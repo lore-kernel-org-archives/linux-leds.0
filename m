@@ -1,76 +1,86 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v2 09/11] Documentation: leds: Add description of
- v4l2-flash sub-device
-Date: Sun, 29 Mar 2015 01:35:32 +0200
-Message-ID: <20150328233532.GB18321@valkosipuli.retiisi.org.uk>
-References: <1427464185-27950-1-git-send-email-j.anaszewski@samsung.com>
- <1427464185-27950-10-git-send-email-j.anaszewski@samsung.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH RESEND v6 0/2] Driver for TI tlc591xx 8/16 Channel i2c
+ LED driver
+Date: Sun, 29 Mar 2015 21:28:38 +0200
+Message-ID: <20150329192838.GB24313@lunn.ch>
+References: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:52958 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751241AbbC1XgJ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Sat, 28 Mar 2015 19:36:09 -0400
+Received: from vps0.lunn.ch ([178.209.37.122]:33445 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752455AbbC2Tc2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 29 Mar 2015 15:32:28 -0400
 Content-Disposition: inline
-In-Reply-To: <1427464185-27950-10-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com
 
-Hi Jacek,
+On Tue, Mar 17, 2015 at 11:08:25PM +0100, Andrew Lunn wrote:
+> This patchset is a driver for the TI tlc59116 16 Channel i2c LED
+> driver and tlc59108 8 Channel i2c LED driver. This driver is used on
+> the Belkin WRT1900AC access point and the C code is derived from code
+> Belkin contributed to OpenWRT.  However it has been extensively
+> re-written, and a device tree binding added to replace platform data.
 
-On Fri, Mar 27, 2015 at 02:49:43PM +0100, Jacek Anaszewski wrote:
-> This patch extends LED Flash class documention by
-> the description of interactions with v4l2-flash sub-device.
+Hi Bryan
+
+Do you have any comments on this driver? Anything you would like me to
+do to help get it accepted?
+
+Thanks
+	Andrew
+
+
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> ---
->  Documentation/leds/leds-class-flash.txt |   13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> Cc: Matthew.Fatheree@belkin.com
 > 
-> diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-> index 19bb673..8623413 100644
-> --- a/Documentation/leds/leds-class-flash.txt
-> +++ b/Documentation/leds/leds-class-flash.txt
-> @@ -20,3 +20,16 @@ Following sysfs attributes are exposed for controlling flash LED devices:
->  	- max_flash_timeout
->  	- flash_strobe
->  	- flash_fault
-> +
-> +A LED subsystem driver can be controlled also from the level of VideoForLinux2
-> +subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
-> +be defined in the kernel config. The driver must call the v4l2_flash_init
-> +function to get registered in the V4L2 subsystem. On remove the
-> +v4l2_flash_release function has to be called (see <media/v4l2-flash.h>).
-
-More information on using the interface functions would be nice, with a
-pointer to a driver that uses the interface. The simpler, the better I
-guess.
-
-> +
-> +After proper initialization a V4L2 Flash sub-device is created. The sub-device
-> +exposes a number of V4L2 controls, which allow for controlling a LED Flash class
-> +device with use of its internal kernel API.
-
-How about this:
-
-Once the V4L2 sub-device is registered by the driver which created the Media
-controller device, the sub-device node acts just as a node of a native V4L2
-flash API device would. The calls are simply routed to the LED flash API.
-
-> +Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
-> +unavailable. The interface is re-enabled after the V4L2 Flash sub-device
-> +is closed.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> Since v5:
+>       Hard code number of LEDs, rather than #define
+>       Moved common fields from led into priv
+>       Moved reg_ledout into priv, removed helper functions
+>       Cache brightness to avoid race conditions
+>       tlc591xx_led_set -> tlc591xx_set_brightness
+>       Be paranoid with of_match_device() and client->dev.of_node
+> 
+> Since v4:
+>       Fix Oops on module unload reported by Vignesh R
+> 
+> Since v3:
+>       Generalized and added support for tlc59108
+>       brightness == 0 and brightness == LED_FULL disable PWM and used
+>         fixed OFF/ON mode
+> 
+> Since v2:
+>       Remove incorrect /* Mode register ? */ comment
+>       Parenthesis around the macro arguments
+>       Converted many signed variables into unsigned
+>       Saved an initialization
+> 
+> 
+> Since v1:
+>       s/uint8_t/u8/g
+>       Remove empty line
+>       Removed #gpio-cells
+>       Added select REGMAP_I2C
+>       Sorted #includes into alphabetic order
+>       Added missing MODULE_DEVICE_TABLE(of, ...)
+>       Check return value of regmap_write()
+>       Simplified tlc59116_set_mode()
+> 
+> Andrew Lunn (2):
+>   leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
+>   leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
+> 
+>  .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
+>  drivers/leds/Kconfig                               |   7 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
+>  4 files changed, 302 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+>  create mode 100644 drivers/leds/leds-tlc59116.c
+> 
+> -- 
+> 2.1.3
