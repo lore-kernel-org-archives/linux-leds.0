@@ -1,90 +1,122 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH RESEND v6 0/2] Driver for TI tlc591xx 8/16 Channel i2c LED driver
-Date: Mon, 30 Mar 2015 15:10:31 -0700
-Message-ID: <CAK5ve-KZOXUOOfmsbcOBvTeF+wa3PHGmWnigBEBOX1=cKFN_eQ@mail.gmail.com>
-References: <1426630107-25057-1-git-send-email-andrew@lunn.ch> <20150329192838.GB24313@lunn.ch>
+Subject: Re: [PATCH] leds-gpio: Fix error handling and memory leak
+Date: Mon, 30 Mar 2015 15:16:12 -0700
+Message-ID: <CAK5ve-J=DVHJPMCmWwY4niu59GahU3x=pK0guzhFu1wLJRLEOw@mail.gmail.com>
+References: <1425948222-7925-1-git-send-email-minyard@acm.org>
+ <CAK5ve-+vwbMhDc-_YE3skwSS0RtCULspzQiYyPwero6a_jFk7w@mail.gmail.com> <5514C9A7.5030304@acm.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:34299 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753766AbbC3WKw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 18:10:52 -0400
-In-Reply-To: <20150329192838.GB24313@lunn.ch>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:34133 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752661AbbC3WQd (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 18:16:33 -0400
+In-Reply-To: <5514C9A7.5030304@acm.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Matthew.Fatheree@belkin.com
+To: minyard@acm.org
+Cc: Raphael Assenat <raph@8d.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Corey Minyard <cminyard@mvista.com>
 
-On Sun, Mar 29, 2015 at 12:28 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> On Tue, Mar 17, 2015 at 11:08:25PM +0100, Andrew Lunn wrote:
->> This patchset is a driver for the TI tlc59116 16 Channel i2c LED
->> driver and tlc59108 8 Channel i2c LED driver. This driver is used on
->> the Belkin WRT1900AC access point and the C code is derived from code
->> Belkin contributed to OpenWRT.  However it has been extensively
->> re-written, and a device tree binding added to replace platform data.
+On Thu, Mar 26, 2015 at 8:08 PM, Corey Minyard <minyard@acm.org> wrote:
+> On 03/26/2015 08:20 PM, Bryan Wu wrote:
+>> On Mon, Mar 9, 2015 at 5:43 PM,  <minyard@acm.org> wrote:
+>>> From: Corey Minyard <cminyard@mvista.com>
+>>>
+>>> The leds-gpio driver would not clean up properly if it failed in some
+>>> places, and it wasn't freeing its private data.
+>>>
+>>> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+>>> ---
+>>>  drivers/leds/leds-gpio.c | 13 +++++++++----
+>>>  1 file changed, 9 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+>>> index d26af0a..32f7642 100644
+>>> --- a/drivers/leds/leds-gpio.c
+>>> +++ b/drivers/leds/leds-gpio.c
+>>> @@ -198,8 +198,10 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>>>                 } else {
+>>>                         if (IS_ENABLED(CONFIG_OF) && !led.name && np)
+>>>                                 led.name = np->name;
+>>> -                       if (!led.name)
+>>> -                               return ERR_PTR(-EINVAL);
+>>> +                       if (!led.name) {
+>>> +                               ret = -EINVAL;
+>>> +                               goto err;
+>>> +                       }
+>>>                 }
+>>>                 fwnode_property_read_string(child, "linux,default-trigger",
+>>>                                             &led.default_trigger);
+>>> @@ -217,19 +219,21 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>>>                 if (fwnode_property_present(child, "retain-state-suspended"))
+>>>                         led.retain_state_suspended = 1;
+>>>
+>>> -               ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
+>>> +               ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
+>> Why need this change? it's correct. And your add one more line
+>> "priv->num_leds++"
 >
-> Hi Bryan
+> That's actually the major source of the problem.  The value of
+> priv->num_leds was not correct if it failed before this point, and there
+> was already one "goto err" above this code and I added another to
+> properly handle not allocating the led name.  If it failed there it
+> would leave an LED lying around but free the memory underneath it.  So
+> instead, modify the failure recovery code to be priv->num_leds-1 instead
+> of priv->num_leds-2 and don't increment priv->num_leds until you have
+> success.
 >
-> Do you have any comments on this driver? Anything you would like me to
-> do to help get it accepted?
+>>>                                       dev, NULL);
+>>>                 if (ret < 0) {
+>>>                         fwnode_handle_put(child);
+>>>                         goto err;
+>>>                 }
+>>> +               priv->num_leds++;
+>> Why need this?
+>
+> See above.
+>
+>>>         }
+>>>
+>>>         return priv;
+>>>
+>>>  err:
+>>> -       for (count = priv->num_leds - 2; count >= 0; count--)
+>>> +       for (count = priv->num_leds - 1; count >= 0; count--)
+>>>                 delete_gpio_led(&priv->leds[count]);
+>>> +       devm_kfree(dev, priv);
+>> priv is created by devm_kzalloc(), so if driver probing return error,
+>> it will be freed automatically, you don't need call devm_free();
+>
+> Ah, ok.  Then this is unnecessary.  Do want a new patch?
 >
 
-Sorry for the delay. I'm reviewing several other patches as well as
-working on my internal work.
-I will review this soon.
+I see, please provide a new patch. I'm going to merge this fix soon.
 
 Thanks,
 -Bryan
 
+
+> Thanks,
 >
+> -corey
+>
+>>>         return ERR_PTR(ret);
+>>>  }
+>>>
+>>> @@ -283,6 +287,7 @@ static int gpio_led_remove(struct platform_device *pdev)
+>>>
+>>>         for (i = 0; i < priv->num_leds; i++)
+>>>                 delete_gpio_led(&priv->leds[i]);
+>>> +       devm_kfree(&pdev->dev, priv);
+>> No need this during remove.
 >>
->> Cc: Matthew.Fatheree@belkin.com
->>
->> Since v5:
->>       Hard code number of LEDs, rather than #define
->>       Moved common fields from led into priv
->>       Moved reg_ledout into priv, removed helper functions
->>       Cache brightness to avoid race conditions
->>       tlc591xx_led_set -> tlc591xx_set_brightness
->>       Be paranoid with of_match_device() and client->dev.of_node
->>
->> Since v4:
->>       Fix Oops on module unload reported by Vignesh R
->>
->> Since v3:
->>       Generalized and added support for tlc59108
->>       brightness == 0 and brightness == LED_FULL disable PWM and used
->>         fixed OFF/ON mode
->>
->> Since v2:
->>       Remove incorrect /* Mode register ? */ comment
->>       Parenthesis around the macro arguments
->>       Converted many signed variables into unsigned
->>       Saved an initialization
->>
->>
->> Since v1:
->>       s/uint8_t/u8/g
->>       Remove empty line
->>       Removed #gpio-cells
->>       Added select REGMAP_I2C
->>       Sorted #includes into alphabetic order
->>       Added missing MODULE_DEVICE_TABLE(of, ...)
->>       Check return value of regmap_write()
->>       Simplified tlc59116_set_mode()
->>
->> Andrew Lunn (2):
->>   leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
->>   leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
->>
->>  .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
->>  drivers/leds/Kconfig                               |   7 +
->>  drivers/leds/Makefile                              |   1 +
->>  drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
->>  4 files changed, 302 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
->>  create mode 100644 drivers/leds/leds-tlc59116.c
->>
->> --
->> 2.1.3
+>>>         return 0;
+>>>  }
+>>> --
+>>> 1.8.3.1
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
