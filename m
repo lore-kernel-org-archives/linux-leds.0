@@ -1,38 +1,84 @@
-From: Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH 1/2] leds: lp8501: Fix typo in MODULE_DESCRIPTION in leds-lp8501.c
-Date: Mon, 30 Mar 2015 18:50:10 +0900
-Message-ID: <1427709011-5057-1-git-send-email-standby24x7@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v3] Documentation: leds: Add description of v4l2-flash
+ sub-device
+Date: Mon, 30 Mar 2015 11:52:27 +0200
+Message-ID: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:34269 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751792AbbC3JuB (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:50:01 -0400
-Received: by pdbni2 with SMTP id ni2so170669393pdb.1
-        for <linux-leds@vger.kernel.org>; Mon, 30 Mar 2015 02:50:00 -0700 (PDT)
+Received: from mailout1.samsung.com ([203.254.224.24]:63482 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752490AbbC3Jwp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:52:45 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.krenel.org, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org
-Cc: trivial@kernel.org, dmurphy@ti.com, milo.kim@ti.com, Masanari Iida <standby24x7@gmail.com>
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-This patch fix a spelling typo in MODULE_DESCRIPTION in
-leds-lp8501.c
+This patch extends LED Flash class documention by
+the description of interactions with v4l2-flash sub-device.
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
 ---
- drivers/leds/leds-lp8501.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/leds/leds-class-flash.txt |   46 +++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-index 00f068b..d3098e3 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -406,6 +406,6 @@ static struct i2c_driver lp8501_driver = {
- 
- module_i2c_driver(lp8501_driver);
- 
--MODULE_DESCRIPTION("Texas Instruments LP8501 LED drvier");
-+MODULE_DESCRIPTION("Texas Instruments LP8501 LED driver");
- MODULE_AUTHOR("Milo Kim");
- MODULE_LICENSE("GPL");
+- extended description of v4l2_flash API
+
+diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
+index 19bb673..9d45667 100644
+--- a/Documentation/leds/leds-class-flash.txt
++++ b/Documentation/leds/leds-class-flash.txt
+@@ -20,3 +20,49 @@ Following sysfs attributes are exposed for controlling flash LED devices:
+ 	- max_flash_timeout
+ 	- flash_strobe
+ 	- flash_fault
++
++
++V4L2 Flash wrapper for flash LEDs
++=================================
++
++A LED subsystem driver can be controlled also from the level of VideoForLinux2
++subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
++be defined in the kernel config.
++
++The driver must call the v4l2_flash_init function to get registered in the
++V4L2 subsystem. The function takes three arguments:
++- fled_cdev : the LED Flash class device to wrap
++- ops : V4L2 specific ops
++	* external_strobe_set - defines the source of the flash LED strobe -
++		V4L2_CID_FLASH_STROBE control or external source, typically
++		a sensor, which makes it possible to synchronise the flash
++		strobe start with exposure start,
++	* intensity_to_led_brightness and led_brightness_to_intensity - perform
++		enum led_brightness <-> V4L2 intensity conversion in a device
++		specific manner - they can be used for devices with non-linear
++		LED current scale.
++- config : configuration for V4L2 Flash sub-device
++	* dev_name - the name of the media entity, unique in the system,
++	* flash_faults - bitmask of flash faults that the LED Flash class
++		device can report; corresponding LED_FAULT* bit definitions are
++		available in <linux/led-class-flash.h>,
++	* intensity - constraints for the LED in the TORCH or INDICATOR mode,
++		in microamperes,
++	* has_external_strobe - external strobe capability,
++	* indicator_led - signifies that a led is of indicator type, which
++		implies that it can have only two V4L2 controls:
++		V4L2_CID_FLASH_INDICATOR_INTENSITY and V4L2_CID_FLASH_FAULT.
++
++On remove the v4l2_flash_release function has to be called, which takes one
++argument - struct v4l2_flash pointer returned previously by v4l2_flash_init.
++
++Please refer to the drivers/leds/leds-max77693.c for an exemplary usage of the
++v4l2-flash API.
++
++Once the V4L2 sub-device is registered by the driver which created the Media
++controller device, the sub-device node acts just as a node of a native V4L2
++flash API device would. The calls are simply routed to the LED flash API.
++
++Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
++unavailable. The interface is re-enabled after the V4L2 Flash sub-device
++is closed.
 -- 
-2.3.4.274.g92e625d
+1.7.9.5
