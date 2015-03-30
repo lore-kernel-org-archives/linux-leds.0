@@ -1,76 +1,87 @@
-From: Jason Cooper <jason@lakedaemon.net>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
 Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
-Date: Mon, 30 Mar 2015 13:46:05 +0000
-Message-ID: <20150330134605.GC8688@io.lakedaemon.net>
-References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
- <20150309094107.GL1509@kw.sim.vm.gnt>
- <5506FE46.4000405@free-electrons.com>
- <20150330083040.GY1509@kw.sim.vm.gnt>
- <20150330123008.GC17650@lunn.ch>
- <20150330132240.GB8688@io.lakedaemon.net>
- <55194FC5.6080902@free-electrons.com>
+Date: Mon, 30 Mar 2015 16:20:41 +0200
+Message-ID: <55195BB9.4020409@free-electrons.com>
+References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org> <20150309094107.GL1509@kw.sim.vm.gnt> <5506FE46.4000405@free-electrons.com> <20150330083040.GY1509@kw.sim.vm.gnt> <20150330123008.GC17650@lunn.ch> <20150330132240.GB8688@io.lakedaemon.net> <55194FC5.6080902@free-electrons.com> <20150330134605.GC8688@io.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <55194FC5.6080902@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:56201 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752755AbbC3OUn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 10:20:43 -0400
+In-Reply-To: <20150330134605.GC8688@io.lakedaemon.net>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Andrew Lunn <andrew@lunn.ch>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-On Mon, Mar 30, 2015 at 03:29:41PM +0200, Gregory CLEMENT wrote:
-> Hi Simon,
-> [...]
+On 30/03/2015 15:46, Jason Cooper wrote:
+> On Mon, Mar 30, 2015 at 03:29:41PM +0200, Gregory CLEMENT wrote:
+>> Hi Simon,
+>> [...]
+>>
+>>>>> Hi Gregory, Andrew and Jason,
+>>>>>
+>>>>> This patch set seems stuck. I believe that Bryan is probably too busy to
+>>>>> handle it...
+>>>>>
+>>>>> Is that possible to merge it via the mvebu tree ? Since only some LaCie
+>>>>> boards are impacted, I think it could make sense.
+>>>>
+>>>> Hi Simon
+>>>>
+>>>> Hard one. I also have a driver stuck in led limbo.
+>>>>
+>>>> Last time we took a fix via mvebu, it all went messy at the last
+>>>> minute. We made it very clear to Bryon we planned to take a patch via
+>>>> mvebu, we had queued it via mvebu, we had sent a pull request to
+>>>> arm-soc, all with no reply from Bryon. Only at the last minute did he
+>>>> jump in, pull it himself and send it to Linus. That caused Olof all
+>>>> sorts of problems with his tree.
+>>>
+>>> It's also good to keep in mind the workflow of driver maintainers who push
+>>> directly to Linus.  They send PRs during the merge window, and don't
+>>> necessarily spend too much time in -next.  Which means, if they have good
+>>> filters running on lkml, they just sit down a week or so before the merge
+>>> window and apply everything they have pending.
+>>>
+>>> For those of us who are feeding arm-soc, and are accustomed to getting things
+>>> in early, this can be nerve-wracking.
+>>>
+>>> Brian has demonstrated that he does pick things up and get them merged.  We
+>>> just need to make sure that what he picks up is well tested and reviewed when
+>>> he gets to it.  Since there won't be time for another revision before the merge
+>>> window.  But hey, that's what -rc's are for.  :-P
+>>>
+>>
+>> At least what I can do is creating a led branch and merged it in the mvebu/for-next
+>> branch. It will allow us to be more confident for the merge window.
 > 
-> >>> Hi Gregory, Andrew and Jason,
-> >>>
-> >>> This patch set seems stuck. I believe that Bryan is probably too busy to
-> >>> handle it...
-> >>>
-> >>> Is that possible to merge it via the mvebu tree ? Since only some LaCie
-> >>> boards are impacted, I think it could make sense.
-> >>
-> >> Hi Simon
-> >>
-> >> Hard one. I also have a driver stuck in led limbo.
-> >>
-> >> Last time we took a fix via mvebu, it all went messy at the last
-> >> minute. We made it very clear to Bryon we planned to take a patch via
-> >> mvebu, we had queued it via mvebu, we had sent a pull request to
-> >> arm-soc, all with no reply from Bryon. Only at the last minute did he
-> >> jump in, pull it himself and send it to Linus. That caused Olof all
-> >> sorts of problems with his tree.
-> > 
-> > It's also good to keep in mind the workflow of driver maintainers who push
-> > directly to Linus.  They send PRs during the merge window, and don't
-> > necessarily spend too much time in -next.  Which means, if they have good
-> > filters running on lkml, they just sit down a week or so before the merge
-> > window and apply everything they have pending.
-> > 
-> > For those of us who are feeding arm-soc, and are accustomed to getting things
-> > in early, this can be nerve-wracking.
-> > 
-> > Brian has demonstrated that he does pick things up and get them merged.  We
-> > just need to make sure that what he picks up is well tested and reviewed when
-> > he gets to it.  Since there won't be time for another revision before the merge
-> > window.  But hey, that's what -rc's are for.  :-P
-> > 
+> How would we know when to remove it?  We have no reliable communication with Brian.
+
+We will remove it when we will received an acked-by from him.
+
+The purpose of it was to be able to do a pull request as soon as we know
+that either Bryan will take it or let us take the full series.
+
+In the mean time if Bryan also applied the patch in is leds/for-next branch
+it should not be a problem as the patch will be the same.
+
+Thanks,
+
+Gregory
+
 > 
-> At least what I can do is creating a led branch and merged it in the mvebu/for-next
-> branch. It will allow us to be more confident for the merge window.
+> thx,
+> 
+> Jason.
+> 
 
-How would we know when to remove it?  We have no reliable communication with Brian.
 
-thx,
-
-Jason.
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
