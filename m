@@ -1,7 +1,7 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 2/3] leds/class: Check snprintf return value
-Date: Mon, 30 Mar 2015 10:55:11 +0200
-Message-ID: <1427705712-18083-3-git-send-email-ricardo.ribalda@gmail.com>
+Subject: [PATCH 3/3] leds/class: Set naming index as unsigned
+Date: Mon, 30 Mar 2015 10:55:12 +0200
+Message-ID: <1427705712-18083-4-git-send-email-ricardo.ribalda@gmail.com>
 References: <1427705712-18083-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1427705712-18083-1-git-send-email-ricardo.ribalda@gmail.com>
@@ -10,47 +10,26 @@ To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-led
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-If the final name does not fit the string there is a potential
-endless-loop.
+Avoid weird names (led_-65537) on overflows.
 
 Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/leds/led-class.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/leds/led-class.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 294d6d6..2ffe8b1 100644
+index 2ffe8b1..2be1ba3 100644
 --- a/drivers/leds/led-class.c
 +++ b/drivers/leds/led-class.c
-@@ -223,12 +223,17 @@ static int led_classdev_next_name(const char *init_name, char *name,
+@@ -222,7 +222,7 @@ static int match_name(struct device *dev, const void *data)
+ static int led_classdev_next_name(const char *init_name, char *name,
  				  size_t len)
  {
- 	int i = 0;
-+	int ret = 0;
+-	int i = 0;
++	unsigned int i = 0;
+ 	int ret = 0;
  
  	strlcpy(name, init_name, len);
- 
--	while (class_find_device(leds_class, NULL, name, match_name))
-+	while (class_find_device(leds_class, NULL, name, match_name) &&
-+	       (ret < len))
- 		snprintf(name, len, "%s_%d", init_name, ++i);
- 
-+	if (ret >= len)
-+		return -ENOMEM;
-+
- 	return i;
- }
- 
-@@ -243,6 +248,9 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 	int ret;
- 
- 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
-+	if (ret < 0)
-+		return ret;
-+
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
- 				led_cdev, led_cdev->groups, "%s", name);
- 	if (IS_ERR(led_cdev->dev))
 -- 
 2.1.4
