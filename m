@@ -1,54 +1,100 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3] DT: Add documentation for the mfd Maxim max77693
-Date: Mon, 30 Mar 2015 14:20:03 +0100
-Message-ID: <20150330132002.GA29200@leverpostej>
-References: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
- <1427709149-15014-2-git-send-email-j.anaszewski@samsung.com>
- <20150330115729.GG17971@leverpostej>
- <55194509.1070008@samsung.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
+Date: Mon, 30 Mar 2015 13:22:40 +0000
+Message-ID: <20150330132240.GB8688@io.lakedaemon.net>
+References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
+ <20150309094107.GL1509@kw.sim.vm.gnt>
+ <5506FE46.4000405@free-electrons.com>
+ <20150330083040.GY1509@kw.sim.vm.gnt>
+ <20150330123008.GC17650@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:60914 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751923AbbC3NUJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 30 Mar 2015 09:20:09 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <55194509.1070008@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20150330123008.GC17650@lunn.ch>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "sakari.ailus@iki.fi" <sakari.ailus@iki.fi>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi,
-
-> >> +Optional properties:
-> >> +- maxim,trigger-type : Flash trigger type.
-> >> +	Possible trigger types:
-> >> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
-> >> +			the flash,
-> >> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
-> >> +			of the flash.
-> >
-> > Surely this is required? What should be assumed if this property isn't
-> > present?
+On Mon, Mar 30, 2015 at 02:30:08PM +0200, Andrew Lunn wrote:
+> On Mon, Mar 30, 2015 at 10:30:40AM +0200, Simon Guinot wrote:
+> > On Mon, Mar 16, 2015 at 05:01:10PM +0100, Gregory CLEMENT wrote:
+> > > Hi all,
+> > > 
+> > > On 09/03/2015 10:41, Simon Guinot wrote:
+> > > > On Mon, Feb 23, 2015 at 04:04:18PM +0100, Simon Guinot wrote:
+> > > >> Hello,
+> > > >>
+> > > >> This patch series adds DT support for the LEDs found on the Kirkwood-based
+> > > >> LaCie boards 2Big and 5Big Network v2.
+> > > >>
+> > > >> Simon
+> > > >>
+> > > >> Simon Guinot (3):
+> > > >>   leds: netxbig: add device tree binding
+> > > >>   ARM: Kirkwood: add LED DT entries for netxbig boards
+> > > >>   ARM: mvebu: remove static LED setup for netxbig boards
+> > > > 
+> > > > Hi Brian,
+> > > > 
+> > > > Please, consider merging the first patch of this serie.
+> > > 
+> > > Brian,
+> > > 
+> > > here again let me know when this patch will be merged, and I will
+> > > also need a stable tag as patch 2 depends on this one.
+> > > 
+> > > Andrew, Jason,
+> > > 
+> > > patch 2 and 3 looks OK for me. What is your opinion about it?
+> > 
+> > Hi Gregory, Andrew and Jason,
+> > 
+> > This patch set seems stuck. I believe that Bryan is probably too busy to
+> > handle it...
+> > 
+> > Is that possible to merge it via the mvebu tree ? Since only some LaCie
+> > boards are impacted, I think it could make sense.
 > 
-> LEDS_TRIG_TYPE_LEVEL allows for an ISP to do e.g. short flash blink
-> before the actual strobe - it is used for eliminating photographs with
-> closed eyes, or can serve for probing ambient light conditions.
+> Hi Simon
 > 
-> With LEDS_TRIG_TYPE_EDGE flash strobe is triggered on rising edge
-> and lasts until programmed timeout expires.
+> Hard one. I also have a driver stuck in led limbo.
 > 
-> This setting is tightly related to a camera sensor, which generates
-> the strobe signal. Effectively it depends on board configuration.
+> Last time we took a fix via mvebu, it all went messy at the last
+> minute. We made it very clear to Bryon we planned to take a patch via
+> mvebu, we had queued it via mvebu, we had sent a pull request to
+> arm-soc, all with no reply from Bryon. Only at the last minute did he
+> jump in, pull it himself and send it to Linus. That caused Olof all
+> sorts of problems with his tree.
 
-My comment wasn't to do with the semantics of eitehr option but rather
-the optionality of the property.
+It's also good to keep in mind the workflow of driver maintainers who push
+directly to Linus.  They send PRs during the merge window, and don't
+necessarily spend too much time in -next.  Which means, if they have good
+filters running on lkml, they just sit down a week or so before the merge
+window and apply everything they have pending.
 
-Surely it's vital to know what this should be, and hence this property
-should be required rather than optional?
+For those of us who are feeding arm-soc, and are accustomed to getting things
+in early, this can be nerve-wracking.
 
-If it isn't required, what would the assumed default be?
+Brian has demonstrated that he does pick things up and get them merged.  We
+just need to make sure that what he picks up is well tested and reviewed when
+he gets to it.  Since there won't be time for another revision before the merge
+window.  But hey, that's what -rc's are for.  :-P
 
-Mark.
+> To stop that happening again, i think we need an Acked-by from Bryan.
+
+I agree.
+
+thx,
+
+Jason.
