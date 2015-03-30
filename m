@@ -1,84 +1,117 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v3] Documentation: leds: Add description of v4l2-flash
- sub-device
-Date: Mon, 30 Mar 2015 11:52:27 +0200
-Message-ID: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v3] DT: Add documentation for the mfd Maxim max77693
+Date: Mon, 30 Mar 2015 11:52:28 +0200
+Message-ID: <1427709149-15014-2-git-send-email-j.anaszewski@samsung.com>
+References: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63482 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752490AbbC3Jwp (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:52:45 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:42245 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752490AbbC3Jwz (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:52:55 -0400
+In-reply-to: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
 
-This patch extends LED Flash class documention by
-the description of interactions with v4l2-flash sub-device.
+This patch adds device tree binding documentation for
+the flash cell of the Maxim max77693 multifunctional device.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: devicetree@vger.kernel.org
 ---
- Documentation/leds/leds-class-flash.txt |   46 +++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ Documentation/devicetree/bindings/mfd/max77693.txt |   63 ++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-- extended description of v4l2_flash API
+- added range to maxim,boost-mvout and maxim,mvsys-min description
 
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.txt
-index 19bb673..9d45667 100644
---- a/Documentation/leds/leds-class-flash.txt
-+++ b/Documentation/leds/leds-class-flash.txt
-@@ -20,3 +20,49 @@ Following sysfs attributes are exposed for controlling flash LED devices:
- 	- max_flash_timeout
- 	- flash_strobe
- 	- flash_fault
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 38e6440..3d2103a 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -76,7 +76,55 @@ Optional properties:
+     Valid values: 4300000, 4700000, 4800000, 4900000
+     Default: 4300000
+ 
++- led : the LED submodule device node
 +
++There are two LED outputs available - FLED1 and FLED2. Each of them can
++control a separate LED or they can be connected together to double
++the maximum current for a single connected LED. One LED is represented
++by one child node.
 +
-+V4L2 Flash wrapper for flash LEDs
-+=================================
++Required properties:
++- compatible : Must be "maxim,max77693-led".
 +
-+A LED subsystem driver can be controlled also from the level of VideoForLinux2
-+subsystem. In order to enable this CONFIG_V4L2_FLASH_LED_CLASS symbol has to
-+be defined in the kernel config.
++Optional properties:
++- maxim,trigger-type : Flash trigger type.
++	Possible trigger types:
++		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
++			the flash,
++		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
++			of the flash.
++- maxim,boost-mode :
++	In boost mode the device can produce up to 1.2A of total current
++	on both outputs. The maximum current on each output is reduced
++	to 625mA then. If not enabled explicitly, boost setting defaults to
++	LEDS_BOOST_FIXED in case both current sources are used.
++	Possible values:
++		LEDS_BOOST_OFF (0) - no boost,
++		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
++		LEDS_BOOST_FIXED (2) - fixed mode.
++- maxim,boost-mvout : Output voltage of the boost module in millivolts.
++		Range: 3300 - 5500
++- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
++	if chip estimates that system voltage could drop below this level due
++	to flash power consumption.
++		Range: 2400 - 3400
 +
-+The driver must call the v4l2_flash_init function to get registered in the
-+V4L2 subsystem. The function takes three arguments:
-+- fled_cdev : the LED Flash class device to wrap
-+- ops : V4L2 specific ops
-+	* external_strobe_set - defines the source of the flash LED strobe -
-+		V4L2_CID_FLASH_STROBE control or external source, typically
-+		a sensor, which makes it possible to synchronise the flash
-+		strobe start with exposure start,
-+	* intensity_to_led_brightness and led_brightness_to_intensity - perform
-+		enum led_brightness <-> V4L2 intensity conversion in a device
-+		specific manner - they can be used for devices with non-linear
-+		LED current scale.
-+- config : configuration for V4L2 Flash sub-device
-+	* dev_name - the name of the media entity, unique in the system,
-+	* flash_faults - bitmask of flash faults that the LED Flash class
-+		device can report; corresponding LED_FAULT* bit definitions are
-+		available in <linux/led-class-flash.h>,
-+	* intensity - constraints for the LED in the TORCH or INDICATOR mode,
-+		in microamperes,
-+	* has_external_strobe - external strobe capability,
-+	* indicator_led - signifies that a led is of indicator type, which
-+		implies that it can have only two V4L2 controls:
-+		V4L2_CID_FLASH_INDICATOR_INTENSITY and V4L2_CID_FLASH_FAULT.
++Required properties of the LED child node:
++- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
++		device current output identifiers: 0 - FLED1, 1 - FLED2
 +
-+On remove the v4l2_flash_release function has to be called, which takes one
-+argument - struct v4l2_flash pointer returned previously by v4l2_flash_init.
++Optional properties of the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++- max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 15625 - 250000
++- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 15625 - 1000000
++- flash-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
++		Range: 62500 - 1000000
 +
-+Please refer to the drivers/leds/leds-max77693.c for an exemplary usage of the
-+v4l2-flash API.
+ Example:
++#include <dt-bindings/leds/common.h>
 +
-+Once the V4L2 sub-device is registered by the driver which created the Media
-+controller device, the sub-device node acts just as a node of a native V4L2
-+flash API device would. The calls are simply routed to the LED flash API.
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+ 		reg = <0x66>;
+@@ -117,5 +165,20 @@ Example:
+ 			maxim,thermal-regulation-celsius = <75>;
+ 			maxim,battery-overcurrent-microamp = <3000000>;
+ 			maxim,charge-input-threshold-microvolt = <4300000>;
 +
-+Opening the V4L2 Flash sub-device makes the LED subsystem sysfs interface
-+unavailable. The interface is re-enabled after the V4L2 Flash sub-device
-+is closed.
++		led {
++			compatible = "maxim,max77693-led";
++			maxim,trigger-type = <LEDS_TRIG_TYPE_LEVEL>;
++			maxim,boost-mode = <LEDS_BOOST_FIXED>;
++			maxim,boost-mvout = <5000>;
++			maxim,mvsys-min = <2400>;
++
++			camera_flash: flash-led {
++				label = "max77693-flash";
++				led-sources = <0>, <1>;
++				max-microamp = <500000>;
++				flash-max-microamp = <1250000>;
++				flash-timeout-us = <1000000>;
++			};
+ 		};
+ 	};
 -- 
 1.7.9.5
