@@ -1,57 +1,76 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3] DT: Add documentation for the mfd Maxim max77693
-Date: Mon, 30 Mar 2015 15:46:38 +0200
-Message-ID: <551953BE.50506@samsung.com>
-References: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
- <1427709149-15014-2-git-send-email-j.anaszewski@samsung.com>
- <20150330115729.GG17971@leverpostej> <55194509.1070008@samsung.com>
- <20150330132002.GA29200@leverpostej>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
+Date: Mon, 30 Mar 2015 13:46:05 +0000
+Message-ID: <20150330134605.GC8688@io.lakedaemon.net>
+References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org>
+ <20150309094107.GL1509@kw.sim.vm.gnt>
+ <5506FE46.4000405@free-electrons.com>
+ <20150330083040.GY1509@kw.sim.vm.gnt>
+ <20150330123008.GC17650@lunn.ch>
+ <20150330132240.GB8688@io.lakedaemon.net>
+ <55194FC5.6080902@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20150330132002.GA29200@leverpostej>
-Sender: linux-media-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "sakari.ailus@iki.fi" <sakari.ailus@iki.fi>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <55194FC5.6080902@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Mark,
+On Mon, Mar 30, 2015 at 03:29:41PM +0200, Gregory CLEMENT wrote:
+> Hi Simon,
+> [...]
+> 
+> >>> Hi Gregory, Andrew and Jason,
+> >>>
+> >>> This patch set seems stuck. I believe that Bryan is probably too busy to
+> >>> handle it...
+> >>>
+> >>> Is that possible to merge it via the mvebu tree ? Since only some LaCie
+> >>> boards are impacted, I think it could make sense.
+> >>
+> >> Hi Simon
+> >>
+> >> Hard one. I also have a driver stuck in led limbo.
+> >>
+> >> Last time we took a fix via mvebu, it all went messy at the last
+> >> minute. We made it very clear to Bryon we planned to take a patch via
+> >> mvebu, we had queued it via mvebu, we had sent a pull request to
+> >> arm-soc, all with no reply from Bryon. Only at the last minute did he
+> >> jump in, pull it himself and send it to Linus. That caused Olof all
+> >> sorts of problems with his tree.
+> > 
+> > It's also good to keep in mind the workflow of driver maintainers who push
+> > directly to Linus.  They send PRs during the merge window, and don't
+> > necessarily spend too much time in -next.  Which means, if they have good
+> > filters running on lkml, they just sit down a week or so before the merge
+> > window and apply everything they have pending.
+> > 
+> > For those of us who are feeding arm-soc, and are accustomed to getting things
+> > in early, this can be nerve-wracking.
+> > 
+> > Brian has demonstrated that he does pick things up and get them merged.  We
+> > just need to make sure that what he picks up is well tested and reviewed when
+> > he gets to it.  Since there won't be time for another revision before the merge
+> > window.  But hey, that's what -rc's are for.  :-P
+> > 
+> 
+> At least what I can do is creating a led branch and merged it in the mvebu/for-next
+> branch. It will allow us to be more confident for the merge window.
 
-On 03/30/2015 03:20 PM, Mark Rutland wrote:
-> Hi,
->
->>>> +Optional properties:
->>>> +- maxim,trigger-type : Flash trigger type.
->>>> +	Possible trigger types:
->>>> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
->>>> +			the flash,
->>>> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
->>>> +			of the flash.
->>>
->>> Surely this is required? What should be assumed if this property isn't
->>> present?
->>
->> LEDS_TRIG_TYPE_LEVEL allows for an ISP to do e.g. short flash blink
->> before the actual strobe - it is used for eliminating photographs with
->> closed eyes, or can serve for probing ambient light conditions.
->>
->> With LEDS_TRIG_TYPE_EDGE flash strobe is triggered on rising edge
->> and lasts until programmed timeout expires.
->>
->> This setting is tightly related to a camera sensor, which generates
->> the strobe signal. Effectively it depends on board configuration.
->
-> My comment wasn't to do with the semantics of eitehr option but rather
-> the optionality of the property.
->
-> Surely it's vital to know what this should be, and hence this property
-> should be required rather than optional?
->
-> If it isn't required, what would the assumed default be?
+How would we know when to remove it?  We have no reliable communication with Brian.
 
-Default is LEDS_TRIG_TYPE_EDGE.
+thx,
 
--- 
-Best Regards,
-Jacek Anaszewski
+Jason.
