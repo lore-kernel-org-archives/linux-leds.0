@@ -1,12 +1,12 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Subject: [PATCH 2/3] leds/class: Check snprintf return value
-Date: Mon, 30 Mar 2015 11:08:07 +0200
-Message-ID: <1427706487-22499-1-git-send-email-ricardo.ribalda@gmail.com>
+Date: Mon, 30 Mar 2015 11:08:50 +0200
+Message-ID: <1427706531-22569-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:33963 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752739AbbC3JIM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:08:12 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:36440 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752985AbbC3JI4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:08:56 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
