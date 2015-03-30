@@ -1,39 +1,58 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/3] leds/class: Set naming index as unsigned
-Date: Mon, 30 Mar 2015 10:59:47 +0200
-Message-ID: <CAMuHMdWxyP=okznpcCi6YROzKkfr8MT9V0vGyEouz68=L1LhTw@mail.gmail.com>
-References: <1427705712-18083-1-git-send-email-ricardo.ribalda@gmail.com>
-	<1427705712-18083-4-git-send-email-ricardo.ribalda@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH 2/3] leds/class: Check snprintf return value
+Date: Mon, 30 Mar 2015 11:08:07 +0200
+Message-ID: <1427706487-22499-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35511 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752800AbbC3I7r (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 04:59:47 -0400
-In-Reply-To: <1427705712-18083-4-git-send-email-ricardo.ribalda@gmail.com>
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:33963 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752739AbbC3JIM (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 05:08:12 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-On Mon, Mar 30, 2015 at 10:55 AM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> -       int i = 0;
-> +       unsigned int i = 0;
+If the final name does not fit the string there is a potential
+endless-loop.
 
-That won't help, as you forgot to replace "%d" by "%u" in the snprintf()
-call.
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/leds/led-class.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
->         int ret = 0;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 294d6d6..2ffe8b1 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -223,12 +223,17 @@ static int led_classdev_next_name(const char *init_name, char *name,
+ 				  size_t len)
+ {
+ 	int i = 0;
++	int ret = 0;
+ 
+ 	strlcpy(name, init_name, len);
+ 
+-	while (class_find_device(leds_class, NULL, name, match_name))
++	while (class_find_device(leds_class, NULL, name, match_name) &&
++	       (ret < len))
+ 		snprintf(name, len, "%s_%d", init_name, ++i);
+ 
++	if (ret >= len)
++		return -ENOMEM;
++
+ 	return i;
+ }
+ 
+@@ -243,6 +248,9 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 	int ret;
+ 
+ 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
++	if (ret < 0)
++		return ret;
++
+ 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
+ 				led_cdev, led_cdev->groups, "%s", name);
+ 	if (IS_ERR(led_cdev->dev))
+-- 
+2.1.4
