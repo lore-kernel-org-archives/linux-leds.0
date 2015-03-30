@@ -1,138 +1,88 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 04/11] DT: Add documentation for the mfd Maxim max77693
-Date: Mon, 30 Mar 2015 09:36:37 +0200
-Message-ID: <5518FD05.5060800@samsung.com>
-References: <1427464185-27950-1-git-send-email-j.anaszewski@samsung.com>
- <1427464185-27950-5-git-send-email-j.anaszewski@samsung.com>
- <20150328225503.GZ18321@valkosipuli.retiisi.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
+Date: Mon, 30 Mar 2015 09:59:21 +0200
+Message-ID: <CAMuHMdUKos-vWP0Ok0=a7B2g5EjnRH12hqS0vm2wUDgu-b0QHQ@mail.gmail.com>
+References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:11771 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752810AbbC3Hgl (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 03:36:41 -0400
-In-reply-to: <20150328225503.GZ18321@valkosipuli.retiisi.org.uk>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34723 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752933AbbC3H7V (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 03:59:21 -0400
+In-Reply-To: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Sakari,
-
-On 03/28/2015 11:55 PM, Sakari Ailus wrote:
-> On Fri, Mar 27, 2015 at 02:49:38PM +0100, Jacek Anaszewski wrote:
->> This patch adds device tree binding documentation for
->> the flash cell of the Maxim max77693 multifunctional device.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Chanwoo Choi <cw00.choi@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> ---
->>   Documentation/devicetree/bindings/mfd/max77693.txt |   61 ++++++++++++++++++++
->>   1 file changed, 61 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
->> index 38e6440..15c546ea 100644
->> --- a/Documentation/devicetree/bindings/mfd/max77693.txt
->> +++ b/Documentation/devicetree/bindings/mfd/max77693.txt
->> @@ -76,7 +76,53 @@ Optional properties:
->>       Valid values: 4300000, 4700000, 4800000, 4900000
->>       Default: 4300000
->>
->> +- led : the LED submodule device node
->> +
->> +There are two LED outputs available - FLED1 and FLED2. Each of them can
->> +control a separate LED or they can be connected together to double
->> +the maximum current for a single connected LED. One LED is represented
->> +by one child node.
->> +
->> +Required properties:
->> +- compatible : Must be "maxim,max77693-led".
->> +
->> +Optional properties:
->> +- maxim,trigger-type : Flash trigger type.
->> +	Possible trigger types:
->> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
->> +			the flash,
->> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
->> +			of the flash.
->> +- maxim,boost-mode :
->> +	In boost mode the device can produce up to 1.2A of total current
->> +	on both outputs. The maximum current on each output is reduced
->> +	to 625mA then. If not enabled explicitly, boost setting defaults to
->> +	LEDS_BOOST_FIXED in case both current sources are used.
->> +	Possible values:
->> +		LEDS_BOOST_OFF (0) - no boost,
->> +		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
->> +		LEDS_BOOST_FIXED (2) - fixed mode.
->> +- maxim,boost-mvout : Output voltage of the boost module in millivolts.
+On Sat, Mar 14, 2015 at 12:05 AM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> The current code expected that every LED had an unique name. This is a
+> legit expectation when the device tree can no be modified or extended.
+> But with device tree overlays this requirement can be easily broken.
 >
-> What are the possible values for this?
-
-maxim,boost-mvout : Output voltage of the boost module in millivolts
-	Range: 3300 - 5500
-
-Do you think it is necessary to mention also allowed step for all the
-values?
-
-> Is the datasheet publicly available btw.?
-
-I have an access only to the non-public one.
-
->> +- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
->> +	if chip estimates that system voltage could drop below this level due
->> +	to flash power consumption.
->> +
->> +Required properties of the LED child node:
->> +- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
->> +		device current output identifiers: 0 - FLED1, 1 - FLED2
->> +
->> +Optional properties of the LED child node:
->> +- label : see Documentation/devicetree/bindings/leds/common.txt
->> +- max-microamp : see Documentation/devicetree/bindings/leds/common.txt
->> +		Range: 15625 - 250000
->> +- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
->> +		Range: 15625 - 1000000
->> +- flash-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
->> +		Range: 62500 - 1000000
->> +
->>   Example:
->> +#include <dt-bindings/leds/common.h>
->> +
->>   	max77693@66 {
->>   		compatible = "maxim,max77693";
->>   		reg = <0x66>;
->> @@ -117,5 +163,20 @@ Example:
->>   			maxim,thermal-regulation-celsius = <75>;
->>   			maxim,battery-overcurrent-microamp = <3000000>;
->>   			maxim,charge-input-threshold-microvolt = <4300000>;
->> +
->> +		led {
->> +			compatible = "maxim,max77693-led";
->> +			maxim,trigger-type = <LEDS_TRIG_TYPE_LEVEL>;
->> +			maxim,boost-mode = <LEDS_BOOST_FIXED>;
->> +			maxim,boost-mvout = <5000>;
->> +			maxim,mvsys-min = <2400>;
->> +
->> +			camera_flash: flash-led {
->> +				label = "max77693-flash";
->> +				led-sources = <0>, <1>;
->> +				max-microamp = <500000>;
->> +				flash-max-microamp = <1250000>;
->> +				flash-timeout-us = <1000000>;
->> +			};
->>   		};
->>   	};
+> This patch finds out if the name is already in use and adds the suffix
+> _1, _2... if not.
 >
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+> v3: Suggested by Bryan Wu <cooloney@gmail.com>
+>
+> -Do not allocate dynamically the name
+>  drivers/leds/led-class.c | 31 +++++++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 768d33a..4ca37b8 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -212,6 +212,26 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
+>         .resume         = led_resume,
+>  };
+>
+> +static int match_name(struct device *dev, const void *data)
+> +{
+> +       if (!dev_name(dev))
+> +               return 0;
+> +       return !strcmp(dev_name(dev), (char *)data);
+> +}
+> +
+> +static int led_classdev_next_name(const char *init_name, char *name,
+> +                                 size_t len)
+> +{
+> +       int i = 0;
+> +
+> +       strncpy(name, init_name, len);
 
+What's the maximum length of init_name?
+strncpy() is _not_ guaranteed to zero-terminate the destination buffer.
 
--- 
-Best Regards,
-Jacek Anaszewski
+There are two ways to fix this:
+  1. Use strlcpy() instead of strncpy(),
+  2. Explicitly set name[len-1] to 0 after the call to strncpy().
+
+As we don't need the "security" feature of strncpy() that fills the remaining
+part of the buffer with zeroes, I think using strlcpy() is the best solution.
+
+> +       while (class_find_device(leds_class, NULL, name, match_name))
+> +               snprintf(name, len, "%s_%d", init_name, ++i);
+
+This will become an infinite loop once the resulting string no longer fits in
+the target buffer. Hence the loop should be terminated, and an error code
+should be returned, once snprintf() returns a value >= len.
+
+> +
+> +       return i;
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
