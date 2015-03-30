@@ -1,84 +1,57 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 0/3] Add DT support for netxbig LEDs
-Date: Mon, 30 Mar 2015 15:29:41 +0200
-Message-ID: <55194FC5.6080902@free-electrons.com>
-References: <1424703861-20903-1-git-send-email-simon.guinot@sequanux.org> <20150309094107.GL1509@kw.sim.vm.gnt> <5506FE46.4000405@free-electrons.com> <20150330083040.GY1509@kw.sim.vm.gnt> <20150330123008.GC17650@lunn.ch> <20150330132240.GB8688@io.lakedaemon.net>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v3] DT: Add documentation for the mfd Maxim max77693
+Date: Mon, 30 Mar 2015 15:46:38 +0200
+Message-ID: <551953BE.50506@samsung.com>
+References: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
+ <1427709149-15014-2-git-send-email-j.anaszewski@samsung.com>
+ <20150330115729.GG17971@leverpostej> <55194509.1070008@samsung.com>
+ <20150330132002.GA29200@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:54485 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752979AbbC3N3q (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 09:29:46 -0400
-In-Reply-To: <20150330132240.GB8688@io.lakedaemon.net>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <20150330132002.GA29200@leverpostej>
+Sender: linux-media-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "sakari.ailus@iki.fi" <sakari.ailus@iki.fi>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Hi Simon,
-[...]
+Hi Mark,
 
->>> Hi Gregory, Andrew and Jason,
+On 03/30/2015 03:20 PM, Mark Rutland wrote:
+> Hi,
+>
+>>>> +Optional properties:
+>>>> +- maxim,trigger-type : Flash trigger type.
+>>>> +	Possible trigger types:
+>>>> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
+>>>> +			the flash,
+>>>> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
+>>>> +			of the flash.
 >>>
->>> This patch set seems stuck. I believe that Bryan is probably too busy to
->>> handle it...
->>>
->>> Is that possible to merge it via the mvebu tree ? Since only some LaCie
->>> boards are impacted, I think it could make sense.
+>>> Surely this is required? What should be assumed if this property isn't
+>>> present?
 >>
->> Hi Simon
+>> LEDS_TRIG_TYPE_LEVEL allows for an ISP to do e.g. short flash blink
+>> before the actual strobe - it is used for eliminating photographs with
+>> closed eyes, or can serve for probing ambient light conditions.
 >>
->> Hard one. I also have a driver stuck in led limbo.
+>> With LEDS_TRIG_TYPE_EDGE flash strobe is triggered on rising edge
+>> and lasts until programmed timeout expires.
 >>
->> Last time we took a fix via mvebu, it all went messy at the last
->> minute. We made it very clear to Bryon we planned to take a patch via
->> mvebu, we had queued it via mvebu, we had sent a pull request to
->> arm-soc, all with no reply from Bryon. Only at the last minute did he
->> jump in, pull it himself and send it to Linus. That caused Olof all
->> sorts of problems with his tree.
-> 
-> It's also good to keep in mind the workflow of driver maintainers who push
-> directly to Linus.  They send PRs during the merge window, and don't
-> necessarily spend too much time in -next.  Which means, if they have good
-> filters running on lkml, they just sit down a week or so before the merge
-> window and apply everything they have pending.
-> 
-> For those of us who are feeding arm-soc, and are accustomed to getting things
-> in early, this can be nerve-wracking.
-> 
-> Brian has demonstrated that he does pick things up and get them merged.  We
-> just need to make sure that what he picks up is well tested and reviewed when
-> he gets to it.  Since there won't be time for another revision before the merge
-> window.  But hey, that's what -rc's are for.  :-P
-> 
+>> This setting is tightly related to a camera sensor, which generates
+>> the strobe signal. Effectively it depends on board configuration.
+>
+> My comment wasn't to do with the semantics of eitehr option but rather
+> the optionality of the property.
+>
+> Surely it's vital to know what this should be, and hence this property
+> should be required rather than optional?
+>
+> If it isn't required, what would the assumed default be?
 
-At least what I can do is creating a led branch and merged it in the mvebu/for-next
-branch. It will allow us to be more confident for the merge window.
-
-Thanks,
-
-Gregory
-
-
->> To stop that happening again, i think we need an Acked-by from Bryan.
-> 
-> I agree.
-
-
-
-
-
-> 
-> thx,
-> 
-> Jason.
-> 
-
+Default is LEDS_TRIG_TYPE_EDGE.
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Best Regards,
+Jacek Anaszewski
