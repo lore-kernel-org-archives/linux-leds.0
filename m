@@ -1,58 +1,29 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Mon, 30 Mar 2015 10:43:39 +0200
-Message-ID: <CAMuHMdUTnUrvhQtMaTCy=FvJCxr10CHbn0AaePoza0YE-frphQ@mail.gmail.com>
-References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH 0/3] leds/class: Fix string handling
+Date: Mon, 30 Mar 2015 10:55:09 +0200
+Message-ID: <1427705712-18083-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:33130 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752833AbbC3IzR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 04:55:17 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Hi Ricardo,
+Fix errors reported by Geert Uytterhoeven.
 
-I forgot one thing:
+I didn't have the chance to test the changes it in real hardware.
 
-On Sat, Mar 14, 2015 at 12:05 AM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -212,6 +212,26 @@ static const struct dev_pm_ops leds_class_dev_pm_ops = {
->         .resume         = led_resume,
->  };
->
-> +static int match_name(struct device *dev, const void *data)
-> +{
-> +       if (!dev_name(dev))
-> +               return 0;
-> +       return !strcmp(dev_name(dev), (char *)data);
-> +}
-> +
-> +static int led_classdev_next_name(const char *init_name, char *name,
-> +                                 size_t len)
-> +{
-> +       int i = 0;
 
-unsigned int
+Ricardo Ribalda Delgado (3):
+  leds/class: Use strlcpy instead of strncpy
+  leds/class: Check snprintf return value
+  leds/class: Set naming index as unsigned
 
-> +
-> +       strncpy(name, init_name, len);
-> +
-> +       while (class_find_device(leds_class, NULL, name, match_name))
-> +               snprintf(name, len, "%s_%d", init_name, ++i);
+ drivers/leds/led-class.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-%u
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.1.4
