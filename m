@@ -1,39 +1,90 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 0/3] Handle LEDs with the same name
-Date: Mon, 30 Mar 2015 15:08:01 -0700
-Message-ID: <CAK5ve-+fd-akCiCENfCvdU9x79g=q2b3gat2h8Zao64ciDbymw@mail.gmail.com>
-References: <1427737561-2424-1-git-send-email-ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH RESEND v6 0/2] Driver for TI tlc591xx 8/16 Channel i2c LED driver
+Date: Mon, 30 Mar 2015 15:10:31 -0700
+Message-ID: <CAK5ve-KZOXUOOfmsbcOBvTeF+wa3PHGmWnigBEBOX1=cKFN_eQ@mail.gmail.com>
+References: <1426630107-25057-1-git-send-email-andrew@lunn.ch> <20150329192838.GB24313@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:36672 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751092AbbC3WIX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 18:08:23 -0400
-In-Reply-To: <1427737561-2424-1-git-send-email-ricardo.ribalda@gmail.com>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:34299 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753766AbbC3WKw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 18:10:52 -0400
+In-Reply-To: <20150329192838.GB24313@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, sakari.ailus@linux.intel.com, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Matthew.Fatheree@belkin.com
 
-On Mon, Mar 30, 2015 at 10:45 AM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> This is a rework of the original patch + 3 fixup patches from me.
-> Contains a lot of feedback from Geert Uytterhoeven <geert@linux-m68k.org>
-> Thanks!
+On Sun, Mar 29, 2015 at 12:28 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+> On Tue, Mar 17, 2015 at 11:08:25PM +0100, Andrew Lunn wrote:
+>> This patchset is a driver for the TI tlc59116 16 Channel i2c LED
+>> driver and tlc59108 8 Channel i2c LED driver. This driver is used on
+>> the Belkin WRT1900AC access point and the C code is derived from code
+>> Belkin contributed to OpenWRT.  However it has been extensively
+>> re-written, and a device tree binding added to replace platform data.
 >
-> Ricardo Ribalda Delgado (1):
->   leds/led-class: Handle LEDs with the same name
+> Hi Bryan
 >
-> Sakari Ailus (2):
->   leds: Use log level warn instead of info when telling about a name
->     clash
->   leds: Don't treat the LED name as a format string
+> Do you have any comments on this driver? Anything you would like me to
+> do to help get it accepted?
 >
->  drivers/leds/led-class.c | 39 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 37 insertions(+), 2 deletions(-)
->
-Applied again.
+
+Sorry for the delay. I'm reviewing several other patches as well as
+working on my internal work.
+I will review this soon.
 
 Thanks,
 -Bryan
+
+>
+>>
+>> Cc: Matthew.Fatheree@belkin.com
+>>
+>> Since v5:
+>>       Hard code number of LEDs, rather than #define
+>>       Moved common fields from led into priv
+>>       Moved reg_ledout into priv, removed helper functions
+>>       Cache brightness to avoid race conditions
+>>       tlc591xx_led_set -> tlc591xx_set_brightness
+>>       Be paranoid with of_match_device() and client->dev.of_node
+>>
+>> Since v4:
+>>       Fix Oops on module unload reported by Vignesh R
+>>
+>> Since v3:
+>>       Generalized and added support for tlc59108
+>>       brightness == 0 and brightness == LED_FULL disable PWM and used
+>>         fixed OFF/ON mode
+>>
+>> Since v2:
+>>       Remove incorrect /* Mode register ? */ comment
+>>       Parenthesis around the macro arguments
+>>       Converted many signed variables into unsigned
+>>       Saved an initialization
+>>
+>>
+>> Since v1:
+>>       s/uint8_t/u8/g
+>>       Remove empty line
+>>       Removed #gpio-cells
+>>       Added select REGMAP_I2C
+>>       Sorted #includes into alphabetic order
+>>       Added missing MODULE_DEVICE_TABLE(of, ...)
+>>       Check return value of regmap_write()
+>>       Simplified tlc59116_set_mode()
+>>
+>> Andrew Lunn (2):
+>>   leds: tlc59116: Document binding for the TI 16 Channel i2c LED driver
+>>   leds: tlc59116: Driver for the TI 16 Channel i2c LED driver
+>>
+>>  .../devicetree/bindings/leds/leds-tlc59116.txt     |  41 ++++
+>>  drivers/leds/Kconfig                               |   7 +
+>>  drivers/leds/Makefile                              |   1 +
+>>  drivers/leds/leds-tlc59116.c                       | 253 +++++++++++++++++++++
+>>  4 files changed, 302 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc59116.txt
+>>  create mode 100644 drivers/leds/leds-tlc59116.c
+>>
+>> --
+>> 2.1.3
