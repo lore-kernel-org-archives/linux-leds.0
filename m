@@ -1,61 +1,115 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs related
- properties
-Date: Tue, 31 Mar 2015 15:52:37 +0200
-Message-ID: <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v4 02/12] leds: unify the location of led-trigger API
+Date: Tue, 31 Mar 2015 15:52:38 +0200
+Message-ID: <1427809965-25540-3-git-send-email-j.anaszewski@samsung.com>
 References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:47886 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753943AbbCaNyC (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 31 Mar 2015 09:54:02 -0400
 In-reply-to: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, devicetree@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Description of flash LEDs related properties was not precise regarding
-the state of corresponding settings in case a property is missing.
-Add relevant statements.
-Removed is also the requirement making the flash-max-microamp
-property obligatory for flash LEDs. It was inconsistent as the property
-is defined as optional. Devices which require the property will have
-to assert this in their DT bindings.
+Part of led-trigger API was in the private drivers/leds/leds.h header.
+Move it to the include/linux/leds.h header to unify the API location
+and announce it as public. It has been already exported from
+led-triggers.c with EXPORT_SYMBOL_GPL macro.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Bryan Wu <cooloney@gmail.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: devicetree@vger.kernel.org
 ---
- Documentation/devicetree/bindings/leds/common.txt |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/leds/leds.h  |   24 ------------------------
+ include/linux/leds.h |   24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 747c538..21a25e4 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -29,13 +29,15 @@ Optional properties for child nodes:
-      "ide-disk" - LED indicates disk activity
-      "timer" - LED flashes at a fixed, configurable rate
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 79efe57..bc89d7a 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -13,7 +13,6 @@
+ #ifndef __LEDS_H_INCLUDED
+ #define __LEDS_H_INCLUDED
  
--- max-microamp : maximum intensity in microamperes of the LED
--		 (torch LED for flash devices)
--- flash-max-microamp : maximum intensity in microamperes of the
--                       flash LED; it is mandatory if the LED should
--		       support the flash mode
--- flash-timeout-us : timeout in microseconds after which the flash
--                     LED is turned off
-+- max-microamp : Maximum intensity in microamperes of the LED
-+		 (torch LED for flash devices). If omitted this will default
-+		 to the maximum current allowed by the device.
-+- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
-+		       If omitted this will default to the maximum
-+		       current allowed by the device.
-+- flash-timeout-us : Timeout in microseconds after which the flash
-+                     LED is turned off. If omitted this will default to the
-+		     maximum timeout allowed by the device.
+-#include <linux/device.h>
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
  
+@@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
+ extern struct rw_semaphore leds_list_lock;
+ extern struct list_head leds_list;
  
- Examples:
+-#ifdef CONFIG_LEDS_TRIGGERS
+-void led_trigger_set_default(struct led_classdev *led_cdev);
+-void led_trigger_set(struct led_classdev *led_cdev,
+-			struct led_trigger *trigger);
+-void led_trigger_remove(struct led_classdev *led_cdev);
+-
+-static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+-{
+-	return led_cdev->trigger_data;
+-}
+-
+-#else
+-#define led_trigger_set_default(x) do {} while (0)
+-#define led_trigger_set(x, y) do {} while (0)
+-#define led_trigger_remove(x) do {} while (0)
+-#define led_get_trigger_data(x) (NULL)
+-#endif
+-
+-ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+-			const char *buf, size_t count);
+-ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+-			char *buf);
+-
+ #endif	/* __LEDS_H_INCLUDED */
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 9a2b000..0579708 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -12,6 +12,7 @@
+ #ifndef __LINUX_LEDS_H_INCLUDED
+ #define __LINUX_LEDS_H_INCLUDED
+ 
++#include <linux/device.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+@@ -222,6 +223,29 @@ struct led_trigger {
+ 	struct list_head  next_trig;
+ };
+ 
++#ifdef CONFIG_LEDS_TRIGGERS
++void led_trigger_set_default(struct led_classdev *led_cdev);
++void led_trigger_set(struct led_classdev *led_cdev,
++			struct led_trigger *trigger);
++void led_trigger_remove(struct led_classdev *led_cdev);
++
++static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
++{
++	return led_cdev->trigger_data;
++}
++
++#else
++#define led_trigger_set_default(x) do {} while (0)
++#define led_trigger_set(x, y) do {} while (0)
++#define led_trigger_remove(x) do {} while (0)
++#define led_get_trigger_data(x) (NULL)
++#endif
++
++ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
++			const char *buf, size_t count);
++ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
++			char *buf);
++
+ /* Registration functions for complex triggers */
+ extern int led_trigger_register(struct led_trigger *trigger);
+ extern void led_trigger_unregister(struct led_trigger *trigger);
 -- 
 1.7.9.5
