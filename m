@@ -1,122 +1,74 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds-gpio: Fix error handling and memory leak
-Date: Mon, 30 Mar 2015 15:16:12 -0700
-Message-ID: <CAK5ve-J=DVHJPMCmWwY4niu59GahU3x=pK0guzhFu1wLJRLEOw@mail.gmail.com>
-References: <1425948222-7925-1-git-send-email-minyard@acm.org>
- <CAK5ve-+vwbMhDc-_YE3skwSS0RtCULspzQiYyPwero6a_jFk7w@mail.gmail.com> <5514C9A7.5030304@acm.org>
+From: "sakari.ailus@iki.fi" <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v3] DT: Add documentation for the mfd Maxim max77693
+Date: Tue, 31 Mar 2015 12:14:14 +0300
+Message-ID: <20150331091414.GH18321@valkosipuli.retiisi.org.uk>
+References: <1427709149-15014-1-git-send-email-j.anaszewski@samsung.com>
+ <1427709149-15014-2-git-send-email-j.anaszewski@samsung.com>
+ <20150330115729.GG17971@leverpostej>
+ <55194509.1070008@samsung.com>
+ <20150330132002.GA29200@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:34133 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752661AbbC3WQd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Mar 2015 18:16:33 -0400
-In-Reply-To: <5514C9A7.5030304@acm.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:43060 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751817AbbCaJOw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Tue, 31 Mar 2015 05:14:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20150330132002.GA29200@leverpostej>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: minyard@acm.org
-Cc: Raphael Assenat <raph@8d.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Corey Minyard <cminyard@mvista.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "cooloney@gmail.com" <cooloney@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Mar 26, 2015 at 8:08 PM, Corey Minyard <minyard@acm.org> wrote:
-> On 03/26/2015 08:20 PM, Bryan Wu wrote:
->> On Mon, Mar 9, 2015 at 5:43 PM,  <minyard@acm.org> wrote:
->>> From: Corey Minyard <cminyard@mvista.com>
->>>
->>> The leds-gpio driver would not clean up properly if it failed in some
->>> places, and it wasn't freeing its private data.
->>>
->>> Signed-off-by: Corey Minyard <cminyard@mvista.com>
->>> ---
->>>  drivers/leds/leds-gpio.c | 13 +++++++++----
->>>  1 file changed, 9 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
->>> index d26af0a..32f7642 100644
->>> --- a/drivers/leds/leds-gpio.c
->>> +++ b/drivers/leds/leds-gpio.c
->>> @@ -198,8 +198,10 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->>>                 } else {
->>>                         if (IS_ENABLED(CONFIG_OF) && !led.name && np)
->>>                                 led.name = np->name;
->>> -                       if (!led.name)
->>> -                               return ERR_PTR(-EINVAL);
->>> +                       if (!led.name) {
->>> +                               ret = -EINVAL;
->>> +                               goto err;
->>> +                       }
->>>                 }
->>>                 fwnode_property_read_string(child, "linux,default-trigger",
->>>                                             &led.default_trigger);
->>> @@ -217,19 +219,21 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->>>                 if (fwnode_property_present(child, "retain-state-suspended"))
->>>                         led.retain_state_suspended = 1;
->>>
->>> -               ret = create_gpio_led(&led, &priv->leds[priv->num_leds++],
->>> +               ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
->> Why need this change? it's correct. And your add one more line
->> "priv->num_leds++"
->
-> That's actually the major source of the problem.  The value of
-> priv->num_leds was not correct if it failed before this point, and there
-> was already one "goto err" above this code and I added another to
-> properly handle not allocating the led name.  If it failed there it
-> would leave an LED lying around but free the memory underneath it.  So
-> instead, modify the failure recovery code to be priv->num_leds-1 instead
-> of priv->num_leds-2 and don't increment priv->num_leds until you have
-> success.
->
->>>                                       dev, NULL);
->>>                 if (ret < 0) {
->>>                         fwnode_handle_put(child);
->>>                         goto err;
->>>                 }
->>> +               priv->num_leds++;
->> Why need this?
->
-> See above.
->
->>>         }
->>>
->>>         return priv;
->>>
->>>  err:
->>> -       for (count = priv->num_leds - 2; count >= 0; count--)
->>> +       for (count = priv->num_leds - 1; count >= 0; count--)
->>>                 delete_gpio_led(&priv->leds[count]);
->>> +       devm_kfree(dev, priv);
->> priv is created by devm_kzalloc(), so if driver probing return error,
->> it will be freed automatically, you don't need call devm_free();
->
-> Ah, ok.  Then this is unnecessary.  Do want a new patch?
->
+Hi Mark and Jacek,
 
-I see, please provide a new patch. I'm going to merge this fix soon.
+On Mon, Mar 30, 2015 at 02:20:03PM +0100, Mark Rutland wrote:
+> Hi,
+> 
+> > >> +Optional properties:
+> > >> +- maxim,trigger-type : Flash trigger type.
+> > >> +	Possible trigger types:
+> > >> +		LEDS_TRIG_TYPE_EDGE (0) - Rising edge of the signal triggers
+> > >> +			the flash,
+> > >> +		LEDS_TRIG_TYPE_LEVEL (1) - Strobe pulse length controls duration
+> > >> +			of the flash.
+> > >
+> > > Surely this is required? What should be assumed if this property isn't
+> > > present?
+> > 
+> > LEDS_TRIG_TYPE_LEVEL allows for an ISP to do e.g. short flash blink
+> > before the actual strobe - it is used for eliminating photographs with
+> > closed eyes, or can serve for probing ambient light conditions.
+> > 
+> > With LEDS_TRIG_TYPE_EDGE flash strobe is triggered on rising edge
+> > and lasts until programmed timeout expires.
+> > 
+> > This setting is tightly related to a camera sensor, which generates
+> > the strobe signal. Effectively it depends on board configuration.
+> 
+> My comment wasn't to do with the semantics of eitehr option but rather
+> the optionality of the property.
+> 
+> Surely it's vital to know what this should be, and hence this property
+> should be required rather than optional?
+> 
+> If it isn't required, what would the assumed default be?
 
-Thanks,
--Bryan
+I wonder if there's a use case for edge triggering. In level trigger mode,
+whichever component generates the trigger signal, determines also the strobe
+time (up to the timeout). The sensor or (in the case of lack of the signal
+from the sensor) the ISP has the most information on the sensor timing.
 
+The existing as3654a driver only supports level triggering while the chip
+can do edge, too.
 
-> Thanks,
->
-> -corey
->
->>>         return ERR_PTR(ret);
->>>  }
->>>
->>> @@ -283,6 +287,7 @@ static int gpio_led_remove(struct platform_device *pdev)
->>>
->>>         for (i = 0; i < priv->num_leds; i++)
->>>                 delete_gpio_led(&priv->leds[i]);
->>> +       devm_kfree(&pdev->dev, priv);
->> No need this during remove.
->>
->>>         return 0;
->>>  }
->>> --
->>> 1.8.3.1
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+I'd make level default and perhaps add a V4L2 control / sysfs file to change
+this if needed.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
