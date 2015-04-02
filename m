@@ -1,62 +1,56 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs
- related properties
-Date: Thu, 2 Apr 2015 16:41:34 +0200
-Message-ID: <20150402144134.GA18125@amd>
-References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
- <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v13 04/13] DT: Add documentation for the mfd Maxim
+ max77693
+Date: Thu, 2 Apr 2015 16:50:46 +0200
+Message-ID: <20150402145046.GD18125@amd>
+References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
+ <1426175114-14876-5-git-send-email-j.anaszewski@samsung.com>
+ <20150323120743.GG24422@x1>
+ <20150323142202.GA23919@amd>
+ <20150323150213.GN24804@x1>
+ <20150323154807.GA13297@amd>
+ <20150323155937.GQ24804@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Sakari Ailus <sakari.ailus@linux.intel.com>, devicetree@vger.kernel.org
+In-Reply-To: <20150323155937.GQ24804@x1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 2015-03-31 15:52:37, Jacek Anaszewski wrote:
-> Description of flash LEDs related properties was not precise regarding
-> the state of corresponding settings in case a property is missing.
-> Add relevant statements.
-> Removed is also the requirement making the flash-max-microamp
-> property obligatory for flash LEDs. It was inconsistent as the property
-> is defined as optional. Devices which require the property will have
-> to assert this in their DT bindings.
+On Mon 2015-03-23 15:59:37, Lee Jones wrote:
+> On Mon, 23 Mar 2015, Pavel Machek wrote:
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
+> > On Mon 2015-03-23 15:02:13, Lee Jones wrote:
+> > > On Mon, 23 Mar 2015, Pavel Machek wrote:
+> > > > On Mon 2015-03-23 12:07:43, Lee Jones wrote:
+> > > > > This patch requires a DT Ack.
+> > > > 
+> > > > No, it requires DT people to be notified -- and they were, few times
+> > > > by now.
+> > > > 
+> > > > They clearly don't care.
+> > > 
+> > > Well fortunately for the Kernel community, I do care.  And as this
+> > > patch adds 3 new DT properties, has been through many iterations
+> > > already with vast changes made over that period and there is still
+> > > some controversy looming, I'm saying that it _does_ require a DT
+> > > Ack.
+> > 
+> > Can you help get that ack, then? As a maintainer, you have better
+> > chance getting reply from DT people than patch submitter.
+> 
+> Hopefully they will see my plea a couple of replies back.
+> 
+> If that fails I'll go poke them via other means.  Failing that I'll go
+> see them in person and continually hit them with wet fish until one of
+> them relents.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> index 747c538..21a25e4 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -29,13 +29,15 @@ Optional properties for child nodes:
->       "ide-disk" - LED indicates disk activity
->       "timer" - LED flashes at a fixed, configurable rate
->  
-> -- max-microamp : maximum intensity in microamperes of the LED
-> -		 (torch LED for flash devices)
-> -- flash-max-microamp : maximum intensity in microamperes of the
-> -                       flash LED; it is mandatory if the LED should
-> -		       support the flash mode
-> -- flash-timeout-us : timeout in microseconds after which the flash
-> -                     LED is turned off
-> +- max-microamp : Maximum intensity in microamperes of the LED
-> +		 (torch LED for flash devices). If omitted this will default
-> +		 to the maximum current allowed by the device.
-> +- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
-> +		       If omitted this will default to the maximum
-> +		       current allowed by the device.
-> +- flash-timeout-us : Timeout in microseconds after which the flash
-> +                     LED is turned off. If omitted this will default to the
-> +		     maximum timeout allowed by the device.
-
-
+Can I request footage of the last steps on the youtube? (IOW ping, I
+don't think I seen any replies from DT maintainers...)
+									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
