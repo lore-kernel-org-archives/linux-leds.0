@@ -1,105 +1,110 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 1/2] leds: add DT binding for BCM6328 LED controller
-Date: Thu, 02 Apr 2015 19:06:30 -0700
-Message-ID: <551DF5A6.1080100@gmail.com>
-References: <1427975661-29964-1-git-send-email-noltari@gmail.com> <1427975661-29964-2-git-send-email-noltari@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v1 09/11] DT: Add documentation for exynos4-is 'flashes'
+ property
+Date: Fri, 03 Apr 2015 12:53:16 +0200
+Message-ID: <551E711C.2080802@samsung.com>
+References: <1426863811-12516-1-git-send-email-j.anaszewski@samsung.com>
+ <1426863811-12516-10-git-send-email-j.anaszewski@samsung.com>
+ <20150325010641.GI18321@valkosipuli.retiisi.org.uk>
+ <55127732.7020004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:36702 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752929AbbDCCHV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 2 Apr 2015 22:07:21 -0400
-Received: by pabsx10 with SMTP id sx10so10053126pab.3
-        for <linux-leds@vger.kernel.org>; Thu, 02 Apr 2015 19:07:20 -0700 (PDT)
-In-Reply-To: <1427975661-29964-2-git-send-email-noltari@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <55127732.7020004@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, linux-leds@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, cernekee@gmail.com
 
-On 02/04/15 04:54, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
-> This adds device tree binding documentation for the Broadcom BCM6328 =
-LED
-> controller.
+Hello,
 
-Looks pretty good to me, few comments below:
+On 25/03/15 09:52, Jacek Anaszewski wrote:
+> On 03/25/2015 02:06 AM, Sakari Ailus wrote:
+>> On Fri, Mar 20, 2015 at 04:03:29PM +0100, Jacek Anaszewski wrote:
+>>> This patch adds a description of 'flashes' property
+>>> to the samsung-fimc.txt.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> ---
+>>>   .../devicetree/bindings/media/samsung-fimc.txt     |    8 ++++++++
+>>>   1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>>> index 922d6f8..cb0e263 100644
+>>> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>>> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>>> @@ -40,6 +40,13 @@ should be inactive. For the "active-a" state the camera port A must be activated
+>>>   and the port B deactivated and for the state "active-b" it should be the other
+>>>   way around.
+>>>
+>>> +Optional properties:
+>>> +
+>>> +- flashes - Array of phandles to the flash LEDs that can be controlled by the
+>>> +	    sub-devices contained in this media device. Flash LED is
+>>> +	    represented by a child node of a flash LED device
+>>
+>> This should be in
+>> Documentation/devicetree/bindings/media/video-interfaces.txt.
+>>
+>> Should flash devices be associated with sensors somehow rather than ISPs?
+>> That's how they commonly are arranged, however that doesn't limit placing
+>> them in silly places.
+>>
+>> I'm not necessarily saying the flashes-property should be present in
+>> sensor's DT nodes, but it'd be good to be able to make the association if
+>> it's there.
 
->=20
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
->  .../devicetree/bindings/leds/leds-bcm6328.txt      | 173 +++++++++++=
-++++++++++
->  1 file changed, 173 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm63=
-28.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt =
-b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
-> new file mode 100644
-> index 0000000..e63d27f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
-> @@ -0,0 +1,173 @@
-> +LEDs connected to Broadcom BCM6328 controller
-> +
-> +Required properties:
-> +- compatible : should be : "brcm,bcm6328-leds".
+IMHO 'flashes' is a misleading name, these are simply high brightness LEDs
+which can work as camera flash or auxiliary light for camcording, in context of
+a camera device.
 
-Something like "brcm,bcm6328-leds-ctrl" might be a bit more descriptive=
-=2E
+The led DT nodes which the entries of above flashes property is pointing to
+have a text label, which presumably could be used to associate a LED device
+with an image sensor. That said, I think we should allow a property as above
+'flashes' be placed in aggregate camera node and also in sensor device node.
+I think it should be left to the bridge/ISP binding to choose one option or
+the other.
 
-> +- #address-cells: must be 1
-> +- #size-cells: must be 0
-> +- reg: BCM6328 LED controller address and size.
-> +
-> +Optional properties:
-> +- brcm,serial-leds: enable Serial LEDs.
-> +
-> +Each led is represented as a sub-node of the brcm,bcm6328-leds devic=
-e.
-> +
-> +LED sub-node properties:
-> +- reg : LED pin number (could be from 0 to 23).
-> +- compatible : should be : "brcm,bcm6328-led".
+For now I would propose to rename the "flashes" property to "samsung,leds" or
+"leds" and leave it in "camera" node.
 
-Do we really need to strongly type the LED child nodes here with a
-compatible string? It is somewhat implicit that if your parent is
-"brcm,bcm6328-leds", the child nodes are of the same "type"?
+> I know of a SoC, which drives the flash from its on-chip ISP. The GPIO
+> connected to the flash controller's external strobe pin can be
+> configured so that the signal is routed to it from the ISP or from
+> CPU (for software strobe mode).
+> 
+> I think that Sylwester could say more in this subject.
+> 
+> 
+>>> +	    (see Documentation/devicetree/bindings/leds/common.txt).
+>>> +
+>>>   The 'camera' node must include at least one 'fimc' child node.
+>>>
+>>>
+>>> @@ -166,6 +173,7 @@ Example:
+>>>   		clock-output-names = "cam_a_clkout", "cam_b_clkout";
+>>>   		pinctrl-names = "default";
+>>>   		pinctrl-0 = <&cam_port_a_clk_active>;
+>>> +		flashes = <&camera_flash>, <&system_torch>;
+>>>   		status = "okay";
+>>>   		#address-cells = <1>;
+>>>   		#size-cells = <1>;
+>>
+>> There will be other kind of devices that have somewhat similar relationship.
+>> They just haven't been defined yet. Lens controllers or EEPROM for instance.
+>> The two are an integral part of a module, something which is not modelled in
+>> DT in any way, but perhaps should be.
 
-> +
-> +Normal LED:
-> +- label (optional) : see Documentation/devicetree/bindings/leds/comm=
-on.txt
-> +- active-low (optional) : LED is active low.
+Indeed, I'd say it belongs to a particular image sensor (camera module) binding
+to describe each its physical subdevices, i.e. if a pointer to lens or EEPROM
+is needed in the main module DT node.
 
-If it is an optional property, you would want to clarify that active
-high is the default.
+> Do you suggest using more generic name than 'flashes'?
 
-> +- default-state (optional): see
-> +  Documentation/devicetree/bindings/leds/leds-gpio.txt
-> +- linux,default-trigger (optional): see
-> +  Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Hardware controlled LED:
-> +- brcm,hardware-controlled (optional) : LED is hardware controlled.
 
-The type of this property is not strictly defined, but it would appear
-to be a boolean. Reading through the driver though, it looks like the
-number of LEDs "hardware" controlled should be something customizable a=
-t
-some point.
-
-> +- brcm,link-selection (optional) : LED link selection values.
-
-Here you should specify exactly which values are accepted, if this is a
-value that is directly mapping to a hardware register value, we might
-want to create a header file for that.
-
-> +- brcm,activity-selection (optional) : LED activity selection values=
-=2E
-
-Ditto.
---=20
-=46lorian
+-- 
+Regards,
+Sylwester
