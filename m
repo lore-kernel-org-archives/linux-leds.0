@@ -1,76 +1,105 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC v13 04/13] DT: Add documentation for the mfd Maxim
- max77693
-Date: Thu, 2 Apr 2015 20:33:55 +0100
-Message-ID: <20150402193355.GG9447@x1>
-References: <1426175114-14876-1-git-send-email-j.anaszewski@samsung.com>
- <1426175114-14876-5-git-send-email-j.anaszewski@samsung.com>
- <20150323120743.GG24422@x1>
- <20150323142202.GA23919@amd>
- <20150323150213.GN24804@x1>
- <20150323154807.GA13297@amd>
- <20150323155937.GQ24804@x1>
- <20150402145046.GD18125@amd>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 1/2] leds: add DT binding for BCM6328 LED controller
+Date: Thu, 02 Apr 2015 19:06:30 -0700
+Message-ID: <551DF5A6.1080100@gmail.com>
+References: <1427975661-29964-1-git-send-email-noltari@gmail.com> <1427975661-29964-2-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150402145046.GD18125@amd>
-Sender: linux-media-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:36702 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752929AbbDCCHV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 2 Apr 2015 22:07:21 -0400
+Received: by pabsx10 with SMTP id sx10so10053126pab.3
+        for <linux-leds@vger.kernel.org>; Thu, 02 Apr 2015 19:07:20 -0700 (PDT)
+In-Reply-To: <1427975661-29964-2-git-send-email-noltari@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, linux-leds@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, cernekee@gmail.com
 
-On Thu, 02 Apr 2015, Pavel Machek wrote:
+On 02/04/15 04:54, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+> This adds device tree binding documentation for the Broadcom BCM6328 =
+LED
+> controller.
 
-> On Mon 2015-03-23 15:59:37, Lee Jones wrote:
-> > On Mon, 23 Mar 2015, Pavel Machek wrote:
-> >=20
-> > > On Mon 2015-03-23 15:02:13, Lee Jones wrote:
-> > > > On Mon, 23 Mar 2015, Pavel Machek wrote:
-> > > > > On Mon 2015-03-23 12:07:43, Lee Jones wrote:
-> > > > > > This patch requires a DT Ack.
-> > > > >=20
-> > > > > No, it requires DT people to be notified -- and they were, fe=
-w times
-> > > > > by now.
-> > > > >=20
-> > > > > They clearly don't care.
-> > > >=20
-> > > > Well fortunately for the Kernel community, I do care.  And as t=
-his
-> > > > patch adds 3 new DT properties, has been through many iteration=
-s
-> > > > already with vast changes made over that period and there is st=
-ill
-> > > > some controversy looming, I'm saying that it _does_ require a D=
-T
-> > > > Ack.
-> > >=20
-> > > Can you help get that ack, then? As a maintainer, you have better
-> > > chance getting reply from DT people than patch submitter.
-> >=20
-> > Hopefully they will see my plea a couple of replies back.
-> >=20
-> > If that fails I'll go poke them via other means.  Failing that I'll=
- go
-> > see them in person and continually hit them with wet fish until one=
- of
-> > them relents.
+Looks pretty good to me, few comments below:
+
 >=20
-> Can I request footage of the last steps on the youtube?
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+>  .../devicetree/bindings/leds/leds-bcm6328.txt      | 173 +++++++++++=
+++++++++++
+>  1 file changed, 173 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm63=
+28.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt =
+b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> new file mode 100644
+> index 0000000..e63d27f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> @@ -0,0 +1,173 @@
+> +LEDs connected to Broadcom BCM6328 controller
+> +
+> +Required properties:
+> +- compatible : should be : "brcm,bcm6328-leds".
 
-Too late, it's been and gone.
+Something like "brcm,bcm6328-leds-ctrl" might be a bit more descriptive=
+=2E
 
-> (IOW ping, I don't think I seen any replies from DT maintainers...)
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
+> +- reg: BCM6328 LED controller address and size.
+> +
+> +Optional properties:
+> +- brcm,serial-leds: enable Serial LEDs.
+> +
+> +Each led is represented as a sub-node of the brcm,bcm6328-leds devic=
+e.
+> +
+> +LED sub-node properties:
+> +- reg : LED pin number (could be from 0 to 23).
+> +- compatible : should be : "brcm,bcm6328-led".
 
-Then you haven't been looking the right place [1]. ;)
+Do we really need to strongly type the LED child nodes here with a
+compatible string? It is somewhat implicit that if your parent is
+"brcm,bcm6328-leds", the child nodes are of the same "type"?
 
-[1] http://comments.gmane.org/gmane.linux.leds/2245
+> +
+> +Normal LED:
+> +- label (optional) : see Documentation/devicetree/bindings/leds/comm=
+on.txt
+> +- active-low (optional) : LED is active low.
 
+If it is an optional property, you would want to clarify that active
+high is the default.
+
+> +- default-state (optional): see
+> +  Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +- linux,default-trigger (optional): see
+> +  Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Hardware controlled LED:
+> +- brcm,hardware-controlled (optional) : LED is hardware controlled.
+
+The type of this property is not strictly defined, but it would appear
+to be a boolean. Reading through the driver though, it looks like the
+number of LEDs "hardware" controlled should be something customizable a=
+t
+some point.
+
+> +- brcm,link-selection (optional) : LED link selection values.
+
+Here you should specify exactly which values are accepted, if this is a
+value that is directly mapping to a hardware register value, we might
+want to create a header file for that.
+
+> +- brcm,activity-selection (optional) : LED activity selection values=
+=2E
+
+Ditto.
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+=46lorian
