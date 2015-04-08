@@ -1,74 +1,112 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash
- LEDs related properties
-Date: Wed, 08 Apr 2015 10:48:27 +0300
-Message-ID: <5524DD4B.6040607@linux.intel.com>
-References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com> <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com> <20150403120910.GL20756@valkosipuli.retiisi.org.uk> <551E8DEA.5070205@samsung.com> <20150403203730.GA13009@amd> <CAK5ve-KR81cNrJnPj_XUkNvctsEYLDGb58qTVaOOAYJnoZTGXg@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs
+ related properties
+Date: Wed, 08 Apr 2015 10:54:52 +0200
+Message-ID: <5524ECDC.1070609@samsung.com>
+References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
+ <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
+ <20150403120910.GL20756@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-KR81cNrJnPj_XUkNvctsEYLDGb58qTVaOOAYJnoZTGXg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:20297 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751286AbbDHIy7 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 8 Apr 2015 04:54:59 -0400
+In-reply-to: <20150403120910.GL20756@valkosipuli.retiisi.org.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Sakari Ailus <sakari.ailus@linux.intel.com>, devicetree@vger.kernel.org
 
-Hi Bryan,
+Hi Sakari,
 
-Bryan Wu wrote:
-> On Fri, Apr 3, 2015 at 1:37 PM, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
->> Hi!
+On 04/03/2015 02:09 PM, Sakari Ailus wrote:
+> Hi Jacek,
+>
+> On Tue, Mar 31, 2015 at 03:52:37PM +0200, Jacek Anaszewski wrote:
+>> Description of flash LEDs related properties was not precise regarding
+>> the state of corresponding settings in case a property is missing.
+>> Add relevant statements.
+>> Removed is also the requirement making the flash-max-microamp
+>> property obligatory for flash LEDs. It was inconsistent as the property
+>> is defined as optional. Devices which require the property will have
+>> to assert this in their DT bindings.
 >>
->>>>> +- flash-timeout-us : Timeout in microseconds after which the flash
->>>>> +                     LED is turned off. If omitted this will default to the
->>>>> +                maximum timeout allowed by the device.
->>>>>
->>>>>
->>>>>  Examples:
->>>>
->>>> Pavel pointed out that the brightness between maximum current and the
->>>> maximum *allowed* another current might not be noticeable,leading a
->>>> potential spelling error to cause the LED being run at too high current.
->>>
->>> Where did he point this out? Do you think about the current version
->>> of the leds/common.txt documentation or there was some other message,
->>> that I don't see?
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Bryan Wu <cooloney@gmail.com>
+>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>> Cc: Pavel Machek <pavel@ucw.cz>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>>   Documentation/devicetree/bindings/leds/common.txt |   16 +++++++++-------
+>>   1 file changed, 9 insertions(+), 7 deletions(-)
 >>
->> Date: Thu, 2 Apr 2015 22:30:44 +0200
->> From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
->> To: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
->> Subject: Re: [PATCHv3] media: i2c/adp1653: devicetree support for adp1653
+>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+>> index 747c538..21a25e4 100644
+>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>> @@ -29,13 +29,15 @@ Optional properties for child nodes:
+>>        "ide-disk" - LED indicates disk activity
+>>        "timer" - LED flashes at a fixed, configurable rate
 >>
->>> Besides, I can't understand your point. Could you express it in other
->>> words, please?
+>> -- max-microamp : maximum intensity in microamperes of the LED
+>> -		 (torch LED for flash devices)
+>> -- flash-max-microamp : maximum intensity in microamperes of the
+>> -                       flash LED; it is mandatory if the LED should
+>> -		       support the flash mode
+>> -- flash-timeout-us : timeout in microseconds after which the flash
+>> -                     LED is turned off
+>> +- max-microamp : Maximum intensity in microamperes of the LED
+>> +		 (torch LED for flash devices). If omitted this will default
+>> +		 to the maximum current allowed by the device.
+>> +- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
+>> +		       If omitted this will default to the maximum
+>> +		       current allowed by the device.
+>> +- flash-timeout-us : Timeout in microseconds after which the flash
+>> +                     LED is turned off. If omitted this will default to the
+>> +		     maximum timeout allowed by the device.
 >>
->> Typo in device tree would cause hardware damage. But idea. Make the
->> properties mandatory.
->>                                                                 Pavel
-> 
-> I don't quite follow there. I think Pavel acked this patch right? So
-> what's left to hold here?
+>>
+>>   Examples:
+>
+> Pavel pointed out that the brightness between maximum current and the
+> maximum *allowed* another current might not be noticeable, leading a
+> potential spelling error to cause the LED being run at too high current.
 
-LED flash controllers are capable of providing more current than the
-LEDs attached to them can withstand without hardware damage. This is the
-reason the maximum current limits lower than the LED controller maximums
-are there.
+I think that a board designed so that it can be damaged because of
+software bugs should be considered not eligible for commercial use.
+Any self-esteeming manufacturer will not connect a LED to the output
+that can produce the current greater than the LED's absolute maximum
+current.
 
-Pavel, quite rightly so in my opinion, is suggesting these properties
-are made mandatory. A typo in the DT source could cause the controller
-maximum current used instead of LED maximum which is often lower. That
-kind of a problem would easily go unnoticed since there isn't
-necessarily any perceivable change in the functionality of the board.
+The DT properties could be useful for devices like aat1290 device I was
+writing a driver for, which has the maximum current and timeout values
+depending on corresponding capacitor and resistor values respectively.
+Such devices should make the properties required in their bindings.
 
-You'd only notice later on, when the LEDs stop working.
+> The three drivers I've looked also require these properties, which I think
+> is in the line with the above.
+>
+> How about either dropping the patch, or changing maximum to minimum and
+> will to should? The drivers could also behave this way instead of requiring
+> the properties, but I don't think there's anything wrong with requiring the
+> properties either.
+
+As I mentioned in the previous message in this subject, the max-microamp
+property refers also to non-flash LEDs. Since existing LED class devices
+does not require them, then it should be left optional and default to
+max. It would however be inconsistent with flash LEDs related
+properties.
+
+
+> I think this is worth considering now as we can't change this later without
+> breaking something.
+>
 
 -- 
-Regards,
-
-Sakari Ailus
-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+Jacek Anaszewski
