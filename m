@@ -1,80 +1,73 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs
- related properties
-Date: Wed, 08 Apr 2015 16:45:28 +0200
-Message-ID: <55253F08.3040409@samsung.com>
-References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
- <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
- <5524FCEF.7060901@samsung.com> <552517DD.2040905@samsung.com>
+Subject: Re: [PATCH v5] DT: leds: Improve description of flash LEDs related
+ properties
+Date: Wed, 08 Apr 2015 17:15:11 +0200
+Message-ID: <552545FF.2030208@samsung.com>
+References: <1428503487-4912-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40629 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753666AbbDHOpd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 8 Apr 2015 10:45:33 -0400
-In-reply-to: <552517DD.2040905@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43765 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932483AbbDHPPR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 8 Apr 2015 11:15:17 -0400
+In-reply-to: <1428503487-4912-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: pavel@ucw.cz, sakari.ailus@iki.fi, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@linux.intel.com>, devicetree@vger.kernel.org
 
-Hi Jacek,
+On 08/04/15 16:31, Jacek Anaszewski wrote:
+> Properties defining maximum values for LED currents and timeout should
+> be mandatory to avoid the risk of hardware damage. This patch fixes
+> the issue.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-On 08/04/15 13:58, Jacek Anaszewski wrote:
->>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>> >> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>> >> @@ -29,13 +29,15 @@ Optional properties for child nodes:
->>> >>        "ide-disk" - LED indicates disk activity
->>> >>        "timer" - LED flashes at a fixed, configurable rate
->>> >>
->>> >> -- max-microamp : maximum intensity in microamperes of the LED
->>> >> -		 (torch LED for flash devices)
->>> >> -- flash-max-microamp : maximum intensity in microamperes of the
->>> >> -                       flash LED; it is mandatory if the LED should
->>> >> -		       support the flash mode
->>> >> -- flash-timeout-us : timeout in microseconds after which the flash
->>> >> -                     LED is turned off
->>> >> +- max-microamp : Maximum intensity in microamperes of the LED
->>> >> +		 (torch LED for flash devices). If omitted this will default
->>> >> +		 to the maximum current allowed by the device.
->>> >> +- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
->>> >> +		       If omitted this will default to the maximum
->>> >> +		       current allowed by the device.
->>> >> +- flash-timeout-us : Timeout in microseconds after which the flash
->>> >> +                     LED is turned off. If omitted this will default to the
->>> >> +		     maximum timeout allowed by the device.
->> >
->> > Sorry about late comments on that, but since we can still change these
->> > properties and it seems we're going to do that, I'd like throw in my
->> > few preferences on the colour of this bike...
->> >
->> > IMO "max-microamp" is a poor property name, how about:
->> >
->> > s/max-microamp/led-max-current-ua,
->> > s/flash-max-microamp/flash-max-current-ua,
->> >
->> > so we have more consistent set of properties like:
->> >
->> > led-max-current-ua
->> > flash-max-current-ua
->> > flash-timeout-us
->
-> The "-microamp' suffix is consistent with regulator bindings.
-> Please refer to [1].
+> ---
+>  Documentation/devicetree/bindings/leds/common.txt |   19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 747c538..e478ac6 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -10,6 +10,17 @@ can influence the way of the LED device initialization, the LED components
+>  have to be tightly coupled with the LED device binding. They are represented
+>  by child nodes of the parent LED device binding.
+>  
+> +Required properties for child nodes:
 
-OK, in a perfect world we would have clean and consistent notation of
-units. If it's acked let's leave it, I didn't know it was, sorry about
-that.
+These properties are mandatory only for LEDs with Flash/Torch capabilities,
+aren't they? Requiring those properties for all led nodes would make all
+current dtses not compliant with the DT binding specification AFAICT.
 
-When I read yesterday Documentation/devicetree/bindings/leds/common.txt
-the set of new properties looked rather sloppy, especially "max-microamp"
-looked incomplete to me, as if the subject was missing.
+How about:
 
-Anyway, I'll just get used to it, let's complete this whole Flash/LED
-integration story.
+"Required properties for child nodes for LEDs with Flash/Torch capabilities:" ?
 
--- 
-Thanks,
+> +- led-max-microamp : Maximum LED supply current in microamperes
+> +                     (torch LED for flash devices). Controllers that have no
+> +                     configurable current can omit this property.
+> +- flash-max-microamp : Maximum flash LED supply current in microamperes.
+> +- flash-timeout-us : Timeout in microseconds after which the flash
+> +                     LED is turned off.
+> +
+
+> +Above properties determine a LED driver IC settings required for safe
+> +operation. They should be also used as the initial settings for the IC.
+
+Shouldn't "Controllers that have no configurable current can omit this
+property" refer to both led-max-microamp and flash-max-microamp? 
+
+I would drop the "Above...for the IC." paragraph and instead add something like:
+
+"For controllers that have no configurable current the led-max-microamp, 
+flash-max-microamp properties respectively can be omitted. For controllers that 
+have no configurable timeout the flash-timeout-us property can be omitted."
+
+--
+Regards, 
 Sylwester
