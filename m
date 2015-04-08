@@ -1,57 +1,125 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs
- related properties
-Date: Tue, 7 Apr 2015 18:20:08 -0700
-Message-ID: <CAK5ve-KR81cNrJnPj_XUkNvctsEYLDGb58qTVaOOAYJnoZTGXg@mail.gmail.com>
-References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
- <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
- <20150403120910.GL20756@valkosipuli.retiisi.org.uk> <551E8DEA.5070205@samsung.com>
- <20150403203730.GA13009@amd>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v4 02/12] leds: unify the location of led-trigger API
+Date: Tue, 7 Apr 2015 18:25:35 -0700
+Message-ID: <CAK5ve-Jw5v5toKx4fJt-5wqT2OJrJFwCaq_gxsuqBUaPAWed3g@mail.gmail.com>
+References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com> <1427809965-25540-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150403203730.GA13009@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:35383 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753490AbbDHBZ4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Apr 2015 21:25:56 -0400
+In-Reply-To: <1427809965-25540-3-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Fri, Apr 3, 2015 at 1:37 PM, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
-> Hi!
+On Tue, Mar 31, 2015 at 6:52 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Part of led-trigger API was in the private drivers/leds/leds.h header.
+> Move it to the include/linux/leds.h header to unify the API location
+> and announce it as public. It has been already exported from
+> led-triggers.c with EXPORT_SYMBOL_GPL macro.
 >
->> >>+- flash-timeout-us : Timeout in microseconds after which the flash
->> >>+                     LED is turned off. If omitted this will default to the
->> >>+                maximum timeout allowed by the device.
->> >>
->> >>
->> >>  Examples:
->> >
->> >Pavel pointed out that the brightness between maximum current and the
->> >maximum *allowed* another current might not be noticeable,leading a
->> >potential spelling error to cause the LED being run at too high current.
->>
->> Where did he point this out? Do you think about the current version
->> of the leds/common.txt documentation or there was some other message,
->> that I don't see?
->
-> Date: Thu, 2 Apr 2015 22:30:44 +0200
-> From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> To: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-> Subject: Re: [PATCHv3] media: i2c/adp1653: devicetree support for adp1653
->
->> Besides, I can't understand your point. Could you express it in other
->> words, please?
->
-> Typo in device tree would cause hardware damage. But idea. Make the
-> properties mandatory.
->                                                                 Pavel
 
-I don't quite follow there. I think Pavel acked this patch right? So
-what's left to hold here?
+Applied, thanks.
 
-Thanks,
 -Bryan
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
+>  drivers/leds/leds.h  |   24 ------------------------
+>  include/linux/leds.h |   24 ++++++++++++++++++++++++
+>  2 files changed, 24 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index 79efe57..bc89d7a 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -13,7 +13,6 @@
+>  #ifndef __LEDS_H_INCLUDED
+>  #define __LEDS_H_INCLUDED
+>
+> -#include <linux/device.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/leds.h>
+>
+> @@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
+>  extern struct rw_semaphore leds_list_lock;
+>  extern struct list_head leds_list;
+>
+> -#ifdef CONFIG_LEDS_TRIGGERS
+> -void led_trigger_set_default(struct led_classdev *led_cdev);
+> -void led_trigger_set(struct led_classdev *led_cdev,
+> -                       struct led_trigger *trigger);
+> -void led_trigger_remove(struct led_classdev *led_cdev);
+> -
+> -static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+> -{
+> -       return led_cdev->trigger_data;
+> -}
+> -
+> -#else
+> -#define led_trigger_set_default(x) do {} while (0)
+> -#define led_trigger_set(x, y) do {} while (0)
+> -#define led_trigger_remove(x) do {} while (0)
+> -#define led_get_trigger_data(x) (NULL)
+> -#endif
+> -
+> -ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+> -                       const char *buf, size_t count);
+> -ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+> -                       char *buf);
+> -
+>  #endif /* __LEDS_H_INCLUDED */
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 9a2b000..0579708 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -12,6 +12,7 @@
+>  #ifndef __LINUX_LEDS_H_INCLUDED
+>  #define __LINUX_LEDS_H_INCLUDED
+>
+> +#include <linux/device.h>
+>  #include <linux/list.h>
+>  #include <linux/mutex.h>
+>  #include <linux/rwsem.h>
+> @@ -222,6 +223,29 @@ struct led_trigger {
+>         struct list_head  next_trig;
+>  };
+>
+> +#ifdef CONFIG_LEDS_TRIGGERS
+> +void led_trigger_set_default(struct led_classdev *led_cdev);
+> +void led_trigger_set(struct led_classdev *led_cdev,
+> +                       struct led_trigger *trigger);
+> +void led_trigger_remove(struct led_classdev *led_cdev);
+> +
+> +static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+> +{
+> +       return led_cdev->trigger_data;
+> +}
+> +
+> +#else
+> +#define led_trigger_set_default(x) do {} while (0)
+> +#define led_trigger_set(x, y) do {} while (0)
+> +#define led_trigger_remove(x) do {} while (0)
+> +#define led_get_trigger_data(x) (NULL)
+> +#endif
+> +
+> +ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+> +                       const char *buf, size_t count);
+> +ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+> +                       char *buf);
+> +
+>  /* Registration functions for complex triggers */
+>  extern int led_trigger_register(struct led_trigger *trigger);
+>  extern void led_trigger_unregister(struct led_trigger *trigger);
+> --
+> 1.7.9.5
+>
