@@ -1,79 +1,151 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
 Subject: Re: [PATCH v4 01/12] DT: leds: Improve description of flash LEDs
  related properties
-Date: Wed, 8 Apr 2015 12:36:22 +0200
-Message-ID: <20150408103622.GB17245@amd>
+Date: Wed, 8 Apr 2015 13:44:17 +0300
+Message-ID: <20150408104417.GU20756@valkosipuli.retiisi.org.uk>
 References: <1427809965-25540-1-git-send-email-j.anaszewski@samsung.com>
  <1427809965-25540-2-git-send-email-j.anaszewski@samsung.com>
- <5524FCEF.7060901@samsung.com>
+ <20150403120910.GL20756@valkosipuli.retiisi.org.uk>
+ <5524ECDC.1070609@samsung.com>
+ <20150408091129.GT20756@valkosipuli.retiisi.org.uk>
+ <5525019B.8050104@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55074 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753676AbbDHKgY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 8 Apr 2015 06:36:24 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5524FCEF.7060901@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <5525019B.8050104-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, sakari.ailus@iki.fi, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org
 
-On Wed 2015-04-08 12:03:27, Sylwester Nawrocki wrote:
-> Hello,
-> 
-> On 31/03/15 15:52, Jacek Anaszewski wrote:
-> > Description of flash LEDs related properties was not precise regarding
-> > the state of corresponding settings in case a property is missing.
-> > Add relevant statements.
-> > Removed is also the requirement making the flash-max-microamp
-> > property obligatory for flash LEDs. It was inconsistent as the property
-> > is defined as optional. Devices which require the property will have
-> > to assert this in their DT bindings.
-> > 
-> > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Cc: Bryan Wu <cooloney@gmail.com>
-> > Cc: Richard Purdie <rpurdie@rpsys.net>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Cc: devicetree@vger.kernel.org
-> > ---
-> >  Documentation/devicetree/bindings/leds/common.txt |   16 +++++++++-------
-> >  1 file changed, 9 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> > index 747c538..21a25e4 100644
-> > --- a/Documentation/devicetree/bindings/leds/common.txt
-> > +++ b/Documentation/devicetree/bindings/leds/common.txt
-> > @@ -29,13 +29,15 @@ Optional properties for child nodes:
-> >       "ide-disk" - LED indicates disk activity
-> >       "timer" - LED flashes at a fixed, configurable rate
-> >  
-> > -- max-microamp : maximum intensity in microamperes of the LED
-> > -		 (torch LED for flash devices)
-> > -- flash-max-microamp : maximum intensity in microamperes of the
-> > -                       flash LED; it is mandatory if the LED should
-> > -		       support the flash mode
-> > -- flash-timeout-us : timeout in microseconds after which the flash
-> > -                     LED is turned off
-> > +- max-microamp : Maximum intensity in microamperes of the LED
-> > +		 (torch LED for flash devices). If omitted this will default
-> > +		 to the maximum current allowed by the device.
-> > +- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
-> > +		       If omitted this will default to the maximum
-> > +		       current allowed by the device.
-> > +- flash-timeout-us : Timeout in microseconds after which the flash
-> > +                     LED is turned off. If omitted this will default to the
-> > +		     maximum timeout allowed by the device.
-> 
-> Sorry about late comments on that, but since we can still change these
-> properties and it seems we're going to do that, I'd like throw in my
-> few preferences on the colour of this bike...
+Hi Jacek,
 
-Lets not paint bikes here.
+On Wed, Apr 08, 2015 at 12:23:23PM +0200, Jacek Anaszewski wrote:
+> Hi Sakari,
+> 
+> On 04/08/2015 11:11 AM, Sakari Ailus wrote:
+> >Hi Jacek,
+> >
+> >On Wed, Apr 08, 2015 at 10:54:52AM +0200, Jacek Anaszewski wrote:
+> >>Hi Sakari,
+> >>
+> >>On 04/03/2015 02:09 PM, Sakari Ailus wrote:
+> >>>Hi Jacek,
+> >>>
+> >>>On Tue, Mar 31, 2015 at 03:52:37PM +0200, Jacek Anaszewski wrote:
+> >>>>Description of flash LEDs related properties was not precise regarding
+> >>>>the state of corresponding settings in case a property is missing.
+> >>>>Add relevant statements.
+> >>>>Removed is also the requirement making the flash-max-microamp
+> >>>>property obligatory for flash LEDs. It was inconsistent as the property
+> >>>>is defined as optional. Devices which require the property will have
+> >>>>to assert this in their DT bindings.
+> >>>>
+> >>>>Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>>Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>>Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>>>Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+> >>>>Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+> >>>>Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> >>>>Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> >>>>---
+> >>>>  Documentation/devicetree/bindings/leds/common.txt |   16 +++++++++-------
+> >>>>  1 file changed, 9 insertions(+), 7 deletions(-)
+> >>>>
+> >>>>diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> >>>>index 747c538..21a25e4 100644
+> >>>>--- a/Documentation/devicetree/bindings/leds/common.txt
+> >>>>+++ b/Documentation/devicetree/bindings/leds/common.txt
+> >>>>@@ -29,13 +29,15 @@ Optional properties for child nodes:
+> >>>>       "ide-disk" - LED indicates disk activity
+> >>>>       "timer" - LED flashes at a fixed, configurable rate
+> >>>>
+> >>>>-- max-microamp : maximum intensity in microamperes of the LED
+> >>>>-		 (torch LED for flash devices)
+> >>>>-- flash-max-microamp : maximum intensity in microamperes of the
+> >>>>-                       flash LED; it is mandatory if the LED should
+> >>>>-		       support the flash mode
+> >>>>-- flash-timeout-us : timeout in microseconds after which the flash
+> >>>>-                     LED is turned off
+> >>>>+- max-microamp : Maximum intensity in microamperes of the LED
+> >>>>+		 (torch LED for flash devices). If omitted this will default
+> >>>>+		 to the maximum current allowed by the device.
+> >>>>+- flash-max-microamp : Maximum intensity in microamperes of the flash LED.
+> >>>>+		       If omitted this will default to the maximum
+> >>>>+		       current allowed by the device.
+> >>>>+- flash-timeout-us : Timeout in microseconds after which the flash
+> >>>>+                     LED is turned off. If omitted this will default to the
+> >>>>+		     maximum timeout allowed by the device.
+> >>>>
+> >>>>
+> >>>>  Examples:
+> >>>
+> >>>Pavel pointed out that the brightness between maximum current and the
+> >>>maximum *allowed* another current might not be noticeable, leading a
+> >>>potential spelling error to cause the LED being run at too high current.
+> >>
+> >>I think that a board designed so that it can be damaged because of
+> >>software bugs should be considered not eligible for commercial use.
+> >>Any self-esteeming manufacturer will not connect a LED to the output
+> >>that can produce the current greater than the LED's absolute maximum
+> >>current.
+> >
+> >The maximum current *is* used to prevent potential hardware damage.
+> 
+> What hardware are we talking about - LED controller or the discrete
+> LED component attached to the LED controller's current output?
+
+Generally the LED itself, not the controller. Most controllers have
+overheating protection while the LEDs do not.
+
+> 
+> The maximum current the LED controller can produce is fixed or depends
+> on external components like resistors.
+
+On some controllers perhaps, but not on most of them.
+
+> 
+> This is at least the case for max77693 and aat1290 device I've been
+> working with. If a LED is rated to max 1A and it will be connected
+> to the output capable of producing 1.2A then it is likely that it
+> will be damaged. I was thinking about this kind of hardware damage.
+
+This is the very reason why the maximum current limit is there: to prevent
+hardware damage. If the LED could safely be used at the controller's maximum
+current, there would be no need for the maximum current property
+(torch/flash).
+
+> 
+> How vendors can protect from it if they connect incompatible LED
+> to the current output?
+> 
+> There might be boards that provide sockets for connecting external
+> LEDs though. Such arrangements indeed justify the need for making the
+> properties required.
+
+Pluggable hardware is a completely different matter. If used with DT
+overlays, the overlay should contain the limits as well.
+
+> 
+> >This is
+> >how mobile phones typically are, probably also the one you're using. :-) I
+> >don't believe there's really a difference between vendors in this respect.
+> >
+> >We still lack a proper way to model the temperature of the flash LED, so
+> >what we have now is a bit incomplete, but at least it prevents causing
+> >damage unintentionally.
+> 
+> Are you thinking about flash faults?
+
+The question is: when if it safe to strobe again after a strobe has ended?
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
