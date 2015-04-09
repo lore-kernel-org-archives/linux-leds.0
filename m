@@ -1,94 +1,123 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: Fix regression related to led-trigger API location change
-Date: Thu, 09 Apr 2015 14:55:33 +0200
-Message-ID: <1428584133-27892-1-git-send-email-j.anaszewski@samsung.com>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH 0/4] Allow to use leds-ns2 with n090401 boards
+Date: Thu, 9 Apr 2015 16:25:29 +0200
+Message-ID: <20150409142529.GC1509@kw.sim.vm.gnt>
+References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
+ <20150313094433.GU1509@kw.sim.vm.gnt>
+ <20150323103243.GQ1509@kw.sim.vm.gnt>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="g+8Xtij24AYnRgQJ"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44927 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751177AbbDIMzw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 08:55:52 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NMJ0066QIL20W90@mailout4.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 09 Apr 2015 21:55:50 +0900 (KST)
+Received: from vm1.sequanux.org ([188.165.36.56]:41565 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753255AbbDIOZh (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 9 Apr 2015 10:25:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20150323103243.GQ1509@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: cooloney@gmail.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Patch fe4d2d05 ("leds: unify the location of led-trigger API") is
-causing a build break when led-triggers are turned off in the config.
-This patch fixes the issue and changes no-op declarations of affected
-functions to inlines instead of macros.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
----
- include/linux/leds.h |   37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+--g+8Xtij24AYnRgQJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 0579708..0b9780e 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -223,24 +223,6 @@ struct led_trigger {
- 	struct list_head  next_trig;
- };
- 
--#ifdef CONFIG_LEDS_TRIGGERS
--void led_trigger_set_default(struct led_classdev *led_cdev);
--void led_trigger_set(struct led_classdev *led_cdev,
--			struct led_trigger *trigger);
--void led_trigger_remove(struct led_classdev *led_cdev);
--
--static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
--{
--	return led_cdev->trigger_data;
--}
--
--#else
--#define led_trigger_set_default(x) do {} while (0)
--#define led_trigger_set(x, y) do {} while (0)
--#define led_trigger_remove(x) do {} while (0)
--#define led_get_trigger_data(x) (NULL)
--#endif
--
- ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
- 			const char *buf, size_t count);
- ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-@@ -262,6 +244,16 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
- 				      unsigned long *delay_on,
- 				      unsigned long *delay_off,
- 				      int invert);
-+void led_trigger_set_default(struct led_classdev *led_cdev);
-+void led_trigger_set(struct led_classdev *led_cdev,
-+			struct led_trigger *trigger);
-+void led_trigger_remove(struct led_classdev *led_cdev);
-+
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return led_cdev->trigger_data;
-+}
-+
- /**
-  * led_trigger_rename_static - rename a trigger
-  * @name: the new trigger name
-@@ -291,6 +283,15 @@ static inline void led_trigger_register_simple(const char *name,
- static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
- static inline void led_trigger_event(struct led_trigger *trigger,
- 				enum led_brightness event) {}
-+static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
-+static inline void led_trigger_set(struct led_classdev *led_cdev,
-+				struct led_trigger *trigger) {}
-+static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_LEDS_TRIGGERS */
- 
- /* Trigger specific functions */
--- 
-1.7.9.5
+On Mon, Mar 23, 2015 at 11:32:43AM +0100, Simon Guinot wrote:
+> On Fri, Mar 13, 2015 at 10:44:33AM +0100, Simon Guinot wrote:
+> > On Wed, Mar 04, 2015 at 03:52:15PM +0100, Simon Guinot wrote:
+> > > Hello,
+> > >=20
+> > > This patch series allows to use the leds-ns2 driver with the n090401
+> > > boards (Seagate NAS 4-Bay), based on an Armada-370 SoC.
+> > >=20
+> > > Here is the list changes:
+> > >=20
+> > > - Allow to configure the LED mode mapping.
+> > > - Handle can_sleep GPIOs. On n090401, the LEDs are connected to an I2C
+> > >   GPIO expander.
+> > > - Make leds-ns2 depends on MACH_ARMADA_370.
+> >=20
+> > Hi Brian,
+> >=20
+> > Please consider applying the leds-ns2 patches of this serie.
+>=20
+> Hi Brian,
+>=20
+> Again, it would be nice to have this patches for the incoming release.
+> Please, consider picking the leds-ns2 patches of this serie.
+
+Hi Bryan,
+
+Ping :)
+
+Please, let me know if there is anything I can do to have this patches
+merged for the next Linux release.
+
+Thanks,
+
+Simon
+
+> > > Simon Guinot (2):
+> > >   leds: leds-ns2: handle can_sleep GPIOs
+> > >   leds: leds-ns2: depends on MACH_ARMADA_370
+> > >=20
+> > > Vincent Donnefort (2):
+> > >   leds: leds-ns2: move LED modes mapping outside of the driver
+> > >   ARM: Kirkwood: add modes-map property to ns2-leds nodes
+> > >=20
+> > >  .../devicetree/bindings/leds/leds-ns2.txt          |   9 ++
+> > >  arch/arm/boot/dts/kirkwood-d2net.dts               |   5 +
+> > >  arch/arm/boot/dts/kirkwood-is2.dts                 |   5 +
+> > >  arch/arm/boot/dts/kirkwood-ns2.dts                 |   5 +
+> > >  arch/arm/boot/dts/kirkwood-ns2max.dts              |   5 +
+> > >  arch/arm/boot/dts/kirkwood-ns2mini.dts             |   5 +
+> > >  drivers/leds/Kconfig                               |  12 +-
+> > >  drivers/leds/leds-ns2.c                            | 156 +++++++++++=
+++--------
+> > >  include/dt-bindings/leds/leds-ns2.h                |   8 ++
+> > >  include/linux/platform_data/leds-kirkwood-ns2.h    |  14 ++
+> > >  10 files changed, 159 insertions(+), 65 deletions(-)
+> > >  create mode 100644 include/dt-bindings/leds/leds-ns2.h
+> > >=20
+> > > --=20
+> > > 2.1.1
+> > >=20
+> > >=20
+> > > _______________________________________________
+> > > linux-arm-kernel mailing list
+> > > linux-arm-kernel@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+>=20
+>=20
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+
+
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+--g+8Xtij24AYnRgQJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlUmi9kACgkQgtp0PDeOcDo8IACeLbOjkXM/j+uHe36KVabjES1B
+11UAnR2T7qr2msWR0FKSto1Agx9UTNG2
+=iIFD
+-----END PGP SIGNATURE-----
+
+--g+8Xtij24AYnRgQJ--
