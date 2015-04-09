@@ -1,80 +1,104 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH -next] leds: Fix build failure seen if LEDS_TRIGGERS is
- not configured
-Date: Thu, 9 Apr 2015 10:34:49 -0700
-Message-ID: <CAK5ve-JMsG_XijWVJ_=4xTTPhG9-FjMADbBTZnQFiCmFjkbXvA@mail.gmail.com>
-References: <1428594140-16832-1-git-send-email-linux@roeck-us.net>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [patch 2/2] leds: netxbig: clean up a data type issue
+Date: Thu, 9 Apr 2015 21:25:57 +0200
+Message-ID: <20150409192557.GD1509@kw.sim.vm.gnt>
+References: <20150409090712.GF17605@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pHzye94IkqcvRa/c"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:36571 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755923AbbDIRfK (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 13:35:10 -0400
-In-Reply-To: <1428594140-16832-1-git-send-email-linux@roeck-us.net>
+Received: from vm1.sequanux.org ([188.165.36.56]:44370 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932855AbbDIT0B (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 9 Apr 2015 15:26:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20150409090712.GF17605@mwanda>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 9, 2015 at 8:42 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> Fix:
->
-> drivers/leds/led-class.c: In function 'brightness_store':
-> drivers/leds/led-class.c:57: error:
->                         implicit declaration of function 'led_trigger_remove'
->
-> seen if LEDS_TRIGGERS is not configured.
->
 
-Thanks for patching this. Jacek got a fix then.
--Bryan
+--pHzye94IkqcvRa/c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Fixes: 5a15d172057c ("leds: unify the location of led-trigger API")
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  include/linux/leds.h | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
->
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 0579708..96a669f 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -223,7 +223,6 @@ struct led_trigger {
->         struct list_head  next_trig;
+On Thu, Apr 09, 2015 at 12:07:12PM +0300, Dan Carpenter wrote:
+> This driver is pretty hardware specific so it's unlikely that we're
+> going to be using it on 64 big endian systems.  Still, the current code
+> causes a static checker warning so we may as well change the type from
+> "unsigned long" to "u32" and remove the casting.
+
+Hi Dan,
+
+Thanks for the patch.
+
+Why do you think it would be an issue to use the u32 type for this
+variables on a 64-bit big-endian machine ? Note that this LED mechanism
+is actually used on ARM 32-bits and x86-64 NAS platforms. The latter are
+not mainlined yet. But indeed, for now, there is no plan to use it on a
+64-bit big-endian machine.
+
+Since the whole LED code uses the unsigned long type to hold the delay
+values, if possible, I would prefer to keep the delay_{on,off} variables
+consistent with that.
+
+Is there an another way to make the "static checker" happy ?
+
+Thanks,
+
+Simon
+
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/include/linux/platform_data/leds-kirkwood-netxbig.h b/includ=
+e/linux/platform_data/leds-kirkwood-netxbig.h
+> index d2be19a..bbd1d99 100644
+> --- a/include/linux/platform_data/leds-kirkwood-netxbig.h
+> +++ b/include/linux/platform_data/leds-kirkwood-netxbig.h
+> @@ -29,9 +29,9 @@ enum netxbig_led_mode {
+>  #define NETXBIG_LED_INVALID_MODE NETXBIG_LED_MODE_NUM
+> =20
+>  struct netxbig_led_timer {
+> -	unsigned long		delay_on;
+> -	unsigned long		delay_off;
+> -	enum netxbig_led_mode	mode;
+> +	u32 delay_on;
+> +	u32 delay_off;
+> +	enum netxbig_led_mode mode;
 >  };
->
-> -#ifdef CONFIG_LEDS_TRIGGERS
->  void led_trigger_set_default(struct led_classdev *led_cdev);
->  void led_trigger_set(struct led_classdev *led_cdev,
->                         struct led_trigger *trigger);
-> @@ -234,13 +233,6 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
->         return led_cdev->trigger_data;
->  }
->
-> -#else
-> -#define led_trigger_set_default(x) do {} while (0)
-> -#define led_trigger_set(x, y) do {} while (0)
-> -#define led_trigger_remove(x) do {} while (0)
-> -#define led_get_trigger_data(x) (NULL)
-> -#endif
-> -
->  ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
->                         const char *buf, size_t count);
->  ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-> @@ -282,6 +274,11 @@ extern void led_trigger_rename_static(const char *name,
->
->  #else
->
-> +#define led_trigger_set_default(x) do {} while (0)
-> +#define led_trigger_set(x, y) do {} while (0)
-> +#define led_trigger_remove(x) do {} while (0)
-> +#define led_get_trigger_data(x) (NULL)
-> +
->  /* Trigger has no members */
->  struct led_trigger {};
->
-> --
-> 2.1.0
->
+> =20
+>  struct netxbig_led {
+> diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+> index d0b743c..3da87be 100644
+> --- a/drivers/leds/leds-netxbig.c
+> +++ b/drivers/leds/leds-netxbig.c
+> @@ -447,9 +447,9 @@ static int netxbig_leds_get_of_pdata(struct device *d=
+ev,
+>  			of_property_read_u32_index(np, "timers", 3 * i,
+>  						&timers[i].mode);
+>  			of_property_read_u32_index(np, "timers", 3 * i + 1,
+> -						(u32 *) &timers[i].delay_on);
+> +						   &timers[i].delay_on);
+>  			of_property_read_u32_index(np, "timers", 3 * i + 2,
+> -						(u32 *) &timers[i].delay_off);
+> +						   &timers[i].delay_off);
+>  		}
+>  		pdata->timer =3D timers;
+>  		pdata->num_timer =3D num_timers;
+
+--pHzye94IkqcvRa/c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlUm0kUACgkQgtp0PDeOcDpOPQCghyu1OXLlEwRkPmOdEXa6E5y5
+qgYAn2ADJZ3QBdioNgz7d08MF7fX9peA
+=PeXs
+-----END PGP SIGNATURE-----
+
+--pHzye94IkqcvRa/c--
