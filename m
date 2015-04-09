@@ -1,51 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch 2/2] leds: netxbig: clean up a data type issue
-Date: Thu, 9 Apr 2015 22:54:26 +0300
-Message-ID: <20150409195426.GP10964@mwanda>
-References: <20150409090712.GF17605@mwanda>
- <20150409192557.GD1509@kw.sim.vm.gnt>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] leds: fix !CONFIG_LEDS_TRIGGERS builds
+Date: Thu, 09 Apr 2015 23:06:53 +0200
+Message-ID: <32374082.15Rv66z5Mo@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150409192557.GD1509@kw.sim.vm.gnt>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:50766 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753709AbbDIVHD (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 17:07:03 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 09, 2015 at 09:25:57PM +0200, Simon Guinot wrote:
-> On Thu, Apr 09, 2015 at 12:07:12PM +0300, Dan Carpenter wrote:
-> > This driver is pretty hardware specific so it's unlikely that we're
-> > going to be using it on 64 big endian systems.  Still, the current code
-> > causes a static checker warning so we may as well change the type from
-> > "unsigned long" to "u32" and remove the casting.
-> 
-> Hi Dan,
-> 
-> Thanks for the patch.
-> 
-> Why do you think it would be an issue to use the u32 type for this
-> variables on a 64-bit big-endian machine ? Note that this LED mechanism
-> is actually used on ARM 32-bits and x86-64 NAS platforms. The latter are
-> not mainlined yet. But indeed, for now, there is no plan to use it on a
-> 64-bit big-endian machine.
-> 
-> Since the whole LED code uses the unsigned long type to hold the delay
-> values, if possible, I would prefer to keep the delay_{on,off} variables
-> consistent with that.
-> 
-> Is there an another way to make the "static checker" happy ?
+A recent move of the header led trigger function declaration caused the
+alternative wrappers to be entirely invisible if LEDS_TRIGGERS is
+disabled, leading to a compile-time error:
 
-We're writing over 32 bits of a long.  It's a dangerous habbit.
+drivers/leds/led-class.c: In function 'brightness_store':
+drivers/leds/led-class.c:57:3: error: implicit declaration of function 'led_trigger_remove' [-Werror=implicit-function-declaration]
 
-If long is u32 then of_property_read_u32_index() works, obviously.  If
-it is a little endian and the last 32 bits have been zeroed out (as they
-have been here) then that also works.
+This moves the wrappers to an appropriate location and changes the
+macros to inline functions to match the style of the surrounding code.
 
-If it's big endian and 64 bit then it doesn't work because we're writing
-to the wrong 32 bits.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 5a15d172057c ("leds: unify the location of led-trigger API")
+---
+This showed up in today's linux-next
 
-regards,
-dan carpenter
-
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 057970818961..e049cb374837 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -223,7 +223,6 @@ struct led_trigger {
+ 	struct list_head  next_trig;
+ };
+ 
+-#ifdef CONFIG_LEDS_TRIGGERS
+ void led_trigger_set_default(struct led_classdev *led_cdev);
+ void led_trigger_set(struct led_classdev *led_cdev,
+ 			struct led_trigger *trigger);
+@@ -234,13 +233,6 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+ 	return led_cdev->trigger_data;
+ }
+ 
+-#else
+-#define led_trigger_set_default(x) do {} while (0)
+-#define led_trigger_set(x, y) do {} while (0)
+-#define led_trigger_remove(x) do {} while (0)
+-#define led_get_trigger_data(x) (NULL)
+-#endif
+-
+ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+ 			const char *buf, size_t count);
+ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+@@ -286,6 +278,14 @@ extern void led_trigger_rename_static(const char *name,
+ struct led_trigger {};
+ 
+ /* Trigger inline empty functions */
++static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
++static inline void led_trigger_set(struct led_classdev *led_cdev,
++				   struct led_trigger *trigger) {}
++static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
++static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
++{
++	return NULL;
++}
+ static inline void led_trigger_register_simple(const char *name,
+ 					struct led_trigger **trigger) {}
+ static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
