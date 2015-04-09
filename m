@@ -1,54 +1,38 @@
-From: Valentin Rothberg <valentinrothberg@gmail.com>
-Subject: [PATCH v2] leds: fix redundant trigger API #ifdef
-Date: Thu,  9 Apr 2015 17:37:45 +0200
-Message-ID: <1428593865-9929-1-git-send-email-valentinrothberg@gmail.com>
-References: <1428593110-9611-1-git-send-email-valentinrothberg@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH -next] leds: Fix build failure seen if LEDS_TRIGGERS is not configured
+Date: Thu,  9 Apr 2015 08:42:20 -0700
+Message-ID: <1428594140-16832-1-git-send-email-linux@roeck-us.net>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:35103 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755510AbbDIPhw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 11:37:52 -0400
-In-Reply-To: <1428593110-9611-1-git-send-email-valentinrothberg@gmail.com>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:38614 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755331AbbDIPmk (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 11:42:40 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YgEbH-000mMM-Rc
+	for linux-leds@vger.kernel.org; Thu, 09 Apr 2015 15:42:40 +0000
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: j.anaszewski@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, pebolle@tiscali.nl, rupran@einserver.de, stefan.hengelein@fau.de
-Cc: Valentin Rothberg <valentinrothberg@gmail.com>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Commit 5a15d172057c ("leds: unify the location of led-trigger API")
-moved the leds trigger API to led.h.  Moving the function definitions
-caused a logical problem regarding the visibility of #idef blocks.  As
-listed in the code snippet below, the inner #else block will never see a
-compiler since CONFIG_LEDS_TRIGGERS is always true for the second #ifdef.
+Fix:
 
- #ifdef CONFIG_LEDS_TRIGGERS
- [...]
- #ifdef CONFIG_LEDS_TRIGGERS
- [...]
- #else
- #define led_trigger_set_default(x) do {} while (0)
- #define led_trigger_set(x, y) do {} while (0)
- #define led_trigger_remove(x) do {} while (0)
- #define led_get_trigger_data(x) (NULL)
- #endif
- #else
- [...]
- #endif
+drivers/leds/led-class.c: In function 'brightness_store':
+drivers/leds/led-class.c:57: error:
+			implicit declaration of function 'led_trigger_remove'
 
-This patch removes the second, redundant #ifdef and moves the code of
-the #else branch to its proper place.
+seen if LEDS_TRIGGERS is not configured.
 
-Signed-off-by: Valentin Rothberg <valentinrothberg@gmail.com>
----
-I found this issue with undertaker-checkpatch from the Undertaker
-toolsuite.  See undertaker.cs.fau.de for more information.
-
-v2:  Add the code snippet example.  It has been removed by Git before.
+Fixes: 5a15d172057c ("leds: unify the location of led-trigger API")
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
  include/linux/leds.h | 13 +++++--------
  1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 057970818961..96a669f93f69 100644
+index 0579708..96a669f 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
 @@ -223,7 +223,6 @@ struct led_trigger {
