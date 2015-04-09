@@ -1,123 +1,177 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [PATCH 0/4] Allow to use leds-ns2 with n090401 boards
-Date: Thu, 9 Apr 2015 16:25:29 +0200
-Message-ID: <20150409142529.GC1509@kw.sim.vm.gnt>
-References: <1425480739-2373-1-git-send-email-simon.guinot@sequanux.org>
- <20150313094433.GU1509@kw.sim.vm.gnt>
- <20150323103243.GQ1509@kw.sim.vm.gnt>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v5] DT: leds: Improve description of flash LEDs related
+ properties
+Date: Thu, 09 Apr 2015 16:39:35 +0200
+Message-ID: <55268F27.70409@samsung.com>
+References: <1428503487-4912-1-git-send-email-j.anaszewski@samsung.com>
+ <552545FF.2030208@samsung.com> <552628E4.50003@samsung.com>
+ <55263247.5070009@linux.intel.com> <55264E6D.40801@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="g+8Xtij24AYnRgQJ"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:41565 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753255AbbDIOZh (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 9 Apr 2015 10:25:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20150323103243.GQ1509@kw.sim.vm.gnt>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29240 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754072AbbDIOjj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 10:39:39 -0400
+In-reply-to: <55264E6D.40801@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>
+
+Hi Sylwester, Sakari,
+
+On 04/09/2015 12:03 PM, Sylwester Nawrocki wrote:
+> On 09/04/15 10:03, Sakari Ailus wrote:
+>> Jacek Anaszewski wrote:
+>>> On 04/08/2015 05:15 PM, Sylwester Nawrocki wrote:
+>>>> On 08/04/15 16:31, Jacek Anaszewski wrote:
+>>>>> Properties defining maximum values for LED currents and timeout should
+>>>>> be mandatory to avoid the risk of hardware damage. This patch fixes
+>>>>> the issue.
+>
+>>>>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>>>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>>>>> @@ -10,6 +10,17 @@ can influence the way of the LED device
+>>>>> initialization, the LED components
+>>>>>    have to be tightly coupled with the LED device binding. They are
+>>>>> represented
+>>>>>    by child nodes of the parent LED device binding.
+>>>>>
+>>>>> +Required properties for child nodes:
+>>>>
+>>>> These properties are mandatory only for LEDs with Flash/Torch
+>>>> capabilities, aren't they?
+>>>
+>>> flash-max-microamp and flash-timeout-us properties description mention
+>>> that they refer to flash LEDs. Perhaps this should be made indeed more
+>>> explicit.
+>>
+>> Sounds good to me, after all these shouldn't be defined for devices they
+>> don't make sense for. Alternatively, you could add another section for
+>> "required properties for flash LEDs".
+>
+> Sounds good to me.
+>
+>>>> Requiring those properties for all led nodes would make all
+>>>> current dtses not compliant with the DT binding specification AFAICT.
+>>
+>> Some drivers also define these explicitly as optional, the behaviour for
+>> those obviously can't be changed.  This should apply to new drivers
+>> only, and I think documenting the matter in this file would be the best
+>> way to do that.
+>
+> Unfortunately this file is not a proper place for information regarding
+> Linux drivers.
+> I can't see any drivers in -next using those DT properties. Could you
+> point to any examples?
+> Perhaps we should stay with the below properties specified as optional
+> in general and add a note they can be mandatory for some LEDs (controllers)?
+
+I've analyzed existing led bindings. Four bindings define brightness
+related properties:
+
+leds-lp55xx.txt
+Each child has own specific current settings
+- led-cur: Current setting at each led channel (mA x10, 0 if led is not 
+connected)
+- max-cur: Maximun current at each led channel.
+
+leds-netxbig.txt
+Required sub-node properties:
+- bright-max: Maximum brightness value
+
+leds-pwm
+LED sub-node properties:
+- max-brightness : Maximum brightness possible for the LED
+
+leds-pm8941-wled.txt
+Optional properties:
+- qcom,current-limit: mA; per-string current limit; value from 0 to 25
+         default: 20mA
 
 
---g+8Xtij24AYnRgQJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We can summarize this as follows:
+- only four devices define max brightness
+- one of them defines also default current setting
+- some of them define current in mA, some in brightness levels
 
-On Mon, Mar 23, 2015 at 11:32:43AM +0100, Simon Guinot wrote:
-> On Fri, Mar 13, 2015 at 10:44:33AM +0100, Simon Guinot wrote:
-> > On Wed, Mar 04, 2015 at 03:52:15PM +0100, Simon Guinot wrote:
-> > > Hello,
-> > >=20
-> > > This patch series allows to use the leds-ns2 driver with the n090401
-> > > boards (Seagate NAS 4-Bay), based on an Armada-370 SoC.
-> > >=20
-> > > Here is the list changes:
-> > >=20
-> > > - Allow to configure the LED mode mapping.
-> > > - Handle can_sleep GPIOs. On n090401, the LEDs are connected to an I2C
-> > >   GPIO expander.
-> > > - Make leds-ns2 depends on MACH_ARMADA_370.
-> >=20
-> > Hi Brian,
-> >=20
-> > Please consider applying the leds-ns2 patches of this serie.
->=20
-> Hi Brian,
->=20
-> Again, it would be nice to have this patches for the incoming release.
-> Please, consider picking the leds-ns2 patches of this serie.
+It has to be stressed that LED subsystem operates on brightness levels,
+not microamperes. max-microamp property was expressed in microamperes,
+because it was initially designed only for flash LEDs.
 
-Hi Bryan,
+I think that if we want to add generic property for limiting maximum
+brightness for non-flash LEDs, then it should be called brightness-max
+and expressed in brightness levels. It should apply only to non-flash
+devices. We could have also brightness-default.
 
-Ping :)
+For flash devices we would have torch-max-microamp and
+flash-max-microamp properties. We could also have their counterparts:
+torch-default-microamp, flash-default-microamp.
 
-Please, let me know if there is anything I can do to have this patches
-merged for the next Linux release.
+Should we also need
 
-Thanks,
+- flash-timeout-max-us
+- flash-timeout-default-us ?
 
-Simon
-
-> > > Simon Guinot (2):
-> > >   leds: leds-ns2: handle can_sleep GPIOs
-> > >   leds: leds-ns2: depends on MACH_ARMADA_370
-> > >=20
-> > > Vincent Donnefort (2):
-> > >   leds: leds-ns2: move LED modes mapping outside of the driver
-> > >   ARM: Kirkwood: add modes-map property to ns2-leds nodes
-> > >=20
-> > >  .../devicetree/bindings/leds/leds-ns2.txt          |   9 ++
-> > >  arch/arm/boot/dts/kirkwood-d2net.dts               |   5 +
-> > >  arch/arm/boot/dts/kirkwood-is2.dts                 |   5 +
-> > >  arch/arm/boot/dts/kirkwood-ns2.dts                 |   5 +
-> > >  arch/arm/boot/dts/kirkwood-ns2max.dts              |   5 +
-> > >  arch/arm/boot/dts/kirkwood-ns2mini.dts             |   5 +
-> > >  drivers/leds/Kconfig                               |  12 +-
-> > >  drivers/leds/leds-ns2.c                            | 156 +++++++++++=
-++--------
-> > >  include/dt-bindings/leds/leds-ns2.h                |   8 ++
-> > >  include/linux/platform_data/leds-kirkwood-ns2.h    |  14 ++
-> > >  10 files changed, 159 insertions(+), 65 deletions(-)
-> > >  create mode 100644 include/dt-bindings/leds/leds-ns2.h
-> > >=20
-> > > --=20
-> > > 2.1.1
-> > >=20
-> > >=20
-> > > _______________________________________________
-> > > linux-arm-kernel mailing list
-> > > linux-arm-kernel@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->=20
->=20
->=20
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->=20
+max-brightness and default-brightness would be expressed in brightness
+levels and would be optional. Flash related properties would be
+required.
 
 
+>>> I was also worrying about making led-max-microamp required, but others
+>>> didn't share my objections. I think that we have to reexamine this.
+>>>
+>>> Please refer to the discussion under [PATCH v4]. The role of this
+>>> led-max-microamp property would be preventing hardware damage.
+>>>
+>>>
+>>>> How about:
+>>>>
+>>>> "Required properties for child nodes for LEDs with Flash/Torch
+>>>> capabilities:" ?
+>>>>
+>>>>> +- led-max-microamp : Maximum LED supply current in microamperes
+>>>>> +                     (torch LED for flash devices). Controllers that
+>>
+>> Do you think we can just rename max-microamp as led-max-microamp? It's
+>> been there since v3.19. Or is it because no driver has been using it?
+>
+> I'd say it could be renamed if there is no users in mainline. But the DT
+> maintainers could disagree here (adding Rob, Mark at Cc).
+>
+>>>>> have no
+>>>>> +                     configurable current can omit this property.
+>>>>> +- flash-max-microamp : Maximum flash LED supply current in
+>>>>> microamperes.
+>>>>> +- flash-timeout-us : Timeout in microseconds after which the flash
+>>>>> +                     LED is turned off.
+>>>>> +
+>>>>
+>>>>> +Above properties determine a LED driver IC settings required for safe
+>>>>> +operation. They should be also used as the initial settings for the IC.
+>>>>
+>>>> Shouldn't "Controllers that have no configurable current can omit this
+>>>> property" refer to both led-max-microamp and flash-max-microamp?
+>>>>
+>>>> I would drop the "Above...for the IC." paragraph and instead add
+>>>> something like:
+>>>>
+>>>> "For controllers that have no configurable current the led-max-microamp,
+>>>> flash-max-microamp properties respectively can be omitted. For
+>>>> controllers that
+>>>> have no configurable timeout the flash-timeout-us property can be
+>>>> omitted."
+>>>
+>>> Are we going to avoid mentioning about their role in preventing
+>>> hardware damage (former "for safe operation" sequence)?
+>>
+>> That'd make it understandable why the properties are mandatory. Sounds
+>> good to me.
+>
 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-
---g+8Xtij24AYnRgQJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlUmi9kACgkQgtp0PDeOcDo8IACeLbOjkXM/j+uHe36KVabjES1B
-11UAnR2T7qr2msWR0FKSto1Agx9UTNG2
-=iIFD
------END PGP SIGNATURE-----
-
---g+8Xtij24AYnRgQJ--
+-- 
+Best Regards,
+Jacek Anaszewski
