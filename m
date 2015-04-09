@@ -1,12 +1,14 @@
 From: Valentin Rothberg <valentinrothberg@gmail.com>
-Subject: [PATCH] leds: fix redundant trigger API #ifdef
-Date: Thu,  9 Apr 2015 17:25:10 +0200
-Message-ID: <1428593110-9611-1-git-send-email-valentinrothberg@gmail.com>
+Subject: [PATCH v2] leds: fix redundant trigger API #ifdef
+Date: Thu,  9 Apr 2015 17:37:45 +0200
+Message-ID: <1428593865-9929-1-git-send-email-valentinrothberg@gmail.com>
+References: <1428593110-9611-1-git-send-email-valentinrothberg@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:38205 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753554AbbDIPZW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 11:25:22 -0400
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:35103 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755510AbbDIPhw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 9 Apr 2015 11:37:52 -0400
+In-Reply-To: <1428593110-9611-1-git-send-email-valentinrothberg@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: j.anaszewski@samsung.com, cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, pebolle@tiscali.nl, rupran@einserver.de, stefan.hengelein@fau.de
@@ -18,6 +20,20 @@ caused a logical problem regarding the visibility of #idef blocks.  As
 listed in the code snippet below, the inner #else block will never see a
 compiler since CONFIG_LEDS_TRIGGERS is always true for the second #ifdef.
 
+ #ifdef CONFIG_LEDS_TRIGGERS
+ [...]
+ #ifdef CONFIG_LEDS_TRIGGERS
+ [...]
+ #else
+ #define led_trigger_set_default(x) do {} while (0)
+ #define led_trigger_set(x, y) do {} while (0)
+ #define led_trigger_remove(x) do {} while (0)
+ #define led_get_trigger_data(x) (NULL)
+ #endif
+ #else
+ [...]
+ #endif
+
 This patch removes the second, redundant #ifdef and moves the code of
 the #else branch to its proper place.
 
@@ -25,6 +41,8 @@ Signed-off-by: Valentin Rothberg <valentinrothberg@gmail.com>
 ---
 I found this issue with undertaker-checkpatch from the Undertaker
 toolsuite.  See undertaker.cs.fau.de for more information.
+
+v2:  Add the code snippet example.  It has been removed by Git before.
 ---
  include/linux/leds.h | 13 +++++--------
  1 file changed, 5 insertions(+), 8 deletions(-)
