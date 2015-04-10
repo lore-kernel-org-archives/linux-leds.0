@@ -1,44 +1,42 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v6 3/3] leds: Add ktd2692 flash LED driver
-Date: Fri, 10 Apr 2015 12:16:39 +0300
-Message-ID: <20150410091639.GG20756@valkosipuli.retiisi.org.uk>
-References: <1428648359-23289-1-git-send-email-ingi2.kim@samsung.com>
- <1428648359-23289-4-git-send-email-ingi2.kim@samsung.com>
- <20150410081106.GF20756@valkosipuli.retiisi.org.uk>
- <55278DAA.40700@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6] DT: leds: Improve description of flash LEDs related
+ properties
+Date: Fri, 10 Apr 2015 12:07:07 +0200
+Message-ID: <5527A0CB.8040800@samsung.com>
+References: <1428655016-17752-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44259 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754242AbbDJJRQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Fri, 10 Apr 2015 05:17:16 -0400
-Content-Disposition: inline
-In-Reply-To: <55278DAA.40700@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1428655016-17752-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Ingi,
-
-On Fri, Apr 10, 2015 at 05:45:30PM +0900, Ingi Kim wrote:
-...
-> >> +	ret = devm_gpio_request_one(dev, led->ctrl_gpio,
-> >> +					GPIOF_OPEN_SOURCE, "ctrl-gpio");
-> >
-> > I think you could simply use devm_gpio_get(), and start using the new API
-> > instead. It'd save quite a few lines of code, too.
-> >
+On 10/04/15 10:36, Jacek Anaszewski wrote:
+> 1. Since max-microamp property has had no users so far, then rename
+>    it to more descriptive led-max-microamp.
+> 2. Since flash-timeout-us property has had no users so far, then rename
+>    it to more accurate flash-max-timeout-us.
+> 3. Describe led-max-microamp property as mandatory for specific board
+>    configurations.
+> 4. Make flash-max-microamp and flash-max-timeout-us properties mandatory
+>    for devices with configurable flash current and flash timeout settings
+>    respectively.
 > 
-> did you mean devm_gpiod_get()
-> Ok, I'll check it
+> Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+> Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+> Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Yes, that's what I meant.
+Looks good, thanks.
 
--- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Acked-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
