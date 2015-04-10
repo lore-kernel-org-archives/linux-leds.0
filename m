@@ -1,87 +1,117 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [patch 2/2] leds: netxbig: clean up a data type issue
-Date: Fri, 10 Apr 2015 02:25:07 +0200
-Message-ID: <20150410002507.GF1509@kw.sim.vm.gnt>
-References: <20150409090712.GF17605@mwanda>
- <20150409192557.GD1509@kw.sim.vm.gnt>
- <20150409195426.GP10964@mwanda>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: Re: [PATCH v5 3/3] leds: Add ktd2692 flash LED driver
+Date: Fri, 10 Apr 2015 15:40:44 +0900
+Message-ID: <5527706C.9020300@samsung.com>
+References: <1427860708-32559-1-git-send-email-ingi2.kim@samsung.com>
+ <1427860708-32559-4-git-send-email-ingi2.kim@samsung.com>
+ <551B948D.5060905@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4Ldzc4wBVbTTlpZt"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:46224 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751905AbbDJAZL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 9 Apr 2015 20:25:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20150409195426.GP10964@mwanda>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <551B948D.5060905@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sakari.ailus@iki.fi, varkabhadram@gmail.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Bryan Wu <cooloney@gmail.com>, kernel-janitors@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
+Hi Jacek,
 
---4Ldzc4wBVbTTlpZt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 09, 2015 at 10:54:26PM +0300, Dan Carpenter wrote:
-> On Thu, Apr 09, 2015 at 09:25:57PM +0200, Simon Guinot wrote:
-> > On Thu, Apr 09, 2015 at 12:07:12PM +0300, Dan Carpenter wrote:
-> > > This driver is pretty hardware specific so it's unlikely that we're
-> > > going to be using it on 64 big endian systems.  Still, the current co=
-de
-> > > causes a static checker warning so we may as well change the type from
-> > > "unsigned long" to "u32" and remove the casting.
-> >=20
-> > Hi Dan,
-> >=20
-> > Thanks for the patch.
-> >=20
-> > Why do you think it would be an issue to use the u32 type for this
-> > variables on a 64-bit big-endian machine ? Note that this LED mechanism
-> > is actually used on ARM 32-bits and x86-64 NAS platforms. The latter are
-> > not mainlined yet. But indeed, for now, there is no plan to use it on a
-> > 64-bit big-endian machine.
-> >=20
-> > Since the whole LED code uses the unsigned long type to hold the delay
-> > values, if possible, I would prefer to keep the delay_{on,off} variables
-> > consistent with that.
-> >=20
-> > Is there an another way to make the "static checker" happy ?
+On 2015=EB=85=84 04=EC=9B=94 01=EC=9D=BC 15:47, Jacek Anaszewski wrote:
+> Hi Ingi,
 >=20
-> We're writing over 32 bits of a long.  It's a dangerous habbit.
+> On 04/01/2015 05:58 AM, Ingi Kim wrote:
+>> This patch adds a driver to support the ktd2692 flash LEDs.
+>> ktd2692 can control flash current by ExpressWire interface.
+>>
+
+=2E..
+
+>> +    ktd2692_init_flash_timeout(flash_timeout_us, &flash_timeout);
+>> +
+>> +    fled_cdev->timeout =3D flash_timeout;
+>> +    fled_cdev->ops =3D &flash_ops;
+>> +
+>> +    led_cdev->name =3D KTD2692_DEFAULT_NAME;
 >=20
-> If long is u32 then of_property_read_u32_index() works, obviously.  If
-> it is a little endian and the last 32 bits have been zeroed out (as they
-> have been here) then that also works.
+> Device Tree label should be used for the LED class device name.
+> Please refer to :
+> Documentation/devicetree/bindings/leds/common.txt
 >=20
-> If it's big endian and 64 bit then it doesn't work because we're writing
-> to the wrong 32 bits.
+> Also the documentation states that the LED should be represented
+> by DT child node of the LED controller.
+>=20
+> You can parse the label as follows:
+>=20
+> led_cdev->name =3D of_get_property(child, "label", NULL) ? :
+>                            child->name;
+>=20
 
-Sorry, I misunderstood your commit message.
+Sorry about late comments,
+I fix the name and DT such as LED style
+Thank you!
 
-But still, rather than changing the type from unsigned long to u32 for
-the delay_{on,off} variables, I think we should use a temporary u32
-variable for the of_property_read_u32_index calls. This way we can keep
-the type of the delay_{on,off} variables consistent with the LED core
-code.
-
-Regards,
-
-Simon
-
---4Ldzc4wBVbTTlpZt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlUnGGMACgkQgtp0PDeOcDq/ZwCfcQd+4f+TZ2/BPDW531tlu7IG
-Yr8AoJoQe4vmDp7i8nucQmdfvOPCf7RM
-=VOfZ
------END PGP SIGNATURE-----
-
---4Ldzc4wBVbTTlpZt--
+>> +    led_cdev->brightness_set =3D ktd2692_led_brightness_set;
+>> +    led_cdev->brightness_set_sync =3D ktd2692_led_brightness_set_sy=
+nc;
+>> +    led_cdev->flags |=3D LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH=
+;
+>> +
+>> +    mutex_init(&led->lock);
+>> +    INIT_WORK(&led->work_brightness_set, ktd2692_brightness_set_wor=
+k);
+>> +
+>> +    platform_set_drvdata(pdev, led);
+>> +
+>> +    ret =3D led_classdev_flash_register(&pdev->dev, fled_cdev);
+>> +    if (ret) {
+>> +        dev_err(&pdev->dev, "can't register LED %s\n", led_cdev->na=
+me);
+>> +        mutex_destroy(&led->lock);
+>> +        return ret;
+>> +    }
+>> +
+>> +    ktd2692_setup(led);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int ktd2692_remove(struct platform_device *pdev)
+>> +{
+>> +    struct ktd2692_context *led =3D platform_get_drvdata(pdev);
+>> +    int ret;
+>> +
+>> +    led_classdev_flash_unregister(&led->fled_cdev);
+>> +    cancel_work_sync(&led->work_brightness_set);
+>> +
+>> +    ret =3D regulator_disable(led->regulator);
+>> +    if (ret)
+>> +        dev_err(&pdev->dev, "Failed to disable supply: %d\n", ret);
+>> +
+>> +    mutex_destroy(&led->lock);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct of_device_id ktd2692_match[] =3D {
+>> +    { .compatible =3D "kinetic,ktd2692", },
+>> +    { /* sentinel */ },
+>> +};
+>> +
+>> +static struct platform_driver ktd2692_driver =3D {
+>> +    .driver =3D {
+>> +        .name  =3D "leds-ktd2692",
+>> +        .of_match_table =3D ktd2692_match,
+>> +    },
+>> +    .probe  =3D ktd2692_probe,
+>> +    .remove =3D ktd2692_remove,
+>> +};
+>> +
+>> +module_platform_driver(ktd2692_driver);
+>> +
+>> +MODULE_AUTHOR("Ingi Kim <ingi2.kim@samsung.com>");
+>> +MODULE_DESCRIPTION("Kinetic KTD2692 LED driver");
+>> +MODULE_LICENSE("GPL v2");
+>>
+>=20
+>=20
