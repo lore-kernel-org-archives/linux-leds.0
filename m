@@ -1,42 +1,68 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v6] DT: leds: Improve description of flash LEDs related
- properties
-Date: Fri, 10 Apr 2015 12:07:07 +0200
-Message-ID: <5527A0CB.8040800@samsung.com>
-References: <1428655016-17752-1-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [patch 2/2 v2] leds: netxbig: silence a static checker warning
+Date: Fri, 10 Apr 2015 16:18:34 +0200
+Message-ID: <5527DBBA.9060109@samsung.com>
+References: <20150410083040.GA2189@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1428655016-17752-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:19618 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932827AbbDJOSj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 10:18:39 -0400
+In-reply-to: <20150410083040.GA2189@mwanda>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/04/15 10:36, Jacek Anaszewski wrote:
-> 1. Since max-microamp property has had no users so far, then rename
->    it to more descriptive led-max-microamp.
-> 2. Since flash-timeout-us property has had no users so far, then rename
->    it to more accurate flash-max-timeout-us.
-> 3. Describe led-max-microamp property as mandatory for specific board
->    configurations.
-> 4. Make flash-max-microamp and flash-max-timeout-us properties mandatory
->    for devices with configurable flash current and flash timeout settings
->    respectively.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
-> Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Hi Dan,
 
-Looks good, thanks.
+On 04/10/2015 10:30 AM, Dan Carpenter wrote:
+> Static checkers complain that "timers[i].delay_on" is an unsigned long
+> but we're writing to only 32 bits of it.  The code works on 32 bit
+> systems and little endian 64 bit systems so it doesn't cause a problem
+> in practise but it's still better to silence the warning.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: use a temporary variable
+>
+> diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+> index 028686f2..6cb4537 100644
+> --- a/drivers/leds/leds-netxbig.c
+> +++ b/drivers/leds/leds-netxbig.c
+> @@ -444,12 +444,17 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+>   		if (!timers)
+>   			return -ENOMEM;
+>   		for (i = 0; i < num_timers; i++) {
+> +			u32 delay_on = 0;
+> +			u32 delay_off = 0;
 
-Acked-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+These variables don't need initialization, as they are assigned
+a new value in of_property_read_u32_index anyway.
+
+>   			of_property_read_u32_index(np, "timers", 3 * i,
+>   						&timers[i].mode);
+>   			of_property_read_u32_index(np, "timers", 3 * i + 1,
+> -						(u32 *) &timers[i].delay_on);
+> +						   &delay_on);
+>   			of_property_read_u32_index(np, "timers", 3 * i + 2,
+> -						(u32 *) &timers[i].delay_off);
+> +						   &delay_off);
+> +			timers[i].delay_on = delay_on;
+> +			timers[i].delay_off = delay_off;
+>   		}
+>   		pdata->timer = timers;
+>   		pdata->num_timer = num_timers;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
