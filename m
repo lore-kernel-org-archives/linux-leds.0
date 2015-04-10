@@ -1,34 +1,50 @@
-From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: [PATCH v6 1/3] of: Add vendor prefix for Kinetic technologies
-Date: Fri, 10 Apr 2015 15:45:57 +0900
-Message-ID: <1428648359-23289-2-git-send-email-ingi2.kim@samsung.com>
-References: <1428648359-23289-1-git-send-email-ingi2.kim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1428648359-23289-1-git-send-email-ingi2.kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: Fix regression related to led-trigger API location
+ change
+Date: Fri, 10 Apr 2015 08:47:32 +0200
+Message-ID: <55277204.2050407@samsung.com>
+References: <1428584133-27892-1-git-send-email-j.anaszewski@samsung.com>
+ <CAK5ve-++Ej+Lb0=2WfxShojgLfejBpqam6e6ThLefvtYQLnzZw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46009 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752182AbbDJGrg (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 02:47:36 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NMK006NMWE1H2A0@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 10 Apr 2015 07:51:37 +0100 (BST)
+In-reply-to: <CAK5ve-++Ej+Lb0=2WfxShojgLfejBpqam6e6ThLefvtYQLnzZw@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-This patch adds vendor prefix for Kinetic technologies
+On 04/09/2015 07:33 PM, Bryan Wu wrote:
+> On Thu, Apr 9, 2015 at 5:55 AM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> Patch fe4d2d05 ("leds: unify the location of led-trigger API") is
+>> causing a build break when led-triggers are turned off in the config.
+>> This patch fixes the issue and changes no-op declarations of affected
+>> functions to inlines instead of macros.
+>>
+>
+> My bad, I should build and test kernel on my board and shouldn't put
+> this big change in next branch since merge window will open soon.
+>
+> Jacek, I'm going to drop the previous patch from my tree. and please
+> fold this fix patch with previous one together. I will merge it into
+> my -devel branch instead of for-next branch. So that means it won't be
+> in 4.0 release but 4.1.
+>
+> Does this make sense to you?
 
-Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+Of course, I should have tested this more carefully too.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index fae26d0..90a4be1 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -100,6 +100,7 @@ isee	ISEE 2007 S.L.
- isil	Intersil
- karo	Ka-Ro electronics GmbH
- keymile	Keymile GmbH
-+kinetic Kinetic Technologies
- lacie	LaCie
- lantiq	Lantiq Semiconductor
- lenovo	Lenovo Group Ltd.
 -- 
-2.0.5
+Best Regards,
+Jacek Anaszewski
