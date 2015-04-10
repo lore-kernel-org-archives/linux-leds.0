@@ -1,52 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch 2/2 v2] leds: netxbig: silence a static checker warning
-Date: Fri, 10 Apr 2015 11:30:41 +0300
-Message-ID: <20150410083040.GA2189@mwanda>
-References: <20150410002507.GF1509@kw.sim.vm.gnt>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v6] DT: leds: Improve description of flash LEDs related
+ properties
+Date: Fri, 10 Apr 2015 10:36:56 +0200
+Message-ID: <1428655016-17752-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:23026 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753995AbbDJIbG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 04:31:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20150410002507.GF1509@kw.sim.vm.gnt>
+Received: from mailout4.samsung.com ([203.254.224.34]:37317 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754063AbbDJIhO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 04:37:14 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devicetree@vger.kernel.org
 
-Static checkers complain that "timers[i].delay_on" is an unsigned long
-but we're writing to only 32 bits of it.  The code works on 32 bit
-systems and little endian 64 bit systems so it doesn't cause a problem
-in practise but it's still better to silence the warning.
+1. Since max-microamp property has had no users so far, then rename
+   it to more descriptive led-max-microamp.
+2. Since flash-timeout-us property has had no users so far, then rename
+   it to more accurate flash-max-timeout-us.
+3. Describe led-max-microamp property as mandatory for specific board
+   configurations.
+4. Make flash-max-microamp and flash-max-timeout-us properties mandatory
+   for devices with configurable flash current and flash timeout settings
+   respectively.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org
 ---
-v2: use a temporary variable
+ Documentation/devicetree/bindings/leds/common.txt |   27 ++++++++++++++-------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 028686f2..6cb4537 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -444,12 +444,17 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
- 		if (!timers)
- 			return -ENOMEM;
- 		for (i = 0; i < num_timers; i++) {
-+			u32 delay_on = 0;
-+			u32 delay_off = 0;
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 747c538..6841984 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -29,14 +29,23 @@ Optional properties for child nodes:
+      "ide-disk" - LED indicates disk activity
+      "timer" - LED flashes at a fixed, configurable rate
+ 
+-- max-microamp : maximum intensity in microamperes of the LED
+-		 (torch LED for flash devices)
+-- flash-max-microamp : maximum intensity in microamperes of the
+-                       flash LED; it is mandatory if the LED should
+-		       support the flash mode
+-- flash-timeout-us : timeout in microseconds after which the flash
+-                     LED is turned off
++- led-max-microamp : Maximum LED supply current in microamperes. This property
++                     can be made mandatory for the board configurations
++                     introducing a risk of hardware damage in case an excessive
++                     current is set.
++                     For flash LED controllers with configurable current this
++                     property is mandatory for the LEDs in the non-flash modes
++                     (e.g. torch or indicator).
+ 
++Required properties for flash LED child nodes:
++- flash-max-microamp : Maximum flash LED supply current in microamperes.
++- flash-max-timeout-us : Maximum timeout in microseconds after which the flash
++                         LED is turned off.
 +
- 			of_property_read_u32_index(np, "timers", 3 * i,
- 						&timers[i].mode);
- 			of_property_read_u32_index(np, "timers", 3 * i + 1,
--						(u32 *) &timers[i].delay_on);
-+						   &delay_on);
- 			of_property_read_u32_index(np, "timers", 3 * i + 2,
--						(u32 *) &timers[i].delay_off);
-+						   &delay_off);
-+			timers[i].delay_on = delay_on;
-+			timers[i].delay_off = delay_off;
- 		}
- 		pdata->timer = timers;
- 		pdata->num_timer = num_timers;
++For controllers that have no configurable current the flash-max-microamp
++property can be omitted.
++For controllers that have no configurable timeout the flash-max-timeout-us
++property can be omitted.
+ 
+ Examples:
+ 
+@@ -49,7 +58,7 @@ system-status {
+ camera-flash {
+ 	label = "Flash";
+ 	led-sources = <0>, <1>;
+-	max-microamp = <50000>;
++	led-max-microamp = <50000>;
+ 	flash-max-microamp = <320000>;
+-	flash-timeout-us = <500000>;
++	flash-max-timeout-us = <500000>;
+ };
+-- 
+1.7.9.5
