@@ -1,50 +1,44 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v6] DT: leds: Improve description of flash LEDs
- related properties
-Date: Fri, 10 Apr 2015 12:14:53 +0300
-Message-ID: <5527948D.1020603@linux.intel.com>
-References: <1428655016-17752-1-git-send-email-j.anaszewski@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v6 3/3] leds: Add ktd2692 flash LED driver
+Date: Fri, 10 Apr 2015 12:16:39 +0300
+Message-ID: <20150410091639.GG20756@valkosipuli.retiisi.org.uk>
+References: <1428648359-23289-1-git-send-email-ingi2.kim@samsung.com>
+ <1428648359-23289-4-git-send-email-ingi2.kim@samsung.com>
+ <20150410081106.GF20756@valkosipuli.retiisi.org.uk>
+ <55278DAA.40700@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:55105 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932288AbbDJJO6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Fri, 10 Apr 2015 05:14:58 -0400
-In-Reply-To: <1428655016-17752-1-git-send-email-j.anaszewski@samsung.com>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44259 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754242AbbDJJRQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Fri, 10 Apr 2015 05:17:16 -0400
+Content-Disposition: inline
+In-Reply-To: <55278DAA.40700@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devicetree@vger.kernel.org
+To: Ingi Kim <ingi2.kim@samsung.com>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Jacek,
+Hi Ingi,
 
-Thank you for the quick update!
-
-Jacek Anaszewski wrote:
-> 1. Since max-microamp property has had no users so far, then rename
->    it to more descriptive led-max-microamp.
-> 2. Since flash-timeout-us property has had no users so far, then rename
->    it to more accurate flash-max-timeout-us.
-> 3. Describe led-max-microamp property as mandatory for specific board
->    configurations.
-> 4. Make flash-max-microamp and flash-max-timeout-us properties mandatory
->    for devices with configurable flash current and flash timeout settings
->    respectively.
+On Fri, Apr 10, 2015 at 05:45:30PM +0900, Ingi Kim wrote:
+...
+> >> +	ret = devm_gpio_request_one(dev, led->ctrl_gpio,
+> >> +					GPIOF_OPEN_SOURCE, "ctrl-gpio");
+> >
+> > I think you could simply use devm_gpio_get(), and start using the new API
+> > instead. It'd save quite a few lines of code, too.
+> >
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: devicetree@vger.kernel.org
+> did you mean devm_gpiod_get()
+> Ok, I'll check it
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Yes, that's what I meant.
 
 -- 
-Kind regards,
+Regards,
 
 Sakari Ailus
-sakari.ailus@linux.intel.com
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
