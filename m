@@ -1,78 +1,74 @@
 From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: Re: [PATCH v6 0/3] Add ktd2692 Flash LED driver using LED Flash class
-Date: Fri, 10 Apr 2015 16:17:03 +0900
-Message-ID: <552778EF.8000709@samsung.com>
-References: <1428648359-23289-1-git-send-email-ingi2.kim@samsung.com>
- <552774CC.4040201@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v6 RESEND 2/3] leds: ktd2692: add device tree bindings for
+ ktd2692
+Date: Fri, 10 Apr 2015 16:51:00 +0900
+Message-ID: <1428652261-24142-3-git-send-email-ingi2.kim@samsung.com>
+References: <1428652261-24142-1-git-send-email-ingi2.kim@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50376 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:59450 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750934AbbDJHRF (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 03:17:05 -0400
-In-reply-to: <552774CC.4040201@gmail.com>
+	with ESMTP id S1754063AbbDJHvH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2015 03:51:07 -0400
+In-reply-to: <1428652261-24142-1-git-send-email-ingi2.kim@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sakari.ailus@iki.fi, j.anaszewski@samsung.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
 
-Hi Varka,
+This patch adds the device tree bindings for ktd2692 flash LEDs.
+Add Optional properties of child node for Flash LED
 
-On 2015=EB=85=84 04=EC=9B=94 10=EC=9D=BC 15:59, Varka Bhadram wrote:
-> On 04/10/2015 12:15 PM, Ingi Kim wrote:
->=20
->> This patch adds ktd2692 Flash LED driver with LED Flash class
->>
->> Change in v6:
->> 	- Change goto label to if-else
->> 	- Change DT binding style for LED device binding
->>
->> Change in v5:
->> 	- Clean up the code
->> 	- Fix help message of Kconfig
->> 	- Fix issue related with regulator and mutex usage
->> 	- Remove tab spaces in bindings
->>
->> Change in v4:
->> 	- Clean up the code
->> 	- Modify binding documentation of ktd2692
->>
->> Change in v3:
->> 	- Clean up the code
->> 	- Add aux gpio pin to control Flash LED
->>
->> Change in v2:
->> 	- Introduction of LED Flash class as Jacek's comment
->> 	- Supplement of binding documentation
->> 	- Rename gpio control pin and remove unused pin
->> 	- Add regulator for the Flash LED
->>
->> Ingi Kim (3):
->>   of: Add vendor prefix for Kinetic technologies
->>   leds: ktd2692: add device tree bindings for ktd2692
->>   leds: Add ktd2692 flash LED driver
->>
->>  .../devicetree/bindings/leds/leds-ktd2692.txt      |  40 ++
->>  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->>  drivers/leds/Kconfig                               |   9 +
->>  drivers/leds/Makefile                              |   1 +
->>  drivers/leds/leds-ktd2692.c                        | 408 ++++++++++=
-+++++++++++
->>  5 files changed, 459 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2=
-692.txt
->>  create mode 100644 drivers/leds/leds-ktd2692.c
->>
-> Run checkpatch.pl with --strict option on this series..
->=20
-> ./scripts/checkpatch.pl --strict 000*
->=20
-> Reported "CHECK: Alignment should match open parenthesis"..
->=20
+Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+---
+ .../devicetree/bindings/leds/leds-ktd2692.txt      | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
 
-I used checkpatch.pl script but I wasn't aware of this option.
-It reveals my mistakes more :)
-
-Thanks
+diff --git a/Documentation/devicetree/bindings/leds/leds-ktd2692.txt b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+new file mode 100644
+index 0000000..68bb59e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+@@ -0,0 +1,40 @@
++* Kinetic Technologies - KTD2692 Flash LED Driver
++
++KTD2692 is the ideal power solution for high-power flash LEDs.
++It uses ExpressWire single-wire programming for maximum flexibility.
++
++The ExpressWire interface through CTRL pin can control LED on/off and
++enable/disable the IC, Movie(max 1/3 of Flash current) / Flash mode current,
++Flash timeout, LVP(low voltage protection).
++
++Also, When the AUX pin is pulled high while CTRL pin is high,
++LED current will be ramped up to the flash-mode current level.
++
++Required properties:
++- compatible: "kinetic,ktd2692"
++- ctrl-gpio : gpio pin in order control CTRL pin
++- aux-gpio : gpio pin in order control AUX pin
++- vin-supply : "vin" LED supply (2.7V to 5.5V)
++  See Documentation/devicetree/bindings/regulator/regulator.txt
++
++A discrete LED element connected to the device must be represented by a child
++node - see Documentation/devicetree/bindings/leds/common.txt.
++
++Optional properties of flash LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++- flash-timeout-us : Maximum flash timeout in microseconds.
++  flash timeout ranges from 0 to 1835000us and default is 1049000us.
++
++Example:
++
++ktd2692 {
++	compatible = "kinetic,ktd2692";
++	ctrl-gpio = <&gpc0 1 0>;
++	aux-gpio = <&gpc0 2 0>;
++	vin-supply = <&vbat>;
++
++	flash-led {
++		label = "ktd2692-flash";
++		flash-timeout-us = <1835000>;
++	};
++};
+-- 
+2.0.5
