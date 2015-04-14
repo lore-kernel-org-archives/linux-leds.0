@@ -1,98 +1,71 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [patch 2/2 v2] leds: netxbig: silence a static checker warning
-Date: Mon, 13 Apr 2015 12:54:46 +0200
-Message-ID: <552BA076.4050205@samsung.com>
-References: <20150410083040.GA2189@mwanda> <5527DBBA.9060109@samsung.com>
- <20150410143056.GI16501@mwanda> <20150410144123.GI1509@kw.sim.vm.gnt>
- <20150410155034.GK16501@mwanda> <20150410195224.GJ1509@kw.sim.vm.gnt>
- <552B71B7.3000100@samsung.com> <20150413101619.GL1509@kw.sim.vm.gnt>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 14 Apr 2015 11:10:30 +0530
+Message-ID: <552CA84E.50705@linux.vnet.ibm.com>
+References: <20150320105921.14866.83209.stgit@localhost.localdomain> <20150320110328.14866.98225.stgit@localhost.localdomain> <1427260873.6468.68.camel@kernel.crashing.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:10490 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753719AbbDMKyy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 13 Apr 2015 06:54:54 -0400
-In-reply-to: <20150413101619.GL1509@kw.sim.vm.gnt>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:59263 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751596AbbDNFl1 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 14 Apr 2015 01:41:27 -0400
+Received: from /spool/local
+	by e23smtp05.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Tue, 14 Apr 2015 15:41:24 +1000
+Received: from d23relay10.au.ibm.com (d23relay10.au.ibm.com [9.190.26.77])
+	by d23dlp03.au.ibm.com (Postfix) with ESMTP id ACF1D357804C
+	for <linux-leds@vger.kernel.org>; Tue, 14 Apr 2015 15:41:21 +1000 (EST)
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+	by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3E5fD2R46596346
+	for <linux-leds@vger.kernel.org>; Tue, 14 Apr 2015 15:41:21 +1000
+Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
+	by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3E5el1e024837
+	for <linux-leds@vger.kernel.org>; Tue, 14 Apr 2015 15:40:48 +1000
+In-Reply-To: <1427260873.6468.68.camel@kernel.crashing.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cooloney@gmail.com, rpurdie@rpsys.net
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com
 
-On 04/13/2015 12:16 PM, Simon Guinot wrote:
-> On Mon, Apr 13, 2015 at 09:35:19AM +0200, Jacek Anaszewski wrote:
->> On 04/10/2015 09:52 PM, Simon Guinot wrote:
->>> On Fri, Apr 10, 2015 at 06:50:34PM +0300, Dan Carpenter wrote:
->>>> I've looked at this some more.  Most of the places which call
->>>> of_property_read_u32_index() check the return code.  The ones that don't
->>>> mostly initialize their values going in.  The remainder introduce static
->>>> checker warnings like:
->>>>
->>>> 	drivers/clk/ti/divider.c:472 ti_clk_get_div_table()
->>>> 	error: potentially using uninitialized 'val'.
->>>>
->>>> These warnings cause me pain.  It calls of_get_property() earlier so
->>>> it won't return -EINVAL.  I don't know if it can return -ENODATA or
->>>> -EOVERFLOW?
->>>>
->>>> I guess not.
->>>
->>> I think it can't. Above, we are calling of_property_count_u32_elems() to
->>> count the number of u32 elements in the "timers" property. After we are
->>> ensuring that there is three u32 elements available per timer. That's
->>> why the return codes for the three of_property_read_u32_index() calls
->>> are not checked.
+On 03/25/2015 10:51 AM, Benjamin Herrenschmidt wrote:
+> On Fri, 2015-03-20 at 16:34 +0530, Vasant Hegde wrote:
+>> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 >>
->> After looking at Documentation/devicetree/bindings/leds/leds-netxbig.txt
->> I noticed inconsistency: timers property is defined as required, but
->> the comment over the call to of_property_count_u32_elems says that it
->> is optional.
+>> This patch implements LED driver for PowerNV platform using the existing
+>> generic LED class framework. It registers classdev structures for all
+>> individual LEDs detected on the system through LED specific device tree
+>> nodes. Device tree nodes specify what all kind of LEDs present on the
+>> same location code. It registers LED classdev structure for each of them.
 >>
->> I think that DT documentation should be changed to make the property
->> optional. How do you think?
->
-> Thanks for spotting this. At first, I wrote the binding document. And
-> since there is always "blink timers" defined with this LED mechanism,
-> I made the property mandatory. But after, in the code, I made it
-> optional because there is no point in discarding a LED if timers are
-> missing.
->
-> I'll update the documentation accordingly.
->
+>> The platform level implementation of LED get and set state has been
+>> achieved through OPAL calls. These calls are made available for the
+>> driver by exporting from architecture specific codes.
 >>
->> Besides, I am wondering if we shouldn't check if the values read are
->> sane? In such a case initializing delay_on and delay_off to 0 would be
->> useful. We could check if both delays don't equal 0, which could happen
->> if the of_property_read_u32_index returned negative value because of
->> providing values out of bounds or not numerical values.
->
-> Well, here I didn't checked too much intentionally. IMO, calling
-> of_property_count_u32_elems() is enough to make sure that the following
-> u32 read will succeed. After that, there is not real way to check if a
-> delay value is sane, or not. To make work an hardware timer, correct
-> values have to be defined in the DT. If not, then this hardware timer
-> will be either broken or not reachable. It is not really harmful.
+>> As per the LED class framework, the 'brightness_set' function should not
+>> sleep. Hence these functions have been implemented through global work
+>> queue tasks which might sleep on OPAL async call completion.
+>>
+>> All the system LEDs can be found in the same regular path /sys/class/leds/.
+>> There are two different kind of LEDs present for the same location code,
+>> one being the identify indicator and other one being the fault indicator.
+>> We don't use LED colors. Hence our LEDs have names in this format.
+>>
+>>         <location_code>:<ATTENTION|IDENTIFY|FAULT>
+>>
+>> Any positive brightness value would turn on the LED and a zero value
+>> would turn off the LED. The driver will return LED_FULL (255) for any
+>> turned on LED and LED_OFF for any turned off LED.
+> 
 
-OK, that makes sense.
+Bryan, Richard,
 
-> Now, I can see, that I have also missed a check on the timer "mode"
-> value. And since mode is used as an array index, I think it is a little
-> bit more serious...
+  Did you get a chance to review this patchset?
 
-Yeah, the mode needs to be validated.
+-Vasant
 
-> Dan, given that the patches adding DT support for the leds-netxbig
-> driver have not been merged with Linux v4.1, I propose you drop your
-> patch. Instead, I'll send a v2, trying to take into account all the
-> comments here.
->
-> Thanks for the review and the comments.
->
-> Simon
->
-
-
--- 
-Best Regards,
-Jacek Anaszewski
+> Any comment from the LEDs folks ? I am not too familiar with the LED
+> subsystem so I would appreciate at least a cursory review of the high
+> level design :-)
