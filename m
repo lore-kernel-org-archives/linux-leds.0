@@ -1,29 +1,35 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v5 01/10] leds: unify the location of led-trigger API
-Date: Wed, 15 Apr 2015 11:32:40 +0300
-Message-ID: <20150415083239.GE27451@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v5 02/10] DT: Add documentation for the mfd Maxim max77693
+Date: Wed, 15 Apr 2015 11:33:31 +0300
+Message-ID: <20150415083330.GF27451@valkosipuli.retiisi.org.uk>
 References: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
- <1429080520-10687-2-git-send-email-j.anaszewski@samsung.com>
+ <1429080520-10687-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1429080520-10687-2-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1429080520-10687-3-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Apr 15, 2015 at 08:48:31AM +0200, Jacek Anaszewski wrote:
-> Part of led-trigger API was in the private drivers/leds/leds.h header.
-> Move it to the include/linux/leds.h header to unify the API location
-> and announce it as public. It has been already exported from
-> led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
-> changed from macros to inline to match the style of the surrounding code.
+Hi Jacek,
+
+On Wed, Apr 15, 2015 at 08:48:32AM +0200, Jacek Anaszewski wrote:
+> This patch adds device tree binding documentation for
+> the flash cell of the Maxim max77693 multifunctional device.
 > 
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 > Cc: Bryan Wu <cooloney@gmail.com>
 > Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: devicetree@vger.kernel.org
+
+Thanks!
 
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
