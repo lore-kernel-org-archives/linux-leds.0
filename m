@@ -1,103 +1,32 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v5 09/10] DT: aat1290: Document handling external strobe sources
-Date: Wed, 15 Apr 2015 08:48:39 +0200
-Message-ID: <1429080520-10687-10-git-send-email-j.anaszewski@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v5 01/10] leds: unify the location of led-trigger API
+Date: Wed, 15 Apr 2015 11:32:40 +0300
+Message-ID: <20150415083239.GE27451@valkosipuli.retiisi.org.uk>
 References: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15534 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752876AbbDOGtn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2015 02:49:43 -0400
-In-reply-to: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+ <1429080520-10687-2-git-send-email-j.anaszewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1429080520-10687-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org
 
-This patch adds documentation for a pinctrl-names property.
-The property, when present, is used for switching the source
-of the strobe signal for the device.
+On Wed, Apr 15, 2015 at 08:48:31AM +0200, Jacek Anaszewski wrote:
+> Part of led-trigger API was in the private drivers/leds/leds.h header.
+> Move it to the include/linux/leds.h header to unify the API location
+> and announce it as public. It has been already exported from
+> led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
+> changed from macros to inline to match the style of the surrounding code.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: devicetree@vger.kernel.org
----
- .../devicetree/bindings/leds/leds-aat1290.txt      |   36 ++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-index ef88b9c..c05ed91 100644
---- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-@@ -2,7 +2,9 @@
- 
- The device is controlled through two pins: FL_EN and EN_SET. The pins when,
- asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
--respectively.
-+respectively. In order to add a capability of selecting the strobe signal source
-+(e.g. CPU or camera sensor) there is an additional switch required, independent
-+of the flash chip. The switch is controlled with pin control.
- 
- Required properties:
- 
-@@ -10,6 +12,13 @@ Required properties:
- - flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
- - enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
- 
-+Optional properties:
-+- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
-+		"default" and "host" must refer to the same pin configuration
-+		node, which sets the host as a strobe signal provider. Entry
-+		"isp" must refer to the pin configuration node, which sets the
-+		ISP as a strobe signal provider.
-+
- A discrete LED element connected to the device must be represented by a child
- node - see Documentation/devicetree/bindings/leds/common.txt.
- 
-@@ -25,13 +34,22 @@ Required properties of the LED child node:
- Optional properties of the LED child node:
- - label : see Documentation/devicetree/bindings/leds/common.txt
- 
--Example (by Ct = 220nF, Rset = 160kohm):
-+Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
-+a switch that allows for routing strobe signal either from the host or from
-+the camera sensor):
-+
-+#include "exynos4412.dtsi"
- 
- aat1290 {
- 	compatible = "skyworks,aat1290";
- 	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
- 	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
- 
-+	pinctrl-names = "default", "host", "isp";
-+	pinctrl-0 = <&camera_flash_host>;
-+	pinctrl-1 = <&camera_flash_host>;
-+	pinctrl-2 = <&camera_flash_isp>;
-+
- 	camera_flash: flash-led {
- 		label = "aat1290-flash";
- 		led-max-microamp = <520833>;
-@@ -39,3 +57,17 @@ aat1290 {
- 		flash-timeout-us = <1940000>;
- 	};
- };
-+
-+&pinctrl_0 {
-+	camera_flash_host: camera-flash-host {
-+		samsung,pins = "gpj1-0";
-+		samsung,pin-function = <1>;
-+		samsung,pin-val = <0>;
-+	};
-+
-+	camera_flash_isp: camera-flash-isp {
-+		samsung,pins = "gpj1-0";
-+		samsung,pin-function = <1>;
-+		samsung,pin-val = <1>;
-+	};
-+};
 -- 
-1.7.9.5
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
