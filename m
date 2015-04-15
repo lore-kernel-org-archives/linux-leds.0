@@ -1,129 +1,119 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v5 01/10] leds: unify the location of led-trigger API
-Date: Wed, 15 Apr 2015 08:48:31 +0200
-Message-ID: <1429080520-10687-2-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 02/10] DT: Add documentation for the mfd Maxim max77693
+Date: Wed, 15 Apr 2015 08:48:32 +0200
+Message-ID: <1429080520-10687-3-git-send-email-j.anaszewski@samsung.com>
 References: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25631 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751757AbbDOGtM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2015 02:49:12 -0400
-In-reply-to: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1429080520-10687-1-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Part of led-trigger API was in the private drivers/leds/leds.h header.
-Move it to the include/linux/leds.h header to unify the API location
-and announce it as public. It has been already exported from
-led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
-changed from macros to inline to match the style of the surrounding code.
+This patch adds device tree binding documentation for
+the flash cell of the Maxim max77693 multifunctional device.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
+Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 ---
- drivers/leds/leds.h  |   24 ------------------------
- include/linux/leds.h |   25 +++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 24 deletions(-)
+ Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 79efe57..bc89d7a 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -13,7 +13,6 @@
- #ifndef __LEDS_H_INCLUDED
- #define __LEDS_H_INCLUDED
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 38e6440..d342584 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -76,7 +76,60 @@ Optional properties:
+     Valid values: 4300000, 4700000, 4800000, 4900000
+     Default: 4300000
  
--#include <linux/device.h>
- #include <linux/rwsem.h>
- #include <linux/leds.h>
- 
-@@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
- 
--#ifdef CONFIG_LEDS_TRIGGERS
--void led_trigger_set_default(struct led_classdev *led_cdev);
--void led_trigger_set(struct led_classdev *led_cdev,
--			struct led_trigger *trigger);
--void led_trigger_remove(struct led_classdev *led_cdev);
--
--static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
--{
--	return led_cdev->trigger_data;
--}
--
--#else
--#define led_trigger_set_default(x) do {} while (0)
--#define led_trigger_set(x, y) do {} while (0)
--#define led_trigger_remove(x) do {} while (0)
--#define led_get_trigger_data(x) (NULL)
--#endif
--
--ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
--			const char *buf, size_t count);
--ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
--			char *buf);
--
- #endif	/* __LEDS_H_INCLUDED */
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 9a2b000..b122eea 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -12,6 +12,7 @@
- #ifndef __LINUX_LEDS_H_INCLUDED
- #define __LINUX_LEDS_H_INCLUDED
- 
-+#include <linux/device.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
-@@ -222,6 +223,11 @@ struct led_trigger {
- 	struct list_head  next_trig;
- };
- 
-+ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
-+			const char *buf, size_t count);
-+ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-+			char *buf);
++- led : the LED submodule device node
 +
- /* Registration functions for complex triggers */
- extern int led_trigger_register(struct led_trigger *trigger);
- extern void led_trigger_unregister(struct led_trigger *trigger);
-@@ -238,6 +244,16 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
- 				      unsigned long *delay_on,
- 				      unsigned long *delay_off,
- 				      int invert);
-+extern void led_trigger_set_default(struct led_classdev *led_cdev);
-+extern void led_trigger_set(struct led_classdev *led_cdev,
-+			struct led_trigger *trigger);
-+extern void led_trigger_remove(struct led_classdev *led_cdev);
++There are two LED outputs available - FLED1 and FLED2. Each of them can
++control a separate LED or they can be connected together to double
++the maximum current for a single connected LED. One LED is represented
++by one child node.
 +
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return led_cdev->trigger_data;
-+}
++Required properties:
++- compatible : Must be "maxim,max77693-led".
 +
- /**
-  * led_trigger_rename_static - rename a trigger
-  * @name: the new trigger name
-@@ -267,6 +283,15 @@ static inline void led_trigger_register_simple(const char *name,
- static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
- static inline void led_trigger_event(struct led_trigger *trigger,
- 				enum led_brightness event) {}
-+static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
-+static inline void led_trigger_set(struct led_classdev *led_cdev,
-+				struct led_trigger *trigger) {}
-+static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return NULL;
-+}
++Optional properties:
++- maxim,boost-mode :
++	In boost mode the device can produce up to 1.2A of total current
++	on both outputs. The maximum current on each output is reduced
++	to 625mA then. If not enabled explicitly, boost setting defaults to
++	LEDS_BOOST_FIXED in case both current sources are used.
++	Possible values:
++		LEDS_BOOST_OFF (0) - no boost,
++		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
++		LEDS_BOOST_FIXED (2) - fixed mode.
++- maxim,boost-mvout : Output voltage of the boost module in millivolts.
++	Valid values: 3300 - 5500, step by 25 (rounded down)
++	Default: 3300
++- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
++	if chip estimates that system voltage could drop below this level due
++	to flash power consumption.
++	Valid values: 2400 - 3400, step by 33 (rounded down)
++	Default: 2400
 +
- #endif /* CONFIG_LEDS_TRIGGERS */
- 
- /* Trigger specific functions */
++Required properties for the LED child node:
++- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
++		device current output identifiers: 0 - FLED1, 1 - FLED2
++- led-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values for a LED connected to one FLED output:
++		15625 - 250000, step by 15625 (rounded down)
++	Valid values for a LED connected to both FLED outputs:
++		15625 - 500000, step by 15625 (rounded down)
++- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values for a single LED connected to one FLED output:
++	(boost mode must be turned off):
++		15625 - 1000000, step by 15625 (rounded down)
++	Valid values for a single LED connected to both FLED outputs:
++		15625 - 1250000, step by 15625 (rounded down)
++	Valid values for two LEDs case:
++		15625 - 625000, step by 15625 (rounded down)
++- flash-max-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values: 62500 - 1000000, step by 62500 (rounded down)
++
++Optional properties for the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++
+ Example:
++#include <dt-bindings/leds/common.h>
++
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+ 		reg = <0x66>;
+@@ -117,5 +170,19 @@ Example:
+ 			maxim,thermal-regulation-celsius = <75>;
+ 			maxim,battery-overcurrent-microamp = <3000000>;
+ 			maxim,charge-input-threshold-microvolt = <4300000>;
++
++		led {
++			compatible = "maxim,max77693-led";
++			maxim,boost-mode = <LEDS_BOOST_FIXED>;
++			maxim,boost-mvout = <5000>;
++			maxim,mvsys-min = <2400>;
++
++			camera_flash: flash-led {
++				label = "max77693-flash";
++				led-sources = <0>, <1>;
++				led-max-microamp = <500000>;
++				flash-max-microamp = <1250000>;
++				flash-max-timeout-us = <1000000>;
++			};
+ 		};
+ 	};
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
