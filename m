@@ -1,329 +1,109 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Wed, 15 Apr 2015 11:56:37 +0530
-Message-ID: <552E049D.2030604@linux.vnet.ibm.com>
-References: <20150320105921.14866.83209.stgit@localhost.localdomain> <20150320110328.14866.98225.stgit@localhost.localdomain> <552D303A.5080506@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v5 00/10] LED / flash API integration
+Date: Wed, 15 Apr 2015 08:48:30 +0200
+Message-ID: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e28smtp01.in.ibm.com ([122.248.162.1]:39323 "EHLO
-	e28smtp01.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964802AbbDOG05 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2015 02:26:57 -0400
-Received: from /spool/local
-	by e28smtp01.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Wed, 15 Apr 2015 11:56:53 +0530
-Received: from d28relay04.in.ibm.com (d28relay04.in.ibm.com [9.184.220.61])
-	by d28dlp02.in.ibm.com (Postfix) with ESMTP id 89680394004E
-	for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2015 11:56:49 +0530 (IST)
-Received: from d28av04.in.ibm.com (d28av04.in.ibm.com [9.184.220.66])
-	by d28relay04.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3F6QfVw40108032
-	for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2015 11:56:41 +0530
-Received: from d28av04.in.ibm.com (localhost [127.0.0.1])
-	by d28av04.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3F6Qctx011810
-	for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2015 11:56:40 +0530
-In-Reply-To: <552D303A.5080506@samsung.com>
+Received: from mailout2.samsung.com ([203.254.224.25]:16940 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751506AbbDOGtI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2015 02:49:08 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, mpe@ellerman.id.au, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On 04/14/2015 08:50 PM, Jacek Anaszewski wrote:
-> Hi Vasant,
+This is a fifth non-RFC version of LED / flash API integration
+series [1]. It is based on linux-next_linux_next-20150414.
 
-Hi Jacek,
+================
+Changes since v4
+================
+- adapted leds-max77693 and leds-aat1290 drivers to the recent
+  modifications in leds/common.txt bindings documentation and
+  changed the behaviour when properties are missing
+- modified DT bindings documenation for the aforementioned
+  drivers
+- removed unjustified use of goto in the leds-aat1290 driver
+- fixed lack of of_node_put in leds-aat1290 driver, after parsing
+  DT child node 
+- removed patch adding 'skyworks' vendor prefix, as the entry
+  has been recently added
 
->>
->> This patch implements LED driver for PowerNV platform using the existing
->> generic LED class framework. It registers classdev structures for all
->> individual LEDs detected on the system through LED specific device tree
->> nodes. Device tree nodes specify what all kind of LEDs present on the
->> same location code. It registers LED classdev structure for each of them.
->>
->> The platform level implementation of LED get and set state has been
->> achieved through OPAL calls. These calls are made available for the
->> driver by exporting from architecture specific codes.
->>
->> As per the LED class framework, the 'brightness_set' function should not
->> sleep. Hence these functions have been implemented through global work
->> queue tasks which might sleep on OPAL async call completion.
-> 
-> Wouldn't it be easier to implement synchronization on the OPAL side?
+================
+Changes since v2
+================
+- improved leds/common DT bindings documentation
+- improved max77693-led DT documentation
+- fixed validation of DT confguration for leds-max77693 by
+  minimal values in joint iouts case
+- removed trigger-type property from leds-max77693 bindings
+  and adjusted the driver accordingly
+- improved LED Flash class documentation related to v4l2-flash sub-device
+  initialization
+- excluded from leds-aat1290 DT bindings documentation the part
+  related to handling external strobe sources
 
-We had thought about this.. But OPAL intern depends on service processor to
-enable/disable indicator. So we can't make this as synchronous one.
+================
+Changes since v1
+================
 
+- excluded exynos4-is media device related patches, as there is
+  consenus required related to flash devices handling in media device
+  DT bindings
+- modifications around LED Flash class settings and v4l2 flash config
+  initialization in LED Flash class drivers and v4l2-flash wrapper
+- switched to using DT node name as a device name for leds-max77693
+  and leds-aat1290 drivers, in case DT 'label' property is absent
+- dropped OF dependecy for v4l2-flash wrapper
+- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
+- allowed for multiple clients of v4l2-flash sub-device
 
-.../...
+======================
+Changes since RFC v13:
+======================
 
->>
->> diff --git a/arch/powerpc/platforms/powernv/opal.c
->> b/arch/powerpc/platforms/powernv/opal.c
->> index 142a08a..fbfd9c1 100644
->> --- a/arch/powerpc/platforms/powernv/opal.c
->> +++ b/arch/powerpc/platforms/powernv/opal.c
->> @@ -746,7 +746,7 @@ static void __init opal_irq_init(struct device_node *dn)
->>
->>   static int __init opal_init(void)
->>   {
->> -    struct device_node *np, *consoles;
->> +    struct device_node *np, *consoles, *led;
->>       int rc;
->>
->>       opal_node = of_find_node_by_path("/ibm,opal");
->> @@ -772,6 +772,13 @@ static int __init opal_init(void)
->>       /* Create i2c platform devices */
->>       opal_i2c_create_devs();
->>
->> +    /* Create led platform devices */
->> +    led = of_find_node_by_path("/ibm,opal/led");
->> +    if (led) {
->> +        of_platform_device_create(led, "opal_led", NULL);
->> +        of_node_put(led);
->> +    }
->> +
->>       /* Find all OPAL interrupts and request them */
->>       opal_irq_init(opal_node);
->>
->> @@ -904,3 +911,6 @@ EXPORT_SYMBOL_GPL(opal_rtc_write);
->>   EXPORT_SYMBOL_GPL(opal_tpo_read);
->>   EXPORT_SYMBOL_GPL(opal_tpo_write);
->>   EXPORT_SYMBOL_GPL(opal_i2c_request);
->> +/* Export these symbols for PowerNV LED class driver */
->> +EXPORT_SYMBOL_GPL(opal_leds_get_ind);
->> +EXPORT_SYMBOL_GPL(opal_leds_set_ind);
-> 
-> Please split the above part to the separate patch and put it in the
-> series before this one.
+- reduced number of patches - some of them have been merged
+- slightly modified max77693-led device naming
+- fixed issues in v4l2-flash helpers detected with yavta
+- cleaned up AAT1290 device tree documentation
+- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
 
-Sure. Will split it in next version.
+Thanks,
+Jacek Anaszewski
 
-> 
->> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->> index 25b320d..a93223c 100644
->> --- a/drivers/leds/Kconfig
->> +++ b/drivers/leds/Kconfig
->> @@ -508,6 +508,15 @@ config LEDS_BLINKM
->>         This option enables support for the BlinkM RGB LED connected
->>         through I2C. Say Y to enable support for the BlinkM LED.
->>
->> +config LEDS_POWERNV
->> +    tristate "LED support for PowerNV Platform"
->> +    depends on LEDS_CLASS
->> +    depends on PPC_POWERNV
-> 
-> OF dependency is missing here.
+[1] http://www.spinics.net/lists/kernel/msg1944538.html
 
-Agree. Will fix.
+Jacek Anaszewski (10):
+  leds: unify the location of led-trigger API
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the Skyworks AAT1290
+  leds: Add driver for AAT1290 flash LED controller
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  leds: max77693: add support for V4L2 Flash sub-device
+  DT: aat1290: Document handling external strobe sources
+  leds: aat1290: add support for V4L2 Flash sub-device
 
-> 
->> +    help
->> +      This option enables support for the system LEDs present on
->> +      PowerNV platforms. Say 'y' to enable this support in kernel.
->> +      Say 'm' enable this support as module.
-> 
-> Please change the last line to:
-> 
-> To compile this driver as a module, choose M here: the module will
-> be called leds-powernv.
-> 
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   73 ++
+ Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++
+ Documentation/leds/leds-class-flash.txt            |   47 +
+ drivers/leds/Kconfig                               |   19 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/leds-aat1290.c                        |  577 ++++++++++
+ drivers/leds/leds-max77693.c                       | 1100 ++++++++++++++++++++
+ drivers/leds/leds.h                                |   24 -
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash.c               |  619 +++++++++++
+ include/linux/leds.h                               |   25 +
+ include/media/v4l2-flash.h                         |  145 +++
+ 13 files changed, 2687 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash.c
+ create mode 100644 include/media/v4l2-flash.h
 
-Sure. Will fix.
-
-> 
->> +
->>   config LEDS_SYSCON
->>       bool "LED support for LEDs on system controllers"
->>       depends on LEDS_CLASS=y
->> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->> index cbba921..604ffc9 100644
->> --- a/drivers/leds/Makefile
->> +++ b/drivers/leds/Makefile
->> @@ -58,6 +58,7 @@ obj-$(CONFIG_LEDS_BLINKM)        += leds-blinkm.o
->>   obj-$(CONFIG_LEDS_SYSCON)        += leds-syscon.o
->>   obj-$(CONFIG_LEDS_VERSATILE)        += leds-versatile.o
->>   obj-$(CONFIG_LEDS_MENF21BMC)        += leds-menf21bmc.o
->> +obj-$(CONFIG_LEDS_POWERNV)        += leds-powernv.o
->>
->>   # LED SPI Drivers
->>   obj-$(CONFIG_LEDS_DAC124S085)        += leds-dac124s085.o
->> diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
->> new file mode 100644
->> index 0000000..0c9f958
->> --- /dev/null
->> +++ b/drivers/leds/leds-powernv.c
->> @@ -0,0 +1,620 @@
->> +/*
->> + * PowerNV LED Driver
->> + *
->> + * Copyright IBM Corp. 2015
->> + *
->> + * Author: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->> + * Author: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License
->> + * as published by the Free Software Foundation; either version
->> + * 2 of the License, or (at your option) any later version.
->> + */
->> +
->> +#define PREFIX        "POWERNV_LED"
->> +#define pr_fmt(fmt)    PREFIX ": " fmt
-> 
-> Wouldn't you mind using dev_* prefixed logging?
-> Unless you have a good reason not to do it.
-> 
-
-I don't see any specific reason to use pr_fmt. Will convert this to dev_*.
-
-
->> +
->> +#include <linux/platform_device.h>
->> +#include <linux/leds.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/slab.h>
->> +#include <linux/list.h>
-> 
-> Please keep alphabetical order.
-
-Sure.
-
-> 
->> +
->> +#include <asm/opal.h>
->> +
->> +#define LED_STR_ATTENTION    ":ATTENTION"
->> +#define LED_STR_IDENT        ":IDENTIFY"
->> +#define LED_STR_FAULT        ":FAULT"
-> 
-> Namespacing prefix is required here. LED is reserved for
-> LED subsystem global macros. How about POWERNV_LED_* ?
-
-Yep... Its my fault.. Makes sense to have POWERNV_*.
-
-> 
->> +
->> +/*
->> + * LED operation state
->> + *
->> + * led_classdev_unregister resets the brightness values. However
->> + * we want to retain the LED state across boot.
-> 
-> What boot are you thinking of here?
-> 
->> Hence disable
->> + * LED operation before calling led_classdev_unregister.
->> + */
-> 
-> This comment is unclear for me, as this is static initialization,
-> unrelated to to any function call.
-> 
-
-I mean, we have to retain the state of LED across system reboot.
-
->> +static bool led_disabled = false;
-> 
-> Static variables are initialized to 0 by default.
-
-Fixed.
-
-.../...
-
->> +/*
->> + * powernv_led_compact_work_list
->> + *
->> + * This function goes through the entire list of scheduled powernv_led_work
->> + * nodes and removes the nodes which have already processed one set LED
->> + * state request from request list and has been marked for deletion. This is
->> + * essential for cleaning the list before adding new elements into it. This
->> + * also tracks the total number of pending tasks. Once it reaches the
->> + * threshold the function will throttle till all the scheduled tasks completes
->> + * execution during which the user space thread will block and will be
->> + * prevented from queuing up more LED state change requests.
->> + */
-> 
-> Did you test the driver with led-triggers?
-
-I have tested set/reset LEDs .. not triggers as our user space dont' use that.
-
->> +
->> +    switch (led_type) {
->> +    case OPAL_SLOT_LED_TYPE_ATTN:
->> +        loc_code[strlen(loc_code) - strlen(LED_STR_ATTENTION)] = '\0';
->> +        break;
->> +    case OPAL_SLOT_LED_TYPE_ID:
->> +        loc_code[strlen(loc_code) - strlen(LED_STR_IDENT)] = '\0';
->> +        break;
->> +    case OPAL_SLOT_LED_TYPE_FAULT:
->> +        loc_code[strlen(loc_code) - strlen(LED_STR_FAULT)] = '\0';
->> +        break;
->> +    default:    /* Unknown LED type */
->> +        goto out_loc;
->> +    }
-> 
-> Above sequence is repeated in the function below - it could be wrapped
-> with a new function.
-
-Agree. Will fix.
-
-.../...
-
->> +
->> +/*
->> + * power_led_classdev
->> + *
->> + * This function registers classdev structure for any given type of LED on
->> + * a given child LED device node.
->> + */
->> +static int power_led_classdev(struct platform_device *pdev,
->> +                  struct device_node *cled, u64 led_type)
->> +{
->> +    int rc;
->> +    unsigned long flags;
->> +    struct powernv_led *cpled;
->> +
->> +    cpled = kzalloc(sizeof(struct powernv_led), GFP_KERNEL);
->> +    if (!cpled) {
->> +        pr_err("Memory allocation failed at %s\n", __func__);
->> +        return -ENOMEM;
->> +    }
->> +
->> +    /* Create the name for classdev */
->> +    switch (led_type) {
->> +    case OPAL_SLOT_LED_TYPE_ATTN:
->> +        cpled->cdev.name = kasprintf(GFP_KERNEL, "%s%s",
->> +                         cled->name, LED_STR_ATTENTION);
-> 
-> We have a 'label' DT property for naming LED Flash class devices.
-> Please refer to Documentation/devicetree/bindings/leds/common.txt.
-> 
-
-In Power Systems LEDs are overloaded (meaning same LED is used for identify and
-fault depending on their state  ---  blinking = identify and solid = fault).
-Hence here append LED type info.
-
-
-.../...
-
->> +
->> +static struct platform_driver powernv_led_driver = {
->> +    .probe    = powernv_led_probe,
->> +    .remove = powernv_led_remove,
->> +    .driver = {
->> +        .name = "powernv-led-driver",
->> +        .owner = THIS_MODULE,
->> +        .of_match_table = powernv_led_match,
-> 
-> Is somewhere DT documentation available for these leds?
-
-These are PowerNV platform specific properties. I don't think its
-specified/documented in kernel side.
-These are documented in OPAL (firmware) side.
-
-
-Thanks for valuable review. Will post v3 ASAP.
-
--Vasant
+-- 
+1.7.9.5
