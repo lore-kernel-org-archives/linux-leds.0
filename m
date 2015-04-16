@@ -1,268 +1,108 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 1/2] leds: add DT binding for BCM6328 LED controller
-Date: Thu, 16 Apr 2015 16:39:48 +0200
-Message-ID: <552FC9B4.3030303@samsung.com>
-References: <1427975661-29964-1-git-send-email-noltari@gmail.com>
- <1428246485-32305-1-git-send-email-noltari@gmail.com>
- <1428246485-32305-2-git-send-email-noltari@gmail.com>
+From: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 1/1] media: i2c/adp1653: Devicetree support for adp1653
+Date: Thu, 16 Apr 2015 18:29:06 +0200
+Message-ID: <20150416162905.GA3181@earth>
+References: <1429141034-29237-1-git-send-email-sakari.ailus@iki.fi>
+ <20150416052442.GA31095@earth>
+ <20150416055817.GA2749@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43006 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754482AbbDPOjx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 16 Apr 2015 10:39:53 -0400
-In-reply-to: <1428246485-32305-2-git-send-email-noltari@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150416055817.GA2749@amd>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Cc: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-
-Hi Alvaro,
-
-On 04/05/2015 05:08 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
-> This adds device tree binding documentation for the Broadcom BCM6328 =
-LED
-> controller.
->
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
-> v2: Introduce changes suggested by Florian and Jonas.
->   - Change compatible string to "brcm,bcm6328-leds-ctrl".
->   - Make valid LEDs statement more strict.
->   - Remove compatible strings from LED subnodes.
->   - Clarify that LEDs are active high by default.
->   - Add a better description for brcm,link-signal-sources and brcm,ac=
-tivity-signal-sources.
->
->   .../devicetree/bindings/leds/leds-bcm6328.txt      | 162 ++++++++++=
-+++++++++++
->   1 file changed, 162 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm6=
-328.txt
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt =
-b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
-> new file mode 100644
-> index 0000000..6e4f5563a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
-> @@ -0,0 +1,162 @@
-> +LEDs connected to Broadcom BCM6328 controller
-
-Part of description from the cover letter could find its way here.
-It could be more precise though. I am wondering who controls the LEDs
-through spi-gpio interface.
-
-> +
-> +Required properties:
-> +- compatible: should be : "brcm,bcm6328-leds-ctrl".
-
-I liked brcm,bcm6328-leds more. It is obvious that all LED subsystem
-drivers are for LED *controllers*.
-
-> +- #address-cells: must be 1
-> +- #size-cells: must be 0
-> +- reg: BCM6328 LED controller address and size.
-> +
-> +Optional properties:
-> +- brcm,serial-leds: boolean which enables Serial LEDs.
-> +
-> +Each LED is represented as a sub-node of the brcm,bcm6328-leds devic=
-e.
-> +
-> +LED sub-node properties:
-> +- reg: LED pin number (only LEDs 0 to 23 are valid).
-> +
-> +Normal LED:
-
-Please give it more meaningful description. Software controlled?
-
-> +LEDs are active high by default.
-
-This should be put next to active-low property, like:
-
-active-low: boolean that makes LED active low.
-             Default: false
-
-> +- label (optional): see Documentation/devicetree/bindings/leds/commo=
-n.txt
-> +- active-low (optional): boolean that makes LED active low.
-> +- default-state (optional): see
-> +  Documentation/devicetree/bindings/leds/leds-gpio.txt
-> +- linux,default-trigger (optional): see
-> +  Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Hardware controlled LED:
-> +- brcm,hardware-controlled (optional): boolean that makes this LED h=
-ardware
-> +  controlled.
-> +- brcm,link-signal-sources (optional): An array of hardware link
-> +  signal sources. Up to four link hardware signals can get muxed int=
-o
-> +  these LEDs. Only valid for LEDs 0 to 7, where LED signals 0 to 3 m=
-ay
-> +  be muxed to LEDs 0 to 3, and signals 4 to 7 may be muxed to LEDs
-> +  4 to 7. A signal can be muxed to more than one LED, and one LED ca=
-n
-> +  have more than one source signal.
-> +- brcm,activity-signal-sources (optional): An array of hardware acti=
-vity
-> +  signal sources. Up to four activity hardware signals can get muxed=
- into
-> +  these LEDs. Only valid for LEDs 0 to 7, where LED signals 0 to 3 m=
-ay
-> +  be muxed to LEDs 0 to 3, and signals 4 to 7 may be muxed to LEDs
-> +  4 to 7. A signal can be muxed to more than one LED, and one LED ca=
-n
-> +  have more than one source signal.
-
-It is more common to group properties in sections - in this case:
-"Required properties for child nodes" and "Optional properties for
-child nodes".
 
 
-> +example 1) BCM6328
-> +
-> +leds0: led-controller@10000800 {
-> +	compatible =3D "brcm,bcm6328-leds-ctrl";
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +	reg =3D <0x10000800 0x24>;
-> +
-> +	alarm_red@2 {
-> +		reg =3D <2>;
-> +		active-low;
-> +		label =3D "red:alarm";
-> +	};
-> +	inet_green@3 {
-> +		reg =3D <3>;
-> +		active-low;
-> +		label =3D "green:inet";
-> +	};
-> +	power_green@4 {
-> +		reg =3D <4>;
-> +		active-low;
-> +		label =3D "green:power";
-> +		default-state =3D "on";
-> +	};
-> +	ephy0_spd@17 {
-> +		reg =3D <17>;
-> +		brcm,hardware-controlled;
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If there is no LED class device created for hardware controlled LED,
-then why does it need the node if has no brcm,link-signal-sources
-or brcm,activity-signal-sources properties? There seems to be nothing
-to configure then.
+Hi Pavel,
 
-> +	};
-> +	ephy1_spd@18 {
-> +		reg =3D <18>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy2_spd@19 {
-> +		reg =3D <19>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy3_spd@20 {
-> +		reg =3D <20>;
-> +		brcm,hardware-controlled;
-> +	};
-> +};
-> +
-> +example 2) BCM63268
-> +
-> +leds0: led-controller@10001900 {
-> +	compatible =3D "brcm,bcm6328-leds-ctrl";
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +	reg =3D <0x10001900 0x24>;
-> +	brcm,serial-leds;
-> +
-> +	gphy0_spd0@0 {
-> +		reg =3D <0>;
-> +		brcm,hardware-controlled;
-> +		brcm,link-signal-sources =3D <0>;
+On Thu, Apr 16, 2015 at 07:58:18AM +0200, Pavel Machek wrote:
+> On Thu 2015-04-16 07:24:42, Sebastian Reichel wrote:
+> > Hi Sakari,
+> >=20
+> > Since this driver won't make it into 4.1 anyways, I have one more
+> > comment:
+>=20
+> Like this driver did not receive enough bikesheding.
 
-More valid examples with brcm,link-signal-sources and
-brcm,activity-signal-sources properties would be useful. This is
-especially vital taking into account limitations mentioned in the
-description of these properties. The examples should be as
-comprehensive as possible, i.e. the lists should contain more than
-one element.
+You should become more restrained with this argument if
+you want it to be taken seriously by me in the future...
 
-> +	};
-> +	gphy0_spd1@1 {
-> +		reg =3D <1>;
-> +		brcm,hardware-controlled;
-> +		brcm,link-signal-sources =3D <1>;
-> +	};
-> +	inet_red@2 {
-> +		reg =3D <2>;
-> +		active-low;
-> +		label =3D "red:inet";
-> +	};
-> +	dsl_green@3 {
-> +		reg =3D <3>;
-> +		active-low;
-> +		label =3D "green:dsl";
-> +	};
-> +	usb_green@4 {
-> +		reg =3D <4>;
-> +		active-low;
-> +		label =3D "green:usb";
-> +	};
-> +	wps_green@7 {
-> +		reg =3D <7>;
-> +		active-low;
-> +		label =3D "green:wps";
-> +	};
-> +	inet_green@8 {
-> +		reg =3D <8>;
-> +		active-low;
-> +		label =3D "green:inet";
-> +	};
-> +	ephy0_act@9 {
-> +		reg =3D <9>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy1_act@10 {
-> +		reg =3D <10>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy2_act@11 {
-> +		reg =3D <11>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	gphy0_act@12 {
-> +		reg =3D <12>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy0_spd@13 {
-> +		reg =3D <13>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy1_spd@14 {
-> +		reg =3D <14>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	ephy2_spd@15 {
-> +		reg =3D <15>;
-> +		brcm,hardware-controlled;
-> +	};
-> +	power_green@20 {
-> +		reg =3D <20>;
-> +		active-low;
-> +		label =3D "green:power";
-> +		default-state =3D "on";
-> +	};
-> +};
->
+> > > +	} else {
+> > > +		gpiod_set_value(flash->platform_data->enable_gpio, on);
+> > > +		if (on)
+> > > +			/* Some delay is apparently required. */
+> > > +			udelay(20);
+> > > +	}
+> >=20
+> > I suggest to remove the power callback from platform data. Instead
+> > you can require to setup a gpiod lookup table in the boardcode, if
+> > platform data based initialization is used (see for example si4713
+> > initialization in board-rx51-periphals.c).
+> >=20
+> > This will reduce complexity in the driver and should be fairly easy
+> > to implement, since there is no adp1653 platform code user in the
+> > mainline kernel anyways.
+>=20
+> I'd hate to break out of tree users for very little gain.
 
+This normally happens as the kernel progresses. If you want your
+driver not to break, you should sent it upstream and maintain it.
+Also the only out-of-tree user I know is the Nokia N900 (which has
+already broken camera subsystem). Note that the required out of tree
+changes to use the platform code with gpiod interface are actually
+quite small and if you really care about it, they could actually be
+done *in kernel*.
 
---=20
-Best Regards,
-Jacek Anaszewski
+Note that many drivers are updated to use new kernel APIs together
+with the DT changes - especially those, which haven't been updated
+for quite some time.
+
+So let's have a look at the advantages of removing the power gpio:
+
+ + gpio handling is always done in the driver, making code
+   easier to read
+ + less loc in the driver, making it easier to read
+ + less loc in the boardcode (no gpio requesting/releasing)
+ + less branching in driver code - easier testing coverage
+ - out of tree users will break
+
+So basically its code quality vs minor out-of-tree breakage.
+
+-- Sebastian
+
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJVL+NPAAoJENju1/PIO/qaCkgP+wRFedHH49l4MJkEoo9itGAP
++7y4otju5bFsuPJCGUAOwpsmIRrNqkz2F8Rb2kKVkuwSnnFhv9ltkuR077b1WjCT
+9R9rE7jiiLLDOkjmQTd70q/TEigDDu7w2Apk5WoNHYtPIG9gtAMlZiW0x/WL2JzO
+05e7Kf8AX0+gkp3tDc6autji+INAiVEHPrQ/L3R0ohVWJxKv5992znGF/iCnb1uP
+/3i+glksApTHesMlfRkNaEndlOgZ/u9dKBO0gH8xQToTzNvZgLPL4Ims1ExkC3kd
+cg/h26h7YIRI47oebrIcCYGvOv+f1Ioxd0dim0ngUmHSycVU/bSncRcDRC0rSBkD
+zBeTFv6od9/wDKjMvpqgzukm0cD4G3UGT9mB9qGG9LCpxd6ytJ49p4dNJbFs63bj
+pjgtiWeY4CZ90PUPg+U4TBYxhLjaQ3ikjgPbv5x9ObYpblJiDXjfc5cdBGxnP+45
+zXlJChgLcPBPT/zvp04hZRDg3tDcJV3h4zlf234gSO8vpyAS1y4v5cSmRVSuC0Cu
+M2cEsq49+0OiytDBHVoS7Uclxp+WrsM0Cd3PeHuP1E/gby4BA0EGsGbc3MWz1cDi
+fm5nQZa5t0SS8x2dTAs8IC9uYtx2+ntN7IEijTaI03u1qeZ6w7+zuVAAmKn/8oHe
+uEKImql8BtlxuWzSLUKc
+=gzfH
+-----END PGP SIGNATURE-----
+
+--n8g4imXOkfNTN/H1--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
