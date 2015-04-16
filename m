@@ -1,132 +1,527 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Thu, 16 Apr 2015 13:34:17 +0200
-Message-ID: <552F9E39.4050801@samsung.com>
-References: <20150320105921.14866.83209.stgit@localhost.localdomain>
- <20150320110328.14866.98225.stgit@localhost.localdomain>
- <552D303A.5080506@samsung.com> <552E049D.2030604@linux.vnet.ibm.com>
- <552E2480.9060102@samsung.com> <552E3A56.8030300@linux.vnet.ibm.com>
- <552E63D2.4070209@samsung.com> <552F5C1A.3060701@linux.vnet.ibm.com>
- <552F7807.9080605@samsung.com> <552F8E48.6070903@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/2] leds: add BCM6328 LED driver
+Date: Thu, 16 Apr 2015 16:37:21 +0200
+Message-ID: <552FC921.3050005@samsung.com>
+References: <1427975661-29964-1-git-send-email-noltari@gmail.com>
+ <1428246485-32305-1-git-send-email-noltari@gmail.com>
+ <1428246485-32305-3-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-reply-to: <552F8E48.6070903@linux.vnet.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: stewart@linux.vnet.ibm.com, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45212 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755004AbbDPOha (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 16 Apr 2015 10:37:30 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NMW00G95M53THB0@mailout1.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 16 Apr 2015 15:41:27 +0100 (BST)
+In-reply-to: <1428246485-32305-3-git-send-email-noltari@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com
 
-T24gMDQvMTYvMjAxNSAxMjoyNiBQTSwgVmFzYW50IEhlZ2RlIHdyb3RlOgo+IE9uIDA0LzE2LzIw
-MTUgMDI6MjEgUE0sIEphY2VrIEFuYXN6ZXdza2kgd3JvdGU6Cj4+IEhpIFZhc2FudCwKPj4KPj4g
-T24gMDQvMTYvMjAxNSAwODo1MiBBTSwgVmFzYW50IEhlZ2RlIHdyb3RlOgo+Pj4gT24gMDQvMTUv
-MjAxNSAwNjo0MiBQTSwgSmFjZWsgQW5hc3pld3NraSB3cm90ZToKPj4+PiBPbiAwNC8xNS8yMDE1
-IDEyOjE1IFBNLCBWYXNhbnQgSGVnZGUgd3JvdGU6Cj4+Pj4+IE9uIDA0LzE1LzIwMTUgMDI6MTIg
-UE0sIEphY2VrIEFuYXN6ZXdza2kgd3JvdGU6Cj4+Pj4+PiBIaSBWYXNhbnQsCj4+Pgo+Pj4gSGkg
-SmFjZWssCj4+Pgo+Pj4gLi4uLy4uLgo+Pj4KPj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+IEkgbWVh
-biwgd2UgaGF2ZSB0byByZXRhaW4gdGhlIHN0YXRlIG9mIExFRCBhY3Jvc3Mgc3lzdGVtIHJlYm9v
-dC4KPj4+Pj4+Cj4+Pj4+PiBTdGF0aWMgdmFyaWFibGVzIGFyZSByZWluaXRpYWxpemVkIG9uIHN5
-c3RlbSByZWJvb3QsIGFyZW4ndCB0aGV5Pwo+Pj4+Pgo+Pj4+PiBTb3JyeS4gSSB0aGluayBjb21t
-ZW50IHdhcyBjb25mdXNpbmcuLgo+Pj4+Pgo+Pj4+PiBBcyBJIHVuZGVyc3Rvb2QsIGNsYXNzZGV2
-X3VucmVnaXN0ZXIgY2FsbCByZXNldHMgYWxsIExFRHMgc3RhdGUuIEhvd2V2ZXIgaW4gb3VyCj4+
-Pj4+IGNhc2UsIHdlIGRvbid0Cj4+Pj4+IHdhbnQgdG8gY2hhbmdlIHRoZSBMRUQgc3RhdGUgZHVy
-aW5nIHN5c3RlbSBzaHV0ZG93bi9yZWJvb3QuCj4+Pj4+Cj4+Pj4+IEhlbmNlIEkgaGF2ZSBpbnRy
-b2R1Y2VkIHN0YXRlIHZhcmlhYmxlIGhlcmUuIFNvIGR1cmluZyByZWdpc3RlciBjYWxsLCBJIGp1
-c3QKPj4+Pj4gZGlzYWJsZSBMRURzIHNvIHRoYXQgYW55IGZ1cnRoZXIgY2FsbCB3aWxsIGp1c3Qg
-cmV0dXJuLiBUaGF0IHdheSB3ZSByZXRhaW4gTEVECj4+Pj4+IHN0YXRlIGV2ZW4gYWZ0ZXIgdW5s
-b2FkaW5nIG1vZHVsZS4KPj4+Pj4KPj4+Pj4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHRoZXJlIGlz
-IGFueSBiZXR0ZXIgd2F5IHRvIGFjaGlldmUgdGhpcy4KPj4+Pgo+Pj4+IFNpbmNlIHRoaXMgaXMg
-bm90IGEgZmVhdHVyZSBvZiB0aGUgZGV2aWNlLCBidXQgcmF0aGVyIGEgdXNlIGNhc2UsIHRoZW4K
-Pj4+PiBpdCBjYW5ub3QgYmUgaGFyZCBjb2RlZCBpbiB0aGUgZHJpdmVyIHRoaXMgd2F5LiBUaGUg
-c29sdXRpb24gSSBzZWUgaXMKPj4+PiBpbnRyb2R1Y2luZyBhIHN5c2ZzIGF0dHJpYnV0ZSB0aGF0
-IHdvdWxkIGRldGVybWluZSBpZiB3ZSB3YW50IHRoZQo+Pj4+IExFRCB0byBiZSB0dXJuZWQgb2Zm
-IG9uIHVucmVnaXN0cmF0aW9uIG9yIG5vdC4KPj4+Cj4+PiBIbW1tLiBJIHRob3VnaHQgaGF2aW5n
-IHNpbXBsZSB2YXJpb3VzIGlzIGVub3VnaCAuLgo+Pj4KPj4+IEkgZG9uJ3Qga25vdyB0aGUgdXNh
-Z2Ugb2Ygb3RoZXIgTEVEIGRyaXZlcnMgLi4gSnVzdCBhIHRob3VnaHQgLi4gSG93IGFib3V0Cj4+
-PiBlbmFibGluZyB0aGlzIGZlYXR1cmUgaW4gTEVEIGNsYXNzIGl0c2VsZiAuLi5Tb21ldGhpbmcg
-bGlrZToKPj4+ICAgICAtIEFkZCBuZXcgYXR0cmlidXRlIHRvIGdlbmVyaWMgTEVEIGNsYXNzIChz
-YXkgcGVyc2lzdGVudCk/Cj4+PiAgICAgLSBJZiBkcml2ZXJzIHdhbnRzIHRvIHJldGFpbiBMRUQg
-c3RhdGUgYWNyb3NzIHJlYm9vdCwgdGhlbiBlbmFibGUgdGhpcyBvcHRpb24KPj4+ICAgICAtIER1
-cmluZyB1bnJlZ2lzdGVyIGNhbGwgY2hlY2sgZm9yIHRoaXMgYXR0cmlidXRlCj4+Pgo+Pj4+Cj4+
-Pj4gWW91IGNhbiByZWZlciB0byB0aGUgZm9sbG93aW5nIGRyaXZlciB0byBmaW5kIG91dCBob3cg
-dG8gYWRkIHRoZQo+Pj4+IHN5c2ZzIGF0dHJpYnV0ZToKPj4+Pgo+Pj4+IGRyaXZlcnMvbGVkcy9s
-ZWRzLWxtMzUzMy5jCj4+Pj4KPj4+PiBUaGUgYXR0cmlidXRlIHdpbGwgYWxzbyBoYXZlIHRvIGJl
-IGRvY3VtZW50ZWQsIHNpbWlsYXJseSB0byB0aGVzZToKPj4+Pgo+Pj4+IERvY3VtZW50YXRpb24v
-QUJJL3Rlc3Rpbmcvc3lzZnMtY2xhc3MtbGVkLWRyaXZlci1sbTM1MzMKPj4+Pgo+Pj4+IEN1cnJl
-bnRseSBJIGRvbid0IGhhdmUgYSBnb29kIGNhbmRpZGF0ZSBmb3IgYXR0cmlidXRlCj4+Pj4gbmFt
-ZSwgc28gZmVlbCBmcmVlIHRvIHByb3Bvc2Ugb25lLgo+Pj4KPj4+IElmIHlvdSBkb24ndCBsaWtl
-IGdlbmVyaWMgYXR0cmlidXRlLCB0aGVuIHNoYWxsIEkgaW50cm9kdWNlICJwZXJzaXN0ZW50Igo+
-Pj4gYXR0cmlidXRlIGluc2lkZSBteSBkcml2ZXIuID8KPj4+ICAgICAtIEJ5IGRlZmF1bHQgdGhp
-cyBhdHRyaWJ1dGUgaXMgT04gYW5kIGlmIHVzZXIgd2FudHMgaGUgY2FuIGRpc2FibGUgdGhpcyAu
-Cj4+PiAgICAgLSBBbmQgSSB3aWxsIGhhdmUgYW5vdGhlciB2YXJpYWJsZSAoc2F5IG9wX3N1cHBv
-cnQpLi4gd2hpY2ggSSB3aWxsIGRpc2FibGUgaW4KPj4+IHVubG9hZCBwYXRoLi4KPj4+IC4uLi8u
-Li4KPj4+Cj4+Pj4+Pgo+Pj4+Pj4gVGhlIGxhYmVsIGNvdWxkIGJlIGNvbXBvc2VkIG9mIHNlZ21l
-bnRzIGFuZCBhbiBvcmRpbmFsIG51bWJlciBhcwo+Pj4+Pj4gbGFiZWxzIGhhdmUgdG8gYmUgdW5p
-cXVlLCBlLmcuIGF0dG5faWRlbnRfMCwgYXR0bl9pZGVudF8xLgo+Pj4+Pj4gVGhlIHNlZ21lbnRz
-IHdvdWxkIGhhdmUgdG8gYmUgcGFyc2VkIGJ5IHRoZSBkcml2ZXIgdG8gZGlzY292ZXIKPj4+Pj4+
-IGFsbCB0aGUgTEVEJ3MgYXZhaWxhYmxlIG1vZGVzLgo+Pj4+Pj4KPj4+Pj4+IG5pdHBpY2tpbmc6
-IGlkZW50aWZ5IGlzIGEgdmVyYiBhbmQgaXMgbm90IGEgcHJvcGVyIG5hbWUgZm9yIHRoZSBMRUQu
-Cj4+Pj4+PiBDb3VsZCB5b3UgZGVzY3JpYmUgdGhlIHB1cnBvc2Ugb2YgdGhpcyBtb2RlLCBzbyB0
-aGF0IHdlIGNvdWxkIGNvbWUKPj4+Pj4+IHVwIHdpdGggYSBiZXR0ZXIgbmFtZT8KPj4+Pj4KPj4+
-Pj4gRWFjaCBjb21wb25lbnQgKEZpZWxkIFJlcGxhY2VtZW50IFVuaXQpIHdpbGwgaGF2ZSBzZXJ2
-aWNlIGluZGljYXRvciAoTEVEUykKPj4+Pj4gd2hpY2gKPj4+Pj4gY2FuIGhhdmUgYmVsb3cgc3Rh
-dGVzIDoKPj4+Pj4gICAgICAtIE9GRiAgICAgOiBubyBhY3Rpb24KPj4+Pj4gICAgICAtIElkZW50
-aWZ5OiBibGlua2luZyBzdGF0ZSAodXNlciBjYW4gdXNlIHRoaXMgc3RhdGUgdG8gaWRlbnRpZnkg
-cGFydGljdWxhcgo+Pj4+PiBjb21wb25lbnQpLgo+Pj4+PiAgICAgICAgICAgSW4gUG93ZXIgU3lz
-dGVtcyB3b3JsZCB3ZSBjYWxsIGl0IGFzICJpZGVudGlmeSIgaW5kaWNhdG9yLi4gSGVuY2UgSQo+
-Pj4+PiByZXRhaW5lZCBzYW1lIG5hbWUgaGVyZS4KPj4+Pj4gICAgICAgICAgIEhvdyBhYm91dCBq
-dXN0ICJpZGVudCIgPwo+Pj4+Cj4+Pj4gU291bmRzIGdvb2QuCj4+Pj4KPj4+Pj4gICAgICAtIGZh
-dWx0IDogc29saWQgc3RhdGUgKHdoZW4gY29tcG9uZW50IGdvZXMgYmFkLCBMRUQgZ29lcyB0byBz
-b2xpZCBzdGF0ZSkKPj4+Pj4gICAgICAgICBOb3RlIHRoYXQgb3VyIEZXIGlzIGNhcGFibGUgb2Yg
-aXNvbGF0aW5nIHNvbWUgb2YgdGhlIGlzc3VlcyBhbmQgaXQKPj4+Pj4gY2FuIHR1cm4KPj4+Pj4g
-b24gTEVEcyB3aXRob3V0IE9TCj4+Pj4+ICAgICAgICAgIGludGVyZmVyZW5jZS4KPj4+Pgo+Pj4+
-IERvZXMgaXQgbWVhbiB0aGF0IHRoZSBMRUQgY2FuIGJlIGNvbnRyb2xsZWQgZnJvbSBoYXJkd2Fy
-ZT8KPj4+PiBJZiBzbywgd2hhdCB3b3VsZCBiZSBzb2Z0d2FyZSB1c2UgY2FzZXMgdGhlbj8gVGhl
-IHNhbWUgcXVlc3Rpb24gaXMKPj4+PiByZWxhdGVkIHRvIHRoZSBhdHRuIGFuZCBpbmRlbnQgc3Rh
-dGVzLgo+Pj4KPj4+IC0gSWRlbnRpZnkgTEVEczoKPj4+ICAgICBXZSBoYXZlIHNlcnZpY2UgcHJv
-Y2Vzc29yIGludGVyZmFjZSB0byBzZXQvcmVzZXQgdGhpcyBMRURzLi4gU2ltaWxhciBvcGVyYXRp
-b24KPj4+IGNhbiBiZSBkb25lIGZyb20gaW5iYW5kIGludGVyZmFjZSBhcyB3ZWxsICh2aWEgdXNl
-ciBzcGFjZSB0b29scyBpbiBMaW51eCkuLgo+Pj4gTGF0ZXIgbWFuYWdlbWVudCBsYXllciBjYW4g
-bWFrZSB1c2Ugb2YgdGhpcy4KPj4+Cj4+PiAtIEZhdWx0IC8gQXR0ZW50aW9uIDoKPj4+ICAgICBG
-VyBjYW4gU0VUIHRoZXNlIExFRHMgaWYgaXRzIGNhcGFibGUgb2YgaXNvbGF0aW5nIHByb2JsZW0u
-Cj4+PiAgICAgU2ltaWxhcmx5IGhvc3QvdXNlciBzcGFjZSBjYW4gU0VUIHRoZXNlIExFRHMgaWYg
-dGhlbiBjYW4gZG8gZmluZSBncmFpbmVkCj4+PiBwcm9ibGVtIGlzb2xhdGlvbiBldGMuCj4+PiAg
-ICAgSG9zdC91c2VyIHNwYWNlIGNhbiBSRVNFVCB0aGVzZSBMRURzLgo+Pj4KPj4+IEhlbmNlIHdl
-IGFyZSBhZGRpbmcgaG9zdCBzdXBwb3J0IHRvIGFsbCB0aGUgTEVEcyB3aGljaCBjYW4gYmUgbW9k
-aWZpZWQgYnkgaG9zdC4KPj4+Cj4+PiBIb3BlIHRoaXMgY2xhcmlmaWVzLgo+Pgo+PiBUaGFua3Mg
-Zm9yIHRoaXMgZXhwbGFuYXRpb24uCj4+Cj4+IEkgYW0gY2hhbmdpbmcgbXkgbWluZCBhYm91dCB0
-aGVzZSBMRURzLiBTaW5jZSB0aGV5IGNhbiBiZSBjb250cm9sbGVkCj4+IGZyb20gaGFyZHdhcmUg
-d2l0aG91dCBhbnkgc3lzdGVtIGludGVyYWN0aW9uLCB0aGVuIHR1cm5pbmcgdGhlbSBvZmYKPj4g
-b24gZHJpdmVyIHJlbW92YWwgbWFrZXMgbm8gc2Vuc2UuIFRoZSBMRURzIGNvdWxkIGJlIHR1cm5l
-ZCBvbiBhZ2FpbiBldmVuCj4+IGlmIHRoZSBkcml2ZXIgaXMgdW5sb2FkZWQuCj4+IFNpbmNlIHRo
-ZSBkcml2ZXIgZG9lc24ndCBwZXJmb3JtIGFueSBpbml0aWFsaXphdGlvbiBvZiB0aGUgTEVEcywK
-Pj4gbmVpdGhlciBzaG91bGQgaXQgdHVybiB0aGVtIG9mZiBvbiByZW1vdmFsLgo+Pgo+PiBJZiBJ
-IHVuZGVyc3RhbmQgdGhpcyBjb3JyZWN0bHksIHRoZW4gdGhlIHNvbHV0aW9uIHdpdGggdmFyaWFi
-bGUgd291bGQKPj4gZG8gYW5kIG5vIHN5c2ZzIGF0dHJpYnV0ZSB3b3VsZCBiZSByZXF1aXJlZC4K
-Pj4KPgo+IEphY2VrLAo+Cj4gVGhhbmtzLiBUaGVuIEkgd2lsbCByZXRhaW4gY3VycmVudCBtZXRo
-b2QuCj4KPiBPbmUgcXVlc3Rpb24uLldoYXQgaXMgdGhlIHByZWZlcnJlZCB3YXkgdG8gbmFtZSBM
-RUQgbm9kZSBpbiB0aGlzIGNhc2UgPwo+Cj4gICAgIDxsb2NhdGlvbl9jb2RlPjo8QVRURU5USU9O
-fElERU5USUZZfEZBVUxUPgo+ICAgICBPUgo+ICAgICA8bG9jYXRpb25fY29kZT4KPiAgICAgICAg
-ICBpZGVudCAgPC0gYXR0cmlidXRlIHVuZGVyIGVhY2ggbm9kZQo+ICAgICAgICAgIGZhdWx0Cj4g
-ICAgICAgICAgYXR0ZW50aW9uCgoKSWYgcG9zc2libGUgbG9jYXRpb25zIGFyZSBlY2xvc3VyZS9k
-ZXNjZW5kZW50IGFzIGluIHRoZSBkb2N1bWVudGF0aW9uCnlvdSBnYXZlIGEgcmVmZXJlbmNlIHRv
-LCB0aGVuIHRoZSByZWxhdGVkIGlkZW50aWZpZXJzIGNvdWxkIGJlOgoKZW5jbG9zdXJlOiBlbmNs
-CmRlc2NlbmRlbnQ6IGRlc2Mgb3IgZnJ1IChob3cgZG9lcyBmcnUgZXhwYW5kIGJ0dz8pCgoKQ2hp
-bGQgbm9kZXMgY291bGQgYmUgZGVmaW5lZCBhcyBmb2xsb3dzOgoKCmxlZDAgewkKCWxhYmVsID0g
-InBvd2VybnYwOmVuY2w6YXR0bjppZGVudDpmYXVsdCIKfQoKbGVkMSB7CQoJbGFiZWwgPSAicG93
-ZXJudjE6ZW5jbDo6aWRlbnQ6ZmF1bHQiCn0KCmxlZDIgewkKCWxhYmVsID0gInBvd2VybnYyOmRl
-c2M6YXR0bjo6ZmF1bHQ6Igp9CgpsZWQyIHsJCglsYWJlbCA9ICJwb3dlcm52MzpkZXNjOjo6ZmF1
-bHQ6Igp9CgotLSAKQmVzdCBSZWdhcmRzLApKYWNlayBBbmFzemV3c2tpCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxp
-c3QKTGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3Jn
-L2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
+Hi Alvaro,
+
+On 04/05/2015 05:08 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+> This adds support for the LED controller on Broadcom's BCM6328.
+>
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+> v2: introduce changes suggested by Florian and Jonas.
+>   - Improve Kconfig description.
+>   - Remove unused imports.
+>   - Fix bug in blink_set so it works for multiple LEDs.
+>   - "brcm,link-selection" -> "brcm,link-signal-sources".
+>   - "brcm,activity-selection" -> "brcm,activity-signal-sources".
+>   - Use of_property_read_bool instead of of_get_property for booleans=
+=2E
+>   - Add MODULE_AUTHOR strings.
+>
+>   drivers/leds/Kconfig        |   8 +
+>   drivers/leds/Makefile       |   1 +
+>   drivers/leds/leds-bcm6328.c | 409 +++++++++++++++++++++++++++++++++=
++++++++++++
+>   3 files changed, 418 insertions(+)
+>   create mode 100644 drivers/leds/leds-bcm6328.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 25b320d..64a12e4 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -42,6 +42,14 @@ config LEDS_88PM860X
+>   	  This option enables support for on-chip LED drivers found on Mar=
+vell
+>   	  Semiconductor 88PM8606 PMIC.
+>
+> +config LEDS_BCM6328
+> +	tristate "LED Support for Broadcom BCM6328"
+> +	depends on LEDS_CLASS
+> +	depends on OF
+> +	help
+> +	  This option enables support for LEDs connected to the BCM6328
+> +	  LED HW controller accessed via MMIO registers.
+> +
+>   config LEDS_LM3530
+>   	tristate "LCD Backlight driver for LM3530"
+>   	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index cbba921..bf69f49 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
+>
+>   # LED Platform Drivers
+>   obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
+> +obj-$(CONFIG_LEDS_BCM6328)		+=3D leds-bcm6328.o
+>   obj-$(CONFIG_LEDS_BD2802)		+=3D leds-bd2802.o
+>   obj-$(CONFIG_LEDS_LOCOMO)		+=3D leds-locomo.o
+>   obj-$(CONFIG_LEDS_LM3530)		+=3D leds-lm3530.o
+> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.=
+c
+> new file mode 100644
+> index 0000000..6a63f9c
+> --- /dev/null
+> +++ b/drivers/leds/leds-bcm6328.c
+> @@ -0,0 +1,409 @@
+> +/*
+> + * Driver for BCM6328 memory-mapped LEDs, based on leds-syscon.c
+> + *
+> + * Copyright 2015 =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.co=
+m>
+> + * Copyright 2015 Jonas Gorski <jogo@openwrt.org>
+> + *
+> + * This program is free software; you can redistribute  it and/or mo=
+dify it
+> + * under  the terms of  the GNU General  Public License as published=
+ by the
+> + * Free Software Foundation;  either version 2 of the  License, or (=
+at your
+> + * option) any later version.
+> + */
+> +#include <linux/io.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define REG_INIT		0x00
+> +#define REG_MODE_HI		0x04
+> +#define REG_MODE_LO		0x08
+> +#define REG_HWDIS		0x0c
+> +#define REG_STROBE		0x10
+> +#define REG_LNKACTSEL_HI	0x14
+> +#define REG_LNKACTSEL_LO	0x18
+> +#define REG_RBACK		0x1c
+> +#define REG_SERMUX		0x20
+> +
+> +#define LED_MAX_COUNT		24
+> +#define LED_DEF_DELAY		500
+> +#define LED_INTERVAL_MS		20
+> +
+> +#define LED_INTV_MASK		0x3f
+> +#define LED_FAST_INTV_SHIFT	6
+> +#define LED_FAST_INTV_MASK	(LED_INTV_MASK << LED_FAST_INTV_SHIFT)
+> +#define SERIAL_LED_EN		BIT(12)
+> +#define SERIAL_LED_MUX		BIT(13)
+> +#define SERIAL_LED_CLK_NPOL	BIT(14)
+> +#define SERIAL_LED_DATA_PPOL	BIT(15)
+> +#define SERIAL_LED_SHIFT_DIR	BIT(16)
+> +#define LED_SHIFT_TEST		BIT(30)
+> +#define LED_TEST		BIT(31)
+> +
+> +#define LED_MODE_MASK		3
+> +#define LED_MODE_OFF		0
+> +#define LED_MODE_FAST		1
+> +#define LED_MODE_BLINK		2
+> +#define LED_MODE_ON		3
+> +#define LED_SHIFT(X)		((X) << 1)
+
+Please add BCM6328_ namespacing prefix to the macros above.
+
+> +
+> +/**
+> + * struct bcm6328_led - state container for bcm6328 based LEDs
+> + * @cdev: LED class device for this LED
+> + * @mem: memory resource
+> + * @lock: memory lock
+> + * @pin: LED pin number
+> + * @blink_leds: blinking LEDs
+> + * @blink_del: blinking delay
+> + * @active_low: LED is active low
+> + */
+> +struct bcm6328_led {
+> +	struct led_classdev cdev;
+> +	void __iomem *mem;
+> +	spinlock_t *lock;
+> +	unsigned long pin;
+> +	unsigned long *blink_leds;
+> +	unsigned long *blink_del;
+
+I would go for blink_delay, as "del" suggests "delete".
+
+> +	bool active_low;
+> +};
+> +
+> +static void bcm6328_led_write(void __iomem *reg, unsigned long data)
+> +{
+> +	iowrite32be(data, reg);
+> +}
+> +
+> +static unsigned long bcm6328_led_read(void __iomem *reg)
+> +{
+> +	return ioread32be(reg);
+> +}
+> +
+> +/**
+> + * LEDMode 64 bits / 24 LEDs
+> + * bits [31:0] -> LEDs 8-23
+> + * bits [47:32] -> LEDs 0-7
+> + * bits [63:48] -> unused
+> + */
+> +static unsigned long bcm6328_pin2shift(unsigned long pin)
+> +{
+> +	if (pin < 8)
+> +		return pin + 16; /* LEDs 0-7 (bits 47:32) */
+> +	else
+> +		return pin - 8; /* LEDs 8-23 (bits 31:0) */
+> +}
+> +
+> +static void bcm6328_led_mode(struct bcm6328_led *led, unsigned long =
+value)
+> +{
+> +	void __iomem *mode;
+> +	unsigned long val, shift;
+> +
+> +	shift =3D bcm6328_pin2shift(led->pin);
+> +	if (shift / 16)
+> +		mode =3D led->mem + REG_MODE_HI;
+> +	else
+> +		mode =3D led->mem + REG_MODE_LO;
+> +
+> +	val =3D bcm6328_led_read(mode);
+> +	val &=3D ~(LED_MODE_MASK << LED_SHIFT(shift % 16));
+> +	val |=3D (value << LED_SHIFT(shift % 16));
+> +	bcm6328_led_write(mode, val);
+> +}
+> +
+> +static void bcm6328_led_set(struct led_classdev *led_cdev,
+> +	enum led_brightness value)
+> +{
+> +	struct bcm6328_led *led =3D
+> +		container_of(led_cdev, struct bcm6328_led, cdev);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(led->lock, flags);
+> +	*(led->blink_leds) &=3D ~BIT(led->pin);
+> +	if ((led->active_low && value =3D=3D LED_OFF) ||
+> +	    (!led->active_low && value !=3D LED_OFF))
+> +		bcm6328_led_mode(led, LED_MODE_OFF);
+> +	else
+> +		bcm6328_led_mode(led, LED_MODE_ON);
+> +	spin_unlock_irqrestore(led->lock, flags);
+> +}
+> +
+> +static int bcm6328_blink_set(struct led_classdev *led_cdev,
+> +			     unsigned long *delay_on, unsigned long *delay_off)
+> +{
+> +	struct bcm6328_led *led =3D
+> +		container_of(led_cdev, struct bcm6328_led, cdev);
+> +	unsigned long delay, flags;
+> +
+> +	if (!*delay_on)
+> +		*delay_on =3D LED_DEF_DELAY;
+> +	if (!*delay_off)
+> +		*delay_off =3D LED_DEF_DELAY;
+> +
+> +	if (*delay_on !=3D *delay_off) {
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay_on !=3D delay_off)\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	delay =3D *delay_on / LED_INTERVAL_MS;
+> +	if (delay =3D=3D 0)
+> +		delay =3D 1;
+> +	else if (delay > LED_INTV_MASK) {
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay > %ums)\n",
+> +			LED_INTV_MASK * LED_INTERVAL_MS);
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock_irqsave(led->lock, flags);
+> +	if (*(led->blink_leds) =3D=3D 0 ||
+> +	    *(led->blink_leds) =3D=3D BIT(led->pin) ||
+> +	    *(led->blink_del) =3D=3D delay) {
+> +		unsigned long val;
+> +
+> +		*(led->blink_leds) |=3D BIT(led->pin);
+> +		*(led->blink_del) =3D delay;
+> +
+> +		val =3D bcm6328_led_read(led->mem + REG_INIT);
+> +		val &=3D ~LED_FAST_INTV_MASK;
+> +		val |=3D (delay << LED_FAST_INTV_SHIFT);
+> +		bcm6328_led_write(led->mem + REG_INIT, val);
+> +
+> +		bcm6328_led_mode(led, LED_MODE_BLINK);
+> +
+> +		spin_unlock_irqrestore(led->lock, flags);
+> +	} else {
+> +		spin_unlock_irqrestore(led->lock, flags);
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay already set)\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_hwled(struct device *dev, struct device_node *nc,=
+ u32 reg,
+> +			 void __iomem *mem, spinlock_t *lock)
+> +{
+> +	int i, cnt;
+> +	unsigned long flags, val;
+> +
+> +	spin_lock_irqsave(lock, flags);
+> +	val =3D bcm6328_led_read(mem + REG_HWDIS);
+> +	val &=3D ~BIT(reg);
+> +	bcm6328_led_write(mem + REG_HWDIS, val);
+
+What is the purpose of REG_HWDIS register? Does it activate the LED or
+so?
+
+> +	spin_unlock_irqrestore(lock, flags);
+> +
+> +	/* Only LEDs 0-7 can be activity/link controlled */
+> +	if (reg >=3D 8)
+> +		return 0;
+> +
+> +	cnt =3D of_property_count_elems_of_size(nc, "brcm,link-signal-sourc=
+es",
+> +					      sizeof(u32));
+> +	for (i =3D 0; i < cnt; i++) {
+> +		u32 sel;
+> +		void __iomem *addr;
+> +
+> +		if (reg < 4)
+> +			addr =3D mem + REG_LNKACTSEL_LO;
+> +		else
+> +			addr =3D mem + REG_LNKACTSEL_HI;
+> +
+> +		of_property_read_u32_index(nc, "brcm,link-signal-sources", i, &sel=
+);
+> +
+> +		if (reg / 4 !=3D sel / 4) {
+> +			dev_warn(dev, "invalid link signal source\n");
+> +			continue;
+> +		}
+> +
+> +		spin_lock_irqsave(lock, flags);
+> +		val =3D bcm6328_led_read(addr);
+> +		val |=3D (BIT(reg) << (((sel % 4) * 4) + 16));
+> +		bcm6328_led_write(addr, val);
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	cnt =3D of_property_count_elems_of_size(nc, "brcm,activity-signal-s=
+ources",
+> +					      sizeof(u32));
+> +	for (i =3D 0; i < cnt; i++) {
+> +		u32 sel;
+> +		void __iomem *addr;
+> +
+> +		if (reg < 4)
+> +			addr =3D mem + REG_LNKACTSEL_LO;
+> +		else
+> +			addr =3D mem + REG_LNKACTSEL_HI;
+> +
+> +		of_property_read_u32_index(nc, "brcm,activity-signal-sources", i,
+> +					   &sel);
+> +
+> +		if (reg / 4 !=3D sel / 4) {
+> +			dev_warn(dev, "invalid activity signal source\n");
+> +			continue;
+> +		}
+> +
+> +		spin_lock_irqsave(lock, flags);
+> +		val =3D bcm6328_led_read(addr);
+> +		val |=3D (BIT(reg) << ((sel % 4) * 4));
+> +		bcm6328_led_write(addr, val);
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_led(struct device *dev, struct device_node *nc, u=
+32 reg,
+> +		       void __iomem *mem, spinlock_t *lock,
+> +		       unsigned long *blink_leds, unsigned long *blink_del)
+> +{
+> +	struct bcm6328_led *led;
+> +	unsigned long flags;
+> +	const char *state;
+> +	int rc;
+> +
+> +	led =3D devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->pin =3D reg;
+> +	led->mem =3D mem;
+> +	led->lock =3D lock;
+> +	led->blink_leds =3D blink_leds;
+> +	led->blink_del =3D blink_del;
+> +
+> +	if (of_property_read_bool(nc, "active-low"))
+> +		led->active_low =3D 1;
+> +
+> +	led->cdev.name =3D of_get_property(nc, "label", NULL) ? : nc->name;
+> +	led->cdev.default_trigger =3D of_get_property(nc,
+> +						    "linux,default-trigger",
+> +						    NULL);
+> +
+> +	if (!of_property_read_string(nc, "default-state", &state)) {
+> +		spin_lock_irqsave(lock, flags);
+> +		if (!strcmp(state, "on")) {
+> +			led->cdev.brightness =3D LED_FULL;
+> +			bcm6328_led_mode(led, LED_MODE_ON);
+> +		} else if (!strcmp(state, "keep")) {
+> +			void __iomem *mode;
+> +			unsigned long val, shift;
+> +
+> +			shift =3D bcm6328_pin2shift(led->pin);
+> +			if (shift / 16)
+> +				mode =3D mem + REG_MODE_HI;
+> +			else
+> +				mode =3D mem + REG_MODE_LO;
+> +
+> +			val =3D bcm6328_led_read(mode) >> (shift % 16);
+> +			val &=3D LED_MODE_MASK;
+> +			if (val =3D=3D LED_MODE_ON)
+> +				led->cdev.brightness =3D LED_FULL;
+> +			else {
+> +				led->cdev.brightness =3D LED_OFF;
+> +				bcm6328_led_mode(led, LED_MODE_OFF);
+> +			}
+> +		} else {
+> +			led->cdev.brightness =3D LED_OFF;
+> +			bcm6328_led_mode(led, LED_MODE_OFF);
+> +		}
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	led->cdev.brightness_set =3D bcm6328_led_set;
+> +	led->cdev.blink_set =3D bcm6328_blink_set;
+> +
+> +	rc =3D led_classdev_register(dev, &led->cdev);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	dev_dbg(dev, "registered LED %s\n", led->cdev.name);
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_leds_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D pdev->dev.of_node;
+> +	struct device_node *child;
+> +	struct resource *mem_r;
+> +	void __iomem *mem;
+> +	spinlock_t *lock;
+> +	unsigned long val, *blink_leds, *blink_del;
+> +
+> +	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!mem_r)
+> +		return -EINVAL;
+> +
+> +	mem =3D devm_ioremap_resource(dev, mem_r);
+> +	if (IS_ERR(mem))
+> +		return PTR_ERR(mem);
+> +
+> +	lock =3D devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
+> +	if (!lock)
+> +		return -ENOMEM;
+> +
+> +	blink_leds =3D devm_kzalloc(dev, sizeof(*blink_leds), GFP_KERNEL);
+> +	if (!blink_leds)
+> +		return -ENOMEM;
+> +
+> +	blink_del =3D devm_kzalloc(dev, sizeof(*blink_del), GFP_KERNEL);
+> +	if (!blink_del)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(lock);
+> +
+> +	bcm6328_led_write(mem + REG_HWDIS, ~0);
+> +	bcm6328_led_write(mem + REG_LNKACTSEL_HI, 0);
+> +	bcm6328_led_write(mem + REG_LNKACTSEL_LO, 0);
+> +
+> +	val =3D bcm6328_led_read(mem + REG_INIT);
+> +	val &=3D ~SERIAL_LED_EN;
+> +	if (of_property_read_bool(np, "brcm,serial-leds"))
+> +		val |=3D SERIAL_LED_EN;
+> +	bcm6328_led_write(mem + REG_INIT, val);
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +		int rc;
+> +		u32 reg;
+> +
+> +		if (of_property_read_u32(child, "reg", &reg))
+> +			continue;
+> +
+> +		if (reg >=3D LED_MAX_COUNT) {
+> +			dev_err(dev, "invalid LED (>=3D %d)\n", LED_MAX_COUNT);
+> +			continue;
+> +		}
+> +
+> +		if (of_property_read_bool(child, "brcm,hardware-controlled"))
+> +			rc =3D bcm6328_hwled(dev, child, reg, mem, lock);
+> +		else
+> +			rc =3D bcm6328_led(dev, child, reg, mem, lock,
+> +					  blink_leds, blink_del);
+> +
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id bcm6328_leds_of_match[] =3D {
+> +	{ .compatible =3D "brcm,bcm6328-leds-ctrl", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver bcm6328_leds_driver =3D {
+> +	.probe =3D bcm6328_leds_probe,
+> +	.driver =3D {
+> +		.name =3D "leds-bcm6328",
+> +		.of_match_table =3D bcm6328_leds_of_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(bcm6328_leds_driver);
+> +
+> +MODULE_AUTHOR("=C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>"=
+);
+> +MODULE_AUTHOR("Jonas Gorski <jogo@openwrt.org>");
+> +MODULE_DESCRIPTION("LED driver for BCM6328 controllers");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:leds-bcm6328");
+>
+
+
+--=20
+Best Regards,
+Jacek Anaszewski
