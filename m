@@ -1,95 +1,52 @@
-From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Subject: Re: [PATCH v8 1/1] media: i2c/adp1653: Devicetree support for adp1653
-Date: Thu, 16 Apr 2015 23:22:15 +0300
-Message-ID: <20150416202215.GH27451@valkosipuli.retiisi.org.uk>
-References: <1429141034-29237-1-git-send-email-sakari.ailus@iki.fi>
- <20150416052442.GA31095@earth>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: LED subsystem child DT node ref counting
+Date: Fri, 17 Apr 2015 13:03:45 +0200
+Message-ID: <5530E891.20707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150416052442.GA31095@earth>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: pavel-+ZI9xUNit7I@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56710 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751795AbbDQLDu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 17 Apr 2015 07:03:50 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
 
-Hi Sebastian,
+Hi,
 
-On Thu, Apr 16, 2015 at 07:24:42AM +0200, Sebastian Reichel wrote:
-> Hi Sakari,
-> 
-> Since this driver won't make it into 4.1 anyways, I have one more
-> comment:
-> 
-> On Thu, Apr 16, 2015 at 02:37:13AM +0300, Sakari Ailus wrote:
-...
-> > @@ -308,16 +311,28 @@ __adp1653_set_power(struct adp1653_flash *flash, int on)
-> >  {
-> >  	int ret;
-> >  
-> > -	ret = flash->platform_data->power(&flash->subdev, on);
-> > -	if (ret < 0)
-> > -		return ret;
-> > +	if (flash->platform_data->power) {
-> > +		ret = flash->platform_data->power(&flash->subdev, on);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	} else {
-> > +		gpiod_set_value(flash->platform_data->enable_gpio, on);
-> > +		if (on)
-> > +			/* Some delay is apparently required. */
-> > +			udelay(20);
-> > +	}
-> 
-> I suggest to remove the power callback from platform data. Instead
-> you can require to setup a gpiod lookup table in the boardcode, if
-> platform data based initialization is used (see for example si4713
-> initialization in board-rx51-periphals.c).
-> 
-> This will reduce complexity in the driver and should be fairly easy
-> to implement, since there is no adp1653 platform code user in the
-> mainline kernel anyways.
+I'd like to clarify whether LED subsystem drivers behave correctly
+or not, regarding child DT nodes reference counting.
 
-There are a couple of out-of-tree users perhaps. I think that I'd rather
-remove platform data support altogether than trying to polish it.
+Single LED controller can have connected more then one LED to it.
+The LEDs are represented by child DT nodes of the node representing
+the controller (see Documentation/devicetree/bindings/leds).
 
-The timeline could be about the same than with the omap3isp driver, that
-shouldn't be too many minor kernel versions either.
+LED subsystem drivers parse child DT nodes and use the node name,
+or 'label' property string as the LED class device name.
 
-What do you think?
+This is usually accomplished like below:
 
-...
+for_each_child_of_node(np, child) {
+     ...
+     led.name = of_get_property(child, "label", NULL) ? : child->name;
 
-> > diff --git a/include/media/adp1653.h b/include/media/adp1653.h
-> > index 1d9b48a..9779c85 100644
-> > --- a/include/media/adp1653.h
-> > +++ b/include/media/adp1653.h
-> > @@ -100,9 +100,11 @@ struct adp1653_platform_data {
-> >  	int (*power)(struct v4l2_subdev *sd, int on);
-> >  
-> >  	u32 max_flash_timeout;		/* flash light timeout in us */
-> > -	u32 max_flash_intensity;	/* led intensity, flash mode */
-> > -	u32 max_torch_intensity;	/* led intensity, torch mode */
-> > -	u32 max_indicator_intensity;	/* indicator led intensity */
-> > +	u32 max_flash_intensity;	/* led intensity, flash mode, mA */
-> > +	u32 max_torch_intensity;	/* led intensity, torch mode, mA */
-> > +	u32 max_indicator_intensity;	/* indicator led intensity, uA */
-> > +
-> > +	struct gpio_desc *enable_gpio;	/* for device-tree based boot */
-> 
-> IMHO this should become part of "struct adp1653_flash", so that
-> adp1653_platform_data only contains variables, which should be
-> filled by boardcode / manual DT parsing code.
 
-We'll get rid of the whole header with platform data support removal. :-)
+The question is whether reference count of the child node shouldn't
+be increased here with of_node_get(child). Whereas intuitively it could
+be thought of as a right thing to do, empirical experiments don't
+necessary confirm that.
+
+When I print the value of child_node->kobj.kref.refcount.counter
+inside for_each loop it is 3 and and after leaving the loop it gets
+decreased to 2. On driver removal the value is also 2. It means that
+label is available all the time, without increasing child node ref
+counter.
+
+I'd like to ask if this is guaranteed to be always true.
 
 -- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org	XMPP: sailus-PCDdDYkjdNMDXYZnReoRVg@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+Jacek Anaszewski
