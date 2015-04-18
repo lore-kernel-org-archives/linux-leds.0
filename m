@@ -1,52 +1,59 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: LED subsystem child DT node ref counting
-Date: Fri, 17 Apr 2015 13:03:45 +0200
-Message-ID: <5530E891.20707@samsung.com>
+From: Jonas Gorski <jogo@openwrt.org>
+Subject: Re: [PATCH 2/2] leds: add BCM6328 LED driver
+Date: Sat, 18 Apr 2015 11:14:55 +0200
+Message-ID: <5532208F.6070505@openwrt.org>
+References: <1427975661-29964-1-git-send-email-noltari@gmail.com> <1428246485-32305-1-git-send-email-noltari@gmail.com> <1428246485-32305-3-git-send-email-noltari@gmail.com> <552FC921.3050005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56710 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751795AbbDQLDu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 17 Apr 2015 07:03:50 -0400
+Received: from arrakis.dune.hu ([78.24.191.176]:48502 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751171AbbDRJOt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sat, 18 Apr 2015 05:14:49 -0400
+In-Reply-To: <552FC921.3050005@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, =?UTF-8?B?w4FsdmFybyBGZXI=?= =?UTF-8?B?bsOhbmRleiBSb2phcw==?= <noltari@gmail.com>
+Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, f.fainelli@gmail.com, cernekee@gmail.com
 
-Hi,
+Hi Jacek,
 
-I'd like to clarify whether LED subsystem drivers behave correctly
-or not, regarding child DT nodes reference counting.
+On 16.04.2015 16:37, Jacek Anaszewski wrote:
+> Hi Alvaro,
+>=20
+> On 04/05/2015 05:08 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
 
-Single LED controller can have connected more then one LED to it.
-The LEDs are represented by child DT nodes of the node representing
-the controller (see Documentation/devicetree/bindings/leds).
+(snip)
 
-LED subsystem drivers parse child DT nodes and use the node name,
-or 'label' property string as the LED class device name.
+>> +static int bcm6328_hwled(struct device *dev, struct device_node *nc=
+, u32 reg,
+>> +			 void __iomem *mem, spinlock_t *lock)
+>> +{
+>> +	int i, cnt;
+>> +	unsigned long flags, val;
+>> +
+>> +	spin_lock_irqsave(lock, flags);
+>> +	val =3D bcm6328_led_read(mem + REG_HWDIS);
+>> +	val &=3D ~BIT(reg);
+>> +	bcm6328_led_write(mem + REG_HWDIS, val);
+>=20
+> What is the purpose of REG_HWDIS register? Does it activate the LED o=
+r
+> so?
 
-This is usually accomplished like below:
+The HWDIS register controls whether the led will be controlled by a
+hardware signal, with 0 meaning hardware control enabled and 1 hardware
+control disabled. This is usually 1:1 for hardware to led signals, but
+through the activity/link registers you have some limited control over
+rerouting it. Note that even with a bit cleared there is limited contro=
+l
+over the led; you can still let it blink and light it up if it isn't,
+but not turn it off if the hardware decided to light it up.
 
-for_each_child_of_node(np, child) {
-     ...
-     led.name = of_get_property(child, "label", NULL) ? : child->name;
+The default is to disable all hardware signals, and only enable them to
+be driven by hardware if requested.
 
 
-The question is whether reference count of the child node shouldn't
-be increased here with of_node_get(child). Whereas intuitively it could
-be thought of as a right thing to do, empirical experiments don't
-necessary confirm that.
-
-When I print the value of child_node->kobj.kref.refcount.counter
-inside for_each loop it is 3 and and after leaving the loop it gets
-decreased to 2. On driver removal the value is also 2. It means that
-label is available all the time, without increasing child node ref
-counter.
-
-I'd like to ask if this is guaranteed to be always true.
-
--- 
-Best Regards,
-Jacek Anaszewski
+Regards
+Jonas
