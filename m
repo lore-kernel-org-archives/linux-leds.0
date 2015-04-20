@@ -1,344 +1,395 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: [PATCH v3 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Mon, 20 Apr 2015 13:31:45 +0530
-Message-ID: <20150420080124.12371.41528.stgit@localhost.localdomain>
-References: <20150420075558.12371.6697.stgit@localhost.localdomain>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH RESEND v6 2/2] leds: tlc591xx: Driver for the TI 8/16
+ Channel i2c LED driver
+Date: Mon, 20 Apr 2015 11:06:09 +0200
+Message-ID: <5534C181.9060202@samsung.com>
+References: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
+ <1426630107-25057-3-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20150420075558.12371.6697.stgit@localhost.localdomain>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org
-Cc: stewart@linux.vnet.ibm.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, khandual@linux.vnet.ibm.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63328 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754142AbbDTJGN (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Apr 2015 05:06:13 -0400
+In-reply-to: <1426630107-25057-3-git-send-email-andrew@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com
 
-VGhpcyBwYXRjaCBpbXBsZW1lbnRzIExFRCBkcml2ZXIgZm9yIFBvd2VyTlYgcGxhdGZvcm0gdXNp
-bmcgdGhlIGV4aXN0aW5nCmdlbmVyaWMgTEVEIGNsYXNzIGZyYW1ld29yay4KClBvd2VyTlYgcGxh
-dGZvcm0gaGFzIGJlbG93IHR5cGUgb2YgTEVEczoKICAtIFN5c3RlbSBhdHRlbnRpb24KICAgICAg
-SW5kaWNhdGVzIHRoZXJlIGlzIGEgcHJvYmxlbSB3aXRoIHRoZSBzeXN0ZW0gdGhhdCBuZWVkcyBh
-dHRlbnRpb24uCiAgLSBJZGVudGlmeQogICAgICBIZWxwcyB0aGUgdXNlciBsb2NhdGUvaWRlbnRp
-ZnkgYSBwYXJ0aWN1bGFyIEZSVSBvciByZXNvdXJjZSBpbiB0aGUKICAgICAgc3lzdGVtLgogIC0g
-RmF1bHQKICAgICAgSW5kaWNhdGVzIHRoZXJlIGlzIGEgcHJvYmxlbSB3aXRoIHRoZSBGUlUgb3Ig
-cmVzb3VyY2UgYXQgdGhlCiAgICAgIGxvY2F0aW9uIHdpdGggd2hpY2ggdGhlIGluZGljYXRvciBp
-cyBhc3NvY2lhdGVkLgoKV2UgcmVnaXN0ZXJzIGNsYXNzZGV2IHN0cnVjdHVyZXMgZm9yIGFsbCBp
-bmRpdmlkdWFsIExFRHMgZGV0ZWN0ZWQgb24gdGhlCnN5c3RlbSB0aHJvdWdoIExFRCBzcGVjaWZp
-YyBkZXZpY2UgdHJlZSBub2Rlcy4gRGV2aWNlIHRyZWUgbm9kZXMgc3BlY2lmeQp3aGF0ICBhbGwg
-a2luZCBvZiBMRURzIHByZXNlbnQgb24gdGhlIHNhbWUgbG9jYXRpb24gY29kZS4gSXQgcmVnaXN0
-ZXJzCkxFRCBjbGFzc2RldiBzdHJ1Y3R1cmUgZm9yIGVhY2ggb2YgdGhlbS4KCkFsbCB0aGUgc3lz
-dGVtIExFRHMgY2FuIGJlIGZvdW5kIGluIHRoZSBzYW1lIHJlZ3VsYXIgcGF0aCAvc3lzL2NsYXNz
-L2xlZHMvLgpXZSBkb24ndCB1c2UgTEVEIGNvbG9ycy4gSGVuY2Ugb3VyIExFRHMgaGF2ZSBuYW1l
-cyBpbiB0aGlzIGZvcm1hdC4KCiAgICAgICAgPGxvY2F0aW9uX2NvZGU+OjxBVFRFTlRJT058SURF
-TlR8RkFVTFQ+CgpBbnkgcG9zaXRpdmUgYnJpZ2h0bmVzcyB2YWx1ZSB3b3VsZCB0dXJuIG9uIHRo
-ZSBMRUQgYW5kIGEgemVybyB2YWx1ZSB3b3VsZAp0dXJuIG9mZiB0aGUgTEVELiBUaGUgZHJpdmVy
-IHdpbGwgcmV0dXJuIExFRF9GVUxMICgyNTUpIGZvciBhbnkgdHVybmVkIG9uCkxFRCBhbmQgTEVE
-X09GRiAoMCkgZm9yIGFueSB0dXJuZWQgb2ZmIExFRC4KCkFzIHBlciB0aGUgTEVEIGNsYXNzIGZy
-YW1ld29yaywgdGhlICdicmlnaHRuZXNzX3NldCcgZnVuY3Rpb24gc2hvdWxkIG5vdApzbGVlcC4g
-SGVuY2UgdGhlc2UgZnVuY3Rpb25zIGhhdmUgYmVlbiBpbXBsZW1lbnRlZCB0aHJvdWdoIGdsb2Jh
-bCB3b3JrCnF1ZXVlIHRhc2tzIHdoaWNoIG1pZ2h0IHNsZWVwIG9uIE9QQUwgYXN5bmMgY2FsbCBj
-b21wbGV0aW9uLgoKVGhlIHBsYXRmb3JtIGxldmVsIGltcGxlbWVudGF0aW9uIG9mIExFRCBnZXQg
-YW5kIHNldCBzdGF0ZSBoYXMgYmVlbiBhY2hpZXZlZAp0aHJvdWdoIE9QQUwgY2FsbHMuIFRoZXNl
-IGNhbGxzIGFyZSBtYWRlIGF2YWlsYWJsZSBmb3IgdGhlIGRyaXZlciBieQpleHBvcnRpbmcgZnJv
-bSBhcmNoaXRlY3R1cmUgc3BlY2lmaWMgY29kZXMuCgpTaWduZWQtb2ZmLWJ5OiBWYXNhbnQgSGVn
-ZGUgPGhlZ2RldmFzYW50QGxpbnV4LnZuZXQuaWJtLmNvbT4KU2lnbmVkLW9mZi1ieTogQW5zaHVt
-YW4gS2hhbmR1YWwgPGtoYW5kdWFsQGxpbnV4LnZuZXQuaWJtLmNvbT4KQWNrZWQtYnk6IFN0ZXdh
-cnQgU21pdGggPHN0ZXdhcnRAbGludXgudm5ldC5pYm0uY29tPgpUZXN0ZWQtYnk6IFN0ZXdhcnQg
-U21pdGggPHN0ZXdhcnRAbGludXgudm5ldC5pYm0uY29tPgoKLS0tCkNoYW5nZXMgaW4gdjM6CiAg
-LSBBZGRyZXNzZWQgcmV2aWV3IGNvbW1lbnRzIGZyb20gSmFjZWsuIE1ham9yIG9uY2UgYXJlOgog
-ICAgUmVwbGFjZWQgc3BpbiBsb2NrIGFuZCBtdXRleCBhbmQgcmVtb3ZlZCByZWR1bmRhbnQgc3Ry
-dWN0dXJlcwogICAgUmVwbGFjZWQgcHJfKiB3aXRoIGRldl8qCiAgICBNb3ZlZCBPUEFMIHBsYXRm
-b3JtIHNlcGNpZmljIHBhcnQgdG8gc2VwYXJhdGUgcGF0Y2gKICAgIE1vdmVkIHJlcHRlYXRlZCBj
-b2RlIHRvIGNvbW1vbiBmdW5jdGlvbgogICAgQWRkZWQgZGV2aWNlIHRyZWUgZG9jdW1lbnRhdGlv
-biBmb3IgTEVEcwoKQ2hhbmdlcyBpbiB2MjoKICAtIEFkZGVkIFN5c3RlbSBBdHRlbnRpb24gaW5k
-aWNhdG9yIHN1cHBvcnQKICAtIE1vdmVkIGNvbW1vbiBjb2RlIHRvIHBvd2VybnZfbGVkX3NldF9x
-dWV1ZSgpCgogLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9sZWRzLXBvd2VybnYudHh0ICAg
-ICAgfCAgIDM0ICsKIGRyaXZlcnMvbGVkcy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHwgICAxMSAKIGRyaXZlcnMvbGVkcy9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgICAgMSAKIGRyaXZlcnMvbGVkcy9sZWRzLXBvd2VybnYuYyAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDQ1NSArKysrKysrKysrKysrKysrKysrKwogNCBmaWxlcyBjaGFuZ2Vk
-LCA1MDEgaW5zZXJ0aW9ucygrKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9sZWRzL2xlZHMtcG93ZXJudi50eHQKIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBkcml2ZXJzL2xlZHMvbGVkcy1wb3dlcm52LmMKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9sZWRzLXBvd2VybnYudHh0IGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvbGVkcy1wb3dlcm52LnR4dApuZXcgZmlsZSBtb2Rl
-IDEwMDY0NAppbmRleCAwMDAwMDAwLi40OTUzZmRmCi0tLSAvZGV2L251bGwKKysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvbGVkcy1wb3dlcm52LnR4dApAQCAtMCww
-ICsxLDM0IEBACitEZXZpY2UgVHJlZSBiaW5kaW5nIGZvciBMRURzIG9uIElCTSBQb3dlciBTeXN0
-ZW1zCistLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisK
-K1RoZSAnbGVkJyBub2RlIHVuZGVyICcvaWJtLG9wYWwnIGxpc3RzIHNlcnZpY2UgaW5kaWNhdG9y
-cyBhdmFpbGFibGUgaW4gdGhlCitzeXN0ZW0gYW5kIHRoZWlyIGNhcGFiaWxpdGllcy4KKworbGVk
-IHsKKwljb21wYXRpYmxlID0gImlibSxvcGFsLXYzLWxlZCI7CisJcGhhbmRsZSA9IDwweDEwMDAw
-MDZiPjsKKwlsaW51eCxwaGFuZGxlID0gPDB4MTAwMDAwNmI+OworCWxlZC1tb2RlID0gImxpZ2h0
-cGF0aCI7CisKKwlVNzhDOS4wMDEuUlNUMDAyNy1QMS1DMSB7CisJCWxlZC10eXBlcyA9ICJpZGVu
-dGlmeSIsICJmYXVsdCI7CisJCWxlZC1sb2MgPSAiZGVzY2VuZGVudCI7CisJCXBoYW5kbGUgPSA8
-MHgxMDAwMDA2Zj47CisJCWxpbnV4LHBoYW5kbGUgPSA8MHgxMDAwMDA2Zj47CisJfTsKKwkuLi4K
-KwkuLi4KK307CisKKworJ2NvbXBhdGlibGUnIHByb3BlcnR5IGRlc2NyaWJlcyBMRURzIGNvbXBh
-dGliaWxpdHkuCisKKydsZWQtbW9kZScgcHJvcGVydHkgZGVzY3JpYmVzIHNlcnZpY2UgaW5kaWNh
-dG9yIG1vZGUgKGxpZ2h0cGF0aC9ndWlkaW5nbGlnaHQpLgorCitFYWNoIG5vZGUgdW5kZXIgJ2xl
-ZCcgbm9kZSBkZXNjcmliZXMgbG9jYXRpb24gY29kZSBvZiBGUlUvRW5jbG9zdXJlLgorCitUaGUg
-cHJvcGVydGllcyB1bmRlciBlYWNoIG5vZGU6CisKKyAgbGVkLXR5cGVzIDogU3VwcG9ydGVkIGlu
-ZGljYXRvcnMgKGF0dGVudGlvbi9pZGVudGlmeS9mYXVsdCkuCisKKyAgbGVkLWxvYyAgIDogZW5j
-bG9zdXJlL2Rlc2NlbmRlbnQoRlJVKSBsb2NhdGlvbiBjb2RlLgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9sZWRzL0tjb25maWcgYi9kcml2ZXJzL2xlZHMvS2NvbmZpZwppbmRleCAyNWIzMjBkLi4yZWEw
-ODQ5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2xlZHMvS2NvbmZpZworKysgYi9kcml2ZXJzL2xlZHMv
-S2NvbmZpZwpAQCAtNTA4LDYgKzUwOCwxNyBAQCBjb25maWcgTEVEU19CTElOS00KIAkgIFRoaXMg
-b3B0aW9uIGVuYWJsZXMgc3VwcG9ydCBmb3IgdGhlIEJsaW5rTSBSR0IgTEVEIGNvbm5lY3RlZAog
-CSAgdGhyb3VnaCBJMkMuIFNheSBZIHRvIGVuYWJsZSBzdXBwb3J0IGZvciB0aGUgQmxpbmtNIExF
-RC4KIAorY29uZmlnIExFRFNfUE9XRVJOVgorCXRyaXN0YXRlICJMRUQgc3VwcG9ydCBmb3IgUG93
-ZXJOViBQbGF0Zm9ybSIKKwlkZXBlbmRzIG9uIExFRFNfQ0xBU1MKKwlkZXBlbmRzIG9uIFBQQ19Q
-T1dFUk5WCisJZGVwZW5kcyBvbiBPRgorCWhlbHAKKwkgIFRoaXMgb3B0aW9uIGVuYWJsZXMgc3Vw
-cG9ydCBmb3IgdGhlIHN5c3RlbSBMRURzIHByZXNlbnQgb24KKwkgIFBvd2VyTlYgcGxhdGZvcm1z
-LiBTYXkgJ3knIHRvIGVuYWJsZSB0aGlzIHN1cHBvcnQgaW4ga2VybmVsLgorCSAgVG8gY29tcGls
-ZSB0aGlzIGRyaXZlciBhcyBhIG1vZHVsZSwgY2hvb3NlICdtJyBoZXJlOiB0aGUgbW9kdWxlCisJ
-ICB3aWxsIGJlIGNhbGxlZCBsZWRzLXBvd2VybnYuCisKIGNvbmZpZyBMRURTX1NZU0NPTgogCWJv
-b2wgIkxFRCBzdXBwb3J0IGZvciBMRURzIG9uIHN5c3RlbSBjb250cm9sbGVycyIKIAlkZXBlbmRz
-IG9uIExFRFNfQ0xBU1M9eQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9sZWRzL01ha2VmaWxlIGIvZHJp
-dmVycy9sZWRzL01ha2VmaWxlCmluZGV4IGNiYmE5MjEuLjYwNGZmYzkgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvbGVkcy9NYWtlZmlsZQorKysgYi9kcml2ZXJzL2xlZHMvTWFrZWZpbGUKQEAgLTU4LDYg
-KzU4LDcgQEAgb2JqLSQoQ09ORklHX0xFRFNfQkxJTktNKQkJKz0gbGVkcy1ibGlua20ubwogb2Jq
-LSQoQ09ORklHX0xFRFNfU1lTQ09OKQkJKz0gbGVkcy1zeXNjb24ubwogb2JqLSQoQ09ORklHX0xF
-RFNfVkVSU0FUSUxFKQkJKz0gbGVkcy12ZXJzYXRpbGUubwogb2JqLSQoQ09ORklHX0xFRFNfTUVO
-RjIxQk1DKQkJKz0gbGVkcy1tZW5mMjFibWMubworb2JqLSQoQ09ORklHX0xFRFNfUE9XRVJOVikJ
-CSs9IGxlZHMtcG93ZXJudi5vCiAKICMgTEVEIFNQSSBEcml2ZXJzCiBvYmotJChDT05GSUdfTEVE
-U19EQUMxMjRTMDg1KQkJKz0gbGVkcy1kYWMxMjRzMDg1Lm8KZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-bGVkcy9sZWRzLXBvd2VybnYuYyBiL2RyaXZlcnMvbGVkcy9sZWRzLXBvd2VybnYuYwpuZXcgZmls
-ZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi5lM2MwMzNkCi0tLSAvZGV2L251bGwKKysrIGIv
-ZHJpdmVycy9sZWRzL2xlZHMtcG93ZXJudi5jCkBAIC0wLDAgKzEsNDU1IEBACisvKgorICogUG93
-ZXJOViBMRUQgRHJpdmVyCisgKgorICogQ29weXJpZ2h0IElCTSBDb3JwLiAyMDE1CisgKgorICog
-QXV0aG9yOiBWYXNhbnQgSGVnZGUgPGhlZ2RldmFzYW50QGxpbnV4LnZuZXQuaWJtLmNvbT4KKyAq
-IEF1dGhvcjogQW5zaHVtYW4gS2hhbmR1YWwgPGtoYW5kdWFsQGxpbnV4LnZuZXQuaWJtLmNvbT4K
-KyAqCisgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1
-dGUgaXQgYW5kL29yCisgKiBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZQorICogYXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJl
-IEZvdW5kYXRpb247IGVpdGhlciB2ZXJzaW9uCisgKiAyIG9mIHRoZSBMaWNlbnNlLCBvciAoYXQg
-eW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgorICovCisKKyNkZWZpbmUgUFJFRklYCQki
-UE9XRVJOVl9MRUQiCisKKyNpbmNsdWRlIDxsaW51eC9sZWRzLmg+CisjaW5jbHVkZSA8bGludXgv
-bGlzdC5oPgorI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgorI2luY2x1ZGUgPGxpbnV4L29mLmg+
-CisjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CisjaW5jbHVkZSA8bGludXgvc2xh
-Yi5oPgorCisjaW5jbHVkZSA8YXNtL29wYWwuaD4KKworI2RlZmluZSBQT1dFUk5WX0xFRF9BVFRO
-CSI6QVRURU5USU9OIgorI2RlZmluZSBQT1dFUk5WX0xFRF9JREVOVAkiOklERU5UIgorI2RlZmlu
-ZSBQT1dFUk5WX0xFRF9GQVVMVAkiOkZBVUxUIgorCisvKgorICogQnkgZGVmYXVsdCB1bmxvYWQg
-cGF0aCByZXNldHMgYWxsIHRoZSBMRURzLiBCdXQgb24gUG93ZXJOViBwbGF0Zm9ybQorICogd2Ug
-d2FudCB0byByZXRhaW4gTEVEIHN0YXRlIGFjcm9zcyByZWJvb3QgYXMgdGhlc2UgYXJlIGNvbnRy
-b2xsZWQgYnkKKyAqIGZpcm13YXJlLiBBbHNvIHNlcnZpY2UgcHJvY2Vzc29yIGNhbiBtb2RpZnkg
-dGhlIExFRHMgaW5kZXBlbmRlbnQgb2YKKyAqIE9TLiBIZW5jZSBhdm9pZCByZXNldHRpbmcgTEVE
-cyBpbiB1bmxvYWQgcGF0aC4KKyAqLworc3RhdGljIGJvb2wgbGVkX2Rpc2FibGVkOworCisvKiBD
-b252ZXJ0cyBMRUQgZXZlbnQgdHlwZSBpbnRvIGl0J3MgZGVzY3JpcHRpb24uICovCitzdGF0aWMg
-Y29uc3QgY2hhciAqbGVkX3R5cGVfbWFwW09QQUxfU0xPVF9MRURfVFlQRV9NQVhdID0geworCSJB
-dHRlbnRpb24iLCAiSWRlbnQiLCAiRmF1bHQiCit9OworCisvKgorICogTEVEIHNldCByb3V0aW5l
-cyBoYXZlIGJlZW4gaW1wbGVtZW50ZWQgYXMgd29yayBxdWV1ZSB0YXNrcyBzY2hlZHVsZWQKKyAq
-IG9uIHRoZSBnbG9iYWwgd29yayBxdWV1ZS4gSW5kaXZpZHVhbCB0YXNrIGNhbGxzIE9QQUwgaW50
-ZXJmYWNlIHRvIHNldAorICogdGhlIExFRCBzdGF0ZSB3aGljaCBtaWdodCBzbGVlcCBmb3Igc29t
-ZSB0aW1lLgorICovCitzdHJ1Y3QgcG93ZXJudl9sZWRfZGF0YSB7CisJc3RydWN0IGxlZF9jbGFz
-c2RldgljZGV2OworCisJdTY0CQkJbGVkX3R5cGU7ICAvKiBBdHRlbnRpb24gb3IgSWRlbnQgb3Ig
-RmF1bHQgKi8KKwllbnVtIGxlZF9icmlnaHRuZXNzCXZhbHVlOyAgICAgLyogQnJpZ2h0bmVzcyB2
-YWx1ZSAqLworCisJc3RydWN0IG11dGV4CQlsb2NrOworCXN0cnVjdCB3b3JrX3N0cnVjdAl3b3Jr
-X2xlZDsgLyogTEVEIHVwZGF0ZSB3b3JrcXVldWUgKi8KKworCXN0cnVjdCBsaXN0X2hlYWQJbGlu
-azsKK307CitzdGF0aWMgTElTVF9IRUFEKHBvd2VybnZfbGVkX2xpc3QpOworCisKKy8qIEdldCBM
-RUQgbG9jYXRpb24gY29kZSBiYXNlZCBvbiBMRUQgbmFtZSAqLworc3RhdGljIGludCBwb3dlcm52
-X2dldF9sb2NfY29kZSh1NjQgbGVkX3R5cGUsIGNoYXIgKmxvY19jb2RlKQoreworCXN3aXRjaCAo
-bGVkX3R5cGUpIHsKKwljYXNlIE9QQUxfU0xPVF9MRURfVFlQRV9BVFROOgorCQlsb2NfY29kZVtz
-dHJsZW4obG9jX2NvZGUpIC0gc3RybGVuKFBPV0VSTlZfTEVEX0FUVE4pXSA9ICdcMCc7CisJCWJy
-ZWFrOworCWNhc2UgT1BBTF9TTE9UX0xFRF9UWVBFX0lEOgorCQlsb2NfY29kZVtzdHJsZW4obG9j
-X2NvZGUpIC0gc3RybGVuKFBPV0VSTlZfTEVEX0lERU5UKV0gPSAnXDAnOworCQlicmVhazsKKwlj
-YXNlIE9QQUxfU0xPVF9MRURfVFlQRV9GQVVMVDoKKwkJbG9jX2NvZGVbc3RybGVuKGxvY19jb2Rl
-KSAtIHN0cmxlbihQT1dFUk5WX0xFRF9GQVVMVCldID0gJ1wwJzsKKwkJYnJlYWs7CisJZGVmYXVs
-dDoJLyogVW5zdXBwb3J0ZWQgTEVEIHR5cGUgKi8KKwkJcmV0dXJuIC0xOworCX0KKwlyZXR1cm4g
-MDsKK30KKworLyoKKyAqIFRoaXMgY29tbWl0cyB0aGUgc3RhdGUgY2hhbmdlIG9mIHRoZSByZXF1
-ZXN0ZWQgTEVEIHRocm91Z2ggYW4gT1BBTCBjYWxsLgorICogVGhpcyBmdW5jdGlvbiBpcyBjYWxs
-ZWQgZnJvbSB3b3JrIHF1ZXVlIHRhc2sgY29udGV4dCB3aGVuIGV2ZXIgaXQgZ2V0cworICogc2No
-ZWR1bGVkLiBUaGlzIGZ1bmN0aW9uIGNhbiBzbGVlcCBhdCBvcGFsX2FzeW5jX3dhaXRfcmVzcG9u
-c2UgY2FsbC4KKyAqLworc3RhdGljIHZvaWQgcG93ZXJudl9sZWRfc2V0KHN0cnVjdCBsZWRfY2xh
-c3NkZXYgKmxlZF9jZGV2LAorCQkJICAgIGVudW0gbGVkX2JyaWdodG5lc3MgdmFsdWUsIHU2NCBs
-ZWRfdHlwZSkKK3sKKwljaGFyICpsb2NfY29kZTsKKwlpbnQgcmMsIHRva2VuOworCXU2NCBsZWRf
-bWFzaywgbWF4X2xlZF90eXBlLCBsZWRfdmFsdWUgPSAwOworCXN0cnVjdCBvcGFsX21zZyBtc2c7
-CisKKwkvKiBMb2NhdGlvbiBjb2RlIG9mIHRoZSBMRUQgKi8KKwlsb2NfY29kZSA9IGthc3ByaW50
-ZihHRlBfS0VSTkVMLCAiJXMiLCBsZWRfY2Rldi0+bmFtZSk7CisJaWYgKCFsb2NfY29kZSkgewor
-CQlkZXZfZXJyKGxlZF9jZGV2LT5kZXYsCisJCQkiJXM6IE1lbW9yeSBhbGxvY2F0aW9uIGZhaWxl
-ZFxuIiwgX19mdW5jX18pOworCQlyZXR1cm47CisJfQorCisJaWYgKHBvd2VybnZfZ2V0X2xvY19j
-b2RlKGxlZF90eXBlLCBsb2NfY29kZSkgIT0gMCkKKwkJZ290byBvdXRfbG9jOworCisJLyogUHJl
-cGFyZSBmb3IgdGhlIE9QQUwgY2FsbCAqLworCW1heF9sZWRfdHlwZSA9IGNwdV90b19iZTY0KE9Q
-QUxfU0xPVF9MRURfVFlQRV9NQVgpOworCWxlZF9tYXNrID0gT1BBTF9TTE9UX0xFRF9TVEFURV9P
-TiA8PCBsZWRfdHlwZTsKKwlpZiAodmFsdWUpCisJCWxlZF92YWx1ZSA9IE9QQUxfU0xPVF9MRURf
-U1RBVEVfT04gPDwgbGVkX3R5cGU7CisKKwkvKiBPUEFMIGFzeW5jIGNhbGwgKi8KKwl0b2tlbiA9
-IG9wYWxfYXN5bmNfZ2V0X3Rva2VuX2ludGVycnVwdGlibGUoKTsKKwlpZiAodG9rZW4gPCAwKSB7
-CisJCWlmICh0b2tlbiAhPSAtRVJFU1RBUlRTWVMpCisJCQlkZXZfZXJyKGxlZF9jZGV2LT5kZXYs
-CisJCQkJIiVzOiBDb3VsZG4ndCBnZXQgT1BBTCBhc3luYyB0b2tlblxuIiwKKwkJCQlfX2Z1bmNf
-Xyk7CisJCWdvdG8gb3V0X2xvYzsKKwl9CisKKwlyYyA9IG9wYWxfbGVkc19zZXRfaW5kKHRva2Vu
-LCBsb2NfY29kZSwKKwkJCSAgICAgICBsZWRfbWFzaywgbGVkX3ZhbHVlLCAmbWF4X2xlZF90eXBl
-KTsKKwlpZiAocmMgIT0gT1BBTF9BU1lOQ19DT01QTEVUSU9OKSB7CisJCWRldl9lcnIobGVkX2Nk
-ZXYtPmRldiwKKwkJCSIlczogT1BBTCBzZXQgTEVEIGNhbGwgZmFpbGVkIGZvciAlcyBbcmM9JWRd
-XG4iLAorCQkJX19mdW5jX18sIGxvY19jb2RlLCByYyk7CisJCWdvdG8gb3V0X3Rva2VuOworCX0K
-KworCXJjID0gb3BhbF9hc3luY193YWl0X3Jlc3BvbnNlKHRva2VuLCAmbXNnKTsKKwlpZiAocmMp
-IHsKKwkJZGV2X2VycihsZWRfY2Rldi0+ZGV2LAorCQkJIiVzOiBGYWlsZWQgdG8gd2FpdCBmb3Ig
-dGhlIGFzeW5jIHJlc3BvbnNlIFtyYz0lZF1cbiIsCisJCQlfX2Z1bmNfXywgcmMpOworCQlnb3Rv
-IG91dF90b2tlbjsKKwl9CisKKwlyYyA9IGJlNjRfdG9fY3B1KG1zZy5wYXJhbXNbMV0pOworCWlm
-IChyYyAhPSBPUEFMX1NVQ0NFU1MpCisJCWRldl9lcnIobGVkX2NkZXYtPmRldiwKKwkJCSIlcyA6
-IE9BUEwgYXN5bmMgY2FsbCByZXR1cm5lZCBmYWlsZWQgW3JjPSVkXVxuIiwKKwkJCV9fZnVuY19f
-LCByYyk7CisKK291dF90b2tlbjoKKwlvcGFsX2FzeW5jX3JlbGVhc2VfdG9rZW4odG9rZW4pOwor
-CitvdXRfbG9jOgorCWtmcmVlKGxvY19jb2RlKTsKK30KKworLyoKKyAqIFRoaXMgZnVuY3Rpb24g
-ZmV0Y2hlcyB0aGUgTEVEIHN0YXRlIGZvciBhIGdpdmVuIExFRCB0eXBlIGZvcgorICogbWVudGlv
-bmVkIExFRCBjbGFzc2RldiBzdHJ1Y3R1cmUuCisgKi8KK3N0YXRpYyBlbnVtIGxlZF9icmlnaHRu
-ZXNzIHBvd2VybnZfbGVkX2dldChzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiwKKwkJCQkJ
-ICAgdTY0IGxlZF90eXBlKQoreworCWNoYXIgKmxvY19jb2RlOworCWludCByYzsKKwl1NjQgbGVk
-X21hc2ssIGxlZF92YWx1ZSwgbWF4X2xlZF90eXBlOworCisJLyogTEVEIGxvY2F0aW9uIGNvZGUg
-Ki8KKwlsb2NfY29kZSA9IGthc3ByaW50ZihHRlBfS0VSTkVMLCAiJXMiLCBsZWRfY2Rldi0+bmFt
-ZSk7CisJaWYgKCFsb2NfY29kZSkgeworCQlkZXZfZXJyKGxlZF9jZGV2LT5kZXYsCisJCQkiJXM6
-IE1lbW9yeSBhbGxvY2F0aW9uIGZhaWxlZFxuIiwgX19mdW5jX18pOworCQlyZXR1cm4gLUVOT01F
-TTsKKwl9CisKKwlpZiAocG93ZXJudl9nZXRfbG9jX2NvZGUobGVkX3R5cGUsIGxvY19jb2RlKSAh
-PSAwKQorCQlnb3RvIGxlZF9mYWlsOworCisJLyogRmV0Y2ggYWxsIExFRCBzdGF0dXMgKi8KKwls
-ZWRfbWFzayA9IGNwdV90b19iZTY0KDApOworCWxlZF92YWx1ZSA9IGNwdV90b19iZTY0KDApOwor
-CW1heF9sZWRfdHlwZSA9IGNwdV90b19iZTY0KE9QQUxfU0xPVF9MRURfVFlQRV9NQVgpOworCisJ
-cmMgPSBvcGFsX2xlZHNfZ2V0X2luZChsb2NfY29kZSwgJmxlZF9tYXNrLCAmbGVkX3ZhbHVlLCAm
-bWF4X2xlZF90eXBlKTsKKwlpZiAocmMgIT0gT1BBTF9TVUNDRVNTICYmIHJjICE9IE9QQUxfUEFS
-VElBTCkgeworCQlkZXZfZXJyKGxlZF9jZGV2LT5kZXYsCisJCQkiJXM6IE9QQUwgZ2V0IGxlZCBj
-YWxsIGZhaWxlZCBbcmM9JWRdXG4iLAorCQkJX19mdW5jX18sIHJjKTsKKwkJZ290byBsZWRfZmFp
-bDsKKwl9CisKKwlsZWRfbWFzayA9IGJlNjRfdG9fY3B1KGxlZF9tYXNrKTsKKwlsZWRfdmFsdWUg
-PSBiZTY0X3RvX2NwdShsZWRfdmFsdWUpOworCisJLyogTEVEIHN0YXR1cyBhdmFpbGFibGUgKi8K
-KwlpZiAoISgobGVkX21hc2sgPj4gbGVkX3R5cGUpICYgT1BBTF9TTE9UX0xFRF9TVEFURV9PTikp
-IHsKKwkJZGV2X2VycihsZWRfY2Rldi0+ZGV2LAorCQkJIiVzOiAlcyBMRUQgc3RhdHVzIG5vdCBh
-dmFpbGFibGUgZm9yICVzXG4iLAorCQkJX19mdW5jX18sIGxlZF90eXBlX21hcFtsZWRfdHlwZV0s
-IGxvY19jb2RlKTsKKwkJZ290byBsZWRfZmFpbDsKKwl9CisKKwkvKiBMRUQgc3RhdHVzIHZhbHVl
-ICovCisJaWYgKChsZWRfdmFsdWUgPj4gbGVkX3R5cGUpICYgT1BBTF9TTE9UX0xFRF9TVEFURV9P
-TikgeworCQlrZnJlZShsb2NfY29kZSk7CisJCXJldHVybiBMRURfRlVMTDsKKwl9CisKK2xlZF9m
-YWlsOgorCWtmcmVlKGxvY19jb2RlKTsKKwlyZXR1cm4gTEVEX09GRjsKK30KKworLyoKKyAqIFRo
-aXMgdGhlIGZ1bmN0aW9uIHdoaWNoIHdpbGwgYmUgZXhlY3V0ZWQgYnkgYW55IExFRCB3b3JrIHRh
-c2sgb24gdGhlCisgKiBnbG9iYWwgd29yayBxdWV1ZS4KKyAqLworc3RhdGljIHZvaWQgcG93ZXJu
-dl9kZWZlcnJlZF9sZWRfc2V0KHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKK3sKKwlzdHJ1Y3Qg
-cG93ZXJudl9sZWRfZGF0YSAqcG93ZXJudl9sZWQgPQorCQljb250YWluZXJfb2Yod29yaywgc3Ry
-dWN0IHBvd2VybnZfbGVkX2RhdGEsIHdvcmtfbGVkKTsKKworCW11dGV4X2xvY2soJnBvd2VybnZf
-bGVkLT5sb2NrKTsKKwlwb3dlcm52X2xlZF9zZXQoJnBvd2VybnZfbGVkLT5jZGV2LAorCQkJcG93
-ZXJudl9sZWQtPnZhbHVlLCBwb3dlcm52X2xlZC0+bGVkX3R5cGUpOworCW11dGV4X3VubG9jaygm
-cG93ZXJudl9sZWQtPmxvY2spOworfQorCisvKiBTY2hlZHVsZSB3b3JrIHRvIHVwZGF0ZSBMRUQg
-c3RhdGUgKi8KK3N0YXRpYyB2b2lkIHBvd2VybnZfbGVkX3NldF9xdWV1ZShzdHJ1Y3QgbGVkX2Ns
-YXNzZGV2ICpsZWRfY2RldiwKKwkJCQkgIGVudW0gbGVkX2JyaWdodG5lc3MgdmFsdWUsIHU2NCBs
-ZWRfdHlwZSkKK3sKKwlzdHJ1Y3QgcG93ZXJudl9sZWRfZGF0YSAqcG93ZXJudl9sZWQgPQorCQlj
-b250YWluZXJfb2YobGVkX2NkZXYsIHN0cnVjdCBwb3dlcm52X2xlZF9kYXRhLCBjZGV2KTsKKwor
-CS8qIERvIG5vdCBtb2RpZnkgTEVEIGluIHVubG9hZCBwYXRoICovCisJaWYgKGxlZF9kaXNhYmxl
-ZCkKKwkJcmV0dXJuOworCisJLyogUHJlcGFyZSB0aGUgcmVxdWVzdCAqLworCXBvd2VybnZfbGVk
-LT52YWx1ZSA9IHZhbHVlOworCXBvd2VybnZfbGVkLT5sZWRfdHlwZSA9IGxlZF90eXBlOworCisJ
-LyogU2NoZWR1bGUgdGhlIG5ldyB0YXNrICovCisJc2NoZWR1bGVfd29yaygmcG93ZXJudl9sZWQt
-PndvcmtfbGVkKTsKK30KKworCisvKiBMRUQgY2xhc3NkZXYgJ2JyaWdodG5lc3Nfc2V0JyBmdW5j
-dGlvbiBmb3IgYXR0ZW50aW9uIExFRC4gKi8KK3N0YXRpYyB2b2lkIHBvd2VybnZfbGVkX3NldF9h
-dHRuKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2LAorCQkJCSAgZW51bSBsZWRfYnJpZ2h0
-bmVzcyB2YWx1ZSkKK3sKKwlyZXR1cm4gcG93ZXJudl9sZWRfc2V0X3F1ZXVlKGxlZF9jZGV2LCB2
-YWx1ZSwgT1BBTF9TTE9UX0xFRF9UWVBFX0FUVE4pOworfQorCisvKiBMRUQgY2xhc3NkZXYgJ2Jy
-aWdodG5lc3NfZ2V0JyBmdW5jdGlvbiBmb3IgYXR0ZW50aW9uIExFRC4gICovCitzdGF0aWMgZW51
-bSBsZWRfYnJpZ2h0bmVzcyBwb3dlcm52X2xlZF9nZXRfYXR0bihzdHJ1Y3QgbGVkX2NsYXNzZGV2
-ICpsZWRfY2RldikKK3sKKwlyZXR1cm4gcG93ZXJudl9sZWRfZ2V0KGxlZF9jZGV2LCBPUEFMX1NM
-T1RfTEVEX1RZUEVfQVRUTik7Cit9CisKKy8qIExFRCBjbGFzc2RldiAnYnJpZ2h0bmVzc19zZXQn
-IGZ1bmN0aW9uIGZvciBpZGVudCBMRUQgdHlwZXMuICovCitzdGF0aWMgdm9pZCBwb3dlcm52X2xl
-ZF9zZXRfaWRlbnQoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVkX2NkZXYsCisJCQkJICBlbnVtIGxl
-ZF9icmlnaHRuZXNzIHZhbHVlKQoreworCXJldHVybiBwb3dlcm52X2xlZF9zZXRfcXVldWUobGVk
-X2NkZXYsIHZhbHVlLCBPUEFMX1NMT1RfTEVEX1RZUEVfSUQpOworfQorCisvKiBMRUQgY2xhc3Nk
-ZXYgJ2JyaWdodG5lc3NfZ2V0JyBmdW5jdGlvbiBmb3IgaWRlbnQgTEVEIHR5cGVzLiAqLworc3Rh
-dGljIGVudW0gbGVkX2JyaWdodG5lc3MgcG93ZXJudl9sZWRfZ2V0X2lkZW50KHN0cnVjdCBsZWRf
-Y2xhc3NkZXYgKmxlZF9jZGV2KQoreworCXJldHVybiBwb3dlcm52X2xlZF9nZXQobGVkX2NkZXYs
-IE9QQUxfU0xPVF9MRURfVFlQRV9JRCk7Cit9CisKKy8qIExFRCBjbGFzc2RldiAnYnJpZ2h0bmVz
-c19zZXQnIGZ1bmN0aW9uIGZvciBmYXVsdCBMRUQgdHlwZXMuICovCitzdGF0aWMgdm9pZCBwb3dl
-cm52X2xlZF9zZXRfZmF1bHQoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVkX2NkZXYsCisJCQkJICBl
-bnVtIGxlZF9icmlnaHRuZXNzIHZhbHVlKQoreworCXJldHVybiBwb3dlcm52X2xlZF9zZXRfcXVl
-dWUobGVkX2NkZXYsIHZhbHVlLCBPUEFMX1NMT1RfTEVEX1RZUEVfRkFVTFQpOworfQorCisvKiBM
-RUQgY2xhc3NkZXYgJ2JyaWdodG5lc3NfZ2V0JyBmdW5jdGlvbiBmb3IgZmF1bHQgTEVEIHR5cGVz
-LiAqLworc3RhdGljIGVudW0gbGVkX2JyaWdodG5lc3MgcG93ZXJudl9sZWRfZ2V0X2ZhdWx0KHN0
-cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2KQoreworCXJldHVybiBwb3dlcm52X2xlZF9nZXQo
-bGVkX2NkZXYsIE9QQUxfU0xPVF9MRURfVFlQRV9GQVVMVCk7Cit9CisKKworLyoKKyAqIFRoaXMg
-ZnVuY3Rpb24gdmVyaWZpZXMgd2hldGhlciB0aGUgY2hpbGQgTEVEIGRldmljZSBub2RlIHN1cHBv
-cnRzIGNlcnRhaW4KKyAqIHR5cGUgb2YgTEVEIG9yIG5vdC4gVGhpcyB3aWxsIGJlIHVzZWQgdG8g
-cmVnaXN0ZXIgTEVEIGNsYXNzZGV2IHN0cnVjdHVyZXMKKyAqIGZvciB0aGF0IHBhcnRpY3VhbCB0
-eXBlIG9mIExFRCBmb3IgYSBnaXZlbiBkZXZpY2UgdHJlZSBub2RlLgorICovCitzdGF0aWMgYm9v
-bCBoYXNfbGVkX3R5cGUoc3RydWN0IGRldmljZV9ub2RlICpub2RlLCBjb25zdCBjaGFyICpsZWRf
-dHlwZSkKK3sKKwlib29sIHJlc3VsdCA9IGZhbHNlOworCisJaWYgKG9mX3Byb3BlcnR5X21hdGNo
-X3N0cmluZyhub2RlLCAibGVkLXR5cGVzIiwgbGVkX3R5cGUpID49IDApCisJCXJlc3VsdCA9IHRy
-dWU7CisKKwlyZXR1cm4gcmVzdWx0OworfQorCisvKgorICogVGhpcyBmdW5jdGlvbiByZWdpc3Rl
-cnMgY2xhc3NkZXYgc3RydWN0dXJlIGZvciBhbnkgZ2l2ZW4gdHlwZSBvZiBMRUQgb24KKyAqIGEg
-Z2l2ZW4gY2hpbGQgTEVEIGRldmljZSBub2RlLgorICovCitzdGF0aWMgaW50IHBvd2VyX2xlZF9j
-bGFzc2RldihzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LAorCQkJICAgICAgc3RydWN0IGRl
-dmljZV9ub2RlICpub2RlLCB1NjQgbGVkX3R5cGUpCit7CisJaW50IHJjOworCXN0cnVjdCBwb3dl
-cm52X2xlZF9kYXRhICpwb3dlcm52X2xlZDsKKworCXBvd2VybnZfbGVkID0ga3phbGxvYyhzaXpl
-b2Yoc3RydWN0IHBvd2VybnZfbGVkX2RhdGEpLCBHRlBfS0VSTkVMKTsKKwlpZiAoIXBvd2VybnZf
-bGVkKSB7CisJCWRldl9lcnIoJnBkZXYtPmRldiwKKwkJCSIlczogTWVtb3J5IGFsbG9jYXRpb24g
-ZmFpbGVkXG4iLCBfX2Z1bmNfXyk7CisJCXJldHVybiAtRU5PTUVNOworCX0KKworCS8qIENyZWF0
-ZSB0aGUgbmFtZSBmb3IgY2xhc3NkZXYgKi8KKwlzd2l0Y2ggKGxlZF90eXBlKSB7CisJY2FzZSBP
-UEFMX1NMT1RfTEVEX1RZUEVfQVRUTjoKKwkJcG93ZXJudl9sZWQtPmNkZXYubmFtZSA9IGthc3By
-aW50ZihHRlBfS0VSTkVMLAorCQkJCQkJICAgIiVzJXMiLCBub2RlLT5uYW1lLAorCQkJCQkJICAg
-UE9XRVJOVl9MRURfQVRUTik7CisJCXBvd2VybnZfbGVkLT5jZGV2LmJyaWdodG5lc3Nfc2V0ID0g
-cG93ZXJudl9sZWRfc2V0X2F0dG47CisJCXBvd2VybnZfbGVkLT5jZGV2LmJyaWdodG5lc3NfZ2V0
-ID0gcG93ZXJudl9sZWRfZ2V0X2F0dG47CisJCWJyZWFrOworCWNhc2UgT1BBTF9TTE9UX0xFRF9U
-WVBFX0lEOgorCQlwb3dlcm52X2xlZC0+Y2Rldi5uYW1lID0ga2FzcHJpbnRmKEdGUF9LRVJORUws
-CisJCQkJCQkgICAiJXMlcyIsIG5vZGUtPm5hbWUsCisJCQkJCQkgICBQT1dFUk5WX0xFRF9JREVO
-VCk7CisJCXBvd2VybnZfbGVkLT5jZGV2LmJyaWdodG5lc3Nfc2V0ID0gcG93ZXJudl9sZWRfc2V0
-X2lkZW50OworCQlwb3dlcm52X2xlZC0+Y2Rldi5icmlnaHRuZXNzX2dldCA9IHBvd2VybnZfbGVk
-X2dldF9pZGVudDsKKwkJYnJlYWs7CisJY2FzZSBPUEFMX1NMT1RfTEVEX1RZUEVfRkFVTFQ6CisJ
-CXBvd2VybnZfbGVkLT5jZGV2Lm5hbWUgPSBrYXNwcmludGYoR0ZQX0tFUk5FTCwKKwkJCQkJCSAg
-ICIlcyVzIiwgbm9kZS0+bmFtZSwKKwkJCQkJCSAgIFBPV0VSTlZfTEVEX0ZBVUxUKTsKKwkJcG93
-ZXJudl9sZWQtPmNkZXYuYnJpZ2h0bmVzc19zZXQgPSBwb3dlcm52X2xlZF9zZXRfZmF1bHQ7CisJ
-CXBvd2VybnZfbGVkLT5jZGV2LmJyaWdodG5lc3NfZ2V0ID0gcG93ZXJudl9sZWRfZ2V0X2ZhdWx0
-OworCQlicmVhazsKKwlkZWZhdWx0OiAvKiBVbnN1cHBvcnRlZCBMRUQgdHlwZSAqLworCQlrZnJl
-ZShwb3dlcm52X2xlZCk7CisJCXJldHVybiAtRUlOVkFMOworCX0KKworCWlmICghcG93ZXJudl9s
-ZWQtPmNkZXYubmFtZSkgeworCQlkZXZfZXJyKCZwZGV2LT5kZXYsCisJCQkiJXM6IE1lbW9yeSBh
-bGxvY2F0aW9uIGZhaWxlZCBmb3IgY2xhc3NkZXYgbmFtZVxuIiwKKwkJCV9fZnVuY19fKTsKKwkJ
-a2ZyZWUocG93ZXJudl9sZWQpOworCQlyZXR1cm4gLUVOT01FTTsKKwl9CisKKwlwb3dlcm52X2xl
-ZC0+Y2Rldi5icmlnaHRuZXNzID0gTEVEX09GRjsKKwlwb3dlcm52X2xlZC0+Y2Rldi5tYXhfYnJp
-Z2h0bmVzcyA9IExFRF9GVUxMOworCXBvd2VybnZfbGVkLT5jZGV2LmZsYWdzID0gTEVEX0NPUkVf
-U1VTUEVORFJFU1VNRTsKKworCW11dGV4X2luaXQoJnBvd2VybnZfbGVkLT5sb2NrKTsKKwlJTklU
-X1dPUksoJnBvd2VybnZfbGVkLT53b3JrX2xlZCwgcG93ZXJudl9kZWZlcnJlZF9sZWRfc2V0KTsK
-KworCS8qIFJlZ2lzdGVyIHRoZSBjbGFzc2RldiAqLworCXJjID0gbGVkX2NsYXNzZGV2X3JlZ2lz
-dGVyKCZwZGV2LT5kZXYsICZwb3dlcm52X2xlZC0+Y2Rldik7CisJaWYgKHJjKSB7CisJCWRldl9l
-cnIoJnBkZXYtPmRldiwgIiVzOiBDbGFzc2RldiByZWdpc3RyYXRpb24gZmFpbGVkIGZvciAlc1xu
-IiwKKwkJCV9fZnVuY19fLCBwb3dlcm52X2xlZC0+Y2Rldi5uYW1lKTsKKwkJa2ZyZWUocG93ZXJu
-dl9sZWQtPmNkZXYubmFtZSk7CisJCWtmcmVlKHBvd2VybnZfbGVkKTsKKwl9IGVsc2UgeworCQls
-aXN0X2FkZF90YWlsKCZwb3dlcm52X2xlZC0+bGluaywgJnBvd2VybnZfbGVkX2xpc3QpOworCQlk
-ZXZfZGJnKCZwZGV2LT5kZXYsCisJCQkiQ2xhc3NkZXYgcmVnaXN0cmF0aW9uIHN1Y2Nlc3NmdWwg
-Zm9yICVzXG4iLAorCQkJcG93ZXJudl9sZWQtPmNkZXYubmFtZSk7CisJfQorCXJldHVybiByYzsK
-K30KKworLyogUGxhdGZvcm0gZHJpdmVyIHByb2JlICovCitzdGF0aWMgaW50IHBvd2VybnZfbGVk
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCit7CisJaW50IHJjID0gMDsKKwlz
-dHJ1Y3QgZGV2aWNlX25vZGUgKmxlZF9ub2RlLCAqbnA7CisKKwlsZWRfbm9kZSA9IG9mX2ZpbmRf
-bm9kZV9ieV9wYXRoKCIvaWJtLG9wYWwvbGVkIik7CisJaWYgKCFsZWRfbm9kZSkgeworCQlkZXZf
-ZXJyKCZwZGV2LT5kZXYsCisJCQkiJXM6IExFRCBwYXJlbnQgZGV2aWNlIG5vZGUgbm90IGZvdW5k
-XG4iLCBfX2Z1bmNfXyk7CisJCXJldHVybiAtRUlOVkFMOworCX0KKworCWZvcl9lYWNoX2NoaWxk
-X29mX25vZGUobGVkX25vZGUsIG5wKSB7CisJCWlmIChoYXNfbGVkX3R5cGUobnAsIExFRF9UWVBF
-X0FUVEVOVElPTikpCisJCQlyYyA9IHBvd2VyX2xlZF9jbGFzc2RldihwZGV2LCBucCwKKwkJCQkJ
-CU9QQUxfU0xPVF9MRURfVFlQRV9BVFROKTsKKworCQlpZiAoaGFzX2xlZF90eXBlKG5wLCBMRURf
-VFlQRV9JREVOVElGWSkpCisJCQlyYyA9IHBvd2VyX2xlZF9jbGFzc2RldihwZGV2LCBucCwKKwkJ
-CQkJCU9QQUxfU0xPVF9MRURfVFlQRV9JRCk7CisKKwkJaWYgKGhhc19sZWRfdHlwZShucCwgTEVE
-X1RZUEVfRkFVTFQpKQorCQkJcmMgPSBwb3dlcl9sZWRfY2xhc3NkZXYocGRldiwgbnAsCisJCQkJ
-CQlPUEFMX1NMT1RfTEVEX1RZUEVfRkFVTFQpOworCX0KKwlyZXR1cm4gcmM7Cit9CisKKy8qIFBs
-YXRmb3JtIGRyaXZlciByZW1vdmUgKi8KK3N0YXRpYyBpbnQgcG93ZXJudl9sZWRfcmVtb3ZlKHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCit7CisJc3RydWN0IHBvd2VybnZfbGVkX2RhdGEg
-KnBvd2VybnZfbGVkOworCisJLyogRGlzYWJsZSBMRUQgb3BlcmF0aW9uICovCisJbGVkX2Rpc2Fi
-bGVkID0gdHJ1ZTsKKworCWRldl9kYmcoJnBkZXYtPmRldiwKKwkJIiVzOiBVbnJlZ2lzdGVyIGFs
-bCBjbGFzc2RldiBzdHJ1Y3R1cmVzXG4iLCBfX2Z1bmNfXyk7CisJbGlzdF9mb3JfZWFjaF9lbnRy
-eShwb3dlcm52X2xlZCwgJnBvd2VybnZfbGVkX2xpc3QsIGxpbmspCisJCWxlZF9jbGFzc2Rldl91
-bnJlZ2lzdGVyKCZwb3dlcm52X2xlZC0+Y2Rldik7CisKKwlkZXZfZGJnKCZwZGV2LT5kZXYsCisJ
-CSIlczogV2FpdCBmb3IgYWxsIHdvcmsgdGFza3MgdG8gZmluaXNoXG4iLCBfX2Z1bmNfXyk7CisJ
-bGlzdF9mb3JfZWFjaF9lbnRyeShwb3dlcm52X2xlZCwgJnBvd2VybnZfbGVkX2xpc3QsIGxpbmsp
-CisJCWZsdXNoX3dvcmsoJnBvd2VybnZfbGVkLT53b3JrX2xlZCk7CisKKwl3aGlsZSAoIWxpc3Rf
-ZW1wdHkoJnBvd2VybnZfbGVkX2xpc3QpKSB7CisJCXBvd2VybnZfbGVkID0gbGlzdF9maXJzdF9l
-bnRyeSgmcG93ZXJudl9sZWRfbGlzdCwKKwkJCQkJICAgICAgIHN0cnVjdCBwb3dlcm52X2xlZF9k
-YXRhLCBsaW5rKTsKKwkJbGlzdF9kZWwoJnBvd2VybnZfbGVkLT5saW5rKTsKKwkJa2ZyZWUocG93
-ZXJudl9sZWQpOworCX0KKworCWRldl9pbmZvKCZwZGV2LT5kZXYsICJQb3dlck5WIGxlZCBtb2R1
-bGUgdW5yZWdpc3RlcmVkXG4iKTsKKwlyZXR1cm4gMDsKK30KKworLyogUGxhdGZvcm0gZHJpdmVy
-IHByb3BlcnR5IG1hdGNoICovCitzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBwb3dl
-cm52X2xlZF9tYXRjaFtdID0geworCXsKKwkJLmNvbXBhdGlibGUJPSAiaWJtLG9wYWwtdjMtbGVk
-IiwKKwl9LAorCXt9LAorfTsKK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHBvd2VybnZfbGVkX21h
-dGNoKTsKKworc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgcG93ZXJudl9sZWRfZHJpdmVy
-ID0geworCS5wcm9iZQk9IHBvd2VybnZfbGVkX3Byb2JlLAorCS5yZW1vdmUgPSBwb3dlcm52X2xl
-ZF9yZW1vdmUsCisJLmRyaXZlciA9IHsKKwkJLm5hbWUgPSAicG93ZXJudi1sZWQtZHJpdmVyIiwK
-KwkJLm93bmVyID0gVEhJU19NT0RVTEUsCisJCS5vZl9tYXRjaF90YWJsZSA9IHBvd2VybnZfbGVk
-X21hdGNoLAorCX0sCit9OworCittb2R1bGVfcGxhdGZvcm1fZHJpdmVyKHBvd2VybnZfbGVkX2Ry
-aXZlcik7CisKK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsKK01PRFVMRV9ERVNDUklQVElPTigiUG93
-ZXJOViBMRUQgZHJpdmVyIik7CitNT0RVTEVfQVVUSE9SKCJWYXNhbnQgSGVnZGUgPGhlZ2RldmFz
-YW50QGxpbnV4LnZuZXQuaWJtLmNvbT4iKTsKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2
-QGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4
-cHBjLWRldg==
+Hi Andrew,
+
+Very nice driver. I have one question below.
+
+On 03/17/2015 11:08 PM, Andrew Lunn wrote:
+> The TLC59116 is an I2C bus controlled 16-channel LED driver.  The
+> TLC59108 is an I2C bus controlled 8-channel LED driver, which is very
+> similar to the TLC59116. Each LED output has its own 8-bit
+> fixed-frequency PWM controller to control the brightness of the LED.
+> The LEDs can also be fixed off and on, making them suitable for use as
+> GPOs.
+>
+> This is based on a driver from Belkin, but has been extensively
+> rewritten and extended to support both 08 and 16 versions.
+>
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Tested-by: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Matthew.Fatheree@belkin.comG
+> ---
+>   drivers/leds/Kconfig         |   8 ++
+>   drivers/leds/Makefile        |   1 +
+>   drivers/leds/leds-tlc591xx.c | 300 +++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 309 insertions(+)
+>   create mode 100644 drivers/leds/leds-tlc591xx.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 966b9605f5f0..a38b17a10bd2 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -467,6 +467,14 @@ config LEDS_TCA6507
+>   	  LED driver chips accessed via the I2C bus.
+>   	  Driver support brightness control and hardware-assisted blinking.
+>
+> +config LEDS_TLC591XX
+> +	tristate "LED driver for TLC59108 and TLC59116 controllers"
+> +	depends on LEDS_CLASS && I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for Texas Instruments TLC59108
+> +	  and TLC59116 LED controllers.
+> +
+>   config LEDS_MAX8997
+>   	tristate "LED support for MAX8997 PMIC"
+>   	depends on LEDS_CLASS && MFD_MAX8997
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index bf4609338e10..749dbe38ab27 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -31,6 +31,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+>   obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+>   obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+>   obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
+> +obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
+>   obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+>   obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+>   obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+> new file mode 100644
+> index 000000000000..de16c29d7895
+> --- /dev/null
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -0,0 +1,300 @@
+> +/*
+> + * Copyright 2014 Belkin Inc.
+> + * Copyright 2015 Andrew Lunn <andrew@lunn.ch>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/workqueue.h>
+> +
+> +#define TLC591XX_MAX_LEDS	16
+> +
+> +#define TLC591XX_REG_MODE1	0x00
+> +#define MODE1_RESPON_ADDR_MASK	0xF0
+> +#define MODE1_NORMAL_MODE	(0 << 4)
+> +#define MODE1_SPEED_MODE	(1 << 4)
+> +
+> +#define TLC591XX_REG_MODE2	0x01
+> +#define MODE2_DIM		(0 << 5)
+> +#define MODE2_BLINK		(1 << 5)
+> +#define MODE2_OCH_STOP		(0 << 3)
+> +#define MODE2_OCH_ACK		(1 << 3)
+> +
+> +#define TLC591XX_REG_PWM(x)	(0x02 + (x))
+> +
+> +#define TLC591XX_REG_GRPPWM	0x12
+> +#define TLC591XX_REG_GRPFREQ	0x13
+> +
+> +/* LED Driver Output State, determine the source that drives LED outputs */
+> +#define LEDOUT_OFF		0x0	/* Output LOW */
+> +#define LEDOUT_ON		0x1	/* Output HI-Z */
+> +#define LEDOUT_DIM		0x2	/* Dimming */
+> +#define LEDOUT_BLINK		0x3	/* Blinking */
+> +#define LEDOUT_MASK		0x3
+> +
+> +#define ldev_to_led(c)		container_of(c, struct tlc591xx_led, ldev)
+> +#define work_to_led(work)	container_of(work, struct tlc591xx_led, work)
+> +
+> +struct tlc591xx_led {
+> +	bool active;
+> +	unsigned int led_no;
+> +	struct led_classdev ldev;
+> +	struct work_struct work;
+> +	struct tlc591xx_priv *priv;
+> +};
+> +
+> +struct tlc591xx_priv {
+> +	struct tlc591xx_led leds[TLC591XX_MAX_LEDS];
+> +	struct regmap *regmap;
+> +	unsigned int reg_ledout_offset;
+> +};
+> +
+> +struct tlc591xx {
+> +	unsigned int max_leds;
+> +	unsigned int reg_ledout_offset;
+> +};
+> +
+> +static const struct tlc591xx tlc59116 = {
+> +	.max_leds = 16,
+> +	.reg_ledout_offset = 0x14,
+> +};
+> +
+> +static const struct tlc591xx tlc59108 = {
+> +	.max_leds = 8,
+> +	.reg_ledout_offset = 0x0c,
+> +};
+> +
+> +static int
+> +tlc591xx_set_mode(struct regmap *regmap, u8 mode)
+> +{
+> +	int err;
+> +	u8 val;
+> +
+> +	err = regmap_write(regmap, TLC591XX_REG_MODE1, MODE1_NORMAL_MODE);
+> +	if (err)
+> +		return err;
+> +
+> +	val = MODE2_OCH_STOP | mode;
+> +
+> +	return regmap_write(regmap, TLC591XX_REG_MODE2, val);
+> +}
+> +
+> +static int
+> +tlc591xx_set_ledout(struct tlc591xx_priv *priv, struct tlc591xx_led *led,
+> +		    u8 val)
+> +{
+> +	unsigned int i = (led->led_no % 4) * 2;
+> +	unsigned int mask = LEDOUT_MASK << i;
+> +	unsigned int addr = priv->reg_ledout_offset + (led->led_no >> 2);
+> +
+> +	val = val << i;
+> +
+> +	return regmap_update_bits(priv->regmap, addr, mask, val);
+> +}
+> +
+> +static int
+> +tlc591xx_set_pwm(struct tlc591xx_priv *priv, struct tlc591xx_led *led,
+> +		 u8 brightness)
+> +{
+> +	u8 pwm = TLC591XX_REG_PWM(led->led_no);
+> +
+> +	return regmap_write(priv->regmap, pwm, brightness);
+> +}
+> +
+> +static void
+> +tlc591xx_led_work(struct work_struct *work)
+> +{
+> +	struct tlc591xx_led *led = work_to_led(work);
+> +	struct tlc591xx_priv *priv = led->priv;
+> +	enum led_brightness brightness = led->ldev.brightness;
+> +	int err;
+> +
+> +	switch (brightness) {
+> +	case 0:
+> +		err = tlc591xx_set_ledout(priv, led, LEDOUT_OFF);
+> +		break;
+> +	case LED_FULL:
+> +		err = tlc591xx_set_ledout(priv, led, LEDOUT_ON);
+> +		break;
+> +	default:
+> +		err = tlc591xx_set_ledout(priv, led, LEDOUT_DIM);
+> +		if (!err)
+> +			err = tlc591xx_set_pwm(priv, led, brightness);
+> +	}
+> +
+> +	if (err)
+> +		dev_err(led->ldev.dev, "Failed setting brightness\n");
+> +}
+> +
+> +static void
+> +tlc591xx_brightness_set(struct led_classdev *led_cdev,
+> +			enum led_brightness brightness)
+> +{
+> +	struct tlc591xx_led *led = ldev_to_led(led_cdev);
+> +
+> +	led->ldev.brightness = brightness;
+> +	schedule_work(&led->work);
+> +}
+> +
+> +static void
+> +tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
+> +{
+> +	int i = j;
+> +
+> +	while (--i >= 0) {
+> +		if (priv->leds[i].active) {
+> +			led_classdev_unregister(&priv->leds[i].ldev);
+> +			cancel_work_sync(&priv->leds[i].work);
+> +		}
+> +	}
+> +}
+> +
+> +static int
+> +tlc591xx_configure(struct device *dev,
+> +		   struct tlc591xx_priv *priv,
+> +		   const struct tlc591xx *tlc591xx)
+> +{
+> +	unsigned int i;
+> +	int err = 0;
+> +
+> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+
+It seems that all leds will be initially turned on, in dim mode.
+This shouldn't be fixed and probably an optional 'led-mode' DT node
+property should be provided for defining the initial state. It would
+default to OFF if not present.
+
+> +	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
+> +		struct tlc591xx_led *led = &priv->leds[i];
+> +
+> +		if (!led->active)
+> +			continue;
+> +
+> +		led->priv = priv;
+> +		led->led_no = i;
+> +		led->ldev.brightness_set = tlc591xx_brightness_set;
+> +		led->ldev.max_brightness = LED_FULL;
+> +		INIT_WORK(&led->work, tlc591xx_led_work);
+> +		err = led_classdev_register(dev, &led->ldev);
+> +		if (err < 0) {
+> +			dev_err(dev, "couldn't register LED %s\n",
+> +				led->ldev.name);
+> +			goto exit;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +exit:
+> +	tlc591xx_destroy_devices(priv, i);
+> +	return err;
+> +}
+> +
+> +static const struct regmap_config tlc591xx_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 0x1e,
+> +};
+> +
+> +static const struct of_device_id of_tlc591xx_leds_match[] = {
+> +	{ .compatible = "ti,tlc59116",
+> +	  .data = &tlc59116 },
+> +	{ .compatible = "ti,tlc59108",
+> +	  .data = &tlc59108 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_tlc591xx_leds_match);
+> +
+> +static int
+> +tlc591xx_probe(struct i2c_client *client,
+> +	       const struct i2c_device_id *id)
+> +{
+> +	struct device_node *np = client->dev.of_node, *child;
+> +	struct device *dev = &client->dev;
+> +	const struct of_device_id *match;
+> +	const struct tlc591xx *tlc591xx;
+> +	struct tlc591xx_priv *priv;
+> +	int err, count, reg;
+> +
+> +	match = of_match_device(of_tlc591xx_leds_match, dev);
+> +	if (!match)
+> +		return -ENODEV;
+> +
+> +	tlc591xx = match->data;
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	count = of_get_child_count(np);
+> +	if (!count || count > tlc591xx->max_leds)
+> +		return -EINVAL;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_BYTE_DATA))
+> +		return -EIO;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->regmap = devm_regmap_init_i2c(client, &tlc591xx_regmap);
+> +	if (IS_ERR(priv->regmap)) {
+> +		err = PTR_ERR(priv->regmap);
+> +		dev_err(dev, "Failed to allocate register map: %d\n", err);
+> +		return err;
+> +	}
+> +	priv->reg_ledout_offset = tlc591xx->reg_ledout_offset;
+> +
+> +	i2c_set_clientdata(client, priv);
+> +
+> +	for_each_child_of_node(np, child) {
+> +		err = of_property_read_u32(child, "reg", &reg);
+> +		if (err)
+> +			return err;
+> +		if (reg < 0 || reg >= tlc591xx->max_leds)
+> +			return -EINVAL;
+> +		if (priv->leds[reg].active)
+> +			return -EINVAL;
+> +		priv->leds[reg].active = true;
+> +		priv->leds[reg].ldev.name =
+> +			of_get_property(child, "label", NULL) ? : child->name;
+> +		priv->leds[reg].ldev.default_trigger =
+> +			of_get_property(child, "linux,default-trigger", NULL);
+> +	}
+> +	return tlc591xx_configure(dev, priv, tlc591xx);
+> +}
+> +
+> +static int
+> +tlc591xx_remove(struct i2c_client *client)
+> +{
+> +	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
+> +
+> +	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id tlc591xx_id[] = {
+> +	{ "tlc59116" },
+> +	{ "tlc59108" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(i2c, tlc591xx_id);
+> +
+> +static struct i2c_driver tlc591xx_driver = {
+> +	.driver = {
+> +		.name = "tlc591xx",
+> +		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
+> +	},
+> +	.probe = tlc591xx_probe,
+> +	.remove = tlc591xx_remove,
+> +	.id_table = tlc591xx_id,
+> +};
+> +
+> +module_i2c_driver(tlc591xx_driver);
+> +
+> +MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("TLC591XX LED driver");
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
