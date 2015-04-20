@@ -1,64 +1,84 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH RESEND v6 2/2] leds: tlc591xx: Driver for the TI 8/16
- Channel i2c LED driver
-Date: Mon, 20 Apr 2015 15:07:31 +0200
-Message-ID: <5534FA13.9090502@samsung.com>
+Subject: Re: [PATCH RESEND v6 1/2] leds: tlc591xx: Document binding for the TI
+ 8/16 Channel i2c LED driver
+Date: Mon, 20 Apr 2015 15:09:01 +0200
+Message-ID: <5534FA6D.4000009@samsung.com>
 References: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
- <1426630107-25057-3-git-send-email-andrew@lunn.ch>
- <5534C181.9060202@samsung.com> <20150420115959.GA8050@lunn.ch>
+ <1426630107-25057-2-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:21297 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752090AbbDTNHf (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Apr 2015 09:07:35 -0400
-In-reply-to: <20150420115959.GA8050@lunn.ch>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:21969 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751843AbbDTNJE (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Apr 2015 09:09:04 -0400
+In-reply-to: <1426630107-25057-2-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Andrew Lunn <andrew@lunn.ch>
 Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com
 
-On 04/20/2015 01:59 PM, Andrew Lunn wrote:
-> On Mon, Apr 20, 2015 at 11:06:09AM +0200, Jacek Anaszewski wrote:
->> Hi Andrew,
->>
->> Very nice driver.
+On 03/17/2015 11:08 PM, Andrew Lunn wrote:
+> Document the binding for the TLC591xx LED driver.
 >
-> Thanks. I just hope it gets accepted into this merge window.
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Tested-by: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Matthew.Fatheree@belkin.com
+> ---
+>   .../devicetree/bindings/leds/leds-tlc591xx.txt     | 40 ++++++++++++++++++++++
+>   1 file changed, 40 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
 >
->> I have one question below.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt b/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
+> new file mode 100644
+> index 000000000000..3bbbf7024411
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
+> @@ -0,0 +1,40 @@
+> +LEDs connected to tlc59116 or tlc59108
+> +
+> +Required properties
+> +- compatible: should be "ti,tlc59116" or "ti,tlc59108"
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
+> +- reg: typically 0x68
+> +
+> +Each led is represented as a sub-node of the ti,tlc59116.
+> +See Documentation/devicetree/bindings/leds/common.txt
+> +
+> +LED sub-node properties:
+> +- reg: number of LED line, 0 to 15 or 0 to 7
+> +- label: (optional) name of LED
+> +- linux,default-trigger : (optional)
+> +
+> +Examples:
+> +
+> +tlc59116@68 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	compatible = "ti,tlc59116";
+> +	reg = <0x68>;
+> +
+> +	wan@0 {
+> +		label = "wrt1900ac:amber:wan";
+> +		reg = <0x0>;
+> +	};
+> +
+> +	2g@2 {
+> +		label = "wrt1900ac:white:2g";
+> +		reg = <0x2>;
+> +	};
+> +
+> +	alive@9 {
+> +		label = "wrt1900ac:green:alive";
+> +		reg = <0x9>;
+> +		linux,default_trigger = "heartbeat";
+> +	};
+> +};
 >
-[...]
->>> +static int
->>> +tlc591xx_configure(struct device *dev,
->>> +		   struct tlc591xx_priv *priv,
->>> +		   const struct tlc591xx *tlc591xx)
->>> +{
->>> +	unsigned int i;
->>> +	int err = 0;
->>> +
->>> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
->>
->> It seems that all leds will be initially turned on, in dim mode.
->> This shouldn't be fixed and probably an optional 'led-mode' DT node
->> property should be provided for defining the initial state. It would
->> default to OFF if not present.
->
-> If you look further down, you will find
->
->>> +		priv->leds[reg].ldev.default_trigger =
->>> +			of_get_property(child, "linux,default-trigger", NULL);
->
-> This is the normal way in DT to specify the default on/off/keep
-> current value/heartbeat etc.
-
-OK, I was initially thinking that initializing LED to MODE2_DIM
-turns the LED on.
 
 Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-
 
 -- 
 Best Regards,
