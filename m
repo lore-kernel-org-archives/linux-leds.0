@@ -1,84 +1,133 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH RESEND v6 1/2] leds: tlc591xx: Document binding for the TI
- 8/16 Channel i2c LED driver
-Date: Mon, 20 Apr 2015 15:09:01 +0200
-Message-ID: <5534FA6D.4000009@samsung.com>
-References: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
- <1426630107-25057-2-git-send-email-andrew@lunn.ch>
+Subject: Re: [PATCH v3 1/3] powerpc/powernv: Add OPAL interfaces for accessing
+ and modifying system LED states
+Date: Mon, 20 Apr 2015 17:21:13 +0200
+Message-ID: <55351969.2020604@samsung.com>
+References: <20150420075558.12371.6697.stgit@localhost.localdomain>
+ <20150420075927.12371.59080.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:21969 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751843AbbDTNJE (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Apr 2015 09:09:04 -0400
-In-reply-to: <1426630107-25057-2-git-send-email-andrew@lunn.ch>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:29611 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751223AbbDTPVQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Apr 2015 11:21:16 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NN40057J2US5P60@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 20 Apr 2015 16:25:40 +0100 (BST)
+In-reply-to: <20150420075927.12371.59080.stgit@localhost.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, mpe@ellerman.id.au, cooloney@gmail.com, rpurdie@rpsys.net, Benjamin Herrenschmidt <benh@kernel.crashing.org>, khandual@linux.vnet.ibm.com
 
-On 03/17/2015 11:08 PM, Andrew Lunn wrote:
-> Document the binding for the TLC591xx LED driver.
+Hi Vasant, Anshuman,
+
+Thanks for the update.
+
+On 04/20/2015 09:59 AM, Vasant Hegde wrote:
+> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 >
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> Tested-by: Imre Kaloz <kaloz@openwrt.org>
-> Cc: Matthew.Fatheree@belkin.com
+> This patch registers the following two new OPAL interfaces calls
+> for the platform LED subsystem. With the help of these new OPAL calls,
+> the kernel will be able to get or set the state of various individual
+> LEDs on the system at any given location code which is passed through
+> the LED specific device tree nodes.
+>
+> 	(1) OPAL_LEDS_GET_INDICATOR     opal_leds_get_ind
+> 	(2) OPAL_LEDS_SET_INDICATOR     opal_leds_set_ind
+>
+> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+> Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+> Tested-by: Stewart Smith <stewart@linux.vnet.ibm.com>
 > ---
->   .../devicetree/bindings/leds/leds-tlc591xx.txt     | 40 ++++++++++++++++++++++
->   1 file changed, 40 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
+>   arch/powerpc/include/asm/opal-api.h            |   29 +++++++++++++++++++++++-
+>   arch/powerpc/include/asm/opal.h                |    5 ++++
+>   arch/powerpc/platforms/powernv/opal-wrappers.S |    2 ++
+>   3 files changed, 35 insertions(+), 1 deletion(-)
 >
-> diff --git a/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt b/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
-> new file mode 100644
-> index 000000000000..3bbbf7024411
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
-> @@ -0,0 +1,40 @@
-> +LEDs connected to tlc59116 or tlc59108
+> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+> index 0321a90..64508eb 100644
+> --- a/arch/powerpc/include/asm/opal-api.h
+> +++ b/arch/powerpc/include/asm/opal-api.h
+> @@ -153,7 +153,9 @@
+>   #define OPAL_FLASH_READ				110
+>   #define OPAL_FLASH_WRITE			111
+>   #define OPAL_FLASH_ERASE			112
+> -#define OPAL_LAST				112
+> +#define OPAL_LEDS_GET_INDICATOR			114
+> +#define OPAL_LEDS_SET_INDICATOR			115
+> +#define OPAL_LAST				115
+>
+>   /* Device tree flags */
+>
+> @@ -730,6 +732,31 @@ struct opal_i2c_request {
+>   	__be64 buffer_ra;		/* Buffer real address */
+>   };
+>
+> +/* LED Mode */
+> +#define LED_MODE_LIGHT_PATH	"lightpath"
+> +#define LED_MODE_GUIDING_LIGHT	"guidinglight"
 > +
-> +Required properties
-> +- compatible: should be "ti,tlc59116" or "ti,tlc59108"
-> +- #address-cells: must be 1
-> +- #size-cells: must be 0
-> +- reg: typically 0x68
+> +/* LED type */
+> +#define LED_TYPE_IDENTIFY	"identify"
+> +#define LED_TYPE_FAULT		"fault"
+> +#define LED_TYPE_ATTENTION	"attention"
 > +
-> +Each led is represented as a sub-node of the ti,tlc59116.
-> +See Documentation/devicetree/bindings/leds/common.txt
-> +
-> +LED sub-node properties:
-> +- reg: number of LED line, 0 to 15 or 0 to 7
-> +- label: (optional) name of LED
-> +- linux,default-trigger : (optional)
-> +
-> +Examples:
-> +
-> +tlc59116@68 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	compatible = "ti,tlc59116";
-> +	reg = <0x68>;
-> +
-> +	wan@0 {
-> +		label = "wrt1900ac:amber:wan";
-> +		reg = <0x0>;
-> +	};
-> +
-> +	2g@2 {
-> +		label = "wrt1900ac:white:2g";
-> +		reg = <0x2>;
-> +	};
-> +
-> +	alive@9 {
-> +		label = "wrt1900ac:green:alive";
-> +		reg = <0x9>;
-> +		linux,default_trigger = "heartbeat";
-> +	};
+> +/* LED location */
+> +#define LED_LOC_ENCLOSURE	"enclosure"
+> +#define LED_LOC_DESCENDENT	"descendent"
+
+These macros should also have POWERNV_LED prefix.
+
+> +enum OpalSlotLedType {
+> +	OPAL_SLOT_LED_TYPE_ID = 0,	/* IDENTIFY LED */
+> +	OPAL_SLOT_LED_TYPE_FAULT = 1,	/* FAULT LED */
+> +	OPAL_SLOT_LED_TYPE_ATTN = 2,	/* System Attention LED */
+> +	OPAL_SLOT_LED_TYPE_MAX = 3
 > +};
+> +
+> +enum OpalSlotLedState {
+> +	OPAL_SLOT_LED_STATE_OFF = 0,	/* LED is OFF */
+> +	OPAL_SLOT_LED_STATE_ON = 1	/* LED is ON */
+> +};
+> +
+>   #endif /* __ASSEMBLY__ */
+>
+>   #endif /* __OPAL_API_H */
+> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+> index 042af1a..e06dc7e 100644
+> --- a/arch/powerpc/include/asm/opal.h
+> +++ b/arch/powerpc/include/asm/opal.h
+> @@ -193,6 +193,11 @@ int64_t opal_ipmi_recv(uint64_t interface, struct opal_ipmi_msg *msg,
+>   		uint64_t *msg_len);
+>   int64_t opal_i2c_request(uint64_t async_token, uint32_t bus_id,
+>   			 struct opal_i2c_request *oreq);
+> +int64_t opal_leds_get_ind(char *loc_code, u64 *led_mask,
+> +			  u64 *led_value, u64 *max_led_type);
+> +int64_t opal_leds_set_ind(uint64_t token, char *loc_code, const u64 led_mask,
+> +			  const u64 led_value, u64 *max_led_type);
+> +
+>
+>   int64_t opal_flash_read(uint64_t id, uint64_t offset, uint64_t buf,
+>   		uint64_t size, uint64_t token);
+> diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
+> index 4e74037..20d4da4 100644
+> --- a/arch/powerpc/platforms/powernv/opal-wrappers.S
+> +++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
+> @@ -295,3 +295,5 @@ OPAL_CALL(opal_i2c_request,			OPAL_I2C_REQUEST);
+>   OPAL_CALL(opal_flash_read,			OPAL_FLASH_READ);
+>   OPAL_CALL(opal_flash_write,			OPAL_FLASH_WRITE);
+>   OPAL_CALL(opal_flash_erase,			OPAL_FLASH_ERASE);
+> +OPAL_CALL(opal_leds_get_ind,			OPAL_LEDS_GET_INDICATOR);
+> +OPAL_CALL(opal_leds_set_ind,			OPAL_LEDS_SET_INDICATOR);
+>
 >
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
 -- 
 Best Regards,
