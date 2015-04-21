@@ -1,219 +1,58 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Tue, 21 Apr 2015 11:20:36 +0530
-Message-ID: <5535E52C.6030908@linux.vnet.ibm.com>
-References: <20150420075558.12371.6697.stgit@localhost.localdomain> <20150420080124.12371.41528.stgit@localhost.localdomain> <55351AEE.70806@samsung.com>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Wed, 22 Apr 2015 09:03:36 +1000
+Message-ID: <m3sibtozhz.fsf@oc8180480414.ibm.com>
+References: <20150320105921.14866.83209.stgit@localhost.localdomain> <20150320110328.14866.98225.stgit@localhost.localdomain> <552D303A.5080506@samsung.com> <m3zj69ql8x.fsf@oc8180480414.ibm.com> <552F437E.4020409@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e28smtp08.in.ibm.com ([122.248.162.8]:54816 "EHLO
-	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750751AbbDUFu5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Apr 2015 01:50:57 -0400
+Received: from e39.co.us.ibm.com ([32.97.110.160]:42353 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964934AbbDUXDo (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Apr 2015 19:03:44 -0400
 Received: from /spool/local
-	by e28smtp08.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Tue, 21 Apr 2015 11:20:54 +0530
-Received: from d28relay05.in.ibm.com (d28relay05.in.ibm.com [9.184.220.62])
-	by d28dlp03.in.ibm.com (Postfix) with ESMTP id 7604E1258064
-	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 11:22:47 +0530 (IST)
-Received: from d28av04.in.ibm.com (d28av04.in.ibm.com [9.184.220.66])
-	by d28relay05.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3L5onVY58916906
-	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 11:20:49 +0530
-Received: from d28av04.in.ibm.com (localhost [127.0.0.1])
-	by d28av04.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3L5olxm010992
-	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 11:20:49 +0530
-In-Reply-To: <55351AEE.70806@samsung.com>
+	by e39.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
+	Tue, 21 Apr 2015 17:03:43 -0600
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+	by d01dlp03.pok.ibm.com (Postfix) with ESMTP id C1890C9003E
+	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 18:54:48 -0400 (EDT)
+Received: from d01av04.pok.ibm.com (d01av04.pok.ibm.com [9.56.224.64])
+	by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3LN3daG65536154
+	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 23:03:39 GMT
+Received: from d01av04.pok.ibm.com (localhost [127.0.0.1])
+	by d01av04.pok.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3LN3cNs027265
+	for <linux-leds@vger.kernel.org>; Tue, 21 Apr 2015 19:03:39 -0400
+In-Reply-To: <552F437E.4020409@linux.vnet.ibm.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, mpe@ellerman.id.au, cooloney@gmail.com, rpurdie@rpsys.net, Benjamin Herrenschmidt <benh@kernel.crashing.org>, khandual@linux.vnet.ibm.com
+To: mpe@ellerman.id.au
+Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-On 04/20/2015 08:57 PM, Jacek Anaszewski wrote:
-> Hi Vasant,
-> 
+Vasant Hegde <hegdevasant@linux.vnet.ibm.com> writes:
+> On 04/16/2015 12:20 AM, Stewart Smith wrote:
+>> Jacek Anaszewski <j.anaszewski@samsung.com> writes:
+>>>> +static struct platform_driver powernv_led_driver = {
+>>>> +	.probe	= powernv_led_probe,
+>>>> +	.remove = powernv_led_remove,
+>>>> +	.driver = {
+>>>> +		.name = "powernv-led-driver",
+>>>> +		.owner = THIS_MODULE,
+>>>> +		.of_match_table = powernv_led_match,
+>>>
+>>> Is somewhere DT documentation available for these leds?
+>> 
+>> https://github.com/open-power/skiboot/blob/master/doc/device-tree/ibm%2Copal/led.txt
+>> 
+>> We've been documenting things in firmware source, and I'm open to if we
+>> should mirror this somewhere (somewhere in linux Documentation/ ?).
+>
+> Stewart,
+>
+> I'm adding Documentation/devicetree/bindings/leds/leds-powernv.txt ...which is
+> pretty much similar to the device tree documentation we have in OPAL side.
 
-Jacek,
+Michael,
 
-Thanks for the review.
-
-> Thanks for the update.
-> 
-> On 04/20/2015 10:01 AM, Vasant Hegde wrote:
->> This patch implements LED driver for PowerNV platform using the existing
->> generic LED class framework.
->>
->> PowerNV platform has below type of LEDs:
->>    - System attention
->>        Indicates there is a problem with the system that needs attention.
->>    - Identify
->>        Helps the user locate/identify a particular FRU or resource in the
->>        system.
->>    - Fault
->>        Indicates there is a problem with the FRU or resource at the
->>        location with which the indicator is associated.
->>
->> We registers classdev structures for all individual LEDs detected on the
-> 
-> s/registers/register
-
-Fixed.
-
-> 
->> system through LED specific device tree nodes. Device tree nodes specify
->> what  all kind of LEDs present on the same location code.It registers
->> LED classdev structure for each of them.
->>
->> All the system LEDs can be found in the same regular path /sys/class/leds/.
->> We don't use LED colors. Hence our LEDs have names in this format.
->>
->>          <location_code>:<ATTENTION|IDENT|FAULT>
-> 
-> I think that powernv prefix should be also present in the beginning.
-> What would be the format of <location_code> ? Does it identify a LED
-> uniquely.
-
-Location code is unique and its guaranteed that we don't clash here. Also this
-is platform specific LEDs and I don't see any value by prefixing "powernv".
-Hence I think its fine with current format.
-
-Sample location code : U78C9.001.RST0027-P1-C1
-  Here "U78C9.001.RST0027" represents the system model
-             P1 - Planar 1
-             C1 - Card 1
-
-.../...
-
->> +led {
->> +    compatible = "ibm,opal-v3-led";
->> +    phandle = <0x1000006b>;
->> +    linux,phandle = <0x1000006b>;
->> +    led-mode = "lightpath";
->> +
->> +    U78C9.001.RST0027-P1-C1 {
-> 
-> DT node names should be in lowercase form.
-> Is U78C9.001.RST0027-P1-C1 a location code?
-
-Yes ... Node presents the location code.. Platform provides these location code
-in upper case. Hence our OPAL firmware exposes them in upper case.
-
-> 
->> +        led-types = "identify", "fault";
->> +        led-loc = "descendent";
->> +        phandle = <0x1000006f>;
->> +        linux,phandle = <0x1000006f>;
->> +    };
->> +    ...
->> +    ...
->> +};
->> +
->> +
->> +'compatible' property describes LEDs compatibility.
-> 
-> compatible doesn't need to be mentioned here.
-
-Removed.
-
-> 
->> +'led-mode' property describes service indicator mode (lightpath/guidinglight).
-> 
-> You don't parse this in the driver? What is its purpose?
-
-As mentioned in other thread, currently our driver doesn't parse this. (As mode
-is provided by platform and its static).
-
-Do you want me to elaborate this property here?
-
-.../...
-
->> +
->> +/*
->> + * By default unload path resets all the LEDs. But on PowerNV platform
->> + * we want to retain LED state across reboot as these are controlled by
->> + * firmware. Also service processor can modify the LEDs independent of
->> + * OS. Hence avoid resetting LEDs in unload path.
->> + */
->> +static bool led_disabled;
-> 
-> I think that we have to make it configurable from the Device Tree level.
-> There could be a 'retain-state-removed' property introduced.
-
-Hmmm.. In my case, LED behavior is not going to change. Hence I don't think we
-need this property.
-
-> 
-> There is also another implication - you define LED_CORE_SUSPENDRESUME
-> flag. With current approach it wouldn't turn the led off on suspend.
-> Please either drop the flag or assure correct behaviour on suspend.
-
-I will drop this.
-
-> You can also make this configurable like retain-state-suspended
-> property in Documentation/devicetree/bindings/leds/leds-gpio.txt.
-> 
-
-.../...
-
->> +
->> +    if (powernv_get_loc_code(led_type, loc_code) != 0)
->> +        goto out_loc;
->> +
->> +    /* Prepare for the OPAL call */
->> +    max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
->> +    led_mask = OPAL_SLOT_LED_STATE_ON << led_type;
->> +    if (value)
->> +        led_value = OPAL_SLOT_LED_STATE_ON << led_type;
-> 
->         led_value = led_mask;
-
-Fixed.
-
-.../...
-
->> +
->> +/* Schedule work to update LED state */
->> +static void powernv_led_set_queue(struct led_classdev *led_cdev,
->> +                  enum led_brightness value, u64 led_type)
-> 
-> It doesn't set any queue. It should be powernv_brightness_set.
-
-Make sense. Fixed.
-
-.../...
-
->> +    /* Create the name for classdev */
->> +    switch (led_type) {
->> +    case OPAL_SLOT_LED_TYPE_ATTN:
->> +        powernv_led->cdev.name = kasprintf(GFP_KERNEL,
->> +                           "%s%s", node->name,
->> +                           POWERNV_LED_ATTN);
-> 
-> LED name should be taken from of_node name or label property directly.
-> Please refer to the other LED class drivers.
-
-Hmmm.. Our  current FW provides led-types property which tells available type
-for given location code..
-like
-  led-types = "identify" "fault"..
-
-Can I use this ? So the names will be
-   <location_code>:<identify|fault|attention>
-
-And if this approach fine,  I can fix (assuming maintainer agrees :-) ) firmware
-side to change identify -> ident.
-
-
-.../...
-
-
->> +        list_add_tail(&powernv_led->link, &powernv_led_list);
-> 
-> You don't need a list. powernv_led can be allocated with devm_kzalloc
-> and it will be released on remove automatically.
-
-
-Sure. .will look into it.
-
--Vasant
+I know we've kind of discussed this in the past, but perhaps we should
+come up with a conistent way of doing this for OPAL related docs.
