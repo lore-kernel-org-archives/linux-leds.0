@@ -1,503 +1,253 @@
-From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: [PATCH v7 3/3] leds: Add ktd2692 flash LED driver
-Date: Thu, 23 Apr 2015 22:18:05 +0900
-Message-ID: <1429795085-22171-4-git-send-email-ingi2.kim@samsung.com>
-References: <1429795085-22171-1-git-send-email-ingi2.kim@samsung.com>
+From: Jacek Anaszewski <j.anaszewski81@gmail.com>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Thu, 23 Apr 2015 16:13:42 +0200
+Message-ID: <20150423161342.55e9ac8f@ja.home>
+References: <20150422234509.626d9dc7@ja.home>
+	<55388254.4000606@linux.vnet.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16333 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755160AbbDWNSL (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2015 09:18:11 -0400
-In-reply-to: <1429795085-22171-1-git-send-email-ingi2.kim@samsung.com>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:35310 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964779AbbDWONx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2015 10:13:53 -0400
+Received: by widdi4 with SMTP id di4so217457273wid.0
+        for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 07:13:52 -0700 (PDT)
+In-Reply-To: <55388254.4000606@linux.vnet.ibm.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: stewart@linux.vnet.ibm.com, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
 
-This patch adds a driver to support the ktd2692 flash LEDs.
-ktd2692 can control flash current by ExpressWire interface.
+On Thu, 23 Apr 2015 10:55:40 +0530
+Vasant Hegde <hegdevasant@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
-Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/leds/Kconfig        |   9 +
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-ktd2692.c | 435 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 445 insertions(+)
- create mode 100644 drivers/leds/leds-ktd2692.c
+> On 04/23/2015 03:15 AM, Jacek Anaszewski wrote:
+> > Hi Vasant,
+> > 
+> 
+> Hi Jacek,
+> 
+> 
+> .../...
+> 
+> >>
+> >>>
+> >>>  From what I can see from the driver code the LEDs are set with:
+> >>>
+> >>> opal_leds_set_ind(token, loc_code, led_mask, led_value,
+> >>> &max_led_type);
+> >>>
+> >>> and their state can be read with:
+> >>>
+> >>> opal_leds_get_ind(loc_code, &led_mask, &led_value, &max_led_type)
+> >>>
+> >>>  From the kernel point of view these are very simple operations.
+> >>>
+> >>> All the logic you described should be handled by user space.
+> >>> If you need to be able to specify the LED mode you want to
+> >>> set/read, then additional 'mode' sysfs attribute should be added
+> >>> by the driver. There would have to be also additional sysfs
+> >>> attribute 'available_modes" provided. The ABI documentation
+> >>> should inform how the mode identifiers map to the modes. I
+> >>> already explained how to add it, when we were discussing about
+> >>> retaining led state on remove.
+> >>
+> >> Sorry..My fault.. I should have elaborated mode operation...
+> > 
+> > What I was thinking about here was actually LED type, not mode in
+> > terms of Guiding Light/Light Path. However, please look at the
+> > newest approach in the end of this message.
+> > 
+> 
+> No problem.
+> 
+> >> I forgot to mention that LED mode is static... meaning platform
+> >> provides this information, but we cannot change during runtime..
+> >>
+> >> Presently we have this information in Device Tree. Since this is
+> >> static one (and also LED Mode is system wide.. nothing to do
+> >> individual LED),  I didn't add it in LED driver code.. .Do you
+> >> think we should add that property ?
+> > 
+> > The property shouldn't be documented at all if it isn't to be used.
+> 
+> Ok . I will remove this.
+> 
+> > 
+> >>>
+> >>>
+> >>> I'd see following use cases.
+> >>>
+> >>> (let's assume that modes are defined as follows:
+> >>> 0: ident, 1: attn, 2: fault)
+> >>
+> >> Modes are : Guiding Light / Light Path ... which is static and
+> >> platform provides this information.
+> >>
+> >> LED types : IDENT, FAULT and ATTN .... which can be get/set/reset
+> >> by OS (kernel/userspace)
+> >>
+> >> Also only 1 LED can be ATTN ...
+> >>
+> >>> #cat available_modes
+> >>> #0 1 2
+> >>> #echo 0 > mode  //set ident mode
+> >>> #echo 1 > brightness //set ident state
+> >>> #echo 2 > mode  //set fault mode
+> >>> #cat brightness //read fault state
+> >>> #0
+> >>> #echo 1 > attn //set attn mode
+> >>> #echo 1 > brightness
+> >>>
+> >>> This would set the LED in blinking mode, so I am wondering if we
+> >>> shouldn't employ timer trigger for this to keep the LED API
+> >>> consistent.
+> >>>
+> >>> Can a single LED support other mode than 'attention'? I'd like to
+> >>> know if a LED in attention mode (blinking), can be set to some
+> >>> solid mode?
+> >>
+> >> No.. Its always single attention LED/system ... which can be Set
+> >> (Solid) / reset state.
+> > 
+> > I confused it with ident.
+> 
+> No problem. We have many hardware specific jargon's which is enough
+> to confuse anyone :-)
+> 
+> > 
+> >>>
+> >>> Please let me know if such an approach would still not fit for
+> >>> your requirements.
+> >>>
+> >>
+> >> Given above conditions, I think current approach (my v3 patchset)
+> >> is simple and works better. What you say?
+> > 
+> > Yes, but we still have naming and blinking issues to solve.
+> > 
+> > Please look at this draft design of device tree node:
+> > 
+> > opal-leds {
+> >         compatible = "ibm,opal-v3-led";
+> > 
+> >         U78C9.001.RST0027-P1-C1:attn {
+> >         };
+> > 
+> >         U78C9.001.RST0027-P2-C1:identify:fault 
+> >         };
+> > 
+> >         U78C9.001.RST0027-P3-C2:identify:fault {
+> >         };
+> >     };
+> > };
+> > 
+> > The LED nodes could be empty as the name would convey all the
+> > required information. The implications would be as follows:
+> > 
+> 
+> These device tree comes from out firmware ... which is immutable .
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 51059bb..bfbdbd1 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -505,6 +505,15 @@ config LEDS_MENF21BMC
- 	  This driver can also be built as a module. If so the module
- 	  will be called leds-menf21bmc.
- 
-+config LEDS_KTD2692
-+	tristate "KTD2692 LED flash support"
-+	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
-+	help
-+	  This option enables support for KTD2692 LED flash connected
-+	  through ExpressWire interface.
-+
-+	  Say Y to enable this driver.
-+
- comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
- 
- config LEDS_BLINKM
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index a739ae2..ed5ed79 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -59,6 +59,7 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
- obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
- obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
- obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
-+obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
-new file mode 100644
-index 0000000..cec5264
---- /dev/null
-+++ b/drivers/leds/leds-ktd2692.c
-@@ -0,0 +1,435 @@
-+/*
-+ * LED driver : leds-ktd2692.c
-+ *
-+ * Copyright (C) 2015 Samsung Electronics
-+ * Ingi Kim <ingi2.kim@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/workqueue.h>
-+
-+/* Value related the movie mode */
-+#define KTD2692_MOVIE_MODE_CURRENT_MAX_MA	300000
-+#define KTD2692_MOVIE_MODE_CURRENT_LEVELS	16
-+#define KTD2692_MM_TO_FL_RATIO			(1 / 3)
-+#define KTD2962_MM_MIN_CURR_THRESHOLD_SCALE	8
-+
-+/* Value related the flash mode */
-+#define KTD2692_FLASH_MODE_TIMEOUT_LEVELS	8
-+#define KTD2692_FLASH_MODE_TIMEOUT_DISABLE	0
-+#define KTD2692_FLASH_MODE_CURR_PERCENT(x)	(((x) * 16) / 100)
-+
-+/* Macro for getting offset of flash timeout */
-+#define GET_TIMEOUT_OFFSET(timeout, step)	((timeout) / (step))
-+
-+/* Base register address */
-+#define KTD2692_REG_LVP_BASE			0x00
-+#define KTD2692_REG_FLASH_TIMEOUT_BASE		0x20
-+#define KTD2692_REG_MM_MIN_CURR_THRESHOLD_BASE	0x40
-+#define KTD2692_REG_MOVIE_CURRENT_BASE		0x60
-+#define KTD2692_REG_FLASH_CURRENT_BASE		0x80
-+#define KTD2692_REG_MODE_BASE			0xA0
-+
-+/* Set bit coding time for expresswire interface */
-+#define KTD2692_TIME_RESET_US			700
-+#define KTD2692_TIME_DATA_START_TIME_US		10
-+#define KTD2692_TIME_HIGH_END_OF_DATA_US	350
-+#define KTD2692_TIME_LOW_END_OF_DATA_US		10
-+#define KTD2692_TIME_SHORT_BITSET_US		4
-+#define KTD2692_TIME_LONG_BITSET_US		12
-+
-+/* KTD2692 default length of name */
-+#define KTD2692_NAME_LENGTH			20
-+
-+enum ktd2692_bitset {
-+	KTD2692_LOW = 0,
-+	KTD2692_HIGH,
-+};
-+
-+/* Movie / Flash Mode Control */
-+enum ktd2692_led_mode {
-+	KTD2692_MODE_DISABLE = 0,	/* default */
-+	KTD2692_MODE_MOVIE,
-+	KTD2692_MODE_FLASH,
-+};
-+
-+struct ktd2692_led_config_data {
-+	/* maximum LED current in flash mode */
-+	u32 flash_max_microamp;
-+	/* maximum flash timeout */
-+	u32 flash_max_timeout;
-+	/* max LED brightness level */
-+	enum led_brightness max_brightness;
-+};
-+
-+struct ktd2692_context {
-+	/* Related LED Flash class device */
-+	struct led_classdev_flash fled_cdev;
-+
-+	/* secures access to the device */
-+	struct mutex lock;
-+	struct regulator *regulator;
-+	struct work_struct work_brightness_set;
-+
-+	struct gpio_desc *aux_gpio;
-+	struct gpio_desc *ctrl_gpio;
-+
-+	enum ktd2692_led_mode mode;
-+	enum led_brightness torch_brightness;
-+};
-+
-+static struct ktd2692_context *fled_cdev_to_led(
-+				struct led_classdev_flash *fled_cdev)
-+{
-+	return container_of(fled_cdev, struct ktd2692_context, fled_cdev);
-+}
-+
-+static void ktd2692_expresswire_start(struct ktd2692_context *led)
-+{
-+	gpiod_direction_output(led->ctrl_gpio, KTD2692_HIGH);
-+	udelay(KTD2692_TIME_DATA_START_TIME_US);
-+}
-+
-+static void ktd2692_expresswire_reset(struct ktd2692_context *led)
-+{
-+	gpiod_direction_output(led->ctrl_gpio, KTD2692_LOW);
-+	udelay(KTD2692_TIME_RESET_US);
-+}
-+
-+static void ktd2692_expresswire_end(struct ktd2692_context *led)
-+{
-+	gpiod_direction_output(led->ctrl_gpio, KTD2692_LOW);
-+	udelay(KTD2692_TIME_LOW_END_OF_DATA_US);
-+	gpiod_direction_output(led->ctrl_gpio, KTD2692_HIGH);
-+	udelay(KTD2692_TIME_HIGH_END_OF_DATA_US);
-+}
-+
-+static void ktd2692_expresswire_set_bit(struct ktd2692_context *led, bool bit)
-+{
-+	/*
-+	 * The Low Bit(0) and High Bit(1) is based on a time detection
-+	 * algorithm between time low and time high
-+	 * Time_(L_LB) : Low time of the Low Bit(0)
-+	 * Time_(H_LB) : High time of the LOW Bit(0)
-+	 * Time_(L_HB) : Low time of the High Bit(1)
-+	 * Time_(H_HB) : High time of the High Bit(1)
-+	 *
-+	 * It can be simplified to:
-+	 * Low Bit(0) : 2 * Time_(H_LB) < Time_(L_LB)
-+	 * High Bit(1) : 2 * Time_(L_HB) < Time_(H_HB)
-+	 * HIGH  ___           ____    _..     _________    ___
-+	 *          |_________|    |_..  |____|         |__|
-+	 * LOW        <L_LB>  <H_LB>     <L_HB>  <H_HB>
-+	 *          [  Low Bit (0) ]     [  High Bit(1) ]
-+	 */
-+	if (bit) {
-+		gpiod_direction_output(led->ctrl_gpio, KTD2692_LOW);
-+		udelay(KTD2692_TIME_SHORT_BITSET_US);
-+		gpiod_direction_output(led->ctrl_gpio, KTD2692_HIGH);
-+		udelay(KTD2692_TIME_LONG_BITSET_US);
-+	} else {
-+		gpiod_direction_output(led->ctrl_gpio, KTD2692_LOW);
-+		udelay(KTD2692_TIME_LONG_BITSET_US);
-+		gpiod_direction_output(led->ctrl_gpio, KTD2692_HIGH);
-+		udelay(KTD2692_TIME_SHORT_BITSET_US);
-+	}
-+}
-+
-+static void ktd2692_expresswire_write(struct ktd2692_context *led, u8 value)
-+{
-+	int i;
-+
-+	ktd2692_expresswire_start(led);
-+	for (i = 7; i >= 0; i--)
-+		ktd2692_expresswire_set_bit(led, value & BIT(i));
-+	ktd2692_expresswire_end(led);
-+}
-+
-+static void ktd2692_brightness_set(struct ktd2692_context *led,
-+				   enum led_brightness brightness)
-+{
-+	mutex_lock(&led->lock);
-+
-+	if (brightness == LED_OFF) {
-+		led->mode = KTD2692_MODE_DISABLE;
-+		gpiod_direction_output(led->aux_gpio, KTD2692_LOW);
-+	} else {
-+		ktd2692_expresswire_write(led, brightness |
-+					KTD2692_REG_MOVIE_CURRENT_BASE);
-+		led->mode = KTD2692_MODE_MOVIE;
-+	}
-+
-+	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
-+	mutex_unlock(&led->lock);
-+}
-+
-+static void ktd2692_brightness_set_work(struct work_struct *work)
-+{
-+	struct ktd2692_context *led =
-+		container_of(work, struct ktd2692_context, work_brightness_set);
-+
-+	ktd2692_brightness_set(led, led->torch_brightness);
-+}
-+
-+static void ktd2692_led_brightness_set(struct led_classdev *led_cdev,
-+				       enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-+
-+	led->torch_brightness = brightness;
-+	schedule_work(&led->work_brightness_set);
-+}
-+
-+static int ktd2692_led_brightness_set_sync(struct led_classdev *led_cdev,
-+					   enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-+
-+	ktd2692_brightness_set(led, brightness);
-+
-+	return 0;
-+}
-+
-+static int ktd2692_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
-+					bool state)
-+{
-+	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
-+	struct led_flash_setting *timeout = &fled_cdev->timeout;
-+	u32 flash_tm_reg;
-+
-+	mutex_lock(&led->lock);
-+
-+	if (state == 0) {
-+		led->mode = KTD2692_MODE_DISABLE;
-+		gpiod_direction_output(led->aux_gpio, KTD2692_LOW);
-+	} else {
-+		flash_tm_reg = GET_TIMEOUT_OFFSET(timeout->val, timeout->step);
-+		ktd2692_expresswire_write(led, flash_tm_reg
-+				| KTD2692_REG_FLASH_TIMEOUT_BASE);
-+
-+		led->mode = KTD2692_MODE_FLASH;
-+		gpiod_direction_output(led->aux_gpio, KTD2692_HIGH);
-+	}
-+
-+	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
-+
-+	fled_cdev->led_cdev.brightness = LED_OFF;
-+	led->mode = KTD2692_MODE_DISABLE;
-+
-+	mutex_unlock(&led->lock);
-+
-+	return 0;
-+}
-+
-+static int ktd2692_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
-+					 u32 timeout)
-+{
-+	return 0;
-+}
-+
-+static void ktd2692_init_movie_current_max(struct ktd2692_led_config_data *cfg)
-+{
-+	u32 offset, step;
-+	u32 movie_current_microamp;
-+
-+	offset = KTD2692_MOVIE_MODE_CURRENT_LEVELS;
-+	step = (cfg->flash_max_microamp / KTD2692_MM_TO_FL_RATIO)
-+		/ KTD2692_MOVIE_MODE_CURRENT_LEVELS;
-+
-+	do {
-+		movie_current_microamp = step * offset;
-+		offset--;
-+	} while ((movie_current_microamp > KTD2692_MOVIE_MODE_CURRENT_MAX_MA) &&
-+		(offset > 0));
-+
-+	cfg->max_brightness = offset;
-+}
-+
-+static void ktd2692_init_flash_timeout(struct led_classdev_flash *fled_cdev,
-+				       struct ktd2692_led_config_data *cfg)
-+{
-+	struct led_flash_setting *setting;
-+
-+	setting = &fled_cdev->timeout;
-+	setting->min = KTD2692_FLASH_MODE_TIMEOUT_DISABLE;
-+	setting->max = cfg->flash_max_timeout;
-+	setting->step = cfg->flash_max_timeout
-+			/ (KTD2692_FLASH_MODE_TIMEOUT_LEVELS - 1);
-+	setting->val = cfg->flash_max_timeout;
-+}
-+
-+static void ktd2692_setup(struct ktd2692_context *led)
-+{
-+	led->mode = KTD2692_MODE_DISABLE;
-+	ktd2692_expresswire_reset(led);
-+	gpiod_direction_output(led->aux_gpio, KTD2692_LOW);
-+
-+	ktd2692_expresswire_write(led, (KTD2962_MM_MIN_CURR_THRESHOLD_SCALE - 1)
-+				 | KTD2692_REG_MM_MIN_CURR_THRESHOLD_BASE);
-+	ktd2692_expresswire_write(led, KTD2692_FLASH_MODE_CURR_PERCENT(45)
-+				 | KTD2692_REG_FLASH_CURRENT_BASE);
-+}
-+
-+static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
-+			    struct ktd2692_led_config_data *cfg)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child_node;
-+	int ret;
-+
-+	if (!dev->of_node)
-+		return -ENXIO;
-+
-+	led->ctrl_gpio = devm_gpiod_get(dev, "ctrl");
-+	if (IS_ERR(led->ctrl_gpio)) {
-+		ret = PTR_ERR(led->ctrl_gpio);
-+		dev_err(dev, "cannot get ctrl-gpio %d\n", ret);
-+		return ret;
-+	}
-+
-+	led->aux_gpio = devm_gpiod_get(dev, "aux");
-+	if (IS_ERR(led->aux_gpio)) {
-+		ret = PTR_ERR(led->aux_gpio);
-+		dev_err(dev, "cannot get aux-gpio %d\n", ret);
-+		return ret;
-+	}
-+
-+	led->regulator = devm_regulator_get(dev, "vin");
-+	if (IS_ERR(led->regulator))
-+		led->regulator = NULL;
-+
-+	if (led->regulator) {
-+		ret = regulator_enable(led->regulator);
-+		if (ret)
-+			dev_err(dev, "Failed to enable supply: %d\n", ret);
-+	}
-+
-+	child_node = of_get_next_available_child(np, NULL);
-+	if (!child_node) {
-+		dev_err(dev, "No DT child node found for connected LED.\n");
-+		return -EINVAL;
-+	}
-+
-+	led->fled_cdev.led_cdev.name =
-+		of_get_property(child_node, "label", NULL) ? : child_node->name;
-+
-+	ret = of_property_read_u32(child_node, "flash-max-microamp",
-+				   &cfg->flash_max_microamp);
-+	if (ret) {
-+		dev_err(dev, "failed to parse flash-max-microamp\n");
-+		return ret;
-+	}
-+
-+	ret = of_property_read_u32(child_node, "flash-max-timeout-us",
-+				   &cfg->flash_max_timeout);
-+	if (ret)
-+		dev_err(dev, "failed to parse flash-max-timeout-us\n");
-+
-+	of_node_put(child_node);
-+	return ret;
-+}
-+
-+static const struct led_flash_ops flash_ops = {
-+	.strobe_set = ktd2692_led_flash_strobe_set,
-+	.timeout_set = ktd2692_led_flash_timeout_set,
-+};
-+
-+static int ktd2692_probe(struct platform_device *pdev)
-+{
-+	struct ktd2692_context *led;
-+	struct led_classdev *led_cdev;
-+	struct led_classdev_flash *fled_cdev;
-+	struct ktd2692_led_config_data led_cfg;
-+	int ret;
-+
-+	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	fled_cdev = &led->fled_cdev;
-+	led_cdev = &fled_cdev->led_cdev;
-+
-+	ret = ktd2692_parse_dt(led, &pdev->dev, &led_cfg);
-+	if (ret)
-+		return ret;
-+
-+	ktd2692_init_flash_timeout(fled_cdev, &led_cfg);
-+	ktd2692_init_movie_current_max(&led_cfg);
-+
-+	fled_cdev->ops = &flash_ops;
-+
-+	led_cdev->max_brightness = led_cfg.max_brightness;
-+	led_cdev->brightness_set = ktd2692_led_brightness_set;
-+	led_cdev->brightness_set_sync = ktd2692_led_brightness_set_sync;
-+	led_cdev->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
-+
-+	mutex_init(&led->lock);
-+	INIT_WORK(&led->work_brightness_set, ktd2692_brightness_set_work);
-+
-+	platform_set_drvdata(pdev, led);
-+
-+	ret = led_classdev_flash_register(&pdev->dev, fled_cdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "can't register LED %s\n", led_cdev->name);
-+		mutex_destroy(&led->lock);
-+		return ret;
-+	}
-+
-+	ktd2692_setup(led);
-+
-+	return 0;
-+}
-+
-+static int ktd2692_remove(struct platform_device *pdev)
-+{
-+	struct ktd2692_context *led = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	led_classdev_flash_unregister(&led->fled_cdev);
-+	cancel_work_sync(&led->work_brightness_set);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&pdev->dev,
-+				"Failed to disable supply: %d\n", ret);
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ktd2692_match[] = {
-+	{ .compatible = "kinetic,ktd2692", },
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver ktd2692_driver = {
-+	.driver = {
-+		.name  = "ktd2692",
-+		.of_match_table = ktd2692_match,
-+	},
-+	.probe  = ktd2692_probe,
-+	.remove = ktd2692_remove,
-+};
-+
-+module_platform_driver(ktd2692_driver);
-+
-+MODULE_AUTHOR("Ingi Kim <ingi2.kim@samsung.com>");
-+MODULE_DESCRIPTION("Kinetic KTD2692 LED driver");
-+MODULE_LICENSE("GPL v2");
+How the firmware is related to kernel? These bindings are for kernel,
+not for the firmware.
+
+DT bindings are compiled to *.dtb file which is concatenated with
+zImage. During system boot device drivers are matched with DT bindings
+through 'compatible' property. A driver should have single matching DT
+node, i.e. no other driver can probe with the same DT node.
+This implies that the node should contain only the properties required
+for configuring the related device.
+
+> We can use LED node name + led-type property for naming...which is
+> what I do currently (v4.. which I haven't posted)
+>
+> 
+> > 1. Each LED would have one corresponding LED class device.
+> > 
+> > 2. Operations on attn and fault LED types:
+> > 	turn on:
+> > 		echo 255 > brightness
+> > 	turn off:
+> > 		echo 0 > brightness
+> > 	get status
+> > 		cat brightness
+> > 	
+> > 3. Operations on identify LED:
+> > 	turn on:
+> > 		echo "timer" > trigger
+> > 		(blink_set op would have to be implemented in the
+> > 		driver)
+> > 	turn off:
+> > 		echo 0 > brightness
+> > 	get status:
+> > 		support for this would have to be added to the LED
+> > 		subsystem core
+> 
+> I see few issues here.
+>   - Overloading same LED device with multiple opeartion complicates
+> things .. as these operations can be done independently (say user is
+> allowed to enable both identify and fault simultaneously)
+
+I agree, it would be hard to distinguish whether by executing
+`echo 0 > brightness` we want to turn off identify or fault function.
+
+>   - point 3: IIUC after duration value expires identify indicator
+> reverts.. we don't want to revert until user asks .
+
+>From what you shared, blinking has hardware acceleration on OPAL side.
+At first timer trigger tries to use HW accelerated blinking by
+calling blink_set op and resorts to using software fallback only if
+the op fails or is not defined.
+
+BTW timer trigger re-sets blink after timer expires, unless
+LED_BLINK_ONESHOT flag is set by LED class device.
+
+>   - point 3: if I use brightness for both identify/fault, how to
+> disable these LEDs independently?
+
+Another sysfs attribute would be required, but it would be ugly.
+
+>   - Also how to use trigger property for each LED (if at all we want
+> to use them later)?
+>
+
+After analyzing pros and cons I think that separate LED class devices
+for each LED type would be most suitable solution in this case.
+
+For 'identify' LED the operation would be:
+
+#echo "timer" > trigger		//set 'identify' (blinking)
+#cat trigger			//check "identify" state
+#none [timer]			//'identify' is ON
+#echo 0 > brightness		//unset 'identify
+#cat trigger
+#[none] timer			//'identify' is OFF
+
+You would have to implement blink_set op
+(see Documentation/leds/leds-class.txt and other LED class drivers for
+reference).
+
+For attention and fault LEDs only brightness attribute would matter.
+
+DT bindings would look as follows:
+
+opal-leds {
+        compatible = "ibm,opal-leds";
+
+        U78C9.001.RST0027-P1-C1:fault {
+        };
+
+        U78C9.001.RST0027-P1-C1:indent {
+        };
+
+        U78C9.001.RST0027-P2-C1:attn
+        };
+    }
+}
+
+
 -- 
-2.0.5
+Best Regards,
+Jacek Anaszewski
