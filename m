@@ -1,237 +1,206 @@
 From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Thu, 23 Apr 2015 10:27:38 +0530
-Message-ID: <55387BC2.1050004@linux.vnet.ibm.com>
-References: <20150422234524.305b5324@ja.home>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Thu, 23 Apr 2015 10:55:40 +0530
+Message-ID: <55388254.4000606@linux.vnet.ibm.com>
+References: <20150422234509.626d9dc7@ja.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:41445 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752168AbbDWE6i (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2015 00:58:38 -0400
+Received: from e23smtp01.au.ibm.com ([202.81.31.143]:45012 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751980AbbDWF0g (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2015 01:26:36 -0400
 Received: from /spool/local
-	by e23smtp07.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
 	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Thu, 23 Apr 2015 14:58:35 +1000
-In-Reply-To: <20150422234524.305b5324@ja.home>
+	Thu, 23 Apr 2015 15:26:34 +1000
+Received: from d23relay08.au.ibm.com (d23relay08.au.ibm.com [9.185.71.33])
+	by d23dlp02.au.ibm.com (Postfix) with ESMTP id D4F6C2BB0051
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 15:26:31 +1000 (EST)
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+	by d23relay08.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3N5QNuE22151346
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 15:26:31 +1000
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+	by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3N5Pv3D025218
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 15:25:58 +1000
+In-Reply-To: <20150422234509.626d9dc7@ja.home>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Cc: stewart@linux.vnet.ibm.com, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com, benh@kernel.crashing.org, mpe@ellerman.id.au, devicetree@vger.kernel.org
+Cc: stewart@linux.vnet.ibm.com, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
 
 On 04/23/2015 03:15 AM, Jacek Anaszewski wrote:
->> On 21.04.2015 07:50, Vasant Hegde wrote:
->> On 04/20/2015 08:57 PM, Jacek Anaszewski wrote:
->>> Hi Vasant,
->>>
->>
+> Hi Vasant,
+> 
 
-Jacek,
+Hi Jacek,
+
 
 .../...
 
->>>>
->>>> All the system LEDs can be found in the same regular
->>>> path /sys/class/leds/. We don't use LED colors. Hence our LEDs have
->>>> names in this format.
->>>>
->>>>           <location_code>:<ATTENTION|IDENT|FAULT>
->>>
->>> I think that powernv prefix should be also present in the beginning.
->>> What would be the format of <location_code> ? Does it identify a LED
->>> uniquely.
->>
->> Location code is unique and its guaranteed that we don't clash here.
->> Also this is platform specific LEDs and I don't see any value by
->> prefixing "powernv". Hence I think its fine with current format.
->>
->> Sample location code : U78C9.001.RST0027-P1-C1
->>    Here "U78C9.001.RST0027" represents the system model
->>               P1 - Planar 1
->>               C1 - Card 1
-> 
-> I consulted ePAPR standard and all the characters used for location code
-> are allowed. Nonetheless AFAIK no existing bindings use uppercase for
-> node name.
-> 
-
-These are PowerNV platform specific properties..
-
-
-> 
-> We will need DT maintainer's ack here too, so cc DT list.
-> Please CC devicetree@vger.kernel.org next time, especially for
-> DT documentation patch.
-> 
-
-Sure. Next time I will CC DT mailing list.
-
-@Ben,
-  Any comments?
-
->> .../...
->>
->>>> +led {
->>>> +    compatible = "ibm,opal-v3-led";
->>>> +    phandle = <0x1000006b>;
->>>> +    linux,phandle = <0x1000006b>;
->>>> +    led-mode = "lightpath";
->>>> +
->>>> +    U78C9.001.RST0027-P1-C1 {
->>>
->>> DT node names should be in lowercase form.
->>> Is U78C9.001.RST0027-P1-C1 a location code?
->>
->> Yes ... Node presents the location code.. Platform provides these
->> location code in upper case. Hence our OPAL firmware exposes them in
->> upper case.
 >>
 >>>
->>>> +        led-types = "identify", "fault";
->>>> +        led-loc = "descendent";
->>>> +        phandle = <0x1000006f>;
->>>> +        linux,phandle = <0x1000006f>;
-> 
-> I think that all these properties will not be needed.
-
-These properties are coming from our firmware which is static.
-
-phandle property is default .. which is required to uniquely identify node
-inside  DT.
-led-loc property is not used today. If its not going to be used forever then I
-can request
-FW folks to remove it later.
-
-
-> 
->>>> +    };
->>>> +    ...
->>>> +    ...
->>>> +};
->>>> +
->>>> +
->>>> +'compatible' property describes LEDs compatibility.
+>>>  From what I can see from the driver code the LEDs are set with:
 >>>
->>> compatible doesn't need to be mentioned here.
->>
->> Removed.
->>
+>>> opal_leds_set_ind(token, loc_code, led_mask, led_value,
+>>> &max_led_type);
 >>>
->>>> +'led-mode' property describes service indicator mode
->>>> (lightpath/guidinglight).
+>>> and their state can be read with:
 >>>
->>> You don't parse this in the driver? What is its purpose?
->>
->> As mentioned in other thread, currently our driver doesn't parse
->> this. (As mode is provided by platform and its static).
->>
->> Do you want me to elaborate this property here?
-> 
-> I don't think so. At least for now :)
-
-Ok.
-
-> 
->> .../...
->>
->>>> +
->>>> +/*
->>>> + * By default unload path resets all the LEDs. But on PowerNV
->>>> platform
->>>> + * we want to retain LED state across reboot as these are
->>>> controlled by
->>>> + * firmware. Also service processor can modify the LEDs
->>>> independent of
->>>> + * OS. Hence avoid resetting LEDs in unload path.
->>>> + */
->>>> +static bool led_disabled;
+>>> opal_leds_get_ind(loc_code, &led_mask, &led_value, &max_led_type)
 >>>
->>> I think that we have to make it configurable from the Device Tree
->>> level. There could be a 'retain-state-removed' property introduced.
+>>>  From the kernel point of view these are very simple operations.
+>>>
+>>> All the logic you described should be handled by user space.
+>>> If you need to be able to specify the LED mode you want to set/read,
+>>> then additional 'mode' sysfs attribute should be added by the driver.
+>>> There would have to be also additional sysfs attribute
+>>> 'available_modes" provided. The ABI documentation should inform how
+>>> the mode identifiers map to the modes. I already explained how to
+>>> add it, when we were discussing about retaining led state on remove.
 >>
->> Hmmm.. In my case, LED behavior is not going to change. Hence I don't
->> think we need this property.
+>> Sorry..My fault.. I should have elaborated mode operation...
 > 
-> Can you guarantee that the next version of the platform will have also
-> the same requirements? What if it would be made available to choose
-> that the LEDs are software-only controlled?
-
-This design exists for ages.. IMO if we change this to software control (or
-dynamic property which can be changed during runtime) then it completely defeats
-the LED purpose. Hence I don't think it will change anytime.
-
+> What I was thinking about here was actually LED type, not mode in terms
+> of Guiding Light/Light Path. However, please look at the newest
+> approach in the end of this message.
 > 
-> If these are unjustified doubts, I'm ok with leaving the static
-> variable.
+
+No problem.
+
+>> I forgot to mention that LED mode is static... meaning platform
+>> provides this information, but we cannot change during runtime..
+>>
+>> Presently we have this information in Device Tree. Since this is
+>> static one (and also LED Mode is system wide.. nothing to do
+>> individual LED),  I didn't add it in LED driver code.. .Do you think
+>> we should add that property ?
+> 
+> The property shouldn't be documented at all if it isn't to be used.
+
+Ok . I will remove this.
+
 > 
 >>>
->>> There is also another implication - you define LED_CORE_SUSPENDRESUME
->>> flag. With current approach it wouldn't turn the led off on suspend.
->>> Please either drop the flag or assure correct behaviour on suspend.
->>
->> I will drop this.
->>
->>> You can also make this configurable like retain-state-suspended
->>> property in Documentation/devicetree/bindings/leds/leds-gpio.txt.
 >>>
->>
->> .../...
->>
->>>> +
->>>> +    if (powernv_get_loc_code(led_type, loc_code) != 0)
->>>> +        goto out_loc;
->>>> +
->>>> +    /* Prepare for the OPAL call */
->>>> +    max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
->>>> +    led_mask = OPAL_SLOT_LED_STATE_ON << led_type;
->>>> +    if (value)
->>>> +        led_value = OPAL_SLOT_LED_STATE_ON << led_type;
+>>> I'd see following use cases.
 >>>
->>>          led_value = led_mask;
+>>> (let's assume that modes are defined as follows:
+>>> 0: ident, 1: attn, 2: fault)
 >>
->> Fixed.
+>> Modes are : Guiding Light / Light Path ... which is static and
+>> platform provides this information.
 >>
->> .../...
+>> LED types : IDENT, FAULT and ATTN .... which can be get/set/reset by
+>> OS (kernel/userspace)
 >>
->>>> +
->>>> +/* Schedule work to update LED state */
->>>> +static void powernv_led_set_queue(struct led_classdev *led_cdev,
->>>> +                  enum led_brightness value, u64 led_type)
+>> Also only 1 LED can be ATTN ...
+>>
+>>> #cat available_modes
+>>> #0 1 2
+>>> #echo 0 > mode  //set ident mode
+>>> #echo 1 > brightness //set ident state
+>>> #echo 2 > mode  //set fault mode
+>>> #cat brightness //read fault state
+>>> #0
+>>> #echo 1 > attn //set attn mode
+>>> #echo 1 > brightness
 >>>
->>> It doesn't set any queue. It should be powernv_brightness_set.
->>
->> Make sense. Fixed.
->>
->> .../...
->>
->>>> +    /* Create the name for classdev */
->>>> +    switch (led_type) {
->>>> +    case OPAL_SLOT_LED_TYPE_ATTN:
->>>> +        powernv_led->cdev.name = kasprintf(GFP_KERNEL,
->>>> +                           "%s%s", node->name,
->>>> +                           POWERNV_LED_ATTN);
+>>> This would set the LED in blinking mode, so I am wondering if we
+>>> shouldn't employ timer trigger for this to keep the LED API
+>>> consistent.
 >>>
->>> LED name should be taken from of_node name or label property
->>> directly. Please refer to the other LED class drivers.
+>>> Can a single LED support other mode than 'attention'? I'd like to
+>>> know if a LED in attention mode (blinking), can be set to some solid
+>>> mode?
 >>
->> Hmmm.. Our  current FW provides led-types property which tells
->> available type for given location code..
->> like
->>    led-types = "identify" "fault"..
->>
->> Can I use this ? So the names will be
->>     <location_code>:<identify|fault|attention>
+>> No.. Its always single attention LED/system ... which can be Set
+>> (Solid) / reset state.
 > 
-> I adressed this in the other message.
-> 
->> And if this approach fine,  I can fix (assuming maintainer agrees :-)
->> ) firmware side to change identify -> ident.
-> 
-> Let's leave it. It seems to be platform specific.
+> I confused it with ident.
 
-Sure.
+No problem. We have many hardware specific jargon's which is enough to confuse
+anyone :-)
 
-Thanks!
--Vasant
+> 
+>>>
+>>> Please let me know if such an approach would still not fit for your
+>>> requirements.
+>>>
+>>
+>> Given above conditions, I think current approach (my v3 patchset) is
+>> simple and works better. What you say?
+> 
+> Yes, but we still have naming and blinking issues to solve.
+> 
+> Please look at this draft design of device tree node:
+> 
+> opal-leds {
+>         compatible = "ibm,opal-v3-led";
+> 
+>         U78C9.001.RST0027-P1-C1:attn {
+>         };
+> 
+>         U78C9.001.RST0027-P2-C1:identify:fault 
+>         };
+> 
+>         U78C9.001.RST0027-P3-C2:identify:fault {
+>         };
+>     };
+> };
+> 
+> The LED nodes could be empty as the name would convey all the
+> required information. The implications would be as follows:
+> 
+
+These device tree comes from out firmware ... which is immutable .
+We can use LED node name + led-type property for naming...which is what I do
+currently (v4.. which I haven't posted)
+
+
+> 1. Each LED would have one corresponding LED class device.
+> 
+> 2. Operations on attn and fault LED types:
+> 	turn on:
+> 		echo 255 > brightness
+> 	turn off:
+> 		echo 0 > brightness
+> 	get status
+> 		cat brightness
+> 	
+> 3. Operations on identify LED:
+> 	turn on:
+> 		echo "timer" > trigger
+> 		(blink_set op would have to be implemented in the
+> 		driver)
+> 	turn off:
+> 		echo 0 > brightness
+> 	get status:
+> 		support for this would have to be added to the LED
+> 		subsystem core
+
+I see few issues here.
+  - Overloading same LED device with multiple opeartion complicates things .. as
+these operations can be done independently (say user is allowed to enable both
+identify and fault simultaneously)
+  - point 3: IIUC after duration value expires identify indicator reverts.. we
+don't want to revert until user asks .
+  - point 3: if I use brightness for both identify/fault, how to disable these
+LEDs independently?
+  - Also how to use trigger property for each LED (if at all we want to use them
+later)?
+
+
+> 
+> 4. Since 'identify' is the platform specific name it could be preserved
+> 
+
+Ok sure.
+
+> 
+> Does it work for you?
+> 
+
+Thanks
+Vasant
