@@ -1,109 +1,50 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v5 06/10] media: Add registration helpers for V4L2
- flash sub-devices
-Date: Fri, 24 Apr 2015 00:52:12 +0300
-Message-ID: <5539698C.5030707@iki.fi>
-References: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>	<1429080520-10687-7-git-send-email-j.anaszewski@samsung.com>	<20150423074008.GY27451@valkosipuli.retiisi.org.uk> <20150423171026.099b9ea1@ja.home>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Fri, 24 Apr 2015 14:18:30 +1000
+Message-ID: <m3egnama5l.fsf@oc8180480414.ibm.com>
+References: <20150422234509.626d9dc7@ja.home> <55388254.4000606@linux.vnet.ibm.com> <20150423161342.55e9ac8f@ja.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20150423171026.099b9ea1@ja.home>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from e33.co.us.ibm.com ([32.97.110.151]:42957 "EHLO
+	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891AbbDXESf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 00:18:35 -0400
+Received: from /spool/local
+	by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
+	Thu, 23 Apr 2015 22:18:34 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+	by d03dlp01.boulder.ibm.com (Postfix) with ESMTP id 3CEDB1FF0025
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 22:09:43 -0600 (MDT)
+Received: from d03av03.boulder.ibm.com (d03av03.boulder.ibm.com [9.17.195.169])
+	by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3O4IB5e33882280
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 21:18:11 -0700
+Received: from d03av03.boulder.ibm.com (localhost [127.0.0.1])
+	by d03av03.boulder.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3O4IVu9024775
+	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 22:18:32 -0600
+In-Reply-To: <20150423161342.55e9ac8f@ja.home>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski81@gmail.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
 
-Hi Jacek,
+Jacek Anaszewski <j.anaszewski81@gmail.com> writes:
+>> These device tree comes from out firmware ... which is immutable .
+>
+> How the firmware is related to kernel? These bindings are for kernel,
+> not for the firmware.
+>
+> DT bindings are compiled to *.dtb file which is concatenated with
+> zImage. During system boot device drivers are matched with DT bindings
+> through 'compatible' property. A driver should have single matching DT
+> node, i.e. no other driver can probe with the same DT node.
+> This implies that the node should contain only the properties required
+> for configuring the related device.
 
-Jacek Anaszewski wrote:
-...
->>> +#define call_flash_op(v4l2_flash, op, arg)			\
->>> +		(has_flash_op(v4l2_flash,
->>> op) ?			\
->>> +			v4l2_flash->ops->op(v4l2_flash,
->>> arg) :	\
->>> +			-EINVAL)
->>> +
->>> +static enum led_brightness __intensity_to_led_brightness(
->>> +					struct v4l2_ctrl *ctrl,
->>> +					s32 intensity)
->>
->> Fits on previous line.
->>
->>> +{
->>> +	s64 intensity64 = intensity - ctrl->minimum;
->>
->> intensity, ctrl->step and ctrl->minimum are 32-bit signed integers.
->> Do you need a 64-bit integer here?
-> 
-> step is u64.
+For OPAL firmware on POWER, firmware hands kernel a flattened device
+tree of the machine it's booting on. It's not added to kernel as the
+kernels aren't board specific - they're generic.
 
-Nevertheless integer controls will not have values outside the s32
-range, using a step value that's outside the range makes no sense
-either. I think you should use s32 instead.
-
-> 
->>
->>> +
->>> +	do_div(intensity64, ctrl->step);
->>> +
->>> +	/*
->>> +	 * Indicator LEDs, unlike torch LEDs, are turned on/off
->>> basing on
->>> +	 * the state of V4L2_CID_FLASH_INDICATOR_INTENSITY control
->>> only.
->>> +	 * Therefore it must be possible to set it to 0 level
->>> which in
->>> +	 * the LED subsystem reflects LED_OFF state.
->>> +	 */
->>> +	if (ctrl->id != V4L2_CID_FLASH_INDICATOR_INTENSITY)
->>> +		++intensity64;
->>
->> I think the condition could simply be ctrl->minimum instead, that way
->> I find it easier to understand what's happening here. I'd expect the
->> minimum for non-intensity controls always to be non-zero, though, so
->> the end result is the same. Up to you.
-> 
-> Minimum for indicator control must be 0 to make possible
-> turning the indicator LED off only with this control.
-
-Would torch be still on if the minimum torch current was 0 mA? I'd say no.
-
-Although in that case I'd expect the driver to use a different range,
-and selecting the off mode would then turn it off, I still think that's
-a better condition than relying on the control id.
-
-...
-
->>> +static int v4l2_flash_g_volatile_ctrl(struct v4l2_ctrl *c)
->>> +{
->>> +	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
->>> +	struct led_classdev_flash *fled_cdev =
->>> v4l2_flash->fled_cdev;
->>> +	bool is_strobing;
->>> +	int ret;
->>> +
->>> +	switch (c->id) {
->>> +	case V4L2_CID_FLASH_TORCH_INTENSITY:
->>> +	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
->>> +		return
->>> v4l2_flash_update_led_brightness(v4l2_flash, c);
->>> +	case V4L2_CID_FLASH_INTENSITY:
->>> +		ret = led_update_flash_brightness(fled_cdev);
->>> +		if (ret < 0)
->>> +			return ret;
->>> +		/* no conversion is needed */
->>
->> Maybe a stupid question, but why is it not needed?
-> 
-> Because LED Flash class also uses microamperes.
-
-Right, I had missed that. It'd be nice if that was said in the comment,
-it might not be obvious to others either.
-
--- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@iki.fi
+https://github.com/open-power/skiboot/ is the firmware that generates
+the device tree for booting under OPAL.
