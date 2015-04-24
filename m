@@ -1,146 +1,95 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v5 06/10] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Fri, 24 Apr 2015 14:56:14 +0300
-Message-ID: <20150424115614.GA27451@valkosipuli.retiisi.org.uk>
-References: <1429080520-10687-1-git-send-email-j.anaszewski@samsung.com>
- <1429080520-10687-7-git-send-email-j.anaszewski@samsung.com>
- <20150423074008.GY27451@valkosipuli.retiisi.org.uk>
- <20150423171026.099b9ea1@ja.home>
- <5539698C.5030707@iki.fi>
- <20150424122917.697a0a6f@ja.home>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150424122917.697a0a6f@ja.home>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+From: <grygorii.strashko@linaro.org>
+Subject: [PATCH RESEND v2] leds: fix hibernation on arm when gpio-led used with CPU led trigger
+Date: Fri, 24 Apr 2015 14:57:10 +0300
+Message-ID: <1429876630-15952-1-git-send-email-grygorii.strashko@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:33405 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031AbbDXL5S (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 07:57:18 -0400
+Received: by lbbzk7 with SMTP id zk7so34630550lbb.0
+        for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 04:57:17 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kevin Hilman <khilman@deeprootsystems.com>, linux-leds@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, sumit.semwal@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Grygorii Strashko <Grygorii.Strashko@linaro.org>
 
-Hi Jacek,
+From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
 
-On Fri, Apr 24, 2015 at 12:29:17PM +0200, Jacek Anaszewski wrote:
-> Hi Sakari,
-> 
-> On Fri, 24 Apr 2015 00:52:12 +0300
-> Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> 
-> > Hi Jacek,
-> > 
-> > Jacek Anaszewski wrote:
-> > ...
-> > >>> +#define call_flash_op(v4l2_flash, op,
-> > >>> arg)			\
-> > >>> +		(has_flash_op(v4l2_flash,
-> > >>> op) ?			\
-> > >>> +			v4l2_flash->ops->op(v4l2_flash,
-> > >>> arg) :	\
-> > >>> +			-EINVAL)
-> > >>> +
-> > >>> +static enum led_brightness __intensity_to_led_brightness(
-> > >>> +					struct v4l2_ctrl *ctrl,
-> > >>> +					s32 intensity)
-> > >>
-> > >> Fits on previous line.
-> > >>
-> > >>> +{
-> > >>> +	s64 intensity64 = intensity - ctrl->minimum;
-> > >>
-> > >> intensity, ctrl->step and ctrl->minimum are 32-bit signed integers.
-> > >> Do you need a 64-bit integer here?
-> > > 
-> > > step is u64.
-> > 
-> > Nevertheless integer controls will not have values outside the s32
-> > range, using a step value that's outside the range makes no sense
-> > either. I think you should use s32 instead.
-> 
-> I infer that local u32 variable should be assigned ctrl->step,
-> and then used as a divisor.
+Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
+hibernation callbacks means those pm functions will not be
+called upon hibernation - that leads to system crash on ARM during
+freezing if gpio-led is used in combination with CPU led trigger.
+It may happen after freeze_noirq stage (GPIO is suspended)
+and before syscore_suspend stage (CPU led trigger is suspended)
+- usually when disable_nonboot_cpus() is called.
 
-You could cast explicitly as well. Either is fine for me.
+Log:
+  PM: noirq freeze of devices complete after 1.425 msecs
+  Disabling non-boot CPUs ...
+    ^ system may crash or stuck here with message (TI AM572x)
 
-> 
-> > > 
-> > >>
-> > >>> +
-> > >>> +	do_div(intensity64, ctrl->step);
-> > >>> +
-> > >>> +	/*
-> > >>> +	 * Indicator LEDs, unlike torch LEDs, are turned on/off
-> > >>> basing on
-> > >>> +	 * the state of V4L2_CID_FLASH_INDICATOR_INTENSITY
-> > >>> control only.
-> > >>> +	 * Therefore it must be possible to set it to 0 level
-> > >>> which in
-> > >>> +	 * the LED subsystem reflects LED_OFF state.
-> > >>> +	 */
-> > >>> +	if (ctrl->id != V4L2_CID_FLASH_INDICATOR_INTENSITY)
-> > >>> +		++intensity64;
-> > >>
-> > >> I think the condition could simply be ctrl->minimum instead, that
-> > >> way I find it easier to understand what's happening here. I'd
-> > >> expect the minimum for non-intensity controls always to be
-> > >> non-zero, though, so the end result is the same. Up to you.
-> > > 
-> > > Minimum for indicator control must be 0 to make possible
-> > > turning the indicator LED off only with this control.
-> > 
-> > Would torch be still on if the minimum torch current was 0 mA? I'd
-> > say no.
-> > 
-> > Although in that case I'd expect the driver to use a different range,
-> > and selecting the off mode would then turn it off, I still think
-> > that's a better condition than relying on the control id.
-> 
-> I didn't catch your point previously. Probably you was thinking
-> about somethig like this:
-> 
-> if (ctrl->minimum)
-> 	++intensity;
-> 
-> If so, I agree.
+  WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148 l3_interrupt_handler+0x22c/0x370()
+  44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode during Functional access
 
-Yes, that's what I meant.
+  CPU1: shutdown
+    ^ or here
 
-> 
-> > ...
-> > 
-> > >>> +static int v4l2_flash_g_volatile_ctrl(struct v4l2_ctrl *c)
-> > >>> +{
-> > >>> +	struct v4l2_flash *v4l2_flash =
-> > >>> v4l2_ctrl_to_v4l2_flash(c);
-> > >>> +	struct led_classdev_flash *fled_cdev =
-> > >>> v4l2_flash->fled_cdev;
-> > >>> +	bool is_strobing;
-> > >>> +	int ret;
-> > >>> +
-> > >>> +	switch (c->id) {
-> > >>> +	case V4L2_CID_FLASH_TORCH_INTENSITY:
-> > >>> +	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
-> > >>> +		return
-> > >>> v4l2_flash_update_led_brightness(v4l2_flash, c);
-> > >>> +	case V4L2_CID_FLASH_INTENSITY:
-> > >>> +		ret = led_update_flash_brightness(fled_cdev);
-> > >>> +		if (ret < 0)
-> > >>> +			return ret;
-> > >>> +		/* no conversion is needed */
-> > >>
-> > >> Maybe a stupid question, but why is it not needed?
-> > > 
-> > > Because LED Flash class also uses microamperes.
-> > 
-> > Right, I had missed that. It'd be nice if that was said in the
-> > comment, it might not be obvious to others either.
-> 
-> OK, I will add the comment.
+Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
+assigns the suspend and hibernation callbacks and move
+led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
+build warnings.
 
-Thanks!
+Fixes: 73e1ab41a80d (leds: Convert led class driver from legacy pm ops to dev_pm_ops)
+Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
+---
 
+Hi All,
+
+Could you pls pay attention on this patch?
+
+This trivial patch was posted at Feb 2015 and
+it's missed two merge windows already ((.
+
+Rebased on top of next (4.1).
+
+Changes in v2:
+- fixed compile time warnings when !CONFIG_PM_SLEEP
+- updated commit message
+
+v2:
+  https://lkml.org/lkml/2015/2/5/323
+v1:
+  https://lkml.org/lkml/2015/2/2/476
+
+ drivers/leds/led-class.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 728681d..7fb2a19 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -187,6 +187,7 @@ void led_classdev_resume(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_resume);
+ 
++#ifdef CONFIG_PM_SLEEP
+ static int led_suspend(struct device *dev)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+@@ -206,11 +207,9 @@ static int led_resume(struct device *dev)
+ 
+ 	return 0;
+ }
++#endif
+ 
+-static const struct dev_pm_ops leds_class_dev_pm_ops = {
+-	.suspend        = led_suspend,
+-	.resume         = led_resume,
+-};
++static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+ 
+ static int match_name(struct device *dev, const void *data)
+ {
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.9.1
