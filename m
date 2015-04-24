@@ -1,50 +1,178 @@
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
 Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Fri, 24 Apr 2015 14:18:30 +1000
-Message-ID: <m3egnama5l.fsf@oc8180480414.ibm.com>
+Date: Fri, 24 Apr 2015 11:00:41 +0530
+Message-ID: <5539D501.3040601@linux.vnet.ibm.com>
 References: <20150422234509.626d9dc7@ja.home> <55388254.4000606@linux.vnet.ibm.com> <20150423161342.55e9ac8f@ja.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:42957 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbbDXESf (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 00:18:35 -0400
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:49576 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754524AbbDXFbj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 01:31:39 -0400
 Received: from /spool/local
-	by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
-	Thu, 23 Apr 2015 22:18:34 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-	by d03dlp01.boulder.ibm.com (Postfix) with ESMTP id 3CEDB1FF0025
-	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 22:09:43 -0600 (MDT)
-Received: from d03av03.boulder.ibm.com (d03av03.boulder.ibm.com [9.17.195.169])
-	by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3O4IB5e33882280
-	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 21:18:11 -0700
-Received: from d03av03.boulder.ibm.com (localhost [127.0.0.1])
-	by d03av03.boulder.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3O4IVu9024775
-	for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2015 22:18:32 -0600
+	by e23smtp08.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Fri, 24 Apr 2015 15:31:37 +1000
+Received: from d23relay10.au.ibm.com (d23relay10.au.ibm.com [9.190.26.77])
+	by d23dlp02.au.ibm.com (Postfix) with ESMTP id 23EF62BB0052
+	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:34 +1000 (EST)
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+	by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3O5VPdR24641726
+	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:33 +1000
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+	by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3O5Uxcu011515
+	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:00 +1000
 In-Reply-To: <20150423161342.55e9ac8f@ja.home>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski81@gmail.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
+To: Jacek Anaszewski <j.anaszewski81@gmail.com>
+Cc: stewart@linux.vnet.ibm.com, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
 
-Jacek Anaszewski <j.anaszewski81@gmail.com> writes:
+On 04/23/2015 07:43 PM, Jacek Anaszewski wrote:
+> On Thu, 23 Apr 2015 10:55:40 +0530
+> Vasant Hegde <hegdevasant@linux.vnet.ibm.com> wrote:
+> 
+
+Hi Jacek,
+
+.../...
+
+>>
 >> These device tree comes from out firmware ... which is immutable .
->
+> 
 > How the firmware is related to kernel? These bindings are for kernel,
 > not for the firmware.
->
+> 
 > DT bindings are compiled to *.dtb file which is concatenated with
 > zImage. During system boot device drivers are matched with DT bindings
 > through 'compatible' property. A driver should have single matching DT
 > node, i.e. no other driver can probe with the same DT node.
 > This implies that the node should contain only the properties required
 > for configuring the related device.
+> 
 
-For OPAL firmware on POWER, firmware hands kernel a flattened device
-tree of the machine it's booting on. It's not added to kernel as the
-kernels aren't board specific - they're generic.
+As Stewart mentioned, its not .dtb file in our case.. we pass flattened device
+tree .. which is built by OPAL.
 
-https://github.com/open-power/skiboot/ is the firmware that generates
-the device tree for booting under OPAL.
+>> We can use LED node name + led-type property for naming...which is
+>> what I do currently (v4.. which I haven't posted)
+>>
+>>
+>>> 1. Each LED would have one corresponding LED class device.
+>>>
+>>> 2. Operations on attn and fault LED types:
+>>> 	turn on:
+>>> 		echo 255 > brightness
+>>> 	turn off:
+>>> 		echo 0 > brightness
+>>> 	get status
+>>> 		cat brightness
+>>> 	
+>>> 3. Operations on identify LED:
+>>> 	turn on:
+>>> 		echo "timer" > trigger
+>>> 		(blink_set op would have to be implemented in the
+>>> 		driver)
+>>> 	turn off:
+>>> 		echo 0 > brightness
+>>> 	get status:
+>>> 		support for this would have to be added to the LED
+>>> 		subsystem core
+>>
+>> I see few issues here.
+>>   - Overloading same LED device with multiple opeartion complicates
+>> things .. as these operations can be done independently (say user is
+>> allowed to enable both identify and fault simultaneously)
+> 
+> I agree, it would be hard to distinguish whether by executing
+> `echo 0 > brightness` we want to turn off identify or fault function.
+> 
+>>   - point 3: IIUC after duration value expires identify indicator
+>> reverts.. we don't want to revert until user asks .
+> 
+> From what you shared, blinking has hardware acceleration on OPAL side.
+> At first timer trigger tries to use HW accelerated blinking by
+> calling blink_set op and resorts to using software fallback only if
+> the op fails or is not defined.
+
+Blinking is the physical state of LED to represent "identify" state. which is
+taken care by hardware. and OS doesn't have control on this ..
+
+>From software point of view its just another LED with two state (ON and OFF).
+
+> 
+> BTW timer trigger re-sets blink after timer expires, unless
+> LED_BLINK_ONESHOT flag is set by LED class device.
+
+In my case, I want to retain the state.'
+
+> 
+>>   - point 3: if I use brightness for both identify/fault, how to
+>> disable these LEDs independently?
+> 
+> Another sysfs attribute would be required, but it would be ugly.
+
+yeah.
+
+
+>>   - Also how to use trigger property for each LED (if at all we want
+>> to use them later)?
+>>
+> 
+> After analyzing pros and cons I think that separate LED class devices
+> for each LED type would be most suitable solution in this case.
+
+Agree.
+
+> 
+> For 'identify' LED the operation would be:
+> 
+> #echo "timer" > trigger		//set 'identify' (blinking)
+> #cat trigger			//check "identify" state
+> #none [timer]			//'identify' is ON
+> #echo 0 > brightness		//unset 'identify
+> #cat trigger
+> #[none] timer			//'identify' is OFF
+> 
+> You would have to implement blink_set op
+> (see Documentation/leds/leds-class.txt and other LED class drivers for
+> reference).
+
+Implementing another op should be fine.. I can try to implement it.
+
+But from user perspective identify is just another LED. Hence can we just use
+"brightness" property itself?
+
+
+> 
+> For attention and fault LEDs only brightness attribute would matter.
+> 
+
+Sure.
+
+> DT bindings would look as follows:
+> 
+> opal-leds {
+>         compatible = "ibm,opal-leds";
+> 
+>         U78C9.001.RST0027-P1-C1:fault {
+>         };
+> 
+>         U78C9.001.RST0027-P1-C1:indent {
+>         };
+> 
+>         U78C9.001.RST0027-P2-C1:attn
+>         };
+>     }
+> }
+> 
+
+As mentioned earlier DT is coming from our firmware. For now I will respin
+another round of patches by using led-types property and run it through DT
+experts (DT mailing list). If they insist this method is better than what I
+already have , then will work with my firmware folks to see what we can do better.
+
+Thanks
+Vasant
