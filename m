@@ -1,178 +1,73 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Fri, 24 Apr 2015 11:00:41 +0530
-Message-ID: <5539D501.3040601@linux.vnet.ibm.com>
-References: <20150422234509.626d9dc7@ja.home> <55388254.4000606@linux.vnet.ibm.com> <20150423161342.55e9ac8f@ja.home>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v7 0/3] Add ktd2692 Flash LED driver using LED Flash class
+Date: Fri, 24 Apr 2015 15:00:35 +0530
+Message-ID: <553A0D3B.2060101@gmail.com>
+References: <1429795085-22171-1-git-send-email-ingi2.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp08.au.ibm.com ([202.81.31.141]:49576 "EHLO
-	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754524AbbDXFbj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 01:31:39 -0400
-Received: from /spool/local
-	by e23smtp08.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Fri, 24 Apr 2015 15:31:37 +1000
-Received: from d23relay10.au.ibm.com (d23relay10.au.ibm.com [9.190.26.77])
-	by d23dlp02.au.ibm.com (Postfix) with ESMTP id 23EF62BB0052
-	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:34 +1000 (EST)
-Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
-	by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3O5VPdR24641726
-	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:33 +1000
-Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
-	by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3O5Uxcu011515
-	for <linux-leds@vger.kernel.org>; Fri, 24 Apr 2015 15:31:00 +1000
-In-Reply-To: <20150423161342.55e9ac8f@ja.home>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:33280 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933351AbbDXJbC (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 24 Apr 2015 05:31:02 -0400
+In-Reply-To: <1429795085-22171-1-git-send-email-ingi2.kim@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Cc: stewart@linux.vnet.ibm.com, linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
+To: Ingi Kim <ingi2.kim@samsung.com>, cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On 04/23/2015 07:43 PM, Jacek Anaszewski wrote:
-> On Thu, 23 Apr 2015 10:55:40 +0530
-> Vasant Hegde <hegdevasant@linux.vnet.ibm.com> wrote:
-> 
-
-Hi Jacek,
-
-.../...
-
->>
->> These device tree comes from out firmware ... which is immutable .
-> 
-> How the firmware is related to kernel? These bindings are for kernel,
-> not for the firmware.
-> 
-> DT bindings are compiled to *.dtb file which is concatenated with
-> zImage. During system boot device drivers are matched with DT bindings
-> through 'compatible' property. A driver should have single matching DT
-> node, i.e. no other driver can probe with the same DT node.
-> This implies that the node should contain only the properties required
-> for configuring the related device.
-> 
-
-As Stewart mentioned, its not .dtb file in our case.. we pass flattened device
-tree .. which is built by OPAL.
-
->> We can use LED node name + led-type property for naming...which is
->> what I do currently (v4.. which I haven't posted)
->>
->>
->>> 1. Each LED would have one corresponding LED class device.
->>>
->>> 2. Operations on attn and fault LED types:
->>> 	turn on:
->>> 		echo 255 > brightness
->>> 	turn off:
->>> 		echo 0 > brightness
->>> 	get status
->>> 		cat brightness
->>> 	
->>> 3. Operations on identify LED:
->>> 	turn on:
->>> 		echo "timer" > trigger
->>> 		(blink_set op would have to be implemented in the
->>> 		driver)
->>> 	turn off:
->>> 		echo 0 > brightness
->>> 	get status:
->>> 		support for this would have to be added to the LED
->>> 		subsystem core
->>
->> I see few issues here.
->>   - Overloading same LED device with multiple opeartion complicates
->> things .. as these operations can be done independently (say user is
->> allowed to enable both identify and fault simultaneously)
-> 
-> I agree, it would be hard to distinguish whether by executing
-> `echo 0 > brightness` we want to turn off identify or fault function.
-> 
->>   - point 3: IIUC after duration value expires identify indicator
->> reverts.. we don't want to revert until user asks .
-> 
-> From what you shared, blinking has hardware acceleration on OPAL side.
-> At first timer trigger tries to use HW accelerated blinking by
-> calling blink_set op and resorts to using software fallback only if
-> the op fails or is not defined.
-
-Blinking is the physical state of LED to represent "identify" state. which is
-taken care by hardware. and OS doesn't have control on this ..
-
->From software point of view its just another LED with two state (ON and OFF).
-
-> 
-> BTW timer trigger re-sets blink after timer expires, unless
-> LED_BLINK_ONESHOT flag is set by LED class device.
-
-In my case, I want to retain the state.'
-
-> 
->>   - point 3: if I use brightness for both identify/fault, how to
->> disable these LEDs independently?
-> 
-> Another sysfs attribute would be required, but it would be ugly.
-
-yeah.
-
-
->>   - Also how to use trigger property for each LED (if at all we want
->> to use them later)?
->>
-> 
-> After analyzing pros and cons I think that separate LED class devices
-> for each LED type would be most suitable solution in this case.
-
-Agree.
-
-> 
-> For 'identify' LED the operation would be:
-> 
-> #echo "timer" > trigger		//set 'identify' (blinking)
-> #cat trigger			//check "identify" state
-> #none [timer]			//'identify' is ON
-> #echo 0 > brightness		//unset 'identify
-> #cat trigger
-> #[none] timer			//'identify' is OFF
-> 
-> You would have to implement blink_set op
-> (see Documentation/leds/leds-class.txt and other LED class drivers for
-> reference).
-
-Implementing another op should be fine.. I can try to implement it.
-
-But from user perspective identify is just another LED. Hence can we just use
-"brightness" property itself?
-
-
-> 
-> For attention and fault LEDs only brightness attribute would matter.
-> 
-
-Sure.
-
-> DT bindings would look as follows:
-> 
-> opal-leds {
->         compatible = "ibm,opal-leds";
-> 
->         U78C9.001.RST0027-P1-C1:fault {
->         };
-> 
->         U78C9.001.RST0027-P1-C1:indent {
->         };
-> 
->         U78C9.001.RST0027-P2-C1:attn
->         };
->     }
-> }
-> 
-
-As mentioned earlier DT is coming from our firmware. For now I will respin
-another round of patches by using led-types property and run it through DT
-experts (DT mailing list). If they insist this method is better than what I
-already have , then will work with my firmware folks to see what we can do better.
+On 04/23/2015 06:48 PM, Ingi Kim wrote:
+> This patch adds ktd2692 Flash LED driver with LED Flash class
+>
+> Change in v7:
+> 	- Add flash-max-microamp property for Flash LED
+> 	- Change gpio-legacy interface to gpio consumer interface
+>
+> Change in v6 resend:
+> 	- Adjust indent using checkpatch.pl script with strict option
+>
+> Change in v6:
+> 	- Change goto label to if-else
+> 	- Change DT binding style for LED device binding
+>
+> Change in v5:
+> 	- Clean up the code
+> 	- Fix help message of Kconfig
+> 	- Fix issue related with regulator and mutex usage
+> 	- Remove tab spaces in bindings
+>
+> Change in v4:
+> 	- Clean up the code
+> 	- Modify binding documentation of ktd2692
+>
+> Change in v3:
+> 	- Clean up the code
+> 	- Add aux gpio pin to control Flash LED
+>
+> Change in v2:
+> 	- Introduction of LED Flash class as Jacek's comment
+> 	- Supplement of binding documentation
+> 	- Rename gpio control pin and remove unused pin
+> 	- Add regulator for the Flash LED
+>
+> Ingi Kim (3):
+>   of: Add vendor prefix for Kinetic technologies
+>   leds: ktd2692: add device tree bindings for ktd2692
+>   leds: Add ktd2692 flash LED driver
+>
+>  .../devicetree/bindings/leds/leds-ktd2692.txt      |  47 +++
+>  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+>  drivers/leds/Kconfig                               |   9 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-ktd2692.c                        | 435 +++++++++++++++++++++
+>  5 files changed, 493 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+>  create mode 100644 drivers/leds/leds-ktd2692.c
+>
+Reviewed-by: Varka Bhadram <varkabhadram@gmail.com>
 
 Thanks
-Vasant
+
+-- 
+Varka Bhadram
