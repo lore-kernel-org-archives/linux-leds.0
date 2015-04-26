@@ -1,112 +1,442 @@
 From: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Subject: Re: [PATCH RESEND v2] leds: fix hibernation on arm when gpio-led
- used with CPU led trigger
-Date: Sat, 25 Apr 2015 13:51:38 +0200
-Message-ID: <20150425135138.002cb906@ja.home>
-References: <1429876630-15952-1-git-send-email-grygorii.strashko@linaro.org>
+Subject: Re: [PATCH v3 1/2] leds: add DT binding for BCM6328 LED controller
+Date: Sun, 26 Apr 2015 13:09:47 +0200
+Message-ID: <20150426130947.2bd5ea2e@ja.home>
+References: <1428246485-32305-1-git-send-email-noltari@gmail.com>
+	<1429895176-21818-1-git-send-email-noltari@gmail.com>
+	<1429895176-21818-2-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:36546 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759127AbbDYLvy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 25 Apr 2015 07:51:54 -0400
-In-Reply-To: <1429876630-15952-1-git-send-email-grygorii.strashko@linaro.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:37619 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751623AbbDZLKD convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 26 Apr 2015 07:10:03 -0400
+In-Reply-To: <1429895176-21818-2-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: grygorii.strashko@linaro.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kevin Hilman <khilman@deeprootsystems.com>, linux-leds@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, sumit.semwal@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>, linux-leds@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com, devicetree@vger.kernel.org
 
-Hi Grygorii,
+Hi Alvaro,
 
-Thanks for the patch.
+Thanks for the update. Since this patch will require also DT ack,
+please add devicetree@vger.kernel.org on cc as you'll be posting
+next version
 
-On Fri, 24 Apr 2015 14:57:10 +0300
-<grygorii.strashko@linaro.org> wrote:
+On Fri, 24 Apr 2015 19:06:15 +0200
+=C3=81lvaro Fern=C3=A1ndez Rojas  <noltari@gmail.com> wrote:
 
-> From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
-> 
-> Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
-> hibernation callbacks means those pm functions will not be
-> called upon hibernation - that leads to system crash on ARM during
-> freezing if gpio-led is used in combination with CPU led trigger.
-> It may happen after freeze_noirq stage (GPIO is suspended)
-> and before syscore_suspend stage (CPU led trigger is suspended)
-> - usually when disable_nonboot_cpus() is called.
-> 
-> Log:
->   PM: noirq freeze of devices complete after 1.425 msecs
->   Disabling non-boot CPUs ...
->     ^ system may crash or stuck here with message (TI AM572x)
-> 
->   WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148
-> l3_interrupt_handler+0x22c/0x370() 44000000.ocp:L3 Custom Error:
-> MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode
-> during Functional access
-> 
->   CPU1: shutdown
->     ^ or here
-> 
-> Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
-> assigns the suspend and hibernation callbacks and move
-> led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
-> build warnings.
-> 
-> Fixes: 73e1ab41a80d (leds: Convert led class driver from legacy pm
-> ops to dev_pm_ops) Signed-off-by: Grygorii Strashko
-> <Grygorii.Strashko@linaro.org> ---
-> 
-> Hi All,
-> 
-> Could you pls pay attention on this patch?
-> 
-> This trivial patch was posted at Feb 2015 and
-> it's missed two merge windows already ((.
-> 
-> Rebased on top of next (4.1).
-> 
-> Changes in v2:
-> - fixed compile time warnings when !CONFIG_PM_SLEEP
-> - updated commit message
-> 
-> v2:
->   https://lkml.org/lkml/2015/2/5/323
-> v1:
->   https://lkml.org/lkml/2015/2/2/476
-> 
->  drivers/leds/led-class.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 728681d..7fb2a19 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -187,6 +187,7 @@ void led_classdev_resume(struct led_classdev
-> *led_cdev) }
->  EXPORT_SYMBOL_GPL(led_classdev_resume);
->  
-> +#ifdef CONFIG_PM_SLEEP
->  static int led_suspend(struct device *dev)
->  {
->  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> @@ -206,11 +207,9 @@ static int led_resume(struct device *dev)
->  
->  	return 0;
->  }
-> +#endif
->  
-> -static const struct dev_pm_ops leds_class_dev_pm_ops = {
-> -	.suspend        = led_suspend,
-> -	.resume         = led_resume,
-> -};
-> +static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend,
-> led_resume); 
->  static int match_name(struct device *dev, const void *data)
->  {
+> This adds device tree binding documentation for the Broadcom BCM6328 =
+LED controller.
+>=20
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+>  v3: introduce changes suggested by Jacek
+>  - Revert compatible string to "brcm,bcm6328-leds".
+>  - Improved description.
+>  - Renamed normal LEDs to hardware controlled.
+>  - Explain that LEDs are active high by default on active-low optiona=
+l property.
+>  - Properties are now grouped depending on the type of LED and option=
+al requirement.
+>  - Added more examples to explain hardware controlled LEDs and activi=
+ty/link selection.
+>  v2: Introduce changes suggested by Florian and Jonas.
+>  - Change compatible string to "brcm,bcm6328-leds-ctrl".
+>  - Make valid LEDs statement more strict.
+>  - Remove compatible strings from LED subnodes.
+>  - Clarify that LEDs are active high by default.
+>  - Add a better description for brcm,link-signal-sources and brcm,act=
+ivity-signal-sources.
+>=20
+>  .../devicetree/bindings/leds/leds-bcm6328.txt      | 311 +++++++++++=
+++++++++++
+>  1 file changed, 311 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm63=
+28.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt =
+b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> new file mode 100644
+> index 0000000..6d838f8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> @@ -0,0 +1,311 @@
+> +LEDs connected to Broadcom BCM6328 controller
+> +
+> +This controller is present on BCM6318, BCM6328, BCM6362 and BCM63268=
+=2E
+> +In these SoCs it's possible to control LEDs both as GPIOs or by hard=
+ware.
+> +However, on some devices there are Serial LEDs (LEDs connected to a =
+74x164
+> +controller), which can either be controlled by software (exporting t=
+he 74x164
+> +as spi-gpio. See Documentation/devicetree/bindings/gpio/gpio-74x164.=
+txt), or
+> +by hardware using this driver.
+> +Some of these Serial LEDs are hardware controlled (e.g. ethernet LED=
+s) and
+> +exporting the 74x164 as spi-gpio prevents those LEDs to be hardware
+> +controlled, so the only chance to keep them working is by using this=
+ driver.
+> +
+> +BCM6328 LED controller has a HWDIS register, which controls whether =
+a LED
+> +should be controlled by a hardware signal instead of the MODE regist=
+er value,
+> +with 0 meaning hardware control enabled and 1 hardware control disab=
+led. This
+> +is usually 1:1 for hardware to LED signals, but through the activity=
+/link
+> +registers you have some limited control over rerouting the LEDs (as
+> +explained later in brcm,link-signal-sources). Even if a LED is hardw=
+are
+> +controlled you are still able to make it blink or light it up if it =
+isn't,
+> +but you can't turn it off if the hardware decides to light it up. Fo=
+r this
+> +reason, hardware controlled LEDs aren't registered as LED class devi=
+ces.
+> +
+> +Required properties:
+> +- compatible: should be : "brcm,bcm6328-leds".
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Please drop the colon after "should be".
+Also it is more common to insert a space before the colon character.
+e.g.:
 
--- 
+compatible : should be ...
+
+Please apply this rule to each property.
+
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
+> +- reg: BCM6328 LED controller address and size.
+>
+> +
+> +Optional properties:
+> +- brcm,serial-leds: boolean which enables Serial LEDs.
+
+How about:
+
+brcm,serial-leds: Boolean, enables Serial LEDs.
+
+Boolean should begin with capital letter. Please refer to the other
+bindings in Documentation/devicetree/bindings to keep the style of
+DT documentation consistent.
+Also default value should be mentioned.
+
+> +Each LED is represented as a sub-node of the brcm,bcm6328-leds devic=
+e.
+> +
+> +LED sub-node required properties:
+
+How about:
+
+Required properties for sub-nodes:
+
+> +- reg: LED pin number (only LEDs 0 to 23 are valid).
+> +
+> +Software controlled LED optional properties:
+
+How about:
+
+Optional properties for sub-nodes related to software controlled LEDs:
+
+> +- label (optional): see Documentation/devicetree/bindings/leds/commo=
+n.txt
+> +- active-low (optional): boolean that makes LED active low.
+> +  Default: false
+> +- default-state (optional): see
+> +  Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +- linux,default-trigger (optional): see
+> +  Documentation/devicetree/bindings/leds/common.txt
+
+Please drop "(optional)" as you are already mentioned this in the
+section header.
+
+> +Hardware controlled LED optional properties:
+
+How about:
+
+Optional properties for sub-nodes related to hardware controlled LEDs:
+
+> +- brcm,hardware-controlled: boolean that makes this LED hardware
+> +  controlled.
+> +- brcm,link-signal-sources: An array of hardware link
+> +  signal sources. Up to four link hardware signals can get muxed int=
+o
+> +  these LEDs. Only valid for LEDs 0 to 7, where LED signals 0 to 3 m=
+ay
+> +  be muxed to LEDs 0 to 3, and signals 4 to 7 may be muxed to LEDs
+> +  4 to 7. A signal can be muxed to more than one LED, and one LED ca=
+n
+> +  have more than one source signal.
+> +- brcm,activity-signal-sources: An array of hardware activity
+> +  signal sources. Up to four activity hardware signals can get muxed=
+ into
+> +  these LEDs. Only valid for LEDs 0 to 7, where LED signals 0 to 3 m=
+ay
+> +  be muxed to LEDs 0 to 3, and signals 4 to 7 may be muxed to LEDs
+> +  4 to 7. A signal can be muxed to more than one LED, and one LED ca=
+n
+> +  have more than one source signal.
+> +
+> +example 1) BCM6328 with 4 EPHY LEDs
+> +
+> +leds0: led-controller@10000800 {
+> +	compatible =3D "brcm,bcm6328-leds";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x10000800 0x24>;
+> +
+> +	alarm_red@2 {
+> +		reg =3D <2>;
+> +		active-low;
+> +		label =3D "red:alarm";
+> +	};
+> +	inet_green@3 {
+> +		reg =3D <3>;
+> +		active-low;
+> +		label =3D "green:inet";
+> +	};
+> +	power_green@4 {
+> +		reg =3D <4>;
+> +		active-low;
+> +		label =3D "green:power";
+> +		default-state =3D "on";
+> +	};
+> +	ephy0_spd@17 {
+> +		reg =3D <17>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy1_spd@18 {
+> +		reg =3D <18>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy2_spd@19 {
+> +		reg =3D <19>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy3_spd@20 {
+> +		reg =3D <20>;
+> +		brcm,hardware-controlled;
+> +	};
+> +};
+> +
+> +example 2) BCM63268 with Serial/GPHY0 LEDs
+> +
+> +leds0: led-controller@10001900 {
+> +	compatible =3D "brcm,bcm6328-leds";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x10001900 0x24>;
+> +	brcm,serial-leds;
+> +
+> +	gphy0_spd0@0 {
+> +		reg =3D <0>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <0>;
+> +	};
+> +	gphy0_spd1@1 {
+> +		reg =3D <1>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <1>;
+> +	};
+> +	inet_red@2 {
+> +		reg =3D <2>;
+> +		active-low;
+> +		label =3D "red:inet";
+> +	};
+> +	dsl_green@3 {
+> +		reg =3D <3>;
+> +		active-low;
+> +		label =3D "green:dsl";
+> +	};
+> +	usb_green@4 {
+> +		reg =3D <4>;
+> +		active-low;
+> +		label =3D "green:usb";
+> +	};
+> +	wps_green@7 {
+> +		reg =3D <7>;
+> +		active-low;
+> +		label =3D "green:wps";
+> +	};
+> +	inet_green@8 {
+> +		reg =3D <8>;
+> +		active-low;
+> +		label =3D "green:inet";
+> +	};
+> +	ephy0_act@9 {
+> +		reg =3D <9>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy1_act@10 {
+> +		reg =3D <10>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy2_act@11 {
+> +		reg =3D <11>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	gphy0_act@12 {
+> +		reg =3D <12>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy0_spd@13 {
+> +		reg =3D <13>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy1_spd@14 {
+> +		reg =3D <14>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	ephy2_spd@15 {
+> +		reg =3D <15>;
+> +		brcm,hardware-controlled;
+> +	};
+> +	power_green@20 {
+> +		reg =3D <20>;
+> +		active-low;
+> +		label =3D "green:power";
+> +		default-state =3D "on";
+> +	};
+> +};
+> +
+> +example 3) BCM6362 with 1 LED for each EPHY
+> +
+> +leds0: led-controller@10001900 {
+> +	compatible =3D "brcm,bcm6328-leds";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x10001900 0x24>;
+> +
+> +	usb@0 {
+> +		reg =3D <0>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <0>;
+> +		brcm,activity-signal-sources =3D <0>;
+> +		/* USB link/activity routed to USB LED */
+> +	};
+> +	inet@1 {
+> +		reg =3D <1>;
+> +		brcm,hardware-controlled;
+> +		brcm,activity-signal-sources =3D <1>;
+> +		/* INET activity routed to INET LED */
+> +	};
+> +	ephy0@4 {
+> +		reg =3D <4>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <4>;
+> +		/* EPHY0 link routed to EPHY0 LED */
+> +	};
+> +	ephy1@5 {
+> +		reg =3D <5>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <5>;
+> +		/* EPHY1 link routed to EPHY1 LED */
+> +	};
+> +	ephy2@6 {
+> +		reg =3D <6>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <6>;
+> +		/* EPHY2 link routed to EPHY2 LED */
+> +	};
+> +	ephy3@7 {
+> +		reg =3D <7>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <7>;
+> +		/* EPHY3 link routed to EPHY3 LED */
+> +	};
+> +	power_green@20 {
+> +		reg =3D <20>;
+> +		active-low;
+> +		label =3D "green:power";
+> +		default-state =3D "on";
+> +	};
+> +};
+> +
+> +example 4) BCM6362 with 1 LED for all EPHYs
+> +
+> +leds0: led-controller@10001900 {
+> +	compatible =3D "brcm,bcm6328-leds";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x10001900 0x24>;
+> +
+> +	usb@0 {
+> +		reg =3D <0>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <0 1>;
+> +		brcm,activity-signal-sources =3D <0 1>;
+> +		/* USB/INET link/activity routed to USB LED */
+> +	};
+> +	ephy@4 {
+> +		reg =3D <4>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <4 5 6 7>;
+> +		/* EPHY0/1/2/3 link routed to EPHY0 LED */
+> +	};
+> +	power_green@20 {
+> +		reg =3D <20>;
+> +		active-low;
+> +		label =3D "green:power";
+> +		default-state =3D "on";
+> +	};
+> +};
+> +
+> +example 5) BCM6362 with EPHY LEDs swapped
+> +
+> +leds0: led-controller@10001900 {
+> +	compatible =3D "brcm,bcm6328-leds";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x10001900 0x24>;
+> +
+> +	usb@0 {
+> +		reg =3D <0>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <0>;
+> +		brcm,activity-signal-sources =3D <0 1>;
+> +		/* USB link/activity & INET activity routed to USB LED */
+> +	};
+> +	ephy0@4 {
+> +		reg =3D <4>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <7>;
+> +		/* EPHY3 link routed to EPHY0 LED */
+> +	};
+> +	ephy1@5 {
+> +		reg =3D <5>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <6>;
+> +		/* EPHY2 link routed to EPHY1 LED */
+> +	};
+> +	ephy2@6 {
+> +		reg =3D <6>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <5>;
+> +		/* EPHY1 link routed to EPHY2 LED */
+> +	};
+> +	ephy3@7 {
+> +		reg =3D <7>;
+> +		brcm,hardware-controlled;
+> +		brcm,link-signal-sources =3D <4>;
+> +		/* EPHY0 link routed to EPHY3 LED */
+> +	};
+> +	power_green@20 {
+> +		reg =3D <20>;
+> +		active-low;
+> +		label =3D "green:power";
+> +		default-state =3D "on";
+> +	};
+> +};
+
+
+--=20
 Best Regards,
 Jacek Anaszewski
