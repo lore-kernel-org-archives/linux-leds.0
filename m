@@ -1,7 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
 Subject: [PATCH 1/3] leds: use hrtimer for blinking
-Date: Mon, 27 Apr 2015 20:09:49 +0300
-Message-ID: <553E6D5D.8090705@list.ru>
+Date: Mon, 27 Apr 2015 20:11:25 +0300
+Message-ID: <553E6DBD.2080007@list.ru>
 References: <553E6CF5.4030601@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -10,7 +10,7 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <553E6CF5.4030601@list.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 
