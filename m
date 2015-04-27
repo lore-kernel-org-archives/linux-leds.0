@@ -1,59 +1,40 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: LED subsystem child DT node ref counting
-Date: Mon, 27 Apr 2015 11:26:27 +0200
-Message-ID: <553E00C3.3060409@samsung.com>
-References: <5530E891.20707@samsung.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
+Date: Mon, 27 Apr 2015 19:53:55 +1000
+Message-ID: <1430128435.16571.110.camel@kernel.crashing.org>
+References: <20150422234509.626d9dc7@ja.home>
+	 <55388254.4000606@linux.vnet.ibm.com> <20150423161342.55e9ac8f@ja.home>
+	 <1430086038.16571.78.camel@kernel.crashing.org>
+	 <553DE41A.5070703@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:31011 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932428AbbD0J0b (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Apr 2015 05:26:31 -0400
-In-reply-to: <5530E891.20707@samsung.com>
+Received: from gate.crashing.org ([63.228.1.57]:54329 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751252AbbD0Jyj (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 27 Apr 2015 05:54:39 -0400
+In-Reply-To: <553DE41A.5070703@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: stewart@linux.vnet.ibm.com, cooloney@gmail.com, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com
 
-Gentle reminder. Can anyone clarify this?
+On Mon, 2015-04-27 at 09:24 +0200, Jacek Anaszewski wrote:
+> I was not aware that some other entity than the driver could be
+> interested in the information provided by DT node. I will no longer
+> object, provided that we will get an ack from DT maintainer.
 
-On 04/17/2015 01:03 PM, Jacek Anaszewski wrote:
-> Hi,
->
-> I'd like to clarify whether LED subsystem drivers behave correctly
-> or not, regarding child DT nodes reference counting.
->
-> Single LED controller can have connected more then one LED to it.
-> The LEDs are represented by child DT nodes of the node representing
-> the controller (see Documentation/devicetree/bindings/leds).
->
-> LED subsystem drivers parse child DT nodes and use the node name,
-> or 'label' property string as the LED class device name.
->
-> This is usually accomplished like below:
->
-> for_each_child_of_node(np, child) {
->      ...
->      led.name = of_get_property(child, "label", NULL) ? : child->name;
->
->
-> The question is whether reference count of the child node shouldn't
-> be increased here with of_node_get(child). Whereas intuitively it could
-> be thought of as a right thing to do, empirical experiments don't
-> necessary confirm that.
->
-> When I print the value of child_node->kobj.kref.refcount.counter
-> inside for_each loop it is 3 and and after leaving the loop it gets
-> decreased to 2. On driver removal the value is also 2. It means that
-> label is available all the time, without increasing child node ref
-> counter.
->
-> I'd like to ask if this is guaranteed to be always true.
->
+My understanding is that we no longer need bindings to be accepted by DT
+maintainers.
 
+That being said, I would like to review this one before it is accepted,
+as I haven't had a chance to do so yet :-) (I was mostly responding to
+you, I haven't caught up with the full thread yet).
 
--- 
-Best Regards,
-Jacek Anaszewski
+Please wait for an ack from myself or Michael Ellerman (the two powerpc
+maintainers). Either that or provide your ack and we'll merge it via our
+tree if we are happy with it.
+
+Cheers,
+Ben.
