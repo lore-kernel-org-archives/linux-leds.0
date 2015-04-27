@@ -1,58 +1,19 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: LED subsystem child DT node ref counting
-Date: Mon, 27 Apr 2015 08:57:21 -0500
-Message-ID: <CAL_JsqLVEKN_XWOLz2uOVbhf3NWf=b27DXh8NhaqvfrNsU+WNw@mail.gmail.com>
-References: <5530E891.20707@samsung.com>
+From: Stas Sergeev <stsp@list.ru>
+Subject: [PATCH v2 0/3] leds: blink resolution improvements
+Date: Mon, 27 Apr 2015 20:08:05 +0300
+Message-ID: <553E6CF5.4030601@list.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:36056 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932811AbbD0N5m (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Apr 2015 09:57:42 -0400
-In-Reply-To: <5530E891.20707@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
 
-On Fri, Apr 17, 2015 at 6:03 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi,
->
-> I'd like to clarify whether LED subsystem drivers behave correctly
-> or not, regarding child DT nodes reference counting.
+Hello.
 
-In general, the DT reference counting is broken. It is really only
-used on pSeries and only for certain nodes on it.
-
-> Single LED controller can have connected more then one LED to it.
-> The LEDs are represented by child DT nodes of the node representing
-> the controller (see Documentation/devicetree/bindings/leds).
->
-> LED subsystem drivers parse child DT nodes and use the node name,
-> or 'label' property string as the LED class device name.
->
-> This is usually accomplished like below:
->
-> for_each_child_of_node(np, child) {
->     ...
->     led.name = of_get_property(child, "label", NULL) ? : child->name;
->
->
-> The question is whether reference count of the child node shouldn't
-> be increased here with of_node_get(child). Whereas intuitively it could
-> be thought of as a right thing to do, empirical experiments don't
-> necessary confirm that.
->
-> When I print the value of child_node->kobj.kref.refcount.counter
-> inside for_each loop it is 3 and and after leaving the loop it gets
-> decreased to 2. On driver removal the value is also 2. It means that
-> label is available all the time, without increasing child node ref
-> counter.
-
-I believe the ref count is only left incremented if you break from the
-loop. Otherwise, it is only incremented during the loop one child at a
-time.
-
-Rob
+The following patches improve the precision of led
+timer trigger and add the delay unit control.
+That allows to make PWM brightness control with timer
+trigger.
