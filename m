@@ -1,45 +1,36 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 3/3] leds: update documentation about new delay units
-Date: Mon, 27 Apr 2015 20:14:25 +0300
-Message-ID: <553E6E71.4080509@list.ru>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
+Date: Mon, 27 Apr 2015 22:54:41 +0200
+Message-ID: <20150427205441.GB1301@xo-6d-61-c0.localdomain>
 References: <553E6CF5.4030601@list.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59758 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965081AbbD0Uys (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Apr 2015 16:54:48 -0400
+Content-Disposition: inline
 In-Reply-To: <553E6CF5.4030601@list.ru>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
 
+Hi!
 
-This adds the description of /sys/class/leds/<device>/delay_unit.
-It allows you to specify the delay unit for the led trigger timer.
+> The following patches improve the precision of led
+> timer trigger and add the delay unit control.
+> That allows to make PWM brightness control with timer
+> trigger.
 
-CC: Jonathan Corbet <corbet@lwn.net>
-CC: linux-doc@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
+Are you sure that is good idea? Doing LED pwm with main cpu is quite harsh...
 
-Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
----
- Documentation/leds/leds-class.txt |    4 ++++
- 1 file changed, 4 insertions(+)
+We already have "brightness" for... well... brightness level.
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index 79699c2..0e5ecf5 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -23,6 +23,10 @@ parameters and work on a per LED basis. The timer trigger is an example.
- The timer trigger will periodically change the LED brightness between
- LED_OFF and the current brightness setting. The "on" and "off" time can
- be specified via /sys/class/leds/<device>/delay_{on,off} in milliseconds.
-+If you want to specify the delay in microseconds or nanoseconds, you can
-+write 'usec' or 'nsec' to /sys/class/leds/<device>/delay_unit. That
-+functionality is available only if you have high-resolution timers
-+configured (check CONFIG_HIGH_RES_TIMERS in your kernel config).
- You can change the brightness value of a LED independently of the timer
- trigger. However, if you set the brightness value to LED_OFF it will
- also disable the timer trigger.
+Would it make sense to have an option (Kconfig?) to do PWM using timer on hardware
+that does not do hardware PWM?
+									Pavel
 -- 
-1.7.9.5
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
