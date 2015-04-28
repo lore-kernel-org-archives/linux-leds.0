@@ -1,60 +1,47 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 1/2] leds: add DT binding for BCM6328 LED controller
-Date: Tue, 28 Apr 2015 10:18:55 +0200
-Message-ID: <553F426F.3000507@samsung.com>
-References: <1429895176-21818-1-git-send-email-noltari@gmail.com>
- <1430050517-8045-1-git-send-email-noltari@gmail.com>
- <1430050517-8045-2-git-send-email-noltari@gmail.com>
+Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
+Date: Tue, 28 Apr 2015 10:57:04 +0200
+Message-ID: <553F4B60.20204@samsung.com>
+References: <553E6CF5.4030601@list.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:16766 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:19566 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932454AbbD1IS7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 04:18:59 -0400
-In-reply-to: <1430050517-8045-2-git-send-email-noltari@gmail.com>
+	with ESMTP id S932657AbbD1I5K (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 04:57:10 -0400
+In-reply-to: <553E6CF5.4030601@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
 
-On 04/26/2015 02:15 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
-> This adds device tree binding documentation for the Broadcom BCM6328 =
-LED controller.
+Hi Stas,
+
+Have you tested it? I tried it with Samsung M0 board and
+my leds-aat1290 driver. It didn't work well. And for small delay
+intervals it will not have a chance to work reliably with all drivers,
+especially the ones which use mutex in their brightness_set op,
+since mutex can sleep.
+
+I am afraid that we have to stay with what we have currently.
+
+On 04/27/2015 07:08 PM, Stas Sergeev wrote:
+> Hello.
 >
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
->   v4: introduce changes suggested by Jacek
->   - Follow Documentation convention.
->   v3: introduce changes suggested by Jacek
->   - Revert compatible string to "brcm,bcm6328-leds".
->   - Improved description.
->   - Renamed normal LEDs to hardware controlled.
->   - Explain that LEDs are active high by default on active-low option=
-al property.
->   - Properties are now grouped depending on the type of LED and optio=
-nal requirement.
->   - Added more examples to explain hardware controlled LEDs and activ=
-ity/link selection.
->   v2: Introduce changes suggested by Florian and Jonas.
->   - Change compatible string to "brcm,bcm6328-leds-ctrl".
->   - Make valid LEDs statement more strict.
->   - Remove compatible strings from LED subnodes.
->   - Clarify that LEDs are active high by default.
->   - Add a better description for brcm,link-signal-sources and brcm,ac=
-tivity-signal-sources.
+> The following patches improve the precision of led
+> timer trigger and add the delay unit control.
+> That allows to make PWM brightness control with timer
+> trigger.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 >
->   .../devicetree/bindings/leds/leds-bcm6328.txt      | 309 ++++++++++=
-+++++++++++
->   1 file changed, 309 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm6=
-328.txt
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
---=20
+-- 
 Best Regards,
 Jacek Anaszewski
