@@ -1,54 +1,75 @@
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 2/2] leds/powernv: Add driver for PowerNV platform
-Date: Tue, 28 Apr 2015 16:59:18 +1000
-Message-ID: <m3zj5slovt.fsf@oc8180480414.ibm.com>
-References: <20150422234509.626d9dc7@ja.home> <55388254.4000606@linux.vnet.ibm.com> <20150423161342.55e9ac8f@ja.home> <m3egnama5l.fsf@oc8180480414.ibm.com> <20150424121629.69a159b3@ja.home>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: LED subsystem child DT node ref counting
+Date: Tue, 28 Apr 2015 09:15:47 +0200
+Message-ID: <553F33A3.2000902@samsung.com>
+References: <5530E891.20707@samsung.com>
+ <CAL_JsqLVEKN_XWOLz2uOVbhf3NWf=b27DXh8NhaqvfrNsU+WNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e18.ny.us.ibm.com ([129.33.205.208]:37401 "EHLO
-	e18.ny.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348AbbD1G7z (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 02:59:55 -0400
-Received: from /spool/local
-	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
-	Tue, 28 Apr 2015 02:59:54 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-	by d01dlp03.pok.ibm.com (Postfix) with ESMTP id 0460FC90045
-	for <linux-leds@vger.kernel.org>; Tue, 28 Apr 2015 02:50:31 -0400 (EDT)
-Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
-	by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3S6xMba59703388
-	for <linux-leds@vger.kernel.org>; Tue, 28 Apr 2015 06:59:22 GMT
-Received: from d01av02.pok.ibm.com (localhost [127.0.0.1])
-	by d01av02.pok.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3S6xKW9011746
-	for <linux-leds@vger.kernel.org>; Tue, 28 Apr 2015 02:59:21 -0400
-In-Reply-To: <20150424121629.69a159b3@ja.home>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:14807 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751889AbbD1HPy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:15:54 -0400
+In-reply-to: <CAL_JsqLVEKN_XWOLz2uOVbhf3NWf=b27DXh8NhaqvfrNsU+WNw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski81@gmail.com>
-Cc: linux-leds@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, khandual@linux.vnet.ibm.com
+To: Rob Herring <robherring2@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
 
-Jacek Anaszewski <j.anaszewski81@gmail.com> writes:
-> Is the DT node we are discussing used by some other drivers than the
-> LED class driver? Or is it required in this form by other components of
-> your platform?
+On 04/27/2015 03:57 PM, Rob Herring wrote:
+> On Fri, Apr 17, 2015 at 6:03 AM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> Hi,
+>>
+>> I'd like to clarify whether LED subsystem drivers behave correctly
+>> or not, regarding child DT nodes reference counting.
+>
+> In general, the DT reference counting is broken. It is really only
+> used on pSeries and only for certain nodes on it.
+>
+>> Single LED controller can have connected more then one LED to it.
+>> The LEDs are represented by child DT nodes of the node representing
+>> the controller (see Documentation/devicetree/bindings/leds).
+>>
+>> LED subsystem drivers parse child DT nodes and use the node name,
+>> or 'label' property string as the LED class device name.
+>>
+>> This is usually accomplished like below:
+>>
+>> for_each_child_of_node(np, child) {
+>>      ...
+>>      led.name = of_get_property(child, "label", NULL) ? : child->name;
+>>
+>>
+>> The question is whether reference count of the child node shouldn't
+>> be increased here with of_node_get(child). Whereas intuitively it could
+>> be thought of as a right thing to do, empirical experiments don't
+>> necessary confirm that.
+>>
+>> When I print the value of child_node->kobj.kref.refcount.counter
+>> inside for_each loop it is 3 and and after leaving the loop it gets
+>> decreased to 2. On driver removal the value is also 2. It means that
+>> label is available all the time, without increasing child node ref
+>> counter.
+>
+> I believe the ref count is only left incremented if you break from the
+> loop. Otherwise, it is only incremented during the loop one child at a
+> time.
 
-OS kernels are the chief consumers, Linux being the overwhelmingly major
-one here.
+Child node ref count is 3 right after obtaining it with
+of_get_next_available_child.
 
-But this is what firmware currently produces.
+Nonetheless my further source code investigation revealed that this
+does not pose an issue for the LED subsystem, as the label is copied
+in the device_create_with_groups function.
 
-Changing the DT representation at this stage is perhaps *possible*
-without creating a bunch of pain (I'd have to audit a bunch of things to
-see if we have GA shipping systems with this functionality for instance,
-and then evaluate the impact to partners and our various labs) which is
-a lot of work I don't particularly want to do and is well below urgent
-item 248 on my TODO list, especially for what seems to be largely a
-cosmetic suggestion?
+The related 'name' property should be probably removed from the
+struct led_classdev, as it seems to be used only for device name
+initialization. It will require modifications in the existing LED
+drivers though.
 
-That being said, more and better review of things we're putting in the
-device tree in firmware is probably a good thing. After all, once we
-release we do kind of have to live with it essentially forever. If
-people are able to aid in that kind of code review, I'd be most welcome
-to hear it.
+-- 
+Best Regards,
+Jacek Anaszewski
