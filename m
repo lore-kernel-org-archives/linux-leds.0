@@ -1,75 +1,130 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: LED subsystem child DT node ref counting
-Date: Tue, 28 Apr 2015 09:15:47 +0200
-Message-ID: <553F33A3.2000902@samsung.com>
-References: <5530E891.20707@samsung.com>
- <CAL_JsqLVEKN_XWOLz2uOVbhf3NWf=b27DXh8NhaqvfrNsU+WNw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v6 01/10] leds: unify the location of led-trigger API
+Date: Tue, 28 Apr 2015 09:18:41 +0200
+Message-ID: <1430205530-20873-2-git-send-email-j.anaszewski@samsung.com>
+References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:14807 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889AbbD1HPy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:15:54 -0400
-In-reply-to: <CAL_JsqLVEKN_XWOLz2uOVbhf3NWf=b27DXh8NhaqvfrNsU+WNw@mail.gmail.com>
+Received: from mailout2.samsung.com ([203.254.224.25]:35541 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbbD1HUr (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:20:47 -0400
+In-reply-to: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Bryan Wu <cooloney@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On 04/27/2015 03:57 PM, Rob Herring wrote:
-> On Fri, Apr 17, 2015 at 6:03 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> Hi,
->>
->> I'd like to clarify whether LED subsystem drivers behave correctly
->> or not, regarding child DT nodes reference counting.
->
-> In general, the DT reference counting is broken. It is really only
-> used on pSeries and only for certain nodes on it.
->
->> Single LED controller can have connected more then one LED to it.
->> The LEDs are represented by child DT nodes of the node representing
->> the controller (see Documentation/devicetree/bindings/leds).
->>
->> LED subsystem drivers parse child DT nodes and use the node name,
->> or 'label' property string as the LED class device name.
->>
->> This is usually accomplished like below:
->>
->> for_each_child_of_node(np, child) {
->>      ...
->>      led.name = of_get_property(child, "label", NULL) ? : child->name;
->>
->>
->> The question is whether reference count of the child node shouldn't
->> be increased here with of_node_get(child). Whereas intuitively it could
->> be thought of as a right thing to do, empirical experiments don't
->> necessary confirm that.
->>
->> When I print the value of child_node->kobj.kref.refcount.counter
->> inside for_each loop it is 3 and and after leaving the loop it gets
->> decreased to 2. On driver removal the value is also 2. It means that
->> label is available all the time, without increasing child node ref
->> counter.
->
-> I believe the ref count is only left incremented if you break from the
-> loop. Otherwise, it is only incremented during the loop one child at a
-> time.
+Part of led-trigger API was in the private drivers/leds/leds.h header.
+Move it to the include/linux/leds.h header to unify the API location
+and announce it as public. It has been already exported from
+led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
+changed from macros to inline to match the style of the surrounding code.
 
-Child node ref count is 3 right after obtaining it with
-of_get_next_available_child.
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/leds/leds.h  |   24 ------------------------
+ include/linux/leds.h |   25 +++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+), 24 deletions(-)
 
-Nonetheless my further source code investigation revealed that this
-does not pose an issue for the LED subsystem, as the label is copied
-in the device_create_with_groups function.
-
-The related 'name' property should be probably removed from the
-struct led_classdev, as it seems to be used only for device name
-initialization. It will require modifications in the existing LED
-drivers though.
-
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 79efe57..bc89d7a 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -13,7 +13,6 @@
+ #ifndef __LEDS_H_INCLUDED
+ #define __LEDS_H_INCLUDED
+ 
+-#include <linux/device.h>
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
+ 
+@@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
+ extern struct rw_semaphore leds_list_lock;
+ extern struct list_head leds_list;
+ 
+-#ifdef CONFIG_LEDS_TRIGGERS
+-void led_trigger_set_default(struct led_classdev *led_cdev);
+-void led_trigger_set(struct led_classdev *led_cdev,
+-			struct led_trigger *trigger);
+-void led_trigger_remove(struct led_classdev *led_cdev);
+-
+-static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+-{
+-	return led_cdev->trigger_data;
+-}
+-
+-#else
+-#define led_trigger_set_default(x) do {} while (0)
+-#define led_trigger_set(x, y) do {} while (0)
+-#define led_trigger_remove(x) do {} while (0)
+-#define led_get_trigger_data(x) (NULL)
+-#endif
+-
+-ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+-			const char *buf, size_t count);
+-ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+-			char *buf);
+-
+ #endif	/* __LEDS_H_INCLUDED */
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 9a2b000..b122eea 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -12,6 +12,7 @@
+ #ifndef __LINUX_LEDS_H_INCLUDED
+ #define __LINUX_LEDS_H_INCLUDED
+ 
++#include <linux/device.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+@@ -222,6 +223,11 @@ struct led_trigger {
+ 	struct list_head  next_trig;
+ };
+ 
++ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
++			const char *buf, size_t count);
++ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
++			char *buf);
++
+ /* Registration functions for complex triggers */
+ extern int led_trigger_register(struct led_trigger *trigger);
+ extern void led_trigger_unregister(struct led_trigger *trigger);
+@@ -238,6 +244,16 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
+ 				      unsigned long *delay_on,
+ 				      unsigned long *delay_off,
+ 				      int invert);
++extern void led_trigger_set_default(struct led_classdev *led_cdev);
++extern void led_trigger_set(struct led_classdev *led_cdev,
++			struct led_trigger *trigger);
++extern void led_trigger_remove(struct led_classdev *led_cdev);
++
++static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
++{
++	return led_cdev->trigger_data;
++}
++
+ /**
+  * led_trigger_rename_static - rename a trigger
+  * @name: the new trigger name
+@@ -267,6 +283,15 @@ static inline void led_trigger_register_simple(const char *name,
+ static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
+ static inline void led_trigger_event(struct led_trigger *trigger,
+ 				enum led_brightness event) {}
++static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
++static inline void led_trigger_set(struct led_classdev *led_cdev,
++				struct led_trigger *trigger) {}
++static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
++static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_LEDS_TRIGGERS */
+ 
+ /* Trigger specific functions */
 -- 
-Best Regards,
-Jacek Anaszewski
+1.7.9.5
