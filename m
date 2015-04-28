@@ -1,80 +1,313 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
-Date: Tue, 28 Apr 2015 16:26:23 +0300
-Message-ID: <553F8A7F.7040700@list.ru>
-References: <553E6CF5.4030601@list.ru> <553F4B60.20204@samsung.com> <553F5CFF.9090601@list.ru> <553F83DC.8080701@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v6 10/10] leds: aat1290: add support for V4L2 Flash
+ sub-device
+Date: Tue, 28 Apr 2015 17:02:20 +0300
+Message-ID: <20150428140220.GI3188@valkosipuli.retiisi.org.uk>
+References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
+ <1430205530-20873-11-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp42.i.mail.ru ([94.100.177.102]:52419 "EHLO smtp42.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965423AbbD1N0h (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 28 Apr 2015 09:26:37 -0400
-In-Reply-To: <553F83DC.8080701@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430205530-20873-11-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+List-Id: linux-leds@vger.kernel.org
 
-28.04.2015 15:58, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 04/28/2015 12:12 PM, Stas Sergeev wrote:
->> 28.04.2015 11:57, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Hi Stas,
->>>
->>> Have you tested it?
->> Of course I did.
->> Works with gpio driver and provides up to 10usec precision on
->> armada-xp board.
->> This is 1000 times better than without my patch - the precision
->> was 10ms (jiffy).
-> Please take into account that this could work reliably only for gpio
-> LEDs. For the LEDs driven though a bus (e.g. I2C) delays below 1ms
-> might be hard to achieve. The minimum available delay would vary from
-> driver to driver.
->=20
-> We could think of adding the hr_timer mode to the led-class.
-> The mode could be turned on with use of a new led_set_high_res_timer
-> API. The API would be called by drivers/leds/leds-gpio.c driver when
-> a dedicated sysfs attribute was set adequately.
-> The other drivers could also set this mode if they controlled device
-> with a suitable LED switching rate. The minimum delay value could
-> be made configurable by the driver and readable through sysfs
-> when in hr_timer mode.
-Why such a complexity?
-Wouldn't it be enough if the driver can set the minimum delay
-value, yet to always use the hrtimer?
-Please note that 10ms (jiffy) is an inadequate minimum delay
-pretty much for any driver, I guess. At least 1ms should be possible,
-because, well, you can write 1ms to sysfs attribute even without
-my patch. So even the existing options need hrtimer to work right.
+Hi Jacek,
 
->>> I tried it with Samsung M0 board and
->>> my leds-aat1290 driver. It didn't work well. And for small delay
->>> intervals it will not have a chance to work reliably with all drive=
-rs,
->>> especially the ones which use mutex in their brightness_set op,
->>> since mutex can sleep.
->> OK, I can remove the nsec resolution.
-> usec also didn't work, please look at my use case and warning:
->=20
-> echo "timer" > trigger
-> echo 1 > delay_on
-> echo 1 > delay_off
-> echo usec > delay_unit
-> [  178.584433] hrtimer: interrupt took 300747 ns
-I think I should try a tasklet then.
+On Tue, Apr 28, 2015 at 09:18:50AM +0200, Jacek Anaszewski wrote:
+> Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
+> driver. The support allows for V4L2 Flash sub-device to take the control
+> of the LED Flash class device.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Sakari Ailus <sakari.ailus@iki.fi>
+> ---
+>  drivers/leds/Kconfig        |    1 +
+>  drivers/leds/leds-aat1290.c |  137 +++++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 132 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index dd7834c..874df63 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -47,6 +47,7 @@ config LEDS_AAT1290
+>  	depends on LEDS_CLASS_FLASH
+>  	depends on GPIOLIB
+>  	depends on OF
+> +	depends on PINCTRL
+>  	help
+>  	 This option enables support for the LEDs on the AAT1290.
+>  
+> diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+> index 03e5b96..f37f848 100644
+> --- a/drivers/leds/leds-aat1290.c
+> +++ b/drivers/leds/leds-aat1290.c
+> @@ -17,9 +17,11 @@
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/of.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+> +#include <media/v4l2-flash-led-class.h>
+>  
+>  #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
+>  #define AAT1290_MAX_MM_CURR_PERCENT_0	16
+> @@ -52,6 +54,8 @@ struct aat1290_led_config_data {
+>  	u32 max_flash_current;
+>  	/* maximum flash timeout */
+>  	u32 max_flash_tm;
+> +	/* external strobe capability */
+> +	bool has_external_strobe;
+>  	/* max LED brightness level */
+>  	enum led_brightness max_brightness;
+>  };
+> @@ -64,6 +68,8 @@ struct aat1290_led {
+>  
+>  	/* corresponding LED Flash class device */
+>  	struct led_classdev_flash fled_cdev;
+> +	/* V4L2 Flash device */
+> +	struct v4l2_flash *v4l2_flash;
+>  
+>  	/* FLEN pin */
+>  	struct gpio_desc *gpio_fl_en;
+> @@ -230,11 +236,15 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
+>  }
+>  
+>  static int aat1290_led_parse_dt(struct aat1290_led *led,
+> -			struct aat1290_led_config_data *cfg)
+> +			struct aat1290_led_config_data *cfg,
+> +			struct device_node **sub_node)
+>  {
+>  	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
+>  	struct device *dev = &led->pdev->dev;
+>  	struct device_node *child_node;
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+> +	struct pinctrl *pinctrl;
+> +#endif
+>  	int ret = 0;
+>  
+>  	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
+> @@ -251,6 +261,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
+>  		return ret;
+>  	}
+>  
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+> +	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
+> +	if (IS_ERR(pinctrl)) {
+> +		cfg->has_external_strobe = false;
+> +		dev_info(dev,
+> +			 "No support for external strobe detected.\n");
+> +	} else {
+> +		cfg->has_external_strobe = true;
+> +	}
+> +#endif
+> +
+>  	child_node = of_get_next_available_child(dev->of_node, NULL);
+>  	if (!child_node) {
+>  		dev_err(dev, "No DT child node found for connected LED.\n");
+> @@ -288,6 +309,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
+>  
+>  	of_node_put(child_node);
+>  
+> +	*sub_node = child_node;
+> +
+>  	return ret;
+>  }
+>  
+> @@ -316,7 +339,8 @@ int init_mm_current_scale(struct aat1290_led *led,
+>  	int i, max_mm_current =
+>  			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
+>  
+> -	led->mm_current_scale = kzalloc(sizeof(max_mm_current_percent),
+> +	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
+> +					sizeof(max_mm_current_percent),
+>  					GFP_KERNEL);
+>  	if (!led->mm_current_scale)
+>  		return -ENOMEM;
+> @@ -329,11 +353,12 @@ int init_mm_current_scale(struct aat1290_led *led,
+>  }
+>  
+>  static int aat1290_led_get_configuration(struct aat1290_led *led,
+> -					struct aat1290_led_config_data *cfg)
+> +					struct aat1290_led_config_data *cfg,
+> +					struct device_node **sub_node)
+>  {
+>  	int ret;
+>  
+> -	ret = aat1290_led_parse_dt(led, cfg);
+> +	ret = aat1290_led_parse_dt(led, cfg, sub_node);
+>  	if (ret < 0)
+>  		return ret;
+>  	/*
+> @@ -346,7 +371,10 @@ static int aat1290_led_get_configuration(struct aat1290_led *led,
+>  
+>  	aat1290_led_validate_mm_current(led, cfg);
+>  
+> -	kfree(led->mm_current_scale);
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+> +#else
+> +	devm_kfree(&led->pdev->dev, led->mm_current_scale);
+> +#endif
+>  
+>  	return 0;
+>  }
+> @@ -365,6 +393,83 @@ static void aat1290_init_flash_timeout(struct aat1290_led *led,
+>  	setting->val = setting->max;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+> +enum led_brightness aat1290_intensity_to_brightness(
+> +					struct v4l2_flash *v4l2_flash,
+> +					s32 intensity)
+> +{
+> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+> +	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
+> +	int i;
+> +
+> +	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
+> +		if (intensity >= led->mm_current_scale[i])
+> +			return i + 1;
+> +
+> +	return 1;
+> +}
+> +
+> +s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
+> +					enum led_brightness brightness)
+> +{
+> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+> +	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
+> +
+> +	return led->mm_current_scale[brightness - 1];
+> +}
+> +
+> +static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
+> +						bool enable)
+> +{
+> +	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
+> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+> +	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+> +	struct pinctrl *pinctrl;
+> +
+> +	gpiod_direction_output(led->gpio_fl_en, 0);
+> +	gpiod_direction_output(led->gpio_en_set, 0);
+> +
+> +	led->movie_mode = false;
+> +	led_cdev->brightness = 0;
+> +
+> +	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
+> +						enable ? "isp" : "host");
+> +	if (IS_ERR(pinctrl)) {
+> +		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
+> +		return PTR_ERR(pinctrl);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
+> +					struct aat1290_led_config_data *led_cfg,
+> +					struct v4l2_flash_config *v4l2_sd_cfg)
+> +{
+> +	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
+> +	struct led_flash_setting *s;
+> +
+> +	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->name,
+> +		sizeof(v4l2_sd_cfg->dev_name));
+> +
+> +	s = &v4l2_sd_cfg->intensity;
+> +	s->min = led->mm_current_scale[0];
+> +	s->max = led_cfg->max_mm_current;
+> +	s->step = 1;
+> +	s->val = s->max;
+> +
+> +	v4l2_sd_cfg->has_external_strobe = led_cfg->has_external_strobe;
+> +}
+> +
+> +static const struct v4l2_flash_ops v4l2_flash_ops = {
+> +	.external_strobe_set = aat1290_led_external_strobe_set,
+> +	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
+> +	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
+> +};
+> +#else
+> +#define aat1290_init_v4l2_flash_config(led, led_cfg, v4l2_sd_cfg)
+> +#endif
+> +
+>  static const struct led_flash_ops flash_ops = {
+>  	.strobe_set = aat1290_led_flash_strobe_set,
+>  	.timeout_set = aat1290_led_flash_timeout_set,
+> @@ -373,10 +478,14 @@ static const struct led_flash_ops flash_ops = {
+>  static int aat1290_led_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> +	struct device_node *sub_node = NULL;
+>  	struct aat1290_led *led;
+>  	struct led_classdev *led_cdev;
+>  	struct led_classdev_flash *fled_cdev;
+>  	struct aat1290_led_config_data led_cfg = {};
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+> +	struct v4l2_flash_config v4l2_sd_cfg = {};
+> +#endif
+>  	int ret;
+>  
+>  	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> @@ -390,7 +499,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
+>  	fled_cdev->ops = &flash_ops;
+>  	led_cdev = &fled_cdev->led_cdev;
+>  
+> -	ret = aat1290_led_get_configuration(led, &led_cfg);
+> +	ret = aat1290_led_get_configuration(led, &led_cfg, &sub_node);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -410,8 +519,23 @@ static int aat1290_led_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		goto err_flash_register;
+>  
+> +	aat1290_init_v4l2_flash_config(led, &led_cfg, &v4l2_sd_cfg);
+> +
+> +	led_cdev->dev->of_node = sub_node;
 
-> Only some time later I realized that for AAT1290 brightness is set
-> through ASCwire pulse protocol, which takes few ms.
->=20
-> Please note that with this approach users would have to wonder why
-> they are getting the warnings and why they can't get their LEDs to wo=
-rk
-> with given settings.
-OK, so we need a tasklet and the ability for the driver to set the
-minimal delay. I think I can implement the former and hope someone
-else will later implement the later. :)
-Lets just solve the problem step-by-step. I can't solve all the
-problems at once, but you can't deny the fact that the problem
-exists and needs to be solved.
+What's the reason for this? I can't immediately see how this is being used.
+
+There's also a problem with references, you should grab it here and release
+when it's no longer used.
+
+> +
+> +	/* Create V4L2 Flash subdev. */
+> +	led->v4l2_flash = v4l2_flash_init(fled_cdev,
+> +					  &v4l2_flash_ops,
+> +					  &v4l2_sd_cfg);
+> +	if (IS_ERR(led->v4l2_flash)) {
+> +		ret = PTR_ERR(led->v4l2_flash);
+> +		goto error_v4l2_flash_init;
+> +	}
+> +
+>  	return 0;
+>  
+> +error_v4l2_flash_init:
+> +	led_classdev_flash_unregister(fled_cdev);
+>  err_flash_register:
+>  	mutex_destroy(&led->lock);
+>  
+> @@ -422,6 +546,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
+>  {
+>  	struct aat1290_led *led = platform_get_drvdata(pdev);
+>  
+> +	v4l2_flash_release(led->v4l2_flash);
+>  	led_classdev_flash_unregister(&led->fled_cdev);
+>  	cancel_work_sync(&led->work_brightness_set);
+>  
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
