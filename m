@@ -1,116 +1,115 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v6 00/10] LED / flash API integration
-Date: Tue, 28 Apr 2015 09:18:40 +0200
-Message-ID: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50868 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751766AbbD1HUt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:20:49 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH v6 02/10] DT: Add documentation for the mfd Maxim max77693
+Date: Tue, 28 Apr 2015 09:18:42 +0200
+Message-ID: <1430205530-20873-3-git-send-email-j.anaszewski@samsung.com>
+References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-This is a sixth non-RFC version of LED / flash API integration
-series [1]. It is based on linux_next-20150427.
+This patch adds device tree binding documentation for
+the flash cell of the Maxim max77693 multifunctional device.
 
-================
-Changes since v5
-================
-- renamed v4l2-flash module to v4l2-flash-led-class and applied
-  other related modifications spotted by Sakari
-- fixed not released of_node reference in max77693-led driver
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: devicetree@vger.kernel.org
+---
+ Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-================
-Changes since v4
-================
-- adapted leds-max77693 and leds-aat1290 drivers to the recent
-  modifications in leds/common.txt bindings documentation and
-  changed the behaviour when properties are missing
-- modified DT bindings documenation for the aforementioned
-  drivers
-- removed unjustified use of goto in the leds-aat1290 driver
-- fixed lack of of_node_put in leds-aat1290 driver, after parsing
-  DT child node 
-- removed patch adding 'skyworks' vendor prefix, as the entry
-  has been recently added
-
-================
-Changes since v2
-================
-- improved leds/common DT bindings documentation
-- improved max77693-led DT documentation
-- fixed validation of DT confguration for leds-max77693 by
-  minimal values in joint iouts case
-- removed trigger-type property from leds-max77693 bindings
-  and adjusted the driver accordingly
-- improved LED Flash class documentation related to v4l2-flash sub-device
-  initialization
-- excluded from leds-aat1290 DT bindings documentation the part
-  related to handling external strobe sources
-
-================
-Changes since v1
-================
-
-- excluded exynos4-is media device related patches, as there is
-  consenus required related to flash devices handling in media device
-  DT bindings
-- modifications around LED Flash class settings and v4l2 flash config
-  initialization in LED Flash class drivers and v4l2-flash wrapper
-- switched to using DT node name as a device name for leds-max77693
-  and leds-aat1290 drivers, in case DT 'label' property is absent
-- dropped OF dependecy for v4l2-flash wrapper
-- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
-- allowed for multiple clients of v4l2-flash sub-device
-
-======================
-Changes since RFC v13:
-======================
-
-- reduced number of patches - some of them have been merged
-- slightly modified max77693-led device naming
-- fixed issues in v4l2-flash helpers detected with yavta
-- cleaned up AAT1290 device tree documentation
-- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
-
-Thanks,
-Jacek Anaszewski
-
-[1] http://www.spinics.net/lists/kernel/msg1944538.html
-
-Jacek Anaszewski (10):
-  leds: unify the location of led-trigger API
-  DT: Add documentation for the mfd Maxim max77693
-  leds: Add support for max77693 mfd flash cell
-  DT: Add documentation for the Skyworks AAT1290
-  leds: Add driver for AAT1290 flash LED controller
-  media: Add registration helpers for V4L2 flash sub-devices
-  Documentation: leds: Add description of v4l2-flash sub-device
-  leds: max77693: add support for V4L2 Flash sub-device
-  DT: aat1290: Document handling external strobe sources
-  leds: aat1290: add support for V4L2 Flash sub-device
-
- .../devicetree/bindings/leds/leds-aat1290.txt      |   73 ++
- Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++
- Documentation/leds/leds-class-flash.txt            |   47 +
- drivers/leds/Kconfig                               |   19 +
- drivers/leds/Makefile                              |    2 +
- drivers/leds/leds-aat1290.c                        |  577 ++++++++++
- drivers/leds/leds-max77693.c                       | 1104 ++++++++++++++++++++
- drivers/leds/leds.h                                |   24 -
- drivers/media/v4l2-core/Kconfig                    |   11 +
- drivers/media/v4l2-core/Makefile                   |    2 +
- drivers/media/v4l2-core/v4l2-flash-led-class.c     |  626 +++++++++++
- include/linux/leds.h                               |   25 +
- include/media/v4l2-flash-led-class.h               |  145 +++
- 13 files changed, 2698 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
- create mode 100644 drivers/leds/leds-aat1290.c
- create mode 100644 drivers/leds/leds-max77693.c
- create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
- create mode 100644 include/media/v4l2-flash-led-class.h
-
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 38e6440..d342584 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -76,7 +76,60 @@ Optional properties:
+     Valid values: 4300000, 4700000, 4800000, 4900000
+     Default: 4300000
+ 
++- led : the LED submodule device node
++
++There are two LED outputs available - FLED1 and FLED2. Each of them can
++control a separate LED or they can be connected together to double
++the maximum current for a single connected LED. One LED is represented
++by one child node.
++
++Required properties:
++- compatible : Must be "maxim,max77693-led".
++
++Optional properties:
++- maxim,boost-mode :
++	In boost mode the device can produce up to 1.2A of total current
++	on both outputs. The maximum current on each output is reduced
++	to 625mA then. If not enabled explicitly, boost setting defaults to
++	LEDS_BOOST_FIXED in case both current sources are used.
++	Possible values:
++		LEDS_BOOST_OFF (0) - no boost,
++		LEDS_BOOST_ADAPTIVE (1) - adaptive mode,
++		LEDS_BOOST_FIXED (2) - fixed mode.
++- maxim,boost-mvout : Output voltage of the boost module in millivolts.
++	Valid values: 3300 - 5500, step by 25 (rounded down)
++	Default: 3300
++- maxim,mvsys-min : Low input voltage level in millivolts. Flash is not fired
++	if chip estimates that system voltage could drop below this level due
++	to flash power consumption.
++	Valid values: 2400 - 3400, step by 33 (rounded down)
++	Default: 2400
++
++Required properties for the LED child node:
++- led-sources : see Documentation/devicetree/bindings/leds/common.txt;
++		device current output identifiers: 0 - FLED1, 1 - FLED2
++- led-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values for a LED connected to one FLED output:
++		15625 - 250000, step by 15625 (rounded down)
++	Valid values for a LED connected to both FLED outputs:
++		15625 - 500000, step by 15625 (rounded down)
++- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values for a single LED connected to one FLED output
++	(boost mode must be turned off):
++		15625 - 1000000, step by 15625 (rounded down)
++	Valid values for a single LED connected to both FLED outputs:
++		15625 - 1250000, step by 15625 (rounded down)
++	Valid values for two LEDs case:
++		15625 - 625000, step by 15625 (rounded down)
++- flash-max-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
++	Valid values: 62500 - 1000000, step by 62500 (rounded down)
++
++Optional properties for the LED child node:
++- label : see Documentation/devicetree/bindings/leds/common.txt
++
+ Example:
++#include <dt-bindings/leds/common.h>
++
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+ 		reg = <0x66>;
+@@ -117,5 +170,19 @@ Example:
+ 			maxim,thermal-regulation-celsius = <75>;
+ 			maxim,battery-overcurrent-microamp = <3000000>;
+ 			maxim,charge-input-threshold-microvolt = <4300000>;
++
++		led {
++			compatible = "maxim,max77693-led";
++			maxim,boost-mode = <LEDS_BOOST_FIXED>;
++			maxim,boost-mvout = <5000>;
++			maxim,mvsys-min = <2400>;
++
++			camera_flash: flash-led {
++				label = "max77693-flash";
++				led-sources = <0>, <1>;
++				led-max-microamp = <500000>;
++				flash-max-microamp = <1250000>;
++				flash-max-timeout-us = <1000000>;
++			};
+ 		};
+ 	};
 -- 
 1.7.9.5
