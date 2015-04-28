@@ -1,295 +1,529 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v6 10/10] leds: aat1290: add support for V4L2 Flash sub-device
-Date: Tue, 28 Apr 2015 09:18:50 +0200
-Message-ID: <1430205530-20873-11-git-send-email-j.anaszewski@samsung.com>
-References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v4 2/2] leds: add BCM6328 LED driver
+Date: Tue, 28 Apr 2015 10:18:16 +0200
+Message-ID: <553F4248.6040302@samsung.com>
+References: <1429895176-21818-1-git-send-email-noltari@gmail.com>
+ <1430050517-8045-1-git-send-email-noltari@gmail.com>
+ <1430050517-8045-3-git-send-email-noltari@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:19088 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752556AbbD1ISU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 04:18:20 -0400
+In-reply-to: <1430050517-8045-3-git-send-email-noltari@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com
 
-Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
-driver. The support allows for V4L2 Flash sub-device to take the control
-of the LED Flash class device.
+Hi Alvaro,
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
----
- drivers/leds/Kconfig        |    1 +
- drivers/leds/leds-aat1290.c |  137 +++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 132 insertions(+), 6 deletions(-)
+Thanks for the update. I see one minor issue below.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index dd7834c..874df63 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -47,6 +47,7 @@ config LEDS_AAT1290
- 	depends on LEDS_CLASS_FLASH
- 	depends on GPIOLIB
- 	depends on OF
-+	depends on PINCTRL
- 	help
- 	 This option enables support for the LEDs on the AAT1290.
- 
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index 03e5b96..f37f848 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -17,9 +17,11 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-+#include <media/v4l2-flash-led-class.h>
- 
- #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
- #define AAT1290_MAX_MM_CURR_PERCENT_0	16
-@@ -52,6 +54,8 @@ struct aat1290_led_config_data {
- 	u32 max_flash_current;
- 	/* maximum flash timeout */
- 	u32 max_flash_tm;
-+	/* external strobe capability */
-+	bool has_external_strobe;
- 	/* max LED brightness level */
- 	enum led_brightness max_brightness;
- };
-@@ -64,6 +68,8 @@ struct aat1290_led {
- 
- 	/* corresponding LED Flash class device */
- 	struct led_classdev_flash fled_cdev;
-+	/* V4L2 Flash device */
-+	struct v4l2_flash *v4l2_flash;
- 
- 	/* FLEN pin */
- 	struct gpio_desc *gpio_fl_en;
-@@ -230,11 +236,15 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
- }
- 
- static int aat1290_led_parse_dt(struct aat1290_led *led,
--			struct aat1290_led_config_data *cfg)
-+			struct aat1290_led_config_data *cfg,
-+			struct device_node **sub_node)
- {
- 	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
- 	struct device *dev = &led->pdev->dev;
- 	struct device_node *child_node;
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	struct pinctrl *pinctrl;
-+#endif
- 	int ret = 0;
- 
- 	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
-@@ -251,6 +261,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
- 		return ret;
- 	}
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
-+	if (IS_ERR(pinctrl)) {
-+		cfg->has_external_strobe = false;
-+		dev_info(dev,
-+			 "No support for external strobe detected.\n");
-+	} else {
-+		cfg->has_external_strobe = true;
-+	}
-+#endif
-+
- 	child_node = of_get_next_available_child(dev->of_node, NULL);
- 	if (!child_node) {
- 		dev_err(dev, "No DT child node found for connected LED.\n");
-@@ -288,6 +309,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
- 
- 	of_node_put(child_node);
- 
-+	*sub_node = child_node;
-+
- 	return ret;
- }
- 
-@@ -316,7 +339,8 @@ int init_mm_current_scale(struct aat1290_led *led,
- 	int i, max_mm_current =
- 			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
- 
--	led->mm_current_scale = kzalloc(sizeof(max_mm_current_percent),
-+	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
-+					sizeof(max_mm_current_percent),
- 					GFP_KERNEL);
- 	if (!led->mm_current_scale)
- 		return -ENOMEM;
-@@ -329,11 +353,12 @@ int init_mm_current_scale(struct aat1290_led *led,
- }
- 
- static int aat1290_led_get_configuration(struct aat1290_led *led,
--					struct aat1290_led_config_data *cfg)
-+					struct aat1290_led_config_data *cfg,
-+					struct device_node **sub_node)
- {
- 	int ret;
- 
--	ret = aat1290_led_parse_dt(led, cfg);
-+	ret = aat1290_led_parse_dt(led, cfg, sub_node);
- 	if (ret < 0)
- 		return ret;
- 	/*
-@@ -346,7 +371,10 @@ static int aat1290_led_get_configuration(struct aat1290_led *led,
- 
- 	aat1290_led_validate_mm_current(led, cfg);
- 
--	kfree(led->mm_current_scale);
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+#else
-+	devm_kfree(&led->pdev->dev, led->mm_current_scale);
-+#endif
- 
- 	return 0;
- }
-@@ -365,6 +393,83 @@ static void aat1290_init_flash_timeout(struct aat1290_led *led,
- 	setting->val = setting->max;
- }
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+enum led_brightness aat1290_intensity_to_brightness(
-+					struct v4l2_flash *v4l2_flash,
-+					s32 intensity)
-+{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+	int i;
-+
-+	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
-+		if (intensity >= led->mm_current_scale[i])
-+			return i + 1;
-+
-+	return 1;
-+}
-+
-+s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+
-+	return led->mm_current_scale[brightness - 1];
-+}
-+
-+static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
-+						bool enable)
-+{
-+	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct pinctrl *pinctrl;
-+
-+	gpiod_direction_output(led->gpio_fl_en, 0);
-+	gpiod_direction_output(led->gpio_en_set, 0);
-+
-+	led->movie_mode = false;
-+	led_cdev->brightness = 0;
-+
-+	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
-+						enable ? "isp" : "host");
-+	if (IS_ERR(pinctrl)) {
-+		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
-+		return PTR_ERR(pinctrl);
-+	}
-+
-+	return 0;
-+}
-+
-+static void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
-+					struct aat1290_led_config_data *led_cfg,
-+					struct v4l2_flash_config *v4l2_sd_cfg)
-+{
-+	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
-+	struct led_flash_setting *s;
-+
-+	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->name,
-+		sizeof(v4l2_sd_cfg->dev_name));
-+
-+	s = &v4l2_sd_cfg->intensity;
-+	s->min = led->mm_current_scale[0];
-+	s->max = led_cfg->max_mm_current;
-+	s->step = 1;
-+	s->val = s->max;
-+
-+	v4l2_sd_cfg->has_external_strobe = led_cfg->has_external_strobe;
-+}
-+
-+static const struct v4l2_flash_ops v4l2_flash_ops = {
-+	.external_strobe_set = aat1290_led_external_strobe_set,
-+	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
-+	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
-+};
-+#else
-+#define aat1290_init_v4l2_flash_config(led, led_cfg, v4l2_sd_cfg)
-+#endif
-+
- static const struct led_flash_ops flash_ops = {
- 	.strobe_set = aat1290_led_flash_strobe_set,
- 	.timeout_set = aat1290_led_flash_timeout_set,
-@@ -373,10 +478,14 @@ static const struct led_flash_ops flash_ops = {
- static int aat1290_led_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct device_node *sub_node = NULL;
- 	struct aat1290_led *led;
- 	struct led_classdev *led_cdev;
- 	struct led_classdev_flash *fled_cdev;
- 	struct aat1290_led_config_data led_cfg = {};
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	struct v4l2_flash_config v4l2_sd_cfg = {};
-+#endif
- 	int ret;
- 
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-@@ -390,7 +499,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	fled_cdev->ops = &flash_ops;
- 	led_cdev = &fled_cdev->led_cdev;
- 
--	ret = aat1290_led_get_configuration(led, &led_cfg);
-+	ret = aat1290_led_get_configuration(led, &led_cfg, &sub_node);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -410,8 +519,23 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_flash_register;
- 
-+	aat1290_init_v4l2_flash_config(led, &led_cfg, &v4l2_sd_cfg);
-+
-+	led_cdev->dev->of_node = sub_node;
-+
-+	/* Create V4L2 Flash subdev. */
-+	led->v4l2_flash = v4l2_flash_init(fled_cdev,
-+					  &v4l2_flash_ops,
-+					  &v4l2_sd_cfg);
-+	if (IS_ERR(led->v4l2_flash)) {
-+		ret = PTR_ERR(led->v4l2_flash);
-+		goto error_v4l2_flash_init;
-+	}
-+
- 	return 0;
- 
-+error_v4l2_flash_init:
-+	led_classdev_flash_unregister(fled_cdev);
- err_flash_register:
- 	mutex_destroy(&led->lock);
- 
-@@ -422,6 +546,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
- {
- 	struct aat1290_led *led = platform_get_drvdata(pdev);
- 
-+	v4l2_flash_release(led->v4l2_flash);
- 	led_classdev_flash_unregister(&led->fled_cdev);
- 	cancel_work_sync(&led->work_brightness_set);
- 
--- 
-1.7.9.5
+On 04/26/2015 02:15 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+> This adds support for the LED controller on Broadcom's BCM6328.
+>
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+>   v4: resend, no changes.
+>   v3: introduce changes suggested by Jacek
+>   - Revert compatible string to "brcm,bcm6328-leds".
+>   - Add BCM6328_ prefix to macros.
+>   - Rename blink_del to blink_delay.
+>   v2: introduce changes suggested by Florian and Jonas.
+>   - Improve Kconfig description.
+>   - Remove unused imports.
+>   - Fix bug in blink_set so it works for multiple LEDs.
+>   - "brcm,link-selection" -> "brcm,link-signal-sources".
+>   - "brcm,activity-selection" -> "brcm,activity-signal-sources".
+>   - Use of_property_read_bool instead of of_get_property for booleans=
+=2E
+>   - Add MODULE_AUTHOR strings.
+>
+>   drivers/leds/Kconfig        |   8 +
+>   drivers/leds/Makefile       |   1 +
+>   drivers/leds/leds-bcm6328.c | 413 +++++++++++++++++++++++++++++++++=
++++++++++++
+>   3 files changed, 422 insertions(+)
+>   create mode 100644 drivers/leds/leds-bcm6328.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 966b960..caa8ee6 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -42,6 +42,14 @@ config LEDS_88PM860X
+>   	  This option enables support for on-chip LED drivers found on Mar=
+vell
+>   	  Semiconductor 88PM8606 PMIC.
+>
+> +config LEDS_BCM6328
+> +	tristate "LED Support for Broadcom BCM6328"
+> +	depends on LEDS_CLASS
+> +	depends on OF
+> +	help
+> +	  This option enables support for LEDs connected to the BCM6328
+> +	  LED HW controller accessed via MMIO registers.
+> +
+>   config LEDS_LM3530
+>   	tristate "LCD Backlight driver for LM3530"
+>   	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index bf46093..309a46b 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
+>
+>   # LED Platform Drivers
+>   obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
+> +obj-$(CONFIG_LEDS_BCM6328)		+=3D leds-bcm6328.o
+>   obj-$(CONFIG_LEDS_BD2802)		+=3D leds-bd2802.o
+>   obj-$(CONFIG_LEDS_LOCOMO)		+=3D leds-locomo.o
+>   obj-$(CONFIG_LEDS_LM3530)		+=3D leds-lm3530.o
+> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.=
+c
+> new file mode 100644
+> index 0000000..d2bcbc3
+> --- /dev/null
+> +++ b/drivers/leds/leds-bcm6328.c
+> @@ -0,0 +1,413 @@
+> +/*
+> + * Driver for BCM6328 memory-mapped LEDs, based on leds-syscon.c
+> + *
+> + * Copyright 2015 =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.co=
+m>
+> + * Copyright 2015 Jonas Gorski <jogo@openwrt.org>
+> + *
+> + * This program is free software; you can redistribute  it and/or mo=
+dify it
+> + * under  the terms of  the GNU General  Public License as published=
+ by the
+> + * Free Software Foundation;  either version 2 of the  License, or (=
+at your
+> + * option) any later version.
+> + */
+> +#include <linux/io.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define BCM6328_REG_INIT		0x00
+> +#define BCM6328_REG_MODE_HI		0x04
+> +#define BCM6328_REG_MODE_LO		0x08
+> +#define BCM6328_REG_HWDIS		0x0c
+> +#define BCM6328_REG_STROBE		0x10
+> +#define BCM6328_REG_LNKACTSEL_HI	0x14
+> +#define BCM6328_REG_LNKACTSEL_LO	0x18
+> +#define BCM6328_REG_RBACK		0x1c
+> +#define BCM6328_REG_SERMUX		0x20
+> +
+> +#define BCM6328_LED_MAX_COUNT		24
+> +#define BCM6328_LED_DEF_DELAY		500
+> +#define BCM6328_LED_INTERVAL_MS		20
+> +
+> +#define BCM6328_LED_INTV_MASK		0x3f
+> +#define BCM6328_LED_FAST_INTV_SHIFT	6
+> +#define BCM6328_LED_FAST_INTV_MASK	(BCM6328_LED_INTV_MASK << \
+> +					 BCM6328_LED_FAST_INTV_SHIFT)
+> +#define BCM6328_SERIAL_LED_EN		BIT(12)
+> +#define BCM6328_SERIAL_LED_MUX		BIT(13)
+> +#define BCM6328_SERIAL_LED_CLK_NPOL	BIT(14)
+> +#define BCM6328_SERIAL_LED_DATA_PPOL	BIT(15)
+> +#define BCM6328_SERIAL_LED_SHIFT_DIR	BIT(16)
+> +#define BCM6328_LED_SHIFT_TEST		BIT(30)
+> +#define BCM6328_LED_TEST		BIT(31)
+> +
+> +#define BCM6328_LED_MODE_MASK		3
+> +#define BCM6328_LED_MODE_OFF		0
+> +#define BCM6328_LED_MODE_FAST		1
+> +#define BCM6328_LED_MODE_BLINK		2
+> +#define BCM6328_LED_MODE_ON		3
+> +#define BCM6328_LED_SHIFT(X)		((X) << 1)
+> +
+> +/**
+> + * struct bcm6328_led - state container for bcm6328 based LEDs
+> + * @cdev: LED class device for this LED
+> + * @mem: memory resource
+> + * @lock: memory lock
+> + * @pin: LED pin number
+> + * @blink_leds: blinking LEDs
+> + * @blink_delay: blinking delay
+> + * @active_low: LED is active low
+> + */
+> +struct bcm6328_led {
+> +	struct led_classdev cdev;
+> +	void __iomem *mem;
+> +	spinlock_t *lock;
+> +	unsigned long pin;
+> +	unsigned long *blink_leds;
+> +	unsigned long *blink_delay;
+> +	bool active_low;
+> +};
+> +
+> +static void bcm6328_led_write(void __iomem *reg, unsigned long data)
+> +{
+> +	iowrite32be(data, reg);
+> +}
+> +
+> +static unsigned long bcm6328_led_read(void __iomem *reg)
+> +{
+> +	return ioread32be(reg);
+> +}
+> +
+> +/**
+> + * LEDMode 64 bits / 24 LEDs
+> + * bits [31:0] -> LEDs 8-23
+> + * bits [47:32] -> LEDs 0-7
+> + * bits [63:48] -> unused
+> + */
+> +static unsigned long bcm6328_pin2shift(unsigned long pin)
+> +{
+> +	if (pin < 8)
+> +		return pin + 16; /* LEDs 0-7 (bits 47:32) */
+> +	else
+> +		return pin - 8; /* LEDs 8-23 (bits 31:0) */
+> +}
+> +
+> +static void bcm6328_led_mode(struct bcm6328_led *led, unsigned long =
+value)
+> +{
+> +	void __iomem *mode;
+> +	unsigned long val, shift;
+> +
+> +	shift =3D bcm6328_pin2shift(led->pin);
+> +	if (shift / 16)
+> +		mode =3D led->mem + BCM6328_REG_MODE_HI;
+> +	else
+> +		mode =3D led->mem + BCM6328_REG_MODE_LO;
+> +
+> +	val =3D bcm6328_led_read(mode);
+> +	val &=3D ~(BCM6328_LED_MODE_MASK << BCM6328_LED_SHIFT(shift % 16));
+> +	val |=3D (value << BCM6328_LED_SHIFT(shift % 16));
+> +	bcm6328_led_write(mode, val);
+> +}
+> +
+> +static void bcm6328_led_set(struct led_classdev *led_cdev,
+> +			    enum led_brightness value)
+> +{
+> +	struct bcm6328_led *led =3D
+> +		container_of(led_cdev, struct bcm6328_led, cdev);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(led->lock, flags);
+> +	*(led->blink_leds) &=3D ~BIT(led->pin);
+> +	if ((led->active_low && value =3D=3D LED_OFF) ||
+> +	    (!led->active_low && value !=3D LED_OFF))
+> +		bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
+> +	else
+> +		bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
+> +	spin_unlock_irqrestore(led->lock, flags);
+> +}
+> +
+> +static int bcm6328_blink_set(struct led_classdev *led_cdev,
+> +			     unsigned long *delay_on, unsigned long *delay_off)
+> +{
+> +	struct bcm6328_led *led =3D
+> +		container_of(led_cdev, struct bcm6328_led, cdev);
+> +	unsigned long delay, flags;
+> +
+> +	if (!*delay_on)
+> +		*delay_on =3D BCM6328_LED_DEF_DELAY;
+> +	if (!*delay_off)
+> +		*delay_off =3D BCM6328_LED_DEF_DELAY;
+> +
+> +	if (*delay_on !=3D *delay_off) {
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay_on !=3D delay_off)\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	delay =3D *delay_on / BCM6328_LED_INTERVAL_MS;
+> +	if (delay =3D=3D 0)
+> +		delay =3D 1;
+> +	else if (delay > BCM6328_LED_INTV_MASK) {
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay > %ums)\n",
+> +			BCM6328_LED_INTV_MASK * BCM6328_LED_INTERVAL_MS);
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock_irqsave(led->lock, flags);
+> +	if (*(led->blink_leds) =3D=3D 0 ||
+> +	    *(led->blink_leds) =3D=3D BIT(led->pin) ||
+> +	    *(led->blink_delay) =3D=3D delay) {
+> +		unsigned long val;
+> +
+> +		*(led->blink_leds) |=3D BIT(led->pin);
+> +		*(led->blink_delay) =3D delay;
+> +
+> +		val =3D bcm6328_led_read(led->mem + BCM6328_REG_INIT);
+> +		val &=3D ~BCM6328_LED_FAST_INTV_MASK;
+> +		val |=3D (delay << BCM6328_LED_FAST_INTV_SHIFT);
+> +		bcm6328_led_write(led->mem + BCM6328_REG_INIT, val);
+> +
+> +		bcm6328_led_mode(led, BCM6328_LED_MODE_BLINK);
+> +
+> +		spin_unlock_irqrestore(led->lock, flags);
+> +	} else {
+> +		spin_unlock_irqrestore(led->lock, flags);
+> +		dev_dbg(led_cdev->dev,
+> +			"fallback to soft blinking (delay already set)\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_hwled(struct device *dev, struct device_node *nc,=
+ u32 reg,
+> +			 void __iomem *mem, spinlock_t *lock)
+> +{
+> +	int i, cnt;
+> +	unsigned long flags, val;
+> +
+> +	spin_lock_irqsave(lock, flags);
+> +	val =3D bcm6328_led_read(mem + BCM6328_REG_HWDIS);
+> +	val &=3D ~BIT(reg);
+> +	bcm6328_led_write(mem + BCM6328_REG_HWDIS, val);
+> +	spin_unlock_irqrestore(lock, flags);
+> +
+> +	/* Only LEDs 0-7 can be activity/link controlled */
+> +	if (reg >=3D 8)
+> +		return 0;
+> +
+> +	cnt =3D of_property_count_elems_of_size(nc, "brcm,link-signal-sourc=
+es",
+> +					      sizeof(u32));
+> +	for (i =3D 0; i < cnt; i++) {
+> +		u32 sel;
+> +		void __iomem *addr;
+> +
+> +		if (reg < 4)
+> +			addr =3D mem + BCM6328_REG_LNKACTSEL_LO;
+> +		else
+> +			addr =3D mem + BCM6328_REG_LNKACTSEL_HI;
+> +
+> +		of_property_read_u32_index(nc, "brcm,link-signal-sources", i,
+> +					   &sel);
+> +
+> +		if (reg / 4 !=3D sel / 4) {
+> +			dev_warn(dev, "invalid link signal source\n");
+> +			continue;
+> +		}
+> +
+> +		spin_lock_irqsave(lock, flags);
+> +		val =3D bcm6328_led_read(addr);
+> +		val |=3D (BIT(reg) << (((sel % 4) * 4) + 16));
+> +		bcm6328_led_write(addr, val);
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	cnt =3D of_property_count_elems_of_size(nc,
+> +					      "brcm,activity-signal-sources",
+> +					      sizeof(u32));
+> +	for (i =3D 0; i < cnt; i++) {
+> +		u32 sel;
+> +		void __iomem *addr;
+> +
+> +		if (reg < 4)
+> +			addr =3D mem + BCM6328_REG_LNKACTSEL_LO;
+> +		else
+> +			addr =3D mem + BCM6328_REG_LNKACTSEL_HI;
+> +
+> +		of_property_read_u32_index(nc, "brcm,activity-signal-sources",
+> +					   i, &sel);
+> +
+> +		if (reg / 4 !=3D sel / 4) {
+> +			dev_warn(dev, "invalid activity signal source\n");
+> +			continue;
+> +		}
+> +
+> +		spin_lock_irqsave(lock, flags);
+> +		val =3D bcm6328_led_read(addr);
+> +		val |=3D (BIT(reg) << ((sel % 4) * 4));
+> +		bcm6328_led_write(addr, val);
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_led(struct device *dev, struct device_node *nc, u=
+32 reg,
+> +		       void __iomem *mem, spinlock_t *lock,
+> +		       unsigned long *blink_leds, unsigned long *blink_delay)
+> +{
+> +	struct bcm6328_led *led;
+> +	unsigned long flags;
+> +	const char *state;
+> +	int rc;
+> +
+> +	led =3D devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->pin =3D reg;
+> +	led->mem =3D mem;
+> +	led->lock =3D lock;
+> +	led->blink_leds =3D blink_leds;
+> +	led->blink_delay =3D blink_delay;
+> +
+> +	if (of_property_read_bool(nc, "active-low"))
+> +		led->active_low =3D 1;
+
+active_low is of bool type, so let's assign 'true' here instead of 1.
+
+Having this fixed:
+
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
+> +
+> +	led->cdev.name =3D of_get_property(nc, "label", NULL) ? : nc->name;
+> +	led->cdev.default_trigger =3D of_get_property(nc,
+> +						    "linux,default-trigger",
+> +						    NULL);
+> +
+> +	if (!of_property_read_string(nc, "default-state", &state)) {
+> +		spin_lock_irqsave(lock, flags);
+> +		if (!strcmp(state, "on")) {
+> +			led->cdev.brightness =3D LED_FULL;
+> +			bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
+> +		} else if (!strcmp(state, "keep")) {
+> +			void __iomem *mode;
+> +			unsigned long val, shift;
+> +
+> +			shift =3D bcm6328_pin2shift(led->pin);
+> +			if (shift / 16)
+> +				mode =3D mem + BCM6328_REG_MODE_HI;
+> +			else
+> +				mode =3D mem + BCM6328_REG_MODE_LO;
+> +
+> +			val =3D bcm6328_led_read(mode) >> (shift % 16);
+> +			val &=3D BCM6328_LED_MODE_MASK;
+> +			if (val =3D=3D BCM6328_LED_MODE_ON)
+> +				led->cdev.brightness =3D LED_FULL;
+> +			else {
+> +				led->cdev.brightness =3D LED_OFF;
+> +				bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
+> +			}
+> +		} else {
+> +			led->cdev.brightness =3D LED_OFF;
+> +			bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
+> +		}
+> +		spin_unlock_irqrestore(lock, flags);
+> +	}
+> +
+> +	led->cdev.brightness_set =3D bcm6328_led_set;
+> +	led->cdev.blink_set =3D bcm6328_blink_set;
+> +
+> +	rc =3D led_classdev_register(dev, &led->cdev);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	dev_dbg(dev, "registered LED %s\n", led->cdev.name);
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm6328_leds_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D pdev->dev.of_node;
+> +	struct device_node *child;
+> +	struct resource *mem_r;
+> +	void __iomem *mem;
+> +	spinlock_t *lock;
+> +	unsigned long val, *blink_leds, *blink_delay;
+> +
+> +	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!mem_r)
+> +		return -EINVAL;
+> +
+> +	mem =3D devm_ioremap_resource(dev, mem_r);
+> +	if (IS_ERR(mem))
+> +		return PTR_ERR(mem);
+> +
+> +	lock =3D devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
+> +	if (!lock)
+> +		return -ENOMEM;
+> +
+> +	blink_leds =3D devm_kzalloc(dev, sizeof(*blink_leds), GFP_KERNEL);
+> +	if (!blink_leds)
+> +		return -ENOMEM;
+> +
+> +	blink_delay =3D devm_kzalloc(dev, sizeof(*blink_delay), GFP_KERNEL)=
+;
+> +	if (!blink_delay)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(lock);
+> +
+> +	bcm6328_led_write(mem + BCM6328_REG_HWDIS, ~0);
+> +	bcm6328_led_write(mem + BCM6328_REG_LNKACTSEL_HI, 0);
+> +	bcm6328_led_write(mem + BCM6328_REG_LNKACTSEL_LO, 0);
+> +
+> +	val =3D bcm6328_led_read(mem + BCM6328_REG_INIT);
+> +	val &=3D ~BCM6328_SERIAL_LED_EN;
+> +	if (of_property_read_bool(np, "brcm,serial-leds"))
+> +		val |=3D BCM6328_SERIAL_LED_EN;
+> +	bcm6328_led_write(mem + BCM6328_REG_INIT, val);
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +		int rc;
+> +		u32 reg;
+> +
+> +		if (of_property_read_u32(child, "reg", &reg))
+> +			continue;
+> +
+> +		if (reg >=3D BCM6328_LED_MAX_COUNT) {
+> +			dev_err(dev, "invalid LED (>=3D %d)\n",
+> +				BCM6328_LED_MAX_COUNT);
+> +			continue;
+> +		}
+> +
+> +		if (of_property_read_bool(child, "brcm,hardware-controlled"))
+> +			rc =3D bcm6328_hwled(dev, child, reg, mem, lock);
+> +		else
+> +			rc =3D bcm6328_led(dev, child, reg, mem, lock,
+> +					 blink_leds, blink_delay);
+> +
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id bcm6328_leds_of_match[] =3D {
+> +	{ .compatible =3D "brcm,bcm6328-leds", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver bcm6328_leds_driver =3D {
+> +	.probe =3D bcm6328_leds_probe,
+> +	.driver =3D {
+> +		.name =3D "leds-bcm6328",
+> +		.of_match_table =3D bcm6328_leds_of_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(bcm6328_leds_driver);
+> +
+> +MODULE_AUTHOR("=C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>"=
+);
+> +MODULE_AUTHOR("Jonas Gorski <jogo@openwrt.org>");
+> +MODULE_DESCRIPTION("LED driver for BCM6328 controllers");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:leds-bcm6328");
+>
+
+
+--=20
+Best Regards,
+Jacek Anaszewski
