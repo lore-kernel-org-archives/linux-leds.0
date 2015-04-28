@@ -1,46 +1,60 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
-Date: Tue, 28 Apr 2015 13:12:15 +0300
-Message-ID: <553F5CFF.9090601@list.ru>
-References: <553E6CF5.4030601@list.ru> <553F4B60.20204@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 28 Apr 2015 12:18:22 +0200
+Message-ID: <5316346.zPr516JNgQ@wuerfel>
+References: <20150428100535.26912.29607.stgit@localhost.localdomain> <20150428101008.26912.38735.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp34.i.mail.ru ([94.100.177.94]:53480 "EHLO smtp34.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933106AbbD1KMb (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 28 Apr 2015 06:12:31 -0400
-In-Reply-To: <553F4B60.20204@samsung.com>
+Received: from mout.kundenserver.de ([212.227.17.10]:51686 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965271AbbD1KS3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 06:18:29 -0400
+In-Reply-To: <20150428101008.26912.38735.stgit@localhost.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-28.04.2015 11:57, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> Hi Stas,
->=20
-> Have you tested it?
-Of course I did.
-Works with gpio driver and provides up to 10usec precision on
-armada-xp board.
-This is 1000 times better than without my patch - the precision
-was 10ms (jiffy).
+On Tuesday 28 April 2015 15:40:35 Vasant Hegde wrote:
+> +++ b/Documentation/devicetree/bindings/leds/leds-powernv.txt
+> @@ -0,0 +1,29 @@
+> +Device Tree binding for LEDs on IBM Power Systems
+> +-------------------------------------------------
+> +
+> +The 'led' node under '/ibm,opal' lists service indicators available in the
+> +system and their capabilities.
+> +
+> +led {
+> +       compatible = "ibm,opal-v3-led";
+> +       phandle = <0x1000006b>;
+> +       linux,phandle = <0x1000006b>;
+> +       led-mode = "lightpath";
+> +
+> +       U78C9.001.RST0027-P1-C1 {
+> +               led-types = "identify", "fault";
+> +               led-loc = "descendent";
+> +               phandle = <0x1000006f>;
+> +               linux,phandle = <0x1000006f>;
+> +       };
+> +       ...
+> +       ...
+> +};
 
-> I tried it with Samsung M0 board and
-> my leds-aat1290 driver. It didn't work well. And for small delay
-> intervals it will not have a chance to work reliably with all drivers=
-,
-> especially the ones which use mutex in their brightness_set op,
-> since mutex can sleep.
-OK, I can remove the nsec resolution.
-I added it for the future, it doesn't work for me either, but
-hrtimer has an API for it, so I thought it may work on another hw.
-I don't see why it can't stay, but if it bothers you that much,
-I'll remove it.
+We normally don't list the 'phandle' or 'linux,phandle' properties in the binding
+description.
 
-> I am afraid that we have to stay with what we have currently.
-This is a counter-productive conclusion.
-My patch does 1000 times precision improvement with gpio driver.
-If you only want nsec to be removed as it doesn't work - that's
-fine with me.
+> +
+> +Each node under 'led' node describes location code of FRU/Enclosure.
+> +
+> +The properties under each node:
+> +
+> +  led-types : Supported LED types (attention/identify/fault).
+> +
+> +  led-loc   : enclosure/descendent(FRU) location code.
+> 
+
+Could you use the standard 'label' property for this?
+
+	Arnd
