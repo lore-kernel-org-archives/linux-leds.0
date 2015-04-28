@@ -1,130 +1,116 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v6 01/10] leds: unify the location of led-trigger API
-Date: Tue, 28 Apr 2015 09:18:41 +0200
-Message-ID: <1430205530-20873-2-git-send-email-j.anaszewski@samsung.com>
-References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v6 00/10] LED / flash API integration
+Date: Tue, 28 Apr 2015 09:18:40 +0200
+Message-ID: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35541 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751766AbbD1HUr (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:20:47 -0400
-In-reply-to: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:50868 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbbD1HUt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 03:20:49 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Part of led-trigger API was in the private drivers/leds/leds.h header.
-Move it to the include/linux/leds.h header to unify the API location
-and announce it as public. It has been already exported from
-led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
-changed from macros to inline to match the style of the surrounding code.
+This is a sixth non-RFC version of LED / flash API integration
+series [1]. It is based on linux_next-20150427.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/leds/leds.h  |   24 ------------------------
- include/linux/leds.h |   25 +++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 24 deletions(-)
+================
+Changes since v5
+================
+- renamed v4l2-flash module to v4l2-flash-led-class and applied
+  other related modifications spotted by Sakari
+- fixed not released of_node reference in max77693-led driver
 
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 79efe57..bc89d7a 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -13,7 +13,6 @@
- #ifndef __LEDS_H_INCLUDED
- #define __LEDS_H_INCLUDED
- 
--#include <linux/device.h>
- #include <linux/rwsem.h>
- #include <linux/leds.h>
- 
-@@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
- 
--#ifdef CONFIG_LEDS_TRIGGERS
--void led_trigger_set_default(struct led_classdev *led_cdev);
--void led_trigger_set(struct led_classdev *led_cdev,
--			struct led_trigger *trigger);
--void led_trigger_remove(struct led_classdev *led_cdev);
--
--static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
--{
--	return led_cdev->trigger_data;
--}
--
--#else
--#define led_trigger_set_default(x) do {} while (0)
--#define led_trigger_set(x, y) do {} while (0)
--#define led_trigger_remove(x) do {} while (0)
--#define led_get_trigger_data(x) (NULL)
--#endif
--
--ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
--			const char *buf, size_t count);
--ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
--			char *buf);
--
- #endif	/* __LEDS_H_INCLUDED */
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 9a2b000..b122eea 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -12,6 +12,7 @@
- #ifndef __LINUX_LEDS_H_INCLUDED
- #define __LINUX_LEDS_H_INCLUDED
- 
-+#include <linux/device.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
-@@ -222,6 +223,11 @@ struct led_trigger {
- 	struct list_head  next_trig;
- };
- 
-+ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
-+			const char *buf, size_t count);
-+ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-+			char *buf);
-+
- /* Registration functions for complex triggers */
- extern int led_trigger_register(struct led_trigger *trigger);
- extern void led_trigger_unregister(struct led_trigger *trigger);
-@@ -238,6 +244,16 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
- 				      unsigned long *delay_on,
- 				      unsigned long *delay_off,
- 				      int invert);
-+extern void led_trigger_set_default(struct led_classdev *led_cdev);
-+extern void led_trigger_set(struct led_classdev *led_cdev,
-+			struct led_trigger *trigger);
-+extern void led_trigger_remove(struct led_classdev *led_cdev);
-+
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return led_cdev->trigger_data;
-+}
-+
- /**
-  * led_trigger_rename_static - rename a trigger
-  * @name: the new trigger name
-@@ -267,6 +283,15 @@ static inline void led_trigger_register_simple(const char *name,
- static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
- static inline void led_trigger_event(struct led_trigger *trigger,
- 				enum led_brightness event) {}
-+static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
-+static inline void led_trigger_set(struct led_classdev *led_cdev,
-+				struct led_trigger *trigger) {}
-+static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
-+static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_LEDS_TRIGGERS */
- 
- /* Trigger specific functions */
+================
+Changes since v4
+================
+- adapted leds-max77693 and leds-aat1290 drivers to the recent
+  modifications in leds/common.txt bindings documentation and
+  changed the behaviour when properties are missing
+- modified DT bindings documenation for the aforementioned
+  drivers
+- removed unjustified use of goto in the leds-aat1290 driver
+- fixed lack of of_node_put in leds-aat1290 driver, after parsing
+  DT child node 
+- removed patch adding 'skyworks' vendor prefix, as the entry
+  has been recently added
+
+================
+Changes since v2
+================
+- improved leds/common DT bindings documentation
+- improved max77693-led DT documentation
+- fixed validation of DT confguration for leds-max77693 by
+  minimal values in joint iouts case
+- removed trigger-type property from leds-max77693 bindings
+  and adjusted the driver accordingly
+- improved LED Flash class documentation related to v4l2-flash sub-device
+  initialization
+- excluded from leds-aat1290 DT bindings documentation the part
+  related to handling external strobe sources
+
+================
+Changes since v1
+================
+
+- excluded exynos4-is media device related patches, as there is
+  consenus required related to flash devices handling in media device
+  DT bindings
+- modifications around LED Flash class settings and v4l2 flash config
+  initialization in LED Flash class drivers and v4l2-flash wrapper
+- switched to using DT node name as a device name for leds-max77693
+  and leds-aat1290 drivers, in case DT 'label' property is absent
+- dropped OF dependecy for v4l2-flash wrapper
+- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
+- allowed for multiple clients of v4l2-flash sub-device
+
+======================
+Changes since RFC v13:
+======================
+
+- reduced number of patches - some of them have been merged
+- slightly modified max77693-led device naming
+- fixed issues in v4l2-flash helpers detected with yavta
+- cleaned up AAT1290 device tree documentation
+- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
+
+Thanks,
+Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/kernel/msg1944538.html
+
+Jacek Anaszewski (10):
+  leds: unify the location of led-trigger API
+  DT: Add documentation for the mfd Maxim max77693
+  leds: Add support for max77693 mfd flash cell
+  DT: Add documentation for the Skyworks AAT1290
+  leds: Add driver for AAT1290 flash LED controller
+  media: Add registration helpers for V4L2 flash sub-devices
+  Documentation: leds: Add description of v4l2-flash sub-device
+  leds: max77693: add support for V4L2 Flash sub-device
+  DT: aat1290: Document handling external strobe sources
+  leds: aat1290: add support for V4L2 Flash sub-device
+
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   73 ++
+ Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++
+ Documentation/leds/leds-class-flash.txt            |   47 +
+ drivers/leds/Kconfig                               |   19 +
+ drivers/leds/Makefile                              |    2 +
+ drivers/leds/leds-aat1290.c                        |  577 ++++++++++
+ drivers/leds/leds-max77693.c                       | 1104 ++++++++++++++++++++
+ drivers/leds/leds.h                                |   24 -
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash-led-class.c     |  626 +++++++++++
+ include/linux/leds.h                               |   25 +
+ include/media/v4l2-flash-led-class.h               |  145 +++
+ 13 files changed, 2698 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 drivers/leds/leds-aat1290.c
+ create mode 100644 drivers/leds/leds-max77693.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
+ create mode 100644 include/media/v4l2-flash-led-class.h
+
 -- 
 1.7.9.5
