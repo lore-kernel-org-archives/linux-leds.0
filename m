@@ -1,332 +1,54 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 10/10] leds: aat1290: add support for V4L2 Flash
- sub-device
-Date: Tue, 28 Apr 2015 16:56:22 +0200
-Message-ID: <553F9F96.5010205@samsung.com>
-References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
- <1430205530-20873-11-git-send-email-j.anaszewski@samsung.com>
- <20150428140220.GI3188@valkosipuli.retiisi.org.uk>
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
+	<noltari@gmail.com>
+Subject: [PATCH v5 0/2] BCM6328 LED driver
+Date: Tue, 28 Apr 2015 18:50:48 +0200
+Message-ID: <1430239850-26120-1-git-send-email-noltari@gmail.com>
+References: <1430050517-8045-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43108 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965982AbbD1O40 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 10:56:26 -0400
-In-reply-to: <20150428140220.GI3188@valkosipuli.retiisi.org.uk>
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:33031 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030477AbbD1Qup (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 12:50:45 -0400
+In-Reply-To: <1430050517-8045-1-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-Hi Sakari,
+These patches add support and documentation for the BCM6328 LED driver,=
+ which is present on BCM6318, BCM6328, BCM6362 and BCM63268.
+In these SoCs it's possible to control LEDs both as GPIOs or by hardwar=
+e.
+However, on some devices there are Serial LEDs (LEDs connected to a 74h=
+c controller), which can either be controlled by software (exporting th=
+e 74hc as spi-gpio) or hardware using this driver.
+The problem is some of these serial LEDs are hardware controlled (ether=
+net LEDs) and exporting the 74hc as spi-gpio prevents those LEDs to be =
+hardware controlled, so the only chance to keep them working is by usin=
+g this driver.
 
-On 04/28/2015 04:02 PM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> On Tue, Apr 28, 2015 at 09:18:50AM +0200, Jacek Anaszewski wrote:
->> Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
->> driver. The support allows for V4L2 Flash sub-device to take the control
->> of the LED Flash class device.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: Sakari Ailus <sakari.ailus@iki.fi>
->> ---
->>   drivers/leds/Kconfig        |    1 +
->>   drivers/leds/leds-aat1290.c |  137 +++++++++++++++++++++++++++++++++++++++++--
->>   2 files changed, 132 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->> index dd7834c..874df63 100644
->> --- a/drivers/leds/Kconfig
->> +++ b/drivers/leds/Kconfig
->> @@ -47,6 +47,7 @@ config LEDS_AAT1290
->>   	depends on LEDS_CLASS_FLASH
->>   	depends on GPIOLIB
->>   	depends on OF
->> +	depends on PINCTRL
->>   	help
->>   	 This option enables support for the LEDs on the AAT1290.
->>
->> diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
->> index 03e5b96..f37f848 100644
->> --- a/drivers/leds/leds-aat1290.c
->> +++ b/drivers/leds/leds-aat1290.c
->> @@ -17,9 +17,11 @@
->>   #include <linux/module.h>
->>   #include <linux/mutex.h>
->>   #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/slab.h>
->>   #include <linux/workqueue.h>
->> +#include <media/v4l2-flash-led-class.h>
->>
->>   #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
->>   #define AAT1290_MAX_MM_CURR_PERCENT_0	16
->> @@ -52,6 +54,8 @@ struct aat1290_led_config_data {
->>   	u32 max_flash_current;
->>   	/* maximum flash timeout */
->>   	u32 max_flash_tm;
->> +	/* external strobe capability */
->> +	bool has_external_strobe;
->>   	/* max LED brightness level */
->>   	enum led_brightness max_brightness;
->>   };
->> @@ -64,6 +68,8 @@ struct aat1290_led {
->>
->>   	/* corresponding LED Flash class device */
->>   	struct led_classdev_flash fled_cdev;
->> +	/* V4L2 Flash device */
->> +	struct v4l2_flash *v4l2_flash;
->>
->>   	/* FLEN pin */
->>   	struct gpio_desc *gpio_fl_en;
->> @@ -230,11 +236,15 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
->>   }
->>
->>   static int aat1290_led_parse_dt(struct aat1290_led *led,
->> -			struct aat1290_led_config_data *cfg)
->> +			struct aat1290_led_config_data *cfg,
->> +			struct device_node **sub_node)
->>   {
->>   	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
->>   	struct device *dev = &led->pdev->dev;
->>   	struct device_node *child_node;
->> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->> +	struct pinctrl *pinctrl;
->> +#endif
->>   	int ret = 0;
->>
->>   	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
->> @@ -251,6 +261,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
->>   		return ret;
->>   	}
->>
->> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->> +	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
->> +	if (IS_ERR(pinctrl)) {
->> +		cfg->has_external_strobe = false;
->> +		dev_info(dev,
->> +			 "No support for external strobe detected.\n");
->> +	} else {
->> +		cfg->has_external_strobe = true;
->> +	}
->> +#endif
->> +
->>   	child_node = of_get_next_available_child(dev->of_node, NULL);
->>   	if (!child_node) {
->>   		dev_err(dev, "No DT child node found for connected LED.\n");
->> @@ -288,6 +309,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
->>
->>   	of_node_put(child_node);
->>
->> +	*sub_node = child_node;
->> +
->>   	return ret;
->>   }
->>
->> @@ -316,7 +339,8 @@ int init_mm_current_scale(struct aat1290_led *led,
->>   	int i, max_mm_current =
->>   			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
->>
->> -	led->mm_current_scale = kzalloc(sizeof(max_mm_current_percent),
->> +	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
->> +					sizeof(max_mm_current_percent),
->>   					GFP_KERNEL);
->>   	if (!led->mm_current_scale)
->>   		return -ENOMEM;
->> @@ -329,11 +353,12 @@ int init_mm_current_scale(struct aat1290_led *led,
->>   }
->>
->>   static int aat1290_led_get_configuration(struct aat1290_led *led,
->> -					struct aat1290_led_config_data *cfg)
->> +					struct aat1290_led_config_data *cfg,
->> +					struct device_node **sub_node)
->>   {
->>   	int ret;
->>
->> -	ret = aat1290_led_parse_dt(led, cfg);
->> +	ret = aat1290_led_parse_dt(led, cfg, sub_node);
->>   	if (ret < 0)
->>   		return ret;
->>   	/*
->> @@ -346,7 +371,10 @@ static int aat1290_led_get_configuration(struct aat1290_led *led,
->>
->>   	aat1290_led_validate_mm_current(led, cfg);
->>
->> -	kfree(led->mm_current_scale);
->> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->> +#else
->> +	devm_kfree(&led->pdev->dev, led->mm_current_scale);
->> +#endif
->>
->>   	return 0;
->>   }
->> @@ -365,6 +393,83 @@ static void aat1290_init_flash_timeout(struct aat1290_led *led,
->>   	setting->val = setting->max;
->>   }
->>
->> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->> +enum led_brightness aat1290_intensity_to_brightness(
->> +					struct v4l2_flash *v4l2_flash,
->> +					s32 intensity)
->> +{
->> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
->> +	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
->> +	int i;
->> +
->> +	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
->> +		if (intensity >= led->mm_current_scale[i])
->> +			return i + 1;
->> +
->> +	return 1;
->> +}
->> +
->> +s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
->> +					enum led_brightness brightness)
->> +{
->> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
->> +	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
->> +
->> +	return led->mm_current_scale[brightness - 1];
->> +}
->> +
->> +static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
->> +						bool enable)
->> +{
->> +	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
->> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
->> +	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
->> +	struct pinctrl *pinctrl;
->> +
->> +	gpiod_direction_output(led->gpio_fl_en, 0);
->> +	gpiod_direction_output(led->gpio_en_set, 0);
->> +
->> +	led->movie_mode = false;
->> +	led_cdev->brightness = 0;
->> +
->> +	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
->> +						enable ? "isp" : "host");
->> +	if (IS_ERR(pinctrl)) {
->> +		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
->> +		return PTR_ERR(pinctrl);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
->> +					struct aat1290_led_config_data *led_cfg,
->> +					struct v4l2_flash_config *v4l2_sd_cfg)
->> +{
->> +	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
->> +	struct led_flash_setting *s;
->> +
->> +	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->name,
->> +		sizeof(v4l2_sd_cfg->dev_name));
->> +
->> +	s = &v4l2_sd_cfg->intensity;
->> +	s->min = led->mm_current_scale[0];
->> +	s->max = led_cfg->max_mm_current;
->> +	s->step = 1;
->> +	s->val = s->max;
->> +
->> +	v4l2_sd_cfg->has_external_strobe = led_cfg->has_external_strobe;
->> +}
->> +
->> +static const struct v4l2_flash_ops v4l2_flash_ops = {
->> +	.external_strobe_set = aat1290_led_external_strobe_set,
->> +	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
->> +	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
->> +};
->> +#else
->> +#define aat1290_init_v4l2_flash_config(led, led_cfg, v4l2_sd_cfg)
->> +#endif
->> +
->>   static const struct led_flash_ops flash_ops = {
->>   	.strobe_set = aat1290_led_flash_strobe_set,
->>   	.timeout_set = aat1290_led_flash_timeout_set,
->> @@ -373,10 +478,14 @@ static const struct led_flash_ops flash_ops = {
->>   static int aat1290_led_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->> +	struct device_node *sub_node = NULL;
->>   	struct aat1290_led *led;
->>   	struct led_classdev *led_cdev;
->>   	struct led_classdev_flash *fled_cdev;
->>   	struct aat1290_led_config_data led_cfg = {};
->> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
->> +	struct v4l2_flash_config v4l2_sd_cfg = {};
->> +#endif
->>   	int ret;
->>
->>   	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
->> @@ -390,7 +499,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
->>   	fled_cdev->ops = &flash_ops;
->>   	led_cdev = &fled_cdev->led_cdev;
->>
->> -	ret = aat1290_led_get_configuration(led, &led_cfg);
->> +	ret = aat1290_led_get_configuration(led, &led_cfg, &sub_node);
->>   	if (ret < 0)
->>   		return ret;
->>
->> @@ -410,8 +519,23 @@ static int aat1290_led_probe(struct platform_device *pdev)
->>   	if (ret < 0)
->>   		goto err_flash_register;
->>
->> +	aat1290_init_v4l2_flash_config(led, &led_cfg, &v4l2_sd_cfg);
->> +
->> +	led_cdev->dev->of_node = sub_node;
->
-> What's the reason for this? I can't immediately see how this is being used.
+v4->v5: Introduce changes suggested by Jacek.
+v3->v4: Introduce changes suggested by Jacek.
+v2->v3: Introduce changes suggested by Jacek.
+v1->v2: Introduce changes suggested by Florian and Jonas.
 
-The of_node is used for async sub-device registration. There is a call
-made in v4l2_sync_belongs:
-	match(sd->dev, asd).
+=C3=81lvaro Fern=C3=A1ndez Rojas (2):
+  leds: add DT binding for BCM6328 LED controller
+  leds: add BCM6328 LED driver
 
-In this case match_of is used which does the comparison:
-dev->of_node == asd->match.of.node.
+ .../devicetree/bindings/leds/leds-bcm6328.txt      | 309 +++++++++++++=
+++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-bcm6328.c                        | 413 +++++++++++++=
+++++++++
+ 4 files changed, 731 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm6328=
+=2Etxt
+ create mode 100644 drivers/leds/leds-bcm6328.c
 
-In v4l2_flash_init an assignment is made: sd->dev = led_cdev->dev
-
-> There's also a problem with references, you should grab it here and release
-> when it's no longer used.
-
-The reference is grabbed in v4l2_flash_init.
-
->> +
->> +	/* Create V4L2 Flash subdev. */
->> +	led->v4l2_flash = v4l2_flash_init(fled_cdev,
->> +					  &v4l2_flash_ops,
->> +					  &v4l2_sd_cfg);
->> +	if (IS_ERR(led->v4l2_flash)) {
->> +		ret = PTR_ERR(led->v4l2_flash);
->> +		goto error_v4l2_flash_init;
->> +	}
->> +
->>   	return 0;
->>
->> +error_v4l2_flash_init:
->> +	led_classdev_flash_unregister(fled_cdev);
->>   err_flash_register:
->>   	mutex_destroy(&led->lock);
->>
->> @@ -422,6 +546,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
->>   {
->>   	struct aat1290_led *led = platform_get_drvdata(pdev);
->>
->> +	v4l2_flash_release(led->v4l2_flash);
->>   	led_classdev_flash_unregister(&led->fled_cdev);
->>   	cancel_work_sync(&led->work_brightness_set);
->>
->
-
-
--- 
-Best Regards,
-Jacek Anaszewski
+--=20
+1.9.1
