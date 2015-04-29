@@ -1,39 +1,61 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v6 05/10] leds: Add driver for AAT1290 flash LED controller
-Date: Tue, 28 Apr 2015 17:32:13 -0700
-Message-ID: <CAK5ve-J-HdS3omcSHT657GhfCrno5U=y=9jcXs=U=1e0mkLdZA@mail.gmail.com>
-References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
- <1430205530-20873-6-git-send-email-j.anaszewski@samsung.com> <20150428113658.GE3188@valkosipuli.retiisi.org.uk>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 0/2] BCM6328 LED driver
+Date: Tue, 28 Apr 2015 17:46:12 -0700
+Message-ID: <CAK5ve-JHffs9Dbq_C5SVFo7dyWpBwb9gSvVFjnPG6mpK9XF0sw@mail.gmail.com>
+References: <1430050517-8045-1-git-send-email-noltari@gmail.com> <1430239850-26120-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:35709 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031191AbbD2Ace (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 20:32:34 -0400
-In-Reply-To: <20150428113658.GE3188@valkosipuli.retiisi.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430239850-26120-1-git-send-email-noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org, f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cernekee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Tue, Apr 28, 2015 at 4:36 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Tue, Apr 28, 2015 at 09:18:45AM +0200, Jacek Anaszewski wrote:
->> This patch adds a driver for the 1.5A Step-Up Current Regulator
->> for Flash LEDs. The device is programmed through a Skyworks proprietary
->> AS2Cwire serial digital interface.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
+On Tue, Apr 28, 2015 at 9:50 AM, =C3=81lvaro Fern=C3=A1ndez Rojas
+<noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> These patches add support and documentation for the BCM6328 LED drive=
+r, which is present on BCM6318, BCM6328, BCM6362 and BCM63268.
+> In these SoCs it's possible to control LEDs both as GPIOs or by hardw=
+are.
+> However, on some devices there are Serial LEDs (LEDs connected to a 7=
+4hc controller), which can either be controlled by software (exporting =
+the 74hc as spi-gpio) or hardware using this driver.
+> The problem is some of these serial LEDs are hardware controlled (eth=
+ernet LEDs) and exporting the 74hc as spi-gpio prevents those LEDs to b=
+e hardware controlled, so the only chance to keep them working is by us=
+ing this driver.
 >
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> v4->v5: Introduce changes suggested by Jacek.
+> v3->v4: Introduce changes suggested by Jacek.
+> v2->v3: Introduce changes suggested by Jacek.
+> v1->v2: Introduce changes suggested by Florian and Jonas.
 >
-Applied, thanks,
+
+Applied to my tree, thanks.
 -Bryan
 
+> =C3=81lvaro Fern=C3=A1ndez Rojas (2):
+>   leds: add DT binding for BCM6328 LED controller
+>   leds: add BCM6328 LED driver
+>
+>  .../devicetree/bindings/leds/leds-bcm6328.txt      | 309 +++++++++++=
+++++
+>  drivers/leds/Kconfig                               |   8 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-bcm6328.c                        | 413 +++++++++++=
+++++++++++
+>  4 files changed, 731 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm63=
+28.txt
+>  create mode 100644 drivers/leds/leds-bcm6328.c
+>
 > --
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi     XMPP: sailus@retiisi.org.uk
+> 1.9.1
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
