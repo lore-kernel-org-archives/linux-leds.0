@@ -1,26 +1,26 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
-Date: Wed, 29 Apr 2015 17:06:32 +0200
-Message-ID: <5540F378.9010106@samsung.com>
+Date: Wed, 29 Apr 2015 17:14:59 +0200
+Message-ID: <5540F573.1040908@samsung.com>
 References: <553E6CF5.4030601@list.ru> <553F4B60.20204@samsung.com>
  <553F5CFF.9090601@list.ru> <553F83DC.8080701@samsung.com>
- <553F8A7F.7040700@list.ru>
+ <5540BFFD.4090205@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37822 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423038AbbD2PGg (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 29 Apr 2015 11:06:36 -0400
-In-reply-to: <553F8A7F.7040700@list.ru>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:36000 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933223AbbD2PPD (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 29 Apr 2015 11:15:03 -0400
+In-reply-to: <5540BFFD.4090205@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Stas Sergeev <stsp@list.ru>
 Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
 
-On 04/28/2015 03:26 PM, Stas Sergeev wrote:
+On 04/29/2015 01:26 PM, Stas Sergeev wrote:
 > 28.04.2015 15:58, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 >> On 04/28/2015 12:12 PM, Stas Sergeev wrote:
 >>> 28.04.2015 11:57, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
@@ -32,6 +32,7 @@ On 04/28/2015 03:26 PM, Stas Sergeev wrote:
 >>> armada-xp board.
 >>> This is 1000 times better than without my patch - the precision
 >>> was 10ms (jiffy).
+>>
 >> Please take into account that this could work reliably only for gpio
 >> LEDs. For the LEDs driven though a bus (e.g. I2C) delays below 1ms
 >> might be hard to achieve. The minimum available delay would vary fro=
@@ -46,57 +47,40 @@ m
 >> with a suitable LED switching rate. The minimum delay value could
 >> be made configurable by the driver and readable through sysfs
 >> when in hr_timer mode.
-> Why such a complexity?
-> Wouldn't it be enough if the driver can set the minimum delay
-> value, yet to always use the hrtimer?
+> I've found the SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS_SYNC flags.
+> Sounds interesting for my patch, but the only "documentation" I was
+> able to find, is this:
+> ---
+>          /* Setting a torch brightness needs to have immediate effect=
+ */
+>          led_cdev->flags &=3D ~SET_BRIGHTNESS_ASYNC;
+>          led_cdev->flags |=3D SET_BRIGHTNESS_SYNC;
+> ---
+> Aren't these flags mutually exclusive, and so just one could have
+> been used?
 
-Hr timers would be advantageous only for leds-gpio AFAICS. There is no
-reason for making them default for all LED class drivers. I assume that
-they provide higher resolution at a cost of consuming more CPU/system
-resources.
+Yes they are.
 
-> Please note that 10ms (jiffy) is an inadequate minimum delay
-> pretty much for any driver, I guess. At least 1ms should be possible,
-> because, well, you can write 1ms to sysfs attribute even without
-> my patch. So even the existing options need hrtimer to work right.
+> Anyway, from that comment I can try to guess that if the driver
+> supports ASYNC mode, it should be fast enough and without sleeps.
+> The drivers that do i2c transfers with sleeps, should be using SYNC
+> mode. Or was the intention for these flags entirely different?
 
-As I mentioned before even with hr timer it wouldn't be possible
-to assure that 1ms is achievable due to locking and bus latency
-reasons.
+Sync mode was designed for flash LED devices, for which turning
+torch immediately has a big importance because they are often
+synchronized with camera sensor.
 
->>>> I tried it with Samsung M0 board and
->>>> my leds-aat1290 driver. It didn't work well. And for small delay
->>>> intervals it will not have a chance to work reliably with all driv=
-ers,
->>>> especially the ones which use mutex in their brightness_set op,
->>>> since mutex can sleep.
->>> OK, I can remove the nsec resolution.
->> usec also didn't work, please look at my use case and warning:
->>
->> echo "timer" > trigger
->> echo 1 > delay_on
->> echo 1 > delay_off
->> echo usec > delay_unit
->> [  178.584433] hrtimer: interrupt took 300747 ns
-> I think I should try a tasklet then.
->
->> Only some time later I realized that for AAT1290 brightness is set
->> through ASCwire pulse protocol, which takes few ms.
->>
->> Please note that with this approach users would have to wonder why
->> they are getting the warnings and why they can't get their LEDs to w=
-ork
->> with given settings.
-> OK, so we need a tasklet and the ability for the driver to set the
-> minimal delay. I think I can implement the former and hope someone
-> else will later implement the later. :)
-> Lets just solve the problem step-by-step. I can't solve all the
-> problems at once, but you can't deny the fact that the problem
-> exists and needs to be solved.
+Triggers use led_set_brightness_async API anyway.
+
+> My intention is to use either a work-queue or a direct hrtimer
+> callback, depending on whether the driver supports sync or async
+> mode. This is instead of the driver being able to set the minimum
+> delay - much simpler to implement. Makes sense?
+> Can I use the above flags for that purpose, or will I need
+> a new one?
 >
 
-This seems not to be an urgent issue. Therefore it is better to
-provide complex solution in one patch set.
+These flags are intended for internal LED core use.
 
 
 --=20
