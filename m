@@ -1,47 +1,37 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v6 02/10] DT: Add documentation for the mfd Maxim max77693
-Date: Tue, 28 Apr 2015 17:24:09 -0700
-Message-ID: <CAK5ve-Kj92nU0Ykq54OVZxi_oekAiZ9O6R2sf11TrtZTKDr=dg@mail.gmail.com>
+Subject: Re: [PATCH v6 03/10] leds: Add support for max77693 mfd flash cell
+Date: Tue, 28 Apr 2015 17:28:12 -0700
+Message-ID: <CAK5ve-LzasuSmVD9=CYR9bb__QWX+j7uvb1dhp-YhBhcGJ9G4Q@mail.gmail.com>
 References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com>
- <1430205530-20873-3-git-send-email-j.anaszewski@samsung.com> <20150428100951.GO11956@x1>
+ <1430205530-20873-4-git-send-email-j.anaszewski@samsung.com> <20150428113604.GD3188@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:32962 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031083AbbD2AYa (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 20:24:30 -0400
-In-Reply-To: <20150428100951.GO11956@x1>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20150428113604.GD3188@valkosipuli.retiisi.org.uk>
+Sender: linux-media-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Apr 28, 2015 at 3:09 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 28 Apr 2015, Jacek Anaszewski wrote:
+On Tue, Apr 28, 2015 at 4:36 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> Hi Jacek,
 >
->> This patch adds device tree binding documentation for
->> the flash cell of the Maxim max77693 multifunctional device.
+> On Tue, Apr 28, 2015 at 09:18:43AM +0200, Jacek Anaszewski wrote:
+>> This patch adds led-flash support to Maxim max77693 chipset.
+>> A device can be exposed to user space through LED subsystem
+>> sysfs interface. Device supports up to two leds which can
+>> work in flash and torch mode. The leds can be triggered
+>> externally or by software.
 >>
 >> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 >> Cc: Bryan Wu <cooloney@gmail.com>
 >> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: devicetree@vger.kernel.org
->> ---
->>  Documentation/devicetree/bindings/mfd/max77693.txt |   67 ++++++++++++++++++++
->>  1 file changed, 67 insertions(+)
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
 >
-> Requires a LED Ack.
->
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Please go with my Ack:
-
-Acked-by: Bryan Wu <cooloney@gmail.com>
-
-Thanks,
+Applied, thanks,
 -Bryan
