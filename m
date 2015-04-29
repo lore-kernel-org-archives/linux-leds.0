@@ -1,30 +1,139 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 15/17] ARM: pxa: poodle: don't preallocate IRQ space for locomo
-Date: Tue, 28 Apr 2015 21:36:10 +0200
-Message-ID: <87618gjb9x.fsf@belgarion.home>
-References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
-	<1430178954-11138-16-git-send-email-dbaryshkov@gmail.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v6 01/10] leds: unify the location of led-trigger API
+Date: Tue, 28 Apr 2015 17:20:33 -0700
+Message-ID: <CAK5ve-KKDr0_j6SSGCTCff9av8Xcz56-YC2eR0EsA0=HtxDj4Q@mail.gmail.com>
+References: <1430205530-20873-1-git-send-email-j.anaszewski@samsung.com> <1430205530-20873-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:20966 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030853AbbD1Tgd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 15:36:33 -0400
-In-Reply-To: <1430178954-11138-16-git-send-email-dbaryshkov@gmail.com> (Dmitry
-	Eremin-Solenikov's message of "Tue, 28 Apr 2015 02:55:52 +0300")
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:33950 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031083AbbD2AUy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2015 20:20:54 -0400
+In-Reply-To: <1430205530-20873-2-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Dmitry Eremin-Solenikov <dbaryshkov@gmail.com> writes:
-
-> As new locomo driver supports SPARSE_IRQ, don't preallocate NR_IRQS
-> space for it on poodle.
+On Tue, Apr 28, 2015 at 12:18 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Part of led-trigger API was in the private drivers/leds/leds.h header.
+> Move it to the include/linux/leds.h header to unify the API location
+> and announce it as public. It has been already exported from
+> led-triggers.c with EXPORT_SYMBOL_GPL macro. The no-op definitions are
+> changed from macros to inline to match the style of the surrounding code.
 >
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
--- 
-Robert
+Applied, thanks,
+-Bryan
+
+> ---
+>  drivers/leds/leds.h  |   24 ------------------------
+>  include/linux/leds.h |   25 +++++++++++++++++++++++++
+>  2 files changed, 25 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index 79efe57..bc89d7a 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -13,7 +13,6 @@
+>  #ifndef __LEDS_H_INCLUDED
+>  #define __LEDS_H_INCLUDED
+>
+> -#include <linux/device.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/leds.h>
+>
+> @@ -50,27 +49,4 @@ void led_stop_software_blink(struct led_classdev *led_cdev);
+>  extern struct rw_semaphore leds_list_lock;
+>  extern struct list_head leds_list;
+>
+> -#ifdef CONFIG_LEDS_TRIGGERS
+> -void led_trigger_set_default(struct led_classdev *led_cdev);
+> -void led_trigger_set(struct led_classdev *led_cdev,
+> -                       struct led_trigger *trigger);
+> -void led_trigger_remove(struct led_classdev *led_cdev);
+> -
+> -static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+> -{
+> -       return led_cdev->trigger_data;
+> -}
+> -
+> -#else
+> -#define led_trigger_set_default(x) do {} while (0)
+> -#define led_trigger_set(x, y) do {} while (0)
+> -#define led_trigger_remove(x) do {} while (0)
+> -#define led_get_trigger_data(x) (NULL)
+> -#endif
+> -
+> -ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+> -                       const char *buf, size_t count);
+> -ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+> -                       char *buf);
+> -
+>  #endif /* __LEDS_H_INCLUDED */
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 9a2b000..b122eea 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -12,6 +12,7 @@
+>  #ifndef __LINUX_LEDS_H_INCLUDED
+>  #define __LINUX_LEDS_H_INCLUDED
+>
+> +#include <linux/device.h>
+>  #include <linux/list.h>
+>  #include <linux/mutex.h>
+>  #include <linux/rwsem.h>
+> @@ -222,6 +223,11 @@ struct led_trigger {
+>         struct list_head  next_trig;
+>  };
+>
+> +ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+> +                       const char *buf, size_t count);
+> +ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+> +                       char *buf);
+> +
+>  /* Registration functions for complex triggers */
+>  extern int led_trigger_register(struct led_trigger *trigger);
+>  extern void led_trigger_unregister(struct led_trigger *trigger);
+> @@ -238,6 +244,16 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
+>                                       unsigned long *delay_on,
+>                                       unsigned long *delay_off,
+>                                       int invert);
+> +extern void led_trigger_set_default(struct led_classdev *led_cdev);
+> +extern void led_trigger_set(struct led_classdev *led_cdev,
+> +                       struct led_trigger *trigger);
+> +extern void led_trigger_remove(struct led_classdev *led_cdev);
+> +
+> +static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+> +{
+> +       return led_cdev->trigger_data;
+> +}
+> +
+>  /**
+>   * led_trigger_rename_static - rename a trigger
+>   * @name: the new trigger name
+> @@ -267,6 +283,15 @@ static inline void led_trigger_register_simple(const char *name,
+>  static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
+>  static inline void led_trigger_event(struct led_trigger *trigger,
+>                                 enum led_brightness event) {}
+> +static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
+> +static inline void led_trigger_set(struct led_classdev *led_cdev,
+> +                               struct led_trigger *trigger) {}
+> +static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
+> +static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+> +{
+> +       return NULL;
+> +}
+> +
+>  #endif /* CONFIG_LEDS_TRIGGERS */
+>
+>  /* Trigger specific functions */
+> --
+> 1.7.9.5
+>
