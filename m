@@ -1,23 +1,23 @@
 From: kbuild test robot <fengguang.wu@intel.com>
 Subject: [PATCH] leds: fix platform_no_drv_owner.cocci warnings
-Date: Wed, 29 Apr 2015 10:23:16 +0800
-Message-ID: <20150429022316.GA62862@athens>
-References: <201504291015.yVl4AoD5%fengguang.wu@intel.com>
+Date: Wed, 29 Apr 2015 10:30:46 +0800
+Message-ID: <20150429023046.GA9109@athens>
+References: <201504291045.wLiGFH3V%fengguang.wu@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:59657 "EHLO mga03.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:5701 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1031377AbbD2CY3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 28 Apr 2015 22:24:29 -0400
+	id S1031508AbbD2Cb3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 28 Apr 2015 22:31:29 -0400
 Content-Disposition: inline
-In-Reply-To: <201504291015.yVl4AoD5%fengguang.wu@intel.com>
+In-Reply-To: <201504291045.wLiGFH3V%fengguang.wu@intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: kbuild-all@01.org, Bryan Wu <cooloney@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kbuild-all@01.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-drivers/leds/leds-max77693.c:978:3-8: No need to set .owner here. The core will do it.
+drivers/leds/leds-aat1290.c:443:3-8: No need to set .owner here. The core will do it.
 
  Remove .owner field if calls are used which set it automatically
 
@@ -27,16 +27,16 @@ CC: Jacek Anaszewski <j.anaszewski@samsung.com>
 Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
 
- leds-max77693.c |    1 -
+ leds-aat1290.c |    1 -
  1 file changed, 1 deletion(-)
 
---- a/drivers/leds/leds-max77693.c
-+++ b/drivers/leds/leds-max77693.c
-@@ -975,7 +975,6 @@ static struct platform_driver max77693_l
- 	.remove		= max77693_led_remove,
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -440,7 +440,6 @@ static struct platform_driver aat1290_le
+ 	.remove		= aat1290_led_remove,
  	.driver		= {
- 		.name	= "max77693-led",
+ 		.name	= "aat1290",
 -		.owner	= THIS_MODULE,
- 		.of_match_table = max77693_led_dt_match,
+ 		.of_match_table = aat1290_led_dt_match,
  	},
  };
