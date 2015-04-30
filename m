@@ -1,101 +1,58 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v4 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Thu, 30 Apr 2015 20:38:31 +0530
-Message-ID: <5542456F.2060904@linux.vnet.ibm.com>
-References: <20150428100535.26912.29607.stgit@localhost.localdomain> <20150428101008.26912.38735.stgit@localhost.localdomain> <55423C45.3070601@samsung.com>
+From: Stas Sergeev <stsp@list.ru>
+Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
+Date: Thu, 30 Apr 2015 20:11:41 +0300
+Message-ID: <5542624D.70701@list.ru>
+References: <553E6CF5.4030601@list.ru> <553F4B60.20204@samsung.com> <553F5CFF.9090601@list.ru> <553F83DC.8080701@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:58892 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751982AbbD3PJ3 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 30 Apr 2015 11:09:29 -0400
-Received: from /spool/local
-	by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Fri, 1 May 2015 01:09:27 +1000
-Received: from d23relay09.au.ibm.com (d23relay09.au.ibm.com [9.185.63.181])
-	by d23dlp01.au.ibm.com (Postfix) with ESMTP id 175302CE8054
-	for <linux-leds@vger.kernel.org>; Fri,  1 May 2015 01:09:26 +1000 (EST)
-Received: from d23av02.au.ibm.com (d23av02.au.ibm.com [9.190.235.138])
-	by d23relay09.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t3UF9HrL28639450
-	for <linux-leds@vger.kernel.org>; Fri, 1 May 2015 01:09:26 +1000
-Received: from d23av02.au.ibm.com (localhost [127.0.0.1])
-	by d23av02.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t3UF8pQG007215
-	for <linux-leds@vger.kernel.org>; Fri, 1 May 2015 01:08:52 +1000
-In-Reply-To: <55423C45.3070601@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <553F83DC.8080701@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, benh@kernel.crashing.org, cooloney@gmail.com, rpurdie@rpsys.net, mpe@ellerman.id.au, khandual@linux.vnet.ibm.com
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
+List-Id: linux-leds@vger.kernel.org
 
-On 04/30/2015 07:59 PM, Jacek Anaszewski wrote:
-> Hi Vasant,
-> 
+28.04.2015 15:58, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> I tried it with Samsung M0 board and
+>>> my leds-aat1290 driver. It didn't work well. And for small delay
+>>> intervals it will not have a chance to work reliably with all drive=
+rs,
+>>> especially the ones which use mutex in their brightness_set op,
+>>> since mutex can sleep.
+>> OK, I can remove the nsec resolution.
+>=20
+> usec also didn't work, please look at my use case and warning:
+>=20
+> echo "timer" > trigger
+> echo 1 > delay_on
+> echo 1 > delay_off
+> echo usec > delay_unit
+> [  178.584433] hrtimer: interrupt took 300747 ns
+>=20
+> Only some time later I realized that for AAT1290 brightness is set
+> through ASCwire pulse protocol, which takes few ms.
+>=20
+> Please note that with this approach users would have to wonder why
+> they are getting the warnings and why they can't get their LEDs to wo=
+rk
+> with given settings.
+I've now found that the drivers itself use a work queue
+when needed. And some drivers, like leds_gpio, even do this:
+---
+        if (led_dat->can_sleep) {
+                led_dat->new_level =3D level;
+                schedule_work(&led_dat->work);
+        } else {
+                set_brightness_now();
+        }
+---
+So it seems the problem is already solved on the per-driver
+basis. I don't have leds-aat1290 driver, it is probably not
+in the kernel. It is likely forgetting to use the work-queue
+the way all other drivers do. So I think my patch is good for
+the in-kernel drivers.
 
-Hi  Jacek,
-
-.../...
-
->> diff --git a/Documentation/devicetree/bindings/leds/leds-powernv.txt
->> b/Documentation/devicetree/bindings/leds/leds-powernv.txt
->> new file mode 100644
->> index 0000000..6bb0e7e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-powernv.txt
->> @@ -0,0 +1,29 @@
->> +Device Tree binding for LEDs on IBM Power Systems
->> +-------------------------------------------------
->> +
->> +The 'led' node under '/ibm,opal' lists service indicators available in the
->> +system and their capabilities.
->> +
->> +led {
->> +    compatible = "ibm,opal-v3-led";
->> +    phandle = <0x1000006b>;
->> +    linux,phandle = <0x1000006b>;
->> +    led-mode = "lightpath";
->> +
->> +    U78C9.001.RST0027-P1-C1 {
->> +        led-types = "identify", "fault";
->> +        led-loc = "descendent";
->> +        phandle = <0x1000006f>;
->> +        linux,phandle = <0x1000006f>;
->> +    };
->> +    ...
->> +    ...
->> +};
->> +
->> +Each node under 'led' node describes location code of FRU/Enclosure.
->> +
->> +The properties under each node:
->> +
->> +  led-types : Supported LED types (attention/identify/fault).
->> +
->> +  led-loc   : enclosure/descendent(FRU) location code.
-> 
-> DT documentation it usually constructed so that properties are
-> described in the beginning and the file ends with an example.
-> 
-> Also last time I mistakenly requested to remove description of
-> compatible property, but it should also be present here and
-> the entry should described it in detail, like:
-> 
-> - compatible : Should be "ibm,opal-v3-led".
-
-That's fine. I will fix it in v5.
-
-> 
-> Please refer to the other bindings,
-> 
-> I will express my opinion on the LED part after powerpc maintainer
-> will ack DT bindings.
-> 
-
-Sure..
-
-@Ben/Michael,
-  Can you please review/ack this patchset?
-
--Vasant
+There is also a led_cdev->set_brightness_work, and it looks
+unused. I could use it for my patch, but for what, if the
+drivers already use the work queue when needed?
