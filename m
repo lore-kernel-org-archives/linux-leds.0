@@ -1,72 +1,88 @@
-From: Stas Sergeev <stsp@list.ru>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v2 0/3] leds: blink resolution improvements
-Date: Sun, 03 May 2015 14:35:47 +0300
-Message-ID: <55460813.6030100@list.ru>
-References: <553E6CF5.4030601@list.ru> <20150427205441.GB1301@xo-6d-61-c0.localdomain> <553EA6B9.5040309@list.ru> <20150430173024.GB21211@amd> <554293BB.6000709@list.ru> <20150503103436.GA4317@amd>
+Date: Mon, 04 May 2015 09:55:00 +0200
+Message-ID: <554725D4.7090805@samsung.com>
+References: <553E6CF5.4030601@list.ru> <553F4B60.20204@samsung.com>
+ <553F5CFF.9090601@list.ru> <553F83DC.8080701@samsung.com>
+ <5542624D.70701@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp40.i.mail.ru ([94.100.177.100]:43018 "EHLO smtp40.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbbECLgP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sun, 3 May 2015 07:36:15 -0400
-In-Reply-To: <20150503103436.GA4317@amd>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:34137 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750832AbbEDHzE (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 4 May 2015 03:55:04 -0400
+In-reply-to: <5542624D.70701@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
+To: Stas Sergeev <stsp@list.ru>
 Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
 
-03.05.2015 13:34, Pavel Machek =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> What about simply "echo 0.001 > delay_on"?
->> This is possible.
->> But please consider the following reservations:
->> - There is already 2 files, so you are not going to write settings
->> atomically anyway. When resolution changes, it might be better
->> to just reset to the sane defaults (not in my current patch).
-> Sane defaults would be mandatory, but lets get reasonable interface.
+On 04/30/2015 07:11 PM, Stas Sergeev wrote:
+> 28.04.2015 15:58, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> I tried it with Samsung M0 board and
+>>>> my leds-aat1290 driver. It didn't work well. And for small delay
+>>>> intervals it will not have a chance to work reliably with all driv=
+ers,
+>>>> especially the ones which use mutex in their brightness_set op,
+>>>> since mutex can sleep.
+>>> OK, I can remove the nsec resolution.
+>>
+>> usec also didn't work, please look at my use case and warning:
+>>
+>> echo "timer" > trigger
+>> echo 1 > delay_on
+>> echo 1 > delay_off
+>> echo usec > delay_unit
+>> [  178.584433] hrtimer: interrupt took 300747 ns
+>>
+>> Only some time later I realized that for AAT1290 brightness is set
+>> through ASCwire pulse protocol, which takes few ms.
+>>
+>> Please note that with this approach users would have to wonder why
+>> they are getting the warnings and why they can't get their LEDs to w=
+ork
+>> with given settings.
+> I've now found that the drivers itself use a work queue
+> when needed. And some drivers, like leds_gpio, even do this:
+> ---
+>          if (led_dat->can_sleep) {
+>                  led_dat->new_level =3D level;
+>                  schedule_work(&led_dat->work);
+>          } else {
+>                  set_brightness_now();
+>          }
+> ---
+
+This is to handle GPIO expander chips, for which gpio set/get functions
+must sleep while waiting for I2C or SPI transfer completion.
+
+> So it seems the problem is already solved on the per-driver
+> basis. I don't have leds-aat1290 driver, it is probably not
+> in the kernel.
+
+It is currently on linux-next/master branch.
+
+> It is likely forgetting to use the work-queue
+> the way all other drivers do. So I think my patch is good for
+> the in-kernel drivers.
 >
-> Someone left 1 in delay_on. You want 100 nsec. You echo nsec >
-> delay_on_units, bang, dead machine, looping in kernel.
-That's exactly what the aforementioned "reset to the sane defaults"
-should solve: if you change the delay_units, all delays should
-reset to the sane defaults. FYI, there was no "delay_on_units",
-just "delay_unit" for both ON and OFF delays.
+> There is also a led_cdev->set_brightness_work, and it looks
+> unused. I could use it for my patch, but for what, if the
+> drivers already use the work queue when needed?
 
-> Someone left 100 / nsec in delay on. You want one usec. Echo 1 >
-> delay_on, bang, dead machine.
-There are 2 things needed to address this:
-1. No interface should allow a michine lock-up. Locking up the
-machine by writing 0.000000001 is just as bad as by writing
-"nsec" and then "1". So I'll simply remove nsecs, regardless of
-what interface I'll end up implementing.
-2. Since changing "delay_unit" should reset the delays to the
-sane default, the user should always write the delay_unit first,
-then the value.
+It is used in led_set_brightness function.
 
->> - As was already discussed in the same thread, not all drivers
->> can support sub-ms delays. For these drivers such resolutions
->> should not be available. With separate file this is naturally
->> achieved: you either don't create it at all, or list only the possib=
-le
->> resolutions. With your approach you never know whether you
->> can write 0.0001 or not.
-> Well, so you get back einval. Knowing "unit" is not enough to know ho=
-w
-> short delays hw can support.
-The idea was that you can at least find out the order of the
-supported delay. But indeed checking for EINVAL looks like a
-more robust and precise solution.
+I think that using work queues would compromise the whole idea of
+introducing intervals less than 1ms. After the task is delegated to
+work queue we are losing the control over the moment when it will get
+executed.
 
->> - You will set the delay in ms units. For example for 100us you'll
->> write 0.1. IMHO it is counter-intuitive: people will make a mistake
->> and try 0.0001 instead, wrongly assuming that this is in seconds.
->> And nanoseconds should then better be removed, as writing
->> nanosecond delay will just require too much zeros.
-> This is machine-to-machine interface. And users can handle this.
-OK. I think you mostly convinced me that this solution is not
-that bad. :) But I am going to add an explicit "Acked-by" then,
-to emphasize that it is your idea and not mine.
+I am becoming reluctant towards the whole idea, as we will be
+unable to guarantee the stability of a delay interval.
 
-I'll post a v3 a couple of weeks later, thanks!
+--=20
+Best Regards,
+Jacek Anaszewski
