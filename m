@@ -1,11 +1,8 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 1/3] gpiolib: Add missing dummies for the unified device properties interface
-Date: Thu,  7 May 2015 10:08:08 +0200
-Message-ID: <1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 3/3] leds: leds-gpio: Allow compile test if !GPIOLIB
+Date: Thu,  7 May 2015 10:08:10 +0200
+Message-ID: <1430986090-7243-4-git-send-email-geert@linux-m68k.org>
 References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -13,53 +10,33 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-leds@vger.kernel.org
 
-If GPIOLIB=3Dn:
+The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+functionality only, can still be compiled if GPIOLIB is not enabled.
 
-    drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=80=
-=99:
-    drivers/leds/leds-gpio.c:187: error: implicit declaration of functi=
-on =E2=80=98devm_get_gpiod_from_child=E2=80=99
-    drivers/leds/leds-gpio.c:187: warning: assignment makes pointer fro=
-m integer without a cast
-
-Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_child(=
-)
-for the !GPIOLIB case to fix this.
+Relax the dependency of LEDS_GPIO on GPIOLIB if COMPILE_TEST is
+enabled.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-=46ixes: 40b7318319281b1b ("gpio: Support for unified device properties=
- interface")
 ---
- include/linux/gpio/consumer.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This could be folded in "[PATCH 09/27] leds: Allow compile test of GPIO
+consumers if !GPIOLIB" once its dependencies are satisfied.
+---
+ drivers/leds/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consume=
-r.h
-index 3a7c9ffd5ab930b4..da042657dc31d7f5 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -406,6 +406,21 @@ static inline int desc_to_gpio(const struct gpio_d=
-esc *desc)
- 	return -EINVAL;
- }
-=20
-+/* Child properties interface */
-+struct fwnode_handle;
-+
-+static inline struct gpio_desc *fwnode_get_named_gpiod(
-+	struct fwnode_handle *fwnode, const char *propname)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+static inline struct gpio_desc *devm_get_gpiod_from_child(
-+	struct device *dev, const char *con_id, struct fwnode_handle *child)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- #endif /* CONFIG_GPIOLIB */
-=20
- /*
---=20
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 8161cddc3f8d597a..1f6cb38335b52c3c 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -182,7 +182,7 @@ config LEDS_PCA9532_GPIO
+ config LEDS_GPIO
+ 	tristate "LED Support for GPIO connected LEDs"
+ 	depends on LEDS_CLASS
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  This option enables support for the LEDs connected to GPIO
+ 	  outputs. To be useful the particular board must have LEDs
+-- 
 1.9.1
