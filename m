@@ -1,56 +1,47 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH v2 08/17] gpio: locomo: implement per-pin irq handling
-Date: Wed, 6 May 2015 19:42:33 +0300
-Message-ID: <CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
-References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
-	<1430178954-11138-9-git-send-email-dbaryshkov@gmail.com>
-	<CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/3] leds: leds-gpio: Add missing #include <linux/of.h>
+Date: Thu,  7 May 2015 10:08:09 +0200
+Message-ID: <1430986090-7243-3-git-send-email-geert@linux-m68k.org>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger.kernel.or
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:38975 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbbEGIIQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 7 May 2015 04:08:16 -0400
+In-Reply-To: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-2015-05-06 17:15 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 28, 2015 at 1:55 AM, Dmitry Eremin-Solenikov
-> <dbaryshkov@gmail.com> wrote:
->
->> LoCoMo has a possibility to generate per-GPIO edge irqs. Support for
->> that was there in old locomo driver, got 'cleaned up' during old driver
->> IRQ cascading cleanup and is now reimplemented. It is expected that
->> SL-5500 (collie) will use locomo gpio irqs for mmc detection irq.
->>
->> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=80=99=
+:
+drivers/leds/leds-gpio.c:194: error: implicit declaration of function =E2=
+=80=98of_node=E2=80=99
+drivers/leds/leds-gpio.c:194: warning: assignment makes pointer from in=
+teger without a cast
+drivers/leds/leds-gpio.c:200: error: dereferencing pointer to incomplet=
+e type
 
-Thanks for review of the patches.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/leds/leds-gpio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Assume this will also go through MFD.
->
->> +       irq_set_chained_handler(lg->irq, NULL);
->> +       irq_set_handler_data(lg->irq, NULL);
->
-> Why is this needed? If the GPIOLIB_IRQCHIP code in
-> gpiolib.c is not doing this then maybe it's the core code that
-> needs fixing rather than having this in the driver.
-
-I have skimmed through the rest of drivers using
-gpiochip_set_chained_irqchip(). Indeed none of the drivers NULL
-the chained handled and handler data. However I couldn't locate
-the code where they would be cleared.
-
-Should I still send the patch fixing the GPIOLIB_IRQCHIP?
-
->
-> Yours,
-> Linus Walleij
-
-
-
--- 
-With best wishes
-Dmitry
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 15eb3f86f670ffe4..89d981e8f8cacf55 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -16,6 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+--=20
+1.9.1
