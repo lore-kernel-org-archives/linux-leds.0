@@ -1,27 +1,26 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v8 3/3] leds: Add ktd2692 flash LED driver
-Date: Fri, 08 May 2015 10:33:47 +0200
-Message-ID: <554C74EB.8070905@samsung.com>
+Date: Fri, 08 May 2015 11:06:48 +0200
+Message-ID: <554C7CA8.8010303@samsung.com>
 References: <1431054225-16635-1-git-send-email-ingi2.kim@samsung.com>
  <1431054225-16635-4-git-send-email-ingi2.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56995 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58898 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752406AbbEHIdy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 8 May 2015 04:33:54 -0400
+	with ESMTP id S1750995AbbEHJGx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 8 May 2015 05:06:53 -0400
 In-reply-to: <1431054225-16635-4-git-send-email-ingi2.kim@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Ingi Kim <ingi2.kim@samsung.com>
 Cc: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sakari.ailus@iki.fi, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Ingi,
-
-Thanks for the update. It looks like we're almost there.
-I can see only two minor issues.
+There is one more thing - please rebase this patch on top
+of linux-next as currently it conflicts with
+drivers/leds/Makefile.
 
 On 05/08/2015 05:03 AM, Ingi Kim wrote:
 > This patch adds a driver to support the ktd2692 flash LEDs.
@@ -47,12 +46,6 @@ On 05/08/2015 05:03 AM, Ingi Kim wrote:
 >
 > +config LEDS_KTD2692
 > +	tristate "KTD2692 LED flash support"
-
-Please keep the style of description in line with the existing
-drivers. How about:
-
-"LED support for KTD2692 flash LED controller"
-
 > +	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
 > +	help
 > +	  This option enables support for KTD2692 LED flash connected
@@ -298,13 +291,6 @@ drivers. How about:
 > +	mutex_lock(&led->lock);
 > +
 > +	if (state == 0) {
-
-Coccinelle raises a warning here:
-
-drivers/leds/leds-ktd2692.c:217:5-10: WARNING: Comparison of bool to 0/1
-
-I had to fix it also in my leds-aat1290 driver recently:)
-
 > +		led->mode = KTD2692_MODE_DISABLE;
 > +		gpiod_direction_output(led->aux_gpio, KTD2692_LOW);
 > +	} else {
