@@ -1,68 +1,72 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: lp5523: add master_fader support
-Date: Tue, 12 May 2015 10:59:28 -0700
-Message-ID: <CAK5ve-KkLmJMLs0Q3KskUodEJrjcWRx_tobVUm5+G=Q+_sFxmg@mail.gmail.com>
-References: <1431371454-2035-1-git-send-email-toshik@chromium.org>
- <5551AAFA.5080807@samsung.com> <5551B8F9.6040808@ti.com> <5551BF04.5010503@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2 10/17] i2c: add locomo i2c driver
+Date: Tue, 12 May 2015 21:24:13 +0200
+Message-ID: <20150512192413.GE4449@schokonusskuchen.bad>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-11-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:33968 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932711AbbELR7t (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 13:59:49 -0400
-In-Reply-To: <5551BF04.5010503@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430178954-11138-11-git-send-email-dbaryshkov@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "Kim, Milo" <milo.kim@ti.com>, Toshi Kikuchi <toshik@chromium.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On Tue, May 12, 2015 at 1:51 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> On 05/12/2015 10:25 AM, Kim, Milo wrote:
->>
->> Hi Jacek and Toshi,
->>
->> On 5/12/2015 4:25 PM, Jacek Anaszewski wrote:
->>>
->>> Hi Toshi,
->>>
->>> On 05/11/2015 09:10 PM, Toshi Kikuchi wrote:
->>>>
->>>> This patch introduces 4 new attributes:
->>>>     master_fader_leds
->>>>     master_fader1
->>>>     master_fader2
->>>>     master_fader3
->>>>
->>>> Fo example, to map channel 0,6 to master_fader1,
->>>> map channel 1,7 to master_fader2,
->>>> map channel 2,8 to master_fader3, and
->>>> map channel 3,4,5 to none
->>>
->>>   >
->>>>
->>>>     echo "123000123" > master_fader_leds
->>>
->>>
->>> I propose to add ABI documentation for this driver. It already exposes
->>> many custom attributes but I can't find documentation for them.
->>
->>
->> I agree with Jacek's comment but it would be better if we could see the
->> description in lp5523 driver
->> documentation(Documentation/leds/leds-lp5523.txt).
->
->
-> Right, I missed that file.
->
->
 
-Toshi,
+--WBsA/oQW3eTA3LlM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I merged this patch into my tree with Milo and Jacek Acks. But please
-follow their advice and provide a patch to update those document
-files.
+On Tue, Apr 28, 2015 at 02:55:47AM +0300, Dmitry Eremin-Solenikov wrote:
+> LoCoMo chip contains a tiny i2c controller destined to control
+> M62332 DAC. Provide a separate I2C driver for this cell.
+>=20
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-Thanks,
--Bryan
+Thanks for the submission!
+
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/locomo.h>
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/i2c-algo-bit.h>
+
+To avoid duplicates, I prefer the includes to be sorted. No need to
+resend because of that, though.
+
+Kudos for brushing up old code! Do you want the drivers go via the
+subsystem trees? Or is there a dependency so it should go in via some
+other tree in one go?
+
+
+--WBsA/oQW3eTA3LlM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJVUlNdAAoJEBQN5MwUoCm2RBAP/3YILVpXkyvZZVX0QJlKN1DI
+Vvfli1Bm956MZwfV7ORSoWzthYmRSgsCZ/Q0i+97Y8M2sIpNWWQI00fFm6viiaf0
+zlDq8JZFeAyDQG6BIfsOeWqnIY0RSVoZ5a11PFGnge+knkn1Zj/HADMYZKwWfPgx
+qH/HXrPeZ79ewHzXmGPEmkGUBbtJYZi2VVprlYy85HY6yYPZ36/fS9tPNpCMz1vH
+9uXzpyY1DqGjqoi0pTR7+PhlRpBWsXB75B35A8hvfujPDAMFaCkVkFzD/OzW25ac
+Cu/NCRum6bCkVb6l5oz13sClc/5+OWUePH887TKgrZO4CFNH9jschbgqTb3utDLG
+CnvXRzXBI+XCH35szRZpgWm2DZvbUZXCEvEyVHU39eiCpKL6qh9VKsqwMtHldirf
+tDKKYW5Yo4io2QNedMbsBRFl60bajLBYxtmZhiTZKj8BBmaFa+Hi8rb+hdL5j0yV
+Kl8VrW6zlJhAbYzNahRdQJ786JkJX6acr8J2Itx8vlMx7PDIdyhRFqJQa1Z636Hl
+93sXW55dZtkOcrj+iHiT6047Az4AhzLr+WP8B8fxC4v0rC/1FXVdqjADduhu5LKU
+i/TwixNqO32RV0pPjx1bQbZS1pmgk6nuIIsj9jue07wD64+F1xJcKfMZtrTZd3zL
+4jm4gFJaJQ2D9kc0D7gd
+=PJWG
+-----END PGP SIGNATURE-----
+
+--WBsA/oQW3eTA3LlM--
