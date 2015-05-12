@@ -1,47 +1,40 @@
-From: "Kim, Milo" <milo.kim@ti.com>
-Subject: Re: [PATCH] leds: lp5523: add master_fader support
-Date: Tue, 12 May 2015 17:25:29 +0900
-Message-ID: <5551B8F9.6040808@ti.com>
-References: <1431371454-2035-1-git-send-email-toshik@chromium.org> <5551AAFA.5080807@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: [PATCH v9 1/3] of: Add vendor prefix for Kinetic technologies
+Date: Tue, 12 May 2015 17:37:55 +0900
+Message-ID: <1431419877-28339-2-git-send-email-ingi2.kim@samsung.com>
+References: <1431419877-28339-1-git-send-email-ingi2.kim@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:40578 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752681AbbELIZi (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 12 May 2015 04:25:38 -0400
-In-Reply-To: <5551AAFA.5080807@samsung.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:34488 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932434AbbELIiW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 04:38:22 -0400
+In-reply-to: <1431419877-28339-1-git-send-email-ingi2.kim@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Toshi Kikuchi <toshik@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>
+To: cooloney@gmail.com, rpurdie@rpsys.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: sakari.ailus@iki.fi, j.anaszewski@samsung.com, varkabhadram@gmail.com, joe@perches.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
 
-Hi Jacek and Toshi,
+This patch adds vendor prefix for Kinetic technologies
 
-On 5/12/2015 4:25 PM, Jacek Anaszewski wrote:
-> Hi Toshi,
->
-> On 05/11/2015 09:10 PM, Toshi Kikuchi wrote:
->> This patch introduces 4 new attributes:
->>     master_fader_leds
->>     master_fader1
->>     master_fader2
->>     master_fader3
->>
->> Fo example, to map channel 0,6 to master_fader1,
->> map channel 1,7 to master_fader2,
->> map channel 2,8 to master_fader3, and
->> map channel 3,4,5 to none
->   >
->>     echo "123000123" > master_fader_leds
->
-> I propose to add ABI documentation for this driver. It already exposes
-> many custom attributes but I can't find documentation for them.
+Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Varka Bhadram <varkabhadram@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-I agree with Jacek's comment but it would be better if we could see the 
-description in lp5523 driver 
-documentation(Documentation/leds/leds-lp5523.txt).
-
-Best regards,
-Milo
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index b6682ab..0a50533 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -108,6 +108,7 @@ isee	ISEE 2007 S.L.
+ isil	Intersil
+ karo	Ka-Ro electronics GmbH
+ keymile	Keymile GmbH
++kinetic Kinetic Technologies
+ lacie	LaCie
+ lantiq	Lantiq Semiconductor
+ lenovo	Lenovo Group Ltd.
+-- 
+2.0.5
