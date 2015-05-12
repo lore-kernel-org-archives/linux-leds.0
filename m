@@ -1,53 +1,59 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
- properties interface
-Date: Tue, 12 May 2015 10:48:28 -0700
-Message-ID: <CAK5ve-+9jtPMYdYmicJDRwiUcb8g5XD0h-G88RULY3GX6skZmQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] leds: leds-gpio: Add missing #include <linux/of.h>
+Date: Tue, 12 May 2015 10:49:46 -0700
+Message-ID: <CAK5ve-+rsWrQZhoGu0qxY7E5WFMNwk3THyBNbMZubz8Qg611Vw@mail.gmail.com>
 References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
- <1430986090-7243-2-git-send-email-geert@linux-m68k.org> <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+ <1430986090-7243-3-git-send-email-geert@linux-m68k.org> <554B5749.60801@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:36505 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933003AbbELRst convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 13:48:49 -0400
-In-Reply-To: <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:35384 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933010AbbELRuI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 13:50:08 -0400
+In-Reply-To: <554B5749.60801@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Tue, May 12, 2015 at 3:31 AM, Linus Walleij <linus.walleij@linaro.or=
-g> wrote:
-> On Thu, May 7, 2015 at 10:08 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->
->> If GPIOLIB=3Dn:
+On Thu, May 7, 2015 at 5:15 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> On 05/07/2015 10:08 AM, Geert Uytterhoeven wrote:
 >>
->>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
-=80=99:
->>     drivers/leds/leds-gpio.c:187: error: implicit declaration of fun=
-ction =E2=80=98devm_get_gpiod_from_child=E2=80=99
->>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer =
-from integer without a cast
->>
->> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chi=
-ld()
->> for the !GPIOLIB case to fix this.
+>> drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=80=
+=99:
+>> drivers/leds/leds-gpio.c:194: error: implicit declaration of functio=
+n
+>> =E2=80=98of_node=E2=80=99
+>> drivers/leds/leds-gpio.c:194: warning: assignment makes pointer from
+>> integer without a cast
+>> drivers/leds/leds-gpio.c:200: error: dereferencing pointer to incomp=
+lete
+>> type
 >>
 >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Fixes: 40b7318319281b1b ("gpio: Support for unified device propertie=
-s interface")
+>> ---
+>>   drivers/leds/leds-gpio.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+>> index 15eb3f86f670ffe4..89d981e8f8cacf55 100644
+>> --- a/drivers/leds/leds-gpio.c
+>> +++ b/drivers/leds/leds-gpio.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/kernel.h>
+>>   #include <linux/leds.h>
+>>   #include <linux/module.h>
+>> +#include <linux/of.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/property.h>
+>>   #include <linux/slab.h>
+>>
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 >
-> Counting on this to go through the LEDs tree as discussed.
->
-> Yours,
-> Linus Walleij
 
-
-OK, merged with Alex and Linus Acks. Thanks,
+Merged, thanks.
 -Bryan
