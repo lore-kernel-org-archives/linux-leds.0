@@ -1,49 +1,53 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v9 3/3] leds: Add ktd2692 flash LED driver
-Date: Tue, 12 May 2015 10:44:27 -0700
-Message-ID: <CAK5ve-LTuQWS59m=O2YyO1bAryAezYhre4eW3ZA34sraJ53AZA@mail.gmail.com>
-References: <1431419877-28339-1-git-send-email-ingi2.kim@samsung.com>
- <1431419877-28339-4-git-send-email-ingi2.kim@samsung.com> <5551F4AE.9050900@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
+ properties interface
+Date: Tue, 12 May 2015 10:48:28 -0700
+Message-ID: <CAK5ve-+9jtPMYdYmicJDRwiUcb8g5XD0h-G88RULY3GX6skZmQ@mail.gmail.com>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+ <1430986090-7243-2-git-send-email-geert@linux-m68k.org> <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5551F4AE.9050900-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ingi Kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:36505 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933003AbbELRst convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 13:48:49 -0400
+In-Reply-To: <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 12, 2015 at 5:40 AM, Jacek Anaszewski
-<j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi Ingi,
+On Tue, May 12, 2015 at 3:31 AM, Linus Walleij <linus.walleij@linaro.or=
+g> wrote:
+> On Thu, May 7, 2015 at 10:08 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
 >
-> On 05/12/2015 10:37 AM, Ingi Kim wrote:
+>> If GPIOLIB=3Dn:
 >>
->> This patch adds a driver to support the ktd2692 flash LEDs.
->> ktd2692 can control flash current by ExpressWire interface.
+>>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
+=80=99:
+>>     drivers/leds/leds-gpio.c:187: error: implicit declaration of fun=
+ction =E2=80=98devm_get_gpiod_from_child=E2=80=99
+>>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer =
+from integer without a cast
 >>
->> Signed-off-by: Ingi Kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>   drivers/leds/Kconfig        |   9 +
->>   drivers/leds/Makefile       |   1 +
->>   drivers/leds/leds-ktd2692.c | 443
->> ++++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 453 insertions(+)
->>   create mode 100644 drivers/leds/leds-ktd2692.c
+>> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chi=
+ld()
+>> for the !GPIOLIB case to fix this.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Fixes: 40b7318319281b1b ("gpio: Support for unified device propertie=
+s interface")
 >
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> Acked-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Counting on this to go through the LEDs tree as discussed.
 >
+> Yours,
+> Linus Walleij
 
-Merged, thanks.
+
+OK, merged with Alex and Linus Acks. Thanks,
 -Bryan
-
-> --
-> Best Regards,
-> Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
