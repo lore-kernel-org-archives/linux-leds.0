@@ -1,49 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
- properties interface
-Date: Tue, 12 May 2015 12:31:35 +0200
-Message-ID: <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
-References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
-	<1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+Subject: Re: [PATCH v2 08/17] gpio: locomo: implement per-pin irq handling
+Date: Tue, 12 May 2015 13:15:25 +0200
+Message-ID: <CACRpkdYQFYaA87N2f1uizRo=sDj2P4k4m1O_0_cQsi4BZbeGkg@mail.gmail.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+	<1430178954-11138-9-git-send-email-dbaryshkov@gmail.com>
+	<CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
+	<CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:34330 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbbELKbg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 06:31:36 -0400
-Received: by obfe9 with SMTP id e9so1920919obf.1
-        for <linux-leds@vger.kernel.org>; Tue, 12 May 2015 03:31:35 -0700 (PDT)
-In-Reply-To: <1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35221 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932381AbbELLP0 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2015 07:15:26 -0400
+Received: by oign205 with SMTP id n205so2817995oig.2
+        for <linux-leds@vger.kernel.org>; Tue, 12 May 2015 04:15:26 -0700 (PDT)
+In-Reply-To: <CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger.kernel.or
 
-On Thu, May 7, 2015 at 10:08 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-
-> If GPIOLIB=3Dn:
+On Wed, May 6, 2015 at 6:42 PM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
+> 2015-05-06 17:15 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Tue, Apr 28, 2015 at 1:55 AM, Dmitry Eremin-Solenikov
+>> <dbaryshkov@gmail.com> wrote:
+>>
+>>> LoCoMo has a possibility to generate per-GPIO edge irqs. Support for
+>>> that was there in old locomo driver, got 'cleaned up' during old driver
+>>> IRQ cascading cleanup and is now reimplemented. It is expected that
+>>> SL-5500 (collie) will use locomo gpio irqs for mmc detection irq.
+>>>
+>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 >
->     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
-=80=99:
->     drivers/leds/leds-gpio.c:187: error: implicit declaration of func=
-tion =E2=80=98devm_get_gpiod_from_child=E2=80=99
->     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer f=
-rom integer without a cast
+> Thanks for review of the patches.
 >
-> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chil=
-d()
-> for the !GPIOLIB case to fix this.
+>> Assume this will also go through MFD.
+>>
+>>> +       irq_set_chained_handler(lg->irq, NULL);
+>>> +       irq_set_handler_data(lg->irq, NULL);
+>>
+>> Why is this needed? If the GPIOLIB_IRQCHIP code in
+>> gpiolib.c is not doing this then maybe it's the core code that
+>> needs fixing rather than having this in the driver.
 >
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: 40b7318319281b1b ("gpio: Support for unified device properties=
- interface")
+> I have skimmed through the rest of drivers using
+> gpiochip_set_chained_irqchip(). Indeed none of the drivers NULL
+> the chained handled and handler data. However I couldn't locate
+> the code where they would be cleared.
+>
+> Should I still send the patch fixing the GPIOLIB_IRQCHIP?
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Counting on this to go through the LEDs tree as discussed.
+Yes I guess you need to save parent_irq in struct gpio_chip and
+remove it in gpiochip_irqchip_remove() if it's != 0.
 
 Yours,
 Linus Walleij
