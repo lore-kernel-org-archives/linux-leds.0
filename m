@@ -1,34 +1,130 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] Documentation: leds-lp5523: describe master fader
- attributes
-Date: Wed, 13 May 2015 11:57:54 +0200
-Message-ID: <55532022.8010206@samsung.com>
-References: <1431479714-25846-1-git-send-email-toshik@chromium.org>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 02/17] leds: port locomo leds driver to new locomo core
+Date: Wed, 13 May 2015 12:31:06 +0200
+Message-ID: <555327EA.5060402@samsung.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-3-git-send-email-dbaryshkov@gmail.com>
+ <554A2DB4.3020000@samsung.com>
+ <CALT56yNJWapNw1XLrzfbUDUz1LF_BB9DfF94H6GhbnBUEP80_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55284 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933159AbbEMJ56 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 May 2015 05:57:58 -0400
-In-reply-to: <1431479714-25846-1-git-send-email-toshik@chromium.org>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CALT56yNJWapNw1XLrzfbUDUz1LF_BB9DfF94H6GhbnBUEP80_w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds <linux-leds-u79uwXL29TaqPxH82wqD4g@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Toshi Kikuchi <toshik@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, milo.kim@ti.com, cooloney@gmail.com
 
-Hi Toshi,
-
-On 05/13/2015 03:15 AM, Toshi Kikuchi wrote:
-> Add the usage of the new attributes for master faders.
+On 05/12/2015 05:35 PM, Dmitry Eremin-Solenikov wrote:
+> 2015-05-06 18:05 GMT+03:00 Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+>> On 04/28/2015 01:55 AM, Dmitry Eremin-Solenikov wrote:
+>>>
+>>> Adapt locomo leds driver to new locomo core setup.
+>>>
+>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>    drivers/leds/Kconfig       |   1 -
+>>>    drivers/leds/leds-locomo.c | 119
+>>> +++++++++++++++++++++++----------------------
+>>>    2 files changed, 61 insertions(+), 59 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>> index 966b960..4b4650b 100644
+>>> --- a/drivers/leds/Kconfig
+>>> +++ b/drivers/leds/Kconfig
+>>> @@ -79,7 +79,6 @@ config LEDS_LM3642
+>>>    config LEDS_LOCOMO
+>>>          tristate "LED Support for Locomo device"
+>>>          depends on LEDS_CLASS
+>>> -       depends on SHARP_LOCOMO
+>>
+>>
+>> Why do you remove this dependency?
 >
-> Signed-off-by: Toshi Kikuchi <toshik@chromium.org>
-> ---
->   Documentation/leds/leds-lp5523.txt | 30 ++++++++++++++++++++++++++++++
->   1 file changed, 30 insertions(+)
+> Because SHARP_LOCOMO is a Kconfig symbol for the old driver. New driver
+> uses MFD_LOCOMO Kconfig entry. Also the driver now uses generic platform
+> device and regmap interfaces, so there is no direct dependency on main
+> LoCoMo driver. And the policy (IIRC) was not to have such dependencies.
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Ack. Shouldn't you also need "select REGMAP_MMIO" ?
+
+>>
+>>>          help
+>>>            This option enables support for the LEDs on Sharp Locomo.
+>>>            Zaurus models SL-5500 and SL-5600.
+>>> diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
+>>> index 80ba048..7fde812 100644
+>>> --- a/drivers/leds/leds-locomo.c
+>>> +++ b/drivers/leds/leds-locomo.c
+>>> @@ -9,89 +9,92 @@
+>>>     */
+>>>
+>>>    #include <linux/kernel.h>
+>>> -#include <linux/init.h>
+>>> -#include <linux/module.h>
+>>> -#include <linux/device.h>
+>>>    #include <linux/leds.h>
+>>> -
+>>> -#include <mach/hardware.h>
+>>> -#include <asm/hardware/locomo.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/regmap.h>
+>>> +#include <linux/mfd/locomo.h>
+>>
+>>
+>> Please keep alphabetical order.
+>
+> Ack
+>
+>>
+>>> +
+>>> +struct locomo_led {
+>>> +       struct led_classdev led;
+>>> +       struct regmap *regmap;
+>>> +       unsigned int reg;
+>>> +};
+>>>
+>>>    static void locomoled_brightness_set(struct led_classdev *led_cdev,
+>>> -                               enum led_brightness value, int offset)
+>>> +                               enum led_brightness value)
+>>>    {
+>>> -       struct locomo_dev *locomo_dev = LOCOMO_DEV(led_cdev->dev->parent);
+>>> -       unsigned long flags;
+>>> +       struct locomo_led *led = container_of(led_cdev, struct locomo_led,
+>>> led);
+>>>
+>>> -       local_irq_save(flags);
+>>> -       if (value)
+>>> -               locomo_writel(LOCOMO_LPT_TOFH, locomo_dev->mapbase +
+>>> offset);
+>>> -       else
+>>> -               locomo_writel(LOCOMO_LPT_TOFL, locomo_dev->mapbase +
+>>> offset);
+>>> -       local_irq_restore(flags);
+>>> +       regmap_write(led->regmap, led->reg,
+>>> +                       value ? LOCOMO_LPT_TOFH : LOCOMO_LPT_TOFL);
+>>>    }
+>>
+>>
+>> Please use work queue for setting brightness. This is required for the
+>> driver to be compatible with led triggers. You can refer to the
+>> existing LED drivers on how to implement this.
+>
+> Hmm. Why? The regmap here uses MMIO access, so it is atomic operation
+> and doesn't need to be wrapped into work queue, does it?
+
+Triggers can call brightness_set op in the interrupt context, so it
+cannot sleep. I see "map->lock(map->lock_arg)" in regmap_write, thus
+I am inferring that it can sleep.
+
+I am not sure if regmap implements its 'lock' op when using MMIO.
+
+The best way to figure this out is turning "LED Timer Trigger" on
+in the config and execute:
+
+echo "timer" > trigger
 
 -- 
 Best Regards,
