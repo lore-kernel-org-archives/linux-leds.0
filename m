@@ -1,35 +1,85 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] Documentation: leds-lp5523: describe master fader attributes
-Date: Wed, 13 May 2015 10:13:11 -0700
-Message-ID: <CAK5ve-JAJy6c0kez9=xUb5BN+NkeBzGQ-0O15WgSBFuj-tr=fw@mail.gmail.com>
-References: <1431479714-25846-1-git-send-email-toshik@chromium.org> <55532022.8010206@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2 02/17] leds: port locomo leds driver to new locomo core
+Date: Thu, 14 May 2015 08:35:01 +0200
+Message-ID: <55544215.3010401@samsung.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-3-git-send-email-dbaryshkov@gmail.com>
+ <554A2DB4.3020000@samsung.com>
+ <CALT56yNJWapNw1XLrzfbUDUz1LF_BB9DfF94H6GhbnBUEP80_w@mail.gmail.com>
+ <555327EA.5060402@samsung.com>
+ <CALT56yOJyZvWF9neC2A09Y_w1Ej41uwWvU=aOOM0idbzUkBiFQ@mail.gmail.com>
+ <5553654F.4010608@samsung.com> <20150513164248.GB11891@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55532022.8010206@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Toshi Kikuchi <toshik@chromium.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, =?UTF-8?B?6rmA7Jqw6rK4?= <milo.kim@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <20150513164248.GB11891@dtor-ws>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, May 13, 2015 at 2:57 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Toshi,
->
-> On 05/13/2015 03:15 AM, Toshi Kikuchi wrote:
+On 05/13/2015 06:42 PM, Dmitry Torokhov wrote:
+> On Wed, May 13, 2015 at 04:53:03PM +0200, Jacek Anaszewski wrote:
+>> On 05/13/2015 04:14 PM, Dmitry Eremin-Solenikov wrote:
+>>> 2015-05-13 13:31 GMT+03:00 Jacek Anaszewski <j.anaszewski@samsung.com>:
+>>>> On 05/12/2015 05:35 PM, Dmitry Eremin-Solenikov wrote:
+>>>>>
+>>>>> 2015-05-06 18:05 GMT+03:00 Jacek Anaszewski <j.anaszewski@samsung.com>:
+>>>>>>
+>>>>>> On 04/28/2015 01:55 AM, Dmitry Eremin-Solenikov wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> Adapt locomo leds driver to new locomo core setup.
+>>>>>>>
+>>>>>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>>>>>>> ---
+>>>>>>>     drivers/leds/Kconfig       |   1 -
+>>>>>>>     drivers/leds/leds-locomo.c | 119
+>>>>>>> +++++++++++++++++++++++----------------------
+>>>>>>>     2 files changed, 61 insertions(+), 59 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>>>>>> index 966b960..4b4650b 100644
+>>>>>>> --- a/drivers/leds/Kconfig
+>>>>>>> +++ b/drivers/leds/Kconfig
+>>>>>>> @@ -79,7 +79,6 @@ config LEDS_LM3642
+>>>>>>>     config LEDS_LOCOMO
+>>>>>>>           tristate "LED Support for Locomo device"
+>>>>>>>           depends on LEDS_CLASS
+>>>>>>> -       depends on SHARP_LOCOMO
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Why do you remove this dependency?
+>>>>>
+>>>>>
+>>>>> Because SHARP_LOCOMO is a Kconfig symbol for the old driver. New driver
+>>>>> uses MFD_LOCOMO Kconfig entry. Also the driver now uses generic platform
+>>>>> device and regmap interfaces, so there is no direct dependency on main
+>>>>> LoCoMo driver. And the policy (IIRC) was not to have such dependencies.
+>>>>
+>>>>
+>>>> Ack. Shouldn't you also need "select REGMAP_MMIO" ?
+>>>
+>>> No. Maybe I should add "select REGMAP" instead.
 >>
->> Add the usage of the new attributes for master faders.
->>
->> Signed-off-by: Toshi Kikuchi <toshik@chromium.org>
->> ---
->>   Documentation/leds/leds-lp5523.txt | 30 ++++++++++++++++++++++++++++++
->>   1 file changed, 30 insertions(+)
+>> REGMAP is enabled by default if REGMAP_MMIO is enabled. Having
 >
->
-> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->
+> That is unfortunately not how select works: it does not automatically
+> select parents for the selected symbol.
 
-Merged with Milo and Jacek's Acks.
+Please look at config REGMAP declaration in the file
+drivers/base/regmap/Kconfig:
 
-Thanks,
--Bryan
+config REGMAP
+         default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || 
+REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ)
+         select LZO_COMPRESS
+         select LZO_DECOMPRESS
+         select IRQ_DOMAIN if REGMAP_IRQ
+         bool
+
+-- 
+Best Regards,
+Jacek Anaszewski
