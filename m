@@ -1,106 +1,100 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds: remove redundant SET_BRIGHTNESS_SYNC flag
-Date: Thu, 14 May 2015 13:50:16 -0700
-Message-ID: <CAK5ve-Jjwx8Q9-9eskPo+zZDRYiyDF_xam6zraYzWHmn4Jfj1A@mail.gmail.com>
-References: <55537091.7040306@list.ru> <555466C9.7080702@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH RESEND v2] leds: fix hibernation on arm when gpio-led used with CPU led trigger
+Date: Fri, 15 May 2015 02:07:16 +0200
+Message-ID: <1812053.91OoSt4Bq7@vostro.rjw.lan>
+References: <1429876630-15952-1-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:35066 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933271AbbENUui (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 14 May 2015 16:50:38 -0400
-In-Reply-To: <555466C9.7080702@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1429876630-15952-1-git-send-email-grygorii.strashko@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: grygorii.strashko@linaro.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kevin Hilman <khilman@deeprootsystems.com>, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, sumit.semwal@linaro.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Grygorii Strashko <Grygorii.Strashko@linaro.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Stas Sergeev <stsp@list.ru>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux kernel <linux-kernel@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>
 
-On Thu, May 14, 2015 at 2:11 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> I personally can't find any strong argument against this optimization.
-> I added both flags on Bryan's request while implementing LED Flash class
-> extension. I can see a few occurrences in the include/linux directory
-> where both SYNC and ASYNC flags are implemented. The argument in favour
-> could be the fact that the flags influence the core functionality of
-> the subsystem.
->
-> Bryan, could you express your opinion, please?
->
+On Friday, April 24, 2015 02:57:10 PM grygorii.strashko@linaro.org wrote:
+> From: Grygorii Strashko <Grygorii.Strashko@linaro.org>
+> 
+> Setting a dev_pm_ops suspend/resume pair of callbacks but not a set of
+> hibernation callbacks means those pm functions will not be
+> called upon hibernation - that leads to system crash on ARM during
+> freezing if gpio-led is used in combination with CPU led trigger.
+> It may happen after freeze_noirq stage (GPIO is suspended)
+> and before syscore_suspend stage (CPU led trigger is suspended)
+> - usually when disable_nonboot_cpus() is called.
+> 
+> Log:
+>   PM: noirq freeze of devices complete after 1.425 msecs
+>   Disabling non-boot CPUs ...
+>     ^ system may crash or stuck here with message (TI AM572x)
+> 
+>   WARNING: CPU: 0 PID: 3100 at drivers/bus/omap_l3_noc.c:148 l3_interrupt_handler+0x22c/0x370()
+>   44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_PER1_P3 (Idle): Data Access in Supervisor mode during Functional access
+> 
+>   CPU1: shutdown
+>     ^ or here
+> 
+> Fix this by using SIMPLE_DEV_PM_OPS, which appropriately
+> assigns the suspend and hibernation callbacks and move
+> led_suspend/led_resume under CONFIG_PM_SLEEP to avoid
+> build warnings.
+> 
+> Fixes: 73e1ab41a80d (leds: Convert led class driver from legacy pm ops to dev_pm_ops)
+> Signed-off-by: Grygorii Strashko <Grygorii.Strashko@linaro.org>
+> ---
+> 
+> Hi All,
+> 
+> Could you pls pay attention on this patch?
+> 
+> This trivial patch was posted at Feb 2015 and
+> it's missed two merge windows already ((.
+> 
+> Rebased on top of next (4.1).
+> 
+> Changes in v2:
+> - fixed compile time warnings when !CONFIG_PM_SLEEP
+> - updated commit message
+> 
+> v2:
+>   https://lkml.org/lkml/2015/2/5/323
+> v1:
+>   https://lkml.org/lkml/2015/2/2/476
+> 
+>  drivers/leds/led-class.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 728681d..7fb2a19 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -187,6 +187,7 @@ void led_classdev_resume(struct led_classdev *led_cdev)
+>  }
+>  EXPORT_SYMBOL_GPL(led_classdev_resume);
+>  
+> +#ifdef CONFIG_PM_SLEEP
+>  static int led_suspend(struct device *dev)
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> @@ -206,11 +207,9 @@ static int led_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> +#endif
+>  
+> -static const struct dev_pm_ops leds_class_dev_pm_ops = {
+> -	.suspend        = led_suspend,
+> -	.resume         = led_resume,
+> -};
+> +static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+>  
+>  static int match_name(struct device *dev, const void *data)
+>  {
 
-Please keep this flag and although it's redundant at this point I
-think it's still make code more clear and easy to understand.
+Queued up for 4.2, thanks!
 
-Thanks,
--Bryan
 
->
-> On 05/13/2015 05:41 PM, Stas Sergeev wrote:
->>
->>
->> There is a complimentary flag called SET_BRIGHTNESS_ASYNC.
->> Having both is redundant. This patch removes the unneeded flag
->> without any functionality change.
->>
->> CC: Bryan Wu <cooloney@gmail.com>
->> CC: Richard Purdie <rpurdie@rpsys.net>
->> CC: linux-leds@vger.kernel.org
->> CC: linux-kernel@vger.kernel.org
->>
->> Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
->> ---
->>   drivers/leds/led-class-flash.c |    1 -
->>   drivers/leds/led-core.c        |    4 +---
->>   include/linux/leds.h           |    2 +-
->>   3 files changed, 2 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/leds/led-class-flash.c
->> b/drivers/leds/led-class-flash.c
->> index 3b25734..bb67364 100644
->> --- a/drivers/leds/led-class-flash.c
->> +++ b/drivers/leds/led-class-flash.c
->> @@ -318,7 +318,6 @@ int led_classdev_flash_register(struct device *parent,
->>
->>         /* Setting a torch brightness needs to have immediate effect */
->>         led_cdev->flags &= ~SET_BRIGHTNESS_ASYNC;
->> -       led_cdev->flags |= SET_BRIGHTNESS_SYNC;
->>
->>         return 0;
->>   }
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index 9886dac..356e851 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -129,10 +129,8 @@ void led_set_brightness(struct led_classdev
->> *led_cdev,
->>         if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
->>                 led_set_brightness_async(led_cdev, brightness);
->>                 return;
->> -       } else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
->> +       } else
->>                 ret = led_set_brightness_sync(led_cdev, brightness);
->> -       else
->> -               ret = -EINVAL;
->>
->>         if (ret < 0)
->>                 dev_dbg(led_cdev->dev, "Setting LED brightness failed
->> (%d)\n",
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index 9a2b000..c9e6e5d 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -45,7 +45,7 @@ struct led_classdev {
->>   #define LED_BLINK_INVERT      (1 << 19)
->>   #define LED_SYSFS_DISABLE     (1 << 20)
->>   #define SET_BRIGHTNESS_ASYNC  (1 << 21)
->> -#define SET_BRIGHTNESS_SYNC    (1 << 22)
->> +/* bit 22 unused, take it */
->>   #define LED_DEV_CAP_FLASH     (1 << 23)
->>
->>         /* Set LED brightness level */
->>
->
->
-> --
-> Best Regards,
-> Jacek Anaszewski
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
