@@ -1,1206 +1,670 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 17/17] ARM: drop old LoCoMo driver
-Date: Sun, 17 May 2015 19:27:57 +0300
-Message-ID: <1431880077-26321-18-git-send-email-dbaryshkov@gmail.com>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431880077-26321-1-git-send-email-dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: put hard limit on minimum blink period for slow leds
+Date: Mon, 18 May 2015 10:28:13 +0200
+Message-ID: <5559A29D.5010204@samsung.com>
+References: <55562329.9070604@list.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:28039 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958AbbERI2R (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 18 May 2015 04:28:17 -0400
+In-reply-to: <55562329.9070604@list.ru>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Michael Hennerich <michael.hennerich@analog.com>, Jan-Simon Moeller <jansimon.moeller@gmx.de>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Riku Voipio <riku.voipio@iki.fi>, Kyungmin Park <kyungmin.park@samsung.com>, patches@opensource.wolfsonmicro.com
 
-As there are no in-kernel users of old locomo driver, drop all
-alltogether. Remove Kconfig entry, driver and header.
+Hi Stas,
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- arch/arm/common/Kconfig                |   3 -
- arch/arm/common/Makefile               |   1 -
- arch/arm/common/locomo.c               | 914 ---------------------------------
- arch/arm/include/asm/hardware/locomo.h | 221 --------
- 4 files changed, 1139 deletions(-)
- delete mode 100644 arch/arm/common/locomo.c
- delete mode 100644 arch/arm/include/asm/hardware/locomo.h
+On 05/15/2015 06:47 PM, Stas Sergeev wrote:
+>
+> Currently the timer trigger allows to set blink period as small as
+> 1mS. But in fact the minimum period is jiffy, which is usually 10mS.
+> The following mail says:
+> http://lkml.iu.edu/hypermail/linux/kernel/1504.3/03469.html
+> ---
 
-diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
-index c3a4e9c..76c9970 100644
---- a/arch/arm/common/Kconfig
-+++ b/arch/arm/common/Kconfig
-@@ -9,9 +9,6 @@ config DMABOUNCE
- 	bool
- 	select ZONE_DMA
- 
--config SHARP_LOCOMO
--	bool
--
- config SHARP_PARAM
- 	bool
- 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b1eff..437c79a 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -7,7 +7,6 @@ obj-y				+= firmware.o
- obj-$(CONFIG_ICST)		+= icst.o
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
--obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
- obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
-diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
-deleted file mode 100644
-index b55c362..0000000
---- a/arch/arm/common/locomo.c
-+++ /dev/null
-@@ -1,914 +0,0 @@
--/*
-- * linux/arch/arm/common/locomo.c
-- *
-- * Sharp LoCoMo support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This file contains all generic LoCoMo support.
-- *
-- * All initialization functions provided here are intended to be called
-- * from machine specific code with proper arguments when required.
-- *
-- * Based on sa1111.c
-- */
--
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/delay.h>
--#include <linux/errno.h>
--#include <linux/ioport.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/spinlock.h>
--#include <linux/io.h>
--
--#include <mach/hardware.h>
--#include <asm/irq.h>
--#include <asm/mach/irq.h>
--
--#include <asm/hardware/locomo.h>
--
--/* LoCoMo Interrupts */
--#define IRQ_LOCOMO_KEY		(0)
--#define IRQ_LOCOMO_GPIO		(1)
--#define IRQ_LOCOMO_LT		(2)
--#define IRQ_LOCOMO_SPI		(3)
--
--/* M62332 output channel selection */
--#define M62332_EVR_CH	1	/* M62332 volume channel number  */
--				/*   0 : CH.1 , 1 : CH. 2        */
--/* DAC send data */
--#define	M62332_SLAVE_ADDR	0x4e	/* Slave address  */
--#define	M62332_W_BIT		0x00	/* W bit (0 only) */
--#define	M62332_SUB_ADDR		0x00	/* Sub address    */
--#define	M62332_A_BIT		0x00	/* A bit (0 only) */
--
--/* DAC setup and hold times (expressed in us) */
--#define DAC_BUS_FREE_TIME	5	/*   4.7 us */
--#define DAC_START_SETUP_TIME	5	/*   4.7 us */
--#define DAC_STOP_SETUP_TIME	4	/*   4.0 us */
--#define DAC_START_HOLD_TIME	5	/*   4.7 us */
--#define DAC_SCL_LOW_HOLD_TIME	5	/*   4.7 us */
--#define DAC_SCL_HIGH_HOLD_TIME	4	/*   4.0 us */
--#define DAC_DATA_SETUP_TIME	1	/*   250 ns */
--#define DAC_DATA_HOLD_TIME	1	/*   300 ns */
--#define DAC_LOW_SETUP_TIME	1	/*   300 ns */
--#define DAC_HIGH_SETUP_TIME	1	/*  1000 ns */
--
--/* the following is the overall data for the locomo chip */
--struct locomo {
--	struct device *dev;
--	unsigned long phys;
--	unsigned int irq;
--	int irq_base;
--	spinlock_t lock;
--	void __iomem *base;
--#ifdef CONFIG_PM
--	void *saved_state;
--#endif
--};
--
--struct locomo_dev_info {
--	unsigned long	offset;
--	unsigned long	length;
--	unsigned int	devid;
--	unsigned int	irq[1];
--	const char *	name;
--};
--
--/* All the locomo devices.  If offset is non-zero, the mapbase for the
-- * locomo_dev will be set to the chip base plus offset.  If offset is
-- * zero, then the mapbase for the locomo_dev will be set to zero.  An
-- * offset of zero means the device only uses GPIOs or other helper
-- * functions inside this file */
--static struct locomo_dev_info locomo_devices[] = {
--	{
--		.devid 		= LOCOMO_DEVID_KEYBOARD,
--		.irq		= { IRQ_LOCOMO_KEY },
--		.name		= "locomo-keyboard",
--		.offset		= LOCOMO_KEYBOARD,
--		.length		= 16,
--	},
--	{
--		.devid		= LOCOMO_DEVID_FRONTLIGHT,
--		.irq		= {},
--		.name		= "locomo-frontlight",
--		.offset		= LOCOMO_FRONTLIGHT,
--		.length		= 8,
--
--	},
--	{
--		.devid		= LOCOMO_DEVID_BACKLIGHT,
--		.irq		= {},
--		.name		= "locomo-backlight",
--		.offset		= LOCOMO_BACKLIGHT,
--		.length		= 8,
--	},
--	{
--		.devid		= LOCOMO_DEVID_AUDIO,
--		.irq		= {},
--		.name		= "locomo-audio",
--		.offset		= LOCOMO_AUDIO,
--		.length		= 4,
--	},
--	{
--		.devid		= LOCOMO_DEVID_LED,
--		.irq 		= {},
--		.name		= "locomo-led",
--		.offset		= LOCOMO_LED,
--		.length		= 8,
--	},
--	{
--		.devid		= LOCOMO_DEVID_UART,
--		.irq		= {},
--		.name		= "locomo-uart",
--		.offset		= 0,
--		.length		= 0,
--	},
--	{
--		.devid		= LOCOMO_DEVID_SPI,
--		.irq		= {},
--		.name		= "locomo-spi",
--		.offset		= LOCOMO_SPI,
--		.length		= 0x30,
--	},
--};
--
--static void locomo_handler(unsigned int irq, struct irq_desc *desc)
--{
--	struct locomo *lchip = irq_get_chip_data(irq);
--	int req, i;
--
--	/* Acknowledge the parent IRQ */
--	desc->irq_data.chip->irq_ack(&desc->irq_data);
--
--	/* check why this interrupt was generated */
--	req = locomo_readl(lchip->base + LOCOMO_ICR) & 0x0f00;
--
--	if (req) {
--		/* generate the next interrupt(s) */
--		irq = lchip->irq_base;
--		for (i = 0; i <= 3; i++, irq++) {
--			if (req & (0x0100 << i)) {
--				generic_handle_irq(irq);
--			}
--
--		}
--	}
--}
--
--static void locomo_ack_irq(struct irq_data *d)
--{
--}
--
--static void locomo_mask_irq(struct irq_data *d)
--{
--	struct locomo *lchip = irq_data_get_irq_chip_data(d);
--	unsigned int r;
--	r = locomo_readl(lchip->base + LOCOMO_ICR);
--	r &= ~(0x0010 << (d->irq - lchip->irq_base));
--	locomo_writel(r, lchip->base + LOCOMO_ICR);
--}
--
--static void locomo_unmask_irq(struct irq_data *d)
--{
--	struct locomo *lchip = irq_data_get_irq_chip_data(d);
--	unsigned int r;
--	r = locomo_readl(lchip->base + LOCOMO_ICR);
--	r |= (0x0010 << (d->irq - lchip->irq_base));
--	locomo_writel(r, lchip->base + LOCOMO_ICR);
--}
--
--static struct irq_chip locomo_chip = {
--	.name		= "LOCOMO",
--	.irq_ack	= locomo_ack_irq,
--	.irq_mask	= locomo_mask_irq,
--	.irq_unmask	= locomo_unmask_irq,
--};
--
--static void locomo_setup_irq(struct locomo *lchip)
--{
--	int irq = lchip->irq_base;
--
--	/*
--	 * Install handler for IRQ_LOCOMO_HW.
--	 */
--	irq_set_irq_type(lchip->irq, IRQ_TYPE_EDGE_FALLING);
--	irq_set_chip_data(lchip->irq, lchip);
--	irq_set_chained_handler(lchip->irq, locomo_handler);
--
--	/* Install handlers for IRQ_LOCOMO_* */
--	for ( ; irq <= lchip->irq_base + 3; irq++) {
--		irq_set_chip_and_handler(irq, &locomo_chip, handle_level_irq);
--		irq_set_chip_data(irq, lchip);
--		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
--	}
--}
--
--
--static void locomo_dev_release(struct device *_dev)
--{
--	struct locomo_dev *dev = LOCOMO_DEV(_dev);
--
--	kfree(dev);
--}
--
--static int
--locomo_init_one_child(struct locomo *lchip, struct locomo_dev_info *info)
--{
--	struct locomo_dev *dev;
--	int ret;
--
--	dev = kzalloc(sizeof(struct locomo_dev), GFP_KERNEL);
--	if (!dev) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	/*
--	 * If the parent device has a DMA mask associated with it,
--	 * propagate it down to the children.
--	 */
--	if (lchip->dev->dma_mask) {
--		dev->dma_mask = *lchip->dev->dma_mask;
--		dev->dev.dma_mask = &dev->dma_mask;
--	}
--
--	dev_set_name(&dev->dev, "%s", info->name);
--	dev->devid	 = info->devid;
--	dev->dev.parent  = lchip->dev;
--	dev->dev.bus     = &locomo_bus_type;
--	dev->dev.release = locomo_dev_release;
--	dev->dev.coherent_dma_mask = lchip->dev->coherent_dma_mask;
--
--	if (info->offset)
--		dev->mapbase = lchip->base + info->offset;
--	else
--		dev->mapbase = 0;
--	dev->length = info->length;
--
--	dev->irq[0] = (lchip->irq_base == NO_IRQ) ?
--			NO_IRQ : lchip->irq_base + info->irq[0];
--
--	ret = device_register(&dev->dev);
--	if (ret) {
-- out:
--		kfree(dev);
--	}
--	return ret;
--}
--
--#ifdef CONFIG_PM
--
--struct locomo_save_data {
--	u16	LCM_GPO;
--	u16	LCM_SPICT;
--	u16	LCM_GPE;
--	u16	LCM_ASD;
--	u16	LCM_SPIMD;
--};
--
--static int locomo_suspend(struct platform_device *dev, pm_message_t state)
--{
--	struct locomo *lchip = platform_get_drvdata(dev);
--	struct locomo_save_data *save;
--	unsigned long flags;
--
--	save = kmalloc(sizeof(struct locomo_save_data), GFP_KERNEL);
--	if (!save)
--		return -ENOMEM;
--
--	lchip->saved_state = save;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--
--	save->LCM_GPO     = locomo_readl(lchip->base + LOCOMO_GPO);	/* GPIO */
--	locomo_writel(0x00, lchip->base + LOCOMO_GPO);
--	save->LCM_SPICT   = locomo_readl(lchip->base + LOCOMO_SPI + LOCOMO_SPICT);	/* SPI */
--	locomo_writel(0x40, lchip->base + LOCOMO_SPI + LOCOMO_SPICT);
--	save->LCM_GPE     = locomo_readl(lchip->base + LOCOMO_GPE);	/* GPIO */
--	locomo_writel(0x00, lchip->base + LOCOMO_GPE);
--	save->LCM_ASD     = locomo_readl(lchip->base + LOCOMO_ASD);	/* ADSTART */
--	locomo_writel(0x00, lchip->base + LOCOMO_ASD);
--	save->LCM_SPIMD   = locomo_readl(lchip->base + LOCOMO_SPI + LOCOMO_SPIMD);	/* SPI */
--	locomo_writel(0x3C14, lchip->base + LOCOMO_SPI + LOCOMO_SPIMD);
--
--	locomo_writel(0x00, lchip->base + LOCOMO_PAIF);
--	locomo_writel(0x00, lchip->base + LOCOMO_DAC);
--	locomo_writel(0x00, lchip->base + LOCOMO_BACKLIGHT + LOCOMO_TC);
--
--	if ((locomo_readl(lchip->base + LOCOMO_LED + LOCOMO_LPT0) & 0x88) && (locomo_readl(lchip->base + LOCOMO_LED + LOCOMO_LPT1) & 0x88))
--		locomo_writel(0x00, lchip->base + LOCOMO_C32K); 	/* CLK32 off */
--	else
--		/* 18MHz already enabled, so no wait */
--		locomo_writel(0xc1, lchip->base + LOCOMO_C32K); 	/* CLK32 on */
--
--	locomo_writel(0x00, lchip->base + LOCOMO_TADC);		/* 18MHz clock off*/
--	locomo_writel(0x00, lchip->base + LOCOMO_AUDIO + LOCOMO_ACC);			/* 22MHz/24MHz clock off */
--	locomo_writel(0x00, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALS);			/* FL */
--
--	spin_unlock_irqrestore(&lchip->lock, flags);
--
--	return 0;
--}
--
--static int locomo_resume(struct platform_device *dev)
--{
--	struct locomo *lchip = platform_get_drvdata(dev);
--	struct locomo_save_data *save;
--	unsigned long r;
--	unsigned long flags;
--
--	save = lchip->saved_state;
--	if (!save)
--		return 0;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--
--	locomo_writel(save->LCM_GPO, lchip->base + LOCOMO_GPO);
--	locomo_writel(save->LCM_SPICT, lchip->base + LOCOMO_SPI + LOCOMO_SPICT);
--	locomo_writel(save->LCM_GPE, lchip->base + LOCOMO_GPE);
--	locomo_writel(save->LCM_ASD, lchip->base + LOCOMO_ASD);
--	locomo_writel(save->LCM_SPIMD, lchip->base + LOCOMO_SPI + LOCOMO_SPIMD);
--
--	locomo_writel(0x00, lchip->base + LOCOMO_C32K);
--	locomo_writel(0x90, lchip->base + LOCOMO_TADC);
--
--	locomo_writel(0, lchip->base + LOCOMO_KEYBOARD + LOCOMO_KSC);
--	r = locomo_readl(lchip->base + LOCOMO_KEYBOARD + LOCOMO_KIC);
--	r &= 0xFEFF;
--	locomo_writel(r, lchip->base + LOCOMO_KEYBOARD + LOCOMO_KIC);
--	locomo_writel(0x1, lchip->base + LOCOMO_KEYBOARD + LOCOMO_KCMD);
--
--	spin_unlock_irqrestore(&lchip->lock, flags);
--
--	lchip->saved_state = NULL;
--	kfree(save);
--
--	return 0;
--}
--#endif
--
--
--/**
-- *	locomo_probe - probe for a single LoCoMo chip.
-- *	@phys_addr: physical address of device.
-- *
-- *	Probe for a LoCoMo chip.  This must be called
-- *	before any other locomo-specific code.
-- *
-- *	Returns:
-- *	%-ENODEV	device not found.
-- *	%-EBUSY		physical address already marked in-use.
-- *	%0		successful.
-- */
--static int
--__locomo_probe(struct device *me, struct resource *mem, int irq)
--{
--	struct locomo_platform_data *pdata = me->platform_data;
--	struct locomo *lchip;
--	unsigned long r;
--	int i, ret = -ENODEV;
--
--	lchip = kzalloc(sizeof(struct locomo), GFP_KERNEL);
--	if (!lchip)
--		return -ENOMEM;
--
--	spin_lock_init(&lchip->lock);
--
--	lchip->dev = me;
--	dev_set_drvdata(lchip->dev, lchip);
--
--	lchip->phys = mem->start;
--	lchip->irq = irq;
--	lchip->irq_base = (pdata) ? pdata->irq_base : NO_IRQ;
--
--	/*
--	 * Map the whole region.  This also maps the
--	 * registers for our children.
--	 */
--	lchip->base = ioremap(mem->start, PAGE_SIZE);
--	if (!lchip->base) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	/* locomo initialize */
--	locomo_writel(0, lchip->base + LOCOMO_ICR);
--	/* KEYBOARD */
--	locomo_writel(0, lchip->base + LOCOMO_KEYBOARD + LOCOMO_KIC);
--
--	/* GPIO */
--	locomo_writel(0, lchip->base + LOCOMO_GPO);
--	locomo_writel((LOCOMO_GPIO(1) | LOCOMO_GPIO(2) | LOCOMO_GPIO(13) | LOCOMO_GPIO(14))
--			, lchip->base + LOCOMO_GPE);
--	locomo_writel((LOCOMO_GPIO(1) | LOCOMO_GPIO(2) | LOCOMO_GPIO(13) | LOCOMO_GPIO(14))
--			, lchip->base + LOCOMO_GPD);
--	locomo_writel(0, lchip->base + LOCOMO_GIE);
--
--	/* Frontlight */
--	locomo_writel(0, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALS);
--	locomo_writel(0, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALD);
--
--	/* Longtime timer */
--	locomo_writel(0, lchip->base + LOCOMO_LTINT);
--	/* SPI */
--	locomo_writel(0, lchip->base + LOCOMO_SPI + LOCOMO_SPIIE);
--
--	locomo_writel(6 + 8 + 320 + 30 - 10, lchip->base + LOCOMO_ASD);
--	r = locomo_readl(lchip->base + LOCOMO_ASD);
--	r |= 0x8000;
--	locomo_writel(r, lchip->base + LOCOMO_ASD);
--
--	locomo_writel(6 + 8 + 320 + 30 - 10 - 128 + 4, lchip->base + LOCOMO_HSD);
--	r = locomo_readl(lchip->base + LOCOMO_HSD);
--	r |= 0x8000;
--	locomo_writel(r, lchip->base + LOCOMO_HSD);
--
--	locomo_writel(128 / 8, lchip->base + LOCOMO_HSC);
--
--	/* XON */
--	locomo_writel(0x80, lchip->base + LOCOMO_TADC);
--	udelay(1000);
--	/* CLK9MEN */
--	r = locomo_readl(lchip->base + LOCOMO_TADC);
--	r |= 0x10;
--	locomo_writel(r, lchip->base + LOCOMO_TADC);
--	udelay(100);
--
--	/* init DAC */
--	r = locomo_readl(lchip->base + LOCOMO_DAC);
--	r |= LOCOMO_DAC_SCLOEB | LOCOMO_DAC_SDAOEB;
--	locomo_writel(r, lchip->base + LOCOMO_DAC);
--
--	r = locomo_readl(lchip->base + LOCOMO_VER);
--	printk(KERN_INFO "LoCoMo Chip: %lu%lu\n", (r >> 8), (r & 0xff));
--
--	/*
--	 * The interrupt controller must be initialised before any
--	 * other device to ensure that the interrupts are available.
--	 */
--	if (lchip->irq != NO_IRQ && lchip->irq_base != NO_IRQ)
--		locomo_setup_irq(lchip);
--
--	for (i = 0; i < ARRAY_SIZE(locomo_devices); i++)
--		locomo_init_one_child(lchip, &locomo_devices[i]);
--	return 0;
--
-- out:
--	kfree(lchip);
--	return ret;
--}
--
--static int locomo_remove_child(struct device *dev, void *data)
--{
--	device_unregister(dev);
--	return 0;
--} 
--
--static void __locomo_remove(struct locomo *lchip)
--{
--	device_for_each_child(lchip->dev, NULL, locomo_remove_child);
--
--	if (lchip->irq != NO_IRQ) {
--		irq_set_chained_handler(lchip->irq, NULL);
--		irq_set_handler_data(lchip->irq, NULL);
--	}
--
--	iounmap(lchip->base);
--	kfree(lchip);
--}
--
--static int locomo_probe(struct platform_device *dev)
--{
--	struct resource *mem;
--	int irq;
--
--	mem = platform_get_resource(dev, IORESOURCE_MEM, 0);
--	if (!mem)
--		return -EINVAL;
--	irq = platform_get_irq(dev, 0);
--	if (irq < 0)
--		return -ENXIO;
--
--	return __locomo_probe(&dev->dev, mem, irq);
--}
--
--static int locomo_remove(struct platform_device *dev)
--{
--	struct locomo *lchip = platform_get_drvdata(dev);
--
--	if (lchip) {
--		__locomo_remove(lchip);
--		platform_set_drvdata(dev, NULL);
--	}
--
--	return 0;
--}
--
--/*
-- *	Not sure if this should be on the system bus or not yet.
-- *	We really want some way to register a system device at
-- *	the per-machine level, and then have this driver pick
-- *	up the registered devices.
-- */
--static struct platform_driver locomo_device_driver = {
--	.probe		= locomo_probe,
--	.remove		= locomo_remove,
--#ifdef CONFIG_PM
--	.suspend	= locomo_suspend,
--	.resume		= locomo_resume,
--#endif
--	.driver		= {
--		.name	= "locomo",
--	},
--};
--
--/*
-- *	Get the parent device driver (us) structure
-- *	from a child function device
-- */
--static inline struct locomo *locomo_chip_driver(struct locomo_dev *ldev)
--{
--	return (struct locomo *)dev_get_drvdata(ldev->dev.parent);
--}
--
--void locomo_gpio_set_dir(struct device *dev, unsigned int bits, unsigned int dir)
--{
--	struct locomo *lchip = dev_get_drvdata(dev);
--	unsigned long flags;
--	unsigned int r;
--
--	if (!lchip)
--		return;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--
--	r = locomo_readl(lchip->base + LOCOMO_GPD);
--	if (dir)
--		r |= bits;
--	else
--		r &= ~bits;
--	locomo_writel(r, lchip->base + LOCOMO_GPD);
--
--	r = locomo_readl(lchip->base + LOCOMO_GPE);
--	if (dir)
--		r |= bits;
--	else
--		r &= ~bits;
--	locomo_writel(r, lchip->base + LOCOMO_GPE);
--
--	spin_unlock_irqrestore(&lchip->lock, flags);
--}
--EXPORT_SYMBOL(locomo_gpio_set_dir);
--
--int locomo_gpio_read_level(struct device *dev, unsigned int bits)
--{
--	struct locomo *lchip = dev_get_drvdata(dev);
--	unsigned long flags;
--	unsigned int ret;
--
--	if (!lchip)
--		return -ENODEV;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--	ret = locomo_readl(lchip->base + LOCOMO_GPL);
--	spin_unlock_irqrestore(&lchip->lock, flags);
--
--	ret &= bits;
--	return ret;
--}
--EXPORT_SYMBOL(locomo_gpio_read_level);
--
--int locomo_gpio_read_output(struct device *dev, unsigned int bits)
--{
--	struct locomo *lchip = dev_get_drvdata(dev);
--	unsigned long flags;
--	unsigned int ret;
--
--	if (!lchip)
--		return -ENODEV;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--	ret = locomo_readl(lchip->base + LOCOMO_GPO);
--	spin_unlock_irqrestore(&lchip->lock, flags);
--
--	ret &= bits;
--	return ret;
--}
--EXPORT_SYMBOL(locomo_gpio_read_output);
--
--void locomo_gpio_write(struct device *dev, unsigned int bits, unsigned int set)
--{
--	struct locomo *lchip = dev_get_drvdata(dev);
--	unsigned long flags;
--	unsigned int r;
--
--	if (!lchip)
--		return;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--
--	r = locomo_readl(lchip->base + LOCOMO_GPO);
--	if (set)
--		r |= bits;
--	else
--		r &= ~bits;
--	locomo_writel(r, lchip->base + LOCOMO_GPO);
--
--	spin_unlock_irqrestore(&lchip->lock, flags);
--}
--EXPORT_SYMBOL(locomo_gpio_write);
--
--static void locomo_m62332_sendbit(void *mapbase, int bit)
--{
--	unsigned int r;
--
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_DATA_HOLD_TIME);	/* 300 nsec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--
--	if (bit & 1) {
--		r = locomo_readl(mapbase + LOCOMO_DAC);
--		r |=  LOCOMO_DAC_SDAOEB;
--		locomo_writel(r, mapbase + LOCOMO_DAC);
--		udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	} else {
--		r = locomo_readl(mapbase + LOCOMO_DAC);
--		r &=  ~(LOCOMO_DAC_SDAOEB);
--		locomo_writel(r, mapbase + LOCOMO_DAC);
--		udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	}
--
--	udelay(DAC_DATA_SETUP_TIME);	/* 250 nsec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/*  4.0 usec */
--}
--
--void locomo_m62332_senddata(struct locomo_dev *ldev, unsigned int dac_data, int channel)
--{
--	struct locomo *lchip = locomo_chip_driver(ldev);
--	int i;
--	unsigned char data;
--	unsigned int r;
--	void *mapbase = lchip->base;
--	unsigned long flags;
--
--	spin_lock_irqsave(&lchip->lock, flags);
--
--	/* Start */
--	udelay(DAC_BUS_FREE_TIME);	/* 5.0 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB | LOCOMO_DAC_SDAOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4.0 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SDAOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_START_HOLD_TIME);	/* 5.0 usec */
--	udelay(DAC_DATA_HOLD_TIME);	/* 300 nsec */
--
--	/* Send slave address and W bit (LSB is W bit) */
--	data = (M62332_SLAVE_ADDR << 1) | M62332_W_BIT;
--	for (i = 1; i <= 8; i++) {
--		locomo_m62332_sendbit(mapbase, data >> (8 - i));
--	}
--
--	/* Check A bit */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SDAOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4.7 usec */
--	if (locomo_readl(mapbase + LOCOMO_DAC) & LOCOMO_DAC_SDAOEB) {	/* High is error */
--		printk(KERN_WARNING "locomo: m62332_senddata Error 1\n");
--		goto out;
--	}
--
--	/* Send Sub address (LSB is channel select) */
--	/*    channel = 0 : ch1 select              */
--	/*            = 1 : ch2 select              */
--	data = M62332_SUB_ADDR + channel;
--	for (i = 1; i <= 8; i++) {
--		locomo_m62332_sendbit(mapbase, data >> (8 - i));
--	}
--
--	/* Check A bit */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SDAOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4.7 usec */
--	if (locomo_readl(mapbase + LOCOMO_DAC) & LOCOMO_DAC_SDAOEB) {	/* High is error */
--		printk(KERN_WARNING "locomo: m62332_senddata Error 2\n");
--		goto out;
--	}
--
--	/* Send DAC data */
--	for (i = 1; i <= 8; i++) {
--		locomo_m62332_sendbit(mapbase, dac_data >> (8 - i));
--	}
--
--	/* Check A bit */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SDAOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4.7 usec */
--	if (locomo_readl(mapbase + LOCOMO_DAC) & LOCOMO_DAC_SDAOEB) {	/* High is error */
--		printk(KERN_WARNING "locomo: m62332_senddata Error 3\n");
--	}
--
--out:
--	/* stop */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r &=  ~(LOCOMO_DAC_SCLOEB);
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4 usec */
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SDAOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_HIGH_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_HIGH_HOLD_TIME);	/* 4 usec */
--
--	r = locomo_readl(mapbase + LOCOMO_DAC);
--	r |=  LOCOMO_DAC_SCLOEB | LOCOMO_DAC_SDAOEB;
--	locomo_writel(r, mapbase + LOCOMO_DAC);
--	udelay(DAC_LOW_SETUP_TIME);	/* 1000 nsec */
--	udelay(DAC_SCL_LOW_HOLD_TIME);	/* 4.7 usec */
--
--	spin_unlock_irqrestore(&lchip->lock, flags);
--}
--EXPORT_SYMBOL(locomo_m62332_senddata);
--
--/*
-- *	Frontlight control
-- */
--
--void locomo_frontlight_set(struct locomo_dev *dev, int duty, int vr, int bpwf)
--{
--	unsigned long flags;
--	struct locomo *lchip = locomo_chip_driver(dev);
--
--	if (vr)
--		locomo_gpio_write(dev->dev.parent, LOCOMO_GPIO_FL_VR, 1);
--	else
--		locomo_gpio_write(dev->dev.parent, LOCOMO_GPIO_FL_VR, 0);
--
--	spin_lock_irqsave(&lchip->lock, flags);
--	locomo_writel(bpwf, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALS);
--	udelay(100);
--	locomo_writel(duty, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALD);
--	locomo_writel(bpwf | LOCOMO_ALC_EN, lchip->base + LOCOMO_FRONTLIGHT + LOCOMO_ALS);
--	spin_unlock_irqrestore(&lchip->lock, flags);
--}
--EXPORT_SYMBOL(locomo_frontlight_set);
--
--/*
-- *	LoCoMo "Register Access Bus."
-- *
-- *	We model this as a regular bus type, and hang devices directly
-- *	off this.
-- */
--static int locomo_match(struct device *_dev, struct device_driver *_drv)
--{
--	struct locomo_dev *dev = LOCOMO_DEV(_dev);
--	struct locomo_driver *drv = LOCOMO_DRV(_drv);
--
--	return dev->devid == drv->devid;
--}
--
--static int locomo_bus_suspend(struct device *dev, pm_message_t state)
--{
--	struct locomo_dev *ldev = LOCOMO_DEV(dev);
--	struct locomo_driver *drv = LOCOMO_DRV(dev->driver);
--	int ret = 0;
--
--	if (drv && drv->suspend)
--		ret = drv->suspend(ldev, state);
--	return ret;
--}
--
--static int locomo_bus_resume(struct device *dev)
--{
--	struct locomo_dev *ldev = LOCOMO_DEV(dev);
--	struct locomo_driver *drv = LOCOMO_DRV(dev->driver);
--	int ret = 0;
--
--	if (drv && drv->resume)
--		ret = drv->resume(ldev);
--	return ret;
--}
--
--static int locomo_bus_probe(struct device *dev)
--{
--	struct locomo_dev *ldev = LOCOMO_DEV(dev);
--	struct locomo_driver *drv = LOCOMO_DRV(dev->driver);
--	int ret = -ENODEV;
--
--	if (drv->probe)
--		ret = drv->probe(ldev);
--	return ret;
--}
--
--static int locomo_bus_remove(struct device *dev)
--{
--	struct locomo_dev *ldev = LOCOMO_DEV(dev);
--	struct locomo_driver *drv = LOCOMO_DRV(dev->driver);
--	int ret = 0;
--
--	if (drv->remove)
--		ret = drv->remove(ldev);
--	return ret;
--}
--
--struct bus_type locomo_bus_type = {
--	.name		= "locomo-bus",
--	.match		= locomo_match,
--	.probe		= locomo_bus_probe,
--	.remove		= locomo_bus_remove,
--	.suspend	= locomo_bus_suspend,
--	.resume		= locomo_bus_resume,
--};
--
--int locomo_driver_register(struct locomo_driver *driver)
--{
--	driver->drv.bus = &locomo_bus_type;
--	return driver_register(&driver->drv);
--}
--EXPORT_SYMBOL(locomo_driver_register);
--
--void locomo_driver_unregister(struct locomo_driver *driver)
--{
--	driver_unregister(&driver->drv);
--}
--EXPORT_SYMBOL(locomo_driver_unregister);
--
--static int __init locomo_init(void)
--{
--	int ret = bus_register(&locomo_bus_type);
--	if (ret == 0)
--		platform_driver_register(&locomo_device_driver);
--	return ret;
--}
--
--static void __exit locomo_exit(void)
--{
--	platform_driver_unregister(&locomo_device_driver);
--	bus_unregister(&locomo_bus_type);
--}
--
--module_init(locomo_init);
--module_exit(locomo_exit);
--
--MODULE_DESCRIPTION("Sharp LoCoMo core driver");
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("John Lenz <lenz-hcNo3dDEHLuVc3sceRu5cw@public.gmane.org>");
-diff --git a/arch/arm/include/asm/hardware/locomo.h b/arch/arm/include/asm/hardware/locomo.h
-deleted file mode 100644
-index 74e51d6b..0000000
---- a/arch/arm/include/asm/hardware/locomo.h
-+++ /dev/null
-@@ -1,221 +0,0 @@
--/*
-- * arch/arm/include/asm/hardware/locomo.h
-- *
-- * This file contains the definitions for the LoCoMo G/A Chip
-- *
-- * (C) Copyright 2004 John Lenz
-- *
-- * May be copied or modified under the terms of the GNU General Public
-- * License.  See linux/COPYING for more information.
-- *
-- * Based on sa1111.h
-- */
--#ifndef _ASM_ARCH_LOCOMO
--#define _ASM_ARCH_LOCOMO
--
--#define locomo_writel(val,addr)	({ *(volatile u16 *)(addr) = (val); })
--#define locomo_readl(addr)	(*(volatile u16 *)(addr))
--
--/* LOCOMO version */
--#define LOCOMO_VER	0x00
--
--/* Pin status */
--#define LOCOMO_ST	0x04
--
--/* Pin status */
--#define LOCOMO_C32K	0x08
--
--/* Interrupt controller */
--#define LOCOMO_ICR	0x0C
--
--/* MCS decoder for boot selecting */
--#define LOCOMO_MCSX0	0x10
--#define LOCOMO_MCSX1	0x14
--#define LOCOMO_MCSX2	0x18
--#define LOCOMO_MCSX3	0x1c
--
--/* Touch panel controller */
--#define LOCOMO_ASD	0x20		/* AD start delay */
--#define LOCOMO_HSD	0x28		/* HSYS delay */
--#define LOCOMO_HSC	0x2c		/* HSYS period */
--#define LOCOMO_TADC	0x30		/* tablet ADC clock */
--
--
--/* Long time timer */
--#define LOCOMO_LTC	0xd8		/* LTC interrupt setting */
--#define LOCOMO_LTINT	0xdc		/* LTC interrupt */
--
--/* DAC control signal for LCD (COMADJ ) */
--#define LOCOMO_DAC		0xe0
--/* DAC control */
--#define	LOCOMO_DAC_SCLOEB	0x08	/* SCL pin output data       */
--#define	LOCOMO_DAC_TEST		0x04	/* Test bit                  */
--#define	LOCOMO_DAC_SDA		0x02	/* SDA pin level (read-only) */
--#define	LOCOMO_DAC_SDAOEB	0x01	/* SDA pin output data       */
--
--/* SPI interface */
--#define LOCOMO_SPI	0x60
--#define LOCOMO_SPIMD	0x00		/* SPI mode setting */
--#define LOCOMO_SPICT	0x04		/* SPI mode control */
--#define LOCOMO_SPIST	0x08		/* SPI status */
--#define	LOCOMO_SPI_TEND	(1 << 3)	/* Transfer end bit */
--#define	LOCOMO_SPI_REND	(1 << 2)	/* Receive end bit */
--#define	LOCOMO_SPI_RFW	(1 << 1)	/* write buffer bit */
--#define	LOCOMO_SPI_RFR	(1)		/* read buffer bit */
--
--#define LOCOMO_SPIIS	0x10		/* SPI interrupt status */
--#define LOCOMO_SPIWE	0x14		/* SPI interrupt status write enable */
--#define LOCOMO_SPIIE	0x18		/* SPI interrupt enable */
--#define LOCOMO_SPIIR	0x1c		/* SPI interrupt request */
--#define LOCOMO_SPITD	0x20		/* SPI transfer data write */
--#define LOCOMO_SPIRD	0x24		/* SPI receive data read */
--#define LOCOMO_SPITS	0x28		/* SPI transfer data shift */
--#define LOCOMO_SPIRS	0x2C		/* SPI receive data shift */
--
--/* GPIO */
--#define LOCOMO_GPD		0x90	/* GPIO direction */
--#define LOCOMO_GPE		0x94	/* GPIO input enable */
--#define LOCOMO_GPL		0x98	/* GPIO level */
--#define LOCOMO_GPO		0x9c	/* GPIO out data setting */
--#define LOCOMO_GRIE		0xa0	/* GPIO rise detection */
--#define LOCOMO_GFIE		0xa4	/* GPIO fall detection */
--#define LOCOMO_GIS		0xa8	/* GPIO edge detection status */
--#define LOCOMO_GWE		0xac	/* GPIO status write enable */
--#define LOCOMO_GIE		0xb0	/* GPIO interrupt enable */
--#define LOCOMO_GIR		0xb4	/* GPIO interrupt request */
--#define	LOCOMO_GPIO(Nb)		(0x01 << (Nb))
--#define LOCOMO_GPIO_RTS		LOCOMO_GPIO(0)
--#define LOCOMO_GPIO_CTS		LOCOMO_GPIO(1)
--#define LOCOMO_GPIO_DSR		LOCOMO_GPIO(2)
--#define LOCOMO_GPIO_DTR		LOCOMO_GPIO(3)
--#define LOCOMO_GPIO_LCD_VSHA_ON	LOCOMO_GPIO(4)
--#define LOCOMO_GPIO_LCD_VSHD_ON	LOCOMO_GPIO(5)
--#define LOCOMO_GPIO_LCD_VEE_ON	LOCOMO_GPIO(6)
--#define LOCOMO_GPIO_LCD_MOD	LOCOMO_GPIO(7)
--#define LOCOMO_GPIO_DAC_ON	LOCOMO_GPIO(8)
--#define LOCOMO_GPIO_FL_VR	LOCOMO_GPIO(9)
--#define LOCOMO_GPIO_DAC_SDATA	LOCOMO_GPIO(10)
--#define LOCOMO_GPIO_DAC_SCK	LOCOMO_GPIO(11)
--#define LOCOMO_GPIO_DAC_SLOAD	LOCOMO_GPIO(12)
--#define LOCOMO_GPIO_CARD_DETECT LOCOMO_GPIO(13)
--#define LOCOMO_GPIO_WRITE_PROT  LOCOMO_GPIO(14)
--#define LOCOMO_GPIO_CARD_POWER  LOCOMO_GPIO(15)
--
--/* Start the definitions of the devices.  Each device has an initial
-- * base address and a series of offsets from that base address. */
--
--/* Keyboard controller */
--#define LOCOMO_KEYBOARD		0x40
--#define LOCOMO_KIB		0x00	/* KIB level */
--#define LOCOMO_KSC		0x04	/* KSTRB control */
--#define LOCOMO_KCMD		0x08	/* KSTRB command */
--#define LOCOMO_KIC		0x0c	/* Key interrupt */
--
--/* Front light adjustment controller */
--#define LOCOMO_FRONTLIGHT	0xc8
--#define LOCOMO_ALS		0x00	/* Adjust light cycle */
--#define LOCOMO_ALD		0x04	/* Adjust light duty */
--
--#define LOCOMO_ALC_EN		0x8000
--
--/* Backlight controller: TFT signal */
--#define LOCOMO_BACKLIGHT	0x38
--#define LOCOMO_TC		0x00		/* TFT control signal */
--#define LOCOMO_CPSD		0x04		/* CPS delay */
--
--/* Audio controller */
--#define LOCOMO_AUDIO		0x54
--#define LOCOMO_ACC		0x00	/* Audio clock */
--#define LOCOMO_PAIF		0xD0	/* PCM audio interface */
--/* Audio clock */
--#define	LOCOMO_ACC_XON		0x80
--#define	LOCOMO_ACC_XEN		0x40
--#define	LOCOMO_ACC_XSEL0	0x00
--#define	LOCOMO_ACC_XSEL1	0x20
--#define	LOCOMO_ACC_MCLKEN	0x10
--#define	LOCOMO_ACC_64FSEN	0x08
--#define	LOCOMO_ACC_CLKSEL000	0x00	/* mclk  2 */
--#define	LOCOMO_ACC_CLKSEL001	0x01	/* mclk  3 */
--#define	LOCOMO_ACC_CLKSEL010	0x02	/* mclk  4 */
--#define	LOCOMO_ACC_CLKSEL011	0x03	/* mclk  6 */
--#define	LOCOMO_ACC_CLKSEL100	0x04	/* mclk  8 */
--#define	LOCOMO_ACC_CLKSEL101	0x05	/* mclk 12 */
--/* PCM audio interface */
--#define	LOCOMO_PAIF_SCINV	0x20
--#define	LOCOMO_PAIF_SCEN	0x10
--#define	LOCOMO_PAIF_LRCRST	0x08
--#define	LOCOMO_PAIF_LRCEVE	0x04
--#define	LOCOMO_PAIF_LRCINV	0x02
--#define	LOCOMO_PAIF_LRCEN	0x01
--
--/* LED controller */
--#define LOCOMO_LED		0xe8
--#define LOCOMO_LPT0		0x00
--#define LOCOMO_LPT1		0x04
--/* LED control */
--#define LOCOMO_LPT_TOFH		0x80
--#define LOCOMO_LPT_TOFL		0x08
--#define LOCOMO_LPT_TOH(TOH)	((TOH & 0x7) << 4)
--#define LOCOMO_LPT_TOL(TOL)	((TOL & 0x7))
--
--extern struct bus_type locomo_bus_type;
--
--#define LOCOMO_DEVID_KEYBOARD	0
--#define LOCOMO_DEVID_FRONTLIGHT	1
--#define LOCOMO_DEVID_BACKLIGHT	2
--#define LOCOMO_DEVID_AUDIO	3
--#define LOCOMO_DEVID_LED	4
--#define LOCOMO_DEVID_UART	5
--#define LOCOMO_DEVID_SPI	6
--
--struct locomo_dev {
--	struct device	dev;
--	unsigned int	devid;
--	unsigned int	irq[1];
--
--	void		*mapbase;
--	unsigned long	length;
--
--	u64		dma_mask;
--};
--
--#define LOCOMO_DEV(_d)	container_of((_d), struct locomo_dev, dev)
--
--#define locomo_get_drvdata(d)	dev_get_drvdata(&(d)->dev)
--#define locomo_set_drvdata(d,p)	dev_set_drvdata(&(d)->dev, p)
--
--struct locomo_driver {
--	struct device_driver	drv;
--	unsigned int		devid;
--	int (*probe)(struct locomo_dev *);
--	int (*remove)(struct locomo_dev *);
--	int (*suspend)(struct locomo_dev *, pm_message_t);
--	int (*resume)(struct locomo_dev *);
--};
--
--#define LOCOMO_DRV(_d)	container_of((_d), struct locomo_driver, drv)
--
--#define LOCOMO_DRIVER_NAME(_ldev) ((_ldev)->dev.driver->name)
--
--void locomo_lcd_power(struct locomo_dev *, int, unsigned int);
--
--int locomo_driver_register(struct locomo_driver *);
--void locomo_driver_unregister(struct locomo_driver *);
--
--/* GPIO control functions */
--void locomo_gpio_set_dir(struct device *dev, unsigned int bits, unsigned int dir);
--int locomo_gpio_read_level(struct device *dev, unsigned int bits);
--int locomo_gpio_read_output(struct device *dev, unsigned int bits);
--void locomo_gpio_write(struct device *dev, unsigned int bits, unsigned int set);
--
--/* M62332 control function */
--void locomo_m62332_senddata(struct locomo_dev *ldev, unsigned int dac_data, int channel);
--
--/* Frontlight control */
--void locomo_frontlight_set(struct locomo_dev *dev, int duty, int vr, int bpwf);
--
--struct locomo_platform_data {
--	int	irq_base;	/* IRQ base for cascaded on-chip IRQs */
--};
--
--#endif
+Text after '---' characters is not added to the commit message.
+Please use different characters for this and check how your patch
+looks in git log after applying it locally.
+
+> As I mentioned before even with hr timer it wouldn't be possible
+> to assure that 1ms is achievable due to locking and bus latency
+> reasons.
+> ---
+> So the limit of 10mS should be enforced for drivers that use
+> waiting operations, like transfers across slow bus.
+> This allows to stay on safe side when CONFIG_HZ is set to eg 1000.
+>
+> This patch differentiates the "slow" drivers by marking them with
+> the new LED_BRIGHTNESS_SLOW flag. Currently every driver that uses
+> a work-queue in .brightness_set op, is marked as such.
+> The extra bonus is the possibility of a further development
+> aiming for software PWM for "fast" drivers.
+>
+> CC: Bryan Wu <cooloney@gmail.com>
+> CC: Richard Purdie <rpurdie@rpsys.net>
+> CC: Michael Hennerich <michael.hennerich@analog.com>
+> CC: Jan-Simon Moeller <jansimon.moeller@gmx.de>
+> CC: Support Opensource <support.opensource@diasemi.com>
+> CC: Milo Kim <milo.kim@ti.com>
+> CC: Riku Voipio <riku.voipio@iki.fi>
+> CC: Jacek Anaszewski <j.anaszewski@samsung.com>
+> CC: Kyungmin Park <kyungmin.park@samsung.com>
+> CC: linux-leds@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: patches@opensource.wolfsonmicro.com
+>
+> Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
+> ---
+>   drivers/leds/led-core.c                | 30 +++++++++++++++++++-----------
+>   drivers/leds/led-triggers.c            |  8 +++++---
+>   drivers/leds/leds-88pm860x.c           |  1 +
+>   drivers/leds/leds-adp5520.c            |  1 +
+>   drivers/leds/leds-bd2802.c             |  2 +-
+>   drivers/leds/leds-blinkm.c             |  3 ++-
+>   drivers/leds/leds-da903x.c             |  1 +
+>   drivers/leds/leds-da9052.c             |  1 +
+>   drivers/leds/leds-dac124s085.c         |  1 +
+>   drivers/leds/leds-gpio.c               |  2 ++
+>   drivers/leds/leds-lm3533.c             |  1 +
+>   drivers/leds/leds-lm355x.c             |  1 +
+>   drivers/leds/leds-lm3642.c             |  1 +
+>   drivers/leds/leds-lp3944.c             |  3 ++-
+>   drivers/leds/leds-lp55xx-common.c      |  1 +
+>   drivers/leds/leds-lp8788.c             |  1 +
+>   drivers/leds/leds-lp8860.c             |  1 +
+>   drivers/leds/leds-lt3593.c             |  1 +
+>   drivers/leds/leds-mc13783.c            |  3 ++-
+>   drivers/leds/leds-pca9532.c            |  1 +
+>   drivers/leds/leds-pca955x.c            |  1 +
+>   drivers/leds/leds-pca963x.c            |  1 +
+>   drivers/leds/leds-pwm.c                |  4 +++-
+>   drivers/leds/leds-regulator.c          |  2 +-
+>   drivers/leds/leds-tca6507.c            |  1 +
+>   drivers/leds/leds-wm831x-status.c      |  1 +
+>   drivers/leds/leds-wm8350.c             |  2 +-
+>   drivers/leds/trigger/ledtrig-oneshot.c |  5 ++++-
+>   drivers/leds/trigger/ledtrig-timer.c   | 18 +++++++++++++-----
+>   include/linux/leds.h                   |  8 ++++++--
+>   30 files changed, 78 insertions(+), 29 deletions(-)
+
+Please create a separate patch for each driver you modify and
+add "Cc:" entries in the commit message for the authors.
+
+LED flash class drivers also need the flag. Please rebase your
+work on top of linux-next/master.
+
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 9886dac..2653755 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -25,12 +25,19 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+>   LIST_HEAD(leds_list);
+>   EXPORT_SYMBOL_GPL(leds_list);
+>
+> -static void led_set_software_blink(struct led_classdev *led_cdev,
+> +static int led_set_software_blink(struct led_classdev *led_cdev,
+>   				   unsigned long delay_on,
+>   				   unsigned long delay_off)
+>   {
+>   	int current_brightness;
+>
+> +	if (led_cdev->flags & LED_BRIGHTNESS_SLOW) {
+> +		if (delay_on < LED_SLOW_MIN_PERIOD)
+> +			return -EINVAL;
+> +		if (delay_off < LED_SLOW_MIN_PERIOD)
+> +			return -EINVAL;
+> +	}
+> +
+
+How about "return -ERANGE" in both cases?
+
+>   	current_brightness = led_get_brightness(led_cdev);
+>   	if (current_brightness)
+>   		led_cdev->blink_brightness = current_brightness;
+> @@ -43,36 +50,37 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>   	/* never on - just set to off */
+>   	if (!delay_on) {
+>   		led_set_brightness_async(led_cdev, LED_OFF);
+> -		return;
+> +		return 0;
+>   	}
+>
+>   	/* never off - just set to brightness */
+>   	if (!delay_off) {
+>   		led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
+> -		return;
+> +		return 0;
+>   	}
+>
+>   	mod_timer(&led_cdev->blink_timer, jiffies + 1);
+> +	return 0;
+>   }
+>
+>
+> -static void led_blink_setup(struct led_classdev *led_cdev,
+> +static int led_blink_setup(struct led_classdev *led_cdev,
+>   		     unsigned long *delay_on,
+>   		     unsigned long *delay_off)
+>   {
+>   	if (!(led_cdev->flags & LED_BLINK_ONESHOT) &&
+>   	    led_cdev->blink_set &&
+>   	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+> -		return;
+> +		return 0;
+>
+>   	/* blink with 1 Hz as default if nothing specified */
+>   	if (!*delay_on && !*delay_off)
+>   		*delay_on = *delay_off = 500;
+>
+> -	led_set_software_blink(led_cdev, *delay_on, *delay_off);
+> +	return led_set_software_blink(led_cdev, *delay_on, *delay_off);
+>   }
+>
+> -void led_blink_set(struct led_classdev *led_cdev,
+> +int led_blink_set(struct led_classdev *led_cdev,
+>   		   unsigned long *delay_on,
+>   		   unsigned long *delay_off)
+>   {
+> @@ -81,18 +89,18 @@ void led_blink_set(struct led_classdev *led_cdev,
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT;
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+>
+> -	led_blink_setup(led_cdev, delay_on, delay_off);
+> +	return led_blink_setup(led_cdev, delay_on, delay_off);
+>   }
+>   EXPORT_SYMBOL(led_blink_set);
+>
+> -void led_blink_set_oneshot(struct led_classdev *led_cdev,
+> +int led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   			   unsigned long *delay_on,
+>   			   unsigned long *delay_off,
+>   			   int invert)
+>   {
+>   	if ((led_cdev->flags & LED_BLINK_ONESHOT) &&
+>   	     timer_pending(&led_cdev->blink_timer))
+> -		return;
+> +		return -EBUSY;
+>
+>   	led_cdev->flags |= LED_BLINK_ONESHOT;
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+> @@ -102,7 +110,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   	else
+>   		led_cdev->flags &= ~LED_BLINK_INVERT;
+>
+> -	led_blink_setup(led_cdev, delay_on, delay_off);
+> +	return led_blink_setup(led_cdev, delay_on, delay_off);
+>   }
+>   EXPORT_SYMBOL(led_blink_set_oneshot);
+>
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index e8b1120..012b94c 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -272,6 +272,7 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+>   			     int oneshot,
+>   			     int invert)
+>   {
+> +	int rc = 0;
+
+Names of variables conveying error codes are already inconsistent in
+led-triggers.c (there are 'ret' and 'err'), but let's not make things
+even worse. I'd opt for 'ret' here.
+
+>   	struct led_classdev *led_cdev;
+>
+>   	if (!trig)
+> @@ -280,12 +281,13 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+>   	read_lock(&trig->leddev_list_lock);
+>   	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
+>   		if (oneshot)
+> -			led_blink_set_oneshot(led_cdev, delay_on, delay_off,
+> -					      invert);
+> +			rc = led_blink_set_oneshot(led_cdev, delay_on,
+> +						   delay_off, invert);
+>   		else
+> -			led_blink_set(led_cdev, delay_on, delay_off);
+> +			rc = led_blink_set(led_cdev, delay_on, delay_off);
+>   	}
+>   	read_unlock(&trig->leddev_list_lock);
+> +	WARN_ON(rc);
+>   }
+>
+>   void led_trigger_blink(struct led_trigger *trig,
+> diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+> index 1497a09..b21e6ac 100644
+> --- a/drivers/leds/leds-88pm860x.c
+> +++ b/drivers/leds/leds-88pm860x.c
+> @@ -213,6 +213,7 @@ static int pm860x_led_probe(struct platform_device *pdev)
+>   	data->current_brightness = 0;
+>   	data->cdev.name = data->name;
+>   	data->cdev.brightness_set = pm860x_led_set;
+> +	data->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>   	mutex_init(&data->lock);
+>   	INIT_WORK(&data->work, pm860x_led_work);
+>
+> diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
+> index 07e66ca..f3540c2 100644
+> --- a/drivers/leds/leds-adp5520.c
+> +++ b/drivers/leds/leds-adp5520.c
+> @@ -137,6 +137,7 @@ static int adp5520_led_probe(struct platform_device *pdev)
+>   		led_dat->cdev.default_trigger = cur_led->default_trigger;
+>   		led_dat->cdev.brightness_set = adp5520_led_set;
+>   		led_dat->cdev.brightness = LED_OFF;
+> +		led_dat->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   		if (cur_led->flags & ADP5520_FLAG_LED_MASK)
+>   			led_dat->flags = cur_led->flags;
+> diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
+> index 6078c15..3aba6af 100644
+> --- a/drivers/leds/leds-bd2802.c
+> +++ b/drivers/leds/leds-bd2802.c
+> @@ -633,7 +633,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+>   	led->cdev_led2b.brightness = LED_OFF;
+>   	led->cdev_led2b.brightness_set = bd2802_set_led2b_brightness;
+>   	led->cdev_led2b.blink_set = bd2802_set_led2b_blink;
+> -	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME;
+> +	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_SLOW;
+>
+>   	ret = led_classdev_register(&led->client->dev, &led->cdev_led2b);
+>   	if (ret < 0) {
+> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+> index d0452b0..e5cc289 100644
+> --- a/drivers/leds/leds-blinkm.c
+> +++ b/drivers/leds/leds-blinkm.c
+> @@ -668,7 +668,8 @@ static int blinkm_probe(struct i2c_client *client,
+>   		led[i]->i2c_client = client;
+>   		led[i]->id = i;
+>   		led[i]->led_cdev.max_brightness = 255;
+> -		led[i]->led_cdev.flags = LED_CORE_SUSPENDRESUME;
+> +		led[i]->led_cdev.flags = LED_CORE_SUSPENDRESUME |
+> +				LED_BRIGHTNESS_SLOW;
+>   		atomic_set(&led[i]->active, 0);
+>   		switch (i) {
+>   		case RED:
+> diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
+> index 952ba96e..af6318f 100644
+> --- a/drivers/leds/leds-da903x.c
+> +++ b/drivers/leds/leds-da903x.c
+> @@ -115,6 +115,7 @@ static int da903x_led_probe(struct platform_device *pdev)
+>   	led->cdev.default_trigger = pdata->default_trigger;
+>   	led->cdev.brightness_set = da903x_led_set;
+>   	led->cdev.brightness = LED_OFF;
+> +	led->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   	led->id = id;
+>   	led->flags = pdata->flags;
+> diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
+> index 28291b6..0c12b46 100644
+> --- a/drivers/leds/leds-da9052.c
+> +++ b/drivers/leds/leds-da9052.c
+> @@ -137,6 +137,7 @@ static int da9052_led_probe(struct platform_device *pdev)
+>   		led[i].cdev.brightness = LED_OFF;
+>   		led[i].cdev.max_brightness = DA9052_MAX_BRIGHTNESS;
+>   		led[i].brightness = LED_OFF;
+> +		led[i].flags |= LED_BRIGHTNESS_SLOW;
+>   		led[i].led_index = pled->leds[i].flags;
+>   		led[i].da9052 = dev_get_drvdata(pdev->dev.parent);
+>   		INIT_WORK(&led[i].work, da9052_led_work);
+> diff --git a/drivers/leds/leds-dac124s085.c b/drivers/leds/leds-dac124s085.c
+> index db3ba8b..64b3ed7 100644
+> --- a/drivers/leds/leds-dac124s085.c
+> +++ b/drivers/leds/leds-dac124s085.c
+> @@ -88,6 +88,7 @@ static int dac124s085_probe(struct spi_device *spi)
+>   		led->ldev.brightness = LED_OFF;
+>   		led->ldev.max_brightness = 0xfff;
+>   		led->ldev.brightness_set = dac124s085_set_brightness;
+> +		led->ldev.flags |= LED_BRIGHTNESS_SLOW;
+>   		ret = led_classdev_register(&spi->dev, &led->ldev);
+>   		if (ret < 0)
+>   			goto eledcr;
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 15eb3f8..45c0bb1 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -137,6 +137,8 @@ static int create_gpio_led(const struct gpio_led *template,
+>   	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
+>   	if (!template->retain_state_suspended)
+>   		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+> +	if (led_dat->can_sleep)
+> +		led_dat->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   	ret = gpiod_direction_output(led_dat->gpiod, state);
+>   	if (ret < 0)
+> diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+> index 6e2e020..f70cd0e 100644
+> --- a/drivers/leds/leds-lm3533.c
+> +++ b/drivers/leds/leds-lm3533.c
+> @@ -697,6 +697,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
+>   	led->cdev.brightness_get = lm3533_led_get;
+>   	led->cdev.blink_set = lm3533_led_blink_set;
+>   	led->cdev.brightness = LED_OFF;
+> +	led->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>   	led->cdev.groups = lm3533_led_attribute_groups,
+>   	led->id = pdev->id;
+>
+> diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
+> index f5112cb..4a9948b 100644
+> --- a/drivers/leds/leds-lm355x.c
+> +++ b/drivers/leds/leds-lm355x.c
+> @@ -483,6 +483,7 @@ static int lm355x_probe(struct i2c_client *client,
+>   	chip->cdev_flash.name = "flash";
+>   	chip->cdev_flash.max_brightness = 16;
+>   	chip->cdev_flash.brightness_set = lm355x_strobe_brightness_set;
+> +	chip->cdev_flash.flags |= LED_BRIGHTNESS_SLOW;
+>   	chip->cdev_flash.default_trigger = "flash";
+>   	err = led_classdev_register((struct device *)
+>   				    &client->dev, &chip->cdev_flash);
+> diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
+> index d3dec01..84bb319 100644
+> --- a/drivers/leds/leds-lm3642.c
+> +++ b/drivers/leds/leds-lm3642.c
+> @@ -375,6 +375,7 @@ static int lm3642_probe(struct i2c_client *client,
+>   	chip->cdev_flash.name = "flash";
+>   	chip->cdev_flash.max_brightness = 16;
+>   	chip->cdev_flash.brightness_set = lm3642_strobe_brightness_set;
+> +	chip->cdev_flash.flags |= LED_BRIGHTNESS_SLOW;
+>   	chip->cdev_flash.default_trigger = "flash";
+>   	chip->cdev_flash.groups = lm3642_flash_groups,
+>   	err = led_classdev_register((struct device *)
+> diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
+> index 53144fb..70b15b3 100644
+> --- a/drivers/leds/leds-lp3944.c
+> +++ b/drivers/leds/leds-lp3944.c
+> @@ -323,7 +323,8 @@ static int lp3944_configure(struct i2c_client *client,
+>   			led->ldev.max_brightness = 1;
+>   			led->ldev.brightness_set = lp3944_led_set_brightness;
+>   			led->ldev.blink_set = lp3944_led_set_blink;
+> -			led->ldev.flags = LED_CORE_SUSPENDRESUME;
+> +			led->ldev.flags = LED_CORE_SUSPENDRESUME |
+> +					LED_BRIGHTNESS_SLOW;
+>
+>   			INIT_WORK(&led->work, lp3944_led_work);
+>   			err = led_classdev_register(&client->dev, &led->ldev);
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 77c26bc..02bc090 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -173,6 +173,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+>   	}
+>
+>   	led->cdev.brightness_set = lp55xx_set_brightness;
+> +	led->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>   	led->cdev.groups = lp55xx_led_groups;
+>
+>   	if (pdata->led_config[chan].name) {
+> diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
+> index 3409f03..3fe2983 100644
+> --- a/drivers/leds/leds-lp8788.c
+> +++ b/drivers/leds/leds-lp8788.c
+> @@ -140,6 +140,7 @@ static int lp8788_led_probe(struct platform_device *pdev)
+>   	led->lp = lp;
+>   	led->led_dev.max_brightness = MAX_BRIGHTNESS;
+>   	led->led_dev.brightness_set = lp8788_brightness_set;
+> +	led->led_dev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   	led_pdata = lp->pdata ? lp->pdata->led_pdata : NULL;
+>
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 8c2b7fb..9270410 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -407,6 +407,7 @@ static int lp8860_probe(struct i2c_client *client,
+>   	led->led_dev.name = led->label;
+>   	led->led_dev.max_brightness = LED_FULL;
+>   	led->led_dev.brightness_set = lp8860_brightness_set;
+> +	led->led_dev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   	mutex_init(&led->lock);
+>   	INIT_WORK(&led->work, lp8860_led_brightness_work);
+> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+> index 9f41124..cedc31c 100644
+> --- a/drivers/leds/leds-lt3593.c
+> +++ b/drivers/leds/leds-lt3593.c
+> @@ -104,6 +104,7 @@ static int create_lt3593_led(const struct gpio_led *template,
+>
+>   	if (!template->retain_state_suspended)
+>   		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+> +	led_dat->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   	ret = devm_gpio_request_one(parent, template->gpio, state ?
+>   				    GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
+> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+> index e2b847f..706a94f 100644
+> --- a/drivers/leds/leds-mc13783.c
+> +++ b/drivers/leds/leds-mc13783.c
+> @@ -256,7 +256,8 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+>   		leds->led[i].leds = leds;
+>   		leds->led[i].cdev.name = name;
+>   		leds->led[i].cdev.default_trigger = trig;
+> -		leds->led[i].cdev.flags = LED_CORE_SUSPENDRESUME;
+> +		leds->led[i].cdev.flags = LED_CORE_SUSPENDRESUME |
+> +				LED_BRIGHTNESS_SLOW;
+>   		leds->led[i].cdev.brightness_set = mc13xxx_led_set;
+>   		leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
+>
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index 5a6363d..e9bcd0e 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+> @@ -361,6 +361,7 @@ static int pca9532_configure(struct i2c_client *client,
+>   			led->ldev.brightness = LED_OFF;
+>   			led->ldev.brightness_set = pca9532_set_brightness;
+>   			led->ldev.blink_set = pca9532_set_blink;
+> +			led->ldev.flags |= LED_BRIGHTNESS_SLOW;
+>   			INIT_WORK(&led->work, pca9532_led_work);
+>   			err = led_classdev_register(&client->dev, &led->ldev);
+>   			if (err < 0) {
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index c3a08b6..2a6f1e5 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -329,6 +329,7 @@ static int pca955x_probe(struct i2c_client *client,
+>
+>   		pca955x_led->led_cdev.name = pca955x_led->name;
+>   		pca955x_led->led_cdev.brightness_set = pca955x_led_set;
+> +		pca955x_led->led_cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   		INIT_WORK(&pca955x_led->work, pca955x_led_work);
+>
+> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+> index bee3e1a..0b2ff27 100644
+> --- a/drivers/leds/leds-pca963x.c
+> +++ b/drivers/leds/leds-pca963x.c
+> @@ -409,6 +409,7 @@ static int pca963x_probe(struct i2c_client *client,
+>
+>   		pca963x[i].led_cdev.name = pca963x[i].name;
+>   		pca963x[i].led_cdev.brightness_set = pca963x_led_set;
+> +		pca963x[i].led_cdev.flags |= LED_BRIGHTNESS_SLOW;
+>
+>   		if (pdata && pdata->blink_type == PCA963X_HW_BLINK)
+>   			pca963x[i].led_cdev.blink_set = pca963x_blink_set;
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 1d07e3e..daff48d 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -122,8 +122,10 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>   	}
+>
+>   	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+> -	if (led_data->can_sleep)
+> +	if (led_data->can_sleep) {
+>   		INIT_WORK(&led_data->work, led_pwm_work);
+> +		led_data->cdev.flags |= LED_BRIGHTNESS_SLOW;
+> +	}
+>
+>   	led_data->period = pwm_get_period(led_data->pwm);
+>   	if (!led_data->period && (led->pwm_period_ns > 0))
+> diff --git a/drivers/leds/leds-regulator.c b/drivers/leds/leds-regulator.c
+> index ffc2139..3b898fb 100644
+> --- a/drivers/leds/leds-regulator.c
+> +++ b/drivers/leds/leds-regulator.c
+> @@ -173,7 +173,7 @@ static int regulator_led_probe(struct platform_device *pdev)
+>
+>   	led->cdev.brightness_set = regulator_led_brightness_set;
+>   	led->cdev.name = pdata->name;
+> -	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
+> +	led->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_SLOW;
+>   	led->vcc = vcc;
+>
+>   	/* to handle correctly an already enabled regulator */
+> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+> index 20fa8e7..8209b0d 100644
+> --- a/drivers/leds/leds-tca6507.c
+> +++ b/drivers/leds/leds-tca6507.c
+> @@ -788,6 +788,7 @@ static int tca6507_probe(struct i2c_client *client,
+>   				= pdata->leds.leds[i].default_trigger;
+>   			l->led_cdev.brightness_set = tca6507_brightness_set;
+>   			l->led_cdev.blink_set = tca6507_blink_set;
+> +			l->led_cdev.flags |= LED_BRIGHTNESS_SLOW;
+>   			l->bank = -1;
+>   			err = led_classdev_register(&client->dev,
+>   						    &l->led_cdev);
+> diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
+> index 56027ef..7718dcd 100644
+> --- a/drivers/leds/leds-wm831x-status.c
+> +++ b/drivers/leds/leds-wm831x-status.c
+> @@ -288,6 +288,7 @@ static int wm831x_status_probe(struct platform_device *pdev)
+>   	drvdata->cdev.name = pdata.name;
+>   	drvdata->cdev.default_trigger = pdata.default_trigger;
+>   	drvdata->cdev.brightness_set = wm831x_status_set;
+> +	drvdata->cdev.flags |= LED_BRIGHTNESS_SLOW;
+>   	drvdata->cdev.blink_set = wm831x_status_blink_set;
+>   	drvdata->cdev.groups = wm831x_status_groups;
+>
+> diff --git a/drivers/leds/leds-wm8350.c b/drivers/leds/leds-wm8350.c
+> index 0d12183..ad1ada3 100644
+> --- a/drivers/leds/leds-wm8350.c
+> +++ b/drivers/leds/leds-wm8350.c
+> @@ -235,7 +235,7 @@ static int wm8350_led_probe(struct platform_device *pdev)
+>   	led->cdev.brightness_set = wm8350_led_set;
+>   	led->cdev.default_trigger = pdata->default_trigger;
+>   	led->cdev.name = pdata->name;
+> -	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
+> +	led->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_SLOW;
+>   	led->enabled = regulator_is_enabled(isink);
+>   	led->isink = isink;
+>   	led->dcdc = dcdc;
+> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+> index fbd02cd..ba91838 100644
+> --- a/drivers/leds/trigger/ledtrig-oneshot.c
+> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+> @@ -29,12 +29,15 @@ struct oneshot_trig_data {
+>   static ssize_t led_shot(struct device *dev,
+>   		struct device_attribute *attr, const char *buf, size_t size)
+>   {
+> +	ssize_t ret;
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	struct oneshot_trig_data *oneshot_data = led_cdev->trigger_data;
+>
+> -	led_blink_set_oneshot(led_cdev,
+> +	ret = led_blink_set_oneshot(led_cdev,
+>   			&led_cdev->blink_delay_on, &led_cdev->blink_delay_off,
+>   			oneshot_data->invert);
+> +	if (ret)
+> +		return ret;
+>
+>   	/* content is ignored */
+>   	return size;
+> diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+> index 8d09327..edc0c7f 100644
+> --- a/drivers/leds/trigger/ledtrig-timer.c
+> +++ b/drivers/leds/trigger/ledtrig-timer.c
+> @@ -31,13 +31,15 @@ static ssize_t led_delay_on_store(struct device *dev,
+>   {
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret;
+>
+>   	ret = kstrtoul(buf, 10, &state);
+>   	if (ret)
+>   		return ret;
+>
+> -	led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
+> +	ret = led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
+> +	if (ret)
+> +		return ret;
+>   	led_cdev->blink_delay_on = state;
+>
+>   	return size;
+> @@ -56,13 +58,15 @@ static ssize_t led_delay_off_store(struct device *dev,
+>   {
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret;
+>
+>   	ret = kstrtoul(buf, 10, &state);
+>   	if (ret)
+>   		return ret;
+>
+> -	led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
+> +	ret = led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
+> +	if (ret)
+> +		return ret;
+>   	led_cdev->blink_delay_off = state;
+>
+>   	return size;
+> @@ -84,12 +88,16 @@ static void timer_trig_activate(struct led_classdev *led_cdev)
+>   	if (rc)
+>   		goto err_out_delayon;
+>
+> -	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+> +	rc = led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+>   		      &led_cdev->blink_delay_off);
+> +	if (rc)
+> +		goto err_out_delayoff;
+>   	led_cdev->activated = true;
+>
+>   	return;
+>
+> +err_out_delayoff:
+> +	device_remove_file(led_cdev->dev, &dev_attr_delay_off);
+>   err_out_delayon:
+>   	device_remove_file(led_cdev->dev, &dev_attr_delay_on);
+>   }
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 9a2b000..356b8d1 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -47,6 +47,10 @@ struct led_classdev {
+>   #define SET_BRIGHTNESS_ASYNC	(1 << 21)
+>   #define SET_BRIGHTNESS_SYNC	(1 << 22)
+>   #define LED_DEV_CAP_FLASH	(1 << 23)
+> +#define LED_BRIGHTNESS_SLOW	(1 << 24)
+> +
+> +/* safe period value for slow leds is 10mS */
+> +#define LED_SLOW_MIN_PERIOD 10
+>
+>   	/* Set LED brightness level */
+>   	/* Must not sleep, use a workqueue if needed */
+> @@ -127,7 +131,7 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
+>    * led_cdev->brightness_set() will not stop the blinking,
+>    * use led_classdev_brightness_set() instead.
+>    */
+> -extern void led_blink_set(struct led_classdev *led_cdev,
+> +extern int led_blink_set(struct led_classdev *led_cdev,
+>   			  unsigned long *delay_on,
+>   			  unsigned long *delay_off);
+>   /**
+> @@ -144,7 +148,7 @@ extern void led_blink_set(struct led_classdev *led_cdev,
+>    * If invert is set, led blinks for delay_off first, then for
+>    * delay_on and leave the led on after the on-off cycle.
+>    */
+> -extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+> +extern int led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   				  unsigned long *delay_on,
+>   				  unsigned long *delay_off,
+>   				  int invert);
+>
+
+"Returns:" entry is now missing in the documentation of both functions.
+
 -- 
-2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+Jacek Anaszewski
