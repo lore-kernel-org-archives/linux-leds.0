@@ -1,316 +1,92 @@
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
-	<noltari@gmail.com>
-Subject: [PATCH 2/2] leds: add BCM6358 LED driver
-Date: Tue, 19 May 2015 19:12:58 +0200
-Message-ID: <1432055578-14089-3-git-send-email-noltari@gmail.com>
-References: <1432055578-14089-1-git-send-email-noltari@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: [PATCH 3/5] v4l: flash: Pass struct device and device_node to v4l2_flash_init()
+Date: Wed, 20 May 2015 02:04:03 +0300
+Message-ID: <1432076645-4799-4-git-send-email-sakari.ailus@iki.fi>
+References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:37870 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752365AbbESRMz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 May 2015 13:12:55 -0400
-In-Reply-To: <1432055578-14089-1-git-send-email-noltari@gmail.com>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:56193 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751967AbbESXFb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Tue, 19 May 2015 19:05:31 -0400
+In-Reply-To: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: linux-media@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, j.anaszewski@samsung.com, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
 
-This adds support for the LED controller on Broadcom's BCM6358.
+The V4L2 sub-device node's dev will thus refer to the physical device, not
+the LED flash device node. Also matching against device_node is possible in
+cases where the LED flash controller drives multiple LEDs.
 
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
 ---
- drivers/leds/Kconfig        |   8 ++
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-bcm6358.c | 241 ++++++++++++++++++++++++++++++++++++=
-++++++++
- 3 files changed, 250 insertions(+)
- create mode 100644 drivers/leds/leds-bcm6358.c
+ drivers/media/v4l2-core/v4l2-flash.c |   10 ++++++----
+ include/media/v4l2-flash.h           |   10 +++++++---
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index ec26dd1..86de046 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -58,6 +58,14 @@ config LEDS_BCM6328
- 	  This option enables support for LEDs connected to the BCM6328
- 	  LED HW controller accessed via MMIO registers.
-=20
-+config LEDS_BCM6358
-+	tristate "LED Support for Broadcom BCM6358"
-+	depends on LEDS_CLASS
-+	depends on OF
-+	help
-+	  This option enables support for LEDs connected to the BCM6358
-+	  LED HW controller accessed via MMIO registers.
-+
- config LEDS_LM3530
- 	tristate "LCD Backlight driver for LM3530"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index edb3abf..8d6a24a 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
- obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
- obj-$(CONFIG_LEDS_AAT1290)		+=3D leds-aat1290.o
- obj-$(CONFIG_LEDS_BCM6328)		+=3D leds-bcm6328.o
-+obj-$(CONFIG_LEDS_BCM6358)		+=3D leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+=3D leds-bd2802.o
- obj-$(CONFIG_LEDS_LOCOMO)		+=3D leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+=3D leds-lm3530.o
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-new file mode 100644
-index 0000000..4a3a6c3
---- /dev/null
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -0,0 +1,241 @@
-+/*
-+ * Driver for BCM6358 memory-mapped LEDs, based on leds-syscon.c
-+ *
-+ * Copyright 2015 =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modi=
-fy it
-+ * under  the terms of  the GNU General  Public License as published b=
-y the
-+ * Free Software Foundation;  either version 2 of the  License, or (at=
- your
-+ * option) any later version.
-+ */
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+
-+#define BCM6358_REG_MODE		0x0
-+#define BCM6358_REG_CTRL		0x4
-+
-+#define BCM6358_SLED_CLKDIV_MASK	3
-+#define BCM6358_SLED_CLKDIV_1		0
-+#define BCM6358_SLED_CLKDIV_2		1
-+#define BCM6358_SLED_CLKDIV_4		2
-+#define BCM6358_SLED_CLKDIV_8		3
-+
-+#define BCM6358_SLED_POLARITY		BIT(2)
-+#define BCM6358_SLED_BUSY		BIT(3)
-+
-+#define BCM6358_SLED_MAX_COUNT		32
-+#define BCM6358_SLED_WAIT		100
-+
-+/**
-+ * struct bcm6358_led - state container for bcm6358 based LEDs
-+ * @cdev: LED class device for this LED
-+ * @mem: memory resource
-+ * @lock: memory lock
-+ * @pin: LED pin number
-+ * @active_low: LED is active low
-+ */
-+struct bcm6358_led {
-+	struct led_classdev cdev;
-+	void __iomem *mem;
-+	spinlock_t *lock;
-+	unsigned long pin;
-+	bool active_low;
-+};
-+
-+static void bcm6358_led_write(void __iomem *reg, unsigned long data)
-+{
-+	iowrite32be(data, reg);
-+}
-+
-+static unsigned long bcm6358_led_read(void __iomem *reg)
-+{
-+	return ioread32be(reg);
-+}
-+
-+static unsigned long bcm6358_led_busy(void __iomem *mem)
-+{
-+	unsigned long val;
-+
-+	while ((val =3D bcm6358_led_read(mem + BCM6358_REG_CTRL)) &
-+		BCM6358_SLED_BUSY)
-+		udelay(BCM6358_SLED_WAIT);
-+
-+	return val;
-+}
-+
-+static void bcm6358_led_mode(struct bcm6358_led *led, unsigned long va=
-lue)
-+{
-+	unsigned long val;
-+
-+	bcm6358_led_busy(led->mem);
-+
-+	val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-+	if ((led->active_low && value =3D=3D LED_OFF) ||
-+	    (!led->active_low && value !=3D LED_OFF))
-+		val |=3D BIT(led->pin);
-+	else
-+		val &=3D ~(BIT(led->pin));
-+	bcm6358_led_write(led->mem + BCM6358_REG_MODE, val);
-+}
-+
-+static void bcm6358_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
-+{
-+	struct bcm6358_led *led =3D
-+		container_of(led_cdev, struct bcm6358_led, cdev);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(led->lock, flags);
-+	bcm6358_led_mode(led, value);
-+	spin_unlock_irqrestore(led->lock, flags);
-+}
-+
-+static int bcm6358_led(struct device *dev, struct device_node *nc, u32=
- reg,
-+		       void __iomem *mem, spinlock_t *lock)
-+{
-+	struct bcm6358_led *led;
-+	unsigned long flags;
-+	const char *state;
-+	int rc;
-+
-+	led =3D devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	led->pin =3D reg;
-+	led->mem =3D mem;
-+	led->lock =3D lock;
-+
-+	if (of_property_read_bool(nc, "active-low"))
-+		led->active_low =3D true;
-+
-+	led->cdev.name =3D of_get_property(nc, "label", NULL) ? : nc->name;
-+	led->cdev.default_trigger =3D of_get_property(nc,
-+						    "linux,default-trigger",
-+						    NULL);
-+
-+	spin_lock_irqsave(lock, flags);
-+	if (!of_property_read_string(nc, "default-state", &state))
-+		if (!strcmp(state, "on"))
-+			led->cdev.brightness =3D LED_FULL;
-+		else if (!strcmp(state, "keep")) {
-+			unsigned long val;
-+
-+			bcm6358_led_busy(led->mem);
-+
-+			val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-+			val &=3D BIT(led->pin);
-+			if ((led->active_low && !val) ||
-+				(!led->active_low && val))
-+				led->cdev.brightness =3D LED_FULL;
-+			else
-+				led->cdev.brightness =3D LED_OFF;
-+		} else
-+			led->cdev.brightness =3D LED_OFF;
-+	else
-+		led->cdev.brightness =3D LED_OFF;
-+	bcm6358_led_mode(led, led->cdev.brightness);
-+	spin_unlock_irqrestore(lock, flags);
-+
-+	led->cdev.brightness_set =3D bcm6358_led_set;
-+
-+	rc =3D led_classdev_register(dev, &led->cdev);
-+	if (rc < 0)
-+		return rc;
-+
-+	dev_dbg(dev, "registered LED %s\n", led->cdev.name);
-+
-+	return 0;
-+}
-+
-+static int bcm6358_leds_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct device_node *np =3D pdev->dev.of_node;
-+	struct device_node *child;
-+	struct resource *mem_r;
-+	void __iomem *mem;
-+	spinlock_t *lock;
-+	unsigned long val;
-+	u32 clk_div;
-+
-+	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!mem_r)
-+		return -EINVAL;
-+
-+	mem =3D devm_ioremap_resource(dev, mem_r);
-+	if (IS_ERR(mem))
-+		return PTR_ERR(mem);
-+
-+	lock =3D devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
-+	if (!lock)
-+		return -ENOMEM;
-+
-+	spin_lock_init(lock);
-+
-+	val =3D bcm6358_led_busy(mem);
-+	val &=3D ~(BCM6358_SLED_POLARITY | BCM6358_SLED_CLKDIV_MASK);
-+	if (of_property_read_bool(np, "brcm,clk-dat-low"))
-+		val |=3D BCM6358_SLED_POLARITY;
-+	of_property_read_u32(child, "brcm,clk-div", &clk_div);
-+	switch (clk_div) {
-+	case 8:
-+		val |=3D BCM6358_SLED_CLKDIV_8;
-+		break;
-+	case 4:
-+		val |=3D BCM6358_SLED_CLKDIV_4;
-+		break;
-+	case 2:
-+		val |=3D BCM6358_SLED_CLKDIV_2;
-+		break;
-+	default:
-+		val |=3D BCM6358_SLED_CLKDIV_1;
-+		break;
-+	}
-+	bcm6358_led_write(mem + BCM6358_REG_CTRL, val);
-+
-+	for_each_available_child_of_node(np, child) {
-+		int rc;
-+		u32 reg;
-+
-+		if (of_property_read_u32(child, "reg", &reg))
-+			continue;
-+
-+		if (reg >=3D BCM6358_SLED_MAX_COUNT) {
-+			dev_err(dev, "invalid LED (%u >=3D %d)\n", reg,
-+				BCM6358_SLED_MAX_COUNT);
-+			continue;
-+		}
-+
-+		rc =3D bcm6358_led(dev, child, reg, mem, lock);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bcm6358_leds_of_match[] =3D {
-+	{ .compatible =3D "brcm,bcm6358-leds", },
-+	{ },
-+};
-+
-+static struct platform_driver bcm6358_leds_driver =3D {
-+	.probe =3D bcm6358_leds_probe,
-+	.driver =3D {
-+		.name =3D "leds-bcm6358",
-+		.of_match_table =3D bcm6358_leds_of_match,
-+	},
-+};
-+
-+module_platform_driver(bcm6358_leds_driver);
-+
-+MODULE_AUTHOR("=C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>");
-+MODULE_DESCRIPTION("LED driver for BCM6358 controllers");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:leds-bcm6358");
---=20
-1.9.1
+diff --git a/drivers/media/v4l2-core/v4l2-flash.c b/drivers/media/v4l2-core/v4l2-flash.c
+index bed2036..d182adc 100644
+--- a/drivers/media/v4l2-core/v4l2-flash.c
++++ b/drivers/media/v4l2-core/v4l2-flash.c
+@@ -542,9 +542,10 @@ static const struct v4l2_subdev_ops v4l2_flash_subdev_ops = {
+ 	.core = &v4l2_flash_core_ops,
+ };
+ 
+-struct v4l2_flash *v4l2_flash_init(struct led_classdev_flash *fled_cdev,
+-				   const struct v4l2_flash_ops *ops,
+-				   struct v4l2_flash_config *config)
++struct v4l2_flash *v4l2_flash_init(
++	struct device *dev, struct device_node *of_node,
++	struct led_classdev_flash *fled_cdev, const struct v4l2_flash_ops *ops,
++	struct v4l2_flash_config *config)
+ {
+ 	struct v4l2_flash *v4l2_flash;
+ 	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+@@ -562,7 +563,8 @@ struct v4l2_flash *v4l2_flash_init(struct led_classdev_flash *fled_cdev,
+ 	sd = &v4l2_flash->sd;
+ 	v4l2_flash->fled_cdev = fled_cdev;
+ 	v4l2_flash->ops = ops;
+-	sd->dev = led_cdev->dev;
++	sd->dev = dev;
++	sd->of_node = of_node;
+ 	v4l2_subdev_init(sd, &v4l2_flash_subdev_ops);
+ 	sd->internal_ops = &v4l2_flash_subdev_internal_ops;
+ 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+diff --git a/include/media/v4l2-flash.h b/include/media/v4l2-flash.h
+index 67a2cbf..31e421d 100644
+--- a/include/media/v4l2-flash.h
++++ b/include/media/v4l2-flash.h
+@@ -115,6 +115,8 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
+ #if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+ /**
+  * v4l2_flash_init - initialize V4L2 flash led sub-device
++ * @dev:	flash device, e.g. an I2C device
++ * @of_node:	of_node of the LED, may be NULL if the same as device's
+  * @fled_cdev:	the LED Flash class device to wrap
+  * @flash_ops:	V4L2 Flash device ops
+  * @config:	initialization data for V4L2 Flash sub-device
+@@ -125,9 +127,10 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
+  * value is encoded using ERR_PTR(). Use IS_ERR() to check and
+  * PTR_ERR() to obtain the numeric return value.
+  */
+-struct v4l2_flash *v4l2_flash_init(struct led_classdev_flash *fled_cdev,
+-				   const struct v4l2_flash_ops *ops,
+-				   struct v4l2_flash_config *config);
++struct v4l2_flash *v4l2_flash_init(
++	struct device *dev, struct device_node *of_node,
++	struct led_classdev_flash *fled_cdev, const struct v4l2_flash_ops *ops,
++	struct v4l2_flash_config *config);
+ 
+ /**
+  * v4l2_flash_release - release V4L2 Flash sub-device
+@@ -139,6 +142,7 @@ void v4l2_flash_release(struct v4l2_flash *v4l2_flash);
+ 
+ #else
+ static inline struct v4l2_flash *v4l2_flash_init(
++	struct device *dev, struct device_node *of_node,
+ 	struct led_classdev_flash *fled_cdev, const struct v4l2_flash_ops *ops,
+ 	struct v4l2_flash_config *config)
+ {
+-- 
+1.7.10.4
