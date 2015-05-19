@@ -1,60 +1,40 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 06/17] video: lcd: add LoCoMo LCD driver
-Date: Tue, 19 May 2015 13:34:18 +0100
-Message-ID: <20150519123418.GB3627@x1>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
- <1431880077-26321-7-git-send-email-dbaryshkov@gmail.com>
- <20150519093644.GT22418@x1>
- <CALT56yMwGngNvRWiCux962B=EQODUHW3=-ed6SZWJ9PnSPm09A@mail.gmail.com>
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
+	<noltari@gmail.com>
+Subject: [PATCH 0/2] BCM6358 LED driver
+Date: Tue, 19 May 2015 19:12:56 +0200
+Message-ID: <1432055578-14089-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:35846 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755771AbbESMeX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 May 2015 08:34:23 -0400
-Received: by wgbgq6 with SMTP id gq6so16091017wgb.3
-        for <linux-leds@vger.kernel.org>; Tue, 19 May 2015 05:34:22 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CALT56yMwGngNvRWiCux962B=EQODUHW3=-ed6SZWJ9PnSPm09A@mail.gmail.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:37809 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751478AbbESRMw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 May 2015 13:12:52 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, linux-fbdev@vger.
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-On Tue, 19 May 2015, Dmitry Eremin-Solenikov wrote:
+These patches add support and documentation for the BCM6358 LED driver,=
+ which is present on BCM6358 and BCM6368.
+In these SoCs there are Serial LEDs (LEDs connected to a 74hc controlle=
+r), which can either be controlled by software (exporting the 74hc as s=
+pi-gpio) or hardware using this driver.
 
-> 2015-05-19 12:36 GMT+03:00 Lee Jones <lee.jones@linaro.org>:
-> > On Sun, 17 May 2015, Dmitry Eremin-Solenikov wrote:
-> >
-> >> LoCoMo has some special handling for TFT screens attached to Colli=
-e and
-> >> Poodle. Implement that as a separate driver.
-> >>
-> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> >> ---
-> >>  drivers/video/backlight/Kconfig      |  10 ++
-> >>  drivers/video/backlight/Makefile     |   1 +
-> >>  drivers/video/backlight/locomo_lcd.c | 285 ++++++++++++++++++++++=
-+++++++++++++
-> >>  3 files changed, 296 insertions(+)
-> >>  create mode 100644 drivers/video/backlight/locomo_lcd.c
-> >
-> > This looks like it should be part of patch 16.
-> >
-> > How much of this file is the same as the one removed later in the s=
-et?
->=20
-> This is a completely new driver. Only few comments remained from old
-> locomolcd.c.
+=C3=81lvaro Fern=C3=A1ndez Rojas (2):
+  leds: add DT binding for BCM6358 LED controller
+  leds: add BCM6358 LED driver
 
-Okay, thanks for the explanation.
-
-I'm sure Jingoo will be around to review shortly.
+ .../devicetree/bindings/leds/leds-bcm6358.txt      | 145 +++++++++++++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-bcm6358.c                        | 241 +++++++++++++=
+++++++++
+ 4 files changed, 395 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm6358=
+=2Etxt
+ create mode 100644 drivers/leds/leds-bcm6358.c
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+1.9.1
