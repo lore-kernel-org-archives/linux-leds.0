@@ -1,189 +1,316 @@
 From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
 	<noltari@gmail.com>
-Subject: [PATCH 1/2] leds: add DT binding for BCM6358 LED controller
-Date: Tue, 19 May 2015 19:12:57 +0200
-Message-ID: <1432055578-14089-2-git-send-email-noltari@gmail.com>
+Subject: [PATCH 2/2] leds: add BCM6358 LED driver
+Date: Tue, 19 May 2015 19:12:58 +0200
+Message-ID: <1432055578-14089-3-git-send-email-noltari@gmail.com>
 References: <1432055578-14089-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:38758 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390AbbESRMx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 May 2015 13:12:53 -0400
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:37870 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752365AbbESRMz (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 May 2015 13:12:55 -0400
 In-Reply-To: <1432055578-14089-1-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com
 Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-This adds device tree binding documentation for the Broadcom BCM6358 LE=
-D controller.
+This adds support for the LED controller on Broadcom's BCM6358.
 
 Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 ---
- .../devicetree/bindings/leds/leds-bcm6358.txt      | 145 +++++++++++++=
+ drivers/leds/Kconfig        |   8 ++
+ drivers/leds/Makefile       |   1 +
+ drivers/leds/leds-bcm6358.c | 241 ++++++++++++++++++++++++++++++++++++=
 ++++++++
- 1 file changed, 145 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-bcm6358=
-=2Etxt
+ 3 files changed, 250 insertions(+)
+ create mode 100644 drivers/leds/leds-bcm6358.c
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6358.txt b/=
-Documentation/devicetree/bindings/leds/leds-bcm6358.txt
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index ec26dd1..86de046 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -58,6 +58,14 @@ config LEDS_BCM6328
+ 	  This option enables support for LEDs connected to the BCM6328
+ 	  LED HW controller accessed via MMIO registers.
+=20
++config LEDS_BCM6358
++	tristate "LED Support for Broadcom BCM6358"
++	depends on LEDS_CLASS
++	depends on OF
++	help
++	  This option enables support for LEDs connected to the BCM6358
++	  LED HW controller accessed via MMIO registers.
++
+ config LEDS_LM3530
+ 	tristate "LCD Backlight driver for LM3530"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index edb3abf..8d6a24a 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
+ obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
+ obj-$(CONFIG_LEDS_AAT1290)		+=3D leds-aat1290.o
+ obj-$(CONFIG_LEDS_BCM6328)		+=3D leds-bcm6328.o
++obj-$(CONFIG_LEDS_BCM6358)		+=3D leds-bcm6358.o
+ obj-$(CONFIG_LEDS_BD2802)		+=3D leds-bd2802.o
+ obj-$(CONFIG_LEDS_LOCOMO)		+=3D leds-locomo.o
+ obj-$(CONFIG_LEDS_LM3530)		+=3D leds-lm3530.o
+diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
 new file mode 100644
-index 0000000..b22a55b
+index 0000000..4a3a6c3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-bcm6358.txt
-@@ -0,0 +1,145 @@
-+LEDs connected to Broadcom BCM6358 controller
++++ b/drivers/leds/leds-bcm6358.c
+@@ -0,0 +1,241 @@
++/*
++ * Driver for BCM6358 memory-mapped LEDs, based on leds-syscon.c
++ *
++ * Copyright 2015 =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
++ *
++ * This program is free software; you can redistribute  it and/or modi=
+fy it
++ * under  the terms of  the GNU General  Public License as published b=
+y the
++ * Free Software Foundation;  either version 2 of the  License, or (at=
+ your
++ * option) any later version.
++ */
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
 +
-+This controller is present on BCM6358 and BCM6368.
-+In these SoCs there are Serial LEDs (LEDs connected to a 74x164 contro=
-ller),
-+which can either be controlled by software (exporting the 74x164 as sp=
-i-gpio.
-+See Documentation/devicetree/bindings/gpio/gpio-74x164.txt), or
-+by hardware using this driver.
++#define BCM6358_REG_MODE		0x0
++#define BCM6358_REG_CTRL		0x4
 +
-+Required properties:
-+  - compatible : should be "brcm,bcm6358-leds".
-+  - #address-cells : must be 1.
-+  - #size-cells : must be 0.
-+  - reg : BCM6358 LED controller address and size.
++#define BCM6358_SLED_CLKDIV_MASK	3
++#define BCM6358_SLED_CLKDIV_1		0
++#define BCM6358_SLED_CLKDIV_2		1
++#define BCM6358_SLED_CLKDIV_4		2
++#define BCM6358_SLED_CLKDIV_8		3
 +
-+Optional properties:
-+  - brcm,clk-div : SCK signal divider. Possible values are 1, 2, 4 and=
- 8.
-+    Default : 1
-+  - brcm,clk-dat-low : Boolean, makes clock and data signals active lo=
-w.
-+    Default : false
++#define BCM6358_SLED_POLARITY		BIT(2)
++#define BCM6358_SLED_BUSY		BIT(3)
 +
-+Each LED is represented as a sub-node of the brcm,bcm6358-leds device.
++#define BCM6358_SLED_MAX_COUNT		32
++#define BCM6358_SLED_WAIT		100
 +
-+LED sub-node required properties:
-+  - reg : LED pin number (only LEDs 0 to 31 are valid).
++/**
++ * struct bcm6358_led - state container for bcm6358 based LEDs
++ * @cdev: LED class device for this LED
++ * @mem: memory resource
++ * @lock: memory lock
++ * @pin: LED pin number
++ * @active_low: LED is active low
++ */
++struct bcm6358_led {
++	struct led_classdev cdev;
++	void __iomem *mem;
++	spinlock_t *lock;
++	unsigned long pin;
++	bool active_low;
++};
 +
-+LED sub-node optional properties:
-+  - label : see Documentation/devicetree/bindings/leds/common.txt
-+  - active-low : Boolean, makes LED active low.
-+    Default : false
-+  - default-state : see
-+    Documentation/devicetree/bindings/leds/leds-gpio.txt
-+  - linux,default-trigger : see
-+    Documentation/devicetree/bindings/leds/common.txt
++static void bcm6358_led_write(void __iomem *reg, unsigned long data)
++{
++	iowrite32be(data, reg);
++}
 +
-+Examples:
-+Scenario 1 : BCM6358
-+	leds0: led-controller@fffe00d0 {
-+		compatible =3D "brcm,bcm6358-leds";
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		reg =3D <0xfffe00d0 0x8>;
++static unsigned long bcm6358_led_read(void __iomem *reg)
++{
++	return ioread32be(reg);
++}
 +
-+		alarm_white {
-+			reg =3D <0>;
-+			active-low;
-+			label =3D "white:alarm";
-+		};
-+		tv_white {
-+			reg =3D <2>;
-+			active-low;
-+			label =3D "white:tv";
-+		};
-+		tel_white {
-+			reg =3D <3>;
-+			active-low;
-+			label =3D "white:tel";
-+		};
-+		adsl_white {
-+			reg =3D <4>;
-+			active-low;
-+			label =3D "white:adsl";
-+		};
-+	};
++static unsigned long bcm6358_led_busy(void __iomem *mem)
++{
++	unsigned long val;
 +
-+Scenario 2 : BCM6368
-+	leds0: led-controller@100000d0 {
-+		compatible =3D "brcm,bcm6358-leds";
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		reg =3D <0x100000d0 0x8>;
-+		brcm,pol-low;
-+		brcm,clk-div =3D <4>;
++	while ((val =3D bcm6358_led_read(mem + BCM6358_REG_CTRL)) &
++		BCM6358_SLED_BUSY)
++		udelay(BCM6358_SLED_WAIT);
 +
-+		power_red {
-+			reg =3D <0>;
-+			active-low;
-+			label =3D "red:power";
-+		};
-+		power_green {
-+			reg =3D <1>;
-+			active-low;
-+			label =3D "green:power";
-+			default-state =3D "on";
-+		};
-+		power_blue {
-+			reg =3D <2>;
-+			label =3D "blue:power";
-+		};
-+		broadband_red {
-+			reg =3D <3>;
-+			active-low;
-+			label =3D "red:broadband";
-+		};
-+		broadband_green {
-+			reg =3D <4>;
-+			label =3D "green:broadband";
-+		};
-+		broadband_blue {
-+			reg =3D <5>;
-+			active-low;
-+			label =3D "blue:broadband";
-+		};
-+		wireless_red {
-+			reg =3D <6>;
-+			active-low;
-+			label =3D "red:wireless";
-+		};
-+		wireless_green {
-+			reg =3D <7>;
-+			active-low;
-+			label =3D "green:wireless";
-+		};
-+		wireless_blue {
-+			reg =3D <8>;
-+			label =3D "blue:wireless";
-+		};
-+		phone_red {
-+			reg =3D <9>;
-+			active-low;
-+			label =3D "red:phone";
-+		};
-+		phone_green {
-+			reg =3D <10>;
-+			active-low;
-+			label =3D "green:phone";
-+		};
-+		phone_blue {
-+			reg =3D <11>;
-+			label =3D "blue:phone";
-+		};
-+		upgrading_red {
-+			reg =3D <12>;
-+			active-low;
-+			label =3D "red:upgrading";
-+		};
-+		upgrading_green {
-+			reg =3D <13>;
-+			active-low;
-+			label =3D "green:upgrading";
-+		};
-+		upgrading_blue {
-+			reg =3D <14>;
-+			label =3D "blue:upgrading";
-+		};
-+	};
++	return val;
++}
++
++static void bcm6358_led_mode(struct bcm6358_led *led, unsigned long va=
+lue)
++{
++	unsigned long val;
++
++	bcm6358_led_busy(led->mem);
++
++	val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
++	if ((led->active_low && value =3D=3D LED_OFF) ||
++	    (!led->active_low && value !=3D LED_OFF))
++		val |=3D BIT(led->pin);
++	else
++		val &=3D ~(BIT(led->pin));
++	bcm6358_led_write(led->mem + BCM6358_REG_MODE, val);
++}
++
++static void bcm6358_led_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
++{
++	struct bcm6358_led *led =3D
++		container_of(led_cdev, struct bcm6358_led, cdev);
++	unsigned long flags;
++
++	spin_lock_irqsave(led->lock, flags);
++	bcm6358_led_mode(led, value);
++	spin_unlock_irqrestore(led->lock, flags);
++}
++
++static int bcm6358_led(struct device *dev, struct device_node *nc, u32=
+ reg,
++		       void __iomem *mem, spinlock_t *lock)
++{
++	struct bcm6358_led *led;
++	unsigned long flags;
++	const char *state;
++	int rc;
++
++	led =3D devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	led->pin =3D reg;
++	led->mem =3D mem;
++	led->lock =3D lock;
++
++	if (of_property_read_bool(nc, "active-low"))
++		led->active_low =3D true;
++
++	led->cdev.name =3D of_get_property(nc, "label", NULL) ? : nc->name;
++	led->cdev.default_trigger =3D of_get_property(nc,
++						    "linux,default-trigger",
++						    NULL);
++
++	spin_lock_irqsave(lock, flags);
++	if (!of_property_read_string(nc, "default-state", &state))
++		if (!strcmp(state, "on"))
++			led->cdev.brightness =3D LED_FULL;
++		else if (!strcmp(state, "keep")) {
++			unsigned long val;
++
++			bcm6358_led_busy(led->mem);
++
++			val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
++			val &=3D BIT(led->pin);
++			if ((led->active_low && !val) ||
++				(!led->active_low && val))
++				led->cdev.brightness =3D LED_FULL;
++			else
++				led->cdev.brightness =3D LED_OFF;
++		} else
++			led->cdev.brightness =3D LED_OFF;
++	else
++		led->cdev.brightness =3D LED_OFF;
++	bcm6358_led_mode(led, led->cdev.brightness);
++	spin_unlock_irqrestore(lock, flags);
++
++	led->cdev.brightness_set =3D bcm6358_led_set;
++
++	rc =3D led_classdev_register(dev, &led->cdev);
++	if (rc < 0)
++		return rc;
++
++	dev_dbg(dev, "registered LED %s\n", led->cdev.name);
++
++	return 0;
++}
++
++static int bcm6358_leds_probe(struct platform_device *pdev)
++{
++	struct device *dev =3D &pdev->dev;
++	struct device_node *np =3D pdev->dev.of_node;
++	struct device_node *child;
++	struct resource *mem_r;
++	void __iomem *mem;
++	spinlock_t *lock;
++	unsigned long val;
++	u32 clk_div;
++
++	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!mem_r)
++		return -EINVAL;
++
++	mem =3D devm_ioremap_resource(dev, mem_r);
++	if (IS_ERR(mem))
++		return PTR_ERR(mem);
++
++	lock =3D devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
++	if (!lock)
++		return -ENOMEM;
++
++	spin_lock_init(lock);
++
++	val =3D bcm6358_led_busy(mem);
++	val &=3D ~(BCM6358_SLED_POLARITY | BCM6358_SLED_CLKDIV_MASK);
++	if (of_property_read_bool(np, "brcm,clk-dat-low"))
++		val |=3D BCM6358_SLED_POLARITY;
++	of_property_read_u32(child, "brcm,clk-div", &clk_div);
++	switch (clk_div) {
++	case 8:
++		val |=3D BCM6358_SLED_CLKDIV_8;
++		break;
++	case 4:
++		val |=3D BCM6358_SLED_CLKDIV_4;
++		break;
++	case 2:
++		val |=3D BCM6358_SLED_CLKDIV_2;
++		break;
++	default:
++		val |=3D BCM6358_SLED_CLKDIV_1;
++		break;
++	}
++	bcm6358_led_write(mem + BCM6358_REG_CTRL, val);
++
++	for_each_available_child_of_node(np, child) {
++		int rc;
++		u32 reg;
++
++		if (of_property_read_u32(child, "reg", &reg))
++			continue;
++
++		if (reg >=3D BCM6358_SLED_MAX_COUNT) {
++			dev_err(dev, "invalid LED (%u >=3D %d)\n", reg,
++				BCM6358_SLED_MAX_COUNT);
++			continue;
++		}
++
++		rc =3D bcm6358_led(dev, child, reg, mem, lock);
++		if (rc < 0)
++			return rc;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id bcm6358_leds_of_match[] =3D {
++	{ .compatible =3D "brcm,bcm6358-leds", },
++	{ },
++};
++
++static struct platform_driver bcm6358_leds_driver =3D {
++	.probe =3D bcm6358_leds_probe,
++	.driver =3D {
++		.name =3D "leds-bcm6358",
++		.of_match_table =3D bcm6358_leds_of_match,
++	},
++};
++
++module_platform_driver(bcm6358_leds_driver);
++
++MODULE_AUTHOR("=C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>");
++MODULE_DESCRIPTION("LED driver for BCM6358 controllers");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:leds-bcm6358");
 --=20
 1.9.1
