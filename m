@@ -1,7 +1,8 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 03/20] leds: mark asic3 driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:21:46 +0300
-Message-ID: <555CA68A.4000504@list.ru>
+Subject: [PATCH 04/20] leds: mark bcm6328 driver with LED_BRIGHTNESS_FAST
+ flag
+Date: Wed, 20 May 2015 18:22:47 +0300
+Message-ID: <555CA6C7.1050707@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,21 +27,20 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-asic3.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-bcm6328.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-asic3.c b/drivers/leds/leds-asic3.c
-index 1b71eac..427befa 100644
---- a/drivers/leds/leds-asic3.c
-+++ b/drivers/leds/leds-asic3.c
-@@ -108,7 +108,7 @@ static int asic3_led_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 986fe1e..5c5f5b4 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -313,6 +313,7 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
 
- 	led->cdev->name = led->name;
--	led->cdev->flags = LED_CORE_SUSPENDRESUME;
-+	led->cdev->flags = LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
- 	led->cdev->brightness_set = brightness_set;
- 	led->cdev->blink_set = blink_set;
- 	led->cdev->default_trigger = led->default_trigger;
+ 	led->cdev.brightness_set = bcm6328_led_set;
+ 	led->cdev.blink_set = bcm6328_blink_set;
++	led->cdev.flags = LED_BRIGHTNESS_FAST;
+
+ 	rc = led_classdev_register(dev, &led->cdev);
+ 	if (rc < 0)
 -- 
 1.7.9.5
