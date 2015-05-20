@@ -1,74 +1,123 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
- v4l2_flash_init()
-Date: Wed, 20 May 2015 15:47:25 +0200
-Message-ID: <555C906D.4030902@samsung.com>
-References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
- <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
- <555C582E.8000807@samsung.com> <555C63CF.2020304@samsung.com>
- <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v8 0/8] LED / flash API integration
+Date: Wed, 20 May 2015 16:10:07 +0200
+Message-ID: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34873 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752766AbbETNr3 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 May 2015 09:47:29 -0400
-In-reply-to: <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
+Received: from mailout4.samsung.com ([203.254.224.34]:36934 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752496AbbETOKc (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 May 2015 10:10:32 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
+To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On 05/20/2015 02:27 PM, Sakari Ailus wrote:
-> Hi Jacek,
->
-> On Wed, May 20, 2015 at 12:37:03PM +0200, Jacek Anaszewski wrote:
->> On 05/20/2015 11:47 AM, Jacek Anaszewski wrote:
->>> Hi Sakari,
->>>
->>> On 05/20/2015 01:04 AM, Sakari Ailus wrote:
->>>> Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
->>>> ---
->>>>   drivers/leds/leds-aat1290.c |    5 ++---
->>>>   1 file changed, 2 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
->>>> index c656a2d..71bf6bb 100644
->>>> --- a/drivers/leds/leds-aat1290.c
->>>> +++ b/drivers/leds/leds-aat1290.c
->>>> @@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
->>>> platform_device *pdev)
->>>>       led_cdev->dev->of_node = sub_node;
->>>>
->>>>       /* Create V4L2 Flash subdev. */
->>>> -    led->v4l2_flash = v4l2_flash_init(fled_cdev,
->>>> -                      &v4l2_flash_ops,
->>>> -                      &v4l2_sd_cfg);
->>>> +    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
->>>> +                      &v4l2_flash_ops, &v4l2_sd_cfg);
->>>
->>> Here the first argument should be led_cdev->dev, not dev, which is
->>> &pdev->dev, whereas led_cdev->dev is returned by
->>> device_create_with_groups (it takes dev as a parent) called from
->>> led_classdev_register.
->>
->> The reason for this is the fact that pdev->dev has its of_node
->> field initialized, which makes v4l2_async trying to match
->> subdev by parent node of a LED device, not by sub-LED related
->> DT node.
->
-> If v4l2_subdev->of_node is set, then it won't be replaced with one from
-> struct device. I.e. you need to provide of_node pointer only if it's
-> different from dev->of_node.
->
+This is eighth non-RFC version of LED / flash API integration
+series [1]. It is based on linux_next-20150519 with patch [2].
 
-It will always be different since dev->of_node pointer is related
-to the main DT node of LED device, whereas each LED connected to it
-must be expressed in the form of sub-node, as
-Documentation/devicetree/bindings/leds/common.txt DT states.
+================
+Changes since v7
+================
+
+- Merged patches from Sakari for v4l2-flash-led-class and V4L2 related
+  patches for leds-max77693 and leds-aat1290 drivers
+- applied minor modifications to the both led drivers related patches
+- modified exynos4-is media device to parse new samsung,flash-led
+  property, instead of 'flashes' array
+- added DT documentation for samsung,flash-led property
+
+================
+Changes since v5
+================
+- renamed v4l2-flash module to v4l2-flash-led-class and applied
+  other related modifications spotted by Sakari
+- fixed not released of_node reference in max77693-led driver
+
+================
+Changes since v4
+================
+- adapted leds-max77693 and leds-aat1290 drivers to the recent
+  modifications in leds/common.txt bindings documentation and
+  changed the behaviour when properties are missing
+- modified DT bindings documenation for the aforementioned
+  drivers
+- removed unjustified use of goto in the leds-aat1290 driver
+- fixed lack of of_node_put in leds-aat1290 driver, after parsing
+  DT child node 
+- removed patch adding 'skyworks' vendor prefix, as the entry
+  has been recently added
+
+================
+Changes since v2
+================
+- improved leds/common DT bindings documentation
+- improved max77693-led DT documentation
+- fixed validation of DT confguration for leds-max77693 by
+  minimal values in joint iouts case
+- removed trigger-type property from leds-max77693 bindings
+  and adjusted the driver accordingly
+- improved LED Flash class documentation related to v4l2-flash sub-device
+  initialization
+- excluded from leds-aat1290 DT bindings documentation the part
+  related to handling external strobe sources
+
+================
+Changes since v1
+================
+
+- excluded exynos4-is media device related patches, as there is
+  consenus required related to flash devices handling in media device
+  DT bindings
+- modifications around LED Flash class settings and v4l2 flash config
+  initialization in LED Flash class drivers and v4l2-flash wrapper
+- switched to using DT node name as a device name for leds-max77693
+  and leds-aat1290 drivers, in case DT 'label' property is absent
+- dropped OF dependecy for v4l2-flash wrapper
+- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
+- allowed for multiple clients of v4l2-flash sub-device
+
+======================
+Changes since RFC v13:
+======================
+
+- reduced number of patches - some of them have been merged
+- slightly modified max77693-led device naming
+- fixed issues in v4l2-flash helpers detected with yavta
+- cleaned up AAT1290 device tree documentation
+- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
+
+Thanks,
+Jacek Anaszewski
+
+[1] http://www.spinics.net/lists/kernel/msg1944538.html
+[2] http://www.spinics.net/lists/linux-media/msg89839.html
+
+Jacek Anaszewski (8):
+  media: Add registration helpers for V4L2 flash sub-devices
+  leds: max77693: add support for V4L2 Flash sub-device
+  DT: aat1290: Document handling external strobe sources
+  leds: aat1290: add support for V4L2 Flash sub-device
+  exynos4-is: Add support for v4l2-flash subdevs
+  DT: s5c73m3: Add documentation for samsung,flash-led property
+  DT: s5k6a3: Add documentation for samsung,flash-led property
+  DT: samsung-fimc: Add examples for samsung,flash-led property
+
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   36 +-
+ .../devicetree/bindings/media/samsung-fimc.txt     |    4 +
+ .../devicetree/bindings/media/samsung-s5c73m3.txt  |    5 +
+ .../devicetree/bindings/media/samsung-s5k6a3.txt   |    4 +
+ drivers/leds/Kconfig                               |    1 +
+ drivers/leds/leds-aat1290.c                        |  137 +++-
+ drivers/leds/leds-max77693.c                       |  129 +++-
+ drivers/media/platform/exynos4-is/media-dev.c      |   39 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
+ drivers/media/v4l2-core/Kconfig                    |   11 +
+ drivers/media/v4l2-core/Makefile                   |    2 +
+ drivers/media/v4l2-core/v4l2-flash-led-class.c     |  655 ++++++++++++++++++++
+ include/media/v4l2-flash-led-class.h               |  139 +++++
+ 13 files changed, 1158 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
+ create mode 100644 include/media/v4l2-flash-led-class.h
 
 -- 
-Best Regards,
-Jacek Anaszewski
+1.7.9.5
