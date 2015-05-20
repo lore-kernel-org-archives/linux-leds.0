@@ -1,150 +1,76 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/5] v4l: async: Add a pointer to of_node to struct
- v4l2_subdev, match it
-Date: Wed, 20 May 2015 16:20:51 +0200
-Message-ID: <555C9843.3020409@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
+ v4l2_flash_init()
+Date: Wed, 20 May 2015 17:31:43 +0300
+Message-ID: <20150520143143.GA8601@valkosipuli.retiisi.org.uk>
 References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
- <1432076645-4799-2-git-send-email-sakari.ailus@iki.fi>
+ <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
+ <555C582E.8000807@samsung.com>
+ <555C63CF.2020304@samsung.com>
+ <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
+ <555C906D.4030902@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:36526 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752745AbbETOUz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 May 2015 10:20:55 -0400
-In-reply-to: <1432076645-4799-2-git-send-email-sakari.ailus@iki.fi>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:35736 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752083AbbETObu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 10:31:50 -0400
+Content-Disposition: inline
+In-Reply-To: <555C906D.4030902@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
 
-On 05/20/2015 01:04 AM, Sakari Ailus wrote:
-> V4L2 async sub-devices are currently matched (OF case) based on the struct
-> device_node pointer in struct device. LED devices may have more than one
-> LED, and in that case the OF node to match is not directly the device's
-> node, but a LED's node.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
-> ---
->   drivers/media/v4l2-core/v4l2-async.c  |   34 +++++++++++++++++++++------------
->   drivers/media/v4l2-core/v4l2-device.c |    3 +++
->   include/media/v4l2-subdev.h           |    2 ++
->   3 files changed, 27 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 85a6a34..bcdd140 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -22,10 +22,10 @@
->   #include <media/v4l2-device.h>
->   #include <media/v4l2-subdev.h>
->
-> -static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
-> +static bool match_i2c(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
->   {
->   #if IS_ENABLED(CONFIG_I2C)
-> -	struct i2c_client *client = i2c_verify_client(dev);
-> +	struct i2c_client *client = i2c_verify_client(sd->dev);
->   	return client &&
->   		asd->match.i2c.adapter_id == client->adapter->nr &&
->   		asd->match.i2c.address == client->addr;
-> @@ -34,14 +34,27 @@ static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
->   #endif
->   }
->
-> -static bool match_devname(struct device *dev, struct v4l2_async_subdev *asd)
-> +static bool match_devname(struct v4l2_subdev *sd,
-> +			  struct v4l2_async_subdev *asd)
->   {
-> -	return !strcmp(asd->match.device_name.name, dev_name(dev));
-> +	return !strcmp(asd->match.device_name.name, dev_name(sd->dev));
->   }
->
-> -static bool match_of(struct device *dev, struct v4l2_async_subdev *asd)
-> +static bool match_of(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
->   {
-> -	return dev->of_node == asd->match.of.node;
-> +	struct device_node *of_node =
-> +		sd->of_node ? sd->of_node : sd->dev->of_node;
-> +
-> +	return of_node == asd->match.of.node;
-> +}
-> +
-> +static bool match_custom(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
-> +{
-> +	if (!asd->match.custom.match)
-> +		/* Match always */
-> +		return true;
-> +
-> +	return asd->match.custom.match(sd->dev, asd);
->   }
->
->   static LIST_HEAD(subdev_list);
-> @@ -51,17 +64,14 @@ static DEFINE_MUTEX(list_lock);
->   static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *notifier,
->   						    struct v4l2_subdev *sd)
->   {
-> +	bool (*match)(struct v4l2_subdev *, struct v4l2_async_subdev *);
->   	struct v4l2_async_subdev *asd;
-> -	bool (*match)(struct device *, struct v4l2_async_subdev *);
->
->   	list_for_each_entry(asd, &notifier->waiting, list) {
->   		/* bus_type has been verified valid before */
->   		switch (asd->match_type) {
->   		case V4L2_ASYNC_MATCH_CUSTOM:
-> -			match = asd->match.custom.match;
-> -			if (!match)
-> -				/* Match always */
-> -				return asd;
-> +			match = match_custom;
->   			break;
->   		case V4L2_ASYNC_MATCH_DEVNAME:
->   			match = match_devname;
-> @@ -79,7 +89,7 @@ static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *
->   		}
->
->   		/* match cannot be NULL here */
-> -		if (match(sd->dev, asd))
-> +		if (match(sd, asd))
->   			return asd;
->   	}
->
-> diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-> index 5b0a30b..a741c6c 100644
-> --- a/drivers/media/v4l2-core/v4l2-device.c
-> +++ b/drivers/media/v4l2-core/v4l2-device.c
-> @@ -157,6 +157,9 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
->   	/* Warn if we apparently re-register a subdev */
->   	WARN_ON(sd->v4l2_dev != NULL);
->
-> +	if (!sd->of_node && sd->dev)
-> +		sd->of_node = sd->dev->of_node;
-> +
->   	/*
->   	 * The reason to acquire the module here is to avoid unloading
->   	 * a module of sub-device which is registered to a media
-> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-> index 8f5da73..5c51987 100644
-> --- a/include/media/v4l2-subdev.h
-> +++ b/include/media/v4l2-subdev.h
-> @@ -603,6 +603,8 @@ struct v4l2_subdev {
->   	struct video_device *devnode;
->   	/* pointer to the physical device, if any */
->   	struct device *dev;
-> +	/* A device_node of the sub-device, iff not dev->of_node. */
-> +	struct device_node *of_node;
->   	/* Links this subdev to a global subdev_list or @notifier->done list. */
->   	struct list_head async_list;
->   	/* Pointer to respective struct v4l2_async_subdev. */
->
+Hi Jacek,
 
-I've tested it with V4L2_ASYNC_MATCH_OF matching type.
-For this you can add my:
+On Wed, May 20, 2015 at 03:47:25PM +0200, Jacek Anaszewski wrote:
+...
+> >>>>--- a/drivers/leds/leds-aat1290.c
+> >>>>+++ b/drivers/leds/leds-aat1290.c
+> >>>>@@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
+> >>>>platform_device *pdev)
+> >>>>      led_cdev->dev->of_node = sub_node;
+> >>>>
+> >>>>      /* Create V4L2 Flash subdev. */
+> >>>>-    led->v4l2_flash = v4l2_flash_init(fled_cdev,
+> >>>>-                      &v4l2_flash_ops,
+> >>>>-                      &v4l2_sd_cfg);
+> >>>>+    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
+> >>>>+                      &v4l2_flash_ops, &v4l2_sd_cfg);
+> >>>
+> >>>Here the first argument should be led_cdev->dev, not dev, which is
+> >>>&pdev->dev, whereas led_cdev->dev is returned by
+> >>>device_create_with_groups (it takes dev as a parent) called from
+> >>>led_classdev_register.
+> >>
+> >>The reason for this is the fact that pdev->dev has its of_node
+> >>field initialized, which makes v4l2_async trying to match
+> >>subdev by parent node of a LED device, not by sub-LED related
+> >>DT node.
+> >
+> >If v4l2_subdev->of_node is set, then it won't be replaced with one from
+> >struct device. I.e. you need to provide of_node pointer only if it's
+> >different from dev->of_node.
+> >
+> 
+> It will always be different since dev->of_node pointer is related
+> to the main DT node of LED device, whereas each LED connected to it
+> must be expressed in the form of sub-node, as
+> Documentation/devicetree/bindings/leds/common.txt DT states.
 
-Tested-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+You can still refer to the device's root device_node using a phandle.
+
+Say, if you have a LED flash controller with an indicator. It's intended to
+be used together with the flash LED, and the existing as3645a driver exposes
+it through the same sub-device. I think that'd make sense with LED class
+driver as well (i.e. you'd have two LED class devices but a single
+sub-device). Small changes to the wrapper would be needed.
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
