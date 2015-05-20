@@ -1,73 +1,110 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
- v4l2_flash_init()
-Date: Wed, 20 May 2015 17:31:43 +0300
-Message-ID: <20150520143143.GA8601@valkosipuli.retiisi.org.uk>
-References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
- <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
- <555C582E.8000807@samsung.com>
- <555C63CF.2020304@samsung.com>
- <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
- <555C906D.4030902@samsung.com>
+Subject: Re: [PATCH v8 1/8] media: Add registration helpers for V4L2 flash
+ sub-devices
+Date: Wed, 20 May 2015 17:44:47 +0300
+Message-ID: <20150520144447.GB8601@valkosipuli.retiisi.org.uk>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:35736 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:35884 "EHLO
 	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752083AbbETObu (ORCPT
+	by vger.kernel.org with ESMTP id S1753613AbbETOov (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>);
-	Wed, 20 May 2015 10:31:50 -0400
+	Wed, 20 May 2015 10:44:51 -0400
 Content-Disposition: inline
-In-Reply-To: <555C906D.4030902@samsung.com>
+In-Reply-To: <1432131015-22397-2-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
 
 Hi Jacek,
 
-On Wed, May 20, 2015 at 03:47:25PM +0200, Jacek Anaszewski wrote:
+On Wed, May 20, 2015 at 04:10:08PM +0200, Jacek Anaszewski wrote:
 ...
-> >>>>--- a/drivers/leds/leds-aat1290.c
-> >>>>+++ b/drivers/leds/leds-aat1290.c
-> >>>>@@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
-> >>>>platform_device *pdev)
-> >>>>      led_cdev->dev->of_node = sub_node;
-> >>>>
-> >>>>      /* Create V4L2 Flash subdev. */
-> >>>>-    led->v4l2_flash = v4l2_flash_init(fled_cdev,
-> >>>>-                      &v4l2_flash_ops,
-> >>>>-                      &v4l2_sd_cfg);
-> >>>>+    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
-> >>>>+                      &v4l2_flash_ops, &v4l2_sd_cfg);
-> >>>
-> >>>Here the first argument should be led_cdev->dev, not dev, which is
-> >>>&pdev->dev, whereas led_cdev->dev is returned by
-> >>>device_create_with_groups (it takes dev as a parent) called from
-> >>>led_classdev_register.
-> >>
-> >>The reason for this is the fact that pdev->dev has its of_node
-> >>field initialized, which makes v4l2_async trying to match
-> >>subdev by parent node of a LED device, not by sub-LED related
-> >>DT node.
-> >
-> >If v4l2_subdev->of_node is set, then it won't be replaced with one from
-> >struct device. I.e. you need to provide of_node pointer only if it's
-> >different from dev->of_node.
-> >
-> 
-> It will always be different since dev->of_node pointer is related
-> to the main DT node of LED device, whereas each LED connected to it
-> must be expressed in the form of sub-node, as
-> Documentation/devicetree/bindings/leds/common.txt DT states.
+> +struct v4l2_flash *v4l2_flash_init(
+> +	struct device *dev, struct device_node *of_node,
+> +	struct led_classdev_flash *fled_cdev, const struct v4l2_flash_ops *ops,
+> +	struct v4l2_flash_config *config)
+> +{
+> +	struct v4l2_flash *v4l2_flash;
+> +	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+> +	struct v4l2_subdev *sd;
+> +	int ret;
+> +
+> +	if (!fled_cdev || !ops || !config)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	v4l2_flash = devm_kzalloc(led_cdev->dev, sizeof(*v4l2_flash),
+> +					GFP_KERNEL);
+> +	if (!v4l2_flash)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	sd = &v4l2_flash->sd;
+> +	v4l2_flash->fled_cdev = fled_cdev;
+> +	v4l2_flash->ops = ops;
+> +	sd->dev = dev;
+> +	sd->of_node = of_node;
+> +	v4l2_subdev_init(sd, &v4l2_flash_subdev_ops);
+> +	sd->internal_ops = &v4l2_flash_subdev_internal_ops;
+> +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	strlcpy(sd->name, config->dev_name, sizeof(sd->name));
+> +
+> +	ret = media_entity_init(&sd->entity, 0, NULL, 0);
+> +	if (ret < 0)
+> +		return ERR_PTR(ret);
+> +
+> +	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_FLASH;
+> +
+> +	ret = v4l2_flash_init_controls(v4l2_flash, config);
+> +	if (ret < 0)
+> +		goto err_init_controls;
+> +
+> +	of_node_get(led_cdev->dev->of_node);
+> +
+> +	ret = v4l2_async_register_subdev(sd);
+> +	if (ret < 0)
+> +		goto err_async_register_sd;
+> +
+> +	return v4l2_flash;
+> +
+> +err_async_register_sd:
+> +	of_node_put(led_cdev->dev->of_node);
+> +	v4l2_ctrl_handler_free(sd->ctrl_handler);
+> +err_init_controls:
+> +	media_entity_cleanup(&sd->entity);
+> +
+> +	return ERR_PTR(ret);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_flash_init);
+> +
+> +void v4l2_flash_release(struct v4l2_flash *v4l2_flash)
+> +{
+> +	struct v4l2_subdev *sd;
+> +	struct led_classdev *led_cdev;
+> +
+> +	if (IS_ERR(v4l2_flash))
 
-You can still refer to the device's root device_node using a phandle.
+I propose to use IS_ERR_OR_NULL() instead. Then this can be safely called
+without calling v4l2_flash_init() first, making error handling easier.
 
-Say, if you have a LED flash controller with an indicator. It's intended to
-be used together with the flash LED, and the existing as3645a driver exposes
-it through the same sub-device. I think that'd make sense with LED class
-driver as well (i.e. you'd have two LED class devices but a single
-sub-device). Small changes to the wrapper would be needed.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+> +		return;
+> +
+> +	sd = &v4l2_flash->sd;
+> +	led_cdev = &v4l2_flash->fled_cdev->led_cdev;
+> +
+> +	v4l2_async_unregister_subdev(sd);
+> +	of_node_put(led_cdev->dev->of_node);
+> +	v4l2_ctrl_handler_free(sd->ctrl_handler);
+> +	media_entity_cleanup(&sd->entity);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_flash_release);
+
+...
 
 -- 
 Kind regards,
