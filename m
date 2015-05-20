@@ -1,18 +1,22 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 04/20] leds: mark bcm6328 driver with LED_BRIGHTNESS_FAST
+Subject: [PATCH 05/20] leds: mark clevo-mail driver with LED_BRIGHTNESS_FAST
  flag
-Date: Wed, 20 May 2015 18:22:47 +0300
-Message-ID: <555CA6C7.1050707@list.ru>
+Date: Wed, 20 May 2015 18:23:58 +0300
+Message-ID: <555CA70E.6080004@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp38.i.mail.ru ([94.100.177.98]:44757 "EHLO smtp38.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752766AbbETPYC (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 11:24:02 -0400
 In-Reply-To: <555CA58A.10700@list.ru>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-List-Id: linux-leds@vger.kernel.org
 
 
 This driver doesn't use sleeping operations in .brightness_set
@@ -27,20 +31,21 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-bcm6328.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-clevo-mail.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index 986fe1e..5c5f5b4 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -313,6 +313,7 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+diff --git a/drivers/leds/leds-clevo-mail.c b/drivers/leds/leds-clevo-mail.c
+index 0f9ed1e..958e52c 100644
+--- a/drivers/leds/leds-clevo-mail.c
++++ b/drivers/leds/leds-clevo-mail.c
+@@ -150,7 +150,7 @@ static struct led_classdev clevo_mail_led = {
+ 	.name			= "clevo::mail",
+ 	.brightness_set		= clevo_mail_led_set,
+ 	.blink_set		= clevo_mail_led_blink,
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
 
- 	led->cdev.brightness_set = bcm6328_led_set;
- 	led->cdev.blink_set = bcm6328_blink_set;
-+	led->cdev.flags = LED_BRIGHTNESS_FAST;
-
- 	rc = led_classdev_register(dev, &led->cdev);
- 	if (rc < 0)
+ static int __init clevo_mail_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
