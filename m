@@ -1,7 +1,8 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 14/20] leds: mark ns2 driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:32:36 +0300
-Message-ID: <555CA914.1060105@list.ru>
+Subject: [PATCH 19/20] leds: mark versatile driver with LED_BRIGHTNESS_FAST
+ flag
+Date: Wed, 20 May 2015 18:36:54 +0300
+Message-ID: <555CAA16.70606@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,21 +27,20 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-ns2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-versatile.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 1fd6adb..9d872f5 100644
---- a/drivers/leds/leds-ns2.c
-+++ b/drivers/leds/leds-ns2.c
-@@ -224,7 +224,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->cdev.blink_set = NULL;
- 	led_dat->cdev.brightness_set = ns2_led_set;
--	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-+	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
- 	led_dat->cdev.groups = ns2_led_groups;
- 	led_dat->cmd = template->cmd;
- 	led_dat->slow = template->slow;
+diff --git a/drivers/leds/leds-versatile.c b/drivers/leds/leds-versatile.c
+index 8055302..4061257 100644
+--- a/drivers/leds/leds-versatile.c
++++ b/drivers/leds/leds-versatile.c
+@@ -84,6 +84,7 @@ static int versatile_leds_probe(struct platform_device *dev)
+ 		led->cdev.name = versatile_leds[i].name;
+ 		led->cdev.brightness_set = versatile_led_set;
+ 		led->cdev.brightness_get = versatile_led_get;
++		led->cdev.flags |= LED_BRIGHTNESS_FAST;
+ 		led->cdev.default_trigger = versatile_leds[i].trigger;
+ 		led->mask = BIT(i);
+
 -- 
 1.7.9.5
