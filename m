@@ -1,58 +1,287 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 07/20] leds: mark cobalt-raq driver with LED_BRIGHTNESS_FAST
- flag
-Date: Wed, 20 May 2015 18:25:37 +0300
-Message-ID: <555CA771.8090503@list.ru>
+Subject: [PATCH 01/20] leds: implement LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:19:22 +0300
+Message-ID: <555CA5FA.2080308@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp41.i.mail.ru ([94.100.177.101]:52220 "EHLO smtp41.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752835AbbETPZq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 20 May 2015 11:25:46 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <555CA58A.10700@list.ru>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
 
-This driver doesn't use sleeping operations in .brightness_set
-method, and can be marked with LED_BRIGHTNESS_FAST flag.
-That flag allows changing brightness at high rates (over 100Hz).
+Add LED_BRIGHTNESS_FAST flag. This flag is used to mark the led drivers
+that do not use waiting operations when setting led brightness and do not
+use work-queue in .brightness_set op.
+When this flag is not set, disallow the blink periods smaller than 10mS
+(LED_SLOW_MIN_PERIOD define).
 
 CC: Bryan Wu <cooloney@gmail.com>
 CC: Richard Purdie <rpurdie@rpsys.net>
 CC: Jacek Anaszewski <j.anaszewski@samsung.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>
 CC: linux-leds@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-cobalt-raq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/led-core.c                |   30 +++++++++++++++++++-----------
+ drivers/leds/led-triggers.c            |    8 +++++---
+ drivers/leds/trigger/ledtrig-oneshot.c |    5 ++++-
+ drivers/leds/trigger/ledtrig-timer.c   |   18 +++++++++++++-----
+ include/linux/leds.h                   |   12 ++++++++++--
+ 5 files changed, 51 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-raq.c
-index 06dbe18..d0579ef 100644
---- a/drivers/leds/leds-cobalt-raq.c
-+++ b/drivers/leds/leds-cobalt-raq.c
-@@ -52,6 +52,7 @@ static void raq_web_led_set(struct led_classdev *led_cdev,
- static struct led_classdev raq_web_led = {
- 	.name		= "raq::web",
- 	.brightness_set	= raq_web_led_set,
-+	.flags		= LED_BRIGHTNESS_FAST,
- };
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 9886dac..89241aa 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -25,12 +25,19 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+ LIST_HEAD(leds_list);
+ EXPORT_SYMBOL_GPL(leds_list);
 
- static void raq_power_off_led_set(struct led_classdev *led_cdev,
-@@ -74,6 +75,7 @@ static struct led_classdev raq_power_off_led = {
- 	.name			= "raq::power-off",
- 	.brightness_set		= raq_power_off_led_set,
- 	.default_trigger	= "power-off",
-+	.flags			= LED_BRIGHTNESS_FAST,
- };
+-static void led_set_software_blink(struct led_classdev *led_cdev,
++static int led_set_software_blink(struct led_classdev *led_cdev,
+ 				   unsigned long delay_on,
+ 				   unsigned long delay_off)
+ {
+ 	int current_brightness;
 
- static int cobalt_raq_led_probe(struct platform_device *pdev)
++	if (!(led_cdev->flags & LED_BRIGHTNESS_FAST)) {
++		if (delay_on < LED_SLOW_MIN_PERIOD)
++			return -ERANGE;
++		if (delay_off < LED_SLOW_MIN_PERIOD)
++			return -ERANGE;
++	}
++
+ 	current_brightness = led_get_brightness(led_cdev);
+ 	if (current_brightness)
+ 		led_cdev->blink_brightness = current_brightness;
+@@ -43,36 +50,37 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+ 	/* never on - just set to off */
+ 	if (!delay_on) {
+ 		led_set_brightness_async(led_cdev, LED_OFF);
+-		return;
++		return 0;
+ 	}
+
+ 	/* never off - just set to brightness */
+ 	if (!delay_off) {
+ 		led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
+-		return;
++		return 0;
+ 	}
+
+ 	mod_timer(&led_cdev->blink_timer, jiffies + 1);
++	return 0;
+ }
+
+
+-static void led_blink_setup(struct led_classdev *led_cdev,
++static int led_blink_setup(struct led_classdev *led_cdev,
+ 		     unsigned long *delay_on,
+ 		     unsigned long *delay_off)
+ {
+ 	if (!(led_cdev->flags & LED_BLINK_ONESHOT) &&
+ 	    led_cdev->blink_set &&
+ 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+-		return;
++		return 0;
+
+ 	/* blink with 1 Hz as default if nothing specified */
+ 	if (!*delay_on && !*delay_off)
+ 		*delay_on = *delay_off = 500;
+
+-	led_set_software_blink(led_cdev, *delay_on, *delay_off);
++	return led_set_software_blink(led_cdev, *delay_on, *delay_off);
+ }
+
+-void led_blink_set(struct led_classdev *led_cdev,
++int led_blink_set(struct led_classdev *led_cdev,
+ 		   unsigned long *delay_on,
+ 		   unsigned long *delay_off)
+ {
+@@ -81,18 +89,18 @@ void led_blink_set(struct led_classdev *led_cdev,
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+
+-	led_blink_setup(led_cdev, delay_on, delay_off);
++	return led_blink_setup(led_cdev, delay_on, delay_off);
+ }
+ EXPORT_SYMBOL(led_blink_set);
+
+-void led_blink_set_oneshot(struct led_classdev *led_cdev,
++int led_blink_set_oneshot(struct led_classdev *led_cdev,
+ 			   unsigned long *delay_on,
+ 			   unsigned long *delay_off,
+ 			   int invert)
+ {
+ 	if ((led_cdev->flags & LED_BLINK_ONESHOT) &&
+ 	     timer_pending(&led_cdev->blink_timer))
+-		return;
++		return -EBUSY;
+
+ 	led_cdev->flags |= LED_BLINK_ONESHOT;
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+@@ -102,7 +110,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
+ 	else
+ 		led_cdev->flags &= ~LED_BLINK_INVERT;
+
+-	led_blink_setup(led_cdev, delay_on, delay_off);
++	return led_blink_setup(led_cdev, delay_on, delay_off);
+ }
+ EXPORT_SYMBOL(led_blink_set_oneshot);
+
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index e8b1120..63305b1 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -272,6 +272,7 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+ 			     int oneshot,
+ 			     int invert)
+ {
++	int ret = 0;
+ 	struct led_classdev *led_cdev;
+
+ 	if (!trig)
+@@ -280,12 +281,13 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+ 	read_lock(&trig->leddev_list_lock);
+ 	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
+ 		if (oneshot)
+-			led_blink_set_oneshot(led_cdev, delay_on, delay_off,
+-					      invert);
++			ret = led_blink_set_oneshot(led_cdev, delay_on,
++						   delay_off, invert);
+ 		else
+-			led_blink_set(led_cdev, delay_on, delay_off);
++			ret = led_blink_set(led_cdev, delay_on, delay_off);
+ 	}
+ 	read_unlock(&trig->leddev_list_lock);
++	WARN_ON(ret);
+ }
+
+ void led_trigger_blink(struct led_trigger *trig,
+diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+index fbd02cd..ba91838 100644
+--- a/drivers/leds/trigger/ledtrig-oneshot.c
++++ b/drivers/leds/trigger/ledtrig-oneshot.c
+@@ -29,12 +29,15 @@ struct oneshot_trig_data {
+ static ssize_t led_shot(struct device *dev,
+ 		struct device_attribute *attr, const char *buf, size_t size)
+ {
++	ssize_t ret;
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	struct oneshot_trig_data *oneshot_data = led_cdev->trigger_data;
+
+-	led_blink_set_oneshot(led_cdev,
++	ret = led_blink_set_oneshot(led_cdev,
+ 			&led_cdev->blink_delay_on, &led_cdev->blink_delay_off,
+ 			oneshot_data->invert);
++	if (ret)
++		return ret;
+
+ 	/* content is ignored */
+ 	return size;
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+index 8d09327..edc0c7f 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -31,13 +31,15 @@ static ssize_t led_delay_on_store(struct device *dev,
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	unsigned long state;
+-	ssize_t ret = -EINVAL;
++	ssize_t ret;
+
+ 	ret = kstrtoul(buf, 10, &state);
+ 	if (ret)
+ 		return ret;
+
+-	led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
++	ret = led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
++	if (ret)
++		return ret;
+ 	led_cdev->blink_delay_on = state;
+
+ 	return size;
+@@ -56,13 +58,15 @@ static ssize_t led_delay_off_store(struct device *dev,
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	unsigned long state;
+-	ssize_t ret = -EINVAL;
++	ssize_t ret;
+
+ 	ret = kstrtoul(buf, 10, &state);
+ 	if (ret)
+ 		return ret;
+
+-	led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
++	ret = led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
++	if (ret)
++		return ret;
+ 	led_cdev->blink_delay_off = state;
+
+ 	return size;
+@@ -84,12 +88,16 @@ static void timer_trig_activate(struct led_classdev *led_cdev)
+ 	if (rc)
+ 		goto err_out_delayon;
+
+-	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
++	rc = led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+ 		      &led_cdev->blink_delay_off);
++	if (rc)
++		goto err_out_delayoff;
+ 	led_cdev->activated = true;
+
+ 	return;
+
++err_out_delayoff:
++	device_remove_file(led_cdev->dev, &dev_attr_delay_off);
+ err_out_delayon:
+ 	device_remove_file(led_cdev->dev, &dev_attr_delay_on);
+ }
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index b122eea..d3c6c2e 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -48,6 +48,10 @@ struct led_classdev {
+ #define SET_BRIGHTNESS_ASYNC	(1 << 21)
+ #define SET_BRIGHTNESS_SYNC	(1 << 22)
+ #define LED_DEV_CAP_FLASH	(1 << 23)
++#define LED_BRIGHTNESS_FAST	(1 << 24)
++
++/* safe period value for slow leds is 10mS */
++#define LED_SLOW_MIN_PERIOD 10
+
+ 	/* Set LED brightness level */
+ 	/* Must not sleep, use a workqueue if needed */
+@@ -127,8 +131,10 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
+  * Note that if software blinking is active, simply calling
+  * led_cdev->brightness_set() will not stop the blinking,
+  * use led_classdev_brightness_set() instead.
++ *
++ * Returns: 0 on success or negative error value on failure
+  */
+-extern void led_blink_set(struct led_classdev *led_cdev,
++extern int led_blink_set(struct led_classdev *led_cdev,
+ 			  unsigned long *delay_on,
+ 			  unsigned long *delay_off);
+ /**
+@@ -144,8 +150,10 @@ extern void led_blink_set(struct led_classdev *led_cdev,
+  *
+  * If invert is set, led blinks for delay_off first, then for
+  * delay_on and leave the led on after the on-off cycle.
++ *
++ * Returns: 0 on success or negative error value on failure
+  */
+-extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
++extern int led_blink_set_oneshot(struct led_classdev *led_cdev,
+ 				  unsigned long *delay_on,
+ 				  unsigned long *delay_off,
+ 				  int invert);
 -- 
 1.7.9.5
