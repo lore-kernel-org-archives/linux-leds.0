@@ -1,8 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 19/20] leds: mark versatile driver with LED_BRIGHTNESS_FAST
- flag
-Date: Wed, 20 May 2015 18:36:54 +0300
-Message-ID: <555CAA16.70606@list.ru>
+Subject: [PATCH 20/20] leds: mark wrap driver with LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:37:50 +0300
+Message-ID: <555CAA4E.4000702@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -27,20 +26,35 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-versatile.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-wrap.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-versatile.c b/drivers/leds/leds-versatile.c
-index 8055302..4061257 100644
---- a/drivers/leds/leds-versatile.c
-+++ b/drivers/leds/leds-versatile.c
-@@ -84,6 +84,7 @@ static int versatile_leds_probe(struct platform_device *dev)
- 		led->cdev.name = versatile_leds[i].name;
- 		led->cdev.brightness_set = versatile_led_set;
- 		led->cdev.brightness_get = versatile_led_get;
-+		led->cdev.flags |= LED_BRIGHTNESS_FAST;
- 		led->cdev.default_trigger = versatile_leds[i].trigger;
- 		led->mask = BIT(i);
+diff --git a/drivers/leds/leds-wrap.c b/drivers/leds/leds-wrap.c
+index 1ba3def..dfc9e73 100644
+--- a/drivers/leds/leds-wrap.c
++++ b/drivers/leds/leds-wrap.c
+@@ -57,19 +57,19 @@ static struct led_classdev wrap_power_led = {
+ 	.name			= "wrap::power",
+ 	.brightness_set		= wrap_power_led_set,
+ 	.default_trigger	= "default-on",
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
 
+ static struct led_classdev wrap_error_led = {
+ 	.name		= "wrap::error",
+ 	.brightness_set	= wrap_error_led_set,
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
+
+ static struct led_classdev wrap_extra_led = {
+ 	.name           = "wrap::extra",
+ 	.brightness_set = wrap_extra_led_set,
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
+
+ static int wrap_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
