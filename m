@@ -1,17 +1,17 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 06/20] leds: mark cobalt-qube driver with LED_BRIGHTNESS_FAST
+Subject: [PATCH 07/20] leds: mark cobalt-raq driver with LED_BRIGHTNESS_FAST
  flag
-Date: Wed, 20 May 2015 18:24:44 +0300
-Message-ID: <555CA73C.3060100@list.ru>
+Date: Wed, 20 May 2015 18:25:37 +0300
+Message-ID: <555CA771.8090503@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp44.i.mail.ru ([94.100.177.104]:50564 "EHLO smtp44.i.mail.ru"
+Received: from smtp41.i.mail.ru ([94.100.177.101]:52220 "EHLO smtp41.i.mail.ru"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753434AbbETPYv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 20 May 2015 11:24:51 -0400
+	id S1752835AbbETPZq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 11:25:46 -0400
 In-Reply-To: <555CA58A.10700@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -31,20 +31,28 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-cobalt-qube.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-cobalt-raq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/leds/leds-cobalt-qube.c b/drivers/leds/leds-cobalt-qube.c
-index d975220..f16da2a 100644
---- a/drivers/leds/leds-cobalt-qube.c
-+++ b/drivers/leds/leds-cobalt-qube.c
-@@ -31,6 +31,7 @@ static struct led_classdev qube_front_led = {
- 	.brightness		= LED_FULL,
- 	.brightness_set		= qube_front_led_set,
- 	.default_trigger	= "default-on",
+diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-raq.c
+index 06dbe18..d0579ef 100644
+--- a/drivers/leds/leds-cobalt-raq.c
++++ b/drivers/leds/leds-cobalt-raq.c
+@@ -52,6 +52,7 @@ static void raq_web_led_set(struct led_classdev *led_cdev,
+ static struct led_classdev raq_web_led = {
+ 	.name		= "raq::web",
+ 	.brightness_set	= raq_web_led_set,
++	.flags		= LED_BRIGHTNESS_FAST,
+ };
+
+ static void raq_power_off_led_set(struct led_classdev *led_cdev,
+@@ -74,6 +75,7 @@ static struct led_classdev raq_power_off_led = {
+ 	.name			= "raq::power-off",
+ 	.brightness_set		= raq_power_off_led_set,
+ 	.default_trigger	= "power-off",
 +	.flags			= LED_BRIGHTNESS_FAST,
  };
 
- static int cobalt_qube_led_probe(struct platform_device *pdev)
+ static int cobalt_raq_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
