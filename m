@@ -1,60 +1,51 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 0/20] leds: put hard limit on minimum blink period for slow
- leds
-Date: Wed, 20 May 2015 18:17:30 +0300
-Message-ID: <555CA58A.10700@list.ru>
+Subject: [PATCH 02/20] leds: mark dell-led driver with LED_BRIGHTNESS_FAST
+ flag
+Date: Wed, 20 May 2015 18:20:44 +0300
+Message-ID: <555CA64C.50507@list.ru>
+References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp12.mail.ru ([94.100.181.93]:43788 "EHLO smtp12.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752922AbbETPUs (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 11:20:48 -0400
+In-Reply-To: <555CA58A.10700@list.ru>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
 
-Currently the timer trigger allows to set blink period as small as
-1mS. But in fact the minimum period is jiffy, which is usually 10mS.
-The following mail says:
-http://lkml.iu.edu/hypermail/linux/kernel/1504.3/03469.html
-<<
-As I mentioned before even with hr timer it wouldn't be possible
-to assure that 1ms is achievable due to locking and bus latency
-reasons.
->>
-So the limit of 10mS should be enforced for drivers that use
-waiting operations, like transfers across slow bus.
-This allows to stay on safe side when CONFIG_HZ is set to eg 1000.
+This driver doesn't use sleeping operations in .brightness_set
+method, and can be marked with LED_BRIGHTNESS_FAST flag.
+That flag allows changing brightness at high rates (over 100Hz).
 
-This patch set differentiates the "fast" drivers by marking them
-with the new LED_BRIGHTNESS_FAST flag. For these drivers, setting
-periods as small as 1mS is possible (provided CONFIG_HZ is set
-appropriately), while for "slow" drivers the limit of 10mS in enforced.
-In the future, the "fast" drivers may get used by a software PWM.
+CC: Bryan Wu <cooloney@gmail.com>
+CC: Richard Purdie <rpurdie@rpsys.net>
+CC: Jacek Anaszewski <j.anaszewski@samsung.com>
+CC: linux-leds@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 
+Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
+---
+ drivers/leds/dell-led.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/leds/dell-led.c                |    2 +-
- drivers/leds/led-core.c                |   30 +++++++++++++++++++-----------
- drivers/leds/led-triggers.c            |    8 +++++---
- drivers/leds/leds-asic3.c              |    2 +-
- drivers/leds/leds-bcm6328.c            |    1 +
- drivers/leds/leds-clevo-mail.c         |    2 +-
- drivers/leds/leds-cobalt-qube.c        |    1 +
- drivers/leds/leds-cobalt-raq.c         |    2 ++
- drivers/leds/leds-fsg.c                |   12 ++++++------
- drivers/leds/leds-gpio.c               |    2 ++
- drivers/leds/leds-hp6xx.c              |    4 ++--
- drivers/leds/leds-locomo.c             |    2 ++
- drivers/leds/leds-net48xx.c            |    2 +-
- drivers/leds/leds-netxbig.c            |    2 +-
- drivers/leds/leds-ns2.c                |    2 +-
- drivers/leds/leds-ot200.c              |    1 +
- drivers/leds/leds-pwm.c                |    2 ++
- drivers/leds/leds-s3c24xx.c            |    2 +-
- drivers/leds/leds-ss4200.c             |    1 +
- drivers/leds/leds-versatile.c          |    1 +
- drivers/leds/leds-wrap.c               |    6 +++---
- drivers/leds/trigger/ledtrig-oneshot.c |    5 ++++-
- drivers/leds/trigger/ledtrig-timer.c   |   18 +++++++++++++-----
- include/linux/leds.h                   |   12 ++++++++++--
- 24 files changed, 82 insertions(+), 40 deletions(-)
+diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+index c36acaf..159231b 100644
+--- a/drivers/leds/dell-led.c
++++ b/drivers/leds/dell-led.c
+@@ -320,7 +320,7 @@ static struct led_classdev dell_led = {
+ 	.max_brightness = 1,
+ 	.brightness_set = dell_led_set,
+ 	.blink_set	= dell_led_blink,
+-	.flags		= LED_CORE_SUSPENDRESUME,
++	.flags		= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
+
+ static int __init dell_led_init(void)
+-- 
+1.7.9.5
