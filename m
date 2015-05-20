@@ -1,35 +1,70 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH v3 06/17] video: lcd: add LoCoMo LCD driver
-Date: Wed, 20 May 2015 21:26:45 +0900
-Message-ID: <000001d092f8$42fc9aa0$c8f5cfe0$@com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
+ v4l2_flash_init()
+Date: Wed, 20 May 2015 15:27:14 +0300
+Message-ID: <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
+References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
+ <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
+ <555C582E.8000807@samsung.com>
+ <555C63CF.2020304@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:32978 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751928AbbETM0x (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 May 2015 08:26:53 -0400
-Content-Language: ko
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:34139 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753893AbbETM1X (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 08:27:23 -0400
+Content-Disposition: inline
+In-Reply-To: <555C63CF.2020304@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: 'Dmitry Eremin-Solenikov' <dbaryshkov@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Daniel Mack' <zonque@gmail.com>, 'Robert Jarzmik' <robert.jarzmik@free.fr>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <acourbot@nvidia.com>, 'Wolfram Sang' <wsa@the-dreams.de>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Mark Brown' <broonie@linaro.org>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Liam Girdwood' <liam.r.girdwood@linux.intel.com>, 'Andrea Adami' <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpiol@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
 
-> LoCoMo has some special handling for TFT screens attached to Collie and
-> Poodle. Implement that as a separate driver.
->
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Hi Jacek,
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+On Wed, May 20, 2015 at 12:37:03PM +0200, Jacek Anaszewski wrote:
+> On 05/20/2015 11:47 AM, Jacek Anaszewski wrote:
+> >Hi Sakari,
+> >
+> >On 05/20/2015 01:04 AM, Sakari Ailus wrote:
+> >>Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
+> >>---
+> >>  drivers/leds/leds-aat1290.c |    5 ++---
+> >>  1 file changed, 2 insertions(+), 3 deletions(-)
+> >>
+> >>diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+> >>index c656a2d..71bf6bb 100644
+> >>--- a/drivers/leds/leds-aat1290.c
+> >>+++ b/drivers/leds/leds-aat1290.c
+> >>@@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
+> >>platform_device *pdev)
+> >>      led_cdev->dev->of_node = sub_node;
+> >>
+> >>      /* Create V4L2 Flash subdev. */
+> >>-    led->v4l2_flash = v4l2_flash_init(fled_cdev,
+> >>-                      &v4l2_flash_ops,
+> >>-                      &v4l2_sd_cfg);
+> >>+    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
+> >>+                      &v4l2_flash_ops, &v4l2_sd_cfg);
+> >
+> >Here the first argument should be led_cdev->dev, not dev, which is
+> >&pdev->dev, whereas led_cdev->dev is returned by
+> >device_create_with_groups (it takes dev as a parent) called from
+> >led_classdev_register.
+> 
+> The reason for this is the fact that pdev->dev has its of_node
+> field initialized, which makes v4l2_async trying to match
+> subdev by parent node of a LED device, not by sub-LED related
+> DT node.
 
-Best regards,
-Jingoo Han
+If v4l2_subdev->of_node is set, then it won't be replaced with one from
+struct device. I.e. you need to provide of_node pointer only if it's
+different from dev->of_node.
 
-> ---
->  drivers/video/backlight/Kconfig      |  10 ++
->  drivers/video/backlight/Makefile     |   1 +
->  drivers/video/backlight/locomo_lcd.c | 285 +++++++++++++++++++++++++++++++++++
->  3 files changed, 296 insertions(+)
->  create mode 100644 drivers/video/backlight/locomo_lcd.c
+-- 
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
