@@ -1,7 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 09/20] leds: mark gpio driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:27:34 +0300
-Message-ID: <555CA7E6.4080300@list.ru>
+Subject: [PATCH 10/20] leds: mark hp6xx driver with LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:28:29 +0300
+Message-ID: <555CA81D.2090609@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -15,8 +15,7 @@ List-Id: linux-leds@vger.kernel.org
 
 
 This driver doesn't use sleeping operations in .brightness_set
-method if can_sleep variable is not set. In that case it can be
-marked with LED_BRIGHTNESS_FAST flag.
+method, and can be marked with LED_BRIGHTNESS_FAST flag.
 That flag allows changing brightness at high rates (over 100Hz).
 
 CC: Bryan Wu <cooloney@gmail.com>
@@ -27,21 +26,29 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-gpio.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-hp6xx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 3af4f2b..0e1346c 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -138,6 +138,8 @@ static int create_gpio_led(const struct gpio_led *template,
- 	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
- 	if (!template->retain_state_suspended)
- 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-+	if (!led_dat->can_sleep)
-+		led_dat->cdev.flags |= LED_BRIGHTNESS_FAST;
+diff --git a/drivers/leds/leds-hp6xx.c b/drivers/leds/leds-hp6xx.c
+index 0b84c01..8f369fb 100644
+--- a/drivers/leds/leds-hp6xx.c
++++ b/drivers/leds/leds-hp6xx.c
+@@ -45,14 +45,14 @@ static struct led_classdev hp6xx_red_led = {
+ 	.name			= "hp6xx:red",
+ 	.default_trigger	= "hp6xx-charge",
+ 	.brightness_set		= hp6xxled_red_set,
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
 
- 	ret = gpiod_direction_output(led_dat->gpiod, state);
- 	if (ret < 0)
+ static struct led_classdev hp6xx_green_led = {
+ 	.name			= "hp6xx:green",
+ 	.default_trigger	= "ide-disk",
+ 	.brightness_set		= hp6xxled_green_set,
+-	.flags			= LED_CORE_SUSPENDRESUME,
++	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+ };
+
+ static int hp6xxled_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
