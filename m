@@ -1,21 +1,26 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 15/20] leds: mark ot200 driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:33:26 +0300
-Message-ID: <555CA946.5010209@list.ru>
+Subject: [PATCH 16/20] leds: mark pwm driver with LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:34:17 +0300
+Message-ID: <555CA979.8080700@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp34.i.mail.ru ([94.100.177.94]:47669 "EHLO smtp34.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752821AbbETPeV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 20 May 2015 11:34:21 -0400
 In-Reply-To: <555CA58A.10700@list.ru>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-List-Id: linux-leds@vger.kernel.org
 
 
 This driver doesn't use sleeping operations in .brightness_set
-method, and can be marked with LED_BRIGHTNESS_FAST flag.
+method if can_sleep variable is not set. In that case it can be
+marked with LED_BRIGHTNESS_FAST flag.
 That flag allows changing brightness at high rates (over 100Hz).
 
 CC: Bryan Wu <cooloney@gmail.com>
@@ -26,20 +31,21 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-ot200.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-pwm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
-index 39870de..d357c14 100644
---- a/drivers/leds/leds-ot200.c
-+++ b/drivers/leds/leds-ot200.c
-@@ -123,6 +123,7 @@ static int ot200_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 1d07e3e..82d01e5 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -124,6 +124,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+ 	if (led_data->can_sleep)
+ 		INIT_WORK(&led_data->work, led_pwm_work);
++	else
++		led_data->cdev.flags |= LED_BRIGHTNESS_FAST;
 
- 		leds[i].cdev.name = leds[i].name;
- 		leds[i].cdev.brightness_set = ot200_led_brightness_set;
-+		leds[i].cdev.flags |= LED_BRIGHTNESS_FAST;
-
- 		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
- 		if (ret < 0)
+ 	led_data->period = pwm_get_period(led_data->pwm);
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
 -- 
 1.7.9.5
