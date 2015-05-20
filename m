@@ -1,7 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 11/20] leds: mark locomo driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:29:16 +0300
-Message-ID: <555CA84C.7040702@list.ru>
+Subject: [PATCH 15/20] leds: mark ot200 driver with LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:33:26 +0300
+Message-ID: <555CA946.5010209@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,27 +26,20 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-locomo.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-ot200.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
-index 80ba048..0eb69c3 100644
---- a/drivers/leds/leds-locomo.c
-+++ b/drivers/leds/leds-locomo.c
-@@ -47,12 +47,14 @@ static struct led_classdev locomo_led0 = {
- 	.name			= "locomo:amber:charge",
- 	.default_trigger	= "main-battery-charging",
- 	.brightness_set		= locomoled_brightness_set0,
-+	.flags			= LED_BRIGHTNESS_FAST,
- };
+diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
+index 39870de..d357c14 100644
+--- a/drivers/leds/leds-ot200.c
++++ b/drivers/leds/leds-ot200.c
+@@ -123,6 +123,7 @@ static int ot200_led_probe(struct platform_device *pdev)
 
- static struct led_classdev locomo_led1 = {
- 	.name			= "locomo:green:mail",
- 	.default_trigger	= "nand-disk",
- 	.brightness_set		= locomoled_brightness_set1,
-+	.flags			= LED_BRIGHTNESS_FAST,
- };
+ 		leds[i].cdev.name = leds[i].name;
+ 		leds[i].cdev.brightness_set = ot200_led_brightness_set;
++		leds[i].cdev.flags |= LED_BRIGHTNESS_FAST;
 
- static int locomoled_probe(struct locomo_dev *ldev)
+ 		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
+ 		if (ret < 0)
 -- 
 1.7.9.5
