@@ -1,38 +1,71 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v8 2/8] leds: max77693: add support for V4L2 Flash
- sub-device
-Date: Wed, 20 May 2015 23:02:45 +0300
-Message-ID: <20150520200245.GD8601@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Thu, 21 May 2015 01:00:18 +0300
+Message-ID: <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
 References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
- <1432131015-22397-3-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:39274 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753288AbbETUDW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Wed, 20 May 2015 16:03:22 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1432131015-22397-3-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, devicetree@vger.kernel.org, sre@kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-On Wed, May 20, 2015 at 04:10:09PM +0200, Jacek Anaszewski wrote:
-> Add support for V4L2 Flash sub-device to the max77693 LED Flash class
-> driver. The support allows for V4L2 Flash sub-device to take the control
-> of the LED Flash class device.
+Hi Jacek,
+
+On Wed, May 20, 2015 at 04:10:15PM +0200, Jacek Anaszewski wrote:
+> This patch adds examples for samsung,flash-led property to the
+> samsung-fimc.txt.
 > 
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../devicetree/bindings/media/samsung-fimc.txt     |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> index 922d6f8..57edffa 100644
+> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> @@ -126,6 +126,8 @@ Example:
+>  			clocks = <&camera 1>;
+>  			clock-names = "mclk";
+>  
+> +			samsung,flash-led = <&front_cam_flash>;
+> +
+>  			port {
+>  				s5k6aa_ep: endpoint {
+>  					remote-endpoint = <&fimc0_ep>;
+> @@ -147,6 +149,8 @@ Example:
+>  			clocks = <&camera 0>;
+>  			clock-names = "mclk";
+>  
+> +			samsung,flash-led = <&rear_cam_flash>;
+> +
+>  			port {
+>  				s5c73m3_1: endpoint {
+>  					data-lanes = <1 2 3 4>;
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Oops. I missed this property would have ended to the sensor's DT node. I
+don't think we should have properties here that are parsed by another
+driver --- let's discuss this tomorrow.
+
+There are two main options that I can think of --- either put the property
+under the bridge (ISP) driver's device node as a temporary solution that
+works on a few ISP drivers, or think how sensor modules should be modelled,
+in which case we'd have some idea how lens device would be taken into
+account.
+
+Cc Sebastian.
 
 -- 
+Kind regards,
+
 Sakari Ailus
 e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
