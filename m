@@ -1,7 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 18/20] leds: mark ss4200 driver with LED_BRIGHTNESS_FAST flag
-Date: Wed, 20 May 2015 18:35:53 +0300
-Message-ID: <555CA9D9.50703@list.ru>
+Subject: [PATCH 14/20] leds: mark ns2 driver with LED_BRIGHTNESS_FAST flag
+Date: Wed, 20 May 2015 18:32:36 +0300
+Message-ID: <555CA914.1060105@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,20 +26,21 @@ CC: linux-kernel@vger.kernel.org
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-ss4200.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-ns2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-index 046cb70..99e8348 100644
---- a/drivers/leds/leds-ss4200.c
-+++ b/drivers/leds/leds-ss4200.c
-@@ -487,6 +487,7 @@ static int register_nasgpio_led(int led_nr)
- 		led->brightness = LED_FULL;
- 	led->brightness_set = nasgpio_led_set_brightness;
- 	led->blink_set = nasgpio_led_set_blink;
-+	led->flags |= LED_BRIGHTNESS_FAST;
- 	led->groups = nasgpio_led_groups;
- 	ret = led_classdev_register(&nas_gpio_pci_dev->dev, led);
- 	if (ret)
+diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+index 1fd6adb..9d872f5 100644
+--- a/drivers/leds/leds-ns2.c
++++ b/drivers/leds/leds-ns2.c
+@@ -224,7 +224,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->cdev.blink_set = NULL;
+ 	led_dat->cdev.brightness_set = ns2_led_set;
+-	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
++	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
+ 	led_dat->cdev.groups = ns2_led_groups;
+ 	led_dat->cmd = template->cmd;
+ 	led_dat->slow = template->slow;
 -- 
 1.7.9.5
