@@ -1,323 +1,115 @@
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
-	<noltari@gmail.com>
-Subject: [PATCH v2 2/2] leds: add BCM6358 LED driver
-Date: Thu, 21 May 2015 19:11:10 +0200
-Message-ID: <1432228270-21891-3-git-send-email-noltari@gmail.com>
-References: <1432055578-14089-1-git-send-email-noltari@gmail.com>
- <1432228270-21891-1-git-send-email-noltari@gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Fri, 22 May 2015 02:27:34 +0300
+Message-ID: <20150521232734.GL8601@valkosipuli.retiisi.org.uk>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+ <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+ <555DA119.9030904@samsung.com>
+ <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
+ <555DDD88.8080601@samsung.com>
+ <20150521142018.GK8601@valkosipuli.retiisi.org.uk>
+ <555E0ED3.5080101@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:38037 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753162AbbEURK7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 May 2015 13:10:59 -0400
-In-Reply-To: <1432228270-21891-1-git-send-email-noltari@gmail.com>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:53205 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754764AbbEUX2P (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>);
+	Thu, 21 May 2015 19:28:15 -0400
+Content-Disposition: inline
+In-Reply-To: <555E0ED3.5080101@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, cooloney@gmail.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, j.anaszewski@samsung.com
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
 
-This adds support for the LED controller on Broadcom's BCM6358.
+Hi Sylwester,
 
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
----
- v2: introduce changes suggested by Jacek
- - Use correct device_node when getting brcm,clk-div property.
- - Code style fixes suggested by "checkpatch --strict".
+On Thu, May 21, 2015 at 06:58:59PM +0200, Sylwester Nawrocki wrote:
+> Hi Sakari,
+> 
+> On 21/05/15 16:20, Sakari Ailus wrote:
+> > On Thu, May 21, 2015 at 03:28:40PM +0200, Sylwester Nawrocki wrote:
+> >> > On 21/05/15 13:32, Sakari Ailus wrote:
+> >>>>>> > >>>> @@ -147,6 +149,8 @@ Example:
+> >>>>>>>>> > >>>> > >>  			clocks = <&camera 0>;
+> >>>>>>>>> > >>>> > >>  			clock-names = "mclk";
+> >>>>>>>>> > >>>> > >>
+> >>>>>>>>> > >>>> > >>+			samsung,flash-led = <&rear_cam_flash>;
+> >>>>>>>>> > >>>> > >>+
+> >>>>>>>>> > >>>> > >>  			port {
+> >>>>>>>>> > >>>> > >>  				s5c73m3_1: endpoint {
+> >>>>>>>>> > >>>> > >>  					data-lanes = <1 2 3 4>;
+> >>>>>>> > >>> > >
+> >>>>>>> > >>> > >Oops. I missed this property would have ended to the sensor's DT node. I
+> >>>>>>> > >>> > >don't think we should have properties here that are parsed by another
+> >>>>>>> > >>> > >driver --- let's discuss this tomorrow.
+> >>>>> > >> > 
+> >>>>> > >> > exynos4-is driver already parses sensor nodes (at least their 'port'
+> >>>>> > >> > sub-nodes).
+> >>> > >
+> >>> > > If you read the code and the comment, it looks like something that should be
+> >>> > > done better but hasn't been done yet. :-) That's something we should avoid.
+> >>> > > Also, flash devices are by far more common than external ISPs I presume.
+> >> > 
+> >> > Yes, especially let's not require any samsung specific properties in
+> >> > other vendors' sensor bindings.
+> >> > 
+> >> > One way of modelling [flash led]/[image sensor] association I imagine
+> >> > would be to put, e.g. 'flash-leds' property in the SoC camera host
+> >> > interface/ISP DT node. This property would then contain pairs of phandles,
+> >> > first to the led node and the second to the sensor node, e.g.
+> >> > 
+> >> > i2c_controller {
+> >> > 	...
+> >> > 	flash_xx@NN {
+> >> > 		...
+> >> > 		led_a {
+> >> > 			...		
+> >> > 		}
+> >> > 	};
+> >> > 
+> >> > 	image_sensor_x@NN {
+> >> > 		...
+> >> > 	};
+> >> > };
+> >> > 
+> >> > flash-leds = <&flash_xx &image_sensor_x>, <...>;
+> >
+> > Maybe a stupid question, but how do you access this in a driver? I have to
+> > admit I'm no DT expert.
+> 
+> You could get of_node pointers with of_parse_phandle() call and then
+> lookup related flash and sensor devices based on that.
 
- drivers/leds/Kconfig        |   8 ++
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-bcm6358.c | 243 ++++++++++++++++++++++++++++++++++++=
-++++++++
- 3 files changed, 252 insertions(+)
- create mode 100644 drivers/leds/leds-bcm6358.c
+Ack. Looks good to me.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index ec26dd1..86de046 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -58,6 +58,14 @@ config LEDS_BCM6328
- 	  This option enables support for LEDs connected to the BCM6328
- 	  LED HW controller accessed via MMIO registers.
-=20
-+config LEDS_BCM6358
-+	tristate "LED Support for Broadcom BCM6358"
-+	depends on LEDS_CLASS
-+	depends on OF
-+	help
-+	  This option enables support for LEDs connected to the BCM6358
-+	  LED HW controller accessed via MMIO registers.
-+
- config LEDS_LM3530
- 	tristate "LCD Backlight driver for LM3530"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index edb3abf..8d6a24a 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
- obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
- obj-$(CONFIG_LEDS_AAT1290)		+=3D leds-aat1290.o
- obj-$(CONFIG_LEDS_BCM6328)		+=3D leds-bcm6328.o
-+obj-$(CONFIG_LEDS_BCM6358)		+=3D leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+=3D leds-bd2802.o
- obj-$(CONFIG_LEDS_LOCOMO)		+=3D leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+=3D leds-lm3530.o
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-new file mode 100644
-index 0000000..21f9693
---- /dev/null
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -0,0 +1,243 @@
-+/*
-+ * Driver for BCM6358 memory-mapped LEDs, based on leds-syscon.c
-+ *
-+ * Copyright 2015 =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modi=
-fy it
-+ * under  the terms of  the GNU General  Public License as published b=
-y the
-+ * Free Software Foundation;  either version 2 of the  License, or (at=
- your
-+ * option) any later version.
-+ */
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+
-+#define BCM6358_REG_MODE		0x0
-+#define BCM6358_REG_CTRL		0x4
-+
-+#define BCM6358_SLED_CLKDIV_MASK	3
-+#define BCM6358_SLED_CLKDIV_1		0
-+#define BCM6358_SLED_CLKDIV_2		1
-+#define BCM6358_SLED_CLKDIV_4		2
-+#define BCM6358_SLED_CLKDIV_8		3
-+
-+#define BCM6358_SLED_POLARITY		BIT(2)
-+#define BCM6358_SLED_BUSY		BIT(3)
-+
-+#define BCM6358_SLED_MAX_COUNT		32
-+#define BCM6358_SLED_WAIT		100
-+
-+/**
-+ * struct bcm6358_led - state container for bcm6358 based LEDs
-+ * @cdev: LED class device for this LED
-+ * @mem: memory resource
-+ * @lock: memory lock
-+ * @pin: LED pin number
-+ * @active_low: LED is active low
-+ */
-+struct bcm6358_led {
-+	struct led_classdev cdev;
-+	void __iomem *mem;
-+	spinlock_t *lock;
-+	unsigned long pin;
-+	bool active_low;
-+};
-+
-+static void bcm6358_led_write(void __iomem *reg, unsigned long data)
-+{
-+	iowrite32be(data, reg);
-+}
-+
-+static unsigned long bcm6358_led_read(void __iomem *reg)
-+{
-+	return ioread32be(reg);
-+}
-+
-+static unsigned long bcm6358_led_busy(void __iomem *mem)
-+{
-+	unsigned long val;
-+
-+	while ((val =3D bcm6358_led_read(mem + BCM6358_REG_CTRL)) &
-+		BCM6358_SLED_BUSY)
-+		udelay(BCM6358_SLED_WAIT);
-+
-+	return val;
-+}
-+
-+static void bcm6358_led_mode(struct bcm6358_led *led, unsigned long va=
-lue)
-+{
-+	unsigned long val;
-+
-+	bcm6358_led_busy(led->mem);
-+
-+	val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-+	if ((led->active_low && value =3D=3D LED_OFF) ||
-+	    (!led->active_low && value !=3D LED_OFF))
-+		val |=3D BIT(led->pin);
-+	else
-+		val &=3D ~(BIT(led->pin));
-+	bcm6358_led_write(led->mem + BCM6358_REG_MODE, val);
-+}
-+
-+static void bcm6358_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
-+{
-+	struct bcm6358_led *led =3D
-+		container_of(led_cdev, struct bcm6358_led, cdev);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(led->lock, flags);
-+	bcm6358_led_mode(led, value);
-+	spin_unlock_irqrestore(led->lock, flags);
-+}
-+
-+static int bcm6358_led(struct device *dev, struct device_node *nc, u32=
- reg,
-+		       void __iomem *mem, spinlock_t *lock)
-+{
-+	struct bcm6358_led *led;
-+	unsigned long flags;
-+	const char *state;
-+	int rc;
-+
-+	led =3D devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	led->pin =3D reg;
-+	led->mem =3D mem;
-+	led->lock =3D lock;
-+
-+	if (of_property_read_bool(nc, "active-low"))
-+		led->active_low =3D true;
-+
-+	led->cdev.name =3D of_get_property(nc, "label", NULL) ? : nc->name;
-+	led->cdev.default_trigger =3D of_get_property(nc,
-+						    "linux,default-trigger",
-+						    NULL);
-+
-+	spin_lock_irqsave(lock, flags);
-+	if (!of_property_read_string(nc, "default-state", &state)) {
-+		if (!strcmp(state, "on")) {
-+			led->cdev.brightness =3D LED_FULL;
-+		} else if (!strcmp(state, "keep")) {
-+			unsigned long val;
-+
-+			bcm6358_led_busy(led->mem);
-+
-+			val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-+			val &=3D BIT(led->pin);
-+			if ((led->active_low && !val) ||
-+			    (!led->active_low && val))
-+				led->cdev.brightness =3D LED_FULL;
-+			else
-+				led->cdev.brightness =3D LED_OFF;
-+		} else {
-+			led->cdev.brightness =3D LED_OFF;
-+		}
-+	} else {
-+		led->cdev.brightness =3D LED_OFF;
-+	}
-+	bcm6358_led_mode(led, led->cdev.brightness);
-+	spin_unlock_irqrestore(lock, flags);
-+
-+	led->cdev.brightness_set =3D bcm6358_led_set;
-+
-+	rc =3D led_classdev_register(dev, &led->cdev);
-+	if (rc < 0)
-+		return rc;
-+
-+	dev_dbg(dev, "registered LED %s\n", led->cdev.name);
-+
-+	return 0;
-+}
-+
-+static int bcm6358_leds_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct device_node *np =3D pdev->dev.of_node;
-+	struct device_node *child;
-+	struct resource *mem_r;
-+	void __iomem *mem;
-+	spinlock_t *lock; /* memory lock */
-+	unsigned long val;
-+	u32 clk_div;
-+
-+	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!mem_r)
-+		return -EINVAL;
-+
-+	mem =3D devm_ioremap_resource(dev, mem_r);
-+	if (IS_ERR(mem))
-+		return PTR_ERR(mem);
-+
-+	lock =3D devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
-+	if (!lock)
-+		return -ENOMEM;
-+
-+	spin_lock_init(lock);
-+
-+	val =3D bcm6358_led_busy(mem);
-+	val &=3D ~(BCM6358_SLED_POLARITY | BCM6358_SLED_CLKDIV_MASK);
-+	if (of_property_read_bool(np, "brcm,clk-dat-low"))
-+		val |=3D BCM6358_SLED_POLARITY;
-+	of_property_read_u32(np, "brcm,clk-div", &clk_div);
-+	switch (clk_div) {
-+	case 8:
-+		val |=3D BCM6358_SLED_CLKDIV_8;
-+		break;
-+	case 4:
-+		val |=3D BCM6358_SLED_CLKDIV_4;
-+		break;
-+	case 2:
-+		val |=3D BCM6358_SLED_CLKDIV_2;
-+		break;
-+	default:
-+		val |=3D BCM6358_SLED_CLKDIV_1;
-+		break;
-+	}
-+	bcm6358_led_write(mem + BCM6358_REG_CTRL, val);
-+
-+	for_each_available_child_of_node(np, child) {
-+		int rc;
-+		u32 reg;
-+
-+		if (of_property_read_u32(child, "reg", &reg))
-+			continue;
-+
-+		if (reg >=3D BCM6358_SLED_MAX_COUNT) {
-+			dev_err(dev, "invalid LED (%u >=3D %d)\n", reg,
-+				BCM6358_SLED_MAX_COUNT);
-+			continue;
-+		}
-+
-+		rc =3D bcm6358_led(dev, child, reg, mem, lock);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bcm6358_leds_of_match[] =3D {
-+	{ .compatible =3D "brcm,bcm6358-leds", },
-+	{ },
-+};
-+
-+static struct platform_driver bcm6358_leds_driver =3D {
-+	.probe =3D bcm6358_leds_probe,
-+	.driver =3D {
-+		.name =3D "leds-bcm6358",
-+		.of_match_table =3D bcm6358_leds_of_match,
-+	},
-+};
-+
-+module_platform_driver(bcm6358_leds_driver);
-+
-+MODULE_AUTHOR("=C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>");
-+MODULE_DESCRIPTION("LED driver for BCM6358 controllers");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:leds-bcm6358");
---=20
-1.9.1
+> >> > For the purpose of this patch set presumably just samsung specific
+> >> > property name could be used (i.e. samsung,flash-leds).
+> >
+> > I agree. I'll add similar support for the omap3isp driver in the near future
+> > though. Let's see how the camera modules will get modelled, if they will,
+> > and if this property still fits to the picture by that time, then we make it
+> > more generic.
+> > 
+> > What do you think?
+> 
+> I think we could do that, perhaps we could get some more opinions and
+> use generic name already in this series? I'm not sure what are exact
+> plans for this series, I guess it is targeted for 4.2?
+
+There have been very few opinions expressed besides yours, mine and Jacek's,
+unfortunately. I'm also not very certain on the future-proofness of this
+solution until we have better understanding of how modules would best be
+expressed in DT.
+
+v4.2 would be nice target for these, yes.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
