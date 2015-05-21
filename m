@@ -1,8 +1,7 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 07/20] leds: mark cobalt-raq driver with LED_BRIGHTNESS_FAST
- flag
-Date: Thu, 21 May 2015 18:15:45 +0300
-Message-ID: <555DF6A1.2070906@list.ru>
+Subject: [PATCH 15/20] leds: mark ot200 driver with LED_BRIGHTNESS_FAST flag
+Date: Thu, 21 May 2015 18:21:01 +0300
+Message-ID: <555DF7DD.9080907@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -11,7 +10,7 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <555CA58A.10700@list.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Yoichi Yuasa <yuasa@linux-mips.org>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Christian Gmeiner <christian.gmeiner@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 
@@ -24,32 +23,25 @@ CC: Richard Purdie <rpurdie@rpsys.net>
 CC: Jacek Anaszewski <j.anaszewski@samsung.com>
 CC: linux-leds@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
-CC: Yoichi Yuasa <yuasa@linux-mips.org>
+CC: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Christian Gmeiner <christian.gmeiner@gmail.com>
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-cobalt-raq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-ot200.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-raq.c
-index 06dbe18..d0579ef 100644
---- a/drivers/leds/leds-cobalt-raq.c
-+++ b/drivers/leds/leds-cobalt-raq.c
-@@ -52,6 +52,7 @@ static void raq_web_led_set(struct led_classdev *led_cdev,
- static struct led_classdev raq_web_led = {
- 	.name		= "raq::web",
- 	.brightness_set	= raq_web_led_set,
-+	.flags		= LED_BRIGHTNESS_FAST,
- };
+diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
+index 39870de..d357c14 100644
+--- a/drivers/leds/leds-ot200.c
++++ b/drivers/leds/leds-ot200.c
+@@ -123,6 +123,7 @@ static int ot200_led_probe(struct platform_device *pdev)
 
- static void raq_power_off_led_set(struct led_classdev *led_cdev,
-@@ -74,6 +75,7 @@ static struct led_classdev raq_power_off_led = {
- 	.name			= "raq::power-off",
- 	.brightness_set		= raq_power_off_led_set,
- 	.default_trigger	= "power-off",
-+	.flags			= LED_BRIGHTNESS_FAST,
- };
+ 		leds[i].cdev.name = leds[i].name;
+ 		leds[i].cdev.brightness_set = ot200_led_brightness_set;
++		leds[i].cdev.flags |= LED_BRIGHTNESS_FAST;
 
- static int cobalt_raq_led_probe(struct platform_device *pdev)
+ 		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
+ 		if (ret < 0)
 -- 
 1.7.9.5
