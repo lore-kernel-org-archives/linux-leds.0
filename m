@@ -1,22 +1,21 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 02/20] leds: mark dell-led driver with LED_BRIGHTNESS_FAST
- flag
-Date: Thu, 21 May 2015 18:11:48 +0300
-Message-ID: <555DF5B4.6050400@list.ru>
+Subject: [PATCH 03/20] leds: mark asic3 driver with LED_BRIGHTNESS_FAST flag
+Date: Thu, 21 May 2015 18:12:42 +0300
+Message-ID: <555DF5EA.5070704@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp36.i.mail.ru ([94.100.177.96]:47509 "EHLO smtp36.i.mail.ru"
+Received: from smtp3.mail.ru ([94.100.179.58]:56909 "EHLO smtp3.mail.ru"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752832AbbEUPME (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 21 May 2015 11:12:04 -0400
+	id S964829AbbEUPMx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 21 May 2015 11:12:53 -0400
 In-Reply-To: <555CA58A.10700@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Louis Davis <louis_davis@dell.com>, Jim Dailey <jim_dailey@dell.com>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Paul Parsons <lost.distance@yahoo.com>
 
 
 This driver doesn't use sleeping operations in .brightness_set
@@ -28,26 +27,25 @@ CC: Richard Purdie <rpurdie@rpsys.net>
 CC: Jacek Anaszewski <j.anaszewski@samsung.com>
 CC: linux-leds@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
-CC: Louis Davis <louis_davis@dell.com>
-CC: Jim Dailey <jim_dailey@dell.com>
+CC: Paul Parsons <lost.distance@yahoo.com>
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/dell-led.c |    2 +-
+ drivers/leds/leds-asic3.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-index c36acaf..159231b 100644
---- a/drivers/leds/dell-led.c
-+++ b/drivers/leds/dell-led.c
-@@ -320,7 +320,7 @@ static struct led_classdev dell_led = {
- 	.max_brightness = 1,
- 	.brightness_set = dell_led_set,
- 	.blink_set	= dell_led_blink,
--	.flags		= LED_CORE_SUSPENDRESUME,
-+	.flags		= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
- };
+diff --git a/drivers/leds/leds-asic3.c b/drivers/leds/leds-asic3.c
+index 1b71eac..427befa 100644
+--- a/drivers/leds/leds-asic3.c
++++ b/drivers/leds/leds-asic3.c
+@@ -108,7 +108,7 @@ static int asic3_led_probe(struct platform_device *pdev)
+ 	}
 
- static int __init dell_led_init(void)
+ 	led->cdev->name = led->name;
+-	led->cdev->flags = LED_CORE_SUSPENDRESUME;
++	led->cdev->flags = LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
+ 	led->cdev->brightness_set = brightness_set;
+ 	led->cdev->blink_set = blink_set;
+ 	led->cdev->default_trigger = led->default_trigger;
 -- 
 1.7.9.5
