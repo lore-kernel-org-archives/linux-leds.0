@@ -1,76 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
- samsung,flash-led property
-Date: Thu, 21 May 2015 15:28:40 +0200
-Message-ID: <555DDD88.8080601@samsung.com>
-References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
- <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
- <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
- <555DA119.9030904@samsung.com>
- <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 01/20] leds: implement LED_BRIGHTNESS_FAST flag
+Date: Thu, 21 May 2015 15:37:24 +0200
+Message-ID: <555DDF94.5040006@samsung.com>
+References: <555CA58A.10700@list.ru> <555CA5FA.2080308@list.ru>
+ <555DDC01.9050502@samsung.com> <555DDD4B.2090400@list.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:25066 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756010AbbEUN2u (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 May 2015 09:28:50 -0400
-In-reply-to: <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <555DDD4B.2090400@list.ru>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
 
-On 21/05/15 13:32, Sakari Ailus wrote:
->>>> @@ -147,6 +149,8 @@ Example:
->>>> > >>  			clocks = <&camera 0>;
->>>> > >>  			clock-names = "mclk";
->>>> > >>
->>>> > >>+			samsung,flash-led = <&rear_cam_flash>;
->>>> > >>+
->>>> > >>  			port {
->>>> > >>  				s5c73m3_1: endpoint {
->>>> > >>  					data-lanes = <1 2 3 4>;
->>> > >
->>> > >Oops. I missed this property would have ended to the sensor's DT node. I
->>> > >don't think we should have properties here that are parsed by another
->>> > >driver --- let's discuss this tomorrow.
->> > 
->> > exynos4-is driver already parses sensor nodes (at least their 'port'
->> > sub-nodes).
->
-> If you read the code and the comment, it looks like something that should be
-> done better but hasn't been done yet. :-) That's something we should avoid.
-> Also, flash devices are by far more common than external ISPs I presume.
+On 05/21/2015 03:27 PM, Stas Sergeev wrote:
+> 21.05.2015 16:22, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Hi Stas,
+>>
+>> My intention was to add a developer of each driver on
+>> cc in the commit message.
+> I did. You can see CC: Chris Boot <bootc@bootc.net> at patch 12.
+> Otherwise, this is all the get_maintainers.pl script gives me.
+> So unless you can suggest some other script, or get_maintainers.pl
+> is fixed, what do you expect me to do?
 
-Yes, especially let's not require any samsung specific properties in
-other vendors' sensor bindings.
+You don't have to rely on get_maintainers.pl script only, but
+you can obtain the authors' names from driver headers or
+MODULE_AUTHOR entries at the bottom.
 
-One way of modelling [flash led]/[image sensor] association I imagine
-would be to put, e.g. 'flash-leds' property in the SoC camera host
-interface/ISP DT node. This property would then contain pairs of phandles,
-first to the led node and the second to the sensor node, e.g.
+> Anyway. I can reduce the patchset to just the initial patch and
+> the leds-gpio one. In a hope others will change more drivers later.
+> At least that would be trivial to review and apply.
+> Deal?
 
-i2c_controller {
-	...
-	flash_xx@NN {
-		...
-		led_a {
-			...		
-		}
-	};
+Please don't reduce it. The greater number of people familiar with
+related drivers/devices will get this, the greater chance that we
+won't miss something crucial.
 
-	image_sensor_x@NN {
-		...
-	};
-};
-
-flash-leds = <&flash_xx &image_sensor_x>, <...>;
-
-For the purpose of this patch set presumably just samsung specific
-property name could be used (i.e. samsung,flash-leds).
-
---
-Thanks,
-Sylwester
+--=20
+Best Regards,
+Jacek Anaszewski
