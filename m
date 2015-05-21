@@ -1,84 +1,77 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
- v4l2_flash_init()
-Date: Thu, 21 May 2015 10:54:07 +0200
-Message-ID: <555D9D2F.9020500@samsung.com>
-References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
- <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
- <555C582E.8000807@samsung.com> <555C63CF.2020304@samsung.com>
- <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
- <555C906D.4030902@samsung.com>
- <20150520143143.GA8601@valkosipuli.retiisi.org.uk>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Thu, 21 May 2015 11:10:49 +0200
+Message-ID: <555DA119.9030904@samsung.com>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+ <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20150520143143.GA8601@valkosipuli.retiisi.org.uk>
+In-reply-to: <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
 Sender: linux-media-owner@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, devicetree@vger.kernel.org, sre@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 Hi Sakari,
 
-On 05/20/2015 04:31 PM, Sakari Ailus wrote:
+On 05/21/2015 12:00 AM, Sakari Ailus wrote:
 > Hi Jacek,
 >
-> On Wed, May 20, 2015 at 03:47:25PM +0200, Jacek Anaszewski wrote:
-> ...
->>>>>> --- a/drivers/leds/leds-aat1290.c
->>>>>> +++ b/drivers/leds/leds-aat1290.c
->>>>>> @@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
->>>>>> platform_device *pdev)
->>>>>>       led_cdev->dev->of_node = sub_node;
->>>>>>
->>>>>>       /* Create V4L2 Flash subdev. */
->>>>>> -    led->v4l2_flash = v4l2_flash_init(fled_cdev,
->>>>>> -                      &v4l2_flash_ops,
->>>>>> -                      &v4l2_sd_cfg);
->>>>>> +    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
->>>>>> +                      &v4l2_flash_ops, &v4l2_sd_cfg);
->>>>>
->>>>> Here the first argument should be led_cdev->dev, not dev, which is
->>>>> &pdev->dev, whereas led_cdev->dev is returned by
->>>>> device_create_with_groups (it takes dev as a parent) called from
->>>>> led_classdev_register.
->>>>
->>>> The reason for this is the fact that pdev->dev has its of_node
->>>> field initialized, which makes v4l2_async trying to match
->>>> subdev by parent node of a LED device, not by sub-LED related
->>>> DT node.
->>>
->>> If v4l2_subdev->of_node is set, then it won't be replaced with one from
->>> struct device. I.e. you need to provide of_node pointer only if it's
->>> different from dev->of_node.
->>>
+> On Wed, May 20, 2015 at 04:10:15PM +0200, Jacek Anaszewski wrote:
+>> This patch adds examples for samsung,flash-led property to the
+>> samsung-fimc.txt.
 >>
->> It will always be different since dev->of_node pointer is related
->> to the main DT node of LED device, whereas each LED connected to it
->> must be expressed in the form of sub-node, as
->> Documentation/devicetree/bindings/leds/common.txt DT states.
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>>   .../devicetree/bindings/media/samsung-fimc.txt     |    4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> index 922d6f8..57edffa 100644
+>> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> @@ -126,6 +126,8 @@ Example:
+>>   			clocks = <&camera 1>;
+>>   			clock-names = "mclk";
+>>
+>> +			samsung,flash-led = <&front_cam_flash>;
+>> +
+>>   			port {
+>>   				s5k6aa_ep: endpoint {
+>>   					remote-endpoint = <&fimc0_ep>;
+>> @@ -147,6 +149,8 @@ Example:
+>>   			clocks = <&camera 0>;
+>>   			clock-names = "mclk";
+>>
+>> +			samsung,flash-led = <&rear_cam_flash>;
+>> +
+>>   			port {
+>>   				s5c73m3_1: endpoint {
+>>   					data-lanes = <1 2 3 4>;
 >
-> You can still refer to the device's root device_node using a phandle.
+> Oops. I missed this property would have ended to the sensor's DT node. I
+> don't think we should have properties here that are parsed by another
+> driver --- let's discuss this tomorrow.
 
-Why should I need to refer to the device's root node?
+exynos4-is driver already parses sensor nodes (at least their 'port'
+sub-nodes).
 
-What I meant here was that DT documentation enforces that even if
-there is a single LED connected to the device it has to be expressed
-as a sub-node anyway. Each LED will have to be matched by the phandle
-to the sub-node representing it. This implies that v4l2_subdev->of_node
-(related to sub-LED DT node) will be always different from dev->of_node
-(related to LED controller DT node).
-
-> Say, if you have a LED flash controller with an indicator. It's intended to
-> be used together with the flash LED, and the existing as3645a driver exposes
-> it through the same sub-device. I think that'd make sense with LED class
-> driver as well (i.e. you'd have two LED class devices but a single
-> sub-device). Small changes to the wrapper would be needed.
+> There are two main options that I can think of --- either put the property
+> under the bridge (ISP) driver's device node as a temporary solution that
+> works on a few ISP drivers, or think how sensor modules should be modelled,
+> in which case we'd have some idea how lens device would be taken into
+> account.
+>
+> Cc Sebastian.
 >
 
-How the sub-device name should look like then? We would have to
-concatenate somehow both LED class device names?
 
 -- 
 Best Regards,
