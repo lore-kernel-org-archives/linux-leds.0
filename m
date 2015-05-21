@@ -1,17 +1,16 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 13/20] leds: mark netxbig driver with LED_BRIGHTNESS_FAST
- flag
-Date: Thu, 21 May 2015 18:19:25 +0300
-Message-ID: <555DF77D.6040807@list.ru>
+Subject: [PATCH 14/20] leds: mark ns2 driver with LED_BRIGHTNESS_FAST flag
+Date: Thu, 21 May 2015 18:20:15 +0300
+Message-ID: <555DF7AF.2020605@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp40.i.mail.ru ([94.100.177.100]:39814 "EHLO smtp40.i.mail.ru"
+Received: from smtp45.i.mail.ru ([94.100.177.105]:48613 "EHLO smtp45.i.mail.ru"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751569AbbEUPTb (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 21 May 2015 11:19:31 -0400
+	id S1753915AbbEUPUW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 21 May 2015 11:20:22 -0400
 In-Reply-To: <555CA58A.10700@list.ru>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -32,21 +31,21 @@ CC: Simon Guinot <sguinot@lacie.com>
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-netxbig.c |    2 +-
+ drivers/leds/leds-ns2.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 25e4197..e99b233 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -329,7 +329,7 @@ create_netxbig_led(struct platform_device *pdev,
- 	 */
- 	led_dat->sata = 0;
- 	led_dat->cdev.brightness = LED_OFF;
+diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+index 1fd6adb..9d872f5 100644
+--- a/drivers/leds/leds-ns2.c
++++ b/drivers/leds/leds-ns2.c
+@@ -224,7 +224,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->cdev.blink_set = NULL;
+ 	led_dat->cdev.brightness_set = ns2_led_set;
 -	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
 +	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
- 	led_dat->mode_addr = template->mode_addr;
- 	led_dat->mode_val = template->mode_val;
- 	led_dat->bright_addr = template->bright_addr;
+ 	led_dat->cdev.groups = ns2_led_groups;
+ 	led_dat->cmd = template->cmd;
+ 	led_dat->slow = template->slow;
 -- 
 1.7.9.5
