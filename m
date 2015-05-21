@@ -1,32 +1,99 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH 01/20] leds: implement LED_BRIGHTNESS_FAST flag
-Date: Thu, 21 May 2015 18:26:10 +0300
-Message-ID: <555DF912.4030207@list.ru>
-References: <555CA58A.10700@list.ru> <555CA5FA.2080308@list.ru> <555DDC01.9050502@samsung.com> <555DDD4B.2090400@list.ru> <555DDF94.5040006@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Thu, 21 May 2015 18:58:59 +0200
+Message-ID: <555E0ED3.5080101@samsung.com>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+ <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+ <555DA119.9030904@samsung.com>
+ <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
+ <555DDD88.8080601@samsung.com>
+ <20150521142018.GK8601@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <555DDF94.5040006@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35218 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964798AbbEUQ7I (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 May 2015 12:59:08 -0400
+In-reply-to: <20150521142018.GK8601@valkosipuli.retiisi.org.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
 
-21.05.2015 16:37, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 05/21/2015 03:27 PM, Stas Sergeev wrote:
->> 21.05.2015 16:22, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Hi Stas,
->>>
->>> My intention was to add a developer of each driver on
->>> cc in the commit message.
->> I did. You can see CC: Chris Boot <bootc@bootc.net> at patch 12.
->> Otherwise, this is all the get_maintainers.pl script gives me.
->> So unless you can suggest some other script, or get_maintainers.pl
->> is fixed, what do you expect me to do?
->=20
-> You don't have to rely on get_maintainers.pl script only, but
-> you can obtain the authors' names from driver headers or
-> MODULE_AUTHOR entries at the bottom.
+Hi Sakari,
 
-Re-sent with more CCs.
+On 21/05/15 16:20, Sakari Ailus wrote:
+> On Thu, May 21, 2015 at 03:28:40PM +0200, Sylwester Nawrocki wrote:
+>> > On 21/05/15 13:32, Sakari Ailus wrote:
+>>>>>> > >>>> @@ -147,6 +149,8 @@ Example:
+>>>>>>>>> > >>>> > >>  			clocks = <&camera 0>;
+>>>>>>>>> > >>>> > >>  			clock-names = "mclk";
+>>>>>>>>> > >>>> > >>
+>>>>>>>>> > >>>> > >>+			samsung,flash-led = <&rear_cam_flash>;
+>>>>>>>>> > >>>> > >>+
+>>>>>>>>> > >>>> > >>  			port {
+>>>>>>>>> > >>>> > >>  				s5c73m3_1: endpoint {
+>>>>>>>>> > >>>> > >>  					data-lanes = <1 2 3 4>;
+>>>>>>> > >>> > >
+>>>>>>> > >>> > >Oops. I missed this property would have ended to the sensor's DT node. I
+>>>>>>> > >>> > >don't think we should have properties here that are parsed by another
+>>>>>>> > >>> > >driver --- let's discuss this tomorrow.
+>>>>> > >> > 
+>>>>> > >> > exynos4-is driver already parses sensor nodes (at least their 'port'
+>>>>> > >> > sub-nodes).
+>>> > >
+>>> > > If you read the code and the comment, it looks like something that should be
+>>> > > done better but hasn't been done yet. :-) That's something we should avoid.
+>>> > > Also, flash devices are by far more common than external ISPs I presume.
+>> > 
+>> > Yes, especially let's not require any samsung specific properties in
+>> > other vendors' sensor bindings.
+>> > 
+>> > One way of modelling [flash led]/[image sensor] association I imagine
+>> > would be to put, e.g. 'flash-leds' property in the SoC camera host
+>> > interface/ISP DT node. This property would then contain pairs of phandles,
+>> > first to the led node and the second to the sensor node, e.g.
+>> > 
+>> > i2c_controller {
+>> > 	...
+>> > 	flash_xx@NN {
+>> > 		...
+>> > 		led_a {
+>> > 			...		
+>> > 		}
+>> > 	};
+>> > 
+>> > 	image_sensor_x@NN {
+>> > 		...
+>> > 	};
+>> > };
+>> > 
+>> > flash-leds = <&flash_xx &image_sensor_x>, <...>;
+>
+> Maybe a stupid question, but how do you access this in a driver? I have to
+> admit I'm no DT expert.
+
+You could get of_node pointers with of_parse_phandle() call and then
+lookup related flash and sensor devices based on that.
+
+>> > For the purpose of this patch set presumably just samsung specific
+>> > property name could be used (i.e. samsung,flash-leds).
+>
+> I agree. I'll add similar support for the omap3isp driver in the near future
+> though. Let's see how the camera modules will get modelled, if they will,
+> and if this property still fits to the picture by that time, then we make it
+> more generic.
+> 
+> What do you think?
+
+I think we could do that, perhaps we could get some more opinions and
+use generic name already in this series? I'm not sure what are exact
+plans for this series, I guess it is targeted for 4.2?
+
+-- 
+Regards,
+Sylwester
