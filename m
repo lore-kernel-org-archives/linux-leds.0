@@ -1,101 +1,108 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH 4/5] leds: aat1290: Pass dev and dev->of_node to
- v4l2_flash_init()
-Date: Thu, 21 May 2015 13:06:04 +0300
-Message-ID: <20150521100604.GG8601@valkosipuli.retiisi.org.uk>
-References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi>
- <1432076645-4799-5-git-send-email-sakari.ailus@iki.fi>
- <555C582E.8000807@samsung.com>
- <555C63CF.2020304@samsung.com>
- <20150520122714.GC8365@valkosipuli.retiisi.org.uk>
- <555C906D.4030902@samsung.com>
- <20150520143143.GA8601@valkosipuli.retiisi.org.uk>
- <555D9D2F.9020500@samsung.com>
+Subject: Re: [PATCH v8 5/8] exynos4-is: Add support for v4l2-flash subdevs
+Date: Thu, 21 May 2015 13:38:49 +0300
+Message-ID: <20150521103849.GH8601@valkosipuli.retiisi.org.uk>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-6-git-send-email-j.anaszewski@samsung.com>
+ <20150521074648.GF8601@valkosipuli.retiisi.org.uk>
+ <555DA7D7.1000308@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45555 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45853 "EHLO
 	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753001AbbEUKGJ (ORCPT
+	by vger.kernel.org with ESMTP id S1751569AbbEUKj1 (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>);
-	Thu, 21 May 2015 06:06:09 -0400
+	Thu, 21 May 2015 06:39:27 -0400
 Content-Disposition: inline
-In-Reply-To: <555D9D2F.9020500@samsung.com>
+In-Reply-To: <555DA7D7.1000308@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
 Hi Jacek,
 
-On Thu, May 21, 2015 at 10:54:07AM +0200, Jacek Anaszewski wrote:
-> Hi Sakari,
+On Thu, May 21, 2015 at 11:39:35AM +0200, Jacek Anaszewski wrote:
 > 
-> On 05/20/2015 04:31 PM, Sakari Ailus wrote:
+> 
+> On 05/21/2015 09:46 AM, Sakari Ailus wrote:
 > >Hi Jacek,
 > >
-> >On Wed, May 20, 2015 at 03:47:25PM +0200, Jacek Anaszewski wrote:
-> >...
-> >>>>>>--- a/drivers/leds/leds-aat1290.c
-> >>>>>>+++ b/drivers/leds/leds-aat1290.c
-> >>>>>>@@ -524,9 +524,8 @@ static int aat1290_led_probe(struct
-> >>>>>>platform_device *pdev)
-> >>>>>>      led_cdev->dev->of_node = sub_node;
-> >>>>>>
-> >>>>>>      /* Create V4L2 Flash subdev. */
-> >>>>>>-    led->v4l2_flash = v4l2_flash_init(fled_cdev,
-> >>>>>>-                      &v4l2_flash_ops,
-> >>>>>>-                      &v4l2_sd_cfg);
-> >>>>>>+    led->v4l2_flash = v4l2_flash_init(dev, NULL, fled_cdev,
-> >>>>>>+                      &v4l2_flash_ops, &v4l2_sd_cfg);
-> >>>>>
-> >>>>>Here the first argument should be led_cdev->dev, not dev, which is
-> >>>>>&pdev->dev, whereas led_cdev->dev is returned by
-> >>>>>device_create_with_groups (it takes dev as a parent) called from
-> >>>>>led_classdev_register.
-> >>>>
-> >>>>The reason for this is the fact that pdev->dev has its of_node
-> >>>>field initialized, which makes v4l2_async trying to match
-> >>>>subdev by parent node of a LED device, not by sub-LED related
-> >>>>DT node.
-> >>>
-> >>>If v4l2_subdev->of_node is set, then it won't be replaced with one from
-> >>>struct device. I.e. you need to provide of_node pointer only if it's
-> >>>different from dev->of_node.
-> >>>
+> >On Wed, May 20, 2015 at 04:10:12PM +0200, Jacek Anaszewski wrote:
+> >>This patch adds support for external v4l2-flash devices.
+> >>The support includes parsing "samsung,flash-led" DT property
+> >>and asynchronous subdevice registration.
 > >>
-> >>It will always be different since dev->of_node pointer is related
-> >>to the main DT node of LED device, whereas each LED connected to it
-> >>must be expressed in the form of sub-node, as
-> >>Documentation/devicetree/bindings/leds/common.txt DT states.
+> >>Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >>Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >>---
+> >>  drivers/media/platform/exynos4-is/media-dev.c |   39 +++++++++++++++++++++++--
+> >>  drivers/media/platform/exynos4-is/media-dev.h |   13 ++++++++-
+> >>  2 files changed, 49 insertions(+), 3 deletions(-)
+> >>
+> >>diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+> >>index f315ef9..80cecd8 100644
+> >>--- a/drivers/media/platform/exynos4-is/media-dev.c
+> >>+++ b/drivers/media/platform/exynos4-is/media-dev.c
+> >>@@ -451,6 +451,28 @@ rpm_put:
+> >>  	return ret;
+> >>  }
+> >>
+> >>+static void fimc_md_register_flash_entities(struct fimc_md *fmd)
+> >>+{
+> >>+	int i;
+> >>+
+> >>+	fmd->num_flashes = 0;
+> >>+
+> >>+	for (i = 0; i < fmd->num_sensors; i++) {
+> >>+		const struct device_node *np =
+> >>+					fmd->sensor[i].asd.match.of.node;
+> >>+		const int nf = fmd->num_flashes;
+> >>+
+> >>+		np = of_parse_phandle(np, "samsung,flash-led", 0);
+> >>+		if (!np)
+> >>+			continue;
+> >>+
+> >>+		fmd->flash[nf].asd.match_type = V4L2_ASYNC_MATCH_OF;
+> >>+		fmd->flash[nf].asd.match.of.node = np;
+> >>+		fmd->async_subdevs[fmd->num_sensors + nf] = &fmd->flash[nf].asd;
+> >>+		fmd->num_flashes++;
+> >>+	}
+> >>+}
+> >>+
+> >>  static int __of_get_csis_id(struct device_node *np)
+> >>  {
+> >>  	u32 reg = 0;
+> >>@@ -1275,6 +1297,15 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
+> >>  	struct fimc_sensor_info *si = NULL;
+> >>  	int i;
+> >>
+> >>+	/* Register flash subdev if detected any */
+> >>+	for (i = 0; i < ARRAY_SIZE(fmd->flash); i++) {
+> >>+		if (fmd->flash[i].asd.match.of.node == subdev->of_node) {
 > >
-> >You can still refer to the device's root device_node using a phandle.
+> >Does the index of a particular sub-device index matter? Could you just use
+> >the next available one?
 > 
-> Why should I need to refer to the device's root node?
+> Having the positions of sensor sub-devices kept in synch with
+> the positions of associated flash sub-devices in the 'flash' array
+> allows to avoid the addition o a condition for checking if the element
+> of the flash array is available.
 > 
-> What I meant here was that DT documentation enforces that even if
-> there is a single LED connected to the device it has to be expressed
-> as a sub-node anyway. Each LED will have to be matched by the phandle
-> to the sub-node representing it. This implies that v4l2_subdev->of_node
-> (related to sub-LED DT node) will be always different from dev->of_node
-> (related to LED controller DT node).
+> >There would be no need to for the check anything here, please see how the
+> >omap3isp driver does it --- it's in isp_subdev_notifier_bound()
+> >drivers/media/platform/omap3isp/isp.c .
+> 
+> This 'for' loop allows to detect that the sub-device being bound
+> is of flash type and basing on that we can exit the function
+> at this point. Otherwise some guards would have to be added in
+> the remaining part of the function.
 
->From driver point of view this makes no difference; it's just easier to
-parse if you don't refer to the LEDs separately. I think this is a bit
-special case; nowadays many LED flash controllers drive two LEDs.
-
-> 
-> >Say, if you have a LED flash controller with an indicator. It's intended to
-> >be used together with the flash LED, and the existing as3645a driver exposes
-> >it through the same sub-device. I think that'd make sense with LED class
-> >driver as well (i.e. you'd have two LED class devices but a single
-> >sub-device). Small changes to the wrapper would be needed.
-> >
-> 
-> How the sub-device name should look like then? We would have to
-> concatenate somehow both LED class device names?
-
-It'd be different, i.e. there would be no flash or indicator in the name.
+You have that information in fimc_md_register_flash_entities() but you're
+not storing that. A common struct for all async sub-device would help. I
+think you could associate sensors to flashes the same way.
 
 -- 
 Regards,
