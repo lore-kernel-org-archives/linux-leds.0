@@ -1,21 +1,18 @@
 From: Stas Sergeev <stsp@list.ru>
-Subject: [PATCH 14/20] leds: mark ns2 driver with LED_BRIGHTNESS_FAST flag
-Date: Thu, 21 May 2015 18:20:15 +0300
-Message-ID: <555DF7AF.2020605@list.ru>
+Subject: [PATCH 07/20] leds: mark cobalt-raq driver with LED_BRIGHTNESS_FAST
+ flag
+Date: Thu, 21 May 2015 18:15:45 +0300
+Message-ID: <555DF6A1.2070906@list.ru>
 References: <555CA58A.10700@list.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp45.i.mail.ru ([94.100.177.105]:48613 "EHLO smtp45.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753915AbbEUPUW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 21 May 2015 11:20:22 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <555CA58A.10700@list.ru>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Simon Guinot <sguinot@lacie.com>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Yoichi Yuasa <yuasa@linux-mips.org>
+List-Id: linux-leds@vger.kernel.org
 
 
 This driver doesn't use sleeping operations in .brightness_set
@@ -27,25 +24,32 @@ CC: Richard Purdie <rpurdie@rpsys.net>
 CC: Jacek Anaszewski <j.anaszewski@samsung.com>
 CC: linux-leds@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
-CC: Simon Guinot <sguinot@lacie.com>
+CC: Yoichi Yuasa <yuasa@linux-mips.org>
 
 Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-ns2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-cobalt-raq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 1fd6adb..9d872f5 100644
---- a/drivers/leds/leds-ns2.c
-+++ b/drivers/leds/leds-ns2.c
-@@ -224,7 +224,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->cdev.blink_set = NULL;
- 	led_dat->cdev.brightness_set = ns2_led_set;
--	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-+	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST;
- 	led_dat->cdev.groups = ns2_led_groups;
- 	led_dat->cmd = template->cmd;
- 	led_dat->slow = template->slow;
+diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-raq.c
+index 06dbe18..d0579ef 100644
+--- a/drivers/leds/leds-cobalt-raq.c
++++ b/drivers/leds/leds-cobalt-raq.c
+@@ -52,6 +52,7 @@ static void raq_web_led_set(struct led_classdev *led_cdev,
+ static struct led_classdev raq_web_led = {
+ 	.name		= "raq::web",
+ 	.brightness_set	= raq_web_led_set,
++	.flags		= LED_BRIGHTNESS_FAST,
+ };
+
+ static void raq_power_off_led_set(struct led_classdev *led_cdev,
+@@ -74,6 +75,7 @@ static struct led_classdev raq_power_off_led = {
+ 	.name			= "raq::power-off",
+ 	.brightness_set		= raq_power_off_led_set,
+ 	.default_trigger	= "power-off",
++	.flags			= LED_BRIGHTNESS_FAST,
+ };
+
+ static int cobalt_raq_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
