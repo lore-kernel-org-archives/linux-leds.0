@@ -1,75 +1,105 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
- samsung,flash-led property
-Date: Thu, 21 May 2015 11:10:49 +0200
-Message-ID: <555DA119.9030904@samsung.com>
+Subject: Re: [PATCH v8 5/8] exynos4-is: Add support for v4l2-flash subdevs
+Date: Thu, 21 May 2015 11:39:35 +0200
+Message-ID: <555DA7D7.1000308@samsung.com>
 References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
- <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
- <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+ <1432131015-22397-6-git-send-email-j.anaszewski@samsung.com>
+ <20150521074648.GF8601@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+In-reply-to: <20150521074648.GF8601@valkosipuli.retiisi.org.uk>
 Sender: linux-media-owner@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com, devicetree@vger.kernel.org, sre@kernel.org
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Sakari,
 
-On 05/21/2015 12:00 AM, Sakari Ailus wrote:
+
+On 05/21/2015 09:46 AM, Sakari Ailus wrote:
 > Hi Jacek,
 >
-> On Wed, May 20, 2015 at 04:10:15PM +0200, Jacek Anaszewski wrote:
->> This patch adds examples for samsung,flash-led property to the
->> samsung-fimc.txt.
+> On Wed, May 20, 2015 at 04:10:12PM +0200, Jacek Anaszewski wrote:
+>> This patch adds support for external v4l2-flash devices.
+>> The support includes parsing "samsung,flash-led" DT property
+>> and asynchronous subdevice registration.
 >>
 >> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: devicetree@vger.kernel.org
 >> ---
->>   .../devicetree/bindings/media/samsung-fimc.txt     |    4 ++++
->>   1 file changed, 4 insertions(+)
+>>   drivers/media/platform/exynos4-is/media-dev.c |   39 +++++++++++++++++++++++--
+>>   drivers/media/platform/exynos4-is/media-dev.h |   13 ++++++++-
+>>   2 files changed, 49 insertions(+), 3 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> index 922d6f8..57edffa 100644
->> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
->> @@ -126,6 +126,8 @@ Example:
->>   			clocks = <&camera 1>;
->>   			clock-names = "mclk";
+>> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+>> index f315ef9..80cecd8 100644
+>> --- a/drivers/media/platform/exynos4-is/media-dev.c
+>> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+>> @@ -451,6 +451,28 @@ rpm_put:
+>>   	return ret;
+>>   }
 >>
->> +			samsung,flash-led = <&front_cam_flash>;
+>> +static void fimc_md_register_flash_entities(struct fimc_md *fmd)
+>> +{
+>> +	int i;
 >> +
->>   			port {
->>   				s5k6aa_ep: endpoint {
->>   					remote-endpoint = <&fimc0_ep>;
->> @@ -147,6 +149,8 @@ Example:
->>   			clocks = <&camera 0>;
->>   			clock-names = "mclk";
->>
->> +			samsung,flash-led = <&rear_cam_flash>;
+>> +	fmd->num_flashes = 0;
 >> +
->>   			port {
->>   				s5c73m3_1: endpoint {
->>   					data-lanes = <1 2 3 4>;
+>> +	for (i = 0; i < fmd->num_sensors; i++) {
+>> +		const struct device_node *np =
+>> +					fmd->sensor[i].asd.match.of.node;
+>> +		const int nf = fmd->num_flashes;
+>> +
+>> +		np = of_parse_phandle(np, "samsung,flash-led", 0);
+>> +		if (!np)
+>> +			continue;
+>> +
+>> +		fmd->flash[nf].asd.match_type = V4L2_ASYNC_MATCH_OF;
+>> +		fmd->flash[nf].asd.match.of.node = np;
+>> +		fmd->async_subdevs[fmd->num_sensors + nf] = &fmd->flash[nf].asd;
+>> +		fmd->num_flashes++;
+>> +	}
+>> +}
+>> +
+>>   static int __of_get_csis_id(struct device_node *np)
+>>   {
+>>   	u32 reg = 0;
+>> @@ -1275,6 +1297,15 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
+>>   	struct fimc_sensor_info *si = NULL;
+>>   	int i;
+>>
+>> +	/* Register flash subdev if detected any */
+>> +	for (i = 0; i < ARRAY_SIZE(fmd->flash); i++) {
+>> +		if (fmd->flash[i].asd.match.of.node == subdev->of_node) {
 >
-> Oops. I missed this property would have ended to the sensor's DT node. I
-> don't think we should have properties here that are parsed by another
-> driver --- let's discuss this tomorrow.
+> Does the index of a particular sub-device index matter? Could you just use
+> the next available one?
 
-exynos4-is driver already parses sensor nodes (at least their 'port'
-sub-nodes).
+Having the positions of sensor sub-devices kept in synch with
+the positions of associated flash sub-devices in the 'flash' array
+allows to avoid the addition o a condition for checking if the element
+of the flash array is available.
 
-> There are two main options that I can think of --- either put the property
-> under the bridge (ISP) driver's device node as a temporary solution that
-> works on a few ISP drivers, or think how sensor modules should be modelled,
-> in which case we'd have some idea how lens device would be taken into
-> account.
->
-> Cc Sebastian.
+> There would be no need to for the check anything here, please see how the
+> omap3isp driver does it --- it's in isp_subdev_notifier_bound()
+> drivers/media/platform/omap3isp/isp.c .
+
+This 'for' loop allows to detect that the sub-device being bound
+is of flash type and basing on that we can exit the function
+at this point. Otherwise some guards would have to be added in
+the remaining part of the function.
+
+>> +			fmd->flash[i].subdev = subdev;
+>> +			fmd->num_flashes++;
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>>   	/* Find platform data for this sensor subdev */
+>>   	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
+>>   		if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
 >
 
 
