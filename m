@@ -1,69 +1,59 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/5] v4l: flash: Make v4l2_flash_init() and v4l2_flash_release() functions always
-Date: Sat, 23 May 2015 21:40:51 +0300
-Message-ID: <2401592.2Lzj5V7eWH@avalon>
-References: <1432076645-4799-1-git-send-email-sakari.ailus@iki.fi> <1432076645-4799-3-git-send-email-sakari.ailus@iki.fi>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Mon, 25 May 2015 14:00:33 +0200
+Message-ID: <55630EE1.90307@samsung.com>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+ <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+ <555DA119.9030904@samsung.com>
+ <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
+ <555DDD88.8080601@samsung.com>
+ <20150523120348.GA3170@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38001 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753919AbbEWV7n (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 23 May 2015 17:59:43 -0400
-In-Reply-To: <1432076645-4799-3-git-send-email-sakari.ailus@iki.fi>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38708 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520AbbEYMAp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 25 May 2015 08:00:45 -0400
+In-reply-to: <20150523120348.GA3170@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, mchehab@osg.samsung.com
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
 
-Hi Sakari,
+Hi,
 
-Thank you for the patch.
-
-On Wednesday 20 May 2015 02:04:02 Sakari Ailus wrote:
-> If CONFIG_V4L2_FLASH_LED_CLASS wasn't defined, v4l2_flash_init() and
-> v4l2_flash_release() were empty macros. This will lead to compiler warnings
-> in form of unused variables if the variables are not used for other
-> purposes.
+On 23/05/15 14:03, Sakari Ailus wrote:
+> On Thu, May 21, 2015 at 03:28:40PM +0200, Sylwester Nawrocki wrote:
+>> flash-leds = <&flash_xx &image_sensor_x>, <...>;
 > 
-> Instead, implement v4l2_flash_init() and v4l2_flash_release() as static
-> inline functions.
+> One more matter to consider: xenon flash devices.
 > 
-> Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  include/media/v4l2-flash.h |   12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+> How about samsung,camera-flashes (and ti,camera-flashes)? After pondering
+> this awhile, I'm ok with removing the vendor prefix as well.
 > 
-> diff --git a/include/media/v4l2-flash.h b/include/media/v4l2-flash.h
-> index 945fa08..67a2cbf 100644
-> --- a/include/media/v4l2-flash.h
-> +++ b/include/media/v4l2-flash.h
-> @@ -138,8 +138,16 @@ struct v4l2_flash *v4l2_flash_init(struct
-> led_classdev_flash *fled_cdev, void v4l2_flash_release(struct v4l2_flash
-> *v4l2_flash);
-> 
->  #else
-> -#define v4l2_flash_init(fled_cdev, ops, config) (NULL)
-> -#define v4l2_flash_release(v4l2_flash)
-> +static inline struct v4l2_flash *v4l2_flash_init(
-> +	struct led_classdev_flash *fled_cdev, const struct v4l2_flash_ops *ops,
-> +	struct v4l2_flash_config *config)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline void v4l2_flash_release(struct v4l2_flash *v4l2_flash)
-> +{
-> +}
->  #endif /* CONFIG_V4L2_FLASH_LED_CLASS */
-> 
->  #endif /* _V4L2_FLASH_H */
+> Let me know what you think.
 
--- 
-Regards,
+I thought about it a bit more and I have some doubts about semantics
+as above. I'm fine with 'camera-flashes' as far as name is concerned.
 
-Laurent Pinchart
+Perhaps we should put only phandles to leds or xenon flash devices
+in the 'camera-flashes' property. I think it would be more future
+proof in case there is more nodes needed to describe the camera flash
+(or a camera module) than the above two. And phandles to corresponding
+image sensor device nodes would be put in a separate property.
+
+camera-flashes = <&flash_xx>, ...
+camera-flash-masters = <&image_sensor_x>, ...
+
+Then pairs at same index would describe a single flash, 0 would indicate
+a null entry if needed.
+Similarly we could create properties for other sub-devices of a camera
+module, like lenses, etc.
+
+--
+Thanks,
+Sylwester
