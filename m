@@ -1,151 +1,82 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v9 6/8] exynos4-is: Improve the mechanism of async subdevs
- verification
-Date: Mon, 25 May 2015 17:14:01 +0200
-Message-ID: <1432566843-6391-7-git-send-email-j.anaszewski@samsung.com>
-References: <1432566843-6391-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1432566843-6391-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
+ samsung,flash-led property
+Date: Mon, 25 May 2015 17:20:03 +0200
+Message-ID: <55633DA3.9090409@samsung.com>
+References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
+ <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
+ <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
+ <555DA119.9030904@samsung.com>
+ <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
+ <555DDD88.8080601@samsung.com>
+ <20150523120348.GA3170@valkosipuli.retiisi.org.uk>
+ <55630EE1.90307@samsung.com> <55631AAC.6080507@samsung.com>
+ <55633186.1000004@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:48497 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771AbbEYPUH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 25 May 2015 11:20:07 -0400
+In-reply-to: <55633186.1000004@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
 
-Avoid verifying bound async sensor sub-devices by their of_nodes,
-which duplicates v4l2-async functionality, in favour of matching
-them by the corresponding struct v4l2_async_subdev. The structures
-are now being aggregated in the newly introduced struct fimc_async_subdevs
-which allows for categorizing async sub-devices by their type upon
-DT node parsing and recognizing the type easily when they're being bound.
+On 05/25/2015 04:28 PM, Sylwester Nawrocki wrote:
+> On 25/05/15 14:50, Jacek Anaszewski wrote:
+>>> On 23/05/15 14:03, Sakari Ailus wrote:
+>>>>>> On Thu, May 21, 2015 at 03:28:40PM +0200, Sylwester Nawrocki wrote:
+>>>>>>>> flash-leds = <&flash_xx &image_sensor_x>, <...>;
+>>>>>>
+>>>>>> One more matter to consider: xenon flash devices.
+>>>>>>
+>>>>>> How about samsung,camera-flashes (and ti,camera-flashes)? After pondering
+>>>>>> this awhile, I'm ok with removing the vendor prefix as well.
+>>>>>>
+>>>>>> Let me know what you think.
+>>>>
+>>>> I thought about it a bit more and I have some doubts about semantics
+>>>> as above. I'm fine with 'camera-flashes' as far as name is concerned.
+>>>>
+>>>> Perhaps we should put only phandles to leds or xenon flash devices
+>>>> in the 'camera-flashes' property. I think it would be more future
+>>>> proof in case there is more nodes needed to describe the camera flash
+>>>> (or a camera module) than the above two. And phandles to corresponding
+>>>> image sensor device nodes would be put in a separate property.
+>>
+>> Could you give examples of the cases you are thinking of?
+>
+> I don't have any examples in mind ATM, I just wanted to point out
+> the above convention might not be flexible enough. Especially since
+> we already know there is more sub-devices within the camera module
+> than just flashes and image sensors.
+>
+>>>> camera-flashes = <&flash_xx>, ...
+>>>> camera-flash-masters = <&image_sensor_x>, ...
+>>>>
+>>>> Then pairs at same index would describe a single flash, 0 would indicate
+>>>> a null entry if needed.
+>>
+>> When it should be needed?
+>
+> Not sure if there is a real use case for null entries, it was just to
+> note we can skip any entry if needed - probably an irrelevant comment.
+> I could imagine 2 LEDs of which one is only triggered in software, so
+> it wouldn't have a 'camera-flash-masters' entry.
+>
+>>>> Similarly we could create properties for other sub-devices of a camera
+>>>> module, like lenses, etc.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/media/platform/exynos4-is/media-dev.c |   34 +++++++++++++++++++------
- drivers/media/platform/exynos4-is/media-dev.h |    8 ++++--
- 2 files changed, 32 insertions(+), 10 deletions(-)
+I have had the ninth version of the patch set ready to send today,
+so in view of your doubts I made the property samsung specific
+so as not to prevent us from going further while we will be
+discussing the implementation of the generic property.
+The 9th version of the patch set has been just sent.
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index f315ef9..ff36a3b 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -331,6 +331,8 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 				   unsigned int index)
- {
- 	struct fimc_source_info *pd = &fmd->sensor[index].pdata;
-+	struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
-+	struct v4l2_async_subdev *asd;
- 	struct device_node *rem, *ep, *np;
- 	struct v4l2_of_endpoint endpoint;
- 
-@@ -387,9 +389,11 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
- 		return -EINVAL;
- 
--	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
--	fmd->sensor[index].asd.match.of.node = rem;
--	fmd->async_subdevs[index] = &fmd->sensor[index].asd;
-+	asd = &fmd->async_subdevs.sensors[index];
-+	asd->match_type = V4L2_ASYNC_MATCH_OF;
-+	asd->match.of.node = rem;
-+	notifier->subdevs[notifier->num_subdevs++] = asd;
-+	fmd->sensor[index].asd = asd;
- 
- 	fmd->num_sensors++;
- 
-@@ -1272,12 +1276,13 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 				 struct v4l2_async_subdev *asd)
- {
- 	struct fimc_md *fmd = notifier_to_fimc_md(notifier);
-+	struct fimc_async_subdevs *async_subdevs = &fmd->async_subdevs;
- 	struct fimc_sensor_info *si = NULL;
- 	int i;
- 
- 	/* Find platform data for this sensor subdev */
--	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
--		if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
-+	for (i = 0; i < ARRAY_SIZE(async_subdevs->sensors); i++)
-+		if (fmd->sensor[i].asd == asd)
- 			si = &fmd->sensor[i];
- 
- 	if (si == NULL)
-@@ -1317,6 +1322,19 @@ unlock:
- 	return ret;
- }
- 
-+static int fimc_md_register_async_entities(struct fimc_md *fmd)
-+{
-+	struct device *dev = fmd->media_dev.dev;
-+	struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
-+
-+	notifier->subdevs = devm_kcalloc(dev, FIMC_MAX_SENSORS,
-+					sizeof(*notifier->subdevs), GFP_KERNEL);
-+	if (!notifier->subdevs)
-+		return -ENOMEM;
-+
-+	return fimc_md_register_sensor_entities(fmd);
-+}
-+
- static int fimc_md_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1379,7 +1397,7 @@ static int fimc_md_probe(struct platform_device *pdev)
- 		goto err_clk;
- 	}
- 
--	ret = fimc_md_register_sensor_entities(fmd);
-+	ret = fimc_md_register_async_entities(fmd);
- 	if (ret) {
- 		mutex_unlock(&fmd->media_dev.graph_mutex);
- 		goto err_m_ent;
-@@ -1402,8 +1420,6 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	}
- 
- 	if (fmd->num_sensors > 0) {
--		fmd->subdev_notifier.subdevs = fmd->async_subdevs;
--		fmd->subdev_notifier.num_subdevs = fmd->num_sensors;
- 		fmd->subdev_notifier.bound = subdev_notifier_bound;
- 		fmd->subdev_notifier.complete = subdev_notifier_complete;
- 		fmd->num_sensors = 0;
-@@ -1412,6 +1428,8 @@ static int fimc_md_probe(struct platform_device *pdev)
- 						&fmd->subdev_notifier);
- 		if (ret)
- 			goto err_clk_p;
-+	} else {
-+		devm_kfree(dev, fmd->subdev_notifier.subdevs);
- 	}
- 
- 	return 0;
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 0321454..ff6d020 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -88,11 +88,15 @@ struct fimc_camclk_info {
-  */
- struct fimc_sensor_info {
- 	struct fimc_source_info pdata;
--	struct v4l2_async_subdev asd;
-+	struct v4l2_async_subdev *asd;
- 	struct v4l2_subdev *subdev;
- 	struct fimc_dev *host;
- };
- 
-+struct fimc_async_subdevs {
-+	struct v4l2_async_subdev sensors[FIMC_MAX_SENSORS];
-+};
-+
- struct cam_clk {
- 	struct clk_hw hw;
- 	struct fimc_md *fmd;
-@@ -149,7 +153,7 @@ struct fimc_md {
- 	} clk_provider;
- 
- 	struct v4l2_async_notifier subdev_notifier;
--	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_SENSORS];
-+	struct fimc_async_subdevs async_subdevs;
- 
- 	bool user_subdev_api;
- 	spinlock_t slock;
 -- 
-1.7.9.5
+Best Regards,
+Jacek Anaszewski
