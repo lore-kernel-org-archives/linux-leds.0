@@ -1,70 +1,91 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v8 8/8] DT: samsung-fimc: Add examples for
- samsung,flash-led property
-Date: Mon, 25 May 2015 23:56:59 +0300
-Message-ID: <20150525205659.GB4081@valkosipuli.retiisi.org.uk>
-References: <1432131015-22397-1-git-send-email-j.anaszewski@samsung.com>
- <1432131015-22397-9-git-send-email-j.anaszewski@samsung.com>
- <20150520220018.GE8601@valkosipuli.retiisi.org.uk>
- <555DA119.9030904@samsung.com>
- <20150521113213.GI8601@valkosipuli.retiisi.org.uk>
- <555DDD88.8080601@samsung.com>
- <20150523120348.GA3170@valkosipuli.retiisi.org.uk>
- <55630EE1.90307@samsung.com>
- <55631AAC.6080507@samsung.com>
- <55633186.1000004@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v9 8/8] exynos4-is: Add support for v4l2-flash subdevs
+Date: Tue, 26 May 2015 11:04:30 +0200
+Message-ID: <5564371E.2040705@samsung.com>
+References: <1432566843-6391-1-git-send-email-j.anaszewski@samsung.com>
+ <1432566843-6391-9-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46318 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751174AbbEYU5F (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Mon, 25 May 2015 16:57:05 -0400
-Content-Disposition: inline
-In-Reply-To: <55633186.1000004@samsung.com>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31673 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070AbbEZNTy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 26 May 2015 09:19:54 -0400
+In-reply-to: <1432566843-6391-9-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, sre@kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi
 
-Hi Sylwester,
+On 25/05/15 17:14, Jacek Anaszewski wrote:
+> This patch adds support for external v4l2-flash devices.
+> The support includes parsing "camera-flashes" DT property
 
-On Mon, May 25, 2015 at 04:28:22PM +0200, Sylwester Nawrocki wrote:
-> On 25/05/15 14:50, Jacek Anaszewski wrote:
-> >> On 23/05/15 14:03, Sakari Ailus wrote:
-> >>> >> On Thu, May 21, 2015 at 03:28:40PM +0200, Sylwester Nawrocki wrote:
-> >>>> >>> flash-leds = <&flash_xx &image_sensor_x>, <...>;
-> >>> >>
-> >>> >> One more matter to consider: xenon flash devices.
-> >>> >>
-> >>> >> How about samsung,camera-flashes (and ti,camera-flashes)? After pondering
-> >>> >> this awhile, I'm ok with removing the vendor prefix as well.
-> >>> >>
-> >>> >> Let me know what you think.
-> >> >
-> >> > I thought about it a bit more and I have some doubts about semantics
-> >> > as above. I'm fine with 'camera-flashes' as far as name is concerned.
-> >> >
-> >> > Perhaps we should put only phandles to leds or xenon flash devices
-> >> > in the 'camera-flashes' property. I think it would be more future
-> >> > proof in case there is more nodes needed to describe the camera flash
-> >> > (or a camera module) than the above two. And phandles to corresponding
-> >> > image sensor device nodes would be put in a separate property.
-> >
-> > Could you give examples of the cases you are thinking of?
-> 
-> I don't have any examples in mind ATM, I just wanted to point out
-> the above convention might not be flexible enough. Especially since
-> we already know there is more sub-devices within the camera module
-> than just flashes and image sensors.
+"samsung,camera-flashes" ?
 
-I have to admit I've never seen a camera module with an integrated flash.
-The lens is part of the module but typically flash is not. That doesn't say
-there aren't such devices though.
+> and asynchronous sub-device registration.
+
+> +static int fimc_md_register_flash_entities(struct fimc_md *fmd)
+> +{
+> +	struct device_node *parent = fmd->pdev->dev.of_node, *np_sensor,
+> +		*np_flash;
+> +	struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
+> +	struct v4l2_async_subdev *asd;
+> +	int i, j, num_flashes = 0, num_elems;
+> +
+> +	num_elems = of_property_count_elems_of_size(parent,
+> +				"samsung,camera-flashes", sizeof(np_flash));
+
+I think this should be of_property_count_u32_elems(), phandle is always
+a 32-bit value [1], while size of a pointer depends on the architecture.
+
+
+> +	/* samsung,camera-flashes property is optional */
+> +	if (num_elems < 0)
+> +		return 0;
+> +
+> +	/* samsung,camera-flashes array must have even number of elements */
+> +	if ((num_elems & 1) || (num_elems > FIMC_MAX_SENSORS * 2))
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < num_elems; i += 2) {
+> +		np_sensor = of_parse_phandle(parent,
+> +					     "samsung,camera-flashes", i);
+> +
+> +		for (j = 0; j < fmd->num_sensors; j++)
+> +			if (fmd->async_subdevs.sensors[j].match.of.node ==
+> +			    np_sensor)
+> +				break;
+> +
+> +		of_node_put(np_sensor);
+
+Would be good to add some comment here, why is the sensor required.
+It's just a DT correctness check? Couldn't we carry on with the flash
+registration after just emitting some warning?
+
+> +		if (j == fmd->num_sensors)
+> +			continue;
+> +
+> +		np_flash = of_parse_phandle(parent, "samsung,camera-flashes",
+> +						i + 1);
+> +
+> +		asd = &fmd->async_subdevs.flashes[num_flashes++];
+> +		asd->match_type = V4L2_ASYNC_MATCH_OF;
+> +		asd->match.of.node = np_flash;
+> +		notifier->subdevs[notifier->num_subdevs++] = asd;
+> +
+> +		of_node_put(np_flash);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Otherwise looks good to me.
 
 -- 
-Kind regards,
+Thanks,
+Sylwester
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+[1]
+http://lxr.free-electrons.com/source/Documentation/devicetree/booting-without-of.txt#L545
