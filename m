@@ -1,33 +1,37 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH 01/20] leds: implement LED_BRIGHTNESS_FAST flag
-Date: Mon, 01 Jun 2015 17:37:35 +0300
-Message-ID: <556C6E2F.7050100@list.ru>
-References: <555CA58A.10700@list.ru> <555CA5FA.2080308@list.ru> <556C1855.7070903@samsung.com> <556C4851.7060900@list.ru> <556C69EA.10000@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v9 1/8] Documentation: leds: Add description of
+ v4l2-flash sub-device
+Date: Mon, 1 Jun 2015 23:58:37 +0300
+Message-ID: <20150601205837.GG25595@valkosipuli.retiisi.org.uk>
+References: <1432566843-6391-1-git-send-email-j.anaszewski@samsung.com>
+ <1432566843-6391-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp37.i.mail.ru ([94.100.177.97]:48327 "EHLO smtp37.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751507AbbFAOhv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 1 Jun 2015 10:37:51 -0400
-In-Reply-To: <556C69EA.10000@samsung.com>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46187 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752317AbbFAU6n (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Jun 2015 16:58:43 -0400
+Content-Disposition: inline
+In-Reply-To: <1432566843-6391-2-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, s.nawrocki@samsung.com
 
-01.06.2015 17:19, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> In fact, the things are more complicated: some drivers do small
->> udelay()'s but do not use a work-queue. I was not marking them as
->> FAST, although perhaps they could still be marked as SYNC?
-> This could be handled by adding a property to struct led_classdev
-> for defining minimum acceptable delay. Then FAST flag should not
-> be needed.
-Oh c'mon, that's too difficult!
-Lets just have a flag whether we can do an SW PWM from hrtimer irq call=
-back.
-If we can't do from irq callback - simply do not do anything below 10mS=
-=2E
-IMHO a simple and practical solution.
-Otherwise we'll not have anything implemented at all I guess.
+Hi Jacek,
+
+On Mon, May 25, 2015 at 05:13:56PM +0200, Jacek Anaszewski wrote:
+> +On remove the v4l2_flash_release function has to be called, which takes one
+> +argument - struct v4l2_flash pointer returned previously by v4l2_flash_init.
+
+You might want to add this function can be safely called with NULL or error
+pointer argument.
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
