@@ -1,135 +1,336 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: [PATCH v1.1 1/5] v4l: async: Add a pointer to of_node to struct v4l2_subdev, match it
-Date: Mon,  1 Jun 2015 01:24:39 +0300
-Message-ID: <1433111079-22457-1-git-send-email-sakari.ailus@iki.fi>
-References: <4071589.mUaJIGvIJX@avalon>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4071589.mUaJIGvIJX@avalon>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, cooloney@gmail.com, s.nawrocki@samsung.com, mchehab@osg.samsung.com, g.liakhovetski@gmx.de
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 01/20] leds: implement LED_BRIGHTNESS_FAST flag
+Date: Mon, 01 Jun 2015 10:31:17 +0200
+Message-ID: <556C1855.7070903@samsung.com>
+References: <555CA58A.10700@list.ru> <555CA5FA.2080308@list.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <555CA5FA.2080308@list.ru>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Stas Sergeev <stsp@users.sourceforge.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-V4L2 async sub-devices are currently matched (OF case) based on the struct
-device_node pointer in struct device. LED devices may have more than one
-LED, and in that case the OF node to match is not directly the device's
-node, but a LED's node.
+On 05/20/2015 05:19 PM, Stas Sergeev wrote:
+>
+> Add LED_BRIGHTNESS_FAST flag. This flag is used to mark the led drivers
+> that do not use waiting operations when setting led brightness and do not
+> use work-queue in .brightness_set op.
+> When this flag is not set, disallow the blink periods smaller than 10mS
+> (LED_SLOW_MIN_PERIOD define).
+>
+> CC: Bryan Wu <cooloney@gmail.com>
+> CC: Richard Purdie <rpurdie@rpsys.net>
+> CC: Jacek Anaszewski <j.anaszewski@samsung.com>
+> CC: Kyungmin Park <kyungmin.park@samsung.com>
+> CC: linux-leds@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+>
+> Signed-off-by: Stas Sergeev <stsp@users.sourceforge.net>
+> ---
+>   drivers/leds/led-core.c                |   30 +++++++++++++++++++-----------
+>   drivers/leds/led-triggers.c            |    8 +++++---
+>   drivers/leds/trigger/ledtrig-oneshot.c |    5 ++++-
+>   drivers/leds/trigger/ledtrig-timer.c   |   18 +++++++++++++-----
+>   include/linux/leds.h                   |   12 ++++++++++--
+>   5 files changed, 51 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 9886dac..89241aa 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -25,12 +25,19 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+>   LIST_HEAD(leds_list);
+>   EXPORT_SYMBOL_GPL(leds_list);
+>
+> -static void led_set_software_blink(struct led_classdev *led_cdev,
+> +static int led_set_software_blink(struct led_classdev *led_cdev,
+>   				   unsigned long delay_on,
+>   				   unsigned long delay_off)
+>   {
+>   	int current_brightness;
+>
+> +	if (!(led_cdev->flags & LED_BRIGHTNESS_FAST)) {
+> +		if (delay_on < LED_SLOW_MIN_PERIOD)
+> +			return -ERANGE;
+> +		if (delay_off < LED_SLOW_MIN_PERIOD)
+> +			return -ERANGE;
+> +	}
+> +
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
----
-since v1:
+With this approach, the LED will remain in its current blink state, in
+case LED_BRIGHTNESS_FAST flag is not set and delay to be set is below 
+LED_SLOW_MIN_PERIOD. This is because timer is deleted at the beginning
+of led_blink_set. Effectively this can result in the LED staying turned
+on when e.g. "echo 1 > delay_on" fails.
 
-- Move conditional setting of struct v4l2_subdev.of_node from
-  v4l2_device_register_subdev() to v4l2_async_register_subdev.
+I propose to change this part of code as follows:
 
-- Remove the check for NULL struct v4l2_subdev.of_node from match_of() as
-  it's no longer needed.
+         if (!(led_cdev->flags & LED_BRIGHTNESS_FAST)) {
+		if (delay_on < LED_SLOW_MIN_PERIOD ||
+		    delay_off < LED_SLOW_MIN_PERIOD)
+			led_set_brightness_async(led_cdev, LED_OFF);
+			return -ERANGE;
+		}
+	}
 
-- Unconditionally state in the struct v4l2_subdev.of_node field comment that
-  the field contains (a pointer to) the sub-device's of_node.
+By this occasion it turned out that we have inconsistency:
+led_set_brightness_async calls brightness_set op, which doesn't
+set LED brightness in an asynchronous way in case of every driver.
 
- drivers/media/v4l2-core/v4l2-async.c | 34 ++++++++++++++++++++++------------
- include/media/v4l2-subdev.h          |  2 ++
- 2 files changed, 24 insertions(+), 12 deletions(-)
+Before introduction of SET_BRIGHTNESS_SYNC and SET_BRIGHTNESS_ASYNC
+flags there was only brightness_set op. The flags and
+brightness_set_sync op was added for flash LED controllers to avoid
+delegating the job to work queue and assure that brightness is set
+as quickly as possible.
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 85a6a34..b0badac 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -22,10 +22,10 @@
- #include <media/v4l2-device.h>
- #include <media/v4l2-subdev.h>
- 
--static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
-+static bool match_i2c(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- {
- #if IS_ENABLED(CONFIG_I2C)
--	struct i2c_client *client = i2c_verify_client(dev);
-+	struct i2c_client *client = i2c_verify_client(sd->dev);
- 	return client &&
- 		asd->match.i2c.adapter_id == client->adapter->nr &&
- 		asd->match.i2c.address == client->addr;
-@@ -34,14 +34,24 @@ static bool match_i2c(struct device *dev, struct v4l2_async_subdev *asd)
- #endif
- }
- 
--static bool match_devname(struct device *dev, struct v4l2_async_subdev *asd)
-+static bool match_devname(struct v4l2_subdev *sd,
-+			  struct v4l2_async_subdev *asd)
- {
--	return !strcmp(asd->match.device_name.name, dev_name(dev));
-+	return !strcmp(asd->match.device_name.name, dev_name(sd->dev));
- }
- 
--static bool match_of(struct device *dev, struct v4l2_async_subdev *asd)
-+static bool match_of(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- {
--	return dev->of_node == asd->match.of.node;
-+	return sd->of_node == asd->match.of.node;
-+}
-+
-+static bool match_custom(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
-+{
-+	if (!asd->match.custom.match)
-+		/* Match always */
-+		return true;
-+
-+	return asd->match.custom.match(sd->dev, asd);
- }
- 
- static LIST_HEAD(subdev_list);
-@@ -51,17 +61,14 @@ static DEFINE_MUTEX(list_lock);
- static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *notifier,
- 						    struct v4l2_subdev *sd)
- {
-+	bool (*match)(struct v4l2_subdev *, struct v4l2_async_subdev *);
- 	struct v4l2_async_subdev *asd;
--	bool (*match)(struct device *, struct v4l2_async_subdev *);
- 
- 	list_for_each_entry(asd, &notifier->waiting, list) {
- 		/* bus_type has been verified valid before */
- 		switch (asd->match_type) {
- 		case V4L2_ASYNC_MATCH_CUSTOM:
--			match = asd->match.custom.match;
--			if (!match)
--				/* Match always */
--				return asd;
-+			match = match_custom;
- 			break;
- 		case V4L2_ASYNC_MATCH_DEVNAME:
- 			match = match_devname;
-@@ -79,7 +86,7 @@ static struct v4l2_async_subdev *v4l2_async_belongs(struct v4l2_async_notifier *
- 		}
- 
- 		/* match cannot be NULL here */
--		if (match(sd->dev, asd))
-+		if (match(sd, asd))
- 			return asd;
- 	}
- 
-@@ -266,6 +273,9 @@ int v4l2_async_register_subdev(struct v4l2_subdev *sd)
- {
- 	struct v4l2_async_notifier *notifier;
- 
-+	if (!sd->of_node && sd->dev)
-+		sd->of_node = sd->dev->of_node;
-+
- 	mutex_lock(&list_lock);
- 
- 	INIT_LIST_HEAD(&sd->async_list);
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index 8f5da73..8a17c24 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -603,6 +603,8 @@ struct v4l2_subdev {
- 	struct video_device *devnode;
- 	/* pointer to the physical device, if any */
- 	struct device *dev;
-+	/* A device_node of the subdev, usually the same as dev->of_node. */
-+	struct device_node *of_node;
- 	/* Links this subdev to a global subdev_list or @notifier->done list. */
- 	struct list_head async_list;
- 	/* Pointer to respective struct v4l2_async_subdev. */
+I mistakenly assumed that all drivers set the brightness with use
+of a work queue.
+
+Now, to fix the issue all drivers that set brightness in the
+asynchronous way need to set the SET_BRIGHTNESS_SYNC flag and rename
+their brightness_set ops to brightness_set_sync.
+It would be also nice to rename brightness_set op to
+brightness_set_async.
+
+Also, led_set_brightness_async shouldn't be called directly
+anywhere, but led_set_brightness should be used, as it
+selects the appropriate op basing on the SET_BRIGHTNESS_* flag.
+
+I'd prefer to do these modifications before merging this patch
+set. I can produce the patch set within a few days. Or, maybe you
+would like to take care of it?
+
+>   	current_brightness = led_get_brightness(led_cdev);
+>   	if (current_brightness)
+>   		led_cdev->blink_brightness = current_brightness;
+> @@ -43,36 +50,37 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>   	/* never on - just set to off */
+>   	if (!delay_on) {
+>   		led_set_brightness_async(led_cdev, LED_OFF);
+> -		return;
+> +		return 0;
+>   	}
+>
+>   	/* never off - just set to brightness */
+>   	if (!delay_off) {
+>   		led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
+> -		return;
+> +		return 0;
+>   	}
+>
+>   	mod_timer(&led_cdev->blink_timer, jiffies + 1);
+> +	return 0;
+>   }
+>
+>
+> -static void led_blink_setup(struct led_classdev *led_cdev,
+> +static int led_blink_setup(struct led_classdev *led_cdev,
+>   		     unsigned long *delay_on,
+>   		     unsigned long *delay_off)
+>   {
+>   	if (!(led_cdev->flags & LED_BLINK_ONESHOT) &&
+>   	    led_cdev->blink_set &&
+>   	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+> -		return;
+> +		return 0;
+>
+>   	/* blink with 1 Hz as default if nothing specified */
+>   	if (!*delay_on && !*delay_off)
+>   		*delay_on = *delay_off = 500;
+>
+> -	led_set_software_blink(led_cdev, *delay_on, *delay_off);
+> +	return led_set_software_blink(led_cdev, *delay_on, *delay_off);
+>   }
+>
+> -void led_blink_set(struct led_classdev *led_cdev,
+> +int led_blink_set(struct led_classdev *led_cdev,
+>   		   unsigned long *delay_on,
+>   		   unsigned long *delay_off)
+>   {
+> @@ -81,18 +89,18 @@ void led_blink_set(struct led_classdev *led_cdev,
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT;
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+>
+> -	led_blink_setup(led_cdev, delay_on, delay_off);
+> +	return led_blink_setup(led_cdev, delay_on, delay_off);
+>   }
+>   EXPORT_SYMBOL(led_blink_set);
+>
+> -void led_blink_set_oneshot(struct led_classdev *led_cdev,
+> +int led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   			   unsigned long *delay_on,
+>   			   unsigned long *delay_off,
+>   			   int invert)
+>   {
+>   	if ((led_cdev->flags & LED_BLINK_ONESHOT) &&
+>   	     timer_pending(&led_cdev->blink_timer))
+> -		return;
+> +		return -EBUSY;
+>
+>   	led_cdev->flags |= LED_BLINK_ONESHOT;
+>   	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+> @@ -102,7 +110,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   	else
+>   		led_cdev->flags &= ~LED_BLINK_INVERT;
+>
+> -	led_blink_setup(led_cdev, delay_on, delay_off);
+> +	return led_blink_setup(led_cdev, delay_on, delay_off);
+>   }
+>   EXPORT_SYMBOL(led_blink_set_oneshot);
+>
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index e8b1120..63305b1 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -272,6 +272,7 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+>   			     int oneshot,
+>   			     int invert)
+>   {
+> +	int ret = 0;
+>   	struct led_classdev *led_cdev;
+>
+>   	if (!trig)
+> @@ -280,12 +281,13 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+>   	read_lock(&trig->leddev_list_lock);
+>   	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
+>   		if (oneshot)
+> -			led_blink_set_oneshot(led_cdev, delay_on, delay_off,
+> -					      invert);
+> +			ret = led_blink_set_oneshot(led_cdev, delay_on,
+> +						   delay_off, invert);
+>   		else
+> -			led_blink_set(led_cdev, delay_on, delay_off);
+> +			ret = led_blink_set(led_cdev, delay_on, delay_off);
+>   	}
+>   	read_unlock(&trig->leddev_list_lock);
+> +	WARN_ON(ret);
+>   }
+>
+>   void led_trigger_blink(struct led_trigger *trig,
+> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+> index fbd02cd..ba91838 100644
+> --- a/drivers/leds/trigger/ledtrig-oneshot.c
+> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+> @@ -29,12 +29,15 @@ struct oneshot_trig_data {
+>   static ssize_t led_shot(struct device *dev,
+>   		struct device_attribute *attr, const char *buf, size_t size)
+>   {
+> +	ssize_t ret;
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	struct oneshot_trig_data *oneshot_data = led_cdev->trigger_data;
+>
+> -	led_blink_set_oneshot(led_cdev,
+> +	ret = led_blink_set_oneshot(led_cdev,
+>   			&led_cdev->blink_delay_on, &led_cdev->blink_delay_off,
+>   			oneshot_data->invert);
+> +	if (ret)
+> +		return ret;
+>
+>   	/* content is ignored */
+>   	return size;
+> diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+> index 8d09327..edc0c7f 100644
+> --- a/drivers/leds/trigger/ledtrig-timer.c
+> +++ b/drivers/leds/trigger/ledtrig-timer.c
+> @@ -31,13 +31,15 @@ static ssize_t led_delay_on_store(struct device *dev,
+>   {
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret;
+>
+>   	ret = kstrtoul(buf, 10, &state);
+>   	if (ret)
+>   		return ret;
+>
+> -	led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
+> +	ret = led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
+> +	if (ret)
+> +		return ret;
+>   	led_cdev->blink_delay_on = state;
+>
+>   	return size;
+> @@ -56,13 +58,15 @@ static ssize_t led_delay_off_store(struct device *dev,
+>   {
+>   	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>   	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret;
+>
+>   	ret = kstrtoul(buf, 10, &state);
+>   	if (ret)
+>   		return ret;
+>
+> -	led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
+> +	ret = led_blink_set(led_cdev, &led_cdev->blink_delay_on, &state);
+> +	if (ret)
+> +		return ret;
+>   	led_cdev->blink_delay_off = state;
+>
+>   	return size;
+> @@ -84,12 +88,16 @@ static void timer_trig_activate(struct led_classdev *led_cdev)
+>   	if (rc)
+>   		goto err_out_delayon;
+>
+> -	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+> +	rc = led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+>   		      &led_cdev->blink_delay_off);
+> +	if (rc)
+> +		goto err_out_delayoff;
+>   	led_cdev->activated = true;
+>
+>   	return;
+>
+> +err_out_delayoff:
+> +	device_remove_file(led_cdev->dev, &dev_attr_delay_off);
+>   err_out_delayon:
+>   	device_remove_file(led_cdev->dev, &dev_attr_delay_on);
+>   }
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b122eea..d3c6c2e 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -48,6 +48,10 @@ struct led_classdev {
+>   #define SET_BRIGHTNESS_ASYNC	(1 << 21)
+>   #define SET_BRIGHTNESS_SYNC	(1 << 22)
+>   #define LED_DEV_CAP_FLASH	(1 << 23)
+> +#define LED_BRIGHTNESS_FAST	(1 << 24)
+> +
+> +/* safe period value for slow leds is 10mS */
+> +#define LED_SLOW_MIN_PERIOD 10
+>
+>   	/* Set LED brightness level */
+>   	/* Must not sleep, use a workqueue if needed */
+> @@ -127,8 +131,10 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
+>    * Note that if software blinking is active, simply calling
+>    * led_cdev->brightness_set() will not stop the blinking,
+>    * use led_classdev_brightness_set() instead.
+> + *
+> + * Returns: 0 on success or negative error value on failure
+>    */
+> -extern void led_blink_set(struct led_classdev *led_cdev,
+> +extern int led_blink_set(struct led_classdev *led_cdev,
+>   			  unsigned long *delay_on,
+>   			  unsigned long *delay_off);
+>   /**
+> @@ -144,8 +150,10 @@ extern void led_blink_set(struct led_classdev *led_cdev,
+>    *
+>    * If invert is set, led blinks for delay_off first, then for
+>    * delay_on and leave the led on after the on-off cycle.
+> + *
+> + * Returns: 0 on success or negative error value on failure
+>    */
+> -extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+> +extern int led_blink_set_oneshot(struct led_classdev *led_cdev,
+>   				  unsigned long *delay_on,
+>   				  unsigned long *delay_off,
+>   				  int invert);
+>
+
+
 -- 
-2.1.4
+Best Regards,
+Jacek Anaszewski
