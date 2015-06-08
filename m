@@ -1,12 +1,12 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v10 5/8] leds: aat1290: add support for V4L2 Flash sub-device
-Date: Mon, 08 Jun 2015 11:02:22 +0200
-Message-ID: <1433754145-12765-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v10 8/8] exynos4-is: Add support for v4l2-flash subdevs
+Date: Mon, 08 Jun 2015 11:02:25 +0200
+Message-ID: <1433754145-12765-9-git-send-email-j.anaszewski@samsung.com>
 References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55128 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753072AbbFHJDT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54541 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753089AbbFHJDT (ORCPT
 	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Jun 2015 05:03:19 -0400
 In-reply-to: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
@@ -14,286 +14,145 @@ List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Add support for V4L2 Flash sub-device to the aat1290 LED Flash class
-driver. The support allows for V4L2 Flash sub-device to take the control
-of the LED Flash class device.
+This patch adds support for external v4l2-flash devices.
+The support includes parsing "camera-flashes" DT property
+and asynchronous sub-device registration.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/leds/Kconfig        |    1 +
- drivers/leds/leds-aat1290.c |  137 +++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 132 insertions(+), 6 deletions(-)
+ drivers/media/platform/exynos4-is/media-dev.c |   75 ++++++++++++++++++++++++-
+ drivers/media/platform/exynos4-is/media-dev.h |    4 ++
+ 2 files changed, 77 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 86de046..b04f82c 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -47,6 +47,7 @@ config LEDS_AAT1290
- 	depends on LEDS_CLASS_FLASH
- 	depends on GPIOLIB
- 	depends on OF
-+	depends on PINCTRL
- 	help
- 	 This option enables support for the LEDs on the AAT1290.
- 
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index 6ea1d54..d3215d5 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -17,9 +17,11 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-+#include <media/v4l2-flash-led-class.h>
- 
- #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
- #define AAT1290_MAX_MM_CURR_PERCENT_0	16
-@@ -52,6 +54,8 @@ struct aat1290_led_config_data {
- 	u32 max_flash_current;
- 	/* maximum flash timeout */
- 	u32 max_flash_tm;
-+	/* external strobe capability */
-+	bool has_external_strobe;
- 	/* max LED brightness level */
- 	enum led_brightness max_brightness;
- };
-@@ -64,6 +68,8 @@ struct aat1290_led {
- 
- 	/* corresponding LED Flash class device */
- 	struct led_classdev_flash fled_cdev;
-+	/* V4L2 Flash device */
-+	struct v4l2_flash *v4l2_flash;
- 
- 	/* FLEN pin */
- 	struct gpio_desc *gpio_fl_en;
-@@ -230,11 +236,15 @@ static int aat1290_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
- }
- 
- static int aat1290_led_parse_dt(struct aat1290_led *led,
--			struct aat1290_led_config_data *cfg)
-+			struct aat1290_led_config_data *cfg,
-+			struct device_node **sub_node)
- {
- 	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
- 	struct device *dev = &led->pdev->dev;
- 	struct device_node *child_node;
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	struct pinctrl *pinctrl;
-+#endif
- 	int ret = 0;
- 
- 	led->gpio_fl_en = devm_gpiod_get(dev, "flen");
-@@ -251,6 +261,17 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
- 		return ret;
- 	}
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+	pinctrl = devm_pinctrl_get_select_default(&led->pdev->dev);
-+	if (IS_ERR(pinctrl)) {
-+		cfg->has_external_strobe = false;
-+		dev_info(dev,
-+			 "No support for external strobe detected.\n");
-+	} else {
-+		cfg->has_external_strobe = true;
-+	}
-+#endif
-+
- 	child_node = of_get_next_available_child(dev->of_node, NULL);
- 	if (!child_node) {
- 		dev_err(dev, "No DT child node found for connected LED.\n");
-@@ -288,6 +309,8 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
- 
- 	of_node_put(child_node);
- 
-+	*sub_node = child_node;
-+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index e3d7b70..e387fd2 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -455,6 +455,63 @@ rpm_put:
  	return ret;
  }
  
-@@ -316,7 +339,8 @@ int init_mm_current_scale(struct aat1290_led *led,
- 	int i, max_mm_current =
- 			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
- 
--	led->mm_current_scale = kzalloc(sizeof(max_mm_current_percent),
-+	led->mm_current_scale = devm_kzalloc(&led->pdev->dev,
-+					sizeof(max_mm_current_percent),
- 					GFP_KERNEL);
- 	if (!led->mm_current_scale)
- 		return -ENOMEM;
-@@ -329,11 +353,12 @@ int init_mm_current_scale(struct aat1290_led *led,
- }
- 
- static int aat1290_led_get_configuration(struct aat1290_led *led,
--					struct aat1290_led_config_data *cfg)
-+					struct aat1290_led_config_data *cfg,
-+					struct device_node **sub_node)
- {
- 	int ret;
- 
--	ret = aat1290_led_parse_dt(led, cfg);
-+	ret = aat1290_led_parse_dt(led, cfg, sub_node);
- 	if (ret < 0)
- 		return ret;
- 	/*
-@@ -346,7 +371,10 @@ static int aat1290_led_get_configuration(struct aat1290_led *led,
- 
- 	aat1290_led_validate_mm_current(led, cfg);
- 
--	kfree(led->mm_current_scale);
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+#else
-+	devm_kfree(&led->pdev->dev, led->mm_current_scale);
-+#endif
- 
- 	return 0;
- }
-@@ -365,6 +393,88 @@ static void aat1290_init_flash_timeout(struct aat1290_led *led,
- 	setting->val = setting->max;
- }
- 
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+enum led_brightness aat1290_intensity_to_brightness(
-+					struct v4l2_flash *v4l2_flash,
-+					s32 intensity)
++static int fimc_md_register_flash_entities(struct fimc_md *fmd)
 +{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+	int i;
++	struct device_node *parent = fmd->pdev->dev.of_node, *np_sensor,
++		*np_flash;
++	struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
++	struct device *dev = &fmd->pdev->dev;
++	struct v4l2_async_subdev *asd;
++	int i, j, num_flashes = 0, num_elems;
 +
-+	for (i = AAT1290_MM_CURRENT_SCALE_SIZE - 1; i >= 0; --i)
-+		if (intensity >= led->mm_current_scale[i])
-+			return i + 1;
++	num_elems = of_property_count_u32_elems(parent,
++						"samsung,camera-flashes");
++	/* samsung,camera-flashes property is optional */
++	if (num_elems < 0)
++		return 0;
 +
-+	return 1;
-+}
++	/* samsung,camera-flashes array must have even number of elements */
++	if ((num_elems & 1) || (num_elems > FIMC_MAX_SENSORS * 2))
++		return -EINVAL;
 +
-+s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
++	for (i = 0; i < num_elems; i += 2) {
++		/*
++		 * The pair of camera sensor and flash LED phandles reflects
++		 * the physical connection on the board, which allows for the
++		 * camera sensor to strobe the flash by raising a hardware pin.
++		 * This property just describes the association.
++		 */
++		np_sensor = of_parse_phandle(parent,
++					     "samsung,camera-flashes", i);
 +
-+	return led->mm_current_scale[brightness - 1];
-+}
++		for (j = 0; j < fmd->num_sensors; j++)
++			if (fmd->async_subdevs.sensors[j].match.of.node ==
++			    np_sensor)
++				break;
 +
-+static int aat1290_led_external_strobe_set(struct v4l2_flash *v4l2_flash,
-+						bool enable)
-+{
-+	struct aat1290_led *led = fled_cdev_to_led(v4l2_flash->fled_cdev);
-+	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-+	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct pinctrl *pinctrl;
++		of_node_put(np_sensor);
 +
-+	gpiod_direction_output(led->gpio_fl_en, 0);
-+	gpiod_direction_output(led->gpio_en_set, 0);
++		/*
++		 * If the camera sensor phandle isn't known to the media device
++		 * controller, then raise a warning only.
++		 */
++		if (j == fmd->num_sensors)
++			dev_warn(dev, "sensor verification failed for a flash\n");
 +
-+	led->movie_mode = false;
-+	led_cdev->brightness = 0;
++		np_flash = of_parse_phandle(parent, "samsung,camera-flashes",
++						i + 1);
 +
-+	pinctrl = devm_pinctrl_get_select(&led->pdev->dev,
-+						enable ? "isp" : "host");
-+	if (IS_ERR(pinctrl)) {
-+		dev_warn(&led->pdev->dev, "Unable to switch strobe source.\n");
-+		return PTR_ERR(pinctrl);
++		asd = &fmd->async_subdevs.flashes[num_flashes++];
++		asd->match_type = V4L2_ASYNC_MATCH_OF;
++		asd->match.of.node = np_flash;
++		notifier->subdevs[notifier->num_subdevs++] = asd;
++
++		of_node_put(np_flash);
 +	}
 +
 +	return 0;
 +}
 +
-+static void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
-+					struct aat1290_led_config_data *led_cfg,
-+					struct v4l2_flash_config *v4l2_sd_cfg)
-+{
-+	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
-+	struct led_flash_setting *s;
-+
-+	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->name,
-+		sizeof(v4l2_sd_cfg->dev_name));
-+
-+	s = &v4l2_sd_cfg->torch_intensity;
-+	s->min = led->mm_current_scale[0];
-+	s->max = led_cfg->max_mm_current;
-+	s->step = 1;
-+	s->val = s->max;
-+
-+	v4l2_sd_cfg->has_external_strobe = led_cfg->has_external_strobe;
-+}
-+
-+static const struct v4l2_flash_ops v4l2_flash_ops = {
-+	.external_strobe_set = aat1290_led_external_strobe_set,
-+	.intensity_to_led_brightness = aat1290_intensity_to_brightness,
-+	.led_brightness_to_intensity = aat1290_brightness_to_intensity,
-+};
-+#else
-+static inline void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
-+				struct aat1290_led_config_data *led_cfg,
-+				struct v4l2_flash_config *v4l2_sd_cfg)
-+{
-+}
-+static const struct v4l2_flash_ops v4l2_flash_ops;
-+#endif
-+
- static const struct led_flash_ops flash_ops = {
- 	.strobe_set = aat1290_led_flash_strobe_set,
- 	.timeout_set = aat1290_led_flash_timeout_set,
-@@ -373,10 +483,12 @@ static const struct led_flash_ops flash_ops = {
- static int aat1290_led_probe(struct platform_device *pdev)
+ static int __of_get_csis_id(struct device_node *np)
  {
- 	struct device *dev = &pdev->dev;
-+	struct device_node *sub_node = NULL;
- 	struct aat1290_led *led;
- 	struct led_classdev *led_cdev;
- 	struct led_classdev_flash *fled_cdev;
- 	struct aat1290_led_config_data led_cfg = {};
-+	struct v4l2_flash_config v4l2_sd_cfg = {};
- 	int ret;
+ 	u32 reg = 0;
+@@ -1280,6 +1337,15 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
+ 	struct fimc_sensor_info *si = NULL;
+ 	int i;
  
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-@@ -390,7 +502,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	fled_cdev->ops = &flash_ops;
- 	led_cdev = &fled_cdev->led_cdev;
- 
--	ret = aat1290_led_get_configuration(led, &led_cfg);
-+	ret = aat1290_led_get_configuration(led, &led_cfg, &sub_node);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -410,8 +522,20 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_flash_register;
- 
-+	aat1290_init_v4l2_flash_config(led, &led_cfg, &v4l2_sd_cfg);
++	/*
++	 * Flash sub-devices are controlled independently of ISP, and thus
++	 * verify only that the sub-device being matched was previously
++	 * registered.
++	 */
++	for (i = 0; i < ARRAY_SIZE(async_subdevs->flashes); i++)
++		if (&async_subdevs->flashes[i] == asd)
++			return 0;
 +
-+	/* Create V4L2 Flash subdev. */
-+	led->v4l2_flash = v4l2_flash_init(dev, sub_node, fled_cdev, NULL,
-+					  &v4l2_flash_ops, &v4l2_sd_cfg);
-+	if (IS_ERR(led->v4l2_flash)) {
-+		ret = PTR_ERR(led->v4l2_flash);
-+		goto error_v4l2_flash_init;
-+	}
-+
- 	return 0;
- 
-+error_v4l2_flash_init:
-+	led_classdev_flash_unregister(fled_cdev);
- err_flash_register:
- 	mutex_destroy(&led->lock);
- 
-@@ -422,6 +546,7 @@ static int aat1290_led_remove(struct platform_device *pdev)
+ 	/* Find platform data for this sensor subdev */
+ 	for (i = 0; i < ARRAY_SIZE(async_subdevs->sensors); i++)
+ 		if (fmd->sensor[i].asd == asd)
+@@ -1326,13 +1392,18 @@ static int fimc_md_register_async_entities(struct fimc_md *fmd)
  {
- 	struct aat1290_led *led = platform_get_drvdata(pdev);
+ 	struct device *dev = fmd->media_dev.dev;
+ 	struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
++	int ret;
  
-+	v4l2_flash_release(led->v4l2_flash);
- 	led_classdev_flash_unregister(&led->fled_cdev);
- 	cancel_work_sync(&led->work_brightness_set);
+-	notifier->subdevs = devm_kcalloc(dev, FIMC_MAX_SENSORS,
++	notifier->subdevs = devm_kcalloc(dev, FIMC_MAX_ASYNC_ENTITIES,
+ 					sizeof(*notifier->subdevs), GFP_KERNEL);
+ 	if (!notifier->subdevs)
+ 		return -ENOMEM;
  
+-	return fimc_md_register_sensor_entities(fmd);
++	ret = fimc_md_register_sensor_entities(fmd);
++	if (ret)
++		return -EINVAL;
++
++	return fimc_md_register_flash_entities(fmd);
+ }
+ 
+ static int fimc_md_probe(struct platform_device *pdev)
+diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
+index ff6d020..be9205c 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.h
++++ b/drivers/media/platform/exynos4-is/media-dev.h
+@@ -33,7 +33,10 @@
+ #define PINCTRL_STATE_IDLE	"idle"
+ 
+ #define FIMC_MAX_SENSORS	4
++#define FIMC_MAX_FLASHES	4
++#define FIMC_MAX_ASYNC_ENTITIES	(FIMC_MAX_SENSORS + FIMC_MAX_FLASHES)
+ #define FIMC_MAX_CAMCLKS	2
++
+ #define DEFAULT_SENSOR_CLK_FREQ	24000000U
+ 
+ /* LCD/ISP Writeback clocks (PIXELASYNCMx) */
+@@ -95,6 +98,7 @@ struct fimc_sensor_info {
+ 
+ struct fimc_async_subdevs {
+ 	struct v4l2_async_subdev sensors[FIMC_MAX_SENSORS];
++	struct v4l2_async_subdev flashes[FIMC_MAX_FLASHES];
+ };
+ 
+ struct cam_clk {
 -- 
 1.7.9.5
