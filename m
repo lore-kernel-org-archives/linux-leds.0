@@ -1,142 +1,99 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v10 0/8] LED / flash API integration
-Date: Mon, 08 Jun 2015 11:02:17 +0200
-Message-ID: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:43327 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932276AbbFHJCw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Jun 2015 05:02:52 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH v10 4/8] DT: aat1290: Document handling external strobe sources
+Date: Mon, 08 Jun 2015 11:02:21 +0200
+Message-ID: <1433754145-12765-5-git-send-email-j.anaszewski@samsung.com>
+References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: kyungmin.park@samsung.com, pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-This is tenth non-RFC version of LED / flash API integration
-series [1]. It is based on linux_next-20150605 with patch [2].
+This patch adds documentation for a pinctrl-names property.
+The property, when present, is used for switching the source
+of the strobe signal for the device.
 
-================
-Changes since v9
-================
-- improved v4l2_flash_open and v4l2_flash_close functions of
-  v4l2-flash-led-class wrapper, to lock/unlock also the sysfs interface
-  of indicator LED flash class device
-- improved slightly LED subsystem documentation for V4L2 flash wrapper
-- used proper function for getting the size of array of phandles in
-  the exynos4-is media device driver and switched over to only raising
-  a warning when a sensor phandle related to a flash phandle is not known
-  to the media device controller
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: devicetree@vger.kernel.org
+---
+ .../devicetree/bindings/leds/leds-aat1290.txt      |   36 ++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 2 deletions(-)
 
-================
-Changes since v8
-================
-- switched from samsung,flash-leds to samsun,camera-flashes DT property
-- improved async sub-devices matching for exynos4-is media device
-- modified v4l2-flash-led-class wrapper to incorporate indicator
-  LED class deviecs
-
-================
-Changes since v7
-================
-
-- Merged patches from Sakari for v4l2-flash-led-class and V4L2 related
-  patches for leds-max77693 and leds-aat1290 drivers
-- applied minor modifications to the both led drivers related patches
-- modified exynos4-is media device to parse new samsung,flash-led
-  property, instead of 'flashes' array
-- added DT documentation for samsung,flash-led property
-
-================
-Changes since v5
-================
-- renamed v4l2-flash module to v4l2-flash-led-class and applied
-  other related modifications spotted by Sakari
-- fixed not released of_node reference in max77693-led driver
-
-================
-Changes since v4
-================
-- adapted leds-max77693 and leds-aat1290 drivers to the recent
-  modifications in leds/common.txt bindings documentation and
-  changed the behaviour when properties are missing
-- modified DT bindings documenation for the aforementioned
-  drivers
-- removed unjustified use of goto in the leds-aat1290 driver
-- fixed lack of of_node_put in leds-aat1290 driver, after parsing
-  DT child node 
-- removed patch adding 'skyworks' vendor prefix, as the entry
-  has been recently added
-
-================
-Changes since v2
-================
-- improved leds/common DT bindings documentation
-- improved max77693-led DT documentation
-- fixed validation of DT confguration for leds-max77693 by
-  minimal values in joint iouts case
-- removed trigger-type property from leds-max77693 bindings
-  and adjusted the driver accordingly
-- improved LED Flash class documentation related to v4l2-flash sub-device
-  initialization
-- excluded from leds-aat1290 DT bindings documentation the part
-  related to handling external strobe sources
-
-================
-Changes since v1
-================
-
-- excluded exynos4-is media device related patches, as there is
-  consenus required related to flash devices handling in media device
-  DT bindings
-- modifications around LED Flash class settings and v4l2 flash config
-  initialization in LED Flash class drivers and v4l2-flash wrapper
-- switched to using DT node name as a device name for leds-max77693
-  and leds-aat1290 drivers, in case DT 'label' property is absent
-- dropped OF dependecy for v4l2-flash wrapper
-- moved LED_FAULTS definitions from led-class-flash.h to uapi/linux/leds.h
-- allowed for multiple clients of v4l2-flash sub-device
-
-======================
-Changes since RFC v13:
-======================
-
-- reduced number of patches - some of them have been merged
-- slightly modified max77693-led device naming
-- fixed issues in v4l2-flash helpers detected with yavta
-- cleaned up AAT1290 device tree documentation
-- added GPIOLIB dependecy to AAT1290 related entry in Kconfig
-
-Thanks,
-Jacek Anaszewski
-
-[1] http://www.spinics.net/lists/kernel/msg1944538.html
-[2] http://www.spinics.net/lists/linux-media/msg89839.html
-
-Jacek Anaszewski (8):
-  Documentation: leds: Add description of v4l2-flash sub-device
-  media: Add registration helpers for V4L2 flash sub-devices
-  leds: max77693: add support for V4L2 Flash sub-device
-  DT: aat1290: Document handling external strobe sources
-  leds: aat1290: add support for V4L2 Flash sub-device
-  exynos4-is: Improve the mechanism of async subdevs verification
-  DT: Add documentation for exynos4-is 'flashes' property
-  exynos4-is: Add support for v4l2-flash subdevs
-
- .../devicetree/bindings/leds/leds-aat1290.txt      |   36 +-
- .../devicetree/bindings/media/samsung-fimc.txt     |   10 +
- Documentation/leds/leds-class-flash.txt            |   51 ++
- drivers/leds/Kconfig                               |    1 +
- drivers/leds/leds-aat1290.c                        |  137 +++-
- drivers/leds/leds-max77693.c                       |  129 +++-
- drivers/media/platform/exynos4-is/media-dev.c      |  105 ++-
- drivers/media/platform/exynos4-is/media-dev.h      |   12 +-
- drivers/media/v4l2-core/Kconfig                    |   11 +
- drivers/media/v4l2-core/Makefile                   |    2 +
- drivers/media/v4l2-core/v4l2-flash-led-class.c     |  708 ++++++++++++++++++++
- include/media/v4l2-flash-led-class.h               |  148 ++++
- 12 files changed, 1326 insertions(+), 24 deletions(-)
- create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
- create mode 100644 include/media/v4l2-flash-led-class.h
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+index ef88b9c..c05ed91 100644
+--- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -2,7 +2,9 @@
+ 
+ The device is controlled through two pins: FL_EN and EN_SET. The pins when,
+ asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
+-respectively.
++respectively. In order to add a capability of selecting the strobe signal source
++(e.g. CPU or camera sensor) there is an additional switch required, independent
++of the flash chip. The switch is controlled with pin control.
+ 
+ Required properties:
+ 
+@@ -10,6 +12,13 @@ Required properties:
+ - flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
+ - enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
+ 
++Optional properties:
++- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
++		"default" and "host" must refer to the same pin configuration
++		node, which sets the host as a strobe signal provider. Entry
++		"isp" must refer to the pin configuration node, which sets the
++		ISP as a strobe signal provider.
++
+ A discrete LED element connected to the device must be represented by a child
+ node - see Documentation/devicetree/bindings/leds/common.txt.
+ 
+@@ -25,13 +34,22 @@ Required properties of the LED child node:
+ Optional properties of the LED child node:
+ - label : see Documentation/devicetree/bindings/leds/common.txt
+ 
+-Example (by Ct = 220nF, Rset = 160kohm):
++Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
++a switch that allows for routing strobe signal either from the host or from
++the camera sensor):
++
++#include "exynos4412.dtsi"
+ 
+ aat1290 {
+ 	compatible = "skyworks,aat1290";
+ 	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+ 	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+ 
++	pinctrl-names = "default", "host", "isp";
++	pinctrl-0 = <&camera_flash_host>;
++	pinctrl-1 = <&camera_flash_host>;
++	pinctrl-2 = <&camera_flash_isp>;
++
+ 	camera_flash: flash-led {
+ 		label = "aat1290-flash";
+ 		led-max-microamp = <520833>;
+@@ -39,3 +57,17 @@ aat1290 {
+ 		flash-timeout-us = <1940000>;
+ 	};
+ };
++
++&pinctrl_0 {
++	camera_flash_host: camera-flash-host {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <0>;
++	};
++
++	camera_flash_isp: camera-flash-isp {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <1>;
++	};
++};
 -- 
 1.7.9.5
