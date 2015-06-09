@@ -1,125 +1,92 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Mon, 8 Jun 2015 15:55:45 -0700
-Message-ID: <CAGXu5jLPRS+0KOcb2g1y_1Yqg-NywshHiujxNghQJ5HdFVWo1Q@mail.gmail.com>
-References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-	<20150326233025.GR18321@valkosipuli.retiisi.org.uk>
-	<CAPybu_1thjCfz3Xomzpvc3Hpw2j_z8rXpmp28WnuRBDE0DYAtA@mail.gmail.com>
-	<CAK5ve-KLmETc1Ym1xvwTuvG7f5O1w6s=u3fgdGcYT8GHCWT+VA@mail.gmail.com>
-	<20150328010705.GB3891@wfg-t540p.sh.intel.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v1.1 1/5] v4l: async: Add a pointer to of_node to struct
+ v4l2_subdev, match it
+Date: Tue, 9 Jun 2015 11:05:23 +0300
+Message-ID: <20150609080523.GC5904@valkosipuli.retiisi.org.uk>
+References: <4071589.mUaJIGvIJX@avalon>
+ <1433111079-22457-1-git-send-email-sakari.ailus@iki.fi>
+ <1668366.2mMvbSMUnT@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-vn0-f54.google.com ([209.85.216.54]:38579 "EHLO
-	mail-vn0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932205AbbFHWzq (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Jun 2015 18:55:46 -0400
-Received: by vnbf190 with SMTP id f190so273156vnb.5
-        for <linux-leds@vger.kernel.org>; Mon, 08 Jun 2015 15:55:46 -0700 (PDT)
-In-Reply-To: <20150328010705.GB3891@wfg-t540p.sh.intel.com>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47934 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753518AbbFIIFa (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Jun 2015 04:05:30 -0400
+Content-Disposition: inline
+In-Reply-To: <1668366.2mMvbSMUnT@avalon>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Li <sparse@chrisli.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, cooloney@gmail.com, s.nawrocki@samsung.com, mchehab@osg.samsung.com, g.liakhovetski@gmx.de
 
-On Fri, Mar 27, 2015 at 6:07 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> + Kees Cook
->
-> On Fri, Mar 27, 2015 at 10:24:53AM -0700, Bryan Wu wrote:
->> On Fri, Mar 27, 2015 at 1:09 AM, Ricardo Ribalda Delgado
->> <ricardo.ribalda@gmail.com> wrote:
->> > Hi Sakari
->> >
->> > cc: adding Greg (core and FormatGuard) and Chistopher (sparse)
->> >>
->> >> I just realised there was another issue --- the name is now interpreted as
->> >> format string. Bad things will happen if there's e.g. %s in the name itself
->> >> --- perhaps unlikely, but possible.
->> >
->> > Good catch!
->> >
->> > Would it be possible to add a sparse check to avoid this in all the kernel?
->> >
->> > And what about a macro protection like FormatGuard?
->> >
->> > https://www.usenix.org/legacy/events/sec01/full_papers/cowanbarringer/cowanbarringer.pdf
->> >
->> >
->>
->> I think Fengguang's 0-DAY kernel test infrastructure can help this.
->
-> Kees' format-security branch has a check on dynamic printf format
-> string, which has been effective in finding errors like:
->
->    drivers/tty/serial/sb1250-duart.c: In function 'sbd_map_port':
->>> drivers/tty/serial/sb1250-duart.c:680:3: error: format not a string literal and no format arguments [-Werror=format-security]
->       printk(err);
->       ^
->
-> I wonder if Kees has the plan to include the patch into upstream and
-> make it a kconfig option. For your convenience, the patch is pasted
-> below.
->
-> Thanks,
-> Fengguang
-> ---
->
-> commit 95420c349194d1b570270ba1b1567d85461761c3
-> Author:     Kees Cook <keescook@chromium.org>
-> AuthorDate: Mon Sep 16 11:15:54 2013 -0700
-> Commit:     Kees Cook <keescook@chromium.org>
-> CommitDate: Wed Mar 4 14:07:18 2015 -0800
->
->     Make all format string problems fail the build
->
->     In an effort to stop format strings from leaking into various callers,
->     have gcc stop the build when this gets detected.
->
->     Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> diff --git a/Makefile b/Makefile
-> index e6a9b1b..b7684d2 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -402,7 +402,6 @@ KBUILD_CPPFLAGS := -D__KERNEL__
->  KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
->                    -fno-strict-aliasing -fno-common \
->                    -Werror-implicit-function-declaration \
-> -                  -Wno-format-security \
->                    -std=gnu89
->
->  KBUILD_AFLAGS_KERNEL :=
-> @@ -752,6 +751,11 @@ endif
->  NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
->  CHECKFLAGS     += $(NOSTDINC_FLAGS)
->
-> +# Enable format-security when it can stop the build, otherwise disable.
-> +KBUILD_CFLAGS  += $(call cc-option,\
-> +                       -Wformat -Wformat-security -Werror=format-security,\
-> +                       -Wno-format-security)
-> +
->  # warn about C99 declaration after statement
->  KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
->
+Hi Laurent,
 
-The trouble is that gcc still has a terrible time with false positives
-on these warnings. It doesn't know to silence const char strings. For
-example:
+On Tue, Jun 02, 2015 at 05:47:12AM +0300, Laurent Pinchart wrote:
+> Hi Sakari,
+> 
+> Thank you for the patch. Please see below for one small comment.
+> 
+> On Monday 01 June 2015 01:24:39 Sakari Ailus wrote:
+> > V4L2 async sub-devices are currently matched (OF case) based on the struct
+> > device_node pointer in struct device. LED devices may have more than one
+> > LED, and in that case the OF node to match is not directly the device's
+> > node, but a LED's node.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
+> > ---
+> > since v1:
+> > 
+> > - Move conditional setting of struct v4l2_subdev.of_node from
+> >   v4l2_device_register_subdev() to v4l2_async_register_subdev.
+> > 
+> > - Remove the check for NULL struct v4l2_subdev.of_node from match_of() as
+> >   it's no longer needed.
+> > 
+> > - Unconditionally state in the struct v4l2_subdev.of_node field comment that
+> > the field contains (a pointer to) the sub-device's of_node.
+> > 
+> >  drivers/media/v4l2-core/v4l2-async.c | 34 +++++++++++++++++++++------------
+> >  include/media/v4l2-subdev.h          |  2 ++
+> >  2 files changed, 24 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/media/v4l2-core/v4l2-async.c
+> > b/drivers/media/v4l2-core/v4l2-async.c index 85a6a34..b0badac 100644
+> > --- a/drivers/media/v4l2-core/v4l2-async.c
+> > +++ b/drivers/media/v4l2-core/v4l2-async.c
+> 
+> [snip]
+> 
+> > @@ -266,6 +273,9 @@ int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+> >  {
+> >  	struct v4l2_async_notifier *notifier;
+> > 
+> > +	if (!sd->of_node && sd->dev)
+> > +		sd->of_node = sd->dev->of_node;
+> > +
+> 
+> I think we don't need to take a reference to of_node here, as we assume 
+> there's a reference to dev through the whole life of the subdev, and dev 
+> should have a reference to of_node, but could you double-check ?
+> 
+> If that's indeed not a problem,
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-const char * version = "SomeThing driver v1.3\n";
-...
-printk(version);
+Good question.
 
-We don't care about this, since the string is not dynamic, but gcc
-still warns. My intention is that when gcc fixes this bug, then I'd
-upstream this patch. Right now I have to carry a patch to silence
-false positives. :(
+I don't think a reference would be needed also because we are only
+interested in the pointer value itself, the memory the pointer is pointing
+to is never accessed.
 
-You can see it here:
-http://git.kernel.org/cgit/linux/kernel/git/kees/linux.git/log/?h=format-security
+As far as I can tell, there's no reference through the device.
 
--Kees
+I can add a comment on this if you like. Perhaps it'd be a good idea
+actually, as you usually do take a reference in such cases.
 
 -- 
-Kees Cook
-Chrome OS Security
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
