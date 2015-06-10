@@ -1,26 +1,26 @@
 From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v10 4/8] DT: aat1290: Document handling external strobe sources
-Date: Wed, 10 Jun 2015 11:12:20 -0700
-Message-ID: <CAK5ve-JjLuYqOP2dzQCV0w-5eV0XnuVkiDOXD58FugXfrNYc0w@mail.gmail.com>
-References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com> <1433754145-12765-5-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH v10 3/8] leds: max77693: add support for V4L2 Flash sub-device
+Date: Wed, 10 Jun 2015 11:12:01 -0700
+Message-ID: <CAK5ve-+PW7KUL+Leei46HJDiS60-KVjoMMpXZfKX9yDFYCrZEA@mail.gmail.com>
+References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com> <1433754145-12765-4-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:34553 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934030AbbFJSMm (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jun 2015 14:12:42 -0400
-In-Reply-To: <1433754145-12765-5-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:35047 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933971AbbFJSMW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jun 2015 14:12:22 -0400
+In-Reply-To: <1433754145-12765-4-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 On Mon, Jun 8, 2015 at 2:02 AM, Jacek Anaszewski
 <j.anaszewski@samsung.com> wrote:
-> This patch adds documentation for a pinctrl-names property.
-> The property, when present, is used for switching the source
-> of the strobe signal for the device.
+> Add support for V4L2 Flash sub-device to the max77693 LED Flash class
+> driver. The support allows for V4L2 Flash sub-device to take the control
+> of the LED Flash class device.
 >
 
 Merged into my -devel branch and it won't be merged into 4.2.0 merge
@@ -35,82 +35,234 @@ Thanks,
 > Cc: Bryan Wu <cooloney@gmail.com>
 > Cc: Richard Purdie <rpurdie@rpsys.net>
 > Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: devicetree@vger.kernel.org
 > ---
->  .../devicetree/bindings/leds/leds-aat1290.txt      |   36 ++++++++++++++++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
+>  drivers/leds/leds-max77693.c |  129 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 123 insertions(+), 6 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-> index ef88b9c..c05ed91 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-> +++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-> @@ -2,7 +2,9 @@
+> diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+> index eecaa92..b8b0eec 100644
+> --- a/drivers/leds/leds-max77693.c
+> +++ b/drivers/leds/leds-max77693.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+> +#include <media/v4l2-flash-led-class.h>
 >
->  The device is controlled through two pins: FL_EN and EN_SET. The pins when,
->  asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
-> -respectively.
-> +respectively. In order to add a capability of selecting the strobe signal source
-> +(e.g. CPU or camera sensor) there is an additional switch required, independent
-> +of the flash chip. The switch is controlled with pin control.
+>  #define MODE_OFF               0
+>  #define MODE_FLASH(a)          (1 << (a))
+> @@ -62,6 +63,8 @@ struct max77693_sub_led {
+>         struct led_classdev_flash fled_cdev;
+>         /* assures led-triggers compatibility */
+>         struct work_struct work_brightness_set;
+> +       /* V4L2 Flash device */
+> +       struct v4l2_flash *v4l2_flash;
 >
->  Required properties:
+>         /* brightness cache */
+>         unsigned int torch_brightness;
+> @@ -627,7 +630,8 @@ static int max77693_led_flash_timeout_set(
+>  }
 >
-> @@ -10,6 +12,13 @@ Required properties:
->  - flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
->  - enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
+>  static int max77693_led_parse_dt(struct max77693_led_device *led,
+> -                               struct max77693_led_config_data *cfg)
+> +                               struct max77693_led_config_data *cfg,
+> +                               struct device_node **sub_nodes)
+>  {
+>         struct device *dev = &led->pdev->dev;
+>         struct max77693_sub_led *sub_leds = led->sub_leds;
+> @@ -674,6 +678,13 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
+>                         return -EINVAL;
+>                 }
 >
-> +Optional properties:
-> +- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
-> +               "default" and "host" must refer to the same pin configuration
-> +               node, which sets the host as a strobe signal provider. Entry
-> +               "isp" must refer to the pin configuration node, which sets the
-> +               ISP as a strobe signal provider.
+> +               if (sub_nodes[fled_id]) {
+> +                       dev_err(dev,
+> +                               "Conflicting \"led-sources\" DT properties\n");
+> +                       return -EINVAL;
+> +               }
 > +
->  A discrete LED element connected to the device must be represented by a child
->  node - see Documentation/devicetree/bindings/leds/common.txt.
+> +               sub_nodes[fled_id] = child_node;
+>                 sub_leds[fled_id].fled_id = fled_id;
 >
-> @@ -25,13 +34,22 @@ Required properties of the LED child node:
->  Optional properties of the LED child node:
->  - label : see Documentation/devicetree/bindings/leds/common.txt
+>                 cfg->label[fled_id] =
+> @@ -786,11 +797,12 @@ static void max77693_led_validate_configuration(struct max77693_led_device *led,
+>  }
 >
-> -Example (by Ct = 220nF, Rset = 160kohm):
-> +Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
-> +a switch that allows for routing strobe signal either from the host or from
-> +the camera sensor):
-> +
-> +#include "exynos4412.dtsi"
+>  static int max77693_led_get_configuration(struct max77693_led_device *led,
+> -                               struct max77693_led_config_data *cfg)
+> +                               struct max77693_led_config_data *cfg,
+> +                               struct device_node **sub_nodes)
+>  {
+>         int ret;
 >
->  aat1290 {
->         compatible = "skyworks,aat1290";
->         flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
->         enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+> -       ret = max77693_led_parse_dt(led, cfg);
+> +       ret = max77693_led_parse_dt(led, cfg, sub_nodes);
+>         if (ret < 0)
+>                 return ret;
 >
-> +       pinctrl-names = "default", "host", "isp";
-> +       pinctrl-0 = <&camera_flash_host>;
-> +       pinctrl-1 = <&camera_flash_host>;
-> +       pinctrl-2 = <&camera_flash_isp>;
+> @@ -838,6 +850,71 @@ static void max77693_init_flash_settings(struct max77693_sub_led *sub_led,
+>         setting->val = setting->max;
+>  }
+>
+> +#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
 > +
->         camera_flash: flash-led {
->                 label = "aat1290-flash";
->                 led-max-microamp = <520833>;
-> @@ -39,3 +57,17 @@ aat1290 {
->                 flash-timeout-us = <1940000>;
->         };
->  };
+> +static int max77693_led_external_strobe_set(
+> +                               struct v4l2_flash *v4l2_flash,
+> +                               bool enable)
+> +{
+> +       struct max77693_sub_led *sub_led =
+> +                               flcdev_to_sub_led(v4l2_flash->fled_cdev);
+> +       struct max77693_led_device *led = sub_led_to_led(sub_led);
+> +       int fled_id = sub_led->fled_id;
+> +       int ret;
 > +
-> +&pinctrl_0 {
-> +       camera_flash_host: camera-flash-host {
-> +               samsung,pins = "gpj1-0";
-> +               samsung,pin-function = <1>;
-> +               samsung,pin-val = <0>;
-> +       };
+> +       mutex_lock(&led->lock);
 > +
-> +       camera_flash_isp: camera-flash-isp {
-> +               samsung,pins = "gpj1-0";
-> +               samsung,pin-function = <1>;
-> +               samsung,pin-val = <1>;
-> +       };
+> +       if (enable)
+> +               ret = max77693_add_mode(led, MODE_FLASH_EXTERNAL(fled_id));
+> +       else
+> +               ret = max77693_clear_mode(led, MODE_FLASH_EXTERNAL(fled_id));
+> +
+> +       mutex_unlock(&led->lock);
+> +
+> +       return ret;
+> +}
+> +
+> +static void max77693_init_v4l2_flash_config(struct max77693_sub_led *sub_led,
+> +                               struct max77693_led_config_data *led_cfg,
+> +                               struct v4l2_flash_config *v4l2_sd_cfg)
+> +{
+> +       struct max77693_led_device *led = sub_led_to_led(sub_led);
+> +       struct device *dev = &led->pdev->dev;
+> +       struct max77693_dev *iodev = dev_get_drvdata(dev->parent);
+> +       struct i2c_client *i2c = iodev->i2c;
+> +       struct led_flash_setting *s;
+> +
+> +       snprintf(v4l2_sd_cfg->dev_name, sizeof(v4l2_sd_cfg->dev_name),
+> +                "%s %d-%04x", sub_led->fled_cdev.led_cdev.name,
+> +                i2c_adapter_id(i2c->adapter), i2c->addr);
+> +
+> +       s = &v4l2_sd_cfg->torch_intensity;
+> +       s->min = TORCH_IOUT_MIN;
+> +       s->max = sub_led->fled_cdev.led_cdev.max_brightness * TORCH_IOUT_STEP;
+> +       s->step = TORCH_IOUT_STEP;
+> +       s->val = s->max;
+> +
+> +       /* Init flash faults config */
+> +       v4l2_sd_cfg->flash_faults = LED_FAULT_OVER_VOLTAGE |
+> +                               LED_FAULT_SHORT_CIRCUIT |
+> +                               LED_FAULT_OVER_CURRENT;
+> +
+> +       v4l2_sd_cfg->has_external_strobe = true;
+> +}
+> +
+> +static const struct v4l2_flash_ops v4l2_flash_ops = {
+> +       .external_strobe_set = max77693_led_external_strobe_set,
 > +};
+> +#else
+> +static inline void max77693_init_v4l2_flash_config(
+> +                               struct max77693_sub_led *sub_led,
+> +                               struct max77693_led_config_data *led_cfg,
+> +                               struct v4l2_flash_config *v4l2_sd_cfg)
+> +{
+> +}
+> +static const struct v4l2_flash_ops v4l2_flash_ops;
+> +#endif
+> +
+>  static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
+>                                 struct max77693_led_config_data *led_cfg)
+>  {
+> @@ -870,12 +947,45 @@ static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
+>         sub_led->flash_timeout = fled_cdev->timeout.val;
+>  }
+>
+> +static int max77693_register_led(struct max77693_sub_led *sub_led,
+> +                                struct max77693_led_config_data *led_cfg,
+> +                                struct device_node *sub_node)
+> +{
+> +       struct max77693_led_device *led = sub_led_to_led(sub_led);
+> +       struct led_classdev_flash *fled_cdev = &sub_led->fled_cdev;
+> +       struct device *dev = &led->pdev->dev;
+> +       struct v4l2_flash_config v4l2_sd_cfg = {};
+> +       int ret;
+> +
+> +       /* Register in the LED subsystem */
+> +       ret = led_classdev_flash_register(dev, fled_cdev);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       max77693_init_v4l2_flash_config(sub_led, led_cfg, &v4l2_sd_cfg);
+> +
+> +       /* Register in the V4L2 subsystem. */
+> +       sub_led->v4l2_flash = v4l2_flash_init(dev, sub_node, fled_cdev, NULL,
+> +                                             &v4l2_flash_ops, &v4l2_sd_cfg);
+> +       if (IS_ERR(sub_led->v4l2_flash)) {
+> +               ret = PTR_ERR(sub_led->v4l2_flash);
+> +               goto err_v4l2_flash_init;
+> +       }
+> +
+> +       return 0;
+> +
+> +err_v4l2_flash_init:
+> +       led_classdev_flash_unregister(fled_cdev);
+> +       return ret;
+> +}
+> +
+>  static int max77693_led_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+>         struct max77693_dev *iodev = dev_get_drvdata(dev->parent);
+>         struct max77693_led_device *led;
+>         struct max77693_sub_led *sub_leds;
+> +       struct device_node *sub_nodes[2] = {};
+>         struct max77693_led_config_data led_cfg = {};
+>         int init_fled_cdev[2], i, ret;
+>
+> @@ -889,7 +999,7 @@ static int max77693_led_probe(struct platform_device *pdev)
+>         sub_leds = led->sub_leds;
+>
+>         platform_set_drvdata(pdev, led);
+> -       ret = max77693_led_get_configuration(led, &led_cfg);
+> +       ret = max77693_led_get_configuration(led, &led_cfg, sub_nodes);
+>         if (ret < 0)
+>                 return ret;
+>
+> @@ -911,8 +1021,12 @@ static int max77693_led_probe(struct platform_device *pdev)
+>                 /* Initialize LED Flash class device */
+>                 max77693_init_fled_cdev(&sub_leds[i], &led_cfg);
+>
+> -               /* Register LED Flash class device */
+> -               ret = led_classdev_flash_register(dev, &sub_leds[i].fled_cdev);
+> +               /*
+> +                * Register LED Flash class device and corresponding
+> +                * V4L2 Flash device.
+> +                */
+> +               ret = max77693_register_led(&sub_leds[i], &led_cfg,
+> +                                               sub_nodes[i]);
+>                 if (ret < 0) {
+>                         /*
+>                          * At this moment FLED1 might have been already
+> @@ -931,6 +1045,7 @@ err_register_led2:
+>         /* It is possible than only FLED2 was to be registered */
+>         if (!init_fled_cdev[FLED1])
+>                 goto err_register_led1;
+> +       v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
+>         led_classdev_flash_unregister(&sub_leds[FLED1].fled_cdev);
+>  err_register_led1:
+>         mutex_destroy(&led->lock);
+> @@ -944,11 +1059,13 @@ static int max77693_led_remove(struct platform_device *pdev)
+>         struct max77693_sub_led *sub_leds = led->sub_leds;
+>
+>         if (led->iout_joint || max77693_fled_used(led, FLED1)) {
+> +               v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
+>                 led_classdev_flash_unregister(&sub_leds[FLED1].fled_cdev);
+>                 cancel_work_sync(&sub_leds[FLED1].work_brightness_set);
+>         }
+>
+>         if (!led->iout_joint && max77693_fled_used(led, FLED2)) {
+> +               v4l2_flash_release(sub_leds[FLED2].v4l2_flash);
+>                 led_classdev_flash_unregister(&sub_leds[FLED2].fled_cdev);
+>                 cancel_work_sync(&sub_leds[FLED2].work_brightness_set);
+>         }
 > --
 > 1.7.9.5
 >
