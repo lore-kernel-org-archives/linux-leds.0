@@ -1,119 +1,237 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v10 2/8] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Thu, 11 Jun 2015 00:55:27 +0300
-Message-ID: <20150610215527.GS5904@valkosipuli.retiisi.org.uk>
-References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com>
- <1433754145-12765-3-git-send-email-j.anaszewski@samsung.com>
- <CAK5ve-+FojRu1Ti3doEUJrf+QF-=Hb7ku_wZZEP2TEnS0PK=2g@mail.gmail.com>
- <CAK5ve-L6MJ0RfE+9Spp1YCu3MZAJSNnK8pBX0bc_G_4dL6812w@mail.gmail.com>
- <CAK5ve-+Yni0P2ZrS-boF9iRs2aqJGB73x87KZdmKckfe650N0Q@mail.gmail.com>
- <20150610213458.GQ5904@valkosipuli.retiisi.org.uk>
- <CAK5ve-+g6t-kpCpkD__-iANAaJTKgZ8W-4A11NAhMkj5Q0v07w@mail.gmail.com>
+From: Matt Ranostay <mranostay@gmail.com>
+Subject: Re: [PATCH v2] cap11xx: add LED support
+Date: Wed, 10 Jun 2015 15:07:25 -0700
+Message-ID: <CAKzfze_+XEQB5VTiH6BcyU297OnEWc3JK0m2hLuVsqhykCfPAw@mail.gmail.com>
+References: <1433920083-31869-1-git-send-email-mranostay@gmail.com>
+	<5577EF58.60706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-+g6t-kpCpkD__-iANAaJTKgZ8W-4A11NAhMkj5Q0v07w@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, mchehab@osg.samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:35294 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752554AbbFJWH0 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jun 2015 18:07:26 -0400
+In-Reply-To: <5577EF58.60706@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Mack <zonque@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-leds@vger.kernel.org
 
-Hi Bryan,
+On Wed, Jun 10, 2015 at 1:03 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Hi Matt,
+>
+> On 06/10/2015 09:08 AM, Matt Ranostay wrote:
+>>
+>> Several cap11xx variants have LEDs that be can be controlled, this
+>> patchset implements this functionality.
+>>
+>> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
+>> ---
+>>   drivers/input/keyboard/cap11xx.c | 90
+>> ++++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 87 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/input/keyboard/cap11xx.c
+>> b/drivers/input/keyboard/cap11xx.c
+>> index f07461a..af1daa0 100644
+>> --- a/drivers/input/keyboard/cap11xx.c
+>> +++ b/drivers/input/keyboard/cap11xx.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/input.h>
+>> +#include <linux/leds.h>
+>>   #include <linux/of_irq.h>
+>>   #include <linux/regmap.h>
+>>   #include <linux/i2c.h>
+>
+>
+> These include directives aren't arranged in an alphabetical order.
+> You could fix that as you are modifying this file.
+>
+>> @@ -47,6 +48,8 @@
+>>   #define CAP11XX_REG_CONFIG2           0x44
+>>   #define CAP11XX_REG_CONFIG2_ALT_POL   BIT(6)
+>>   #define CAP11XX_REG_SENSOR_BASE_CNT(X)        (0x50 + (X))
+>> +#define CAP11XX_REG_LED_POLARITY       0x73
+>> +#define CAP11XX_REG_LED_OUTPUT_CONTROL 0x74
+>>   #define CAP11XX_REG_SENSOR_CALIB      (0xb1 + (X))
+>>   #define CAP11XX_REG_SENSOR_CALIB_LSB1 0xb9
+>>   #define CAP11XX_REG_SENSOR_CALIB_LSB2 0xba
+>> @@ -56,10 +59,25 @@
+>>
+>>   #define CAP11XX_MANUFACTURER_ID       0x5d
+>>
+>> +#ifdef CONFIG_LEDS_CLASS
+>> +struct cap11xx_led {
+>> +       struct cap11xx_priv *priv;
+>> +       struct led_classdev cdev;
+>> +       struct work_struct work;
+>> +       char name[32];
+>
+>
+> This 'name' field is not needed. Instead the 'name' field of struct
+> led_classdev should be initialized with the address of either a 'label'
+> property from DT child node representing a LED, or the DT child node
+> name if the label is absent. Please refer to
+> Documentation/devicetree/bindings/leds/common.txt.
+>
+> This is usually accomplished in the LED subsystem with following
+> instruction:
+>
+> led_cdev->name = of_get_property(child_node, "label", NULL) ? :
+>                                                 child_node->name;
+>
+>
+>
+>> +       int id;
+>> +       enum led_brightness new_brightness;
+>> +};
+>> +#endif
+>> +
+>>   struct cap11xx_priv {
+>>         struct regmap *regmap;
+>>         struct input_dev *idev;
+>>
+>> +#ifdef CONFIG_LEDS_CLASS
+>> +       struct cap11xx_led *leds;
+>> +       int num_leds;
+>> +#endif
+>>         /* config */
+>>         u32 keycodes[];
+>>   };
+>> @@ -67,6 +85,7 @@ struct cap11xx_priv {
+>>   struct cap11xx_hw_model {
+>>         u8 product_id;
+>>         unsigned int num_channels;
+>> +       unsigned int num_leds;
+>>   };
+>>
+>>   enum {
+>> @@ -76,9 +95,9 @@ enum {
+>>   };
+>>
+>>   static const struct cap11xx_hw_model cap11xx_devices[] = {
+>> -       [CAP1106] = { .product_id = 0x55, .num_channels = 6 },
+>> -       [CAP1126] = { .product_id = 0x53, .num_channels = 6 },
+>> -       [CAP1188] = { .product_id = 0x50, .num_channels = 8 },
+>> +       [CAP1106] = { .product_id = 0x55, .num_channels = 6, .num_leds = 0
+>> },
+>> +       [CAP1126] = { .product_id = 0x53, .num_channels = 6, .num_leds = 2
+>> },
+>> +       [CAP1188] = { .product_id = 0x50, .num_channels = 8, .num_leds = 8
+>> },
+>>   };
+>
+>
+> The number of LEDs should be determined by the number of DT child nodes
+> representing each LED. Please refer to
+> Documentation/devicetree/bindings/leds/common.txt and other LED
+> subsystem drivers to find out how it should be implemented.
+>
+Ok but this is still needed as a check so you don't "overflow" the
+number the chipset supports, correct?
 
-On Wed, Jun 10, 2015 at 02:39:09PM -0700, Bryan Wu wrote:
-> On Wed, Jun 10, 2015 at 2:34 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > Hi Bryan,
-> >
-> > On Wed, Jun 10, 2015 at 11:12:50AM -0700, Bryan Wu wrote:
-> >> On Wed, Jun 10, 2015 at 11:01 AM, Bryan Wu <cooloney@gmail.com> wrote:
-> >> > On Wed, Jun 10, 2015 at 10:57 AM, Bryan Wu <cooloney@gmail.com> wrote:
-> >> >> On Mon, Jun 8, 2015 at 2:02 AM, Jacek Anaszewski
-> >> >> <j.anaszewski@samsung.com> wrote:
-> >> >>> This patch adds helper functions for registering/unregistering
-> >> >>> LED Flash class devices as V4L2 sub-devices. The functions should
-> >> >>> be called from the LED subsystem device driver. In case the
-> >> >>> support for V4L2 Flash sub-devices is disabled in the kernel
-> >> >>> config the functions' empty versions will be used.
-> >> >>>
-> >> >>
-> >> >> Please go ahead with my Ack
-> >> >>
-> >> >> Acked-by: Bryan Wu <cooloney@gmail.com>
-> >> >>
-> >> >
-> >> > I found the rest of LED patches depend on this one. What about merging
-> >> > this through my tree?
-> >> >
-> >> > -Bryan
-> >> >
-> >> >
-> >>
-> >> Merged into my -devel branch and it won't be merged into 4.2.0 merge
-> >> window but wait for one more cycle, since now it's quite late in 4.1.0
-> >> cycle.
-> >
-> > Thanks!!
-> >
-> > I briefly discussed this with Mauro (cc'd), this should be fine indeed.
-> >
-> 
-> I just got an email reporting a building error.
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
-> devel
-> head:   c7551d847a2336c299dff27b33ff48913fb11ee3
-> commit: badd9dba592c55f7a7b1f2b59ecdf0345ca56f01 [23/26] media: Add
-> registration helpers for V4L2 flash sub-devices
-> config: i386-allyesconfig (attached as .config)
-> reproduce:
->   git checkout badd9dba592c55f7a7b1f2b59ecdf0345ca56f01
->   # save the attached .config to linux build tree
->   make ARCH=i386
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    drivers/media/v4l2-core/v4l2-flash-led-class.c: In function
-> 'v4l2_flash_init':
-> 
-> drivers/media/v4l2-core/v4l2-flash-led-class.c:646:4: error: 'struct
-> v4l2_subdev' has no member named 'of_node'
-> 
->      sd->of_node = of_node;
->        ^
->    drivers/media/v4l2-core/v4l2-flash-led-class.c:662:8: error:
-> 'struct v4l2_subdev' has no member named 'of_node'
->      if (sd->of_node)
->            ^
->    drivers/media/v4l2-core/v4l2-flash-led-class.c:663:17: error:
-> 'struct v4l2_subdev' has no member named 'of_node'
->       of_node_get(sd->of_node);
->                     ^
->    drivers/media/v4l2-core/v4l2-flash-led-class.c: In function
-> 'v4l2_flash_release':
->    drivers/media/v4l2-core/v4l2-flash-led-class.c:696:8: error:
-> 'struct v4l2_subdev' has no member named 'of_node'
->      if (sd->of_node)
->            ^
->    drivers/media/v4l2-core/v4l2-flash-led-class.c:697:17: error:
-> 'struct v4l2_subdev' has no member named 'of_node'
->       of_node_put(sd->of_node);
->                     ^
-> 
-> vim +646 drivers/media/v4l2-core/v4l2-flash-led-class.c
-
-Oh dear. I briefly forgot the dependency to the patch Jacek also referred
-to:
-
-<URL:http://www.spinics.net/lists/linux-media/msg90846.html>
-
-That's v1.2 I just sent in order to address Laurent's concern. I'd like to
-get an ack from him on that though, but he probably won't be able to give
-one until tomorrow evening Finnish time.
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+>
+>
+>>   static const struct reg_default cap11xx_reg_defaults[] = {
+>> @@ -111,6 +130,7 @@ static const struct reg_default cap11xx_reg_defaults[]
+>> = {
+>>         { CAP11XX_REG_STANDBY_SENSITIVITY,      0x02 },
+>>         { CAP11XX_REG_STANDBY_THRESH,           0x40 },
+>>         { CAP11XX_REG_CONFIG2,                  0x40 },
+>> +       { CAP11XX_REG_LED_POLARITY,             0x00 },
+>>         { CAP11XX_REG_SENSOR_CALIB_LSB1,        0x00 },
+>>         { CAP11XX_REG_SENSOR_CALIB_LSB2,        0x00 },
+>>   };
+>> @@ -196,6 +216,58 @@ static void cap11xx_input_close(struct input_dev
+>> *idev)
+>>         cap11xx_set_sleep(priv, true);
+>>   }
+>>
+>> +#ifdef CONFIG_LEDS_CLASS
+>> +static void cap11xx_led_work(struct work_struct *work)
+>> +{
+>> +       struct cap11xx_led *led = container_of(work, struct cap11xx_led,
+>> work);
+>> +       struct cap11xx_priv *priv = led->priv;
+>> +       int value = led->new_brightness;
+>> +
+>> +       regmap_update_bits(priv->regmap, CAP11XX_REG_LED_OUTPUT_CONTROL,
+>> +                               BIT(led->id), !!value ? BIT(led->id) : 0);
+>> +}
+>> +
+>> +static void cap11xx_led_set(struct led_classdev *cdev,
+>> +                          enum led_brightness value)
+>> +{
+>> +       struct cap11xx_led *led = container_of(cdev, struct cap11xx_led,
+>> cdev);
+>> +
+>> +       led->new_brightness = value;
+>> +       schedule_work(&led->work);
+>> +}
+>> +
+>> +static int cap11xx_register_leds(struct device *dev, struct cap11xx_priv
+>> *priv)
+>> +{
+>> +       int ret;
+>> +       int i;
+>> +
+>> +       /*
+>> +        * Be sure all LEDS are in off-state
+>> +        */
+>> +       regmap_update_bits(priv->regmap,
+>> +                       CAP11XX_REG_LED_OUTPUT_CONTROL, 0xff, 0);
+>> +
+>> +       for (i = 0; i < priv->num_leds; i++) {
+>> +               struct cap11xx_led *led = &priv->leds[i];
+>> +
+>> +               snprintf(led->name, sizeof(led->name), "cap11xx:led%d", i
+>> + 1);
+>> +               led->cdev.name = led->name;
+>> +               led->cdev.brightness_set = cap11xx_led_set;
+>> +               led->cdev.brightness = LED_OFF;
+>> +               led->cdev.max_brightness = 1;
+>> +               led->id = i;
+>> +               led->priv = priv;
+>> +
+>> +               ret = devm_led_classdev_register(dev, &led->cdev);
+>> +               if (ret < 0)
+>> +                       return ret;
+>> +
+>> +               INIT_WORK(&led->work, cap11xx_led_work);
+>> +       };
+>> +       return 0;
+>> +}
+>> +#endif
+>> +
+>>   static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
+>>                              const struct i2c_device_id *id)
+>>   {
+>> @@ -316,6 +388,18 @@ static int cap11xx_i2c_probe(struct i2c_client
+>> *i2c_client,
+>>         priv->idev->open = cap11xx_input_open;
+>>         priv->idev->close = cap11xx_input_close;
+>>
+>> +#ifdef CONFIG_LEDS_CLASS
+>> +       if (cap->num_leds > 0) {
+>> +               priv->leds = devm_kcalloc(dev, cap->num_leds,
+>> +                               sizeof(struct cap11xx_led), GFP_KERNEL);
+>> +               if (!priv->leds)
+>> +                       return -ENOMEM;
+>> +               priv->num_leds = cap->num_leds;
+>> +               error = cap11xx_register_leds(dev, priv);
+>> +               if (error)
+>> +                       return error;
+>> +       }
+>> +#endif
+>>         input_set_drvdata(priv->idev, priv);
+>>
+>>         /*
+>>
+>
+>
+> --
+> Best Regards,
+> Jacek Anaszewski
