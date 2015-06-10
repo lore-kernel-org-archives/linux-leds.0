@@ -1,163 +1,69 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v10 6/8] exynos4-is: Improve the mechanism of async
- subdevs verification
-Date: Wed, 10 Jun 2015 11:17:50 -0700
-Message-ID: <CAK5ve-Lj93_NbGqC7-cTK2jbpELkF_p3XtpPvsHUC2pOpNWB3w@mail.gmail.com>
-References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com> <1433754145-12765-7-git-send-email-j.anaszewski@samsung.com>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 7/8] DT: Add documentation for exynos4-is 'flashes' property
+Date: Wed, 10 Jun 2015 11:18:16 -0700
+Message-ID: <CAK5ve-LZ0G0H2XpepJ1Bje=Sfv4HNHt1PCu2Mn9HnT4bgXZmuw@mail.gmail.com>
+References: <1433754145-12765-1-git-send-email-j.anaszewski@samsung.com> <1433754145-12765-8-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1433754145-12765-7-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pavel Machek <pavel@ucw.cz>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1433754145-12765-8-git-send-email-j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
 On Mon, Jun 8, 2015 at 2:02 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Avoid verifying bound async sensor sub-devices by their of_nodes,
-> which duplicates v4l2-async functionality, in favour of matching
-> them by the corresponding struct v4l2_async_subdev. The structures
-> are now being aggregated in the newly introduced struct fimc_async_subdevs
-> which allows for categorizing async sub-devices by their type upon
-> DT node parsing and recognizing the type easily when they're being bound.
+<j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch adds a description of 'samsung,camera-flashes'
+> property to the samsung-fimc.txt.
 >
 
 Please go ahead with my Ack
-Acked-by: Bryan Wu <cooloney@gmail.com>
+Acked-by: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
 Thanks,
 -Bryan
 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > ---
->  drivers/media/platform/exynos4-is/media-dev.c |   34 +++++++++++++++++++------
->  drivers/media/platform/exynos4-is/media-dev.h |    8 ++++--
->  2 files changed, 32 insertions(+), 10 deletions(-)
+>  .../devicetree/bindings/media/samsung-fimc.txt     |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index 4f5586a..e3d7b70 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -331,6 +331,8 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->                                    unsigned int index)
->  {
->         struct fimc_source_info *pd = &fmd->sensor[index].pdata;
-> +       struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
-> +       struct v4l2_async_subdev *asd;
->         struct device_node *rem, *ep, *np;
->         struct v4l2_of_endpoint endpoint;
+> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> index 922d6f8..0554cad 100644
+> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> @@ -40,6 +40,14 @@ should be inactive. For the "active-a" state the camera port A must be activated
+>  and the port B deactivated and for the state "active-b" it should be the other
+>  way around.
 >
-> @@ -387,9 +389,11 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->         if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
->                 return -EINVAL;
->
-> -       fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
-> -       fmd->sensor[index].asd.match.of.node = rem;
-> -       fmd->async_subdevs[index] = &fmd->sensor[index].asd;
-> +       asd = &fmd->async_subdevs.sensors[index];
-> +       asd->match_type = V4L2_ASYNC_MATCH_OF;
-> +       asd->match.of.node = rem;
-> +       notifier->subdevs[notifier->num_subdevs++] = asd;
-> +       fmd->sensor[index].asd = asd;
->
->         fmd->num_sensors++;
->
-> @@ -1272,12 +1276,13 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
->                                  struct v4l2_async_subdev *asd)
->  {
->         struct fimc_md *fmd = notifier_to_fimc_md(notifier);
-> +       struct fimc_async_subdevs *async_subdevs = &fmd->async_subdevs;
->         struct fimc_sensor_info *si = NULL;
->         int i;
->
->         /* Find platform data for this sensor subdev */
-> -       for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
-> -               if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
-> +       for (i = 0; i < ARRAY_SIZE(async_subdevs->sensors); i++)
-> +               if (fmd->sensor[i].asd == asd)
->                         si = &fmd->sensor[i];
->
->         if (si == NULL)
-> @@ -1317,6 +1322,19 @@ unlock:
->         return ret;
->  }
->
-> +static int fimc_md_register_async_entities(struct fimc_md *fmd)
-> +{
-> +       struct device *dev = fmd->media_dev.dev;
-> +       struct v4l2_async_notifier *notifier = &fmd->subdev_notifier;
+> +Optional properties:
 > +
-> +       notifier->subdevs = devm_kcalloc(dev, FIMC_MAX_SENSORS,
-> +                                       sizeof(*notifier->subdevs), GFP_KERNEL);
-> +       if (!notifier->subdevs)
-> +               return -ENOMEM;
+> +- samsung,camera-flashes - Array of pairs of phandles to the camera sensor
+> +       devices and flash LEDs respectively. The pairs must reflect the board
+> +       configuration, i.e. a sensor has to be able to strobe a flash LED by
+> +       hardware. Flash LED is represented by a child node of a flash LED
+> +       device (see Documentation/devicetree/bindings/leds/common.txt).
 > +
-> +       return fimc_md_register_sensor_entities(fmd);
-> +}
-> +
->  static int fimc_md_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> @@ -1379,7 +1397,7 @@ static int fimc_md_probe(struct platform_device *pdev)
->                 goto err_clk;
->         }
+>  The 'camera' node must include at least one 'fimc' child node.
 >
-> -       ret = fimc_md_register_sensor_entities(fmd);
-> +       ret = fimc_md_register_async_entities(fmd);
->         if (ret) {
->                 mutex_unlock(&fmd->media_dev.graph_mutex);
->                 goto err_m_ent;
-> @@ -1402,8 +1420,6 @@ static int fimc_md_probe(struct platform_device *pdev)
->         }
 >
->         if (fmd->num_sensors > 0) {
-> -               fmd->subdev_notifier.subdevs = fmd->async_subdevs;
-> -               fmd->subdev_notifier.num_subdevs = fmd->num_sensors;
->                 fmd->subdev_notifier.bound = subdev_notifier_bound;
->                 fmd->subdev_notifier.complete = subdev_notifier_complete;
->                 fmd->num_sensors = 0;
-> @@ -1412,6 +1428,8 @@ static int fimc_md_probe(struct platform_device *pdev)
->                                                 &fmd->subdev_notifier);
->                 if (ret)
->                         goto err_clk_p;
-> +       } else {
-> +               devm_kfree(dev, fmd->subdev_notifier.subdevs);
->         }
->
->         return 0;
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-> index 0321454..ff6d020 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.h
-> +++ b/drivers/media/platform/exynos4-is/media-dev.h
-> @@ -88,11 +88,15 @@ struct fimc_camclk_info {
->   */
->  struct fimc_sensor_info {
->         struct fimc_source_info pdata;
-> -       struct v4l2_async_subdev asd;
-> +       struct v4l2_async_subdev *asd;
->         struct v4l2_subdev *subdev;
->         struct fimc_dev *host;
->  };
->
-> +struct fimc_async_subdevs {
-> +       struct v4l2_async_subdev sensors[FIMC_MAX_SENSORS];
-> +};
-> +
->  struct cam_clk {
->         struct clk_hw hw;
->         struct fimc_md *fmd;
-> @@ -149,7 +153,7 @@ struct fimc_md {
->         } clk_provider;
->
->         struct v4l2_async_notifier subdev_notifier;
-> -       struct v4l2_async_subdev *async_subdevs[FIMC_MAX_SENSORS];
-> +       struct fimc_async_subdevs async_subdevs;
->
->         bool user_subdev_api;
->         spinlock_t slock;
+> @@ -166,6 +174,8 @@ Example:
+>                 clock-output-names = "cam_a_clkout", "cam_b_clkout";
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&cam_port_a_clk_active>;
+> +               samsung,camera-flashes = <&rear_camera &rear_flash>,
+> +                                        <&front_camera &front_flash>;
+>                 status = "okay";
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
 > --
 > 1.7.9.5
 >
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
