@@ -1,237 +1,220 @@
-From: Matt Ranostay <mranostay@gmail.com>
-Subject: Re: [PATCH v2] cap11xx: add LED support
-Date: Wed, 10 Jun 2015 15:07:25 -0700
-Message-ID: <CAKzfze_+XEQB5VTiH6BcyU297OnEWc3JK0m2hLuVsqhykCfPAw@mail.gmail.com>
-References: <1433920083-31869-1-git-send-email-mranostay@gmail.com>
-	<5577EF58.60706@samsung.com>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: Re: [PATCH v4 0/3] LED interface for PowerNV platform
+Date: Thu, 11 Jun 2015 12:03:23 +0530
+Message-ID: <55792BB3.3000102@linux.vnet.ibm.com>
+References: <20150428100535.26912.29607.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:35294 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752554AbbFJWH0 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jun 2015 18:07:26 -0400
-In-Reply-To: <5577EF58.60706@samsung.com>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:52452 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036AbbFKGeV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 11 Jun 2015 02:34:21 -0400
+Received: from /spool/local
+	by e23smtp05.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Thu, 11 Jun 2015 16:34:19 +1000
+Received: from d23relay08.au.ibm.com (d23relay08.au.ibm.com [9.185.71.33])
+	by d23dlp02.au.ibm.com (Postfix) with ESMTP id 41EA42BB0047
+	for <linux-leds@vger.kernel.org>; Thu, 11 Jun 2015 16:34:15 +1000 (EST)
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+	by d23relay08.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t5B6Y5iJ46661882
+	for <linux-leds@vger.kernel.org>; Thu, 11 Jun 2015 16:34:13 +1000
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+	by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t5B6Xf3C009885
+	for <linux-leds@vger.kernel.org>; Thu, 11 Jun 2015 16:33:42 +1000
+In-Reply-To: <20150428100535.26912.29607.stgit@localhost.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Mack <zonque@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-leds@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, mpe@ellerman.id.au
+Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-On Wed, Jun 10, 2015 at 1:03 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Matt,
->
-> On 06/10/2015 09:08 AM, Matt Ranostay wrote:
->>
->> Several cap11xx variants have LEDs that be can be controlled, this
->> patchset implements this functionality.
->>
->> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
->> ---
->>   drivers/input/keyboard/cap11xx.c | 90
->> ++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 87 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/input/keyboard/cap11xx.c
->> b/drivers/input/keyboard/cap11xx.c
->> index f07461a..af1daa0 100644
->> --- a/drivers/input/keyboard/cap11xx.c
->> +++ b/drivers/input/keyboard/cap11xx.c
->> @@ -12,6 +12,7 @@
->>   #include <linux/module.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/input.h>
->> +#include <linux/leds.h>
->>   #include <linux/of_irq.h>
->>   #include <linux/regmap.h>
->>   #include <linux/i2c.h>
->
->
-> These include directives aren't arranged in an alphabetical order.
-> You could fix that as you are modifying this file.
->
->> @@ -47,6 +48,8 @@
->>   #define CAP11XX_REG_CONFIG2           0x44
->>   #define CAP11XX_REG_CONFIG2_ALT_POL   BIT(6)
->>   #define CAP11XX_REG_SENSOR_BASE_CNT(X)        (0x50 + (X))
->> +#define CAP11XX_REG_LED_POLARITY       0x73
->> +#define CAP11XX_REG_LED_OUTPUT_CONTROL 0x74
->>   #define CAP11XX_REG_SENSOR_CALIB      (0xb1 + (X))
->>   #define CAP11XX_REG_SENSOR_CALIB_LSB1 0xb9
->>   #define CAP11XX_REG_SENSOR_CALIB_LSB2 0xba
->> @@ -56,10 +59,25 @@
->>
->>   #define CAP11XX_MANUFACTURER_ID       0x5d
->>
->> +#ifdef CONFIG_LEDS_CLASS
->> +struct cap11xx_led {
->> +       struct cap11xx_priv *priv;
->> +       struct led_classdev cdev;
->> +       struct work_struct work;
->> +       char name[32];
->
->
-> This 'name' field is not needed. Instead the 'name' field of struct
-> led_classdev should be initialized with the address of either a 'label'
-> property from DT child node representing a LED, or the DT child node
-> name if the label is absent. Please refer to
-> Documentation/devicetree/bindings/leds/common.txt.
->
-> This is usually accomplished in the LED subsystem with following
-> instruction:
->
-> led_cdev->name = of_get_property(child_node, "label", NULL) ? :
->                                                 child_node->name;
->
->
->
->> +       int id;
->> +       enum led_brightness new_brightness;
->> +};
->> +#endif
->> +
->>   struct cap11xx_priv {
->>         struct regmap *regmap;
->>         struct input_dev *idev;
->>
->> +#ifdef CONFIG_LEDS_CLASS
->> +       struct cap11xx_led *leds;
->> +       int num_leds;
->> +#endif
->>         /* config */
->>         u32 keycodes[];
->>   };
->> @@ -67,6 +85,7 @@ struct cap11xx_priv {
->>   struct cap11xx_hw_model {
->>         u8 product_id;
->>         unsigned int num_channels;
->> +       unsigned int num_leds;
->>   };
->>
->>   enum {
->> @@ -76,9 +95,9 @@ enum {
->>   };
->>
->>   static const struct cap11xx_hw_model cap11xx_devices[] = {
->> -       [CAP1106] = { .product_id = 0x55, .num_channels = 6 },
->> -       [CAP1126] = { .product_id = 0x53, .num_channels = 6 },
->> -       [CAP1188] = { .product_id = 0x50, .num_channels = 8 },
->> +       [CAP1106] = { .product_id = 0x55, .num_channels = 6, .num_leds = 0
->> },
->> +       [CAP1126] = { .product_id = 0x53, .num_channels = 6, .num_leds = 2
->> },
->> +       [CAP1188] = { .product_id = 0x50, .num_channels = 8, .num_leds = 8
->> },
->>   };
->
->
-> The number of LEDs should be determined by the number of DT child nodes
-> representing each LED. Please refer to
-> Documentation/devicetree/bindings/leds/common.txt and other LED
-> subsystem drivers to find out how it should be implemented.
->
-Ok but this is still needed as a check so you don't "overflow" the
-number the chipset supports, correct?
+On 04/28/2015 03:39 PM, Vasant Hegde wrote:
+> The following series implements LED driver for PowerNV platform.
 
->
->
->>   static const struct reg_default cap11xx_reg_defaults[] = {
->> @@ -111,6 +130,7 @@ static const struct reg_default cap11xx_reg_defaults[]
->> = {
->>         { CAP11XX_REG_STANDBY_SENSITIVITY,      0x02 },
->>         { CAP11XX_REG_STANDBY_THRESH,           0x40 },
->>         { CAP11XX_REG_CONFIG2,                  0x40 },
->> +       { CAP11XX_REG_LED_POLARITY,             0x00 },
->>         { CAP11XX_REG_SENSOR_CALIB_LSB1,        0x00 },
->>         { CAP11XX_REG_SENSOR_CALIB_LSB2,        0x00 },
->>   };
->> @@ -196,6 +216,58 @@ static void cap11xx_input_close(struct input_dev
->> *idev)
->>         cap11xx_set_sleep(priv, true);
->>   }
->>
->> +#ifdef CONFIG_LEDS_CLASS
->> +static void cap11xx_led_work(struct work_struct *work)
->> +{
->> +       struct cap11xx_led *led = container_of(work, struct cap11xx_led,
->> work);
->> +       struct cap11xx_priv *priv = led->priv;
->> +       int value = led->new_brightness;
->> +
->> +       regmap_update_bits(priv->regmap, CAP11XX_REG_LED_OUTPUT_CONTROL,
->> +                               BIT(led->id), !!value ? BIT(led->id) : 0);
->> +}
->> +
->> +static void cap11xx_led_set(struct led_classdev *cdev,
->> +                          enum led_brightness value)
->> +{
->> +       struct cap11xx_led *led = container_of(cdev, struct cap11xx_led,
->> cdev);
->> +
->> +       led->new_brightness = value;
->> +       schedule_work(&led->work);
->> +}
->> +
->> +static int cap11xx_register_leds(struct device *dev, struct cap11xx_priv
->> *priv)
->> +{
->> +       int ret;
->> +       int i;
->> +
->> +       /*
->> +        * Be sure all LEDS are in off-state
->> +        */
->> +       regmap_update_bits(priv->regmap,
->> +                       CAP11XX_REG_LED_OUTPUT_CONTROL, 0xff, 0);
->> +
->> +       for (i = 0; i < priv->num_leds; i++) {
->> +               struct cap11xx_led *led = &priv->leds[i];
->> +
->> +               snprintf(led->name, sizeof(led->name), "cap11xx:led%d", i
->> + 1);
->> +               led->cdev.name = led->name;
->> +               led->cdev.brightness_set = cap11xx_led_set;
->> +               led->cdev.brightness = LED_OFF;
->> +               led->cdev.max_brightness = 1;
->> +               led->id = i;
->> +               led->priv = priv;
->> +
->> +               ret = devm_led_classdev_register(dev, &led->cdev);
->> +               if (ret < 0)
->> +                       return ret;
->> +
->> +               INIT_WORK(&led->work, cap11xx_led_work);
->> +       };
->> +       return 0;
->> +}
->> +#endif
->> +
->>   static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
->>                              const struct i2c_device_id *id)
->>   {
->> @@ -316,6 +388,18 @@ static int cap11xx_i2c_probe(struct i2c_client
->> *i2c_client,
->>         priv->idev->open = cap11xx_input_open;
->>         priv->idev->close = cap11xx_input_close;
->>
->> +#ifdef CONFIG_LEDS_CLASS
->> +       if (cap->num_leds > 0) {
->> +               priv->leds = devm_kcalloc(dev, cap->num_leds,
->> +                               sizeof(struct cap11xx_led), GFP_KERNEL);
->> +               if (!priv->leds)
->> +                       return -ENOMEM;
->> +               priv->num_leds = cap->num_leds;
->> +               error = cap11xx_register_leds(dev, priv);
->> +               if (error)
->> +                       return error;
->> +       }
->> +#endif
->>         input_set_drvdata(priv->idev, priv);
->>
->>         /*
->>
->
->
+Ben, Michael,
+
+Can you please review/ACK this patchset?
+
+-Vasant
+
+>=20
+> PowerNV platform has below type of LEDs:
+>   - System attention
+>       Indicates there is a problem with the system that needs attenti=
+on.
+>   - Identify
+>       Helps the user locate/identify a particular FRU or resource in =
+the
+>       system.
+>   - Fault
+>       Indicates there is a problem with the FRU or resource at the
+>       location with which the indicator is associated.
+>=20
+> On PowerNV (Non Virtualized) platform OPAL firmware provides LED info=
+rmation
+> to host via device tree (location code and LED type). During init we =
+check
+> for 'ibm,opal/led' node in device tree to enable LED driver. And we u=
+se
+> OPAL API's to get/set LEDs.
+>=20
+> Note that on PowerNV platform firmware can activate fault LED, if it =
+can isolate
+> the problem. Also one can modify the LEDs using service processor int=
+erface. None
+> of these involes kernel. Hence we retain LED state in unload path.
+>=20
+> Sample LED device tree output:
+> ------------------------------
+> led {
+> 	compatible =3D "ibm,opal-v3-led";
+> 	phandle =3D <0x1000006b>;
+> 	linux,phandle =3D <0x1000006b>;
+> 	led-mode =3D "lightpath";
+>=20
+> 	U78C9.001.RST0027-P1-C1 {
+> 		led-types =3D "identify", "fault";
+> 		led-loc =3D "descendent";
+> 		phandle =3D <0x1000006f>;
+> 		linux,phandle =3D <0x1000006f>;
+> 	};
+> 	...
+> 	...
+>     }
+>=20
+> Sample sysfs output:
+> --------------------
+> .
+> =E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:fault
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 brightness
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../opal_led
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_brightness
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 power
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 async
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 autosuspend_delay=
+_ms
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 control
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_active_ki=
+ds
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_active_ti=
+me
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_enabled
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_status
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_suspended=
+_time
+> =E2=94=82   =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 runtime_usage
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../../../../c=
+lass/leds
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 trigger
+> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 uevent
+> =E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:identify
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 brightness
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../opal_led
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_brightness
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 power
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 async
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 autosuspend_delay=
+_ms
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 control
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_active_ki=
+ds
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_active_ti=
+me
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_enabled
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_status
+> =E2=94=82   =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 runtime_suspended=
+_time
+> =E2=94=82   =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 runtime_usage
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../../../../c=
+lass/leds
+> =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 trigger
+> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 uevent
+> ....
+> ....
+> ....
+>=20
+> patch 1/2: PowerNV architecture specific code. This adds necessary
+>            OPAL APIs.
+> patch 2/2: Create LED platform device and export OPAL symbols
+> patch 3/3: Actual LED driver implemenation for PowerNV platform.
+>=20
+> This patchset is based on top of mpe's next branch:
+>   https://git.kernel.org/cgit/linux/kernel/git/mpe/linux.git/log/?h=3D=
+next
+>=20
+> Previous patchset:
+>   v3: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-April/1277=
+02.html
+>   v2: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/1263=
+01.html
+>   v1: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/1257=
+05.html
+>=20
+> Changes in v4:
+>   - Updated macros to reflect platform.
+>   - s/u64/__be64/g for big endian data we get from firmware
+>   - Addressed review comments from Jacek. Major once are:
+>     Removed list in powernv_led_data structure
+>     s/kzalloc/devm_kzalloc/
+>     Removed compatible property from documentation
+>     s/powernv_led_set_queue/powernv_brightness_set/
+>   - Removed LED specific brightness_set/get function. Instead this ve=
+rsion
+>     uses single function to queue all LED set/get requests. Later we =
+use
+>     LED name to detect LED type and value.
+>   - Removed hardcoded LED type used in previous version. Instead we u=
+se
+>     led-types property to form LED classdev.
+>=20
+> Changes in v3:
+>   - Addressed review comments from Jacek. Major once are:
+>     Replaced spin lock and mutex and removed redundant structures
+>     Replaced pr_* with dev_*
+>     Moved OPAL platform sepcific part to separate patch
+>     Moved repteated code to common function
+>     Added device tree documentation for LEDs
+>=20
+> Changes in v2:
+>   - Rebased patches on top of mpe's next branch
+>     https://git.kernel.org/cgit/linux/kernel/git/mpe/linux.git/log/?h=
+=3Dnext
+>   - Added System Attention Indicator support
+>   - Removed redundant code in leds-powernv.c file
+>=20
+>=20
+> ---
+>=20
+> Anshuman Khandual (1):
+>       powerpc/powernv: Add OPAL interfaces for accessing and modifyin=
+g system LED states
+>=20
+> Vasant Hegde (2):
+>       powerpc/powernv: Create LED platform device
+>       leds/powernv: Add driver for PowerNV platform
+>=20
+>=20
+>  .../devicetree/bindings/leds/leds-powernv.txt      |   29 +
+>  arch/powerpc/include/asm/opal-api.h                |   29 +
+>  arch/powerpc/include/asm/opal.h                    |    5=20
+>  arch/powerpc/platforms/powernv/opal-wrappers.S     |    2=20
+>  arch/powerpc/platforms/powernv/opal.c              |   12 -
+>  drivers/leds/Kconfig                               |   11=20
+>  drivers/leds/Makefile                              |    1=20
+>  drivers/leds/leds-powernv.c                        |  472 ++++++++++=
+++++++++++
+>  8 files changed, 559 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-power=
+nv.txt
+>  create mode 100644 drivers/leds/leds-powernv.c
+>=20
 > --
-> Best Regards,
-> Jacek Anaszewski
+> Vasant
+>=20
+> _______________________________________________
+> Linuxppc-dev mailing list
+> Linuxppc-dev@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/linuxppc-dev
+>=20
