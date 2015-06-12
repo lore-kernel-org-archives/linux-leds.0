@@ -1,49 +1,69 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1.3 1/5] v4l: async: Add a pointer to of_node to struct
- v4l2_subdev, match it
-Date: Fri, 12 Jun 2015 09:41:09 +0300
-Message-ID: <20150612064109.GT5904@valkosipuli.retiisi.org.uk>
-References: <1433971645-32304-1-git-send-email-sakari.ailus@iki.fi>
- <1434050281-27861-1-git-send-email-sakari.ailus@iki.fi>
- <4041793.jETg7P3oYY@avalon>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] leds: ktd2692: pass flags parameter to devm_gpiod_get
+Date: Fri, 12 Jun 2015 09:32:23 +0200
+Message-ID: <1434094343-10349-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37592 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750949AbbFLGln (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>);
-	Fri, 12 Jun 2015 02:41:43 -0400
-Content-Disposition: inline
-In-Reply-To: <4041793.jETg7P3oYY@avalon>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:53064 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753196AbbFLHc3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 12 Jun 2015 03:32:29 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, cooloney@gmail.com, g.liakhovetski@gmx.de, s.nawrocki@samsung.com, mchehab@osg.samsung.com
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Ingi Kim <ingi2.kim@samsung.com>, Varka Bhadram <varkabhadram@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-On Thu, Jun 11, 2015 at 10:27:30PM +0300, Laurent Pinchart wrote:
-> Hi Sakari,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 11 June 2015 22:18:01 Sakari Ailus wrote:
-> > V4L2 async sub-devices are currently matched (OF case) based on the struct
-> > device_node pointer in struct device. LED devices may have more than one
-> > LED, and in that case the OF node to match is not directly the device's
-> > node, but a LED's node.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Sakari Ailus <sakari.ailus@iki.fi>
-> 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Since 39b2bbe3d715 (gpio: add flags argument to gpiod_get*() functions)
+which appeared in v3.17-rc1, the gpiod_get* functions take an additiona=
+l
+parameter that allows to specify direction and initial value for output=
+=2E
 
-Bryan, could you apply the patch to your tree? It's required by Jacek's
-patchset you attempted to apply a few days back.
+In this case the driver cannot easily be simplified but as the flags
+parameter will become mandatory soon this change is necessary
+beforehand.
 
-Thanks!
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+Hello,
 
--- 
-Kind regards,
+this patch applies to next and is only necessary on top of b7da8c5c725c
+(leds: Add ktd2692 flash LED driver) which currently sits in next.
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Note I plan to make the flags parameter mandatory for 4.3. So unless
+this change gets into 4.2, would it be ok to let it go in via the gpio
+tree?
+
+Best regards
+Uwe
+
+ drivers/leds/leds-ktd2692.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index fe05cd113b9d..2ae8c4d17ff8 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -295,14 +295,14 @@ static int ktd2692_parse_dt(struct ktd2692_contex=
+t *led, struct device *dev,
+ 	if (!dev->of_node)
+ 		return -ENXIO;
+=20
+-	led->ctrl_gpio =3D devm_gpiod_get(dev, "ctrl");
++	led->ctrl_gpio =3D devm_gpiod_get(dev, "ctrl", GPIOD_ASIS);
+ 	if (IS_ERR(led->ctrl_gpio)) {
+ 		ret =3D PTR_ERR(led->ctrl_gpio);
+ 		dev_err(dev, "cannot get ctrl-gpios %d\n", ret);
+ 		return ret;
+ 	}
+=20
+-	led->aux_gpio =3D devm_gpiod_get(dev, "aux");
++	led->aux_gpio =3D devm_gpiod_get(dev, "aux", GPIOD_ASIS);
+ 	if (IS_ERR(led->aux_gpio)) {
+ 		ret =3D PTR_ERR(led->aux_gpio);
+ 		dev_err(dev, "cannot get aux-gpios %d\n", ret);
+--=20
+2.1.4
