@@ -1,48 +1,31 @@
-From: kbuild test robot <fengguang.wu@intel.com>
-Subject: [PATCH next] Merge remote-tracking branch 'leds/for-next'::
- aat1290_intensity_to_brightness() can be static
-Date: Wed, 17 Jun 2015 14:56:39 +0800
-Message-ID: <20150617065639.GA70664@athens>
-References: <201506171403.akc8Fj4R%fengguang.wu@intel.com>
+From: Daniel Mack <daniel@zonque.org>
+Subject: Re: [PATCH v4 2/2] cap11xx: add LED support
+Date: Wed, 17 Jun 2015 10:59:42 +0200
+Message-ID: <558136FE.7060308@zonque.org>
+References: <1434422770-26896-1-git-send-email-mranostay@gmail.com>	<1434422770-26896-3-git-send-email-mranostay@gmail.com>	<557FD625.1080806@samsung.com>	<CAKzfze9gneY_LmWaWGNKxLXBsw_k2d596CkGNat5RoTbn3cYEg@mail.gmail.com>	<55809476.90407@zonque.org>	<CAKzfze_TXP=qpyXJcktALW4V9b2SxH3qQSs=u3a8Xc=0diZ0Ng@mail.gmail.com>	<CAKzfze8629xyiz1wufjoGbOu+npDRXyCgyGEhxY_1h7XHKeTQg@mail.gmail.com> <CAKzfze-M2aDY8p7FeazC7vBrigBGa-a6k43+=FZ9DEBOD0hHpw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:20985 "EHLO mga11.intel.com"
+Received: from svenfoo.org ([82.94.215.22]:43624 "EHLO mail.zonque.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752605AbbFQG5i (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 17 Jun 2015 02:57:38 -0400
-Content-Disposition: inline
-In-Reply-To: <201506171403.akc8Fj4R%fengguang.wu@intel.com>
+	id S1752710AbbFQI7p (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 17 Jun 2015 04:59:45 -0400
+In-Reply-To: <CAKzfze-M2aDY8p7FeazC7vBrigBGa-a6k43+=FZ9DEBOD0hHpw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: kbuild-all@01.org, Michael Ellerman <mpe@ellerman.id.au>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matt Ranostay <mranostay@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+
+On 06/17/2015 08:49 AM, Matt Ranostay wrote:
+> Actually after further reading of the datasheet and testing with
+> i2ctools it seems cap11xx_input_close() isn't putting the device in
+> DEEP SLEEP mode.
+> 
+> Any thoughts why?
+
+No, sorry. IIRC, the board I wrote the driver for didn't give me the
+ability to measure power consumption.
 
 
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- leds-aat1290.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index 1ac525b4..fd7c25f 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -394,7 +394,7 @@ static void aat1290_init_flash_timeout(struct aat1290_led *led,
- }
- 
- #if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
--enum led_brightness aat1290_intensity_to_brightness(
-+static enum led_brightness aat1290_intensity_to_brightness(
- 					struct v4l2_flash *v4l2_flash,
- 					s32 intensity)
- {
-@@ -409,7 +409,7 @@ enum led_brightness aat1290_intensity_to_brightness(
- 	return 1;
- }
- 
--s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
-+static s32 aat1290_brightness_to_intensity(struct v4l2_flash *v4l2_flash,
- 					enum led_brightness brightness)
- {
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+Daniel
