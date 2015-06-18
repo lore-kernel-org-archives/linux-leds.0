@@ -1,144 +1,54 @@
 From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [RESEND PATCH 2/4] ARM: Kirkwood: add modes-map property to ns2-leds nodes
-Date: Thu, 18 Jun 2015 17:17:28 +0200
-Message-ID: <1434640650-28086-3-git-send-email-simon.guinot@sequanux.org>
+Subject: [RESEND PATCH 4/4] leds: leds-ns2: depends on MACH_ARMADA_370
+Date: Thu, 18 Jun 2015 17:17:30 +0200
+Message-ID: <1434640650-28086-5-git-send-email-simon.guinot@sequanux.org>
 References: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:38166 "EHLO vm1.sequanux.org"
+Received: from vm1.sequanux.org ([188.165.36.56]:38172 "EHLO vm1.sequanux.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754802AbbFRPRi (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 18 Jun 2015 11:17:38 -0400
+	id S1754802AbbFRPRl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 18 Jun 2015 11:17:41 -0400
 In-Reply-To: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-From: Vincent Donnefort <vdonnefort@gmail.com>
+The leds-ns2 driver is also used by the n090401 board (Seagate NAS
+4-Bay), which is based on the Marvell Armada-370 SoC.
 
-Since the LED modes mapping is no longer hardcoded inside the leds-ns2
-driver, then it must be provided through the modes-map property in the
-ns2-leds nodes.
+Then this patch allows to select the leds-ns2 driver if MACH_ARMADA_370
+is enabled. Additionally, this also updates the Kconfig help message.
 
-Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
 ---
- arch/arm/boot/dts/kirkwood-d2net.dts   | 5 +++++
- arch/arm/boot/dts/kirkwood-is2.dts     | 5 +++++
- arch/arm/boot/dts/kirkwood-ns2.dts     | 5 +++++
- arch/arm/boot/dts/kirkwood-ns2max.dts  | 5 +++++
- arch/arm/boot/dts/kirkwood-ns2mini.dts | 5 +++++
- 5 files changed, 25 insertions(+)
+ drivers/leds/Kconfig | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/kirkwood-d2net.dts b/arch/arm/boot/dts/kirkwood-d2net.dts
-index 6b7856025001..e1c25c35e9ce 100644
---- a/arch/arm/boot/dts/kirkwood-d2net.dts
-+++ b/arch/arm/boot/dts/kirkwood-d2net.dts
-@@ -10,6 +10,7 @@
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 966b9605f5f0..68fd6b2b12be 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -431,12 +431,16 @@ config LEDS_MC13783
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+ 	depends on LEDS_CLASS
+-	depends on MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD || MACH_ARMADA_370
+ 	default y
+ 	help
+-	  This option enable support for the dual-GPIO LED found on the
+-	  Network Space v2 board (and parents). This include Internet Space v2,
+-	  Network Space (Max) v2 and d2 Network v2 boards.
++	  This option enables support for the dual-GPIO LEDs found on the
++	  following LaCie/Seagate boards:
++
++		Network Space v2 (and parents: Max, Mini)
++		Internet Space v2
++		d2 Network v2
++		n090401 (Seagate NAS 4-Bay)
  
- /dts-v1/;
- 
-+#include <dt-bindings/leds/leds-ns2.h>
- #include "kirkwood-netxbig.dtsi"
- 
- / {
-@@ -28,6 +29,10 @@
- 			label = "d2net_v2:blue:sata";
- 			slow-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
- 			cmd-gpio = <&gpio0 30 GPIO_ACTIVE_HIGH>;
-+			modes-map = <NS_V2_LED_OFF  1 0
-+				     NS_V2_LED_ON   0 1
-+				     NS_V2_LED_ON   1 1
-+				     NS_V2_LED_SATA 0 0>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/kirkwood-is2.dts b/arch/arm/boot/dts/kirkwood-is2.dts
-index da674bbd49a8..4121674abd1c 100644
---- a/arch/arm/boot/dts/kirkwood-is2.dts
-+++ b/arch/arm/boot/dts/kirkwood-is2.dts
-@@ -1,5 +1,6 @@
- /dts-v1/;
- 
-+#include <dt-bindings/leds/leds-ns2.h>
- #include "kirkwood-ns2-common.dtsi"
- 
- / {
-@@ -27,6 +28,10 @@
- 			label = "ns2:blue:sata";
- 			slow-gpio = <&gpio0 29 0>;
- 			cmd-gpio = <&gpio0 30 0>;
-+			modes-map = <NS_V2_LED_OFF  1 0
-+				     NS_V2_LED_ON   0 1
-+				     NS_V2_LED_ON   1 1
-+				     NS_V2_LED_SATA 0 0>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/kirkwood-ns2.dts b/arch/arm/boot/dts/kirkwood-ns2.dts
-index 53368d1022cc..190189d235e6 100644
---- a/arch/arm/boot/dts/kirkwood-ns2.dts
-+++ b/arch/arm/boot/dts/kirkwood-ns2.dts
-@@ -1,5 +1,6 @@
- /dts-v1/;
- 
-+#include <dt-bindings/leds/leds-ns2.h>
- #include "kirkwood-ns2-common.dtsi"
- 
- / {
-@@ -27,6 +28,10 @@
- 			label = "ns2:blue:sata";
- 			slow-gpio = <&gpio0 29 0>;
- 			cmd-gpio = <&gpio0 30 0>;
-+			modes-map = <NS_V2_LED_OFF  1 0
-+				     NS_V2_LED_ON   0 1
-+				     NS_V2_LED_ON   1 1
-+				     NS_V2_LED_SATA 0 0>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/kirkwood-ns2max.dts b/arch/arm/boot/dts/kirkwood-ns2max.dts
-index 72c78d0b1116..55cc41d9c80c 100644
---- a/arch/arm/boot/dts/kirkwood-ns2max.dts
-+++ b/arch/arm/boot/dts/kirkwood-ns2max.dts
-@@ -1,5 +1,6 @@
- /dts-v1/;
- 
-+#include <dt-bindings/leds/leds-ns2.h>
- #include "kirkwood-ns2-common.dtsi"
- 
- / {
-@@ -46,6 +47,10 @@
- 			label = "ns2:blue:sata";
- 			slow-gpio = <&gpio0 29 0>;
- 			cmd-gpio = <&gpio0 30 0>;
-+			modes-map = <NS_V2_LED_OFF  1 0
-+				     NS_V2_LED_ON   0 1
-+				     NS_V2_LED_ON   1 1
-+				     NS_V2_LED_SATA 0 0>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/kirkwood-ns2mini.dts b/arch/arm/boot/dts/kirkwood-ns2mini.dts
-index c441bf62c09f..9935f3ec29b4 100644
---- a/arch/arm/boot/dts/kirkwood-ns2mini.dts
-+++ b/arch/arm/boot/dts/kirkwood-ns2mini.dts
-@@ -1,5 +1,6 @@
- /dts-v1/;
- 
-+#include <dt-bindings/leds/leds-ns2.h>
- #include "kirkwood-ns2-common.dtsi"
- 
- / {
-@@ -47,6 +48,10 @@
- 			label = "ns2:blue:sata";
- 			slow-gpio = <&gpio0 29 0>;
- 			cmd-gpio = <&gpio0 30 0>;
-+			modes-map = <NS_V2_LED_OFF  1 0
-+				     NS_V2_LED_ON   0 1
-+				     NS_V2_LED_ON   1 1
-+				     NS_V2_LED_SATA 0 0>;
- 		};
- 	};
- };
+ config LEDS_NETXBIG
+ 	tristate "LED support for Big Network series LEDs"
 -- 
 2.1.4
