@@ -1,255 +1,203 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 2/2] cap11xx: add LED support
-Date: Thu, 18 Jun 2015 08:51:07 +0200
-Message-ID: <55826A5B.7030408@samsung.com>
-References: <1434599897-22505-1-git-send-email-mranostay@gmail.com>
- <1434599897-22505-3-git-send-email-mranostay@gmail.com>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH v2 2/3] ARM: Kirkwood: add LED DT entries for netxbig boards
+Date: Thu, 18 Jun 2015 13:52:52 +0200
+Message-ID: <1434628373-11834-3-git-send-email-simon.guinot@sequanux.org>
+References: <1434628373-11834-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22728 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752194AbbFRGvM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 18 Jun 2015 02:51:12 -0400
-In-reply-to: <1434599897-22505-3-git-send-email-mranostay@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1434628373-11834-1-git-send-email-simon.guinot@sequanux.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Vincent Donnefort <vdonnefort@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Matt Ranostay <mranostay@gmail.com>
-Cc: zonque@gmail.com, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi Matt,
+This patch adds DT entries for the LEDs found on the Kirkwood-based
+LaCie boards 2Big and 5Big Network v2.
 
-On 06/18/2015 05:58 AM, Matt Ranostay wrote:
-> Several cap11xx variants have LEDs that be can be controlled, this
-> patchset implements this functionality.
->
-> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
-> ---
->   drivers/input/keyboard/cap11xx.c | 141 ++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 138 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/input/keyboard/cap11xx.c b/drivers/input/keyboard/cap11xx.c
-> index f07461a..b48d72f 100644
-> --- a/drivers/input/keyboard/cap11xx.c
-> +++ b/drivers/input/keyboard/cap11xx.c
-> @@ -12,6 +12,7 @@
->   #include <linux/module.h>
->   #include <linux/interrupt.h>
->   #include <linux/input.h>
-> +#include <linux/leds.h>
->   #include <linux/of_irq.h>
->   #include <linux/regmap.h>
->   #include <linux/i2c.h>
-> @@ -47,6 +48,20 @@
->   #define CAP11XX_REG_CONFIG2		0x44
->   #define CAP11XX_REG_CONFIG2_ALT_POL	BIT(6)
->   #define CAP11XX_REG_SENSOR_BASE_CNT(X)	(0x50 + (X))
-> +#define CAP11XX_REG_LED_POLARITY	0x73
-> +#define CAP11XX_REG_LED_OUTPUT_CONTROL	0x74
-> +
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_1	0x90
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_2	0x91
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_3	0x92
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_4	0x93
-> +
-> +#define CAP11XX_REG_LED_DUTY_MIN_MASK	(0x0f)
-> +#define CAP11XX_REG_LED_DUTY_MIN_MASK_SHIFT	(0)
-> +#define CAP11XX_REG_LED_DUTY_MAX_MASK	(0xf0)
-> +#define CAP11XX_REG_LED_DUTY_MAX_MASK_SHIFT	(4)
-> +#define CAP11XX_REG_LED_DUTY_MAX_VALUE	(15)
-> +
->   #define CAP11XX_REG_SENSOR_CALIB	(0xb1 + (X))
->   #define CAP11XX_REG_SENSOR_CALIB_LSB1	0xb9
->   #define CAP11XX_REG_SENSOR_CALIB_LSB2	0xba
-> @@ -56,10 +71,24 @@
->
->   #define CAP11XX_MANUFACTURER_ID	0x5d
->
-> +#ifdef CONFIG_LEDS_CLASS
-> +struct cap11xx_led {
-> +	struct cap11xx_priv *priv;
-> +	struct led_classdev cdev;
-> +	struct work_struct work;
-> +	u32 reg;
-> +	enum led_brightness new_brightness;
-> +};
-> +#endif
-> +
->   struct cap11xx_priv {
->   	struct regmap *regmap;
->   	struct input_dev *idev;
->
-> +#ifdef CONFIG_LEDS_CLASS
-> +	struct cap11xx_led *leds;
-> +	int num_leds;
-> +#endif
->   	/* config */
->   	u32 keycodes[];
->   };
-> @@ -67,6 +96,7 @@ struct cap11xx_priv {
->   struct cap11xx_hw_model {
->   	u8 product_id;
->   	unsigned int num_channels;
-> +	unsigned int num_leds;
->   };
->
->   enum {
-> @@ -76,9 +106,9 @@ enum {
->   };
->
->   static const struct cap11xx_hw_model cap11xx_devices[] = {
-> -	[CAP1106] = { .product_id = 0x55, .num_channels = 6 },
-> -	[CAP1126] = { .product_id = 0x53, .num_channels = 6 },
-> -	[CAP1188] = { .product_id = 0x50, .num_channels = 8 },
-> +	[CAP1106] = { .product_id = 0x55, .num_channels = 6, .num_leds = 0 },
-> +	[CAP1126] = { .product_id = 0x53, .num_channels = 6, .num_leds = 2 },
-> +	[CAP1188] = { .product_id = 0x50, .num_channels = 8, .num_leds = 8 },
->   };
->
->   static const struct reg_default cap11xx_reg_defaults[] = {
-> @@ -111,6 +141,7 @@ static const struct reg_default cap11xx_reg_defaults[] = {
->   	{ CAP11XX_REG_STANDBY_SENSITIVITY,	0x02 },
->   	{ CAP11XX_REG_STANDBY_THRESH,		0x40 },
->   	{ CAP11XX_REG_CONFIG2,			0x40 },
-> +	{ CAP11XX_REG_LED_POLARITY,		0x00 },
->   	{ CAP11XX_REG_SENSOR_CALIB_LSB1,	0x00 },
->   	{ CAP11XX_REG_SENSOR_CALIB_LSB2,	0x00 },
->   };
-> @@ -177,6 +208,13 @@ out:
->
->   static int cap11xx_set_sleep(struct cap11xx_priv *priv, bool sleep)
->   {
-> +#ifdef CONFIG_LEDS_CLASS
-> +	/*
-> +	 * DLSEEP mode will turn off all LEDS, prevent this
-> +	 */
-> +	if (priv->num_leds)
-> +		return 0;
-> +#endif
->   	return regmap_update_bits(priv->regmap, CAP11XX_REG_MAIN_CONTROL,
->   				  CAP11XX_REG_MAIN_CONTROL_DLSEEP,
->   				  sleep ? CAP11XX_REG_MAIN_CONTROL_DLSEEP : 0);
-> @@ -196,6 +234,98 @@ static void cap11xx_input_close(struct input_dev *idev)
->   	cap11xx_set_sleep(priv, true);
->   }
->
-> +#ifdef CONFIG_LEDS_CLASS
-> +static void cap11xx_led_work(struct work_struct *work)
-> +{
-> +	struct cap11xx_led *led = container_of(work, struct cap11xx_led, work);
-> +	struct cap11xx_priv *priv = led->priv;
-> +	int value = led->new_brightness;
-> +
-> +	/*
-> +	 * All LEDs share the same duty cycle as this is a HW limitation.
-> +	 * Brightness levels per LED are either 0 (OFF) and 1 (ON).
-> +	 *
-> +	 * Actual brightness level for the ON state for all LEDS is set via the
-> +	 * "linux,led-brightness" DT property.
-> +	 */
-> +	regmap_update_bits(priv->regmap, CAP11XX_REG_LED_OUTPUT_CONTROL,
-> +				BIT(led->reg), value ? BIT(led->reg) : 0);
-> +}
-> +
-> +static void cap11xx_led_set(struct led_classdev *cdev,
-> +			   enum led_brightness value)
-> +{
-> +	struct cap11xx_led *led = container_of(cdev, struct cap11xx_led, cdev);
-> +
-> +	if (led->new_brightness == value)
-> +		return;
-> +
-> +	led->new_brightness = value;
-> +	schedule_work(&led->work);
-> +}
-> +
-> +static int cap11xx_init_leds(struct device *dev,
-> +			     struct cap11xx_priv *priv, int num_leds)
-> +{
-> +	struct device_node *node = dev->of_node, *child;
-> +	struct cap11xx_led *led;
-> +	int cnt = of_get_child_count(node);
-> +	u32 reg = 0;
-> +	int error;
-> +
-> +	if (!num_leds || !cnt)
-> +		return 0;
-> +	if (cnt > num_leds)
-> +		return -EINVAL;
-> +
-> +	led = devm_kcalloc(dev, cnt,
-> +		sizeof(struct cap11xx_led), GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	priv->leds = led;
-> +	error = of_property_read_u32(node, "linux,led-brightness", &reg);
-> +	if (error || reg == 0 || reg > CAP11XX_REG_LED_DUTY_MAX_VALUE)
-> +		reg = CAP11XX_REG_LED_DUTY_MAX_VALUE;
-> +
-> +	error = regmap_update_bits(priv->regmap,
-> +				CAP11XX_REG_LED_OUTPUT_CONTROL, 0xff, 0);
-> +	if (error)
-> +		return error;
-> +	error = regmap_update_bits(priv->regmap, CAP11XX_REG_LED_DUTY_CYCLE_4,
-> +				CAP11XX_REG_LED_DUTY_MAX_MASK,
-> +				reg << CAP11XX_REG_LED_DUTY_MAX_MASK_SHIFT);
-> +	if (error)
-> +		return error;
-> +
-> +	for_each_child_of_node(node, child) {
-> +		led->cdev.name =
-> +			of_get_property(child, "label", NULL) ? : child->name;
-> +		led->cdev.default_trigger =
-> +			of_get_property(child, "linux,default-trigger", NULL);
-> +		led->cdev.flags = 0;
-> +		led->cdev.brightness_set = cap11xx_led_set;
-> +		led->cdev.max_brightness = 1;
-> +		led->cdev.brightness = LED_OFF;
-> +
-> +		error = of_property_read_u32(child, "reg", &reg);
-> +		if (error != 0 || reg >= num_leds)
-> +			continue;
-> +		led->reg = reg;
-> +		led->priv = priv;
-> +
-> +		INIT_WORK(&led->work, cap11xx_led_work);
-> +		error = devm_led_classdev_register(dev, &led->cdev);
-> +		if (error < 0)
-> +			return -EINVAL;
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+---
+ arch/arm/boot/dts/kirkwood-net5big.dts  | 60 +++++++++++++++++++++++++
+ arch/arm/boot/dts/kirkwood-netxbig.dtsi | 80 +++++++++++++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
 
-I would add empty line here and after INIT_WORK.
-With this addressed:
-
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-
-> +		priv->num_leds++;
-> +		led++;
-> +	};
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->   static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
->   			     const struct i2c_device_id *id)
->   {
-> @@ -316,6 +446,11 @@ static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
->   	priv->idev->open = cap11xx_input_open;
->   	priv->idev->close = cap11xx_input_close;
->
-> +#ifdef CONFIG_LEDS_CLASS
-> +	error = cap11xx_init_leds(dev, priv, cap->num_leds);
-> +	if (error)
-> +		return error;
-> +#endif
->   	input_set_drvdata(priv->idev, priv);
->
->   	/*
->
-
-
+diff --git a/arch/arm/boot/dts/kirkwood-net5big.dts b/arch/arm/boot/dts/kirkwood-net5big.dts
+index 36155b749d9f..3cc5e469df06 100644
+--- a/arch/arm/boot/dts/kirkwood-net5big.dts
++++ b/arch/arm/boot/dts/kirkwood-net5big.dts
+@@ -86,6 +86,66 @@
+ 			 clock-frequency = <32768>;
+ 	       };
+ 	};
++
++	netxbig-leds {
++		blue-sata2 {
++			label = "netxbig:blue:sata2";
++			mode-addr = <5>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 7
++				    NETXBIG_LED_SATA 1
++				    NETXBIG_LED_TIMER1 3>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		red-sata2 {
++			label = "netxbig:red:sata2";
++			mode-addr = <5>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		blue-sata3 {
++			label = "netxbig:blue:sata3";
++			mode-addr = <6>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 7
++				    NETXBIG_LED_SATA 1
++				    NETXBIG_LED_TIMER1 3>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		red-sata3 {
++			label = "netxbig:red:sata3";
++			mode-addr = <6>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		blue-sata4 {
++			label = "netxbig:blue:sata4";
++			mode-addr = <7>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 7
++				    NETXBIG_LED_SATA 1
++				    NETXBIG_LED_TIMER1 3>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		red-sata4 {
++			label = "netxbig:red:sata4";
++			mode-addr = <7>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++	};
+ };
+ 
+ &mdio {
+diff --git a/arch/arm/boot/dts/kirkwood-netxbig.dtsi b/arch/arm/boot/dts/kirkwood-netxbig.dtsi
+index b0cfb7cd30b9..5e7ed1c7e1b2 100644
+--- a/arch/arm/boot/dts/kirkwood-netxbig.dtsi
++++ b/arch/arm/boot/dts/kirkwood-netxbig.dtsi
+@@ -13,6 +13,7 @@
+  * warranty of any kind, whether express or implied.
+ */
+ 
++#include <dt-bindings/leds/leds-netxbig.h>
+ #include "kirkwood.dtsi"
+ #include "kirkwood-6281.dtsi"
+ 
+@@ -105,6 +106,85 @@
+ 			gpio = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
++
++	netxbig_gpio_ext: netxbig-gpio-ext {
++		compatible = "lacie,netxbig-gpio-ext";
++
++		addr-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH
++			      &gpio1 16 GPIO_ACTIVE_HIGH
++			      &gpio1 17 GPIO_ACTIVE_HIGH>;
++		data-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH
++			      &gpio1 13 GPIO_ACTIVE_HIGH
++			      &gpio1 14 GPIO_ACTIVE_HIGH>;
++		enable-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
++	};
++
++	netxbig-leds {
++		compatible = "lacie,netxbig-leds";
++
++		gpio-ext = <&netxbig_gpio_ext>;
++
++		timers = <NETXBIG_LED_TIMER1 500 500
++			  NETXBIG_LED_TIMER2 500 1000>;
++
++		blue-power {
++			label = "netxbig:blue:power";
++			mode-addr = <0>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 1
++				    NETXBIG_LED_TIMER1 3
++				    NETXBIG_LED_TIMER2 7>;
++			bright-addr = <1>;
++			bright-max = <7>;
++		};
++		red-power {
++			label = "netxbig:red:power";
++			mode-addr = <0>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <1>;
++			bright-max = <7>;
++		};
++		blue-sata0 {
++			label = "netxbig:blue:sata0";
++			mode-addr = <3>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 7
++				    NETXBIG_LED_SATA 1
++				    NETXBIG_LED_TIMER1 3>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		red-sata0 {
++			label = "netxbig:red:sata0";
++			mode-addr = <3>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		blue-sata1 {
++			label = "netxbig:blue:sata1";
++			mode-addr = <4>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 7
++				    NETXBIG_LED_SATA 1
++				    NETXBIG_LED_TIMER1 3>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++		red-sata1 {
++			label = "netxbig:red:sata1";
++			mode-addr = <4>;
++			mode-val = <NETXBIG_LED_OFF 0
++				    NETXBIG_LED_ON 2
++				    NETXBIG_LED_TIMER1 4>;
++			bright-addr = <2>;
++			bright-max = <7>;
++		};
++	};
+ };
+ 
+ &mdio {
 -- 
-Best Regards,
-Jacek Anaszewski
+2.1.4
