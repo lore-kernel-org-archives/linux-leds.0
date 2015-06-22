@@ -1,269 +1,209 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v5 2/2] cap11xx: add LED support
-Date: Mon, 22 Jun 2015 11:08:28 -0700
-Message-ID: <20150622180828.GB15851@dtor-ws>
-References: <1434599897-22505-1-git-send-email-mranostay@gmail.com>
- <1434599897-22505-3-git-send-email-mranostay@gmail.com>
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Subject: [PATCH] of: acpi: Rename of_node() and acpi_node() to to_of_node()
+ and to_acpi_node()
+Date: Mon, 22 Jun 2015 22:38:53 +0200
+Message-ID: <5588725D.6000101@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1434599897-22505-3-git-send-email-mranostay@gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Matt Ranostay <mranostay@gmail.com>
-Cc: zonque@gmail.com, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devel@acpica.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 08:58:17PM -0700, Matt Ranostay wrote:
-> Several cap11xx variants have LEDs that be can be controlled, this
-> patchset implements this functionality.
-> 
-> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
-> ---
->  drivers/input/keyboard/cap11xx.c | 141 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 138 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/cap11xx.c b/drivers/input/keyboard/cap11xx.c
-> index f07461a..b48d72f 100644
-> --- a/drivers/input/keyboard/cap11xx.c
-> +++ b/drivers/input/keyboard/cap11xx.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/interrupt.h>
->  #include <linux/input.h>
-> +#include <linux/leds.h>
->  #include <linux/of_irq.h>
->  #include <linux/regmap.h>
->  #include <linux/i2c.h>
-> @@ -47,6 +48,20 @@
->  #define CAP11XX_REG_CONFIG2		0x44
->  #define CAP11XX_REG_CONFIG2_ALT_POL	BIT(6)
->  #define CAP11XX_REG_SENSOR_BASE_CNT(X)	(0x50 + (X))
-> +#define CAP11XX_REG_LED_POLARITY	0x73
-> +#define CAP11XX_REG_LED_OUTPUT_CONTROL	0x74
-> +
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_1	0x90
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_2	0x91
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_3	0x92
-> +#define CAP11XX_REG_LED_DUTY_CYCLE_4	0x93
-> +
-> +#define CAP11XX_REG_LED_DUTY_MIN_MASK	(0x0f)
-> +#define CAP11XX_REG_LED_DUTY_MIN_MASK_SHIFT	(0)
-> +#define CAP11XX_REG_LED_DUTY_MAX_MASK	(0xf0)
-> +#define CAP11XX_REG_LED_DUTY_MAX_MASK_SHIFT	(4)
-> +#define CAP11XX_REG_LED_DUTY_MAX_VALUE	(15)
-> +
->  #define CAP11XX_REG_SENSOR_CALIB	(0xb1 + (X))
->  #define CAP11XX_REG_SENSOR_CALIB_LSB1	0xb9
->  #define CAP11XX_REG_SENSOR_CALIB_LSB2	0xba
-> @@ -56,10 +71,24 @@
->  
->  #define CAP11XX_MANUFACTURER_ID	0x5d
->  
-> +#ifdef CONFIG_LEDS_CLASS
-> +struct cap11xx_led {
-> +	struct cap11xx_priv *priv;
-> +	struct led_classdev cdev;
-> +	struct work_struct work;
-> +	u32 reg;
-> +	enum led_brightness new_brightness;
-> +};
-> +#endif
-> +
->  struct cap11xx_priv {
->  	struct regmap *regmap;
->  	struct input_dev *idev;
->  
-> +#ifdef CONFIG_LEDS_CLASS
-> +	struct cap11xx_led *leds;
-> +	int num_leds;
-> +#endif
->  	/* config */
->  	u32 keycodes[];
->  };
-> @@ -67,6 +96,7 @@ struct cap11xx_priv {
->  struct cap11xx_hw_model {
->  	u8 product_id;
->  	unsigned int num_channels;
-> +	unsigned int num_leds;
->  };
->  
->  enum {
-> @@ -76,9 +106,9 @@ enum {
->  };
->  
->  static const struct cap11xx_hw_model cap11xx_devices[] = {
-> -	[CAP1106] = { .product_id = 0x55, .num_channels = 6 },
-> -	[CAP1126] = { .product_id = 0x53, .num_channels = 6 },
-> -	[CAP1188] = { .product_id = 0x50, .num_channels = 8 },
-> +	[CAP1106] = { .product_id = 0x55, .num_channels = 6, .num_leds = 0 },
-> +	[CAP1126] = { .product_id = 0x53, .num_channels = 6, .num_leds = 2 },
-> +	[CAP1188] = { .product_id = 0x50, .num_channels = 8, .num_leds = 8 },
->  };
->  
->  static const struct reg_default cap11xx_reg_defaults[] = {
-> @@ -111,6 +141,7 @@ static const struct reg_default cap11xx_reg_defaults[] = {
->  	{ CAP11XX_REG_STANDBY_SENSITIVITY,	0x02 },
->  	{ CAP11XX_REG_STANDBY_THRESH,		0x40 },
->  	{ CAP11XX_REG_CONFIG2,			0x40 },
-> +	{ CAP11XX_REG_LED_POLARITY,		0x00 },
->  	{ CAP11XX_REG_SENSOR_CALIB_LSB1,	0x00 },
->  	{ CAP11XX_REG_SENSOR_CALIB_LSB2,	0x00 },
->  };
-> @@ -177,6 +208,13 @@ out:
->  
->  static int cap11xx_set_sleep(struct cap11xx_priv *priv, bool sleep)
->  {
-> +#ifdef CONFIG_LEDS_CLASS
-> +	/*
-> +	 * DLSEEP mode will turn off all LEDS, prevent this
-> +	 */
-> +	if (priv->num_leds)
-> +		return 0;
-> +#endif
+Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
+but there were already ~63 of_node local variables or function parameters
+(no single acpi_node though, but anyway).
 
-Do we need to have #ifdef here? I think we can spare a pointer and an
-integer in device structure even if leds are disabled.
+After debugging undefined but used of_node local varible (which turned out
+to reference static function of_node() instead) it became clear that the names
+for the functions are too short and too generic for global scope.
 
->  	return regmap_update_bits(priv->regmap, CAP11XX_REG_MAIN_CONTROL,
->  				  CAP11XX_REG_MAIN_CONTROL_DLSEEP,
->  				  sleep ? CAP11XX_REG_MAIN_CONTROL_DLSEEP : 0);
-> @@ -196,6 +234,98 @@ static void cap11xx_input_close(struct input_dev *idev)
->  	cap11xx_set_sleep(priv, true);
->  }
->  
-> +#ifdef CONFIG_LEDS_CLASS
-> +static void cap11xx_led_work(struct work_struct *work)
-> +{
-> +	struct cap11xx_led *led = container_of(work, struct cap11xx_led, work);
-> +	struct cap11xx_priv *priv = led->priv;
-> +	int value = led->new_brightness;
-> +
-> +	/*
-> +	 * All LEDs share the same duty cycle as this is a HW limitation.
-> +	 * Brightness levels per LED are either 0 (OFF) and 1 (ON).
-> +	 *
-> +	 * Actual brightness level for the ON state for all LEDS is set via the
-> +	 * "linux,led-brightness" DT property.
-> +	 */
-> +	regmap_update_bits(priv->regmap, CAP11XX_REG_LED_OUTPUT_CONTROL,
-> +				BIT(led->reg), value ? BIT(led->reg) : 0);
-> +}
-> +
-> +static void cap11xx_led_set(struct led_classdev *cdev,
-> +			   enum led_brightness value)
-> +{
-> +	struct cap11xx_led *led = container_of(cdev, struct cap11xx_led, cdev);
-> +
-> +	if (led->new_brightness == value)
-> +		return;
-> +
-> +	led->new_brightness = value;
-> +	schedule_work(&led->work);
-> +}
-> +
-> +static int cap11xx_init_leds(struct device *dev,
-> +			     struct cap11xx_priv *priv, int num_leds)
-> +{
-> +	struct device_node *node = dev->of_node, *child;
-> +	struct cap11xx_led *led;
-> +	int cnt = of_get_child_count(node);
-> +	u32 reg = 0;
-> +	int error;
-> +
-> +	if (!num_leds || !cnt)
-> +		return 0;
-> +	if (cnt > num_leds)
-> +		return -EINVAL;
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+---
 
-An error message might be nice here.
+Compile-tested on x86_64 with ACPI and ARM with OF.
 
-> +
-> +	led = devm_kcalloc(dev, cnt,
-> +		sizeof(struct cap11xx_led), GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	priv->leds = led;
-> +	error = of_property_read_u32(node, "linux,led-brightness", &reg);
-> +	if (error || reg == 0 || reg > CAP11XX_REG_LED_DUTY_MAX_VALUE)
-> +		reg = CAP11XX_REG_LED_DUTY_MAX_VALUE;
+ drivers/base/property.c  | 26 +++++++++++++-------------
+ drivers/gpio/gpiolib.c   |  4 ++--
+ drivers/leds/leds-gpio.c |  2 +-
+ include/acpi/acpi_bus.h  |  2 +-
+ include/linux/acpi.h     |  4 ++--
+ include/linux/of.h       |  4 ++--
+ 6 files changed, 21 insertions(+), 21 deletions(-)
 
-I'd rather we error out if invalid brightness value was present in DTS.
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 1d0b116..dfd4de6 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
+ bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
+ {
+ 	if (is_of_node(fwnode))
+-		return of_property_read_bool(of_node(fwnode), propname);
++		return of_property_read_bool(to_of_node(fwnode), propname);
+ 	else if (is_acpi_node(fwnode))
+-		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
++		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
 
-> +
-> +	error = regmap_update_bits(priv->regmap,
-> +				CAP11XX_REG_LED_OUTPUT_CONTROL, 0xff, 0);
-> +	if (error)
-> +		return error;
-> +	error = regmap_update_bits(priv->regmap, CAP11XX_REG_LED_DUTY_CYCLE_4,
-> +				CAP11XX_REG_LED_DUTY_MAX_MASK,
-> +				reg << CAP11XX_REG_LED_DUTY_MAX_MASK_SHIFT);
-> +	if (error)
-> +		return error;
-> +
-> +	for_each_child_of_node(node, child) {
-> +		led->cdev.name =
-> +			of_get_property(child, "label", NULL) ? : child->name;
-> +		led->cdev.default_trigger =
-> +			of_get_property(child, "linux,default-trigger", NULL);
+ 	return !!pset_prop_get(to_pset(fwnode), propname);
+ }
+@@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
+ ({ \
+ 	int _ret_; \
+ 	if (is_of_node(_fwnode_)) \
+-		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
++		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
+ 					       _type_, _val_, _nval_); \
+ 	else if (is_acpi_node(_fwnode_)) \
+-		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
++		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
+ 					   _proptype_, _val_, _nval_); \
+ 	else \
+ 		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
+@@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
+ {
+ 	if (is_of_node(fwnode))
+ 		return val ?
+-			of_property_read_string_array(of_node(fwnode), propname,
+-						      val, nval) :
+-			of_property_count_strings(of_node(fwnode), propname);
++			of_property_read_string_array(to_of_node(fwnode),
++						      propname, val, nval) :
++			of_property_count_strings(to_of_node(fwnode), propname);
+ 	else if (is_acpi_node(fwnode))
+-		return acpi_dev_prop_read(acpi_node(fwnode), propname,
++		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+ 					  DEV_PROP_STRING, val, nval);
 
-Hmm, we do not have standard LEDs fwnode parser? Maybe we should have
-one.
+ 	return pset_prop_read_array(to_pset(fwnode), propname,
+@@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
+ 				const char *propname, const char **val)
+ {
+ 	if (is_of_node(fwnode))
+-		return of_property_read_string(of_node(fwnode), propname, val);
++		return of_property_read_string(to_of_node(fwnode), propname, val);
+ 	else if (is_acpi_node(fwnode))
+-		return acpi_dev_prop_read(acpi_node(fwnode), propname,
++		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+ 					  DEV_PROP_STRING, val, 1);
 
-> +		led->cdev.flags = 0;
-> +		led->cdev.brightness_set = cap11xx_led_set;
-> +		led->cdev.max_brightness = 1;
-> +		led->cdev.brightness = LED_OFF;
-> +
-> +		error = of_property_read_u32(child, "reg", &reg);
-> +		if (error != 0 || reg >= num_leds)
-> +			continue;
+ 	return -ENXIO;
+@@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
+ 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+ 		struct device_node *node;
 
-Why do we silently skip entries with invalid OF data instead of
-returning error?
+-		node = of_get_next_available_child(dev->of_node, of_node(child));
++		node = of_get_next_available_child(dev->of_node, to_of_node(child));
+ 		if (node)
+ 			return &node->fwnode;
+ 	} else if (IS_ENABLED(CONFIG_ACPI)) {
+ 		struct acpi_device *node;
 
-> +		led->reg = reg;
-> +		led->priv = priv;
-> +
-> +		INIT_WORK(&led->work, cap11xx_led_work);
-> +		error = devm_led_classdev_register(dev, &led->cdev);
-> +		if (error < 0)
-> +			return -EINVAL;
-> +		priv->num_leds++;
-> +		led++;
-> +	};
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
->  			     const struct i2c_device_id *id)
->  {
-> @@ -316,6 +446,11 @@ static int cap11xx_i2c_probe(struct i2c_client *i2c_client,
->  	priv->idev->open = cap11xx_input_open;
->  	priv->idev->close = cap11xx_input_close;
->  
-> +#ifdef CONFIG_LEDS_CLASS
-> +	error = cap11xx_init_leds(dev, priv, cap->num_leds);
-> +	if (error)
-> +		return error;
-> +#endif
+-		node = acpi_get_next_child(dev, acpi_node(child));
++		node = acpi_get_next_child(dev, to_acpi_node(child));
+ 		if (node)
+ 			return acpi_fwnode_handle(node);
+ 	}
+@@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
+ void fwnode_handle_put(struct fwnode_handle *fwnode)
+ {
+ 	if (is_of_node(fwnode))
+-		of_node_put(of_node(fwnode));
++		of_node_put(to_of_node(fwnode));
+ }
+ EXPORT_SYMBOL_GPL(fwnode_handle_put);
 
-Please provide stub for cap11xx_init_leds so we do not need to have
-#ifdef here.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6bc612b..5d8b2b3 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (is_of_node(fwnode)) {
+ 		enum of_gpio_flags flags;
 
->  	input_set_drvdata(priv->idev, priv);
->  
->  	/*
-> -- 
-> 1.9.1
-> 
+-		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
++		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
+ 						&flags);
+ 		if (!IS_ERR(desc))
+ 			active_low = flags & OF_GPIO_ACTIVE_LOW;
+ 	} else if (is_acpi_node(fwnode)) {
+ 		struct acpi_gpio_info info;
 
-Thanks.
+-		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
++		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
+ 					       &info);
+ 		if (!IS_ERR(desc))
+ 			active_low = info.active_low;
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 15eb3f8..d2d54d6 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			goto err;
+ 		}
 
--- 
-Dmitry
+-		np = of_node(child);
++		np = to_of_node(child);
+
+ 		if (fwnode_property_present(child, "label")) {
+ 			fwnode_property_read_string(child, "label", &led.name);
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index 8de4fa9..1224be8 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+ 	return fwnode && fwnode->type == FWNODE_ACPI;
+ }
+
+-static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
++static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+ {
+ 	return is_acpi_node(fwnode) ?
+ 		container_of(fwnode, struct acpi_device, fwnode) : NULL;
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index e4da5e3..ec3c98e 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+ 	return adev ? adev->handle : NULL;
+ }
+
+-#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
++#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
+ #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
+ 	acpi_fwnode_handle(adev) : NULL)
+ #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
+@@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+ 	return false;
+ }
+
+-static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
++static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+ {
+ 	return NULL;
+ }
+diff --git a/include/linux/of.h b/include/linux/of.h
+index b871ff9..f05fdce 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+ 	return fwnode && fwnode->type == FWNODE_OF;
+ }
+
+-static inline struct device_node *of_node(struct fwnode_handle *fwnode)
++static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+ {
+ 	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
+ }
+@@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+ 	return false;
+ }
+
+-static inline struct device_node *of_node(struct fwnode_handle *fwnode)
++static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+ {
+ 	return NULL;
+ }
 --
-To unsubscribe from this list: send the line "unsubscribe linux-input" in
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
