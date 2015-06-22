@@ -1,42 +1,71 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 0/3] LED interface for PowerNV platform
-Date: Mon, 22 Jun 2015 10:03:37 +0200
-Message-ID: <5587C159.3060706@samsung.com>
-References: <20150428100535.26912.29607.stgit@localhost.localdomain>
- <55792BB3.3000102@linux.vnet.ibm.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] leds: lp5523: add master_fader support
+Date: Mon, 22 Jun 2015 13:58:46 +0200
+Message-ID: <20150622115846.GA9179@xo-6d-61-c0.localdomain>
+References: <1431371454-2035-1-git-send-email-toshik@chromium.org>
+ <5551AAFA.5080807@samsung.com>
+ <5551B8F9.6040808@ti.com>
+ <5551BF04.5010503@samsung.com>
+ <CAK5ve-KkLmJMLs0Q3KskUodEJrjcWRx_tobVUm5+G=Q+_sFxmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17425 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755999AbbFVIDk (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Jun 2015 04:03:40 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NQC0093M6E25L90@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 22 Jun 2015 09:03:38 +0100 (BST)
-In-reply-to: <55792BB3.3000102@linux.vnet.ibm.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49654 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751938AbbFVL6z (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Jun 2015 07:58:55 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5ve-KkLmJMLs0Q3KskUodEJrjcWRx_tobVUm5+G=Q+_sFxmg@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, mpe@ellerman.id.au
-Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, "Kim, Milo" <milo.kim@ti.com>, Toshi Kikuchi <toshik@chromium.org>, lkml <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-On 06/11/2015 08:33 AM, Vasant Hegde wrote:
-> On 04/28/2015 03:39 PM, Vasant Hegde wrote:
->> The following series implements LED driver for PowerNV platform.
->
-> Ben, Michael,
->
-> Can you please review/ACK this patchset?
+Hi!
 
-Yeah, we are waiting for ppc maintainer's ack, also to clarify
-DT related issues. Ben himself asked to wait for the ack in the
-message [1]. We are waiting for almost two months now :)
+> >>>> This patch introduces 4 new attributes:
+> >>>>     master_fader_leds
+> >>>>     master_fader1
+> >>>>     master_fader2
+> >>>>     master_fader3
+> >>>>
+> >>>> Fo example, to map channel 0,6 to master_fader1,
+> >>>> map channel 1,7 to master_fader2,
+> >>>> map channel 2,8 to master_fader3, and
+> >>>> map channel 3,4,5 to none
+> >>>
+> >>>   >
+> >>>>
+> >>>>     echo "123000123" > master_fader_leds
+> >>>
+> >>>
+> >>> I propose to add ABI documentation for this driver. It already exposes
+> >>> many custom attributes but I can't find documentation for them.
+> >>
+> >>
+> >> I agree with Jacek's comment but it would be better if we could see the
+> >> description in lp5523 driver
+> >> documentation(Documentation/leds/leds-lp5523.txt).
+> >
+> >
+> > Right, I missed that file.
+> >
+> >
+> 
+> Toshi,
+> 
+> I merged this patch into my tree with Milo and Jacek Acks. But please
+> follow their advice and provide a patch to update those document
+> files.
 
-[1] http://www.spinics.net/lists/linux-leds/msg03557.html
+Are you sure this is the right interface? lp5523 is turing-complete. Yes, it
+can multiply brightness values by a constant. It can also do morse code on its
+own, and compute prime numbers.
 
+Why is this useful addition to kernel<->user interface?
+
+Can we do better interface that works on more than one chip?
+									Pavel
 -- 
-Best Regards,
-Jacek Anaszewski
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
