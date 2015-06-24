@@ -1,83 +1,95 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 1/2] dt: add cap11xx LED documentation
-Date: Wed, 24 Jun 2015 09:44:23 +0200
-Message-ID: <558A5FD7.4060105@samsung.com>
-References: <1434599897-22505-1-git-send-email-mranostay@gmail.com>
- <1434599897-22505-2-git-send-email-mranostay@gmail.com>
- <20150622175914.GA15851@dtor-ws> <55891A84.1070509@samsung.com>
- <CAKzfze8jC1Nq9+AWFZbbC4=jzLwUZumbXYmg9O=0190Ne+f7fg@mail.gmail.com>
- <20150623180706.GA40168@dtor-ws> <558A5C0E.8090105@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] leds: fix brightness changing when software blinking
+ is active
+Date: Wed, 24 Jun 2015 10:44:21 +0200
+Message-ID: <20150624084421.GB17732@amd>
+References: <5554BE12.7050209@list.ru>
+ <20150502145957.GB8156@xo-6d-61-c0.localdomain>
+ <5589906F.4070901@list.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-reply-to: <558A5C0E.8090105@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Matt Ranostay <mranostay@gmail.com>, Daniel Mack <zonque@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44514 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbbFXIoX (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jun 2015 04:44:23 -0400
+Content-Disposition: inline
+In-Reply-To: <5589906F.4070901@list.ru>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Stas Sergeev <stsp@list.ru>
+Cc: linux-leds@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stas Sergeev <stsp@users.sourceforge.net>
 
-On 06/24/2015 09:28 AM, Jacek Anaszewski wrote:
-> On 06/23/2015 08:07 PM, Dmitry Torokhov wrote:
->> On Tue, Jun 23, 2015 at 10:23:57AM -0700, Matt Ranostay wrote:
->>> On Tue, Jun 23, 2015 at 1:36 AM, Jacek Anaszewski
->>> <j.anaszewski@samsung.com> wrote:
->>>> On 06/22/2015 07:59 PM, Dmitry Torokhov wrote:
->>>>>
->>>>> On Wed, Jun 17, 2015 at 08:58:16PM -0700, Matt Ranostay wrote:
->>>>>>
->>>>>> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
->>>>>> ---
->>>>>>    .../devicetree/bindings/input/cap11xx.txt          | 25
->>>>>> ++++++++++++++++++++++
->>>>>>    1 file changed, 25 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>>> b/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>>> index 7d0a300..09cdc43 100644
->>>>>> --- a/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>>> +++ b/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>>> @@ -38,6 +38,11 @@ Optional properties:
->>>>>>                                  defaults. The array must have
->>>>>> exactly six
->>>>>>                                  entries.
->>>>>>
->>>>>> +       linux,led-brightness:   Defines the ON brightness when the
->>>>>> optional LED
->>>>>> +                               functionality is used. Valid
->>>>>> values are
->>>>>> 1-15.
->>>>>> +                               By default a value of 15 is set.
->>>>>
->>>>>
->>>>> Please mention the device does not allow controlling brightness of
->>>>> leds
->>>>> individually and that is why this property is at device level, not
->>>>> individual led level.
->>>>
->>>>
->>>> I've just noticed that we have drivers/leds/leds-netxbig.c driver,
->>>> which
->>>> also doesn't allow controlling the LEDs on extension board
->>>> individually,
->>>> but it still does allow changing their brightness. I am leaning towards
->>>> allowing this also for this driver and adding similar comment in the
->>>> source code like at the line 218 of the aforementioned driver.
->>>> As a result this property wouldn't be required.
->>>>
->>>
->>> Ok that should be pretty simple to do. But seems kind weird to have
->>> each led channel to be changing the brightness of all.  Wouldn't the
->>> brightness sysfs entries of the other led channels be showing
->>> incorrect values?
->
-> If you implemented brightness_get op it would show proper value.
-> Assuming that the device allows reading current brightness.
+On Tue 2015-06-23 19:59:27, Stas Sergeev wrote:
+> 02.05.2015 17:59, Pavel Machek =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Thu 2015-05-14 18:24:02, Stas Sergeev wrote:
+> >>
+> >> The following sequence:
+> >> echo timer >/sys/class/leds/<name>/trigger
+> >> echo 1 >/sys/class/leds/<name>/brightness
+> >> should change the ON brightness for blinking.
+> >> The function led_set_brightness() was mistakenly initiating the
+> >> delayed blink stop procedure, which resulted in no blinking with
+> >> the timer trigger still active.
+> >>
+> >> This patch fixes the problem by changing led_set_brightness()
+> >> to not initiate the delayed blink stop when brightness is not 0.
+> >=20
+> > Could we get this part of API documented? It is quite non-obvious..=
+=2E 0 clears the trigger,
+> > other values do not, I thought it is a bug when I saw it...
+> I guess the thinking was that if ON brightness differs
+> from OFF brightness, you should not clear the trigger.
+> But if you put ON brightness similar to OFF brightness,
+> then you can as well stop blinking at all.
 
-Of course brightness_get wouldn't have to read the brightness
-from the device, but return the value cached on on each call to
-brightness_set for any LED class device exposed by the driver.
+And none of this is documented. So what about this?
 
--- 
-Best Regards,
-Jacek Anaszewski
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/=
+ABI/testing/sysfs-class-led
+index 3646ec8..b734d7f 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -4,16 +4,25 @@ KernelVersion:	2.6.17
+ Contact:	Richard Purdie <rpurdie@rpsys.net>
+ Description:
+ 		Set the brightness of the LED. Most LEDs don't
+-		have hardware brightness support so will just be turned on for
++		have hardware brightness support, so will just be turned on for
+ 		non-zero brightness settings. The value is between 0 and
+ 		/sys/class/leds/<led>/max_brightness.
+=20
++		Writing 0 to this file clears active trigger.
++
++		Writing non-zero to this file while trigger is active changes the
++		top brightness trigger is going to use.
++	=09
++
+ What:		/sys/class/leds/<led>/max_brightness
+ Date:		March 2006
+ KernelVersion:	2.6.17
+ Contact:	Richard Purdie <rpurdie@rpsys.net>
+ Description:
+-		Maximum brightness level for this led, default is 255 (LED_FULL).
++		Maximum brightness level for this LED, default is 255 (LED_FULL).
++
++		If the LED does not support different brightness levels, this
++		should be 1.
+=20
+ What:		/sys/class/leds/<led>/trigger
+ Date:		March 2006
+@@ -21,7 +30,7 @@ KernelVersion:	2.6.17
+ Contact:	Richard Purdie <rpurdie@rpsys.net>
+ Description:
+ 		Set the trigger for this LED. A trigger is a kernel based source
+-		of led events.
++		of LED events.
+ 		You can change triggers in a similar manner to the way an IO
+ 		scheduler is chosen. Trigger specific parameters can appear in
+ 		/sys/class/leds/<led> once a given trigger is selected.
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
+/blog.html
