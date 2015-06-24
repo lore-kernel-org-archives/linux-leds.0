@@ -1,70 +1,227 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [RESEND PATCH 3/4] leds: leds-ns2: handle can_sleep GPIOs
-Date: Wed, 24 Jun 2015 16:18:29 +0200
-Message-ID: <558ABC35.1010801@samsung.com>
-References: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
- <1434640650-28086-4-git-send-email-simon.guinot@sequanux.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] of: acpi: Rename of_node() and acpi_node() to to_of_node() and to_acpi_node()
+Date: Thu, 25 Jun 2015 00:20:31 +0200
+Message-ID: <10569034.P3OFQNPcxE@vostro.rjw.lan>
+References: <5588725D.6000101@gmail.com> <2099562.7T915zWny0@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17189 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752723AbbFXOSd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jun 2015 10:18:33 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NQG0019MD2VKN30@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Wed, 24 Jun 2015 15:18:31 +0100 (BST)
-In-reply-to: <1434640650-28086-4-git-send-email-simon.guinot@sequanux.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <2099562.7T915zWny0@vostro.rjw.lan>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-On 06/18/2015 05:17 PM, Simon Guinot wrote:
-> On the board n090401 (Seagate NAS 4-Bay), some of the LEDs are handled
-> by the leds-ns2 driver. This LEDs are connected to an I2C GPIO expander
-> (PCA95554PW) which means that GPIO access may sleep. This patch makes
-> leds-ns2 compatible with such GPIOs by using the *_cansleep() variant of
-> the GPIO functions. As a drawback this functions can't be used safely in
-> a timer context (with the timer LED trigger for example). To fix this
-> issue, a workqueue mechanism (copied from the leds-gpio driver) is used.
->
-> Note that this patch also updates slightly the ns2_led_sata_store
-> function. The LED state is now retrieved from cached values instead of
-> reading the GPIOs previously. This prevents ns2_led_sata_store from
-> working with a stale LED state (which may happen when a delayed work
-> is pending).
->
-> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
-> ---
->   drivers/leds/leds-ns2.c | 56 ++++++++++++++++++++++++++++++++++++-------------
->   1 file changed, 42 insertions(+), 14 deletions(-)
->
+On Tuesday, June 23, 2015 01:45:00 AM Rafael J. Wysocki wrote:
+> On Monday, June 22, 2015 10:38:53 PM Alexander Sverdlin wrote:
+> > Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
+> > but there were already ~63 of_node local variables or function parameters
+> > (no single acpi_node though, but anyway).
+> > 
+> > After debugging undefined but used of_node local varible (which turned out
+> > to reference static function of_node() instead) it became clear that the names
+> > for the functions are too short and too generic for global scope.
+> > 
+> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> 
+> Putting the whole world into the To: field of your messages is not a good idea
+> in general.
+> 
+> I'm fine with this change, personally.
+> 
+> Does anyone in the CC list have any objections?
 
->
-> +static void ns2_led_work(struct work_struct *work)
-> +{
-> +	struct ns2_led_data *led_dat =
-> +		container_of(work, struct ns2_led_data, work);
-> +	int i = led_dat->new_mode_index;
-> +
-> +	write_lock(&led_dat->rw_lock);
-> +
-> +	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
-> +	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
-> +
-> +	write_unlock(&led_dat->rw_lock);
-> +}
-> +
+No objections apparently.
 
-I've just realized that this can break one of the basic rules:
-no sleeping should occur while holding a spinlock. Did you
-consider this?
+OK, I've queued this one up for the next PM+ACPI pull request, thanks!
 
--- 
-Best Regards,
-Jacek Anaszewski
+> 
+> 
+> > ---
+> > 
+> > Compile-tested on x86_64 with ACPI and ARM with OF.
+> > 
+> >  drivers/base/property.c  | 26 +++++++++++++-------------
+> >  drivers/gpio/gpiolib.c   |  4 ++--
+> >  drivers/leds/leds-gpio.c |  2 +-
+> >  include/acpi/acpi_bus.h  |  2 +-
+> >  include/linux/acpi.h     |  4 ++--
+> >  include/linux/of.h       |  4 ++--
+> >  6 files changed, 21 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/base/property.c b/drivers/base/property.c
+> > index 1d0b116..dfd4de6 100644
+> > --- a/drivers/base/property.c
+> > +++ b/drivers/base/property.c
+> > @@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
+> >  bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
+> >  {
+> >  	if (is_of_node(fwnode))
+> > -		return of_property_read_bool(of_node(fwnode), propname);
+> > +		return of_property_read_bool(to_of_node(fwnode), propname);
+> >  	else if (is_acpi_node(fwnode))
+> > -		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
+> > +		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
+> > 
+> >  	return !!pset_prop_get(to_pset(fwnode), propname);
+> >  }
+> > @@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
+> >  ({ \
+> >  	int _ret_; \
+> >  	if (is_of_node(_fwnode_)) \
+> > -		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
+> > +		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
+> >  					       _type_, _val_, _nval_); \
+> >  	else if (is_acpi_node(_fwnode_)) \
+> > -		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
+> > +		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
+> >  					   _proptype_, _val_, _nval_); \
+> >  	else \
+> >  		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
+> > @@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
+> >  {
+> >  	if (is_of_node(fwnode))
+> >  		return val ?
+> > -			of_property_read_string_array(of_node(fwnode), propname,
+> > -						      val, nval) :
+> > -			of_property_count_strings(of_node(fwnode), propname);
+> > +			of_property_read_string_array(to_of_node(fwnode),
+> > +						      propname, val, nval) :
+> > +			of_property_count_strings(to_of_node(fwnode), propname);
+> >  	else if (is_acpi_node(fwnode))
+> > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
+> > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+> >  					  DEV_PROP_STRING, val, nval);
+> > 
+> >  	return pset_prop_read_array(to_pset(fwnode), propname,
+> > @@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
+> >  				const char *propname, const char **val)
+> >  {
+> >  	if (is_of_node(fwnode))
+> > -		return of_property_read_string(of_node(fwnode), propname, val);
+> > +		return of_property_read_string(to_of_node(fwnode), propname, val);
+> >  	else if (is_acpi_node(fwnode))
+> > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
+> > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+> >  					  DEV_PROP_STRING, val, 1);
+> > 
+> >  	return -ENXIO;
+> > @@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
+> >  	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+> >  		struct device_node *node;
+> > 
+> > -		node = of_get_next_available_child(dev->of_node, of_node(child));
+> > +		node = of_get_next_available_child(dev->of_node, to_of_node(child));
+> >  		if (node)
+> >  			return &node->fwnode;
+> >  	} else if (IS_ENABLED(CONFIG_ACPI)) {
+> >  		struct acpi_device *node;
+> > 
+> > -		node = acpi_get_next_child(dev, acpi_node(child));
+> > +		node = acpi_get_next_child(dev, to_acpi_node(child));
+> >  		if (node)
+> >  			return acpi_fwnode_handle(node);
+> >  	}
+> > @@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
+> >  void fwnode_handle_put(struct fwnode_handle *fwnode)
+> >  {
+> >  	if (is_of_node(fwnode))
+> > -		of_node_put(of_node(fwnode));
+> > +		of_node_put(to_of_node(fwnode));
+> >  }
+> >  EXPORT_SYMBOL_GPL(fwnode_handle_put);
+> > 
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 6bc612b..5d8b2b3 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+> >  	if (is_of_node(fwnode)) {
+> >  		enum of_gpio_flags flags;
+> > 
+> > -		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
+> > +		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
+> >  						&flags);
+> >  		if (!IS_ERR(desc))
+> >  			active_low = flags & OF_GPIO_ACTIVE_LOW;
+> >  	} else if (is_acpi_node(fwnode)) {
+> >  		struct acpi_gpio_info info;
+> > 
+> > -		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
+> > +		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
+> >  					       &info);
+> >  		if (!IS_ERR(desc))
+> >  			active_low = info.active_low;
+> > diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> > index 15eb3f8..d2d54d6 100644
+> > --- a/drivers/leds/leds-gpio.c
+> > +++ b/drivers/leds/leds-gpio.c
+> > @@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+> >  			goto err;
+> >  		}
+> > 
+> > -		np = of_node(child);
+> > +		np = to_of_node(child);
+> > 
+> >  		if (fwnode_property_present(child, "label")) {
+> >  			fwnode_property_read_string(child, "label", &led.name);
+> > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > index 8de4fa9..1224be8 100644
+> > --- a/include/acpi/acpi_bus.h
+> > +++ b/include/acpi/acpi_bus.h
+> > @@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+> >  	return fwnode && fwnode->type == FWNODE_ACPI;
+> >  }
+> > 
+> > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
+> > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+> >  {
+> >  	return is_acpi_node(fwnode) ?
+> >  		container_of(fwnode, struct acpi_device, fwnode) : NULL;
+> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > index e4da5e3..ec3c98e 100644
+> > --- a/include/linux/acpi.h
+> > +++ b/include/linux/acpi.h
+> > @@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+> >  	return adev ? adev->handle : NULL;
+> >  }
+> > 
+> > -#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
+> > +#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
+> >  #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
+> >  	acpi_fwnode_handle(adev) : NULL)
+> >  #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
+> > @@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+> >  	return false;
+> >  }
+> > 
+> > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
+> > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+> >  {
+> >  	return NULL;
+> >  }
+> > diff --git a/include/linux/of.h b/include/linux/of.h
+> > index b871ff9..f05fdce 100644
+> > --- a/include/linux/of.h
+> > +++ b/include/linux/of.h
+> > @@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+> >  	return fwnode && fwnode->type == FWNODE_OF;
+> >  }
+> > 
+> > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
+> > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+> >  {
+> >  	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
+> >  }
+> > @@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+> >  	return false;
+> >  }
+> > 
+> > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
+> > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+> >  {
+> >  	return NULL;
+> >  }
+> > --
+
