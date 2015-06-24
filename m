@@ -1,89 +1,70 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 1/2] dt: add cap11xx LED documentation
-Date: Wed, 24 Jun 2015 09:28:14 +0200
-Message-ID: <558A5C0E.8090105@samsung.com>
-References: <1434599897-22505-1-git-send-email-mranostay@gmail.com>
- <1434599897-22505-2-git-send-email-mranostay@gmail.com>
- <20150622175914.GA15851@dtor-ws> <55891A84.1070509@samsung.com>
- <CAKzfze8jC1Nq9+AWFZbbC4=jzLwUZumbXYmg9O=0190Ne+f7fg@mail.gmail.com>
- <20150623180706.GA40168@dtor-ws>
+Subject: Re: [RESEND PATCH 1/4] leds: leds-ns2: move LED modes mapping outside
+ of the driver
+Date: Wed, 24 Jun 2015 09:34:45 +0200
+Message-ID: <558A5D95.9040807@samsung.com>
+References: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
+ <1434640650-28086-2-git-send-email-simon.guinot@sequanux.org>
+ <55881C85.1050809@samsung.com> <20150623181203.GE4853@kw.sim.vm.gnt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53178 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750812AbbFXH2S (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jun 2015 03:28:18 -0400
-In-reply-to: <20150623180706.GA40168@dtor-ws>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49513 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750994AbbFXHet (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jun 2015 03:34:49 -0400
+In-reply-to: <20150623181203.GE4853@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Matt Ranostay <mranostay@gmail.com>, Daniel Mack <zonque@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On 06/23/2015 08:07 PM, Dmitry Torokhov wrote:
-> On Tue, Jun 23, 2015 at 10:23:57AM -0700, Matt Ranostay wrote:
->> On Tue, Jun 23, 2015 at 1:36 AM, Jacek Anaszewski
->> <j.anaszewski@samsung.com> wrote:
->>> On 06/22/2015 07:59 PM, Dmitry Torokhov wrote:
->>>>
->>>> On Wed, Jun 17, 2015 at 08:58:16PM -0700, Matt Ranostay wrote:
->>>>>
->>>>> Signed-off-by: Matt Ranostay <mranostay@gmail.com>
->>>>> ---
->>>>>    .../devicetree/bindings/input/cap11xx.txt          | 25
->>>>> ++++++++++++++++++++++
->>>>>    1 file changed, 25 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>> b/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>> index 7d0a300..09cdc43 100644
->>>>> --- a/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>> +++ b/Documentation/devicetree/bindings/input/cap11xx.txt
->>>>> @@ -38,6 +38,11 @@ Optional properties:
->>>>>                                  defaults. The array must have exactly six
->>>>>                                  entries.
->>>>>
->>>>> +       linux,led-brightness:   Defines the ON brightness when the
->>>>> optional LED
->>>>> +                               functionality is used. Valid values are
->>>>> 1-15.
->>>>> +                               By default a value of 15 is set.
->>>>
->>>>
->>>> Please mention the device does not allow controlling brightness of leds
->>>> individually and that is why this property is at device level, not
->>>> individual led level.
+Hi Simon,
+
+On 06/23/2015 08:12 PM, Simon Guinot wrote:
+[...]
+>
+>>> +	led = leds;
+>>>   	for_each_child_of_node(np, child) {
+>>>   		const char *string;
+>>> -		int ret;
+>>> +		int ret, i, num_modes;
+>>> +		struct ns2_led_modval *modval;
 >>>
->>>
->>> I've just noticed that we have drivers/leds/leds-netxbig.c driver, which
->>> also doesn't allow controlling the LEDs on extension board individually,
->>> but it still does allow changing their brightness. I am leaning towards
->>> allowing this also for this driver and adding similar comment in the
->>> source code like at the line 218 of the aforementioned driver.
->>> As a result this property wouldn't be required.
->>>
+>>>   		ret = of_get_named_gpio(child, "cmd-gpio", 0);
+>>>   		if (ret < 0)
+>>>   			return ret;
+>>> -		leds[i].cmd = ret;
+>>> +		led->cmd = ret;
+>>>   		ret = of_get_named_gpio(child, "slow-gpio", 0);
+>>>   		if (ret < 0)
+>>>   			return ret;
+>>> -		leds[i].slow = ret;
+>>> +		led->slow = ret;
+>>>   		ret = of_property_read_string(child, "label", &string);
+>>> -		leds[i].name = (ret == 0) ? string : child->name;
+>>> +		led->name = (ret == 0) ? string : child->name;
+>>>   		ret = of_property_read_string(child, "linux,default-trigger",
+>>>   					      &string);
+>>>   		if (ret == 0)
+>>> -			leds[i].default_trigger = string;
+>>> +			led->default_trigger = string;
+>>> +
+>>> +		ret = of_property_count_u32_elems(child, "modes-map");
 >>
->> Ok that should be pretty simple to do. But seems kind weird to have
->> each led channel to be changing the brightness of all.  Wouldn't the
->> brightness sysfs entries of the other led channels be showing
->> incorrect values?
+>> I think that we shouldn't fail if the property is absent, but default
+>> to the mapping that is currently hard coded in the driver. Otherwise
+>> we would break existing users.
+>
+> I don't think there is a risk of breaking existing users. On platforms
+> where the leds-ns2 driver is used, DTB will be updated with the kernel
+> image. Moreover, removing the hard coded mapping is a nice clean-up.
+>
+> Let me know if you still want me to add a fallback.
 
-If you implemented brightness_get op it would show proper value.
-Assuming that the device allows reading current brightness.
-
-> I agree, this is kind of weird. Maybe we should have a device-specific
-> attribute (on the platform device level) that allows controlling overall
-> brightness, but I think LEDs should be just on/off with max brightness
-> of 1. Userspace should not have to be aware about the fact that on that
-> particular device LEDs are not completely independent as far as their
-> brightness goes.
-
-This way we are removing the possibility of controlling LED brightness
-at all, the feature that the hardware supports. Anyway, we will have to
-add a mechanism to the LED subsystem for detecting which LED class
-devices are controlled by the same hardware. This will allow for
-describing this type of dependencies. This is on "to do" list.
+Since you modify also dts file in this patch set this is OK.
+You can keep this part as is.
 
 -- 
 Best Regards,
