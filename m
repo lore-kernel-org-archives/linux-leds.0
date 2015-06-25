@@ -1,227 +1,122 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] of: acpi: Rename of_node() and acpi_node() to to_of_node() and to_acpi_node()
-Date: Thu, 25 Jun 2015 00:20:31 +0200
-Message-ID: <10569034.P3OFQNPcxE@vostro.rjw.lan>
-References: <5588725D.6000101@gmail.com> <2099562.7T915zWny0@vostro.rjw.lan>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v4 1/3] powerpc/powernv: Add OPAL interfaces for
+ accessing and modifying system LED states
+Date: Thu, 25 Jun 2015 11:04:53 +1000
+Message-ID: <1435194293.3790.27.camel@kernel.crashing.org>
+References: <20150428100535.26912.29607.stgit@localhost.localdomain>
+	 <20150428100913.26912.81177.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <2099562.7T915zWny0@vostro.rjw.lan>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:52411 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752126AbbFYBFX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 24 Jun 2015 21:05:23 -0400
+In-Reply-To: <20150428100913.26912.81177.stgit@localhost.localdomain>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, mpe@ellerman.id.au, khandual@linux.vnet.ibm.com
 
-On Tuesday, June 23, 2015 01:45:00 AM Rafael J. Wysocki wrote:
-> On Monday, June 22, 2015 10:38:53 PM Alexander Sverdlin wrote:
-> > Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
-> > but there were already ~63 of_node local variables or function parameters
-> > (no single acpi_node though, but anyway).
-> > 
-> > After debugging undefined but used of_node local varible (which turned out
-> > to reference static function of_node() instead) it became clear that the names
-> > for the functions are too short and too generic for global scope.
-> > 
-> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+On Tue, 2015-04-28 at 15:39 +0530, Vasant Hegde wrote:
+> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 > 
-> Putting the whole world into the To: field of your messages is not a good idea
-> in general.
+> This patch registers the following two new OPAL interfaces calls
+> for the platform LED subsystem. With the help of these new OPAL calls,
+> the kernel will be able to get or set the state of various individual
+> LEDs on the system at any given location code which is passed through
+> the LED specific device tree nodes.
 > 
-> I'm fine with this change, personally.
+> 	(1) OPAL_LEDS_GET_INDICATOR     opal_leds_get_ind
+> 	(2) OPAL_LEDS_SET_INDICATOR     opal_leds_set_ind
 > 
-> Does anyone in the CC list have any objections?
+> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+> Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+> Tested-by: Stewart Smith <stewart@linux.vnet.ibm.com>
 
-No objections apparently.
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-OK, I've queued this one up for the next PM+ACPI pull request, thanks!
-
+> ---
+> Changes in v4:
+>   - Updated macros to reflect platform.
 > 
+>  arch/powerpc/include/asm/opal-api.h            |   29 +++++++++++++++++++++++-
+>  arch/powerpc/include/asm/opal.h                |    5 ++++
+>  arch/powerpc/platforms/powernv/opal-wrappers.S |    2 ++
+>  3 files changed, 35 insertions(+), 1 deletion(-)
 > 
-> > ---
-> > 
-> > Compile-tested on x86_64 with ACPI and ARM with OF.
-> > 
-> >  drivers/base/property.c  | 26 +++++++++++++-------------
-> >  drivers/gpio/gpiolib.c   |  4 ++--
-> >  drivers/leds/leds-gpio.c |  2 +-
-> >  include/acpi/acpi_bus.h  |  2 +-
-> >  include/linux/acpi.h     |  4 ++--
-> >  include/linux/of.h       |  4 ++--
-> >  6 files changed, 21 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/base/property.c b/drivers/base/property.c
-> > index 1d0b116..dfd4de6 100644
-> > --- a/drivers/base/property.c
-> > +++ b/drivers/base/property.c
-> > @@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
-> >  bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
-> >  {
-> >  	if (is_of_node(fwnode))
-> > -		return of_property_read_bool(of_node(fwnode), propname);
-> > +		return of_property_read_bool(to_of_node(fwnode), propname);
-> >  	else if (is_acpi_node(fwnode))
-> > -		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
-> > +		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
-> > 
-> >  	return !!pset_prop_get(to_pset(fwnode), propname);
-> >  }
-> > @@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
-> >  ({ \
-> >  	int _ret_; \
-> >  	if (is_of_node(_fwnode_)) \
-> > -		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
-> > +		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
-> >  					       _type_, _val_, _nval_); \
-> >  	else if (is_acpi_node(_fwnode_)) \
-> > -		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
-> > +		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
-> >  					   _proptype_, _val_, _nval_); \
-> >  	else \
-> >  		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
-> > @@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
-> >  {
-> >  	if (is_of_node(fwnode))
-> >  		return val ?
-> > -			of_property_read_string_array(of_node(fwnode), propname,
-> > -						      val, nval) :
-> > -			of_property_count_strings(of_node(fwnode), propname);
-> > +			of_property_read_string_array(to_of_node(fwnode),
-> > +						      propname, val, nval) :
-> > +			of_property_count_strings(to_of_node(fwnode), propname);
-> >  	else if (is_acpi_node(fwnode))
-> > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-> > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
-> >  					  DEV_PROP_STRING, val, nval);
-> > 
-> >  	return pset_prop_read_array(to_pset(fwnode), propname,
-> > @@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
-> >  				const char *propname, const char **val)
-> >  {
-> >  	if (is_of_node(fwnode))
-> > -		return of_property_read_string(of_node(fwnode), propname, val);
-> > +		return of_property_read_string(to_of_node(fwnode), propname, val);
-> >  	else if (is_acpi_node(fwnode))
-> > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-> > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
-> >  					  DEV_PROP_STRING, val, 1);
-> > 
-> >  	return -ENXIO;
-> > @@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
-> >  	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> >  		struct device_node *node;
-> > 
-> > -		node = of_get_next_available_child(dev->of_node, of_node(child));
-> > +		node = of_get_next_available_child(dev->of_node, to_of_node(child));
-> >  		if (node)
-> >  			return &node->fwnode;
-> >  	} else if (IS_ENABLED(CONFIG_ACPI)) {
-> >  		struct acpi_device *node;
-> > 
-> > -		node = acpi_get_next_child(dev, acpi_node(child));
-> > +		node = acpi_get_next_child(dev, to_acpi_node(child));
-> >  		if (node)
-> >  			return acpi_fwnode_handle(node);
-> >  	}
-> > @@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
-> >  void fwnode_handle_put(struct fwnode_handle *fwnode)
-> >  {
-> >  	if (is_of_node(fwnode))
-> > -		of_node_put(of_node(fwnode));
-> > +		of_node_put(to_of_node(fwnode));
-> >  }
-> >  EXPORT_SYMBOL_GPL(fwnode_handle_put);
-> > 
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 6bc612b..5d8b2b3 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
-> >  	if (is_of_node(fwnode)) {
-> >  		enum of_gpio_flags flags;
-> > 
-> > -		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
-> > +		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
-> >  						&flags);
-> >  		if (!IS_ERR(desc))
-> >  			active_low = flags & OF_GPIO_ACTIVE_LOW;
-> >  	} else if (is_acpi_node(fwnode)) {
-> >  		struct acpi_gpio_info info;
-> > 
-> > -		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
-> > +		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
-> >  					       &info);
-> >  		if (!IS_ERR(desc))
-> >  			active_low = info.active_low;
-> > diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> > index 15eb3f8..d2d54d6 100644
-> > --- a/drivers/leds/leds-gpio.c
-> > +++ b/drivers/leds/leds-gpio.c
-> > @@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
-> >  			goto err;
-> >  		}
-> > 
-> > -		np = of_node(child);
-> > +		np = to_of_node(child);
-> > 
-> >  		if (fwnode_property_present(child, "label")) {
-> >  			fwnode_property_read_string(child, "label", &led.name);
-> > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> > index 8de4fa9..1224be8 100644
-> > --- a/include/acpi/acpi_bus.h
-> > +++ b/include/acpi/acpi_bus.h
-> > @@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
-> >  	return fwnode && fwnode->type == FWNODE_ACPI;
-> >  }
-> > 
-> > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-> > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
-> >  {
-> >  	return is_acpi_node(fwnode) ?
-> >  		container_of(fwnode, struct acpi_device, fwnode) : NULL;
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index e4da5e3..ec3c98e 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
-> >  	return adev ? adev->handle : NULL;
-> >  }
-> > 
-> > -#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
-> > +#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
-> >  #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
-> >  	acpi_fwnode_handle(adev) : NULL)
-> >  #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
-> > @@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
-> >  	return false;
-> >  }
-> > 
-> > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-> > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
-> >  {
-> >  	return NULL;
-> >  }
-> > diff --git a/include/linux/of.h b/include/linux/of.h
-> > index b871ff9..f05fdce 100644
-> > --- a/include/linux/of.h
-> > +++ b/include/linux/of.h
-> > @@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
-> >  	return fwnode && fwnode->type == FWNODE_OF;
-> >  }
-> > 
-> > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-> > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
-> >  {
-> >  	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
-> >  }
-> > @@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
-> >  	return false;
-> >  }
-> > 
-> > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-> > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
-> >  {
-> >  	return NULL;
-> >  }
-> > --
-
+> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+> index 0321a90..ff85397 100644
+> --- a/arch/powerpc/include/asm/opal-api.h
+> +++ b/arch/powerpc/include/asm/opal-api.h
+> @@ -153,7 +153,9 @@
+>  #define OPAL_FLASH_READ				110
+>  #define OPAL_FLASH_WRITE			111
+>  #define OPAL_FLASH_ERASE			112
+> -#define OPAL_LAST				112
+> +#define OPAL_LEDS_GET_INDICATOR			114
+> +#define OPAL_LEDS_SET_INDICATOR			115
+> +#define OPAL_LAST				115
+>  
+>  /* Device tree flags */
+>  
+> @@ -730,6 +732,31 @@ struct opal_i2c_request {
+>  	__be64 buffer_ra;		/* Buffer real address */
+>  };
+>  
+> +/* LED Mode */
+> +#define POWERNV_LED_MODE_LIGHT_PATH	"lightpath"
+> +#define POWERNV_LED_MODE_GUIDING_LIGHT	"guidinglight"
+> +
+> +/* LED type */
+> +#define POWERNV_LED_TYPE_IDENTIFY	"identify"
+> +#define POWERNV_LED_TYPE_FAULT		"fault"
+> +#define POWERNV_LED_TYPE_ATTENTION	"attention"
+> +
+> +/* LED location */
+> +#define POWERNV_LED_LOC_ENCLOSURE	"enclosure"
+> +#define POWERNV_LED_LOC_DESCENDENT	"descendent"
+> +
+> +enum OpalSlotLedType {
+> +	OPAL_SLOT_LED_TYPE_ID = 0,	/* IDENTIFY LED */
+> +	OPAL_SLOT_LED_TYPE_FAULT = 1,	/* FAULT LED */
+> +	OPAL_SLOT_LED_TYPE_ATTN = 2,	/* System Attention LED */
+> +	OPAL_SLOT_LED_TYPE_MAX = 3
+> +};
+> +
+> +enum OpalSlotLedState {
+> +	OPAL_SLOT_LED_STATE_OFF = 0,	/* LED is OFF */
+> +	OPAL_SLOT_LED_STATE_ON = 1	/* LED is ON */
+> +};
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif /* __OPAL_API_H */
+> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+> index 042af1a..e06dc7e 100644
+> --- a/arch/powerpc/include/asm/opal.h
+> +++ b/arch/powerpc/include/asm/opal.h
+> @@ -193,6 +193,11 @@ int64_t opal_ipmi_recv(uint64_t interface, struct opal_ipmi_msg *msg,
+>  		uint64_t *msg_len);
+>  int64_t opal_i2c_request(uint64_t async_token, uint32_t bus_id,
+>  			 struct opal_i2c_request *oreq);
+> +int64_t opal_leds_get_ind(char *loc_code, u64 *led_mask,
+> +			  u64 *led_value, u64 *max_led_type);
+> +int64_t opal_leds_set_ind(uint64_t token, char *loc_code, const u64 led_mask,
+> +			  const u64 led_value, u64 *max_led_type);
+> +
+>  
+>  int64_t opal_flash_read(uint64_t id, uint64_t offset, uint64_t buf,
+>  		uint64_t size, uint64_t token);
+> diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
+> index 4e74037..20d4da4 100644
+> --- a/arch/powerpc/platforms/powernv/opal-wrappers.S
+> +++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
+> @@ -295,3 +295,5 @@ OPAL_CALL(opal_i2c_request,			OPAL_I2C_REQUEST);
+>  OPAL_CALL(opal_flash_read,			OPAL_FLASH_READ);
+>  OPAL_CALL(opal_flash_write,			OPAL_FLASH_WRITE);
+>  OPAL_CALL(opal_flash_erase,			OPAL_FLASH_ERASE);
+> +OPAL_CALL(opal_leds_get_ind,			OPAL_LEDS_GET_INDICATOR);
+> +OPAL_CALL(opal_leds_set_ind,			OPAL_LEDS_SET_INDICATOR);
