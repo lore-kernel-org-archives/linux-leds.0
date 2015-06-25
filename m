@@ -1,70 +1,73 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [PATCH v3 1/3] leds: netxbig: add device tree binding
-Date: Thu, 25 Jun 2015 10:46:03 +0200
-Message-ID: <20150625084603.GG4853@kw.sim.vm.gnt>
-References: <1434639590-27389-1-git-send-email-simon.guinot@sequanux.org>
- <1434639590-27389-2-git-send-email-simon.guinot@sequanux.org>
- <55894D0A.8000306@samsung.com>
- <20150623211711.GF4853@kw.sim.vm.gnt>
- <558A736D.8030503@samsung.com>
+From: Milo Kim <milo.kim@ti.com>
+Subject: [PATCH] leds:lp55xx: fix firmware loading error
+Date: Fri, 26 Jun 2015 04:33:03 +0900
+Message-ID: <1435260783-7132-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jQblWL/lOOo35ApW"
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:38316 "EHLO vm1.sequanux.org"
+Received: from comal.ext.ti.com ([198.47.26.152]:33103 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751636AbbFYIqK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 25 Jun 2015 04:46:10 -0400
-Content-Disposition: inline
-In-Reply-To: <558A736D.8030503@samsung.com>
+	id S1751630AbbFYTdh (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 25 Jun 2015 15:33:37 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, Dan Carpenter <dan.carpenter@oracle.com>, Alexandre Courbot <gnurou@gmail.com>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: cooloney@gmail.com
+Cc: Milo Kim <milo.kim@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 
+LP55xx driver uses not firmware file but raw data to load program data through
+the firmware interface.(Documents/leds/leds-lp55xx.txt)
 
---jQblWL/lOOo35ApW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  For example, run blinking green channel pattern,
+  echo 2 > /sys/bus/i2c/devices/xxxx/select_engine     # 2 is for green channel
+  echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux    # engine mux for RGB
+  echo 1 > /sys/class/firmware/lp5562/loading
+  echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
+  echo 0 > /sys/class/firmware/lp5562/loading
+  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
 
-On Wed, Jun 24, 2015 at 11:07:57AM +0200, Jacek Anaszewski wrote:
-> >>BTW how do you compile the driver? I've tried to use
-> >>multi_v5_defconfig and mvebu_v5_defconfig and I have build breaks
-> >>with both of them on the recent linux-next.
-> >
-> >For the original patch set version (Linux 4.0 at the time), I have used
-> >the mvebu_v5_defconfig. Now I am using a lighter configuration because
-> >I don't need to build the whole mvebu stuff.
-> >
-> >What kind of error do you get ? I remember something about setting
-> >CONFIG_HZ to 250.
->=20
-> I am getting:
->=20
-> drivers/crypto/mv_cesa.c:1037:2: error: implicit declaration of
-> function =E2=80=98of_get_named_gen_pool=E2=80=99
-> [-Werror=3Dimplicit-function-declaration]
->=20
-> Compilation succeeded after disabling CONFIG_CRYPTO_DEV_MV_CESA.
+However, '/sys/class/firmware/<device name>' is not created after
+firmware load user helper was introduced.
 
-It is because the merge in linux-next missed the renaming of
-of_get_named_gen_pool() in of_gen_pool_get() for the mv_cesa driver.
+LP55xx driver requires not only enabling CONFIG_FW_LOADER_USER_HELPER_FALLBACK
+but also option, 'FW_OPT_USERHELPER'.
+When _request_firmware() is invoked, this option enables to load raw data
+manually (aka, fw_load_from_user_helper() is called)
+The second parameter 'uevent' of request_firmware_nowait() is used for this
+option, 'FW_OPT_USERHELPER'.
 
-I have sent a patch, just in case.
+Signed-off-by: Milo Kim <milo.kim@ti.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
+---
+ drivers/leds/Kconfig              | 1 +
+ drivers/leds/leds-lp55xx-common.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Simon
-
---jQblWL/lOOo35ApW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlWLv8sACgkQgtp0PDeOcDo+dwCggPZSw/wmFL9Eq05+hIzfzdw0
-/wIAnAiBlLN7JVwqt38aNBgkpGxkIzrH
-=KNM2
------END PGP SIGNATURE-----
-
---jQblWL/lOOo35ApW--
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 966b960..a39d608 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -206,6 +206,7 @@ config LEDS_LP55XX_COMMON
+ 	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+ 	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+ 	select FW_LOADER
++	select FW_LOADER_USER_HELPER_FALLBACK
+ 	help
+ 	  This option supports common operations for LP5521/5523/55231/5562/8501
+ 	  devices.
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 77c26bc..96d51e9 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -223,7 +223,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+ 	const char *name = chip->cl->name;
+ 	struct device *dev = &chip->cl->dev;
+ 
+-	return request_firmware_nowait(THIS_MODULE, true, name, dev,
++	return request_firmware_nowait(THIS_MODULE, false, name, dev,
+ 				GFP_KERNEL, chip, lp55xx_firmware_loaded);
+ }
+ 
+-- 
+1.9.1
