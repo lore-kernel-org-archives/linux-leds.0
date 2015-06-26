@@ -1,120 +1,98 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v4 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Fri, 26 Jun 2015 10:47:02 +0530
-Message-ID: <558CE04E.6070306@linux.vnet.ibm.com>
-References: <20150428100535.26912.29607.stgit@localhost.localdomain> <20150428101008.26912.38735.stgit@localhost.localdomain> <1435194598.3790.32.camel@kernel.crashing.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds:lp55xx: fix firmware loading error
+Date: Fri, 26 Jun 2015 11:04:12 +0200
+Message-ID: <558D158C.8090300@samsung.com>
+References: <1435260783-7132-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp04.au.ibm.com ([202.81.31.146]:36862 "EHLO
-	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750964AbbFZFSH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 01:18:07 -0400
-Received: from /spool/local
-	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Fri, 26 Jun 2015 15:18:04 +1000
-Received: from d23relay10.au.ibm.com (d23relay10.au.ibm.com [9.190.26.77])
-	by d23dlp01.au.ibm.com (Postfix) with ESMTP id C00132CE8050
-	for <linux-leds@vger.kernel.org>; Fri, 26 Jun 2015 15:18:01 +1000 (EST)
-Received: from d23av02.au.ibm.com (d23av02.au.ibm.com [9.190.235.138])
-	by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t5Q5Hr6V57999568
-	for <linux-leds@vger.kernel.org>; Fri, 26 Jun 2015 15:18:01 +1000
-Received: from d23av02.au.ibm.com (localhost [127.0.0.1])
-	by d23av02.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t5Q5HS3A011400
-	for <linux-leds@vger.kernel.org>; Fri, 26 Jun 2015 15:17:29 +1000
-In-Reply-To: <1435194598.3790.32.camel@kernel.crashing.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:27239 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751849AbbFZJER (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 05:04:17 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NQJ00KCZNV2HB10@mailout1.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 26 Jun 2015 10:04:14 +0100 (BST)
+In-reply-to: <1435260783-7132-1-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com
+To: Milo Kim <milo.kim@ti.com>
+Cc: cooloney@gmail.com, linux-leds@vger.kernel.org
 
-On 06/25/2015 06:39 AM, Benjamin Herrenschmidt wrote:
-> On Tue, 2015-04-28 at 15:40 +0530, Vasant Hegde wrote:
-> 
->> +Device Tree binding for LEDs on IBM Power Systems
->> +-------------------------------------------------
->> +
->> +The 'led' node under '/ibm,opal' lists service indicators available in the
->> +system and their capabilities.
->> +
->> +led {
->> +	compatible = "ibm,opal-v3-led";
->> +	phandle = <0x1000006b>;
->> +	linux,phandle = <0x1000006b>;
->> +	led-mode = "lightpath";
->> +
->> +	U78C9.001.RST0027-P1-C1 {
->> +		led-types = "identify", "fault";
->> +		led-loc = "descendent";
->> +		phandle = <0x1000006f>;
->> +		linux,phandle = <0x1000006f>;
->> +	};
->> +	...
->> +	...
->> +};
+Hi Milo,
 
-Ben,
+Thanks for the patch.
 
-> 
-> My only issue is that /led should probably have been /leds but afaik
-> this is already committed in the FW tree. Vasant, have we done a release
-> what that code yet or can we still change this ?
+On 06/25/2015 09:33 PM, Milo Kim wrote:
+> LP55xx driver uses not firmware file but raw data to load program data through
+> the firmware interface.(Documents/leds/leds-lp55xx.txt)
+>
+>    For example, run blinking green channel pattern,
+>    echo 2 > /sys/bus/i2c/devices/xxxx/select_engine     # 2 is for green channel
+>    echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux    # engine mux for RGB
+>    echo 1 > /sys/class/firmware/lp5562/loading
+>    echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
+>    echo 0 > /sys/class/firmware/lp5562/loading
+>    echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
 
-I think we can change OPAL side as we haven't released kernel code... So no
-consumer yet.
-Will send a patch to skiboot mailing list. lets see
+Please don't exceed 75 characters line length limit.
 
-> 
-> Also what does led-mode = "lightpath" means ? Can you describe it ?
-> Are there alternative values ? I don't see the point myself ...
+>
+> However, '/sys/class/firmware/<device name>' is not created after
+> firmware load user helper was introduced.
+>
+> LP55xx driver requires not only enabling CONFIG_FW_LOADER_USER_HELPER_FALLBACK
+> but also option, 'FW_OPT_USERHELPER'.
+> When _request_firmware() is invoked, this option enables to load raw data
+> manually (aka, fw_load_from_user_helper() is called)
+> The second parameter 'uevent' of request_firmware_nowait() is used for this
+> option, 'FW_OPT_USERHELPER'.
 
-Yes.. Our system can work in two modes...
-   - light path --> Both identify and faults are supported
-     typically all low end servers are in this mode
-  - guiding light -> Only identify LEDs are supports . no fault indicator
-support for individual FRU
-     typically high end servers are in this mode.
+Could you describe it more clearly, i.e. how 'uevent' is used for the
+option FW_OPT_USERHELPER? I can't get the relationship without going
+deeper into details.
 
-These modes are static in nature.. meaning we cannot change that during run time...
-AFAIK all the PowerNV boxes shipped today are in Light Path mode.. I have added
-this, so that in future if they decide to ship system with guiding light mode,
-then we don't need to make any changes.
-
-
-> 
-> Don't leave the "linux,phandle" in the description of the binding (nor
-> the phandle actually). They are implicit for all nodes, no need to
-> clutter the documentation with them.
-
-Sure. Will fix in next version.
-
-
-> 
->> +Each node under 'led' node describes location code of FRU/Enclosure.
->> +
->> +The properties under each node:
->> +
->> +  led-types : Supported LED types (attention/identify/fault).
->> +
->> +  led-loc   : enclosure/descendent(FRU) location code.
-> 
-> I don't understand what that means. Please provide a more detailed
-> explanation.
-> 
-
-This describes the LED location (FRU or enclosure level).. This was added to
-identify the component (as FRU leds are overloaded and enclosure level we have
-separate LEDs for each component)...
+>
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> ---
+>   drivers/leds/Kconfig              | 1 +
+>   drivers/leds/leds-lp55xx-common.c | 2 +-
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 966b960..a39d608 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -206,6 +206,7 @@ config LEDS_LP55XX_COMMON
+>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+>   	select FW_LOADER
+> +	select FW_LOADER_USER_HELPER_FALLBACK
+>   	help
+>   	  This option supports common operations for LP5521/5523/55231/5562/8501
+>   	  devices.
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 77c26bc..96d51e9 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -223,7 +223,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+>   	const char *name = chip->cl->name;
+>   	struct device *dev = &chip->cl->dev;
+>
+> -	return request_firmware_nowait(THIS_MODULE, true, name, dev,
+> +	return request_firmware_nowait(THIS_MODULE, false, name, dev,
+>   				GFP_KERNEL, chip, lp55xx_firmware_loaded);
+>   }
+>
+>
 
 
-> Is the name of the node the loc code of the FRU ? In that case, how do
-> you deal with multiple LEDs on the same FRU without a unit address ?
-
-We use location code + LED type for node. So that we can identify multiple LEDs.
-
-Looking back again, probably we can take out above property as we are not using
-that today.
-
--Vasant
+-- 
+Best Regards,
+Jacek Anaszewski
