@@ -1,98 +1,97 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds:lp55xx: fix firmware loading error
-Date: Fri, 26 Jun 2015 11:04:12 +0200
-Message-ID: <558D158C.8090300@samsung.com>
-References: <1435260783-7132-1-git-send-email-milo.kim@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
+Date: Fri, 26 Jun 2015 11:19:16 +0200
+Message-ID: <CAMuHMdUPO+W=Fs+F1vo9+2EqRargK-XXO7+L=k5U8NXP=BHiEg@mail.gmail.com>
+References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
+	<20150326233025.GR18321@valkosipuli.retiisi.org.uk>
+	<CAPybu_1thjCfz3Xomzpvc3Hpw2j_z8rXpmp28WnuRBDE0DYAtA@mail.gmail.com>
+	<CAK5ve-KLmETc1Ym1xvwTuvG7f5O1w6s=u3fgdGcYT8GHCWT+VA@mail.gmail.com>
+	<20150328010705.GB3891@wfg-t540p.sh.intel.com>
+	<CAGXu5jLPRS+0KOcb2g1y_1Yqg-NywshHiujxNghQJ5HdFVWo1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:27239 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751849AbbFZJER (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 05:04:17 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NQJ00KCZNV2HB10@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 26 Jun 2015 10:04:14 +0100 (BST)
-In-reply-to: <1435260783-7132-1-git-send-email-milo.kim@ti.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33018 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751685AbbFZJTR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 05:19:17 -0400
+In-Reply-To: <CAGXu5jLPRS+0KOcb2g1y_1Yqg-NywshHiujxNghQJ5HdFVWo1Q@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: cooloney@gmail.com, linux-leds@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, Bryan Wu <cooloney@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Li <sparse@chrisli.org>
 
-Hi Milo,
-
-Thanks for the patch.
-
-On 06/25/2015 09:33 PM, Milo Kim wrote:
-> LP55xx driver uses not firmware file but raw data to load program data through
-> the firmware interface.(Documents/leds/leds-lp55xx.txt)
+On Tue, Jun 9, 2015 at 12:55 AM, Kees Cook <keescook@chromium.org> wrote:
+>> commit 95420c349194d1b570270ba1b1567d85461761c3
+>> Author:     Kees Cook <keescook@chromium.org>
+>> AuthorDate: Mon Sep 16 11:15:54 2013 -0700
+>> Commit:     Kees Cook <keescook@chromium.org>
+>> CommitDate: Wed Mar 4 14:07:18 2015 -0800
+>>
+>>     Make all format string problems fail the build
+>>
+>>     In an effort to stop format strings from leaking into various callers,
+>>     have gcc stop the build when this gets detected.
+>>
+>>     Signed-off-by: Kees Cook <keescook@chromium.org>
+>>
+>> diff --git a/Makefile b/Makefile
+>> index e6a9b1b..b7684d2 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -402,7 +402,6 @@ KBUILD_CPPFLAGS := -D__KERNEL__
+>>  KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+>>                    -fno-strict-aliasing -fno-common \
+>>                    -Werror-implicit-function-declaration \
+>> -                  -Wno-format-security \
+>>                    -std=gnu89
+>>
+>>  KBUILD_AFLAGS_KERNEL :=
+>> @@ -752,6 +751,11 @@ endif
+>>  NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+>>  CHECKFLAGS     += $(NOSTDINC_FLAGS)
+>>
+>> +# Enable format-security when it can stop the build, otherwise disable.
+>> +KBUILD_CFLAGS  += $(call cc-option,\
+>> +                       -Wformat -Wformat-security -Werror=format-security,\
+>> +                       -Wno-format-security)
+>> +
+>>  # warn about C99 declaration after statement
+>>  KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+>>
 >
->    For example, run blinking green channel pattern,
->    echo 2 > /sys/bus/i2c/devices/xxxx/select_engine     # 2 is for green channel
->    echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux    # engine mux for RGB
->    echo 1 > /sys/class/firmware/lp5562/loading
->    echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
->    echo 0 > /sys/class/firmware/lp5562/loading
->    echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
+> The trouble is that gcc still has a terrible time with false positives
+> on these warnings. It doesn't know to silence const char strings. For
+> example:
+>
+> const char * version = "SomeThing driver v1.3\n";
 
-Please don't exceed 75 characters line length limit.
+While the contents of the string are const, the pointer isn't...
 
->
-> However, '/sys/class/firmware/<device name>' is not created after
-> firmware load user helper was introduced.
->
-> LP55xx driver requires not only enabling CONFIG_FW_LOADER_USER_HELPER_FALLBACK
-> but also option, 'FW_OPT_USERHELPER'.
-> When _request_firmware() is invoked, this option enables to load raw data
-> manually (aka, fw_load_from_user_helper() is called)
-> The second parameter 'uevent' of request_firmware_nowait() is used for this
-> option, 'FW_OPT_USERHELPER'.
+> ...
+> printk(version);
 
-Could you describe it more clearly, i.e. how 'uevent' is used for the
-option FW_OPT_USERHELPER? I can't get the relationship without going
-deeper into details.
+... hence gcc cannot be sure version hasn't been changed to point
+to something different.
 
->
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: linux-leds@vger.kernel.org
-> ---
->   drivers/leds/Kconfig              | 1 +
->   drivers/leds/leds-lp55xx-common.c | 2 +-
->   2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 966b960..a39d608 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -206,6 +206,7 @@ config LEDS_LP55XX_COMMON
->   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
->   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
->   	select FW_LOADER
-> +	select FW_LOADER_USER_HELPER_FALLBACK
->   	help
->   	  This option supports common operations for LP5521/5523/55231/5562/8501
->   	  devices.
-> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> index 77c26bc..96d51e9 100644
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -223,7 +223,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
->   	const char *name = chip->cl->name;
->   	struct device *dev = &chip->cl->dev;
->
-> -	return request_firmware_nowait(THIS_MODULE, true, name, dev,
-> +	return request_firmware_nowait(THIS_MODULE, false, name, dev,
->   				GFP_KERNEL, chip, lp55xx_firmware_loaded);
->   }
->
->
+> We don't care about this, since the string is not dynamic, but gcc
+> still warns. My intention is that when gcc fixes this bug, then I'd
+> upstream this patch. Right now I have to carry a patch to silence
+> false positives. :(
 
+Does it help if you change it to:
 
--- 
-Best Regards,
-Jacek Anaszewski
+    const char * const version = "SomeThing driver v1.3\n";
+
+???
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
