@@ -1,117 +1,45 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v3] led/led-class: Handle LEDs with the same name
-Date: Fri, 26 Jun 2015 10:47:12 -0700
-Message-ID: <CAGXu5j+6Rf-z2U8LdZK-hqPSXFphX0aUSrbYwFXriGwsdcZweQ@mail.gmail.com>
-References: <1426287939-7596-1-git-send-email-ricardo.ribalda@gmail.com>
-	<20150326233025.GR18321@valkosipuli.retiisi.org.uk>
-	<CAPybu_1thjCfz3Xomzpvc3Hpw2j_z8rXpmp28WnuRBDE0DYAtA@mail.gmail.com>
-	<CAK5ve-KLmETc1Ym1xvwTuvG7f5O1w6s=u3fgdGcYT8GHCWT+VA@mail.gmail.com>
-	<20150328010705.GB3891@wfg-t540p.sh.intel.com>
-	<CAGXu5jLPRS+0KOcb2g1y_1Yqg-NywshHiujxNghQJ5HdFVWo1Q@mail.gmail.com>
-	<CAMuHMdUPO+W=Fs+F1vo9+2EqRargK-XXO7+L=k5U8NXP=BHiEg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] leds: fix aat1290 build errors
+Date: Fri, 26 Jun 2015 12:00:20 -0700
+Message-ID: <558DA144.6050203@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-vn0-f51.google.com ([209.85.216.51]:37448 "EHLO
-	mail-vn0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751829AbbFZRrN (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 13:47:13 -0400
-Received: by vnbf129 with SMTP id f129so16668767vnb.4
-        for <linux-leds@vger.kernel.org>; Fri, 26 Jun 2015 10:47:12 -0700 (PDT)
-In-Reply-To: <CAMuHMdUPO+W=Fs+F1vo9+2EqRargK-XXO7+L=k5U8NXP=BHiEg@mail.gmail.com>
+Received: from bombadil.infradead.org ([198.137.202.9]:37212 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751919AbbFZTAY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 26 Jun 2015 15:00:24 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, Bryan Wu <cooloney@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Li <sparse@chrisli.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-On Fri, Jun 26, 2015 at 2:19 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Jun 9, 2015 at 12:55 AM, Kees Cook <keescook@chromium.org> wrote:
->>> commit 95420c349194d1b570270ba1b1567d85461761c3
->>> Author:     Kees Cook <keescook@chromium.org>
->>> AuthorDate: Mon Sep 16 11:15:54 2013 -0700
->>> Commit:     Kees Cook <keescook@chromium.org>
->>> CommitDate: Wed Mar 4 14:07:18 2015 -0800
->>>
->>>     Make all format string problems fail the build
->>>
->>>     In an effort to stop format strings from leaking into various callers,
->>>     have gcc stop the build when this gets detected.
->>>
->>>     Signed-off-by: Kees Cook <keescook@chromium.org>
->>>
->>> diff --git a/Makefile b/Makefile
->>> index e6a9b1b..b7684d2 100644
->>> --- a/Makefile
->>> +++ b/Makefile
->>> @@ -402,7 +402,6 @@ KBUILD_CPPFLAGS := -D__KERNEL__
->>>  KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
->>>                    -fno-strict-aliasing -fno-common \
->>>                    -Werror-implicit-function-declaration \
->>> -                  -Wno-format-security \
->>>                    -std=gnu89
->>>
->>>  KBUILD_AFLAGS_KERNEL :=
->>> @@ -752,6 +751,11 @@ endif
->>>  NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
->>>  CHECKFLAGS     += $(NOSTDINC_FLAGS)
->>>
->>> +# Enable format-security when it can stop the build, otherwise disable.
->>> +KBUILD_CFLAGS  += $(call cc-option,\
->>> +                       -Wformat -Wformat-security -Werror=format-security,\
->>> +                       -Wno-format-security)
->>> +
->>>  # warn about C99 declaration after statement
->>>  KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
->>>
->>
->> The trouble is that gcc still has a terrible time with false positives
->> on these warnings. It doesn't know to silence const char strings. For
->> example:
->>
->> const char * version = "SomeThing driver v1.3\n";
->
-> While the contents of the string are const, the pointer isn't...
->
->> ...
->> printk(version);
->
-> ... hence gcc cannot be sure version hasn't been changed to point
-> to something different.
->
->> We don't care about this, since the string is not dynamic, but gcc
->> still warns. My intention is that when gcc fixes this bug, then I'd
->> upstream this patch. Right now I have to carry a patch to silence
->> false positives. :(
->
-> Does it help if you change it to:
->
->     const char * const version = "SomeThing driver v1.3\n";
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Nope. :(
+Fix build errors when LEDS_AAT1290=y and V4L2_FLASH_LED_CLASS=m
+by restricting LEDS_AAT1290 to =m if V4L2_FLASH_LED_CLASS=m.
 
-Here's what I use when examining gcc's behavior:
+drivers/built-in.o: In function `aat1290_led_remove':
+leds-aat1290.c:(.text+0xe5d77): undefined reference to `v4l2_flash_release'
+drivers/built-in.o: In function `aat1290_led_probe':
+leds-aat1290.c:(.text+0xe6494): undefined reference to `v4l2_flash_init'
 
-https://gist.github.com/kees/e561143ba0bd0ca163bc
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ drivers/leds/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
--Kees
-
->
-> ???
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
-
-
--- 
-Kees Cook
-Chrome OS Security
+--- linux-next-20150626.orig/drivers/leds/Kconfig
++++ linux-next-20150626/drivers/leds/Kconfig
+@@ -42,6 +42,7 @@ config LEDS_88PM860X
+ config LEDS_AAT1290
+ 	tristate "LED support for the AAT1290"
+ 	depends on LEDS_CLASS_FLASH
++	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+ 	depends on GPIOLIB
+ 	depends on OF
+ 	depends on PINCTRL
