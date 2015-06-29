@@ -1,50 +1,101 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: fix max77693-led build errors
-Date: Mon, 29 Jun 2015 16:45:23 +0200
-Message-ID: <1435589123-23545-1-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH RESEND] leds:lp55xx: fix firmware loading error
+Date: Mon, 29 Jun 2015 16:58:05 +0200
+Message-ID: <55915CFD.2000801@samsung.com>
+References: <1435538354-4332-1-git-send-email-milo.kim@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36030 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033AbbF2Ope (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Jun 2015 10:45:34 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:11261 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753026AbbF2O6J (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Jun 2015 10:58:09 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NQP035CINNV8F80@mailout1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 29 Jun 2015 23:45:31 +0900 (KST)
+ with ESMTP id <0NQP009SWO8V9G70@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 29 Jun 2015 15:58:07 +0100 (BST)
+In-reply-to: <1435538354-4332-1-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+To: Milo Kim <milo.kim@ti.com>
+Cc: cooloney@gmail.com, linux-leds@vger.kernel.org
 
-Fix build errors when LEDS_MAX77693=y and V4L2_FLASH_LED_CLASS=m
-by restricting LEDS_MAX77693 to =m if V4L2_FLASH_LED_CLASS=m.
+Hi Milo,
 
-drivers/leds/leds-max77693.c:1062: undefined reference to `v4l2_flash_release'
-drivers/leds/leds-max77693.c:1068: undefined reference to `v4l2_flash_release'
-drivers/built-in.o: In function `max77693_register_led':
-drivers/leds/leds-max77693.c:968: undefined reference to `v4l2_flash_init'
-drivers/built-in.o: In function `max77693_led_probe':
-drivers/leds/leds-max77693.c:1048: undefined reference to `v4l2_flash_release'
+Thanks for the update.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
----
- drivers/leds/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+On 06/29/2015 02:39 AM, Milo Kim wrote:
+> LP55xx driver uses not firmware file but raw data to load program through
+> the firmware interface.(Documents/leds/leds-lp55xx.txt)
+>
+>    For example, here is how to run blinking green channel pattern.
+>    (The second engine is seleted and MUX is mapped to 'RGB' mode)
+>    echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
+>    echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux
+>    echo 1 > /sys/class/firmware/lp5562/loading
+>    echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
+>    echo 0 > /sys/class/firmware/lp5562/loading
+>    echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
+>
+> However, '/sys/class/firmware/<device name>' is not created after the
+> firmware loader user helper was introduced.
+> This feature is used in the case below.
+>
+>    As soon as the firmware download is requested by the driver, firmware
+>    class subsystem tries to find the binary file.
+>    If it gets failed, then it just falls back to user helper to load
+>    raw data manually. Here, you can see the device file under
+>    /sys/class/firmware/.
+>
+> To make it happen, LP55xx driver requires two configurations.
+>
+>    1. Enable CONFIG_FW_LOADER_USER_HELPER_FALLBACK in Kconfig
+>    2. Set option, 'FW_OPT_USERHELPER' on requesting the firmware data.
+>       It means the second option should be 'false' in
+>       request_firmware_nowait().
+>       This option enables to load firmware data manually by calling
+>       fw_load_from_user_helper().
+>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> ---
+>   drivers/leds/Kconfig              | 1 +
+>   drivers/leds/leds-lp55xx-common.c | 2 +-
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 966b960..a39d608 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -206,6 +206,7 @@ config LEDS_LP55XX_COMMON
+>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+>   	select FW_LOADER
+> +	select FW_LOADER_USER_HELPER_FALLBACK
+>   	help
+>   	  This option supports common operations for LP5521/5523/55231/5562/8501
+>   	  devices.
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 77c26bc..96d51e9 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -223,7 +223,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+>   	const char *name = chip->cl->name;
+>   	struct device *dev = &chip->cl->dev;
+>
+> -	return request_firmware_nowait(THIS_MODULE, true, name, dev,
+> +	return request_firmware_nowait(THIS_MODULE, false, name, dev,
+>   				GFP_KERNEL, chip, lp55xx_firmware_loaded);
+>   }
+>
+>
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a817a13..9ad35f7 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -502,6 +502,7 @@ config LEDS_TLC591XX
- config LEDS_MAX77693
- 	tristate "LED support for MAX77693 Flash"
- 	depends on LEDS_CLASS_FLASH
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
- 	depends on MFD_MAX77693
- 	depends on OF
- 	help
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
 -- 
-1.7.9.5
+Best Regards,
+Jacek Anaszewski
