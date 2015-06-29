@@ -1,115 +1,59 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [RESEND PATCH 3/4] leds: leds-ns2: handle can_sleep GPIOs
-Date: Mon, 29 Jun 2015 16:41:23 +0200
-Message-ID: <20150629144123.GM4853@kw.sim.vm.gnt>
-References: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
- <1434640650-28086-4-git-send-email-simon.guinot@sequanux.org>
- <558ABC35.1010801@samsung.com>
- <20150626171028.GL4853@kw.sim.vm.gnt>
- <55915549.60106@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH -next] leds: fix aat1290 build errors
+Date: Mon, 29 Jun 2015 16:44:18 +0200
+Message-ID: <559159C2.40305@samsung.com>
+References: <558DA144.6050203@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="agiWCrAZ2JOwsdBK"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:52912 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750821AbbF2Ol2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 29 Jun 2015 10:41:28 -0400
-Content-Disposition: inline
-In-Reply-To: <55915549.60106@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:10508 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752671AbbF2OoV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Jun 2015 10:44:21 -0400
+In-reply-to: <558DA144.6050203@infradead.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
+Hi Randy,
 
---agiWCrAZ2JOwsdBK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch.
 
-On Mon, Jun 29, 2015 at 04:25:13PM +0200, Jacek Anaszewski wrote:
-> On 06/26/2015 07:10 PM, Simon Guinot wrote:
-> >On Wed, Jun 24, 2015 at 04:18:29PM +0200, Jacek Anaszewski wrote:
-> >>On 06/18/2015 05:17 PM, Simon Guinot wrote:
-> >>>On the board n090401 (Seagate NAS 4-Bay), some of the LEDs are handled
-> >>>by the leds-ns2 driver. This LEDs are connected to an I2C GPIO expander
-> >>>(PCA95554PW) which means that GPIO access may sleep. This patch makes
-> >>>leds-ns2 compatible with such GPIOs by using the *_cansleep() variant =
-of
-> >>>the GPIO functions. As a drawback this functions can't be used safely =
-in
-> >>>a timer context (with the timer LED trigger for example). To fix this
-> >>>issue, a workqueue mechanism (copied from the leds-gpio driver) is use=
-d.
-> >>>
-> >>>Note that this patch also updates slightly the ns2_led_sata_store
-> >>>function. The LED state is now retrieved from cached values instead of
-> >>>reading the GPIOs previously. This prevents ns2_led_sata_store from
-> >>>working with a stale LED state (which may happen when a delayed work
-> >>>is pending).
-> >>>
-> >>>Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> >>>Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
-> >>>---
-> >>>  drivers/leds/leds-ns2.c | 56 ++++++++++++++++++++++++++++++++++++---=
-----------
-> >>>  1 file changed, 42 insertions(+), 14 deletions(-)
-> >>>
-> >>
-> >>>
-> >>>+static void ns2_led_work(struct work_struct *work)
-> >>>+{
-> >>>+	struct ns2_led_data *led_dat =3D
-> >>>+		container_of(work, struct ns2_led_data, work);
-> >>>+	int i =3D led_dat->new_mode_index;
-> >>>+
-> >>>+	write_lock(&led_dat->rw_lock);
-> >>>+
-> >>>+	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
-> >>>+	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level=
-);
-> >>>+
-> >>>+	write_unlock(&led_dat->rw_lock);
-> >>>+}
-> >>>+
-> >>
-> >>I've just realized that this can break one of the basic rules:
-> >>no sleeping should occur while holding a spinlock. Did you
-> >>consider this?
-> >
-> >Well, if I did, I can't say I have done a good job here :/
-> >
-> >You have to know that this code is used on a large number of boards.
-> >Thus, I have to thank you for spotting this bug.As a relief, this don't
-> >actually lead to a bug with the configuration we are using: UP machine
-> >and !CONFIG_SMP.
-> >
-> >It should be simple to fix it because using a spinlock in ns2_led_work()
-> >is not needed. The GPIO writing calls are protected by the workqueue
-> >itself: a single instance is running at a time. We are only let with the
-> >new_mode_index reading which must be made coherent.
-> >
-> >Note that the very same issue also applies to ns2_led_get_mode(). And
-> >again using a lock here is not needed either. This function is only
-> >called once at probe time and there is no possible concurrency.
->=20
-> Switching to gpio_get_value_cansleep would be nice there too.
+On 06/26/2015 09:00 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix build errors when LEDS_AAT1290=y and V4L2_FLASH_LED_CLASS=m
+> by restricting LEDS_AAT1290 to =m if V4L2_FLASH_LED_CLASS=m.
+>
+> drivers/built-in.o: In function `aat1290_led_remove':
+> leds-aat1290.c:(.text+0xe5d77): undefined reference to `v4l2_flash_release'
+> drivers/built-in.o: In function `aat1290_led_probe':
+> leds-aat1290.c:(.text+0xe6494): undefined reference to `v4l2_flash_init'
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> ---
+>   drivers/leds/Kconfig |    1 +
+>   1 file changed, 1 insertion(+)
+>
+> --- linux-next-20150626.orig/drivers/leds/Kconfig
+> +++ linux-next-20150626/drivers/leds/Kconfig
+> @@ -42,6 +42,7 @@ config LEDS_88PM860X
+>   config LEDS_AAT1290
+>   	tristate "LED support for the AAT1290"
+>   	depends on LEDS_CLASS_FLASH
+> +	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+>   	depends on GPIOLIB
+>   	depends on OF
+>   	depends on PINCTRL
+>
 
-It is already the case.
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Simon
-
---agiWCrAZ2JOwsdBK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlWRWRMACgkQgtp0PDeOcDpjfwCgiLZMcQht0D9c/k2C7jj6JpDZ
-I+4An1/kLycPNfFUX9mZfff5R/D65Fky
-=F5jC
------END PGP SIGNATURE-----
-
---agiWCrAZ2JOwsdBK--
+-- 
+Best Regards,
+Jacek Anaszewski
