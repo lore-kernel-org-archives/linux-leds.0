@@ -1,325 +1,100 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 3/3] ARM: mvebu: remove static LED setup for netxbig
- boards
-Date: Mon, 29 Jun 2015 14:45:44 +0200
-Message-ID: <55913DF8.4070905@free-electrons.com>
-References: <1434628373-11834-1-git-send-email-simon.guinot@sequanux.org> <1434628373-11834-4-git-send-email-simon.guinot@sequanux.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [RESEND PATCH 3/4] leds: leds-ns2: handle can_sleep GPIOs
+Date: Mon, 29 Jun 2015 16:25:13 +0200
+Message-ID: <55915549.60106@samsung.com>
+References: <1434640650-28086-1-git-send-email-simon.guinot@sequanux.org>
+ <1434640650-28086-4-git-send-email-simon.guinot@sequanux.org>
+ <558ABC35.1010801@samsung.com> <20150626171028.GL4853@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:47251 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752522AbbF2Mpr (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Jun 2015 08:45:47 -0400
-In-Reply-To: <1434628373-11834-4-git-send-email-simon.guinot@sequanux.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11597 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752298AbbF2OZR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Jun 2015 10:25:17 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NQP008X3MQ2TJ60@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 29 Jun 2015 15:25:15 +0100 (BST)
+In-reply-to: <20150626171028.GL4853@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Vincent Donnefort <vdonnefort@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Hi Simon,
+On 06/26/2015 07:10 PM, Simon Guinot wrote:
+> On Wed, Jun 24, 2015 at 04:18:29PM +0200, Jacek Anaszewski wrote:
+>> On 06/18/2015 05:17 PM, Simon Guinot wrote:
+>>> On the board n090401 (Seagate NAS 4-Bay), some of the LEDs are handled
+>>> by the leds-ns2 driver. This LEDs are connected to an I2C GPIO expander
+>>> (PCA95554PW) which means that GPIO access may sleep. This patch makes
+>>> leds-ns2 compatible with such GPIOs by using the *_cansleep() variant of
+>>> the GPIO functions. As a drawback this functions can't be used safely in
+>>> a timer context (with the timer LED trigger for example). To fix this
+>>> issue, a workqueue mechanism (copied from the leds-gpio driver) is used.
+>>>
+>>> Note that this patch also updates slightly the ns2_led_sata_store
+>>> function. The LED state is now retrieved from cached values instead of
+>>> reading the GPIOs previously. This prevents ns2_led_sata_store from
+>>> working with a stale LED state (which may happen when a delayed work
+>>> is pending).
+>>>
+>>> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+>>> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+>>> ---
+>>>   drivers/leds/leds-ns2.c | 56 ++++++++++++++++++++++++++++++++++++-------------
+>>>   1 file changed, 42 insertions(+), 14 deletions(-)
+>>>
+>>
+>>>
+>>> +static void ns2_led_work(struct work_struct *work)
+>>> +{
+>>> +	struct ns2_led_data *led_dat =
+>>> +		container_of(work, struct ns2_led_data, work);
+>>> +	int i = led_dat->new_mode_index;
+>>> +
+>>> +	write_lock(&led_dat->rw_lock);
+>>> +
+>>> +	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
+>>> +	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
+>>> +
+>>> +	write_unlock(&led_dat->rw_lock);
+>>> +}
+>>> +
+>>
+>> I've just realized that this can break one of the basic rules:
+>> no sleeping should occur while holding a spinlock. Did you
+>> consider this?
+>
+> Well, if I did, I can't say I have done a good job here :/
+>
+> You have to know that this code is used on a large number of boards.
+> Thus, I have to thank you for spotting this bug.As a relief, this don't
+> actually lead to a bug with the configuration we are using: UP machine
+> and !CONFIG_SMP.
+>
+> It should be simple to fix it because using a spinlock in ns2_led_work()
+> is not needed. The GPIO writing calls are protected by the workqueue
+> itself: a single instance is running at a time. We are only let with the
+> new_mode_index reading which must be made coherent.
+>
+> Note that the very same issue also applies to ns2_led_get_mode(). And
+> again using a lock here is not needed either. This function is only
+> called once at probe time and there is no possible concurrency.
 
-On 18/06/2015 13:52, Simon Guinot wrote:
-> Since DT support is now available for the LEDs found on the LaCie
-> netxbig boards (Kirkwood-based), then the old-fashion netxbig board
-> setup file is no longer needed. This patch removes this file.
-> 
-> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+Switching to gpio_get_value_cansleep would be nice there too.
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-
-Thanks,
-
-Gregory
-
-> ---
->  arch/arm/mach-mvebu/Kconfig    |   7 --
->  arch/arm/mach-mvebu/Makefile   |   1 -
->  arch/arm/mach-mvebu/board.h    |  21 -----
->  arch/arm/mach-mvebu/kirkwood.c |   4 -
->  arch/arm/mach-mvebu/netxbig.c  | 191 -----------------------------------------
->  5 files changed, 224 deletions(-)
->  delete mode 100644 arch/arm/mach-mvebu/board.h
->  delete mode 100644 arch/arm/mach-mvebu/netxbig.c
-> 
-> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-> index c1e4567a5ab3..e58020bc80c0 100644
-> --- a/arch/arm/mach-mvebu/Kconfig
-> +++ b/arch/arm/mach-mvebu/Kconfig
-> @@ -102,11 +102,4 @@ config MACH_KIRKWOOD
->  	  Say 'Y' here if you want your kernel to support boards based
->  	  on the Marvell Kirkwood device tree.
->  
-> -config MACH_NETXBIG
-> -	bool "LaCie 2Big and 5Big Network v2"
-> -	depends on MACH_KIRKWOOD
-> -	help
-> -	  Say 'Y' here if you want your kernel to support the
-> -	  LaCie 2Big and 5Big Network v2
-> -
->  endif
-> diff --git a/arch/arm/mach-mvebu/Makefile b/arch/arm/mach-mvebu/Makefile
-> index b4f01497ce0b..ecf9e0c3b107 100644
-> --- a/arch/arm/mach-mvebu/Makefile
-> +++ b/arch/arm/mach-mvebu/Makefile
-> @@ -13,4 +13,3 @@ endif
->  
->  obj-$(CONFIG_MACH_DOVE)		 += dove.o
->  obj-$(CONFIG_MACH_KIRKWOOD)	 += kirkwood.o kirkwood-pm.o
-> -obj-$(CONFIG_MACH_NETXBIG)	 += netxbig.o
-> diff --git a/arch/arm/mach-mvebu/board.h b/arch/arm/mach-mvebu/board.h
-> deleted file mode 100644
-> index 98e32cc2ef3d..000000000000
-> --- a/arch/arm/mach-mvebu/board.h
-> +++ /dev/null
-> @@ -1,21 +0,0 @@
-> -/*
-> - * Board functions for Marvell System On Chip
-> - *
-> - * Copyright (C) 2014
-> - *
-> - * Andrew Lunn <andrew@lunn.ch>
-> - *
-> - * This file is licensed under the terms of the GNU General Public
-> - * License version 2.  This program is licensed "as is" without any
-> - * warranty of any kind, whether express or implied.
-> - */
-> -
-> -#ifndef __ARCH_MVEBU_BOARD_H
-> -#define __ARCH_MVEBU_BOARD_H
-> -
-> -#ifdef CONFIG_MACH_NETXBIG
-> -void netxbig_init(void);
-> -#else
-> -static inline void netxbig_init(void) {};
-> -#endif
-> -#endif
-> diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkwood.c
-> index 6b5310828eb2..e81b33dc57d8 100644
-> --- a/arch/arm/mach-mvebu/kirkwood.c
-> +++ b/arch/arm/mach-mvebu/kirkwood.c
-> @@ -25,7 +25,6 @@
->  #include "kirkwood.h"
->  #include "kirkwood-pm.h"
->  #include "common.h"
-> -#include "board.h"
->  
->  static struct resource kirkwood_cpufreq_resources[] = {
->  	[0] = {
-> @@ -180,9 +179,6 @@ static void __init kirkwood_dt_init(void)
->  	kirkwood_pm_init();
->  	kirkwood_dt_eth_fixup();
->  
-> -	if (of_machine_is_compatible("lacie,netxbig"))
-> -		netxbig_init();
-> -
->  	of_platform_populate(NULL, of_default_bus_match_table, auxdata, NULL);
->  }
->  
-> diff --git a/arch/arm/mach-mvebu/netxbig.c b/arch/arm/mach-mvebu/netxbig.c
-> deleted file mode 100644
-> index 94b11b6585a4..000000000000
-> --- a/arch/arm/mach-mvebu/netxbig.c
-> +++ /dev/null
-> @@ -1,191 +0,0 @@
-> -/*
-> - * arch/arm/mach-mvbu/board-netxbig.c
-> - *
-> - * LaCie 2Big and 5Big Network v2 board setup
-> - *
-> - * Copyright (C) 2010 Simon Guinot <sguinot@lacie.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/of.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/platform_data/leds-kirkwood-netxbig.h>
-> -#include "common.h"
-> -
-> -/*****************************************************************************
-> - * GPIO extension LEDs
-> - ****************************************************************************/
-> -
-> -/*
-> - * The LEDs are controlled by a CPLD and can be configured through a GPIO
-> - * extension bus:
-> - *
-> - * - address register : bit [0-2] -> GPIO [47-49]
-> - * - data register    : bit [0-2] -> GPIO [44-46]
-> - * - enable register  : GPIO 29
-> - */
-> -
-> -static int netxbig_v2_gpio_ext_addr[] = { 47, 48, 49 };
-> -static int netxbig_v2_gpio_ext_data[] = { 44, 45, 46 };
-> -
-> -static struct netxbig_gpio_ext netxbig_v2_gpio_ext = {
-> -	.addr		= netxbig_v2_gpio_ext_addr,
-> -	.num_addr	= ARRAY_SIZE(netxbig_v2_gpio_ext_addr),
-> -	.data		= netxbig_v2_gpio_ext_data,
-> -	.num_data	= ARRAY_SIZE(netxbig_v2_gpio_ext_data),
-> -	.enable		= 29,
-> -};
-> -
-> -/*
-> - * Address register selection:
-> - *
-> - * addr | register
-> - * ----------------------------
-> - *   0  | front LED
-> - *   1  | front LED brightness
-> - *   2  | SATA LED brightness
-> - *   3  | SATA0 LED
-> - *   4  | SATA1 LED
-> - *   5  | SATA2 LED
-> - *   6  | SATA3 LED
-> - *   7  | SATA4 LED
-> - *
-> - * Data register configuration:
-> - *
-> - * data | LED brightness
-> - * -------------------------------------------------
-> - *   0  | min (off)
-> - *   -  | -
-> - *   7  | max
-> - *
-> - * data | front LED mode
-> - * -------------------------------------------------
-> - *   0  | fix off
-> - *   1  | fix blue on
-> - *   2  | fix red on
-> - *   3  | blink blue on=1 sec and blue off=1 sec
-> - *   4  | blink red on=1 sec and red off=1 sec
-> - *   5  | blink blue on=2.5 sec and red on=0.5 sec
-> - *   6  | blink blue on=1 sec and red on=1 sec
-> - *   7  | blink blue on=0.5 sec and blue off=2.5 sec
-> - *
-> - * data | SATA LED mode
-> - * -------------------------------------------------
-> - *   0  | fix off
-> - *   1  | SATA activity blink
-> - *   2  | fix red on
-> - *   3  | blink blue on=1 sec and blue off=1 sec
-> - *   4  | blink red on=1 sec and red off=1 sec
-> - *   5  | blink blue on=2.5 sec and red on=0.5 sec
-> - *   6  | blink blue on=1 sec and red on=1 sec
-> - *   7  | fix blue on
-> - */
-> -
-> -static int netxbig_v2_red_mled[NETXBIG_LED_MODE_NUM] = {
-> -	[NETXBIG_LED_OFF]	= 0,
-> -	[NETXBIG_LED_ON]	= 2,
-> -	[NETXBIG_LED_SATA]	= NETXBIG_LED_INVALID_MODE,
-> -	[NETXBIG_LED_TIMER1]	= 4,
-> -	[NETXBIG_LED_TIMER2]	= NETXBIG_LED_INVALID_MODE,
-> -};
-> -
-> -static int netxbig_v2_blue_pwr_mled[NETXBIG_LED_MODE_NUM] = {
-> -	[NETXBIG_LED_OFF]	= 0,
-> -	[NETXBIG_LED_ON]	= 1,
-> -	[NETXBIG_LED_SATA]	= NETXBIG_LED_INVALID_MODE,
-> -	[NETXBIG_LED_TIMER1]	= 3,
-> -	[NETXBIG_LED_TIMER2]	= 7,
-> -};
-> -
-> -static int netxbig_v2_blue_sata_mled[NETXBIG_LED_MODE_NUM] = {
-> -	[NETXBIG_LED_OFF]	= 0,
-> -	[NETXBIG_LED_ON]	= 7,
-> -	[NETXBIG_LED_SATA]	= 1,
-> -	[NETXBIG_LED_TIMER1]	= 3,
-> -	[NETXBIG_LED_TIMER2]	= NETXBIG_LED_INVALID_MODE,
-> -};
-> -
-> -static struct netxbig_led_timer netxbig_v2_led_timer[] = {
-> -	[0] = {
-> -		.delay_on	= 500,
-> -		.delay_off	= 500,
-> -		.mode		= NETXBIG_LED_TIMER1,
-> -	},
-> -	[1] = {
-> -		.delay_on	= 500,
-> -		.delay_off	= 1000,
-> -		.mode		= NETXBIG_LED_TIMER2,
-> -	},
-> -};
-> -
-> -#define NETXBIG_LED(_name, maddr, mval, baddr)			\
-> -	{ .name		= _name,				\
-> -	  .mode_addr	= maddr,				\
-> -	  .mode_val	= mval,					\
-> -	  .bright_addr	= baddr }
-> -
-> -static struct netxbig_led net2big_v2_leds_ctrl[] = {
-> -	NETXBIG_LED("net2big-v2:blue:power", 0, netxbig_v2_blue_pwr_mled,  1),
-> -	NETXBIG_LED("net2big-v2:red:power",  0, netxbig_v2_red_mled,       1),
-> -	NETXBIG_LED("net2big-v2:blue:sata0", 3, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net2big-v2:red:sata0",  3, netxbig_v2_red_mled,       2),
-> -	NETXBIG_LED("net2big-v2:blue:sata1", 4, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net2big-v2:red:sata1",  4, netxbig_v2_red_mled,       2),
-> -};
-> -
-> -static struct netxbig_led_platform_data net2big_v2_leds_data = {
-> -	.gpio_ext	= &netxbig_v2_gpio_ext,
-> -	.timer		= netxbig_v2_led_timer,
-> -	.num_timer	= ARRAY_SIZE(netxbig_v2_led_timer),
-> -	.leds		= net2big_v2_leds_ctrl,
-> -	.num_leds	= ARRAY_SIZE(net2big_v2_leds_ctrl),
-> -};
-> -
-> -static struct netxbig_led net5big_v2_leds_ctrl[] = {
-> -	NETXBIG_LED("net5big-v2:blue:power", 0, netxbig_v2_blue_pwr_mled,  1),
-> -	NETXBIG_LED("net5big-v2:red:power",  0, netxbig_v2_red_mled,       1),
-> -	NETXBIG_LED("net5big-v2:blue:sata0", 3, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net5big-v2:red:sata0",  3, netxbig_v2_red_mled,       2),
-> -	NETXBIG_LED("net5big-v2:blue:sata1", 4, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net5big-v2:red:sata1",  4, netxbig_v2_red_mled,       2),
-> -	NETXBIG_LED("net5big-v2:blue:sata2", 5, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net5big-v2:red:sata2",  5, netxbig_v2_red_mled,       2),
-> -	NETXBIG_LED("net5big-v2:blue:sata3", 6, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net5big-v2:red:sata3",  6, netxbig_v2_red_mled,       2),
-> -	NETXBIG_LED("net5big-v2:blue:sata4", 7, netxbig_v2_blue_sata_mled, 2),
-> -	NETXBIG_LED("net5big-v2:red:sata4",  7, netxbig_v2_red_mled,       2),
-> -};
-> -
-> -static struct netxbig_led_platform_data net5big_v2_leds_data = {
-> -	.gpio_ext	= &netxbig_v2_gpio_ext,
-> -	.timer		= netxbig_v2_led_timer,
-> -	.num_timer	= ARRAY_SIZE(netxbig_v2_led_timer),
-> -	.leds		= net5big_v2_leds_ctrl,
-> -	.num_leds	= ARRAY_SIZE(net5big_v2_leds_ctrl),
-> -};
-> -
-> -static struct platform_device netxbig_v2_leds = {
-> -	.name		= "leds-netxbig",
-> -	.id		= -1,
-> -	.dev		= {
-> -		.platform_data	= &net2big_v2_leds_data,
-> -	},
-> -};
-> -
-> -void __init netxbig_init(void)
-> -{
-> -
-> -	if (of_machine_is_compatible("lacie,net5big_v2"))
-> -		netxbig_v2_leds.dev.platform_data = &net5big_v2_leds_data;
-> -	platform_device_register(&netxbig_v2_leds);
-> -}
-> 
+>
+> I'll fix all this issues with the v2.
+>
+> Thanks.
+>
+> Simon
+>
 
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Best Regards,
+Jacek Anaszewski
