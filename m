@@ -1,45 +1,76 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for
- brightness_set ops that can sleep
-Date: Tue, 30 Jun 2015 15:06:19 +0200
-Message-ID: <5592944B.5020809@samsung.com>
-References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
- <20150630115809.GA13605@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH/RFC v2 0/5] Remove work queues from LED class drivers
+Date: Tue, 30 Jun 2015 15:55:34 +0200
+Message-ID: <1435672534-4004-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55845 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752467AbbF3NGZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jun 2015 09:06:25 -0400
-In-reply-to: <20150630115809.GA13605@amd>
+Received: from mailout4.samsung.com ([203.254.224.34]:34630 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751311AbbF3N4D (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jun 2015 09:56:03 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@denx.de>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, pavel@ucw.cz, sakari.ailus@linux.intel.com, andreas.werner@men.de, andrew@lunn.ch, ospite@studenti.unina.it, anemo@mba.ocn.ne.jp, ben@simtec.co.uk, bootc@bootc.net, dmurphy@ti.com, daniel.jeong@ti.com, daniel@zonque.org, davem@davemloft.net, fabio.baltieri@gmail.com, balbi@ti.com, florian@openwrt.org, gshark.jeong@gmail.com, g.liakhovetski@gmx.de, ingi2.kim@samsung.com, dl9pf@gmx.de, johan@kernel.org, lenz@cs.wisc.edu, jogo@openwrt.org, q1.kim@samsung.com, kris@krisk.org, kristoffer.ericson@gmail.com, linus.walleij@linaro.org, broonie@kernel.org, michael.hennerich@analog.com, milo.kim@ti.com, nm127@freemail.hu, ncase@xes-inc.com, neilb@suse.de, nick.forbes@incepta.com, lost.distance@yahoo.com, p.meerwald@bct-electronic.com, n0-1@freewrt.org, philippe.retornaz@epfl.ch, raph@
 
-On 06/30/2015 01:58 PM, Pavel Machek wrote:
-> On Tue 2015-06-30 10:01:08, Jacek Anaszewski wrote:
->> This patch rearranges the core LED subsystem code, so that it
->> now removes from drivers the responsibility of using work queues
->> internally in case their brightness_set ops can sleep.
->> Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
->> as well as new_brightness_value property to the struct led_classdev
->> allows for employing existing set_brightness_work to do the job.
->> The modifications allow also to get rid of brightness_set_sync op,
->> as flash LED devices can now be handled properly only basing on the
->> SET_BRIGHTNESS_SYNC flag.
->
-> Are you sure this is good idea?
->
-> You'll now use single callback for blocking and non-blocking
-> behaviour. I'm pretty sure stuff like lockdep will have some fun with
-> that.
+V2 includes also patches for one LED class driver
+and two LED flash class drivers, that show how the
+drivers will benefit from the optimization being
+introduced in the first patch of this patch set.
 
-I enabled "Lock Debugging" options and didn't get any warning.
-Could you describe the use case you are thinking of?
+I was able to test only the LED Flash class drivers.
 
--- 
+Original message from the patch 483a3122 ("leds: Use set_brightness_work for
+brightness_set ops that can sleep") that was sent previously as a single one:
+
+Hi All,
+
+Since this patch will affect all the LED subsystem drivers
+I'd like it was tested by as many developers as possible
+to make sure that I haven't missed something.
+
+For the drivers which can sleep in their brightness_set ops
+(e.g. use mutex or gpio "cansleep" API) you only need to
+remove the work queues and move the code executed currently
+in the work queue task to the brightness_set op, as now
+LED core does the job.
+
+For drivers that are capable of setting brightness with use
+of MMIO you need to set the LED_BRIGHTNESS_FAST flag, so
+that LED core would know that it doesn't have to employ
+work queue.
+
+After the patch is positively verified I will create relevant
+patches for every LED class driver.
+
+This patch is based on linux-next_20150622.
+
+I am looking forward to your cooperation.
+
 Best Regards,
 Jacek Anaszewski
+
+Jacek Anaszewski (5):
+  leds: Use set_brightness_work for brightness_set ops that can sleep
+  leds: pwm: remove work queue
+  led: flash: remove check for brightness_set_sync op
+  leds: max77693: remove work queue
+  leds: aat1290: remove work queue
+
+ drivers/leds/led-class-flash.c            |    3 --
+ drivers/leds/led-class.c                  |   18 ++++++----
+ drivers/leds/led-core.c                   |   50 +++++++++++++++-----------
+ drivers/leds/leds-aat1290.c               |   50 +++++++-------------------
+ drivers/leds/leds-max77693.c              |   55 ++++-------------------------
+ drivers/leds/leds-pwm.c                   |   24 +++----------
+ drivers/leds/leds.h                       |   41 ++++++++++++---------
+ drivers/leds/trigger/ledtrig-backlight.c  |    8 ++---
+ drivers/leds/trigger/ledtrig-default-on.c |    2 +-
+ drivers/leds/trigger/ledtrig-gpio.c       |    6 ++--
+ drivers/leds/trigger/ledtrig-heartbeat.c  |    4 +--
+ drivers/leds/trigger/ledtrig-oneshot.c    |    4 +--
+ drivers/leds/trigger/ledtrig-transient.c  |    8 ++---
+ include/linux/leds.h                      |    9 ++---
+ 14 files changed, 107 insertions(+), 175 deletions(-)
+
+-- 
+1.7.9.5
