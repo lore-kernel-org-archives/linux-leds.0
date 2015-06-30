@@ -1,56 +1,55 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH/RFC v2 0/5] Remove work queues from LED class drivers
-Date: Tue, 30 Jun 2015 19:39:38 +0300
-Message-ID: <5592C64A.3020406@list.ru>
-References: <1435672534-4004-1-git-send-email-j.anaszewski@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for
+ brightness_set ops that can sleep
+Date: Tue, 30 Jun 2015 19:46:19 +0200
+Message-ID: <20150630174619.GA1852@amd>
+References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
+ <20150630115809.GA13605@amd>
+ <5592944B.5020809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1435672534-4004-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, pavel@ucw.cz, sakari.ailus@linux.intel.com, andreas.werner@men.de, andrew@lunn.ch, ospite@studenti.unina.it, anemo@mba.ocn.ne.jp, ben@simtec.co.uk, bootc@bootc.net, dmurphy@ti.com, daniel.jeong@ti.com, daniel@zonque.org, davem@davemloft.net, fabio.baltieri@gmail.com, balbi@ti.com, florian@openwrt.org, gshark.jeong@gmail.com, g.liakhovetski@gmx.de, ingi2.kim@samsung.com, dl9pf@gmx.de, johan@kernel.org, lenz@cs.wisc.edu, jogo@openwrt.org, q1.kim@samsung.com, kris@krisk.org, kristoffer.ericson@gmail.com, linus.walleij@linaro.org, broonie@kernel.org, michael.hennerich@analog.com, milo.kim@ti.com, nm127@freemail.hu, ncase@xes-inc.com, neilb@suse.de, nick.forbes@incepta.com, lost.distance@yahoo.com, p.meerwald@bct-electronic.com, n0-1@freewrt.org, philippe.retornaz@epfl.ch, raph@
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38012 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753349AbbF3RqW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jun 2015 13:46:22 -0400
+Content-Disposition: inline
+In-Reply-To: <5592944B.5020809@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John
 
-30.06.2015 16:55, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> V2 includes also patches for one LED class driver
-> and two LED flash class drivers, that show how the
-> drivers will benefit from the optimization being
-> introduced in the first patch of this patch set.
->=20
-> I was able to test only the LED Flash class drivers.
->=20
-> Original message from the patch 483a3122 ("leds: Use set_brightness_w=
-ork for
-> brightness_set ops that can sleep") that was sent previously as a sin=
-gle one:
->=20
-> Hi All,
->=20
-> Since this patch will affect all the LED subsystem drivers
-> I'd like it was tested by as many developers as possible
-> to make sure that I haven't missed something.
->=20
-> For the drivers which can sleep in their brightness_set ops
-> (e.g. use mutex or gpio "cansleep" API) you only need to
-> remove the work queues and move the code executed currently
-> in the work queue task to the brightness_set op, as now
-> LED core does the job.
->=20
-> For drivers that are capable of setting brightness with use
-> of MMIO you need to set the LED_BRIGHTNESS_FAST flag, so
-> that LED core would know that it doesn't have to employ
-> work queue.
->=20
-> After the patch is positively verified I will create relevant
-> patches for every LED class driver.
->=20
-> This patch is based on linux-next_20150622.
->=20
-> I am looking forward to your cooperation.
-=46YI I ported my soft-pwm patches to yours and that seems to
-work fine. So I am looking forward for this being applied, then
-I'll post them again.
+On Tue 2015-06-30 15:06:19, Jacek Anaszewski wrote:
+> On 06/30/2015 01:58 PM, Pavel Machek wrote:
+> >On Tue 2015-06-30 10:01:08, Jacek Anaszewski wrote:
+> >>This patch rearranges the core LED subsystem code, so that it
+> >>now removes from drivers the responsibility of using work queues
+> >>internally in case their brightness_set ops can sleep.
+> >>Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
+> >>as well as new_brightness_value property to the struct led_classdev
+> >>allows for employing existing set_brightness_work to do the job.
+> >>The modifications allow also to get rid of brightness_set_sync op,
+> >>as flash LED devices can now be handled properly only basing on the
+> >>SET_BRIGHTNESS_SYNC flag.
+> >
+> >Are you sure this is good idea?
+> >
+> >You'll now use single callback for blocking and non-blocking
+> >behaviour. I'm pretty sure stuff like lockdep will have some fun with
+> >that.
+> 
+> I enabled "Lock Debugging" options and didn't get any warning.
+> Could you describe the use case you are thinking of?
 
-Acked-by: Stas Sergeev <stsp@users.sourceforge.net>
+You may get one when one of the sleeping functions uses some lock...
+
+I'm not a lockdep expert, but mixing functions with different
+semantics under one function pointer is wrong thing to do. If it does
+not produce warnings today, it may start producing them tommorow. Just
+don't do it.
+
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
