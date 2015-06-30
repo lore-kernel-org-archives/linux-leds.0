@@ -1,61 +1,40 @@
-From: Stas Sergeev <stsp@list.ru>
-Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for brightness_set
- ops that can sleep
-Date: Tue, 30 Jun 2015 14:41:08 +0300
-Message-ID: <55928054.8070705@list.ru>
-References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com> <559252EC.2050906@samsung.com>
+From: Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for
+ brightness_set ops that can sleep
+Date: Tue, 30 Jun 2015 13:58:09 +0200
+Message-ID: <20150630115809.GA13605@amd>
+References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <559252EC.2050906@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Stas Sergeev <stsp@users.sourceforge.net>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John Lenz <lenz@cs.wisc.>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60226 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751104AbbF3L6M (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jun 2015 07:58:12 -0400
+Content-Disposition: inline
+In-Reply-To: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John
 
-30.06.2015 11:27, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 06/29/2015 05:17 PM, Stas Sergeev wrote:> 29.06.2015 17:05, Jacek =
-Anaszewski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> +         * If need to disable soft blinking delegate this to the
->>> +         * work queue task to avoid problems in case we are
->>> +         * called from hard irq context.
->>> +         */
->>> +        led_cdev->flags |=3D LED_BLINK_DISABLE;
->> Wouldn't it be better to just enforce the callers
->> to explicitly disable software blink, so that it to
->> never happen from irq context? Something like in this
->> patch:
->> https://lkml.org/lkml/2015/5/13/491
->>
->=20
-> Blinking can be disabled not only by removing trigger explicitly,
-> but also by setting brightness to 0 and led_set_brightness
-> can be called from hard irq context. set_brightness_work
-> was originally introduced exactly for this use case.
-Could you please describe where does this happen?
-I can see LED_OFF happening only in led_heartbeat_function(), but
-it doesn't use soft-blink, so it will not activate the delayed
-timer cancel.
+On Tue 2015-06-30 10:01:08, Jacek Anaszewski wrote:
+> This patch rearranges the core LED subsystem code, so that it
+> now removes from drivers the responsibility of using work queues
+> internally in case their brightness_set ops can sleep.
+> Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
+> as well as new_brightness_value property to the struct led_classdev
+> allows for employing existing set_brightness_work to do the job.
+> The modifications allow also to get rid of brightness_set_sync op,
+> as flash LED devices can now be handled properly only basing on the
+> SET_BRIGHTNESS_SYNC flag.
 
-I would suggest the patch below to make it explicit that
-led_heartbeat_function() doesn't want to cancel soft blink.
-Note that led_heartbeat_function() already uses led_set_brightness_asyn=
-c()
-in a normal case.
+Are you sure this is good idea?
 
-
-diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/tr=
-igger/ledtrig-heartbeat.c
-index fea6871..0f89d12 100644
---- a/drivers/leds/trigger/ledtrig-heartbeat.c
-+++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-@@ -37,7 +37,7 @@ static void led_heartbeat_function(unsigned long data=
-)
- 	unsigned long delay =3D 0;
-
- 	if (unlikely(panic_heartbeats)) {
--		led_set_brightness(led_cdev, LED_OFF);
-+		led_set_brightness_async(led_cdev, LED_OFF);
- 		return;
- 	}
+You'll now use single callback for blocking and non-blocking
+behaviour. I'm pretty sure stuff like lockdep will have some fun with
+that.
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
