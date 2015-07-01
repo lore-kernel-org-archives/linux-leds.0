@@ -1,76 +1,89 @@
-From: Pavel Machek <pavel@denx.de>
-Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for
- brightness_set ops that can sleep
-Date: Wed, 1 Jul 2015 09:43:27 +0200
-Message-ID: <20150701074327.GB11385@amd>
-References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
- <20150630115809.GA13605@amd>
- <5592944B.5020809@samsung.com>
- <20150630174619.GA1852@amd>
- <559396B4.9020504@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [RFC PATCH 00/15] pwm: add support for atomic update
+Date: Wed,  1 Jul 2015 10:21:46 +0200
+Message-ID: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48249 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750798AbbGAHna (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 1 Jul 2015 03:43:30 -0400
-Content-Disposition: inline
-In-Reply-To: <559396B4.9020504@samsung.com>
+Received: from down.free-electrons.com ([37.187.137.238]:34231 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752361AbbGAIWL (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 1 Jul 2015 04:22:11 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
 
-On Wed 2015-07-01 09:28:52, Jacek Anaszewski wrote:
-> On 06/30/2015 07:46 PM, Pavel Machek wrote:
-> >On Tue 2015-06-30 15:06:19, Jacek Anaszewski wrote:
-> >>On 06/30/2015 01:58 PM, Pavel Machek wrote:
-> >>>On Tue 2015-06-30 10:01:08, Jacek Anaszewski wrote:
-> >>>>This patch rearranges the core LED subsystem code, so that it
-> >>>>now removes from drivers the responsibility of using work queues
-> >>>>internally in case their brightness_set ops can sleep.
-> >>>>Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
-> >>>>as well as new_brightness_value property to the struct led_classdev
-> >>>>allows for employing existing set_brightness_work to do the job.
-> >>>>The modifications allow also to get rid of brightness_set_sync op,
-> >>>>as flash LED devices can now be handled properly only basing on the
-> >>>>SET_BRIGHTNESS_SYNC flag.
-> >>>
-> >>>Are you sure this is good idea?
-> >>>
-> >>>You'll now use single callback for blocking and non-blocking
-> >>>behaviour. I'm pretty sure stuff like lockdep will have some fun with
-> >>>that.
-> >>
-> >>I enabled "Lock Debugging" options and didn't get any warning.
-> >>Could you describe the use case you are thinking of?
-> >
-> >You may get one when one of the sleeping functions uses some lock...
-> 
-> Drivers which use spin_lock in their brightness_set op will have to
-> set LED_BRIGHTNESS_FAST flag, which will instruct the LED core to
-> call the op synchronously. On the other hand drivers which can sleep
-> in their brightness_set op won't set the flag, which will make LED core
-> delegating the op to the work queue task. It is also possible that
-> driver with brightness_set op that can sleep set SET_BRIGHTNESS_SYNC
-> flag - then LED core will call it in a synchronous way from
-> led_brightness_set and it will schedule work queue task in case
-> the op is called from triggers.
+Hello Thierry,
 
-I understand this "works".
+This series adds support for atomic PWM update, or ITO, the capability
+to update all the parameters of a PWM device (enabled/disabled, period,
+duty and polarity) in one go.
 
-> If you want to NAK the patch, please come up with detailed analysis
-> on how it can cause problems. Without this I infer that you didn't
-> spend a second on analyzing the code. This is counterproductive.
+This implementation is still experimental, and I may have missed some key
+aspect, so any feedback are welcome.
 
-NAK.
+Also note that I haven't protected the state update with any locking.
+That's because the existing config does not protect against concurrent
+access to a requested PWM device (see the pwm_config implementation).
+I guess the PWM framework assume the user will implement the proper locking
+scheme if it has to concurrently access the device.
 
-Because calling two functions with different semantics through same
-function pointer is extremely ugly, and _will_ cause lockdep
-problems. Talk to the lockdep people for details.
+The 5 first patches prepare the addition of the pwm_state concept, which
+will be used to allow atomic updates.
+The following patches introduce the pwm_state struct, initial state
+retrieval and atomic update concepts.
 
-								Pavel
+Patches 12 and 13 are showing how one can implement the initial state
+retrieval and atomic update features in a PWM driver (in this specific
+case I implemented it in the rockchip driver).
+
+The last 2 patches are making use of those changes to improve the
+pwm-regulator driver (initializing the regulator state based on the
+initial PWM state).
+
+Best Regards,
+
+Boris
+
+Boris Brezillon (15):
+  pwm: add the pwm_is_enabled() helper
+  pwm: fix pwm_get_period and pwm_get_duty_cycle prototypes
+  pwm: add pwm_get_polarity helper function
+  pwm: make use of pwm_get_xxx helpers where appropriate
+  pwm: introduce default period and polarity concepts
+  pwm: define a new pwm_state struct
+  pwm: move the enabled/disabled info to pwm_state struct
+  backlight: pwm_bl: remove useless call to pwm_set_period
+  pwm: declare a default PWM state
+  pwm: add the PWM initial state retrieval infra
+  pwm: add the core infrastructure to allow atomic update
+  pwm: rockchip: add initial state retrieval
+  pwm: rockchip: add support for atomic update
+  regulator: pwm: implement ->enable(), ->disable() and ->is_enabled
+    methods
+  regulator: pwm: properly initialize the ->state field
+
+ drivers/leds/leds-pwm.c              |   2 +-
+ drivers/pwm/core.c                   | 136 ++++++++++++++++++++++++++++++-----
+ drivers/pwm/pwm-atmel-tcb.c          |   2 +-
+ drivers/pwm/pwm-atmel.c              |   6 +-
+ drivers/pwm/pwm-bcm-kona.c           |   7 +-
+ drivers/pwm/pwm-ep93xx.c             |   4 +-
+ drivers/pwm/pwm-imx.c                |   5 +-
+ drivers/pwm/pwm-mxs.c                |   4 +-
+ drivers/pwm/pwm-pxa.c                |   2 +-
+ drivers/pwm/pwm-renesas-tpu.c        |   2 +-
+ drivers/pwm/pwm-rockchip.c           | 122 ++++++++++++++++++++++++-------
+ drivers/pwm/pwm-sun4i.c              |   3 +-
+ drivers/pwm/pwm-tegra.c              |   6 +-
+ drivers/pwm/pwm-tiecap.c             |  10 +--
+ drivers/pwm/pwm-tiehrpwm.c           |   6 +-
+ drivers/pwm/sysfs.c                  |  13 ++--
+ drivers/regulator/pwm-regulator.c    |  60 ++++++++++++++--
+ drivers/video/backlight/lm3630a_bl.c |   4 +-
+ drivers/video/backlight/pwm_bl.c     |   6 +-
+ drivers/video/fbdev/ssd1307fb.c      |   2 +-
+ include/linux/pwm.h                  |  82 ++++++++++++++++++---
+ 21 files changed, 380 insertions(+), 104 deletions(-)
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.9.1
