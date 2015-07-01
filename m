@@ -1,118 +1,137 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC PATCH 12/15] pwm: rockchip: add initial state retrieval
-Date: Wed, 01 Jul 2015 23:44:46 +0200
-Message-ID: <3258341.kaLi8uDfLr@diego>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com> <1435738921-25027-13-git-send-email-boris.brezillon@free-electrons.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH/RFC v2 1/5] leds: Use set_brightness_work for
+ brightness_set ops that can sleep
+Date: Thu, 2 Jul 2015 00:44:56 +0300
+Message-ID: <20150701214456.GU5904@valkosipuli.retiisi.org.uk>
+References: <1435672770-4261-1-git-send-email-j.anaszewski@samsung.com>
+ <20150630222450.GR5904@valkosipuli.retiisi.org.uk>
+ <5593B84B.7030806@samsung.com>
+ <5593D6B2.4030808@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1435738921-25027-13-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5593D6B2.4030808@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, pavel@ucw.cz, sakari.ailus@linux.intel.com, andreas.werner@men.de, andrew@lunn.ch, ospite@studenti.unina.it, anemo@mba.ocn.ne.jp, ben@simtec.co.uk, bootc@bootc.net, dmurphy@ti.com, daniel.jeong@ti.com, daniel@zonque.org, davem@davemloft.net, fabio.baltieri@gmail.com, balbi@ti.com, florian@openwrt.org, gshark.jeong@gmail.com, g.liakhovetski@gmx.de, ingi2.kim@samsung.com, dl9pf@gmx.de, johan@kernel.org, lenz@cs.wisc.edu, jogo@openwrt.org, q1.kim@samsung.com, kris@krisk.org, kristoffer.ericson@gmail.com, linus.walleij@linaro.org, broonie@kernel.org, michael.hennerich@analog.com, milo.kim@ti.com, nm127@freemail.hu, ncase@xes-inc.com, neilb@suse.de, nick.forbes@incepta.com, lost.distance@yahoo.com, p.meerwald@bct-electronic.com, n0-1@freewrt.org, phil
 List-Id: linux-leds@vger.kernel.org
 
-Hi Boris,
+Hi Jacek,
 
-Am Mittwoch, 1. Juli 2015, 10:21:58 schrieb Boris Brezillon:
-> Implement the ->init_state() function to expose initial state.
+On Wed, Jul 01, 2015 at 02:01:54PM +0200, Jacek Anaszewski wrote:
+> On 07/01/2015 11:52 AM, Jacek Anaszewski wrote:
+> >Hi Sakari,
+> >
+> >On 07/01/2015 12:24 AM, Sakari Ailus wrote:
+> >>Hi Jacek,
+> >>
+> >>On Tue, Jun 30, 2015 at 03:59:26PM +0200, Jacek Anaszewski wrote:
+> >>>This patch rearranges the core LED subsystem code, so that it
+> >>>now shifts the responsibility for using work queues from drivers,
+> >>>in case their brightness_set ops can sleep, onto the LED core
+> >>>Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
+> >>>as well as new_brightness_value property to the struct led_classdev
+> >>>allows for employing existing set_brightness_work to do the job.
+> >>>The modifications allows also to get rid of brightness_set_sync op,
+> >>>as flash LED devices can now be handled properly only basing on the
+> >>>SET_BRIGHTNESS_SYNC flag.
+> >>
+> >>Nice patch! Thanks!
+> >>
+> >>Looks like this is the favourite topic nowadays. ;-)
+> >
+> >Yeah, this allows to believe that we will manage to tackle the issue
+> >finally :)
+> >
+> >>The documentation should be improved to tell how the API is expected
+> >>to be
+> >>have, e.g. which functions may block. I think this is out of scope for
+> >>this
+> >>patch though.
+> >
+> >Yes, I planned to cover this after the patch is accepted.
+> >
+> >>I think all the existing drivers that implement the set_brightness()
+> >>callback have a fast (and non-blocking) implementation, and some of these
+> >>drivers use a work queue. In order to avoid modifying those drivers right
+> >>now, how about adding a flag for slow devices instead? "Slow" handlers
+> >>should be those that do at least one of the following: 1) sleep and 2)
+> >>take
+> >>excessive amount of time to run.
+> >
+> >As Andrew Lunn mentioned, he was also working on this issue and he did
+> >the vast majority of work [1] needed to remove work queues from existing
+> >drivers. Only new flags would have to be added.
+> >
+> >>How about splitting the patch as follows:
+> >>
+> >>- set_brightness()/set_brightness_sync() -> set_brightness() +
+> >>   LED_BRIGHTNESS_FAST + slow handlers in a work queue,
+> >>- add LED_BLINK_DISABLE flag,
+> >>- fix the heartbeat trigger (it's sleeping in a timer if
+> >>LED_BRIGHTNESS_SYNC
+> >>   is set).
+> >
+> >With my solution heartbeat trigger is not sleeping even if
+> >LED_BRIGHTNESS_SYNC is set as all triggers use the new function -
+> >led_set_brightness_nosleep.
+> >
+> >>I'd propose to drop led_set_brightness_async() and just make
+> >>led_set_brightness() asynchronous (or non-blocking if you wish) as it was
+> >>before the LED flash class patches. Considering the nature and
+> >>tradition of
+> >>the framework, that's probably how most users want it to be. One can
+> >>always
+> >>use led_set_brightness_sync() if needed.
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
+> led_set_brightness called brightness_set op in a synchronous way
+> before LED flash class patches. It was up to driver how it implemented
+> the op - blocking or non-blocking. API was not async by default then.
 
-[...]
+The framework did not implement it but the drivers did. Quite a few drivers
+actually change the LED state asynchronously, while the set_brightness()
+callback does not block.
 
-> @@ -98,6 +110,36 @@ static void rockchip_pwm_set_enable_v2(struct pwm_chip
-> *chip, writel_relaxed(val, pc->base + pc->data->regs.ctrl);
->  }
 > 
-> +static void rockchip_pwm_init_state(struct pwm_chip *chip,
-> +				    struct pwm_device *pwm)
-> +{
-> +	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-> +	unsigned long clk_rate;
-> +	u64 tmp;
-> +	int ret;
-> +
-> +	ret = clk_enable(pc->clk);
-> +	if (ret)
-> +		return;
-> +
-> +	clk_rate = clk_get_rate(pc->clk);
-> +
-> +	tmp = readl(pc->base + pc->data->regs.period);
-> +	tmp *= pc->data->prescaler * NSEC_PER_SEC;
-> +	tmp = do_div(tmp, clk_rate);
+> Adding public API led_set_brightness_sync would introduce ambiguity, as
+> led_set_brightness also can be synchronous.
 
-I guess you want to have the division result here and not the remainder, so
--       tmp = do_div(tmp, clk_rate);
-+       do_div(tmp, clk_rate);
+Well, it could be synchronous, indeed. But synchronous operation is not
+guaranteed. The essence of this is that led_set_brightness() does not sleep.
+Whether the LED state is changed synchronously or not is not important.
 
-
-> +	pwm->state.period = tmp;
-> +
-> +	tmp = readl(pc->base + pc->data->regs.duty);
-> +	tmp *= pc->data->prescaler * NSEC_PER_SEC;
-> +	tmp = do_div(tmp, clk_rate);
-
-ditto
-
-> +	pwm->state.duty_cycle = tmp;
-> +
-> +	pc->data->init(chip, chip->pwms);
-> +
-> +	if (!pwm_is_enabled(pwm))
-> +		clk_disable(pc->clk);
-> +}
-> +
->  static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device
-> *pwm, int duty_ns, int period_ns)
->  {
-> @@ -171,6 +213,7 @@ static void rockchip_pwm_disable(struct pwm_chip *chip,
-> struct pwm_device *pwm) }
 > 
->  static const struct pwm_ops rockchip_pwm_ops_v1 = {
-> +	.init_state = rockchip_pwm_init_state,
->  	.config = rockchip_pwm_config,
->  	.enable = rockchip_pwm_enable,
->  	.disable = rockchip_pwm_disable,
-> @@ -178,6 +221,7 @@ static const struct pwm_ops rockchip_pwm_ops_v1 = {
->  };
+> >>The caller should indeed decide whether the operation is synchronous
+> >>or not,
+> >>that's not really a property of the LED. I requested that for the V4L2
+> >>framework due to the very different use cases that are typical for the
+> >>LED
+> >>class devices.
 > 
->  static const struct pwm_ops rockchip_pwm_ops_v2 = {
-> +	.init_state = rockchip_pwm_init_state,
->  	.config = rockchip_pwm_config,
->  	.set_polarity = rockchip_pwm_set_polarity,
->  	.enable = rockchip_pwm_enable,
-> @@ -195,6 +239,7 @@ static const struct rockchip_pwm_data pwm_data_v1 = {
->  	.prescaler = 2,
->  	.ops = &rockchip_pwm_ops_v1,
->  	.set_enable = rockchip_pwm_set_enable_v1,
-> +	.init = rockchip_pwm_init_v1,
->  };
-> 
->  static const struct rockchip_pwm_data pwm_data_v2 = {
-> @@ -207,6 +252,7 @@ static const struct rockchip_pwm_data pwm_data_v2 = {
->  	.prescaler = 1,
->  	.ops = &rockchip_pwm_ops_v2,
->  	.set_enable = rockchip_pwm_set_enable_v2,
-> +	.init = rockchip_pwm_init_v2,
+> I agree that caller should decide, but we would have to have unambiguous
+> API for this. I am wondering if renaming led_set_brightness to
+> led_set_brightness_async and making it always scheduling the work queue
+> would be harmless solution. This would modify only kernel internal API.
 
-you're referencing the v2 init here, but only add it in the next patch?
-[pwm: rockchip: add support for atomic update]
+We don't want to queue work if we just want to write to a register. The work
+queue should only be used for slow handlers that are better not called e.g.
+from interrupt context.
 
+> We could introduce led_set_brightness_sync API then, which would call
+> brightness_set op in a synchronous way.
 
->  };
-> 
->  static const struct rockchip_pwm_data pwm_data_vop = {
-> @@ -219,6 +265,7 @@ static const struct rockchip_pwm_data pwm_data_vop = {
->  	.prescaler = 1,
->  	.ops = &rockchip_pwm_ops_v2,
->  	.set_enable = rockchip_pwm_set_enable_v2,
-> +	.init = rockchip_pwm_init_v2,
+Considering the pre-flash LED use cases and what the V4L2 flash API
+requirements are, my understanding is that we should do with two LED class
+API functions for setting LED brightness:
 
-ditto
+- led_set_brightness (which will not block and is very fast, but the LED
+  brightness change may happen asynchronously) and
 
+- led_set_brightness_sync (which is always synchronous).
 
-Heiko
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
