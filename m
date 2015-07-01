@@ -1,135 +1,87 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [RFC PATCH 14/15] regulator: pwm: implement ->enable(),
- ->disable() and ->is_enabled methods
-Date: Wed, 1 Jul 2015 14:19:12 +0200
-Message-ID: <20150701141912.52f995a5@bbrezillon>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<3495901.qMzLCVWCDl@diego>
-	<20150701140531.2041b05c@bbrezillon>
-	<3530235.H11CYEfk28@diego>
+From: Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCH/RFC RESEND] leds: Use set_brightness_work for
+ brightness_set ops that can sleep
+Date: Wed, 1 Jul 2015 15:37:32 +0200
+Message-ID: <20150701133732.GB16250@amd>
+References: <1435651268-9657-1-git-send-email-j.anaszewski@samsung.com>
+ <20150630115809.GA13605@amd>
+ <5592944B.5020809@samsung.com>
+ <20150630174619.GA1852@amd>
+ <559396B4.9020504@samsung.com>
+ <20150701074327.GB11385@amd>
+ <5593C526.9070300@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3530235.H11CYEfk28@diego>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53973 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754147AbbGANhf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 1 Jul 2015 09:37:35 -0400
+Content-Disposition: inline
+In-Reply-To: <5593C526.9070300@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andreas Werner <andreas.werner@men.de>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Ben Dooks <ben@simtec.co.uk>, Chris Boot <bootc@bootc.net>, Dan Murphy <dmurphy@ti.com>, Daniel Jeong <daniel.jeong@ti.com>, Daniel Mack <daniel@zonque.org>, "David S. Miller" <davem@davemloft.net>, Fabio Baltieri <fabio.baltieri@gmail.com>, Felipe Balbi <balbi@ti.com>, Florian Fainelli <florian@openwrt.org>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ingi Kim <ingi2.kim@samsung.com>, Jan-Simon Moeller <dl9pf@gmx.de>, Johan Hovold <johan@kernel.org>, John
 
-On Wed, 01 Jul 2015 14:08:18 +0200
-Heiko St=C3=BCbner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> wrote:
+On Wed 2015-07-01 12:47:02, Jacek Anaszewski wrote:
+> On 07/01/2015 09:43 AM, Pavel Machek wrote:
+> >On Wed 2015-07-01 09:28:52, Jacek Anaszewski wrote:
+> >>On 06/30/2015 07:46 PM, Pavel Machek wrote:
+> >>>On Tue 2015-06-30 15:06:19, Jacek Anaszewski wrote:
+> >>>>On 06/30/2015 01:58 PM, Pavel Machek wrote:
+> >>>>>On Tue 2015-06-30 10:01:08, Jacek Anaszewski wrote:
+> >>>>>>This patch rearranges the core LED subsystem code, so that it
+> >>>>>>now removes from drivers the responsibility of using work queues
+> >>>>>>internally in case their brightness_set ops can sleep.
+> >>>>>>Addition of two flags: LED_BRIGHTNESS_FAST and LED_BLINK_DISABLE
+> >>>>>>as well as new_brightness_value property to the struct led_classdev
+> >>>>>>allows for employing existing set_brightness_work to do the job.
+> >>>>>>The modifications allow also to get rid of brightness_set_sync op,
+> >>>>>>as flash LED devices can now be handled properly only basing on the
+> >>>>>>SET_BRIGHTNESS_SYNC flag.
+> >>>>>
+> >>>>>Are you sure this is good idea?
+> >>>>>
+> >>>>>You'll now use single callback for blocking and non-blocking
+> >>>>>behaviour. I'm pretty sure stuff like lockdep will have some fun with
+> >>>>>that.
+> >>>>
+> >>>>I enabled "Lock Debugging" options and didn't get any warning.
+> >>>>Could you describe the use case you are thinking of?
+> >>>
+> >>>You may get one when one of the sleeping functions uses some lock...
+> >>
+> >>Drivers which use spin_lock in their brightness_set op will have to
+> >>set LED_BRIGHTNESS_FAST flag, which will instruct the LED core to
+> >>call the op synchronously. On the other hand drivers which can sleep
+> >>in their brightness_set op won't set the flag, which will make LED core
+> >>delegating the op to the work queue task. It is also possible that
+> >>driver with brightness_set op that can sleep set SET_BRIGHTNESS_SYNC
+> >>flag - then LED core will call it in a synchronous way from
+> >>led_brightness_set and it will schedule work queue task in case
+> >>the op is called from triggers.
+> >
+> >I understand this "works".
+> >
+> >>If you want to NAK the patch, please come up with detailed analysis
+> >>on how it can cause problems. Without this I infer that you didn't
+> >>spend a second on analyzing the code. This is counterproductive.
+> >
+> >NAK.
+> >
+> >Because calling two functions with different semantics through same
+> >function pointer is extremely ugly, and _will_ cause lockdep
+> >problems. Talk to the lockdep people for details.
+> 
+> Which two functions are you thinking of? There is a single
+> brightness_set op to call.
 
-> Am Mittwoch, 1. Juli 2015, 14:05:31 schrieb Boris Brezillon:
-> > Hi Heiko,
-> >=20
-> > On Wed, 01 Jul 2015 13:58:09 +0200
-> >=20
-> > Heiko St=C3=BCbner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> wrote:
-> > > Am Mittwoch, 1. Juli 2015, 10:22:00 schrieb Boris Brezillon:
-> > > > Implement the ->enable(), ->disable() and ->is_enabled methods =
-and
-> > > > remove
-> > > > the PWM call in ->set_voltage_sel().
-> > > > This is particularly important for critical regulators tagged a=
-s
-> > > > always-on,
-> > > > because not claiming the PWM (and its dependencies) might lead =
-to
-> > > > unpredictable behavior (like a system hang because the PWM clk =
-is only
-> > > > claimed when the PWM device is enabled).
-> > > >=20
-> > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.=
-com>
-> > > > ---
-> > > >=20
-> > > >  drivers/regulator/pwm-regulator.c | 32 +++++++++++++++++++++++=
-+++------
-> > > >  1 file changed, 26 insertions(+), 6 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/regulator/pwm-regulator.c
-> > > > b/drivers/regulator/pwm-regulator.c index 12b4d9d..8159518 1006=
-44
-> > > > --- a/drivers/regulator/pwm-regulator.c
-> > > > +++ b/drivers/regulator/pwm-regulator.c
-> > > > @@ -59,12 +59,6 @@ static int pwm_regulator_set_voltage_sel(str=
-uct
-> > > > regulator_dev *rdev,
-> > > >=20
-> > > >  	drvdata->state =3D selector;
-> > > >=20
-> > > > -	ret =3D pwm_enable(drvdata->pwm);
-> > > > -	if (ret) {
-> > > > -		dev_err(&rdev->dev, "Failed to enable PWM\n");
-> > > > -		return ret;
-> > > > -	}
-> > > > -
-> > > >=20
-> > > >  	return 0;
-> > > > =20
-> > > >  }
-> > > >=20
-> > > > @@ -79,11 +73,37 @@ static int pwm_regulator_list_voltage(struc=
-t
-> > > > regulator_dev *rdev, return drvdata->duty_cycle_table[selector]=
-=2EuV;
-> > > >=20
-> > > >  }
-> > > >=20
-> > > > +static int pwm_regulator_enable(struct regulator_dev *dev)
-> > > > +{
-> > > > +	struct pwm_regulator_data *drvdata =3D rdev_get_drvdata(dev);
-> > > > +
-> > > > +	return pwm_enable(drvdata->pwm);
-> > > > +}
-> > > > +
-> > > > +static int pwm_regulator_disable(struct regulator_dev *dev)
-> > > > +{
-> > > > +	struct pwm_regulator_data *drvdata =3D rdev_get_drvdata(dev);
-> > > > +
-> > > > +	pwm_disable(drvdata->pwm);
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static int pwm_regulator_is_enabled(struct regulator_dev *dev)
-> > > > +{
-> > > > +       struct pwm_regulator_data *drvdata =3D rdev_get_drvdata=
-(dev);
-> > > > +
-> > > > +       return pwm_is_enabled(drvdata->pwm);
-> > > > +}
-> > >=20
-> > > nit: indentation is wrong in pwm_regulator_is_enabled (spaces ins=
-tead of
-> > > tabs)
-> > Yep, I noticed checkpatch warnings/errors before sending the patch,=
- but
-> > since this is just an RFC I decided to fix them for the next versio=
-n ;-)
->=20
-> ok, so I'll just skip over any more style issues for now. Making my w=
-ay=20
-> through your series and trying it on my veyron right now :-)
+Yes, and brightness_set may or may not sleep according to a flag
+somewhere. Just use two function pointers, one of them will be always
+NULL. You can keep the flag if you want to.
 
-Also note that I haven't tested the series on a real board (just compil=
-e
-tested) because I don't have the board with me right now, but I wanted
-to post the RFC early so that we can discuss the concepts.
-
-Anyway, any feedback on the implementation (including bug reports) is
-welcome.
-
-This is the version I actually tested on the veyron board:
-
-https://github.com/bbrezillon/linux-rk/tree/rk-3.14
-
-Best Regards,
-
-Boris
-
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
