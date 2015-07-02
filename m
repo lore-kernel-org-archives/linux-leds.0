@@ -1,57 +1,55 @@
-From: Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2 0/4] Allow to use leds-ns2 with n090401 boards
-Date: Thu,  2 Jul 2015 19:56:39 +0200
-Message-ID: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
-Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH v2 4/4] leds: leds-ns2: depends on MACH_ARMADA_370
+Date: Thu,  2 Jul 2015 19:56:43 +0200
+Message-ID: <1435859803-19583-5-git-send-email-simon.guinot@sequanux.org>
+References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vm1.sequanux.org ([188.165.36.56]:41598 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753327AbbGBR47 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 2 Jul 2015 13:56:59 -0400
+In-Reply-To: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Hello,
+The leds-ns2 driver is also used by the n090401 board (Seagate NAS
+4-Bay), which is based on the Marvell Armada-370 SoC.
 
-This patch series allows to use the leds-ns2 driver with the n090401
-boards (Seagate NAS 4-Bay), based on an Armada-370 SoC.
+Then this patch allows to select the leds-ns2 driver if MACH_ARMADA_370
+is enabled. Additionally, this also updates the Kconfig help message.
 
-Here is the list changes:
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+---
+ drivers/leds/Kconfig | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-- Allow to configure the LED mode mapping.
-- Handle can_sleep GPIOs. On n090401, the LEDs are connected to an I2C
-  GPIO expander.
-- Make leds-ns2 depends on MACH_ARMADA_370.
-
-Changes for v2:
-- Fix gpio_{get,set}_*_cansleep() usage while holding a spinlock:
-  Holding a spinlock at this places was not needed.
-- Add Acked-by from Jacek Anaszewski for patch 4.
-
-Simon
-
-Simon Guinot (2):
-  leds: leds-ns2: handle can_sleep GPIOs
-  leds: leds-ns2: depends on MACH_ARMADA_370
-
-Vincent Donnefort (2):
-  leds: leds-ns2: move LED modes mapping outside of the driver
-  ARM: Kirkwood: add modes-map property to ns2-leds nodes
-
- .../devicetree/bindings/leds/leds-ns2.txt          |   9 ++
- arch/arm/boot/dts/kirkwood-d2net.dts               |   5 +
- arch/arm/boot/dts/kirkwood-is2.dts                 |   5 +
- arch/arm/boot/dts/kirkwood-ns2.dts                 |   5 +
- arch/arm/boot/dts/kirkwood-ns2max.dts              |   5 +
- arch/arm/boot/dts/kirkwood-ns2mini.dts             |   5 +
- drivers/leds/Kconfig                               |  12 +-
- drivers/leds/leds-ns2.c                            | 169 ++++++++++++---------
- include/dt-bindings/leds/leds-ns2.h                |   8 +
- include/linux/platform_data/leds-kirkwood-ns2.h    |  14 ++
- 10 files changed, 165 insertions(+), 72 deletions(-)
- create mode 100644 include/dt-bindings/leds/leds-ns2.h
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 966b9605f5f0..68fd6b2b12be 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -431,12 +431,16 @@ config LEDS_MC13783
+ config LEDS_NS2
+ 	tristate "LED support for Network Space v2 GPIO LEDs"
+ 	depends on LEDS_CLASS
+-	depends on MACH_KIRKWOOD
++	depends on MACH_KIRKWOOD || MACH_ARMADA_370
+ 	default y
+ 	help
+-	  This option enable support for the dual-GPIO LED found on the
+-	  Network Space v2 board (and parents). This include Internet Space v2,
+-	  Network Space (Max) v2 and d2 Network v2 boards.
++	  This option enables support for the dual-GPIO LEDs found on the
++	  following LaCie/Seagate boards:
++
++		Network Space v2 (and parents: Max, Mini)
++		Internet Space v2
++		d2 Network v2
++		n090401 (Seagate NAS 4-Bay)
+ 
+ config LEDS_NETXBIG
+ 	tristate "LED support for Big Network series LEDs"
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
