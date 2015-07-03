@@ -1,55 +1,49 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH v2 4/4] leds: leds-ns2: depends on MACH_ARMADA_370
-Date: Thu,  2 Jul 2015 19:56:43 +0200
-Message-ID: <1435859803-19583-5-git-send-email-simon.guinot@sequanux.org>
-References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH] pwm: add informations about polarity, duty cycle and period to debugfs
+Date: Fri, 03 Jul 2015 10:43:22 +0200
+Message-ID: <2415780.vdSYHqsCOV@diego>
+References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com> <3365087.n2eEES60JK@diego> <20150702150141.5018a791@bbrezillon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:41598 "EHLO vm1.sequanux.org"
+Received: from gloria.sntech.de ([95.129.55.99]:50767 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753327AbbGBR47 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 2 Jul 2015 13:56:59 -0400
-In-Reply-To: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org>
+	id S1754509AbbGCInt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 3 Jul 2015 04:43:49 -0400
+In-Reply-To: <20150702150141.5018a791@bbrezillon>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 
-The leds-ns2 driver is also used by the n090401 board (Seagate NAS
-4-Bay), which is based on the Marvell Armada-370 SoC.
+The pwm-states make it possible to also output the polarity, duty cycle
+and period information in the debugfs pwm summary-outout.
+This makes it easier to gather overview information about pwms without
+needing to walk through the sysfs attributes of every pwm.
 
-Then this patch allows to select the leds-ns2 driver if MACH_ARMADA_370
-is enabled. Additionally, this also updates the Kconfig help message.
-
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/leds/Kconfig | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+now values are printed independent of the enable status :-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 966b9605f5f0..68fd6b2b12be 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -431,12 +431,16 @@ config LEDS_MC13783
- config LEDS_NS2
- 	tristate "LED support for Network Space v2 GPIO LEDs"
- 	depends on LEDS_CLASS
--	depends on MACH_KIRKWOOD
-+	depends on MACH_KIRKWOOD || MACH_ARMADA_370
- 	default y
- 	help
--	  This option enable support for the dual-GPIO LED found on the
--	  Network Space v2 board (and parents). This include Internet Space v2,
--	  Network Space (Max) v2 and d2 Network v2 boards.
-+	  This option enables support for the dual-GPIO LEDs found on the
-+	  following LaCie/Seagate boards:
-+
-+		Network Space v2 (and parents: Max, Mini)
-+		Internet Space v2
-+		d2 Network v2
-+		n090401 (Seagate NAS 4-Bay)
+ drivers/pwm/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 6dafd8e..4360ebb 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -954,6 +954,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 		if (pwm_is_enabled(pwm))
+ 			seq_puts(s, " enabled");
  
- config LEDS_NETXBIG
- 	tristate "LED support for Big Network series LEDs"
++		seq_printf(s, " period:%uns", pwm_get_period(pwm));
++		seq_printf(s, " duty:%uns", pwm_get_duty_cycle(pwm));
++		seq_printf(s, " polarity:%s", pwm_get_polarity(pwm) ? "inverse"
++								    : "normal");
++
+ 		seq_puts(s, "\n");
+ 	}
+ }
 -- 
 2.1.4
