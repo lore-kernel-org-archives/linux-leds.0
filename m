@@ -1,63 +1,62 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Allow compile test of LEDS_AAT1290 and LEDS_KTD2692
- if !GPIOLIB
-Date: Mon, 13 Jul 2015 14:39:53 +0200
-Message-ID: <55A3B199.7010308@samsung.com>
-References: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
+Subject: Re: [PATCH] leds: lp8860: Constify reg_default tables
+Date: Mon, 13 Jul 2015 14:50:09 +0200
+Message-ID: <55A3B401.40900@samsung.com>
+References: <1436323406.25341.0.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46631 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115AbbGMMj7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2015 08:39:59 -0400
-In-reply-to: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40320 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292AbbGMMuN (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2015 08:50:13 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NRF004H7FNMUG00@mailout1.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 13 Jul 2015 13:50:10 +0100 (BST)
+In-reply-to: <1436323406.25341.0.camel@ingics.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
 
-Hi Geert,
+Hi Axel,
 
 Thanks for the patch.
 
-On 07/06/2015 03:42 PM, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
+On 07/08/2015 04:43 AM, Axel Lin wrote:
+> These reg_default tables are not modified after initialized, so make them
+> const.
 >
-> If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
-> recently introduced symbols LEDS_AAT1290 and LEDS_KTD2692.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 > ---
->   drivers/leds/Kconfig | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/leds/leds-lp8860.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 94eced66d877182b..cf0248b8dbb9c023 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -43,7 +43,7 @@ config LEDS_AAT1290
->   	tristate "LED support for the AAT1290"
->   	depends on LEDS_CLASS_FLASH
->   	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->   	depends on OF
->   	depends on PINCTRL
->   	help
-> @@ -543,7 +543,8 @@ config LEDS_MENF21BMC
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 8c2b7fb..79f0843 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -302,7 +302,7 @@ out:
+>   	return ret;
+>   }
 >
->   config LEDS_KTD2692
->   	tristate "LED support for KTD2692 flash LED controller"
-> -	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
-> +	depends on LEDS_CLASS_FLASH && OF
-> +	depends on GPIOLIB || COMPILE_TEST
->   	help
->   	  This option enables support for KTD2692 LED flash connected
->   	  through ExpressWire interface.
+> -static struct reg_default lp8860_reg_defs[] = {
+> +static const struct reg_default lp8860_reg_defs[] = {
+>   	{ LP8860_DISP_CL1_BRT_MSB, 0x00},
+>   	{ LP8860_DISP_CL1_BRT_LSB, 0x00},
+>   	{ LP8860_DISP_CL1_CURR_MSB, 0x00},
+> @@ -332,7 +332,7 @@ static const struct regmap_config lp8860_regmap_config = {
+>   	.cache_type = REGCACHE_NONE,
+>   };
+>
+> -static struct reg_default lp8860_eeprom_defs[] = {
+> +static const struct reg_default lp8860_eeprom_defs[] = {
+>   	{ LP8860_EEPROM_REG_0, 0x00 },
+>   	{ LP8860_EEPROM_REG_1, 0x00 },
+>   	{ LP8860_EEPROM_REG_2, 0x00 },
 >
 
 Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
