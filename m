@@ -1,106 +1,120 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] leds: Drop owner assignment from i2c_driver
-Date: Fri, 10 Jul 2015 15:00:52 +0900
-Message-ID: <1436508053-14251-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:8552 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbbGJGBA (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 10 Jul 2015 02:01:00 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 0/9] regulator: Merge max77843 into max77693
+Date: Mon, 13 Jul 2015 20:26:49 +0900
+Message-ID: <1436786818-14115-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-i2c_driver does not need to set an owner because i2c_register_driver()
-will set it.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+The patchset merges max77843 regulator driver into max77693.
 
----
+I still need acks from leds subsystem for patch 4:
+drivers: max77693: Move state container to common header
 
-The coccinelle script which generated the patch was sent here:
-http://www.spinics.net/lists/kernel/msg2029903.html
----
- drivers/leds/leds-lm3530.c  | 1 -
- drivers/leds/leds-lm355x.c  | 1 -
- drivers/leds/leds-lm3642.c  | 1 -
- drivers/leds/leds-pca955x.c | 1 -
- drivers/leds/leds-pca963x.c | 1 -
- drivers/leds/leds-tca6507.c | 1 -
- 6 files changed, 6 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3530.c b/drivers/leds/leds-lm3530.c
-index 91325de3cd33..b38430cb10ad 100644
---- a/drivers/leds/leds-lm3530.c
-+++ b/drivers/leds/leds-lm3530.c
-@@ -492,7 +492,6 @@ static struct i2c_driver lm3530_i2c_driver = {
- 	.id_table = lm3530_id,
- 	.driver = {
- 		.name = LM3530_NAME,
--		.owner = THIS_MODULE,
- 	},
- };
- 
-diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
-index f5112cb2d991..48872997d6b4 100644
---- a/drivers/leds/leds-lm355x.c
-+++ b/drivers/leds/leds-lm355x.c
-@@ -555,7 +555,6 @@ MODULE_DEVICE_TABLE(i2c, lm355x_id);
- static struct i2c_driver lm355x_i2c_driver = {
- 	.driver = {
- 		   .name = LM355x_NAME,
--		   .owner = THIS_MODULE,
- 		   .pm = NULL,
- 		   },
- 	.probe = lm355x_probe,
-diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
-index d3dec0132769..02ebe342f5af 100644
---- a/drivers/leds/leds-lm3642.c
-+++ b/drivers/leds/leds-lm3642.c
-@@ -446,7 +446,6 @@ MODULE_DEVICE_TABLE(i2c, lm3642_id);
- static struct i2c_driver lm3642_i2c_driver = {
- 	.driver = {
- 		   .name = LM3642_NAME,
--		   .owner = THIS_MODULE,
- 		   .pm = NULL,
- 		   },
- 	.probe = lm3642_probe,
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index c3a08b60535b..b775e1efecd3 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -379,7 +379,6 @@ static int pca955x_remove(struct i2c_client *client)
- static struct i2c_driver pca955x_driver = {
- 	.driver = {
- 		.name	= "leds-pca955x",
--		.owner	= THIS_MODULE,
- 	},
- 	.probe	= pca955x_probe,
- 	.remove	= pca955x_remove,
-diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-index bee3e1ab27fd..3f63a1bfdc4f 100644
---- a/drivers/leds/leds-pca963x.c
-+++ b/drivers/leds/leds-pca963x.c
-@@ -458,7 +458,6 @@ static int pca963x_remove(struct i2c_client *client)
- static struct i2c_driver pca963x_driver = {
- 	.driver = {
- 		.name	= "leds-pca963x",
--		.owner	= THIS_MODULE,
- 		.of_match_table = of_match_ptr(of_pca963x_match),
- 	},
- 	.probe	= pca963x_probe,
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index 20fa8e77f186..c1f910981781 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -830,7 +830,6 @@ static int tca6507_remove(struct i2c_client *client)
- static struct i2c_driver tca6507_driver = {
- 	.driver   = {
- 		.name    = "leds-tca6507",
--		.owner   = THIS_MODULE,
- 		.of_match_table = of_match_ptr(of_tca6507_leds_match),
- 	},
- 	.probe    = tca6507_probe,
+The patchset touches multiple subsystems so I think the best way
+would be to merge it through one tree. I already got acks from extcon,
+input mfd and power maintainers.
+
+If there are no objections then everything could go through regulator
+tree.
+
+
+Changes since v3
+================
+1. Patch 4/9: Fix missing includei n leds driver (leds-max77693.c).
+2. Rebase on v4.2-rc2.
+
+
+Changes since v2
+================
+1. Rebase on v4.2-rc1.
+2. Add acks: Chanwoo Choi, Dmitry Torokhov, Lee Jones. Thanks!
+
+
+Changes since v1
+================
+1. Drop patch "regulator: max77693: Use core code for charger's
+   is_enabled" because Mark Brown picked it up.
+2. Patch 2: remove some more old IRQ extcon stuff (suggested by Chanwoo
+   Choi).
+3. Patch 6: minor fixes over defines (suggested by Lee Jones).
+4. Send last patch, previously it slipped during "git send-email".
+5. Add acks obtained for v1. I still need more of them.
+
+
+Rationale
+=========
+The recently added max77843 regulator driver is very similar to
+its older brother: the max77693. Both devices provide two safeouts
+and a charger.
+
+The main difference is in charger's output capabilities and related
+registry values.
+
+With some code additions the max77693 regulator driver can support both
+chipsets. This reduces overall code duplication and is a first step
+toward integrating other drivers for these devices. I plan to merge
+also input/haptic drivers.
+
+
+Patchset description
+====================
+Patches 1-2 do various cleanup.
+Patch 3 prepares max77694 regulator driver for supporting different
+devices.
+Patch 4 switches max77693 drivers to common state container.
+Patch 5 updates max77843 drivers to common state container.
+Patches 6-7 do final cleanup before merging.
+Patches 8-9 do the merge of max77843 regulator into max77693.
+
+
+Dependencies
+============
+Everything is bisectable but next patches depend on previous ones.
+So probably the easiest way would be picking picked up by one
+maintainer.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (9):
+  mfd/extcon: max77693: Remove unused extern declarations and
+    max77693_dev members
+  mfd: max77693: Store I2C device type as enum and add default unknown
+  regulator: max77693: Support different register configurations
+  drivers: max77693: Move state container to common header
+  drivers: max77843: Switch to common max77693 state container
+  mfd/extcon: max77693: Rename defines to allow inclusion with max77843
+  mfd/extcon: max77843: Rename defines to allow inclusion with max77693
+  regulator: max77693: Add support for MAX77843 device
+  regulator: Remove the max77843 driver
+
+ drivers/extcon/extcon-max77693.c     |  94 +++++++---------
+ drivers/extcon/extcon-max77843.c     |  66 +++++++-----
+ drivers/input/misc/max77693-haptic.c |   1 +
+ drivers/input/misc/max77843-haptic.c |   3 +-
+ drivers/leds/leds-max77693.c         |   1 +
+ drivers/mfd/max77693.c               |  31 +++---
+ drivers/mfd/max77843.c               |  20 ++--
+ drivers/power/max77693_charger.c     |   1 +
+ drivers/regulator/Kconfig            |  16 +--
+ drivers/regulator/Makefile           |   1 -
+ drivers/regulator/max77693.c         | 161 ++++++++++++++++++++++++----
+ drivers/regulator/max77843.c         | 201 -----------------------------------
+ include/linux/mfd/max77693-common.h  |  49 +++++++++
+ include/linux/mfd/max77693-private.h | 134 +++++++++--------------
+ include/linux/mfd/max77843-private.h | 174 ++++++++++++++----------------
+ 15 files changed, 433 insertions(+), 520 deletions(-)
+ delete mode 100644 drivers/regulator/max77843.c
+ create mode 100644 include/linux/mfd/max77693-common.h
+
 -- 
-1.9.1
+2.1.4
+
