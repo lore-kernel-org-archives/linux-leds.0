@@ -1,38 +1,60 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [RFC PATCH 15/15] regulator: pwm: properly initialize the
- ->state field
-Date: Tue, 14 Jul 2015 13:03:53 +0200
-Message-ID: <20150714130353.5f5d9d69@bbrezillon>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 14/15] regulator: pwm: implement ->enable(),
+ ->disable() and ->is_enabled methods
+Date: Tue, 14 Jul 2015 12:08:19 +0100
+Message-ID: <20150714110819.GU11162@sirena.org.uk>
 References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1435738921-25027-16-git-send-email-boris.brezillon@free-electrons.com>
-	<20150714105155.GS11162@sirena.org.uk>
+ <1435738921-25027-15-git-send-email-boris.brezillon@free-electrons.com>
+ <20150714105019.GR11162@sirena.org.uk>
+ <20150714130222.1bdfedc5@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20150714105155.GS11162@sirena.org.uk>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fFZg0b+WaoCdn4Fq"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150714130222.1bdfedc5@bbrezillon>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 14 Jul 2015 11:51:55 +0100
-Mark Brown <broonie@kernel.org> wrote:
 
-> On Wed, Jul 01, 2015 at 10:22:01AM +0200, Boris Brezillon wrote:
-> > The ->state field is currently initialized to 0, thus referencing the
-> > voltage selector at index 0, which might not reflect the current voltage
-> > value.
-> 
-> This looks like it'll need reworking on top of Lee's recent changes to
-> implement continuous voltage support for PWM regulators - we may be
-> calculating the values to set dynamically at runtime.
+--fFZg0b+WaoCdn4Fq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yep, I was planning on doing that in the next iteration, but I'd like
-to have Thierry's feedback before sending a new version.
+On Tue, Jul 14, 2015 at 01:02:22PM +0200, Boris Brezillon wrote:
+> Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
+> > On Wed, Jul 01, 2015 at 10:22:00AM +0200, Boris Brezillon wrote:
+> > > Implement the ->enable(), ->disable() and ->is_enabled methods and remove
+> > > the PWM call in ->set_voltage_sel().
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> > This doesn't apply, please check and resend.
+
+> This series was made on top of Linus' tree (4.2-rc1 IIRC) and patch 14
+> and 15 were not meant to be applied without Thierry's approval (they
+> depend on other changes in the PWM framework).
+> I can rebase them on top of linux-next (or just on top of Linus'
+> 4.2-rc2) if Thierry is okay with that, but I don't think rebasing them
+> on your regulator's for-next branch is a good idea.
+
+What is the dependency for the enable patch?
+
+--fFZg0b+WaoCdn4Fq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVpO2jAAoJECTWi3JdVIfQCzAH/jtVAxZM4A2VDq6+8+KcbB4Q
+FHI8enaYP9PYo645nK+Os5OdcAD3mEaVOWgscWVOZC77jJc2EfVhEbOGXFkPVBEY
+UQiNm2Ho/bAxflmKYO3ejouir17ApUIrOJHE5ED04WqBWWyoUD5EartUF3puL7CV
+VCUl34VE2tdJ/juFH8RsNUf2r3UJv2mF6Bm+iem5RO46briQFve8PCoFmXqfCyM+
+3b7gHVQdwj3XNPh4MnU7VhB9NpkIT0tEbCHtQoyIOa8uc/aQwfyvrERfhiNHNUMk
+b1KHUXMH3xjT/TMd8K+glb45vISmS9BY47/h5FYvayAGUnRBI8IcFiSr7U+todI=
+=CduC
+-----END PGP SIGNATURE-----
+
+--fFZg0b+WaoCdn4Fq--
