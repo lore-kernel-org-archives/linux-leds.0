@@ -1,321 +1,232 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v5 5/9] drivers: max77843: Switch to common max77693 state container
-Date: Wed, 15 Jul 2015 21:59:51 +0900
-Message-ID: <1436965195-8899-6-git-send-email-k.kozlowski.k@gmail.com>
-References: <1436965195-8899-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436965195-8899-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH] backlight: pm8941-wled: Move PM8941 WLED driver to backlight
+Date: Wed, 15 Jul 2015 13:02:20 -0700
+Message-ID: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Rob Clark <robdclark@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Switch to the same definition of state container as in MAX77693 drivers.
-This will allow usage of one regulator driver in both devices: MAX77693
-and MAX77843.
+The Qualcomm PM8941 WLED block is used for backlight and should therefor
+be in the backlight framework and not in the LED framework. This moves
+the driver and adapts to the backlight api instead.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 ---
- drivers/extcon/extcon-max77843.c     | 17 +++++++++--------
- drivers/input/misc/max77843-haptic.c |  3 ++-
- drivers/mfd/max77843.c               | 20 +++++++++++---------
- drivers/regulator/max77843.c         |  6 ++++--
- include/linux/mfd/max77693-common.h  |  5 +++++
- include/linux/mfd/max77843-private.h | 20 --------------------
- 6 files changed, 31 insertions(+), 40 deletions(-)
+ .../devicetree/bindings/leds/leds-pm8941-wled.txt  |  5 +-
+ drivers/leds/Kconfig                               |  8 ---
+ drivers/leds/Makefile                              |  1 -
+ drivers/video/backlight/Kconfig                    |  8 +++
+ drivers/video/backlight/Makefile                   |  1 +
+ .../backlight/pm8941-wled.c}                       | 59 ++++++++++------------
+ 6 files changed, 36 insertions(+), 46 deletions(-)
+ rename drivers/{leds/leds-pm8941-wled.c => video/backlight/pm8941-wled.c} (90%)
 
-diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
-index fac2f1417a79..4dfe0a6337d8 100644
---- a/drivers/extcon/extcon-max77843.c
-+++ b/drivers/extcon/extcon-max77843.c
-@@ -15,6 +15,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
+diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+index a85a964d61f5..424f8444a6cd 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+@@ -5,10 +5,7 @@ Required properties:
+ - reg: slave address
+ 
+ Optional properties:
+-- label: The label for this led
+-  See Documentation/devicetree/bindings/leds/common.txt
+-- linux,default-trigger: Default trigger assigned to the LED
+-  See Documentation/devicetree/bindings/leds/common.txt
++- label: The name of the backlight device
+ - qcom,cs-out: bool; enable current sink output
+ - qcom,cabc: bool; enable content adaptive backlight control
+ - qcom,ext-gen: bool; use externally generated modulator signal to dim
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 9ad35f72ab4c..b8d4b965ca2a 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -578,14 +578,6 @@ config LEDS_VERSATILE
+ 	  This option enabled support for the LEDs on the ARM Versatile
+ 	  and RealView boards. Say Y to enabled these.
+ 
+-config LEDS_PM8941_WLED
+-	tristate "LED support for the Qualcomm PM8941 WLED block"
+-	depends on LEDS_CLASS
+-	select REGMAP
+-	help
+-	  This option enables support for the 'White' LED block
+-	  on Qualcomm PM8941 PMICs.
+-
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 8d6a24a2f513..abe96d960ebe 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -63,7 +63,6 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
+ obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
+ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+-obj-$(CONFIG_LEDS_PM8941_WLED)		+= leds-pm8941-wled.o
+ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+ 
+ # LED SPI Drivers
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 0505b796d743..6c67c5430933 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -299,6 +299,14 @@ config BACKLIGHT_TOSA
+ 	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+ 	  for its backlight
+ 
++config BACKLIGHT_PM8941_WLED
++	tristate "Qualcomm PM8941 WLED Driver"
++	depends on LEDS_CLASS
++	select REGMAP
++	help
++	  If you have the Qualcomm PM8941, say Y to enable a driver for the
++	  WLED block.
++
+ config BACKLIGHT_SAHARA
+ 	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+ 	depends on X86
+diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+index d67073f9d421..16ec534cff30 100644
+--- a/drivers/video/backlight/Makefile
++++ b/drivers/video/backlight/Makefile
+@@ -48,6 +48,7 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
+ obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+ obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+ obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
++obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+ obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
+ obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+ obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+diff --git a/drivers/leds/leds-pm8941-wled.c b/drivers/video/backlight/pm8941-wled.c
+similarity index 90%
+rename from drivers/leds/leds-pm8941-wled.c
+rename to drivers/video/backlight/pm8941-wled.c
+index bf64a593fbf1..4f5ae95331a1 100644
+--- a/drivers/leds/leds-pm8941-wled.c
++++ b/drivers/video/backlight/pm8941-wled.c
+@@ -11,7 +11,7 @@
+  */
+ 
  #include <linux/kernel.h>
-+#include <linux/mfd/max77693-common.h>
- #include <linux/mfd/max77843-private.h>
+-#include <linux/leds.h>
++#include <linux/backlight.h>
  #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -32,7 +33,7 @@ enum max77843_muic_status {
- 
- struct max77843_muic_info {
- 	struct device *dev;
--	struct max77843 *max77843;
-+	struct max77693_dev *max77843;
- 	struct extcon_dev *edev;
- 
- 	struct mutex mutex;
-@@ -198,7 +199,7 @@ static const struct regmap_irq_chip max77843_muic_irq_chip = {
- static int max77843_muic_set_path(struct max77843_muic_info *info,
- 		u8 val, bool attached)
- {
--	struct max77843 *max77843 = info->max77843;
-+	struct max77693_dev *max77843 = info->max77843;
- 	int ret = 0;
- 	unsigned int ctrl1, ctrl2;
- 
-@@ -539,7 +540,7 @@ static void max77843_muic_irq_work(struct work_struct *work)
- {
- 	struct max77843_muic_info *info = container_of(work,
- 			struct max77843_muic_info, irq_work);
--	struct max77843 *max77843 = info->max77843;
-+	struct max77693_dev *max77843 = info->max77843;
- 	int ret = 0;
- 
- 	mutex_lock(&info->mutex);
-@@ -615,7 +616,7 @@ static void max77843_muic_detect_cable_wq(struct work_struct *work)
- {
- 	struct max77843_muic_info *info = container_of(to_delayed_work(work),
- 			struct max77843_muic_info, wq_detcable);
--	struct max77843 *max77843 = info->max77843;
-+	struct max77693_dev *max77843 = info->max77843;
- 	int chg_type, adc, ret;
- 	bool attached;
- 
-@@ -656,7 +657,7 @@ err_cable_wq:
- static int max77843_muic_set_debounce_time(struct max77843_muic_info *info,
- 		enum max77843_muic_adc_debounce_time time)
- {
--	struct max77843 *max77843 = info->max77843;
-+	struct max77693_dev *max77843 = info->max77843;
- 	int ret;
- 
- 	switch (time) {
-@@ -681,7 +682,7 @@ static int max77843_muic_set_debounce_time(struct max77843_muic_info *info,
- 	return 0;
- }
- 
--static int max77843_init_muic_regmap(struct max77843 *max77843)
-+static int max77843_init_muic_regmap(struct max77693_dev *max77843)
- {
- 	int ret;
- 
-@@ -720,7 +721,7 @@ err_muic_i2c:
- 
- static int max77843_muic_probe(struct platform_device *pdev)
- {
--	struct max77843 *max77843 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77693_dev *max77843 = dev_get_drvdata(pdev->dev.parent);
- 	struct max77843_muic_info *info;
- 	unsigned int id;
- 	int i, ret;
-@@ -821,7 +822,7 @@ err_muic_irq:
- static int max77843_muic_remove(struct platform_device *pdev)
- {
- 	struct max77843_muic_info *info = platform_get_drvdata(pdev);
--	struct max77843 *max77843 = info->max77843;
-+	struct max77693_dev *max77843 = info->max77843;
- 
- 	cancel_work_sync(&info->irq_work);
- 	regmap_del_irq_chip(max77843->irq, max77843->irq_data_muic);
-diff --git a/drivers/input/misc/max77843-haptic.c b/drivers/input/misc/max77843-haptic.c
-index dccbb465a055..30da81ab5a21 100644
---- a/drivers/input/misc/max77843-haptic.c
-+++ b/drivers/input/misc/max77843-haptic.c
-@@ -14,6 +14,7 @@
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/input.h>
-+#include <linux/mfd/max77693-common.h>
- #include <linux/mfd/max77843-private.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -243,7 +244,7 @@ static void max77843_haptic_close(struct input_dev *dev)
- 
- static int max77843_haptic_probe(struct platform_device *pdev)
- {
--	struct max77843 *max77843 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77693_dev *max77843 = dev_get_drvdata(pdev->dev.parent);
- 	struct max77843_haptic *haptic;
- 	int error;
- 
-diff --git a/drivers/mfd/max77843.c b/drivers/mfd/max77843.c
-index a354ac677ec7..c52162ea3d0a 100644
---- a/drivers/mfd/max77843.c
-+++ b/drivers/mfd/max77843.c
-@@ -17,6 +17,7 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/mfd/core.h>
-+#include <linux/mfd/max77693-common.h>
- #include <linux/mfd/max77843-private.h>
+ #include <linux/of.h>
  #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -71,7 +72,7 @@ static const struct regmap_irq_chip max77843_irq_chip = {
+@@ -76,30 +76,29 @@ struct pm8941_wled_config {
  };
  
- /* Charger and Charger regulator use same regmap. */
--static int max77843_chg_init(struct max77843 *max77843)
-+static int max77843_chg_init(struct max77693_dev *max77843)
- {
- 	int ret;
+ struct pm8941_wled {
++	const char *name;
+ 	struct regmap *regmap;
+ 	u16 addr;
  
-@@ -101,7 +102,7 @@ err_chg_i2c:
- static int max77843_probe(struct i2c_client *i2c,
- 			  const struct i2c_device_id *id)
- {
--	struct max77843 *max77843;
-+	struct max77693_dev *max77843;
- 	unsigned int reg_data;
- 	int ret;
- 
-@@ -113,6 +114,7 @@ static int max77843_probe(struct i2c_client *i2c,
- 	max77843->dev = &i2c->dev;
- 	max77843->i2c = i2c;
- 	max77843->irq = i2c->irq;
-+	max77843->type = id->driver_data;
- 
- 	max77843->regmap = devm_regmap_init_i2c(i2c,
- 			&max77843_regmap_config);
-@@ -123,7 +125,7 @@ static int max77843_probe(struct i2c_client *i2c,
- 
- 	ret = regmap_add_irq_chip(max77843->regmap, max77843->irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
--			0, &max77843_irq_chip, &max77843->irq_data);
-+			0, &max77843_irq_chip, &max77843->irq_data_topsys);
- 	if (ret) {
- 		dev_err(&i2c->dev, "Failed to add TOPSYS IRQ chip\n");
- 		return ret;
-@@ -164,18 +166,18 @@ static int max77843_probe(struct i2c_client *i2c,
- 	return 0;
- 
- err_pmic_id:
--	regmap_del_irq_chip(max77843->irq, max77843->irq_data);
-+	regmap_del_irq_chip(max77843->irq, max77843->irq_data_topsys);
- 
- 	return ret;
- }
- 
- static int max77843_remove(struct i2c_client *i2c)
- {
--	struct max77843 *max77843 = i2c_get_clientdata(i2c);
-+	struct max77693_dev *max77843 = i2c_get_clientdata(i2c);
- 
- 	mfd_remove_devices(max77843->dev);
- 
--	regmap_del_irq_chip(max77843->irq, max77843->irq_data);
-+	regmap_del_irq_chip(max77843->irq, max77843->irq_data_topsys);
- 
- 	i2c_unregister_device(max77843->i2c_chg);
- 
-@@ -188,7 +190,7 @@ static const struct of_device_id max77843_dt_match[] = {
+-	struct led_classdev cdev;
+-
+ 	struct pm8941_wled_config cfg;
  };
  
- static const struct i2c_device_id max77843_id[] = {
--	{ "max77843", },
-+	{ "max77843", TYPE_MAX77843, },
- 	{ },
- };
- MODULE_DEVICE_TABLE(i2c, max77843_id);
-@@ -196,7 +198,7 @@ MODULE_DEVICE_TABLE(i2c, max77843_id);
- static int __maybe_unused max77843_suspend(struct device *dev)
+-static int pm8941_wled_set(struct led_classdev *cdev,
+-			   enum led_brightness value)
++static int pm8941_wled_update_status(struct backlight_device *bl)
  {
- 	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
--	struct max77843 *max77843 = i2c_get_clientdata(i2c);
-+	struct max77693_dev *max77843 = i2c_get_clientdata(i2c);
- 
- 	disable_irq(max77843->irq);
- 	if (device_may_wakeup(dev))
-@@ -208,7 +210,7 @@ static int __maybe_unused max77843_suspend(struct device *dev)
- static int __maybe_unused max77843_resume(struct device *dev)
- {
- 	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
--	struct max77843 *max77843 = i2c_get_clientdata(i2c);
-+	struct max77693_dev *max77843 = i2c_get_clientdata(i2c);
- 
- 	if (device_may_wakeup(dev))
- 		disable_irq_wake(max77843->irq);
-diff --git a/drivers/regulator/max77843.c b/drivers/regulator/max77843.c
-index f4fd0d3cfa6e..9926247aae6b 100644
---- a/drivers/regulator/max77843.c
-+++ b/drivers/regulator/max77843.c
-@@ -15,6 +15,7 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
-+#include <linux/mfd/max77693-common.h>
- #include <linux/mfd/max77843-private.h>
- #include <linux/regulator/of_regulator.h>
- 
-@@ -130,7 +131,8 @@ static const struct regulator_desc max77843_supported_regulators[] = {
- 	},
- };
- 
--static struct regmap *max77843_get_regmap(struct max77843 *max77843, int reg_id)
-+static struct regmap *max77843_get_regmap(struct max77693_dev *max77843,
-+					  int reg_id)
- {
- 	switch (reg_id) {
- 	case MAX77843_SAFEOUT1:
-@@ -145,7 +147,7 @@ static struct regmap *max77843_get_regmap(struct max77843 *max77843, int reg_id)
- 
- static int max77843_regulator_probe(struct platform_device *pdev)
- {
--	struct max77843 *max77843 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77693_dev *max77843 = dev_get_drvdata(pdev->dev.parent);
- 	struct regulator_config config = {};
+-	struct pm8941_wled *wled;
++	struct pm8941_wled *wled = bl_get_data(bl);
++	u16 val = bl->props.brightness;
+ 	u8 ctrl = 0;
+-	u16 val;
+ 	int rc;
  	int i;
  
-diff --git a/include/linux/mfd/max77693-common.h b/include/linux/mfd/max77693-common.h
-index 7da4cc38e982..095b121aa725 100644
---- a/include/linux/mfd/max77693-common.h
-+++ b/include/linux/mfd/max77693-common.h
-@@ -15,6 +15,9 @@
- enum max77693_types {
- 	TYPE_MAX77693_UNKNOWN,
- 	TYPE_MAX77693,
-+	TYPE_MAX77843,
+-	wled = container_of(cdev, struct pm8941_wled, cdev);
++	if (bl->props.power != FB_BLANK_UNBLANK ||
++	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
++	    bl->props.state & BL_CORE_FBBLANK)
++		val = 0;
+ 
+-	if (value != 0)
++	if (val != 0)
+ 		ctrl = PM8941_WLED_REG_MOD_EN_BIT;
+ 
+-	val = value * PM8941_WLED_REG_VAL_MAX / LED_FULL;
+-
+ 	rc = regmap_update_bits(wled->regmap,
+ 			wled->addr + PM8941_WLED_REG_MOD_EN,
+ 			PM8941_WLED_REG_MOD_EN_MASK, ctrl);
+@@ -128,16 +127,6 @@ static int pm8941_wled_set(struct led_classdev *cdev,
+ 	return rc;
+ }
+ 
+-static void pm8941_wled_set_brightness(struct led_classdev *cdev,
+-				       enum led_brightness value)
+-{
+-	if (pm8941_wled_set(cdev, value)) {
+-		dev_err(cdev->dev, "Unable to set brightness\n");
+-		return;
+-	}
+-	cdev->brightness = value;
+-}
+-
+ static int pm8941_wled_setup(struct pm8941_wled *wled)
+ {
+ 	int rc;
+@@ -336,12 +325,9 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+ 	}
+ 	wled->addr = val;
+ 
+-	rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
++	rc = of_property_read_string(dev->of_node, "label", &wled->name);
+ 	if (rc)
+-		wled->cdev.name = dev->of_node->name;
+-
+-	wled->cdev.default_trigger = of_get_property(dev->of_node,
+-			"linux,default-trigger", NULL);
++		wled->name = dev->of_node->name;
+ 
+ 	*cfg = pm8941_wled_config_defaults;
+ 	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
+@@ -377,8 +363,14 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+ 	return 0;
+ }
+ 
++static const struct backlight_ops pm8941_wled_ops = {
++	.update_status = pm8941_wled_update_status,
++};
 +
-+	TYPE_MAX77693_NUM,
- };
- 
- /*
-@@ -25,12 +28,14 @@ struct max77693_dev {
- 	struct i2c_client *i2c;		/* 0xCC , PMIC, Charger, Flash LED */
- 	struct i2c_client *i2c_muic;	/* 0x4A , MUIC */
- 	struct i2c_client *i2c_haptic;	/* MAX77693: 0x90 , Haptic */
-+	struct i2c_client *i2c_chg;	/* MAX77843: 0xD2, Charger */
- 
- 	enum max77693_types type;
- 
+ static int pm8941_wled_probe(struct platform_device *pdev)
+ {
++	struct backlight_properties props;
++	struct backlight_device *bl;
+ 	struct pm8941_wled *wled;
  	struct regmap *regmap;
- 	struct regmap *regmap_muic;
- 	struct regmap *regmap_haptic;	/* Only MAX77693 */
-+	struct regmap *regmap_chg;	/* Only MAX77843 */
+ 	int rc;
+@@ -403,13 +395,14 @@ static int pm8941_wled_probe(struct platform_device *pdev)
+ 	if (rc)
+ 		return rc;
  
- 	struct regmap_irq_chip_data *irq_data_led;
- 	struct regmap_irq_chip_data *irq_data_topsys;
-diff --git a/include/linux/mfd/max77843-private.h b/include/linux/mfd/max77843-private.h
-index 7178ace8379e..0121d9440340 100644
---- a/include/linux/mfd/max77843-private.h
-+++ b/include/linux/mfd/max77843-private.h
-@@ -431,24 +431,4 @@ enum max77843_irq_muic {
- #define MAX77843_REG_SAFEOUTCTRL_SAFEOUT2_MASK \
- 		(0x3 << SAFEOUTCTRL_SAFEOUT2_SHIFT)
+-	wled->cdev.brightness_set = pm8941_wled_set_brightness;
+-
+-	rc = devm_led_classdev_register(&pdev->dev, &wled->cdev);
+-	if (rc)
+-		return rc;
+-
+-	platform_set_drvdata(pdev, wled);
++	memset(&props, 0, sizeof(struct backlight_properties));
++	props.type = BACKLIGHT_RAW;
++	props.max_brightness = PM8941_WLED_REG_VAL_MAX;
++	bl = devm_backlight_device_register(&pdev->dev, wled->name,
++					    &pdev->dev, wled,
++					    &pm8941_wled_ops, &props);
++	if (IS_ERR(bl))
++		return PTR_ERR(bl);
  
--struct max77843 {
--	struct device *dev;
--
--	struct i2c_client *i2c;
--	struct i2c_client *i2c_chg;
--	struct i2c_client *i2c_fuel;
--	struct i2c_client *i2c_muic;
--
--	struct regmap *regmap;
--	struct regmap *regmap_chg;
--	struct regmap *regmap_fuel;
--	struct regmap *regmap_muic;
--
--	struct regmap_irq_chip_data *irq_data;
--	struct regmap_irq_chip_data *irq_data_chg;
--	struct regmap_irq_chip_data *irq_data_fuel;
--	struct regmap_irq_chip_data *irq_data_muic;
--
--	int irq;
--};
- #endif /* __MAX77843_H__ */
+ 	return 0;
+ };
 -- 
-2.1.4
+1.8.2.2
