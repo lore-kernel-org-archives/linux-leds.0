@@ -1,43 +1,59 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] backlight: pm8941-wled: Move PM8941 WLED driver to
- backlight
-Date: Thu, 16 Jul 2015 10:01:09 +0200
-Message-ID: <55A764C5.5060205@samsung.com>
-References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/3] leds: netxbig: add device tree binding
+Date: Thu, 16 Jul 2015 10:25:37 +0200
+Message-ID: <CACRpkdZvbgZWjCOPsPeojBpsPjt+WF_rgQWG_biEqphuErR1dQ@mail.gmail.com>
+References: <1434639590-27389-1-git-send-email-simon.guinot@sequanux.org>
+	<1434639590-27389-2-git-send-email-simon.guinot@sequanux.org>
+	<55894D0A.8000306@samsung.com>
+	<20150623211711.GF4853@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43657 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751750AbbGPIBO (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 16 Jul 2015 04:01:14 -0400
-In-reply-to: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33984 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752520AbbGPIZh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 16 Jul 2015 04:25:37 -0400
+Received: by obre1 with SMTP id e1so42658832obr.1
+        for <linux-leds@vger.kernel.org>; Thu, 16 Jul 2015 01:25:37 -0700 (PDT)
+In-Reply-To: <20150623211711.GF4853@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Rob Clark <robdclark@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, Vincent Donnefort <vdonnefort@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Bjorn,
+On Tue, Jun 23, 2015 at 11:17 PM, Simon Guinot
+<simon.guinot@sequanux.org> wrote:
+> On Tue, Jun 23, 2015 at 02:11:54PM +0200, Jacek Anaszewski wrote:
 
-On 07/15/2015 10:02 PM, Bjorn Andersson wrote:
-> The Qualcomm PM8941 WLED block is used for backlight and should therefor
-> be in the backlight framework and not in the LED framework. This moves
-> the driver and adapts to the backlight api instead.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> ---
->   .../devicetree/bindings/leds/leds-pm8941-wled.txt  |  5 +-
->   drivers/leds/Kconfig                               |  8 ---
->   drivers/leds/Makefile                              |  1 -
->   drivers/video/backlight/Kconfig                    |  8 +++
->   drivers/video/backlight/Makefile                   |  1 +
->   .../backlight/pm8941-wled.c}                       | 59 ++++++++++------------
->   6 files changed, 36 insertions(+), 46 deletions(-)
->   rename drivers/{leds/leds-pm8941-wled.c => video/backlight/pm8941-wled.c} (90%)
+>> >+Binding for the GPIO extension bus found on some LaCie/Seagate boards
+>> >+(Example: 2Big/5Big Network v2, 2Big NAS).
+>> >+
+>> >+Required properties:
+>> >+- compatible: "lacie,netxbig-gpio-ext".
+>> >+- addr-gpios: GPIOs representing the address register.
+>> >+- data-gpios: GPIOs representing the data register.
+>> >+- enable-gpio: GPIO used to enable the new configuration (address, data).
+(...)
+>> >+Example:
+>> >+
+>> >+netxbig_gpio_ext: netxbig-gpio-ext {
+>> >+    compatible = "lacie,netxbig-gpio-ext";
+>> >+
+>> >+    addr-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH
+>> >+                  &gpio1 16 GPIO_ACTIVE_HIGH
+>> >+                  &gpio1 17 GPIO_ACTIVE_HIGH>;
+>> >+    data-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH
+>> >+                  &gpio1 13 GPIO_ACTIVE_HIGH
+>> >+                  &gpio1 14 GPIO_ACTIVE_HIGH>;
+(..)
+>> >+    enable-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+>> >+};
+>>
+>> This needs gpio maintainer ack. Adding Linus and Alexandre.
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Looks pretty straight-forward, a lot of GPIOs for LEDs, well such is life.
 
--- 
-Best Regards,
-Jacek Anaszewski
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
