@@ -1,163 +1,35 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 31/51] leds: lm355x: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:17 +0200
-Message-ID: <1437122857-6765-32-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 26/51] leds: max8997: Remove unneeded workqueue include
+Date: Fri, 17 Jul 2015 10:47:12 +0200
+Message-ID: <1437122857-6765-27-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-leds@vger.kernel.org
 
-Now the core implements the work queue, remove it from the drivers.
+From: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Daniel Jeong <daniel.jeong@ti.com>
-Cc: G.Shark Jeong <gshark.jeong@gmail.com>
+Work queues are not used in this driver, so remove the include.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/leds/leds-lm355x.c |   58 +++++++-------------------------------------
- 1 file changed, 9 insertions(+), 49 deletions(-)
+ drivers/leds/leds-max8997.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
-index f5112cb..3504806 100644
---- a/drivers/leds/leds-lm355x.c
-+++ b/drivers/leds/leds-lm355x.c
-@@ -16,7 +16,6 @@
- #include <linux/platform_device.h>
- #include <linux/fs.h>
- #include <linux/regmap.h>
+diff --git a/drivers/leds/leds-max8997.c b/drivers/leds/leds-max8997.c
+index c592aa5..01b45906 100644
+--- a/drivers/leds/leds-max8997.c
++++ b/drivers/leds/leds-max8997.c
+@@ -13,7 +13,6 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
 -#include <linux/workqueue.h>
- #include <linux/platform_data/leds-lm355x.h>
- 
- enum lm355x_type {
-@@ -59,14 +58,6 @@ struct lm355x_chip_data {
- 	struct led_classdev cdev_torch;
- 	struct led_classdev cdev_indicator;
- 
--	struct work_struct work_flash;
--	struct work_struct work_torch;
--	struct work_struct work_indicator;
--
--	u8 br_flash;
--	u8 br_torch;
--	u8 br_indicator;
--
- 	struct lm355x_platform_data *pdata;
- 	struct regmap *regmap;
- 	struct mutex lock;
-@@ -316,15 +307,6 @@ out:
- }
- 
- /* torch */
--static void lm355x_deferred_torch_brightness_set(struct work_struct *work)
--{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_torch);
--
--	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_torch, MODE_TORCH);
--	mutex_unlock(&chip->lock);
--}
- 
- static void lm355x_torch_brightness_set(struct led_classdev *cdev,
- 					enum led_brightness brightness)
-@@ -332,50 +314,35 @@ static void lm355x_torch_brightness_set(struct led_classdev *cdev,
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_torch);
- 
--	chip->br_torch = brightness;
--	schedule_work(&chip->work_torch);
--}
--
--/* flash */
--static void lm355x_deferred_strobe_brightness_set(struct work_struct *work)
--{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_flash);
--
- 	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_flash, MODE_FLASH);
-+	lm355x_control(chip, brightness, MODE_TORCH);
- 	mutex_unlock(&chip->lock);
- }
- 
-+/* flash */
-+
- static void lm355x_strobe_brightness_set(struct led_classdev *cdev,
- 					 enum led_brightness brightness)
- {
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_flash);
- 
--	chip->br_flash = brightness;
--	schedule_work(&chip->work_flash);
--}
--
--/* indicator */
--static void lm355x_deferred_indicator_brightness_set(struct work_struct *work)
--{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_indicator);
--
- 	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_indicator, MODE_INDIC);
-+	lm355x_control(chip, brightness, MODE_FLASH);
- 	mutex_unlock(&chip->lock);
- }
- 
-+/* indicator */
-+
- static void lm355x_indicator_brightness_set(struct led_classdev *cdev,
- 					    enum led_brightness brightness)
- {
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_indicator);
- 
--	chip->br_indicator = brightness;
--	schedule_work(&chip->work_indicator);
-+	mutex_lock(&chip->lock);
-+	lm355x_control(chip, brightness, MODE_INDIC);
-+	mutex_unlock(&chip->lock);
- }
- 
- /* indicator pattern only for lm3556*/
-@@ -479,7 +446,6 @@ static int lm355x_probe(struct i2c_client *client,
- 		goto err_out;
- 
- 	/* flash */
--	INIT_WORK(&chip->work_flash, lm355x_deferred_strobe_brightness_set);
- 	chip->cdev_flash.name = "flash";
- 	chip->cdev_flash.max_brightness = 16;
- 	chip->cdev_flash.brightness_set = lm355x_strobe_brightness_set;
-@@ -489,7 +455,6 @@ static int lm355x_probe(struct i2c_client *client,
- 	if (err < 0)
- 		goto err_out;
- 	/* torch */
--	INIT_WORK(&chip->work_torch, lm355x_deferred_torch_brightness_set);
- 	chip->cdev_torch.name = "torch";
- 	chip->cdev_torch.max_brightness = 8;
- 	chip->cdev_torch.brightness_set = lm355x_torch_brightness_set;
-@@ -499,8 +464,6 @@ static int lm355x_probe(struct i2c_client *client,
- 	if (err < 0)
- 		goto err_create_torch_file;
- 	/* indicator */
--	INIT_WORK(&chip->work_indicator,
--		  lm355x_deferred_indicator_brightness_set);
- 	chip->cdev_indicator.name = "indicator";
- 	if (id->driver_data == CHIP_LM3554)
- 		chip->cdev_indicator.max_brightness = 4;
-@@ -534,11 +497,8 @@ static int lm355x_remove(struct i2c_client *client)
- 
- 	regmap_write(chip->regmap, preg[REG_OPMODE].regno, 0);
- 	led_classdev_unregister(&chip->cdev_indicator);
--	flush_work(&chip->work_indicator);
- 	led_classdev_unregister(&chip->cdev_torch);
--	flush_work(&chip->work_torch);
- 	led_classdev_unregister(&chip->cdev_flash);
--	flush_work(&chip->work_flash);
- 	dev_info(&client->dev, "%s is removed\n", lm355x_name[chip->type]);
- 
- 	return 0;
+ #include <linux/leds.h>
+ #include <linux/mfd/max8997.h>
+ #include <linux/mfd/max8997-private.h>
 -- 
 1.7.9.5
