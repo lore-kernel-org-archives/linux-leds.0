@@ -1,110 +1,92 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 27/51] leds: mc13783: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:13 +0200
-Message-ID: <1437122857-6765-28-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 30/51] leds: pwm: remove work queue
+Date: Fri, 17 Jul 2015 10:47:16 +0200
+Message-ID: <1437122857-6765-31-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
 List-Id: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
-
 Now the core implements the work queue, remove it from the drivers.
+If brightness setting is guaranteed not to sleep then set the flag
+LED_BRIGHTNESS_FAST.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Raphael Assenat <raph@8d.com>
 ---
- drivers/leds/leds-mc13783.c |   31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
+ drivers/leds/leds-pwm.c |   24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index e2b847f..f2f8cae 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -20,7 +20,6 @@
- #include <linux/platform_device.h>
- #include <linux/leds.h>
- #include <linux/of.h>
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 1d07e3e..0068297 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -22,12 +22,10 @@
+ #include <linux/pwm.h>
+ #include <linux/leds_pwm.h>
+ #include <linux/slab.h>
 -#include <linux/workqueue.h>
- #include <linux/mfd/mc13xxx.h>
  
- struct mc13xxx_led_devtype {
-@@ -32,8 +31,6 @@ struct mc13xxx_led_devtype {
- 
- struct mc13xxx_led {
+ struct led_pwm_data {
  	struct led_classdev	cdev;
+ 	struct pwm_device	*pwm;
 -	struct work_struct	work;
--	enum led_brightness	new_brightness;
- 	int			id;
- 	struct mc13xxx_leds	*leds;
- };
-@@ -55,9 +52,11 @@ static unsigned int mc13xxx_max_brightness(int id)
- 	return 0x3f;
+ 	unsigned int		active_low;
+ 	unsigned int		period;
+ 	int			duty;
+@@ -51,14 +49,6 @@ static void __led_pwm_set(struct led_pwm_data *led_dat)
+ 		pwm_enable(led_dat->pwm);
  }
  
--static void mc13xxx_led_work(struct work_struct *work)
-+static void mc13xxx_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
- {
--	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
-+	struct mc13xxx_led *led =
-+		container_of(led_cdev, struct mc13xxx_led, cdev);
- 	struct mc13xxx_leds *leds = led->leds;
- 	unsigned int reg, bank, off, shift;
- 
-@@ -107,17 +106,7 @@ static void mc13xxx_led_work(struct work_struct *work)
- 
- 	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
- 			mc13xxx_max_brightness(led->id) << shift,
--			led->new_brightness << shift);
+-static void led_pwm_work(struct work_struct *work)
+-{
+-	struct led_pwm_data *led_dat =
+-		container_of(work, struct led_pwm_data, work);
+-
+-	__led_pwm_set(led_dat);
 -}
 -
--static void mc13xxx_led_set(struct led_classdev *led_cdev,
--			    enum led_brightness value)
--{
--	struct mc13xxx_led *led =
--		container_of(led_cdev, struct mc13xxx_led, cdev);
--
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+			value << shift);
+ static void led_pwm_set(struct led_classdev *led_cdev,
+ 	enum led_brightness brightness)
+ {
+@@ -75,10 +65,7 @@ static void led_pwm_set(struct led_classdev *led_cdev,
+ 
+ 	led_dat->duty = duty;
+ 
+-	if (led_dat->can_sleep)
+-		schedule_work(&led_dat->work);
+-	else
+-		__led_pwm_set(led_dat);
++	__led_pwm_set(led_dat);
  }
  
- #ifdef CONFIG_OF
-@@ -260,8 +249,6 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 		leds->led[i].cdev.brightness_set = mc13xxx_led_set;
- 		leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
+ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+@@ -89,11 +76,8 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
  
--		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
--
- 		ret = led_classdev_register(dev->parent, &leds->led[i].cdev);
- 		if (ret) {
- 			dev_err(dev, "Failed to register LED %i\n", id);
-@@ -270,10 +257,8 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ static void led_pwm_cleanup(struct led_pwm_priv *priv)
+ {
+-	while (priv->num_leds--) {
++	while (priv->num_leds--)
+ 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+-		if (priv->leds[priv->num_leds].can_sleep)
+-			cancel_work_sync(&priv->leds[priv->num_leds].work);
+-	}
+ }
+ 
+ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+@@ -122,8 +106,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
  	}
  
- 	if (ret)
--		while (--i >= 0) {
-+		while (--i >= 0)
- 			led_classdev_unregister(&leds->led[i].cdev);
--			cancel_work_sync(&leds->led[i].work);
--		}
+ 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+-	if (led_data->can_sleep)
+-		INIT_WORK(&led_data->work, led_pwm_work);
++	if (!led_data->can_sleep)
++		led_data->cdev.flags |= LED_BRIGHTNESS_FAST;
  
- 	return ret;
- }
-@@ -283,10 +268,8 @@ static int mc13xxx_led_remove(struct platform_device *pdev)
- 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < leds->num_leds; i++) {
-+	for (i = 0; i < leds->num_leds; i++)
- 		led_classdev_unregister(&leds->led[i].cdev);
--		cancel_work_sync(&leds->led[i].work);
--	}
- 
- 	return 0;
- }
+ 	led_data->period = pwm_get_period(led_data->pwm);
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
 -- 
 1.7.9.5
