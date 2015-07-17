@@ -1,113 +1,51 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH/RFC 09/51] leds: adp5520: Remove work queue
-Date: Fri, 17 Jul 2015 10:52:29 +0200
-Message-ID: <55A8C24D.6010002@analog.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH/RFC 21/51] leds: wm831x: Remove work queue
+Date: Fri, 17 Jul 2015 11:02:10 +0100
+Message-ID: <20150717100210.GH11162@sirena.org.uk>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
- <1437122857-6765-10-git-send-email-j.anaszewski@samsung.com>
-Reply-To: <michael.hennerich@analog.com>
+ <1437122857-6765-22-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1437122857-6765-10-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iWiB/3aOFpG2Ko/s"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55394 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751706AbbGQKCS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 17 Jul 2015 06:02:18 -0400
+Content-Disposition: inline
+In-Reply-To: <1437122857-6765-22-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
 
-On 07/17/2015 10:46 AM, Jacek Anaszewski wrote:
+
+--iWiB/3aOFpG2Ko/s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 17, 2015 at 10:47:07AM +0200, Jacek Anaszewski wrote:
 > From: Andrew Lunn <andrew@lunn.ch>
->
-> Now the core implements the work queue, remove it from the driver.
->
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+>=20
+> Now the core implements the work queue, remove it from the drivers.
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Reviwed-by: Mark Brown <broonie@kernel.org>
 
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> ---
->   drivers/leds/leds-adp5520.c |   22 +++-------------------
->   1 file changed, 3 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
-> index 07e66ca..6378150 100644
-> --- a/drivers/leds/leds-adp5520.c
-> +++ b/drivers/leds/leds-adp5520.c
-> @@ -17,34 +17,24 @@
->   #include <linux/kernel.h>
->   #include <linux/platform_device.h>
->   #include <linux/leds.h>
-> -#include <linux/workqueue.h>
->   #include <linux/mfd/adp5520.h>
->   #include <linux/slab.h>
->   
->   struct adp5520_led {
->   	struct led_classdev	cdev;
-> -	struct work_struct	work;
->   	struct device		*master;
-> -	enum led_brightness	new_brightness;
->   	int			id;
->   	int			flags;
->   };
->   
-> -static void adp5520_led_work(struct work_struct *work)
-> -{
-> -	struct adp5520_led *led = container_of(work, struct adp5520_led, work);
-> -	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
-> -			 led->new_brightness >> 2);
-> -}
-> -
->   static void adp5520_led_set(struct led_classdev *led_cdev,
->   			   enum led_brightness value)
->   {
->   	struct adp5520_led *led;
->   
->   	led = container_of(led_cdev, struct adp5520_led, cdev);
-> -	led->new_brightness = value;
-> -	schedule_work(&led->work);
-> +	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
-> +			 value >> 2);
->   }
->   
->   static int adp5520_led_setup(struct adp5520_led *led)
-> @@ -146,9 +136,6 @@ static int adp5520_led_probe(struct platform_device *pdev)
->   		led_dat->id = led_dat->flags & ADP5520_FLAG_LED_MASK;
->   
->   		led_dat->master = pdev->dev.parent;
-> -		led_dat->new_brightness = LED_OFF;
-> -
-> -		INIT_WORK(&led_dat->work, adp5520_led_work);
->   
->   		ret = led_classdev_register(led_dat->master, &led_dat->cdev);
->   		if (ret) {
-> @@ -170,10 +157,8 @@ static int adp5520_led_probe(struct platform_device *pdev)
->   
->   err:
->   	if (i > 0) {
-> -		for (i = i - 1; i >= 0; i--) {
-> +		for (i = i - 1; i >= 0; i--)
->   			led_classdev_unregister(&led[i].cdev);
-> -			cancel_work_sync(&led[i].work);
-> -		}
->   	}
->   
->   	return ret;
-> @@ -192,7 +177,6 @@ static int adp5520_led_remove(struct platform_device *pdev)
->   
->   	for (i = 0; i < pdata->num_leds; i++) {
->   		led_classdev_unregister(&led[i].cdev);
-> -		cancel_work_sync(&led[i].work);
->   	}
->   
->   	return 0;
+--iWiB/3aOFpG2Ko/s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--- 
-Greetings,
-Michael
+iQEcBAEBCAAGBQJVqNKhAAoJECTWi3JdVIfQJZgH/iKb/cRSn3x3+E+p8o9PuBb5
+e/ovFp4ejiQkT2KfAau+a8HbFnsJVgIZDxbJ1+KzxtRZVteA0ovARgE7fWySlXJ/
+9sI74S5GprRXQOz+udeTk6gShDhgdncsa4IMd1URcAhPVBILsXojo4ERnMvmIsn2
+XQ4nQ/E7wEmkBeav+MpUvaqEu26QBFXgRGfX4eX6hIDM9M4i/qgZfrglr5HB76g6
+CVvqFlHYMugi+TDEgZGOLpfAGAvUuSWB87kJndT7c1tps2QTtCtX21CshJmp60bQ
+7P5SnYf1xCdM4lhd6J9wQ3fuOrYdb56vldPZmR5z+F56hRJvXKc7SV1r/cGgrVc=
+=fgMr
+-----END PGP SIGNATURE-----
 
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-Margaret Seif
+--iWiB/3aOFpG2Ko/s--
