@@ -1,136 +1,164 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 19/51] leds: pca955x: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:05 +0200
-Message-ID: <1437122857-6765-20-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 13/51] leds: lm3642: Remove work queue
+Date: Fri, 17 Jul 2015 10:46:59 +0200
+Message-ID: <1437122857-6765-14-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Nate Case <ncase@xes-inc.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
 
-Now the core implements the work queue, remove it from the drivers.
+Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Nate Case <ncase@xes-inc.com>
+Cc: Daniel Jeong <daniel.jeong@ti.com>
+Cc: G.Shark Jeong <gshark.jeong@gmail.com>
 ---
- drivers/leds/leds-pca955x.c |   37 +++++++------------------------------
- 1 file changed, 7 insertions(+), 30 deletions(-)
+ drivers/leds/leds-lm3642.c |   54 ++++++++------------------------------------
+ 1 file changed, 9 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index c3a08b6..3150d59 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -47,7 +47,6 @@
- #include <linux/leds.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
+diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
+index d3dec01..b54f98d 100644
+--- a/drivers/leds/leds-lm3642.c
++++ b/drivers/leds/leds-lm3642.c
+@@ -15,7 +15,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/fs.h>
+ #include <linux/regmap.h>
 -#include <linux/workqueue.h>
- #include <linux/slab.h>
+ #include <linux/platform_data/leds-lm3642.h>
  
- /* LED select registers determine the source that drives LED outputs */
-@@ -110,8 +109,6 @@ struct pca955x {
+ #define	REG_FILT_TIME			(0x0)
+@@ -73,10 +72,6 @@ struct lm3642_chip_data {
+ 	struct led_classdev cdev_torch;
+ 	struct led_classdev cdev_indicator;
  
- struct pca955x_led {
- 	struct pca955x	*pca955x;
--	struct work_struct	work;
--	enum led_brightness	brightness;
- 	struct led_classdev	led_cdev;
- 	int			led_num;	/* 0 .. 15 potentially */
- 	char			name[32];
-@@ -193,7 +190,8 @@ static u8 pca955x_read_ls(struct i2c_client *client, int n)
- 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
- }
+-	struct work_struct work_flash;
+-	struct work_struct work_torch;
+-	struct work_struct work_indicator;
+-
+ 	u8 br_flash;
+ 	u8 br_torch;
+ 	u8 br_indicator;
+@@ -209,24 +204,16 @@ out_strtoint:
  
--static void pca955x_led_work(struct work_struct *work)
-+static void pca955x_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
- {
- 	struct pca955x_led *pca955x_led;
- 	struct pca955x *pca955x;
-@@ -201,7 +199,7 @@ static void pca955x_led_work(struct work_struct *work)
- 	int chip_ls;	/* which LSx to use (0-3 potentially) */
- 	int ls_led;	/* which set of bits within LSx to use (0-3) */
+ static DEVICE_ATTR(torch_pin, S_IWUSR, NULL, lm3642_torch_pin_store);
  
--	pca955x_led = container_of(work, struct pca955x_led, work);
-+	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
- 	pca955x = pca955x_led->pca955x;
- 
- 	chip_ls = pca955x_led->led_num / 4;
-@@ -211,7 +209,7 @@ static void pca955x_led_work(struct work_struct *work)
- 
- 	ls = pca955x_read_ls(pca955x->client, chip_ls);
- 
--	switch (pca955x_led->brightness) {
-+	switch (value) {
- 	case LED_FULL:
- 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
- 		break;
-@@ -230,7 +228,7 @@ static void pca955x_led_work(struct work_struct *work)
- 		 * just turning off for all other values.
- 		 */
- 		pca955x_write_pwm(pca955x->client, 1,
--				255 - pca955x_led->brightness);
-+				255 - value);
- 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
- 		break;
- 	}
-@@ -240,21 +238,6 @@ static void pca955x_led_work(struct work_struct *work)
- 	mutex_unlock(&pca955x->lock);
- }
- 
--static void pca955x_led_set(struct led_classdev *led_cdev, enum led_brightness value)
+-static void lm3642_deferred_torch_brightness_set(struct work_struct *work)
 -{
--	struct pca955x_led *pca955x;
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_torch);
 -
--	pca955x = container_of(led_cdev, struct pca955x_led, led_cdev);
--
--	pca955x->brightness = value;
--
--	/*
--	 * Must use workqueue for the actual I/O since I2C operations
--	 * can sleep.
--	 */
--	schedule_work(&pca955x->work);
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_torch, MODES_TORCH);
+-	mutex_unlock(&chip->lock);
 -}
 -
- static int pca955x_probe(struct i2c_client *client,
- 					const struct i2c_device_id *id)
+ static void lm3642_torch_brightness_set(struct led_classdev *cdev,
+ 					enum led_brightness brightness)
  {
-@@ -330,8 +313,6 @@ static int pca955x_probe(struct i2c_client *client,
- 		pca955x_led->led_cdev.name = pca955x_led->name;
- 		pca955x_led->led_cdev.brightness_set = pca955x_led_set;
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_torch);
  
--		INIT_WORK(&pca955x_led->work, pca955x_led_work);
--
- 		err = led_classdev_register(&client->dev,
- 					&pca955x_led->led_cdev);
- 		if (err < 0)
-@@ -355,10 +336,8 @@ static int pca955x_probe(struct i2c_client *client,
- 	return 0;
- 
- exit:
--	while (i--) {
-+	while (i--)
- 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
--		cancel_work_sync(&pca955x->leds[i].work);
--	}
- 
- 	return err;
++	mutex_lock(&chip->lock);
+ 	chip->br_torch = brightness;
+-	schedule_work(&chip->work_torch);
++	lm3642_control(chip, chip->br_torch, MODES_TORCH);
++	mutex_unlock(&chip->lock);
  }
-@@ -368,10 +347,8 @@ static int pca955x_remove(struct i2c_client *client)
- 	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	int i;
  
--	for (i = 0; i < pca955x->chipdef->bits; i++) {
-+	for (i = 0; i < pca955x->chipdef->bits; i++)
- 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
--		cancel_work_sync(&pca955x->leds[i].work);
--	}
+ /* flash */
+@@ -266,45 +253,29 @@ out_strtoint:
  
+ static DEVICE_ATTR(strobe_pin, S_IWUSR, NULL, lm3642_strobe_pin_store);
+ 
+-static void lm3642_deferred_strobe_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_flash);
+-
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_flash, MODES_FLASH);
+-	mutex_unlock(&chip->lock);
+-}
+-
+ static void lm3642_strobe_brightness_set(struct led_classdev *cdev,
+ 					 enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_flash);
+ 
+-	chip->br_flash = brightness;
+-	schedule_work(&chip->work_flash);
+-}
+-
+-/* indicator */
+-static void lm3642_deferred_indicator_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_indicator);
+-
+ 	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	chip->br_flash = brightness;
++	lm3642_control(chip, chip->br_flash, MODES_FLASH);
+ 	mutex_unlock(&chip->lock);
+ }
+ 
++/* indicator */
+ static void lm3642_indicator_brightness_set(struct led_classdev *cdev,
+ 					    enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_indicator);
+ 
++	mutex_lock(&chip->lock);
+ 	chip->br_indicator = brightness;
+-	schedule_work(&chip->work_indicator);
++	lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	mutex_unlock(&chip->lock);
+ }
+ 
+ static const struct regmap_config lm3642_regmap = {
+@@ -371,7 +342,6 @@ static int lm3642_probe(struct i2c_client *client,
+ 		goto err_out;
+ 
+ 	/* flash */
+-	INIT_WORK(&chip->work_flash, lm3642_deferred_strobe_brightness_set);
+ 	chip->cdev_flash.name = "flash";
+ 	chip->cdev_flash.max_brightness = 16;
+ 	chip->cdev_flash.brightness_set = lm3642_strobe_brightness_set;
+@@ -385,7 +355,6 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* torch */
+-	INIT_WORK(&chip->work_torch, lm3642_deferred_torch_brightness_set);
+ 	chip->cdev_torch.name = "torch";
+ 	chip->cdev_torch.max_brightness = 8;
+ 	chip->cdev_torch.brightness_set = lm3642_torch_brightness_set;
+@@ -399,8 +368,6 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* indicator */
+-	INIT_WORK(&chip->work_indicator,
+-		  lm3642_deferred_indicator_brightness_set);
+ 	chip->cdev_indicator.name = "indicator";
+ 	chip->cdev_indicator.max_brightness = 8;
+ 	chip->cdev_indicator.brightness_set = lm3642_indicator_brightness_set;
+@@ -427,11 +394,8 @@ static int lm3642_remove(struct i2c_client *client)
+ 	struct lm3642_chip_data *chip = i2c_get_clientdata(client);
+ 
+ 	led_classdev_unregister(&chip->cdev_indicator);
+-	flush_work(&chip->work_indicator);
+ 	led_classdev_unregister(&chip->cdev_torch);
+-	flush_work(&chip->work_torch);
+ 	led_classdev_unregister(&chip->cdev_flash);
+-	flush_work(&chip->work_flash);
+ 	regmap_write(chip->regmap, REG_ENABLE, 0);
  	return 0;
  }
 -- 
