@@ -1,35 +1,120 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH/RFC 51/51] leds: ipaq-micro: Mark the LED fast
-Date: Fri, 17 Jul 2015 15:43:19 +0200
-Message-ID: <CACRpkdYLwQ1itBXv63xPvBAiTyhGLLPTFfT2DdXVB5PLaZdcng@mail.gmail.com>
-References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
-	<1437122857-6765-52-git-send-email-j.anaszewski@samsung.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH/RFC 18/51] leds: lp8860: Remove work queue
+Date: Fri, 17 Jul 2015 08:52:50 -0500
+Message-ID: <55A908B2.1070407@ti.com>
+References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com> <1437122857-6765-19-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34529 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757844AbbGQNnU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 17 Jul 2015 09:43:20 -0400
-Received: by oigd21 with SMTP id d21so28390579oig.1
-        for <linux-leds@vger.kernel.org>; Fri, 17 Jul 2015 06:43:19 -0700 (PDT)
-In-Reply-To: <1437122857-6765-52-git-send-email-j.anaszewski@samsung.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:39673 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750795AbbGQNxR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 17 Jul 2015 09:53:17 -0400
+In-Reply-To: <1437122857-6765-19-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Stas Sergeev <stsp@users.sourceforge.net>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
 
-On Fri, Jul 17, 2015 at 10:47 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-
-> The driver neither sleeps nor uses delays in its brightness_set
-> op. Mark it fast then.
+On 07/17/2015 03:47 AM, Jacek Anaszewski wrote:
+> From: Andrew Lunn <andrew@lunn.ch>
 >
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Now the core implements the work queue, remove it from the drivers.
+>
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/leds-lp8860.c |   24 +++++-------------------
+>  1 file changed, 5 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 8c2b7fb..40e0ed8 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -91,26 +91,22 @@
+>  /**
+>   * struct lp8860_led -
+>   * @lock - Lock for reading/writing the device
+> - * @work - Work item used to off load the brightness register writes
+>   * @client - Pointer to the I2C client
+>   * @led_dev - led class device pointer
+>   * @regmap - Devices register map
+>   * @eeprom_regmap - EEPROM register map
+>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>   * @regulator - LED supply regulator pointer
+> - * @brightness - Current brightness value requested
+>   * @label - LED label
+>  **/
+>  struct lp8860_led {
+>  	struct mutex lock;
+> -	struct work_struct work;
+>  	struct i2c_client *client;
+>  	struct led_classdev led_dev;
+>  	struct regmap *regmap;
+>  	struct regmap *eeprom_regmap;
+>  	struct gpio_desc *enable_gpio;
+>  	struct regulator *regulator;
+> -	enum led_brightness brightness;
+>  	const char *label;
+>  };
+>  
+> @@ -212,11 +208,13 @@ out:
+>  	return ret;
+>  }
+>  
+> -static void lp8860_led_brightness_work(struct work_struct *work)
+> +static void lp8860_brightness_set(struct led_classdev *led_cdev,
+> +				enum led_brightness brt_val)
+>  {
+> -	struct lp8860_led *led = container_of(work, struct lp8860_led, work);
+> +	struct lp8860_led *led =
+> +			container_of(led_cdev, struct lp8860_led, led_dev);
+> +	int disp_brightness = brt_val * 255;
+>  	int ret;
+> -	int disp_brightness = led->brightness * 255;
+>  
+>  	mutex_lock(&led->lock);
+>  
+> @@ -243,16 +241,6 @@ out:
+>  	mutex_unlock(&led->lock);
+>  }
+>  
+> -static void lp8860_brightness_set(struct led_classdev *led_cdev,
+> -				enum led_brightness brt_val)
+> -{
+> -	struct lp8860_led *led =
+> -			container_of(led_cdev, struct lp8860_led, led_dev);
+> -
+> -	led->brightness = brt_val;
+> -	schedule_work(&led->work);
+> -}
+> -
+>  static int lp8860_init(struct lp8860_led *led)
+>  {
+>  	unsigned int read_buf;
+> @@ -409,7 +397,6 @@ static int lp8860_probe(struct i2c_client *client,
+>  	led->led_dev.brightness_set = lp8860_brightness_set;
+>  
+>  	mutex_init(&led->lock);
+> -	INIT_WORK(&led->work, lp8860_led_brightness_work);
+>  
+>  	i2c_set_clientdata(client, led);
+>  
+> @@ -448,7 +435,6 @@ static int lp8860_remove(struct i2c_client *client)
+>  	int ret;
+>  
+>  	led_classdev_unregister(&led->led_dev);
+> -	cancel_work_sync(&led->work);
+>  
+>  	if (led->enable_gpio)
+>  		gpiod_direction_output(led->enable_gpio, 0);
 
-NACK. The functions called in drivers/mfd/ipaq-micro.c are
-not fast, this need to be dropped.
+Thanks!
 
-Yours,
-Linus Walleij
+Acked-by: Dan Murphy <dmurphy@ti.com>
+
+
+-- 
+------------------
+Dan Murphy
