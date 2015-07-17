@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 12/51] leds: lm3533: Remove work queue
-Date: Fri, 17 Jul 2015 10:46:58 +0200
-Message-ID: <1437122857-6765-13-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 07/51] leds: tlc591xx: Remove work queue
+Date: Fri, 17 Jul 2015 10:46:53 +0200
+Message-ID: <1437122857-6765-8-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,99 +15,85 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Johan Hovold <johan@kernel.org>
 ---
- drivers/leds/leds-lm3533.c |   30 ++++++------------------------
- 1 file changed, 6 insertions(+), 24 deletions(-)
+ drivers/leds/leds-tlc591xx.c |   24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-index 6e2e020..52496d8 100644
---- a/drivers/leds/leds-lm3533.c
-+++ b/drivers/leds/leds-lm3533.c
-@@ -17,7 +17,6 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+index de16c29..b10c425 100644
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -14,7 +14,6 @@
+ #include <linux/of_device.h>
+ #include <linux/regmap.h>
  #include <linux/slab.h>
 -#include <linux/workqueue.h>
  
- #include <linux/mfd/lm3533.h>
+ #define TLC591XX_MAX_LEDS	16
  
-@@ -53,9 +52,6 @@ struct lm3533_led {
+@@ -42,13 +41,11 @@
+ #define LEDOUT_MASK		0x3
  
- 	struct mutex mutex;
- 	unsigned long flags;
--
+ #define ldev_to_led(c)		container_of(c, struct tlc591xx_led, ldev)
+-#define work_to_led(work)	container_of(work, struct tlc591xx_led, work)
+ 
+ struct tlc591xx_led {
+ 	bool active;
+ 	unsigned int led_no;
+ 	struct led_classdev ldev;
 -	struct work_struct work;
--	u8 new_brightness;
+ 	struct tlc591xx_priv *priv;
  };
  
- 
-@@ -123,27 +119,17 @@ out:
- 	return ret;
+@@ -111,11 +108,11 @@ tlc591xx_set_pwm(struct tlc591xx_priv *priv, struct tlc591xx_led *led,
  }
  
--static void lm3533_led_work(struct work_struct *work)
+ static void
+-tlc591xx_led_work(struct work_struct *work)
++tlc591xx_brightness_set(struct led_classdev *led_cdev,
++			enum led_brightness brightness)
+ {
+-	struct tlc591xx_led *led = work_to_led(work);
++	struct tlc591xx_led *led = ldev_to_led(led_cdev);
+ 	struct tlc591xx_priv *priv = led->priv;
+-	enum led_brightness brightness = led->ldev.brightness;
+ 	int err;
+ 
+ 	switch (brightness) {
+@@ -136,25 +133,13 @@ tlc591xx_led_work(struct work_struct *work)
+ }
+ 
+ static void
+-tlc591xx_brightness_set(struct led_classdev *led_cdev,
+-			enum led_brightness brightness)
 -{
--	struct lm3533_led *led = container_of(work, struct lm3533_led, work);
+-	struct tlc591xx_led *led = ldev_to_led(led_cdev);
 -
--	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, led->new_brightness);
--
--	if (led->new_brightness == 0)
--		lm3533_led_pattern_enable(led, 0);	/* disable blink */
--
--	lm3533_ctrlbank_set_brightness(&led->cb, led->new_brightness);
+-	led->ldev.brightness = brightness;
+-	schedule_work(&led->work);
 -}
 -
- static void lm3533_led_set(struct led_classdev *cdev,
--						enum led_brightness value)
-+			   enum led_brightness value)
+-static void
+ tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
  {
- 	struct lm3533_led *led = to_lm3533_led(cdev);
+ 	int i = j;
  
--	dev_dbg(led->cdev.dev, "%s - %d\n", __func__, value);
-+	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, value);
-+
-+	if (value == 0)
-+		lm3533_led_pattern_enable(led, 0);	/* disable blink */
- 
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+	lm3533_ctrlbank_set_brightness(&led->cb, value);
+ 	while (--i >= 0) {
+-		if (priv->leds[i].active) {
++		if (priv->leds[i].active)
+ 			led_classdev_unregister(&priv->leds[i].ldev);
+-			cancel_work_sync(&priv->leds[i].work);
+-		}
+ 	}
  }
  
- static enum led_brightness lm3533_led_get(struct led_classdev *cdev)
-@@ -701,7 +687,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 	led->id = pdev->id;
- 
- 	mutex_init(&led->mutex);
--	INIT_WORK(&led->work, lm3533_led_work);
- 
- 	/* The class framework makes a callback to get brightness during
- 	 * registration so use parent device (for error reporting) until
-@@ -733,7 +718,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 
- err_unregister:
- 	led_classdev_unregister(&led->cdev);
--	flush_work(&led->work);
- 
- 	return ret;
- }
-@@ -746,7 +730,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
- 
- 	lm3533_ctrlbank_disable(&led->cb);
- 	led_classdev_unregister(&led->cdev);
--	flush_work(&led->work);
- 
- 	return 0;
- }
-@@ -760,7 +743,6 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
- 
- 	lm3533_ctrlbank_disable(&led->cb);
- 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
--	flush_work(&led->work);
- }
- 
- static struct platform_driver lm3533_led_driver = {
+@@ -177,7 +162,6 @@ tlc591xx_configure(struct device *dev,
+ 		led->led_no = i;
+ 		led->ldev.brightness_set = tlc591xx_brightness_set;
+ 		led->ldev.max_brightness = LED_FULL;
+-		INIT_WORK(&led->work, tlc591xx_led_work);
+ 		err = led_classdev_register(dev, &led->ldev);
+ 		if (err < 0) {
+ 			dev_err(dev, "couldn't register LED %s\n",
 -- 
 1.7.9.5
