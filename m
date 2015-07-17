@@ -1,99 +1,58 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 07/51] leds: tlc591xx: Remove work queue
-Date: Fri, 17 Jul 2015 10:46:53 +0200
-Message-ID: <1437122857-6765-8-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 06/51] media: flash: use led_set_brightness_sync for torch
+ brightness
+Date: Fri, 17 Jul 2015 10:46:52 +0200
+Message-ID: <1437122857-6765-7-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+LED subsystem shifted responsibility for choosing between SYNC or ASYNC
+way of setting brightness from drivers to the caller. Adapt the wrapper
+to those changes.
 
-Now the core implements the work queue, remove it from the driver.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-media@vger.kernel.org
 ---
- drivers/leds/leds-tlc591xx.c |   24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+ drivers/media/v4l2-core/v4l2-flash-led-class.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index de16c29..b10c425 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -14,7 +14,6 @@
- #include <linux/of_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
+diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+index 5bdfb8d..5d67335 100644
+--- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
++++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+@@ -107,10 +107,10 @@ static void v4l2_flash_set_led_brightness(struct v4l2_flash *v4l2_flash,
+ 		if (ctrls[LED_MODE]->val != V4L2_FLASH_LED_MODE_TORCH)
+ 			return;
  
- #define TLC591XX_MAX_LEDS	16
- 
-@@ -42,13 +41,11 @@
- #define LEDOUT_MASK		0x3
- 
- #define ldev_to_led(c)		container_of(c, struct tlc591xx_led, ldev)
--#define work_to_led(work)	container_of(work, struct tlc591xx_led, work)
- 
- struct tlc591xx_led {
- 	bool active;
- 	unsigned int led_no;
- 	struct led_classdev ldev;
--	struct work_struct work;
- 	struct tlc591xx_priv *priv;
- };
- 
-@@ -111,11 +108,11 @@ tlc591xx_set_pwm(struct tlc591xx_priv *priv, struct tlc591xx_led *led,
- }
- 
- static void
--tlc591xx_led_work(struct work_struct *work)
-+tlc591xx_brightness_set(struct led_classdev *led_cdev,
-+			enum led_brightness brightness)
- {
--	struct tlc591xx_led *led = work_to_led(work);
-+	struct tlc591xx_led *led = ldev_to_led(led_cdev);
- 	struct tlc591xx_priv *priv = led->priv;
--	enum led_brightness brightness = led->ldev.brightness;
- 	int err;
- 
- 	switch (brightness) {
-@@ -136,25 +133,13 @@ tlc591xx_led_work(struct work_struct *work)
- }
- 
- static void
--tlc591xx_brightness_set(struct led_classdev *led_cdev,
--			enum led_brightness brightness)
--{
--	struct tlc591xx_led *led = ldev_to_led(led_cdev);
--
--	led->ldev.brightness = brightness;
--	schedule_work(&led->work);
--}
--
--static void
- tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
- {
- 	int i = j;
- 
- 	while (--i >= 0) {
--		if (priv->leds[i].active) {
-+		if (priv->leds[i].active)
- 			led_classdev_unregister(&priv->leds[i].ldev);
--			cancel_work_sync(&priv->leds[i].work);
--		}
+-		led_set_brightness(&v4l2_flash->fled_cdev->led_cdev,
++		led_set_brightness_sync(&v4l2_flash->fled_cdev->led_cdev,
+ 					brightness);
+ 	} else {
+-		led_set_brightness(&v4l2_flash->iled_cdev->led_cdev,
++		led_set_brightness_sync(&v4l2_flash->iled_cdev->led_cdev,
+ 					brightness);
  	}
  }
- 
-@@ -177,7 +162,6 @@ tlc591xx_configure(struct device *dev,
- 		led->led_no = i;
- 		led->ldev.brightness_set = tlc591xx_brightness_set;
- 		led->ldev.max_brightness = LED_FULL;
--		INIT_WORK(&led->work, tlc591xx_led_work);
- 		err = led_classdev_register(dev, &led->ldev);
- 		if (err < 0) {
- 			dev_err(dev, "couldn't register LED %s\n",
+@@ -206,11 +206,11 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
+ 	case V4L2_CID_FLASH_LED_MODE:
+ 		switch (c->val) {
+ 		case V4L2_FLASH_LED_MODE_NONE:
+-			led_set_brightness(led_cdev, LED_OFF);
++			led_set_brightness_sync(led_cdev, LED_OFF);
+ 			return led_set_flash_strobe(fled_cdev, false);
+ 		case V4L2_FLASH_LED_MODE_FLASH:
+ 			/* Turn the torch LED off */
+-			led_set_brightness(led_cdev, LED_OFF);
++			led_set_brightness_sync(led_cdev, LED_OFF);
+ 			if (ctrls[STROBE_SOURCE]) {
+ 				external_strobe = (ctrls[STROBE_SOURCE]->val ==
+ 					V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
 -- 
 1.7.9.5
