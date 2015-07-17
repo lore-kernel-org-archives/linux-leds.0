@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 21/51] leds: wm831x: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:07 +0200
-Message-ID: <1437122857-6765-22-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 20/51] leds: pca963x: Remove work queue
+Date: Fri, 17 Jul 2015 10:47:06 +0200
+Message-ID: <1437122857-6765-21-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,98 +15,162 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Peter Meerwald <p.meerwald@bct-electronic.com>
+Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 ---
- drivers/leds/leds-wm831x-status.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ drivers/leds/leds-pca963x.c |   56 +++++++------------------------------------
+ 1 file changed, 8 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
-index 56027ef..01dad0e 100644
---- a/drivers/leds/leds-wm831x-status.c
-+++ b/drivers/leds/leds-wm831x-status.c
-@@ -23,7 +23,6 @@
- struct wm831x_status {
- 	struct led_classdev cdev;
- 	struct wm831x *wm831x;
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index bee3e1a..92819c5 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -32,7 +32,6 @@
+ #include <linux/leds.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/workqueue.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/leds-pca963x.h>
+@@ -96,11 +95,6 @@ static const struct i2c_device_id pca963x_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, pca963x_id);
+ 
+-enum pca963x_cmd {
+-	BRIGHTNESS_SET,
+-	BLINK_SET,
+-};
+-
+ struct pca963x_led;
+ 
+ struct pca963x {
+@@ -112,17 +106,16 @@ struct pca963x {
+ 
+ struct pca963x_led {
+ 	struct pca963x *chip;
 -	struct work_struct work;
- 	struct mutex mutex;
+ 	enum led_brightness brightness;
+ 	struct led_classdev led_cdev;
+ 	int led_num; /* 0 .. 15 potentially */
+-	enum pca963x_cmd cmd;
+ 	char name[32];
+ 	u8 gdc;
+ 	u8 gfrq;
+ };
  
- 	spinlock_t value_lock;
-@@ -40,10 +39,8 @@ struct wm831x_status {
- #define to_wm831x_status(led_cdev) \
- 	container_of(led_cdev, struct wm831x_status, cdev)
- 
--static void wm831x_status_work(struct work_struct *work)
-+static void wm831x_status_set(struct wm831x_status *led)
+-static void pca963x_brightness_work(struct pca963x_led *pca963x)
++static void pca963x_brightness(struct pca963x_led *pca963x,
++			       enum led_brightness brightness)
  {
--	struct wm831x_status *led = container_of(work, struct wm831x_status,
--						 work);
- 	unsigned long flags;
+ 	u8 ledout_addr = pca963x->chip->chipdef->ledout_base
+ 		+ (pca963x->led_num / 4);
+@@ -132,7 +125,7 @@ static void pca963x_brightness_work(struct pca963x_led *pca963x)
  
- 	mutex_lock(&led->mutex);
-@@ -70,8 +67,8 @@ static void wm831x_status_work(struct work_struct *work)
- 	mutex_unlock(&led->mutex);
+ 	mutex_lock(&pca963x->chip->mutex);
+ 	ledout = i2c_smbus_read_byte_data(pca963x->chip->client, ledout_addr);
+-	switch (pca963x->brightness) {
++	switch (brightness) {
+ 	case LED_FULL:
+ 		i2c_smbus_write_byte_data(pca963x->chip->client, ledout_addr,
+ 			(ledout & ~mask) | (PCA963X_LED_ON << shift));
+@@ -152,7 +145,7 @@ static void pca963x_brightness_work(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
  }
  
--static void wm831x_status_set(struct led_classdev *led_cdev,
--			   enum led_brightness value)
-+static void wm831x_status_brightness_set(struct led_classdev *led_cdev,
-+					 enum led_brightness value)
+-static void pca963x_blink_work(struct pca963x_led *pca963x)
++static void pca963x_blink(struct pca963x_led *pca963x)
  {
- 	struct wm831x_status *led = to_wm831x_status(led_cdev);
- 	unsigned long flags;
-@@ -80,8 +77,8 @@ static void wm831x_status_set(struct led_classdev *led_cdev,
- 	led->brightness = value;
- 	if (value == LED_OFF)
- 		led->blink = 0;
--	schedule_work(&led->work);
- 	spin_unlock_irqrestore(&led->value_lock, flags);
-+	wm831x_status_set(led);
+ 	u8 ledout_addr = pca963x->chip->chipdef->ledout_base +
+ 		(pca963x->led_num / 4);
+@@ -180,21 +173,6 @@ static void pca963x_blink_work(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
  }
  
- static int wm831x_status_blink_set(struct led_classdev *led_cdev,
-@@ -147,11 +144,8 @@ static int wm831x_status_blink_set(struct led_classdev *led_cdev,
- 	else
- 		led->blink = 0;
- 
--	/* Always update; if we fail turn off blinking since we expect
--	 * a software fallback. */
--	schedule_work(&led->work);
+-static void pca963x_work(struct work_struct *work)
+-{
+-	struct pca963x_led *pca963x = container_of(work,
+-		struct pca963x_led, work);
 -
- 	spin_unlock_irqrestore(&led->value_lock, flags);
-+	wm831x_status_set(led);
+-	switch (pca963x->cmd) {
+-	case BRIGHTNESS_SET:
+-		pca963x_brightness_work(pca963x);
+-		break;
+-	case BLINK_SET:
+-		pca963x_blink_work(pca963x);
+-		break;
+-	}
+-}
+-
+ static void pca963x_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+@@ -202,14 +180,7 @@ static void pca963x_led_set(struct led_classdev *led_cdev,
  
- 	return ret;
+ 	pca963x = container_of(led_cdev, struct pca963x_led, led_cdev);
+ 
+-	pca963x->cmd = BRIGHTNESS_SET;
+-	pca963x->brightness = value;
+-
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca963x->work);
++	pca963x_brightness(pca963x, value);
  }
-@@ -206,11 +200,9 @@ static ssize_t wm831x_status_src_store(struct device *dev,
- 	for (i = 0; i < ARRAY_SIZE(led_src_texts); i++) {
- 		if (!strcmp(name, led_src_texts[i])) {
- 			mutex_lock(&led->mutex);
+ 
+ static int pca963x_blink_set(struct led_classdev *led_cdev,
+@@ -254,15 +225,10 @@ static int pca963x_blink_set(struct led_classdev *led_cdev,
+ 	 */
+ 	gfrq = (period * 24 / 1000) - 1;
+ 
+-	pca963x->cmd = BLINK_SET;
+ 	pca963x->gdc = gdc;
+ 	pca963x->gfrq = gfrq;
+ 
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca963x->work);
++	pca963x_blink(pca963x);
+ 
+ 	*delay_on = time_on;
+ 	*delay_off = time_off;
+@@ -413,8 +379,6 @@ static int pca963x_probe(struct i2c_client *client,
+ 		if (pdata && pdata->blink_type == PCA963X_HW_BLINK)
+ 			pca963x[i].led_cdev.blink_set = pca963x_blink_set;
+ 
+-		INIT_WORK(&pca963x[i].work, pca963x_work);
 -
- 			led->src = i;
--			schedule_work(&led->work);
--
- 			mutex_unlock(&led->mutex);
-+			wm831x_status_set(led);
- 		}
- 	}
+ 		err = led_classdev_register(&client->dev, &pca963x[i].led_cdev);
+ 		if (err < 0)
+ 			goto exit;
+@@ -434,10 +398,8 @@ static int pca963x_probe(struct i2c_client *client,
+ 	return 0;
  
-@@ -262,7 +254,6 @@ static int wm831x_status_probe(struct platform_device *pdev)
- 		pdata.name = dev_name(&pdev->dev);
+ exit:
+-	while (i--) {
++	while (i--)
+ 		led_classdev_unregister(&pca963x[i].led_cdev);
+-		cancel_work_sync(&pca963x[i].work);
+-	}
  
- 	mutex_init(&drvdata->mutex);
--	INIT_WORK(&drvdata->work, wm831x_status_work);
- 	spin_lock_init(&drvdata->value_lock);
+ 	return err;
+ }
+@@ -447,10 +409,8 @@ static int pca963x_remove(struct i2c_client *client)
+ 	struct pca963x *pca963x = i2c_get_clientdata(client);
+ 	int i;
  
- 	/* We cache the configuration register and read startup values
-@@ -287,7 +278,7 @@ static int wm831x_status_probe(struct platform_device *pdev)
+-	for (i = 0; i < pca963x->chipdef->n_leds; i++) {
++	for (i = 0; i < pca963x->chipdef->n_leds; i++)
+ 		led_classdev_unregister(&pca963x->leds[i].led_cdev);
+-		cancel_work_sync(&pca963x->leds[i].work);
+-	}
  
- 	drvdata->cdev.name = pdata.name;
- 	drvdata->cdev.default_trigger = pdata.default_trigger;
--	drvdata->cdev.brightness_set = wm831x_status_set;
-+	drvdata->cdev.brightness_set = wm831x_status_brightness_set;
- 	drvdata->cdev.blink_set = wm831x_status_blink_set;
- 	drvdata->cdev.groups = wm831x_status_groups;
- 
+ 	return 0;
+ }
 -- 
 1.7.9.5
