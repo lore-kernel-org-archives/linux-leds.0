@@ -1,137 +1,105 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 28/51] leds: regulator: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:14 +0200
-Message-ID: <1437122857-6765-29-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 25/51] leds: lt3593: Remove work queue
+Date: Fri, 17 Jul 2015 10:47:11 +0200
+Message-ID: <1437122857-6765-26-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@caiaq.de>
 List-Id: linux-leds@vger.kernel.org
+
+From: Andrew Lunn <andrew@lunn.ch>
 
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Antonio Ospite <ospite@studenti.unina.it>
+Cc: Daniel Mack <daniel@caiaq.de>
 ---
- drivers/leds/leds-regulator.c |   34 +++++++++-------------------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
+ drivers/leds/leds-lt3593.c |   27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/leds/leds-regulator.c b/drivers/leds/leds-regulator.c
-index ffc2139..87615e1 100644
---- a/drivers/leds/leds-regulator.c
-+++ b/drivers/leds/leds-regulator.c
-@@ -14,7 +14,6 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
- #include <linux/leds.h>
- #include <linux/leds-regulator.h>
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index 9f41124..5e456ee 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
  #include <linux/platform_device.h>
-@@ -25,10 +24,8 @@
- 
- struct regulator_led {
+ #include <linux/leds.h>
+-#include <linux/workqueue.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+@@ -28,15 +27,14 @@
+ struct lt3593_led_data {
  	struct led_classdev cdev;
--	enum led_brightness value;
- 	int enabled;
- 	struct mutex mutex;
+ 	unsigned gpio;
 -	struct work_struct work;
- 
- 	struct regulator *vcc;
+-	u8 new_level;
  };
-@@ -94,22 +91,23 @@ static void regulator_led_disable(struct regulator_led *led)
- 	led->enabled = 0;
- }
  
--static void regulator_led_set_value(struct regulator_led *led)
-+static void regulator_led_set_value(struct regulator_led *led,
-+				    enum led_brightness value)
+-static void lt3593_led_work(struct work_struct *work)
++static void lt3593_led_set(struct led_classdev *led_cdev,
++			   enum led_brightness value)
  {
- 	int voltage;
- 	int ret;
+-	int pulses;
+ 	struct lt3593_led_data *led_dat =
+-		container_of(work, struct lt3593_led_data, work);
++		container_of(led_cdev, struct lt3593_led_data, cdev);
++	int pulses;
  
- 	mutex_lock(&led->mutex);
+ 	/*
+ 	 * The LT3593 resets its internal current level register to the maximum
+@@ -47,12 +45,12 @@ static void lt3593_led_work(struct work_struct *work)
+ 	 * applied is to the output driver.
+ 	 */
  
--	if (led->value == LED_OFF) {
-+	if (value == LED_OFF) {
- 		regulator_led_disable(led);
- 		goto out;
+-	if (led_dat->new_level == 0) {
++	if (value == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+ 		return;
  	}
  
- 	if (led->cdev.max_brightness > 1) {
--		voltage = led_regulator_get_voltage(led->vcc, led->value);
-+		voltage = led_regulator_get_voltage(led->vcc, value);
- 		dev_dbg(led->cdev.dev, "brightness: %d voltage: %d\n",
--				led->value, voltage);
-+				value, voltage);
+-	pulses = 32 - (led_dat->new_level * 32) / 255;
++	pulses = 32 - (value * 32) / 255;
  
- 		ret = regulator_set_voltage(led->vcc, voltage, voltage);
- 		if (ret != 0)
-@@ -123,21 +121,12 @@ out:
- 	mutex_unlock(&led->mutex);
+ 	if (pulses == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+@@ -71,16 +69,6 @@ static void lt3593_led_work(struct work_struct *work)
+ 	}
  }
  
--static void led_work(struct work_struct *work)
+-static void lt3593_led_set(struct led_classdev *led_cdev,
+-	enum led_brightness value)
 -{
--	struct regulator_led *led;
+-	struct lt3593_led_data *led_dat =
+-		container_of(led_cdev, struct lt3593_led_data, cdev);
 -
--	led = container_of(work, struct regulator_led, work);
--	regulator_led_set_value(led);
+-	led_dat->new_level = value;
+-	schedule_work(&led_dat->work);
 -}
 -
- static void regulator_led_brightness_set(struct led_classdev *led_cdev,
- 			   enum led_brightness value)
+ static int create_lt3593_led(const struct gpio_led *template,
+ 	struct lt3593_led_data *led_dat, struct device *parent)
  {
- 	struct regulator_led *led = to_regulator_led(led_cdev);
- 
--	led->value = value;
--	schedule_work(&led->work);
-+	regulator_led_set_value(led, value);
- }
- 
- static int regulator_led_probe(struct platform_device *pdev)
-@@ -169,7 +158,6 @@ static int regulator_led_probe(struct platform_device *pdev)
- 				pdata->brightness);
- 		return -EINVAL;
- 	}
--	led->value = pdata->brightness;
- 
- 	led->cdev.brightness_set = regulator_led_brightness_set;
- 	led->cdev.name = pdata->name;
-@@ -181,21 +169,18 @@ static int regulator_led_probe(struct platform_device *pdev)
- 		led->enabled = 1;
- 
- 	mutex_init(&led->mutex);
--	INIT_WORK(&led->work, led_work);
- 
- 	platform_set_drvdata(pdev, led);
- 
- 	ret = led_classdev_register(&pdev->dev, &led->cdev);
--	if (ret < 0) {
--		cancel_work_sync(&led->work);
-+	if (ret < 0)
+@@ -111,8 +99,6 @@ static int create_lt3593_led(const struct gpio_led *template,
+ 	if (ret < 0)
  		return ret;
--	}
  
- 	/* to expose the default value to userspace */
--	led->cdev.brightness = led->value;
-+	led->cdev.brightness = pdata->brightness;
- 
- 	/* Set the default led status */
--	regulator_led_set_value(led);
-+	regulator_led_set_value(led, led->cdev.brightness);
- 
- 	return 0;
- }
-@@ -205,7 +190,6 @@ static int regulator_led_remove(struct platform_device *pdev)
- 	struct regulator_led *led = platform_get_drvdata(pdev);
+-	INIT_WORK(&led_dat->work, lt3593_led_work);
+-
+ 	ret = led_classdev_register(parent, &led_dat->cdev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -129,7 +115,6 @@ static void delete_lt3593_led(struct lt3593_led_data *led)
+ 		return;
  
  	led_classdev_unregister(&led->cdev);
 -	cancel_work_sync(&led->work);
- 	regulator_led_disable(led);
- 	return 0;
  }
+ 
+ static int lt3593_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
