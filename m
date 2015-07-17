@@ -1,92 +1,142 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 30/51] leds: pwm: remove work queue
-Date: Fri, 17 Jul 2015 10:47:16 +0200
-Message-ID: <1437122857-6765-31-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 32/51] leds: gpio: Remove work queue
+Date: Fri, 17 Jul 2015 10:47:18 +0200
+Message-ID: <1437122857-6765-33-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:46140 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1945960AbbGQItX (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 17 Jul 2015 04:49:23 -0400
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
-List-Id: linux-leds@vger.kernel.org
 
 Now the core implements the work queue, remove it from the drivers.
-If brightness setting is guaranteed not to sleep then set the flag
-LED_BRIGHTNESS_FAST.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Raphael Assenat <raph@8d.com>
 ---
- drivers/leds/leds-pwm.c |   24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+ drivers/leds/leds-gpio.c |   50 +++++++++++-----------------------------------
+ 1 file changed, 12 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 1d07e3e..0068297 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -22,12 +22,10 @@
- #include <linux/pwm.h>
- #include <linux/leds_pwm.h>
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index af1876a..bf4dfbd 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -20,32 +20,16 @@
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
  #include <linux/slab.h>
 -#include <linux/workqueue.h>
  
- struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
--	struct work_struct	work;
- 	unsigned int		active_low;
- 	unsigned int		period;
- 	int			duty;
-@@ -51,14 +49,6 @@ static void __led_pwm_set(struct led_pwm_data *led_dat)
- 		pwm_enable(led_dat->pwm);
- }
+ struct gpio_led_data {
+ 	struct led_classdev cdev;
+ 	struct gpio_desc *gpiod;
+-	struct work_struct work;
+-	u8 new_level;
+ 	u8 can_sleep;
+ 	u8 blinking;
+ 	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
+ 			unsigned long *delay_on, unsigned long *delay_off);
+ };
  
--static void led_pwm_work(struct work_struct *work)
+-static void gpio_led_work(struct work_struct *work)
 -{
--	struct led_pwm_data *led_dat =
--		container_of(work, struct led_pwm_data, work);
+-	struct gpio_led_data *led_dat =
+-		container_of(work, struct gpio_led_data, work);
 -
--	__led_pwm_set(led_dat);
+-	if (led_dat->blinking) {
+-		led_dat->platform_gpio_blink_set(led_dat->gpiod,
+-					led_dat->new_level, NULL, NULL);
+-		led_dat->blinking = 0;
+-	} else
+-		gpiod_set_value_cansleep(led_dat->gpiod, led_dat->new_level);
 -}
 -
- static void led_pwm_set(struct led_classdev *led_cdev,
- 	enum led_brightness brightness)
+ static void gpio_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
  {
-@@ -75,10 +65,7 @@ static void led_pwm_set(struct led_classdev *led_cdev,
- 
- 	led_dat->duty = duty;
- 
--	if (led_dat->can_sleep)
+@@ -62,17 +46,12 @@ static void gpio_led_set(struct led_classdev *led_cdev,
+ 	 * seem to have a reliable way to know if we're already in one; so
+ 	 * let's just assume the worst.
+ 	 */
+-	if (led_dat->can_sleep) {
+-		led_dat->new_level = level;
 -		schedule_work(&led_dat->work);
--	else
--		__led_pwm_set(led_dat);
-+	__led_pwm_set(led_dat);
- }
- 
- static inline size_t sizeof_pwm_leds_priv(int num_leds)
-@@ -89,11 +76,8 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
- 
- static void led_pwm_cleanup(struct led_pwm_priv *priv)
- {
--	while (priv->num_leds--) {
-+	while (priv->num_leds--)
- 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
--		if (priv->leds[priv->num_leds].can_sleep)
--			cancel_work_sync(&priv->leds[priv->num_leds].work);
+-	} else {
+-		if (led_dat->blinking) {
+-			led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
+-							 NULL, NULL);
+-			led_dat->blinking = 0;
+-		} else
+-			gpiod_set_value(led_dat->gpiod, level);
 -	}
++	if (led_dat->blinking) {
++		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
++						 NULL, NULL);
++		led_dat->blinking = 0;
++	} else
++		gpiod_set_value(led_dat->gpiod, level);
  }
  
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
-@@ -122,8 +106,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	}
+ static int gpio_blink_set(struct led_classdev *led_cdev,
+@@ -125,6 +104,8 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	led_dat->cdev.name = template->name;
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
++	if (!led_dat->can_sleep)
++		led_dat->cdev.flags |= LED_BRIGHTNESS_FAST;
+ 	led_dat->blinking = 0;
+ 	if (blink_set) {
+ 		led_dat->platform_gpio_blink_set = blink_set;
+@@ -143,17 +124,9 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	if (ret < 0)
+ 		return ret;
  
- 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
--	if (led_data->can_sleep)
--		INIT_WORK(&led_data->work, led_pwm_work);
-+	if (!led_data->can_sleep)
-+		led_data->cdev.flags |= LED_BRIGHTNESS_FAST;
+-	INIT_WORK(&led_dat->work, gpio_led_work);
+-
+ 	return led_classdev_register(parent, &led_dat->cdev);
+ }
  
- 	led_data->period = pwm_get_period(led_data->pwm);
- 	if (!led_data->period && (led->pwm_period_ns > 0))
+-static void delete_gpio_led(struct gpio_led_data *led)
+-{
+-	led_classdev_unregister(&led->cdev);
+-	cancel_work_sync(&led->work);
+-}
+-
+ struct gpio_leds_priv {
+ 	int num_leds;
+ 	struct gpio_led_data leds[];
+@@ -233,7 +206,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 
+ err:
+ 	for (count = priv->num_leds - 1; count >= 0; count--)
+-		delete_gpio_led(&priv->leds[count]);
++		led_classdev_unregister(&priv->leds[count].cdev);
+ 	return ERR_PTR(ret);
+ }
+ 
+@@ -265,7 +238,8 @@ static int gpio_led_probe(struct platform_device *pdev)
+ 			if (ret < 0) {
+ 				/* On failure: unwind the led creations */
+ 				for (i = i - 1; i >= 0; i--)
+-					delete_gpio_led(&priv->leds[i]);
++					led_classdev_unregister(
++							&priv->leds[i].cdev);
+ 				return ret;
+ 			}
+ 		}
+@@ -286,7 +260,7 @@ static int gpio_led_remove(struct platform_device *pdev)
+ 	int i;
+ 
+ 	for (i = 0; i < priv->num_leds; i++)
+-		delete_gpio_led(&priv->leds[i]);
++		led_classdev_unregister(&priv->leds[i].cdev);
+ 
+ 	return 0;
+ }
 -- 
 1.7.9.5
