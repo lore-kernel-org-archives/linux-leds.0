@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 23/51] leds: da9052: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:09 +0200
-Message-ID: <1437122857-6765-24-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 18/51] leds: lp8860: Remove work queue
+Date: Fri, 17 Jul 2015 10:47:04 +0200
+Message-ID: <1437122857-6765-19-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,119 +15,91 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-da9052.c |   35 ++++++++++-------------------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
+ drivers/leds/leds-lp8860.c |   24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-da9052.c b/drivers/leds/leds-da9052.c
-index 28291b6..e4dc010 100644
---- a/drivers/leds/leds-da9052.c
-+++ b/drivers/leds/leds-da9052.c
-@@ -16,7 +16,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #include <linux/slab.h>
- 
- #include <linux/mfd/da9052/reg.h>
-@@ -32,11 +31,9 @@
- 
- struct da9052_led {
- 	struct led_classdev cdev;
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 8c2b7fb..40e0ed8 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -91,26 +91,22 @@
+ /**
+  * struct lp8860_led -
+  * @lock - Lock for reading/writing the device
+- * @work - Work item used to off load the brightness register writes
+  * @client - Pointer to the I2C client
+  * @led_dev - led class device pointer
+  * @regmap - Devices register map
+  * @eeprom_regmap - EEPROM register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @brightness - Current brightness value requested
+  * @label - LED label
+ **/
+ struct lp8860_led {
+ 	struct mutex lock;
 -	struct work_struct work;
- 	struct da9052 *da9052;
- 	unsigned char led_index;
- 	unsigned char id;
--	int brightness;
+ 	struct i2c_client *client;
+ 	struct led_classdev led_dev;
+ 	struct regmap *regmap;
+ 	struct regmap *eeprom_regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	enum led_brightness brightness;
+ 	const char *label;
  };
  
- static unsigned char led_reg[] = {
-@@ -44,12 +41,13 @@ static unsigned char led_reg[] = {
- 	DA9052_LED_CONT_5_REG,
- };
- 
--static int da9052_set_led_brightness(struct da9052_led *led)
-+static int da9052_set_led_brightness(struct da9052_led *led,
-+				     enum led_brightness brightness)
- {
- 	u8 val;
- 	int error;
- 
--	val = (led->brightness & 0x7f) | DA9052_LED_CONT_DIM;
-+	val = (brightness & 0x7f) | DA9052_LED_CONT_DIM;
- 
- 	error = da9052_reg_write(led->da9052, led_reg[led->led_index], val);
- 	if (error < 0)
-@@ -58,21 +56,13 @@ static int da9052_set_led_brightness(struct da9052_led *led)
- 	return error;
+@@ -212,11 +208,13 @@ out:
+ 	return ret;
  }
  
--static void da9052_led_work(struct work_struct *work)
+-static void lp8860_led_brightness_work(struct work_struct *work)
++static void lp8860_brightness_set(struct led_classdev *led_cdev,
++				enum led_brightness brt_val)
+ {
+-	struct lp8860_led *led = container_of(work, struct lp8860_led, work);
++	struct lp8860_led *led =
++			container_of(led_cdev, struct lp8860_led, led_dev);
++	int disp_brightness = brt_val * 255;
+ 	int ret;
+-	int disp_brightness = led->brightness * 255;
+ 
+ 	mutex_lock(&led->lock);
+ 
+@@ -243,16 +241,6 @@ out:
+ 	mutex_unlock(&led->lock);
+ }
+ 
+-static void lp8860_brightness_set(struct led_classdev *led_cdev,
+-				enum led_brightness brt_val)
 -{
--	struct da9052_led *led = container_of(work, struct da9052_led, work);
+-	struct lp8860_led *led =
+-			container_of(led_cdev, struct lp8860_led, led_dev);
 -
--	da9052_set_led_brightness(led);
+-	led->brightness = brt_val;
+-	schedule_work(&led->work);
 -}
 -
- static void da9052_led_set(struct led_classdev *led_cdev,
- 			   enum led_brightness value)
+ static int lp8860_init(struct lp8860_led *led)
  {
--	struct da9052_led *led;
-+	struct da9052_led *led =
-+			container_of(led_cdev, struct da9052_led, cdev);
+ 	unsigned int read_buf;
+@@ -409,7 +397,6 @@ static int lp8860_probe(struct i2c_client *client,
+ 	led->led_dev.brightness_set = lp8860_brightness_set;
  
--	led = container_of(led_cdev, struct da9052_led, cdev);
--	led->brightness = value;
--	schedule_work(&led->work);
-+	da9052_set_led_brightness(led, value);
- }
+ 	mutex_init(&led->lock);
+-	INIT_WORK(&led->work, lp8860_led_brightness_work);
  
- static int da9052_configure_leds(struct da9052 *da9052)
-@@ -136,10 +126,8 @@ static int da9052_led_probe(struct platform_device *pdev)
- 		led[i].cdev.brightness_set = da9052_led_set;
- 		led[i].cdev.brightness = LED_OFF;
- 		led[i].cdev.max_brightness = DA9052_MAX_BRIGHTNESS;
--		led[i].brightness = LED_OFF;
- 		led[i].led_index = pled->leds[i].flags;
- 		led[i].da9052 = dev_get_drvdata(pdev->dev.parent);
--		INIT_WORK(&led[i].work, da9052_led_work);
+ 	i2c_set_clientdata(client, led);
  
- 		error = led_classdev_register(pdev->dev.parent, &led[i].cdev);
- 		if (error) {
-@@ -148,7 +136,8 @@ static int da9052_led_probe(struct platform_device *pdev)
- 			goto err_register;
- 		}
+@@ -448,7 +435,6 @@ static int lp8860_remove(struct i2c_client *client)
+ 	int ret;
  
--		error = da9052_set_led_brightness(&led[i]);
-+		error = da9052_set_led_brightness(&led[i],
-+						  led[i].cdev.brightness);
- 		if (error) {
- 			dev_err(&pdev->dev, "Unable to init led %d\n",
- 				led[i].led_index);
-@@ -166,10 +155,8 @@ static int da9052_led_probe(struct platform_device *pdev)
- 	return 0;
+ 	led_classdev_unregister(&led->led_dev);
+-	cancel_work_sync(&led->work);
  
- err_register:
--	for (i = i - 1; i >= 0; i--) {
-+	for (i = i - 1; i >= 0; i--)
- 		led_classdev_unregister(&led[i].cdev);
--		cancel_work_sync(&led[i].work);
--	}
- err:
- 	return error;
- }
-@@ -187,10 +174,8 @@ static int da9052_led_remove(struct platform_device *pdev)
- 	pled = pdata->pled;
- 
- 	for (i = 0; i < pled->num_leds; i++) {
--		led[i].brightness = 0;
--		da9052_set_led_brightness(&led[i]);
-+		da9052_set_led_brightness(&led[i], LED_OFF);
- 		led_classdev_unregister(&led[i].cdev);
--		cancel_work_sync(&led[i].work);
- 	}
- 
- 	return 0;
+ 	if (led->enable_gpio)
+ 		gpiod_direction_output(led->enable_gpio, 0);
 -- 
 1.7.9.5
