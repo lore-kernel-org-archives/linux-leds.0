@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 10/51] leds: bd2802: Remove work queue
-Date: Fri, 17 Jul 2015 10:46:56 +0200
-Message-ID: <1437122857-6765-11-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 09/51] leds: adp5520: Remove work queue
+Date: Fri, 17 Jul 2015 10:46:55 +0200
+Message-ID: <1437122857-6765-10-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Kim Kyuwon <q1.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Michael Hennerich <michael.hennerich@analog.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,82 +15,81 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Kim Kyuwon <q1.kim@samsung.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>
 ---
- drivers/leds/leds-bd2802.c |   24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
+ drivers/leds/leds-adp5520.c |   22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
-index 6078c15d..19113c0 100644
---- a/drivers/leds/leds-bd2802.c
-+++ b/drivers/leds/leds-bd2802.c
-@@ -72,7 +72,6 @@ struct bd2802_led {
- 	struct bd2802_led_platform_data	*pdata;
- 	struct i2c_client		*client;
- 	struct rw_semaphore		rwsem;
--	struct work_struct		work;
+diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
+index 07e66ca..6378150 100644
+--- a/drivers/leds/leds-adp5520.c
++++ b/drivers/leds/leds-adp5520.c
+@@ -17,34 +17,24 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/leds.h>
+-#include <linux/workqueue.h>
+ #include <linux/mfd/adp5520.h>
+ #include <linux/slab.h>
  
- 	struct led_state		led[2];
- 
-@@ -518,16 +517,6 @@ static struct device_attribute *bd2802_attributes[] = {
- 	&bd2802_rgb_current_attr,
+ struct adp5520_led {
+ 	struct led_classdev	cdev;
+-	struct work_struct	work;
+ 	struct device		*master;
+-	enum led_brightness	new_brightness;
+ 	int			id;
+ 	int			flags;
  };
  
--static void bd2802_led_work(struct work_struct *work)
+-static void adp5520_led_work(struct work_struct *work)
 -{
--	struct bd2802_led *led = container_of(work, struct bd2802_led, work);
--
--	if (led->state)
--		bd2802_turn_on(led, led->led_id, led->color, led->state);
--	else
--		bd2802_turn_off(led, led->led_id, led->color);
+-	struct adp5520_led *led = container_of(work, struct adp5520_led, work);
+-	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
+-			 led->new_brightness >> 2);
 -}
 -
- #define BD2802_CONTROL_RGBS(name, id, clr)				\
- static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
- 					enum led_brightness value)	\
-@@ -536,11 +525,13 @@ static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
- 		container_of(led_cdev, struct bd2802_led, cdev_##name);	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
--	if (value == LED_OFF)						\
-+	if (value == LED_OFF) {						\
- 		led->state = BD2802_OFF;				\
--	else								\
-+		bd2802_turn_off(led, led->led_id, led->color);		\
-+	} else {							\
- 		led->state = BD2802_ON;					\
--	schedule_work(&led->work);					\
-+		bd2802_turn_on(led, led->led_id, led->color, BD2802_ON);\
-+	}								\
- }									\
- static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 		unsigned long *delay_on, unsigned long *delay_off)	\
-@@ -552,7 +543,7 @@ static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
- 	led->state = BD2802_BLINK;					\
--	schedule_work(&led->work);					\
-+	bd2802_turn_on(led, led->led_id, led->color, BD2802_BLINK);	\
- 	return 0;							\
+ static void adp5520_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness value)
+ {
+ 	struct adp5520_led *led;
+ 
+ 	led = container_of(led_cdev, struct adp5520_led, cdev);
+-	led->new_brightness = value;
+-	schedule_work(&led->work);
++	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
++			 value >> 2);
  }
  
-@@ -567,8 +558,6 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- {
- 	int ret;
+ static int adp5520_led_setup(struct adp5520_led *led)
+@@ -146,9 +136,6 @@ static int adp5520_led_probe(struct platform_device *pdev)
+ 		led_dat->id = led_dat->flags & ADP5520_FLAG_LED_MASK;
  
--	INIT_WORK(&led->work, bd2802_led_work);
+ 		led_dat->master = pdev->dev.parent;
+-		led_dat->new_brightness = LED_OFF;
 -
- 	led->cdev_led1r.name = "led1_R";
- 	led->cdev_led1r.brightness = LED_OFF;
- 	led->cdev_led1r.brightness_set = bd2802_set_led1r_brightness;
-@@ -661,7 +650,6 @@ failed_unregister_led1_R:
+-		INIT_WORK(&led_dat->work, adp5520_led_work);
  
- static void bd2802_unregister_led_classdev(struct bd2802_led *led)
- {
--	cancel_work_sync(&led->work);
- 	led_classdev_unregister(&led->cdev_led2b);
- 	led_classdev_unregister(&led->cdev_led2g);
- 	led_classdev_unregister(&led->cdev_led2r);
+ 		ret = led_classdev_register(led_dat->master, &led_dat->cdev);
+ 		if (ret) {
+@@ -170,10 +157,8 @@ static int adp5520_led_probe(struct platform_device *pdev)
+ 
+ err:
+ 	if (i > 0) {
+-		for (i = i - 1; i >= 0; i--) {
++		for (i = i - 1; i >= 0; i--)
+ 			led_classdev_unregister(&led[i].cdev);
+-			cancel_work_sync(&led[i].work);
+-		}
+ 	}
+ 
+ 	return ret;
+@@ -192,7 +177,6 @@ static int adp5520_led_remove(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < pdata->num_leds; i++) {
+ 		led_classdev_unregister(&led[i].cdev);
+-		cancel_work_sync(&led[i].work);
+ 	}
+ 
+ 	return 0;
 -- 
 1.7.9.5
