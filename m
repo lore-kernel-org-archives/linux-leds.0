@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 11/51] leds: blinkm: Remove work queue
-Date: Fri, 17 Jul 2015 10:46:57 +0200
-Message-ID: <1437122857-6765-12-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 12/51] leds: lm3533: Remove work queue
+Date: Fri, 17 Jul 2015 10:46:58 +0200
+Message-ID: <1437122857-6765-13-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jan-Simon Moeller <dl9pf@gmx.de>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Johan Hovold <johan@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,145 +15,99 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Jan-Simon Moeller <dl9pf@gmx.de>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Johan Hovold <johan@kernel.org>
 ---
- drivers/leds/leds-blinkm.c |   66 ++++----------------------------------------
- 1 file changed, 5 insertions(+), 61 deletions(-)
+ drivers/leds/leds-lm3533.c |   30 ++++++------------------------
+ 1 file changed, 6 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-index d0452b0..8543775 100644
---- a/drivers/leds/leds-blinkm.c
-+++ b/drivers/leds/leds-blinkm.c
-@@ -39,16 +39,9 @@ struct blinkm_led {
- 	struct i2c_client *i2c_client;
- 	struct led_classdev led_cdev;
- 	int id;
--	atomic_t active;
--};
+diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+index 6e2e020..52496d8 100644
+--- a/drivers/leds/leds-lm3533.c
++++ b/drivers/leds/leds-lm3533.c
+@@ -17,7 +17,6 @@
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+-#include <linux/workqueue.h>
+ 
+ #include <linux/mfd/lm3533.h>
+ 
+@@ -53,9 +52,6 @@ struct lm3533_led {
+ 
+ 	struct mutex mutex;
+ 	unsigned long flags;
 -
--struct blinkm_work {
--	struct blinkm_led *blinkm_led;
 -	struct work_struct work;
+-	u8 new_brightness;
  };
  
- #define cdev_to_blmled(c)          container_of(c, struct blinkm_led, led_cdev)
--#define work_to_blmwork(c)         container_of(c, struct blinkm_work, work)
  
- struct blinkm_data {
- 	struct i2c_client *i2c_client;
-@@ -439,65 +432,30 @@ static int blinkm_transfer_hw(struct i2c_client *client, int cmd)
- 	return 0;
+@@ -123,27 +119,17 @@ out:
+ 	return ret;
  }
  
--static void led_work(struct work_struct *work)
+-static void lm3533_led_work(struct work_struct *work)
 -{
--	int ret;
--	struct blinkm_led *led;
--	struct blinkm_data *data;
--	struct blinkm_work *blm_work = work_to_blmwork(work);
+-	struct lm3533_led *led = container_of(work, struct lm3533_led, work);
 -
--	led = blm_work->blinkm_led;
--	data = i2c_get_clientdata(led->i2c_client);
--	ret = blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
--	atomic_dec(&led->active);
--	dev_dbg(&led->i2c_client->dev,
--			"# DONE # next_red = %d, next_green = %d,"
--			" next_blue = %d, active = %d\n",
--			data->next_red, data->next_green,
--			data->next_blue, atomic_read(&led->active));
--	kfree(blm_work);
+-	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, led->new_brightness);
+-
+-	if (led->new_brightness == 0)
+-		lm3533_led_pattern_enable(led, 0);	/* disable blink */
+-
+-	lm3533_ctrlbank_set_brightness(&led->cb, led->new_brightness);
 -}
 -
- static int blinkm_led_common_set(struct led_classdev *led_cdev,
- 				 enum led_brightness value, int color)
+ static void lm3533_led_set(struct led_classdev *cdev,
+-						enum led_brightness value)
++			   enum led_brightness value)
  {
- 	/* led_brightness is 0, 127 or 255 - we just use it here as-is */
- 	struct blinkm_led *led = cdev_to_blmled(led_cdev);
- 	struct blinkm_data *data = i2c_get_clientdata(led->i2c_client);
--	struct blinkm_work *bl_work;
+ 	struct lm3533_led *led = to_lm3533_led(cdev);
  
- 	switch (color) {
- 	case RED:
- 		/* bail out if there's no change */
- 		if (data->next_red == (u8) value)
- 			return 0;
--		/* we assume a quite fast sequence here ([off]->on->off)
--		 * think of network led trigger - we cannot blink that fast, so
--		 * in case we already have a off->on->off transition queued up,
--		 * we refuse to queue up more.
--		 * Revisit: fast-changing brightness. */
--		if (atomic_read(&led->active) > 1)
--			return 0;
- 		data->next_red = (u8) value;
- 		break;
- 	case GREEN:
- 		/* bail out if there's no change */
- 		if (data->next_green == (u8) value)
- 			return 0;
--		/* we assume a quite fast sequence here ([off]->on->off)
--		 * Revisit: fast-changing brightness. */
--		if (atomic_read(&led->active) > 1)
--			return 0;
- 		data->next_green = (u8) value;
- 		break;
- 	case BLUE:
- 		/* bail out if there's no change */
- 		if (data->next_blue == (u8) value)
- 			return 0;
--		/* we assume a quite fast sequence here ([off]->on->off)
--		 * Revisit: fast-changing brightness. */
--		if (atomic_read(&led->active) > 1)
--			return 0;
- 		data->next_blue = (u8) value;
- 		break;
+-	dev_dbg(led->cdev.dev, "%s - %d\n", __func__, value);
++	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, value);
++
++	if (value == 0)
++		lm3533_led_pattern_enable(led, 0);	/* disable blink */
  
-@@ -506,23 +464,12 @@ static int blinkm_led_common_set(struct led_classdev *led_cdev,
- 		return -EINVAL;
- 	}
- 
--	bl_work = kzalloc(sizeof(*bl_work), GFP_ATOMIC);
--	if (!bl_work)
--		return -ENOMEM;
--
--	atomic_inc(&led->active);
-+	blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
- 	dev_dbg(&led->i2c_client->dev,
--			"#TO_SCHED# next_red = %d, next_green = %d,"
--			" next_blue = %d, active = %d\n",
-+			"# DONE # next_red = %d, next_green = %d,"
-+			" next_blue = %d\n",
- 			data->next_red, data->next_green,
--			data->next_blue, atomic_read(&led->active));
--
--	/* a fresh work _item_ for each change */
--	bl_work->blinkm_led = led;
--	INIT_WORK(&bl_work->work, led_work);
--	/* queue work in own queue for easy sync on exit*/
--	schedule_work(&bl_work->work);
--
-+			data->next_blue);
- 	return 0;
+-	led->new_brightness = value;
+-	schedule_work(&led->work);
++	lm3533_ctrlbank_set_brightness(&led->cb, value);
  }
  
-@@ -669,7 +616,6 @@ static int blinkm_probe(struct i2c_client *client,
- 		led[i]->id = i;
- 		led[i]->led_cdev.max_brightness = 255;
- 		led[i]->led_cdev.flags = LED_CORE_SUSPENDRESUME;
--		atomic_set(&led[i]->active, 0);
- 		switch (i) {
- 		case RED:
- 			snprintf(blinkm_led_name, sizeof(blinkm_led_name),
-@@ -746,10 +692,8 @@ static int blinkm_remove(struct i2c_client *client)
- 	int i;
+ static enum led_brightness lm3533_led_get(struct led_classdev *cdev)
+@@ -701,7 +687,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 	led->id = pdev->id;
  
- 	/* make sure no workqueue entries are pending */
--	for (i = 0; i < 3; i++) {
--		flush_scheduled_work();
-+	for (i = 0; i < 3; i++)
- 		led_classdev_unregister(&data->blinkm_leds[i].led_cdev);
--	}
+ 	mutex_init(&led->mutex);
+-	INIT_WORK(&led->work, lm3533_led_work);
  
- 	/* reset rgb */
- 	data->next_red = 0x00;
+ 	/* The class framework makes a callback to get brightness during
+ 	 * registration so use parent device (for error reporting) until
+@@ -733,7 +718,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 
+ err_unregister:
+ 	led_classdev_unregister(&led->cdev);
+-	flush_work(&led->work);
+ 
+ 	return ret;
+ }
+@@ -746,7 +730,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
+ 
+ 	lm3533_ctrlbank_disable(&led->cb);
+ 	led_classdev_unregister(&led->cdev);
+-	flush_work(&led->work);
+ 
+ 	return 0;
+ }
+@@ -760,7 +743,6 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
+ 
+ 	lm3533_ctrlbank_disable(&led->cb);
+ 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
+-	flush_work(&led->work);
+ }
+ 
+ static struct platform_driver lm3533_led_driver = {
 -- 
 1.7.9.5
