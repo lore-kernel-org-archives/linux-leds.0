@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 22/51] leds: da903x: Remove work queue
-Date: Fri, 17 Jul 2015 10:47:08 +0200
-Message-ID: <1437122857-6765-23-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 24/51] leds: dac124d085: Remove work queue
+Date: Fri, 17 Jul 2015 10:47:10 +0200
+Message-ID: <1437122857-6765-25-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,101 +15,96 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 ---
- drivers/leds/leds-da903x.c |   32 +++++++++-----------------------
- 1 file changed, 9 insertions(+), 23 deletions(-)
+ drivers/leds/leds-dac124s085.c |   33 ++++++---------------------------
+ 1 file changed, 6 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
-index 952ba96e..9e19df1 100644
---- a/drivers/leds/leds-da903x.c
-+++ b/drivers/leds/leds-da903x.c
-@@ -16,7 +16,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #include <linux/mfd/da903x.h>
+diff --git a/drivers/leds/leds-dac124s085.c b/drivers/leds/leds-dac124s085.c
+index db3ba8b..2316620 100644
+--- a/drivers/leds/leds-dac124s085.c
++++ b/drivers/leds/leds-dac124s085.c
+@@ -13,20 +13,15 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
  #include <linux/slab.h>
+-#include <linux/spinlock.h>
+-#include <linux/workqueue.h>
+ #include <linux/spi/spi.h>
  
-@@ -33,9 +32,7 @@
- 
- struct da903x_led {
- 	struct led_classdev	cdev;
--	struct work_struct	work;
- 	struct device		*master;
--	enum led_brightness	new_brightness;
+ struct dac124s085_led {
+ 	struct led_classdev	ldev;
+ 	struct spi_device	*spi;
  	int			id;
- 	int			flags;
+-	int			brightness;
+ 	char			name[sizeof("dac124s085-3")];
+ 
+ 	struct mutex		mutex;
+-	struct work_struct	work;
+-	spinlock_t		lock;
  };
-@@ -43,9 +40,11 @@ struct da903x_led {
- #define DA9030_LED_OFFSET(id)	((id) - DA9030_ID_LED_1)
- #define DA9034_LED_OFFSET(id)	((id) - DA9034_ID_LED_1)
  
--static void da903x_led_work(struct work_struct *work)
-+static void da903x_led_set(struct led_classdev *led_cdev,
-+			   enum led_brightness value)
+ struct dac124s085 {
+@@ -38,31 +33,20 @@ struct dac124s085 {
+ #define ALL_WRITE_UPDATE	(2 << 12)
+ #define POWER_DOWN_OUTPUT	(3 << 12)
+ 
+-static void dac124s085_led_work(struct work_struct *work)
++static void dac124s085_set_brightness(struct led_classdev *ldev,
++				      enum led_brightness brightness)
  {
--	struct da903x_led *led = container_of(work, struct da903x_led, work);
-+	struct da903x_led *led =
-+			container_of(led_cdev, struct da903x_led, cdev);
- 	uint8_t val;
- 	int offset;
+-	struct dac124s085_led *led = container_of(work, struct dac124s085_led,
+-						  work);
++	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
++						  ldev);
+ 	u16 word;
  
-@@ -57,39 +56,29 @@ static void da903x_led_work(struct work_struct *work)
- 	case DA9030_ID_LED_PC:
- 		offset = DA9030_LED_OFFSET(led->id);
- 		val = led->flags & ~0x87;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
--		val |= (0x7 - (led->new_brightness >> 5)) & 0x7; /* PWM<2:0> */
-+		val |= value ? 0x80 : 0; /* EN bit */
-+		val |= (0x7 - (value >> 5)) & 0x7; /* PWM<2:0> */
- 		da903x_write(led->master, DA9030_LED1_CONTROL + offset, val);
- 		break;
- 	case DA9030_ID_VIBRA:
- 		val = led->flags & ~0x80;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
-+		val |= value ? 0x80 : 0; /* EN bit */
- 		da903x_write(led->master, DA9030_MISC_CONTROL_A, val);
- 		break;
- 	case DA9034_ID_LED_1:
- 	case DA9034_ID_LED_2:
- 		offset = DA9034_LED_OFFSET(led->id);
--		val = (led->new_brightness * 0x5f / LED_FULL) & 0x7f;
-+		val = (value * 0x5f / LED_FULL) & 0x7f;
- 		val |= (led->flags & DA9034_LED_RAMP) ? 0x80 : 0;
- 		da903x_write(led->master, DA9034_LED1_CONTROL + offset, val);
- 		break;
- 	case DA9034_ID_VIBRA:
--		val = led->new_brightness & 0xfe;
-+		val = value & 0xfe;
- 		da903x_write(led->master, DA9034_VIBRA, val);
- 		break;
- 	}
+ 	mutex_lock(&led->mutex);
+ 	word = cpu_to_le16(((led->id) << 14) | REG_WRITE_UPDATE |
+-			   (led->brightness & 0xfff));
++			   (brightness & 0xfff));
+ 	spi_write(led->spi, (const u8 *)&word, sizeof(word));
+ 	mutex_unlock(&led->mutex);
  }
  
--static void da903x_led_set(struct led_classdev *led_cdev,
--			   enum led_brightness value)
+-static void dac124s085_set_brightness(struct led_classdev *ldev,
+-				      enum led_brightness brightness)
 -{
--	struct da903x_led *led;
+-	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
+-						  ldev);
 -
--	led = container_of(led_cdev, struct da903x_led, cdev);
--	led->new_brightness = value;
+-	spin_lock(&led->lock);
+-	led->brightness = brightness;
 -	schedule_work(&led->work);
+-	spin_unlock(&led->lock);
 -}
 -
- static int da903x_led_probe(struct platform_device *pdev)
+ static int dac124s085_probe(struct spi_device *spi)
  {
- 	struct led_info *pdata = dev_get_platdata(&pdev->dev);
-@@ -119,9 +108,6 @@ static int da903x_led_probe(struct platform_device *pdev)
- 	led->id = id;
- 	led->flags = pdata->flags;
- 	led->master = pdev->dev.parent;
--	led->new_brightness = LED_OFF;
--
--	INIT_WORK(&led->work, da903x_led_work);
+ 	struct dac124s085	*dac;
+@@ -78,11 +62,8 @@ static int dac124s085_probe(struct spi_device *spi)
+ 	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
+ 		led		= dac->leds + i;
+ 		led->id		= i;
+-		led->brightness	= LED_OFF;
+ 		led->spi	= spi;
+ 		snprintf(led->name, sizeof(led->name), "dac124s085-%d", i);
+-		spin_lock_init(&led->lock);
+-		INIT_WORK(&led->work, dac124s085_led_work);
+ 		mutex_init(&led->mutex);
+ 		led->ldev.name = led->name;
+ 		led->ldev.brightness = LED_OFF;
+@@ -109,10 +90,8 @@ static int dac124s085_remove(struct spi_device *spi)
+ 	struct dac124s085	*dac = spi_get_drvdata(spi);
+ 	int i;
  
- 	ret = led_classdev_register(led->master, &led->cdev);
- 	if (ret) {
+-	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
++	for (i = 0; i < ARRAY_SIZE(dac->leds); i++)
+ 		led_classdev_unregister(&dac->leds[i].ldev);
+-		cancel_work_sync(&dac->leds[i].work);
+-	}
+ 
+ 	return 0;
+ }
 -- 
 1.7.9.5
