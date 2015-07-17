@@ -1,50 +1,35 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC 41/51] leds: wrap: Mark the LED fast
-Date: Fri, 17 Jul 2015 10:47:27 +0200
-Message-ID: <1437122857-6765-42-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC 49/51] leds: rb532: Mark the LED fast
+Date: Fri, 17 Jul 2015 10:47:35 +0200
+Message-ID: <1437122857-6765-50-git-send-email-j.anaszewski@samsung.com>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Kristian Kielhofner <kris@krisk.org>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Phil Sutter <n0-1@freewrt.org>
 List-Id: linux-leds@vger.kernel.org
 
 The driver neither sleeps nor uses delays in its brightness_set
 op. Mark it fast then.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Kristian Kielhofner <kris@krisk.org>
+Cc: Phil Sutter <n0-1@freewrt.org>
 ---
- drivers/leds/leds-wrap.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/leds/leds-rb532.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-wrap.c b/drivers/leds/leds-wrap.c
-index 1ba3def..dfc9e73 100644
---- a/drivers/leds/leds-wrap.c
-+++ b/drivers/leds/leds-wrap.c
-@@ -57,19 +57,19 @@ static struct led_classdev wrap_power_led = {
- 	.name			= "wrap::power",
- 	.brightness_set		= wrap_power_led_set,
- 	.default_trigger	= "default-on",
--	.flags			= LED_CORE_SUSPENDRESUME,
-+	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
+diff --git a/drivers/leds/leds-rb532.c b/drivers/leds/leds-rb532.c
+index fcd1215b..e825006 100644
+--- a/drivers/leds/leds-rb532.c
++++ b/drivers/leds/leds-rb532.c
+@@ -35,6 +35,7 @@ static struct led_classdev rb532_uled = {
+ 	.brightness_set = rb532_led_set,
+ 	.brightness_get = rb532_led_get,
+ 	.default_trigger = "nand-disk",
++	.flags		= LED_BRIGHTNESS_FAST,
  };
  
- static struct led_classdev wrap_error_led = {
- 	.name		= "wrap::error",
- 	.brightness_set	= wrap_error_led_set,
--	.flags			= LED_CORE_SUSPENDRESUME,
-+	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
- };
- 
- static struct led_classdev wrap_extra_led = {
- 	.name           = "wrap::extra",
- 	.brightness_set = wrap_extra_led_set,
--	.flags			= LED_CORE_SUSPENDRESUME,
-+	.flags			= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_FAST,
- };
- 
- static int wrap_led_probe(struct platform_device *pdev)
+ static int rb532_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
