@@ -1,82 +1,56 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: Re: [PATCH] backlight: pm8941-wled: Move PM8941 WLED driver to
- backlight
-Date: Mon, 20 Jul 2015 10:45:32 -0700
-Message-ID: <20150720174532.GA4753@usrtlx11787.corpusers.net>
-References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
- <004501d0c2f7$7ee51f40$7caf5dc0$@com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v2 00/10] pwm: add support for atomic update
+Date: Mon, 20 Jul 2015 21:49:13 +0200
+Message-ID: <20150720214913.73c47fa6@bbrezillon>
+References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150720171950.GE11162@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <004501d0c2f7$7ee51f40$7caf5dc0$@com>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: 'Rob Herring' <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Pawel Moll' <pawel.moll-5wv7dgnIgG8@public.gmane.org>, 'Mark Rutland' <mark.rutland-5wv7dgnIgG8@public.gmane.org>, 'Ian Campbell' <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, 'Kumar Gala' <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, 'Bryan Wu' <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Richard Purdie' <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, 'Jacek Anaszewski' <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Lee Jones' <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Jean-Christophe Plagniol-Villard' <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, 'Tomi Valkeinen' <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, 'Rob Clark' <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:33897 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754823AbbGTTtS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2015 15:49:18 -0400
+In-Reply-To: <20150720171950.GE11162@sirena.org.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Doug Anderson <dianders@google.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Mon 20 Jul 07:22 PDT 2015, Jingoo Han wrote:
+Hi Mark,
 
-> On Thursday, July 16, 2015 5:02 AM, Bjorn Andersson wrote:
-> > 
-> > The Qualcomm PM8941 WLED block is used for backlight and should therefor
-> > be in the backlight framework and not in the LED framework. This moves
-> > the driver and adapts to the backlight api instead.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/leds/leds-pm8941-wled.txt  |  5 +-
-> >  drivers/leds/Kconfig                               |  8 ---
-> >  drivers/leds/Makefile                              |  1 -
-> >  drivers/video/backlight/Kconfig                    |  8 +++
-> >  drivers/video/backlight/Makefile                   |  1 +
-> >  .../backlight/pm8941-wled.c}                       | 59 ++++++++++------------
-> >  6 files changed, 36 insertions(+), 46 deletions(-)
-> >  rename drivers/{leds/leds-pm8941-wled.c => video/backlight/pm8941-wled.c} (90%)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-> > b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-> > index a85a964d61f5..424f8444a6cd 100644
-> > --- a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
-> > +++ b/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+On Mon, 20 Jul 2015 18:19:50 +0100
+Mark Brown <broonie@kernel.org> wrote:
+
+> On Mon, Jul 20, 2015 at 05:31:57PM +0200, Boris Brezillon wrote:
 > 
-> Please move this txt file to 'backlight' directory.
+> > - dropped pwm-regulator patches (should be submitted separately)
 > 
+> I think the second patch needs to go in with this series doesn't it?  It
+> was just the enable one that was good to go immediately IIRC.
 
-Of course
+I was planning on submitting those two patches after the PWM changes
+have been merged, but you're right, maybe we should think about a proper
+way to smoothly get all of them in the same release.
 
-[..]
+I have rebased my work on top your regulator/topic/pwm branch containing
+Lee's work [1].
 
-> > diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-> > index 0505b796d743..6c67c5430933 100644
-> > --- a/drivers/video/backlight/Kconfig
-> > +++ b/drivers/video/backlight/Kconfig
-> > @@ -299,6 +299,14 @@ config BACKLIGHT_TOSA
-> >  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
-> >  	  for its backlight
-> > 
-> > +config BACKLIGHT_PM8941_WLED
-> > +	tristate "Qualcomm PM8941 WLED Driver"
-> > +	depends on LEDS_CLASS
-> 
-> LEDS_CLASS?
-> Please check your patch carefully.
-> 
+Note that patch 1 has changed a bit to take Lee's additions into
+account.
 
-Sorry about that.
+Thierry, could you create a branch based on Mark's regulator/topic/pwm
+branch ?
+If everybody agrees on the solution I'll send a v3 rebasing my work on
+top of this topic branch.
 
-> One more thing,
-> Did you test this patch with the board?
-> If not, I will not accept this patch, unless other people send 'Tested-by'.
+Best Regards,
 
-I've tested the driver on the Sony Xperia Z3 and it visually behaves as
-expected.
+Boris
 
-I'll send you an updated patch shortly.
-
-Thank you,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1]https://github.com/bbrezillon/linux-rk/tree/atomic-pwm-v3
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
