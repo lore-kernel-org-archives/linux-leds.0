@@ -1,67 +1,45 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2 00/10] pwm: add support for atomic update
-Date: Mon, 20 Jul 2015 22:21:00 +0200
-Message-ID: <20150720222100.7d838742@bbrezillon>
-References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
-	<20150720171950.GE11162@sirena.org.uk>
-	<20150720214913.73c47fa6@bbrezillon>
-	<20150720200819.GN11162@sirena.org.uk>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] backlight: pm8941-wled: Move PM8941 WLED driver to backlight
+Date: Mon, 20 Jul 2015 23:11:27 +0200
+Message-ID: <55AD63FF.8090408@gmail.com>
+References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com> <55A764C5.5060205@samsung.com> <004401d0c2f6$9b73b820$d25b2860$@com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34503 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752019AbbGTUVF (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2015 16:21:05 -0400
-In-Reply-To: <20150720200819.GN11162@sirena.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <004401d0c2f6$9b73b820$d25b2860$@com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Jingoo Han <jingoohan1@gmail.com>, 'Bjorn Andersson' <bjorn.andersson@sonymobile.com>
+Cc: 'Jacek Anaszewski' <j.anaszewski@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Lee Jones' <lee.jones@linaro.org>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Rob Clark' <robdclark@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Doug Anderson <dianders@google.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>
-
-On Mon, 20 Jul 2015 21:08:19 +0100
-Mark Brown <broonie@kernel.org> wrote:
-
-> On Mon, Jul 20, 2015 at 09:49:13PM +0200, Boris Brezillon wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> > > On Mon, Jul 20, 2015 at 05:31:57PM +0200, Boris Brezillon wrote:
-> 
-> > > > - dropped pwm-regulator patches (should be submitted separately)
-> 
-> > > I think the second patch needs to go in with this series doesn't it?  It
-> > > was just the enable one that was good to go immediately IIRC.
-> 
-> > I was planning on submitting those two patches after the PWM changes
-> > have been merged, but you're right, maybe we should think about a proper
-> > way to smoothly get all of them in the same release.
-> 
-> I see.  We should at least try to get the enable one in this time, I'd
-
-Actually I was wrong about that patch: it depends on patch 1/15 of the
-RFC ("pwm: add the pwm_is_enabled() helper").
-
-> like to just apply it and then either do a cross tree merge for the one
-> making use of the new functionality or (if the rest of the series gets
-> held up for some reason) just letting it get merged via Linus' tree.
-> 
-> > I have rebased my work on top your regulator/topic/pwm branch containing
-> > Lee's work [1].
-> 
-> > Note that patch 1 has changed a bit to take Lee's additions into
-> > account.
-> 
-> > Thierry, could you create a branch based on Mark's regulator/topic/pwm
-> > branch ?
-> > If everybody agrees on the solution I'll send a v3 rebasing my work on
-> > top of this topic branch.
-> 
-> I think that's fine for me, I can tag the PWM branch in my tree and
-> Thierry can pull that.
 
 
+
+On 20.07.2015 16:15, Jingoo Han wrote:
+> On Thursday, July 16, 2015 5:01 PM, Jacek Anaszewski wrote:
+>> On 07/15/2015 10:02 PM, Bjorn Andersson wrote:
+>>> The Qualcomm PM8941 WLED block is used for backlight and should therefor
+>>> be in the backlight framework and not in the LED framework. This moves
+>>> the driver and adapts to the backlight api instead.
+>>>
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+>>> ---
+>>>    .../devicetree/bindings/leds/leds-pm8941-wled.txt  |  5 +-
+>>>    drivers/leds/Kconfig                               |  8 ---
+>>>    drivers/leds/Makefile                              |  1 -
+>>>    drivers/video/backlight/Kconfig                    |  8 +++
+>>>    drivers/video/backlight/Makefile                   |  1 +
+>>>    .../backlight/pm8941-wled.c}                       | 59 ++++++++++------------
+>>>    6 files changed, 36 insertions(+), 46 deletions(-)
+>>>    rename drivers/{leds/leds-pm8941-wled.c => video/backlight/pm8941-wled.c} (90%)
+>>
+>> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>
+> If you are not an author of this driver or a maintainer affected by this patch,
+> Just 'Reviewed-by' looks good.
+
+I am a LED subsystem maintainer.
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best Regards,
+Jacek Anaszewski
