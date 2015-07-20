@@ -1,74 +1,49 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v6 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Mon, 20 Jul 2015 22:25:37 +0530
-Message-ID: <55AD2809.6050007@linux.vnet.ibm.com>
-References: <1437129671-14078-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437129671-14078-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55A91E67.6010200@samsung.com> <55A92B44.6020502@linux.vnet.ibm.com> <55AC193B.9060005@gmail.com> <55AC9244.5010407@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 00/10] pwm: add support for atomic update
+Date: Mon, 20 Jul 2015 18:19:50 +0100
+Message-ID: <20150720171950.GE11162@sirena.org.uk>
+References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OwxNnBplxDBmy6FV"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:34441 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752261AbbGTQ4g (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2015 12:56:36 -0400
-Received: from /spool/local
-	by e23smtp07.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Tue, 21 Jul 2015 02:56:34 +1000
-Received: from d23relay09.au.ibm.com (d23relay09.au.ibm.com [9.185.63.181])
-	by d23dlp03.au.ibm.com (Postfix) with ESMTP id 7CC393578048
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:56:30 +1000 (EST)
-Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
-	by d23relay09.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t6KGuMxw59244718
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:56:30 +1000
-Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
-	by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t6KGtvTY008169
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:55:58 +1000
-In-Reply-To: <55AC9244.5010407@gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60255 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753177AbbGTRUO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2015 13:20:14 -0400
+Content-Disposition: inline
+In-Reply-To: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, stewart@linux.vnet.ibm.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com, mpe@ellerman.id.au, benh@kernel.crashing.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Doug Anderson <dianders@google.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On 07/20/2015 11:46 AM, Jacek Anaszewski wrote:
-> On 19.07.2015 23:40, Jacek Anaszewski wrote:
-> [...]
->>>>> +/* Platform driver probe */
->>>>> +static int powernv_led_probe(struct platform_device *pdev)
->>>>> +{
->>>>> +    int num_leds;
->>>>> +    struct device_node *led_node;
->>>>> +    struct powernv_leds_priv *priv;
->>>>> +
->>>>> +    led_node = of_find_node_by_path("/ibm,opal/leds");
->>>>> +    if (!led_node) {
->>>>> +        dev_err(&pdev->dev,
->>>>> +            "%s: LED parent device node not found\n", __func__);
->>>>> +        return -EINVAL;
->>>>> +    }
->>>>> +
->>>>> +    num_leds = powernv_leds_count(led_node);
->>>>> +    if (num_leds <= 0) {
->>>>> +        dev_err(&pdev->dev,
->>>>> +            "%s: No location code found under LED node\n",
->>>>> +            __func__);
->>>>> +        return -EINVAL;
->>>>> +    }
->>
->> You won't need to count the number of LEDs to register, just allocate
->> memory for each LED during parsing with managed resource allocation
->> API.
 
-Jacek,
+--OwxNnBplxDBmy6FV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> You can refer to drivers/leds/leds-bcm6328.c in order to gain
-> full picture on how this can look like.
-> struct powernv_led_data would have to carry the pointer to the
-> new common struct.
-> 
+On Mon, Jul 20, 2015 at 05:31:57PM +0200, Boris Brezillon wrote:
 
-Sure.. Will though this code and will fix powernv code..
+> - dropped pwm-regulator patches (should be submitted separately)
 
-Thanks
--Vasant
+I think the second patch needs to go in with this series doesn't it?  It
+was just the enable one that was good to go immediately IIRC.
+
+--OwxNnBplxDBmy6FV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVrS22AAoJECTWi3JdVIfQ3u4H/1DaEVJrIoD2zH3HSOGhfiRF
+bonfEXpacF+zm5pnN91kk06bGts2+xrKBPErT72C4awUlxb+wP4KilkJpBUKjdro
+/BKsfcs/OnNuxB1Yv1XL0ZH49fFDIMdauDnNR4L/wCA047dYKlrKTCAghkPQLEbY
+9VTLq6uIoCEMk5LRdGzX6rX31/638uqLH409BTAMUgsDKDk2Wg1HRgm3PHtvLDwS
+BYxO/eiAhTAvz+UirukwM3SzJ7BCVS0eSi6t9ftNeMB+rP6tS8xdYXiHhfueEGJE
+jfiI9A9hDfv405HOImy/uP9gnqQ1udwaZPU+/GBN6+wQweyvObDWEO3IkahJDcc=
+=S7l4
+-----END PGP SIGNATURE-----
+
+--OwxNnBplxDBmy6FV--
