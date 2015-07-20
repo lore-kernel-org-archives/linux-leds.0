@@ -1,79 +1,74 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 05/10] pwm: declare a default PWM state
-Date: Mon, 20 Jul 2015 17:32:02 +0200
-Message-ID: <1437406327-6207-6-git-send-email-boris.brezillon@free-electrons.com>
-References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: Re: [PATCH v6 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Mon, 20 Jul 2015 22:25:37 +0530
+Message-ID: <55AD2809.6050007@linux.vnet.ibm.com>
+References: <1437129671-14078-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437129671-14078-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55A91E67.6010200@samsung.com> <55A92B44.6020502@linux.vnet.ibm.com> <55AC193B.9060005@gmail.com> <55AC9244.5010407@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, linux-fbdev@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-rockchip@lists.infradead.org, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Doug Anderson <dianders@google.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from e23smtp07.au.ibm.com ([202.81.31.140]:34441 "EHLO
+	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261AbbGTQ4g (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2015 12:56:36 -0400
+Received: from /spool/local
+	by e23smtp07.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Tue, 21 Jul 2015 02:56:34 +1000
+Received: from d23relay09.au.ibm.com (d23relay09.au.ibm.com [9.185.63.181])
+	by d23dlp03.au.ibm.com (Postfix) with ESMTP id 7CC393578048
+	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:56:30 +1000 (EST)
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+	by d23relay09.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t6KGuMxw59244718
+	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:56:30 +1000
+Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
+	by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t6KGtvTY008169
+	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:55:58 +1000
+In-Reply-To: <55AC9244.5010407@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, stewart@linux.vnet.ibm.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com, mpe@ellerman.id.au, benh@kernel.crashing.org
 
-Prepare the addition of the PWM initial state retrieval by adding a default
-state where all the parameters retrieved from DT, platform data or
-statically forced by the hardware will be stored.
-Once done we will be able to store the initial state in the ->state field
-without risking to loose the default parameters.
+On 07/20/2015 11:46 AM, Jacek Anaszewski wrote:
+> On 19.07.2015 23:40, Jacek Anaszewski wrote:
+> [...]
+>>>>> +/* Platform driver probe */
+>>>>> +static int powernv_led_probe(struct platform_device *pdev)
+>>>>> +{
+>>>>> +    int num_leds;
+>>>>> +    struct device_node *led_node;
+>>>>> +    struct powernv_leds_priv *priv;
+>>>>> +
+>>>>> +    led_node = of_find_node_by_path("/ibm,opal/leds");
+>>>>> +    if (!led_node) {
+>>>>> +        dev_err(&pdev->dev,
+>>>>> +            "%s: LED parent device node not found\n", __func__);
+>>>>> +        return -EINVAL;
+>>>>> +    }
+>>>>> +
+>>>>> +    num_leds = powernv_leds_count(led_node);
+>>>>> +    if (num_leds <= 0) {
+>>>>> +        dev_err(&pdev->dev,
+>>>>> +            "%s: No location code found under LED node\n",
+>>>>> +            __func__);
+>>>>> +        return -EINVAL;
+>>>>> +    }
+>>
+>> You won't need to count the number of LEDs to register, just allocate
+>> memory for each LED during parsing with managed resource allocation
+>> API.
 
-Update the pwm_set/get_default_xxx helpers accordingly.
+Jacek,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- include/linux/pwm.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> You can refer to drivers/leds/leds-bcm6328.c in order to gain
+> full picture on how this can look like.
+> struct powernv_led_data would have to carry the pointer to the
+> new common struct.
+> 
 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index f4bc034..1e6e9d1 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -101,6 +101,7 @@ struct pwm_device {
- 	void			*chip_data;
- 
- 	struct pwm_state	state;
-+	struct pwm_state	default_state;
- };
- 
- static inline bool pwm_is_enabled(const struct pwm_device *pwm)
-@@ -117,7 +118,8 @@ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
- static inline void pwm_set_default_period(struct pwm_device *pwm,
- 					  unsigned int period)
- {
--	pwm_set_period(pwm, period);
-+	if (pwm)
-+		pwm->default_state.period = period;
- }
- 
- static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
-@@ -127,7 +129,7 @@ static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
- 
- static inline unsigned int pwm_get_default_period(const struct pwm_device *pwm)
- {
--	return pwm_get_period(pwm);
-+	return pwm ? pwm->default_state.period : 0;
- }
- 
- static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
-@@ -149,7 +151,8 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity);
- static inline void pwm_set_default_polarity(struct pwm_device *pwm,
- 					    enum pwm_polarity polarity)
- {
--	pwm_set_polarity(pwm, polarity);
-+	if (pwm)
-+		pwm->default_state.polarity = polarity;
- }
- 
- static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
--- 
-1.9.1
+Sure.. Will though this code and will fix powernv code..
+
+Thanks
+-Vasant
