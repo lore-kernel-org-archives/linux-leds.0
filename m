@@ -1,40 +1,145 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC 03/51] leds: Add an internal
- led_set_brightness_nosleep function
-Date: Tue, 21 Jul 2015 11:53:31 +0200
-Message-ID: <20150721095331.GC23841@amd>
-References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
- <1437122857-6765-4-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v6 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 21 Jul 2015 11:55:47 +0200
+Message-ID: <55AE1723.6040806@gmail.com>
+References: <1437129671-14078-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437129671-14078-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55A91E67.6010200@samsung.com> <55A92B44.6020502@linux.vnet.ibm.com> <55AC193B.9060005@gmail.com> <55ADDE92.5040902@linux.vnet.ibm.com> <55ADECD2.4010802@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59831 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299AbbGUJxe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Jul 2015 05:53:34 -0400
-Content-Disposition: inline
-In-Reply-To: <1437122857-6765-4-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-wi0-f196.google.com ([209.85.212.196]:35098 "EHLO
+	mail-wi0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754384AbbGUJ5W (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Jul 2015 05:57:22 -0400
+Received: by wilm20 with SMTP id m20so12641421wil.2
+        for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 02:57:21 -0700 (PDT)
+In-Reply-To: <55ADECD2.4010802@linux.vnet.ibm.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: stewart@linux.vnet.ibm.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com
 
+Vasant,
 
->  	/* Set LED brightness level */
-> -	/* Must not sleep, use a workqueue if needed */
-> +	/* Must not sleep if the driver sets LED_BRIGHTNESS_FAST flag */
->  	void		(*brightness_set)(struct led_classdev *led_cdev,
->  					  enum led_brightness brightness);
->  	/*
+On 21.07.2015 08:55, Vasant Hegde wrote:
+> On 07/21/2015 11:24 AM, Vasant Hegde wrote:
+>> On 07/20/2015 03:10 AM, Jacek Anaszewski wrote:
+>>> Hi Vasant,
+>>>
+>>
+>> Jacek,
+>>
+>>> I've revised your patch and found few more issues.
+>>> Please refer to my comments below.
+>>
+>> Thanks.
+>>
+>> .../...
+>>
+>>>>>
+>>>>> Please don't exceed 75 character line length limit.
+>>>>
+>>>> Ok. I will fix it.. But I thought 80 character is the limit.
+>>>
+>>> checkpatch.pl reports this.
+>>
+>> Ah! I was running checkpatch.pl against source. Let me fix this.
+>> .../...
+>>
+>>>>>> +/*
+>>>>>> + * LED set routines have been implemented as work queue tasks scheduled
+>>>>>> + * on the global work queue. Individual task calls OPAL interface to set
+>>>>>> + * the LED state which might sleep for some time.
+>>>>>> + */
+>>>>>> +struct powernv_led_data {
+>>>>>> +    struct led_classdev    cdev;
+>>>>>> +    char            *loc_code;    /* LED location code */
+>>>>>> +    int            led_type;    /* OPAL_SLOT_LED_TYPE_* */
+>>>>>> +    enum led_brightness    value;        /* Brightness value */
+>>>>>> +    struct mutex        lock;
+>>>
+>>> You're unnecessarily adding mutex for each LED class device.
+>>> The shared resource to protect is here powernv led interface,
+>>> so one mutex will suffice.
+>>
+>>
+>> Ok. Let me move that to common structure.
+>>
+>>>
+>>>
+>>>>>> +    struct work_struct    work_led;    /* LED update workqueue */
+>>>>>> +};
+>>>>>> +
+>>>>>> +struct powernv_leds_priv {
+>>>>>> +    int num_leds;
+>>>>>> +    struct powernv_led_data powernv_leds[];
+>>>>>> +};
+>>>
+>>> powernv_led_data doesn't have to be retained in the array. You access
+>>> the array elements only upon creation of LED class devices. When using
+>>> managed resource allocation you don't need to bother with freeing
+>>> resources, so you don't need to keep reference to the data.
+>>>
+>>> I propose to drop struct powernv_leds_priv and instead introduce
+>>> a structure that would aggregate common driver data like mutex,
+>>> led_disable and max_led_type.
+>>
+>> I still think we need two structures.. One for common driver data like mutex,
+>> led_disable etc and other one for led data itself .. like
+>> 	struct powernv_led_data {
+>> 		struct led_classdev     cdev;
+>> 		char                    *loc_code;     <-- pointer to DT node
+>> 		int                     led_type;       /* OPAL_SLOT_LED_TYPE_* */
+>> 		enum led_brightness     value;          /* Brightness value */
+>> 	};
+>>
+>> 	struct powernv_led_common {
+>> 		bool led_disable;
+>> 		int 	max_led_type;
+>> 		struct mutex            lock;
+>> 	};
+>
+> Jacek,
+>
+> Alternatively I can club both into single structure like below
+>
+>   	struct powernv_led_data {
+>   		struct led_classdev     cdev;
+>   		char                    *loc_code;     <-- pointer to DT node
+>   		int                     led_type;       /* OPAL_SLOT_LED_TYPE_* */
+>   		enum led_brightness     value;          /* Brightness value */
+>
+>   		int 		*max_led_type;
+>   		struct mutex            *lock;
+>   	};
+>
+> 	static  bool 	led_disable;
+>
+>
+> In this case I've to keep led_disable outside the structure as I need to access
+> this variable in powernv_led_remove().
 
-Have fun improving static checkers to check for this kind of crazy
-semantics.
+OK, this looks good to me.
 
-NAK.
+>
+> One remaining issue with these approach (where we don't have array of
+> powernv_led ) is,
+> powernv_let_set() function can sleep. Current code (v6) calls flush_work before
+> unloading
+> module. That way we are sure work is complete before unloading module.
+> With new approach, I'm not sure how I can make sure work is completed before
+> loading module.
 
-Just use two callbacks, one of them always NULL.
-									Pavel
+led_classdev_unregister calls cancel_work_sync so brightness_set op
+will not be called after driver detach.
+
+ >  Does new workqueue approach has sleep functionality? Is there
+> way to make sure work is completed before
+> unloading module?
+
+It is approached from the other side - we are making sure that
+work will not be executed after driver detach.
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best Regards,
+Jacek Anaszewski
