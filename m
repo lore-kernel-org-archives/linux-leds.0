@@ -1,140 +1,80 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v6 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Tue, 21 Jul 2015 12:25:14 +0530
-Message-ID: <55ADECD2.4010802@linux.vnet.ibm.com>
-References: <1437129671-14078-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437129671-14078-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55A91E67.6010200@samsung.com> <55A92B44.6020502@linux.vnet.ibm.com> <55AC193B.9060005@gmail.com> <55ADDE92.5040902@linux.vnet.ibm.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] backlight: pm8941-wled: Move PM8941 WLED driver to
+ backlight
+Date: Tue, 21 Jul 2015 09:50:36 +0100
+Message-ID: <20150721085036.GF3061@x1>
+References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
+ <55A764C5.5060205@samsung.com>
+ <004401d0c2f6$9b73b820$d25b2860$@com>
+ <55AD63FF.8090408@gmail.com>
+ <9F0858DA-62D4-4511-A515-6CE38A680969@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e28smtp07.in.ibm.com ([122.248.162.7]:40589 "EHLO
-	e28smtp07.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752157AbbGUGzk (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Jul 2015 02:55:40 -0400
-Received: from /spool/local
-	by e28smtp07.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Tue, 21 Jul 2015 12:25:35 +0530
-Received: from d28relay03.in.ibm.com (d28relay03.in.ibm.com [9.184.220.60])
-	by d28dlp03.in.ibm.com (Postfix) with ESMTP id E06A5125807C
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 12:28:25 +0530 (IST)
-Received: from d28av03.in.ibm.com (d28av03.in.ibm.com [9.184.220.65])
-	by d28relay03.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t6L6tQE340370372
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 12:25:27 +0530
-Received: from d28av03.in.ibm.com (localhost [127.0.0.1])
-	by d28av03.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t6L5c5DS031235
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 11:08:07 +0530
-In-Reply-To: <55ADDE92.5040902@linux.vnet.ibm.com>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:37361 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752444AbbGUIul (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 21 Jul 2015 04:50:41 -0400
+Received: by wibud3 with SMTP id ud3so120140654wib.0
+        for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2015 01:50:39 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <9F0858DA-62D4-4511-A515-6CE38A680969@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: stewart@linux.vnet.ibm.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, linuxppc-dev@lists.ozlabs.org, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, khandual@linux.vnet.ibm.com
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Rob Clark <robdclark@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 
-On 07/21/2015 11:24 AM, Vasant Hegde wrote:
-> On 07/20/2015 03:10 AM, Jacek Anaszewski wrote:
->> Hi Vasant,
->>
-> 
-> Jacek,
-> 
->> I've revised your patch and found few more issues.
->> Please refer to my comments below.
-> 
-> Thanks.
-> 
-> .../...
-> 
->>>>
->>>> Please don't exceed 75 character line length limit.
->>>
->>> Ok. I will fix it.. But I thought 80 character is the limit.
->>
->> checkpatch.pl reports this.
-> 
-> Ah! I was running checkpatch.pl against source. Let me fix this.
-> .../...
-> 
->>>>> +/*
->>>>> + * LED set routines have been implemented as work queue tasks scheduled
->>>>> + * on the global work queue. Individual task calls OPAL interface to set
->>>>> + * the LED state which might sleep for some time.
->>>>> + */
->>>>> +struct powernv_led_data {
->>>>> +    struct led_classdev    cdev;
->>>>> +    char            *loc_code;    /* LED location code */
->>>>> +    int            led_type;    /* OPAL_SLOT_LED_TYPE_* */
->>>>> +    enum led_brightness    value;        /* Brightness value */
->>>>> +    struct mutex        lock;
->>
->> You're unnecessarily adding mutex for each LED class device.
->> The shared resource to protect is here powernv led interface,
->> so one mutex will suffice.
-> 
-> 
-> Ok. Let me move that to common structure.
-> 
->>
->>
->>>>> +    struct work_struct    work_led;    /* LED update workqueue */
->>>>> +};
->>>>> +
->>>>> +struct powernv_leds_priv {
->>>>> +    int num_leds;
->>>>> +    struct powernv_led_data powernv_leds[];
->>>>> +};
->>
->> powernv_led_data doesn't have to be retained in the array. You access
->> the array elements only upon creation of LED class devices. When using
->> managed resource allocation you don't need to bother with freeing
->> resources, so you don't need to keep reference to the data.
->>
->> I propose to drop struct powernv_leds_priv and instead introduce
->> a structure that would aggregate common driver data like mutex,
->> led_disable and max_led_type.
-> 
-> I still think we need two structures.. One for common driver data like mutex,
-> led_disable etc and other one for led data itself .. like
-> 	struct powernv_led_data {
-> 		struct led_classdev     cdev;
-> 		char                    *loc_code;     <-- pointer to DT node
-> 		int                     led_type;       /* OPAL_SLOT_LED_TYPE_* */
-> 		enum led_brightness     value;          /* Brightness value */
-> 	};
-> 
-> 	struct powernv_led_common {
-> 		bool led_disable;
-> 		int 	max_led_type;
-> 		struct mutex            lock;
-> 	};
+On Tue, 21 Jul 2015, Jingoo Han wrote:
 
-Jacek,
+>=20
+> On 2015. 7. 21., at AM 6:11, Jacek Anaszewski <jacek.anaszewski@gmail=
+=2Ecom> wrote:
+> >> On 20.07.2015 16:15, Jingoo Han wrote:
+> >>> On Thursday, July 16, 2015 5:01 PM, Jacek Anaszewski wrote:
+> >>>> On 07/15/2015 10:02 PM, Bjorn Andersson wrote:
+> >>>> The Qualcomm PM8941 WLED block is used for backlight and should =
+therefor
+> >>>> be in the backlight framework and not in the LED framework. This=
+ moves
+> >>>> the driver and adapts to the backlight api instead.
+> >>>>=20
+> >>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> >>>> ---
+> >>>>   .../devicetree/bindings/leds/leds-pm8941-wled.txt  |  5 +-
+> >>>>   drivers/leds/Kconfig                               |  8 ---
+> >>>>   drivers/leds/Makefile                              |  1 -
+> >>>>   drivers/video/backlight/Kconfig |  8 +++
+> >>>>   drivers/video/backlight/Makefile                   |  1 +
+> >>>>   .../backlight/pm8941-wled.c}                       | 59 ++++++=
+++++------------
+> >>>>   6 files changed, 36 insertions(+), 46 deletions(-)
+> >>>>   rename drivers/{leds/leds-pm8941-wled.c =3D> video/backlight/p=
+m8941-wled.c} (90%)
+> >>>=20
+> >>> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> >>=20
+> >> If you are not an author of this driver or a maintainer affected b=
+y this patch,
+> >> Just 'Reviewed-by' looks good.
+> >=20
+> > I am a LED subsystem maintainer.
+>=20
+> OK, I see.
+> I didn't notice that you were added as the maintainer 2 months ago.
 
-Alternatively I can club both into single structure like below
+Please read: Sections 12 and 13 of Documentation/SubmittingPatches.
 
- 	struct powernv_led_data {
- 		struct led_classdev     cdev;
- 		char                    *loc_code;     <-- pointer to DT node
- 		int                     led_type;       /* OPAL_SLOT_LED_TYPE_* */
- 		enum led_brightness     value;          /* Brightness value */
+Granted, Acked-bys are used by Maintainers when reviewing changes in
+subsystems they are responsible for.  However, that's not the sole use
+of them.  Anyone can provide an Ack for code they have reviewed, but
+are not an expert in.  Reviewed-bys have much stronger meaning and
+should only be used if the supplier knows the code and the subsystem
+well.  Please see SubmittingPatches for a full meaning of the
+Reviewed-by tag.
 
- 		int 		*max_led_type;
- 		struct mutex            *lock;
- 	};
-
-	static  bool 	led_disable;
-
-
-In this case I've to keep led_disable outside the structure as I need to access
-this variable in powernv_led_remove().
-
-One remaining issue with these approach (where we don't have array of
-powernv_led ) is,
-powernv_let_set() function can sleep. Current code (v6) calls flush_work before
-unloading
-module. That way we are sure work is complete before unloading module.
-With new approach, I'm not sure how I can make sure work is completed before
-loading module. Does new workqueue approach has sleep functionality? Is there
-way to make sure work is completed before
-unloading module?
-
--Vasant
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
