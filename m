@@ -1,50 +1,128 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC 01/51] leds: Add led_set_brightness_sync to the
- public LED subsystem API
-Date: Wed, 22 Jul 2015 09:25:27 +0200
-Message-ID: <20150722072527.GB18401@amd>
+From: Antonio Ospite <ao2@ao2.it>
+Subject: Re: [PATCH/RFC 15/51] leds: lp3944: Remove work queue
+Date: Wed, 22 Jul 2015 11:45:16 +0200
+Message-ID: <20150722114516.023361c194227890febbce54@ao2.it>
 References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
- <1437122857-6765-2-git-send-email-j.anaszewski@samsung.com>
- <20150721095005.GB23841@amd>
- <55AE6895.3040605@gmail.com>
+	<1437122857-6765-16-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55AE6895.3040605@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp209.alice.it ([82.57.200.105]:31193 "EHLO smtp209.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755016AbbGVJvv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 22 Jul 2015 05:51:51 -0400
+In-Reply-To: <1437122857-6765-16-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>
 
-On Tue 2015-07-21 17:43:17, Jacek Anaszewski wrote:
-> On 21.07.2015 11:50, Pavel Machek wrote:
-> >On Fri 2015-07-17 10:46:47, Jacek Anaszewski wrote:
-> >>led_set_brightness_sync function was visible only internally to the
-> >>LED subsystem. It is now being made publicly available since it has
-> >>become apparent that this is a caller who should decide whether
-> >>brightness is to be set in a synchronous or an asynchronous way.
-> >>The function is modified to use brightness_set op as the second
-> >>option if brightness_set_sync is not implemented. Eventually all
-> >>LED subsystem drivers will be modfified to set brightness only in
-> >>a synchronous way with use of brightness_set op and brightness_set_sync
-> >>op will be removed. LED core will take care of calling brightness_set
-> >>op asynchronously if needed.
-> >
-> >As I explained before, having single brightness_set callback sometimes
-> >block and sometimes not based on flag elsewhere is a bad design.
+On Fri, 17 Jul 2015 10:47:01 +0200
+Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+
+> From: Andrew Lunn <andrew@lunn.ch>
 > 
-> The flag is not "elsewhere" but defined by the same driver that
-> implements the op.
+> Now the core implements the work queue, remove it from the driver.
+> 
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Cc: Antonio Ospite <ospite@studenti.unina.it>
 
-Single callback sometimes blocks and sometimes does not, based on flag
-elsewhere (*). Making both human and computer analysis more tricky. Just
-don't do it.
+I can't test the changes but they look good to me.
 
-									Pavel
+Acked-by: Antonio Ospite <ao2@ao2.it>
 
-(*) sure, in the same driver, somewhere. but that info should be in
-the callback name.
+AFAICS now the status field may be dropped from struct
+lp3944_led_data and the values passed directly to lp3944_led_set()
+
+Not a big deal anyway, If you are not adding this change in the next
+iteration I will eventually send the cleanup as a separate patch after
+your change have been merged.
+
+Thanks,
+   Antonio
+
+> ---
+>  drivers/leds/leds-lp3944.c |   15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
+> index 53144fb..c5cb4b9 100644
+> --- a/drivers/leds/leds-lp3944.c
+> +++ b/drivers/leds/leds-lp3944.c
+> @@ -31,7 +31,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/leds.h>
+>  #include <linux/mutex.h>
+> -#include <linux/workqueue.h>
+>  #include <linux/leds-lp3944.h>
+>  
+>  /* Read Only Registers */
+> @@ -71,7 +70,6 @@ struct lp3944_led_data {
+>  	enum lp3944_status status;
+>  	struct led_classdev ldev;
+>  	struct i2c_client *client;
+> -	struct work_struct work;
+>  };
+>  
+>  struct lp3944_data {
+> @@ -276,7 +274,7 @@ static int lp3944_led_set_blink(struct led_classdev *led_cdev,
+>  		__func__);
+>  
+>  	led->status = LP3944_LED_STATUS_DIM0;
+> -	schedule_work(&led->work);
+> +	lp3944_led_set(led, led->status);
+>  
+>  	return 0;
+>  }
+> @@ -290,14 +288,6 @@ static void lp3944_led_set_brightness(struct led_classdev *led_cdev,
+>  		__func__, led_cdev->name, brightness);
+>  
+>  	led->status = !!brightness;
+> -	schedule_work(&led->work);
+> -}
+> -
+> -static void lp3944_led_work(struct work_struct *work)
+> -{
+> -	struct lp3944_led_data *led;
+> -
+> -	led = container_of(work, struct lp3944_led_data, work);
+>  	lp3944_led_set(led, led->status);
+>  }
+>  
+> @@ -325,7 +315,6 @@ static int lp3944_configure(struct i2c_client *client,
+>  			led->ldev.blink_set = lp3944_led_set_blink;
+>  			led->ldev.flags = LED_CORE_SUSPENDRESUME;
+>  
+> -			INIT_WORK(&led->work, lp3944_led_work);
+>  			err = led_classdev_register(&client->dev, &led->ldev);
+>  			if (err < 0) {
+>  				dev_err(&client->dev,
+> @@ -364,7 +353,6 @@ exit:
+>  			case LP3944_LED_TYPE_LED:
+>  			case LP3944_LED_TYPE_LED_INVERTED:
+>  				led_classdev_unregister(&data->leds[i].ldev);
+> -				cancel_work_sync(&data->leds[i].work);
+>  				break;
+>  
+>  			case LP3944_LED_TYPE_NONE:
+> @@ -424,7 +412,6 @@ static int lp3944_remove(struct i2c_client *client)
+>  		case LP3944_LED_TYPE_LED:
+>  		case LP3944_LED_TYPE_LED_INVERTED:
+>  			led_classdev_unregister(&data->leds[i].ldev);
+> -			cancel_work_sync(&data->leds[i].work);
+>  			break;
+>  
+>  		case LP3944_LED_TYPE_NONE:
+> -- 
+> 1.7.9.5
+> 
+
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Antonio Ospite
+http://ao2.it
+
+A: Because it messes up the order in which people normally read text.
+   See http://en.wikipedia.org/wiki/Posting_style
+Q: Why is top-posting such a bad thing?
