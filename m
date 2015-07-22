@@ -1,40 +1,50 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: Re: [PATCH v2] backlight: pm8941-wled: Move PM8941 WLED driver to
- backlight
-Date: Tue, 21 Jul 2015 17:49:27 -0700
-Message-ID: <20150722004927.GC4753@usrtlx11787.corpusers.net>
-References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>
- <1437525889-24928-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH/RFC 01/51] leds: Add led_set_brightness_sync to the
+ public LED subsystem API
+Date: Wed, 22 Jul 2015 09:25:27 +0200
+Message-ID: <20150722072527.GB18401@amd>
+References: <1437122857-6765-1-git-send-email-j.anaszewski@samsung.com>
+ <1437122857-6765-2-git-send-email-j.anaszewski@samsung.com>
+ <20150721095005.GB23841@amd>
+ <55AE6895.3040605@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1437525889-24928-1-git-send-email-bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55AE6895.3040605@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 21 Jul 17:44 PDT 2015, Bjorn Andersson wrote:
-
-> The Qualcomm PM8941 WLED block is used for backlight and should therefor
-> be in the backlight framework and not in the LED framework. This moves
-> the driver and adapts to the backlight api instead.
+On Tue 2015-07-21 17:43:17, Jacek Anaszewski wrote:
+> On 21.07.2015 11:50, Pavel Machek wrote:
+> >On Fri 2015-07-17 10:46:47, Jacek Anaszewski wrote:
+> >>led_set_brightness_sync function was visible only internally to the
+> >>LED subsystem. It is now being made publicly available since it has
+> >>become apparent that this is a caller who should decide whether
+> >>brightness is to be set in a synchronous or an asynchronous way.
+> >>The function is modified to use brightness_set op as the second
+> >>option if brightness_set_sync is not implemented. Eventually all
+> >>LED subsystem drivers will be modfified to set brightness only in
+> >>a synchronous way with use of brightness_set op and brightness_set_sync
+> >>op will be removed. LED core will take care of calling brightness_set
+> >>op asynchronously if needed.
+> >
+> >As I explained before, having single brightness_set callback sometimes
+> >block and sometimes not based on flag elsewhere is a bad design.
 > 
-> Acked-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Tested-by: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-> ---
+> The flag is not "elsewhere" but defined by the same driver that
+> implements the op.
 
-Sorry, forgot the changelog.
+Single callback sometimes blocks and sometimes does not, based on flag
+elsewhere (*). Making both human and computer analysis more tricky. Just
+don't do it.
 
-Changed since v1:
-- Moved dt binding document to backlight
-- Dropped LED_CLASS as dependency
+									Pavel
 
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+(*) sure, in the same driver, somewhere. but that info should be in
+the callback name.
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
