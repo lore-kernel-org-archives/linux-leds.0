@@ -1,65 +1,101 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v7 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Thu, 23 Jul 2015 13:38:01 +0530
-Message-ID: <55B0A0E1.1090803@linux.vnet.ibm.com>
-References: <1437576767-28496-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
- <1437576767-28496-4-git-send-email-hegdevasant@linux.vnet.ibm.com>
- <55B09DFB.2080108@gmail.com>
+Date: Thu, 23 Jul 2015 14:26:14 +0200
+Message-ID: <55B0DD66.8090809@gmail.com>
+References: <1437576767-28496-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437576767-28496-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55B09DFB.2080108@gmail.com> <55B0A0E1.1090803@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <55B09DFB.2080108@gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com
-Cc: stewart@linux.vnet.ibm.com, arnd@arndb.de, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:35583 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752316AbbGWM1t (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Jul 2015 08:27:49 -0400
+Received: by wibxm9 with SMTP id xm9so206072660wib.0
+        for <linux-leds@vger.kernel.org>; Thu, 23 Jul 2015 05:27:48 -0700 (PDT)
+In-Reply-To: <55B0A0E1.1090803@linux.vnet.ibm.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com
+Cc: stewart@linux.vnet.ibm.com, arnd@arndb.de, j.anaszewski81@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-T24gMDcvMjMvMjAxNSAwMToyNSBQTSwgSmFjZWsgQW5hc3pld3NraSB3cm90ZToKPiBIaSBWYXNh
-bnQsCj4gCgpKYWNlaywKCi4uLi8uLi4KCj4+ICsvKiBQb3dlck5WIExFRCBkYXRhICovCj4+ICtz
-dHJ1Y3QgcG93ZXJudl9sZWRfZGF0YSB7Cj4+ICsgICAgc3RydWN0IGxlZF9jbGFzc2RldiAgICBj
-ZGV2Owo+PiArICAgIGNoYXIgICAgICAgICAgICAqbG9jX2NvZGU7ICAgIC8qIExFRCBsb2NhdGlv
-biBjb2RlICovCj4+ICsgICAgaW50ICAgICAgICAgICAgbGVkX3R5cGU7ICAgIC8qIE9QQUxfU0xP
-VF9MRURfVFlQRV8qICovCj4+ICsgICAgZW51bSBsZWRfYnJpZ2h0bmVzcyAgICB2YWx1ZTsgICAg
-ICAgIC8qIEJyaWdodG5lc3MgdmFsdWUgKi8KPiAKPiBZb3UgZG9uJ3QgbmVlZCAndmFsdWUnIGFz
-IGJyaWdodG5lc3MgdmFsdWUgaXMgYWxyZWFkeSBzdG9yZWQgaW4KPiBjZGV2LmJyaWdodG5lc3Mu
-Cj4gCgpBZ3JlZS4gSSdsbCByZW1vdmUuCgo+PiArLyoKPj4gKyAqIExFRCBjbGFzc2RldiAnYnJp
-Z2h0bmVzc19nZXQnIGZ1bmN0aW9uLiBUaGlzIHNjaGVkdWxlcyB3b3JrCj4+ICsgKiB0byB1cGRh
-dGUgTEVEIHN0YXRlLgo+PiArICovCj4+ICtzdGF0aWMgdm9pZCBwb3dlcm52X2JyaWdodG5lc3Nf
-c2V0KHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2LAo+PiArICAgICAgICAgICAgICAgICAg
-IGVudW0gbGVkX2JyaWdodG5lc3MgdmFsdWUpCj4+ICt7Cj4+ICsgICAgc3RydWN0IHBvd2VybnZf
-bGVkX2RhdGEgKnBvd2VybnZfbGVkID0KPj4gKyAgICAgICAgY29udGFpbmVyX29mKGxlZF9jZGV2
-LCBzdHJ1Y3QgcG93ZXJudl9sZWRfZGF0YSwgY2Rldik7Cj4+ICsKPj4gKyAgICAvKiBEbyBub3Qg
-bW9kaWZ5IExFRCBpbiB1bmxvYWQgcGF0aCAqLwo+PiArICAgIGlmIChsZWRfZGlzYWJsZWQpCj4+
-ICsgICAgICAgIHJldHVybjsKPj4gKwo+PiArICAgIC8qIFByZXBhcmUgdGhlIHJlcXVlc3QgKi8K
-Pj4gKyAgICBwb3dlcm52X2xlZC0+dmFsdWUgPSB2YWx1ZTsKPj4gKwo+PiArICAgICByZXR1cm4g
-cG93ZXJudl9sZWRfc2V0KHBvd2VybnZfbGVkKTsKPiAKPiBJc24ndCBtdXRleF9sb2NrL3VubG9j
-ayBtaXNzaW5nIGhlcmU/CgpZZXMuIEkgcmVhbGl6ZWQgdGhpcyBhZnRlciBzZW5kaW5nIG91dCB0
-aGUgcGF0Y2guIEkgd2lsbCBmaXggdGhpcy4KLi4uLy4uLgoKPj4gKwo+PiArICAgIG1heF9sZWRf
-dHlwZSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqbWF4X2xlZF90eXBlKSwgR0ZQX0tFUk5F
-TCk7Cj4+ICsgICAgaWYgKCFtYXhfbGVkX3R5cGUpCj4+ICsgICAgICAgIHJldHVybiAtRU5PTUVN
-Owo+PiArCj4+ICsgICAgbXV0ZXhfaW5pdChsb2NrKTsKPj4gKyAgICAqbWF4X2xlZF90eXBlID0g
-Y3B1X3RvX2JlNjQoT1BBTF9TTE9UX0xFRF9UWVBFX01BWCk7Cj4+ICsKPj4gKyAgICBwbGF0Zm9y
-bV9zZXRfZHJ2ZGF0YShwZGV2LCBsb2NrKTsKPiAKPiBTZXR0aW5nIG9ubHkgbG9jayBhcyBkcnZk
-YXRhIGxvb2tzIG9kZCB0byBtZSBhbmQgSSBoYXZlbid0IG5vdGljZWQKPiBhbnlvbmUgZG9pbmcg
-dGhhdC4KPiBJJ2QgcHJlZmVyIHRvIHB1dCBsb2NrLCBsZWRfZGlzYWJsZWQgYW5kIG1heF9sZWRf
-dHlwZSBpbiBhIGNvbW1vbgo+IHN0cnVjdCBhbmQgc2V0IGl0IGFzIGRydmRhdGEuIEkga25vdyB0
-aGF0IEkgYWNjZXB0ZWQgdGhpcyBkZXNpZ24sIGJ1dAo+IEkgZGlkbid0IHRha2UgaW50byBhY2Nv
-dW50IHRoZXNlIGRldGFpbHMuCgpZZWFoLiBFdmVuIEkgbG9va2VkIGludG8gZXhpc3RpbmcgY29k
-ZSBhbmQgSSBkb24ndCBzZWUgYW55b25lIHVzaW5nIGxpa2UgdGhpcy4KU2luY2UgaXQncyB2b2lk
-ICogYW5kIHdlIGp1c3QgbmVlZCBsb2NrLCBJIGFkZGVkIGxpa2UgdGhpcy4KCklmIEkgYnJlYWsg
-dGhpcyBpbnRvIHR3byBzdHJ1Y3R1cmUsIHRoZW4gSSd2ZSB0byB1c2UgcGxhdGZvcm1fZ2V0X2Ry
-dmRhdGEoKSBjYWxsCmluIG11bHRpcGxlIGZ1bmN0aW9ucyBsaWtlIHBvd2VybnZfYnJpZ2h0bmVz
-c19zZXQoKSB0byBnZXQgbWF4X2xldF90eXBlIGV0Yy4gSXMKdGhhdCBmaW5lPwoKLVZhc2FudAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMt
-ZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xp
-c3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
+Vasant,
+
+On 23.07.2015 10:08, Vasant Hegde wrote:
+> On 07/23/2015 01:25 PM, Jacek Anaszewski wrote:
+>> Hi Vasant,
+>>
+>
+> Jacek,
+>
+> .../...
+>
+>>> +/* PowerNV LED data */
+>>> +struct powernv_led_data {
+>>> +    struct led_classdev    cdev;
+>>> +    char            *loc_code;    /* LED location code */
+>>> +    int            led_type;    /* OPAL_SLOT_LED_TYPE_* */
+>>> +    enum led_brightness    value;        /* Brightness value */
+>>
+>> You don't need 'value' as brightness value is already stored in
+>> cdev.brightness.
+>>
+>
+> Agree. I'll remove.
+>
+>>> +/*
+>>> + * LED classdev 'brightness_get' function. This schedules work
+>>> + * to update LED state.
+>>> + */
+>>> +static void powernv_brightness_set(struct led_classdev *led_cdev,
+>>> +                   enum led_brightness value)
+>>> +{
+>>> +    struct powernv_led_data *powernv_led =
+>>> +        container_of(led_cdev, struct powernv_led_data, cdev);
+>>> +
+>>> +    /* Do not modify LED in unload path */
+>>> +    if (led_disabled)
+>>> +        return;
+>>> +
+>>> +    /* Prepare the request */
+>>> +    powernv_led->value = value;
+>>> +
+>>> +     return powernv_led_set(powernv_led);
+>>
+>> Isn't mutex_lock/unlock missing here?
+>
+> Yes. I realized this after sending out the patch. I will fix this.
+> .../...
+>
+>>> +
+>>> +    max_led_type = devm_kzalloc(dev, sizeof(*max_led_type), GFP_KERNEL);
+>>> +    if (!max_led_type)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    mutex_init(lock);
+>>> +    *max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
+>>> +
+>>> +    platform_set_drvdata(pdev, lock);
+>>
+>> Setting only lock as drvdata looks odd to me and I haven't noticed
+>> anyone doing that.
+>> I'd prefer to put lock, led_disabled and max_led_type in a common
+>> struct and set it as drvdata. I know that I accepted this design, but
+>> I didn't take into account these details.
+>
+> Yeah. Even I looked into existing code and I don't see anyone using like this.
+> Since it's void * and we just need lock, I added like this.
+>
+> If I break this into two structure, then I've to use platform_get_drvdata() call
+> in multiple functions like powernv_brightness_set() to get max_let_type etc. Is
+> that fine?
+
+You could add wrappers for grouping instructions required to
+retrieve given properties of the common struct.
+Alternatively you could add a pointer to the common struct
+in the struct powernv_led_data. You can play with these approaches
+and choose the one which looks better.
+
+-- 
+Best Regards,
+Jacek Anaszewski
