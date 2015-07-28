@@ -1,78 +1,72 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v8 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Tue, 28 Jul 2015 08:38:33 +0200
-Message-ID: <55B72369.5040102@gmail.com>
-References: <1437801670-23705-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55B5540B.1000301@gmail.com> <55B5A853.3080909@linux.vnet.ibm.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v10.1] media: Add registration helpers for V4L2 flash
+ sub-devices
+Date: Tue, 28 Jul 2015 12:00:00 +0200
+Message-ID: <55B752A0.9060301@xs4all.nl>
+References: <1434699107-5678-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:34737 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751238AbbG1GkP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 02:40:15 -0400
-Received: by wibud3 with SMTP id ud3so166890514wib.1
-        for <linux-leds@vger.kernel.org>; Mon, 27 Jul 2015 23:40:14 -0700 (PDT)
-In-Reply-To: <55B5A853.3080909@linux.vnet.ibm.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1434699107-5678-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Cc: pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-leds@vger.kernel.org
-To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com, mpe@ellerman.id.au
-Cc: rpurdie@rpsys.net, cooloney@gmail.com, khandual@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, stewart@linux.vnet.ibm.com, benh@kernel.crashing.org
 
-Vasant,
+On 06/19/2015 09:31 AM, Jacek Anaszewski wrote:
+> This patch adds helper functions for registering/unregistering
+> LED Flash class devices as V4L2 sub-devices. The functions should
+> be called from the LED subsystem device driver. In case the
+> support for V4L2 Flash sub-devices is disabled in the kernel
+> config the functions' empty versions will be used.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Sakari Ailus <sakari.ailus@iki.fi>
+> Cc: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+> - fixed possible NULL fled_cdev pointer dereference
+>   in the v4l2_flash_init function
+> 
+>  drivers/media/v4l2-core/Kconfig                |   11 +
+>  drivers/media/v4l2-core/Makefile               |    2 +
+>  drivers/media/v4l2-core/v4l2-flash-led-class.c |  710 ++++++++++++++++++++++++
+>  include/media/v4l2-flash-led-class.h           |  148 +++++
+>  4 files changed, 871 insertions(+)
+>  create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
+>  create mode 100644 include/media/v4l2-flash-led-class.h
+> 
 
-I've found one more formatting issue below.
+<snip>
 
-On 27.07.2015 05:41, Vasant Hegde wrote:
-[...]
->>> +
->>> +/*
->>> + * This function registers classdev structure for any given type of LED on
->>> + * a given child LED device node.
->>> + */
->>> +static int powernv_led_create(struct device *dev,
->>> +                  struct powernv_led_data *powernv_led,
->>> +                  const char *led_type_desc)
->>> +{
->>> +    int rc;
->>> +
->>> +    /* Make sure LED type is supported */
->>> +    powernv_led->led_type = powernv_get_led_type(led_type_desc);
->>> +    if (powernv_led->led_type == -1) {
->>> +        dev_warn(dev, "%s: No support for led type : %s\n",
->>> +             __func__, led_type_desc);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    /* Create the name for classdev */
->>> +    powernv_led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
->>> +                        powernv_led->loc_code,
->>> +                        led_type_desc);
->>> +    if (!powernv_led->cdev.name) {
->>> +        dev_err(dev,
->>> +            "%s: Memory allocation failed for classdev name\n",
->>> +            __func__);
->>> +        return -ENOMEM;
->>> +    }
->>> +
->>> +    powernv_led->cdev.brightness_set = powernv_brightness_set;
->>> +    powernv_led->cdev.brightness_get = powernv_brightness_get;
->>> +    powernv_led->cdev.brightness = LED_OFF;
->>> +    powernv_led->cdev.max_brightness = LED_FULL;
->>> +
->>> +    /* Register the classdev */
->>> +    rc = devm_led_classdev_register(dev, &powernv_led->cdev);
->>> +    if (rc) {
->>> +        dev_err(dev, "%s: Classdev registration failed for %s\n",
->>> +            __func__, powernv_led->cdev.name);
->>> +    }
+> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> new file mode 100644
+> index 0000000..5bdfb8d
+> --- /dev/null
+> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
 
-Braces are not needed here,
+<snip>
 
->>> +
->>> +    return rc;
->>> +}
+> +static const struct v4l2_subdev_core_ops v4l2_flash_core_ops = {
+> +	.queryctrl = v4l2_subdev_queryctrl,
+> +	.querymenu = v4l2_subdev_querymenu,
 
--- 
-Best Regards,
-Jacek Anaszewski
+Why are these here? This should not be necessary. As long as the sd.ctrl_handler
+pointer is set, this is handled automatically.
+
+> +};
+> +
+> +static const struct v4l2_subdev_ops v4l2_flash_subdev_ops = {
+> +	.core = &v4l2_flash_core_ops,
+> +};
+> +
+
+And if v4l2_flash_core_ops goes away, then this can go away as well.
+
+I know this driver has been merged, but I just noticed this while looking at
+something else.
+
+Regards,
+
+	Hans
