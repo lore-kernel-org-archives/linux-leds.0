@@ -1,138 +1,184 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 0/3] Add DT support for netxbig LEDs
-Date: Tue, 28 Jul 2015 12:30:07 +0200
-Message-ID: <55B759AF.8050304@free-electrons.com>
-References: <1434628373-11834-1-git-send-email-simon.guinot@sequanux.org> <55B3A32C.1010305@free-electrons.com> <55B3E536.5010107@gmail.com> <55B3F580.2040207@gmail.com>
+Subject: Re: [PATCH v2 2/4] ARM: Kirkwood: add modes-map property to ns2-leds
+ nodes
+Date: Tue, 28 Jul 2015 12:32:14 +0200
+Message-ID: <55B75A2E.4080803@free-electrons.com>
+References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org> <1435859803-19583-3-git-send-email-simon.guinot@sequanux.org> <55B3A047.70905@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:54933 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:55003 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932541AbbG1Kah (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 06:30:37 -0400
-In-Reply-To: <55B3F580.2040207@gmail.com>
+	with ESMTP id S932158AbbG1KcV (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 06:32:21 -0400
+In-Reply-To: <55B3A047.70905@free-electrons.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Vincent Donnefort <vdonnefort@gmail.com>
+To: Simon Guinot <simon.guinot@sequanux.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Hi Jacek, Simon,
-On 25/07/2015 22:45, Jacek Anaszewski wrote:
-> I confused two patch sets. Everything I wrote in the reply
-> below was related to leds-ns2 [1] patch set.
+Hi Simon, Jacek,
 
-About taking the dts part of this patch set in the led branch, I agree.
-It will solve the dependency problem I would have. Usually we (the mvebu
-maintainer) take all the dts related to void the merge conflict.
+On 25/07/2015 16:42, Gregory CLEMENT wrote:
+> Hi Simon, Jacek, Bryan, Richard,
+> 
+> On 02/07/2015 19:56, Simon Guinot wrote:
+>> From: Vincent Donnefort <vdonnefort@gmail.com>
+>>
+>> Since the LED modes mapping is no longer hardcoded inside the leds-ns2
+>> driver, then it must be provided through the modes-map property in the
+>> ns2-leds nodes.
+>>
+>> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+> 
+> As the other patch of the series seem to be merged in the led branch,
+> then I can apply this patch on mvebu/dt.
+> 
+> It is OK for being in linux-next, however this patch depend on "leds:
+> leds-ns2: move LED modes mapping outside of the driver", so I will need
+> to find a way to express this dependency when I will do the pull request
+> to arm-soc.
+> 
 
-For these ones, I don't expect any merge problem because they are all located
-in dts and only in one family.
+Eventually I removed this patch from my branch.
+Jacek, you can take it with my
 
-So you can also take "[PATCH v2 2/4] ARM: Kirkwood: add modes-map property to
-ns2-leds nodes" with my
 Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-and I will remove this one from my branches.
 
 Thanks,
 
 Gregory
 
 
-> When it is related to leds-netxbig driver - there was already
-> version 3 posted [2], but it is not the final one, we are waiting
-> for the update.
-
-Right, I missed this third version.
-
-
-
 > 
-> On 25.07.2015 21:36, Jacek Anaszewski wrote:
->> Hi Gregory,
+> Thanks,
+> 
+> Gregory
+> 
+> 
+>> ---
+>>  arch/arm/boot/dts/kirkwood-d2net.dts   | 5 +++++
+>>  arch/arm/boot/dts/kirkwood-is2.dts     | 5 +++++
+>>  arch/arm/boot/dts/kirkwood-ns2.dts     | 5 +++++
+>>  arch/arm/boot/dts/kirkwood-ns2max.dts  | 5 +++++
+>>  arch/arm/boot/dts/kirkwood-ns2mini.dts | 5 +++++
+>>  5 files changed, 25 insertions(+)
 >>
->> On 25.07.2015 16:54, Gregory CLEMENT wrote:
->>> Hi Simon, Bryan, Richard,
->>>
->>> On 18/06/2015 13:52, Simon Guinot wrote:
->>>> Hello,
->>>>
->>>> This patch series adds DT support for the LEDs found on the
->>>> Kirkwood-based
->>>> LaCie boards 2Big and 5Big Network v2.
->>>
->>> I saw that some led related patch on kirkwood based board have been
->>> merged.
->>> What is the status of this series?
->>
->> LED subsystem part has been merged to linux-next, since DTS files
->> are not required for the compilation to succeed. We've been waiting
->> for ARM/Marvell Kirkwood maintainer opinion to decide on how to proceed
->> regarding patch 2/4.
->>
->>> I still have the patch 2 and 3 in my inbox waiting for being applied.
->>
->> Patch 3 affects only drivers/leds/leds-ns2.c, you were probably
->> thinking of patch 1 which modifies the out of LED tree file
->> include/linux/platform_data/leds-kirkwood-ns2.h.
->>
->> IMO it would be best if the whole series went through the
->> LED tree.
->>
->>> Thanks,
->>>
->>> Gregory
->>>
->>>
->>>>
->>>> Changes since v1:
->>>> - Check timer mode value retrieved from DT.
->>>> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
->>>>    timer delay values from DT with function of_property_read_u32_index.
->>>>    Instead, use a temporary u32 variable. This allows to silence a
->>>> static
->>>>    checker warning.
->>>> - Make timer property optional in the binding documentation. It is now
->>>>    aligned with the driver code.
->>>>
->>>> Simon
->>>>
->>>> Simon Guinot (3):
->>>>    leds: netxbig: add device tree binding
->>>>    ARM: Kirkwood: add LED DT entries for netxbig boards
->>>>    ARM: mvebu: remove static LED setup for netxbig boards
->>>>
->>>>   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
->>>>   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
->>>>   arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
->>>>   arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
->>>>   arch/arm/mach-mvebu/Kconfig                        |   7 -
->>>>   arch/arm/mach-mvebu/Makefile                       |   1 -
->>>>   arch/arm/mach-mvebu/board.h                        |  21 --
->>>>   arch/arm/mach-mvebu/kirkwood.c                     |   4 -
->>>>   arch/arm/mach-mvebu/netxbig.c                      | 191
->>>> ----------------
->>>>   drivers/leds/leds-netxbig.c                        | 250
->>>> +++++++++++++++++++--
->>>>   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
->>>>   11 files changed, 501 insertions(+), 245 deletions(-)
->>>>   create mode 100644
->>>> Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
->>>>   create mode 100644
->>>> Documentation/devicetree/bindings/leds/leds-netxbig.txt
->>>>   delete mode 100644 arch/arm/mach-mvebu/board.h
->>>>   delete mode 100644 arch/arm/mach-mvebu/netxbig.c
->>>>   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
->>>>
->>>
->>>
+>> diff --git a/arch/arm/boot/dts/kirkwood-d2net.dts b/arch/arm/boot/dts/kirkwood-d2net.dts
+>> index 6b7856025001..e1c25c35e9ce 100644
+>> --- a/arch/arm/boot/dts/kirkwood-d2net.dts
+>> +++ b/arch/arm/boot/dts/kirkwood-d2net.dts
+>> @@ -10,6 +10,7 @@
+>>  
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/leds/leds-ns2.h>
+>>  #include "kirkwood-netxbig.dtsi"
+>>  
+>>  / {
+>> @@ -28,6 +29,10 @@
+>>  			label = "d2net_v2:blue:sata";
+>>  			slow-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+>>  			cmd-gpio = <&gpio0 30 GPIO_ACTIVE_HIGH>;
+>> +			modes-map = <NS_V2_LED_OFF  1 0
+>> +				     NS_V2_LED_ON   0 1
+>> +				     NS_V2_LED_ON   1 1
+>> +				     NS_V2_LED_SATA 0 0>;
+>>  		};
+>>  	};
+>>  
+>> diff --git a/arch/arm/boot/dts/kirkwood-is2.dts b/arch/arm/boot/dts/kirkwood-is2.dts
+>> index da674bbd49a8..4121674abd1c 100644
+>> --- a/arch/arm/boot/dts/kirkwood-is2.dts
+>> +++ b/arch/arm/boot/dts/kirkwood-is2.dts
+>> @@ -1,5 +1,6 @@
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/leds/leds-ns2.h>
+>>  #include "kirkwood-ns2-common.dtsi"
+>>  
+>>  / {
+>> @@ -27,6 +28,10 @@
+>>  			label = "ns2:blue:sata";
+>>  			slow-gpio = <&gpio0 29 0>;
+>>  			cmd-gpio = <&gpio0 30 0>;
+>> +			modes-map = <NS_V2_LED_OFF  1 0
+>> +				     NS_V2_LED_ON   0 1
+>> +				     NS_V2_LED_ON   1 1
+>> +				     NS_V2_LED_SATA 0 0>;
+>>  		};
+>>  	};
+>>  };
+>> diff --git a/arch/arm/boot/dts/kirkwood-ns2.dts b/arch/arm/boot/dts/kirkwood-ns2.dts
+>> index 53368d1022cc..190189d235e6 100644
+>> --- a/arch/arm/boot/dts/kirkwood-ns2.dts
+>> +++ b/arch/arm/boot/dts/kirkwood-ns2.dts
+>> @@ -1,5 +1,6 @@
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/leds/leds-ns2.h>
+>>  #include "kirkwood-ns2-common.dtsi"
+>>  
+>>  / {
+>> @@ -27,6 +28,10 @@
+>>  			label = "ns2:blue:sata";
+>>  			slow-gpio = <&gpio0 29 0>;
+>>  			cmd-gpio = <&gpio0 30 0>;
+>> +			modes-map = <NS_V2_LED_OFF  1 0
+>> +				     NS_V2_LED_ON   0 1
+>> +				     NS_V2_LED_ON   1 1
+>> +				     NS_V2_LED_SATA 0 0>;
+>>  		};
+>>  	};
+>>  };
+>> diff --git a/arch/arm/boot/dts/kirkwood-ns2max.dts b/arch/arm/boot/dts/kirkwood-ns2max.dts
+>> index 72c78d0b1116..55cc41d9c80c 100644
+>> --- a/arch/arm/boot/dts/kirkwood-ns2max.dts
+>> +++ b/arch/arm/boot/dts/kirkwood-ns2max.dts
+>> @@ -1,5 +1,6 @@
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/leds/leds-ns2.h>
+>>  #include "kirkwood-ns2-common.dtsi"
+>>  
+>>  / {
+>> @@ -46,6 +47,10 @@
+>>  			label = "ns2:blue:sata";
+>>  			slow-gpio = <&gpio0 29 0>;
+>>  			cmd-gpio = <&gpio0 30 0>;
+>> +			modes-map = <NS_V2_LED_OFF  1 0
+>> +				     NS_V2_LED_ON   0 1
+>> +				     NS_V2_LED_ON   1 1
+>> +				     NS_V2_LED_SATA 0 0>;
+>>  		};
+>>  	};
+>>  };
+>> diff --git a/arch/arm/boot/dts/kirkwood-ns2mini.dts b/arch/arm/boot/dts/kirkwood-ns2mini.dts
+>> index c441bf62c09f..9935f3ec29b4 100644
+>> --- a/arch/arm/boot/dts/kirkwood-ns2mini.dts
+>> +++ b/arch/arm/boot/dts/kirkwood-ns2mini.dts
+>> @@ -1,5 +1,6 @@
+>>  /dts-v1/;
+>>  
+>> +#include <dt-bindings/leds/leds-ns2.h>
+>>  #include "kirkwood-ns2-common.dtsi"
+>>  
+>>  / {
+>> @@ -47,6 +48,10 @@
+>>  			label = "ns2:blue:sata";
+>>  			slow-gpio = <&gpio0 29 0>;
+>>  			cmd-gpio = <&gpio0 30 0>;
+>> +			modes-map = <NS_V2_LED_OFF  1 0
+>> +				     NS_V2_LED_ON   0 1
+>> +				     NS_V2_LED_ON   1 1
+>> +				     NS_V2_LED_SATA 0 0>;
+>>  		};
+>>  	};
+>>  };
 >>
 > 
-> [1] 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/353807.html
-> [2] 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351486.html
 > 
 
 
