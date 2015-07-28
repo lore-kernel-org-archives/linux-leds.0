@@ -1,87 +1,57 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v10.1] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Tue, 28 Jul 2015 13:33:14 +0200
-Message-ID: <55B7687A.2020802@gmail.com>
-References: <1434699107-5678-1-git-send-email-j.anaszewski@samsung.com> <55B752A0.9060301@xs4all.nl>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] ARM: Kirkwood: add modes-map property to ns2-leds
+ nodes
+Date: Tue, 28 Jul 2015 13:34:51 +0200
+Message-ID: <55B768DB.3040409@gmail.com>
+References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org> <1435859803-19583-3-git-send-email-simon.guinot@sequanux.org> <55B3A047.70905@free-electrons.com> <55B75A2E.4080803@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:38221 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755370AbbG1Le4 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 07:34:56 -0400
-In-Reply-To: <55B752A0.9060301@xs4all.nl>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55B75A2E.4080803-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
 
-On 28.07.2015 12:00, Hans Verkuil wrote:
-> On 06/19/2015 09:31 AM, Jacek Anaszewski wrote:
->> This patch adds helper functions for registering/unregistering
->> LED Flash class devices as V4L2 sub-devices. The functions should
->> be called from the LED subsystem device driver. In case the
->> support for V4L2 Flash sub-devices is disabled in the kernel
->> config the functions' empty versions will be used.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Sakari Ailus <sakari.ailus@iki.fi>
->> Cc: Hans Verkuil <hans.verkuil@cisco.com>
->> ---
->> - fixed possible NULL fled_cdev pointer dereference
->>    in the v4l2_flash_init function
->>
->>   drivers/media/v4l2-core/Kconfig                |   11 +
->>   drivers/media/v4l2-core/Makefile               |    2 +
->>   drivers/media/v4l2-core/v4l2-flash-led-class.c |  710 ++++++++++++++++++++++++
->>   include/media/v4l2-flash-led-class.h           |  148 +++++
->>   4 files changed, 871 insertions(+)
->>   create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
->>   create mode 100644 include/media/v4l2-flash-led-class.h
->>
->
-> <snip>
->
->> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
->> new file mode 100644
->> index 0000000..5bdfb8d
->> --- /dev/null
->> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
->
-> <snip>
->
->> +static const struct v4l2_subdev_core_ops v4l2_flash_core_ops = {
->> +	.queryctrl = v4l2_subdev_queryctrl,
->> +	.querymenu = v4l2_subdev_querymenu,
->
-> Why are these here? This should not be necessary. As long as the sd.ctrl_handler
-> pointer is set, this is handled automatically.
->
->> +};
->> +
->> +static const struct v4l2_subdev_ops v4l2_flash_subdev_ops = {
->> +	.core = &v4l2_flash_core_ops,
->> +};
->> +
->
-> And if v4l2_flash_core_ops goes away, then this can go away as well.
->
-> I know this driver has been merged, but I just noticed this while looking at
-> something else.
 
-I'll be able to verify this no sooner than in two weeks. Probably
-you're right as I added this snippet without checking if it was
-really necessary.
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 28.07.2015 12:32, Gregory CLEMENT wrote:
+> Hi Simon, Jacek,
 >
+> On 25/07/2015 16:42, Gregory CLEMENT wrote:
+>> Hi Simon, Jacek, Bryan, Richard,
+>>
+>> On 02/07/2015 19:56, Simon Guinot wrote:
+>>> From: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>
+>>> Since the LED modes mapping is no longer hardcoded inside the leds-ns2
+>>> driver, then it must be provided through the modes-map property in the
+>>> ns2-leds nodes.
+>>>
+>>> Signed-off-by: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>
+>> As the other patch of the series seem to be merged in the led branch,
+>> then I can apply this patch on mvebu/dt.
+>>
+>> It is OK for being in linux-next, however this patch depend on "leds:
+>> leds-ns2: move LED modes mapping outside of the driver", so I will need
+>> to find a way to express this dependency when I will do the pull request
+>> to arm-soc.
+>>
+>
+> Eventually I removed this patch from my branch.
+> Jacek, you can take it with my
+>
+> Acked-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>
+
+OK, I'll take it with your ack.
 
 -- 
 Best Regards,
 Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
