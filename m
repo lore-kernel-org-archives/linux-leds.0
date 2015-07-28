@@ -1,72 +1,42 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v10.1] media: Add registration helpers for V4L2 flash
- sub-devices
-Date: Tue, 28 Jul 2015 12:00:00 +0200
-Message-ID: <55B752A0.9060301@xs4all.nl>
-References: <1434699107-5678-1-git-send-email-j.anaszewski@samsung.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v8 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 28 Jul 2015 20:14:55 +1000
+Message-ID: <1438078495.7562.135.camel@kernel.crashing.org>
+References: <1437801670-23705-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
+	 <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com>
+	 <55B5540B.1000301@gmail.com> <55B5A853.3080909@linux.vnet.ibm.com>
+	 <55B72369.5040102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1434699107-5678-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
-Cc: pavel@ucw.cz, cooloney@gmail.com, rpurdie@rpsys.net, sakari.ailus@iki.fi, s.nawrocki@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:47491 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933236AbbG1KPe (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 28 Jul 2015 06:15:34 -0400
+In-Reply-To: <55B72369.5040102@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com, mpe@ellerman.id.au, rpurdie@rpsys.net, cooloney@gmail.com, khandual@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, stewart@linux.vnet.ibm.com
 
-On 06/19/2015 09:31 AM, Jacek Anaszewski wrote:
-> This patch adds helper functions for registering/unregistering
-> LED Flash class devices as V4L2 sub-devices. The functions should
-> be called from the LED subsystem device driver. In case the
-> support for V4L2 Flash sub-devices is disabled in the kernel
-> config the functions' empty versions will be used.
+On Tue, 2015-07-28 at 08:38 +0200, Jacek Anaszewski wrote:
+> >>> +    /* Register the classdev */
+> >>> +    rc = devm_led_classdev_register(dev, &powernv_led->cdev);
+> >>> +    if (rc) {
+> >>> +        dev_err(dev, "%s: Classdev registration failed for %s\n",
+> >>> +            __func__, powernv_led->cdev.name);
+> >>> +    }
 > 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
-> - fixed possible NULL fled_cdev pointer dereference
->   in the v4l2_flash_init function
-> 
->  drivers/media/v4l2-core/Kconfig                |   11 +
->  drivers/media/v4l2-core/Makefile               |    2 +
->  drivers/media/v4l2-core/v4l2-flash-led-class.c |  710 ++++++++++++++++++++++++
->  include/media/v4l2-flash-led-class.h           |  148 +++++
->  4 files changed, 871 insertions(+)
->  create mode 100644 drivers/media/v4l2-core/v4l2-flash-led-class.c
->  create mode 100644 include/media/v4l2-flash-led-class.h
-> 
+> Braces are not needed here,
 
-<snip>
+Putting my old maintainer hat on for a minute ... this is serious nit
+picking :-)
 
-> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> new file mode 100644
-> index 0000000..5bdfb8d
-> --- /dev/null
-> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+Arguably, the function being multi-line, the braces do make the code
+more readable. This is a matter of taste which in such as case
+which isn't a blatant violation of an important rule should be left to
+the choice of the code implementor/maintainer.
 
-<snip>
-
-> +static const struct v4l2_subdev_core_ops v4l2_flash_core_ops = {
-> +	.queryctrl = v4l2_subdev_queryctrl,
-> +	.querymenu = v4l2_subdev_querymenu,
-
-Why are these here? This should not be necessary. As long as the sd.ctrl_handler
-pointer is set, this is handled automatically.
-
-> +};
-> +
-> +static const struct v4l2_subdev_ops v4l2_flash_subdev_ops = {
-> +	.core = &v4l2_flash_core_ops,
-> +};
-> +
-
-And if v4l2_flash_core_ops goes away, then this can go away as well.
-
-I know this driver has been merged, but I just noticed this while looking at
-something else.
-
-Regards,
-
-	Hans
+Cheers,
+Ben.
