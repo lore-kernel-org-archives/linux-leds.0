@@ -1,189 +1,50 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 2/4] ARM: Kirkwood: add modes-map property to ns2-leds
- nodes
-Date: Tue, 28 Jul 2015 12:32:14 +0200
-Message-ID: <55B75A2E.4080803@free-electrons.com>
-References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org> <1435859803-19583-3-git-send-email-simon.guinot@sequanux.org> <55B3A047.70905@free-electrons.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v8 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 28 Jul 2015 13:23:32 +0200
+Message-ID: <55B76634.6050505@gmail.com>
+References: <1437801670-23705-1-git-send-email-hegdevasant@linux.vnet.ibm.com>	 <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com>	 <55B5540B.1000301@gmail.com> <55B5A853.3080909@linux.vnet.ibm.com>	 <55B72369.5040102@gmail.com> <1438078495.7562.135.camel@kernel.crashing.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:55003 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932158AbbG1KcV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 06:32:21 -0400
-In-Reply-To: <55B3A047.70905@free-electrons.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:35497 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752373AbbG1LZP (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 07:25:15 -0400
+Received: by wibxm9 with SMTP id xm9so152450780wib.0
+        for <linux-leds@vger.kernel.org>; Tue, 28 Jul 2015 04:25:14 -0700 (PDT)
+In-Reply-To: <1438078495.7562.135.camel@kernel.crashing.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com, mpe@ellerman.id.au, rpurdie@rpsys.net, cooloney@gmail.com, khandual@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, stewart@linux.vnet.ibm.com
 
-Hi Simon, Jacek,
 
-On 25/07/2015 16:42, Gregory CLEMENT wrote:
-> Hi Simon, Jacek, Bryan, Richard,
-> 
-> On 02/07/2015 19:56, Simon Guinot wrote:
->> From: Vincent Donnefort <vdonnefort@gmail.com>
+
+On 28.07.2015 12:14, Benjamin Herrenschmidt wrote:
+> On Tue, 2015-07-28 at 08:38 +0200, Jacek Anaszewski wrote:
+>>>>> +    /* Register the classdev */
+>>>>> +    rc = devm_led_classdev_register(dev, &powernv_led->cdev);
+>>>>> +    if (rc) {
+>>>>> +        dev_err(dev, "%s: Classdev registration failed for %s\n",
+>>>>> +            __func__, powernv_led->cdev.name);
+>>>>> +    }
 >>
->> Since the LED modes mapping is no longer hardcoded inside the leds-ns2
->> driver, then it must be provided through the modes-map property in the
->> ns2-leds nodes.
->>
->> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
-> 
-> As the other patch of the series seem to be merged in the led branch,
-> then I can apply this patch on mvebu/dt.
-> 
-> It is OK for being in linux-next, however this patch depend on "leds:
-> leds-ns2: move LED modes mapping outside of the driver", so I will need
-> to find a way to express this dependency when I will do the pull request
-> to arm-soc.
-> 
+>> Braces are not needed here,
+>
+> Putting my old maintainer hat on for a minute ... this is serious nit
+> picking :-)
+>
+> Arguably, the function being multi-line, the braces do make the code
+> more readable. This is a matter of taste which in such as case
+> which isn't a blatant violation of an important rule should be left to
+> the choice of the code implementor/maintainer.
 
-Eventually I removed this patch from my branch.
-Jacek, you can take it with my
+I will not insist as checkpatch.pl also doesn't complain
+about that.
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-
-Thanks,
-
-Gregory
-
-
-> 
-> Thanks,
-> 
-> Gregory
-> 
-> 
->> ---
->>  arch/arm/boot/dts/kirkwood-d2net.dts   | 5 +++++
->>  arch/arm/boot/dts/kirkwood-is2.dts     | 5 +++++
->>  arch/arm/boot/dts/kirkwood-ns2.dts     | 5 +++++
->>  arch/arm/boot/dts/kirkwood-ns2max.dts  | 5 +++++
->>  arch/arm/boot/dts/kirkwood-ns2mini.dts | 5 +++++
->>  5 files changed, 25 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/kirkwood-d2net.dts b/arch/arm/boot/dts/kirkwood-d2net.dts
->> index 6b7856025001..e1c25c35e9ce 100644
->> --- a/arch/arm/boot/dts/kirkwood-d2net.dts
->> +++ b/arch/arm/boot/dts/kirkwood-d2net.dts
->> @@ -10,6 +10,7 @@
->>  
->>  /dts-v1/;
->>  
->> +#include <dt-bindings/leds/leds-ns2.h>
->>  #include "kirkwood-netxbig.dtsi"
->>  
->>  / {
->> @@ -28,6 +29,10 @@
->>  			label = "d2net_v2:blue:sata";
->>  			slow-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
->>  			cmd-gpio = <&gpio0 30 GPIO_ACTIVE_HIGH>;
->> +			modes-map = <NS_V2_LED_OFF  1 0
->> +				     NS_V2_LED_ON   0 1
->> +				     NS_V2_LED_ON   1 1
->> +				     NS_V2_LED_SATA 0 0>;
->>  		};
->>  	};
->>  
->> diff --git a/arch/arm/boot/dts/kirkwood-is2.dts b/arch/arm/boot/dts/kirkwood-is2.dts
->> index da674bbd49a8..4121674abd1c 100644
->> --- a/arch/arm/boot/dts/kirkwood-is2.dts
->> +++ b/arch/arm/boot/dts/kirkwood-is2.dts
->> @@ -1,5 +1,6 @@
->>  /dts-v1/;
->>  
->> +#include <dt-bindings/leds/leds-ns2.h>
->>  #include "kirkwood-ns2-common.dtsi"
->>  
->>  / {
->> @@ -27,6 +28,10 @@
->>  			label = "ns2:blue:sata";
->>  			slow-gpio = <&gpio0 29 0>;
->>  			cmd-gpio = <&gpio0 30 0>;
->> +			modes-map = <NS_V2_LED_OFF  1 0
->> +				     NS_V2_LED_ON   0 1
->> +				     NS_V2_LED_ON   1 1
->> +				     NS_V2_LED_SATA 0 0>;
->>  		};
->>  	};
->>  };
->> diff --git a/arch/arm/boot/dts/kirkwood-ns2.dts b/arch/arm/boot/dts/kirkwood-ns2.dts
->> index 53368d1022cc..190189d235e6 100644
->> --- a/arch/arm/boot/dts/kirkwood-ns2.dts
->> +++ b/arch/arm/boot/dts/kirkwood-ns2.dts
->> @@ -1,5 +1,6 @@
->>  /dts-v1/;
->>  
->> +#include <dt-bindings/leds/leds-ns2.h>
->>  #include "kirkwood-ns2-common.dtsi"
->>  
->>  / {
->> @@ -27,6 +28,10 @@
->>  			label = "ns2:blue:sata";
->>  			slow-gpio = <&gpio0 29 0>;
->>  			cmd-gpio = <&gpio0 30 0>;
->> +			modes-map = <NS_V2_LED_OFF  1 0
->> +				     NS_V2_LED_ON   0 1
->> +				     NS_V2_LED_ON   1 1
->> +				     NS_V2_LED_SATA 0 0>;
->>  		};
->>  	};
->>  };
->> diff --git a/arch/arm/boot/dts/kirkwood-ns2max.dts b/arch/arm/boot/dts/kirkwood-ns2max.dts
->> index 72c78d0b1116..55cc41d9c80c 100644
->> --- a/arch/arm/boot/dts/kirkwood-ns2max.dts
->> +++ b/arch/arm/boot/dts/kirkwood-ns2max.dts
->> @@ -1,5 +1,6 @@
->>  /dts-v1/;
->>  
->> +#include <dt-bindings/leds/leds-ns2.h>
->>  #include "kirkwood-ns2-common.dtsi"
->>  
->>  / {
->> @@ -46,6 +47,10 @@
->>  			label = "ns2:blue:sata";
->>  			slow-gpio = <&gpio0 29 0>;
->>  			cmd-gpio = <&gpio0 30 0>;
->> +			modes-map = <NS_V2_LED_OFF  1 0
->> +				     NS_V2_LED_ON   0 1
->> +				     NS_V2_LED_ON   1 1
->> +				     NS_V2_LED_SATA 0 0>;
->>  		};
->>  	};
->>  };
->> diff --git a/arch/arm/boot/dts/kirkwood-ns2mini.dts b/arch/arm/boot/dts/kirkwood-ns2mini.dts
->> index c441bf62c09f..9935f3ec29b4 100644
->> --- a/arch/arm/boot/dts/kirkwood-ns2mini.dts
->> +++ b/arch/arm/boot/dts/kirkwood-ns2mini.dts
->> @@ -1,5 +1,6 @@
->>  /dts-v1/;
->>  
->> +#include <dt-bindings/leds/leds-ns2.h>
->>  #include "kirkwood-ns2-common.dtsi"
->>  
->>  / {
->> @@ -47,6 +48,10 @@
->>  			label = "ns2:blue:sata";
->>  			slow-gpio = <&gpio0 29 0>;
->>  			cmd-gpio = <&gpio0 30 0>;
->> +			modes-map = <NS_V2_LED_OFF  1 0
->> +				     NS_V2_LED_ON   0 1
->> +				     NS_V2_LED_ON   1 1
->> +				     NS_V2_LED_SATA 0 0>;
->>  		};
->>  	};
->>  };
->>
-> 
-> 
-
+Vasant, please ignore my remark then.
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Best Regards,
+Jacek Anaszewski
