@@ -1,42 +1,143 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v8 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Tue, 28 Jul 2015 20:14:55 +1000
-Message-ID: <1438078495.7562.135.camel@kernel.crashing.org>
-References: <1437801670-23705-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
-	 <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com>
-	 <55B5540B.1000301@gmail.com> <55B5A853.3080909@linux.vnet.ibm.com>
-	 <55B72369.5040102@gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 0/3] Add DT support for netxbig LEDs
+Date: Tue, 28 Jul 2015 12:30:07 +0200
+Message-ID: <55B759AF.8050304@free-electrons.com>
+References: <1434628373-11834-1-git-send-email-simon.guinot@sequanux.org> <55B3A32C.1010305@free-electrons.com> <55B3E536.5010107@gmail.com> <55B3F580.2040207@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:47491 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933236AbbG1KPe (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 28 Jul 2015 06:15:34 -0400
-In-Reply-To: <55B72369.5040102@gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:54933 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932541AbbG1Kah (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 06:30:37 -0400
+In-Reply-To: <55B3F580.2040207@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com, mpe@ellerman.id.au, rpurdie@rpsys.net, cooloney@gmail.com, khandual@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, stewart@linux.vnet.ibm.com
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Vincent Donnefort <vdonnefort@gmail.com>
 
-On Tue, 2015-07-28 at 08:38 +0200, Jacek Anaszewski wrote:
-> >>> +    /* Register the classdev */
-> >>> +    rc = devm_led_classdev_register(dev, &powernv_led->cdev);
-> >>> +    if (rc) {
-> >>> +        dev_err(dev, "%s: Classdev registration failed for %s\n",
-> >>> +            __func__, powernv_led->cdev.name);
-> >>> +    }
+Hi Jacek, Simon,
+On 25/07/2015 22:45, Jacek Anaszewski wrote:
+> I confused two patch sets. Everything I wrote in the reply
+> below was related to leds-ns2 [1] patch set.
+
+About taking the dts part of this patch set in the led branch, I agree.
+It will solve the dependency problem I would have. Usually we (the mvebu
+maintainer) take all the dts related to void the merge conflict.
+
+For these ones, I don't expect any merge problem because they are all located
+in dts and only in one family.
+
+So you can also take "[PATCH v2 2/4] ARM: Kirkwood: add modes-map property to
+ns2-leds nodes" with my
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+and I will remove this one from my branches.
+
+Thanks,
+
+Gregory
+
+
+> When it is related to leds-netxbig driver - there was already
+> version 3 posted [2], but it is not the final one, we are waiting
+> for the update.
+
+Right, I missed this third version.
+
+
+
 > 
-> Braces are not needed here,
+> On 25.07.2015 21:36, Jacek Anaszewski wrote:
+>> Hi Gregory,
+>>
+>> On 25.07.2015 16:54, Gregory CLEMENT wrote:
+>>> Hi Simon, Bryan, Richard,
+>>>
+>>> On 18/06/2015 13:52, Simon Guinot wrote:
+>>>> Hello,
+>>>>
+>>>> This patch series adds DT support for the LEDs found on the
+>>>> Kirkwood-based
+>>>> LaCie boards 2Big and 5Big Network v2.
+>>>
+>>> I saw that some led related patch on kirkwood based board have been
+>>> merged.
+>>> What is the status of this series?
+>>
+>> LED subsystem part has been merged to linux-next, since DTS files
+>> are not required for the compilation to succeed. We've been waiting
+>> for ARM/Marvell Kirkwood maintainer opinion to decide on how to proceed
+>> regarding patch 2/4.
+>>
+>>> I still have the patch 2 and 3 in my inbox waiting for being applied.
+>>
+>> Patch 3 affects only drivers/leds/leds-ns2.c, you were probably
+>> thinking of patch 1 which modifies the out of LED tree file
+>> include/linux/platform_data/leds-kirkwood-ns2.h.
+>>
+>> IMO it would be best if the whole series went through the
+>> LED tree.
+>>
+>>> Thanks,
+>>>
+>>> Gregory
+>>>
+>>>
+>>>>
+>>>> Changes since v1:
+>>>> - Check timer mode value retrieved from DT.
+>>>> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
+>>>>    timer delay values from DT with function of_property_read_u32_index.
+>>>>    Instead, use a temporary u32 variable. This allows to silence a
+>>>> static
+>>>>    checker warning.
+>>>> - Make timer property optional in the binding documentation. It is now
+>>>>    aligned with the driver code.
+>>>>
+>>>> Simon
+>>>>
+>>>> Simon Guinot (3):
+>>>>    leds: netxbig: add device tree binding
+>>>>    ARM: Kirkwood: add LED DT entries for netxbig boards
+>>>>    ARM: mvebu: remove static LED setup for netxbig boards
+>>>>
+>>>>   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+>>>>   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
+>>>>   arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
+>>>>   arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
+>>>>   arch/arm/mach-mvebu/Kconfig                        |   7 -
+>>>>   arch/arm/mach-mvebu/Makefile                       |   1 -
+>>>>   arch/arm/mach-mvebu/board.h                        |  21 --
+>>>>   arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+>>>>   arch/arm/mach-mvebu/netxbig.c                      | 191
+>>>> ----------------
+>>>>   drivers/leds/leds-netxbig.c                        | 250
+>>>> +++++++++++++++++++--
+>>>>   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+>>>>   11 files changed, 501 insertions(+), 245 deletions(-)
+>>>>   create mode 100644
+>>>> Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+>>>>   create mode 100644
+>>>> Documentation/devicetree/bindings/leds/leds-netxbig.txt
+>>>>   delete mode 100644 arch/arm/mach-mvebu/board.h
+>>>>   delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+>>>>   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
+>>>>
+>>>
+>>>
+>>
+> 
+> [1] 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/353807.html
+> [2] 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351486.html
+> 
 
-Putting my old maintainer hat on for a minute ... this is serious nit
-picking :-)
 
-Arguably, the function being multi-line, the braces do make the code
-more readable. This is a matter of taste which in such as case
-which isn't a blatant violation of an important rule should be left to
-the choice of the code implementor/maintainer.
-
-Cheers,
-Ben.
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
