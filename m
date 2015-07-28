@@ -1,57 +1,67 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] ARM: Kirkwood: add modes-map property to ns2-leds
- nodes
-Date: Tue, 28 Jul 2015 13:34:51 +0200
-Message-ID: <55B768DB.3040409@gmail.com>
-References: <1435859803-19583-1-git-send-email-simon.guinot@sequanux.org> <1435859803-19583-3-git-send-email-simon.guinot@sequanux.org> <55B3A047.70905@free-electrons.com> <55B75A2E.4080803@free-electrons.com>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: Re: [PATCH v8 3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 28 Jul 2015 19:10:46 +0530
+Message-ID: <55B7865E.8000402@linux.vnet.ibm.com>
+References: <1437801670-23705-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55B5540B.1000301@gmail.com> <55B5A853.3080909@linux.vnet.ibm.com> <55B5FEDD.2000506@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55B75A2E.4080803-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from e23smtp01.au.ibm.com ([202.81.31.143]:48881 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752109AbbG1Nlp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2015 09:41:45 -0400
+Received: from /spool/local
+	by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Tue, 28 Jul 2015 23:41:43 +1000
+Received: from d23relay10.au.ibm.com (d23relay10.au.ibm.com [9.190.26.77])
+	by d23dlp03.au.ibm.com (Postfix) with ESMTP id 59490357804C
+	for <linux-leds@vger.kernel.org>; Tue, 28 Jul 2015 23:41:40 +1000 (EST)
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+	by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t6SDfWHT39911452
+	for <linux-leds@vger.kernel.org>; Tue, 28 Jul 2015 23:41:40 +1000
+Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
+	by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t6SDf6cn007323
+	for <linux-leds@vger.kernel.org>; Tue, 28 Jul 2015 23:41:08 +1000
+In-Reply-To: <55B5FEDD.2000506@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com, mpe@ellerman.id.au
+Cc: rpurdie@rpsys.net, cooloney@gmail.com, khandual@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, stewart@linux.vnet.ibm.com, benh@kernel.crashing.org
 
-
-
-On 28.07.2015 12:32, Gregory CLEMENT wrote:
-> Hi Simon, Jacek,
->
-> On 25/07/2015 16:42, Gregory CLEMENT wrote:
->> Hi Simon, Jacek, Bryan, Richard,
->>
->> On 02/07/2015 19:56, Simon Guinot wrote:
->>> From: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On 07/27/2015 03:20 PM, Jacek Anaszewski wrote:
+> Hi Vasant,
+> 
+> On 27.07.2015 05:41, Vasant Hegde wrote:
+>> On 07/27/2015 03:11 AM, Jacek Anaszewski wrote:
+>>> Hi Vasant,
 >>>
->>> Since the LED modes mapping is no longer hardcoded inside the leds-ns2
->>> driver, then it must be provided through the modes-map property in the
->>> ns2-leds nodes.
->>>
->>> Signed-off-by: Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >>
->> As the other patch of the series seem to be merged in the led branch,
->> then I can apply this patch on mvebu/dt.
+>> Hi Jacek,
 >>
->> It is OK for being in linux-next, however this patch depend on "leds:
->> leds-ns2: move LED modes mapping outside of the driver", so I will need
->> to find a way to express this dependency when I will do the pull request
->> to arm-soc.
+>>> Two trivial details left. Please find them below.
 >>
->
-> Eventually I removed this patch from my branch.
-> Jacek, you can take it with my
->
-> Acked-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->
+>> Thanks for the review/Ack. I'll fix below issues and resend patchset.
+>>
+>> I will ask Benh/Michael to take this patchset. But this patchset is depending
+>> on your core changes. Can you confirm that you are pushing that patchset in next
+>> merge window?
 
-OK, I'll take it with your ack.
+Jacek,
 
--- 
-Best Regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Without my core changes your driver won't work with led triggers, but
+> AFAIR this use case is not relevant for your LEDs? Eventually, we could
+> produce a patch set adding support for LED triggers if it will be clear
+> that LED core changes will not be merged in the upcoming merge window.
+
+IIUC current LED code doesn't allow me to sleep (without driver specific
+workqueue). And powernv_led_set() call will sleep. Hence I think it won't work.
+
+I did a quick test without your patch. It doesn't seems to be working.
+
+Alternatively we can revert the changes (add driver specific workqueue now) and
+later when your changes goes to upstream, I can fix my code.
+
+-Vasant
