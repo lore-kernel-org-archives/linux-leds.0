@@ -1,79 +1,64 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 00/27] Export I2C and OF module aliases in missing drivers
-Date: Thu, 30 Jul 2015 19:13:44 +0200
-Message-ID: <55BA5B48.1050005@osg.samsung.com>
-References: <1438273132-20926-1-git-send-email-javier@osg.samsung.com>
- <20150730163517.GA13165@dtor-ws> <20150730163708.GB13165@dtor-ws>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds/led-class: Add missing put_device()
+Date: Thu, 30 Jul 2015 22:37:05 +0200
+Message-ID: <55BA8AF1.80206@gmail.com>
+References: <1437746972-23967-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:55168 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754003AbbG3RN4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 30 Jul 2015 13:13:56 -0400
-In-Reply-To: <20150730163708.GB13165@dtor-ws>
+Received: from mail-wi0-f193.google.com ([209.85.212.193]:33423 "EHLO
+	mail-wi0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750935AbbG3Uiw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 30 Jul 2015 16:38:52 -0400
+In-Reply-To: <1437746972-23967-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, lm-sensors@lm-sensors.org, Sebastian Reichel <sre@kernel.org>, linux-input@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jean Delvare <jdelvare@suse.com>, Jonathan Cameron <jic23@kernel.org>, linux-media@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Guenter Roeck <linux@roeck-us.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Wolfram Sang <wsa@the-dreams.de>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Sjoe
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Dmitry,
+Hi Ricardo,
 
-Thanks a lot for your feedback.
+On 24.07.2015 16:09, Ricardo Ribalda Delgado wrote:
+> Devices found by class_find_device must be freed with put_device().
+> Otherwise the reference count will not work properly.
+>
+> Fixes: a96aa64cb572 ("leds/led-class: Handle LEDs with the same name")
+> Reported-by: Alan Tull <delicious.quinoa@gmail.com>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>
+> Thanks Alan!
+>
+>   drivers/leds/led-class.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index beabfbc6f7cd..380cda0bff72 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -228,12 +228,15 @@ static int led_classdev_next_name(const char *init_name, char *name,
+>   {
+>   	unsigned int i = 0;
+>   	int ret = 0;
+> +	struct device *dev;
+>
+>   	strlcpy(name, init_name, len);
+>
+> -	while (class_find_device(leds_class, NULL, name, match_name) &&
+> -	       (ret < len))
+> +	while ((dev = class_find_device(leds_class, NULL, name, match_name)) &&
+> +	       (ret < len)) {
+> +		put_device(dev);
 
-On 07/30/2015 06:37 PM, Dmitry Torokhov wrote:
-> On Thu, Jul 30, 2015 at 09:35:17AM -0700, Dmitry Torokhov wrote:
->> Hi Javier,
->>
->> On Thu, Jul 30, 2015 at 06:18:25PM +0200, Javier Martinez Canillas wrote:
->>> Hello,
->>>
->>> Short version:
->>>
->>> This series add the missing MODULE_DEVICE_TABLE() for OF and I2C tables
->>> to export that information so modules have the correct aliases built-in
->>> and autoloading works correctly.
->>>
->>> Longer version:
->>>
->>> Currently it's mandatory for I2C drivers to have an I2C device ID table
->>> regardless if the device was registered using platform data or OF. This
->>> is because the I2C core needs an I2C device ID table for two reasons:
->>>
->>> 1) Match the I2C client with a I2C device ID so a struct i2c_device_id
->>>    is passed to the I2C driver probe() function.
->>>
->>> 2) Export the module aliases from the I2C device ID table so userspace
->>>    can auto-load the correct module. This is because i2c_device_uevent
->>>    always reports a MODALIAS of the form i2c:<client->name>.
->>
->> Why are we not fixing this? We emit specially carved uevent for
->> ACPI-based devices, why not the same for OF? Platform bus does this...
-> 
-> Ah, now I see the 27/27 patch. I think it is exactly what we need. And
+IIUC, we will be leaking dev if ret >= len.
 
-Yes, patch 27/27 is needed but the problem is as I explained before that
-there are drivers relying on the current behavior. The item c) in the list
-of issues that I mentioned. So those drivers need to be fixed before that
-patch is merged...
-
-> probably for SPI bus as well.
+>   		ret = snprintf(name, len, "%s_%u", init_name, ++i);
+> +	}
+>
+>   	if (ret >= len)
+>   		return -ENOMEM;
 >
 
-Yes, I didn't mention SPI because the cover letter became too long
-already but it does indeed have the same issue and I discussed this
-with  Mark already some time ago [0].
-
-Once I2C uevent report is fixed, I plan to do the same for SPI.
-
-> Thanks.
-> 
-
-[0]: https://lkml.org/lkml/2014/9/11/458
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Best Regards,
+Jacek Anaszewski
