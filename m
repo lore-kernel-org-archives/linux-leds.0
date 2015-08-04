@@ -1,82 +1,113 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2] LED/MIPS: Move SEAD3 LED driver to where it belongs.
-Date: Tue, 04 Aug 2015 14:18:20 +0200
-Message-ID: <55C0AD8C.8090306@gmail.com>
-References: <20150803150401.GD2843@linux-mips.org> <55BF89D0.2080303@cogentembedded.com>
+From: Toshi Kikuchi <toshik@google.com>
+Subject: Re: [PATCH] leds: lp55xx: avoid dereferencing a stale platform_data pointer
+Date: Tue, 4 Aug 2015 11:07:42 -0700
+Message-ID: <CALMyts6RTvZfeDgpugQc75kOHc2Mc60cqUexOHezsjD=m1V1iw@mail.gmail.com>
+References: <1438649224-21989-1-git-send-email-toshik@chromium.org>
+	<55C01056.2020404@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:36042 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755894AbbHDMSX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 4 Aug 2015 08:18:23 -0400
-Received: by wicgj17 with SMTP id gj17so147665033wic.1
-        for <linux-leds@vger.kernel.org>; Tue, 04 Aug 2015 05:18:22 -0700 (PDT)
-In-Reply-To: <55BF89D0.2080303@cogentembedded.com>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:35189 "EHLO
+	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751588AbbHDSHn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 4 Aug 2015 14:07:43 -0400
+Received: by iodd187 with SMTP id d187so25168145iod.2
+        for <linux-leds@vger.kernel.org>; Tue, 04 Aug 2015 11:07:43 -0700 (PDT)
+In-Reply-To: <55C01056.2020404@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ralf Baechle <ralf@linux-mips.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Markos Chandras <markos.chandras@imgtec.com>
-Cc: linux-leds@vger.kernel.org, linux-mips@linux-mips.org
+To: "Kim, Milo" <milo.kim@ti.com>
+Cc: linux-leds@vger.kernel.org
 
-Hi Ralf, Sergei,
+Hi Milo,
 
-On 08/03/2015 05:33 PM, Sergei Shtylyov wrote:
-> Hello.
+I posted another patch (v2). Let me know what you think.
+
+Thanks,
+Toshi
+
+On Mon, Aug 3, 2015 at 6:07 PM, Kim, Milo <milo.kim@ti.com> wrote:
+> Hi Toshi,
 >
-> On 08/03/2015 06:04 PM, Ralf Baechle wrote:
 >
->> Fixes the following randconfig problem
->
->> leds-sead3.c:(.text+0x7dc): undefined reference to
->> `led_classdev_unregister'
->> leds-sead3.c:(.text+0x7e8): undefined reference to
->> `led_classdev_unregister'
->
->> Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Cc: Markos Chandras <markos.chandras@imgtec.com>
->> Cc: linux-leds@vger.kernel.org
->> Cc: linux-mips@linux-mips.org
->
-> [...]
->
->> diff --git a/arch/mips/mti-sead3/leds-sead3.c b/drivers/leds/leds-sead3.c
->> similarity index 99%
->> rename from arch/mips/mti-sead3/leds-sead3.c
->> rename to drivers/leds/leds-sead3.c
->> index c938cee..eb97a32 100644
->> --- a/arch/mips/mti-sead3/leds-sead3.c
->> +++ b/drivers/leds/leds-sead3.c
->
->      Oh, so you started to use -M finally. :-)
->
->> @@ -59,6 +59,7 @@ static int sead3_led_remove(struct platform_device
->> *pdev)
->>   {
->>       led_classdev_unregister(&sead3_pled);
->>       led_classdev_unregister(&sead3_fled);
+> On 8/4/2015 9:47 AM, Toshi Kikuchi wrote:
+>>
+>> lp55xx_of_populate_pdata() allocates platform_data dynamically if DT
+>> is used. The memory area is allocated with devm_kzalloc() so it is
+>> automatically freed if the driver is unloaded. The driver should clear
+>> the pointer to platform_data before it is unloaded, otherwise it will
+>> use the stale pointer accidentally if the driver is reloaded.
+>>
+>> Change-Id: Ia097ed83b92cec5a52534a71dcb5322869c2a7b1
+>> Signed-off-by: Toshi Kikuchi <toshik@chromium.org>
+>> ---
+>>   drivers/leds/leds-lp5521.c | 3 +++
+>>   drivers/leds/leds-lp5523.c | 3 +++
+>>   drivers/leds/leds-lp5562.c | 3 +++
+>>   drivers/leds/leds-lp8501.c | 3 +++
+>>   4 files changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+>> index 8ca197a..1f39922 100644
+>> --- a/drivers/leds/leds-lp5521.c
+>> +++ b/drivers/leds/leds-lp5521.c
+>> @@ -582,6 +582,9 @@ static int lp5521_remove(struct i2c_client *client)
+>>         lp55xx_unregister_leds(led, chip);
+>>         lp55xx_deinit_device(chip);
+>>
+>> +       if (client->dev.of_node)
+>> +               client->dev.platform_data = NULL;
 >> +
->
->     Unrelated white space change?
-
-Ralf, please split this change to the separate patch.
-You could also reorder include directives to be arranged in
-an alphabetical order.
-
->>       return 0;
+>>         return 0;
 >>   }
+>>
+>> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+>> index 584dbbc..15e10da 100644
+>> --- a/drivers/leds/leds-lp5523.c
+>> +++ b/drivers/leds/leds-lp5523.c
+>> @@ -948,6 +948,9 @@ static int lp5523_remove(struct i2c_client *client)
+>>         lp55xx_unregister_leds(led, chip);
+>>         lp55xx_deinit_device(chip);
+>>
+>> +       if (client->dev.of_node)
+>> +               client->dev.platform_data = NULL;
+>> +
+>>         return 0;
+>>   }
+>>
+>> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+>> index ca85724..32c8392 100644
+>> --- a/drivers/leds/leds-lp5562.c
+>> +++ b/drivers/leds/leds-lp5562.c
+>> @@ -582,6 +582,9 @@ static int lp5562_remove(struct i2c_client *client)
+>>         lp55xx_unregister_leds(led, chip);
+>>         lp55xx_deinit_device(chip);
+>>
+>> +       if (client->dev.of_node)
+>> +               client->dev.platform_data = NULL;
+>> +
+>>         return 0;
+>>   }
+>>
+>> diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+>> index d3098e3..e8542be 100644
+>> --- a/drivers/leds/leds-lp8501.c
+>> +++ b/drivers/leds/leds-lp8501.c
+>> @@ -376,6 +376,9 @@ static int lp8501_remove(struct i2c_client *client)
+>>         lp55xx_unregister_leds(led, chip);
+>>         lp55xx_deinit_device(chip);
+>>
+>> +       if (client->dev.of_node)
+>> +               client->dev.platform_data = NULL;
+>> +
+>>         return 0;
+>>   }
+>>
+>>
 >
-> MBR, Sergei
+> Thanks a lot for catching this. I think it would be better to move these
+> code to common part - 'leds-lp55xx-common.c' and call exported function in
+> each driver.
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
--- 
-Best Regards,
-Jacek Anaszewski
+> Best regards,
+> Milo
