@@ -1,113 +1,96 @@
-From: Toshi Kikuchi <toshik@google.com>
-Subject: Re: [PATCH] leds: lp55xx: avoid dereferencing a stale platform_data pointer
-Date: Tue, 4 Aug 2015 11:07:42 -0700
-Message-ID: <CALMyts6RTvZfeDgpugQc75kOHc2Mc60cqUexOHezsjD=m1V1iw@mail.gmail.com>
-References: <1438649224-21989-1-git-send-email-toshik@chromium.org>
-	<55C01056.2020404@ti.com>
+From: Craig McQueen <craig.mcqueen@innerrange.com>
+Subject: RE: Change uevent whenever brightness is set to 0
+Date: Wed, 5 Aug 2015 11:08:19 +1000
+Message-ID: <5500469A22567C4BAF673A6E86AFA3A40227C1D641F5@IR-CENTRAL.corp.innerrange.com>
+References: <5500469A22567C4BAF673A6E86AFA3A40227C1D640EC@IR-CENTRAL.corp.innerrange.com>
+ <55C0996C.6020905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:35189 "EHLO
-	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751588AbbHDSHn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 4 Aug 2015 14:07:43 -0400
-Received: by iodd187 with SMTP id d187so25168145iod.2
-        for <linux-leds@vger.kernel.org>; Tue, 04 Aug 2015 11:07:43 -0700 (PDT)
-In-Reply-To: <55C01056.2020404@ti.com>
+Received: from 122-143-146.dsl.connexus.net.au ([203.122.143.146]:51553 "EHLO
+	remote.innerrange.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751188AbbHEBI3 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 4 Aug 2015 21:08:29 -0400
+In-Reply-To: <55C0996C.6020905@gmail.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Kim, Milo" <milo.kim@ti.com>
-Cc: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Milo,
+> -----Original Message-----
+> From: Jacek Anaszewski [mailto:jacek.anaszewski@gmail.com]
+> 
+> Hi Craig,
+> 
+> On 08/04/2015 05:56 AM, Craig McQueen wrote:
+> > I've written a udev rule to catch uevent "change" events, with the goal of
+> setting LED user/group/permissions whenever trigger settings are changed.
+> >
+> > http://unix.stackexchange.com/a/202870/34376
+> >
+> > However, I've noticed that a TRIGGER uevent "change" event is generated
+> every time an LED is turned off.
+> >
+> > E.g. in one terminal:
+> >      udevadm monitor -p
+> >
+> > In another terminal:
+> >      echo 0 > /sys/class/leds/beaglebone:green:usr3/brightness
+> >
+> > The first terminal shows:
+> >
+> >      KERNEL[15446.374466] change
+> /devices/leds/leds/beaglebone:green:usr3 (leds)
+> >      ACTION=change
+> >      DEVPATH=/devices/leds/leds/beaglebone:green:usr3
+> >      SEQNUM=39147
+> >      SUBSYSTEM=leds
+> >      TRIGGER=none
+> >
+> > This behaviour is not ideal, because I really only want this uevent if the
+> trigger really has changed.
+> >
+> > I presume this is due to these two lines in brightness_store() in led-class.c:
+> > 	if (state == LED_OFF)
+> > 		led_trigger_remove(led_cdev);
+> >
+> > What would be the recommended way to improve this, so a TRIGGER
+> uevent "change" event is only generated if the trigger is actually reset to
+> 'none' in this scenario?
+> >
+> > I've noticed this on kernel 3.14.48 running on BeagleBone Black.
+> >
+> 
+> You can define your rule so that it would not be matched when
+> TRIGGER=none.
 
-I posted another patch (v2). Let me know what you think.
+I tried adding TRIGGER!="none" as in this rule:
 
-Thanks,
-Toshi
+SUBSYSTEM=="leds", ACTION=="change", TRIGGER!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 
-On Mon, Aug 3, 2015 at 6:07 PM, Kim, Milo <milo.kim@ti.com> wrote:
-> Hi Toshi,
->
->
-> On 8/4/2015 9:47 AM, Toshi Kikuchi wrote:
->>
->> lp55xx_of_populate_pdata() allocates platform_data dynamically if DT
->> is used. The memory area is allocated with devm_kzalloc() so it is
->> automatically freed if the driver is unloaded. The driver should clear
->> the pointer to platform_data before it is unloaded, otherwise it will
->> use the stale pointer accidentally if the driver is reloaded.
->>
->> Change-Id: Ia097ed83b92cec5a52534a71dcb5322869c2a7b1
->> Signed-off-by: Toshi Kikuchi <toshik@chromium.org>
->> ---
->>   drivers/leds/leds-lp5521.c | 3 +++
->>   drivers/leds/leds-lp5523.c | 3 +++
->>   drivers/leds/leds-lp5562.c | 3 +++
->>   drivers/leds/leds-lp8501.c | 3 +++
->>   4 files changed, 12 insertions(+)
->>
->> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
->> index 8ca197a..1f39922 100644
->> --- a/drivers/leds/leds-lp5521.c
->> +++ b/drivers/leds/leds-lp5521.c
->> @@ -582,6 +582,9 @@ static int lp5521_remove(struct i2c_client *client)
->>         lp55xx_unregister_leds(led, chip);
->>         lp55xx_deinit_device(chip);
->>
->> +       if (client->dev.of_node)
->> +               client->dev.platform_data = NULL;
->> +
->>         return 0;
->>   }
->>
->> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
->> index 584dbbc..15e10da 100644
->> --- a/drivers/leds/leds-lp5523.c
->> +++ b/drivers/leds/leds-lp5523.c
->> @@ -948,6 +948,9 @@ static int lp5523_remove(struct i2c_client *client)
->>         lp55xx_unregister_leds(led, chip);
->>         lp55xx_deinit_device(chip);
->>
->> +       if (client->dev.of_node)
->> +               client->dev.platform_data = NULL;
->> +
->>         return 0;
->>   }
->>
->> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
->> index ca85724..32c8392 100644
->> --- a/drivers/leds/leds-lp5562.c
->> +++ b/drivers/leds/leds-lp5562.c
->> @@ -582,6 +582,9 @@ static int lp5562_remove(struct i2c_client *client)
->>         lp55xx_unregister_leds(led, chip);
->>         lp55xx_deinit_device(chip);
->>
->> +       if (client->dev.of_node)
->> +               client->dev.platform_data = NULL;
->> +
->>         return 0;
->>   }
->>
->> diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
->> index d3098e3..e8542be 100644
->> --- a/drivers/leds/leds-lp8501.c
->> +++ b/drivers/leds/leds-lp8501.c
->> @@ -376,6 +376,9 @@ static int lp8501_remove(struct i2c_client *client)
->>         lp55xx_unregister_leds(led, chip);
->>         lp55xx_deinit_device(chip);
->>
->> +       if (client->dev.of_node)
->> +               client->dev.platform_data = NULL;
->> +
->>         return 0;
->>   }
->>
->>
->
-> Thanks a lot for catching this. I think it would be better to move these
-> code to common part - 'leds-lp55xx-common.c' and call exported function in
-> each driver.
->
-> Best regards,
-> Milo
+But the rule never seems to run. I can't figure out why not. Unless the older version of udev I'm using (182) doesn't support !=.
+
+
+Meanwhile, I have made the following local change to the kernel, which does avoid generating a uevent every time brightness is set to 0:
+
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 9d9c79f..e5700c4 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -143,7 +143,8 @@ EXPORT_SYMBOL_GPL(led_trigger_set);
+ void led_trigger_remove(struct led_classdev *led_cdev)
+ {
+        down_write(&led_cdev->trigger_lock);
+-       led_trigger_set(led_cdev, NULL);
++       if (led_cdev->trigger)
++               led_trigger_set(led_cdev, NULL);
+        up_write(&led_cdev->trigger_lock);
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_remove);
+
+
+It has the minor side-effect of not generating a uevent more than once if 'echo none > trigger' is done repeatedly. I don't think this is a problem. (But repeated 'echo timer > trigger' would still generate a uevent every time. I think this is in the realm of no-one-cares.)
+
+-- 
+Craig McQueen
