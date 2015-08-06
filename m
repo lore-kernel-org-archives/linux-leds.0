@@ -1,46 +1,257 @@
-From: Toshi Kikuchi <toshik@chromium.org>
-Subject: Re: [PATCH v2] leds: lp55xx: avoid dereferencing a stale
- platform_data pointer
-Date: Thu, 6 Aug 2015 01:38:55 -0700
-Message-ID: <CALMyts6-uW87g6Y_j480QfqF3ujV0mWJtMO-pGS_pkXoisuY_w@mail.gmail.com>
-References: <1438679930-26080-1-git-send-email-toshik@chromium.org>
-	<55C31892.1030008@ti.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH v2] backlight: pm8941-wled: Move PM8941 WLED driver to backlight
+Date: Fri, 7 Aug 2015 00:37:32 +0900
+Message-ID: <000101d0d05d$d668e940$833abbc0$@com>
+References: <1436990540-23354-1-git-send-email-bjorn.andersson@sonymobile.com>  <1437525889-24928-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:36376 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754029AbbHFIi6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 6 Aug 2015 04:38:58 -0400
-Received: by igbij6 with SMTP id ij6so6682071igb.1
-        for <linux-leds@vger.kernel.org>; Thu, 06 Aug 2015 01:38:57 -0700 (PDT)
-Received: from mail-ig0-f178.google.com (mail-ig0-f178.google.com. [209.85.213.178])
-        by smtp.gmail.com with ESMTPSA id d4sm944280igl.1.2015.08.06.01.38.56
-        for <linux-leds@vger.kernel.org>
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Aug 2015 01:38:56 -0700 (PDT)
-Received: by igbij6 with SMTP id ij6so6681706igb.1
-        for <linux-leds@vger.kernel.org>; Thu, 06 Aug 2015 01:38:55 -0700 (PDT)
-In-Reply-To: <55C31892.1030008@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1437525889-24928-1-git-send-email-bjorn.andersson@sonymobile.com>
+Content-Language: ko
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: 'Bjorn Andersson' <bjorn.andersson@sonymobile.com>
+Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Jacek Anaszewski' <j.anaszewski@samsung.com>, 'Lee Jones' <lee.jones@linaro.org>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Rob Clark' <robdclark@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, 'Jingoo Han' <jingoohan1@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: "Kim, Milo" <milo.kim@ti.com>
-Cc: linux-leds@vger.kernel.org
 
-Hi Milo,
+On Wednesday, July 22, 2015 9:45 AM, Bjorn Andersson wrote:
+> 
+> The Qualcomm PM8941 WLED block is used for backlight and should therefor
+> be in the backlight framework and not in the LED framework. This moves
+> the driver and adapts to the backlight api instead.
+> 
+> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Tested-by: Rob Clark <robdclark@gmail.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-On Thu, Aug 6, 2015 at 1:19 AM, Kim, Milo <milo.kim@ti.com> wrote:
-> Your patch is good but I just found that I should modify lp55xx_of_populate_pdata().
-> Allocated platform data should not be pointed to I2C device platform data.
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Yes, I like your new patch better. We don't have to modify the i2c
-device platform data in the first place.
+Best regards,
+Jingoo Han
 
-> May I ask you something? Could you check attached patch if available? I
-> can't test it on real target board at this moment. I would appreciate if you
-> could test my code.
-
-Sure. I'll test the patch and let you know the result.
-
-Thanks,
-Toshi
+> ---
+>  .../backlight/pm8941-wled.txt}                     |  5 +-
+>  drivers/leds/Kconfig                               |  8 ---
+>  drivers/leds/Makefile                              |  1 -
+>  drivers/video/backlight/Kconfig                    |  7 +++
+>  drivers/video/backlight/Makefile                   |  1 +
+>  .../backlight/pm8941-wled.c}                       | 60 ++++++++++------------
+>  6 files changed, 35 insertions(+), 47 deletions(-)
+>  rename Documentation/devicetree/bindings/{leds/leds-pm8941-wled.txt => video/backlight/pm8941-
+> wled.txt} (84%)
+>  rename drivers/{leds/leds-pm8941-wled.c => video/backlight/pm8941-wled.c} (90%)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+> b/Documentation/devicetree/bindings/video/backlight/pm8941-wled.txt
+> similarity index 84%
+> rename from Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+> rename to Documentation/devicetree/bindings/video/backlight/pm8941-wled.txt
+> index a85a964d61f5..424f8444a6cd 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-pm8941-wled.txt
+> +++ b/Documentation/devicetree/bindings/video/backlight/pm8941-wled.txt
+> @@ -5,10 +5,7 @@ Required properties:
+>  - reg: slave address
+> 
+>  Optional properties:
+> -- label: The label for this led
+> -  See Documentation/devicetree/bindings/leds/common.txt
+> -- linux,default-trigger: Default trigger assigned to the LED
+> -  See Documentation/devicetree/bindings/leds/common.txt
+> +- label: The name of the backlight device
+>  - qcom,cs-out: bool; enable current sink output
+>  - qcom,cabc: bool; enable content adaptive backlight control
+>  - qcom,ext-gen: bool; use externally generated modulator signal to dim
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 9ad35f72ab4c..b8d4b965ca2a 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -578,14 +578,6 @@ config LEDS_VERSATILE
+>  	  This option enabled support for the LEDs on the ARM Versatile
+>  	  and RealView boards. Say Y to enabled these.
+> 
+> -config LEDS_PM8941_WLED
+> -	tristate "LED support for the Qualcomm PM8941 WLED block"
+> -	depends on LEDS_CLASS
+> -	select REGMAP
+> -	help
+> -	  This option enables support for the 'White' LED block
+> -	  on Qualcomm PM8941 PMICs.
+> -
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+> 
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 8d6a24a2f513..abe96d960ebe 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -63,7 +63,6 @@ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
+>  obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
+>  obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+>  obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+> -obj-$(CONFIG_LEDS_PM8941_WLED)		+= leds-pm8941-wled.o
+>  obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+> 
+>  # LED SPI Drivers
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 0505b796d743..5ffa4b4e26c0 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -299,6 +299,13 @@ config BACKLIGHT_TOSA
+>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+>  	  for its backlight
+> 
+> +config BACKLIGHT_PM8941_WLED
+> +	tristate "Qualcomm PM8941 WLED Driver"
+> +	select REGMAP
+> +	help
+> +	  If you have the Qualcomm PM8941, say Y to enable a driver for the
+> +	  WLED block.
+> +
+>  config BACKLIGHT_SAHARA
+>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+>  	depends on X86
+> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+> index d67073f9d421..16ec534cff30 100644
+> --- a/drivers/video/backlight/Makefile
+> +++ b/drivers/video/backlight/Makefile
+> @@ -48,6 +48,7 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
+>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
+> +obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
+>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+> diff --git a/drivers/leds/leds-pm8941-wled.c b/drivers/video/backlight/pm8941-wled.c
+> similarity index 90%
+> rename from drivers/leds/leds-pm8941-wled.c
+> rename to drivers/video/backlight/pm8941-wled.c
+> index bf64a593fbf1..c704c3236034 100644
+> --- a/drivers/leds/leds-pm8941-wled.c
+> +++ b/drivers/video/backlight/pm8941-wled.c
+> @@ -11,7 +11,7 @@
+>   */
+> 
+>  #include <linux/kernel.h>
+> -#include <linux/leds.h>
+> +#include <linux/backlight.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> @@ -76,30 +76,29 @@ struct pm8941_wled_config {
+>  };
+> 
+>  struct pm8941_wled {
+> +	const char *name;
+>  	struct regmap *regmap;
+>  	u16 addr;
+> 
+> -	struct led_classdev cdev;
+> -
+>  	struct pm8941_wled_config cfg;
+>  };
+> 
+> -static int pm8941_wled_set(struct led_classdev *cdev,
+> -			   enum led_brightness value)
+> +static int pm8941_wled_update_status(struct backlight_device *bl)
+>  {
+> -	struct pm8941_wled *wled;
+> +	struct pm8941_wled *wled = bl_get_data(bl);
+> +	u16 val = bl->props.brightness;
+>  	u8 ctrl = 0;
+> -	u16 val;
+>  	int rc;
+>  	int i;
+> 
+> -	wled = container_of(cdev, struct pm8941_wled, cdev);
+> +	if (bl->props.power != FB_BLANK_UNBLANK ||
+> +	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
+> +	    bl->props.state & BL_CORE_FBBLANK)
+> +		val = 0;
+> 
+> -	if (value != 0)
+> +	if (val != 0)
+>  		ctrl = PM8941_WLED_REG_MOD_EN_BIT;
+> 
+> -	val = value * PM8941_WLED_REG_VAL_MAX / LED_FULL;
+> -
+>  	rc = regmap_update_bits(wled->regmap,
+>  			wled->addr + PM8941_WLED_REG_MOD_EN,
+>  			PM8941_WLED_REG_MOD_EN_MASK, ctrl);
+> @@ -128,16 +127,6 @@ static int pm8941_wled_set(struct led_classdev *cdev,
+>  	return rc;
+>  }
+> 
+> -static void pm8941_wled_set_brightness(struct led_classdev *cdev,
+> -				       enum led_brightness value)
+> -{
+> -	if (pm8941_wled_set(cdev, value)) {
+> -		dev_err(cdev->dev, "Unable to set brightness\n");
+> -		return;
+> -	}
+> -	cdev->brightness = value;
+> -}
+> -
+>  static int pm8941_wled_setup(struct pm8941_wled *wled)
+>  {
+>  	int rc;
+> @@ -336,12 +325,9 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+>  	}
+>  	wled->addr = val;
+> 
+> -	rc = of_property_read_string(dev->of_node, "label", &wled->cdev.name);
+> +	rc = of_property_read_string(dev->of_node, "label", &wled->name);
+>  	if (rc)
+> -		wled->cdev.name = dev->of_node->name;
+> -
+> -	wled->cdev.default_trigger = of_get_property(dev->of_node,
+> -			"linux,default-trigger", NULL);
+> +		wled->name = dev->of_node->name;
+> 
+>  	*cfg = pm8941_wled_config_defaults;
+>  	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
+> @@ -377,8 +363,14 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
+>  	return 0;
+>  }
+> 
+> +static const struct backlight_ops pm8941_wled_ops = {
+> +	.update_status = pm8941_wled_update_status,
+> +};
+> +
+>  static int pm8941_wled_probe(struct platform_device *pdev)
+>  {
+> +	struct backlight_properties props;
+> +	struct backlight_device *bl;
+>  	struct pm8941_wled *wled;
+>  	struct regmap *regmap;
+>  	int rc;
+> @@ -403,13 +395,14 @@ static int pm8941_wled_probe(struct platform_device *pdev)
+>  	if (rc)
+>  		return rc;
+> 
+> -	wled->cdev.brightness_set = pm8941_wled_set_brightness;
+> -
+> -	rc = devm_led_classdev_register(&pdev->dev, &wled->cdev);
+> -	if (rc)
+> -		return rc;
+> -
+> -	platform_set_drvdata(pdev, wled);
+> +	memset(&props, 0, sizeof(struct backlight_properties));
+> +	props.type = BACKLIGHT_RAW;
+> +	props.max_brightness = PM8941_WLED_REG_VAL_MAX;
+> +	bl = devm_backlight_device_register(&pdev->dev, wled->name,
+> +					    &pdev->dev, wled,
+> +					    &pm8941_wled_ops, &props);
+> +	if (IS_ERR(bl))
+> +		return PTR_ERR(bl);
+> 
+>  	return 0;
+>  };
+> @@ -432,4 +425,3 @@ module_platform_driver(pm8941_wled_driver);
+> 
+>  MODULE_DESCRIPTION("pm8941 wled driver");
+>  MODULE_LICENSE("GPL v2");
+> -MODULE_ALIAS("platform:pm8941-wled");
+> --
+> 1.8.2.2
