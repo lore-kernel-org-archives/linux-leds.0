@@ -1,86 +1,121 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: leds-gpio on x86
-Date: Wed, 5 Aug 2015 22:09:48 +0200
-Message-ID: <20150805220948.3984f19c@x2>
+From: "Kim, Milo" <milo.kim@ti.com>
+Subject: Re: [PATCH v2] leds: lp55xx: avoid dereferencing a stale
+ platform_data pointer
+Date: Thu, 6 Aug 2015 14:44:17 +0900
+Message-ID: <55C2F431.3030107@ti.com>
+References: <1438679930-26080-1-git-send-email-toshik@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:38679 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751542AbbHEUJZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 5 Aug 2015 16:09:25 -0400
+Received: from comal.ext.ti.com ([198.47.26.152]:50657 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754317AbbHFFoV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 6 Aug 2015 01:44:21 -0400
+In-Reply-To: <1438679930-26080-1-git-send-email-toshik@chromium.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org
+To: Toshi Kikuchi <toshik@chromium.org>, linux-leds@vger.kernel.org
 
-Hello,
+Hi Toshi,
 
-I have recently acquired a NAS[1] which is basically an x86_64 with UEFI
-bios and adequate enclosure (drive trays and associated activity & error
-leds).
+On 8/4/2015 6:18 PM, Toshi Kikuchi wrote:
+> lp55xx_of_populate_pdata() allocates platform_data dynamically if DT
+> is used. The memory area is allocated with devm_kzalloc() so it is
+> automatically freed if the driver is unloaded. The driver should clear
+> the pointer to platform_data before it is unloaded, otherwise it will
+> use the stale pointer accidentally if the driver is reloaded.
+>
+> Change-Id: Ia097ed83b92cec5a52534a71dcb5322869c2a7b1
+> Signed-off-by: Toshi Kikuchi <toshik@chromium.org>
 
-Not being too happy with stock firmware features, I am in the process
-of replacing it with a general distribution. The distribution works
-great with stock kernel, but I do not get the error leds (nor, but I'm
-less interested, the global power/error/usb leds).
+Acked-by: Milo Kim <milo.kim@ti.com>
 
-Poking in the original firmware, I found a file declaring which SuperIO
-GPIO pins are used, and confirmed they do work by loading the
-appropriate gpio driver.
-
-Now, I wonder how far I should go: I would like to use the leds
-subsystem for easy triggering, but leds-acpi finds nothing.
-A quick read shows this driver finds relevant devices using
-openfirmware enumeration functions. If I understand correctly, this
-would be devicetree on ARM/MIPS/... but ACPI tables on x86. After an
-uneducated look at disassembled DSDT, I think I found the
-SuperIO declaration:
-  Name (IO3B, 0x0290)
-  [...]
-  Device (SIO1)
-  {
-    Name (_HID, EisaId ("PNP0C02") /* PNP Motherboard Resources */)  // _HID: Hardware ID
-    [...]
-    Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-    {
-      [...]
-      If (IO3B)
-      {
-        CreateWordField (CRS, \_SB.PCI0.SBRG.SIO1._Y0A._MIN, GP30)  // _MIN: Minimum Base Address
-        CreateWordField (CRS, \_SB.PCI0.SBRG.SIO1._Y0A._MAX, GP31)  // _MAX: Maximum Base Address
-        CreateByteField (CRS, \_SB.PCI0.SBRG.SIO1._Y0A._LEN, GPL3)  // _LEN: Length
-        GP30 = IO3B /* \IO3B */
-        GP31 = IO3B /* \IO3B */
-        GPL3 = IO3L /* \IO3L */
-      }
-(dmesg showing the SuperIO being based at 0x290 and this value not
-appearing elsewhere) which does not define any GPIO (no GpioIo() in
-the Device {} block), even less leds.
-
-One option seems to patch this to declare leds, but it seems dangerous
-(from the examples[2] I found, the change needed is less than 100 lines
-for the 6 leds, but that's an awful lot of error possibilities for the
-ACPI illiterate I am).
-
-Another option seems to develop a dumb module just declaring what the
-leds. This means I'll have to maintain an off-tree module (I do not
-see how it would detect that it's actually on this NAS model, so
-upstream inclusion seems unlikely).
-
-Yet another option would be to extend an existing driver, to make it
-configurable (ex: via sysfs). This would be my favourite (it is
-clearer to see how it would get merged), but registration need several
-values (name, pin number, active high/low, maybe color ?) and I have no
-idea how clean the syntax would be.
-
-Everything seems possible but I cannot tell which has better chances of
-success.
-
-Is my analysis correct so far ?
-Which next step would you recommend ?
-
-[1] QNAP TS-651
-[2] https://lwn.net/Articles/612062/
--- 
-Vincent Pelletier
+> ---
+>   drivers/leds/leds-lp5521.c        | 1 +
+>   drivers/leds/leds-lp5523.c        | 1 +
+>   drivers/leds/leds-lp5562.c        | 1 +
+>   drivers/leds/leds-lp55xx-common.c | 7 +++++++
+>   drivers/leds/leds-lp55xx-common.h | 2 ++
+>   drivers/leds/leds-lp8501.c        | 1 +
+>   6 files changed, 13 insertions(+)
+>
+> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+> index 8ca197a..faba1f9 100644
+> --- a/drivers/leds/leds-lp5521.c
+> +++ b/drivers/leds/leds-lp5521.c
+> @@ -581,6 +581,7 @@ static int lp5521_remove(struct i2c_client *client)
+>   	lp55xx_unregister_sysfs(chip);
+>   	lp55xx_unregister_leds(led, chip);
+>   	lp55xx_deinit_device(chip);
+> +	lp55xx_of_reset_pdata(&client->dev, client->dev.of_node);
+>
+>   	return 0;
+>   }
+> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+> index 584dbbc..4fc2850 100644
+> --- a/drivers/leds/leds-lp5523.c
+> +++ b/drivers/leds/leds-lp5523.c
+> @@ -947,6 +947,7 @@ static int lp5523_remove(struct i2c_client *client)
+>   	lp55xx_unregister_sysfs(chip);
+>   	lp55xx_unregister_leds(led, chip);
+>   	lp55xx_deinit_device(chip);
+> +	lp55xx_of_reset_pdata(&client->dev, client->dev.of_node);
+>
+>   	return 0;
+>   }
+> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+> index ca85724..9d8c250 100644
+> --- a/drivers/leds/leds-lp5562.c
+> +++ b/drivers/leds/leds-lp5562.c
+> @@ -581,6 +581,7 @@ static int lp5562_remove(struct i2c_client *client)
+>   	lp55xx_unregister_sysfs(chip);
+>   	lp55xx_unregister_leds(led, chip);
+>   	lp55xx_deinit_device(chip);
+> +	lp55xx_of_reset_pdata(&client->dev, client->dev.of_node);
+>
+>   	return 0;
+>   }
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 96d51e9..ec29163 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -594,6 +594,13 @@ int lp55xx_of_populate_pdata(struct device *dev, struct device_node *np)
+>   }
+>   EXPORT_SYMBOL_GPL(lp55xx_of_populate_pdata);
+>
+> +void lp55xx_of_reset_pdata(struct device *dev, struct device_node *np)
+> +{
+> +	if (np)
+> +		dev->platform_data = NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(lp55xx_of_reset_pdata);
+> +
+>   MODULE_AUTHOR("Milo Kim <milo.kim@ti.com>");
+>   MODULE_DESCRIPTION("LP55xx Common Driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
+> index cceab48..2a6a8fc 100644
+> --- a/drivers/leds/leds-lp55xx-common.h
+> +++ b/drivers/leds/leds-lp55xx-common.h
+> @@ -204,5 +204,7 @@ extern void lp55xx_unregister_sysfs(struct lp55xx_chip *chip);
+>   /* common device tree population function */
+>   extern int lp55xx_of_populate_pdata(struct device *dev,
+>   				    struct device_node *np);
+> +extern void lp55xx_of_reset_pdata(struct device *dev,
+> +				  struct device_node *np);
+>
+>   #endif /* _LEDS_LP55XX_COMMON_H */
+> diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+> index d3098e3..d75a6f3 100644
+> --- a/drivers/leds/leds-lp8501.c
+> +++ b/drivers/leds/leds-lp8501.c
+> @@ -375,6 +375,7 @@ static int lp8501_remove(struct i2c_client *client)
+>   	lp55xx_unregister_sysfs(chip);
+>   	lp55xx_unregister_leds(led, chip);
+>   	lp55xx_deinit_device(chip);
+> +	lp55xx_of_reset_pdata(&client->dev, client->dev.of_node);
+>
+>   	return 0;
+>   }
+>
