@@ -1,41 +1,49 @@
-From: "Kim, Milo" <milo.kim@ti.com>
-Subject: Re: [PATCH v2] leds: lp55xx: avoid dereferencing a stale
- platform_data pointer
-Date: Fri, 7 Aug 2015 07:39:05 +0900
-Message-ID: <55C3E209.1030202@ti.com>
-References: <1438679930-26080-1-git-send-email-toshik@chromium.org>
- <55C31892.1030008@ti.com>
- <CALMyts6-uW87g6Y_j480QfqF3ujV0mWJtMO-pGS_pkXoisuY_w@mail.gmail.com>
- <CALMyts6zZs5Mzyw3z8MH0N=1CuhL0iWEdjyUvKmGgYf1ekoSUg@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: leds-gpio on x86
+Date: Fri, 7 Aug 2015 13:57:45 +0300
+Message-ID: <20150807105745.GB1540@lahna.fi.intel.com>
+References: <20150805220948.3984f19c@x2>
+ <20150806165924.GY1540@lahna.fi.intel.com>
+ <20150806191727.0bf87a3a@x2>
+ <20150806173558.GZ1540@lahna.fi.intel.com>
+ <20150806201820.5ca0764d@x2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:36489 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464AbbHFXqd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 6 Aug 2015 19:46:33 -0400
-In-Reply-To: <CALMyts6zZs5Mzyw3z8MH0N=1CuhL0iWEdjyUvKmGgYf1ekoSUg@mail.gmail.com>
+Received: from mga03.intel.com ([134.134.136.65]:8766 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752126AbbHGK5s (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 7 Aug 2015 06:57:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20150806201820.5ca0764d@x2>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Toshi Kikuchi <toshik@chromium.org>
-Cc: linux-leds@vger.kernel.org
+To: Vincent Pelletier <plr.vincent@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org
 
-Hi Toshi,
+On Thu, Aug 06, 2015 at 08:18:20PM +0200, Vincent Pelletier wrote:
+> On Thu, 6 Aug 2015 20:35:58 +0300, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > Do you know which GPIOs are used for leds?
+> > 
+> > Since the GPIO host controller is listed in the DSDT, I think patching
+> > the leds device should be pretty simple.
+> 
+> That would be fantastic.
+> 
+> Green status: 62, green, active low
+> Red status: 63, red, active low
+> HDD racks: 70 to 75, red, active low
+> USB: 17, blue, active low
+> 
+> I tested all via sysfs with gpio-f7188x driver loaded (numbers above
+> are the values I wrote to /sys/class/gpio/register).
 
-On 8/7/2015 4:13 AM, Toshi Kikuchi wrote:
-> Hi Milo,
->
-> On Thu, Aug 6, 2015 at 1:38 AM, Toshi Kikuchi <toshik@chromium.org> wrote:
->>> May I ask you something? Could you check attached patch if available? I
->>> can't test it on real target board at this moment. I would appreciate if you
->>> could test my code.
->>
->> Sure. I'll test the patch and let you know the result.
->
-> I just tested it and it works fine.
+Ah, this is different GPIO controller that is listed in the DSDT (the
+Baytrail GPIO host controller).
 
-Many thanks for your help. I'll send the patch officially later.
-
-Best regards,
-Milo
+In order to get ACPI GPIO stuff work here you would need to first add
+the GPIO device to the ACPI namespace and then modify gpio-f7188x.c to
+probe it from there. You would also need to invent a _HID to the device
+in order to get it matched. Unfortunately using random _HID will make
+upstreaming the changes difficult.
