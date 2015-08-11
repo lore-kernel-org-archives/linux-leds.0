@@ -1,65 +1,57 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v5 25/57] leds: pca963x: Remove work queue
-Date: Tue, 11 Aug 2015 12:35:50 +0200
-Message-ID: <55C9D006.9070104@samsung.com>
-References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
- <1439285890-27329-26-git-send-email-j.anaszewski@samsung.com>
- <CAPybu_3Wt8QCk1oZeNx_0jSLgapLOyyeOfxW3zVkc08mXsgP9A@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: leds-gpio on x86
+Date: Tue, 11 Aug 2015 15:00:38 +0300
+Message-ID: <20150811120038.GF1541@lahna.fi.intel.com>
+References: <20150805220948.3984f19c@x2>
+ <20150806165924.GY1540@lahna.fi.intel.com>
+ <20150806191727.0bf87a3a@x2>
+ <20150806173558.GZ1540@lahna.fi.intel.com>
+ <20150806201820.5ca0764d@x2>
+ <20150807105745.GB1540@lahna.fi.intel.com>
+ <20150808140656.6b81d3b9@x2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAPybu_3Wt8QCk1oZeNx_0jSLgapLOyyeOfxW3zVkc08mXsgP9A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Peter Meerwald <p.meerwald@bct-electronic.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:4311 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933911AbbHKMBA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 11 Aug 2015 08:01:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20150808140656.6b81d3b9@x2>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Vincent Pelletier <plr.vincent@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org
 
-Hi Ricardo,
+On Sat, Aug 08, 2015 at 02:06:56PM +0200, Vincent Pelletier wrote:
+> On Fri, 7 Aug 2015 13:57:45 +0300, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > Ah, this is different GPIO controller that is listed in the DSDT (the
+> > Baytrail GPIO host controller).
+> > 
+> > In order to get ACPI GPIO stuff work here you would need to first add
+> > the GPIO device to the ACPI namespace and then modify gpio-f7188x.c to
+> > probe it from there. You would also need to invent a _HID to the device
+> > in order to get it matched. Unfortunately using random _HID will make
+> > upstreaming the changes difficult.
+> 
+> I gave a shot at writing a module. I got to the point where it builds
+> and loads, but it does not appear to do anything (no error
+> returned modprobe, nothing in dmesg).
+> 
+> I have no idea if the ~4 lines of "actual" code (ie, not just data
+> definition) are even in the good direction actually. I took
+>   http://www.armadeus.com/wiki/index.php?title=GPIO_LEDS
+> as an example. This is for a platform definition for a devboard
+> (arm ?), so it may be a wrong example. I took a look at other led
+> drivers, and their complexity varies a lot.
+> 
+> Would you mind taking a look ?
+>   https://github.com/vpelletier/linux/commits/ts651
 
-Thanks for the review.
+One thing I noticed:
 
-On 08/11/2015 12:00 PM, Ricardo Ribalda Delgado wrote:
-> Hello Jacek
->
-> Sorry for the late reply.
->
-> On Tue, Aug 11, 2015 at 11:37 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->
->
->>   struct pca963x_led {
->>          struct pca963x *chip;
->> -       struct work_struct work;
->>          enum led_brightness brightness;
->>          struct led_classdev led_cdev;
->>          int led_num; /* 0 .. 15 potentially */
->> -       enum pca963x_cmd cmd;
->>          char name[32];
->>          u8 gdc;
->>          u8 gfrq;
->>   };
->
-> Maybe you want to remove also brightness, gdc and gfrq and pass them
-> as arguments to the functions.
->
->> -static void pca963x_blink_work(struct pca963x_led *pca963x)
->> +static void pca963x_blink(struct pca963x_led *pca963x)
->
-> something like: blink(pca963x, gdc, gfrq)
+	qnap_tsx51_leds_platform_device = platform_device_register_resndata(NULL, "led-gpio", -1, NULL, 0,
+		&qnap_tsx51_led_data, sizeof(qnap_tsx51_led_data));
 
-OK, I'll check it.
-
->
-> Big disclaimer: i havent tested it on real hardware. Maybe next week I
-> can get hold of a board with a pca chip.
->
->
-> BTW: great thing that the work queue is implemented in the core :)
-
-So far it is only in this patch set, but hopefully we will manage
-to merge it soon.
-
--- 
-Best Regards,
-Jacek Anaszewski
+The driver expects "leds-gpio" not "led-gpio".
