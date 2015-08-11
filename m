@@ -1,97 +1,184 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 13/57] leds: 88pm860x: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:26 +0200
-Message-ID: <1439285890-27329-14-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 16/57] leds: blinkm: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:29 +0200
+Message-ID: <1439285890-27329-17-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55959 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964861AbbHKJjD (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Aug 2015 05:39:03 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jan-Simon Moeller <dl9pf@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
 
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Jan-Simon Moeller <dl9pf@gmx.de>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-88pm860x.c |   22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ drivers/leds/leds-blinkm.c |   69 +++++---------------------------------------
+ 1 file changed, 8 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index 1497a09..a2f7b10 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -16,7 +16,6 @@
- #include <linux/i2c.h>
- #include <linux/leds.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
- #include <linux/mfd/88pm860x.h>
- #include <linux/module.h>
- 
-@@ -33,7 +32,6 @@
- struct pm860x_led {
- 	struct led_classdev cdev;
- 	struct i2c_client *i2c;
+diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+index d0452b0..f1c8668 100644
+--- a/drivers/leds/leds-blinkm.c
++++ b/drivers/leds/leds-blinkm.c
+@@ -39,16 +39,9 @@ struct blinkm_led {
+ 	struct i2c_client *i2c_client;
+ 	struct led_classdev led_cdev;
+ 	int id;
+-	atomic_t active;
+-};
+-
+-struct blinkm_work {
+-	struct blinkm_led *blinkm_led;
 -	struct work_struct work;
- 	struct pm860x_chip *chip;
- 	struct mutex lock;
- 	char name[MFD_NAME_SIZE];
-@@ -69,17 +67,18 @@ static int led_power_set(struct pm860x_chip *chip, int port, int on)
- 	return ret;
+ };
+ 
+ #define cdev_to_blmled(c)          container_of(c, struct blinkm_led, led_cdev)
+-#define work_to_blmwork(c)         container_of(c, struct blinkm_work, work)
+ 
+ struct blinkm_data {
+ 	struct i2c_client *i2c_client;
+@@ -439,65 +432,30 @@ static int blinkm_transfer_hw(struct i2c_client *client, int cmd)
+ 	return 0;
  }
  
--static void pm860x_led_work(struct work_struct *work)
-+static void pm860x_led_set(struct led_classdev *cdev,
-+			   enum led_brightness value)
- {
--
--	struct pm860x_led *led;
-+	struct pm860x_led *led = container_of(cdev, struct pm860x_led, cdev);
- 	struct pm860x_chip *chip;
- 	unsigned char buf[3];
- 	int ret;
- 
--	led = container_of(work, struct pm860x_led, work);
- 	chip = led->chip;
- 	mutex_lock(&led->lock);
-+	led->brightness = value >> 3;
-+
- 	if ((led->current_brightness == 0) && led->brightness) {
- 		led_power_set(chip, led->port, 1);
- 		if (led->iset) {
-@@ -114,15 +113,6 @@ static void pm860x_led_work(struct work_struct *work)
- 	mutex_unlock(&led->lock);
- }
- 
--static void pm860x_led_set(struct led_classdev *cdev,
--			   enum led_brightness value)
+-static void led_work(struct work_struct *work)
 -{
--	struct pm860x_led *data = container_of(cdev, struct pm860x_led, cdev);
+-	int ret;
+-	struct blinkm_led *led;
+-	struct blinkm_data *data;
+-	struct blinkm_work *blm_work = work_to_blmwork(work);
 -
--	data->brightness = value >> 3;
--	schedule_work(&data->work);
+-	led = blm_work->blinkm_led;
+-	data = i2c_get_clientdata(led->i2c_client);
+-	ret = blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
+-	atomic_dec(&led->active);
+-	dev_dbg(&led->i2c_client->dev,
+-			"# DONE # next_red = %d, next_green = %d,"
+-			" next_blue = %d, active = %d\n",
+-			data->next_red, data->next_green,
+-			data->next_blue, atomic_read(&led->active));
+-	kfree(blm_work);
 -}
 -
- #ifdef CONFIG_OF
- static int pm860x_led_dt_init(struct platform_device *pdev,
- 			      struct pm860x_led *data)
-@@ -213,8 +203,8 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 	data->current_brightness = 0;
- 	data->cdev.name = data->name;
- 	data->cdev.brightness_set = pm860x_led_set;
-+	data->cdev.flags = LED_BRIGHTNESS_BLOCKING;
- 	mutex_init(&data->lock);
--	INIT_WORK(&data->work, pm860x_led_work);
+ static int blinkm_led_common_set(struct led_classdev *led_cdev,
+ 				 enum led_brightness value, int color)
+ {
+ 	/* led_brightness is 0, 127 or 255 - we just use it here as-is */
+ 	struct blinkm_led *led = cdev_to_blmled(led_cdev);
+ 	struct blinkm_data *data = i2c_get_clientdata(led->i2c_client);
+-	struct blinkm_work *bl_work;
  
- 	ret = led_classdev_register(chip->dev, &data->cdev);
- 	if (ret < 0) {
+ 	switch (color) {
+ 	case RED:
+ 		/* bail out if there's no change */
+ 		if (data->next_red == (u8) value)
+ 			return 0;
+-		/* we assume a quite fast sequence here ([off]->on->off)
+-		 * think of network led trigger - we cannot blink that fast, so
+-		 * in case we already have a off->on->off transition queued up,
+-		 * we refuse to queue up more.
+-		 * Revisit: fast-changing brightness. */
+-		if (atomic_read(&led->active) > 1)
+-			return 0;
+ 		data->next_red = (u8) value;
+ 		break;
+ 	case GREEN:
+ 		/* bail out if there's no change */
+ 		if (data->next_green == (u8) value)
+ 			return 0;
+-		/* we assume a quite fast sequence here ([off]->on->off)
+-		 * Revisit: fast-changing brightness. */
+-		if (atomic_read(&led->active) > 1)
+-			return 0;
+ 		data->next_green = (u8) value;
+ 		break;
+ 	case BLUE:
+ 		/* bail out if there's no change */
+ 		if (data->next_blue == (u8) value)
+ 			return 0;
+-		/* we assume a quite fast sequence here ([off]->on->off)
+-		 * Revisit: fast-changing brightness. */
+-		if (atomic_read(&led->active) > 1)
+-			return 0;
+ 		data->next_blue = (u8) value;
+ 		break;
+ 
+@@ -506,23 +464,12 @@ static int blinkm_led_common_set(struct led_classdev *led_cdev,
+ 		return -EINVAL;
+ 	}
+ 
+-	bl_work = kzalloc(sizeof(*bl_work), GFP_ATOMIC);
+-	if (!bl_work)
+-		return -ENOMEM;
+-
+-	atomic_inc(&led->active);
++	blinkm_transfer_hw(led->i2c_client, BLM_GO_RGB);
+ 	dev_dbg(&led->i2c_client->dev,
+-			"#TO_SCHED# next_red = %d, next_green = %d,"
+-			" next_blue = %d, active = %d\n",
++			"# DONE # next_red = %d, next_green = %d,"
++			" next_blue = %d\n",
+ 			data->next_red, data->next_green,
+-			data->next_blue, atomic_read(&led->active));
+-
+-	/* a fresh work _item_ for each change */
+-	bl_work->blinkm_led = led;
+-	INIT_WORK(&bl_work->work, led_work);
+-	/* queue work in own queue for easy sync on exit*/
+-	schedule_work(&bl_work->work);
+-
++			data->next_blue);
+ 	return 0;
+ }
+ 
+@@ -669,7 +616,6 @@ static int blinkm_probe(struct i2c_client *client,
+ 		led[i]->id = i;
+ 		led[i]->led_cdev.max_brightness = 255;
+ 		led[i]->led_cdev.flags = LED_CORE_SUSPENDRESUME;
+-		atomic_set(&led[i]->active, 0);
+ 		switch (i) {
+ 		case RED:
+ 			snprintf(blinkm_led_name, sizeof(blinkm_led_name),
+@@ -678,6 +624,7 @@ static int blinkm_probe(struct i2c_client *client,
+ 					 client->addr);
+ 			led[i]->led_cdev.name = blinkm_led_name;
+ 			led[i]->led_cdev.brightness_set = blinkm_led_red_set;
++			led[i]->led_cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 			err = led_classdev_register(&client->dev,
+ 						    &led[i]->led_cdev);
+ 			if (err < 0) {
+@@ -694,6 +641,7 @@ static int blinkm_probe(struct i2c_client *client,
+ 					 client->addr);
+ 			led[i]->led_cdev.name = blinkm_led_name;
+ 			led[i]->led_cdev.brightness_set = blinkm_led_green_set;
++			led[i]->led_cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 			err = led_classdev_register(&client->dev,
+ 						    &led[i]->led_cdev);
+ 			if (err < 0) {
+@@ -710,6 +658,7 @@ static int blinkm_probe(struct i2c_client *client,
+ 					 client->addr);
+ 			led[i]->led_cdev.name = blinkm_led_name;
+ 			led[i]->led_cdev.brightness_set = blinkm_led_blue_set;
++			led[i]->led_cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 			err = led_classdev_register(&client->dev,
+ 						    &led[i]->led_cdev);
+ 			if (err < 0) {
+@@ -746,10 +695,8 @@ static int blinkm_remove(struct i2c_client *client)
+ 	int i;
+ 
+ 	/* make sure no workqueue entries are pending */
+-	for (i = 0; i < 3; i++) {
+-		flush_scheduled_work();
++	for (i = 0; i < 3; i++)
+ 		led_classdev_unregister(&data->blinkm_leds[i].led_cdev);
+-	}
+ 
+ 	/* reset rgb */
+ 	data->next_red = 0x00;
 -- 
 1.7.9.5
