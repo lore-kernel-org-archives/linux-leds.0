@@ -1,127 +1,109 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 20/57] leds: lp3944: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:33 +0200
-Message-ID: <1439285890-27329-21-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 23/57] leds: lp8860: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:36 +0200
+Message-ID: <1439285890-27329-24-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
 
-Now the core implements the work queue, remove it from the driver.
+Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Antonio Ospite <ospite@studenti.unina.it>
+Cc: Dan Murphy <dmurphy@ti.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-lp3944.c |   30 +++++++-----------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
+ drivers/leds/leds-lp8860.c |   25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
-index 53144fb..4b90663 100644
---- a/drivers/leds/leds-lp3944.c
-+++ b/drivers/leds/leds-lp3944.c
-@@ -31,7 +31,6 @@
- #include <linux/slab.h>
- #include <linux/leds.h>
- #include <linux/mutex.h>
--#include <linux/workqueue.h>
- #include <linux/leds-lp3944.h>
- 
- /* Read Only Registers */
-@@ -68,10 +67,8 @@
- struct lp3944_led_data {
- 	u8 id;
- 	enum lp3944_type type;
--	enum lp3944_status status;
- 	struct led_classdev ldev;
- 	struct i2c_client *client;
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 79f0843..e0d7afc 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -91,26 +91,22 @@
+ /**
+  * struct lp8860_led -
+  * @lock - Lock for reading/writing the device
+- * @work - Work item used to off load the brightness register writes
+  * @client - Pointer to the I2C client
+  * @led_dev - led class device pointer
+  * @regmap - Devices register map
+  * @eeprom_regmap - EEPROM register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @brightness - Current brightness value requested
+  * @label - LED label
+ **/
+ struct lp8860_led {
+ 	struct mutex lock;
 -	struct work_struct work;
+ 	struct i2c_client *client;
+ 	struct led_classdev led_dev;
+ 	struct regmap *regmap;
+ 	struct regmap *eeprom_regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	enum led_brightness brightness;
+ 	const char *label;
  };
  
- struct lp3944_data {
-@@ -275,8 +272,7 @@ static int lp3944_led_set_blink(struct led_classdev *led_cdev,
- 	dev_dbg(&led->client->dev, "%s: OK hardware accelerated blink!\n",
- 		__func__);
- 
--	led->status = LP3944_LED_STATUS_DIM0;
--	schedule_work(&led->work);
-+	lp3944_led_set(led, LP3944_LED_STATUS_DIM0);
- 
- 	return 0;
+@@ -212,11 +208,13 @@ out:
+ 	return ret;
  }
-@@ -289,16 +285,7 @@ static void lp3944_led_set_brightness(struct led_classdev *led_cdev,
- 	dev_dbg(&led->client->dev, "%s: %s, %d\n",
- 		__func__, led_cdev->name, brightness);
  
--	led->status = !!brightness;
+-static void lp8860_led_brightness_work(struct work_struct *work)
++static void lp8860_brightness_set(struct led_classdev *led_cdev,
++				enum led_brightness brt_val)
+ {
+-	struct lp8860_led *led = container_of(work, struct lp8860_led, work);
++	struct lp8860_led *led =
++			container_of(led_cdev, struct lp8860_led, led_dev);
++	int disp_brightness = brt_val * 255;
+ 	int ret;
+-	int disp_brightness = led->brightness * 255;
+ 
+ 	mutex_lock(&led->lock);
+ 
+@@ -243,16 +241,6 @@ out:
+ 	mutex_unlock(&led->lock);
+ }
+ 
+-static void lp8860_brightness_set(struct led_classdev *led_cdev,
+-				enum led_brightness brt_val)
+-{
+-	struct lp8860_led *led =
+-			container_of(led_cdev, struct lp8860_led, led_dev);
+-
+-	led->brightness = brt_val;
 -	schedule_work(&led->work);
 -}
 -
--static void lp3944_led_work(struct work_struct *work)
--{
--	struct lp3944_led_data *led;
--
--	led = container_of(work, struct lp3944_led_data, work);
--	lp3944_led_set(led, led->status);
-+	lp3944_led_set(led, !!brightness);
- }
+ static int lp8860_init(struct lp8860_led *led)
+ {
+ 	unsigned int read_buf;
+@@ -407,9 +395,9 @@ static int lp8860_probe(struct i2c_client *client,
+ 	led->led_dev.name = led->label;
+ 	led->led_dev.max_brightness = LED_FULL;
+ 	led->led_dev.brightness_set = lp8860_brightness_set;
++	led->led_dev.flags |= LED_BRIGHTNESS_BLOCKING;
  
- static int lp3944_configure(struct i2c_client *client,
-@@ -318,14 +305,13 @@ static int lp3944_configure(struct i2c_client *client,
- 		case LP3944_LED_TYPE_LED:
- 		case LP3944_LED_TYPE_LED_INVERTED:
- 			led->type = pled->type;
--			led->status = pled->status;
- 			led->ldev.name = pled->name;
- 			led->ldev.max_brightness = 1;
- 			led->ldev.brightness_set = lp3944_led_set_brightness;
- 			led->ldev.blink_set = lp3944_led_set_blink;
--			led->ldev.flags = LED_CORE_SUSPENDRESUME;
-+			led->ldev.flags = LED_CORE_SUSPENDRESUME |
-+					  LED_BRIGHTNESS_BLOCKING;
+ 	mutex_init(&led->lock);
+-	INIT_WORK(&led->work, lp8860_led_brightness_work);
  
--			INIT_WORK(&led->work, lp3944_led_work);
- 			err = led_classdev_register(&client->dev, &led->ldev);
- 			if (err < 0) {
- 				dev_err(&client->dev,
-@@ -336,14 +322,14 @@ static int lp3944_configure(struct i2c_client *client,
+ 	i2c_set_clientdata(client, led);
  
- 			/* to expose the default value to userspace */
- 			led->ldev.brightness =
--					(enum led_brightness) led->status;
-+					(enum led_brightness) pled->status;
+@@ -448,7 +436,6 @@ static int lp8860_remove(struct i2c_client *client)
+ 	int ret;
  
- 			/* Set the default led status */
--			err = lp3944_led_set(led, led->status);
-+			err = lp3944_led_set(led, pled->status);
- 			if (err < 0) {
- 				dev_err(&client->dev,
- 					"%s couldn't set STATUS %d\n",
--					led->ldev.name, led->status);
-+					led->ldev.name, pled->status);
- 				goto exit;
- 			}
- 			break;
-@@ -364,7 +350,6 @@ exit:
- 			case LP3944_LED_TYPE_LED:
- 			case LP3944_LED_TYPE_LED_INVERTED:
- 				led_classdev_unregister(&data->leds[i].ldev);
--				cancel_work_sync(&data->leds[i].work);
- 				break;
+ 	led_classdev_unregister(&led->led_dev);
+-	cancel_work_sync(&led->work);
  
- 			case LP3944_LED_TYPE_NONE:
-@@ -424,7 +409,6 @@ static int lp3944_remove(struct i2c_client *client)
- 		case LP3944_LED_TYPE_LED:
- 		case LP3944_LED_TYPE_LED_INVERTED:
- 			led_classdev_unregister(&data->leds[i].ldev);
--			cancel_work_sync(&data->leds[i].work);
- 			break;
- 
- 		case LP3944_LED_TYPE_NONE:
+ 	if (led->enable_gpio)
+ 		gpiod_direction_output(led->enable_gpio, 0);
 -- 
 1.7.9.5
