@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 17/57] leds: lm3533: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:30 +0200
-Message-ID: <1439285890-27329-18-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 15/57] leds: bd2802: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:28 +0200
+Message-ID: <1439285890-27329-16-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Kim Kyuwon <q1.kim@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,101 +15,130 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Kim Kyuwon <q1.kim@samsung.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Johan Hovold <johan@kernel.org>
 ---
- drivers/leds/leds-lm3533.c |   27 +++++----------------------
- 1 file changed, 5 insertions(+), 22 deletions(-)
+ drivers/leds/leds-bd2802.c |   32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-index 6e2e020..5a9ae74 100644
---- a/drivers/leds/leds-lm3533.c
-+++ b/drivers/leds/leds-lm3533.c
-@@ -17,7 +17,6 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
+diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
+index 6078c15d..9d1535a 100644
+--- a/drivers/leds/leds-bd2802.c
++++ b/drivers/leds/leds-bd2802.c
+@@ -72,7 +72,6 @@ struct bd2802_led {
+ 	struct bd2802_led_platform_data	*pdata;
+ 	struct i2c_client		*client;
+ 	struct rw_semaphore		rwsem;
+-	struct work_struct		work;
  
- #include <linux/mfd/lm3533.h>
+ 	struct led_state		led[2];
  
-@@ -53,9 +52,6 @@ struct lm3533_led {
- 
- 	struct mutex mutex;
- 	unsigned long flags;
--
--	struct work_struct work;
--	u8 new_brightness;
+@@ -518,16 +517,6 @@ static struct device_attribute *bd2802_attributes[] = {
+ 	&bd2802_rgb_current_attr,
  };
  
- 
-@@ -123,18 +119,6 @@ out:
- 	return ret;
- }
- 
--static void lm3533_led_work(struct work_struct *work)
+-static void bd2802_led_work(struct work_struct *work)
 -{
--	struct lm3533_led *led = container_of(work, struct lm3533_led, work);
+-	struct bd2802_led *led = container_of(work, struct bd2802_led, work);
 -
--	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, led->new_brightness);
--
--	if (led->new_brightness == 0)
--		lm3533_led_pattern_enable(led, 0);	/* disable blink */
--
--	lm3533_ctrlbank_set_brightness(&led->cb, led->new_brightness);
+-	if (led->state)
+-		bd2802_turn_on(led, led->led_id, led->color, led->state);
+-	else
+-		bd2802_turn_off(led, led->led_id, led->color);
 -}
 -
- static void lm3533_led_set(struct led_classdev *cdev,
- 						enum led_brightness value)
+ #define BD2802_CONTROL_RGBS(name, id, clr)				\
+ static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
+ 					enum led_brightness value)	\
+@@ -536,11 +525,13 @@ static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
+ 		container_of(led_cdev, struct bd2802_led, cdev_##name);	\
+ 	led->led_id = id;						\
+ 	led->color = clr;						\
+-	if (value == LED_OFF)						\
++	if (value == LED_OFF) {						\
+ 		led->state = BD2802_OFF;				\
+-	else								\
++		bd2802_turn_off(led, led->led_id, led->color);		\
++	} else {							\
+ 		led->state = BD2802_ON;					\
+-	schedule_work(&led->work);					\
++		bd2802_turn_on(led, led->led_id, led->color, BD2802_ON);\
++	}								\
+ }									\
+ static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
+ 		unsigned long *delay_on, unsigned long *delay_off)	\
+@@ -552,7 +543,7 @@ static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
+ 	led->led_id = id;						\
+ 	led->color = clr;						\
+ 	led->state = BD2802_BLINK;					\
+-	schedule_work(&led->work);					\
++	bd2802_turn_on(led, led->led_id, led->color, BD2802_BLINK);	\
+ 	return 0;							\
+ }
+ 
+@@ -567,12 +558,11 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
  {
-@@ -142,8 +126,10 @@ static void lm3533_led_set(struct led_classdev *cdev,
+ 	int ret;
  
- 	dev_dbg(led->cdev.dev, "%s - %d\n", __func__, value);
+-	INIT_WORK(&led->work, bd2802_led_work);
+-
+ 	led->cdev_led1r.name = "led1_R";
+ 	led->cdev_led1r.brightness = LED_OFF;
+ 	led->cdev_led1r.brightness_set = bd2802_set_led1r_brightness;
+ 	led->cdev_led1r.blink_set = bd2802_set_led1r_blink;
++	led->cdev_led1r.flags |= LED_BRIGHTNESS_BLOCKING;
  
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+	if (value == 0)
-+		lm3533_led_pattern_enable(led, 0);	/* disable blink */
-+
-+	lm3533_ctrlbank_set_brightness(&led->cb, value);
- }
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1r);
+ 	if (ret < 0) {
+@@ -585,6 +575,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+ 	led->cdev_led1g.brightness = LED_OFF;
+ 	led->cdev_led1g.brightness_set = bd2802_set_led1g_brightness;
+ 	led->cdev_led1g.blink_set = bd2802_set_led1g_blink;
++	led->cdev_led1g.flags |= LED_BRIGHTNESS_BLOCKING;
  
- static enum led_brightness lm3533_led_get(struct led_classdev *cdev)
-@@ -698,10 +684,10 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 	led->cdev.blink_set = lm3533_led_blink_set;
- 	led->cdev.brightness = LED_OFF;
- 	led->cdev.groups = lm3533_led_attribute_groups,
-+	led->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
- 	led->id = pdev->id;
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1g);
+ 	if (ret < 0) {
+@@ -597,6 +588,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+ 	led->cdev_led1b.brightness = LED_OFF;
+ 	led->cdev_led1b.brightness_set = bd2802_set_led1b_brightness;
+ 	led->cdev_led1b.blink_set = bd2802_set_led1b_blink;
++	led->cdev_led1b.flags |= LED_BRIGHTNESS_BLOCKING;
  
- 	mutex_init(&led->mutex);
--	INIT_WORK(&led->work, lm3533_led_work);
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1b);
+ 	if (ret < 0) {
+@@ -609,6 +601,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+ 	led->cdev_led2r.brightness = LED_OFF;
+ 	led->cdev_led2r.brightness_set = bd2802_set_led2r_brightness;
+ 	led->cdev_led2r.blink_set = bd2802_set_led2r_blink;
++	led->cdev_led2r.flags |= LED_BRIGHTNESS_BLOCKING;
  
- 	/* The class framework makes a callback to get brightness during
- 	 * registration so use parent device (for error reporting) until
-@@ -733,7 +719,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2r);
+ 	if (ret < 0) {
+@@ -621,6 +614,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+ 	led->cdev_led2g.brightness = LED_OFF;
+ 	led->cdev_led2g.brightness_set = bd2802_set_led2g_brightness;
+ 	led->cdev_led2g.blink_set = bd2802_set_led2g_blink;
++	led->cdev_led2g.flags |= LED_BRIGHTNESS_BLOCKING;
  
- err_unregister:
- 	led_classdev_unregister(&led->cdev);
--	flush_work(&led->work);
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2g);
+ 	if (ret < 0) {
+@@ -633,7 +627,8 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
+ 	led->cdev_led2b.brightness = LED_OFF;
+ 	led->cdev_led2b.brightness_set = bd2802_set_led2b_brightness;
+ 	led->cdev_led2b.blink_set = bd2802_set_led2b_blink;
+-	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME;
++	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME |
++				 LED_BRIGHTNESS_BLOCKING;
  
- 	return ret;
- }
-@@ -746,7 +731,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
+ 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2b);
+ 	if (ret < 0) {
+@@ -661,7 +656,6 @@ failed_unregister_led1_R:
  
- 	lm3533_ctrlbank_disable(&led->cb);
- 	led_classdev_unregister(&led->cdev);
--	flush_work(&led->work);
- 
- 	return 0;
- }
-@@ -760,7 +744,6 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
- 
- 	lm3533_ctrlbank_disable(&led->cb);
- 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
--	flush_work(&led->work);
- }
- 
- static struct platform_driver lm3533_led_driver = {
+ static void bd2802_unregister_led_classdev(struct bd2802_led *led)
+ {
+-	cancel_work_sync(&led->work);
+ 	led_classdev_unregister(&led->cdev_led2b);
+ 	led_classdev_unregister(&led->cdev_led2g);
+ 	led_classdev_unregister(&led->cdev_led2r);
 -- 
 1.7.9.5
