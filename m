@@ -1,152 +1,177 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 35/57] leds: gpio: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:48 +0200
-Message-ID: <1439285890-27329-36-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 37/57] leds: lm355x: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:50 +0200
+Message-ID: <1439285890-27329-38-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Raphael Assenat <raph@8d.com>
+Cc: Daniel Jeong <daniel.jeong@ti.com>
+Cc: G.Shark Jeong <gshark.jeong@gmail.com>
 ---
- drivers/leds/leds-gpio.c |   59 +++++++++++++---------------------------------
- 1 file changed, 16 insertions(+), 43 deletions(-)
+ drivers/leds/leds-lm355x.c |   61 +++++++++-----------------------------------
+ 1 file changed, 12 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index af1876a..2a8e6a0 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -20,32 +20,16 @@
+diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
+index 48872997..d2e74e9 100644
+--- a/drivers/leds/leds-lm355x.c
++++ b/drivers/leds/leds-lm355x.c
+@@ -16,7 +16,6 @@
  #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/slab.h>
+ #include <linux/fs.h>
+ #include <linux/regmap.h>
 -#include <linux/workqueue.h>
+ #include <linux/platform_data/leds-lm355x.h>
  
- struct gpio_led_data {
- 	struct led_classdev cdev;
- 	struct gpio_desc *gpiod;
--	struct work_struct work;
--	u8 new_level;
- 	u8 can_sleep;
- 	u8 blinking;
- 	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
- 			unsigned long *delay_on, unsigned long *delay_off);
- };
+ enum lm355x_type {
+@@ -59,14 +58,6 @@ struct lm355x_chip_data {
+ 	struct led_classdev cdev_torch;
+ 	struct led_classdev cdev_indicator;
  
--static void gpio_led_work(struct work_struct *work)
--{
--	struct gpio_led_data *led_dat =
--		container_of(work, struct gpio_led_data, work);
+-	struct work_struct work_flash;
+-	struct work_struct work_torch;
+-	struct work_struct work_indicator;
 -
--	if (led_dat->blinking) {
--		led_dat->platform_gpio_blink_set(led_dat->gpiod,
--					led_dat->new_level, NULL, NULL);
--		led_dat->blinking = 0;
--	} else
--		gpiod_set_value_cansleep(led_dat->gpiod, led_dat->new_level);
+-	u8 br_flash;
+-	u8 br_torch;
+-	u8 br_indicator;
+-
+ 	struct lm355x_platform_data *pdata;
+ 	struct regmap *regmap;
+ 	struct mutex lock;
+@@ -316,15 +307,6 @@ out:
+ }
+ 
+ /* torch */
+-static void lm355x_deferred_torch_brightness_set(struct work_struct *work)
+-{
+-	struct lm355x_chip_data *chip =
+-	    container_of(work, struct lm355x_chip_data, work_torch);
+-
+-	mutex_lock(&chip->lock);
+-	lm355x_control(chip, chip->br_torch, MODE_TORCH);
+-	mutex_unlock(&chip->lock);
+-}
+ 
+ static void lm355x_torch_brightness_set(struct led_classdev *cdev,
+ 					enum led_brightness brightness)
+@@ -332,50 +314,35 @@ static void lm355x_torch_brightness_set(struct led_classdev *cdev,
+ 	struct lm355x_chip_data *chip =
+ 	    container_of(cdev, struct lm355x_chip_data, cdev_torch);
+ 
+-	chip->br_torch = brightness;
+-	schedule_work(&chip->work_torch);
 -}
 -
- static void gpio_led_set(struct led_classdev *led_cdev,
- 	enum led_brightness value)
+-/* flash */
+-static void lm355x_deferred_strobe_brightness_set(struct work_struct *work)
+-{
+-	struct lm355x_chip_data *chip =
+-	    container_of(work, struct lm355x_chip_data, work_flash);
+-
+ 	mutex_lock(&chip->lock);
+-	lm355x_control(chip, chip->br_flash, MODE_FLASH);
++	lm355x_control(chip, brightness, MODE_TORCH);
+ 	mutex_unlock(&chip->lock);
+ }
+ 
++/* flash */
++
+ static void lm355x_strobe_brightness_set(struct led_classdev *cdev,
+ 					 enum led_brightness brightness)
  {
-@@ -58,21 +42,12 @@ static void gpio_led_set(struct led_classdev *led_cdev,
- 	else
- 		level = 1;
+ 	struct lm355x_chip_data *chip =
+ 	    container_of(cdev, struct lm355x_chip_data, cdev_flash);
  
--	/* Setting GPIOs with I2C/etc requires a task context, and we don't
--	 * seem to have a reliable way to know if we're already in one; so
--	 * let's just assume the worst.
--	 */
--	if (led_dat->can_sleep) {
--		led_dat->new_level = level;
--		schedule_work(&led_dat->work);
--	} else {
--		if (led_dat->blinking) {
--			led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
--							 NULL, NULL);
--			led_dat->blinking = 0;
--		} else
--			gpiod_set_value(led_dat->gpiod, level);
--	}
-+	if (led_dat->blinking) {
-+		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
-+						 NULL, NULL);
-+		led_dat->blinking = 0;
-+	} else
-+		gpiod_set_value(led_dat->gpiod, level);
- }
- 
- static int gpio_blink_set(struct led_classdev *led_cdev,
-@@ -125,12 +100,17 @@ static int create_gpio_led(const struct gpio_led *template,
- 	led_dat->cdev.name = template->name;
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
-+	if (!led_dat->can_sleep) {
-+		led_dat->cdev.brightness_set_nonblocking = gpio_led_set;
-+	} else {
-+		led_dat->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
-+		led_dat->cdev.brightness_set = gpio_led_set;
-+	}
- 	led_dat->blinking = 0;
- 	if (blink_set) {
- 		led_dat->platform_gpio_blink_set = blink_set;
- 		led_dat->cdev.blink_set = gpio_blink_set;
- 	}
--	led_dat->cdev.brightness_set = gpio_led_set;
- 	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP)
- 		state = !!gpiod_get_value_cansleep(led_dat->gpiod);
- 	else
-@@ -143,17 +123,9 @@ static int create_gpio_led(const struct gpio_led *template,
- 	if (ret < 0)
- 		return ret;
- 
--	INIT_WORK(&led_dat->work, gpio_led_work);
--
- 	return led_classdev_register(parent, &led_dat->cdev);
- }
- 
--static void delete_gpio_led(struct gpio_led_data *led)
--{
--	led_classdev_unregister(&led->cdev);
--	cancel_work_sync(&led->work);
+-	chip->br_flash = brightness;
+-	schedule_work(&chip->work_flash);
 -}
 -
- struct gpio_leds_priv {
- 	int num_leds;
- 	struct gpio_led_data leds[];
-@@ -233,7 +205,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 
- err:
- 	for (count = priv->num_leds - 1; count >= 0; count--)
--		delete_gpio_led(&priv->leds[count]);
-+		led_classdev_unregister(&priv->leds[count].cdev);
- 	return ERR_PTR(ret);
+-/* indicator */
+-static void lm355x_deferred_indicator_brightness_set(struct work_struct *work)
+-{
+-	struct lm355x_chip_data *chip =
+-	    container_of(work, struct lm355x_chip_data, work_indicator);
+-
+ 	mutex_lock(&chip->lock);
+-	lm355x_control(chip, chip->br_indicator, MODE_INDIC);
++	lm355x_control(chip, brightness, MODE_FLASH);
+ 	mutex_unlock(&chip->lock);
  }
  
-@@ -265,7 +237,8 @@ static int gpio_led_probe(struct platform_device *pdev)
- 			if (ret < 0) {
- 				/* On failure: unwind the led creations */
- 				for (i = i - 1; i >= 0; i--)
--					delete_gpio_led(&priv->leds[i]);
-+					led_classdev_unregister(
-+							&priv->leds[i].cdev);
- 				return ret;
- 			}
- 		}
-@@ -286,7 +259,7 @@ static int gpio_led_remove(struct platform_device *pdev)
- 	int i;
++/* indicator */
++
+ static void lm355x_indicator_brightness_set(struct led_classdev *cdev,
+ 					    enum led_brightness brightness)
+ {
+ 	struct lm355x_chip_data *chip =
+ 	    container_of(cdev, struct lm355x_chip_data, cdev_indicator);
  
- 	for (i = 0; i < priv->num_leds; i++)
--		delete_gpio_led(&priv->leds[i]);
-+		led_classdev_unregister(&priv->leds[i].cdev);
+-	chip->br_indicator = brightness;
+-	schedule_work(&chip->work_indicator);
++	mutex_lock(&chip->lock);
++	lm355x_control(chip, brightness, MODE_INDIC);
++	mutex_unlock(&chip->lock);
+ }
+ 
+ /* indicator pattern only for lm3556*/
+@@ -479,28 +446,26 @@ static int lm355x_probe(struct i2c_client *client,
+ 		goto err_out;
+ 
+ 	/* flash */
+-	INIT_WORK(&chip->work_flash, lm355x_deferred_strobe_brightness_set);
+ 	chip->cdev_flash.name = "flash";
+ 	chip->cdev_flash.max_brightness = 16;
+ 	chip->cdev_flash.brightness_set = lm355x_strobe_brightness_set;
+ 	chip->cdev_flash.default_trigger = "flash";
++	chip->cdev_flash.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_flash);
+ 	if (err < 0)
+ 		goto err_out;
+ 	/* torch */
+-	INIT_WORK(&chip->work_torch, lm355x_deferred_torch_brightness_set);
+ 	chip->cdev_torch.name = "torch";
+ 	chip->cdev_torch.max_brightness = 8;
+ 	chip->cdev_torch.brightness_set = lm355x_torch_brightness_set;
+ 	chip->cdev_torch.default_trigger = "torch";
++	chip->cdev_torch.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_torch);
+ 	if (err < 0)
+ 		goto err_create_torch_file;
+ 	/* indicator */
+-	INIT_WORK(&chip->work_indicator,
+-		  lm355x_deferred_indicator_brightness_set);
+ 	chip->cdev_indicator.name = "indicator";
+ 	if (id->driver_data == CHIP_LM3554)
+ 		chip->cdev_indicator.max_brightness = 4;
+@@ -510,6 +475,7 @@ static int lm355x_probe(struct i2c_client *client,
+ 	/* indicator pattern control only for LM3556 */
+ 	if (id->driver_data == CHIP_LM3556)
+ 		chip->cdev_indicator.groups = lm355x_indicator_groups;
++	chip->cdev_indicator.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_indicator);
+ 	if (err < 0)
+@@ -534,11 +500,8 @@ static int lm355x_remove(struct i2c_client *client)
+ 
+ 	regmap_write(chip->regmap, preg[REG_OPMODE].regno, 0);
+ 	led_classdev_unregister(&chip->cdev_indicator);
+-	flush_work(&chip->work_indicator);
+ 	led_classdev_unregister(&chip->cdev_torch);
+-	flush_work(&chip->work_torch);
+ 	led_classdev_unregister(&chip->cdev_flash);
+-	flush_work(&chip->work_flash);
+ 	dev_info(&client->dev, "%s is removed\n", lm355x_name[chip->type]);
  
  	return 0;
- }
 -- 
 1.7.9.5
