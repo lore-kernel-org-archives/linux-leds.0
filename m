@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 30/57] leds: lt3593: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:43 +0200
-Message-ID: <1439285890-27329-31-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 26/57] leds: wm831x: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:39 +0200
+Message-ID: <1439285890-27329-27-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@caiaq.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Mark Brown <broonie@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,100 +15,102 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Daniel Mack <daniel@caiaq.de>
+Cc: Mark Brown <broonie@kernel.org>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-lt3593.c |   29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+ drivers/leds/leds-wm831x-status.c |   24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-index 9f41124..ccd6589 100644
---- a/drivers/leds/leds-lt3593.c
-+++ b/drivers/leds/leds-lt3593.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #include <linux/delay.h>
- #include <linux/gpio.h>
- #include <linux/slab.h>
-@@ -28,15 +27,14 @@
- struct lt3593_led_data {
+diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
+index 56027ef..ed40dd7 100644
+--- a/drivers/leds/leds-wm831x-status.c
++++ b/drivers/leds/leds-wm831x-status.c
+@@ -23,7 +23,6 @@
+ struct wm831x_status {
  	struct led_classdev cdev;
- 	unsigned gpio;
+ 	struct wm831x *wm831x;
 -	struct work_struct work;
--	u8 new_level;
- };
+ 	struct mutex mutex;
  
--static void lt3593_led_work(struct work_struct *work)
-+static void lt3593_led_set(struct led_classdev *led_cdev,
-+			   enum led_brightness value)
+ 	spinlock_t value_lock;
+@@ -40,10 +39,8 @@ struct wm831x_status {
+ #define to_wm831x_status(led_cdev) \
+ 	container_of(led_cdev, struct wm831x_status, cdev)
+ 
+-static void wm831x_status_work(struct work_struct *work)
++static void wm831x_status_set(struct wm831x_status *led)
  {
--	int pulses;
- 	struct lt3593_led_data *led_dat =
--		container_of(work, struct lt3593_led_data, work);
-+		container_of(led_cdev, struct lt3593_led_data, cdev);
-+	int pulses;
+-	struct wm831x_status *led = container_of(work, struct wm831x_status,
+-						 work);
+ 	unsigned long flags;
  
- 	/*
- 	 * The LT3593 resets its internal current level register to the maximum
-@@ -47,12 +45,12 @@ static void lt3593_led_work(struct work_struct *work)
- 	 * applied is to the output driver.
- 	 */
- 
--	if (led_dat->new_level == 0) {
-+	if (value == 0) {
- 		gpio_set_value_cansleep(led_dat->gpio, 0);
- 		return;
- 	}
- 
--	pulses = 32 - (led_dat->new_level * 32) / 255;
-+	pulses = 32 - (value * 32) / 255;
- 
- 	if (pulses == 0) {
- 		gpio_set_value_cansleep(led_dat->gpio, 0);
-@@ -71,16 +69,6 @@ static void lt3593_led_work(struct work_struct *work)
- 	}
+ 	mutex_lock(&led->mutex);
+@@ -70,8 +67,8 @@ static void wm831x_status_work(struct work_struct *work)
+ 	mutex_unlock(&led->mutex);
  }
  
--static void lt3593_led_set(struct led_classdev *led_cdev,
--	enum led_brightness value)
--{
--	struct lt3593_led_data *led_dat =
--		container_of(led_cdev, struct lt3593_led_data, cdev);
--
--	led_dat->new_level = value;
--	schedule_work(&led_dat->work);
--}
--
- static int create_lt3593_led(const struct gpio_led *template,
- 	struct lt3593_led_data *led_dat, struct device *parent)
+-static void wm831x_status_set(struct led_classdev *led_cdev,
+-			   enum led_brightness value)
++static void wm831x_status_brightness_set(struct led_classdev *led_cdev,
++					 enum led_brightness value)
  {
-@@ -105,14 +93,14 @@ static int create_lt3593_led(const struct gpio_led *template,
- 	if (!template->retain_state_suspended)
- 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 
-+	led_dat->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
-+
- 	ret = devm_gpio_request_one(parent, template->gpio, state ?
- 				    GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
- 				    template->name);
- 	if (ret < 0)
- 		return ret;
- 
--	INIT_WORK(&led_dat->work, lt3593_led_work);
--
- 	ret = led_classdev_register(parent, &led_dat->cdev);
- 	if (ret < 0)
- 		return ret;
-@@ -129,7 +117,6 @@ static void delete_lt3593_led(struct lt3593_led_data *led)
- 		return;
- 
- 	led_classdev_unregister(&led->cdev);
--	cancel_work_sync(&led->work);
+ 	struct wm831x_status *led = to_wm831x_status(led_cdev);
+ 	unsigned long flags;
+@@ -80,8 +77,8 @@ static void wm831x_status_set(struct led_classdev *led_cdev,
+ 	led->brightness = value;
+ 	if (value == LED_OFF)
+ 		led->blink = 0;
+-	schedule_work(&led->work);
+ 	spin_unlock_irqrestore(&led->value_lock, flags);
++	wm831x_status_set(led);
  }
  
- static int lt3593_led_probe(struct platform_device *pdev)
+ static int wm831x_status_blink_set(struct led_classdev *led_cdev,
+@@ -147,11 +144,8 @@ static int wm831x_status_blink_set(struct led_classdev *led_cdev,
+ 	else
+ 		led->blink = 0;
+ 
+-	/* Always update; if we fail turn off blinking since we expect
+-	 * a software fallback. */
+-	schedule_work(&led->work);
+-
+ 	spin_unlock_irqrestore(&led->value_lock, flags);
++	wm831x_status_set(led);
+ 
+ 	return ret;
+ }
+@@ -206,11 +200,9 @@ static ssize_t wm831x_status_src_store(struct device *dev,
+ 	for (i = 0; i < ARRAY_SIZE(led_src_texts); i++) {
+ 		if (!strcmp(name, led_src_texts[i])) {
+ 			mutex_lock(&led->mutex);
+-
+ 			led->src = i;
+-			schedule_work(&led->work);
+-
+ 			mutex_unlock(&led->mutex);
++			wm831x_status_set(led);
+ 		}
+ 	}
+ 
+@@ -262,7 +254,6 @@ static int wm831x_status_probe(struct platform_device *pdev)
+ 		pdata.name = dev_name(&pdev->dev);
+ 
+ 	mutex_init(&drvdata->mutex);
+-	INIT_WORK(&drvdata->work, wm831x_status_work);
+ 	spin_lock_init(&drvdata->value_lock);
+ 
+ 	/* We cache the configuration register and read startup values
+@@ -287,9 +278,10 @@ static int wm831x_status_probe(struct platform_device *pdev)
+ 
+ 	drvdata->cdev.name = pdata.name;
+ 	drvdata->cdev.default_trigger = pdata.default_trigger;
+-	drvdata->cdev.brightness_set = wm831x_status_set;
++	drvdata->cdev.brightness_set = wm831x_status_brightness_set;
+ 	drvdata->cdev.blink_set = wm831x_status_blink_set;
+ 	drvdata->cdev.groups = wm831x_status_groups;
++	drvdata->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 
+ 	ret = led_classdev_register(wm831x->dev, &drvdata->cdev);
+ 	if (ret < 0) {
 -- 
 1.7.9.5
