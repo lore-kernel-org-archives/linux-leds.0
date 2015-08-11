@@ -1,14 +1,18 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 21/57] leds: lp55xx: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:34 +0200
-Message-ID: <1439285890-27329-22-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 25/57] leds: pca963x: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:38 +0200
+Message-ID: <1439285890-27329-26-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:54738 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934168AbbHKJjf (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Aug 2015 05:39:35 -0400
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Milo Kim <milo.kim@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
 From: Andrew Lunn <andrew@lunn.ch>
 
@@ -16,203 +20,166 @@ Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Milo Kim <milo.kim@ti.com>
+Cc: Peter Meerwald <p.meerwald@bct-electronic.com>
+Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 ---
- drivers/leds/leds-lp5521.c        |    6 ++----
- drivers/leds/leds-lp5523.c        |    6 ++----
- drivers/leds/leds-lp5562.c        |    6 ++----
- drivers/leds/leds-lp55xx-common.c |    9 ++++-----
- drivers/leds/leds-lp55xx-common.h |    6 ++----
- drivers/leds/leds-lp8501.c        |    6 ++----
- 6 files changed, 14 insertions(+), 25 deletions(-)
+ drivers/leds/leds-pca963x.c |   57 +++++++------------------------------------
+ 1 file changed, 9 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 8ca197a..9893f7b 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -362,10 +362,8 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 3f63a1b..662d813 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -32,7 +32,6 @@
+ #include <linux/leds.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/workqueue.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/leds-pca963x.h>
+@@ -96,11 +95,6 @@ static const struct i2c_device_id pca963x_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, pca963x_id);
+ 
+-enum pca963x_cmd {
+-	BRIGHTNESS_SET,
+-	BLINK_SET,
+-};
+-
+ struct pca963x_led;
+ 
+ struct pca963x {
+@@ -112,17 +106,16 @@ struct pca963x {
+ 
+ struct pca963x_led {
+ 	struct pca963x *chip;
+-	struct work_struct work;
+ 	enum led_brightness brightness;
+ 	struct led_classdev led_cdev;
+ 	int led_num; /* 0 .. 15 potentially */
+-	enum pca963x_cmd cmd;
+ 	char name[32];
+ 	u8 gdc;
+ 	u8 gfrq;
+ };
+ 
+-static void pca963x_brightness_work(struct pca963x_led *pca963x)
++static void pca963x_brightness(struct pca963x_led *pca963x,
++			       enum led_brightness brightness)
+ {
+ 	u8 ledout_addr = pca963x->chip->chipdef->ledout_base
+ 		+ (pca963x->led_num / 4);
+@@ -132,7 +125,7 @@ static void pca963x_brightness_work(struct pca963x_led *pca963x)
+ 
+ 	mutex_lock(&pca963x->chip->mutex);
+ 	ledout = i2c_smbus_read_byte_data(pca963x->chip->client, ledout_addr);
+-	switch (pca963x->brightness) {
++	switch (brightness) {
+ 	case LED_FULL:
+ 		i2c_smbus_write_byte_data(pca963x->chip->client, ledout_addr,
+ 			(ledout & ~mask) | (PCA963X_LED_ON << shift));
+@@ -152,7 +145,7 @@ static void pca963x_brightness_work(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
+ }
+ 
+-static void pca963x_blink_work(struct pca963x_led *pca963x)
++static void pca963x_blink(struct pca963x_led *pca963x)
+ {
+ 	u8 ledout_addr = pca963x->chip->chipdef->ledout_base +
+ 		(pca963x->led_num / 4);
+@@ -180,21 +173,6 @@ static void pca963x_blink_work(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
+ }
+ 
+-static void pca963x_work(struct work_struct *work)
+-{
+-	struct pca963x_led *pca963x = container_of(work,
+-		struct pca963x_led, work);
+-
+-	switch (pca963x->cmd) {
+-	case BRIGHTNESS_SET:
+-		pca963x_brightness_work(pca963x);
+-		break;
+-	case BLINK_SET:
+-		pca963x_blink_work(pca963x);
+-		break;
+-	}
+-}
+-
+ static void pca963x_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+@@ -202,14 +180,7 @@ static void pca963x_led_set(struct led_classdev *led_cdev,
+ 
+ 	pca963x = container_of(led_cdev, struct pca963x_led, led_cdev);
+ 
+-	pca963x->cmd = BRIGHTNESS_SET;
+-	pca963x->brightness = value;
+-
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca963x->work);
++	pca963x_brightness(pca963x, value);
+ }
+ 
+ static int pca963x_blink_set(struct led_classdev *led_cdev,
+@@ -254,15 +225,10 @@ static int pca963x_blink_set(struct led_classdev *led_cdev,
+ 	 */
+ 	gfrq = (period * 24 / 1000) - 1;
+ 
+-	pca963x->cmd = BLINK_SET;
+ 	pca963x->gdc = gdc;
+ 	pca963x->gfrq = gfrq;
+ 
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca963x->work);
++	pca963x_blink(pca963x);
+ 
+ 	*delay_on = time_on;
+ 	*delay_off = time_off;
+@@ -409,12 +375,11 @@ static int pca963x_probe(struct i2c_client *client,
+ 
+ 		pca963x[i].led_cdev.name = pca963x[i].name;
+ 		pca963x[i].led_cdev.brightness_set = pca963x_led_set;
++		pca963x[i].led_cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 
+ 		if (pdata && pdata->blink_type == PCA963X_HW_BLINK)
+ 			pca963x[i].led_cdev.blink_set = pca963x_blink_set;
+ 
+-		INIT_WORK(&pca963x[i].work, pca963x_work);
+-
+ 		err = led_classdev_register(&client->dev, &pca963x[i].led_cdev);
+ 		if (err < 0)
+ 			goto exit;
+@@ -434,10 +399,8 @@ static int pca963x_probe(struct i2c_client *client,
  	return 0;
+ 
+ exit:
+-	while (i--) {
++	while (i--)
+ 		led_classdev_unregister(&pca963x[i].led_cdev);
+-		cancel_work_sync(&pca963x[i].work);
+-	}
+ 
+ 	return err;
  }
- 
--static void lp5521_led_brightness_work(struct work_struct *work)
-+static void lp5521_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
- 
- 	mutex_lock(&chip->lock);
-@@ -501,7 +499,7 @@ static struct lp55xx_device_config lp5521_cfg = {
- 	},
- 	.max_channel  = LP5521_MAX_LEDS,
- 	.post_init_device   = lp5521_post_init_device,
--	.brightness_work_fn = lp5521_led_brightness_work,
-+	.brightness_fn      = lp5521_led_brightness,
- 	.set_led_current    = lp5521_set_led_current,
- 	.firmware_cb        = lp5521_firmware_loaded,
- 	.run_engine         = lp5521_run_engine,
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 584dbbc..35d58ac 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -802,10 +802,8 @@ leave:
- 	return ret;
- }
- 
--static void lp5523_led_brightness_work(struct work_struct *work)
-+static void lp5523_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
- 
- 	mutex_lock(&chip->lock);
-@@ -867,7 +865,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	},
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
--	.brightness_work_fn = lp5523_led_brightness_work,
-+	.brightness_fn      = lp5523_led_brightness,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index ca85724..0c0487b 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -311,10 +311,8 @@ static int lp5562_post_init_device(struct lp55xx_chip *chip)
- 	return 0;
- }
- 
--static void lp5562_led_brightness_work(struct work_struct *work)
-+static void lp5562_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
- 	u8 addr[] = {
- 		LP5562_REG_R_PWM,
-@@ -503,7 +501,7 @@ static struct lp55xx_device_config lp5562_cfg = {
- 	},
- 	.post_init_device   = lp5562_post_init_device,
- 	.set_led_current    = lp5562_set_led_current,
--	.brightness_work_fn = lp5562_led_brightness_work,
-+	.brightness_fn      = lp5562_led_brightness,
- 	.run_engine         = lp5562_run_engine,
- 	.firmware_cb        = lp5562_firmware_loaded,
- 	.dev_attr_group     = &lp5562_group,
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 96d51e9..b3c834b 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -138,9 +138,10 @@ static void lp55xx_set_brightness(struct led_classdev *cdev,
- 			     enum led_brightness brightness)
- {
- 	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
-+	struct lp55xx_device_config *cfg = led->chip->cfg;
- 
- 	led->brightness = (u8)brightness;
--	schedule_work(&led->brightness_work);
-+	cfg->brightness_fn(led);
- }
- 
- static int lp55xx_init_led(struct lp55xx_led *led,
-@@ -174,6 +175,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 
- 	led->cdev.brightness_set = lp55xx_set_brightness;
- 	led->cdev.groups = lp55xx_led_groups;
-+	led->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
- 
- 	if (pdata->led_config[chan].name) {
- 		led->cdev.name = pdata->led_config[chan].name;
-@@ -464,7 +466,7 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 	int ret;
+@@ -447,10 +410,8 @@ static int pca963x_remove(struct i2c_client *client)
+ 	struct pca963x *pca963x = i2c_get_clientdata(client);
  	int i;
  
--	if (!cfg->brightness_work_fn) {
-+	if (!cfg->brightness_fn) {
- 		dev_err(&chip->cl->dev, "empty brightness configuration\n");
- 		return -EINVAL;
- 	}
-@@ -481,8 +483,6 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 		if (ret)
- 			goto err_init_led;
+-	for (i = 0; i < pca963x->chipdef->n_leds; i++) {
++	for (i = 0; i < pca963x->chipdef->n_leds; i++)
+ 		led_classdev_unregister(&pca963x->leds[i].led_cdev);
+-		cancel_work_sync(&pca963x->leds[i].work);
+-	}
  
--		INIT_WORK(&each->brightness_work, cfg->brightness_work_fn);
--
- 		chip->num_leds++;
- 		each->chip = chip;
- 
-@@ -507,7 +507,6 @@ void lp55xx_unregister_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 	for (i = 0; i < chip->num_leds; i++) {
- 		each = led + i;
- 		led_classdev_unregister(&each->cdev);
--		flush_work(&each->brightness_work);
- 	}
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(lp55xx_unregister_leds);
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index cceab48..0a045d0 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -95,7 +95,7 @@ struct lp55xx_reg {
-  * @enable             : Chip specific enable command
-  * @max_channel        : Maximum number of channels
-  * @post_init_device   : Chip specific initialization code
-- * @brightness_work_fn : Brightness work function
-+ * @brightness_fn      : Brightness function
-  * @set_led_current    : LED current set function
-  * @firmware_cb        : Call function when the firmware is loaded
-  * @run_engine         : Run internal engine for pattern
-@@ -110,7 +110,7 @@ struct lp55xx_device_config {
- 	int (*post_init_device) (struct lp55xx_chip *chip);
- 
- 	/* access brightness register */
--	void (*brightness_work_fn)(struct work_struct *work);
-+	void (*brightness_fn)(struct lp55xx_led *led);
- 
- 	/* current setting function */
- 	void (*set_led_current) (struct lp55xx_led *led, u8 led_current);
-@@ -164,7 +164,6 @@ struct lp55xx_chip {
-  * @cdev            : LED class device
-  * @led_current     : Current setting at each led channel
-  * @max_current     : Maximun current at each led channel
-- * @brightness_work : Workqueue for brightness control
-  * @brightness      : Brightness value
-  * @chip            : The lp55xx chip data
-  */
-@@ -173,7 +172,6 @@ struct lp55xx_led {
- 	struct led_classdev cdev;
- 	u8 led_current;
- 	u8 max_current;
--	struct work_struct brightness_work;
- 	u8 brightness;
- 	struct lp55xx_chip *chip;
- };
-diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-index d3098e3..753ce15 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -272,10 +272,8 @@ static void lp8501_firmware_loaded(struct lp55xx_chip *chip)
- 	lp8501_update_program_memory(chip, fw->data, fw->size);
- }
- 
--static void lp8501_led_brightness_work(struct work_struct *work)
-+static void lp8501_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
- 
- 	mutex_lock(&chip->lock);
-@@ -296,7 +294,7 @@ static struct lp55xx_device_config lp8501_cfg = {
- 	},
- 	.max_channel  = LP8501_MAX_LEDS,
- 	.post_init_device   = lp8501_post_init_device,
--	.brightness_work_fn = lp8501_led_brightness_work,
-+	.brightness_fn      = lp8501_led_brightness,
- 	.set_led_current    = lp8501_set_led_current,
- 	.firmware_cb        = lp8501_firmware_loaded,
- 	.run_engine         = lp8501_run_engine,
 -- 
 1.7.9.5
