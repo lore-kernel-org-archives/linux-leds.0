@@ -1,120 +1,127 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 10/57] leds: max77693: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:23 +0200
-Message-ID: <1439285890-27329-11-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 20/57] leds: lp3944: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:33 +0200
+Message-ID: <1439285890-27329-21-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-Now the core implements the work queue, remove it from the drivers.
+From: Andrew Lunn <andrew@lunn.ch>
 
+Now the core implements the work queue, remove it from the driver.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Antonio Ospite <ospite@studenti.unina.it>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Bryan Wu <cooloney@gmail.com>
 ---
- drivers/leds/leds-max77693.c |   45 ++++++++----------------------------------
- 1 file changed, 8 insertions(+), 37 deletions(-)
+ drivers/leds/leds-lp3944.c |   30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
-index 856d929..cc4146a 100644
---- a/drivers/leds/leds-max77693.c
-+++ b/drivers/leds/leds-max77693.c
-@@ -20,7 +20,6 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
+diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
+index 53144fb..4b90663 100644
+--- a/drivers/leds/leds-lp3944.c
++++ b/drivers/leds/leds-lp3944.c
+@@ -31,7 +31,6 @@
  #include <linux/slab.h>
+ #include <linux/leds.h>
+ #include <linux/mutex.h>
 -#include <linux/workqueue.h>
- #include <media/v4l2-flash-led-class.h>
+ #include <linux/leds-lp3944.h>
  
- #define MODE_OFF		0
-@@ -62,8 +61,6 @@ struct max77693_sub_led {
- 	int fled_id;
- 	/* corresponding LED Flash class device */
- 	struct led_classdev_flash fled_cdev;
--	/* assures led-triggers compatibility */
--	struct work_struct work_brightness_set;
- 	/* V4L2 Flash device */
- 	struct v4l2_flash *v4l2_flash;
+ /* Read Only Registers */
+@@ -68,10 +67,8 @@
+ struct lp3944_led_data {
+ 	u8 id;
+ 	enum lp3944_type type;
+-	enum lp3944_status status;
+ 	struct led_classdev ldev;
+ 	struct i2c_client *client;
+-	struct work_struct work;
+ };
  
-@@ -463,10 +460,14 @@ static int max77693_setup(struct max77693_led_device *led,
- 	return max77693_set_mode_reg(led, MODE_OFF);
+ struct lp3944_data {
+@@ -275,8 +272,7 @@ static int lp3944_led_set_blink(struct led_classdev *led_cdev,
+ 	dev_dbg(&led->client->dev, "%s: OK hardware accelerated blink!\n",
+ 		__func__);
+ 
+-	led->status = LP3944_LED_STATUS_DIM0;
+-	schedule_work(&led->work);
++	lp3944_led_set(led, LP3944_LED_STATUS_DIM0);
+ 
+ 	return 0;
  }
+@@ -289,16 +285,7 @@ static void lp3944_led_set_brightness(struct led_classdev *led_cdev,
+ 	dev_dbg(&led->client->dev, "%s: %s, %d\n",
+ 		__func__, led_cdev->name, brightness);
  
--static int __max77693_led_brightness_set(struct max77693_led_device *led,
--					int fled_id, enum led_brightness value)
-+/* LED subsystem callbacks */
-+static void max77693_led_brightness_set(struct led_classdev *led_cdev,
-+					enum led_brightness value)
- {
--	int ret;
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
-+	struct max77693_led_device *led = sub_led_to_led(sub_led);
-+	int fled_id = sub_led->fled_id, ret;
- 
- 	mutex_lock(&led->lock);
- 
-@@ -494,32 +495,6 @@ static int __max77693_led_brightness_set(struct max77693_led_device *led,
- 			ret);
- unlock:
- 	mutex_unlock(&led->lock);
--	return ret;
+-	led->status = !!brightness;
+-	schedule_work(&led->work);
 -}
 -
--static void max77693_led_brightness_set_work(
--					struct work_struct *work)
+-static void lp3944_led_work(struct work_struct *work)
 -{
--	struct max77693_sub_led *sub_led =
--			container_of(work, struct max77693_sub_led,
--					work_brightness_set);
--	struct max77693_led_device *led = sub_led_to_led(sub_led);
+-	struct lp3944_led_data *led;
 -
--	__max77693_led_brightness_set(led, sub_led->fled_id,
--				sub_led->torch_brightness);
--}
--
--/* LED subsystem callbacks */
--
--static void max77693_led_brightness_set(
--				struct led_classdev *led_cdev,
--				enum led_brightness value)
--{
--	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
--	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
--
--	sub_led->torch_brightness = value;
--	schedule_work(&sub_led->work_brightness_set);
+-	led = container_of(work, struct lp3944_led_data, work);
+-	lp3944_led_set(led, led->status);
++	lp3944_led_set(led, !!brightness);
  }
  
- static int max77693_led_flash_brightness_set(
-@@ -926,9 +901,7 @@ static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
- 					led_cfg->iout_torch_max[FLED2] :
- 					led_cfg->iout_torch_max[fled_id]) /
- 				   TORCH_IOUT_STEP;
--	led_cdev->flags |= LED_DEV_CAP_FLASH;
--	INIT_WORK(&sub_led->work_brightness_set,
--			max77693_led_brightness_set_work);
-+	led_cdev->flags |= LED_DEV_CAP_FLASH | LED_BRIGHTNESS_BLOCKING;
+ static int lp3944_configure(struct i2c_client *client,
+@@ -318,14 +305,13 @@ static int lp3944_configure(struct i2c_client *client,
+ 		case LP3944_LED_TYPE_LED:
+ 		case LP3944_LED_TYPE_LED_INVERTED:
+ 			led->type = pled->type;
+-			led->status = pled->status;
+ 			led->ldev.name = pled->name;
+ 			led->ldev.max_brightness = 1;
+ 			led->ldev.brightness_set = lp3944_led_set_brightness;
+ 			led->ldev.blink_set = lp3944_led_set_blink;
+-			led->ldev.flags = LED_CORE_SUSPENDRESUME;
++			led->ldev.flags = LED_CORE_SUSPENDRESUME |
++					  LED_BRIGHTNESS_BLOCKING;
  
- 	max77693_init_flash_settings(sub_led, led_cfg);
+-			INIT_WORK(&led->work, lp3944_led_work);
+ 			err = led_classdev_register(&client->dev, &led->ldev);
+ 			if (err < 0) {
+ 				dev_err(&client->dev,
+@@ -336,14 +322,14 @@ static int lp3944_configure(struct i2c_client *client,
  
-@@ -1050,13 +1023,11 @@ static int max77693_led_remove(struct platform_device *pdev)
- 	if (led->iout_joint || max77693_fled_used(led, FLED1)) {
- 		v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
- 		led_classdev_flash_unregister(&sub_leds[FLED1].fled_cdev);
--		cancel_work_sync(&sub_leds[FLED1].work_brightness_set);
- 	}
+ 			/* to expose the default value to userspace */
+ 			led->ldev.brightness =
+-					(enum led_brightness) led->status;
++					(enum led_brightness) pled->status;
  
- 	if (!led->iout_joint && max77693_fled_used(led, FLED2)) {
- 		v4l2_flash_release(sub_leds[FLED2].v4l2_flash);
- 		led_classdev_flash_unregister(&sub_leds[FLED2].fled_cdev);
--		cancel_work_sync(&sub_leds[FLED2].work_brightness_set);
- 	}
+ 			/* Set the default led status */
+-			err = lp3944_led_set(led, led->status);
++			err = lp3944_led_set(led, pled->status);
+ 			if (err < 0) {
+ 				dev_err(&client->dev,
+ 					"%s couldn't set STATUS %d\n",
+-					led->ldev.name, led->status);
++					led->ldev.name, pled->status);
+ 				goto exit;
+ 			}
+ 			break;
+@@ -364,7 +350,6 @@ exit:
+ 			case LP3944_LED_TYPE_LED:
+ 			case LP3944_LED_TYPE_LED_INVERTED:
+ 				led_classdev_unregister(&data->leds[i].ldev);
+-				cancel_work_sync(&data->leds[i].work);
+ 				break;
  
- 	mutex_destroy(&led->lock);
+ 			case LP3944_LED_TYPE_NONE:
+@@ -424,7 +409,6 @@ static int lp3944_remove(struct i2c_client *client)
+ 		case LP3944_LED_TYPE_LED:
+ 		case LP3944_LED_TYPE_LED_INVERTED:
+ 			led_classdev_unregister(&data->leds[i].ldev);
+-			cancel_work_sync(&data->leds[i].work);
+ 			break;
+ 
+ 		case LP3944_LED_TYPE_NONE:
 -- 
 1.7.9.5
