@@ -1,144 +1,219 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 15/57] leds: bd2802: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:28 +0200
-Message-ID: <1439285890-27329-16-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 06/57] leds: Improve setting brightness in a non
+ sleeping way
+Date: Tue, 11 Aug 2015 11:37:19 +0200
+Message-ID: <1439285890-27329-7-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Kim Kyuwon <q1.kim@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+This patch replaces led_set_brightness_async with
+led_set_brightness_nosleep in all places where the most vital was setting
+brightness in a non sleeping way but not necessarily asynchronously, which
+is not needed for non-blocking drivers.
 
-Now the core implements the work queue, remove it from the driver.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Kim Kyuwon <q1.kim@samsung.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-bd2802.c |   32 +++++++++++++-------------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
+ drivers/leds/led-class.c                  |    4 ++--
+ drivers/leds/led-core.c                   |    5 +++--
+ drivers/leds/trigger/ledtrig-backlight.c  |    8 ++++----
+ drivers/leds/trigger/ledtrig-default-on.c |    2 +-
+ drivers/leds/trigger/ledtrig-gpio.c       |    6 +++---
+ drivers/leds/trigger/ledtrig-heartbeat.c  |    4 ++--
+ drivers/leds/trigger/ledtrig-oneshot.c    |    4 ++--
+ drivers/leds/trigger/ledtrig-transient.c  |    8 ++++----
+ 8 files changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
-index 6078c15d..9d1535a 100644
---- a/drivers/leds/leds-bd2802.c
-+++ b/drivers/leds/leds-bd2802.c
-@@ -72,7 +72,6 @@ struct bd2802_led {
- 	struct bd2802_led_platform_data	*pdata;
- 	struct i2c_client		*client;
- 	struct rw_semaphore		rwsem;
--	struct work_struct		work;
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 853bd95..bd32919 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -109,7 +109,7 @@ static void led_timer_function(unsigned long data)
+ 	unsigned long delay;
  
- 	struct led_state		led[2];
+ 	if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
+-		led_set_brightness_async(led_cdev, LED_OFF);
++		led_set_brightness_nosleep(led_cdev, LED_OFF);
+ 		return;
+ 	}
  
-@@ -518,16 +517,6 @@ static struct device_attribute *bd2802_attributes[] = {
- 	&bd2802_rgb_current_attr,
- };
+@@ -137,7 +137,7 @@ static void led_timer_function(unsigned long data)
+ 		delay = led_cdev->blink_delay_off;
+ 	}
  
--static void bd2802_led_work(struct work_struct *work)
--{
--	struct bd2802_led *led = container_of(work, struct bd2802_led, work);
--
--	if (led->state)
--		bd2802_turn_on(led, led->led_id, led->color, led->state);
--	else
--		bd2802_turn_off(led, led->led_id, led->color);
--}
--
- #define BD2802_CONTROL_RGBS(name, id, clr)				\
- static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
- 					enum led_brightness value)	\
-@@ -536,11 +525,13 @@ static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
- 		container_of(led_cdev, struct bd2802_led, cdev_##name);	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
--	if (value == LED_OFF)						\
-+	if (value == LED_OFF) {						\
- 		led->state = BD2802_OFF;				\
--	else								\
-+		bd2802_turn_off(led, led->led_id, led->color);		\
-+	} else {							\
- 		led->state = BD2802_ON;					\
--	schedule_work(&led->work);					\
-+		bd2802_turn_on(led, led->led_id, led->color, BD2802_ON);\
-+	}								\
- }									\
- static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 		unsigned long *delay_on, unsigned long *delay_off)	\
-@@ -552,7 +543,7 @@ static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
- 	led->state = BD2802_BLINK;					\
--	schedule_work(&led->work);					\
-+	bd2802_turn_on(led, led->led_id, led->color, BD2802_BLINK);	\
- 	return 0;							\
+-	led_set_brightness_async(led_cdev, brightness);
++	led_set_brightness_nosleep(led_cdev, brightness);
+ 
+ 	/* Return in next iteration if led is in one-shot mode and we are in
+ 	 * the final blink state so that the led is toggled each delay_on +
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 3ea32ab..14377ea 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -42,13 +42,14 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+ 
+ 	/* never on - just set to off */
+ 	if (!delay_on) {
+-		led_set_brightness_async(led_cdev, LED_OFF);
++		led_set_brightness_nosleep(led_cdev, LED_OFF);
+ 		return;
+ 	}
+ 
+ 	/* never off - just set to brightness */
+ 	if (!delay_off) {
+-		led_set_brightness_async(led_cdev, led_cdev->blink_brightness);
++		led_set_brightness_nosleep(led_cdev,
++					   led_cdev->blink_brightness);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/leds/trigger/ledtrig-backlight.c b/drivers/leds/trigger/ledtrig-backlight.c
+index 59eca17..1ca1f16 100644
+--- a/drivers/leds/trigger/ledtrig-backlight.c
++++ b/drivers/leds/trigger/ledtrig-backlight.c
+@@ -51,9 +51,9 @@ static int fb_notifier_callback(struct notifier_block *p,
+ 
+ 	if ((n->old_status == UNBLANK) ^ n->invert) {
+ 		n->brightness = led->brightness;
+-		led_set_brightness_async(led, LED_OFF);
++		led_set_brightness_nosleep(led, LED_OFF);
+ 	} else {
+-		led_set_brightness_async(led, n->brightness);
++		led_set_brightness_nosleep(led, n->brightness);
+ 	}
+ 
+ 	n->old_status = new_status;
+@@ -89,9 +89,9 @@ static ssize_t bl_trig_invert_store(struct device *dev,
+ 
+ 	/* After inverting, we need to update the LED. */
+ 	if ((n->old_status == BLANK) ^ n->invert)
+-		led_set_brightness_async(led, LED_OFF);
++		led_set_brightness_nosleep(led, LED_OFF);
+ 	else
+-		led_set_brightness_async(led, n->brightness);
++		led_set_brightness_nosleep(led, n->brightness);
+ 
+ 	return num;
+ }
+diff --git a/drivers/leds/trigger/ledtrig-default-on.c b/drivers/leds/trigger/ledtrig-default-on.c
+index 6f38f88..ff455cb 100644
+--- a/drivers/leds/trigger/ledtrig-default-on.c
++++ b/drivers/leds/trigger/ledtrig-default-on.c
+@@ -19,7 +19,7 @@
+ 
+ static void defon_trig_activate(struct led_classdev *led_cdev)
+ {
+-	led_set_brightness_async(led_cdev, led_cdev->max_brightness);
++	led_set_brightness_nosleep(led_cdev, led_cdev->max_brightness);
  }
  
-@@ -567,12 +558,11 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- {
- 	int ret;
+ static struct led_trigger defon_led_trigger = {
+diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
+index 4cc7040..51288a4 100644
+--- a/drivers/leds/trigger/ledtrig-gpio.c
++++ b/drivers/leds/trigger/ledtrig-gpio.c
+@@ -54,12 +54,12 @@ static void gpio_trig_work(struct work_struct *work)
  
--	INIT_WORK(&led->work, bd2802_led_work);
--
- 	led->cdev_led1r.name = "led1_R";
- 	led->cdev_led1r.brightness = LED_OFF;
- 	led->cdev_led1r.brightness_set = bd2802_set_led1r_brightness;
- 	led->cdev_led1r.blink_set = bd2802_set_led1r_blink;
-+	led->cdev_led1r.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	if (tmp) {
+ 		if (gpio_data->desired_brightness)
+-			led_set_brightness_async(gpio_data->led,
++			led_set_brightness_nosleep(gpio_data->led,
+ 					   gpio_data->desired_brightness);
+ 		else
+-			led_set_brightness_async(gpio_data->led, LED_FULL);
++			led_set_brightness_nosleep(gpio_data->led, LED_FULL);
+ 	} else {
+-		led_set_brightness_async(gpio_data->led, LED_OFF);
++		led_set_brightness_nosleep(gpio_data->led, LED_OFF);
+ 	}
+ }
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1r);
- 	if (ret < 0) {
-@@ -585,6 +575,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 	led->cdev_led1g.brightness = LED_OFF;
- 	led->cdev_led1g.brightness_set = bd2802_set_led1g_brightness;
- 	led->cdev_led1g.blink_set = bd2802_set_led1g_blink;
-+	led->cdev_led1g.flags |= LED_BRIGHTNESS_BLOCKING;
+diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+index fea6871..3dc6f0c 100644
+--- a/drivers/leds/trigger/ledtrig-heartbeat.c
++++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+@@ -37,7 +37,7 @@ static void led_heartbeat_function(unsigned long data)
+ 	unsigned long delay = 0;
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1g);
- 	if (ret < 0) {
-@@ -597,6 +588,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 	led->cdev_led1b.brightness = LED_OFF;
- 	led->cdev_led1b.brightness_set = bd2802_set_led1b_brightness;
- 	led->cdev_led1b.blink_set = bd2802_set_led1b_blink;
-+	led->cdev_led1b.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	if (unlikely(panic_heartbeats)) {
+-		led_set_brightness(led_cdev, LED_OFF);
++		led_set_brightness_nosleep(led_cdev, LED_OFF);
+ 		return;
+ 	}
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1b);
- 	if (ret < 0) {
-@@ -609,6 +601,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 	led->cdev_led2r.brightness = LED_OFF;
- 	led->cdev_led2r.brightness_set = bd2802_set_led2r_brightness;
- 	led->cdev_led2r.blink_set = bd2802_set_led2r_blink;
-+	led->cdev_led2r.flags |= LED_BRIGHTNESS_BLOCKING;
+@@ -74,7 +74,7 @@ static void led_heartbeat_function(unsigned long data)
+ 		break;
+ 	}
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2r);
- 	if (ret < 0) {
-@@ -621,6 +614,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 	led->cdev_led2g.brightness = LED_OFF;
- 	led->cdev_led2g.brightness_set = bd2802_set_led2g_brightness;
- 	led->cdev_led2g.blink_set = bd2802_set_led2g_blink;
-+	led->cdev_led2g.flags |= LED_BRIGHTNESS_BLOCKING;
+-	led_set_brightness_async(led_cdev, brightness);
++	led_set_brightness_nosleep(led_cdev, brightness);
+ 	mod_timer(&heartbeat_data->timer, jiffies + delay);
+ }
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2g);
- 	if (ret < 0) {
-@@ -633,7 +627,8 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 	led->cdev_led2b.brightness = LED_OFF;
- 	led->cdev_led2b.brightness_set = bd2802_set_led2b_brightness;
- 	led->cdev_led2b.blink_set = bd2802_set_led2b_blink;
--	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME;
-+	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME |
-+				 LED_BRIGHTNESS_BLOCKING;
+diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+index fbd02cd..6729317 100644
+--- a/drivers/leds/trigger/ledtrig-oneshot.c
++++ b/drivers/leds/trigger/ledtrig-oneshot.c
+@@ -63,9 +63,9 @@ static ssize_t led_invert_store(struct device *dev,
+ 	oneshot_data->invert = !!state;
  
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2b);
- 	if (ret < 0) {
-@@ -661,7 +656,6 @@ failed_unregister_led1_R:
+ 	if (oneshot_data->invert)
+-		led_set_brightness_async(led_cdev, LED_FULL);
++		led_set_brightness_nosleep(led_cdev, LED_FULL);
+ 	else
+-		led_set_brightness_async(led_cdev, LED_OFF);
++		led_set_brightness_nosleep(led_cdev, LED_OFF);
  
- static void bd2802_unregister_led_classdev(struct bd2802_led *led)
- {
--	cancel_work_sync(&led->work);
- 	led_classdev_unregister(&led->cdev_led2b);
- 	led_classdev_unregister(&led->cdev_led2g);
- 	led_classdev_unregister(&led->cdev_led2r);
+ 	return size;
+ }
+diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+index 3c34de4..1dddd8f 100644
+--- a/drivers/leds/trigger/ledtrig-transient.c
++++ b/drivers/leds/trigger/ledtrig-transient.c
+@@ -41,7 +41,7 @@ static void transient_timer_function(unsigned long data)
+ 	struct transient_trig_data *transient_data = led_cdev->trigger_data;
+ 
+ 	transient_data->activate = 0;
+-	led_set_brightness_async(led_cdev, transient_data->restore_state);
++	led_set_brightness_nosleep(led_cdev, transient_data->restore_state);
+ }
+ 
+ static ssize_t transient_activate_show(struct device *dev,
+@@ -72,7 +72,7 @@ static ssize_t transient_activate_store(struct device *dev,
+ 	if (state == 0 && transient_data->activate == 1) {
+ 		del_timer(&transient_data->timer);
+ 		transient_data->activate = state;
+-		led_set_brightness_async(led_cdev,
++		led_set_brightness_nosleep(led_cdev,
+ 					transient_data->restore_state);
+ 		return size;
+ 	}
+@@ -81,7 +81,7 @@ static ssize_t transient_activate_store(struct device *dev,
+ 	if (state == 1 && transient_data->activate == 0 &&
+ 	    transient_data->duration != 0) {
+ 		transient_data->activate = state;
+-		led_set_brightness_async(led_cdev, transient_data->state);
++		led_set_brightness_nosleep(led_cdev, transient_data->state);
+ 		transient_data->restore_state =
+ 		    (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
+ 		mod_timer(&transient_data->timer,
+@@ -204,7 +204,7 @@ static void transient_trig_deactivate(struct led_classdev *led_cdev)
+ 
+ 	if (led_cdev->activated) {
+ 		del_timer_sync(&transient_data->timer);
+-		led_set_brightness_async(led_cdev,
++		led_set_brightness_nosleep(led_cdev,
+ 					transient_data->restore_state);
+ 		device_remove_file(led_cdev->dev, &dev_attr_activate);
+ 		device_remove_file(led_cdev->dev, &dev_attr_duration);
 -- 
 1.7.9.5
