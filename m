@@ -1,177 +1,147 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 37/57] leds: lm355x: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:50 +0200
-Message-ID: <1439285890-27329-38-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 33/57] leds: regulator: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:46 +0200
+Message-ID: <1439285890-27329-34-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
+
+From: Andrew Lunn <andrew@lunn.ch>
 
 Now the core implements the work queue, remove it from the drivers.
 
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Antonio Ospite <ospite@studenti.unina.it>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Daniel Jeong <daniel.jeong@ti.com>
-Cc: G.Shark Jeong <gshark.jeong@gmail.com>
 ---
- drivers/leds/leds-lm355x.c |   61 +++++++++-----------------------------------
- 1 file changed, 12 insertions(+), 49 deletions(-)
+ drivers/leds/leds-regulator.c |   43 ++++++++++-------------------------------
+ 1 file changed, 10 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
-index 48872997..d2e74e9 100644
---- a/drivers/leds/leds-lm355x.c
-+++ b/drivers/leds/leds-lm355x.c
-@@ -16,7 +16,6 @@
- #include <linux/platform_device.h>
- #include <linux/fs.h>
- #include <linux/regmap.h>
+diff --git a/drivers/leds/leds-regulator.c b/drivers/leds/leds-regulator.c
+index ffc2139..73af223 100644
+--- a/drivers/leds/leds-regulator.c
++++ b/drivers/leds/leds-regulator.c
+@@ -14,7 +14,6 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
 -#include <linux/workqueue.h>
- #include <linux/platform_data/leds-lm355x.h>
+ #include <linux/leds.h>
+ #include <linux/leds-regulator.h>
+ #include <linux/platform_device.h>
+@@ -25,10 +24,8 @@
  
- enum lm355x_type {
-@@ -59,14 +58,6 @@ struct lm355x_chip_data {
- 	struct led_classdev cdev_torch;
- 	struct led_classdev cdev_indicator;
+ struct regulator_led {
+ 	struct led_classdev cdev;
+-	enum led_brightness value;
+ 	int enabled;
+ 	struct mutex mutex;
+-	struct work_struct work;
  
--	struct work_struct work_flash;
--	struct work_struct work_torch;
--	struct work_struct work_indicator;
--
--	u8 br_flash;
--	u8 br_torch;
--	u8 br_indicator;
--
- 	struct lm355x_platform_data *pdata;
- 	struct regmap *regmap;
- 	struct mutex lock;
-@@ -316,15 +307,6 @@ out:
+ 	struct regulator *vcc;
+ };
+@@ -94,22 +91,24 @@ static void regulator_led_disable(struct regulator_led *led)
+ 	led->enabled = 0;
  }
  
- /* torch */
--static void lm355x_deferred_torch_brightness_set(struct work_struct *work)
--{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_torch);
--
--	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_torch, MODE_TORCH);
--	mutex_unlock(&chip->lock);
--}
- 
- static void lm355x_torch_brightness_set(struct led_classdev *cdev,
- 					enum led_brightness brightness)
-@@ -332,50 +314,35 @@ static void lm355x_torch_brightness_set(struct led_classdev *cdev,
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_torch);
- 
--	chip->br_torch = brightness;
--	schedule_work(&chip->work_torch);
--}
--
--/* flash */
--static void lm355x_deferred_strobe_brightness_set(struct work_struct *work)
--{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_flash);
--
- 	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_flash, MODE_FLASH);
-+	lm355x_control(chip, brightness, MODE_TORCH);
- 	mutex_unlock(&chip->lock);
- }
- 
-+/* flash */
-+
- static void lm355x_strobe_brightness_set(struct led_classdev *cdev,
- 					 enum led_brightness brightness)
+-static void regulator_led_set_value(struct regulator_led *led)
++static void regulator_led_brightness_set(struct led_classdev *led_cdev,
++					 enum led_brightness value)
  {
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_flash);
++	struct regulator_led *led = to_regulator_led(led_cdev);
+ 	int voltage;
+ 	int ret;
  
--	chip->br_flash = brightness;
--	schedule_work(&chip->work_flash);
+ 	mutex_lock(&led->mutex);
+ 
+-	if (led->value == LED_OFF) {
++	if (value == LED_OFF) {
+ 		regulator_led_disable(led);
+ 		goto out;
+ 	}
+ 
+ 	if (led->cdev.max_brightness > 1) {
+-		voltage = led_regulator_get_voltage(led->vcc, led->value);
++		voltage = led_regulator_get_voltage(led->vcc, value);
+ 		dev_dbg(led->cdev.dev, "brightness: %d voltage: %d\n",
+-				led->value, voltage);
++				value, voltage);
+ 
+ 		ret = regulator_set_voltage(led->vcc, voltage, voltage);
+ 		if (ret != 0)
+@@ -123,23 +122,6 @@ out:
+ 	mutex_unlock(&led->mutex);
+ }
+ 
+-static void led_work(struct work_struct *work)
+-{
+-	struct regulator_led *led;
+-
+-	led = container_of(work, struct regulator_led, work);
+-	regulator_led_set_value(led);
 -}
 -
--/* indicator */
--static void lm355x_deferred_indicator_brightness_set(struct work_struct *work)
+-static void regulator_led_brightness_set(struct led_classdev *led_cdev,
+-			   enum led_brightness value)
 -{
--	struct lm355x_chip_data *chip =
--	    container_of(work, struct lm355x_chip_data, work_indicator);
+-	struct regulator_led *led = to_regulator_led(led_cdev);
 -
- 	mutex_lock(&chip->lock);
--	lm355x_control(chip, chip->br_indicator, MODE_INDIC);
-+	lm355x_control(chip, brightness, MODE_FLASH);
- 	mutex_unlock(&chip->lock);
- }
- 
-+/* indicator */
-+
- static void lm355x_indicator_brightness_set(struct led_classdev *cdev,
- 					    enum led_brightness brightness)
+-	led->value = value;
+-	schedule_work(&led->work);
+-}
+-
+ static int regulator_led_probe(struct platform_device *pdev)
  {
- 	struct lm355x_chip_data *chip =
- 	    container_of(cdev, struct lm355x_chip_data, cdev_indicator);
+ 	struct led_regulator_platform_data *pdata =
+@@ -169,11 +151,10 @@ static int regulator_led_probe(struct platform_device *pdev)
+ 				pdata->brightness);
+ 		return -EINVAL;
+ 	}
+-	led->value = pdata->brightness;
  
--	chip->br_indicator = brightness;
--	schedule_work(&chip->work_indicator);
-+	mutex_lock(&chip->lock);
-+	lm355x_control(chip, brightness, MODE_INDIC);
-+	mutex_unlock(&chip->lock);
- }
+ 	led->cdev.brightness_set = regulator_led_brightness_set;
+ 	led->cdev.name = pdata->name;
+-	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
++	led->cdev.flags |= LED_CORE_SUSPENDRESUME | LED_BRIGHTNESS_BLOCKING;
+ 	led->vcc = vcc;
  
- /* indicator pattern only for lm3556*/
-@@ -479,28 +446,26 @@ static int lm355x_probe(struct i2c_client *client,
- 		goto err_out;
+ 	/* to handle correctly an already enabled regulator */
+@@ -181,21 +162,18 @@ static int regulator_led_probe(struct platform_device *pdev)
+ 		led->enabled = 1;
  
- 	/* flash */
--	INIT_WORK(&chip->work_flash, lm355x_deferred_strobe_brightness_set);
- 	chip->cdev_flash.name = "flash";
- 	chip->cdev_flash.max_brightness = 16;
- 	chip->cdev_flash.brightness_set = lm355x_strobe_brightness_set;
- 	chip->cdev_flash.default_trigger = "flash";
-+	chip->cdev_flash.flags |= LED_BRIGHTNESS_BLOCKING;
- 	err = led_classdev_register((struct device *)
- 				    &client->dev, &chip->cdev_flash);
- 	if (err < 0)
- 		goto err_out;
- 	/* torch */
--	INIT_WORK(&chip->work_torch, lm355x_deferred_torch_brightness_set);
- 	chip->cdev_torch.name = "torch";
- 	chip->cdev_torch.max_brightness = 8;
- 	chip->cdev_torch.brightness_set = lm355x_torch_brightness_set;
- 	chip->cdev_torch.default_trigger = "torch";
-+	chip->cdev_torch.flags |= LED_BRIGHTNESS_BLOCKING;
- 	err = led_classdev_register((struct device *)
- 				    &client->dev, &chip->cdev_torch);
- 	if (err < 0)
- 		goto err_create_torch_file;
- 	/* indicator */
--	INIT_WORK(&chip->work_indicator,
--		  lm355x_deferred_indicator_brightness_set);
- 	chip->cdev_indicator.name = "indicator";
- 	if (id->driver_data == CHIP_LM3554)
- 		chip->cdev_indicator.max_brightness = 4;
-@@ -510,6 +475,7 @@ static int lm355x_probe(struct i2c_client *client,
- 	/* indicator pattern control only for LM3556 */
- 	if (id->driver_data == CHIP_LM3556)
- 		chip->cdev_indicator.groups = lm355x_indicator_groups;
-+	chip->cdev_indicator.flags |= LED_BRIGHTNESS_BLOCKING;
- 	err = led_classdev_register((struct device *)
- 				    &client->dev, &chip->cdev_indicator);
- 	if (err < 0)
-@@ -534,11 +500,8 @@ static int lm355x_remove(struct i2c_client *client)
+ 	mutex_init(&led->mutex);
+-	INIT_WORK(&led->work, led_work);
  
- 	regmap_write(chip->regmap, preg[REG_OPMODE].regno, 0);
- 	led_classdev_unregister(&chip->cdev_indicator);
--	flush_work(&chip->work_indicator);
- 	led_classdev_unregister(&chip->cdev_torch);
--	flush_work(&chip->work_torch);
- 	led_classdev_unregister(&chip->cdev_flash);
--	flush_work(&chip->work_flash);
- 	dev_info(&client->dev, "%s is removed\n", lm355x_name[chip->type]);
+ 	platform_set_drvdata(pdev, led);
+ 
+ 	ret = led_classdev_register(&pdev->dev, &led->cdev);
+-	if (ret < 0) {
+-		cancel_work_sync(&led->work);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	/* to expose the default value to userspace */
+-	led->cdev.brightness = led->value;
++	led->cdev.brightness = pdata->brightness;
+ 
+ 	/* Set the default led status */
+-	regulator_led_set_value(led);
++	regulator_led_brightness_set(&led->cdev, led->cdev.brightness);
  
  	return 0;
+ }
+@@ -205,7 +183,6 @@ static int regulator_led_remove(struct platform_device *pdev)
+ 	struct regulator_led *led = platform_get_drvdata(pdev);
+ 
+ 	led_classdev_unregister(&led->cdev);
+-	cancel_work_sync(&led->work);
+ 	regulator_led_disable(led);
+ 	return 0;
+ }
 -- 
 1.7.9.5
