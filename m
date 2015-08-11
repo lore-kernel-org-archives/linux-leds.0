@@ -1,13 +1,16 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 42/57] leds: ot200: Use brightness_set_nonblocking op
-Date: Tue, 11 Aug 2015 11:37:55 +0200
-Message-ID: <1439285890-27329-43-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 39/57] leds: bcm6328: Use brightness_set_nonblocking op
+Date: Tue, 11 Aug 2015 11:37:52 +0200
+Message-ID: <1439285890-27329-40-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, "Sebastian A. Siewior" <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>
 List-Id: linux-leds@vger.kernel.org
 
 The driver neither sleeps nor uses delays in its brightness_set op.
@@ -15,24 +18,25 @@ Use a new brightness_set_nonblocking op instead of brightness_set for
 setting brightness then.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Sebastian A. Siewior <bigeasy@linutronix.de>
+Cc: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+Cc: Jonas Gorski <jogo@openwrt.org>
 ---
- drivers/leds/leds-ot200.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/leds-bcm6328.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
-index 39870de..47de99e 100644
---- a/drivers/leds/leds-ot200.c
-+++ b/drivers/leds/leds-ot200.c
-@@ -122,7 +122,8 @@ static int ot200_led_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(leds); i++) {
- 
- 		leds[i].cdev.name = leds[i].name;
--		leds[i].cdev.brightness_set = ot200_led_brightness_set;
-+		leds[i].cdev.brightness_set_nonblocking =
-+						ot200_led_brightness_set;
- 
- 		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
- 		if (ret < 0)
--- 
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 986fe1e..0b0a6b5 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -311,7 +311,7 @@ static int bcm6328_led(struct device *dev, struct d=
+evice_node *nc, u32 reg,
+ 		spin_unlock_irqrestore(lock, flags);
+ 	}
+=20
+-	led->cdev.brightness_set =3D bcm6328_led_set;
++	led->cdev.brightness_set_nonblocking =3D bcm6328_led_set;
+ 	led->cdev.blink_set =3D bcm6328_blink_set;
+=20
+ 	rc =3D led_classdev_register(dev, &led->cdev);
+--=20
 1.7.9.5
