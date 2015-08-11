@@ -1,41 +1,44 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 48/57] leds: asic3: Use brightness_set_nonblocking op
-Date: Tue, 11 Aug 2015 11:38:01 +0200
-Message-ID: <1439285890-27329-49-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 49/57] leds: cobalt-qube: Use brightness_set_nonblocking
+ op
+Date: Tue, 11 Aug 2015 11:38:02 +0200
+Message-ID: <1439285890-27329-50-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39931 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933995AbbHKJki (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Aug 2015 05:40:38 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Paul Parsons <lost.distance@yahoo.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Florian Fainelli <florian@openwrt.org>
+List-Id: linux-leds@vger.kernel.org
 
 The driver neither sleeps nor uses delays in its brightness_set op.
 Use a new brightness_set_nonblocking op instead of brightness_set for
 setting brightness then.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Paul Parsons <lost.distance@yahoo.com>
+Cc: Florian Fainelli <florian@openwrt.org>
 ---
- drivers/leds/leds-asic3.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-cobalt-qube.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-asic3.c b/drivers/leds/leds-asic3.c
-index 1b71eac..c23f565 100644
---- a/drivers/leds/leds-asic3.c
-+++ b/drivers/leds/leds-asic3.c
-@@ -109,7 +109,7 @@ static int asic3_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-cobalt-qube.c b/drivers/leds/leds-cobalt-qube.c
+index d975220..7cb986e 100644
+--- a/drivers/leds/leds-cobalt-qube.c
++++ b/drivers/leds/leds-cobalt-qube.c
+@@ -27,10 +27,10 @@ static void qube_front_led_set(struct led_classdev *led_cdev,
+ }
  
- 	led->cdev->name = led->name;
- 	led->cdev->flags = LED_CORE_SUSPENDRESUME;
--	led->cdev->brightness_set = brightness_set;
-+	led->cdev->brightness_set_nonblocking = brightness_set;
- 	led->cdev->blink_set = blink_set;
- 	led->cdev->default_trigger = led->default_trigger;
+ static struct led_classdev qube_front_led = {
+-	.name			= "qube::front",
+-	.brightness		= LED_FULL,
+-	.brightness_set		= qube_front_led_set,
+-	.default_trigger	= "default-on",
++	.name				= "qube::front",
++	.brightness			= LED_FULL,
++	.brightness_set_nonblocking	= qube_front_led_set,
++	.default_trigger		= "default-on",
+ };
  
+ static int cobalt_qube_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
