@@ -1,22 +1,28 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 05/57] leds: Add an internal led_set_brightness_nosleep
- function
-Date: Tue, 11 Aug 2015 11:37:18 +0200
-Message-ID: <1439285890-27329-6-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 03/57] leds: Add led_set_brightness_sync to the public
+ LED subsystem API
+Date: Tue, 11 Aug 2015 11:37:16 +0200
+Message-ID: <1439285890-27329-4-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33652 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934116AbbHKJig (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 11 Aug 2015 05:38:36 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
+List-Id: linux-leds@vger.kernel.org
 
-This patch adds led_set_brightness_nosleep function. It guarantees setting
-LED brightness in a non-blocking way.
+led_set_brightness_sync function was visible only internally to the
+LED subsystem. It is now being made publicly available since it has
+become apparent that this is a caller who should decide whether
+brightness is to be set in a synchronous or an asynchronous way.
+
+The function is modified to use brightness_set_nonblocking or
+brightness_set op if brightness_set_sync is not implemented.
+Eventually all LED subsystem drivers will be modfified to set brightness
+only in a synchronous way with use of brightness_set_nonblocking or
+brightness_set op (brightness_set_sync op will be removed). LED core
+will take care of delegating brightness_set op to the work queue task,
+if needed.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Bryan Wu <cooloney@gmail.com>
@@ -25,64 +31,96 @@ Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Pavel Machek <pavel@ucw.cz>
 Cc: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds.h  |   22 ++++++++++++++++++++++
- include/linux/leds.h |    2 +-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/leds/led-core.c |   25 +++++++++++++++++++++++++
+ drivers/leds/leds.h     |   13 -------------
+ include/linux/leds.h    |   15 +++++++++++++++
+ 3 files changed, 40 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 549de7e..192071d 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -141,6 +141,31 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ }
+ EXPORT_SYMBOL(led_set_brightness);
+ 
++int led_set_brightness_sync(struct led_classdev *led_cdev,
++			    enum led_brightness value)
++{
++	int ret = 0;
++
++	led_cdev->brightness = min(value, led_cdev->max_brightness);
++
++	if (led_cdev->flags & LED_SUSPENDED)
++		return 0;
++
++	if (led_cdev->brightness_set_sync)
++		ret = led_cdev->brightness_set_sync(led_cdev,
++							led_cdev->brightness);
++	else if (led_cdev->brightness_set_nonblocking)
++		led_cdev->brightness_set_nonblocking(led_cdev,
++							led_cdev->brightness);
++	else if (led_cdev->brightness_set)
++		led_cdev->brightness_set(led_cdev, led_cdev->brightness);
++	else
++		ret = -EINVAL;
++
++	return ret;
++}
++EXPORT_SYMBOL(led_set_brightness_sync);
++
+ int led_update_brightness(struct led_classdev *led_cdev)
+ {
+ 	int ret = 0;
 diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index f700400..308f60f 100644
+index bc89d7a..1c026c9 100644
 --- a/drivers/leds/leds.h
 +++ b/drivers/leds/leds.h
-@@ -2,8 +2,10 @@
-  * LED Core
-  *
-  * Copyright 2005 Openedhand Ltd.
-+ * Copyright 2014, 2015 Samsung Electronics Co., Ltd.
-  *
-  * Author: Richard Purdie <rpurdie@openedhand.com>
-+ * Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -39,6 +41,26 @@ static inline void led_set_brightness_async(struct led_classdev *led_cdev,
- 	schedule_work(&led_cdev->set_brightness_work);
+@@ -26,19 +26,6 @@ static inline void led_set_brightness_async(struct led_classdev *led_cdev,
+ 		led_cdev->brightness_set(led_cdev, value);
  }
  
-+static inline void led_set_brightness_nosleep(struct led_classdev *led_cdev,
-+					      enum led_brightness value)
-+{
-+	int ret;
-+
-+	/*
-+	 * Drivers that implement brightness_set_nonblocking op are guaranteed
-+	 * not to sleep while setting brightness.
-+	 */
-+	if (led_cdev->brightness_set_nonblocking) {
-+		ret = led_set_brightness_sync(led_cdev, value);
-+		if (ret < 0)
-+			dev_err(led_cdev->dev,
-+				"cannot set led brightness %d\n", ret);
-+		return;
-+	}
-+
-+	led_set_brightness_async(led_cdev, value);
-+}
-+
+-static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
+-					enum led_brightness value)
+-{
+-	int ret = 0;
+-
+-	led_cdev->brightness = min(value, led_cdev->max_brightness);
+-
+-	if (!(led_cdev->flags & LED_SUSPENDED))
+-		ret = led_cdev->brightness_set_sync(led_cdev,
+-						led_cdev->brightness);
+-	return ret;
+-}
+-
  static inline int led_get_brightness(struct led_classdev *led_cdev)
  {
  	return led_cdev->brightness;
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index a004e84..9603a73 100644
+index ac9efe1..0c3098ea 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -52,7 +52,7 @@ struct led_classdev {
- #define LED_BLINK_DISABLE	(1 << 25)
- 
- 	/* Set LED brightness level */
--	/* Must not sleep, use a workqueue if needed */
-+	/* Intended for drivers that may set brightness in a blocking way. */
- 	void		(*brightness_set)(struct led_classdev *led_cdev,
- 					  enum led_brightness brightness);
- 	/* Intended for drivers that set brightness in a non-blocking way */
+@@ -164,6 +164,21 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+  */
+ extern void led_set_brightness(struct led_classdev *led_cdev,
+ 			       enum led_brightness brightness);
++
++/**
++ * led_set_brightness_sync - set LED brightness synchronously
++ * @led_cdev: the LED to set
++ * @brightness: the brightness to set it to
++ *
++ * Set an LED's brightness immediately. This function will block
++ * the caller for the time required for accessing device register,
++ * and it can sleep.
++ *
++ * Returns: 0 on success or negative error value on failure
++ */
++extern int led_set_brightness_sync(struct led_classdev *led_cdev,
++				   enum led_brightness value);
++
+ /**
+  * led_update_brightness - update LED brightness
+  * @led_cdev: the LED to query
 -- 
 1.7.9.5
