@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 27/57] leds: da903x: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:40 +0200
-Message-ID: <1439285890-27329-28-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 24/57] leds: pca955x: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:37 +0200
+Message-ID: <1439285890-27329-25-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Nate Case <ncase@xes-inc.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,106 +15,125 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Nate Case <ncase@xes-inc.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-da903x.c |   33 ++++++++++-----------------------
- 1 file changed, 10 insertions(+), 23 deletions(-)
+ drivers/leds/leds-pca955x.c |   38 ++++++++------------------------------
+ 1 file changed, 8 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
-index 952ba96e..bbb7935 100644
---- a/drivers/leds/leds-da903x.c
-+++ b/drivers/leds/leds-da903x.c
-@@ -16,7 +16,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index b775e1e..32de9c6 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -47,7 +47,6 @@
  #include <linux/leds.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
 -#include <linux/workqueue.h>
- #include <linux/mfd/da903x.h>
  #include <linux/slab.h>
  
-@@ -33,9 +32,7 @@
+ /* LED select registers determine the source that drives LED outputs */
+@@ -110,8 +109,6 @@ struct pca955x {
  
- struct da903x_led {
- 	struct led_classdev	cdev;
+ struct pca955x_led {
+ 	struct pca955x	*pca955x;
 -	struct work_struct	work;
- 	struct device		*master;
--	enum led_brightness	new_brightness;
- 	int			id;
- 	int			flags;
- };
-@@ -43,9 +40,11 @@ struct da903x_led {
- #define DA9030_LED_OFFSET(id)	((id) - DA9030_ID_LED_1)
- #define DA9034_LED_OFFSET(id)	((id) - DA9034_ID_LED_1)
- 
--static void da903x_led_work(struct work_struct *work)
-+static void da903x_led_set(struct led_classdev *led_cdev,
-+			   enum led_brightness value)
- {
--	struct da903x_led *led = container_of(work, struct da903x_led, work);
-+	struct da903x_led *led =
-+			container_of(led_cdev, struct da903x_led, cdev);
- 	uint8_t val;
- 	int offset;
- 
-@@ -57,39 +56,29 @@ static void da903x_led_work(struct work_struct *work)
- 	case DA9030_ID_LED_PC:
- 		offset = DA9030_LED_OFFSET(led->id);
- 		val = led->flags & ~0x87;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
--		val |= (0x7 - (led->new_brightness >> 5)) & 0x7; /* PWM<2:0> */
-+		val |= value ? 0x80 : 0; /* EN bit */
-+		val |= (0x7 - (value >> 5)) & 0x7; /* PWM<2:0> */
- 		da903x_write(led->master, DA9030_LED1_CONTROL + offset, val);
- 		break;
- 	case DA9030_ID_VIBRA:
- 		val = led->flags & ~0x80;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
-+		val |= value ? 0x80 : 0; /* EN bit */
- 		da903x_write(led->master, DA9030_MISC_CONTROL_A, val);
- 		break;
- 	case DA9034_ID_LED_1:
- 	case DA9034_ID_LED_2:
- 		offset = DA9034_LED_OFFSET(led->id);
--		val = (led->new_brightness * 0x5f / LED_FULL) & 0x7f;
-+		val = (value * 0x5f / LED_FULL) & 0x7f;
- 		val |= (led->flags & DA9034_LED_RAMP) ? 0x80 : 0;
- 		da903x_write(led->master, DA9034_LED1_CONTROL + offset, val);
- 		break;
- 	case DA9034_ID_VIBRA:
--		val = led->new_brightness & 0xfe;
-+		val = value & 0xfe;
- 		da903x_write(led->master, DA9034_VIBRA, val);
- 		break;
- 	}
+-	enum led_brightness	brightness;
+ 	struct led_classdev	led_cdev;
+ 	int			led_num;	/* 0 .. 15 potentially */
+ 	char			name[32];
+@@ -193,7 +190,8 @@ static u8 pca955x_read_ls(struct i2c_client *client, int n)
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
  }
  
--static void da903x_led_set(struct led_classdev *led_cdev,
--			   enum led_brightness value)
+-static void pca955x_led_work(struct work_struct *work)
++static void pca955x_led_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
+ {
+ 	struct pca955x_led *pca955x_led;
+ 	struct pca955x *pca955x;
+@@ -201,7 +199,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 	int chip_ls;	/* which LSx to use (0-3 potentially) */
+ 	int ls_led;	/* which set of bits within LSx to use (0-3) */
+ 
+-	pca955x_led = container_of(work, struct pca955x_led, work);
++	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
+ 	pca955x = pca955x_led->pca955x;
+ 
+ 	chip_ls = pca955x_led->led_num / 4;
+@@ -211,7 +209,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 
+ 	ls = pca955x_read_ls(pca955x->client, chip_ls);
+ 
+-	switch (pca955x_led->brightness) {
++	switch (value) {
+ 	case LED_FULL:
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
+ 		break;
+@@ -230,7 +228,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 		 * just turning off for all other values.
+ 		 */
+ 		pca955x_write_pwm(pca955x->client, 1,
+-				255 - pca955x_led->brightness);
++				255 - value);
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
+ 		break;
+ 	}
+@@ -240,21 +238,6 @@ static void pca955x_led_work(struct work_struct *work)
+ 	mutex_unlock(&pca955x->lock);
+ }
+ 
+-static void pca955x_led_set(struct led_classdev *led_cdev, enum led_brightness value)
 -{
--	struct da903x_led *led;
+-	struct pca955x_led *pca955x;
 -
--	led = container_of(led_cdev, struct da903x_led, cdev);
--	led->new_brightness = value;
--	schedule_work(&led->work);
+-	pca955x = container_of(led_cdev, struct pca955x_led, led_cdev);
+-
+-	pca955x->brightness = value;
+-
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca955x->work);
 -}
 -
- static int da903x_led_probe(struct platform_device *pdev)
+ static int pca955x_probe(struct i2c_client *client,
+ 					const struct i2c_device_id *id)
  {
- 	struct led_info *pdata = dev_get_platdata(&pdev->dev);
-@@ -115,13 +104,11 @@ static int da903x_led_probe(struct platform_device *pdev)
- 	led->cdev.default_trigger = pdata->default_trigger;
- 	led->cdev.brightness_set = da903x_led_set;
- 	led->cdev.brightness = LED_OFF;
-+	led->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
+@@ -329,8 +312,7 @@ static int pca955x_probe(struct i2c_client *client,
  
- 	led->id = id;
- 	led->flags = pdata->flags;
- 	led->master = pdev->dev.parent;
--	led->new_brightness = LED_OFF;
+ 		pca955x_led->led_cdev.name = pca955x_led->name;
+ 		pca955x_led->led_cdev.brightness_set = pca955x_led_set;
 -
--	INIT_WORK(&led->work, da903x_led_work);
+-		INIT_WORK(&pca955x_led->work, pca955x_led_work);
++		pca955x_led->led_cdev.flags |= LED_BRIGHTNESS_BLOCKING;
  
- 	ret = led_classdev_register(led->master, &led->cdev);
- 	if (ret) {
+ 		err = led_classdev_register(&client->dev,
+ 					&pca955x_led->led_cdev);
+@@ -355,10 +337,8 @@ static int pca955x_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit:
+-	while (i--) {
++	while (i--)
+ 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-		cancel_work_sync(&pca955x->leds[i].work);
+-	}
+ 
+ 	return err;
+ }
+@@ -368,10 +348,8 @@ static int pca955x_remove(struct i2c_client *client)
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
+ 	int i;
+ 
+-	for (i = 0; i < pca955x->chipdef->bits; i++) {
++	for (i = 0; i < pca955x->chipdef->bits; i++)
+ 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-		cancel_work_sync(&pca955x->leds[i].work);
+-	}
+ 
+ 	return 0;
+ }
 -- 
 1.7.9.5
