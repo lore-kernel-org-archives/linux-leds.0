@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 19/57] leds: pca9532: Remove work queue for LEDs.
-Date: Tue, 11 Aug 2015 11:37:32 +0200
-Message-ID: <1439285890-27329-20-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 18/57] leds: lm3642: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:31 +0200
+Message-ID: <1439285890-27329-19-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,70 +15,168 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the driver.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Daniel Jeong <daniel.jeong@ti.com>
+Cc: G.Shark Jeong <gshark.jeong@gmail.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-pca9532.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/leds/leds-lm3642.c |   57 ++++++++++----------------------------------
+ 1 file changed, 12 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 5a6363d..18d4d61 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -174,7 +174,9 @@ static void pca9532_set_brightness(struct led_classdev *led_cdev,
- 		if (err)
- 			return; /* XXX: led api doesn't allow error code? */
- 	}
--	schedule_work(&led->work);
-+	if (led->state == PCA9532_PWM0)
-+		pca9532_setpwm(led->client, 0);
-+	pca9532_setled(led);
- }
+diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
+index 02ebe34..38cbebb 100644
+--- a/drivers/leds/leds-lm3642.c
++++ b/drivers/leds/leds-lm3642.c
+@@ -15,7 +15,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/fs.h>
+ #include <linux/regmap.h>
+-#include <linux/workqueue.h>
+ #include <linux/platform_data/leds-lm3642.h>
  
- static int pca9532_set_blink(struct led_classdev *led_cdev,
-@@ -198,7 +200,10 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
- 	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
- 	if (err)
- 		return err;
--	schedule_work(&led->work);
-+	if (led->state == PCA9532_PWM0)
-+		pca9532_setpwm(led->client, 0);
-+	pca9532_setled(led);
-+
- 	return 0;
- }
+ #define	REG_FILT_TIME			(0x0)
+@@ -73,10 +72,6 @@ struct lm3642_chip_data {
+ 	struct led_classdev cdev_torch;
+ 	struct led_classdev cdev_indicator;
  
-@@ -233,15 +238,6 @@ static void pca9532_input_work(struct work_struct *work)
- 	mutex_unlock(&data->update_lock);
- }
+-	struct work_struct work_flash;
+-	struct work_struct work_torch;
+-	struct work_struct work_indicator;
+-
+ 	u8 br_flash;
+ 	u8 br_torch;
+ 	u8 br_indicator;
+@@ -209,24 +204,16 @@ out_strtoint:
  
--static void pca9532_led_work(struct work_struct *work)
+ static DEVICE_ATTR(torch_pin, S_IWUSR, NULL, lm3642_torch_pin_store);
+ 
+-static void lm3642_deferred_torch_brightness_set(struct work_struct *work)
 -{
--	struct pca9532_led *led;
--	led = container_of(work, struct pca9532_led, work);
--	if (led->state == PCA9532_PWM0)
--		pca9532_setpwm(led->client, 0);
--	pca9532_setled(led);
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_torch);
+-
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_torch, MODES_TORCH);
+-	mutex_unlock(&chip->lock);
 -}
 -
- #ifdef CONFIG_LEDS_PCA9532_GPIO
- static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+ static void lm3642_torch_brightness_set(struct led_classdev *cdev,
+ 					enum led_brightness brightness)
  {
-@@ -307,7 +303,6 @@ static int pca9532_destroy_devices(struct pca9532_data *data, int n_devs)
- 			break;
- 		case PCA9532_TYPE_LED:
- 			led_classdev_unregister(&data->leds[i].ldev);
--			cancel_work_sync(&data->leds[i].work);
- 			break;
- 		case PCA9532_TYPE_N2100_BEEP:
- 			if (data->idev != NULL) {
-@@ -361,7 +356,7 @@ static int pca9532_configure(struct i2c_client *client,
- 			led->ldev.brightness = LED_OFF;
- 			led->ldev.brightness_set = pca9532_set_brightness;
- 			led->ldev.blink_set = pca9532_set_blink;
--			INIT_WORK(&led->work, pca9532_led_work);
-+			led->ldev.flags |= LED_BRIGHTNESS_BLOCKING;
- 			err = led_classdev_register(&client->dev, &led->ldev);
- 			if (err < 0) {
- 				dev_err(&client->dev,
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_torch);
+ 
++	mutex_lock(&chip->lock);
+ 	chip->br_torch = brightness;
+-	schedule_work(&chip->work_torch);
++	lm3642_control(chip, chip->br_torch, MODES_TORCH);
++	mutex_unlock(&chip->lock);
+ }
+ 
+ /* flash */
+@@ -266,45 +253,29 @@ out_strtoint:
+ 
+ static DEVICE_ATTR(strobe_pin, S_IWUSR, NULL, lm3642_strobe_pin_store);
+ 
+-static void lm3642_deferred_strobe_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_flash);
+-
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_flash, MODES_FLASH);
+-	mutex_unlock(&chip->lock);
+-}
+-
+ static void lm3642_strobe_brightness_set(struct led_classdev *cdev,
+ 					 enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_flash);
+ 
+-	chip->br_flash = brightness;
+-	schedule_work(&chip->work_flash);
+-}
+-
+-/* indicator */
+-static void lm3642_deferred_indicator_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_indicator);
+-
+ 	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	chip->br_flash = brightness;
++	lm3642_control(chip, chip->br_flash, MODES_FLASH);
+ 	mutex_unlock(&chip->lock);
+ }
+ 
++/* indicator */
+ static void lm3642_indicator_brightness_set(struct led_classdev *cdev,
+ 					    enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_indicator);
+ 
++	mutex_lock(&chip->lock);
+ 	chip->br_indicator = brightness;
+-	schedule_work(&chip->work_indicator);
++	lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	mutex_unlock(&chip->lock);
+ }
+ 
+ static const struct regmap_config lm3642_regmap = {
+@@ -371,12 +342,12 @@ static int lm3642_probe(struct i2c_client *client,
+ 		goto err_out;
+ 
+ 	/* flash */
+-	INIT_WORK(&chip->work_flash, lm3642_deferred_strobe_brightness_set);
+ 	chip->cdev_flash.name = "flash";
+ 	chip->cdev_flash.max_brightness = 16;
+ 	chip->cdev_flash.brightness_set = lm3642_strobe_brightness_set;
+ 	chip->cdev_flash.default_trigger = "flash";
+ 	chip->cdev_flash.groups = lm3642_flash_groups,
++	chip->cdev_flash.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_flash);
+ 	if (err < 0) {
+@@ -385,12 +356,12 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* torch */
+-	INIT_WORK(&chip->work_torch, lm3642_deferred_torch_brightness_set);
+ 	chip->cdev_torch.name = "torch";
+ 	chip->cdev_torch.max_brightness = 8;
+ 	chip->cdev_torch.brightness_set = lm3642_torch_brightness_set;
+ 	chip->cdev_torch.default_trigger = "torch";
+ 	chip->cdev_torch.groups = lm3642_torch_groups,
++	chip->cdev_torch.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_torch);
+ 	if (err < 0) {
+@@ -399,11 +370,10 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* indicator */
+-	INIT_WORK(&chip->work_indicator,
+-		  lm3642_deferred_indicator_brightness_set);
+ 	chip->cdev_indicator.name = "indicator";
+ 	chip->cdev_indicator.max_brightness = 8;
+ 	chip->cdev_indicator.brightness_set = lm3642_indicator_brightness_set;
++	chip->cdev_indicator.flags |= LED_BRIGHTNESS_BLOCKING;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_indicator);
+ 	if (err < 0) {
+@@ -427,11 +397,8 @@ static int lm3642_remove(struct i2c_client *client)
+ 	struct lm3642_chip_data *chip = i2c_get_clientdata(client);
+ 
+ 	led_classdev_unregister(&chip->cdev_indicator);
+-	flush_work(&chip->work_indicator);
+ 	led_classdev_unregister(&chip->cdev_torch);
+-	flush_work(&chip->work_torch);
+ 	led_classdev_unregister(&chip->cdev_flash);
+-	flush_work(&chip->work_flash);
+ 	regmap_write(chip->regmap, REG_ENABLE, 0);
+ 	return 0;
+ }
 -- 
 1.7.9.5
