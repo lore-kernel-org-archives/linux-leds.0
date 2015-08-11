@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 22/57] leds: lp8788: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:35 +0200
-Message-ID: <1439285890-27329-23-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 30/57] leds: lt3593: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:43 +0200
+Message-ID: <1439285890-27329-31-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Milo Kim <milo.kim@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@caiaq.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -15,85 +15,100 @@ From: Andrew Lunn <andrew@lunn.ch>
 Now the core implements the work queue, remove it from the drivers.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Milo Kim <milo.kim@ti.com>
+Cc: Daniel Mack <daniel@caiaq.de>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-lp8788.c |   23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/leds/leds-lt3593.c |   29 ++++++++---------------------
+ 1 file changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
-index 3409f03..b8adacb 100644
---- a/drivers/leds/leds-lp8788.c
-+++ b/drivers/leds/leds-lp8788.c
-@@ -26,10 +26,8 @@
- struct lp8788_led {
- 	struct lp8788 *lp;
- 	struct mutex lock;
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index 9f41124..ccd6589 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/leds.h>
+-#include <linux/workqueue.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+@@ -28,15 +27,14 @@
+ struct lt3593_led_data {
+ 	struct led_classdev cdev;
+ 	unsigned gpio;
 -	struct work_struct work;
- 	struct led_classdev led_dev;
- 	enum lp8788_isink_number isink_num;
--	enum led_brightness brightness;
- 	int on;
+-	u8 new_level;
  };
  
-@@ -88,12 +86,14 @@ static void lp8788_led_enable(struct lp8788_led *led,
- 	led->on = on;
- }
- 
--static void lp8788_led_work(struct work_struct *work)
-+static void lp8788_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness val)
+-static void lt3593_led_work(struct work_struct *work)
++static void lt3593_led_set(struct led_classdev *led_cdev,
++			   enum led_brightness value)
  {
--	struct lp8788_led *led = container_of(work, struct lp8788_led, work);
-+	struct lp8788_led *led =
-+			container_of(led_cdev, struct lp8788_led, led_dev);
-+
- 	enum lp8788_isink_number num = led->isink_num;
- 	int enable;
--	u8 val = led->brightness;
+-	int pulses;
+ 	struct lt3593_led_data *led_dat =
+-		container_of(work, struct lt3593_led_data, work);
++		container_of(led_cdev, struct lt3593_led_data, cdev);
++	int pulses;
  
- 	mutex_lock(&led->lock);
+ 	/*
+ 	 * The LT3593 resets its internal current level register to the maximum
+@@ -47,12 +45,12 @@ static void lt3593_led_work(struct work_struct *work)
+ 	 * applied is to the output driver.
+ 	 */
  
-@@ -115,16 +115,6 @@ static void lp8788_led_work(struct work_struct *work)
- 	mutex_unlock(&led->lock);
+-	if (led_dat->new_level == 0) {
++	if (value == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+ 		return;
+ 	}
+ 
+-	pulses = 32 - (led_dat->new_level * 32) / 255;
++	pulses = 32 - (value * 32) / 255;
+ 
+ 	if (pulses == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+@@ -71,16 +69,6 @@ static void lt3593_led_work(struct work_struct *work)
+ 	}
  }
  
--static void lp8788_brightness_set(struct led_classdev *led_cdev,
--				enum led_brightness brt_val)
+-static void lt3593_led_set(struct led_classdev *led_cdev,
+-	enum led_brightness value)
 -{
--	struct lp8788_led *led =
--			container_of(led_cdev, struct lp8788_led, led_dev);
+-	struct lt3593_led_data *led_dat =
+-		container_of(led_cdev, struct lt3593_led_data, cdev);
 -
--	led->brightness = brt_val;
--	schedule_work(&led->work);
+-	led_dat->new_level = value;
+-	schedule_work(&led_dat->work);
 -}
 -
- static int lp8788_led_probe(struct platform_device *pdev)
+ static int create_lt3593_led(const struct gpio_led *template,
+ 	struct lt3593_led_data *led_dat, struct device *parent)
  {
- 	struct lp8788 *lp = dev_get_drvdata(pdev->dev.parent);
-@@ -140,6 +130,7 @@ static int lp8788_led_probe(struct platform_device *pdev)
- 	led->lp = lp;
- 	led->led_dev.max_brightness = MAX_BRIGHTNESS;
- 	led->led_dev.brightness_set = lp8788_brightness_set;
-+	led->led_dev.flags |= LED_BRIGHTNESS_BLOCKING;
+@@ -105,14 +93,14 @@ static int create_lt3593_led(const struct gpio_led *template,
+ 	if (!template->retain_state_suspended)
+ 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
  
- 	led_pdata = lp->pdata ? lp->pdata->led_pdata : NULL;
++	led_dat->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
++
+ 	ret = devm_gpio_request_one(parent, template->gpio, state ?
+ 				    GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
+ 				    template->name);
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -149,7 +140,6 @@ static int lp8788_led_probe(struct platform_device *pdev)
- 		led->led_dev.name = led_pdata->name;
+-	INIT_WORK(&led_dat->work, lt3593_led_work);
+-
+ 	ret = led_classdev_register(parent, &led_dat->cdev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -129,7 +117,6 @@ static void delete_lt3593_led(struct lt3593_led_data *led)
+ 		return;
  
- 	mutex_init(&led->lock);
--	INIT_WORK(&led->work, lp8788_led_work);
- 
- 	platform_set_drvdata(pdev, led);
- 
-@@ -173,7 +163,6 @@ static int lp8788_led_remove(struct platform_device *pdev)
- 	struct lp8788_led *led = platform_get_drvdata(pdev);
- 
- 	led_classdev_unregister(&led->led_dev);
--	flush_work(&led->work);
- 
- 	return 0;
+ 	led_classdev_unregister(&led->cdev);
+-	cancel_work_sync(&led->work);
  }
+ 
+ static int lt3593_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
