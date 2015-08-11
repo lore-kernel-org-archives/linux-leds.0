@@ -1,104 +1,117 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 36/57] leds: pwm: remove work queue
-Date: Tue, 11 Aug 2015 11:37:49 +0200
-Message-ID: <1439285890-27329-37-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 29/57] leds: dac124d085: Remove work queue
+Date: Tue, 11 Aug 2015 11:37:42 +0200
+Message-ID: <1439285890-27329-30-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
+From: Andrew Lunn <andrew@lunn.ch>
+
 Now the core implements the work queue, remove it from the drivers.
-If brightness setting is guaranteed not to sleep then implement
-brightness_set_nonblocking op instead of brightness_set.
 
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Raphael Assenat <raph@8d.com>
 ---
- drivers/leds/leds-pwm.c |   29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+ drivers/leds/leds-dac124s085.c |   34 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 1d07e3e..01e5838 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -22,12 +22,10 @@
- #include <linux/pwm.h>
- #include <linux/leds_pwm.h>
+diff --git a/drivers/leds/leds-dac124s085.c b/drivers/leds/leds-dac124s085.c
+index db3ba8b..62039a1 100644
+--- a/drivers/leds/leds-dac124s085.c
++++ b/drivers/leds/leds-dac124s085.c
+@@ -13,20 +13,15 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
  #include <linux/slab.h>
+-#include <linux/spinlock.h>
 -#include <linux/workqueue.h>
+ #include <linux/spi/spi.h>
  
- struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
+ struct dac124s085_led {
+ 	struct led_classdev	ldev;
+ 	struct spi_device	*spi;
+ 	int			id;
+-	int			brightness;
+ 	char			name[sizeof("dac124s085-3")];
+ 
+ 	struct mutex		mutex;
 -	struct work_struct	work;
- 	unsigned int		active_low;
- 	unsigned int		period;
- 	int			duty;
-@@ -51,14 +49,6 @@ static void __led_pwm_set(struct led_pwm_data *led_dat)
- 		pwm_enable(led_dat->pwm);
+-	spinlock_t		lock;
+ };
+ 
+ struct dac124s085 {
+@@ -38,31 +33,20 @@ struct dac124s085 {
+ #define ALL_WRITE_UPDATE	(2 << 12)
+ #define POWER_DOWN_OUTPUT	(3 << 12)
+ 
+-static void dac124s085_led_work(struct work_struct *work)
++static void dac124s085_set_brightness(struct led_classdev *ldev,
++				      enum led_brightness brightness)
+ {
+-	struct dac124s085_led *led = container_of(work, struct dac124s085_led,
+-						  work);
++	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
++						  ldev);
+ 	u16 word;
+ 
+ 	mutex_lock(&led->mutex);
+ 	word = cpu_to_le16(((led->id) << 14) | REG_WRITE_UPDATE |
+-			   (led->brightness & 0xfff));
++			   (brightness & 0xfff));
+ 	spi_write(led->spi, (const u8 *)&word, sizeof(word));
+ 	mutex_unlock(&led->mutex);
  }
  
--static void led_pwm_work(struct work_struct *work)
+-static void dac124s085_set_brightness(struct led_classdev *ldev,
+-				      enum led_brightness brightness)
 -{
--	struct led_pwm_data *led_dat =
--		container_of(work, struct led_pwm_data, work);
+-	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
+-						  ldev);
 -
--	__led_pwm_set(led_dat);
+-	spin_lock(&led->lock);
+-	led->brightness = brightness;
+-	schedule_work(&led->work);
+-	spin_unlock(&led->lock);
 -}
 -
- static void led_pwm_set(struct led_classdev *led_cdev,
- 	enum led_brightness brightness)
+ static int dac124s085_probe(struct spi_device *spi)
  {
-@@ -75,10 +65,7 @@ static void led_pwm_set(struct led_classdev *led_cdev,
+ 	struct dac124s085	*dac;
+@@ -78,16 +62,14 @@ static int dac124s085_probe(struct spi_device *spi)
+ 	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
+ 		led		= dac->leds + i;
+ 		led->id		= i;
+-		led->brightness	= LED_OFF;
+ 		led->spi	= spi;
+ 		snprintf(led->name, sizeof(led->name), "dac124s085-%d", i);
+-		spin_lock_init(&led->lock);
+-		INIT_WORK(&led->work, dac124s085_led_work);
+ 		mutex_init(&led->mutex);
+ 		led->ldev.name = led->name;
+ 		led->ldev.brightness = LED_OFF;
+ 		led->ldev.max_brightness = 0xfff;
+ 		led->ldev.brightness_set = dac124s085_set_brightness;
++		led->ldev.flags |= LED_BRIGHTNESS_BLOCKING;
+ 		ret = led_classdev_register(&spi->dev, &led->ldev);
+ 		if (ret < 0)
+ 			goto eledcr;
+@@ -109,10 +91,8 @@ static int dac124s085_remove(struct spi_device *spi)
+ 	struct dac124s085	*dac = spi_get_drvdata(spi);
+ 	int i;
  
- 	led_dat->duty = duty;
- 
--	if (led_dat->can_sleep)
--		schedule_work(&led_dat->work);
--	else
--		__led_pwm_set(led_dat);
-+	__led_pwm_set(led_dat);
- }
- 
- static inline size_t sizeof_pwm_leds_priv(int num_leds)
-@@ -89,11 +76,8 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
- 
- static void led_pwm_cleanup(struct led_pwm_priv *priv)
- {
--	while (priv->num_leds--) {
-+	while (priv->num_leds--)
- 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
--		if (priv->leds[priv->num_leds].can_sleep)
--			cancel_work_sync(&priv->leds[priv->num_leds].work);
+-	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
++	for (i = 0; i < ARRAY_SIZE(dac->leds); i++)
+ 		led_classdev_unregister(&dac->leds[i].ldev);
+-		cancel_work_sync(&dac->leds[i].work);
 -	}
+ 
+ 	return 0;
  }
- 
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
-@@ -105,7 +89,6 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	led_data->active_low = led->active_low;
- 	led_data->cdev.name = led->name;
- 	led_data->cdev.default_trigger = led->default_trigger;
--	led_data->cdev.brightness_set = led_pwm_set;
- 	led_data->cdev.brightness = LED_OFF;
- 	led_data->cdev.max_brightness = led->max_brightness;
- 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
-@@ -122,8 +105,12 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	}
- 
- 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
--	if (led_data->can_sleep)
--		INIT_WORK(&led_data->work, led_pwm_work);
-+	if (!led_data->can_sleep) {
-+		led_data->cdev.brightness_set_nonblocking = led_pwm_set;
-+	} else {
-+		led_data->cdev.brightness_set = led_pwm_set;
-+		led_data->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
-+	}
- 
- 	led_data->period = pwm_get_period(led_data->pwm);
- 	if (!led_data->period && (led->pwm_period_ns > 0))
 -- 
 1.7.9.5
