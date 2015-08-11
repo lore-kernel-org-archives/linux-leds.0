@@ -1,104 +1,256 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v5 14/57] leds: adp5520: Remove work queue
-Date: Tue, 11 Aug 2015 11:37:27 +0200
-Message-ID: <1439285890-27329-15-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v5 07/57] leds: Drivers shouldn't enforce SYNC/ASYNC
+ brightness setting
+Date: Tue, 11 Aug 2015 11:37:20 +0200
+Message-ID: <1439285890-27329-8-git-send-email-j.anaszewski@samsung.com>
 References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Andrew Lunn <andrew@lunn.ch>, Michael Hennerich <michael.hennerich@analog.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Jacek Anaszewski <j.anaszewski@samsung.com>, Ingi Kim <ingi2.kim@samsung.com>, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+This patch removes brightness_set_sync op as well as SET_BRIGHTNESS_ASYNC
+and SET_BRIGHTNESS sync flags. led_set_brightness now calls
+led_set_brightness_nosleep rather then choosing between sync and async op
+basing on the flags defined by the driver. Now if a user wants to make
+sure that brightness will be set synchronously it has to use
+led_set_brightness_sync API.
 
-Now the core implements the work queue, remove it from the driver.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Michael Hennerich <michael.hennerich@analog.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Ingi Kim <ingi2.kim@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Stas Sergeev <stsp@users.sourceforge.net>
 ---
- drivers/leds/leds-adp5520.c |   23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ drivers/leds/led-class-flash.c |    7 -------
+ drivers/leds/led-class.c       |    2 --
+ drivers/leds/led-core.c        |   22 +++-------------------
+ drivers/leds/leds-aat1290.c    |   12 ------------
+ drivers/leds/leds-ktd2692.c    |   12 ------------
+ drivers/leds/leds-max77693.c   |   12 ------------
+ include/linux/leds.h           |   16 ++++------------
+ 7 files changed, 7 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/leds/leds-adp5520.c b/drivers/leds/leds-adp5520.c
-index 07e66ca..d09f742 100644
---- a/drivers/leds/leds-adp5520.c
-+++ b/drivers/leds/leds-adp5520.c
-@@ -17,34 +17,24 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #include <linux/mfd/adp5520.h>
- #include <linux/slab.h>
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 3b25734..68c3f36 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -298,9 +298,6 @@ int led_classdev_flash_register(struct device *parent,
+ 	led_cdev = &fled_cdev->led_cdev;
  
- struct adp5520_led {
- 	struct led_classdev	cdev;
--	struct work_struct	work;
- 	struct device		*master;
--	enum led_brightness	new_brightness;
- 	int			id;
- 	int			flags;
- };
- 
--static void adp5520_led_work(struct work_struct *work)
--{
--	struct adp5520_led *led = container_of(work, struct adp5520_led, work);
--	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
--			 led->new_brightness >> 2);
--}
+ 	if (led_cdev->flags & LED_DEV_CAP_FLASH) {
+-		if (!led_cdev->brightness_set_sync)
+-			return -EINVAL;
 -
- static void adp5520_led_set(struct led_classdev *led_cdev,
- 			   enum led_brightness value)
- {
- 	struct adp5520_led *led;
+ 		ops = fled_cdev->ops;
+ 		if (!ops || !ops->strobe_set)
+ 			return -EINVAL;
+@@ -316,10 +313,6 @@ int led_classdev_flash_register(struct device *parent,
+ 	if (ret < 0)
+ 		return ret;
  
- 	led = container_of(led_cdev, struct adp5520_led, cdev);
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+	adp5520_write(led->master, ADP5520_LED1_CURRENT + led->id - 1,
-+			 value >> 2);
+-	/* Setting a torch brightness needs to have immediate effect */
+-	led_cdev->flags &= ~SET_BRIGHTNESS_ASYNC;
+-	led_cdev->flags |= SET_BRIGHTNESS_SYNC;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_flash_register);
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index bd32919..5932c4c 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -285,8 +285,6 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 	WARN_ON((led_cdev->flags & LED_BRIGHTNESS_BLOCKING) &&
+ 		!led_cdev->brightness_set);
+ 
+-	led_cdev->flags |= SET_BRIGHTNESS_ASYNC;
+-
+ 	led_update_brightness(led_cdev);
+ 
+ 	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 14377ea..b36f50e 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -118,8 +118,6 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+ void led_set_brightness(struct led_classdev *led_cdev,
+ 			enum led_brightness brightness)
+ {
+-	int ret = 0;
+-
+ 	/*
+ 	 * In case blinking is on delay brightness setting
+ 	 * until the next timer tick.
+@@ -137,20 +135,9 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ 		 */
+ 		led_cdev->flags |= LED_BLINK_DISABLE;
+ 		led_set_brightness_async(led_cdev, brightness);
+-		return;
++	} else {
++		led_set_brightness_nosleep(led_cdev, brightness);
+ 	}
+-
+-	if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
+-		led_set_brightness_async(led_cdev, brightness);
+-		return;
+-	} else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
+-		ret = led_set_brightness_sync(led_cdev, brightness);
+-	else
+-		ret = -EINVAL;
+-
+-	if (ret < 0)
+-		dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
+-			ret);
+ }
+ EXPORT_SYMBOL(led_set_brightness);
+ 
+@@ -164,10 +151,7 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 	if (led_cdev->flags & LED_SUSPENDED)
+ 		return 0;
+ 
+-	if (led_cdev->brightness_set_sync)
+-		ret = led_cdev->brightness_set_sync(led_cdev,
+-							led_cdev->brightness);
+-	else if (led_cdev->brightness_set_nonblocking)
++	if (led_cdev->brightness_set_nonblocking)
+ 		led_cdev->brightness_set_nonblocking(led_cdev,
+ 							led_cdev->brightness);
+ 	else if (led_cdev->brightness_set)
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index fd7c25f..0ecaf76 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -180,17 +180,6 @@ static void aat1290_led_brightness_set(struct led_classdev *led_cdev,
+ 	schedule_work(&led->work_brightness_set);
  }
  
- static int adp5520_led_setup(struct adp5520_led *led)
-@@ -137,6 +127,7 @@ static int adp5520_led_probe(struct platform_device *pdev)
- 		led_dat->cdev.default_trigger = cur_led->default_trigger;
- 		led_dat->cdev.brightness_set = adp5520_led_set;
- 		led_dat->cdev.brightness = LED_OFF;
-+		led_dat->cdev.flags |= LED_BRIGHTNESS_BLOCKING;
- 
- 		if (cur_led->flags & ADP5520_FLAG_LED_MASK)
- 			led_dat->flags = cur_led->flags;
-@@ -146,9 +137,6 @@ static int adp5520_led_probe(struct platform_device *pdev)
- 		led_dat->id = led_dat->flags & ADP5520_FLAG_LED_MASK;
- 
- 		led_dat->master = pdev->dev.parent;
--		led_dat->new_brightness = LED_OFF;
+-static int aat1290_led_brightness_set_sync(struct led_classdev *led_cdev,
+-					enum led_brightness brightness)
+-{
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
 -
--		INIT_WORK(&led_dat->work, adp5520_led_work);
+-	aat1290_brightness_set(led, brightness);
+-
+-	return 0;
+-}
+-
+ static int aat1290_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
+ 					 bool state)
  
- 		ret = led_classdev_register(led_dat->master, &led_dat->cdev);
- 		if (ret) {
-@@ -170,10 +158,8 @@ static int adp5520_led_probe(struct platform_device *pdev)
+@@ -510,7 +499,6 @@ static int aat1290_led_probe(struct platform_device *pdev)
  
- err:
- 	if (i > 0) {
--		for (i = i - 1; i >= 0; i--) {
-+		for (i = i - 1; i >= 0; i--)
- 			led_classdev_unregister(&led[i].cdev);
--			cancel_work_sync(&led[i].work);
--		}
- 	}
+ 	/* Initialize LED Flash class device */
+ 	led_cdev->brightness_set = aat1290_led_brightness_set;
+-	led_cdev->brightness_set_sync = aat1290_led_brightness_set_sync;
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+ 	led_cdev->flags |= LED_DEV_CAP_FLASH;
+ 	INIT_WORK(&led->work_brightness_set, aat1290_brightness_set_work);
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index 2ae8c4d..7f6758d 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -194,17 +194,6 @@ static void ktd2692_led_brightness_set(struct led_classdev *led_cdev,
+ 	schedule_work(&led->work_brightness_set);
+ }
  
- 	return ret;
-@@ -192,7 +178,6 @@ static int adp5520_led_remove(struct platform_device *pdev)
+-static int ktd2692_led_brightness_set_sync(struct led_classdev *led_cdev,
+-					   enum led_brightness brightness)
+-{
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
+-
+-	ktd2692_brightness_set(led, brightness);
+-
+-	return 0;
+-}
+-
+ static int ktd2692_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
+ 					bool state)
+ {
+@@ -382,7 +371,6 @@ static int ktd2692_probe(struct platform_device *pdev)
  
- 	for (i = 0; i < pdata->num_leds; i++) {
- 		led_classdev_unregister(&led[i].cdev);
--		cancel_work_sync(&led[i].work);
- 	}
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+ 	led_cdev->brightness_set = ktd2692_led_brightness_set;
+-	led_cdev->brightness_set_sync = ktd2692_led_brightness_set_sync;
+ 	led_cdev->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
  
- 	return 0;
+ 	mutex_init(&led->lock);
+diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+index df348a0..856d929 100644
+--- a/drivers/leds/leds-max77693.c
++++ b/drivers/leds/leds-max77693.c
+@@ -511,17 +511,6 @@ static void max77693_led_brightness_set_work(
+ 
+ /* LED subsystem callbacks */
+ 
+-static int max77693_led_brightness_set_sync(
+-				struct led_classdev *led_cdev,
+-				enum led_brightness value)
+-{
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
+-	struct max77693_led_device *led = sub_led_to_led(sub_led);
+-
+-	return __max77693_led_brightness_set(led, sub_led->fled_id, value);
+-}
+-
+ static void max77693_led_brightness_set(
+ 				struct led_classdev *led_cdev,
+ 				enum led_brightness value)
+@@ -932,7 +921,6 @@ static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
+ 	led_cdev->name = led_cfg->label[fled_id];
+ 
+ 	led_cdev->brightness_set = max77693_led_brightness_set;
+-	led_cdev->brightness_set_sync = max77693_led_brightness_set_sync;
+ 	led_cdev->max_brightness = (led->iout_joint ?
+ 					led_cfg->iout_torch_max[FLED1] +
+ 					led_cfg->iout_torch_max[FLED2] :
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 9603a73..45cb93d 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -45,11 +45,9 @@ struct led_classdev {
+ #define LED_BLINK_ONESHOT_STOP	(1 << 18)
+ #define LED_BLINK_INVERT	(1 << 19)
+ #define LED_SYSFS_DISABLE	(1 << 20)
+-#define SET_BRIGHTNESS_ASYNC	(1 << 21)
+-#define SET_BRIGHTNESS_SYNC	(1 << 22)
+-#define LED_DEV_CAP_FLASH	(1 << 23)
+-#define LED_BRIGHTNESS_BLOCKING	(1 << 24)
+-#define LED_BLINK_DISABLE	(1 << 25)
++#define LED_DEV_CAP_FLASH	(1 << 21)
++#define LED_BRIGHTNESS_BLOCKING	(1 << 22)
++#define LED_BLINK_DISABLE	(1 << 23)
+ 
+ 	/* Set LED brightness level */
+ 	/* Intended for drivers that may set brightness in a blocking way. */
+@@ -58,12 +56,6 @@ struct led_classdev {
+ 	/* Intended for drivers that set brightness in a non-blocking way */
+ 	void (*brightness_set_nonblocking)(struct led_classdev *led_cdev,
+ 					  enum led_brightness brightness);
+-	/*
+-	 * Set LED brightness level immediately - it can block the caller for
+-	 * the time required for accessing a LED device register.
+-	 */
+-	int		(*brightness_set_sync)(struct led_classdev *led_cdev,
+-					enum led_brightness brightness);
+ 	/* Get LED brightness level */
+ 	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
+ 
+@@ -162,7 +154,7 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+  *
+  * Set an LED's brightness, and, if necessary, cancel the
+  * software blink timer that implements blinking when the
+- * hardware doesn't.
++ * hardware doesn't. This function is guaranteed not to sleep.
+  */
+ extern void led_set_brightness(struct led_classdev *led_cdev,
+ 			       enum led_brightness brightness);
 -- 
 1.7.9.5
