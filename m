@@ -1,50 +1,107 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v1 RFC] This patch repairs HTC Magician machine (PXA27x)
- support
-Date: Thu, 13 Aug 2015 01:10:29 +0200
-Message-ID: <55CBD265.7080705@tul.cz>
-References: <55CBCDED.8010409@tul.cz>
+From: =?iso-8859-1?Q?Sean_Nyekj=E6r?= <Sean.Nyekjaer@prevas.dk>
+Subject: Synchronized led trigger
+Date: Thu, 13 Aug 2015 07:37:12 +0000
+Message-ID: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+	boundary="_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bubo.tul.cz ([147.230.16.1]:48589 "EHLO bubo.tul.cz"
+Received: from mail02.prevas.se ([62.95.78.10]:43889 "EHLO mail02.prevas.se"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750953AbbHLXHv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 12 Aug 2015 19:07:51 -0400
-In-Reply-To: <55CBCDED.8010409@tul.cz>
+	id S1751998AbbHMHhT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 13 Aug 2015 03:37:19 -0400
+Content-Language: da-DK
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
+To: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Dne 13.8.2015 v 00:51 Petr Cvek napsal(a):
+--_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/drivers/mfd/htc-pasic3.c b/drivers/mfd/htc-pasic3.c
-> index e88d4f6..3df3f0a 100644
-> --- a/drivers/mfd/htc-pasic3.c
-> +++ b/drivers/mfd/htc-pasic3.c
-> @@ -3,6 +3,9 @@
->   *
->   * Copyright (C) 2006 Philipp Zabel <philipp.zabel@gmail.com>
->   *
-> + * LED support:
-> + * Copyright (C) 2015 Petr Cvek <petr.cvek@tul.cz>
-> + *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
->   * the Free Software Foundation; version 2 of the License.
-> @@ -65,8 +68,76 @@ EXPORT_SYMBOL(pasic3_read_register); /* for leds-pasic3 */
->   * LEDs
->   */
+Hi=0A=
+=0A=
+I couldn't find any synchronized led triggers in the kernel. The timer trig=
+ger was blinking in random when I tried to set our 5 leds. :-)=0A=
+=0A=
+So i created this led trigger, which can blink with a half and one hz.=0A=
+=0A=
+Is there any place for something like this upstream? I'm prepared to make c=
+hanges so it can be configured by the dtb or some other way.=0A=
+=0A=
+Cheers=0A=
+Sean Nyekj=E6r=
 
-Just some P.S.
+--_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_
+Content-Type: text/x-diff;
+	name="0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch"
+Content-Description: 0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch
+Content-Disposition: attachment;
+	filename="0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch";
+	size=3440; creation-date="Thu, 13 Aug 2015 07:36:33 GMT";
+	modification-date="Thu, 13 Aug 2015 07:36:33 GMT"
+Content-Transfer-Encoding: base64
 
-Checkpatch warns me about spaces around * in this section. It seems it thinks it is some pointer. Is this behavior OK (I assume it cannot find begining of comment or am I doing something bad?).
+RnJvbSAyYTIwYWM1YjdiZDU2OTU4YjM5ZTllMzg1YTJhOTljNDA0N2M5ZTdkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWFuIE55ZWtqYWVyIDxzZWFuLm55ZWtqYWVyQHByZXZhcy5k
+az4KRGF0ZTogV2VkLCAxMiBBdWcgMjAxNSAxNDo1NDozOCArMDIwMApTdWJqZWN0OiBbUEFUQ0gg
+MS8xXSBBZGRlZCBzeW5jaHJvbml6ZWQgbGVkdHJpZ2dlciBkcml2ZXIgZm9yIGhhbGYgYW5kIG9u
+ZSBIWgogYmxpbmtpbmcKCi0tLQogZHJpdmVycy9sZWRzL3RyaWdnZXIvS2NvbmZpZyAgICAgICAg
+fCAgNiArKysrCiBkcml2ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZSAgICAgICB8ICAxICsKIGRy
+aXZlcnMvbGVkcy90cmlnZ2VyL2xlZHRyaWctc3luYy5jIHwgNjkgKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCA3NiBpbnNlcnRpb25zKCspCiBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9sZWRzL3RyaWdnZXIvbGVkdHJpZy1zeW5jLmMKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9LY29uZmlnIGIvZHJpdmVycy9sZWRzL3Ry
+aWdnZXIvS2NvbmZpZwppbmRleCA0OTc5NGI0Li45MDIxZjAzIDEwMDY0NAotLS0gYS9kcml2ZXJz
+L2xlZHMvdHJpZ2dlci9LY29uZmlnCisrKyBiL2RyaXZlcnMvbGVkcy90cmlnZ2VyL0tjb25maWcK
+QEAgLTEwOCw0ICsxMDgsMTAgQEAgY29uZmlnIExFRFNfVFJJR0dFUl9DQU1FUkEKIAkgIFRoaXMg
+ZW5hYmxlcyBkaXJlY3QgZmxhc2gvdG9yY2ggb24vb2ZmIGJ5IHRoZSBkcml2ZXIsIGtlcm5lbCBz
+cGFjZS4KIAkgIElmIHVuc3VyZSwgc2F5IFkuCiAKK2NvbmZpZyBMRURTX1RSSUdHRVJfU1lOQwor
+CXRyaXN0YXRlICJMRUQgU3luY2hyb25pemVkIFRyaWdnZXIiCisJZGVwZW5kcyBvbiBMRURTX1RS
+SUdHRVJTCisJaGVscAorCSAgVGhpcyBhbGxvd3MgTEVEUyB0byBiZSBzeW5jaHJvbml6ZWQgYWdh
+aW5zIGEga2VybmVsIHRpbWVyIHRvIGEgaGFsZiBvciBvbmUgSFouCisKIGVuZGlmICMgTEVEU19U
+UklHR0VSUwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9sZWRzL3RyaWdnZXIvTWFrZWZpbGUgYi9kcml2
+ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZQppbmRleCAxYWJmNDhkLi5kOGY2MzY5IDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZQorKysgYi9kcml2ZXJzL2xlZHMvdHJp
+Z2dlci9NYWtlZmlsZQpAQCAtOCwzICs4LDQgQEAgb2JqLSQoQ09ORklHX0xFRFNfVFJJR0dFUl9D
+UFUpCQkrPSBsZWR0cmlnLWNwdS5vCiBvYmotJChDT05GSUdfTEVEU19UUklHR0VSX0RFRkFVTFRf
+T04pCSs9IGxlZHRyaWctZGVmYXVsdC1vbi5vCiBvYmotJChDT05GSUdfTEVEU19UUklHR0VSX1RS
+QU5TSUVOVCkJKz0gbGVkdHJpZy10cmFuc2llbnQubwogb2JqLSQoQ09ORklHX0xFRFNfVFJJR0dF
+Ul9DQU1FUkEpCSs9IGxlZHRyaWctY2FtZXJhLm8KK29iai0kKENPTkZJR19MRURTX1RSSUdHRVJf
+U1lOQykJKz0gbGVkdHJpZy1zeW5jLm8KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy90cmlnZ2Vy
+L2xlZHRyaWctc3luYy5jIGIvZHJpdmVycy9sZWRzL3RyaWdnZXIvbGVkdHJpZy1zeW5jLmMKbmV3
+IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uYmMwNDY3ZQotLS0gL2Rldi9udWxsCisr
+KyBiL2RyaXZlcnMvbGVkcy90cmlnZ2VyL2xlZHRyaWctc3luYy5jCkBAIC0wLDAgKzEsNjkgQEAK
+KyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4KKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4KKyNp
+bmNsdWRlIDxsaW51eC9sZWRzLmg+CisjaW5jbHVkZSA8bGludXgvdGltZXIuaD4KKworc3RydWN0
+IHN5bmNfbGVkX2RhdGEgeworCXN0cnVjdCBsZWRfdHJpZ2dlciAqb25laHo7CisJc3RydWN0IGxl
+ZF90cmlnZ2VyICpoYWxmaHo7CisJYm9vbCBvbjsKKwljaGFyIHNraXA7Cit9IHN5bmNfZGF0YTsK
+Kworc3RhdGljIHN0cnVjdCB0aW1lcl9saXN0IGNoZWNrX3RpbWVyOworCitzdGF0aWMgdm9pZCB0
+aW1lcl9jYWxsYmFjayh1bnNpZ25lZCBsb25nIGRhdGEpCit7CisJdW5zaWduZWQgbG9uZyBqID0g
+amlmZmllczsKKwlzd2l0Y2ggKHN5bmNfZGF0YS5za2lwKSB7CisJY2FzZSAwOgorCQlsZWRfdHJp
+Z2dlcl9ldmVudChzeW5jX2RhdGEub25laHosIExFRF9GVUxMKTsKKwkJbGVkX3RyaWdnZXJfZXZl
+bnQoc3luY19kYXRhLmhhbGZoeiwgTEVEX0ZVTEwpOworCQlicmVhazsKKwljYXNlIDE6CisJCWxl
+ZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5oYWxmaHosIExFRF9PRkYpOworCQlicmVhazsKKwlj
+YXNlIDI6CisJCWxlZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5vbmVoeiwgTEVEX09GRik7CisJ
+CWxlZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5oYWxmaHosIExFRF9GVUxMKTsKKwkJYnJlYWs7
+CisJY2FzZSAzOgorCQlsZWRfdHJpZ2dlcl9ldmVudChzeW5jX2RhdGEuaGFsZmh6LCBMRURfT0ZG
+KTsKKwkJYnJlYWs7CisJZGVmYXVsdDoKKwkJbGVkX3RyaWdnZXJfZXZlbnQoc3luY19kYXRhLm9u
+ZWh6LCBMRURfT0ZGKTsKKwkJbGVkX3RyaWdnZXJfZXZlbnQoc3luY19kYXRhLmhhbGZoeiwgTEVE
+X09GRik7CisJfQorCXN5bmNfZGF0YS5za2lwKys7CisJaWYoc3luY19kYXRhLnNraXAgPT0gNCkK
+KwkJc3luY19kYXRhLnNraXAgPSAwOworCW1vZF90aW1lcigmY2hlY2tfdGltZXIsIGppZmZpZXMg
+KyBtc2Vjc190b19qaWZmaWVzKDUwMCkgLShqaWZmaWVzIC0gaikgKTsKK30KKworc3RhdGljIGlu
+dCBfX2luaXQgc3luY190cmlnX2luaXQodm9pZCkKK3sKKwlzeW5jX2RhdGEub24gPSBmYWxzZTsK
+KworCWxlZF90cmlnZ2VyX3JlZ2lzdGVyX3NpbXBsZSgiaGFsZmh6IiwgJnN5bmNfZGF0YS5oYWxm
+aHopOworCWxlZF90cmlnZ2VyX3JlZ2lzdGVyX3NpbXBsZSgib25laHoiLCAmc3luY19kYXRhLm9u
+ZWh6KTsKKworCWluaXRfdGltZXIoJmNoZWNrX3RpbWVyKTsKKwlzZXR1cF90aW1lciggJmNoZWNr
+X3RpbWVyLCB0aW1lcl9jYWxsYmFjaywgMCApOworCW1vZF90aW1lcigmY2hlY2tfdGltZXIsIGpp
+ZmZpZXMgKyBtc2Vjc190b19qaWZmaWVzKDUwMCkgKTsKKworCXJldHVybiAwOworfQorCitzdGF0
+aWMgdm9pZCBfX2V4aXQgc3luY190cmlnX2V4aXQodm9pZCkKK3sKKwlkZWxfdGltZXJfc3luYygm
+Y2hlY2tfdGltZXIpOworCWxlZF90cmlnZ2VyX3VucmVnaXN0ZXJfc2ltcGxlKHN5bmNfZGF0YS5o
+YWxmaHopOworCWxlZF90cmlnZ2VyX3VucmVnaXN0ZXJfc2ltcGxlKHN5bmNfZGF0YS5vbmVoeik7
+Cit9CisKK21vZHVsZV9pbml0KHN5bmNfdHJpZ19pbml0KTsKK21vZHVsZV9leGl0KHN5bmNfdHJp
+Z19leGl0KTsKKworTU9EVUxFX0RFU0NSSVBUSU9OKCJIYWxmIGFuZCBPbmUgSFogdGltZXIgbGVk
+IHRyaWdnZXIiKTsKK01PRFVMRV9BVVRIT1IoIlByZXZhcyBBL1MiKTsKK01PRFVMRV9MSUNFTlNF
+KCJHUEwiKTsKLS0gCjIuNS4wCgo=
 
-Checkpatch also throws warning about new file and MAINTAINERS list updating (for leds-pasic3.c). I assume it falls into LEDs subsystem.
-
-As the patch changes the definitions for many subsystems, are there another people who should be awared of this patch?
-
-Cheers,
-Petr Cvek
+--_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_--
