@@ -1,63 +1,70 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v5 01/57] leds: Add brightness_set_nonblocking op
-Date: Thu, 13 Aug 2015 16:23:49 +0200
-Message-ID: <20150813142349.GA14736@amd>
-References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
- <1439285890-27329-2-git-send-email-j.anaszewski@samsung.com>
- <20150813141547.GB32484@lunn.ch>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v1 RFC] This patch repairs HTC Magician machine (PXA27x) support
+Date: Thu, 13 Aug 2015 20:01:08 +0200
+Message-ID: <87y4hfhxuj.fsf@belgarion.home>
+References: <55CBCDED.8010409@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51926 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127AbbHMOXw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 13 Aug 2015 10:23:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20150813141547.GB32484@lunn.ch>
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:32934 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753192AbbHMSFQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 13 Aug 2015 14:05:16 -0400
+In-Reply-To: <55CBCDED.8010409@tul.cz> (Petr Cvek's message of "Thu, 13 Aug
+	2015 00:51:25 +0200")
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Petr Cvek <petr.cvek@tul.cz>, Philipp Zabel <philipp.zabel@gmail.com>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
 
-On Thu 2015-08-13 16:15:47, Andrew Lunn wrote:
-> On Tue, Aug 11, 2015 at 11:37:14AM +0200, Jacek Anaszewski wrote:
-> > This patch adds a new brightness_set_nonblocking op to the LED subsystem.
-> > The op is intended for drivers that set brightness in a non-blocking way,
-> > i.e. they neither sleep nor use delays while setting brightness.
-> > 
-> > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > Cc: Bryan Wu <cooloney@gmail.com>
-> > Cc: Andrew Lunn <andrew@lunn.ch>
-> > Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Stas Sergeev <stsp@users.sourceforge.net>
-> > ---
-> >  include/linux/leds.h |    3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> > index b122eea..c32f1b8 100644
-> > --- a/include/linux/leds.h
-> > +++ b/include/linux/leds.h
-> > @@ -53,6 +53,9 @@ struct led_classdev {
-> >  	/* Must not sleep, use a workqueue if needed */
-> >  	void		(*brightness_set)(struct led_classdev *led_cdev,
-> >  					  enum led_brightness brightness);
-> > +	/* Intended for drivers that set brightness in a non-blocking way */
-> > +	void (*brightness_set_nonblocking)(struct led_classdev *led_cdev,
-> > +					  enum led_brightness brightness);
-> 
-> Hi Jacek
-> 
-> >From an API design point of view, i'm not sure this is the best way to
-> go. You now have two calls which do the same thing, with the plan that
-> you want to invert the meaning of brightness_set, the old well known
-> API call, sometime later. This inverting the meaning is going to catch
-> people out and introduce bugs.
+Petr Cvek <petr.cvek@tul.cz> writes:
 
-Yes please.
-									Pavel
+> Fixing original code: Problems to successful boot due to the bad LCD
+> power sequence (wrongly configured GPIO).
+>
+> Add/fix platform data and helper function for various hardware
+> (touchscreen, audio, USB device, ...).
+>
+> Add new discovered GPIOs and fix names by GPIO context.
+>
+> Add new LEDs driver.
+>
+> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+Hi Petr,
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Just as Lee, I want the serie to be split per-subsystem.
+
+For the mach-pxa part, I need you to split the patch into several chunks to
+review.
+At least please split :
+ - a first patch for cleanup (identation and whitespaces)
+ - a second patch for cleanup (comments changes, debug messages)
+ - a serie of fix patches
+   - one for the power sequence
+   - one for GPIO fixes
+ - a serie of evolution patches
+   - new gpio_keys
+   - new backlight stuff
+   - one per new device declared
+   - new flash stuff
+   - etc ...
+
+Please keep in mind that in order to pick the patches, I need to split them in 3
+groups :
+ - cleanups
+ - fixes
+ - evolutions / new stuff
+Moreover I want to be able to revert one functionality (for example new power
+sequence) without reverting the whole serie.
+
+You probably know that the pxa patches need the subject prefix to be "ARM: pxa:
+magician: " in your case. Other subsystem maintainers have similar requirements
+I believe.
+
+When that's done, I'll begin the review, and Philipp will probably too as he is
+the maintainer.
+
+Cheers.
+
+--
+Robert
