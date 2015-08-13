@@ -1,107 +1,312 @@
-From: =?iso-8859-1?Q?Sean_Nyekj=E6r?= <Sean.Nyekjaer@prevas.dk>
-Subject: Synchronized led trigger
-Date: Thu, 13 Aug 2015 07:37:12 +0000
-Message-ID: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v1 RFC] This patch repairs HTC Magician machine (PXA27x)
+ support
+Date: Thu, 13 Aug 2015 10:10:00 +0200
+Message-ID: <55CC50D8.5000706@samsung.com>
+References: <55CBCDED.8010409@tul.cz>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail02.prevas.se ([62.95.78.10]:43889 "EHLO mail02.prevas.se"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751998AbbHMHhT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 13 Aug 2015 03:37:19 -0400
-Content-Language: da-DK
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:26182 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752064AbbHMIKF (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 13 Aug 2015 04:10:05 -0400
+In-reply-to: <55CBCDED.8010409@tul.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Russell King <linux@arm.linux.org.uk>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
 
---_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi Petr,
 
-Hi=0A=
-=0A=
-I couldn't find any synchronized led triggers in the kernel. The timer trig=
-ger was blinking in random when I tried to set our 5 leds. :-)=0A=
-=0A=
-So i created this led trigger, which can blink with a half and one hz.=0A=
-=0A=
-Is there any place for something like this upstream? I'm prepared to make c=
-hanges so it can be configured by the dtb or some other way.=0A=
-=0A=
-Cheers=0A=
-Sean Nyekj=E6r=
+This is review only of the LED subsystem related part of this patch,.
 
---_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_
-Content-Type: text/x-diff;
-	name="0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch"
-Content-Description: 0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch
-Content-Disposition: attachment;
-	filename="0001-Added-synchronized-ledtrigger-driver-for-half-and-on.patch";
-	size=3440; creation-date="Thu, 13 Aug 2015 07:36:33 GMT";
-	modification-date="Thu, 13 Aug 2015 07:36:33 GMT"
-Content-Transfer-Encoding: base64
+On 08/13/2015 12:51 AM, Petr Cvek wrote:
+> Fixing original code: Problems to successful boot due to the bad LCD
+> power sequence (wrongly configured GPIO).
+>
+> Add/fix platform data and helper function for various hardware
+> (touchscreen, audio, USB device, ...).
+>
+> Add new discovered GPIOs and fix names by GPIO context.
+>
+> Add new LEDs driver.
+>
+> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+> ---
+>   arch/arm/mach-pxa/Kconfig                 |    1 +
+>   arch/arm/mach-pxa/include/mach/magician.h |   21 +-
+>   arch/arm/mach-pxa/magician.c              | 1148 ++++++++++++++++++=
++++++------
+>   drivers/leds/Kconfig                      |    9 +
+>   drivers/leds/Makefile                     |    1 +
+>   drivers/leds/leds-pasic3.c                |  192 +++++
+>   drivers/mfd/htc-pasic3.c                  |  115 ++-
+>   include/linux/mfd/htc-pasic3.h            |   69 +-
+>   8 files changed, 1293 insertions(+), 263 deletions(-)
+>   create mode 100644 drivers/leds/leds-pasic3.c
+>
 
-RnJvbSAyYTIwYWM1YjdiZDU2OTU4YjM5ZTllMzg1YTJhOTljNDA0N2M5ZTdkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWFuIE55ZWtqYWVyIDxzZWFuLm55ZWtqYWVyQHByZXZhcy5k
-az4KRGF0ZTogV2VkLCAxMiBBdWcgMjAxNSAxNDo1NDozOCArMDIwMApTdWJqZWN0OiBbUEFUQ0gg
-MS8xXSBBZGRlZCBzeW5jaHJvbml6ZWQgbGVkdHJpZ2dlciBkcml2ZXIgZm9yIGhhbGYgYW5kIG9u
-ZSBIWgogYmxpbmtpbmcKCi0tLQogZHJpdmVycy9sZWRzL3RyaWdnZXIvS2NvbmZpZyAgICAgICAg
-fCAgNiArKysrCiBkcml2ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZSAgICAgICB8ICAxICsKIGRy
-aXZlcnMvbGVkcy90cmlnZ2VyL2xlZHRyaWctc3luYy5jIHwgNjkgKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCA3NiBpbnNlcnRpb25zKCspCiBj
-cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9sZWRzL3RyaWdnZXIvbGVkdHJpZy1zeW5jLmMKCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9LY29uZmlnIGIvZHJpdmVycy9sZWRzL3Ry
-aWdnZXIvS2NvbmZpZwppbmRleCA0OTc5NGI0Li45MDIxZjAzIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2xlZHMvdHJpZ2dlci9LY29uZmlnCisrKyBiL2RyaXZlcnMvbGVkcy90cmlnZ2VyL0tjb25maWcK
-QEAgLTEwOCw0ICsxMDgsMTAgQEAgY29uZmlnIExFRFNfVFJJR0dFUl9DQU1FUkEKIAkgIFRoaXMg
-ZW5hYmxlcyBkaXJlY3QgZmxhc2gvdG9yY2ggb24vb2ZmIGJ5IHRoZSBkcml2ZXIsIGtlcm5lbCBz
-cGFjZS4KIAkgIElmIHVuc3VyZSwgc2F5IFkuCiAKK2NvbmZpZyBMRURTX1RSSUdHRVJfU1lOQwor
-CXRyaXN0YXRlICJMRUQgU3luY2hyb25pemVkIFRyaWdnZXIiCisJZGVwZW5kcyBvbiBMRURTX1RS
-SUdHRVJTCisJaGVscAorCSAgVGhpcyBhbGxvd3MgTEVEUyB0byBiZSBzeW5jaHJvbml6ZWQgYWdh
-aW5zIGEga2VybmVsIHRpbWVyIHRvIGEgaGFsZiBvciBvbmUgSFouCisKIGVuZGlmICMgTEVEU19U
-UklHR0VSUwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9sZWRzL3RyaWdnZXIvTWFrZWZpbGUgYi9kcml2
-ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZQppbmRleCAxYWJmNDhkLi5kOGY2MzY5IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9NYWtlZmlsZQorKysgYi9kcml2ZXJzL2xlZHMvdHJp
-Z2dlci9NYWtlZmlsZQpAQCAtOCwzICs4LDQgQEAgb2JqLSQoQ09ORklHX0xFRFNfVFJJR0dFUl9D
-UFUpCQkrPSBsZWR0cmlnLWNwdS5vCiBvYmotJChDT05GSUdfTEVEU19UUklHR0VSX0RFRkFVTFRf
-T04pCSs9IGxlZHRyaWctZGVmYXVsdC1vbi5vCiBvYmotJChDT05GSUdfTEVEU19UUklHR0VSX1RS
-QU5TSUVOVCkJKz0gbGVkdHJpZy10cmFuc2llbnQubwogb2JqLSQoQ09ORklHX0xFRFNfVFJJR0dF
-Ul9DQU1FUkEpCSs9IGxlZHRyaWctY2FtZXJhLm8KK29iai0kKENPTkZJR19MRURTX1RSSUdHRVJf
-U1lOQykJKz0gbGVkdHJpZy1zeW5jLm8KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy90cmlnZ2Vy
-L2xlZHRyaWctc3luYy5jIGIvZHJpdmVycy9sZWRzL3RyaWdnZXIvbGVkdHJpZy1zeW5jLmMKbmV3
-IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uYmMwNDY3ZQotLS0gL2Rldi9udWxsCisr
-KyBiL2RyaXZlcnMvbGVkcy90cmlnZ2VyL2xlZHRyaWctc3luYy5jCkBAIC0wLDAgKzEsNjkgQEAK
-KyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4KKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4KKyNp
-bmNsdWRlIDxsaW51eC9sZWRzLmg+CisjaW5jbHVkZSA8bGludXgvdGltZXIuaD4KKworc3RydWN0
-IHN5bmNfbGVkX2RhdGEgeworCXN0cnVjdCBsZWRfdHJpZ2dlciAqb25laHo7CisJc3RydWN0IGxl
-ZF90cmlnZ2VyICpoYWxmaHo7CisJYm9vbCBvbjsKKwljaGFyIHNraXA7Cit9IHN5bmNfZGF0YTsK
-Kworc3RhdGljIHN0cnVjdCB0aW1lcl9saXN0IGNoZWNrX3RpbWVyOworCitzdGF0aWMgdm9pZCB0
-aW1lcl9jYWxsYmFjayh1bnNpZ25lZCBsb25nIGRhdGEpCit7CisJdW5zaWduZWQgbG9uZyBqID0g
-amlmZmllczsKKwlzd2l0Y2ggKHN5bmNfZGF0YS5za2lwKSB7CisJY2FzZSAwOgorCQlsZWRfdHJp
-Z2dlcl9ldmVudChzeW5jX2RhdGEub25laHosIExFRF9GVUxMKTsKKwkJbGVkX3RyaWdnZXJfZXZl
-bnQoc3luY19kYXRhLmhhbGZoeiwgTEVEX0ZVTEwpOworCQlicmVhazsKKwljYXNlIDE6CisJCWxl
-ZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5oYWxmaHosIExFRF9PRkYpOworCQlicmVhazsKKwlj
-YXNlIDI6CisJCWxlZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5vbmVoeiwgTEVEX09GRik7CisJ
-CWxlZF90cmlnZ2VyX2V2ZW50KHN5bmNfZGF0YS5oYWxmaHosIExFRF9GVUxMKTsKKwkJYnJlYWs7
-CisJY2FzZSAzOgorCQlsZWRfdHJpZ2dlcl9ldmVudChzeW5jX2RhdGEuaGFsZmh6LCBMRURfT0ZG
-KTsKKwkJYnJlYWs7CisJZGVmYXVsdDoKKwkJbGVkX3RyaWdnZXJfZXZlbnQoc3luY19kYXRhLm9u
-ZWh6LCBMRURfT0ZGKTsKKwkJbGVkX3RyaWdnZXJfZXZlbnQoc3luY19kYXRhLmhhbGZoeiwgTEVE
-X09GRik7CisJfQorCXN5bmNfZGF0YS5za2lwKys7CisJaWYoc3luY19kYXRhLnNraXAgPT0gNCkK
-KwkJc3luY19kYXRhLnNraXAgPSAwOworCW1vZF90aW1lcigmY2hlY2tfdGltZXIsIGppZmZpZXMg
-KyBtc2Vjc190b19qaWZmaWVzKDUwMCkgLShqaWZmaWVzIC0gaikgKTsKK30KKworc3RhdGljIGlu
-dCBfX2luaXQgc3luY190cmlnX2luaXQodm9pZCkKK3sKKwlzeW5jX2RhdGEub24gPSBmYWxzZTsK
-KworCWxlZF90cmlnZ2VyX3JlZ2lzdGVyX3NpbXBsZSgiaGFsZmh6IiwgJnN5bmNfZGF0YS5oYWxm
-aHopOworCWxlZF90cmlnZ2VyX3JlZ2lzdGVyX3NpbXBsZSgib25laHoiLCAmc3luY19kYXRhLm9u
-ZWh6KTsKKworCWluaXRfdGltZXIoJmNoZWNrX3RpbWVyKTsKKwlzZXR1cF90aW1lciggJmNoZWNr
-X3RpbWVyLCB0aW1lcl9jYWxsYmFjaywgMCApOworCW1vZF90aW1lcigmY2hlY2tfdGltZXIsIGpp
-ZmZpZXMgKyBtc2Vjc190b19qaWZmaWVzKDUwMCkgKTsKKworCXJldHVybiAwOworfQorCitzdGF0
-aWMgdm9pZCBfX2V4aXQgc3luY190cmlnX2V4aXQodm9pZCkKK3sKKwlkZWxfdGltZXJfc3luYygm
-Y2hlY2tfdGltZXIpOworCWxlZF90cmlnZ2VyX3VucmVnaXN0ZXJfc2ltcGxlKHN5bmNfZGF0YS5o
-YWxmaHopOworCWxlZF90cmlnZ2VyX3VucmVnaXN0ZXJfc2ltcGxlKHN5bmNfZGF0YS5vbmVoeik7
-Cit9CisKK21vZHVsZV9pbml0KHN5bmNfdHJpZ19pbml0KTsKK21vZHVsZV9leGl0KHN5bmNfdHJp
-Z19leGl0KTsKKworTU9EVUxFX0RFU0NSSVBUSU9OKCJIYWxmIGFuZCBPbmUgSFogdGltZXIgbGVk
-IHRyaWdnZXIiKTsKK01PRFVMRV9BVVRIT1IoIlByZXZhcyBBL1MiKTsKK01PRFVMRV9MSUNFTlNF
-KCJHUEwiKTsKLS0gCjIuNS4wCgo=
+[...]
 
---_002_715D9F6A60DF2F458F39683D45F6609A7E22E57BVMPREVAS1prevas_--
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 9ad35f7..516ba65 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -586,6 +586,15 @@ config LEDS_PM8941_WLED
+>   	  This option enables support for the 'White' LED block
+>   	  on Qualcomm PM8941 PMICs.
+>
+> +config LEDS_PASIC3
+> +	tristate "LED support for the HTC Magician/Alpine PASIC3"
+> +	depends on LEDS_CLASS
+> +	depends on HTC_PASIC3
+> +	select REGMAP
+> +	help
+> +	  This option enables support for the PASIC3 chip (different chip
+> +	  than Compaq ASIC3).
+> +
+>   comment "LED Triggers"
+>   source "drivers/leds/trigger/Kconfig"
+>
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 8d6a24a..b1c659c 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -65,6 +65,7 @@ obj-$(CONFIG_LEDS_VERSATILE)		+=3D leds-versatile.o
+>   obj-$(CONFIG_LEDS_MENF21BMC)		+=3D leds-menf21bmc.o
+>   obj-$(CONFIG_LEDS_PM8941_WLED)		+=3D leds-pm8941-wled.o
+>   obj-$(CONFIG_LEDS_KTD2692)		+=3D leds-ktd2692.o
+> +obj-$(CONFIG_LEDS_PASIC3)		+=3D leds-pasic3.o
+>
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_DAC124S085)		+=3D leds-dac124s085.o
+> diff --git a/drivers/leds/leds-pasic3.c b/drivers/leds/leds-pasic3.c
+> new file mode 100644
+> index 0000000..ecb0557
+> --- /dev/null
+> +++ b/drivers/leds/leds-pasic3.c
+> @@ -0,0 +1,192 @@
+> +/*
+> + * AIC3 (or PASIC3) LED driver for HTC Magician/Alpine/.. (not Compa=
+q ASIC3)
+> + *
+> + * Copyright (c) 2015 Petr Cvek <petr.cvek@tul.cz>
+> + *
+> + * Based on leds-asic3.c driver
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/leds.h>
+> +#include <linux/slab.h>
+> +
+
+This empty line is not required.
+
+> +#include <linux/mfd/htc-pasic3.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+
+Please keep alphabetical order across all includes.
+
+> +/*
+> + * 1 tick is around 62-63 ms, blinking settings (on+off):
+> + *	Min: 1+1 ticks ~125ms
+> + *	Max: 127+127 ticks ~15=E2=80=AF875ms
+> + * Sometimes takes time to change after write (counter overflow?)
+> + */
+> +
+> +#define MS_TO_CLK(ms)	DIV_ROUND_CLOSEST(((ms)*1024), 64000)
+> +#define CLK_TO_MS(clk)	(((clk)*64000)/1024)
+> +#define MAX_CLK		254		/* 127 + 127 (2x 7 bit reg) */
+> +#define MAX_MS		CLK_TO_MS(MAX_CLK)
+> +
+> +static void brightness_set(struct led_classdev *cdev,
+> +	enum led_brightness value)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(cdev->dev->pare=
+nt);
+> +	const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> +	struct pasic3_led *led;
+> +	struct device *dev;
+> +	u8 val;
+> +
+> +	if (!cell->platform_data) {
+> +		pr_err("No platform data\n");
+> +		return;
+> +	}
+> +
+> +	led =3D cell->platform_data;
+> +	dev =3D pdev->dev.parent;
+> +
+> +	if (value =3D=3D LED_OFF) {
+> +		val =3D pasic3_read_register(dev, PASIC3_CH_CONTROL);
+> +		pasic3_write_register(dev, PASIC3_CH_CONTROL,
+> +			val & ~(led->bit_blink_en | led->bit_force_on));
+> +
+> +		val =3D pasic3_read_register(dev, PASIC3_MASK_A);
+> +		pasic3_write_register(dev, PASIC3_MASK_A, val & ~led->bit_mask);
+
+I think that you need spin_lock protection as setting brightness
+is not an atomic operation here. Moreover pasic3_write_register
+calls __raw_writeb twice, without spin_lock protection. This function
+is used also in drivers/mfd/htc-pasic3.c - shouldn't it be fixed?
+
+> +	} else {
+> +		val =3D pasic3_read_register(dev, PASIC3_CH_CONTROL);
+> +		pasic3_write_register(dev, PASIC3_CH_CONTROL,
+> +			val | led->bit_force_on);
+> +	}
+> +}
+> +
+> +static int blink_set(struct led_classdev *cdev,
+> +	unsigned long *delay_on,
+> +	unsigned long *delay_off)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(cdev->dev->pare=
+nt);
+> +	const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> +	struct device *dev;
+> +	struct pasic3_led *led;
+> +	u32 on, off;
+> +	u8 val;
+> +
+> +	if (!cell->platform_data) {
+> +		pr_err("No platform data\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (*delay_on > MAX_MS || *delay_off > MAX_MS)
+> +		return -EINVAL;
+> +
+> +	if (*delay_on =3D=3D 0 && *delay_off =3D=3D 0) {
+> +		/* If both are zero then a sensible default should be chosen */
+> +		on =3D MS_TO_CLK(500);
+> +		off =3D MS_TO_CLK(500);
+> +	} else {
+> +		on =3D MS_TO_CLK(*delay_on);
+> +		off =3D MS_TO_CLK(*delay_off);
+> +		if ((on + off) > MAX_CLK)
+> +			return -EINVAL;
+> +		/* Minimal value must be 1 */
+> +		on =3D on ? on : 1;
+> +		off =3D off ? off : 1;
+> +	}
+> +
+> +	led =3D cell->platform_data;
+> +	dev =3D pdev->dev.parent;
+> +
+> +	pasic3_write_register(dev, led->reg_delay_on, on);
+> +	pasic3_write_register(dev, led->reg_delay_off, off);
+> +
+> +	val =3D pasic3_read_register(dev, PASIC3_CH_CONTROL);
+> +	pasic3_write_register(dev, PASIC3_CH_CONTROL, val | led->bit_blink_=
+en);
+
+Ditto.
+
+> +	*delay_on =3D CLK_TO_MS(on);
+> +	*delay_off =3D CLK_TO_MS(off);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pasic3_led_probe(struct platform_device *pdev)
+> +{
+> +	struct pasic3_led *led =3D dev_get_platdata(&pdev->dev);
+> +	int ret;
+> +
+> +	ret =3D mfd_cell_enable(pdev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	led->cdev.flags =3D LED_CORE_SUSPENDRESUME;
+> +	led->cdev.brightness_set =3D brightness_set;
+> +	led->cdev.blink_set =3D blink_set;
+
+You need to set also led->cdev.name. What is the name of your
+LED in the sysfs now?
+
+> +	ret =3D led_classdev_register(&pdev->dev, &led->cdev);
+> +	if (ret < 0)
+> +		goto out;
+
+Please use devm_led_classdev_register.
+
+> +	return 0;
+> +
+> +out:
+> +	(void) mfd_cell_disable(pdev);
+> +	return ret;
+> +}
+> +
+> +static int pasic3_led_remove(struct platform_device *pdev)
+> +{
+> +	struct pasic3_led *led =3D dev_get_platdata(&pdev->dev);
+> +
+> +	led_classdev_unregister(&led->cdev);
+> +
+> +	return mfd_cell_disable(pdev);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int pasic3_led_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> +	int ret;
+> +
+> +	ret =3D 0;
+> +	if (cell->suspend)
+> +		ret =3D (*cell->suspend)(pdev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int pasic3_led_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> +	int ret;
+> +
+> +	ret =3D 0;
+> +	if (cell->resume)
+> +		ret =3D (*cell->resume)(pdev);
+> +
+> +	return ret;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(pasic3_led_pm_ops, pasic3_led_suspend,
+> +	pasic3_led_resume);
+> +
+> +static struct platform_driver pasic3_led_driver =3D {
+> +	.probe		=3D pasic3_led_probe,
+> +	.remove		=3D pasic3_led_remove,
+> +	.driver		=3D {
+> +		.name	=3D "leds-pasic3",
+> +		.pm	=3D &pasic3_led_pm_ops,
+> +	},
+> +};
+> +
+> +module_platform_driver(pasic3_led_driver);
+> +
+> +MODULE_AUTHOR("Petr Cvek <petr.cvek@tul.cz>");
+> +MODULE_DESCRIPTION("HTC Magician PASIC3 LED driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:leds-pasic3");
+
+[...]
+
+--=20
+Best Regards,
+Jacek Anaszewski
