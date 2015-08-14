@@ -1,84 +1,60 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v5 01/57] leds: Add brightness_set_nonblocking op
-Date: Fri, 14 Aug 2015 09:57:51 +0200
-Message-ID: <55CD9F7F.4020706@samsung.com>
-References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
- <1439285890-27329-2-git-send-email-j.anaszewski@samsung.com>
- <20150813141547.GB32484@lunn.ch>
+Subject: Re: Synchronized led trigger
+Date: Fri, 14 Aug 2015 10:40:53 +0200
+Message-ID: <55CDA995.6010709@samsung.com>
+References: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:64311 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9461 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751255AbbHNH55 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Aug 2015 03:57:57 -0400
-In-reply-to: <20150813141547.GB32484@lunn.ch>
+	with ESMTP id S1753500AbbHNIk6 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Aug 2015 04:40:58 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NT200IGXDG6YI50@mailout2.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 14 Aug 2015 09:40:54 +0100 (BST)
+In-reply-to: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
+To: =?ISO-8859-1?Q?Sean_Nyekj=E6r?= <Sean.Nyekjaer@prevas.dk>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-H Andrew,
+Hi Sean,
 
-On 08/13/2015 04:15 PM, Andrew Lunn wrote:
-> On Tue, Aug 11, 2015 at 11:37:14AM +0200, Jacek Anaszewski wrote:
->> This patch adds a new brightness_set_nonblocking op to the LED subsystem.
->> The op is intended for drivers that set brightness in a non-blocking way,
->> i.e. they neither sleep nor use delays while setting brightness.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Cc: Bryan Wu <cooloney@gmail.com>
->> Cc: Andrew Lunn <andrew@lunn.ch>
->> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Pavel Machek <pavel@ucw.cz>
->> Cc: Stas Sergeev <stsp@users.sourceforge.net>
->> ---
->>   include/linux/leds.h |    3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index b122eea..c32f1b8 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -53,6 +53,9 @@ struct led_classdev {
->>   	/* Must not sleep, use a workqueue if needed */
->>   	void		(*brightness_set)(struct led_classdev *led_cdev,
->>   					  enum led_brightness brightness);
->> +	/* Intended for drivers that set brightness in a non-blocking way */
->> +	void (*brightness_set_nonblocking)(struct led_classdev *led_cdev,
->> +					  enum led_brightness brightness);
+On 08/13/2015 09:37 AM, Sean Nyekj=E6r wrote:
+> Hi
 >
-> Hi Jacek
+> I couldn't find any synchronized led triggers in the kernel. The time=
+r trigger was blinking in random when I tried to set our 5 leds. :-)
+
+It is impossible to synchronize brightness setting operation for
+different devices. It would only make sense for two separate
+LED class devices exposed by a driver controlling one hardware
+device. Effectively the issue boils down to the problem of
+adding an API for synchronizing brightness setting operation
+for several LED class devices exposed by a single LED class
+driver. We were trying to implement similar functionality
+for synchronizing flash strobe for LED flash class devices,
+but it has been given up. You could try to pursue the subject
+if you want, here are references: [1], [2].
+
+> So i created this led trigger, which can blink with a half and one hz=
+=2E
 >
->>From an API design point of view, i'm not sure this is the best way to
-> go. You now have two calls which do the same thing, with the plan that
-> you want to invert the meaning of brightness_set, the old well known
-> API call, sometime later. This inverting the meaning is going to catch
-> people out and introduce bugs.
+> Is there any place for something like this upstream? I'm prepared to =
+make changes so it can be configured by the dtb or some other way.
 >
-> I would rather add a brightness_set_blocking op. Then as you go
-> thought the drivers stripping out the work queue, move the driver to
-> use this brightness_set_blocking.
+> Cheers
+> Sean Nyekj=E6r
+>
 
-There are around 60 drivers in the other kernel subsystems that register
-LED class devices. If we chose the way you proposed then we would have
-to adjust all of them to the LED core changes, which could complicate
-the situation during merge window if there were other modifications in
-the affected drivers.
+[1] https://lwn.net/Articles/634465/
+[2] http://www.spinics.net/lists/linux-leds/msg02995.html
 
-With my approach all old-fashion drivers will be treated by the
-LED core in the old-fashion way. This is why I introduced
-LED_BRIGHTNESS_BLOCKING flag - only drivers aware of the LED core
-changes will set it, which will allow for the LED core to find out
-which drivers are aware of brightness_set semantics change and
-implement the op accordingly.
-
-This way the change of brightness_set semantics will not be painful.
-
-After all drivers across all subsystems are adapted to the LED core
-changes the flag will be made redundant and we will remove it.
-
--- 
+--=20
 Best Regards,
 Jacek Anaszewski
