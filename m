@@ -1,70 +1,84 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v1 RFC] This patch repairs HTC Magician machine (PXA27x) support
-Date: Thu, 13 Aug 2015 20:01:08 +0200
-Message-ID: <87y4hfhxuj.fsf@belgarion.home>
-References: <55CBCDED.8010409@tul.cz>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v5 01/57] leds: Add brightness_set_nonblocking op
+Date: Fri, 14 Aug 2015 09:57:51 +0200
+Message-ID: <55CD9F7F.4020706@samsung.com>
+References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
+ <1439285890-27329-2-git-send-email-j.anaszewski@samsung.com>
+ <20150813141547.GB32484@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:32934 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753192AbbHMSFQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 13 Aug 2015 14:05:16 -0400
-In-Reply-To: <55CBCDED.8010409@tul.cz> (Petr Cvek's message of "Thu, 13 Aug
-	2015 00:51:25 +0200")
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64311 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751255AbbHNH55 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Aug 2015 03:57:57 -0400
+In-reply-to: <20150813141547.GB32484@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>, Philipp Zabel <philipp.zabel@gmail.com>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
 
-Petr Cvek <petr.cvek@tul.cz> writes:
+H Andrew,
 
-> Fixing original code: Problems to successful boot due to the bad LCD
-> power sequence (wrongly configured GPIO).
+On 08/13/2015 04:15 PM, Andrew Lunn wrote:
+> On Tue, Aug 11, 2015 at 11:37:14AM +0200, Jacek Anaszewski wrote:
+>> This patch adds a new brightness_set_nonblocking op to the LED subsystem.
+>> The op is intended for drivers that set brightness in a non-blocking way,
+>> i.e. they neither sleep nor use delays while setting brightness.
+>>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Cc: Bryan Wu <cooloney@gmail.com>
+>> Cc: Andrew Lunn <andrew@lunn.ch>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Pavel Machek <pavel@ucw.cz>
+>> Cc: Stas Sergeev <stsp@users.sourceforge.net>
+>> ---
+>>   include/linux/leds.h |    3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index b122eea..c32f1b8 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -53,6 +53,9 @@ struct led_classdev {
+>>   	/* Must not sleep, use a workqueue if needed */
+>>   	void		(*brightness_set)(struct led_classdev *led_cdev,
+>>   					  enum led_brightness brightness);
+>> +	/* Intended for drivers that set brightness in a non-blocking way */
+>> +	void (*brightness_set_nonblocking)(struct led_classdev *led_cdev,
+>> +					  enum led_brightness brightness);
 >
-> Add/fix platform data and helper function for various hardware
-> (touchscreen, audio, USB device, ...).
+> Hi Jacek
 >
-> Add new discovered GPIOs and fix names by GPIO context.
+>>From an API design point of view, i'm not sure this is the best way to
+> go. You now have two calls which do the same thing, with the plan that
+> you want to invert the meaning of brightness_set, the old well known
+> API call, sometime later. This inverting the meaning is going to catch
+> people out and introduce bugs.
 >
-> Add new LEDs driver.
->
-> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-Hi Petr,
+> I would rather add a brightness_set_blocking op. Then as you go
+> thought the drivers stripping out the work queue, move the driver to
+> use this brightness_set_blocking.
 
-Just as Lee, I want the serie to be split per-subsystem.
+There are around 60 drivers in the other kernel subsystems that register
+LED class devices. If we chose the way you proposed then we would have
+to adjust all of them to the LED core changes, which could complicate
+the situation during merge window if there were other modifications in
+the affected drivers.
 
-For the mach-pxa part, I need you to split the patch into several chunks to
-review.
-At least please split :
- - a first patch for cleanup (identation and whitespaces)
- - a second patch for cleanup (comments changes, debug messages)
- - a serie of fix patches
-   - one for the power sequence
-   - one for GPIO fixes
- - a serie of evolution patches
-   - new gpio_keys
-   - new backlight stuff
-   - one per new device declared
-   - new flash stuff
-   - etc ...
+With my approach all old-fashion drivers will be treated by the
+LED core in the old-fashion way. This is why I introduced
+LED_BRIGHTNESS_BLOCKING flag - only drivers aware of the LED core
+changes will set it, which will allow for the LED core to find out
+which drivers are aware of brightness_set semantics change and
+implement the op accordingly.
 
-Please keep in mind that in order to pick the patches, I need to split them in 3
-groups :
- - cleanups
- - fixes
- - evolutions / new stuff
-Moreover I want to be able to revert one functionality (for example new power
-sequence) without reverting the whole serie.
+This way the change of brightness_set semantics will not be painful.
 
-You probably know that the pxa patches need the subject prefix to be "ARM: pxa:
-magician: " in your case. Other subsystem maintainers have similar requirements
-I believe.
+After all drivers across all subsystems are adapted to the LED core
+changes the flag will be made redundant and we will remove it.
 
-When that's done, I'll begin the review, and Philipp will probably too as he is
-the maintainer.
-
-Cheers.
-
---
-Robert
+-- 
+Best Regards,
+Jacek Anaszewski
