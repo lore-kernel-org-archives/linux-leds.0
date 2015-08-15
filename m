@@ -1,60 +1,108 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Synchronized led trigger
-Date: Fri, 14 Aug 2015 10:40:53 +0200
-Message-ID: <55CDA995.6010709@samsung.com>
-References: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: [PATCH] leds: leds-fsg: Use devm_led_classdev_register
+Date: Sat, 15 Aug 2015 15:51:01 +0530
+Message-ID: <20150815102101.GA8323@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:9461 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753500AbbHNIk6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 14 Aug 2015 04:40:58 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NT200IGXDG6YI50@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 14 Aug 2015 09:40:54 +0100 (BST)
-In-reply-to: <715D9F6A60DF2F458F39683D45F6609A7E22E57B@VMPREVAS1.prevas.se>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:34068 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750748AbbHOKVF (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 15 Aug 2015 06:21:05 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?ISO-8859-1?Q?Sean_Nyekj=E6r?= <Sean.Nyekjaer@prevas.dk>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Sean,
+Use resource-managed function devm_led_classdev_register instead
+of led_classdev_register to make the error-path simpler.
 
-On 08/13/2015 09:37 AM, Sean Nyekj=E6r wrote:
-> Hi
->
-> I couldn't find any synchronized led triggers in the kernel. The time=
-r trigger was blinking in random when I tried to set our 5 leds. :-)
+To be compatible with the change, various gotos are replced with
+direct returns and unneeded labels are dropped. Also, remove
+fsg_led_remove as it is now redundant.
 
-It is impossible to synchronize brightness setting operation for
-different devices. It would only make sense for two separate
-LED class devices exposed by a driver controlling one hardware
-device. Effectively the issue boils down to the problem of
-adding an API for synchronizing brightness setting operation
-for several LED class devices exposed by a single LED class
-driver. We were trying to implement similar functionality
-for synchronizing flash strobe for LED flash class devices,
-but it has been given up. You could try to pursue the subject
-if you want, here are references: [1], [2].
+Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+---
+ drivers/leds/leds-fsg.c | 51 ++++++++++++-------------------------------------
+ 1 file changed, 12 insertions(+), 39 deletions(-)
 
-> So i created this led trigger, which can blink with a half and one hz=
-=2E
->
-> Is there any place for something like this upstream? I'm prepared to =
-make changes so it can be configured by the dtb or some other way.
->
-> Cheers
-> Sean Nyekj=E6r
->
-
-[1] https://lwn.net/Articles/634465/
-[2] http://www.spinics.net/lists/linux-leds/msg02995.html
-
---=20
-Best Regards,
-Jacek Anaszewski
+diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+index 2b4dc73..df0e5da 100644
+--- a/drivers/leds/leds-fsg.c
++++ b/drivers/leds/leds-fsg.c
+@@ -156,60 +156,33 @@ static int fsg_led_probe(struct platform_device *pdev)
+ 	latch_value = 0xffff;
+ 	*latch_address = latch_value;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
+ 	if (ret < 0)
+-		goto failwlan;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
+ 	if (ret < 0)
+-		goto failwan;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
+ 	if (ret < 0)
+-		goto failsata;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
+ 	if (ret < 0)
+-		goto failusb;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
++	ret = devm_classdev_register(&pdev->dev, &fsg_sync_led);
+ 	if (ret < 0)
+-		goto failsync;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
+ 	if (ret < 0)
+-		goto failring;
+-
+-	return ret;
+-
+- failring:
+-	led_classdev_unregister(&fsg_sync_led);
+- failsync:
+-	led_classdev_unregister(&fsg_usb_led);
+- failusb:
+-	led_classdev_unregister(&fsg_sata_led);
+- failsata:
+-	led_classdev_unregister(&fsg_wan_led);
+- failwan:
+-	led_classdev_unregister(&fsg_wlan_led);
+- failwlan:
++		return ret;
+ 
+ 	return ret;
+ }
+ 
+-static int fsg_led_remove(struct platform_device *pdev)
+-{
+-	led_classdev_unregister(&fsg_wlan_led);
+-	led_classdev_unregister(&fsg_wan_led);
+-	led_classdev_unregister(&fsg_sata_led);
+-	led_classdev_unregister(&fsg_usb_led);
+-	led_classdev_unregister(&fsg_sync_led);
+-	led_classdev_unregister(&fsg_ring_led);
+-
+-	return 0;
+-}
+-
+-
+ static struct platform_driver fsg_led_driver = {
+ 	.probe		= fsg_led_probe,
+ 	.remove		= fsg_led_remove,
+-- 
+1.9.1
