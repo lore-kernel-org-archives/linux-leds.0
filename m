@@ -1,97 +1,120 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2 00/10] pwm: add support for atomic update
-Date: Mon, 17 Aug 2015 09:18:27 +0200
-Message-ID: <20150817091827.70eae7eb@bbrezillon>
-References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
-	<20150725083657.6111ff59@bbrezillon>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: leds-fsg: Use devm_led_classdev_register
+Date: Mon, 17 Aug 2015 10:27:02 +0200
+Message-ID: <55D19AD6.8030506@samsung.com>
+References: <20150815102101.GA8323@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38289 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750937AbbHQHSc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Aug 2015 03:18:32 -0400
-In-Reply-To: <20150725083657.6111ff59@bbrezillon>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:39092 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbbHQI1F (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Aug 2015 04:27:05 -0400
+In-reply-to: <20150815102101.GA8323@localhost>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Doug Anderson <dianders@google.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 25 Jul 2015 08:36:57 +0200
-Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+Hi Vaishali,
 
-> Hi Thierry,
->=20
-> Should I resend a new version rebased on Mark's pwm topic branch or
-> would you like to review this one first ?
+Thanks for the patch. Unfortunately it causes build break.
+Please fix the issues and resubmit.
 
-Ping.
+On 08/15/2015 12:21 PM, Vaishali Thakkar wrote:
+> Use resource-managed function devm_led_classdev_register instead
+> of led_classdev_register to make the error-path simpler.
+>
+> To be compatible with the change, various gotos are replced with
+> direct returns and unneeded labels are dropped. Also, remove
+> fsg_led_remove as it is now redundant.
+>
+> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> ---
+>   drivers/leds/leds-fsg.c | 51 ++++++++++++-------------------------------------
+>   1 file changed, 12 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+> index 2b4dc73..df0e5da 100644
+> --- a/drivers/leds/leds-fsg.c
+> +++ b/drivers/leds/leds-fsg.c
+> @@ -156,60 +156,33 @@ static int fsg_led_probe(struct platform_device *pdev)
+>   	latch_value = 0xffff;
+>   	*latch_address = latch_value;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
+>   	if (ret < 0)
+> -		goto failwlan;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
+>   	if (ret < 0)
+> -		goto failwan;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
+>   	if (ret < 0)
+> -		goto failsata;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
+>   	if (ret < 0)
+> -		goto failusb;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
+> +	ret = devm_classdev_register(&pdev->dev, &fsg_sync_led);
+>   	if (ret < 0)
+> -		goto failsync;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
+>   	if (ret < 0)
+> -		goto failring;
+> -
+> -	return ret;
+> -
+> - failring:
+> -	led_classdev_unregister(&fsg_sync_led);
+> - failsync:
+> -	led_classdev_unregister(&fsg_usb_led);
+> - failusb:
+> -	led_classdev_unregister(&fsg_sata_led);
+> - failsata:
+> -	led_classdev_unregister(&fsg_wan_led);
+> - failwan:
+> -	led_classdev_unregister(&fsg_wlan_led);
+> - failwlan:
+> +		return ret;
+>
+>   	return ret;
+>   }
+>
+> -static int fsg_led_remove(struct platform_device *pdev)
+> -{
+> -	led_classdev_unregister(&fsg_wlan_led);
+> -	led_classdev_unregister(&fsg_wan_led);
+> -	led_classdev_unregister(&fsg_sata_led);
+> -	led_classdev_unregister(&fsg_usb_led);
+> -	led_classdev_unregister(&fsg_sync_led);
+> -	led_classdev_unregister(&fsg_ring_led);
+> -
+> -	return 0;
+> -}
+> -
+> -
+>   static struct platform_driver fsg_led_driver = {
+>   	.probe		= fsg_led_probe,
+>   	.remove		= fsg_led_remove,
+>
 
->=20
-> Best Regards,
->=20
-> Boris
->=20
-> On Mon, 20 Jul 2015 17:31:57 +0200
-> Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
->=20
-> > Hello Thierry,
-> >=20
-> > This series adds support for atomic PWM update, or IOW, the capabil=
-ity
-> > to update all the parameters of a PWM device (enabled/disabled, per=
-iod,
-> > duty and polarity) in one go.
-> >=20
-> > Best Regards,
-> >=20
-> > Boris
-> >=20
-> > Changes since v1:
-> > - dropped applied patches
-> > - squashed Heiko's fixes into the rockchip driver changes
-> > - made a few cosmetic changes
-> > - added kerneldoc comments
-> > - added Heiko's patch to display more information in debugfs
-> > - dropped pwm-regulator patches (should be submitted separately)
-> >=20
-> > Boris Brezillon (9):
-> >   pwm: introduce default period and polarity concepts
-> >   pwm: define a new pwm_state struct
-> >   pwm: move the enabled/disabled info to pwm_state struct
-> >   backlight: pwm_bl: remove useless call to pwm_set_period
-> >   pwm: declare a default PWM state
-> >   pwm: add the PWM initial state retrieval infra
-> >   pwm: add the core infrastructure to allow atomic update
-> >   pwm: rockchip: add initial state retrieval
-> >   pwm: rockchip: add support for atomic update
-> >=20
-> > Heiko St=C3=BCbner (1):
-> >   pwm: add information about polarity, duty cycle and period to deb=
-ugfs
-> >=20
-> >  drivers/leds/leds-pwm.c              |   2 +-
-> >  drivers/pwm/core.c                   | 169 +++++++++++++++++++++++=
-++++++++----
-> >  drivers/pwm/pwm-pxa.c                |   2 +-
-> >  drivers/pwm/pwm-rockchip.c           | 119 +++++++++++++++++++----=
--
-> >  drivers/pwm/pwm-sun4i.c              |   3 +-
-> >  drivers/regulator/pwm-regulator.c    |   2 +-
-> >  drivers/video/backlight/lm3630a_bl.c |   4 +-
-> >  drivers/video/backlight/pwm_bl.c     |  10 ++-
-> >  drivers/video/fbdev/ssd1307fb.c      |   2 +-
-> >  include/linux/pwm.h                  |  86 +++++++++++++++---
-> >  10 files changed, 336 insertions(+), 63 deletions(-)
-> >=20
->=20
->=20
->=20
 
-
-
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+-- 
+Best Regards,
+Jacek Anaszewski
