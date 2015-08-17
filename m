@@ -1,120 +1,70 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-fsg: Use devm_led_classdev_register
-Date: Mon, 17 Aug 2015 10:27:02 +0200
-Message-ID: <55D19AD6.8030506@samsung.com>
-References: <20150815102101.GA8323@localhost>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH RESEND v6 0/2] Driver for TI tlc591xx 8/16 Channel i2c
+ LED driver
+Date: Mon, 17 Aug 2015 15:11:48 +0300
+Message-ID: <55D1CF84.8040906@ti.com>
+References: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="WDJ5qBUsqMFotHIqW5Ia6xXNTKfm7aDud"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:39092 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751427AbbHQI1F (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Aug 2015 04:27:05 -0400
-In-reply-to: <20150815102101.GA8323@localhost>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:43701 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751427AbbHQMML (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 17 Aug 2015 08:12:11 -0400
+In-Reply-To: <1426630107-25057-1-git-send-email-andrew@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, cooloney@gmail.com
+Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com
 
-Hi Vaishali,
+--WDJ5qBUsqMFotHIqW5Ia6xXNTKfm7aDud
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the patch. Unfortunately it causes build break.
-Please fix the issues and resubmit.
+Hi Andrew, (and Brian),
 
-On 08/15/2015 12:21 PM, Vaishali Thakkar wrote:
-> Use resource-managed function devm_led_classdev_register instead
-> of led_classdev_register to make the error-path simpler.
->
-> To be compatible with the change, various gotos are replced with
-> direct returns and unneeded labels are dropped. Also, remove
-> fsg_led_remove as it is now redundant.
->
-> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
-> ---
->   drivers/leds/leds-fsg.c | 51 ++++++++++++-------------------------------------
->   1 file changed, 12 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
-> index 2b4dc73..df0e5da 100644
-> --- a/drivers/leds/leds-fsg.c
-> +++ b/drivers/leds/leds-fsg.c
-> @@ -156,60 +156,33 @@ static int fsg_led_probe(struct platform_device *pdev)
->   	latch_value = 0xffff;
->   	*latch_address = latch_value;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
->   	if (ret < 0)
-> -		goto failwlan;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
->   	if (ret < 0)
-> -		goto failwan;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
->   	if (ret < 0)
-> -		goto failsata;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
->   	if (ret < 0)
-> -		goto failusb;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
-> +	ret = devm_classdev_register(&pdev->dev, &fsg_sync_led);
->   	if (ret < 0)
-> -		goto failsync;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
->   	if (ret < 0)
-> -		goto failring;
-> -
-> -	return ret;
-> -
-> - failring:
-> -	led_classdev_unregister(&fsg_sync_led);
-> - failsync:
-> -	led_classdev_unregister(&fsg_usb_led);
-> - failusb:
-> -	led_classdev_unregister(&fsg_sata_led);
-> - failsata:
-> -	led_classdev_unregister(&fsg_wan_led);
-> - failwan:
-> -	led_classdev_unregister(&fsg_wlan_led);
-> - failwlan:
-> +		return ret;
->
->   	return ret;
->   }
->
-> -static int fsg_led_remove(struct platform_device *pdev)
-> -{
-> -	led_classdev_unregister(&fsg_wlan_led);
-> -	led_classdev_unregister(&fsg_wan_led);
-> -	led_classdev_unregister(&fsg_sata_led);
-> -	led_classdev_unregister(&fsg_usb_led);
-> -	led_classdev_unregister(&fsg_sync_led);
-> -	led_classdev_unregister(&fsg_ring_led);
-> -
-> -	return 0;
-> -}
-> -
-> -
->   static struct platform_driver fsg_led_driver = {
->   	.probe		= fsg_led_probe,
->   	.remove		= fsg_led_remove,
->
+On 18/03/15 00:08, Andrew Lunn wrote:
+> This patchset is a driver for the TI tlc59116 16 Channel i2c LED
+> driver and tlc59108 8 Channel i2c LED driver. This driver is used on
+> the Belkin WRT1900AC access point and the C code is derived from code
+> Belkin contributed to OpenWRT.  However it has been extensively
+> re-written, and a device tree binding added to replace platform data.
+
+I see this is now in 4.2-rc... And I see you dropped me from Cc in this
+resend series. Because of that, I missed this resend, and couldn't
+object to merging.
+
+I'm not very happy about this getting merged. I think I had valid
+comments to the driver, to which I did get no answers. You knew my
+objections, but you did not even bother mentioning those in the resend
+intro.
+
+ Tomi
 
 
--- 
-Best Regards,
-Jacek Anaszewski
+--WDJ5qBUsqMFotHIqW5Ia6xXNTKfm7aDud
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJV0c+EAAoJEPo9qoy8lh71ntkQAJhJ2UygiIGwnw7Rcv/QwVJF
+7VLV+DH6QC5YZFDE8LwgAEXtd0QGuwaCuFKZnzGYtuCOLulXwqmxcs4ARIzZmbXF
+A9JmR4iE9X/Iyf3jqAFTArnF4xm2xvjAPAI/d3/u+F4kc2SEcuqcZNgA4YipklU8
+bq7lstvYMcyTC2M+TpZrqwpOqG8zuvCuHRsjpHDt/bDjvOdVj5tAvWuHDq+nkfXs
+32kJNOw0FEtTTBUor0BbwGfnRW6/jFAwnqvlQN6ayqJmFrShVBdtsm540C+CrIpV
+QGy/OEmE0A7IQTqHCVGinaoyada90jiBWuJgntz8wiHr7IWOTdevIOMOdlbexMOr
+IXbZUw8D84YbgMtayqqFcTjkcKQwFr5iafF2sYQU51b8Llhl0KezAyAxmKZilG3y
+howBwwAUWgJ+Z7dmapjSwV4d4d/2rSOlvGiSFgZ3FNCsLX6dZjRiD7QhZEvFjwkS
+0fEP8MNaPWCNmAjl2hy/HPJzygbodQrotvRt6z1FP1hDU2YcxjIMFfxTXid3kpgO
+7clh1obMpFet5POrJ2NauZTeldNjcVs+uTXpv9UxMNfLQG5d+PtJnTTRdlo9YztJ
+lD7Ot6e875Ty2nX3kaI8EXez/Ml/+HUBi+sksGeRZ1T2JtBtzb/jZomJywYt4E52
+AqyfTDBH0dTmVCvTKoZD
+=edXK
+-----END PGP SIGNATURE-----
+
+--WDJ5qBUsqMFotHIqW5Ia6xXNTKfm7aDud--
