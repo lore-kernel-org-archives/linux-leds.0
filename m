@@ -1,99 +1,65 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH RESEND v6 0/2] Driver for TI tlc591xx 8/16 Channel i2c
- LED driver
-Date: Mon, 17 Aug 2015 23:47:29 +0300
-Message-ID: <55D24861.3020202@ti.com>
-References: <1426630107-25057-1-git-send-email-andrew@lunn.ch> <55D1CF84.8040906@ti.com> <20150817132718.GF7537@lunn.ch> <55D1EBA8.9090609@ti.com> <20150817142147.GG7537@lunn.ch> <55D20E96.3020504@ti.com> <20150817164822.GA29494@lunn.ch>
+From: Vincent Pelletier <plr.vincent@gmail.com>
+Subject: Re: leds-gpio on x86
+Date: Mon, 17 Aug 2015 23:08:23 +0200
+Message-ID: <20150817230823.61de477a@x2>
+References: <20150805220948.3984f19c@x2>
+	<20150806165924.GY1540@lahna.fi.intel.com>
+	<20150806191727.0bf87a3a@x2>
+	<20150806173558.GZ1540@lahna.fi.intel.com>
+	<20150806201820.5ca0764d@x2>
+	<20150807105745.GB1540@lahna.fi.intel.com>
+	<20150808140656.6b81d3b9@x2>
+	<20150811120038.GF1541@lahna.fi.intel.com>
+	<20150811194256.08816c63@x2>
+	<20150812125314.GS1541@lahna.fi.intel.com>
+	<20150815123640.45a5b9bf@x2>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="IQKXBTjCkp7kl5IdIU4GASxGVWFQui2p8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:49171 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750906AbbHQUsI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 17 Aug 2015 16:48:08 -0400
-In-Reply-To: <20150817164822.GA29494@lunn.ch>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:37795 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751078AbbHQVI1 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 17 Aug 2015 17:08:27 -0400
+Received: by wibhh20 with SMTP id hh20so91633044wib.0
+        for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2015 14:08:25 -0700 (PDT)
+In-Reply-To: <20150815123640.45a5b9bf@x2>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: cooloney@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Matthew.Fatheree@belkin.com, "R, Vignesh" <vigneshr@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-leds@vger.kernel.org
 
---IQKXBTjCkp7kl5IdIU4GASxGVWFQui2p8
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+I'm getting more comfortable with leds, and troubles begin.
+When I enable timer-base led triggering and start even just two leds in
+short succession (in a shell script), I start seeing:
 
+[ 1210.586990] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1211.227414] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1211.867890] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1212.508299] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1213.148734] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1213.789172] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1214.429607] Trying to free nonexistent resource <000000000000002e-000000000000002f>
 
+2e-2f is the range of the SuperIO, which is requested & released by
+(at least) gpio-f7188x:
+[  535.653716] gpio-f7188x: Found f71869a at 0x2e, revision 32
 
-On 17/08/15 19:48, Andrew Lunn wrote:
->> TLC591xx is quite simple HW, and the code doing the HW programming
->> should be identical for a pwm and for a led driver. I don't see either=
- a
->> pwm or a led driver being somehow superior. They are very similar simp=
-le
->> drivers, implementing a different interface. Whether the interface wor=
-ks
->> for you should be clear from the interface itself. The code is just de=
-tails.
->>
->> On the other hand, if you want something you can use to test, it's a
->> different case, but you haven't indicated any interest in that.
->=20
-> What i want is code in the kernel to driver the LEDs on my Linksys
-> WRT1900ac. You say, "the code is just details", is just plain
-> wrong. Code is the Linux kernel and is the process of getting stuff
-> into the kernel. I've followed the process, submitted code for review,
-> fixed up comments, got it tested and ACKed by people, and merged.
+Unloading all other modules accessing the SuperIO (fintek-cir and
+f71882fg), I can still reproduce the message.
 
-Your process also included in ignoring my questions, and dropping me
-from cc so you'd get the driver merged. My idea of the Linux development
-process differs greatly from yours.
+Also, when this error happens, tty screen can become corrupted (areas
+become blank, as if space char was replacing large rectangles).
+Unloading my module (which unregisters leds, in turn unregistering GPIO
+pins) clears the corruption ("hidden" chars appear again).
 
-> Where as all you have done is emailed.
+Enabling usb-host triggering, the messages appears without a single
+other led trigger set to something else than "none".
 
-Yes, as you were writing the driver for the HW, and I was expecting
-answers from you. I would find it rather rude if I'm working on a
-driver, getting comments on it and fixing things, and suddenly someone
-else goes and writes his own version of the driver for the HW.
+I do not speak C fluently enough to tell if this is a re-entry kind of
+problem (same module accessing GPIO pins right next to each other at
+about the same time by different timers).
 
-I presumed that you would either answer to my comments, or you would cc
-me when you want to ping the maintainers.
-
-Sure, if the driver is complex or somehow controversial it's good to
-have different implementations of the driver so the best one can be
-picked. This is not the case here. The HW is simple, and both PWM and
-LED interfaces are simple. The code is just details in such a case.
-
-I can post a pwm based driver tomorrow. I could've done that long ago if
-you would have just said that you're not interested in finding answers
-to my questions or trying a pwm driver. Or if you'd have bothered to cc
-me in the last series, so I would've realized you are done with the drive=
-r.
-
- Tomi
-
-
---IQKXBTjCkp7kl5IdIU4GASxGVWFQui2p8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJV0khtAAoJEPo9qoy8lh71i9YQAK26QE7s1KElu9sNA0wa4rsw
-w8Lcno7gR82k9HIhwh4IgplWmwBkztCSc1YhPN6Q78KGBLYC6fpPtSlgmq+dC87r
-JtteE/2wGa8mPQ0cQjWFg3xuPmF+nky1gVsPkWSZ1C+Eth57ntKFqRx4N7FEFMg0
-g4kOEF/iuX6CuI10DeR4JamuDZuUzSEnLTDdFn85sXmhGzAJ6e5zl1Z/QhLGZXd7
-HD6f3trVtrHW1j7tahWCGAeo7gLVuLW751JJ4Hojypf+S0kHC57Eptyqka0YZaMx
-jvrQorzMJ3jDSyZZYH0QwQlAIGKHU8MjBiDP238OKK6IbiG/13woFpcVav8USyo3
-BdeLL1vwdGIlnkjDi9mbdyCuRRSdtVhNqp4lwkZYLsKZdOuXCyAQkGi7+0NUPuq9
-G2WeW3wqkW6KwkEAaR+EHldcjkSzyGYQKnqi5U5erumnVik9+RfCqe9OJeZiYhts
-T3BONkgbF/cgdoZQ5cbq0YmI3TybrECH5DrSkguvAo06mkc4q2lBvqD6Aomuz9PC
-3AwNt6TASYUw5SxQ/VNEykLCP0cmHFjXVSfwVdBNRau1Sf2Rfpmc74vxZ6Ay9F58
-4nKDxuq+1oH6PS0EOPmZOP6ME/FSPQF7tXnqI2zDyrZPwvFRgn2EZqS3CjWrEyZ9
-rOhESAtUhmbrTdG2vxqu
-=83am
------END PGP SIGNATURE-----
-
---IQKXBTjCkp7kl5IdIU4GASxGVWFQui2p8--
+How can I debug this further ?
+-- 
+Vincent Pelletier
