@@ -1,55 +1,157 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v2 00/21] ARM: pxa: magician: Rework HTC Magician support
-Date: Tue, 18 Aug 2015 00:20:37 +0200
-Message-ID: <55D25E35.3000102@tul.cz>
-References: <55D2583B.8040602@tul.cz>
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: Re: [PATCH] leds: leds-fsg: Use devm_led_classdev_register
+Date: Tue, 18 Aug 2015 11:16:31 +0530
+Message-ID: <CAK-LDbJ+6VnKcsuhRUP13gweetP2p-ioY+ittxDcLqZ5ECxctA@mail.gmail.com>
+References: <20150815102101.GA8323@localhost>
+	<55D19AD6.8030506@samsung.com>
+	<CAK-LDbKBwtq9i3Xozew-axZfPOrgTBKrVHEft4ucLEoohnG_xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bubo.tul.cz ([147.230.16.1]:51261 "EHLO bubo.tul.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751282AbbHQWRq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 17 Aug 2015 18:17:46 -0400
-In-Reply-To: <55D2583B.8040602@tul.cz>
+Received: from mail-yk0-f180.google.com ([209.85.160.180]:32961 "EHLO
+	mail-yk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296AbbHRFqc (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 18 Aug 2015 01:46:32 -0400
+In-Reply-To: <CAK-LDbKBwtq9i3Xozew-axZfPOrgTBKrVHEft4ucLEoohnG_xw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org
-Cc: linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Dne 17.8.2015 v 23:55 Petr Cvek napsal(a):
-> This patchset will clean, fix and finally add multiple PXA devices
-> to HTC Magician machine. Also it adds leds-pasic3 driver to LED subsystem.
-> This driver require changes into htc-pasic3 structures, which are used
-> exclusively by magician.c code.
-> 
-> Petr Cvek (21):
->   ARM: pxa: magician: Fix Kconfig for magician to always include
->     htc-egpio
->   ARM: pxa: magician: Fix indentation and whitespaces
->   ARM: pxa: magician: Fix comments, debug functions and print strings
->   ARM: pxa: magician: Add, fix and init (new) GPIOs
->   ARM: pxa: magician: Add support for ADS7846 touchscreen
->   ARM: pxa: magician: Add normal and power I2C definition
->   ARM: pxa: magician: Fix IrDA pdata and redundant GPIO request
->   ARM: pxa: magician: Add StrataFlash Vpp GPIO and alternative driver
->   ARM: pxa: magician: Add OV9640 camera support
->   ARM: pxa: magician: Add UDA1380 sound support
->   ARM: pxa: magician: Add MAX1586 Vcore regulator support
->   ARM: pxa: magician: Add PXA27x UDC support
->   ARM: pxa: magician: Fix charging source and add NiCd backup charging
->   ARM: pxa: magician: Fix PXA USB OHCI port enable flags
->   ARM: pxa: magician: Fix PWM backlight regulator
->   ARM: pxa: magician: Add support for alternative LCD backlight
->   ARM: pxa: magician: Remove (temporarily) pasic3 LED support
->   mfd: htc-pasic3: Prepare driver for leds-pasic3
->   leds: leds-pasic3: Add support for PASIC3 LED controller
->   ARM: pxa: magician: Re-add pdata for new leds-pasic3 driver
->   ARM: pxa: magician: Move platform_add_devices() to the end of
->     magician_init()
+On Mon, Aug 17, 2015 at 2:02 PM, Vaishali Thakkar
+<vthakkar1994@gmail.com> wrote:
+>
+> On 17 Aug 2015 13:57, "Jacek Anaszewski" <j.anaszewski@samsung.com> wrote:
+>>
+>> Hi Vaishali,
+>>
+>> Thanks for the patch. Unfortunately it causes build break.
+>> Please fix the issues and resubmit.
+>
+> Oops! I am really very sorry. By mistake I sent a basic version of patch
+> instead of final one. Thanks for the review.
+>
+> I'll send v2 with the fix of that build error.
 
-Patches for EGPIO, charging, LCD, MAX1586 and UDC are required to use
-Magician at all or else there will be no connectivity for debug console,
-very fast accu discharge, no working LCD and/or no rootfs from MMC/SD.
+Hi Jacek,
 
-Petr
+Can you please tell me what are those build errors?
+After looking at my patch, I can expect that as I forgot to
+remove '.remove         = fsg_led_remove' from structure,
+it can cause an error. Also, there is one typing mistake in
+function name. So, both of these can be a reason for
+breaking a build.
+
+Also to be on safe side, I tried to cross compile it for arm
+architecture. But to my surprise, it is not compiling properly.
+So, it would be good if you can point me to the script you
+used for compilation so that I can check it before sending a new
+version.
+
+Thank You.
+
+>>
+>> On 08/15/2015 12:21 PM, Vaishali Thakkar wrote:
+>>>
+>>> Use resource-managed function devm_led_classdev_register instead
+>>> of led_classdev_register to make the error-path simpler.
+>>>
+>>> To be compatible with the change, various gotos are replced with
+>>> direct returns and unneeded labels are dropped. Also, remove
+>>> fsg_led_remove as it is now redundant.
+>>>
+>>> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+>>> ---
+>>>   drivers/leds/leds-fsg.c | 51
+>>> ++++++++++++-------------------------------------
+>>>   1 file changed, 12 insertions(+), 39 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+>>> index 2b4dc73..df0e5da 100644
+>>> --- a/drivers/leds/leds-fsg.c
+>>> +++ b/drivers/leds/leds-fsg.c
+>>> @@ -156,60 +156,33 @@ static int fsg_led_probe(struct platform_device
+>>> *pdev)
+>>>         latch_value = 0xffff;
+>>>         *latch_address = latch_value;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
+>>> +       ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
+>>>         if (ret < 0)
+>>> -               goto failwlan;
+>>> +               return ret;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
+>>> +       ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
+>>>         if (ret < 0)
+>>> -               goto failwan;
+>>> +               return ret;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
+>>> +       ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
+>>>         if (ret < 0)
+>>> -               goto failsata;
+>>> +               return ret;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
+>>> +       ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
+>>>         if (ret < 0)
+>>> -               goto failusb;
+>>> +               return ret;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
+>>> +       ret = devm_classdev_register(&pdev->dev, &fsg_sync_led);
+>>>         if (ret < 0)
+>>> -               goto failsync;
+>>> +               return ret;
+>>>
+>>> -       ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
+>>> +       ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
+>>>         if (ret < 0)
+>>> -               goto failring;
+>>> -
+>>> -       return ret;
+>>> -
+>>> - failring:
+>>> -       led_classdev_unregister(&fsg_sync_led);
+>>> - failsync:
+>>> -       led_classdev_unregister(&fsg_usb_led);
+>>> - failusb:
+>>> -       led_classdev_unregister(&fsg_sata_led);
+>>> - failsata:
+>>> -       led_classdev_unregister(&fsg_wan_led);
+>>> - failwan:
+>>> -       led_classdev_unregister(&fsg_wlan_led);
+>>> - failwlan:
+>>> +               return ret;
+>>>
+>>>         return ret;
+>>>   }
+>>>
+>>> -static int fsg_led_remove(struct platform_device *pdev)
+>>> -{
+>>> -       led_classdev_unregister(&fsg_wlan_led);
+>>> -       led_classdev_unregister(&fsg_wan_led);
+>>> -       led_classdev_unregister(&fsg_sata_led);
+>>> -       led_classdev_unregister(&fsg_usb_led);
+>>> -       led_classdev_unregister(&fsg_sync_led);
+>>> -       led_classdev_unregister(&fsg_ring_led);
+>>> -
+>>> -       return 0;
+>>> -}
+>>> -
+>>> -
+>>>   static struct platform_driver fsg_led_driver = {
+>>>         .probe          = fsg_led_probe,
+>>>         .remove         = fsg_led_remove,
+>>>
+>>
+>>
+>> --
+>> Best Regards,
+>> Jacek Anaszewski
+
+
+
+-- 
+Vaishali
