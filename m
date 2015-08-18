@@ -1,66 +1,38 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: leds-gpio on x86
-Date: Tue, 18 Aug 2015 12:02:16 +0300
-Message-ID: <20150818090216.GG1552@lahna.fi.intel.com>
-References: <20150806173558.GZ1540@lahna.fi.intel.com>
- <20150806201820.5ca0764d@x2>
- <20150807105745.GB1540@lahna.fi.intel.com>
- <20150808140656.6b81d3b9@x2>
- <20150811120038.GF1541@lahna.fi.intel.com>
- <20150811194256.08816c63@x2>
- <20150812125314.GS1541@lahna.fi.intel.com>
- <20150815123640.45a5b9bf@x2>
- <20150817230823.61de477a@x2>
- <20150818093226.3db0b553@x2>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [v8,3/3] leds/powernv: Add driver for PowerNV platform
+Date: Tue, 18 Aug 2015 20:21:35 +1000 (AEST)
+Message-ID: <20150818102136.0C9DD1402B5@ozlabs.org>
+References: <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:6862 "EHLO mga14.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:33124 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751465AbbHRJCT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 18 Aug 2015 05:02:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20150818093226.3db0b553@x2>
+	id S1750799AbbHRKVi (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 18 Aug 2015 06:21:38 -0400
+In-Reply-To: <1437801670-23705-4-git-send-email-hegdevasant@linux.vnet.ibm.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vincent Pelletier <plr.vincent@gmail.com>
-Cc: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com
+Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-On Tue, Aug 18, 2015 at 09:32:26AM +0200, Vincent Pelletier wrote:
-> On Mon, 17 Aug 2015 23:08:23 +0200, Vincent Pelletier
-> <plr.vincent@gmail.com> wrote:
-> > How can I debug this further ?
+On Sat, 2015-25-07 at 05:21:10 UTC, Vasant Hegde wrote:
+> This patch implements LED driver for PowerNV platform using the existing
+> generic LED class framework.
 > 
-> I made a bit of progress: disabling all but one cpu (...which, in this
-> case, just means disabling the second core) makes the error messages go
-> away, and blinking works fine.
-> 
-> There is a lock taken in __request_region, and released around
-> schedule() when muxed. I guess this means region request is just pushed
-> into a queue when resource is busy, then scheduler is told to let
-> whatever else available run.
-> I have no idea if the lock should be taken before or after
-> remove_wait_queue after schedule call.
+> PowerNV platform has below type of LEDs:
+>   - System attention
+>       Indicates there is a problem with the system that needs attention.
+>   - Identify
+>       Helps the user locate/identify a particular FRU or resource in the
+>       system.
+>   - Fault
+>       Indicates there is a problem with the FRU or resource at the
+>       location with which the indicator is associated.
 
-For each GPIO operation the f7188x driver calls
-superio_enter()/superio_exit().
+Hi Vasant,
 
-However, I don't think that is enough to prevent multiple threads
-accessing a GPIO at the same time.
+I'm waiting for a respin of this based on the discussion between you and
+Jackek.
 
-One option is to add mutex to the private structure and then do
-something like this in each callback:
+If I don't see it soon it will miss v4.3.
 
-static int f7188x_gpio_get(...)
-{
-	mutex_lock(&sio->lock);
-	
-	/* request the resource and touch the hardware */
-
-	mutex_unlock(&sio->lock);
-
-	...
-}
-
-It is a bit weird that it needs to acquire/release the ioport region each
-time.
+cheers
