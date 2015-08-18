@@ -1,142 +1,62 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v2 04/21] ARM: pxa: magician: Add, fix and init (new)
- GPIOs
-Date: Wed, 19 Aug 2015 00:46:25 +0200
-Message-ID: <55D3B5C1.2070806@tul.cz>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D258E9.9010303@tul.cz>
- <87mvxo8lqi.fsf@belgarion.home>
+From: Vincent Pelletier <plr.vincent@gmail.com>
+Subject: Re: leds-gpio on x86
+Date: Wed, 19 Aug 2015 00:56:35 +0200
+Message-ID: <20150819005635.1daee673@x2>
+References: <20150806173558.GZ1540@lahna.fi.intel.com>
+	<20150806201820.5ca0764d@x2>
+	<20150807105745.GB1540@lahna.fi.intel.com>
+	<20150808140656.6b81d3b9@x2>
+	<20150811120038.GF1541@lahna.fi.intel.com>
+	<20150811194256.08816c63@x2>
+	<20150812125314.GS1541@lahna.fi.intel.com>
+	<20150815123640.45a5b9bf@x2>
+	<20150817230823.61de477a@x2>
+	<20150818093226.3db0b553@x2>
+	<20150818090216.GG1552@lahna.fi.intel.com>
+	<20150818133850.42bb31cf@x2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <87mvxo8lqi.fsf@belgarion.home>
-Sender: linux-pm-owner@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:33248 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750710AbbHRW4j (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 18 Aug 2015 18:56:39 -0400
+Received: by wijp15 with SMTP id p15so112204369wij.0
+        for <linux-leds@vger.kernel.org>; Tue, 18 Aug 2015 15:56:37 -0700 (PDT)
+In-Reply-To: <20150818133850.42bb31cf@x2>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-leds@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>
 
-Dne 18.8.2015 v 21:01 Robert Jarzmik napsal(a):
-> 
-> From here onward, I'll suppose you'll catch all whitespace/indentation changes
-> and extract them towards patch 01/21 ...
+Hello,
 
-OK
+I did a first pass on gpio-f7188x module, and pushed several commits in
+my current working branch:
 
-> 
->>  /* input */
->>  
->> -#define EGPIO_MAGICIAN_CABLE_STATE_AC		MAGICIAN_EGPIO(4, 0)
->> -#define EGPIO_MAGICIAN_CABLE_STATE_USB		MAGICIAN_EGPIO(4, 1)
->> +/* AC=1, USB=0 */
->> +#define EGPIO_MAGICIAN_CABLE_TYPE		MAGICIAN_EGPIO(4, 0)
->> +/* =1 when AC or USB cable inserted */
->> +#define EGPIO_MAGICIAN_CABLE_INSERT1		MAGICIAN_EGPIO(4, 1)
-> The naming makes me uneasy : it's rather vague "cable insert".
-> If AC and USB are the only charging methods, why not have something like
-> "EGPIO_MAGICIAN_POWERED" or the like ?
+https://github.com/vpelletier/linux/commits/ts651
 
-I don't see why not, but there are two GPIOs and it may turn out they have different function. I found it only for power/usb cable insertion. For example they may differ when usb device is connected (magician is now a host) but I did not test it (yet, phone does not generate vbus power).
+This commit contains the relevant part of my changes:
+  gpio: gpio-f7188x: Use mutex for access serialisation.
+(currently:
+  https://github.com/vpelletier/linux/commit/0fecf37bcee67d577f7e1e8e58afc463f452bcff
+)
+but "of course", it does not work: kernel Oops as soon as I trigger the
+concurrent access which caused the original issue. With a single active
+core, it works fine of course.
 
-> 
->>  	GPIO10_GPIO,	/* GSM_IRQ */
->>  	GPIO13_GPIO,	/* CPLD_IRQ */
->>  	GPIO107_GPIO,	/* DS1WM_IRQ */
->>  	GPIO108_GPIO,	/* GSM_READY */
->>  	GPIO115_GPIO,	/* nPEN_IRQ */
->>  
->> -	/* I2C */
->> -	GPIO117_I2C_SCL,
->> -	GPIO118_I2C_SDA,
-> Okay so that are no I2C devices on magician ? Why keep GPIO119_MAGICIAN_I2C_* at
-> the beginning of the file then ?
+Sadly, the traceback is longer than on-screen info, despite being at
+1920x1080 resolution with default console font. I recall reading about
+a project to display kernel errors as qr-codes, did it get somewhere ?
+Also, watchdog kicks in a few seconds after, complaining about hard
+lock on (at least) one core, and scrolling even more. I suspect both
+cores are hard locked, and have so far no idea what I did wrong:
+- each acquire is followed by a release, with no code path around it
+- gpio_device.can_sleep is true (as was the case before my patch)
 
-It is a duplicite definition.
+...would I have somehow poked at another bug ?
 
-	http://lxr.free-electrons.com/source/arch/arm/mach-pxa/magician.c#L60
-
-and in the same array again at:
-
-	http://lxr.free-electrons.com/source/arch/arm/mach-pxa/magician.c#L118
-
-> 
->> +	MFP_CFG_OUT(GPIO40, AF0, DRIVE_LOW),	/* FIXME GSM? */
->> +	MFP_CFG_OUT(GPIO87, AF0, DRIVE_LOW),	/* FIXME GSM? */
->> +
->> +	/* Left GPIOs (undefined here):
->> +	 * 18, 49 : bootloader=VLIO?, WinM=TODO
->> +	 * 48 : AF0/out0
->> +	 * 56 : AF0/out0
->> +	 * 74 : bootloader=AF0/output
->> +	 * 86 : bootloader=AF0/input (but should be gsm reset???)
->> +	 * 114 : AF0/out0
->> +	 * 119 : AF0/out0
->> +	 * 120 : AF0/out
->> +	 * 1 : dedicated reset, AF0/output
->> +	 * 13 : cpld irq, output (??)
->> +	 */
-> This is not describing current code. This doesn't belong to this file, even if I
-> know how frustrating it is to reverse engineer all these gpios. I created a wiki
-> web page will all GPIOs to let go my frustration in the past :)
-
-OK I can create file in Documentation for that (at least one pin has a different direction in kernel vs bootloader).
-
-BTW on xda wiki?
-
-> 
->> @@ -241,8 +324,9 @@ static struct htc_egpio_chip egpio_chips[] = {
->>  
->>  		/*
->>  		 * Depends on modules configuration
->> +		 * Things like MMC and LCD should be enabled
->>  		 */
->> -		.initial_values = 0x40,
->> +		.initial_values = 0x21a0c0,
-> Aren't they enabled by each driver upon its probe() ? What if MMC nor LCD is
-> compiled in the kernel ?
-> 
-
-Some of it is from time kernel did not get to rootfs detection: 0x8000 for to be able to read panic errors (before a backlight driver is loaded - which is BTW not working now in vanilla). 0x80 should be for a valid LCD power sequence (broken one causes invalid voltages on LCD power lines). 0x2000 is RESET for soundcard as original 0x40 is for GSM. MMC can be probably changed to "0" now when everything is working. 0x200000 as 500mA charging should be enabled (for safety) as sometimes boot on weak accu can cause overcurrent, which will hardreset the phone.
-
-
->> @@ -343,21 +427,19 @@ static void samsung_lcd_power(int on, struct fb_var_screeninfo *si)
->>  			gpio_set_value(GPIO75_MAGICIAN_SAMSUNG_POWER, 1);
->>  		else
->>  			gpio_set_value(EGPIO_MAGICIAN_LCD_POWER, 1);
->> -		mdelay(10);
->> -		gpio_set_value(GPIO106_MAGICIAN_LCD_POWER_3, 1);
->> -		mdelay(10);
->> -		gpio_set_value(GPIO104_MAGICIAN_LCD_POWER_1, 1);
->> -		mdelay(30);
->> -		gpio_set_value(GPIO105_MAGICIAN_LCD_POWER_2, 1);
->> -		mdelay(10);
->> +		mdelay(6);
->> +		gpio_set_value(GPIO106_MAGICIAN_LCD_DCDC_NRESET, 1);
->> +		mdelay(6);	/* Avdd -> Voff >5ms */
->> +		gpio_set_value(GPIO104_MAGICIAN_LCD_VOFF_EN, 1);
->> +		mdelay(16);	/* Voff -> Von >(5+10)ms */
->> +		gpio_set_value(GPIO105_MAGICIAN_LCD_VON_EN, 1);
->>  	} else {
->> -		mdelay(10);
->> -		gpio_set_value(GPIO105_MAGICIAN_LCD_POWER_2, 0);
->> -		mdelay(30);
->> -		gpio_set_value(GPIO104_MAGICIAN_LCD_POWER_1, 0);
->> -		mdelay(10);
->> -		gpio_set_value(GPIO106_MAGICIAN_LCD_POWER_3, 0);
->> -		mdelay(10);
->> +		gpio_set_value(GPIO105_MAGICIAN_LCD_VON_EN, 0);
->> +		mdelay(16);
->> +		gpio_set_value(GPIO104_MAGICIAN_LCD_VOFF_EN, 0);
->> +		mdelay(6);
->> +		gpio_set_value(GPIO106_MAGICIAN_LCD_DCDC_NRESET, 0);
->> +		mdelay(6);
-> You're changing the timings here, right ? This should be an appart patch. What
-> is the reason of the change by the way ?
-
-Faster reaction, one change from msleep to mdelay (in toppoly LCD) and reading a datasheet for a valid sequence.
-
-> 
-> Cheers.
-> 
-Best regards,
-Petr
-
+Regards,
+-- 
+Vincent Pelletier
