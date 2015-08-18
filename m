@@ -1,30 +1,34 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [RFC PATCH] pwm: add TLC59108/TLC59116 PWM driver
-Date: Tue, 18 Aug 2015 17:14:40 +0200
-Message-ID: <20150818151440.GH4381@lunn.ch>
-References: <1439905927-27861-1-git-send-email-tomi.valkeinen@ti.com>
- <1439905927-27861-2-git-send-email-tomi.valkeinen@ti.com>
- <20150818141959.GF4381@lunn.ch>
- <55D34807.2020609@ti.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 01/21] ARM: pxa: magician: Fix Kconfig for magician to always include htc-egpio
+Date: Tue, 18 Aug 2015 20:31:31 +0200
+Message-ID: <87zj1o8n3w.fsf@belgarion.home>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D25880.3030507@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55D34807.2020609@ti.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-pwm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <55D25880.3030507@tul.cz> (Petr Cvek's message of "Mon, 17 Aug
+	2015 23:56:16 +0200")
+Sender: linux-pm-owner@vger.kernel.org
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
 
-> > The hardware does allow you to change the period, but there is only
-> > one clock generator for all the channels. If you are going to make the
-> 
-> Hmm... How does that work?
+Petr Cvek <petr.cvek@tul.cz> writes:
 
-I does not :-(
+> The htc-egpio driver should be always included in the kernel as it
+> controls MMC/charging/IrDA power, which is the only way to get
+> an useful rootfs.
+>
+> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+It's already defined in magician_defconfig, why enforce it in Kconfig ?
 
-It is something like 8 months since i rewrote the LED class driver,
-and i've forgotten how the thing actually works.
+And if it's enforced and I want to build a kernel for magician without
+MMC/charging/IrDA, why should I be forced to build in HTC_EGPIO ?
 
-Sorry
-	Andrew
+Or said differently, does a kernel without HTC_EGPIO is proven to fail 100%
+without this option ?
+
+Cheers.
+
+-- 
+Robert
