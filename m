@@ -1,62 +1,107 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: leds-gpio on x86
-Date: Wed, 19 Aug 2015 00:56:35 +0200
-Message-ID: <20150819005635.1daee673@x2>
-References: <20150806173558.GZ1540@lahna.fi.intel.com>
-	<20150806201820.5ca0764d@x2>
-	<20150807105745.GB1540@lahna.fi.intel.com>
-	<20150808140656.6b81d3b9@x2>
-	<20150811120038.GF1541@lahna.fi.intel.com>
-	<20150811194256.08816c63@x2>
-	<20150812125314.GS1541@lahna.fi.intel.com>
-	<20150815123640.45a5b9bf@x2>
-	<20150817230823.61de477a@x2>
-	<20150818093226.3db0b553@x2>
-	<20150818090216.GG1552@lahna.fi.intel.com>
-	<20150818133850.42bb31cf@x2>
+From: Petr Cvek <petr.cvek@tul.cz>
+Subject: Re: [PATCH v2 03/21] ARM: pxa: magician: Fix comments, debug
+ functions and print strings
+Date: Wed, 19 Aug 2015 01:09:44 +0200
+Message-ID: <55D3BB38.8030701@tul.cz>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D258CD.40101@tul.cz>
+ <87r3n08mqo.fsf@belgarion.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:33248 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750710AbbHRW4j (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 18 Aug 2015 18:56:39 -0400
-Received: by wijp15 with SMTP id p15so112204369wij.0
-        for <linux-leds@vger.kernel.org>; Tue, 18 Aug 2015 15:56:37 -0700 (PDT)
-In-Reply-To: <20150818133850.42bb31cf@x2>
+Received: from bubo.tul.cz ([147.230.16.1]:39874 "EHLO bubo.tul.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750892AbbHRXGs (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 18 Aug 2015 19:06:48 -0400
+In-Reply-To: <87r3n08mqo.fsf@belgarion.home>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-leds@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>, philipp.zabel@gmail.com
+Cc: daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+Dne 18.8.2015 v 20:39 Robert Jarzmik napsal(a):
+> Petr Cvek <petr.cvek@tul.cz> writes:
+> 
+>> Fix comments, debug functions and print strings. Rename backlight
+>> structures to be more specific.
+>>
+>> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+>> ---
+>>  arch/arm/mach-pxa/magician.c | 121 +++++++++++++++++++++++++++++++------------
+>>  1 file changed, 89 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+>> index 9e8698a..57da133 100644
+>> --- a/arch/arm/mach-pxa/magician.c
+>> +++ b/arch/arm/mach-pxa/magician.c
+>> @@ -11,6 +11,46 @@
+>>   * it under the terms of the GNU General Public License version 2 as
+>>   * published by the Free Software Foundation.
+>>   *
+>> + *
+>> + * NOTICE MDA Compact (T-mobile XDA) facts:
+>> + *   On "LCD type = 1, system_rev = 2" (0x3a in CPLD)
+>> + * Samsung LTP280QV - valid LCD init sequence sequence:
+>> + *   powerup: Vdigital->Vanalog->gate Voff->gate Von->data enable
+>> + *   powerdown: data disable->gate Von->gate Voff->Vanalog->Vdigital
+>> + * Measured on PCB:
+>> + *   GPIO106
+>> + *     Affects VOFF, VON and other voltages
+>> + *     Probably main reset pin for DC-DC converter
+>> + *   GPIO75
+>> + *     Must be AF0+OUT (WM leaves it to AF2+OUT), not LCD signal
+>> + *     GPIO106 works only when GPIO75 is high (DC-DC power enable?)
+>> + *     After LCD powerup, value is irrelevant
+>> + *   GPIO104
+>> + *     LCD VOFF (gate off voltage)
+>> + *   GPIO105
+>> + *     LCD VON (gate on voltage)
+>> + * FFUART (/dev/ttyS0) WM: 38400,8,n,1,crtscts (GSM data?)
+>> + * BTUART (/dev/ttyS1) WM: 115200,8,n,1,crtscts (GSM AT commands)
+>> + *   Use a HTC line discipline: 0x02 channel(==0x16) data 0x02
+>> + * EGPIO(CPLD) should be always present (controls "all" supply power)
+>> + *   For rootfs on MMC/SD: EGPIO module controls card power (in kernel)
+>> + * cpu-freq often freeze platform (errata?, use userspace gov)
+>> + * Do not use YUV420, (erratum E24) causes LCD hang (forever)
+>> + * Many GSM related pins are unknown
+>> + * gpio-rc-recv probably require lowpass filter (sw is OK)
+>> + * TODO EGPIO_MAGICIAN_IR_RECEIVE_SHUTDOWN
+>> + * FIXME AC charging blocks IrDA
+>> + * Unimplemented blocking of camera+power+reset, reset and door open reset
+>> + *   Registers: htc-pasic3.h (but blocks charging too)
+>> + * Other PXA machines have wait_for_sync for ADS7846 (during LCD refresh)
+>> + * pda-power has not optimal charging (accu can be bloated)
+>> + * TODO Current switching works? Is gpio-regulator/bq24022 required?
+> I think you can ask Philip, he's the maintainer after all ...
 
-I did a first pass on gpio-f7188x module, and pushed several commits in
-my current working branch:
+Ok. Philipp? 
 
-https://github.com/vpelletier/linux/commits/ts651
+Current switching can be done in pda-power function .set_charge(). But setting the charging current based on AC vs USB cable only is irrelevant as both can deliver 500mA (and Magician is not one of the most power efficient machine, 100mA is barely enough to power). Better thing would be to base the switching on accu level of charge (trickle charging).
 
-This commit contains the relevant part of my changes:
-  gpio: gpio-f7188x: Use mutex for access serialisation.
-(currently:
-  https://github.com/vpelletier/linux/commit/0fecf37bcee67d577f7e1e8e58afc463f452bcff
-)
-but "of course", it does not work: kernel Oops as soon as I trigger the
-concurrent access which caused the original issue. With a single active
-core, it works fine of course.
+> 
+>> + * pdata supports alternative drivers (mutually exclusive modules)
+>> + *   i2c-pxa vs i2c-gpio (SCCB)
+>> + *   pwm_bl vs gpio_backlight
+>> + *   pxa27x_udc vs phy-gpio-vbus-usb
+>> + *   physmap-flash vs pxa2xx-flash
+> 
+> Okay, this chunk is nice documentation, but not code ...
+> I'd rather have it in : Documentation/arm/pxa/magician.txt or something like
+> that.
+OK I can move these comments there.
 
-Sadly, the traceback is longer than on-screen info, despite being at
-1920x1080 resolution with default console font. I recall reading about
-a project to display kernel errors as qr-codes, did it get somewhere ?
-Also, watchdog kicks in a few seconds after, complaining about hard
-lock on (at least) one core, and scrolling even more. I suspect both
-cores are hard locked, and have so far no idea what I did wrong:
-- each acquire is followed by a release, with no code path around it
-- gpio_device.can_sleep is true (as was the case before my patch)
-
-...would I have somehow poked at another bug ?
-
-Regards,
--- 
-Vincent Pelletier
+> 
+>> @@ -120,11 +160,12 @@ static unsigned long magician_pin_config[] __initdata = {
+>>  };
+>>  
+>>  /*
+>> - * IRDA
+>> + * IrDA
+>>   */
+>>  
+>>  static struct pxaficp_platform_data magician_ficp_info = {
+>>  	.gpio_pwdown		= GPIO83_MAGICIAN_nIR_EN,
+>> +	/* TODO test with FIR dongle */
+> I don't like this comment. I was not there before, so let it be. You know there
+> remains a TODO, I know ... but you can cunningly slip it in the commit message.
+Actually I have bought a dongle during last week, but it turned out, it can do only SIR (and poorly :-D). I can try to enable a second magician PCB, but it will takes some time (as I have only one accupack - second burned down). So do I have to remove only comment or FIR flag altogether? (I can find with second magician that it can work like a charm or it is not working - for example due to incompatible IrDA transceiver).
