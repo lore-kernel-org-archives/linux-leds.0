@@ -1,239 +1,58 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: [PATCH v10 0/3] LED driver for PowerNV platform
-Date: Wed, 19 Aug 2015 22:19:51 +0530
-Message-ID: <1440002994-25662-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 06/21] ARM: pxa: magician: Add normal and power I2C
+ definition
+Date: Wed, 19 Aug 2015 20:41:43 +0200
+Message-ID: <87mvxn6ryw.fsf@belgarion.home>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D2593A.5060400@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e28smtp09.in.ibm.com ([122.248.162.9]:54700 "EHLO
-	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199AbbHSQuJ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 12:50:09 -0400
-Received: from /spool/local
-	by e28smtp09.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Wed, 19 Aug 2015 22:20:06 +0530
-Received: from d28relay02.in.ibm.com (d28relay02.in.ibm.com [9.184.220.59])
-	by d28dlp02.in.ibm.com (Postfix) with ESMTP id C1BBF3940061
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 22:20:03 +0530 (IST)
-Received: from d28av01.in.ibm.com (d28av01.in.ibm.com [9.184.220.63])
-	by d28relay02.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7JGo1gT53215406
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 22:20:01 +0530
-Received: from d28av01.in.ibm.com (localhost [127.0.0.1])
-	by d28av01.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7JGnx2H005271
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 22:20:01 +0530
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, sameo@linux.intel.com, linux-pm@vger.kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, cooloney@gmail.com, sre@kernel.org, haojian.zhuang@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, philipp.zabel@gmail.com, lee.jones@linaro.org, j.anaszewski@samsung.com, daniel@zonque.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: mpe@ellerman.id.au, j.anaszewski@samsung.com, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com, benh@kernel.crashing.org, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
 
-The following series implements LED driver for PowerNV platform.
+Petr Cvek <petr.cvek@tul.cz> writes:
 
-PowerNV platform has below type of LEDs:
-  - System attention
-      Indicates there is a problem with the system that needs attention=
-=2E
-  - Identify
-      Helps the user locate/identify a particular FRU or resource in th=
-e
-      system.
-  - Fault
-      Indicates there is a problem with the FRU or resource at the
-      location with which the indicator is associated.
+> @@ -873,10 +875,39 @@ static struct platform_device strataflash = {
+>   */
+>  
+>  static struct i2c_pxa_platform_data i2c_info = {
+> -	.fast_mode = 1,
+> +	.fast_mode = 0,	/* fast mode seems to be have bit errors */
+> +	.use_pio = 0, /* no polling */
+This deserves a better commit message : why the switch out of fast_mode, what
+was not working, etc ...
 
-On PowerNV (Non Virtualized) platform OPAL firmware provides LED inform=
-ation
-to host via device tree (location code and LED type). During init we ch=
-eck
-for 'ibm,opal/leds' node in device tree to enable LED driver. And we us=
-e
-OPAL API's to get/set LEDs.
+> +/*
+> + * GPIO I2C normal controller (alternative)
+> + */
+> +
+> +static struct i2c_gpio_platform_data rtc_device_data = {
+> +	.sda_pin = GPIO118_MAGICIAN_I2C_SDA,
+> +	.scl_pin = GPIO117_MAGICIAN_I2C_SCL,
+> +	.udelay = 100
+> +};
+> +
+> +static struct platform_device i2c_gpio_bus_alt = {
+> +	.name = "i2c-gpio",
+> +	.id = 0,
+> +	.dev = {
+> +		.platform_data = &rtc_device_data,
+rtc_device_data, really ?
+Can you add __initdata, I think i2c-gpio copies the data and doesn't use it
+anymore after ?
 
-Note that on PowerNV platform firmware can activate fault LED, if it ca=
-n isolate
-the problem. Also one can modify the LEDs using service processor inter=
-face. None
-of these involes kernel. Hence we retain LED state in unload path.
+Cheers.
 
-Sample LED device tree output:
-------------------------------
-leds {
-	compatible =3D "ibm,opal-v3-led";
-	led-mode =3D "lightpath";
-
-	U78C9.001.RST0027-P1-C1 {
-		led-types =3D "identify", "fault";
-	};
-	...
-	...
-    }
-
-Sample sysfs output:
---------------------
-=2E
-=E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:fault
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 brightness
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../op=
-al_leds
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 max_brightness
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 power
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- async
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- autosuspend_delay_ms
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- control
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_active_kids
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_active_time
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_enabled
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_status
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_suspended_time
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80=
- runtime_usage
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../..=
-/../../class/leds
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 trigger
-=E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 uevent
-=E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:identify
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 brightness
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../op=
-al_leds
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 max_brightness
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 power
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- async
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- autosuspend_delay_ms
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- control
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_active_kids
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_active_time
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_enabled
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_status
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
- runtime_suspended_time
-=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80=
- runtime_usage
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../..=
-/../../class/leds
-=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 trigger
-=E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 uevent
-=2E...
-=2E...
-=2E...
-
-patch 1/2: PowerNV architecture specific code. This adds necessary
-           OPAL APIs.
-patch 2/2: Create LED platform device and export OPAL symbols
-patch 3/3: Actual LED driver implemenation for PowerNV platform.
-
-Note:
- - This version of patchset is based on top of v4.2-rc7.
-
-@Ben/Michael,
-  This patchset is Acked by LED subsystem maintainer (Jacek) [1] and he
-  suggested merge it via powerpc tree [1]. Can you please review/take
-  this patchset?
-
-[1] https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131695.ht=
-ml
-
-Previous patchset:
-  v9: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-August/13296=
-4.html
-  v8: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131652.=
-html
-  v7: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131533.=
-html
-  v6: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131328.=
-html
-  v5: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/130602.=
-html
-  v4: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-April/128028=
-=2Ehtml
-  v3: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-April/127702=
-=2Ehtml
-  v2: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/126301=
-=2Ehtml
-  v1: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/125705=
-=2Ehtml
-
-Changes in v10:
-  - Removed "led_disabled" variable initialization
-  - Removed ".owner =3D THIS_MODULE"
-
-Changes in v9:
-  - Addressed minor comments from Jacek.
-  - Added Ack-by: Jacek
-
-Changes in v8:
-  - Added powernv_led_common structure for common variables
-  - Removed unused variable 'value'
-  - Fixed locking issue
-
-Changes in v7:
-  - Club powernv_led_data & powernv_leds_priv into single structure
-  - Removed num_leds & powernv_leds_count()
-  - Replaced per LED mutex with global mutex
-  - Removed driver specific workqueue. Instead this version uses new
-    global workqueue.
-
-Changes in v6:
-  - Added loc_code and type to powernv_led_data structure instead of pa=
-rsing
-    them from led classdev name.
-  - Fixed documentation issues.
-  - Fixed mutex_destry issue
-  - Replaced led_classdev_register with devm_led_classdev_register
-
-Changes in v5:
-  - Rebased on top of Linus tree
-  - Renamed led as leds and updated documentation
-  - As Ben and Arnd suggested, removed phandle from documenation
-  - As Ben suggested removed led-loc device tree property
-  - As Jacek suggested, added back compatible property to documentation
-
-Changes in v4:
-  - Updated macros to reflect platform.
-  - s/u64/__be64/g for big endian data we get from firmware
-  - Addressed review comments from Jacek. Major once are:
-    Removed list in powernv_led_data structure
-    s/kzalloc/devm_kzalloc/
-    Removed compatible property from documentation
-
-
-Anshuman Khandual (1):
-  powerpc/powernv: Add OPAL interfaces for accessing and modifying
-    system LED states
-
-Vasant Hegde (2):
-  powerpc/powernv: Create LED platform device
-  leds/powernv: Add driver for PowerNV platform
-
- .../devicetree/bindings/leds/leds-powernv.txt      |  26 ++
- arch/powerpc/include/asm/opal-api.h                |  25 +-
- arch/powerpc/include/asm/opal.h                    |   4 +
- arch/powerpc/platforms/powernv/opal-wrappers.S     |   2 +
- arch/powerpc/platforms/powernv/opal.c              |  12 +-
- drivers/leds/Kconfig                               |  11 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-powernv.c                        | 345 +++++++++++++=
-++++++++
- 8 files changed, 424 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-powernv=
-=2Etxt
- create mode 100644 drivers/leds/leds-powernv.c
-
---=20
-Vasant
-2.1.0
+-- 
+Robert
