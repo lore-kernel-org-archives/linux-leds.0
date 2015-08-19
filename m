@@ -1,59 +1,116 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [v8,3/3] leds/powernv: Add driver for PowerNV platform
-Date: Wed, 19 Aug 2015 14:12:27 +0530
-Message-ID: <55D44173.9020700@linux.vnet.ibm.com>
-References: <20150818102136.0C9DD1402B5@ozlabs.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2 19/21] leds: leds-pasic3: Add support for PASIC3 LED
+ controller
+Date: Wed, 19 Aug 2015 10:49:08 +0200
+Message-ID: <55D44304.1000503@samsung.com>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D25ADC.10703@tul.cz>
+ <55D30875.3090103@samsung.com> <55D3A832.90705@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e28smtp04.in.ibm.com ([122.248.162.4]:57776 "EHLO
-	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752783AbbHSInG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 04:43:06 -0400
-Received: from /spool/local
-	by e28smtp04.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Wed, 19 Aug 2015 14:13:03 +0530
-Received: from d28relay05.in.ibm.com (d28relay05.in.ibm.com [9.184.220.62])
-	by d28dlp01.in.ibm.com (Postfix) with ESMTP id 7D352E005A
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:20 +0530 (IST)
-Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
-	by d28relay05.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7J8gSPF17367222
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:29 +0530
-Received: from d28av05.in.ibm.com (localhost [127.0.0.1])
-	by d28av05.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7J8gRhZ007212
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:28 +0530
-In-Reply-To: <20150818102136.0C9DD1402B5@ozlabs.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26763 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750791AbbHSItM (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 04:49:12 -0400
+In-reply-to: <55D3A832.90705@tul.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com
-Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/18/2015 03:51 PM, Michael Ellerman wrote:
-> On Sat, 2015-25-07 at 05:21:10 UTC, Vasant Hegde wrote:
->> This patch implements LED driver for PowerNV platform using the existing
->> generic LED class framework.
+On 08/18/2015 11:48 PM, Petr Cvek wrote:
+> Dne 18.8.2015 v 12:27 Jacek Anaszewski napsal(a):
+>> Hi Petr,
 >>
->> PowerNV platform has below type of LEDs:
->>   - System attention
->>       Indicates there is a problem with the system that needs attention.
->>   - Identify
->>       Helps the user locate/identify a particular FRU or resource in the
->>       system.
->>   - Fault
->>       Indicates there is a problem with the FRU or resource at the
->>       location with which the indicator is associated.
-> 
-> Hi Vasant,
-> 
-> I'm waiting for a respin of this based on the discussion between you and
-> Jackek.
-> 
-> If I don't see it soon it will miss v4.3.
+>> On 08/18/2015 12:06 AM, Petr Cvek wrote:
+>>> +/*
+>>> + * AIC3 (or PASIC3) LED driver for HTC Magician/Alpine/.. (not Compaq ASIC3)
+>>
+>> s/AIC3/ASIC3/
+>>
+>> I am a bit confused. What's the relation between ASIC3 and PASIC3?
+>
+> Actually both drivers should be renamed to AIC3 (or AIC only, as there is version 2). "HTC_AIC3" is written on the chip and "pasic3" is confusing with compaq asic3 driver, which claims in Kconfig help to be compatible with HTC machines. Compaq ASIC3 has much more functionality and from brief look it seems it has 16 bit registers (HTC_AIC3 has only LEDs, RESET and DS1WM and has 8 bit registers).
 
-Michael,
+I see, thanks for the explanation.
 
-I'll post v9 in a day or two.
+>>> +spinlock_t lock;
+>>
+>> Please move it to the struct pasic3_leds_data.
+>
+> OK
+>
+>>
+>>> +
+>>> +static void brightness_set(struct led_classdev *cdev,
+>>> +    enum led_brightness value)
+>>> +{
+>>> +    struct platform_device *pdev = to_platform_device(cdev->dev->parent);
+>>> +    struct pasic3_led *led = dev_get_platdata(cdev->dev);
+>>> +    struct pasic3_leds_pdata *pdata = dev_get_platdata(&pdev->dev);
+>>> +    unsigned long flags;
+>>> +    u8 val;
+>>> +
+>>> +    spin_lock_irqsave(&lock, flags);
+>>> +
+>>> +    if (value == LED_OFF) {
+>>> +        val = pasic3_read_register(pdata->mfd_dev, PASIC3_CH_CONTROL);
+>>> +        pasic3_write_register(pdata->mfd_dev, PASIC3_CH_CONTROL,
+>>> +            val & ~(led->bit_blink_en | led->bit_force_on));
+>>> +
+>>> +        val = pasic3_read_register(pdata->mfd_dev, PASIC3_MASK_A);
+>>> +        pasic3_write_register(pdata->mfd_dev, PASIC3_MASK_A,
+>>> +            val & ~led->bit_mask);
+>>> +
+>>> +        if (pdata->power_gpio) {
+>>> +            pdata->power_gpio_users--;
+>>
+>> Now it is possible that power_gpio_users will have negative value.
+>> You should check the value before decrementing it.
+>
+>> Now you are setting power_gpio_users to 1 each time brightness is set,
+>> whereas it should be set to 1 only if it was 0.
+>>
+>> This could be changed to:
+>>
+>> if (pdata->power_gpio_users == 0)
+>>      gpio_set_value(pdata->power_gpio, 1);
+>>
+>> pdata->power_gpio_users++;
+>
+>>
+>> Shouldn't you check if also power_gpio state doesn't need to be altered
+>> here?
+>>
+>
+>
+> Can the same brightness_set() function be called multiple times with same value (like LED_ON)?
 
--Vasant
+Yes it can. LED core doesn't check if the value isn't already set.
+
+> I think I will change it to a different code altogether, power_gpio is shared variable and power can be shut off when two of three leds are disabled (green LED does not use power_gpio). Something like:
+>
+> enabled_leds |= BIT(hw_num);
+>
+> or
+>
+> enabled_leds &= ~BIT(hw_num);
+
+OK, we'll discuss that after you'll submit the next version.
+
+>
+>>> +        ret = gpio_request(pdata->power_gpio,
+>>> +            "Red-Blue LED Power");
+>>
+>> Please use devm_gpio_request. Then you will not need pasic3_led_remove.
+>>
+>
+> OK
+>
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
