@@ -1,43 +1,55 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH v9 3/3] leds/powernv: Add driver for PowerNV platform
-Date: Wed, 19 Aug 2015 21:49:45 +0530
-Message-ID: <55D4ACA1.30801@linux.vnet.ibm.com>
-References: <1439980886-16360-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <1439980886-16360-4-git-send-email-hegdevasant@linux.vnet.ibm.com> <55D478AF.4080009@samsung.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Change LED subsystem git tree URL
+Date: Wed, 19 Aug 2015 09:45:31 -0700
+Message-ID: <CAK5ve-J6n2RMODsOVi=m-NW46wAwvAMmq8ckL1z6MkMqANVtwQ@mail.gmail.com>
+References: <1439981261-9786-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:40644 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752428AbbHSQUr (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 12:20:47 -0400
-Received: from /spool/local
-	by e23smtp06.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Thu, 20 Aug 2015 02:20:45 +1000
-Received: from d23relay06.au.ibm.com (d23relay06.au.ibm.com [9.185.63.219])
-	by d23dlp02.au.ibm.com (Postfix) with ESMTP id 697C92BB0052
-	for <linux-leds@vger.kernel.org>; Thu, 20 Aug 2015 02:20:39 +1000 (EST)
-Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
-	by d23relay06.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7JGKTEV57868418
-	for <linux-leds@vger.kernel.org>; Thu, 20 Aug 2015 02:20:37 +1000
-Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
-	by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7JGK5KP019528
-	for <linux-leds@vger.kernel.org>; Thu, 20 Aug 2015 02:20:06 +1000
-In-Reply-To: <55D478AF.4080009@samsung.com>
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:34651 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797AbbHSQpv (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 12:45:51 -0400
+In-Reply-To: <1439981261-9786-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com, benh@kernel.crashing.org
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>
 
-On 08/19/2015 06:08 PM, Jacek Anaszewski wrote:
-> Hi Vasant,
+On Wed, Aug 19, 2015 at 3:47 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> This patch removes Bryan Wu from the list of LED subsystem
+> maintainers and replaces related git tree URL with the one
+> maintained by Jacek Anaszewski.
+>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
 
-Hello Jacek,
+Acked-by: Bryan Wu <cooloney@gmail.com>
 
-> 
-> I've found two superfluous lines. Please find my remarks below.
 
-Thanks for the review. I will fix both issues and will send v10 soon.
-
--Vasant
+> ---
+>  MAINTAINERS |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 569568f..f8ebbef 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6040,11 +6040,10 @@ F:      Documentation/scsi/53c700.txt
+>  F:     drivers/scsi/53c700*
+>
+>  LED SUBSYSTEM
+> -M:     Bryan Wu <cooloney@gmail.com>
+>  M:     Richard Purdie <rpurdie@rpsys.net>
+>  M:     Jacek Anaszewski <j.anaszewski@samsung.com>
+>  L:     linux-leds@vger.kernel.org
+> -T:     git git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
+> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+>  S:     Maintained
+>  F:     drivers/leds/
+>  F:     include/linux/leds.h
+> --
+> 1.7.9.5
+>
