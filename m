@@ -1,47 +1,59 @@
-From: Philipp Zabel <philipp.zabel@gmail.com>
-Subject: Re: [PATCH v2 19/21] leds: leds-pasic3: Add support for PASIC3 LED
- controller
-Date: Wed, 19 Aug 2015 10:09:31 +0200
-Message-ID: <1439971771.11928.31.camel@gmail.com>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D25ADC.10703@tul.cz>
-	 <55D30875.3090103@samsung.com> <55D3A832.90705@tul.cz>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: Re: [v8,3/3] leds/powernv: Add driver for PowerNV platform
+Date: Wed, 19 Aug 2015 14:12:27 +0530
+Message-ID: <55D44173.9020700@linux.vnet.ibm.com>
+References: <20150818102136.0C9DD1402B5@ozlabs.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:35476 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752981AbbHSIJe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 04:09:34 -0400
-In-Reply-To: <55D3A832.90705@tul.cz>
+Received: from e28smtp04.in.ibm.com ([122.248.162.4]:57776 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752783AbbHSInG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 04:43:06 -0400
+Received: from /spool/local
+	by e28smtp04.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Wed, 19 Aug 2015 14:13:03 +0530
+Received: from d28relay05.in.ibm.com (d28relay05.in.ibm.com [9.184.220.62])
+	by d28dlp01.in.ibm.com (Postfix) with ESMTP id 7D352E005A
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:20 +0530 (IST)
+Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
+	by d28relay05.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7J8gSPF17367222
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:29 +0530
+Received: from d28av05.in.ibm.com (localhost [127.0.0.1])
+	by d28av05.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7J8gRhZ007212
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 14:12:28 +0530
+In-Reply-To: <20150818102136.0C9DD1402B5@ozlabs.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: robert.jarzmik@free.fr, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Michael Ellerman <mpe@ellerman.id.au>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, j.anaszewski@samsung.com
+Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com
 
-Am Dienstag, den 18.08.2015, 23:48 +0200 schrieb Petr Cvek:
-> Dne 18.8.2015 v 12:27 Jacek Anaszewski napsal(a):
-> > Hi Petr,
-> > 
-> > On 08/18/2015 12:06 AM, Petr Cvek wrote:
-> > > +/*
-> > > + * AIC3 (or PASIC3) LED driver for HTC Magician/Alpine/.. (not 
-> > > Compaq ASIC3)
-> > 
-> > s/AIC3/ASIC3/
-> > 
-> > I am a bit confused. What's the relation between ASIC3 and PASIC3?
+On 08/18/2015 03:51 PM, Michael Ellerman wrote:
+> On Sat, 2015-25-07 at 05:21:10 UTC, Vasant Hegde wrote:
+>> This patch implements LED driver for PowerNV platform using the existing
+>> generic LED class framework.
+>>
+>> PowerNV platform has below type of LEDs:
+>>   - System attention
+>>       Indicates there is a problem with the system that needs attention.
+>>   - Identify
+>>       Helps the user locate/identify a particular FRU or resource in the
+>>       system.
+>>   - Fault
+>>       Indicates there is a problem with the FRU or resource at the
+>>       location with which the indicator is associated.
 > 
-> Actually both drivers should be renamed to AIC3 (or AIC only, as 
-> there is version 2). "HTC_AIC3" is written on the chip and "pasic3" 
-> is confusing with compaq asic3 driver, which claims in Kconfig help 
-> to be compatible with HTC machines. Compaq ASIC3 has much more 
-> functionality and from brief look it seems it has 16 bit registers 
-> (HTC_AIC3 has only LEDs, RESET and DS1WM and has 8 bit registers).
+> Hi Vasant,
+> 
+> I'm waiting for a respin of this based on the discussion between you and
+> Jackek.
+> 
+> If I don't see it soon it will miss v4.3.
 
-I think I've got the PASIC3 name from debug strings present in the HTC
-bootloader or WinCE binary. This chip (and its predecessor PASIC2 in
-HTC Blueangel) are different from the ASIC3 found in hx4700 iPAQs.
+Michael,
 
-regards
-Philipp
+I'll post v9 in a day or two.
+
+-Vasant
