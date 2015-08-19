@@ -1,116 +1,96 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 19/21] leds: leds-pasic3: Add support for PASIC3 LED
- controller
-Date: Wed, 19 Aug 2015 10:49:08 +0200
-Message-ID: <55D44304.1000503@samsung.com>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D25ADC.10703@tul.cz>
- <55D30875.3090103@samsung.com> <55D3A832.90705@tul.cz>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH] pwm: TLC591xx PWM driver
+Date: Wed, 19 Aug 2015 12:24:25 +0200
+Message-ID: <20150819102424.GE26627@ulmo>
+References: <1439905927-27861-1-git-send-email-tomi.valkeinen@ti.com>
+ <20150818150916.GG4381@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26763 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbbHSItM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 04:49:12 -0400
-In-reply-to: <55D3A832.90705@tul.cz>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:38548 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751516AbbHSKZb (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 06:25:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20150818150916.GG4381@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>
-Cc: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-
-On 08/18/2015 11:48 PM, Petr Cvek wrote:
-> Dne 18.8.2015 v 12:27 Jacek Anaszewski napsal(a):
->> Hi Petr,
->>
->> On 08/18/2015 12:06 AM, Petr Cvek wrote:
->>> +/*
->>> + * AIC3 (or PASIC3) LED driver for HTC Magician/Alpine/.. (not Compaq ASIC3)
->>
->> s/AIC3/ASIC3/
->>
->> I am a bit confused. What's the relation between ASIC3 and PASIC3?
->
-> Actually both drivers should be renamed to AIC3 (or AIC only, as there is version 2). "HTC_AIC3" is written on the chip and "pasic3" is confusing with compaq asic3 driver, which claims in Kconfig help to be compatible with HTC machines. Compaq ASIC3 has much more functionality and from brief look it seems it has 16 bit registers (HTC_AIC3 has only LEDs, RESET and DS1WM and has 8 bit registers).
-
-I see, thanks for the explanation.
-
->>> +spinlock_t lock;
->>
->> Please move it to the struct pasic3_leds_data.
->
-> OK
->
->>
->>> +
->>> +static void brightness_set(struct led_classdev *cdev,
->>> +    enum led_brightness value)
->>> +{
->>> +    struct platform_device *pdev = to_platform_device(cdev->dev->parent);
->>> +    struct pasic3_led *led = dev_get_platdata(cdev->dev);
->>> +    struct pasic3_leds_pdata *pdata = dev_get_platdata(&pdev->dev);
->>> +    unsigned long flags;
->>> +    u8 val;
->>> +
->>> +    spin_lock_irqsave(&lock, flags);
->>> +
->>> +    if (value == LED_OFF) {
->>> +        val = pasic3_read_register(pdata->mfd_dev, PASIC3_CH_CONTROL);
->>> +        pasic3_write_register(pdata->mfd_dev, PASIC3_CH_CONTROL,
->>> +            val & ~(led->bit_blink_en | led->bit_force_on));
->>> +
->>> +        val = pasic3_read_register(pdata->mfd_dev, PASIC3_MASK_A);
->>> +        pasic3_write_register(pdata->mfd_dev, PASIC3_MASK_A,
->>> +            val & ~led->bit_mask);
->>> +
->>> +        if (pdata->power_gpio) {
->>> +            pdata->power_gpio_users--;
->>
->> Now it is possible that power_gpio_users will have negative value.
->> You should check the value before decrementing it.
->
->> Now you are setting power_gpio_users to 1 each time brightness is set,
->> whereas it should be set to 1 only if it was 0.
->>
->> This could be changed to:
->>
->> if (pdata->power_gpio_users == 0)
->>      gpio_set_value(pdata->power_gpio, 1);
->>
->> pdata->power_gpio_users++;
->
->>
->> Shouldn't you check if also power_gpio state doesn't need to be altered
->> here?
->>
->
->
-> Can the same brightness_set() function be called multiple times with same value (like LED_ON)?
-
-Yes it can. LED core doesn't check if the value isn't already set.
-
-> I think I will change it to a different code altogether, power_gpio is shared variable and power can be shut off when two of three leds are disabled (green LED does not use power_gpio). Something like:
->
-> enabled_leds |= BIT(hw_num);
->
-> or
->
-> enabled_leds &= ~BIT(hw_num);
-
-OK, we'll discuss that after you'll submit the next version.
-
->
->>> +        ret = gpio_request(pdata->power_gpio,
->>> +            "Red-Blue LED Power");
->>
->> Please use devm_gpio_request. Then you will not need pasic3_led_remove.
->>
->
-> OK
->
->
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>
 
 
--- 
-Best Regards,
-Jacek Anaszewski
+--ep0oHQY+/Gbo/zt0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 18, 2015 at 05:09:16PM +0200, Andrew Lunn wrote:
+> > On the other hand, there's pwm_bl.c which give us backlight device
+> > with PWM,
+>=20
+> Lets look at this. A backlight device seems to do most of its work in
+> the update_status callback. It is given a brightness in
+> bl->props.brightness, which takes a value between 0 and
+> props.max_brightness.
+>=20
+> What pwm_bl.c does it then turn this brightness value into an
+> artificial PWM configuration. Your proposed PWM driver then turns this
+> back into a brightness, since you don't actually implement the period
+> part of the PWM interface.
+>=20
+> From an architecture point of view, doesn't an LED class device, which
+> takes a brightness value, seem much more naturally?
+>=20
+> It seems like implementing a generic led_bl.c driver would make sense.
+> It would also allow some of the code in drivers/video/backlight/ to be
+> eliminated. There seems to be both an LED class driver for lp55xx and
+> a blacklight driver lp855x_bl.c. There are duplicate lp8788, 88pm860x,
+> adp5520, da903x, da9052, hp6xx, and lm3533 drivers which might all be
+> removed if a led_bl.c generic driver existed.
+>=20
+> > and a GPIO over PWM sounds more sane to me than GPIO over LED.
+>=20
+> Currently two LED class drivers are calling gpiochip_add:
+>=20
+> ~/linux/drivers/leds$ grep gpiochip_add *.c
+> leds-pca9532.c:	      	   err =3D gpiochip_add(&data->gpio);
+> leds-tca6507.c:		   err =3D gpiochip_add(&tca->gpio);
+>=20
+> The pca9532 has full GPIO capabilities, in as well as out. But it
+> seems like tca6507 is output only. The TLC59108/TLC59116 is also
+> output only. So a generic GPO driver on top of LED would make sense
+> for these two, and save some code/bugs.
+>=20
+> From a stand back, lets take a look at the architecture point of view,
+> generic led_bl and gpio-led drivers seem to make sense.
+
+I agree it's sensible for there to be a driver that can drive a
+backlight from an LED. PWM is somewhat of a lower level API than the LED
+API, so there are cases where LED fits better than PWM. This particular
+case seems to be one of them.
+
+Thierry
+
+--ep0oHQY+/Gbo/zt0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV1FlVAAoJEN0jrNd/PrOhDIoP/1qtFXf94NpapgtqC2Yo4/EJ
+ok3OYoEpETw+/Qyl7dyl5ARkCWjFS1w4Opj1RiNTjqS2utHqGs/cUCuno74EzBY2
+18qcU5iaUsSQ+O0QFiRraj+MuqapAMVqHnPIrAtt67u+OGhGsgB+r0yGaZeo58c5
+zplsHspj6TAFLUCXPWcI/EcHvtm0kZ/klM7I7GPo1Q0yN9Clf6gH/SM57AA3Kntv
+L4/ycEFJYGc7L0Ro8eUxLL4JL1DX2d08wyM8Jawkp2FzafBCvQ8TMdvxk8HY4rYa
+ICJxf9kupFndqKKMN8NGOHXgg8/ob6dGahvKmH2d0wIR8ngpkkvP680Q9uJJwnKo
+rdWQWvyQkqLQIDctOBDkusuGoRH/A3hcdY6oGatZGaxq0E/3pK/BZe7TJMsdWk7E
+IUI0A+/3qIJSJBAmrZt8ufQK8OLtXF0JK2E0R+EFBfoiNH/GRZhOpIeagjhufj8i
+uyc6ryUdeLkHLEJf90/oO4/xQrpMOS/K1bBLyJYBoWznDqFKHmJ++rlKMWJ538Cb
+3AHFZk/c4+FEYjXFmuNj8hWBjHCFgH1v993yBtTUrc2uVi8uG4aMBQ8804bTCPmx
+amdMUekEmFnJGx5/X528a4VmDfize6Usb1eyT/ZSHiqMhq3cMBv/R2R61C6XoN6b
+SFCHtczZl9vmHxN10V0l
+=WWH+
+-----END PGP SIGNATURE-----
+
+--ep0oHQY+/Gbo/zt0--
