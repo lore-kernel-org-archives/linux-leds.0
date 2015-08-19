@@ -1,54 +1,44 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: [PATCH v9 2/3] powerpc/powernv: Create LED platform device
-Date: Wed, 19 Aug 2015 16:11:25 +0530
-Message-ID: <1439980886-16360-3-git-send-email-hegdevasant@linux.vnet.ibm.com>
-References: <1439980886-16360-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1439980886-16360-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, rpurdie@rpsys.net, j.anaszewski@samsung.com, khandual@linux.vnet.ibm.com
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH] MAINTAINERS: Change LED subsystem git tree URL
+Date: Wed, 19 Aug 2015 12:47:41 +0200
+Message-ID: <1439981261-9786-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:57743 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752047AbbHSKrx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 06:47:53 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
 
-VGhpcyBwYXRjaCBhZGRzIHBsYXRmb3JtIGRldmljZXMgZm9yIGxlZHMuIEFsc28gZXhwb3J0IExF
-RCByZWxhdGVkCk9QQUwgQVBJJ3Mgc28gdGhhdCBsZWQgZHJpdmVyIGNhbiB1c2UgdGhlc2UgQVBJ
-cy4KClNpZ25lZC1vZmYtYnk6IFZhc2FudCBIZWdkZSA8aGVnZGV2YXNhbnRAbGludXgudm5ldC5p
-Ym0uY29tPgpBY2tlZC1ieTogQmVuamFtaW4gSGVycmVuc2NobWlkdCA8YmVuaEBrZXJuZWwuY3Jh
-c2hpbmcub3JnPgotLS0KIGFyY2gvcG93ZXJwYy9wbGF0Zm9ybXMvcG93ZXJudi9vcGFsLmMgfCAx
-MiArKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9wb3dlcm52L29wYWwu
-YyBiL2FyY2gvcG93ZXJwYy9wbGF0Zm9ybXMvcG93ZXJudi9vcGFsLmMKaW5kZXggZjA4NGFmYS4u
-NjgzOTM1OCAxMDA2NDQKLS0tIGEvYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9wb3dlcm52L29wYWwu
-YworKysgYi9hcmNoL3Bvd2VycGMvcGxhdGZvcm1zL3Bvd2VybnYvb3BhbC5jCkBAIC02NDgsNyAr
-NjQ4LDcgQEAgc3RhdGljIHZvaWQgb3BhbF9pbml0X2hlYXJ0YmVhdCh2b2lkKQogCiBzdGF0aWMg
-aW50IF9faW5pdCBvcGFsX2luaXQodm9pZCkKIHsKLQlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLCAq
-Y29uc29sZXM7CisJc3RydWN0IGRldmljZV9ub2RlICpucCwgKmNvbnNvbGVzLCAqbGVkczsKIAlp
-bnQgcmM7CiAKIAlvcGFsX25vZGUgPSBvZl9maW5kX25vZGVfYnlfcGF0aCgiL2libSxvcGFsIik7
-CkBAIC02ODksNiArNjg5LDEzIEBAIHN0YXRpYyBpbnQgX19pbml0IG9wYWxfaW5pdCh2b2lkKQog
-CS8qIFNldHVwIGEgaGVhdGJlYXQgdGhyZWFkIGlmIHJlcXVlc3RlZCBieSBPUEFMICovCiAJb3Bh
-bF9pbml0X2hlYXJ0YmVhdCgpOwogCisJLyogQ3JlYXRlIGxlZHMgcGxhdGZvcm0gZGV2aWNlcyAq
-LworCWxlZHMgPSBvZl9maW5kX25vZGVfYnlfcGF0aCgiL2libSxvcGFsL2xlZHMiKTsKKwlpZiAo
-bGVkcykgeworCQlvZl9wbGF0Zm9ybV9kZXZpY2VfY3JlYXRlKGxlZHMsICJvcGFsX2xlZHMiLCBO
-VUxMKTsKKwkJb2Zfbm9kZV9wdXQobGVkcyk7CisJfQorCiAJLyogQ3JlYXRlICJvcGFsIiBrb2Jq
-ZWN0IHVuZGVyIC9zeXMvZmlybXdhcmUgKi8KIAlyYyA9IG9wYWxfc3lzZnNfaW5pdCgpOwogCWlm
-IChyYyA9PSAwKSB7CkBAIC04NDEsMyArODQ4LDYgQEAgRVhQT1JUX1NZTUJPTF9HUEwob3BhbF9y
-dGNfd3JpdGUpOwogRVhQT1JUX1NZTUJPTF9HUEwob3BhbF90cG9fcmVhZCk7CiBFWFBPUlRfU1lN
-Qk9MX0dQTChvcGFsX3Rwb193cml0ZSk7CiBFWFBPUlRfU1lNQk9MX0dQTChvcGFsX2kyY19yZXF1
-ZXN0KTsKKy8qIEV4cG9ydCB0aGVzZSBzeW1ib2xzIGZvciBQb3dlck5WIExFRCBjbGFzcyBkcml2
-ZXIgKi8KK0VYUE9SVF9TWU1CT0xfR1BMKG9wYWxfbGVkc19nZXRfaW5kKTsKK0VYUE9SVF9TWU1C
-T0xfR1BMKG9wYWxfbGVkc19zZXRfaW5kKTsKLS0gCjIuMS4wCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0Ckxp
-bnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0
-aW5mby9saW51eHBwYy1kZXY=
+This patch removes Bryan Wu from the list of LED subsystem
+maintainers and replaces related git tree URL with the one
+maintained by Jacek Anaszewski.
+
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ MAINTAINERS |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 569568f..f8ebbef 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6040,11 +6040,10 @@ F:	Documentation/scsi/53c700.txt
+ F:	drivers/scsi/53c700*
+ 
+ LED SUBSYSTEM
+-M:	Bryan Wu <cooloney@gmail.com>
+ M:	Richard Purdie <rpurdie@rpsys.net>
+ M:	Jacek Anaszewski <j.anaszewski@samsung.com>
+ L:	linux-leds@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+ S:	Maintained
+ F:	drivers/leds/
+ F:	include/linux/leds.h
+-- 
+1.7.9.5
