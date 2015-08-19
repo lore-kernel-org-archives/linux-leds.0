@@ -1,107 +1,131 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v2 03/21] ARM: pxa: magician: Fix comments, debug
- functions and print strings
-Date: Wed, 19 Aug 2015 01:09:44 +0200
-Message-ID: <55D3BB38.8030701@tul.cz>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D258CD.40101@tul.cz>
- <87r3n08mqo.fsf@belgarion.home>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 18/21] mfd: htc-pasic3: Prepare driver for leds-pasic3
+Date: Wed, 19 Aug 2015 07:58:26 +0100
+Message-ID: <20150819065826.GH6180@x1>
+References: <cover.1439843482.git.petr.cvek@tul.cz>
+ <55D25ABC.1000405@tul.cz>
+ <20150818065207.GC6180@x1>
+ <55D39D25.7010909@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bubo.tul.cz ([147.230.16.1]:39874 "EHLO bubo.tul.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750892AbbHRXGs (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 18 Aug 2015 19:06:48 -0400
-In-Reply-To: <87r3n08mqo.fsf@belgarion.home>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:35743 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751426AbbHSG6a (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 02:58:30 -0400
+Received: by wicne3 with SMTP id ne3so112147248wic.0
+        for <linux-leds@vger.kernel.org>; Tue, 18 Aug 2015 23:58:29 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <55D39D25.7010909@tul.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>, philipp.zabel@gmail.com
-Cc: daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Dne 18.8.2015 v 20:39 Robert Jarzmik napsal(a):
-> Petr Cvek <petr.cvek@tul.cz> writes:
-> 
->> Fix comments, debug functions and print strings. Rename backlight
->> structures to be more specific.
->>
->> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
->> ---
->>  arch/arm/mach-pxa/magician.c | 121 +++++++++++++++++++++++++++++++------------
->>  1 file changed, 89 insertions(+), 32 deletions(-)
->>
->> diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
->> index 9e8698a..57da133 100644
->> --- a/arch/arm/mach-pxa/magician.c
->> +++ b/arch/arm/mach-pxa/magician.c
->> @@ -11,6 +11,46 @@
->>   * it under the terms of the GNU General Public License version 2 as
->>   * published by the Free Software Foundation.
->>   *
->> + *
->> + * NOTICE MDA Compact (T-mobile XDA) facts:
->> + *   On "LCD type = 1, system_rev = 2" (0x3a in CPLD)
->> + * Samsung LTP280QV - valid LCD init sequence sequence:
->> + *   powerup: Vdigital->Vanalog->gate Voff->gate Von->data enable
->> + *   powerdown: data disable->gate Von->gate Voff->Vanalog->Vdigital
->> + * Measured on PCB:
->> + *   GPIO106
->> + *     Affects VOFF, VON and other voltages
->> + *     Probably main reset pin for DC-DC converter
->> + *   GPIO75
->> + *     Must be AF0+OUT (WM leaves it to AF2+OUT), not LCD signal
->> + *     GPIO106 works only when GPIO75 is high (DC-DC power enable?)
->> + *     After LCD powerup, value is irrelevant
->> + *   GPIO104
->> + *     LCD VOFF (gate off voltage)
->> + *   GPIO105
->> + *     LCD VON (gate on voltage)
->> + * FFUART (/dev/ttyS0) WM: 38400,8,n,1,crtscts (GSM data?)
->> + * BTUART (/dev/ttyS1) WM: 115200,8,n,1,crtscts (GSM AT commands)
->> + *   Use a HTC line discipline: 0x02 channel(==0x16) data 0x02
->> + * EGPIO(CPLD) should be always present (controls "all" supply power)
->> + *   For rootfs on MMC/SD: EGPIO module controls card power (in kernel)
->> + * cpu-freq often freeze platform (errata?, use userspace gov)
->> + * Do not use YUV420, (erratum E24) causes LCD hang (forever)
->> + * Many GSM related pins are unknown
->> + * gpio-rc-recv probably require lowpass filter (sw is OK)
->> + * TODO EGPIO_MAGICIAN_IR_RECEIVE_SHUTDOWN
->> + * FIXME AC charging blocks IrDA
->> + * Unimplemented blocking of camera+power+reset, reset and door open reset
->> + *   Registers: htc-pasic3.h (but blocks charging too)
->> + * Other PXA machines have wait_for_sync for ADS7846 (during LCD refresh)
->> + * pda-power has not optimal charging (accu can be bloated)
->> + * TODO Current switching works? Is gpio-regulator/bq24022 required?
-> I think you can ask Philip, he's the maintainer after all ...
+On Tue, 18 Aug 2015, Petr Cvek wrote:
 
-Ok. Philipp? 
+> Dne 18.8.2015 v 08:52 Lee Jones napsal(a):
+> > On Tue, 18 Aug 2015, Petr Cvek wrote:
+> >=20
+> >> Fix register definitions and prepare structures for new leds-pasic=
+3
+> >> driver.
+> >>
+> >> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+> >> ---
+> >>  drivers/mfd/htc-pasic3.c       | 54 ++++++++++++++++-----------
+> >>  include/linux/mfd/htc-pasic3.h | 85 +++++++++++++++++++++++++++++=
+++-----------
+> >>  2 files changed, 97 insertions(+), 42 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/htc-pasic3.c b/drivers/mfd/htc-pasic3.c
+> >> index e88d4f6..16e156d 100644
+> >> --- a/drivers/mfd/htc-pasic3.c
+> >> +++ b/drivers/mfd/htc-pasic3.c
+> >> @@ -3,6 +3,9 @@
+> >>   *
+> >>   * Copyright (C) 2006 Philipp Zabel <philipp.zabel@gmail.com>
+> >>   *
+> >> + * 2015:	Added registers for LED and RESET, see htc-pasic3.h
+> >> + *		-- Petr Cvek
+> >> + *
+> >=20
+> > This is pretty unconventional.
+> >=20
+> > Please look to see what others have done.
+>=20
+> LED support: Petr Cvek <petr.cvek@tul.cz>
 
-Current switching can be done in pda-power function .set_charge(). But setting the charging current based on AC vs USB cable only is irrelevant as both can deliver 500mA (and Magician is not one of the most power efficient machine, 100mA is barely enough to power). Better thing would be to base the switching on accu level of charge (trickle charging).
+We can see what changes/support you added in the Git log.  No need to
+reflect that here at all.  If everyone did that, the headers would be
+a complete mess.
 
-> 
->> + * pdata supports alternative drivers (mutually exclusive modules)
->> + *   i2c-pxa vs i2c-gpio (SCCB)
->> + *   pwm_bl vs gpio_backlight
->> + *   pxa27x_udc vs phy-gpio-vbus-usb
->> + *   physmap-flash vs pxa2xx-flash
-> 
-> Okay, this chunk is nice documentation, but not code ...
-> I'd rather have it in : Documentation/arm/pxa/magician.txt or something like
-> that.
-OK I can move these comments there.
+Just:
+ * Copyright (C) 2015 Petr Cvek <petr.cvek@tul.cz>
 
-> 
->> @@ -120,11 +160,12 @@ static unsigned long magician_pin_config[] __initdata = {
->>  };
->>  
->>  /*
->> - * IRDA
->> + * IrDA
->>   */
->>  
->>  static struct pxaficp_platform_data magician_ficp_info = {
->>  	.gpio_pwdown		= GPIO83_MAGICIAN_nIR_EN,
->> +	/* TODO test with FIR dongle */
-> I don't like this comment. I was not there before, so let it be. You know there
-> remains a TODO, I know ... but you can cunningly slip it in the commit message.
-Actually I have bought a dongle during last week, but it turned out, it can do only SIR (and poorly :-D). I can try to enable a second magician PCB, but it will takes some time (as I have only one accupack - second burned down). So do I have to remove only comment or FIR flag altogether? (I can find with second magician that it can work like a charm or it is not working - for example due to incompatible IrDA transceiver).
+=2E.. will do fine.
+
+> >> @@ -130,6 +140,7 @@ static int __init pasic3_probe(struct platform=
+_device *pdev)
+> >>  	struct device *dev =3D &pdev->dev;
+> >>  	struct pasic3_data *asic;
+> >>  	struct resource *r;
+> >> +	struct pasic3_leds_pdata *leds_pdata;
+> >>  	int ret;
+> >>  	int irq =3D 0;
+> >> =20
+> >> @@ -162,6 +173,8 @@ static int __init pasic3_probe(struct platform=
+_device *pdev)
+> >>  	/* calculate bus shift from mem resource */
+> >>  	asic->bus_shift =3D (resource_size(r) - 5) >> 3;
+> >> =20
+> >> +	spin_lock_init(&asic->lock);
+> >> +
+> >>  	if (pdata && pdata->clock_rate) {
+> >>  		ds1wm_pdata.clock_rate =3D pdata->clock_rate;
+> >>  		/* the first 5 PASIC3 registers control the DS1WM */
+> >> @@ -172,13 +185,12 @@ static int __init pasic3_probe(struct platfo=
+rm_device *pdev)
+> >>  			dev_warn(dev, "failed to register DS1WM\n");
+> >>  	}
+> >> =20
+> >> -	if (pdata && pdata->led_pdata) {
+> >> -		led_cell.platform_data =3D pdata->led_pdata;
+> >> -		led_cell.pdata_size =3D sizeof(struct pasic3_leds_machinfo);
+> >> -		ret =3D mfd_add_devices(&pdev->dev, pdev->id, &led_cell, 1, r,
+> >> -				      0, NULL);
+> >> -		if (ret < 0)
+> >> -			dev_warn(dev, "failed to register LED device\n");
+> >> +	if (pdata && pdata->pasic3_leds) {
+> >> +		leds_pdata =3D dev_get_platdata(&pdata->pasic3_leds->dev);
+> >=20
+> > Whoa!  You're passing a pointer to a device through pdata?
+> >=20
+> > I don't like that at all.  Please explain.
+>=20
+> >=20
+> >> +		if (leds_pdata) {
+> >> +			leds_pdata->mfd_dev =3D dev;
+> >> +			platform_device_register(pdata->pasic3_leds);
+> >=20
+> > What's the idea here?
+>=20
+> Actually, I don't know how to do this in a clean way as
+> pasic3_read_register() and pasic3_write_register() require device
+> struct to pass address for accessing the registers. Only way would
+> be to rewrite all functions which call pasic3_*_register() (removing
+> struct device *dev and change it to struct pasic3_data *asic).
+
+I'm still not entirely sure what the problem is.
+
+Why are you calling platform_device_register() instead of using the
+MFD API?
+
+Where does the 'struct device' actually get loaded into pdata?
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
