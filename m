@@ -1,96 +1,234 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH] pwm: TLC591xx PWM driver
-Date: Wed, 19 Aug 2015 12:24:25 +0200
-Message-ID: <20150819102424.GE26627@ulmo>
-References: <1439905927-27861-1-git-send-email-tomi.valkeinen@ti.com>
- <20150818150916.GG4381@lunn.ch>
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Subject: [PATCH v9 0/3] LED driver for PowerNV platform
+Date: Wed, 19 Aug 2015 16:11:23 +0530
+Message-ID: <1439980886-16360-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:38548 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751516AbbHSKZb (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 06:25:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20150818150916.GG4381@lunn.ch>
+Received: from e28smtp04.in.ibm.com ([122.248.162.4]:37060 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855AbbHSKlk (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 06:41:40 -0400
+Received: from /spool/local
+	by e28smtp04.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
+	Wed, 19 Aug 2015 16:11:38 +0530
+Received: from d28relay03.in.ibm.com (d28relay03.in.ibm.com [9.184.220.60])
+	by d28dlp02.in.ibm.com (Postfix) with ESMTP id 65084394005E
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 16:11:36 +0530 (IST)
+Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
+	by d28relay03.in.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7JAfYZ064487536
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 16:11:34 +0530
+Received: from d28av05.in.ibm.com (localhost [127.0.0.1])
+	by d28av05.in.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7JAfSd0019215
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2015 16:11:33 +0530
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-pwm@vger.kernel.org, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>
+To: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: mpe@ellerman.id.au, j.anaszewski@samsung.com, stewart@linux.vnet.ibm.com, j.anaszewski81@gmail.com, arnd@arndb.de, cooloney@gmail.com, rpurdie@rpsys.net, khandual@linux.vnet.ibm.com, benh@kernel.crashing.org, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+
+The following series implements LED driver for PowerNV platform.
+
+PowerNV platform has below type of LEDs:
+  - System attention
+      Indicates there is a problem with the system that needs attention=
+=2E
+  - Identify
+      Helps the user locate/identify a particular FRU or resource in th=
+e
+      system.
+  - Fault
+      Indicates there is a problem with the FRU or resource at the
+      location with which the indicator is associated.
+
+On PowerNV (Non Virtualized) platform OPAL firmware provides LED inform=
+ation
+to host via device tree (location code and LED type). During init we ch=
+eck
+for 'ibm,opal/leds' node in device tree to enable LED driver. And we us=
+e
+OPAL API's to get/set LEDs.
+
+Note that on PowerNV platform firmware can activate fault LED, if it ca=
+n isolate
+the problem. Also one can modify the LEDs using service processor inter=
+face. None
+of these involes kernel. Hence we retain LED state in unload path.
+
+Sample LED device tree output:
+------------------------------
+leds {
+	compatible =3D "ibm,opal-v3-led";
+	led-mode =3D "lightpath";
+
+	U78C9.001.RST0027-P1-C1 {
+		led-types =3D "identify", "fault";
+	};
+	...
+	...
+    }
+
+Sample sysfs output:
+--------------------
+=2E
+=E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:fault
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 brightness
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../op=
+al_leds
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 max_brightness
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 power
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ async
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ autosuspend_delay_ms
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ control
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_active_kids
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_active_time
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_enabled
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_status
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_suspended_time
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80=
+ runtime_usage
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../..=
+/../../class/leds
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 trigger
+=E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 uevent
+=E2=94=9C=E2=94=80=E2=94=80 U78CB.001.WZS008R-A1:identify
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 brightness
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 device -> ../../../op=
+al_leds
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 max_brightness
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 power
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ async
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ autosuspend_delay_ms
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ control
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_active_kids
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_active_time
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_enabled
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_status
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80=
+ runtime_suspended_time
+=E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80=
+ runtime_usage
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 subsystem -> ../../..=
+/../../class/leds
+=E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 trigger
+=E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 uevent
+=2E...
+=2E...
+=2E...
+
+patch 1/2: PowerNV architecture specific code. This adds necessary
+           OPAL APIs.
+patch 2/2: Create LED platform device and export OPAL symbols
+patch 3/3: Actual LED driver implemenation for PowerNV platform.
+
+Note:
+ - This version of patchset is based on top of v4.2-rc7.
+
+@Ben/Michael,
+  This patchset is Acked by LED subsystem maintainer (Jacek) [1] and he
+  suggested merge it via powerpc tree [1]. Can you please review/take
+  this patchset?
+
+[1] https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131695.ht=
+ml
+
+Previous patchset:
+  v8: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131652.=
+html
+  v7: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131533.=
+html
+  v6: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/131328.=
+html
+  v5: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-July/130602.=
+html
+  v4: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-April/128028=
+=2Ehtml
+  v3: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-April/127702=
+=2Ehtml
+  v2: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/126301=
+=2Ehtml
+  v1: https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-March/125705=
+=2Ehtml
+
+Changes in v9:
+  - Addressed minor comments from Jacek.
+  - Added Ack-by: Jacek
+
+Changes in v8:
+  - Added powernv_led_common structure for common variables
+  - Removed unused variable 'value'
+  - Fixed locking issue
+
+Changes in v7:
+  - Club powernv_led_data & powernv_leds_priv into single structure
+  - Removed num_leds & powernv_leds_count()
+  - Replaced per LED mutex with global mutex
+  - Removed driver specific workqueue. Instead this version uses new
+    global workqueue.
+
+Changes in v6:
+  - Added loc_code and type to powernv_led_data structure instead of pa=
+rsing
+    them from led classdev name.
+  - Fixed documentation issues.
+  - Fixed mutex_destry issue
+  - Replaced led_classdev_register with devm_led_classdev_register
+
+Changes in v5:
+  - Rebased on top of Linus tree
+  - Renamed led as leds and updated documentation
+  - As Ben and Arnd suggested, removed phandle from documenation
+  - As Ben suggested removed led-loc device tree property
+  - As Jacek suggested, added back compatible property to documentation
+
+Changes in v4:
+  - Updated macros to reflect platform.
+  - s/u64/__be64/g for big endian data we get from firmware
+  - Addressed review comments from Jacek. Major once are:
+    Removed list in powernv_led_data structure
+    s/kzalloc/devm_kzalloc/
+    Removed compatible property from documentation
 
 
---ep0oHQY+/Gbo/zt0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Anshuman Khandual (1):
+  powerpc/powernv: Add OPAL interfaces for accessing and modifying
+    system LED states
 
-On Tue, Aug 18, 2015 at 05:09:16PM +0200, Andrew Lunn wrote:
-> > On the other hand, there's pwm_bl.c which give us backlight device
-> > with PWM,
->=20
-> Lets look at this. A backlight device seems to do most of its work in
-> the update_status callback. It is given a brightness in
-> bl->props.brightness, which takes a value between 0 and
-> props.max_brightness.
->=20
-> What pwm_bl.c does it then turn this brightness value into an
-> artificial PWM configuration. Your proposed PWM driver then turns this
-> back into a brightness, since you don't actually implement the period
-> part of the PWM interface.
->=20
-> From an architecture point of view, doesn't an LED class device, which
-> takes a brightness value, seem much more naturally?
->=20
-> It seems like implementing a generic led_bl.c driver would make sense.
-> It would also allow some of the code in drivers/video/backlight/ to be
-> eliminated. There seems to be both an LED class driver for lp55xx and
-> a blacklight driver lp855x_bl.c. There are duplicate lp8788, 88pm860x,
-> adp5520, da903x, da9052, hp6xx, and lm3533 drivers which might all be
-> removed if a led_bl.c generic driver existed.
->=20
-> > and a GPIO over PWM sounds more sane to me than GPIO over LED.
->=20
-> Currently two LED class drivers are calling gpiochip_add:
->=20
-> ~/linux/drivers/leds$ grep gpiochip_add *.c
-> leds-pca9532.c:	      	   err =3D gpiochip_add(&data->gpio);
-> leds-tca6507.c:		   err =3D gpiochip_add(&tca->gpio);
->=20
-> The pca9532 has full GPIO capabilities, in as well as out. But it
-> seems like tca6507 is output only. The TLC59108/TLC59116 is also
-> output only. So a generic GPO driver on top of LED would make sense
-> for these two, and save some code/bugs.
->=20
-> From a stand back, lets take a look at the architecture point of view,
-> generic led_bl and gpio-led drivers seem to make sense.
+Vasant Hegde (2):
+  powerpc/powernv: Create LED platform device
+  leds/powernv: Add driver for PowerNV platform
+  - Removed redundant code in leds-powernv.c file
 
-I agree it's sensible for there to be a driver that can drive a
-backlight from an LED. PWM is somewhat of a lower level API than the LED
-API, so there are cases where LED fits better than PWM. This particular
-case seems to be one of them.
+ .../devicetree/bindings/leds/leds-powernv.txt      |  26 ++
+ arch/powerpc/include/asm/opal-api.h                |  25 +-
+ arch/powerpc/include/asm/opal.h                    |   4 +
+ arch/powerpc/platforms/powernv/opal-wrappers.S     |   2 +
+ arch/powerpc/platforms/powernv/opal.c              |  12 +-
+ drivers/leds/Kconfig                               |  11 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-powernv.c                        | 347 +++++++++++++=
+++++++++
+ 8 files changed, 426 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-powernv=
+=2Etxt
+ create mode 100644 drivers/leds/leds-powernv.c
 
-Thierry
-
---ep0oHQY+/Gbo/zt0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJV1FlVAAoJEN0jrNd/PrOhDIoP/1qtFXf94NpapgtqC2Yo4/EJ
-ok3OYoEpETw+/Qyl7dyl5ARkCWjFS1w4Opj1RiNTjqS2utHqGs/cUCuno74EzBY2
-18qcU5iaUsSQ+O0QFiRraj+MuqapAMVqHnPIrAtt67u+OGhGsgB+r0yGaZeo58c5
-zplsHspj6TAFLUCXPWcI/EcHvtm0kZ/klM7I7GPo1Q0yN9Clf6gH/SM57AA3Kntv
-L4/ycEFJYGc7L0Ro8eUxLL4JL1DX2d08wyM8Jawkp2FzafBCvQ8TMdvxk8HY4rYa
-ICJxf9kupFndqKKMN8NGOHXgg8/ob6dGahvKmH2d0wIR8ngpkkvP680Q9uJJwnKo
-rdWQWvyQkqLQIDctOBDkusuGoRH/A3hcdY6oGatZGaxq0E/3pK/BZe7TJMsdWk7E
-IUI0A+/3qIJSJBAmrZt8ufQK8OLtXF0JK2E0R+EFBfoiNH/GRZhOpIeagjhufj8i
-uyc6ryUdeLkHLEJf90/oO4/xQrpMOS/K1bBLyJYBoWznDqFKHmJ++rlKMWJ538Cb
-3AHFZk/c4+FEYjXFmuNj8hWBjHCFgH1v993yBtTUrc2uVi8uG4aMBQ8804bTCPmx
-amdMUekEmFnJGx5/X528a4VmDfize6Usb1eyT/ZSHiqMhq3cMBv/R2R61C6XoN6b
-SFCHtczZl9vmHxN10V0l
-=WWH+
------END PGP SIGNATURE-----
-
---ep0oHQY+/Gbo/zt0--
+--=20
+Vasant
+2.1.0
