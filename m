@@ -1,46 +1,95 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [RFC PATCH] pwm: TLC591xx PWM driver
-Date: Wed, 19 Aug 2015 15:31:04 +0200
-Message-ID: <20150819133104.GA12002@lunn.ch>
-References: <1439905927-27861-1-git-send-email-tomi.valkeinen@ti.com>
- <20150818150916.GG4381@lunn.ch>
- <55D45FE4.2050805@ti.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH/RFC v5 01/57] leds: Add brightness_set_nonblocking op
+Date: Wed, 19 Aug 2015 16:03:19 +0200
+Message-ID: <55D48CA7.1030504@samsung.com>
+References: <1439285890-27329-1-git-send-email-j.anaszewski@samsung.com>
+ <1439285890-27329-2-git-send-email-j.anaszewski@samsung.com>
+ <20150813141547.GB32484@lunn.ch> <55CD9F7F.4020706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:36174 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751512AbbHSNiY (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 19 Aug 2015 09:38:24 -0400
-Content-Disposition: inline
-In-Reply-To: <55D45FE4.2050805@ti.com>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:51156 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752614AbbHSODY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 10:03:24 -0400
+In-reply-to: <55CD9F7F.4020706@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-pwm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, cooloney@gmail.com, rpurdie@rpsys.net, stsp@users.sourceforge.net, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>
 
-> But in the end, it is still PWM in the HW level, and also, the
-> brightness isn't linear, or even anything like it. At least on my
-> backlight, the visible values range from ~230 to 255.
+On 08/14/2015 09:57 AM, Jacek Anaszewski wrote:
+> H Andrew,
+>
+> On 08/13/2015 04:15 PM, Andrew Lunn wrote:
+>> On Tue, Aug 11, 2015 at 11:37:14AM +0200, Jacek Anaszewski wrote:
+>>> This patch adds a new brightness_set_nonblocking op to the LED
+>>> subsystem.
+>>> The op is intended for drivers that set brightness in a non-blocking
+>>> way,
+>>> i.e. they neither sleep nor use delays while setting brightness.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>> Cc: Bryan Wu <cooloney@gmail.com>
+>>> Cc: Andrew Lunn <andrew@lunn.ch>
+>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>>> Cc: Pavel Machek <pavel@ucw.cz>
+>>> Cc: Stas Sergeev <stsp@users.sourceforge.net>
+>>> ---
+>>>   include/linux/leds.h |    3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>> index b122eea..c32f1b8 100644
+>>> --- a/include/linux/leds.h
+>>> +++ b/include/linux/leds.h
+>>> @@ -53,6 +53,9 @@ struct led_classdev {
+>>>       /* Must not sleep, use a workqueue if needed */
+>>>       void        (*brightness_set)(struct led_classdev *led_cdev,
+>>>                         enum led_brightness brightness);
+>>> +    /* Intended for drivers that set brightness in a non-blocking
+>>> way */
+>>> +    void (*brightness_set_nonblocking)(struct led_classdev *led_cdev,
+>>> +                      enum led_brightness brightness);
+>>
+>> Hi Jacek
+>>
+>>> From an API design point of view, i'm not sure this is the best way to
+>> go. You now have two calls which do the same thing, with the plan that
+>> you want to invert the meaning of brightness_set, the old well known
+>> API call, sometime later. This inverting the meaning is going to catch
+>> people out and introduce bugs.
+>>
+>> I would rather add a brightness_set_blocking op. Then as you go
+>> thought the drivers stripping out the work queue, move the driver to
+>> use this brightness_set_blocking.
+>
+> There are around 60 drivers in the other kernel subsystems that register
+> LED class devices. If we chose the way you proposed then we would have
+> to adjust all of them to the LED core changes, which could complicate
+> the situation during merge window if there were other modifications in
+> the affected drivers.
+>
+> With my approach all old-fashion drivers will be treated by the
+> LED core in the old-fashion way. This is why I introduced
+> LED_BRIGHTNESS_BLOCKING flag - only drivers aware of the LED core
+> changes will set it, which will allow for the LED core to find out
+> which drivers are aware of brightness_set semantics change and
+> implement the op accordingly.
+>
+> This way the change of brightness_set semantics will not be painful.
+>
+> After all drivers across all subsystems are adapted to the LED core
+> changes the flag will be made redundant and we will remove it.
+>
 
-I suspect the narrow range for you is a property of your hardware. For
-my WRT1900ac, 0-32 the LEDs look pretty much like off. Above that, i
-get light. Should the LED class layer care about this? Probably
-not. It seems like the generic backlight layer should have some method
-to reduce the 0-255 down to a couple of dozen useful working points.
+Hi Andrew, Pavel and others,
 
-> That said, I feel that these frameworks, GPIO, PWM and LED are somewhat
-> overlapping. Not really my area of expertise, but I imagine a single
-> framework containing all those functionalities could be possible.
+Do you have any comments to my explanation? It would be great if
+we could merge this during upcoming merge window, but I'd like to
+obtain some acks for the LED core part beforehand.
 
-Humm, i don't think the frameworks overlap that much. I think it is
-the hardware which overlaps. You have a device with an output which
-you normally connect an LED to, but you could connect anything to. You
-can control this pin using a very restricted PWM like scheme, or you
-can have it plain off/on.
-
-With hardware like this, you need to decide which it is most like, and
-put that framework at the bottom. Then stack generic X->Y layers on
-top to get the rest of the functionality.
-
-    Andrew
+-- 
+Best Regards,
+Jacek Anaszewski
