@@ -1,131 +1,74 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 18/21] mfd: htc-pasic3: Prepare driver for leds-pasic3
-Date: Wed, 19 Aug 2015 07:58:26 +0100
-Message-ID: <20150819065826.GH6180@x1>
+From: Philipp Zabel <philipp.zabel@gmail.com>
+Subject: Re: [PATCH v2 01/21] ARM: pxa: magician: Fix Kconfig for magician
+ to always include htc-egpio
+Date: Wed, 19 Aug 2015 09:29:42 +0200
+Message-ID: <1439969382.11928.6.camel@gmail.com>
 References: <cover.1439843482.git.petr.cvek@tul.cz>
- <55D25ABC.1000405@tul.cz>
- <20150818065207.GC6180@x1>
- <55D39D25.7010909@tul.cz>
+	 <55D25880.3030507@tul.cz> <87zj1o8n3w.fsf@belgarion.home>
+	 <55D38F60.7010405@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:35743 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426AbbHSG6a (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 02:58:30 -0400
-Received: by wicne3 with SMTP id ne3so112147248wic.0
-        for <linux-leds@vger.kernel.org>; Tue, 18 Aug 2015 23:58:29 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55D39D25.7010909@tul.cz>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:36667 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752395AbbHSH3q (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 19 Aug 2015 03:29:46 -0400
+In-Reply-To: <55D38F60.7010405@tul.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>
-Cc: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Petr Cvek <petr.cvek@tul.cz>, Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, 18 Aug 2015, Petr Cvek wrote:
+Am Dienstag, den 18.08.2015, 22:02 +0200 schrieb Petr Cvek:
+> Dne 18.8.2015 v 20:31 Robert Jarzmik napsal(a):
+> > Petr Cvek <petr.cvek@tul.cz> writes:
+> > 
+> > > The htc-egpio driver should be always included in the kernel as 
+> > > it
+> > > controls MMC/charging/IrDA power, which is the only way to get
+> > > an useful rootfs.
+> > > 
+> > > Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+> > It's already defined in magician_defconfig, why enforce it in 
+> > Kconfig ?
+> 
+> Good remark, I did not use defconfig at all (as I had to fix from 
+> zero configuration + I did not know if defconfig works and will be 
+> supported in the future).
+> 
+> I will check if magician_defconfig needs to be updated (probably for 
+> leds).
+> 
+> > 
+> > And if it's enforced and I want to build a kernel for magician 
+> > without
+> > MMC/charging/IrDA, why should I be forced to build in HTC_EGPIO ?
+> > 
+> > Or said differently, does a kernel without HTC_EGPIO is proven to 
+> > fail 100%
+> > without this option ?
+> 
+> Kernel will probably run OK, but the phone will be unusable (for any 
+> practical purposes). The EGPIO chip (CPLD) will stay in the state 
+> programmed from the previous environment (bootloader or WinCE/Mobile) 
+> and drivers fail to init because of the missing EGPIO (and if they 
+> init, they will be without any idea about state of the peripherals 
+> (no charger detection/charging current stuck on the previous 
+> settings, no LCD backlight control, no IrDA, no rootfs, no GSM, no 
+> sound, no LEDs).
+> 
+> Different PCB revisions probably use EGPIO pin for LCD power (and at 
+> least on my phone, LCD power must have very specific order).
+> 
+> For future (when ROM XIP will work) I would like to be able boot 
+> kernel from flash, which itself uses EGPIO for Vpp control (another 
+> initial EGPIO configuration). Last possible boot is from JTAG and 
+> there will be no previous EGPIO initialization.
+> 
+> Petr
 
-> Dne 18.8.2015 v 08:52 Lee Jones napsal(a):
-> > On Tue, 18 Aug 2015, Petr Cvek wrote:
-> >=20
-> >> Fix register definitions and prepare structures for new leds-pasic=
-3
-> >> driver.
-> >>
-> >> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-> >> ---
-> >>  drivers/mfd/htc-pasic3.c       | 54 ++++++++++++++++-----------
-> >>  include/linux/mfd/htc-pasic3.h | 85 +++++++++++++++++++++++++++++=
-++-----------
-> >>  2 files changed, 97 insertions(+), 42 deletions(-)
-> >>
-> >> diff --git a/drivers/mfd/htc-pasic3.c b/drivers/mfd/htc-pasic3.c
-> >> index e88d4f6..16e156d 100644
-> >> --- a/drivers/mfd/htc-pasic3.c
-> >> +++ b/drivers/mfd/htc-pasic3.c
-> >> @@ -3,6 +3,9 @@
-> >>   *
-> >>   * Copyright (C) 2006 Philipp Zabel <philipp.zabel@gmail.com>
-> >>   *
-> >> + * 2015:	Added registers for LED and RESET, see htc-pasic3.h
-> >> + *		-- Petr Cvek
-> >> + *
-> >=20
-> > This is pretty unconventional.
-> >=20
-> > Please look to see what others have done.
->=20
-> LED support: Petr Cvek <petr.cvek@tul.cz>
+I agree with Robert, let's drop this patch.
 
-We can see what changes/support you added in the Git log.  No need to
-reflect that here at all.  If everyone did that, the headers would be
-a complete mess.
-
-Just:
- * Copyright (C) 2015 Petr Cvek <petr.cvek@tul.cz>
-
-=2E.. will do fine.
-
-> >> @@ -130,6 +140,7 @@ static int __init pasic3_probe(struct platform=
-_device *pdev)
-> >>  	struct device *dev =3D &pdev->dev;
-> >>  	struct pasic3_data *asic;
-> >>  	struct resource *r;
-> >> +	struct pasic3_leds_pdata *leds_pdata;
-> >>  	int ret;
-> >>  	int irq =3D 0;
-> >> =20
-> >> @@ -162,6 +173,8 @@ static int __init pasic3_probe(struct platform=
-_device *pdev)
-> >>  	/* calculate bus shift from mem resource */
-> >>  	asic->bus_shift =3D (resource_size(r) - 5) >> 3;
-> >> =20
-> >> +	spin_lock_init(&asic->lock);
-> >> +
-> >>  	if (pdata && pdata->clock_rate) {
-> >>  		ds1wm_pdata.clock_rate =3D pdata->clock_rate;
-> >>  		/* the first 5 PASIC3 registers control the DS1WM */
-> >> @@ -172,13 +185,12 @@ static int __init pasic3_probe(struct platfo=
-rm_device *pdev)
-> >>  			dev_warn(dev, "failed to register DS1WM\n");
-> >>  	}
-> >> =20
-> >> -	if (pdata && pdata->led_pdata) {
-> >> -		led_cell.platform_data =3D pdata->led_pdata;
-> >> -		led_cell.pdata_size =3D sizeof(struct pasic3_leds_machinfo);
-> >> -		ret =3D mfd_add_devices(&pdev->dev, pdev->id, &led_cell, 1, r,
-> >> -				      0, NULL);
-> >> -		if (ret < 0)
-> >> -			dev_warn(dev, "failed to register LED device\n");
-> >> +	if (pdata && pdata->pasic3_leds) {
-> >> +		leds_pdata =3D dev_get_platdata(&pdata->pasic3_leds->dev);
-> >=20
-> > Whoa!  You're passing a pointer to a device through pdata?
-> >=20
-> > I don't like that at all.  Please explain.
->=20
-> >=20
-> >> +		if (leds_pdata) {
-> >> +			leds_pdata->mfd_dev =3D dev;
-> >> +			platform_device_register(pdata->pasic3_leds);
-> >=20
-> > What's the idea here?
->=20
-> Actually, I don't know how to do this in a clean way as
-> pasic3_read_register() and pasic3_write_register() require device
-> struct to pass address for accessing the registers. Only way would
-> be to rewrite all functions which call pasic3_*_register() (removing
-> struct device *dev and change it to struct pasic3_data *asic).
-
-I'm still not entirely sure what the problem is.
-
-Why are you calling platform_device_register() instead of using the
-MFD API?
-
-Where does the 'struct device' actually get loaded into pdata?
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+regards
+Philipp
