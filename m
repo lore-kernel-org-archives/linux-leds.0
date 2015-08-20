@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 12/36] leds: 88pm860x: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:42 +0200
-Message-ID: <1440081846-11697-13-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 16/36] leds: lm3533: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:46 +0200
+Message-ID: <1440081846-11697-17-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Johan Hovold <johan@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -17,80 +17,106 @@ and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Johan Hovold <johan@kernel.org>
 ---
- drivers/leds/leds-88pm860x.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ drivers/leds/leds-lm3533.c |   30 ++++++------------------------
+ 1 file changed, 6 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index 1497a09..c9fcf49 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -16,7 +16,6 @@
- #include <linux/i2c.h>
- #include <linux/leds.h>
+diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+index 6e2e020..196dcb5 100644
+--- a/drivers/leds/leds-lm3533.c
++++ b/drivers/leds/leds-lm3533.c
+@@ -17,7 +17,6 @@
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
  #include <linux/slab.h>
 -#include <linux/workqueue.h>
- #include <linux/mfd/88pm860x.h>
- #include <linux/module.h>
  
-@@ -33,7 +32,6 @@
- struct pm860x_led {
- 	struct led_classdev cdev;
- 	struct i2c_client *i2c;
+ #include <linux/mfd/lm3533.h>
+ 
+@@ -53,9 +52,6 @@ struct lm3533_led {
+ 
+ 	struct mutex mutex;
+ 	unsigned long flags;
+-
 -	struct work_struct work;
- 	struct pm860x_chip *chip;
- 	struct mutex lock;
- 	char name[MFD_NAME_SIZE];
-@@ -69,17 +67,18 @@ static int led_power_set(struct pm860x_chip *chip, int port, int on)
+-	u8 new_brightness;
+ };
+ 
+ 
+@@ -123,27 +119,17 @@ out:
  	return ret;
  }
  
--static void pm860x_led_work(struct work_struct *work)
-+static int pm860x_led_set(struct led_classdev *cdev,
-+			   enum led_brightness value)
- {
--
--	struct pm860x_led *led;
-+	struct pm860x_led *led = container_of(cdev, struct pm860x_led, cdev);
- 	struct pm860x_chip *chip;
- 	unsigned char buf[3];
- 	int ret;
- 
--	led = container_of(work, struct pm860x_led, work);
- 	chip = led->chip;
- 	mutex_lock(&led->lock);
-+	led->brightness = value >> 3;
-+
- 	if ((led->current_brightness == 0) && led->brightness) {
- 		led_power_set(chip, led->port, 1);
- 		if (led->iset) {
-@@ -112,15 +111,8 @@ static void pm860x_led_work(struct work_struct *work)
- 	dev_dbg(chip->dev, "Update LED. (reg:%d, brightness:%d)\n",
- 		led->reg_control, led->brightness);
- 	mutex_unlock(&led->lock);
--}
- 
--static void pm860x_led_set(struct led_classdev *cdev,
--			   enum led_brightness value)
+-static void lm3533_led_work(struct work_struct *work)
 -{
--	struct pm860x_led *data = container_of(cdev, struct pm860x_led, cdev);
+-	struct lm3533_led *led = container_of(work, struct lm3533_led, work);
 -
--	data->brightness = value >> 3;
--	schedule_work(&data->work);
-+	return 0;
+-	dev_dbg(led->cdev.dev, "%s - %u\n", __func__, led->new_brightness);
+-
+-	if (led->new_brightness == 0)
+-		lm3533_led_pattern_enable(led, 0);	/* disable blink */
+-
+-	lm3533_ctrlbank_set_brightness(&led->cb, led->new_brightness);
+-}
+-
+-static void lm3533_led_set(struct led_classdev *cdev,
++static int lm3533_led_set(struct led_classdev *cdev,
+ 						enum led_brightness value)
+ {
+ 	struct lm3533_led *led = to_lm3533_led(cdev);
+ 
+ 	dev_dbg(led->cdev.dev, "%s - %d\n", __func__, value);
+ 
+-	led->new_brightness = value;
+-	schedule_work(&led->work);
++	if (value == 0)
++		lm3533_led_pattern_enable(led, 0);	/* disable blink */
++
++	return lm3533_ctrlbank_set_brightness(&led->cb, value);
  }
  
- #ifdef CONFIG_OF
-@@ -212,9 +204,8 @@ static int pm860x_led_probe(struct platform_device *pdev)
+ static enum led_brightness lm3533_led_get(struct led_classdev *cdev)
+@@ -693,7 +679,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 	led->lm3533 = lm3533;
+ 	led->cdev.name = pdata->name;
+ 	led->cdev.default_trigger = pdata->default_trigger;
+-	led->cdev.brightness_set = lm3533_led_set;
++	led->cdev.brightness_set_blocking = lm3533_led_set;
+ 	led->cdev.brightness_get = lm3533_led_get;
+ 	led->cdev.blink_set = lm3533_led_blink_set;
+ 	led->cdev.brightness = LED_OFF;
+@@ -701,7 +687,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 	led->id = pdev->id;
  
- 	data->current_brightness = 0;
- 	data->cdev.name = data->name;
--	data->cdev.brightness_set = pm860x_led_set;
-+	data->cdev.brightness_set_blocking = pm860x_led_set;
- 	mutex_init(&data->lock);
--	INIT_WORK(&data->work, pm860x_led_work);
+ 	mutex_init(&led->mutex);
+-	INIT_WORK(&led->work, lm3533_led_work);
  
- 	ret = led_classdev_register(chip->dev, &data->cdev);
- 	if (ret < 0) {
+ 	/* The class framework makes a callback to get brightness during
+ 	 * registration so use parent device (for error reporting) until
+@@ -733,7 +718,6 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 
+ err_unregister:
+ 	led_classdev_unregister(&led->cdev);
+-	flush_work(&led->work);
+ 
+ 	return ret;
+ }
+@@ -746,7 +730,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
+ 
+ 	lm3533_ctrlbank_disable(&led->cb);
+ 	led_classdev_unregister(&led->cdev);
+-	flush_work(&led->work);
+ 
+ 	return 0;
+ }
+@@ -760,7 +743,6 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
+ 
+ 	lm3533_ctrlbank_disable(&led->cb);
+ 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
+-	flush_work(&led->work);
+ }
+ 
+ static struct platform_driver lm3533_led_driver = {
 -- 
 1.7.9.5
