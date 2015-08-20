@@ -1,140 +1,108 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 21/36] leds: lp8788: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:51 +0200
-Message-ID: <1440081846-11697-22-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 35/36] leds: pwm: remove work queue
+Date: Thu, 20 Aug 2015 16:44:05 +0200
+Message-ID: <1440081846-11697-36-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Milo Kim <milo.kim@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
 List-Id: linux-leds@vger.kernel.org
-
-From: Andrew Lunn <andrew@lunn.ch>
 
 Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Milo Kim <milo.kim@ti.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Raphael Assenat <raph@8d.com>
 ---
- drivers/leds/leds-lp8788.c |   48 +++++++++++++++++++-------------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+ drivers/leds/leds-pwm.c |   34 +++++++++++++---------------------
+ 1 file changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
-index 3409f03..0eee38f 100644
---- a/drivers/leds/leds-lp8788.c
-+++ b/drivers/leds/leds-lp8788.c
-@@ -26,10 +26,8 @@
- struct lp8788_led {
- 	struct lp8788 *lp;
- 	struct mutex lock;
--	struct work_struct work;
- 	struct led_classdev led_dev;
- 	enum lp8788_isink_number isink_num;
--	enum led_brightness brightness;
- 	int on;
- };
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 1d07e3e..bc50193 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -22,12 +22,10 @@
+ #include <linux/pwm.h>
+ #include <linux/leds_pwm.h>
+ #include <linux/slab.h>
+-#include <linux/workqueue.h>
  
-@@ -76,24 +74,29 @@ static int lp8788_led_init_device(struct lp8788_led *led,
- 	return lp8788_update_bits(led->lp, addr, mask, val);
+ struct led_pwm_data {
+ 	struct led_classdev	cdev;
+ 	struct pwm_device	*pwm;
+-	struct work_struct	work;
+ 	unsigned int		active_low;
+ 	unsigned int		period;
+ 	int			duty;
+@@ -51,14 +49,6 @@ static void __led_pwm_set(struct led_pwm_data *led_dat)
+ 		pwm_enable(led_dat->pwm);
  }
  
--static void lp8788_led_enable(struct lp8788_led *led,
-+static int lp8788_led_enable(struct lp8788_led *led,
- 			enum lp8788_isink_number num, int on)
- {
-+	int ret;
-+
- 	u8 mask = 1 << num;
- 	u8 val = on << num;
- 
--	if (lp8788_update_bits(led->lp, LP8788_ISINK_CTRL, mask, val))
--		return;
-+	ret = lp8788_update_bits(led->lp, LP8788_ISINK_CTRL, mask, val);
-+	if (ret == 0)
-+		led->on = on;
- 
--	led->on = on;
-+	return ret;
- }
- 
--static void lp8788_led_work(struct work_struct *work)
-+static int lp8788_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness val)
- {
--	struct lp8788_led *led = container_of(work, struct lp8788_led, work);
-+	struct lp8788_led *led =
-+			container_of(led_cdev, struct lp8788_led, led_dev);
-+
- 	enum lp8788_isink_number num = led->isink_num;
--	int enable;
--	u8 val = led->brightness;
-+	int enable, ret;
- 
- 	mutex_lock(&led->lock);
- 
-@@ -101,28 +104,21 @@ static void lp8788_led_work(struct work_struct *work)
- 	case LP8788_ISINK_1:
- 	case LP8788_ISINK_2:
- 	case LP8788_ISINK_3:
--		lp8788_write_byte(led->lp, lp8788_pwm_addr[num], val);
-+		ret = lp8788_write_byte(led->lp, lp8788_pwm_addr[num], val);
-+		if (ret < 0)
-+			goto unlock;
- 		break;
- 	default:
- 		mutex_unlock(&led->lock);
--		return;
-+		return -EINVAL;
- 	}
- 
- 	enable = (val > 0) ? 1 : 0;
- 	if (enable != led->on)
--		lp8788_led_enable(led, num, enable);
+-static void led_pwm_work(struct work_struct *work)
+-{
+-	struct led_pwm_data *led_dat =
+-		container_of(work, struct led_pwm_data, work);
 -
-+		ret = lp8788_led_enable(led, num, enable);
-+unlock:
- 	mutex_unlock(&led->lock);
+-	__led_pwm_set(led_dat);
 -}
 -
--static void lp8788_brightness_set(struct led_classdev *led_cdev,
--				enum led_brightness brt_val)
--{
--	struct lp8788_led *led =
--			container_of(led_cdev, struct lp8788_led, led_dev);
--
--	led->brightness = brt_val;
--	schedule_work(&led->work);
-+	return ret;
+ static void led_pwm_set(struct led_classdev *led_cdev,
+ 	enum led_brightness brightness)
+ {
+@@ -75,10 +65,14 @@ static void led_pwm_set(struct led_classdev *led_cdev,
+ 
+ 	led_dat->duty = duty;
+ 
+-	if (led_dat->can_sleep)
+-		schedule_work(&led_dat->work);
+-	else
+-		__led_pwm_set(led_dat);
++	__led_pwm_set(led_dat);
++}
++
++static int led_pwm_set_blocking(struct led_classdev *led_cdev,
++	enum led_brightness brightness)
++{
++	led_pwm_set(led_cdev, brightness);
++	return 0;
  }
  
- static int lp8788_led_probe(struct platform_device *pdev)
-@@ -139,7 +135,7 @@ static int lp8788_led_probe(struct platform_device *pdev)
+ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+@@ -89,11 +83,8 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
  
- 	led->lp = lp;
- 	led->led_dev.max_brightness = MAX_BRIGHTNESS;
--	led->led_dev.brightness_set = lp8788_brightness_set;
-+	led->led_dev.brightness_set_blocking = lp8788_brightness_set;
- 
- 	led_pdata = lp->pdata ? lp->pdata->led_pdata : NULL;
- 
-@@ -149,7 +145,6 @@ static int lp8788_led_probe(struct platform_device *pdev)
- 		led->led_dev.name = led_pdata->name;
- 
- 	mutex_init(&led->lock);
--	INIT_WORK(&led->work, lp8788_led_work);
- 
- 	platform_set_drvdata(pdev, led);
- 
-@@ -173,7 +168,6 @@ static int lp8788_led_remove(struct platform_device *pdev)
- 	struct lp8788_led *led = platform_get_drvdata(pdev);
- 
- 	led_classdev_unregister(&led->led_dev);
--	flush_work(&led->work);
- 
- 	return 0;
+ static void led_pwm_cleanup(struct led_pwm_priv *priv)
+ {
+-	while (priv->num_leds--) {
++	while (priv->num_leds--)
+ 		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+-		if (priv->leds[priv->num_leds].can_sleep)
+-			cancel_work_sync(&priv->leds[priv->num_leds].work);
+-	}
  }
+ 
+ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+@@ -105,7 +96,6 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	led_data->active_low = led->active_low;
+ 	led_data->cdev.name = led->name;
+ 	led_data->cdev.default_trigger = led->default_trigger;
+-	led_data->cdev.brightness_set = led_pwm_set;
+ 	led_data->cdev.brightness = LED_OFF;
+ 	led_data->cdev.max_brightness = led->max_brightness;
+ 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
+@@ -122,8 +112,10 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	}
+ 
+ 	led_data->can_sleep = pwm_can_sleep(led_data->pwm);
+-	if (led_data->can_sleep)
+-		INIT_WORK(&led_data->work, led_pwm_work);
++	if (!led_data->can_sleep)
++		led_data->cdev.brightness_set = led_pwm_set;
++	else
++		led_data->cdev.brightness_set_blocking = led_pwm_set_blocking;
+ 
+ 	led_data->period = pwm_get_period(led_data->pwm);
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
 -- 
 1.7.9.5
