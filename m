@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 08/36] leds: ktd2692: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:38 +0200
-Message-ID: <1440081846-11697-9-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 09/36] leds: aat1290: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:39 +0200
+Message-ID: <1440081846-11697-10-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Ingi Kim <ingi2.kim@samsung.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bryan Wu <cooloney@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 Now the core implements the work queue, remove it from the drivers,
@@ -15,92 +15,108 @@ and switch to using brightness_set_blocking op.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Ingi Kim <ingi2.kim@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>
 ---
- drivers/leds/leds-ktd2692.c |   31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
+ drivers/leds/leds-aat1290.c |   40 ++++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
-index 7f6758d..d70af1a 100644
---- a/drivers/leds/leds-ktd2692.c
-+++ b/drivers/leds/leds-ktd2692.c
-@@ -18,7 +18,6 @@
- #include <linux/of.h>
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 0ecaf76..d802fbb 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -20,7 +20,6 @@
+ #include <linux/pinctrl/consumer.h>
  #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
 -#include <linux/workqueue.h>
+ #include <media/v4l2-flash-led-class.h>
  
- /* Value related the movie mode */
- #define KTD2692_MOVIE_MODE_CURRENT_LEVELS	16
-@@ -82,7 +81,6 @@ struct ktd2692_context {
- 	/* secures access to the device */
- 	struct mutex lock;
- 	struct regulator *regulator;
+ #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
+@@ -82,8 +81,6 @@ struct aat1290_led {
+ 
+ 	/* brightness cache */
+ 	unsigned int torch_brightness;
+-	/* assures led-triggers compatibility */
 -	struct work_struct work_brightness_set;
+ };
  
- 	struct gpio_desc *aux_gpio;
- 	struct gpio_desc *ctrl_gpio;
-@@ -158,9 +156,12 @@ static void ktd2692_expresswire_write(struct ktd2692_context *led, u8 value)
- 	ktd2692_expresswire_end(led);
+ static struct aat1290_led *fled_cdev_to_led(
+@@ -92,6 +89,12 @@ static struct aat1290_led *fled_cdev_to_led(
+ 	return container_of(fled_cdev, struct aat1290_led, fled_cdev);
  }
  
--static void ktd2692_brightness_set(struct ktd2692_context *led,
--				   enum led_brightness brightness)
-+static int ktd2692_led_brightness_set(struct led_classdev *led_cdev,
-+				       enum led_brightness brightness)
++static struct led_classdev_flash *led_cdev_to_fled_cdev(
++				struct led_classdev *led_cdev)
++{
++	return container_of(led_cdev, struct led_classdev_flash, led_cdev);
++}
++
+ static void aat1290_as2cwire_write(struct aat1290_led *led, int addr, int value)
  {
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
+ 	int i;
+@@ -134,9 +137,14 @@ static void aat1290_set_flash_safety_timer(struct aat1290_led *led,
+ 							flash_tm_reg);
+ }
+ 
+-static void aat1290_brightness_set(struct aat1290_led *led,
++/* LED subsystem callbacks */
++
++static int aat1290_led_brightness_set(struct led_classdev *led_cdev,
+ 					enum led_brightness brightness)
+ {
++	struct led_classdev_flash *fled_cdev = led_cdev_to_fled_cdev(led_cdev);
++	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
 +
  	mutex_lock(&led->lock);
  
- 	if (brightness == LED_OFF) {
-@@ -174,24 +175,8 @@ static void ktd2692_brightness_set(struct ktd2692_context *led,
+ 	if (brightness == 0) {
+@@ -158,26 +166,8 @@ static void aat1290_brightness_set(struct aat1290_led *led,
+ 	}
  
- 	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
  	mutex_unlock(&led->lock);
 -}
 -
--static void ktd2692_brightness_set_work(struct work_struct *work)
--{
--	struct ktd2692_context *led =
--		container_of(work, struct ktd2692_context, work_brightness_set);
+-/* LED subsystem callbacks */
  
--	ktd2692_brightness_set(led, led->torch_brightness);
+-static void aat1290_brightness_set_work(struct work_struct *work)
+-{
+-	struct aat1290_led *led =
+-		container_of(work, struct aat1290_led, work_brightness_set);
+-
+-	aat1290_brightness_set(led, led->torch_brightness);
 -}
 -
--static void ktd2692_led_brightness_set(struct led_classdev *led_cdev,
--				       enum led_brightness brightness)
+-static void aat1290_led_brightness_set(struct led_classdev *led_cdev,
+-					enum led_brightness brightness)
 -{
 -	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
--	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
+-	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
 -
 -	led->torch_brightness = brightness;
 -	schedule_work(&led->work_brightness_set);
 +	return 0;
  }
  
- static int ktd2692_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
-@@ -370,11 +355,10 @@ static int ktd2692_probe(struct platform_device *pdev)
- 	fled_cdev->ops = &flash_ops;
- 
- 	led_cdev->max_brightness = led_cfg.max_brightness;
--	led_cdev->brightness_set = ktd2692_led_brightness_set;
-+	led_cdev->brightness_set_blocking = ktd2692_led_brightness_set;
- 	led_cdev->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
- 
+ static int aat1290_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
+@@ -498,10 +488,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
  	mutex_init(&led->lock);
--	INIT_WORK(&led->work_brightness_set, ktd2692_brightness_set_work);
  
- 	platform_set_drvdata(pdev, led);
+ 	/* Initialize LED Flash class device */
+-	led_cdev->brightness_set = aat1290_led_brightness_set;
++	led_cdev->brightness_set_blocking = aat1290_led_brightness_set;
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+ 	led_cdev->flags |= LED_DEV_CAP_FLASH;
+-	INIT_WORK(&led->work_brightness_set, aat1290_brightness_set_work);
  
-@@ -396,7 +380,6 @@ static int ktd2692_remove(struct platform_device *pdev)
- 	int ret;
+ 	aat1290_init_flash_timeout(led, &led_cfg);
  
+@@ -536,7 +525,6 @@ static int aat1290_led_remove(struct platform_device *pdev)
+ 
+ 	v4l2_flash_release(led->v4l2_flash);
  	led_classdev_flash_unregister(&led->fled_cdev);
 -	cancel_work_sync(&led->work_brightness_set);
  
- 	if (led->regulator) {
- 		ret = regulator_disable(led->regulator);
+ 	mutex_destroy(&led->lock);
+ 
 -- 
 1.7.9.5
