@@ -1,17 +1,17 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 11/21] ARM: pxa: magician: Add MAX1586 Vcore regulator support
-Date: Thu, 20 Aug 2015 21:32:21 +0200
-Message-ID: <87pp2h69iy.fsf@belgarion.home>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259CC.6040307@tul.cz>
+Subject: Re: [PATCH v2 09/21] ARM: pxa: magician: Add OV9640 camera support
+Date: Thu, 20 Aug 2015 21:48:20 +0200
+Message-ID: <87lhd568sb.fsf@belgarion.home>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259A1.6090102@tul.cz>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:24434 "EHLO
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:37422 "EHLO
 	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751693AbbHTTgm (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 15:36:42 -0400
-In-Reply-To: <55D259CC.6040307@tul.cz> (Petr Cvek's message of "Tue, 18 Aug
-	2015 00:01:48 +0200")
+	with ESMTP id S1751728AbbHTTw3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 15:52:29 -0400
+In-Reply-To: <55D259A1.6090102@tul.cz> (Petr Cvek's message of "Tue, 18 Aug
+	2015 00:01:05 +0200")
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Petr Cvek <petr.cvek@tul.cz>
@@ -19,16 +19,11 @@ Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@
 
 Petr Cvek <petr.cvek@tul.cz> writes:
 
-> Add support for MAX1586 Vcore regulator.
->
-> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-I'll leave that for a week and if no objections queue it.
+> +	mdelay(3);
+Okay, there are several mdelay(3) in this file.
 
-I would have expected a better commit message : for example, from your patch I
-deduce magician has a 1587 regulator, not a 1586 one : that deserves a small
-mention in the commit message. Moreover, the Maxim has 2 outputs : one is
-connected to VCC_Core of the SoC, what about the other output ?  Is it unknown,
-or do you know but don't use it ?
+Could you please test if removing these mdelays prevents the camera from working
+? If not, I'd like to have them removed.
 
 Cheers.
 
