@@ -1,14 +1,18 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 14/36] leds: bd2802: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:44 +0200
-Message-ID: <1440081846-11697-15-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 17/36] leds: lm3642: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:47 +0200
+Message-ID: <1440081846-11697-18-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:41235 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753552AbbHTOqo (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 10:46:44 -0400
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Kim Kyuwon <q1.kim@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Daniel Jeong <daniel.jeong@ti.com>, "G.Shark Jeong" <gshark.jeong@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
 From: Andrew Lunn <andrew@lunn.ch>
 
@@ -16,135 +20,174 @@ Now the core implements the work queue, remove it from the driver,
 and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Kim Kyuwon <q1.kim@samsung.com>
+Cc: Daniel Jeong <daniel.jeong@ti.com>
+Cc: G.Shark Jeong <gshark.jeong@gmail.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-bd2802.c |   39 ++++++++++++++-------------------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+ drivers/leds/leds-lm3642.c |   73 +++++++++++++-------------------------------
+ 1 file changed, 22 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/leds/leds-bd2802.c b/drivers/leds/leds-bd2802.c
-index 6078c15d..6b4de76 100644
---- a/drivers/leds/leds-bd2802.c
-+++ b/drivers/leds/leds-bd2802.c
-@@ -72,7 +72,6 @@ struct bd2802_led {
- 	struct bd2802_led_platform_data	*pdata;
- 	struct i2c_client		*client;
- 	struct rw_semaphore		rwsem;
--	struct work_struct		work;
+diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
+index 02ebe34..cada084 100644
+--- a/drivers/leds/leds-lm3642.c
++++ b/drivers/leds/leds-lm3642.c
+@@ -15,7 +15,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/fs.h>
+ #include <linux/regmap.h>
+-#include <linux/workqueue.h>
+ #include <linux/platform_data/leds-lm3642.h>
  
- 	struct led_state		led[2];
+ #define	REG_FILT_TIME			(0x0)
+@@ -73,10 +72,6 @@ struct lm3642_chip_data {
+ 	struct led_classdev cdev_torch;
+ 	struct led_classdev cdev_indicator;
  
-@@ -518,29 +517,22 @@ static struct device_attribute *bd2802_attributes[] = {
- 	&bd2802_rgb_current_attr,
- };
- 
--static void bd2802_led_work(struct work_struct *work)
--{
--	struct bd2802_led *led = container_of(work, struct bd2802_led, work);
+-	struct work_struct work_flash;
+-	struct work_struct work_torch;
+-	struct work_struct work_indicator;
 -
--	if (led->state)
--		bd2802_turn_on(led, led->led_id, led->color, led->state);
--	else
--		bd2802_turn_off(led, led->led_id, led->color);
+ 	u8 br_flash;
+ 	u8 br_torch;
+ 	u8 br_indicator;
+@@ -209,24 +204,18 @@ out_strtoint:
+ 
+ static DEVICE_ATTR(torch_pin, S_IWUSR, NULL, lm3642_torch_pin_store);
+ 
+-static void lm3642_deferred_torch_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_torch);
+-
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_torch, MODES_TORCH);
+-	mutex_unlock(&chip->lock);
 -}
 -
- #define BD2802_CONTROL_RGBS(name, id, clr)				\
--static void bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
-+static int bd2802_set_##name##_brightness(struct led_classdev *led_cdev,\
- 					enum led_brightness value)	\
- {									\
- 	struct bd2802_led *led =					\
- 		container_of(led_cdev, struct bd2802_led, cdev_##name);	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
--	if (value == LED_OFF)						\
-+	if (value == LED_OFF) {						\
- 		led->state = BD2802_OFF;				\
--	else								\
-+		bd2802_turn_off(led, led->led_id, led->color);		\
-+	} else {							\
- 		led->state = BD2802_ON;					\
--	schedule_work(&led->work);					\
-+		bd2802_turn_on(led, led->led_id, led->color, BD2802_ON);\
-+	}								\
-+	return 0;							\
- }									\
- static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 		unsigned long *delay_on, unsigned long *delay_off)	\
-@@ -552,7 +544,7 @@ static int bd2802_set_##name##_blink(struct led_classdev *led_cdev,	\
- 	led->led_id = id;						\
- 	led->color = clr;						\
- 	led->state = BD2802_BLINK;					\
--	schedule_work(&led->work);					\
-+	bd2802_turn_on(led, led->led_id, led->color, BD2802_BLINK);	\
- 	return 0;							\
+-static void lm3642_torch_brightness_set(struct led_classdev *cdev,
++static int lm3642_torch_brightness_set(struct led_classdev *cdev,
+ 					enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_torch);
++	int ret;
+ 
++	mutex_lock(&chip->lock);
+ 	chip->br_torch = brightness;
+-	schedule_work(&chip->work_torch);
++	ret = lm3642_control(chip, chip->br_torch, MODES_TORCH);
++	mutex_unlock(&chip->lock);
++	return ret;
  }
  
-@@ -567,11 +559,9 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- {
- 	int ret;
+ /* flash */
+@@ -266,45 +255,33 @@ out_strtoint:
  
--	INIT_WORK(&led->work, bd2802_led_work);
+ static DEVICE_ATTR(strobe_pin, S_IWUSR, NULL, lm3642_strobe_pin_store);
+ 
+-static void lm3642_deferred_strobe_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_flash);
 -
- 	led->cdev_led1r.name = "led1_R";
- 	led->cdev_led1r.brightness = LED_OFF;
--	led->cdev_led1r.brightness_set = bd2802_set_led1r_brightness;
-+	led->cdev_led1r.brightness_set_blocking = bd2802_set_led1r_brightness;
- 	led->cdev_led1r.blink_set = bd2802_set_led1r_blink;
- 
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1r);
-@@ -583,7 +573,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 
- 	led->cdev_led1g.name = "led1_G";
- 	led->cdev_led1g.brightness = LED_OFF;
--	led->cdev_led1g.brightness_set = bd2802_set_led1g_brightness;
-+	led->cdev_led1g.brightness_set_blocking = bd2802_set_led1g_brightness;
- 	led->cdev_led1g.blink_set = bd2802_set_led1g_blink;
- 
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1g);
-@@ -595,7 +585,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 
- 	led->cdev_led1b.name = "led1_B";
- 	led->cdev_led1b.brightness = LED_OFF;
--	led->cdev_led1b.brightness_set = bd2802_set_led1b_brightness;
-+	led->cdev_led1b.brightness_set_blocking = bd2802_set_led1b_brightness;
- 	led->cdev_led1b.blink_set = bd2802_set_led1b_blink;
- 
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led1b);
-@@ -607,7 +597,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 
- 	led->cdev_led2r.name = "led2_R";
- 	led->cdev_led2r.brightness = LED_OFF;
--	led->cdev_led2r.brightness_set = bd2802_set_led2r_brightness;
-+	led->cdev_led2r.brightness_set_blocking = bd2802_set_led2r_brightness;
- 	led->cdev_led2r.blink_set = bd2802_set_led2r_blink;
- 
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2r);
-@@ -619,7 +609,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 
- 	led->cdev_led2g.name = "led2_G";
- 	led->cdev_led2g.brightness = LED_OFF;
--	led->cdev_led2g.brightness_set = bd2802_set_led2g_brightness;
-+	led->cdev_led2g.brightness_set_blocking = bd2802_set_led2g_brightness;
- 	led->cdev_led2g.blink_set = bd2802_set_led2g_blink;
- 
- 	ret = led_classdev_register(&led->client->dev, &led->cdev_led2g);
-@@ -631,7 +621,7 @@ static int bd2802_register_led_classdev(struct bd2802_led *led)
- 
- 	led->cdev_led2b.name = "led2_B";
- 	led->cdev_led2b.brightness = LED_OFF;
--	led->cdev_led2b.brightness_set = bd2802_set_led2b_brightness;
-+	led->cdev_led2b.brightness_set_blocking = bd2802_set_led2b_brightness;
- 	led->cdev_led2b.blink_set = bd2802_set_led2b_blink;
- 	led->cdev_led2b.flags |= LED_CORE_SUSPENDRESUME;
- 
-@@ -661,7 +651,6 @@ failed_unregister_led1_R:
- 
- static void bd2802_unregister_led_classdev(struct bd2802_led *led)
+-	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_flash, MODES_FLASH);
+-	mutex_unlock(&chip->lock);
+-}
+-
+-static void lm3642_strobe_brightness_set(struct led_classdev *cdev,
++static int lm3642_strobe_brightness_set(struct led_classdev *cdev,
+ 					 enum led_brightness brightness)
  {
--	cancel_work_sync(&led->work);
- 	led_classdev_unregister(&led->cdev_led2b);
- 	led_classdev_unregister(&led->cdev_led2g);
- 	led_classdev_unregister(&led->cdev_led2r);
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_flash);
+-
+-	chip->br_flash = brightness;
+-	schedule_work(&chip->work_flash);
+-}
+-
+-/* indicator */
+-static void lm3642_deferred_indicator_brightness_set(struct work_struct *work)
+-{
+-	struct lm3642_chip_data *chip =
+-	    container_of(work, struct lm3642_chip_data, work_indicator);
++	int ret;
+ 
+ 	mutex_lock(&chip->lock);
+-	lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	chip->br_flash = brightness;
++	ret = lm3642_control(chip, chip->br_flash, MODES_FLASH);
+ 	mutex_unlock(&chip->lock);
++	return ret;
+ }
+ 
+-static void lm3642_indicator_brightness_set(struct led_classdev *cdev,
++/* indicator */
++static int lm3642_indicator_brightness_set(struct led_classdev *cdev,
+ 					    enum led_brightness brightness)
+ {
+ 	struct lm3642_chip_data *chip =
+ 	    container_of(cdev, struct lm3642_chip_data, cdev_indicator);
++	int ret;
+ 
++	mutex_lock(&chip->lock);
+ 	chip->br_indicator = brightness;
+-	schedule_work(&chip->work_indicator);
++	ret = lm3642_control(chip, chip->br_indicator, MODES_INDIC);
++	mutex_unlock(&chip->lock);
++	return ret;
+ }
+ 
+ static const struct regmap_config lm3642_regmap = {
+@@ -371,10 +348,9 @@ static int lm3642_probe(struct i2c_client *client,
+ 		goto err_out;
+ 
+ 	/* flash */
+-	INIT_WORK(&chip->work_flash, lm3642_deferred_strobe_brightness_set);
+ 	chip->cdev_flash.name = "flash";
+ 	chip->cdev_flash.max_brightness = 16;
+-	chip->cdev_flash.brightness_set = lm3642_strobe_brightness_set;
++	chip->cdev_flash.brightness_set_blocking = lm3642_strobe_brightness_set;
+ 	chip->cdev_flash.default_trigger = "flash";
+ 	chip->cdev_flash.groups = lm3642_flash_groups,
+ 	err = led_classdev_register((struct device *)
+@@ -385,10 +361,9 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* torch */
+-	INIT_WORK(&chip->work_torch, lm3642_deferred_torch_brightness_set);
+ 	chip->cdev_torch.name = "torch";
+ 	chip->cdev_torch.max_brightness = 8;
+-	chip->cdev_torch.brightness_set = lm3642_torch_brightness_set;
++	chip->cdev_torch.brightness_set_blocking = lm3642_torch_brightness_set;
+ 	chip->cdev_torch.default_trigger = "torch";
+ 	chip->cdev_torch.groups = lm3642_torch_groups,
+ 	err = led_classdev_register((struct device *)
+@@ -399,11 +374,10 @@ static int lm3642_probe(struct i2c_client *client,
+ 	}
+ 
+ 	/* indicator */
+-	INIT_WORK(&chip->work_indicator,
+-		  lm3642_deferred_indicator_brightness_set);
+ 	chip->cdev_indicator.name = "indicator";
+ 	chip->cdev_indicator.max_brightness = 8;
+-	chip->cdev_indicator.brightness_set = lm3642_indicator_brightness_set;
++	chip->cdev_indicator.brightness_set_blocking =
++						lm3642_indicator_brightness_set;
+ 	err = led_classdev_register((struct device *)
+ 				    &client->dev, &chip->cdev_indicator);
+ 	if (err < 0) {
+@@ -427,11 +401,8 @@ static int lm3642_remove(struct i2c_client *client)
+ 	struct lm3642_chip_data *chip = i2c_get_clientdata(client);
+ 
+ 	led_classdev_unregister(&chip->cdev_indicator);
+-	flush_work(&chip->work_indicator);
+ 	led_classdev_unregister(&chip->cdev_torch);
+-	flush_work(&chip->work_torch);
+ 	led_classdev_unregister(&chip->cdev_flash);
+-	flush_work(&chip->work_flash);
+ 	regmap_write(chip->regmap, REG_ENABLE, 0);
+ 	return 0;
+ }
 -- 
 1.7.9.5
