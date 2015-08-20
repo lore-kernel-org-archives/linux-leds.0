@@ -1,40 +1,47 @@
 From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v2 11/21] ARM: pxa: magician: Add MAX1586 Vcore regulator
- support
-Date: Fri, 21 Aug 2015 00:33:41 +0200
-Message-ID: <55D655C5.40506@tul.cz>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259CC.6040307@tul.cz>
- <87pp2h69iy.fsf@belgarion.home>
+Subject: Re: [PATCH v2 09/21] ARM: pxa: magician: Add OV9640 camera support
+Date: Fri, 21 Aug 2015 00:39:30 +0200
+Message-ID: <55D65722.9030508@tul.cz>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259A1.6090102@tul.cz>
+ <87lhd568sb.fsf@belgarion.home> <2889798.x6xcIzdYMU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <87pp2h69iy.fsf@belgarion.home>
-Sender: linux-pm-owner@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bubo.tul.cz ([147.230.16.1]:53549 "EHLO bubo.tul.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752581AbbHTWg1 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 20 Aug 2015 18:36:27 -0400
+In-Reply-To: <2889798.x6xcIzdYMU@wuerfel>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, linux@arm.linux.org.uk, sameo@linux.intel.com, linux-pm@vger.kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, cooloney@gmail.com, sre@kernel.org, haojian.zhuang@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, philipp.zabel@gmail.com, lee.jones@linaro.org, j.anaszewski@samsung.com, daniel@zonque.org
 
-Dne 20.8.2015 v 21:32 Robert Jarzmik napsal(a):
-> Petr Cvek <petr.cvek@tul.cz> writes:
-> 
->> Add support for MAX1586 Vcore regulator.
+Dne 20.8.2015 v 22:26 Arnd Bergmann napsal(a):
+> On Thursday 20 August 2015 21:48:20 Robert Jarzmik wrote:
+>> Petr Cvek <petr.cvek@tul.cz> writes:
 >>
->> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-> I'll leave that for a week and if no objections queue it.
+>>> +     mdelay(3);
+>> Okay, there are several mdelay(3) in this file.
+>>
+>> Could you please test if removing these mdelays prevents the camera from working
+>> ? If not, I'd like to have them removed.
+>>
+>>
 > 
-> I would have expected a better commit message : for example, from your patch I
-> deduce magician has a 1587 regulator, not a 1586 one : that deserves a small
-> mention in the commit message. Moreover, the Maxim has 2 outputs : one is
-> connected to VCC_Core of the SoC, what about the other output ?  Is it unknown,
-> or do you know but don't use it ?
+> FWIW, it might be possible to replace some of them with msleep() calls,
+> potentially after replacing spinlocks with mutexes where necessary.
 > 
-You mean V6 - Usim? MAX1587 does not have this pin implemented. I will note it in commit message.
-
-
-> Cheers.
-> 
-> --
-> Robert
+> 	Arnd
 > 
 
+Datasheet says:
+
+	tS:RESET	Setting time after software/hardware reset	1 ms
+
+So at least one ~1 ms should be left there. Are msleep less than 20ms valid? 
+
+(checkpatch: msleep < 20ms  can sleep for up to 20ms)
+
+Petr
