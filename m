@@ -1,14 +1,18 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 26/36] leds: da903x: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:56 +0200
-Message-ID: <1440081846-11697-27-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 25/36] leds: wm831x: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:55 +0200
+Message-ID: <1440081846-11697-26-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41361 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753730AbbHTOrR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 10:47:17 -0400
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Mark Brown <broonie@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
 From: Andrew Lunn <andrew@lunn.ch>
 
@@ -16,116 +20,101 @@ Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Mark Brown <broonie@kernel.org>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-da903x.c |   46 +++++++++++++++++---------------------------
- 1 file changed, 18 insertions(+), 28 deletions(-)
+ drivers/leds/leds-wm831x-status.c |   25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
-index 952ba96e..4752a2b 100644
---- a/drivers/leds/leds-da903x.c
-+++ b/drivers/leds/leds-da903x.c
-@@ -16,7 +16,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #include <linux/mfd/da903x.h>
- #include <linux/slab.h>
+diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
+index 56027ef..64a2226 100644
+--- a/drivers/leds/leds-wm831x-status.c
++++ b/drivers/leds/leds-wm831x-status.c
+@@ -23,7 +23,6 @@
+ struct wm831x_status {
+ 	struct led_classdev cdev;
+ 	struct wm831x *wm831x;
+-	struct work_struct work;
+ 	struct mutex mutex;
  
-@@ -33,9 +32,7 @@
+ 	spinlock_t value_lock;
+@@ -40,10 +39,8 @@ struct wm831x_status {
+ #define to_wm831x_status(led_cdev) \
+ 	container_of(led_cdev, struct wm831x_status, cdev)
  
- struct da903x_led {
- 	struct led_classdev	cdev;
--	struct work_struct	work;
- 	struct device		*master;
--	enum led_brightness	new_brightness;
- 	int			id;
- 	int			flags;
- };
-@@ -43,11 +40,13 @@ struct da903x_led {
- #define DA9030_LED_OFFSET(id)	((id) - DA9030_ID_LED_1)
- #define DA9034_LED_OFFSET(id)	((id) - DA9034_ID_LED_1)
- 
--static void da903x_led_work(struct work_struct *work)
-+static int da903x_led_set(struct led_classdev *led_cdev,
-+			   enum led_brightness value)
+-static void wm831x_status_work(struct work_struct *work)
++static void wm831x_status_set(struct wm831x_status *led)
  {
--	struct da903x_led *led = container_of(work, struct da903x_led, work);
-+	struct da903x_led *led =
-+			container_of(led_cdev, struct da903x_led, cdev);
- 	uint8_t val;
--	int offset;
-+	int offset, ret = -EINVAL;
+-	struct wm831x_status *led = container_of(work, struct wm831x_status,
+-						 work);
+ 	unsigned long flags;
  
- 	switch (led->id) {
- 	case DA9030_ID_LED_1:
-@@ -57,37 +56,31 @@ static void da903x_led_work(struct work_struct *work)
- 	case DA9030_ID_LED_PC:
- 		offset = DA9030_LED_OFFSET(led->id);
- 		val = led->flags & ~0x87;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
--		val |= (0x7 - (led->new_brightness >> 5)) & 0x7; /* PWM<2:0> */
--		da903x_write(led->master, DA9030_LED1_CONTROL + offset, val);
-+		val |= value ? 0x80 : 0; /* EN bit */
-+		val |= (0x7 - (value >> 5)) & 0x7; /* PWM<2:0> */
-+		ret = da903x_write(led->master, DA9030_LED1_CONTROL + offset,
-+				   val);
- 		break;
- 	case DA9030_ID_VIBRA:
- 		val = led->flags & ~0x80;
--		val |= (led->new_brightness) ? 0x80 : 0; /* EN bit */
--		da903x_write(led->master, DA9030_MISC_CONTROL_A, val);
-+		val |= value ? 0x80 : 0; /* EN bit */
-+		ret = da903x_write(led->master, DA9030_MISC_CONTROL_A, val);
- 		break;
- 	case DA9034_ID_LED_1:
- 	case DA9034_ID_LED_2:
- 		offset = DA9034_LED_OFFSET(led->id);
--		val = (led->new_brightness * 0x5f / LED_FULL) & 0x7f;
-+		val = (value * 0x5f / LED_FULL) & 0x7f;
- 		val |= (led->flags & DA9034_LED_RAMP) ? 0x80 : 0;
--		da903x_write(led->master, DA9034_LED1_CONTROL + offset, val);
-+		ret = da903x_write(led->master, DA9034_LED1_CONTROL + offset,
-+				   val);
- 		break;
- 	case DA9034_ID_VIBRA:
--		val = led->new_brightness & 0xfe;
--		da903x_write(led->master, DA9034_VIBRA, val);
-+		val = value & 0xfe;
-+		ret = da903x_write(led->master, DA9034_VIBRA, val);
- 		break;
- 	}
--}
- 
--static void da903x_led_set(struct led_classdev *led_cdev,
--			   enum led_brightness value)
--{
--	struct da903x_led *led;
--
--	led = container_of(led_cdev, struct da903x_led, cdev);
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+	return ret;
+ 	mutex_lock(&led->mutex);
+@@ -70,8 +67,8 @@ static void wm831x_status_work(struct work_struct *work)
+ 	mutex_unlock(&led->mutex);
  }
  
- static int da903x_led_probe(struct platform_device *pdev)
-@@ -113,15 +106,12 @@ static int da903x_led_probe(struct platform_device *pdev)
+-static void wm831x_status_set(struct led_classdev *led_cdev,
+-			   enum led_brightness value)
++static int wm831x_status_brightness_set(struct led_classdev *led_cdev,
++					 enum led_brightness value)
+ {
+ 	struct wm831x_status *led = to_wm831x_status(led_cdev);
+ 	unsigned long flags;
+@@ -80,8 +77,10 @@ static void wm831x_status_set(struct led_classdev *led_cdev,
+ 	led->brightness = value;
+ 	if (value == LED_OFF)
+ 		led->blink = 0;
+-	schedule_work(&led->work);
+ 	spin_unlock_irqrestore(&led->value_lock, flags);
++	wm831x_status_set(led);
++
++	return 0;
+ }
  
- 	led->cdev.name = pdata->name;
- 	led->cdev.default_trigger = pdata->default_trigger;
--	led->cdev.brightness_set = da903x_led_set;
-+	led->cdev.brightness_set_blocking = da903x_led_set;
- 	led->cdev.brightness = LED_OFF;
+ static int wm831x_status_blink_set(struct led_classdev *led_cdev,
+@@ -147,11 +146,8 @@ static int wm831x_status_blink_set(struct led_classdev *led_cdev,
+ 	else
+ 		led->blink = 0;
  
- 	led->id = id;
- 	led->flags = pdata->flags;
- 	led->master = pdev->dev.parent;
--	led->new_brightness = LED_OFF;
+-	/* Always update; if we fail turn off blinking since we expect
+-	 * a software fallback. */
+-	schedule_work(&led->work);
 -
--	INIT_WORK(&led->work, da903x_led_work);
+ 	spin_unlock_irqrestore(&led->value_lock, flags);
++	wm831x_status_set(led);
  
- 	ret = led_classdev_register(led->master, &led->cdev);
- 	if (ret) {
+ 	return ret;
+ }
+@@ -206,11 +202,9 @@ static ssize_t wm831x_status_src_store(struct device *dev,
+ 	for (i = 0; i < ARRAY_SIZE(led_src_texts); i++) {
+ 		if (!strcmp(name, led_src_texts[i])) {
+ 			mutex_lock(&led->mutex);
+-
+ 			led->src = i;
+-			schedule_work(&led->work);
+-
+ 			mutex_unlock(&led->mutex);
++			wm831x_status_set(led);
+ 		}
+ 	}
+ 
+@@ -262,7 +256,6 @@ static int wm831x_status_probe(struct platform_device *pdev)
+ 		pdata.name = dev_name(&pdev->dev);
+ 
+ 	mutex_init(&drvdata->mutex);
+-	INIT_WORK(&drvdata->work, wm831x_status_work);
+ 	spin_lock_init(&drvdata->value_lock);
+ 
+ 	/* We cache the configuration register and read startup values
+@@ -287,7 +280,7 @@ static int wm831x_status_probe(struct platform_device *pdev)
+ 
+ 	drvdata->cdev.name = pdata.name;
+ 	drvdata->cdev.default_trigger = pdata.default_trigger;
+-	drvdata->cdev.brightness_set = wm831x_status_set;
++	drvdata->cdev.brightness_set_blocking = wm831x_status_brightness_set;
+ 	drvdata->cdev.blink_set = wm831x_status_blink_set;
+ 	drvdata->cdev.groups = wm831x_status_groups;
+ 
 -- 
 1.7.9.5
