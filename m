@@ -1,17 +1,17 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 09/21] ARM: pxa: magician: Add OV9640 camera support
-Date: Thu, 20 Aug 2015 21:48:20 +0200
-Message-ID: <87lhd568sb.fsf@belgarion.home>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259A1.6090102@tul.cz>
+Subject: Re: [PATCH v2 10/21] ARM: pxa: magician: Add UDA1380 sound support
+Date: Thu, 20 Aug 2015 21:51:45 +0200
+Message-ID: <87h9nt68mm.fsf@belgarion.home>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259B7.90703@tul.cz>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:37422 "EHLO
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:55166 "EHLO
 	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751728AbbHTTw3 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 15:52:29 -0400
-In-Reply-To: <55D259A1.6090102@tul.cz> (Petr Cvek's message of "Tue, 18 Aug
-	2015 00:01:05 +0200")
+	with ESMTP id S1751666AbbHTTzy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 15:55:54 -0400
+In-Reply-To: <55D259B7.90703@tul.cz> (Petr Cvek's message of "Tue, 18 Aug 2015
+	00:01:27 +0200")
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Petr Cvek <petr.cvek@tul.cz>
@@ -19,11 +19,14 @@ Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@
 
 Petr Cvek <petr.cvek@tul.cz> writes:
 
-> +	mdelay(3);
-Okay, there are several mdelay(3) in this file.
-
-Could you please test if removing these mdelays prevents the camera from working
-? If not, I'd like to have them removed.
+> +/*
+> + * Magician Audio controller
+> + */
+> +
+> +static struct platform_device magician_audio_device = {
+> +	.name = "magician-audio",
+Is this already upstream or is it a submission in progress ? Other than that
+detail, I'll queue it in a week probably.
 
 Cheers.
 
