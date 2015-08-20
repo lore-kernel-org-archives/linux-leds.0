@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 20/36] leds: lp55xx: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:50 +0200
-Message-ID: <1440081846-11697-21-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 31/36] leds: mc13783: Remove work queue
+Date: Thu, 20 Aug 2015 16:44:01 +0200
+Message-ID: <1440081846-11697-32-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>, Milo Kim <milo.kim@ti.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -17,253 +17,103 @@ and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Milo Kim <milo.kim@ti.com>
 ---
- drivers/leds/leds-lp5521.c        |   11 ++++++-----
- drivers/leds/leds-lp5523.c        |   10 +++++-----
- drivers/leds/leds-lp5562.c        |   11 ++++++-----
- drivers/leds/leds-lp55xx-common.c |   12 +++++-------
- drivers/leds/leds-lp55xx-common.h |    6 ++----
- drivers/leds/leds-lp8501.c        |   11 ++++++-----
- 6 files changed, 30 insertions(+), 31 deletions(-)
+ drivers/leds/leds-mc13783.c |   35 +++++++++--------------------------
+ 1 file changed, 9 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 8ca197a..86c9882 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -362,16 +362,17 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
- 	return 0;
+diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+index e2b847f..a2e4c17 100644
+--- a/drivers/leds/leds-mc13783.c
++++ b/drivers/leds/leds-mc13783.c
+@@ -20,7 +20,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/leds.h>
+ #include <linux/of.h>
+-#include <linux/workqueue.h>
+ #include <linux/mfd/mc13xxx.h>
+ 
+ struct mc13xxx_led_devtype {
+@@ -32,8 +31,6 @@ struct mc13xxx_led_devtype {
+ 
+ struct mc13xxx_led {
+ 	struct led_classdev	cdev;
+-	struct work_struct	work;
+-	enum led_brightness	new_brightness;
+ 	int			id;
+ 	struct mc13xxx_leds	*leds;
+ };
+@@ -55,9 +52,11 @@ static unsigned int mc13xxx_max_brightness(int id)
+ 	return 0x3f;
  }
  
--static void lp5521_led_brightness_work(struct work_struct *work)
-+static int lp5521_led_brightness(struct lp55xx_led *led)
+-static void mc13xxx_led_work(struct work_struct *work)
++static int mc13xxx_led_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
  {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
-+	int ret;
+-	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
++	struct mc13xxx_led *led =
++		container_of(led_cdev, struct mc13xxx_led, cdev);
+ 	struct mc13xxx_leds *leds = led->leds;
+ 	unsigned int reg, bank, off, shift;
  
- 	mutex_lock(&chip->lock);
--	lp55xx_write(chip, LP5521_REG_LED_PWM_BASE + led->chan_nr,
-+	ret = lp55xx_write(chip, LP5521_REG_LED_PWM_BASE + led->chan_nr,
- 		led->brightness);
- 	mutex_unlock(&chip->lock);
-+
-+	return ret;
+@@ -105,19 +104,9 @@ static void mc13xxx_led_work(struct work_struct *work)
+ 		BUG();
+ 	}
+ 
+-	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
++	return mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
+ 			mc13xxx_max_brightness(led->id) << shift,
+-			led->new_brightness << shift);
+-}
+-
+-static void mc13xxx_led_set(struct led_classdev *led_cdev,
+-			    enum led_brightness value)
+-{
+-	struct mc13xxx_led *led =
+-		container_of(led_cdev, struct mc13xxx_led, cdev);
+-
+-	led->new_brightness = value;
+-	schedule_work(&led->work);
++			value << shift);
  }
  
- static ssize_t show_engine_mode(struct device *dev,
-@@ -501,7 +502,7 @@ static struct lp55xx_device_config lp5521_cfg = {
- 	},
- 	.max_channel  = LP5521_MAX_LEDS,
- 	.post_init_device   = lp5521_post_init_device,
--	.brightness_work_fn = lp5521_led_brightness_work,
-+	.brightness_fn      = lp5521_led_brightness,
- 	.set_led_current    = lp5521_set_led_current,
- 	.firmware_cb        = lp5521_firmware_loaded,
- 	.run_engine         = lp5521_run_engine,
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 584dbbc..e81694a 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -802,16 +802,16 @@ leave:
+ #ifdef CONFIG_OF
+@@ -257,11 +246,9 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ 		leds->led[i].cdev.name = name;
+ 		leds->led[i].cdev.default_trigger = trig;
+ 		leds->led[i].cdev.flags = LED_CORE_SUSPENDRESUME;
+-		leds->led[i].cdev.brightness_set = mc13xxx_led_set;
++		leds->led[i].cdev.brightness_set_blocking = mc13xxx_led_set;
+ 		leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
+ 
+-		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
+-
+ 		ret = led_classdev_register(dev->parent, &leds->led[i].cdev);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to register LED %i\n", id);
+@@ -270,10 +257,8 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (ret)
+-		while (--i >= 0) {
++		while (--i >= 0)
+ 			led_classdev_unregister(&leds->led[i].cdev);
+-			cancel_work_sync(&leds->led[i].work);
+-		}
+ 
  	return ret;
  }
- 
--static void lp5523_led_brightness_work(struct work_struct *work)
-+static int lp5523_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
-+	int ret;
- 
- 	mutex_lock(&chip->lock);
--	lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr,
-+	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr,
- 		     led->brightness);
- 	mutex_unlock(&chip->lock);
-+	return ret;
- }
- 
- static LP55XX_DEV_ATTR_RW(engine1_mode, show_engine1_mode, store_engine1_mode);
-@@ -867,7 +867,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	},
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
--	.brightness_work_fn = lp5523_led_brightness_work,
-+	.brightness_fn      = lp5523_led_brightness,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index ca85724..d7ec706 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -311,10 +311,8 @@ static int lp5562_post_init_device(struct lp55xx_chip *chip)
- 	return 0;
- }
- 
--static void lp5562_led_brightness_work(struct work_struct *work)
-+static int lp5562_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
- 	u8 addr[] = {
- 		LP5562_REG_R_PWM,
-@@ -322,10 +320,13 @@ static void lp5562_led_brightness_work(struct work_struct *work)
- 		LP5562_REG_B_PWM,
- 		LP5562_REG_W_PWM,
- 	};
-+	int ret;
- 
- 	mutex_lock(&chip->lock);
--	lp55xx_write(chip, addr[led->chan_nr], led->brightness);
-+	ret = lp55xx_write(chip, addr[led->chan_nr], led->brightness);
- 	mutex_unlock(&chip->lock);
-+
-+	return ret;
- }
- 
- static void lp5562_write_program_memory(struct lp55xx_chip *chip,
-@@ -503,7 +504,7 @@ static struct lp55xx_device_config lp5562_cfg = {
- 	},
- 	.post_init_device   = lp5562_post_init_device,
- 	.set_led_current    = lp5562_set_led_current,
--	.brightness_work_fn = lp5562_led_brightness_work,
-+	.brightness_fn      = lp5562_led_brightness,
- 	.run_engine         = lp5562_run_engine,
- 	.firmware_cb        = lp5562_firmware_loaded,
- 	.dev_attr_group     = &lp5562_group,
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 96d51e9..95fd28e 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -134,13 +134,14 @@ static struct attribute *lp55xx_led_attrs[] = {
- };
- ATTRIBUTE_GROUPS(lp55xx_led);
- 
--static void lp55xx_set_brightness(struct led_classdev *cdev,
-+static int lp55xx_set_brightness(struct led_classdev *cdev,
- 			     enum led_brightness brightness)
- {
- 	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
-+	struct lp55xx_device_config *cfg = led->chip->cfg;
- 
- 	led->brightness = (u8)brightness;
--	schedule_work(&led->brightness_work);
-+	return cfg->brightness_fn(led);
- }
- 
- static int lp55xx_init_led(struct lp55xx_led *led,
-@@ -172,7 +173,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 		return -EINVAL;
- 	}
- 
--	led->cdev.brightness_set = lp55xx_set_brightness;
-+	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
- 	led->cdev.groups = lp55xx_led_groups;
- 
- 	if (pdata->led_config[chan].name) {
-@@ -464,7 +465,7 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 	int ret;
+@@ -283,10 +268,8 @@ static int mc13xxx_led_remove(struct platform_device *pdev)
+ 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
  	int i;
  
--	if (!cfg->brightness_work_fn) {
-+	if (!cfg->brightness_fn) {
- 		dev_err(&chip->cl->dev, "empty brightness configuration\n");
- 		return -EINVAL;
- 	}
-@@ -481,8 +482,6 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 		if (ret)
- 			goto err_init_led;
+-	for (i = 0; i < leds->num_leds; i++) {
++	for (i = 0; i < leds->num_leds; i++)
+ 		led_classdev_unregister(&leds->led[i].cdev);
+-		cancel_work_sync(&leds->led[i].work);
+-	}
  
--		INIT_WORK(&each->brightness_work, cfg->brightness_work_fn);
--
- 		chip->num_leds++;
- 		each->chip = chip;
- 
-@@ -507,7 +506,6 @@ void lp55xx_unregister_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 	for (i = 0; i < chip->num_leds; i++) {
- 		each = led + i;
- 		led_classdev_unregister(&each->cdev);
--		flush_work(&each->brightness_work);
- 	}
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(lp55xx_unregister_leds);
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index cceab48..22e7882 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -95,7 +95,7 @@ struct lp55xx_reg {
-  * @enable             : Chip specific enable command
-  * @max_channel        : Maximum number of channels
-  * @post_init_device   : Chip specific initialization code
-- * @brightness_work_fn : Brightness work function
-+ * @brightness_fn      : Brightness function
-  * @set_led_current    : LED current set function
-  * @firmware_cb        : Call function when the firmware is loaded
-  * @run_engine         : Run internal engine for pattern
-@@ -110,7 +110,7 @@ struct lp55xx_device_config {
- 	int (*post_init_device) (struct lp55xx_chip *chip);
- 
- 	/* access brightness register */
--	void (*brightness_work_fn)(struct work_struct *work);
-+	int (*brightness_fn)(struct lp55xx_led *led);
- 
- 	/* current setting function */
- 	void (*set_led_current) (struct lp55xx_led *led, u8 led_current);
-@@ -164,7 +164,6 @@ struct lp55xx_chip {
-  * @cdev            : LED class device
-  * @led_current     : Current setting at each led channel
-  * @max_current     : Maximun current at each led channel
-- * @brightness_work : Workqueue for brightness control
-  * @brightness      : Brightness value
-  * @chip            : The lp55xx chip data
-  */
-@@ -173,7 +172,6 @@ struct lp55xx_led {
- 	struct led_classdev cdev;
- 	u8 led_current;
- 	u8 max_current;
--	struct work_struct brightness_work;
- 	u8 brightness;
- 	struct lp55xx_chip *chip;
- };
-diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-index d3098e3..b94210b 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -272,16 +272,17 @@ static void lp8501_firmware_loaded(struct lp55xx_chip *chip)
- 	lp8501_update_program_memory(chip, fw->data, fw->size);
- }
- 
--static void lp8501_led_brightness_work(struct work_struct *work)
-+static int lp8501_led_brightness(struct lp55xx_led *led)
- {
--	struct lp55xx_led *led = container_of(work, struct lp55xx_led,
--					      brightness_work);
- 	struct lp55xx_chip *chip = led->chip;
-+	int ret;
- 
- 	mutex_lock(&chip->lock);
--	lp55xx_write(chip, LP8501_REG_LED_PWM_BASE + led->chan_nr,
-+	ret = lp55xx_write(chip, LP8501_REG_LED_PWM_BASE + led->chan_nr,
- 		     led->brightness);
- 	mutex_unlock(&chip->lock);
-+
-+	return ret;
- }
- 
- /* Chip specific configurations */
-@@ -296,7 +297,7 @@ static struct lp55xx_device_config lp8501_cfg = {
- 	},
- 	.max_channel  = LP8501_MAX_LEDS,
- 	.post_init_device   = lp8501_post_init_device,
--	.brightness_work_fn = lp8501_led_brightness_work,
-+	.brightness_fn      = lp8501_led_brightness,
- 	.set_led_current    = lp8501_set_led_current,
- 	.firmware_cb        = lp8501_firmware_loaded,
- 	.run_engine         = lp8501_run_engine,
 -- 
 1.7.9.5
