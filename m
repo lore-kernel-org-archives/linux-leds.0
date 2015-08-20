@@ -1,160 +1,117 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 34/36] leds: gpio: Remove work queue
-Date: Thu, 20 Aug 2015 16:44:04 +0200
-Message-ID: <1440081846-11697-35-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 28/36] leds: dac124d085: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:58 +0200
+Message-ID: <1440081846-11697-29-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36547 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752964AbbHTOry (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 20 Aug 2015 10:47:54 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
+
+From: Andrew Lunn <andrew@lunn.ch>
 
 Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Raphael Assenat <raph@8d.com>
 ---
- drivers/leds/leds-gpio.c |   64 +++++++++++++++-------------------------------
- 1 file changed, 21 insertions(+), 43 deletions(-)
+ drivers/leds/leds-dac124s085.c |   38 ++++++++++----------------------------
+ 1 file changed, 10 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index af1876a..3282ad3 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -20,32 +20,16 @@
- #include <linux/platform_device.h>
- #include <linux/property.h>
+diff --git a/drivers/leds/leds-dac124s085.c b/drivers/leds/leds-dac124s085.c
+index db3ba8b..1e6a3ee 100644
+--- a/drivers/leds/leds-dac124s085.c
++++ b/drivers/leds/leds-dac124s085.c
+@@ -13,20 +13,15 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
  #include <linux/slab.h>
+-#include <linux/spinlock.h>
 -#include <linux/workqueue.h>
+ #include <linux/spi/spi.h>
  
- struct gpio_led_data {
- 	struct led_classdev cdev;
- 	struct gpio_desc *gpiod;
--	struct work_struct work;
--	u8 new_level;
- 	u8 can_sleep;
- 	u8 blinking;
- 	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
- 			unsigned long *delay_on, unsigned long *delay_off);
+ struct dac124s085_led {
+ 	struct led_classdev	ldev;
+ 	struct spi_device	*spi;
+ 	int			id;
+-	int			brightness;
+ 	char			name[sizeof("dac124s085-3")];
+ 
+ 	struct mutex		mutex;
+-	struct work_struct	work;
+-	spinlock_t		lock;
  };
  
--static void gpio_led_work(struct work_struct *work)
--{
--	struct gpio_led_data *led_dat =
--		container_of(work, struct gpio_led_data, work);
--
--	if (led_dat->blinking) {
--		led_dat->platform_gpio_blink_set(led_dat->gpiod,
--					led_dat->new_level, NULL, NULL);
--		led_dat->blinking = 0;
--	} else
--		gpiod_set_value_cansleep(led_dat->gpiod, led_dat->new_level);
--}
--
- static void gpio_led_set(struct led_classdev *led_cdev,
- 	enum led_brightness value)
+ struct dac124s085 {
+@@ -38,29 +33,21 @@ struct dac124s085 {
+ #define ALL_WRITE_UPDATE	(2 << 12)
+ #define POWER_DOWN_OUTPUT	(3 << 12)
+ 
+-static void dac124s085_led_work(struct work_struct *work)
++static int dac124s085_set_brightness(struct led_classdev *ldev,
++				      enum led_brightness brightness)
  {
-@@ -58,21 +42,19 @@ static void gpio_led_set(struct led_classdev *led_cdev,
- 	else
- 		level = 1;
+-	struct dac124s085_led *led = container_of(work, struct dac124s085_led,
+-						  work);
++	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
++						  ldev);
+ 	u16 word;
++	int ret;
  
--	/* Setting GPIOs with I2C/etc requires a task context, and we don't
--	 * seem to have a reliable way to know if we're already in one; so
--	 * let's just assume the worst.
--	 */
--	if (led_dat->can_sleep) {
--		led_dat->new_level = level;
--		schedule_work(&led_dat->work);
--	} else {
--		if (led_dat->blinking) {
--			led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
--							 NULL, NULL);
--			led_dat->blinking = 0;
--		} else
--			gpiod_set_value(led_dat->gpiod, level);
--	}
-+	if (led_dat->blinking) {
-+		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
-+						 NULL, NULL);
-+		led_dat->blinking = 0;
-+	} else
-+		gpiod_set_value(led_dat->gpiod, level);
-+}
-+
-+static int gpio_led_set_blocking(struct led_classdev *led_cdev,
-+	enum led_brightness value)
-+{
-+	gpio_led_set(led_cdev, value);
-+	return 0;
- }
- 
- static int gpio_blink_set(struct led_classdev *led_cdev,
-@@ -125,12 +107,15 @@ static int create_gpio_led(const struct gpio_led *template,
- 	led_dat->cdev.name = template->name;
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
-+	if (!led_dat->can_sleep)
-+		led_dat->cdev.brightness_set = gpio_led_set;
-+	else
-+		led_dat->cdev.brightness_set_blocking = gpio_led_set_blocking;
- 	led_dat->blinking = 0;
- 	if (blink_set) {
- 		led_dat->platform_gpio_blink_set = blink_set;
- 		led_dat->cdev.blink_set = gpio_blink_set;
- 	}
--	led_dat->cdev.brightness_set = gpio_led_set;
- 	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP)
- 		state = !!gpiod_get_value_cansleep(led_dat->gpiod);
- 	else
-@@ -143,17 +128,9 @@ static int create_gpio_led(const struct gpio_led *template,
- 	if (ret < 0)
- 		return ret;
- 
--	INIT_WORK(&led_dat->work, gpio_led_work);
--
- 	return led_classdev_register(parent, &led_dat->cdev);
- }
- 
--static void delete_gpio_led(struct gpio_led_data *led)
--{
--	led_classdev_unregister(&led->cdev);
--	cancel_work_sync(&led->work);
+ 	mutex_lock(&led->mutex);
+ 	word = cpu_to_le16(((led->id) << 14) | REG_WRITE_UPDATE |
+-			   (led->brightness & 0xfff));
+-	spi_write(led->spi, (const u8 *)&word, sizeof(word));
++			   (brightness & 0xfff));
++	ret = spi_write(led->spi, (const u8 *)&word, sizeof(word));
+ 	mutex_unlock(&led->mutex);
 -}
 -
- struct gpio_leds_priv {
- 	int num_leds;
- 	struct gpio_led_data leds[];
-@@ -233,7 +210,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+-static void dac124s085_set_brightness(struct led_classdev *ldev,
+-				      enum led_brightness brightness)
+-{
+-	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
+-						  ldev);
  
- err:
- 	for (count = priv->num_leds - 1; count >= 0; count--)
--		delete_gpio_led(&priv->leds[count]);
-+		led_classdev_unregister(&priv->leds[count].cdev);
- 	return ERR_PTR(ret);
+-	spin_lock(&led->lock);
+-	led->brightness = brightness;
+-	schedule_work(&led->work);
+-	spin_unlock(&led->lock);
++	return ret;
  }
  
-@@ -265,7 +242,8 @@ static int gpio_led_probe(struct platform_device *pdev)
- 			if (ret < 0) {
- 				/* On failure: unwind the led creations */
- 				for (i = i - 1; i >= 0; i--)
--					delete_gpio_led(&priv->leds[i]);
-+					led_classdev_unregister(
-+							&priv->leds[i].cdev);
- 				return ret;
- 			}
- 		}
-@@ -286,7 +264,7 @@ static int gpio_led_remove(struct platform_device *pdev)
+ static int dac124s085_probe(struct spi_device *spi)
+@@ -78,16 +65,13 @@ static int dac124s085_probe(struct spi_device *spi)
+ 	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
+ 		led		= dac->leds + i;
+ 		led->id		= i;
+-		led->brightness	= LED_OFF;
+ 		led->spi	= spi;
+ 		snprintf(led->name, sizeof(led->name), "dac124s085-%d", i);
+-		spin_lock_init(&led->lock);
+-		INIT_WORK(&led->work, dac124s085_led_work);
+ 		mutex_init(&led->mutex);
+ 		led->ldev.name = led->name;
+ 		led->ldev.brightness = LED_OFF;
+ 		led->ldev.max_brightness = 0xfff;
+-		led->ldev.brightness_set = dac124s085_set_brightness;
++		led->ldev.brightness_set_blocking = dac124s085_set_brightness;
+ 		ret = led_classdev_register(&spi->dev, &led->ldev);
+ 		if (ret < 0)
+ 			goto eledcr;
+@@ -109,10 +93,8 @@ static int dac124s085_remove(struct spi_device *spi)
+ 	struct dac124s085	*dac = spi_get_drvdata(spi);
  	int i;
  
- 	for (i = 0; i < priv->num_leds; i++)
--		delete_gpio_led(&priv->leds[i]);
-+		led_classdev_unregister(&priv->leds[i].cdev);
+-	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
++	for (i = 0; i < ARRAY_SIZE(dac->leds); i++)
+ 		led_classdev_unregister(&dac->leds[i].ldev);
+-		cancel_work_sync(&dac->leds[i].work);
+-	}
  
  	return 0;
  }
