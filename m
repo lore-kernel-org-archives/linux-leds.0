@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 28/36] leds: dac124d085: Remove work queue
-Date: Thu, 20 Aug 2015 16:43:58 +0200
-Message-ID: <1440081846-11697-29-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 23/36] leds: pca955x: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:53 +0200
+Message-ID: <1440081846-11697-24-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Nate Case <ncase@xes-inc.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -16,101 +16,124 @@ Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Nate Case <ncase@xes-inc.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-dac124s085.c |   38 ++++++++++----------------------------
- 1 file changed, 10 insertions(+), 28 deletions(-)
+ drivers/leds/leds-pca955x.c |   39 +++++++++------------------------------
+ 1 file changed, 9 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/leds/leds-dac124s085.c b/drivers/leds/leds-dac124s085.c
-index db3ba8b..1e6a3ee 100644
---- a/drivers/leds/leds-dac124s085.c
-+++ b/drivers/leds/leds-dac124s085.c
-@@ -13,20 +13,15 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
--#include <linux/spinlock.h>
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index b775e1e..840401a 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -47,7 +47,6 @@
+ #include <linux/leds.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
 -#include <linux/workqueue.h>
- #include <linux/spi/spi.h>
+ #include <linux/slab.h>
  
- struct dac124s085_led {
- 	struct led_classdev	ldev;
- 	struct spi_device	*spi;
- 	int			id;
--	int			brightness;
- 	char			name[sizeof("dac124s085-3")];
+ /* LED select registers determine the source that drives LED outputs */
+@@ -110,8 +109,6 @@ struct pca955x {
  
- 	struct mutex		mutex;
+ struct pca955x_led {
+ 	struct pca955x	*pca955x;
 -	struct work_struct	work;
--	spinlock_t		lock;
- };
- 
- struct dac124s085 {
-@@ -38,29 +33,21 @@ struct dac124s085 {
- #define ALL_WRITE_UPDATE	(2 << 12)
- #define POWER_DOWN_OUTPUT	(3 << 12)
- 
--static void dac124s085_led_work(struct work_struct *work)
-+static int dac124s085_set_brightness(struct led_classdev *ldev,
-+				      enum led_brightness brightness)
- {
--	struct dac124s085_led *led = container_of(work, struct dac124s085_led,
--						  work);
-+	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
-+						  ldev);
- 	u16 word;
-+	int ret;
- 
- 	mutex_lock(&led->mutex);
- 	word = cpu_to_le16(((led->id) << 14) | REG_WRITE_UPDATE |
--			   (led->brightness & 0xfff));
--	spi_write(led->spi, (const u8 *)&word, sizeof(word));
-+			   (brightness & 0xfff));
-+	ret = spi_write(led->spi, (const u8 *)&word, sizeof(word));
- 	mutex_unlock(&led->mutex);
--}
--
--static void dac124s085_set_brightness(struct led_classdev *ldev,
--				      enum led_brightness brightness)
--{
--	struct dac124s085_led *led = container_of(ldev, struct dac124s085_led,
--						  ldev);
- 
--	spin_lock(&led->lock);
--	led->brightness = brightness;
--	schedule_work(&led->work);
--	spin_unlock(&led->lock);
-+	return ret;
+-	enum led_brightness	brightness;
+ 	struct led_classdev	led_cdev;
+ 	int			led_num;	/* 0 .. 15 potentially */
+ 	char			name[32];
+@@ -193,7 +190,8 @@ static u8 pca955x_read_ls(struct i2c_client *client, int n)
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
  }
  
- static int dac124s085_probe(struct spi_device *spi)
-@@ -78,16 +65,13 @@ static int dac124s085_probe(struct spi_device *spi)
- 	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
- 		led		= dac->leds + i;
- 		led->id		= i;
--		led->brightness	= LED_OFF;
- 		led->spi	= spi;
- 		snprintf(led->name, sizeof(led->name), "dac124s085-%d", i);
--		spin_lock_init(&led->lock);
--		INIT_WORK(&led->work, dac124s085_led_work);
- 		mutex_init(&led->mutex);
- 		led->ldev.name = led->name;
- 		led->ldev.brightness = LED_OFF;
- 		led->ldev.max_brightness = 0xfff;
--		led->ldev.brightness_set = dac124s085_set_brightness;
-+		led->ldev.brightness_set_blocking = dac124s085_set_brightness;
- 		ret = led_classdev_register(&spi->dev, &led->ldev);
- 		if (ret < 0)
- 			goto eledcr;
-@@ -109,10 +93,8 @@ static int dac124s085_remove(struct spi_device *spi)
- 	struct dac124s085	*dac = spi_get_drvdata(spi);
+-static void pca955x_led_work(struct work_struct *work)
++static int pca955x_led_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
+ {
+ 	struct pca955x_led *pca955x_led;
+ 	struct pca955x *pca955x;
+@@ -201,7 +199,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 	int chip_ls;	/* which LSx to use (0-3 potentially) */
+ 	int ls_led;	/* which set of bits within LSx to use (0-3) */
+ 
+-	pca955x_led = container_of(work, struct pca955x_led, work);
++	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
+ 	pca955x = pca955x_led->pca955x;
+ 
+ 	chip_ls = pca955x_led->led_num / 4;
+@@ -211,7 +209,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 
+ 	ls = pca955x_read_ls(pca955x->client, chip_ls);
+ 
+-	switch (pca955x_led->brightness) {
++	switch (value) {
+ 	case LED_FULL:
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
+ 		break;
+@@ -230,7 +228,7 @@ static void pca955x_led_work(struct work_struct *work)
+ 		 * just turning off for all other values.
+ 		 */
+ 		pca955x_write_pwm(pca955x->client, 1,
+-				255 - pca955x_led->brightness);
++				255 - value);
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
+ 		break;
+ 	}
+@@ -238,21 +236,8 @@ static void pca955x_led_work(struct work_struct *work)
+ 	pca955x_write_ls(pca955x->client, chip_ls, ls);
+ 
+ 	mutex_unlock(&pca955x->lock);
+-}
+-
+-static void pca955x_led_set(struct led_classdev *led_cdev, enum led_brightness value)
+-{
+-	struct pca955x_led *pca955x;
+-
+-	pca955x = container_of(led_cdev, struct pca955x_led, led_cdev);
+-
+-	pca955x->brightness = value;
+ 
+-	/*
+-	 * Must use workqueue for the actual I/O since I2C operations
+-	 * can sleep.
+-	 */
+-	schedule_work(&pca955x->work);
++	return 0;
+ }
+ 
+ static int pca955x_probe(struct i2c_client *client,
+@@ -328,9 +313,7 @@ static int pca955x_probe(struct i2c_client *client,
+ 		}
+ 
+ 		pca955x_led->led_cdev.name = pca955x_led->name;
+-		pca955x_led->led_cdev.brightness_set = pca955x_led_set;
+-
+-		INIT_WORK(&pca955x_led->work, pca955x_led_work);
++		pca955x_led->led_cdev.brightness_set_blocking = pca955x_led_set;
+ 
+ 		err = led_classdev_register(&client->dev,
+ 					&pca955x_led->led_cdev);
+@@ -355,10 +338,8 @@ static int pca955x_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit:
+-	while (i--) {
++	while (i--)
+ 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-		cancel_work_sync(&pca955x->leds[i].work);
+-	}
+ 
+ 	return err;
+ }
+@@ -368,10 +349,8 @@ static int pca955x_remove(struct i2c_client *client)
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
  	int i;
  
--	for (i = 0; i < ARRAY_SIZE(dac->leds); i++) {
-+	for (i = 0; i < ARRAY_SIZE(dac->leds); i++)
- 		led_classdev_unregister(&dac->leds[i].ldev);
--		cancel_work_sync(&dac->leds[i].work);
+-	for (i = 0; i < pca955x->chipdef->bits; i++) {
++	for (i = 0; i < pca955x->chipdef->bits; i++)
+ 		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-		cancel_work_sync(&pca955x->leds[i].work);
 -	}
  
  	return 0;
