@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 32/36] leds: regulator: Remove work queue
-Date: Thu, 20 Aug 2015 16:44:02 +0200
-Message-ID: <1440081846-11697-33-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 22/36] leds: lp8860: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:52 +0200
+Message-ID: <1440081846-11697-23-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Antonio Ospite <ospite@studenti.unina.it>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -16,133 +16,97 @@ Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Antonio Ospite <ospite@studenti.unina.it>
+Cc: Dan Murphy <dmurphy@ti.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-regulator.c |   46 +++++++++++------------------------------
- 1 file changed, 12 insertions(+), 34 deletions(-)
+ drivers/leds/leds-lp8860.c |   27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/leds/leds-regulator.c b/drivers/leds/leds-regulator.c
-index ffc2139..acf77ca 100644
---- a/drivers/leds/leds-regulator.c
-+++ b/drivers/leds/leds-regulator.c
-@@ -14,7 +14,6 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
- #include <linux/leds.h>
- #include <linux/leds-regulator.h>
- #include <linux/platform_device.h>
-@@ -25,10 +24,8 @@
- 
- struct regulator_led {
- 	struct led_classdev cdev;
--	enum led_brightness value;
- 	int enabled;
- 	struct mutex mutex;
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 79f0843..3e70775 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -91,26 +91,22 @@
+ /**
+  * struct lp8860_led -
+  * @lock - Lock for reading/writing the device
+- * @work - Work item used to off load the brightness register writes
+  * @client - Pointer to the I2C client
+  * @led_dev - led class device pointer
+  * @regmap - Devices register map
+  * @eeprom_regmap - EEPROM register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @brightness - Current brightness value requested
+  * @label - LED label
+ **/
+ struct lp8860_led {
+ 	struct mutex lock;
 -	struct work_struct work;
- 
- 	struct regulator *vcc;
+ 	struct i2c_client *client;
+ 	struct led_classdev led_dev;
+ 	struct regmap *regmap;
+ 	struct regmap *eeprom_regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	enum led_brightness brightness;
+ 	const char *label;
  };
-@@ -94,22 +91,24 @@ static void regulator_led_disable(struct regulator_led *led)
- 	led->enabled = 0;
+ 
+@@ -212,11 +208,13 @@ out:
+ 	return ret;
  }
  
--static void regulator_led_set_value(struct regulator_led *led)
-+static int regulator_led_brightness_set(struct led_classdev *led_cdev,
-+					 enum led_brightness value)
+-static void lp8860_led_brightness_work(struct work_struct *work)
++static int lp8860_brightness_set(struct led_classdev *led_cdev,
++				enum led_brightness brt_val)
  {
-+	struct regulator_led *led = to_regulator_led(led_cdev);
- 	int voltage;
--	int ret;
-+	int ret = 0;
+-	struct lp8860_led *led = container_of(work, struct lp8860_led, work);
++	struct lp8860_led *led =
++			container_of(led_cdev, struct lp8860_led, led_dev);
++	int disp_brightness = brt_val * 255;
+ 	int ret;
+-	int disp_brightness = led->brightness * 255;
  
- 	mutex_lock(&led->mutex);
+ 	mutex_lock(&led->lock);
  
--	if (led->value == LED_OFF) {
-+	if (value == LED_OFF) {
- 		regulator_led_disable(led);
- 		goto out;
+@@ -241,16 +239,7 @@ static void lp8860_led_brightness_work(struct work_struct *work)
  	}
- 
- 	if (led->cdev.max_brightness > 1) {
--		voltage = led_regulator_get_voltage(led->vcc, led->value);
-+		voltage = led_regulator_get_voltage(led->vcc, value);
- 		dev_dbg(led->cdev.dev, "brightness: %d voltage: %d\n",
--				led->value, voltage);
-+				value, voltage);
- 
- 		ret = regulator_set_voltage(led->vcc, voltage, voltage);
- 		if (ret != 0)
-@@ -121,23 +120,7 @@ static void regulator_led_set_value(struct regulator_led *led)
- 
  out:
- 	mutex_unlock(&led->mutex);
+ 	mutex_unlock(&led->lock);
 -}
 -
--static void led_work(struct work_struct *work)
+-static void lp8860_brightness_set(struct led_classdev *led_cdev,
+-				enum led_brightness brt_val)
 -{
--	struct regulator_led *led;
+-	struct lp8860_led *led =
+-			container_of(led_cdev, struct lp8860_led, led_dev);
 -
--	led = container_of(work, struct regulator_led, work);
--	regulator_led_set_value(led);
--}
--
--static void regulator_led_brightness_set(struct led_classdev *led_cdev,
--			   enum led_brightness value)
--{
--	struct regulator_led *led = to_regulator_led(led_cdev);
--
--	led->value = value;
+-	led->brightness = brt_val;
 -	schedule_work(&led->work);
 +	return ret;
  }
  
- static int regulator_led_probe(struct platform_device *pdev)
-@@ -169,9 +152,8 @@ static int regulator_led_probe(struct platform_device *pdev)
- 				pdata->brightness);
- 		return -EINVAL;
- 	}
--	led->value = pdata->brightness;
+ static int lp8860_init(struct lp8860_led *led)
+@@ -406,10 +395,9 @@ static int lp8860_probe(struct i2c_client *client,
+ 	led->client = client;
+ 	led->led_dev.name = led->label;
+ 	led->led_dev.max_brightness = LED_FULL;
+-	led->led_dev.brightness_set = lp8860_brightness_set;
++	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
  
--	led->cdev.brightness_set = regulator_led_brightness_set;
-+	led->cdev.brightness_set_blocking = regulator_led_brightness_set;
- 	led->cdev.name = pdata->name;
- 	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 	led->vcc = vcc;
-@@ -181,21 +163,18 @@ static int regulator_led_probe(struct platform_device *pdev)
- 		led->enabled = 1;
+ 	mutex_init(&led->lock);
+-	INIT_WORK(&led->work, lp8860_led_brightness_work);
  
- 	mutex_init(&led->mutex);
--	INIT_WORK(&led->work, led_work);
+ 	i2c_set_clientdata(client, led);
  
- 	platform_set_drvdata(pdev, led);
+@@ -448,7 +436,6 @@ static int lp8860_remove(struct i2c_client *client)
+ 	int ret;
  
- 	ret = led_classdev_register(&pdev->dev, &led->cdev);
--	if (ret < 0) {
--		cancel_work_sync(&led->work);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	/* to expose the default value to userspace */
--	led->cdev.brightness = led->value;
-+	led->cdev.brightness = pdata->brightness;
- 
- 	/* Set the default led status */
--	regulator_led_set_value(led);
-+	regulator_led_brightness_set(&led->cdev, led->cdev.brightness);
- 
- 	return 0;
- }
-@@ -205,7 +184,6 @@ static int regulator_led_remove(struct platform_device *pdev)
- 	struct regulator_led *led = platform_get_drvdata(pdev);
- 
- 	led_classdev_unregister(&led->cdev);
+ 	led_classdev_unregister(&led->led_dev);
 -	cancel_work_sync(&led->work);
- 	regulator_led_disable(led);
- 	return 0;
- }
+ 
+ 	if (led->enable_gpio)
+ 		gpiod_direction_output(led->enable_gpio, 0);
 -- 
 1.7.9.5
