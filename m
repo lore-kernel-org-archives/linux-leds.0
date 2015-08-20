@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH/RFC v6 31/36] leds: mc13783: Remove work queue
-Date: Thu, 20 Aug 2015 16:44:01 +0200
-Message-ID: <1440081846-11697-32-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH/RFC v6 29/36] leds: lt3593: Remove work queue
+Date: Thu, 20 Aug 2015 16:43:59 +0200
+Message-ID: <1440081846-11697-30-git-send-email-j.anaszewski@samsung.com>
 References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@caiaq.de>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
@@ -16,104 +16,110 @@ Now the core implements the work queue, remove it from the drivers,
 and switch to using brightness_set_blocking op.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Daniel Mack <daniel@caiaq.de>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-mc13783.c |   35 +++++++++--------------------------
- 1 file changed, 9 insertions(+), 26 deletions(-)
+ drivers/leds/leds-lt3593.c |   33 ++++++++++-----------------------
+ 1 file changed, 10 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index e2b847f..a2e4c17 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -20,7 +20,6 @@
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index 9f41124..a7ff510 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
  #include <linux/platform_device.h>
  #include <linux/leds.h>
- #include <linux/of.h>
 -#include <linux/workqueue.h>
- #include <linux/mfd/mc13xxx.h>
- 
- struct mc13xxx_led_devtype {
-@@ -32,8 +31,6 @@ struct mc13xxx_led_devtype {
- 
- struct mc13xxx_led {
- 	struct led_classdev	cdev;
--	struct work_struct	work;
--	enum led_brightness	new_brightness;
- 	int			id;
- 	struct mc13xxx_leds	*leds;
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+@@ -28,15 +27,14 @@
+ struct lt3593_led_data {
+ 	struct led_classdev cdev;
+ 	unsigned gpio;
+-	struct work_struct work;
+-	u8 new_level;
  };
-@@ -55,9 +52,11 @@ static unsigned int mc13xxx_max_brightness(int id)
- 	return 0x3f;
- }
  
--static void mc13xxx_led_work(struct work_struct *work)
-+static int mc13xxx_led_set(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
+-static void lt3593_led_work(struct work_struct *work)
++static int lt3593_led_set(struct led_classdev *led_cdev,
++			   enum led_brightness value)
  {
--	struct mc13xxx_led *led = container_of(work, struct mc13xxx_led, work);
-+	struct mc13xxx_led *led =
-+		container_of(led_cdev, struct mc13xxx_led, cdev);
- 	struct mc13xxx_leds *leds = led->leds;
- 	unsigned int reg, bank, off, shift;
+-	int pulses;
+ 	struct lt3593_led_data *led_dat =
+-		container_of(work, struct lt3593_led_data, work);
++		container_of(led_cdev, struct lt3593_led_data, cdev);
++	int pulses;
  
-@@ -105,19 +104,9 @@ static void mc13xxx_led_work(struct work_struct *work)
- 		BUG();
+ 	/*
+ 	 * The LT3593 resets its internal current level register to the maximum
+@@ -47,18 +45,18 @@ static void lt3593_led_work(struct work_struct *work)
+ 	 * applied is to the output driver.
+ 	 */
+ 
+-	if (led_dat->new_level == 0) {
++	if (value == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+-		return;
++		return 0;
  	}
  
--	mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
-+	return mc13xxx_reg_rmw(leds->master, leds->devtype->ledctrl_base + reg,
- 			mc13xxx_max_brightness(led->id) << shift,
--			led->new_brightness << shift);
+-	pulses = 32 - (led_dat->new_level * 32) / 255;
++	pulses = 32 - (value * 32) / 255;
+ 
+ 	if (pulses == 0) {
+ 		gpio_set_value_cansleep(led_dat->gpio, 0);
+ 		mdelay(1);
+ 		gpio_set_value_cansleep(led_dat->gpio, 1);
+-		return;
++		return 0;
+ 	}
+ 
+ 	gpio_set_value_cansleep(led_dat->gpio, 1);
+@@ -69,16 +67,8 @@ static void lt3593_led_work(struct work_struct *work)
+ 		gpio_set_value_cansleep(led_dat->gpio, 1);
+ 		udelay(1);
+ 	}
 -}
--
--static void mc13xxx_led_set(struct led_classdev *led_cdev,
--			    enum led_brightness value)
+ 
+-static void lt3593_led_set(struct led_classdev *led_cdev,
+-	enum led_brightness value)
 -{
--	struct mc13xxx_led *led =
--		container_of(led_cdev, struct mc13xxx_led, cdev);
+-	struct lt3593_led_data *led_dat =
+-		container_of(led_cdev, struct lt3593_led_data, cdev);
 -
--	led->new_brightness = value;
--	schedule_work(&led->work);
-+			value << shift);
+-	led_dat->new_level = value;
+-	schedule_work(&led_dat->work);
++	return 0;
  }
  
- #ifdef CONFIG_OF
-@@ -257,11 +246,9 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 		leds->led[i].cdev.name = name;
- 		leds->led[i].cdev.default_trigger = trig;
- 		leds->led[i].cdev.flags = LED_CORE_SUSPENDRESUME;
--		leds->led[i].cdev.brightness_set = mc13xxx_led_set;
-+		leds->led[i].cdev.brightness_set_blocking = mc13xxx_led_set;
- 		leds->led[i].cdev.max_brightness = mc13xxx_max_brightness(id);
+ static int create_lt3593_led(const struct gpio_led *template,
+@@ -97,7 +87,7 @@ static int create_lt3593_led(const struct gpio_led *template,
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->gpio = template->gpio;
  
--		INIT_WORK(&leds->led[i].work, mc13xxx_led_work);
+-	led_dat->cdev.brightness_set = lt3593_led_set;
++	led_dat->cdev.brightness_set_blocking = lt3593_led_set;
+ 
+ 	state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
+ 	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
+@@ -111,8 +101,6 @@ static int create_lt3593_led(const struct gpio_led *template,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	INIT_WORK(&led_dat->work, lt3593_led_work);
 -
- 		ret = led_classdev_register(dev->parent, &leds->led[i].cdev);
- 		if (ret) {
- 			dev_err(dev, "Failed to register LED %i\n", id);
-@@ -270,10 +257,8 @@ static int __init mc13xxx_led_probe(struct platform_device *pdev)
- 	}
+ 	ret = led_classdev_register(parent, &led_dat->cdev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -129,7 +117,6 @@ static void delete_lt3593_led(struct lt3593_led_data *led)
+ 		return;
  
- 	if (ret)
--		while (--i >= 0) {
-+		while (--i >= 0)
- 			led_classdev_unregister(&leds->led[i].cdev);
--			cancel_work_sync(&leds->led[i].work);
--		}
- 
- 	return ret;
+ 	led_classdev_unregister(&led->cdev);
+-	cancel_work_sync(&led->work);
  }
-@@ -283,10 +268,8 @@ static int mc13xxx_led_remove(struct platform_device *pdev)
- 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
- 	int i;
  
--	for (i = 0; i < leds->num_leds; i++) {
-+	for (i = 0; i < leds->num_leds; i++)
- 		led_classdev_unregister(&leds->led[i].cdev);
--		cancel_work_sync(&leds->led[i].work);
--	}
- 
- 	return 0;
- }
+ static int lt3593_led_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
