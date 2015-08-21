@@ -1,51 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 09/21] ARM: pxa: magician: Add OV9640 camera support
-Date: Fri, 21 Aug 2015 15:45:53 +0200
-Message-ID: <1634812.ZDaECJ9ClW@wuerfel>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <2889798.x6xcIzdYMU@wuerfel> <55D65722.9030508@tul.cz>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH/RFC v6 05/36] leds: Improve setting brightness in a non
+ sleeping way
+Date: Fri, 21 Aug 2015 19:45:07 +0200
+Message-ID: <20150821174507.GB8193@lunn.ch>
+References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
+ <1440081846-11697-6-git-send-email-j.anaszewski@samsung.com>
+ <20150820160938.GF27457@lunn.ch>
+ <55D6EDD9.6050202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:55801 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858AbbHUNqQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 21 Aug 2015 09:46:16 -0400
-In-Reply-To: <55D65722.9030508@tul.cz>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <55D6EDD9.6050202@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Stas Sergeev <stsp@users.sourceforge.net>
 List-Id: linux-leds@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>
-Cc: linux-arm-kernel@lists.infradead.org, Robert Jarzmik <robert.jarzmik@free.fr>, linux@arm.linux.org.uk, sameo@linux.intel.com, linux-pm@vger.kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, cooloney@gmail.com, sre@kernel.org, haojian.zhuang@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, philipp.zabel@gmail.com, lee.jones@linaro.org, j.anaszewski@samsung.com, daniel@zonque.org
 
-On Friday 21 August 2015 00:39:30 Petr Cvek wrote:
-> Dne 20.8.2015 v 22:26 Arnd Bergmann napsal(a):
-> > On Thursday 20 August 2015 21:48:20 Robert Jarzmik wrote:
-> >> Petr Cvek <petr.cvek@tul.cz> writes:
-> >>
-> >>> +     mdelay(3);
-> >> Okay, there are several mdelay(3) in this file.
-> >>
-> >> Could you please test if removing these mdelays prevents the camera from working
-> >> ? If not, I'd like to have them removed.
-> >>
-> >>
-> > 
-> > FWIW, it might be possible to replace some of them with msleep() calls,
-> > potentially after replacing spinlocks with mutexes where necessary.
-> > 
-> >       Arnd
-> > 
+On Fri, Aug 21, 2015 at 11:22:33AM +0200, Jacek Anaszewski wrote:
+> Hi Andrew,
 > 
-> Datasheet says:
+> Thanks for the review.
 > 
->         tS:RESET        Setting time after software/hardware reset      1 ms
+> On 08/20/2015 06:09 PM, Andrew Lunn wrote:
+> >On Thu, Aug 20, 2015 at 04:43:35PM +0200, Jacek Anaszewski wrote:
+> >>This patch replaces led_set_brightness_async with
+> >>led_set_brightness_nosleep in all places where the most vital was setting
+> >>brightness in a non sleeping way but not necessarily asynchronously, which
+> >>is not needed for non-blocking drivers.
+> >
+> >O.K, so i've lost the plot. _sync, _asymc, _nosleep, etc. Too many
+> >changes without a clearly documented vision of what you are trying to
+> >achieve.
+> >
+> >How about splitting this up into at least two patch sets.
+> >
+> >1) Add the brightness_set_blocking op and the minimum of changes
+> >needed to the core to make it work, and the driver changes taking out
+> >the work queue.
 > 
-> So at least one ~1 ms should be left there. Are msleep less than 20ms valid? 
-> 
-> (checkpatch: msleep < 20ms  can sleep for up to 20ms)
+> The minimum of changes needed includes harnessing existing
+> set_brightness_work for setting brightness instead of the work queues
+> in the drivers.
 
-On most kernels, an msleep(1) will sleep somewhere between 1 and 3 milliseconds
-(but could be much longer), while an mdelay(1) tries to sleep around one
-millisecond, more or less.
+I'm not sure that is the correct architecture.
 
-	Arnd
+The work queue is in the class, not the core. So you need to define
+the core API to not need this work queue. What exactly is the core
+API? What does it say about blocking and non-blocking, synchronous and
+non-synchronous?
+
+Adding the work queue to the core is the quick and simple way of
+removing it from the drivers. Maybe that is the way forward. You can
+then later come back and sort out the core API and the class API, and
+clean up the documentation.
+
+      Andrew
