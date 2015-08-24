@@ -1,95 +1,69 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: Re: [PATCH v2 01/21] ARM: pxa: magician: Fix Kconfig for magician to
- always include htc-egpio
-Date: Mon, 24 Aug 2015 05:39:57 +0200
-Message-ID: <55DA920D.4030605@tul.cz>
-References: <cover.1439843482.git.petr.cvek@tul.cz> <55D25880.3030507@tul.cz>
- <87zj1o8n3w.fsf@belgarion.home> <55D38F60.7010405@tul.cz>
- <1439969382.11928.6.camel@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 09/21] ARM: pxa: magician: Add OV9640 camera support
+Date: Mon, 24 Aug 2015 07:53:56 +0100
+Message-ID: <20150824065356.GA3247@x1>
+References: <cover.1439843482.git.petr.cvek@tul.cz>
+ <2889798.x6xcIzdYMU@wuerfel>
+ <55D65722.9030508@tul.cz>
+ <1634812.ZDaECJ9ClW@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bubo.tul.cz ([147.230.16.1]:51983 "EHLO bubo.tul.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751030AbbHXDgp (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sun, 23 Aug 2015 23:36:45 -0400
-In-Reply-To: <1439969382.11928.6.camel@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1634812.ZDaECJ9ClW@wuerfel>
+Sender: linux-pm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Petr Cvek <petr.cvek@tul.cz>, linux-arm-kernel@lists.infradead.org, Robert Jarzmik <robert.jarzmik@free.fr>, linux@arm.linux.org.uk, sameo@linux.intel.com, linux-pm@vger.kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, cooloney@gmail.com, sre@kernel.org, haojian.zhuang@gmail.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, philipp.zabel@gmail.com, j.anaszewski@samsung.com, daniel@zonque.org
 List-Id: linux-leds@vger.kernel.org
-To: Philipp Zabel <philipp.zabel@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Dne 19.8.2015 v 09:29 Philipp Zabel napsal(a):
-> Am Dienstag, den 18.08.2015, 22:02 +0200 schrieb Petr Cvek:
->> Dne 18.8.2015 v 20:31 Robert Jarzmik napsal(a):
->>> Petr Cvek <petr.cvek@tul.cz> writes:
->>>
->>>> The htc-egpio driver should be always included in the kernel as 
->>>> it
->>>> controls MMC/charging/IrDA power, which is the only way to get
->>>> an useful rootfs.
->>>>
->>>> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
->>> It's already defined in magician_defconfig, why enforce it in 
->>> Kconfig ?
->>
->> Good remark, I did not use defconfig at all (as I had to fix from 
->> zero configuration + I did not know if defconfig works and will be 
->> supported in the future).
->>
->> I will check if magician_defconfig needs to be updated (probably for 
->> leds).
->>
->>>
->>> And if it's enforced and I want to build a kernel for magician 
->>> without
->>> MMC/charging/IrDA, why should I be forced to build in HTC_EGPIO ?
->>>
->>> Or said differently, does a kernel without HTC_EGPIO is proven to 
->>> fail 100%
->>> without this option ?
->>
->> Kernel will probably run OK, but the phone will be unusable (for any 
->> practical purposes). The EGPIO chip (CPLD) will stay in the state 
->> programmed from the previous environment (bootloader or WinCE/Mobile) 
->> and drivers fail to init because of the missing EGPIO (and if they 
->> init, they will be without any idea about state of the peripherals 
->> (no charger detection/charging current stuck on the previous 
->> settings, no LCD backlight control, no IrDA, no rootfs, no GSM, no 
->> sound, no LEDs).
->>
->> Different PCB revisions probably use EGPIO pin for LCD power (and at 
->> least on my phone, LCD power must have very specific order).
->>
->> For future (when ROM XIP will work) I would like to be able boot 
->> kernel from flash, which itself uses EGPIO for Vpp control (another 
->> initial EGPIO configuration). Last possible boot is from JTAG and 
->> there will be no previous EGPIO initialization.
->>
->> Petr
-> 
-> I agree with Robert, let's drop this patch.
-As finishing patchset v3 I've finally got enough deterministic configuration.
+On Fri, 21 Aug 2015, Arnd Bergmann wrote:
 
-Situation A:
-	Most code same as v2 patchset (GPIO init, devices, ...)
-	RTC patch (not in patchset, but vanilla causes errors during boot)
-	Boot from bootloader (htc-tools), kernel from RAM 
-	Rootfs on SDHC
-	EGPIO driver in kernel
-	-> boot
-Situation B:
-	EGPIO disabled
-	-> every EGPIO requests fail (bad LCD readability, but most probably by -EDEFER)
-	mci driver fails to start (SD card power EGPIO and others are not found)
-	kernel prints cannot open root device ...
-	there is kernel panic from rootfs mount (stackdump with some *mount* function name)
+> On Friday 21 August 2015 00:39:30 Petr Cvek wrote:
+> > Dne 20.8.2015 v 22:26 Arnd Bergmann napsal(a):
+> > > On Thursday 20 August 2015 21:48:20 Robert Jarzmik wrote:
+> > >> Petr Cvek <petr.cvek@tul.cz> writes:
+> > >>
+> > >>> +     mdelay(3);
+> > >> Okay, there are several mdelay(3) in this file.
+> > >>
+> > >> Could you please test if removing these mdelays prevents the cam=
+era from working
+> > >> ? If not, I'd like to have them removed.
+> > >>
+> > >>
+> > >=20
+> > > FWIW, it might be possible to replace some of them with msleep() =
+calls,
+> > > potentially after replacing spinlocks with mutexes where necessar=
+y.
+> > >=20
+> > >       Arnd
+> > >=20
+> >=20
+> > Datasheet says:
+> >=20
+> >         tS:RESET        Setting time after software/hardware reset =
+     1 ms
+> >=20
+> > So at least one ~1 ms should be left there. Are msleep less than 20=
+ms valid?=20
+> >=20
+> > (checkpatch: msleep < 20ms  can sleep for up to 20ms)
+>=20
+> On most kernels, an msleep(1) will sleep somewhere between 1 and 3 mi=
+lliseconds
+> (but could be much longer), while an mdelay(1) tries to sleep around =
+one
+> millisecond, more or less.
 
--> So it seems EGPIO driver is required for standard boot.
+If high-res timers are available I'd suggest using usleep_range()
+instead.  By providing suitably divergent values usleep_range
+de-restricts the kernel, allowing the scheduler to bundle your
+wake-up along with others.
 
-When trying to boot with initrd, the htc-boot will freeze during image upload (around 5 MB of initrd, not enough for rootfs), but maybe I'm doing something wrong. 
-
--> Without initrd, there is no way to get useful rootfs.
-
-Petr
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
