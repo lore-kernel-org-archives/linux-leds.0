@@ -1,62 +1,57 @@
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Tue, 25 Aug 2015 15:53:03 +0300
-Message-ID: <55DC652F.5080201@ti.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com> <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com> <20150825121853.GB14871@lunn.ch>
+Subject: Re: [PATCH 2/3] backlight: add led-backlight driver
+Date: Tue, 25 Aug 2015 16:00:10 +0300
+Message-ID: <55DC66DA.5030000@ti.com>
+References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com> <1440502442-19531-3-git-send-email-tomi.valkeinen@ti.com> <20150825123952.GA18009@lunn.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
 	protocol="application/pgp-signature";
-	boundary="DewF7TrfsaOXLFXlwK3xtSQf09bUEVqL7"
+	boundary="PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:52979 "EHLO arroyo.ext.ti.com"
+Received: from comal.ext.ti.com ([198.47.26.152]:56949 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751978AbbHYMxS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 25 Aug 2015 08:53:18 -0400
-In-Reply-To: <20150825121853.GB14871@lunn.ch>
+	id S1754619AbbHYNAZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 25 Aug 2015 09:00:25 -0400
+In-Reply-To: <20150825123952.GA18009@lunn.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Andrew Lunn <andrew@lunn.ch>
 Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
 
---DewF7TrfsaOXLFXlwK3xtSQf09bUEVqL7
+--PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
 
 
-On 25/08/15 15:18, Andrew Lunn wrote:
-> On Tue, Aug 25, 2015 at 02:34:00PM +0300, Tomi Valkeinen wrote:
->> This patch adds basic support for a kernel driver to get a LED device.=
-
->> This will be used by the led-backlight driver.
->>
->> Only OF version is implemented for now, and the behavior is similar to=
-
->> PWM's of_pwm_get() and pwm_put().
+On 25/08/15 15:39, Andrew Lunn wrote:
+> On Tue, Aug 25, 2015 at 02:34:01PM +0300, Tomi Valkeinen wrote:
+>> This patch adds a led-backlight driver (led_bl), which is similar to
+>> pwm_bl except the driver uses a LED class driver to adjust the
+>> brightness in the HW.
 >=20
-> Hi Tomi
->=20
-> Is this the correct way to do it?  I would of expected an xlate
-> function.
+> Shouldn't this be sending an event to drivers/leds/trigger/kedtrig-back=
+light.c
+>
+> Calling led_set_brightness() from outside of drivers/leds is pretty
+> much unheard of. It is normal to have a trigger to do this. So why not
+> use the exiting backlight trigger?
 
-I don't know. To be honest I haven't worked much with this kind of code,
-and I didn't want to start writing full blown "of" support for leds. My
-solution cuts the corners a bit... Probably this is more of an RFC than
-a ready patch series.
+ledtrig-backlight.c is based on fbdev, and I want the backlight to work
+also with DRM. And I want the backlight device to be a proper backlight
+device, i.e. something I can pass data to from the DT.
 
-I need to look what the of_xlate functions are doing in other frameworks.=
+So, I could create a new trigger, say, "bldev" trigger, which would
+create a backlight device. But then I could not pass any info to it via D=
+T.
 
-
-> I'm also wondering if this is the right place, in the class. Don't you
-> just need the core?
-
-I'm using the "static struct class *leds_class;" to find the actual
-led_classdev, and that variable is local to led-class.c.
+This patch was the only working solution I could figure out, but I don't
+have much experience with leds, so I might be missing something.
 
  Tomi
 
 
---DewF7TrfsaOXLFXlwK3xtSQf09bUEVqL7
+--PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -64,19 +59,19 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJV3GUvAAoJEPo9qoy8lh71nHUP/0Tpicr/0XmrgWo4XpYcqzCe
-JuFMniYW7ILcBiKEewTCWZziT/Wnwz7WE+B4kG+danuvV49tkh8qbktikv4LVsVR
-Fj5VCzOn+0DcPxIuIv1zpSGtoBdSFY+d4hOiJAbj/Eo2x4c/sqWlLMuplhw6kz6m
-naQjlHWC0IN9DFKKeyXJBag0rhx5y9uO7pj6cbk4GxOtswpJRthpkBB0ZfA4wTpw
-opab/wkZ8fs6l3ByTDyQn2l7hot/1tvhw0virYE728iA+ltFXKfTap4fE0/u6O1t
-etOLSVJUoxLEveJR+/vbPw/gwbTM1DFIUpT2ekMHxWtD+zfS7EM+8k74209mCuZp
-OYXupbj0JAyLNLAR5/AWQDBe7KyG+ZSP+RWdIpt8kbkQOHq2DV+e5Ukp/gQ0ER/O
-zazh/9GSOp8s5L8hroDhOXkLUkjuREv6rf2czqMlMFYNaRWQ2MNWhdrwTJhVfDh6
-yjjOb2QRsoIh+l9u38d/lwx041AtGbNx5TLkhQVXrHBrip17OA5jViwqx/Brw6Fc
-J5UivlRbtuk9IJ39m9pVAaeHexeyS1e4u1ft6l7LmSfqpOIJ6X/SDDKcVPgh/y3G
-TQEtGayFsvzyu843lQi3k2IQNUzjB4XOvV00TohkMpC474ftogeyoL+TyZ/Dt2Aw
-akzMFU2rMS9/YSasoweH
-=lwZc
+iQIcBAEBCAAGBQJV3GbaAAoJEPo9qoy8lh71eZ4P/01NJGiImirIqpFPh+2EbTig
+w2tvj2GBvmZTObJ06zObIEAsNz5PnpwrD89bCnOV7cQG73maBzTx2OzPlcpv56fA
+8tnG+gKUtZ2cTn12EhR1RZXmj9S5I4gIU2B2sw7ZROC0Qe/hgcWK8rbMWi2JQ611
+pQJ1Mi6tHJXQ+wC9mzIuB7o6TgOeXvJjBwp21HATpPFSiLlPBJFPbyRCNKWdXdh4
+mL1DSxgAO40hvJ95R7nC1qA9woRReo5bnn1YR23C9QFwlWFN0itoyELDihYnrOyS
+NT7DzjdL4+0q24ZjrpvUL0bgvf+ivN2RetSOcbpiZ0/d7Z2FOcds+24JILnKid0i
+YvMWPxO6Xg7oIIJ0QKej52AUXV+WGIMSa9nnuuJK1fVq37S5+rEKO6imppawXZ7G
+VI7r2SiVhOOtGvWVMptYswrhVN0rEYRCf7KynOHh9ttkt3kuscgizu5zqPv5zt9Y
+Qxy0qV4hExkk36BhieJM0504T5y2LVx9cZAjKt0X2ftdjSUksWWNtx7HhCIajZEB
+QHIODd57MtoaC36ssU3Y2MjnvQwILcvc2A7DQBCqWb5IsBanloEklJPAWW+TqAmW
+E7pUMtETiLYmgX865kuGlwXDz+ZRCCKT5DmWg9JS3fSBa+O4vqzf8vbH1ZqYlxMT
+PYKWzfYYGXPn20vU3ImJ
+=VWOW
 -----END PGP SIGNATURE-----
 
---DewF7TrfsaOXLFXlwK3xtSQf09bUEVqL7--
+--PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB--
