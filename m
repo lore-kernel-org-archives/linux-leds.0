@@ -1,36 +1,48 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH/RFC v6 01/36] leds: Add brightness_set_blocking op
-Date: Mon, 24 Aug 2015 13:40:15 +0200
-Message-ID: <20150824114015.GA22243@amd>
-References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
- <1440081846-11697-2-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56644 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752836AbbHXLkT (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 24 Aug 2015 07:40:19 -0400
-Content-Disposition: inline
-In-Reply-To: <1440081846-11697-2-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: [RESEND PATCH 0/7] Export I2C and OF module aliases in missing drivers
+Date: Tue, 25 Aug 2015 08:31:10 +0200
+Message-ID: <1440484277-32675-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Sakari Ailus <sakari.ailus@linux.intel.com>, Stas Sergeev <stsp@users.sourceforge.net>
 
-On Thu 2015-08-20 16:43:31, Jacek Anaszewski wrote:
-> This patch adds a new brightness_set_blocking op to the LED subsystem.
-> The op is intended for drivers that set brightness in a blocking way,
-> i.e. they either can sleep or use delays while setting brightness.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hello,
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+This is a resend of the patches that were not picked from the series
+"[PATCH 00/27] Export I2C and OF module aliases in missing drivers" [0]
+posted about a month ago.
 
-Thanks!
-								Pavel
+The patches have no dependencies and can be picked individually by the
+relevant maintainer.
+
+I preferred to resend instead of sending a naked ping for each patch
+that I got no answer.
+
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (7):
+  i2c: core: Export I2C module alias information in dummy driver
+  backlight: tosa: Export I2C module alias information
+  usb: phy: isp1301: Export I2C module alias information
+  ALSA: ppc: keywest: Export I2C module alias information
+  extcon: Export OF module alias information in missing drivers
+  leds: Export OF module alias information in missing drivers
+  regulator: isl9305: Export OF module alias information
+
+ drivers/extcon/extcon-rt8973a.c   | 1 +
+ drivers/extcon/extcon-sm5502.c    | 1 +
+ drivers/i2c/i2c-core.c            | 1 +
+ drivers/leds/leds-pca963x.c       | 1 +
+ drivers/leds/leds-tca6507.c       | 1 +
+ drivers/regulator/isl9305.c       | 1 +
+ drivers/usb/phy/phy-isp1301.c     | 1 +
+ drivers/video/backlight/tosa_bl.c | 1 +
+ sound/ppc/keywest.c               | 1 +
+ 9 files changed, 9 insertions(+)
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.4.3
