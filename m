@@ -1,77 +1,170 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 2/3] backlight: add led-backlight driver
-Date: Tue, 25 Aug 2015 16:00:10 +0300
-Message-ID: <55DC66DA.5030000@ti.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com> <1440502442-19531-3-git-send-email-tomi.valkeinen@ti.com> <20150825123952.GA18009@lunn.ch>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
+Date: Tue, 25 Aug 2015 15:25:13 +0200
+Message-ID: <55DC6CB9.5060301@samsung.com>
+References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
+ <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:56949 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754619AbbHYNAZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 25 Aug 2015 09:00:25 -0400
-In-Reply-To: <20150825123952.GA18009@lunn.ch>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34407 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754183AbbHYNZS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 25 Aug 2015 09:25:18 -0400
+In-reply-to: <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hi Tomi,
 
+Thanks for the patch. Generally, I'd prefer to add files
+drivers/leds/of.c and include/linux/of_leds.h and put related functions
+there. Those functions' names should begin with "of_". Please provide
+also no-op versions of the functions to address configurations when
+CONFIG_OF isn't enabled. I have also few comments below.
 
-
-On 25/08/15 15:39, Andrew Lunn wrote:
-> On Tue, Aug 25, 2015 at 02:34:01PM +0300, Tomi Valkeinen wrote:
->> This patch adds a led-backlight driver (led_bl), which is similar to
->> pwm_bl except the driver uses a LED class driver to adjust the
->> brightness in the HW.
->=20
-> Shouldn't this be sending an event to drivers/leds/trigger/kedtrig-back=
-light.c
+On 08/25/2015 01:34 PM, Tomi Valkeinen wrote:
+> This patch adds basic support for a kernel driver to get a LED device.
+> This will be used by the led-backlight driver.
 >
-> Calling led_set_brightness() from outside of drivers/leds is pretty
-> much unheard of. It is normal to have a trigger to do this. So why not
-> use the exiting backlight trigger?
+> Only OF version is implemented for now, and the behavior is similar to
+> PWM's of_pwm_get() and pwm_put().
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> ---
+>   drivers/leds/led-class.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/leds.h     |  4 +++
+>   2 files changed, 79 insertions(+)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index beabfbc6f7cd..0cb4fd7d71d6 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/spinlock.h>
+>   #include <linux/timer.h>
+> +#include <linux/of.h>
+>   #include "leds.h"
+>
+>   static struct class *leds_class;
+> @@ -216,6 +217,80 @@ static int led_resume(struct device *dev)
+>
+>   static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+>
+> +/* find OF node for the given led_cdev */
+> +static struct device_node *find_led_of_node(struct led_classdev *led_cdev)
+> +{
+> +	struct device *led_dev = led_cdev->dev;
+> +	struct device_node *child;
+> +
+> +	for_each_child_of_node(led_dev->parent->of_node, child) {
+> +		if (of_property_match_string(child, "label", led_cdev->name) == 0)
+> +			return child;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int led_match_led_node(struct device *led_dev, const void *data)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(led_dev);
+> +	const struct device_node *target_node = data;
+> +	struct device_node *led_node;
+> +
+> +	led_node = find_led_of_node(led_cdev);
+> +	if (!led_node)
+> +		return 0;
+> +
+> +	of_node_put(led_node);
+> +
+> +	return led_node == target_node ? 1 : 0;
+> +}
+> +
+> +/**
+> + * of_led_get() - request a LED device via the LED framework
+> + * @np: device node to get the LED device from
+> + *
+> + * Returns the LED device parsed from the phandle specified in the "leds"
+> + * property of a device tree node or a negative error-code on failure.
+> + */
+> +struct led_classdev *of_led_get(struct device_node *np)
+> +{
+> +	struct device *led_dev;
+> +	struct led_classdev *led_cdev;
+> +	struct device_node *led_node;
+> +
+> +	led_node = of_parse_phandle(np, "leds", 0);
+> +	if (!led_node)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	led_dev = class_find_device(leds_class, NULL, led_node,
+> +		led_match_led_node);
 
-ledtrig-backlight.c is based on fbdev, and I want the backlight to work
-also with DRM. And I want the backlight device to be a proper backlight
-device, i.e. something I can pass data to from the DT.
+Single of_node_put(led_node) here will do.
 
-So, I could create a new trigger, say, "bldev" trigger, which would
-create a backlight device. But then I could not pass any info to it via D=
-T.
+> +	if (!led_dev) {
+> +		of_node_put(led_node);
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	of_node_put(led_node);
 
-This patch was the only working solution I could figure out, but I don't
-have much experience with leds, so I might be missing something.
+> +	led_cdev = dev_get_drvdata(led_dev);
+> +
+> +	if (!try_module_get(led_cdev->dev->parent->driver->owner))
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return led_cdev;
+> +}
+> +EXPORT_SYMBOL_GPL(of_led_get);
+> +/**
+> + * led_put() - release a LED device
+> + * @led_cdev: LED device
+> + */
+> +void led_put(struct led_classdev *led_cdev)
+> +{
+> +	module_put(led_cdev->dev->parent->driver->owner);
+> +}
+> +EXPORT_SYMBOL_GPL(led_put);
 
- Tomi
+Please move it to include/linux/leds.h, make static inline and provide
+also no-op version for the case when CONFIG_LEDS_CLASS isn't enabled.
+
+>   static int match_name(struct device *dev, const void *data)
+>   {
+>   	if (!dev_name(dev))
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b122eeafb5dc..efc9b28af564 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -21,6 +21,7 @@
+>   #include <linux/workqueue.h>
+>
+>   struct device;
+> +struct device_node;
+>   /*
+>    * LED Core
+>    */
+> @@ -113,6 +114,9 @@ extern void devm_led_classdev_unregister(struct device *parent,
+>   extern void led_classdev_suspend(struct led_classdev *led_cdev);
+>   extern void led_classdev_resume(struct led_classdev *led_cdev);
+>
+> +extern struct led_classdev *of_led_get(struct device_node *np);
+
+We need also no-op version for (!CONFIG_OF || !CONFIG_LEDS_CLASS).
+
+> +extern void led_put(struct led_classdev *led_cdev);
+> +
+>   /**
+>    * led_blink_set - set blinking with software fallback
+>    * @led_cdev: the LED to start blinking
+>
 
 
---PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJV3GbaAAoJEPo9qoy8lh71eZ4P/01NJGiImirIqpFPh+2EbTig
-w2tvj2GBvmZTObJ06zObIEAsNz5PnpwrD89bCnOV7cQG73maBzTx2OzPlcpv56fA
-8tnG+gKUtZ2cTn12EhR1RZXmj9S5I4gIU2B2sw7ZROC0Qe/hgcWK8rbMWi2JQ611
-pQJ1Mi6tHJXQ+wC9mzIuB7o6TgOeXvJjBwp21HATpPFSiLlPBJFPbyRCNKWdXdh4
-mL1DSxgAO40hvJ95R7nC1qA9woRReo5bnn1YR23C9QFwlWFN0itoyELDihYnrOyS
-NT7DzjdL4+0q24ZjrpvUL0bgvf+ivN2RetSOcbpiZ0/d7Z2FOcds+24JILnKid0i
-YvMWPxO6Xg7oIIJ0QKej52AUXV+WGIMSa9nnuuJK1fVq37S5+rEKO6imppawXZ7G
-VI7r2SiVhOOtGvWVMptYswrhVN0rEYRCf7KynOHh9ttkt3kuscgizu5zqPv5zt9Y
-Qxy0qV4hExkk36BhieJM0504T5y2LVx9cZAjKt0X2ftdjSUksWWNtx7HhCIajZEB
-QHIODd57MtoaC36ssU3Y2MjnvQwILcvc2A7DQBCqWb5IsBanloEklJPAWW+TqAmW
-E7pUMtETiLYmgX865kuGlwXDz+ZRCCKT5DmWg9JS3fSBa+O4vqzf8vbH1ZqYlxMT
-PYKWzfYYGXPn20vU3ImJ
-=VWOW
------END PGP SIGNATURE-----
-
---PKn9cOg9kAwbQikwc5vMj8PrpjTPxSLLB--
+-- 
+Best Regards,
+Jacek Anaszewski
