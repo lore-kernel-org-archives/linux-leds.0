@@ -1,57 +1,62 @@
-From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Subject: Re: [PATCH] powerpc/configs: Enable LEDS support
-Date: Wed, 26 Aug 2015 09:46:03 +0530
-Message-ID: <55DD3D83.5020406@linux.vnet.ibm.com>
-References: <1440489254-8162-1-git-send-email-hegdevasant@linux.vnet.ibm.com> <m3a8teopy3.fsf@oc8180480414.ibm.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 3/3] devicetree: Add led-backlight binding
+Date: Wed, 26 Aug 2015 09:07:42 +0200
+Message-ID: <55DD65BE.4050308@samsung.com>
+References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
+ <1440502442-19531-4-git-send-email-tomi.valkeinen@ti.com>
+ <55DC700C.4030802@samsung.com> <55DC8C9D.4050007@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:44681 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750979AbbHZERG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 26 Aug 2015 00:17:06 -0400
-Received: from /spool/local
-	by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-leds@vger.kernel.org> from <hegdevasant@linux.vnet.ibm.com>;
-	Wed, 26 Aug 2015 14:17:04 +1000
-Received: from d23relay08.au.ibm.com (d23relay08.au.ibm.com [9.185.71.33])
-	by d23dlp03.au.ibm.com (Postfix) with ESMTP id 4DDD93578047
-	for <linux-leds@vger.kernel.org>; Wed, 26 Aug 2015 14:17:02 +1000 (EST)
-Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
-	by d23relay08.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id t7Q4Gl8M59637818
-	for <linux-leds@vger.kernel.org>; Wed, 26 Aug 2015 14:16:55 +1000
-Received: from d23av03.au.ibm.com (localhost [127.0.0.1])
-	by d23av03.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id t7Q4GTe5031116
-	for <linux-leds@vger.kernel.org>; Wed, 26 Aug 2015 14:16:29 +1000
-In-Reply-To: <m3a8teopy3.fsf@oc8180480414.ibm.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:9316 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756534AbbHZHHq (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 26 Aug 2015 03:07:46 -0400
+In-reply-to: <55DC8C9D.4050007@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Stewart Smith <stewart@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: j.anaszewski@samsung.com, linux-leds@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-On 08/26/2015 05:56 AM, Stewart Smith wrote:
-> Vasant Hegde <hegdevasant@linux.vnet.ibm.com> writes:
->> Presently PowerNV LEDS driver is specific to FSP based PowerNV
->> platform. Hence added it as 'm'. So that we will be loaded only
->> if we have required device tree support.
+On 08/25/2015 05:41 PM, Tomi Valkeinen wrote:
+>
+>
+> On 25/08/15 16:39, Jacek Anaszewski wrote:
+>
+>>> +Example:
+>>> +
+>>> +    backlight {
+>>> +        compatible = "led-backlight";
+>>> +        leds = <&backlight_led>;
+>>> +
+>>> +        brightness-levels = <0 4 8 16 32 64 128 255>;
+>>
+>> brightness level is not a suitable unit for describing LED brightness
+>> in a Device Tree, as it is not a physical unit. We have led-max-microamp
+>> property for this, expressed in microamperes, please refer to [0] from
+>> linux-next.
+>
+> Hmm, ok, but what should the driver do with microamperes? As far as I
+> see, "enum led_brightness" (which is between 0-255) is used to set the
+> brightness to LEDs. I don't see any function accepting microamperes.
 
-Stewart,
+This is implementation detail. You can convert microamperes to
+enum led_brightness in the driver. Please refer to the discussion [1].
 
-> 
-> Currently the *firmware* support is FSP specific.
-> 
-> The driver should magically work on any OPAL machine that hooks up the
-> OPAL calls and DT. Right?
+>>> +        default-brightness-level = <6>;
+>>
+>> This also should be microamperes.
+>
+> This is an index to the above brightness-levels array. It's not LED
+> brightness, but backlight brightness, between 0 and
+> ARRAY_SIZE(brightness-levels) - 1.
 
-Yep. It will just work if we have appropriate device tree . I'll update the
-description and resend patch.
+You could skip "-level" postfix  and have default brightness
+in microamperes.
 
+[1] http://www.spinics.net/lists/linux-leds/msg03416.html
 
-> 
-> The A in OPAL is for Abstraction, not P for Passthrough-to-fsp.
-> 
-
-:-)
-
--Vasant
+-- 
+Best Regards,
+Jacek Anaszewski
