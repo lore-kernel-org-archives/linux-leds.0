@@ -1,87 +1,43 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-cobalt-qube: Use devm_led_classdev_register
-Date: Thu, 27 Aug 2015 09:26:53 +0200
-Message-ID: <55DEBBBD.9010802@samsung.com>
-References: <20150827051302.GA10275@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [v2] powerpc/configs: Enable LEDS support
+Date: Thu, 27 Aug 2015 20:26:19 +1000 (AEST)
+Message-ID: <20150827102619.BEB9214018C@ozlabs.org>
+References: <1440655450-6831-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:64624 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbbH0H05 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 27 Aug 2015 03:26:57 -0400
-In-reply-to: <20150827051302.GA10275@localhost>
+Received: from ozlabs.org ([103.22.144.67]:36376 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751633AbbH0K0U (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 27 Aug 2015 06:26:20 -0400
+In-Reply-To: <1440655450-6831-1-git-send-email-hegdevasant@linux.vnet.ibm.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>
 
-Hi Vaishali,
-
-Thanks for the patch.
-
-On 08/27/2015 07:13 AM, Vaishali Thakkar wrote:
-> Use resource-managed function devm_led_classdev_register instead
-> of led_classdev_register to make the error-path simpler.
->
-> To be compatible with the change, goto is replaced with direct
-> return and unneeded label is dropped. Also, remove redundant
-> cobalt_qube_led_remove.
->
-> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+On Thu, 2015-27-08 at 06:04:10 UTC, Vasant Hegde wrote:
+> Commit 84ad6e5c added LEDS support for PowerNV platform. Lets
+> update ppc64_defconfig to pick LEDS driver.
+> 
+> PowerNV LEDS driver looks for "/ibm,opal/leds" node in device
+> tree and loads if this node exists. Hence added it as 'm'.
+> 
+> Also note that powernv LEDS driver needs NEW_LEDS and LEDS_CLASS
+> as well. Hence added them to config file.
+> 
+> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+> Signed-off-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+> Cc: Stewart Smith <stewart@linux.vnet.ibm.com>
 > ---
->   drivers/leds/leds-cobalt-qube.c | 20 ++------------------
->   1 file changed, 2 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/leds/leds-cobalt-qube.c b/drivers/leds/leds-cobalt-qube.c
-> index d975220..59818df 100644
-> --- a/drivers/leds/leds-cobalt-qube.c
-> +++ b/drivers/leds/leds-cobalt-qube.c
-> @@ -49,31 +49,15 @@ static int cobalt_qube_led_probe(struct platform_device *pdev)
->   	led_value = LED_FRONT_LEFT | LED_FRONT_RIGHT;
->   	writeb(led_value, led_port);
->
-> -	retval = led_classdev_register(&pdev->dev, &qube_front_led);
-> +	retval = devm_led_classdev_register(&pdev->dev, &qube_front_led);
->   	if (retval)
-> -		goto err_null;
+> Changes in v2:
+>   - As suggested by Stewart updated patch description
+> 
+> Michael,
+>   This is PowerNV specific config. Hence I've not updated pseries_defconfig.
+>   Let me know if you want me to update pseries_defconfig config as well.
 
-We can spare more lines by changing this to:
+I've added it to pseries_defconfig also, no need to resend.
 
-return devm_led_classdev_register(&pdev->dev, &qube_front_led);
+Currently pseries_defconfig is also used on powernv, though in the medium term
+we should stop doing that.
 
-You could get rid of retval then, too.
-
-> -
-> -	return 0;
-> -
-> -err_null:
-> -	led_port = NULL;
-> -
-> -	return retval;
-> -}
-> -
-> -static int cobalt_qube_led_remove(struct platform_device *pdev)
-> -{
-> -	led_classdev_unregister(&qube_front_led);
-> -
-> -	if (led_port)
-> -		led_port = NULL;
-> +		return retval;
->
->   	return 0;
->   }
->
->   static struct platform_driver cobalt_qube_led_driver = {
->   	.probe	= cobalt_qube_led_probe,
-> -	.remove	= cobalt_qube_led_remove,
->   	.driver	= {
->   		.name	= "cobalt-qube-leds",
->   	},
->
-
-
--- 
-Best Regards,
-Jacek Anaszewski
+cheers
