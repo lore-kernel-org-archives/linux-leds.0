@@ -1,102 +1,59 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: Re: [PATCH] leds: leds-cobalt-qube: Use devm_led_classdev_register
-Date: Fri, 28 Aug 2015 13:49:05 +0530
-Message-ID: <CAK-LDbKBwoDaGbiedreWtd++AQfAGcBTC=8fqivWQe=0mEcavg@mail.gmail.com>
-References: <20150827051302.GA10275@localhost>
-	<55DEBBBD.9010802@samsung.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 10/21] ARM: pxa: magician: Add UDA1380 sound support
+Date: Fri, 28 Aug 2015 10:48:48 +0200
+Message-ID: <87a8tb3ij3.fsf@belgarion.home>
+References: <cover.1439843482.git.petr.cvek@tul.cz> <55D259B7.90703@tul.cz>
+	<87h9nt68mm.fsf@belgarion.home> <55D65C32.6080503@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:35846 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272AbbH1ITH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 28 Aug 2015 04:19:07 -0400
-In-Reply-To: <55DEBBBD.9010802@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <55D65C32.6080503@tul.cz> (Petr Cvek's message of "Fri, 21 Aug
+	2015 01:01:06 +0200")
+Sender: linux-pm-owner@vger.kernel.org
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, sameo@linux.intel.com, lee.jones@linaro.org, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, Aug 27, 2015 at 12:56 PM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Vaishali,
->
-> Thanks for the patch.
->
-> On 08/27/2015 07:13 AM, Vaishali Thakkar wrote:
->>
->> Use resource-managed function devm_led_classdev_register instead
->> of led_classdev_register to make the error-path simpler.
->>
->> To be compatible with the change, goto is replaced with direct
->> return and unneeded label is dropped. Also, remove redundant
->> cobalt_qube_led_remove.
->>
->> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
->> ---
->>   drivers/leds/leds-cobalt-qube.c | 20 ++------------------
->>   1 file changed, 2 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/leds/leds-cobalt-qube.c
->> b/drivers/leds/leds-cobalt-qube.c
->> index d975220..59818df 100644
->> --- a/drivers/leds/leds-cobalt-qube.c
->> +++ b/drivers/leds/leds-cobalt-qube.c
->> @@ -49,31 +49,15 @@ static int cobalt_qube_led_probe(struct
->> platform_device *pdev)
->>         led_value = LED_FRONT_LEFT | LED_FRONT_RIGHT;
->>         writeb(led_value, led_port);
->>
->> -       retval = led_classdev_register(&pdev->dev, &qube_front_led);
->> +       retval = devm_led_classdev_register(&pdev->dev, &qube_front_led);
->>         if (retval)
->> -               goto err_null;
->
->
-> We can spare more lines by changing this to:
->
-> return devm_led_classdev_register(&pdev->dev, &qube_front_led);
->
-> You could get rid of retval then, too.
+Petr Cvek <petr.cvek@tul.cz> writes:
 
-Sure. This makes sense. I will send v2 with the change.
-
-Thanks.
-
->> -
->> -       return 0;
->> -
->> -err_null:
->> -       led_port = NULL;
->> -
->> -       return retval;
->> -}
->> -
->> -static int cobalt_qube_led_remove(struct platform_device *pdev)
->> -{
->> -       led_classdev_unregister(&qube_front_led);
->> -
->> -       if (led_port)
->> -               led_port = NULL;
->> +               return retval;
->>
->>         return 0;
->>   }
->>
->>   static struct platform_driver cobalt_qube_led_driver = {
->>         .probe  = cobalt_qube_led_probe,
->> -       .remove = cobalt_qube_led_remove,
->>         .driver = {
->>                 .name   = "cobalt-qube-leds",
->>         },
->>
+> Dne 20.8.2015 v 21:51 Robert Jarzmik napsal(a):
+>> Petr Cvek <petr.cvek@tul.cz> writes:
+>> 
+>>> +/*
+>>> + * Magician Audio controller
+>>> + */
+>>> +
+>>> +static struct platform_device magician_audio_device = {
+>>> +	.name = "magician-audio",
+>> Is this already upstream or is it a submission in progress ? Other than that
+>> detail, I'll queue it in a week probably.
 >
+> This one is problematic. Vanilla version did not work from at least 3.4 (where I
+> started, but probably even more in past). Somewhere between 3.13 and ~4.1 there
+> is a change which causes it to fail after driver reload (bad pointers I
+> think). UDA codec routes are not constructed completely and in ~4.1 they are
+> refused, there are some swapped control registers and bad DMA definitions. Oh
+> and recording stopped to work too (maybe it is caused by that routes).
 >
-> --
-> Best Regards,
-> Jacek Anaszewski
+> I tried to send initial separate patches (for DMA and registers), but it got
+> stuck somewhere (at least it is not in 4.2rcX and I sent them around start of
+> this year).
+>
+> I can add some of these patches to this patchset (but I didn't started yet on
+> failing reload, record and fixing the routes).
 
+Ok, but not for this patchset. This would be an apart submission to sound/soc
+and Mark Brown more likely.
+So I presume my answer is "no, it is not upstream yet, it is a submission under
+review". In that case, I'll take it in my "held" tree until you tell me your
+patches have been queued up by Mark, and then I'll move them to the for-next
+tree.
 
+Cheers.
 
 -- 
-Vaishali
+Robert
+
+PS: For DMA registers, there will also be an impact by the dmaengine
+conversion. I'd like to be joined to the sound/soc submission, to foresee the
+conflicts.
