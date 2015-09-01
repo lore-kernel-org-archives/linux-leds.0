@@ -1,44 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Single gpio shared by LED and switch?
-Date: Tue, 1 Sep 2015 19:00:54 +0200
-Message-ID: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+From: Luis de Bethencourt <luis@debethencourt.com>
+Subject: [PATCH 0/6] leds: Fix module autoload for OF platform drivers
+Date: Tue, 1 Sep 2015 23:34:50 +0200
+Message-ID: <20150901213450.GA14225@goodgumbo.baconseed.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:36826 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829AbbIARA4 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 13:00:56 -0400
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:36000 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750969AbbIAVex (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 17:34:53 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi,
+Hello,
 
-I'm wondering if there already exists a driver for a gpio that's connected
-to both an LED and an input switch.
+This series adds the missing MODULE_DEVICE_TABLE() for OF to eport
+that information so modules have the correct aliases built-in and
+autoloading works correctly.
 
-I'd expect such a hardware configuration to be fairly common, as gpios can be
-a limited resource.
-Most of the time the gpio would be in output mode, driving the LED, but at
-regular intervals the mode would be changed for a very short moment to input,
-to monitor the state of the switch.
+A longer explanation by Javier Canillas can be found here:
+https://lkml.org/lkml/2015/7/30/519
 
-I had a quick look at various drivers (and of course at
-Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
+Thanks,
+Luis
 
-Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
+Luis de Bethencourt (6):
+  leds: aat1290: Fix module autoload for OF platform driver
+  leds: bcm6328: Fix module autoload for OF platform driver
+  leds: bcm6358: Fix module autoload for OF platform driver
+  leds: ktd2692: Fix module autoload for OF platform driver
+  leds: max77693: Fix module autoload for OF platform driver
+  leds: leds-ns2: Fix module autoload for OF platform driver
 
-Thanks in advance!
+ drivers/leds/leds-aat1290.c  | 1 +
+ drivers/leds/leds-bcm6328.c  | 1 +
+ drivers/leds/leds-bcm6358.c  | 1 +
+ drivers/leds/leds-ktd2692.c  | 1 +
+ drivers/leds/leds-max77693.c | 1 +
+ drivers/leds/leds-ns2.c      | 1 +
+ 6 files changed, 6 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.4.6
