@@ -1,80 +1,44 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: [PATCH v2] leds: leds-cobalt-qube: Use devm_led_classdev_register
-Date: Tue, 1 Sep 2015 18:05:26 +0530
-Message-ID: <20150901123525.GA12241@localhost>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Single gpio shared by LED and switch?
+Date: Tue, 1 Sep 2015 19:00:54 +0200
+Message-ID: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:35848 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752891AbbIAMfa (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 08:35:30 -0400
-Content-Disposition: inline
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36826 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829AbbIARA4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 13:00:56 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Use resource-managed function devm_led_classdev_register instead
-of led_classdev_register to make the error-path simpler.
+Hi,
 
-To be compatible with the change, goto is replaced with direct
-return, unneeded label err_null is dropped and unnecessary variable
-retval is removed. Also, remove redundant cobalt_qube_led_remove.
+I'm wondering if there already exists a driver for a gpio that's connected
+to both an LED and an input switch.
 
-Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
----
-Changes since v1:
-	- Remove use of variable retval
-	- Change commit log
----
- drivers/leds/leds-cobalt-qube.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+I'd expect such a hardware configuration to be fairly common, as gpios can be
+a limited resource.
+Most of the time the gpio would be in output mode, driving the LED, but at
+regular intervals the mode would be changed for a very short moment to input,
+to monitor the state of the switch.
 
-diff --git a/drivers/leds/leds-cobalt-qube.c b/drivers/leds/leds-cobalt-qube.c
-index d975220..f1374d2 100644
---- a/drivers/leds/leds-cobalt-qube.c
-+++ b/drivers/leds/leds-cobalt-qube.c
-@@ -36,7 +36,6 @@ static struct led_classdev qube_front_led = {
- static int cobalt_qube_led_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
--	int retval;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
-@@ -49,31 +48,13 @@ static int cobalt_qube_led_probe(struct platform_device *pdev)
- 	led_value = LED_FRONT_LEFT | LED_FRONT_RIGHT;
- 	writeb(led_value, led_port);
- 
--	retval = led_classdev_register(&pdev->dev, &qube_front_led);
--	if (retval)
--		goto err_null;
--
--	return 0;
--
--err_null:
--	led_port = NULL;
--
--	return retval;
--}
--
--static int cobalt_qube_led_remove(struct platform_device *pdev)
--{
--	led_classdev_unregister(&qube_front_led);
--
--	if (led_port)
--		led_port = NULL;
-+	return devm_led_classdev_register(&pdev->dev, &qube_front_led);
- 
- 	return 0;
- }
- 
- static struct platform_driver cobalt_qube_led_driver = {
- 	.probe	= cobalt_qube_led_probe,
--	.remove	= cobalt_qube_led_remove,
- 	.driver	= {
- 		.name	= "cobalt-qube-leds",
- 	},
--- 
-1.9.1
+I had a quick look at various drivers (and of course at
+Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
+
+Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
+
+Thanks in advance!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
