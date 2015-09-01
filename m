@@ -1,14 +1,14 @@
 From: Luis de Bethencourt <luis@debethencourt.com>
-Subject: [PATCH 3/6] leds: bcm6358: Fix module autoload for OF platform driver
-Date: Tue, 1 Sep 2015 23:35:55 +0200
-Message-ID: <20150901213555.GA14336@goodgumbo.baconseed.org>
+Subject: [PATCH 4/6] leds: ktd2692: Fix module autoload for OF platform driver
+Date: Tue, 1 Sep 2015 23:36:15 +0200
+Message-ID: <20150901213615.GA14345@goodgumbo.baconseed.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:36689 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753052AbbIAVf5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 17:35:57 -0400
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:33609 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753160AbbIAVgS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Sep 2015 17:36:18 -0400
 Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -20,20 +20,20 @@ alias information is not created so module autoloading won't work.
 
 Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
 ---
- drivers/leds/leds-bcm6358.c | 1 +
+ drivers/leds/leds-ktd2692.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 21f9693..7ea3526 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -226,6 +226,7 @@ static const struct of_device_id bcm6358_leds_of_match[] = {
- 	{ .compatible = "brcm,bcm6358-leds", },
- 	{ },
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index 2ae8c4d..feca07b 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -426,6 +426,7 @@ static const struct of_device_id ktd2692_match[] = {
+ 	{ .compatible = "kinetic,ktd2692", },
+ 	{ /* sentinel */ },
  };
-+MODULE_DEVICE_TABLE(of, bcm6358_leds_of_match);
++MODULE_DEVICE_TABLE(of, ktd2692_match);
  
- static struct platform_driver bcm6358_leds_driver = {
- 	.probe = bcm6358_leds_probe,
+ static struct platform_driver ktd2692_driver = {
+ 	.driver = {
 -- 
 2.4.6
