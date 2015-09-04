@@ -1,57 +1,106 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 0/6] leds: Fix module autoload for OF platform drivers
-Date: Fri, 04 Sep 2015 13:25:47 +0200
-Message-ID: <55E97FBB.5090504@samsung.com>
-References: <20150901213450.GA14225@goodgumbo.baconseed.org>
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: Re: [PATCH v2] leds: leds-cobalt-qube: Use devm_led_classdev_register
+Date: Fri, 4 Sep 2015 17:00:51 +0530
+Message-ID: <CAK-LDbL7yQuTQrFmcdR-MvzMsWzkGwZwW0i3eAEwH-0H2+f6GQ@mail.gmail.com>
+References: <20150901123525.GA12241@localhost>
+	<55E97F64.3030904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:59304 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758970AbbIDLZw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Sep 2015 07:25:52 -0400
-In-reply-to: <20150901213450.GA14225@goodgumbo.baconseed.org>
+Received: from mail-yk0-f181.google.com ([209.85.160.181]:35612 "EHLO
+	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756470AbbIDLay (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Sep 2015 07:30:54 -0400
+In-Reply-To: <55E97F64.3030904@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Luis de Bethencourt <luis@debethencourt.com>
-Cc: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Luis,
+On Fri, Sep 4, 2015 at 4:54 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Hi Vaishali,
+>
+>
+> On 09/01/2015 02:35 PM, Vaishali Thakkar wrote:
+>>
+>> Use resource-managed function devm_led_classdev_register instead
+>> of led_classdev_register to make the error-path simpler.
+>>
+>> To be compatible with the change, goto is replaced with direct
+>> return, unneeded label err_null is dropped and unnecessary variable
+>> retval is removed. Also, remove redundant cobalt_qube_led_remove.
+>>
+>> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+>> ---
+>> Changes since v1:
+>>         - Remove use of variable retval
+>>         - Change commit log
+>> ---
+>>   drivers/leds/leds-cobalt-qube.c | 21 +--------------------
+>>   1 file changed, 1 insertion(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-cobalt-qube.c
+>> b/drivers/leds/leds-cobalt-qube.c
+>> index d975220..f1374d2 100644
+>> --- a/drivers/leds/leds-cobalt-qube.c
+>> +++ b/drivers/leds/leds-cobalt-qube.c
+>> @@ -36,7 +36,6 @@ static struct led_classdev qube_front_led = {
+>>   static int cobalt_qube_led_probe(struct platform_device *pdev)
+>>   {
+>>         struct resource *res;
+>> -       int retval;
+>>
+>>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>         if (!res)
+>> @@ -49,31 +48,13 @@ static int cobalt_qube_led_probe(struct
+>> platform_device *pdev)
+>>         led_value = LED_FRONT_LEFT | LED_FRONT_RIGHT;
+>>         writeb(led_value, led_port);
+>>
+>> -       retval = led_classdev_register(&pdev->dev, &qube_front_led);
+>> -       if (retval)
+>> -               goto err_null;
+>> -
+>> -       return 0;
+>> -
+>> -err_null:
+>> -       led_port = NULL;
+>> -
+>> -       return retval;
+>> -}
+>> -
+>> -static int cobalt_qube_led_remove(struct platform_device *pdev)
+>> -{
+>> -       led_classdev_unregister(&qube_front_led);
+>> -
+>> -       if (led_port)
+>> -               led_port = NULL;
+>> +       return devm_led_classdev_register(&pdev->dev, &qube_front_led);
+>>
+>>         return 0;
+>
+>
+> Merged, after removing stray "return 0", thanks.
 
-Whole patch set merged, thanks.
+Oops! my bad. Thanks.
 
-On 09/01/2015 11:34 PM, Luis de Bethencourt wrote:
-> Hello,
+>>   }
+>>
+>>   static struct platform_driver cobalt_qube_led_driver = {
+>>         .probe  = cobalt_qube_led_probe,
+>> -       .remove = cobalt_qube_led_remove,
+>>         .driver = {
+>>                 .name   = "cobalt-qube-leds",
+>>         },
+>>
 >
-> This series adds the missing MODULE_DEVICE_TABLE() for OF to eport
-> that information so modules have the correct aliases built-in and
-> autoloading works correctly.
 >
-> A longer explanation by Javier Canillas can be found here:
-> https://lkml.org/lkml/2015/7/30/519
->
-> Thanks,
-> Luis
->
-> Luis de Bethencourt (6):
->    leds: aat1290: Fix module autoload for OF platform driver
->    leds: bcm6328: Fix module autoload for OF platform driver
->    leds: bcm6358: Fix module autoload for OF platform driver
->    leds: ktd2692: Fix module autoload for OF platform driver
->    leds: max77693: Fix module autoload for OF platform driver
->    leds: leds-ns2: Fix module autoload for OF platform driver
->
->   drivers/leds/leds-aat1290.c  | 1 +
->   drivers/leds/leds-bcm6328.c  | 1 +
->   drivers/leds/leds-bcm6358.c  | 1 +
->   drivers/leds/leds-ktd2692.c  | 1 +
->   drivers/leds/leds-max77693.c | 1 +
->   drivers/leds/leds-ns2.c      | 1 +
->   6 files changed, 6 insertions(+)
->
+> --
+> Best Regards,
+> Jacek Anaszewski
+
 
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Vaishali
