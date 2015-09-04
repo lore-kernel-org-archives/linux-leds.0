@@ -1,106 +1,41 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: Re: [PATCH v2] leds: leds-cobalt-qube: Use devm_led_classdev_register
-Date: Fri, 4 Sep 2015 17:00:51 +0530
-Message-ID: <CAK-LDbL7yQuTQrFmcdR-MvzMsWzkGwZwW0i3eAEwH-0H2+f6GQ@mail.gmail.com>
-References: <20150901123525.GA12241@localhost>
-	<55E97F64.3030904@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH] leds: aat1290: add 'static' modifier to init_mm_current_scale
+Date: Fri, 04 Sep 2015 13:54:40 +0200
+Message-ID: <1441367680-29120-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:35612 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756470AbbIDLay (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Sep 2015 07:30:54 -0400
-In-Reply-To: <55E97F64.3030904@samsung.com>
+Received: from mailout2.samsung.com ([203.254.224.25]:53314 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752296AbbIDLyx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Sep 2015 07:54:53 -0400
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NU500VO2ID8BU70@mailout2.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 04 Sep 2015 20:54:52 +0900 (KST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Fri, Sep 4, 2015 at 4:54 PM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Vaishali,
->
->
-> On 09/01/2015 02:35 PM, Vaishali Thakkar wrote:
->>
->> Use resource-managed function devm_led_classdev_register instead
->> of led_classdev_register to make the error-path simpler.
->>
->> To be compatible with the change, goto is replaced with direct
->> return, unneeded label err_null is dropped and unnecessary variable
->> retval is removed. Also, remove redundant cobalt_qube_led_remove.
->>
->> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
->> ---
->> Changes since v1:
->>         - Remove use of variable retval
->>         - Change commit log
->> ---
->>   drivers/leds/leds-cobalt-qube.c | 21 +--------------------
->>   1 file changed, 1 insertion(+), 20 deletions(-)
->>
->> diff --git a/drivers/leds/leds-cobalt-qube.c
->> b/drivers/leds/leds-cobalt-qube.c
->> index d975220..f1374d2 100644
->> --- a/drivers/leds/leds-cobalt-qube.c
->> +++ b/drivers/leds/leds-cobalt-qube.c
->> @@ -36,7 +36,6 @@ static struct led_classdev qube_front_led = {
->>   static int cobalt_qube_led_probe(struct platform_device *pdev)
->>   {
->>         struct resource *res;
->> -       int retval;
->>
->>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>         if (!res)
->> @@ -49,31 +48,13 @@ static int cobalt_qube_led_probe(struct
->> platform_device *pdev)
->>         led_value = LED_FRONT_LEFT | LED_FRONT_RIGHT;
->>         writeb(led_value, led_port);
->>
->> -       retval = led_classdev_register(&pdev->dev, &qube_front_led);
->> -       if (retval)
->> -               goto err_null;
->> -
->> -       return 0;
->> -
->> -err_null:
->> -       led_port = NULL;
->> -
->> -       return retval;
->> -}
->> -
->> -static int cobalt_qube_led_remove(struct platform_device *pdev)
->> -{
->> -       led_classdev_unregister(&qube_front_led);
->> -
->> -       if (led_port)
->> -               led_port = NULL;
->> +       return devm_led_classdev_register(&pdev->dev, &qube_front_led);
->>
->>         return 0;
->
->
-> Merged, after removing stray "return 0", thanks.
+Function init_mm_current_scale is used only locally. Make it static then.
 
-Oops! my bad. Thanks.
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+---
+ drivers/leds/leds-aat1290.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>   }
->>
->>   static struct platform_driver cobalt_qube_led_driver = {
->>         .probe  = cobalt_qube_led_probe,
->> -       .remove = cobalt_qube_led_remove,
->>         .driver = {
->>                 .name   = "cobalt-qube-leds",
->>         },
->>
->
->
-> --
-> Best Regards,
-> Jacek Anaszewski
-
-
-
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 8ceb471..ac77d36 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -331,7 +331,7 @@ static void aat1290_led_validate_mm_current(struct aat1290_led *led,
+ 	cfg->max_brightness = b + 1;
+ }
+ 
+-int init_mm_current_scale(struct aat1290_led *led,
++static int init_mm_current_scale(struct aat1290_led *led,
+ 			struct aat1290_led_config_data *cfg)
+ {
+ 	int max_mm_current_percent[] = { 20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
 -- 
-Vaishali
+1.7.9.5
