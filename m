@@ -1,106 +1,61 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Mon, 07 Sep 2015 16:11:13 +0200
-Message-ID: <55ED9B01.5030003@samsung.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
- <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
- <55DC6CB9.5060301@samsung.com> <55ED848F.2060906@ti.com>
+Subject: Re: [PATCH] leds:lp55xx: Correct Kconfig dependency for f/w user helper
+Date: Mon, 07 Sep 2015 16:19:13 +0200
+Message-ID: <55ED9CE1.1080002@samsung.com>
+References: <1441628701-3022-1-git-send-email-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28262 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753082AbbIGOLR (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:11:17 -0400
-In-reply-to: <55ED848F.2060906@ti.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:19597 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750964AbbIGOTQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:19:16 -0400
+In-reply-to: <1441628701-3022-1-git-send-email-tiwai@suse.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: Takashi Iwai <tiwai@suse.de>, Milo Kim <milo.kim@ti.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>
 
-On 09/07/2015 02:35 PM, Tomi Valkeinen wrote:
-> Hi,
->
-> On 25/08/15 16:25, Jacek Anaszewski wrote:
->> Hi Tomi,
->>
->> Thanks for the patch. Generally, I'd prefer to add files
->> drivers/leds/of.c and include/linux/of_leds.h and put related functions
->> there. Those functions' names should begin with "of_". Please provide
->
-> Ok, I'll do that. I do need to export something from led-class in that
-> case, so that the of.c gets hold of 'leds_class' pointer, either
-> directly or indirectly.
+Hi Takashi,
 
-What exactly do you need to export?
+Thanks for chasing this.
+Milo, could you express your opinion?
 
+On 09/07/2015 02:25 PM, Takashi Iwai wrote:
+> The commit [b67893206fc0: leds:lp55xx: fix firmware loading error]
+> tries to address the firmware file handling with user helper, but it
+> sets a wrong Kconfig CONFIG_FW_LOADER_USER_HELPER_FALLBACK.  Since the
+> wrong option was enabled, the system got a regression -- it suffers
+> from the unexpected long delays for non-present firmware files.
 >
->> also no-op versions of the functions to address configurations when
->> CONFIG_OF isn't enabled. I have also few comments below.
+> This patch corrects the Kconfig dependency to the right one,
+> CONFIG_FW_LOADER_USER_HELPER.  This doesn't change the fallback
+> behavior but only enables UMH when needed.
 >
-> Yep. No-ops for the purpose of making the kernel image smaller?
+> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=944661
+> Fixes: b67893206fc0 ('leds:lp55xx: fix firmware loading error')
+> Cc: <stable@vger.kernel.org> # v4.2+
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>   drivers/leds/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 70f4255ff291..2ba52bc2e174 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -229,7 +229,7 @@ config LEDS_LP55XX_COMMON
+>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+>   	select FW_LOADER
+> -	select FW_LOADER_USER_HELPER_FALLBACK
+> +	select FW_LOADER_USER_HELPER
+>   	help
+>   	  This option supports common operations for LP5521/5523/55231/5562/8501
+>   	  devices.
+>
 
-No, for the case when support for LED subsystem is disabled in the
-kernel config. I'd rather backlight driver depended on LED subsystem
-than selected it.
-
-> I do
-> think the current code compiles and works fine with CONFIG_OF disabled
-> (although I have to say I don't remember if I actually tested it).
->
->>> +struct led_classdev *of_led_get(struct device_node *np)
->>> +{
->>> +    struct device *led_dev;
->>> +    struct led_classdev *led_cdev;
->>> +    struct device_node *led_node;
->>> +
->>> +    led_node = of_parse_phandle(np, "leds", 0);
->>> +    if (!led_node)
->>> +        return ERR_PTR(-ENODEV);
->>> +
->>> +    led_dev = class_find_device(leds_class, NULL, led_node,
->>> +        led_match_led_node);
->>
->> Single of_node_put(led_node) here will do.
->
-> Right.
->
->>> +    if (!led_dev) {
->>> +        of_node_put(led_node);
->>> +        return ERR_PTR(-EPROBE_DEFER);
->>> +    }
->>> +
->>> +    of_node_put(led_node);
->>
->>> +    led_cdev = dev_get_drvdata(led_dev);
->>> +pinctrl/pinctrl.h"
->>> +    if (!try_module_get(led_cdev->dev->parent->driver->owner))
->>> +        return ERR_PTR(-ENODEV);
->>> +
->>> +    return led_cdev;
->>> +}
->>> +EXPORT_SYMBOL_GPL(of_led_get);
->>> +/**
->>> + * led_put() - release a LED device
->>> + * @led_cdev: LED device
->>> + */
->>> +void led_put(struct led_classdev *led_cdev)
->>> +{
->>> +    module_put(led_cdev->dev->parent->driver->owner);
->>> +}
->>> +EXPORT_SYMBOL_GPL(led_put);
->>
->> Please move it to include/linux/leds.h, make static inline and provide
->> also no-op version for the case when CONFIG_LEDS_CLASS isn't enabled.
->
-> Ok. Why do you want it as static inline in the leds.h?
-
-This function contains only one instruction, why should we waste
-a function call for it?
-
-> I usually like to
-> keep the matching functions (get and put here) in the same place.
 
 -- 
 Best Regards,
