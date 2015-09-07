@@ -1,40 +1,69 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Single gpio shared by LED and switch?
-Date: Mon, 07 Sep 2015 15:03:50 +0200
-Message-ID: <55ED8B36.60108@samsung.com>
-References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
+Date: Mon, 7 Sep 2015 16:18:17 +0300
+Message-ID: <55ED8E99.9060004@ti.com>
+References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
+ <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
+ <55DC6CB9.5060301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="DIBDI2wA2unPgd1sWLfRBK74c5RhNctKN"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:41744 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750885AbbIGNSf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 7 Sep 2015 09:18:35 -0400
+In-Reply-To: <55DC6CB9.5060301@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-Hi Geert,
+--DIBDI2wA2unPgd1sWLfRBK74c5RhNctKN
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
-> Hi,
->
-> I'm wondering if there already exists a driver for a gpio that's connected
-> to both an LED and an input switch.
->
-> I'd expect such a hardware configuration to be fairly common, as gpios can be
-> a limited resource.
-> Most of the time the gpio would be in output mode, driving the LED, but at
-> regular intervals the mode would be changed for a very short moment to input,
-> to monitor the state of the switch.
->
-> I had a quick look at various drivers (and of course at
-> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
->
-> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
+Hi,
 
-Can you share an example of such a circuit? Would it be possible to
-construct it without additional GPIO driven transistor?
+On 25/08/15 16:25, Jacek Anaszewski wrote:
+> Hi Tomi,
+>=20
+> Thanks for the patch. Generally, I'd prefer to add files
+> drivers/leds/of.c and include/linux/of_leds.h and put related functions=
 
--- 
-Best Regards,
-Jacek Anaszewski
+> there. Those functions' names should begin with "of_". Please provide
+
+So I presume leds/of.c should be linked together with led-class.c.
+Afaics, that means I need to either rename the resulting led-class.ko or
+led-class.c, so that I can do it in the Makefile. Any preferences?
+
+Alternatively I could create a led-of.ko, but that doesn't feel right.
+
+ Tomi
+
+
+--DIBDI2wA2unPgd1sWLfRBK74c5RhNctKN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJV7Y6ZAAoJEPo9qoy8lh71ffgQAI0jqrretSl1mGupzDKWvA8m
+Gs4Snb+WhwZjmcC7tdcSE9OA3+Rf56WWlBce2BNDOB7HdTtgEnXfZ3KfeTeggFXD
+OhFjYJ62zrfqsp2g3C6TxD3z9wsa4bcsmCYS6eLd0++QT1R8ME3xIowXOZy8+jQ1
+chNXbvNP9M6XJRrBpfQIgndbypf9TKDoKPgGePCoFiM40bS1OzeRbiUg0yvOeqF1
+4Ft/g9kk4jOwEcAOsj3CAH8KADNFegYmOXK8+Ph4wy359J7E8RkU45+DAx8oOkkg
+mNVEmd6GkW3ac87oMKZk8l/sf0sJgP1IaBgpHvKpUTnlOQP7tVvZbaeZEVWLf8Sy
+PbJuQtN4p7N/HlyTsE478t+O7m3jNsrzc+E3A31REkTgX2yhMCodkfvFYs40Ofut
+iq1yETy2KSjPdsaE7qddINTgCfYYwtKGgLKuV/8rB0Yg34wOAteNLPFgQhWUy8Xm
+7qAyjNchhAseHJUCbonQ+vGNUaD16xTcjAnIKcKT3Es2hEAhJ6RoFCLJDXwFx/3E
+RDdvg3pkMmk/EN9Grvil643N/VDAx8OmGCUkSKovSUgOMAoy0PgDy7NrVEa6d1iM
+U0n3ThcExsbZtqsDsxOT2peqeUlZIPe/ka2VpHRzhb2aCewwyh8kM+j14PaA3qnp
+KaRwdeXdW9hTlaTKu+xd
+=x4yv
+-----END PGP SIGNATURE-----
+
+--DIBDI2wA2unPgd1sWLfRBK74c5RhNctKN--
