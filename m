@@ -1,59 +1,43 @@
-From: Muhammad Falak R Wani <falakreyaz@gmail.com>
-Subject: [PATCH v2 1/2] leds: leds-ipaq-micro: Use devm_led_classdev_register
-Date: Mon,  7 Sep 2015 19:43:23 +0530
-Message-ID: <1441635204-3634-2-git-send-email-falakreyaz@gmail.com>
-References: <1441635204-3634-1-git-send-email-falakreyaz@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
+Date: Mon, 07 Sep 2015 16:10:14 +0200
+Message-ID: <55ED9AC6.3020505@samsung.com>
+References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
+ <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
+ <55DC6CB9.5060301@samsung.com> <55ED8E99.9060004@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:32782 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752699AbbIGOKA (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:10:00 -0400
-In-Reply-To: <1441635204-3634-1-git-send-email-falakreyaz@gmail.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:18995 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752917AbbIGOKR (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:10:17 -0400
+In-reply-to: <55ED8E99.9060004@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Muhammad Falak R Wani <falakreyaz@gmail.com>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-Use of resource-managed function devm_led_classdev_register
-instead of led_classdev_register is preferred, consequently
-remove redundant function micro_leds_remove.
+On 09/07/2015 03:18 PM, Tomi Valkeinen wrote:
+> Hi,
+>
+> On 25/08/15 16:25, Jacek Anaszewski wrote:
+>> Hi Tomi,
+>>
+>> Thanks for the patch. Generally, I'd prefer to add files
+>> drivers/leds/of.c and include/linux/of_leds.h and put related functions
+>> there. Those functions' names should begin with "of_". Please provide
+>
+> So I presume leds/of.c should be linked together with led-class.c.
+> Afaics, that means I need to either rename the resulting led-class.ko or
+> led-class.c, so that I can do it in the Makefile. Any preferences?
 
-Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
----
- drivers/leds/leds-ipaq-micro.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Let's rename led-class.ko to led-class-objs.ko.
 
-diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-index 3776f51..1206215 100644
---- a/drivers/leds/leds-ipaq-micro.c
-+++ b/drivers/leds/leds-ipaq-micro.c
-@@ -111,7 +111,7 @@ static int micro_leds_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	ret = led_classdev_register(&pdev->dev, &micro_led);
-+	ret = devm_led_classdev_register(&pdev->dev, &micro_led);
- 	if (ret) {
- 		dev_err(&pdev->dev, "registering led failed: %d\n", ret);
- 		return ret;
-@@ -121,18 +121,11 @@ static int micro_leds_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int micro_leds_remove(struct platform_device *pdev)
--{
--	led_classdev_unregister(&micro_led);
--	return 0;
--}
--
- static struct platform_driver micro_leds_device_driver = {
- 	.driver = {
- 		.name    = "ipaq-micro-leds",
- 	},
- 	.probe   = micro_leds_probe,
--	.remove  = micro_leds_remove,
- };
- module_platform_driver(micro_leds_device_driver);
- 
+> Alternatively I could create a led-of.ko, but that doesn't feel right.
+
+
 -- 
-1.9.1
+Best Regards,
+Jacek Anaszewski
