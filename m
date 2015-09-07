@@ -1,36 +1,41 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 1/2] leds: leds-ipaq-micro: Use
- devm_led_classdev_register
-Date: Mon, 07 Sep 2015 16:58:59 +0200
-Message-ID: <55EDA633.6050603@samsung.com>
-References: <1441635204-3634-1-git-send-email-falakreyaz@gmail.com>
- <1441635204-3634-2-git-send-email-falakreyaz@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] led: leds-ipaq-micro: Add LEDS_CLASS dependency
+Date: Mon, 07 Sep 2015 17:04:44 +0200
+Message-ID: <1441638284-19203-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:23159 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750898AbbIGO7D (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:59:03 -0400
-In-reply-to: <1441635204-3634-2-git-send-email-falakreyaz@gmail.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:50176 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750878AbbIGPFO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 11:05:14 -0400
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NUB02H55B8NZF40@mailout3.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 08 Sep 2015 00:05:11 +0900 (KST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Muhammad Falak R Wani <falakreyaz@gmail.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On 09/07/2015 04:13 PM, Muhammad Falak R Wani wrote:
-> Use of resource-managed function devm_led_classdev_register
-> instead of led_classdev_register is preferred, consequently
-> remove redundant function micro_leds_remove.
->
-> Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
-> ---
->   drivers/leds/leds-ipaq-micro.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
+Fix missing Kconfig LEDS_CLASS dependency
 
-Merged, thanks.
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/leds/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 23408bd..78ae3c2 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -170,6 +170,7 @@ config LEDS_SUNFIRE
+ 
+ config LEDS_IPAQ_MICRO
+ 	tristate "LED Support for the Compaq iPAQ h3xxx"
++	depends on LEDS_CLASS
+ 	depends on MFD_IPAQ_MICRO
+ 	help
+ 	  Choose this option if you want to use the notification LED on
 -- 
-Best Regards,
-Jacek Anaszewski
+1.7.9.5
