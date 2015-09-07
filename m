@@ -1,95 +1,28 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Single gpio shared by LED and switch?
-Date: Mon, 7 Sep 2015 15:22:44 +0200
-Message-ID: <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
-References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
-	<55ED8B36.60108@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Muhammad Falak R Wani <falakreyaz@gmail.com>
+Subject: [PATCH v2 0/2] leds: leds-ipaq-micro: Use resource managed functions and fix coding style.
+Date: Mon,  7 Sep 2015 19:43:22 +0530
+Message-ID: <1441635204-3634-1-git-send-email-falakreyaz@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35259 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750907AbbIGNWp (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 09:22:45 -0400
-In-Reply-To: <55ED8B36.60108@samsung.com>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:34986 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752175AbbIGOJY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2015 10:09:24 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Muhammad Falak R Wani <falakreyaz@gmail.com>
 
-Hi Jacek,
+Hi,
+Based on the suggestion from Jaeck, the orginal patch is split into
+two, one patch fixes the coding style issues, and the other
+uses resource managed function, devm_led_classdev_register.
 
-On Mon, Sep 7, 2015 at 3:03 PM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
->> I'm wondering if there already exists a driver for a gpio that's connected
->> to both an LED and an input switch.
->>
->> I'd expect such a hardware configuration to be fairly common, as gpios can
->> be
->> a limited resource.
->> Most of the time the gpio would be in output mode, driving the LED, but at
->> regular intervals the mode would be changed for a very short moment to
->> input,
->> to monitor the state of the switch.
->>
->> I had a quick look at various drivers (and of course at
->> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
->>
->> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
->
-> Can you share an example of such a circuit? Would it be possible to
+Muhammad Falak R Wani (2):
+  leds: leds-ipaq-micro: Use devm_led_classdev_register
+  leds: leds-ipaq-micro: Fix coding style issues
 
-Something like this?
+ drivers/leds/leds-ipaq-micro.c | 47 ++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 27 deletions(-)
 
-                     VCC         VCC
-                      |           |
-                      R           R
-                      |           |
-              __|__   |           |
-          +---o   o---+          _|_
-          |           |          \ /
-          |           |          ---
-         GND          R           |
-                      |           |
-                      |         |-+
-                      |         |<+
-GPIO -----------------+---------|-|
-                                  |
-                                  |
-                                 GND
-
-> construct it without additional GPIO driven transistor?
-
-Perhaps just like this?
-
-                     VCC
-                      |
-                      R
-                      |
-                      |
-                     _|_
-                     \ /
-                     ---
-                      |
-                      |
-GPIO -----R-----------+
-                      |
-                      |
-                    | o
-                   -|
-                    | o
-                      |
-                      |
-                     GND
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
