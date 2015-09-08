@@ -1,82 +1,254 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Tue, 8 Sep 2015 14:23:21 +0300
-Message-ID: <55EEC529.4040104@ti.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
- <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
- <20150825121853.GB14871@lunn.ch>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCHv2 1/3] leds: Add of_led_get() and led_put()
+Date: Tue, 08 Sep 2015 15:20:33 +0200
+Message-ID: <55EEE0A1.5070000@samsung.com>
+References: <1441711176-4258-1-git-send-email-tomi.valkeinen@ti.com>
+ <1441711176-4258-2-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="o7GPNadffIOTlaTfKhh3tltxp6sIl9dsl"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:45469 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754252AbbIHLXe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 07:23:34 -0400
-In-Reply-To: <20150825121853.GB14871@lunn.ch>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15272 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755017AbbIHNUi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 09:20:38 -0400
+In-reply-to: <1441711176-4258-2-git-send-email-tomi.valkeinen@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---o7GPNadffIOTlaTfKhh3tltxp6sIl9dsl
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hi Tomi,
 
-Hi Andrew,
+Thanks for the update.
 
-On 25/08/15 15:18, Andrew Lunn wrote:
-> On Tue, Aug 25, 2015 at 02:34:00PM +0300, Tomi Valkeinen wrote:
->> This patch adds basic support for a kernel driver to get a LED device.=
+On 09/08/2015 01:19 PM, Tomi Valkeinen wrote:
+> This patch adds basic support for a kernel driver to get a LED device.
+> This will be used by the led-backlight driver.
+>
+> Only OF version is implemented for now, and the behavior is similar to
+> PWM's of_pwm_get() and pwm_put().
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> ---
+>   drivers/leds/Makefile    |  6 +++-
+>   drivers/leds/led-class.c | 13 +++++++-
+>   drivers/leds/led-of.c    | 82 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/leds/leds.h      |  1 +
+>   include/linux/leds-of.h  | 26 +++++++++++++++
 
->> This will be used by the led-backlight driver.
->>
->> Only OF version is implemented for now, and the behavior is similar to=
+According to existing naming convention this should be "of_leds.h".
 
->> PWM's of_pwm_get() and pwm_put().
->=20
-> Hi Tomi
->=20
-> Is this the correct way to do it?  I would of expected an xlate
-> function.
+>   include/linux/leds.h     |  2 ++
+>   6 files changed, 128 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/leds/led-of.c
+>   create mode 100644 include/linux/leds-of.h
+>
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 8d6a24a2f513..6fd22e411810 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -1,7 +1,11 @@
+>
+>   # LED Core
+>   obj-$(CONFIG_NEW_LEDS)			+= led-core.o
+> -obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+> +
+> +obj-$(CONFIG_LEDS_CLASS)		+= led-class-objs.o
+> +led-class-objs-y			:= led-class.o
+> +led-class-objs-$(CONFIG_OF)		+= led-of.o
+> +
+>   obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
+>   obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index beabfbc6f7cd..1234f9dc3537 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -22,7 +22,7 @@
+>   #include <linux/timer.h>
+>   #include "leds.h"
+>
+> -static struct class *leds_class;
+> +struct class *leds_class;
+>
+>   static ssize_t brightness_show(struct device *dev,
+>   		struct device_attribute *attr, char *buf)
+> @@ -216,6 +216,17 @@ static int led_resume(struct device *dev)
+>
+>   static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+>
+> +/**
+> + * led_put() - release a LED device, reserved with led_get()
+> + * @led_cdev: LED device
+> + */
+> +void led_put(struct led_classdev *led_cdev)
+> +{
+> +	put_device(led_cdev->dev);
+> +	module_put(led_cdev->dev->parent->driver->owner);
+> +}
+> +EXPORT_SYMBOL_GPL(led_put);
+> +
+>   static int match_name(struct device *dev, const void *data)
+>   {
+>   	if (!dev_name(dev))
+> diff --git a/drivers/leds/led-of.c b/drivers/leds/led-of.c
+> new file mode 100644
+> index 000000000000..32631682be07
+> --- /dev/null
+> +++ b/drivers/leds/led-of.c
+> @@ -0,0 +1,82 @@
+> +/*
+> + * LED Class Core OF support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/leds.h>
+> +#include <linux/of.h>
+> +#include <linux/leds-of.h>
 
-I just sent v2, but I don't use xlate there.
+Please keep alphabetical order.
 
-If I understand the purpose of xlate (in pwm, for example) correctly,
-xlate is a function in the pwm chip to allow custom bindings for the pwm
-outputs from that pwm chip.
+> +#include <linux/module.h>
+> +
+> +#include "leds.h"
+> +
+> +/* find OF node for the given led_cdev */
+> +static struct device_node *find_led_of_node(struct led_classdev *led_cdev)
+> +{
+> +	struct device *led_dev = led_cdev->dev;
+> +	struct device_node *child;
+> +
+> +	for_each_child_of_node(led_dev->parent->of_node, child) {
+> +		if (of_property_match_string(child, "label", led_cdev->name) == 0)
 
-The problem with LEDs is that there's no "LED chip". Each LED is
-modelled as individual device, without a well defined parent. Thus
-there's no place to add such an xlate function.
+Line over 80 characters.
 
-Do you have any thoughts on what the xlate for LEDs should look like?
+> +			return child;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int led_match_led_node(struct device *led_dev, const void *data)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(led_dev);
+> +	const struct device_node *target_node = data;
+> +	struct device_node *led_node;
+> +
+> +	led_node = find_led_of_node(led_cdev);
+> +	if (!led_node)
+> +		return 0;
+> +
+> +	of_node_put(led_node);
+> +
+> +	return led_node == target_node ? 1 : 0;
 
- Tomi
+return led_node == target_node;
+
+> +}
+> +
+> +/**
+> + * of_led_get() - request a LED device via the LED framework
+> + * @np: device node to get the LED device from
+> + *
+> + * Returns the LED device parsed from the phandle specified in the "leds"
+> + * property of a device tree node or a negative error-code on failure.
+> + *
+> + * The caller must use led_put() to release the device after use.
+> + */
+> +struct led_classdev *of_led_get(struct device_node *np)
+> +{
+> +	struct device *led_dev;
+> +	struct led_classdev *led_cdev;
+> +	struct device_node *led_node;
+> +
+> +	led_node = of_parse_phandle(np, "leds", 0);
+> +	if (!led_node)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	led_dev = class_find_device(leds_class, NULL, led_node,
+> +		led_match_led_node);
+> +
+> +	of_node_put(led_node);
+> +
+> +	if (!led_dev) {
+> +		pr_err("failed to find led device for node %s, deferring probe\n",
+> +			of_node_full_name(led_node));
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	led_cdev = dev_get_drvdata(led_dev);
+> +
+> +	if (!try_module_get(led_cdev->dev->parent->driver->owner))
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return led_cdev;
+> +}
+> +EXPORT_SYMBOL_GPL(of_led_get);
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index bc89d7ace2c4..ccc3abb417d4 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -46,6 +46,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
+>
+>   void led_stop_software_blink(struct led_classdev *led_cdev);
+>
+> +extern struct class *leds_class;
+>   extern struct rw_semaphore leds_list_lock;
+>   extern struct list_head leds_list;
+>
+> diff --git a/include/linux/leds-of.h b/include/linux/leds-of.h
+> new file mode 100644
+> index 000000000000..7e8e64bd9811
+> --- /dev/null
+> +++ b/include/linux/leds-of.h
+> @@ -0,0 +1,26 @@
+> +/*
+> + * OF support for leds
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#ifndef __LINUX_LEDS_OF_H_INCLUDED
+> +#define __LINUX_LEDS_OF_H_INCLUDED
+> +
+> +#if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_LEDS_CLASS)
+> +
+> +extern struct led_classdev *of_led_get(struct device_node *np);
+> +
+> +#else
+> +
+> +static inline struct led_classdev *of_led_get(struct device_node *np)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +#endif
+> +
+> +#endif /* __LINUX_LEDS_OF_H_INCLUDED */
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b122eeafb5dc..0fce71a06d68 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -113,6 +113,8 @@ extern void devm_led_classdev_unregister(struct device *parent,
+>   extern void led_classdev_suspend(struct led_classdev *led_cdev);
+>   extern void led_classdev_resume(struct led_classdev *led_cdev);
+>
+> +extern void led_put(struct led_classdev *led_cdev);
+> +
+>   /**
+>    * led_blink_set - set blinking with software fallback
+>    * @led_cdev: the LED to start blinking
+>
 
 
---o7GPNadffIOTlaTfKhh3tltxp6sIl9dsl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJV7sUpAAoJEPo9qoy8lh71xyEP/3dtOqRKfgUOirmAUGoDO6Ym
-5y5IM9mg9ASuJNB1qjcdYF+xZiTna1TXj0ukQagIo+7uAg1lA+iOWJxfP8kk8WYf
-Xtp2UmYEOjTkmFmLHLckXe852+VuctQ0CdPxXiGL5KUPG56NfsNBcTLPHVzUK7do
-z9JUAO/iJyC+29hZKPZ+f86HEIhuKS530FgOTQ+1MulQWOVy8ReCJRAD2uQZn7ev
-8Vr13i7hTN6TIilpxWqlmVLudcs7+OVAd0MwBr114p94ZllVMEKSp1wm6RrXhd9z
-Coh5UikqTdvkD0yOYqlBZ/Um1TycOZwOnfyjELBJgLwLPRlBtAvYAM2O2UrTydFN
-9F1u33AQ1NyYR/4atd3jb7HAU8nVIgyQkBNuxuvO5oQZEcQzj8vZK3fBIzYlNJ6M
-8SbJvsj2ysTo/Xcj3Oa1dTXCoqvd2wIgGXVmAAgtvWQXSbyFysvV8Xy9SnGCMoWZ
-3U2VS4jRTRUsBAoAmnc/M6vx2VGswPYeXIE/UAA2G93WyOm0+kv96uoK5kI5mMSY
-PUTjihkpcLaClA+vdsdSr5ZSmZHJHsC18x/yPF8TG2O0/E/gFd8MaFZ92YGCzAVl
-siLrGTDAGHou4B7IbfSb0w3ZAUdQ765MTfpjHUQMnmIyqiqPfyASJxkqEYiQU8i9
-pSe7fmU5U25iQNadw3AR
-=V35e
------END PGP SIGNATURE-----
-
---o7GPNadffIOTlaTfKhh3tltxp6sIl9dsl--
+-- 
+Best Regards,
+Jacek Anaszewski
