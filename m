@@ -1,96 +1,34 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds:lp55xx: Correct Kconfig dependency for f/w user helper
-Date: Tue, 08 Sep 2015 09:37:35 +0200
-Message-ID: <55EE903F.9000209@samsung.com>
-References: <1441628701-3022-1-git-send-email-tiwai@suse.de>
- <55ED9CE1.1080002@samsung.com> <55EE2C0F.5040101@ti.com>
- <s5hwpw1fqjl.wl-tiwai@suse.de>
+Subject: Re: [PATCH v3 2/2] leds: leds-ipaq-micro: Fix coding style issues
+Date: Tue, 08 Sep 2015 09:38:13 +0200
+Message-ID: <55EE9065.9070404@samsung.com>
+References: <1441643309-7807-1-git-send-email-falakreyaz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <s5hwpw1fqjl.wl-tiwai@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Kim, Milo" <milo.kim@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41128 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753824AbbIHHiP (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 03:38:15 -0400
+In-reply-to: <1441643309-7807-1-git-send-email-falakreyaz@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Muhammad Falak R Wani <falakreyaz@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/08/2015 07:06 AM, Takashi Iwai wrote:
-> On Tue, 08 Sep 2015 02:30:07 +0200,
-> Kim, Milo wrote:
->>
->> Hi Takashi,
->>
->> On 9/7/2015 11:19 PM, Jacek Anaszewski wrote:
->>> Hi Takashi,
->>>
->>> Thanks for chasing this.
->>> Milo, could you express your opinion?
->>>
->>> On 09/07/2015 02:25 PM, Takashi Iwai wrote:
->>>> The commit [b67893206fc0: leds:lp55xx: fix firmware loading error]
->>>> tries to address the firmware file handling with user helper, but it
->>>> sets a wrong Kconfig CONFIG_FW_LOADER_USER_HELPER_FALLBACK.  Since the
->>>> wrong option was enabled, the system got a regression -- it suffers
->>>> from the unexpected long delays for non-present firmware files.
->>>>
->>>> This patch corrects the Kconfig dependency to the right one,
->>>> CONFIG_FW_LOADER_USER_HELPER.  This doesn't change the fallback
->>>> behavior but only enables UMH when needed.
->>>>
->>>> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=944661
->>>> Fixes: b67893206fc0 ('leds:lp55xx: fix firmware loading error')
->>>> Cc: <stable@vger.kernel.org> # v4.2+
->>>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
->>>> ---
->>>>     drivers/leds/Kconfig | 2 +-
->>>>     1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>> index 70f4255ff291..2ba52bc2e174 100644
->>>> --- a/drivers/leds/Kconfig
->>>> +++ b/drivers/leds/Kconfig
->>>> @@ -229,7 +229,7 @@ config LEDS_LP55XX_COMMON
->>>>     	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
->>>>     	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
->>>>     	select FW_LOADER
->>>> -	select FW_LOADER_USER_HELPER_FALLBACK
->>>> +	select FW_LOADER_USER_HELPER
->>>>     	help
->>>>     	  This option supports common operations for LP5521/5523/55231/5562/8501
->>>>     	  devices.
->>
->> Thank for catching this. It seems I misunderstood firmware helper
->> configuration. LP55xx driver uses firmware interface to activate LED
->> visual effect. So this driver enables FW_LOADER_USER_HELPER_FALLBACK and
->> calls request_firmware_nowait() without uevent. Then, it will try to
->> load raw data manually when binary(firmware) file doesn't exist.
->>
->> I'm still not clear what the difference is between FW_LOADER_USER_HELPER
->> and FW_LOADER_USER_HELPER_FALLBACK. Kconfig description makes me confused.
->> Could you explain it in more details?
+On 09/07/2015 06:28 PM, Muhammad Falak R Wani wrote:
+> Spaces at the starting of a line are removed, indentation using
+> tab, instead of space. Also, line width of more than 80 characters
+> is also taken care of.
+> Two warnings are left alone to aid better readability.
 >
-> FW_LOADER_USER_HELPER_FALLBACK globally enables the fallback to user
-> helper mode when no file is loaded by the direct f/w loader.  It
-> automatically sets FW_LOADER_USER_HELPER.
->
-> OTOH, when FW_LOADER_USER_HELPER is set, requeset_firmware_nowait()
-> does user mode fallback only when uevent (the second) argument is
-> false.  Note that this is a special case.  In the usual cases --
-> uevent = true or request_firmware() -- its doesn't enable the
-> fallback.
->
-> The fallback to user helper mode is bad for the recent udev, since
-> udev already dropped the f/w support code completely.  Thus every
-> non-existing f/w load will result in 60 seconds stall.
->
-> In short, FW_LOAD_USER_HELPER_FALLBACK is present mostly only for
-> older systems, just for compatibility.  For drivers that need the no
-> direct f/w load and no udev interaction, set FW_LOAD_USER_HELPER
-> instead.
+> Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
+> ---
+>   drivers/leds/leds-ipaq-micro.c | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
 
-Merged to fixes-for-4.3 branch of linux-leds.git.
-Thanks for this explanation.
+Merged, thanks.
 
 -- 
 Best Regards,
