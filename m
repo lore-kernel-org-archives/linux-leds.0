@@ -1,81 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Tue, 08 Sep 2015 12:57:00 +0200
-Message-ID: <55EEBEFC.4090904@samsung.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
- <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
- <55DC6CB9.5060301@samsung.com> <55ED848F.2060906@ti.com>
- <55ED9B01.5030003@samsung.com> <55EE89CF.8060308@ti.com>
- <55EEA8B2.3040808@samsung.com> <55EEBB3F.4040908@ti.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCHv2 0/3] backlight: led-backlight driver
+Date: Tue, 8 Sep 2015 14:19:33 +0300
+Message-ID: <1441711176-4258-1-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54370 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754089AbbIHK5F (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 06:57:05 -0400
-In-reply-to: <55EEBB3F.4040908@ti.com>
+Received: from comal.ext.ti.com ([198.47.26.152]:58169 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753254AbbIHLT4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 8 Sep 2015 07:19:56 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-On 09/08/2015 12:41 PM, Tomi Valkeinen wrote:
->
-> On 08/09/15 12:21, Jacek Anaszewski wrote:
->
->>> The "static struct class *leds_class" from led-class.c, in one way or
->>> another. of_led_get() needs to go through the led devices from the class.
->>>
->>> For now I just removed the "static" from it, so that I can use it from
->>> of.c.
->>
->> I think we can go in this direction. I've skimmed through existing
->> class drivers and found similar examples (e.g. tty_class, rtc_class).
->
-> Yep.
->
->>> Sorry, I didn't get that one. How does the backlight driver's
->>> depend/select affect this?
->>
->> OK, I confused something here. Backlight driver should depend on
->> LEDS_CLASS by defining "depends on LEDS_CLASS" in backlight Kconfig.
->> It should also depend on OF. In case of this driver the no-ops would be
->> only for the purpose of making the kernel image smaller, as the driver
->> probe will fail without them anyway. Nevertheless, there might be added
->> other drivers in the future, using of_led_get{put} API which would like
->> to make some decisions basing on whether LEDS_CLASS or/and OF are
->> turned on. No-ops would be of use then.
->
-> I agree.
->
->>> What do you mean with "waste"?
->>
->> I used 'waste' because we would be wasting time here for the call which
->> can be avoided at no cost. Of course if compiler will decide to inline
->> it.
->>
->>> In this case there's no need to get more performance by inlining
->>
->> Why so?
->
-> Reserving and freeing resources are rarely hot paths. The functions in
-> question are usually called in a driver's probe and remove. Saving a few
-> CPU cycles there doesn't really matter, so I think readability is the
-> important part here.
+This series aims to add a led-backlight driver, similar to pwm-backlight, but
+using a LED class device underneath.
 
-OK, I agree.
+LED framework has no support for DT or getting a LED class driver from another
+kernel driver, so I added minimal functionality to led-class to get
+led-backlight working.
 
->>> and inlining forces the users of led_put to include module.h to compile.
->>
->> We could include module.h from leds.h.
->
-> Yes we can. And I can do that in my patch. I don't agree with the
-> solution but neither do I really have a problem with it =).
+Changes to v1:
+- Split LED OF parts into separate .h and .c files
+- Check for CONFIG_OF and CONFIG_LEDS_CLASS where relevant to leave unused code
+  out.
+- Improved error prints and comments a bit
+- Added put_device() into led_put(), as the device was gotten from
+  class_find_device() which requires a put_device() call.
 
-Please go ahead as you originally planned, i.e. without inlining.
+ Tomi
+
+Tomi Valkeinen (3):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
+  devicetree: Add led-backlight binding
+
+ .../bindings/video/backlight/led-backlight.txt     |  30 +++
+ drivers/leds/Makefile                              |   6 +-
+ drivers/leds/led-class.c                           |  13 +-
+ drivers/leds/led-of.c                              |  82 +++++++
+ drivers/leds/leds.h                                |   1 +
+ drivers/video/backlight/Kconfig                    |   7 +
+ drivers/video/backlight/Makefile                   |   1 +
+ drivers/video/backlight/led_bl.c                   | 235 +++++++++++++++++++++
+ include/linux/leds-of.h                            |  26 +++
+ include/linux/leds.h                               |   2 +
+ 10 files changed, 401 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
+ create mode 100644 drivers/leds/led-of.c
+ create mode 100644 drivers/video/backlight/led_bl.c
+ create mode 100644 include/linux/leds-of.h
 
 -- 
-Best Regards,
-Jacek Anaszewski
+2.1.4
