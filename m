@@ -1,41 +1,77 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] led: leds-ipaq-micro: Add LEDS_CLASS dependency
-Date: Tue, 08 Sep 2015 16:35:48 +0200
-Message-ID: <55EEF244.9040507@samsung.com>
-References: <1441638284-19203-1-git-send-email-j.anaszewski@samsung.com>
- <CACRpkdZcLxmEDq_67qDa53z_4+JsU8NDbQ44iTnyt+q6NcCn7A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Single gpio shared by LED and switch?
+Date: Tue, 8 Sep 2015 16:37:54 +0200
+Message-ID: <CACRpkdZ+W8ZBdtjYUUYAy6t+bRvRx9MG7YP0EKno2Cr5C-kzoQ@mail.gmail.com>
+References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+	<55ED8B36.60108@samsung.com>
+	<CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
+	<55EEBDBC.8040408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11886 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755180AbbIHOfw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 10:35:52 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NUD00DTP4JP7B90@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 08 Sep 2015 15:35:50 +0100 (BST)
-In-reply-to: <CACRpkdZcLxmEDq_67qDa53z_4+JsU8NDbQ44iTnyt+q6NcCn7A@mail.gmail.com>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:36334 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932074AbbIHOhz (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 10:37:55 -0400
+Received: by oibi136 with SMTP id i136so59984578oib.3
+        for <linux-leds@vger.kernel.org>; Tue, 08 Sep 2015 07:37:54 -0700 (PDT)
+In-Reply-To: <55EEBDBC.8040408@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 09/08/2015 04:21 PM, Linus Walleij wrote:
-> On Mon, Sep 7, 2015 at 5:04 PM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->
->> Fix missing Kconfig LEDS_CLASS dependency
+On Tue, Sep 8, 2015 at 12:51 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> On 09/07/2015 03:22 PM, Geert Uytterhoeven wrote:
+
+>> Something like this?
 >>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>                       VCC         VCC
+>>                        |           |
+>>                        R           R
+>>                        |           |
+>>                __|__   |           |
+>>            +---o   o---+          _|_
+>>            |           |          \ /
+>>            |           |          ---
+>>           GND          R           |
+>>                        |           |
+>>                        |         |-+
+>>                        |         |<+
+>> GPIO -----------------+---------|-|
+>>                                    |
+>>                                    |
+>>                                   GND
 >
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> You would need also resistor to avoid short-circuit
+> when the switch is on.
 
-Merged to fixes-for-4.3 branch of linux-leds.git. Thanks.
+There is a resistor AFAICT.
 
--- 
-Best Regards,
-Jacek Anaszewski
+But consider the GPIO side which is opaque
+here. When used as input it is often high impedance
+but when used to drive it is not.
+
+Doesn't this mean the output actually has to be
+open collector (open drain)?
+
+In that case we should enforce that in the software
+framework too so we protect people from shooting
+themselves in the foot.
+
+> We'd have to ask Linus if he welcomes drivers for this type
+> of home-made circuits in mainline. If yes, then probably someone would
+> have to build the circuit, develop and test the driver on it, and
+> finally come up with a detailed documentation.
+> Are you the volunteer? :)
+
+Of course he's considering it or he wouldn't write :)
+
+I'm curious about what comes out of this, this is exactly
+the type of problems that the GPIO subsystem is about
+to help with.
+
+Yours,
+Linus Walleij
