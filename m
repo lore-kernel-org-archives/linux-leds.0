@@ -1,112 +1,102 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Tue, 8 Sep 2015 13:41:03 +0300
-Message-ID: <55EEBB3F.4040908@ti.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
- <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
- <55DC6CB9.5060301@samsung.com> <55ED848F.2060906@ti.com>
- <55ED9B01.5030003@samsung.com> <55EE89CF.8060308@ti.com>
- <55EEA8B2.3040808@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: Single gpio shared by LED and switch?
+Date: Tue, 08 Sep 2015 12:51:40 +0200
+Message-ID: <55EEBDBC.8040408@samsung.com>
+References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+ <55ED8B36.60108@samsung.com>
+ <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="C76lKnh16PpcavPbTQndubDwAu3qn4NbV"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:56715 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754662AbbIHKlS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 8 Sep 2015 06:41:18 -0400
-In-Reply-To: <55EEA8B2.3040808@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---C76lKnh16PpcavPbTQndubDwAu3qn4NbV
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hi Geert,
 
+Thanks for sharing this.
 
-On 08/09/15 12:21, Jacek Anaszewski wrote:
-
->> The "static struct class *leds_class" from led-class.c, in one way or
->> another. of_led_get() needs to go through the led devices from the cla=
-ss.
+On 09/07/2015 03:22 PM, Geert Uytterhoeven wrote:
+> Hi Jacek,
+>
+> On Mon, Sep 7, 2015 at 3:03 PM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
+>>> I'm wondering if there already exists a driver for a gpio that's connected
+>>> to both an LED and an input switch.
+>>>
+>>> I'd expect such a hardware configuration to be fairly common, as gpios can
+>>> be
+>>> a limited resource.
+>>> Most of the time the gpio would be in output mode, driving the LED, but at
+>>> regular intervals the mode would be changed for a very short moment to
+>>> input,
+>>> to monitor the state of the switch.
+>>>
+>>> I had a quick look at various drivers (and of course at
+>>> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
+>>>
+>>> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
 >>
->> For now I just removed the "static" from it, so that I can use it from=
+>> Can you share an example of such a circuit? Would it be possible to
+>
+> Something like this?
+>
+>                       VCC         VCC
+>                        |           |
+>                        R           R
+>                        |           |
+>                __|__   |           |
+>            +---o   o---+          _|_
+>            |           |          \ /
+>            |           |          ---
+>           GND          R           |
+>                        |           |
+>                        |         |-+
+>                        |         |<+
+> GPIO -----------------+---------|-|
+>                                    |
+>                                    |
+>                                   GND
 
->> of.c.
->=20
-> I think we can go in this direction. I've skimmed through existing
-> class drivers and found similar examples (e.g. tty_class, rtc_class).
+You would need also resistor to avoid short-circuit
+when the switch is on.
 
-Yep.
+>
+>> construct it without additional GPIO driven transistor?
+>
+> Perhaps just like this?
+>
+>                       VCC
+>                        |
+>                        R
+>                        |
+>                        |
+>                       _|_
+>                       \ /
+>                       ---
+>                        |
+>                        |
+> GPIO -----R-----------+
+>                        |
+>                        |
+>                      | o
+>                     -|
+>                      | o
+>                        |
+>                        |
+>                       GND
+>
 
->> Sorry, I didn't get that one. How does the backlight driver's
->> depend/select affect this?
->=20
-> OK, I confused something here. Backlight driver should depend on
-> LEDS_CLASS by defining "depends on LEDS_CLASS" in backlight Kconfig.
-> It should also depend on OF. In case of this driver the no-ops would be=
+We'd have to ask Linus if he welcomes drivers for this type
+of home-made circuits in mainline. If yes, then probably someone would
+have to build the circuit, develop and test the driver on it, and
+finally come up with a detailed documentation.
+Are you the volunteer? :)
 
-> only for the purpose of making the kernel image smaller, as the driver
-> probe will fail without them anyway. Nevertheless, there might be added=
-
-> other drivers in the future, using of_led_get{put} API which would like=
-
-> to make some decisions basing on whether LEDS_CLASS or/and OF are
-> turned on. No-ops would be of use then.
-
-I agree.
-
->> What do you mean with "waste"?
->=20
-> I used 'waste' because we would be wasting time here for the call which=
-
-> can be avoided at no cost. Of course if compiler will decide to inline
-> it.
->=20
->> In this case there's no need to get more performance by inlining
->=20
-> Why so?
-
-Reserving and freeing resources are rarely hot paths. The functions in
-question are usually called in a driver's probe and remove. Saving a few
-CPU cycles there doesn't really matter, so I think readability is the
-important part here.
-
->> and inlining forces the users of led_put to include module.h to compil=
-e.
->=20
-> We could include module.h from leds.h.
-
-Yes we can. And I can do that in my patch. I don't agree with the
-solution but neither do I really have a problem with it =3D).
-
- Tomi
-
-
---C76lKnh16PpcavPbTQndubDwAu3qn4NbV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJV7rs/AAoJEPo9qoy8lh71c4gQAIBxFC5lz3bajRT3fVvk3N4C
-Lc1bv0g6ODpIpNVuI/obanP3pow3wm5LJwrzn0h7w3KTeXvyM8o0aMPM8oCxs307
-7jyq96W41ikLQzIqSX+C1kZOBsMjj85Gj7P/kvqicCPaZKKYllI/fBKp1qzBI7H8
-kdH8QFIVQ4WD0Iod3tuygxTYY56hoYo5gfcO0anyShdeGdC1gDAuC/vdNdPftazs
-t55HsZ2OjZO5Z9aVg9XHyEZbuWjGW7ybwcXknfcMc3olJkgpcTX4yR9pXYO3u6xu
-l+7xyHoozr4qDWkruOD58CoiOY4tilErgKzhLtceDb4CD8/Fwh4IjVRBPahqAzps
-I8H/CO5WoAVipEwYwjNQe3Kmm22aI+OJTJlxHECi7feJxnvKTxIDcemwQONS23+1
-1zGU6DDwGCQkn7zFqE2ZrDg4k54PbcsVp4jzzrhG3EljV3757yD8YRfAgU+qHf1s
-lJ6AGixk4ysjyzb0FlZgaYANSrOenf3WavSVJx7Xvsz6act+83aPexPaot6woDV9
-H87FKaE/Pvabx49p6iLZ7H/WfuIa0zFHeMz2FEQGXJy3o7bbTQhhjJbmppnyFWMY
-O+TRuHNutp5l3MdBMrtJVTXb2c0CP06NdY8swfkJJglZjE1miKXNgLPEyO6bdI4z
-biMFq3OfCFfw07VHN/vt
-=e7Zx
------END PGP SIGNATURE-----
-
---C76lKnh16PpcavPbTQndubDwAu3qn4NbV--
+-- 
+Best Regards,
+Jacek Anaszewski
