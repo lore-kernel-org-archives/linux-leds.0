@@ -1,109 +1,97 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 1/3] leds: Add of_led_get() and led_put()
-Date: Tue, 8 Sep 2015 10:10:07 +0300
-Message-ID: <55EE89CF.8060308@ti.com>
-References: <1440502442-19531-1-git-send-email-tomi.valkeinen@ti.com>
- <1440502442-19531-2-git-send-email-tomi.valkeinen@ti.com>
- <55DC6CB9.5060301@samsung.com> <55ED848F.2060906@ti.com>
- <55ED9B01.5030003@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds:lp55xx: Correct Kconfig dependency for f/w user helper
+Date: Tue, 08 Sep 2015 09:37:35 +0200
+Message-ID: <55EE903F.9000209@samsung.com>
+References: <1441628701-3022-1-git-send-email-tiwai@suse.de>
+ <55ED9CE1.1080002@samsung.com> <55EE2C0F.5040101@ti.com>
+ <s5hwpw1fqjl.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="9kkmblLVDuCFwlEE7vT2j5PpWBbXTJfQ0"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:35741 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751803AbbIHHK2 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2015 03:10:28 -0400
-In-Reply-To: <55ED9B01.5030003@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <s5hwpw1fqjl.wl-tiwai@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: "Kim, Milo" <milo.kim@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---9kkmblLVDuCFwlEE7vT2j5PpWBbXTJfQ0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-
-On 07/09/15 17:11, Jacek Anaszewski wrote:
-
->>> Thanks for the patch. Generally, I'd prefer to add files
->>> drivers/leds/of.c and include/linux/of_leds.h and put related functio=
-ns
->>> there. Those functions' names should begin with "of_". Please provide=
-
+On 09/08/2015 07:06 AM, Takashi Iwai wrote:
+> On Tue, 08 Sep 2015 02:30:07 +0200,
+> Kim, Milo wrote:
 >>
->> Ok, I'll do that. I do need to export something from led-class in that=
-
->> case, so that the of.c gets hold of 'leds_class' pointer, either
->> directly or indirectly.
->=20
-> What exactly do you need to export?
-
-The "static struct class *leds_class" from led-class.c, in one way or
-another. of_led_get() needs to go through the led devices from the class.=
-
-
-For now I just removed the "static" from it, so that I can use it from of=
-=2Ec.
-
->>> also no-op versions of the functions to address configurations when
->>> CONFIG_OF isn't enabled. I have also few comments below.
+>> Hi Takashi,
 >>
->> Yep. No-ops for the purpose of making the kernel image smaller?
->=20
-> No, for the case when support for LED subsystem is disabled in the
-> kernel config. I'd rather backlight driver depended on LED subsystem
-> than selected it.
-
-Sorry, I didn't get that one. How does the backlight driver's
-depend/select affect this?
-
->>> Please move it to include/linux/leds.h, make static inline and provid=
-e
->>> also no-op version for the case when CONFIG_LEDS_CLASS isn't enabled.=
-
+>> On 9/7/2015 11:19 PM, Jacek Anaszewski wrote:
+>>> Hi Takashi,
+>>>
+>>> Thanks for chasing this.
+>>> Milo, could you express your opinion?
+>>>
+>>> On 09/07/2015 02:25 PM, Takashi Iwai wrote:
+>>>> The commit [b67893206fc0: leds:lp55xx: fix firmware loading error]
+>>>> tries to address the firmware file handling with user helper, but it
+>>>> sets a wrong Kconfig CONFIG_FW_LOADER_USER_HELPER_FALLBACK.  Since the
+>>>> wrong option was enabled, the system got a regression -- it suffers
+>>>> from the unexpected long delays for non-present firmware files.
+>>>>
+>>>> This patch corrects the Kconfig dependency to the right one,
+>>>> CONFIG_FW_LOADER_USER_HELPER.  This doesn't change the fallback
+>>>> behavior but only enables UMH when needed.
+>>>>
+>>>> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=944661
+>>>> Fixes: b67893206fc0 ('leds:lp55xx: fix firmware loading error')
+>>>> Cc: <stable@vger.kernel.org> # v4.2+
+>>>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+>>>> ---
+>>>>     drivers/leds/Kconfig | 2 +-
+>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>>> index 70f4255ff291..2ba52bc2e174 100644
+>>>> --- a/drivers/leds/Kconfig
+>>>> +++ b/drivers/leds/Kconfig
+>>>> @@ -229,7 +229,7 @@ config LEDS_LP55XX_COMMON
+>>>>     	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>>>>     	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+>>>>     	select FW_LOADER
+>>>> -	select FW_LOADER_USER_HELPER_FALLBACK
+>>>> +	select FW_LOADER_USER_HELPER
+>>>>     	help
+>>>>     	  This option supports common operations for LP5521/5523/55231/5562/8501
+>>>>     	  devices.
 >>
->> Ok. Why do you want it as static inline in the leds.h?
->=20
-> This function contains only one instruction, why should we waste
-> a function call for it?
+>> Thank for catching this. It seems I misunderstood firmware helper
+>> configuration. LP55xx driver uses firmware interface to activate LED
+>> visual effect. So this driver enables FW_LOADER_USER_HELPER_FALLBACK and
+>> calls request_firmware_nowait() without uevent. Then, it will try to
+>> load raw data manually when binary(firmware) file doesn't exist.
+>>
+>> I'm still not clear what the difference is between FW_LOADER_USER_HELPER
+>> and FW_LOADER_USER_HELPER_FALLBACK. Kconfig description makes me confused.
+>> Could you explain it in more details?
+>
+> FW_LOADER_USER_HELPER_FALLBACK globally enables the fallback to user
+> helper mode when no file is loaded by the direct f/w loader.  It
+> automatically sets FW_LOADER_USER_HELPER.
+>
+> OTOH, when FW_LOADER_USER_HELPER is set, requeset_firmware_nowait()
+> does user mode fallback only when uevent (the second) argument is
+> false.  Note that this is a special case.  In the usual cases --
+> uevent = true or request_firmware() -- its doesn't enable the
+> fallback.
+>
+> The fallback to user helper mode is bad for the recent udev, since
+> udev already dropped the f/w support code completely.  Thus every
+> non-existing f/w load will result in 60 seconds stall.
+>
+> In short, FW_LOAD_USER_HELPER_FALLBACK is present mostly only for
+> older systems, just for compatibility.  For drivers that need the no
+> direct f/w load and no udev interaction, set FW_LOAD_USER_HELPER
+> instead.
 
-I like to keep code in .c files and leave .h files for declarations, and
-only in special cases have inline code in .h files.
+Merged to fixes-for-4.3 branch of linux-leds.git.
+Thanks for this explanation.
 
-What do you mean with "waste"?
-
-In this case there's no need to get more performance by inlining (which
-anyway may not help and needs to be studied separately for every case),
-with inlining the resulting kernel image is larger, and inlining forces
-the users of led_put to include module.h to compile.
-
- Tomi
-
-
---9kkmblLVDuCFwlEE7vT2j5PpWBbXTJfQ0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJV7onVAAoJEPo9qoy8lh71KT8P/RNjJdDLAwZFSQAJaKO+k7R2
-pfhcY3x1iNHiIwgi9oJlbjFzgEO87XR1KewuBOjMjBEbFDP3yvpYCE/BVkidwJiJ
-UOA+uPtpMkOFoRRc/LjSvUE3A7JGbWPoNYtllH++UaDVV1oee6sh4Ja2YVD7muaq
-V3orR1u3khS1ETmSlvmUuzO195P5ARJumOC4jcaH+IY4h2fJJbkhAWNmuueQa2zU
-sp8sKIKLg7nWAYtL/iDXM9TZL1QJ4BQBr/Scwov8O4j1CUj6NohszZGtfabvEJ2o
-xlsKG9r6Eks4TRuOepmTm2xW/qRYo6DP/ggdVECoS81y13Vo1ckpPNdpqW5tjsVV
-+9mtZ5/sNaD18nTgEfFSaS06anbVG/68nWAGCPMEK5/m5niV3FEWbV2q2NJtysmN
-NbjILqEo++zYhkMUvHsa6bjV8/M8GQsh3bMq2k/nL11/ed6Q7MKlzMxIqx6/jhbZ
-LnDhNLFY4TMhudFju+GOHabtSGSiQ0Dt7bMsBHVCsf3Kz8cyhbHJ1zeFUwcGsrab
-y1M93yTs5ld9333Q38jbbV46H0jbxaHPqwdJUECYxEW2F8LixJ9uhywhjFNF6IHF
-O2KjcbDjvf/dLB/Chf50CflafbbZMRZU8UrBtKQtaAzHT+TKrK737B+btTzMje/r
-kcbmmpIOo16mZj8rGlQp
-=BNro
------END PGP SIGNATURE-----
-
---9kkmblLVDuCFwlEE7vT2j5PpWBbXTJfQ0--
+-- 
+Best Regards,
+Jacek Anaszewski
