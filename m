@@ -1,79 +1,122 @@
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCHv2 3/3] devicetree: Add led-backlight binding
-Date: Wed, 9 Sep 2015 14:47:08 +0300
-Message-ID: <55F01C3C.5030406@ti.com>
+Subject: Re: [PATCHv2 1/3] leds: Add of_led_get() and led_put()
+Date: Wed, 9 Sep 2015 15:00:31 +0300
+Message-ID: <55F01F5F.4060609@ti.com>
 References: <1441711176-4258-1-git-send-email-tomi.valkeinen@ti.com>
- <1441711176-4258-4-git-send-email-tomi.valkeinen@ti.com>
- <20150908134140.GH30736@lunn.ch>
+ <1441711176-4258-2-git-send-email-tomi.valkeinen@ti.com>
+ <55EEE0A1.5070000@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
 	protocol="application/pgp-signature";
-	boundary="xsNXfj7kXXbxf44MxdWNtauAk8N77q7L8"
+	boundary="v9ETHvUwUsOg7oXAluM1IDMpKfME1udSw"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:54431 "EHLO arroyo.ext.ti.com"
+Received: from comal.ext.ti.com ([198.47.26.152]:57185 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751886AbbIILrY (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 9 Sep 2015 07:47:24 -0400
-In-Reply-To: <20150908134140.GH30736@lunn.ch>
+	id S1753740AbbIIMAr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 9 Sep 2015 08:00:47 -0400
+In-Reply-To: <55EEE0A1.5070000@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---xsNXfj7kXXbxf44MxdWNtauAk8N77q7L8
+--v9ETHvUwUsOg7oXAluM1IDMpKfME1udSw
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
 
+On 08/09/15 16:20, Jacek Anaszewski wrote:
+> Hi Tomi,
+>=20
+> Thanks for the update.
+>=20
+> On 09/08/2015 01:19 PM, Tomi Valkeinen wrote:
+>> This patch adds basic support for a kernel driver to get a LED device.=
 
-On 08/09/15 16:41, Andrew Lunn wrote:
-> On Tue, Sep 08, 2015 at 02:19:36PM +0300, Tomi Valkeinen wrote:
->> Add DT binding for led-backlight.
+>> This will be used by the led-backlight driver.
+>>
+>> Only OF version is implemented for now, and the behavior is similar to=
+
+>> PWM's of_pwm_get() and pwm_put().
 >>
 >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 >> ---
->>  .../bindings/video/backlight/led-backlight.txt     | 30 +++++++++++++=
-+++++++++
->>  1 file changed, 30 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/video/backlight/=
-led-backlight.txt
->>
->> diff --git a/Documentation/devicetree/bindings/video/backlight/led-bac=
-klight.txt b/Documentation/devicetree/bindings/video/backlight/led-backli=
-ght.txt
->> new file mode 100644
->> index 000000000000..fb77051ac230
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/backlight/led-backlight.=
-txt
->> @@ -0,0 +1,30 @@
->> +led-backlight bindings
+>>   drivers/leds/Makefile    |  6 +++-
+>>   drivers/leds/led-class.c | 13 +++++++-
+>>   drivers/leds/led-of.c    | 82
+>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/leds/leds.h      |  1 +
+>>   include/linux/leds-of.h  | 26 +++++++++++++++
+>=20
+> According to existing naming convention this should be "of_leds.h".
+
+Right. I was thinking it's "leds" first, and "of" second, but I see
+of_*.h is the convention.
+
+>> +#include <linux/leds.h>
+>> +#include <linux/of.h>
+>> +#include <linux/leds-of.h>
+>=20
+> Please keep alphabetical order.
+
+Yep.
+
+>> +#include <linux/module.h>
 >> +
->> +Required properties:
->> +  - compatible: "led-backlight"
->> +  - leds: phandle to a led OF node [0]
->> +  - brightness-levels: Array of distinct LED brightness levels. These=
-
->> +      are in the range from 0 to 255, passed to the LED class driver.=
-
->> +  - default-brightness-level: the default brightness level (index int=
-o the
->> +      array defined by the "brightness-levels" property)
->> +  - power-supply: regulator for supply voltage
+>> +#include "leds.h"
+>> +
+>> +/* find OF node for the given led_cdev */
+>> +static struct device_node *find_led_of_node(struct led_classdev
+>> *led_cdev)
+>> +{
+>> +    struct device *led_dev =3D led_cdev->dev;
+>> +    struct device_node *child;
+>> +
+>> +    for_each_child_of_node(led_dev->parent->of_node, child) {
+>> +        if (of_property_match_string(child, "label", led_cdev->name)
+>> =3D=3D 0)
 >=20
-> Hi Tomi
->=20
-> Maybe this regulator should be optional? I could imagine blacklights
-> without one, in none power sensitive cases, e.g. industrial PC with a
-> touch screen display, train ticket machine, etc.
+> Line over 80 characters.
 
-Yes, I think so. Especially in this case as this led-backlight device is
-not exactly a specific HW device, but more of a virtual device.
+I don't like to split lines to exact 80 chars, when it makes the code
+more difficult to read. In this case it's 3 chars over 80, and splitting
+the function call above to two lines doesn't look nice to me.
+
+I'll do the func call separately, then it stays under 80 chars.
+
+>> +            return child;
+>> +    }
+>> +
+>> +    return NULL;
+>> +}
+>> +
+>> +static int led_match_led_node(struct device *led_dev, const void *dat=
+a)
+>> +{
+>> +    struct led_classdev *led_cdev =3D dev_get_drvdata(led_dev);
+>> +    const struct device_node *target_node =3D data;
+>> +    struct device_node *led_node;
+>> +
+>> +    led_node =3D find_led_of_node(led_cdev);
+>> +    if (!led_node)
+>> +        return 0;
+>> +
+>> +    of_node_put(led_node);
+>> +
+>> +    return led_node =3D=3D target_node ? 1 : 0;
+>=20
+> return led_node =3D=3D target_node;
+
+Again a matter of taste, but to me, =3D=3D returns a bool, whereas the ma=
+tch
+function here returns an int.
+
+But I'm fine with plain =3D=3D here.
 
  Tomi
 
 
---xsNXfj7kXXbxf44MxdWNtauAk8N77q7L8
+--v9ETHvUwUsOg7oXAluM1IDMpKfME1udSw
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -81,19 +124,19 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJV8Bw8AAoJEPo9qoy8lh71I1EP/iN9GLtI9guJq2BDj5nbwElY
-DLwFncpwaSq76ZDSrtX9nl4Q06njlMGB7hK9u2bFkqJcpGyxHo4vyeKuoknyHarD
-weHQdL4iu5cFgy7SJqVjqlq2yFzh/WdbS779AHQzKFjJ0dy+ztWHekljuchGIBt4
-bYgNwhAaZaP88cm3OCNw7aR4Ll3G67MqlZQmj2G1nI3FjDlDGax85CHf77akMcFj
-iwVYBZ9g8m9GvqF/XZAWE5MICDADgu3Tw3tajV3rOj2l/Bz/5HA0w1Mb+KfXaJaN
-YrWTrB1HDGj3c2Jjj1Q0X79xlsEFf77Z125Q+DMYoJJOSQ0L+10w+bsSexP4tNGE
-gWv0RhtHlATDhNIM0kzBydGZYom8C/fDTW0e3tP++/KR2OlVsLJ8B2S02xfqJMTt
-TNP54mQ31+5tdzutTP1vJs1sTKIH24pG0cS1iY+j/ZorhUseZutvLCFzyqT4lSAU
-6/UX4O9tA1oHp7ECJntNuOE05d2T5hlKopfoQLeI3XoDjQG+rh5776g5AFSn0kSp
-BqhLTuaZ39q7kJq+OGGOdW/ppsdNcxkAjNS/qrtEV7YRa4rk6BDAxzPL39BeyJ+L
-1SjUxLgWPaCz4LvGLfqwgpTPJkMW2UNFLN+xVxs9rjAB9aGvNdyU8Vh+I3m4G+LW
-j6b0knzmo9NokO8vw1Ih
-=0FfK
+iQIcBAEBCAAGBQJV8B9fAAoJEPo9qoy8lh71A78QAKYfgvXjwMuEUW3ayjZBjeWq
+qBLU5sMHDBL4lGBTqcIYCyd+QmLTv+GszcRdykrOVCVmJZjl+RrIsCJOJD47MrA6
+VI12fBCcXU9mTOxq/6zNLn5lTBI2fUOPJu4FHYxiGhU0R7yRR4vQPJkjhlcDADdV
+5PHUQmpLe+jsYaTN44T0n03a7JSXhWk3EK4uGVyOxKGOGZEZZcqXq7LjtbzNEMdO
+CM7OqHIAmSAAAPcZstCNobtQ9FQC3POso9qXf4zuVuG38wEffivBkIDmGD0wCPKy
+FTu+Sh+mUu8/1QFNtSSYGIXmMWEmNrVha/ZJbiNOODKnu+blsWhVpi995f+eGlXf
+cW4Gqwhp9iS0K0G18F25Cw0A462tYucvOU2rXz13MMYEMETy+NpsdTdXQ577i0x0
+Gzuo7bb778KPT0xavQw6lDvMcYZ1WrBKbxKlqcWaNq6dTBOYrzwmCj6wLF/Kfpzw
+RkzRB5bVr9tUl83TYcTYcLdNhGatFSbCB/vcuaWUGtg1PzkSJWhtkj3M6rOR+U5p
+iSX4wopsuy8slNTNhjaX63fTcwqkLiW8mDP1HNu7FLWVb3PNNg4YKb6WZxjekDPx
+2vrfhpK/tnkQTvb+dof6KJ23K7MA6R9YJBbWTfmO/9Z7M++65KrvBvK9DT1ICANy
+IcnZzxJnqCQEQLgyTwX3
+=4LTt
 -----END PGP SIGNATURE-----
 
---xsNXfj7kXXbxf44MxdWNtauAk8N77q7L8--
+--v9ETHvUwUsOg7oXAluM1IDMpKfME1udSw--
