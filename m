@@ -1,215 +1,86 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH 1/5] leds: core: Move LED core callbacks out of led-class.c
-Date: Wed, 16 Sep 2015 12:47:40 +0200
-Message-ID: <1442400464-27367-2-git-send-email-j.anaszewski@samsung.com>
-References: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, stsp@users.sourceforge.net, pavel@ucw.cz, ospite@studenti.unina.it, davem@davemloft.net, linus.walleij@linaro.org, ricardo.ribalda@gmail.com, p.meerwald@bct-electronic.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Petr Cvek <petr.cvek@tul.cz>
+Subject: [PATCH v3 00/26] ARM: pxa: magician: Rework HTC Magician support
+Date: Thu, 17 Sep 2015 06:53:42 +0200
+Message-ID: <55FA4756.9080309@tul.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bubo.tul.cz ([147.230.16.1]:36608 "EHLO bubo.tul.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751205AbbIQExw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 17 Sep 2015 00:53:52 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, lee.jones@linaro.org, sameo@linux.intel.com, dwmw2@infradead.org, arnd@arndb.de, g.liakhovetski@gmx.de
+Cc: linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Since the API for controlling LED brightness and blinking is defined in
-the LED core, move the related timer and work callbacks to the led-core.c,
-and initialize them through a new led_core_init API.
+This patchset will clean, fix, optimize and add multiple devices,
+which can be found on the HTC Magician machine.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
----
- drivers/leds/led-class.c |   69 +------------------------------------------
- drivers/leds/led-core.c  |   73 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/leds/leds.h      |    1 +
- 3 files changed, 75 insertions(+), 68 deletions(-)
+Platform data for the pasic3-leds driver has been removed, as this
+driver do not exist in the vanilla. And it is expected to be recreated
+in the future with an incompatible platform data structure.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index ca51d58..7385f98 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -102,70 +102,6 @@ static const struct attribute_group *led_groups[] = {
- 	NULL,
- };
- 
--static void led_timer_function(unsigned long data)
--{
--	struct led_classdev *led_cdev = (void *)data;
--	unsigned long brightness;
--	unsigned long delay;
--
--	if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
--		led_set_brightness_async(led_cdev, LED_OFF);
--		return;
--	}
--
--	if (led_cdev->flags & LED_BLINK_ONESHOT_STOP) {
--		led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
--		return;
--	}
--
--	brightness = led_get_brightness(led_cdev);
--	if (!brightness) {
--		/* Time to switch the LED on. */
--		if (led_cdev->delayed_set_value) {
--			led_cdev->blink_brightness =
--					led_cdev->delayed_set_value;
--			led_cdev->delayed_set_value = 0;
--		}
--		brightness = led_cdev->blink_brightness;
--		delay = led_cdev->blink_delay_on;
--	} else {
--		/* Store the current brightness value to be able
--		 * to restore it when the delay_off period is over.
--		 */
--		led_cdev->blink_brightness = brightness;
--		brightness = LED_OFF;
--		delay = led_cdev->blink_delay_off;
--	}
--
--	led_set_brightness_async(led_cdev, brightness);
--
--	/* Return in next iteration if led is in one-shot mode and we are in
--	 * the final blink state so that the led is toggled each delay_on +
--	 * delay_off milliseconds in worst case.
--	 */
--	if (led_cdev->flags & LED_BLINK_ONESHOT) {
--		if (led_cdev->flags & LED_BLINK_INVERT) {
--			if (brightness)
--				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
--		} else {
--			if (!brightness)
--				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
--		}
--	}
--
--	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
--}
--
--static void set_brightness_delayed(struct work_struct *ws)
--{
--	struct led_classdev *led_cdev =
--		container_of(ws, struct led_classdev, set_brightness_work);
--
--	led_stop_software_blink(led_cdev);
--
--	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
--}
--
- /**
-  * led_classdev_suspend - suspend an led_classdev.
-  * @led_cdev: the led_classdev to suspend.
-@@ -283,10 +219,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 
- 	led_update_brightness(led_cdev);
- 
--	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
--
--	setup_timer(&led_cdev->blink_timer, led_timer_function,
--		    (unsigned long)led_cdev);
-+	led_init_core(led_cdev);
- 
- #ifdef CONFIG_LEDS_TRIGGERS
- 	led_trigger_set_default(led_cdev);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 549de7e..2cb4e37 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -25,6 +25,70 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
- LIST_HEAD(leds_list);
- EXPORT_SYMBOL_GPL(leds_list);
- 
-+static void led_timer_function(unsigned long data)
-+{
-+	struct led_classdev *led_cdev = (void *)data;
-+	unsigned long brightness;
-+	unsigned long delay;
-+
-+	if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
-+		led_set_brightness_async(led_cdev, LED_OFF);
-+		return;
-+	}
-+
-+	if (led_cdev->flags & LED_BLINK_ONESHOT_STOP) {
-+		led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
-+		return;
-+	}
-+
-+	brightness = led_get_brightness(led_cdev);
-+	if (!brightness) {
-+		/* Time to switch the LED on. */
-+		if (led_cdev->delayed_set_value) {
-+			led_cdev->blink_brightness =
-+					led_cdev->delayed_set_value;
-+			led_cdev->delayed_set_value = 0;
-+		}
-+		brightness = led_cdev->blink_brightness;
-+		delay = led_cdev->blink_delay_on;
-+	} else {
-+		/* Store the current brightness value to be able
-+		 * to restore it when the delay_off period is over.
-+		 */
-+		led_cdev->blink_brightness = brightness;
-+		brightness = LED_OFF;
-+		delay = led_cdev->blink_delay_off;
-+	}
-+
-+	led_set_brightness_async(led_cdev, brightness);
-+
-+	/* Return in next iteration if led is in one-shot mode and we are in
-+	 * the final blink state so that the led is toggled each delay_on +
-+	 * delay_off milliseconds in worst case.
-+	 */
-+	if (led_cdev->flags & LED_BLINK_ONESHOT) {
-+		if (led_cdev->flags & LED_BLINK_INVERT) {
-+			if (brightness)
-+				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
-+		} else {
-+			if (!brightness)
-+				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
-+		}
-+	}
-+
-+	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
-+}
-+
-+static void set_brightness_delayed(struct work_struct *ws)
-+{
-+	struct led_classdev *led_cdev =
-+		container_of(ws, struct led_classdev, set_brightness_work);
-+
-+	led_stop_software_blink(led_cdev);
-+
-+	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
-+}
-+
- static void led_set_software_blink(struct led_classdev *led_cdev,
- 				   unsigned long delay_on,
- 				   unsigned long delay_off)
-@@ -72,6 +136,15 @@ static void led_blink_setup(struct led_classdev *led_cdev,
- 	led_set_software_blink(led_cdev, *delay_on, *delay_off);
- }
- 
-+void led_init_core(struct led_classdev *led_cdev)
-+{
-+	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
-+
-+	setup_timer(&led_cdev->blink_timer, led_timer_function,
-+		    (unsigned long)led_cdev);
-+}
-+EXPORT_SYMBOL(led_init_core);
-+
- void led_blink_set(struct led_classdev *led_cdev,
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index bc89d7a..4238fbc 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -44,6 +44,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
- 	return led_cdev->brightness;
- }
- 
-+void led_init_core(struct led_classdev *led_cdev);
- void led_stop_software_blink(struct led_classdev *led_cdev);
- 
- extern struct rw_semaphore leds_list_lock;
+Default setting of the Samsung LCD pixel clock period has been
+increased, so resulting frequency is 50Hz (original 117Hz). Period
+can be possibly incresed even more. At this moment there is no video
+player with IWMMXT support and software only versions cannot make it
+to 30fps. Frequency decreasing has a good impact to memory troughtput
+as LCD controller does not do as many memory bursts as at original
+speed. This was verified with the lat_mem_rd from the lmbench3.
+
+The Omnivision OV9640 camera has a problem with running on 400kHz
+of the I2C clock. It seems it freezes the bus until PXA I2C driver
+reload. Datasheet says it OK on 400kHz though. There may be some
+compatibility bug in the PXA I2C driver as Omnivision cameras often
+uses special I2C protocol (SCCB).
+
+Using the CPU frequency scaling (with help of an MAX1587A regulator)
+sometimes causes an SoC failure. It is probably related to the PXA27x
+erratum E37, E36, E80 or E89. Infreqent changes mostly works.
+
+STUART removal is a prepare for:
+
+	net: irda: pxaficp_ir: dmaengine conversion
+
+Function was tested on the board_id 0x3a version (specifically on
+the T-Mobile MDA compact).
+
+Petr Cvek (26):
+  ARM: pxa: magician: Fix indentation in machine files
+  ARM: pxa: magician: Change comments to be more informative
+  ARM: pxa: magician: Print more specific error message for global
+    GPIOs
+  ARM: pxa: magician: Optimize debug messages for LCD power
+  ARM: pxa: magician: Change description of LCD power GPIO
+  ARM: pxa: magician: Add new discovered EGPIO pins
+  ARM: pxa: magician: Fix HTC Magician pin mux definitions
+  ARM: pxa: magician: Rename abstract LCD GPIOs
+  ARM: pxa: magician: Optimize powerup delays for Samsung LCD
+  ARM: pxa: magician: Optimize Samsung LCD refresh to 50Hz
+  ARM: pxa: magician: Optimize EGPIO initial values
+  ARM: pxa: magician: Rename charger cable detection EGPIOs
+  ARM: pxa: magician: Fix and add charging detection functions
+  ARM: pxa: magician: Fix platform data for both PXA27x I2C controllers
+  ARM: pxa: magician: Fix redundant GPIO request for pxaficp_ir
+  ARM: pxa: magician: Fix support for Intel Strata NOR Flash
+  ARM: pxa: magician: Fix wrongly enabled USB host ports
+  ARM: pxa: magician: Add support for ADS7846
+  ARM: pxa: magician: Add support for Omnivision OV9640 camera
+  ARM: pxa: magician: Add support for MAX1587A Vcore regulator
+  ARM: pxa: magician: Add support for PXA27x UDC
+  ARM: pxa: magician: Remove pdata for pasic3-leds
+  ARM: pxa: magician: Remove definition of the STUART port
+  ARM: pxa: magician: Add debug message for backlight brightness
+    function
+  ARM: pxa: magician: Add missing regulator for PWM backlight
+  ARM: pxa: magician: Move platform_add_devices() to the end of
+    magician_init()
+
+ arch/arm/mach-pxa/include/mach/magician.h |  78 +--
+ arch/arm/mach-pxa/magician.c              | 907 +++++++++++++++++++++---------
+ 2 files changed, 682 insertions(+), 303 deletions(-)
+
 -- 
-1.7.9.5
+1.7.12.1
