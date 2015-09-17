@@ -1,50 +1,72 @@
-From: Petr Cvek <petr.cvek@tul.cz>
-Subject: [PATCH v3 15/26] ARM: pxa: magician: Fix redundant GPIO request for
- pxaficp_ir
-Date: Thu, 17 Sep 2015 06:59:54 +0200
-Message-ID: <55FA48CA.6000807@tul.cz>
-References: <cover.1442462898.git.petr.cvek@tul.cz>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 00/26] ARM: pxa: magician: Rework HTC Magician support
+Date: Thu, 17 Sep 2015 08:04:38 +0100
+Message-ID: <20150917070438.GC3218@x1>
+References: <55FA4756.9080309@tul.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bubo.tul.cz ([147.230.16.1]:37356 "EHLO bubo.tul.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751857AbbIQFAC (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 17 Sep 2015 01:00:02 -0400
-In-Reply-To: <cover.1442462898.git.petr.cvek@tul.cz>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:36563 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753552AbbIQHEn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 17 Sep 2015 03:04:43 -0400
+Received: by wicgb1 with SMTP id gb1so104158376wic.1
+        for <linux-leds@vger.kernel.org>; Thu, 17 Sep 2015 00:04:42 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <55FA4756.9080309@tul.cz>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, lee.jones@linaro.org, sameo@linux.intel.com, dwmw2@infradead.org, arnd@arndb.de, g.liakhovetski@gmx.de
-Cc: linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Petr Cvek <petr.cvek@tul.cz>
+Cc: robert.jarzmik@free.fr, philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, sameo@linux.intel.com, dwmw2@infradead.org, arnd@arndb.de, g.liakhovetski@gmx.de, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The pxaficp_ir driver requests a power GPIO for the transceiver internally,
-so a global GPIO allocation in magician_init() is redundant.
+On Thu, 17 Sep 2015, Petr Cvek wrote:
 
-Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
----
- arch/arm/mach-pxa/magician.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index 86d395d..91b5ed0 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -189,6 +189,7 @@ static unsigned long magician_pin_config[] __initdata = {
- static struct pxaficp_platform_data magician_ficp_info = {
- 	.gpio_pwdown		= GPIO83_MAGICIAN_nIR_EN,
- 	.transceiver_cap	= IR_SIRMODE | IR_OFF,
-+	.gpio_pwdown_inverted	= 0,
- };
- 
- /*
-@@ -854,7 +855,6 @@ static struct gpio magician_global_gpios[] = {
- 	{ GPIO106_MAGICIAN_LCD_DCDC_NRESET, GPIOF_OUT_INIT_LOW, "LCD DCDC nreset" },
- 	{ GPIO104_MAGICIAN_LCD_VOFF_EN, GPIOF_OUT_INIT_LOW, "LCD VOFF enable" },
- 	{ GPIO105_MAGICIAN_LCD_VON_EN, GPIOF_OUT_INIT_LOW, "LCD VON enable" },
--	{ GPIO83_MAGICIAN_nIR_EN, GPIOF_OUT_INIT_HIGH, "nIR_EN" },
- };
- 
- static void __init magician_init(void)
--- 
-1.7.12.1
+> Petr Cvek (26):
+>   ARM: pxa: magician: Fix indentation in machine files
+>   ARM: pxa: magician: Change comments to be more informative
+>   ARM: pxa: magician: Print more specific error message for global
+>     GPIOs
+>   ARM: pxa: magician: Optimize debug messages for LCD power
+>   ARM: pxa: magician: Change description of LCD power GPIO
+>   ARM: pxa: magician: Add new discovered EGPIO pins
+>   ARM: pxa: magician: Fix HTC Magician pin mux definitions
+>   ARM: pxa: magician: Rename abstract LCD GPIOs
+>   ARM: pxa: magician: Optimize powerup delays for Samsung LCD
+>   ARM: pxa: magician: Optimize Samsung LCD refresh to 50Hz
+>   ARM: pxa: magician: Optimize EGPIO initial values
+>   ARM: pxa: magician: Rename charger cable detection EGPIOs
+>   ARM: pxa: magician: Fix and add charging detection functions
+>   ARM: pxa: magician: Fix platform data for both PXA27x I2C controlle=
+rs
+>   ARM: pxa: magician: Fix redundant GPIO request for pxaficp_ir
+>   ARM: pxa: magician: Fix support for Intel Strata NOR Flash
+>   ARM: pxa: magician: Fix wrongly enabled USB host ports
+>   ARM: pxa: magician: Add support for ADS7846
+>   ARM: pxa: magician: Add support for Omnivision OV9640 camera
+>   ARM: pxa: magician: Add support for MAX1587A Vcore regulator
+>   ARM: pxa: magician: Add support for PXA27x UDC
+>   ARM: pxa: magician: Remove pdata for pasic3-leds
+>   ARM: pxa: magician: Remove definition of the STUART port
+>   ARM: pxa: magician: Add debug message for backlight brightness
+>     function
+>   ARM: pxa: magician: Add missing regulator for PWM backlight
+>   ARM: pxa: magician: Move platform_add_devices() to the end of
+>     magician_init()
+
+Why have you sent me 26 patches which have absolutely nothing to do
+with me?
+
+>  arch/arm/mach-pxa/include/mach/magician.h |  78 +--
+>  arch/arm/mach-pxa/magician.c              | 907 ++++++++++++++++++++=
++---------
+>  2 files changed, 682 insertions(+), 303 deletions(-)
+>=20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
