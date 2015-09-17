@@ -1,173 +1,77 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2] LED/MIPS: Move SEAD3 LED driver to where it belongs.
-Date: Thu, 17 Sep 2015 10:36:48 +0200
-Message-ID: <55FA7BA0.4080706@samsung.com>
-References: <20150803150401.GD2843@linux-mips.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH v4 0/3] Add DT support for netxbig LEDs
+Date: Thu, 17 Sep 2015 17:59:28 +0200
+Message-ID: <1442505571-9744-1-git-send-email-simon.guinot@sequanux.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11089 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753955AbbIQIgv (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 17 Sep 2015 04:36:51 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NUT00CV8BXDVN00@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 17 Sep 2015 09:36:49 +0100 (BST)
-In-reply-to: <20150803150401.GD2843@linux-mips.org>
+Received: from vm1.sequanux.org ([188.165.36.56]:58254 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751868AbbIQP7h (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 17 Sep 2015 11:59:37 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Markos Chandras <markos.chandras@imgtec.com>, linux-leds@vger.kernel.org, linux-mips@linux-mips.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Hi Ralf,
+Hello,
 
-This patch got stuck somewhere in my mailbox and just
-recently showed up to my eyes again, so I applied it to v4.3-rc1, but 
-when tried to compile-test it, I got following errors:
+This patch series adds DT support for the LEDs found on the Kirkwood-based
+LaCie boards 2Big and 5Big Network v2.
 
-arch/mips/kernel/signal.c: In function 'sc_to_extcontext':
-arch/mips/kernel/signal.c:143:12: error: 'struct ucontext' has no member 
-named 'uc_extcontext'
-   return &uc->uc_extcontext;
-             ^
-In file included from include/linux/poll.h:11:0,
-                  from include/linux/ring_buffer.h:7,
-                  from include/linux/trace_events.h:5,
-                  from include/trace/syscall.h:6,
-                  from include/linux/syscalls.h:81,
-                  from arch/mips/kernel/signal.c:26:
-arch/mips/kernel/signal.c: In function 'save_msa_extcontext':
-arch/mips/kernel/signal.c:171:40: error: dereferencing pointer to 
-incomplete type
-    err = __put_user(read_msa_csr(), &msa->csr);
-                                         ^
-./arch/mips/include/asm/uaccess.h:441:15: note: in definition of macro 
-'__put_user_nocheck'
-   __typeof__(*(ptr)) __pu_val;     \
-                ^
-arch/mips/kernel/signal.c:171:9: note: in expansion of macro '__put_user'
-    err = __put_user(read_msa_csr(), &msa->csr);
-          ^
-arch/mips/kernel/signal.c:171:40: error: dereferencing pointer to 
-incomplete type
-    err = __put_user(read_msa_csr(), &msa->csr);
-                                         ^
-./arch/mips/include/asm/uaccess.h:430:10: note: in definition of macro 
-'__put_user_common'
-   switch (size) {       \
-           ^
-./arch/mips/include/asm/uaccess.h:446:3: note: in expansion of macro 
-'__put_kernel_common'
-    __put_kernel_common(ptr, size);    \
-    ^
-./arch/mips/include/asm/uaccess.h:214:2: note: in expansion of macro 
-'__put_user_nocheck'
-   __put_user_nocheck((x), (ptr), sizeof(*(ptr)))
-   ^
-arch/mips/kernel/signal.c:171:9: note: in expansion of macro '__put_user'
-    err = __put_user(read_msa_csr(), &msa->csr);
-          ^
-arch/mips/kernel/signal.c:171:40: error: dereferencing pointer to 
-incomplete type
-    err = __put_user(read_msa_csr(), &msa->csr);
-                                         ^
-./arch/mips/include/asm/uaccess.h:241:51: note: in definition of macro '__m'
-  #define __m(x) (*(struct __large_struct __user *)(x))
-                                                    ^
--- cut listing here - it is much longer --
+Changes for v2:
+- Check timer mode value retrieved from DT.
+- In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
+  timer delay values from DT with function of_property_read_u32_index.
+  Instead, use a temporary u32 variable. This allows to silence a static
+  checker warning.
+- Make timer property optional in the binding documentation. It is now
+  aligned with the driver code.
 
+Changes for v3:
+- Fix pointer usage with the temporary u32 variable while calling
+  of_property_read_u32_index.
 
-Compilation succeeds with v4.2-rc8.
-Is it a known issue?
+Changes for v4:
+- In DT binding document netxbig-gpio-ext.txt, detail byte order for
+  registers and latch mechanism for "enable-gpio".
+- In leds-netxbig.c, add some error messages.
+- In leds-netxbig.c, fix some "sizeof" style issues.
+- In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
+  of_property_read_string() calls after the error-prone checks.
+- Add some Acked-by.
+
+Jacek,
+
+I did not convert the bright-max DT property into led-max-microamp.
+The reason is that I can't translate the bright-max values into
+microamperes. Therefore, it looks more consistent to keep the same
+naming prefix for the bright-addr and bright-max DT properties.
+
+Thanks,
+
+Simon
+
+Simon Guinot (3):
+  leds: netxbig: add device tree binding
+  ARM: Kirkwood: add LED DT entries for netxbig boards
+  ARM: mvebu: remove static LED setup for netxbig boards
+
+ .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+ .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
+ arch/arm/boot/dts/kirkwood-net5big.dts             |  60 +++++
+ arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++++
+ arch/arm/mach-mvebu/Kconfig                        |   7 -
+ arch/arm/mach-mvebu/Makefile                       |   1 -
+ arch/arm/mach-mvebu/board.h                        |  21 --
+ arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+ arch/arm/mach-mvebu/netxbig.c                      | 191 ---------------
+ drivers/leds/leds-netxbig.c                        | 258 +++++++++++++++++++--
+ include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+ 11 files changed, 509 insertions(+), 245 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+ delete mode 100644 arch/arm/mach-mvebu/board.h
+ delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+ create mode 100644 include/dt-bindings/leds/leds-netxbig.h
 
 -- 
-Best Regards,
-Jacek Anaszewski
-
-On 08/03/2015 05:04 PM, Ralf Baechle wrote:
-> Fixes the following randconfig problem
->
-> leds-sead3.c:(.text+0x7dc): undefined reference to `led_classdev_unregister'
-> leds-sead3.c:(.text+0x7e8): undefined reference to `led_classdev_unregister'
->
-> Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Markos Chandras <markos.chandras@imgtec.com>
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> ---
->   arch/mips/mti-sead3/Makefile                       |  2 --
->   drivers/leds/Kconfig                               | 10 ++++++++++
->   drivers/leds/Makefile                              |  1 +
->   {arch/mips/mti-sead3 => drivers/leds}/leds-sead3.c |  1 +
->   4 files changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/mips/mti-sead3/Makefile b/arch/mips/mti-sead3/Makefile
-> index 2e52cbd..7a584e0 100644
-> --- a/arch/mips/mti-sead3/Makefile
-> +++ b/arch/mips/mti-sead3/Makefile
-> @@ -12,6 +12,4 @@ obj-y				:= sead3-lcd.o sead3-display.o sead3-init.o \
->   				   sead3-int.o sead3-platform.o sead3-reset.o \
->   				   sead3-setup.o sead3-time.o
->
-> -obj-y				+= leds-sead3.o
-> -
->   obj-$(CONFIG_EARLY_PRINTK)	+= sead3-console.o
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 9ad35f7..531729c 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -550,6 +550,16 @@ config LEDS_KTD2692
->
->   	  Say Y to enable this driver.
->
-> +config LEDS_SEAD3
-> +	tristate "LED support for the MIPS SEAD 3 board"
-> +	depends on LEDS_CLASS && MIPS_SEAD3
-> +	help
-> +	  Say Y here to include support for the FLED and PLED LEDs on SEAD3 eval
-> +	  boards.
-> +
-> +	  This driver can also be built as a module. If so the module
-> +	  will be called leds-sead3.
-> +
->   comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
->
->   config LEDS_BLINKM
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 8d6a24a..a976161 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
->   obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
->   obj-$(CONFIG_LEDS_PM8941_WLED)		+= leds-pm8941-wled.o
->   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
-> +obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
->
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/arch/mips/mti-sead3/leds-sead3.c b/drivers/leds/leds-sead3.c
-> similarity index 99%
-> rename from arch/mips/mti-sead3/leds-sead3.c
-> rename to drivers/leds/leds-sead3.c
-> index c938cee..eb97a32 100644
-> --- a/arch/mips/mti-sead3/leds-sead3.c
-> +++ b/drivers/leds/leds-sead3.c
-> @@ -59,6 +59,7 @@ static int sead3_led_remove(struct platform_device *pdev)
->   {
->   	led_classdev_unregister(&sead3_pled);
->   	led_classdev_unregister(&sead3_fled);
-> +
->   	return 0;
->   }
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+2.1.4
