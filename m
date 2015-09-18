@@ -1,278 +1,57 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 1/3] leds: netxbig: add device tree binding
-Date: Fri, 18 Sep 2015 12:49:28 +0200
-Message-ID: <55FBEC38.6020209@samsung.com>
-References: <1442505571-9744-1-git-send-email-simon.guinot@sequanux.org>
- <1442505571-9744-2-git-send-email-simon.guinot@sequanux.org>
- <55FBD679.2020402@samsung.com> <20150918103006.GM7306@kw.sim.vm.gnt>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15986 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752450AbbIRKtd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 18 Sep 2015 06:49:33 -0400
-In-reply-to: <20150918103006.GM7306@kw.sim.vm.gnt>
-Sender: linux-leds-owner@vger.kernel.org
+Subject: [GIT PULL] LED subsystem fixes for v4.3-rc2
+Date: Fri, 18 Sep 2015 13:16:47 +0200
+Message-ID: <1442575007-18191-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On 09/18/2015 12:30 PM, Simon Guinot wrote:
-> On Fri, Sep 18, 2015 at 11:16:41AM +0200, Jacek Anaszewski wrote:
->> Hi Simon,
->>
->> Please find my comments in the code below.
->
-> Hi Jacek,
->
-> Thanks for the quick review.
+Hi Linus,
 
-You're welcome.
+Please consider pulling LED subsystem fixes for v4.3-rc2.
 
->>
->> On 09/17/2015 05:59 PM, Simon Guinot wrote:
->>> This patch adds device tree support for the netxbig LEDs.
->>>
->>> This also introduces a additionnal DT binding for the GPIO extension bus
->>> (netxbig-gpio-ext) used to configure the LEDs. Since this bus could also
->>> be used to control other devices, then it seems more suitable to have it
->>> in a separate DT binding.
->>>
->>> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
->>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>> ---
->>>   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
->>>   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
->>>   drivers/leds/leds-netxbig.c                        | 258 +++++++++++++++++++--
->>>   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
->>>   4 files changed, 369 insertions(+), 21 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
->>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
->>>   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
->>>
->>> Changes for v2:
->>> - Check timer mode value retrieved from DT.
->>> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
->>>    timer delay values from DT with function of_property_read_u32_index.
->>>    Instead, use a temporary u32 variable. This allows to silence a static
->>>    checker warning.
->>> - Make timer property optional in the binding documentation. It is now
->>>    aligned with the driver code.
->>>
->>> Changes for v3:
->>> - Fix pointer usage with the temporary u32 variable while calling
->>>    of_property_read_u32_index.
->>>
->>> Changes for v4:
->>> - In DT binding document netxbig-gpio-ext.txt, detail byte order for
->>>    registers and latch mechanism for "enable-gpio".
->>> - In leds-netxbig.c, add some error messages.
->>> - In leds-netxbig.c, fix some "sizeof" style issues.
->>> - In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
->>>    of_property_read_string() calls after the error-prone checks.
->>> - Add some Acked-by.
->
-> ...
->
->>> +#ifdef CONFIG_OF_GPIO
->>> +static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
->>> +				 struct netxbig_gpio_ext *gpio_ext)
->>> +{
->>> +	int *addr, *data;
->>> +	int num_addr, num_data;
->>> +	int ret;
->>> +	int i;
->>> +
->>> +	ret = of_gpio_named_count(np, "addr-gpios");
->>> +	if (ret < 0) {
->>> +		dev_err(dev,
->>> +			"Failed to count GPIOs in DT property addr-gpios\n");
->>> +		return ret;
->>> +	}
->>> +	num_addr = ret;
->>> +	addr = devm_kzalloc(dev, num_addr * sizeof(*addr), GFP_KERNEL);
->>> +	if (!addr)
->>> +		return -ENOMEM;
->>> +
->>> +	for (i = 0; i < num_addr; i++) {
->>> +		ret = of_get_named_gpio(np, "addr-gpios", i);
->>> +		if (ret < 0)
->>> +			return ret;
->>> +		addr[i] = ret;
->>> +	}
->>> +	gpio_ext->addr = addr;
->>> +	gpio_ext->num_addr = num_addr;
->>> +
->>> +	ret = of_gpio_named_count(np, "data-gpios");
->>> +	if (ret < 0) {
->>> +		dev_err(dev,
->>> +			"Failed to count GPIOs in DT property data-gpios\n");
->>> +		return ret;
->>> +	}
->>> +	num_data = ret;
->>> +	data = devm_kzalloc(dev, num_data * sizeof(*data), GFP_KERNEL);
->>> +	if (!data)
->>> +		return -ENOMEM;
->>> +
->>> +	for (i = 0; i < num_data; i++) {
->>> +		ret = of_get_named_gpio(np, "data-gpios", i);
->>> +		if (ret < 0)
->>> +			return ret;
->>> +		data[i] = ret;
->>> +	}
->>> +	gpio_ext->data = data;
->>> +	gpio_ext->num_data = num_data;
->>> +
->>> +	ret = of_get_named_gpio(np, "enable-gpio", 0);
->>> +	if (ret < 0) {
->>> +		dev_err(dev,
->>> +			"Failed to get GPIO from DT property enable-gpio\n");
->>> +		return ret;
->>> +	}
->>> +	gpio_ext->enable = ret;
->>> +
->>> +	return 0;
->>> +}
->>
->> Since netxbig-gpio-ext extension bus can be also used to control other
->> device, and the related DT bindings are meant for GPIO subsystem, then
->> the above parser should also be placed there to make it available
->> for reuse by other drivers. The gpio_ext_init function should be also
->> moved to GPIO subsystem, presumably to the same module.
->
-> Yes, this patch series is a first step. I am planning to move the
-> netxbig-gpio-ext extension bus into a dedicated driver as soon as I need
-> need it for an another device/driver. But for the time being, I was
-> planning to keep it here. If you agree with that of course.
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
-ack.
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
 
->>
->> Moreover, if you switched to using devm* prefixed version of
->> gpio_request_one and led_classdev_reqister, you could simplify
->> the error paths in the driver.
->
-> Yes, I have a pending patch for this conversion. But since it is not
-> really related with the subject of this patch series (add DT support),
-> I was planning to send it next.
->
-> Do you want me to include this patch into this series.
+are available in the git repository at:
 
-Why not, if you have it ready to go. If it needs some polishing,
-we can live with what we have now.
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-v4.3-rc2
 
->>
->>> +static int netxbig_leds_get_of_pdata(struct device *dev,
->>> +				     struct netxbig_led_platform_data *pdata)
->>> +{
->>> +	struct device_node *np = dev->of_node;
->>> +	struct device_node *gpio_ext_np;
->>> +	struct device_node *child;
->>> +	struct netxbig_gpio_ext *gpio_ext;
->>> +	struct netxbig_led_timer *timers;
->>> +	struct netxbig_led *leds, *led;
->>> +	int num_timers;
->>> +	int num_leds = 0;
->>> +	int ret;
->>> +	int i;
->
-> ...
->
->>> +	led = leds;
->>> +	for_each_child_of_node(np, child) {
->>> +		const char *string;
->>> +		int *mode_val;
->>> +		int num_modes;
->>> +
->>> +		if (of_property_read_u32(child, "mode-addr",
->>> +					 &led->mode_addr))
->>> +			return -EINVAL;
->>> +
->>> +		if (of_property_read_u32(child, "bright-addr",
->>> +					 &led->bright_addr))
->>> +			return -EINVAL;
->>
->> You don't parse bright-max DT property anywhere, AFAICT.
->
-> Yes I don't. I have added this bright-max property thinking ahead of
-> moving the netxbig-gpio-ext stuff into a dedicated driver. For now, it
-> is possible to compute bright-max from the number of data GPIOs of the
-> extension bus. But once it will be removed something else will be
-> needed. That's why I introduced this property.
->
-> But now, I am thinking I should have used this property right now. It
-> will be more convenient when moving the netxbig-gpio-ext code out.
->
-> I'll do that for the next round.
+for you to fetch changes up to 2338f73d407d5abe2036d92716ba25ef5279c3d2:
 
-Thanks.
+  leds:lp55xx: Correct Kconfig dependency for f/w user helper (2015-09-17 10:02:20 +0200)
 
->>
->>> +		mode_val =
->>> +			devm_kzalloc(dev,
->>> +				     NETXBIG_LED_MODE_NUM * sizeof(*mode_val),
->>> +				     GFP_KERNEL);
->>> +		if (!mode_val)
->>> +			return -ENOMEM;
->>> +
->>> +		for (i = 0; i < NETXBIG_LED_MODE_NUM; i++)
->>> +			mode_val[i] = NETXBIG_LED_INVALID_MODE;
->>> +
->>> +		ret = of_property_count_u32_elems(child, "mode-val");
->>> +		if (ret < 0 || ret % 2)
->>> +			return -EINVAL;
->>> +		num_modes = ret / 2;
->>> +		if (num_modes > NETXBIG_LED_MODE_NUM)
->>> +			return -EINVAL;
->>> +
->>> +		for (i = 0; i < num_modes; i++) {
->>> +			int mode;
->>> +			int val;
->>> +
->>> +			of_property_read_u32_index(child,
->>> +						   "mode-val", 2 * i, &mode);
->>> +			of_property_read_u32_index(child,
->>> +						   "mode-val", 2 * i + 1, &val);
->>> +			if (mode >= NETXBIG_LED_MODE_NUM)
->>> +				return -EINVAL;
->>> +			mode_val[mode] = val;
->>> +		}
->>> +		led->mode_val = mode_val;
->>> +
->>> +		if (!of_property_read_string(child, "label", &string))
->>> +			led->name = string;
->>> +		else
->>> +			led->name = child->name;
->>> +
->>> +		if (!of_property_read_string(child,
->>> +					     "linux,default-trigger", &string))
->>> +			led->default_trigger = string;
->>> +
->>> +		led++;
->>> +	}
->>> +
->>> +	pdata->leds = leds;
->>> +	pdata->num_leds = num_leds;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct of_device_id of_netxbig_leds_match[] = {
->>> +	{ .compatible = "lacie,netxbig-leds", },
->>> +	{},
->>> +};
->>> +#else
->>> +static int netxbig_leds_get_of_pdata(struct device *dev,
->>> +				     struct netxbig_led_platform_data *pdata)
->>
->> s/static int/static inline int/
->
-> Is that not already the case with modern compiler ?
+----------------------------------------------------------------
+- fix module autoload for six OF platform drivers
+  (aat1290, bcm6328, bcm6358, ktd2692, max77693, ns2)
+- aat1290: add missing static modifier
+- ipaq-micro: add missing LEDS_CLASS dependency
+- lp55xx: correct Kconfig dependecy for f/w user helper
 
-Could you elaborate on this?
+----------------------------------------------------------------
+Jacek Anaszewski (2):
+      leds: aat1290: add 'static' modifier to init_mm_current_scale
+      leds: leds-ipaq-micro: Add LEDS_CLASS dependency
 
--- 
-Best Regards,
-Jacek Anaszewski
+Luis de Bethencourt (6):
+      leds: aat1290: Fix module autoload for OF platform driver
+      leds: bcm6328: Fix module autoload for OF platform driver
+      leds: bcm6358: Fix module autoload for OF platform driver
+      leds: ktd2692: Fix module autoload for OF platform driver
+      leds: max77693: Fix module autoload for OF platform driver
+      leds: leds-ns2: Fix module autoload for OF platform driver
+
+Takashi Iwai (1):
+      leds:lp55xx: Correct Kconfig dependency for f/w user helper
+
+ drivers/leds/Kconfig         |    3 ++-
+ drivers/leds/leds-aat1290.c  |    3 ++-
+ drivers/leds/leds-bcm6328.c  |    1 +
+ drivers/leds/leds-bcm6358.c  |    1 +
+ drivers/leds/leds-ktd2692.c  |    1 +
+ drivers/leds/leds-max77693.c |    1 +
+ drivers/leds/leds-ns2.c      |    1 +
+ 7 files changed, 9 insertions(+), 2 deletions(-)
