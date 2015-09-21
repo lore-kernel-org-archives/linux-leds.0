@@ -1,183 +1,114 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
- brightness setting
-Date: Mon, 21 Sep 2015 16:29:26 +0200
-Message-ID: <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH 5/5] leds: ktd2692: Remove work queue
+Date: Mon, 21 Sep 2015 16:29:30 +0200
+Message-ID: <1442845770-17800-6-git-send-email-j.anaszewski@samsung.com>
 References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, Jacek Anaszewski <j.anaszewski@samsung.com>, Ingi Kim <ingi2.kim@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch removes SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS flags.
-led_set_brightness now calls led_set_brightness_nosleep instead of
-choosing between sync and async op basing on the flags defined by the
-driver.
-
->From now on, if a user wants to make sure that brightness will be set
-synchronously, they have to use led_set_brightness_sync API. It is now
-being made publicly available since it has become apparent that it is
-a caller who should decide whether brightness is to be set in
-a synchronous or an asynchronous way.
+Now the core implements the work queue, remove it from the drivers,
+and switch to using brightness_set_blocking op.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Ingi Kim <ingi2.kim@samsung.com>
 ---
- drivers/leds/led-class-flash.c |    4 ----
- drivers/leds/led-class.c       |    2 --
- drivers/leds/led-core.c        |   33 +++++++++++++++++++--------------
- drivers/leds/leds.h            |   13 -------------
- include/linux/leds.h           |   19 ++++++++++++++++---
- 5 files changed, 35 insertions(+), 36 deletions(-)
+ drivers/leds/leds-ktd2692.c |   41 ++++++-----------------------------------
+ 1 file changed, 6 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-index 300a2c9..f53783b 100644
---- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -316,10 +316,6 @@ int led_classdev_flash_register(struct device *parent,
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index 4c14bed..d70af1a 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -18,7 +18,6 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/workqueue.h>
  
--	/* Setting a torch brightness needs to have immediate effect */
--	led_cdev->flags &= ~SET_BRIGHTNESS_ASYNC;
--	led_cdev->flags |= SET_BRIGHTNESS_SYNC;
--
- 	return 0;
+ /* Value related the movie mode */
+ #define KTD2692_MOVIE_MODE_CURRENT_LEVELS	16
+@@ -82,7 +81,6 @@ struct ktd2692_context {
+ 	/* secures access to the device */
+ 	struct mutex lock;
+ 	struct regulator *regulator;
+-	struct work_struct work_brightness_set;
+ 
+ 	struct gpio_desc *aux_gpio;
+ 	struct gpio_desc *ctrl_gpio;
+@@ -158,9 +156,12 @@ static void ktd2692_expresswire_write(struct ktd2692_context *led, u8 value)
+ 	ktd2692_expresswire_end(led);
  }
- EXPORT_SYMBOL_GPL(led_classdev_flash_register);
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 7385f98..37eec1a 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -215,8 +215,6 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 	if (!led_cdev->max_brightness)
- 		led_cdev->max_brightness = LED_FULL;
  
--	led_cdev->flags |= SET_BRIGHTNESS_ASYNC;
--
- 	led_update_brightness(led_cdev);
- 
- 	led_init_core(led_cdev);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index d8649f1..d0eb838 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -215,8 +215,6 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
- void led_set_brightness(struct led_classdev *led_cdev,
- 			enum led_brightness brightness)
+-static void ktd2692_brightness_set(struct ktd2692_context *led,
+-				   enum led_brightness brightness)
++static int ktd2692_led_brightness_set(struct led_classdev *led_cdev,
++				       enum led_brightness brightness)
  {
--	int ret = 0;
--
- 	/*
- 	 * In case blinking is on delay brightness setting
- 	 * until the next timer tick.
-@@ -235,19 +233,9 @@ void led_set_brightness(struct led_classdev *led_cdev,
- 			led_cdev->blink_brightness = brightness;
- 		}
- 		return;
--	}
--
--	if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
-+	} else {
- 		led_set_brightness_nosleep(led_cdev, brightness);
--		return;
--	} else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
--		ret = led_set_brightness_sync(led_cdev, brightness);
--	else
--		ret = -EINVAL;
--
--	if (ret < 0)
--		dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
--			ret);
-+	}
- }
- EXPORT_SYMBOL(led_set_brightness);
++	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
++	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
++
+ 	mutex_lock(&led->lock);
  
-@@ -269,6 +257,23 @@ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
- }
- EXPORT_SYMBOL(led_set_brightness_nosleep);
+ 	if (brightness == LED_OFF) {
+@@ -174,33 +175,6 @@ static void ktd2692_brightness_set(struct ktd2692_context *led,
  
-+int led_set_brightness_sync(struct led_classdev *led_cdev,
-+			    enum led_brightness value)
-+{
-+	WARN_ON(led_cdev->blink_delay_on || led_cdev->blink_delay_off);
-+
-+	led_cdev->brightness = min(value, led_cdev->max_brightness);
-+
-+	if (led_cdev->flags & LED_SUSPENDED)
-+		return 0;
-+
-+	if (led_cdev->brightness_set_blocking)
-+		return led_cdev->brightness_set_blocking(led_cdev,
-+							 led_cdev->brightness);
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL(led_set_brightness_sync);
-+
- int led_update_brightness(struct led_classdev *led_cdev)
- {
- 	int ret = 0;
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 04b8e41..62d9eba 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -16,19 +16,6 @@
- #include <linux/rwsem.h>
- #include <linux/leds.h>
- 
--static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
--					enum led_brightness value)
--{
--	int ret = 0;
--
--	led_cdev->brightness = min(value, led_cdev->max_brightness);
--
--	if (!(led_cdev->flags & LED_SUSPENDED))
--		ret = led_cdev->brightness_set_blocking(led_cdev,
--						led_cdev->brightness);
--	return ret;
+ 	ktd2692_expresswire_write(led, led->mode | KTD2692_REG_MODE_BASE);
+ 	mutex_unlock(&led->lock);
 -}
 -
- static inline int led_get_brightness(struct led_classdev *led_cdev)
- {
- 	return led_cdev->brightness;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ae3c178..2019929 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -47,9 +47,7 @@ struct led_classdev {
- #define LED_BLINK_CHANGE	(1 << 20)
- #define LED_BLINK_DISABLE	(1 << 21)
- #define LED_SYSFS_DISABLE	(1 << 22)
--#define SET_BRIGHTNESS_ASYNC	(1 << 23)
--#define SET_BRIGHTNESS_SYNC	(1 << 24)
--#define LED_DEV_CAP_FLASH	(1 << 25)
-+#define LED_DEV_CAP_FLASH	(1 << 23)
+-static void ktd2692_brightness_set_work(struct work_struct *work)
+-{
+-	struct ktd2692_context *led =
+-		container_of(work, struct ktd2692_context, work_brightness_set);
+-
+-	ktd2692_brightness_set(led, led->torch_brightness);
+-}
+-
+-static void ktd2692_led_brightness_set(struct led_classdev *led_cdev,
+-				       enum led_brightness brightness)
+-{
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
+-
+-	led->torch_brightness = brightness;
+-	schedule_work(&led->work_brightness_set);
+-}
+-
+-static int ktd2692_led_brightness_set_sync(struct led_classdev *led_cdev,
+-					   enum led_brightness brightness)
+-{
+-	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+-	struct ktd2692_context *led = fled_cdev_to_led(fled_cdev);
+-
+-	ktd2692_brightness_set(led, brightness);
  
- 	/* Set LED brightness level */
- 	/* Must not sleep, use a workqueue if needed */
-@@ -159,6 +157,21 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
-  */
- extern void led_set_brightness(struct led_classdev *led_cdev,
- 			       enum led_brightness brightness);
-+
-+/**
-+ * led_set_brightness_sync - set LED brightness synchronously
-+ * @led_cdev: the LED to set
-+ * @brightness: the brightness to set it to
-+ *
-+ * Set an LED's brightness immediately. This function will block
-+ * the caller for the time required for accessing device register,
-+ * and it can sleep.
-+ *
-+ * Returns: 0 on success or negative error value on failure
-+ */
-+extern int led_set_brightness_sync(struct led_classdev *led_cdev,
-+				   enum led_brightness value);
-+
- /**
-  * led_update_brightness - update LED brightness
-  * @led_cdev: the LED to query
+ 	return 0;
+ }
+@@ -381,12 +355,10 @@ static int ktd2692_probe(struct platform_device *pdev)
+ 	fled_cdev->ops = &flash_ops;
+ 
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+-	led_cdev->brightness_set = ktd2692_led_brightness_set;
+-	led_cdev->brightness_set_blocking = ktd2692_led_brightness_set_sync;
++	led_cdev->brightness_set_blocking = ktd2692_led_brightness_set;
+ 	led_cdev->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
+ 
+ 	mutex_init(&led->lock);
+-	INIT_WORK(&led->work_brightness_set, ktd2692_brightness_set_work);
+ 
+ 	platform_set_drvdata(pdev, led);
+ 
+@@ -408,7 +380,6 @@ static int ktd2692_remove(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	led_classdev_flash_unregister(&led->fled_cdev);
+-	cancel_work_sync(&led->work_brightness_set);
+ 
+ 	if (led->regulator) {
+ 		ret = regulator_disable(led->regulator);
 -- 
 1.7.9.5
