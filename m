@@ -1,55 +1,48 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH 2/5] Documentation: leds: Add description of brightness setting
- API
-Date: Mon, 21 Sep 2015 16:29:27 +0200
-Message-ID: <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
-References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v3 01/12] pwm: introduce default period and polarity concepts
+Date: Mon, 21 Sep 2015 20:20:29 +0200
+Message-ID: <877fnjr5w2.fsf@belgarion.home>
+References: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1442828009-6241-2-git-send-email-boris.brezillon@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:21592 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756633AbbIUSZh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 14:25:37 -0400
+In-Reply-To: <1442828009-6241-2-git-send-email-boris.brezillon@free-electrons.com>
+	(Boris Brezillon's message of "Mon, 21 Sep 2015 11:33:18 +0200")
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-sunxi@googlegroups.com, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@google.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
-This patch adds description of the LED subsystem API for
-setting an LED brightness.
+Boris Brezillon <boris.brezillon@free-electrons.com> writes:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
----
- Documentation/leds/leds-class.txt |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> When requested by a user, the PWM is assigned a default period and polarity
+> extracted from the DT, the platform data or statically set by the driver.
+> Those default values are currently stored in the period and polarity
+> fields of the pwm_device struct, but they will be stored somewhere else
+> once we have introduced the architecture allowing for hardware state
+> retrieval.
+>
+> The pwm_set_default_polarity and pwm_set_default_period should only be
+> used by PWM drivers or the PWM core infrastructure to specify the
+> default period and polarity values.
+>
+> PWM users might call the pwm_get_default_period to query the default
+> period value. There is currently no helper to query the default
+> polarity, but it might be added later on if there is a need for it.
+>
+> This patch also modifies all the places where the default helpers should
+> be used in place of the standard ones.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+For pwm-pxa.c :
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index 62261c0..2cc38fa 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -52,6 +52,27 @@ above leaves scope for further attributes should they be needed. If sections
- of the name don't apply, just leave that section blank.
- 
- 
-+Brightness setting API
-+======================
-+
-+LED subsystem core exposes following API for setting brightness:
-+
-+    - led_set_brightness : if necessary, cancels the software blink timer that
-+		implements blinking when the hardware doesn't; it is guaranteed
-+		not to sleep, which implies the possibility of delegating the
-+		job to a work queue task (uses led_set_brightness_nosleep
-+		underneath - see below),
-+    - led_set_brightness_sync : for use cases when immediate effect is desired;
-+		it can block the caller for the time required for accessing
-+		device registers and can sleep,
-+    - led_set_brightness_nosleep : sets an LEDs brightness using either
-+		brightness_set op, which is guaranteed not to sleep, or, if only
-+		brightness_set_blocking op is available, delegates it to a work
-+		queue task; this API is inteded for use by LED core and
-+		led-triggers, as they can be called from atomic context, and thus
-+		cannot sleep.
-+
-+
- Hardware accelerated blink of LEDs
- ==================================
- 
--- 
-1.7.9.5
+Cheers.
+
+--
+Robert
