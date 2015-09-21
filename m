@@ -1,48 +1,125 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v3 01/12] pwm: introduce default period and polarity concepts
-Date: Mon, 21 Sep 2015 20:20:29 +0200
-Message-ID: <877fnjr5w2.fsf@belgarion.home>
-References: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1442828009-6241-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/3] leds: netxbig: add device tree binding
+Date: Mon, 21 Sep 2015 10:38:45 -0500
+Message-ID: <56002485.7030802@kernel.org>
+References: <1442505571-9744-1-git-send-email-simon.guinot@sequanux.org>
+ <1442505571-9744-2-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:21592 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756633AbbIUSZh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 14:25:37 -0400
-In-Reply-To: <1442828009-6241-2-git-send-email-boris.brezillon@free-electrons.com>
-	(Boris Brezillon's message of "Mon, 21 Sep 2015 11:33:18 +0200")
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34694 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756606AbbIUTDO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 15:03:14 -0400
+In-Reply-To: <1442505571-9744-2-git-send-email-simon.guinot@sequanux.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-sunxi@googlegroups.com, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@google.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Boris Brezillon <boris.brezillon@free-electrons.com> writes:
+On 09/17/2015 10:59 AM, Simon Guinot wrote:
+> This patch adds device tree support for the netxbig LEDs.
+> 
+> This also introduces a additionnal DT binding for the GPIO extension bus
+> (netxbig-gpio-ext) used to configure the LEDs. Since this bus could also
+> be used to control other devices, then it seems more suitable to have it
+> in a separate DT binding.
+> 
+> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+>  .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
+>  drivers/leds/leds-netxbig.c                        | 258 +++++++++++++++++++--
+>  include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+>  4 files changed, 369 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+>  create mode 100644 include/dt-bindings/leds/leds-netxbig.h
+> 
+> Changes for v2:
+> - Check timer mode value retrieved from DT.
+> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
+>   timer delay values from DT with function of_property_read_u32_index.
+>   Instead, use a temporary u32 variable. This allows to silence a static
+>   checker warning.
+> - Make timer property optional in the binding documentation. It is now
+>   aligned with the driver code.
+> 
+> Changes for v3:
+> - Fix pointer usage with the temporary u32 variable while calling
+>   of_property_read_u32_index.
+> 
+> Changes for v4:
+> - In DT binding document netxbig-gpio-ext.txt, detail byte order for
+>   registers and latch mechanism for "enable-gpio".
+> - In leds-netxbig.c, add some error messages.
+> - In leds-netxbig.c, fix some "sizeof" style issues.
+> - In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
+>   of_property_read_string() calls after the error-prone checks.
+> - Add some Acked-by.
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt b/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+> new file mode 100644
+> index 000000000000..50ec2e690701
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+> @@ -0,0 +1,22 @@
+> +Binding for the GPIO extension bus found on some LaCie/Seagate boards
+> +(Example: 2Big/5Big Network v2, 2Big NAS).
+> +
+> +Required properties:
+> +- compatible: "lacie,netxbig-gpio-ext".
+> +- addr-gpios: GPIOs representing the address register (LSB -> MSB).
+> +- data-gpios: GPIOs representing the data register (LSB -> MSB).
+> +- enable-gpio: latches the new configuration (address, data) on raising edge.
+> +
+> +Example:
+> +
+> +netxbig_gpio_ext: netxbig-gpio-ext {
+> +	compatible = "lacie,netxbig-gpio-ext";
+> +
+> +	addr-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH
+> +		      &gpio1 16 GPIO_ACTIVE_HIGH
+> +		      &gpio1 17 GPIO_ACTIVE_HIGH>;
+> +	data-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH
+> +		      &gpio1 13 GPIO_ACTIVE_HIGH
+> +		      &gpio1 14 GPIO_ACTIVE_HIGH>;
+> +	enable-gpio = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+> +};
+> diff --git a/Documentation/devicetree/bindings/leds/leds-netxbig.txt b/Documentation/devicetree/bindings/leds/leds-netxbig.txt
+> new file mode 100644
+> index 000000000000..efadbecbfeb9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-netxbig.txt
+> @@ -0,0 +1,92 @@
+> +Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seagate
+> +boards (Example: 2Big/5Big Network v2, 2Big NAS).
+> +
+> +Required properties:
+> +- compatible: "lacie,netxbig-leds".
+> +- gpio-ext: Phandle for the gpio-ext bus.
 
-> When requested by a user, the PWM is assigned a default period and polarity
-> extracted from the DT, the platform data or statically set by the driver.
-> Those default values are currently stored in the period and polarity
-> fields of the pwm_device struct, but they will be stored somewhere else
-> once we have introduced the architecture allowing for hardware state
-> retrieval.
->
-> The pwm_set_default_polarity and pwm_set_default_period should only be
-> used by PWM drivers or the PWM core infrastructure to specify the
-> default period and polarity values.
->
-> PWM users might call the pwm_get_default_period to query the default
-> period value. There is currently no helper to query the default
-> polarity, but it might be added later on if there is a need for it.
->
-> This patch also modifies all the places where the default helpers should
-> be used in place of the standard ones.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-For pwm-pxa.c :
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Would being a subnode of gpio-ext work instead?
 
-Cheers.
+> +
+> +Optional properties:
+> +- timers: Timer array. Each timer entry is represented by three integers:
+> +  Mode (gpio-ext bus), delay_on and delay_off.
+> +
+> +Each LED is represented as a sub-node of the netxbig-leds device.
+> +
+> +Required sub-node properties:
+> +- mode-addr: Mode register address on gpio-ext bus.
+> +- mode-val: Mode to value mapping. Each entry is represented by two integers:
+> +  A mode and the corresponding value on the gpio-ext bus.
 
---
-Robert
+I somewhat wonder if this is too low level and should just be in the
+driver instead. I guess with only 3 addr and data lines, it is okay. It
+wouldn't scale to a large number of registers though.
+
+> +- bright-addr: Brightness register address on gpio-ext bus.
+> +- bright-max: Maximum brightness value.
+
+We already have a somewhat standard max-brightness property.
