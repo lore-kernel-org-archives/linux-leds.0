@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH 4/5] leds: aat1290: Remove work queue
-Date: Mon, 21 Sep 2015 16:29:29 +0200
-Message-ID: <1442845770-17800-5-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH 3/5] leds: max77693: Remove work queue
+Date: Mon, 21 Sep 2015 16:29:28 +0200
+Message-ID: <1442845770-17800-4-git-send-email-j.anaszewski@samsung.com>
 References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
@@ -15,115 +15,124 @@ and switch to using brightness_set_blocking op.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/leds-aat1290.c |   50 +++++++++++--------------------------------
- 1 file changed, 13 insertions(+), 37 deletions(-)
+ drivers/leds/leds-max77693.c |   57 +++++++-----------------------------------
+ 1 file changed, 9 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index 4bff3b5..d802fbb 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -20,7 +20,6 @@
- #include <linux/pinctrl/consumer.h>
+diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+index f69bcb4..28f3d05 100644
+--- a/drivers/leds/leds-max77693.c
++++ b/drivers/leds/leds-max77693.c
+@@ -19,7 +19,6 @@
  #include <linux/platform_device.h>
+ #include <linux/regmap.h>
  #include <linux/slab.h>
 -#include <linux/workqueue.h>
  #include <media/v4l2-flash-led-class.h>
  
- #define AAT1290_MOVIE_MODE_CURRENT_ADDR	17
-@@ -82,8 +81,6 @@ struct aat1290_led {
- 
- 	/* brightness cache */
- 	unsigned int torch_brightness;
+ #define MODE_OFF		0
+@@ -61,8 +60,6 @@ struct max77693_sub_led {
+ 	int fled_id;
+ 	/* corresponding LED Flash class device */
+ 	struct led_classdev_flash fled_cdev;
 -	/* assures led-triggers compatibility */
 -	struct work_struct work_brightness_set;
- };
+ 	/* V4L2 Flash device */
+ 	struct v4l2_flash *v4l2_flash;
  
- static struct aat1290_led *fled_cdev_to_led(
-@@ -92,6 +89,12 @@ static struct aat1290_led *fled_cdev_to_led(
- 	return container_of(fled_cdev, struct aat1290_led, fled_cdev);
+@@ -462,10 +459,14 @@ static int max77693_setup(struct max77693_led_device *led,
+ 	return max77693_set_mode_reg(led, MODE_OFF);
  }
  
-+static struct led_classdev_flash *led_cdev_to_fled_cdev(
-+				struct led_classdev *led_cdev)
-+{
-+	return container_of(led_cdev, struct led_classdev_flash, led_cdev);
-+}
-+
- static void aat1290_as2cwire_write(struct aat1290_led *led, int addr, int value)
- {
- 	int i;
-@@ -134,9 +137,14 @@ static void aat1290_set_flash_safety_timer(struct aat1290_led *led,
- 							flash_tm_reg);
- }
- 
--static void aat1290_brightness_set(struct aat1290_led *led,
+-static int __max77693_led_brightness_set(struct max77693_led_device *led,
+-					int fled_id, enum led_brightness value)
 +/* LED subsystem callbacks */
-+
-+static int aat1290_led_brightness_set(struct led_classdev *led_cdev,
- 					enum led_brightness brightness)
++static int max77693_led_brightness_set(struct led_classdev *led_cdev,
++					enum led_brightness value)
  {
-+	struct led_classdev_flash *fled_cdev = led_cdev_to_fled_cdev(led_cdev);
-+	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
-+
+-	int ret;
++	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
++	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
++	struct max77693_led_device *led = sub_led_to_led(sub_led);
++	int fled_id = sub_led->fled_id, ret;
+ 
  	mutex_lock(&led->lock);
  
- 	if (brightness == 0) {
-@@ -158,35 +166,6 @@ static void aat1290_brightness_set(struct aat1290_led *led,
- 	}
- 
+@@ -493,43 +494,8 @@ static int __max77693_led_brightness_set(struct max77693_led_device *led,
+ 			ret);
+ unlock:
  	mutex_unlock(&led->lock);
+-	return ret;
+-}
+ 
+-static void max77693_led_brightness_set_work(
+-					struct work_struct *work)
+-{
+-	struct max77693_sub_led *sub_led =
+-			container_of(work, struct max77693_sub_led,
+-					work_brightness_set);
+-	struct max77693_led_device *led = sub_led_to_led(sub_led);
+-
+-	__max77693_led_brightness_set(led, sub_led->fled_id,
+-				sub_led->torch_brightness);
 -}
 -
 -/* LED subsystem callbacks */
 -
--static void aat1290_brightness_set_work(struct work_struct *work)
--{
--	struct aat1290_led *led =
--		container_of(work, struct aat1290_led, work_brightness_set);
--
--	aat1290_brightness_set(led, led->torch_brightness);
--}
--
--static void aat1290_led_brightness_set(struct led_classdev *led_cdev,
--					enum led_brightness brightness)
+-static int max77693_led_brightness_set_sync(
+-				struct led_classdev *led_cdev,
+-				enum led_brightness value)
 -{
 -	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
--	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
+-	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
+-	struct max77693_led_device *led = sub_led_to_led(sub_led);
 -
--	led->torch_brightness = brightness;
--	schedule_work(&led->work_brightness_set);
+-	return __max77693_led_brightness_set(led, sub_led->fled_id, value);
 -}
 -
--static int aat1290_led_brightness_set_sync(struct led_classdev *led_cdev,
--					enum led_brightness brightness)
+-static void max77693_led_brightness_set(
+-				struct led_classdev *led_cdev,
+-				enum led_brightness value)
 -{
 -	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
--	struct aat1290_led *led = fled_cdev_to_led(fled_cdev);
+-	struct max77693_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
 -
--	aat1290_brightness_set(led, brightness);
- 
- 	return 0;
+-	sub_led->torch_brightness = value;
+-	schedule_work(&sub_led->work_brightness_set);
++	return ret;
  }
-@@ -509,11 +488,9 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 	mutex_init(&led->lock);
  
- 	/* Initialize LED Flash class device */
--	led_cdev->brightness_set = aat1290_led_brightness_set;
--	led_cdev->brightness_set_blocking = aat1290_led_brightness_set_sync;
-+	led_cdev->brightness_set_blocking = aat1290_led_brightness_set;
- 	led_cdev->max_brightness = led_cfg.max_brightness;
+ static int max77693_led_flash_brightness_set(
+@@ -930,16 +896,13 @@ static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
+ 
+ 	led_cdev->name = led_cfg->label[fled_id];
+ 
+-	led_cdev->brightness_set = max77693_led_brightness_set;
+-	led_cdev->brightness_set_blocking = max77693_led_brightness_set_sync;
++	led_cdev->brightness_set_blocking = max77693_led_brightness_set;
+ 	led_cdev->max_brightness = (led->iout_joint ?
+ 					led_cfg->iout_torch_max[FLED1] +
+ 					led_cfg->iout_torch_max[FLED2] :
+ 					led_cfg->iout_torch_max[fled_id]) /
+ 				   TORCH_IOUT_STEP;
  	led_cdev->flags |= LED_DEV_CAP_FLASH;
--	INIT_WORK(&led->work_brightness_set, aat1290_brightness_set_work);
+-	INIT_WORK(&sub_led->work_brightness_set,
+-			max77693_led_brightness_set_work);
  
- 	aat1290_init_flash_timeout(led, &led_cfg);
+ 	max77693_init_flash_settings(sub_led, led_cfg);
  
-@@ -548,7 +525,6 @@ static int aat1290_led_remove(struct platform_device *pdev)
+@@ -1061,13 +1024,11 @@ static int max77693_led_remove(struct platform_device *pdev)
+ 	if (led->iout_joint || max77693_fled_used(led, FLED1)) {
+ 		v4l2_flash_release(sub_leds[FLED1].v4l2_flash);
+ 		led_classdev_flash_unregister(&sub_leds[FLED1].fled_cdev);
+-		cancel_work_sync(&sub_leds[FLED1].work_brightness_set);
+ 	}
  
- 	v4l2_flash_release(led->v4l2_flash);
- 	led_classdev_flash_unregister(&led->fled_cdev);
--	cancel_work_sync(&led->work_brightness_set);
+ 	if (!led->iout_joint && max77693_fled_used(led, FLED2)) {
+ 		v4l2_flash_release(sub_leds[FLED2].v4l2_flash);
+ 		led_classdev_flash_unregister(&sub_leds[FLED2].fled_cdev);
+-		cancel_work_sync(&sub_leds[FLED2].work_brightness_set);
+ 	}
  
  	mutex_destroy(&led->lock);
- 
 -- 
 1.7.9.5
