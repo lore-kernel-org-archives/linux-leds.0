@@ -1,60 +1,67 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2] LED/MIPS: Move SEAD3 LED driver to where it belongs.
-Date: Mon, 21 Sep 2015 10:52:18 +0200
-Message-ID: <55FFC542.5090209@samsung.com>
-References: <20150803150401.GD2843@linux-mips.org>
- <55FA7BA0.4080706@samsung.com> <20150918210549.GD16992@NP-P-BURTON>
+Subject: Re: [PATCH v4 1/3] leds: netxbig: add device tree binding
+Date: Mon, 21 Sep 2015 11:10:56 +0200
+Message-ID: <55FFC9A0.1020608@samsung.com>
+References: <1442505571-9744-1-git-send-email-simon.guinot@sequanux.org>
+ <1442505571-9744-2-git-send-email-simon.guinot@sequanux.org>
+ <55FBD679.2020402@samsung.com> <20150918103006.GM7306@kw.sim.vm.gnt>
+ <55FBEC38.6020209@samsung.com> <20150918131011.GN7306@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:15263 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:16706 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756163AbbIUIwW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 04:52:22 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NV000H9DRB88K70@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 21 Sep 2015 09:52:20 +0100 (BST)
-In-reply-to: <20150918210549.GD16992@NP-P-BURTON>
+	with ESMTP id S1751658AbbIUJLB (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 05:11:01 -0400
+In-reply-to: <20150918131011.GN7306@kw.sim.vm.gnt>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Markos Chandras <markos.chandras@imgtec.com>, linux-leds@vger.kernel.org, linux-mips@linux-mips.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Gregory Clement <gregory.clement@free-electrons.com>, Yoann Sculo <yoann@sculo.fr>, linux-leds@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Hi Paul,
-
-On 09/18/2015 11:05 PM, Paul Burton wrote:
-> On Thu, Sep 17, 2015 at 10:36:48AM +0200, Jacek Anaszewski wrote:
->> Hi Ralf,
+On 09/18/2015 03:10 PM, Simon Guinot wrote:
+> On Fri, Sep 18, 2015 at 12:49:28PM +0200, Jacek Anaszewski wrote:
+>>>>
+>>>> Moreover, if you switched to using devm* prefixed version of
+>>>> gpio_request_one and led_classdev_reqister, you could simplify
+>>>> the error paths in the driver.
+>>>
+>>> Yes, I have a pending patch for this conversion. But since it is not
+>>> really related with the subject of this patch series (add DT support),
+>>> I was planning to send it next.
+>>>
+>>> Do you want me to include this patch into this series.
 >>
->> This patch got stuck somewhere in my mailbox and just
->> recently showed up to my eyes again, so I applied it to v4.3-rc1, but when
->> tried to compile-test it, I got following errors:
+>> Why not, if you have it ready to go. If it needs some polishing,
+>> we can live with what we have now.
+>
+> No, the patch is ready. I'll add it.
+>
+>>>>> +static const struct of_device_id of_netxbig_leds_match[] = {
+>>>>> +	{ .compatible = "lacie,netxbig-leds", },
+>>>>> +	{},
+>>>>> +};
+>>>>> +#else
+>>>>> +static int netxbig_leds_get_of_pdata(struct device *dev,
+>>>>> +				     struct netxbig_led_platform_data *pdata)
+>>>>
+>>>> s/static int/static inline int/
+>>>
+>>> Is that not already the case with modern compiler ?
 >>
->> arch/mips/kernel/signal.c: In function 'sc_to_extcontext':
->> arch/mips/kernel/signal.c:143:12: error: 'struct ucontext' has no member
->> named 'uc_extcontext'
->>    return &uc->uc_extcontext;
->>              ^
+>> Could you elaborate on this?
 >
-> <snip...>
+> There is not much to say. netxbig_leds_get_of_pdata is a single line of
+> code. I am not a gcc expert but I am quite confident that this function
+> will be inlined anyway (given the optimisation level used to compile the
+> Linux kernel). That's it.
 >
->> Compilation succeeds with v4.2-rc8.
->> Is it a known issue?
->
-> Hi Jacek,
->
-> The patches adding the MSA extended context added a MIPS-specific
-> ucontext.h, where we were previously were using the generic one. Kbuild
-> doesn't automatically remove the old generated header that includes the
-> generic version, so could you try either cleaning your working tree or
-> removing arch/mips/include/generated and trying again?
+> But there is nothing wrong by adding "inline" neither.
 
-Thanks for the hint. It works.
+Right. All the more, this is a common pattern for no-ops, also in *.c
+files.
 
-I've applied the patch to the for-next branch of linux-leds.git
 
 -- 
 Best Regards,
