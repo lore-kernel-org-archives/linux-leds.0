@@ -1,52 +1,46 @@
-From: David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
-Date: Mon, 21 Sep 2015 14:42:25 +0100
-Message-ID: <17571.1442842945@warthog.procyon.org.uk>
-References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1442842450-29769-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-ID: <17570.1442842945.1-S6HVgzuS8uM4Awkfq6JHfwNdhmdF6hFW@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-cachefs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH 0/5] LED flash: Set brightness in a sync way on demand
+Date: Mon, 21 Sep 2015 16:29:25 +0200
+Message-ID: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:52813 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699AbbIUOaz (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Sep 2015 10:30:55 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+Since it has become apparent that user should decide whether brightness
+is to be set in a synchronous or an asynchronousi way, export internal
+led_set_brightness_sync API and remove SET_BRIGHTNESS_SYNC and
+SET_BRIGHTNESS_ASYNC flags from the LED core. After patch set [1] flash
+LED drivers don't longer have to implement brightness_set op and use work
+queues internally. Remove the redundant code from them.
 
-> Semantic patch finds comparisons of types:
->     unsigned < 0
->     unsigned >= 0
-> The former is always false, the latter is always true.
-> Such comparisons are useless, so theoretically they could be
-> safely removed, but their presence quite often indicates bugs.
+Thanks,
+Jacek Anaszewski
 
-Or someone has left them in because they don't matter and there's the
-possibility that the type being tested might be or become signed under some
-circumstances.  If the comparison is useless, I'd expect the compiler to just
-discard it - for such cases your patch is pointless.
+[1] https://lkml.org/lkml/2015/9/16/299 
 
-If I have, for example:
+Jacek Anaszewski (5):
+  leds: core: Drivers shouldn't enforce SYNC/ASYNC brightness setting
+  Documentation: leds: Add description of brightness setting API
+  leds: max77693: Remove work queue
+  leds: aat1290: Remove work queue
+  leds: ktd2692: Remove work queue
 
-	unsigned x;
+ Documentation/leds/leds-class.txt |   21 ++++++++++++++
+ drivers/leds/led-class-flash.c    |    4 ---
+ drivers/leds/led-class.c          |    2 --
+ drivers/leds/led-core.c           |   33 ++++++++++++---------
+ drivers/leds/leds-aat1290.c       |   50 +++++++++-----------------------
+ drivers/leds/leds-ktd2692.c       |   41 ++++----------------------
+ drivers/leds/leds-max77693.c      |   57 ++++++-------------------------------
+ drivers/leds/leds.h               |   13 ---------
+ include/linux/leds.h              |   19 +++++++++++--
+ 9 files changed, 84 insertions(+), 156 deletions(-)
 
-	if (x == 0 || x > 27)
-		give_a_range_error();
-
-I will write this as:
-
-	unsigned x;
-
-	if (x <= 0 || x > 27)
-		give_a_range_error();
-
-because it that gives a way to handle x being changed to signed at some point
-in the future for no cost.  In which case, your changing the <= to an ==
-"because the < part of the case is useless" is arguably wrong.
-
-David
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.7.9.5
