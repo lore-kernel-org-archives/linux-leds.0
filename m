@@ -1,70 +1,77 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
-Date: Tue, 22 Sep 2015 11:46:58 +0200
-Message-ID: <56012392.7020807@samsung.com>
-References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
- <17571.1442842945@warthog.procyon.org.uk> <56011BB9.5030004@samsung.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH 2/5] Documentation: leds: Add description of brightness
+ setting API
+Date: Tue, 22 Sep 2015 13:26:08 +0300
+Message-ID: <56012CC0.3030405@linux.intel.com>
+References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-reply-to: <56011BB9.5030004@samsung.com>
-Sender: owner-linux-mm@kvack.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: David Howells <dhowells@redhat.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, devel@driverdev.osuosl.org, dev@openvswitch.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com, linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-mm@kvack.org, linux-omap@vger.kernel.org, linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org, linux-sh@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, lustre-devel@lists.lustre.org, netdev@vger.kernel.org, rtc-linux@googlegroups.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:53750 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757755AbbIVK0L (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 22 Sep 2015 06:26:11 -0400
+In-Reply-To: <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch
 
-On 09/22/2015 11:13 AM, Andrzej Hajda wrote:
-> On 09/21/2015 03:42 PM, David Howells wrote:
->> Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>
->>> Semantic patch finds comparisons of types:
->>>      unsigned < 0
->>>      unsigned >= 0
->>> The former is always false, the latter is always true.
->>> Such comparisons are useless, so theoretically they could be
->>> safely removed, but their presence quite often indicates bugs.
->>
->> Or someone has left them in because they don't matter and there's the
->> possibility that the type being tested might be or become signed under some
->> circumstances.  If the comparison is useless, I'd expect the compiler to just
->> discard it - for such cases your patch is pointless.
->>
->> If I have, for example:
->>
->> 	unsigned x;
->>
->> 	if (x == 0 || x > 27)
->> 		give_a_range_error();
->>
->> I will write this as:
->>
->> 	unsigned x;
->>
->> 	if (x <= 0 || x > 27)
->> 		give_a_range_error();
->>
->> because it that gives a way to handle x being changed to signed at some point
->> in the future for no cost.  In which case, your changing the <= to an ==
->> "because the < part of the case is useless" is arguably wrong.
->
-> This is why I have not checked for such cases - I have skipped checks of type
-> 	unsigned <= 0
-> exactly for the reasons above.
->
-> However I have left two other checks as they seems to me more suspicious - they
-> are always true or false. But as Dmitry and Andrew pointed out Linus have quite
-> strong opinion against removing range checks in such cases as he finds it
-> clearer. I think it applies to patches 29-36. I am not sure about patches 26-28,37.
+Hi Jacek,
 
-Dropped 30/38 and 31/38 from LED tree then.
+Jacek Anaszewski wrote:
+> This patch adds description of the LED subsystem API for
+> setting an LED brightness.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> ---
+>  Documentation/leds/leds-class.txt |   21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+> index 62261c0..2cc38fa 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -52,6 +52,27 @@ above leaves scope for further attributes should they be needed. If sections
+>  of the name don't apply, just leave that section blank.
+>  
+>  
+> +Brightness setting API
+> +======================
+> +
+> +LED subsystem core exposes following API for setting brightness:
+> +
+> +    - led_set_brightness : if necessary, cancels the software blink timer that
+> +		implements blinking when the hardware doesn't; it is guaranteed
+> +		not to sleep, which implies the possibility of delegating the
+> +		job to a work queue task (uses led_set_brightness_nosleep
+> +		underneath - see below),
+> +    - led_set_brightness_sync : for use cases when immediate effect is desired;
+> +		it can block the caller for the time required for accessing
+> +		device registers and can sleep,
+> +    - led_set_brightness_nosleep : sets an LEDs brightness using either
+> +		brightness_set op, which is guaranteed not to sleep, or, if only
+> +		brightness_set_blocking op is available, delegates it to a work
+> +		queue task; this API is inteded for use by LED core and
+> +		led-triggers, as they can be called from atomic context, and thus
+> +		cannot sleep.
+
+led_set_brightness_nosleep() isn't part of the API intended to be used
+outside the LED framework --- I wouldn't document it here, only the part
+relevant for users outside the LED class and triggers frameworks.
+
+> +
+> +
+>  Hardware accelerated blink of LEDs
+>  ==================================
+>  
+> 
+
 
 -- 
-Best Regards,
-Jacek Anaszewski
+Kind regards,
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Sakari Ailus
+sakari.ailus@linux.intel.com
