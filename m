@@ -1,71 +1,67 @@
 From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
- brightness setting
-Date: Tue, 22 Sep 2015 21:16:50 +0200
-Message-ID: <20150922191650.GF20029@lunn.ch>
+Subject: Re: [PATCH 2/5] Documentation: leds: Add description of brightness
+ setting API
+Date: Tue, 22 Sep 2015 21:27:50 +0200
+Message-ID: <20150922192750.GG20029@lunn.ch>
 References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
- <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:41648 "EHLO vps0.lunn.ch"
+Received: from vps0.lunn.ch ([178.209.37.122]:41655 "EHLO vps0.lunn.ch"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758211AbbIVTY6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 22 Sep 2015 15:24:58 -0400
+	id S1758013AbbIVTf7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 22 Sep 2015 15:35:59 -0400
 Content-Disposition: inline
-In-Reply-To: <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+In-Reply-To: <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com
 
-> +int led_set_brightness_sync(struct led_classdev *led_cdev,
-> +			    enum led_brightness value)
-> +{
-> +	WARN_ON(led_cdev->blink_delay_on || led_cdev->blink_delay_off);
-> +
-> +	led_cdev->brightness = min(value, led_cdev->max_brightness);
-> +
-> +	if (led_cdev->flags & LED_SUSPENDED)
-> +		return 0;
-> +
-> +	if (led_cdev->brightness_set_blocking)
-> +		return led_cdev->brightness_set_blocking(led_cdev,
-> +							 led_cdev->brightness);
-> +	return -EINVAL;
-
-Maybe -ENOTSUP would be better. It is not an invalid argument, the
-driver does not support it.
-
-
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index ae3c178..2019929 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -47,9 +47,7 @@ struct led_classdev {
->  #define LED_BLINK_CHANGE	(1 << 20)
->  #define LED_BLINK_DISABLE	(1 << 21)
->  #define LED_SYSFS_DISABLE	(1 << 22)
-> -#define SET_BRIGHTNESS_ASYNC	(1 << 23)
-> -#define SET_BRIGHTNESS_SYNC	(1 << 24)
-> -#define LED_DEV_CAP_FLASH	(1 << 25)
-> +#define LED_DEV_CAP_FLASH	(1 << 23)
+On Mon, Sep 21, 2015 at 04:29:27PM +0200, Jacek Anaszewski wrote:
+> This patch adds description of the LED subsystem API for
+> setting an LED brightness.
+> 
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> ---
+>  Documentation/leds/leds-class.txt |   21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+> index 62261c0..2cc38fa 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -52,6 +52,27 @@ above leaves scope for further attributes should they be needed. If sections
+>  of the name don't apply, just leave that section blank.
 >  
->  	/* Set LED brightness level */
->  	/* Must not sleep, use a workqueue if needed */
-> @@ -159,6 +157,21 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
->   */
->  extern void led_set_brightness(struct led_classdev *led_cdev,
->  			       enum led_brightness brightness);
+>  
+> +Brightness setting API
+> +======================
 > +
-> +/**
-> + * led_set_brightness_sync - set LED brightness synchronously
-> + * @led_cdev: the LED to set
-> + * @brightness: the brightness to set it to
-> + *
-> + * Set an LED's brightness immediately. This function will block
-> + * the caller for the time required for accessing device register,
+> +LED subsystem core exposes following API for setting brightness:
+> +
+> +    - led_set_brightness : if necessary, cancels the software blink timer that
+> +		implements blinking when the hardware doesn't; it is guaranteed
+> +		not to sleep
 
-registers - plural.
+I would put this in the reverse order. Not sleeping is the most
+important bit. Also, stopping blinking should also happen if the
+hardware is performing the blinking. There is no need to mention
+software blinking, that is an implementation detail.
 
-	  Andrew
+                which implies the possibility of delegating the
+> +		job to a work queue task (uses led_set_brightness_nosleep
+> +		underneath - see below),
+
+This bit is also an implementation detail and not relevant to the API.
+
+
+> +    - led_set_brightness_sync : for use cases when immediate effect is desired;
+> +		it can block the caller for the time required for accessing
+> +		device registers and can sleep,
+
+In fact, i would probably have a separate paragraph that says passing
+LED_OFF to either of these two functions stops blinking.
+
+	Andrew
