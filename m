@@ -1,140 +1,79 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH 5/5] leds: core: Use set_brightness_work for the blocking
- op
-Date: Tue, 22 Sep 2015 11:03:50 +0300
-Message-ID: <56010B66.6070700@linux.intel.com>
-References: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
- <1442400464-27367-6-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH v5 0/4] Add DT support for netxbig LEDs
+Date: Tue, 22 Sep 2015 10:24:04 +0200
+Message-ID: <1442910248-11380-1-git-send-email-simon.guinot@sequanux.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:6705 "EHLO mga09.intel.com"
+Received: from vm1.sequanux.org ([188.165.36.56]:57245 "EHLO vm1.sequanux.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757019AbbIVIDz (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 22 Sep 2015 04:03:55 -0400
-In-Reply-To: <1442400464-27367-6-git-send-email-j.anaszewski@samsung.com>
+	id S1753205AbbIVIYM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 22 Sep 2015 04:24:12 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, stsp@users.sourceforge.net, pavel@ucw.cz, ospite@studenti.unina.it, davem@davemloft.net, linus.walleij@linaro.org, ricardo.ribalda@gmail.com, p.meerwald@bct-electronic.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Hi Jacek,
+Hello,
 
-Jacek Anaszewski wrote:
-> This patch makes LED core capable of setting brightness for drivers
-> that implement brightness_set_blocking op. It removes from LED class
-> drivers responsibility for using work queues on their own.
-> 
-> In order to achieve this set_brightness_delayed callback is being
-> modified to call newly added __led_set_brightness helper instead of
-> led_set_brightness_async.
-> 
-> led_set_brightness_async function didn't set brightness in an
-> asynchronous way in all cases. It was mistakenly assuming that all
-> LED subsystem drivers used work queue in their brightness_set op,
-> whereas only half of them did that. Since it has no users now,
-> it is being removed.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> ---
->  drivers/leds/led-core.c |   22 +++++++++++++++++++++-
->  drivers/leds/leds.h     |   10 ----------
->  include/linux/leds.h    |    2 +-
->  3 files changed, 22 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index fe6c2df..d8649f1 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -25,6 +25,22 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
->  LIST_HEAD(leds_list);
->  EXPORT_SYMBOL_GPL(leds_list);
->  
-> +static int __led_set_brightness(struct led_classdev *led_cdev,
-> +				enum led_brightness brightness)
-> +{
-> +	int ret = 0;
-> +
-> +	if (led_cdev->brightness_set)
-> +		led_cdev->brightness_set(led_cdev, led_cdev->brightness);
-> +	else if (led_cdev->brightness_set_blocking)
-> +		ret = led_cdev->brightness_set_blocking(led_cdev,
+This patch series adds DT support for the LEDs found on the Kirkwood-based
+LaCie boards 2Big and 5Big Network v2.
 
-You can return here, and drop ret.
+Changes for v2:
+- Check timer mode value retrieved from DT.
+- In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
+  timer delay values from DT with function of_property_read_u32_index.
+  Instead, use a temporary u32 variable. This allows to silence a static
+  checker warning.
+- Make timer property optional in the binding documentation. It is now
+  aligned with the driver code.
 
-> +							led_cdev->brightness);
-> +	else
-> +		return -EINVAL;
-> +
-> +	return ret;
-> +}
-> +
->  static void led_timer_function(unsigned long data)
->  {
->  	struct led_classdev *led_cdev = (void *)data;
-> @@ -83,6 +99,7 @@ static void set_brightness_delayed(struct work_struct *ws)
->  {
->  	struct led_classdev *led_cdev =
->  		container_of(ws, struct led_classdev, set_brightness_work);
-> +	int ret;
->  
->  	if (led_cdev->flags & LED_BLINK_DISABLE) {
->  		led_cdev->delayed_set_value = LED_OFF;
-> @@ -90,7 +107,10 @@ static void set_brightness_delayed(struct work_struct *ws)
->  		led_cdev->flags &= ~LED_BLINK_DISABLE;
->  	}
->  
-> -	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
-> +	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+Changes for v3:
+- Fix pointer usage with the temporary u32 variable while calling
+  of_property_read_u32_index.
 
-As __led_set_brightness() isn't used elsewhere and both are rather
-simple functions, I'd just move the contents of that function here.
+Changes for v4:
+- In DT binding document netxbig-gpio-ext.txt, detail byte order for
+  registers and latch mechanism for "enable-gpio".
+- In leds-netxbig.c, add some error messages.
+- In leds-netxbig.c, fix some "sizeof" style issues.
+- In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
+  of_property_read_string() calls after the error-prone checks.
+- Add some Acked-by.
 
-> +	if (ret < 0)
-> +		dev_err(led_cdev->dev,
-> +			"Setting an LED's brightness failed (%d)\n", ret);
->  }
->  
->  static void led_set_software_blink(struct led_classdev *led_cdev,
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index 11520eb..04b8e41 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -16,16 +16,6 @@
->  #include <linux/rwsem.h>
->  #include <linux/leds.h>
->  
-> -static inline void led_set_brightness_async(struct led_classdev *led_cdev,
-> -					enum led_brightness value)
-> -{
-> -	value = min(value, led_cdev->max_brightness);
-> -	led_cdev->brightness = value;
-> -
-> -	if (!(led_cdev->flags & LED_SUSPENDED))
-> -		led_cdev->brightness_set(led_cdev, value);
-> -}
-> -
->  static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
->  					enum led_brightness value)
->  {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 9f850e6..ae3c178 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -155,7 +155,7 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
->   *
->   * Set an LED's brightness, and, if necessary, cancel the
->   * software blink timer that implements blinking when the
-> - * hardware doesn't.
-> + * hardware doesn't. This function is guaranteed not to sleep.
->   */
->  extern void led_set_brightness(struct led_classdev *led_cdev,
->  			       enum led_brightness brightness);
-> 
+Changes for v5:
+- Rename DT property "bright-max" into the more common "max-brightness".
+- Make use of the "max-brightness" DT property. Instead of counting the
+  data pins of the GPIO extension bus, use "max-brightness" to get the
+  maximum brightness level.
+- Add a patch to convert the leds-netxbig driver to the devm_ functions.
+
+Thanks,
+
+Simon
+
+Simon Guinot (4):
+  leds: netxbig: add device tree binding
+  ARM: Kirkwood: add LED DT entries for netxbig boards
+  ARM: mvebu: remove static LED setup for netxbig boards
+  leds: netxbig: convert to use the devm_ functions
+
+ .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+ .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++
+ arch/arm/boot/dts/kirkwood-net5big.dts             |  60 ++++
+ arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 ++++++
+ arch/arm/mach-mvebu/Kconfig                        |   7 -
+ arch/arm/mach-mvebu/Makefile                       |   1 -
+ arch/arm/mach-mvebu/board.h                        |  21 --
+ arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+ arch/arm/mach-mvebu/netxbig.c                      | 191 -------------
+ drivers/leds/leds-netxbig.c                        | 313 ++++++++++++++++-----
+ include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+ .../linux/platform_data/leds-kirkwood-netxbig.h    |   1 +
+ 12 files changed, 514 insertions(+), 296 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+ delete mode 100644 arch/arm/mach-mvebu/board.h
+ delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+ create mode 100644 include/dt-bindings/leds/leds-netxbig.h
 
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.1.4
