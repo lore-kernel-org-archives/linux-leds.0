@@ -1,186 +1,70 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [PATCH v4 1/3] leds: netxbig: add device tree binding
-Date: Tue, 22 Sep 2015 11:30:15 +0200
-Message-ID: <20150922093015.GU7306@kw.sim.vm.gnt>
-References: <1442505571-9744-1-git-send-email-simon.guinot@sequanux.org>
- <1442505571-9744-2-git-send-email-simon.guinot@sequanux.org>
- <56002485.7030802@kernel.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
+Date: Tue, 22 Sep 2015 11:46:58 +0200
+Message-ID: <56012392.7020807@samsung.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+ <17571.1442842945@warthog.procyon.org.uk> <56011BB9.5030004@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cbsCxbAnPLQXdgdB"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:57957 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933217AbbIVJVA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 22 Sep 2015 05:21:00 -0400
-Content-Disposition: inline
-In-Reply-To: <56002485.7030802@kernel.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-reply-to: <56011BB9.5030004@samsung.com>
+Sender: owner-linux-mm@kvack.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: David Howells <dhowells@redhat.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, devel@driverdev.osuosl.org, dev@openvswitch.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com, linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-mm@kvack.org, linux-omap@vger.kernel.org, linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org, linux-sh@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, lustre-devel@lists.lustre.org, netdev@vger.kernel.org, rtc-linux@googlegroups.com
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
+On 09/22/2015 11:13 AM, Andrzej Hajda wrote:
+> On 09/21/2015 03:42 PM, David Howells wrote:
+>> Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>
+>>> Semantic patch finds comparisons of types:
+>>>      unsigned < 0
+>>>      unsigned >= 0
+>>> The former is always false, the latter is always true.
+>>> Such comparisons are useless, so theoretically they could be
+>>> safely removed, but their presence quite often indicates bugs.
+>>
+>> Or someone has left them in because they don't matter and there's the
+>> possibility that the type being tested might be or become signed under some
+>> circumstances.  If the comparison is useless, I'd expect the compiler to just
+>> discard it - for such cases your patch is pointless.
+>>
+>> If I have, for example:
+>>
+>> 	unsigned x;
+>>
+>> 	if (x == 0 || x > 27)
+>> 		give_a_range_error();
+>>
+>> I will write this as:
+>>
+>> 	unsigned x;
+>>
+>> 	if (x <= 0 || x > 27)
+>> 		give_a_range_error();
+>>
+>> because it that gives a way to handle x being changed to signed at some point
+>> in the future for no cost.  In which case, your changing the <= to an ==
+>> "because the < part of the case is useless" is arguably wrong.
+>
+> This is why I have not checked for such cases - I have skipped checks of type
+> 	unsigned <= 0
+> exactly for the reasons above.
+>
+> However I have left two other checks as they seems to me more suspicious - they
+> are always true or false. But as Dmitry and Andrew pointed out Linus have quite
+> strong opinion against removing range checks in such cases as he finds it
+> clearer. I think it applies to patches 29-36. I am not sure about patches 26-28,37.
 
---cbsCxbAnPLQXdgdB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dropped 30/38 and 31/38 from LED tree then.
 
-On Mon, Sep 21, 2015 at 10:38:45AM -0500, Rob Herring wrote:
+-- 
+Best Regards,
+Jacek Anaszewski
 
-Hi Rob,
-
-Thanks for your feedback. Please, see my answers below.
-
-> On 09/17/2015 10:59 AM, Simon Guinot wrote:
-> > This patch adds device tree support for the netxbig LEDs.
-> >=20
-> > This also introduces a additionnal DT binding for the GPIO extension bus
-> > (netxbig-gpio-ext) used to configure the LEDs. Since this bus could also
-> > be used to control other devices, then it seems more suitable to have it
-> > in a separate DT binding.
-> >=20
-> > Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> >  .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
-> >  .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++++
-> >  drivers/leds/leds-netxbig.c                        | 258 +++++++++++++=
-++++++--
-> >  include/dt-bindings/leds/leds-netxbig.h            |  18 ++
-> >  4 files changed, 369 insertions(+), 21 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio=
--ext.txt
-> >  create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig=
-=2Etxt
-> >  create mode 100644 include/dt-bindings/leds/leds-netxbig.h
-> >=20
-> > Changes for v2:
-> > - Check timer mode value retrieved from DT.
-> > - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
-> >   timer delay values from DT with function of_property_read_u32_index.
-> >   Instead, use a temporary u32 variable. This allows to silence a static
-> >   checker warning.
-> > - Make timer property optional in the binding documentation. It is now
-> >   aligned with the driver code.
-> >=20
-> > Changes for v3:
-> > - Fix pointer usage with the temporary u32 variable while calling
-> >   of_property_read_u32_index.
-> >=20
-> > Changes for v4:
-> > - In DT binding document netxbig-gpio-ext.txt, detail byte order for
-> >   registers and latch mechanism for "enable-gpio".
-> > - In leds-netxbig.c, add some error messages.
-> > - In leds-netxbig.c, fix some "sizeof" style issues.
-> > - In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
-> >   of_property_read_string() calls after the error-prone checks.
-> > - Add some Acked-by.
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.tx=
-t b/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
-> > new file mode 100644
-> > index 000000000000..50ec2e690701
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
-> > @@ -0,0 +1,22 @@
-> > +Binding for the GPIO extension bus found on some LaCie/Seagate boards
-> > +(Example: 2Big/5Big Network v2, 2Big NAS).
-> > +
-> > +Required properties:
-> > +- compatible: "lacie,netxbig-gpio-ext".
-> > +- addr-gpios: GPIOs representing the address register (LSB -> MSB).
-> > +- data-gpios: GPIOs representing the data register (LSB -> MSB).
-> > +- enable-gpio: latches the new configuration (address, data) on raisin=
-g edge.
-> > +
-> > +Example:
-> > +
-> > +netxbig_gpio_ext: netxbig-gpio-ext {
-> > +	compatible =3D "lacie,netxbig-gpio-ext";
-> > +
-> > +	addr-gpios =3D <&gpio1 15 GPIO_ACTIVE_HIGH
-> > +		      &gpio1 16 GPIO_ACTIVE_HIGH
-> > +		      &gpio1 17 GPIO_ACTIVE_HIGH>;
-> > +	data-gpios =3D <&gpio1 12 GPIO_ACTIVE_HIGH
-> > +		      &gpio1 13 GPIO_ACTIVE_HIGH
-> > +		      &gpio1 14 GPIO_ACTIVE_HIGH>;
-> > +	enable-gpio =3D <&gpio0 29 GPIO_ACTIVE_HIGH>;
-> > +};
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-netxbig.txt b/=
-Documentation/devicetree/bindings/leds/leds-netxbig.txt
-> > new file mode 100644
-> > index 000000000000..efadbecbfeb9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/leds-netxbig.txt
-> > @@ -0,0 +1,92 @@
-> > +Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Sea=
-gate
-> > +boards (Example: 2Big/5Big Network v2, 2Big NAS).
-> > +
-> > +Required properties:
-> > +- compatible: "lacie,netxbig-leds".
-> > +- gpio-ext: Phandle for the gpio-ext bus.
->=20
-> Would being a subnode of gpio-ext work instead?
-
-Well, it is really unclear to me. I think that the GPIO extension bus
-can be seen as a "kind of" GPIO chip. And devices which are using a GPIO
-resource are not represented in DT as sub-nodes of the GPIO node. That's
-why I chose to use a phandle here.=20
-
-Let me know if this representation is not correct.
-
->=20
-> > +
-> > +Optional properties:
-> > +- timers: Timer array. Each timer entry is represented by three intege=
-rs:
-> > +  Mode (gpio-ext bus), delay_on and delay_off.
-> > +
-> > +Each LED is represented as a sub-node of the netxbig-leds device.
-> > +
-> > +Required sub-node properties:
-> > +- mode-addr: Mode register address on gpio-ext bus.
-> > +- mode-val: Mode to value mapping. Each entry is represented by two in=
-tegers:
-> > +  A mode and the corresponding value on the gpio-ext bus.
->=20
-> I somewhat wonder if this is too low level and should just be in the
-> driver instead. I guess with only 3 addr and data lines, it is okay. It
-> wouldn't scale to a large number of registers though.
-
-Even if it is not the case now, note that this values could be different
-for an another board. For example, we already have some x86-based boards
-(still no mainlined yet) which are using the leds-netxbig driver but
-with a different gpio-ext configuration. This could happen with some
-ARM-based boards too.
-
-That's why I think it is better to have this properties in the DT rather
-than hardcoded values in the driver.
-
->=20
-> > +- bright-addr: Brightness register address on gpio-ext bus.
-> > +- bright-max: Maximum brightness value.
->=20
-> We already have a somewhat standard max-brightness property.
-
-Yes, Jacek mentioned that too. It made the change in the v5.
-
-Thanks,
-
-Simon
-
---cbsCxbAnPLQXdgdB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlYBH6cACgkQgtp0PDeOcDqXVgCeJ2FLSD2nFnXeJzqYhfRePfcu
-DhQAnjov8b5mCvsh1THvnjYmLtdskZ7I
-=fGyU
------END PGP SIGNATURE-----
-
---cbsCxbAnPLQXdgdB--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
