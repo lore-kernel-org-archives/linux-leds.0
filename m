@@ -1,213 +1,60 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH v5 4/4] leds: netxbig: convert to use the devm_ functions
-Date: Tue, 22 Sep 2015 10:24:08 +0200
-Message-ID: <1442910248-11380-5-git-send-email-simon.guinot@sequanux.org>
-References: <1442910248-11380-1-git-send-email-simon.guinot@sequanux.org>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:57295 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753826AbbIVIYO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 22 Sep 2015 04:24:14 -0400
-In-Reply-To: <1442910248-11380-1-git-send-email-simon.guinot@sequanux.org>
-Sender: linux-leds-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of
+	unsigned types
+Date: Tue, 22 Sep 2015 11:13:29 +0200
+Message-ID: <56011BB9.5030004@samsung.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+ <17571.1442842945@warthog.procyon.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-reply-to: <17571.1442842945@warthog.procyon.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-mips@linux-mips.org, linux-fbdev@vger.kernel.org, linux-sh@vger.kernel.org, brcm80211-dev-list@broadcom.com, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, linux-cachefs@redhat.com, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, dev@openvswitch.org, rtc-linux@googlegroups.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, intel-gfx@lists.freedesktop.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, linux-api@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, netdev@vger.kernel.org, lustre-devel@lists.lustre.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-This patch converts the leds-netxbig driver to use the devres functions
-devm_gpio_request_one() and devm_led_classdev_register(). This allows to
-simplify the code a bit.
-
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
----
- drivers/leds/leds-netxbig.c | 108 ++++++++++++--------------------------------
- 1 file changed, 28 insertions(+), 80 deletions(-)
-
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 19dac94b0364..3a982b99f738 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -71,7 +71,8 @@ static void gpio_ext_set_value(struct netxbig_gpio_ext *gpio_ext,
- 	spin_unlock_irqrestore(&gpio_ext_lock, flags);
- }
- 
--static int gpio_ext_init(struct netxbig_gpio_ext *gpio_ext)
-+static int gpio_ext_init(struct platform_device *pdev,
-+			 struct netxbig_gpio_ext *gpio_ext)
- {
- 	int err;
- 	int i;
-@@ -81,46 +82,28 @@ static int gpio_ext_init(struct netxbig_gpio_ext *gpio_ext)
- 
- 	/* Configure address GPIOs. */
- 	for (i = 0; i < gpio_ext->num_addr; i++) {
--		err = gpio_request_one(gpio_ext->addr[i], GPIOF_OUT_INIT_LOW,
--				       "GPIO extension addr");
-+		err = devm_gpio_request_one(&pdev->dev, gpio_ext->addr[i],
-+					    GPIOF_OUT_INIT_LOW,
-+					    "GPIO extension addr");
- 		if (err)
--			goto err_free_addr;
-+			return err;
- 	}
- 	/* Configure data GPIOs. */
- 	for (i = 0; i < gpio_ext->num_data; i++) {
--		err = gpio_request_one(gpio_ext->data[i], GPIOF_OUT_INIT_LOW,
--				   "GPIO extension data");
-+		err = devm_gpio_request_one(&pdev->dev, gpio_ext->data[i],
-+					    GPIOF_OUT_INIT_LOW,
-+					    "GPIO extension data");
- 		if (err)
--			goto err_free_data;
-+			return err;
- 	}
- 	/* Configure "enable select" GPIO. */
--	err = gpio_request_one(gpio_ext->enable, GPIOF_OUT_INIT_LOW,
--			       "GPIO extension enable");
-+	err = devm_gpio_request_one(&pdev->dev, gpio_ext->enable,
-+				    GPIOF_OUT_INIT_LOW,
-+				    "GPIO extension enable");
- 	if (err)
--		goto err_free_data;
-+		return err;
- 
- 	return 0;
--
--err_free_data:
--	for (i = i - 1; i >= 0; i--)
--		gpio_free(gpio_ext->data[i]);
--	i = gpio_ext->num_addr;
--err_free_addr:
--	for (i = i - 1; i >= 0; i--)
--		gpio_free(gpio_ext->addr[i]);
--
--	return err;
--}
--
--static void gpio_ext_free(struct netxbig_gpio_ext *gpio_ext)
--{
--	int i;
--
--	gpio_free(gpio_ext->enable);
--	for (i = gpio_ext->num_addr - 1; i >= 0; i--)
--		gpio_free(gpio_ext->addr[i]);
--	for (i = gpio_ext->num_data - 1; i >= 0; i--)
--		gpio_free(gpio_ext->data[i]);
- }
- 
- /*
-@@ -141,11 +124,6 @@ struct netxbig_led_data {
- 	spinlock_t		lock;
- };
- 
--struct netxbig_led_priv {
--	struct netxbig_led_platform_data *pdata;
--	struct netxbig_led_data leds_data[];
--};
--
- static int netxbig_led_get_timer_mode(enum netxbig_led_mode *mode,
- 				      unsigned long delay_on,
- 				      unsigned long delay_off,
-@@ -305,18 +283,11 @@ static struct attribute *netxbig_led_attrs[] = {
- };
- ATTRIBUTE_GROUPS(netxbig_led);
- 
--static void delete_netxbig_led(struct netxbig_led_data *led_dat)
--{
--	led_classdev_unregister(&led_dat->cdev);
--}
--
--static int create_netxbig_led(struct platform_device *pdev, int led,
--			      struct netxbig_led_priv *priv)
-+static int create_netxbig_led(struct platform_device *pdev,
-+			      struct netxbig_led_platform_data *pdata,
-+			      struct netxbig_led_data *led_dat,
-+			      const struct netxbig_led *template)
- {
--	struct netxbig_led_platform_data *pdata = priv->pdata;
--	struct netxbig_led_data *led_dat = &priv->leds_data[led];
--	const struct netxbig_led *template = &priv->pdata->leds[led];
--
- 	spin_lock_init(&led_dat->lock);
- 	led_dat->gpio_ext = pdata->gpio_ext;
- 	led_dat->cdev.name = template->name;
-@@ -349,7 +320,7 @@ static int create_netxbig_led(struct platform_device *pdev, int led,
- 	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
- 		led_dat->cdev.groups = netxbig_led_groups;
- 
--	return led_classdev_register(&pdev->dev, &led_dat->cdev);
-+	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
- }
- 
- #ifdef CONFIG_OF_GPIO
-@@ -564,7 +535,7 @@ netxbig_leds_get_of_pdata(struct device *dev,
- static int netxbig_led_probe(struct platform_device *pdev)
- {
- 	struct netxbig_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	struct netxbig_led_priv *priv;
-+	struct netxbig_led_data *leds_data;
- 	int i;
- 	int ret;
- 
-@@ -577,51 +548,28 @@ static int netxbig_led_probe(struct platform_device *pdev)
- 			return ret;
- 	}
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv) +
--			    pdata->num_leds * sizeof(struct netxbig_led_data),
--			    GFP_KERNEL);
--	if (!priv)
-+	leds_data = devm_kzalloc(&pdev->dev,
-+				 pdata->num_leds * sizeof(*leds_data),
-+				 GFP_KERNEL);
-+	if (!leds_data)
- 		return -ENOMEM;
--	priv->pdata = pdata;
- 
--	ret = gpio_ext_init(pdata->gpio_ext);
-+	ret = gpio_ext_init(pdev, pdata->gpio_ext);
- 	if (ret < 0)
- 		return ret;
- 
- 	for (i = 0; i < pdata->num_leds; i++) {
--		ret = create_netxbig_led(pdev, i, priv);
-+		ret = create_netxbig_led(pdev, pdata,
-+					 &leds_data[i], &pdata->leds[i]);
- 		if (ret < 0)
--			goto err_free_leds;
-+			return ret;
- 	}
--	platform_set_drvdata(pdev, priv);
--
--	return 0;
--
--err_free_leds:
--	for (i = i - 1; i >= 0; i--)
--		delete_netxbig_led(&priv->leds_data[i]);
--
--	gpio_ext_free(pdata->gpio_ext);
--	return ret;
--}
--
--static int netxbig_led_remove(struct platform_device *pdev)
--{
--	struct netxbig_led_priv *priv = platform_get_drvdata(pdev);
--	struct netxbig_led_platform_data *pdata = priv->pdata;
--	int i;
--
--	for (i = 0; i < pdata->num_leds; i++)
--		delete_netxbig_led(&priv->leds_data[i]);
--
--	gpio_ext_free(pdata->gpio_ext);
- 
- 	return 0;
- }
- 
- static struct platform_driver netxbig_led_driver = {
- 	.probe		= netxbig_led_probe,
--	.remove		= netxbig_led_remove,
- 	.driver		= {
- 		.name		= "leds-netxbig",
- 		.of_match_table	= of_match_ptr(of_netxbig_leds_match),
--- 
-2.1.4
+T24gMDkvMjEvMjAxNSAwMzo0MiBQTSwgRGF2aWQgSG93ZWxscyB3cm90ZToKPiBBbmRyemVqIEhh
+amRhIDxhLmhhamRhLVN6ZTNPM1VVMjJKQkRnaks3eTdUVVFAcHVibGljLmdtYW5lLm9yZz4gd3Jv
+dGU6Cj4gCj4+IFNlbWFudGljIHBhdGNoIGZpbmRzIGNvbXBhcmlzb25zIG9mIHR5cGVzOgo+PiAg
+ICAgdW5zaWduZWQgPCAwCj4+ICAgICB1bnNpZ25lZCA+PSAwCj4+IFRoZSBmb3JtZXIgaXMgYWx3
+YXlzIGZhbHNlLCB0aGUgbGF0dGVyIGlzIGFsd2F5cyB0cnVlLgo+PiBTdWNoIGNvbXBhcmlzb25z
+IGFyZSB1c2VsZXNzLCBzbyB0aGVvcmV0aWNhbGx5IHRoZXkgY291bGQgYmUKPj4gc2FmZWx5IHJl
+bW92ZWQsIGJ1dCB0aGVpciBwcmVzZW5jZSBxdWl0ZSBvZnRlbiBpbmRpY2F0ZXMgYnVncy4KPiAK
+PiBPciBzb21lb25lIGhhcyBsZWZ0IHRoZW0gaW4gYmVjYXVzZSB0aGV5IGRvbid0IG1hdHRlciBh
+bmQgdGhlcmUncyB0aGUKPiBwb3NzaWJpbGl0eSB0aGF0IHRoZSB0eXBlIGJlaW5nIHRlc3RlZCBt
+aWdodCBiZSBvciBiZWNvbWUgc2lnbmVkIHVuZGVyIHNvbWUKPiBjaXJjdW1zdGFuY2VzLiAgSWYg
+dGhlIGNvbXBhcmlzb24gaXMgdXNlbGVzcywgSSdkIGV4cGVjdCB0aGUgY29tcGlsZXIgdG8ganVz
+dAo+IGRpc2NhcmQgaXQgLSBmb3Igc3VjaCBjYXNlcyB5b3VyIHBhdGNoIGlzIHBvaW50bGVzcy4K
+PiAKPiBJZiBJIGhhdmUsIGZvciBleGFtcGxlOgo+IAo+IAl1bnNpZ25lZCB4Owo+IAo+IAlpZiAo
+eCA9PSAwIHx8IHggPiAyNykKPiAJCWdpdmVfYV9yYW5nZV9lcnJvcigpOwo+IAo+IEkgd2lsbCB3
+cml0ZSB0aGlzIGFzOgo+IAo+IAl1bnNpZ25lZCB4Owo+IAo+IAlpZiAoeCA8PSAwIHx8IHggPiAy
+NykKPiAJCWdpdmVfYV9yYW5nZV9lcnJvcigpOwo+IAo+IGJlY2F1c2UgaXQgdGhhdCBnaXZlcyBh
+IHdheSB0byBoYW5kbGUgeCBiZWluZyBjaGFuZ2VkIHRvIHNpZ25lZCBhdCBzb21lIHBvaW50Cj4g
+aW4gdGhlIGZ1dHVyZSBmb3Igbm8gY29zdC4gIEluIHdoaWNoIGNhc2UsIHlvdXIgY2hhbmdpbmcg
+dGhlIDw9IHRvIGFuID09Cj4gImJlY2F1c2UgdGhlIDwgcGFydCBvZiB0aGUgY2FzZSBpcyB1c2Vs
+ZXNzIiBpcyBhcmd1YWJseSB3cm9uZy4KClRoaXMgaXMgd2h5IEkgaGF2ZSBub3QgY2hlY2tlZCBm
+b3Igc3VjaCBjYXNlcyAtIEkgaGF2ZSBza2lwcGVkIGNoZWNrcyBvZiB0eXBlCgl1bnNpZ25lZCA8
+PSAwCmV4YWN0bHkgZm9yIHRoZSByZWFzb25zIGFib3ZlLgoKSG93ZXZlciBJIGhhdmUgbGVmdCB0
+d28gb3RoZXIgY2hlY2tzIGFzIHRoZXkgc2VlbXMgdG8gbWUgbW9yZSBzdXNwaWNpb3VzIC0gdGhl
+eQphcmUgYWx3YXlzIHRydWUgb3IgZmFsc2UuIEJ1dCBhcyBEbWl0cnkgYW5kIEFuZHJldyBwb2lu
+dGVkIG91dCBMaW51cyBoYXZlIHF1aXRlCnN0cm9uZyBvcGluaW9uIGFnYWluc3QgcmVtb3Zpbmcg
+cmFuZ2UgY2hlY2tzIGluIHN1Y2ggY2FzZXMgYXMgaGUgZmluZHMgaXQKY2xlYXJlci4gSSB0aGlu
+ayBpdCBhcHBsaWVzIHRvIHBhdGNoZXMgMjktMzYuIEkgYW0gbm90IHN1cmUgYWJvdXQgcGF0Y2hl
+cyAyNi0yOCwzNy4KClJlZ2FyZHMKQW5kcnplagoKPiAKPiBEYXZpZAo+IC0tCj4gVG8gdW5zdWJz
+Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXdp
+cmVsZXNzIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW8tdTc5dXdYTDI5
+VFk3Nloyck01bUhYQUBwdWJsaWMuZ21hbmUub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
+aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBs
+aXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
