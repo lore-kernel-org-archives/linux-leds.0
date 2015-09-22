@@ -1,18 +1,18 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 30/38] leds: flash: remove invalid check
-Date: Tue, 22 Sep 2015 09:36:43 +0200
-Message-ID: <5601050B.1000802@samsung.com>
+Subject: Re: [PATCH 31/38] leds: tca6507: remove invalid check
+Date: Tue, 22 Sep 2015 09:37:16 +0200
+Message-ID: <5601052C.50809@samsung.com>
 References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
- <1442842450-29769-31-git-send-email-a.hajda@samsung.com>
+ <1442842450-29769-32-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:10840 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932340AbbIVHgr (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2015 03:36:47 -0400
-In-reply-to: <1442842450-29769-31-git-send-email-a.hajda@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64748 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932340AbbIVHhX (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2015 03:37:23 -0400
+In-reply-to: <1442842450-29769-32-git-send-email-a.hajda@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>
@@ -21,7 +21,7 @@ Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsun
 Hi Andrzej,
 
 On 09/21/2015 03:34 PM, Andrzej Hajda wrote:
-> Unsigned cannot be lesser than zero.
+> unsigned value cannot be lesser than zero.
 >
 > The problem has been detected using proposed semantic patch
 > scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
@@ -30,22 +30,22 @@ On 09/21/2015 03:34 PM, Andrzej Hajda wrote:
 >
 > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
->   drivers/leds/led-class-flash.c | 2 +-
+>   drivers/leds/leds-tca6507.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-> index 3b25734..c209077 100644
-> --- a/drivers/leds/led-class-flash.c
-> +++ b/drivers/leds/led-class-flash.c
-> @@ -108,7 +108,7 @@ static ssize_t flash_strobe_store(struct device *dev,
->   	if (ret)
->   		goto unlock;
+> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+> index edbecc4..93564f6 100644
+> --- a/drivers/leds/leds-tca6507.c
+> +++ b/drivers/leds/leds-tca6507.c
+> @@ -713,7 +713,7 @@ tca6507_led_dt_init(struct i2c_client *client)
+>   		if (of_property_match_string(child, "compatible", "gpio") >= 0)
+>   			led.flags |= TCA6507_MAKE_GPIO;
+>   		ret = of_property_read_u32(child, "reg", &reg);
+> -		if (ret != 0 || reg < 0 || reg >= NUM_LEDS)
+> +		if (ret != 0 || reg >= NUM_LEDS)
+>   			continue;
 >
-> -	if (state < 0 || state > 1) {
-> +	if (state > 1) {
->   		ret = -EINVAL;
->   		goto unlock;
->   	}
+>   		tca_leds[reg] = led;
 >
 
 Merged, thanks.
