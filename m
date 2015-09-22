@@ -1,224 +1,54 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
- brightness setting
-Date: Tue, 22 Sep 2015 09:09:45 +0200
-Message-ID: <5600FEB9.10409@samsung.com>
-References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
- <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
- <5600F83C.4070302@linux.intel.com>
+Subject: Re: [PATCH 30/38] leds: flash: remove invalid check
+Date: Tue, 22 Sep 2015 09:36:43 +0200
+Message-ID: <5601050B.1000802@samsung.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+ <1442842450-29769-31-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:9069 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:10840 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756509AbbIVHJt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2015 03:09:49 -0400
-In-reply-to: <5600F83C.4070302@linux.intel.com>
+	with ESMTP id S932340AbbIVHgr (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2015 03:36:47 -0400
+In-reply-to: <1442842450-29769-31-git-send-email-a.hajda@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-Hi Sakari,
+Hi Andrzej,
 
-Thanks for the review.
-Just to avoid a confusion - this patch set depends on [1], which is
-not merged yet and also needs a review. I reimplemented and split [2]
-into two patch sets, so that [1] contained only modifications required
-for removing work queues from LED class drivers, but yesterday decided
-to send also the remaining part.
-
-[1] https://lkml.org/lkml/2015/9/16/299
-[2] https://lkml.org/lkml/2015/8/20/426
-
-On 09/22/2015 08:42 AM, Sakari Ailus wrote:
-> Hi Jacek,
+On 09/21/2015 03:34 PM, Andrzej Hajda wrote:
+> Unsigned cannot be lesser than zero.
 >
-> Thanks for the patchset. A few comments below.
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
 >
-> Jacek Anaszewski wrote:
->> This patch removes SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS flags.
->> led_set_brightness now calls led_set_brightness_nosleep instead of
->> choosing between sync and async op basing on the flags defined by the
->> driver.
->>
->>  From now on, if a user wants to make sure that brightness will be set
->> synchronously, they have to use led_set_brightness_sync API. It is now
->> being made publicly available since it has become apparent that it is
->> a caller who should decide whether brightness is to be set in
->> a synchronous or an asynchronous way.
->>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> ---
->>   drivers/leds/led-class-flash.c |    4 ----
->>   drivers/leds/led-class.c       |    2 --
->>   drivers/leds/led-core.c        |   33 +++++++++++++++++++--------------
->>   drivers/leds/leds.h            |   13 -------------
->>   include/linux/leds.h           |   19 ++++++++++++++++---
->>   5 files changed, 35 insertions(+), 36 deletions(-)
->>
->> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
->> index 300a2c9..f53783b 100644
->> --- a/drivers/leds/led-class-flash.c
->> +++ b/drivers/leds/led-class-flash.c
->> @@ -316,10 +316,6 @@ int led_classdev_flash_register(struct device *parent,
->>   	if (ret < 0)
->>   		return ret;
->>
->> -	/* Setting a torch brightness needs to have immediate effect */
->> -	led_cdev->flags &= ~SET_BRIGHTNESS_ASYNC;
->> -	led_cdev->flags |= SET_BRIGHTNESS_SYNC;
->> -
->>   	return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(led_classdev_flash_register);
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 7385f98..37eec1a 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -215,8 +215,6 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>   	if (!led_cdev->max_brightness)
->>   		led_cdev->max_brightness = LED_FULL;
->>
->> -	led_cdev->flags |= SET_BRIGHTNESS_ASYNC;
->> -
->>   	led_update_brightness(led_cdev);
->>
->>   	led_init_core(led_cdev);
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index d8649f1..d0eb838 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -215,8 +215,6 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
->>   void led_set_brightness(struct led_classdev *led_cdev,
->>   			enum led_brightness brightness)
->>   {
->> -	int ret = 0;
->> -
->>   	/*
->>   	 * In case blinking is on delay brightness setting
->>   	 * until the next timer tick.
->> @@ -235,19 +233,9 @@ void led_set_brightness(struct led_classdev *led_cdev,
->>   			led_cdev->blink_brightness = brightness;
->>   		}
->>   		return;
->> -	}
->> -
->> -	if (led_cdev->flags & SET_BRIGHTNESS_ASYNC) {
->> +	} else {
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
 >
-> Useless use of else.
-
-Right.
-
->>   		led_set_brightness_nosleep(led_cdev, brightness);
->> -		return;
->> -	} else if (led_cdev->flags & SET_BRIGHTNESS_SYNC)
->> -		ret = led_set_brightness_sync(led_cdev, brightness);
->> -	else
->> -		ret = -EINVAL;
->> -
->> -	if (ret < 0)
->> -		dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
->> -			ret);
->> +	}
->>   }
->>   EXPORT_SYMBOL(led_set_brightness);
->>
->> @@ -269,6 +257,23 @@ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->>   }
->>   EXPORT_SYMBOL(led_set_brightness_nosleep);
->>
->> +int led_set_brightness_sync(struct led_classdev *led_cdev,
->> +			    enum led_brightness value)
->> +{
->> +	WARN_ON(led_cdev->blink_delay_on || led_cdev->blink_delay_off);
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>   drivers/leds/led-class-flash.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> How about simply returning an error instead?
-
-Indeed, it will be more relevant here.
-
->> +
->> +	led_cdev->brightness = min(value, led_cdev->max_brightness);
->> +
->> +	if (led_cdev->flags & LED_SUSPENDED)
->> +		return 0;
->> +
->> +	if (led_cdev->brightness_set_blocking)
->> +		return led_cdev->brightness_set_blocking(led_cdev,
->> +							 led_cdev->brightness);
->> +	return -EINVAL;
->> +}
->> +EXPORT_SYMBOL(led_set_brightness_sync);
->> +
->>   int led_update_brightness(struct led_classdev *led_cdev)
->>   {
->>   	int ret = 0;
->> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
->> index 04b8e41..62d9eba 100644
->> --- a/drivers/leds/leds.h
->> +++ b/drivers/leds/leds.h
->> @@ -16,19 +16,6 @@
->>   #include <linux/rwsem.h>
->>   #include <linux/leds.h>
->>
->> -static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
->> -					enum led_brightness value)
->> -{
->> -	int ret = 0;
->> -
->> -	led_cdev->brightness = min(value, led_cdev->max_brightness);
->> -
->> -	if (!(led_cdev->flags & LED_SUSPENDED))
->> -		ret = led_cdev->brightness_set_blocking(led_cdev,
->> -						led_cdev->brightness);
->> -	return ret;
->> -}
->> -
->>   static inline int led_get_brightness(struct led_classdev *led_cdev)
->>   {
->>   	return led_cdev->brightness;
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index ae3c178..2019929 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -47,9 +47,7 @@ struct led_classdev {
->>   #define LED_BLINK_CHANGE	(1 << 20)
->>   #define LED_BLINK_DISABLE	(1 << 21)
->>   #define LED_SYSFS_DISABLE	(1 << 22)
->> -#define SET_BRIGHTNESS_ASYNC	(1 << 23)
->> -#define SET_BRIGHTNESS_SYNC	(1 << 24)
->> -#define LED_DEV_CAP_FLASH	(1 << 25)
->> +#define LED_DEV_CAP_FLASH	(1 << 23)
->>
->>   	/* Set LED brightness level */
->>   	/* Must not sleep, use a workqueue if needed */
->> @@ -159,6 +157,21 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
->>    */
->>   extern void led_set_brightness(struct led_classdev *led_cdev,
->>   			       enum led_brightness brightness);
->> +
->> +/**
->> + * led_set_brightness_sync - set LED brightness synchronously
->> + * @led_cdev: the LED to set
->> + * @brightness: the brightness to set it to
->> + *
->> + * Set an LED's brightness immediately. This function will block
->> + * the caller for the time required for accessing device register,
->> + * and it can sleep.
->> + *
->> + * Returns: 0 on success or negative error value on failure
->> + */
->> +extern int led_set_brightness_sync(struct led_classdev *led_cdev,
->> +				   enum led_brightness value);
->> +
->>   /**
->>    * led_update_brightness - update LED brightness
->>    * @led_cdev: the LED to query
->>
+> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+> index 3b25734..c209077 100644
+> --- a/drivers/leds/led-class-flash.c
+> +++ b/drivers/leds/led-class-flash.c
+> @@ -108,7 +108,7 @@ static ssize_t flash_strobe_store(struct device *dev,
+>   	if (ret)
+>   		goto unlock;
+>
+> -	if (state < 0 || state > 1) {
+> +	if (state > 1) {
+>   		ret = -EINVAL;
+>   		goto unlock;
+>   	}
 >
 
+Merged, thanks.
 
 -- 
 Best Regards,
