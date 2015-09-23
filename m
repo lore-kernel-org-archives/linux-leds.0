@@ -1,54 +1,86 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 4/5] leds: core: Add an internal led_set_brightness_nosleep
- function
-Date: Wed, 23 Sep 2015 10:53:49 +0200
-Message-ID: <5602689D.2080604@samsung.com>
-References: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
- <1442400464-27367-5-git-send-email-j.anaszewski@samsung.com>
- <20150922190243.GD20029@lunn.ch>
+Subject: Re: [PATCH 2/5] Documentation: leds: Add description of brightness
+ setting API
+Date: Wed, 23 Sep 2015 11:24:01 +0200
+Message-ID: <56026FB1.20804@samsung.com>
+References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
+ <20150922192750.GG20029@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150922190243.GD20029@lunn.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, stsp@users.sourceforge.net, pavel@ucw.cz, ospite@studenti.unina.it, davem@davemloft.net, linus.walleij@linaro.org, ricardo.ribalda@gmail.com, p.meerwald@bct-electronic.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:62165 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753115AbbIWJYH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Sep 2015 05:24:07 -0400
+In-reply-to: <20150922192750.GG20029@lunn.ch>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com
 
-On 09/22/2015 09:02 PM, Andrew Lunn wrote:
->> +void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->> +					enum led_brightness value)
->> +{
->> +	led_cdev->brightness = min(value, led_cdev->max_brightness);
+On 09/22/2015 09:27 PM, Andrew Lunn wrote:
+> On Mon, Sep 21, 2015 at 04:29:27PM +0200, Jacek Anaszewski wrote:
+>> This patch adds description of the LED subsystem API for
+>> setting an LED brightness.
+>>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> ---
+>>   Documentation/leds/leds-class.txt |   21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+>> index 62261c0..2cc38fa 100644
+>> --- a/Documentation/leds/leds-class.txt
+>> +++ b/Documentation/leds/leds-class.txt
+>> @@ -52,6 +52,27 @@ above leaves scope for further attributes should they be needed. If sections
+>>   of the name don't apply, just leave that section blank.
+>>
+>>
+>> +Brightness setting API
+>> +======================
 >> +
->> +	if (led_cdev->flags & LED_SUSPENDED)
->> +		return;
+>> +LED subsystem core exposes following API for setting brightness:
 >> +
->> +	/* Use brightness_set op if available, it is guaranteed not to sleep */
->> +	if (led_cdev->brightness_set)
->> +		led_cdev->brightness_set(led_cdev, led_cdev->brightness);
->> +
->> +	/* If brightness setting can sleep, delegate it to a work queue task */
->> +	led_cdev->delayed_set_value = led_cdev->brightness;
->> +	schedule_work(&led_cdev->set_brightness_work);
->> +}
+>> +    - led_set_brightness : if necessary, cancels the software blink timer that
+>> +		implements blinking when the hardware doesn't; it is guaranteed
+>> +		not to sleep
 >
-> To me, it looks like there is a missing else, or return here. We don't
-> want both led_cdev->brightness_set() and the work queue.
+> I would put this in the reverse order. Not sleeping is the most
+> important bit.
 
-Thanks for spotting this.
+OK.
 
->> +EXPORT_SYMBOL(led_set_brightness_nosleep);
+> Also, stopping blinking should also happen if the
+> hardware is performing the blinking. There is no need to mention
+> software blinking, that is an implementation detail.
+
+OK.
+
 >
-> There seems to be a mixture of EXPORT_SYMBOL and
-> EXPORT_SYMBOL_GPL. Have you figured out the pattern? led-class.c seems
-> to be all _GPL, but led-core.c has a mixture.
+>                  which implies the possibility of delegating the
+>> +		job to a work queue task (uses led_set_brightness_nosleep
+>> +		underneath - see below),
+>
+> This bit is also an implementation detail and not relevant to the API.
+>
+>
+>> +    - led_set_brightness_sync : for use cases when immediate effect is desired;
+>> +		it can block the caller for the time required for accessing
+>> +		device registers and can sleep,
+>
+> In fact, i would probably have a separate paragraph that says passing
+> LED_OFF to either of these two functions stops blinking.
 
-In fact, this is weird. I didn't pay sufficient attention to this,
-I must admit. We should switch to using EXPORT_SYMBOL_GPL consequently [1].
+In case of led_set_brightness_sync passing LED_OFF will disable only
+hardware blinking. I noticed this discrepancy before a while. We can't
+disable soft blinking, because we would have to do it in a work queue
+task, which would in turn compromise the contract offering by the API,
+i.e. brightness is guaranteed to be set after function returns.
+Since Sakari proposed to return error from the function if soft blinking
+is on, then this has to be explicitly stated here too.
 
-[1] https://lwn.net/Articles/603187/
 
 -- 
 Best Regards,
