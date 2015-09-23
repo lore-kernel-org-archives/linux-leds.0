@@ -1,85 +1,76 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 2/5] Documentation: leds: Add description of brightness
- setting API
-Date: Wed, 23 Sep 2015 11:24:01 +0200
-Message-ID: <56026FB1.20804@samsung.com>
-References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
- <1442845770-17800-3-git-send-email-j.anaszewski@samsung.com>
- <20150922192750.GG20029@lunn.ch>
+Subject: Re: [PATCH 3/5] leds: Rename brightness_set_sync op to
+ brightness_set_blocking
+Date: Wed, 23 Sep 2015 11:34:07 +0200
+Message-ID: <5602720F.7080405@samsung.com>
+References: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
+ <1442400464-27367-4-git-send-email-j.anaszewski@samsung.com>
+ <20150922185426.GC20029@lunn.ch> <5602648D.9040609@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:62165 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:62774 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753115AbbIWJYH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Sep 2015 05:24:07 -0400
-In-reply-to: <20150922192750.GG20029@lunn.ch>
+	with ESMTP id S1753292AbbIWJeL (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Sep 2015 05:34:11 -0400
+In-reply-to: <5602648D.9040609@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, stsp@users.sourceforge.net, pavel@ucw.cz, ospite@studenti.unina.it, davem@davemloft.net, linus.walleij@linaro.org, ricardo.ribalda@gmail.com, p.meerwald@bct-electronic.com
 
-On 09/22/2015 09:27 PM, Andrew Lunn wrote:
-> On Mon, Sep 21, 2015 at 04:29:27PM +0200, Jacek Anaszewski wrote:
->> This patch adds description of the LED subsystem API for
->> setting an LED brightness.
+On 09/23/2015 10:36 AM, Jacek Anaszewski wrote:
+> On 09/22/2015 08:54 PM, Andrew Lunn wrote:
+>> On Wed, Sep 16, 2015 at 12:47:42PM +0200, Jacek Anaszewski wrote:
+>>> The initial purpose of brightness_set_sync op, introduced along with
+>>> the LED flash class extension, was to add a means for setting torch LED
+>>> brightness as soon as possible, which couldn't have been guaranteed by
+>>> brightness_set op. This patch renames the op to brightness_set_blocking,
+>>> which describes its purpose in a more generic way, and is beneficial
+>>> in view of the prospective changes in the core related to using
+>>> LED core's set_brightness_work for setting brightness for LED class
+>>> drivers that can sleep or use delays while setting brightness.
 >>
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> ---
->>   Documentation/leds/leds-class.txt |   21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
+>> ...
 >>
->> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
->> index 62261c0..2cc38fa 100644
->> --- a/Documentation/leds/leds-class.txt
->> +++ b/Documentation/leds/leds-class.txt
->> @@ -52,6 +52,27 @@ above leaves scope for further attributes should they be needed. If sections
->>   of the name don't apply, just leave that section blank.
+>>> -    /*
+>>> -     * Set LED brightness level immediately - it can block the
+>>> caller for
+>>> -     * the time required for accessing a LED device register.
+>>> -     */
+>>> -    int        (*brightness_set_sync)(struct led_classdev *led_cdev,
+>>> -                    enum led_brightness brightness);
+>>> +    /* Can sleep or use delays */
+>>> +    int (*brightness_set_blocking)(struct led_classdev *led_cdev,
 >>
->>
->> +Brightness setting API
->> +======================
->> +
->> +LED subsystem core exposes following API for setting brightness:
->> +
->> +    - led_set_brightness : if necessary, cancels the software blink timer that
->> +		implements blinking when the hardware doesn't; it is guaranteed
->> +		not to sleep
+>> I'm no expert when it comes to flash photography with digital
+>> cameras.
 >
-> I would put this in the reverse order. Not sleeping is the most
-> important bit.
+> This op is now not specific to flash LEDs. The last sentence in the
+> commit message explains this, but now I see that it is too long.
+> Let's change it to:
+>
+> "This patch renames the op to brightness_set_blocking,
+> which describes its purpose in a more generic way. It is beneficial
+> in view of the prospective changes in the LED core, aiming at removing
+> the need for using work queues in LED class drivers that can sleep
+> or use delays while setting brightness."
+>
+>> But to me the old comment seems better.
+>
+> I changed it to highlight the essence of how it differs from
+> brightness_set.
+>
+>> Doesn't the caller
+>> want to know the flash is now giving out light?
+>
+> We have strobe_get op for this, but it is in led-class-flash extension.
+> This is irrelevant here.
 
-OK.
-
-> Also, stopping blinking should also happen if the
-> hardware is performing the blinking. There is no need to mention
-> software blinking, that is an implementation detail.
-
-OK.
-
->
->                  which implies the possibility of delegating the
->> +		job to a work queue task (uses led_set_brightness_nosleep
->> +		underneath - see below),
->
-> This bit is also an implementation detail and not relevant to the API.
->
->
->> +    - led_set_brightness_sync : for use cases when immediate effect is desired;
->> +		it can block the caller for the time required for accessing
->> +		device registers and can sleep,
->
-> In fact, i would probably have a separate paragraph that says passing
-> LED_OFF to either of these two functions stops blinking.
-
-In case of led_set_brightness_sync passing LED_OFF will disable only
-hardware blinking. I noticed this discrepancy before a while. We can't
-disable soft blinking, because we would have to do it in a work queue
-task, which would in turn compromise the contract offering by the API,
-i.e. brightness is guaranteed to be set after function returns.
-Since Sakari proposed to return error from the function if soft blinking
-is on, then this has to be explicitly stated here too.
+I focused myself on flash mode of flash LED, but you asked
+probably about brightness in torch mode, which can be obtained
+with brightness_get op, if implemented by the driver.
 
 
 -- 
