@@ -1,86 +1,78 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH v6 0/5] Add DT support for netxbig LEDs
-Date: Sat, 26 Sep 2015 23:02:33 +0200
-Message-ID: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:58916 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754915AbbIZVCn (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sat, 26 Sep 2015 17:02:43 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v6 5/5] leds: netxbig: set led_classdev max_brightness
+Date: Sat, 26 Sep 2015 23:02:38 +0200
+Message-ID: <1443301358-2131-6-git-send-email-simon.guinot@sequanux.org>
+References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1443301358-2131-1-git-send-email-simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vincent Donnefort <vdonnefort-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yoann Sculo <yoann-SEL7PEOQfnBQFI55V6+gNQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Hello,
+This patch sets the led_classdev max_brightness to the maximum level
+value supported by hardware. This allows to get rid of the brightness
+conversion operation (from software [0:LED_FULL] to hardware ranges) in
+brightness_set().
 
-This patch series adds DT support for the LEDs found on the
-Kirkwood-based LaCie boards 2Big and 5Big Network v2.
+Signed-off-by: Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
+---
+ drivers/leds/leds-netxbig.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Changes for v2:
-- Check timer mode value retrieved from DT.
-- In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
-  timer delay values from DT with function of_property_read_u32_index.
-  Instead, use a temporary u32 variable. This allows to silence a static
-  checker warning.
-- Make timer property optional in the binding documentation. It is now
-  aligned with the driver code.
-
-Changes for v3:
-- Fix pointer usage with the temporary u32 variable while calling
-  of_property_read_u32_index.
-
-Changes for v4:
-- In DT binding document netxbig-gpio-ext.txt, detail byte order for
-  registers and latch mechanism for "enable-gpio".
-- In leds-netxbig.c, add some error messages.
-- In leds-netxbig.c, fix some "sizeof" style issues.
-- In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
-  of_property_read_string() calls after the error-prone checks.
-- Add some Acked-by.
-
-Changes for v5:
-- Rename DT property "bright-max" into the more common "max-brightness".
-- Make use of the "max-brightness" DT property. Instead of counting the
-  data pins of the GPIO extension bus, use "max-brightness" to get the
-  maximum brightness level.
-- Add a patch to convert the leds-netxbig driver to the devm_ functions.
-
-Changes for v6:
-- Add a patch to set led_classdev max_brightness in the leds-netxbig
-  driver.
-- Decrement the current child node refcount with of_node_put() when an
-  error happens while iterating with for_each_child_of_node().
-
-Thanks,
-
-Simon
-
-Simon Guinot (5):
-  leds: netxbig: add device tree binding
-  ARM: Kirkwood: add LED DT entries for netxbig boards
-  ARM: mvebu: remove static LED setup for netxbig boards
-  leds: netxbig: convert to use the devm_ functions
-  leds: netxbig: set led_classdev max_brightness
-
- .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
- .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++
- arch/arm/boot/dts/kirkwood-net5big.dts             |  60 ++++
- arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++
- arch/arm/mach-mvebu/Kconfig                        |   7 -
- arch/arm/mach-mvebu/Makefile                       |   1 -
- arch/arm/mach-mvebu/board.h                        |  21 --
- arch/arm/mach-mvebu/kirkwood.c                     |   4 -
- arch/arm/mach-mvebu/netxbig.c                      | 191 ------------
- drivers/leds/leds-netxbig.c                        | 336 ++++++++++++++++-----
- include/dt-bindings/leds/leds-netxbig.h            |  18 ++
- .../linux/platform_data/leds-kirkwood-netxbig.h    |   1 +
- 12 files changed, 531 insertions(+), 302 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
- delete mode 100644 arch/arm/mach-mvebu/board.h
- delete mode 100644 arch/arm/mach-mvebu/netxbig.c
- create mode 100644 include/dt-bindings/leds/leds-netxbig.h
-
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index b166fd9f4186..4b88b93244be 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -116,7 +116,6 @@ struct netxbig_led_data {
+ 	int			mode_addr;
+ 	int			*mode_val;
+ 	int			bright_addr;
+-	int			bright_max;
+ 	struct			netxbig_led_timer *timer;
+ 	int			num_timer;
+ 	enum netxbig_led_mode	mode;
+@@ -178,7 +177,7 @@ static void netxbig_led_set(struct led_classdev *led_cdev,
+ 	struct netxbig_led_data *led_dat =
+ 		container_of(led_cdev, struct netxbig_led_data, cdev);
+ 	enum netxbig_led_mode mode;
+-	int mode_val, bright_val;
++	int mode_val;
+ 	int set_brightness = 1;
+ 	unsigned long flags;
+ 
+@@ -204,12 +203,9 @@ static void netxbig_led_set(struct led_classdev *led_cdev,
+ 	 * SATA LEDs. So, change the brightness setting for a single
+ 	 * SATA LED will affect all the others.
+ 	 */
+-	if (set_brightness) {
+-		bright_val = DIV_ROUND_UP(value * led_dat->bright_max,
+-					  LED_FULL);
++	if (set_brightness)
+ 		gpio_ext_set_value(led_dat->gpio_ext,
+-				   led_dat->bright_addr, bright_val);
+-	}
++				   led_dat->bright_addr, value);
+ 
+ 	spin_unlock_irqrestore(&led_dat->lock, flags);
+ }
+@@ -306,11 +302,11 @@ static int create_netxbig_led(struct platform_device *pdev,
+ 	 */
+ 	led_dat->sata = 0;
+ 	led_dat->cdev.brightness = LED_OFF;
++	led_dat->cdev.max_brightness = template->bright_max;
+ 	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+ 	led_dat->mode_addr = template->mode_addr;
+ 	led_dat->mode_val = template->mode_val;
+ 	led_dat->bright_addr = template->bright_addr;
+-	led_dat->bright_max = template->bright_max;
+ 	led_dat->timer = pdata->timer;
+ 	led_dat->num_timer = pdata->num_timer;
+ 	/*
 -- 
 2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
