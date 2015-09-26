@@ -1,36 +1,46 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v3 13/26] ARM: pxa: magician: Fix and add charging detection functions
-Date: Sat, 26 Sep 2015 16:45:32 +0200
-Message-ID: <87eghli6di.fsf@belgarion.home>
-References: <cover.1442462898.git.petr.cvek@tul.cz> <55FA48A0.9090709@tul.cz>
+Subject: Re: [PATCH v3 00/26] ARM: pxa: magician: Rework HTC Magician support
+Date: Sat, 26 Sep 2015 17:15:57 +0200
+Message-ID: <87zj09fbyq.fsf@belgarion.home>
+References: <55FA4756.9080309@tul.cz>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Petr Cvek <petr.cvek@tul.cz>
-Cc: philipp.zabel@gmail.com, daniel@zonque.org, haojian.zhuang@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, lee.jones@linaro.org, sameo@linux.intel.com, dwmw2@infradead.org, arnd@arndb.de, g.liakhovetski@gmx.de, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:31987 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336AbbIZPVC (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 26 Sep 2015 11:21:02 -0400
+In-Reply-To: <55FA4756.9080309@tul.cz> (Petr Cvek's message of "Thu, 17 Sep
+	2015 06:53:42 +0200")
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Petr Cvek <petr.cvek@tul.cz>, philipp.zabel@gmail.com
+Cc: daniel@zonque.org, haojian.zhuang@gmail.com, cooloney@gmail.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux@arm.linux.org.uk, sre@kernel.org, dbaryshkov@gmail.com, lee.jones@linaro.org, sameo@linux.intel.com, dwmw2@infradead.org, arnd@arndb.de, g.liakhovetski@gmx.de, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 Petr Cvek <petr.cvek@tul.cz> writes:
 
-> This patch fixes the charging detection functions for pda_power driver
-> (according to newly discovered EGPIOs) and add NiCd backup accumulator
-> charging support.
->
-> Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-> ---
-> +static int magician_is_usb_online(void)
-> +{
-> +	return gpio_get_value(EGPIO_MAGICIAN_CABLE_INSERTED) &&
-> +		(!gpio_get_value(EGPIO_MAGICIAN_CABLE_TYPE)); /* USB=0 */
-No need to the extra parenthesis, just :
-> +	return gpio_get_value(EGPIO_MAGICIAN_CABLE_INSERTED) &&
-> +		!gpio_get_value(EGPIO_MAGICIAN_CABLE_TYPE); /* USB=0 */
+> This patchset will clean, fix, optimize and add multiple devices,
+> which can be found on the HTC Magician machine.
+... zip ...
+>  arch/arm/mach-pxa/include/mach/magician.h |  78 +--
+>  arch/arm/mach-pxa/magician.c              | 907 +++++++++++++++++++++---------
+>  2 files changed, 682 insertions(+), 303 deletions(-)
 
-As the remaining looks sgood to me, I'll wait for a week for Philipp's ack and
-queuing it after with this parenthesis thing fixed, won't cost me much.
+Ok Petr, that's way better.
+This is how I see the next step :
+ 1) You fix the patch 1/26 and resend only that one, it's trivial whitespacing,
+    no need to send another complete patchset
+ 2) I wait a week for Philip to ack all the patches I replied to (ie. all except
+    patch 19/26 and 22/26)
+ 3) If Philipp doesn't NAK, then I'll queue all these patches to my next tree
+    (git://github.com/rjarzmik/linux.git pxa/for-next)
+
+Meanwhile, I'll have time to answer to patches 19 and 22. Next Sunday, I'll
+reply once more that I have queued your patches (provided that you update patch
+1/26), and you will be able to rebase on this tree, leaving at most 2 patches to
+deal with.
 
 Cheers.
 
---
+-- 
 Robert
