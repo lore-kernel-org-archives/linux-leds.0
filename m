@@ -1,79 +1,80 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 01/12] leds: core: Use EXPORT_SYMBOL_GPL consistently
-Date: Mon, 28 Sep 2015 17:13:39 +0200
-Message-ID: <56095923.7090600@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 12/12] media: flash: use led_set_brightness_sync for
+ torch brightness
+Date: Mon, 28 Sep 2015 22:37:47 +0200
+Message-ID: <20150928203747.GA19666@amd>
 References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
- <1443445641-9529-2-git-send-email-j.anaszewski@samsung.com>
+ <1443445641-9529-13-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:61702 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933554AbbI1PNo (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 11:13:44 -0400
-In-reply-to: <1443445641-9529-2-git-send-email-j.anaszewski@samsung.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59749 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbbI1Uhw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 16:37:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1443445641-9529-13-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, linux-media@vger.kernel.org
 
-This patch isn't going to be applied since it can cause
-legal implications for existing users.
+On Mon 2015-09-28 15:07:21, Jacek Anaszewski wrote:
+> LED subsystem shifted responsibility for choosing between SYNC or ASYNC
+> way of setting brightness from drivers to the caller. Adapt the wrapper
+> to those changes.
 
-On 09/28/2015 03:07 PM, Jacek Anaszewski wrote:
-> LED core has a mixture of EXPORT_SYMBOL and EXPORT_SYMBOL_GPL macros.
-> This patch fixes this discrepancy and switches to using EXPORT_SYMBOL_GPL
-> for each exported function.
->
+Umm. Maybe right patch, but wrong position in the queue, no?
+
+If I understand changelog correctly, LED flashes will be subtly broken
+before this patch is applied.
+
+I guess this patch should be moved sooner so everything works at each
+position in bisect...?
+
+Best regards,
+								Pavel
+
 > Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: linux-media@vger.kernel.org
 > ---
->   drivers/leds/led-core.c |    8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 549de7e..c1dd545 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -83,7 +83,7 @@ void led_blink_set(struct led_classdev *led_cdev,
->
->   	led_blink_setup(led_cdev, delay_on, delay_off);
->   }
-> -EXPORT_SYMBOL(led_blink_set);
-> +EXPORT_SYMBOL_GPL(led_blink_set);
->
->   void led_blink_set_oneshot(struct led_classdev *led_cdev,
->   			   unsigned long *delay_on,
-> @@ -104,7 +104,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
->
->   	led_blink_setup(led_cdev, delay_on, delay_off);
->   }
-> -EXPORT_SYMBOL(led_blink_set_oneshot);
-> +EXPORT_SYMBOL_GPL(led_blink_set_oneshot);
->
->   void led_stop_software_blink(struct led_classdev *led_cdev)
->   {
-> @@ -139,7 +139,7 @@ void led_set_brightness(struct led_classdev *led_cdev,
->   		dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
->   			ret);
->   }
-> -EXPORT_SYMBOL(led_set_brightness);
-> +EXPORT_SYMBOL_GPL(led_set_brightness);
->
->   int led_update_brightness(struct led_classdev *led_cdev)
->   {
-> @@ -155,7 +155,7 @@ int led_update_brightness(struct led_classdev *led_cdev)
->
->   	return ret;
->   }
-> -EXPORT_SYMBOL(led_update_brightness);
-> +EXPORT_SYMBOL_GPL(led_update_brightness);
->
->   /* Caller must ensure led_cdev->led_access held */
->   void led_sysfs_disable(struct led_classdev *led_cdev)
->
-
+>  drivers/media/v4l2-core/v4l2-flash-led-class.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> index 5bdfb8d..5d67335 100644
+> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> @@ -107,10 +107,10 @@ static void v4l2_flash_set_led_brightness(struct v4l2_flash *v4l2_flash,
+>  		if (ctrls[LED_MODE]->val != V4L2_FLASH_LED_MODE_TORCH)
+>  			return;
+>  
+> -		led_set_brightness(&v4l2_flash->fled_cdev->led_cdev,
+> +		led_set_brightness_sync(&v4l2_flash->fled_cdev->led_cdev,
+>  					brightness);
+>  	} else {
+> -		led_set_brightness(&v4l2_flash->iled_cdev->led_cdev,
+> +		led_set_brightness_sync(&v4l2_flash->iled_cdev->led_cdev,
+>  					brightness);
+>  	}
+>  }
+> @@ -206,11 +206,11 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
+>  	case V4L2_CID_FLASH_LED_MODE:
+>  		switch (c->val) {
+>  		case V4L2_FLASH_LED_MODE_NONE:
+> -			led_set_brightness(led_cdev, LED_OFF);
+> +			led_set_brightness_sync(led_cdev, LED_OFF);
+>  			return led_set_flash_strobe(fled_cdev, false);
+>  		case V4L2_FLASH_LED_MODE_FLASH:
+>  			/* Turn the torch LED off */
+> -			led_set_brightness(led_cdev, LED_OFF);
+> +			led_set_brightness_sync(led_cdev, LED_OFF);
+>  			if (ctrls[STROBE_SOURCE]) {
+>  				external_strobe = (ctrls[STROBE_SOURCE]->val ==
+>  					V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
 
 -- 
-Best Regards,
-Jacek Anaszewski
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
