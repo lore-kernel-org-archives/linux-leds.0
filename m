@@ -1,79 +1,50 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 5/5] leds: netxbig: set led_classdev max_brightness
-Date: Mon, 28 Sep 2015 12:15:22 +0200
-Message-ID: <5609133A.3050802@samsung.com>
-References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
- <1443301358-2131-6-git-send-email-simon.guinot@sequanux.org>
- <5608F41B.4020307@samsung.com> <20150928091956.GY7306@kw.sim.vm.gnt>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCHv3 2/3] backlight: add led-backlight driver
+Date: Mon, 28 Sep 2015 11:31:54 +0100
+Message-ID: <20150928103154.GO27197@x1>
+References: <1441976857-26548-1-git-send-email-tomi.valkeinen@ti.com>
+ <1441976857-26548-3-git-send-email-tomi.valkeinen@ti.com>
+ <5608F66E.8020703@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:42423 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932609AbbI1KP1 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 06:15:27 -0400
-In-reply-to: <20150928091956.GY7306@kw.sim.vm.gnt>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:34429 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932198AbbI1Kb6 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 06:31:58 -0400
+Received: by wicfx3 with SMTP id fx3so97760469wic.1
+        for <linux-leds@vger.kernel.org>; Mon, 28 Sep 2015 03:31:57 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5608F66E.8020703@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-On 09/28/2015 11:19 AM, Simon Guinot wrote:
-> On Mon, Sep 28, 2015 at 10:02:35AM +0200, Jacek Anaszewski wrote:
->> Hi Simon,
->
-> Hi Jacek,
->
->>
->> Does your device support reading the brightness currently set?
->
-> No it don't.
->
->> If so, it would be good to implement brightness_get op, because
->> AFAIR you mentioned that the firmware you are working with sets
->> always maximum brightness value. Having the op implemented would
->> allow to find this out.
->
-> I don't understand how this can help. I mean, the only issue is that at
-> startup the initial LED state is unknown. And the software brightness
-> value could be false. But once the LED is configured, the brightness
-> values for software and hardware are synchronized. The brightness value
-> is stored/cached in led_classdev and it can be retrieved by the user via
-> sysfs...
->
-> For my own knowledge, is there some interest in having brightness_get(),
-> aside of guessing the LED initial state ?
+On Mon, 28 Sep 2015, Tomi Valkeinen wrote:
+> > This patch adds a led-backlight driver (led_bl), which is similar t=
+o
+> > pwm_bl except the driver uses a LED class driver to adjust the
+> > brightness in the HW.
+> >=20
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > ---
+> >  drivers/video/backlight/Kconfig  |   7 ++
+> >  drivers/video/backlight/Makefile |   1 +
+> >  drivers/video/backlight/led_bl.c | 246 +++++++++++++++++++++++++++=
+++++++++++++
+> >  3 files changed, 254 insertions(+)
+> >  create mode 100644 drivers/video/backlight/led_bl.c
+>=20
+> Any comments on the backlight side of this series? It is very similar=
+ to
+> the pwm_bl.c, so I presume the approach is acceptable?
 
-Some LED controllers can adjust brightness in case battery voltage level
-falls below some threshold.
+Jingoo?
 
-> What does the embedded firmware is writing 255 or 0 into the brightness
-> sysfs attribute. The max_brightness value is ignored. After this patch,
-> writing 255 and 0 still allows to configure the LED in the same way:
-> maximum brightness or off. Thus, I believe there is no compatibility
-> issue.
-
-LED core always assures that brightness value passed to brightness_set
-op does not exceed max_brightness value. So, now after executing
-"echo 255 > brightness", LED core will adjust it to max_brightness
-(e.g. 7) before passing to brightness_set.
-
-In the message [1], you mentioned that "LEDs are only enabled at their
-maximum level", so IIUC following is possible:
-
-#echo 3 > "brightness"
-
-firmware sets brightness to max_brightness from DT (e.g. 7), but
-
-#cat brightness
-#3
-
-Is it true?
-
-> But of course, I will update the firmware as well :)
-
-[1] http://www.spinics.net/lists/devicetree/msg94358.html
--- 
-Best Regards,
-Jacek Anaszewski
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
