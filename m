@@ -1,216 +1,152 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v2 02/12] leds: core: Move LED core callbacks out of led-class.c
-Date: Mon, 28 Sep 2015 15:07:11 +0200
-Message-ID: <1443445641-9529-3-git-send-email-j.anaszewski@samsung.com>
-References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH v6 5/5] leds: netxbig: set led_classdev max_brightness
+Date: Mon, 28 Sep 2015 15:25:33 +0200
+Message-ID: <20150928132533.GA7306@kw.sim.vm.gnt>
+References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+ <1443301358-2131-6-git-send-email-simon.guinot@sequanux.org>
+ <5608F41B.4020307@samsung.com>
+ <20150928091956.GY7306@kw.sim.vm.gnt>
+ <5609133A.3050802@samsung.com>
+ <20150928115033.GZ7306@kw.sim.vm.gnt>
+ <56093188.4050405@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bc2iwAtkAaXP8cWF"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vm1.sequanux.org ([188.165.36.56]:50663 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757357AbbI1NYK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 28 Sep 2015 09:24:10 -0400
+Content-Disposition: inline
+In-Reply-To: <56093188.4050405@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Since the API for controlling LED brightness and blinking is defined in
-the LED core, move the related timer and work callbacks to the led-core.c,
-and initialize them through a new led_core_init API.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/leds/led-class.c |   69 +------------------------------------------
- drivers/leds/led-core.c  |   73 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/leds/leds.h      |    1 +
- 3 files changed, 75 insertions(+), 68 deletions(-)
+--bc2iwAtkAaXP8cWF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index ca51d58..7385f98 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -102,70 +102,6 @@ static const struct attribute_group *led_groups[] = {
- 	NULL,
- };
- 
--static void led_timer_function(unsigned long data)
--{
--	struct led_classdev *led_cdev = (void *)data;
--	unsigned long brightness;
--	unsigned long delay;
--
--	if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
--		led_set_brightness_async(led_cdev, LED_OFF);
--		return;
--	}
--
--	if (led_cdev->flags & LED_BLINK_ONESHOT_STOP) {
--		led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
--		return;
--	}
--
--	brightness = led_get_brightness(led_cdev);
--	if (!brightness) {
--		/* Time to switch the LED on. */
--		if (led_cdev->delayed_set_value) {
--			led_cdev->blink_brightness =
--					led_cdev->delayed_set_value;
--			led_cdev->delayed_set_value = 0;
--		}
--		brightness = led_cdev->blink_brightness;
--		delay = led_cdev->blink_delay_on;
--	} else {
--		/* Store the current brightness value to be able
--		 * to restore it when the delay_off period is over.
--		 */
--		led_cdev->blink_brightness = brightness;
--		brightness = LED_OFF;
--		delay = led_cdev->blink_delay_off;
--	}
--
--	led_set_brightness_async(led_cdev, brightness);
--
--	/* Return in next iteration if led is in one-shot mode and we are in
--	 * the final blink state so that the led is toggled each delay_on +
--	 * delay_off milliseconds in worst case.
--	 */
--	if (led_cdev->flags & LED_BLINK_ONESHOT) {
--		if (led_cdev->flags & LED_BLINK_INVERT) {
--			if (brightness)
--				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
--		} else {
--			if (!brightness)
--				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
--		}
--	}
--
--	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
--}
--
--static void set_brightness_delayed(struct work_struct *ws)
--{
--	struct led_classdev *led_cdev =
--		container_of(ws, struct led_classdev, set_brightness_work);
--
--	led_stop_software_blink(led_cdev);
--
--	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
--}
--
- /**
-  * led_classdev_suspend - suspend an led_classdev.
-  * @led_cdev: the led_classdev to suspend.
-@@ -283,10 +219,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 
- 	led_update_brightness(led_cdev);
- 
--	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
--
--	setup_timer(&led_cdev->blink_timer, led_timer_function,
--		    (unsigned long)led_cdev);
-+	led_init_core(led_cdev);
- 
- #ifdef CONFIG_LEDS_TRIGGERS
- 	led_trigger_set_default(led_cdev);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index c1dd545..ee9309e 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -25,6 +25,70 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
- LIST_HEAD(leds_list);
- EXPORT_SYMBOL_GPL(leds_list);
- 
-+static void led_timer_function(unsigned long data)
-+{
-+	struct led_classdev *led_cdev = (void *)data;
-+	unsigned long brightness;
-+	unsigned long delay;
-+
-+	if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
-+		led_set_brightness_async(led_cdev, LED_OFF);
-+		return;
-+	}
-+
-+	if (led_cdev->flags & LED_BLINK_ONESHOT_STOP) {
-+		led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
-+		return;
-+	}
-+
-+	brightness = led_get_brightness(led_cdev);
-+	if (!brightness) {
-+		/* Time to switch the LED on. */
-+		if (led_cdev->delayed_set_value) {
-+			led_cdev->blink_brightness =
-+					led_cdev->delayed_set_value;
-+			led_cdev->delayed_set_value = 0;
-+		}
-+		brightness = led_cdev->blink_brightness;
-+		delay = led_cdev->blink_delay_on;
-+	} else {
-+		/* Store the current brightness value to be able
-+		 * to restore it when the delay_off period is over.
-+		 */
-+		led_cdev->blink_brightness = brightness;
-+		brightness = LED_OFF;
-+		delay = led_cdev->blink_delay_off;
-+	}
-+
-+	led_set_brightness_async(led_cdev, brightness);
-+
-+	/* Return in next iteration if led is in one-shot mode and we are in
-+	 * the final blink state so that the led is toggled each delay_on +
-+	 * delay_off milliseconds in worst case.
-+	 */
-+	if (led_cdev->flags & LED_BLINK_ONESHOT) {
-+		if (led_cdev->flags & LED_BLINK_INVERT) {
-+			if (brightness)
-+				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
-+		} else {
-+			if (!brightness)
-+				led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
-+		}
-+	}
-+
-+	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
-+}
-+
-+static void set_brightness_delayed(struct work_struct *ws)
-+{
-+	struct led_classdev *led_cdev =
-+		container_of(ws, struct led_classdev, set_brightness_work);
-+
-+	led_stop_software_blink(led_cdev);
-+
-+	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
-+}
-+
- static void led_set_software_blink(struct led_classdev *led_cdev,
- 				   unsigned long delay_on,
- 				   unsigned long delay_off)
-@@ -72,6 +136,15 @@ static void led_blink_setup(struct led_classdev *led_cdev,
- 	led_set_software_blink(led_cdev, *delay_on, *delay_off);
- }
- 
-+void led_init_core(struct led_classdev *led_cdev)
-+{
-+	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
-+
-+	setup_timer(&led_cdev->blink_timer, led_timer_function,
-+		    (unsigned long)led_cdev);
-+}
-+EXPORT_SYMBOL_GPL(led_init_core);
-+
- void led_blink_set(struct led_classdev *led_cdev,
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index bc89d7a..4238fbc 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -44,6 +44,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
- 	return led_cdev->brightness;
- }
- 
-+void led_init_core(struct led_classdev *led_cdev);
- void led_stop_software_blink(struct led_classdev *led_cdev);
- 
- extern struct rw_semaphore leds_list_lock;
--- 
-1.7.9.5
+On Mon, Sep 28, 2015 at 02:24:40PM +0200, Jacek Anaszewski wrote:
+> On 09/28/2015 01:50 PM, Simon Guinot wrote:
+> >On Mon, Sep 28, 2015 at 12:15:22PM +0200, Jacek Anaszewski wrote:
+> >>On 09/28/2015 11:19 AM, Simon Guinot wrote:
+> >>>On Mon, Sep 28, 2015 at 10:02:35AM +0200, Jacek Anaszewski wrote:
+> >>>>Hi Simon,
+> >>>
+> >>>Hi Jacek,
+> >>>
+> >>>>
+> >>>>Does your device support reading the brightness currently set?
+> >>>
+> >>>No it don't.
+> >>>
+> >>>>If so, it would be good to implement brightness_get op, because
+> >>>>AFAIR you mentioned that the firmware you are working with sets
+> >>>>always maximum brightness value. Having the op implemented would
+> >>>>allow to find this out.
+> >>>
+> >>>I don't understand how this can help. I mean, the only issue is that at
+> >>>startup the initial LED state is unknown. And the software brightness
+> >>>value could be false. But once the LED is configured, the brightness
+> >>>values for software and hardware are synchronized. The brightness value
+> >>>is stored/cached in led_classdev and it can be retrieved by the user v=
+ia
+> >>>sysfs...
+> >>>
+> >>>For my own knowledge, is there some interest in having brightness_get(=
+),
+> >>>aside of guessing the LED initial state ?
+> >>
+> >>Some LED controllers can adjust brightness in case battery voltage level
+> >>falls below some threshold.
+> >
+> >OK, thanks for the explanation.
+> >
+> >>
+> >>>What does the embedded firmware is writing 255 or 0 into the brightness
+> >>>sysfs attribute. The max_brightness value is ignored. After this patch,
+> >>>writing 255 and 0 still allows to configure the LED in the same way:
+> >>>maximum brightness or off. Thus, I believe there is no compatibility
+> >>>issue.
+> >>
+> >>LED core always assures that brightness value passed to brightness_set
+> >>op does not exceed max_brightness value. So, now after executing
+> >>"echo 255 > brightness", LED core will adjust it to max_brightness
+> >>(e.g. 7) before passing to brightness_set.
+> >>
+> >>In the message [1], you mentioned that "LEDs are only enabled at their
+> >>maximum level", so IIUC following is possible:
+> >>
+> >>#echo 3 > "brightness"
+> >>
+> >>firmware sets brightness to max_brightness from DT (e.g. 7), but
+> >>
+> >>#cat brightness
+> >>#3
+> >>
+> >>Is it true?
+> >
+> >Oh no sorry, it is a misunderstanding. By "LEDs are only enabled at
+> >their maximum level", I was meaning "LEDs are only enabled at their
+> >maximum level by the LaCie stock firmware". The firmware don't make
+> >use of the different hardware brightness levels available. But the
+> >feature works perfectly. If you write 3 into sysfs "brightness", then
+> >you get the third brightness level.
+>=20
+> I thought that driver talks to firmware, which controls the LEDs.
+> From your explanation I infer that this driver replaces LaCie stock
+> firmware, am I right? There must be however some circuit that controls
+> LED brightness then.
+
+OK, I think I may have managed to confuse you completely.
+
+The LEDs are controlled by a CPLD. The leds-netxbig driver talks to the
+CPLD via the gpio-ext "kind of" bus:
+
+leds-netxbig -> gpio-ext bus -> CPLD -> LEDs
+
+"LaCie stock firmware" don't refer to the firmware embedded in the CPLD
+but to the stock LaCie Linux system running *on* the board.
+
+"LEDs are only enabled at their maximum level by the LaCie stock
+firmware" means: "In the Linux LaCie system running on the board,
+userland only configures the LED brightness to 0 or 255".
+
+It don't mean that the CPLD does some weird stuff implying that the
+feature is somewhat broken. No, the feature works. Simply userland
+(in the stock LaCie system aka firmware) don't use it.
+
+Remember that your original question was:
+
+"Doesn't specification of your device say what current value given
+ brightness level reflects?"
+
+Let me rephrase my answer without using "LaCie stock firmware":
+
+No this information is not available in the board specification. It is
+probably because this feature is not used by the LaCie Linux userland.
+The LED brightness is configured to off or full. Other levels are not
+used. That's probably why no one took care of measuring the LED current
+consumption.
+
+Let me know if it is still unclear for you.
+
+Simon
+
+--bc2iwAtkAaXP8cWF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlYJP80ACgkQgtp0PDeOcDpkkQCdGJlhXcwHx7C7WbhCaTdqOmNm
+N68AnAuaCNqhVAwfqCkYtgc4t8DPhcBM
+=aEEt
+-----END PGP SIGNATURE-----
+
+--bc2iwAtkAaXP8cWF--
