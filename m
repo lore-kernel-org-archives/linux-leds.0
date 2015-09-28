@@ -1,51 +1,51 @@
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCHv3 1/3] leds: Add of_led_get() and led_put()
-Date: Mon, 28 Sep 2015 11:08:50 +0300
-Message-ID: <5608F592.7010008@ti.com>
+Subject: Re: [PATCHv3 2/3] backlight: add led-backlight driver
+Date: Mon, 28 Sep 2015 11:12:30 +0300
+Message-ID: <5608F66E.8020703@ti.com>
 References: <1441976857-26548-1-git-send-email-tomi.valkeinen@ti.com>
- <1441976857-26548-2-git-send-email-tomi.valkeinen@ti.com>
- <55F2DC3C.6090100@samsung.com>
+ <1441976857-26548-3-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
 	protocol="application/pgp-signature";
-	boundary="KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd"
+	boundary="TCBBEosFDnwbpLwveGIDaoJW7NfQ7o81j"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:53484 "EHLO arroyo.ext.ti.com"
+Received: from comal.ext.ti.com ([198.47.26.152]:38918 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756469AbbI1IJE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 28 Sep 2015 04:09:04 -0400
-In-Reply-To: <55F2DC3C.6090100@samsung.com>
+	id S1756464AbbI1IMm (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 28 Sep 2015 04:12:42 -0400
+In-Reply-To: <1441976857-26548-3-git-send-email-tomi.valkeinen@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
---KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd
+--TCBBEosFDnwbpLwveGIDaoJW7NfQ7o81j
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
+Hi Jingoo, Lee,
 
-
-On 11/09/15 16:50, Jacek Anaszewski wrote:
-
->> +/**
->> + * led_put() - release a LED device, reserved with led_get()
+On 11/09/15 16:07, Tomi Valkeinen wrote:
+> This patch adds a led-backlight driver (led_bl), which is similar to
+> pwm_bl except the driver uses a LED class driver to adjust the
+> brightness in the HW.
 >=20
-> s/led_get/of_led_get/
->=20
-> or we should add led_get, but since class_find_device, which increments=
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> ---
+>  drivers/video/backlight/Kconfig  |   7 ++
+>  drivers/video/backlight/Makefile |   1 +
+>  drivers/video/backlight/led_bl.c | 246 +++++++++++++++++++++++++++++++=
+++++++++
+>  3 files changed, 254 insertions(+)
+>  create mode 100644 drivers/video/backlight/led_bl.c
 
-> device ref count, takes led_node and led_match_led_node, it is tightly
-> coupled tightly with OF. OTOH we could have of_led_put for symmetry,
-> but it would have nothing to do with OF. Amending the comment is the
-> best option here, I think.
-
-I agree. I've changed the comment.
+Any comments on the backlight side of this series? It is very similar to
+the pwm_bl.c, so I presume the approach is acceptable?
 
  Tomi
 
 
---KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd
+--TCBBEosFDnwbpLwveGIDaoJW7NfQ7o81j
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -53,19 +53,19 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJWCPWSAAoJEPo9qoy8lh71oUoP/1XL0l+p0RD+vzy2C1sOm9cn
-5GBTYPADKWPvJUx6HYptu4ewyCA9mjJ4Tm7T8vI+PyAZgRV8Sjua0PH0+8pj+98Z
-z150RtWS70QaUw1hUyjupfViFmv+jJwQo1NQ5qWewu9HIz7690ntZZL/9jkuFVEp
-lts8MkSOeuoOtX6EKDw7PhBoSL+N5AqYlEbA0ljQcWSLI6NcVDXIqeeYR14kltk8
-+/1hjIleKx0a4BEmEm7j8WzyS4/PbWIAyBlfoC8Faa0UUOJXl2aDVjuw1wc43hXH
-e48X8EMYzHTedtSZRowRiOzZ3zl81G/k1pAnwrdfKMYvu2MUaevA2PNRsOiXGCkr
-BRcU73KK4N317pIt11hD8aWjujuSw00Wa9gSsSEb+LzXBtER3Add1Lxjg25Rx0f2
-eaST3nLOtubAqUxMOo/QjTElc5XH+ciwzIt2v2n0syIdIlxC9nyC9HdTPSVREcMF
-WAB/RcB4oiNZyDrjCBD4HOMsqxVjSI1MXv3o2THz3/Kvn/tIZz04864BQa4EY3+L
-HE+lcqcypNivdLmfftjqESjmzNql+MKOSVz8w54oef/zO7Q3dIYIFLuopo1Q3CFX
-5O4bOsm3zwQy1oCgVqOncJKrRnNGD02iQ8c/IUhOoVawLVGoGAVnu0zicoMoK3+Y
-hghTqBVD78fELPKDrgsq
-=U2IK
+iQIcBAEBCAAGBQJWCPZuAAoJEPo9qoy8lh71+D8P/2EpIzb2ZTsoVDhBSwNqUEqP
+Ng+jtemeytYRVgP59Aa2q4oDreN/stiIEUNnyD2AD/ZS0oNnMLvMdimExDc4lJ+0
+EtPeHQF22mPsKPRr6vlexzUrS4siezFOumJkSZHHFmujHZAGR65mBxNbWYyLr2aB
+AjXvqHIei++wN729dSY2PdCpFMxrl99wEDgDCVI3WH894xmBXXSWrveJCJB36/nq
+8yrwJGFmQmUugu5r+40qxY3g/+2UcSEq2TEZzoQmQ9H5dEsSh792AuKa+Ot5IseP
+tV0qON7xDduaCVq4/Q9UEyxOgDXwjNHHk8f7Sy6L5c90DyqL8ngLYaDQzsVlScgj
+F3qNitzVhakUkqo9e+qnEeyhonrJXmykhfg2OdB07RTV92kABaZbSVecRj6bpRM7
+WY6qMa5rP9Gb2ScoyBXTmRTq1oIQn5wsYbGtrA88jA39epnyhMAuUHgigzWdC1H2
+WF6ZHMTAXJaA9Zvv3Gw69dyRVxlQtluXINLPFumAZhSXZU6xMQrdCdAcuT2m6kDZ
+Qe0ulQfBbZG/lWfNKNo1mEeXIUd1yzpeYhjcVqvVf5MpX4cgIIHGf/XHzwb4si9k
+NhAUg5joNBIGkK/bkcrAAShJCMNTHoP1Y0CKhru34tfpzyqkEXyqmuixSmwJ+kf5
+8CgB0lp3o3QxGe2j98p2
+=rld4
 -----END PGP SIGNATURE-----
 
---KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd--
+--TCBBEosFDnwbpLwveGIDaoJW7NfQ7o81j--
