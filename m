@@ -1,94 +1,71 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 5/5] leds: netxbig: set led_classdev max_brightness
-Date: Mon, 28 Sep 2015 10:02:35 +0200
-Message-ID: <5608F41B.4020307@samsung.com>
-References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
- <1443301358-2131-6-git-send-email-simon.guinot@sequanux.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCHv3 1/3] leds: Add of_led_get() and led_put()
+Date: Mon, 28 Sep 2015 11:08:50 +0300
+Message-ID: <5608F592.7010008@ti.com>
+References: <1441976857-26548-1-git-send-email-tomi.valkeinen@ti.com>
+ <1441976857-26548-2-git-send-email-tomi.valkeinen@ti.com>
+ <55F2DC3C.6090100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:21720 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756464AbbI1ICs (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 04:02:48 -0400
-In-reply-to: <1443301358-2131-6-git-send-email-simon.guinot@sequanux.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:53484 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756469AbbI1IJE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 28 Sep 2015 04:09:04 -0400
+In-Reply-To: <55F2DC3C.6090100@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-Hi Simon,
-
-Does your device support reading the brightness currently set?
-If so, it would be good to implement brightness_get op, because
-AFAIR you mentioned that the firmware you are working with sets
-always maximum brightness value. Having the op implemented would
-allow to find this out.
-
-On 09/26/2015 11:02 PM, Simon Guinot wrote:
-> This patch sets the led_classdev max_brightness to the maximum level
-> value supported by hardware. This allows to get rid of the brightness
-> conversion operation (from software [0:LED_FULL] to hardware ranges) in
-> brightness_set().
->
-> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> ---
->   drivers/leds/leds-netxbig.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-> index b166fd9f4186..4b88b93244be 100644
-> --- a/drivers/leds/leds-netxbig.c
-> +++ b/drivers/leds/leds-netxbig.c
-> @@ -116,7 +116,6 @@ struct netxbig_led_data {
->   	int			mode_addr;
->   	int			*mode_val;
->   	int			bright_addr;
-> -	int			bright_max;
->   	struct			netxbig_led_timer *timer;
->   	int			num_timer;
->   	enum netxbig_led_mode	mode;
-> @@ -178,7 +177,7 @@ static void netxbig_led_set(struct led_classdev *led_cdev,
->   	struct netxbig_led_data *led_dat =
->   		container_of(led_cdev, struct netxbig_led_data, cdev);
->   	enum netxbig_led_mode mode;
-> -	int mode_val, bright_val;
-> +	int mode_val;
->   	int set_brightness = 1;
->   	unsigned long flags;
->
-> @@ -204,12 +203,9 @@ static void netxbig_led_set(struct led_classdev *led_cdev,
->   	 * SATA LEDs. So, change the brightness setting for a single
->   	 * SATA LED will affect all the others.
->   	 */
-> -	if (set_brightness) {
-> -		bright_val = DIV_ROUND_UP(value * led_dat->bright_max,
-> -					  LED_FULL);
-> +	if (set_brightness)
->   		gpio_ext_set_value(led_dat->gpio_ext,
-> -				   led_dat->bright_addr, bright_val);
-> -	}
-> +				   led_dat->bright_addr, value);
->
->   	spin_unlock_irqrestore(&led_dat->lock, flags);
->   }
-> @@ -306,11 +302,11 @@ static int create_netxbig_led(struct platform_device *pdev,
->   	 */
->   	led_dat->sata = 0;
->   	led_dat->cdev.brightness = LED_OFF;
-> +	led_dat->cdev.max_brightness = template->bright_max;
->   	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
->   	led_dat->mode_addr = template->mode_addr;
->   	led_dat->mode_val = template->mode_val;
->   	led_dat->bright_addr = template->bright_addr;
-> -	led_dat->bright_max = template->bright_max;
->   	led_dat->timer = pdata->timer;
->   	led_dat->num_timer = pdata->num_timer;
->   	/*
->
+--KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
 
--- 
-Best Regards,
-Jacek Anaszewski
+
+On 11/09/15 16:50, Jacek Anaszewski wrote:
+
+>> +/**
+>> + * led_put() - release a LED device, reserved with led_get()
+>=20
+> s/led_get/of_led_get/
+>=20
+> or we should add led_get, but since class_find_device, which increments=
+
+> device ref count, takes led_node and led_match_led_node, it is tightly
+> coupled tightly with OF. OTOH we could have of_led_put for symmetry,
+> but it would have nothing to do with OF. Amending the comment is the
+> best option here, I think.
+
+I agree. I've changed the comment.
+
+ Tomi
+
+
+--KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWCPWSAAoJEPo9qoy8lh71oUoP/1XL0l+p0RD+vzy2C1sOm9cn
+5GBTYPADKWPvJUx6HYptu4ewyCA9mjJ4Tm7T8vI+PyAZgRV8Sjua0PH0+8pj+98Z
+z150RtWS70QaUw1hUyjupfViFmv+jJwQo1NQ5qWewu9HIz7690ntZZL/9jkuFVEp
+lts8MkSOeuoOtX6EKDw7PhBoSL+N5AqYlEbA0ljQcWSLI6NcVDXIqeeYR14kltk8
++/1hjIleKx0a4BEmEm7j8WzyS4/PbWIAyBlfoC8Faa0UUOJXl2aDVjuw1wc43hXH
+e48X8EMYzHTedtSZRowRiOzZ3zl81G/k1pAnwrdfKMYvu2MUaevA2PNRsOiXGCkr
+BRcU73KK4N317pIt11hD8aWjujuSw00Wa9gSsSEb+LzXBtER3Add1Lxjg25Rx0f2
+eaST3nLOtubAqUxMOo/QjTElc5XH+ciwzIt2v2n0syIdIlxC9nyC9HdTPSVREcMF
+WAB/RcB4oiNZyDrjCBD4HOMsqxVjSI1MXv3o2THz3/Kvn/tIZz04864BQa4EY3+L
+HE+lcqcypNivdLmfftjqESjmzNql+MKOSVz8w54oef/zO7Q3dIYIFLuopo1Q3CFX
+5O4bOsm3zwQy1oCgVqOncJKrRnNGD02iQ8c/IUhOoVawLVGoGAVnu0zicoMoK3+Y
+hghTqBVD78fELPKDrgsq
+=U2IK
+-----END PGP SIGNATURE-----
+
+--KGrvgXVCDwHBT1GrLca4vtUQ9dSPJ82kd--
