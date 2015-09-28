@@ -1,80 +1,54 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 12/12] media: flash: use led_set_brightness_sync for
- torch brightness
-Date: Mon, 28 Sep 2015 22:37:47 +0200
-Message-ID: <20150928203747.GA19666@amd>
-References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
- <1443445641-9529-13-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Maciek Borzecki <maciek.borzecki@gmail.com>
+Subject: [PATCH 0/3] leds: add device trigger
+Date: Mon, 28 Sep 2015 22:43:02 +0200
+Message-ID: <cover.1443471365.git.maciek.borzecki@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59749 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbbI1Uhw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 16:37:52 -0400
-Content-Disposition: inline
-In-Reply-To: <1443445641-9529-13-git-send-email-j.anaszewski@samsung.com>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:33076 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751505AbbI1UoO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 16:44:14 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, linux-media@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Cc: Maciek Borzecki <maciek.borzecki@gmail.com>
 
-On Mon 2015-09-28 15:07:21, Jacek Anaszewski wrote:
-> LED subsystem shifted responsibility for choosing between SYNC or ASYNC
-> way of setting brightness from drivers to the caller. Adapt the wrapper
-> to those changes.
+A series of patches that add yet another LED trigger, a device
+activity trigger.
 
-Umm. Maybe right patch, but wrong position in the queue, no?
+The motivation is to have a LED trigger that is associated with a
+device and can be fired from cetrain points in the code that have been
+chosen by the developer. With this this device activity trigger it is
+possible for instance to easily hook up a tty driver for a console to
+blink one LED, yet another serial port to blink a second LED and
+writes to a block device to trigger a third LED.
 
-If I understand changelog correctly, LED flashes will be subtly broken
-before this patch is applied.
+The patches have been tested on Wandboard Quad.
 
-I guess this patch should be moved sooner so everything works at each
-position in bisect...?
+The first patch adds the actual trigger. Each device wishing to use
+the trigger has to be explicitly registered by calling
+ledtrig_dev_add(), and passing it's dev_t. The intention is that the
+trigger will be used in scenarios that are impossible to foresee at
+this moment, and are likely to be approach in a case by case manner
+anyway.
 
-Best regards,
-								Pavel
+The second patch adds couple of debugfs helpers.
 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-media@vger.kernel.org
-> ---
->  drivers/media/v4l2-core/v4l2-flash-led-class.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> index 5bdfb8d..5d67335 100644
-> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-> @@ -107,10 +107,10 @@ static void v4l2_flash_set_led_brightness(struct v4l2_flash *v4l2_flash,
->  		if (ctrls[LED_MODE]->val != V4L2_FLASH_LED_MODE_TORCH)
->  			return;
->  
-> -		led_set_brightness(&v4l2_flash->fled_cdev->led_cdev,
-> +		led_set_brightness_sync(&v4l2_flash->fled_cdev->led_cdev,
->  					brightness);
->  	} else {
-> -		led_set_brightness(&v4l2_flash->iled_cdev->led_cdev,
-> +		led_set_brightness_sync(&v4l2_flash->iled_cdev->led_cdev,
->  					brightness);
->  	}
->  }
-> @@ -206,11 +206,11 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
->  	case V4L2_CID_FLASH_LED_MODE:
->  		switch (c->val) {
->  		case V4L2_FLASH_LED_MODE_NONE:
-> -			led_set_brightness(led_cdev, LED_OFF);
-> +			led_set_brightness_sync(led_cdev, LED_OFF);
->  			return led_set_flash_strobe(fled_cdev, false);
->  		case V4L2_FLASH_LED_MODE_FLASH:
->  			/* Turn the torch LED off */
-> -			led_set_brightness(led_cdev, LED_OFF);
-> +			led_set_brightness_sync(led_cdev, LED_OFF);
->  			if (ctrls[STROBE_SOURCE]) {
->  				external_strobe = (ctrls[STROBE_SOURCE]->val ==
->  					V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
+The third patch adds documentation and notes on debugfs interface.
+
+Maciek Borzecki (3):
+  leds: add device activity LED triggers
+  leds: add debugfs to device trigger
+  Documentation: leds: document ledtrig-device trigger
+
+ Documentation/leds/00-INDEX           |   3 +
+ Documentation/leds/ledtrig-device.txt |  32 ++++
+ drivers/leds/trigger/Kconfig          |   8 +
+ drivers/leds/trigger/Makefile         |   1 +
+ drivers/leds/trigger/ledtrig-device.c | 289 ++++++++++++++++++++++++++++++++++
+ include/linux/leds.h                  |  10 ++
+ 6 files changed, 343 insertions(+)
+ create mode 100644 Documentation/leds/ledtrig-device.txt
+ create mode 100644 drivers/leds/trigger/ledtrig-device.c
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.5.3
