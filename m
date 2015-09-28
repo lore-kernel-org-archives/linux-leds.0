@@ -1,7 +1,8 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v2 03/12] leds: core: Add two new LED_BLINK_ flags
-Date: Mon, 28 Sep 2015 15:07:12 +0200
-Message-ID: <1443445641-9529-4-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v2 04/12] leds: Rename brightness_set_sync op to
+ brightness_set_blocking
+Date: Mon, 28 Sep 2015 15:07:13 +0200
+Message-ID: <1443445641-9529-5-git-send-email-j.anaszewski@samsung.com>
 References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
@@ -10,109 +11,104 @@ To: linux-leds@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds LED_BLINK_BRIGHTNESS_CHANGE flag to indicate that blink
-brightness has changed, and LED_BLINK_DISABLE flag to indicate that
-blinking deactivation has been requested. In order to use the flags
-led_timer_function and set_brightness_delayed callbacks as well as
-led_set_brightness function are being modified. The main goal of these
-modifications is to prepare set_brightness_work for extension of the
-scope of its responsibilities.
+The initial purpose of brightness_set_sync op, introduced along with
+the LED flash class extension, was to add a means for setting torch LED
+brightness as soon as possible, which couldn't have been guaranteed by
+brightness_set op. This patch renames the op to brightness_set_blocking,
+which describes its purpose in a more generic way. It is beneficial
+in view of the prospective changes in the LED core, aiming at removing
+the need for using work queues in LED class drivers that can sleep
+or use delays while setting brightness.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/led-core.c |   36 ++++++++++++++++++++++++++----------
- include/linux/leds.h    |   10 ++++++----
- 2 files changed, 32 insertions(+), 14 deletions(-)
+ drivers/leds/led-class-flash.c |    2 +-
+ drivers/leds/leds-aat1290.c    |    2 +-
+ drivers/leds/leds-ktd2692.c    |    2 +-
+ drivers/leds/leds-max77693.c   |    2 +-
+ drivers/leds/leds.h            |    2 +-
+ include/linux/leds.h           |    4 ++--
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index ee9309e..7cf5924 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -44,18 +44,18 @@ static void led_timer_function(unsigned long data)
- 	brightness = led_get_brightness(led_cdev);
- 	if (!brightness) {
- 		/* Time to switch the LED on. */
--		if (led_cdev->delayed_set_value) {
--			led_cdev->blink_brightness =
--					led_cdev->delayed_set_value;
--			led_cdev->delayed_set_value = 0;
--		}
- 		brightness = led_cdev->blink_brightness;
- 		delay = led_cdev->blink_delay_on;
- 	} else {
- 		/* Store the current brightness value to be able
- 		 * to restore it when the delay_off period is over.
-+		 * Do it only if there is no pending blink brightness
-+		 * change, to avoid overwriting the new value.
- 		 */
--		led_cdev->blink_brightness = brightness;
-+		if (!(led_cdev->flags & LED_BLINK_BRIGHTNESS_CHANGE))
-+			led_cdev->blink_brightness = brightness;
-+		else
-+			led_cdev->flags &= ~LED_BLINK_BRIGHTNESS_CHANGE;
- 		brightness = LED_OFF;
- 		delay = led_cdev->blink_delay_off;
- 	}
-@@ -84,7 +84,11 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	struct led_classdev *led_cdev =
- 		container_of(ws, struct led_classdev, set_brightness_work);
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 3b25734..300a2c9 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -298,7 +298,7 @@ int led_classdev_flash_register(struct device *parent,
+ 	led_cdev = &fled_cdev->led_cdev;
  
--	led_stop_software_blink(led_cdev);
-+	if (led_cdev->flags & LED_BLINK_DISABLE) {
-+		led_cdev->delayed_set_value = LED_OFF;
-+		led_stop_software_blink(led_cdev);
-+		led_cdev->flags &= ~LED_BLINK_DISABLE;
-+	}
+ 	if (led_cdev->flags & LED_DEV_CAP_FLASH) {
+-		if (!led_cdev->brightness_set_sync)
++		if (!led_cdev->brightness_set_blocking)
+ 			return -EINVAL;
  
- 	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
+ 		ops = fled_cdev->ops;
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index ac77d36..c56f9a9 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -510,7 +510,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 
+ 	/* Initialize LED Flash class device */
+ 	led_cdev->brightness_set = aat1290_led_brightness_set;
+-	led_cdev->brightness_set_sync = aat1290_led_brightness_set_sync;
++	led_cdev->brightness_set_blocking = aat1290_led_brightness_set_sync;
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+ 	led_cdev->flags |= LED_DEV_CAP_FLASH;
+ 	INIT_WORK(&led->work_brightness_set, aat1290_brightness_set_work);
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index feca07b..e37de14 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -382,7 +382,7 @@ static int ktd2692_probe(struct platform_device *pdev)
+ 
+ 	led_cdev->max_brightness = led_cfg.max_brightness;
+ 	led_cdev->brightness_set = ktd2692_led_brightness_set;
+-	led_cdev->brightness_set_sync = ktd2692_led_brightness_set_sync;
++	led_cdev->brightness_set_blocking = ktd2692_led_brightness_set_sync;
+ 	led_cdev->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
+ 
+ 	mutex_init(&led->lock);
+diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+index afbb140..9f7240b 100644
+--- a/drivers/leds/leds-max77693.c
++++ b/drivers/leds/leds-max77693.c
+@@ -932,7 +932,7 @@ static void max77693_init_fled_cdev(struct max77693_sub_led *sub_led,
+ 	led_cdev->name = led_cfg->label[fled_id];
+ 
+ 	led_cdev->brightness_set = max77693_led_brightness_set;
+-	led_cdev->brightness_set_sync = max77693_led_brightness_set_sync;
++	led_cdev->brightness_set_blocking = max77693_led_brightness_set_sync;
+ 	led_cdev->max_brightness = (led->iout_joint ?
+ 					led_cfg->iout_torch_max[FLED1] +
+ 					led_cfg->iout_torch_max[FLED2] :
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 4238fbc..cf6d448 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -34,7 +34,7 @@ static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 	led_cdev->brightness = min(value, led_cdev->max_brightness);
+ 
+ 	if (!(led_cdev->flags & LED_SUSPENDED))
+-		ret = led_cdev->brightness_set_sync(led_cdev,
++		ret = led_cdev->brightness_set_blocking(led_cdev,
+ 						led_cdev->brightness);
+ 	return ret;
  }
-@@ -192,11 +196,23 @@ void led_set_brightness(struct led_classdev *led_cdev,
- {
- 	int ret = 0;
- 
--	/* delay brightness if soft-blink is active */
-+	/*
-+	 * In case blinking is on delay brightness setting
-+	 * until the next timer tick.
-+	 */
- 	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off) {
--		led_cdev->delayed_set_value = brightness;
--		if (brightness == LED_OFF)
-+		/*
-+		 * If we need to disable soft blinking delegate this to the
-+		 * work queue task to avoid problems in case we are called
-+		 * from hard irq context.
-+		 */
-+		if (brightness == LED_OFF) {
-+			led_cdev->flags |= LED_BLINK_DISABLE;
- 			schedule_work(&led_cdev->set_brightness_work);
-+		} else {
-+			led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
-+			led_cdev->blink_brightness = brightness;
-+		}
- 		return;
- 	}
- 
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b122eea..84521e5 100644
+index 84521e5..b47eff5 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -44,10 +44,12 @@ struct led_classdev {
- #define LED_BLINK_ONESHOT	(1 << 17)
- #define LED_BLINK_ONESHOT_STOP	(1 << 18)
- #define LED_BLINK_INVERT	(1 << 19)
--#define LED_SYSFS_DISABLE	(1 << 20)
--#define SET_BRIGHTNESS_ASYNC	(1 << 21)
--#define SET_BRIGHTNESS_SYNC	(1 << 22)
--#define LED_DEV_CAP_FLASH	(1 << 23)
-+#define LED_BLINK_BRIGHTNESS_CHANGE (1 << 20)
-+#define LED_BLINK_DISABLE	(1 << 21)
-+#define LED_SYSFS_DISABLE	(1 << 22)
-+#define SET_BRIGHTNESS_ASYNC	(1 << 23)
-+#define SET_BRIGHTNESS_SYNC	(1 << 24)
-+#define LED_DEV_CAP_FLASH	(1 << 25)
+@@ -59,8 +59,8 @@ struct led_classdev {
+ 	 * Set LED brightness level immediately - it can block the caller for
+ 	 * the time required for accessing a LED device register.
+ 	 */
+-	int		(*brightness_set_sync)(struct led_classdev *led_cdev,
+-					enum led_brightness brightness);
++	int (*brightness_set_blocking)(struct led_classdev *led_cdev,
++				       enum led_brightness brightness);
+ 	/* Get LED brightness level */
+ 	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
  
- 	/* Set LED brightness level */
- 	/* Must not sleep, use a workqueue if needed */
 -- 
 1.7.9.5
