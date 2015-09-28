@@ -1,94 +1,103 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v2 00/12] LED core improvements
-Date: Mon, 28 Sep 2015 15:07:09 +0200
-Message-ID: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v2 06/12] leds: core: Use set_brightness_work for the blocking
+ op
+Date: Mon, 28 Sep 2015 15:07:15 +0200
+Message-ID: <1443445641-9529-7-git-send-email-j.anaszewski@samsung.com>
+References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50517 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933561AbbI1NHd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 09:07:33 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:44447 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933762AbbI1NHt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 28 Sep 2015 09:07:49 -0400
+In-reply-to: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-This is a second version of the patch set preparing the
-ground for removing work queues from LED class drivers.
-Andrew and Sakari - thanks for a review.
+This patch makes LED core capable of setting brightness for drivers
+that implement brightness_set_blocking op. It removes from LED class
+drivers responsibility for using work queues on their own.
 
-================
-Changes from v1:
-================
-- removed useless use of else in led_set_brightness()
-- switched to removing error code instead of emitting
-  warning from led_set_brightness_sync() in case software
-  blink fallback is enabled
-- moved __led_set_brightness() contents to set_brightness_delayed()
-- removed description of internal led_set_brightness_nosleep() from
-  led-class.txt documentation, and modified description of
-  led_set_brightness() and led_set_brightness_sync()
-- renamed LED_BLINK_CHANGE flag to more meaningful
-  LED_BLINK_BRIGHTNESS_CHANGE
-- Fixed stylistic issues in a few comments
-- Adopted old brightness_set_sync() op description to
-  a new brightness_set_blocking() op
-- Fixed led_set_brightness_nosleep to avoid scheduling
-  spurious set_brightness_work
-- made LED core using EXPORT_SYMBOL_GPL consistently
-- switched v4l2-flash-led-class wrapper to using
-  led_set_brightness_sync API for setting torch brightness
-- merged with patch set
-  "LED flash: Set brightness in a sync way on demand"
+In order to achieve this set_brightness_delayed callback is being
+modified to directly call one of available ops for brightness setting.
 
+led_set_brightness_async function didn't set brightness in an
+asynchronous way in all cases. It was mistakenly assuming that all
+LED subsystem drivers used work queue in their brightness_set op,
+whereas only half of them did that. Since it has no users now,
+it is being removed.
 
-======================
-Original cover letter:
-======================
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+---
+ drivers/leds/led-core.c |   12 +++++++++++-
+ drivers/leds/leds.h     |   10 ----------
+ include/linux/leds.h    |    2 +-
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-This patch set prepares the ground for removing work queues
-from LED class drivers, and is a follow up of the patch set [1].
-LED core modifications have been reorganized to make them
-more clear and easier to review. The patch set is reduced
-in comparison to it its predecessor, to expose the modifications
-indispensable for the LED core to gain the capability of handling
-brightness_set_blocking ops, that is without work queues.
-
-Thanks,
-Jacek Anaszewski
-
-[1] https://lkml.org/lkml/2015/8/20/426
-
-Jacek Anaszewski (12):
-  leds: core: Use EXPORT_SYMBOL_GPL consistently
-  leds: core: Move LED core callbacks out of led-class.c
-  leds: core: Add two new LED_BLINK_ flags
-  leds: Rename brightness_set_sync op to brightness_set_blocking
-  leds: core: Add an internal led_set_brightness_nosleep function
-  leds: core: Use set_brightness_work for the blocking op
-  leds: core: Drivers shouldn't enforce SYNC/ASYNC brightness setting
-  Documentation: leds: Add description of brightness setting API
-  leds: max77693: Remove work queue
-  leds: aat1290: Remove work queue
-  leds: ktd2692: Remove work queue
-  media: flash: use led_set_brightness_sync for torch brightness
-
- Documentation/leds/leds-class.txt              |   13 ++
- drivers/leds/led-class-flash.c                 |    6 +-
- drivers/leds/led-class.c                       |   71 +---------
- drivers/leds/led-core.c                        |  166 +++++++++++++++++++++---
- drivers/leds/leds-aat1290.c                    |   50 ++-----
- drivers/leds/leds-ktd2692.c                    |   41 +-----
- drivers/leds/leds-max77693.c                   |   57 ++------
- drivers/leds/leds.h                            |   26 +---
- drivers/leds/trigger/ledtrig-backlight.c       |    8 +-
- drivers/leds/trigger/ledtrig-default-on.c      |    2 +-
- drivers/leds/trigger/ledtrig-gpio.c            |    6 +-
- drivers/leds/trigger/ledtrig-heartbeat.c       |    4 +-
- drivers/leds/trigger/ledtrig-oneshot.c         |    4 +-
- drivers/leds/trigger/ledtrig-transient.c       |    8 +-
- drivers/media/v4l2-core/v4l2-flash-led-class.c |    8 +-
- include/linux/leds.h                           |   27 +++-
- 16 files changed, 233 insertions(+), 264 deletions(-)
-
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 865f73c..784636e 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -83,6 +83,7 @@ static void set_brightness_delayed(struct work_struct *ws)
+ {
+ 	struct led_classdev *led_cdev =
+ 		container_of(ws, struct led_classdev, set_brightness_work);
++	int ret = 0;
+ 
+ 	if (led_cdev->flags & LED_BLINK_DISABLE) {
+ 		led_cdev->delayed_set_value = LED_OFF;
+@@ -90,7 +91,16 @@ static void set_brightness_delayed(struct work_struct *ws)
+ 		led_cdev->flags &= ~LED_BLINK_DISABLE;
+ 	}
+ 
+-	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
++	if (led_cdev->brightness_set)
++		led_cdev->brightness_set(led_cdev, led_cdev->brightness);
++	else if (led_cdev->brightness_set_blocking)
++		ret = led_cdev->brightness_set_blocking(led_cdev,
++							led_cdev->brightness);
++	else
++		ret = -ENOTSUPP;
++	if (ret < 0)
++		dev_err(led_cdev->dev,
++			"Setting an LED's brightness failed (%d)\n", ret);
+ }
+ 
+ static void led_set_software_blink(struct led_classdev *led_cdev,
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 11520eb..04b8e41 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -16,16 +16,6 @@
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
+ 
+-static inline void led_set_brightness_async(struct led_classdev *led_cdev,
+-					enum led_brightness value)
+-{
+-	value = min(value, led_cdev->max_brightness);
+-	led_cdev->brightness = value;
+-
+-	if (!(led_cdev->flags & LED_SUSPENDED))
+-		led_cdev->brightness_set(led_cdev, value);
+-}
+-
+ static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 					enum led_brightness value)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index b47eff5..56d5069 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -158,7 +158,7 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
+  *
+  * Set an LED's brightness, and, if necessary, cancel the
+  * software blink timer that implements blinking when the
+- * hardware doesn't.
++ * hardware doesn't. This function is guaranteed not to sleep.
+  */
+ extern void led_set_brightness(struct led_classdev *led_cdev,
+ 			       enum led_brightness brightness);
 -- 
 1.7.9.5
