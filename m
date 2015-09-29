@@ -1,55 +1,39 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 12/12] media: flash: use led_set_brightness_sync for
- torch brightness
-Date: Tue, 29 Sep 2015 11:39:37 +0200
-Message-ID: <20150929093937.GB9293@amd>
-References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
- <1443445641-9529-13-git-send-email-j.anaszewski@samsung.com>
- <20150928203747.GA19666@amd>
- <560A3D23.4010606@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: leds: inconsistent use of EXPORT_SYMBOL_* macros
+Date: Tue, 29 Sep 2015 15:35:44 +0200
+Message-ID: <560A93B0.3070605@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <560A3D23.4010606@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41496 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965003AbbI2Nfr (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 29 Sep 2015 09:35:47 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Tue 2015-09-29 09:26:27, Jacek Anaszewski wrote:
-> Hi Pavel,
-> 
-> Thanks for the review.
-> 
-> On 09/28/2015 10:37 PM, Pavel Machek wrote:
-> >On Mon 2015-09-28 15:07:21, Jacek Anaszewski wrote:
-> >>LED subsystem shifted responsibility for choosing between SYNC or ASYNC
-> >>way of setting brightness from drivers to the caller. Adapt the wrapper
-> >>to those changes.
-> >
-> >Umm. Maybe right patch, but wrong position in the queue, no?
-> >
-> >If I understand changelog correctly, LED flashes will be subtly broken
-> >before this patch is applied.
-> >
-> >I guess this patch should be moved sooner so everything works at each
-> >position in bisect...?
-> 
-> Moving it wouldn't improve anything. It would have to be merged with
-> patch 7/12 [1]. However, as you mentioned, LED flashes before this
-> patch will be broken only subtly, i.e. torch brightness will be set
-> from a work queue task and not synchronously. It would be barely
-> noticeable. Nonetheless, I can merge the patches in the next
-> version of the patch set.
+Hi Linus,
 
-Ok, flash firing a tiny bit later is probably not huge problem. I
-guess it is best to leave the patches as is.
+In drivers/leds/led-core.c some symbols are exported with
+EXPORT_SYMBOL and other with EXPORT_SYMBOL_GPL macros.
 
-Best regards,
-								Pavel
+It seems that this mess wasn't introduced intentionally, but rather
+carelessly, as in case of led_blink_set() and led_stop_software_blink()
+functions, where the former, which enables blinking, is exported with
+EXPORT_SYMBOL, and the latter, which disables blinking, with
+EXPORT_SYMBOL_GPL.
 
+It is also worth of noting that all symbols in drivers/led/led-class.c
+are exported with EXPORT_SYMBOL_GPL, which implies that it is not
+possible to register LED class device with non-GPL API, which in
+turn rather eliminates non-GPL users of led-core API.
+
+I'd like just confirm that in this case we are permitted to
+switch to using EXPORT_SYMBOL_GPL consequently in the LED core.
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best Regards,
+Jacek Anaszewski
