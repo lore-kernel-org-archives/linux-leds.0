@@ -1,201 +1,255 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 2/3] leds: add debugfs to device trigger
-Date: Wed, 30 Sep 2015 16:08:14 +0200
-Message-ID: <560BECCE.6080304@samsung.com>
-References: <cover.1443471365.git.maciek.borzecki@gmail.com>
- <ca802c20eb972c459bb8671ba203a5f0b2b2770d.1443472356.git.maciek.borzecki@gmail.com>
+Subject: Re: [PATCHv4 1/3] leds: Add of_led_get() and led_put()
+Date: Wed, 30 Sep 2015 16:29:12 +0200
+Message-ID: <560BF1B8.30606@samsung.com>
+References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
+ <1443605522-1118-2-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <ca802c20eb972c459bb8671ba203a5f0b2b2770d.1443472356.git.maciek.borzecki@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maciek Borzecki <maciek.borzecki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:30754 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751991AbbI3O3Q (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Sep 2015 10:29:16 -0400
+In-reply-to: <1443605522-1118-2-git-send-email-tomi.valkeinen@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-Hi Maciek,
+Hi Tomi,
 
-Please test your solution thoroughly before submitting
-the next version. Writing to debugfs register attribute
-fails due to lack of proper copying from user memory,
-which makes testing impossible.
+Thanks for the update.
 
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
+On 09/30/2015 11:32 AM, Tomi Valkeinen wrote:
+> This patch adds basic support for a kernel driver to get a LED device.
+> This will be used by the led-backlight driver.
+>
+> Only OF version is implemented for now, and the behavior is similar to
+> PWM's of_pwm_get() and pwm_put().
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> ---
+>   drivers/leds/Makefile    |  6 +++-
+>   drivers/leds/led-class.c | 13 +++++++-
+>   drivers/leds/led-of.c    | 85 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/leds/leds.h      |  1 +
+>   include/linux/leds.h     | 10 ++++++
+>   include/linux/of_leds.h  | 26 +++++++++++++++
+>   6 files changed, 139 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/leds/led-of.c
+>   create mode 100644 include/linux/of_leds.h
+>
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 8d6a24a2f513..6fd22e411810 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -1,7 +1,11 @@
+>
+>   # LED Core
+>   obj-$(CONFIG_NEW_LEDS)			+= led-core.o
+> -obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+> +
+> +obj-$(CONFIG_LEDS_CLASS)		+= led-class-objs.o
+> +led-class-objs-y			:= led-class.o
+> +led-class-objs-$(CONFIG_OF)		+= led-of.o
+> +
+>   obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
+>   obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index beabfbc6f7cd..ff0c27654358 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -22,7 +22,7 @@
+>   #include <linux/timer.h>
+>   #include "leds.h"
+>
+> -static struct class *leds_class;
+> +struct class *leds_class;
+>
+>   static ssize_t brightness_show(struct device *dev,
+>   		struct device_attribute *attr, char *buf)
+> @@ -216,6 +216,17 @@ static int led_resume(struct device *dev)
+>
+>   static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+>
+> +/**
+> + * led_put() - release a LED device, reserved with of_led_get()
+> + * @led_cdev: LED device
+> + */
+> +void led_put(struct led_classdev *led_cdev)
+> +{
+> +	put_device(led_cdev->dev);
+> +	module_put(led_cdev->dev->parent->driver->owner);
+> +}
+> +EXPORT_SYMBOL_GPL(led_put);
+> +
+>   static int match_name(struct device *dev, const void *data)
+>   {
+>   	if (!dev_name(dev))
+> diff --git a/drivers/leds/led-of.c b/drivers/leds/led-of.c
+> new file mode 100644
+> index 000000000000..6e96fee9adf1
+> --- /dev/null
+> +++ b/drivers/leds/led-of.c
+> @@ -0,0 +1,85 @@
+> +/*
+> + * LED Class Core OF support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_leds.h>
+> +
+> +#include "leds.h"
+> +
+> +/* find OF node for the given led_cdev */
+> +static struct device_node *find_led_of_node(struct led_classdev *led_cdev)
+> +{
+> +	struct device *led_dev = led_cdev->dev;
+> +	struct device_node *child;
+> +
+> +	for_each_child_of_node(led_dev->parent->of_node, child) {
+> +		int idx;
+> +
+> +		idx = of_property_match_string(child, "label", led_cdev->name);
+> +		if (idx == 0)
+> +			return child;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int led_match_led_node(struct device *led_dev, const void *data)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(led_dev);
+> +	const struct device_node *target_node = data;
+> +	struct device_node *led_node;
+> +
+> +	led_node = find_led_of_node(led_cdev);
+> +	if (!led_node)
+> +		return 0;
+> +
+> +	of_node_put(led_node);
+> +
+> +	return led_node == target_node;
+> +}
+> +
+> +/**
+> + * of_led_get() - request a LED device via the LED framework
+> + * @np: device node to get the LED device from
+> + *
+> + * Returns the LED device parsed from the phandle specified in the "leds"
+> + * property of a device tree node or a negative error-code on failure.
+> + *
+> + * The caller must use led_put() to release the device after use.
+> + */
+> +struct led_classdev *of_led_get(struct device_node *np)
+> +{
+> +	struct device *led_dev;
+> +	struct led_classdev *led_cdev;
+> +	struct device_node *led_node;
+> +
+> +	led_node = of_parse_phandle(np, "leds", 0);
+> +	if (!led_node)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	led_dev = class_find_device(leds_class, NULL, led_node,
+> +		led_match_led_node);
+> +
+> +	of_node_put(led_node);
+> +
+> +	if (!led_dev) {
+> +		pr_err("failed to find led device for node %s, deferring probe\n",
+> +			of_node_full_name(led_node));
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	led_cdev = dev_get_drvdata(led_dev);
+> +
+> +	if (!try_module_get(led_cdev->dev->parent->driver->owner))
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return led_cdev;
+> +}
+> +EXPORT_SYMBOL_GPL(of_led_get);
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index bc89d7ace2c4..ccc3abb417d4 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -46,6 +46,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
+>
+>   void led_stop_software_blink(struct led_classdev *led_cdev);
+>
+> +extern struct class *leds_class;
+>   extern struct rw_semaphore leds_list_lock;
+>   extern struct list_head leds_list;
+>
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b122eeafb5dc..fbad4ce78e6e 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -113,6 +113,16 @@ extern void devm_led_classdev_unregister(struct device *parent,
+>   extern void led_classdev_suspend(struct led_classdev *led_cdev);
+>   extern void led_classdev_resume(struct led_classdev *led_cdev);
+>
+> +#if IS_ENABLED(CONFIG_LEDS_CLASS)
+> +
+> +extern void led_put(struct led_classdev *led_cdev);
+> +
+> +#else
+> +
+> +static inline void led_put(struct led_classdev *led_cdev) { }
+> +
+> +#endif /* IS_ENABLED(CONFIG_LEDS_CLASS) */
+> +
+>   /**
+>    * led_blink_set - set blinking with software fallback
+>    * @led_cdev: the LED to start blinking
+> diff --git a/include/linux/of_leds.h b/include/linux/of_leds.h
+> new file mode 100644
+> index 000000000000..7e8e64bd9811
+> --- /dev/null
+> +++ b/include/linux/of_leds.h
+> @@ -0,0 +1,26 @@
+> +/*
+> + * OF support for leds
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#ifndef __LINUX_LEDS_OF_H_INCLUDED
+> +#define __LINUX_LEDS_OF_H_INCLUDED
+> +
+> +#if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_LEDS_CLASS)
+> +
+> +extern struct led_classdev *of_led_get(struct device_node *np);
+> +
+> +#else
+> +
+> +static inline struct led_classdev *of_led_get(struct device_node *np)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +#endif
+> +
+> +#endif /* __LINUX_LEDS_OF_H_INCLUDED */
+>
+
+
+-- 
 Best Regards,
 Jacek Anaszewski
-
-On 09/28/2015 10:43 PM, Maciek Borzecki wrote:
-> Add debugfs entries for device activity trigger. Three entries are
-> created under /sys/kernel/debug/ledtrig-dev when the driver gets
-> loaded. These are:
->
->    devices - cat'ing will produce a list of currently registered devices
->              in <major>:<minor> format, a line for each device.
->
->    register - echo'ing <major>:<minor> will create a trigger for this
->               device
->
->    trigger - echo'ing <major>:<minor> will fire a trigger for this device
->
-> Signed-off-by: Maciek Borzecki <maciek.borzecki@gmail.com>
-> ---
->   drivers/leds/trigger/ledtrig-device.c | 113 +++++++++++++++++++++++++++++++++-
->   1 file changed, 111 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/trigger/ledtrig-device.c b/drivers/leds/trigger/ledtrig-device.c
-> index dbb8d7d2b4a0258149c581a040c416d412d9ceeb..6814db5e34d76974ae095d2e1c8f1f2e23dea79e 100644
-> --- a/drivers/leds/trigger/ledtrig-device.c
-> +++ b/drivers/leds/trigger/ledtrig-device.c
-> @@ -16,15 +16,18 @@
->   #include <linux/list.h>
->   #include <linux/rwsem.h>
->   #include <linux/kdev_t.h>
-> +#include <linux/fs.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/seq_file.h>
->
->   #define BLINK_DELAY 30
->   static unsigned long blink_delay = BLINK_DELAY;
->
->   static DECLARE_RWSEM(devs_list_lock);
->   static LIST_HEAD(devs_list);
-> +static struct dentry *debug_root;
->
->   #define MAX_NAME_LEN 20
-> -
->   struct ledtrig_dev_data {
->   	char name[MAX_NAME_LEN];
->   	dev_t dev;
-> @@ -114,8 +117,11 @@ void ledtrig_dev_add(dev_t dev)
->   		/* register with led triggers */
->   		led_trigger_register_simple(new_dev_trig->name,
->   					    &new_dev_trig->trig);
-> -	else
-> +	else {
-> +		pr_warn("device %u:%u already registered\n",
-> +			MAJOR(dev), MINOR(dev));
->   		kfree(new_dev_trig);
-> +	}
->   }
->   EXPORT_SYMBOL(ledtrig_dev_add);
->
-> @@ -167,13 +173,116 @@ static void ledtrig_dev_remove_all(void)
->   	up_write(&devs_list_lock);
->   }
->
-> +static int ledtrig_dev_devices_show(struct seq_file *s, void *unused)
-> +{
-> +	struct ledtrig_dev_data *dev_trig;
-> +
-> +	down_read(&devs_list_lock);
-> +	list_for_each_entry(dev_trig, &devs_list, node) {
-> +		seq_printf(s, "%u:%u\n", MAJOR(dev_trig->dev),
-> +			MINOR(dev_trig->dev));
-> +	}
-> +	up_read(&devs_list_lock);
-> +	return 0;
-> +}
-> +
-> +static int ledtrig_dev_devices_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, ledtrig_dev_devices_show,
-> +			   &inode->i_private);
-> +}
-> +
-> +static const struct file_operations debug_devices_ops = {
-> +	.owner = THIS_MODULE,
-> +	.open = ledtrig_dev_devices_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = single_release
-> +};
-> +
-> +static int get_dev_from_user(const char __user *buf, size_t size,
-> +			dev_t *dev)
-> +{
-> +	unsigned int major;
-> +	unsigned int minor;
-> +	int ret;
-> +
-> +	WARN_ON(dev == NULL);
-> +	if (dev == NULL)
-> +		return -EINVAL;
-> +
-> +	ret = sscanf(buf, "%u:%u", &major, &minor);
-> +	if (ret < 2)
-> +		return -EINVAL;
-> +
-> +	*dev = MKDEV(major, minor);
-> +	return 0;
-> +}
-> +
-> +static ssize_t ledtrig_dev_register_write(struct file *filp,
-> +					const char __user *buf,
-> +					size_t size, loff_t *off)
-> +{
-> +	dev_t dev;
-> +	int ret;
-> +
-> +	ret = get_dev_from_user(buf, size, &dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pr_debug("got device %u:%u\n", MAJOR(dev), MINOR(dev));
-> +	ledtrig_dev_add(dev);
-> +
-> +	return size;
-> +}
-> +
-> +static const struct file_operations debug_register_ops = {
-> +	.owner = THIS_MODULE,
-> +	.write = ledtrig_dev_register_write,
-> +};
-> +
-> +static ssize_t ledtrig_dev_trigger_write(struct file *filp,
-> +					const char __user *buf,
-> +					size_t size, loff_t *off)
-> +{
-> +	dev_t dev;
-> +	int ret;
-> +
-> +	ret = get_dev_from_user(buf, size, &dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pr_debug("trigger device %u:%u\n", MAJOR(dev), MINOR(dev));
-> +	ledtrig_dev_activity(dev);
-> +
-> +	return size;
-> +}
-> +
-> +static const struct file_operations debug_trigger_ops = {
-> +	.owner = THIS_MODULE,
-> +	.write = ledtrig_dev_trigger_write,
-> +};
-> +
->   static int __init ledtrig_dev_init(void)
->   {
-> +	debug_root = debugfs_create_dir("ledtrig-dev", NULL);
-> +
-> +	if (debug_root) {
-> +		debugfs_create_file("devices", 0444, debug_root, NULL,
-> +				&debug_devices_ops);
-> +		debugfs_create_file("register", 0200, debug_root, NULL,
-> +				&debug_register_ops);
-> +		debugfs_create_file("trigger", 0200, debug_root, NULL,
-> +				&debug_trigger_ops);
-> +	}
-> +
->   	return 0;
->   }
->
->   static void __exit ledtrig_dev_exit(void)
->   {
-> +	debugfs_remove_recursive(debug_root);
-> +
->   	ledtrig_dev_remove_all();
->   }
->
->
-
-
