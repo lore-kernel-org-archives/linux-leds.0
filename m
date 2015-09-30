@@ -1,311 +1,65 @@
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCHv4 2/3] backlight: add led-backlight driver
-Date: Wed, 30 Sep 2015 12:32:01 +0300
-Message-ID: <1443605522-1118-3-git-send-email-tomi.valkeinen@ti.com>
+Subject: [PATCHv4 3/3] devicetree: Add led-backlight binding
+Date: Wed, 30 Sep 2015 12:32:02 +0300
+Message-ID: <1443605522-1118-4-git-send-email-tomi.valkeinen@ti.com>
 References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:57641 "EHLO arroyo.ext.ti.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:42564 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755193AbbI3Jc1 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 30 Sep 2015 05:32:27 -0400
+	id S1755245AbbI3Jc2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 30 Sep 2015 05:32:28 -0400
 In-Reply-To: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>, devicetree@vger.kernel.org
 
-This patch adds a led-backlight driver (led_bl), which is similar to
-pwm_bl except the driver uses a LED class driver to adjust the
-brightness in the HW.
+Add DT binding for led-backlight.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: devicetree@vger.kernel.org
 ---
- drivers/video/backlight/Kconfig  |   7 ++
- drivers/video/backlight/Makefile |   1 +
- drivers/video/backlight/led_bl.c | 246 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 254 insertions(+)
- create mode 100644 drivers/video/backlight/led_bl.c
+ .../bindings/video/backlight/led-backlight.txt     | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
 
-diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 0505b796d743..d1336196aba2 100644
---- a/drivers/video/backlight/Kconfig
-+++ b/drivers/video/backlight/Kconfig
-@@ -453,6 +453,13 @@ config BACKLIGHT_BD6107
- 	help
- 	  If you have a Rohm BD6107 say Y to enable the backlight driver.
- 
-+config BACKLIGHT_LED
-+	tristate "Generic LED based Backlight Driver"
-+	depends on LEDS_CLASS && OF
-+	help
-+	  If you have a LCD backlight adjustable by LED class driver, say Y
-+	  to enable this driver.
-+
- endif # BACKLIGHT_CLASS_DEVICE
- 
- endif # BACKLIGHT_LCD_SUPPORT
-diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-index d67073f9d421..ecd321daee21 100644
---- a/drivers/video/backlight/Makefile
-+++ b/drivers/video/backlight/Makefile
-@@ -54,3 +54,4 @@ obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
- obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
- obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
- obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
-+obj-$(CONFIG_BACKLIGHT_LED)		+= led_bl.o
-diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
+diff --git a/Documentation/devicetree/bindings/video/backlight/led-backlight.txt b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
 new file mode 100644
-index 000000000000..1befc8ce5964
+index 000000000000..d4621d7414bc
 --- /dev/null
-+++ b/drivers/video/backlight/led_bl.c
-@@ -0,0 +1,246 @@
-+/*
-+ * Copyright 2015 Texas Instruments
-+ *
-+ * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
-+ *
-+ * Based on pwm_bl.c
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#include <linux/backlight.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/leds.h>
-+#include <linux/of_leds.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
++++ b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
+@@ -0,0 +1,30 @@
++led-backlight bindings
 +
-+struct led_bl_data {
-+	struct device		*dev;
-+	struct backlight_device	*bl_dev;
++Required properties:
++  - compatible: "led-backlight"
++  - leds: phandle to a led OF node [0]
++  - brightness-levels: Array of distinct LED brightness levels. These
++      are in the range from 0 to 255, passed to the LED class driver.
++  - default-brightness-level: the default brightness level (index into the
++      array defined by the "brightness-levels" property)
 +
-+	unsigned int		*levels;
-+	bool			enabled;
-+	struct regulator	*power_supply;
-+	struct gpio_desc	*enable_gpio;
++Optional properties:
++  - power-supply: regulator for supply voltage
++  - enable-gpios: contains a single GPIO specifier for the GPIO which enables
++                  and disables the backlight (see GPIO binding[1])
 +
-+	struct led_classdev *led_cdev;
++[0]: Documentation/devicetree/bindings/leds/common.txt
++[1]: Documentation/devicetree/bindings/gpio/gpio.txt
 +
-+	unsigned int max_brightness;
-+	unsigned int default_brightness;
-+};
++Example:
 +
-+static void led_bl_set_brightness(struct led_bl_data *priv, int brightness)
-+{
-+	int err;
++	backlight {
++		compatible = "led-backlight";
++		leds = <&backlight_led>;
 +
-+	if (!priv->enabled) {
-+		if (priv->power_supply) {
-+			err = regulator_enable(priv->power_supply);
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
 +
-+			if (err < 0)
-+				dev_err(priv->dev,
-+					"failed to enable power supply\n");
-+		}
-+
-+		if (priv->enable_gpio)
-+			gpiod_set_value_cansleep(priv->enable_gpio, 1);
-+	}
-+
-+	led_set_brightness(priv->led_cdev, priv->levels[brightness]);
-+
-+	priv->enabled = true;
-+}
-+
-+static void led_bl_power_off(struct led_bl_data *priv)
-+{
-+	if (!priv->enabled)
-+		return;
-+
-+	led_set_brightness(priv->led_cdev, LED_OFF);
-+
-+	if (priv->enable_gpio)
-+		gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+
-+	if (priv->power_supply)
-+		regulator_disable(priv->power_supply);
-+
-+	priv->enabled = false;
-+}
-+
-+static int led_bl_update_status(struct backlight_device *bl)
-+{
-+	struct led_bl_data *priv = bl_get_data(bl);
-+	int brightness = bl->props.brightness;
-+
-+	if (bl->props.power != FB_BLANK_UNBLANK ||
-+	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
-+
-+	if (brightness > 0)
-+		led_bl_set_brightness(priv, brightness);
-+	else
-+		led_bl_power_off(priv);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops led_bl_ops = {
-+	.update_status	= led_bl_update_status,
-+};
-+
-+static int led_bl_parse_dt(struct device *dev,
-+			   struct led_bl_data *priv)
-+{
-+	struct device_node *node = dev->of_node;
-+	int num_levels;
-+	u32 *levels;
-+	u32 value;
-+	int ret;
-+
-+	if (!node)
-+		return -ENODEV;
-+
-+	num_levels = of_property_count_u32_elems(node, "brightness-levels");
-+	if (num_levels < 0) {
-+		dev_err(dev, "failed to find 'brightness-levels'\n");
-+		return num_levels;
-+	}
-+
-+	levels = devm_kzalloc(dev, sizeof(u32) * num_levels, GFP_KERNEL);
-+	if (!levels)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u32_array(node, "brightness-levels",
-+					 levels,
-+					 num_levels);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to parse 'brightness-levels'\n");
-+		return ret;
-+	}
-+
-+	ret = of_property_read_u32(node, "default-brightness-level", &value);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to parse 'default-brightness-level'\n");
-+		return ret;
-+	}
-+
-+	if (value >= num_levels) {
-+		dev_err(dev, "invalid default-brightness-level\n");
-+		return -EINVAL;
-+	}
-+
-+	priv->levels = levels;
-+	priv->max_brightness = num_levels - 1;
-+	priv->default_brightness = value;
-+
-+	priv->led_cdev = of_led_get(node);
-+	if (IS_ERR(priv->led_cdev)) {
-+		dev_err(dev, "failed to get LED device\n");
-+		return PTR_ERR(priv->led_cdev);
-+	}
-+
-+	return 0;
-+}
-+
-+static int led_bl_probe(struct platform_device *pdev)
-+{
-+	struct backlight_properties props;
-+	struct led_bl_data *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->dev = &pdev->dev;
-+
-+	ret = led_bl_parse_dt(&pdev->dev, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to parse DT data\n");
-+		return ret;
-+	}
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&pdev->dev, "enable",
-+			    GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		goto err;
-+	}
-+
-+	priv->power_supply = devm_regulator_get_optional(&pdev->dev, "power");
-+	if (IS_ERR(priv->power_supply)) {
-+		ret = PTR_ERR(priv->power_supply);
-+
-+		if (ret == -ENODEV) {
-+			priv->power_supply = NULL;
-+		} else {
-+			ret = PTR_ERR(priv->power_supply);
-+			goto err;
-+		}
-+	}
-+
-+	memset(&props, 0, sizeof(struct backlight_properties));
-+	props.type = BACKLIGHT_RAW;
-+	props.max_brightness = priv->max_brightness;
-+	priv->bl_dev = backlight_device_register(dev_name(&pdev->dev),
-+			&pdev->dev, priv, &led_bl_ops, &props);
-+	if (IS_ERR(priv->bl_dev)) {
-+		dev_err(&pdev->dev, "failed to register backlight\n");
-+		ret = PTR_ERR(priv->bl_dev);
-+		goto err;
-+	}
-+
-+	priv->bl_dev->props.brightness = priv->default_brightness;
-+	backlight_update_status(priv->bl_dev);
-+
-+	return 0;
-+
-+err:
-+	if (priv->led_cdev)
-+		led_put(priv->led_cdev);
-+
-+	return ret;
-+}
-+
-+static int led_bl_remove(struct platform_device *pdev)
-+{
-+	struct led_bl_data *priv = platform_get_drvdata(pdev);
-+	struct backlight_device *bl = priv->bl_dev;
-+
-+	backlight_device_unregister(bl);
-+
-+	led_bl_power_off(priv);
-+
-+	led_put(priv->led_cdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id led_bl_of_match[] = {
-+	{ .compatible = "led-backlight" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, led_bl_of_match);
-+
-+static struct platform_driver led_bl_driver = {
-+	.driver		= {
-+		.name		= "led-backlight",
-+		.of_match_table	= of_match_ptr(led_bl_of_match),
-+	},
-+	.probe		= led_bl_probe,
-+	.remove		= led_bl_remove,
-+};
-+
-+module_platform_driver(led_bl_driver);
-+
-+MODULE_DESCRIPTION("LED based Backlight Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:led-backlight");
++		power-supply = <&vdd_bl_reg>;
++		enable-gpios = <&gpio 58 0>;
++	};
 -- 
 2.1.4
