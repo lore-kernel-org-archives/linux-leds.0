@@ -1,161 +1,124 @@
-From: Maciek Borzecki <maciek.borzecki@gmail.com>
-Subject: Re: [PATCH v2 0/3] leds: add device trigger
-Date: Fri, 2 Oct 2015 18:26:33 +0200
-Message-ID: <20151002162633.GD31149@corsair.lan>
+From: Josh Cartwright <joshc@ni.com>
+Subject: Re: [PATCH v2 1/3] leds: add device activity LED triggers
+Date: Fri, 2 Oct 2015 12:08:54 -0500
+Message-ID: <20151002170854.GA10631@jcartwri.amer.corp.natinst.com>
 References: <cover.1443705827.git.maciek.borzecki@gmail.com>
- <560E9455.3080800@samsung.com>
+ <333479ab96fc4cef3c6feec31ab75802a809e38d.1443705827.git.maciek.borzecki@gmail.com>
+ <20151001144718.GQ26335@jcartwri.amer.corp.natinst.com>
+ <20151002074537.GC31149@corsair.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20151002074537.GC31149@corsair.lan>
 Content-Disposition: inline
-In-Reply-To: <560E9455.3080800@samsung.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+To: Maciek Borzecki <maciek.borzecki@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
 List-Id: linux-leds@vger.kernel.org
 
-On 10/02 16:27, Jacek Anaszewski wrote:
-> Hi Maciek,
->
-> I tested your trigger, and it works fine, but I wonder if
-> it really improves the things.
->
-> Basically, similarly as Josh, I have doubts related to associating
-> triggers with dev_t. It requires from user to figure out how they can
-> obtain valid dev_t. For example, in case of v4l2 jpeg codec, I had to
-> spend some time looking for the location of struct device containing
-> dev_t related to the exposed encoder and decoder nodes, whereas addition
-> of debugging instruction should be easy and intuitive.
->
-> It is much simpler to register a trigger with human readable names.
-> What is more, use of dev_t makes the user thinking that there is
-> some mechanism involved, that automatically associates device with
-> trigger, and after some time of code investigation one gets
-> disillusioned and realizes that dev_t is used only to uniquely identify
-> registered triggers.
->
-> I tried to add trigger to the JPEG codec interrupt handler using
-> ledtrig-oneshot, and below is the result:
->
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index 9690f9d..af826d3 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -28,6 +28,7 @@
->  #include <media/v4l2-ioctl.h>
->  #include <media/videobuf2-core.h>
->  #include <media/videobuf2-dma-contig.h>
-> +#include <linux/leds.h>
->
->  #include "jpeg-core.h"
->  #include "jpeg-hw-s5p.h"
-> @@ -35,6 +36,9 @@
->  #include "jpeg-hw-exynos3250.h"
->  #include "jpeg-regs.h"
->
-> +static unsigned long blink_delay = 30;
-> +struct led_trigger *jpeg_led_trig;
-> +
->  static struct s5p_jpeg_fmt sjpeg_formats[] = {
->         {
->                 .name           = "JPEG JFIF",
-> @@ -2318,6 +2322,7 @@ static irqreturn_t s5p_jpeg_irq(int irq, void *dev_id)
->         return IRQ_HANDLED;
->  }
->
-> +
->  static irqreturn_t exynos4_jpeg_irq(int irq, void *priv)
->  {
->         unsigned int int_status;
-> @@ -2375,7 +2380,10 @@ static irqreturn_t exynos4_jpeg_irq(int irq, void
-> *priv)
->         v4l2_m2m_job_finish(jpeg->m2m_dev, curr_ctx->fh.m2m_ctx);
->         curr_ctx->subsampling = exynos4_jpeg_get_frame_fmt(jpeg->regs);
->
-> +       led_trigger_blink_oneshot(jpeg_led_trig, &blink_delay, &blink_delay,
-> 0);
-> +
->         spin_unlock(&jpeg->slock);
-> +
->         return IRQ_HANDLED;
->  }
->
-> @@ -2589,6 +2597,8 @@ static int s5p_jpeg_probe(struct platform_device
-> *pdev)
->
->         v4l2_info(&jpeg->v4l2_dev, "Samsung S5P JPEG codec\n");
->
-> +       led_trigger_register_simple("jpeg-trig", &jpeg_led_trig);
-> +
->         return 0;
->
->  enc_vdev_register_rollback:
-> @@ -2633,6 +2643,8 @@ static int s5p_jpeg_remove(struct platform_device
-> *pdev)
->         if (!IS_ERR(jpeg->sclk))
->                 clk_put(jpeg->sclk);
->
-> +       led_trigger_unregister_simple(jpeg_led_trig);
-> +
->         return 0;
->  }
->
-> It needs addition of 6 lines of code versus 2 lines in case
-> of ledtrig-device. Not a big deal, taking into account that we
-> don't have to spend additional time looking for the suitable
-> struct device.
->
-> Please note that in case of drivers that expose many dev nodes,
-> there are cases like interrupt handlers, where struct device
-> can't be automatically retrieved, but it needs additional
-> analysis to find out which dev node given call to ISR referes to.
-> In this case we would have to check current mode (encoding/decoding)
-> and call either
->
-> 	ledtrig_dev_activity(jpeg->vfd_encoder->dev.devt)
-> or
-> 	ledtrig_dev_activity(jpeg->vfd_decoder->dev.devt).
->
->
-> When comparing the steps required from user space side to activate
-> the triggers, it looks as follows:
->
->
-> ledtrig-oneshot (we have one trigger for encoding and decoding mode):
-> =================
-> #cd /sys/class/leds/aat1290
-> #cat triggers
-> #[none] jpeg-trig
-> #echo "jpeg-trig" > trigger
->
-> ledtrig-dev approach (we have to define trigger per dev_t, we choose
-> encoder):
-> =====================
-> #grep .  /sys/class/video4linux/video*/name
-> #/sys/class/video4linux/video7/name:s5p-jpeg-enc
-> #/sys/class/video4linux/video8/name:s5p-jpeg-dec
-> #ls -l /dev/video7
-> #crw-rw---T 1 root video 81, 8 Jan  1 03:32 /dev/video8
-> #echo "81:7" > /sys/kernel/debug/ledtrig-dev/register
-> #cd /sys/class/leds/aat1290
-> #cat triggers
-> #[none] dev-81:7
-> #echo "dev-81:7" > trigger
->
-> It seems that ledtrig-dev is more troublesome in use.
->
-> Please let me know if I missed something.
->
 
-Thanks for your comments. You've raised some fair points.
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Although my use case is a bit different (multiple serial ports, each
-with a LED, port <-> LED mapping is user configurable, hooks at tty
-layer), I may have unnecessarily overengineered the solution. Indeed
-simply patching driver structures with `struct led_trigger` will work as
-well.
+On Fri, Oct 02, 2015 at 09:45:37AM +0200, Maciek Borzecki wrote:
+> On 10/01 09:47, Josh Cartwright wrote:
+> > On Thu, Oct 01, 2015 at 04:04:31PM +0200, Maciek Borzecki wrote:
+> > > The patch adds LED triggers for indicating an activity on a selected
+> > > device. The drivers that intend to use triggers need to register
+> > > respective devices using ledtrig_dev_add(). Triggers are generated by
+> > > explicitly calling ledtrig_dev_activity().
+> > >
+> > > Signed-off-by: Maciek Borzecki <maciek.borzecki@gmail.com>
+> > > ---
+> > [..]
+> > > +struct ledtrig_dev_data {
+> > > +	char name[MAX_NAME_LEN];
+> > > +	dev_t dev;
+> > > +	struct led_trigger *trig;
+> > > +	struct list_head node;
+> > > +};
+> > > +
+> > > +/**
+> > > + * ledtrig_dev_activity - signal activity on device
+> > > + * @dev: device
+> > > + *
+> > > + * Fires a trigger assigned to @dev device.
+> > > + */
+> > > +void ledtrig_dev_activity(dev_t dev)
+> >
+> > It seems a bit strange to me to associate a device LED trigger with
+> > dev_t.  Some devices don't expose a dev node, some devices expose
+> > multiple dev nodes...
+> >
+> > Is there a reason why you are not tying to the device model?
+> >
+> Thanks for the comments.
+>=20
+> The first proof of concept used `sturct device` as parameter in all API
+> calls, but then there's a problem of naming of a trigger in a sane
+> way. The trigger name followed the same approach as __dev_printk, and
+> the naming was done in this fashion:
+>=20
+>    sprintf(..., "dev-%s-%s", dev_driver_string(dev), dev_name(dev));
+>=20
+> Then for instance on wandboard, /dev/ttymxc0 and /dev/ttymxc2 would
+> appear as `dev-serial-2020000` and `dev-serial-21ec000`. In my opinion
+> this was unnecessarily complicated.
 
-Regards,
---
-Maciek Borzecki
+Hmm, maybe we're bikeshedding at this point, but LEDs with those names
+seem much more straightfoward to me than a "dev-<maj>:<min>" name, for
+devices which have done dynamic dev_t allocation.
+
+> Also, if I'm not mistaken, using this approach the partitions on MMC
+> card or SATA drive would end up with the same trigger name, as it is a
+> single device.
+
+This would only be true if you used _just_ the struct device.  I was
+imagining that you'd specify a (struct device, unsigned index) pair.
+Better, you could do a (struct device, const char *) pair.
+
+Also, from a lifetime management perspective, it starts to feel like
+something that might integrate better as a managed resource (devm_*).
+
+[..]
+> Multiple dev nodes will already have different minor numbers, so
+> their dev_t is different anyway.
+
+Okay, backing up I don't really see what this API really buys the
+consumer.  The dev_t -> struct led_trigger mapping just seems like a
+total waste.  Why not just make your ledtrig_dev_add() function return
+the struct led_trigger * that the consumer keeps track of?
+
+Maybe seeing an example consumer would provide some clarification.
+
+> As for devices that do not have a dev_t assigned to them one can still
+> pass a custom tag in ledtrig_dev_add(). It's just a number so as long as
+> there's no collision in numbering things should be fine.
+
+Ensuring no collision will be difficult, especially given that it's most
+common that the dynamic allocator is used.  In order to guarantee no
+collisions, a user who doesn't expose any device nodes would need to do
+their own dev_t allocation...to use this interface.  And that seems
+silly to me.
+
+  Josh
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAABCAAGBQJWDroiAAoJEKp7ZBKwQFArq7sH/jeVZeiqhQB/P2y1bG/RRPdo
+NJqqfay8bVbs+tAhFpMT7TioY0vvSE3P7hOO2gLLoHpX++GZg8m1eGNMwaRWcIM7
+6iEf3H6xu71L8CYpsZyOPWzUHrIwKddRA3OUHLi6G8RCh32uV/YDwdWIXmzOKVav
+c77LlGX0q7wEQ1EPrPrePoM8BgOl2eVV1lSyupT/7IROZ06FczT/N8YyVMd8NAfa
+4H4hyZF42eB0uW26JOzozyTipcFDpSEpq2k5v8Y/J0kEyAfGt0Viuolgtqf1jQf3
+4xZln/cA3vGfb6XK7JiqwO1fFgUBFm3piwpbufuFgjr1pDjuZuLIlN98ECtitS8=
+=4tPi
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
