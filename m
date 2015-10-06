@@ -1,92 +1,47 @@
-From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: Re: [PATCH 1/2] leds: rt5033: add DT binding for RT5033
-Date: Mon, 05 Oct 2015 19:40:04 +0900
-Message-ID: <56125384.5030603@samsung.com>
-References: <1443778875-18261-1-git-send-email-ingi2.kim@samsung.com>
- <1443778875-18261-2-git-send-email-ingi2.kim@samsung.com>
- <CAL_JsqL13SC132eGRrUmrH4LTD61ZtNshFibSWLC8OEP+4zoQA@mail.gmail.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v2 01/10] pwm: introduce default period and polarity
+ concepts
+Date: Tue, 6 Oct 2015 12:09:35 +0200
+Message-ID: <20151006100935.GK2694@piout.net>
+References: <1437406327-6207-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1437406327-6207-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAL_JsqL13SC132eGRrUmrH4LTD61ZtNshFibSWLC8OEP+4zoQA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:48502 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751112AbbJFKJi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 6 Oct 2015 06:09:38 -0400
+Content-Disposition: inline
+In-Reply-To: <1437406327-6207-2-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Doug Anderson <dianders@google.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Hello, Rob Herring
+On 20/07/2015 at 17:31:58 +0200, Boris Brezillon wrote :
+> When requested by a user, the PWM is assigned a default period and polarity
+> extracted from the DT, the platform data or statically set by the driver.
+> Those default values are currently stored in the period and polarity
+> fields of the pwm_device struct, but they will be stored somewhere else
+> once we have introduced the architecture allowing for hardware state
+> retrieval.
+> 
+> The pwm_set_default_polarity and pwm_set_default_period should only be
+> used by PWM drivers or the PWM core infrastructure to specify the
+> default period and polarity values.
+> 
+> PWM users might call the pwm_get_default_period to query the default
+> period value. There is currently no helper to query the default
+> polarity, but it might be added later on if there is a need for it.
+> 
+> This patch also modifies all the places where the default helpers should
+> be used in place of the standard ones.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-I'll push ver2 patch soon with your acked
-because other patch has some issues.
-
-Thanks for the review.
-
-On 2015=EB=85=84 10=EC=9B=94 02=EC=9D=BC 23:31, Rob Herring wrote:
-> On Fri, Oct 2, 2015 at 4:41 AM, Ingi Kim <ingi2.kim@samsung.com> wrot=
-e:
->> This patch adds the device tree bindings for RT5033 flash LEDs.
->>
->> Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
->=20
->> ---
->>  .../devicetree/bindings/leds/leds-rt5033.txt       | 38 +++++++++++=
-+++++++++++
->>  1 file changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-rt50=
-33.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-rt5033.txt =
-b/Documentation/devicetree/bindings/leds/leds-rt5033.txt
->> new file mode 100644
->> index 0000000..2ef7bdc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-rt5033.txt
->> @@ -0,0 +1,38 @@
->> +* Richtek Technology Corporation - RT5033 Flash LED Driver
->> +
->> +The RT5033 Flash LED Circuit is designed for one or two LEDs drivin=
-g
->> +for torch and strobe applications, it provides an I2C software comm=
-and
->> +to trigger the torch and strobe operation.
->> +
->> +Required properties:
->> +- compatible : Must be "richtek,rt5033-led".
->> +
->> +A discrete LED element connected to the device must be represented =
-by a child
->> +node - see Documentation/devicetree/bindings/leds/common.txt.
->> +
->> +Required properties of the LED child node:
->> +  See Documentation/devicetree/bindings/leds/common.txt
->> +- led-max-microamp : Minimum Threshold for Timer protection
->> +  is defined internally (Maximum 200mA).
->> +- flash-max-microamp : Flash LED maximum current
->> +- flash-max-timeout-us : Flash LED maximum timeout
->> +
->> +Optional properties of the LED child node:
->> +- label : see Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Example:
->> +
->> +rt5033 {
->> +       compatible =3D "richtek,rt5033";
->> +
->> +       led {
->> +               compatible =3D "richtek,rt5033-led";
->> +
->> +               flash-led {
->> +                       label =3D "rt5033-flash";
->> +                       led-max-microamp =3D <200000>;
->> +                       flash-max-microamp =3D <800000>;
->> +                       flash-max-timeout-us =3D <1216000>;
->> +               };
->> +       };
->> +}
->> --
->> 2.0.5
->>
->=20
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
