@@ -1,30 +1,34 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 3/5] leds: Rename brightness_set_sync op to
- brightness_set_blocking
-Date: Tue, 6 Oct 2015 17:36:51 +0200
-Message-ID: <20151006153651.GC375@xo-6d-61-c0.localdomain>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/5] leds: core: Move LED core callbacks out of led-class.c
+Date: Wed, 07 Oct 2015 09:29:03 +0200
+Message-ID: <5614C9BF.9000807@samsung.com>
 References: <1442400464-27367-1-git-send-email-j.anaszewski@samsung.com>
- <1442400464-27367-4-git-send-email-j.anaszewski@samsung.com>
+ <1442400464-27367-2-git-send-email-j.anaszewski@samsung.com>
+ <20151006153128.GA375@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1442400464-27367-4-git-send-email-j.anaszewski@samsung.com>
+In-reply-to: <20151006153128.GA375@xo-6d-61-c0.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Pavel Machek <pavel@denx.de>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, stsp@users.sourceforge.net, ospite@studenti.unina.it, davem@davemloft.net, linus.walleij@linaro.org, ricardo.ribalda@gmail.com, p.meerwald@bct-electronic.com
 List-Id: linux-leds@vger.kernel.org
 
-On Wed 2015-09-16 12:47:42, Jacek Anaszewski wrote:
-> The initial purpose of brightness_set_sync op, introduced along with
-> the LED flash class extension, was to add a means for setting torch LED
-> brightness as soon as possible, which couldn't have been guaranteed by
-> brightness_set op. This patch renames the op to brightness_set_blocking,
-> which describes its purpose in a more generic way, and is beneficial
-> in view of the prospective changes in the core related to using
-> LED core's set_brightness_work for setting brightness for LED class
-> drivers that can sleep or use delays while setting brightness.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+On 10/06/2015 05:31 PM, Pavel Machek wrote:
+> On Wed 2015-09-16 12:47:40, Jacek Anaszewski wrote:
+>> Since the API for controlling LED brightness and blinking is defined in
+>> the LED core, move the related timer and work callbacks to the led-core.c,
+>> and initialize them through a new led_core_init API.
+>>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+>
+>
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Applied, thanks.
+
+-- 
+Best Regards,
+Jacek Anaszewski
