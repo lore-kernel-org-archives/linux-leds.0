@@ -1,119 +1,130 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v3 01/10] leds: core: Add two new LED_BLINK_ flags
-Date: Wed, 07 Oct 2015 11:10:39 +0200
-Message-ID: <1444209048-29415-2-git-send-email-j.anaszewski@samsung.com>
-References: <1444209048-29415-1-git-send-email-j.anaszewski@samsung.com>
+From: Jiri Prchal <jiri.prchal@aksignal.cz>
+Subject: [PATCH] leds: triggers: add invert to heartbeat
+Date: Wed,  7 Oct 2015 11:31:35 +0200
+Message-ID: <d59e47a523eb7e21f3986f316569cd48810bdc35.1444209737.git.jiri.prchal@aksignal.cz>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1444209048-29415-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, pavel@ucw.cz, sakari.ailus@linux.intel.com, andrew@lunn.ch, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org
+Cc: cooloney@gmail.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, Jiri Prchal <jiri.prchal@aksignal.cz>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds LED_BLINK_BRIGHTNESS_CHANGE flag to indicate that blink
-brightness has changed, and LED_BLINK_DISABLE flag to indicate that
-blinking deactivation has been requested. In order to use the flags
-led_timer_function and set_brightness_delayed callbacks as well as
-led_set_brightness() function are being modified. The main goal of these
-modifications is to prepare set_brightness_work for extension of the
-scope of its responsibilities.
+This patcht adds possibility to invert heartbeat blinking. The inverted LED is
+more time ON then OFF.
+It's because it looks better when the heartbeat LED is next to other LED which
+is most time ON.
+The invert value is exported same way via sysfs in file invert like oneshot. I
+get inspiration from this trigger.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jiri Prchal <jiri.prchal@aksignal.cz>
 ---
- drivers/leds/led-core.c |   36 ++++++++++++++++++++++++++----------
- include/linux/leds.h    |   10 ++++++----
- 2 files changed, 32 insertions(+), 14 deletions(-)
+ drivers/leds/trigger/ledtrig-heartbeat.c | 49 ++++++++++++++++++++++++++++++--
+ 1 file changed, 47 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index c1c3af0..1ba7fac 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -44,18 +44,18 @@ static void led_timer_function(unsigned long data)
- 	brightness = led_get_brightness(led_cdev);
- 	if (!brightness) {
- 		/* Time to switch the LED on. */
--		if (led_cdev->delayed_set_value) {
--			led_cdev->blink_brightness =
--					led_cdev->delayed_set_value;
--			led_cdev->delayed_set_value = 0;
--		}
- 		brightness = led_cdev->blink_brightness;
- 		delay = led_cdev->blink_delay_on;
- 	} else {
- 		/* Store the current brightness value to be able
- 		 * to restore it when the delay_off period is over.
-+		 * Do it only if there is no pending blink brightness
-+		 * change, to avoid overwriting the new value.
- 		 */
--		led_cdev->blink_brightness = brightness;
-+		if (!(led_cdev->flags & LED_BLINK_BRIGHTNESS_CHANGE))
-+			led_cdev->blink_brightness = brightness;
-+		else
-+			led_cdev->flags &= ~LED_BLINK_BRIGHTNESS_CHANGE;
- 		brightness = LED_OFF;
- 		delay = led_cdev->blink_delay_off;
+diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+index fea6871..c09c30b 100644
+--- a/drivers/leds/trigger/ledtrig-heartbeat.c
++++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+@@ -27,6 +27,7 @@ struct heartbeat_trig_data {
+ 	unsigned int phase;
+ 	unsigned int period;
+ 	struct timer_list timer;
++	unsigned int invert;
+ };
+ 
+ static void led_heartbeat_function(unsigned long data)
+@@ -56,21 +57,27 @@ static void led_heartbeat_function(unsigned long data)
+ 			msecs_to_jiffies(heartbeat_data->period);
+ 		delay = msecs_to_jiffies(70);
+ 		heartbeat_data->phase++;
+-		brightness = led_cdev->max_brightness;
++		if (!heartbeat_data->invert)
++			brightness = led_cdev->max_brightness;
+ 		break;
+ 	case 1:
+ 		delay = heartbeat_data->period / 4 - msecs_to_jiffies(70);
+ 		heartbeat_data->phase++;
++		if (heartbeat_data->invert)
++			brightness = led_cdev->max_brightness;
+ 		break;
+ 	case 2:
+ 		delay = msecs_to_jiffies(70);
+ 		heartbeat_data->phase++;
+-		brightness = led_cdev->max_brightness;
++		if (!heartbeat_data->invert)
++			brightness = led_cdev->max_brightness;
+ 		break;
+ 	default:
+ 		delay = heartbeat_data->period - heartbeat_data->period / 4 -
+ 			msecs_to_jiffies(70);
+ 		heartbeat_data->phase = 0;
++		if (heartbeat_data->invert)
++			brightness = led_cdev->max_brightness;
+ 		break;
  	}
-@@ -84,7 +84,11 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	struct led_classdev *led_cdev =
- 		container_of(ws, struct led_classdev, set_brightness_work);
  
--	led_stop_software_blink(led_cdev);
-+	if (led_cdev->flags & LED_BLINK_DISABLE) {
-+		led_cdev->delayed_set_value = LED_OFF;
-+		led_stop_software_blink(led_cdev);
-+		led_cdev->flags &= ~LED_BLINK_DISABLE;
-+	}
- 
- 	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
+@@ -78,15 +85,50 @@ static void led_heartbeat_function(unsigned long data)
+ 	mod_timer(&heartbeat_data->timer, jiffies + delay);
  }
-@@ -192,11 +196,23 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ 
++static ssize_t led_invert_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
++
++	return sprintf(buf, "%u\n", heartbeat_data->invert);
++}
++
++static ssize_t led_invert_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
++	unsigned long state;
++	int ret;
++
++	ret = kstrtoul(buf, 0, &state);
++	if (ret)
++		return ret;
++
++	heartbeat_data->invert = !!state;
++
++	return size;
++}
++
++static DEVICE_ATTR(invert, 0644, led_invert_show, led_invert_store);
++
+ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
  {
- 	int ret = 0;
+ 	struct heartbeat_trig_data *heartbeat_data;
++	int rc;
  
--	/* delay brightness if soft-blink is active */
-+	/*
-+	 * In case blinking is on delay brightness setting
-+	 * until the next timer tick.
-+	 */
- 	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off) {
--		led_cdev->delayed_set_value = brightness;
--		if (brightness == LED_OFF)
-+		/*
-+		 * If we need to disable soft blinking delegate this to the
-+		 * work queue task to avoid problems in case we are called
-+		 * from hard irq context.
-+		 */
-+		if (brightness == LED_OFF) {
-+			led_cdev->flags |= LED_BLINK_DISABLE;
- 			schedule_work(&led_cdev->set_brightness_work);
-+		} else {
-+			led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
-+			led_cdev->blink_brightness = brightness;
-+		}
+ 	heartbeat_data = kzalloc(sizeof(*heartbeat_data), GFP_KERNEL);
+ 	if (!heartbeat_data)
  		return;
+ 
+ 	led_cdev->trigger_data = heartbeat_data;
++	rc = device_create_file(led_cdev->dev, &dev_attr_invert);
++	if (rc) {
++		kfree(led_cdev->trigger_data);
++		return;
++	}
++
+ 	setup_timer(&heartbeat_data->timer,
+ 		    led_heartbeat_function, (unsigned long) led_cdev);
+ 	heartbeat_data->phase = 0;
+@@ -100,9 +142,12 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
+ 
+ 	if (led_cdev->activated) {
+ 		del_timer_sync(&heartbeat_data->timer);
++		device_remove_file(led_cdev->dev, &dev_attr_invert);
+ 		kfree(heartbeat_data);
+ 		led_cdev->activated = false;
  	}
++
++	led_set_brightness(led_cdev, LED_OFF);
+ }
  
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b122eea..84521e5 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -44,10 +44,12 @@ struct led_classdev {
- #define LED_BLINK_ONESHOT	(1 << 17)
- #define LED_BLINK_ONESHOT_STOP	(1 << 18)
- #define LED_BLINK_INVERT	(1 << 19)
--#define LED_SYSFS_DISABLE	(1 << 20)
--#define SET_BRIGHTNESS_ASYNC	(1 << 21)
--#define SET_BRIGHTNESS_SYNC	(1 << 22)
--#define LED_DEV_CAP_FLASH	(1 << 23)
-+#define LED_BLINK_BRIGHTNESS_CHANGE (1 << 20)
-+#define LED_BLINK_DISABLE	(1 << 21)
-+#define LED_SYSFS_DISABLE	(1 << 22)
-+#define SET_BRIGHTNESS_ASYNC	(1 << 23)
-+#define SET_BRIGHTNESS_SYNC	(1 << 24)
-+#define LED_DEV_CAP_FLASH	(1 << 25)
- 
- 	/* Set LED brightness level */
- 	/* Must not sleep, use a workqueue if needed */
+ static struct led_trigger heartbeat_led_trigger = {
 -- 
-1.7.9.5
+1.9.1
