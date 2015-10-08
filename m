@@ -1,84 +1,36 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCHv4 0/3] backlight: led-backlight driver
-Date: Thu, 08 Oct 2015 12:09:17 +0200
-Message-ID: <561640CD.8070901@samsung.com>
-References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
- <561638F2.2010003@ti.com>
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
+	<noltari@gmail.com>
+Subject: [PATCH 0/4] leds-bcm6328: several fixes and improvements
+Date: Thu,  8 Oct 2015 12:35:51 +0200
+Message-ID: <1444300555-13988-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43202 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751449AbbJHKJW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Oct 2015 06:09:22 -0400
-In-reply-to: <561638F2.2010003@ti.com>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:33665 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751736AbbJHKfl (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Oct 2015 06:35:41 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, cernekee@gmail.com, f.fainelli@gmail.com
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-On 10/08/2015 11:35 AM, Tomi Valkeinen wrote:
-> Hi,
->
-> On 30/09/15 12:31, Tomi Valkeinen wrote:
->> This series aims to add a led-backlight driver, similar to pwm-backlight, but
->> using a LED class device underneath.
->>
->> LED framework has no support for DT or getting a LED class driver from another
->> kernel driver, so I added minimal functionality to led-class to get
->> led-backlight working.
->>
->> Changes to v3:
->> - Change a comment to refer to of_led_get()
->>
->> Changes to v2:
->> - power supply is now optional
->> - cosmetic changes
->> - no-op function for led_put() when !CONFIG_LEDS_CLASS
->>
->> Changes to v1:
->> - Split LED OF parts into separate .h and .c files
->> - Check for CONFIG_OF and CONFIG_LEDS_CLASS where relevant to leave unused code
->>    out.
->> - Improved error prints and comments a bit
->> - Added put_device() into led_put(), as the device was gotten from
->>    class_find_device() which requires a put_device() call.
->>
->>   Tomi
->>
->> Tomi Valkeinen (3):
->>    leds: Add of_led_get() and led_put()
->>    backlight: add led-backlight driver
->>    devicetree: Add led-backlight binding
->>
->>   .../bindings/video/backlight/led-backlight.txt     |  30 +++
->>   drivers/leds/Makefile                              |   6 +-
->>   drivers/leds/led-class.c                           |  13 +-
->>   drivers/leds/led-of.c                              |  85 +++++++
->>   drivers/leds/leds.h                                |   1 +
->>   drivers/video/backlight/Kconfig                    |   7 +
->>   drivers/video/backlight/Makefile                   |   1 +
->>   drivers/video/backlight/led_bl.c                   | 246 +++++++++++++++++++++
->>   include/linux/leds.h                               |  10 +
->>   include/linux/of_leds.h                            |  26 +++
->>   10 files changed, 423 insertions(+), 2 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
->>   create mode 100644 drivers/leds/led-of.c
->>   create mode 100644 drivers/video/backlight/led_bl.c
->>   create mode 100644 include/linux/of_leds.h
->
-> There's been no more comments on this. Should this be merged via led or
-> backlight trees?
->
-> Possible conflicts probably happen on the led side, as this changes the
-> led core files, so perhaps that's easier way?
+These patches improve leds-bcm6328 by adding invalid LED printing (like=
+ it's done in leds-bcm6358), simplifying default-state handling (once a=
+gain like it's done in leds-bcm6358), and adding more init configuratio=
+n options.
 
-Yes, it would be better to merge it via LED tree, also because the
-driver being added depends on drivers/leds/led-of.c which is introduced
-in this set. Obviously I need backlight maintainer's ack. Jingoo, Lee,
-are you ok with this changes?
+=C3=81lvaro Fern=C3=A1ndez Rojas (4):
+  leds-bcm6328: print invalid LED
+  leds-bcm6328: simplify and improve default-state handling
+  leds-bcm6328: add more init configuration options
+  Documentation: leds: update DT bindings for leds-bcm6328
 
--- 
-Best Regards,
-Jacek Anaszewski
+ .../devicetree/bindings/leds/leds-bcm6328.txt      | 10 ++++++
+ drivers/leds/leds-bcm6328.c                        | 41 ++++++++++++++=
+++------
+ 2 files changed, 40 insertions(+), 11 deletions(-)
+
+--=20
+1.9.1
