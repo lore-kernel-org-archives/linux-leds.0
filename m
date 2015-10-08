@@ -1,34 +1,27 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2] leds: triggers: add invert to heartbeat
-Date: Thu, 08 Oct 2015 14:05:22 +0200
-Message-ID: <56165C02.3090106@samsung.com>
-References: <f72b41d0cf24fa74ea74799fea87b05ff727e621.1444292878.git.jiri.prchal@aksignal.cz>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
+ brightness setting
+Date: Thu, 8 Oct 2015 17:50:37 +0200
+Message-ID: <20151008155036.GF11776@xo-6d-61-c0.localdomain>
+References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:65398 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755408AbbJHMFZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 8 Oct 2015 08:05:25 -0400
-In-reply-to: <f72b41d0cf24fa74ea74799fea87b05ff727e621.1444292878.git.jiri.prchal@aksignal.cz>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com
 List-Id: linux-leds@vger.kernel.org
-To: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, cooloney@gmail.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
 
-On 10/08/2015 10:32 AM, Jiri Prchal wrote:
-> This patcht adds possibility to invert heartbeat blinking. The inverted LED
-> is more time ON then OFF.
-> It's because it looks better when the heartbeat LED is next to other LED
-> which is most time ON.
-> The invert value is exported same way via sysfs in file invert like
-> oneshot. I get inspiration from this trigger.
->
-> Signed-off-by: Jiri Prchal <jiri.prchal@aksignal.cz>
+On Mon 2015-09-21 16:29:26, Jacek Anaszewski wrote:
+> This patch removes SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS flags.
+> led_set_brightness now calls led_set_brightness_nosleep instead of
+> choosing between sync and async op basing on the flags defined by the
+> driver.
 
-Adjusted commit message format a bit and merged, thanks.
+Are those flags unused in the version of kernel you are patching?
 
--- 
-Best Regards,
-Jacek Anaszewski
+If so, tell us so in the changelog. Thanks,
+								Pavel
