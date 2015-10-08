@@ -1,129 +1,111 @@
-From: Jiri Prchal <jiri.prchal@aksignal.cz>
-Subject: [PATCH v2] leds: triggers: add invert to heartbeat
-Date: Thu,  8 Oct 2015 10:32:26 +0200
-Message-ID: <f72b41d0cf24fa74ea74799fea87b05ff727e621.1444292878.git.jiri.prchal@aksignal.cz>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org
-Cc: cooloney@gmail.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, Jiri Prchal <jiri.prchal@aksignal.cz>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCHv4 0/3] backlight: led-backlight driver
+Date: Thu, 8 Oct 2015 12:35:46 +0300
+Message-ID: <561638F2.2010003@ti.com>
+References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="sPkKlvsXIOuNStKnh4o43Vf88rxWbDkAV"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:36352 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755285AbbJHJgB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 8 Oct 2015 05:36:01 -0400
+In-Reply-To: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>
 
-This patcht adds possibility to invert heartbeat blinking. The inverted LED
-is more time ON then OFF.
-It's because it looks better when the heartbeat LED is next to other LED
-which is most time ON.
-The invert value is exported same way via sysfs in file invert like
-oneshot. I get inspiration from this trigger.
+--sPkKlvsXIOuNStKnh4o43Vf88rxWbDkAV
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jiri Prchal <jiri.prchal@aksignal.cz>
----
-v2:
-- Removed led_set_brightness in heartbeat_trig_deactivate.
-- Reformated message.
----
- drivers/leds/trigger/ledtrig-heartbeat.c | 47 ++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
-index fea6871..8622ce6 100644
---- a/drivers/leds/trigger/ledtrig-heartbeat.c
-+++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-@@ -27,6 +27,7 @@ struct heartbeat_trig_data {
- 	unsigned int phase;
- 	unsigned int period;
- 	struct timer_list timer;
-+	unsigned int invert;
- };
+On 30/09/15 12:31, Tomi Valkeinen wrote:
+> This series aims to add a led-backlight driver, similar to pwm-backligh=
+t, but
+> using a LED class device underneath.
+>=20
+> LED framework has no support for DT or getting a LED class driver from =
+another
+> kernel driver, so I added minimal functionality to led-class to get
+> led-backlight working.
+>=20
+> Changes to v3:
+> - Change a comment to refer to of_led_get()
+>=20
+> Changes to v2:
+> - power supply is now optional
+> - cosmetic changes
+> - no-op function for led_put() when !CONFIG_LEDS_CLASS
+>=20
+> Changes to v1:
+> - Split LED OF parts into separate .h and .c files
+> - Check for CONFIG_OF and CONFIG_LEDS_CLASS where relevant to leave unu=
+sed code
+>   out.
+> - Improved error prints and comments a bit
+> - Added put_device() into led_put(), as the device was gotten from
+>   class_find_device() which requires a put_device() call.
+>=20
+>  Tomi
+>=20
+> Tomi Valkeinen (3):
+>   leds: Add of_led_get() and led_put()
+>   backlight: add led-backlight driver
+>   devicetree: Add led-backlight binding
+>=20
+>  .../bindings/video/backlight/led-backlight.txt     |  30 +++
+>  drivers/leds/Makefile                              |   6 +-
+>  drivers/leds/led-class.c                           |  13 +-
+>  drivers/leds/led-of.c                              |  85 +++++++
+>  drivers/leds/leds.h                                |   1 +
+>  drivers/video/backlight/Kconfig                    |   7 +
+>  drivers/video/backlight/Makefile                   |   1 +
+>  drivers/video/backlight/led_bl.c                   | 246 +++++++++++++=
+++++++++
+>  include/linux/leds.h                               |  10 +
+>  include/linux/of_leds.h                            |  26 +++
+>  10 files changed, 423 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/video/backlight/l=
+ed-backlight.txt
+>  create mode 100644 drivers/leds/led-of.c
+>  create mode 100644 drivers/video/backlight/led_bl.c
+>  create mode 100644 include/linux/of_leds.h
 
- static void led_heartbeat_function(unsigned long data)
-@@ -56,21 +57,27 @@ static void led_heartbeat_function(unsigned long data)
- 			msecs_to_jiffies(heartbeat_data->period);
- 		delay = msecs_to_jiffies(70);
- 		heartbeat_data->phase++;
--		brightness = led_cdev->max_brightness;
-+		if (!heartbeat_data->invert)
-+			brightness = led_cdev->max_brightness;
- 		break;
- 	case 1:
- 		delay = heartbeat_data->period / 4 - msecs_to_jiffies(70);
- 		heartbeat_data->phase++;
-+		if (heartbeat_data->invert)
-+			brightness = led_cdev->max_brightness;
- 		break;
- 	case 2:
- 		delay = msecs_to_jiffies(70);
- 		heartbeat_data->phase++;
--		brightness = led_cdev->max_brightness;
-+		if (!heartbeat_data->invert)
-+			brightness = led_cdev->max_brightness;
- 		break;
- 	default:
- 		delay = heartbeat_data->period - heartbeat_data->period / 4 -
- 			msecs_to_jiffies(70);
- 		heartbeat_data->phase = 0;
-+		if (heartbeat_data->invert)
-+			brightness = led_cdev->max_brightness;
- 		break;
- 	}
+There's been no more comments on this. Should this be merged via led or
+backlight trees?
 
-@@ -78,15 +85,50 @@ static void led_heartbeat_function(unsigned long data)
- 	mod_timer(&heartbeat_data->timer, jiffies + delay);
- }
+Possible conflicts probably happen on the led side, as this changes the
+led core files, so perhaps that's easier way?
 
-+static ssize_t led_invert_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
-+
-+	return sprintf(buf, "%u\n", heartbeat_data->invert);
-+}
-+
-+static ssize_t led_invert_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t size)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
-+	unsigned long state;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &state);
-+	if (ret)
-+		return ret;
-+
-+	heartbeat_data->invert = !!state;
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(invert, 0644, led_invert_show, led_invert_store);
-+
- static void heartbeat_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct heartbeat_trig_data *heartbeat_data;
-+	int rc;
+ Tomi
 
- 	heartbeat_data = kzalloc(sizeof(*heartbeat_data), GFP_KERNEL);
- 	if (!heartbeat_data)
- 		return;
 
- 	led_cdev->trigger_data = heartbeat_data;
-+	rc = device_create_file(led_cdev->dev, &dev_attr_invert);
-+	if (rc) {
-+		kfree(led_cdev->trigger_data);
-+		return;
-+	}
-+
- 	setup_timer(&heartbeat_data->timer,
- 		    led_heartbeat_function, (unsigned long) led_cdev);
- 	heartbeat_data->phase = 0;
-@@ -100,6 +142,7 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
+--sPkKlvsXIOuNStKnh4o43Vf88rxWbDkAV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
- 	if (led_cdev->activated) {
- 		del_timer_sync(&heartbeat_data->timer);
-+		device_remove_file(led_cdev->dev, &dev_attr_invert);
- 		kfree(heartbeat_data);
- 		led_cdev->activated = false;
- 	}
---
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWFjjyAAoJEPo9qoy8lh71pC0P/1zhKf727SkjS4CMbjaKfH1S
+9AtCn0OY2igbYUZFX9y+Mjpnt/Oc/YghPgPkXlttT+JjD9RcMJSfsjDPLFWFQ9R4
+u1KRR0bbAeFKSWLICetT290pQ8ieXvOAQXI3uqGuIGecuALpjYjqbn2HXiaREE/F
+bfJ1RxhJK6PZSdEcKSI/r8PpFPGRQiemsOdBcJAV4Lb0Z9X4KdsenrwURC7rAYe3
+mHmziANV0SXX39C+h/jBFGmBrtf+rocHEzv8wwFODGNloamyonlsKZehEkKZax/Y
+eBbhHpZi2GFOhnhWoEBk77ez84bhrM5pAHj5j9OZjSzTFNoco8Ct01t3m3m3lSrX
+sbk76VQpsEDvoOSTGs/NhCi6is7CBTVSPSgXTsPuu40+7GA+Psy8Z8YAiP04B3Np
+8NpMbuxZK5eD/lPJ60VeAwefkA1XB0nIT0ld1NqoeK2I5jQ1p1UYdkL7CBBHBExS
+0BKIMgu2yE7NpVn/IYmqS0ugesOKWUzzx0mlRvhpr+60CYclLBWr8NE35YeQghwC
+On2hcaxeEMKOBibQOoU66XP6Icf9nEM0ZkXECkmJfjyuq5BFMF/waT2A13NsfI/2
+oRjUoVVG59Qelhw4wftE5QVTX5s9I1kmBEPC6IEjypREA+jDmXM65AcPljp2OTGu
+ET6LykqYCwJPGLdxnxvq
+=ZIrr
+-----END PGP SIGNATURE-----
+
+--sPkKlvsXIOuNStKnh4o43Vf88rxWbDkAV--
