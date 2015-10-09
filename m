@@ -1,97 +1,44 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 0/5] Add DT support for netxbig LEDs
-Date: Fri, 09 Oct 2015 11:43:37 +0200
-Message-ID: <56178C49.4070704@samsung.com>
-References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+Subject: Re: [PATCH 0/4] leds-bcm6328: several fixes and improvements
+Date: Fri, 09 Oct 2015 12:20:16 +0200
+Message-ID: <561794E0.1050007@samsung.com>
+References: <1444300555-13988-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38957 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752226AbbJIJnm (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 05:43:42 -0400
-In-reply-to: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34330 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753524AbbJIKUU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 06:20:20 -0400
+In-reply-to: <1444300555-13988-1-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, jogo@openwrt.org, cernekee@gmail.com, f.fainelli@gmail.com
 
-On 09/26/2015 11:02 PM, Simon Guinot wrote:
-> Hello,
->
-> This patch series adds DT support for the LEDs found on the
-> Kirkwood-based LaCie boards 2Big and 5Big Network v2.
->
-> Changes for v2:
-> - Check timer mode value retrieved from DT.
-> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
->    timer delay values from DT with function of_property_read_u32_index.
->    Instead, use a temporary u32 variable. This allows to silence a static
->    checker warning.
-> - Make timer property optional in the binding documentation. It is now
->    aligned with the driver code.
->
-> Changes for v3:
-> - Fix pointer usage with the temporary u32 variable while calling
->    of_property_read_u32_index.
->
-> Changes for v4:
-> - In DT binding document netxbig-gpio-ext.txt, detail byte order for
->    registers and latch mechanism for "enable-gpio".
-> - In leds-netxbig.c, add some error messages.
-> - In leds-netxbig.c, fix some "sizeof" style issues.
-> - In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
->    of_property_read_string() calls after the error-prone checks.
-> - Add some Acked-by.
->
-> Changes for v5:
-> - Rename DT property "bright-max" into the more common "max-brightness".
-> - Make use of the "max-brightness" DT property. Instead of counting the
->    data pins of the GPIO extension bus, use "max-brightness" to get the
->    maximum brightness level.
-> - Add a patch to convert the leds-netxbig driver to the devm_ functions.
->
-> Changes for v6:
-> - Add a patch to set led_classdev max_brightness in the leds-netxbig
->    driver.
-> - Decrement the current child node refcount with of_node_put() when an
->    error happens while iterating with for_each_child_of_node().
->
-> Thanks,
->
-> Simon
->
-> Simon Guinot (5):
->    leds: netxbig: add device tree binding
->    ARM: Kirkwood: add LED DT entries for netxbig boards
->    ARM: mvebu: remove static LED setup for netxbig boards
->    leds: netxbig: convert to use the devm_ functions
->    leds: netxbig: set led_classdev max_brightness
->
->   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
->   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++
->   arch/arm/boot/dts/kirkwood-net5big.dts             |  60 ++++
->   arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++
->   arch/arm/mach-mvebu/Kconfig                        |   7 -
->   arch/arm/mach-mvebu/Makefile                       |   1 -
->   arch/arm/mach-mvebu/board.h                        |  21 --
->   arch/arm/mach-mvebu/kirkwood.c                     |   4 -
->   arch/arm/mach-mvebu/netxbig.c                      | 191 ------------
->   drivers/leds/leds-netxbig.c                        | 336 ++++++++++++++++-----
->   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
->   .../linux/platform_data/leds-kirkwood-netxbig.h    |   1 +
->   12 files changed, 531 insertions(+), 302 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
->   delete mode 100644 arch/arm/mach-mvebu/board.h
->   delete mode 100644 arch/arm/mach-mvebu/netxbig.c
->   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
->
+Hi Alvaro,
 
-Since no comment regarding DT bindings has appeared for a long time,
-I decided to merge the patch set without DT maintainer's ack, thanks.
+Thanks for the patches, merged.
 
--- 
 Best Regards,
 Jacek Anaszewski
+
+On 10/08/2015 12:35 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+> These patches improve leds-bcm6328 by adding invalid LED printing (li=
+ke it's done in leds-bcm6358), simplifying default-state handling (once=
+ again like it's done in leds-bcm6358), and adding more init configurat=
+ion options.
+>
+> =C3=81lvaro Fern=C3=A1ndez Rojas (4):
+>    leds-bcm6328: print invalid LED
+>    leds-bcm6328: simplify and improve default-state handling
+>    leds-bcm6328: add more init configuration options
+>    Documentation: leds: update DT bindings for leds-bcm6328
+>
+>   .../devicetree/bindings/leds/leds-bcm6328.txt      | 10 ++++++
+>   drivers/leds/leds-bcm6328.c                        | 41 +++++++++++=
++++++------
+>   2 files changed, 40 insertions(+), 11 deletions(-)
+>
