@@ -1,90 +1,42 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 01/12] leds: core: Use EXPORT_SYMBOL_GPL consistently
-Date: Thu, 8 Oct 2015 17:51:07 +0200
-Message-ID: <20151008155107.GJ11776@xo-6d-61-c0.localdomain>
-References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
- <1443445641-9529-2-git-send-email-j.anaszewski@samsung.com>
- <56095923.7090600@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
+ brightness setting
+Date: Fri, 09 Oct 2015 08:28:44 +0200
+Message-ID: <56175E9C.5040403@samsung.com>
+References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+ <20151008155036.GF11776@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56095923.7090600@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:26883 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753994AbbJIG2s (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 02:28:48 -0400
+In-reply-to: <20151008155036.GF11776@xo-6d-61-c0.localdomain>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com
 
-On Mon 2015-09-28 17:13:39, Jacek Anaszewski wrote:
-> This patch isn't going to be applied since it can cause
-> legal implications for existing users.
+On 10/08/2015 05:50 PM, Pavel Machek wrote:
+> On Mon 2015-09-21 16:29:26, Jacek Anaszewski wrote:
+>> This patch removes SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS flags.
+
+s/SET_BRIGHTNESS/SET_BRIGHTNESS_SYNC/
+
+>> led_set_brightness now calls led_set_brightness_nosleep instead of
+>> choosing between sync and async op basing on the flags defined by the
+>> driver.
 >
+> Are those flags unused in the version of kernel you are patching?
 
-Are there any? Best do this ASAP :-).
-							Pavel
- 
-> On 09/28/2015 03:07 PM, Jacek Anaszewski wrote:
-> >LED core has a mixture of EXPORT_SYMBOL and EXPORT_SYMBOL_GPL macros.
-> >This patch fixes this discrepancy and switches to using EXPORT_SYMBOL_GPL
-> >for each exported function.
-> >
-> >Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> >---
-> >  drivers/leds/led-core.c |    8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> >diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> >index 549de7e..c1dd545 100644
-> >--- a/drivers/leds/led-core.c
-> >+++ b/drivers/leds/led-core.c
-> >@@ -83,7 +83,7 @@ void led_blink_set(struct led_classdev *led_cdev,
-> >
-> >  	led_blink_setup(led_cdev, delay_on, delay_off);
-> >  }
-> >-EXPORT_SYMBOL(led_blink_set);
-> >+EXPORT_SYMBOL_GPL(led_blink_set);
-> >
-> >  void led_blink_set_oneshot(struct led_classdev *led_cdev,
-> >  			   unsigned long *delay_on,
-> >@@ -104,7 +104,7 @@ void led_blink_set_oneshot(struct led_classdev *led_cdev,
-> >
-> >  	led_blink_setup(led_cdev, delay_on, delay_off);
-> >  }
-> >-EXPORT_SYMBOL(led_blink_set_oneshot);
-> >+EXPORT_SYMBOL_GPL(led_blink_set_oneshot);
-> >
-> >  void led_stop_software_blink(struct led_classdev *led_cdev)
-> >  {
-> >@@ -139,7 +139,7 @@ void led_set_brightness(struct led_classdev *led_cdev,
-> >  		dev_dbg(led_cdev->dev, "Setting LED brightness failed (%d)\n",
-> >  			ret);
-> >  }
-> >-EXPORT_SYMBOL(led_set_brightness);
-> >+EXPORT_SYMBOL_GPL(led_set_brightness);
-> >
-> >  int led_update_brightness(struct led_classdev *led_cdev)
-> >  {
-> >@@ -155,7 +155,7 @@ int led_update_brightness(struct led_classdev *led_cdev)
-> >
-> >  	return ret;
-> >  }
-> >-EXPORT_SYMBOL(led_update_brightness);
-> >+EXPORT_SYMBOL_GPL(led_update_brightness);
-> >
-> >  /* Caller must ensure led_cdev->led_access held */
-> >  void led_sysfs_disable(struct led_classdev *led_cdev)
-> >
-> 
-> 
-> -- 
-> Best Regards,
-> Jacek Anaszewski
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+The flags are used until this patch.
+
+> If so, tell us so in the changelog. Thanks,
+
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best Regards,
+Jacek Anaszewski
