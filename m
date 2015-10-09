@@ -1,36 +1,96 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 01/12] leds: core: Use EXPORT_SYMBOL_GPL consistently
-Date: Fri, 09 Oct 2015 10:19:48 +0200
-Message-ID: <561778A4.3020006@samsung.com>
-References: <1443445641-9529-1-git-send-email-j.anaszewski@samsung.com>
- <1443445641-9529-2-git-send-email-j.anaszewski@samsung.com>
- <56095923.7090600@samsung.com> <20151008155107.GJ11776@xo-6d-61-c0.localdomain>
+Subject: Re: [PATCH v6 0/5] Add DT support for netxbig LEDs
+Date: Fri, 09 Oct 2015 11:43:37 +0200
+Message-ID: <56178C49.4070704@samsung.com>
+References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20151008155107.GJ11776@xo-6d-61-c0.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, andrew@lunn.ch, rpurdie@rpsys.net
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38957 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752226AbbJIJnm (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 05:43:42 -0400
+In-reply-to: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On 10/08/2015 05:51 PM, Pavel Machek wrote:
-> On Mon 2015-09-28 17:13:39, Jacek Anaszewski wrote:
->> This patch isn't going to be applied since it can cause
->> legal implications for existing users.
->>
+On 09/26/2015 11:02 PM, Simon Guinot wrote:
+> Hello,
 >
-> Are there any? Best do this ASAP :-).
+> This patch series adds DT support for the LEDs found on the
+> Kirkwood-based LaCie boards 2Big and 5Big Network v2.
+>
+> Changes for v2:
+> - Check timer mode value retrieved from DT.
+> - In netxbig_leds_get_of_pdata, don't use unsigned long variables to get
+>    timer delay values from DT with function of_property_read_u32_index.
+>    Instead, use a temporary u32 variable. This allows to silence a static
+>    checker warning.
+> - Make timer property optional in the binding documentation. It is now
+>    aligned with the driver code.
+>
+> Changes for v3:
+> - Fix pointer usage with the temporary u32 variable while calling
+>    of_property_read_u32_index.
+>
+> Changes for v4:
+> - In DT binding document netxbig-gpio-ext.txt, detail byte order for
+>    registers and latch mechanism for "enable-gpio".
+> - In leds-netxbig.c, add some error messages.
+> - In leds-netxbig.c, fix some "sizeof" style issues.
+> - In leds-netxbig.c, in netxbig_leds_get_of_pdata(), move the
+>    of_property_read_string() calls after the error-prone checks.
+> - Add some Acked-by.
+>
+> Changes for v5:
+> - Rename DT property "bright-max" into the more common "max-brightness".
+> - Make use of the "max-brightness" DT property. Instead of counting the
+>    data pins of the GPIO extension bus, use "max-brightness" to get the
+>    maximum brightness level.
+> - Add a patch to convert the leds-netxbig driver to the devm_ functions.
+>
+> Changes for v6:
+> - Add a patch to set led_classdev max_brightness in the leds-netxbig
+>    driver.
+> - Decrement the current child node refcount with of_node_put() when an
+>    error happens while iterating with for_each_child_of_node().
+>
+> Thanks,
+>
+> Simon
+>
+> Simon Guinot (5):
+>    leds: netxbig: add device tree binding
+>    ARM: Kirkwood: add LED DT entries for netxbig boards
+>    ARM: mvebu: remove static LED setup for netxbig boards
+>    leds: netxbig: convert to use the devm_ functions
+>    leds: netxbig: set led_classdev max_brightness
+>
+>   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+>   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++
+>   arch/arm/boot/dts/kirkwood-net5big.dts             |  60 ++++
+>   arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++
+>   arch/arm/mach-mvebu/Kconfig                        |   7 -
+>   arch/arm/mach-mvebu/Makefile                       |   1 -
+>   arch/arm/mach-mvebu/board.h                        |  21 --
+>   arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+>   arch/arm/mach-mvebu/netxbig.c                      | 191 ------------
+>   drivers/leds/leds-netxbig.c                        | 336 ++++++++++++++++-----
+>   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+>   .../linux/platform_data/leds-kirkwood-netxbig.h    |   1 +
+>   12 files changed, 531 insertions(+), 302 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+>   delete mode 100644 arch/arm/mach-mvebu/board.h
+>   delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+>   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
+>
 
-Current non-GPL users of led_set_brightness would be affected if we
-changed this. I am not however certain if there are any, having in mind
-that led_classdev_register is exported with EXPORT_SYMBOL_GPL.
-Theoretically it is possible to use led_set_brightness without
-registering LED class device, but it would be partially broken then
-due to not initialized set_brightness_work.
-I think that it would be safe to apply this patch.
-I need acks, though :)
+Since no comment regarding DT bindings has appeared for a long time,
+I decided to merge the patch set without DT maintainer's ack, thanks.
 
 -- 
 Best Regards,
