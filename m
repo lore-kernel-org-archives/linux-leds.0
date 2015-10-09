@@ -1,44 +1,53 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 0/4] leds-bcm6328: several fixes and improvements
-Date: Fri, 09 Oct 2015 12:20:16 +0200
-Message-ID: <561794E0.1050007@samsung.com>
-References: <1444300555-13988-1-git-send-email-noltari@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/5] leds: core: Drivers shouldn't enforce SYNC/ASYNC
+ brightness setting
+Date: Fri, 9 Oct 2015 13:16:35 +0200
+Message-ID: <20151009111635.GA13923@amd>
+References: <1442845770-17800-1-git-send-email-j.anaszewski@samsung.com>
+ <1442845770-17800-2-git-send-email-j.anaszewski@samsung.com>
+ <20151008155036.GF11776@xo-6d-61-c0.localdomain>
+ <56175E9C.5040403@samsung.com>
+ <20151009070202.GA27183@amd>
+ <561775EC.80703@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34330 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753524AbbJIKUU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 06:20:20 -0400
-In-reply-to: <1444300555-13988-1-git-send-email-noltari@gmail.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53102 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756019AbbJILQi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 9 Oct 2015 07:16:38 -0400
+Content-Disposition: inline
+In-Reply-To: <561775EC.80703@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, jogo@openwrt.org, cernekee@gmail.com, f.fainelli@gmail.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com
 
-Hi Alvaro,
+On Fri 2015-10-09 10:08:12, Jacek Anaszewski wrote:
+> On 10/09/2015 09:02 AM, Pavel Machek wrote:
+> >On Fri 2015-10-09 08:28:44, Jacek Anaszewski wrote:
+> >>On 10/08/2015 05:50 PM, Pavel Machek wrote:
+> >>>On Mon 2015-09-21 16:29:26, Jacek Anaszewski wrote:
+> >>>>This patch removes SET_BRIGHTNESS_ASYNC and SET_BRIGHTNESS flags.
+> >>
+> >>s/SET_BRIGHTNESS/SET_BRIGHTNESS_SYNC/
+> >>
+> >>>>led_set_brightness now calls led_set_brightness_nosleep instead of
+> >>>>choosing between sync and async op basing on the flags defined by the
+> >>>>driver.
+> >>>
+> >>>Are those flags unused in the version of kernel you are patching?
+> >>
+> >>The flags are used until this patch.
+> >
+> >Hmm. I seen you removing the definitions, but not removing any
+> >users. I guess I missed something.
+> 
+> Only LED core is the user. It sets SET_BRIGHTNESS_SYNC flag
+> for LED flash class drivers.
 
-Thanks for the patches, merged.
+Aha. All is right, then.
 
-Best Regards,
-Jacek Anaszewski
-
-On 10/08/2015 12:35 PM, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
-> These patches improve leds-bcm6328 by adding invalid LED printing (li=
-ke it's done in leds-bcm6358), simplifying default-state handling (once=
- again like it's done in leds-bcm6358), and adding more init configurat=
-ion options.
->
-> =C3=81lvaro Fern=C3=A1ndez Rojas (4):
->    leds-bcm6328: print invalid LED
->    leds-bcm6328: simplify and improve default-state handling
->    leds-bcm6328: add more init configuration options
->    Documentation: leds: update DT bindings for leds-bcm6328
->
->   .../devicetree/bindings/leds/leds-bcm6328.txt      | 10 ++++++
->   drivers/leds/leds-bcm6328.c                        | 41 +++++++++++=
-+++++------
->   2 files changed, 40 insertions(+), 11 deletions(-)
->
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
