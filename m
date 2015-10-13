@@ -1,71 +1,121 @@
-From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: Re: [PATCH v2 2/3] mfd: rt5033: Add RT5033 Flash led sub device
-Date: Tue, 13 Oct 2015 17:03:51 +0900
-Message-ID: <561CBAE7.1070300@samsung.com>
-References: <1444655578-19806-1-git-send-email-ingi2.kim@samsung.com>
- <1444655578-19806-3-git-send-email-ingi2.kim@samsung.com>
- <20151013070610.GO17172@x1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCHv4 3/3] devicetree: Add led-backlight binding
+Date: Tue, 13 Oct 2015 09:42:48 +0100
+Message-ID: <20151013084248.GA32409@x1>
+References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com>
+ <1443605522-1118-4-git-send-email-tomi.valkeinen@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49356 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932145AbbJMIDx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Oct 2015 04:03:53 -0400
-In-reply-to: <20151013070610.GO17172@x1>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:36571 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751020AbbJMImw (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Oct 2015 04:42:52 -0400
+Received: by wicgb1 with SMTP id gb1so178599264wic.1
+        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2015 01:42:50 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1443605522-1118-4-git-send-email-tomi.valkeinen@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org
 
-Hi Lee Jones,
+On Wed, 30 Sep 2015, Tomi Valkeinen wrote:
 
-Okay, I'm try to remove needless part and resend it
-Thanks for the review
+> Add DT binding for led-backlight.
+>=20
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../bindings/video/backlight/led-backlight.txt     | 30 ++++++++++++=
+++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/video/backlight=
+/led-backlight.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/video/backlight/led-ba=
+cklight.txt b/Documentation/devicetree/bindings/video/backlight/led-bac=
+klight.txt
+> new file mode 100644
+> index 000000000000..d4621d7414bc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/backlight/led-backlight=
+=2Etxt
+> @@ -0,0 +1,30 @@
+> +led-backlight bindings
 
-Thank you
+Make this look like a heading, rather than just another binding.
 
-On 2015=EB=85=84 10=EC=9B=94 13=EC=9D=BC 16:06, Lee Jones wrote:
-> On Mon, 12 Oct 2015, Ingi Kim wrote:
->=20
->> This patch adds rt5033-led sub device to support it.
->>
->> Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
->> ---
->>  drivers/mfd/rt5033.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mfd/rt5033.c b/drivers/mfd/rt5033.c
->> index d60f916..b7f374b 100644
->> --- a/drivers/mfd/rt5033.c
->> +++ b/drivers/mfd/rt5033.c
->> @@ -40,13 +40,17 @@ static const struct regmap_irq_chip rt5033_irq_c=
-hip =3D {
->>  };
->> =20
->>  static const struct mfd_cell rt5033_devs[] =3D {
->> -	{ .name =3D "rt5033-regulator", },
->>  	{
->> +		.name =3D "rt5033-regulator",
->> +	}, {
->=20
-> There's no need for this change.  Please remove it.
->=20
->>  		.name =3D "rt5033-charger",
->>  		.of_compatible =3D "richtek,rt5033-charger",
->>  	}, {
->>  		.name =3D "rt5033-battery",
->>  		.of_compatible =3D "richtek,rt5033-battery",
->> +	}, {
->> +		.name =3D "rt5033-led",
->> +		.of_compatible =3D "richtek,rt5033-led",
->=20
-> For when you resubmit with the hunk above removed:
->=20
-> Acked-by: Lee Jones <lee.jones@linaro.org>
->=20
->>  	},
->>  };
->> =20
->=20
+I would expect to see "LED Backlight Bindings" or similar.
+
+> +Required properties:
+> +  - compatible: "led-backlight"
+> +  - leds: phandle to a led OF node [0]
+
+s/phandle/Phandle/
+
+s/led/LED/
+
+s/[0]/(See: ../leds/common.txt)
+
+> +  - brightness-levels: Array of distinct LED brightness levels. Thes=
+e
+> +      are in the range from 0 to 255, passed to the LED class driver=
+=2E
+> +  - default-brightness-level: the default brightness level (index in=
+to the
+
+s/the/The/
+
+> +      array defined by the "brightness-levels" property)
+
+Tab this out, so:
+
+- compatible			: "led-backlight"
+- leds				: phandle to a led OF node [0]
+- brightness-levels		: Array of distinct LED brightness levels. These
+				  are in the range from 0 to 255, passed to the LED class driver.
+- default-brightness-level	: the default brightness level (index into t=
+he
+				  array defined by the "brightness-levels" property)
+
+Etc.
+
+> +Optional properties:
+> +  - power-supply: regulator for supply voltage
+
+s/regulator/Regulator/
+
+> +  - enable-gpios: contains a single GPIO specifier for the GPIO whic=
+h enables
+
+s/contains/Contains/
+
+> +                  and disables the backlight (see GPIO binding[1])
+
+s/[1]/(See: ../gpio/gpio.txt)
+
+> +[0]: Documentation/devicetree/bindings/leds/common.txt
+> +[1]: Documentation/devicetree/bindings/gpio/gpio.txt
+
+Remove these.
+
+> +Example:
+> +
+> +	backlight {
+> +		compatible =3D "led-backlight";
+> +		leds =3D <&backlight_led>;
+> +
+> +		brightness-levels =3D <0 4 8 16 32 64 128 255>;
+> +		default-brightness-level =3D <6>;
+> +
+> +		power-supply =3D <&vdd_bl_reg>;
+> +		enable-gpios =3D <&gpio 58 0>;
+> +	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
