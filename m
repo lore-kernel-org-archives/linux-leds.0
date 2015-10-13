@@ -1,52 +1,69 @@
-From: Heiko Schocher <hs@denx.de>
-Subject: [PATCH] leds: leds-gpio: add shutdown function
-Date: Tue, 13 Oct 2015 07:17:12 +0200
-Message-ID: <1444713432-24433-1-git-send-email-hs@denx.de>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:58977 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932379AbbJMFRR (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Oct 2015 01:17:17 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] mfd: rt5033: Add RT5033 Flash led sub device
+Date: Tue, 13 Oct 2015 08:06:10 +0100
+Message-ID: <20151013070610.GO17172@x1>
+References: <1444655578-19806-1-git-send-email-ingi2.kim@samsung.com>
+ <1444655578-19806-3-git-send-email-ingi2.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1444655578-19806-3-git-send-email-ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ingi Kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Heiko Schocher <hs@denx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Georg.Soffel@bosch-si.com
 
-add a shutdown function for setting the gpio-leds
-into off state when shuting down.
+On Mon, 12 Oct 2015, Ingi Kim wrote:
 
-Signed-off-by: Heiko Schocher <hs@denx.de>
----
+> This patch adds rt5033-led sub device to support it.
+>=20
+> Signed-off-by: Ingi Kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/mfd/rt5033.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mfd/rt5033.c b/drivers/mfd/rt5033.c
+> index d60f916..b7f374b 100644
+> --- a/drivers/mfd/rt5033.c
+> +++ b/drivers/mfd/rt5033.c
+> @@ -40,13 +40,17 @@ static const struct regmap_irq_chip rt5033_irq_ch=
+ip =3D {
+>  };
+> =20
+>  static const struct mfd_cell rt5033_devs[] =3D {
+> -	{ .name =3D "rt5033-regulator", },
+>  	{
+> +		.name =3D "rt5033-regulator",
+> +	}, {
 
- drivers/leds/leds-gpio.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+There's no need for this change.  Please remove it.
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index af1876a..5db4515 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -291,9 +291,22 @@ static int gpio_led_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void gpio_led_shutdown(struct platform_device *pdev)
-+{
-+	struct gpio_leds_priv *priv = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < priv->num_leds; i++) {
-+		struct gpio_led_data *led = &priv->leds[i];
-+
-+		gpio_led_set(&led->cdev, LED_OFF);
-+	}
-+}
-+
- static struct platform_driver gpio_led_driver = {
- 	.probe		= gpio_led_probe,
- 	.remove		= gpio_led_remove,
-+	.shutdown	= gpio_led_shutdown,
- 	.driver		= {
- 		.name	= "leds-gpio",
- 		.of_match_table = of_gpio_leds_match,
--- 
-2.1.0
+>  		.name =3D "rt5033-charger",
+>  		.of_compatible =3D "richtek,rt5033-charger",
+>  	}, {
+>  		.name =3D "rt5033-battery",
+>  		.of_compatible =3D "richtek,rt5033-battery",
+> +	}, {
+> +		.name =3D "rt5033-led",
+> +		.of_compatible =3D "richtek,rt5033-led",
+
+=46or when you resubmit with the hunk above removed:
+
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+>  	},
+>  };
+> =20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
