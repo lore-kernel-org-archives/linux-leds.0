@@ -1,60 +1,77 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCHv4 3/3] devicetree: Add led-backlight binding
-Date: Tue, 13 Oct 2015 09:21:03 -0500
-Message-ID: <CAL_JsqJ+xYpX86DNHFCOEqV85FRh-Xzh1wg3p6guA0QeWG4+pg@mail.gmail.com>
-References: <1443605522-1118-1-git-send-email-tomi.valkeinen@ti.com> <1443605522-1118-4-git-send-email-tomi.valkeinen@ti.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v6 0/5] Add DT support for netxbig LEDs
+Date: Thu, 15 Oct 2015 09:16:42 +0200
+Message-ID: <87mvvk38kl.fsf@free-electrons.com>
+References: <1443301358-2131-1-git-send-email-simon.guinot@sequanux.org>
+	<56178C49.4070704@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:34938 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753157AbbJMOVX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 13 Oct 2015 10:21:23 -0400
-In-Reply-To: <1443605522-1118-4-git-send-email-tomi.valkeinen@ti.com>
+Received: from down.free-electrons.com ([37.187.137.238]:55107 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754555AbbJOHQy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 15 Oct 2015 03:16:54 -0400
+In-Reply-To: <56178C49.4070704@samsung.com> (Jacek Anaszewski's message of
+	"Fri, 09 Oct 2015 11:43:37 +0200")
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@printk.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh@kernel.org>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Wed, Sep 30, 2015 at 4:32 AM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> Add DT binding for led-backlight.
+Hi Jacek,
+ 
+ On ven., oct. 09 2015, Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
 
-Please use get_maintainers.pl.
+> On 09/26/2015 11:02 PM, Simon Guinot wrote:
+>> Hello,
+
+[..]
+>>
+>> Simon Guinot (5):
+>>    leds: netxbig: add device tree binding
+>>    ARM: Kirkwood: add LED DT entries for netxbig boards
+>>    ARM: mvebu: remove static LED setup for netxbig boards
+>>    leds: netxbig: convert to use the devm_ functions
+>>    leds: netxbig: set led_classdev max_brightness
+>>
+>>   .../devicetree/bindings/gpio/netxbig-gpio-ext.txt  |  22 ++
+>>   .../devicetree/bindings/leds/leds-netxbig.txt      |  92 ++++++
+>>   arch/arm/boot/dts/kirkwood-net5big.dts             |  60 ++++
+>>   arch/arm/boot/dts/kirkwood-netxbig.dtsi            |  80 +++++
+>>   arch/arm/mach-mvebu/Kconfig                        |   7 -
+>>   arch/arm/mach-mvebu/Makefile                       |   1 -
+>>   arch/arm/mach-mvebu/board.h                        |  21 --
+>>   arch/arm/mach-mvebu/kirkwood.c                     |   4 -
+>>   arch/arm/mach-mvebu/netxbig.c                      | 191 ------------
+>>   drivers/leds/leds-netxbig.c                        | 336 ++++++++++++++++-----
+>>   include/dt-bindings/leds/leds-netxbig.h            |  18 ++
+>>   .../linux/platform_data/leds-kirkwood-netxbig.h    |   1 +
+>>   12 files changed, 531 insertions(+), 302 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/netxbig-gpio-ext.txt
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+>>   delete mode 100644 arch/arm/mach-mvebu/board.h
+>>   delete mode 100644 arch/arm/mach-mvebu/netxbig.c
+>>   create mode 100644 include/dt-bindings/leds/leds-netxbig.h
+>>
+>
+> Since no comment regarding DT bindings has appeared for a long time,
+> I decided to merge the patch set without DT maintainer's ack, thanks.
+
+it is a good news that this series will be finally merged. However did
+you also take the patches "ARM: Kirkwood: add LED DT entries for netxbig
+boards" and "ARM: mvebu: remove static LED setup for netxbig boards" ?
+
+Thanks,
+
+Gregory
 
 >
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: devicetree@vger.kernel.org
-> ---
->  .../bindings/video/backlight/led-backlight.txt     | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
->
-> diff --git a/Documentation/devicetree/bindings/video/backlight/led-backlight.txt b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
-> new file mode 100644
-> index 000000000000..d4621d7414bc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
-> @@ -0,0 +1,30 @@
-> +led-backlight bindings
-> +
-> +Required properties:
-> +  - compatible: "led-backlight"
-> +  - leds: phandle to a led OF node [0]
+> -- 
+> Best Regards,
+> Jacek Anaszewski
 
-Why do we need 2 levels of LED nodes?
-
-> +  - brightness-levels: Array of distinct LED brightness levels. These
-> +      are in the range from 0 to 255, passed to the LED class driver.
-> +  - default-brightness-level: the default brightness level (index into the
-> +      array defined by the "brightness-levels" property)
-> +
-> +Optional properties:
-> +  - power-supply: regulator for supply voltage
-> +  - enable-gpios: contains a single GPIO specifier for the GPIO which enables
-> +                  and disables the backlight (see GPIO binding[1])
-
-Why are all of these not part of the LED node pointed to by leds?
-
-Describe the h/w, not what you want for a driver.
-
-Rob
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
