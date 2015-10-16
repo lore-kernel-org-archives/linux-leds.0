@@ -1,63 +1,101 @@
-From: Fida Mohammad <fmthoker@gmail.com>
-Subject: [PATCH] leds: leds-locomo.c: Use devm_led_classdev_register
-Date: Fri, 16 Oct 2015 14:33:03 -0700
-Message-ID: <1445031183-25326-1-git-send-email-fmthoker@gmail.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:36340 "EHLO
-	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750772AbbJPVdw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 16 Oct 2015 17:33:52 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Muhammad Falak R Wani <falakreyaz@gmail.com>
+Subject: [PATCH] leds: leds-fsg: Use devm_led_class_register
+Date: Sat, 17 Oct 2015 04:43:17 +0530
+Message-ID: <1445037197-8038-1-git-send-email-falakreyaz@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Muhammad Falak R Wani <falakreyaz@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Fida Mohammad <fmthoker@gmail.com>
 
-Use resource managed function devm_led_classdev_register to make
-initialisation path simpler.
-Also removed redundant led_classdev_unregister function.
+Use resource-managed function devm_led_classdev_register, remove
+redundant function fsg_led_remove.
+Drop unneeded gotos to make the _init code flow clean.
 
-Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
+Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
 ---
- drivers/leds/leds-locomo.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ drivers/leds/leds-fsg.c | 52 ++++++++++++-------------------------------------
+ 1 file changed, 12 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
-index 80ba048..24c4b53 100644
---- a/drivers/leds/leds-locomo.c
-+++ b/drivers/leds/leds-locomo.c
-@@ -59,23 +59,13 @@ static int locomoled_probe(struct locomo_dev *ldev)
- {
- 	int ret;
+diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+index 2b4dc73..cb01f5e 100644
+--- a/drivers/leds/leds-fsg.c
++++ b/drivers/leds/leds-fsg.c
+@@ -156,63 +156,35 @@ static int fsg_led_probe(struct platform_device *pdev)
+ 	latch_value = 0xffff;
+ 	*latch_address = latch_value;
  
--	ret = led_classdev_register(&ldev->dev, &locomo_led0);
-+	ret = devm_led_classdev_register(&ldev->dev, &locomo_led0);
+-	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
  	if (ret < 0)
- 		return ret;
+-		goto failwlan;
++		return ret;
  
--	ret = led_classdev_register(&ldev->dev, &locomo_led1);
--	if (ret < 0)
--		led_classdev_unregister(&locomo_led0);
+-	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
+ 	if (ret < 0)
+-		goto failwan;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
+ 	if (ret < 0)
+-		goto failsata;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
+ 	if (ret < 0)
+-		goto failusb;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_sync_led);
+ 	if (ret < 0)
+-		goto failsync;
++		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
++	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
+ 	if (ret < 0)
+-		goto failring;
 -
 -	return ret;
-+	return  devm_led_classdev_register(&ldev->dev, &locomo_led1);
+-
+- failring:
+-	led_classdev_unregister(&fsg_sync_led);
+- failsync:
+-	led_classdev_unregister(&fsg_usb_led);
+- failusb:
+-	led_classdev_unregister(&fsg_sata_led);
+- failsata:
+-	led_classdev_unregister(&fsg_wan_led);
+- failwan:
+-	led_classdev_unregister(&fsg_wlan_led);
+- failwlan:
+-
+-	return ret;
+-}
+-
+-static int fsg_led_remove(struct platform_device *pdev)
+-{
+-	led_classdev_unregister(&fsg_wlan_led);
+-	led_classdev_unregister(&fsg_wan_led);
+-	led_classdev_unregister(&fsg_sata_led);
+-	led_classdev_unregister(&fsg_usb_led);
+-	led_classdev_unregister(&fsg_sync_led);
+-	led_classdev_unregister(&fsg_ring_led);
++		return ret;
+ 
+ 	return 0;
  }
  
--static int locomoled_remove(struct locomo_dev *dev)
--{
--	led_classdev_unregister(&locomo_led0);
--	led_classdev_unregister(&locomo_led1);
--	return 0;
--}
- 
- static struct locomo_driver locomoled_driver = {
- 	.drv = {
-@@ -83,7 +73,6 @@ static struct locomo_driver locomoled_driver = {
+-
+ static struct platform_driver fsg_led_driver = {
+ 	.probe		= fsg_led_probe,
+-	.remove		= fsg_led_remove,
+ 	.driver		= {
+ 		.name		= "fsg-led",
  	},
- 	.devid	= LOCOMO_DEVID_LED,
- 	.probe	= locomoled_probe,
--	.remove	= locomoled_remove,
- };
- 
- static int __init locomoled_init(void)
 -- 
 1.9.1
