@@ -1,116 +1,72 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v3 04/10] leds: core: Use set_brightness_work for the
- blocking op
-Date: Fri, 16 Oct 2015 18:43:58 +0300
-Message-ID: <20151016154358.GN26916@valkosipuli.retiisi.org.uk>
-References: <1444209048-29415-1-git-send-email-j.anaszewski@samsung.com>
- <1444209048-29415-5-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1444209048-29415-5-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, sakari.ailus@linux.intel.com, andrew@lunn.ch
+From: Muhammad Falak R Wani <falakreyaz@gmail.com>
+Subject: [PATCH] leds: leds-menf21bmc.c: Use devm_led_class_register
+Date: Sat, 17 Oct 2015 01:47:55 +0530
+Message-ID: <1445026675-2171-1-git-send-email-falakreyaz@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:34838 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932325AbbJPUNo (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 16 Oct 2015 16:13:44 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Anreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Muhammad Falak R Wani <falakreyaz@gmail.com>
 
-Hi Jacek,
+Use resource-managed function devm_led_classdev_register instead
+of led_classdev_register, consequently remove redundant
+menf21bmc_led_remove function.
+Also drop the unneeded label err_free_leds.
 
-I think I'd rearrange patches 3 and 4; delayed_set_brightness is briefly
-needed in patch 3 but again no longer here.
+Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
+---
+ drivers/leds/leds-menf21bmc.c | 26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
-I have to say I quite like the set, it cleans up the framework a lot.
-Thanks!
-
-On Wed, Oct 07, 2015 at 11:10:42AM +0200, Jacek Anaszewski wrote:
-> This patch makes LED core capable of setting brightness for drivers
-> that implement brightness_set_blocking op. It removes from LED class
-> drivers responsibility for using work queues on their own.
-> 
-> In order to achieve this set_brightness_delayed callback is being
-> modified to directly call one of available ops for brightness setting.
-> 
-> led_set_brightness_async() function didn't set brightness in an
-> asynchronous way in all cases. It was mistakenly assuming that all
-> LED subsystem drivers used work queue in their brightness_set op,
-> whereas only half of them did that. Since it has no users now,
-> it is being removed.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> ---
->  drivers/leds/led-core.c |   12 +++++++++++-
->  drivers/leds/leds.h     |   10 ----------
->  include/linux/leds.h    |    2 +-
->  3 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index a1f53aa..7d2512f 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -83,6 +83,7 @@ static void set_brightness_delayed(struct work_struct *ws)
->  {
->  	struct led_classdev *led_cdev =
->  		container_of(ws, struct led_classdev, set_brightness_work);
-> +	int ret = 0;
->  
->  	if (led_cdev->flags & LED_BLINK_DISABLE) {
->  		led_cdev->delayed_set_value = LED_OFF;
-> @@ -90,7 +91,16 @@ static void set_brightness_delayed(struct work_struct *ws)
->  		led_cdev->flags &= ~LED_BLINK_DISABLE;
->  	}
->  
-> -	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
-> +	if (led_cdev->brightness_set)
-> +		led_cdev->brightness_set(led_cdev, led_cdev->brightness);
-> +	else if (led_cdev->brightness_set_blocking)
-> +		ret = led_cdev->brightness_set_blocking(led_cdev,
-> +							led_cdev->brightness);
-> +	else
-> +		ret = -ENOTSUPP;
-> +	if (ret < 0)
-> +		dev_err(led_cdev->dev,
-> +			"Setting an LED's brightness failed (%d)\n", ret);
->  }
->  
->  static void led_set_software_blink(struct led_classdev *led_cdev,
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index 8e252a2..683a605 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -16,16 +16,6 @@
->  #include <linux/rwsem.h>
->  #include <linux/leds.h>
->  
-> -static inline void led_set_brightness_async(struct led_classdev *led_cdev,
-> -					enum led_brightness value)
-> -{
-> -	value = min(value, led_cdev->max_brightness);
-> -	led_cdev->brightness = value;
-> -
-> -	if (!(led_cdev->flags & LED_SUSPENDED))
-> -		led_cdev->brightness_set(led_cdev, value);
-> -}
-> -
->  static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
->  					enum led_brightness value)
->  {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index b47eff5..56d5069 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -158,7 +158,7 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
->   *
->   * Set an LED's brightness, and, if necessary, cancel the
->   * software blink timer that implements blinking when the
-> - * hardware doesn't.
-> + * hardware doesn't. This function is guaranteed not to sleep.
->   */
->  extern void led_set_brightness(struct led_classdev *led_cdev,
->  			       enum led_brightness brightness);
-
+diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
+index 4b9eea8..dec2a6e 100644
+--- a/drivers/leds/leds-menf21bmc.c
++++ b/drivers/leds/leds-menf21bmc.c
+@@ -87,36 +87,20 @@ static int menf21bmc_led_probe(struct platform_device *pdev)
+ 		leds[i].cdev.name = leds[i].name;
+ 		leds[i].cdev.brightness_set = menf21bmc_led_set;
+ 		leds[i].i2c_client = i2c_client;
+-		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
+-		if (ret < 0)
+-			goto err_free_leds;
++		ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "failed to register LED device\n");
++			return ret;
++		}
+ 	}
+ 	dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
+ 
+ 	return 0;
+ 
+-err_free_leds:
+-	dev_err(&pdev->dev, "failed to register LED device\n");
+-
+-	for (i = i - 1; i >= 0; i--)
+-		led_classdev_unregister(&leds[i].cdev);
+-
+-	return ret;
+-}
+-
+-static int menf21bmc_led_remove(struct platform_device *pdev)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(leds); i++)
+-		led_classdev_unregister(&leds[i].cdev);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver menf21bmc_led = {
+ 	.probe		= menf21bmc_led_probe,
+-	.remove		= menf21bmc_led_remove,
+ 	.driver		= {
+ 		.name		= "menf21bmc_led",
+ 	},
 -- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+1.9.1
