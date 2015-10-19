@@ -1,77 +1,68 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-menf21bmc.c: Use devm_led_class_register
-Date: Mon, 19 Oct 2015 10:15:46 +0200
-Message-ID: <5624A6B2.4020005@samsung.com>
-References: <1445026675-2171-1-git-send-email-falakreyaz@gmail.com>
+Subject: Re: [PATCH] leds: leds-locomo.c: Use devm_led_classdev_register
+Date: Mon, 19 Oct 2015 10:16:09 +0200
+Message-ID: <5624A6C9.8080806@samsung.com>
+References: <1445031183-25326-1-git-send-email-fmthoker@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1445026675-2171-1-git-send-email-falakreyaz@gmail.com>
+In-reply-to: <1445031183-25326-1-git-send-email-fmthoker@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Muhammad Falak R Wani <falakreyaz@gmail.com>
-Cc: Anreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Fida Mohammad <fmthoker@gmail.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Muhammad,
+Hi Fida,
 
-On 10/16/2015 10:17 PM, Muhammad Falak R Wani wrote:
-> Use resource-managed function devm_led_classdev_register instead
-> of led_classdev_register, consequently remove redundant
-> menf21bmc_led_remove function.
-> Also drop the unneeded label err_free_leds.
+On 10/16/2015 11:33 PM, Fida Mohammad wrote:
+> Use resource managed function devm_led_classdev_register to make
+> initialisation path simpler.
+> Also removed redundant led_classdev_unregister function.
 >
-> Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
+> Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
 > ---
->   drivers/leds/leds-menf21bmc.c | 26 +++++---------------------
->   1 file changed, 5 insertions(+), 21 deletions(-)
+>   drivers/leds/leds-locomo.c | 15 ++-------------
+>   1 file changed, 2 insertions(+), 13 deletions(-)
 >
-> diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
-> index 4b9eea8..dec2a6e 100644
-> --- a/drivers/leds/leds-menf21bmc.c
-> +++ b/drivers/leds/leds-menf21bmc.c
-> @@ -87,36 +87,20 @@ static int menf21bmc_led_probe(struct platform_device *pdev)
->   		leds[i].cdev.name = leds[i].name;
->   		leds[i].cdev.brightness_set = menf21bmc_led_set;
->   		leds[i].i2c_client = i2c_client;
-> -		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
-> -		if (ret < 0)
-> -			goto err_free_leds;
-> +		ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev, "failed to register LED device\n");
-> +			return ret;
-> +		}
->   	}
->   	dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
+> diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
+> index 80ba048..24c4b53 100644
+> --- a/drivers/leds/leds-locomo.c
+> +++ b/drivers/leds/leds-locomo.c
+> @@ -59,23 +59,13 @@ static int locomoled_probe(struct locomo_dev *ldev)
+>   {
+>   	int ret;
 >
->   	return 0;
+> -	ret = led_classdev_register(&ldev->dev, &locomo_led0);
+> +	ret = devm_led_classdev_register(&ldev->dev, &locomo_led0);
+>   	if (ret < 0)
+>   		return ret;
 >
-> -err_free_leds:
-> -	dev_err(&pdev->dev, "failed to register LED device\n");
-> -
-> -	for (i = i - 1; i >= 0; i--)
-> -		led_classdev_unregister(&leds[i].cdev);
+> -	ret = led_classdev_register(&ldev->dev, &locomo_led1);
+> -	if (ret < 0)
+> -		led_classdev_unregister(&locomo_led0);
 > -
 > -	return ret;
-> -}
-> -
-> -static int menf21bmc_led_remove(struct platform_device *pdev)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(leds); i++)
-> -		led_classdev_unregister(&leds[i].cdev);
-> -
-> -	return 0;
+> +	return  devm_led_classdev_register(&ldev->dev, &locomo_led1);
 >   }
 >
->   static struct platform_driver menf21bmc_led = {
->   	.probe		= menf21bmc_led_probe,
-> -	.remove		= menf21bmc_led_remove,
->   	.driver		= {
->   		.name		= "menf21bmc_led",
+> -static int locomoled_remove(struct locomo_dev *dev)
+> -{
+> -	led_classdev_unregister(&locomo_led0);
+> -	led_classdev_unregister(&locomo_led1);
+> -	return 0;
+> -}
+>
+>   static struct locomo_driver locomoled_driver = {
+>   	.drv = {
+> @@ -83,7 +73,6 @@ static struct locomo_driver locomoled_driver = {
 >   	},
+>   	.devid	= LOCOMO_DEVID_LED,
+>   	.probe	= locomoled_probe,
+> -	.remove	= locomoled_remove,
+>   };
+>
+>   static int __init locomoled_init(void)
 >
 
 Applied, thanks.
