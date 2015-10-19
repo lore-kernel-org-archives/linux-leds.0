@@ -1,105 +1,121 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v10.1] leds: core: Use set_brightness_work for the blocking op
-Date: Mon, 19 Oct 2015 09:26:17 +0200
-Message-ID: <1445239577-24621-1-git-send-email-j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: leds-fsg: Use devm_led_class_register
+Date: Mon, 19 Oct 2015 09:48:26 +0200
+Message-ID: <5624A04A.6060209@samsung.com>
+References: <1445037197-8038-1-git-send-email-falakreyaz@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58521 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbbJSH0c (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 19 Oct 2015 03:26:32 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29089 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750787AbbJSHsa (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 19 Oct 2015 03:48:30 -0400
+In-reply-to: <1445037197-8038-1-git-send-email-falakreyaz@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, andrew@lunn.ch, sakari.ailus@linux.intel.com, pavel@ucw.cz, Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Muhammad Falak R Wani <falakreyaz@gmail.com>
+Cc: Anreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch makes LED core capable of setting brightness for drivers
-that implement brightness_set_blocking op. It removes from LED class
-drivers responsibility for using work queues on their own.
+Hi Muhammad,
 
-In order to achieve this set_brightness_delayed callback is being
-modified to directly call one of available ops for brightness setting.
+On 10/17/2015 01:13 AM, Muhammad Falak R Wani wrote:
+> Use resource-managed function devm_led_classdev_register, remove
+> redundant function fsg_led_remove.
+> Drop unneeded gotos to make the _init code flow clean.
+>
+> Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
+> ---
+>   drivers/leds/leds-fsg.c | 52 ++++++++++++-------------------------------------
+>   1 file changed, 12 insertions(+), 40 deletions(-)
+>
+> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+> index 2b4dc73..cb01f5e 100644
+> --- a/drivers/leds/leds-fsg.c
+> +++ b/drivers/leds/leds-fsg.c
+> @@ -156,63 +156,35 @@ static int fsg_led_probe(struct platform_device *pdev)
+>   	latch_value = 0xffff;
+>   	*latch_address = latch_value;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
+>   	if (ret < 0)
+> -		goto failwlan;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
+>   	if (ret < 0)
+> -		goto failwan;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
+>   	if (ret < 0)
+> -		goto failsata;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
+>   	if (ret < 0)
+> -		goto failusb;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sync_led);
+>   	if (ret < 0)
+> -		goto failsync;
+> +		return ret;
+>
+> -	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
+> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
+>   	if (ret < 0)
+> -		goto failring;
+> -
+> -	return ret;
+> -
+> - failring:
+> -	led_classdev_unregister(&fsg_sync_led);
+> - failsync:
+> -	led_classdev_unregister(&fsg_usb_led);
+> - failusb:
+> -	led_classdev_unregister(&fsg_sata_led);
+> - failsata:
+> -	led_classdev_unregister(&fsg_wan_led);
+> - failwan:
+> -	led_classdev_unregister(&fsg_wlan_led);
+> - failwlan:
+> -
+> -	return ret;
+> -}
+> -
+> -static int fsg_led_remove(struct platform_device *pdev)
+> -{
+> -	led_classdev_unregister(&fsg_wlan_led);
+> -	led_classdev_unregister(&fsg_wan_led);
+> -	led_classdev_unregister(&fsg_sata_led);
+> -	led_classdev_unregister(&fsg_usb_led);
+> -	led_classdev_unregister(&fsg_sync_led);
+> -	led_classdev_unregister(&fsg_ring_led);
+> +		return ret;
+>
+>   	return 0;
+>   }
+>
+> -
+>   static struct platform_driver fsg_led_driver = {
+>   	.probe		= fsg_led_probe,
+> -	.remove		= fsg_led_remove,
+>   	.driver		= {
+>   		.name		= "fsg-led",
+>   	},
+>
 
-led_set_brightness_async() function didn't set brightness in an
-asynchronous way in all cases. It was mistakenly assuming that all
-LED subsystem drivers used work queue in their brightness_set op,
-whereas only half of them did that. Since it has no users now,
-it is being removed.
+We've had a similar patch for this driver already. Please refer to
+linux-next or LED tree:
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
----
-Changes from v10:
-- change the argument passed to brightness_set and brightness_set_blocking
-  ops in set_brightness_delayed() from led_cdev->brightness to
-  led_cdev->delayed_set_value.
+git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
 
- drivers/leds/led-core.c |   12 +++++++++++-
- drivers/leds/leds.h     |   10 ----------
- include/linux/leds.h    |    2 +-
- 3 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index a1f53aa..a9e2f20 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -83,6 +83,7 @@ static void set_brightness_delayed(struct work_struct *ws)
- {
- 	struct led_classdev *led_cdev =
- 		container_of(ws, struct led_classdev, set_brightness_work);
-+	int ret = 0;
- 
- 	if (led_cdev->flags & LED_BLINK_DISABLE) {
- 		led_cdev->delayed_set_value = LED_OFF;
-@@ -90,7 +91,16 @@ static void set_brightness_delayed(struct work_struct *ws)
- 		led_cdev->flags &= ~LED_BLINK_DISABLE;
- 	}
- 
--	led_set_brightness_async(led_cdev, led_cdev->delayed_set_value);
-+	if (led_cdev->brightness_set)
-+		led_cdev->brightness_set(led_cdev, led_cdev->delayed_set_value);
-+	else if (led_cdev->brightness_set_blocking)
-+		ret = led_cdev->brightness_set_blocking(led_cdev,
-+						led_cdev->delayed_set_value);
-+	else
-+		ret = -ENOTSUPP;
-+	if (ret < 0)
-+		dev_err(led_cdev->dev,
-+			"Setting an LED's brightness failed (%d)\n", ret);
- }
- 
- static void led_set_software_blink(struct led_classdev *led_cdev,
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 8e252a2..683a605 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -16,16 +16,6 @@
- #include <linux/rwsem.h>
- #include <linux/leds.h>
- 
--static inline void led_set_brightness_async(struct led_classdev *led_cdev,
--					enum led_brightness value)
--{
--	value = min(value, led_cdev->max_brightness);
--	led_cdev->brightness = value;
--
--	if (!(led_cdev->flags & LED_SUSPENDED))
--		led_cdev->brightness_set(led_cdev, value);
--}
--
- static inline int led_set_brightness_sync(struct led_classdev *led_cdev,
- 					enum led_brightness value)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b47eff5..56d5069 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -158,7 +158,7 @@ extern void led_blink_set_oneshot(struct led_classdev *led_cdev,
-  *
-  * Set an LED's brightness, and, if necessary, cancel the
-  * software blink timer that implements blinking when the
-- * hardware doesn't.
-+ * hardware doesn't. This function is guaranteed not to sleep.
-  */
- extern void led_set_brightness(struct led_classdev *led_cdev,
- 			       enum led_brightness brightness);
 -- 
-1.7.9.5
+Best Regards,
+Jacek Anaszewski
