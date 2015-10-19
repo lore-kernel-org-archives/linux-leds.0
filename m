@@ -1,120 +1,80 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-fsg: Use devm_led_class_register
-Date: Mon, 19 Oct 2015 09:48:26 +0200
-Message-ID: <5624A04A.6060209@samsung.com>
-References: <1445037197-8038-1-git-send-email-falakreyaz@gmail.com>
+Subject: Re: [PATCH] leds: leds-menf21bmc.c: Use devm_led_class_register
+Date: Mon, 19 Oct 2015 10:15:46 +0200
+Message-ID: <5624A6B2.4020005@samsung.com>
+References: <1445026675-2171-1-git-send-email-falakreyaz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29089 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750787AbbJSHsa (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 19 Oct 2015 03:48:30 -0400
-In-reply-to: <1445037197-8038-1-git-send-email-falakreyaz@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1445026675-2171-1-git-send-email-falakreyaz@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Muhammad Falak R Wani <falakreyaz@gmail.com>
 Cc: Anreas Werner <andreas.werner@men.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
 Hi Muhammad,
 
-On 10/17/2015 01:13 AM, Muhammad Falak R Wani wrote:
-> Use resource-managed function devm_led_classdev_register, remove
-> redundant function fsg_led_remove.
-> Drop unneeded gotos to make the _init code flow clean.
+On 10/16/2015 10:17 PM, Muhammad Falak R Wani wrote:
+> Use resource-managed function devm_led_classdev_register instead
+> of led_classdev_register, consequently remove redundant
+> menf21bmc_led_remove function.
+> Also drop the unneeded label err_free_leds.
 >
 > Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
 > ---
->   drivers/leds/leds-fsg.c | 52 ++++++++++++-------------------------------------
->   1 file changed, 12 insertions(+), 40 deletions(-)
+>   drivers/leds/leds-menf21bmc.c | 26 +++++---------------------
+>   1 file changed, 5 insertions(+), 21 deletions(-)
 >
-> diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
-> index 2b4dc73..cb01f5e 100644
-> --- a/drivers/leds/leds-fsg.c
-> +++ b/drivers/leds/leds-fsg.c
-> @@ -156,63 +156,35 @@ static int fsg_led_probe(struct platform_device *pdev)
->   	latch_value = 0xffff;
->   	*latch_address = latch_value;
+> diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
+> index 4b9eea8..dec2a6e 100644
+> --- a/drivers/leds/leds-menf21bmc.c
+> +++ b/drivers/leds/leds-menf21bmc.c
+> @@ -87,36 +87,20 @@ static int menf21bmc_led_probe(struct platform_device *pdev)
+>   		leds[i].cdev.name = leds[i].name;
+>   		leds[i].cdev.brightness_set = menf21bmc_led_set;
+>   		leds[i].i2c_client = i2c_client;
+> -		ret = led_classdev_register(&pdev->dev, &leds[i].cdev);
+> -		if (ret < 0)
+> -			goto err_free_leds;
+> +		ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev, "failed to register LED device\n");
+> +			return ret;
+> +		}
+>   	}
+>   	dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
 >
-> -	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wlan_led);
->   	if (ret < 0)
-> -		goto failwlan;
-> +		return ret;
+>   	return 0;
 >
-> -	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_wan_led);
->   	if (ret < 0)
-> -		goto failwan;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sata_led);
->   	if (ret < 0)
-> -		goto failsata;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_usb_led);
->   	if (ret < 0)
-> -		goto failusb;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_sync_led);
->   	if (ret < 0)
-> -		goto failsync;
-> +		return ret;
->
-> -	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
-> +	ret = devm_led_classdev_register(&pdev->dev, &fsg_ring_led);
->   	if (ret < 0)
-> -		goto failring;
+> -err_free_leds:
+> -	dev_err(&pdev->dev, "failed to register LED device\n");
 > -
-> -	return ret;
-> -
-> - failring:
-> -	led_classdev_unregister(&fsg_sync_led);
-> - failsync:
-> -	led_classdev_unregister(&fsg_usb_led);
-> - failusb:
-> -	led_classdev_unregister(&fsg_sata_led);
-> - failsata:
-> -	led_classdev_unregister(&fsg_wan_led);
-> - failwan:
-> -	led_classdev_unregister(&fsg_wlan_led);
-> - failwlan:
+> -	for (i = i - 1; i >= 0; i--)
+> -		led_classdev_unregister(&leds[i].cdev);
 > -
 > -	return ret;
 > -}
 > -
-> -static int fsg_led_remove(struct platform_device *pdev)
+> -static int menf21bmc_led_remove(struct platform_device *pdev)
 > -{
-> -	led_classdev_unregister(&fsg_wlan_led);
-> -	led_classdev_unregister(&fsg_wan_led);
-> -	led_classdev_unregister(&fsg_sata_led);
-> -	led_classdev_unregister(&fsg_usb_led);
-> -	led_classdev_unregister(&fsg_sync_led);
-> -	led_classdev_unregister(&fsg_ring_led);
-> +		return ret;
->
->   	return 0;
+> -	int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(leds); i++)
+> -		led_classdev_unregister(&leds[i].cdev);
+> -
+> -	return 0;
 >   }
 >
-> -
->   static struct platform_driver fsg_led_driver = {
->   	.probe		= fsg_led_probe,
-> -	.remove		= fsg_led_remove,
+>   static struct platform_driver menf21bmc_led = {
+>   	.probe		= menf21bmc_led_probe,
+> -	.remove		= menf21bmc_led_remove,
 >   	.driver		= {
->   		.name		= "fsg-led",
+>   		.name		= "menf21bmc_led",
 >   	},
 >
 
-We've had a similar patch for this driver already. Please refer to
-linux-next or LED tree:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+Applied, thanks.
 
 -- 
 Best Regards,
