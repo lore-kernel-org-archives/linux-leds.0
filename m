@@ -1,61 +1,38 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-net48xx: Use devm_led_classdev_register
-Date: Mon, 19 Oct 2015 10:16:28 +0200
-Message-ID: <5624A6DC.50503@samsung.com>
-References: <1445038377-11547-1-git-send-email-falakreyaz@gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v3 00/12] pwm: add support for atomic update
+Date: Mon, 19 Oct 2015 12:12:12 +0200
+Message-ID: <2341981.a79ioYM9Es__26311.7631817751$1445249605$gmane$org@diego>
+References: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40487 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753452AbbJSIQc (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 19 Oct 2015 04:16:32 -0400
-In-reply-to: <1445038377-11547-1-git-send-email-falakreyaz@gmail.com>
+Received: from gloria.sntech.de ([95.129.55.99]:35528 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750876AbbJSKNM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 19 Oct 2015 06:13:12 -0400
+In-Reply-To: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Muhammad Falak R Wani <falakreyaz@gmail.com>
-Cc: Chris Boot <bootc@bootc.net>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-sunxi@googlegroups.com, linux-rockchip@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@google.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-Hi Muhammad,
+Hi Thierry,
 
-On 10/17/2015 01:32 AM, Muhammad Falak R Wani wrote:
-> Use devm_led_classdev_register instead of led_classdev_register,
-> removing the redundant net48xx_led_remove function.
->
-> Signed-off-by: Muhammad Falak R Wani <falakreyaz@gmail.com>
-> ---
->   drivers/leds/leds-net48xx.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/drivers/leds/leds-net48xx.c b/drivers/leds/leds-net48xx.c
-> index ec3a2e8..0d214c2 100644
-> --- a/drivers/leds/leds-net48xx.c
-> +++ b/drivers/leds/leds-net48xx.c
-> @@ -39,18 +39,11 @@ static struct led_classdev net48xx_error_led = {
->
->   static int net48xx_led_probe(struct platform_device *pdev)
->   {
-> -	return led_classdev_register(&pdev->dev, &net48xx_error_led);
-> -}
-> -
-> -static int net48xx_led_remove(struct platform_device *pdev)
-> -{
-> -	led_classdev_unregister(&net48xx_error_led);
-> -	return 0;
-> +	return devm_led_classdev_register(&pdev->dev, &net48xx_error_led);
->   }
->
->   static struct platform_driver net48xx_led_driver = {
->   	.probe		= net48xx_led_probe,
-> -	.remove		= net48xx_led_remove,
->   	.driver		= {
->   		.name		= DRVNAME,
->   	},
->
+Am Montag, 21. September 2015, 11:33:17 schrieb Boris Brezillon:
+> Hello,
+> 
+> This series adds support for atomic PWM update, or IOW, the capability
+> to update all the parameters of a PWM device (enabled/disabled, period,
+> duty and polarity) in one go.
 
-Applied, thanks.
+is anything more blocking this series? It's now sitting on the lists for 
+nearly a month and everybody seems happy with it, so it would be really nice 
+to have in mainline :-) .
 
--- 
-Best Regards,
-Jacek Anaszewski
+Especially as this also makes it possible for Rockchip Chromebooks to actually 
+control the logic-regulator that is implemented as pwm-regulator there.
+
+
+Thanks
+Heiko
