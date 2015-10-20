@@ -1,42 +1,82 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v3 00/12] pwm: add support for atomic update
-Date: Mon, 19 Oct 2015 12:12:12 +0200
-Message-ID: <2341981.a79ioYM9Es__19159.9953956485$1445249648$gmane$org@diego>
-References: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1442828009-6241-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Robert Jarzmik <robert.jarzmik@free.fr>, linux-leds@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-pwm@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Daniel Mack <daniel@zonque.org>
+From: Fida Mohammad <fmthoker@gmail.com>
+Subject: [PATCH] leds: leds-netxbig.c: Use devm_led_classdev_register
+Date: Tue, 20 Oct 2015 13:06:32 -0700
+Message-ID: <1445371592-24228-1-git-send-email-fmthoker@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Muhammad Falak <falakreyaz@gmail.com>
+Cc: Fida Mohammad <fmthoker@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Thierry,
+Use resource managed function devm_led_classdev_register to make
+error path simpler. Consequently, removed a goto call and
+remove function made simpler.
 
-Am Montag, 21. September 2015, 11:33:17 schrieb Boris Brezillon:
-> Hello,
-> 
-> This series adds support for atomic PWM update, or IOW, the capability
-> to update all the parameters of a PWM device (enabled/disabled, period,
-> duty and polarity) in one go.
+Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
+---
+ drivers/leds/leds-netxbig.c | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
 
-is anything more blocking this series? It's now sitting on the lists for 
-nearly a month and everybody seems happy with it, so it would be really nice 
-to have in mainline :-) .
-
-Especially as this also makes it possible for Rockchip Chromebooks to actually 
-control the logic-regulator that is implemented as pwm-regulator there.
-
-
-Thanks
-Heiko
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 25e4197..639f8bd 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -299,10 +299,6 @@ static struct attribute *netxbig_led_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(netxbig_led);
+ 
+-static void delete_netxbig_led(struct netxbig_led_data *led_dat)
+-{
+-	led_classdev_unregister(&led_dat->cdev);
+-}
+ 
+ static int
+ create_netxbig_led(struct platform_device *pdev,
+@@ -343,7 +339,7 @@ create_netxbig_led(struct platform_device *pdev,
+ 	if (led_dat->mode_val[NETXBIG_LED_SATA] != NETXBIG_LED_INVALID_MODE)
+ 		led_dat->cdev.groups = netxbig_led_groups;
+ 
+-	return led_classdev_register(&pdev->dev, &led_dat->cdev);
++	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
+ }
+ 
+ static int netxbig_led_probe(struct platform_device *pdev)
+@@ -367,32 +363,21 @@ static int netxbig_led_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < pdata->num_leds; i++) {
+ 		ret = create_netxbig_led(pdev, &leds_data[i], &pdata->leds[i]);
+-		if (ret < 0)
+-			goto err_free_leds;
++		if (ret < 0) {
++			gpio_ext_free(pdata->gpio_ext);
++			return ret;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, leds_data);
+ 
+ 	return 0;
+ 
+-err_free_leds:
+-	for (i = i - 1; i >= 0; i--)
+-		delete_netxbig_led(&leds_data[i]);
+-
+-	gpio_ext_free(pdata->gpio_ext);
+-	return ret;
+ }
+ 
+ static int netxbig_led_remove(struct platform_device *pdev)
+ {
+ 	struct netxbig_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct netxbig_led_data *leds_data;
+-	int i;
+-
+-	leds_data = platform_get_drvdata(pdev);
+-
+-	for (i = 0; i < pdata->num_leds; i++)
+-		delete_netxbig_led(&leds_data[i]);
+ 
+ 	gpio_ext_free(pdata->gpio_ext);
+ 
+-- 
+1.9.1
