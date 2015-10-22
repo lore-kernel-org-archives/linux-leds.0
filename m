@@ -1,73 +1,24 @@
-From: Fida Mohammad <fmthoker@gmail.com>
-Subject: [PATCH] leds: leds-wrap.c: Use devm_led_classdev_register
-Date: Wed, 21 Oct 2015 03:58:35 -0700
-Message-ID: <1445425115-5415-1-git-send-email-fmthoker@gmail.com>
+From: Unknown <unknown@unknown.invalid>
+Subject: Re:Loan Offer
+Date: Wed, 21 Oct 2015 18:31:13 -0700
+Message-ID: <AM2PR09MB01315904EC7910567B05F7FDB8270@AM2PR09MB0131.eurprd09.prod.outlook.com>
+Reply-To: <bishtbhagwatian@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:35439 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754461AbbJUK7k (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2015 06:59:40 -0400
+Received: from mail-am1hn0249.outbound.protection.outlook.com ([157.56.112.249]:27917
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932530AbbJVBb1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2015 21:31:27 -0400
+Content-Description: Mail message body
+From: social finance commercial co,ltd
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Muhammad Falak <falakreyaz@gmail.com>
-Cc: Kristian Kielhofner <kris@krisk.org>, Fida Mohammad <fmthoker@gmail.com>
+To: Recipients@vger.kernel.org
 
-Use of resource managed function devm_led_classdev_register to
-make initialization path simpler. Also removed redundant remove
-function.
+Social Finance Commercial Co. Pvt Ltd is a place where people borrow money from, aside stepping the banks.
 
-Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
----
- drivers/leds/leds-wrap.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/leds/leds-wrap.c b/drivers/leds/leds-wrap.c
-index 1ba3def..c5ff4b4 100644
---- a/drivers/leds/leds-wrap.c
-+++ b/drivers/leds/leds-wrap.c
-@@ -76,39 +76,21 @@ static int wrap_led_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	ret = led_classdev_register(&pdev->dev, &wrap_power_led);
-+	ret = devm_led_classdev_register(&pdev->dev, &wrap_power_led);
- 	if (ret < 0)
- 		return ret;
- 
--	ret = led_classdev_register(&pdev->dev, &wrap_error_led);
-+	ret = devm_led_classdev_register(&pdev->dev, &wrap_error_led);
- 	if (ret < 0)
--		goto err1;
--
--	ret = led_classdev_register(&pdev->dev, &wrap_extra_led);
--	if (ret < 0)
--		goto err2;
--
--	return ret;
-+		return ret;
- 
--err2:
--	led_classdev_unregister(&wrap_error_led);
--err1:
--	led_classdev_unregister(&wrap_power_led);
-+	return  devm_led_classdev_register(&pdev->dev, &wrap_extra_led);
- 
--	return ret;
- }
- 
--static int wrap_led_remove(struct platform_device *pdev)
--{
--	led_classdev_unregister(&wrap_power_led);
--	led_classdev_unregister(&wrap_error_led);
--	led_classdev_unregister(&wrap_extra_led);
--	return 0;
--}
- 
- static struct platform_driver wrap_led_driver = {
- 	.probe		= wrap_led_probe,
--	.remove		= wrap_led_remove,
- 	.driver		= {
- 		.name		= DRVNAME,
- 	},
--- 
-1.9.1
+We Offer loan to individuals and cooperate Bodies at the rate of 2.5%,both Secured and unsecured loan,Business Loans,Bad Credit,Home Loans,School Loans, etc approved within few hours.
+Shaw Clerk
