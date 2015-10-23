@@ -1,48 +1,43 @@
-From: Fida Mohammad <fmthoker@gmail.com>
-Subject: [PATCH] leds: leds-net48xx.c: devm_led_classdev_register
-Date: Thu, 22 Oct 2015 03:51:58 -0700
-Message-ID: <1445511118-12024-1-git-send-email-fmthoker@gmail.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:35986 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751885AbbJVKwz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 22 Oct 2015 06:52:55 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: [PATCH v3 0/3] Add RT5033 Flash LED driver
+Date: Fri, 23 Oct 2015 14:48:01 +0900
+Message-ID: <1445579285-6866-1-git-send-email-ingi2.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, j.anaszewski@samsung.com
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Muhammad Falak <falakreyaz@gmail.com>, Chris <bootc@bootc.net>, Fida Mohammad <fmthoker@gmail.com>
 
-Use of resource managed function devm_led_classdev_register.
-Also remove redundant remove function.
+This patch supports flash led of RT5033 PMIC.
 
-Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
----
- drivers/leds/leds-net48xx.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Changes since v3:
+ - Use mutex and work queue
+ - Split brightness set func (sync / async)
+ - Add flash API (flash_brightness_set)
+ - Move struct(rt5033_led_config_data) to local area
+ - Code clean
 
-diff --git a/drivers/leds/leds-net48xx.c b/drivers/leds/leds-net48xx.c
-index ec3a2e8..148ddb1 100644
---- a/drivers/leds/leds-net48xx.c
-+++ b/drivers/leds/leds-net48xx.c
-@@ -39,18 +39,12 @@ static struct led_classdev net48xx_error_led = {
- 
- static int net48xx_led_probe(struct platform_device *pdev)
- {
--	return led_classdev_register(&pdev->dev, &net48xx_error_led);
-+	return devm_led_classdev_register(&pdev->dev, &net48xx_error_led);
- }
- 
--static int net48xx_led_remove(struct platform_device *pdev)
--{
--	led_classdev_unregister(&net48xx_error_led);
--	return 0;
--}
- 
- static struct platform_driver net48xx_led_driver = {
- 	.probe		= net48xx_led_probe,
--	.remove		= net48xx_led_remove,
- 	.driver		= {
- 		.name		= DRVNAME,
- 	},
+Changes since v2:
+ - Split MFC code from rt5033 flash led patch
+ - Fix typo error
+ - Change naming of mfd register back again
+ - Fix compile error
+
+Ingi Kim (3):
+  leds: rt5033: Add DT binding for RT5033
+  mfd: rt5033: Add RT5033 Flash led sub device
+  leds: rt5033: Add RT5033 Flash led device driver
+
+ .../devicetree/bindings/leds/leds-rt5033.txt       |  38 +++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-rt5033.c                         | 314 +++++++++++++++++++++
+ drivers/mfd/rt5033.c                               |   3 +
+ include/linux/mfd/rt5033-private.h                 |  49 ++++
+ include/linux/mfd/rt5033.h                         |  13 +
+ 7 files changed, 426 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-rt5033.txt
+ create mode 100644 drivers/leds/leds-rt5033.c
+
 -- 
-1.9.1
+2.0.5
