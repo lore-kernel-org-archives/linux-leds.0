@@ -1,59 +1,69 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/9] add missing of_node_put
-Date: Sat, 24 Oct 2015 16:42:26 +0200
-Message-ID: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org
+Subject: [PATCH 1/9] powerpc/powernv: add missing of_node_put
+Date: Sat, 24 Oct 2015 16:42:27 +0200
+Message-ID: <1445697755-26341-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 List-Id: linux-leds@vger.kernel.org
 
-VGhlIHZhcmlvdXMgZm9yX2VhY2ggZGV2aWNlX25vZGUgaXRlcmF0b3JzIHBlcmZvcm1zIGFuIG9m
-X25vZGVfZ2V0IG9uIGVhY2gKaXRlcmF0aW9uLCBzbyBhIGJyZWFrIG91dCBvZiB0aGUgbG9vcCBy
-ZXF1aXJlcyBhbiBvZl9ub2RlX3B1dC4KClRoZSBjb21wbGV0ZSBzZW1hbnRpYyBwYXRjaCB0aGF0
-IGZpeGVzIHRoaXMgcHJvYmxlbSBpcwooaHR0cDovL2NvY2NpbmVsbGUubGlwNi5mcik6CgovLyA8
-c21wbD4KQHJACmxvY2FsIGlkZXhwcmVzc2lvbiBuOwpleHByZXNzaW9uIGUxLGUyOwppdGVyYXRv
-ciBuYW1lIGZvcl9lYWNoX25vZGVfYnlfbmFtZSwgZm9yX2VhY2hfbm9kZV9ieV90eXBlLApmb3Jf
-ZWFjaF9jb21wYXRpYmxlX25vZGUsIGZvcl9lYWNoX21hdGNoaW5nX25vZGUsCmZvcl9lYWNoX21h
-dGNoaW5nX25vZGVfYW5kX21hdGNoLCBmb3JfZWFjaF9jaGlsZF9vZl9ub2RlLApmb3JfZWFjaF9h
-dmFpbGFibGVfY2hpbGRfb2Zfbm9kZSwgZm9yX2VhY2hfbm9kZV93aXRoX3Byb3BlcnR5OwppdGVy
-YXRvciBpOwpzdGF0ZW1lbnQgUzsKZXhwcmVzc2lvbiBsaXN0IFtuMV0gZXM7CkBACgooCigKZm9y
-X2VhY2hfbm9kZV9ieV9uYW1lKG4sZTEpIFMKfApmb3JfZWFjaF9ub2RlX2J5X3R5cGUobixlMSkg
-Uwp8CmZvcl9lYWNoX2NvbXBhdGlibGVfbm9kZShuLGUxLGUyKSBTCnwKZm9yX2VhY2hfbWF0Y2hp
-bmdfbm9kZShuLGUxKSBTCnwKZm9yX2VhY2hfbWF0Y2hpbmdfbm9kZV9hbmRfbWF0Y2gobixlMSxl
-MikgUwp8CmZvcl9lYWNoX2NoaWxkX29mX25vZGUoZTEsbikgUwp8CmZvcl9lYWNoX2F2YWlsYWJs
-ZV9jaGlsZF9vZl9ub2RlKGUxLG4pIFMKfApmb3JfZWFjaF9ub2RlX3dpdGhfcHJvcGVydHkobixl
-MSkgUwopCiYKaShlcyxuLC4uLikgUwopCgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwppdGVy
-YXRvciByLmk7CmV4cHJlc3Npb24gZTsKZXhwcmVzc2lvbiBsaXN0IFtyLm4xXSBlczsKQEAKCiBp
-KGVzLG4sLi4uKSB7CiAgIC4uLgooCiAgIG9mX25vZGVfcHV0KG4pOwp8CiAgIGUgPSBuCnwKICAg
-cmV0dXJuIG47CnwKKyAgb2Zfbm9kZV9wdXQobik7Cj8gIHJldHVybiAuLi47CikKICAgLi4uCiB9
-CgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwppdGVyYXRvciByLmk7CmV4cHJlc3Npb24gZTsK
-ZXhwcmVzc2lvbiBsaXN0IFtyLm4xXSBlczsKQEAKCiBpKGVzLG4sLi4uKSB7CiAgIC4uLgooCiAg
-IG9mX25vZGVfcHV0KG4pOwp8CiAgIGUgPSBuCnwKKyAgb2Zfbm9kZV9wdXQobik7Cj8gIGJyZWFr
-OwopCiAgIC4uLgogfQouLi4gd2hlbiAhPSBuCgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwpp
-dGVyYXRvciByLmk7CmV4cHJlc3Npb24gZTsKaWRlbnRpZmllciBsOwpleHByZXNzaW9uIGxpc3Qg
-W3IubjFdIGVzOwpAQAoKIGkoZXMsbiwuLi4pIHsKICAgLi4uCigKICAgb2Zfbm9kZV9wdXQobik7
-CnwKICAgZSA9IG4KfAorICBvZl9ub2RlX3B1dChuKTsKPyAgZ290byBsOwopCiAgIC4uLgogfQou
-Li4KbDogLi4uIHdoZW4gIT0gbi8vIDwvc21wbD4KCi0tLQoKIGRyaXZlcnMvYmx1ZXRvb3RoL2J0
-bXJ2bF9tYWluLmMgIHwgICAgNSArKysrLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAg
-ICAgfCAgICA0ICsrKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyAgICAgICAgIHwgICAgNCAr
-KystCiBkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jICAgICB8ICAgIDEgKwogZHJpdmVycy9s
-ZWRzL2xlZHMtYmNtNjMyOC5jICAgICAgfCAgICA0ICsrKy0KIGRyaXZlcnMvbGVkcy9sZWRzLWJj
-bTYzNTguYyAgICAgIHwgICAgNCArKystCiBkcml2ZXJzL2xlZHMvbGVkcy1wb3dlcm52LmMgICAg
-ICB8ICAgIDggKysrKysrLS0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyAgIHwgICAg
-NSArKysrLQogZHJpdmVycy9zb2MvdGkva25hdl9xbXNzX3F1ZXVlLmMgfCAgICAzICsrKwogOSBm
-aWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
+
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/leds/leds-powernv.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 2c5c5b1..1e75e1f 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -262,15 +262,19 @@ static int powernv_led_classdev(struct platform_device *pdev,
+ 		while ((cur = of_prop_next_string(p, cur)) != NULL) {
+ 			powernv_led = devm_kzalloc(dev, sizeof(*powernv_led),
+ 						   GFP_KERNEL);
+-			if (!powernv_led)
++			if (!powernv_led) {
++				of_node_put(np);
+ 				return -ENOMEM;
++			}
+ 
+ 			powernv_led->common = powernv_led_common;
+ 			powernv_led->loc_code = (char *)np->name;
+ 
+ 			rc = powernv_led_create(dev, powernv_led, cur);
+-			if (rc)
++			if (rc) {
++				of_node_put(np);
+ 				return rc;
++			}
+ 		} /* while end */
+ 	}
+ 
