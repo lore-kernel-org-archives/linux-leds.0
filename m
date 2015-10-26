@@ -1,37 +1,59 @@
-From: "Simon Arlott" <simon@fire.lp0.eu>
-Subject: Re: [PATCH] leds: bcm6328: Handle default-state of LEDs correctly
-Date: Mon, 26 Oct 2015 12:36:20 -0000
-Message-ID: <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
-References: <562BB799.7000708@simon.arlott.org.uk>
-    <562DE832.6070903@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Fida Mohammad <fmthoker@gmail.com>
+Subject: [PATCH]  leds: leds-hp6xx: Use of devm_classdev_register
+Date: Mon, 26 Oct 2015 10:00:28 -0700
+Message-ID: <1445878828-32514-1-git-send-email-fmthoker@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from proxima.lp0.eu ([81.2.80.65]:59600 "EHLO proxima.lp0.eu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753692AbbJZMgl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 26 Oct 2015 08:36:41 -0400
-In-Reply-To: <562DE832.6070903@samsung.com>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:35466 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751059AbbJZRBS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 26 Oct 2015 13:01:18 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?utf-8?B?IsOBbHZhcm8gRmVybsOhbmRleiBSb2phcyI=?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Muhammad Falak <falakreyaz@gmail.com>, Kristoffer <kristoffer.ericson@gmail.com>, Fida Mohammad <fmthoker@gmail.com>
 
-On Mon, October 26, 2015 08:45, Jacek Anaszewski wrote:
-> Hi Simon,
->
-> Thanks for the patch. There are conflicts when applying
-> it to the LED tree:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
->
-> Please use it as a code base for your LED development.
+Use resource managed function devm_classdev_register to make
+error path simpler. Also removed the redundant remove function.
 
-This has already been fixed in the devel branch by d19e6b6a0062c86a75365f0715fd079245f6aab9,
-although I think bcm6328_led() should adjust its use of the spinlock
-to only cover reading the register and call bcm6328_led_set() instead
-of copying the code from it.
+Signed-off-by: Fida Mohammad <fmthoker@gmail.com>
+---
+ drivers/leds/leds-hp6xx.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/leds/leds-hp6xx.c b/drivers/leds/leds-hp6xx.c
+index 0b84c01..ffb6d5b 100644
+--- a/drivers/leds/leds-hp6xx.c
++++ b/drivers/leds/leds-hp6xx.c
+@@ -59,28 +59,17 @@ static int hp6xxled_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &hp6xx_red_led);
++	ret = devm_led_classdev_register(&pdev->dev, &hp6xx_red_led);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = led_classdev_register(&pdev->dev, &hp6xx_green_led);
+-	if (ret < 0)
+-		led_classdev_unregister(&hp6xx_red_led);
++	return devm_led_classdev_register(&pdev->dev, &hp6xx_green_led);
+ 
+-	return ret;
+ }
+ 
+-static int hp6xxled_remove(struct platform_device *pdev)
+-{
+-	led_classdev_unregister(&hp6xx_red_led);
+-	led_classdev_unregister(&hp6xx_green_led);
+-
+-	return 0;
+-}
+ 
+ static struct platform_driver hp6xxled_driver = {
+ 	.probe		= hp6xxled_probe,
+-	.remove		= hp6xxled_remove,
+ 	.driver		= {
+ 		.name		= "hp6xx-led",
+ 	},
 -- 
-Simon Arlott
+1.9.1
