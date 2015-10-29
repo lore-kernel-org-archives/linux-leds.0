@@ -1,42 +1,31 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: bcm6328: Handle default-state of LEDs correctly
-Date: Wed, 28 Oct 2015 11:56:01 +0100
-Message-ID: <5630A9C1.5060907@samsung.com>
-References: <562BB799.7000708@simon.arlott.org.uk>
- <562DE832.6070903@samsung.com>
- <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+From: Vincent Donnefort <vdonnefort@gmail.com>
+Subject: Workqueue core implementation
+Date: Thu, 29 Oct 2015 17:59:07 +0100
+Message-ID: <20151029165905.GA15462@ns3274321.ip-5-39-88.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Arlott <simon@fire.lp0.eu>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:38151 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752640AbbJ2RGG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 29 Oct 2015 13:06:06 -0400
+Received: by wmeg8 with SMTP id g8so28731989wme.1
+        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2015 10:06:04 -0700 (PDT)
+Content-Disposition: inline
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: j.anaszewski@samsung.com
+Cc: linux-leds@vger.kernel.org, simon.guinot@sequanux.org
 
-Hi Simon,
+Hi Jacek,
 
-On 10/26/2015 01:36 PM, Simon Arlott wrote:
-> On Mon, October 26, 2015 08:45, Jacek Anaszewski wrote:
->> Hi Simon,
->>
->> Thanks for the patch. There are conflicts when applying
->> it to the LED tree:
->>
->> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
->>
->> Please use it as a code base for your LED development.
->
-> This has already been fixed in the devel branch by d19e6b6a0062c86a75365f0715fd079245f6aab9,
-> although I think bcm6328_led() should adjust its use of the spinlock
-> to only cover reading the register and call bcm6328_led_set() instead
-> of copying the code from it.
->
+I saw on your git branch "linux-leds/devel" that you are working on a
+core solution for workqueues with the new led_set_brightness_nopm()
+function and thus you are removing workqueues from leds-* drivers.
 
-It is also on the for-next branch. Feel free to submit the patch,
-if you see the room for improvement.
+Since I'll need to add GPIO can_sleep support to a LED driver, I'm
+interested to know when are you planning to merge this work, to avoid
+to submit a patch to add workqueue which will be quickly deprecated.
 
--- 
-Best Regards,
-Jacek Anaszewski
+Thanks,
+Vincent.
