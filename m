@@ -1,53 +1,53 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Workqueue core implementation
-Date: Fri, 30 Oct 2015 08:55:23 +0100
-Message-ID: <5633226B.1030009@samsung.com>
-References: <20151029165905.GA15462@ns3274321.ip-5-39-88.eu>
+From: LADDER LOANS <mmateus@ipb.pt>
+Subject: hitel
+Date: Fri, 30 Oct 2015 01:48:51 +0000
+Message-ID: <20151030014851.Horde.89F8CSR19SNmcSg5R1KSdQ1@webmail.ipb.pt>
+Reply-To: mollylogan001@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed	DelSp=Yes
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51158 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758934AbbJ3Hzl (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 30 Oct 2015 03:55:41 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NX000GHVWODPY10@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 30 Oct 2015 07:55:25 +0000 (GMT)
-In-reply-to: <20151029165905.GA15462@ns3274321.ip-5-39-88.eu>
+Received: from hydra.ccom.ipb.pt ([193.136.195.240]:40388 "EHLO
+	hydra.ccom.ipb.pt" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965478AbbJ3Jn0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 30 Oct 2015 05:43:26 -0400
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vincent Donnefort <vdonnefort@gmail.com>
-Cc: linux-leds@vger.kernel.org, simon.guinot@sequanux.org, Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Hi Vincent,
 
-On 10/29/2015 05:59 PM, Vincent Donnefort wrote:
-> Hi Jacek,
->
-> I saw on your git branch "linux-leds/devel" that you are working on a
-> core solution for workqueues with the new led_set_brightness_nopm()
-> function and thus you are removing workqueues from leds-* drivers.
->
-> Since I'll need to add GPIO can_sleep support to a LED driver, I'm
-> interested to know when are you planning to merge this work, to avoid
-> to submit a patch to add workqueue which will be quickly deprecated.
 
-I need some acks for these patches. I've already collected a few [1],
-but there hasn't been any reply to the patch [2] so far, which removes
-the reasons for modifications requested by Sakari in the thread [1].
-Now I am waiting for his review of the patch [2] (btw it should be
-version 3,1, and not 10.1 - I counted mistakenly also previous RFC
-patch sets this time). Nevertheless, if I got acks, or even Tested-by
-from you, it would speed up the things significantly.
+--=20
+=C3=9Cdv=C3=B6zlet mindenkinek odakint,
 
-Cc Sakari.
+   Ez Molly Logan -t=C3=B3l LADDER LOANS C=C3=A9g sz=C3=A9khelye UK. B=C3=
+=A1rmit is van a =20
+c=C3=A9l, LADDER LOANS seg=C3=ADthet megval=C3=B3s=C3=ADtani ezt a c=C3=
+=A9lt. Lehet, hogy a =20
+fel=C3=BAj=C3=ADt=C3=A1sokat, az aut=C3=B3 meg kell, oly m=C3=B3don, ho=
+gy megszil=C3=A1rd=C3=ADtsa az =20
+ad=C3=B3ss=C3=A1gait, az =C3=BCnnep m=C3=A1r dolgozott olyan kem=C3=A9n=
+yen, vagy az esk=C3=BCv=C5=91, =20
+amit mindig is =C3=A1lmodott, akkor ossza meg a c=C3=A9lt a LADDER LOAN=
+S. =20
+B=C3=BCszk=C3=A9k vagyunk a mi szakmai, becs=C3=BCletes =C3=A9s megb=C3=
+=ADzhat=C3=B3 szolg=C3=A1ltat=C3=A1st, =20
+gyors cash.Our c=C3=A9l az, hogy meghaladja az =C3=BCgyfelek elv=C3=A1r=
+=C3=A1sainak minden =20
+szempontb=C3=B3l, k=C3=ADn=C3=A1lunk hitelek alacsony kamatl=C3=A1b 2% =
+-os.
 
-[1] https://lkml.org/lkml/2015/10/16/591
-[2] http://www.spinics.net/lists/linux-leds/msg05045.html
+=C3=8Drjon nek=C3=BCnk, ha =C3=A9rdekli a szolg=C3=A1ltat=C3=A1s-mail: =
+mollylogan001@gmail.com
 
--- 
-Best Regards,
-Jacek Anaszewski
+n=C3=A9v:
+Nem:
+Orsz=C3=A1g:
+Sz=C3=BCks=C3=A9ges =C3=B6sszeg:
+id=C5=91tartam:
+C=C3=A9l:
+
+K=C3=B6sz=C3=B6n=C3=B6m,
+
+Molly Logan
