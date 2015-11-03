@@ -1,85 +1,41 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 04/16] Documentation: dt-bindings: leds: add LM3633 LED
- binding information
-Date: Mon, 2 Nov 2015 08:53:16 -0600
-Message-ID: <CAL_Jsq+rsScGf3L0Qx+NreMpSPDNoxkYL4qeC+QCwe1F8KoRPA@mail.gmail.com>
-References: <1446440483-6948-1-git-send-email-milo.kim@ti.com>
- <1446440483-6948-2-git-send-email-milo.kim@ti.com> <1446440483-6948-3-git-send-email-milo.kim@ti.com>
- <1446440483-6948-4-git-send-email-milo.kim@ti.com> <1446440483-6948-5-git-send-email-milo.kim@ti.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] LED subsystem updates for 4.4
+Date: Mon, 2 Nov 2015 16:16:08 -0800
+Message-ID: <CA+55aFyTbWVVJBcu4zBThzCY0Vpo6E41wxWoAJa-s28kf7AuTQ@mail.gmail.com>
+References: <1446470866-26021-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1446440483-6948-5-git-send-email-milo.kim-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1446470866-26021-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, falakreyaz@gmail.com, Ralf Baechle <ralf@linux-mips.org>, jiri.prchal@aksignal.cz, simon.guinot@sequanux.org, noltari@gmail.com, hs@denx.de, fmthoker@gmail.com, ingi2.kim@samsung.com, Julia Lawall <Julia.Lawall@lip6.fr>
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Nov 1, 2015 at 11:01 PM, Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org> wrote:
-> LM3633 LED device is one of TI LMU device list.
+On Mon, Nov 2, 2015 at 5:27 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
 >
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/leds-lm3633.txt       | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3633.txt
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3633.txt b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
-> new file mode 100644
-> index 0000000..bb7f213
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
-> @@ -0,0 +1,28 @@
-> +TI LMU LM3633 LED device tree bindings
-> +
-> +Required properties:
-> +  - compatible: "ti,lm3633-leds"
-> +
-> +Child nodes:
-> +  Each node matches with LED control bank.
-> +  Please refer to the datasheet [1].
-> +
-> +  Required properties of a child node:
-> +  - lvled1-used, lvled2-used, lvled3-used,
-> +    lvled4-used, lvled5-used, lvled6-used:
-> +    Low voltage LED string configuration. Type is <boolean>.
-> +    Please describe which output LED string is used.
+> Please pull LED updates for 4.4 merge cycle.
 
-What is "LED string"?
+No.
 
-We have properties for which LED driver/channel of the parent to use
-and "status" can be used to disable child nodes.
+Your repository is bogus.
 
-> +
-> +  Optional properties of a child node:
-> +  - channel-name: Name string for LED channel identification
-> +                  It is used for creating LED sysfs,
-> +                  /sys/class/leds/<channel-name>/.
-> +                  If this property is empty, then default name is set to
-> +                  "indicator:<id>" by the driver.
+I don't know what the hell you have done or why you have done it, but
+you have actually rebased *my* 4-3-rc7 commit that updates the
+Makefile from rc6 to rc7:
 
-I believe "label" already provides this function.
+ - commit 91ca3ce1b61f in your tree:
 
-> +  - led-max-microamp: Max current setting. Type is <u32>.
-> +                      Unit is microampere. Range is from 5000 to 30000.
-> +
-> +Examples: Please refer to ti-lmu dt-bindings [2].
-> +
-> +[1] http://www.ti.com/product/LM3633/datasheet
-> +[2] Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+   Author: Linus Torvalds <torvalds@linux-foundation.org>  2015-10-24 18:39:47
+   Committer: Jacek Anaszewski <j.anaszewski@samsung.com>  2015-10-28 04:12:17
+
+      Linux 4.3-rc7
+
+   diff --git a/Makefile b/Makefile:
+   -EXTRAVERSION = -rc6
+   +EXTRAVERSION = -rc7
+
+and there is no way I will take things like this.
+
+                      Linus
