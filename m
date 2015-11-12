@@ -1,54 +1,69 @@
-From: Fabio Baltieri <fabio.baltieri@gmail.com>
-Subject: Re: [PATCH] leds: triggers: oneshot: fix module license specification
-Date: Thu, 12 Nov 2015 09:52:08 +0000
-Message-ID: <CABkP77eYMQd6xsS3=tPH2ZUmcq2DvZq73Eit0Hc9oUR1YCYd1w@mail.gmail.com>
-References: <1447320039-16240-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: Re: [PATCH v4 2/2] leds: rt5033: Add RT5033 Flash led device driver
+Date: Thu, 12 Nov 2015 19:07:33 +0900
+Message-ID: <564464E5.1080005@samsung.com>
+References: <1447121864-15460-1-git-send-email-ingi2.kim@samsung.com>
+ <1447121864-15460-3-git-send-email-ingi2.kim@samsung.com>
+ <56421B8F.6010107@samsung.com> <56444681.9020604@samsung.com>
+ <564459FE.8020209@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:32966 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753644AbbKLJw3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 12 Nov 2015 04:52:29 -0500
-Received: by lbbkw15 with SMTP id kw15so31871180lbb.0
-        for <linux-leds@vger.kernel.org>; Thu, 12 Nov 2015 01:52:28 -0800 (PST)
-In-Reply-To: <1447320039-16240-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <564459FE.8020209@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, kernel@pengutronix.de, linux-leds@vger.kernel.org
 
-On Thu, Nov 12, 2015 at 9:20 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> The header of this file fixes the license to GPL 2 only without the
-> option to use later version. So use the string "GPL v2" that is to be
-> used in this case.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Hi Jacek,
 
-Acked-by: Fabio Baltieri <fabio.baltieri@gmail.com>
+On 2015=EB=85=84 11=EC=9B=94 12=EC=9D=BC 18:21, Jacek Anaszewski wrote:
+> Hi Ingi,
+>=20
+> On 11/12/2015 08:57 AM, Ingi Kim wrote:
+> [...]
+>>>> +        regmap_write(led->regmap, RT5033_REG_FLED_FUNCTION1, val)=
+;
+>>>> +    } else {
+>>>> +        regmap_update_bits(led->regmap, RT5033_REG_FLED_FUNCTION1=
+,
+>>>> +                   RT5033_FLED_FUNC1_MASK, RT5033_FLED_PINCTRL |
+>>>> +                   rt5033_fled_used(led, fled_id));
+>>>> +        regmap_update_bits(led->regmap,    RT5033_REG_FLED_CTRL1,
+>>>> +                   RT5033_FLED_CTRL1_MASK,
+>>>> +                   (brightness - 1) << 4);
+>>>> +        regmap_update_bits(led->regmap, RT5033_REG_FLED_FUNCTION2=
+,
+>>>> +                   RT5033_FLED_FUNC2_MASK, RT5033_FLED_ENFLED);
+>>>> +    }
+>>>
+>>> How are you distinguishing between setting brightness for iout_join=
+t
+>>> case and for individual LEDs? Have you tested this use case?
+>>> Even if you don't have a board with two separate LEDs,
+>>> you should be able to test two LED class devices with a single
+>>> connected LED.
+>>>
+>>
+>> Thanks, I missed a iout_joint case :(
+>> I have tested a board with integrated single LED,
+>> It looks fine and all feature works well even if it has limitation.
+>=20
+> Please also test two separate LEDs case, by defining two child
+> nodes in DT, and in a result you will get two LED class devices.
+> After that you can set brightness separately for each LED class
+> device, and you'll be able to verify that the driver works properly
+> by observing the single LED connected to both outputs.
+> In order to make the testing even more valuable, you can
+> set triggers for both LEDs
+>=20
 
-> ---
->  drivers/leds/trigger/ledtrig-oneshot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/tr=
-igger/ledtrig-oneshot.c
-> index fbd02cdc3ad7..c1bab74b22a0 100644
-> --- a/drivers/leds/trigger/ledtrig-oneshot.c
-> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
-> @@ -201,4 +201,4 @@ module_exit(oneshot_trig_exit);
->
->  MODULE_AUTHOR("Fabio Baltieri <fabio.baltieri@gmail.com>");
->  MODULE_DESCRIPTION("One-shot LED trigger");
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.6.1
->
+Oh, I ask of you, please do not misconstrue.
+I'm sorry if my expression is rather misleading.
 
+I have verified this driver works properly.
+It already tested with two child nodes and observed single LED
+that is connected to both outputs.
 
-
---=20
-=46abio Baltieri
+I just wanted to say that it works properly as you said.
