@@ -1,200 +1,104 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH/RFC v6 00/36] Remove work queues from LED class drivers
-Date: Mon, 16 Nov 2015 14:38:44 +0100
-Message-ID: <5649DC64.8080202@samsung.com>
-References: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
+From: =?iso-8859-1?Q?Hofst=E4tter_Markus?= <Markus.Hofstaetter@ait.ac.at>
+Subject: Re: [PATCH 1/1] leds: call led_pwm_set() in leds-pwm to enforce
+ default LED_OFF
+Date: Mon, 16 Nov 2015 13:48:18 +0000
+Message-ID: <683FCC1FA91F7D4681B11BC13D4A787754C8A73C@S0MSMAIL112.arc.local>
+References: <1447242029-29335-1-git-send-email-markus.hofstaetter@ait.ac.at>,<5649BBF3.6050104@samsung.com>,<683FCC1FA91F7D4681B11BC13D4A787754C8A721@S0MSMAIL112.arc.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16868 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753287AbbKPNis (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:38:48 -0500
-In-reply-to: <1440081846-11697-1-git-send-email-j.anaszewski@samsung.com>
+Received: from mx1.ait.ac.at ([62.218.164.131]:38051 "EHLO mx1.ait.ac.at"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752032AbbKPNsh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:48:37 -0500
+In-Reply-To: <683FCC1FA91F7D4681B11BC13D4A787754C8A721@S0MSMAIL112.arc.local>
+Content-Language: de-AT
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 08/20/2015 04:43 PM, Jacek Anaszewski wrote:
-> This is sixth version of the RFC aiming at removing work queues
-> from LED class drivers, as well as getting rid of complimentary
-> functionalities introduced along with addition of LED flash class
-> extension.
+Hi Jacek,
+
+thx for looking into the patch.
+
+> AFAICS default brightness is hard coded to LED_OFF, so this
+> will turn active-low LEDs on.
+
+LED_OFF will turn a active led on only if you don't set active-low in t=
+he dt. In latter case  the behaviour is inverted to match the same brig=
+htness meanings (for pwms that don't support inversion in the driver).
+As you saw the LED_OFF setting is hard coded and set it in the device s=
+tructure by the probe/pwm add routine.
+
+The issue here is that this will only report a brightness of 0 (e.g., c=
+at ..led/brightness is LED_OFF), but it never configures the associated=
+ pwm to that state. So the PIN will be left at its default resp. previo=
+us state until you set a new brightness value.
+
+E.g., in my case on the i.MX6Q, the default PIN setting outputs low -->=
+ led is at full brightness and cat brightness reports 0. Setting 0 brig=
+htness again, turns the light off.
+Also, I had looked at the PWM register and saw that it has not been con=
+figured until I have set the brightness again.
+Anyhow, this would also be an issue for active-high leds, if  the defau=
+lt/previous PIN state were active-high, as it would not be set to low. =
+This however, is not the case in most scenarios.
+
+Best regards,
+
+Markus Hofst=E4tter
+
+________________________________________
+Von: Jacek Anaszewski [j.anaszewski@samsung.com]
+Gesendet: Montag, 16. November 2015 12:20
+An: Hofst=E4tter Markus
+Cc: Bryan Wu; Richard Purdie; linux-leds@vger.kernel.org
+Betreff: Re: [PATCH 1/1] leds: call led_pwm_set() in leds-pwm to enforc=
+e default LED_OFF
+
+Hi Markus,
+
+On 11/11/2015 12:40 PM, Markus Hofstaetter wrote:
+> Some PWMs are disabled by default or the default pin setting
+> does not match the LED_OFF state (e.g., active-low leds).
+> Hence, the driver may end up reporting 0 brightness, but
+> the leds are actually on using full brightness, because
+> it never enforces its default configuration.
+
+AFAICS default brightness is hard coded to LED_OFF, so this
+will turn active-low LEDs on.
+
+> So enforce it by calling led_pwm_set() after successfully
+> registering the device.
 >
-> ======================
-> Changes from version 5
-> ======================
-> - avoided changing semantics of brightness_set op in favour
->    of introducing brightness_set_blocking op, which also allowed
->    to get rid of LED_BRIGHTNESS_BLOCKING flag - Andrew thanks for
->    the hints
-> - made new brightness_set_blocking op returning int, which entailed
->    the need for extending the scope of modifications in the drivers
->    from which work queues are removed. Those affected drivers now
->    implement the new op instead of brightness_set, which returns void
-> - since LED_BRIGHTNESS_FAST flags is not needed with the new
->    approach, its introduction has been postponed
+> Tested on a Phytec phyFLEX i.MX6Q board based on kernel
+> v3.19.5.
 >
-> ======================
-> Changes from version 4
-> ======================
-> - switched to using two separate ops for blocking and non-blocking way
->    of setting brightness as requested by Pavel Machek.
-> - improved patches for leds-lm3533, leds-regulator, leds-lp3944
->    and leds-ipaq-micro drivers in response to review remarks
+> Signed-off-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
+> Tested-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
+> ---
+>   drivers/leds/leds-pwm.c | 1 +
+>   1 file changed, 1 insertion(+)
 >
-> ======================
-> Changes from version 3
-> ======================
-> - fixed return value in one of intermediary patches
-> - changed the comment over the brightness_set op member
->    of struct led_classdev
-> - added patches adjusting LED subsystem drivers to the introduced
->    modifications - they have been only compile-tested
->
-> ======================
-> Changes from version 2
-> ======================
->
-> - split changes to several incremental patches
-> - removed SET_BRIGHTNESS_SYNC and SET_BRIGHTNESS_ASYNC flags
-> - fixed led_set_brightness_async function instead of renaming it
->
-> ======================
-> Changes from version 1
-> ======================
->
-> V2 includes also patches for one LED class driver
-> and two LED flash class drivers, that show how the
-> drivers will benefit from the optimization being
-> introduced in the first patch of this patch set.
->
-> I was able to test only the LED Flash class drivers.
->
-> Original message from the patch 483a3122 ("leds: Use set_brightness_work for
-> brightness_set ops that can sleep") that was sent previously as a single one:
->
-> Hi All,
->
-> Since this patch will affect all the LED subsystem drivers
-> I'd like it was tested by as many developers as possible
-> to make sure that I haven't missed something.
->
-> For the drivers which can sleep in their brightness_set ops
-> (e.g. use mutex or gpio "cansleep" API) you only need to
-> remove the work queues and move the code executed currently
-> in the work queue task to the brightness_set op, as now
-> LED core does the job.
->
-> For drivers that are capable of setting brightness with use
-> of MMIO you need to set the LED_BRIGHTNESS_FAST flag, so
-> that LED core would know that it doesn't have to employ
-> work queue.
->
-> After the patch is positively verified I will create relevant
-> patches for every LED class driver.
->
-> This patch is based on linux-next_20150622.
->
-> I am looking forward to your cooperation.
->
-> Best Regards,
-> Jacek Anaszewski
->
-> Andrew Lunn (23):
->    leds: tlc591xx: Remove work queue
->    leds: 88pm860x: Remove work queue
->    leds: adp5520: Remove work queue
->    leds: bd2802: Remove work queue
->    leds: blinkm: Remove work queue
->    leds: lm3533: Remove work queue
->    leds: lm3642: Remove work queue
->    leds: pca9532: Remove work queue for LEDs.
->    leds: lp3944: Remove work queue
->    leds: lp55xx: Remove work queue
->    leds: lp8788: Remove work queue
->    leds: lp8860: Remove work queue
->    leds: pca955x: Remove work queue
->    leds: pca963x: Remove work queue
->    leds: wm831x: Remove work queue
->    leds: da903x: Remove work queue
->    leds: da9052: Remove work queue
->    leds: dac124d085: Remove work queue
->    leds: lt3593: Remove work queue
->    leds: max8997: Remove unneeded workqueue include
->    leds: mc13783: Remove work queue
->    leds: regulator: Remove work queue
->    leds: wm8350: Remove work queue
->
-> Jacek Anaszewski (13):
->    leds: Add brightness_set_blocking op
->    leds: Add led_set_brightness_sync to the public LED subsystem API
->    leds: Improve asynchronous path of setting brightness
->    leds: Add an internal led_set_brightness_nosleep function
->    leds: Improve setting brightness in a non sleeping way
->    leds: Drivers shouldn't enforce SYNC/ASYNC brightness setting
->    Documentation: leds: Add description of brightness_set* ops
->    leds: ktd2692: Remove work queue
->    leds: aat1290: Remove work queue
->    leds: max77693: Remove work queue
->    leds: gpio: Remove work queue
->    leds: pwm: remove work queue
->    leds: lm355x: Remove work queue
->
->   Documentation/leds/leds-class.txt         |   11 ++++
->   drivers/leds/led-class-flash.c            |    7 ---
->   drivers/leds/led-class.c                  |   22 +++++---
->   drivers/leds/led-core.c                   |   79 ++++++++++++++++++++------
->   drivers/leds/leds-88pm860x.c              |   23 +++-----
->   drivers/leds/leds-aat1290.c               |   50 +++++------------
->   drivers/leds/leds-adp5520.c               |   26 ++-------
->   drivers/leds/leds-bd2802.c                |   39 +++++--------
->   drivers/leds/leds-blinkm.c                |   87 ++++++-----------------------
->   drivers/leds/leds-da903x.c                |   46 ++++++---------
->   drivers/leds/leds-da9052.c                |   39 ++++---------
->   drivers/leds/leds-dac124s085.c            |   38 ++++---------
->   drivers/leds/leds-gpio.c                  |   64 +++++++--------------
->   drivers/leds/leds-ktd2692.c               |   41 ++------------
->   drivers/leds/leds-lm3533.c                |   30 ++--------
->   drivers/leds/leds-lm355x.c                |   85 +++++++++-------------------
->   drivers/leds/leds-lm3642.c                |   73 ++++++++----------------
->   drivers/leds/leds-lp3944.c                |   32 +++--------
->   drivers/leds/leds-lp5521.c                |   11 ++--
->   drivers/leds/leds-lp5523.c                |   10 ++--
->   drivers/leds/leds-lp5562.c                |   11 ++--
->   drivers/leds/leds-lp55xx-common.c         |   12 ++--
->   drivers/leds/leds-lp55xx-common.h         |    6 +-
->   drivers/leds/leds-lp8501.c                |   11 ++--
->   drivers/leds/leds-lp8788.c                |   48 +++++++---------
->   drivers/leds/leds-lp8860.c                |   27 +++------
->   drivers/leds/leds-lt3593.c                |   33 ++++-------
->   drivers/leds/leds-max77693.c              |   57 +++----------------
->   drivers/leds/leds-max8997.c               |    1 -
->   drivers/leds/leds-mc13783.c               |   35 +++---------
->   drivers/leds/leds-pca9532.c               |   28 ++++------
->   drivers/leds/leds-pca955x.c               |   39 +++----------
->   drivers/leds/leds-pca963x.c               |   80 ++++++++------------------
->   drivers/leds/leds-pwm.c                   |   34 +++++------
->   drivers/leds/leds-regulator.c             |   46 ++++-----------
->   drivers/leds/leds-tlc591xx.c              |   31 +++-------
->   drivers/leds/leds-wm831x-status.c         |   25 +++------
->   drivers/leds/leds-wm8350.c                |   64 +++++++++------------
->   drivers/leds/leds.h                       |   26 +++------
->   drivers/leds/trigger/ledtrig-backlight.c  |    8 +--
->   drivers/leds/trigger/ledtrig-default-on.c |    2 +-
->   drivers/leds/trigger/ledtrig-gpio.c       |    6 +-
->   drivers/leds/trigger/ledtrig-heartbeat.c  |    4 +-
->   drivers/leds/trigger/ledtrig-oneshot.c    |    4 +-
->   drivers/leds/trigger/ledtrig-transient.c  |    8 +--
->   include/linux/leds.h                      |   31 +++++++---
->   include/linux/mfd/wm8350/pmic.h           |    1 -
->   47 files changed, 512 insertions(+), 979 deletions(-)
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 1d07e3e..3149dbe 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -132,6 +132,7 @@ static int led_pwm_add(struct device *dev, struct=
+ led_pwm_priv *priv,
+>       ret =3D led_classdev_register(dev, &led_data->cdev);
+>       if (ret =3D=3D 0) {
+>               priv->num_leds++;
+> +             led_pwm_set(&led_data->cdev, led_data->cdev.brightness)=
+;
+>       } else {
+>               dev_err(dev, "failed to register PWM led for %s: %d\n",
+>                       led->name, ret);
 >
 
-Applied patches 11-36 from this set.
 
--- 
+--
 Best Regards,
 Jacek Anaszewski
