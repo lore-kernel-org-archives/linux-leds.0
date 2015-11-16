@@ -1,102 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use
- pwm_get_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 22:10:40 +0900
-Message-ID: <5649D5D0.6080204@samsung.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: triggers: oneshot: fix module license specification
+Date: Mon, 16 Nov 2015 14:18:45 +0100
+Message-ID: <5649D7B5.7060409@samsung.com>
+References: <1447320039-16240-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CABkP77eYMQd6xsS3=tPH2ZUmcq2DvZq73Eit0Hc9oUR1YCYd1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDKZNNNLXAHBBXFLU6ZAKGQEZDKT6BY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1447664207-24370-6-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-fbdev@vg
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28341 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751679AbbKPNSu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:18:50 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXW004S7SZBLJ60@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 16 Nov 2015 13:18:47 +0000 (GMT)
+In-reply-to: <CABkP77eYMQd6xsS3=tPH2ZUmcq2DvZq73Eit0Hc9oUR1YCYd1w@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Fabio Baltieri <fabio.baltieri@gmail.com>
+Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, Richard Purdie <rpurdie@rpsys.net>, kernel@pengutronix.de, linux-leds@vger.kernel.org
 
-W dniu 16.11.2015 o 17:56, Boris Brezillon pisze:
-> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-> Doing that will ease adaptation of the PWM framework to support atomic
-> update.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
-> Patch generated with the following coccinelle script:
-> 
-> --->8---
-> virtual patch
-> 
-> @@
-> struct pwm_device *p;
-> expression e;
-> @@
-> (
-> -(p)->polarity = e;
-> +pwm_set_polarity((p), e);
-> |
-> -(p)->polarity
-> +pwm_get_polarity((p))
-> |
-> -(p)->period = e;
-> +pwm_set_period((p), e);
-> |
-> -(p)->period
-> +pwm_get_period((p))
-> |
-> -(p)->duty_cycle = e;
-> +pwm_set_duty_cycle((p), e);
-> |
-> -(p)->duty_cycle
-> +pwm_get_duty_cycle((p))
-> )
-> --->8---
-> ---
->  drivers/input/misc/max77693-haptic.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-> index 6d96bff..a038fb3 100644
-> --- a/drivers/input/misc/max77693-haptic.c
-> +++ b/drivers/input/misc/max77693-haptic.c
-> @@ -70,10 +70,11 @@ struct max77693_haptic {
->  
->  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
->  {
-> -	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
-> +	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
+On 11/12/2015 10:52 AM, Fabio Baltieri wrote:
+> On Thu, Nov 12, 2015 at 9:20 AM, Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+>> The header of this file fixes the license to GPL 2 only without the
+>> option to use later version. So use the string "GPL v2" that is to b=
+e
+>> used in this case.
+>>
+>> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de=
+>
+>
+> Acked-by: Fabio Baltieri <fabio.baltieri@gmail.com>
 
-Double parentheses over argument are not needed so just:
-pwm_get_period(haptic->pwm_dev) + ...
+Applied, thanks.
 
-Beside that patch looks good, so with removing parentheses here and below:
+>> ---
+>>   drivers/leds/trigger/ledtrig-oneshot.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/t=
+rigger/ledtrig-oneshot.c
+>> index fbd02cdc3ad7..c1bab74b22a0 100644
+>> --- a/drivers/leds/trigger/ledtrig-oneshot.c
+>> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+>> @@ -201,4 +201,4 @@ module_exit(oneshot_trig_exit);
+>>
+>>   MODULE_AUTHOR("Fabio Baltieri <fabio.baltieri@gmail.com>");
+>>   MODULE_DESCRIPTION("One-shot LED trigger");
+>> -MODULE_LICENSE("GPL");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 2.6.1
+>>
+>
+>
+>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Best regards,
-Krzysztof
-
->  	int error;
->  
-> -	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
-> +	error = pwm_config(haptic->pwm_dev, delta,
-> +			   pwm_get_period((haptic->pwm_dev)));
->  	if (error) {
->  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
->  		return error;
-> @@ -245,7 +246,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
->  	 * The formula to convert magnitude to pwm_duty as follows:
->  	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
->  	 */
-> -	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
-> +	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
->  	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
->  						MAX_MAGNITUDE_SHIFT);
->  
-> 
+--=20
+Best Regards,
+Jacek Anaszewski
