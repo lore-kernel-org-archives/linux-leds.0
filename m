@@ -1,71 +1,73 @@
-From: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
-Subject: Re: [PATCH 1/2 (v2)] leds-bcm6328: Reuse bcm6328_led_set() instead of
- copying its functionality
-Date: Mon, 16 Nov 2015 22:33:06 +0100
-Message-ID: <564A4B92.4040401@gmail.com>
-References: <562BB799.7000708@simon.arlott.org.uk>
- <562DE832.6070903@samsung.com>
- <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
- <5630A9C1.5060907@samsung.com> <56327821.8020508@simon.arlott.org.uk>
- <563A2731.40204@samsung.com> <563A2850.5000506@gmail.com>
- <563B3240.9010804@samsung.com> <56488968.3070103@simon.arlott.org.uk>
- <5649EA72.20504@samsung.com> <564A3B9B.7040608@simon.arlott.org.uk>
+From: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: leds-bcm6328: add more init configuration options
+Date: Mon, 16 Nov 2015 22:35:55 +0100
+Message-ID: <564A4C3B.6090806@gmail.com>
+References: <5648C090.9060904@simon.arlott.org.uk>
+ <5649F040.6090002@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:36779 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752627AbbKPVdY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 16:33:24 -0500
-In-Reply-To: <564A3B9B.7040608@simon.arlott.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5649F040.6090002-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Arlott <simon-A6De1vDTPLDsq35pWSNszA@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Arlott <simon@fire.lp0.eu>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Jonas Gorski <jogo@openwrt.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Still wrong, you are setting the led value after unlocking the spinlock=
-=2E
+Hi Simon and Jacek,
 
-El 16/11/2015 a las 21:24, Simon Arlott escribi=C3=B3:
-> When ensuring a consistent initial LED state in bcm6328_led (as they =
-may
-> be blinking instead of on/off), the LED register is set using an inve=
-rted
-> copy of bcm6328_led_set(). To avoid further errors relating to active=
- low
-> handling, call this function directly instead.
+This is done on purpose because not every BCM63268 device has serial=20
+LEDs and we should be able to enable/disable those options in order to=20
+avoid depending on the bootloader setting the registers correctly.
+
+Regards,
+=C3=81lvaro.
+
+El 16/11/2015 a las 16:03, Jacek Anaszewski escribi=C3=B3:
+> Hi Simon,
 >
-> As bcm6328_led_set() acquires the same spinlock again when updating t=
-he
-> register, it is called after unlocking.
+> On 11/15/2015 06:27 PM, Simon Arlott wrote:
+>> commit 1d3ff22d633d35048c35c3deeead7ab116cebc32
+>> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Date:   Thu Oct 8 12:35:55 2015 +0200
+>>
+>>      Documentation: leds: update DT bindings for leds-bcm6328
+>>
+>>      This patch adds latest DT bindings for leds-bcm6328 init regist=
+er
+>>      configuration.
+>>
+>> commit 9f82c778ce17789a038351a411ff65cd41033c7a
+>> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Date:   Thu Oct 8 12:35:54 2015 +0200
+>>
+>>      leds-bcm6328: add more init configuration options
+>>
+>>      This patch adds more init register configuration options:
+>>      - Serial LEDs multiplexing.
+>>      - Serial LEDs clock signal low/high polarity.
+>>      - Serial LEDs data signal low/high polarity.
+>>      - Serial LEDs shift direction inverted/normal.
+>>
+>> This was not a backwards-compatible change, because the driver is no=
+w
+>> turning off all of the serial LED options by default when previously
+>> it only turned off brcm,serial-leds and left the other options
+>> unchanged.
+>>
+>> There are currently no in-tree users of this binding, so any existin=
+g
+>> users will be broken by this change.
+>>
 >
-> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
-> ---
->   drivers/leds/leds-bcm6328.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
+> Please submit a patch fixing the issue in such cases, so that we coul=
+d
+> discuss possible solutions to the problem.
 >
-> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.=
-c
-> index c7ea5c6..95d0cf9 100644
-> --- a/drivers/leds/leds-bcm6328.c
-> +++ b/drivers/leds/leds-bcm6328.c
-> @@ -314,14 +314,10 @@ static int bcm6328_led(struct device *dev, stru=
-ct device_node *nc, u32 reg,
->   	} else {
->   		led->cdev.brightness =3D LED_OFF;
->   	}
-> -
-> -	if ((led->active_low && led->cdev.brightness =3D=3D LED_FULL) ||
-> -	    (!led->active_low && led->cdev.brightness =3D=3D LED_OFF))
-> -		bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
-> -	else
-> -		bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
->   	spin_unlock_irqrestore(lock, flags);
->  =20
-> +	bcm6328_led_set(&led->cdev, led->cdev.brightness);
-> +
->   	led->cdev.brightness_set =3D bcm6328_led_set;
->   	led->cdev.blink_set =3D bcm6328_blink_set;
->  =20
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
