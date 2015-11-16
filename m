@@ -1,46 +1,67 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 09/24] regulator: pwm: use
- pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 10:55:58 +0000
-Message-ID: <20151116105558.GB31303@sirena.org.uk>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/1] leds: call led_pwm_set() in leds-pwm to enforce
+ default LED_OFF
+Date: Mon, 16 Nov 2015 12:20:19 +0100
+Message-ID: <5649BBF3.6050104@samsung.com>
+References: <1447242029-29335-1-git-send-email-markus.hofstaetter@ait.ac.at>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
-Return-path: <linux-sunxi+bncBDQ2L75W5QGBBX7MU2ZAKGQEOGFLFLI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1447664207-24370-10-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:65017 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751465AbbKPLUW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 06:20:22 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXW004IUNHW6I30@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 16 Nov 2015 11:20:20 +0000 (GMT)
+In-reply-to: <1447242029-29335-1-git-send-email-markus.hofstaetter@ait.ac.at>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Hi Markus,
 
-On Mon, Nov 16, 2015 at 09:56:32AM +0100, Boris Brezillon wrote:
+On 11/11/2015 12:40 PM, Markus Hofstaetter wrote:
+> Some PWMs are disabled by default or the default pin setting
+> does not match the LED_OFF state (e.g., active-low leds).
+> Hence, the driver may end up reporting 0 brightness, but
+> the leds are actually on using full brightness, because
+> it never enforces its default configuration.
 
-> +++ b/drivers/regulator/pwm-regulator.c
-> @@ -56,7 +56,7 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
->  	int dutycycle;
->  	int ret;
->  
-> -	pwm_reg_period = pwm_get_period(drvdata->pwm);
-> +	pwm_reg_period = pwm_get_default_period(drvdata->pwm);
->  
->  	dutycycle = (pwm_reg_period *
->  		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
+AFAICS default brightness is hard coded to LED_OFF, so this
+will turn active-low LEDs on.
 
-It's not clear to me that we're not looking for the current period here
-or in the other use.  Won't configuring based on a period other than the
-one that has been set give the wrong answer?
---z6Eq5LdranGa6ru8--
+> So enforce it by calling led_pwm_set() after successfully
+> registering the device.
+>
+> Tested on a Phytec phyFLEX i.MX6Q board based on kernel
+> v3.19.5.
+>
+> Signed-off-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
+> Tested-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
+> ---
+>   drivers/leds/leds-pwm.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 1d07e3e..3149dbe 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -132,6 +132,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>   	ret = led_classdev_register(dev, &led_data->cdev);
+>   	if (ret == 0) {
+>   		priv->num_leds++;
+> +		led_pwm_set(&led_data->cdev, led_data->cdev.brightness);
+>   	} else {
+>   		dev_err(dev, "failed to register PWM led for %s: %d\n",
+>   			led->name, ret);
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
