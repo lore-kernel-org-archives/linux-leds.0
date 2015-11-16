@@ -1,44 +1,44 @@
-From: Simon Arlott <simon@fire.lp0.eu>
-Subject: leds-bcm6328: add more init configuration options
-Date: Sun, 15 Nov 2015 17:27:44 +0000
-Message-ID: <5648C090.9060904@simon.arlott.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 01/24] pwm: rcar: make use of pwm_is_enabled()
+Date: Mon, 16 Nov 2015 09:56:24 +0100
+Message-ID: <1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:34520 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751102AbbKPI4y (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 03:56:54 -0500
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbd
 
-commit 1d3ff22d633d35048c35c3deeead7ab116cebc32
-Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-Date:   Thu Oct 8 12:35:55 2015 +0200
+Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
+new function to test whether a PWM device is enabled or not without
+manipulating PWM internal fields.
+Hiding this is necessary if we want to smoothly move to the atomic PWM
+config approach without impacting PWM drivers.
+Fix this driver to use pwm_is_enabled() instead of directly accessing the
+->flags field.
 
-    Documentation: leds: update DT bindings for leds-bcm6328
-   =20
-    This patch adds latest DT bindings for leds-bcm6328 init register
-    configuration.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/pwm-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-commit 9f82c778ce17789a038351a411ff65cd41033c7a
-Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-Date:   Thu Oct 8 12:35:54 2015 +0200
-
-    leds-bcm6328: add more init configuration options
-   =20
-    This patch adds more init register configuration options:
-    - Serial LEDs multiplexing.
-    - Serial LEDs clock signal low/high polarity.
-    - Serial LEDs data signal low/high polarity.
-    - Serial LEDs shift direction inverted/normal.
-
-This was not a backwards-compatible change, because the driver is now
-turning off all of the serial LED options by default when previously
-it only turned off brcm,serial-leds and left the other options
-unchanged.
-
-There are currently no in-tree users of this binding, so any existing
-users will be broken by this change.
-
---=20
-Simon Arlott
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 6e99a63..70899c9 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		return div;
+ 
+ 	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
+-	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
++	if (!pwm_is_enabled(pwm) && !duty_ns)
+ 		return 0;
+ 
+ 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+-- 
+2.1.4
