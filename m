@@ -1,104 +1,124 @@
-From: =?iso-8859-1?Q?Hofst=E4tter_Markus?= <Markus.Hofstaetter@ait.ac.at>
-Subject: Re: [PATCH 1/1] leds: call led_pwm_set() in leds-pwm to enforce
- default LED_OFF
-Date: Mon, 16 Nov 2015 13:48:18 +0000
-Message-ID: <683FCC1FA91F7D4681B11BC13D4A787754C8A73C@S0MSMAIL112.arc.local>
-References: <1447242029-29335-1-git-send-email-markus.hofstaetter@ait.ac.at>,<5649BBF3.6050104@samsung.com>,<683FCC1FA91F7D4681B11BC13D4A787754C8A721@S0MSMAIL112.arc.local>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use
+ pwm_get_xxx() helpers where appropriate
+Date: Mon, 16 Nov 2015 14:55:09 +0100
+Message-ID: <20151116145509.3ea50eb0@bbrezillon>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+	<5649D5D0.6080204@samsung.com>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.ait.ac.at ([62.218.164.131]:38051 "EHLO mx1.ait.ac.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752032AbbKPNsh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:48:37 -0500
-In-Reply-To: <683FCC1FA91F7D4681B11BC13D4A787754C8A721@S0MSMAIL112.arc.local>
-Content-Language: de-AT
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBRWDU6ZAKGQE4RAOCJQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <5649D5D0.6080204-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <ji>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Jacek,
+Hi Krzysztof,
 
-thx for looking into the patch.
+On Mon, 16 Nov 2015 22:10:40 +0900
+Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 
-> AFAICS default brightness is hard coded to LED_OFF, so this
-> will turn active-low LEDs on.
+> W dniu 16.11.2015 o 17:56, Boris Brezillon pisze:
+> > Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> > Doing that will ease adaptation of the PWM framework to support atomic
+> > update.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > ---
+> > Patch generated with the following coccinelle script:
+> > 
+> > --->8---
+> > virtual patch
+> > 
+> > @@
+> > struct pwm_device *p;
+> > expression e;
+> > @@
+> > (
+> > -(p)->polarity = e;
+> > +pwm_set_polarity((p), e);
+> > |
+> > -(p)->polarity
+> > +pwm_get_polarity((p))
+> > |
+> > -(p)->period = e;
+> > +pwm_set_period((p), e);
+> > |
+> > -(p)->period
+> > +pwm_get_period((p))
+> > |
+> > -(p)->duty_cycle = e;
+> > +pwm_set_duty_cycle((p), e);
+> > |
+> > -(p)->duty_cycle
+> > +pwm_get_duty_cycle((p))
+> > )
+> > --->8---
+> > ---
+> >  drivers/input/misc/max77693-haptic.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+> > index 6d96bff..a038fb3 100644
+> > --- a/drivers/input/misc/max77693-haptic.c
+> > +++ b/drivers/input/misc/max77693-haptic.c
+> > @@ -70,10 +70,11 @@ struct max77693_haptic {
+> >  
+> >  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+> >  {
+> > -	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
+> > +	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
+> 
+> Double parentheses over argument are not needed so just:
+> pwm_get_period(haptic->pwm_dev) + ...
 
-LED_OFF will turn a active led on only if you don't set active-low in t=
-he dt. In latter case  the behaviour is inverted to match the same brig=
-htness meanings (for pwms that don't support inversion in the driver).
-As you saw the LED_OFF setting is hard coded and set it in the device s=
-tructure by the probe/pwm add routine.
+Actually it was generated with coccinelle, hence I didn't fix existing
+coding style issues, but I have no problem fixing them.
 
-The issue here is that this will only report a brightness of 0 (e.g., c=
-at ..led/brightness is LED_OFF), but it never configures the associated=
- pwm to that state. So the PIN will be left at its default resp. previo=
-us state until you set a new brightness value.
+Thanks,
 
-E.g., in my case on the i.MX6Q, the default PIN setting outputs low -->=
- led is at full brightness and cat brightness reports 0. Setting 0 brig=
-htness again, turns the light off.
-Also, I had looked at the PWM register and saw that it has not been con=
-figured until I have set the brightness again.
-Anyhow, this would also be an issue for active-high leds, if  the defau=
-lt/previous PIN state were active-high, as it would not be set to low. =
-This however, is not the case in most scenarios.
+Boris
 
-Best regards,
-
-Markus Hofst=E4tter
-
-________________________________________
-Von: Jacek Anaszewski [j.anaszewski@samsung.com]
-Gesendet: Montag, 16. November 2015 12:20
-An: Hofst=E4tter Markus
-Cc: Bryan Wu; Richard Purdie; linux-leds@vger.kernel.org
-Betreff: Re: [PATCH 1/1] leds: call led_pwm_set() in leds-pwm to enforc=
-e default LED_OFF
-
-Hi Markus,
-
-On 11/11/2015 12:40 PM, Markus Hofstaetter wrote:
-> Some PWMs are disabled by default or the default pin setting
-> does not match the LED_OFF state (e.g., active-low leds).
-> Hence, the driver may end up reporting 0 brightness, but
-> the leds are actually on using full brightness, because
-> it never enforces its default configuration.
-
-AFAICS default brightness is hard coded to LED_OFF, so this
-will turn active-low LEDs on.
-
-> So enforce it by calling led_pwm_set() after successfully
-> registering the device.
->
-> Tested on a Phytec phyFLEX i.MX6Q board based on kernel
-> v3.19.5.
->
-> Signed-off-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
-> Tested-by: Markus Hofstaetter <markus.hofstaetter@ait.ac.at>
-> ---
->   drivers/leds/leds-pwm.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index 1d07e3e..3149dbe 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -132,6 +132,7 @@ static int led_pwm_add(struct device *dev, struct=
- led_pwm_priv *priv,
->       ret =3D led_classdev_register(dev, &led_data->cdev);
->       if (ret =3D=3D 0) {
->               priv->num_leds++;
-> +             led_pwm_set(&led_data->cdev, led_data->cdev.brightness)=
-;
->       } else {
->               dev_err(dev, "failed to register PWM led for %s: %d\n",
->                       led->name, ret);
->
+> 
+> Beside that patch looks good, so with removing parentheses here and below:
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> Best regards,
+> Krzysztof
+> 
+> >  	int error;
+> >  
+> > -	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
+> > +	error = pwm_config(haptic->pwm_dev, delta,
+> > +			   pwm_get_period((haptic->pwm_dev)));
+> >  	if (error) {
+> >  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
+> >  		return error;
+> > @@ -245,7 +246,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+> >  	 * The formula to convert magnitude to pwm_duty as follows:
+> >  	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+> >  	 */
+> > -	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
+> > +	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
+> >  	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+> >  						MAX_MAGNITUDE_SHIFT);
+> >  
+> > 
+> 
 
 
---
-Best Regards,
-Jacek Anaszewski
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
