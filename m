@@ -1,103 +1,61 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v4 09/24] regulator: pwm: use
- pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 20:28:13 +0100
-Message-ID: <20151116202813.5a2114b9@bbrezillon>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
-	<20151116105558.GB31303@sirena.org.uk>
-	<20151116132359.39d84279@bbrezillon>
-	<20151116184238.GJ31303@sirena.org.uk>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Simon Arlott <simon@fire.lp0.eu>
+Subject: [PATCH 1/2 (v2)] leds-bcm6328: Reuse bcm6328_led_set() instead of
+ copying its functionality
+Date: Mon, 16 Nov 2015 20:24:59 +0000
+Message-ID: <564A3B9B.7040608@simon.arlott.org.uk>
+References: <562BB799.7000708@simon.arlott.org.uk>
+ <562DE832.6070903@samsung.com>
+ <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+ <5630A9C1.5060907@samsung.com> <56327821.8020508@simon.arlott.org.uk>
+ <563A2731.40204@samsung.com> <563A2850.5000506@gmail.com>
+ <563B3240.9010804@samsung.com> <56488968.3070103@simon.arlott.org.uk>
+ <5649EA72.20504@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBVG4VCZAKGQERZOVJIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20151116184238.GJ31303-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>Lee Jones <l>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5649EA72.20504@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 16 Nov 2015 18:42:38 +0000
-Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+When ensuring a consistent initial LED state in bcm6328_led (as they may
+be blinking instead of on/off), the LED register is set using an inverted
+copy of bcm6328_led_set(). To avoid further errors relating to active low
+handling, call this function directly instead.
 
-> On Mon, Nov 16, 2015 at 01:23:59PM +0100, Boris Brezillon wrote:
-> > Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > > On Mon, Nov 16, 2015 at 09:56:32AM +0100, Boris Brezillon wrote:
-> 
-> > > > -	pwm_reg_period = pwm_get_period(drvdata->pwm);
-> > > > +	pwm_reg_period = pwm_get_default_period(drvdata->pwm);
-> 
-> > > It's not clear to me that we're not looking for the current period here
-> > > or in the other use.  Won't configuring based on a period other than the
-> > > one that has been set give the wrong answer?
-> 
-> > Hm, maybe that's naming problem. What I call the 'default' period here
-> > is actually the period configured in your board file (using a PWM lookup
-> > table) or your DT. This value represent the period requested by the PWM
-> > user not a default value specified by the PWM chip driver.
-> 
-> > The reason we're not using the 'current' period value is because it may
-> > have been set by the bootloader, and may be inappropriate for our use
-> > case (ie. the period may be to small to represent the different
-> > voltages).
-> 
-> > ITOH, we're using the current period value when calculating the current
-> > voltage, because we want to get the correct voltage value, and the PWM
-> > device may still use the configuration set by the bootloader (not the
-> > default one specified in your board or DT files).
-> 
-> > I hope this clarifies the differences between the current and default
-> > period, and why we should use the default value here.
-> 
-> To be honest I'm still a bit confused here.  When do we actually apply
-> the default setting and why do we keep on having to constantly override
-> it rather than doing this once at boot?
+As bcm6328_led_set() acquires the same spinlock again when updating the
+register, it is called after unlocking.
 
-That's why I said the 'default' name may be inappropriate. The
-default values are actually never directly applied by the PWM framework.
-It's the default value for a specific PWM user, so it can be applied by
-the PWM user when he wants. It's more here as a reference, nothing
-forces the PWM user to use this specific value.
+Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
+---
+ drivers/leds/leds-bcm6328.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-> It feels wrong to be using it
-> every time we set anything.  I'd expect it to be something we only need
-> to do at probe time or which would automatically be handled by the PWM
-> framework (but that'd have issues changing the state and potentially
-> breaking things if done in an uncoordiated fashion).
-
-The whole point of this series is to smoothly take over the bootloader
-config. This is why we are keeping the PWM untouched until someone
-really wants to change the regulator output. We should be able to apply
-the 'default' PWM period when probing the device, but this means first
-extracting the current voltage from the PWM state and then applying a
-new dutycycle and the default period in a single operation. Not sure
-it's worth the trouble.
-
-Doing it in the PWM framework is not really possible, because the PWM
-lookup table and DT definitions are only defining the 'default' period
-value not the 'default' dutycycle, and applying that automatically when
-requesting the PWM means generating a glitch on the PWM signal
-(dutycycle will be set to 0 until the user changes it using
-pwm_config() or pwm_apply_state()) which is exactly what we're trying to
-solve here.
-
-Also, note that you have to pass the period anyway when configuring the
-PWM, so passing the default one or the current one should be pretty
-much the same in term of performances (unless the PWM driver is able
-to optimize its setting if the period does not change).
-
-Best Regards,
-
-Boris
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index c7ea5c6..95d0cf9 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -314,14 +314,10 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+ 	} else {
+ 		led->cdev.brightness = LED_OFF;
+ 	}
+-
+-	if ((led->active_low && led->cdev.brightness == LED_FULL) ||
+-	    (!led->active_low && led->cdev.brightness == LED_OFF))
+-		bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
+-	else
+-		bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
+ 	spin_unlock_irqrestore(lock, flags);
+ 
++	bcm6328_led_set(&led->cdev, led->cdev.brightness);
++
+ 	led->cdev.brightness_set = bcm6328_led_set;
+ 	led->cdev.blink_set = bcm6328_blink_set;
+ 
+-- 
+2.1.4
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Simon Arlott
