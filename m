@@ -1,37 +1,60 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v4 00/24] pwm: add support for atomic update
-Date: Mon, 16 Nov 2015 15:45:17 +0100
-Message-ID: <3500453.9dNCEh5KzI__5710.52717646143$1447685306$gmane$org@diego>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: leds-bcm6328: add more init configuration options
+Date: Mon, 16 Nov 2015 16:03:28 +0100
+Message-ID: <5649F040.6090002@samsung.com>
+References: <5648C090.9060904@simon.arlott.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Mike Turquette <mturquette@baylibre.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Thierry Reding <thierry.reding@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, lm-sensors@lm-sensors.org, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-input@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Joachim Eastwood <manabian@gmail.com>, Bryan Wu <cooloney@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Mark Brown <broonie@kernel.org>, Jacek Anaszewski <j.anasze>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22731 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbbKPPDc (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 10:03:32 -0500
+In-reply-to: <5648C090.9060904@simon.arlott.org.uk>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Simon Arlott <simon@fire.lp0.eu>
+Cc: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
 
-Hi Boris,
+Hi Simon,
 
-Am Montag, 16. November 2015, 09:56:23 schrieb Boris Brezillon:
-> Hello,
-> 
-> This series adds support for atomic PWM update, or IOW, the capability
-> to update all the parameters of a PWM device (enabled/disabled, period,
-> duty and polarity) in one go.
+On 11/15/2015 06:27 PM, Simon Arlott wrote:
+> commit 1d3ff22d633d35048c35c3deeead7ab116cebc32
+> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Date:   Thu Oct 8 12:35:55 2015 +0200
+>
+>      Documentation: leds: update DT bindings for leds-bcm6328
+>
+>      This patch adds latest DT bindings for leds-bcm6328 init registe=
+r
+>      configuration.
+>
+> commit 9f82c778ce17789a038351a411ff65cd41033c7a
+> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Date:   Thu Oct 8 12:35:54 2015 +0200
+>
+>      leds-bcm6328: add more init configuration options
+>
+>      This patch adds more init register configuration options:
+>      - Serial LEDs multiplexing.
+>      - Serial LEDs clock signal low/high polarity.
+>      - Serial LEDs data signal low/high polarity.
+>      - Serial LEDs shift direction inverted/normal.
+>
+> This was not a backwards-compatible change, because the driver is now
+> turning off all of the serial LED options by default when previously
+> it only turned off brcm,serial-leds and left the other options
+> unchanged.
+>
+> There are currently no in-tree users of this binding, so any existing
+> users will be broken by this change.
+>
 
-you already include my tested-by tags, but anyway, the series still works 
-nicely on 4.4-rc1 on my veyron chromebook.
+Please submit a patch fixing the issue in such cases, so that we could
+discuss possible solutions to the problem.
 
-
-Heiko
+--=20
+Best Regards,
+Jacek Anaszewski
