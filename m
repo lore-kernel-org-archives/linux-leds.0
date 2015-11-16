@@ -1,69 +1,29 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/2] leds-bcm6328: Reuse bcm6328_led_set() instead of
- copying its functionality
-Date: Mon, 16 Nov 2015 15:38:42 +0100
-Message-ID: <5649EA72.20504@samsung.com>
-References: <562BB799.7000708@simon.arlott.org.uk>
- <562DE832.6070903@samsung.com>
- <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
- <5630A9C1.5060907@samsung.com> <56327821.8020508@simon.arlott.org.uk>
- <563A2731.40204@samsung.com> <563A2850.5000506@gmail.com>
- <563B3240.9010804@samsung.com> <56488968.3070103@simon.arlott.org.uk>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 00/24] pwm: add support for atomic update
+Date: Mon, 16 Nov 2015 15:45:17 +0100
+Message-ID: <3500453.9dNCEh5KzI__37260.8713609681$1447685228$gmane$org@diego>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56488968.3070103@simon.arlott.org.uk>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Arlott <simon@fire.lp0.eu>
-Cc: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee
 List-Id: linux-leds@vger.kernel.org
 
-Hi Simon,
+Hi Boris,
 
-On 11/15/2015 02:32 PM, Simon Arlott wrote:
-> When ensuring a consistent initial LED state in bcm6328_led (as they may
-> be blinking instead of on/off), the LED register is set using an inverted
-> copy of bcm6328_led_set(). To avoid further errors relating to active low
-> handling, call this function directly instead.
->
-> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
-> ---
-> I've decided not to move the locking as it should really cover the
-> setting of led->cdev.brightness too (not that it matters as the device
-> is not yet registered).
->
->   drivers/leds/leds-bcm6328.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-> index c7ea5c6..95d0cf9 100644
-> --- a/drivers/leds/leds-bcm6328.c
-> +++ b/drivers/leds/leds-bcm6328.c
-> @@ -314,14 +314,10 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
->   	} else {
->   		led->cdev.brightness = LED_OFF;
->   	}
-> -
-> -	if ((led->active_low && led->cdev.brightness == LED_FULL) ||
-> -	    (!led->active_low && led->cdev.brightness == LED_OFF))
-> -		bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
-> -	else
-> -		bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
->   	spin_unlock_irqrestore(lock, flags);
->
-> +	bcm6328_led_set(&led->cdev, led->cdev.brightness);
-> +
+Am Montag, 16. November 2015, 09:56:23 schrieb Boris Brezillon:
+> Hello,
+> 
+> This series adds support for atomic PWM update, or IOW, the capability
+> to update all the parameters of a PWM device (enabled/disabled, period,
+> duty and polarity) in one go.
 
-You're not protecting bcm6328_led_set with spin_lock here.
-Please describe why this is not needed in the commit message.
-
->   	led->cdev.brightness_set = bcm6328_led_set;
->   	led->cdev.blink_set = bcm6328_blink_set;
->
->
+you already include my tested-by tags, but anyway, the series still works 
+nicely on 4.4-rc1 on my veyron chromebook.
 
 
--- 
-Best Regards,
-Jacek Anaszewski
+Heiko
