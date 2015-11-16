@@ -1,67 +1,65 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: triggers: oneshot: fix module license specification
-Date: Mon, 16 Nov 2015 14:18:45 +0100
-Message-ID: <5649D7B5.7060409@samsung.com>
-References: <1447320039-16240-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CABkP77eYMQd6xsS3=tPH2ZUmcq2DvZq73Eit0Hc9oUR1YCYd1w@mail.gmail.com>
+Subject: Re: [PATCH] leds: ledtrig-transient: fix duration to be msec instead
+ of jiffies
+Date: Mon, 16 Nov 2015 14:20:22 +0100
+Message-ID: <5649D816.9080109@samsung.com>
+References: <1447197017-4783-1-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28341 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbbKPNSu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:18:50 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59702 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261AbbKPNU1 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 08:20:27 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NXW004S7SZBLJ60@mailout3.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 16 Nov 2015 13:18:47 +0000 (GMT)
-In-reply-to: <CABkP77eYMQd6xsS3=tPH2ZUmcq2DvZq73Eit0Hc9oUR1YCYd1w@mail.gmail.com>
+ with ESMTP id <0NXW00FQ2T1Z6K60@mailout2.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 16 Nov 2015 13:20:24 +0000 (GMT)
+In-reply-to: <1447197017-4783-1-git-send-email-robh@kernel.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Fabio Baltieri <fabio.baltieri@gmail.com>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, Richard Purdie <rpurdie@rpsys.net>, kernel@pengutronix.de, linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Shuah Khan <shuahkhan@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-On 11/12/2015 10:52 AM, Fabio Baltieri wrote:
-> On Thu, Nov 12, 2015 at 9:20 AM, Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
->> The header of this file fixes the license to GPL 2 only without the
->> option to use later version. So use the string "GPL v2" that is to b=
-e
->> used in this case.
->>
->> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de=
+Hi Rob,
+
+On 11/11/2015 12:10 AM, Rob Herring wrote:
+> The transient trigger duration is documented to be in msec units, but is
+> actually in jiffies units. Other time based triggers are in msec units
+> as well. Fix the timer setup to convert from msec.
 >
+> This could break an existing userspace that worked around this problem,
+> but exposing jiffies to userspace is just wrong and would break anyway
+> if HZ is changed.
 >
-> Acked-by: Fabio Baltieri <fabio.baltieri@gmail.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Shuah Khan <shuahkhan@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> ---
+>   drivers/leds/trigger/ledtrig-transient.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+> index 3c34de4..60034bf 100644
+> --- a/drivers/leds/trigger/ledtrig-transient.c
+> +++ b/drivers/leds/trigger/ledtrig-transient.c
+> @@ -85,7 +85,7 @@ static ssize_t transient_activate_store(struct device *dev,
+>   		transient_data->restore_state =
+>   		    (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
+>   		mod_timer(&transient_data->timer,
+> -			  jiffies + transient_data->duration);
+> +			  jiffies + msecs_to_jiffies(transient_data->duration));
+>   	}
+>
+>   	/* state == 0 && transient_data->activate == 0
+>
 
 Applied, thanks.
 
->> ---
->>   drivers/leds/trigger/ledtrig-oneshot.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/t=
-rigger/ledtrig-oneshot.c
->> index fbd02cdc3ad7..c1bab74b22a0 100644
->> --- a/drivers/leds/trigger/ledtrig-oneshot.c
->> +++ b/drivers/leds/trigger/ledtrig-oneshot.c
->> @@ -201,4 +201,4 @@ module_exit(oneshot_trig_exit);
->>
->>   MODULE_AUTHOR("Fabio Baltieri <fabio.baltieri@gmail.com>");
->>   MODULE_DESCRIPTION("One-shot LED trigger");
->> -MODULE_LICENSE("GPL");
->> +MODULE_LICENSE("GPL v2");
->> --
->> 2.6.1
->>
->
->
->
-
-
---=20
+-- 
 Best Regards,
 Jacek Anaszewski
