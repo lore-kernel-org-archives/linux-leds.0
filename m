@@ -1,75 +1,65 @@
 From: Ingi Kim <ingi2.kim@samsung.com>
-Subject: [PATCH v5 1/2] leds: rt5033: Add DT binding for RT5033
-Date: Tue, 17 Nov 2015 18:04:19 +0900
-Message-ID: <1447751060-27856-2-git-send-email-ingi2.kim@samsung.com>
-References: <1447751060-27856-1-git-send-email-ingi2.kim@samsung.com>
+Subject: [PATCH v5 0/2] Add RT5033 Flash LED driver
+Date: Tue, 17 Nov 2015 18:04:18 +0900
+Message-ID: <1447751060-27856-1-git-send-email-ingi2.kim@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1447751060-27856-1-git-send-email-ingi2.kim@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, j.anaszewski@samsung.com
 Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds the device tree bindings for RT5033 flash LEDs.
+This is a fifth version of the patch set to support RT5033 Flash Led.
+It is based on RFC [1] from Jacek's patch set.
 
-Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/leds/leds-rt5033.txt       | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Changes since v5:
+ - Rebase on Jacek's devel branch
+   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+ - Remove work queue from driver.
+ - Change brightness_set_sync ops to brightness_set_blocking ops.
+ - Remove "iout_torch_max" and "iout_flash_max" values in rt5033_led struct.
+ - Add missed case for distinguishing between setting brightness.
+   for iout_joint case and for individual LEDs.
+ - Add missed mutex_lock.
+ - Remove guard to check dev->of_node.
+ - Change type of value to const __be32 to get return value of of_find_property.
+
+Changes since v4:
+ - Use of_node_put() when DT parse miss
+ - Move struct(rt5033_led) from include/linux/mfd/rt5033.h
+   to local driver/leds/leds-rt5033.c
+ - Remove MODULE_DEVICE_TABLE
+ - Add interface to handle two LEDs.
+
+Changes since v3:
+ - Use mutex and work queue
+ - Split brightness set func (sync / async)
+ - Add flash API (flash_brightness_set)
+ - Move struct(rt5033_led_config_data) to local area
+ - Code clean
+
+Changes since v2:
+ - Split MFC code from rt5033 flash led patch
+ - Fix typo error
+ - Change naming of mfd register back again
+ - Fix compile error
+
+Original cover letter:
+ This patch supports flash led of RT5033 PMIC.
+
+[1] https://lkml.org/lkml/2015/8/20/426
+
+Ingi Kim (2):
+  leds: rt5033: Add DT binding for RT5033
+  leds: rt5033: Add RT5033 Flash led device driver
+
+ .../devicetree/bindings/leds/leds-rt5033.txt       |  46 ++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-rt5033.c                         | 522 +++++++++++++++++++++
+ include/linux/mfd/rt5033-private.h                 |  51 ++
+ 5 files changed, 628 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-rt5033.txt
+ create mode 100644 drivers/leds/leds-rt5033.c
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-rt5033.txt b/Documentation/devicetree/bindings/leds/leds-rt5033.txt
-new file mode 100644
-index 0000000..17159d4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-rt5033.txt
-@@ -0,0 +1,46 @@
-+* Richtek Technology Corporation - RT5033 Flash LED Driver
-+
-+The RT5033 Flash LED Circuit is designed for one or two LEDs driving
-+for torch and strobe applications, it provides an I2C software command
-+to trigger the torch and strobe operation.
-+
-+There are two LED outputs available - FLED1 and FLED2. Each of them can
-+control a separate LED or they can be connected together to double
-+the maximum current for a single connected LED. One LED is represented
-+by one child node.
-+
-+Required properties:
-+- compatible : Must be "richtek,rt5033-led".
-+
-+A discrete LED element connected to the device must be represented by a child
-+node - see Documentation/devicetree/bindings/leds/common.txt.
-+
-+Required properties for the LED child node:
-+  See Documentation/devicetree/bindings/leds/common.txt
-+- led-sources : device current output identifiers:  0 - FLED1, 1 - FLED2
-+- led-max-microamp : 12.5mA to 200mA, step by 12.5mA.
-+- flash-max-microamp :
-+	Turn on one LED channel : 50mA to 800mA, step by 25mA.
-+	Turn on two LED channels : 50mA to 600mA, step by 25mA.
-+- flash-max-timeout-us : 64ms to 1216ms, step by 32ms.
-+
-+Optional properties for the LED child node:
-+- label : see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+rt5033 {
-+	compatible = "richtek,rt5033";
-+
-+	led {
-+		compatible = "richtek,rt5033-led";
-+
-+		flash-led {
-+			label = "rt5033-flash";
-+			led-sources = <0>, <1>;
-+			led-max-microamp = <200000>;
-+			flash-max-microamp = <800000>;
-+			flash-max-timeout-us = <1216000>;
-+		};
-+	};
-+}
 -- 
 2.0.5
