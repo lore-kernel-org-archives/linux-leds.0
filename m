@@ -1,73 +1,110 @@
-From: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: leds-bcm6328: add more init configuration options
-Date: Mon, 16 Nov 2015 22:35:55 +0100
-Message-ID: <564A4C3B.6090806@gmail.com>
-References: <5648C090.9060904@simon.arlott.org.uk>
- <5649F040.6090002@samsung.com>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: Re: [PATCH] leds: ktd2692: Add missing of_node_put
+Date: Tue, 17 Nov 2015 09:05:56 +0900
+Message-ID: <564A6F64.1080101@samsung.com>
+References: <1447124424-16525-1-git-send-email-ingi2.kim@samsung.com>
+ <5649A92C.1020502@samsung.com>
+ <CAL_JsqJWfSkZPEKaFdUQbQQb8m6MaKSHYMYOEf3U6frqGK_a3w@mail.gmail.com>
+ <5649E87A.8030602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5649F040.6090002-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Arlott <simon-A6De1vDTPLDsq35pWSNszA@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57871 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751236AbbKQAF6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 16 Nov 2015 19:05:58 -0500
+In-reply-to: <5649E87A.8030602@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Simon and Jacek,
+Hi Rob, Jacek
 
-This is done on purpose because not every BCM63268 device has serial=20
-LEDs and we should be able to enable/disable those options in order to=20
-avoid depending on the bootloader setting the registers correctly.
+You're right,
+It is better to remove "return 0"
 
-Regards,
-=C3=81lvaro.
+Thanks for the review.
 
-El 16/11/2015 a las 16:03, Jacek Anaszewski escribi=C3=B3:
-> Hi Simon,
->
-> On 11/15/2015 06:27 PM, Simon Arlott wrote:
->> commit 1d3ff22d633d35048c35c3deeead7ab116cebc32
->> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Date:   Thu Oct 8 12:35:55 2015 +0200
+On 2015=EB=85=84 11=EC=9B=94 16=EC=9D=BC 23:30, Jacek Anaszewski wrote:
+> On 11/16/2015 03:09 PM, Rob Herring wrote:
+>> On Mon, Nov 16, 2015 at 4:00 AM, Jacek Anaszewski
+>> <j.anaszewski@samsung.com> wrote:
+>>> Hi Ingi, Rob,
+>>>
+>>> With this patch we will be leaking of_node when parsing succeeds.
+>>> I think that "return 0" should be removed. I can remove it and appl=
+y,
+>>> provided that Rob's ack is still in force with this. Rob?
 >>
->>      Documentation: leds: update DT bindings for leds-bcm6328
+>> Okay.
+>=20
+> Removed discussed line and applied, thanks.
+>=20
+>>> On 11/10/2015 04:00 AM, Ingi Kim wrote:
+>>>>
+>>>> The refcount of device_node increases after of_node_get() is calle=
+d.
+>>>> So, a break out of the loop requires of_node_put().
+>>>>
+>>>> This patch adds missing of_node_put() when loop breaks.
+>>>>
+>>>> Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+>>>> ---
+>>>>    drivers/leds/leds-ktd2692.c | 11 ++++++++---
+>>>>    1 file changed, 8 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd26=
+92.c
+>>>> index feca07b..dbf37ce 100644
+>>>> --- a/drivers/leds/leds-ktd2692.c
+>>>> +++ b/drivers/leds/leds-ktd2692.c
+>>>> @@ -332,21 +332,26 @@ static int ktd2692_parse_dt(struct ktd2692_c=
+ontext
+>>>> *led, struct device *dev,
+>>>>                                     &cfg->movie_max_microamp);
+>>>>          if (ret) {
+>>>>                  dev_err(dev, "failed to parse led-max-microamp\n"=
+);
+>>>> -               return ret;
+>>>> +               goto err_parse_dt;
+>>>>          }
+>>>>
+>>>>          ret =3D of_property_read_u32(child_node, "flash-max-micro=
+amp",
+>>>>                                     &cfg->flash_max_microamp);
+>>>>          if (ret) {
+>>>>                  dev_err(dev, "failed to parse flash-max-microamp\=
+n");
+>>>> -               return ret;
+>>>> +               goto err_parse_dt;
+>>>>          }
+>>>>
+>>>>          ret =3D of_property_read_u32(child_node, "flash-max-timeo=
+ut-us",
+>>>>                                     &cfg->flash_max_timeout);
+>>>> -       if (ret)
+>>>> +       if (ret) {
+>>>>                  dev_err(dev, "failed to parse flash-max-timeout-u=
+s\n");
+>>>> +               goto err_parse_dt;
+>>>> +       }
+>>>> +
+>>>> +       return 0;
+>>>>
+>>>> +err_parse_dt:
+>>>>          of_node_put(child_node);
+>>>>          return ret;
+>>>>    }
+>>>>
+>>>
+>> --=20
+>> To unsubscribe from this list: send the line "unsubscribe linux-kern=
+el" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
 >>
->>      This patch adds latest DT bindings for leds-bcm6328 init regist=
-er
->>      configuration.
->>
->> commit 9f82c778ce17789a038351a411ff65cd41033c7a
->> Author: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Date:   Thu Oct 8 12:35:54 2015 +0200
->>
->>      leds-bcm6328: add more init configuration options
->>
->>      This patch adds more init register configuration options:
->>      - Serial LEDs multiplexing.
->>      - Serial LEDs clock signal low/high polarity.
->>      - Serial LEDs data signal low/high polarity.
->>      - Serial LEDs shift direction inverted/normal.
->>
->> This was not a backwards-compatible change, because the driver is no=
-w
->> turning off all of the serial LED options by default when previously
->> it only turned off brcm,serial-leds and left the other options
->> unchanged.
->>
->> There are currently no in-tree users of this binding, so any existin=
-g
->> users will be broken by this change.
->>
->
-> Please submit a patch fixing the issue in such cases, so that we coul=
-d
-> discuss possible solutions to the problem.
->
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
