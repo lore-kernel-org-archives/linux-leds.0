@@ -1,31 +1,171 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use pwm_get_xxx()
- helpers where appropriate
-Date: Tue, 17 Nov 2015 09:32:26 -0800
-Message-ID: <20151117173226.GA29423@dtor-ws>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jo>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v7] leds: gpio: Remove work queue
+Date: Wed, 18 Nov 2015 10:22:32 +0100
+Message-ID: <1447838552-27278-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44681 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750808AbbKRJWt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 18 Nov 2015 04:22:49 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NY001K8K7DJHZE0@mailout4.samsung.com> for
+ linux-leds@vger.kernel.org; Wed, 18 Nov 2015 18:22:40 +0900 (KST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux@roeck-us.net, andrew@lunn.ch, Jacek Anaszewski <j.anaszewski@samsung.com>, Raphael Assenat <raph@8d.com>
 
-On Mon, Nov 16, 2015 at 09:56:28AM +0100, Boris Brezillon wrote:
-> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-> Doing that will ease adaptation of the PWM framework to support atomic
-> update.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Now the core implements the work queue, remove it from the drivers,
+and switch to using brightness_set_blocking op.
 
-Could you please tag input-related bits with "Input: driver - ... "
-instead of "misc: ... "?
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Raphael Assenat <raph@8d.com>
+---
+Changes from v6:
+- use gpiod_set_value_cansleep API when gpio setting can sleep
 
-Thanks!
+ drivers/leds/leds-gpio.c |   62 ++++++++++++++++------------------------------
+ 1 file changed, 22 insertions(+), 40 deletions(-)
 
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 5db4515..7bc5328 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -20,32 +20,16 @@
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+-#include <linux/workqueue.h>
+ 
+ struct gpio_led_data {
+ 	struct led_classdev cdev;
+ 	struct gpio_desc *gpiod;
+-	struct work_struct work;
+-	u8 new_level;
+ 	u8 can_sleep;
+ 	u8 blinking;
+ 	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
+ 			unsigned long *delay_on, unsigned long *delay_off);
+ };
+ 
+-static void gpio_led_work(struct work_struct *work)
+-{
+-	struct gpio_led_data *led_dat =
+-		container_of(work, struct gpio_led_data, work);
+-
+-	if (led_dat->blinking) {
+-		led_dat->platform_gpio_blink_set(led_dat->gpiod,
+-					led_dat->new_level, NULL, NULL);
+-		led_dat->blinking = 0;
+-	} else
+-		gpiod_set_value_cansleep(led_dat->gpiod, led_dat->new_level);
+-}
+-
+ static void gpio_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+@@ -58,23 +42,25 @@ static void gpio_led_set(struct led_classdev *led_cdev,
+ 	else
+ 		level = 1;
+ 
+-	/* Setting GPIOs with I2C/etc requires a task context, and we don't
+-	 * seem to have a reliable way to know if we're already in one; so
+-	 * let's just assume the worst.
+-	 */
+-	if (led_dat->can_sleep) {
+-		led_dat->new_level = level;
+-		schedule_work(&led_dat->work);
++	if (led_dat->blinking) {
++		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
++						 NULL, NULL);
++		led_dat->blinking = 0;
+ 	} else {
+-		if (led_dat->blinking) {
+-			led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
+-							 NULL, NULL);
+-			led_dat->blinking = 0;
+-		} else
++		if (led_dat->can_sleep)
++			gpiod_set_value_cansleep(led_dat->gpiod, level);
++		else
+ 			gpiod_set_value(led_dat->gpiod, level);
+ 	}
+ }
+ 
++static int gpio_led_set_blocking(struct led_classdev *led_cdev,
++	enum led_brightness value)
++{
++	gpio_led_set(led_cdev, value);
++	return 0;
++}
++
+ static int gpio_blink_set(struct led_classdev *led_cdev,
+ 	unsigned long *delay_on, unsigned long *delay_off)
+ {
+@@ -125,12 +111,15 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	led_dat->cdev.name = template->name;
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
++	if (!led_dat->can_sleep)
++		led_dat->cdev.brightness_set = gpio_led_set;
++	else
++		led_dat->cdev.brightness_set_blocking = gpio_led_set_blocking;
+ 	led_dat->blinking = 0;
+ 	if (blink_set) {
+ 		led_dat->platform_gpio_blink_set = blink_set;
+ 		led_dat->cdev.blink_set = gpio_blink_set;
+ 	}
+-	led_dat->cdev.brightness_set = gpio_led_set;
+ 	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP)
+ 		state = !!gpiod_get_value_cansleep(led_dat->gpiod);
+ 	else
+@@ -143,17 +132,9 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	INIT_WORK(&led_dat->work, gpio_led_work);
+-
+ 	return led_classdev_register(parent, &led_dat->cdev);
+ }
+ 
+-static void delete_gpio_led(struct gpio_led_data *led)
+-{
+-	led_classdev_unregister(&led->cdev);
+-	cancel_work_sync(&led->work);
+-}
+-
+ struct gpio_leds_priv {
+ 	int num_leds;
+ 	struct gpio_led_data leds[];
+@@ -233,7 +214,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 
+ err:
+ 	for (count = priv->num_leds - 1; count >= 0; count--)
+-		delete_gpio_led(&priv->leds[count]);
++		led_classdev_unregister(&priv->leds[count].cdev);
+ 	return ERR_PTR(ret);
+ }
+ 
+@@ -265,7 +246,8 @@ static int gpio_led_probe(struct platform_device *pdev)
+ 			if (ret < 0) {
+ 				/* On failure: unwind the led creations */
+ 				for (i = i - 1; i >= 0; i--)
+-					delete_gpio_led(&priv->leds[i]);
++					led_classdev_unregister(
++							&priv->leds[i].cdev);
+ 				return ret;
+ 			}
+ 		}
+@@ -286,7 +268,7 @@ static int gpio_led_remove(struct platform_device *pdev)
+ 	int i;
+ 
+ 	for (i = 0; i < priv->num_leds; i++)
+-		delete_gpio_led(&priv->leds[i]);
++		led_classdev_unregister(&priv->leds[i].cdev);
+ 
+ 	return 0;
+ }
 -- 
-Dmitry
+1.7.9.5
