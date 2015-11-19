@@ -1,49 +1,63 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCHi v6] leds: ipaq-micro: Implement brightness_set_blocking op
-Date: Thu, 19 Nov 2015 17:48:27 +0100
-Message-ID: <1447951707-21294-1-git-send-email-j.anaszewski@samsung.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 3/3] leds/pwm: fix driver description and make license
+ match the header
+Date: Thu, 19 Nov 2015 20:17:37 +0100
+Message-ID: <20151119191737.GF22022@pengutronix.de>
+References: <1385412225-29740-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <1385412225-29740-4-git-send-email-u.kleine-koenig@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38940 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757862AbbKSQsl (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Nov 2015 11:48:41 -0500
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NY2000XCMP1LWA0@mailout3.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 20 Nov 2015 01:48:39 +0900 (KST)
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47388 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756314AbbKSTRm (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 19 Nov 2015 14:17:42 -0500
+Content-Disposition: inline
+In-Reply-To: <1385412225-29740-4-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Matt Sealey <matt@genesi-usa.com>
 
-Since brightness setting can sleep for this driver, implement
-brightness_set_blocking op, instead of brightness_set.
-It makes this driver compatible with LED triggers.
+Hello,
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
----
-Changes from v5:
-- use newly introduced brightness_set_blocking op, which was deemed
-  a better solution that flags proposed at earlier stage
-  of LED core improvent patch sets
+while the other two patches in this thread are controversal, this one
+shouldn't. It still sits in my branch with unapplied patches since
+nearly two years, which is enormous considering it's such an easy patch=
+=2E
 
- drivers/leds/leds-ipaq-micro.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards
+Uwe
 
-diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-index fa262b6..229386f 100644
---- a/drivers/leds/leds-ipaq-micro.c
-+++ b/drivers/leds/leds-ipaq-micro.c
-@@ -102,7 +102,7 @@ static int micro_leds_blink_set(struct led_classdev *led_cdev,
- 
- static struct led_classdev micro_led = {
- 	.name			= "led-ipaq-micro",
--	.brightness_set		= micro_leds_brightness_set,
-+	.brightness_set_blocking = micro_leds_brightness_set,
- 	.blink_set		= micro_leds_blink_set,
- 	.flags			= LED_CORE_SUSPENDRESUME,
- };
--- 
-1.7.9.5
+On Mon, Nov 25, 2013 at 09:43:45PM +0100, Uwe Kleine-K=F6nig wrote:
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> ---
+>  drivers/leds/leds-pwm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index cdc3e4d..0796ca3 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -239,6 +239,6 @@ static struct platform_driver led_pwm_driver =3D =
+{
+>  module_platform_driver(led_pwm_driver);
+> =20
+>  MODULE_AUTHOR("Luotao Fu <l.fu@pengutronix.de>");
+> -MODULE_DESCRIPTION("PWM LED driver for PXA");
+> -MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("generic PWM LED driver");
+> +MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS("platform:leds-pwm");
+> --=20
+> 1.8.4.2
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
