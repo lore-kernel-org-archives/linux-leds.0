@@ -1,119 +1,97 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: ns2: Remove work queue
-Date: Fri, 20 Nov 2015 11:44:28 +0100
-Message-ID: <1448016268-23024-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH] leds: powernv: Implement brightness_set_blocking op
+Date: Fri, 20 Nov 2015 16:46:29 +0100
+Message-ID: <1448034389-19972-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55112 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758006AbbKTKoj (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Nov 2015 05:44:39 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:54052 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751506AbbKTPqi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Nov 2015 10:46:38 -0500
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NY401RNI0IDD2D0@mailout1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 20 Nov 2015 19:44:37 +0900 (KST)
+ with ESMTP id <0NY4034BFEHOSEA0@mailout2.samsung.com> for
+ linux-leds@vger.kernel.org; Sat, 21 Nov 2015 00:46:36 +0900 (KST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Simon Guinot <simon.guinot@sequanux.org>
+Cc: linuxppc-dev@lists.ozlabs.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
 
-Now the core implements the work queue, remove it from the driver,
-and switch to using brightness_set_blocking op for 'cansleep' case.
+Since brightness setting can sleep for this driver, implement
+brightness_set_blocking op, instead of brightness_set.
+It makes this driver compatible with LED triggers.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
 ---
- drivers/leds/leds-ns2.c |   31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ drivers/leds/leds-powernv.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index a95a612..506b75b 100644
---- a/drivers/leds/leds-ns2.c
-+++ b/drivers/leds/leds-ns2.c
-@@ -45,24 +45,12 @@ struct ns2_led_data {
- 	unsigned		cmd;
- 	unsigned		slow;
- 	bool			can_sleep;
--	int			mode_index;
- 	unsigned char		sata; /* True when SATA mode active. */
- 	rwlock_t		rw_lock; /* Lock GPIOs. */
--	struct work_struct	work;
- 	int			num_modes;
- 	struct ns2_led_modval	*modval;
- };
- 
--static void ns2_led_work(struct work_struct *work)
--{
--	struct ns2_led_data *led_dat =
--		container_of(work, struct ns2_led_data, work);
--	int i = led_dat->mode_index;
--
--	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
--	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
--}
--
- static int ns2_led_get_mode(struct ns2_led_data *led_dat,
- 			    enum ns2_led_modes *mode)
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 1e75e1f..dd76f34 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -77,7 +77,7 @@ static int powernv_get_led_type(const char *led_type_desc)
+  * This function is called from work queue task context when ever it gets
+  * scheduled. This function can sleep at opal_async_wait_response call.
+  */
+-static void powernv_led_set(struct powernv_led_data *powernv_led,
++static int powernv_led_set(struct powernv_led_data *powernv_led,
+ 			    enum led_brightness value)
  {
-@@ -112,8 +100,8 @@ static void ns2_led_set_mode(struct ns2_led_data *led_dat,
- 		goto exit_unlock;
+ 	int rc, token;
+@@ -99,7 +99,7 @@ static void powernv_led_set(struct powernv_led_data *powernv_led,
+ 		if (token != -ERESTARTSYS)
+ 			dev_err(dev, "%s: Couldn't get OPAL async token\n",
+ 				__func__);
+-		return;
++		return token;
  	}
  
--	led_dat->mode_index = i;
--	schedule_work(&led_dat->work);
-+	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
-+	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
+ 	rc = opal_leds_set_ind(token, powernv_led->loc_code,
+@@ -125,6 +125,7 @@ static void powernv_led_set(struct powernv_led_data *powernv_led,
  
- exit_unlock:
- 	write_unlock_irqrestore(&led_dat->rw_lock, flags);
-@@ -136,6 +124,13 @@ static void ns2_led_set(struct led_classdev *led_cdev,
- 	ns2_led_set_mode(led_dat, mode);
+ out_token:
+ 	opal_async_release_token(token);
++	return rc;
  }
  
-+static int ns2_led_set_blocking(struct led_classdev *led_cdev,
-+			enum led_brightness value)
-+{
-+	ns2_led_set(led_cdev, value);
-+	return 0;
-+}
-+
- static ssize_t ns2_led_sata_store(struct device *dev,
- 				  struct device_attribute *attr,
- 				  const char *buff, size_t count)
-@@ -219,13 +214,16 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.name = template->name;
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->cdev.blink_set = NULL;
--	led_dat->cdev.brightness_set = ns2_led_set;
- 	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 	led_dat->cdev.groups = ns2_led_groups;
- 	led_dat->cmd = template->cmd;
- 	led_dat->slow = template->slow;
- 	led_dat->can_sleep = gpio_cansleep(led_dat->cmd) |
- 				gpio_cansleep(led_dat->slow);
-+	if (led_dat->can_sleep)
-+		led_dat->cdev.brightness_set_blocking = ns2_led_set_blocking;
-+	else
-+		led_dat->cdev.brightness_set = ns2_led_set;
- 	led_dat->modval = template->modval;
- 	led_dat->num_modes = template->num_modes;
- 
-@@ -238,8 +236,6 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.brightness =
- 		(mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
- 
--	INIT_WORK(&led_dat->work, ns2_led_work);
--
- 	ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
- 	if (ret < 0)
- 		return ret;
-@@ -250,7 +246,6 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- static void delete_ns2_led(struct ns2_led_data *led_dat)
+ /*
+@@ -173,20 +174,23 @@ static enum led_brightness powernv_led_get(struct powernv_led_data *powernv_led)
+  * LED classdev 'brightness_get' function. This schedules work
+  * to update LED state.
+  */
+-static void powernv_brightness_set(struct led_classdev *led_cdev,
++static int powernv_brightness_set(struct led_classdev *led_cdev,
+ 				   enum led_brightness value)
  {
- 	led_classdev_unregister(&led_dat->cdev);
--	cancel_work_sync(&led_dat->work);
+ 	struct powernv_led_data *powernv_led =
+ 		container_of(led_cdev, struct powernv_led_data, cdev);
+ 	struct powernv_led_common *powernv_led_common = powernv_led->common;
++	int rc;
+ 
+ 	/* Do not modify LED in unload path */
+ 	if (powernv_led_common->led_disabled)
+-		return;
++		return 0;
+ 
+ 	mutex_lock(&powernv_led_common->lock);
+-	powernv_led_set(powernv_led, value);
++	rc = powernv_led_set(powernv_led, value);
+ 	mutex_unlock(&powernv_led_common->lock);
++
++	return rc;
  }
  
- #ifdef CONFIG_OF_GPIO
+ /* LED classdev 'brightness_get' function */
+@@ -227,7 +231,7 @@ static int powernv_led_create(struct device *dev,
+ 		return -ENOMEM;
+ 	}
+ 
+-	powernv_led->cdev.brightness_set = powernv_brightness_set;
++	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
+ 	powernv_led->cdev.brightness_get = powernv_brightness_get;
+ 	powernv_led->cdev.brightness = LED_OFF;
+ 	powernv_led->cdev.max_brightness = LED_FULL;
 -- 
 1.7.9.5
