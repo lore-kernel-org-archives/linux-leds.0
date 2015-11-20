@@ -1,97 +1,66 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: powernv: Implement brightness_set_blocking op
-Date: Fri, 20 Nov 2015 16:46:29 +0100
-Message-ID: <1448034389-19972-1-git-send-email-j.anaszewski@samsung.com>
+Subject: [PATCH v7] leds: ipaq-micro: Implement brightness_set_blocking op
+Date: Fri, 20 Nov 2015 16:57:50 +0100
+Message-ID: <1448035070-4871-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54052 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:41259 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751506AbbKTPqi (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Nov 2015 10:46:38 -0500
+	with ESMTP id S1752989AbbKTP56 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Nov 2015 10:57:58 -0500
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NY4034BFEHOSEA0@mailout2.samsung.com> for
- linux-leds@vger.kernel.org; Sat, 21 Nov 2015 00:46:36 +0900 (KST)
+ with ESMTP id <0NY402VXLF0KTOB0@mailout2.samsung.com> for
+ linux-leds@vger.kernel.org; Sat, 21 Nov 2015 00:57:56 +0900 (KST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
 Since brightness setting can sleep for this driver, implement
 brightness_set_blocking op, instead of brightness_set.
 It makes this driver compatible with LED triggers.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-powernv.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Changes from v6:
+- adjust micro_leds_brightness_set() return type to match
+  brightness_set_blocking op return type
 
-diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
-index 1e75e1f..dd76f34 100644
---- a/drivers/leds/leds-powernv.c
-+++ b/drivers/leds/leds-powernv.c
-@@ -77,7 +77,7 @@ static int powernv_get_led_type(const char *led_type_desc)
-  * This function is called from work queue task context when ever it gets
-  * scheduled. This function can sleep at opal_async_wait_response call.
-  */
--static void powernv_led_set(struct powernv_led_data *powernv_led,
-+static int powernv_led_set(struct powernv_led_data *powernv_led,
- 			    enum led_brightness value)
+ drivers/leds/leds-ipaq-micro.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
+index fa262b6..02f1733 100644
+--- a/drivers/leds/leds-ipaq-micro.c
++++ b/drivers/leds/leds-ipaq-micro.c
+@@ -20,7 +20,7 @@
+ #define LED_AUTOSTOP (1 << 5) /* LED ON/OFF auto stop set 0:disable, 1:enable */
+ #define LED_ALWAYS   (1 << 6) /* LED Interrupt Mask 0:No mask, 1:mask         */
+ 
+-static void micro_leds_brightness_set(struct led_classdev *led_cdev,
++static int micro_leds_brightness_set(struct led_classdev *led_cdev,
+ 				      enum led_brightness value)
  {
- 	int rc, token;
-@@ -99,7 +99,7 @@ static void powernv_led_set(struct powernv_led_data *powernv_led,
- 		if (token != -ERESTARTSYS)
- 			dev_err(dev, "%s: Couldn't get OPAL async token\n",
- 				__func__);
--		return;
-+		return token;
+ 	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
+@@ -50,7 +50,7 @@ static void micro_leds_brightness_set(struct led_classdev *led_cdev,
+ 		msg.tx_data[2] = 1;
+ 		msg.tx_data[3] = 0; /* Duty cycle 256 */
  	}
- 
- 	rc = opal_leds_set_ind(token, powernv_led->loc_code,
-@@ -125,6 +125,7 @@ static void powernv_led_set(struct powernv_led_data *powernv_led,
- 
- out_token:
- 	opal_async_release_token(token);
-+	return rc;
+-	ipaq_micro_tx_msg_sync(micro, &msg);
++	return ipaq_micro_tx_msg_sync(micro, &msg);
  }
  
- /*
-@@ -173,20 +174,23 @@ static enum led_brightness powernv_led_get(struct powernv_led_data *powernv_led)
-  * LED classdev 'brightness_get' function. This schedules work
-  * to update LED state.
-  */
--static void powernv_brightness_set(struct led_classdev *led_cdev,
-+static int powernv_brightness_set(struct led_classdev *led_cdev,
- 				   enum led_brightness value)
- {
- 	struct powernv_led_data *powernv_led =
- 		container_of(led_cdev, struct powernv_led_data, cdev);
- 	struct powernv_led_common *powernv_led_common = powernv_led->common;
-+	int rc;
+ /* Maximum duty cycle in ms 256/10 sec = 25600 ms */
+@@ -102,7 +102,7 @@ static int micro_leds_blink_set(struct led_classdev *led_cdev,
  
- 	/* Do not modify LED in unload path */
- 	if (powernv_led_common->led_disabled)
--		return;
-+		return 0;
- 
- 	mutex_lock(&powernv_led_common->lock);
--	powernv_led_set(powernv_led, value);
-+	rc = powernv_led_set(powernv_led, value);
- 	mutex_unlock(&powernv_led_common->lock);
-+
-+	return rc;
- }
- 
- /* LED classdev 'brightness_get' function */
-@@ -227,7 +231,7 @@ static int powernv_led_create(struct device *dev,
- 		return -ENOMEM;
- 	}
- 
--	powernv_led->cdev.brightness_set = powernv_brightness_set;
-+	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
- 	powernv_led->cdev.brightness_get = powernv_brightness_get;
- 	powernv_led->cdev.brightness = LED_OFF;
- 	powernv_led->cdev.max_brightness = LED_FULL;
+ static struct led_classdev micro_led = {
+ 	.name			= "led-ipaq-micro",
+-	.brightness_set		= micro_leds_brightness_set,
++	.brightness_set_blocking = micro_leds_brightness_set,
+ 	.blink_set		= micro_leds_blink_set,
+ 	.flags			= LED_CORE_SUSPENDRESUME,
+ };
 -- 
 1.7.9.5
