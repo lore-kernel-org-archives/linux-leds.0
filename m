@@ -1,66 +1,100 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v7] leds: ipaq-micro: Implement brightness_set_blocking op
-Date: Fri, 20 Nov 2015 16:57:50 +0100
-Message-ID: <1448035070-4871-1-git-send-email-j.anaszewski@samsung.com>
+From: Simon Arlott <simon@fire.lp0.eu>
+Subject: [PATCH 1/2 (v3)] leds-bcm6328: Reuse bcm6328_led_set() instead of
+ copying its functionality
+Date: Sun, 22 Nov 2015 20:40:29 +0000
+Message-ID: <5652283D.1050601@simon.arlott.org.uk>
+References: <562BB799.7000708@simon.arlott.org.uk>
+ <562DE832.6070903@samsung.com>
+ <ed10b1e070e8b0d4a9eda6b32b686d1ab5b71759@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+ <5630A9C1.5060907@samsung.com> <56327821.8020508@simon.arlott.org.uk>
+ <563A2731.40204@samsung.com> <563A2850.5000506@gmail.com>
+ <563B3240.9010804@samsung.com> <56488968.3070103@simon.arlott.org.uk>
+ <5649EA72.20504@samsung.com> <564A3B9B.7040608@simon.arlott.org.uk>
+ <564A4B92.4040401@gmail.com> <564ADA76.4040202@simon.arlott.org.uk>
+ <564AE00C.7050303@samsung.com> <564AE209.7000106@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41259 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752989AbbKTP56 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 20 Nov 2015 10:57:58 -0500
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NY402VXLF0KTOB0@mailout2.samsung.com> for
- linux-leds@vger.kernel.org; Sat, 21 Nov 2015 00:57:56 +0900 (KST)
+Received: from proxima.lp0.eu ([81.2.80.65]:40028 "EHLO proxima.lp0.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752656AbbKVUkh (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 22 Nov 2015 15:40:37 -0500
+In-Reply-To: <564AE209.7000106@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, Jonas Gorski <jogo@openwrt.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Since brightness setting can sleep for this driver, implement
-brightness_set_blocking op, instead of brightness_set.
-It makes this driver compatible with LED triggers.
+When ensuring a consistent initial LED state in bcm6328_led (as they ma=
+y
+be blinking instead of on/off), the LED register is set using an invert=
+ed
+copy of bcm6328_led_set(). To avoid further errors relating to active l=
+ow
+handling, call this function directly instead.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+As bcm6328_led_set() expects to acquire the spinlock, call it after
+unlocking. There is no need to hold the spinlock between reading the
+current value and setting it again because the LED device has not yet
+been registered.
+
+Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
 ---
-Changes from v6:
-- adjust micro_leds_brightness_set() return type to match
-  brightness_set_blocking op return type
+On 17/11/15 08:15, Jacek Anaszewski wrote:
+> On 11/17/2015 09:06 AM, Jacek Anaszewski wrote:
+>> On 11/17/2015 08:42 AM, Simon Arlott wrote:
+>>> On 16/11/15 21:33, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+>>>> Still wrong, you are setting the led value after unlocking the spi=
+nlock.
+>>>
+>>> I have to unlock it because bcm6328_led_set() locks that spinlock.
+>>
+>> Commit message from the first version of the patch justified that
+>> properly. It should be preserved in the final patch:
+>>
+>> As bcm6328_led_set() expects to acquire the spinlock, narrow the loc=
+king
+>> to only cover reading of the current state. There is no need to hold=
+ the
+>> spinlock between reading the current value and setting it again beca=
+use
+>> the LED device has not yet been registered.
+>=20
+> Hmm, if so, then spin_lock in bcm6328_led isn't needed at all, as it
+> is guaranteed that no concurrent process will be executing this
+> function.
 
- drivers/leds/leds-ipaq-micro.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+No, it's still required because it has to protect the read/modify/write
+for all the other LED devices that use the same register.
 
-diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-index fa262b6..02f1733 100644
---- a/drivers/leds/leds-ipaq-micro.c
-+++ b/drivers/leds/leds-ipaq-micro.c
-@@ -20,7 +20,7 @@
- #define LED_AUTOSTOP (1 << 5) /* LED ON/OFF auto stop set 0:disable, 1:enable */
- #define LED_ALWAYS   (1 << 6) /* LED Interrupt Mask 0:No mask, 1:mask         */
- 
--static void micro_leds_brightness_set(struct led_classdev *led_cdev,
-+static int micro_leds_brightness_set(struct led_classdev *led_cdev,
- 				      enum led_brightness value)
- {
- 	struct ipaq_micro *micro = dev_get_drvdata(led_cdev->dev->parent->parent);
-@@ -50,7 +50,7 @@ static void micro_leds_brightness_set(struct led_classdev *led_cdev,
- 		msg.tx_data[2] = 1;
- 		msg.tx_data[3] = 0; /* Duty cycle 256 */
+ drivers/leds/leds-bcm6328.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index c7ea5c6..95d0cf9 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -314,14 +314,10 @@ static int bcm6328_led(struct device *dev, struct=
+ device_node *nc, u32 reg,
+ 	} else {
+ 		led->cdev.brightness =3D LED_OFF;
  	}
--	ipaq_micro_tx_msg_sync(micro, &msg);
-+	return ipaq_micro_tx_msg_sync(micro, &msg);
- }
- 
- /* Maximum duty cycle in ms 256/10 sec = 25600 ms */
-@@ -102,7 +102,7 @@ static int micro_leds_blink_set(struct led_classdev *led_cdev,
- 
- static struct led_classdev micro_led = {
- 	.name			= "led-ipaq-micro",
--	.brightness_set		= micro_leds_brightness_set,
-+	.brightness_set_blocking = micro_leds_brightness_set,
- 	.blink_set		= micro_leds_blink_set,
- 	.flags			= LED_CORE_SUSPENDRESUME,
- };
--- 
-1.7.9.5
+-
+-	if ((led->active_low && led->cdev.brightness =3D=3D LED_FULL) ||
+-	    (!led->active_low && led->cdev.brightness =3D=3D LED_OFF))
+-		bcm6328_led_mode(led, BCM6328_LED_MODE_ON);
+-	else
+-		bcm6328_led_mode(led, BCM6328_LED_MODE_OFF);
+ 	spin_unlock_irqrestore(lock, flags);
+=20
++	bcm6328_led_set(&led->cdev, led->cdev.brightness);
++
+ 	led->cdev.brightness_set =3D bcm6328_led_set;
+ 	led->cdev.blink_set =3D bcm6328_blink_set;
+=20
+--=20
+2.1.4
+
+--=20
+Simon Arlott
