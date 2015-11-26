@@ -1,214 +1,81 @@
 From: Milo Kim <milo.kim@ti.com>
-Subject: [PATCH v2 8/9] leds: add LM3633 driver
-Date: Thu, 26 Nov 2015 15:57:04 +0900
-Message-ID: <1448521025-2796-9-git-send-email-milo.kim@ti.com>
+Subject: [PATCH v2 9/9] regulator: add LM363X driver
+Date: Thu, 26 Nov 2015 15:57:05 +0900
+Message-ID: <1448521025-2796-10-git-send-email-milo.kim@ti.com>
 References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:33568 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752497AbbKZG7E (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 26 Nov 2015 01:59:04 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, lee.jones@linaro.org, j.anaszewski@samsung.com, broonie@kernel.org
 Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Milo Kim <milo.kim@ti.com>
+List-Id: linux-leds@vger.kernel.org
 
-LM3633 LED driver supports generic LED functions and pattern generation.
-Pattern is generated through the sysfs. ABI documentation is also added.
+LM363X regulator driver supports LM3631 and LM3632.
+LM3631 has 5 regulators. LM3632 provides 3 regulators.
+One boost output and LDOs are used for the display module.
+Boost voltage is configurable but always on.
+Supported operations for LDOs are enabled/disabled and voltage change.
 
-Device creation from device tree
---------------------------------
-  LED channel name, LED string usage and max current settings are
-  configured inside the DT.
+Two LDOs of LM3632 can be controlled by external pins.
+Those are configured through the DT properties.
 
-LED dimming pattern generation
-------------------------------
-  LM3633 supports programmable dimming pattern generator.
-  To enable it, eight attributes are used. Sysfs ABI describes it.
-  - Time domain
-    : 'pattern_time_delay', 'pattern_time_rise', 'pattern_time_high',
-      'pattern_time_fall' and 'pattern_time_low'.
-  - Level domain
-    : 'pattern_brightness_low' and 'pattern_brightness_high'.
-  - Start or stop
-    : 'run_pattern'
-
-LMU fault monitor event handling
---------------------------------
-  As soon as LMU fault monitoring is done, LMU device is reset. So LED
-  device should be reinitialized. lm3633_led_fault_monitor_notifier() is
-  used for this purpose.
-
-Data structure
---------------
-  ti_lmu_led:         LED output channel data.
-  ti_lmu_led_chip:    LED device data. One LED device can have multiple
-                      LED channel data.
-
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org 
-Cc: Lee Jones <lee.jones@linaro.org> 
 Cc: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org> 
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: devicetree@vger.kernel.org
+Cc: linux-leds@vger.kernel.org 
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Milo Kim <milo.kim@ti.com>
 ---
- Documentation/ABI/testing/sysfs-class-led-lm3633 |  97 +++
- drivers/leds/Kconfig                             |  10 +
- drivers/leds/Makefile                            |   1 +
- drivers/leds/leds-lm3633.c                       | 840 +++++++++++++++++++++++
- 4 files changed, 948 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-lm3633
- create mode 100644 drivers/leds/leds-lm3633.c
+ drivers/regulator/Kconfig            |   9 +
+ drivers/regulator/Makefile           |   1 +
+ drivers/regulator/lm363x-regulator.c | 309 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 319 insertions(+)
+ create mode 100644 drivers/regulator/lm363x-regulator.c
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-lm3633 b/Documentation/ABI/testing/sysfs-class-led-lm3633
-new file mode 100644
-index 0000000..46217d4
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-lm3633
-@@ -0,0 +1,97 @@
-+LM3633 LED driver generates programmable pattern via the sysfs.
-+
-+LED Pattern Generator Structure
-+
-+                            (3)
-+  (a) --------------->  ___________
-+                       /           \
-+                  (2) /             \ (4)
-+  (b) ----> _________/               \_________  ...
-+               (1)                       (5)
-+
-+                     |<-----   period   -----> |
-+
-+What:		/sys/class/leds/<led>/pattern_time_delay
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern startup delay. Please refer to (1).
-+                Range is from 0 to 9700. Unit is millisecond.
-+
-+What:		/sys/class/leds/<led>/pattern_time_rise
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern rising dimming time. Please refer to (2).
-+                Range is from 0 to 16000. Unit is millisecond.
-+
-+What:		/sys/class/leds/<led>/pattern_time_high
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern high level time. Please refer to (3).
-+                It means how much time stays at high level.
-+                Range is from 0 to 9700. Unit is millisecond.
-+
-+What:		/sys/class/leds/<led>/pattern_time_fall
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern falling dimming time. Please refer to (4).
-+                Range is from 0 to 16000. Unit is millisecond.
-+
-+What:		/sys/class/leds/<led>/pattern_time_low
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern low level time. Please refer to (5).
-+                It means how much time stays at low level.
-+                Range is from 0 to 9700. Unit is millisecond.
-+
-+What:		/sys/class/leds/<led>/pattern_brightness_high
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern brightness value at high level.
-+                Please refer to (a). Range is from 0 to max brightness value.
-+
-+What:		/sys/class/leds/<led>/pattern_brightness_low
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                Set pattern brightness value at low level.
-+                Please refer to (b). Range is from 0 to max brightness value.
-+
-+What:		/sys/class/leds/<led>/run_pattern
-+Date:		Dec 2015
-+KernelVersion:	4.5
-+Contact:	Milo Kim <milo.kim@ti.com>
-+Description:	write only
-+                It is used for activating or deactivating programmed LED
-+                dimming pattern. Please make sure pattern parameters
-+                should be written prior to accessing this attribute.
-+
-+                1 : activate programmed pattern
-+                0 : deactivate the pattern
-+
-+                Example:
-+                To run the pattern,
-+
-+                echo 0 > /sys/class/leds/<led>/pattern_time_delay
-+                echo 200 > /sys/class/leds/<led>/pattern_time_rise
-+                echo 300 > /sys/class/leds/<led>/pattern_time_high
-+                echo 100 > /sys/class/leds/<led>/pattern_time_fall
-+                echo 400 > /sys/class/leds/<led>/pattern_time_low
-+                echo 0 > /sys/class/leds/<led>/pattern_brightness_low
-+                echo 255 > /sys/class/leds/<led>/pattern_brightness_high
-+                echo 1 > /sys/class/leds/<led>/run_pattern
-+
-+                To stop running pattern,
-+                echo 0 > /sys/class/leds/<led>/run_pattern
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index b1ab8bd..ed071ac 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -88,6 +88,16 @@ config LEDS_LM3533
- 	  hardware-accelerated blinking with maximum on and off periods of 9.8
- 	  and 77 seconds respectively.
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 3e028d9..971ebfa 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -274,6 +274,15 @@ config REGULATOR_ISL6271A
+ 	help
+ 	  This driver supports ISL6271A voltage regulator chip.
  
-+config LEDS_LM3633
-+	tristate "LED support for the TI LM3633 LMU"
-+	depends on LEDS_CLASS
++config REGULATOR_LM363X
++	tristate "TI LM363X voltage regulators"
 +	depends on MFD_TI_LMU
 +	help
-+	  This option enables support for the LEDs on the LM3633.
-+	  LM3633 has 6 low voltage indicator LEDs.
-+	  All low voltage current sinks can have a programmable pattern
-+	  modulated onto LED output strings.
++	  This driver supports LM3631 and LM3632 voltage regulators for
++	  the LCD bias.
++	  One boost output voltage is configurable and always on.
++	  Other LDOs are used for the display module.
 +
- config LEDS_LM3642
- 	tristate "LED support for LM3642 Chip"
- 	depends on LEDS_CLASS && I2C
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index e9d53092..e183b7d 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
- obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
- obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
-+obj-$(CONFIG_LEDS_LM3633)		+= leds-lm3633.o
- obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
- obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
- obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
-diff --git a/drivers/leds/leds-lm3633.c b/drivers/leds/leds-lm3633.c
+ config REGULATOR_LP3971
+ 	tristate "National Semiconductors LP3971 PMIC regulator driver"
+ 	depends on I2C
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 5a963d9..21a3e67 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_REGULATOR_GPIO) += gpio-regulator.o
+ obj-$(CONFIG_REGULATOR_HI6421) += hi6421-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL6271A) += isl6271a-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL9305) += isl9305.o
++obj-$(CONFIG_REGULATOR_LM363X) += lm363x-regulator.o
+ obj-$(CONFIG_REGULATOR_LP3971) += lp3971.o
+ obj-$(CONFIG_REGULATOR_LP3972) += lp3972.o
+ obj-$(CONFIG_REGULATOR_LP872X) += lp872x.o
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
 new file mode 100644
-index 0000000..9c391ca
+index 0000000..e1b683e
 --- /dev/null
-+++ b/drivers/leds/leds-lm3633.c
-@@ -0,0 +1,840 @@
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -0,0 +1,309 @@
 +/*
-+ * TI LM3633 LED driver
++ * TI LM363X Regulator Driver
 + *
 + * Copyright 2015 Texas Instruments
 + *
@@ -219,833 +86,302 @@ index 0000000..9c391ca
 + * published by the Free Software Foundation.
 + */
 +
-+#include <linux/bitops.h>
++#include <linux/err.h>
 +#include <linux/kernel.h>
-+#include <linux/leds.h>
 +#include <linux/mfd/ti-lmu.h>
 +#include <linux/mfd/ti-lmu-register.h>
 +#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/notifier.h>
 +#include <linux/of.h>
++#include <linux/of_gpio.h>
 +#include <linux/platform_device.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/of_regulator.h>
 +#include <linux/slab.h>
 +
-+#define LM3633_MAX_PWM				255
-+#define LM3633_MIN_CURRENT			5000
-+#define LM3633_MAX_CURRENT			30000
-+#define LM3633_MAX_PERIOD			9700
-+#define LM3633_SHORT_TIMESTEP			16
-+#define LM3633_LONG_TIMESTEP			131
-+#define LM3633_TIME_OFFSET			61
-+#define LM3633_PATTERN_REG_OFFSET		16
-+#define LM3633_IMAX_OFFSET			6
++/* LM3631 */
++#define LM3631_BOOST_VSEL_MAX		0x25
++#define LM3631_LDO_VSEL_MAX		0x28
++#define LM3631_CONT_VSEL_MAX		0x03
++#define LM3631_VBOOST_MIN		4500000
++#define LM3631_VCONT_MIN		1800000
++#define LM3631_VLDO_MIN			4000000
++#define ENABLE_TIME_USEC		1000
 +
-+enum lm3633_led_bank_id {
-+	LM3633_LED_BANK_C,
-+	LM3633_LED_BANK_D,
-+	LM3633_LED_BANK_E,
-+	LM3633_LED_BANK_F,
-+	LM3633_LED_BANK_G,
-+	LM3633_LED_BANK_H,
-+	LM3633_MAX_LEDS,
++/* LM3632 */
++#define LM3632_BOOST_VSEL_MAX		0x26
++#define LM3632_LDO_VSEL_MAX		0x29
++#define LM3632_VBOOST_MIN		4500000
++#define LM3632_VLDO_MIN			4000000
++
++/* Common */
++#define LM363X_STEP_50mV		50000
++#define LM363X_STEP_500mV		500000
++
++struct lm363x_regulator {
++	struct regmap *regmap;
++	struct regulator_dev *regulator;
 +};
 +
-+/**
-+ * struct ti_lmu_led_chip
-+ *
-+ * @dev:		Parent device pointer
-+ * @lmu:		LMU structure. Used for register R/W access.
-+ * @lock:		Secure handling for multiple user interface access
-+ * @lmu_led:		Multiple LED strings
-+ * @num_leds:		Number of LED strings
-+ * @nb:			Notifier block for handling LMU fault monitor event
-+ *
-+ * One LED chip can have multiple LED strings.
-+ */
-+struct ti_lmu_led_chip {
-+	struct device *dev;
-+	struct ti_lmu *lmu;
-+	struct mutex lock;
-+	struct ti_lmu_led *lmu_led;
-+	int num_leds;
-+	struct notifier_block nb;
++const int ldo_cont_enable_time[] = {
++	0, 2000, 5000, 10000, 20000, 50000, 100000, 200000,
 +};
 +
-+/**
-+ * struct ti_lmu_led
-+ *
-+ * @chip:		Pointer to parent LED device
-+ * @bank_id:		LED bank ID
-+ * @cdev:		LED subsystem device structure
-+ * @name:		LED channel name
-+ * @led_sources:	LED output channel configuration.
-+ *			Bit mask is set on parsing DT.
-+ * @max_brightness:	Max brightness value.
-+ *			Is is determined by led-max-microamp.
-+ *
-+ * Each LED device has its own channel configuration.
-+ * For chip control, parent chip data structure is used.
-+ */
-+struct ti_lmu_led {
-+	struct ti_lmu_led_chip *chip;
-+	enum lm3633_led_bank_id bank_id;
-+	struct led_classdev cdev;
-+	const char *name;
-+	unsigned long led_sources;
-+	u8 max_brightness;
-+};
-+
-+static struct ti_lmu_led *to_ti_lmu_led(struct device *dev)
++static int lm363x_regulator_enable_time(struct regulator_dev *rdev)
 +{
-+	struct led_classdev *cdev = dev_get_drvdata(dev);
++	struct lm363x_regulator *lm363x_regulator = rdev_get_drvdata(rdev);
++	enum lm363x_regulator_id id = rdev_get_id(rdev);
++	u8 val, addr, mask;
 +
-+	return container_of(cdev, struct ti_lmu_led, cdev);
-+}
-+
-+static u8 lm3633_led_get_enable_mask(struct ti_lmu_led *lmu_led)
-+{
-+	return 1 << (lmu_led->bank_id + LM3633_LED_BANK_OFFSET);
-+}
-+
-+static int lm3633_led_enable_bank(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u8 mask = lm3633_led_get_enable_mask(lmu_led);
-+
-+	return regmap_update_bits(regmap, LM3633_REG_ENABLE, mask, mask);
-+}
-+
-+static int lm3633_led_disable_bank(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u8 mask = lm3633_led_get_enable_mask(lmu_led);
-+
-+	return regmap_update_bits(regmap, LM3633_REG_ENABLE, mask, 0);
-+}
-+
-+static int lm3633_led_config_bank(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	const u8 group_led[] = { 0, BIT(0), BIT(0), 0, BIT(3), BIT(3), };
-+	const enum lm3633_led_bank_id default_id[] = {
-+		LM3633_LED_BANK_C, LM3633_LED_BANK_C, LM3633_LED_BANK_C,
-+		LM3633_LED_BANK_F, LM3633_LED_BANK_F, LM3633_LED_BANK_F,
-+	};
-+	const enum lm3633_led_bank_id separate_id[] = {
-+		LM3633_LED_BANK_C, LM3633_LED_BANK_D, LM3633_LED_BANK_E,
-+		LM3633_LED_BANK_F, LM3633_LED_BANK_G, LM3633_LED_BANK_H,
-+	};
-+	int i, ret;
-+	u8 val;
-+
-+	/*
-+	 * Check configured LED string and assign control bank
-+	 *
-+	 * Each LED is tied with other LEDS (group):
-+	 *   the default control bank is assigned
-+	 *
-+	 * Otherwise:
-+	 *   separate bank is assigned
-+	 */
-+
-+	for (i = 0; i < LM3633_MAX_LEDS; i++) {
-+		/* LED 0 and LED 3 are fixed, so no assignment is required */
-+		if (i == 0 || i == 3)
-+			continue;
-+
-+		if (test_bit(i, &lmu_led->led_sources)) {
-+			if (lmu_led->led_sources & group_led[i]) {
-+				lmu_led->bank_id = default_id[i];
-+				val = 0;
-+			} else {
-+				lmu_led->bank_id = separate_id[i];
-+				val = BIT(i);
-+			}
-+
-+			ret = regmap_update_bits(regmap, LM3633_REG_BANK_SEL,
-+						 BIT(i), val);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static u8 lm3633_convert_time_to_index(unsigned int msec)
-+{
-+	u8 idx, offset;
-+
-+	/*
-+	 * Find an approximate index
-+	 *
-+	 *      0 <= time <= 1000 : 16ms step
-+	 *   1000 <  time <= 9700 : 131ms step, base index is 61
-+	 */
-+
-+	msec = min_t(int, msec, LM3633_MAX_PERIOD);
-+
-+	if (msec <= 1000) {
-+		idx = msec / LM3633_SHORT_TIMESTEP;
-+		if (idx > 1)
-+			idx--;
-+		offset = 0;
-+	} else {
-+		idx = (msec - 1000) / LM3633_LONG_TIMESTEP;
-+		offset = LM3633_TIME_OFFSET;
-+	}
-+
-+	return idx + offset;
-+}
-+
-+static u8 lm3633_convert_ramp_to_index(unsigned int msec)
-+{
-+	const int ramp_table[] = { 2, 250, 500, 1000, 2000, 4000, 8000, 16000 };
-+	int size = ARRAY_SIZE(ramp_table);
-+	int i;
-+
-+	if (msec <= ramp_table[0])
-+		return 0;
-+
-+	if (msec > ramp_table[size - 1])
-+		return size - 1;
-+
-+	for (i = 1; i < size; i++) {
-+		if (msec == ramp_table[i])
-+			return i;
-+
-+		/* Find an approximate index by looking up the table */
-+		if (msec > ramp_table[i - 1] && msec < ramp_table[i]) {
-+			if (msec - ramp_table[i - 1] < ramp_table[i] - msec)
-+				return i - 1;
-+			else
-+				return i;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int lm3633_led_update_linear_time(const char *buf,
-+					 struct ti_lmu_led *lmu_led, u8 reg)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	unsigned long time;
-+	u8 offset = lmu_led->bank_id * LM3633_PATTERN_REG_OFFSET;
-+
-+	/*
-+	 * Time register addresses need offset number based on the LED bank.
-+	 * Register values are index domain, so input time value should be
-+	 * converted to index.
-+	 */
-+
-+	if (kstrtoul(buf, 0, &time))
-+		return -EINVAL;
-+
-+	return regmap_write(regmap, reg + offset,
-+			    lm3633_convert_time_to_index(time));
-+}
-+
-+static int lm3633_led_update_ramp_time(const char *buf,
-+				       struct ti_lmu_led *lmu_led,
-+				       u8 mask, u8 shift)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	unsigned long ramp_time;
-+	u8 reg, val;
-+
-+	/*
-+	 * Register values are index domain, so input time value should be
-+	 * converted to index.
-+	 */
-+
-+	if (kstrtoul(buf, 0, &ramp_time))
-+		return -EINVAL;
-+
-+	switch (lmu_led->bank_id) {
-+	case LM3633_LED_BANK_C:
-+	case LM3633_LED_BANK_D:
-+	case LM3633_LED_BANK_E:
-+		reg = LM3633_REG_PTN0_RAMP;
++	switch (id) {
++	case LM3631_LDO_CONT:
++		addr = LM3631_REG_ENTIME_VCONT;
++		mask = LM3631_ENTIME_CONT_MASK;
 +		break;
-+	case LM3633_LED_BANK_F:
-+	case LM3633_LED_BANK_G:
-+	case LM3633_LED_BANK_H:
-+		reg = LM3633_REG_PTN1_RAMP;
++	case LM3631_LDO_OREF:
++		addr = LM3631_REG_ENTIME_VOREF;
++		mask = LM3631_ENTIME_MASK;
++		break;
++	case LM3631_LDO_POS:
++		addr = LM3631_REG_ENTIME_VPOS;
++		mask = LM3631_ENTIME_MASK;
++		break;
++	case LM3631_LDO_NEG:
++		addr = LM3631_REG_ENTIME_VNEG;
++		mask = LM3631_ENTIME_MASK;
 +		break;
 +	default:
-+		return -EINVAL;
++		return 0;
 +	}
 +
-+	val = lm3633_convert_ramp_to_index(ramp_time) << shift;
-+	return regmap_update_bits(regmap, reg, mask, val);
-+}
-+
-+static ssize_t lm3633_led_store_pattern_time_delay(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_update_linear_time(buf, lmu_led, LM3633_REG_PTN_DELAY);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static ssize_t lm3633_led_store_pattern_time_high(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_update_linear_time(buf, lmu_led,
-+					    LM3633_REG_PTN_HIGHTIME);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static ssize_t lm3633_led_store_pattern_time_low(struct device *dev,
-+						 struct device_attribute *attr,
-+						 const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_update_linear_time(buf, lmu_led,
-+					    LM3633_REG_PTN_LOWTIME);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static ssize_t lm3633_led_store_pattern_time_rise(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_update_ramp_time(buf, lmu_led, LM3633_PTN_RAMPUP_MASK,
-+					  LM3633_PTN_RAMPUP_SHIFT);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static ssize_t lm3633_led_store_pattern_time_fall(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_update_ramp_time(buf, lmu_led, LM3633_PTN_RAMPDN_MASK,
-+				       LM3633_PTN_RAMPDN_SHIFT);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static int lm3633_led_set_pattern_brightness(const char *buf,
-+					     struct ti_lmu_led *lmu_led, u8 reg)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	unsigned long brt;
-+	int ret;
-+
-+	if (kstrtoul(buf, 0, &brt))
++	if (regmap_read(lm363x_regulator->regmap, addr, (unsigned int *)&val))
 +		return -EINVAL;
 +
-+	ret = lm3633_led_disable_bank(lmu_led);
-+	if (ret)
-+		return ret;
++	val = (val & mask) >> LM3631_ENTIME_SHIFT;
 +
-+	brt = min_t(unsigned long, brt, lmu_led->max_brightness);
-+
-+	return regmap_write(regmap, reg, (u8)brt);
-+}
-+
-+static ssize_t lm3633_led_store_pattern_brightness_low(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	u8 offset = lmu_led->bank_id * LM3633_PATTERN_REG_OFFSET;
-+	u8 reg = LM3633_REG_PTN_LOWBRT + offset;
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_set_pattern_brightness(buf, lmu_led, reg);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static ssize_t lm3633_led_store_pattern_brightness_high(struct device *dev,
-+						  struct device_attribute *attr,
-+						  const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	u8 reg = LM3633_REG_PTN_HIGHBRT + lmu_led->bank_id;
-+	int ret;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+	ret = lm3633_led_set_pattern_brightness(buf, lmu_led, reg);
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static int lm3633_led_activate_pattern(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u8 mask = lm3633_led_get_enable_mask(lmu_led);
-+	int ret;
-+
-+	ret = regmap_update_bits(regmap, LM3633_REG_PATTERN, mask, mask);
-+	if (ret)
-+		return ret;
-+
-+	return lm3633_led_enable_bank(lmu_led);
-+}
-+
-+static int lm3633_led_deactivate_pattern(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u8 mask = lm3633_led_get_enable_mask(lmu_led);
-+
-+	return regmap_update_bits(regmap, LM3633_REG_PATTERN, mask, 0);
-+}
-+
-+static ssize_t lm3633_led_run_pattern(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t len)
-+{
-+	struct ti_lmu_led *lmu_led = to_ti_lmu_led(dev);
-+	unsigned long run;
-+	int ret;
-+
-+	if (kstrtoul(buf, 0, &run))
-+		return -EINVAL;
-+
-+	mutex_lock(&lmu_led->chip->lock);
-+
-+	if (!run)
-+		ret = lm3633_led_deactivate_pattern(lmu_led);
++	if (id == LM3631_LDO_CONT)
++		return ldo_cont_enable_time[val];
 +	else
-+		ret = lm3633_led_activate_pattern(lmu_led);
-+
-+	mutex_unlock(&lmu_led->chip->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	return len;
++		return ENABLE_TIME_USEC * val;
 +}
 +
-+#define LM3633_PATTERN_ATTR(name)	\
-+DEVICE_ATTR(pattern_##name, S_IWUSR, NULL, lm3633_led_store_pattern_##name)
-+
-+static LM3633_PATTERN_ATTR(time_delay);
-+static LM3633_PATTERN_ATTR(time_rise);
-+static LM3633_PATTERN_ATTR(time_high);
-+static LM3633_PATTERN_ATTR(time_fall);
-+static LM3633_PATTERN_ATTR(time_low);
-+static LM3633_PATTERN_ATTR(brightness_low);
-+static LM3633_PATTERN_ATTR(brightness_high);
-+static DEVICE_ATTR(run_pattern, S_IWUSR, NULL, lm3633_led_run_pattern);
-+
-+static struct attribute *lm3633_led_attrs[] = {
-+	&dev_attr_pattern_time_delay.attr,
-+	&dev_attr_pattern_time_rise.attr,
-+	&dev_attr_pattern_time_high.attr,
-+	&dev_attr_pattern_time_fall.attr,
-+	&dev_attr_pattern_time_low.attr,
-+	&dev_attr_pattern_brightness_low.attr,
-+	&dev_attr_pattern_brightness_high.attr,
-+	&dev_attr_run_pattern.attr,
-+	NULL,
++static struct regulator_ops lm363x_boost_voltage_table_ops = {
++	.list_voltage     = regulator_list_voltage_linear,
++	.set_voltage_sel  = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel  = regulator_get_voltage_sel_regmap,
 +};
-+ATTRIBUTE_GROUPS(lm3633_led);	/* lm3633_led_groups */
 +
-+static int lm3633_led_set_max_current(struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u8 reg = LM3633_REG_IMAX_LVLED_BASE + lmu_led->bank_id;
++static struct regulator_ops lm363x_regulator_voltage_table_ops = {
++	.list_voltage     = regulator_list_voltage_linear,
++	.set_voltage_sel  = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel  = regulator_get_voltage_sel_regmap,
++	.enable           = regulator_enable_regmap,
++	.disable          = regulator_disable_regmap,
++	.is_enabled       = regulator_is_enabled_regmap,
++	.enable_time      = lm363x_regulator_enable_time,
++};
 +
-+	return regmap_write(regmap, reg, LMU_IMAX_30mA);
-+}
-+
-+static int lm3633_led_brightness_set(struct led_classdev *cdev,
-+				     enum led_brightness brightness)
-+{
-+	struct ti_lmu_led *lmu_led = container_of(cdev, struct ti_lmu_led,
-+						  cdev);
-+	struct ti_lmu_led_chip *chip = lmu_led->chip;
-+	struct regmap *regmap = chip->lmu->regmap;
-+	u8 reg = LM3633_REG_BRT_LVLED_BASE + lmu_led->bank_id;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+
-+	ret = regmap_write(regmap, reg, brightness);
-+	if (ret) {
-+		mutex_unlock(&chip->lock);
-+		return ret;
-+	}
-+
-+	if (brightness == 0)
-+		lm3633_led_disable_bank(lmu_led);
-+	else
-+		lm3633_led_enable_bank(lmu_led);
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return 0;
-+}
-+
-+static int lm3633_led_init(struct ti_lmu_led *lmu_led, int bank_id)
-+{
-+	struct device *dev = lmu_led->chip->dev;
-+	int ret;
-+
-+	/*
-+	 * Sequence
-+	 *
-+	 * 1) Configure LED bank which is used for brightness control
-+	 * 2) Set max current for each output channel
-+	 * 3) Add LED device
-+	 */
-+
-+	ret = lm3633_led_config_bank(lmu_led);
-+	if (ret) {
-+		dev_err(dev, "Output bank register err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = lm3633_led_set_max_current(lmu_led);
-+	if (ret) {
-+		dev_err(dev, "Set max current err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	lmu_led->cdev.max_brightness = lmu_led->max_brightness;
-+	lmu_led->cdev.brightness_set_blocking = lm3633_led_brightness_set;
-+	lmu_led->cdev.groups = lm3633_led_groups;
-+	lmu_led->cdev.name = lmu_led->name;
-+
-+	ret = devm_led_classdev_register(dev, &lmu_led->cdev);
-+	if (ret) {
-+		dev_err(dev, "LED register err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void lm3633_led_of_set_label(struct device_node *np,
-+				    struct ti_lmu_led *lmu_led)
-+{
-+	const char *name;
-+
-+	if (!of_property_read_string(np, "label", &name))
-+		lmu_led->name = name;
-+	else
-+		lmu_led->name = np->name;
-+}
-+
-+static int lm3633_led_of_create_channel(struct device_node *np,
-+					struct ti_lmu_led *lmu_led)
-+{
-+	int ret, num_sources;
-+	u32 sources[LM3633_MAX_LEDS];
-+
-+	ret = of_property_count_u32_elems(np, "led-sources");
-+	if (ret < 0 || ret > LM3633_MAX_LEDS)
-+		return -EINVAL;
-+
-+	num_sources = ret;
-+	ret = of_property_read_u32_array(np, "led-sources", sources,
-+					 num_sources);
-+	if (ret)
-+		return ret;
-+
-+	lmu_led->led_sources = 0;
-+	while (num_sources--)
-+		set_bit(sources[num_sources], &lmu_led->led_sources);
-+
-+	return 0;
-+}
-+
-+static u8 lm3633_led_convert_current_to_index(u32 imax_microamp)
-+{
-+	u8 imax_milliamp = imax_microamp / 1000;
-+	const u8 imax_table[] = {
-+		LMU_IMAX_6mA,  LMU_IMAX_7mA,  LMU_IMAX_8mA,  LMU_IMAX_9mA,
-+		LMU_IMAX_10mA, LMU_IMAX_11mA, LMU_IMAX_12mA, LMU_IMAX_13mA,
-+		LMU_IMAX_14mA, LMU_IMAX_15mA, LMU_IMAX_16mA, LMU_IMAX_17mA,
-+		LMU_IMAX_18mA, LMU_IMAX_19mA, LMU_IMAX_20mA, LMU_IMAX_21mA,
-+		LMU_IMAX_22mA, LMU_IMAX_23mA, LMU_IMAX_24mA, LMU_IMAX_25mA,
-+		LMU_IMAX_26mA, LMU_IMAX_27mA, LMU_IMAX_28mA, LMU_IMAX_29mA,
-+	};
-+
-+	/* Valid range is from 5mA to 30mA */
-+	if (imax_milliamp <= 5)
-+		return LMU_IMAX_5mA;
-+
-+	if (imax_milliamp >= 30)
-+		return LMU_IMAX_30mA;
-+
-+	return imax_table[imax_milliamp - LM3633_IMAX_OFFSET];
-+}
-+
-+static u8 lm3633_led_scale_max_brightness(struct ti_lmu_led *lmu_led, u32 imax)
-+{
-+	u8 max_current = lm3633_led_convert_current_to_index(imax);
-+	const u8 max_brightness_table[] = {
-+		[LMU_IMAX_5mA]  = 191,
-+		[LMU_IMAX_6mA]  = 197,
-+		[LMU_IMAX_7mA]  = 203,
-+		[LMU_IMAX_8mA]  = 208,
-+		[LMU_IMAX_9mA]  = 212,
-+		[LMU_IMAX_10mA] = 216,
-+		[LMU_IMAX_11mA] = 219,
-+		[LMU_IMAX_12mA] = 222,
-+		[LMU_IMAX_13mA] = 225,
-+		[LMU_IMAX_14mA] = 228,
-+		[LMU_IMAX_15mA] = 230,
-+		[LMU_IMAX_16mA] = 233,
-+		[LMU_IMAX_17mA] = 235,
-+		[LMU_IMAX_18mA] = 237,
-+		[LMU_IMAX_19mA] = 239,
-+		[LMU_IMAX_20mA] = 241,
-+		[LMU_IMAX_21mA] = 242,
-+		[LMU_IMAX_22mA] = 244,
-+		[LMU_IMAX_23mA] = 246,
-+		[LMU_IMAX_24mA] = 247,
-+		[LMU_IMAX_25mA] = 249,
-+		[LMU_IMAX_26mA] = 250,
-+		[LMU_IMAX_27mA] = 251,
-+		[LMU_IMAX_28mA] = 253,
-+		[LMU_IMAX_29mA] = 254,
-+		[LMU_IMAX_30mA] = 255,
-+	};
-+
-+	return max_brightness_table[max_current];
-+}
-+
-+static void lm3633_led_of_get_max_brightness(struct device_node *np,
-+					     struct ti_lmu_led *lmu_led)
-+{
-+	struct regmap *regmap = lmu_led->chip->lmu->regmap;
-+	u32 imax = 0;
-+	u8 mode = 0;
-+
-+	of_property_read_u32(np, "led-max-microamp", &imax);
-+
-+	if (imax <= LM3633_MIN_CURRENT)
-+		imax = LM3633_MIN_CURRENT;
-+	else
-+		imax = min_t(unsigned int, imax, LM3633_MAX_CURRENT);
-+
-+	/*
-+	 * Max brightness is determined by mapping mode - exponential or
-+	 * linear.
-+	 */
-+	regmap_read(regmap, LM3633_REG_LED_MAPPING_MODE, (unsigned int *)&mode);
-+
-+	if (mode & LM3633_LED_EXPONENTIAL)
-+		lmu_led->max_brightness =
-+				lm3633_led_scale_max_brightness(lmu_led, imax);
-+	else
-+		lmu_led->max_brightness =
-+				(imax * LM3633_MAX_PWM) / LM3633_MAX_CURRENT;
-+}
-+
-+static int lm3633_led_of_create(struct ti_lmu_led_chip *chip,
-+				struct device_node *np)
-+{
-+	struct device_node *child;
-+	struct device *dev = chip->dev;
-+	struct ti_lmu_led *lmu_led, *each;
-+	int ret, num_leds;
-+	int i = 0;
-+
-+	if (!np)
-+		return -ENODEV;
-+
-+	num_leds = of_get_child_count(np);
-+	if (num_leds == 0 || num_leds > LM3633_MAX_LEDS) {
-+		dev_err(dev, "Invalid number of LEDs: %d\n", num_leds);
-+		return -EINVAL;
-+	}
-+
-+	lmu_led = devm_kzalloc(dev, sizeof(*lmu_led) * num_leds, GFP_KERNEL);
-+	if (!lmu_led)
-+		return -ENOMEM;
-+
-+	for_each_child_of_node(np, child) {
-+		each = lmu_led + i;
-+		each->bank_id = 0;
-+		each->chip = chip;
-+
-+		lm3633_led_of_set_label(child, each);
-+
-+		ret = lm3633_led_of_create_channel(child, each);
-+		if (ret) {
-+			of_node_put(np);
-+			return ret;
-+		}
-+
-+		lm3633_led_of_get_max_brightness(child, each);
-+		i++;
-+	}
-+
-+	chip->lmu_led = lmu_led;
-+	chip->num_leds = num_leds;
-+
-+	return 0;
-+}
-+
-+static int lm3633_led_fault_monitor_notifier(struct notifier_block *nb,
-+					     unsigned long action, void *unused)
-+{
-+	struct ti_lmu_led_chip *chip = container_of(nb, struct ti_lmu_led_chip,
-+						    nb);
-+	struct ti_lmu_led *each;
-+	int i, ret;
-+
-+	/*
-+	 * LMU fault monitor driver resets the device, so LED should be
-+	 * re-configured after fault detection procedure is done.
-+	 */
-+	if (action == LMU_EVENT_MONITOR_DONE) {
-+		for (i = 0; i < chip->num_leds; i++) {
-+			each = chip->lmu_led + i;
-+			ret = lm3633_led_config_bank(each);
-+			if (ret) {
-+				dev_err(chip->dev,
-+					"Output bank register err: %d\n", ret);
-+				return NOTIFY_STOP;
-+			}
-+
-+			ret = lm3633_led_set_max_current(each);
-+			if (ret) {
-+				dev_err(chip->dev, "Set max current err: %d\n",
-+					ret);
-+				return NOTIFY_STOP;
-+			}
-+
-+			led_set_brightness(&each->cdev, each->cdev.brightness);
-+		}
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int lm3633_led_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct ti_lmu *lmu = dev_get_drvdata(dev->parent);
-+	struct ti_lmu_led_chip *chip;
-+	struct ti_lmu_led *each;
-+	int i, ret;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->dev = dev;
-+	chip->lmu = lmu;
-+
-+	ret = lm3633_led_of_create(chip, dev->of_node);
-+	if (ret)
-+		return ret;
-+
-+	mutex_init(&chip->lock);
-+
-+	for (i = 0; i < chip->num_leds; i++) {
-+		each = chip->lmu_led + i;
-+
-+		ret = lm3633_led_init(each, i);
-+		if (ret) {
-+			dev_err(dev, "LED initialization err: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	/*
-+	 * Notifier callback is required because LED device needs
-+	 * reconfiguration after open/short circuit fault monitoring
-+	 * by ti-lmu-fault-monitor driver.
-+	 */
-+	chip->nb.notifier_call = lm3633_led_fault_monitor_notifier;
-+	ret = blocking_notifier_chain_register(&chip->lmu->notifier, &chip->nb);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, chip);
-+
-+	return 0;
-+}
-+
-+static int lm3633_led_remove(struct platform_device *pdev)
-+{
-+	struct ti_lmu_led_chip *chip = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < chip->num_leds; i++)
-+		lm3633_led_deactivate_pattern(chip->lmu_led + i);
-+
-+	blocking_notifier_chain_unregister(&chip->lmu->notifier, &chip->nb);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver lm3633_led_driver = {
-+	.probe = lm3633_led_probe,
-+	.remove = lm3633_led_remove,
-+	.driver = {
-+		.name = "lm3633-leds",
++static const struct regulator_desc lm363x_regulator_desc[] = {
++	/* LM3631 */
++	{
++		.name           = "vboost",
++		.of_match	= "vboost",
++		.id             = LM3631_BOOST,
++		.ops            = &lm363x_boost_voltage_table_ops,
++		.n_voltages     = LM3631_BOOST_VSEL_MAX + 1,
++		.min_uV         = LM3631_VBOOST_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3631_REG_VOUT_BOOST,
++		.vsel_mask      = LM3631_VOUT_MASK,
++	},
++	{
++		.name           = "ldo_cont",
++		.of_match	= "vcont",
++		.id             = LM3631_LDO_CONT,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3631_CONT_VSEL_MAX + 1,
++		.min_uV         = LM3631_VCONT_MIN,
++		.uV_step        = LM363X_STEP_500mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3631_REG_VOUT_CONT,
++		.vsel_mask      = LM3631_VOUT_CONT_MASK,
++		.enable_reg     = LM3631_REG_LDO_CTRL2,
++		.enable_mask    = LM3631_EN_CONT_MASK,
++	},
++	{
++		.name           = "ldo_oref",
++		.of_match	= "voref",
++		.id             = LM3631_LDO_OREF,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3631_LDO_VSEL_MAX + 1,
++		.min_uV         = LM3631_VLDO_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3631_REG_VOUT_OREF,
++		.vsel_mask      = LM3631_VOUT_MASK,
++		.enable_reg     = LM3631_REG_LDO_CTRL1,
++		.enable_mask    = LM3631_EN_OREF_MASK,
++	},
++	{
++		.name           = "ldo_vpos",
++		.of_match	= "vpos",
++		.id             = LM3631_LDO_POS,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3631_LDO_VSEL_MAX + 1,
++		.min_uV         = LM3631_VLDO_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3631_REG_VOUT_POS,
++		.vsel_mask      = LM3631_VOUT_MASK,
++		.enable_reg     = LM3631_REG_LDO_CTRL1,
++		.enable_mask    = LM3631_EN_VPOS_MASK,
++	},
++	{
++		.name           = "ldo_vneg",
++		.of_match	= "vneg",
++		.id             = LM3631_LDO_NEG,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3631_LDO_VSEL_MAX + 1,
++		.min_uV         = LM3631_VLDO_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3631_REG_VOUT_NEG,
++		.vsel_mask      = LM3631_VOUT_MASK,
++		.enable_reg     = LM3631_REG_LDO_CTRL1,
++		.enable_mask    = LM3631_EN_VNEG_MASK,
++	},
++	/* LM3632 */
++	{
++		.name           = "vboost",
++		.of_match	= "vboost",
++		.id             = LM3632_BOOST,
++		.ops            = &lm363x_boost_voltage_table_ops,
++		.n_voltages     = LM3632_BOOST_VSEL_MAX + 1,
++		.min_uV         = LM3632_VBOOST_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3632_REG_VOUT_BOOST,
++		.vsel_mask      = LM3632_VOUT_MASK,
++	},
++	{
++		.name           = "ldo_vpos",
++		.of_match	= "vpos",
++		.id             = LM3632_LDO_POS,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3632_LDO_VSEL_MAX + 1,
++		.min_uV         = LM3632_VLDO_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3632_REG_VOUT_POS,
++		.vsel_mask      = LM3632_VOUT_MASK,
++		.enable_reg     = LM3632_REG_BIAS_CONFIG,
++		.enable_mask    = LM3632_EN_VPOS_MASK,
++	},
++	{
++		.name           = "ldo_vneg",
++		.of_match	= "vneg",
++		.id             = LM3632_LDO_NEG,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM3632_LDO_VSEL_MAX + 1,
++		.min_uV         = LM3632_VLDO_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM3632_REG_VOUT_NEG,
++		.vsel_mask      = LM3632_VOUT_MASK,
++		.enable_reg     = LM3632_REG_BIAS_CONFIG,
++		.enable_mask    = LM3632_EN_VNEG_MASK,
 +	},
 +};
 +
-+module_platform_driver(lm3633_led_driver);
++static int lm363x_regulator_of_get_enable_gpio(struct device_node *np, int id)
++{
++	/*
++	 * Check LCM_EN1/2_GPIO is configured.
++	 * Those pins are used for enabling VPOS/VNEG LDOs.
++	 */
++	switch (id) {
++	case LM3632_LDO_POS:
++		return of_get_named_gpio(np, "ti,lcm-en1-gpio", 0);
++	case LM3632_LDO_NEG:
++		return of_get_named_gpio(np, "ti,lcm-en2-gpio", 0);
++	default:
++		return -EINVAL;
++	}
++}
 +
-+MODULE_DESCRIPTION("TI LM3633 LED Driver");
++static int lm363x_regulator_probe(struct platform_device *pdev)
++{
++	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
++	struct lm363x_regulator *lm363x_regulator;
++	struct regmap *regmap = lmu->regmap;
++	struct regulator_config cfg = { };
++	struct regulator_dev *rdev;
++	struct device *dev = &pdev->dev;
++	int id = pdev->id;
++	int ret, ena_gpio;
++
++	lm363x_regulator = devm_kzalloc(dev, sizeof(*lm363x_regulator),
++					GFP_KERNEL);
++	if (!lm363x_regulator)
++		return -ENOMEM;
++
++	lm363x_regulator->regmap = regmap;
++
++	cfg.dev = dev;
++	cfg.driver_data = lm363x_regulator;
++	cfg.regmap = regmap;
++
++	/*
++	 * LM3632 LDOs can be controlled by external pin.
++	 * Register update is required if the pin is used.
++	 */
++	ena_gpio = lm363x_regulator_of_get_enable_gpio(dev->of_node, id);
++	if (gpio_is_valid(ena_gpio)) {
++		cfg.ena_gpio = ena_gpio;
++		cfg.ena_gpio_flags = GPIOF_OUT_INIT_LOW;
++
++		ret = regmap_update_bits(regmap, LM3632_REG_BIAS_CONFIG,
++					 LM3632_EXT_EN_MASK,
++					 LM3632_EXT_EN_MASK);
++		if (ret) {
++			dev_err(dev, "External pin err: %d\n", ret);
++			return ret;
++		}
++	}
++
++	rdev = devm_regulator_register(dev, &lm363x_regulator_desc[id], &cfg);
++	if (IS_ERR(rdev)) {
++		ret = PTR_ERR(rdev);
++		dev_err(dev, "[%d] regulator register err: %d\n", id, ret);
++		return ret;
++	}
++
++	lm363x_regulator->regulator = rdev;
++	platform_set_drvdata(pdev, lm363x_regulator);
++
++	return 0;
++}
++
++static struct platform_driver lm363x_regulator_driver = {
++	.probe = lm363x_regulator_probe,
++	.driver = {
++		.name = "lm363x-regulator",
++	},
++};
++
++module_platform_driver(lm363x_regulator_driver);
++
++MODULE_DESCRIPTION("TI LM363X Regulator Driver");
 +MODULE_AUTHOR("Milo Kim");
 +MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:lm3633-leds");
++MODULE_ALIAS("platform:lm363x-regulator");
 -- 
 1.9.1
