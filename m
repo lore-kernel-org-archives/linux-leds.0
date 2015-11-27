@@ -1,86 +1,61 @@
-From: Rob Herring <robh@kernel.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH v2 4/9] Documentation: dt-bindings: regulator: add LM363x
  regulator binding information
-Date: Fri, 27 Nov 2015 14:57:42 -0600
-Message-ID: <20151127205742.GA20729@rob-hp-laptop>
+Date: Fri, 27 Nov 2015 22:07:33 +0000
+Message-ID: <20151127220733.GT1929@sirena.org.uk>
 References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
  <1448521025-2796-5-git-send-email-milo.kim@ti.com>
+ <20151127123750.GQ1929@sirena.org.uk>
+ <20151127204450.GA12162@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CqxttG7JecUZZO5Y"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55792 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754450AbbK0U5r (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Fri, 27 Nov 2015 15:57:47 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51819 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755306AbbK0WHp (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 27 Nov 2015 17:07:45 -0500
 Content-Disposition: inline
-In-Reply-To: <1448521025-2796-5-git-send-email-milo.kim@ti.com>
+In-Reply-To: <20151127204450.GA12162@rob-hp-laptop>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: lee.jones@linaro.org, j.anaszewski@samsung.com, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Milo Kim <milo.kim@ti.com>, lee.jones@linaro.org, j.anaszewski@samsung.com, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 26, 2015 at 03:57:00PM +0900, Milo Kim wrote:
-> This binding describes LM3631 and LM3632 regulator properties.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: Lee Jones <lee.jones@linaro.org> 
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-leds@vger.kernel.org 
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> ---
->  .../bindings/regulator/lm363x-regulator.txt        | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/lm363x-regulator.txt b/Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
-> new file mode 100644
-> index 0000000..8f14df9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
-> @@ -0,0 +1,34 @@
-> +TI LMU LM363x regulator device tree bindings
-> +
-> +LM363x regulator driver supports LM3631 and LM3632.
-> +LM3631 has five regulators and LM3632 supports three regulators.
-> +
-> +Required property:
-> +  - compatible: "ti,lm363x-regulator"
-> +
-> +Optional properties:
-> +  LM3632 has external enable pins for two LDOs.
-> +  - ti,lcm-en1-gpio: A GPIO specifier for Vpos control pin.
-> +  - ti,lcm-en2-gpio: A GPIO specifier for Vneg control pin.
 
-Use "-gpios" please.
+--CqxttG7JecUZZO5Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +Child nodes:
-> +  LM3631
-> +  - vboost
-> +  - vcont
-> +  - voref
-> +  - vpos
-> +  - vneg
-> +
-> +  LM3632
-> +  - vboost
-> +  - vpos
-> +  - vneg
-> +
-> +  Optional properties of a child node:
-> +  Each sub-node should contain the constraints and initialization.
-> +  Please refer to [1].
+On Fri, Nov 27, 2015 at 02:44:50PM -0600, Rob Herring wrote:
+> On Fri, Nov 27, 2015 at 12:37:50PM +0000, Mark Brown wrote:
+> > On Thu, Nov 26, 2015 at 03:57:00PM +0900, Milo Kim wrote:
 
-What about the regulator names?
+> > > This binding describes LM3631 and LM3632 regulator properties.
 
-> +
-> +Examples: Please refer to ti-lmu dt-bindings [2].
-> +
-> +[1] ../regulator/regulator.txt
-> +[2] ../mfd/ti-lmu.txt
-> -- 
-> 1.9.1
-> 
+> > Please use subject lines matching the style for the subsystem.
+
+> Which for bindings, my preference is "dt-bindings: ..." I assume you=20
+> meant to follow regulator style though.=20
+
+Given that maintainers are generally expected to review and apply
+bindings themselves it seems sensible (and it's what we mostly seem to
+do).
+
+--CqxttG7JecUZZO5Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWWNQkAAoJECTWi3JdVIfQHc0H/1bUoGT6Ap3pLwsgit9n28Dn
+a5RxRzNziylbHwWBNH0UPyBfHiBNLcgwJ7koTHcl34h/oLMJUJ4tRkAl/5vclcLn
+VG5R3EvnSOzShtlSJimSi3vsEKaWIrdzNOYTy4wbR0irCzHl1c74Gg9ew5dGRuF9
+N+1g/0uFOvkPJQ65Pw4dSSR3JgCAxlPocWLtpsoQIuvKMcar8tfUq2N/VfZdDTua
+6S1G2feA5XB9/bG8z5UsiQgS3ut+cOrBdBzDtkv7Es81CiNw68JQus1eMa048MhA
+gW10A0ey9vMm6H/I5bZdj+Xl+S4i24Jjoml4jSx4s4WOGD9Q2G9XtTq+2SMcl+A=
+=/2YZ
+-----END PGP SIGNATURE-----
+
+--CqxttG7JecUZZO5Y--
