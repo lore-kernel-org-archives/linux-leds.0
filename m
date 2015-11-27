@@ -1,92 +1,155 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 2/2] leds: rt5033: Add RT5033 Flash led device driver
-Date: Thu, 26 Nov 2015 10:43:25 +0100
-Message-ID: <5656D43D.106@samsung.com>
-References: <1448446948-13729-1-git-send-email-ingi2.kim@samsung.com>
- <1448446948-13729-3-git-send-email-ingi2.kim@samsung.com>
- <5655D001.8090803@samsung.com> <5656BC88.2070603@samsung.com>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH] leds: ns2: Remove work queue
+Date: Fri, 27 Nov 2015 12:10:34 +0100
+Message-ID: <20151127111034.GK4665@kw.sim.vm.gnt>
+References: <1448016268-23024-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5KObZtj3Gjpm0OUY"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41867 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753036AbbKZJn3 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 Nov 2015 04:43:29 -0500
-In-reply-to: <5656BC88.2070603@samsung.com>
+Received: from vm1.sequanux.org ([188.165.36.56]:46422 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753890AbbK0LCe (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 27 Nov 2015 06:02:34 -0500
+Content-Disposition: inline
+In-Reply-To: <1448016268-23024-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, andi.shyti@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 
-Hi Ingi,
 
-On 11/26/2015 09:02 AM, Ingi Kim wrote:
-[...]
->>> +torch_unlock:
->>> +    mutex_unlock(&led->lock);
->>> +    return ret;
->>> +}
->>> +
->>> +static int rt5033_led_flash_brightness_set(struct led_classdev_flash *fled_cdev,
->>> +                       u32 brightness)
->>> +{
->>> +    struct rt5033_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
->>> +    struct rt5033_led *led = sub_led_to_led(sub_led);
->>> +
->>> +    mutex_lock(&led->lock);
->>> +    sub_led->flash_brightness = brightness;
->>> +    mutex_unlock(&led->lock);
->>
->> Mutex protection is redundant in this case. You would need it if device
->> state was also changed here.
->
-> Okay, I'll remove it.
->
->>
->> BTW why flash brightness can't be written to the device here?
->>
->
-> Flash brightness is only affected when FLED flashed (strobing).
-> So, I think it is better to be written in rt5033_led_flash_strobe_set function.
+--5KObZtj3Gjpm0OUY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-strobe_set op should strobe the flash ASAP, and delegating brightness
-setting there extends a delay between calling strobe_set op
-and actual flash strobe. If you set the brightness here, then you
-wouldn't have to do that in the strobe_set op, of course unless the
-the brightness is altered through the API of the other LED, in two
-separate LEDs case.
+Hi Jacek,
 
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int rt5033_led_flash_timeout_set(struct led_classdev_flash *fled_cdev,
->>> +                    u32 timeout)
->>> +{
->>> +    struct rt5033_sub_led *sub_led = flcdev_to_sub_led(fled_cdev);
->>> +    struct rt5033_led *led = sub_led_to_led(sub_led);
->>> +
->>> +    mutex_lock(&led->lock);
->>> +    sub_led->flash_timeout = timeout;
->>> +    mutex_unlock(&led->lock);
->>
->> Ditto.
->>
+On Fri, Nov 20, 2015 at 11:44:28AM +0100, Jacek Anaszewski wrote:
+> Now the core implements the work queue, remove it from the driver,
+> and switch to using brightness_set_blocking op for 'cansleep' case.
+>=20
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Simon Guinot <simon.guinot@sequanux.org>
+> ---
+>  drivers/leds/leds-ns2.c |   31 +++++++++++++------------------
+>  1 file changed, 13 insertions(+), 18 deletions(-)
 
-Timeout should be also written here.
+Tested-by: Simon Guinot <simon.guinot@sequanux.org>
 
-If you will add regmap_write in both ops, then mutex protection will
-have to be preserved, to assure consistency between registers state
-and sub_led->flash_brightness and sub_led->flash_timeout state.
+Thanks,
 
->
->>> +#define RT5033_FLED_CTRL4_VTRREG_MAX    0x60
->>
->> Rename DEF to MASK.
+Simon
 
-Hmm, here it should be: Rename MAX to MASK.
+>=20
+> diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
+> index a95a612..506b75b 100644
+> --- a/drivers/leds/leds-ns2.c
+> +++ b/drivers/leds/leds-ns2.c
+> @@ -45,24 +45,12 @@ struct ns2_led_data {
+>  	unsigned		cmd;
+>  	unsigned		slow;
+>  	bool			can_sleep;
+> -	int			mode_index;
+>  	unsigned char		sata; /* True when SATA mode active. */
+>  	rwlock_t		rw_lock; /* Lock GPIOs. */
+> -	struct work_struct	work;
+>  	int			num_modes;
+>  	struct ns2_led_modval	*modval;
+>  };
+> =20
+> -static void ns2_led_work(struct work_struct *work)
+> -{
+> -	struct ns2_led_data *led_dat =3D
+> -		container_of(work, struct ns2_led_data, work);
+> -	int i =3D led_dat->mode_index;
+> -
+> -	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
+> -	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
+> -}
+> -
+>  static int ns2_led_get_mode(struct ns2_led_data *led_dat,
+>  			    enum ns2_led_modes *mode)
+>  {
+> @@ -112,8 +100,8 @@ static void ns2_led_set_mode(struct ns2_led_data *led=
+_dat,
+>  		goto exit_unlock;
+>  	}
+> =20
+> -	led_dat->mode_index =3D i;
+> -	schedule_work(&led_dat->work);
+> +	gpio_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
+> +	gpio_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
+> =20
+>  exit_unlock:
+>  	write_unlock_irqrestore(&led_dat->rw_lock, flags);
+> @@ -136,6 +124,13 @@ static void ns2_led_set(struct led_classdev *led_cde=
+v,
+>  	ns2_led_set_mode(led_dat, mode);
+>  }
+> =20
+> +static int ns2_led_set_blocking(struct led_classdev *led_cdev,
+> +			enum led_brightness value)
+> +{
+> +	ns2_led_set(led_cdev, value);
+> +	return 0;
+> +}
+> +
+>  static ssize_t ns2_led_sata_store(struct device *dev,
+>  				  struct device_attribute *attr,
+>  				  const char *buff, size_t count)
+> @@ -219,13 +214,16 @@ create_ns2_led(struct platform_device *pdev, struct=
+ ns2_led_data *led_dat,
+>  	led_dat->cdev.name =3D template->name;
+>  	led_dat->cdev.default_trigger =3D template->default_trigger;
+>  	led_dat->cdev.blink_set =3D NULL;
+> -	led_dat->cdev.brightness_set =3D ns2_led_set;
+>  	led_dat->cdev.flags |=3D LED_CORE_SUSPENDRESUME;
+>  	led_dat->cdev.groups =3D ns2_led_groups;
+>  	led_dat->cmd =3D template->cmd;
+>  	led_dat->slow =3D template->slow;
+>  	led_dat->can_sleep =3D gpio_cansleep(led_dat->cmd) |
+>  				gpio_cansleep(led_dat->slow);
+> +	if (led_dat->can_sleep)
+> +		led_dat->cdev.brightness_set_blocking =3D ns2_led_set_blocking;
+> +	else
+> +		led_dat->cdev.brightness_set =3D ns2_led_set;
+>  	led_dat->modval =3D template->modval;
+>  	led_dat->num_modes =3D template->num_modes;
+> =20
+> @@ -238,8 +236,6 @@ create_ns2_led(struct platform_device *pdev, struct n=
+s2_led_data *led_dat,
+>  	led_dat->cdev.brightness =3D
+>  		(mode =3D=3D NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
+> =20
+> -	INIT_WORK(&led_dat->work, ns2_led_work);
+> -
+>  	ret =3D led_classdev_register(&pdev->dev, &led_dat->cdev);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -250,7 +246,6 @@ create_ns2_led(struct platform_device *pdev, struct n=
+s2_led_data *led_dat,
+>  static void delete_ns2_led(struct ns2_led_data *led_dat)
+>  {
+>  	led_classdev_unregister(&led_dat->cdev);
+> -	cancel_work_sync(&led_dat->work);
+>  }
+> =20
+>  #ifdef CONFIG_OF_GPIO
+> --=20
+> 1.7.9.5
 
--- 
-Best Regards,
-Jacek Anaszewski
+--5KObZtj3Gjpm0OUY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlZYOioACgkQgtp0PDeOcDrnvgCfSnP9lQwi/1hrSawsa19fwZCM
+3f8AoKADird63zYrAq3LPizGOd53sKID
+=zRVJ
+-----END PGP SIGNATURE-----
+
+--5KObZtj3Gjpm0OUY--
