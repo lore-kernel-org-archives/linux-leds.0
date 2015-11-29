@@ -1,65 +1,53 @@
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
-	<noltari@gmail.com>
-Subject: [PATCH 7/7] leds-bcm6328: simplify duplicated unlock in bcm6328_blink_set
-Date: Sun, 29 Nov 2015 17:35:31 +0100
-Message-ID: <1448814931-1369-7-git-send-email-noltari@gmail.com>
+From: Simon Arlott <simon@fire.lp0.eu>
+Subject: Re: [PATCH 5/7] leds-bcm6328: switch to __raw_readl() and
+ __raw_writel()
+Date: Sun, 29 Nov 2015 20:25:30 +0000
+Message-ID: <565B5F3A.1030008@simon.arlott.org.uk>
 References: <1448814931-1369-1-git-send-email-noltari@gmail.com>
+ <1448814931-1369-5-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:32897 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752000AbbK2QfQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 29 Nov 2015 11:35:16 -0500
-Received: by wmec201 with SMTP id c201so124727750wme.0
-        for <linux-leds@vger.kernel.org>; Sun, 29 Nov 2015 08:35:15 -0800 (PST)
-In-Reply-To: <1448814931-1369-1-git-send-email-noltari@gmail.com>
+Received: from proxima.lp0.eu ([81.2.80.65]:55154 "EHLO proxima.lp0.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752198AbbK2UZn (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 29 Nov 2015 15:25:43 -0500
+In-Reply-To: <1448814931-1369-5-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, simon@fire.lp0.eu
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com
 
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
----
- drivers/leds/leds-bcm6328.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 29/11/15 16:35, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> ---
+>  drivers/leds/leds-bcm6328.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.=
+c
+> index cd54264..876f0ce 100644
+> --- a/drivers/leds/leds-bcm6328.c
+> +++ b/drivers/leds/leds-bcm6328.c
+> @@ -76,12 +76,12 @@ struct bcm6328_led {
+> =20
+>  static void bcm6328_led_write(void __iomem *reg, unsigned long data)
+>  {
+> -	iowrite32be(data, reg);
+> +	__raw_writel(data, reg);
+>  }
+> =20
+>  static unsigned long bcm6328_led_read(void __iomem *reg)
+>  {
+> -	return ioread32be(reg);
+> +	return __raw_readl(reg);
+>  }
+> =20
+>  /**
+>=20
 
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index 876f0ce..a361829 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -138,6 +138,7 @@ static int bcm6328_blink_set(struct led_classdev *l=
-ed_cdev,
- 	struct bcm6328_led *led =3D
- 		container_of(led_cdev, struct bcm6328_led, cdev);
- 	unsigned long delay, flags;
-+	int rc;
-=20
- 	if (!*delay_on)
- 		*delay_on =3D BCM6328_LED_DEF_DELAY;
-@@ -175,16 +176,15 @@ static int bcm6328_blink_set(struct led_classdev =
-*led_cdev,
- 		bcm6328_led_write(led->mem + BCM6328_REG_INIT, val);
-=20
- 		bcm6328_led_mode(led, BCM6328_LED_MODE_BLINK);
--
--		spin_unlock_irqrestore(led->lock, flags);
-+		rc =3D 0;
- 	} else {
--		spin_unlock_irqrestore(led->lock, flags);
- 		dev_dbg(led_cdev->dev,
- 			"fallback to soft blinking (delay already set)\n");
--		return -EINVAL;
-+		rc =3D -EINVAL;
- 	}
-+	spin_unlock_irqrestore(led->lock, flags);
-=20
--	return 0;
-+	return rc;
- }
-=20
- static int bcm6328_hwled(struct device *dev, struct device_node *nc, u=
-32 reg,
+If the wrapper functions don't add anything, would it not be better to
+just remove them completely?
+
 --=20
-1.9.1
+Simon Arlott
