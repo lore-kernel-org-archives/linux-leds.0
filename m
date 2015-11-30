@@ -1,140 +1,155 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 2/2] leds: rt5033: Add RT5033 Flash led device driver
-Date: Mon, 30 Nov 2015 11:59:38 +0100
-Message-ID: <565C2C1A.3080100@samsung.com>
-References: <1448446948-13729-1-git-send-email-ingi2.kim@samsung.com>
- <1448446948-13729-3-git-send-email-ingi2.kim@samsung.com>
- <5655D001.8090803@samsung.com> <5656BC88.2070603@samsung.com>
- <5656D43D.106@samsung.com> <565BB510.2040903@samsung.com>
+Subject: Re: [PATCH v2 3/9] Documentation: dt-bindings: leds: add LM3633 LED
+ binding information
+Date: Mon, 30 Nov 2015 13:26:51 +0100
+Message-ID: <565C408B.9070703@samsung.com>
+References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
+ <1448521025-2796-4-git-send-email-milo.kim@ti.com>
+ <56583C32.5030307@samsung.com> <565C0677.4030606@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41808 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750818AbbK3K7n (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Nov 2015 05:59:43 -0500
-In-reply-to: <565BB510.2040903@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:45101 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752822AbbK3M0z (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Nov 2015 07:26:55 -0500
+In-reply-to: <565C0677.4030606@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, andi.shyti@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: "Kim, Milo" <milo.kim@ti.com>
+Cc: robh+dt@kernel.org, lee.jones@linaro.org, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Ingi,
+Hi Milo,
 
-On 11/30/2015 03:31 AM, Ingi Kim wrote:
+On 11/30/2015 09:19 AM, Kim, Milo wrote:
 > Hi Jacek,
 >
-> On 2015=EB=85=84 11=EC=9B=94 26=EC=9D=BC 18:43, Jacek Anaszewski wrot=
-e:
->> Hi Ingi,
+> On 11/27/2015 8:19 PM, Jacek Anaszewski wrote:
+>> Hi Milo,
 >>
->> On 11/26/2015 09:02 AM, Ingi Kim wrote:
->> [...]
->>>>> +torch_unlock:
->>>>> +    mutex_unlock(&led->lock);
->>>>> +    return ret;
->>>>> +}
->>>>> +
->>>>> +static int rt5033_led_flash_brightness_set(struct led_classdev_f=
-lash *fled_cdev,
->>>>> +                       u32 brightness)
->>>>> +{
->>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_cd=
-ev);
->>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
->>>>> +
->>>>> +    mutex_lock(&led->lock);
->>>>> +    sub_led->flash_brightness =3D brightness;
->>>>> +    mutex_unlock(&led->lock);
->>>>
->>>> Mutex protection is redundant in this case. You would need it if d=
-evice
->>>> state was also changed here.
+>> On 11/26/2015 07:56 AM, Milo Kim wrote:
+>>> LM3633 LED device is one of TI LMU device list.
 >>>
->>> Okay, I'll remove it.
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>> Cc: Mark Brown <broonie@kernel.org>
+>>> Cc: linux-leds@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Signed-off-by: Milo Kim <milo.kim@ti.com>
+>>> ---
+>>>    .../devicetree/bindings/leds/leds-lm3633.txt       | 24
+>>> ++++++++++++++++++++++
+>>>    1 file changed, 24 insertions(+)
+>>>    create mode 100644
+>>> Documentation/devicetree/bindings/leds/leds-lm3633.txt
 >>>
->>>>
->>>> BTW why flash brightness can't be written to the device here?
->>>>
->>>
->>> Flash brightness is only affected when FLED flashed (strobing).
->>> So, I think it is better to be written in rt5033_led_flash_strobe_s=
-et function.
+>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3633.txt
+>>> b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
+>>> new file mode 100644
+>>> index 0000000..a553894
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
+>>> @@ -0,0 +1,24 @@
+>>> +TI LMU LM3633 LED device tree bindings
+>>> +
+>>> +Required properties:
+>>> +  - compatible: "ti,lm3633-leds"
+>>> +
+>>> +Child nodes:
+>>> +  Each node matches with LED control bank.
+>>> +  Please refer to the datasheet [1].
 >>
->> strobe_set op should strobe the flash ASAP, and delegating brightnes=
-s
->> setting there extends a delay between calling strobe_set op
->> and actual flash strobe. If you set the brightness here, then you
->> wouldn't have to do that in the strobe_set op, of course unless the
->> the brightness is altered through the API of the other LED, in two
->> separate LEDs case.
+>> leds/common.txt documentation says that child nodes represent discrete
+>> LED elements.
 >>
->
-> The brightness may be able to change its brightness in two separate L=
-EDs case as you see.
-> So, I think it would be better to write brightness setting in strobe_=
-op.
+>>> +  Required properties of a child node:
+>>> +  - led-sources: List of enabled channels from 0 to 5.
+>>> +                 Please refer to LED binding [2].
+>>
+>> led-sources property should contain always one element -
 
-Could you motivate your statement, please? Why would it be better?
+Here I should have added that this would have been the correct approach
+for this device. For led flash controllers where we have one LED
+connected to two outputs there are two element in the led-sources array.
 
-> In consideration of delay, of course, the brightness is set just when=
- it would be changed.
+>> a control bank identifier that the iout is to be associated with.
+>> For example, if there are three LEDs and they should be controlled
+>> with control bank A, then the bindings should look as follows
+>> (assuming that control bank identifiers start from 0 [A:0, B:1,
+>> C:2, etc. - it has to be also explicitly stated in the documentation]:
+>
+> My understanding is 'led-sources' means output channel rather than
+> control bank. Output channel is visible and intuitive - just output LED.
+> On the other hand, control banks works inside the silicon, LM3633.
+> I'm not sure other LED devices have control bank or not, but output
+> channel is common concept.
 
-I think that joint iout arrangement will be prevailing - this is the
-case for your board, isn't it? With the modification I am proposing
-the gain is clear.
+There is no "channel" notion present in the leds/common.txt
+documentation.
 
->>>>> +
->>>>> +    return 0;
->>>>> +}
->>>>> +
->>>>> +static int rt5033_led_flash_timeout_set(struct led_classdev_flas=
-h *fled_cdev,
->>>>> +                    u32 timeout)
->>>>> +{
->>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_cd=
-ev);
->>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
->>>>> +
->>>>> +    mutex_lock(&led->lock);
->>>>> +    sub_led->flash_timeout =3D timeout;
->>>>> +    mutex_unlock(&led->lock);
->>>>
->>>> Ditto.
->>>>
->>
->> Timeout should be also written here.
->>
->
-> The timeout may be able to change its flash timeout in two separate L=
-EDs case as you see.
-> So, I think it would be better to write timeout setting in strobe_op.
-> In consideration of delay, of course, the timeout is set just when it=
- would be changed.
->
->> If you will add regmap_write in both ops, then mutex protection will
->> have to be preserved, to assure consistency between registers state
->> and sub_led->flash_brightness and sub_led->flash_timeout state.
->>
->
-> Thanks, but mutex protection is useless in this case.
-> so I try to remove it.
->
->>>
->>>>> +#define RT5033_FLED_CTRL4_VTRREG_MAX    0x60
->>>>
->>>> Rename DEF to MASK.
->>
->> Hmm, here it should be: Rename MAX to MASK.
->>
->
-> Oh
-> Okay, Thanks :)
->
+led-sources property is documented as "list of device current outputs
+the LED is connected to." In case of your device the LVLEDn pins can be
+configured so that they are routed to the common current output.
 
+led-sources property has been initially designed for representing
+one-LED-to many-iouts relation, but it can be equally well exploited for
+representing many-LEDs-to-one-iout relation, if used in conjunction
+with DT child nodes.
 
---=20
+>>
+>> lvled1 {
+>>     led-sources = <2>;
+>>     led-max-microamp = <1000>;
+>> }
+>>
+>> lvled2 {
+>>     led-sources = <2>;
+>>     led-max-microamp = <29000>;
+>> }
+>>
+>> lvled3 {
+>>     led-sources = <2>;
+>>     led-max-microamp = <7000>;
+>> }
+>
+> For this reason, I don't understand this LED configuration - one output
+> channel with multiple LED devices. LED child node should be matched with
+> led class device.
+
+I can't find any claim saying that child node should represent
+LED class device. Instead, there is a statement saying that
+discrete LED components "are represented by child nodes of the parent
+LED device binding". What is more e.g. leds-bcm6328.txt bindings don't
+expose LED class device for the LEDs marked as hardware controlled.
+
+Device tree describes hardware, and above bindings properly reflect
+hardware arrangement - there are three LEDs and each of them
+is connected to the same current output. Please note that
+common/leds.txt documentation doesn't make any reservation saying
+that current output necessarily reflects a hardware pin.
+
+In case of LM3633 the real current outputs are banks and multiplexing
+that occurs between banks and LVLEDn pins can be conveniently expressed
+with the bindings I proposed above.
+
+> If three output channels are controlled by one control bank, then it
+> should be represented as below.
+>
+> lvled-group-A {
+>      led-sources = <0>, <1>, <2>;
+>      led-max-microamp = <some value>;
+> }
+>
+> Please let me know if I misunderstand.
+
+You silently assumed some definition of a "channel". led-sources means
+in fact current sources, and when device is configured so that three
+output pins are routed to the same current source, then in fact
+they share common current source.
+
+-- 
 Best Regards,
 Jacek Anaszewski
