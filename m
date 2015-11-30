@@ -1,55 +1,117 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 5/7] leds-bcm6328: switch to __raw_readl() and
- __raw_writel()
-Date: Sun, 29 Nov 2015 20:32:48 -0800
-Message-ID: <565BD170.2050600@gmail.com>
-References: <1448814931-1369-1-git-send-email-noltari@gmail.com>
- <1448814931-1369-5-git-send-email-noltari@gmail.com>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: Re: [PATCH v6 2/2] leds: rt5033: Add RT5033 Flash led device driver
+Date: Mon, 30 Nov 2015 11:31:44 +0900
+Message-ID: <565BB510.2040903@samsung.com>
+References: <1448446948-13729-1-git-send-email-ingi2.kim@samsung.com>
+ <1448446948-13729-3-git-send-email-ingi2.kim@samsung.com>
+ <5655D001.8090803@samsung.com> <5656BC88.2070603@samsung.com>
+ <5656D43D.106@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33285 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752268AbbK2Ucu (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 29 Nov 2015 15:32:50 -0500
-Received: by oixx65 with SMTP id x65so84565555oix.0
-        for <linux-leds@vger.kernel.org>; Sun, 29 Nov 2015 12:32:50 -0800 (PST)
-In-Reply-To: <1448814931-1369-5-git-send-email-noltari@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5656D43D.106@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, andi.shyti@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, cernekee@gmail.com, simon@fire.lp0.eu
 
-Le 29/11/2015 08:35, =C3=81lvaro Fern=C3=A1ndez Rojas a =C3=A9crit :
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+Hi Jacek,
 
-This driver has a slight chance of running on a BCM63138 SoC which is
-ARM-based and little endian, so I would keep the wrapper around here
-just so it is easy for somebody to add support for a different platform
-later on.
-
-> ---
->  drivers/leds/leds-bcm6328.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 2015=EB=85=84 11=EC=9B=94 26=EC=9D=BC 18:43, Jacek Anaszewski wrote:
+> Hi Ingi,
 >=20
-> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.=
-c
-> index cd54264..876f0ce 100644
-> --- a/drivers/leds/leds-bcm6328.c
-> +++ b/drivers/leds/leds-bcm6328.c
-> @@ -76,12 +76,12 @@ struct bcm6328_led {
-> =20
->  static void bcm6328_led_write(void __iomem *reg, unsigned long data)
->  {
-> -	iowrite32be(data, reg);
-> +	__raw_writel(data, reg);
->  }
-> =20
->  static unsigned long bcm6328_led_read(void __iomem *reg)
->  {
-> -	return ioread32be(reg);
-> +	return __raw_readl(reg);
->  }
-> =20
->  /**
+> On 11/26/2015 09:02 AM, Ingi Kim wrote:
+> [...]
+>>>> +torch_unlock:
+>>>> +    mutex_unlock(&led->lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +static int rt5033_led_flash_brightness_set(struct led_classdev_fl=
+ash *fled_cdev,
+>>>> +                       u32 brightness)
+>>>> +{
+>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_cde=
+v);
+>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
+>>>> +
+>>>> +    mutex_lock(&led->lock);
+>>>> +    sub_led->flash_brightness =3D brightness;
+>>>> +    mutex_unlock(&led->lock);
+>>>
+>>> Mutex protection is redundant in this case. You would need it if de=
+vice
+>>> state was also changed here.
+>>
+>> Okay, I'll remove it.
+>>
+>>>
+>>> BTW why flash brightness can't be written to the device here?
+>>>
+>>
+>> Flash brightness is only affected when FLED flashed (strobing).
+>> So, I think it is better to be written in rt5033_led_flash_strobe_se=
+t function.
 >=20
+> strobe_set op should strobe the flash ASAP, and delegating brightness
+> setting there extends a delay between calling strobe_set op
+> and actual flash strobe. If you set the brightness here, then you
+> wouldn't have to do that in the strobe_set op, of course unless the
+> the brightness is altered through the API of the other LED, in two
+> separate LEDs case.
+>=20
+
+The brightness may be able to change its brightness in two separate LED=
+s case as you see.
+So, I think it would be better to write brightness setting in strobe_op=
+=2E
+In consideration of delay, of course, the brightness is set just when i=
+t would be changed.
+
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int rt5033_led_flash_timeout_set(struct led_classdev_flash=
+ *fled_cdev,
+>>>> +                    u32 timeout)
+>>>> +{
+>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_cde=
+v);
+>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
+>>>> +
+>>>> +    mutex_lock(&led->lock);
+>>>> +    sub_led->flash_timeout =3D timeout;
+>>>> +    mutex_unlock(&led->lock);
+>>>
+>>> Ditto.
+>>>
+>=20
+> Timeout should be also written here.
+>=20
+
+The timeout may be able to change its flash timeout in two separate LED=
+s case as you see.
+So, I think it would be better to write timeout setting in strobe_op.
+In consideration of delay, of course, the timeout is set just when it w=
+ould be changed.
+
+> If you will add regmap_write in both ops, then mutex protection will
+> have to be preserved, to assure consistency between registers state
+> and sub_led->flash_brightness and sub_led->flash_timeout state.
+>=20
+
+Thanks, but mutex protection is useless in this case.
+so I try to remove it.
+
+>>
+>>>> +#define RT5033_FLED_CTRL4_VTRREG_MAX    0x60
+>>>
+>>> Rename DEF to MASK.
+>=20
+> Hmm, here it should be: Rename MAX to MASK.
+>=20
+
+Oh
+Okay, Thanks :)
