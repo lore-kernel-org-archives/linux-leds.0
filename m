@@ -1,105 +1,39 @@
-From: "Kim, Milo" <milo.kim@ti.com>
-Subject: Re: [PATCH v2 3/9] Documentation: dt-bindings: leds: add LM3633 LED
- binding information
-Date: Mon, 30 Nov 2015 17:19:03 +0900
-Message-ID: <565C0677.4030606@ti.com>
-References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
- <1448521025-2796-4-git-send-email-milo.kim@ti.com>
- <56583C32.5030307@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHi v6] leds: ipaq-micro: Implement brightness_set_blocking op
+Date: Mon, 30 Nov 2015 09:47:48 +0100
+Message-ID: <CACRpkdanfT2-rYTPjkPW1vz_gZCB_ZYx-TAPsR6fC67RE94wcg@mail.gmail.com>
+References: <1447951707-21294-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56583C32.5030307@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: robh+dt@kernel.org, lee.jones@linaro.org, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:36824 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753315AbbK3Irs (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 30 Nov 2015 03:47:48 -0500
+Received: by obdgf3 with SMTP id gf3so122772990obd.3
+        for <linux-leds@vger.kernel.org>; Mon, 30 Nov 2015 00:47:48 -0800 (PST)
+In-Reply-To: <1447951707-21294-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Jacek,
+On Thu, Nov 19, 2015 at 5:48 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
 
-On 11/27/2015 8:19 PM, Jacek Anaszewski wrote:
-> Hi Milo,
+> Since brightness setting can sleep for this driver, implement
+> brightness_set_blocking op, instead of brightness_set.
+> It makes this driver compatible with LED triggers.
 >
-> On 11/26/2015 07:56 AM, Milo Kim wrote:
->> LM3633 LED device is one of TI LMU device list.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: linux-leds@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Milo Kim <milo.kim@ti.com>
->> ---
->>    .../devicetree/bindings/leds/leds-lm3633.txt       | 24 ++++++++++++++++++++++
->>    1 file changed, 24 insertions(+)
->>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3633.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3633.txt b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
->> new file mode 100644
->> index 0000000..a553894
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3633.txt
->> @@ -0,0 +1,24 @@
->> +TI LMU LM3633 LED device tree bindings
->> +
->> +Required properties:
->> +  - compatible: "ti,lm3633-leds"
->> +
->> +Child nodes:
->> +  Each node matches with LED control bank.
->> +  Please refer to the datasheet [1].
->
-> leds/common.txt documentation says that child nodes represent discrete
-> LED elements.
->
->> +  Required properties of a child node:
->> +  - led-sources: List of enabled channels from 0 to 5.
->> +                 Please refer to LED binding [2].
->
-> led-sources property should contain always one element -
-> a control bank identifier that the iout is to be associated with.
-> For example, if there are three LEDs and they should be controlled
-> with control bank A, then the bindings should look as follows
-> (assuming that control bank identifiers start from 0 [A:0, B:1,
-> C:2, etc. - it has to be also explicitly stated in the documentation]:
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changes from v5:
+> - use newly introduced brightness_set_blocking op, which was deemed
+>   a better solution that flags proposed at earlier stage
+>   of LED core improvent patch sets
 
-My understanding is 'led-sources' means output channel rather than 
-control bank. Output channel is visible and intuitive - just output LED.
-On the other hand, control banks works inside the silicon, LM3633.
-I'm not sure other LED devices have control bank or not, but output 
-channel is common concept.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->
-> lvled1 {
-> 	led-sources = <2>;
-> 	led-max-microamp = <1000>;
-> }
->
-> lvled2 {
-> 	led-sources = <2>;
-> 	led-max-microamp = <29000>;
-> }
->
-> lvled3 {
-> 	led-sources = <2>;
-> 	led-max-microamp = <7000>;
-> }
-
-For this reason, I don't understand this LED configuration - one output 
-channel with multiple LED devices. LED child node should be matched with 
-led class device.
-If three output channels are controlled by one control bank, then it 
-should be represented as below.
-
-lvled-group-A {
-	led-sources = <0>, <1>, <2>;
-	led-max-microamp = <some value>;
-}
-
-Please let me know if I misunderstand.
-
-Best regards,
-Milo
+Yours,
+Linus Walleij
