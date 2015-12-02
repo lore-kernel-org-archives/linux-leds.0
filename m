@@ -1,171 +1,120 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 2/2] leds: rt5033: Add RT5033 Flash led device driver
-Date: Tue, 01 Dec 2015 08:55:35 +0100
-Message-ID: <565D5277.9080008@samsung.com>
-References: <1448446948-13729-1-git-send-email-ingi2.kim@samsung.com>
- <1448446948-13729-3-git-send-email-ingi2.kim@samsung.com>
- <5655D001.8090803@samsung.com> <5656BC88.2070603@samsung.com>
- <5656D43D.106@samsung.com> <565BB510.2040903@samsung.com>
- <565C2C1A.3080100@samsung.com> <565CFDCC.3090108@samsung.com>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v4 09/24] regulator: pwm: use
+ pwm_get/set_default_xxx() helpers where appropriate
+Date: Wed, 2 Dec 2015 11:37:20 +0100
+Message-ID: <20151202113720.0a6517b1@bbrezillon>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
+	<20151116105558.GB31303@sirena.org.uk>
+	<20151116132359.39d84279@bbrezillon>
+	<20151116184238.GJ31303@sirena.org.uk>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:26056 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751989AbbLAHzk (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Dec 2015 02:55:40 -0500
-In-reply-to: <565CFDCC.3090108@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB3ET7OZAKGQEWFND32Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20151116184238.GJ31303-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Christophe
 List-Id: linux-leds@vger.kernel.org
-To: Ingi Kim <ingi2.kim@samsung.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sameo@linux.intel.com, lee.jones@linaro.org, rpurdie@rpsys.net, inki.dae@samsung.com, sw0312.kim@samsung.com, beomho.seo@samsung.com, andi.shyti@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On 12/01/2015 02:54 AM, Ingi Kim wrote:
-> Hi Jacek,
->
-> On 2015=EB=85=84 11=EC=9B=94 30=EC=9D=BC 19:59, Jacek Anaszewski wrot=
-e:
->> Hi Ingi,
->>
->> On 11/30/2015 03:31 AM, Ingi Kim wrote:
->>> Hi Jacek,
->>>
->>> On 2015=EB=85=84 11=EC=9B=94 26=EC=9D=BC 18:43, Jacek Anaszewski wr=
-ote:
->>>> Hi Ingi,
->>>>
->>>> On 11/26/2015 09:02 AM, Ingi Kim wrote:
->>>> [...]
->>>>>>> +torch_unlock:
->>>>>>> +    mutex_unlock(&led->lock);
->>>>>>> +    return ret;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static int rt5033_led_flash_brightness_set(struct led_classdev=
-_flash *fled_cdev,
->>>>>>> +                       u32 brightness)
->>>>>>> +{
->>>>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_=
-cdev);
->>>>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
->>>>>>> +
->>>>>>> +    mutex_lock(&led->lock);
->>>>>>> +    sub_led->flash_brightness =3D brightness;
->>>>>>> +    mutex_unlock(&led->lock);
->>>>>>
->>>>>> Mutex protection is redundant in this case. You would need it if=
- device
->>>>>> state was also changed here.
->>>>>
->>>>> Okay, I'll remove it.
->>>>>
->>>>>>
->>>>>> BTW why flash brightness can't be written to the device here?
->>>>>>
->>>>>
->>>>> Flash brightness is only affected when FLED flashed (strobing).
->>>>> So, I think it is better to be written in rt5033_led_flash_strobe=
-_set function.
->>>>
->>>> strobe_set op should strobe the flash ASAP, and delegating brightn=
-ess
->>>> setting there extends a delay between calling strobe_set op
->>>> and actual flash strobe. If you set the brightness here, then you
->>>> wouldn't have to do that in the strobe_set op, of course unless th=
-e
->>>> the brightness is altered through the API of the other LED, in two
->>>> separate LEDs case.
->>>>
->>>
->>> The brightness may be able to change its brightness in two separate=
- LEDs case as you see.
->>> So, I think it would be better to write brightness setting in strob=
-e_op.
->>
->> Could you motivate your statement, please? Why would it be better?
->>
->>> In consideration of delay, of course, the brightness is set just wh=
-en it would be changed.
->>
->> I think that joint iout arrangement will be prevailing - this is the
->> case for your board, isn't it? With the modification I am proposing
->> the gain is clear.
->>
->
-> You're right, thanks.
-> Did you mean that flash attributes should be written
-> on their ops(flash brightness, flash timeout)?
+Hi,
 
-Both in those ops and conditionally in the strobe_set op,
-in order to handle two LEDs case, when the other LED has
-altered any of the shared settings.
+On Mon, 16 Nov 2015 18:42:38 +0000
+Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
-> let me update the driver on your suggestion.
->
->>>>>>> +
->>>>>>> +    return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static int rt5033_led_flash_timeout_set(struct led_classdev_fl=
-ash *fled_cdev,
->>>>>>> +                    u32 timeout)
->>>>>>> +{
->>>>>>> +    struct rt5033_sub_led *sub_led =3D flcdev_to_sub_led(fled_=
-cdev);
->>>>>>> +    struct rt5033_led *led =3D sub_led_to_led(sub_led);
->>>>>>> +
->>>>>>> +    mutex_lock(&led->lock);
->>>>>>> +    sub_led->flash_timeout =3D timeout;
->>>>>>> +    mutex_unlock(&led->lock);
->>>>>>
->>>>>> Ditto.
->>>>>>
->>>>
->>>> Timeout should be also written here.
->>>>
->>>
->>> The timeout may be able to change its flash timeout in two separate=
- LEDs case as you see.
->>> So, I think it would be better to write timeout setting in strobe_o=
-p.
->>> In consideration of delay, of course, the timeout is set just when =
-it would be changed.
->>>
->>>> If you will add regmap_write in both ops, then mutex protection wi=
-ll
->>>> have to be preserved, to assure consistency between registers stat=
-e
->>>> and sub_led->flash_brightness and sub_led->flash_timeout state.
->>>>
->>>
->>> Thanks, but mutex protection is useless in this case.
->>> so I try to remove it.
->>>
->>>>>
->>>>>>> +#define RT5033_FLED_CTRL4_VTRREG_MAX    0x60
->>>>>>
->>>>>> Rename DEF to MASK.
->>>>
->>>> Hmm, here it should be: Rename MAX to MASK.
->>>>
->>>
->>> Oh
->>> Okay, Thanks :)
->>>
->>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->
->
+> On Mon, Nov 16, 2015 at 01:23:59PM +0100, Boris Brezillon wrote:
+> > Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> > > On Mon, Nov 16, 2015 at 09:56:32AM +0100, Boris Brezillon wrote:
+> 
+> > > > -	pwm_reg_period = pwm_get_period(drvdata->pwm);
+> > > > +	pwm_reg_period = pwm_get_default_period(drvdata->pwm);
+> 
+> > > It's not clear to me that we're not looking for the current period here
+> > > or in the other use.  Won't configuring based on a period other than the
+> > > one that has been set give the wrong answer?
+> 
+> > Hm, maybe that's naming problem. What I call the 'default' period here
+> > is actually the period configured in your board file (using a PWM lookup
+> > table) or your DT. This value represent the period requested by the PWM
+> > user not a default value specified by the PWM chip driver.
+> 
+> > The reason we're not using the 'current' period value is because it may
+> > have been set by the bootloader, and may be inappropriate for our use
+> > case (ie. the period may be to small to represent the different
+> > voltages).
+> 
+> > ITOH, we're using the current period value when calculating the current
+> > voltage, because we want to get the correct voltage value, and the PWM
+> > device may still use the configuration set by the bootloader (not the
+> > default one specified in your board or DT files).
+> 
+> > I hope this clarifies the differences between the current and default
+> > period, and why we should use the default value here.
+> 
+> To be honest I'm still a bit confused here.  When do we actually apply
+> the default setting and why do we keep on having to constantly override
+> it rather than doing this once at boot?  It feels wrong to be using it
+> every time we set anything.  I'd expect it to be something we only need
+> to do at probe time or which would automatically be handled by the PWM
+> framework (but that'd have issues changing the state and potentially
+> breaking things if done in an uncoordiated fashion).
 
+Thierry, I didn't hear from you after the long discussion we had on IRC
+a few weeks ago.
+The conclusion of this discussion was that using
+pwm_get_default_period() was not acceptable (even after renaming it
+differently, like pwm_get_reference_period()), because it was
+disturbing to get the default/reference period each time we wanted to
+configure the PWM differently.
+Another suggestion was to automatically reconfigure the PWM duty_ns
+value based on the initial PWM state (retrieved through hardware
+readout) and the default period value (specified in the PWM lookup table
+or the DT). But this implied supporting hardware readout in all PWM
+drivers, which prevents a smooth migration to this new approach.
 
---=20
+I also proposed to provide helpers to hide the duty cycle to active
+time calculation in the PWM core, so that PWM users just have to choose
+their scale (percent, or any other custom scale) and set their duty
+cycle based on this scale instead of specifying an active/on time in
+nanosecond. You didn't seem to like this idea, but I gave it a try
+(see here [1]), and think it might be worth looking at it.
+
+The commit you should look at are [2], [3] and [4], and the idea is to
+clarify the notion of duty-cycle, which, according to wikipedia [5]
+(and a lot of other references) is supposed to be expressed in a
+relative unit (percent, or any other scale as said earlier).
+After renaming the pwm_set/get_duty_cycle() helpers into
+pwm_set/get_active_time() we can define a new pwm_set_duty_cycle()
+helper to let the PWM user configure its PWM device relatively to a
+chosen scale, without asking him to choose the PWM period (the
+conversion is done based on the default/reference period).
+The pwm_get_duty_cycle() is doing the reverse conversion: it returns the
+duty-cycle expressed relatively to the scale (here the current PWM
+period is used to handle the case where the PWM user hasn't configure
+the PWM yet, but want to retrieve the current duty-cycle extracted from
+hardware readout).
+
+Please let me know what you think of this approach, and if you're happy
+with it I'll rework my series accordingly.
+
 Best Regards,
-Jacek Anaszewski
+
+Boris
+
+[1]https://github.com/bbrezillon/linux-rk/commits/atomic-pwm-alt
+[2]https://github.com/bbrezillon/linux-rk/commit/d7d4d04e147d4ec349c59f70e141877661930c6d
+[3]https://github.com/bbrezillon/linux-rk/commit/66ce78f308f3eb1a9c536689352f208fd51c9030
+[4]https://github.com/bbrezillon/linux-rk/commit/07882a2dd21f0d17d83640ff55204cc7a7d4c8f7
+[5]https://en.wikipedia.org/wiki/Duty_cycle
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
