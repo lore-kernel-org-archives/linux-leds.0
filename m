@@ -1,74 +1,36 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: sunfire: Use platform_register/unregister_drivers()
-Date: Thu, 03 Dec 2015 11:43:41 +0100
-Message-ID: <56601CDD.70806@samsung.com>
-References: <1449073621-12049-1-git-send-email-thierry.reding@gmail.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH v3 10/10] media: flash: use led_set_brightness_sync for
+ torch brightness
+Date: Thu, 3 Dec 2015 11:35:14 -0200
+Message-ID: <20151203113514.06754498@recife.lan>
+References: <1444209048-29415-1-git-send-email-j.anaszewski@samsung.com>
+	<1444209048-29415-11-git-send-email-j.anaszewski@samsung.com>
+	<5649A37A.2050902@samsung.com>
+	<5649A64E.8050907@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1449073621-12049-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <5649A64E.8050907@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, andrew@lunn.ch, linux-media@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 12/02/2015 05:27 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> These new helpers simplify implementing multi-driver modules and
-> properly handle failure to register one driver by unregistering all
-> previously registered drivers.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   drivers/leds/leds-sunfire.c | 23 +++++++----------------
->   1 file changed, 7 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/leds/leds-sunfire.c b/drivers/leds/leds-sunfire.c
-> index c2553c54f2cf..7c09db8bd4e8 100644
-> --- a/drivers/leds/leds-sunfire.c
-> +++ b/drivers/leds/leds-sunfire.c
-> @@ -234,28 +234,19 @@ static struct platform_driver sunfire_fhc_led_driver = {
->   	},
->   };
->
-> +static struct platform_driver * const drivers[] = {
-> +	&sunfire_clockboard_led_driver,
-> +	&sunfire_fhc_led_driver,
-> +};
-> +
->   static int __init sunfire_leds_init(void)
->   {
-> -	int err = platform_driver_register(&sunfire_clockboard_led_driver);
-> -
-> -	if (err) {
-> -		pr_err("Could not register clock board LED driver\n");
-> -		return err;
-> -	}
-> -
-> -	err = platform_driver_register(&sunfire_fhc_led_driver);
-> -	if (err) {
-> -		pr_err("Could not register FHC LED driver\n");
-> -		platform_driver_unregister(&sunfire_clockboard_led_driver);
-> -	}
-> -
-> -	return err;
-> +	return platform_register_drivers(drivers, ARRAY_SIZE(drivers));
->   }
->
->   static void __exit sunfire_leds_exit(void)
->   {
-> -	platform_driver_unregister(&sunfire_clockboard_led_driver);
-> -	platform_driver_unregister(&sunfire_fhc_led_driver);
-> +	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
->   }
->
->   module_init(sunfire_leds_init);
->
+Em Mon, 16 Nov 2015 11:47:58 +0200
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-Applied, thanks.
+> Jacek Anaszewski wrote:
+> > This patch depends on the preceding LED core improvements patches
+> > from this patch set, and it would be best if it was merged through
+> > the LED tree. Can I get your ack for this? I've already obtained acks
+> > for the whole set from Sakari.
+> 
+> I agree with this going through the LED tree.
 
--- 
-Best Regards,
-Jacek Anaszewski
+Feel free to send it via the LED tree.
+
+Acked-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+
+Regards,
+Mauro
