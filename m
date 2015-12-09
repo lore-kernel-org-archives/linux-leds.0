@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 158/182] leds: pca9532: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:46:10 +0100
-Message-ID: <1449668770-5933-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 159/182] leds: tca6507: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:46:18 +0100
+Message-ID: <1449668778-5980-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:33753 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbbLINqP (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 9 Dec 2015 08:46:15 -0500
-Received: by lbbkw15 with SMTP id kw15so30279363lbb.0
-        for <linux-leds@vger.kernel.org>; Wed, 09 Dec 2015 05:46:13 -0800 (PST)
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34347 "EHLO
+	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083AbbLINqY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 9 Dec 2015 08:46:24 -0500
+Received: by lffu14 with SMTP id u14so34586882lff.1
+        for <linux-leds@vger.kernel.org>; Wed, 09 Dec 2015 05:46:22 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Riku Voipio <riku.voipio@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
@@ -26,48 +26,30 @@ Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 LEDS people: please ACK this so I can merge it in the GPIO tree.
 ---
- drivers/leds/leds-pca9532.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/leds/leds-tca6507.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index a975b32ee8c8..1b228adfd1a7 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -245,7 +245,7 @@ static void pca9532_led_work(struct work_struct *work)
- #ifdef CONFIG_LEDS_PCA9532_GPIO
- static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index 75529a24a615..c548ea10f0f0 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -603,7 +603,7 @@ static int tca6507_blink_set(struct led_classdev *led_cdev,
+ static void tca6507_gpio_set_value(struct gpio_chip *gc,
+ 				   unsigned offset, int val)
  {
--	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
-+	struct pca9532_data *data = gpiochip_get_data(gc);
- 	struct pca9532_led *led = &data->leds[offset];
+-	struct tca6507_chip *tca = container_of(gc, struct tca6507_chip, gpio);
++	struct tca6507_chip *tca = gpiochip_get_data(gc);
+ 	unsigned long flags;
  
- 	if (led->type == PCA9532_TYPE_GPIO)
-@@ -256,7 +256,7 @@ static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
- 
- static void pca9532_gpio_set_value(struct gpio_chip *gc, unsigned offset, int val)
- {
--	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
-+	struct pca9532_data *data = gpiochip_get_data(gc);
- 	struct pca9532_led *led = &data->leds[offset];
- 
- 	if (val)
-@@ -269,7 +269,7 @@ static void pca9532_gpio_set_value(struct gpio_chip *gc, unsigned offset, int va
- 
- static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
- {
--	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
-+	struct pca9532_data *data = gpiochip_get_data(gc);
- 	unsigned char reg;
- 
- 	reg = i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
-@@ -416,7 +416,7 @@ static int pca9532_configure(struct i2c_client *client,
- 		data->gpio.parent = &client->dev;
- 		data->gpio.owner = THIS_MODULE;
- 
--		err = gpiochip_add(&data->gpio);
-+		err = gpiochip_add_data(&data->gpio, data);
- 		if (err) {
- 			/* Use data->gpio.dev as a flag for freeing gpiochip */
- 			data->gpio.parent = NULL;
+ 	spin_lock_irqsave(&tca->lock, flags);
+@@ -655,7 +655,7 @@ static int tca6507_probe_gpios(struct i2c_client *client,
+ #ifdef CONFIG_OF_GPIO
+ 	tca->gpio.of_node = of_node_get(client->dev.of_node);
+ #endif
+-	err = gpiochip_add(&tca->gpio);
++	err = gpiochip_add_data(&tca->gpio, tca);
+ 	if (err) {
+ 		tca->gpio.ngpio = 0;
+ 		return err;
 -- 
 2.4.3
