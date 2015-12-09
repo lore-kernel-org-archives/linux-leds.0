@@ -1,55 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 159/182] leds: tca6507: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:46:18 +0100
-Message-ID: <1449668778-5980-1-git-send-email-linus.walleij@linaro.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 158/182] leds: pca9532: use gpiochip data pointer
+Date: Wed, 09 Dec 2015 15:29:23 +0100
+Message-ID: <56683AC3.6070300@samsung.com>
+References: <1449668770-5933-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34347 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbbLINqY (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 9 Dec 2015 08:46:24 -0500
-Received: by lffu14 with SMTP id u14so34586882lff.1
-        for <linux-leds@vger.kernel.org>; Wed, 09 Dec 2015 05:46:22 -0800 (PST)
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:61887 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754153AbbLIO32 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 9 Dec 2015 09:29:28 -0500
+In-reply-to: <1449668770-5933-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Riku Voipio <riku.voipio@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Riku Voipio <riku.voipio@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-This makes the driver use the data pointer added to the gpio_chip
-to store a pointer to the state container instead of relying on
-container_of().
+On 12/09/2015 02:46 PM, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
+>
+> Cc: Riku Voipio <riku.voipio@iki.fi>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> LEDS people: please ACK this so I can merge it in the GPIO tree.
+> ---
+>   drivers/leds/leds-pca9532.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index a975b32ee8c8..1b228adfd1a7 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+> @@ -245,7 +245,7 @@ static void pca9532_led_work(struct work_struct *work)
+>   #ifdef CONFIG_LEDS_PCA9532_GPIO
+>   static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+>   {
+> -	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
+> +	struct pca9532_data *data = gpiochip_get_data(gc);
+>   	struct pca9532_led *led = &data->leds[offset];
+>
+>   	if (led->type == PCA9532_TYPE_GPIO)
+> @@ -256,7 +256,7 @@ static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+>
+>   static void pca9532_gpio_set_value(struct gpio_chip *gc, unsigned offset, int val)
+>   {
+> -	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
+> +	struct pca9532_data *data = gpiochip_get_data(gc);
+>   	struct pca9532_led *led = &data->leds[offset];
+>
+>   	if (val)
+> @@ -269,7 +269,7 @@ static void pca9532_gpio_set_value(struct gpio_chip *gc, unsigned offset, int va
+>
+>   static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
+>   {
+> -	struct pca9532_data *data = container_of(gc, struct pca9532_data, gpio);
+> +	struct pca9532_data *data = gpiochip_get_data(gc);
+>   	unsigned char reg;
+>
+>   	reg = i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
+> @@ -416,7 +416,7 @@ static int pca9532_configure(struct i2c_client *client,
+>   		data->gpio.parent = &client->dev;
+>   		data->gpio.owner = THIS_MODULE;
+>
+> -		err = gpiochip_add(&data->gpio);
+> +		err = gpiochip_add_data(&data->gpio, data);
+>   		if (err) {
+>   			/* Use data->gpio.dev as a flag for freeing gpiochip */
+>   			data->gpio.parent = NULL;
+>
 
-Cc: Riku Voipio <riku.voipio@iki.fi>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-LEDS people: please ACK this so I can merge it in the GPIO tree.
----
- drivers/leds/leds-tca6507.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This applies only with 3-way merge due to work queue removal related
+changes that already sit on LED git. Nothing clever can be done to fix
+that since those changes depend on LED core changes and this patch
+depends on GPIO changes. We'll need to add relevant remarks in the pull
+requests.
 
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index 75529a24a615..c548ea10f0f0 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -603,7 +603,7 @@ static int tca6507_blink_set(struct led_classdev *led_cdev,
- static void tca6507_gpio_set_value(struct gpio_chip *gc,
- 				   unsigned offset, int val)
- {
--	struct tca6507_chip *tca = container_of(gc, struct tca6507_chip, gpio);
-+	struct tca6507_chip *tca = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&tca->lock, flags);
-@@ -655,7 +655,7 @@ static int tca6507_probe_gpios(struct i2c_client *client,
- #ifdef CONFIG_OF_GPIO
- 	tca->gpio.of_node = of_node_get(client->dev.of_node);
- #endif
--	err = gpiochip_add(&tca->gpio);
-+	err = gpiochip_add_data(&tca->gpio, tca);
- 	if (err) {
- 		tca->gpio.ngpio = 0;
- 		return err;
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
 -- 
-2.4.3
+Best Regards,
+Jacek Anaszewski
