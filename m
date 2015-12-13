@@ -1,73 +1,93 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/3] drivers/leds: make trigger/ledtrig-ide-disk.c driver explicitly non-modular
-Date: Sun, 13 Dec 2015 16:45:50 -0500
-Message-ID: <1450043151-30820-3-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 3/3] drivers/leds: make leds-syscon.c explicitly non-modular
+Date: Sun, 13 Dec 2015 16:45:51 -0500
+Message-ID: <1450043151-30820-4-git-send-email-paul.gortmaker@windriver.com>
 References: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:42801 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751202AbbLMVqV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 13 Dec 2015 16:46:21 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:39577 "EHLO mail5.wrs.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751109AbbLMVsU (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Sun, 13 Dec 2015 16:48:20 -0500
 In-Reply-To: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 
-The Kconfig for this driver is currently:
+The Kconfig currently controlling compilation of this code is:
 
-config LEDS_TRIGGER_IDE_DISK
-        bool "LED IDE Disk Trigger"
+drivers/leds/Kconfig:config LEDS_SYSCON
+drivers/leds/Kconfig:   bool "LED support for LEDs on system controllers"
 
 ...meaning that it currently is not being built as a module by anyone.
+
 Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init translates to device_initcall in the non-modular
-case, the init ordering remains unchanged with this commit.
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
 
-Cc: Bryan Wu <cooloney@gmail.com>
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
 Cc: Richard Purdie <rpurdie@rpsys.net>
 Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/leds/trigger/ledtrig-ide-disk.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/leds/leds-syscon.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-ide-disk.c b/drivers/leds/trigger/ledtrig-ide-disk.c
-index 2cd7c0cf5924..c02a3ac3cd2b 100644
---- a/drivers/leds/trigger/ledtrig-ide-disk.c
-+++ b/drivers/leds/trigger/ledtrig-ide-disk.c
-@@ -11,7 +11,6 @@
-  *
+diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
+index b88900d721e4..3be40f74f12a 100644
+--- a/drivers/leds/leds-syscon.c
++++ b/drivers/leds/leds-syscon.c
+@@ -20,7 +20,7 @@
+  * MA 02111-1307 USA
   */
- 
+ #include <linux/io.h>
 -#include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/leds.h>
-@@ -33,15 +32,4 @@ static int __init ledtrig_ide_init(void)
- 	led_trigger_register_simple("ide-disk", &ledtrig_ide);
++#include <linux/init.h>
+ #include <linux/of_device.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+@@ -139,29 +139,17 @@ static int syscon_led_probe(struct platform_device *pdev)
  	return 0;
  }
--
--static void __exit ledtrig_ide_exit(void)
+ 
+-static int syscon_led_remove(struct platform_device *pdev)
 -{
--	led_trigger_unregister_simple(ledtrig_ide);
+-	struct syscon_led *sled = platform_get_drvdata(pdev);
+-
+-	led_classdev_unregister(&sled->cdev);
+-	/* Turn it off */
+-	regmap_update_bits(sled->map, sled->offset, sled->mask, 0);
+-	return 0;
 -}
 -
--module_init(ledtrig_ide_init);
--module_exit(ledtrig_ide_exit);
+ static const struct of_device_id of_syscon_leds_match[] = {
+ 	{ .compatible = "register-bit-led", },
+ 	{},
+ };
+ 
+-MODULE_DEVICE_TABLE(of, of_syscon_leds_match);
 -
--MODULE_AUTHOR("Richard Purdie <rpurdie@openedhand.com>");
--MODULE_DESCRIPTION("LED IDE Disk Activity Trigger");
--MODULE_LICENSE("GPL");
-+device_initcall(ledtrig_ide_init);
+ static struct platform_driver syscon_led_driver = {
+ 	.probe		= syscon_led_probe,
+-	.remove		= syscon_led_remove,
+ 	.driver		= {
+ 		.name	= "leds-syscon",
+ 		.of_match_table = of_syscon_leds_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+-module_platform_driver(syscon_led_driver);
++builtin_platform_driver(syscon_led_driver);
 -- 
 2.6.1
