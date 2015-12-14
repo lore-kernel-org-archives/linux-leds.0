@@ -1,93 +1,64 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/3] drivers/leds: make leds-syscon.c explicitly non-modular
-Date: Sun, 13 Dec 2015 16:45:51 -0500
-Message-ID: <1450043151-30820-4-git-send-email-paul.gortmaker@windriver.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 0/3] leds: avoid module usage in non-modular code
+Date: Mon, 14 Dec 2015 10:21:39 +0100
+Message-ID: <566E8A23.60108@samsung.com>
 References: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail5.windriver.com ([192.103.53.11]:39577 "EHLO mail5.wrs.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751109AbbLMVsU (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sun, 13 Dec 2015 16:48:20 -0500
-In-Reply-To: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On 12/13/2015 10:45 PM, Paul Gortmaker wrote:
+> This series of commits is a part of a larger project to ensure
+> people don't reference modular support functions in non-modular
+> code.  Overall there was roughly 5k lines of dead code in the
+> kernel due to this.  So far we've fixed several areas, like tty,
+> x86, net, ... and we continue to work on other areas.
+>
+> There are several reasons to not use module support for code that
+> can never be built as a module, but the big ones are:
+>
+>   (1) it is easy to accidentally code up unused module_exit and remove code
+>   (2) it can be misleading when reading the source, thinking it can be
+>        modular when the Makefile and/or Kconfig prohibit it
+>   (3) it requires the include of the module.h header file which in turn
+>       includes nearly everything else.
+>
+> For the LED subsystem, there are just three commits.  Two are basically
+> trivial remapping to the appropriate non-modular counterparts.  The
+> third also has a change to block driver unbinding since that doesn't
+> make any sense and it allows us to delete the .remove code.  We've
+> already made similar unbind changes like this in drivers/tty.
+>
+> Patches created on linux-next and build tested for ARM allmodconfig.
+>
+> Paul.
+> ---
+>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: linux-leds@vger.kernel.org
+>
+> Paul Gortmaker (3):
+>    drivers/leds: make trigger/ledtrig-cpu.c driver explicitly non-modular
+>    drivers/leds: make trigger/ledtrig-ide-disk.c driver explicitly non-modular
+>    drivers/leds: make leds-syscon.c explicitly non-modular
+>
+>   drivers/leds/leds-syscon.c              | 18 +++---------------
+>   drivers/leds/trigger/ledtrig-cpu.c      | 26 +-------------------------
+>   drivers/leds/trigger/ledtrig-ide-disk.c | 14 +-------------
+>   3 files changed, 5 insertions(+), 53 deletions(-)
+>
 
-drivers/leds/Kconfig:config LEDS_SYSCON
-drivers/leds/Kconfig:   bool "LED support for LEDs on system controllers"
+Patch set applied, thanks.
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/leds/leds-syscon.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
-index b88900d721e4..3be40f74f12a 100644
---- a/drivers/leds/leds-syscon.c
-+++ b/drivers/leds/leds-syscon.c
-@@ -20,7 +20,7 @@
-  * MA 02111-1307 USA
-  */
- #include <linux/io.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -139,29 +139,17 @@ static int syscon_led_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int syscon_led_remove(struct platform_device *pdev)
--{
--	struct syscon_led *sled = platform_get_drvdata(pdev);
--
--	led_classdev_unregister(&sled->cdev);
--	/* Turn it off */
--	regmap_update_bits(sled->map, sled->offset, sled->mask, 0);
--	return 0;
--}
--
- static const struct of_device_id of_syscon_leds_match[] = {
- 	{ .compatible = "register-bit-led", },
- 	{},
- };
- 
--MODULE_DEVICE_TABLE(of, of_syscon_leds_match);
--
- static struct platform_driver syscon_led_driver = {
- 	.probe		= syscon_led_probe,
--	.remove		= syscon_led_remove,
- 	.driver		= {
- 		.name	= "leds-syscon",
- 		.of_match_table = of_syscon_leds_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
--module_platform_driver(syscon_led_driver);
-+builtin_platform_driver(syscon_led_driver);
 -- 
-2.6.1
+Best Regards,
+Jacek Anaszewski
