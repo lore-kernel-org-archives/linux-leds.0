@@ -1,64 +1,51 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 0/3] leds: avoid module usage in non-modular code
-Date: Mon, 14 Dec 2015 10:21:39 +0100
-Message-ID: <566E8A23.60108@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] drivers/leds: make trigger/ledtrig-cpu.c driver
+ explicitly non-modular
+Date: Tue, 15 Dec 2015 14:28:40 +0100
+Message-ID: <CACRpkdbXQWG33wvEE-iO6LzxWZqxjFh4T=VC5VK+bqYdMYDLDQ@mail.gmail.com>
 References: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
+	<1450043151-30820-2-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35837 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933323AbbLON2m (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 15 Dec 2015 08:28:42 -0500
+Received: by mail-ob0-f176.google.com with SMTP id 18so6203470obc.2
+        for <linux-leds@vger.kernel.org>; Tue, 15 Dec 2015 05:28:42 -0800 (PST)
+In-Reply-To: <1450043151-30820-2-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 12/13/2015 10:45 PM, Paul Gortmaker wrote:
-> This series of commits is a part of a larger project to ensure
-> people don't reference modular support functions in non-modular
-> code.  Overall there was roughly 5k lines of dead code in the
-> kernel due to this.  So far we've fixed several areas, like tty,
-> x86, net, ... and we continue to work on other areas.
+On Sun, Dec 13, 2015 at 10:45 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+
+> The Kconfig for this driver is currently:
 >
-> There are several reasons to not use module support for code that
-> can never be built as a module, but the big ones are:
+> config LEDS_TRIGGER_CPU
+>         bool "LED CPU Trigger"
 >
->   (1) it is easy to accidentally code up unused module_exit and remove code
->   (2) it can be misleading when reading the source, thinking it can be
->        modular when the Makefile and/or Kconfig prohibit it
->   (3) it requires the include of the module.h header file which in turn
->       includes nearly everything else.
+> ...meaning that it currently is not being built as a module by anyone.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
 >
-> For the LED subsystem, there are just three commits.  Two are basically
-> trivial remapping to the appropriate non-modular counterparts.  The
-> third also has a change to block driver unbinding since that doesn't
-> make any sense and it allows us to delete the .remove code.  We've
-> already made similar unbind changes like this in drivers/tty.
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
 >
-> Patches created on linux-next and build tested for ARM allmodconfig.
->
-> Paul.
-> ---
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
 >
 > Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
 > Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 > Cc: linux-leds@vger.kernel.org
->
-> Paul Gortmaker (3):
->    drivers/leds: make trigger/ledtrig-cpu.c driver explicitly non-modular
->    drivers/leds: make trigger/ledtrig-ide-disk.c driver explicitly non-modular
->    drivers/leds: make leds-syscon.c explicitly non-modular
->
->   drivers/leds/leds-syscon.c              | 18 +++---------------
->   drivers/leds/trigger/ledtrig-cpu.c      | 26 +-------------------------
->   drivers/leds/trigger/ledtrig-ide-disk.c | 14 +-------------
->   3 files changed, 5 insertions(+), 53 deletions(-)
->
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Patch set applied, thanks.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-Best Regards,
-Jacek Anaszewski
+Yours,
+Linus Walleij
