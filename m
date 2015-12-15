@@ -1,51 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] drivers/leds: make trigger/ledtrig-cpu.c driver
- explicitly non-modular
-Date: Tue, 15 Dec 2015 14:28:40 +0100
-Message-ID: <CACRpkdbXQWG33wvEE-iO6LzxWZqxjFh4T=VC5VK+bqYdMYDLDQ@mail.gmail.com>
-References: <1450043151-30820-1-git-send-email-paul.gortmaker@windriver.com>
-	<1450043151-30820-2-git-send-email-paul.gortmaker@windriver.com>
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
+	<noltari@gmail.com>
+Subject: [PATCH v2 1/8] leds: bcm6328: code cleaning
+Date: Tue, 15 Dec 2015 21:03:45 +0100
+Message-ID: <1450209832-2742-2-git-send-email-noltari@gmail.com>
+References: <1448814931-1369-1-git-send-email-noltari@gmail.com>
+ <1450209832-2742-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:35837 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933323AbbLON2m (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 15 Dec 2015 08:28:42 -0500
-Received: by mail-ob0-f176.google.com with SMTP id 18so6203470obc.2
-        for <linux-leds@vger.kernel.org>; Tue, 15 Dec 2015 05:28:42 -0800 (PST)
-In-Reply-To: <1450043151-30820-2-git-send-email-paul.gortmaker@windriver.com>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:33312 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932365AbbLOUEA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 15 Dec 2015 15:04:00 -0500
+Received: by mail-wm0-f52.google.com with SMTP id n186so111592978wmn.0
+        for <linux-leds@vger.kernel.org>; Tue, 15 Dec 2015 12:03:59 -0800 (PST)
+In-Reply-To: <1450209832-2742-1-git-send-email-noltari@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: linux-leds@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, f.fainelli@gmail.com, cernekee@gmail.com, simon@fire.lp0.eu
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-On Sun, Dec 13, 2015 at 10:45 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+- Remove double whitespace
+- Add missing brackets
+- Add spinlock info
 
-> The Kconfig for this driver is currently:
->
-> config LEDS_TRIGGER_CPU
->         bool "LED CPU Trigger"
->
-> ...meaning that it currently is not being built as a module by anyone.
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> Since module_init translates to device_initcall in the non-modular
-> case, the init ordering remains unchanged with this commit.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+---
+ v2: no changes
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+ drivers/leds/leds-bcm6328.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 0329dee..1ef69c2 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -42,7 +42,7 @@
+ #define BCM6328_LED_SHIFT_TEST		BIT(30)
+ #define BCM6328_LED_TEST		BIT(31)
+ #define BCM6328_INIT_MASK		(BCM6328_SERIAL_LED_EN | \
+-					 BCM6328_SERIAL_LED_MUX  | \
++					 BCM6328_SERIAL_LED_MUX | \
+ 					 BCM6328_SERIAL_LED_CLK_NPOL | \
+ 					 BCM6328_SERIAL_LED_DATA_PPOL | \
+ 					 BCM6328_SERIAL_LED_SHIFT_DIR)
+@@ -151,9 +151,9 @@ static int bcm6328_blink_set(struct led_classdev *l=
+ed_cdev,
+ 	}
+=20
+ 	delay =3D *delay_on / BCM6328_LED_INTERVAL_MS;
+-	if (delay =3D=3D 0)
++	if (delay =3D=3D 0) {
+ 		delay =3D 1;
+-	else if (delay > BCM6328_LED_INTV_MASK) {
++	} else if (delay > BCM6328_LED_INTV_MASK) {
+ 		dev_dbg(led_cdev->dev,
+ 			"fallback to soft blinking (delay > %ums)\n",
+ 			BCM6328_LED_INTV_MASK * BCM6328_LED_INTERVAL_MS);
+@@ -337,7 +337,7 @@ static int bcm6328_leds_probe(struct platform_devic=
+e *pdev)
+ 	struct device_node *child;
+ 	struct resource *mem_r;
+ 	void __iomem *mem;
+-	spinlock_t *lock;
++	spinlock_t *lock; /* memory lock */
+ 	unsigned long val, *blink_leds, *blink_delay;
+=20
+ 	mem_r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+--=20
+1.9.1
