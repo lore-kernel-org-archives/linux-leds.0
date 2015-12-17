@@ -1,44 +1,24 @@
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
-	<noltari@gmail.com>
-Subject: [PATCH 2/2] leds: bcm6358: remove unneeded busy status check
-Date: Wed, 16 Dec 2015 21:13:49 +0100
-Message-ID: <1450296829-31817-2-git-send-email-noltari@gmail.com>
+From: Michael@mail.microamerica.com.pe,
+	"J.Tynan <f.digeronimo"@federconsumatori.abruzzo.it
+Subject: Review & Reply
+Date: Thu, 17 Dec 2015 07:55:35 +0700
+Message-ID: <20151217005626.6562389D5DD8__43072.5095830441$1450341640$gmane$org@mail.microamerica.com.pe>
+Reply-To: michaeljtynan8@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35054 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751320AbbLPUOG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 16 Dec 2015 15:14:06 -0500
-Received: by mail-wm0-f51.google.com with SMTP id l126so55622089wml.0
-        for <linux-leds@vger.kernel.org>; Wed, 16 Dec 2015 12:14:05 -0800 (PST)
+Received: from mail.microamerica.com.pe ([200.37.170.69]:49279 "EHLO
+	mail.microamerica.com.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932092AbbLQIkP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 17 Dec 2015 03:40:15 -0500
+Content-Description: Mail message body
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, j.anaszewski@samsung.com, jogo@openwrt.org, f.fainelli@gmail.com, simon@fire.lp0.eu, cernekee@gmail.com
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: Recipients <f.digeronimo@federconsumatori.abruzzo.it>
 
-The busy status checking isn't needed while reading initial LED status.
-
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
----
- drivers/leds/leds-bcm6358.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 7413e3e..b2cc066 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -123,9 +123,6 @@ static int bcm6358_led(struct device *dev, struct d=
-evice_node *nc, u32 reg,
- 			led->cdev.brightness =3D LED_FULL;
- 		} else if (!strcmp(state, "keep")) {
- 			unsigned long val;
--
--			bcm6358_led_busy(led->mem);
--
- 			val =3D bcm6358_led_read(led->mem + BCM6358_REG_MODE);
- 			val &=3D BIT(led->pin);
- 			if ((led->active_low && !val) ||
---=20
-1.9.1
+Greetings,
+My name is Mr.Michael J. Tynan, I am a banker with Bank Of America. It is true that we have not meet each other in person, but I strongly believe in trust and friendship in every business. I have a Lebanese deceased customer's abandoned fund, which I am his personal financial adviser before his accidental death, that being the main reason why I alone working in the bank here, know much about the existence of this fund and the secrets surrounding this money. But before I disclose the full details to you, I will like to know your interest and willingness to assist me. You can call me as soon you receive my message, so that i will send to you full details about the transaction.
+My best regards,
+Mr.Michael J. Tynan
+MOBILE: +1 347 269 3740
