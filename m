@@ -1,25 +1,23 @@
-From: "Zahra Robert" <jakonyvtar@pr.hu>
-Subject: Assalam o Alaikum
-Date: Tue, 29 Dec 2015 03:03:21 +0100
-Message-ID: <471c2eeb9dd637bb3189011857b1b52b.squirrel__1434.21732723272$1451354655$gmane$org@oldwebmail.prtelecom.hu>
-Reply-To: zahrarobert@yahoo.com
+From: "Hassan Ameri" <hossaameri@gmail.com>
+Subject: RE:IMPORTANT AND LUCRATIVE BUSINESS DISCUSSION
+Date: Sun, 27 Dec 2015 09:58:28 +0100
+Message-ID: <UNCLEBUCKEXUqp2T0ap00000411@uncle-buck.co.uk>
+Reply-To: <hossaamerri77@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail9.pr.hu ([87.242.0.9]:52081 "EHLO mail9.pr.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753138AbbL2CDe (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 28 Dec 2015 21:03:34 -0500
+Received: from [212.58.38.130] ([212.58.38.130]:18317 "EHLO uncle-buck.co.uk"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753587AbbL2Tmw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 29 Dec 2015 14:42:52 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: jakonyvtar@pr.hu
 
+HELLO,
 
+PLEASE GET BACK TO ME FOR AN IMPORTANT AND LUCRATIVE BUSINESS DISCUSSION.I AM TALKING ABOUT CRUDE OIL AND SEEKING A REPRESENTATIVE.
 
-
-Cordial greeting message from Eva Zahra, I am seeking for your help,I will
-be very glad if you do assist me to relocate a sum of (US$4 Million
-Dollars)into your Bank account in your country for the benefit of both of
-us i want to use this money for investment. I will give you more details
-as you reply Yours Eva Zahra Robert
+REGARDS,
+H.A
