@@ -1,54 +1,34 @@
-From: Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH] leds: add HAS_IOMEM dependency to LEDS_BCM6328/LEDS_BCM6358
-Date: Sat,  2 Jan 2016 14:05:49 +0100
-Message-ID: <1451739949-14263-1-git-send-email-vegard.nossum@oracle.com>
+From: "Jeff Skoll" <s_w9gc9x@uni-kassel.de>
+Subject: Charity Donation
+Date: Sat, 02 Jan 2016 09:58:22 -0500
+Message-ID: <auto-000000098050@mailadmin.uni-kassel.de>
+Reply-To: jeff.skoll@skollcharity.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:46747 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751389AbcABNGG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sat, 2 Jan 2016 08:06:06 -0500
+Received: from mx4.its.uni-kassel.de ([141.51.12.63]:13735 "EHLO
+	mx4.its.uni-kassel.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751413AbcABPIK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 2 Jan 2016 10:08:10 -0500
+Content-Description: Mail message body
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
+To: Me <s_w9gc9x@uni-kassel.de>
 
-Ran into this on UML:
+Hi,
+My name is Jeffrey Skoll, a philanthropist and the founder of one of th=
+e largest private foundations in the world. I believe strongly in =E2=80=
+=98giving while living.=E2=80=99 I had one idea that never changed in m=
+y mind =E2=80=94 that you should use your wealth to help people and I h=
+ave decided to secretly give USD2.498 Million to a randomly selected in=
+dividual. On receipt of this email, you should count yourself as the in=
+dividual. Kindly get back to me at your earliest convenience, so I know=
+ your email address is valid.
 
-drivers/built-in.o: In function `bcm6328_leds_probe':
-drivers/leds/leds-bcm6328.c:340: undefined reference to `devm_ioremap_resource'
-drivers/built-in.o: In function `bcm6358_leds_probe':
-drivers/leds/leds-bcm6358.c:173: undefined reference to `devm_ioremap_resource'
-collect2: error: ld returned 1 exit status
+Visit the web page to know more about me: http://www.theglobeandmail.co=
+m/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/a=
+rticle4209888/ or you can read an article of me on Wikipedia.
 
-devm_ioremap_resource() is defined only when HAS_IOMEM is selected.
-
-Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
----
- drivers/leds/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index b1ab8bd..7f940c2 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -52,6 +52,7 @@ config LEDS_AAT1290
- config LEDS_BCM6328
- 	tristate "LED Support for Broadcom BCM6328"
- 	depends on LEDS_CLASS
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  This option enables support for LEDs connected to the BCM6328
-@@ -60,6 +61,7 @@ config LEDS_BCM6328
- config LEDS_BCM6358
- 	tristate "LED Support for Broadcom BCM6358"
- 	depends on LEDS_CLASS
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  This option enables support for LEDs connected to the BCM6358
--- 
-1.9.1
+Regards,
+Jeffrey Skoll.
