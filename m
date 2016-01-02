@@ -1,85 +1,54 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] leds: core: add managed version of led_trigger_register
-Date: Sat, 2 Jan 2016 01:36:41 +0100
-Message-ID: <56871B99.1080103@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Vegard Nossum <vegard.nossum@oracle.com>
+Subject: [PATCH] leds: add HAS_IOMEM dependency to LEDS_BCM6328/LEDS_BCM6358
+Date: Sat,  2 Jan 2016 14:05:49 +0100
+Message-ID: <1451739949-14263-1-git-send-email-vegard.nossum@oracle.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:34989 "EHLO
-	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386AbcABAgx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 1 Jan 2016 19:36:53 -0500
-Received: by mail-wm0-f45.google.com with SMTP id f206so90226475wmf.0
-        for <linux-leds@vger.kernel.org>; Fri, 01 Jan 2016 16:36:53 -0800 (PST)
+Received: from aserp1040.oracle.com ([141.146.126.69]:46747 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751389AbcABNGG (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 2 Jan 2016 08:06:06 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org
 
-Complementing devm_led_classdev_register add a managed version of
-led_trigger_register.
+Ran into this on UML:
 
-I omit a managed version of led_classdev_unregister as the equivalent
-devm_led_classdev_unregister isn't used in the kernel as of today.
+drivers/built-in.o: In function `bcm6328_leds_probe':
+drivers/leds/leds-bcm6328.c:340: undefined reference to `devm_ioremap_resource'
+drivers/built-in.o: In function `bcm6358_leds_probe':
+drivers/leds/leds-bcm6358.c:173: undefined reference to `devm_ioremap_resource'
+collect2: error: ld returned 1 exit status
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+devm_ioremap_resource() is defined only when HAS_IOMEM is selected.
+
+Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 ---
- drivers/leds/led-triggers.c | 28 ++++++++++++++++++++++++++++
- include/linux/leds.h        |  2 ++
- 2 files changed, 30 insertions(+)
+ drivers/leds/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index e8b1120..e1e9334 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -249,6 +249,34 @@ void led_trigger_unregister(struct led_trigger *trig)
- }
- EXPORT_SYMBOL_GPL(led_trigger_unregister);
- 
-+static void devm_led_trigger_release(struct device *dev, void *res)
-+{
-+	led_trigger_unregister(*(struct led_trigger **)res);
-+}
-+
-+int devm_led_trigger_register(struct device *dev,
-+			      struct led_trigger *trig)
-+{
-+	struct led_trigger **dr;
-+	int rc;
-+
-+	dr = devres_alloc(devm_led_trigger_release, sizeof(*dr),
-+			  GFP_KERNEL);
-+	if (!dr)
-+		return -ENOMEM;
-+
-+	*dr = trig;
-+
-+	rc = led_trigger_register(trig);
-+	if (rc)
-+		devres_free(dr);
-+	else
-+		devres_add(dev, dr);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(devm_led_trigger_register);
-+
- /* Simple LED Tigger Interface */
- 
- void led_trigger_event(struct led_trigger *trig,
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index fa359c7..3db0654 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -231,6 +231,8 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
- /* Registration functions for complex triggers */
- extern int led_trigger_register(struct led_trigger *trigger);
- extern void led_trigger_unregister(struct led_trigger *trigger);
-+extern int devm_led_trigger_register(struct device *dev,
-+				     struct led_trigger *trigger);
- 
- extern void led_trigger_register_simple(const char *name,
- 				struct led_trigger **trigger);
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index b1ab8bd..7f940c2 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -52,6 +52,7 @@ config LEDS_AAT1290
+ config LEDS_BCM6328
+ 	tristate "LED Support for Broadcom BCM6328"
+ 	depends on LEDS_CLASS
++	depends on HAS_IOMEM
+ 	depends on OF
+ 	help
+ 	  This option enables support for LEDs connected to the BCM6328
+@@ -60,6 +61,7 @@ config LEDS_BCM6328
+ config LEDS_BCM6358
+ 	tristate "LED Support for Broadcom BCM6358"
+ 	depends on LEDS_CLASS
++	depends on HAS_IOMEM
+ 	depends on OF
+ 	help
+ 	  This option enables support for LEDs connected to the BCM6358
 -- 
-2.6.4
+1.9.1
