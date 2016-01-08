@@ -1,12 +1,12 @@
 From: Simon Que <sque@chromium.org>
 Subject: [PATCH] leds: Add driver for Chrome OS keyboard LEDs
-Date: Fri,  8 Jan 2016 11:39:03 -0800
-Message-ID: <1452281943-1269-1-git-send-email-sque@chromium.org>
+Date: Fri,  8 Jan 2016 11:49:03 -0800
+Message-ID: <1452282543-10884-1-git-send-email-sque@chromium.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from [216.239.45.70] ([216.239.45.70]:43728 "EHLO
+Received: from [216.239.45.70] ([216.239.45.70]:40686 "EHLO
 	sq.mtv.corp.google.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932738AbcAHTs4 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 8 Jan 2016 14:48:56 -0500
+	by vger.kernel.org with ESMTP id S932973AbcAHTtH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 8 Jan 2016 14:49:07 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
