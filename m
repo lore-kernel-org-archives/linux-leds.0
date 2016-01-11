@@ -1,122 +1,301 @@
-From: Milo Kim <milo.kim@ti.com>
-Subject: Re: [RFC] leds: lp8860: Support additional features
-Date: Mon, 11 Jan 2016 09:21:07 +0900
-Message-ID: <5692F573.1050907@ti.com>
-References: <568CBD85.3040907@ti.com> <568FE816.6020804@ti.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/9] Documentation: dt-bindings: mfd: add TI LMU
+ device binding information
+Date: Mon, 11 Jan 2016 09:46:07 +0000
+Message-ID: <20160111094607.GQ14104@x1>
+References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
+ <1448521025-2796-2-git-send-email-milo.kim@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:34951 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757375AbcAKATx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Sun, 10 Jan 2016 19:19:53 -0500
-In-Reply-To: <568FE816.6020804@ti.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37720 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758221AbcAKJqM (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jan 2016 04:46:12 -0500
+Received: by mail-wm0-f43.google.com with SMTP id f206so258778935wmf.0
+        for <linux-leds@vger.kernel.org>; Mon, 11 Jan 2016 01:46:11 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1448521025-2796-2-git-send-email-milo.kim@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: j.anaszewski@samsung.com, linux-leds@vger.kernel.org
+To: Milo Kim <milo.kim@ti.com>
+Cc: robh+dt@kernel.org, j.anaszewski@samsung.com, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Thu, 26 Nov 2015, Milo Kim wrote:
 
-Thanks for your comment.
+> This patch describes overall binding for TI LMU MFD devices.
+>=20
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: Lee Jones <lee.jones@linaro.org>=20
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-leds@vger.kernel.org=20
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/ti-lmu.txt | 243 +++++++++++++=
+++++++++++
+>  1 file changed, 243 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ti-lmu.txt
 
-On 09/01/16 01:47, Dan Murphy wrote:
-> Milo
->
-> Thanks for the email sorry I did not get to it till now
->
-> On 01/06/2016 01:08 AM, Milo Kim wrote:
->> Hi Dan,
->>
->> I'm going to support additional features for LP8860 LED driver.
->>
->> * New functions
->>    - SPI support (only I2C is supported at this moment)
->>    - Brightness control by external PWM signal
->>    - Loading EEPROM value by using Linux firmware interface
->>    - Display mode support (currently, only cluster mode is supported)
->>
->> So, leds-lp8860 driver architecture will be changed as below.
->>
->>    MFD: I2C/SPI operation, loading EEPROM values from firmware file
->>    Backlight: LP8860 display mode support
->>    LED: LP8860 cluster mode support
->>
->> * MFD (new)
->>    - Three files will be created.
->>      lp8860-core.c, lp8860-i2c.c and lp8860-spi.c
->
-> Why would you do this?  The led driver uses regmap.  You just need to register the
-> regmap interface and all the writes and reads will be directed accordingly.
->
-> You would need to create a probe that would initialize the correct interface.
-> MFD is not required here.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Good point. I agree. Separate file is not necessary if regmap is configured.
+> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Docum=
+entation/devicetree/bindings/mfd/ti-lmu.txt
+> new file mode 100644
+> index 0000000..c885cf8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> @@ -0,0 +1,243 @@
+> +TI LMU (Lighting Management Unit) device tree bindings
+> +
+> +TI LMU driver supports lighting devices below.
+> +
+> +   Name                  Child nodes
+> +  ------      ---------------------------------
+> +  LM3532       Backlight
+> +  LM3631       Backlight and regulator
+> +  LM3632       Backlight and regulator
+> +  LM3633       Backlight, LED and fault monitor
+> +  LM3695       Backlight
+> +  LM3697       Backlight and fault monitor
+> +
+> +Required properties:
+> +  - compatible: Should be one of:
+> +                "ti,lm3532"
+> +                "ti,lm3631"
+> +                "ti,lm3632"
+> +                "ti,lm3633"
+> +                "ti,lm3695"
+> +                "ti,lm3697"
+> +  - reg: I2C slave address.
+> +         0x11 for LM3632
+> +         0x29 for LM3631
+> +         0x36 for LM3633, LM3697
+> +         0x38 for LM3532
+> +         0x63 for LM3695
+> +
+> +Optional property:
+> +  - enable-gpios: A GPIO specifier for hardware enable pin.
+> +
+> +Required node:
+> +  - backlight: All LMU devices have backlight child nodes.
+> +               For the properties, please refer to [1].
+> +
+> +Optional nodes:
+> +  - fault-monitor: Hardware fault monitoring driver for LM3633 and L=
+M3697.
+> +    Required properties:
+> +      - compatible: Should be one of:
+> +                    "ti,lm3633-fault-monitor"
+> +                    "ti,lm3697-fault-monitor"
+> +  - leds: LED properties for LM3633. Please refer to [2].
+> +  - regulators: Regulator properties for LM3631 and LM3632.
+> +                Please refer to [3].
+> +
+> +[1] ../leds/backlight/ti-lmu-backlight.txt
+> +[2] ../leds/leds-lm3633.txt
+> +[3] ../regulator/lm363x-regulator.txt
+> +
+> +lm3532@38 {
+> +	compatible =3D "ti,lm3532";
+> +	reg =3D <0x38>;
+> +
+> +	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3532-backlight";
+> +
+> +		lcd {
+> +			led-sources =3D <0 1 2>;
+> +			ramp-up-msec =3D <30>;
+> +			ramp-down-msec =3D <0>;
+> +		};
+> +	};
+> +};
+> +
+> +lm3631@29 {
+> +	compatible =3D "ti,lm3631";
+> +	reg =3D <0x29>;
+> +
+> +	regulators {
+> +		compatible =3D "ti,lm363x-regulator";
+> +
+> +		vboost {
+> +			regulator-name =3D "lcd_boost";
+> +			regulator-min-microvolt =3D <4500000>;
+> +			regulator-max-microvolt =3D <6350000>;
+> +			regulator-always-on;
+> +		};
+> +
+> +		vcont {
+> +			regulator-name =3D "lcd_vcont";
+> +			regulator-min-microvolt =3D <1800000>;
+> +			regulator-max-microvolt =3D <3300000>;
+> +		};
+> +
+> +		voref {
+> +			regulator-name =3D "lcd_voref";
+> +			regulator-min-microvolt =3D <4000000>;
+> +			regulator-max-microvolt =3D <6000000>;
+> +		};
+> +
+> +		vpos {
+> +			regulator-name =3D "lcd_vpos";
+> +			regulator-min-microvolt =3D <4000000>;
+> +			regulator-max-microvolt =3D <6000000>;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		vneg {
+> +			regulator-name =3D "lcd_vneg";
+> +			regulator-min-microvolt =3D <4000000>;
+> +			regulator-max-microvolt =3D <6000000>;
+> +			regulator-boot-on;
+> +		};
+> +	};
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3631-backlight";
+> +
+> +		lcd_bl {
+> +			led-sources =3D <0 1>;
+> +			ramp-up-msec =3D <300>;
+> +		};
+> +	};
+> +};
+> +
+> +lm3632@11 {
+> +	compatible =3D "ti,lm3632";
+> +	reg =3D <0x11>;
+> +
+> +	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>; /* PC2 */
+> +
+> +	regulators {
+> +		compatible =3D "ti,lm363x-regulator";
+> +
+> +		ti,lcm-en1-gpio =3D <&pioC 0 GPIO_ACTIVE_HIGH>; /* PC0 */
+> +		ti,lcm-en2-gpio =3D <&pioC 1 GPIO_ACTIVE_HIGH>; /* PC1 */
+> +
+> +		vboost {
+> +			regulator-name =3D "lcd_boost";
+> +			regulator-min-microvolt =3D <4500000>;
+> +			regulator-max-microvolt =3D <6400000>;
+> +			regulator-always-on;
+> +		};
+> +
+> +		vpos {
+> +			regulator-name =3D "lcd_vpos";
+> +			regulator-min-microvolt =3D <4000000>;
+> +			regulator-max-microvolt =3D <6000000>;
+> +		};
+> +
+> +		vneg {
+> +			regulator-name =3D "lcd_vneg";
+> +			regulator-min-microvolt =3D <4000000>;
+> +			regulator-max-microvolt =3D <6000000>;
+> +		};
+> +	};
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3632-backlight";
+> +
+> +		pwms =3D <&pwm0 0 10000 0>; /* pwm number, period, polarity */
+> +		pwm-names =3D "lmu-backlight";
+> +
+> +		lcd {
+> +			led-sources =3D <0 1>;
+> +			pwm-period =3D <10000>;
+> +		};
+> +	};
+> +};
+> +
+> +lm3633@36 {
+> +	compatible =3D "ti,lm3633";
+> +	reg =3D <0x36>;
+> +
+> +	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3633-backlight";
+> +
+> +		main {
+> +			label =3D "main_lcd";
+> +			led-sources =3D <1 2>;
+> +			ramp-up-msec =3D <500>;
+> +			ramp-down-msec =3D <500>;
+> +		};
+> +
+> +		front {
+> +			label =3D "front_lcd";
+> +			led-sources =3D <0>;
+> +			ramp-up-msec =3D <1000>;
+> +			ramp-down-msec =3D <0>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible =3D "ti,lm3633-leds";
+> +
+> +		chan1 {
+> +			label =3D "status";
+> +			led-sources =3D <1>;
+> +			led-max-microamp =3D <6000>;
+> +		};
+> +
+> +		chan345 {
+> +			label =3D "rgb";
+> +			led-sources =3D <3 4 5>;
+> +			led-max-microamp =3D <10000>;
+> +		};
+> +	};
+> +
+> +	fault-monitor {
+> +		compatible =3D "ti,lm3633-fault-monitor";
+> +	};
+> +};
+> +
+> +lm3695@63 {
+> +	compatible =3D "ti,lm3695";
+> +	reg =3D <0x63>;
+> +
+> +	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3695-backlight";
+> +
+> +		lcd {
+> +			label =3D "bl";
+> +			led-sources =3D <0 1>;
+> +		};
+> +	};
+> +};
+> +
+> +lm3697@36 {
+> +	compatible =3D "ti,lm3697";
+> +	reg =3D <0x36>;
+> +
+> +	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
+> +
+> +	backlight {
+> +		compatible =3D "ti,lm3697-backlight";
+> +
+> +		lcd {
+> +			led-sources =3D <0 1 2>;
+> +			ramp-up-msec =3D <200>;
+> +			ramp-down-msec =3D <200>;
+> +		};
+> +	};
+> +
+> +	fault-monitor {
+> +		compatible =3D "ti,lm3697-fault-monitor";
+> +	};
+> +};
 
->
->>    - Firmware I/F
->>      Firmware binary file contains default EEPROM values.
->>      lp8860-core will request a firmware and write values via I2C/SPI.
->>      Bin files will be delivered in separate location later.
->
-> Where?  The linux-firmware repo?
-
-Yes, that was my plan.
-
->>      This feature will support several EEPROM versions with single driver.
->
-> I would prefer to move this firmware loading into a bootloader.  Since this
-> is a back light driver it does not make sense to load the firmware once the file
-> system is available.  Most applications will need backlight very early in the boot
-> sequence to produce a SoL (Sign of Life).  Loading the firmware at file system
-> run time does not make sense.  When/how would create the necessary led interfaces?
-
-Yes, backlight control in early stage - it's true. In other backlight 
-projects, some vendors write register values in both stages - bootloader 
-and kernel.
-With regard to LP8860, I don't have any requirement from vendor/customer 
-side yet.
-
-> It would be better to load the FW very early.  I would probably create a device tree node
-> that tells the driver whether to control the device directly or use the loaded firmware.
-
-I think this is a good option for supporting various applications.
-
->>    - MFD devices
->>      lp8860-core will create MFD child devices based on EEPROM value.
->>      LED_STRING_CONF[2:0] bits will be read.
->>      mode 0: backlight
->>           1: backlight + LED
->>           2: backlight + LED 1, 2
->>           3: backlight + LED 1, 2, 3
->>           4: backlight 1, 2
->>           5: backlight
->>           6: backlight + LED 1, 2
->>           7: LED 1,2,3,4
->>      (Please refer to the page 28 and 29 of LP8860 datasheet.
->>       http://www.ti.com/lit/ds/symlink/lp8860-q1.pdf)
->
-> Well is this something we can add to the DT and program the EEPROM on the fly for
-> implementations that do not require TI firmware?
-> Is loading the EEPROM firmware an absolute requirement?  Can't the individuals just
-> update the EEPROM values in the core file?
-
-There is no requirement. Only few EEPROM values can be updated.
-However, it could cause a problem if wrong values are written in EEPROM, 
-so we used to provide whole values from 0x60 to 0x78.
-
-The reason why I'm considering firmware I/F is kernel maintenance.
-Without DT modification, new options can be applied through the 
-firmware. It provides more useful feature in development stage.
-And I spent much times to check register values on debugging. In most 
-cases, wrong values were written in customer side. So I think this 
-situation could be improved if the driver uses the firmware.
-
-However, as you pointed, firmware I/F is not the best solution because 
-EEPROM should be updated early as soon as possible. I agree DT property 
-would be better.
-
-Best regards,
-Milo
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
