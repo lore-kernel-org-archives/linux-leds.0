@@ -1,85 +1,182 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 6/9] mfd: add TI LMU hardware fault monitoring driver
-Date: Mon, 11 Jan 2016 10:21:17 +0000
-Message-ID: <20160111102117.GU14104@x1>
-References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
- <1448521025-2796-7-git-send-email-milo.kim@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Simon Que <sque@chromium.org>
+Subject: [PATCH v2] leds: Add Chrome OS keyboard LEDs driver
+Date: Mon, 11 Jan 2016 11:12:10 -0800
+Message-ID: <1452539530-10829-1-git-send-email-sque@chromium.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:32959 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759038AbcAKKVV (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jan 2016 05:21:21 -0500
-Received: by mail-wm0-f47.google.com with SMTP id f206so206431611wmf.0
-        for <linux-leds@vger.kernel.org>; Mon, 11 Jan 2016 02:21:21 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1448521025-2796-7-git-send-email-milo.kim@ti.com>
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:33234 "EHLO
+	mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934358AbcAKTND (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jan 2016 14:13:03 -0500
+Received: by mail-pf0-f181.google.com with SMTP id e65so49168703pfe.0
+        for <linux-leds@vger.kernel.org>; Mon, 11 Jan 2016 11:13:02 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: robh+dt@kernel.org, j.anaszewski@samsung.com, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: Sameer Nanda <snanda@chromium.org>, Todd Broch <tbroch@chromium.org>, Duncal Laurie <dlaurie@chromium.org>, Evan McClain <aeroevan@gmail.com>, Simon Que <sque@chromium.org>
 
-On Thu, 26 Nov 2015, Milo Kim wrote:
+Some Chrome OS devices use ACPI-based keyboard backlight LEDs.
 
-> LM3633 and LM3697 are TI LMU MFD device.
-> Those devices have hardware monitoring feature which detects open or
-> short circuit case.
->=20
-> Debugfs
-> -------
->   Two files are created.
->     open_fault:  check light output channel is open or not.
->     short_fault: check light output channel is shorted or not.
->=20
->   The driver checks the status of backlight output channels.
->   LM3633 and LM3697 have same sequence to check channels, so common
->   functions are used.
->   ABI/testing document is also included.
->=20
-> Operations
-> ----------
->   Two devices have common control flow but register addresses are dif=
-ferent.
->   The structure, 'ti_lmu_reg' is used for register configuration.
->=20
-> Event notifier
-> --------------
->   After fault monitoring is done, LMU device is reset. So backlight a=
-nd
->   LED device should be reinitialized. It notifies an event as soon as
->   the monitoring is done. Then, LM3633 and LM3697 backlight and LED d=
-rivers
->   handle this event.
->=20
-> Cc: Lee Jones <lee.jones@linaro.org>=20
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org=20
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> ---
->  .../ABI/testing/debugfs-ti-lmu-fault-monitor       |  32 ++
->  drivers/mfd/Kconfig                                |  10 +
->  drivers/mfd/Makefile                               |   1 +
->  drivers/mfd/ti-lmu-fault-monitor.c                 | 405 +++++++++++=
-++++++++++
+Enable with menuconfig option under Device Drivers -> LED Support.
 
-I think this device is part of the MFD, rather than an MFD itself.
-Please relocate it to somewhere more appropriate.
+Change-Id: Id5a762b97e131c3b66c90fd0da93658c98bd8bc8
+Signed-off-by: Simon Que <sque@chromium.org>
+---
+ drivers/leds/Kconfig                  |   7 +++
+ drivers/leds/Makefile                 |   1 +
+ drivers/leds/leds-chromeos-keyboard.c | 115 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 drivers/leds/leds-chromeos-keyboard.c
 
->  4 files changed, 448 insertions(+)
->  create mode 100644 Documentation/ABI/testing/debugfs-ti-lmu-fault-mo=
-nitor
->  create mode 100644 drivers/mfd/ti-lmu-fault-monitor.c
-
-[...]
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 72156c1..c530085 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -487,6 +487,13 @@ config LEDS_BLINKM
+ 	  This option enables support for the BlinkM RGB LED connected
+ 	  through I2C. Say Y to enable support for the BlinkM LED.
+ 
++config LEDS_CHROMEOS_KEYBOARD
++	tristate "LED support for Chrome OS keyboards"
++	depends on LEDS_CLASS && ACPI
++	help
++	  This option enables support for the LEDs on Chrome OS keyboards.
++	  Say Y to enable keyboard LEDs on Chrome OS systems.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 3cd76db..bf88b27 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -54,6 +54,7 @@ obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
+ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+ obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
+ obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
++obj-$(CONFIG_LEDS_CHROMEOS_KEYBOARD)	+= leds-chromeos-keyboard.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-chromeos-keyboard.c b/drivers/leds/leds-chromeos-keyboard.c
+new file mode 100644
+index 0000000..32d70c0
+--- /dev/null
++++ b/drivers/leds/leds-chromeos-keyboard.c
+@@ -0,0 +1,115 @@
++/*
++ *  LED driver for Chrome OS keyboard backlight
++ *
++ *  Copyright (C) 2012 Google, Inc.
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ */
++
++#include <linux/acpi.h>
++#include <linux/leds.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++/* Keyboard LED ACPI Device must be defined in firmware */
++#define ACPI_KEYBOARD_BACKLIGHT_DEVICE	"\\_SB.KBLT"
++#define ACPI_KEYBOARD_BACKLIGHT_READ	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBQC"
++#define ACPI_KEYBOARD_BACKLIGHT_WRITE	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBCM"
++
++#define ACPI_KEYBOARD_BACKLIGHT_MAX		100
++
++static void keyboard_led_set_brightness(struct led_classdev *cdev,
++					enum led_brightness brightness)
++{
++	union acpi_object param;
++	struct acpi_object_list input;
++	acpi_status status;
++
++	if (!(cdev->flags & LED_SUSPENDED))
++		cdev->brightness = brightness;
++
++	param.type = ACPI_TYPE_INTEGER;
++	param.integer.value = brightness;
++	input.count = 1;
++	input.pointer = &param;
++
++	status = acpi_evaluate_object(NULL, ACPI_KEYBOARD_BACKLIGHT_WRITE,
++					  &input, NULL);
++	if (ACPI_FAILURE(status))
++		dev_err(cdev->dev, "Error setting keyboard LED value");
++}
++
++static int keyboard_led_probe(struct platform_device *pdev)
++{
++	struct led_classdev *cdev;
++	acpi_handle handle;
++	acpi_status status;
++	int ret;
++
++	/* Look for the keyboard LED ACPI Device */
++	status = acpi_get_handle(ACPI_ROOT_OBJECT,
++				 ACPI_KEYBOARD_BACKLIGHT_DEVICE,
++				 &handle);
++	if (ACPI_FAILURE(status)) {
++		dev_err(&pdev->dev, "Unable fo find ACPI device %s\n",
++			ACPI_KEYBOARD_BACKLIGHT_DEVICE);
++		return -ENODEV;
++	}
++
++	cdev = kzalloc(sizeof(struct led_classdev), GFP_KERNEL);
++	if (!cdev)
++		return -ENOMEM;
++	cdev->name = "chromeos::kbd_backlight";
++	cdev->brightness_set = keyboard_led_set_brightness;
++	cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
++	cdev->brightness = cdev->max_brightness;
++	cdev->flags |= LED_CORE_SUSPENDRESUME;
++
++	ret = led_classdev_register(&pdev->dev, cdev);
++	if (ret)
++		goto err;
++
++	platform_set_drvdata(pdev, cdev);
++	return 0;
++err:
++	kfree(cdev);
++	return ret;
++}
++
++static int keyboard_led_remove(struct platform_device *pdev)
++{
++	struct led_classdev *cdev = platform_get_drvdata(pdev);
++
++	platform_set_drvdata(pdev, NULL);
++	kfree(cdev);
++	return 0;
++}
++
++static struct platform_driver keyboard_led_driver = {
++	.driver		= {
++		.name	= "chromeos-keyboard-leds",
++		.owner	= THIS_MODULE,
++	},
++	.probe		= keyboard_led_probe,
++	.remove		= keyboard_led_remove,
++};
++
++module_platform_driver(keyboard_led_driver);
++
++MODULE_AUTHOR("Simon Que <sque@chromium.org>");
++MODULE_DESCRIPTION("ChromeOS Keyboard LED Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:chromeos-keyboard-leds");
+-- 
+2.6.0.rc2.230.g3dd15c0
