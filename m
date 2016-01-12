@@ -1,96 +1,59 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 6/9] mfd: add TI LMU hardware fault monitoring driver
-Date: Tue, 12 Jan 2016 07:37:32 +0000
-Message-ID: <20160112073732.GI19803@x1>
-References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
- <1448521025-2796-7-git-send-email-milo.kim@ti.com>
- <20160111102117.GU14104@x1>
- <569474DB.3090408@ti.com>
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+Subject: [PATCH 00/14] Common Dell SMBIOS API
+Date: Tue, 12 Jan 2016 15:02:46 +0100
+Message-ID: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:34801 "EHLO
-	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933814AbcALHhg (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 Jan 2016 02:37:36 -0500
-Received: by mail-wm0-f49.google.com with SMTP id u188so243754496wmu.1
-        for <linux-leds@vger.kernel.org>; Mon, 11 Jan 2016 23:37:35 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <569474DB.3090408@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Milo Kim <milo.kim@ti.com>
-Cc: robh+dt@kernel.org, j.anaszewski@samsung.com, broonie@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 12 Jan 2016, Milo Kim wrote:
+The Linux kernel tree currently contains two Dell laptop-related driver=
+s
+issuing SMBIOS requests in different ways (dell-laptop in
+drivers/platform/x86 and dell-led in drivers/led).  As an upcoming patc=
+h
+series for the dell-wmi driver (also in drivers/platform/x86) will
+change it so that it also performs SMBIOS requests, I took the
+opportunity to unify the API used for issuing Dell SMBIOS requests
+throughout the kernel before any further code duplication happens.
+Credit for suggesting this goes to Pali Roh=C3=A1r.
 
-> On 01/11/2016 07:21 PM, Lee Jones wrote:
-> >On Thu, 26 Nov 2015, Milo Kim wrote:
-> >
-> >>LM3633 and LM3697 are TI LMU MFD device.
-> >>Those devices have hardware monitoring feature which detects open o=
-r
-> >>short circuit case.
-> >>
-> >>Debugfs
-> >>-------
-> >>   Two files are created.
-> >>     open_fault:  check light output channel is open or not.
-> >>     short_fault: check light output channel is shorted or not.
-> >>
-> >>   The driver checks the status of backlight output channels.
-> >>   LM3633 and LM3697 have same sequence to check channels, so commo=
-n
-> >>   functions are used.
-> >>   ABI/testing document is also included.
-> >>
-> >>Operations
-> >>----------
-> >>   Two devices have common control flow but register addresses are =
-different.
-> >>   The structure, 'ti_lmu_reg' is used for register configuration.
-> >>
-> >>Event notifier
-> >>--------------
-> >>   After fault monitoring is done, LMU device is reset. So backligh=
-t and
-> >>   LED device should be reinitialized. It notifies an event as soon=
- as
-> >>   the monitoring is done. Then, LM3633 and LM3697 backlight and LE=
-D drivers
-> >>   handle this event.
-> >>
-> >>Cc: Lee Jones <lee.jones@linaro.org>
-> >>Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> >>Cc: Mark Brown <broonie@kernel.org>
-> >>Cc: Rob Herring <robh+dt@kernel.org>
-> >>Cc: devicetree@vger.kernel.org
-> >>Cc: linux-leds@vger.kernel.org
-> >>Cc: linux-kernel@vger.kernel.org
-> >>Signed-off-by: Milo Kim <milo.kim@ti.com>
-> >>---
-> >>  .../ABI/testing/debugfs-ti-lmu-fault-monitor       |  32 ++
-> >>  drivers/mfd/Kconfig                                |  10 +
-> >>  drivers/mfd/Makefile                               |   1 +
-> >>  drivers/mfd/ti-lmu-fault-monitor.c                 | 405 ++++++++=
-+++++++++++++
-> >
-> >I think this device is part of the MFD, rather than an MFD itself.
-> >Please relocate it to somewhere more appropriate.
->=20
-> Actually, initial patch driver was created under 'drivers/hwmon/'
-> but HWMON maintainer pointed this driver doesn't include HW sensor
-> feature.
-> So I moved here.
->=20
-> This driver doesn't need any subsystem infrastructure,
-> 'drivers/misc/' could be OK. Does it make sense?
+This patch series is primarily intended for the platform-x86 subsystem,
+with only 2 final patches touching the LED subsystem.  I decided to sen=
+d
+the whole series to everyone involved to provide context - my apologies
+if this is frowned upon.
 
-Either drivers/misc or drivers/platform I guess.
+As for making dell-led dependent on a driver in drivers/platform/x86,
+let me just hint that Pali and I think it could be possible to
+eventually move all of dell-led's code to drivers/platform/x86.  But
+first things first.
+
+The first patch generates a lot of checkpatch warnings, but these are
+also raised for the original code and I decided that not changing the
+code while moving around large quantities of it is critical for
+reviewability.
+
+Alex, as I don't have the hardware to test the changes in dell-led
+(beyond compilation) and you contributed the parts of it which this
+patch series changes, is there any way you might test it on relevant
+hardware?
+
+ drivers/leds/Kconfig               |    1 +
+ drivers/leds/dell-led.c            |  125 ++--------
+ drivers/platform/x86/Kconfig       |   12 +-
+ drivers/platform/x86/Makefile      |    1 +
+ drivers/platform/x86/dell-laptop.c |  444 ++++++++++++----------------=
+--------
+ drivers/platform/x86/dell-smbios.c |  179 +++++++++++++++
+ drivers/platform/x86/dell-smbios.h |   48 ++++
+ 7 files changed, 395 insertions(+), 415 deletions(-)
+ create mode 100644 drivers/platform/x86/dell-smbios.c
+ create mode 100644 drivers/platform/x86/dell-smbios.h
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+1.7.10.4
