@@ -1,72 +1,53 @@
-From: Milo Kim <milo.kim@ti.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v2 9/9] regulator: add LM363X driver
-Date: Thu, 14 Jan 2016 16:56:03 +0900
-Message-ID: <56975493.7050900@ti.com>
+Date: Thu, 14 Jan 2016 10:27:36 +0000
+Message-ID: <20160114102736.GP6588@sirena.org.uk>
 References: <1448521025-2796-1-git-send-email-milo.kim@ti.com>
  <1448521025-2796-10-git-send-email-milo.kim@ti.com>
+ <56975493.7050900@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:58413 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750786AbcANH4O (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 14 Jan 2016 02:56:14 -0500
-In-Reply-To: <1448521025-2796-10-git-send-email-milo.kim@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="le3rj4S+jilWgWjH"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <56975493.7050900-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>
+Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: lee.jones@linaro.org, broonie@kernel.org
-Cc: robh+dt@kernel.org, j.anaszewski@samsung.com, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Lee and Mark,
 
-On 11/26/2015 03:57 PM, Milo Kim wrote:
-> LM363X regulator driver supports LM3631 and LM3632.
-> LM3631 has 5 regulators. LM3632 provides 3 regulators.
-> One boost output and LDOs are used for the display module.
-> Boost voltage is configurable but always on.
-> Supported operations for LDOs are enabled/disabled and voltage change.
->
-> Two LDOs of LM3632 can be controlled by external pins.
-> Those are configured through the DT properties.
->
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
+--le3rj4S+jilWgWjH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'm creating the 3rd patch-set but this driver is found in linux-next 
-tree. And Axel Lin has patched this driver. In my patch v3, modified 
-part is DT properties for external enable pins. (Use '-gpios' instead of 
-'-gpio')
+On Thu, Jan 14, 2016 at 04:56:03PM +0900, Milo Kim wrote:
 
-diff --git a/drivers/regulator/lm363x-regulator.c 
-b/drivers/regulator/lm363x-regulator.c
-index f53e633..4a11290 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -227,9 +227,9 @@ static int 
-lm363x_regulator_of_get_enable_gpio(struct device_node *np, int id)
-*/
-switch (id) {
-case LM3632_LDO_POS:
-- return of_get_named_gpio(np, "ti,lcm-en1-gpio", 0);
-+ return of_get_named_gpio(np, "ti,lcm-en1-gpios", 0);
-case LM3632_LDO_NEG:
-- return of_get_named_gpio(np, "ti,lcm-en2-gpio", 0);
-+ return of_get_named_gpio(np, "ti,lcm-en2-gpios", 0);
-default:
-return -EINVAL;
-}
+> So, I'd like to know which is better for you.
+> a) Create a patch based on linux-next tree (the above patch)
+> Or
+> b) Re-generate a patch based on linux-mfd tree
 
-So, I'd like to know which is better for you.
-a) Create a patch based on linux-next tree (the above patch)
-Or
-b) Re-generate a patch based on linux-mfd tree
+At this point the easiest thing might be to wait for v4.5-rc1 then send
+a patch for that after everything gets merged.
 
-Best regards,
-Milo
+--le3rj4S+jilWgWjH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWl3gXAAoJECTWi3JdVIfQ5FUH/0e/qYToX6HnCYLXTsdurRNn
+XMOyiRQpx1nxNQwJTc0vx9rjAUqqLBFrGkyY3ThiDH19P2PkI/rTf1xjMX+AQOPa
++Y/jbKCuofPA03W9hUVmjaS0vdHxWIF3ShniZiwyWuD1QY2e1+RKcsRMlUgMhK4P
+3XDNh7cpVkH8DeE7hJdww6HGuQmyCGA+18/1oUkx7By/7X00y1HP7qzF3lKQ4ovV
+m/hmvLBGF3h0MlLzEkZx8k+PFm6yiFRMfs1A0FvHiPhsuQVrwUe0z2yCG5FTUd7F
+I0sPVqy2VIoPtoPp8Jj4m5Dpf3/uscjCbhxctoa5LdgEmhLDYkXYz985zhphlQk=
+=YkP3
+-----END PGP SIGNATURE-----
+
+--le3rj4S+jilWgWjH--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
