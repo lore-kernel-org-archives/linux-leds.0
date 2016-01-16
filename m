@@ -1,495 +1,604 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH] led: core: RfC - add RGB LED handling to the core
-Date: Fri, 15 Jan 2016 21:16:31 +0100
-Message-ID: <5699539F.5030102@gmail.com>
-References: <5692BEB6.6040807@gmail.com> <56978FB0.4080700@samsung.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH 01/14] dell-laptop: extract SMBIOS-related code to a
+ separate module
+Date: Sat, 16 Jan 2016 16:19:22 +0100
+Message-ID: <20160116151922.GA5060@pali>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:38864 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751796AbcAOUjd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 15 Jan 2016 15:39:33 -0500
-Received: by mail-wm0-f44.google.com with SMTP id b14so42206873wmb.1
-        for <linux-leds@vger.kernel.org>; Fri, 15 Jan 2016 12:39:32 -0800 (PST)
-In-Reply-To: <56978FB0.4080700@samsung.com>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:34789 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751265AbcAPPTh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 16 Jan 2016 10:19:37 -0500
+Content-Disposition: inline
+In-Reply-To: <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 14.01.2016 um 13:08 schrieb Jacek Anaszewski:
-> On 01/10/2016 09:27 PM, Heiner Kallweit wrote:
->> When playing with a ThingM Blink(1) USB RGB LED device I found that there
->> are few drivers for RGB LED's spread across the kernel and each one
->> implements the RGB functionality in its own way.
->> Some examples:
->> - drivers/hid/hid-thingm.c
->> - drivers/usb/misc/usbled.c
->> - drivers/leds/leds-bd2802.c
->> - drivers/leds/leds-blinkm.c
->> ...
->> IMHO it would make sense to add generic RGB functionality to the LED core.
->>
->> Things I didn't like too much in other driver implementations:
->> - one led_classdev per color or at least
->> - one sysfs attribute per color
->> Colors are not really independent therefore I'd prefer one led_classdev
->> per RGB LED. Also userspace should be able to change the color with one
->> call -> therefore only one sysfs attribute for the RGB values.
->>
->> Also the current brightness-related functionality should not be effected
->> by the RGB extension.
->>
->> This patch is intended to demonstrate the idea of the extension. Most likely
->> it's not ready yet for submission.
->>
->> Main idea is to base the effective RGB value on a combination of brightness
->> and a scaled-to-max RGB value.
->> The RGB-related callbacks are basically the same as for brightness.
->> RGB functionally can be switched on with a new flag in the led_classdev.flags
->> bitmap.
->>
->> Experimentally I changed the thingm driver to use this extension and it works
->> quite well. As one result the driver could be very much simplified.
->>
->> Any feedback is appreciated.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->>   drivers/leds/led-class.c |  62 +++++++++++++++++++++++++++
->>   drivers/leds/led-core.c  | 106 +++++++++++++++++++++++++++++++++++++++++++++++
->>   drivers/leds/leds.h      |  12 ++++++
->>   include/linux/leds.h     |  13 ++++++
->>   4 files changed, 193 insertions(+)
->>
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 14139c3..5e4c2f2 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -64,6 +64,47 @@ unlock:
->>   }
->>   static DEVICE_ATTR_RW(brightness);
->>
->> +static ssize_t rgb_show(struct device *dev, struct device_attribute *attr,
->> +            char *buf)
->> +{
->> +    struct led_classdev *led_cdev = dev_get_drvdata(dev);
->> +    u32 rgb_val;
->> +
->> +    mutex_lock(&led_cdev->led_access);
->> +    led_update_rgb_val(led_cdev);
->> +    rgb_val = led_get_rgb_val(led_cdev);
->> +    mutex_unlock(&led_cdev->led_access);
->> +
->> +    return sprintf(buf, "0x%06x\n", rgb_val);
->> +}
->> +
->> +static ssize_t rgb_store(struct device *dev, struct device_attribute *attr,
->> +             const char *buf, size_t size)
->> +{
->> +    struct led_classdev *led_cdev = dev_get_drvdata(dev);
->> +    unsigned long state;
->> +    ssize_t ret;
->> +
->> +    mutex_lock(&led_cdev->led_access);
->> +
->> +    if (led_sysfs_is_disabled(led_cdev)) {
->> +        ret = -EBUSY;
->> +        goto unlock;
->> +    }
->> +
->> +    ret = kstrtoul(buf, 0, &state);
->> +    if (ret)
->> +        goto unlock;
->> +
->> +    led_set_rgb_val(led_cdev, state);
-> 
-> Please adhere to the current LED API naming style: led_rgb_set.
-> 
-Seems like currently two naming styles are use in the LED core.
-We have e.g. led_blink_set and led_set_brightness.
-However I'm fine with the suggested led_rgb_set.
+On Tuesday 12 January 2016 15:02:47 Micha=C5=82 K=C4=99pie=C5=84 wrote:
+> Extract SMBIOS-related code from dell-laptop to a new kernel module,
+> dell-smbios.  The static specifier was removed from exported symbols,
+> otherwise code is just moved around.
+>=20
+> Signed-off-by: Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempniu.pl>
+> ---
+>  drivers/platform/x86/Kconfig       |   12 ++-
+>  drivers/platform/x86/Makefile      |    1 +
+>  drivers/platform/x86/dell-laptop.c |  163 +-------------------------=
+----
+>  drivers/platform/x86/dell-smbios.c |  193 ++++++++++++++++++++++++++=
+++++++++++
+>  drivers/platform/x86/dell-smbios.h |   51 ++++++++++
+>  5 files changed, 257 insertions(+), 163 deletions(-)
+>  create mode 100644 drivers/platform/x86/dell-smbios.c
+>  create mode 100644 drivers/platform/x86/dell-smbios.h
+>=20
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kcon=
+fig
+> index f37821f..177a794 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -91,10 +91,20 @@ config ASUS_LAPTOP
+> =20
+>  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+> =20
+> +config DELL_SMBIOS
+> +	tristate "Dell SMBIOS Support"
+> +	depends on DCDBAS
+> +	default n
+> +	---help---
+> +	This module provides common functions for kernel modules using
+> +	Dell SMBIOS.
+> +
+> +	If you have a Dell laptop, say Y or M here.
+> +
+>  config DELL_LAPTOP
+>  	tristate "Dell Laptop Extras"
+>  	depends on X86
+> -	depends on DCDBAS
+> +	depends on DELL_SMBIOS
+>  	depends on BACKLIGHT_CLASS_DEVICE
+>  	depends on ACPI_VIDEO || ACPI_VIDEO =3D n
+>  	depends on RFKILL || RFKILL =3D n
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Mak=
+efile
+> index 8b8df29..1128595 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_EEEPC_WMI)		+=3D eeepc-wmi.o
+>  obj-$(CONFIG_MSI_LAPTOP)	+=3D msi-laptop.o
+>  obj-$(CONFIG_ACPI_CMPC)		+=3D classmate-laptop.o
+>  obj-$(CONFIG_COMPAL_LAPTOP)	+=3D compal-laptop.o
+> +obj-$(CONFIG_DELL_SMBIOS)	+=3D dell-smbios.o
+>  obj-$(CONFIG_DELL_LAPTOP)	+=3D dell-laptop.o
+>  obj-$(CONFIG_DELL_WMI)		+=3D dell-wmi.o
+>  obj-$(CONFIG_DELL_WMI_AIO)	+=3D dell-wmi-aio.o
+> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x8=
+6/dell-laptop.c
+> index aaeeae8..d45d356 100644
+> --- a/drivers/platform/x86/dell-laptop.c
+> +++ b/drivers/platform/x86/dell-laptop.c
+> @@ -28,12 +28,11 @@
+>  #include <linux/acpi.h>
+>  #include <linux/mm.h>
+>  #include <linux/i8042.h>
+> -#include <linux/slab.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/seq_file.h>
+>  #include <acpi/video.h>
+> -#include "../../firmware/dcdbas.h"
+>  #include "dell-rbtn.h"
+> +#include "dell-smbios.h"
+> =20
+>  #define BRIGHTNESS_TOKEN 0x7d
+>  #define KBD_LED_OFF_TOKEN 0x01E1
+> @@ -44,33 +43,6 @@
+>  #define KBD_LED_AUTO_75_TOKEN 0x02EC
+>  #define KBD_LED_AUTO_100_TOKEN 0x02F6
+> =20
+> -/* This structure will be modified by the firmware when we enter
+> - * system management mode, hence the volatiles */
+> -
+> -struct calling_interface_buffer {
+> -	u16 class;
+> -	u16 select;
+> -	volatile u32 input[4];
+> -	volatile u32 output[4];
+> -} __packed;
+> -
+> -struct calling_interface_token {
+> -	u16 tokenID;
+> -	u16 location;
+> -	union {
+> -		u16 value;
+> -		u16 stringlength;
+> -	};
+> -};
+> -
+> -struct calling_interface_structure {
+> -	struct dmi_header header;
+> -	u16 cmdIOAddress;
+> -	u8 cmdIOCode;
+> -	u32 supportedCmds;
+> -	struct calling_interface_token tokens[];
+> -} __packed;
+> -
+>  struct quirk_entry {
+>  	u8 touchpad_led;
+> =20
+> @@ -103,11 +75,6 @@ static struct quirk_entry quirk_dell_xps13_9333 =3D=
+ {
+>  	.kbd_timeouts =3D { 0, 5, 15, 60, 5 * 60, 15 * 60, -1 },
+>  };
+> =20
+> -static int da_command_address;
+> -static int da_command_code;
+> -static int da_num_tokens;
+> -static struct calling_interface_token *da_tokens;
+> -
+>  static struct platform_driver platform_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "dell-laptop",
+> @@ -306,112 +273,6 @@ static const struct dmi_system_id dell_quirks[]=
+ __initconst =3D {
+>  	{ }
+>  };
+> =20
+> -static struct calling_interface_buffer *buffer;
+> -static DEFINE_MUTEX(buffer_mutex);
+> -
+> -static void clear_buffer(void)
+> -{
+> -	memset(buffer, 0, sizeof(struct calling_interface_buffer));
+> -}
+> -
+> -static void get_buffer(void)
+> -{
+> -	mutex_lock(&buffer_mutex);
+> -	clear_buffer();
+> -}
+> -
+> -static void release_buffer(void)
+> -{
+> -	mutex_unlock(&buffer_mutex);
+> -}
+> -
+> -static void __init parse_da_table(const struct dmi_header *dm)
+> -{
+> -	/* Final token is a terminator, so we don't want to copy it */
+> -	int tokens =3D (dm->length-11)/sizeof(struct calling_interface_toke=
+n)-1;
+> -	struct calling_interface_token *new_da_tokens;
+> -	struct calling_interface_structure *table =3D
+> -		container_of(dm, struct calling_interface_structure, header);
+> -
+> -	/* 4 bytes of table header, plus 7 bytes of Dell header, plus at le=
+ast
+> -	   6 bytes of entry */
+> -
+> -	if (dm->length < 17)
+> -		return;
+> -
+> -	da_command_address =3D table->cmdIOAddress;
+> -	da_command_code =3D table->cmdIOCode;
+> -
+> -	new_da_tokens =3D krealloc(da_tokens, (da_num_tokens + tokens) *
+> -				 sizeof(struct calling_interface_token),
+> -				 GFP_KERNEL);
+> -
+> -	if (!new_da_tokens)
+> -		return;
+> -	da_tokens =3D new_da_tokens;
+> -
+> -	memcpy(da_tokens+da_num_tokens, table->tokens,
+> -	       sizeof(struct calling_interface_token) * tokens);
+> -
+> -	da_num_tokens +=3D tokens;
+> -}
+> -
+> -static void __init find_tokens(const struct dmi_header *dm, void *du=
+mmy)
+> -{
+> -	switch (dm->type) {
+> -	case 0xd4: /* Indexed IO */
+> -	case 0xd5: /* Protected Area Type 1 */
+> -	case 0xd6: /* Protected Area Type 2 */
+> -		break;
+> -	case 0xda: /* Calling interface */
+> -		parse_da_table(dm);
+> -		break;
+> -	}
+> -}
+> -
+> -static int find_token_id(int tokenid)
+> -{
+> -	int i;
+> -
+> -	for (i =3D 0; i < da_num_tokens; i++) {
+> -		if (da_tokens[i].tokenID =3D=3D tokenid)
+> -			return i;
+> -	}
+> -
+> -	return -1;
+> -}
+> -
+> -static int find_token_location(int tokenid)
+> -{
+> -	int id;
+> -
+> -	id =3D find_token_id(tokenid);
+> -	if (id =3D=3D -1)
+> -		return -1;
+> -
+> -	return da_tokens[id].location;
+> -}
+> -
+> -static struct calling_interface_buffer *
+> -dell_send_request(struct calling_interface_buffer *buffer, int class=
+,
+> -		  int select)
+> -{
+> -	struct smi_cmd command;
+> -
+> -	command.magic =3D SMI_CMD_MAGIC;
+> -	command.command_address =3D da_command_address;
+> -	command.command_code =3D da_command_code;
+> -	command.ebx =3D virt_to_phys(buffer);
+> -	command.ecx =3D 0x42534931;
+> -
+> -	buffer->class =3D class;
+> -	buffer->select =3D select;
+> -
+> -	dcdbas_smi_request(&command);
+> -
+> -	return buffer;
+> -}
+> -
+>  static inline int dell_smi_error(int value)
+>  {
+>  	switch (value) {
+> @@ -2122,13 +1983,6 @@ static int __init dell_init(void)
+>  	/* find if this machine support other functions */
+>  	dmi_check_system(dell_quirks);
+> =20
+> -	dmi_walk(find_tokens, NULL);
+> -
+> -	if (!da_tokens)  {
+> -		pr_info("Unable to find dmi tokens\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	ret =3D platform_driver_register(&platform_driver);
+>  	if (ret)
+>  		goto fail_platform_driver;
+> @@ -2141,16 +1995,6 @@ static int __init dell_init(void)
+>  	if (ret)
+>  		goto fail_platform_device2;
+> =20
+> -	/*
+> -	 * Allocate buffer below 4GB for SMI data--only 32-bit physical add=
+r
+> -	 * is passed to SMI handler.
+> -	 */
+> -	buffer =3D (void *)__get_free_page(GFP_KERNEL | GFP_DMA32);
+> -	if (!buffer) {
+> -		ret =3D -ENOMEM;
+> -		goto fail_buffer;
+> -	}
+> -
+>  	ret =3D dell_setup_rfkill();
+> =20
+>  	if (ret) {
+> @@ -2208,15 +2052,12 @@ static int __init dell_init(void)
+>  fail_backlight:
+>  	dell_cleanup_rfkill();
+>  fail_rfkill:
+> -	free_page((unsigned long)buffer);
+> -fail_buffer:
+>  	platform_device_del(platform_device);
+>  fail_platform_device2:
+>  	platform_device_put(platform_device);
+>  fail_platform_device1:
+>  	platform_driver_unregister(&platform_driver);
+>  fail_platform_driver:
+> -	kfree(da_tokens);
+>  	return ret;
+>  }
+> =20
+> @@ -2232,8 +2073,6 @@ static void __exit dell_exit(void)
+>  		platform_device_unregister(platform_device);
+>  		platform_driver_unregister(&platform_driver);
+>  	}
+> -	kfree(da_tokens);
+> -	free_page((unsigned long)buffer);
+>  }
+> =20
+>  /* dell-rbtn.c driver export functions which will not work correctly=
+ (and could
+> diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x8=
+6/dell-smbios.c
+> new file mode 100644
+> index 0000000..260a32a
+> --- /dev/null
+> +++ b/drivers/platform/x86/dell-smbios.c
+> @@ -0,0 +1,193 @@
+> +/*
+> + *  Common functions for kernel modules using Dell SMBIOS
+> + *
+> + *  Copyright (c) Red Hat <mjg@redhat.com>
+> + *  Copyright (c) 2014 Gabriele Mazzotta <gabriele.mzt@gmail.com>
+> + *  Copyright (c) 2014 Pali Roh=C3=A1r <pali.rohar@gmail.com>
+> + *
+> + *  Based on documentation in the libsmbios package:
+> + *  Copyright (C) 2005-2014 Dell Inc.
+> + *
+> + *  This program is free software; you can redistribute it and/or mo=
+dify
+> + *  it under the terms of the GNU General Public License version 2 a=
+s
+> + *  published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/dmi.h>
+> +#include <linux/gfp.h>
+> +#include <linux/mutex.h>
+> +#include <linux/slab.h>
+> +#include "../../firmware/dcdbas.h"
+> +#include "dell-smbios.h"
+> +
+> +struct calling_interface_structure {
+> +	struct dmi_header header;
+> +	u16 cmdIOAddress;
+> +	u8 cmdIOCode;
+> +	u32 supportedCmds;
+> +	struct calling_interface_token tokens[];
+> +} __packed;
+> +
+> +static DEFINE_MUTEX(buffer_mutex);
+> +struct calling_interface_buffer *buffer;
+> +EXPORT_SYMBOL_GPL(buffer);
+> +
+> +static int da_command_address;
+> +static int da_command_code;
+> +static int da_num_tokens;
+> +struct calling_interface_token *da_tokens;
+> +EXPORT_SYMBOL_GPL(da_tokens);
+> +
+> +void clear_buffer(void)
+> +{
+> +	memset(buffer, 0, sizeof(struct calling_interface_buffer));
+> +}
+> +EXPORT_SYMBOL_GPL(clear_buffer);
+> +
+> +void get_buffer(void)
+> +{
+> +	mutex_lock(&buffer_mutex);
+> +	clear_buffer();
+> +}
+> +EXPORT_SYMBOL_GPL(get_buffer);
+> +
+> +void release_buffer(void)
+> +{
+> +	mutex_unlock(&buffer_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(release_buffer);
+> +
+> +int find_token_id(int tokenid)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < da_num_tokens; i++) {
+> +		if (da_tokens[i].tokenID =3D=3D tokenid)
+> +			return i;
+> +	}
+> +
+> +	return -1;
+> +}
+> +EXPORT_SYMBOL_GPL(find_token_id);
+> +
+> +int find_token_location(int tokenid)
+> +{
+> +	int id;
+> +
+> +	id =3D find_token_id(tokenid);
+> +	if (id =3D=3D -1)
+> +		return -1;
+> +
+> +	return da_tokens[id].location;
+> +}
+> +EXPORT_SYMBOL_GPL(find_token_location);
+> +
+> +struct calling_interface_buffer *
+> +dell_send_request(struct calling_interface_buffer *buffer, int class=
+,
+> +		  int select)
+> +{
+> +	struct smi_cmd command;
+> +
+> +	command.magic =3D SMI_CMD_MAGIC;
+> +	command.command_address =3D da_command_address;
+> +	command.command_code =3D da_command_code;
+> +	command.ebx =3D virt_to_phys(buffer);
+> +	command.ecx =3D 0x42534931;
+> +
+> +	buffer->class =3D class;
+> +	buffer->select =3D select;
+> +
+> +	dcdbas_smi_request(&command);
+> +
+> +	return buffer;
+> +}
+> +EXPORT_SYMBOL_GPL(dell_send_request);
+> +
+> +static void __init parse_da_table(const struct dmi_header *dm)
+> +{
+> +	/* Final token is a terminator, so we don't want to copy it */
+> +	int tokens =3D (dm->length-11)/sizeof(struct calling_interface_toke=
+n)-1;
+> +	struct calling_interface_token *new_da_tokens;
+> +	struct calling_interface_structure *table =3D
+> +		container_of(dm, struct calling_interface_structure, header);
+> +
+> +	/* 4 bytes of table header, plus 7 bytes of Dell header, plus at le=
+ast
+> +	   6 bytes of entry */
+> +
+> +	if (dm->length < 17)
+> +		return;
+> +
+> +	da_command_address =3D table->cmdIOAddress;
+> +	da_command_code =3D table->cmdIOCode;
+> +
+> +	new_da_tokens =3D krealloc(da_tokens, (da_num_tokens + tokens) *
+> +				 sizeof(struct calling_interface_token),
+> +				 GFP_KERNEL);
+> +
+> +	if (!new_da_tokens)
+> +		return;
+> +	da_tokens =3D new_da_tokens;
+> +
+> +	memcpy(da_tokens+da_num_tokens, table->tokens,
+> +	       sizeof(struct calling_interface_token) * tokens);
+> +
+> +	da_num_tokens +=3D tokens;
+> +}
+> +
+> +static void __init find_tokens(const struct dmi_header *dm, void *du=
+mmy)
+> +{
+> +	switch (dm->type) {
+> +	case 0xd4: /* Indexed IO */
+> +	case 0xd5: /* Protected Area Type 1 */
+> +	case 0xd6: /* Protected Area Type 2 */
+> +		break;
+> +	case 0xda: /* Calling interface */
+> +		parse_da_table(dm);
+> +		break;
+> +	}
+> +}
+> +
+> +static int __init dell_smbios_init(void)
+> +{
+> +	int ret;
+> +
+> +	dmi_walk(find_tokens, NULL);
+> +
+> +	if (!da_tokens)  {
+> +		pr_info("Unable to find dmi tokens\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	/*
+> +	 * Allocate buffer below 4GB for SMI data--only 32-bit physical add=
+r
+> +	 * is passed to SMI handler.
+> +	 */
+> +	buffer =3D (void *)__get_free_page(GFP_KERNEL | GFP_DMA32);
+> +	if (!buffer) {
+> +		ret =3D -ENOMEM;
+> +		goto fail_buffer;
+> +	}
+> +
+> +	return 0;
+> +
+> +fail_buffer:
+> +	kfree(da_tokens);
+> +	return ret;
+> +}
+> +
+> +static void __exit dell_smbios_exit(void)
+> +{
+> +	kfree(da_tokens);
+> +	free_page((unsigned long)buffer);
+> +}
+> +
+> +subsys_initcall(dell_smbios_init);
+> +module_exit(dell_smbios_exit);
+> +
+> +MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
+> +MODULE_AUTHOR("Gabriele Mazzotta <gabriele.mzt@gmail.com>");
+> +MODULE_AUTHOR("Pali Roh=C3=A1r <pali.rohar@gmail.com>");
+> +MODULE_DESCRIPTION("Common functions for kernel modules using Dell S=
+MBIOS");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x8=
+6/dell-smbios.h
+> new file mode 100644
+> index 0000000..00e03b2
+> --- /dev/null
+> +++ b/drivers/platform/x86/dell-smbios.h
+> @@ -0,0 +1,51 @@
+> +/*
+> + *  Common functions for kernel modules using Dell SMBIOS
+> + *
+> + *  Copyright (c) Red Hat <mjg@redhat.com>
+> + *  Copyright (c) 2014 Gabriele Mazzotta <gabriele.mzt@gmail.com>
+> + *  Copyright (c) 2014 Pali Roh=C3=A1r <pali.rohar@gmail.com>
+> + *
+> + *  Based on documentation in the libsmbios package:
+> + *  Copyright (C) 2005-2014 Dell Inc.
+> + *
+> + *  This program is free software; you can redistribute it and/or mo=
+dify
+> + *  it under the terms of the GNU General Public License version 2 a=
+s
+> + *  published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _DELL_SMBIOS_H_
+> +#define _DELL_SMBIOS_H_
+> +
+> +/* This structure will be modified by the firmware when we enter
+> + * system management mode, hence the volatiles */
+> +
+> +struct calling_interface_buffer {
+> +	u16 class;
+> +	u16 select;
+> +	volatile u32 input[4];
+> +	volatile u32 output[4];
+> +} __packed;
+> +
+> +struct calling_interface_token {
+> +	u16 tokenID;
+> +	u16 location;
+> +	union {
+> +		u16 value;
+> +		u16 stringlength;
+> +	};
+> +};
 
->> +
->> +    ret = size;
->> +unlock:
->> +    mutex_unlock(&led_cdev->led_access);
->> +    return ret;
->> +}
->> +static DEVICE_ATTR_RW(rgb);
->> +
->>   static ssize_t max_brightness_show(struct device *dev,
->>           struct device_attribute *attr, char *buf)
->>   {
->> @@ -190,6 +231,16 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>       char name[64];
->>       int ret;
->>
->> +    /* FLASH is not supported for RGB LEDs so far
->> +     * and RGB enforces max_brightness = LED_FULL.
->> +     * Initialize the color as white.
->> +     */
->> +    if (led_isRGB(led_cdev)) {
-> 
-> Don't use camel case. Change it to led_is_rgb or check the flag
-> directly.
-> 
-OK, will change it to led_is_rgb.
+After patch 12/14 you do not need to define this struct in header file.
 
->> +        led_cdev->flags &= ~LED_DEV_CAP_FLASH;
-> 
-> I'd rather check whether both FLASH and RGB flag are set and return
-> error in this case.
-> 
-OK
+> +extern struct calling_interface_buffer *buffer;
+> +extern struct calling_interface_token *da_tokens;
 
->> +        led_cdev->max_brightness = LED_FULL;
->> +        led_cdev->rgb_val = 0xffffff;
->> +    }
->> +
->>       ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->>       if (ret < 0)
->>           return ret;
->> @@ -203,6 +254,14 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>           dev_warn(parent, "Led %s renamed to %s due to name collision",
->>                   led_cdev->name, dev_name(led_cdev->dev));
->>
->> +    if (led_isRGB(led_cdev)) {
->> +        ret = device_create_file(led_cdev->dev, &dev_attr_rgb);
-> 
-> Please use led_cdev->groups for this. You can refer to drivers/leds/led-class-flash.c.
-> 
-OK
+Better hide this variable in dell-smbios.c code ...
 
->> +        if (ret) {
->> +            device_unregister(led_cdev->dev);
->> +            return ret;
->> +        }
->> +    }
->> +
->>   #ifdef CONFIG_LEDS_TRIGGERS
->>       init_rwsem(&led_cdev->trigger_lock);
->>   #endif
->> @@ -252,6 +311,9 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
->>
->>       flush_work(&led_cdev->set_brightness_work);
->>
->> +    if (led_isRGB(led_cdev))
->> +        device_remove_file(led_cdev->dev, &dev_attr_rgb);
->> +
->>       device_unregister(led_cdev->dev);
->>
->>       down_write(&leds_list_lock);
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index 19e1e60..6563bd3 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -25,6 +25,48 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
->>   LIST_HEAD(leds_list);
->>   EXPORT_SYMBOL_GPL(leds_list);
->>
->> +static void led_set_rgb_raw(struct led_classdev *cdev, u32 rgb)
->> +{
->> +    u32 red_raw = (rgb >> 16) & 0xff;
->> +    u32 green_raw = (rgb >> 8) & 0xff;
->> +    u32 blue_raw = rgb & 0xff;
->> +    u32 max_raw, red, green, blue;
->> +
->> +    max_raw = max(red_raw, green_raw);
->> +    if (blue_raw > max_raw)
->> +        max_raw = blue_raw;
->> +
->> +    if (!max_raw) {
->> +        cdev->brightness = 0;
->> +        cdev->rgb_val = 0;
->> +        return;
->> +    }
->> +
->> +    red = DIV_ROUND_CLOSEST(red_raw * LED_FULL, max_raw);
->> +    green = DIV_ROUND_CLOSEST(green_raw * LED_FULL, max_raw);
->> +    blue = DIV_ROUND_CLOSEST(blue_raw * LED_FULL, max_raw);
->> +
->> +    cdev->brightness = max_raw;
->> +    cdev->rgb_val = (red << 16) + (green << 8) + blue;
->> +}
-> 
-> I think that we shouldn't impose specific way of calculating brightness
-> depending on the rgb value set. We should just pass value from userspace
-> to the driver.
-> 
-Right, setting brightness from userspace is no problem.
-But how about led_update_brightness? It's supposed to update the brightness
-value in led_cdev with the actual value. And for a RGB LED we have only
-the RGB values, so we need to calculate the brightness based on RGB values.
-Or do you see a better way?
+> +void clear_buffer(void);
+> +void get_buffer(void);
+> +void release_buffer(void);
 
-This leads me to another question: What do we need led_update_brightness for
-in general? The cached and the actual value should always be in sync, except
-the actual brightness can be changed from outside the driver.
-Do we have such cases?
+=2E.. and let those functions to get parameter to buffer.
 
-Last but not least I saw that led_update_brightness is called in
-led_classdev_register.
-Instead of updating our cached value with the actual value shouldn't we
-initialize cached and actual value (most likely to 0)?
-The actual value theoretically could be uninitialized.
-Seems like we rely on BIOS / boot loader to initialize LEDs.
+E.g. get_buffer will return buffer and other two functions will take
+buffer parameter.
 
->> +static u32 led_get_rgb_raw(struct led_classdev *cdev, bool delayed)
->> +{
->> +    u32 rgb = delayed ? cdev->delayed_rgb_value : cdev->rgb_val;
->> +    u32 brightness = delayed ? cdev->delayed_set_value :
->> +             cdev->brightness;
->> +    u32 red = (rgb >> 16) & 0xff;
->> +    u32 green = (rgb >> 8) & 0xff;
->> +    u32 blue = rgb & 0xff;
->> +    u32 red_raw, green_raw, blue_raw;
->> +
->> +    red_raw = DIV_ROUND_CLOSEST(red * brightness, LED_FULL);
->> +    green_raw = DIV_ROUND_CLOSEST(green * brightness, LED_FULL);
->> +    blue_raw = DIV_ROUND_CLOSEST(blue * brightness, LED_FULL);
->> +
->> +    return (red_raw << 16) + (green_raw << 8) + blue_raw;
->> +}
->> +
->>   static void led_timer_function(unsigned long data)
->>   {
->>       struct led_classdev *led_cdev = (void *)data;
->> @@ -91,6 +133,21 @@ static void set_brightness_delayed(struct work_struct *ws)
->>           led_cdev->flags &= ~LED_BLINK_DISABLE;
->>       }
->>
->> +    if (led_isRGB(led_cdev)) {
->> +        u32 rgb = led_get_rgb_raw(led_cdev, true);
->> +
->> +        if (led_cdev->rgb_set)
->> +            led_cdev->rgb_set(led_cdev, rgb);
->> +        else if (led_cdev->rgb_set_blocking)
->> +            ret = led_cdev->rgb_set_blocking(led_cdev, rgb);
->> +        else
->> +            ret = -EOPNOTSUPP;
->> +        if (ret < 0)
->> +            dev_err(led_cdev->dev,
->> +                "Setting LED RGB value failed (%d)\n", ret);
->> +        return;
->> +    }
->> +
-> 
-> Why this is needed? Could you share a use case?
-> 
-If we re-use the existing brightness ops as suggested by you
-then most of this code isn't needed.
+> +int find_token_id(int tokenid);
+> +int find_token_location(int tokenid);
+> +
+> +struct calling_interface_buffer *
+> +dell_send_request(struct calling_interface_buffer *buffer, int class=
+,
+> +		  int select);
+> +#endif
 
->>       if (led_cdev->brightness_set)
->>           led_cdev->brightness_set(led_cdev, led_cdev->delayed_set_value);
->>       else if (led_cdev->brightness_set_blocking)
->> @@ -229,9 +286,35 @@ void led_set_brightness(struct led_classdev *led_cdev,
->>   }
->>   EXPORT_SYMBOL_GPL(led_set_brightness);
->>
->> +void led_set_rgb_val(struct led_classdev *led_cdev, u32 rgb_val)
->> +{
->> +    if (!led_isRGB(led_cdev) || (led_cdev->flags & LED_SUSPENDED))
->> +        return;
->> +
->> +    led_set_rgb_raw(led_cdev, rgb_val);
->> +
->> +    if (led_cdev->rgb_set) {
->> +        led_cdev->rgb_set(led_cdev, rgb_val);
->> +        return;
->> +    }
->> +
->> +    /* If RGB setting can sleep, delegate it to a work queue task */
->> +    led_cdev->delayed_set_value = led_cdev->brightness;
->> +    led_cdev->delayed_rgb_value = led_cdev->rgb_val;
->> +    schedule_work(&led_cdev->set_brightness_work);
-> 
-> I think that settings should be written to the device only in
-> the brightness_set op. We wouldn't need additional rgb op then.
-> 
->> +}
->> +EXPORT_SYMBOL_GPL(led_set_rgb_val);
->> +
->>   void led_set_brightness_nopm(struct led_classdev *led_cdev,
->>                     enum led_brightness value)
->>   {
->> +    if (led_isRGB(led_cdev) && led_cdev->rgb_set) {
->> +        u32 rgb = led_get_rgb_raw(led_cdev, false);
->> +
->> +        led_cdev->rgb_set(led_cdev, rgb);
->> +        return;
->> +    }
->> +
->>       /* Use brightness_set op if available, it is guaranteed not to sleep */
->>       if (led_cdev->brightness_set) {
->>           led_cdev->brightness_set(led_cdev, value);
->> @@ -240,6 +323,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
->>
->>       /* If brightness setting can sleep, delegate it to a work queue task */
->>       led_cdev->delayed_set_value = value;
->> +    led_cdev->delayed_rgb_value = led_cdev->rgb_val;
->>       schedule_work(&led_cdev->set_brightness_work);
->>   }
->>   EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
->> @@ -267,6 +351,12 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
->>       if (led_cdev->flags & LED_SUSPENDED)
->>           return 0;
->>
->> +    if (led_isRGB(led_cdev) && led_cdev->rgb_set_blocking) {
->> +        u32 rgb = led_get_rgb_raw(led_cdev, false);
->> +
->> +        return led_cdev->rgb_set_blocking(led_cdev, rgb);
->> +    }
->> +
->>       if (led_cdev->brightness_set_blocking)
->>           return led_cdev->brightness_set_blocking(led_cdev,
->>                                led_cdev->brightness);
->> @@ -290,6 +380,22 @@ int led_update_brightness(struct led_classdev *led_cdev)
->>   }
->>   EXPORT_SYMBOL_GPL(led_update_brightness);
->>
->> +int led_update_rgb_val(struct led_classdev *led_cdev)
->> +{
->> +    s32 ret = 0;
->> +
->> +    if (led_isRGB(led_cdev) && led_cdev->rgb_get) {
->> +        ret = led_cdev->rgb_get(led_cdev);
->> +        if (ret >= 0) {
->> +            led_set_rgb_raw(led_cdev, ret);
->> +            return 0;
->> +        }
->> +    }
->> +
->> +    return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(led_update_rgb_val);
->> +
->>   /* Caller must ensure led_cdev->led_access held */
->>   void led_sysfs_disable(struct led_classdev *led_cdev)
->>   {
->> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
->> index db3f20d..c733777 100644
->> --- a/drivers/leds/leds.h
->> +++ b/drivers/leds/leds.h
->> @@ -16,17 +16,29 @@
->>   #include <linux/rwsem.h>
->>   #include <linux/leds.h>
->>
->> +static inline bool led_isRGB(struct led_classdev *led_cdev)
->> +{
->> +    return (led_cdev->flags & LED_RGB) != 0;
->> +}
->> +
->>   static inline int led_get_brightness(struct led_classdev *led_cdev)
->>   {
->>       return led_cdev->brightness;
->>   }
->>
->> +static inline u32 led_get_rgb_val(struct led_classdev *led_cdev)
->> +{
->> +    return led_cdev->rgb_val;
->> +}
->> +
->>   void led_init_core(struct led_classdev *led_cdev);
->>   void led_stop_software_blink(struct led_classdev *led_cdev);
->>   void led_set_brightness_nopm(struct led_classdev *led_cdev,
->>                   enum led_brightness value);
->>   void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->>                   enum led_brightness value);
->> +void led_set_rgb_val(struct led_classdev *led_cdev, u32 rgb_val);
->> +int led_update_rgb_val(struct led_classdev *led_cdev);
->>
->>   extern struct rw_semaphore leds_list_lock;
->>   extern struct list_head leds_list;
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index 4429887..83d2912 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -35,6 +35,7 @@ struct led_classdev {
->>       const char        *name;
->>       enum led_brightness     brightness;
->>       enum led_brightness     max_brightness;
->> +    u32             rgb_val;
->>       int             flags;
->>
->>       /* Lower 16 bits reflect status */
->> @@ -48,6 +49,7 @@ struct led_classdev {
->>   #define LED_BLINK_DISABLE    (1 << 21)
->>   #define LED_SYSFS_DISABLE    (1 << 22)
->>   #define LED_DEV_CAP_FLASH    (1 << 23)
->> +#define LED_RGB            (1 << 24)
-> 
-> Please rename it to LED_DEV_CAP_RGB.
-> 
-OK
-
->>
->>       /* Set LED brightness level */
->>       /* Must not sleep. If no non-blocking version can be provided
->> @@ -56,15 +58,25 @@ struct led_classdev {
->>        */
->>       void        (*brightness_set)(struct led_classdev *led_cdev,
->>                         enum led_brightness brightness);
->> +
->> +    void        (*rgb_set)(struct led_classdev *led_cdev,
->> +                   u32 rgb_val);
-> 
-> Without this everything would be much simpler.
-> 
-Sure, we can re-use the existing ops. I just thought it would be
-a little ugly to misuse enum led_brightness for RGB values.
-But as it internally is an int we can also do it this way.
-
-> If we wanted to change the color and intensity we would need to:
-> 1. Set rgb (value only cached in the LED core)
-> 2. Set brightness (write both brightness and rgb settings to the hw)
-> 
-> Current brightness can always be obtained with led_get_brightness in
-> case only rgb is to be set.
-> 
->>       /*
->>        * Set LED brightness level immediately - it can block the caller for
->>        * the time required for accessing a LED device register.
->>        */
->>       int (*brightness_set_blocking)(struct led_classdev *led_cdev,
->>                          enum led_brightness brightness);
->> +
->> +    int (*rgb_set_blocking)(struct led_classdev *led_cdev,
->> +                u32 rgb_val);
->> +
-> 
-> This is also not needed.
-> 
->>       /* Get LED brightness level */
->>       enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
->>
->> +    /* Get LED RGB val */
->> +    s32 (*rgb_get)(struct led_classdev *led_cdev);
->> +
-> 
-> Ditto.
-> 
->>       /*
->>        * Activate hardware accelerated blink, delays are in milliseconds
->>        * and if both are zero then a sensible default should be chosen.
->> @@ -90,6 +102,7 @@ struct led_classdev {
->>
->>       struct work_struct    set_brightness_work;
->>       int            delayed_set_value;
->> +    u32            delayed_rgb_value;
-> 
-> Ditto.
-> 
-If we have a blocking set callback then we have to set a RGB value from the
-workqueue. And we need brightness + RGB to calculate the effective RGB values
-in the worker func. Therefore I think delayed_rgb_val is needed.
-
->>
->>   #ifdef CONFIG_LEDS_TRIGGERS
->>       /* Protects the trigger data below */
->>
-> 
-> 
-Thanks for the review, Heiner
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
