@@ -1,93 +1,73 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Problem with resetting LED in led_classdev_unregister in case of
- USB LED device removal
-Date: Mon, 18 Jan 2016 09:46:55 +0100
-Message-ID: <569CA67F.3070204@samsung.com>
-References: <569AB77D.3020909@gmail.com> <569C2FDB.8090005@ti.com>
- <569C8822.2000203@gmail.com>
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Subject: Re: [PATCH 01/14] dell-laptop: extract SMBIOS-related code to a
+ separate module
+Date: Mon, 18 Jan 2016 11:34:32 +0100
+Message-ID: <20160118103432.GA2444@eudyptula.hq.kempniu.pl>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
+ <20160116151922.GA5060@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33002 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753549AbcARIq7 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 18 Jan 2016 03:46:59 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1500KN04E8DK70@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 18 Jan 2016 08:46:56 +0000 (GMT)
-In-reply-to: <569C8822.2000203@gmail.com>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34358 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754060AbcARKeh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 18 Jan 2016 05:34:37 -0500
+Received: by mail-lf0-f67.google.com with SMTP id n70so27481625lfn.1
+        for <linux-leds@vger.kernel.org>; Mon, 18 Jan 2016 02:34:36 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20160116151922.GA5060@pali>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Milo Kim <milo.kim@ti.com>, linux-leds@vger.kernel.org
+To: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Heiner, Milo,
+Hi Pali,
 
-On 01/18/2016 07:37 AM, Heiner Kallweit wrote:
-> Am 18.01.2016 um 01:20 schrieb Milo Kim:
->> On 01/17/2016 06:34 AM, Heiner Kallweit wrote:
->>> In led_classdev_unregister the LED gets switched off.
->>> This is fine when the driver module is removed but causes issues
->>> when the physical LED device is removed (e.g. USB LED devices).
->>>
->>> In case of the thingm driver (hid/hid-thingm.c) it complains with
->>> ENODEV because the physical LED device is no longer available.
->>
->> I'd like to understand this situation clearly.
->>
->> rmmod hid_thingm
->> -> detach the USB LED device
->> -> -ENODEV is reported.
->>
->> Is it correct? I think -ENODEV seems reasonable because HID device is gone. Could you tell us what the problem is?
->>
-> Sure, this is reasonable. The problem is that this causes dev_err messages.
-> And if it's a normal situation it shouldn't result in error messages (at least not on error level).
->
->>> When I switched this driver to use the generic workqueue in the
->>> LED core then this error was also propagated to set_brightness_delayed
->>> and it complains with "Setting an LED's brightness failed (-19)".
->>>
->>> Recent commit d1aa577f5e19 [turn off the LED and wait for completion
->>> on unregistering LED class device] tackled a first potential issue
->>> in led_classdev_unregister but it seems like the case of removal
->>> of the physical LED device hasn't been considered yet.
->>
->> What happens if resetting only this commit?
->>
-> It's not that something with this commit is wrong. The behaviour was the same before, I just mention it
-> because you addressed the same part of the code and maybe stumbled across the same issue.
->
->>> At a first glance I see no way for the LED core to tell between
->>> the two unregister cases (driver module removal vs. physical LED
->>> device removal), but maybe I miss something.
->>>
->>> If we can't tell between the two cases them I'm not sure what's the
->>> best solution: Not touching the brightness is general in
->>> led_classdev_unregister, live with the situation as it is or add
->>> a special handling for ENODEV.
->>
->> We may handle this by using internal flag in LED subsystem, but I'd like to understand what the problem is and what expected behavior is.
+Thanks for taking a look.
 
-Yes, this seems to be the best solution. Driver should set this flag
-before calling led_classdev_unregister. If the flag is set the -ENODEV
-error will not be reported. It could be named LED_HW_ABSENT for
-instance. Feel free to propose other ideas.
+> > +struct calling_interface_token {
+> > +	u16 tokenID;
+> > +	u16 location;
+> > +	union {
+> > +		u16 value;
+> > +		u16 stringlength;
+> > +	};
+> > +};
+>=20
+> After patch 12/14 you do not need to define this struct in header fil=
+e.
 
-> Ideally we would detect that the device is gone in the unregister function and skip trying to write to it.
->
->> Best regards,
->> Milo
->>
-> Regards, Heiner
->
->
->
+dell_smbios_find_token() returns a struct calling_interface_token *,
+which can then be dereferenced by the caller.  See patch 13.
 
+> > +extern struct calling_interface_buffer *buffer;
+> > +extern struct calling_interface_token *da_tokens;
+>=20
+> Better hide this variable in dell-smbios.c code ...
 
--- 
-Best Regards,
-Jacek Anaszewski
+Patch 12 makes da_tokens static, but I believe you were referring to
+buffer.
+
+> > +void clear_buffer(void);
+> > +void get_buffer(void);
+> > +void release_buffer(void);
+>=20
+> ... and let those functions to get parameter to buffer.
+>=20
+> E.g. get_buffer will return buffer and other two functions will take
+> buffer parameter.
+
+You're right.  My original approach looked tempting because it reduces
+the amount of changes required in dell-laptop, but on second thought, i=
+t
+_assumes_ that users of this API would play nicely with the SMBIOS
+buffer while your way _enforces_ it.
+
+I will prepare a v2 including this suggestion within the next couple of
+days.
+
+--=20
+Best regards,
+Micha=C5=82 K=C4=99pie=C5=84
