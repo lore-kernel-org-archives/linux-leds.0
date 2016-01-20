@@ -1,88 +1,69 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] leds: core: avoid error message when a USB LED device is
- unplugged
-Date: Tue, 19 Jan 2016 21:42:00 +0100
-Message-ID: <569E9F98.3070802@gmail.com>
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Subject: Re: [PATCH 01/14] dell-laptop: extract SMBIOS-related code to a
+ separate module
+Date: Wed, 20 Jan 2016 10:21:07 +0100
+Message-ID: <20160120092107.GA3247@eudyptula.hq.kempniu.pl>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
+ <20160116151922.GA5060@pali>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37995 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933124AbcASUmM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jan 2016 15:42:12 -0500
-Received: by mail-wm0-f51.google.com with SMTP id b14so190767693wmb.1
-        for <linux-leds@vger.kernel.org>; Tue, 19 Jan 2016 12:42:12 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160116151922.GA5060@pali>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
 
-When a USB LED device is unplugged the remove call chain calls
-led_classdev_unregister which tries to switch the LED off.
-As the device has been removed already this results in a ENODEV
-error message in dmesg.
-Avoid this error message by ignoring ENODEV in calls from
-led_classdev_unregister if the LED device is flagged as pluggable.
+> > +extern struct calling_interface_buffer *buffer;
+> > +extern struct calling_interface_token *da_tokens;
+>=20
+> Better hide this variable in dell-smbios.c code ...
+>=20
+> > +void clear_buffer(void);
+> > +void get_buffer(void);
+> > +void release_buffer(void);
+>=20
+> ... and let those functions to get parameter to buffer.
+>=20
+> E.g. get_buffer will return buffer and other two functions will take
+> buffer parameter.
 
-Therefore a new flag LED_HW_PLUGGABLE was introduced which should be set by
-all LED drivers handling pluggable LED devices (mainly USB LED devices).
+Before I spam everyone with another set of 15 patches, I'd like to
+discuss this a bit further.  There is no point in passing the buffer to
+release_buffer(), because it only unlocks a mutex.  I also see no point
+in passing the buffer to clear_buffer() and dell_send_request(), becaus=
+e
+there is always just one buffer to operate on.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/leds/led-class.c | 2 ++
- drivers/leds/led-core.c  | 5 ++++-
- include/linux/leds.h     | 2 ++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+A total of four functions have something to do with the SMBIOS buffer:
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 14139c3..aa84e5b 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -245,6 +245,8 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
- 	up_write(&led_cdev->trigger_lock);
- #endif
- 
-+	led_cdev->flags |= LED_UNREGISTERING;
-+
- 	/* Stop blinking */
- 	led_stop_software_blink(led_cdev);
- 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 19e1e60..ad684b6 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -98,7 +98,10 @@ static void set_brightness_delayed(struct work_struct *ws)
- 						led_cdev->delayed_set_value);
- 	else
- 		ret = -ENOTSUPP;
--	if (ret < 0)
-+	if (ret < 0 &&
-+	    /* LED HW might have been unplugged, therefore don't warn */
-+	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-+	    (led_cdev->flags & LED_HW_PLUGGABLE)))
- 		dev_err(led_cdev->dev,
- 			"Setting an LED's brightness failed (%d)\n", ret);
- }
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 4429887..24413a8 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -39,6 +39,7 @@ struct led_classdev {
- 
- 	/* Lower 16 bits reflect status */
- #define LED_SUSPENDED		(1 << 0)
-+#define LED_UNREGISTERING	(1 << 1)
- 	/* Upper 16 bits reflect control information */
- #define LED_CORE_SUSPENDRESUME	(1 << 16)
- #define LED_BLINK_ONESHOT	(1 << 17)
-@@ -48,6 +49,7 @@ struct led_classdev {
- #define LED_BLINK_DISABLE	(1 << 21)
- #define LED_SYSFS_DISABLE	(1 << 22)
- #define LED_DEV_CAP_FLASH	(1 << 23)
-+#define LED_HW_PLUGGABLE	(1 << 24)
- 
- 	/* Set LED brightness level */
- 	/* Must not sleep. If no non-blocking version can be provided
--- 
-2.7.0
+  * get_buffer()
+  * clear_buffer()
+  * release_buffer()
+  * dell_send_request()
+
+This rework is a chance to make them all consistent, i.e. remove the
+SMBIOS buffer from their argument lists.  This way we can "signal" this
+API's users that there is only one SMBIOS buffer ever involved while
+still removing the extern and EXPORT_SYMBOL_GPL for the buffer.  BTW, I
+also see little point in returning the buffer from dell_send_request()
+as none of its callers in dell-laptop assign its return value to
+anything (i.e. there is no "buffer =3D dell_send_request(buffer, ...)" =
+in
+the code).
+
+To sum up, I'd suggest that function prototypes could look like this:
+
+    struct calling_interface_buffer *dell_smbios_get_buffer(void);
+    void dell_smbios_clear_buffer(void);
+    void dell_smbios_release_buffer(void);
+    void dell_smbios_send_request(int class, int select);
+
+What do you think?
+
+--=20
+Best regards,
+Micha=C5=82 K=C4=99pie=C5=84
