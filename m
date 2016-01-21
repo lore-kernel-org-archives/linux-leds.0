@@ -1,47 +1,51 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 13/14] dell-led: use dell_smbios_find_token() for finding
- mic DMI tokens
-Date: Thu, 21 Jan 2016 16:42:39 +0100
-Message-ID: <56A0FC6F.20603@samsung.com>
-References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
- <1452607380-20861-14-git-send-email-kernel@kempniu.pl>
- <56A0B882.6020508@samsung.com> <20160121150051.GB4684@eudyptula.hq.kempniu.pl>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v2] led: core: fix misleading comment after workqueue removal
+ from drivers
+Date: Thu, 21 Jan 2016 23:11:25 +0100
+Message-ID: <56A1578D.1050101@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:53834 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759878AbcAUPmn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 10:42:43 -0500
-In-reply-to: <20160121150051.GB4684@eudyptula.hq.kempniu.pl>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36592 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbcAUWLh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 17:11:37 -0500
+Received: by mail-wm0-f67.google.com with SMTP id l65so13744685wmf.3
+        for <linux-leds@vger.kernel.org>; Thu, 21 Jan 2016 14:11:37 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?B?UGFsaSBSb2jDoXI=?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 
-On 01/21/2016 04:00 PM, Micha=C5=82 K=C4=99pie=C5=84 wrote:
->> Thanks for the patches.
->> They should probably be merged through linux-platform-drivers-x86.gi=
-t.
->>
->> Feel free to add my
->>
->> Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->>
->> to 13/14 and 14/14.
->
-> Thanks for reviewing.  I will soon post a v2 of this series.  Given t=
-hat
-> the only difference between v1 and v2 for dell-led will be a subtle
-> difference in API use, I'll allow myself to use your Acked-by for the
-> last two patches when I post v2.  Please let me know if that's
-> inappropriate.
->
+Now that workqueues have been removed from individual drivers and
+were replaced with a core-internal workqueue we shouldn't
+encourage people to add new workqueues to drivers.
 
-Yes, feel free to carry my acks.
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+v2:
+- make comment simpler and clearer
+---
+ include/linux/leds.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---=20
-Best Regards,
-Jacek Anaszewski
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index bc1476f..e3470e7 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -49,8 +49,10 @@ struct led_classdev {
+ #define LED_SYSFS_DISABLE	(1 << 22)
+ #define LED_DEV_CAP_FLASH	(1 << 23)
+ 
+-	/* Set LED brightness level */
+-	/* Must not sleep, use a workqueue if needed */
++	/* Set LED brightness level
++	 * Must not sleep. Use brightness_set_blocking for drivers
++	 * that can sleep while setting brightness.
++	 */
+ 	void		(*brightness_set)(struct led_classdev *led_cdev,
+ 					  enum led_brightness brightness);
+ 	/*
+-- 
+2.7.0
