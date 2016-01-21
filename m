@@ -1,74 +1,206 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH] led: core: fix misleading comment after workqueue removal
- from drivers
-Date: Thu, 21 Jan 2016 10:50:30 +0100
-Message-ID: <CAFSsGVv-7dmjoo2kShhEMXi-597gsPXuKeV1x8Va9zzoYj4A-Q@mail.gmail.com>
-References: <56929204.3080404@gmail.com>
-	<56A09EC8.1080807@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v3] leds: Add Chrome OS keyboard LEDs driver
+Date: Thu, 21 Jan 2016 11:23:53 +0100
+Message-ID: <56A0B1B9.3060607@samsung.com>
+References: <1452625899-13306-1-git-send-email-sque@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:36096 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759176AbcAUJub (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 04:50:31 -0500
-Received: by mail-wm0-f51.google.com with SMTP id l65so212471478wmf.1
-        for <linux-leds@vger.kernel.org>; Thu, 21 Jan 2016 01:50:30 -0800 (PST)
-In-Reply-To: <56A09EC8.1080807@samsung.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55851 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759216AbcAUKX5 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 05:23:57 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1A000E9SVUVW50@mailout1.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 21 Jan 2016 10:23:54 +0000 (GMT)
+In-reply-to: <1452625899-13306-1-git-send-email-sque@chromium.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
+To: Simon Que <sque@chromium.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Sameer Nanda <snanda@chromium.org>, Todd Broch <tbroch@chromium.org>, Duncan Laurie <dlaurie@chromium.org>, Evan McClain <aeroevan@gmail.com>
 
-On Thu, Jan 21, 2016 at 10:03 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Hi Heiner,
->
-> On 01/10/2016 06:16 PM, Heiner Kallweit wrote:
->>
->> Now that workqueues have been removed from individual drivers and
->> were replaced with a core-internal workqueue we shouldn't
->> encourage people to add new workqueues to drivers.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->>   include/linux/leds.h | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index bc1476f..4429887 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -50,7 +50,10 @@ struct led_classdev {
->>   #define LED_DEV_CAP_FLASH     (1 << 23)
->>
->>         /* Set LED brightness level */
->> -       /* Must not sleep, use a workqueue if needed */
->> +       /* Must not sleep. If no non-blocking version can be provided
->> +        * set brightness_set_blocking only. The LED core will use an
->> +        * internal work queue to create a non-blocking version.
->> +        */
->
->
-> This comment isn't easily comprehensible at first glance.
->
-> How about:
->
-> "Must not sleep. Use brightness_set_blocking for drivers
-> that can sleep while setting brightness."
->
-Yes, this is better. It's simpler and clearer.
-Are you going to fix the comment on your own or would you like me
-to submit it as a patch?
+Hi Simon,
 
-Regards, Heiner
+Thanks for the patch.
 
->>         void            (*brightness_set)(struct led_classdev *led_cdev,
->>                                           enum led_brightness brightness);
->>         /*
->>
+On 01/12/2016 08:11 PM, Simon Que wrote:
+> Some Chrome OS devices use ACPI-based keyboard backlight LEDs.
 >
+> Enable with menuconfig option under Device Drivers -> LED Support.
 >
-> --
-> Best Regards,
-> Jacek Anaszewski
+> Signed-off-by: Simon Que <sque@chromium.org>
+> ---
+>   drivers/leds/Kconfig                  |   7 +++
+>   drivers/leds/Makefile                 |   1 +
+>   drivers/leds/leds-chromeos-keyboard.c | 115 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 123 insertions(+)
+>   create mode 100644 drivers/leds/leds-chromeos-keyboard.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 7f940c2..38d2997 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -607,6 +607,13 @@ config LEDS_VERSATILE
+>   	  This option enabled support for the LEDs on the ARM Versatile
+>   	  and RealView boards. Say Y to enabled these.
+>
+> +config LEDS_CHROMEOS_KEYBOARD
+> +	tristate "LED support for Chrome OS keyboards"
+> +	depends on LEDS_CLASS && ACPI
+> +	help
+> +	  This option enables support for the LEDs on Chrome OS keyboards.
+> +	  Say Y to enable keyboard LEDs on Chrome OS systems.
+> +
+>   comment "LED Triggers"
+>   source "drivers/leds/trigger/Kconfig"
+>
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index e9d53092..2d7f73a 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+>   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+>   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+>   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
+> +obj-$(CONFIG_LEDS_CHROMEOS_KEYBOARD)	+= leds-chromeos-keyboard.o
+>
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-chromeos-keyboard.c b/drivers/leds/leds-chromeos-keyboard.c
+> new file mode 100644
+> index 0000000..32d70c0
+> --- /dev/null
+> +++ b/drivers/leds/leds-chromeos-keyboard.c
+> @@ -0,0 +1,115 @@
+> +/*
+> + *  LED driver for Chrome OS keyboard backlight
+> + *
+> + *  Copyright (C) 2012 Google, Inc.
+> + *
+> + *  This program is free software; you can redistribute it and/or modify
+> + *  it under the terms of the GNU General Public License as published by
+> + *  the Free Software Foundation; either version 2 of the License, or
+> + *  (at your option) any later version.
+> + *
+> + *  This program is distributed in the hope that it will be useful,
+> + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *  GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/leds.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +/* Keyboard LED ACPI Device must be defined in firmware */
+> +#define ACPI_KEYBOARD_BACKLIGHT_DEVICE	"\\_SB.KBLT"
+> +#define ACPI_KEYBOARD_BACKLIGHT_READ	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBQC"
+> +#define ACPI_KEYBOARD_BACKLIGHT_WRITE	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBCM"
+> +
+> +#define ACPI_KEYBOARD_BACKLIGHT_MAX		100
+> +
+> +static void keyboard_led_set_brightness(struct led_classdev *cdev,
+> +					enum led_brightness brightness)
+> +{
+> +	union acpi_object param;
+> +	struct acpi_object_list input;
+> +	acpi_status status;
+> +
+> +	if (!(cdev->flags & LED_SUSPENDED))
+> +		cdev->brightness = brightness;
+> +
+> +	param.type = ACPI_TYPE_INTEGER;
+> +	param.integer.value = brightness;
+> +	input.count = 1;
+> +	input.pointer = &param;
+> +
+> +	status = acpi_evaluate_object(NULL, ACPI_KEYBOARD_BACKLIGHT_WRITE,
+> +					  &input, NULL);
+> +	if (ACPI_FAILURE(status))
+> +		dev_err(cdev->dev, "Error setting keyboard LED value");
+> +}
+> +
+> +static int keyboard_led_probe(struct platform_device *pdev)
+> +{
+> +	struct led_classdev *cdev;
+> +	acpi_handle handle;
+> +	acpi_status status;
+> +	int ret;
+> +
+> +	/* Look for the keyboard LED ACPI Device */
+> +	status = acpi_get_handle(ACPI_ROOT_OBJECT,
+> +				 ACPI_KEYBOARD_BACKLIGHT_DEVICE,
+> +				 &handle);
+> +	if (ACPI_FAILURE(status)) {
+> +		dev_err(&pdev->dev, "Unable fo find ACPI device %s\n",
+> +			ACPI_KEYBOARD_BACKLIGHT_DEVICE);
+> +		return -ENODEV;
+> +	}
+> +
+> +	cdev = kzalloc(sizeof(struct led_classdev), GFP_KERNEL);
+> +	if (!cdev)
+> +		return -ENOMEM;
+> +	cdev->name = "chromeos::kbd_backlight";
+> +	cdev->brightness_set = keyboard_led_set_brightness;
+> +	cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
+> +	cdev->brightness = cdev->max_brightness;
+> +	cdev->flags |= LED_CORE_SUSPENDRESUME;
+> +
+> +	ret = led_classdev_register(&pdev->dev, cdev);
+> +	if (ret)
+> +		goto err;
+> +
+> +	platform_set_drvdata(pdev, cdev);
+> +	return 0;
+> +err:
+> +	kfree(cdev);
+> +	return ret;
+> +}
+> +
+> +static int keyboard_led_remove(struct platform_device *pdev)
+> +{
+> +	struct led_classdev *cdev = platform_get_drvdata(pdev);
+
+You're missing led_classdev_unregister here.
+It wouldn't be required if the LED was registered with
+devm_led_classdev_register.
+
+Please switch to devm_led_classdev_register.
+kzalloc has to be switched to devm_kzalloc in this case too.
+
+> +
+> +	platform_set_drvdata(pdev, NULL);
+> +	kfree(cdev);
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver keyboard_led_driver = {
+> +	.driver		= {
+> +		.name	= "chromeos-keyboard-leds",
+> +		.owner	= THIS_MODULE,
+> +	},
+> +	.probe		= keyboard_led_probe,
+> +	.remove		= keyboard_led_remove,
+> +};
+> +
+> +module_platform_driver(keyboard_led_driver);
+> +
+> +MODULE_AUTHOR("Simon Que <sque@chromium.org>");
+> +MODULE_DESCRIPTION("ChromeOS Keyboard LED Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:chromeos-keyboard-leds");
+>
+
+
+-- 
+Best Regards,
+Jacek Anaszewski
