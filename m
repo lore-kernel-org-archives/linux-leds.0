@@ -1,206 +1,181 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3] leds: Add Chrome OS keyboard LEDs driver
-Date: Thu, 21 Jan 2016 11:23:53 +0100
-Message-ID: <56A0B1B9.3060607@samsung.com>
-References: <1452625899-13306-1-git-send-email-sque@chromium.org>
+Subject: Re: [PATCH 13/14] dell-led: use dell_smbios_find_token() for finding
+ mic DMI tokens
+Date: Thu, 21 Jan 2016 11:52:50 +0100
+Message-ID: <56A0B882.6020508@samsung.com>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-14-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55851 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759216AbcAUKX5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 05:23:57 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1A000E9SVUVW50@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 21 Jan 2016 10:23:54 +0000 (GMT)
-In-reply-to: <1452625899-13306-1-git-send-email-sque@chromium.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52752 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759249AbcAUKwy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 05:52:54 -0500
+In-reply-to: <1452607380-20861-14-git-send-email-kernel@kempniu.pl>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Simon Que <sque@chromium.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Sameer Nanda <snanda@chromium.org>, Todd Broch <tbroch@chromium.org>, Duncan Laurie <dlaurie@chromium.org>, Evan McClain <aeroevan@gmail.com>
+To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?B?UGFsaSBSb2jDoXI=?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Simon,
+Hi Micha=C5=82,
 
-Thanks for the patch.
+Thanks for the patches.
+They should probably be merged through linux-platform-drivers-x86.git.
 
-On 01/12/2016 08:11 PM, Simon Que wrote:
-> Some Chrome OS devices use ACPI-based keyboard backlight LEDs.
->
-> Enable with menuconfig option under Device Drivers -> LED Support.
->
-> Signed-off-by: Simon Que <sque@chromium.org>
-> ---
->   drivers/leds/Kconfig                  |   7 +++
->   drivers/leds/Makefile                 |   1 +
->   drivers/leds/leds-chromeos-keyboard.c | 115 ++++++++++++++++++++++++++++++++++
->   3 files changed, 123 insertions(+)
->   create mode 100644 drivers/leds/leds-chromeos-keyboard.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 7f940c2..38d2997 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -607,6 +607,13 @@ config LEDS_VERSATILE
->   	  This option enabled support for the LEDs on the ARM Versatile
->   	  and RealView boards. Say Y to enabled these.
->
-> +config LEDS_CHROMEOS_KEYBOARD
-> +	tristate "LED support for Chrome OS keyboards"
-> +	depends on LEDS_CLASS && ACPI
-> +	help
-> +	  This option enables support for the LEDs on Chrome OS keyboards.
-> +	  Say Y to enable keyboard LEDs on Chrome OS systems.
-> +
->   comment "LED Triggers"
->   source "drivers/leds/trigger/Kconfig"
->
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index e9d53092..2d7f73a 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
->   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
-> +obj-$(CONFIG_LEDS_CHROMEOS_KEYBOARD)	+= leds-chromeos-keyboard.o
->
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/drivers/leds/leds-chromeos-keyboard.c b/drivers/leds/leds-chromeos-keyboard.c
-> new file mode 100644
-> index 0000000..32d70c0
-> --- /dev/null
-> +++ b/drivers/leds/leds-chromeos-keyboard.c
-> @@ -0,0 +1,115 @@
-> +/*
-> + *  LED driver for Chrome OS keyboard backlight
-> + *
-> + *  Copyright (C) 2012 Google, Inc.
-> + *
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; either version 2 of the License, or
-> + *  (at your option) any later version.
-> + *
-> + *  This program is distributed in the hope that it will be useful,
-> + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *  GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/leds.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +/* Keyboard LED ACPI Device must be defined in firmware */
-> +#define ACPI_KEYBOARD_BACKLIGHT_DEVICE	"\\_SB.KBLT"
-> +#define ACPI_KEYBOARD_BACKLIGHT_READ	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBQC"
-> +#define ACPI_KEYBOARD_BACKLIGHT_WRITE	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBCM"
-> +
-> +#define ACPI_KEYBOARD_BACKLIGHT_MAX		100
-> +
-> +static void keyboard_led_set_brightness(struct led_classdev *cdev,
-> +					enum led_brightness brightness)
-> +{
-> +	union acpi_object param;
-> +	struct acpi_object_list input;
-> +	acpi_status status;
-> +
-> +	if (!(cdev->flags & LED_SUSPENDED))
-> +		cdev->brightness = brightness;
-> +
-> +	param.type = ACPI_TYPE_INTEGER;
-> +	param.integer.value = brightness;
-> +	input.count = 1;
-> +	input.pointer = &param;
-> +
-> +	status = acpi_evaluate_object(NULL, ACPI_KEYBOARD_BACKLIGHT_WRITE,
-> +					  &input, NULL);
-> +	if (ACPI_FAILURE(status))
-> +		dev_err(cdev->dev, "Error setting keyboard LED value");
-> +}
-> +
-> +static int keyboard_led_probe(struct platform_device *pdev)
-> +{
-> +	struct led_classdev *cdev;
-> +	acpi_handle handle;
-> +	acpi_status status;
-> +	int ret;
-> +
-> +	/* Look for the keyboard LED ACPI Device */
-> +	status = acpi_get_handle(ACPI_ROOT_OBJECT,
-> +				 ACPI_KEYBOARD_BACKLIGHT_DEVICE,
-> +				 &handle);
-> +	if (ACPI_FAILURE(status)) {
-> +		dev_err(&pdev->dev, "Unable fo find ACPI device %s\n",
-> +			ACPI_KEYBOARD_BACKLIGHT_DEVICE);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cdev = kzalloc(sizeof(struct led_classdev), GFP_KERNEL);
-> +	if (!cdev)
-> +		return -ENOMEM;
-> +	cdev->name = "chromeos::kbd_backlight";
-> +	cdev->brightness_set = keyboard_led_set_brightness;
-> +	cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
-> +	cdev->brightness = cdev->max_brightness;
-> +	cdev->flags |= LED_CORE_SUSPENDRESUME;
-> +
-> +	ret = led_classdev_register(&pdev->dev, cdev);
-> +	if (ret)
-> +		goto err;
-> +
-> +	platform_set_drvdata(pdev, cdev);
-> +	return 0;
-> +err:
-> +	kfree(cdev);
-> +	return ret;
-> +}
-> +
-> +static int keyboard_led_remove(struct platform_device *pdev)
-> +{
-> +	struct led_classdev *cdev = platform_get_drvdata(pdev);
+=46eel free to add my
 
-You're missing led_classdev_unregister here.
-It wouldn't be required if the LED was registered with
-devm_led_classdev_register.
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Please switch to devm_led_classdev_register.
-kzalloc has to be switched to devm_kzalloc in this case too.
+to 13/14 and 14/14.
 
-> +
-> +	platform_set_drvdata(pdev, NULL);
-> +	kfree(cdev);
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver keyboard_led_driver = {
-> +	.driver		= {
-> +		.name	= "chromeos-keyboard-leds",
-> +		.owner	= THIS_MODULE,
-> +	},
-> +	.probe		= keyboard_led_probe,
-> +	.remove		= keyboard_led_remove,
-> +};
-> +
-> +module_platform_driver(keyboard_led_driver);
-> +
-> +MODULE_AUTHOR("Simon Que <sque@chromium.org>");
-> +MODULE_DESCRIPTION("ChromeOS Keyboard LED Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:chromeos-keyboard-leds");
->
-
-
--- 
 Best Regards,
 Jacek Anaszewski
+
+On 01/12/2016 03:02 PM, Micha=C5=82 K=C4=99pie=C5=84 wrote:
+> With the advent of dell_smbios_find_token(), dell-led does not need t=
+o
+> perform any DMI walking on its own, but it can rather ask dell-smbios=
+ to
+> look up the DMI tokens it needs for changing the state of the microph=
+one
+> LED.
+>
+> Signed-off-by: Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempniu.pl>
+> ---
+>   drivers/leds/Kconfig    |    1 +
+>   drivers/leds/dell-led.c |   63 +++++++-----------------------------=
+-----------
+>   2 files changed, 10 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index b1ab8bd..171810c 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -441,6 +441,7 @@ config LEDS_DELL_NETBOOKS
+>   	tristate "External LED on Dell Business Netbooks"
+>   	depends on LEDS_CLASS
+>   	depends on X86 && ACPI_WMI
+> +	depends on DELL_SMBIOS
+>   	help
+>   	  This adds support for the Latitude 2100 and similar
+>   	  notebooks that have an external LED.
+> diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+> index c36acaf..bfa7511 100644
+> --- a/drivers/leds/dell-led.c
+> +++ b/drivers/leds/dell-led.c
+> @@ -17,6 +17,7 @@
+>   #include <linux/module.h>
+>   #include <linux/dmi.h>
+>   #include <linux/dell-led.h>
+> +#include "../platform/x86/dell-smbios.h"
+>
+>   MODULE_AUTHOR("Louis Davis/Jim Dailey");
+>   MODULE_DESCRIPTION("Dell LED Control Driver");
+> @@ -59,22 +60,6 @@ struct app_wmi_args {
+>   #define GLOBAL_MIC_MUTE_ENABLE	0x364
+>   #define GLOBAL_MIC_MUTE_DISABLE	0x365
+>
+> -struct dell_bios_data_token {
+> -	u16 tokenid;
+> -	u16 location;
+> -	u16 value;
+> -};
+> -
+> -struct __attribute__ ((__packed__)) dell_bios_calling_interface {
+> -	struct	dmi_header header;
+> -	u16	cmd_io_addr;
+> -	u8	cmd_io_code;
+> -	u32	supported_cmds;
+> -	struct	dell_bios_data_token damap[];
+> -};
+> -
+> -static struct dell_bios_data_token dell_mic_tokens[2];
+> -
+>   static int dell_wmi_perform_query(struct app_wmi_args *args)
+>   {
+>   	struct app_wmi_args *bios_return;
+> @@ -112,43 +97,24 @@ static int dell_wmi_perform_query(struct app_wmi=
+_args *args)
+>   	return rc;
+>   }
+>
+> -static void __init find_micmute_tokens(const struct dmi_header *dm, =
+void *dummy)
+> -{
+> -	struct dell_bios_calling_interface *calling_interface;
+> -	struct dell_bios_data_token *token;
+> -	int token_size =3D sizeof(struct dell_bios_data_token);
+> -	int i =3D 0;
+> -
+> -	if (dm->type =3D=3D 0xda && dm->length > 17) {
+> -		calling_interface =3D container_of(dm,
+> -				struct dell_bios_calling_interface, header);
+> -
+> -		token =3D &calling_interface->damap[i];
+> -		while (token->tokenid !=3D 0xffff) {
+> -			if (token->tokenid =3D=3D GLOBAL_MIC_MUTE_DISABLE)
+> -				memcpy(&dell_mic_tokens[0], token, token_size);
+> -			else if (token->tokenid =3D=3D GLOBAL_MIC_MUTE_ENABLE)
+> -				memcpy(&dell_mic_tokens[1], token, token_size);
+> -
+> -			i++;
+> -			token =3D &calling_interface->damap[i];
+> -		}
+> -	}
+> -}
+> -
+>   static int dell_micmute_led_set(int state)
+>   {
+> +	struct calling_interface_token *token;
+>   	struct app_wmi_args args;
+> -	struct dell_bios_data_token *token;
+>
+>   	if (!wmi_has_guid(DELL_APP_GUID))
+>   		return -ENODEV;
+>
+> -	if (state =3D=3D 0 || state =3D=3D 1)
+> -		token =3D &dell_mic_tokens[state];
+> +	if (state =3D=3D 0)
+> +		token =3D dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+> +	else if (state =3D=3D 1)
+> +		token =3D dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+>   	else
+>   		return -EINVAL;
+>
+> +	if (!token)
+> +		return -ENODEV;
+> +
+>   	memset(&args, 0, sizeof(struct app_wmi_args));
+>
+>   	args.class =3D 1;
+> @@ -177,14 +143,6 @@ int dell_app_wmi_led_set(int whichled, int on)
+>   }
+>   EXPORT_SYMBOL_GPL(dell_app_wmi_led_set);
+>
+> -static int __init dell_micmute_led_init(void)
+> -{
+> -	memset(dell_mic_tokens, 0, sizeof(struct dell_bios_data_token) * 2)=
+;
+> -	dmi_walk(find_micmute_tokens, NULL);
+> -
+> -	return 0;
+> -}
+> -
+>   struct bios_args {
+>   	unsigned char length;
+>   	unsigned char result_code;
+> @@ -330,9 +288,6 @@ static int __init dell_led_init(void)
+>   	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GU=
+ID))
+>   		return -ENODEV;
+>
+> -	if (wmi_has_guid(DELL_APP_GUID))
+> -		error =3D dell_micmute_led_init();
+> -
+>   	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
+>   		error =3D led_off();
+>   		if (error !=3D 0)
+>
