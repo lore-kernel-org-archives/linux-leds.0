@@ -1,87 +1,92 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] led: core: fix misleading comment after workqueue removal
- from drivers
-Date: Thu, 21 Jan 2016 12:05:07 +0100
-Message-ID: <56A0BB63.3060302@samsung.com>
-References: <56929204.3080404@gmail.com> <56A09EC8.1080807@samsung.com>
- <CAFSsGVv-7dmjoo2kShhEMXi-597gsPXuKeV1x8Va9zzoYj4A-Q@mail.gmail.com>
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Subject: Re: [PATCH 01/14] dell-laptop: extract SMBIOS-related code to a
+ separate module
+Date: Thu, 21 Jan 2016 14:06:03 +0100
+Message-ID: <20160121130603.GA4360@eudyptula.hq.kempniu.pl>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
+ <20160116151922.GA5060@pali>
+ <20160120092107.GA3247@eudyptula.hq.kempniu.pl>
+ <20160121083559.GM7192@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:9109 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759268AbcAULFL (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jan 2016 06:05:11 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1A002ADUSK9C60@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 21 Jan 2016 11:05:08 +0000 (GMT)
-In-reply-to: <CAFSsGVv-7dmjoo2kShhEMXi-597gsPXuKeV1x8Va9zzoYj4A-Q@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160121083559.GM7192@pali>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org
 
-On 01/21/2016 10:50 AM, Heiner Kallweit wrote:
-> On Thu, Jan 21, 2016 at 10:03 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> Hi Heiner,
->>
->> On 01/10/2016 06:16 PM, Heiner Kallweit wrote:
->>>
->>> Now that workqueues have been removed from individual drivers and
->>> were replaced with a core-internal workqueue we shouldn't
->>> encourage people to add new workqueues to drivers.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> ---
->>>    include/linux/leds.h | 5 ++++-
->>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index bc1476f..4429887 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -50,7 +50,10 @@ struct led_classdev {
->>>    #define LED_DEV_CAP_FLASH     (1 << 23)
->>>
->>>          /* Set LED brightness level */
->>> -       /* Must not sleep, use a workqueue if needed */
->>> +       /* Must not sleep. If no non-blocking version can be provided
->>> +        * set brightness_set_blocking only. The LED core will use an
->>> +        * internal work queue to create a non-blocking version.
->>> +        */
->>
->>
->> This comment isn't easily comprehensible at first glance.
->>
->> How about:
->>
->> "Must not sleep. Use brightness_set_blocking for drivers
->> that can sleep while setting brightness."
->>
-> Yes, this is better. It's simpler and clearer.
-> Are you going to fix the comment on your own or would you like me
-> to submit it as a patch?
+> > A total of four functions have something to do with the SMBIOS buff=
+er:
+> >=20
+> >   * get_buffer()
+> >   * clear_buffer()
+> >   * release_buffer()
+> >   * dell_send_request()
+> >=20
+> > This rework is a chance to make them all consistent, i.e. remove th=
+e
+> > SMBIOS buffer from their argument lists.  This way we can "signal" =
+this
+> > API's users that there is only one SMBIOS buffer ever involved whil=
+e
+> > still removing the extern and EXPORT_SYMBOL_GPL for the buffer.  BT=
+W, I
+> > also see little point in returning the buffer from dell_send_reques=
+t()
+> > as none of its callers in dell-laptop assign its return value to
+> > anything (i.e. there is no "buffer =3D dell_send_request(buffer, ..=
+=2E)" in
+> > the code).
+> >=20
+> > To sum up, I'd suggest that function prototypes could look like thi=
+s:
+> >=20
+> >     struct calling_interface_buffer *dell_smbios_get_buffer(void);
+> >     void dell_smbios_clear_buffer(void);
+> >     void dell_smbios_release_buffer(void);
+> >     void dell_smbios_send_request(int class, int select);
+> >=20
+> > What do you think?
+> >=20
+>=20
+> In other scenario functions should do something like this:
+>=20
+> struct buf *buf_alloc(void);
+> buf_clear(struct buf *buf);
+> buf_free(struct buf *buf);
+> buf_do_something(struct buf *buf, ...);
+>=20
+> But here I do not know how hard is to create alloc/free functions and
+> what is cost for creating that buffer in first 4GB memory...
 
-Since you are the original author of the patch, feel free to submit
-the final version with the agreed comment.
+I'm guessing the cost is negligible, given that SMBIOS calls are not
+present in any hot path.  Writing these functions is also pretty
+straightforward, but the inconvenience of this approach is that it
+forces the callers to do the error-checking for each buf_alloc() call.
+It also seems pretty inefficient - notice we only need 36 bytes for the
+calling interface buffer, yet we would be allocating a whole page in
+each buf_alloc() call.
 
->>>          void            (*brightness_set)(struct led_classdev *led_cdev,
->>>                                            enum led_brightness brightness);
->>>          /*
->>>
->>
->>
->> --
->> Best Regards,
->> Jacek Anaszewski
->
->
+On the other hand, I believe returning a separate buffer for each
+buf_alloc() caller makes it possible to drop buffer_mutex altogether.
+Yet, the approach I suggested is more similar to what the Dell-supplied
+dcdbas driver does internally (it manages a single, resizable buffer,
+which is protected by a mutex and controllable from userspace through
+sysfs), which is why I think it's a good idea to stick to that concept
+for consistency.
 
+As this patch series already touches a lot of code, I would like to
+avoid changing the underlying concepts as much as possible.  If that's
+okay with you, I'll post a v2 which includes your suggestion to make th=
+e
+buffer pointer static while keeping the interface similar to the
+original one.  If you would really like me to take a different path,
+please let me know and I'll comply.
 
--- 
-Best Regards,
-Jacek Anaszewski
+--=20
+Best regards,
+Micha=C5=82 K=C4=99pie=C5=84
