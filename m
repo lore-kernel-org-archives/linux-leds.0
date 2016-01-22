@@ -1,159 +1,117 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v2 15/16] dell-led: use dell_smbios_find_token() for finding mic DMI tokens
-Date: Fri, 22 Jan 2016 15:27:27 +0100
-Message-ID: <1453472848-3118-16-git-send-email-kernel@kempniu.pl>
+Subject: [PATCH v2 16/16] dell-led: use dell_smbios_send_request() for performing SMBIOS calls
+Date: Fri, 22 Jan 2016 15:27:28 +0100
+Message-ID: <1453472848-3118-17-git-send-email-kernel@kempniu.pl>
 References: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: platform-driver-x86-owner@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-With the advent of dell_smbios_find_token(), dell-led does not need to
-perform any DMI walking on its own, but it can rather ask dell-smbios t=
-o
-look up the DMI tokens it needs for changing the state of the microphon=
-e
-LED.
+Instead of using the WMI wrapper, dell-led can take advantage of
+dell_smbios_send_request() for performing the SMBIOS calls required to
+change the state of the microphone LED.
 
 Signed-off-by: Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempniu.pl>
 Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 ---
- drivers/leds/Kconfig    |    1 +
- drivers/leds/dell-led.c |   63 +++++++--------------------------------=
+ drivers/leds/dell-led.c |   65 +++++----------------------------------=
 --------
- 2 files changed, 10 insertions(+), 54 deletions(-)
+ 1 file changed, 6 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 7f940c2..4351cbe 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -443,6 +443,7 @@ config LEDS_DELL_NETBOOKS
- 	tristate "External LED on Dell Business Netbooks"
- 	depends on LEDS_CLASS
- 	depends on X86 && ACPI_WMI
-+	depends on DELL_SMBIOS
- 	help
- 	  This adds support for the Latitude 2100 and similar
- 	  notebooks that have an external LED.
 diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-index c36acaf..bfa7511 100644
+index bfa7511..b3d6e9c 100644
 --- a/drivers/leds/dell-led.c
 +++ b/drivers/leds/dell-led.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/dmi.h>
- #include <linux/dell-led.h>
-+#include "../platform/x86/dell-smbios.h"
+@@ -43,64 +43,13 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ #define CMD_LED_OFF	17
+ #define CMD_LED_BLINK	18
 =20
- MODULE_AUTHOR("Louis Davis/Jim Dailey");
- MODULE_DESCRIPTION("Dell LED Control Driver");
-@@ -59,22 +60,6 @@ struct app_wmi_args {
+-struct app_wmi_args {
+-	u16 class;
+-	u16 selector;
+-	u32 arg1;
+-	u32 arg2;
+-	u32 arg3;
+-	u32 arg4;
+-	u32 res1;
+-	u32 res2;
+-	u32 res3;
+-	u32 res4;
+-	char dummy[92];
+-};
+-
  #define GLOBAL_MIC_MUTE_ENABLE	0x364
  #define GLOBAL_MIC_MUTE_DISABLE	0x365
 =20
--struct dell_bios_data_token {
--	u16 tokenid;
--	u16 location;
--	u16 value;
--};
--
--struct __attribute__ ((__packed__)) dell_bios_calling_interface {
--	struct	dmi_header header;
--	u16	cmd_io_addr;
--	u8	cmd_io_code;
--	u32	supported_cmds;
--	struct	dell_bios_data_token damap[];
--};
--
--static struct dell_bios_data_token dell_mic_tokens[2];
--
- static int dell_wmi_perform_query(struct app_wmi_args *args)
- {
- 	struct app_wmi_args *bios_return;
-@@ -112,43 +97,24 @@ static int dell_wmi_perform_query(struct app_wmi_a=
-rgs *args)
- 	return rc;
- }
-=20
--static void __init find_micmute_tokens(const struct dmi_header *dm, vo=
-id *dummy)
+-static int dell_wmi_perform_query(struct app_wmi_args *args)
 -{
--	struct dell_bios_calling_interface *calling_interface;
--	struct dell_bios_data_token *token;
--	int token_size =3D sizeof(struct dell_bios_data_token);
--	int i =3D 0;
+-	struct app_wmi_args *bios_return;
+-	union acpi_object *obj;
+-	struct acpi_buffer input;
+-	struct acpi_buffer output =3D { ACPI_ALLOCATE_BUFFER, NULL };
+-	acpi_status status;
+-	u32 rc =3D -EINVAL;
 -
--	if (dm->type =3D=3D 0xda && dm->length > 17) {
--		calling_interface =3D container_of(dm,
--				struct dell_bios_calling_interface, header);
+-	input.length =3D 128;
+-	input.pointer =3D args;
 -
--		token =3D &calling_interface->damap[i];
--		while (token->tokenid !=3D 0xffff) {
--			if (token->tokenid =3D=3D GLOBAL_MIC_MUTE_DISABLE)
--				memcpy(&dell_mic_tokens[0], token, token_size);
--			else if (token->tokenid =3D=3D GLOBAL_MIC_MUTE_ENABLE)
--				memcpy(&dell_mic_tokens[1], token, token_size);
+-	status =3D wmi_evaluate_method(DELL_APP_GUID, 0, 1, &input, &output);
+-	if (!ACPI_SUCCESS(status))
+-		goto err_out0;
 -
--			i++;
--			token =3D &calling_interface->damap[i];
--		}
--	}
+-	obj =3D output.pointer;
+-	if (!obj)
+-		goto err_out0;
+-
+-	if (obj->type !=3D ACPI_TYPE_BUFFER)
+-		goto err_out1;
+-
+-	bios_return =3D (struct app_wmi_args *)obj->buffer.pointer;
+-	rc =3D bios_return->res1;
+-	if (rc)
+-		goto err_out1;
+-
+-	memcpy(args, bios_return, sizeof(struct app_wmi_args));
+-	rc =3D 0;
+-
+- err_out1:
+-	kfree(obj);
+- err_out0:
+-	return rc;
 -}
 -
  static int dell_micmute_led_set(int state)
  {
-+	struct calling_interface_token *token;
- 	struct app_wmi_args args;
--	struct dell_bios_data_token *token;
++	struct calling_interface_buffer *buffer;
+ 	struct calling_interface_token *token;
+-	struct app_wmi_args args;
 =20
  	if (!wmi_has_guid(DELL_APP_GUID))
  		return -ENODEV;
-=20
--	if (state =3D=3D 0 || state =3D=3D 1)
--		token =3D &dell_mic_tokens[state];
-+	if (state =3D=3D 0)
-+		token =3D dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
-+	else if (state =3D=3D 1)
-+		token =3D dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
- 	else
- 		return -EINVAL;
-=20
-+	if (!token)
-+		return -ENODEV;
-+
- 	memset(&args, 0, sizeof(struct app_wmi_args));
-=20
- 	args.class =3D 1;
-@@ -177,14 +143,6 @@ int dell_app_wmi_led_set(int whichled, int on)
- }
- EXPORT_SYMBOL_GPL(dell_app_wmi_led_set);
-=20
--static int __init dell_micmute_led_init(void)
--{
--	memset(dell_mic_tokens, 0, sizeof(struct dell_bios_data_token) * 2);
--	dmi_walk(find_micmute_tokens, NULL);
--
--	return 0;
--}
--
- struct bios_args {
- 	unsigned char length;
- 	unsigned char result_code;
-@@ -330,9 +288,6 @@ static int __init dell_led_init(void)
- 	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID)=
-)
+@@ -115,13 +64,11 @@ static int dell_micmute_led_set(int state)
+ 	if (!token)
  		return -ENODEV;
 =20
--	if (wmi_has_guid(DELL_APP_GUID))
--		error =3D dell_micmute_led_init();
+-	memset(&args, 0, sizeof(struct app_wmi_args));
 -
- 	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
- 		error =3D led_off();
- 		if (error !=3D 0)
+-	args.class =3D 1;
+-	args.arg1 =3D token->location;
+-	args.arg2 =3D token->value;
+-
+-	dell_wmi_perform_query(&args);
++	buffer =3D dell_smbios_get_buffer();
++	buffer->input[0] =3D token->location;
++	buffer->input[1] =3D token->value;
++	dell_smbios_send_request(1, 0);
++	dell_smbios_release_buffer();
+=20
+ 	return state;
+ }
 --=20
 1.7.10.4
