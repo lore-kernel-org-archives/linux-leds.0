@@ -1,114 +1,67 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: core: avoid error message when a USB LED device is
- unplugged
-Date: Fri, 22 Jan 2016 09:45:32 +0100
-Message-ID: <56A1EC2C.6050808@samsung.com>
-References: <569E9F98.3070802@gmail.com>
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+Subject: [PATCH v2 00/16] Common Dell SMBIOS API
+Date: Fri, 22 Jan 2016 15:27:12 +0100
+Message-ID: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39765 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751599AbcAVIpf (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 22 Jan 2016 03:45:35 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1C00FFIIZXJ800@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 22 Jan 2016 08:45:33 +0000 (GMT)
-In-reply-to: <569E9F98.3070802@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org
 
-Hi Heiner,
+The Linux kernel tree currently contains two Dell laptop-related driver=
+s
+issuing SMBIOS requests in different ways (dell-laptop in
+drivers/platform/x86 and dell-led in drivers/led).  As an upcoming patc=
+h
+series for the dell-wmi driver (also in drivers/platform/x86) will
+change it so that it also performs SMBIOS requests, I took the
+opportunity to unify the API used for issuing Dell SMBIOS requests
+throughout the kernel before any further code duplication happens.
+Credit for suggesting this goes to Pali Roh=C3=A1r.
 
-Could you rebase this patch on the top of devel branch
-of LED git, please?
+This patch series is primarily intended for the platform-x86 subsystem,
+with only 2 final patches touching the LED subsystem.
 
-I am getting an error while applying it:
+The first patch generates a lot of checkpatch warnings, but these are
+also raised for the original code and I decided that not changing the
+code while moving around large quantities of it is critical for
+reviewability.
 
-error: short SHA1 19e1e60 is ambiguous.
-fatal: sha1 information is lacking or useless (drivers/leds/led-core.c).
-Repository lacks necessary blobs to fall back on 3-way merge.
+Changes from v1:
 
-It may have happened that you had some patches that are not in mainline
-kernel in the repository you produced the patch from. It is also
-possible that this is an issue with the git version I am using, so this
-would clarify the situation.
+  - the SMBIOS buffer is no longer exported from the new dell-smbios
+    module (patch 03 from v1 has been dropped, patches 08-09 from v2
+    implement this change),
 
-Thanks in advance.
+  - dell_smbios_send_request() is changed so that it doesn't return an
+    SMBIOS buffer (patch 07 from v2),
 
-Best Regards,
-Jacek Anaszewski
+  - slight patch reordering.
 
-On 01/19/2016 09:42 PM, Heiner Kallweit wrote:
-> When a USB LED device is unplugged the remove call chain calls
-> led_classdev_unregister which tries to switch the LED off.
-> As the device has been removed already this results in a ENODEV
-> error message in dmesg.
-> Avoid this error message by ignoring ENODEV in calls from
-> led_classdev_unregister if the LED device is flagged as pluggable.
->
-> Therefore a new flag LED_HW_PLUGGABLE was introduced which should be set by
-> all LED drivers handling pluggable LED devices (mainly USB LED devices).
->
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
->   drivers/leds/led-class.c | 2 ++
->   drivers/leds/led-core.c  | 5 ++++-
->   include/linux/leds.h     | 2 ++
->   3 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 14139c3..aa84e5b 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -245,6 +245,8 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
->   	up_write(&led_cdev->trigger_lock);
->   #endif
->
-> +	led_cdev->flags |= LED_UNREGISTERING;
-> +
->   	/* Stop blinking */
->   	led_stop_software_blink(led_cdev);
->
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 19e1e60..ad684b6 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -98,7 +98,10 @@ static void set_brightness_delayed(struct work_struct *ws)
->   						led_cdev->delayed_set_value);
->   	else
->   		ret = -ENOTSUPP;
-> -	if (ret < 0)
-> +	if (ret < 0 &&
-> +	    /* LED HW might have been unplugged, therefore don't warn */
-> +	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-> +	    (led_cdev->flags & LED_HW_PLUGGABLE)))
->   		dev_err(led_cdev->dev,
->   			"Setting an LED's brightness failed (%d)\n", ret);
->   }
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 4429887..24413a8 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -39,6 +39,7 @@ struct led_classdev {
->
->   	/* Lower 16 bits reflect status */
->   #define LED_SUSPENDED		(1 << 0)
-> +#define LED_UNREGISTERING	(1 << 1)
->   	/* Upper 16 bits reflect control information */
->   #define LED_CORE_SUSPENDRESUME	(1 << 16)
->   #define LED_BLINK_ONESHOT	(1 << 17)
-> @@ -48,6 +49,7 @@ struct led_classdev {
->   #define LED_BLINK_DISABLE	(1 << 21)
->   #define LED_SYSFS_DISABLE	(1 << 22)
->   #define LED_DEV_CAP_FLASH	(1 << 23)
-> +#define LED_HW_PLUGGABLE	(1 << 24)
->
->   	/* Set LED brightness level */
->   	/* Must not sleep. If no non-blocking version can be provided
->
+Note:
+
+    In this series (both v1 and v2) I tried to stick to the overall
+    concept used in dell-laptop, but in the v1 thread me and Pali also
+    briefly discussed his alternative ideas [1][2] as to what this API
+    could look like, so feel free to suggest a different approach.
+
+[1] http://www.spinics.net/lists/platform-driver-x86/msg08260.html
+[2] http://www.spinics.net/lists/platform-driver-x86/msg08268.html
+
+ drivers/leds/Kconfig               |    1 +
+ drivers/leds/dell-led.c            |  126 ++-----------
+ drivers/platform/x86/Kconfig       |   12 +-
+ drivers/platform/x86/Makefile      |    1 +
+ drivers/platform/x86/dell-laptop.c |  340 ++++++++++------------------=
+--------
+ drivers/platform/x86/dell-smbios.c |  176 +++++++++++++++++++
+ drivers/platform/x86/dell-smbios.h |   44 +++++
+ 7 files changed, 344 insertions(+), 356 deletions(-)
+ create mode 100644 drivers/platform/x86/dell-smbios.c
+ create mode 100644 drivers/platform/x86/dell-smbios.h
+
+--=20
+1.7.10.4
