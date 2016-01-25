@@ -1,186 +1,61 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH] led: core: RfC - add RGB LED handling to the core
-Date: Mon, 25 Jan 2016 20:09:35 +0100
-Message-ID: <56A672EF.8080107@gmail.com>
-References: <5692BEB6.6040807@gmail.com> <56978FB0.4080700@samsung.com>
- <5699539F.5030102@gmail.com> <569C1655.1030700@gmail.com>
- <56A4D3ED.1000002@gmail.com> <56A5DFBC.2020509@samsung.com>
- <CAFSsGVshPt=-2z=+GFP+H6JNUwE8eh+ANib7jue22Mxy41x_KQ@mail.gmail.com>
- <56A5FE82.4030103@samsung.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: [PATCH 09/22] leds: Fix dependencies for !HAS_IOMEM
+	archs
+Date: Mon, 25 Jan 2016 23:24:08 +0100
+Message-ID: <1453760661-1444-10-git-send-email-richard@nod.at>
+References: <1453760661-1444-1-git-send-email-richard@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:33331 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757563AbcAYTJo (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 25 Jan 2016 14:09:44 -0500
-Received: by mail-wm0-f54.google.com with SMTP id 123so78472144wmz.0
-        for <linux-leds@vger.kernel.org>; Mon, 25 Jan 2016 11:09:43 -0800 (PST)
-In-Reply-To: <56A5FE82.4030103@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <user-mode-linux-devel-bounces@lists.sourceforge.net>
+In-Reply-To: <1453760661-1444-1-git-send-email-richard@nod.at>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/user-mode-linux-devel>,
+	<mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=user-mode-linux-devel>
+List-Post: <mailto:user-mode-linux-devel@lists.sourceforge.net>
+List-Help: <mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/user-mode-linux-devel>,
+	<mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: user-mode-linux-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, Richard Weinberger <richard@nod.at>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, user-mode-linux-devel@lists.sourceforge.net
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
-Am 25.01.2016 um 11:52 schrieb Jacek Anaszewski:
-> On 01/25/2016 10:51 AM, Heiner Kallweit wrote:
->> On Mon, Jan 25, 2016 at 9:41 AM, Jacek Anaszewski
->> <j.anaszewski@samsung.com> wrote:
->>> Hi Heiner,
->>>
->>>
->>> On 01/24/2016 02:38 PM, Heiner Kallweit wrote:
->>>>
->>>> Am 17.01.2016 um 23:31 schrieb Jacek Anaszewski:
->>>>>
->>>>> On 01/15/2016 09:16 PM, Heiner Kallweit wrote:
->>>>>>
->>>>>> Am 14.01.2016 um 13:08 schrieb Jacek Anaszewski:
->>>>>>>
->>>>>>> On 01/10/2016 09:27 PM, Heiner Kallweit wrote:
->>>>>>>>
->>>>>>>> When playing with a ThingM Blink(1) USB RGB LED device I found that
->>>>>>>> there
->>>>>>>> are few drivers for RGB LED's spread across the kernel and each one
->>>>>>>> implements the RGB functionality in its own way.
->>>>>>>> Some examples:
->>>>>>>> - drivers/hid/hid-thingm.c
->>>>>>>> - drivers/usb/misc/usbled.c
->>>>>>>> - drivers/leds/leds-bd2802.c
->>>>>>>> - drivers/leds/leds-blinkm.c
->>>>>>>> ...
->>>>>>>> IMHO it would make sense to add generic RGB functionality to the LED
->>>>>>>> core.
->>>>>>>>
->>>>>>>> Things I didn't like too much in other driver implementations:
->>>>>>>> - one led_classdev per color or at least
->>>>>>>> - one sysfs attribute per color
->>>>>>>> Colors are not really independent therefore I'd prefer one
->>>>>>>> led_classdev
->>>>>>>> per RGB LED. Also userspace should be able to change the color with
->>>>>>>> one
->>>>>>>> call -> therefore only one sysfs attribute for the RGB values.
->>>>>>>>
->>>>>>>> Also the current brightness-related functionality should not be
->>>>>>>> effected
->>>>>>>> by the RGB extension.
->>>>>>>>
->>>>>>>> This patch is intended to demonstrate the idea of the extension. Most
->>>>>>>> likely
->>>>>>>> it's not ready yet for submission.
->>>>>>>>
->>>>>>>> Main idea is to base the effective RGB value on a combination of
->>>>>>>> brightness
->>>>>>>> and a scaled-to-max RGB value.
->>>>>>>> The RGB-related callbacks are basically the same as for brightness.
->>>>>>>> RGB functionally can be switched on with a new flag in the
->>>>>>>> led_classdev.flags
->>>>>>>> bitmap.
->>>>>>>>
->>>>>>>> Experimentally I changed the thingm driver to use this extension and
->>>>>>>> it works
->>>>>>>> quite well. As one result the driver could be very much simplified.
->>>>>>>>
->>>>>>>> Any feedback is appreciated.
->>>>>>>>
->>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>>>>>> ---
->>>>>>>>      drivers/leds/led-class.c |  62 +++++++++++++++++++++++++++
->>>>>>>>      drivers/leds/led-core.c  | 106
->>>>>>>> +++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>      drivers/leds/leds.h      |  12 ++++++
->>>>>>>>      include/linux/leds.h     |  13 ++++++
->>>>>>>>      4 files changed, 193 insertions(+)
->>>>>>>>
->>> [...]
->>>
->>>>>>>> +static void led_set_rgb_raw(struct led_classdev *cdev, u32 rgb)
->>>>>>>> +{
->>>>>>>> +    u32 red_raw = (rgb >> 16) & 0xff;
->>>>>>>> +    u32 green_raw = (rgb >> 8) & 0xff;
->>>>>>>> +    u32 blue_raw = rgb & 0xff;
->>>>>>>> +    u32 max_raw, red, green, blue;
->>>>>>>> +
->>>>>>>> +    max_raw = max(red_raw, green_raw);
->>>>>>>> +    if (blue_raw > max_raw)
->>>>>>>> +        max_raw = blue_raw;
->>>>>>>> +
->>>>>>>> +    if (!max_raw) {
->>>>>>>> +        cdev->brightness = 0;
->>>>>>>> +        cdev->rgb_val = 0;
->>>>>>>> +        return;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    red = DIV_ROUND_CLOSEST(red_raw * LED_FULL, max_raw);
->>>>>>>> +    green = DIV_ROUND_CLOSEST(green_raw * LED_FULL, max_raw);
->>>>>>>> +    blue = DIV_ROUND_CLOSEST(blue_raw * LED_FULL, max_raw);
->>>>>>>> +
->>>>>>>> +    cdev->brightness = max_raw;
->>>>>>>> +    cdev->rgb_val = (red << 16) + (green << 8) + blue;
->>>>>>>> +}
->>>>>>>
->>>>>>>
->>>>>>> I think that we shouldn't impose specific way of calculating brightness
->>>>>>> depending on the rgb value set. We should just pass value from
->>>>>>> userspace
->>>>>>> to the driver.
->>>>>>>
->>>>>> Right, setting brightness from userspace is no problem.
->>>>>> But how about led_update_brightness? It's supposed to update the
->>>>>> brightness
->>>>>> value in led_cdev with the actual value. And for a RGB LED we have only
->>>>>> the RGB values, so we need to calculate the brightness based on RGB
->>>>>> values.
->>>>>> Or do you see a better way?
->>>>>
->>>>>
->>>>> I thought that you had some device using both brightness and rgb
->>>>> components settings (no idea if this could be sane in any way).
->>>>> If there are only three color components, then why not just redefine
->>>>> brightness to store three components in case of the LEDs with
->>>>> LED_DEV_CAP_RGB flags set?
->>>>>
->>>> My devices just have the three color components (normal 8 bits per color).
->>>> Even in the new RGB mode I don't want to break the current
->>>> brightness-based API
->>>> but extend it with RGB functionality. Therefore I think it's best to store
->>>> brightness and color separately.
->>>> Just one argument: If we store the color components only then we'll
->>>> lose the color information if the brightness is set to 0.
->>>> And I would like to support e.g. software blink in whatever color.
->>>
->>>
->>> Currently blinking works properly and brightness value isn't being lost.
->>> We store it in the led_cdev->blink_brightness property. Could you
->>> present exact use case you'd like to support and which is not feasible
->>> with current LED core design?
->>>
->> I didn't have a closer look on how soft blinking works and you're right,
->> this was a bad example.
->> It's not about that something is wrong with the current LED core design
->> but that IMHO storing just the raw RGB values wouldn't be a good idea
->> and we should store brightness and color separately.
->>
->> So let's take another example:
->> I set a color via sysfs and a trigger is controling the LED. Once the LED
->> brightness is set to LED_OFF by the trigger and e.g. a sysfs read triggers
->> an update the stored RGB value is 0,0,0.
->> If the LED is switched on again, then which color to choose?
-> 
-> The one stored in blink_brightness. I don't get how changing the
-> interpretation of brightness value can affect anything here.
-> 
-But blink_brightness is used in case of soft blink only.
-If a trigger or userspace sets the brightness to zero then blink_brightness
-isn't used.
-I agreed that soft blink was a bad example.
+Not every arch has io memory.
+So, unbreak the build by fixing the dependencies.
 
->> That's why I'm saying we should store color and brightness separately to
->> avoid losing the color information information even if the brightness
->> is set to zero.
->>
->> Regards, Heiner
-> 
-> 
-> 
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ drivers/leds/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 7f940c2..e76a45c 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -54,6 +54,7 @@ config LEDS_BCM6328
+ 	depends on LEDS_CLASS
+ 	depends on HAS_IOMEM
+ 	depends on OF
++	depends on HAS_IOMEM
+ 	help
+ 	  This option enables support for LEDs connected to the BCM6328
+ 	  LED HW controller accessed via MMIO registers.
+@@ -63,6 +64,7 @@ config LEDS_BCM6358
+ 	depends on LEDS_CLASS
+ 	depends on HAS_IOMEM
+ 	depends on OF
++	depends on HAS_IOMEM
+ 	help
+ 	  This option enables support for LEDs connected to the BCM6358
+ 	  LED HW controller accessed via MMIO registers.
+-- 
+1.8.4.5
+
+
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
