@@ -1,55 +1,231 @@
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Subject: Re: [PATCH v2 01/16] dell-laptop: extract SMBIOS-related code to a
- separate module
-Date: Tue, 26 Jan 2016 14:33:46 +0100
-Message-ID: <20160126133346.GA23823@eudyptula.hq.kempniu.pl>
-References: <1453472848-3118-2-git-send-email-kernel@kempniu.pl>
- <201601241024.msPP2mSE%fengguang.wu@intel.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH] led: core: RfC - add RGB LED handling to the core
+Date: Tue, 26 Jan 2016 21:08:40 +0100
+Message-ID: <56A7D248.1020307@gmail.com>
+References: <5692BEB6.6040807@gmail.com> <56978FB0.4080700@samsung.com>
+ <5699539F.5030102@gmail.com> <569C1655.1030700@gmail.com>
+ <56A4D3ED.1000002@gmail.com> <56A5DFBC.2020509@samsung.com>
+ <CAFSsGVshPt=-2z=+GFP+H6JNUwE8eh+ANib7jue22Mxy41x_KQ@mail.gmail.com>
+ <56A5FE82.4030103@samsung.com> <56A672EF.8080107@gmail.com>
+ <56A73E68.4040804@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <201601241024.msPP2mSE%fengguang.wu@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35918 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750857AbcAZUIu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 26 Jan 2016 15:08:50 -0500
+Received: by mail-wm0-f43.google.com with SMTP id l65so119406961wmf.1
+        for <linux-leds@vger.kernel.org>; Tue, 26 Jan 2016 12:08:50 -0800 (PST)
+In-Reply-To: <56A73E68.4040804@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
-> Hi Micha=C5=82,
->=20
-> [auto build test ERROR on platform-drivers-x86/for-next]
-> [also build test ERROR on v4.4 next-20160122]
-> [if your patch is applied to the wrong git tree, please drop us a not=
-e to help improving the system]
->=20
-> url:    https://github.com/0day-ci/linux/commits/Micha-K-pie/Common-D=
-ell-SMBIOS-API/20160122-223550
-> base:   git://git.infradead.org/users/dvhart/linux-platform-drivers-x=
-86.git for-next
-> config: x86_64-randconfig-n0-01240935 (attached as .config)
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=3Dx86_64=20
->=20
-> All errors (new ones prefixed by >>):
->=20
->    drivers/platform/x86/dell-smbios.c: In function 'dell_send_request=
-':
-> >> drivers/platform/x86/dell-smbios.c:71:16: error: implicit declarat=
-ion of function 'virt_to_phys' [-Werror=3Dimplicit-function-declaration=
-]
->      command.ebx =3D virt_to_phys(buffer);
->                    ^
->    cc1: some warnings being treated as errors
+Am 26.01.2016 um 10:37 schrieb Jacek Anaszewski:
+> On 01/25/2016 08:09 PM, Heiner Kallweit wrote:
+>> Am 25.01.2016 um 11:52 schrieb Jacek Anaszewski:
+>>> On 01/25/2016 10:51 AM, Heiner Kallweit wrote:
+>>>> On Mon, Jan 25, 2016 at 9:41 AM, Jacek Anaszewski
+>>>> <j.anaszewski@samsung.com> wrote:
+>>>>> Hi Heiner,
+>>>>>
+>>>>>
+>>>>> On 01/24/2016 02:38 PM, Heiner Kallweit wrote:
+>>>>>>
+>>>>>> Am 17.01.2016 um 23:31 schrieb Jacek Anaszewski:
+>>>>>>>
+>>>>>>> On 01/15/2016 09:16 PM, Heiner Kallweit wrote:
+>>>>>>>>
+>>>>>>>> Am 14.01.2016 um 13:08 schrieb Jacek Anaszewski:
+>>>>>>>>>
+>>>>>>>>> On 01/10/2016 09:27 PM, Heiner Kallweit wrote:
+>>>>>>>>>>
+>>>>>>>>>> When playing with a ThingM Blink(1) USB RGB LED device I found that
+>>>>>>>>>> there
+>>>>>>>>>> are few drivers for RGB LED's spread across the kernel and each one
+>>>>>>>>>> implements the RGB functionality in its own way.
+>>>>>>>>>> Some examples:
+>>>>>>>>>> - drivers/hid/hid-thingm.c
+>>>>>>>>>> - drivers/usb/misc/usbled.c
+>>>>>>>>>> - drivers/leds/leds-bd2802.c
+>>>>>>>>>> - drivers/leds/leds-blinkm.c
+>>>>>>>>>> ...
+>>>>>>>>>> IMHO it would make sense to add generic RGB functionality to the LED
+>>>>>>>>>> core.
+>>>>>>>>>>
+>>>>>>>>>> Things I didn't like too much in other driver implementations:
+>>>>>>>>>> - one led_classdev per color or at least
+>>>>>>>>>> - one sysfs attribute per color
+>>>>>>>>>> Colors are not really independent therefore I'd prefer one
+>>>>>>>>>> led_classdev
+>>>>>>>>>> per RGB LED. Also userspace should be able to change the color with
+>>>>>>>>>> one
+>>>>>>>>>> call -> therefore only one sysfs attribute for the RGB values.
+>>>>>>>>>>
+>>>>>>>>>> Also the current brightness-related functionality should not be
+>>>>>>>>>> effected
+>>>>>>>>>> by the RGB extension.
+>>>>>>>>>>
+>>>>>>>>>> This patch is intended to demonstrate the idea of the extension. Most
+>>>>>>>>>> likely
+>>>>>>>>>> it's not ready yet for submission.
+>>>>>>>>>>
+>>>>>>>>>> Main idea is to base the effective RGB value on a combination of
+>>>>>>>>>> brightness
+>>>>>>>>>> and a scaled-to-max RGB value.
+>>>>>>>>>> The RGB-related callbacks are basically the same as for brightness.
+>>>>>>>>>> RGB functionally can be switched on with a new flag in the
+>>>>>>>>>> led_classdev.flags
+>>>>>>>>>> bitmap.
+>>>>>>>>>>
+>>>>>>>>>> Experimentally I changed the thingm driver to use this extension and
+>>>>>>>>>> it works
+>>>>>>>>>> quite well. As one result the driver could be very much simplified.
+>>>>>>>>>>
+>>>>>>>>>> Any feedback is appreciated.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>>>>>>> ---
+>>>>>>>>>>       drivers/leds/led-class.c |  62 +++++++++++++++++++++++++++
+>>>>>>>>>>       drivers/leds/led-core.c  | 106
+>>>>>>>>>> +++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>       drivers/leds/leds.h      |  12 ++++++
+>>>>>>>>>>       include/linux/leds.h     |  13 ++++++
+>>>>>>>>>>       4 files changed, 193 insertions(+)
+>>>>>>>>>>
+>>>>> [...]
+>>>>>
+>>>>>>>>>> +static void led_set_rgb_raw(struct led_classdev *cdev, u32 rgb)
+>>>>>>>>>> +{
+>>>>>>>>>> +    u32 red_raw = (rgb >> 16) & 0xff;
+>>>>>>>>>> +    u32 green_raw = (rgb >> 8) & 0xff;
+>>>>>>>>>> +    u32 blue_raw = rgb & 0xff;
+>>>>>>>>>> +    u32 max_raw, red, green, blue;
+>>>>>>>>>> +
+>>>>>>>>>> +    max_raw = max(red_raw, green_raw);
+>>>>>>>>>> +    if (blue_raw > max_raw)
+>>>>>>>>>> +        max_raw = blue_raw;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (!max_raw) {
+>>>>>>>>>> +        cdev->brightness = 0;
+>>>>>>>>>> +        cdev->rgb_val = 0;
+>>>>>>>>>> +        return;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    red = DIV_ROUND_CLOSEST(red_raw * LED_FULL, max_raw);
+>>>>>>>>>> +    green = DIV_ROUND_CLOSEST(green_raw * LED_FULL, max_raw);
+>>>>>>>>>> +    blue = DIV_ROUND_CLOSEST(blue_raw * LED_FULL, max_raw);
+>>>>>>>>>> +
+>>>>>>>>>> +    cdev->brightness = max_raw;
+>>>>>>>>>> +    cdev->rgb_val = (red << 16) + (green << 8) + blue;
+>>>>>>>>>> +}
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> I think that we shouldn't impose specific way of calculating brightness
+>>>>>>>>> depending on the rgb value set. We should just pass value from
+>>>>>>>>> userspace
+>>>>>>>>> to the driver.
+>>>>>>>>>
+>>>>>>>> Right, setting brightness from userspace is no problem.
+>>>>>>>> But how about led_update_brightness? It's supposed to update the
+>>>>>>>> brightness
+>>>>>>>> value in led_cdev with the actual value. And for a RGB LED we have only
+>>>>>>>> the RGB values, so we need to calculate the brightness based on RGB
+>>>>>>>> values.
+>>>>>>>> Or do you see a better way?
+>>>>>>>
+>>>>>>>
+>>>>>>> I thought that you had some device using both brightness and rgb
+>>>>>>> components settings (no idea if this could be sane in any way).
+>>>>>>> If there are only three color components, then why not just redefine
+>>>>>>> brightness to store three components in case of the LEDs with
+>>>>>>> LED_DEV_CAP_RGB flags set?
+>>>>>>>
+>>>>>> My devices just have the three color components (normal 8 bits per color).
+>>>>>> Even in the new RGB mode I don't want to break the current
+>>>>>> brightness-based API
+>>>>>> but extend it with RGB functionality. Therefore I think it's best to store
+>>>>>> brightness and color separately.
+>>>>>> Just one argument: If we store the color components only then we'll
+>>>>>> lose the color information if the brightness is set to 0.
+>>>>>> And I would like to support e.g. software blink in whatever color.
+>>>>>
+>>>>>
+>>>>> Currently blinking works properly and brightness value isn't being lost.
+>>>>> We store it in the led_cdev->blink_brightness property. Could you
+>>>>> present exact use case you'd like to support and which is not feasible
+>>>>> with current LED core design?
+>>>>>
+>>>> I didn't have a closer look on how soft blinking works and you're right,
+>>>> this was a bad example.
+>>>> It's not about that something is wrong with the current LED core design
+>>>> but that IMHO storing just the raw RGB values wouldn't be a good idea
+>>>> and we should store brightness and color separately.
+>>>>
+>>>> So let's take another example:
+>>>> I set a color via sysfs and a trigger is controling the LED. Once the LED
+>>>> brightness is set to LED_OFF by the trigger and e.g. a sysfs read triggers
+>>>> an update the stored RGB value is 0,0,0.
+>>>> If the LED is switched on again, then which color to choose?
+>>>
+>>> The one stored in blink_brightness. I don't get how changing the
+>>> interpretation of brightness value can affect anything here.
+>>>
+>> But blink_brightness is used in case of soft blink only.
+> 
+> In case of hardware blinking it is driver's responsibility to report
+> current brightness while blinking is on. It is hardware specific whether
+> it allows to read current LED state during blinking. Nevertheless
+> I don't see where is the problem here either.
+> 
+>> If a trigger or userspace sets the brightness to zero then blink_brightness
+>> isn't used.
+> 
+> Setting brightness to 0 disables trigger. Excerpt from leds-class.txt:
+> 
+> "However, if you set the brightness value to LED_OFF it will
+> also disable the timer trigger."
+> 
+> Now I see that documentation is inexact here. The paragraph says
+> about triggers, using timer trigger as an example. This trigger
+> is specific because of the software fallback implemented in the core.
+> 
+> Setting brightness to LED_OFF disables any trigger only when set from
+> sysfs (in drivers/leds/led-class.c brightness_store calls
+> led_trigger_remove if passed brightness is LED_OFF).
+> 
+> However, when setting brightness to LED_OFF directly through LED API,
+> and not through sysfs, only blink_timer is being disabled, but trigger
+> isn't being removed. Probably we'd have to remove trigger
+> from set_brightness_delayed(), in case LED_BLINK_DISABLE is set,
+> to make implementation in line with the documentation.
+> 
+Sorry, I'm afraid we lost track of the original subject.
+At least I'm a little lost ..
+My understanding is that this discussion is about whether:
+- use current brightness member of led_classdev to store brightness and color
+  (change semantics of brightness to hold a <00000000><RRRRRRRR><GGGGGGGG><BBBBBBBB> value) or
+- store brightness and color separately (introduce a new member for the color)
 
-Nice catch, turns out I missed the <linux/io.h> include in
-dell-smbios.c, but that only causes errors for non-SMP builds.
+Is this also your understanding? Or are you focussing on a different aspect
+and I missed something?
 
-I'll keep that in mind for v3 of this series, if it happens.  If not,
-I'll post a v3 of just this patch once the rest of the series gets
-acked.
+Regards, Heiner
 
---=20
-Best regards,
-Micha=C5=82 K=C4=99pie=C5=84
+>> I agreed that soft blink was a bad example.
+>>>> That's why I'm saying we should store color and brightness separately to
+>>>> avoid losing the color information information even if the brightness
+>>>> is set to zero.
+>>>>
+>>>> Regards, Heiner
+>>>
+>>>
+>>>
+>>
+>>
+>>
+> 
+> 
