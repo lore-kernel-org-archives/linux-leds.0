@@ -1,50 +1,39 @@
-From: Antonio Ospite <ao2@ao2.it>
-Subject: [PATCHv2] leds: lp3944: improve wording and formatting in a comment
-Date: Thu, 28 Jan 2016 16:49:29 +0100
-Message-ID: <1453996169-18124-1-git-send-email-ao2@ao2.it>
-References: <56A9C4D6.5000505@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp205.alice.it ([82.57.200.101]:46621 "EHLO smtp205.alice.it"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935239AbcA1Ptg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Thu, 28 Jan 2016 10:49:36 -0500
-In-Reply-To: <56A9C4D6.5000505@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Subject: [PATCH RFC 1/3] of: Add vendor prefix for Si-En Technology
+Date: Thu, 28 Jan 2016 20:41:05 +0000
+Message-ID: <1454013667-25889-2-git-send-email-stefan.wahren@i2se.com>
+References: <1454013667-25889-1-git-send-email-stefan.wahren@i2se.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1454013667-25889-1-git-send-email-stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Antonio Ospite <ao2@ao2.it>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Improve the wording for the comment about the led status, and while at
-it also use the standard formatting for multi-line comments.
+Si-En Technology is a fabless design house which offers
+audio amplifiers, LED drivers and sensors.
 
-Signed-off-by: Antonio Ospite <ao2@ao2.it>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
 ---
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v1:
-  - make the comment more explicit as suggested by Jacek
-
- drivers/leds/leds-lp3944.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
-index 6c758ae..be60c18 100644
---- a/drivers/leds/leds-lp3944.c
-+++ b/drivers/leds/leds-lp3944.c
-@@ -199,8 +199,11 @@ static int lp3944_led_set(struct lp3944_led_data *led, u8 status)
- 	if (status > LP3944_LED_STATUS_DIM1)
- 		return -EINVAL;
- 
--	/* invert only 0 and 1, leave unchanged the other values,
--	 * remember we are abusing status to set blink patterns
-+	/*
-+	 * Invert status only when it's < 2 (i.e. 0 or 1) which means it's
-+	 * controlling the on/off state directly.
-+	 * When, instead, status is >= 2 don't invert it because it would mean
-+	 * to mess with the hardware blinking mode.
- 	 */
- 	if (led->type == LP3944_LED_TYPE_LED_INVERTED && status < 2)
- 		status = 1 - status;
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 72e2c5a..52f22f9 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -204,6 +204,7 @@ seagate	Seagate Technology PLC
+ semtech	Semtech Corporation
+ sgx	SGX Sensortech
+ sharp	Sharp Corporation
++si-en	Si-En Technology Ltd.
+ sigma	Sigma Designs, Inc.
+ sil	Silicon Image
+ silabs	Silicon Laboratories
 -- 
-2.7.0
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
