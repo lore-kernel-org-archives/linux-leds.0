@@ -1,63 +1,50 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
-Date: Thu, 28 Jan 2016 08:56:48 -0600
-Message-ID: <56AA2C30.2040708@ti.com>
-References: <1453738452-23633-1-git-send-email-afd@ti.com>
- <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Antonio Ospite <ao2@ao2.it>
+Subject: [PATCHv2] leds: lp3944: improve wording and formatting in a comment
+Date: Thu, 28 Jan 2016 16:49:29 +0100
+Message-ID: <1453996169-18124-1-git-send-email-ao2@ao2.it>
+References: <56A9C4D6.5000505@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from smtp205.alice.it ([82.57.200.101]:46621 "EHLO smtp205.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935239AbcA1Ptg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Thu, 28 Jan 2016 10:49:36 -0500
+In-Reply-To: <56A9C4D6.5000505@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Antonio Ospite <ao2@ao2.it>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On 01/28/2016 04:47 AM, Linus Walleij wrote:
-> On Mon, Jan 25, 2016 at 5:14 PM, Andrew F. Davis <afd@ti.com> wrote:
->
->> Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
->>
->> The TPIC2810 has 8 open-drain outputs that can but used to drive
->> LEDs and other low-side switched resistive loads.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->> Changes from v1:
->>   - Added OF match table at Javier Martinez Canillas request
->
-> So the TI datasheet says:
-> "8 bit LED driver with I2C interface"
->
-> So it is *not* "general purpose input/output" (GPIO).
->
-> It is special purpose LED drive output-only circuit.
->
-> So why can it not have a driver directly in drivers/leds/*?
->
-> I understand that it can also be used as a GPIO (and that it
-> is then nice to put leds-gpio on top of it) but then
-> I want a reference to the hardware that actually went ahead
-> and used this as a GPIO chip rather than using a proper
-> GPIO expander.
->
-> Yours,
-> Linus Walleij
->
+Improve the wording for the comment about the led status, and while at
+it also use the standard formatting for multi-line comments.
 
-These don't really have the traditional LED features (current control,
-HW blinking, etc), and all the use cases I've found treat them as GPO,
-including our Industrial Dev Kits (although they run them to test LEDs
-as well as the IO header):
+Signed-off-by: Antonio Ospite <ao2@ao2.it>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+---
 
-http://www.ti.com/tool/tmdsice3359
-http://www.ti.com/tool/tmdxidk437x
+Changes since v1:
+  - make the comment more explicit as suggested by Jacek
 
-And a couple more that I don't think have any public schematics yet.
+ drivers/leds/leds-lp3944.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Like you said, they can still be used for LEDs with leds-gpio, as they
-don't have any LED specific features I figure this way we get both
-uses with one driver.
-
-Andrew
+diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
+index 6c758ae..be60c18 100644
+--- a/drivers/leds/leds-lp3944.c
++++ b/drivers/leds/leds-lp3944.c
+@@ -199,8 +199,11 @@ static int lp3944_led_set(struct lp3944_led_data *led, u8 status)
+ 	if (status > LP3944_LED_STATUS_DIM1)
+ 		return -EINVAL;
+ 
+-	/* invert only 0 and 1, leave unchanged the other values,
+-	 * remember we are abusing status to set blink patterns
++	/*
++	 * Invert status only when it's < 2 (i.e. 0 or 1) which means it's
++	 * controlling the on/off state directly.
++	 * When, instead, status is >= 2 don't invert it because it would mean
++	 * to mess with the hardware blinking mode.
+ 	 */
+ 	if (led->type == LP3944_LED_TYPE_LED_INVERTED && status < 2)
+ 		status = 1 - status;
+-- 
+2.7.0
