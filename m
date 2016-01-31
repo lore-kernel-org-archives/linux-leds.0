@@ -1,38 +1,39 @@
-From: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: =?utf-8?Q?=D0=9A=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D1=81=D0?=
-	=?utf-8?Q?=BA=D0=B8=D0=B5_=D0=B1=D0=B0=D0=B7=D1=8B!!!_=D0?=
-	=?utf-8?Q?=A2=D0=B5=D0=BB=5CViber=5CWhatsapp=3A+791339138?=
-	=?utf-8?Q?37_Skype=3Aprodawez389_Email=3Agdrozdova37=40gm?=
-	=?utf-8?Q?ail=2Ecom_=D0=A3=D0=B7=D0=BD=D0=B0=D0=B9=D1=82?=
-	=?utf-8?Q?=D0=B5_=D0=BF=D0=BE=D0=B4=D1=80=D0=BE=D0=B1=D0?=
-	=?utf-8?Q?=BD=D0=B5=D0=B5!!!?=
-Date: Fri, 29 Jan 2016 22:59:37 +0600
-Message-ID: <A8525BC116C2ED2EF2F7BE01F569C72E@vger.kernel.org>
-Reply-To: "linux-leds@vger.kernel.org" <mamontova260@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 1/3] of: Add vendor prefix for Si-En Technology
+Date: Sun, 31 Jan 2016 12:59:14 +0000
+Message-ID: <1454245156-15747-2-git-send-email-stefan.wahren@i2se.com>
+References: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bestpharmarx24.com ([188.120.250.68]:55199 "EHLO
-	bestpharmarx24.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752157AbcA2Uwy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 29 Jan 2016 15:52:54 -0500
-Received: from 188.120.250.68 (localhost.localdomain [127.0.0.1])
-	by bestpharmarx24.com (Postfix) with SMTP id 403B222AC78
-	for <linux-leds@vger.kernel.org>; Fri, 29 Jan 2016 16:59:38 +0000 (UTC)
+Received: from mout.kundenserver.de ([212.227.126.133]:49685 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755623AbcAaM7s (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 31 Jan 2016 07:59:48 -0500
+In-Reply-To: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
 
-=D0=A1=D0=BE=D0=B1=D0=B5=D1=80=D0=B5=D0=BC =D0=B4=D0=BB=D1=8F =D0=92=D0=
-=B0=D1=81 =D0=BF=D0=BE =D0=B8=D0=BD=D1=82=D0=B5=D1=80=D0=BD=D0=B5=D1=82=
- =D0=B1=D0=B0=D0=B7=D1=83 =D0=B4=D0=B0=D0=BD=D0=BD=D1=8B=D1=85 =D0=BF=D0=
-=BE=D1=82=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D1=85 =D0=
-=BA=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D0=BE=D0=B2 =D0=B4=D0=BB=D1=8F =D0=92=
-=D0=B0=D1=88=D0=B5=D0=B3=D0=BE =D0=91=D0=B8=D0=B7=D0=BD=D0=B5=D1=81=D0=B0=
-!!! =D0=9C=D0=BD=D0=BE=D0=B3=D0=BE! =D0=91=D1=8B=D1=81=D1=82=D1=80=D0=BE=
-! =D0=9D=D0=B5 =D0=B4=D0=BE=D1=80=D0=BE=D0=B3=D0=BE! =D0=A3=D0=B7=D0=BD=
-=D0=B0=D0=B9=D1=82=D0=B5 =D0=BE=D0=B1 =D1=8D=D1=82=D0=BE=D0=BC =D0=BF=D0=
-=BE=D0=B4=D1=80=D0=BE=D0=B1=D0=BD=D0=B5=D0=B5 =D0=BF=D0=BE =D0=A2=D0=B5=
-=D0=BB\Viber\Whatsapp:+79133913837 Skype:prodawez389 Email:lnaumova884@=
-gmail.com =20
+Si-En Technology is a fabless design house which offers
+audio amplifiers, LED drivers and sensors.
+
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 72e2c5a..52f22f9 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -204,6 +204,7 @@ seagate	Seagate Technology PLC
+ semtech	Semtech Corporation
+ sgx	SGX Sensortech
+ sharp	Sharp Corporation
++si-en	Si-En Technology Ltd.
+ sigma	Sigma Designs, Inc.
+ sil	Silicon Image
+ silabs	Silicon Laboratories
+-- 
+1.7.9.5
