@@ -1,76 +1,48 @@
 From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 2/3] DT: add binding for SN3218 LED driver
-Date: Sun, 31 Jan 2016 12:59:15 +0000
-Message-ID: <1454245156-15747-3-git-send-email-stefan.wahren@i2se.com>
-References: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:59363 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757291AbcAaM7t (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 31 Jan 2016 07:59:49 -0500
-In-Reply-To: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH 0/3] leds: add SN3218 LED driver
+Date: Sun, 31 Jan 2016 12:59:13 +0000
+Message-ID: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
+List-Id: linux-leds@vger.kernel.org
 
-This patch adds the binding for Si-En Technology SN3218
-18-Channel LED driver.
+This patch series implements support for the Si-En SN3218
+18 Channel LED Driver connected through I2C. The SN3218
+doesn't support reading so the LED states are cached in a
+regmap.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/leds/leds-sn3218.txt       |   42 ++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+The driver has been tested on a Raspberry Pi B.
+
+Changes since RFC:
+  * using regmap instead of direct I2C
+  * add new function to init single LED
+  * add module name to Kconfig help
+  * replace of_get_property() with of_property_read_string()
+  * remove lock, leds_state and name from priv structure
+  * drop sn3218 LED name prefix
+  * don't use led_info and led_platform_data
+  * abort probing if no SN3218 is connected or DT invalid
+  * fix some style and text issues
+  * fix license
+  * move i2c_device_id and of_device_id at the end of file
+  * use devm_* calls
+  * use device function as node name in DT binding
+
+Stefan Wahren (3):
+  of: Add vendor prefix for Si-En Technology
+  DT: add binding for SN3218 LED driver
+  leds: add SN3218 LED driver
+
+ .../devicetree/bindings/leds/leds-sn3218.txt       |   42 +++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ drivers/leds/Kconfig                               |   12 +
+ drivers/leds/Makefile                              |    1 +
+ drivers/leds/leds-sn3218.c                         |  297 ++++++++++++++++++++
+ 5 files changed, 353 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-sn3218.txt
+ create mode 100644 drivers/leds/leds-sn3218.c
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-sn3218.txt b/Documentation/devicetree/bindings/leds/leds-sn3218.txt
-new file mode 100644
-index 0000000..5daa9b0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-sn3218.txt
-@@ -0,0 +1,42 @@
-+* Si-En Technology - SN3218 18-Channel LED Driver
-+
-+Required properties:
-+- compatible :
-+	"si-en,sn3218"
-+- address-cells : must be 1
-+- size-cells : must be 0
-+- reg : I2C slave address, typically 0x54
-+
-+There must be at least 1 LED which is represented as a sub-node
-+of the sn3218 device.
-+
-+LED sub-node properties:
-+- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
-+- reg : number of LED line (could be from 0 to 17)
-+- linux,default-trigger : (optional)
-+   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+sn3218: led-controller@54 {
-+	compatible = "si-en,sn3218";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x54>;
-+
-+	led@0 {
-+		label = "led1";
-+		reg = <0x0>;
-+	};
-+
-+	led@1 {
-+		label = "led2";
-+		reg = <0x1>;
-+	};
-+
-+	led@2 {
-+		label = "led3";
-+		reg = <0x2>;
-+	};
-+};
-+
 -- 
 1.7.9.5
