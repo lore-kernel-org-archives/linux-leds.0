@@ -1,282 +1,389 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] led: core: RfC - add RGB LED handling to the core
-Date: Mon, 01 Feb 2016 09:26:26 +0100
-Message-ID: <56AF16B2.80708@samsung.com>
-References: <5692BEB6.6040807@gmail.com> <56978FB0.4080700@samsung.com>
- <5699539F.5030102@gmail.com> <569C1655.1030700@gmail.com>
- <56A4D3ED.1000002@gmail.com> <56A5DFBC.2020509@samsung.com>
- <CAFSsGVshPt=-2z=+GFP+H6JNUwE8eh+ANib7jue22Mxy41x_KQ@mail.gmail.com>
- <56A5FE82.4030103@samsung.com> <56A672EF.8080107@gmail.com>
- <56A73E68.4040804@samsung.com> <56A7D248.1020307@gmail.com>
- <56A87F7B.2030806@samsung.com> <56AB0E10.7060405@gmail.com>
- <56AB21A7.5070505@samsung.com> <56AEFEAE.20407@gmail.com>
+Subject: Re: [PATCH 3/3] leds: add SN3218 LED driver
+Date: Mon, 01 Feb 2016 10:58:59 +0100
+Message-ID: <56AF2C63.6000404@samsung.com>
+References: <1454245156-15747-1-git-send-email-stefan.wahren@i2se.com>
+ <1454245156-15747-4-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:46466 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751473AbcBAI03 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 1 Feb 2016 03:26:29 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1V00JD30S3RO60@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 01 Feb 2016 08:26:27 +0000 (GMT)
-In-reply-to: <56AEFEAE.20407@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1454245156-15747-4-git-send-email-stefan.wahren@i2se.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
-On 02/01/2016 07:43 AM, Heiner Kallweit wrote:
-> Am 29.01.2016 um 09:24 schrieb Jacek Anaszewski:
->> On 01/29/2016 08:00 AM, Heiner Kallweit wrote:
->>> Am 27.01.2016 um 09:27 schrieb Jacek Anaszewski:
->>>> On 01/26/2016 09:08 PM, Heiner Kallweit wrote:
->>>>> Am 26.01.2016 um 10:37 schrieb Jacek Anaszewski:
->>>>>> On 01/25/2016 08:09 PM, Heiner Kallweit wrote:
->>>>>>> Am 25.01.2016 um 11:52 schrieb Jacek Anaszewski:
->>>>>>>> On 01/25/2016 10:51 AM, Heiner Kallweit wrote:
->>>>>>>>> On Mon, Jan 25, 2016 at 9:41 AM, Jacek Anaszewski
->>>>>>>>> <j.anaszewski@samsung.com> wrote:
->>>>>>>>>> Hi Heiner,
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> On 01/24/2016 02:38 PM, Heiner Kallweit wrote:
->>>>>>>>>>>
->>>>>>>>>>> Am 17.01.2016 um 23:31 schrieb Jacek Anaszewski:
->>>>>>>>>>>>
->>>>>>>>>>>> On 01/15/2016 09:16 PM, Heiner Kallweit wrote:
->>>>>>>>>>>>>
->>>>>>>>>>>>> Am 14.01.2016 um 13:08 schrieb Jacek Anaszewski:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> On 01/10/2016 09:27 PM, Heiner Kallweit wrote:
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> When playing with a ThingM Blink(1) USB RGB LED device I found that
->>>>>>>>>>>>>>> there
->>>>>>>>>>>>>>> are few drivers for RGB LED's spread across the kernel and each one
->>>>>>>>>>>>>>> implements the RGB functionality in its own way.
->>>>>>>>>>>>>>> Some examples:
->>>>>>>>>>>>>>> - drivers/hid/hid-thingm.c
->>>>>>>>>>>>>>> - drivers/usb/misc/usbled.c
->>>>>>>>>>>>>>> - drivers/leds/leds-bd2802.c
->>>>>>>>>>>>>>> - drivers/leds/leds-blinkm.c
->>>>>>>>>>>>>>> ...
->>>>>>>>>>>>>>> IMHO it would make sense to add generic RGB functionality to the LED
->>>>>>>>>>>>>>> core.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Things I didn't like too much in other driver implementations:
->>>>>>>>>>>>>>> - one led_classdev per color or at least
->>>>>>>>>>>>>>> - one sysfs attribute per color
->>>>>>>>>>>>>>> Colors are not really independent therefore I'd prefer one
->>>>>>>>>>>>>>> led_classdev
->>>>>>>>>>>>>>> per RGB LED. Also userspace should be able to change the color with
->>>>>>>>>>>>>>> one
->>>>>>>>>>>>>>> call -> therefore only one sysfs attribute for the RGB values.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Also the current brightness-related functionality should not be
->>>>>>>>>>>>>>> effected
->>>>>>>>>>>>>>> by the RGB extension.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> This patch is intended to demonstrate the idea of the extension. Most
->>>>>>>>>>>>>>> likely
->>>>>>>>>>>>>>> it's not ready yet for submission.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Main idea is to base the effective RGB value on a combination of
->>>>>>>>>>>>>>> brightness
->>>>>>>>>>>>>>> and a scaled-to-max RGB value.
->>>>>>>>>>>>>>> The RGB-related callbacks are basically the same as for brightness.
->>>>>>>>>>>>>>> RGB functionally can be switched on with a new flag in the
->>>>>>>>>>>>>>> led_classdev.flags
->>>>>>>>>>>>>>> bitmap.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Experimentally I changed the thingm driver to use this extension and
->>>>>>>>>>>>>>> it works
->>>>>>>>>>>>>>> quite well. As one result the driver could be very much simplified.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Any feedback is appreciated.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>>          drivers/leds/led-class.c |  62 +++++++++++++++++++++++++++
->>>>>>>>>>>>>>>          drivers/leds/led-core.c  | 106
->>>>>>>>>>>>>>> +++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>>>>>>>          drivers/leds/leds.h      |  12 ++++++
->>>>>>>>>>>>>>>          include/linux/leds.h     |  13 ++++++
->>>>>>>>>>>>>>>          4 files changed, 193 insertions(+)
->>>>>>>>>>>>>>>
->>>>>>>>>> [...]
->>>>>>>>>>
->>>>>>>>>>>>>>> +static void led_set_rgb_raw(struct led_classdev *cdev, u32 rgb)
->>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>> +    u32 red_raw = (rgb >> 16) & 0xff;
->>>>>>>>>>>>>>> +    u32 green_raw = (rgb >> 8) & 0xff;
->>>>>>>>>>>>>>> +    u32 blue_raw = rgb & 0xff;
->>>>>>>>>>>>>>> +    u32 max_raw, red, green, blue;
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    max_raw = max(red_raw, green_raw);
->>>>>>>>>>>>>>> +    if (blue_raw > max_raw)
->>>>>>>>>>>>>>> +        max_raw = blue_raw;
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    if (!max_raw) {
->>>>>>>>>>>>>>> +        cdev->brightness = 0;
->>>>>>>>>>>>>>> +        cdev->rgb_val = 0;
->>>>>>>>>>>>>>> +        return;
->>>>>>>>>>>>>>> +    }
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    red = DIV_ROUND_CLOSEST(red_raw * LED_FULL, max_raw);
->>>>>>>>>>>>>>> +    green = DIV_ROUND_CLOSEST(green_raw * LED_FULL, max_raw);
->>>>>>>>>>>>>>> +    blue = DIV_ROUND_CLOSEST(blue_raw * LED_FULL, max_raw);
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    cdev->brightness = max_raw;
->>>>>>>>>>>>>>> +    cdev->rgb_val = (red << 16) + (green << 8) + blue;
->>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> I think that we shouldn't impose specific way of calculating brightness
->>>>>>>>>>>>>> depending on the rgb value set. We should just pass value from
->>>>>>>>>>>>>> userspace
->>>>>>>>>>>>>> to the driver.
->>>>>>>>>>>>>>
->>>>>>>>>>>>> Right, setting brightness from userspace is no problem.
->>>>>>>>>>>>> But how about led_update_brightness? It's supposed to update the
->>>>>>>>>>>>> brightness
->>>>>>>>>>>>> value in led_cdev with the actual value. And for a RGB LED we have only
->>>>>>>>>>>>> the RGB values, so we need to calculate the brightness based on RGB
->>>>>>>>>>>>> values.
->>>>>>>>>>>>> Or do you see a better way?
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> I thought that you had some device using both brightness and rgb
->>>>>>>>>>>> components settings (no idea if this could be sane in any way).
->>>>>>>>>>>> If there are only three color components, then why not just redefine
->>>>>>>>>>>> brightness to store three components in case of the LEDs with
->>>>>>>>>>>> LED_DEV_CAP_RGB flags set?
->>>>>>>>>>>>
->>>>>>>>>>> My devices just have the three color components (normal 8 bits per color).
->>>>>>>>>>> Even in the new RGB mode I don't want to break the current
->>>>>>>>>>> brightness-based API
->>>>>>>>>>> but extend it with RGB functionality. Therefore I think it's best to store
->>>>>>>>>>> brightness and color separately.
->>>>>>>>>>> Just one argument: If we store the color components only then we'll
->>>>>>>>>>> lose the color information if the brightness is set to 0.
->>>>>>>>>>> And I would like to support e.g. software blink in whatever color.
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Currently blinking works properly and brightness value isn't being lost.
->>>>>>>>>> We store it in the led_cdev->blink_brightness property. Could you
->>>>>>>>>> present exact use case you'd like to support and which is not feasible
->>>>>>>>>> with current LED core design?
->>>>>>>>>>
->>>>>>>>> I didn't have a closer look on how soft blinking works and you're right,
->>>>>>>>> this was a bad example.
->>>>>>>>> It's not about that something is wrong with the current LED core design
->>>>>>>>> but that IMHO storing just the raw RGB values wouldn't be a good idea
->>>>>>>>> and we should store brightness and color separately.
->>>>>>>>>
->>>>>>>>> So let's take another example:
->>>>>>>>> I set a color via sysfs and a trigger is controling the LED. Once the LED
->>>>>>>>> brightness is set to LED_OFF by the trigger and e.g. a sysfs read triggers
->>>>>>>>> an update the stored RGB value is 0,0,0.
->>>>>>>>> If the LED is switched on again, then which color to choose?
->>>>>>>>
->>>>>>>> The one stored in blink_brightness. I don't get how changing the
->>>>>>>> interpretation of brightness value can affect anything here.
->>>>>>>>
->>>>>>> But blink_brightness is used in case of soft blink only.
->>>>>>
->>>>>> In case of hardware blinking it is driver's responsibility to report
->>>>>> current brightness while blinking is on. It is hardware specific whether
->>>>>> it allows to read current LED state during blinking. Nevertheless
->>>>>> I don't see where is the problem here either.
->>>>>>
->>>>>>> If a trigger or userspace sets the brightness to zero then blink_brightness
->>>>>>> isn't used.
->>>>>>
->>>>>> Setting brightness to 0 disables trigger. Excerpt from leds-class.txt:
->>>>>>
->>>>>> "However, if you set the brightness value to LED_OFF it will
->>>>>> also disable the timer trigger."
->>>>>>
->>>>>> Now I see that documentation is inexact here. The paragraph says
->>>>>> about triggers, using timer trigger as an example. This trigger
->>>>>> is specific because of the software fallback implemented in the core.
->>>>>>
->>>>>> Setting brightness to LED_OFF disables any trigger only when set from
->>>>>> sysfs (in drivers/leds/led-class.c brightness_store calls
->>>>>> led_trigger_remove if passed brightness is LED_OFF).
->>>>>>
->>>>>> However, when setting brightness to LED_OFF directly through LED API,
->>>>>> and not through sysfs, only blink_timer is being disabled, but trigger
->>>>>> isn't being removed. Probably we'd have to remove trigger
->>>>>> from set_brightness_delayed(), in case LED_BLINK_DISABLE is set,
->>>>>> to make implementation in line with the documentation.
->>>>>>
->>>>> Sorry, I'm afraid we lost track of the original subject.
->>>>> At least I'm a little lost ..
->>>>> My understanding is that this discussion is about whether:
->>>>> - use current brightness member of led_classdev to store brightness and color
->>>>>      (change semantics of brightness to hold a <00000000><RRRRRRRR><GGGGGGGG><BBBBBBBB> value) or
->>>>> - store brightness and color separately (introduce a new member for the color)
->>>>>
->>>>> Is this also your understanding? Or are you focussing on a different aspect
->>>>> and I missed something?
->>>>
->>>> Yes it is. I intended to explain that setting brightness to 0 is
->>>> supposed to turn the trigger off. In effect the brightness information
->>>> is not required afterwards because trigger is disabled.
->>>>
->>>> During the analysis I realized about little discrepancy between the documentation and the implementation and proposed potential fix.
->>>>
->>>> I analyzed this basing on the current interpretation of
->>>> brightness. I think we need to focus on your following requirement:
->>>>
->>>> "And I would like to support e.g. software blink in whatever color"
->>>>
->>>> Could you provide more details?
->>>>
->>> Basically I want color and brightness to be independent.
->>>
->>> One example: If a trigger is switching a LED on and off, then I want to be able to change the color
->>> from userspace (even if the LED is off in that moment) w/o affecting the trigger operation.
->>
->> It is possible even now - brightness can be changed during blinking, but
->> it is applied from the next transition to "on" state.
->>
->>> Or another one: If the brightness is changed from 255 to 1 and back to 255 then we'd partially lose
->>> the color information if color and brightness are stored together.
->>> Partially because we'd not lose it if e.g. pure blue is set.
->>> But if the RGB value was let's say (255, 240, 17) before then we'd not be able to restore this value.
->>
->> It would suffice to implement dedicated trigger for this. IMO it would
->> be an over engineering, though. We can support what you want by
->> exposing each color as a separate LED class device and adding a means
->> for LED class device synchronization, I was proposing in the beginning.
->>
->> It would be convenient because it would allow to avoid code duplication
->> in the LED core. I think that gathering all the colors in the single
->> functionality could be a task for the user space.
->>
-> By chance I had to deal with HSV color scheme in another project and
-> using this color scheme core-internally for color LED's might help us to
-> facilitate backwards compatibility and reduce the needed changes to the core.
-> It would also allow to easily solve the question we're discussing here.
+Hi Stefan,
+
+Thanks for the update. A few more comments below.
+
+On 01/31/2016 01:59 PM, Stefan Wahren wrote:
+> This patch adds support for Si-En SN3218 18 Channel LED Driver.
 >
-> The brightness is part of the HSV model anyway so we would just have to
-> add hue / saturation. Conversion to / from RGB would be done on demand.
-> I have a small prototype that needs much less changes to the core logic.
-> I'll come up with a re-worked proposal for handling color LED's.
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> ---
+>   drivers/leds/Kconfig       |   12 ++
+>   drivers/leds/Makefile      |    1 +
+>   drivers/leds/leds-sn3218.c |  297 ++++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 310 insertions(+)
+>   create mode 100644 drivers/leds/leds-sn3218.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 7f940c2..920c2da 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -568,6 +568,18 @@ config LEDS_SEAD3
+>   	  This driver can also be built as a module. If so the module
+>   	  will be called leds-sead3.
+>
+> +config LEDS_SN3218
+> +	tristate "LED support for Si-En SN3218 I2C chip"
+> +	depends on LEDS_CLASS && I2C
+> +	depends on OF
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for the Si-EN SN3218 LED driver
+> +	  connected through I2C. Say Y to enable support for the SN3218 LED.
+> +
+> +	  This driver can also be built as a module. If so the module
+> +	  will be called leds-sn3218.
+> +
+>   comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
+>
+>   config LEDS_BLINKM
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index e9d5309..89c9b6f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+>   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+>   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+>   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
+> +obj-$(CONFIG_LEDS_SN3218)		+= leds-sn3218.o
+>
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-sn3218.c b/drivers/leds/leds-sn3218.c
+> new file mode 100644
+> index 0000000..7a96323
+> --- /dev/null
+> +++ b/drivers/leds/leds-sn3218.c
+> @@ -0,0 +1,297 @@
+> +/*
+> + * Si-En SN3218 18 Channel LED Driver
+> + *
+> + * Copyright (C) 2016 Stefan Wahren <stefan.wahren@i2se.com>
+> + *
+> + * Based on leds-pca963x.c
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
+> + *
+> + * Datasheet: http://www.si-en.com/uploadpdf/s2011517171720.pdf
+> + *
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#define SN3218_MODE		0x00
+> +#define SN3218_PWM_1		0x01
+> +#define SN3218_PWM_2		0x02
+> +#define SN3218_PWM_3		0x03
+> +#define SN3218_PWM_4		0x04
+> +#define SN3218_PWM_5		0x05
+> +#define SN3218_PWM_6		0x06
+> +#define SN3218_PWM_7		0x07
+> +#define SN3218_PWM_8		0x08
+> +#define SN3218_PWM_9		0x09
+> +#define SN3218_PWM_10		0x0a
+> +#define SN3218_PWM_11		0x0b
+> +#define SN3218_PWM_12		0x0c
+> +#define SN3218_PWM_13		0x0d
+> +#define SN3218_PWM_14		0x0e
+> +#define SN3218_PWM_15		0x0f
+> +#define SN3218_PWM_16		0x10
+> +#define SN3218_PWM_17		0x11
+> +#define SN3218_PWM_18		0x12
+> +#define SN3218_LED_1_6		0x13
+> +#define SN3218_LED_7_12		0x14
+> +#define SN3218_LED_13_18	0x15
+> +#define SN3218_UPDATE		0x16	/* applies to reg 0x01 .. 0x15 */
+> +#define SN3218_RESET		0x17
+> +
+> +#define SN3218_LED_MASK		0x3f
+> +#define SN3218_LED_ON		0x01
+> +#define SN3218_LED_OFF		0x00
+> +
+> +#define NUM_LEDS		18
+> +
+> +struct sn3218_led;
+> +
+> +/**
+> + * struct sn3218 -
+> + * @client - Pointer to the I2C client
+> + * @leds - Pointer to the individual LEDs
+> + * @num_leds - Actual number of LEDs
+> +**/
+> +struct sn3218 {
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +	struct sn3218_led *leds;
+> +	int num_leds;
+> +};
+> +
+> +/**
+> + * struct sn3218_led -
+> + * @chip - Pointer to the container
+> + * @led_cdev - led class device pointer
+> + * @led_num - LED index ( 0 .. 17 )
+> +**/
+> +struct sn3218_led {
+> +	struct sn3218 *chip;
 
-At first let's consider if LED synchronization doesn't fit your needs.
-I am very much in favour of this solution since it would address also
-other use cases. On the other hand I am opposed to adding any mechanisms
-for color scheme conversion to the LED core since it can be covered by
-the user space.
+You don't need this if you have led id here. Please refer to
+drivers/leds/leds-max77693.c, sub_led_to_led() to check how to get
+a pointer to the parent structure in similar case.
 
-Drivers should expose device capabilities and not impose the policy on
-how those capabilities can be used. If with slight modifications we
-could stick to this rule, we should go in this direction.
+> +	struct led_classdev led_cdev;
+> +	int led_num;
+> +};
+> +
+> +static int sn3218_led_set(struct led_classdev *led_cdev,
+> +			  enum led_brightness brightness)
+> +{
+> +	struct sn3218_led *led =
+> +			container_of(led_cdev, struct sn3218_led, led_cdev);
+> +	struct regmap *regmap = led->chip->regmap;
+> +	u8 bank = led->led_num / 6;
+> +	u8 mask = 0x1 << (led->led_num % 6);
+> +	u8 val;
+> +	int ret;
+> +
+> +	if (brightness == LED_OFF)
+> +		val = 0;
+> +	else
+> +		val = mask;
+> +
+> +	ret = regmap_update_bits(regmap, SN3218_LED_1_6 + bank, mask, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (brightness > LED_OFF) {
+> +		ret = regmap_write(regmap, SN3218_PWM_1 + led->led_num,
+> +				   brightness);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	ret = regmap_write(regmap, SN3218_UPDATE, 0xff);
+> +
+> +	return ret;
+> +}
+> +
+> +void sn3218_led_init(struct sn3218 *sn3218, struct device_node *node, u32 reg)
+
+s/void/static void/
+
+> +{
+> +	struct sn3218_led *leds = sn3218->leds;
+> +	struct led_classdev *cdev = &leds[reg].led_cdev;
+> +
+> +	leds[reg].led_num = reg;
+> +	leds[reg].chip = sn3218;
+> +
+> +	if (of_property_read_string(node, "label", &cdev->name))
+> +		cdev->name = node->name;
+> +
+> +	of_property_read_string(node, "linux,default-trigger",
+> +				&cdev->default_trigger);
+> +
+> +	cdev->brightness_set_blocking = sn3218_led_set;
+> +	cdev->max_brightness = LED_FULL;
+
+Skip this line. If max_brightness is 0 led_classdev_register()
+automatically initializes it to LED_FULL.
+
+> +}
+> +
+> +static const struct reg_default sn3218_reg_defs[] = {
+> +	{ SN3218_MODE, 0x00},
+> +	{ SN3218_PWM_1, 0x00},
+> +	{ SN3218_PWM_2, 0x00},
+> +	{ SN3218_PWM_3, 0x00},
+> +	{ SN3218_PWM_4, 0x00},
+> +	{ SN3218_PWM_5, 0x00},
+> +	{ SN3218_PWM_6, 0x00},
+> +	{ SN3218_PWM_7, 0x00},
+> +	{ SN3218_PWM_8, 0x00},
+> +	{ SN3218_PWM_9, 0x00},
+> +	{ SN3218_PWM_10, 0x00},
+> +	{ SN3218_PWM_11, 0x00},
+> +	{ SN3218_PWM_12, 0x00},
+> +	{ SN3218_PWM_13, 0x00},
+> +	{ SN3218_PWM_14, 0x00},
+> +	{ SN3218_PWM_15, 0x00},
+> +	{ SN3218_PWM_16, 0x00},
+> +	{ SN3218_PWM_17, 0x00},
+> +	{ SN3218_PWM_18, 0x00},
+> +	{ SN3218_LED_1_6, 0x00},
+> +	{ SN3218_LED_7_12, 0x00},
+> +	{ SN3218_LED_13_18, 0x00},
+> +	{ SN3218_UPDATE, 0x00},
+> +	{ SN3218_RESET, 0x00},
+> +};
+> +
+> +static const struct regmap_config sn3218_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = SN3218_RESET,
+> +	.reg_defaults = sn3218_reg_defs,
+> +	.num_reg_defaults = ARRAY_SIZE(sn3218_reg_defs),
+> +	.cache_type = REGCACHE_RBTREE,
+> +};
+> +
+> +static int sn3218_init(struct i2c_client *client, struct sn3218 *sn3218)
+> +{
+> +	struct device_node *np = client->dev.of_node, *child;
+> +	struct sn3218_led *leds;
+> +	int ret, count;
+> +
+> +	count = of_get_child_count(np);
+> +	if (!count)
+> +		return -ENODEV;
+> +
+> +	if (count > NUM_LEDS) {
+> +		dev_err(&client->dev, "Invalid LED count %d\n", count);
+> +		return -EINVAL;
+> +	}
+> +
+> +	leds = devm_kzalloc(&client->dev, count * sizeof(*leds), GFP_KERNEL);
+> +	if (!leds)
+> +		return -ENOMEM;
+> +
+> +	sn3218->leds = leds;
+> +	sn3218->num_leds = count;
+> +	sn3218->client = client;
+> +
+> +	sn3218->regmap = devm_regmap_init_i2c(client, &sn3218_regmap_config);
+> +	if (IS_ERR(sn3218->regmap)) {
+> +		ret = PTR_ERR(sn3218->regmap);
+> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	for_each_child_of_node(np, child) {
+> +		u32 reg;
+> +
+> +		ret = of_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			goto fail;
+> +
+> +		if (reg >= count) {
+> +			dev_err(&client->dev, "Invalid LED (%u >= %d)\n", reg,
+> +				count);
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		sn3218_led_init(sn3218, child, reg);
+> +	}
+> +
+> +	return 0;
+> +
+> +fail:
+> +	of_node_put(np);
+
+s/np/child/
+
+> +	return ret;
+> +}
+> +
+> +static int sn3218_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	struct sn3218 *sn3218;
+> +	struct sn3218_led *leds;
+> +	struct device *dev = &client->dev;
+> +	int i, ret;
+> +
+> +	sn3218 = devm_kzalloc(dev, sizeof(*sn3218), GFP_KERNEL);
+> +	if (!sn3218)
+> +		return -ENOMEM;
+> +
+> +	ret = sn3218_init(client, sn3218);
+> +	if (ret)
+> +		return ret;
+> +
+> +	i2c_set_clientdata(client, sn3218);
+> +	leds = sn3218->leds;
+> +
+> +	/*
+> +	 * Since the chip is write-only we need to reset him into
+> +	 * a defined state (all LEDs off).
+> +	 */
+> +	ret = regmap_write(sn3218->regmap, SN3218_RESET, 0xff);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < sn3218->num_leds; i++) {
+> +		ret = devm_led_classdev_register(dev, &leds[i].led_cdev);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	/* Set normal mode */
+> +	return regmap_write(sn3218->regmap, SN3218_MODE, 0x01);
+> +}
+> +
+> +static int sn3218_remove(struct i2c_client *client)
+> +{
+> +	struct sn3218 *sn3218 = i2c_get_clientdata(client);
+> +
+> +	/* Set shutdown mode */
+> +	regmap_write(sn3218->regmap, SN3218_MODE, 0x00);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id sn3218_id[] = {
+> +	{ "sn3218", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, sn3218_id);
+> +
+> +static const struct of_device_id of_sn3218_match[] = {
+> +	{ .compatible = "si-en,sn3218", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_sn3218_match);
+> +
+> +static struct i2c_driver sn3218_driver = {
+> +	.driver = {
+> +		.name	= "leds-sn3218",
+> +		.of_match_table = of_match_ptr(of_sn3218_match),
+> +	},
+> +	.probe	= sn3218_probe,
+> +	.remove	= sn3218_remove,
+> +	.id_table = sn3218_id,
+> +};
+> +
+> +module_i2c_driver(sn3218_driver);
+> +
+> +MODULE_DESCRIPTION("Si-En SN3218 LED Driver");
+> +MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
+> +MODULE_LICENSE("GPL v2");
+>
+
 
 -- 
 Best Regards,
