@@ -1,39 +1,71 @@
 From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH V2 1/3] of: Add vendor prefix for Si-En Technology
-Date: Thu,  4 Feb 2016 18:56:04 +0000
-Message-ID: <1454612167-8680-2-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH V2 2/3] DT: add binding for SN3218 LED driver
+Date: Thu,  4 Feb 2016 18:56:05 +0000
+Message-ID: <1454612167-8680-3-git-send-email-stefan.wahren@i2se.com>
 References: <1454612167-8680-1-git-send-email-stefan.wahren@i2se.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:56743 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964773AbcBDS4o (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 4 Feb 2016 13:56:44 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1454612167-8680-1-git-send-email-stefan.wahren@i2se.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
+List-Id: linux-leds@vger.kernel.org
 
-Si-En Technology is a fabless design house which offers
-audio amplifiers, LED drivers and sensors.
+This patch adds the binding for Si-En Technology SN3218
+18-Channel LED driver.
 
 Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/leds/leds-sn3218.txt       |   41 ++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-sn3218.txt
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 72e2c5a..52f22f9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -204,6 +204,7 @@ seagate	Seagate Technology PLC
- semtech	Semtech Corporation
- sgx	SGX Sensortech
- sharp	Sharp Corporation
-+si-en	Si-En Technology Ltd.
- sigma	Sigma Designs, Inc.
- sil	Silicon Image
- silabs	Silicon Laboratories
+diff --git a/Documentation/devicetree/bindings/leds/leds-sn3218.txt b/Documentation/devicetree/bindings/leds/leds-sn3218.txt
+new file mode 100644
+index 0000000..19cbf57
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-sn3218.txt
+@@ -0,0 +1,41 @@
++* Si-En Technology - SN3218 18-Channel LED Driver
++
++Required properties:
++- compatible :
++	"si-en,sn3218"
++- address-cells : must be 1
++- size-cells : must be 0
++- reg : I2C slave address, typically 0x54
++
++There must be at least 1 LED which is represented as a sub-node
++of the sn3218 device.
++
++LED sub-node properties:
++- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
++- reg : number of LED line (could be from 0 to 17)
++- linux,default-trigger : (optional)
++   see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++sn3218: led-controller@54 {
++	compatible = "si-en,sn3218";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x54>;
++
++	led@0 {
++		label = "led1";
++		reg = <0x0>;
++	};
++
++	led@1 {
++		label = "led2";
++		reg = <0x1>;
++	};
++
++	led@2 {
++		label = "led3";
++		reg = <0x2>;
++	};
++};
 -- 
 1.7.9.5
