@@ -1,136 +1,42 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 2/2] leds: core: add support for RGB LED's
-Date: Sun, 7 Feb 2016 11:45:56 +0100
-Message-ID: <56B72064.9010708@gmail.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v2 00/16] Common Dell SMBIOS API
+Date: Sun, 7 Feb 2016 12:34:06 -0800
+Message-ID: <20160207203406.GK1779@malice.jf.intel.com>
+References: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
+ <20160122144851.GN7192@pali>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34920 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499AbcBGKqH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 7 Feb 2016 05:46:07 -0500
-Received: by mail-wm0-f68.google.com with SMTP id g62so10771679wme.2
-        for <linux-leds@vger.kernel.org>; Sun, 07 Feb 2016 02:46:06 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160122144851.GN7192@pali>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
 
-Add support for RGB LED's. Flag LED_DEV_CAP_RGB is used to instruct
-the core to convert HSV to RGB on output.
+On Fri, Jan 22, 2016 at 03:48:51PM +0100, Pali Roh=C3=A1r wrote:
+> On Friday 22 January 2016 15:27:12 Micha=C5=82 K=C4=99pie=C5=84 wrote=
+:
+> > Note:
+> >=20
+> >     In this series (both v1 and v2) I tried to stick to the overall
+> >     concept used in dell-laptop, but in the v1 thread me and Pali a=
+lso
+> >     briefly discussed his alternative ideas [1][2] as to what this =
+API
+> >     could look like, so feel free to suggest a different approach.
+> >=20
+> > [1] http://www.spinics.net/lists/platform-driver-x86/msg08260.html
+> > [2] http://www.spinics.net/lists/platform-driver-x86/msg08268.html
+>=20
+> I would like to hear opinion about dell-smbios API also from other
+> people. Darren, can you look and comment it?
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/leds/led-class.c |  3 +++
- drivers/leds/led-core.c  | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/leds.h     |  1 +
- 3 files changed, 51 insertions(+), 1 deletion(-)
+Sorry for the long delay folks. I'm just about caught up. I'll get to t=
+his by
+tomorrow at the latest.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 18a4558..f04efd2 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -193,6 +193,9 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 	char name[64];
- 	int ret;
- 
-+	if (led_cdev->flags & LED_DEV_CAP_RGB)
-+		led_cdev->flags |= LED_DEV_CAP_COLOR;
-+
- 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
- 	if (ret < 0)
- 		return ret;
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 798e31e..6e1adc5 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -45,12 +45,50 @@ static inline enum led_brightness to_hsv(struct led_classdev *cdev,
- 	return ret | min(value & LED_BRIGHTNESS_MASK, cdev->max_brightness);
- }
- 
-+static enum led_brightness hsv_to_rgb(enum led_brightness hsv)
-+{
-+	int h = min_t(int, (hsv >> 16) & 0xff, 251);
-+	int s = (hsv >> 8) & 0xff;
-+	int v = hsv & 0xff;
-+	int f, p, q, t, r, g, b;
-+
-+	if (!v)
-+		return 0;
-+	if (!s)
-+		return (v << 16) + (v << 8) + v;
-+
-+	f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
-+	p = v - DIV_ROUND_CLOSEST(s * v, 255);
-+	q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
-+	t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
-+
-+	switch (h / 42) {
-+	case 0:
-+		r = v; g = t; b = p; break;
-+	case 1:
-+		r = q; g = v; b = p; break;
-+	case 2:
-+		r = p; g = v; b = t; break;
-+	case 3:
-+		r = p; g = q; b = v; break;
-+	case 4:
-+		r = t; g = p; b = v; break;
-+	case 5:
-+		r = v; g = p; b = q; break;
-+	}
-+
-+	return (r << 16) + (g << 8) + b;
-+}
-+
- static int led_set_output(struct led_classdev *cdev,
- 			  enum led_brightness value)
- {
- 	if (!cdev->brightness_set)
- 		return -ENOTSUPP;
- 
-+	if (cdev->flags & LED_DEV_CAP_RGB)
-+		value = hsv_to_rgb(value);
-+
- 	cdev->brightness_set(cdev, value);
- 
- 	return 0;
-@@ -62,6 +100,9 @@ static int led_set_output_blocking(struct led_classdev *cdev,
- 	if (!cdev->brightness_set_blocking)
- 		return -ENOTSUPP;
- 
-+	if (cdev->flags & LED_DEV_CAP_RGB)
-+		value = hsv_to_rgb(value);
-+
- 	return cdev->brightness_set_blocking(cdev, value);
- }
- 
-@@ -320,7 +361,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
- {
- 	int ret = 0;
- 
--	if (led_cdev->brightness_get) {
-+	/*
-+	 * for now reading back the color is not supported as multiple
-+	 * HSV -> RGB -> HSV conversions may distort the color due to
-+	 * rounding issues in the conversion algorithm
-+	 */
-+	if (led_cdev->brightness_get && !(led_cdev->flags & LED_DEV_CAP_RGB)) {
- 		ret = led_cdev->brightness_get(led_cdev);
- 		if (ret >= 0) {
- 			led_cdev->brightness = ret;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 8e7db72..24eae4b 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -51,6 +51,7 @@ struct led_classdev {
- #define LED_DEV_CAP_FLASH	(1 << 23)
- #define LED_HW_PLUGGABLE	(1 << 24)
- #define LED_DEV_CAP_COLOR	(1 << 25)
-+#define LED_DEV_CAP_RGB		(1 << 26)
- 
- 	/* Set LED brightness level
- 	 * Must not sleep. Use brightness_set_blocking for drivers
--- 
-2.7.0
+--=20
+Darren Hart
+Intel Open Source Technology Center
