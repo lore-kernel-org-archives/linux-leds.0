@@ -1,63 +1,33 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: leds-gpio: Fix return value check in
- create_gpio_led()
-Date: Mon, 08 Feb 2016 09:09:45 +0100
-Message-ID: <56B84D49.1030400@samsung.com>
-References: <1454769453-9533-1-git-send-email-weiyj_lk@163.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v2 07/16] dell-smbios: don't return an SMBIOS buffer from
+ dell_smbios_send_request()
+Date: Mon, 8 Feb 2016 10:44:56 -0800
+Message-ID: <20160208184456.GM1779@malice.jf.intel.com>
+References: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
+ <1453472848-3118-8-git-send-email-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34828 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755278AbcBHIJw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Feb 2016 03:09:52 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2700MWVYODX840@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 08 Feb 2016 08:09:49 +0000 (GMT)
-In-reply-to: <1454769453-9533-1-git-send-email-weiyj_lk@163.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1453472848-3118-8-git-send-email-kernel@kempniu.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Richard Purdie <rpurdie@rpsys.net>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-leds@vger.kernel.org
 
-Hi Wei,
+On Fri, Jan 22, 2016 at 03:27:19PM +0100, Micha=C5=82 K=C4=99pie=C5=84 =
+wrote:
+> An SMBIOS buffer pointer does not need to be returned by
+> dell_smbios_send_request(), because SMBIOS call results are stored in
+> the buffer passed as input.
 
-On 02/06/2016 03:37 PM, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->
-> In case of error, the function gpio_to_desc() returns NULL
-> pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
->
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-> ---
->   drivers/leds/leds-gpio.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 7bc5328..5883ded 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -104,8 +104,8 @@ static int create_gpio_led(const struct gpio_led *template,
->   			return ret;
->
->   		led_dat->gpiod = gpio_to_desc(template->gpio);
-> -		if (IS_ERR(led_dat->gpiod))
-> -			return PTR_ERR(led_dat->gpiod);
-> +		if (!led_dat->gpiod)
-> +			return -EINVAL;
->   	}
->
->   	led_dat->cdev.name = template->name;
->
->
->
+This should come before 6/16, update the commit message to reflect the =
+module
+exported buffer (not the one passed as input), or possibly just merge t=
+his patch
+and 6/16 as correcting the use of SMBIOS buffer within the module.
 
-Thanks for the patch, applied.
-
--- 
-Best Regards,
-Jacek Anaszewski
+--=20
+Darren Hart
+Intel Open Source Technology Center
