@@ -1,68 +1,81 @@
 From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH v2 07/16] dell-smbios: don't return an SMBIOS buffer from
- dell_smbios_send_request()
-Date: Tue, 9 Feb 2016 08:50:27 -0800
-Message-ID: <20160209165027.GA1309@dvhart-mobl5.amr.corp.intel.com>
-References: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
- <1453472848-3118-8-git-send-email-kernel@kempniu.pl>
- <20160208184456.GM1779@malice.jf.intel.com>
- <20160209132736.GA7443@eudyptula.hq.kempniu.pl>
+Subject: Re: [PATCH 01/14] dell-laptop: extract SMBIOS-related code to a
+ separate module
+Date: Tue, 9 Feb 2016 08:51:06 -0800
+Message-ID: <20160209165106.GB1309@dvhart-mobl5.amr.corp.intel.com>
+References: <1452607380-20861-1-git-send-email-kernel@kempniu.pl>
+ <1452607380-20861-2-git-send-email-kernel@kempniu.pl>
+ <20160116151922.GA5060@pali>
+ <20160120092107.GA3247@eudyptula.hq.kempniu.pl>
+ <20160121083559.GM7192@pali>
+ <20160121130603.GA4360@eudyptula.hq.kempniu.pl>
+ <20160121131450.GE7192@pali>
+ <20160121133921.GA4626@eudyptula.hq.kempniu.pl>
+ <20160208214210.GT1779@malice.jf.intel.com>
+ <20160209083303.GN30075@pali>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:57156 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755225AbcBIQvN (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Feb 2016 11:51:13 -0500
 Content-Disposition: inline
-In-Reply-To: <20160209132736.GA7443@eudyptula.hq.kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20160209083303.GN30075@pali>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alex Hung <alex.hung@canonical.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 09, 2016 at 02:27:36PM +0100, Micha=C5=82 K=C4=99pie=C5=84 =
-wrote:
-> > > An SMBIOS buffer pointer does not need to be returned by
-> > > dell_smbios_send_request(), because SMBIOS call results are store=
-d in
-> > > the buffer passed as input.
-> >=20
-> > This should come before 6/16, update the commit message to reflect =
-the module
-> > exported buffer (not the one passed as input), or possibly just mer=
-ge this patch
-> > and 6/16 as correcting the use of SMBIOS buffer within the module.
+On Tue, Feb 09, 2016 at 09:33:03AM +0100, Pali Roh=C3=A1r wrote:
+> On Monday 08 February 2016 13:42:10 Darren Hart wrote:
+> > Assuming the above is an accurate view, I don't see any reason to g=
+o beyond the
+> > minimal change to the existing SMBIOS code to make it a usable API.=
+ If the need
+> > arises, we can always make such optimizations and performance impro=
+vements
+> > later. This is an internal API and we can change it whenever we nee=
+d to so long
+> > as we update the call sites.
 >=20
-> I have only now noticed that I phrased the commit message for this pa=
-tch
-> rather unfortunately as it inappropriately conveyed my reasoning.  Wh=
-at
-> I meant by "the buffer passed as input" was not "the buffer passed as=
- an
-> argument to dell_smbios_send_request()", but rather "the buffer passe=
-d
-> to the SMI handler".  In other words, there is no reason to return a
-> buffer from dell_smbios_send_request(), because each caller will simp=
-ly
-> find their output in the same buffer they used to provide input (no
-> matter whether the latter is passed as a function argument or accesse=
-d
-> using a module-wide variable).
->=20
-> Anyway, as even the above explanation is hardly a stellar demonstrati=
-on
-> of clarity, I believe your idea of resolving this issue may simply be
-> the best one, thanks.
+> Problem is that now smbios code from dell-laptop.c is moved into
+> dell-smbios.c and dell-smbios.h and LED subsystem starts using
+> dell-smbios.h. In this case I'm thinking that we have something like =
+API
+> usable by other modules/subsystem. And I'm thinking if it is not bett=
+er
+> to create "correct" API now instead rewriting code in LED and platfor=
+m
+> subsystem again later... As this API needs to provide just 1 function=
+,
+> send command to Dell SMBIOS I think that API is still minimal. Curren=
+tly
+> we have another two functions alloc/free buffer (needed for send).
 
-In my tree, I reworded this as:
+The internal kernel API changes all the time, we are not bound to it be=
+yond
+ensuring we update the internal users when we change it. I prefer not t=
+o
+introduce complexity until we have to.
 
-    dell-smbios: don't return an SMBIOS buffer from dell_smbios_send_re=
-quest()
+	buffer =3D dell_smbios_get_buffer();
+	buffer->input[0] =3D token->location;
+	buffer->input[1] =3D token->value;
+	dell_smbios_send_request(1, 0);
+	dell_smbios_release_buffer();
 
-    An SMBIOS buffer pointer does not need to be returned by
-    dell_smbios_send_request(), because SMBIOS call results are stored =
-in
-    the buffer exported by the module.
+The get_buffer and release_buffer also include the locking which is nec=
+essary
+for a shared buffer. If you eliminate the shared buffer, then you have =
+to have a
+local buffer, which adds back code to create the buffer, initializize
+it, free it if it's dynamic, etc.
 
-Is that acceptable?
+So from that sense, Micha=C5=82's API seems at least as concise as the =
+alternative,
+and it introduces less change.
 
 --=20
 Darren Hart
