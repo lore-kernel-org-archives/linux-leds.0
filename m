@@ -1,80 +1,69 @@
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Subject: Re: [PATCH v2 00/16] Common Dell SMBIOS API
-Date: Tue, 9 Feb 2016 15:15:49 +0100
-Message-ID: <20160209141549.GA7965@eudyptula.hq.kempniu.pl>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v2 07/16] dell-smbios: don't return an SMBIOS buffer from
+ dell_smbios_send_request()
+Date: Tue, 9 Feb 2016 08:50:27 -0800
+Message-ID: <20160209165027.GA1309@dvhart-mobl5.amr.corp.intel.com>
 References: <1453472848-3118-1-git-send-email-kernel@kempniu.pl>
- <20160122144851.GN7192@pali>
- <20160208192014.GN1779@malice.jf.intel.com>
- <20160208192920.GA10110@kroah.com>
- <20160208204646.GQ1779@malice.jf.intel.com>
+ <1453472848-3118-8-git-send-email-kernel@kempniu.pl>
+ <20160208184456.GM1779@malice.jf.intel.com>
+ <20160209132736.GA7443@eudyptula.hq.kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36348 "EHLO
-	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757222AbcBIOPz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Feb 2016 09:15:55 -0500
-Received: by mail-lf0-f67.google.com with SMTP id h198so6426143lfh.3
-        for <linux-leds@vger.kernel.org>; Tue, 09 Feb 2016 06:15:54 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160208204646.GQ1779@malice.jf.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20160209132736.GA7443@eudyptula.hq.kempniu.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> > > Most of my concerns were addressed by later patches in the series=
-=2E I have pushed
-> > > a version of this 1/7 fixed per lkp (linux/io.h) and 7/16 with a =
-corrected body
-> > > as I sent in reply to that patch. This is on my tree as the dell-=
-smbios branch.
-
-Thanks!
-
-> > >=20
-> > > My only major concern is module load order dependencies. Inter-mo=
-dule
-> > > dependencies are frowned upon with good reason, the kernel load o=
-rdering is
-> > > non-deterministic and it's possible, for example, for dell-laptop=
- to fail to
-> > > find the symbols exported by dell-smbios under certain conditions=
-=2E
-> > >=20
-> > > I have worked around this in the past with things like the follow=
-ing:
-> > >=20
-> > > #ifdef MODULE
-> > > #ifdef CONFIG_FOO_MODULE
-> > > 	if (request_module("foo"))
-> > > 		return -ENODEV;
-> > > #endif
-> > > #endif
-> > >=20
-> > > Something like the above may be necessary for dell-smbios in dell=
--laptop,
-> > > dell-wmi, and dell-leds now that they depend on the dell-smbios e=
-xported
-> > > functions.
-> > >=20
-> > > Cc Greg in case there is a better way to handle this that I'm not=
- aware of.
+On Tue, Feb 09, 2016 at 02:27:36PM +0100, Micha=C5=82 K=C4=99pie=C5=84 =
+wrote:
+> > > An SMBIOS buffer pointer does not need to be returned by
+> > > dell_smbios_send_request(), because SMBIOS call results are store=
+d in
+> > > the buffer passed as input.
 > >=20
-> > No need to request_module anything, the symbol resolution should pu=
-ll
-> > the dependant module in automagically when you do a 'modprobe',
-> > otherwise the symbols would never be found.
+> > This should come before 6/16, update the commit message to reflect =
+the module
+> > exported buffer (not the one passed as input), or possibly just mer=
+ge this patch
+> > and 6/16 as correcting the use of SMBIOS buffer within the module.
 >=20
-> OK, Thank you Greg. Based on this, I have no concerns that haven't be=
-en addressed in the
-> pdx86/dell-smbios branch.
+> I have only now noticed that I phrased the commit message for this pa=
+tch
+> rather unfortunately as it inappropriately conveyed my reasoning.  Wh=
+at
+> I meant by "the buffer passed as input" was not "the buffer passed as=
+ an
+> argument to dell_smbios_send_request()", but rather "the buffer passe=
+d
+> to the SMI handler".  In other words, there is no reason to return a
+> buffer from dell_smbios_send_request(), because each caller will simp=
+ly
+> find their output in the same buffer they used to provide input (no
+> matter whether the latter is passed as a function argument or accesse=
+d
+> using a module-wide variable).
 >=20
-> Micha=C5=82, did you have any changes you wanted to make?
+> Anyway, as even the above explanation is hardly a stellar demonstrati=
+on
+> of clarity, I believe your idea of resolving this issue may simply be
+> the best one, thanks.
 
-No, thanks, nothing new popped up.
+In my tree, I reworded this as:
+
+    dell-smbios: don't return an SMBIOS buffer from dell_smbios_send_re=
+quest()
+
+    An SMBIOS buffer pointer does not need to be returned by
+    dell_smbios_send_request(), because SMBIOS call results are stored =
+in
+    the buffer exported by the module.
+
+Is that acceptable?
 
 --=20
-Best regards,
-Micha=C5=82 K=C4=99pie=C5=84
+Darren Hart
+Intel Open Source Technology Center
