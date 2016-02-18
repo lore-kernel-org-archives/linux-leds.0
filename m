@@ -1,372 +1,118 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 1/4] leds: core: add generic support for color LED's
-Date: Thu, 18 Feb 2016 11:17:05 +0100
-Message-ID: <56C59A21.2080301@samsung.com>
-References: <56C37838.5030309@gmail.com> <56C46891.3020301@samsung.com>
- <56C4DAD1.7000803@gmail.com>
+Subject: Re: [PATCH v2] leds: core: add helpers for calling
+ brightness_set(_blocking)
+Date: Thu, 18 Feb 2016 12:01:31 +0100
+Message-ID: <56C5A48B.5070503@samsung.com>
+References: <56C376D4.4080808@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22342 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425207AbcBRKRI (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 18 Feb 2016 05:17:08 -0500
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41431 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1425249AbcBRLBe (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 18 Feb 2016 06:01:34 -0500
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2Q00LCYN8IDT40@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 18 Feb 2016 10:17:06 +0000 (GMT)
-In-reply-to: <56C4DAD1.7000803@gmail.com>
+ with ESMTP id <0O2Q00KU4PAKTE50@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 18 Feb 2016 11:01:32 +0000 (GMT)
+In-reply-to: <56C376D4.4080808@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Heiner Kallweit <hkallweit1@gmail.com>
 Cc: linux-leds@vger.kernel.org
 
-On 02/17/2016 09:40 PM, Heiner Kallweit wrote:
-> Am 17.02.2016 um 13:33 schrieb Jacek Anaszewski:
->> Hi Heiner,
->>
->> Thanks for the update.
->>
-> Thanks for the quick review. I'll rework the patch series accordingly.
-> Below are few inquiries.
+Hi Heiner,
+
+On 02/16/2016 08:21 PM, Heiner Kallweit wrote:
+> Add helpers for calling brightness_set(_blocking) allowing to
+> simplify the code and make it better readable.
 >
->> On 02/16/2016 08:27 PM, Heiner Kallweit wrote:
->>> Add generic support for color LED's.
->>>
->>> Basic idea is to use enum led_brightness also for the hue and saturation
->>> color components.This allows to implement the color extension w/o
->>> changes to struct led_classdev.
->>> A driver that wants to use this extension has to select LEDS_HSV
->>> in its Kconfig entry.
->>
->> Let's make drivers depending on LEDS_HSV rather than selecting it.
->>
-> If somebody wants to build the driver for a LED needing the color extension
-> then the driver won't be offered until he selects the color extension.
-> This might not be easy to find out (unless user checks manually in Kconfig).
-> Is there a specific reason why you prefer depend over select ?
-
-"LED Support for Color LEDs" category (I also propose to switch from
-LED_HSV to LED_COLOR and consequently led-hsv-core.c->led-color-core.c,
-since HSV is only the method of color representation) will be visible
-at the top of "LED Support" menu. One can turn it on and color LEDs
-will appear on the list.
-
-Select is usually preferable in case there is no item in
-a given menu that can enable the driver. This applies to the cases
-e.g. when REGMAP_I2C is the dependency.
-
->>>
->>> Flag LED_SET_HSV allows to specify that hue / saturation
->>> should be overridden even if the provided values are zero.
->>>
->>> Some examples for writing values to /sys/class/leds/<xx>/brightness:
->>> (now also hex notation can be used)
->>>
->>> 255 -> set full brightness and keep existing color if set
->>> 0 -> switch LED off but keep existing color so that it can be restored
->>>        if the LED is switched on again later
->>> 0x1000000 -> switch LED off and set also hue and saturation to 0
->>> 0x00ffff -> set full brightness, full saturation and set hue to 0 (red)
->>
->> At first glance this description doesn't justify the need for
->> the flag. One could ask why caller can't decide about colour
->> similarly as they decide about brightness. It would be good to add
->> here some of reasoning from your replies to my review questions.
->>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> ---
->>> v2:
->>> - move extension-specific code into a separate source file and
->>>     introduce config symbol LEDS_HSV for it
->>> - create separate patch for the extension to sysfs
->>> - use variable name led_cdev as in the rest if the core
->>> - rename to_hsv to led_validate_brightness
->>> - rename LED_BRIGHTNESS_SET_COLOR to LED_SET_HSV
->>> - introduce helper is_off for checking whether V part
->>>     of a HSV value is zero
->>> ---
->>>    drivers/leds/Kconfig        |  5 +++++
->>>    drivers/leds/Makefile       |  4 +++-
->>>    drivers/leds/led-core.c     | 17 ++++++++++-------
->>>    drivers/leds/led-hsv-core.c | 30 ++++++++++++++++++++++++++++++
->>>    drivers/leds/leds.h         | 17 +++++++++++++++++
->>>    include/linux/leds.h        |  9 +++++++++
->>>    6 files changed, 74 insertions(+), 8 deletions(-)
->>>    create mode 100644 drivers/leds/led-hsv-core.c
->>>
->>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>> index 7f940c2..01c0b35 100644
->>> --- a/drivers/leds/Kconfig
->>> +++ b/drivers/leds/Kconfig
->>> @@ -29,6 +29,11 @@ config LEDS_CLASS_FLASH
->>>          for the flash related features of a LED device. It can be built
->>>          as a module.
->>>
->>> +config LEDS_HSV
->>> +    bool
->>
->> Let's add help message too.
->>
->>> +    depends on LEDS_CLASS
->>> +    default n
->>> +
->>>    comment "LED drivers"
->>>
->>>    config LEDS_88PM860X
->>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->>> index e9d5309..748d650 100644
->>> --- a/drivers/leds/Makefile
->>> +++ b/drivers/leds/Makefile
->>> @@ -1,6 +1,8 @@
->>>
->>>    # LED Core
->>> -obj-$(CONFIG_NEW_LEDS)            += led-core.o
->>> +obj-$(CONFIG_NEW_LEDS)            += ledcore.o
-
-Please change ledcore.o to led-core-objs.o.
-
->>> +ledcore-y                := led-core.o
->>> +ledcore-$(CONFIG_LEDS_HSV)        += led-hsv-core.o
->>>    obj-$(CONFIG_LEDS_CLASS)        += led-class.o
->>>    obj-$(CONFIG_LEDS_CLASS_FLASH)        += led-class-flash.o
->>>    obj-$(CONFIG_LEDS_TRIGGERS)        += led-triggers.o
->>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->>> index 3495d5d..64b627a 100644
->>> --- a/drivers/leds/led-core.c
->>> +++ b/drivers/leds/led-core.c
->>> @@ -62,7 +62,7 @@ static void led_timer_function(unsigned long data)
->>>        }
->>>
->>>        brightness = led_get_brightness(led_cdev);
->>> -    if (!brightness) {
->>> +    if (is_off(brightness)) {
->>
->> s/is_off/led_is_off/
->>
->>>            /* Time to switch the LED on. */
->>>            brightness = led_cdev->blink_brightness;
->>>            delay = led_cdev->blink_delay_on;
->>> @@ -133,8 +133,8 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
->>>        if (current_brightness)
->>>            led_cdev->blink_brightness = current_brightness;
->>>        if (!led_cdev->blink_brightness)
->>> -        led_cdev->blink_brightness = led_cdev->max_brightness;
->>> -
->>> +        led_cdev->blink_brightness =
->>> +                led_validate_brightness(led_cdev, LED_FULL);
->>
->> This function name doesn't fit here, since term "validation" usually
->> refers to validating user provided data.
->>
->> led_confine_brightness() ?
->>
->> And why LED_FULL and not led_cdev->max_brightness?
->>
-> LED_FULL is reduced to max_brightness anyway by led_validate_brightness.
-> IMHO LED_FULL makes clearer that the intention is: switch it on.
-> max_brightness is a device-specific property that I'd like to hide
-> as far as possible in the generic core code.
-
-Without checking led_validate_brightness() internals it looks like this
-patch was changing led_set_software_blink() semantics.
-
->>
->>>        led_cdev->blink_delay_on = delay_on;
->>>        led_cdev->blink_delay_off = delay_off;
->>>
->>> @@ -225,6 +225,8 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
->>>    void led_set_brightness(struct led_classdev *led_cdev,
->>>                enum led_brightness brightness)
->>>    {
->>> +    if (!(led_cdev->flags & LED_DEV_CAP_HSV))
->>> +        brightness &= LED_BRIGHTNESS_MASK;
->>
->> Why is this needed here?
->>
-> I thought about moving this check to another place anyway
-> (to led_validate(confine)_brightness). Reason for the check is
-> that user input via sysfs isn't checked elsewhere.
-> And setting hue / saturation for a monochrome LED doesn't make sense.
-
-Scattering this type of checking over the file makes the code
-harder to analyze. Please move it to led_confine_brightness().
-
->>>        /*
->>>         * In case blinking is on delay brightness setting
->>>         * until the next timer tick.
->>> @@ -235,12 +237,13 @@ void led_set_brightness(struct led_classdev *led_cdev,
->>>             * work queue task to avoid problems in case we are called
->>>             * from hard irq context.
->>>             */
->>> -        if (brightness == LED_OFF) {
->>> +        if (is_off(brightness)) {
->>>                led_cdev->flags |= LED_BLINK_DISABLE;
->>>                schedule_work(&led_cdev->set_brightness_work);
->>>            } else {
->>>                led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
->>> -            led_cdev->blink_brightness = brightness;
->>> +            led_cdev->blink_brightness =
->>> +                led_validate_brightness(led_cdev, brightness);
->>>            }
->>>            return;
->>>        }
->>> @@ -265,7 +268,7 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
->>>    void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->>>                    enum led_brightness value)
->>>    {
->>> -    led_cdev->brightness = min(value, led_cdev->max_brightness);
->>> +    led_cdev->brightness = led_validate_brightness(led_cdev, value);
->>>
->>>        if (led_cdev->flags & LED_SUSPENDED)
->>>            return;
->>> @@ -280,7 +283,7 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
->>>        if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
->>>            return -EBUSY;
->>>
->>> -    led_cdev->brightness = min(value, led_cdev->max_brightness);
->>> +    led_cdev->brightness = led_validate_brightness(led_cdev, value);
->>>
->>>        if (led_cdev->flags & LED_SUSPENDED)
->>>            return 0;
->>> diff --git a/drivers/leds/led-hsv-core.c b/drivers/leds/led-hsv-core.c
->>> new file mode 100644
->>> index 0000000..3c31139
->>> --- /dev/null
->>> +++ b/drivers/leds/led-hsv-core.c
->>> @@ -0,0 +1,30 @@
->>> +/*
->>> + * LED Class Color Support
->>> + *
->>> + * Author: Heiner Kallweit <hkallweit1@gmail.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + */
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/leds.h>
->>> +#include "leds.h"
->>> +
->>> +#define LED_HUE_SAT_MASK    0x00ffff00
->>> +
->>> +enum led_brightness led_validate_brightness(struct led_classdev *led_cdev,
->>> +                        enum led_brightness value)
->>> +{
->>> +    enum led_brightness ret;
->>
->> s/ret/brightness/
->>
->>> +    /* Use LED_SET_HSV to set hue and saturation even if both are zero */
->>> +    if (value & LED_SET_HSV || value > LED_FULL)
->>> +        ret = value & LED_HUE_SAT_MASK;
->>> +    else
->>> +        ret = led_cdev->brightness & ~LED_BRIGHTNESS_MASK;
->>> +
->>> +    return ret | min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
->>> +}
->>> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
->>> index db3f20d..ac3f1be 100644
->>> --- a/drivers/leds/leds.h
->>> +++ b/drivers/leds/leds.h
->>> @@ -16,17 +16,34 @@
->>>    #include <linux/rwsem.h>
->>>    #include <linux/leds.h>
->>>
->>> +#define LED_BRIGHTNESS_MASK    0x000000ff
->>> +
->>>    static inline int led_get_brightness(struct led_classdev *led_cdev)
->>>    {
->>>        return led_cdev->brightness;
->>>    }
->>>
->>> +static inline bool is_off(enum led_brightness brightness)
->>> +{
->>> +    return (brightness & LED_BRIGHTNESS_MASK) == LED_OFF;
->>> +}
->>> +
->>>    void led_init_core(struct led_classdev *led_cdev);
->>>    void led_stop_software_blink(struct led_classdev *led_cdev);
->>>    void led_set_brightness_nopm(struct led_classdev *led_cdev,
->>>                    enum led_brightness value);
->>>    void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->>>                    enum led_brightness value);
->>> +#if IS_ENABLED(CONFIG_LEDS_HSV)
->>> +enum led_brightness led_validate_brightness(struct led_classdev *led_cdev,
->>> +                        enum led_brightness value);
->>> +#else
->>> +static inline enum led_brightness led_validate_brightness(
->>> +        struct led_classdev *led_cdev, enum led_brightness value)
->>> +{
->>> +    return min(value, led_cdev->max_brightness);
->>> +}
->>> +#endif
->>>
->>>    extern struct rw_semaphore leds_list_lock;
->>>    extern struct list_head leds_list;
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index f203a8f..d72dfd9 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -29,8 +29,16 @@ enum led_brightness {
->>>        LED_OFF        = 0,
->>>        LED_HALF    = 127,
->>>        LED_FULL    = 255,
->>> +    /*
->>> +     * dummy enum value to make gcc use a 32 bit type for the enum
->>> +     * even if compiled with -fshort-enums. This is needed for
->>> +     * the enum to store hsv values.
->>> +     */
->>> +    LED_SIZE_DUMMY    = 0xffffffff,
->>>    };
->>
->> Don't refer to hsv here, since it also fixes generic LED class -
->> brightness values over 255 can be truncated after passing to
->> LED API when -fshort-enums is passed to gcc. I'd also change the
->> name to e.g. LED_FULL_32BIT.
->>
-> Actually I have my doubts that brightness values >255 were ever
-> considered / semantically allowed. LED_HALF is defined as 127
-> and LED_FULL as 255. Allowing brightness values > LED_FULL doesn't
-> sound very logical. Full is full and more is not possible ..
-
-I've skimmed throughout the LED class drivers and I don't see
-any using brightness levels above 255, so we can leave this
-change in this patch.
-
-What about s/LED_SIZE_DUMMY/LED_LEVEL_DUMMY/ ?
-
->> Please split it to a separate patch. This fixes patch
->> d8082827d ("leds: make brightness type consistent across whole
->> subsystem"). You can also add "Fixes" tag, according to the
->> pattern presented in Documentation/SubmittingPatches. This way
->> it will make it able to be added to stable kernel versions.
->>
->>
->>> +#define LED_SET_HSV        BIT(24)
->>> +
->>>    struct led_classdev {
->>>        const char        *name;
->>>        enum led_brightness     brightness;
->>> @@ -50,6 +58,7 @@ struct led_classdev {
->>>    #define LED_SYSFS_DISABLE    (1 << 22)
->>>    #define LED_DEV_CAP_FLASH    (1 << 23)
->>>    #define LED_HW_PLUGGABLE    (1 << 24)
->>> +#define LED_DEV_CAP_HSV        (1 << 25)
->>>
->>>        /* Set LED brightness level
->>>         * Must not sleep. Use brightness_set_blocking for drivers
->>>
->>
->>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+> v2:
+> - changed helper names
+> ---
+>   drivers/leds/led-core.c | 40 ++++++++++++++++++++++++++--------------
+>   1 file changed, 26 insertions(+), 14 deletions(-)
 >
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index ad684b6..3495d5d 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -25,6 +25,26 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+>   LIST_HEAD(leds_list);
+>   EXPORT_SYMBOL_GPL(leds_list);
+>
+> +static int __led_set_brightness(struct led_classdev *led_cdev,
+> +				enum led_brightness value)
+> +{
+> +	if (!led_cdev->brightness_set)
+> +		return -ENOTSUPP;
+> +
+> +	led_cdev->brightness_set(led_cdev, value);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
+> +					 enum led_brightness value)
+> +{
+> +	if (!led_cdev->brightness_set_blocking)
+> +		return -ENOTSUPP;
+> +
+> +	return led_cdev->brightness_set_blocking(led_cdev, value);
+> +}
+> +
+>   static void led_timer_function(unsigned long data)
+>   {
+>   	struct led_classdev *led_cdev = (void *)data;
+> @@ -91,13 +111,10 @@ static void set_brightness_delayed(struct work_struct *ws)
+>   		led_cdev->flags &= ~LED_BLINK_DISABLE;
+>   	}
+>
+> -	if (led_cdev->brightness_set)
+> -		led_cdev->brightness_set(led_cdev, led_cdev->delayed_set_value);
+> -	else if (led_cdev->brightness_set_blocking)
+> -		ret = led_cdev->brightness_set_blocking(led_cdev,
+> -						led_cdev->delayed_set_value);
+> -	else
+> -		ret = -ENOTSUPP;
+> +	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+> +	if (ret == -ENOTSUPP)
+> +		ret = __led_set_brightness_blocking(led_cdev,
+> +					led_cdev->delayed_set_value);
+>   	if (ret < 0 &&
+>   	    /* LED HW might have been unplugged, therefore don't warn */
+>   	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
+> @@ -236,10 +253,8 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
+>   			      enum led_brightness value)
+>   {
+>   	/* Use brightness_set op if available, it is guaranteed not to sleep */
+> -	if (led_cdev->brightness_set) {
+> -		led_cdev->brightness_set(led_cdev, value);
+> +	if (!__led_set_brightness(led_cdev, value))
+>   		return;
+> -	}
+>
+>   	/* If brightness setting can sleep, delegate it to a work queue task */
+>   	led_cdev->delayed_set_value = value;
+> @@ -270,10 +285,7 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
+>   	if (led_cdev->flags & LED_SUSPENDED)
+>   		return 0;
+>
+> -	if (led_cdev->brightness_set_blocking)
+> -		return led_cdev->brightness_set_blocking(led_cdev,
+> -							 led_cdev->brightness);
+> -	return -ENOTSUPP;
+> +	return __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
+>   }
+>   EXPORT_SYMBOL_GPL(led_set_brightness_sync);
 >
 >
 
+Applied, thanks.
 
 -- 
 Best regards,
