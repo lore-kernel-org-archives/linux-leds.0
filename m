@@ -1,159 +1,50 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 4/4] leds: core: add support for RGB LED's
-Date: Fri, 19 Feb 2016 14:59:23 +0100
-Message-ID: <56C71FBB.7080901@samsung.com>
-References: <56C6381A.7060209@gmail.com>
+Subject: Re: [PATCH] leds: gpio: Use GPIOF_OUT_INIT_LOW instead of hardcoded
+ zero
+Date: Fri, 19 Feb 2016 16:29:01 +0100
+Message-ID: <56C734BD.8040209@samsung.com>
+References: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44024 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425967AbcBSN70 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 19 Feb 2016 08:59:26 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2S00ASJS709S60@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Fri, 19 Feb 2016 13:59:24 +0000 (GMT)
-In-reply-to: <56C6381A.7060209@gmail.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50590 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751342AbcBSP3F (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 19 Feb 2016 10:29:05 -0500
+In-reply-to: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Heiner,
+Hi Geert,
 
-On 02/18/2016 10:31 PM, Heiner Kallweit wrote:
-> Add support for RGB LED's. Flag LED_DEV_CAP_HSV is used to instruct
-> the core to convert HSV to RGB on output.
+On 02/19/2016 10:52 AM, Geert Uytterhoeven wrote:
+> Use the GPIO flag definition instead of a numeric literal, so the casual
+> reader grepping for GPIOF_ will find the GPIO flags used.
 >
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v2:
-> - move hsv -> rgb conversion to separate file
-> - remove flag LED_DEV_CAP_RGB
-> v3:
-> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
->    This is needed in cases when we have monochrome and color LEDs
->    as well in a system.
-> ---
->   drivers/leds/led-color-core.c | 35 +++++++++++++++++++++++++++++++++++
->   drivers/leds/led-core.c       | 17 ++++++++++++++++-
->   drivers/leds/leds.h           |  1 +
->   3 files changed, 52 insertions(+), 1 deletion(-)
+>   drivers/leds/leds-gpio.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/leds/led-color-core.c b/drivers/leds/led-color-core.c
-> index b101f73..467beeb 100644
-> --- a/drivers/leds/led-color-core.c
-> +++ b/drivers/leds/led-color-core.c
-> @@ -31,3 +31,38 @@ enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->   	return brightness |
->   	       min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
->   }
-> +
-> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv)
-> +{
-> +	int h = min_t(int, (hsv >> 16) & 0xff, 251);
-> +	int s = (hsv >> 8) & 0xff;
-> +	int v = hsv & 0xff;
-> +	int f, p, q, t, r, g, b;
-> +
-> +	if (!v)
-> +		return 0;
-> +	if (!s)
-> +		return (v << 16) + (v << 8) + v;
-> +
-> +	f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
-> +	p = v - DIV_ROUND_CLOSEST(s * v, 255);
-> +	q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
-> +	t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
-> +
-> +	switch (h / 42) {
-> +	case 0:
-> +		r = v; g = t; b = p; break;
-> +	case 1:
-> +		r = q; g = v; b = p; break;
-> +	case 2:
-> +		r = p; g = v; b = t; break;
-> +	case 3:
-> +		r = p; g = q; b = v; break;
-> +	case 4:
-> +		r = t; g = p; b = v; break;
-> +	case 5:
-> +		r = v; g = p; b = q; break;
-> +	}
-> +
-> +	return (r << 16) + (g << 8) + b;
-> +}
-
-Do you plan to add a driver using Color LEDs Support?
-If so, it would be good to add it to this patch set,
-which would make testing this code easier.
-
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 525d566..255bdd7 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -31,6 +31,11 @@ static int __led_set_brightness(struct led_classdev *led_cdev,
->   	if (!led_cdev->brightness_set)
->   		return -ENOTSUPP;
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 7bc53280dbfdd91d..89955574430cec75 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -86,7 +86,7 @@ static int create_gpio_led(const struct gpio_led *template,
+>   		 * still uses GPIO numbers. Ultimately we would like to get
+>   		 * rid of this block completely.
+>   		 */
+> -		unsigned long flags = 0;
+> +		unsigned long flags = GPIOF_OUT_INIT_LOW;
 >
-> +#if IS_ENABLED(CONFIG_LEDS_COLOR)
-> +	if (led_cdev->flags & LED_DEV_CAP_HSV)
-> +		value = led_hsv_to_rgb(value);
-> +#endif
-> +
-
-Please drop this changes. led_hsv_to_rgb() can be used internally
-by RGB LED class drivers.
-
->   	led_cdev->brightness_set(led_cdev, value);
->
->   	return 0;
-> @@ -42,6 +47,11 @@ static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
->   	if (!led_cdev->brightness_set_blocking)
->   		return -ENOTSUPP;
->
-> +#if IS_ENABLED(CONFIG_LEDS_COLOR)
-> +	if (led_cdev->flags & LED_DEV_CAP_HSV)
-> +		value = led_hsv_to_rgb(value);
-> +#endif
-> +
-
-Ditto.
-
->   	return led_cdev->brightness_set_blocking(led_cdev, value);
->   }
->
-> @@ -294,7 +304,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
->   {
->   	int ret = 0;
->
-> -	if (led_cdev->brightness_get) {
-> +	/*
-> +	 * for now reading back the color is not supported as multiple
-> +	 * HSV -> RGB -> HSV conversions may distort the color due to
-> +	 * rounding issues in the conversion algorithm
-> +	 */
-> +	if (led_cdev->brightness_get && !(led_cdev->flags & LED_DEV_CAP_HSV)) {
->   		ret = led_cdev->brightness_get(led_cdev);
->   		if (ret >= 0) {
->   			led_cdev->brightness = ret;
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index 094707f..763f19a 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -37,6 +37,7 @@ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->   #if IS_ENABLED(CONFIG_LEDS_COLOR)
->   enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->   					    enum led_brightness value);
-> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
->   #else
->   static inline enum led_brightness led_confine_brightness(
->   		struct led_classdev *led_cdev, enum led_brightness value)
+>   		/* skip leds that aren't available */
+>   		if (!gpio_is_valid(template->gpio)) {
 >
 
+Applied, thanks.
 
 -- 
 Best regards,
