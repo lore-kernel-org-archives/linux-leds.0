@@ -1,75 +1,34 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v3 3/4] leds: core: add documentation for color extension
-Date: Thu, 18 Feb 2016 22:29:54 +0100
-Message-ID: <56C637D2.1090805@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:38342 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757146AbcBRVbZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 18 Feb 2016 16:31:25 -0500
-Received: by mail-wm0-f50.google.com with SMTP id a4so44550830wme.1
-        for <linux-leds@vger.kernel.org>; Thu, 18 Feb 2016 13:31:24 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] leds: gpio: Use GPIOF_OUT_INIT_LOW instead of hardcoded zero
+Date: Fri, 19 Feb 2016 10:52:34 +0100
+Message-ID: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
 
-Document the color extension in Documentation/leds/leds-class.txt
+Use the GPIO flag definition instead of a numeric literal, so the casual
+reader grepping for GPIOF_ will find the GPIO flags used.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-- introduced to patch series
-v3:
-- document extension in more detail
----
- Documentation/leds/leds-class.txt | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/leds/leds-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index d406d98..d4bf9c1 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -8,6 +8,19 @@ LED is defined in max_brightness file. The brightness file will set the brightne
- of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
- brightness support so will just be turned on for non-zero brightness settings.
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 7bc53280dbfdd91d..89955574430cec75 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -86,7 +86,7 @@ static int create_gpio_led(const struct gpio_led *template,
+ 		 * still uses GPIO numbers. Ultimately we would like to get
+ 		 * rid of this block completely.
+ 		 */
+-		unsigned long flags = 0;
++		unsigned long flags = GPIOF_OUT_INIT_LOW;
  
-+If a driver uses the colour extension of the LED core then the brightness
-+file can be used to set hue / saturation / value. The brightness value is
-+interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-+Usage of the least byte is identical to monochrome mode. Saturation can be
-+0-255 and hue 0-251 (Colour circle is mapped to 0-252).
-+If hue and saturation both are 0 the current colour is not changed and only
-+the brightness is set. This ensures backwards compatibility with monochrome
-+mode, e.g. in calls like led_set_brightness(LED_FULL).
-+This behavior can be overridden with flag F (LED_SET_COLOR). If this flag
-+is set then hue and saturation are not checked for being 0 and the color
-+components are set unconditionally. Example:
-+0x010000ff sets the LED to white color with full brightness.
-+
- The class also introduces the optional concept of an LED trigger. A trigger
- is a kernel based source of led events. Triggers can either be simple or
- complex. A simple trigger isn't configurable and is designed to slot into
-@@ -45,11 +58,12 @@ Is currently of the form:
- 
- "devicename:colour:function"
- 
--There have been calls for LED properties such as colour to be exported as
--individual led class attributes. As a solution which doesn't incur as much
--overhead, I suggest these become part of the device name. The naming scheme
--above leaves scope for further attributes should they be needed. If sections
--of the name don't apply, just leave that section blank.
-+If the colour extension is used hsv / rgb can be used instead of a specific
-+colour.  There have been calls for LED properties such as colour to be
-+exported as individual led class attributes. As a solution which doesn't
-+incur as much overhead, I suggest these become part of the device name.
-+The naming scheme above leaves scope for further attributes should they be
-+needed. If sections of the name don't apply, just leave that section blank.
- 
- 
- Brightness setting API
+ 		/* skip leds that aren't available */
+ 		if (!gpio_is_valid(template->gpio)) {
 -- 
-2.7.1
+1.9.1
+
