@@ -1,160 +1,183 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
-Date: Mon, 22 Feb 2016 13:14:54 +0100
-Message-ID: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Evan McClain <aeroevan@gmail.com>
+Subject: [PATCH 1/3] leds: Add Chrome OS keyboard LEDs driver
+Date: Mon, 22 Feb 2016 10:00:58 -0500
+Message-ID: <1456153260-3022-1-git-send-email-aeroevan@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:35830 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754203AbcBVMOz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Feb 2016 07:14:55 -0500
+Received: from mail-qg0-f50.google.com ([209.85.192.50]:35324 "EHLO
+	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753037AbcBVPBu (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 22 Feb 2016 10:01:50 -0500
+Received: by mail-qg0-f50.google.com with SMTP id y89so112621235qge.2
+        for <linux-leds@vger.kernel.org>; Mon, 22 Feb 2016 07:01:49 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Simon Que <sque@chromium.org>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-TL;DR: If a GPIO is connected to both a push button and an LED, can we
-(1) still use both, or can we (2) chose which one to use?
-This affects both the hardware description in DT and user policies.
+From: Simon Que <sque@chromium.org>
 
+Some Chrome OS devices use ACPI-based keyboard backlight LEDs.
 
-Introduction
-------------
+Enable with menuconfig option under Device Drivers -> LED Support.
 
-On the Renesas Salvator-X development board, 3 GPIO pins are connected to both
-push buttons and LEDs.
-  - If the GPIO is configured for output, it can control the LED,
-  - If the GPIO is configured for input, the push button status can be
-    read. Note that the LED is on if the push button is not pressed; it is
-    turned off while holding the button.
+Signed-off-by: Simon Que <sque@chromium.org>
+---
+ drivers/leds/Kconfig                  |   7 +++
+ drivers/leds/Makefile                 |   1 +
+ drivers/leds/leds-chromeos-keyboard.c | 115 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 drivers/leds/leds-chromeos-keyboard.c
 
-
-DT Hardware Description
------------------------
-
-There exist device tree bindings for push buttons connected to GPIOs,
-and the following works:
-
-        keyboard {
-                compatible = "gpio-keys";
-
-                key-a {
-                        gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-                        label = "SW20";
-                        wakeup-source;
-                        linux,code = <KEY_A>;
-                };
-                key-b {
-                        gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
-                        label = "SW21";
-                        wakeup-source;
-                        linux,code = <KEY_B>;
-                };
-                key-c {
-                        gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
-                        label = "SW22";
-                        wakeup-source;
-                        linux,code = <KEY_C>;
-                };
-        };
-
-
-There exist device tree bindings for LEDs connected to GPIOs, and the
-following also works:
-
-        leds {
-                compatible = "gpio-leds";
-
-                led4 {
-                        gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
-                        label = "LED4";
-                };
-                led5 {
-                        gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-                        label = "LED5";
-                };
-                led6 {
-                        gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-                        label = "LED6";
-                };
-        };
-
-
-However, having both in the DTS doesn't mean you'll have working buttons
-and LEDs. The first driver initialized will bind to the GPIOs. The
-second driver will fail to initialize as the GPIOs are already busy.
-
-One option to solve this is to introduce new bindings for GPIOs shared
-by push buttons and LEDs. But that isn't without its own set of
-problems. E.g. in my case the buttons use GPIO_ACTIVE_LOW, while the
-LEDs use GPIO_ACTIVE_HIGH (I'm sure other combinations are possible),
-which is supposed to be encoded in the GPIO descriptor.
-
-Hence I'm inclined to keep the existing bindings, as they do describe
-the hardware.
-
-
-Device Driver
--------------
-
-As a proof-of-concept, I hacked up a new driver that binds to both
-"gpio-keys" and "gpio-leds", by combining the existing gpio-keys-polled
-and gpio-leds drivers.
-
-If a GPIO is found busy during initialization, and if it's already in
-use by the other half of the driver, the driver switches to a special
-"polled-key-and-LED" mode. I.e. during polling, it does:
-  - Save the GPIO output state,
-  - Switch the GPIO to input mode,
-  - Wait 5 ms (else it will read the old output state, depending on
-    e.g. hardware capacitance),
-  - Read the GPIO input state,
-  - Switch the GPIO to output mode,
-  - Restore the GPIO output state.
-
-And it works, the LEDs can be controlled, and the push button states can
-be read!
-
-However, due to the 5 ms delay, there's a visible flickering of LEDs
-that are supposed to be turned off (remember, when the GPIO is
-configured for input and the button is not pressed, the LED is lit).
-
-If we go this route, adding support for non-polled GPIOs (if the GPIO is
-not shared with an LED) and wake-up should be doable.
-
-
-User Policies
--------------
-
-Hence we can have support for GPIOs connected to both push buttons and
-LEDs. But perhaps the user doesn't want to use both at the same time,
-or not for all GPIOs. On a final product this is probably not the case,
-but it is on a development board like Salvator-X.
-
-If it wasn't for the visible flickering when both are enabled, this
-wouldn't matter. But the flickering may be considered annoying, so it
-would be good if the user could disable either the push button or LED by
-software.
-
-One option is to disable the keyboard node using a DT overlay. But
-that's cheating, as it modifies the hardware description, while this is
-clearly a user policy.
-
-Another use case would be to use the LEDs, and not the buttons, except
-for system wake-up. Then there wouldn't be a need to poll during normal
-system operation.
-
-
-Thanks for your comments!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 7f940c2..38d2997 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -607,6 +607,13 @@ config LEDS_VERSATILE
+ 	  This option enabled support for the LEDs on the ARM Versatile
+ 	  and RealView boards. Say Y to enabled these.
+ 
++config LEDS_CHROMEOS_KEYBOARD
++	tristate "LED support for Chrome OS keyboards"
++	depends on LEDS_CLASS && ACPI
++	help
++	  This option enables support for the LEDs on Chrome OS keyboards.
++	  Say Y to enable keyboard LEDs on Chrome OS systems.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index e9d53092..2d7f73a 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+ obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
++obj-$(CONFIG_LEDS_CHROMEOS_KEYBOARD)	+= leds-chromeos-keyboard.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-chromeos-keyboard.c b/drivers/leds/leds-chromeos-keyboard.c
+new file mode 100644
+index 0000000..32d70c0
+--- /dev/null
++++ b/drivers/leds/leds-chromeos-keyboard.c
+@@ -0,0 +1,115 @@
++/*
++ *  LED driver for Chrome OS keyboard backlight
++ *
++ *  Copyright (C) 2012 Google, Inc.
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ */
++
++#include <linux/acpi.h>
++#include <linux/leds.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++/* Keyboard LED ACPI Device must be defined in firmware */
++#define ACPI_KEYBOARD_BACKLIGHT_DEVICE	"\\_SB.KBLT"
++#define ACPI_KEYBOARD_BACKLIGHT_READ	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBQC"
++#define ACPI_KEYBOARD_BACKLIGHT_WRITE	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBCM"
++
++#define ACPI_KEYBOARD_BACKLIGHT_MAX		100
++
++static void keyboard_led_set_brightness(struct led_classdev *cdev,
++					enum led_brightness brightness)
++{
++	union acpi_object param;
++	struct acpi_object_list input;
++	acpi_status status;
++
++	if (!(cdev->flags & LED_SUSPENDED))
++		cdev->brightness = brightness;
++
++	param.type = ACPI_TYPE_INTEGER;
++	param.integer.value = brightness;
++	input.count = 1;
++	input.pointer = &param;
++
++	status = acpi_evaluate_object(NULL, ACPI_KEYBOARD_BACKLIGHT_WRITE,
++					  &input, NULL);
++	if (ACPI_FAILURE(status))
++		dev_err(cdev->dev, "Error setting keyboard LED value");
++}
++
++static int keyboard_led_probe(struct platform_device *pdev)
++{
++	struct led_classdev *cdev;
++	acpi_handle handle;
++	acpi_status status;
++	int ret;
++
++	/* Look for the keyboard LED ACPI Device */
++	status = acpi_get_handle(ACPI_ROOT_OBJECT,
++				 ACPI_KEYBOARD_BACKLIGHT_DEVICE,
++				 &handle);
++	if (ACPI_FAILURE(status)) {
++		dev_err(&pdev->dev, "Unable fo find ACPI device %s\n",
++			ACPI_KEYBOARD_BACKLIGHT_DEVICE);
++		return -ENODEV;
++	}
++
++	cdev = kzalloc(sizeof(struct led_classdev), GFP_KERNEL);
++	if (!cdev)
++		return -ENOMEM;
++	cdev->name = "chromeos::kbd_backlight";
++	cdev->brightness_set = keyboard_led_set_brightness;
++	cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
++	cdev->brightness = cdev->max_brightness;
++	cdev->flags |= LED_CORE_SUSPENDRESUME;
++
++	ret = led_classdev_register(&pdev->dev, cdev);
++	if (ret)
++		goto err;
++
++	platform_set_drvdata(pdev, cdev);
++	return 0;
++err:
++	kfree(cdev);
++	return ret;
++}
++
++static int keyboard_led_remove(struct platform_device *pdev)
++{
++	struct led_classdev *cdev = platform_get_drvdata(pdev);
++
++	platform_set_drvdata(pdev, NULL);
++	kfree(cdev);
++	return 0;
++}
++
++static struct platform_driver keyboard_led_driver = {
++	.driver		= {
++		.name	= "chromeos-keyboard-leds",
++		.owner	= THIS_MODULE,
++	},
++	.probe		= keyboard_led_probe,
++	.remove		= keyboard_led_remove,
++};
++
++module_platform_driver(keyboard_led_driver);
++
++MODULE_AUTHOR("Simon Que <sque@chromium.org>");
++MODULE_DESCRIPTION("ChromeOS Keyboard LED Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:chromeos-keyboard-leds");
+-- 
+2.5.0
