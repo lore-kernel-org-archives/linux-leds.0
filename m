@@ -1,55 +1,65 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH RFC 3/3] leds: Add driver for the ISSI IS31FL32xx family
- of LED drivers
-Date: Tue, 23 Feb 2016 18:45:17 +0000
-Message-ID: <20160223184517.GB10246@leverpostej>
-References: <1456251445-23970-1-git-send-email-drivshin.allworx@gmail.com>
- <1456251445-23970-4-git-send-email-drivshin.allworx@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 1/4] leds: core: add generic support for color LED's
+Date: Tue, 23 Feb 2016 19:58:47 +0100
+Message-ID: <56CCABE7.9010908@gmail.com>
+References: <56C37838.5030309@gmail.com> <56C46891.3020301@samsung.com>
+ <56C4DAD1.7000803@gmail.com> <56C59A21.2080301@samsung.com>
+ <56C62AEC.4080208@gmail.com> <56C71FAF.50602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:39279 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754881AbcBWSpX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 23 Feb 2016 13:45:23 -0500
-Content-Disposition: inline
-In-Reply-To: <1456251445-23970-4-git-send-email-drivshin.allworx@gmail.com>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:38743 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752340AbcBWS6y (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 23 Feb 2016 13:58:54 -0500
+Received: by mail-wm0-f41.google.com with SMTP id a4so223025239wme.1
+        for <linux-leds@vger.kernel.org>; Tue, 23 Feb 2016 10:58:53 -0800 (PST)
+In-Reply-To: <56C71FAF.50602@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 
-On Tue, Feb 23, 2016 at 01:17:25PM -0500, David Rivshin (Allworx) wrote:
-> From: David Rivshin <drivshin@allworx.com>
-> +static int is31fl32xx_parse_child_dt(const struct device *dev,
-> +				     const struct device_node *child,
-> +				     struct is31fl32xx_led_data *led_data)
-> +{
-> +	struct led_classdev *cdev = &led_data->cdev;
-> +	int ret = 0;
-> +	u32 reg;
-> +
-> +	cdev->name = of_get_property(child, "label", NULL) ? : child->name;
-
-We really shouldn't be spreading of_get_property into more drivers. It's
-generally not what you want, and doesn't do appropriate sanity checking.
-
-Use of_property_read_string, though you may need to copy the result.
-
-> +
-> +	ret = of_property_read_u32(child, "reg", &reg);
-> +	if (ret || reg < 1 || reg > led_data->priv->cdef->channels) {
-> +		dev_err(dev,
-> +			"Child node %s does not have a valid reg property\n",
-> +			child->name);
-> +		return -EINVAL;
-> +	}
-> +	led_data->channel = reg;
-> +
-> +	cdev->default_trigger = of_get_property(child, "linux,default-trigger",
-> +						NULL);
-
-Likewise.
-
-Thanks,
-Mark. 
+Am 19.02.2016 um 14:59 schrieb Jacek Anaszewski:
+> On 02/18/2016 09:34 PM, Heiner Kallweit wrote:
+> [...]
+>>>>>>             /* Time to switch the LED on. */
+>>>>>>             brightness = led_cdev->blink_brightness;
+>>>>>>             delay = led_cdev->blink_delay_on;
+>>>>>> @@ -133,8 +133,8 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+>>>>>>         if (current_brightness)
+>>>>>>             led_cdev->blink_brightness = current_brightness;
+>>>>>>         if (!led_cdev->blink_brightness)
+>>>>>> -        led_cdev->blink_brightness = led_cdev->max_brightness;
+>>>>>> -
+>>>>>> +        led_cdev->blink_brightness =
+>>>>>> +                led_validate_brightness(led_cdev, LED_FULL);
+>>>>>
+>>>>> This function name doesn't fit here, since term "validation" usually
+>>>>> refers to validating user provided data.
+>>>>>
+>>>>> led_confine_brightness() ?
+>>>>>
+>>>>> And why LED_FULL and not led_cdev->max_brightness?
+>>>>>
+>>>> LED_FULL is reduced to max_brightness anyway by led_validate_brightness.
+>>>> IMHO LED_FULL makes clearer that the intention is: switch it on.
+>>>> max_brightness is a device-specific property that I'd like to hide
+>>>> as far as possible in the generic core code.
+>>>
+>>> Without checking led_validate_brightness() internals it looks like this
+>>> patch was changing led_set_software_blink() semantics.
+>>>
+>> As far as I can see it doesn't. In monochrome mode
+>> led_validate_brightness(led_cdev, LED_FULL) evaluates to
+>> led_cdev->max_brightness.
+> 
+> I meant that looking at this change alone makes such an impression.
+> Besides, if we now have led_confine_brightness(), then it implies that
+> brightness will be limited up to LED_FULL level, whereas in fact
+> the upper limit will be max_brightness for monochrome LEDs.
+> 
+Ah, now I get you. Yes, at a first glance it seems like the semantics were
+changed. However I don't see this as a bad thing if we interpret LED_FULL
+as "maximum brightness of a device".
