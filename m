@@ -1,222 +1,62 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Evan McClain <aeroevan@gmail.com>
 Subject: Re: [PATCH] leds: Add Chrome OS keyboard LEDs driver
-Date: Tue, 23 Feb 2016 09:43:51 +0100
-Message-ID: <56CC1BC7.9000108@samsung.com>
+Date: Tue, 23 Feb 2016 07:21:46 -0500
+Message-ID: <1456230106.20438.2.camel@gmail.com>
 References: <1456156814-9619-1-git-send-email-aeroevan@gmail.com>
+	 <56CC1BC7.9000108@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-53mj8dg3vqyrikYQhsrm"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:9065 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704AbcBWInz (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 23 Feb 2016 03:43:55 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2Z00ICAS945J70@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 23 Feb 2016 08:43:52 +0000 (GMT)
-In-reply-to: <1456156814-9619-1-git-send-email-aeroevan@gmail.com>
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:35974 "EHLO
+	mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750850AbcBWMVy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 23 Feb 2016 07:21:54 -0500
+Received: by mail-qk0-f170.google.com with SMTP id s68so66806923qkh.3
+        for <linux-leds@vger.kernel.org>; Tue, 23 Feb 2016 04:21:54 -0800 (PST)
+In-Reply-To: <56CC1BC7.9000108@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Evan McClain <aeroevan@gmail.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org, Simon Que <sque@chromium.org>, Duncan Laurie <dlaurie@chromium.org>
 
-Hi Evan, Simon
 
-Please find few additional remarks below.
+--=-53mj8dg3vqyrikYQhsrm
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/22/2016 05:00 PM, Evan McClain wrote:
-> From: Simon Que <sque@chromium.org>
->
-> Some Chrome OS devices use ACPI-based keyboard backlight LEDs.
->
-> Enable with menuconfig option under Device Drivers -> LED Support.
->
-> Signed-off-by: Simon Que <sque@chromium.org>
-> Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
-> Signed-off-by: Evan McClain <aeroevan@gmail.com>
-> ---
->   drivers/leds/Kconfig                  |   7 ++
->   drivers/leds/Makefile                 |   1 +
->   drivers/leds/leds-chromeos-keyboard.c | 118 ++++++++++++++++++++++++++++++++++
->   3 files changed, 126 insertions(+)
->   create mode 100644 drivers/leds/leds-chromeos-keyboard.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 7f940c2..38d2997 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -607,6 +607,13 @@ config LEDS_VERSATILE
->   	  This option enabled support for the LEDs on the ARM Versatile
->   	  and RealView boards. Say Y to enabled these.
->
-> +config LEDS_CHROMEOS_KEYBOARD
-> +	tristate "LED support for Chrome OS keyboards"
-> +	depends on LEDS_CLASS && ACPI
-> +	help
-> +	  This option enables support for the LEDs on Chrome OS keyboards.
-> +	  Say Y to enable keyboard LEDs on Chrome OS systems.
-> +
->   comment "LED Triggers"
->   source "drivers/leds/trigger/Kconfig"
->
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index e9d53092..2d7f73a 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
->   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
-> +obj-$(CONFIG_LEDS_CHROMEOS_KEYBOARD)	+= leds-chromeos-keyboard.o
->
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/drivers/leds/leds-chromeos-keyboard.c b/drivers/leds/leds-chromeos-keyboard.c
-> new file mode 100644
-> index 0000000..4e56ede
-> --- /dev/null
-> +++ b/drivers/leds/leds-chromeos-keyboard.c
-> @@ -0,0 +1,118 @@
-> +/*
-> + *  LED driver for Chrome OS keyboard backlight
-> + *
-> + *  Copyright (C) 2012 Google, Inc.
-> + *
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; either version 2 of the License, or
-> + *  (at your option) any later version.
-> + *
-> + *  This program is distributed in the hope that it will be useful,
-> + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *  GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/leds.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+On Tue, 2016-02-23 at 09:43 +0100, Jacek Anaszewski wrote:
+> On 02/22/2016 05:00 PM, Evan McClain wrote:
+> > +static int keyboard_led_remove(struct platform_device *pdev)
+> > +{
+> > +	struct led_classdev *cdev =3D platform_get_drvdata(pdev);
+> > +
+> > +	platform_set_drvdata(pdev, NULL);
+>=20
+> Empty line here please.
 
-Please keep alphabetical order.
+Unless I'm reading things wrong, I don't think keyboard_led_remove is
+needed at all.
 
-> +/* Keyboard LED ACPI Device must be defined in firmware */
-> +#define ACPI_KEYBOARD_BACKLIGHT_DEVICE	"\\_SB.KBLT"
-> +#define ACPI_KEYBOARD_BACKLIGHT_READ	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBQC"
-> +#define ACPI_KEYBOARD_BACKLIGHT_WRITE	ACPI_KEYBOARD_BACKLIGHT_DEVICE ".KBCM"
-> +
-> +#define ACPI_KEYBOARD_BACKLIGHT_MAX		100
-> +
-> +static void keyboard_led_set_brightness(struct led_classdev *cdev,
-> +					enum led_brightness brightness)
-> +{
-> +	union acpi_object param;
-> +	struct acpi_object_list input;
-> +	acpi_status status;
-> +
-> +	if (!(cdev->flags & LED_SUSPENDED))
-> +		cdev->brightness = brightness;
-> +
-> +	param.type = ACPI_TYPE_INTEGER;
-> +	param.integer.value = brightness;
-> +	input.count = 1;
-> +	input.pointer = &param;
-> +
-> +	status = acpi_evaluate_object(NULL, ACPI_KEYBOARD_BACKLIGHT_WRITE,
-> +					  &input, NULL);
-> +	if (ACPI_FAILURE(status))
-> +		dev_err(cdev->dev, "Error setting keyboard LED value");
-> +}
-> +
-> +static int keyboard_led_probe(struct platform_device *pdev)
-> +{
-> +	struct led_classdev *cdev;
-> +	acpi_handle handle;
-> +	acpi_status status;
-> +	int ret;
-> +
-> +	/* Look for the keyboard LED ACPI Device */
-> +	status = acpi_get_handle(ACPI_ROOT_OBJECT,
-> +				 ACPI_KEYBOARD_BACKLIGHT_DEVICE,
-> +				 &handle);
-> +	if (ACPI_FAILURE(status)) {
-> +		dev_err(&pdev->dev, "Unable fo find ACPI device %s\n",
-> +			ACPI_KEYBOARD_BACKLIGHT_DEVICE);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cdev = devm_kzalloc(&pdev->dev, sizeof(struct led_classdev), GFP_KERNEL);
-> +	if (!cdev)
-> +		return -ENOMEM;
+--=20
+Evan McClain
+https://keybase.io/aeroevan
 
-Please add empty line here.
+--=-53mj8dg3vqyrikYQhsrm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> +	cdev->name = "chromeos::kbd_backlight";
-> +	cdev->brightness_set = keyboard_led_set_brightness;
-> +	cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
-> +	cdev->brightness = cdev->max_brightness;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Should this LED be turned on by default?
+iQEcBAABCAAGBQJWzE7bAAoJEPQx78gG1JMfQ6gH/3stdOrDhGmLcBcvhEYHOkkB
+i/+8svE2sbjXEuR4kGILmKMwvQ9H3yTGjpWWJXMidOP0aZX8XGafOut/b0Inyc6B
+aXAdJWKQSLoVqlOCf0FrTSWcSNtgjncgr/XAm+hpXXVeFJ0XfvzxjrYIzRE+soYJ
+7kRkssPGkU9YSTt2tk6hMS3ZizNLGzsShXfjH45SyFEWoWQ1LRGPi+AtzQfGhyKN
+iDWUB57KLeGs3vk+pZQb6FpnN0i0uwIR05019YN2DLzS2fkTac6vzof4gTGuMD7c
+jvBm1yHsKKKX7Y5CSWlhIBPjA/xwJvXFPXmADPIDpPnVJkRMJzca8+aQAlYt0RU=
+=0vhE
+-----END PGP SIGNATURE-----
 
-> +	cdev->flags |= LED_CORE_SUSPENDRESUME;
-> +
-> +	ret = devm_led_classdev_register(&pdev->dev, cdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, cdev);
-
-Empty line here please.
-
-> +	return 0;
-> +}
-> +
-> +static int keyboard_led_remove(struct platform_device *pdev)
-> +{
-> +	struct led_classdev *cdev = platform_get_drvdata(pdev);
-> +
-> +	platform_set_drvdata(pdev, NULL);
-
-Empty line here please.
-
-> +	return 0;
-> +}
-> +
-> +static const struct acpi_device_id keyboard_led_id[] = {
-> +	{ "GOOG0002", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, keyboard_led_id);
-> +
-> +static struct platform_driver keyboard_led_driver = {
-> +	.driver		= {
-> +		.name	= "chromeos-keyboard-leds",
-> +		.owner	= THIS_MODULE,
-> +		.acpi_match_table = ACPI_PTR(keyboard_led_id),
-> +	},
-> +	.probe		= keyboard_led_probe,
-> +	.remove		= keyboard_led_remove,
-> +};
-> +
-> +module_platform_driver(keyboard_led_driver);
-> +
-> +MODULE_AUTHOR("Simon Que <sque@chromium.org>");
-> +MODULE_DESCRIPTION("ChromeOS Keyboard LED Driver");
-> +MODULE_LICENSE("GPL");
-
-s/GPL/GPL v2/ to match the statement at the top of the file.
-
-> +MODULE_ALIAS("platform:chromeos-keyboard-leds");
->
-
-
--- 
-Best regards,
-Jacek Anaszewski
+--=-53mj8dg3vqyrikYQhsrm--
