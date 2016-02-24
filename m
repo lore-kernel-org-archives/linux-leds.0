@@ -1,108 +1,112 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH RFC 2/3] DT: leds: Add binding for the ISSI IS31FL32xx
- family of LED drivers
-Date: Wed, 24 Feb 2016 17:04:49 +0100
-Message-ID: <56CDD4A1.5030802@samsung.com>
+Subject: Re: [PATCH RFC 3/3] leds: Add driver for the ISSI IS31FL32xx family of
+ LED drivers
+Date: Wed, 24 Feb 2016 17:08:53 +0100
+Message-ID: <56CDD595.3010203@samsung.com>
 References: <1456251445-23970-1-git-send-email-drivshin.allworx@gmail.com>
- <1456251445-23970-3-git-send-email-drivshin.allworx@gmail.com>
+ <1456251445-23970-4-git-send-email-drivshin.allworx@gmail.com>
+ <20160223184517.GB10246@leverpostej>
+ <20160223173841.2f741421.drivshin.allworx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43575 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:43765 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751750AbcBXQEx (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Feb 2016 11:04:53 -0500
-In-reply-to: <1456251445-23970-3-git-send-email-drivshin.allworx@gmail.com>
+	with ESMTP id S1751764AbcBXQI4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 24 Feb 2016 11:08:56 -0500
+In-reply-to: <20160223173841.2f741421.drivshin.allworx@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>
 
-Hi David,
-
-Thanks for the patch.
-
-On 02/23/2016 07:17 PM, David Rivshin (Allworx) wrote:
-> From: David Rivshin <drivshin@allworx.com>
+On 02/23/2016 11:38 PM, David Rivshin (Allworx) wrote:
+> On Tue, 23 Feb 2016 18:45:17 +0000
+> Mark Rutland <mark.rutland@arm.com> wrote:
 >
-> This adds a binding description for the is31fl3236/35/18/16 I2C LED
-> drivers.
+>> On Tue, Feb 23, 2016 at 01:17:25PM -0500, David Rivshin (Allworx) wrote:
+>>> From: David Rivshin <drivshin@allworx.com>
+>>> +static int is31fl32xx_parse_child_dt(const struct device *dev,
+>>> +				     const struct device_node *child,
+>>> +				     struct is31fl32xx_led_data *led_data)
+>>> +{
+>>> +	struct led_classdev *cdev = &led_data->cdev;
+>>> +	int ret = 0;
+>>> +	u32 reg;
+>>> +
+>>> +	cdev->name = of_get_property(child, "label", NULL) ? : child->name;
+>>
+>> We really shouldn't be spreading of_get_property into more drivers. It's
+>> generally not what you want, and doesn't do appropriate sanity checking.
 >
-> Signed-off-by: David Rivshin <drivshin@allworx.com>
-> ---
->   .../devicetree/bindings/leds/leds-is31fl32xx.txt   | 51 ++++++++++++++++++++++
->   1 file changed, 51 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> Sorry, I copied the basic DT parsing from some other led driver (leds-pwm,
+> I think), and did not check if there was a better way.
 >
-> diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-> new file mode 100644
-> index 0000000..0a05a1d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-> @@ -0,0 +1,51 @@
-> +Binding for ISSI IS31FL32xx LED Drivers
-> +
-> +The IS31FL32xx family of LED drivers are I2C devices with multiple
-> +constant-current channels, each with independent 256-level PWM control.
-> +Each LED is represented as a sub-node of the device.
-> +
-> +Required properties:
-> +- compatible: one of
-> +	issi,is31fl3236
-> +	issi,is31fl3235
-> +	issi,is31fl3218
-> +	issi,is31fl3216
-> +- reg: I2C slave address
-> +- address-cells : must be 1
-> +- size-cells : must be 0
-> +
-> +LED sub-node properties:
-> +- reg : LED channel number (1..N)
-> +- max-brightness : (optional) Maximum brightness possible for the LED.
-
-Please use led-max-microamp instead. You can refer to
-Documentation/devicetree/bindings/leds/common.txt for detailed
-description.
-
-> +  Default is 255.
-> +- label :  (optional)
-> +  see Documentation/devicetree/bindings/leds/common.txt
-> +- linux,default-trigger :  (optional)
-> +  see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +
-> +Example:
-> +
-> +leds: is31fl3236@3c {
-> +	compatible = "issi,is31fl3236";
-> +	reg = <0x3c>;
-
-You're missing address-cells and size-cells in this example.
-
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		label = "EB:blue:usr0";
-> +		max-brightness = <128>;
-> +	};
-> +	led@2 {
-> +		reg = <2>;
-> +		label = "EB:blue:usr1";
-> +	};
-> +	...
-> +	led@36 {
-> +		reg = <36>;
-> +		label = "EB:blue:usr35";
-> +		max-brightness = <255>;
-> +	};
-> +};
-> +
-> +For more product information please see the link below:
-> +http://www.issi.com/US/product-analog-fxled-driver.shtml
-> \ No newline at end of file
+>> Use of_property_read_string, though you may need to copy the result.
 >
+> Will do.
+>
+> As far as copying the result, this is an area I'm fuzzy on. If I
+> understand correctly the device_nodes are reference counted, and
+> of_property_read_string() returns a pointer to the data inside the
+> device_node. So it seems I'd either need to hold onto a reference,
+> or make a copy of the string.
+>
+> devm_kstrdup() seems like it would be an easy way to go, although
+> maybe not the most efficient.
+>
+> Using of_node_get() would seem to be more efficient, but then what
+> would be the right way to release that reference on remove()?
+>   - Does that already happen in some infrastructure when using DT
+>     probing?
+>   - Is there a devm_*() helper function that should be used?
+>   - Or would it be best to just keep a pointer to the device_node so
+>     that of_node_put() can be called on remove()?
+>
+> Also, I have yet to find an example of a driver which either copies
+> the string or does an of_node_get() on the node. In fact just by a
+> count of files, it seems very few have any hope of doing either:
+>
+> $ find drivers/ -name '*.c' -exec grep of_property_read_string -l {} + \
+> | wc -l
+> 197
+> $ find drivers/ -name '*.c' -exec grep of_property_read_string -l {} + \
+> | xargs grep -l of_node_get | wc -l
+> 15
+> $ find drivers/ -name '*.c' -exec grep of_property_read_string -l {} + \
+> | xargs grep -l strdup | wc -l
+> 11
+>
+> So I'm very much hoping that there's some infrastructure automatically
+> handling the appropriate reference counting, so that the nodes stay
+> around (at least) as long as the driver is instantiated...
+>
+>>> +
+>>> +	ret = of_property_read_u32(child, "reg", &reg);
+>>> +	if (ret || reg < 1 || reg > led_data->priv->cdef->channels) {
+>>> +		dev_err(dev,
+>>> +			"Child node %s does not have a valid reg property\n",
+>>> +			child->name);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +	led_data->channel = reg;
+>>> +
+>>> +	cdev->default_trigger = of_get_property(child, "linux,default-trigger",
+>>> +						NULL);
+>>
+>> Likewise.
+>
+> Will take care of this same as above.
 
+DT nodes refcounting is enabled only when CONFIG_OF_DYNAMIC is defined,
+and does matter in case Device Tree overlays are used. DT people -
+please correct me if I'm wrong.
+
+If this use case is not valid for this driver, then we can rely
+on the pointer obtained with of_property_read_string,
+I've been doing empirical tests and child node refcount is greater
+than 0 throughout whole driver lifespan.
 
 -- 
 Best regards,
