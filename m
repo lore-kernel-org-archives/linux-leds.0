@@ -1,80 +1,130 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v4 3/4] leds: core: add documentation for color extension
-Date: Thu, 25 Feb 2016 23:13:25 +0100
-Message-ID: <56CF7C85.7030005@gmail.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH v3 00/12] pwm: add support for atomic update
+Date: Thu, 25 Feb 2016 15:14:03 -0800
+Message-ID: <CAD=FV=VckTVD8b1g+f0G2kMeoTjvY0pAGhoDnWQN_dAmqSxBxg@mail.gmail.com>
+References: <20151110173416.GB21727@ulmo>
+	<CAD=FV=WL3jYEgVe-m6QcAyQwfJgdX4J5OtKisKwyoKOrTSpEQA@mail.gmail.com>
+	<20160125170855.GA10182@ulmo>
+	<CAD=FV=Xvxeqo3imUmjukC5iYk3EZkrJ04G7C1B-w4xyr-r6-2Q@mail.gmail.com>
+	<20160203145337.GD9650@ulmo>
+	<CAD=FV=U_x1cxx6RrHuVgVV8GbOwm9DXXJcyiArbbQySUOaxrvQ@mail.gmail.com>
+	<20160222175929.GA23899@ulmo>
+	<CAD=FV=UCErW3EjYRtwt49_ztNR7cyY4U0o4R_dxdomer-Ac2Dg@mail.gmail.com>
+	<20160223143859.GA27656@ulmo>
+	<CAD=FV=UvxG3MYD4MKQJqN7W68uMjd-s+FH-e8tkrLCpS0RLmZQ@mail.gmail.com>
+	<20160223181448.GA14754@ulmo.nvidia.com>
+	<CAD=FV=VM3cOQ0HqwLANBw9MVBCyFTrSyPe_dGzgPucuMUEWRKA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34022 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751503AbcBYWRf (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Feb 2016 17:17:35 -0500
-Received: by mail-wm0-f66.google.com with SMTP id b205so6027326wmb.1
-        for <linux-leds@vger.kernel.org>; Thu, 25 Feb 2016 14:17:34 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=VM3cOQ0HqwLANBw9MVBCyFTrSyPe_dGzgPucuMUEWRKA@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-pwm <linux-pwm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-sunxi@googlegroups.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@li>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
 
-Document the color extension in Documentation/leds/leds-class.txt
+Thierry,
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- introduced to patch series
-v3:
-- document extension in more detail
-v4:
-- Better explain why flag LED_SET_HUE_SAT is needed
----
- Documentation/leds/leds-class.txt | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+On Tue, Feb 23, 2016 at 10:42 AM, Doug Anderson <dianders@google.com> wrote:
+> Thierry,
+>
+> On Tue, Feb 23, 2016 at 10:14 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>>> pwm_get_period(): get the period of the PWM; if the PWM has not yet
+>>> been configured by software this gets the default period (possibly
+>>> specified by the device tree).
+>>
+>> No. I think we'll need a different construct for the period defined by
+>> DT or board files. pwm_get_period() is the legacy API to retrieve the
+>> "current" period, even if it was lying a little before the atomic API.
+>
+> Ah, got it.  I think I missed that you considered pwm_get_period()
+> legacy and that you eventually wanted to get rid of it.  OK, then what
+> you say makes sense.
+>
+>
+>>> That should work with one minor problem.  If HW readout isn't
+>>> supported then pwm_get_state() in probe will presumably return 0 for
+>>> the duty cycle.  That means it will change the voltage.  That's in
+>>> contrast to how I think things work today where the voltage isn't
+>>> changed until the first set_voltage() call.  At least the last time I
+>>> tested things get_voltage() would simply report an incorrect value
+>>> until the first set_voltage().  I think existing behavior (reporting
+>>> the wrong value) is better than new behavior (change the value at
+>>> probe).
+>>
+>> That's exactly the point. Reporting a wrong value isn't really a good
+>> option. Changing the voltage on boot is the only way to make the logical
+>> state match the hardware state on boot. Chances are that if you don't
+>> have hardware readout support you probably don't care what state your
+>> regulator will be in.
+>>
+>> Then again, if we don't support hardware readout, setting up the logical
+>> state with data from DT (or board files) and defaulting the duty cycle
+>> to 0, we end up with exactly what we had before, even with the atomic
+>> API, right? Maybe that's okay, too.
+>
+> IMHO this is a change in behavior that will break existing users.
+> Anyone using a PWM regulator will suddenly find their voltage changing
+> at bootup.  Certainly today all users of the PWM regulator don't seem
+> to mind (apparently) the the voltage is reported incorrectly at bootup
+> but I bet they'd mind if the voltage suddenly started changing for
+> them at bootup.
+>
+> It seems better to preserve existing behavior and print a warning that
+> the voltage will be reported incorrectly until HW Readout is
+> supported.
+>
+> Of course, we're only talking about two real users in mainline here:
+> Rockchip boards and the "stih407-family".  If we just fix both of
+> those to support HW Readout before landing the change then I'm fine
+> with doing what you say.
+>
+>
+>>> ...and if set_voltage() remains untouched then we can solve my probe
+>>> problem by renaming pwm_get_state() to pwm_get_hw_state() and having
+>>> it return an error if HW readout is not supported.  Then we only call
+>>> pwm_get_args() / pwm_apply_state() when we support HW readout.
+>>
+>> The problem is that we make the API clumsy to use. If we don't sync the
+>> "initial" state (as defined by DT or board files) to hardware at any
+>> point, then we need to add the pwm_args construct and always stick to
+>> it. I think it weird to have to use the pwm_args.period instead of the
+>> current period.
+>>
+>> So we're back to square one, really. That's exactly what Mark brought up
+>> originally.
+>
+> I had missed the part where you wanted to deprecate pwm_get_period().
+> Thus my points here aren't really valid.
+>
+> In my mind the old API was perfectly fine (and actually quite clean /
+> simple to use) except in the special case of avoiding the PWM
+> regulator glitches.  With that mindset I think my previous email make
+> sense.  However, this is your subsystem to maintain and if you think
+> moving everyone to a new atomic API makes more sense then you're in
+> the best position to make that decision.  :)
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index d406d98..b1e4cba 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -8,6 +8,22 @@ LED is defined in max_brightness file. The brightness file will set the brightne
- of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
- brightness support so will just be turned on for non-zero brightness settings.
- 
-+If a driver uses the colour extension of the LED core then the brightness
-+file can be used to set hue / saturation / value. The brightness value is
-+interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-+Usage of the least byte is identical to monochrome mode. Saturation can be
-+0-255 and hue 0-251 (Colour circle is mapped to 0-252).
-+If hue and saturation both are 0 the current colour is preserved and only
-+the brightness is set. This ensures backwards compatibility with monochrome
-+mode, e.g. for led_set_brightness() calls from triggers.
-+However we might want to have the option to set all HSV components, even
-+if hue and saturation both are 0 (e.g. via brightness sysfs attribute).
-+Use case: Set color to white (hue = 0 and saturation = 0).
-+Therefore the default behaviour can be overridden with flag F (LED_SET_HUE_SAT).
-+If this flag is set then hue and saturation are not checked for being 0 and
-+the color components are set unconditionally. Example:
-+0x010000ff sets the LED to white color with full brightness.
-+
- The class also introduces the optional concept of an LED trigger. A trigger
- is a kernel based source of led events. Triggers can either be simple or
- complex. A simple trigger isn't configurable and is designed to slot into
-@@ -45,11 +61,12 @@ Is currently of the form:
- 
- "devicename:colour:function"
- 
--There have been calls for LED properties such as colour to be exported as
--individual led class attributes. As a solution which doesn't incur as much
--overhead, I suggest these become part of the device name. The naming scheme
--above leaves scope for further attributes should they be needed. If sections
--of the name don't apply, just leave that section blank.
-+If the colour extension is used hsv / rgb can be used instead of a specific
-+colour.  There have been calls for LED properties such as colour to be
-+exported as individual led class attributes. As a solution which doesn't
-+incur as much overhead, I suggest these become part of the device name.
-+The naming scheme above leaves scope for further attributes should they be
-+needed. If sections of the name don't apply, just leave that section blank.
- 
- 
- Brightness setting API
--- 
-2.7.1
+So just to summarize:
+
+* Add pwm_get_state(), pwm_apply_state(), pwm_get_args().
+pwm_get_state() initially returns 0 for duty cycle if driver doesn't
+support readout.
+
+* Re-implement pwm_get_period() (and maybe other similar functions)
+atop pwm_get_state() as you describe earlier in the thread.
+
+* Document pwm_get_period() (and maybe other similar functions) as deprecated.
+
+* Fix drivers for all current 2 users of PWM regulator to support
+hardware readout.
+
+* Update PWM regulator as you described earlier in the thread (Feb 23).
+
+* If PWM regulator is ever used on a new board whose PWM doesn't
+support hardware readout, the voltage will change at probe time.
+
+
+Did I get all that right?  Thanks!
+
+-Doug
