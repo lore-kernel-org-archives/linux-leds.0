@@ -1,798 +1,312 @@
-From: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
-Subject: Re: [PATCH RFC 3/3] leds: Add driver for the ISSI IS31FL32xx family
- of LED drivers
-Date: Thu, 25 Feb 2016 14:12:15 -0500
-Message-ID: <20160225141215.2ef2707e.drivshin.allworx@gmail.com>
-References: <1456251445-23970-1-git-send-email-drivshin.allworx@gmail.com>
-	<1456251445-23970-4-git-send-email-drivshin.allworx@gmail.com>
-	<56CDD4AA.5030801@samsung.com>
-	<20160224212450.195330ed.drivshin.allworx@gmail.com>
-	<56CEDDBE.2080601@samsung.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v4 1/4] leds: core: add generic support for RGB Color LED's
+Date: Thu, 25 Feb 2016 23:11:49 +0100
+Message-ID: <56CF7C25.4060707@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qg0-f66.google.com ([209.85.192.66]:36578 "EHLO
-	mail-qg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933514AbcBYTMU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Feb 2016 14:12:20 -0500
-In-Reply-To: <56CEDDBE.2080601@samsung.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34007 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750850AbcBYWRe (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Feb 2016 17:17:34 -0500
+Received: by mail-wm0-f67.google.com with SMTP id b205so6027227wmb.1
+        for <linux-leds@vger.kernel.org>; Thu, 25 Feb 2016 14:17:33 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 
-On Thu, 25 Feb 2016 11:55:58 +0100
-Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+Add generic support for RGB Color LED's.
 
-> On 02/25/2016 03:24 AM, David Rivshin (Allworx) wrote:
-> > On Wed, 24 Feb 2016 17:04:58 +0100
-> > Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
-> >  
-> >> Hi David,
-> >>
-> >> Thanks for the patch. Very nice driver. I have few comments
-> >> below.  
-> >
-> > Thanks Jacek, I have responded the comments inline. I also wanted to
-> > double check whether you noticed some questions I had in the cover
-> > letter [1]. As I mentioned in another email to Rob, in hindsight I'm
-> > guessing I should have included them in the patch comments as well (or
-> > instead of).  
-> 
-> I saw them. I assumed that the review itself will address those
-> questions.
+Basic idea is to use enum led_brightness also for the hue and saturation
+color components.This allows to implement the color extension w/o
+changes to struct led_classdev.
 
-Fair enough, thanks for the confirmation.
+Select LEDS_RGB to enable building drivers using the RGB extension.
 
-> > Your review comments here effectively answered some of the questions, but
-> > the big one I'm still unsure of is whether it actually makes sense to
-> > have all 4 of these devices supported by a single driver.  
-> 
-> It's perfectly fine. Many drivers implement this pattern.
+Flag LED_SET_HUE_SAT allows to specify that hue / saturation
+should be overridden even if the provided values are zero.
 
-OK, then I'll assume you think this driver is not yet too complicated
-for it's own good. Out of curiosity, might that view change if the
-3216 specific features were ever implemented, especially GPIO and HW 
-animation support? Gut feel is that would make 3216 specific code
-bigger than the rest of the code combined.
+Some examples for writing values to /sys/class/leds/<xx>/brightness:
+(now also hex notation can be used)
 
-Bigger question is what should be done in terms of the overlap in device 
-support between this driver and leds-sn3218? If you think I should leave 
-the *3218 support in this driver, then I would propose:
-  - remove leds-sn3218 and its separate binding doc
-  - add the "si-en,sn3218" compatible string to this driver and binding doc
-Note that while I expect this driver to work with the 3218 chips, I do
-not have one to test against. If we go down this route I would definitely
-want Stefan to test so that I don't accidentally break him.
+255 -> set full brightness and keep existing color if set
+0 -> switch LED off but keep existing color so that it can be restored
+     if the LED is switched on again later
+0x1000000 -> switch LED off and set also hue and saturation to 0
+0x00ffff -> set full brightness, full saturation and set hue to 0 (red)
 
-Also I feel I should point out some differences between the 3218 support 
-in this driver versus the leds-sn3218 driver, in case they have any 
-impact:
-  - (as previously mentioned) leds-sn3218 turns off an LEDs enable
-    bit if the brightness is set to 0. This driver just sets the PWM
-    to 0 and leaves the enable bits always on.
-  - leds-sn3218 uses a regmap, I think mostly to deal with the enable
-    bits, but it also has the benefit of showing up in debugfs. This
-    could be seen as useful in and of itself by some users. On the other 
-    hand regmap introduces another mutex on every write.
-  - leds-sn3218 implements the shutdown callback. Actually, I think I 
-    should add that to this driver in any event.
-  - leds-sn3218 just puts the chip in software-shutdown mode on remove/
-    shutdown. This driver uses the reset register to put the device in 
-    poweron state, and software-shutdown is part of the poweron state. 
-    Only difference would be if the next code to use the device does 
-    not do it's own full initialization (which seems unlikely, or at 
-    least unwise), but instead just clears software-shutdown.
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+v2:
+- move extension-specific code into a separate source file and
+  introduce config symbol LEDS_HSV for it
+- create separate patch for the extension to sysfs
+- use variable name led_cdev as in the rest if the core
+- rename to_hsv to led_validate_brightness
+- rename LED_BRIGHTNESS_SET_COLOR to LED_SET_HSV
+- introduce helper is_off for checking whether V part
+  of a HSV value is zero
+v3:
+- change Kconfig to use depend instead of select, add help message,
+  and change config symbol to LEDS_COLOR
+- change LED core object file name in Makefile
+- rename flag LED_SET_HSV to LED_SET_COLOR
+- rename is_off to led_is_off
+- rename led_validate-brightness to led_confine_brightness
+- rename variable in led_confine_brightness
+- add dummy enum led_brightness value to enforce 32bit enum
+- rename led-hsv-core.c to led-color-core.c
+- move check of provided brightness value to led_confine_brightness
+v4:
+- change config symbol name to LEDS_RGB
+- change name of new file to led-rgb-core.c
+- factor out part of led_confine_brightness
+- change led_is_off to __is_set_brightness
+- in led_set_software_blink pass led_cdev->max_brightness instead of LED_FULL
+- rename LED_SET_COLOR to LED_SET_HUE_SAT
+---
+ drivers/leds/Kconfig        | 11 +++++++++++
+ drivers/leds/Makefile       |  4 +++-
+ drivers/leds/led-class.c    |  2 +-
+ drivers/leds/led-core.c     | 16 +++++++++-------
+ drivers/leds/led-rgb-core.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/leds/leds.h         | 17 +++++++++++++++++
+ include/linux/leds.h        |  9 +++++++++
+ 7 files changed, 92 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/leds/led-rgb-core.c
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 7f940c2..4a4f1b2 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -13,6 +13,13 @@ menuconfig NEW_LEDS
  
-> > I won't
-> > clutter this email with a duplicate of the details (it's somewhat long),
-> > but if you could check the cover letter and give some guidance, I would
-> > appreciate it.
-> >
-> > [1] http://www.spinics.net/lists/linux-leds/msg05564.html
-> >      http://thread.gmane.org/gmane.linux.leds/4530
-> >  
-> >>
-> >> On 02/23/2016 07:17 PM, David Rivshin (Allworx) wrote:  
-> >>> From: David Rivshin <drivshin@allworx.com>
-> >>>
-> >>> The IS31FL32xx family of LED drivers are I2C devices with multiple
-> >>> constant-current channels, each with independent 256-level PWM control.
-> >>>
-> >>> HW Docs: http://www.issi.com/US/product-analog-fxled-driver.shtml
-> >>>
-> >>> This has been tested on the IS31FL3236 and IS31FL3216 on an ARM
-> >>> (TI am335x) platform.
-> >>>
-> >>> The programming paradigm of these devices is similar in the following
-> >>> ways:
-> >>>    - All registers are 8 bit
-> >>>    - All LED control registers are write-only
-> >>>    - Each LED channel has a PWM register (0-255)
-> >>>    - PWM register writes are shadowed until an Update register is poked
-> >>>    - All have a concept of Software Shutdown, which disables output
-> >>>
-> >>> However, there are some differences in devices:
-> >>>    - 3236/3235 have a separate Control register for each LED,
-> >>>      (3218/3216 pack the enable bits into fewer registers)
-> >>>    - 3236/3235 have a per-channel current divisor setting
-> >>>    - 3236/3235 have a Global Control register that can turn off all LEDs
-> >>>    - 3216 is unique in a number of ways
-> >>>       - OUT9-OUT16 can be configured as GPIOs instead of LED controls
-> >>>       - LEDs can be programmed with an 8-frame animation, with
-> >>>         programmable delay between frames
-> >>>       - LEDs can be modulated by an input audio signal
-> >>>       - Max output current can be adjusted from 1/4 to 2x globally
-> >>>       - Has a Configuration register instead of a Shutdown register
-> >>>
-> >>> This driver currently only supports the base PWM control function
-> >>> of these devices. The following features of these devices are not
-> >>> implemented, although it should be possible to add them in the future:
-> >>>    - All devices are capable of going into a lower-power "software
-> >>>      shutdown" mode.
-> >>>    - The is31fl3236 and is31fl3235 can reduce the max output current
-> >>>      per-channel with a divisor of 1, 2, 3, or 4.
-> >>>    - The is31fl3216 can use some LED channels as GPIOs instead.
-> >>>    - The is31fl3216 can animate LEDs in hardware.
-> >>>    - The is31fl3216 can modulate LEDs according to an audio input.
-> >>>    - The is31fl3216 can reduce/increase max output current globally.
-> >>>
-> >>> Signed-off-by: David Rivshin <drivshin@allworx.com>
-> >>> ---
-> >>>    drivers/leds/Kconfig           |   9 +
-> >>>    drivers/leds/Makefile          |   1 +
-> >>>    drivers/leds/leds-is31fl32xx.c | 442 +++++++++++++++++++++++++++++++++++++++++
-> >>>    3 files changed, 452 insertions(+)
-> >>>    create mode 100644 drivers/leds/leds-is31fl32xx.c
-> >>>
-> >>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> >>> index 1034696..8f6c46f 100644
-> >>> --- a/drivers/leds/Kconfig
-> >>> +++ b/drivers/leds/Kconfig
-> >>> @@ -580,6 +580,15 @@ config LEDS_SN3218
-> >>>    	  This driver can also be built as a module. If so the module
-> >>>    	  will be called leds-sn3218.
-> >>>
-> >>> +config LEDS_IS31FL32XX
-> >>> +	tristate "Driver for ISSI IS31FL32XX I2C LED driver chip family"  
-> >>
-> >> 2 x "[Dd]river".
-> >>
-> >> How about:
-> >>
-> >> "LED Support for ISSI IS31FL32XX I2C LED chip family" ?  
-> >
-> > Yes, I found that awkward as well. HW folks (and the datasheets) seem
-> > always refer to devices of this type as "LED Driver"s (which can lead
-> > to some interesting confusions). Taking a cue from the LP5521/23/62
-> > entries, how about:
-> >   "LED Support for the ISSI IS31FL32XX I2C LED driver chip family" ?  
-> 
-> "LED Support" means "LED class driver". Driver is a software support
-> for hardware chip. What discrepancy do you see in the description
-> I proposed?
-
-I think in this case "driver" also means "hardware device which drives
-a physical LED". It seems that "LED driver" is the term universally used 
-to describe this type of HW device in datasheets. So it seemed useful to 
-use exactly that phrase in the description of what hardware this software 
-supports. I could see someone interpreting the phrase "LED chip" as
-referring to an actual LED device. 
-I don't feel very strongly on this topic, but for the sake of discussion,
-maybe "LED controller" would avoid any possible confusion in both 
-directions?
-
-> > Perhaps that's the best of both worlds?
-> >  
-> >>> +	depends on LEDS_CLASS && I2C && OF
-> >>> +	help
-> >>> +	  Say Y here to include support for the ISSI 31FL32XX LED driver family.  
-> >>
-> >> s/driver/chip/
-> >>  
-> >>> +	  They are I2C devices with multiple constant-current channels, each
-> >>> +	  with independent 256-level PWM control. This will only work with
-> >>> +	  device tree enabled devices.  
-> >>
-> >> We can skip the last sentence I think.  
-> >
-> > OK. FYI, I think I got that verbiage from LEDS_SYSCON.  
-> 
-> Having "depends on OF" is self-explanatory here.
-
-Noted.
-
-> >>> +
-> >>>    comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
-> >>>
-> >>>    config LEDS_BLINKM
-> >>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> >>> index 89c9b6f..3fdf313 100644
-> >>> --- a/drivers/leds/Makefile
-> >>> +++ b/drivers/leds/Makefile
-> >>> @@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
-> >>>    obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
-> >>>    obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
-> >>>    obj-$(CONFIG_LEDS_SN3218)		+= leds-sn3218.o
-> >>> +obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-> >>>
-> >>>    # LED SPI Drivers
-> >>>    obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> >>> diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
-> >>> new file mode 100644
-> >>> index 0000000..8dea518
-> >>> --- /dev/null
-> >>> +++ b/drivers/leds/leds-is31fl32xx.c
-> >>> @@ -0,0 +1,442 @@
-> >>> +/*
-> >>> + * linux/drivers/leds-is31fl32xx.c
-> >>> + *
-> >>> + * Driver for ISSI IS31FL32xx family of I2C LED controllers
-> >>> + *
-> >>> + * Copyright 2015 Allworx Corp.
-> >>> + *
-> >>> + *
-> >>> + * This program is free software; you can redistribute it and/or modify
-> >>> + * it under the terms of the GNU General Public License version 2 as
-> >>> + * published by the Free Software Foundation.
-> >>> + *
-> >>> + * HW Docs: http://www.issi.com/US/product-analog-fxled-driver.shtml
-> >>> + */
-> >>> +
-> >>> +#include <linux/err.h>
-> >>> +#include <linux/i2c.h>
-> >>> +#include <linux/kernel.h>
-> >>> +#include <linux/leds.h>
-> >>> +#include <linux/module.h>
-> >>> +#include <linux/of_platform.h>
-> >>> +
-> >>> +#ifdef DEBUG
-> >>> + #undef dev_dbg
-> >>> + #define dev_dbg dev_info
-> >>> +#endif  
-> >>
-> >> What's the benefit of the above?  
-> >
-> > It gave me a way to easily see debug output from the driver while it
-> > was parsing the DT (especially if the driver was built-in). Early on
-> > there were other things within that #ifdef as well.
-> > Regardless, passing ddebug_query on the kernel commandline is a more
-> > appropriate way of accomplishing that; I'll remove for the next version.  
-> 
-> Thanks.
-> 
-> >>> +/* Used to indicate a device has no such register */
-> >>> +#define IS31FL32XX_REG_NONE 0xFF
-> >>> +
-> >>> +#define IS31FL3216_CONFIG_REG 0x00
-> >>> +#define IS31FL3216_LIGHTING_EFFECT_REG 0x03
-> >>> +#define IS31FL3216_CHANNEL_CONFIG_REG 0x04
-> >>> +
-> >>> +struct is31fl32xx_priv;
-> >>> +struct is31fl32xx_led_data {
-> >>> +	struct led_classdev cdev;
-> >>> +	u8 channel; /* 1-based, max priv->cdef->channels */
-> >>> +	struct is31fl32xx_priv *priv;
-> >>> +};
-> >>> +
-> >>> +struct is31fl32xx_priv {
-> >>> +	const struct is31fl32xx_chipdef *cdef;
-> >>> +	struct i2c_client *client;
-> >>> +	unsigned int num_leds;
-> >>> +	struct is31fl32xx_led_data leds[0];  
-> >>
-> >> Is there any specific reason for not having *leds here instead?  
-> >
-> > I followed a pattern from leds-pwm where it did a single allocation
-> > for both priv and priv->leds[]. See sizeof_is31fl32xx_priv(), and
-> > its use, below. I saw the benefit as one fewer small allocation, so
-> > slightly more kind to the allocator (and devres). If you'd prefer to
-> > do it as two allocations, I'll make the change.  
-> 
-> OK, I had to look at this one more time. I like the idea.
-
-OK, I'll keep it as-is.
+ if NEW_LEDS
  
-> >>> +};
-> >>> +
-> >>> +/**
-> >>> + * struct is31fl32xx_chipdef - chip-specific attributes
-> >>> + * @channels            : Number of LED channels
-> >>> + * @shutdown_reg        : address of Shutdown register (optional)
-> >>> + * @pwm_update_reg      : address of PWM Update register
-> >>> + * @global_control_reg	: address of Global Control register (optional)
-> >>> + * @reset_reg           : address of Reset register (optional)
-> >>> + * @pwm_register_base	: address of first PWM register
-> >>> + * @pwm_registers_reversed: : true if PWM registers count down instead of up
-> >>> + * @led_control_register_base : address of first LED control register (optional)
-> >>> + * @enable_bits_per_led_control_register: number of LEDs enable bits in each
-> >>> + * @reset_func:         : pointer to reset function
-> >>> + *
-> >>> + * For all optional register addresses, the sentinel value %IS31FL32XX_REG_NONE
-> >>> + * indicates that this chip has no such register.
-> >>> + *
-> >>> + * If non-NULL, @reset_func will be called during probing to set all
-> >>> + * necessary registers to a known initialization state. This is needed
-> >>> + * for chips that do not have a @reset_reg.
-> >>> + *
-> >>> + * @enable_bits_per_led_control_register must be >=1 if
-> >>> + * @led_control_register_base != %IS31FL32XX_REG_NONE.
-> >>> + */
-> >>> +struct is31fl32xx_chipdef {
-> >>> +	u8	channels;
-> >>> +	u8	shutdown_reg;
-> >>> +	u8	pwm_update_reg;
-> >>> +	u8	global_control_reg;
-> >>> +	u8	reset_reg;
-> >>> +	u8	pwm_register_base;
-> >>> +	bool	pwm_registers_reversed;
-> >>> +	u8	led_control_register_base;
-> >>> +	u8	enable_bits_per_led_control_register;
-> >>> +	int (*reset_func)(struct is31fl32xx_priv *priv);
-> >>> +};
-> >>> +
-> >>> +static const struct is31fl32xx_chipdef is31fl3236_cdef = {
-> >>> +	.channels				= 36,
-> >>> +	.shutdown_reg				= 0x00,
-> >>> +	.pwm_update_reg				= 0x25,
-> >>> +	.global_control_reg			= 0x4a,
-> >>> +	.reset_reg				= 0x4f,
-> >>> +	.pwm_register_base			= 0x01,
-> >>> +	.led_control_register_base		= 0x26,
-> >>> +	.enable_bits_per_led_control_register	= 1,
-> >>> +};
-> >>> +
-> >>> +static const struct is31fl32xx_chipdef is31fl3235_cdef = {
-> >>> +	.channels				= 28,
-> >>> +	.shutdown_reg				= 0x00,
-> >>> +	.pwm_update_reg				= 0x25,
-> >>> +	.global_control_reg			= 0x4a,
-> >>> +	.reset_reg				= 0x4f,
-> >>> +	.pwm_register_base			= 0x05,
-> >>> +	.led_control_register_base		= 0x2a,
-> >>> +	.enable_bits_per_led_control_register	= 1,
-> >>> +};
-> >>> +
-> >>> +static const struct is31fl32xx_chipdef is31fl3218_cdef = {
-> >>> +	.channels				= 18,
-> >>> +	.shutdown_reg				= 0x00,
-> >>> +	.pwm_update_reg				= 0x16,
-> >>> +	.global_control_reg			= IS31FL32XX_REG_NONE,
-> >>> +	.reset_reg				= 0x17,
-> >>> +	.pwm_register_base			= 0x01,
-> >>> +	.led_control_register_base		= 0x13,
-> >>> +	.enable_bits_per_led_control_register	= 6,
-> >>> +};
-> >>> +
-> >>> +static int is31fl3216_reset(struct is31fl32xx_priv *priv);
-> >>> +static const struct is31fl32xx_chipdef is31fl3216_cdef = {
-> >>> +	.channels				= 16,
-> >>> +	.shutdown_reg				= IS31FL32XX_REG_NONE,
-> >>> +	.pwm_update_reg				= 0xB0,
-> >>> +	.global_control_reg			= IS31FL32XX_REG_NONE,
-> >>> +	.reset_reg				= IS31FL32XX_REG_NONE,
-> >>> +	.pwm_register_base			= 0x10,
-> >>> +	.pwm_registers_reversed			= true,
-> >>> +	.led_control_register_base		= 0x01,
-> >>> +	.enable_bits_per_led_control_register	= 8,
-> >>> +	.reset_func				= is31fl3216_reset,
-> >>> +};
-> >>> +
-> >>> +static int is31fl32xx_write(struct is31fl32xx_priv *priv, u8 reg, u8 val)
-> >>> +{
-> >>> +	int ret;
-> >>> +
-> >>> +	dev_dbg(&priv->client->dev, "writing register 0x%02X=0x%02X", reg, val);
-> >>> +
-> >>> +	ret =  i2c_smbus_write_byte_data(priv->client, reg, val);
-> >>> +	if (ret) {
-> >>> +		dev_err(&priv->client->dev,
-> >>> +			"register write to 0x%02X failed (error %d)",
-> >>> +			reg, ret);
-> >>> +	}
-> >>> +	return ret;
-> >>> +}
-> >>> +
-> >>> +/*
-> >>> + * Custom reset function for IS31FL3216 because it does not have a RESET
-> >>> + * register the way that the other IS31FL32xx chips do. We don't bother
-> >>> + * writing the GPIO and animation registers, because the registers we
-> >>> + * do write ensure those will have no effect.
-> >>> + */
-> >>> +static int is31fl3216_reset(struct is31fl32xx_priv *priv)
-> >>> +{
-> >>> +	unsigned int i;
-> >>> +	int ret;
-> >>> +
-> >>> +	for (i = 0; i < priv->cdef->channels; i++) {
-> >>> +		ret = is31fl32xx_write(priv, priv->cdef->pwm_register_base+i,
-> >>> +				       0x00);
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +	}
-> >>> +	ret = is31fl32xx_write(priv, priv->cdef->pwm_update_reg, 0);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +	ret = is31fl32xx_write(priv, IS31FL3216_LIGHTING_EFFECT_REG, 0x00);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +	ret = is31fl32xx_write(priv, IS31FL3216_CHANNEL_CONFIG_REG, 0x00);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +	ret = is31fl32xx_write(priv, IS31FL3216_CONFIG_REG, 0x00);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +
-> >>> +static int is31fl32xx_brightness_set(struct led_classdev *led_cdev,
-> >>> +				     enum led_brightness brightness)
-> >>> +{
-> >>> +	const struct is31fl32xx_led_data *led_data =
-> >>> +		container_of(led_cdev, struct is31fl32xx_led_data, cdev);
-> >>> +	const struct is31fl32xx_chipdef *cdef = led_data->priv->cdef;
-> >>> +	u8 pwm_register_offset;
-> >>> +	int ret;
-> >>> +
-> >>> +	dev_dbg(led_cdev->dev, "%s: %d\n", __func__, brightness);
-> >>> +
-> >>> +	/* NOTE: led_data->channel is 1-based */
-> >>> +	if (cdef->pwm_registers_reversed)
-> >>> +		pwm_register_offset = cdef->channels - led_data->channel;
-> >>> +	else
-> >>> +		pwm_register_offset = led_data->channel - 1;
-> >>> +
-> >>> +	ret = is31fl32xx_write(led_data->priv,
-> >>> +			       cdef->pwm_register_base + pwm_register_offset,
-> >>> +			       brightness);
-> >>> +	if (ret)
-> >>> +		return ret;  
-> >>
-> >> I infer that nothing wrong happens in case current process is preempted
-> >> here by the call originating from the other sub-LED?  
-> >
-> > I do not believe so. All the driver-specific data used here is read-only
-> > after probing. chipdefs are entirely const, and the only thing in priv
-> > that's referenced is the chipdef pointer which logically could not change
-> > post-probe. Actually nothing else in priv is modified post-probe either.
-> >
-> > The I2C core code has a mutex on the bus, so two writes cannot happen at
-> > once.
-> >
-> > In all these devices there is a unique PWM duty-cycle register for each
-> > LED channel (which is what is being written here), so no register writes
-> > for one LED channel effect any others.
-> >
-> > I believe the worst that could happen is that the device would see:
-> > 	PWM_REG_A write X
-> > 	PWM_REG_B write Y
-> > 	UPDATE_REG write 0
-> > 	UPDATE_REG write 0
-> > instead of
-> > 	PWM_REG_A write X
-> > 	UPDATE_REG write 0
-> > 	PWM_REG_B write Y
-> > 	UPDATE_REG write 0
-> > but that makes no difference to the functionality. Poking the update
-> > register merely applies all PWM register writes up to that point (I'm
-> > assuming to allow atomically changing the state of multiple LEDs at
-> > once).  
-> 
-> Thanks for this comprehensive explanation.
-
-Should I put some part of this explanation in a comment somewhere? Seems
-like the kind of thing someone else might wonder about in the future also.
-
-> > I should note here (as mentioned in cover letter), I made a choice to
-> > always leave the per-LED "enable" bits on, and let the PWM just get set
-> > to 0 naturally to turn an LED off. This differs from the existing SN3218
-> > driver, which used regmap_update_bits, and is then protected by a per-
-> > regmap mutex.  
-> 
-> ack.
-> 
-> >>> +	return is31fl32xx_write(led_data->priv, cdef->pwm_update_reg, 0);
-> >>> +
-> >>> +}
-> >>> +
-> >>> +static int is31fl32xx_init_regs(struct is31fl32xx_priv *priv)
-> >>> +{
-> >>> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-> >>> +	int ret;
-> >>> +
-> >>> +	if (cdef->reset_reg != IS31FL32XX_REG_NONE) {
-> >>> +		ret = is31fl32xx_write(priv, cdef->reset_reg, 0);
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +	}
-> >>> +	if (cdef->reset_func) {
-> >>> +		ret = cdef->reset_func(priv);
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +	}
-> >>> +	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
-> >>> +		u8 value =
-> >>> +		    GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
-> >>> +		u8 num_regs = cdef->channels /
-> >>> +				cdef->enable_bits_per_led_control_register;
-> >>> +		int i;
-> >>> +
-> >>> +		for (i = 0; i < num_regs; i++) {
-> >>> +			ret = is31fl32xx_write(priv,
-> >>> +					       cdef->led_control_register_base+i,
-> >>> +					       value);
-> >>> +			if (ret)
-> >>> +				return ret;
-> >>> +		}
-> >>> +	}
-> >>> +	if (cdef->shutdown_reg != IS31FL32XX_REG_NONE) {
-> >>> +		ret = is31fl32xx_write(priv, cdef->shutdown_reg, BIT(0));
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +	}
-> >>> +	if (cdef->global_control_reg != IS31FL32XX_REG_NONE) {
-> >>> +		ret = is31fl32xx_write(priv, cdef->global_control_reg, 0x00);
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +	}
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static inline size_t sizeof_is31fl32xx_priv(int num_leds)
-> >>> +{
-> >>> +	return sizeof(struct is31fl32xx_priv) +
-> >>> +		      (sizeof(struct is31fl32xx_led_data) * num_leds);
-> >>> +}
-> >>> +
-> >>> +static int is31fl32xx_parse_child_dt(const struct device *dev,
-> >>> +				     const struct device_node *child,
-> >>> +				     struct is31fl32xx_led_data *led_data)
-> >>> +{
-> >>> +	struct led_classdev *cdev = &led_data->cdev;
-> >>> +	int ret = 0;
-> >>> +	u32 reg;
-> >>> +
-> >>> +	cdev->name = of_get_property(child, "label", NULL) ? : child->name;
-> >>> +
-> >>> +	ret = of_property_read_u32(child, "reg", &reg);
-> >>> +	if (ret || reg < 1 || reg > led_data->priv->cdef->channels) {
-> >>> +		dev_err(dev,
-> >>> +			"Child node %s does not have a valid reg property\n",
-> >>> +			child->name);
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +	led_data->channel = reg;
-> >>> +
-> >>> +	cdev->default_trigger = of_get_property(child, "linux,default-trigger",
-> >>> +						NULL);
-> >>> +	cdev->brightness = LED_OFF;  
-> >>
-> >> devm_kzalloc secures that.  
-> >
-> > OK, I will remove.
-> >  
-> >>> +	ret = of_property_read_u32(child, "max-brightness",
-> >>> +				   &cdev->max_brightness);
-> >>> +	if (ret == -EINVAL) {
-> >>> +		cdev->max_brightness = 255;  
-> >>
-> >> s/255/LED_FULL/  
-> >
-> > Noted, although (from the patch 2 discussion) max-brightness property is
-> > removed/replaced, this would go away anyways.
-> >  
-> >>> +	} else if (ret) {
-> >>> +		dev_dbg(dev,
-> >>> +			"Child node %s has an invalid max-brightness property\n",
-> >>> +			child->name);
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +
-> >>> +	cdev->brightness_set_blocking = is31fl32xx_brightness_set;  
-> >>
-> >> Please add empty line here.  
-> >
-> > Done.
-> >  
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static struct is31fl32xx_led_data *is31fl32xx_find_led_data(
-> >>> +					struct is31fl32xx_priv *priv,
-> >>> +					u8 channel)
-> >>> +{
-> >>> +	size_t i;
-> >>> +
-> >>> +	for (i = 0; i < priv->num_leds; i++) {
-> >>> +		if (priv->leds[i].channel == channel)
-> >>> +			return &priv->leds[i];
-> >>> +	}  
-> >>
-> >> Ditto.  
-> >
-> > Done.
-> >  
-> >>> +	return NULL;
-> >>> +}
-> >>> +
-> >>> +static int is31fl32xx_parse_dt(struct device *dev,
-> >>> +			       struct is31fl32xx_priv *priv)
-> >>> +{
-> >>> +	struct device_node *child;
-> >>> +
-> >>> +	for_each_child_of_node(dev->of_node, child) {
-> >>> +		struct is31fl32xx_led_data *led_data =
-> >>> +			&priv->leds[priv->num_leds];
-> >>> +		int ret = 0;
-> >>> +		const struct is31fl32xx_led_data *other_led_data;
-> >>> +
-> >>> +		led_data->priv = priv;
-> >>> +
-> >>> +		ret = is31fl32xx_parse_child_dt(dev, child, led_data);
-> >>> +		if (ret)
-> >>> +			continue;  
-> >>
-> >> I prefer failing in such cases,  
-> >
-> > OK, I will change to an 'goto err' which will have an 'of_node_put()'
-> > and 'return ret'.
-> >
-> > I will say, however, that while testing the error-detection in the
-> > parsing logic, it was very convenient to construct a single devicetree
-> > with a variety of errors. Then a single boot would test multiple
-> > cases at once.  
-> 
-> Good idea for testing, but in case some failure occurs during DT child
-> node parsing in the release environment you're left with unused
-> allocated memory.
-
-Agreed. BTW, I assume from this that it's common to say "if there's 
-anything wrong in one part of your DT, there is no guarantee as to what 
-parts will actually be used"? I say this because what we're saying is that 
-if one LED node on this device is faulty, that all of them are ignored. 
-Analogy might be to a whole I2C bus being ignored because one of the 
-devices on it failed to probe. To the devicetree it's still a parent/child 
-bus/address relationship, even though the driver implementation is 
-very different.
-
-> >>> +
-> >>> +		/* Detect if channel is already in use by another child */
-> >>> +		other_led_data = is31fl32xx_find_led_data(priv,
-> >>> +							  led_data->channel);
-> >>> +		if (other_led_data) {
-> >>> +			dev_err(dev,
-> >>> +				"%s ignored: channel %d already used by %s",
-> >>> +				led_data->cdev.name,
-> >>> +				led_data->channel,
-> >>> +				other_led_data->cdev.name);
-> >>> +			continue;  
-> >>
-> >> Ditto.  
-> >
-> > OK.
-> >  
-> >>> +		}
-> >>> +
-> >>> +		ret = devm_led_classdev_register(dev, &led_data->cdev);
-> >>> +		if (ret == 0) {
-> >>> +			priv->num_leds++;
-> >>> +		} else {
-> >>> +			dev_err(dev, "failed to register PWM led for %s: %d\n",
-> >>> +				led_data->cdev.name, ret);  
-> >
-> > Should I also fail here, then? Right now it will continue trying to
-> > register future LED devices if a classdev_register fails for some
-> > reason, and will successfully load even if all of them fail.  
-> 
-> Please fail here too. If we can't setup the sub-LED that is advertised
-> in a DT child node, then it means that something went wrong.
-> This is clear error case.
-
-Done.
-
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static const struct of_device_id of_is31fl31xx_match[] = {
-> >>> +	{ .compatible = "issi,is31fl3236", .data = &is31fl3236_cdef, },
-> >>> +	{ .compatible = "issi,is31fl3235", .data = &is31fl3235_cdef, },
-> >>> +	{ .compatible = "issi,is31fl3218", .data = &is31fl3218_cdef, },
-> >>> +	{ .compatible = "issi,is31fl3216", .data = &is31fl3216_cdef, },
-> >>> +	{},
-> >>> +};
-> >>> +
-> >>> +MODULE_DEVICE_TABLE(of, of_is31fl31xx_match);
-> >>> +
-> >>> +static int is31fl32xx_probe(struct i2c_client *client,
-> >>> +				  const struct i2c_device_id *id)
-> >>> +{
-> >>> +	const struct is31fl32xx_chipdef *cdef;
-> >>> +	const struct of_device_id *of_dev_id;
-> >>> +	struct device *dev = &client->dev;
-> >>> +	struct is31fl32xx_priv *priv;
-> >>> +	int count;
-> >>> +	int ret = 0;
-> >>> +
-> >>> +	of_dev_id = of_match_device(of_is31fl31xx_match, dev);
-> >>> +	if (!of_dev_id)
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	cdef = of_dev_id->data;
-> >>> +
-> >>> +	count = of_get_child_count(dev->of_node);
-> >>> +	if (!count)
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	priv = devm_kzalloc(dev, sizeof_is31fl32xx_priv(count),
-> >>> +			    GFP_KERNEL);
-> >>> +	if (!priv)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	priv->client = client;
-> >>> +	priv->cdef = cdef;
-> >>> +	i2c_set_clientdata(client, priv);
-> >>> +
-> >>> +	ret = is31fl32xx_init_regs(priv);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +
-> >>> +	ret = is31fl32xx_parse_dt(dev, priv);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static int is31fl32xx_remove(struct i2c_client *client)
-> >>> +{
-> >>> +	struct is31fl32xx_priv *priv = i2c_get_clientdata(client);
-> >>> +
-> >>> +	/* If there is a reset reg, then it does everything we need */
-> >>> +	if (priv->cdef->reset_reg != IS31FL32XX_REG_NONE)
-> >>> +		return is31fl32xx_write(priv, priv->cdef->reset_reg, 0);
-> >>> +
-> >>> +	/* If there is a reset func, then it does everything we need */
-> >>> +	if (priv->cdef->reset_func)
-> >>> +		return priv->cdef->reset_func(priv);
-> >>> +
-> >>> +	/* If we can't reset, then try just using software-shutdown mode */
-> >>> +	if (priv->cdef->shutdown_reg != IS31FL32XX_REG_NONE)
-> >>> +		return is31fl32xx_write(priv, priv->cdef->shutdown_reg, 0x00);
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +/*
-> >>> + * i2c-core requires that id_table be non-NULL, even though
-> >>> + * it is not used for DeviceTree based instantiation.
-> >>> + */
-> >>> +static const struct i2c_device_id is31fl31xx_id[] = {
-> >>> +	{},
-> >>> +};
-> >>> +
-> >>> +MODULE_DEVICE_TABLE(i2c, is31fl31xx_id);
-> >>> +
-> >>> +static struct i2c_driver is31fl32xx_driver = {
-> >>> +	.driver = {
-> >>> +		.name	= "is31fl32xx",
-> >>> +		.of_match_table = of_is31fl31xx_match,
-> >>> +	},
-> >>> +	.probe		= is31fl32xx_probe,
-> >>> +	.remove		= is31fl32xx_remove,
-> >>> +	.id_table	= is31fl31xx_id,
-> >>> +};
-> >>> +
-> >>> +module_i2c_driver(is31fl32xx_driver);
-> >>> +
-> >>> +MODULE_AUTHOR("David Rivshin <drivshin@allworx.com>");
-> >>> +MODULE_DESCRIPTION("ISSI IS31FL32xx LED driver");
-> >>> +MODULE_LICENSE("GPL v2");
-> >>>  
++config LEDS_RGB
++	bool "RGB Color LED Support"
++	help
++	 This option enables support for RGB Color LED devices.
++	 Sysfs attribute brightness is interpreted as a HSV color value.
++	 For details see Documentation/leds/leds-class.txt.
++
+ config LEDS_CLASS
+ 	tristate "LED Class Support"
+ 	help
+@@ -29,6 +36,10 @@ config LEDS_CLASS_FLASH
+ 	  for the flash related features of a LED device. It can be built
+ 	  as a module.
+ 
++if LEDS_RGB
++comment "RGB Color LED drivers"
++endif # LEDS_RGB
++
+ comment "LED drivers"
+ 
+ config LEDS_88PM860X
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index e9d5309..cc3676f 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -1,6 +1,8 @@
+ 
+ # LED Core
+-obj-$(CONFIG_NEW_LEDS)			+= led-core.o
++obj-$(CONFIG_NEW_LEDS)			+= led-core-objs.o
++led-core-objs-y				:= led-core.o
++led-core-objs-$(CONFIG_LEDS_RGB)	+= led-rgb-core.o
+ obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+ obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
+ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index aa84e5b..007a5b3 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -53,7 +53,7 @@ static ssize_t brightness_store(struct device *dev,
+ 	if (ret)
+ 		goto unlock;
+ 
+-	if (state == LED_OFF)
++	if (!__is_brightness_set(state))
+ 		led_trigger_remove(led_cdev);
+ 	led_set_brightness(led_cdev, state);
+ 
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 3495d5d..e75b0c8 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -62,7 +62,7 @@ static void led_timer_function(unsigned long data)
+ 	}
+ 
+ 	brightness = led_get_brightness(led_cdev);
+-	if (!brightness) {
++	if (!__is_brightness_set(brightness)) {
+ 		/* Time to switch the LED on. */
+ 		brightness = led_cdev->blink_brightness;
+ 		delay = led_cdev->blink_delay_on;
+@@ -133,8 +133,9 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
+ 	if (current_brightness)
+ 		led_cdev->blink_brightness = current_brightness;
+ 	if (!led_cdev->blink_brightness)
+-		led_cdev->blink_brightness = led_cdev->max_brightness;
+-
++		led_cdev->blink_brightness =
++				led_confine_brightness(led_cdev,
++						led_cdev->max_brightness);
+ 	led_cdev->blink_delay_on = delay_on;
+ 	led_cdev->blink_delay_off = delay_off;
+ 
+@@ -235,12 +236,13 @@ void led_set_brightness(struct led_classdev *led_cdev,
+ 		 * work queue task to avoid problems in case we are called
+ 		 * from hard irq context.
+ 		 */
+-		if (brightness == LED_OFF) {
++		if (!__is_brightness_set(brightness)) {
+ 			led_cdev->flags |= LED_BLINK_DISABLE;
+ 			schedule_work(&led_cdev->set_brightness_work);
+ 		} else {
+ 			led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
+-			led_cdev->blink_brightness = brightness;
++			led_cdev->blink_brightness =
++				led_confine_brightness(led_cdev, brightness);
+ 		}
+ 		return;
+ 	}
+@@ -265,7 +267,7 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
+ 				enum led_brightness value)
+ {
+-	led_cdev->brightness = min(value, led_cdev->max_brightness);
++	led_cdev->brightness = led_confine_brightness(led_cdev, value);
+ 
+ 	if (led_cdev->flags & LED_SUSPENDED)
+ 		return;
+@@ -280,7 +282,7 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
+ 		return -EBUSY;
+ 
+-	led_cdev->brightness = min(value, led_cdev->max_brightness);
++	led_cdev->brightness = led_confine_brightness(led_cdev, value);
+ 
+ 	if (led_cdev->flags & LED_SUSPENDED)
+ 		return 0;
+diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
+new file mode 100644
+index 0000000..b81daeb
+--- /dev/null
++++ b/drivers/leds/led-rgb-core.c
+@@ -0,0 +1,42 @@
++/*
++ * LED Class Color Support
++ *
++ * Author: Heiner Kallweit <hkallweit1@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include "leds.h"
++
++#define LED_HUE_SAT_MASK	0x00ffff00
++
++/*
++ * The color extension handles RGB LEDs but uses a HSV color model internally.
++ * led_rgb_adjust_hue_sat sets hue and saturation part of the HSV color value.
++ */
++static enum led_brightness led_rgb_adjust_hue_sat(struct led_classdev *led_cdev,
++						  enum led_brightness value)
++{
++	/* LED_SET_HUE_SAT sets hue and saturation even if both are zero */
++	if (value & LED_SET_HUE_SAT || value > LED_FULL)
++		return value & LED_HUE_SAT_MASK;
++	else
++		return led_cdev->brightness & ~LED_BRIGHTNESS_MASK;
++}
++
++enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
++					   enum led_brightness value)
++{
++	enum led_brightness brightness = 0;
++
++	if (led_cdev->flags & LED_DEV_CAP_HSV)
++		brightness = led_rgb_adjust_hue_sat(led_cdev, value);
++
++	return brightness |
++	       min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
++}
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index db3f20d..f3a8ed5 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -16,17 +16,34 @@
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
+ 
++#define LED_BRIGHTNESS_MASK	0x000000ff
++
+ static inline int led_get_brightness(struct led_classdev *led_cdev)
+ {
+ 	return led_cdev->brightness;
+ }
+ 
++static inline bool __is_brightness_set(enum led_brightness brightness)
++{
++	return (brightness & LED_BRIGHTNESS_MASK) != LED_OFF;
++}
++
+ void led_init_core(struct led_classdev *led_cdev);
+ void led_stop_software_blink(struct led_classdev *led_cdev);
+ void led_set_brightness_nopm(struct led_classdev *led_cdev,
+ 				enum led_brightness value);
+ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
+ 				enum led_brightness value);
++#if IS_ENABLED(CONFIG_LEDS_RGB)
++enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
++					   enum led_brightness value);
++#else
++static inline enum led_brightness led_confine_brightness(
++		struct led_classdev *led_cdev, enum led_brightness value)
++{
++	return min(value, led_cdev->max_brightness);
++}
++#endif
+ 
+ extern struct rw_semaphore leds_list_lock;
+ extern struct list_head leds_list;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index f203a8f..1e98b2e 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -29,8 +29,16 @@ enum led_brightness {
+ 	LED_OFF		= 0,
+ 	LED_HALF	= 127,
+ 	LED_FULL	= 255,
++	/*
++	 * dummy enum value to make gcc use a 32 bit type for the enum
++	 * even if compiled with -fshort-enums. This is needed for
++	 * the enum to store hsv values.
++	 */
++	LED_LEVEL_DUMMY	= 0xffffffff,
+ };
+ 
++#define LED_SET_HUE_SAT		BIT(24)
++
+ struct led_classdev {
+ 	const char		*name;
+ 	enum led_brightness	 brightness;
+@@ -50,6 +58,7 @@ struct led_classdev {
+ #define LED_SYSFS_DISABLE	(1 << 22)
+ #define LED_DEV_CAP_FLASH	(1 << 23)
+ #define LED_HW_PLUGGABLE	(1 << 24)
++#define LED_DEV_CAP_HSV		(1 << 25)
+ 
+ 	/* Set LED brightness level
+ 	 * Must not sleep. Use brightness_set_blocking for drivers
+-- 
+2.7.1
