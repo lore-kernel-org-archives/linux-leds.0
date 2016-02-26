@@ -1,130 +1,126 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH v3 00/12] pwm: add support for atomic update
-Date: Thu, 25 Feb 2016 15:14:03 -0800
-Message-ID: <CAD=FV=VckTVD8b1g+f0G2kMeoTjvY0pAGhoDnWQN_dAmqSxBxg@mail.gmail.com>
-References: <20151110173416.GB21727@ulmo>
-	<CAD=FV=WL3jYEgVe-m6QcAyQwfJgdX4J5OtKisKwyoKOrTSpEQA@mail.gmail.com>
-	<20160125170855.GA10182@ulmo>
-	<CAD=FV=Xvxeqo3imUmjukC5iYk3EZkrJ04G7C1B-w4xyr-r6-2Q@mail.gmail.com>
-	<20160203145337.GD9650@ulmo>
-	<CAD=FV=U_x1cxx6RrHuVgVV8GbOwm9DXXJcyiArbbQySUOaxrvQ@mail.gmail.com>
-	<20160222175929.GA23899@ulmo>
-	<CAD=FV=UCErW3EjYRtwt49_ztNR7cyY4U0o4R_dxdomer-Ac2Dg@mail.gmail.com>
-	<20160223143859.GA27656@ulmo>
-	<CAD=FV=UvxG3MYD4MKQJqN7W68uMjd-s+FH-e8tkrLCpS0RLmZQ@mail.gmail.com>
-	<20160223181448.GA14754@ulmo.nvidia.com>
-	<CAD=FV=VM3cOQ0HqwLANBw9MVBCyFTrSyPe_dGzgPucuMUEWRKA@mail.gmail.com>
+From: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
+Subject: Re: [PATCH RFC 2/3] DT: leds: Add binding for the ISSI IS31FL32xx
+ family of LED drivers
+Date: Thu, 25 Feb 2016 19:30:23 -0500
+Message-ID: <20160225193023.6f8f1f89.drivshin.allworx@gmail.com>
+References: <1456251445-23970-1-git-send-email-drivshin.allworx@gmail.com>
+	<1456251445-23970-3-git-send-email-drivshin.allworx@gmail.com>
+	<56CDD4A1.5030802@samsung.com>
+	<20160224143440.374651b1.drivshin.allworx@gmail.com>
+	<CAL_JsqJzcgSBW+fQ2dAV5M9O=pi_xc+KPymOhCyO4oifHo7y3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=VM3cOQ0HqwLANBw9MVBCyFTrSyPe_dGzgPucuMUEWRKA@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-pwm <linux-pwm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-sunxi@googlegroups.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@li>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33964 "EHLO
+	mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752515AbcBZAa1 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 25 Feb 2016 19:30:27 -0500
+In-Reply-To: <CAL_JsqJzcgSBW+fQ2dAV5M9O=pi_xc+KPymOhCyO4oifHo7y3Q@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>
 
-Thierry,
+On Wed, 24 Feb 2016 13:49:46 -0600
+Rob Herring <robh+dt@kernel.org> wrote:
 
-On Tue, Feb 23, 2016 at 10:42 AM, Doug Anderson <dianders@google.com> wrote:
-> Thierry,
->
-> On Tue, Feb 23, 2016 at 10:14 AM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
->>> pwm_get_period(): get the period of the PWM; if the PWM has not yet
->>> been configured by software this gets the default period (possibly
->>> specified by the device tree).
->>
->> No. I think we'll need a different construct for the period defined by
->> DT or board files. pwm_get_period() is the legacy API to retrieve the
->> "current" period, even if it was lying a little before the atomic API.
->
-> Ah, got it.  I think I missed that you considered pwm_get_period()
-> legacy and that you eventually wanted to get rid of it.  OK, then what
-> you say makes sense.
->
->
->>> That should work with one minor problem.  If HW readout isn't
->>> supported then pwm_get_state() in probe will presumably return 0 for
->>> the duty cycle.  That means it will change the voltage.  That's in
->>> contrast to how I think things work today where the voltage isn't
->>> changed until the first set_voltage() call.  At least the last time I
->>> tested things get_voltage() would simply report an incorrect value
->>> until the first set_voltage().  I think existing behavior (reporting
->>> the wrong value) is better than new behavior (change the value at
->>> probe).
->>
->> That's exactly the point. Reporting a wrong value isn't really a good
->> option. Changing the voltage on boot is the only way to make the logical
->> state match the hardware state on boot. Chances are that if you don't
->> have hardware readout support you probably don't care what state your
->> regulator will be in.
->>
->> Then again, if we don't support hardware readout, setting up the logical
->> state with data from DT (or board files) and defaulting the duty cycle
->> to 0, we end up with exactly what we had before, even with the atomic
->> API, right? Maybe that's okay, too.
->
-> IMHO this is a change in behavior that will break existing users.
-> Anyone using a PWM regulator will suddenly find their voltage changing
-> at bootup.  Certainly today all users of the PWM regulator don't seem
-> to mind (apparently) the the voltage is reported incorrectly at bootup
-> but I bet they'd mind if the voltage suddenly started changing for
-> them at bootup.
->
-> It seems better to preserve existing behavior and print a warning that
-> the voltage will be reported incorrectly until HW Readout is
-> supported.
->
-> Of course, we're only talking about two real users in mainline here:
-> Rockchip boards and the "stih407-family".  If we just fix both of
-> those to support HW Readout before landing the change then I'm fine
-> with doing what you say.
->
->
->>> ...and if set_voltage() remains untouched then we can solve my probe
->>> problem by renaming pwm_get_state() to pwm_get_hw_state() and having
->>> it return an error if HW readout is not supported.  Then we only call
->>> pwm_get_args() / pwm_apply_state() when we support HW readout.
->>
->> The problem is that we make the API clumsy to use. If we don't sync the
->> "initial" state (as defined by DT or board files) to hardware at any
->> point, then we need to add the pwm_args construct and always stick to
->> it. I think it weird to have to use the pwm_args.period instead of the
->> current period.
->>
->> So we're back to square one, really. That's exactly what Mark brought up
->> originally.
->
-> I had missed the part where you wanted to deprecate pwm_get_period().
-> Thus my points here aren't really valid.
->
-> In my mind the old API was perfectly fine (and actually quite clean /
-> simple to use) except in the special case of avoiding the PWM
-> regulator glitches.  With that mindset I think my previous email make
-> sense.  However, this is your subsystem to maintain and if you think
-> moving everyone to a new atomic API makes more sense then you're in
-> the best position to make that decision.  :)
+> On Wed, Feb 24, 2016 at 1:34 PM, David Rivshin (Allworx)
+> <drivshin.allworx@gmail.com> wrote:
+> > On Wed, 24 Feb 2016 17:04:49 +0100
+> > Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> >  
+> >> Hi David,
+> >>
+> >> Thanks for the patch.
+> >>
+> >> On 02/23/2016 07:17 PM, David Rivshin (Allworx) wrote:  
+> >> > From: David Rivshin <drivshin@allworx.com>
+> >> >
+> >> > This adds a binding description for the is31fl3236/35/18/16 I2C LED
+> >> > drivers.
+> >> >
+> >> > Signed-off-by: David Rivshin <drivshin@allworx.com>
+> >> > ---
+> >> >   .../devicetree/bindings/leds/leds-is31fl32xx.txt   | 51 ++++++++++++++++++++++
+> >> >   1 file changed, 51 insertions(+)
+> >> >   create mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> >> >
+> >> > diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> >> > new file mode 100644
+> >> > index 0000000..0a05a1d
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> >> > @@ -0,0 +1,51 @@
+> >> > +Binding for ISSI IS31FL32xx LED Drivers
+> >> > +
+> >> > +The IS31FL32xx family of LED drivers are I2C devices with multiple
+> >> > +constant-current channels, each with independent 256-level PWM control.
+> >> > +Each LED is represented as a sub-node of the device.
+> >> > +
+> >> > +Required properties:
+> >> > +- compatible: one of
+> >> > +   issi,is31fl3236
+> >> > +   issi,is31fl3235
+> >> > +   issi,is31fl3218
+> >> > +   issi,is31fl3216
+> >> > +- reg: I2C slave address
+> >> > +- address-cells : must be 1
+> >> > +- size-cells : must be 0
+> >> > +
+> >> > +LED sub-node properties:
+> >> > +- reg : LED channel number (1..N)
+> >> > +- max-brightness : (optional) Maximum brightness possible for the LED.  
+> >>
+> >> Please use led-max-microamp instead. You can refer to
+> >> Documentation/devicetree/bindings/leds/common.txt for detailed
+> >> description.  
+> >
+> > FYI, I think I got that property from leds-pwm, since these use PWMs
+> > internally, although I don't actually use it myself.
+> >
+> > I can see how led-max-microamp could be a useful property, however
+> > I'm uncertain about computing cdev->max_brightness from it as these
+> > devices look to control their max current via an external resistor.
+> > I suppose either the resistor value, or the resultant max-current
+> > would need to be given in the devicetree, and then that used along
+> > with led-max-microamp to compute cdev->max_brightness. Although I'd
+> > want it to be optional as I suspect most users don't need any
+> > restriction. Also, I don't think I can properly test the result,
+> > which always makes me nervous.
+> >
+> > Would it be acceptable to simply remove the max-brightness property
+> > without adding led-max-microamp? It can always be added if a user
+> > turns out to need it in the future. Or do you feel strongly that
+> > led-max-microamp should be in the binding from the start?  
+> 
+> You should put in DT whatever makes sense for the controls the h/w
+> has. If you only have a PWM, then only max-brightness makes sense and
+> led-max-microamp does not.
 
-So just to summarize:
+There are multiple ways you can look at it, and I'm not sure which
+is the overriding one. The brightness of the LED is determined by the 
+current, which is in turn a combination of the following:
+- The max per-LED current is set with an external resistor.
+- Some devices have a scaling factor, which can be changed dynamically:
+  - One of the devices has either a global scaling factor in a register,
+    that can adjust max-current from 0.25x to 2x.
+  - Two of the devices have a per-LED current divisor (1, 2, 3, or 4).
+- The main control is a 0-255 "PWM duty cycle" register, which 
+  effectively scales the current.
+IOW, the final current is:
+ <resistor-setting> * <scaling> * <PWM-duty-cycle>
+Currently the binding and driver do not support setting either type of 
+scaling (always unity) and only use the PWM duty cycle to dim the LED.
 
-* Add pwm_get_state(), pwm_apply_state(), pwm_get_args().
-pwm_get_state() initially returns 0 for duty cycle if driver doesn't
-support readout.
+So if the purpose is to say "never allow this LED channel to go above 
+X current", the leds-max-microamp probably makes sense.
 
-* Re-implement pwm_get_period() (and maybe other similar functions)
-atop pwm_get_state() as you describe earlier in the thread.
+If the purpose is to say "never allow the PWM duty cycle register
+for this channel to go above value X", then max-brightness perhaps
+makes sense. 
 
-* Document pwm_get_period() (and maybe other similar functions) as deprecated.
-
-* Fix drivers for all current 2 users of PWM regulator to support
-hardware readout.
-
-* Update PWM regulator as you described earlier in the thread (Feb 23).
-
-* If PWM regulator is ever used on a new board whose PWM doesn't
-support hardware readout, the voltage will change at probe time.
-
-
-Did I get all that right?  Thanks!
-
--Doug
+If the scaling is fixed by the DT (i.e won't be changed dynamically 
+by the OS), then those two are basically equivalent in functionality. 
+But if scaling can be changed dynamically, then they have different 
+implications.
