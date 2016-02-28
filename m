@@ -1,204 +1,43 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 4/4] leds: core: add support for RGB LED's
-Date: Mon, 29 Feb 2016 10:57:19 +0100
-Message-ID: <56D415FF.7010106@samsung.com>
-References: <56C6381A.7060209@gmail.com> <56C71FBB.7080901@samsung.com>
- <56CCC0B9.2080108@gmail.com> <56CEF626.8070309@samsung.com>
- <56D0D355.4010509@gmail.com>
+From: "Mr. DOUGLAS" <douglascontact6048@live.com>
+Subject: =?utf-8?q?INFORMA=C3=87=C3=83O_IMPORTANTE__RE=3A_Consultoria_de_Investime?=
+ =?utf-8?q?nto_em_sua_Localidade=2E?=
+Date: Sun, 28 Feb 2016 04:41:06 -0800
+Message-ID: <20160228134005.E97E38FD702@webmail.cefet-rj.br>
+Reply-To: johnsondouglas8738@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15024 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752026AbcB2J5X (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Feb 2016 04:57:23 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O3A00ISLZNKN170@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 29 Feb 2016 09:57:20 +0000 (GMT)
-In-reply-to: <56D0D355.4010509@gmail.com>
+Received: from webmail.cefet-rj.br ([200.9.149.52]:55203 "EHLO
+	webmail.cefet-rj.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755299AbcB2Oyg convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Feb 2016 09:54:36 -0500
+Content-Description: Mail message body
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org
+To: Recipients <douglascontact6048@live.com>
 
-On 02/26/2016 11:36 PM, Heiner Kallweit wrote:
-> Am 25.02.2016 um 13:40 schrieb Jacek Anaszewski:
->> On 02/23/2016 09:27 PM, Heiner Kallweit wrote:
->>> Am 19.02.2016 um 14:59 schrieb Jacek Anaszewski:
->>>> Hi Heiner,
->>>>
->>>> On 02/18/2016 10:31 PM, Heiner Kallweit wrote:
->>>>> Add support for RGB LED's. Flag LED_DEV_CAP_HSV is used to instruct
->>>>> the core to convert HSV to RGB on output.
->>>>>
->>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>>> ---
->>>>> v2:
->>>>> - move hsv -> rgb conversion to separate file
->>>>> - remove flag LED_DEV_CAP_RGB
->>>>> v3:
->>>>> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
->>>>>      This is needed in cases when we have monochrome and color LEDs
->>>>>      as well in a system.
->>>>> ---
->>>>>     drivers/leds/led-color-core.c | 35 +++++++++++++++++++++++++++++++++++
->>>>>     drivers/leds/led-core.c       | 17 ++++++++++++++++-
->>>>>     drivers/leds/leds.h           |  1 +
->>>>>     3 files changed, 52 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/leds/led-color-core.c b/drivers/leds/led-color-core.c
->>>>> index b101f73..467beeb 100644
->>>>> --- a/drivers/leds/led-color-core.c
->>>>> +++ b/drivers/leds/led-color-core.c
->>>>> @@ -31,3 +31,38 @@ enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->>>>>         return brightness |
->>>>>                min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
->>>>>     }
->>>>> +
->>>>> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv)
->>>>> +{
->>>>> +    int h = min_t(int, (hsv >> 16) & 0xff, 251);
->>>>> +    int s = (hsv >> 8) & 0xff;
->>>>> +    int v = hsv & 0xff;
->>>>> +    int f, p, q, t, r, g, b;
->>>>> +
->>>>> +    if (!v)
->>>>> +        return 0;
->>>>> +    if (!s)
->>>>> +        return (v << 16) + (v << 8) + v;
->>>>> +
->>>>> +    f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
->>>>> +    p = v - DIV_ROUND_CLOSEST(s * v, 255);
->>>>> +    q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
->>>>> +    t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
->>>>> +
->>>>> +    switch (h / 42) {
->>>>> +    case 0:
->>>>> +        r = v; g = t; b = p; break;
->>>>> +    case 1:
->>>>> +        r = q; g = v; b = p; break;
->>>>> +    case 2:
->>>>> +        r = p; g = v; b = t; break;
->>>>> +    case 3:
->>>>> +        r = p; g = q; b = v; break;
->>>>> +    case 4:
->>>>> +        r = t; g = p; b = v; break;
->>>>> +    case 5:
->>>>> +        r = v; g = p; b = q; break;
->>>>> +    }
->>>>> +
->>>>> +    return (r << 16) + (g << 8) + b;
->>>>> +}
->>>>
->>>> Do you plan to add a driver using Color LEDs Support?
->>>> If so, it would be good to add it to this patch set,
->>>> which would make testing this code easier.
->>>>
->>> I own a Thingm Blink(1) dual RGB LED USB device which I use for testing.
->>> With the RGB extension in the kernel the driver could be significantly simplified
->>> so that the changes are more or less a rewrite of the driver.
->>> Because the USB device uses a HID interface the driver currently is located
->>> under drivers/hid. IMHO that's questionable because the driver implements
->>> LED functionality only. Moving this driver to drivers/leds could be an option.
->>> When sending the patches for this driver to you for testing I'll set the maintainer
->>> of the HID subsystem on cc.
->>
->> But it will be still USB driver. Please target the driver for usb
->> subsystem and add myself on cc.
->>
-> I'm afraid the maintainer of the HID subsystem will reject the driver patches because
-> he can't even apply them as the RGB LED extension is not yet in his tree.
-> Would it make sense that I send the driver patches to you first for testing the
-> RGB extension (not as official patches)?
-> If everything goes well and the RGB extension shows up in the linux-next tree eventually
-> then the driver changes can be submitted officially to the HID maintainer.
+Oi,
 
-USB maintainer could only ack it and I would merge it through the
-LED tree. I propose to cc the whole patch set also to linux-usb list,
-which would also have the benefit that more people could look at
-the whole idea of using hsv interface for RGB LED. The traffic on
-linux-leds isn't too heavy. Please cc the patch set also to linux-kernel
-next time.
+Temos planejado investir alguns fundos no seu pa=EDs.
 
->>>>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->>>>> index 525d566..255bdd7 100644
->>>>> --- a/drivers/leds/led-core.c
->>>>> +++ b/drivers/leds/led-core.c
->>>>> @@ -31,6 +31,11 @@ static int __led_set_brightness(struct led_classdev *led_cdev,
->>>>>         if (!led_cdev->brightness_set)
->>>>>             return -ENOTSUPP;
->>>>>
->>>>> +#if IS_ENABLED(CONFIG_LEDS_COLOR)
->>>>> +    if (led_cdev->flags & LED_DEV_CAP_HSV)
->>>>> +        value = led_hsv_to_rgb(value);
->>>>> +#endif
->>>>> +
->>>>
->>>> Please drop this changes. led_hsv_to_rgb() can be used internally
->>>> by RGB LED class drivers.
->>>>
->>> OK
->>>
->>>>>         led_cdev->brightness_set(led_cdev, value);
->>>>>
->>>>>         return 0;
->>>>> @@ -42,6 +47,11 @@ static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
->>>>>         if (!led_cdev->brightness_set_blocking)
->>>>>             return -ENOTSUPP;
->>>>>
->>>>> +#if IS_ENABLED(CONFIG_LEDS_COLOR)
->>>>> +    if (led_cdev->flags & LED_DEV_CAP_HSV)
->>>>> +        value = led_hsv_to_rgb(value);
->>>>> +#endif
->>>>> +
->>>>
->>>> Ditto.
->>>>
->>>>>         return led_cdev->brightness_set_blocking(led_cdev, value);
->>>>>     }
->>>>>
->>>>> @@ -294,7 +304,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
->>>>>     {
->>>>>         int ret = 0;
->>>>>
->>>>> -    if (led_cdev->brightness_get) {
->>>>> +    /*
->>>>> +     * for now reading back the color is not supported as multiple
->>>>> +     * HSV -> RGB -> HSV conversions may distort the color due to
->>>>> +     * rounding issues in the conversion algorithm
->>>>> +     */
->>>>> +    if (led_cdev->brightness_get && !(led_cdev->flags & LED_DEV_CAP_HSV)) {
->>>>>             ret = led_cdev->brightness_get(led_cdev);
->>>>>             if (ret >= 0) {
->>>>>                 led_cdev->brightness = ret;
->>>>> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
->>>>> index 094707f..763f19a 100644
->>>>> --- a/drivers/leds/leds.h
->>>>> +++ b/drivers/leds/leds.h
->>>>> @@ -37,6 +37,7 @@ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->>>>>     #if IS_ENABLED(CONFIG_LEDS_COLOR)
->>>>>     enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->>>>>                             enum led_brightness value);
->>>>> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
->>>>>     #else
->>>>>     static inline enum led_brightness led_confine_brightness(
->>>>>             struct led_classdev *led_cdev, enum led_brightness value)
->>>>>
->>>>
->>>>
->>>
->>>
->>>
->>
->>
->
->
->
+Responder se voc=EA estiver interessado.
 
+Sauda=E7=F5es,
+Sir Henry Neville Lindley Keswick
+Presidente da Jardine Matheson Holdings Ltd
+https://en.wikipedia.org/wiki/Keswick_family
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
 
--- 
-Best regards,
-Jacek Anaszewski
+Hi friend,
+
+Our family is interested in investing funds in your locality.
+
+More information for you interest .
+
+Greetings,
+Sir Henry Neville Lindley Keswick
+Chairman of Jardine Matheson Holdings Ltd
+https://en.wikipedia.org/wiki/Keswick_family
