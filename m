@@ -1,97 +1,109 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 3/4] leds: core: add documentation for color extension
-Date: Mon, 29 Feb 2016 17:14:16 +0100
-Message-ID: <56D46E58.5070508@samsung.com>
-References: <56CF7C85.7030005@gmail.com>
+From: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
+Subject: Re: [PATCH RFC 3/3] leds: Add driver for the ISSI IS31FL32xx family
+ of LED drivers
+Date: Mon, 29 Feb 2016 13:02:02 -0500
+Message-ID: <20160229130202.1a5bad0d.drivshin.allworx@gmail.com>
+References: <1456251445-23970-1-git-send-email-drivshin.allworx@gmail.com>
+	<1456251445-23970-4-git-send-email-drivshin.allworx@gmail.com>
+	<56CDD4AA.5030801@samsung.com>
+	<20160224212450.195330ed.drivshin.allworx@gmail.com>
+	<56CEDDBE.2080601@samsung.com>
+	<20160225141215.2ef2707e.drivshin.allworx@gmail.com>
+	<56D01F42.70409@samsung.com>
+	<20160226165823.2ff62b21.drivshin.allworx@gmail.com>
+	<2050552945.311154.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:59951 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752706AbcB2QOU (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Feb 2016 11:14:20 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O3B00AW1H3TKX50@mailout3.w1.samsung.com> for
- linux-leds@vger.kernel.org; Mon, 29 Feb 2016 16:14:17 +0000 (GMT)
-In-reply-to: <56CF7C85.7030005@gmail.com>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33038 "EHLO
+	mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751772AbcB2SCJ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 29 Feb 2016 13:02:09 -0500
+In-Reply-To: <2050552945.311154.eb44c2f6-8870-42b4-ada5-1ccea76f532b.open-xchange@email.1und1.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-On 02/25/2016 11:13 PM, Heiner Kallweit wrote:
-> Document the color extension in Documentation/leds/leds-class.txt
->
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - introduced to patch series
-> v3:
-> - document extension in more detail
-> v4:
-> - Better explain why flag LED_SET_HUE_SAT is needed
-> ---
->   Documentation/leds/leds-class.txt | 27 ++++++++++++++++++++++-----
->   1 file changed, 22 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-> index d406d98..b1e4cba 100644
-> --- a/Documentation/leds/leds-class.txt
-> +++ b/Documentation/leds/leds-class.txt
-> @@ -8,6 +8,22 @@ LED is defined in max_brightness file. The brightness file will set the brightne
->   of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
->   brightness support so will just be turned on for non-zero brightness settings.
->
-> +If a driver uses the colour extension of the LED core then the brightness
-> +file can be used to set hue / saturation / value. The brightness value is
-> +interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-> +Usage of the least byte is identical to monochrome mode. Saturation can be
-> +0-255 and hue 0-251 (Colour circle is mapped to 0-252).
-> +If hue and saturation both are 0 the current colour is preserved and only
-> +the brightness is set. This ensures backwards compatibility with monochrome
-> +mode, e.g. for led_set_brightness() calls from triggers.
-> +However we might want to have the option to set all HSV components, even
-> +if hue and saturation both are 0 (e.g. via brightness sysfs attribute).
-> +Use case: Set color to white (hue = 0 and saturation = 0).
-> +Therefore the default behaviour can be overridden with flag F (LED_SET_HUE_SAT).
-> +If this flag is set then hue and saturation are not checked for being 0 and
-> +the color components are set unconditionally. Example:
-> +0x010000ff sets the LED to white color with full brightness.
+On Sat, 27 Feb 2016 11:48:45 +0100 (CET)
+Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-I was thinking especially about highlighting the use case when we set
-different hue and sat for different LEDs that are registered on some
-trigger, and a driver that is currently unaware of LED RGB extension can
-set only brightness and the LEDs will react with changing their
-colors but each of them in different manner, according to the hue
-and sat set.
+> Hi David,
+> 
+> > "David Rivshin (Allworx)" <drivshin.allworx@gmail.com> hat am 26. Februar 2016
+> > um 22:58 geschrieben:
+> >
+> >
+> > On Fri, 26 Feb 2016 10:47:46 +0100
+> > Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> >  
+> > > On 02/25/2016 08:12 PM, David Rivshin (Allworx) wrote:  
+> > > > On Thu, 25 Feb 2016 11:55:58 +0100
+> > > > Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> > > >  
+> > > >> On 02/25/2016 03:24 AM, David Rivshin (Allworx) wrote:  
+> > > >>> On Wed, 24 Feb 2016 17:04:58 +0100
+> > > >>> Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> > > >>>  
+> > > >>>> Hi David,
+> > > >>>>
+> > > >>>> Thanks for the patch. Very nice driver. I have few comments
+> > > >>>> below.  
+> > > >>>
+> > > >>> Thanks Jacek, I have responded the comments inline. I also wanted to
+> > > >>> double check whether you noticed some questions I had in the cover
+> > > >>> letter [1]. As I mentioned in another email to Rob, in hindsight I'm
+> > > >>> guessing I should have included them in the patch comments as well (or
+> > > >>> instead of).  
+> > > >>
+> > > >> I saw them. I assumed that the review itself will address those
+> > > >> questions.  
+> > > >
+> > > > Fair enough, thanks for the confirmation.
+> > > >  
+> > > >>> Your review comments here effectively answered some of the questions,
+> > > >>> but
+> > > >>> the big one I'm still unsure of is whether it actually makes sense to
+> > > >>> have all 4 of these devices supported by a single driver.  
+> > > >>
+> > > >> It's perfectly fine. Many drivers implement this pattern.  
+> > > >
+> > > > OK, then I'll assume you think this driver is not yet too complicated
+> > > > for it's own good. Out of curiosity, might that view change if the
+> > > > 3216 specific features were ever implemented, especially GPIO and HW
+> > > > animation support? Gut feel is that would make 3216 specific code
+> > > > bigger than the rest of the code combined.  
+> > >
+> > > I don't think so.  
+> >
+> > Thanks, that helps calibrate my intuition for the future.
+> >  
+> > > > Bigger question is what should be done in terms of the overlap in device
+> > > > support between this driver and leds-sn3218? If you think I should leave
+> > > > the *3218 support in this driver, then I would propose:
+> > > > - remove leds-sn3218 and its separate binding doc
+> > > > - add the "si-en,sn3218" compatible string to this driver and binding doc
+> > > > Note that while I expect this driver to work with the 3218 chips, I do
+> > > > not have one to test against. If we go down this route I would definitely
+> > > > want Stefan to test so that I don't accidentally break him.  
+> > >
+> > > I'd prefer to have a single driver for the same hardware. Stefan, would
+> > > it be possible for you to test David's driver with the hardware you
+> > > have an access to?  
+> >
+> > Stefan, one thing to note: the existing sn3218 driver/binding uses 0-based
+> > 'reg' values, and this driver/binding uses 1-based 'reg' values. So your
+> > devicetree(s) would need to be updated for that (as well as the compatible
+> > string).
+> >
+> > I didn't see a final answer from Rob as to which way is most appropriate
+> > for these devices yet, so I don't know which way this will end up in the
+> > final patch.  
+> 
+> unfortunately i'm very busy. Yes, i will test it, but i can't promise when.
+> 
+> Should i apply this version or wait for the next?
 
->   The class also introduces the optional concept of an LED trigger. A trigger
->   is a kernel based source of led events. Triggers can either be simple or
->   complex. A simple trigger isn't configurable and is designed to slot into
-> @@ -45,11 +61,12 @@ Is currently of the form:
->
->   "devicename:colour:function"
->
-> -There have been calls for LED properties such as colour to be exported as
-> -individual led class attributes. As a solution which doesn't incur as much
-> -overhead, I suggest these become part of the device name. The naming scheme
-> -above leaves scope for further attributes should they be needed. If sections
-> -of the name don't apply, just leave that section blank.
-> +If the colour extension is used hsv / rgb can be used instead of a specific
-> +colour.  There have been calls for LED properties such as colour to be
-> +exported as individual led class attributes. As a solution which doesn't
-> +incur as much overhead, I suggest these become part of the device name.
-> +The naming scheme above leaves scope for further attributes should they be
-> +needed. If sections of the name don't apply, just leave that section blank.
->
->
->   Brightness setting API
->
-
-
--- 
-Best regards,
-Jacek Anaszewski
+Thanks Stefan. I am hoping to have the next version ready in the next day or 
+so. To better use your time, it's probably best to wait for that. 
