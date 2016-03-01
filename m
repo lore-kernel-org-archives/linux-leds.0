@@ -1,173 +1,109 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 4/4] leds: core: add support for HSV to RGB conversion
-Date: Tue, 01 Mar 2016 10:21:34 +0100
-Message-ID: <56D55F1E.8010101@samsung.com>
-References: <56CF7D6D.50001@gmail.com> <56D46E0F.5080806@samsung.com>
- <56D4A351.2000806@gmail.com>
+Subject: Re: [PATCH v4 3/4] leds: core: add documentation for color extension
+Date: Tue, 01 Mar 2016 10:25:57 +0100
+Message-ID: <56D56025.4080201@samsung.com>
+References: <56CF7C85.7030005@gmail.com> <56D46E58.5070508@samsung.com>
+ <56D4A91C.30309@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:25630 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752077AbcCAJVi (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Mar 2016 04:21:38 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61644 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751209AbcCAJ0A (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Mar 2016 04:26:00 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O3C001JISNZ8D50@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 01 Mar 2016 09:21:35 +0000 (GMT)
-In-reply-to: <56D4A351.2000806@gmail.com>
+ with ESMTP id <0O3C00KMQSV9TV50@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 01 Mar 2016 09:25:57 +0000 (GMT)
+In-reply-to: <56D4A91C.30309@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Heiner Kallweit <hkallweit1@gmail.com>
 Cc: linux-leds@vger.kernel.org
 
-On 02/29/2016 09:00 PM, Heiner Kallweit wrote:
-> Am 29.02.2016 um 17:13 schrieb Jacek Anaszewski:
->> Hi Heiner,
->>
->> On 02/25/2016 11:17 PM, Heiner Kallweit wrote:
->>> Export a function to convert HSV color values to RGB.
->>> It's intended to be called by drivers for RGB LEDs.
+On 02/29/2016 09:25 PM, Heiner Kallweit wrote:
+> Am 29.02.2016 um 17:14 schrieb Jacek Anaszewski:
+>> On 02/25/2016 11:13 PM, Heiner Kallweit wrote:
+>>> Document the color extension in Documentation/leds/leds-class.txt
 >>>
 >>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 >>> ---
 >>> v2:
->>> - move hsv -> rgb conversion to separate file
->>> - remove flag LED_DEV_CAP_RGB
+>>> - introduced to patch series
 >>> v3:
->>> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
->>>     This is needed in cases when we have monochrome and color LEDs
->>>     as well in a system.
+>>> - document extension in more detail
 >>> v4:
->>> - Export led_hsv_to_rgb and let the device driver call it instead
->>>     of doing the conversion in the core
+>>> - Better explain why flag LED_SET_HUE_SAT is needed
 >>> ---
->>>    drivers/leds/led-core.c     |  7 ++++++-
->>>    drivers/leds/led-rgb-core.c | 36 ++++++++++++++++++++++++++++++++++++
->>>    include/linux/leds.h        |  8 ++++++++
->>>    3 files changed, 50 insertions(+), 1 deletion(-)
+>>>    Documentation/leds/leds-class.txt | 27 ++++++++++++++++++++++-----
+>>>    1 file changed, 22 insertions(+), 5 deletions(-)
 >>>
->>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->>> index e75b0c8..e3ee971 100644
->>> --- a/drivers/leds/led-core.c
->>> +++ b/drivers/leds/led-core.c
->>> @@ -295,7 +295,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
->>>    {
->>>        int ret = 0;
+>>> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+>>> index d406d98..b1e4cba 100644
+>>> --- a/Documentation/leds/leds-class.txt
+>>> +++ b/Documentation/leds/leds-class.txt
+>>> @@ -8,6 +8,22 @@ LED is defined in max_brightness file. The brightness file will set the brightne
+>>>    of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
+>>>    brightness support so will just be turned on for non-zero brightness settings.
 >>>
->>> -    if (led_cdev->brightness_get) {
->>> +    /*
->>> +     * for now reading back the color is not supported as multiple
->>> +     * HSV -> RGB -> HSV conversions may distort the color due to
->>> +     * rounding issues in the conversion algorithm
->>> +     */
+>>> +If a driver uses the colour extension of the LED core then the brightness
+>>> +file can be used to set hue / saturation / value. The brightness value is
+>>> +interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
+>>> +Usage of the least byte is identical to monochrome mode. Saturation can be
+>>> +0-255 and hue 0-251 (Colour circle is mapped to 0-252).
+>>> +If hue and saturation both are 0 the current colour is preserved and only
+>>> +the brightness is set. This ensures backwards compatibility with monochrome
+>>> +mode, e.g. for led_set_brightness() calls from triggers.
+>>> +However we might want to have the option to set all HSV components, even
+>>> +if hue and saturation both are 0 (e.g. via brightness sysfs attribute).
+>>> +Use case: Set color to white (hue = 0 and saturation = 0).
+>>> +Therefore the default behaviour can be overridden with flag F (LED_SET_HUE_SAT).
+>>> +If this flag is set then hue and saturation are not checked for being 0 and
+>>> +the color components are set unconditionally. Example:
+>>> +0x010000ff sets the LED to white color with full brightness.
 >>
->> This is very unpleasant. Is it really not feasible to work this around?
+>> I was thinking especially about highlighting the use case when we set
+>> different hue and sat for different LEDs that are registered on some
+>> trigger, and a driver that is currently unaware of LED RGB extension can
+>> set only brightness and the LEDs will react with changing their
+>> colors but each of them in different manner, according to the hue
+>> and sat set.
 >>
-> With the 8 bit granularity of the color components it's not possible to guarantee
-> that a conversion followed by its reverse operation always results in the same value.
-> (at least for the H and S component, for V it's no problem)
->
-> Just one example: H=1 S=1 V=3 converted to RGB will result in R=G=B=3 and the reverse
-> conversion will result in H=0 S=0 V=3
->
-> I think there's only a theoretical impact of not supporting reading from the device
-> because who except the driver should access the device.
+> I have to admit that I have a hard time trying to understand what you mean.
 
-I know about LED flash device that can reduce brightness level in case
-battery voltage level decreases below certain threshold.
+I was writing this in a hurry - sorry about that.
 
-Maybe in case of low current LED RGB controllers such a feature is not
-likely to appear.
+> With
+> "a driver that is currently unaware of LED RGB extension can set only brightness"
+> you mean a driver calling led_trigger_event?
+> Arguments to led_trigger_event are always <= LED_FULL what means that the (potential)
+> color of all LEDs attached to the trigger isn't touched.
 
-> If you think it is relevant
-> then I could think of something like this:
-> Overwrite the stored brightness value only if the value read from the device differs
-> "significantly" from the stored value. This would indicate that somebody outside
-> the driver changed the LED value and we should reflect this in the stored value.
-> What do you think?
+Changing brightness in HSV model influences resultant color, doesn't it?
 
-I think that only the hardware itself can adjust the brightness.
-After thinking a while about that I came to conclusion that in case
-of RGB LEDs it wouldn't make sense if hardware was able to change
-the colors arbitrarily, as it would distort the color requested
-by the user.
-
-I'd leave this piece of code intact, but instead add WARN_ON
-in led_classdev_register, with the argument evaluating to true
-if brightness_get op is defined and the LED is of RGB type.
-
-BTW: s/LED_DEV_CAP_HSV/LED_DEV_CAP_RGB/
-
->>> +    if (led_cdev->brightness_get && !(led_cdev->flags & LED_DEV_CAP_HSV)) {
->>>            ret = led_cdev->brightness_get(led_cdev);
->>>            if (ret >= 0) {
->>>                led_cdev->brightness = ret;
->>> diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
->>> index b81daeb..4691795 100644
->>> --- a/drivers/leds/led-rgb-core.c
->>> +++ b/drivers/leds/led-rgb-core.c
->>> @@ -40,3 +40,39 @@ enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->>>        return brightness |
->>>               min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
->>>    }
->>> +
->>> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv)
->>> +{
->>> +    int h = min_t(int, (hsv >> 16) & 0xff, 251);
->>> +    int s = (hsv >> 8) & 0xff;
->>> +    int v = hsv & 0xff;
->>> +    int f, p, q, t, r, g, b;
->>> +
->>> +    if (!v)
->>> +        return 0;
->>> +    if (!s)
->>> +        return (v << 16) + (v << 8) + v;
->>> +
->>> +    f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
->>> +    p = v - DIV_ROUND_CLOSEST(s * v, 255);
->>> +    q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
->>> +    t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
->>> +
->>> +    switch (h / 42) {
->>> +    case 0:
->>> +        r = v; g = t; b = p; break;
->>> +    case 1:
->>> +        r = q; g = v; b = p; break;
->>> +    case 2:
->>> +        r = p; g = v; b = t; break;
->>> +    case 3:
->>> +        r = p; g = q; b = v; break;
->>> +    case 4:
->>> +        r = t; g = p; b = v; break;
->>> +    case 5:
->>> +        r = v; g = p; b = q; break;
->>> +    }
->>> +
->>> +    return (r << 16) + (g << 8) + b;
->>> +}
->>> +EXPORT_SYMBOL_GPL(led_hsv_to_rgb);
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index 1e98b2e..27725c6 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -226,6 +226,14 @@ static inline bool led_sysfs_is_disabled(struct led_classdev *led_cdev)
->>>        return led_cdev->flags & LED_SYSFS_DISABLE;
->>>    }
+>>>    The class also introduces the optional concept of an LED trigger. A trigger
+>>>    is a kernel based source of led events. Triggers can either be simple or
+>>>    complex. A simple trigger isn't configurable and is designed to slot into
+>>> @@ -45,11 +61,12 @@ Is currently of the form:
 >>>
->>> +/**
->>> + * led_hsv_to_rgb - convert a hsv color value to rgb color model
->>> + * @hsv: the hsv value to convert
->>> + *
->>> + * Returns: the resulting rgb value
->>> + */
->>> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
->>> +
->>>    /*
->>>     * LED Triggers
->>>     */
+>>>    "devicename:colour:function"
+>>>
+>>> -There have been calls for LED properties such as colour to be exported as
+>>> -individual led class attributes. As a solution which doesn't incur as much
+>>> -overhead, I suggest these become part of the device name. The naming scheme
+>>> -above leaves scope for further attributes should they be needed. If sections
+>>> -of the name don't apply, just leave that section blank.
+>>> +If the colour extension is used hsv / rgb can be used instead of a specific
+>>> +colour.  There have been calls for LED properties such as colour to be
+>>> +exported as individual led class attributes. As a solution which doesn't
+>>> +incur as much overhead, I suggest these become part of the device name.
+>>> +The naming scheme above leaves scope for further attributes should they be
+>>> +needed. If sections of the name don't apply, just leave that section blank.
+>>>
+>>>
+>>>    Brightness setting API
 >>>
 >>
 >>
