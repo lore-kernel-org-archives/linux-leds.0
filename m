@@ -1,38 +1,62 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5 3/4] leds: core: add documentation for color extension
-Date: Tue, 01 Mar 2016 21:41:37 +0000
-Message-ID: <20160301214135.GA21265@kroah.com>
-References: <56D609BB.1010804@gmail.com>
+From: Laison Computech Inc <7sales@laiisoncomputech.com>
+Subject: CISCO AND AVAYA IP Phones
+Date: Wed, 02 Mar 2016 03:10:35 +0700
+Message-ID: <20160301210942.5F83E574BB8__22455.0018123866$1456874277$gmane$org@srv-mta.gcmillenium.com.br>
+Reply-To: sales@laiisoncomputech.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail177-1.suw61.mandrillapp.com ([198.2.177.1]:32204 "EHLO
-	mail177-1.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752317AbcCAVli (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 1 Mar 2016 16:41:38 -0500
-Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-1.suw61.mandrillapp.com id hqo69422rtka for <linux-leds@vger.kernel.org>; Tue, 1 Mar 2016 21:41:37 +0000 (envelope-from <bounce-md_30481620.56d60c91.v1-39e8433d302d48e495c1a01f5c8ee589@mandrillapp.com>)
-In-Reply-To: <56D609BB.1010804@gmail.com>
+Received: from srv-mta.gcmillenium.com.br ([177.125.218.132]:51815 "EHLO
+	srv-mta.gcmillenium.com.br" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751350AbcCAXRh convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Tue, 1 Mar 2016 18:17:37 -0500
+Content-Description: Mail message body
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Recipients <7sales@laiisoncomputech.com>
 
-On Tue, Mar 01, 2016 at 10:29:31PM +0100, Heiner Kallweit wrote:
-> Document the color extension in Documentation/leds/leds-class.txt
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - introduced to patch series
-> v3:
-> - document extension in more detail
-> v4:
-> - Better explain why flag LED_SET_HUE_SAT is needed
-> v5:
-> - no changes
-> ---
->  Documentation/leds/leds-class.txt | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
+Hi,
 
-What aboud Documentation/ABI/ ?
+Clean tested working pulls CPUs and QTYs in stock.
+
+115 X X5650
+65 X E5410
+75 X X5660
+145 X E5530
+100 X E5645
+40 X X5680
+75 X X5690
+
+Brand new sealed IP phones and QTYs in stock.
+
+55 x CP-7937G
+77 x CP-7942G
+54 x CP-7945G
+75 x CP-7962G
+=2E.....
+45 x Avaya 9630
+65 x Avaya 9641
+55 x Avaya 9640=20
+
+USED IT HARDWARE FROM:
+
+=46UJITSU       IBM         SUN        HP
+QUANTUM   DELL       HDS        STK
+NETAPP      SGI         Oracle      EMC=B2
+
+3Com, ADVA, Alcatel, Brocade, Cisco,
+Cabletron, Enterasys, Extreme Networks,
+Huawei, Marconi, Nortel, Qlogic, Avaya
+
+Let me know if you're interested. We are very open to offers and willin=
+g to work with you to make sure that we have a deal.
+
+Sincerely
+Barbara Johnson
+Laison Computech Inc
+Tel: +1-657-205-7860
+=46ax: +1-347-214-0478
+Email: sales@laiisoncomputech.com
+Web: www.laisoncomputech.com
