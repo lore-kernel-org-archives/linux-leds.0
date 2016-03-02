@@ -1,105 +1,225 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v6 3/4] leds: core: add documentation for color extension
-Date: Wed, 2 Mar 2016 20:31:40 +0100
-Message-ID: <56D73F9C.6050006@gmail.com>
+From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] hid: thingm: change driver to use RGB LED core extension
+Date: Wed, 2 Mar 2016 21:15:14 +0100
+Message-ID: <56D749D2.80101@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36092 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076AbcCBTb6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Mar 2016 14:31:58 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jiri Kosina <jikos-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Document the color extension in Documentation/leds/leds-class.txt
+Based on the proposed RGB LED core extension the thingm driver was
+changed to make use of this extension. It allows to simplify
+the code a lot. For now primary purpose of this patch is to facilitate
+testing of the RGB LED core extension.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+I didn't find a way to split the patch into smaller parts as either
+you use the RGB LED extension or not. However this shouldn't be really
+an issue as the resulting code is relatively short and simple.
+
+Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
-v2:
-- introduced to patch series
-v3:
-- document extension in more detail
-v4:
-- Better explain why flag LED_SET_HUE_SAT is needed
-v5:
-- no changes
-v6:
-- add docu for this feature to Documentation/ABI/testing/sysfs-class-led
----
- Documentation/ABI/testing/sysfs-class-led | 11 +++++++++++
- Documentation/leds/leds-class.txt         | 27 ++++++++++++++++++++++-----
- 2 files changed, 33 insertions(+), 5 deletions(-)
+ drivers/hid/hid-thingm.c | 131 +++++++++++++----------------------------------
+ 1 file changed, 36 insertions(+), 95 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 3646ec8..20357d5 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -7,6 +7,17 @@ Description:
- 		have hardware brightness support so will just be turned on for
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
-+		If a driver uses the RGB LED feature then this attribute is
-+		interpreted as a HSV color model value:
-+		<0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-+		Usage of the least byte is identical to monochrome mode.
-+		Saturation can be 0-255 and hue 0-251 (Colour circle is mapped
-+		to 0-252). If hue and saturation both are 0 the current colour
-+		is preserved and only the brightness is set. This ensures
-+		backwards compatibility with monochrome mode, e.g. for
-+		led_set_brightness() calls from triggers.
-+		Flag F enables setting hue and saturation even if both are 0.
-+		For details and examples see Documentation/leds/leds-class.txt
+diff --git a/drivers/hid/hid-thingm.c b/drivers/hid/hid-thingm.c
+index 847a497..07b9f1b 100644
+--- a/drivers/hid/hid-thingm.c
++++ b/drivers/hid/hid-thingm.c
+@@ -19,6 +19,7 @@
  
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index d406d98..b1e4cba 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -8,6 +8,22 @@ LED is defined in max_brightness file. The brightness file will set the brightne
- of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
- brightness support so will just be turned on for non-zero brightness settings.
+ #define REPORT_ID	1
+ #define REPORT_SIZE	9
++#define NUMRGB_MAX	2
  
-+If a driver uses the colour extension of the LED core then the brightness
-+file can be used to set hue / saturation / value. The brightness value is
-+interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-+Usage of the least byte is identical to monochrome mode. Saturation can be
-+0-255 and hue 0-251 (Colour circle is mapped to 0-252).
-+If hue and saturation both are 0 the current colour is preserved and only
-+the brightness is set. This ensures backwards compatibility with monochrome
-+mode, e.g. for led_set_brightness() calls from triggers.
-+However we might want to have the option to set all HSV components, even
-+if hue and saturation both are 0 (e.g. via brightness sysfs attribute).
-+Use case: Set color to white (hue = 0 and saturation = 0).
-+Therefore the default behaviour can be overridden with flag F (LED_SET_HUE_SAT).
-+If this flag is set then hue and saturation are not checked for being 0 and
-+the color components are set unconditionally. Example:
-+0x010000ff sets the LED to white color with full brightness.
+ /* Firmware major number of supported devices */
+ #define THINGM_MAJOR_MK1	'1'
+@@ -42,33 +43,26 @@ static const struct thingm_fwinfo thingm_fwinfo[] = {
+ 	}
+ };
+ 
+-/* A red, green or blue channel, part of an RGB chip */
+ struct thingm_led {
+-	struct thingm_rgb *rgb;
+-	struct led_classdev ldev;
+-	char name[32];
+-};
+-
+-/* Basically a WS2812 5050 RGB LED chip */
+-struct thingm_rgb {
+-	struct thingm_device *tdev;
+-	struct thingm_led red;
+-	struct thingm_led green;
+-	struct thingm_led blue;
+-	u8 num;
++	struct led_classdev		cdev;
++	char				name[32];
++	unsigned			led_num;
++	struct thingm_device		*tdev;
+ };
+ 
+ struct thingm_device {
+-	struct hid_device *hdev;
++	struct hid_device		*hdev;
+ 	struct {
+ 		char major;
+ 		char minor;
+-	} version;
+-	const struct thingm_fwinfo *fwinfo;
+-	struct mutex lock;
+-	struct thingm_rgb *rgb;
++	}				version;
++	const struct thingm_fwinfo	*fwinfo;
++	struct mutex			lock;
++	struct thingm_led		tled[NUMRGB_MAX];
+ };
+ 
++#define to_thingm_led(arg) container_of((arg), struct thingm_led, cdev)
 +
- The class also introduces the optional concept of an LED trigger. A trigger
- is a kernel based source of led events. Triggers can either be simple or
- complex. A simple trigger isn't configurable and is designed to slot into
-@@ -45,11 +61,12 @@ Is currently of the form:
+ static int thingm_send(struct thingm_device *tdev, u8 buf[REPORT_SIZE])
+ {
+ 	int ret;
+@@ -133,86 +127,33 @@ static int thingm_version(struct thingm_device *tdev)
+ 	return 0;
+ }
  
- "devicename:colour:function"
+-static int thingm_write_color(struct thingm_rgb *rgb)
++static int thingm_brightness_set_blocking(struct led_classdev *cdev,
++					  enum led_brightness value)
+ {
+-	u8 buf[REPORT_SIZE] = { REPORT_ID, 'c', 0, 0, 0, 0, 0, rgb->num, 0 };
+-
+-	buf[2] = rgb->red.ldev.brightness;
+-	buf[3] = rgb->green.ldev.brightness;
+-	buf[4] = rgb->blue.ldev.brightness;
+-
+-	return thingm_send(rgb->tdev, buf);
+-}
++	struct thingm_led *tled = to_thingm_led(cdev);
++	u8 buf[REPORT_SIZE] = { REPORT_ID, 'c' };
  
--There have been calls for LED properties such as colour to be exported as
--individual led class attributes. As a solution which doesn't incur as much
--overhead, I suggest these become part of the device name. The naming scheme
--above leaves scope for further attributes should they be needed. If sections
--of the name don't apply, just leave that section blank.
-+If the colour extension is used hsv / rgb can be used instead of a specific
-+colour.  There have been calls for LED properties such as colour to be
-+exported as individual led class attributes. As a solution which doesn't
-+incur as much overhead, I suggest these become part of the device name.
-+The naming scheme above leaves scope for further attributes should they be
-+needed. If sections of the name don't apply, just leave that section blank.
+-static int thingm_led_set(struct led_classdev *ldev,
+-			  enum led_brightness brightness)
+-{
+-	struct thingm_led *led = container_of(ldev, struct thingm_led, ldev);
+-	int ret;
++	value = led_hsv_to_rgb(value);
  
+-	ret = thingm_write_color(led->rgb);
+-	if (ret)
+-		hid_err(led->rgb->tdev->hdev, "failed to write color\n");
++	buf[2] = (value >> 16) & 0xff;
++	buf[3] = (value >> 8) & 0xff;
++	buf[4] = value & 0xff;
++	buf[7] = tled->led_num;
  
- Brightness setting API
+-	return ret;
+-}
+-
+-static int thingm_init_rgb(struct thingm_rgb *rgb)
+-{
+-	const int minor = ((struct hidraw *) rgb->tdev->hdev->hidraw)->minor;
+-	int err;
+-
+-	/* Register the red diode */
+-	snprintf(rgb->red.name, sizeof(rgb->red.name),
+-			"thingm%d:red:led%d", minor, rgb->num);
+-	rgb->red.ldev.name = rgb->red.name;
+-	rgb->red.ldev.max_brightness = 255;
+-	rgb->red.ldev.brightness_set_blocking = thingm_led_set;
+-	rgb->red.rgb = rgb;
+-
+-	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
+-					 &rgb->red.ldev);
+-	if (err)
+-		return err;
+-
+-	/* Register the green diode */
+-	snprintf(rgb->green.name, sizeof(rgb->green.name),
+-			"thingm%d:green:led%d", minor, rgb->num);
+-	rgb->green.ldev.name = rgb->green.name;
+-	rgb->green.ldev.max_brightness = 255;
+-	rgb->green.ldev.brightness_set_blocking = thingm_led_set;
+-	rgb->green.rgb = rgb;
+-
+-	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
+-					 &rgb->green.ldev);
+-	if (err)
+-		return err;
+-
+-	/* Register the blue diode */
+-	snprintf(rgb->blue.name, sizeof(rgb->blue.name),
+-			"thingm%d:blue:led%d", minor, rgb->num);
+-	rgb->blue.ldev.name = rgb->blue.name;
+-	rgb->blue.ldev.max_brightness = 255;
+-	rgb->blue.ldev.brightness_set_blocking = thingm_led_set;
+-	rgb->blue.rgb = rgb;
+-
+-	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
+-					 &rgb->blue.ldev);
+-	return err;
++	return thingm_send(tled->tdev, buf);
+ }
+ 
+ static int thingm_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ {
+ 	struct thingm_device *tdev;
+-	int i, err;
++	struct led_classdev *cdev;
++	int i, err, minor;
+ 
+-	tdev = devm_kzalloc(&hdev->dev, sizeof(struct thingm_device),
+-			GFP_KERNEL);
++	tdev = devm_kzalloc(&hdev->dev, sizeof(*tdev), GFP_KERNEL);
+ 	if (!tdev)
+ 		return -ENOMEM;
+ 
+ 	tdev->hdev = hdev;
+-	hid_set_drvdata(hdev, tdev);
+ 
+ 	err = hid_parse(hdev);
+ 	if (err)
+@@ -236,22 +177,22 @@ static int thingm_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		return -ENODEV;
+ 	}
+ 
+-	tdev->rgb = devm_kzalloc(&hdev->dev,
+-			sizeof(struct thingm_rgb) * tdev->fwinfo->numrgb,
+-			GFP_KERNEL);
+-	if (!tdev->rgb)
+-		return -ENOMEM;
+-
+ 	err = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
+ 	if (err)
+ 		return err;
+ 
+-	for (i = 0; i < tdev->fwinfo->numrgb; ++i) {
+-		struct thingm_rgb *rgb = tdev->rgb + i;
++	minor = ((struct hidraw *)hdev->hidraw)->minor;
+ 
+-		rgb->tdev = tdev;
+-		rgb->num = tdev->fwinfo->first + i;
+-		err = thingm_init_rgb(rgb);
++	for (i = 0; i < tdev->fwinfo->numrgb; ++i) {
++		tdev->tled[i].tdev = tdev;
++		tdev->tled[i].led_num = tdev->fwinfo->first + i;
++		snprintf(tdev->tled[i].name, sizeof(tdev->tled[i].name),
++			 "thingm%d:rgb:led%d", minor, i);
++		cdev = &tdev->tled[i].cdev;
++		cdev->name = tdev->tled[i].name;
++		cdev->flags = LED_DEV_CAP_RGB | LED_HW_PLUGGABLE;
++		cdev->brightness_set_blocking = thingm_brightness_set_blocking;
++		err = devm_led_classdev_register(&hdev->dev, cdev);
+ 		if (err) {
+ 			hid_hw_stop(hdev);
+ 			return err;
 -- 
 2.7.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
