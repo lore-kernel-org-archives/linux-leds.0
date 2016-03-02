@@ -1,49 +1,33 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 3/4] leds: core: add documentation for color extension
-Date: Wed, 02 Mar 2016 09:38:58 +0100
-Message-ID: <56D6A6A2.5080508@samsung.com>
-References: <56D609BB.1010804@gmail.com> <20160301214135.GA21265@kroah.com>
+From: Jiri Kosina <jikos@kernel.org>
+Subject: Re: [PATCH 0/3] hid: thingm: Refactor driver
+Date: Wed, 2 Mar 2016 10:24:13 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1603021023560.3656@cbobk.fhfr.pm>
+References: <56D4AB59.1060303@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12006 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbcCBIjC (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 2 Mar 2016 03:39:02 -0500
-In-reply-to: <20160301214135.GA21265@kroah.com>
+Received: from mx2.suse.de ([195.135.220.15]:33585 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751501AbcCBJYQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 2 Mar 2016 04:24:16 -0500
+In-Reply-To: <56D4AB59.1060303@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-leds@vger.kernel.org, linux-input@vger.kernel.org
 
-On 03/01/2016 10:41 PM, Greg KH wrote:
-> On Tue, Mar 01, 2016 at 10:29:31PM +0100, Heiner Kallweit wrote:
->> Document the color extension in Documentation/leds/leds-class.txt
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->> v2:
->> - introduced to patch series
->> v3:
->> - document extension in more detail
->> v4:
->> - Better explain why flag LED_SET_HUE_SAT is needed
->> v5:
->> - no changes
->> ---
->>   Documentation/leds/leds-class.txt | 27 ++++++++++++++++++++++-----
->>   1 file changed, 22 insertions(+), 5 deletions(-)
->
-> What aboud Documentation/ABI/ ?
->
->
+On Mon, 29 Feb 2016, Heiner Kallweit wrote:
 
-Right, I haven't pushed for this so far, but now, as the functionality
-seems to be reaching its final shape, please update also:
+> This patch series reflects a recent change in the LED core regarding
+> workqueue usage, simplifies the driver and improves locking.
+> 
+> Heiner Kallweit (3):
+>   hid: thingm: remove workqueue
+>   hid: thingm: switch to managed version of led_classdev_register
+>   hid: thingm: improve locking
 
-Documentation/ABI/testing/sysfs-class-led
+I've applied 1/3, 2/3 and v2 3/3. Thanks!
 
 -- 
-Best regards,
-Jacek Anaszewski
+Jiri Kosina
+SUSE Labs
