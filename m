@@ -1,659 +1,539 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 3/4] leds: Add driver for the ISSI IS31FL32xx family of LED
- controllers
-Date: Thu, 03 Mar 2016 15:51:32 +0100
-Message-ID: <56D84F74.3070903@samsung.com>
+Subject: Re: [PATCH 4/4] leds: Replace dedicated SN3218 driver with IS31FL32XX
+ driver
+Date: Thu, 03 Mar 2016 15:51:36 +0100
+Message-ID: <56D84F78.2050901@samsung.com>
 References: <1456974095-1867-1-git-send-email-drivshin.allworx@gmail.com>
- <1456974095-1867-4-git-send-email-drivshin.allworx@gmail.com>
+ <1456974095-1867-5-git-send-email-drivshin.allworx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1456974095-1867-4-git-send-email-drivshin.allworx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:26521 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757883AbcCCOvl (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 3 Mar 2016 09:51:41 -0500
+In-reply-to: <1456974095-1867-5-git-send-email-drivshin.allworx@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>, linux-kernel@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
 
 Hi David,
 
-Thanks for the update. Two remarks in the code.
+I'll wait for Tested-by from Stefan before applying this patch.
+If Stefan will have managed to test your driver with his hardware
+by the end of this cycle, it will suffice for this patch to contain
+only leds-is31fl32xx extension part.
+
+leds-sn3218 hasn't been merged to mainline yet, so I'd rather
+remove it when I get Tested-by from Stefan.
+
+Otherwise, I will send leds-sn3218 to Linus, and this patch
+will be applied after being tested, during 4.7 cycle.
+
+Thanks,
+Jacek Anaszewski
 
 On 03/03/2016 04:01 AM, David Rivshin (Allworx) wrote:
 > From: David Rivshin <drivshin@allworx.com>
 >
-> The IS31FL32xx family of LED controllers are I2C devices with multiple
-> constant-current channels, each with independent 256-level PWM control.
+> Si-En Technology was acquired by ISSI in 2011, and it appears that
+> the IS31FL3218/IS31FL3216 are just rebranded SN3218/SN3216 devices.
+> As the IS31FL32XX driver already handles the *3218 devices, there
+> is no longer a need for the dedicated SN3218 driver.
 >
-> Datasheets: http://www.issi.com/US/product-analog-fxled-driver.shtml
+> Add the "sn,sn3218" and "sn,sn3216" compatible strings into the
+> IS31FL32XX driver and binding documentation, and remove the
+> leds-sn3218 driver.
 >
-> This has been tested on the IS31FL3236 and IS31FL3216, on an ARM
-> (TI am335x) platform.
+> Datasheets:
+>      IS31FL3218: http://www.issi.com/WW/pdf/31FL3218.pdf
+>      SN3218:     http://www.si-en.com/uploadpdf/s2011517171720.pdf
 >
-> The programming paradigm of these devices is similar in the following
-> ways:
->   - All registers are 8 bit
->   - All LED control registers are write-only
->   - Each LED channel has a PWM register (0-255)
->   - PWM register writes are shadowed until an Update register is poked
->   - All have a concept of Software Shutdown, which disables output
->
-> However, there are some differences in devices:
->   - 3236/3235 have a separate Control register for each LED,
->     (3218/3216 pack the enable bits into fewer registers)
->   - 3236/3235 have a per-channel current divisor setting
->   - 3236/3235 have a Global Control register that can turn off all LEDs
->   - 3216 is unique in a number of ways
->      - OUT9-OUT16 can be configured as GPIOs instead of LED controls
->      - LEDs can be programmed with an 8-frame animation, with
->        programmable delay between frames
->      - LEDs can be modulated by an input audio signal
->      - Max output current can be adjusted from 1/4 to 2x globally
->      - Has a Configuration register instead of a Shutdown register
->
-> This driver currently only supports the base PWM control function
-> of these devices. The following features of these devices are not
-> implemented, although it should be possible to add them in the future:
->   - All devices are capable of going into a lower-power "software
->     shutdown" mode.
->   - The is31fl3236 and is31fl3235 can reduce the max output current
->     per-channel with a divisor of 1, 2, 3, or 4.
->   - The is31fl3216 can use some LED channels as GPIOs instead.
->   - The is31fl3216 can animate LEDs in hardware.
->   - The is31fl3216 can modulate LEDs according to an audio input.
->   - The is31fl3216 can reduce/increase max output current globally.
+>      IS31FL3216: http://www.issi.com/WW/pdf/31FL3216.pdf
+>      SN3216;     http://www.si-en.com/uploadpdf/SN3216201152410148.pdf
 >
 > Signed-off-by: David Rivshin <drivshin@allworx.com>
 > ---
 >
-> You may see two instances of this warning:
->    "passing argument 1 of 'of_property_read_string' discards 'const'
->     qualifier from pointer target type"
-> That is a result of of_property_read_string() taking a non-const
-> struct device_node pointer parameter. I have separately submitted a
-> patch to fix that [1], and a few related functions which had the same
-> issue. I'm hoping that will get into linux-next before this does, so
-> that the warnings never show up there.
-
-Please adjust the patch so that it compiles without warnings on
-current linux-next. Your patch for DT API hasn't been reviewed yet
-AFICS, and I can imagine that there will be some resistance against.
-
+> Note that the leds-sn3218 binding use a 0-based 'reg' property, while
+> the leds-is31fl32xx binding uses a 1-based 'reg' property. This seemed
+> to be the preferred binding based on [1]. Since leds-sn3216 has not been
+> in a released kernel, there is are no backwards-compatibility concerns.
+>
 > Changes from RFC:
->   - Removed max-brightness DT property.
->   - Refer to these devices as "LED controllers" in Kconfig.
->   - Removed redundant last sentence from Kconfig entry
->   - Removed unnecessary debug code.
->   - Do not set led_classdev.brightness to 0 explicitly, as it is
->     already initialized to 0 by devm_kzalloc().
->   - Used of_property_read_string() instead of of_get_property().
->   - Fail immediately on DT parsing error in a child node, rather than
->     continuing on with the non-faulty ones.
->   - Added additional comments for some things that might be non-obvious.
->   - Added constants for the location of the SSD bit in the SHUTDOWN
->     register, and the 3216's CONFIG register.
->   - Added special sw_shutdown_func for the 3216 device, as that bit
->     is in a different register, at a different position, and has reverse
->     polarity compared to all the other devices.
->   - Refactored is31fl32xx_init_regs() to separate out some logic into
->     is31fl32xx_reset_regs() and is31fl32xx_software_shutdown().
+>   new
 >
-> [1] https://lkml.org/lkml/2016/3/2/746
+> [1] http://www.spinics.net/lists/linux-leds/msg05589.html
 >
->   drivers/leds/Kconfig           |   8 +
->   drivers/leds/Makefile          |   1 +
->   drivers/leds/leds-is31fl32xx.c | 505 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 514 insertions(+)
->   create mode 100644 drivers/leds/leds-is31fl32xx.c
+>   .../devicetree/bindings/leds/leds-is31fl32xx.txt   |   9 +-
+>   .../devicetree/bindings/leds/leds-sn3218.txt       |  41 ---
+>   drivers/leds/Kconfig                               |  18 +-
+>   drivers/leds/Makefile                              |   1 -
+>   drivers/leds/leds-is31fl32xx.c                     |   6 +-
+>   drivers/leds/leds-sn3218.c                         | 306 ---------------------
+>   6 files changed, 14 insertions(+), 367 deletions(-)
+>   delete mode 100644 Documentation/devicetree/bindings/leds/leds-sn3218.txt
+>   delete mode 100644 drivers/leds/leds-sn3218.c
 >
+> diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> index 539df2e..c59eb1a 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+> @@ -1,6 +1,6 @@
+> -Binding for ISSI IS31FL32xx LED Drivers
+> +Binding for ISSI IS31FL32xx and Si-En SN32xx LED Drivers
+>
+> -The IS31FL32xx family of LED drivers are I2C devices with multiple
+> +The IS31FL32xx/SN32xx family of LED drivers are I2C devices with multiple
+>   constant-current channels, each with independent 256-level PWM control.
+>   Each LED is represented as a sub-node of the device.
+>
+> @@ -10,6 +10,8 @@ Required properties:
+>   	issi,is31fl3235
+>   	issi,is31fl3218
+>   	issi,is31fl3216
+> +	si-en,sn3218
+> +	si-en,sn3216
+>   - reg: I2C slave address
+>   - address-cells : must be 1
+>   - size-cells : must be 0
+> @@ -45,5 +47,6 @@ leds: is31fl3236@3c {
+>   	};
+>   };
+>
+> -For more product information please see the link below:
+> +For more product information please see the links below:
+>   http://www.issi.com/US/product-analog-fxled-driver.shtml
+> +http://www.si-en.com/product.asp?parentid=890
+> diff --git a/Documentation/devicetree/bindings/leds/leds-sn3218.txt b/Documentation/devicetree/bindings/leds/leds-sn3218.txt
+> deleted file mode 100644
+> index 19cbf57..0000000
+> --- a/Documentation/devicetree/bindings/leds/leds-sn3218.txt
+> +++ /dev/null
+> @@ -1,41 +0,0 @@
+> -* Si-En Technology - SN3218 18-Channel LED Driver
+> -
+> -Required properties:
+> -- compatible :
+> -	"si-en,sn3218"
+> -- address-cells : must be 1
+> -- size-cells : must be 0
+> -- reg : I2C slave address, typically 0x54
+> -
+> -There must be at least 1 LED which is represented as a sub-node
+> -of the sn3218 device.
+> -
+> -LED sub-node properties:
+> -- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
+> -- reg : number of LED line (could be from 0 to 17)
+> -- linux,default-trigger : (optional)
+> -   see Documentation/devicetree/bindings/leds/common.txt
+> -
+> -Example:
+> -
+> -sn3218: led-controller@54 {
+> -	compatible = "si-en,sn3218";
+> -	#address-cells = <1>;
+> -	#size-cells = <0>;
+> -	reg = <0x54>;
+> -
+> -	led@0 {
+> -		label = "led1";
+> -		reg = <0x0>;
+> -	};
+> -
+> -	led@1 {
+> -		label = "led2";
+> -		reg = <0x1>;
+> -	};
+> -
+> -	led@2 {
+> -		label = "led3";
+> -		reg = <0x2>;
+> -	};
+> -};
 > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 1034696..9c63ba4 100644
+> index 9c63ba4..1f64151 100644
 > --- a/drivers/leds/Kconfig
 > +++ b/drivers/leds/Kconfig
-> @@ -580,6 +580,14 @@ config LEDS_SN3218
+> @@ -568,25 +568,13 @@ config LEDS_SEAD3
 >   	  This driver can also be built as a module. If so the module
->   	  will be called leds-sn3218.
+>   	  will be called leds-sead3.
 >
-> +config LEDS_IS31FL32XX
-> +	tristate "LED support for ISSI IS31FL32XX I2C LED controller family"
-> +	depends on LEDS_CLASS && I2C && OF
-> +	help
-> +	  Say Y here to include support for ISSI IS31FL32XX LED controllers.
-> +	  They are I2C devices with multiple constant-current channels, each
-> +	  with independent 256-level PWM control.
-> +
+> -config LEDS_SN3218
+> -	tristate "LED support for Si-En SN3218 I2C chip"
+> -	depends on LEDS_CLASS && I2C
+> -	depends on OF
+> -	select REGMAP_I2C
+> -	help
+> -	  This option enables support for the Si-EN SN3218 LED driver
+> -	  connected through I2C. Say Y to enable support for the SN3218 LED.
+> -
+> -	  This driver can also be built as a module. If so the module
+> -	  will be called leds-sn3218.
+> -
+>   config LEDS_IS31FL32XX
+>   	tristate "LED support for ISSI IS31FL32XX I2C LED controller family"
+>   	depends on LEDS_CLASS && I2C && OF
+>   	help
+> -	  Say Y here to include support for ISSI IS31FL32XX LED controllers.
+> -	  They are I2C devices with multiple constant-current channels, each
+> -	  with independent 256-level PWM control.
+> +	  Say Y here to include support for ISSI IS31FL32XX and Si-En SN32xx
+> +	  LED controllers. They are I2C devices with multiple constant-current
+> +	  channels, each with independent 256-level PWM control.
+>
 >   comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
 >
->   config LEDS_BLINKM
 > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 89c9b6f..3fdf313 100644
+> index 3fdf313..cb2013d 100644
 > --- a/drivers/leds/Makefile
 > +++ b/drivers/leds/Makefile
-> @@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+> @@ -66,7 +66,6 @@ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+>   obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
 >   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
 >   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
->   obj-$(CONFIG_LEDS_SN3218)		+= leds-sn3218.o
-> +obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+> -obj-$(CONFIG_LEDS_SN3218)		+= leds-sn3218.o
+>   obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
 >
 >   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
 > diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
-> new file mode 100644
-> index 0000000..49818f0
-> --- /dev/null
+> index 49818f0..ec3f541 100644
+> --- a/drivers/leds/leds-is31fl32xx.c
 > +++ b/drivers/leds/leds-is31fl32xx.c
-> @@ -0,0 +1,505 @@
-> +/*
-> + * linux/drivers/leds-is31fl32xx.c
-> + *
-> + * Driver for ISSI IS31FL32xx family of I2C LED controllers
-> + *
-> + * Copyright 2015 Allworx Corp.
-> + *
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Datasheets: http://www.issi.com/US/product-analog-fxled-driver.shtml
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +
-> +/* Used to indicate a device has no such register */
-> +#define IS31FL32XX_REG_NONE 0xFF
-> +
-> +/* Software Shutdown bit in Shutdown Register */
-> +#define IS31FL32XX_SHUTDOWN_SSD_ENABLE  0
-> +#define IS31FL32XX_SHUTDOWN_SSD_DISABLE BIT(0)
-> +
-> +/* IS31FL3216 has a number of unique registers */
-> +#define IS31FL3216_CONFIG_REG 0x00
-> +#define IS31FL3216_LIGHTING_EFFECT_REG 0x03
-> +#define IS31FL3216_CHANNEL_CONFIG_REG 0x04
-> +
-> +/* Software Shutdown bit in 3216 Config Register */
-> +#define IS31FL3216_CONFIG_SSD_ENABLE  BIT(7)
-> +#define IS31FL3216_CONFIG_SSD_DISABLE 0
-> +
-> +struct is31fl32xx_priv;
-> +struct is31fl32xx_led_data {
-> +	struct led_classdev cdev;
-> +	u8 channel; /* 1-based, max priv->cdef->channels */
-> +	struct is31fl32xx_priv *priv;
-> +};
-> +
-> +struct is31fl32xx_priv {
-> +	const struct is31fl32xx_chipdef *cdef;
-> +	struct i2c_client *client;
-> +	unsigned int num_leds;
-> +	struct is31fl32xx_led_data leds[0];
-> +};
-> +
-> +/**
-> + * struct is31fl32xx_chipdef - chip-specific attributes
-> + * @channels            : Number of LED channels
-> + * @shutdown_reg        : address of Shutdown register (optional)
-> + * @pwm_update_reg      : address of PWM Update register
-> + * @global_control_reg  : address of Global Control register (optional)
-> + * @reset_reg           : address of Reset register (optional)
-> + * @pwm_register_base   : address of first PWM register
-> + * @pwm_registers_reversed: : true if PWM registers count down instead of up
-> + * @led_control_register_base : address of first LED control register (optional)
-> + * @enable_bits_per_led_control_register: number of LEDs enable bits in each
-> + * @reset_func:         : pointer to reset function
-> + *
-> + * For all optional register addresses, the sentinel value %IS31FL32XX_REG_NONE
-> + * indicates that this chip has no such register.
-> + *
-> + * If non-NULL, @reset_func will be called during probing to set all
-> + * necessary registers to a known initialization state. This is needed
-> + * for chips that do not have a @reset_reg.
-> + *
-> + * @enable_bits_per_led_control_register must be >=1 if
-> + * @led_control_register_base != %IS31FL32XX_REG_NONE.
-> + */
-> +struct is31fl32xx_chipdef {
-> +	u8	channels;
-> +	u8	shutdown_reg;
-> +	u8	pwm_update_reg;
-> +	u8	global_control_reg;
-> +	u8	reset_reg;
-> +	u8	pwm_register_base;
-> +	bool	pwm_registers_reversed;
-> +	u8	led_control_register_base;
-> +	u8	enable_bits_per_led_control_register;
-> +	int (*reset_func)(struct is31fl32xx_priv *priv);
-> +	int (*sw_shutdown_func)(struct is31fl32xx_priv *priv, bool enable);
-> +};
-> +
-> +static const struct is31fl32xx_chipdef is31fl3236_cdef = {
-> +	.channels				= 36,
-> +	.shutdown_reg				= 0x00,
-> +	.pwm_update_reg				= 0x25,
-> +	.global_control_reg			= 0x4a,
-> +	.reset_reg				= 0x4f,
-> +	.pwm_register_base			= 0x01,
-> +	.led_control_register_base		= 0x26,
-> +	.enable_bits_per_led_control_register	= 1,
-> +};
-> +
-> +static const struct is31fl32xx_chipdef is31fl3235_cdef = {
-> +	.channels				= 28,
-> +	.shutdown_reg				= 0x00,
-> +	.pwm_update_reg				= 0x25,
-> +	.global_control_reg			= 0x4a,
-> +	.reset_reg				= 0x4f,
-> +	.pwm_register_base			= 0x05,
-> +	.led_control_register_base		= 0x2a,
-> +	.enable_bits_per_led_control_register	= 1,
-> +};
-> +
-> +static const struct is31fl32xx_chipdef is31fl3218_cdef = {
-> +	.channels				= 18,
-> +	.shutdown_reg				= 0x00,
-> +	.pwm_update_reg				= 0x16,
-> +	.global_control_reg			= IS31FL32XX_REG_NONE,
-> +	.reset_reg				= 0x17,
-> +	.pwm_register_base			= 0x01,
-> +	.led_control_register_base		= 0x13,
-> +	.enable_bits_per_led_control_register	= 6,
-> +};
-> +
-> +static int is31fl3216_reset(struct is31fl32xx_priv *priv);
-> +static int is31fl3216_software_shutdown(struct is31fl32xx_priv *priv,
-> +					bool enable);
-> +static const struct is31fl32xx_chipdef is31fl3216_cdef = {
-> +	.channels				= 16,
-> +	.shutdown_reg				= IS31FL32XX_REG_NONE,
-> +	.pwm_update_reg				= 0xB0,
-> +	.global_control_reg			= IS31FL32XX_REG_NONE,
-> +	.reset_reg				= IS31FL32XX_REG_NONE,
-> +	.pwm_register_base			= 0x10,
-> +	.pwm_registers_reversed			= true,
-> +	.led_control_register_base		= 0x01,
-> +	.enable_bits_per_led_control_register	= 8,
-> +	.reset_func				= is31fl3216_reset,
-> +	.sw_shutdown_func			= is31fl3216_software_shutdown,
-> +};
-> +
-> +static int is31fl32xx_write(struct is31fl32xx_priv *priv, u8 reg, u8 val)
-> +{
-> +	int ret;
-> +
-> +	dev_dbg(&priv->client->dev, "writing register 0x%02X=0x%02X", reg, val);
-> +
-> +	ret =  i2c_smbus_write_byte_data(priv->client, reg, val);
-> +	if (ret) {
-> +		dev_err(&priv->client->dev,
-> +			"register write to 0x%02X failed (error %d)",
-> +			reg, ret);
-> +	}
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Custom reset function for IS31FL3216 because it does not have a RESET
-> + * register the way that the other IS31FL32xx chips do. We don't bother
-> + * writing the GPIO and animation registers, because the registers we
-> + * do write ensure those will have no effect.
-> + */
-> +static int is31fl3216_reset(struct is31fl32xx_priv *priv)
-> +{
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	ret = is31fl32xx_write(priv, IS31FL3216_CONFIG_REG,
-> +			       IS31FL3216_CONFIG_SSD_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +	for (i = 0; i < priv->cdef->channels; i++) {
-> +		ret = is31fl32xx_write(priv, priv->cdef->pwm_register_base+i,
-> +				       0x00);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	ret = is31fl32xx_write(priv, priv->cdef->pwm_update_reg, 0);
-> +	if (ret)
-> +		return ret;
-> +	ret = is31fl32xx_write(priv, IS31FL3216_LIGHTING_EFFECT_REG, 0x00);
-> +	if (ret)
-> +		return ret;
-> +	ret = is31fl32xx_write(priv, IS31FL3216_CHANNEL_CONFIG_REG, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Custom Software-Shutdown function for IS31FL3216 because it does not have
-> + * a SHUTDOWN register the way that the other IS31FL32xx chips do.
-> + * We don't bother doing a read/modify/write on the CONFIG register because
-> + * we only ever use a value of '0' for the other fields in that register.
-> + */
-> +static int is31fl3216_software_shutdown(struct is31fl32xx_priv *priv,
-> +					bool enable)
-> +{
-> +	u8 value = enable ? IS31FL3216_CONFIG_SSD_ENABLE :
-> +			    IS31FL3216_CONFIG_SSD_DISABLE;
-> +
-> +	return is31fl32xx_write(priv, IS31FL3216_CONFIG_REG, value);
-> +}
-> +
-> +/*
-> + * NOTE: A mutex is not needed in this function because:
-> + * - All referenced data is read-only after probe()
-> + * - The I2C core has a mutex on to protect the bus
-> + * - There are no read/modify/write operations
-> + * - Intervening operations between the write of the PWM register
-> + *   and the Update register are harmless.
-> + *
-> + * Example:
-> + *	PWM_REG_1 write 16
-> + *	UPDATE_REG write 0
-> + *	PWM_REG_2 write 128
-> + *	UPDATE_REG write 0
-> + *   vs:
-> + *	PWM_REG_1 write 16
-> + *	PWM_REG_2 write 128
-> + *	UPDATE_REG write 0
-> + *	UPDATE_REG write 0
-> + * are equivalent. Poking the Update register merely applies all PWM
-> + * register writes up to that point.
-> + */
-> +static int is31fl32xx_brightness_set(struct led_classdev *led_cdev,
-> +				     enum led_brightness brightness)
-> +{
-> +	const struct is31fl32xx_led_data *led_data =
-> +		container_of(led_cdev, struct is31fl32xx_led_data, cdev);
-> +	const struct is31fl32xx_chipdef *cdef = led_data->priv->cdef;
-> +	u8 pwm_register_offset;
-> +	int ret;
-> +
-> +	dev_dbg(led_cdev->dev, "%s: %d\n", __func__, brightness);
-> +
-> +	/* NOTE: led_data->channel is 1-based */
-> +	if (cdef->pwm_registers_reversed)
-> +		pwm_register_offset = cdef->channels - led_data->channel;
-> +	else
-> +		pwm_register_offset = led_data->channel - 1;
-> +
-> +	ret = is31fl32xx_write(led_data->priv,
-> +			       cdef->pwm_register_base + pwm_register_offset,
-> +			       brightness);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return is31fl32xx_write(led_data->priv, cdef->pwm_update_reg, 0);
-> +}
-> +
-> +static int is31fl32xx_reset_regs(struct is31fl32xx_priv *priv)
-> +{
-> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-> +	int ret;
-> +
-> +	if (cdef->reset_reg != IS31FL32XX_REG_NONE) {
-> +		ret = is31fl32xx_write(priv, cdef->reset_reg, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (cdef->reset_func)
-> +		return cdef->reset_func(priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static int is31fl32xx_software_shutdown(struct is31fl32xx_priv *priv,
-> +					bool enable)
-> +{
-> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-> +	int ret;
-> +
-> +	if (cdef->shutdown_reg != IS31FL32XX_REG_NONE) {
-> +		u8 value = enable ? IS31FL32XX_SHUTDOWN_SSD_ENABLE :
-> +				    IS31FL32XX_SHUTDOWN_SSD_DISABLE;
-> +		ret = is31fl32xx_write(priv, cdef->shutdown_reg, value);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (cdef->sw_shutdown_func)
-> +		return cdef->sw_shutdown_func(priv, enable);
-
-You seem to call sw_shutdown_func only here, so why should we have
-enable parameter in this op?
-
-> +	return 0;
-> +}
-> +
-> +static int is31fl32xx_init_regs(struct is31fl32xx_priv *priv)
-> +{
-> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-> +	int ret;
-> +
-> +	ret = is31fl32xx_reset_regs(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Set enable bit for all channels.
-> +	 * We will control state with PWM registers alone.
-> +	 */
-> +	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
-> +		u8 value =
-> +		    GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
-> +		u8 num_regs = cdef->channels /
-> +				cdef->enable_bits_per_led_control_register;
-> +		int i;
-> +
-> +		for (i = 0; i < num_regs; i++) {
-> +			ret = is31fl32xx_write(priv,
-> +					       cdef->led_control_register_base+i,
-> +					       value);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	ret = is31fl32xx_software_shutdown(priv, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (cdef->global_control_reg != IS31FL32XX_REG_NONE) {
-> +		ret = is31fl32xx_write(priv, cdef->global_control_reg, 0x00);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static inline size_t sizeof_is31fl32xx_priv(int num_leds)
-> +{
-> +	return sizeof(struct is31fl32xx_priv) +
-> +		      (sizeof(struct is31fl32xx_led_data) * num_leds);
-> +}
-> +
-> +static int is31fl32xx_parse_child_dt(const struct device *dev,
-> +				     const struct device_node *child,
-> +				     struct is31fl32xx_led_data *led_data)
-> +{
-> +	struct led_classdev *cdev = &led_data->cdev;
-> +	int ret = 0;
-> +	u32 reg;
-> +
-> +	if (of_property_read_string(child, "label", &cdev->name))
-> +		cdev->name = child->name;
-> +
-> +	ret = of_property_read_u32(child, "reg", &reg);
-> +	if (ret || reg < 1 || reg > led_data->priv->cdef->channels) {
-> +		dev_err(dev,
-> +			"Child node %s does not have a valid reg property\n",
-> +			child->full_name);
-> +		return -EINVAL;
-> +	}
-> +	led_data->channel = reg;
-> +
-> +	of_property_read_string(child, "linux,default-trigger",
-> +				&cdev->default_trigger);
-> +
-> +	cdev->brightness_set_blocking = is31fl32xx_brightness_set;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct is31fl32xx_led_data *is31fl32xx_find_led_data(
-> +					struct is31fl32xx_priv *priv,
-> +					u8 channel)
-> +{
-> +	size_t i;
-> +
-> +	for (i = 0; i < priv->num_leds; i++) {
-> +		if (priv->leds[i].channel == channel)
-> +			return &priv->leds[i];
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static int is31fl32xx_parse_dt(struct device *dev,
-> +			       struct is31fl32xx_priv *priv)
-> +{
-> +	struct device_node *child;
-> +	int ret = 0;
-> +
-> +	for_each_child_of_node(dev->of_node, child) {
-> +		struct is31fl32xx_led_data *led_data =
-> +			&priv->leds[priv->num_leds];
-> +		const struct is31fl32xx_led_data *other_led_data;
-> +
-> +		led_data->priv = priv;
-> +
-> +		ret = is31fl32xx_parse_child_dt(dev, child, led_data);
-> +		if (ret)
-> +			goto err;
-> +
-> +		/* Detect if channel is already in use by another child */
-> +		other_led_data = is31fl32xx_find_led_data(priv,
-> +							  led_data->channel);
-> +		if (other_led_data) {
-> +			dev_err(dev,
-> +				"%s and %s both attempting to use channel %d\n",
-> +				led_data->cdev.name,
-> +				other_led_data->cdev.name,
-> +				led_data->channel);
-> +			goto err;
-> +		}
-> +
-> +		ret = devm_led_classdev_register(dev, &led_data->cdev);
-> +		if (ret) {
-> +			dev_err(dev, "failed to register PWM led for %s: %d\n",
-> +				led_data->cdev.name, ret);
-> +			goto err;
-> +		}
-> +
-> +		priv->num_leds++;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	of_node_put(child);
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id of_is31fl31xx_match[] = {
-> +	{ .compatible = "issi,is31fl3236", .data = &is31fl3236_cdef, },
-> +	{ .compatible = "issi,is31fl3235", .data = &is31fl3235_cdef, },
-> +	{ .compatible = "issi,is31fl3218", .data = &is31fl3218_cdef, },
-> +	{ .compatible = "issi,is31fl3216", .data = &is31fl3216_cdef, },
-> +	{},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, of_is31fl31xx_match);
-> +
-> +static int is31fl32xx_probe(struct i2c_client *client,
-> +			    const struct i2c_device_id *id)
-> +{
-> +	const struct is31fl32xx_chipdef *cdef;
-> +	const struct of_device_id *of_dev_id;
-> +	struct device *dev = &client->dev;
-> +	struct is31fl32xx_priv *priv;
-> +	int count;
-> +	int ret = 0;
-> +
-> +	of_dev_id = of_match_device(of_is31fl31xx_match, dev);
-> +	if (!of_dev_id)
-> +		return -EINVAL;
-> +
-> +	cdef = of_dev_id->data;
-> +
-> +	count = of_get_child_count(dev->of_node);
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	priv = devm_kzalloc(dev, sizeof_is31fl32xx_priv(count),
-> +			    GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->client = client;
-> +	priv->cdef = cdef;
-> +	i2c_set_clientdata(client, priv);
-> +
-> +	ret = is31fl32xx_init_regs(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = is31fl32xx_parse_dt(dev, priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int is31fl32xx_remove(struct i2c_client *client)
-> +{
-> +	struct is31fl32xx_priv *priv = i2c_get_clientdata(client);
-> +
-> +	return is31fl32xx_reset_regs(priv);
-> +}
-> +
-> +/*
-> + * i2c-core requires that id_table be non-NULL, even though
-> + * it is not used for DeviceTree based instantiation.
-> + */
-> +static const struct i2c_device_id is31fl31xx_id[] = {
-> +	{},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i2c, is31fl31xx_id);
-> +
-> +static struct i2c_driver is31fl32xx_driver = {
-> +	.driver = {
-> +		.name	= "is31fl32xx",
-> +		.of_match_table = of_is31fl31xx_match,
-> +	},
-> +	.probe		= is31fl32xx_probe,
-> +	.remove		= is31fl32xx_remove,
-> +	.id_table	= is31fl31xx_id,
-> +};
-> +
-> +module_i2c_driver(is31fl32xx_driver);
-> +
-> +MODULE_AUTHOR("David Rivshin <drivshin@allworx.com>");
-> +MODULE_DESCRIPTION("ISSI IS31FL32xx LED driver");
-> +MODULE_LICENSE("GPL v2");
+> @@ -10,7 +10,9 @@
+>    * it under the terms of the GNU General Public License version 2 as
+>    * published by the Free Software Foundation.
+>    *
+> - * Datasheets: http://www.issi.com/US/product-analog-fxled-driver.shtml
+> + * Datasheets:
+> + *   http://www.issi.com/US/product-analog-fxled-driver.shtml
+> + *   http://www.si-en.com/product.asp?parentid=890
+>    */
 >
-
-
--- 
-Best regards,
-Jacek Anaszewski
+>   #include <linux/err.h>
+> @@ -425,7 +427,9 @@ static const struct of_device_id of_is31fl31xx_match[] = {
+>   	{ .compatible = "issi,is31fl3236", .data = &is31fl3236_cdef, },
+>   	{ .compatible = "issi,is31fl3235", .data = &is31fl3235_cdef, },
+>   	{ .compatible = "issi,is31fl3218", .data = &is31fl3218_cdef, },
+> +	{ .compatible = "si-en,sn3218",    .data = &is31fl3218_cdef, },
+>   	{ .compatible = "issi,is31fl3216", .data = &is31fl3216_cdef, },
+> +	{ .compatible = "si-en,sn3216",    .data = &is31fl3216_cdef, },
+>   	{},
+>   };
+>
+> diff --git a/drivers/leds/leds-sn3218.c b/drivers/leds/leds-sn3218.c
+> deleted file mode 100644
+> index dcc2581..0000000
+> --- a/drivers/leds/leds-sn3218.c
+> +++ /dev/null
+> @@ -1,306 +0,0 @@
+> -/*
+> - * Si-En SN3218 18 Channel LED Driver
+> - *
+> - * Copyright (C) 2016 Stefan Wahren <stefan.wahren@i2se.com>
+> - *
+> - * Based on leds-pca963x.c
+> - *
+> - * This program is free software; you can redistribute it and/or
+> - * modify it under the terms of the GNU General Public License
+> - * version 2 as published by the Free Software Foundation.
+> - *
+> - * Datasheet: http://www.si-en.com/uploadpdf/s2011517171720.pdf
+> - *
+> - */
+> -
+> -#include <linux/err.h>
+> -#include <linux/i2c.h>
+> -#include <linux/leds.h>
+> -#include <linux/module.h>
+> -#include <linux/of.h>
+> -#include <linux/regmap.h>
+> -#include <linux/slab.h>
+> -
+> -#define SN3218_MODE		0x00
+> -#define SN3218_PWM_1		0x01
+> -#define SN3218_PWM_2		0x02
+> -#define SN3218_PWM_3		0x03
+> -#define SN3218_PWM_4		0x04
+> -#define SN3218_PWM_5		0x05
+> -#define SN3218_PWM_6		0x06
+> -#define SN3218_PWM_7		0x07
+> -#define SN3218_PWM_8		0x08
+> -#define SN3218_PWM_9		0x09
+> -#define SN3218_PWM_10		0x0a
+> -#define SN3218_PWM_11		0x0b
+> -#define SN3218_PWM_12		0x0c
+> -#define SN3218_PWM_13		0x0d
+> -#define SN3218_PWM_14		0x0e
+> -#define SN3218_PWM_15		0x0f
+> -#define SN3218_PWM_16		0x10
+> -#define SN3218_PWM_17		0x11
+> -#define SN3218_PWM_18		0x12
+> -#define SN3218_LED_1_6		0x13
+> -#define SN3218_LED_7_12		0x14
+> -#define SN3218_LED_13_18	0x15
+> -#define SN3218_UPDATE		0x16	/* applies to reg 0x01 .. 0x15 */
+> -#define SN3218_RESET		0x17
+> -
+> -#define SN3218_LED_MASK		0x3f
+> -#define SN3218_LED_ON		0x01
+> -#define SN3218_LED_OFF		0x00
+> -
+> -#define SN3218_MODE_SHUTDOWN	0x00
+> -#define SN3218_MODE_NORMAL	0x01
+> -
+> -#define NUM_LEDS		18
+> -
+> -struct sn3218_led;
+> -
+> -/**
+> - * struct sn3218 -
+> - * @client - Pointer to the I2C client
+> - * @leds - Pointer to the individual LEDs
+> - * @num_leds - Actual number of LEDs
+> -**/
+> -struct sn3218 {
+> -	struct i2c_client *client;
+> -	struct regmap *regmap;
+> -	struct sn3218_led *leds;
+> -	int num_leds;
+> -};
+> -
+> -/**
+> - * struct sn3218_led -
+> - * @chip - Pointer to the container
+> - * @led_cdev - led class device pointer
+> - * @led_num - LED index ( 0 .. 17 )
+> -**/
+> -struct sn3218_led {
+> -	struct sn3218 *chip;
+> -	struct led_classdev led_cdev;
+> -	int led_num;
+> -};
+> -
+> -static int sn3218_led_set(struct led_classdev *led_cdev,
+> -			  enum led_brightness brightness)
+> -{
+> -	struct sn3218_led *led =
+> -			container_of(led_cdev, struct sn3218_led, led_cdev);
+> -	struct regmap *regmap = led->chip->regmap;
+> -	u8 bank = led->led_num / 6;
+> -	u8 mask = 0x1 << (led->led_num % 6);
+> -	u8 val;
+> -	int ret;
+> -
+> -	if (brightness == LED_OFF)
+> -		val = 0;
+> -	else
+> -		val = mask;
+> -
+> -	ret = regmap_update_bits(regmap, SN3218_LED_1_6 + bank, mask, val);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	if (brightness > LED_OFF) {
+> -		ret = regmap_write(regmap, SN3218_PWM_1 + led->led_num,
+> -				   brightness);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> -
+> -	ret = regmap_write(regmap, SN3218_UPDATE, 0xff);
+> -
+> -	return ret;
+> -}
+> -
+> -static void sn3218_led_init(struct sn3218 *sn3218, struct device_node *node,
+> -			    u32 reg)
+> -{
+> -	struct sn3218_led *leds = sn3218->leds;
+> -	struct led_classdev *cdev = &leds[reg].led_cdev;
+> -
+> -	leds[reg].led_num = reg;
+> -	leds[reg].chip = sn3218;
+> -
+> -	if (of_property_read_string(node, "label", &cdev->name))
+> -		cdev->name = node->name;
+> -
+> -	of_property_read_string(node, "linux,default-trigger",
+> -				&cdev->default_trigger);
+> -
+> -	cdev->brightness_set_blocking = sn3218_led_set;
+> -}
+> -
+> -static const struct reg_default sn3218_reg_defs[] = {
+> -	{ SN3218_MODE, 0x00},
+> -	{ SN3218_PWM_1, 0x00},
+> -	{ SN3218_PWM_2, 0x00},
+> -	{ SN3218_PWM_3, 0x00},
+> -	{ SN3218_PWM_4, 0x00},
+> -	{ SN3218_PWM_5, 0x00},
+> -	{ SN3218_PWM_6, 0x00},
+> -	{ SN3218_PWM_7, 0x00},
+> -	{ SN3218_PWM_8, 0x00},
+> -	{ SN3218_PWM_9, 0x00},
+> -	{ SN3218_PWM_10, 0x00},
+> -	{ SN3218_PWM_11, 0x00},
+> -	{ SN3218_PWM_12, 0x00},
+> -	{ SN3218_PWM_13, 0x00},
+> -	{ SN3218_PWM_14, 0x00},
+> -	{ SN3218_PWM_15, 0x00},
+> -	{ SN3218_PWM_16, 0x00},
+> -	{ SN3218_PWM_17, 0x00},
+> -	{ SN3218_PWM_18, 0x00},
+> -	{ SN3218_LED_1_6, 0x00},
+> -	{ SN3218_LED_7_12, 0x00},
+> -	{ SN3218_LED_13_18, 0x00},
+> -	{ SN3218_UPDATE, 0x00},
+> -	{ SN3218_RESET, 0x00},
+> -};
+> -
+> -static const struct regmap_config sn3218_regmap_config = {
+> -	.reg_bits = 8,
+> -	.val_bits = 8,
+> -
+> -	.max_register = SN3218_RESET,
+> -	.reg_defaults = sn3218_reg_defs,
+> -	.num_reg_defaults = ARRAY_SIZE(sn3218_reg_defs),
+> -	.cache_type = REGCACHE_RBTREE,
+> -};
+> -
+> -static int sn3218_init(struct i2c_client *client, struct sn3218 *sn3218)
+> -{
+> -	struct device_node *np = client->dev.of_node, *child;
+> -	struct sn3218_led *leds;
+> -	int ret, count;
+> -
+> -	count = of_get_child_count(np);
+> -	if (!count)
+> -		return -ENODEV;
+> -
+> -	if (count > NUM_LEDS) {
+> -		dev_err(&client->dev, "Invalid LED count %d\n", count);
+> -		return -EINVAL;
+> -	}
+> -
+> -	leds = devm_kzalloc(&client->dev, count * sizeof(*leds), GFP_KERNEL);
+> -	if (!leds)
+> -		return -ENOMEM;
+> -
+> -	sn3218->leds = leds;
+> -	sn3218->num_leds = count;
+> -	sn3218->client = client;
+> -
+> -	sn3218->regmap = devm_regmap_init_i2c(client, &sn3218_regmap_config);
+> -	if (IS_ERR(sn3218->regmap)) {
+> -		ret = PTR_ERR(sn3218->regmap);
+> -		dev_err(&client->dev, "Failed to allocate register map: %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	for_each_child_of_node(np, child) {
+> -		u32 reg;
+> -
+> -		ret = of_property_read_u32(child, "reg", &reg);
+> -		if (ret)
+> -			goto fail;
+> -
+> -		if (reg >= count) {
+> -			dev_err(&client->dev, "Invalid LED (%u >= %d)\n", reg,
+> -				count);
+> -			ret = -EINVAL;
+> -			goto fail;
+> -		}
+> -
+> -		sn3218_led_init(sn3218, child, reg);
+> -	}
+> -
+> -	return 0;
+> -
+> -fail:
+> -	of_node_put(child);
+> -	return ret;
+> -}
+> -
+> -static int sn3218_probe(struct i2c_client *client,
+> -			const struct i2c_device_id *id)
+> -{
+> -	struct sn3218 *sn3218;
+> -	struct sn3218_led *leds;
+> -	struct device *dev = &client->dev;
+> -	int i, ret;
+> -
+> -	sn3218 = devm_kzalloc(dev, sizeof(*sn3218), GFP_KERNEL);
+> -	if (!sn3218)
+> -		return -ENOMEM;
+> -
+> -	ret = sn3218_init(client, sn3218);
+> -	if (ret)
+> -		return ret;
+> -
+> -	i2c_set_clientdata(client, sn3218);
+> -	leds = sn3218->leds;
+> -
+> -	/*
+> -	 * Since the chip is write-only we need to reset him into
+> -	 * a defined state (all LEDs off).
+> -	 */
+> -	ret = regmap_write(sn3218->regmap, SN3218_RESET, 0xff);
+> -	if (ret)
+> -		return ret;
+> -
+> -	for (i = 0; i < sn3218->num_leds; i++) {
+> -		ret = devm_led_classdev_register(dev, &leds[i].led_cdev);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> -
+> -	return regmap_write(sn3218->regmap, SN3218_MODE, SN3218_MODE_NORMAL);
+> -}
+> -
+> -static int sn3218_remove(struct i2c_client *client)
+> -{
+> -	struct sn3218 *sn3218 = i2c_get_clientdata(client);
+> -
+> -	regmap_write(sn3218->regmap, SN3218_MODE, SN3218_MODE_SHUTDOWN);
+> -
+> -	return 0;
+> -}
+> -
+> -static void sn3218_shutdown(struct i2c_client *client)
+> -{
+> -	struct sn3218 *sn3218 = i2c_get_clientdata(client);
+> -
+> -	regmap_write(sn3218->regmap, SN3218_MODE, SN3218_MODE_SHUTDOWN);
+> -}
+> -
+> -static const struct i2c_device_id sn3218_id[] = {
+> -	{ "sn3218", 0 },
+> -	{ }
+> -};
+> -MODULE_DEVICE_TABLE(i2c, sn3218_id);
+> -
+> -static const struct of_device_id of_sn3218_match[] = {
+> -	{ .compatible = "si-en,sn3218", },
+> -	{},
+> -};
+> -MODULE_DEVICE_TABLE(of, of_sn3218_match);
+> -
+> -static struct i2c_driver sn3218_driver = {
+> -	.driver = {
+> -		.name	= "leds-sn3218",
+> -		.of_match_table = of_match_ptr(of_sn3218_match),
+> -	},
+> -	.probe	= sn3218_probe,
+> -	.remove	= sn3218_remove,
+> -	.shutdown = sn3218_shutdown,
+> -	.id_table = sn3218_id,
+> -};
+> -
+> -module_i2c_driver(sn3218_driver);
+> -
+> -MODULE_DESCRIPTION("Si-En SN3218 LED Driver");
+> -MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
+> -MODULE_LICENSE("GPL v2");
+>
