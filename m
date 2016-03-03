@@ -1,225 +1,68 @@
-From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] hid: thingm: change driver to use RGB LED core extension
-Date: Wed, 2 Mar 2016 21:15:14 +0100
-Message-ID: <56D749D2.80101@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Jiri Kosina <jikos-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: "David Rivshin (Allworx)" <drivshin.allworx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/4] leds: Add driver for the ISSI IS31FL32xx family of LED controllers
+Date: Wed,  2 Mar 2016 22:01:31 -0500
+Message-ID: <1456974095-1867-1-git-send-email-drivshin.allworx@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Based on the proposed RGB LED core extension the thingm driver was
-changed to make use of this extension. It allows to simplify
-the code a lot. For now primary purpose of this patch is to facilitate
-testing of the RGB LED core extension.
+From: David Rivshin <drivshin-5fOYsn7Fw8lBDgjK7y7TUQ@public.gmane.org>
 
-I didn't find a way to split the patch into smaller parts as either
-you use the RGB LED extension or not. However this shouldn't be really
-an issue as the resulting code is relatively short and simple.
+This series adds support for the ISSI IS31FL32xx family of I2C LED
+controllers. Since the IS31FL3218 is actually the same device as the
+SN3218, the dedicated leds-sn3218 driver is removed and the compatible
+string is folded into this driver.
 
-Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/hid/hid-thingm.c | 131 +++++++++++++----------------------------------
- 1 file changed, 36 insertions(+), 95 deletions(-)
+Changes from RFC [1]:
+ - Removed max-brightness DT property.
+ - Added #address-cells and #size-cells properties to the example DT.
+ - Refer to these devices as "LED controllers" in Kconfig.
+ - Removed redundant last sentence from Kconfig entry
+ - Removed unnecessary debug code.
+ - Do not set led_classdev.brightness to 0 explicitly, as it is
+   already initialized to 0 by devm_kzalloc().
+ - Used of_property_read_string() instead of of_get_property().
+ - Fail immediately on DT parsing error in a child node, rather than
+   continuing on with the non-faulty ones.
+ - Added additional comments for some things that might be non-obvious.
+ - Added constants for the location of the SSD bit in the SHUTDOWN
+   register, and the 3216's CONFIG register.
+ - Added special sw_shutdown_func for the 3216 device, as that bit
+   is in a different register, at a different position, and has reverse
+   polarity compared to all the other devices.
+ - Refactored is31fl32xx_init_regs() to separate out some logic into
+   is31fl32xx_reset_regs() and is31fl32xx_software_shutdown().
+ - Added 4th patch to replace the now-redundant leds-sn3218.
 
-diff --git a/drivers/hid/hid-thingm.c b/drivers/hid/hid-thingm.c
-index 847a497..07b9f1b 100644
---- a/drivers/hid/hid-thingm.c
-+++ b/drivers/hid/hid-thingm.c
-@@ -19,6 +19,7 @@
- 
- #define REPORT_ID	1
- #define REPORT_SIZE	9
-+#define NUMRGB_MAX	2
- 
- /* Firmware major number of supported devices */
- #define THINGM_MAJOR_MK1	'1'
-@@ -42,33 +43,26 @@ static const struct thingm_fwinfo thingm_fwinfo[] = {
- 	}
- };
- 
--/* A red, green or blue channel, part of an RGB chip */
- struct thingm_led {
--	struct thingm_rgb *rgb;
--	struct led_classdev ldev;
--	char name[32];
--};
--
--/* Basically a WS2812 5050 RGB LED chip */
--struct thingm_rgb {
--	struct thingm_device *tdev;
--	struct thingm_led red;
--	struct thingm_led green;
--	struct thingm_led blue;
--	u8 num;
-+	struct led_classdev		cdev;
-+	char				name[32];
-+	unsigned			led_num;
-+	struct thingm_device		*tdev;
- };
- 
- struct thingm_device {
--	struct hid_device *hdev;
-+	struct hid_device		*hdev;
- 	struct {
- 		char major;
- 		char minor;
--	} version;
--	const struct thingm_fwinfo *fwinfo;
--	struct mutex lock;
--	struct thingm_rgb *rgb;
-+	}				version;
-+	const struct thingm_fwinfo	*fwinfo;
-+	struct mutex			lock;
-+	struct thingm_led		tled[NUMRGB_MAX];
- };
- 
-+#define to_thingm_led(arg) container_of((arg), struct thingm_led, cdev)
-+
- static int thingm_send(struct thingm_device *tdev, u8 buf[REPORT_SIZE])
- {
- 	int ret;
-@@ -133,86 +127,33 @@ static int thingm_version(struct thingm_device *tdev)
- 	return 0;
- }
- 
--static int thingm_write_color(struct thingm_rgb *rgb)
-+static int thingm_brightness_set_blocking(struct led_classdev *cdev,
-+					  enum led_brightness value)
- {
--	u8 buf[REPORT_SIZE] = { REPORT_ID, 'c', 0, 0, 0, 0, 0, rgb->num, 0 };
--
--	buf[2] = rgb->red.ldev.brightness;
--	buf[3] = rgb->green.ldev.brightness;
--	buf[4] = rgb->blue.ldev.brightness;
--
--	return thingm_send(rgb->tdev, buf);
--}
-+	struct thingm_led *tled = to_thingm_led(cdev);
-+	u8 buf[REPORT_SIZE] = { REPORT_ID, 'c' };
- 
--static int thingm_led_set(struct led_classdev *ldev,
--			  enum led_brightness brightness)
--{
--	struct thingm_led *led = container_of(ldev, struct thingm_led, ldev);
--	int ret;
-+	value = led_hsv_to_rgb(value);
- 
--	ret = thingm_write_color(led->rgb);
--	if (ret)
--		hid_err(led->rgb->tdev->hdev, "failed to write color\n");
-+	buf[2] = (value >> 16) & 0xff;
-+	buf[3] = (value >> 8) & 0xff;
-+	buf[4] = value & 0xff;
-+	buf[7] = tled->led_num;
- 
--	return ret;
--}
--
--static int thingm_init_rgb(struct thingm_rgb *rgb)
--{
--	const int minor = ((struct hidraw *) rgb->tdev->hdev->hidraw)->minor;
--	int err;
--
--	/* Register the red diode */
--	snprintf(rgb->red.name, sizeof(rgb->red.name),
--			"thingm%d:red:led%d", minor, rgb->num);
--	rgb->red.ldev.name = rgb->red.name;
--	rgb->red.ldev.max_brightness = 255;
--	rgb->red.ldev.brightness_set_blocking = thingm_led_set;
--	rgb->red.rgb = rgb;
--
--	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
--					 &rgb->red.ldev);
--	if (err)
--		return err;
--
--	/* Register the green diode */
--	snprintf(rgb->green.name, sizeof(rgb->green.name),
--			"thingm%d:green:led%d", minor, rgb->num);
--	rgb->green.ldev.name = rgb->green.name;
--	rgb->green.ldev.max_brightness = 255;
--	rgb->green.ldev.brightness_set_blocking = thingm_led_set;
--	rgb->green.rgb = rgb;
--
--	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
--					 &rgb->green.ldev);
--	if (err)
--		return err;
--
--	/* Register the blue diode */
--	snprintf(rgb->blue.name, sizeof(rgb->blue.name),
--			"thingm%d:blue:led%d", minor, rgb->num);
--	rgb->blue.ldev.name = rgb->blue.name;
--	rgb->blue.ldev.max_brightness = 255;
--	rgb->blue.ldev.brightness_set_blocking = thingm_led_set;
--	rgb->blue.rgb = rgb;
--
--	err = devm_led_classdev_register(&rgb->tdev->hdev->dev,
--					 &rgb->blue.ldev);
--	return err;
-+	return thingm_send(tled->tdev, buf);
- }
- 
- static int thingm_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct thingm_device *tdev;
--	int i, err;
-+	struct led_classdev *cdev;
-+	int i, err, minor;
- 
--	tdev = devm_kzalloc(&hdev->dev, sizeof(struct thingm_device),
--			GFP_KERNEL);
-+	tdev = devm_kzalloc(&hdev->dev, sizeof(*tdev), GFP_KERNEL);
- 	if (!tdev)
- 		return -ENOMEM;
- 
- 	tdev->hdev = hdev;
--	hid_set_drvdata(hdev, tdev);
- 
- 	err = hid_parse(hdev);
- 	if (err)
-@@ -236,22 +177,22 @@ static int thingm_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		return -ENODEV;
- 	}
- 
--	tdev->rgb = devm_kzalloc(&hdev->dev,
--			sizeof(struct thingm_rgb) * tdev->fwinfo->numrgb,
--			GFP_KERNEL);
--	if (!tdev->rgb)
--		return -ENOMEM;
--
- 	err = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
- 	if (err)
- 		return err;
- 
--	for (i = 0; i < tdev->fwinfo->numrgb; ++i) {
--		struct thingm_rgb *rgb = tdev->rgb + i;
-+	minor = ((struct hidraw *)hdev->hidraw)->minor;
- 
--		rgb->tdev = tdev;
--		rgb->num = tdev->fwinfo->first + i;
--		err = thingm_init_rgb(rgb);
-+	for (i = 0; i < tdev->fwinfo->numrgb; ++i) {
-+		tdev->tled[i].tdev = tdev;
-+		tdev->tled[i].led_num = tdev->fwinfo->first + i;
-+		snprintf(tdev->tled[i].name, sizeof(tdev->tled[i].name),
-+			 "thingm%d:rgb:led%d", minor, i);
-+		cdev = &tdev->tled[i].cdev;
-+		cdev->name = tdev->tled[i].name;
-+		cdev->flags = LED_DEV_CAP_RGB | LED_HW_PLUGGABLE;
-+		cdev->brightness_set_blocking = thingm_brightness_set_blocking;
-+		err = devm_led_classdev_register(&hdev->dev, cdev);
- 		if (err) {
- 			hid_hw_stop(hdev);
- 			return err;
+[1] http://www.spinics.net/lists/linux-leds/msg05564.html
+    http://thread.gmane.org/gmane.linux.leds/4530
+
+David Rivshin (4):
+  DT: Add vendor prefix for Integrated Silicon Solutions Inc.
+  DT: leds: Add binding for the ISSI IS31FL32xx family of LED
+    controllers
+  leds: Add driver for the ISSI IS31FL32xx family of LED controllers
+  leds: Replace dedicated SN3218 driver with IS31FL32XX driver
+
+ .../devicetree/bindings/leds/leds-is31fl32xx.txt   |  52 +++
+ .../devicetree/bindings/leds/leds-sn3218.txt       |  41 --
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ drivers/leds/Kconfig                               |  16 +-
+ drivers/leds/Makefile                              |   2 +-
+ drivers/leds/leds-is31fl32xx.c                     | 509 +++++++++++++++++++++
+ drivers/leds/leds-sn3218.c                         | 306 -------------
+ 7 files changed, 569 insertions(+), 358 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-sn3218.txt
+ create mode 100644 drivers/leds/leds-is31fl32xx.c
+ delete mode 100644 drivers/leds/leds-sn3218.c
+
 -- 
-2.7.1
+2.5.0
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
