@@ -1,132 +1,46 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 4/4] leds: core: add support for RGB LED's
-Date: Fri, 04 Mar 2016 10:05:16 +0100
-Message-ID: <56D94FCC.8050706@samsung.com>
-References: <56D60B4C.5000506@gmail.com>
+Subject: Re: [PATCH] leds: Add Chrome OS keyboard backlight LEDs driver
+Date: Fri, 04 Mar 2016 10:38:40 +0100
+Message-ID: <56D957A0.7070300@samsung.com>
+References: <20160303234646.GA17641@dtor-ws>
+ <1457080729.18482.6.camel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56D60B4C.5000506@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30327 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758357AbcCDJio (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Mar 2016 04:38:44 -0500
+In-reply-to: <1457080729.18482.6.camel@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Evan McClain <aeroevan@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>, Simon Que <sque@chromium.org>, Olof Johansson <olofj@chromium.org>, Duncan Laurie <dlaurie@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On 03/01/2016 10:36 PM, Heiner Kallweit wrote:
-> Export a function to convert HSV color values to RGB.
-> It's intended to be called by drivers for RGB LEDs.
+Hi Evan,
+
+On 03/04/2016 09:38 AM, Evan McClain wrote:
+> On Thu, 2016-03-03 at 15:46 -0800, Dmitry Torokhov wrote:
+>> From: Simon Que <sque@chromium.org>
+>>
+>> This is a driver for ACPI-based keyboard backlight LEDs found on
+>> Chromebooks. The driver locates \\_SB.KBLT ACPI device and exports
+>> backlight as "chromeos::kbd_backlight" LED class device in sysfs.
 >
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - move hsv -> rgb conversion to separate file
-> - remove flag LED_DEV_CAP_RGB
-> v3:
-> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
->    This is needed in cases when we have monochrome and color LEDs
->    as well in a system.
-> v4:
-> - Export led_hsv_to_rgb and let the device driver call it instead
->    of doing the conversion in the core
-> v5:
-> - don't ignore led_cdev->brightness_get silently if LED_DEV_CAP_RGB
->    is set but warn
-> ---
->   drivers/leds/led-class.c    |  7 +++++++
->   drivers/leds/led-rgb-core.c | 36 ++++++++++++++++++++++++++++++++++++
->   include/linux/leds.h        |  8 ++++++++
->   3 files changed, 51 insertions(+)
->
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 8a3748a..a4b144e 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -193,6 +193,13 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->   	char name[64];
->   	int ret;
->
-> +	/*
-> +	 * for now reading back the color is not supported as multiple
-> +	 * HSV -> RGB -> HSV conversions may distort the color due to
-> +	 * rounding issues in the conversion algorithm
-> +	 */
-
-Does the "for now" mean that you plan on supporting it in the future?
-
-> +	WARN_ON(led_cdev->flags & LED_DEV_CAP_RGB && led_cdev->brightness_get);
-> +
-
-Could you move this warning to the line 216?
-
->   	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->   	if (ret < 0)
->   		return ret;
-> diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
-> index f6591f1..2b18d4c 100644
-> --- a/drivers/leds/led-rgb-core.c
-> +++ b/drivers/leds/led-rgb-core.c
-> @@ -38,3 +38,39 @@ enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
->   	return brightness |
->   	       min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
->   }
-> +
-> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv)
-> +{
-> +	int h = min_t(int, (hsv >> 16) & 0xff, 251);
-> +	int s = (hsv >> 8) & 0xff;
-> +	int v = hsv & 0xff;
-> +	int f, p, q, t, r, g, b;
-> +
-> +	if (!v)
-> +		return 0;
-> +	if (!s)
-> +		return (v << 16) + (v << 8) + v;
-> +
-> +	f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
-> +	p = v - DIV_ROUND_CLOSEST(s * v, 255);
-> +	q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
-> +	t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
-> +
-> +	switch (h / 42) {
-> +	case 0:
-> +		r = v; g = t; b = p; break;
-> +	case 1:
-> +		r = q; g = v; b = p; break;
-> +	case 2:
-> +		r = p; g = v; b = t; break;
-> +	case 3:
-> +		r = p; g = q; b = v; break;
-> +	case 4:
-> +		r = t; g = p; b = v; break;
-> +	case 5:
-> +		r = v; g = p; b = q; break;
-> +	}
-> +
-> +	return (r << 16) + (g << 8) + b;
-> +}
-> +EXPORT_SYMBOL_GPL(led_hsv_to_rgb);
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index bbf24bb..82b3477 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -226,6 +226,14 @@ static inline bool led_sysfs_is_disabled(struct led_classdev *led_cdev)
->   	return led_cdev->flags & LED_SYSFS_DISABLE;
->   }
->
-> +/**
-> + * led_hsv_to_rgb - convert a hsv color value to rgb color model
-> + * @hsv: the hsv value to convert
-> + *
-> + * Returns: the resulting rgb value
-> + */
-> +enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
-> +
->   /*
->    * LED Triggers
->    */
+> Was it ever decided where this driver should live? I was planning on
+> submitting to platform/chrome since most keyboard backlights seem to
+> live over there but I don't think I got a response.
 >
 
+It hasn't been decided yet. I can take it, but could you submit one more
+version, without
+
+'owner	= THIS_MODULE' in struct platform_driver keyboard_led_driver ?
+
+It is redundant, because the core will do it.
+
+Also the line with devm_kzalloc has over 80 characters.
 
 -- 
 Best regards,
