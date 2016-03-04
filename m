@@ -1,7 +1,7 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v7 4/5] leds: core: document ABI change for RGB extension
-Date: Fri, 4 Mar 2016 22:14:42 +0100
-Message-ID: <56D9FAC2.8090703@gmail.com>
+Subject: [PATCH v7 2/5] leds: core: add color LED sysfs extension
+Date: Fri, 4 Mar 2016 22:09:25 +0100
+Message-ID: <56D9F985.5060504@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
@@ -11,37 +11,51 @@ To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Document the ABI change in Documentation/ABI/testing/sysfs-class-led.
+Extend brightness sysfs property handling to deal with monochrome
+and color mode as well.
 
 Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
+v2:
+- split from patch 1
+v3:
+- moved one change (led_is_off) to patch 1
+v4:
+- changed printf format string to %#.6x
+v5:
+- no changes
+v6:
+- no changes
 v7:
-- separated from patch 3
+- no changes
 ---
- Documentation/ABI/testing/sysfs-class-led | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/leds/led-class.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 3646ec8..20357d5 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -7,6 +7,17 @@ Description:
- 		have hardware brightness support so will just be turned on for
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
-+		If a driver uses the RGB LED feature then this attribute is
-+		interpreted as a HSV color model value:
-+		<0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
-+		Usage of the least byte is identical to monochrome mode.
-+		Saturation can be 0-255 and hue 0-251 (Colour circle is mapped
-+		to 0-252). If hue and saturation both are 0 the current colour
-+		is preserved and only the brightness is set. This ensures
-+		backwards compatibility with monochrome mode, e.g. for
-+		led_set_brightness() calls from triggers.
-+		Flag F enables setting hue and saturation even if both are 0.
-+		For details and examples see Documentation/leds/leds-class.txt
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 007a5b3..8a3748a 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -32,7 +32,10 @@ static ssize_t brightness_show(struct device *dev,
+ 	/* no lock needed for this */
+ 	led_update_brightness(led_cdev);
  
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
+-	return sprintf(buf, "%u\n", led_cdev->brightness);
++	if (led_cdev->brightness > LED_FULL)
++		return sprintf(buf, "%#.6x\n", led_cdev->brightness);
++	else
++		return sprintf(buf, "%u\n", led_cdev->brightness);
+ }
+ 
+ static ssize_t brightness_store(struct device *dev,
+@@ -49,7 +52,7 @@ static ssize_t brightness_store(struct device *dev,
+ 		goto unlock;
+ 	}
+ 
+-	ret = kstrtoul(buf, 10, &state);
++	ret = kstrtoul(buf, 0, &state);
+ 	if (ret)
+ 		goto unlock;
+ 
 -- 
 2.7.1
