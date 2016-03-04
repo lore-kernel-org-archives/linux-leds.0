@@ -1,71 +1,52 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] leds: Add Chrome OS keyboard backlight LEDs driver
-Date: Fri, 4 Mar 2016 12:59:55 -0800
-Message-ID: <20160304205955.GG17145@dtor-ws>
-References: <20160303234646.GA17641@dtor-ws>
- <1457080729.18482.6.camel@gmail.com>
- <56D957A0.7070300@samsung.com>
- <20160304191322.GA17145@dtor-ws>
- <56D9F63C.5030608@gmail.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 4/4] leds: Replace dedicated SN3218 driver with
+ IS31FL32XX driver
+Date: Fri, 4 Mar 2016 22:14:27 +0100 (CET)
+Message-ID: <1872003451.86198.4bb16da4-d4d8-48af-950a-7442cddf2b4d.open-xchange@email.1und1.de>
+References: <1456974095-1867-1-git-send-email-drivshin.allworx@gmail.com>
+ <1456974095-1867-5-git-send-email-drivshin.allworx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:33236 "EHLO
-	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758765AbcCDU77 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Mar 2016 15:59:59 -0500
-Content-Disposition: inline
-In-Reply-To: <56D9F63C.5030608@gmail.com>
+Received: from mout.kundenserver.de ([212.227.126.131]:65083 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757489AbcCDVO4 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Mar 2016 16:14:56 -0500
+In-Reply-To: <1456974095-1867-5-git-send-email-drivshin.allworx@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Evan McClain <aeroevan@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Bryan Wu <cooloney@gmail.com>, Simon Que <sque@chromium.org>, Olof Johansson <olofj@chromium.org>, Duncan Laurie <dlaurie@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>, devicetree@vger.kernel.org
+Cc: Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Mark Rutland <mark.rutland@arm.com>
 
-On Fri, Mar 04, 2016 at 09:55:24PM +0100, Jacek Anaszewski wrote:
-> On 03/04/2016 08:13 PM, Dmitry Torokhov wrote:
-> >On Fri, Mar 04, 2016 at 10:38:40AM +0100, Jacek Anaszewski wrote:
-> >>Hi Evan,
-> >>
-> >>On 03/04/2016 09:38 AM, Evan McClain wrote:
-> >>>On Thu, 2016-03-03 at 15:46 -0800, Dmitry Torokhov wrote:
-> >>>>From: Simon Que <sque@chromium.org>
-> >>>>
-> >>>>This is a driver for ACPI-based keyboard backlight LEDs found on
-> >>>>Chromebooks. The driver locates \\_SB.KBLT ACPI device and exports
-> >>>>backlight as "chromeos::kbd_backlight" LED class device in sysfs.
-> >>>
-> >>>Was it ever decided where this driver should live? I was planning on
-> >>>submitting to platform/chrome since most keyboard backlights seem to
-> >>>live over there but I don't think I got a response.
-> >>>
-> >>
-> >>It hasn't been decided yet. I can take it, but could you submit one more
-> >>version, without
-> >>
-> >>'owner	= THIS_MODULE' in struct platform_driver keyboard_led_driver ?
-> >>
-> >>It is redundant, because the core will do it.
-> >>
-> >>Also the line with devm_kzalloc has over 80 characters.
-> >
-> >Also:
-> >
-> >- preferably use sizeof(*cdev) instead of sizeof(struct ...)
-> >- do not check cdev->flags & LED_SUSPENDED in
-> >   keyboard_led_set_brightness() as it is not going to be called when led
-> >   device is suspended anyway
-> >- change the MODULE_LICENSE from "GPL v2" to "GPL" as to match the
-> 
-> I can see "either version 2 of the License" in the license notice.
+Hi David,
 
->From module.h:
+> "David Rivshin (Allworx)" <drivshin.allworx@gmail.com> hat am 3. M=C3=
+=A4rz 2016 um
+> 04:01 geschrieben:
+>
+>
+> From: David Rivshin <drivshin@allworx.com>
+>
+> Si-En Technology was acquired by ISSI in 2011, and it appears that
+> the IS31FL3218/IS31FL3216 are just rebranded SN3218/SN3216 devices.
+> As the IS31FL32XX driver already handles the *3218 devices, there
+> is no longer a need for the dedicated SN3218 driver.
+>
+> Add the "sn,sn3218" and "sn,sn3216" compatible strings into the
+> IS31FL32XX driver and binding documentation, and remove the
+> leds-sn3218 driver.
+>
+> Datasheets:
+> IS31FL3218: http://www.issi.com/WW/pdf/31FL3218.pdf
+> SN3218: http://www.si-en.com/uploadpdf/s2011517171720.pdf
+>
+> IS31FL3216: http://www.issi.com/WW/pdf/31FL3216.pdf
+> SN3216; http://www.si-en.com/uploadpdf/SN3216201152410148.pdf
+>
+> Signed-off-by: David Rivshin <drivshin@allworx.com>
 
- *	"GPL"				[GNU Public License v2 or later]
- *	"GPL v2"			[GNU Public License v2]
+i tested this patch successfully with a Raspberry Pi and a PiGlow (SN32=
+18).
 
-leds-chromeos-keyboard is GPL v2+ so module license should be "GPL".
-
-Thanks.
-
--- 
-Dmitry
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
