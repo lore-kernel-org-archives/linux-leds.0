@@ -1,57 +1,120 @@
-From: Evan McClain <aeroevan@gmail.com>
-Subject: Re: [PATCH] leds: Add Chrome OS keyboard backlight LEDs driver
-Date: Fri, 04 Mar 2016 03:38:49 -0500
-Message-ID: <1457080729.18482.6.camel@gmail.com>
-References: <20160303234646.GA17641@dtor-ws>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v6 3/4] leds: core: add documentation for color extension
+Date: Fri, 04 Mar 2016 10:05:23 +0100
+Message-ID: <56D94FD3.8040304@samsung.com>
+References: <56D73F9C.6050006@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-v6S+nJZySwLTbgCHvndP"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35718 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751489AbcCDIi6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 4 Mar 2016 03:38:58 -0500
-In-Reply-To: <20160303234646.GA17641@dtor-ws>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Bryan Wu <cooloney@gmail.com>, Simon Que <sque@chromium.org>, Olof Johansson <olofj@chromium.org>, Duncan Laurie <dlaurie@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-
-
---=-v6S+nJZySwLTbgCHvndP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2016-03-03 at 15:46 -0800, Dmitry Torokhov wrote:
-> From: Simon Que <sque@chromium.org>
->=20
-> This is a driver for ACPI-based keyboard backlight LEDs found on
-> Chromebooks. The driver locates \\_SB.KBLT ACPI device and exports
-> backlight as "chromeos::kbd_backlight" LED class device in sysfs.
-
-Was it ever decided where this driver should live? I was planning on
-submitting to platform/chrome since most keyboard backlights seem to
-live over there but I don't think I got a response.
-
---=20
-Evan McClain
-https://keybase.io/aeroevan
-
---=-v6S+nJZySwLTbgCHvndP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <56D73F9C.6050006@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Hi Heiner,
 
-iQEcBAABCAAGBQJW2UmaAAoJEPQx78gG1JMfqioH/j6/1i6zEmoWw7c5e+MOad1k
-Dm9EJNNcsxwazUF+WOyS5D7jU/afmMulhzK/WEGzmaQbp0uUkaEz/MxBH8c1liv8
-zOj/yZKIov87vh4azrmXezWedu22OUUyTBKGUzrcSWUkFSNNKPz4DdfNASlCFclP
-QLQHz5dCxNIm+04ku7t1IcCBw4BzawX8fPUeRxikaN7fOXnsN39DnMEclOTvoiz9
-TR8DEYQ06phYNFjZPv/Bh0gv9E/NoEtO1eRL14EzcUjEbJOhNRMHCiF7a2e9ER4c
-kfceKaJIxPhCnEOJd6ZIWA+RF7gWOeRF3h8q+cYrxl/sjUKNKTRATAWDG3gMwHY=
-=bk9N
------END PGP SIGNATURE-----
+Please split the sysfs-class-led part to a separate patch.
 
---=-v6S+nJZySwLTbgCHvndP--
+On 03/02/2016 08:31 PM, Heiner Kallweit wrote:
+> Document the color extension in Documentation/leds/leds-class.txt
+>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+> v2:
+> - introduced to patch series
+> v3:
+> - document extension in more detail
+> v4:
+> - Better explain why flag LED_SET_HUE_SAT is needed
+> v5:
+> - no changes
+> v6:
+> - add docu for this feature to Documentation/ABI/testing/sysfs-class-led
+> ---
+>   Documentation/ABI/testing/sysfs-class-led | 11 +++++++++++
+>   Documentation/leds/leds-class.txt         | 27 ++++++++++++++++++++++-----
+>   2 files changed, 33 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> index 3646ec8..20357d5 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led
+> +++ b/Documentation/ABI/testing/
+> @@ -7,6 +7,17 @@ Description:
+>   		have hardware brightness support so will just be turned on for
+>   		non-zero brightness settings. The value is between 0 and
+>   		/sys/class/leds/<led>/max_brightness.
+> +		If a driver uses the RGB LED feature then this attribute is
+> +		interpreted as a HSV color model value:
+> +		<0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
+> +		Usage of the least byte is identical to monochrome mode.
+> +		Saturation can be 0-255 and hue 0-251 (Colour circle is mapped
+> +		to 0-252). If hue and saturation both are 0 the current colour
+> +		is preserved and only the brightness is set. This ensures
+> +		backwards compatibility with monochrome mode, e.g. for
+> +		led_set_brightness() calls from triggers.
+> +		Flag F enables setting hue and saturation even if both are 0.
+> +		For details and examples see Documentation/leds/leds-class.txt
+>
+>   What:		/sys/class/leds/<led>/max_brightness
+>   Date:		March 2006
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+> index d406d98..b1e4cba 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -8,6 +8,22 @@ LED is defined in max_brightness file. The brightness file will set the brightne
+>   of the LED (taking a value 0-max_brightness). Most LEDs don't have hardware
+>   brightness support so will just be turned on for non-zero brightness settings.
+>
+> +If a driver uses the colour extension of the LED core then the brightness
+
+s/colour/RGB/
+
+> +file can be used to set hue / saturation / value. The brightness value is
+> +interpreted as: <0000000F><HHHHHHHH><SSSSSSSS><VVVVVVVV>
+> +Usage of the least byte is identical to monochrome mode. Saturation can be
+> +0-255 and hue 0-251 (Colour circle is mapped to 0-252).
+> +If hue and saturation both are 0 the current colour is preserved and only
+> +the brightness is set. This ensures backwards compatibility with monochrome
+> +mode, e.g. for led_set_brightness() calls from triggers.
+> +However we might want to have the option to set all HSV components, even
+> +if hue and saturation both are 0 (e.g. via brightness sysfs attribute).
+> +Use case: Set color to white (hue = 0 and saturation = 0).
+> +Therefore the default behaviour can be overridden with flag F (LED_SET_HUE_SAT).
+> +If this flag is set then hue and saturation are not checked for being 0 and
+> +the color components are set unconditionally. Example:
+> +0x010000ff sets the LED to white color with full brightness.
+> +
+
+I had to play a bit with RGB<->HSV conversion to get the flavour of
+the HSV color model, and indeed, changing the brightness byte alone
+influences only the intensity of the perceived color, despite that
+all RGB components are changed. Effectively I find this description
+sufficient.
+
+>   The class also introduces the optional concept of an LED trigger. A trigger
+>   is a kernel based source of led events. Triggers can either be simple or
+>   complex. A simple trigger isn't configurable and is designed to slot into
+> @@ -45,11 +61,12 @@ Is currently of the form:
+>
+>   "devicename:colour:function"
+>
+> -There have been calls for LED properties such as colour to be exported as
+> -individual led class attributes. As a solution which doesn't incur as much
+> -overhead, I suggest these become part of the device name. The naming scheme
+> -above leaves scope for further attributes should they be needed. If sections
+> -of the name don't apply, just leave that section blank.
+> +If the colour extension is used hsv / rgb can be used instead of a specific
+
+s/colour/RGB/
+
+> +colour.  There have been calls for LED properties such as colour to be
+> +exported as individual led class attributes. As a solution which doesn't
+> +incur as much overhead, I suggest these become part of the device name.
+> +The naming scheme above leaves scope for further attributes should they be
+> +needed. If sections of the name don't apply, just leave that section blank.
+>
+>
+>   Brightness setting API
+>
