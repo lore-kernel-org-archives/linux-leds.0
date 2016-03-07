@@ -1,15 +1,15 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH 6/7] leds: max8997: Use devm_led_classdev_register
-Date: Mon, 7 Mar 2016 20:21:30 +0530
-Message-ID: <ed12fa8d958178bf27861a03b20c266043316dcb.1457355137.git.amitoj1606@gmail.com>
+Subject: [PATCH 1/7] leds: 88pm860x: Use devm_led_classdev_register
+Date: Mon, 7 Mar 2016 20:20:56 +0530
+Message-ID: <626701d05839d4bf14d411bd529b1c00668dee0d.1457355136.git.amitoj1606@gmail.com>
 References: <cover.1457355135.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34312 "EHLO
-	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753125AbcCGOvd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Mar 2016 09:51:33 -0500
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:32789 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752931AbcCGOvA (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Mar 2016 09:51:00 -0500
 Content-Disposition: inline
 In-Reply-To: <cover.1457355135.git.amitoj1606@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
@@ -20,7 +20,7 @@ Cc: julia.lawall@lip6.fr
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Also, remove max8997_led_remove as it is now has nothing to do.
+Also, remove pm860x_led_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -58,42 +58,43 @@ removefn(...) {
 
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/leds/leds-max8997.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/leds/leds-88pm860x.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/leds/leds-max8997.c b/drivers/leds/leds-max8997.c
-index 01b45906..2387e35 100644
---- a/drivers/leds/leds-max8997.c
-+++ b/drivers/leds/leds-max8997.c
-@@ -283,28 +283,18 @@ static int max8997_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+index 1ad4d03..16cfb3d 100644
+--- a/drivers/leds/leds-88pm860x.c
++++ b/drivers/leds/leds-88pm860x.c
+@@ -208,7 +208,7 @@ static int pm860x_led_probe(struct platform_device *pdev)
+ 	data->cdev.brightness_set_blocking = pm860x_led_set;
+ 	mutex_init(&data->lock);
  
- 	platform_set_drvdata(pdev, led);
- 
--	ret = led_classdev_register(&pdev->dev, &led->cdev);
-+	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
- 	if (ret < 0)
+-	ret = led_classdev_register(chip->dev, &data->cdev);
++	ret = devm_led_classdev_register(chip->dev, &data->cdev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register LED: %d\n", ret);
  		return ret;
- 
+@@ -217,21 +217,12 @@ static int pm860x_led_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int max8997_led_remove(struct platform_device *pdev)
+-static int pm860x_led_remove(struct platform_device *pdev)
 -{
--	struct max8997_led *led = platform_get_drvdata(pdev);
+-	struct pm860x_led *data = platform_get_drvdata(pdev);
 -
--	led_classdev_unregister(&led->cdev);
+-	led_classdev_unregister(&data->cdev);
 -
 -	return 0;
 -}
--
- static struct platform_driver max8997_led_driver = {
- 	.driver = {
- 		.name  = "max8997-led",
+ 
+ static struct platform_driver pm860x_led_driver = {
+ 	.driver	= {
+ 		.name	= "88pm860x-led",
  	},
- 	.probe  = max8997_led_probe,
--	.remove = max8997_led_remove,
+ 	.probe	= pm860x_led_probe,
+-	.remove	= pm860x_led_remove,
  };
  
- module_platform_driver(max8997_led_driver);
+ module_platform_driver(pm860x_led_driver);
 -- 
 1.9.1
