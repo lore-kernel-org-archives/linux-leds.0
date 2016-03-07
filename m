@@ -1,7 +1,7 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH 4/7] leds: s3c24xx: Use devm_led_classdev_register
-Date: Mon, 7 Mar 2016 20:21:15 +0530
-Message-ID: <aeef24ccdd1220291e9a64ab7d65f608534d06a7.1457355136.git.amitoj1606@gmail.com>
+Subject: [PATCH 7/7] leds: lm3533: Use devm_led_classdev_register
+Date: Mon, 7 Mar 2016 20:21:42 +0530
+Message-ID: <2d56f03be1a346082ffcf253d99593851e74e5f9.1457355137.git.amitoj1606@gmail.com>
 References: <cover.1457355135.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -16,7 +16,8 @@ List-Id: linux-leds@vger.kernel.org
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Also, remove s3c24xx_led_remove as it is now has nothing to do.
+To be compatible with this change, remove an unnecessary label by
+replacing it with direct return statement.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -54,45 +55,50 @@ removefn(...) {
 
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/leds/leds-s3c24xx.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/leds/leds-lm3533.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
-index 83641a7..ae3fbed 100644
---- a/drivers/leds/leds-s3c24xx.c
-+++ b/drivers/leds/leds-s3c24xx.c
-@@ -59,15 +59,6 @@ static void s3c24xx_led_set(struct led_classdev *led_cdev,
- 	}
- }
+diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+index 196dcb5..5b529dc 100644
+--- a/drivers/leds/leds-lm3533.c
++++ b/drivers/leds/leds-lm3533.c
+@@ -698,7 +698,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
  
--static int s3c24xx_led_remove(struct platform_device *dev)
--{
--	struct s3c24xx_gpio_led *led = pdev_to_gpio(dev);
+ 	platform_set_drvdata(pdev, led);
+ 
+-	ret = led_classdev_register(pdev->dev.parent, &led->cdev);
++	ret = devm_led_classdev_register(pdev->dev.parent, &led->cdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register LED %d\n", pdev->id);
+ 		return ret;
+@@ -708,18 +708,13 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 
+ 	ret = lm3533_led_setup(led, pdata);
+ 	if (ret)
+-		goto err_unregister;
++		return ret;
+ 
+ 	ret = lm3533_ctrlbank_enable(&led->cb);
+ 	if (ret)
+-		goto err_unregister;
++		return ret;
+ 
+ 	return 0;
 -
+-err_unregister:
 -	led_classdev_unregister(&led->cdev);
 -
--	return 0;
--}
--
- static int s3c24xx_led_probe(struct platform_device *dev)
- {
- 	struct s3c24xx_led_platdata *pdata = dev_get_platdata(&dev->dev);
-@@ -104,7 +95,7 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+-	return ret;
+ }
  
- 	/* register our new led device */
+ static int lm3533_led_remove(struct platform_device *pdev)
+@@ -729,7 +724,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "%s\n", __func__);
  
--	ret = led_classdev_register(&dev->dev, &led->cdev);
-+	ret = devm_led_classdev_register(&dev->dev, &led->cdev);
- 	if (ret < 0)
- 		dev_err(&dev->dev, "led_classdev_register failed\n");
+ 	lm3533_ctrlbank_disable(&led->cb);
+-	led_classdev_unregister(&led->cdev);
  
-@@ -113,7 +104,6 @@ static int s3c24xx_led_probe(struct platform_device *dev)
- 
- static struct platform_driver s3c24xx_led_driver = {
- 	.probe		= s3c24xx_led_probe,
--	.remove		= s3c24xx_led_remove,
- 	.driver		= {
- 		.name		= "s3c24xx_led",
- 	},
+ 	return 0;
+ }
 -- 
 1.9.1
