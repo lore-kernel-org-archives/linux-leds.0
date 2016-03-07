@@ -1,26 +1,22 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH 5/7] leds: da903x: Use devm_led_classdev_register
-Date: Mon, 7 Mar 2016 20:21:21 +0530
-Message-ID: <252f474d9402b8a9759ddbb552055d4d75e3da60.1457355136.git.amitoj1606@gmail.com>
+Subject: [PATCH 4/7] leds: s3c24xx: Use devm_led_classdev_register
+Date: Mon, 7 Mar 2016 20:21:15 +0530
+Message-ID: <aeef24ccdd1220291e9a64ab7d65f608534d06a7.1457355136.git.amitoj1606@gmail.com>
 References: <cover.1457355135.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:33918 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753161AbcCGOvZ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Mar 2016 09:51:25 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <cover.1457355135.git.amitoj1606@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: julia.lawall@lip6.fr
+List-Id: linux-leds@vger.kernel.org
 
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Also, remove da903x_led_remove as it is now has nothing to do.
+Also, remove s3c24xx_led_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -58,42 +54,45 @@ removefn(...) {
 
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/leds/leds-da903x.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/leds/leds-s3c24xx.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
-index 4752a2b..3e0aab9 100644
---- a/drivers/leds/leds-da903x.c
-+++ b/drivers/leds/leds-da903x.c
-@@ -113,7 +113,7 @@ static int da903x_led_probe(struct platform_device *pdev)
- 	led->flags = pdata->flags;
- 	led->master = pdev->dev.parent;
- 
--	ret = led_classdev_register(led->master, &led->cdev);
-+	ret = devm_led_classdev_register(led->master, &led->cdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register LED %d\n", id);
- 		return ret;
-@@ -123,20 +123,11 @@ static int da903x_led_probe(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 83641a7..ae3fbed 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -59,15 +59,6 @@ static void s3c24xx_led_set(struct led_classdev *led_cdev,
+ 	}
  }
  
--static int da903x_led_remove(struct platform_device *pdev)
+-static int s3c24xx_led_remove(struct platform_device *dev)
 -{
--	struct da903x_led *led = platform_get_drvdata(pdev);
+-	struct s3c24xx_gpio_led *led = pdev_to_gpio(dev);
 -
 -	led_classdev_unregister(&led->cdev);
+-
 -	return 0;
 -}
 -
- static struct platform_driver da903x_led_driver = {
- 	.driver	= {
- 		.name	= "da903x-led",
- 	},
- 	.probe		= da903x_led_probe,
--	.remove		= da903x_led_remove,
- };
+ static int s3c24xx_led_probe(struct platform_device *dev)
+ {
+ 	struct s3c24xx_led_platdata *pdata = dev_get_platdata(&dev->dev);
+@@ -104,7 +95,7 @@ static int s3c24xx_led_probe(struct platform_device *dev)
  
- module_platform_driver(da903x_led_driver);
+ 	/* register our new led device */
+ 
+-	ret = led_classdev_register(&dev->dev, &led->cdev);
++	ret = devm_led_classdev_register(&dev->dev, &led->cdev);
+ 	if (ret < 0)
+ 		dev_err(&dev->dev, "led_classdev_register failed\n");
+ 
+@@ -113,7 +104,6 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 
+ static struct platform_driver s3c24xx_led_driver = {
+ 	.probe		= s3c24xx_led_probe,
+-	.remove		= s3c24xx_led_remove,
+ 	.driver		= {
+ 		.name		= "s3c24xx_led",
+ 	},
 -- 
 1.9.1
