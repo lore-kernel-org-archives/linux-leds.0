@@ -1,23 +1,26 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH 7/7] leds: lm3533: Use devm_led_classdev_register
-Date: Mon, 7 Mar 2016 20:21:42 +0530
-Message-ID: <2d56f03be1a346082ffcf253d99593851e74e5f9.1457355137.git.amitoj1606@gmail.com>
+Subject: [PATCH 6/7] leds: max8997: Use devm_led_classdev_register
+Date: Mon, 7 Mar 2016 20:21:30 +0530
+Message-ID: <ed12fa8d958178bf27861a03b20c266043316dcb.1457355137.git.amitoj1606@gmail.com>
 References: <cover.1457355135.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34312 "EHLO
+	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753125AbcCGOvd (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 7 Mar 2016 09:51:33 -0500
 Content-Disposition: inline
 In-Reply-To: <cover.1457355135.git.amitoj1606@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: julia.lawall@lip6.fr
-List-Id: linux-leds@vger.kernel.org
 
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-To be compatible with this change, remove an unnecessary label by
-replacing it with direct return statement.
+Also, remove max8997_led_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -55,50 +58,42 @@ removefn(...) {
 
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/leds/leds-lm3533.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/leds/leds-max8997.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-index 196dcb5..5b529dc 100644
---- a/drivers/leds/leds-lm3533.c
-+++ b/drivers/leds/leds-lm3533.c
-@@ -698,7 +698,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-max8997.c b/drivers/leds/leds-max8997.c
+index 01b45906..2387e35 100644
+--- a/drivers/leds/leds-max8997.c
++++ b/drivers/leds/leds-max8997.c
+@@ -283,28 +283,18 @@ static int max8997_led_probe(struct platform_device *pdev)
  
  	platform_set_drvdata(pdev, led);
  
--	ret = led_classdev_register(pdev->dev.parent, &led->cdev);
-+	ret = devm_led_classdev_register(pdev->dev.parent, &led->cdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register LED %d\n", pdev->id);
+-	ret = led_classdev_register(&pdev->dev, &led->cdev);
++	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
+ 	if (ret < 0)
  		return ret;
-@@ -708,18 +708,13 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 
- 	ret = lm3533_led_setup(led, pdata);
- 	if (ret)
--		goto err_unregister;
-+		return ret;
- 
- 	ret = lm3533_ctrlbank_enable(&led->cb);
- 	if (ret)
--		goto err_unregister;
-+		return ret;
- 
- 	return 0;
--
--err_unregister:
--	led_classdev_unregister(&led->cdev);
--
--	return ret;
- }
- 
- static int lm3533_led_remove(struct platform_device *pdev)
-@@ -729,7 +724,6 @@ static int lm3533_led_remove(struct platform_device *pdev)
- 	dev_dbg(&pdev->dev, "%s\n", __func__);
- 
- 	lm3533_ctrlbank_disable(&led->cb);
--	led_classdev_unregister(&led->cdev);
  
  	return 0;
  }
+ 
+-static int max8997_led_remove(struct platform_device *pdev)
+-{
+-	struct max8997_led *led = platform_get_drvdata(pdev);
+-
+-	led_classdev_unregister(&led->cdev);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver max8997_led_driver = {
+ 	.driver = {
+ 		.name  = "max8997-led",
+ 	},
+ 	.probe  = max8997_led_probe,
+-	.remove = max8997_led_remove,
+ };
+ 
+ module_platform_driver(max8997_led_driver);
 -- 
 1.9.1
