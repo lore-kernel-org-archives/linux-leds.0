@@ -1,7 +1,7 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH 2/7] leds: lp8788: Use devm_led_classdev_register
-Date: Mon, 7 Mar 2016 20:21:02 +0530
-Message-ID: <f2efd0bd7bcba8f55ab8be51b13c7c4c8cf39ab6.1457355136.git.amitoj1606@gmail.com>
+Subject: [PATCH 3/7] leds: wm381x-status: Use devm_led_classdev_register
+Date: Mon, 7 Mar 2016 20:21:08 +0530
+Message-ID: <3c7d367b830f6c19f18c825f35ebf942e7f4ca52.1457355136.git.amitoj1606@gmail.com>
 References: <cover.1457355135.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -16,7 +16,7 @@ List-Id: linux-leds@vger.kernel.org
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Also, remove lp8788_led_remove as it is now has nothing to do.
+Also, remove wm831x_status_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -54,40 +54,43 @@ removefn(...) {
 
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/leds/leds-lp8788.c | 12 +-----------
+ drivers/leds/leds-wm831x-status.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
-index 0eee38f..ffc3f89 100644
---- a/drivers/leds/leds-lp8788.c
-+++ b/drivers/leds/leds-lp8788.c
-@@ -154,7 +154,7 @@ static int lp8788_led_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
+index 64a2226..5722b94a 100644
+--- a/drivers/leds/leds-wm831x-status.c
++++ b/drivers/leds/leds-wm831x-status.c
+@@ -284,7 +284,7 @@ static int wm831x_status_probe(struct platform_device *pdev)
+ 	drvdata->cdev.blink_set = wm831x_status_blink_set;
+ 	drvdata->cdev.groups = wm831x_status_groups;
  
--	ret = led_classdev_register(dev, &led->led_dev);
-+	ret = devm_led_classdev_register(dev, &led->led_dev);
- 	if (ret) {
- 		dev_err(dev, "led register err: %d\n", ret);
+-	ret = led_classdev_register(wm831x->dev, &drvdata->cdev);
++	ret = devm_led_classdev_register(wm831x->dev, &drvdata->cdev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register LED: %d\n", ret);
  		return ret;
-@@ -163,18 +163,8 @@ static int lp8788_led_probe(struct platform_device *pdev)
+@@ -293,21 +293,11 @@ static int wm831x_status_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int lp8788_led_remove(struct platform_device *pdev)
+-static int wm831x_status_remove(struct platform_device *pdev)
 -{
--	struct lp8788_led *led = platform_get_drvdata(pdev);
+-	struct wm831x_status *drvdata = platform_get_drvdata(pdev);
 -
--	led_classdev_unregister(&led->led_dev);
+-	led_classdev_unregister(&drvdata->cdev);
 -
 -	return 0;
 -}
 -
- static struct platform_driver lp8788_led_driver = {
- 	.probe = lp8788_led_probe,
--	.remove = lp8788_led_remove,
+ static struct platform_driver wm831x_status_driver = {
  	.driver = {
- 		.name = LP8788_DEV_KEYLED,
- 	},
+ 		   .name = "wm831x-status",
+ 		   },
+ 	.probe = wm831x_status_probe,
+-	.remove = wm831x_status_remove,
+ };
+ 
+ module_platform_driver(wm831x_status_driver);
 -- 
 1.9.1
