@@ -1,41 +1,66 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC 3/7] leds: avoid fragile sprintf use
-Date: Tue,  8 Mar 2016 21:40:50 +0100
-Message-ID: <1457469654-17059-4-git-send-email-linux@rasmusvillemoes.dk>
-References: <CAGXu5jJ-NApCpANjfz+bAEfwZJ8xizkM-jDHVhOPCzhxV-aqdA@mail.gmail.com>
- <1457469654-17059-1-git-send-email-linux@rasmusvillemoes.dk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457469654-17059-1-git-send-email-linux@rasmusvillemoes.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH] leds: triggers: simplify led_trigger_store
+Date: Tue, 8 Mar 2016 23:08:36 +0100
+Message-ID: <56DF4D64.4050908@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:38357 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750787AbcCHWIs (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 17:08:48 -0500
+Received: by mail-wm0-f42.google.com with SMTP id l68so46580397wml.1
+        for <linux-leds@vger.kernel.org>; Tue, 08 Mar 2016 14:08:47 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Passing overlapping src and dst buffers to sprintf is fragile (and
-undefined behaviour). So while this may seem like a clever way of
-appending a newline and obtaining the length of the resulting string
-at the same time, we might as well use that pbuf points to the current
-end of string and do the same thing with an assignment, increment and
-pointer subtraction.
+led_trigger_store can be significantly simplified by using sysfs_streq().
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/leds/led-class-flash.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/led-triggers.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-index cf398275a53c..4fae548a7822 100644
---- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -212,7 +212,8 @@ static ssize_t flash_fault_show(struct device *dev,
- 		mask <<= 1;
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index e1e9334..2181581 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -34,9 +34,7 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	char trigger_name[TRIG_NAME_MAX];
+ 	struct led_trigger *trig;
+-	size_t len;
+ 	int ret = count;
+ 
+ 	mutex_lock(&led_cdev->led_access);
+@@ -46,21 +44,14 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+ 		goto unlock;
  	}
  
--	return sprintf(buf, "%s\n", buf);
-+	*pbuf++ = '\n';
-+	return pbuf - buf;
- }
- static DEVICE_ATTR_RO(flash_fault);
+-	trigger_name[sizeof(trigger_name) - 1] = '\0';
+-	strncpy(trigger_name, buf, sizeof(trigger_name) - 1);
+-	len = strlen(trigger_name);
+-
+-	if (len && trigger_name[len - 1] == '\n')
+-		trigger_name[len - 1] = '\0';
+-
+-	if (!strcmp(trigger_name, "none")) {
++	if (sysfs_streq(buf, "none")) {
+ 		led_trigger_remove(led_cdev);
+ 		goto unlock;
+ 	}
  
+ 	down_read(&triggers_list_lock);
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+-		if (!strcmp(trigger_name, trig->name)) {
++		if (sysfs_streq(buf, trig->name)) {
+ 			down_write(&led_cdev->trigger_lock);
+ 			led_trigger_set(led_cdev, trig);
+ 			up_write(&led_cdev->trigger_lock);
 -- 
-2.1.4
+2.7.1
