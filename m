@@ -1,92 +1,87 @@
-From: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
-Subject: [PATCH v2 2/4] DT: leds: Add binding for the ISSI IS31FL32xx family of LED controllers
-Date: Mon,  7 Mar 2016 19:57:14 -0500
-Message-ID: <1457398636-6485-3-git-send-email-drivshin.allworx@gmail.com>
-References: <1457398636-6485-1-git-send-email-drivshin.allworx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457398636-6485-1-git-send-email-drivshin.allworx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>, linux-kernel@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 0/7] leds: Use devm_led_classdev_register
+Date: Tue, 08 Mar 2016 09:26:06 +0100
+Message-ID: <56DE8C9E.1000400@samsung.com>
+References: <cover.1457355135.git.amitoj1606@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39071 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753489AbcCHI0S (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 03:26:18 -0500
+In-reply-to: <cover.1457355135.git.amitoj1606@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr
 
-From: David Rivshin <drivshin@allworx.com>
+Hi Amitoj,
 
-This adds a binding description for the is31fl3236/35/18/16 I2C LED
-controllers.
+Thanks for the patches.
 
-Signed-off-by: David Rivshin <drivshin@allworx.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
+Applied only the 7/7 one. In the remaining ones, please remove
+also all occurrences of platform_set_drvdata() in the probe()
+and pdev_to_gpio() definition from leds-s3c24xx.cm as they will
+be no longer required.
 
-Changes from v1:
- - swapped node name and label in example
- - added Rob's ack (given above fix) [1]
+Best regards,
+Jacek Anaszewski
 
-Changes from RFC:
- - Removed max-brightness property.
- - Added #address-cells and #size-cells properties to the example.
-
-[1] https://lkml.org/lkml/2016/3/4/959
-
- .../devicetree/bindings/leds/leds-is31fl32xx.txt   | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-new file mode 100644
-index 0000000..e72ed66
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-@@ -0,0 +1,49 @@
-+Binding for ISSI IS31FL32xx LED Drivers
-+
-+The IS31FL32xx family of LED drivers are I2C devices with multiple
-+constant-current channels, each with independent 256-level PWM control.
-+Each LED is represented as a sub-node of the device.
-+
-+Required properties:
-+- compatible: one of
-+	issi,is31fl3236
-+	issi,is31fl3235
-+	issi,is31fl3218
-+	issi,is31fl3216
-+- reg: I2C slave address
-+- address-cells : must be 1
-+- size-cells : must be 0
-+
-+LED sub-node properties:
-+- reg : LED channel number (1..N)
-+- label :  (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger :  (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt
-+
-+
-+Example:
-+
-+is31fl3236: led-controller@3c {
-+	compatible = "issi,is31fl3236";
-+	reg = <0x3c>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	led@1 {
-+		reg = <1>;
-+		label = "EB:blue:usr0";
-+	};
-+	led@2 {
-+		reg = <2>;
-+		label = "EB:blue:usr1";
-+	};
-+	...
-+	led@36 {
-+		reg = <36>;
-+		label = "EB:blue:usr35";
-+	};
-+};
-+
-+For more product information please see the link below:
-+http://www.issi.com/US/product-analog-fxled-driver.shtml
--- 
-2.5.0
+On 03/07/2016 03:50 PM, Amitoj Kaur Chawla wrote:
+> Switch to resource-managed function devm_led_classdev_register instead
+> of led_classdev_register and remove unneeded led_classdev_unregister.
+>
+> The Coccinelle semantic patch used to make this change is as follows:
+> //<smpl>
+> @platform@
+> identifier p, probefn, removefn;
+> @@
+> struct platform_driver p = {
+>    .probe = probefn,
+>    .remove = removefn,
+> };
+>
+> @prb@
+> identifier platform.probefn, pdev;
+> expression e;
+> @@
+> probefn(struct platform_device *pdev, ...) {
+>    ...
+>    e =
+> - led_classdev_register
+> + devm_led_classdev_register
+>    (...);
+>     ...
+> ?- led_classdev_unregister(...);
+>    ...
+> }
+> @remove depends on prb@
+> identifier platform.removefn;
+> @@
+> removefn(...) {
+> ...
+> ?- led_classdev_unregister(...);
+> ...
+> }
+> //</smpl>
+>
+> Amitoj Kaur Chawla (7):
+>    leds: 88pm860x: Use devm_led_classdev_register
+>    leds: lp8788: Use devm_led_classdev_register
+>    leds: wm381x-status: Use devm_led_classdev_register
+>    leds: s3c24xx: Use devm_led_classdev_register
+>    leds: da903x: Use devm_led_classdev_register
+>    leds: max8997: Use devm_led_classdev_register
+>    leds: lm3533: Use devm_led_classdev_register
+>
+>   drivers/leds/leds-88pm860x.c      | 11 +----------
+>   drivers/leds/leds-da903x.c        | 11 +----------
+>   drivers/leds/leds-lm3533.c        | 12 +++---------
+>   drivers/leds/leds-lp8788.c        | 12 +-----------
+>   drivers/leds/leds-max8997.c       | 12 +-----------
+>   drivers/leds/leds-s3c24xx.c       | 12 +-----------
+>   drivers/leds/leds-wm831x-status.c | 12 +-----------
+>   7 files changed, 9 insertions(+), 73 deletions(-)
+>
