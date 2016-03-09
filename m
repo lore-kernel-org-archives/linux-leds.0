@@ -1,15 +1,15 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH v2 1/6] leds: 88pm860x: Use devm_led_classdev_register
-Date: Wed, 9 Mar 2016 08:53:29 +0530
-Message-ID: <c776a9456501453a7255a633727659cf870c8724.1457449111.git.amitoj1606@gmail.com>
+Subject: [PATCH v2 2/6] leds: lp8788: Use devm_led_classdev_register
+Date: Wed, 9 Mar 2016 08:53:38 +0530
+Message-ID: <bcef225cab300e66d2f8ad8d0a78cca882b684fa.1457449111.git.amitoj1606@gmail.com>
 References: <cover.1457449111.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34467 "EHLO
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33757 "EHLO
 	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750782AbcCIDXe (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 22:23:34 -0500
+	with ESMTP id S1751618AbcCIDXn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 22:23:43 -0500
 Content-Disposition: inline
 In-Reply-To: <cover.1457449111.git.amitoj1606@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
@@ -21,7 +21,7 @@ Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
 Also, remove platform_set_drvdata in probe function and the remove
-function, pm860x_led_remove as it is now has nothing to do.
+function, lp8788_led_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -60,53 +60,50 @@ removefn(...) {
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
 Changes in v2:
-        -Remove unnecesarry platform_set_drvdata
+        -Remove unnecessary platform_set_drvdata
 
- drivers/leds/leds-88pm860x.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/leds/leds-lp8788.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index 1ad4d03..77a104d 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -195,7 +195,6 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 		sprintf(data->name, "led1-blue");
- 		break;
- 	}
--	platform_set_drvdata(pdev, data);
- 	data->chip = chip;
- 	data->i2c = (chip->id == CHIP_PM8606) ? chip->client : chip->companion;
- 	data->port = pdev->id;
-@@ -208,7 +207,7 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 	data->cdev.brightness_set_blocking = pm860x_led_set;
- 	mutex_init(&data->lock);
+diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
+index 0eee38f..38c253a 100644
+--- a/drivers/leds/leds-lp8788.c
++++ b/drivers/leds/leds-lp8788.c
+@@ -146,15 +146,13 @@ static int lp8788_led_probe(struct platform_device *pdev)
  
--	ret = led_classdev_register(chip->dev, &data->cdev);
-+	ret = devm_led_classdev_register(chip->dev, &data->cdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register LED: %d\n", ret);
+ 	mutex_init(&led->lock);
+ 
+-	platform_set_drvdata(pdev, led);
+-
+ 	ret = lp8788_led_init_device(led, led_pdata);
+ 	if (ret) {
+ 		dev_err(dev, "led init device err: %d\n", ret);
  		return ret;
-@@ -217,21 +216,12 @@ static int pm860x_led_probe(struct platform_device *pdev)
+ 	}
+ 
+-	ret = led_classdev_register(dev, &led->led_dev);
++	ret = devm_led_classdev_register(dev, &led->led_dev);
+ 	if (ret) {
+ 		dev_err(dev, "led register err: %d\n", ret);
+ 		return ret;
+@@ -163,18 +161,8 @@ static int lp8788_led_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int pm860x_led_remove(struct platform_device *pdev)
+-static int lp8788_led_remove(struct platform_device *pdev)
 -{
--	struct pm860x_led *data = platform_get_drvdata(pdev);
+-	struct lp8788_led *led = platform_get_drvdata(pdev);
 -
--	led_classdev_unregister(&data->cdev);
+-	led_classdev_unregister(&led->led_dev);
 -
 -	return 0;
 -}
- 
- static struct platform_driver pm860x_led_driver = {
- 	.driver	= {
- 		.name	= "88pm860x-led",
+-
+ static struct platform_driver lp8788_led_driver = {
+ 	.probe = lp8788_led_probe,
+-	.remove = lp8788_led_remove,
+ 	.driver = {
+ 		.name = LP8788_DEV_KEYLED,
  	},
- 	.probe	= pm860x_led_probe,
--	.remove	= pm860x_led_remove,
- };
- 
- module_platform_driver(pm860x_led_driver);
 -- 
 1.9.1
