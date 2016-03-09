@@ -1,15 +1,15 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH v2 2/6] leds: lp8788: Use devm_led_classdev_register
-Date: Wed, 9 Mar 2016 08:53:38 +0530
-Message-ID: <bcef225cab300e66d2f8ad8d0a78cca882b684fa.1457449111.git.amitoj1606@gmail.com>
+Subject: [PATCH v2 5/6] leds: da903x: Use devm_led_classdev_register
+Date: Wed, 9 Mar 2016 08:54:10 +0530
+Message-ID: <ba976266862775a54a48e39c8ea0d650d9b0d77b.1457449111.git.amitoj1606@gmail.com>
 References: <cover.1457449111.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33757 "EHLO
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:32877 "EHLO
 	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618AbcCIDXn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 22:23:43 -0500
+	with ESMTP id S1751227AbcCIDYP (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 22:24:15 -0500
 Content-Disposition: inline
 In-Reply-To: <cover.1457449111.git.amitoj1606@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
@@ -21,7 +21,7 @@ Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
 Also, remove platform_set_drvdata in probe function and the remove
-function, lp8788_led_remove as it is now has nothing to do.
+function, da903x_led_remove as it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -62,48 +62,43 @@ Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 Changes in v2:
         -Remove unnecessary platform_set_drvdata
 
- drivers/leds/leds-lp8788.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/leds/leds-da903x.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8788.c b/drivers/leds/leds-lp8788.c
-index 0eee38f..38c253a 100644
---- a/drivers/leds/leds-lp8788.c
-+++ b/drivers/leds/leds-lp8788.c
-@@ -146,15 +146,13 @@ static int lp8788_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-da903x.c b/drivers/leds/leds-da903x.c
+index 4752a2b..5ff7d72 100644
+--- a/drivers/leds/leds-da903x.c
++++ b/drivers/leds/leds-da903x.c
+@@ -113,21 +113,12 @@ static int da903x_led_probe(struct platform_device *pdev)
+ 	led->flags = pdata->flags;
+ 	led->master = pdev->dev.parent;
  
- 	mutex_init(&led->lock);
- 
--	platform_set_drvdata(pdev, led);
--
- 	ret = lp8788_led_init_device(led, led_pdata);
+-	ret = led_classdev_register(led->master, &led->cdev);
++	ret = devm_led_classdev_register(led->master, &led->cdev);
  	if (ret) {
- 		dev_err(dev, "led init device err: %d\n", ret);
+ 		dev_err(&pdev->dev, "failed to register LED %d\n", id);
  		return ret;
  	}
  
--	ret = led_classdev_register(dev, &led->led_dev);
-+	ret = devm_led_classdev_register(dev, &led->led_dev);
- 	if (ret) {
- 		dev_err(dev, "led register err: %d\n", ret);
- 		return ret;
-@@ -163,18 +161,8 @@ static int lp8788_led_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int lp8788_led_remove(struct platform_device *pdev)
--{
--	struct lp8788_led *led = platform_get_drvdata(pdev);
--
--	led_classdev_unregister(&led->led_dev);
--
+-	platform_set_drvdata(pdev, led);
 -	return 0;
 -}
 -
- static struct platform_driver lp8788_led_driver = {
- 	.probe = lp8788_led_probe,
--	.remove = lp8788_led_remove,
- 	.driver = {
- 		.name = LP8788_DEV_KEYLED,
+-static int da903x_led_remove(struct platform_device *pdev)
+-{
+-	struct da903x_led *led = platform_get_drvdata(pdev);
+-
+-	led_classdev_unregister(&led->cdev);
+ 	return 0;
+ }
+ 
+@@ -136,7 +127,6 @@ static struct platform_driver da903x_led_driver = {
+ 		.name	= "da903x-led",
  	},
+ 	.probe		= da903x_led_probe,
+-	.remove		= da903x_led_remove,
+ };
+ 
+ module_platform_driver(da903x_led_driver);
 -- 
 1.9.1
