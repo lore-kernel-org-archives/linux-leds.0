@@ -1,7 +1,7 @@
 From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH v2 3/6] leds: wm831x-status: Use devm_led_classdev_register
-Date: Wed, 9 Mar 2016 08:53:47 +0530
-Message-ID: <2e386e36e47e5e635dc1103d4782dc8c633ea99f.1457449111.git.amitoj1606@gmail.com>
+Subject: [PATCH v2 4/6] leds: s3c24xx: Use devm_led_classdev_register
+Date: Wed, 9 Mar 2016 08:53:57 +0530
+Message-ID: <97a18d35caac08b28cac3ae0819aad2a8d0158a2.1457449111.git.amitoj1606@gmail.com>
 References: <cover.1457449111.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -16,8 +16,9 @@ List-Id: linux-leds@vger.kernel.org
 Switch to resource-managed function devm_led_classdev_register instead
 of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Also, remove platform_set_drvdata from probe function and the remove
-function, wm831x_status_remove as it is now has nothing to do.
+Also, remove unnecessary function pdev_to_gpio, platform_set_drvdata 
+in the probe function and the remove function, s3c24xx_led_remove as 
+it is now has nothing to do.
 
 The Coccinelle semantic patch used to make this change is as follows:
 //<smpl>
@@ -56,53 +57,69 @@ removefn(...) {
 Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
 Changes in v2:
-        -Remove unnecessary platform_set_drvdata
+        -Remove unnecessary platform_set_drvdata and pdev_to_gpio
+         function definition.
 
- drivers/leds/leds-wm831x-status.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/leds/leds-s3c24xx.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/drivers/leds/leds-wm831x-status.c b/drivers/leds/leds-wm831x-status.c
-index 64a2226..be93b20 100644
---- a/drivers/leds/leds-wm831x-status.c
-+++ b/drivers/leds/leds-wm831x-status.c
-@@ -239,7 +239,6 @@ static int wm831x_status_probe(struct platform_device *pdev)
- 			       GFP_KERNEL);
- 	if (!drvdata)
- 		return -ENOMEM;
--	platform_set_drvdata(pdev, drvdata);
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 83641a7..404da45 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -29,11 +29,6 @@ struct s3c24xx_gpio_led {
+ 	struct s3c24xx_led_platdata	*pdata;
+ };
  
- 	drvdata->wm831x = wm831x;
- 	drvdata->reg = res->start;
-@@ -284,7 +283,7 @@ static int wm831x_status_probe(struct platform_device *pdev)
- 	drvdata->cdev.blink_set = wm831x_status_blink_set;
- 	drvdata->cdev.groups = wm831x_status_groups;
- 
--	ret = led_classdev_register(wm831x->dev, &drvdata->cdev);
-+	ret = devm_led_classdev_register(wm831x->dev, &drvdata->cdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register LED: %d\n", ret);
- 		return ret;
-@@ -293,21 +292,11 @@ static int wm831x_status_probe(struct platform_device *pdev)
- 	return 0;
+-static inline struct s3c24xx_gpio_led *pdev_to_gpio(struct platform_device *dev)
+-{
+-	return platform_get_drvdata(dev);
+-}
+-
+ static inline struct s3c24xx_gpio_led *to_gpio(struct led_classdev *led_cdev)
+ {
+ 	return container_of(led_cdev, struct s3c24xx_gpio_led, cdev);
+@@ -59,15 +54,6 @@ static void s3c24xx_led_set(struct led_classdev *led_cdev,
+ 	}
  }
  
--static int wm831x_status_remove(struct platform_device *pdev)
+-static int s3c24xx_led_remove(struct platform_device *dev)
 -{
--	struct wm831x_status *drvdata = platform_get_drvdata(pdev);
+-	struct s3c24xx_gpio_led *led = pdev_to_gpio(dev);
 -
--	led_classdev_unregister(&drvdata->cdev);
+-	led_classdev_unregister(&led->cdev);
 -
 -	return 0;
 -}
 -
- static struct platform_driver wm831x_status_driver = {
- 	.driver = {
- 		   .name = "wm831x-status",
- 		   },
- 	.probe = wm831x_status_probe,
--	.remove = wm831x_status_remove,
- };
+ static int s3c24xx_led_probe(struct platform_device *dev)
+ {
+ 	struct s3c24xx_led_platdata *pdata = dev_get_platdata(&dev->dev);
+@@ -79,8 +65,6 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 	if (!led)
+ 		return -ENOMEM;
  
- module_platform_driver(wm831x_status_driver);
+-	platform_set_drvdata(dev, led);
+-
+ 	led->cdev.brightness_set = s3c24xx_led_set;
+ 	led->cdev.default_trigger = pdata->def_trigger;
+ 	led->cdev.name = pdata->name;
+@@ -104,7 +88,7 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 
+ 	/* register our new led device */
+ 
+-	ret = led_classdev_register(&dev->dev, &led->cdev);
++	ret = devm_led_classdev_register(&dev->dev, &led->cdev);
+ 	if (ret < 0)
+ 		dev_err(&dev->dev, "led_classdev_register failed\n");
+ 
+@@ -113,7 +97,6 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 
+ static struct platform_driver s3c24xx_led_driver = {
+ 	.probe		= s3c24xx_led_probe,
+-	.remove		= s3c24xx_led_remove,
+ 	.driver		= {
+ 		.name		= "s3c24xx_led",
+ 	},
 -- 
 1.9.1
