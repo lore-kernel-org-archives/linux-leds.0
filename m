@@ -1,66 +1,76 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] leds: triggers: simplify led_trigger_store
-Date: Tue, 8 Mar 2016 23:08:36 +0100
-Message-ID: <56DF4D64.4050908@gmail.com>
+From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Subject: [PATCH v2 0/6] leds: Use devm_led_classdev_register
+Date: Wed, 9 Mar 2016 08:53:15 +0530
+Message-ID: <cover.1457449111.git.amitoj1606@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:38357 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750787AbcCHWIs (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 17:08:48 -0500
-Received: by mail-wm0-f42.google.com with SMTP id l68so46580397wml.1
-        for <linux-leds@vger.kernel.org>; Tue, 08 Mar 2016 14:08:47 -0800 (PST)
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36195 "EHLO
+	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbcCIDXU (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 8 Mar 2016 22:23:20 -0500
+Content-Disposition: inline
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@lip6.fr
 
-led_trigger_store can be significantly simplified by using sysfs_streq().
+Switch to resource-managed function devm_led_classdev_register instead
+of led_classdev_register and remove unneeded led_classdev_unregister.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/leds/led-triggers.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+The Coccinelle semantic patch used to make this change is as follows:
+//<smpl>
+@platform@
+identifier p, probefn, removefn;
+@@
+struct platform_driver p = {
+  .probe = probefn,
+  .remove = removefn,
+};
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index e1e9334..2181581 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -34,9 +34,7 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
- 		const char *buf, size_t count)
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
--	char trigger_name[TRIG_NAME_MAX];
- 	struct led_trigger *trig;
--	size_t len;
- 	int ret = count;
- 
- 	mutex_lock(&led_cdev->led_access);
-@@ -46,21 +44,14 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
- 		goto unlock;
- 	}
- 
--	trigger_name[sizeof(trigger_name) - 1] = '\0';
--	strncpy(trigger_name, buf, sizeof(trigger_name) - 1);
--	len = strlen(trigger_name);
--
--	if (len && trigger_name[len - 1] == '\n')
--		trigger_name[len - 1] = '\0';
--
--	if (!strcmp(trigger_name, "none")) {
-+	if (sysfs_streq(buf, "none")) {
- 		led_trigger_remove(led_cdev);
- 		goto unlock;
- 	}
- 
- 	down_read(&triggers_list_lock);
- 	list_for_each_entry(trig, &trigger_list, next_trig) {
--		if (!strcmp(trigger_name, trig->name)) {
-+		if (sysfs_streq(buf, trig->name)) {
- 			down_write(&led_cdev->trigger_lock);
- 			led_trigger_set(led_cdev, trig);
- 			up_write(&led_cdev->trigger_lock);
+@prb@
+identifier platform.probefn, pdev;
+expression e;
+@@
+probefn(struct platform_device *pdev, ...) {
+  ...
+  e =
+- led_classdev_register
++ devm_led_classdev_register
+  (...);
+   ...
+?- led_classdev_unregister(...);
+  ...
+}
+@remove depends on prb@
+identifier platform.removefn;
+@@
+removefn(...) {
+...
+?- led_classdev_unregister(...);
+...
+}
+//</smpl>
+
+Amitoj Kaur Chawla (6):
+  leds: 88pm860x: Use devm_led_classdev_register
+  leds: lp8788: Use devm_led_classdev_register
+  leds: wm831x-status: Use devm_led_classdev_register
+  leds: s3c24xx: Use devm_led_classdev_register
+  leds: da903x: Use devm_led_classdev_register
+  leds: max8997: Use devm_led_classdev_register
+
+Changes in v2:
+        -Patches 1-6: Remove unnecessary platform_set_drvdata
+        -Patch 4: Remove unnecessary pdev_to_gpio function definition
+
+ drivers/leds/leds-88pm860x.c      | 12 +-----------
+ drivers/leds/leds-da903x.c        | 12 +-----------
+ drivers/leds/leds-lp8788.c        | 14 +-------------
+ drivers/leds/leds-max8997.c       | 14 +-------------
+ drivers/leds/leds-s3c24xx.c       | 19 +------------------
+ drivers/leds/leds-wm831x-status.c | 13 +------------
+ 6 files changed, 6 insertions(+), 78 deletions(-)
+
 -- 
-2.7.1
+1.9.1
