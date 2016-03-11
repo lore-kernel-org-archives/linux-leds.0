@@ -1,339 +1,79 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v7 1/5] leds: core: add generic support for RGB LED's
-Date: Fri, 11 Mar 2016 09:38:53 +0100
-Message-ID: <56E2841D.7020402@samsung.com>
-References: <56D9F973.8090207@gmail.com>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 00/12] pwm: add support for atomic update
+Date: Fri, 11 Mar 2016 10:51:46 +0100
+Message-ID: <20160311105146.510468ef@bbrezillon>
+References: <20160203145337.GD9650@ulmo>
+	<CAD=FV=U_x1cxx6RrHuVgVV8GbOwm9DXXJcyiArbbQySUOaxrvQ@mail.gmail.com>
+	<20160222175929.GA23899@ulmo>
+	<CAD=FV=UCErW3EjYRtwt49_ztNR7cyY4U0o4R_dxdomer-Ac2Dg@mail.gmail.com>
+	<20160223143859.GA27656@ulmo>
+	<CAD=FV=UvxG3MYD4MKQJqN7W68uMjd-s+FH-e8tkrLCpS0RLmZQ@mail.gmail.com>
+	<20160223181448.GA14754@ulmo.nvidia.com>
+	<CAD=FV=VM3cOQ0HqwLANBw9MVBCyFTrSyPe_dGzgPucuMUEWRKA@mail.gmail.com>
+	<CAD=FV=VckTVD8b1g+f0G2kMeoTjvY0pAGhoDnWQN_dAmqSxBxg@mail.gmail.com>
+	<CAD=FV=W3KPf8tyMviVNB9=HjefMdP+FBbN01Zhh7RKH+gkj2WQ@mail.gmail.com>
+	<20160310175438.GA5648@ulmo.nvidia.com>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11296 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934612AbcCKIi6 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 11 Mar 2016 03:38:58 -0500
-In-reply-to: <56D9F973.8090207@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBO5KRK3QKGQEY3RIAEY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160310175438.GA5648-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-pwm <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, "open
+ list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>linu
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Karl Palsson <karlp@tweak.net.au>
 
-Hi Heiner,
+Hi Thierry,
 
-Thanks for the updated set. I've renamed the feature to RGB LED class
-and pushed out to devel branch of linux-leds.git. It will sit there
-till the end of the upcoming merge window. There have been some
-uncertainties raised related to overloading brightness syntax. so let's
-better have it in linux-next through the whole next development cycle
-for the people to comment on.
+On Thu, 10 Mar 2016 18:54:38 +0100
+Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+
+> On Mon, Mar 07, 2016 at 08:34:19AM -0800, Doug Anderson wrote:
+> > Thierry,
+> > 
+> > On Thu, Feb 25, 2016 at 3:14 PM, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote:
+> > > So just to summarize:
+> > >
+> > > * Add pwm_get_state(), pwm_apply_state(), pwm_get_args().
+> > > pwm_get_state() initially returns 0 for duty cycle if driver doesn't
+> > > support readout.
+> > >
+> > > * Re-implement pwm_get_period() (and maybe other similar functions)
+> > > atop pwm_get_state() as you describe earlier in the thread.
+> > >
+> > > * Document pwm_get_period() (and maybe other similar functions) as deprecated.
+> > >
+> > > * Fix drivers for all current 2 users of PWM regulator to support
+> > > hardware readout.
+> > >
+> > > * Update PWM regulator as you described earlier in the thread (Feb 23).
+> > >
+> > > * If PWM regulator is ever used on a new board whose PWM doesn't
+> > > support hardware readout, the voltage will change at probe time.
+> > >
+> > >
+> > > Did I get all that right?  Thanks!
+> > 
+> > Can you provide a "yes, you got that right" or a "no, you didn't
+> > understand"?  That will unblock Boris, I think.
+> 
+> Sounds about right. Hopefully this will eliminate any objections that
+> others had about the series.
+
+Okay, I'll rework the series accordingly and send a new version soon.
 
 Thanks,
-Jacek Anaszewski
 
-On 03/04/2016 10:09 PM, Heiner Kallweit wrote:
-> Add generic support for RGB LED's.
->
-> Basic idea is to use enum led_brightness also for the hue and saturation
-> color components.This allows to implement the color extension w/o
-> changes to struct led_classdev.
->
-> Select LEDS_RGB to enable building drivers using the RGB extension.
->
-> Flag LED_SET_HUE_SAT allows to specify that hue / saturation
-> should be overridden even if the provided values are zero.
->
-> Some examples for writing values to /sys/class/leds/<xx>/brightness:
-> (now also hex notation can be used)
->
-> 255 -> set full brightness and keep existing color if set
-> 0 -> switch LED off but keep existing color so that it can be restored
->       if the LED is switched on again later
-> 0x1000000 -> switch LED off and set also hue and saturation to 0
-> 0x00ffff -> set full brightness, full saturation and set hue to 0 (red)
->
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - move extension-specific code into a separate source file and
->    introduce config symbol LEDS_HSV for it
-> - create separate patch for the extension to sysfs
-> - use variable name led_cdev as in the rest if the core
-> - rename to_hsv to led_validate_brightness
-> - rename LED_BRIGHTNESS_SET_COLOR to LED_SET_HSV
-> - introduce helper is_off for checking whether V part
->    of a HSV value is zero
-> v3:
-> - change Kconfig to use depend instead of select, add help message,
->    and change config symbol to LEDS_COLOR
-> - change LED core object file name in Makefile
-> - rename flag LED_SET_HSV to LED_SET_COLOR
-> - rename is_off to led_is_off
-> - rename led_validate-brightness to led_confine_brightness
-> - rename variable in led_confine_brightness
-> - add dummy enum led_brightness value to enforce 32bit enum
-> - rename led-hsv-core.c to led-color-core.c
-> - move check of provided brightness value to led_confine_brightness
-> v4:
-> - change config symbol name to LEDS_RGB
-> - change name of new file to led-rgb-core.c
-> - factor out part of led_confine_brightness
-> - change led_is_off to __is_set_brightness
-> - in led_set_software_blink pass led_cdev->max_brightness instead of LED_FULL
-> - rename LED_SET_COLOR to LED_SET_HUE_SAT
-> v5:
-> - change "RGB Color LED" to "RGB LED" in Kconfig
-> - move definition of LED_HUE_SAT_MASK to drivers/leds/leds.h
-> - rename LED_DEV_CAP_HSV to LED_DEV_CAP_RGB
-> v6:
-> - no change
-> v7:
-> - removed "Color" from RGB Color LED in commit message and title
-> - don't include linux/kernel.h in led-rgb-core.c
-> - keep definition of LED_DEV_CAP_[] flags together
-> ---
->   drivers/leds/Kconfig        | 11 +++++++++++
->   drivers/leds/Makefile       |  4 +++-
->   drivers/leds/led-class.c    |  2 +-
->   drivers/leds/led-core.c     | 16 +++++++++-------
->   drivers/leds/led-rgb-core.c | 39 +++++++++++++++++++++++++++++++++++++++
->   drivers/leds/leds.h         | 18 ++++++++++++++++++
->   include/linux/leds.h        | 11 ++++++++++-
->   7 files changed, 91 insertions(+), 10 deletions(-)
->   create mode 100644 drivers/leds/led-rgb-core.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 7f940c2..5b1c852 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -13,6 +13,13 @@ menuconfig NEW_LEDS
->
->   if NEW_LEDS
->
-> +config LEDS_RGB
-> +	bool "RGB LED Support"
-> +	help
-> +	 This option enables support for RGB Color LED devices.
-> +	 Sysfs attribute brightness is interpreted as a HSV color value.
-> +	 For details see Documentation/leds/leds-class.txt.
-> +
->   config LEDS_CLASS
->   	tristate "LED Class Support"
->   	help
-> @@ -29,6 +36,10 @@ config LEDS_CLASS_FLASH
->   	  for the flash related features of a LED device. It can be built
->   	  as a module.
->
-> +if LEDS_RGB
-> +comment "RGB LED drivers"
-> +endif # LEDS_RGB
-> +
->   comment "LED drivers"
->
->   config LEDS_88PM860X
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index e9d5309..cc3676f 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -1,6 +1,8 @@
->
->   # LED Core
-> -obj-$(CONFIG_NEW_LEDS)			+= led-core.o
-> +obj-$(CONFIG_NEW_LEDS)			+= led-core-objs.o
-> +led-core-objs-y				:= led-core.o
-> +led-core-objs-$(CONFIG_LEDS_RGB)	+= led-rgb-core.o
->   obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
->   obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
->   obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index aa84e5b..007a5b3 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -53,7 +53,7 @@ static ssize_t brightness_store(struct device *dev,
->   	if (ret)
->   		goto unlock;
->
-> -	if (state == LED_OFF)
-> +	if (!__is_brightness_set(state))
->   		led_trigger_remove(led_cdev);
->   	led_set_brightness(led_cdev, state);
->
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 3495d5d..e75b0c8 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -62,7 +62,7 @@ static void led_timer_function(unsigned long data)
->   	}
->
->   	brightness = led_get_brightness(led_cdev);
-> -	if (!brightness) {
-> +	if (!__is_brightness_set(brightness)) {
->   		/* Time to switch the LED on. */
->   		brightness = led_cdev->blink_brightness;
->   		delay = led_cdev->blink_delay_on;
-> @@ -133,8 +133,9 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
->   	if (current_brightness)
->   		led_cdev->blink_brightness = current_brightness;
->   	if (!led_cdev->blink_brightness)
-> -		led_cdev->blink_brightness = led_cdev->max_brightness;
-> -
-> +		led_cdev->blink_brightness =
-> +				led_confine_brightness(led_cdev,
-> +						led_cdev->max_brightness);
->   	led_cdev->blink_delay_on = delay_on;
->   	led_cdev->blink_delay_off = delay_off;
->
-> @@ -235,12 +236,13 @@ void led_set_brightness(struct led_classdev *led_cdev,
->   		 * work queue task to avoid problems in case we are called
->   		 * from hard irq context.
->   		 */
-> -		if (brightness == LED_OFF) {
-> +		if (!__is_brightness_set(brightness)) {
->   			led_cdev->flags |= LED_BLINK_DISABLE;
->   			schedule_work(&led_cdev->set_brightness_work);
->   		} else {
->   			led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
-> -			led_cdev->blink_brightness = brightness;
-> +			led_cdev->blink_brightness =
-> +				led_confine_brightness(led_cdev, brightness);
->   		}
->   		return;
->   	}
-> @@ -265,7 +267,7 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
->   void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->   				enum led_brightness value)
->   {
-> -	led_cdev->brightness = min(value, led_cdev->max_brightness);
-> +	led_cdev->brightness = led_confine_brightness(led_cdev, value);
->
->   	if (led_cdev->flags & LED_SUSPENDED)
->   		return;
-> @@ -280,7 +282,7 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
->   	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
->   		return -EBUSY;
->
-> -	led_cdev->brightness = min(value, led_cdev->max_brightness);
-> +	led_cdev->brightness = led_confine_brightness(led_cdev, value);
->
->   	if (led_cdev->flags & LED_SUSPENDED)
->   		return 0;
-> diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
-> new file mode 100644
-> index 0000000..cbd8b35
-> --- /dev/null
-> +++ b/drivers/leds/led-rgb-core.c
-> @@ -0,0 +1,39 @@
-> +/*
-> + * LED Class Color Support
-> + *
-> + * Author: Heiner Kallweit <hkallweit1@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/leds.h>
-> +#include "leds.h"
-> +
-> +/*
-> + * The color extension handles RGB LEDs but uses a HSV color model internally.
-> + * led_rgb_adjust_hue_sat sets hue and saturation part of the HSV color value.
-> + */
-> +static enum led_brightness led_rgb_adjust_hue_sat(struct led_classdev *led_cdev,
-> +						  enum led_brightness value)
-> +{
-> +	/* LED_SET_HUE_SAT sets hue and saturation even if both are zero */
-> +	if (value & LED_SET_HUE_SAT || value > LED_FULL)
-> +		return value & LED_HUE_SAT_MASK;
-> +	else
-> +		return led_cdev->brightness & ~LED_BRIGHTNESS_MASK;
-> +}
-> +
-> +enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
-> +					   enum led_brightness value)
-> +{
-> +	enum led_brightness brightness = 0;
-> +
-> +	if (led_cdev->flags & LED_DEV_CAP_RGB)
-> +		brightness = led_rgb_adjust_hue_sat(led_cdev, value);
-> +
-> +	return brightness |
-> +	       min(value & LED_BRIGHTNESS_MASK, led_cdev->max_brightness);
-> +}
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index db3f20d..b853f54 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -16,17 +16,35 @@
->   #include <linux/rwsem.h>
->   #include <linux/leds.h>
->
-> +#define LED_BRIGHTNESS_MASK	0x000000ff
-> +#define LED_HUE_SAT_MASK	0x00ffff00
-> +
->   static inline int led_get_brightness(struct led_classdev *led_cdev)
->   {
->   	return led_cdev->brightness;
->   }
->
-> +static inline bool __is_brightness_set(enum led_brightness brightness)
-> +{
-> +	return (brightness & LED_BRIGHTNESS_MASK) != LED_OFF;
-> +}
-> +
->   void led_init_core(struct led_classdev *led_cdev);
->   void led_stop_software_blink(struct led_classdev *led_cdev);
->   void led_set_brightness_nopm(struct led_classdev *led_cdev,
->   				enum led_brightness value);
->   void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->   				enum led_brightness value);
-> +#if IS_ENABLED(CONFIG_LEDS_RGB)
-> +enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
-> +					   enum led_brightness value);
-> +#else
-> +static inline enum led_brightness led_confine_brightness(
-> +		struct led_classdev *led_cdev, enum led_brightness value)
-> +{
-> +	return min(value, led_cdev->max_brightness);
-> +}
-> +#endif
->
->   extern struct rw_semaphore leds_list_lock;
->   extern struct list_head leds_list;
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index f203a8f..58e8299 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -29,8 +29,16 @@ enum led_brightness {
->   	LED_OFF		= 0,
->   	LED_HALF	= 127,
->   	LED_FULL	= 255,
-> +	/*
-> +	 * dummy enum value to make gcc use a 32 bit type for the enum
-> +	 * even if compiled with -fshort-enums. This is needed for
-> +	 * the enum to store hsv values.
-> +	 */
-> +	LED_LEVEL_DUMMY	= 0xffffffff,
->   };
->
-> +#define LED_SET_HUE_SAT		BIT(24)
-> +
->   struct led_classdev {
->   	const char		*name;
->   	enum led_brightness	 brightness;
-> @@ -49,7 +57,8 @@ struct led_classdev {
->   #define LED_BLINK_DISABLE	(1 << 21)
->   #define LED_SYSFS_DISABLE	(1 << 22)
->   #define LED_DEV_CAP_FLASH	(1 << 23)
-> -#define LED_HW_PLUGGABLE	(1 << 24)
-> +#define LED_DEV_CAP_RGB		(1 << 24)
-> +#define LED_HW_PLUGGABLE	(1 << 25)
->
->   	/* Set LED brightness level
->   	 * Must not sleep. Use brightness_set_blocking for drivers
->
-
+Boris
 
 -- 
-Best regards,
-Jacek Anaszewski
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
