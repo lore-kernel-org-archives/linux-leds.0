@@ -1,61 +1,61 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [GIT PULL] LED subsystem updates for 4.6
-Date: Wed, 16 Mar 2016 08:47:02 +0100
-Message-ID: <56E90F76.3070401@samsung.com>
-References: <1457951097-27079-1-git-send-email-j.anaszewski@samsung.com>
- <CA+55aFzzz2sj-EjfsUDjnsKhbM2AjjxwjQXRpueMFauRGZgiGQ@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v4 01/24] pwm: rcar: make use of pwm_is_enabled()
+Date: Wed, 16 Mar 2016 15:30:22 +0100
+Message-ID: <20160316153022.164105d1@bbrezillon>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41760 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932395AbcCPHrH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 16 Mar 2016 03:47:07 -0400
-In-reply-to: <CA+55aFzzz2sj-EjfsUDjnsKhbM2AjjxwjQXRpueMFauRGZgiGQ@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbd
 List-Id: linux-leds@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, amitoj1606@gmail.com, ao2@ao2.it, drivshin@allworx.com, Geert Uytterhoeven <geert+renesas@glider.be>, hkallweit1@gmail.com, stefan.wahren@i2se.com, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-On 03/16/2016 06:15 AM, Linus Torvalds wrote:
-> On Mon, Mar 14, 2016 at 3:24 AM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->>
->> New LED class driver:
->>
->> - Add driver for the ISSI IS31FL32xx family of LED controllers.
->
-> Grr. This has apparently not gotten with the program, and causes a fe=
-w
-> annoying warnings:
->
-> drivers/leds/leds-is31fl32xx.c: In function =E2=80=98is31fl32xx_parse=
-_child_dt=E2=80=99:
-> drivers/leds/leds-is31fl32xx.c:345:30: warning: passing argument 1 of
-> =E2=80=98of_property_read_string=E2=80=99 discards =E2=80=98const=E2=80=
-=99 qualifier from pointer
-> target type [-Wdiscarded-qualifiers]
->    if (of_property_read_string(child, "label", &cdev->name))
->                                ^
+Hi Thierry,
 
-The warnings will disappear after merging the patch [1].
-I was to mention it in the pull request but eventually forgot.
-Sorry about that.
+Can you please apply this patch?
+It's completely independent from the rest of the series.
 
-> (there's another at line 357)
->
-> I've pulled, but I'll expect this to be fixed.
->
->                Linus
->
->
+Thanks,
 
-[1]=20
-https://git.kernel.org/cgit/linux/kernel/git/robh/linux.git/commit/?h=3D=
-for-next&id=3Dfe99c707fc7bb0baba75b26ed585ee3464612dbe
+Boris
 
---=20
-Best regards,
-Jacek Anaszewski
+On Mon, 16 Nov 2015 09:56:24 +0100
+Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+
+> Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
+> new function to test whether a PWM device is enabled or not without
+> manipulating PWM internal fields.
+> Hiding this is necessary if we want to smoothly move to the atomic PWM
+> config approach without impacting PWM drivers.
+> Fix this driver to use pwm_is_enabled() instead of directly accessing the
+> ->flags field.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/pwm/pwm-rcar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index 6e99a63..70899c9 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  		return div;
+>  
+>  	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
+> -	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
+> +	if (!pwm_is_enabled(pwm) && !duty_ns)
+>  		return 0;
+>  
+>  	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
