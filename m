@@ -1,61 +1,123 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v4 01/24] pwm: rcar: make use of pwm_is_enabled()
-Date: Wed, 16 Mar 2016 15:30:22 +0100
-Message-ID: <20160316153022.164105d1@bbrezillon>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
+Date: Thu, 17 Mar 2016 11:18:28 +0100
+Message-ID: <CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
+References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1447664207-24370-2-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbd
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Thierry,
+On Mon, Feb 22, 2016 at 1:14 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-Can you please apply this patch?
-It's completely independent from the rest of the series.
+> On the Renesas Salvator-X development board, 3 GPIO pins are connected to both
+> push buttons and LEDs.
+>   - If the GPIO is configured for output, it can control the LED,
+>   - If the GPIO is configured for input, the push button status can be
+>     read. Note that the LED is on if the push button is not pressed; it is
+>     turned off while holding the button.
 
-Thanks,
+Have you asked the hardware engineer who did this construction
+what s/he was thinking? And I mean seriously: what was the
+usecase? Did they really design the LEDs to be used to flicker
+with or just as an indication as to whether the button was being
+pushed or not?
 
-Boris
+Your approach seems dedicated to use it for both usecases (also
+as a stand-alone heartbeat or whatever) but was that really
+intended?
 
-On Mon, 16 Nov 2015 09:56:24 +0100
-Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+>         keyboard {
+>                 compatible = "gpio-keys";
+>
+>                 key-a {
+>                         gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+>                         label = "SW20";
+>                         wakeup-source;
+>                         linux,code = <KEY_A>;
+>                 };
+>                 key-b {
+>                         gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
+>                         label = "SW21";
+>                         wakeup-source;
+>                         linux,code = <KEY_B>;
+>                 };
+>                 key-c {
+>                         gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
+>                         label = "SW22";
+>                         wakeup-source;
+>                         linux,code = <KEY_C>;
+>                 };
+>         };
 
-> Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced a
-> new function to test whether a PWM device is enabled or not without
-> manipulating PWM internal fields.
-> Hiding this is necessary if we want to smoothly move to the atomic PWM
-> config approach without impacting PWM drivers.
-> Fix this driver to use pwm_is_enabled() instead of directly accessing the
-> ->flags field.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  drivers/pwm/pwm-rcar.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-> index 6e99a63..70899c9 100644
-> --- a/drivers/pwm/pwm-rcar.c
-> +++ b/drivers/pwm/pwm-rcar.c
-> @@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
->  		return div;
->  
->  	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
-> -	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
-> +	if (!pwm_is_enabled(pwm) && !duty_ns)
->  		return 0;
->  
->  	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+I suspect that in this usecase, the GPIO should be flagged
+GPIO_OPEN_DRAIN rather than GPIO_ACTIVE_LOW,
+as the construction with the LED draws current fron the line.
 
+> There exist device tree bindings for LEDs connected to GPIOs, and the
+> following also works:
+>
+>         leds {
+>                 compatible = "gpio-leds";
+>
+>                 led4 {
+>                         gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
+>                         label = "LED4";
+>                 };
+>                 led5 {
+>                         gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+>                         label = "LED5";
+>                 };
+>                 led6 {
+>                         gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
+>                         label = "LED6";
+>                 };
+>         };
 
+OK
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> If a GPIO is found busy during initialization, and if it's already in
+> use by the other half of the driver, the driver switches to a special
+> "polled-key-and-LED" mode. I.e. during polling, it does:
+>   - Save the GPIO output state,
+>   - Switch the GPIO to input mode,
+>   - Wait 5 ms (else it will read the old output state, depending on
+>     e.g. hardware capacitance),
+>   - Read the GPIO input state,
+>   - Switch the GPIO to output mode,
+>   - Restore the GPIO output state.
+>
+> And it works, the LEDs can be controlled, and the push button states can
+> be read!
+
+Why go to such troubles of switching the line from output to
+input to read it?
+
+Especially when a line is OPEN_DRAIN it should be perfectly legal
+to read it's value even if it is set as output, but AFAICT that is
+always working no matter whether the line is set as output.
+
+> However, due to the 5 ms delay, there's a visible flickering of LEDs
+> that are supposed to be turned off (remember, when the GPIO is
+> configured for input and the button is not pressed, the LED is lit).
+>
+> If we go this route, adding support for non-polled GPIOs (if the GPIO is
+> not shared with an LED) and wake-up should be doable.
+
+I think this actually implies OPEN_DRAIN and if you flag it as such
+the core should be happy using it as input and output at the same
+time.
+
+If the hardware has a problem with reading the value from a line
+that is set to output, it needs a workaround hack in the driver to
+support reading and output line, *NOT* changes to gpiolib,
+because the lib assumes this is always possible, i.e. it will
+call the driver .get() callback no matter what.
+
+Yours,
+Linus Walleij
