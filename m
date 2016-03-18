@@ -1,220 +1,163 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 3/3] leds: triggers: heartbeat: add RGB version of the
- trigger
-Date: Fri, 18 Mar 2016 14:08:47 +0100
-Message-ID: <56EBFDDF.7000008@samsung.com>
-References: <56E5A0DA.1000700@gmail.com> <56EAB40A.3030004@samsung.com>
- <56EB0DBC.7030005@gmail.com>
+Subject: Re: [PATCH 2/3] leds: triggers: add led_trigger_range_event for RGB
+ triggers
+Date: Fri, 18 Mar 2016 14:09:55 +0100
+Message-ID: <56EBFE23.9070805@samsung.com>
+References: <56E5A010.9080907@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:58913 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:58986 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756949AbcCRNIw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 18 Mar 2016 09:08:52 -0400
-In-reply-to: <56EB0DBC.7030005@gmail.com>
+	with ESMTP id S932158AbcCRNJ6 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 18 Mar 2016 09:09:58 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O480089MKKKWT10@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 18 Mar 2016 13:09:56 +0000 (GMT)
+In-reply-to: <56E5A010.9080907@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 03/17/2016 09:04 PM, Heiner Kallweit wrote:
-> Am 17.03.2016 um 14:41 schrieb Jacek Anaszewski:
->> Hi Heiner,
->>
->> Thanks for the patch. I have a few questions:
->>
->> 1. Why do you want to register another trigger in
->>     a ledtrig-heartbeat.c?
->       The existing trigger uses the heartbeat and can be used with RGB
->       and non-RGB LED's. The new trigger uses color to visualize the load
->       and can be used with RGB LED's only.
+On 03/13/2016 06:14 PM, Heiner Kallweit wrote:
+> Add led_trigger_range_event() and supporting struct led_trigger_range
+> allowing to map a value within a value range to a color within a
+> color range.
+> Simple example would be to map a temperature with in a range to a
+> color between green and red.
 >
->> 2. heartbeat trigger implements LED blinking timing that
->>     resembles human heart beat rhythm, whereas heartbeat_led_rgb_trigger
->>     seems not to reuse led_heartbeat_function code, but instead
->>     led_heartbeat_rgb_function() sets timer interval to 500ms, after
->>     doing some color magic in led_trigger_range_event(). Where is the
->>     heartbeat rhythm implemented here?
->       It uses a color to display the load instead of a rhythm.
->       I have to admit that this trigger might not perfectly fit here as it
->       doesn't actually implement a heartbeat. However it visualizes the same
->       parameter (system load). If preferrable I can make it a separate trigger.
-
-Having it in the ledtrig-heartbeat.c would make sense if we you applied
-also the same blinking pattern. Is there some specific reason for which
-you didn't reuse heartbeat blinking pattern, but instead used fixed
-period?
-
->> 3. Why heartbeat_range.end is somehow related to num_online_cpus()?
->       Because e.g. 5 is a high load on a single CPU system but more or less
->       idle on a 64 CPU system.
-
-I see, thanks for the explanation.
-
-I have also few comments below.
-
->>
->> On 03/13/2016 06:18 PM, Heiner Kallweit wrote:
->>> Add a RGB version of the heartbeat trigger (heartbeat-rgb). This version of
->>> the trigger can only be used with LED devices supporting the RGB extension.
->>>
->>> It maps the load [0 .. num_online_cpus] to a color between green and red.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> ---
->>>    drivers/leds/trigger/ledtrig-heartbeat.c | 64 +++++++++++++++++++++++++++++++-
->>>    1 file changed, 63 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
->>> index 410c39c..510a3c9 100644
->>> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
->>> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
->>> @@ -22,6 +22,7 @@
->>>    #include "../leds.h"
->>>
->>>    static int panic_heartbeats;
->>> +static struct led_trigger heartbeat_led_rgb_trigger;
->>>
->>>    struct heartbeat_trig_data {
->>>        unsigned int phase;
->>> @@ -30,6 +31,14 @@ struct heartbeat_trig_data {
->>>        unsigned int invert;
->>>    };
->>>
->>> +static struct led_trigger_range led_heartbeat_range = {
->>> +    .start = 0,
->>> +    /* default, overridden by module init function */
->>> +    .end = 4 * FIXED_1,
->>> +    .color_start = 0x54ffff, /* GREEN */
->>> +    .color_end = 0x00ffff, /* RED */
->>> +};
->>> +
->>>    static void led_heartbeat_function(unsigned long data)
->>>    {
->>>        struct led_classdev *led_cdev = (struct led_classdev *) data;
->>> @@ -85,6 +94,15 @@ static void led_heartbeat_function(unsigned long data)
->>>        mod_timer(&heartbeat_data->timer, jiffies + delay);
->>>    }
->>>
->>> +static void led_heartbeat_rgb_function(unsigned long data)
->>> +{
->>> +    struct led_classdev *led_cdev = (struct led_classdev *) data;
->>> +    struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
->>> +
->>> +    led_trigger_range_event(&heartbeat_led_rgb_trigger, avenrun[0]);
->>> +    mod_timer(&heartbeat_data->timer, jiffies + msecs_to_jiffies(500));
->>> +}
-
-This function could reuse the code from led_heartbeat_function(), that
-calculates timer delay. That code could be made reusable by
-both monochrome and rgb heartbeat trigger.
-
->>>    static ssize_t led_invert_show(struct device *dev,
->>>            struct device_attribute *attr, char *buf)
->>>    {
->>> @@ -136,6 +154,22 @@ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
->>>        led_cdev->activated = true;
->>>    }
->>>
->>> +static void heartbeat_trig_rgb_activate(struct led_classdev *led_cdev)
->>> +{
->>> +    struct heartbeat_trig_data *heartbeat_data;
->>> +
->>> +    heartbeat_data = kzalloc(sizeof(*heartbeat_data), GFP_KERNEL);
->>> +    if (!heartbeat_data)
->>> +        return;
->>> +
->>> +    led_cdev->trigger_data = heartbeat_data;
-
-How about adding struct rgb_heartbeat_trig_data comprising
-two properties of types struct heartbeat_trig_data and
-struct led_trigger_range respectively?
-It would be used by the new led_heartbeat_rgb_function to
-store blinking and color related data.
-
->>> +    setup_timer(&heartbeat_data->timer,
->>> +            led_heartbeat_rgb_function, (unsigned long) led_cdev);
->>> +    led_heartbeat_rgb_function(heartbeat_data->timer.data);
->>> +    led_cdev->activated = true;
->>> +}
->>> +
->>>    static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
->>>    {
->>>        struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
->>> @@ -148,12 +182,31 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
->>>        }
->>>    }
->>>
->>> +static void heartbeat_trig_rgb_deactivate(struct led_classdev *led_cdev)
->>> +{
->>> +    struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
->>> +
->>> +    if (led_cdev->activated) {
->>> +        del_timer_sync(&heartbeat_data->timer);
->>> +        kfree(heartbeat_data);
->>> +        led_cdev->activated = false;
->>> +    }
->>> +}
->>> +
->>>    static struct led_trigger heartbeat_led_trigger = {
->>>        .name     = "heartbeat",
->>>        .activate = heartbeat_trig_activate,
->>>        .deactivate = heartbeat_trig_deactivate,
->>>    };
->>>
->>> +static struct led_trigger heartbeat_led_rgb_trigger = {
->>> +    .flags    = LED_TRIG_CAP_RGB,
->>> +    .name     = "heartbeat-rgb",
->>> +    .range    = &led_heartbeat_range,
->>> +    .activate = heartbeat_trig_rgb_activate,
->>> +    .deactivate = heartbeat_trig_rgb_deactivate,
->>> +};
->>> +
->>>    static int heartbeat_reboot_notifier(struct notifier_block *nb,
->>>                         unsigned long code, void *unused)
->>>    {
->>> @@ -178,9 +231,17 @@ static struct notifier_block heartbeat_panic_nb = {
->>>
->>>    static int __init heartbeat_trig_init(void)
->>>    {
->>> -    int rc = led_trigger_register(&heartbeat_led_trigger);
->>> +    int rc;
->>> +
->>> +    led_heartbeat_range.end = num_online_cpus() * FIXED_1;
->>> +
->>> +    rc = led_trigger_register(&heartbeat_led_rgb_trigger);
->>> +    if (rc)
->>> +        return rc;
-
-With inherited blinking pattern rgb version will also have to
-register the same notifiers as the monochrome one.
-
->>> +    rc = led_trigger_register(&heartbeat_led_trigger);
->>>        if (!rc) {
->>> +        led_trigger_unregister(&heartbeat_led_rgb_trigger);
->>>            atomic_notifier_chain_register(&panic_notifier_list,
->>>                               &heartbeat_panic_nb);
->>>            register_reboot_notifier(&heartbeat_reboot_nb);
->>> @@ -194,6 +255,7 @@ static void __exit heartbeat_trig_exit(void)
->>>        atomic_notifier_chain_unregister(&panic_notifier_list,
->>>                         &heartbeat_panic_nb);
->>>        led_trigger_unregister(&heartbeat_led_trigger);
->>> +    led_trigger_unregister(&heartbeat_led_rgb_trigger);
->>>    }
->>>
->>>    module_init(heartbeat_trig_init);
->>>
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+>   drivers/leds/led-triggers.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/leds.h        | 14 ++++++++++++++
+>   2 files changed, 56 insertions(+)
 >
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 3ccf88b..5cab10b 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -195,6 +195,9 @@ int led_trigger_register(struct led_trigger *trig)
+>   	struct led_classdev *led_cdev;
+>   	struct led_trigger *_trig;
 >
+> +	if (trig->range && trig->range->start >= trig->range->end)
+> +		return -EINVAL;
+> +
+
+The "range" property is not needed in struct led_trigger. We can have
+struct rgb_heartbeat_trig_data and assign it to trigger_data.
+
+>   	rwlock_init(&trig->leddev_list_lock);
+>   	INIT_LIST_HEAD(&trig->led_cdevs);
+>
+> @@ -294,6 +297,45 @@ void led_trigger_event(struct led_trigger *trig,
+>   }
+>   EXPORT_SYMBOL_GPL(led_trigger_event);
+>
+> +static inline int led_trigger_interpolate(int value,
+> +					  const struct led_trigger_range *range,
+> +					  int x_start, int x_end)
+> +{
+> +		return x_start + DIV_ROUND_CLOSEST((value - range->start) *
+> +		       (x_end - x_start), range->end - range->start);
+> +}
+> +
+> +void led_trigger_range_event(struct led_trigger *trig, int value)
+> +{
+> +	int h, s, v, hs, he, ss, se, vs, ve, hdiff;
+> +
+> +	if (!trig->range)
+> +		return;
+> +
+> +	hs = trig->range->color_start >> 16 & 0xff;
+> +	he = trig->range->color_end >> 16 & 0xff;
+> +	ss = trig->range->color_start >> 8 & 0xff;
+> +	se = trig->range->color_end >> 8 & 0xff;
+> +	vs = trig->range->color_start & 0xff;
+> +	ve = trig->range->color_end & 0xff;
+> +	hdiff = (252 + he - hs) % 252;
+> +
+> +	/* on color circle, choose shortest way from start to end */
+> +	if (hdiff <= 126 && he < hs)
+> +		he += 252;
+> +	else if (hdiff > 126 && he > hs)
+> +		hs += 252;
+> +
+> +	value = clamp(value, trig->range->start, trig->range->end);
+> +
+> +	h = led_trigger_interpolate(value, trig->range, hs, he) % 252;
+> +	s = led_trigger_interpolate(value, trig->range, ss, se);
+> +	v = led_trigger_interpolate(value, trig->range, vs, ve);
+> +
+> +	led_trigger_event(trig, LED_SET_HUE_SAT | h << 16 | s << 8 | v);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_range_event);
+> +
+
+How about making this function a helper returning enum led_brightness
+and using it in rgb-heartbeat trigger? It would be trigger agnostic
+then. Later you could also create a new rgb-range trigger, which would
+expose sysfs attributes for configuring the color range.
+
+It could be also  moved to led-rgb-core.c and renamed to
+led_val_to_color_range or so.
+
+>   static void led_trigger_blink_setup(struct led_trigger *trig,
+>   			     unsigned long *delay_on,
+>   			     unsigned long *delay_off,
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 07eb074..263640e 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -241,6 +241,14 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
+>   #define DEFINE_LED_TRIGGER(x)		static struct led_trigger *x;
+>   #define DEFINE_LED_TRIGGER_GLOBAL(x)	struct led_trigger *x;
+>
+> +struct led_trigger_range {
+> +	int start;
+> +	int end;
+> +	/* HSV color model */
+> +	u32 color_start;
+> +	u32 color_end;
+> +};
+> +
+>   #ifdef CONFIG_LEDS_TRIGGERS
+>
+>   #define TRIG_NAME_MAX 50
+> @@ -251,6 +259,9 @@ struct led_trigger {
+>   	u8		flags;
+>   #define LED_TRIG_CAP_RGB	BIT(0)
+>
+> +	/* optional element for usage with led_trigger_range_event */
+> +	const struct led_trigger_range *range;
+> +
+
+Let's drop it. trigger can carry this information on.
+
+>   	void		(*activate)(struct led_classdev *led_cdev);
+>   	void		(*deactivate)(struct led_classdev *led_cdev);
+>
+> @@ -278,6 +289,7 @@ extern void led_trigger_register_simple(const char *name,
+>   extern void led_trigger_unregister_simple(struct led_trigger *trigger);
+>   extern void led_trigger_event(struct led_trigger *trigger,
+>   				enum led_brightness event);
+> +extern void led_trigger_range_event(struct led_trigger *trigger, int value);
+>   extern void led_trigger_blink(struct led_trigger *trigger,
+>   			      unsigned long *delay_on,
+>   			      unsigned long *delay_off);
+> @@ -324,6 +336,8 @@ static inline void led_trigger_register_simple(const char *name,
+>   static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
+>   static inline void led_trigger_event(struct led_trigger *trigger,
+>   				enum led_brightness event) {}
+> +static inline void led_trigger_range_event(struct led_trigger *trigger,
+> +					   int value) {}
+>   static inline void led_trigger_blink(struct led_trigger *trigger,
+>   				      unsigned long *delay_on,
+>   				      unsigned long *delay_off) {}
 >
 
 
