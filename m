@@ -1,133 +1,188 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH 1/3] leds: triggers: add support for RGB triggers
-Date: Sat, 19 Mar 2016 20:11:45 +0100
-Message-ID: <56EDA471.1060801@gmail.com>
-References: <56E59FFE.8040203@googlemail.com> <56EAB407.60904@samsung.com>
- <56EB0B4D.6040809@gmail.com> <56EBFE3D.4000308@samsung.com>
+Subject: Re: [PATCH 2/3] leds: triggers: add led_trigger_range_event for RGB
+ triggers
+Date: Sun, 20 Mar 2016 00:42:46 +0100
+Message-ID: <56EDE3F6.1060405@gmail.com>
+References: <56E5A010.9080907@gmail.com> <56EBFE23.9070805@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56EBFE3D.4000308@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35714 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932426AbcCSXnH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sat, 19 Mar 2016 19:43:07 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r129so1978582wmr.2
+        for <linux-leds@vger.kernel.org>; Sat, 19 Mar 2016 16:43:05 -0700 (PDT)
+In-Reply-To: <56EBFE23.9070805@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Am 18.03.2016 um 14:10 schrieb Jacek Anaszewski:
-> On 03/17/2016 08:53 PM, Heiner Kallweit wrote:
->> Am 17.03.2016 um 14:41 schrieb Jacek Anaszewski:
->>> Hi Heiner,
->>>
->>> On 03/13/2016 06:14 PM, Heiner Kallweit wrote:
->>>> Add basic support for RGB triggers. Triggers with flag LED_TRIG_CAP_RGB
->>>> set are available to RGB LED devices only.
->>>>
->>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>> ---
->>>>    drivers/leds/led-triggers.c | 15 ++++++++++++---
->>>>    include/linux/leds.h        |  3 +++
->>>>    2 files changed, 15 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
->>>> index 2181581..3ccf88b 100644
->>>> --- a/drivers/leds/led-triggers.c
->>>> +++ b/drivers/leds/led-triggers.c
->>>> @@ -30,6 +30,13 @@ static LIST_HEAD(trigger_list);
->>>>
->>>>     /* Used by LED Class */
->>>>
->>>> +static inline bool led_trig_check_rgb(struct led_trigger *trig,
->>>> +                      struct led_classdev *led_cdev)
->>>> +{
->>>> +    return !(trig->flags & LED_TRIG_CAP_RGB) ||
->>>> +           led_cdev->flags & LED_DEV_CAP_RGB;
->>>> +}
->>>
->>> Could you explain what is the purpose of this function?
->>> What actually do we want to check here?
->>>
->> Triggers using RGB functionality can't be used with non-RGB LED's.
->> This check checks for such unsupported combinations:
->> It returns false if the trigger uses RGB functionality but LED doesn't
->> support the RGB extension.
+Am 18.03.2016 um 14:09 schrieb Jacek Anaszewski:
+> On 03/13/2016 06:14 PM, Heiner Kallweit wrote:
+>> Add led_trigger_range_event() and supporting struct led_trigger_range
+>> allowing to map a value within a value range to a color within a
+>> color range.
+>> Simple example would be to map a temperature with in a range to a
+>> color between green and red.
+>>
+>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>> ---
+>>   drivers/leds/led-triggers.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/leds.h        | 14 ++++++++++++++
+>>   2 files changed, 56 insertions(+)
+>>
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index 3ccf88b..5cab10b 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -195,6 +195,9 @@ int led_trigger_register(struct led_trigger *trig)
+>>       struct led_classdev *led_cdev;
+>>       struct led_trigger *_trig;
+>>
+>> +    if (trig->range && trig->range->start >= trig->range->end)
+>> +        return -EINVAL;
+>> +
 > 
-> We need more meaningful name for it. Maybe led_trigger_is_supported() ?
-> And let's make it no-op for !CONFIG_LEDS_CLASS_RGB case.
+> The "range" property is not needed in struct led_trigger. We can have
+> struct rgb_heartbeat_trig_data and assign it to trigger_data.
 > 
-OK, led_trigger_is_supported() is better.
+Mapping a value range to a color range is a generic new feature and
+independent of the use in the new heartbeat (or better said: system load
+visualization) trigger.
+Having struct led_trigger_range in the trigger struct has the advantage
+that we can do needed checking only once when registering the trigger
+and the caller doesn't have to pass a pointer to the struct with
+each call to led_trigger_range_event().
 
-Making the function a no-op in the non-RGB case would have some impact:
-We'd have to make sure that all public trigger functions are a de-facto no-op
-for RGB triggers (at least register / unregister). Means we would need
-something like this in each public trigger function:
-
-#if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
-	if (trig->flags & LED_TRIG_CAP_RGB))
-		return;
-#endif
-
-I think this would add a lot of overhead and therefore IMHO it's better to
-not make the check function a no-op.
-
->>>>    ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
->>>>            const char *buf, size_t count)
->>>>    {
->>>> @@ -52,12 +59,12 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
->>>>        down_read(&triggers_list_lock);
->>>>        list_for_each_entry(trig, &trigger_list, next_trig) {
->>>>            if (sysfs_streq(buf, trig->name)) {
->>>> +            if (!led_trig_check_rgb(trig, led_cdev))
->>>> +                break;
+>>       rwlock_init(&trig->leddev_list_lock);
+>>       INIT_LIST_HEAD(&trig->led_cdevs);
 >>
->> Check for the case that userspace wants to set a RGB trigger for a non-RGB LED via sysfs.
+>> @@ -294,6 +297,45 @@ void led_trigger_event(struct led_trigger *trig,
+>>   }
+>>   EXPORT_SYMBOL_GPL(led_trigger_event);
 >>
->>>>                down_write(&led_cdev->trigger_lock);
->>>>                led_trigger_set(led_cdev, trig);
->>>>                up_write(&led_cdev->trigger_lock);
->>>> -
->>>> -            up_read(&triggers_list_lock);
->>>> -            goto unlock;
->>>> +            break;
+>> +static inline int led_trigger_interpolate(int value,
+>> +                      const struct led_trigger_range *range,
+>> +                      int x_start, int x_end)
+>> +{
+>> +        return x_start + DIV_ROUND_CLOSEST((value - range->start) *
+>> +               (x_end - x_start), range->end - range->start);
+>> +}
+>> +
+>> +void led_trigger_range_event(struct led_trigger *trig, int value)
+>> +{
+>> +    int h, s, v, hs, he, ss, se, vs, ve, hdiff;
+>> +
+>> +    if (!trig->range)
+>> +        return;
+>> +
+>> +    hs = trig->range->color_start >> 16 & 0xff;
+>> +    he = trig->range->color_end >> 16 & 0xff;
+>> +    ss = trig->range->color_start >> 8 & 0xff;
+>> +    se = trig->range->color_end >> 8 & 0xff;
+>> +    vs = trig->range->color_start & 0xff;
+>> +    ve = trig->range->color_end & 0xff;
+>> +    hdiff = (252 + he - hs) % 252;
+>> +
+>> +    /* on color circle, choose shortest way from start to end */
+>> +    if (hdiff <= 126 && he < hs)
+>> +        he += 252;
+>> +    else if (hdiff > 126 && he > hs)
+>> +        hs += 252;
+>> +
+>> +    value = clamp(value, trig->range->start, trig->range->end);
+>> +
+>> +    h = led_trigger_interpolate(value, trig->range, hs, he) % 252;
+>> +    s = led_trigger_interpolate(value, trig->range, ss, se);
+>> +    v = led_trigger_interpolate(value, trig->range, vs, ve);
+>> +
+>> +    led_trigger_event(trig, LED_SET_HUE_SAT | h << 16 | s << 8 | v);
+>> +}
+>> +EXPORT_SYMBOL_GPL(led_trigger_range_event);
+>> +
 > 
-> This seems to be an unrelated cleanup. Please submit it separately.
+> How about making this function a helper returning enum led_brightness
+> and using it in rgb-heartbeat trigger? It would be trigger agnostic
+> then. Later you could also create a new rgb-range trigger, which would
+> expose sysfs attributes for configuring the color range.
 > 
-OK
+Having the mapping as a helper would be an alternative.
+However then the caller would always need two calls instead of one:
 
->>>>            }
->>>>        }
->>>>        up_read(&triggers_list_lock);
->>>> @@ -84,6 +91,8 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
->>>>            len += sprintf(buf+len, "none ");
->>>>
->>>>        list_for_each_entry(trig, &trigger_list, next_trig) {
->>>> +        if (!led_trig_check_rgb(trig, led_cdev))
->>>> +            continue;
+enum led_brightness brightness = led_val_to_color_range(struct range *, val);
+led_trigger_event(trig, brightness);
+
+But this might be ok considering that we gain the option to use the
+mapping feature independent of triggers.
+
+Making the color range configurable via sysfs is an interesting idea.
+But for this we would first have to introduce generic sysfs handling
+for triggers I think. Maybe that's something for a next round of
+extensions.
+
+> It could be also  moved to led-rgb-core.c and renamed to
+> led_val_to_color_range or so.
+> 
+Yes, this would make sense.
+
+>>   static void led_trigger_blink_setup(struct led_trigger *trig,
+>>                    unsigned long *delay_on,
+>>                    unsigned long *delay_off,
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 07eb074..263640e 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -241,6 +241,14 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
+>>   #define DEFINE_LED_TRIGGER(x)        static struct led_trigger *x;
+>>   #define DEFINE_LED_TRIGGER_GLOBAL(x)    struct led_trigger *x;
 >>
->> Omit RGB triggers when listing the available triggers for a non-RGB LED via sysfs.
+>> +struct led_trigger_range {
+>> +    int start;
+>> +    int end;
+>> +    /* HSV color model */
+>> +    u32 color_start;
+>> +    u32 color_end;
+>> +};
+>> +
+>>   #ifdef CONFIG_LEDS_TRIGGERS
 >>
->>>>            if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
->>>>                                trig->name))
->>>>                len += sprintf(buf+len, "[%s] ", trig->name);
->>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>>> index 58e22e6..07eb074 100644
->>>> --- a/include/linux/leds.h
->>>> +++ b/include/linux/leds.h
->>>> @@ -248,6 +248,9 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
->>>>    struct led_trigger {
->>>>        /* Trigger Properties */
->>>>        const char     *name;
->>>> +    u8        flags;
->>>> +#define LED_TRIG_CAP_RGB    BIT(0)
->>>> +
->>>>        void        (*activate)(struct led_classdev *led_cdev);
->>>>        void        (*deactivate)(struct led_classdev *led_cdev);
->>>>
->>>>
->>>
->>>
+>>   #define TRIG_NAME_MAX 50
+>> @@ -251,6 +259,9 @@ struct led_trigger {
+>>       u8        flags;
+>>   #define LED_TRIG_CAP_RGB    BIT(0)
 >>
+>> +    /* optional element for usage with led_trigger_range_event */
+>> +    const struct led_trigger_range *range;
+>> +
+> 
+> Let's drop it. trigger can carry this information on.
+> 
+If we have the mapping as a helper, independent of triggers, then we won't
+have the pointer to struct range here anyway.
+
+>>       void        (*activate)(struct led_classdev *led_cdev);
+>>       void        (*deactivate)(struct led_classdev *led_cdev);
 >>
+>> @@ -278,6 +289,7 @@ extern void led_trigger_register_simple(const char *name,
+>>   extern void led_trigger_unregister_simple(struct led_trigger *trigger);
+>>   extern void led_trigger_event(struct led_trigger *trigger,
+>>                   enum led_brightness event);
+>> +extern void led_trigger_range_event(struct led_trigger *trigger, int value);
+>>   extern void led_trigger_blink(struct led_trigger *trigger,
+>>                     unsigned long *delay_on,
+>>                     unsigned long *delay_off);
+>> @@ -324,6 +336,8 @@ static inline void led_trigger_register_simple(const char *name,
+>>   static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
+>>   static inline void led_trigger_event(struct led_trigger *trigger,
+>>                   enum led_brightness event) {}
+>> +static inline void led_trigger_range_event(struct led_trigger *trigger,
+>> +                       int value) {}
+>>   static inline void led_trigger_blink(struct led_trigger *trigger,
+>>                         unsigned long *delay_on,
+>>                         unsigned long *delay_off) {}
 >>
 > 
 > 
