@@ -1,73 +1,82 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] leds: use config symbol LEDS_CLASS_RGB consistently
-Date: Mon, 21 Mar 2016 11:57:30 +0100
-Message-ID: <56EFD39A.50800@gmail.com>
+Subject: [PATCH v2 1/3] leds: triggers: add support for RGB triggers
+Date: Mon, 21 Mar 2016 12:57:59 +0100
+Message-ID: <56EFE1C7.50705@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36488 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753757AbcCUK5k (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Mar 2016 06:57:40 -0400
-Received: by mail-wm0-f54.google.com with SMTP id r129so45049342wmr.1
-        for <linux-leds@vger.kernel.org>; Mon, 21 Mar 2016 03:57:39 -0700 (PDT)
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34691 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754037AbcCUL7N (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 21 Mar 2016 07:59:13 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Config symbol LEDS_RGB was renamed to LEDS_CLASS_RGB.
-This makes sense, but the change wasn't done consistently.
+Add basic support for RGB triggers. Triggers with flag LED_TRIG_CAP_RGB
+set are available to RGB LED devices only.
 
 Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/leds/Kconfig  | 4 ++--
- drivers/leds/Makefile | 2 +-
- drivers/leds/leds.h   | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+v2:
+- renamed check to led_trigger_is_supported()
+- removed unrelated other change
+---
+ drivers/leds/led-triggers.c | 11 +++++++++++
+ include/linux/leds.h        |  3 +++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4d819ba..f213c06 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -624,9 +624,9 @@ config LEDS_VERSATILE
- 	  This option enabled support for the LEDs on the ARM Versatile
- 	  and RealView boards. Say Y to enabled these.
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 2181581..f01d6c0 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -30,6 +30,13 @@ static LIST_HEAD(trigger_list);
  
--if LEDS_RGB
-+if LEDS_CLASS_RGB
- comment "RGB LED drivers"
--endif # LEDS_RGB
-+endif # LEDS_CLASS_RGB
+  /* Used by LED Class */
  
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 9419dbf..e36ef69 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -2,7 +2,7 @@
- # LED Core
- obj-$(CONFIG_NEW_LEDS)			+= led-core-objs.o
- led-core-objs-y				:= led-core.o
--led-core-objs-$(CONFIG_LEDS_RGB)	+= led-rgb-core.o
-+led-core-objs-$(CONFIG_LEDS_CLASS_RGB)	+= led-rgb-core.o
- obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
- obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
- obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index b853f54..9c5f3fe 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -35,7 +35,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
- 				enum led_brightness value);
- void led_set_brightness_nosleep(struct led_classdev *led_cdev,
- 				enum led_brightness value);
--#if IS_ENABLED(CONFIG_LEDS_RGB)
-+#if IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
- enum led_brightness led_confine_brightness(struct led_classdev *led_cdev,
- 					   enum led_brightness value);
- #else
++static inline bool led_trigger_is_supported(struct led_trigger *trig,
++					    struct led_classdev *led_cdev)
++{
++	return !(trig->flags & LED_TRIG_CAP_RGB) ||
++	       led_cdev->flags & LED_DEV_CAP_RGB;
++}
++
+ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+@@ -52,6 +59,8 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+ 	down_read(&triggers_list_lock);
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+ 		if (sysfs_streq(buf, trig->name)) {
++			if (!led_trigger_is_supported(trig, led_cdev))
++				break;
+ 			down_write(&led_cdev->trigger_lock);
+ 			led_trigger_set(led_cdev, trig);
+ 			up_write(&led_cdev->trigger_lock);
+@@ -84,6 +93,8 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+ 		len += sprintf(buf+len, "none ");
+ 
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
++		if (!led_trigger_is_supported(trig, led_cdev))
++			continue;
+ 		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
+ 							trig->name))
+ 			len += sprintf(buf+len, "[%s] ", trig->name);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 58e22e6..07eb074 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -248,6 +248,9 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
+ struct led_trigger {
+ 	/* Trigger Properties */
+ 	const char	 *name;
++	u8		flags;
++#define LED_TRIG_CAP_RGB	BIT(0)
++
+ 	void		(*activate)(struct led_classdev *led_cdev);
+ 	void		(*deactivate)(struct led_classdev *led_cdev);
+ 
 -- 
 2.7.3
