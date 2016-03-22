@@ -1,65 +1,204 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
-Date: Tue, 22 Mar 2016 15:18:17 +0100
-Message-ID: <CACRpkdZ=Xd3_T7paMif10P1zwOT5+p-qn_i1pYoUfvX1wi=EVQ@mail.gmail.com>
-References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
-	<CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
-	<56F14FC2.8060804@linaro.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/3] leds: triggers: add support for RGB triggers
+Date: Tue, 22 Mar 2016 17:00:34 +0100
+Message-ID: <56F16C22.7090702@samsung.com>
+References: <56E59FFE.8040203@googlemail.com> <56EAB407.60904@samsung.com>
+ <56EB0B4D.6040809@gmail.com> <56EBFE3D.4000308@samsung.com>
+ <56EDA471.1060801@gmail.com> <56F014DC.7060405@samsung.com>
+ <56F0309A.8020801@gmail.com> <56F0FCAD.7060709@samsung.com>
+ <56F130C5.4000500@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <56F14FC2.8060804@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19143 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752430AbcCVQAj (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 22 Mar 2016 12:00:39 -0400
+In-reply-to: <56F130C5.4000500@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 22, 2016 at 2:59 PM, Vaibhav Hiremath
-<vaibhav.hiremath@linaro.org> wrote:
-> On Thursday 17 March 2016 03:48 PM, Linus Walleij wrote:
+On 03/22/2016 12:47 PM, Heiner Kallweit wrote:
+> Am 22.03.2016 um 09:05 schrieb Jacek Anaszewski:
+>> On 03/21/2016 06:34 PM, Heiner Kallweit wrote:
+>>> Am 21.03.2016 um 16:35 schrieb Jacek Anaszewski:
+>>>> On 03/19/2016 08:11 PM, Heiner Kallweit wrote:
+>>>>> Am 18.03.2016 um 14:10 schrieb Jacek Anaszewski:
+>>>>>> On 03/17/2016 08:53 PM, Heiner Kallweit wrote:
+>>>>>>> Am 17.03.2016 um 14:41 schrieb Jacek Anaszewski:
+>>>>>>>> Hi Heiner,
+>>>>>>>>
+>>>>>>>> On 03/13/2016 06:14 PM, Heiner Kallweit wrote:
+>>>>>>>>> Add basic support for RGB triggers. Triggers with flag LED_TRIG_CAP_RGB
+>>>>>>>>> set are available to RGB LED devices only.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>>>>>> ---
+>>>>>>>>>       drivers/leds/led-triggers.c | 15 ++++++++++++---
+>>>>>>>>>       include/linux/leds.h        |  3 +++
+>>>>>>>>>       2 files changed, 15 insertions(+), 3 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>>>>>>>>> index 2181581..3ccf88b 100644
+>>>>>>>>> --- a/drivers/leds/led-triggers.c
+>>>>>>>>> +++ b/drivers/leds/led-triggers.c
+>>>>>>>>> @@ -30,6 +30,13 @@ static LIST_HEAD(trigger_list);
+>>>>>>>>>
+>>>>>>>>>        /* Used by LED Class */
+>>>>>>>>>
+>>>>>>>>> +static inline bool led_trig_check_rgb(struct led_trigger *trig,
+>>>>>>>>> +                      struct led_classdev *led_cdev)
+>>>>>>>>> +{
+>>>>>>>>> +    return !(trig->flags & LED_TRIG_CAP_RGB) ||
+>>>>>>>>> +           led_cdev->flags & LED_DEV_CAP_RGB;
+>>>>>>>>> +}
+>>>>>>>>
+>>>>>>>> Could you explain what is the purpose of this function?
+>>>>>>>> What actually do we want to check here?
+>>>>>>>>
+>>>>>>> Triggers using RGB functionality can't be used with non-RGB LED's.
+>>>>>>> This check checks for such unsupported combinations:
+>>>>>>> It returns false if the trigger uses RGB functionality but LED doesn't
+>>>>>>> support the RGB extension.
+>>>>>>
+>>>>>> We need more meaningful name for it. Maybe led_trigger_is_supported() ?
+>>>>>> And let's make it no-op for !CONFIG_LEDS_CLASS_RGB case.
+>>>>>>
+>>>>> OK, led_trigger_is_supported() is better.
+>>>>>
+>>>>> Making the function a no-op in the non-RGB case would have some impact:
+>>>>> We'd have to make sure that all public trigger functions are a de-facto no-op
+>>>>> for RGB triggers (at least register / unregister). Means we would need
+>>>>> something like this in each public trigger function:
+>>>>>
+>>>>> #if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+>>>>>       if (trig->flags & LED_TRIG_CAP_RGB))
+>>>>>           return;
+>>>>> #endif
+>>>>>
+>>>>> I think this would add a lot of overhead and therefore IMHO it's better to
+>>>>> not make the check function a no-op.
+>>>>
+>>>> Wouldn't it suffice to make the no-op returning true?
+>>>> Preventing RGB trigger registration for non-RGB LED class configuration
+>>>> seems to be different thing, also to be considered.
+>>>>
+>>> No, it's not sufficient. Let's say the RGB extension is disabled and we have a RGB trigger.
+>>> The check is a no-op now (returns always true), therefore the RGB trigger would be displayed
+>>> in the list of available triggers also for all non-RGB LED's.
+>>
+>> If RGB trigger was made dependent on LED RGB class, then the related
+>> Kconfig symbol would remain undefined in !CONFIG_LEDS_CLASS_RGB case.
+>>
+> Making a RGB trigger dependent on LED RGB class would mean to enclose all calls to trigger
+> functions in the RGB trigger like this:
+> #if IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+> 	trigger_function()
+> #endif
 
-> but recently I came across another usecase of shared gpio,
+You probably think about the case when we have two triggers in
+single module, like in the planned {rgb-}heartbeat case?
+
+If so this is an argument for having RGB triggers in separate files.
+
+> This would apply to led_trigger_(un)register, led_trigger_event, led_trigger_blink, etc.
+> And I think it wouldn't be too nice to force other kernel modules wanting to implement
+> a RGB trigger to add these conditional compile statements.
+
+What other modules do you have on mind? LED triggers are implemented in
+their own files.
+
+> Alternatively, as mentioned before, we would have to add this to all public trigger functions:
 >
-> Say, for example, we have multiple external I2C peripheral which share
-> interrupt line over gpio (ofcourse irq line is muxed onto single gpio).
+> #if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+> 	if (trig->flags & LED_TRIG_CAP_RGB))
+> 		return;
+> #endif
+> I think this would add significant overhead w/o gaining really something.
+ >
+>>> We could maximum remove the "|| led_cdev->flags & LED_DEV_CAP_RGB" from the check if
+>>> the RGB extension is disabled. But it's open whether this minimal gain in a non-critical
+>>> code path justifies this.
+>>>
+>>>>>>>>>       ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>               const char *buf, size_t count)
+>>>>>>>>>       {
+>>>>>>>>> @@ -52,12 +59,12 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>           down_read(&triggers_list_lock);
+>>>>>>>>>           list_for_each_entry(trig, &trigger_list, next_trig) {
+>>>>>>>>>               if (sysfs_streq(buf, trig->name)) {
+>>>>>>>>> +            if (!led_trig_check_rgb(trig, led_cdev))
+>>>>>>>>> +                break;
+>>>>>>>
+>>>>>>> Check for the case that userspace wants to set a RGB trigger for a non-RGB LED via sysfs.
+>>>>>>>
+>>>>>>>>>                   down_write(&led_cdev->trigger_lock);
+>>>>>>>>>                   led_trigger_set(led_cdev, trig);
+>>>>>>>>>                   up_write(&led_cdev->trigger_lock);
+>>>>>>>>> -
+>>>>>>>>> -            up_read(&triggers_list_lock);
+>>>>>>>>> -            goto unlock;
+>>>>>>>>> +            break;
+>>>>>>
+>>>>>> This seems to be an unrelated cleanup. Please submit it separately.
+>>>>>>
+>>>>> OK
+>>>>>
+>>>>>>>>>               }
+>>>>>>>>>           }
+>>>>>>>>>           up_read(&triggers_list_lock);
+>>>>>>>>> @@ -84,6 +91,8 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>               len += sprintf(buf+len, "none ");
+>>>>>>>>>
+>>>>>>>>>           list_for_each_entry(trig, &trigger_list, next_trig) {
+>>>>>>>>> +        if (!led_trig_check_rgb(trig, led_cdev))
+>>>>>>>>> +            continue;
+>>>>>>>
+>>>>>>> Omit RGB triggers when listing the available triggers for a non-RGB LED via sysfs.
+>>>>>>>
+>>>>>>>>>               if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
+>>>>>>>>>                                   trig->name))
+>>>>>>>>>                   len += sprintf(buf+len, "[%s] ", trig->name);
+>>>>>>>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>>>>>>>> index 58e22e6..07eb074 100644
+>>>>>>>>> --- a/include/linux/leds.h
+>>>>>>>>> +++ b/include/linux/leds.h
+>>>>>>>>> @@ -248,6 +248,9 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
+>>>>>>>>>       struct led_trigger {
+>>>>>>>>>           /* Trigger Properties */
+>>>>>>>>>           const char     *name;
+>>>>>>>>> +    u8        flags;
+>>>>>>>>> +#define LED_TRIG_CAP_RGB    BIT(0)
+>>>>>>>>> +
+>>>>>>>>>           void        (*activate)(struct led_classdev *led_cdev);
+>>>>>>>>>           void        (*deactivate)(struct led_classdev *led_cdev);
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>>
+>>
+>>
 >
-> Now in kernel I would have multiple instances of driver supporting each
-> peripheral but gpio can not be shared for registering irq.
 >
-> Do you suggest MFD driver for such simple usecases ? Should gpiolib
-> support SHARED gpios, and gpiolib can define all the policies over
-> configuration
+>
 
-I don't see why you would want to use MFD at all.
 
-Not shared GPIOs but shared interrupt lines.
-
-If you're using device tree is is pretty straight forward:
-
-- Make sure the GPIOlib and irqchip portions of the driver
-  are totally orthogonal. (See Documentation/gpio/driver.txt
-  section "GPIO drivers providing IRQs")
-
-- Just use the irqchip side of the GPIO
-
-- Make sure your consumers check if the IRQ is theirs
-  and return IRQ_HANDLED vs NO_IRQ depending on
-  whether it's theirs or not.
-
-It is quite obvious from context that in this case all consumers
-are using an open drain (if active low) scheme. However
-since the GPIO is then used as input it has no effect, it is
-more a question for the consumers to assure their IRQ
-logic is not using push-pull but rather open drain or you will
-get a disaster in the totempole...
-
-> (input only, what about conflicts, bidirectional mode?)
-
-We thought about this, see Documentation/gpio/driver.txt section
-Locking IRQ usage".
-
-When the line is locked for IRQ usage, it cannot be switched to
-output.
-
-Yours,
-Linus Walleij
+-- 
+Best regards,
+Jacek Anaszewski
