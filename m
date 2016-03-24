@@ -1,86 +1,295 @@
-From: Laison@seymour.toledo.br, Computech@seymour.toledo.br,
-	"Inc <support"@ensuretech.com
-Subject: CISCO IP PHONES AND CPU's
-Date: Thu, 24 Mar 2016 02:12:04 +0700
-Message-ID: <20160323203603.9913EA7B60__48102.5467780002$1458768355$gmane$org@seymour.toledo.br>
-Reply-To: sales@laisoncomputertech.us
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/3] leds: triggers: add support for RGB triggers
+Date: Thu, 24 Mar 2016 14:23:01 +0100
+Message-ID: <56F3EA35.3000203@samsung.com>
+References: <56E59FFE.8040203@googlemail.com> <56EAB407.60904@samsung.com>
+ <56EB0B4D.6040809@gmail.com> <56EBFE3D.4000308@samsung.com>
+ <56EDA471.1060801@gmail.com> <56F014DC.7060405@samsung.com>
+ <56F0309A.8020801@gmail.com> <56F0FCAD.7060709@samsung.com>
+ <56F130C5.4000500@gmail.com> <56F16C22.7090702@samsung.com>
+ <56F1C1EE.4080409@gmail.com> <56F254BA.8030107@samsung.com>
+ <56F284C3.6040802@gmail.com> <56F2BE33.9000000@samsung.com>
+ <56F2C60B.7040801@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from seymour.toledo.br ([200.148.142.55]:47372 "EHLO
-	seymour.toledo.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757017AbcCWVYt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 23 Mar 2016 17:24:49 -0400
-Content-Description: Mail message body
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48501 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755899AbcCXNXH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 24 Mar 2016 09:23:07 -0400
+In-reply-to: <56F2C60B.7040801@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Recipients <support@ensuretech.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi,
+On 03/23/2016 05:36 PM, Heiner Kallweit wrote:
+> Am 23.03.2016 um 17:02 schrieb Jacek Anaszewski:
+>> On 03/23/2016 12:57 PM, Heiner Kallweit wrote:
+>>> Am 23.03.2016 um 09:32 schrieb Jacek Anaszewski:
+>>>> On 03/22/2016 11:06 PM, Heiner Kallweit wrote:
+>>>>> Am 22.03.2016 um 17:00 schrieb Jacek Anaszewski:
+>>>>>> On 03/22/2016 12:47 PM, Heiner Kallweit wrote:
+>>>>>>> Am 22.03.2016 um 09:05 schrieb Jacek Anaszewski:
+>>>>>>>> On 03/21/2016 06:34 PM, Heiner Kallweit wrote:
+>>>>>>>>> Am 21.03.2016 um 16:35 schrieb Jacek Anaszewski:
+>>>>>>>>>> On 03/19/2016 08:11 PM, Heiner Kallweit wrote:
+>>>>>>>>>>> Am 18.03.2016 um 14:10 schrieb Jacek Anaszewski:
+>>>>>>>>>>>> On 03/17/2016 08:53 PM, Heiner Kallweit wrote:
+>>>>>>>>>>>>> Am 17.03.2016 um 14:41 schrieb Jacek Anaszewski:
+>>>>>>>>>>>>>> Hi Heiner,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 03/13/2016 06:14 PM, Heiner Kallweit wrote:
+>>>>>>>>>>>>>>> Add basic support for RGB triggers. Triggers with flag LED_TRIG_CAP_RGB
+>>>>>>>>>>>>>>> set are available to RGB LED devices only.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>>          drivers/leds/led-triggers.c | 15 ++++++++++++---
+>>>>>>>>>>>>>>>          include/linux/leds.h        |  3 +++
+>>>>>>>>>>>>>>>          2 files changed, 15 insertions(+), 3 deletions(-)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>>>>>>>>>>>>>>> index 2181581..3ccf88b 100644
+>>>>>>>>>>>>>>> --- a/drivers/leds/led-triggers.c
+>>>>>>>>>>>>>>> +++ b/drivers/leds/led-triggers.c
+>>>>>>>>>>>>>>> @@ -30,6 +30,13 @@ static LIST_HEAD(trigger_list);
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>           /* Used by LED Class */
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> +static inline bool led_trig_check_rgb(struct led_trigger *trig,
+>>>>>>>>>>>>>>> +                      struct led_classdev *led_cdev)
+>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>> +    return !(trig->flags & LED_TRIG_CAP_RGB) ||
+>>>>>>>>>>>>>>> +           led_cdev->flags & LED_DEV_CAP_RGB;
+>>>>>>>>>>>>>>> +}
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Could you explain what is the purpose of this function?
+>>>>>>>>>>>>>> What actually do we want to check here?
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>> Triggers using RGB functionality can't be used with non-RGB LED's.
+>>>>>>>>>>>>> This check checks for such unsupported combinations:
+>>>>>>>>>>>>> It returns false if the trigger uses RGB functionality but LED doesn't
+>>>>>>>>>>>>> support the RGB extension.
+>>>>>>>>>>>>
+>>>>>>>>>>>> We need more meaningful name for it. Maybe led_trigger_is_supported() ?
+>>>>>>>>>>>> And let's make it no-op for !CONFIG_LEDS_CLASS_RGB case.
+>>>>>>>>>>>>
+>>>>>>>>>>> OK, led_trigger_is_supported() is better.
+>>>>>>>>>>>
+>>>>>>>>>>> Making the function a no-op in the non-RGB case would have some impact:
+>>>>>>>>>>> We'd have to make sure that all public trigger functions are a de-facto no-op
+>>>>>>>>>>> for RGB triggers (at least register / unregister). Means we would need
+>>>>>>>>>>> something like this in each public trigger function:
+>>>>>>>>>>>
+>>>>>>>>>>> #if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+>>>>>>>>>>>          if (trig->flags & LED_TRIG_CAP_RGB))
+>>>>>>>>>>>              return;
+>>>>>>>>>>> #endif
+>>>>>>>>>>>
+>>>>>>>>>>> I think this would add a lot of overhead and therefore IMHO it's better to
+>>>>>>>>>>> not make the check function a no-op.
+>>>>>>>>>>
+>>>>>>>>>> Wouldn't it suffice to make the no-op returning true?
+>>>>>>>>>> Preventing RGB trigger registration for non-RGB LED class configuration
+>>>>>>>>>> seems to be different thing, also to be considered.
+>>>>>>>>>>
+>>>>>>>>> No, it's not sufficient. Let's say the RGB extension is disabled and we have a RGB trigger.
+>>>>>>>>> The check is a no-op now (returns always true), therefore the RGB trigger would be displayed
+>>>>>>>>> in the list of available triggers also for all non-RGB LED's.
+>>>>>>>>
+>>>>>>>> If RGB trigger was made dependent on LED RGB class, then the related
+>>>>>>>> Kconfig symbol would remain undefined in !CONFIG_LEDS_CLASS_RGB case.
+>>>>>>>>
+>>>>>>> Making a RGB trigger dependent on LED RGB class would mean to enclose all calls to trigger
+>>>>>>> functions in the RGB trigger like this:
+>>>>>>> #if IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+>>>>>>>        trigger_function()
+>>>>>>> #endif
+>>>>>>
+>>>>>> You probably think about the case when we have two triggers in
+>>>>>> single module, like in the planned {rgb-}heartbeat case?
+>>>>>>
+>>>>>> If so this is an argument for having RGB triggers in separate files.
+>>>>>>
+>>>>> I mean the case of triggers implemented outside drivers/leds. There the trigger code
+>>>>> often is not separated from other functionality (e.g. drivers/tty/vt/keyboard.c)
+>>>>> and it's not directly under our (LED core) control.
+>>>>>
+>>>>>>> This would apply to led_trigger_(un)register, led_trigger_event, led_trigger_blink, etc.
+>>>>>>> And I think it wouldn't be too nice to force other kernel modules wanting to implement
+>>>>>>> a RGB trigger to add these conditional compile statements.
+>>>>>>
+>>>>>> What other modules do you have on mind? LED triggers are implemented in
+>>>>>> their own files.
+>>>>>>
+>>>>> That's true for the triggers under drivers/leds/trigger, but not necessarily for triggers
+>>>>> implemented in other parts of the kernel.
+>>>>
+>>>> In this case surrounding all the trigger implementation  with
+>>>> IS_ENABLED(CONFIG_LEDS_CLASS_RGB) guard would do.
+>>>
+>>> Yes, that's what would need to be done. But IMHO it's not nice to force trigger implementations
+>>> in other parts of the kernel to guard each trigger-related call this way.
+>>
+>> My main objection is that led_trigger_is_supported() would be redundant
+>> in led_trigger_store() and led_trigger_show() for non-RGB LED subsystem
+>> configuration.
+>>
+> Yes, it's redundant for non-RGB configurations. But it affects sysfs access only
+> and overhead / impact should be minimal to negligible
 
-Our Stock list.
+I agree.
 
-Brand NEW
-96 x Cisco 7900 IP Phone
-87 x Unified IP Phone 6900
-12 x Unified IP Phone 8900
-76 x Unified IP Phone 9900
-55 x Unified IP Phone 8800
-67 x Cisco 1921
-67 x Cisco 1941
-56 x Cisco CP-7961G 7961G
-34 x Cisco CP-7971G-GE 7971G
-19 x Cisco Unified IP Conference Station 7937G Model: 7937 CP-7937G
-20 x Cisco CP-7975G 7975G
+>>> Also it might happen
+>>> that a trigger is implemented w/o this guarding and w/o informing you.
+>>> Then this (RGB) trigger would show up also for all non-RGB LED's.
+>>
+>> It is likely that it wouldn't compile without led-rgb-core.o.
+>>
+> It would compile because the only relevant difference between a RGB and a non-RGB trigger is a flag
+> being set in struct led_trigger.
 
-Brand New Sealed :
+RGB trigger would probably need to use some led-rgb-core API, e.g. as
+in case of led_trigger_range_event() from your patch - we've already
+agreed about moving most of its internals to led-rgb-core.c
 
-23 x  CISCO1921-SEC/K9
-Conditions: Brand New Sealed
-Description: CISCO 1921 Security Bundle w/SEC license PAK
+>>> I still think that not making led_trigger_is_supported() a no-op in the non-RGB case is a small
+>>> price for preventing such potential issues.
+>>
+>> We could avoid the issues by adding a guard in led_trigger_register(),
+>> that would prevent RGB trigger registration in !CONFIG_LEDS_CLASS_RGB
+>> case.
+>>
+> With "preventing registration" most likely you mean registering being a no-op.
 
-45 x CISCO1921/K9
-Conditions: Brand New Sealed
-Description: CISCO 1921 Modular Router, 2 GE, 2 EHWIC slots, 512DRAM, IP Base
+Actually I mean checking if trigger is supported by current LED
+subsystem configuration, i.e. we will need to use
+led_is_trigger_supported() in led_trigger_register(). This is another
+argument for this API to be no-op only if !CONFIG_LEDS_TRIGGERS.
+To conclude - I agree that it shouldn't be no-op in
+!CONFIG_LEDS_CLASS_RGB case.
 
-(1)  WS-C4500X-16SFP+
-Serial number:  JAE183501L3
-US&#36;2600
+> I'm afraid we'd need the same also in all other public trigger functions, because it may cause
+> problems if registering is a no-op and we call e.g. led_trigger_event then (not being a no-op).
+> That's what I meant when I wrote earlier in this thread that we might need something like this
+> in all exported trigger functions:
+>
+> #if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+> 	if (trig->flags & LED_TRIG_CAP_RGB))
+> 		return;
+> #endif
+>
+> And this seems to be much more overhead than the one check in sysfs access not being a no-op
+> in the non-RGB case.
+>
+>>>> In the aformentioned drivers/tty/vt/keyboard.c we have even more generic
+>>>> IS_ENABLED(CONFIG_LEDS_TRIGGERS) guard anyway.
+>>>>
+>>>>>>> Alternatively, as mentioned before, we would have to add this to all public trigger functions:
+>>>>>>>
+>>>>>>> #if !IS_ENABLED(CONFIG_LEDS_CLASS_RGB)
+>>>>>>>        if (trig->flags & LED_TRIG_CAP_RGB))
+>>>>>>>            return;
+>>>>>>> #endif
+>>>>>>> I think this would add significant overhead w/o gaining really something.
+>>>>>>>
+>>>>>>>>> We could maximum remove the "|| led_cdev->flags & LED_DEV_CAP_RGB" from the check if
+>>>>>>>>> the RGB extension is disabled. But it's open whether this minimal gain in a non-critical
+>>>>>>>>> code path justifies this.
+>>>>>>>>>
+>>>>>>>>>>>>>>>          ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>>>>>>>                  const char *buf, size_t count)
+>>>>>>>>>>>>>>>          {
+>>>>>>>>>>>>>>> @@ -52,12 +59,12 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>>>>>>>              down_read(&triggers_list_lock);
+>>>>>>>>>>>>>>>              list_for_each_entry(trig, &trigger_list, next_trig) {
+>>>>>>>>>>>>>>>                  if (sysfs_streq(buf, trig->name)) {
+>>>>>>>>>>>>>>> +            if (!led_trig_check_rgb(trig, led_cdev))
+>>>>>>>>>>>>>>> +                break;
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Check for the case that userspace wants to set a RGB trigger for a non-RGB LED via sysfs.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>                      down_write(&led_cdev->trigger_lock);
+>>>>>>>>>>>>>>>                      led_trigger_set(led_cdev, trig);
+>>>>>>>>>>>>>>>                      up_write(&led_cdev->trigger_lock);
+>>>>>>>>>>>>>>> -
+>>>>>>>>>>>>>>> -            up_read(&triggers_list_lock);
+>>>>>>>>>>>>>>> -            goto unlock;
+>>>>>>>>>>>>>>> +            break;
+>>>>>>>>>>>>
+>>>>>>>>>>>> This seems to be an unrelated cleanup. Please submit it separately.
+>>>>>>>>>>>>
+>>>>>>>>>>> OK
+>>>>>>>>>>>
+>>>>>>>>>>>>>>>                  }
+>>>>>>>>>>>>>>>              }
+>>>>>>>>>>>>>>>              up_read(&triggers_list_lock);
+>>>>>>>>>>>>>>> @@ -84,6 +91,8 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+>>>>>>>>>>>>>>>                  len += sprintf(buf+len, "none ");
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>              list_for_each_entry(trig, &trigger_list, next_trig) {
+>>>>>>>>>>>>>>> +        if (!led_trig_check_rgb(trig, led_cdev))
+>>>>>>>>>>>>>>> +            continue;
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Omit RGB triggers when listing the available triggers for a non-RGB LED via sysfs.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>                  if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
+>>>>>>>>>>>>>>>                                      trig->name))
+>>>>>>>>>>>>>>>                      len += sprintf(buf+len, "[%s] ", trig->name);
+>>>>>>>>>>>>>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>>>>>>>>>>>>>> index 58e22e6..07eb074 100644
+>>>>>>>>>>>>>>> --- a/include/linux/leds.h
+>>>>>>>>>>>>>>> +++ b/include/linux/leds.h
+>>>>>>>>>>>>>>> @@ -248,6 +248,9 @@ enum led_brightness led_hsv_to_rgb(enum led_brightness hsv);
+>>>>>>>>>>>>>>>          struct led_trigger {
+>>>>>>>>>>>>>>>              /* Trigger Properties */
+>>>>>>>>>>>>>>>              const char     *name;
+>>>>>>>>>>>>>>> +    u8        flags;
+>>>>>>>>>>>>>>> +#define LED_TRIG_CAP_RGB    BIT(0)
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>              void        (*activate)(struct led_classdev *led_cdev);
+>>>>>>>>>>>>>>>              void        (*deactivate)(struct led_classdev *led_cdev);
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>>
+>>
+>>
+>
+>
+>
 
-(1)  WS-C3850-48PW-S
-Serial number:  FCW1823C0EW
-US&#36;2650
 
-(1)  WS-X6908-10G-2T
-Serial number:  SAL1620CKUB
-US&#36;3650
-
-(1)  ASR1000-ESP10
-Serial number:  JAE181306C3
-US&#36;3800
-
-(1)  AIR-CT5508-250-K9   (this is new but box is open!)
-Serial number:  FCW1521L038
-US&#36;4000
-
-CPUs part number below
-
-89 x  X5650
-
-975 x  X5660
-
-150 x  X5680
-
-265 x  X5690
-
-Kindly make your price offers.
-
-Sincerely
-Barbara Johnson
-Laison Computech
-210 N Scoring Ave,
-Rialto California, 92376
-Tel: +1-657-232-7047
-Fax: +1-347-214-0478
-Email: sales@laisoncomputertech.us
+-- 
+Best regards,
+Jacek Anaszewski
