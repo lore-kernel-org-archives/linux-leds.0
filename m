@@ -1,57 +1,66 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 2/4] leds: core: add color LED sysfs extension
-Date: Tue, 29 Mar 2016 12:03:47 +0200
-Message-ID: <20160329100347.GB24964@amd>
-References: <56D60960.1020504@gmail.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v5 4/4] leds: core: add support for RGB LED's
+Date: Tue, 29 Mar 2016 12:05:35 +0200
+Message-ID: <20160329100535.GC24964@amd>
+References: <56D60B4C.5000506@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56D60960.1020504@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <56D60B4C.5000506-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 2016-03-01 22:28:00, Heiner Kallweit wrote:
-> Extend brightness sysfs property handling to deal with monochrome
-> and color mode as well.
+On Tue 2016-03-01 22:36:12, Heiner Kallweit wrote:
+> Export a function to convert HSV color values to RGB.
+> It's intended to be called by drivers for RGB LEDs.
 > 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
 > v2:
-> - split from patch 1
+> - move hsv -> rgb conversion to separate file
+> - remove flag LED_DEV_CAP_RGB
 > v3:
-> - moved one change (led_is_off) to patch 1
+> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
+>   This is needed in cases when we have monochrome and color LEDs
+>   as well in a system.
 > v4:
-> - changed printf format string to %#.6x
+> - Export led_hsv_to_rgb and let the device driver call it instead
+>   of doing the conversion in the core
 > v5:
-> - no changes
+> - don't ignore led_cdev->brightness_get silently if LED_DEV_CAP_RGB
+>   is set but warn
 > ---
->  drivers/leds/led-class.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  drivers/leds/led-class.c    |  7 +++++++
+>  drivers/leds/led-rgb-core.c | 36 ++++++++++++++++++++++++++++++++++++
+>  include/linux/leds.h        |  8 ++++++++
+>  3 files changed, 51 insertions(+)
 > 
 > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 007a5b3..8a3748a 100644
+> index 8a3748a..a4b144e 100644
 > --- a/drivers/leds/led-class.c
 > +++ b/drivers/leds/led-class.c
-> @@ -32,7 +32,10 @@ static ssize_t brightness_show(struct device *dev,
->  	/* no lock needed for this */
->  	led_update_brightness(led_cdev);
+> @@ -193,6 +193,13 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>  	char name[64];
+>  	int ret;
 >  
-> -	return sprintf(buf, "%u\n", led_cdev->brightness);
-> +	if (led_cdev->brightness > LED_FULL)
-> +		return sprintf(buf, "%#.6x\n", led_cdev->brightness);
-> +	else
-> +		return sprintf(buf, "%u\n", led_cdev->brightness);
->  }
->  
->  static ssize_t brightness_store(struct device *dev,
+> +	/*
+> +	 * for now reading back the color is not supported as multiple
+> +	 * HSV -> RGB -> HSV conversions may distort the color due to
+> +	 * rounding issues in the conversion algorithm
+> +	 */
+> +	WARN_ON(led_cdev->flags & LED_DEV_CAP_RGB && led_cdev->brightness_get);
+> +
 
-No... I don't think you should change interface for existing file like
-this.
-
-								Pavel
+Backtrace is useless here, you may want to add some ()s and you don't
+really want user to be causing messages in syslog this easily.
+									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
