@@ -1,73 +1,50 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v5 4/4] leds: core: add support for RGB LED's
-Date: Tue, 29 Mar 2016 22:42:53 +0200
-Message-ID: <56FAE8CD.1010804@gmail.com>
-References: <56D60B4C.5000506@gmail.com> <20160329100535.GC24964@amd>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/3] Add a new LED trigger for kernel panics (and use it)
+Date: Tue, 29 Mar 2016 22:44:55 +0200
+Message-ID: <5392030.GWFj1RcGVs@wuerfel>
+References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33375 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753196AbcC2UnH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 29 Mar 2016 16:43:07 -0400
-In-Reply-To: <20160329100535.GC24964@amd>
+Received: from mout.kundenserver.de ([217.72.192.75]:63017 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754228AbcC2Upn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 29 Mar 2016 16:45:43 -0400
+In-Reply-To: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-leds@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Am 29.03.2016 um 12:05 schrieb Pavel Machek:
-> On Tue 2016-03-01 22:36:12, Heiner Kallweit wrote:
->> Export a function to convert HSV color values to RGB.
->> It's intended to be called by drivers for RGB LEDs.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->> v2:
->> - move hsv -> rgb conversion to separate file
->> - remove flag LED_DEV_CAP_RGB
->> v3:
->> - call led_hsv_to_rgb only if LED_DEV_CAP_HSV is set
->>   This is needed in cases when we have monochrome and color LEDs
->>   as well in a system.
->> v4:
->> - Export led_hsv_to_rgb and let the device driver call it instead
->>   of doing the conversion in the core
->> v5:
->> - don't ignore led_cdev->brightness_get silently if LED_DEV_CAP_RGB
->>   is set but warn
->> ---
->>  drivers/leds/led-class.c    |  7 +++++++
->>  drivers/leds/led-rgb-core.c | 36 ++++++++++++++++++++++++++++++++++++
->>  include/linux/leds.h        |  8 ++++++++
->>  3 files changed, 51 insertions(+)
->>
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 8a3748a..a4b144e 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -193,6 +193,13 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>  	char name[64];
->>  	int ret;
->>  
->> +	/*
->> +	 * for now reading back the color is not supported as multiple
->> +	 * HSV -> RGB -> HSV conversions may distort the color due to
->> +	 * rounding issues in the conversion algorithm
->> +	 */
->> +	WARN_ON(led_cdev->flags & LED_DEV_CAP_RGB && led_cdev->brightness_get);
->> +
+On Tuesday 29 March 2016 17:35:46 Ezequiel Garcia wrote:
+> This patchset adds a very simple kernel panic LED trigger,
+> by hooking into panic_blink. I've tested this trigger on
+> ARM Armada XP OpenBlocks AX3-4 machine.
 > 
-> Backtrace is useless here, you may want to add some ()s and you don't
-> really want user to be causing messages in syslog this easily.
+> The trigger is then used to replace the open-coded panic_blink
+> usage in GTA02 board.
 > 
-I agree that the backtrace doesn't provide a benefit here.
+> Note that I don't have a GTA02 board, so the last patch is only
+> built tested.
+> 
+> Ezequiel Garcia (3):
+>   leds: trigger: Introduce a kernel panic LED trigger
+>   ARM: configs: Enable panic LED trigger on s3c2410
+>   ARM: s3c24xx: Use the panic LED trigger for GTA02
+> 
+>  arch/arm/configs/s3c2410_defconfig   |  1 +
+>  arch/arm/mach-s3c24xx/mach-gta02.c   | 35 ++++++++++++++++-------------------
+>  drivers/leds/trigger/Kconfig         |  7 +++++++
+>  drivers/leds/trigger/Makefile        |  1 +
+>  drivers/leds/trigger/ledtrig-panic.c | 30 ++++++++++++++++++++++++++++++
+>  5 files changed, 55 insertions(+), 19 deletions(-)
+>  create mode 100644 drivers/leds/trigger/ledtrig-panic.c
 
-However I don't see how a user could create syslog entries.
-The warn condition can be true only for drivers implementing the RGB extension
-in a not supported way (by setting flag LED_DEV_CAP_RGB and implementing
-brightness_get).
+Now we just need to port this 13-year old patch:
 
-									Pavel
-> 
+https://lwn.net/Articles/21857/
+
+;-)
+
+	Arnd
