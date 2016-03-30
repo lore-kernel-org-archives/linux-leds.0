@@ -1,116 +1,63 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/3] leds: trigger: Introduce a kernel panic LED trigger
-Date: Wed, 30 Mar 2016 11:29:14 +0200
-Message-ID: <56FB9C6A.2090402@samsung.com>
-References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
+ LED's
+Date: Wed, 30 Mar 2016 15:03:19 +0200
+Message-ID: <20160330130319.GB19994@amd>
+References: <56D608ED.2090406@gmail.com>
+ <20160329100258.GA24964@amd>
+ <56FAE7A8.2070302@gmail.com>
+ <20160329214323.GA10455@amd>
+ <56FB893C.60203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:37986 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750720AbcC3J3Y (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Mar 2016 05:29:24 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O4U0076SICWI1A0@mailout3.w1.samsung.com> for
- linux-leds@vger.kernel.org; Wed, 30 Mar 2016 10:29:20 +0100 (BST)
-In-reply-to: <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58792 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751432AbcC3NDY (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Mar 2016 09:03:24 -0400
+Content-Disposition: inline
+In-Reply-To: <56FB893C.60203@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>, kgene@kernel.org, k.kozlowski@samsung.com
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-Hi Ezequiel,
+Hi!
 
-Thanks for the patch. I've tested it on exynos4412-trats2 board
-with leds-aat1290 driver, by executing:
+> >Ok, so:
+> >
+> >a) Do we want RGB leds to be handled by existing subsystem, or do we
+> >need separate layer on top of that?
+> >
+> >b) Does RGB make sense, or HSV? RGB is quite widely used in graphics,
+> >and it is what hardware implements. (But we'd need to do gamma
+> >correction).
+> >
+> >c) My hardware has "acceleration engine", LED is independend from
+> >CPU. That's rather big deal. Does yours? It seems to be quite common,
+> >at least in cellphones.
+> >
+> >Ideally, I'd like to have "triggers", but different ones. As in: if
+> >charging, do yellow " .xX" pattern. If fully charged, do green steady
+> >light. If message is waiting, do blue " x x" pattern. If none of
+> >above, do slow white blinking. (Plus priorities of events). But that's
+> >quite different from existing support...)
+> 
+> Please note that HSV colour scheme allows to neatly project monochrome
+> brightness semantics on the RGB realm. I.e. you can have fixed
+> hue and saturation, and by changing the brightness component a perceived
+> colour intensity can be altered.
 
-echo "c" > /proc/sysrq-trigger
+I see HSV has some advantages. But we already have LEDs with multiple
+colors, and kernel already handles them:
 
-I was able to notice the blinking then.
+pavel@duo:~$ ls -1 /sys/class/leds/
+tpacpi:green:batt
+tpacpi:orange:batt
 
-Applied to the for-next branch of linux-leds.git.
-
-Thanks,
-Jacek Anaszewski
-
-On 03/29/2016 10:35 PM, Ezequiel Garcia wrote:
-> This commit introduces a new LED trigger which allows to configure
-> a LED to blink on a kernel panic (through panic_blink).
->
-> Notice that currently the Openmoko FreeRunner (GTA02) mach code
-> sets panic_blink to blink a hard-coded LED. The new trigger is
-> meant to introduce a generic mechanism to achieve this.
->
-> Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-> ---
->   drivers/leds/trigger/Kconfig         |  7 +++++++
->   drivers/leds/trigger/Makefile        |  1 +
->   drivers/leds/trigger/ledtrig-panic.c | 30 ++++++++++++++++++++++++++++++
->   3 files changed, 38 insertions(+)
->   create mode 100644 drivers/leds/trigger/ledtrig-panic.c
->
-> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-> index 5bda6a9b56bb..554f5bfbeced 100644
-> --- a/drivers/leds/trigger/Kconfig
-> +++ b/drivers/leds/trigger/Kconfig
-> @@ -108,4 +108,11 @@ config LEDS_TRIGGER_CAMERA
->   	  This enables direct flash/torch on/off by the driver, kernel space.
->   	  If unsure, say Y.
->
-> +config LEDS_TRIGGER_PANIC
-> +	bool "LED Panic Trigger"
-> +	depends on LEDS_TRIGGERS
-> +	help
-> +	  This allows LEDs to be configured to blink on a kernel panic.
-> +	  If unsure, say Y.
-> +
->   endif # LEDS_TRIGGERS
-> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-> index 1abf48dacf7e..547bf5c80e52 100644
-> --- a/drivers/leds/trigger/Makefile
-> +++ b/drivers/leds/trigger/Makefile
-> @@ -8,3 +8,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
->   obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
->   obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
->   obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
-> +obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
-> diff --git a/drivers/leds/trigger/ledtrig-panic.c b/drivers/leds/trigger/ledtrig-panic.c
-> new file mode 100644
-> index 000000000000..627b350c5ec3
-> --- /dev/null
-> +++ b/drivers/leds/trigger/ledtrig-panic.c
-> @@ -0,0 +1,30 @@
-> +/*
-> + * Kernel Panic LED Trigger
-> + *
-> + * Copyright 2016 Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/leds.h>
-> +
-> +static struct led_trigger *trigger;
-> +
-> +static long led_panic_blink(int state)
-> +{
-> +	led_trigger_event(trigger, state ? LED_FULL : LED_OFF);
-> +	return 0;
-> +}
-> +
-> +static int __init ledtrig_panic_init(void)
-> +{
-> +	led_trigger_register_simple("panic", &trigger);
-> +	panic_blink = led_panic_blink;
-> +	return 0;
-> +}
-> +device_initcall(ledtrig_panic_init);
+This is physically 2 leds but hidden under one indicator, so you got
+"off", "green", "orange" and "green+orange".
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
