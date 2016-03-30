@@ -1,122 +1,99 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
- LED's
-Date: Wed, 30 Mar 2016 07:58:27 +0200
-Message-ID: <56FB6B03.7080202@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color LED's
+Date: Wed, 30 Mar 2016 09:57:38 +0200
+Message-ID: <56FB86F2.4060000@samsung.com>
 References: <56D608ED.2090406@gmail.com> <20160329100258.GA24964@amd>
- <56FAE7A8.2070302@gmail.com> <20160329214323.GA10455@amd>
+ <56FAE7A8.2070302@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35903 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752720AbcC3F6s (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Mar 2016 01:58:48 -0400
-In-Reply-To: <20160329214323.GA10455@amd>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:31457 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758748AbcC3H5n (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 30 Mar 2016 03:57:43 -0400
+In-reply-to: <56FAE7A8.2070302@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com
-Cc: Greg KH <greg@kroah.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-Am 29.03.2016 um 23:43 schrieb Pavel Machek:
-> Hi!
-> 
->>> First, please Cc me on RGB color support.
->>>
->>>> Add generic support for RGB Color LED's.
->>>>
->>>> Basic idea is to use enum led_brightness also for the hue and saturation
->>>> color components.This allows to implement the color extension w/o
->>>> changes to struct led_classdev.
->>>>
->>>> Select LEDS_RGB to enable building drivers using the RGB extension.
->>>>
->>>> Flag LED_SET_HUE_SAT allows to specify that hue / saturation
->>>> should be overridden even if the provided values are zero.
->>>>
->>>> Some examples for writing values to /sys/class/leds/<xx>/brightness:
->>>> (now also hex notation can be used)
->>>>
->>>> 255 -> set full brightness and keep existing color if set
->>>> 0 -> switch LED off but keep existing color so that it can be restored
->>>>      if the LED is switched on again later
->>>> 0x1000000 -> switch LED off and set also hue and saturation to 0
->>>> 0x00ffff -> set full brightness, full saturation and set hue to 0
->>>> (red)
->>>
->>> Umm, that's rather strange interface -- and three values in single sysfs
->>> file is actually forbidden.
->>>
->>> Plus, it is very much unlike existing interfaces for RGB LEDs, which
->>> we already have supported in the tree. (At least nokia N900 and Sony
->>> motion controller already contain supported three-color LEDs).
->>>
->>> Now... yes, there's work to be done for the 3-color LEDs. Currently,
->>> they are treated as three different LEDs. (Which makes some sense, you
->>> can use "battery charging" trigger for LED, and CPU activity trigger
->>> for green, for example). It would be good to have some kind of
->>> grouping, so that userspace can tell "these 3 leds are actually
->>> combined into one light".
->>>
->> At first thanks for the review comments.
->> Treating the three physical LEDs of a RGB LED as separate LED devices
->> might have been implemented due to the lack of alternatives.
-> 
-> To be fair... they _are_ separate LED devices. In N900 case, you can
-> even see light comming from slightly different places if you look closely.
-> 
-I mainly work with encapsulated USB HID LED devices like Thingm blink(1).
-Due to the diffuse plastic cover you don't see the individual LEDs on the chip.
+Hi Heiner and Pavel,
 
->> With one trigger controlling the red LED and another controlling the green
->> LED we may end up with a yellow light. Not sure whether this is what
->> we want.
-> 
-> Well, it should be understandable for most people.
-> 
->> One driver for this extension was the idea of triggers using color
->> to visualize states etc.
->> Therefore it's not only about userspace controlling the color.
->> As a trigger is bound to a led_classdev we need a led_classdev
->> representing a RGB LED device.
+On 03/29/2016 10:38 PM, Heiner Kallweit wrote:
+> Am 29.03.2016 um 12:02 schrieb Pavel Machek:
+>> Hi!
 >>
->> And ok: If required the sysfs interface can be splitted into separate
->> attributes for hue, saturation, and (existing) brightness.
-> 
-> Required.
-> 
-> Ok, so:
-> 
-> a) Do we want RGB leds to be handled by existing subsystem, or do we
-> need separate layer on top of that?
-> 
-> b) Does RGB make sense, or HSV? RGB is quite widely used in graphics,
-> and it is what hardware implements. (But we'd need to do gamma
-> correction).
-> 
-HSV has the charme that the current monochrome V-only is a subset.
-Therefore the current API can be used also with color LEDs.
-However there might be good reasons for using RGB too.
+>> First, please Cc me on RGB color support.
+>>
+>>> Add generic support for RGB Color LED's.
+>>>
+>>> Basic idea is to use enum led_brightness also for the hue and saturation
+>>> color components.This allows to implement the color extension w/o
+>>> changes to struct led_classdev.
+>>>
+>>> Select LEDS_RGB to enable building drivers using the RGB extension.
+>>>
+>>> Flag LED_SET_HUE_SAT allows to specify that hue / saturation
+>>> should be overridden even if the provided values are zero.
+>>>
+>>> Some examples for writing values to /sys/class/leds/<xx>/brightness:
+>>> (now also hex notation can be used)
+>>>
+>>> 255 -> set full brightness and keep existing color if set
+>>> 0 -> switch LED off but keep existing color so that it can be restored
+>>>       if the LED is switched on again later
+>>> 0x1000000 -> switch LED off and set also hue and saturation to 0
+>>> 0x00ffff -> set full brightness, full saturation and set hue to 0
+>>> (red)
+>>
+>> Umm, that's rather strange interface -- and three values in single sysfs
+>> file is actually forbidden.
+>>
+>> Plus, it is very much unlike existing interfaces for RGB LEDs, which
+>> we already have supported in the tree. (At least nokia N900 and Sony
+>> motion controller already contain supported three-color LEDs).
+>>
+>> Now... yes, there's work to be done for the 3-color LEDs. Currently,
+>> they are treated as three different LEDs. (Which makes some sense, you
+>> can use "battery charging" trigger for LED, and CPU activity trigger
+>> for green, for example). It would be good to have some kind of
+>> grouping, so that userspace can tell "these 3 leds are actually
+>> combined into one light".
+>>
+> At first thanks for the review comments.
+> Treating the three physical LEDs of a RGB LED as separate LED devices
+> might have been implemented due to the lack of alternatives.
+> With one trigger controlling the red LED and another controlling the green
+> LED we may end up with a yellow light. Not sure whether this is what we want.
+>
+> One driver for this extension was the idea of triggers using color
+> to visualize states etc.
+> Therefore it's not only about userspace controlling the color.
+> As a trigger is bound to a led_classdev we need a led_classdev
+> representing a RGB LED device.
+>
+> And ok: If required the sysfs interface can be splitted into separate
+> attributes for hue, saturation, and (existing) brightness.
 
-> c) My hardware has "acceleration engine", LED is independend from
-> CPU. That's rather big deal. Does yours? It seems to be quite common,
-> at least in cellphones.
-> 
-Devices like blink(1) support storing and re-playing patterns, fading etc.
+It would have the same downsides as in case of having r, g and b in
+separate attributes, i.e. - problems with setting LED colour in
+a consistent way. This way LED blinking in whatever colour couldn't
+be supported reliably. It was one of your primary rationale standing
+behind this design, if I remember correctly. Second - what about
+triggers? We've had a long discussion about it and this design turned
+out to be most fitting.
 
-> Ideally, I'd like to have "triggers", but different ones. As in: if
-> charging, do yellow " .xX" pattern. If fully charged, do green steady
-> light. If message is waiting, do blue " x x" pattern. If none of
-> above, do slow white blinking. (Plus priorities of events). But that's
-> quite different from existing support...)
-> 
-I think for this a separate layer would be helpful.
-Your primary intention is to e.g. display "charging" on the RGB LED
-device. Most likely you don't want to split yellow into its red + green
-component and then write to the respective (sub-)LEDs.
-Also just think of the case that later you might decide that orange
-is nicer than yellow.
+It's hard to address these requirements by having the settings in
+separate attributes, due to synchronization issues, and LED trigger
+mechanism specificity.
 
-> 								Pavel
-> 
+There is a question whether we can bend the sysfs "one value per sysfs
+file" rule down to RGB LEDs needs.
+
+Of course other brilliant ideas on how to approach the problem are
+more than expected.
+
+-- 
+Best regards,
+Jacek Anaszewski
