@@ -1,63 +1,152 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 10/46] leds: pwm: use pwm_get_args() where appropriate
-Date: Thu, 31 Mar 2016 09:13:26 +0200
-Message-ID: <56FCCE16.8040200@samsung.com>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459368249-13241-11-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 1/3] leds: trigger: Introduce a kernel panic LED trigger
+Date: Thu, 31 Mar 2016 09:28:57 +0200
+Message-ID: <56FCD1B9.2050801@samsung.com>
+References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <56FB9C6A.2090402@samsung.com> <20160330191109.GA27372@laptop.cereza>
+ <56FCCBE4.7010004@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1459368249-13241-11-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jon>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <56FCCBE4.7010004@samsung.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Boris,
+On 03/31/2016 09:04 AM, Jacek Anaszewski wrote:
+> Hi Ezequiel,
+>
+> On 03/30/2016 09:11 PM, Ezequiel Garcia wrote:
+>> +lkml
+>>
+>> On 30 Mar 11:29 AM, Jacek Anaszewski wrote:
+>>> Hi Ezequiel,
+>>>
+>>> Thanks for the patch. I've tested it on exynos4412-trats2 board
+>>> with leds-aat1290 driver, by executing:
+>>>
+>>> echo "c" > /proc/sysrq-trigger
+>>>
+>>> I was able to notice the blinking then.
+>>>
+>>> Applied to the for-next branch of linux-leds.git.
+>>>
+>>
+>> Notice that we currently need LEDs to be dedicated
+>> to the panic trigger, which is pretty lame as LEDs
+>> are scarce and are most likely assigned to something else.
+>>
+>> So, here's a toy patch to switch all the installed LEDs
+>> to the panic trigger on kernel panic. Patch is half-baked,
+>> but it shows the idea.
+>>
+>> (Interestingly, it also blinks the LEDs on a USB keyboard!)
+>>
+>> Is there any value in polishing this and find a way upstream?
+>
+> I like the idea, but I'd rather explicitly mark LEDs as panic
+> indicators.
+>
+> How about adding a "kernel-panic-indicator" Device Tree property to
+> common LED bindings? LED class device could be registered for the
+> panic trigger on kernel panic notification only when the property is
+> present.
 
-On 03/30/2016 10:03 PM, Boris Brezillon wrote:
-> The PWM framework has clarified the concept of reference PWM config
-> (the platform dependent config retrieved from the DT or the PWM
-> lookup table) and real PWM state.
+Of course we would need similar solution for ACPI based platforms,
+however I am not sure if this approach is feasible in that case, since
+device configuration data is enclosed in firmware then.
+Adding linux-acpi list.
+
+> Adding Rob, Mark and devicetree list.
 >
-> Use pwm_get_args() when the PWM user wants to retrieve this reference
-> config and not the current state.
+>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> index aa84e5b37593..caaf6161a7ae 100644
+>> --- a/drivers/leds/led-class.c
+>> +++ b/drivers/leds/led-class.c
+>> @@ -321,6 +321,20 @@ void devm_led_classdev_unregister(struct device
+>> *dev,
+>>   }
+>>   EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
+>>
+>> +static int led_panic_notifier(struct notifier_block *nb,
+>> +                  unsigned long code, void *unused)
+>> +{
+>> +    struct led_classdev *led_cdev;
+>> +
+>> +    list_for_each_entry(led_cdev, &leds_list, node)
+>> +        led_trigger_set_at_panic(led_cdev, "panic");
+>> +    return NOTIFY_DONE;
+>> +}
+>> +
+>> +static struct notifier_block led_panic_nb = {
+>> +    .notifier_call = led_panic_notifier,
+>> +};
+>> +
+>>   static int __init leds_init(void)
+>>   {
+>>       leds_class = class_create(THIS_MODULE, "leds");
+>> @@ -328,6 +342,8 @@ static int __init leds_init(void)
+>>           return PTR_ERR(leds_class);
+>>       leds_class->pm = &leds_class_dev_pm_ops;
+>>       leds_class->dev_groups = led_groups;
+>> +    atomic_notifier_chain_register(&panic_notifier_list,
+>> +                       &led_panic_nb);
+>>       return 0;
+>>   }
+>>
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index 2181581795d3..8c1d33acdfa8 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -148,6 +148,21 @@ void led_trigger_remove(struct led_classdev
+>> *led_cdev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(led_trigger_remove);
+>>
+>> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const
+>> char *name)
+>> +{
 >
-> This is part of the rework allowing the PWM framework to support
-> hardware readout and expose real PWM state even when the PWM has
-> just been requested (before the user calls pwm_config/enable/disable()).
+> "name" parameter is not required, since setting other trigger than panic
+> on kernel panic doesn't make sense.
 >
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->   drivers/leds/leds-pwm.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index 4783bac..b48231c 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -91,6 +91,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->   		       struct led_pwm *led, struct device_node *child)
->   {
->   	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
-> +	struct pwm_args pargs = { };
->   	int ret;
->
->   	led_data->active_low = led->active_low;
-> @@ -117,7 +118,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->   	else
->   		led_data->cdev.brightness_set_blocking = led_pwm_set_blocking;
->
-> -	led_data->period = pwm_get_period(led_data->pwm);
-> +	pwm_get_args(led_data->pwm, &pargs);
-> +	led_data->period = pargs.period;
->   	if (!led_data->period && (led->pwm_period_ns > 0))
->   		led_data->period = led->pwm_period_ns;
+>> +    struct led_trigger *trig;
+>> +
+>> +    list_for_each_entry(trig, &trigger_list, next_trig) {
+>> +        if (strcmp(name, trig->name))
+>> +            continue;
+>> +        list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
+>> +        led_cdev->trigger = trig;
+>> +        if (trig->activate)
+>> +            trig->activate(led_cdev);
+>> +        break;
+>> +    }
+>> +}
+>> +
+>>   void led_trigger_set_default(struct led_classdev *led_cdev)
+>>   {
+>>       struct led_trigger *trig;
+>> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+>> index db3f20da7221..8cfa10f626a6 100644
+>> --- a/drivers/leds/leds.h
+>> +++ b/drivers/leds/leds.h
+>> @@ -21,6 +21,7 @@ static inline int led_get_brightness(struct
+>> led_classdev *led_cdev)
+>>       return led_cdev->brightness;
+>>   }
+>>
+>> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const
+>> char *name);
+>>   void led_init_core(struct led_classdev *led_cdev);
+>>   void led_stop_software_blink(struct led_classdev *led_cdev);
+>>   void led_set_brightness_nopm(struct led_classdev *led_cdev,
+>>
 >
 >
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
 -- 
 Best regards,
