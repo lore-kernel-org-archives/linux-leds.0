@@ -1,143 +1,73 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/3] leds: trigger: Introduce a kernel panic LED trigger
-Date: Thu, 31 Mar 2016 09:04:04 +0200
-Message-ID: <56FCCBE4.7010004@samsung.com>
-References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
- <56FB9C6A.2090402@samsung.com> <20160330191109.GA27372@laptop.cereza>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args()
+ where appropriate
+Date: Thu, 31 Mar 2016 09:07:09 +0200
+Message-ID: <20160331090709.5c3bdf70@bbrezillon>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+ <20160330225244.GA24044@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23888 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172AbcCaHEJ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 31 Mar 2016 03:04:09 -0400
-In-reply-to: <20160330191109.GA27372@laptop.cereza>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20160330225244.GA24044@roeck-us.net>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Milo Kim <milo.kim@ti.com>, Kamil Debski <k.debski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@baylibre.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Thierry Reding <thierry.reding@gmail.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Jonathan Corbet <corbet@lwn.net>, Robert Jarzmik <robert.jarzmik@free.fr>, lm-sensors@lm-sensors.org, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>l
 List-Id: linux-leds@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-Hi Ezequiel,
-
-On 03/30/2016 09:11 PM, Ezequiel Garcia wrote:
-> +lkml
->
-> On 30 Mar 11:29 AM, Jacek Anaszewski wrote:
->> Hi Ezequiel,
->>
->> Thanks for the patch. I've tested it on exynos4412-trats2 board
->> with leds-aat1290 driver, by executing:
->>
->> echo "c" > /proc/sysrq-trigger
->>
->> I was able to notice the blinking then.
->>
->> Applied to the for-next branch of linux-leds.git.
->>
->
-> Notice that we currently need LEDs to be dedicated
-> to the panic trigger, which is pretty lame as LEDs
-> are scarce and are most likely assigned to something else.
->
-> So, here's a toy patch to switch all the installed LEDs
-> to the panic trigger on kernel panic. Patch is half-baked,
-> but it shows the idea.
->
-> (Interestingly, it also blinks the LEDs on a USB keyboard!)
->
-> Is there any value in polishing this and find a way upstream?
-
-I like the idea, but I'd rather explicitly mark LEDs as panic
-indicators.
-
-How about adding a "kernel-panic-indicator" Device Tree property to
-common LED bindings? LED class device could be registered for the
-panic trigger on kernel panic notification only when the property is
-present.
-
-Adding Rob, Mark and devicetree list.
-
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index aa84e5b37593..caaf6161a7ae 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -321,6 +321,20 @@ void devm_led_classdev_unregister(struct device *dev,
->   }
->   EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
->
-> +static int led_panic_notifier(struct notifier_block *nb,
-> +			      unsigned long code, void *unused)
-> +{
-> +	struct led_classdev *led_cdev;
-> +
-> +	list_for_each_entry(led_cdev, &leds_list, node)
-> +		led_trigger_set_at_panic(led_cdev, "panic");
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block led_panic_nb = {
-> +	.notifier_call = led_panic_notifier,
-> +};
-> +
->   static int __init leds_init(void)
->   {
->   	leds_class = class_create(THIS_MODULE, "leds");
-> @@ -328,6 +342,8 @@ static int __init leds_init(void)
->   		return PTR_ERR(leds_class);
->   	leds_class->pm = &leds_class_dev_pm_ops;
->   	leds_class->dev_groups = led_groups;
-> +	atomic_notifier_chain_register(&panic_notifier_list,
-> +				       &led_panic_nb);
->   	return 0;
->   }
->
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 2181581795d3..8c1d33acdfa8 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -148,6 +148,21 @@ void led_trigger_remove(struct led_classdev *led_cdev)
->   }
->   EXPORT_SYMBOL_GPL(led_trigger_remove);
->
-> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const char *name)
-> +{
-
-"name" parameter is not required, since setting other trigger than panic
-on kernel panic doesn't make sense.
-
-> +	struct led_trigger *trig;
-> +
-> +	list_for_each_entry(trig, &trigger_list, next_trig) {
-> +		if (strcmp(name, trig->name))
-> +			continue;
-> +		list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
-> +		led_cdev->trigger = trig;
-> +		if (trig->activate)
-> +			trig->activate(led_cdev);
-> +		break;
-> +	}
-> +}
-> +
->   void led_trigger_set_default(struct led_classdev *led_cdev)
->   {
->   	struct led_trigger *trig;
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index db3f20da7221..8cfa10f626a6 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -21,6 +21,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
->   	return led_cdev->brightness;
->   }
->
-> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const char *name);
->   void led_init_core(struct led_classdev *led_cdev);
->   void led_stop_software_blink(struct led_classdev *led_cdev);
->   void led_set_brightness_nopm(struct led_classdev *led_cdev,
->
-
-
--- 
-Best regards,
-Jacek Anaszewski
+SGkgR3VlbnRlciwKCk9uIFdlZCwgMzAgTWFyIDIwMTYgMTU6NTI6NDQgLTA3MDAKR3VlbnRlciBS
+b2VjayA8bGludXhAcm9lY2stdXMubmV0PiB3cm90ZToKCj4gT24gV2VkLCBNYXIgMzAsIDIwMTYg
+YXQgMTA6MDM6MzFQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOgo+ID4gVGhlIFBXTSBm
+cmFtZXdvcmsgaGFzIGNsYXJpZmllZCB0aGUgY29uY2VwdCBvZiByZWZlcmVuY2UgUFdNIGNvbmZp
+Zwo+ID4gKHRoZSBwbGF0Zm9ybSBkZXBlbmRlbnQgY29uZmlnIHJldHJpZXZlZCBmcm9tIHRoZSBE
+VCBvciB0aGUgUFdNCj4gPiBsb29rdXAgdGFibGUpIGFuZCByZWFsIFBXTSBzdGF0ZS4KPiA+IAo+
+ID4gVXNlIHB3bV9nZXRfYXJncygpIHdoZW4gdGhlIFBXTSB1c2VyIHdhbnRzIHRvIHJldHJpZXZl
+IHRoaXMgcmVmZXJlbmNlCj4gPiBjb25maWcgYW5kIG5vdCB0aGUgY3VycmVudCBzdGF0ZS4KPiA+
+IAo+ID4gVGhpcyBpcyBwYXJ0IG9mIHRoZSByZXdvcmsgYWxsb3dpbmcgdGhlIFBXTSBmcmFtZXdv
+cmsgdG8gc3VwcG9ydAo+ID4gaGFyZHdhcmUgcmVhZG91dCBhbmQgZXhwb3NlIHJlYWwgUFdNIHN0
+YXRlIGV2ZW4gd2hlbiB0aGUgUFdNIGhhcwo+ID4ganVzdCBiZWVuIHJlcXVlc3RlZCAoYmVmb3Jl
+IHRoZSB1c2VyIGNhbGxzIHB3bV9jb25maWcvZW5hYmxlL2Rpc2FibGUoKSkuCj4gPiAKPiA+IFNp
+Z25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ry
+b25zLmNvbT4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvaHdtb24vcHdtLWZhbi5jIHwgMTkgKysrKysr
+KysrKysrKy0tLS0tLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCA2IGRl
+bGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9od21vbi9wd20tZmFuLmMg
+Yi9kcml2ZXJzL2h3bW9uL3B3bS1mYW4uYwo+ID4gaW5kZXggM2UyMzAwMy4uODJjNTY1NiAxMDA2
+NDQKPiA+IC0tLSBhL2RyaXZlcnMvaHdtb24vcHdtLWZhbi5jCj4gPiArKysgYi9kcml2ZXJzL2h3
+bW9uL3B3bS1mYW4uYwo+ID4gQEAgLTQwLDE1ICs0MCwxOCBAQCBzdHJ1Y3QgcHdtX2Zhbl9jdHgg
+ewo+ID4gIAo+ID4gIHN0YXRpYyBpbnQgIF9fc2V0X3B3bShzdHJ1Y3QgcHdtX2Zhbl9jdHggKmN0
+eCwgdW5zaWduZWQgbG9uZyBwd20pCj4gPiAgewo+ID4gKwlzdHJ1Y3QgcHdtX2FyZ3MgcGFyZ3Mg
+PSB7IH07Cj4gCj4gSGkgQm9yaXMsCj4gCj4gSSBndWVzcyBJIGFtIG1pc3Npbmcgc29tZSBjb250
+ZXh0OyBzb3JyeSBmb3IgdGhhdC4gVW5mb3J0dW5hdGVseSwKPiBJIGRpZCBub3QgZWFzaWx5IGZp
+bmQgYW4gZXhwbGFuYXRpb24sIHNvIHBsZWFzZSBiZWFyIHdpdGggbWUuCj4gCj4gVHdvIHF1ZXN0
+aW9uczogV2h5IGRvIHdlIG5lZWQgYSBsb2NhbCBjb3B5IG9mIHN0cnVjdCBwd21fYXJncyBpbnN0
+ZWFkCj4gb2YgYSBwb2ludGVyIHRvIGl0ID8gSWYgaXQgY2FuIGNoYW5nZSB3aGlsZSBiZWluZyB1
+c2VkLCBpc24ndCBpdAo+IGluY29uc2lzdGVudCBhbnl3YXkgPwoKSXQgY2Fubm90IGNoYW5nZSBh
+ZnRlciBwd21fZ2V0KCkgaXMgY2FsbGVkLiBGb3IgdGhlIHJlYXNvbiBiZWhpbmQKcHJvdG90eXBl
+OiBJIGp1c3QgZm9sbG93ZWQgdGhlIFRoaWVycnkncyBwcm9wb3NhbCwgYnV0IEknbSBwZXJmZWN0
+bHkKZmluZSByZXR1cm5pbmcgYSBjb25zdCBzdHJ1Y3QgcHdtX2FyZ3MgcG9pbnRlciBpbnRlYWQg
+b2YgcGFzc2luZwpwd21fYXJncyBhcyBhIHBhcmFtZXRlci4KClRoaWVycnksIHdoYXQncyB5b3Vy
+IG9waW5pb24/CgoKPiAKPiBBbHNvLCBhc3N1bWluZyB0aGUgbG9jYWwgY29weSBpcyBuZWNlc3Nh
+cnksIHdoeSBpbml0aWFsaXplIHBhcmdzID8gCj4gQWZ0ZXIgYWxsLCBwd21fZ2V0X2FyZ3MoKSBq
+dXN0IG92ZXJ3cml0ZXMgaXQuCgpJdCdzIGEgbGVmdG92ZXIgZnJvbSBhIHByZXZpb3VzIHZlcnNp
+b24gd2hlcmUgcHdtX2dldF9hcmdzIHdhcwppbXBsZW1lbnRlZCB0aGlzIHdheToKCnN0YXRpYyBp
+bmxpbmUgdm9pZCBwd21fZ2V0X2FyZ3MocHdtLCBhcmdzKQp7CglpZiAocHdtKQoJCSphcmdzID0g
+cHdtLT5hcmdzCn0KCmFuZCB0aGlzIGltcGxlbWVudGF0aW9uIHdhcyBnZW5lcmF0aW5nIGEgbG90
+IG9mICd1bmluaXRpYWxpemVkCnZhcmlhYmxlJyB3YXJuaW5ncy4KCkkganVzdCBkZWNpZGVkIHRv
+IGRyb3AgdGhlICdpZiAocHdtKScgdGVzdCwgYmVjYXVzZSwgSU1PLCB0aGlzCnNob3VsZCBiZSBj
+aGVja2VkIHdheSBiZWZvcmUgY2FsbGluZyBwd21fZ2V0X2FyZ3MoKSBpcyBjYWxsZWQuCgpBbnl3
+YXksIGFwcGFyZW50bHkgSSBmb3Jnb3QgdG8gbW9kaWZ5IGEgZmV3IHBhdGNoZXMgYWZ0ZXIgdGhp
+cwptb2RpZmljYXRpb24uCgpUaGFua3MgZm9yIHRoZSByZXZpZXcuCgpCb3JpcwoKCi0tIApCb3Jp
+cyBCcmV6aWxsb24sIEZyZWUgRWxlY3Ryb25zCkVtYmVkZGVkIExpbnV4IGFuZCBLZXJuZWwgZW5n
+aW5lZXJpbmcKaHR0cDovL2ZyZWUtZWxlY3Ryb25zLmNvbQpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdm
+eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9pbnRlbC1nZngK
