@@ -1,76 +1,143 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 34/46] clk: pwm: switch to the atomic API
-Date: Thu, 31 Mar 2016 08:57:35 +0200
-Message-ID: <20160331085735.3574970b@bbrezillon>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-35-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330220149.GU18567@codeaurora.org>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/3] leds: trigger: Introduce a kernel panic LED trigger
+Date: Thu, 31 Mar 2016 09:04:04 +0200
+Message-ID: <56FCCBE4.7010004@samsung.com>
+References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <56FB9C6A.2090402@samsung.com> <20160330191109.GA27372@laptop.cereza>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBY4U6O3QKGQECI4INZQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160330220149.GU18567-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jo>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23888 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172AbcCaHEJ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 31 Mar 2016 03:04:09 -0400
+In-reply-to: <20160330191109.GA27372@laptop.cereza>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-Hi Stephen,
+Hi Ezequiel,
 
-On Wed, 30 Mar 2016 15:01:49 -0700
-Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+On 03/30/2016 09:11 PM, Ezequiel Garcia wrote:
+> +lkml
+>
+> On 30 Mar 11:29 AM, Jacek Anaszewski wrote:
+>> Hi Ezequiel,
+>>
+>> Thanks for the patch. I've tested it on exynos4412-trats2 board
+>> with leds-aat1290 driver, by executing:
+>>
+>> echo "c" > /proc/sysrq-trigger
+>>
+>> I was able to notice the blinking then.
+>>
+>> Applied to the for-next branch of linux-leds.git.
+>>
+>
+> Notice that we currently need LEDs to be dedicated
+> to the panic trigger, which is pretty lame as LEDs
+> are scarce and are most likely assigned to something else.
+>
+> So, here's a toy patch to switch all the installed LEDs
+> to the panic trigger on kernel panic. Patch is half-baked,
+> but it shows the idea.
+>
+> (Interestingly, it also blinks the LEDs on a USB keyboard!)
+>
+> Is there any value in polishing this and find a way upstream?
 
-> On 03/30, Boris Brezillon wrote:
-> > diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-> > index ebcd738..49ec5b1 100644
-> > --- a/drivers/clk/clk-pwm.c
-> > +++ b/drivers/clk/clk-pwm.c
-> > @@ -28,15 +28,29 @@ static inline struct clk_pwm *to_clk_pwm(struct clk_hw *hw)
-> >  static int clk_pwm_prepare(struct clk_hw *hw)
-> >  {
-> >  	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-> > +	struct pwm_state pstate;
-> >  
-> > -	return pwm_enable(clk_pwm->pwm);
-> > +	pwm_get_state(clk_pwm->pwm, &pstate);
-> > +	if (pstate.enabled)
-> > +		return 0;
-> > +
-> > +	pstate.enabled = true;
-> > +
-> > +	return pwm_apply_state(clk_pwm->pwm, &pstate);
-> 
-> This doesn't seem atomic anymore if we're checking the state and
-> then not calling apply_state if it's already enabled. But I
-> assume this doesn't matter because we "own" the pwm here?
+I like the idea, but I'd rather explicitly mark LEDs as panic
+indicators.
 
-Yep. Actually it's not atomic in term of concurrency (maybe the
-'atomic' word is not appropriate here). Atomicity is here referring to
-the fact that we're now providing all the PWM parameters in the same
-request instead of splitting it in pwm_config() + pwm_enable/disable()
-calls.
+How about adding a "kernel-panic-indicator" Device Tree property to
+common LED bindings? LED class device could be registered for the
+panic trigger on kernel panic notification only when the property is
+present.
 
-Concurrent accesses still have to be controlled by the PWM user (which
-is already the case for this driver, thanks to the locking
-infrastructure in the CCF).
+Adding Rob, Mark and devicetree list.
 
-> Otherwise I would think this would be unconditional apply state
-> and duplicates would be ignored in the pwm framework.
-> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index aa84e5b37593..caaf6161a7ae 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -321,6 +321,20 @@ void devm_led_classdev_unregister(struct device *dev,
+>   }
+>   EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
+>
+> +static int led_panic_notifier(struct notifier_block *nb,
+> +			      unsigned long code, void *unused)
+> +{
+> +	struct led_classdev *led_cdev;
+> +
+> +	list_for_each_entry(led_cdev, &leds_list, node)
+> +		led_trigger_set_at_panic(led_cdev, "panic");
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block led_panic_nb = {
+> +	.notifier_call = led_panic_notifier,
+> +};
+> +
+>   static int __init leds_init(void)
+>   {
+>   	leds_class = class_create(THIS_MODULE, "leds");
+> @@ -328,6 +342,8 @@ static int __init leds_init(void)
+>   		return PTR_ERR(leds_class);
+>   	leds_class->pm = &leds_class_dev_pm_ops;
+>   	leds_class->dev_groups = led_groups;
+> +	atomic_notifier_chain_register(&panic_notifier_list,
+> +				       &led_panic_nb);
+>   	return 0;
+>   }
+>
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 2181581795d3..8c1d33acdfa8 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -148,6 +148,21 @@ void led_trigger_remove(struct led_classdev *led_cdev)
+>   }
+>   EXPORT_SYMBOL_GPL(led_trigger_remove);
+>
+> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const char *name)
+> +{
 
-Yep, I'll remove the if (pstate.enabled) branch.
+"name" parameter is not required, since setting other trigger than panic
+on kernel panic doesn't make sense.
 
-Thanks for your review.
+> +	struct led_trigger *trig;
+> +
+> +	list_for_each_entry(trig, &trigger_list, next_trig) {
+> +		if (strcmp(name, trig->name))
+> +			continue;
+> +		list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
+> +		led_cdev->trigger = trig;
+> +		if (trig->activate)
+> +			trig->activate(led_cdev);
+> +		break;
+> +	}
+> +}
+> +
+>   void led_trigger_set_default(struct led_classdev *led_cdev)
+>   {
+>   	struct led_trigger *trig;
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index db3f20da7221..8cfa10f626a6 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -21,6 +21,7 @@ static inline int led_get_brightness(struct led_classdev *led_cdev)
+>   	return led_cdev->brightness;
+>   }
+>
+> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const char *name);
+>   void led_init_core(struct led_classdev *led_cdev);
+>   void led_stop_software_blink(struct led_classdev *led_cdev);
+>   void led_set_brightness_nopm(struct led_classdev *led_cdev,
+>
 
-Boris
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best regards,
+Jacek Anaszewski
