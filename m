@@ -1,153 +1,62 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/3] leds: trigger: Introduce a kernel panic LED trigger
-Date: Thu, 31 Mar 2016 09:28:57 +0200
-Message-ID: <56FCD1B9.2050801@samsung.com>
-References: <1459283749-22451-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1459283749-22451-2-git-send-email-ezequiel@vanguardiasur.com.ar>
- <56FB9C6A.2090402@samsung.com> <20160330191109.GA27372@laptop.cereza>
- <56FCCBE4.7010004@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5 05/46] pwm: introduce the pwm_args concept
+Date: Thu, 31 Mar 2016 09:57:49 +0200
+Message-ID: <20160331095749.4be1e76b@bbrezillon>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1459368249-13241-6-git-send-email-boris.brezillon@free-electrons.com>
+	<20160330215510.GS18567@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <56FCCBE4.7010004@samsung.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20160330215510.GS18567@codeaurora.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee
 List-Id: linux-leds@vger.kernel.org
 
-On 03/31/2016 09:04 AM, Jacek Anaszewski wrote:
-> Hi Ezequiel,
->
-> On 03/30/2016 09:11 PM, Ezequiel Garcia wrote:
->> +lkml
->>
->> On 30 Mar 11:29 AM, Jacek Anaszewski wrote:
->>> Hi Ezequiel,
->>>
->>> Thanks for the patch. I've tested it on exynos4412-trats2 board
->>> with leds-aat1290 driver, by executing:
->>>
->>> echo "c" > /proc/sysrq-trigger
->>>
->>> I was able to notice the blinking then.
->>>
->>> Applied to the for-next branch of linux-leds.git.
->>>
->>
->> Notice that we currently need LEDs to be dedicated
->> to the panic trigger, which is pretty lame as LEDs
->> are scarce and are most likely assigned to something else.
->>
->> So, here's a toy patch to switch all the installed LEDs
->> to the panic trigger on kernel panic. Patch is half-baked,
->> but it shows the idea.
->>
->> (Interestingly, it also blinks the LEDs on a USB keyboard!)
->>
->> Is there any value in polishing this and find a way upstream?
->
-> I like the idea, but I'd rather explicitly mark LEDs as panic
-> indicators.
->
-> How about adding a "kernel-panic-indicator" Device Tree property to
-> common LED bindings? LED class device could be registered for the
-> panic trigger on kernel panic notification only when the property is
-> present.
+On Wed, 30 Mar 2016 14:55:10 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Of course we would need similar solution for ACPI based platforms,
-however I am not sure if this approach is feasible in that case, since
-device configuration data is enclosed in firmware then.
-Adding linux-acpi list.
+> On 03/30, Boris Brezillon wrote:
+> > @@ -74,6 +74,23 @@ enum pwm_polarity {
+> >  	PWM_POLARITY_INVERSED,
+> >  };
+> >  
+> > +/**
+> > + * struct pwm_args - PWM arguments
+> > + * @period: reference period
+> > + * @polarity: reference polarity
+> > + *
+> > + * This structure describe board-dependent arguments attached to a PWM
+> 
+> s/describe/describes/
+> 
+> > + * device. Those arguments are usually retrieved from the PWM lookup table or
+> > + * DT definition.
+> > + * This should not be confused with the PWM state: PWM args not representing
+> 
+> s/not representing/don't represent/ ?
 
-> Adding Rob, Mark and devicetree list.
->
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index aa84e5b37593..caaf6161a7ae 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -321,6 +321,20 @@ void devm_led_classdev_unregister(struct device
->> *dev,
->>   }
->>   EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
->>
->> +static int led_panic_notifier(struct notifier_block *nb,
->> +                  unsigned long code, void *unused)
->> +{
->> +    struct led_classdev *led_cdev;
->> +
->> +    list_for_each_entry(led_cdev, &leds_list, node)
->> +        led_trigger_set_at_panic(led_cdev, "panic");
->> +    return NOTIFY_DONE;
->> +}
->> +
->> +static struct notifier_block led_panic_nb = {
->> +    .notifier_call = led_panic_notifier,
->> +};
->> +
->>   static int __init leds_init(void)
->>   {
->>       leds_class = class_create(THIS_MODULE, "leds");
->> @@ -328,6 +342,8 @@ static int __init leds_init(void)
->>           return PTR_ERR(leds_class);
->>       leds_class->pm = &leds_class_dev_pm_ops;
->>       leds_class->dev_groups = led_groups;
->> +    atomic_notifier_chain_register(&panic_notifier_list,
->> +                       &led_panic_nb);
->>       return 0;
->>   }
->>
->> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
->> index 2181581795d3..8c1d33acdfa8 100644
->> --- a/drivers/leds/led-triggers.c
->> +++ b/drivers/leds/led-triggers.c
->> @@ -148,6 +148,21 @@ void led_trigger_remove(struct led_classdev
->> *led_cdev)
->>   }
->>   EXPORT_SYMBOL_GPL(led_trigger_remove);
->>
->> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const
->> char *name)
->> +{
->
-> "name" parameter is not required, since setting other trigger than panic
-> on kernel panic doesn't make sense.
->
->> +    struct led_trigger *trig;
->> +
->> +    list_for_each_entry(trig, &trigger_list, next_trig) {
->> +        if (strcmp(name, trig->name))
->> +            continue;
->> +        list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
->> +        led_cdev->trigger = trig;
->> +        if (trig->activate)
->> +            trig->activate(led_cdev);
->> +        break;
->> +    }
->> +}
->> +
->>   void led_trigger_set_default(struct led_classdev *led_cdev)
->>   {
->>       struct led_trigger *trig;
->> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
->> index db3f20da7221..8cfa10f626a6 100644
->> --- a/drivers/leds/leds.h
->> +++ b/drivers/leds/leds.h
->> @@ -21,6 +21,7 @@ static inline int led_get_brightness(struct
->> led_classdev *led_cdev)
->>       return led_cdev->brightness;
->>   }
->>
->> +void led_trigger_set_at_panic(struct led_classdev *led_cdev, const
->> char *name);
->>   void led_init_core(struct led_classdev *led_cdev);
->>   void led_stop_software_blink(struct led_classdev *led_cdev);
->>   void led_set_brightness_nopm(struct led_classdev *led_cdev,
->>
->
->
+Yes, I meant "are not representing", but "don't represent" is fine.
+
+> 
+> > + * the current PWM state, but the configuration the PWM user plan to use
+> 
+> s/plan/plans/
+> 
+> > + * on this PWM device.
+> > + */
+> > +struct pwm_args {
+> > +	unsigned int period;
+> > +	enum pwm_polarity polarity;
+> > +};
+> > +
+> 
+
 
 
 -- 
-Best regards,
-Jacek Anaszewski
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
