@@ -1,68 +1,61 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
- LED's
-Date: Fri, 1 Apr 2016 23:18:44 +0200
-Message-ID: <20160401211844.GA21768@amd>
-References: <20160401135748.GD11860@amd>
- <56FEC444.4040106@gmail.com>
+From: Tema williams <temawilliams22@gmail.com>
+Subject: WE NEED YOUR HELP URGENTLY.
+Date: Sun, 3 Apr 2016 18:14:14 +0200
+Message-ID: <CA+hOsCvD3C4OmnF77sXHYmo_TOmxOYZx0ndPSdjPY=VrvrzoOQ__33208.0102329657$1459700080$gmane$org@mail.gmail.com>
+Reply-To: temawilliams26@yahoo.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56FEC444.4040106-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, aaro.koskinen-X3B1VOXEql0@public.gmane.org, ivo.g.dimitrov.75-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Patrik Bachan <patrikbachan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, serge-A9i7LUbDfNHQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ig0-f194.google.com ([209.85.213.194]:35930 "EHLO
+	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754071AbcDCQOQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Sun, 3 Apr 2016 12:14:16 -0400
+Received: by mail-ig0-f194.google.com with SMTP id sy18so9673345igc.3
+        for <linux-leds@vger.kernel.org>; Sun, 03 Apr 2016 09:14:15 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+Dear Sir/madam,
 
-> >>It would have the same downsides as in case of having r, g and b in
-> >>separate attributes, i.e. - problems with setting LED colour in
-> >>a consistent way. This way LED blinking in whatever colour couldn't
-> >>be supported reliably. It was one of your primary rationale standing
-> >>behind this design, if I remember correctly. Second - what about
-> >>triggers? We've had a long discussion about it and this design turned
-> >>out to be most fitting.
-> >
-> >Are on/off triggers really that useful for a LED that can produce 16
-> >million colors?
-> >
-> >I believe we should support patterns for RGB LEDs. Something like
-> >[ (time, r, g, b), ... ] . Ok, what about this one?
-> >
-> >Lets say we have
-> >
-> >/sys/class/pattern/lp5533::0
-> >/sys/class/pattern/software::0
-> >
-> >/sys/class/led/n900::red ; default trigger "lp5533::0:0"
-> >/sys/class/led/n900::green ; default trigger "lp5533::0:1"
-> >/sys/class/led/n900::blue ; default trigger "lp5533::0:2"
-> >
-> >Normally, pattern would correspond to one RGB LED. We could have
-> >attribute "/sys/class/pattern/lp5533::0/color" containing R,G,B for
-> >this pattern.
-> 
-> This involves the same issue you were opposed to: three values per
-> sysfs attribute.
+With due respect and to the glory of Almighty God whom we worship I
+call upon you to assist my family.
+Please Permit me to inform you of my desire of going into business
+relationship with you.
 
-And solves a lot of other things. Like actually being backwards
-compatible.
+My name is Tema Williams,The only Son of late Chief PATRICK WILLIAMS.
+My father was a very wealthy cocoa merchant in Abidjan but we are from
+Sierra Leone
+After my Father death I and my Family move to South Africa as refugee.
 
-And yes, it involves three values in a file, but now it is array of
-led brightnesses, and that might actually be acceptable. (At least the
-values have uniform meaning).
+My father was poisoned to death by his business associates on one of
+their outings on a business trip.
+Before his death in a private hospital in Abidjan he secretly called
+me on his bed side and told me that
+he has the sum of ($12.000,000 MILLION US DOLLAR) kept with a security
+and finance company in South Africa,
+He also explained to me that it was because of this wealth that he was
+poisoned by his business associates,
+that I should seek for a beneficiary in any country of my choice where
+I will transfer this money and use it for investment.
+I am honorably seeking for your assistance to transfer our fund out of
+South Africa.
+Upon the successful transfer of this fund,we shall make arrangement
+for me,my mother and younger sister to come
+over to your country to further our Education and invest in a
+profitable business that you may suggest.
 
-Plus, it is not "issue you were opposed to" it is "something that is
-not permitted by sysfs maintainers".
+More over,I am willing to offer you 20% of the total sum as
+compensation for your effort/input after the successful
+transfer of this fund into your nominated bank account overseas.
 
-Thanks,
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+As we depend on God, and with God all things are possible.
+Anticipating to hear from you today.
+
+Thanks and God bless.
+PLEASE CALL ME +27787597591
+
+
+Best regards,
+
+Tema Williams
+(for the family)
