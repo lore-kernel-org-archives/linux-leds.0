@@ -1,61 +1,106 @@
-From: Tema williams <temawilliams22@gmail.com>
-Subject: WE NEED YOUR HELP URGENTLY.
-Date: Sun, 3 Apr 2016 18:14:14 +0200
-Message-ID: <CA+hOsCvD3C4OmnF77sXHYmo_TOmxOYZx0ndPSdjPY=VrvrzoOQ__33208.0102329657$1459700080$gmane$org@mail.gmail.com>
-Reply-To: temawilliams26@yahoo.com
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 08/46] hwmon: pwm-fan: use pwm_get_args()
+ where appropriate
+Date: Mon, 4 Apr 2016 17:20:48 +0200
+Message-ID: <20160404152048.GA17856@ulmo>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-9-git-send-email-boris.brezillon@free-electrons.com>
+ <20160330225244.GA24044@roeck-us.net>
+ <20160331090709.5c3bdf70@bbrezillon>
+Reply-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:35930 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754071AbcDCQOQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 3 Apr 2016 12:14:16 -0400
-Received: by mail-ig0-f194.google.com with SMTP id sy18so9673345igc.3
-        for <linux-leds@vger.kernel.org>; Sun, 03 Apr 2016 09:14:15 -0700 (PDT)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Return-path: <linux-sunxi+bncBDTKFPPJUEHRBU4MRK4AKGQEZTB7PDQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20160331090709.5c3bdf70@bbrezillon>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jo>
 List-Id: linux-leds@vger.kernel.org
 
-Dear Sir/madam,
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-With due respect and to the glory of Almighty God whom we worship I
-call upon you to assist my family.
-Please Permit me to inform you of my desire of going into business
-relationship with you.
+On Thu, Mar 31, 2016 at 09:07:09AM +0200, Boris Brezillon wrote:
+> Hi Guenter,
+> 
+> On Wed, 30 Mar 2016 15:52:44 -0700
+> Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
+> 
+> > On Wed, Mar 30, 2016 at 10:03:31PM +0200, Boris Brezillon wrote:
+> > > The PWM framework has clarified the concept of reference PWM config
+> > > (the platform dependent config retrieved from the DT or the PWM
+> > > lookup table) and real PWM state.
+> > > 
+> > > Use pwm_get_args() when the PWM user wants to retrieve this reference
+> > > config and not the current state.
+> > > 
+> > > This is part of the rework allowing the PWM framework to support
+> > > hardware readout and expose real PWM state even when the PWM has
+> > > just been requested (before the user calls pwm_config/enable/disable()).
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > > ---
+> > >  drivers/hwmon/pwm-fan.c | 19 +++++++++++++------
+> > >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> > > index 3e23003..82c5656 100644
+> > > --- a/drivers/hwmon/pwm-fan.c
+> > > +++ b/drivers/hwmon/pwm-fan.c
+> > > @@ -40,15 +40,18 @@ struct pwm_fan_ctx {
+> > >  
+> > >  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> > >  {
+> > > +	struct pwm_args pargs = { };
+> > 
+> > Hi Boris,
+> > 
+> > I guess I am missing some context; sorry for that. Unfortunately,
+> > I did not easily find an explanation, so please bear with me.
+> > 
+> > Two questions: Why do we need a local copy of struct pwm_args instead
+> > of a pointer to it ? If it can change while being used, isn't it
+> > inconsistent anyway ?
+> 
+> It cannot change after pwm_get() is called. For the reason behind
+> prototype: I just followed the Thierry's proposal, but I'm perfectly
+> fine returning a const struct pwm_args pointer intead of passing
+> pwm_args as a parameter.
+> 
+> Thierry, what's your opinion?
 
-My name is Tema Williams,The only Son of late Chief PATRICK WILLIAMS.
-My father was a very wealthy cocoa merchant in Abidjan but we are from
-Sierra Leone
-After my Father death I and my Family move to South Africa as refugee.
+I do prefer the current variant because it is more consistent with the
+new atomic API, even if not strictly necessary because of the immutable
+data.
 
-My father was poisoned to death by his business associates on one of
-their outings on a business trip.
-Before his death in a private hospital in Abidjan he secretly called
-me on his bed side and told me that
-he has the sum of ($12.000,000 MILLION US DOLLAR) kept with a security
-and finance company in South Africa,
-He also explained to me that it was because of this wealth that he was
-poisoned by his business associates,
-that I should seek for a beneficiary in any country of my choice where
-I will transfer this money and use it for investment.
-I am honorably seeking for your assistance to transfer our fund out of
-South Africa.
-Upon the successful transfer of this fund,we shall make arrangement
-for me,my mother and younger sister to come
-over to your country to further our Education and invest in a
-profitable business that you may suggest.
+> > Also, assuming the local copy is necessary, why initialize pargs ? 
+> > After all, pwm_get_args() just overwrites it.
+> 
+> It's a leftover from a previous version where pwm_get_args was
+> implemented this way:
+> 
+> static inline void pwm_get_args(pwm, args)
+> {
+> 	if (pwm)
+> 		*args = pwm->args
+> }
+> 
+> and this implementation was generating a lot of 'uninitialized
+> variable' warnings.
+> 
+> I just decided to drop the 'if (pwm)' test, because, IMO, this
+> should be checked way before calling pwm_get_args() is called.
 
-More over,I am willing to offer you 20% of the total sum as
-compensation for your effort/input after the successful
-transfer of this fund into your nominated bank account overseas.
+Sounds fine to me.
 
-As we depend on God, and with God all things are possible.
-Anticipating to hear from you today.
-
-Thanks and God bless.
-PLEASE CALL ME +27787597591
-
-
-Best regards,
-
-Tema Williams
-(for the family)
+Thierry
+--PNTmBPCT7hxwcZjr--
