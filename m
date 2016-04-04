@@ -1,44 +1,36 @@
 From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: [PATCH 0/5] Extend the LED panic trigger
-Date: Mon,  4 Apr 2016 17:22:01 -0300
-Message-ID: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Subject: [PATCH 4/5] devicetree: leds: Introduce "panic-blink" optional property
+Date: Mon,  4 Apr 2016 17:22:05 -0300
+Message-ID: <1459801326-5541-5-git-send-email-ezequiel@vanguardiasur.com.ar>
+References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 List-Id: linux-leds@vger.kernel.org
 
-As per commit 916fe61995 ("leds: trigger: Introduce a kernel panic LED
-trigger"), the kernel now supports a new LED trigger to hook on
-the panic blink.
+It's desirable to specify which LEDs are to be blinked on a kernel
+panic. Therefore, introduce a devicetree boolean property to mark
+which LEDs should be treated this way.
 
-However, the only way of using this is to dedicate a LED device
-to this function.
+Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+---
+ Documentation/devicetree/bindings/leds/common.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-To overcome this limitation, the present series introduces the
-capability to switch the LED trigger of certain LED devices upon
-a kernel panic (using the panic notifier).
-
-The decision of which LEDs should be switched to the panic trigger
-is left to each LED device driver. As an example, a devicetree
-boolean property is introduced and used in the leds-gpio driver.
-
-Feedback and other ideas on how to implement this are most welcomed.
-
-Ezequiel Garcia (5):
-  leds: triggers: Allow to switch the trigger to "panic" on a kernel
-    panic
-  leds: triggers: Add a led_trigger_event_nosleep API
-  leds: trigger: panic: Use led_trigger_event_nosleep
-  devicetree: leds: Introduce "panic-blink" optional property
-  leds: gpio: Support the panic-blink firmware property
-
- Documentation/devicetree/bindings/leds/common.txt |  2 +
- drivers/leds/led-triggers.c                       | 78 +++++++++++++++++++++--
- drivers/leds/leds-gpio.c                          |  4 ++
- drivers/leds/trigger/ledtrig-panic.c              |  2 +-
- include/linux/leds.h                              |  6 ++
- 5 files changed, 87 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 68419843e32f..dd409df9203a 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -37,6 +37,8 @@ Optional properties for child nodes:
+                      property is mandatory for the LEDs in the non-flash modes
+                      (e.g. torch or indicator).
+ 
++- panic-blink : Mark this LED to be used by the panic LED trigger.
++
+ Required properties for flash LED child nodes:
+ - flash-max-microamp : Maximum flash LED supply current in microamperes.
+ - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
 -- 
 2.7.0
