@@ -1,116 +1,50 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 2/5] leds: triggers: Add a led_trigger_event_nosleep API
-Date: Tue, 5 Apr 2016 23:36:24 +0200
-Message-ID: <57042FD8.1090100@gmail.com>
+Subject: Re: [PATCH 4/5] devicetree: leds: Introduce "panic-blink" optional
+ property
+Date: Tue, 5 Apr 2016 23:37:33 +0200
+Message-ID: <5704301D.7040300@gmail.com>
 References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1459801326-5541-3-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <1459801326-5541-5-git-send-email-ezequiel@vanguardiasur.com.ar>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36210 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760345AbcDEVgy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 5 Apr 2016 17:36:54 -0400
-In-Reply-To: <1459801326-5541-3-git-send-email-ezequiel@vanguardiasur.com.ar>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459801326-5541-5-git-send-email-ezequiel@vanguardiasur.com.ar>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, robh@kernel.org
+List-Id: linux-leds@vger.kernel.org
 
 Hi Ezequiel,
 
 On 04/04/2016 10:22 PM, Ezequiel Garcia wrote:
-> Now that we can mark any LED (even those in use by delayed blink
-> triggers) to trigger on a kernel panic, let's introduce a nosleep
-> led_trigger_event API.
->
-> This API is needed to skip the delayed blink path on
-> led_trigger_event. LEDs that are switched on a kernel panic,
-> might be in use by a delayed blink trigger.
->
-> This will be used by the panic LED trigger.
+> It's desirable to specify which LEDs are to be blinked on a kernel
+> panic. Therefore, introduce a devicetree boolean property to mark
+> which LEDs should be treated this way.
 >
 > Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 > ---
->   drivers/leds/led-triggers.c | 26 ++++++++++++++++++++++----
->   include/linux/leds.h        |  4 ++++
->   2 files changed, 26 insertions(+), 4 deletions(-)
+>   Documentation/devicetree/bindings/leds/common.txt | 2 ++
+>   1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index f5c9d7c4d181..00b9d8497777 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -307,8 +307,9 @@ EXPORT_SYMBOL_GPL(devm_led_trigger_register);
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 68419843e32f..dd409df9203a 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -37,6 +37,8 @@ Optional properties for child nodes:
+>                        property is mandatory for the LEDs in the non-flash modes
+>                        (e.g. torch or indicator).
 >
->   /* Simple LED Tigger Interface */
->
-> -void led_trigger_event(struct led_trigger *trig,
-> -			enum led_brightness brightness)
-> +static void do_led_trigger_event(struct led_trigger *trig,
-> +				 enum led_brightness brightness,
-> +				 bool nosleep)
->   {
->   	struct led_classdev *led_cdev;
->
-> @@ -316,12 +317,29 @@ void led_trigger_event(struct led_trigger *trig,
->   		return;
->
->   	read_lock(&trig->leddev_list_lock);
-> -	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list)
-> -		led_set_brightness(led_cdev, brightness);
+> +- panic-blink : Mark this LED to be used by the panic LED trigger.
 
-led_set_brightness() can gently disable blinking if passed 0 in the
-brightness argument. IMHO this patch is not needed then.
+I'd say that 'panic-indicator' would be more informative.
 
-> +	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
-> +		if (nosleep)
-> +			led_set_brightness_nosleep(led_cdev, brightness);
-> +		else
-> +			led_set_brightness(led_cdev, brightness);
-> +	}
->   	read_unlock(&trig->leddev_list_lock);
->   }
+Please next time cc also devicetree list and maintainers.
+
 > +
-> +void led_trigger_event(struct led_trigger *trig,
-> +		       enum led_brightness brightness)
-> +{
-> +	do_led_trigger_event(trig, brightness, false);
-> +}
->   EXPORT_SYMBOL_GPL(led_trigger_event);
->
-> +void led_trigger_event_nosleep(struct led_trigger *trig,
-> +			       enum led_brightness brightness)
-> +{
-> +	do_led_trigger_event(trig, brightness, true);
-> +}
-> +EXPORT_SYMBOL_GPL(led_trigger_event_nosleep);
-> +
->   static void led_trigger_blink_setup(struct led_trigger *trig,
->   			     unsigned long *delay_on,
->   			     unsigned long *delay_off,
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 7f1428bb1e69..d33b230ce66d 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -259,6 +259,8 @@ extern void led_trigger_register_simple(const char *name,
->   extern void led_trigger_unregister_simple(struct led_trigger *trigger);
->   extern void led_trigger_event(struct led_trigger *trigger,
->   				enum led_brightness event);
-> +extern void led_trigger_event_nosleep(struct led_trigger *trigger,
-> +				enum led_brightness event);
->   extern void led_trigger_blink(struct led_trigger *trigger,
->   			      unsigned long *delay_on,
->   			      unsigned long *delay_off);
-> @@ -305,6 +307,8 @@ static inline void led_trigger_register_simple(const char *name,
->   static inline void led_trigger_unregister_simple(struct led_trigger *trigger) {}
->   static inline void led_trigger_event(struct led_trigger *trigger,
->   				enum led_brightness event) {}
-> +static inline void led_trigger_event_nosleep(struct led_trigger *trigger,
-> +				enum led_brightness event) {}
->   static inline void led_trigger_blink(struct led_trigger *trigger,
->   				      unsigned long *delay_on,
->   				      unsigned long *delay_off) {}
+>   Required properties for flash LED child nodes:
+>   - flash-max-microamp : Maximum flash LED supply current in microamperes.
+>   - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
 >
 
 -- 
