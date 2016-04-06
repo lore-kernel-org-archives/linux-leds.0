@@ -1,86 +1,83 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
  LED's
-Date: Wed, 6 Apr 2016 10:52:48 +0200
-Message-ID: <20160406085248.GB10196@amd>
+Date: Wed, 6 Apr 2016 11:12:28 +0200
+Message-ID: <20160406091228.GC10196@amd>
 References: <20160401135748.GD11860@amd>
  <56FEC444.4040106@gmail.com>
  <20160401211844.GA21768@amd>
  <5702DDD2.2030902@gmail.com>
  <20160405090141.GA23282@amd>
  <570415C4.5070003@gmail.com>
+ <5704236D.5080805@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33788 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410AbcDFJMc (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 6 Apr 2016 05:12:32 -0400
 Content-Disposition: inline
-In-Reply-To: <570415C4.5070003@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, serge@hallyn.com
+In-Reply-To: <5704236D.5080805@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, serge@hallyn.com
 
 Hi!
 
-> >>>>>Lets say we have
-> >>>>>
-> >>>>>/sys/class/pattern/lp5533::0
-> >>>>>/sys/class/pattern/software::0
-> >>>>>
-> >>>>>/sys/class/led/n900::red ; default trigger "lp5533::0:0"
-> >>>>>/sys/class/led/n900::green ; default trigger "lp5533::0:1"
-> >>>>>/sys/class/led/n900::blue ; default trigger "lp5533::0:2"
-> >>>>>
-> >>>>>Normally, pattern would correspond to one RGB LED. We could have
-> >>>>>attribute "/sys/class/pattern/lp5533::0/color" containing R,G,B for
-> >>>>>this pattern.
-> >>
-> >>Could you give an example on how to set a color for RGB LED using
-> >>this interface? Would it be compatible with LED triggers?
-> >>Where the "pattern" class would be implemented?
-> >
-> >Well, 'echo "50 60 70" > /sys/class/pattern/lp5533::0/color' should
-> >set the color for the led. 'echo "trigger-name" > trigger' would set
-> >the trigger, probably just toggling between LED off and set color for
-> >the old triggers.
-> >
-> >Where to implement the patterns is different question, but for example
-> >drivers/leds/pattern?
+> > We would probably need additional op in the LED core : color_set.
+> > 
+> > Having the color set to nonzero value would signify the the three LED
+> > class devices are in sync and that setting a trigger on any of them
+> > applies to the remaining two ones. It would have to be considered
+> > whether existing triggers could be made compatible with synchronized
+> > RGB LED class devices.
+> > 
+> > I'm curious what do you think about the idea.
+> > 
+> > Pavel, Heiner, others?
+> > 
+> Exposing "coupled LED devices" as separate LED devices most likely is ok
+> when accessed from user space as the name of the led_classdev's indicates
+> that they belong together.
+> But how about a trigger wanting to set a RGB LED to a specific color?
+> (That's not available yet but one possible use case for RGB LED's)
+> A trigger is bound to a led_classdev currently. In addition we'd need
+> to introduce some kind of super_led_classdev having links to the respective
+> R/G/B led_classdev's (+ trigger functions dealing with this super_led_classdev).
 > 
-> I'd rather leave the pattern issue for now, since it seems to be
-> different from the problem Heiner was trying to solve with his LED RGB
-> extension. Moreover, hardware patterns are device specific and it could
-> be hard to propose a generic interface.
+> These changes / extensions are not needed if a RGB LED is exposed as one
+> led_classdev, just with flag LED_DEV_CAP_RGB set.
+> OK, we'd still have to change the sysfs interface as obviously setting
+> hue/sat/brightness via one "brightness" attribute is not acceptable.
+> However this constraint might not affect the kernel-internal trigger API
+> (usage of parameter brightness in led_trigger_event).
 
-Well, RGB leds are basically useless without pattern support. And I
-believe we can do generic interface.
+Your proposal would break existing hardware. We already have RGB LEDs
+exposed as three LEDs. It is too late to change interface there.
 
-> Drivers can always expose their custom sysfs attributes for configuring
-> the patterns.
+> I see Pavel's point that there might be different types of multi-color LED's.
+> At least we have:
+> - multi-color LED's where each single LED is visible even if all are switched on
+> - multi-color LED's like RGB LED's where you usually just see a
+> uniform color
+
+Well, I suggest we ignore that distinction. Yes, I can see different
+colors coming from different directions, but the LED was clearly
+designed to look like single light. 
+
+> Last but not least regarding the patterns:
+> Something like proposed by Pavel is e.g. (partially) supported by the blink(1)
+> firmware. That would be an example of such a "hardware-accelerated" pattern.
 > 
-> Regardless of the above, some of your considerations brought me an idea
-> on how to add generic and backwards compatible support for setting RGB
-> color at one go.
-> 
-> Currently LED class drivers of RGB LED controllers expose three LED
-> class devices - one per R, G and B color component. I propose that
-> such drivers set LED_DEV_CAP_RGB flag for each LED class device they
-> register. LED core, seeing the flag, would create a generic "color"
-> sysfs attribute for each of the three LED class devices.
-> 
-> The "color" attribute would contain "R G B" values. Setting the "color"
-> attribute of any of the three LED class devices would affect brightness
-> properties (i.e. constituent colors) of the remaining two ones.
-> It would result in disabling any active triggers and writing all the
-> three color settings to the RGB LED controller at one go.
+> As I see it the current blinking support then would be one special case of a pattern.
+> As a consequence once having pattern support we might be able to switch users of blinking
+> to pattern and remove the blinking support.
 
-Having one attribute across three devices is rather ugly. And we'll
-need to solve the pattern issue one day.
+No, you can't remove existing blinking support, due to backwards
+compatibility reasons.
 
-What's tricky about patterns is that you need to control 3 (or more)
-leds at a time. Problem you are trying to solve here is ... control of
-3 leds, at the same time.
-
-So let's solve them together.
 									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
