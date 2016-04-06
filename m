@@ -1,152 +1,227 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
- LED's
-Date: Wed, 6 Apr 2016 00:15:11 +0200
-Message-ID: <570438EF.4080904@gmail.com>
-References: <20160401135748.GD11860@amd> <56FEC444.4040106@gmail.com>
- <20160401211844.GA21768@amd> <5702DDD2.2030902@gmail.com>
- <20160405090141.GA23282@amd> <570415C4.5070003@gmail.com>
- <5704236D.5080805@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5704236D.5080805-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, aaro.koskinen-X3B1VOXEql0@public.gmane.org, ivo.g.dimitrov.75-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Patrik Bachan <patrikbachan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, serge-A9i7LUbDfNHQT0dZR+AlfA@public.gmane.org
+From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+Subject: [PATCH 1/1] leds: pca9532: Add device tree binding
+Date: Wed,  6 Apr 2016 11:10:50 +0800
+Message-ID: <1459912250-50878-2-git-send-email-preid@electromag.com.au>
+References: <1459912250-50878-1-git-send-email-preid@electromag.com.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1459912250-50878-1-git-send-email-preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, riku.voipio-X3B1VOXEql0@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Heiner,
+This patch adds basic device tree support for the pca9532 LEDs.
 
-Thanks for the feedback.
+Signed-off-by: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+---
+ .../devicetree/bindings/leds/leds-pca9532.txt      | 32 +++++++++++
+ drivers/leds/leds-pca9532.c                        | 63 ++++++++++++++++++++--
+ include/dt-bindings/leds/leds-pca9532.h            | 18 +++++++
+ include/linux/leds-pca9532.h                       |  8 ++-
+ 4 files changed, 112 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-pca9532.txt
+ create mode 100644 include/dt-bindings/leds/leds-pca9532.h
 
-On 04/05/2016 10:43 PM, Heiner Kallweit wrote:
-> Am 05.04.2016 um 21:45 schrieb Jacek Anaszewski:
->> On 04/05/2016 11:01 AM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>>>>> It would have the same downsides as in case of having r, g and b in
->>>>>>>> separate attributes, i.e. - problems with setting LED colour in
->>>>>>>> a consistent way. This way LED blinking in whatever colour couldn't
->>>>>>>> be supported reliably. It was one of your primary rationale standing
->>>>>>>> behind this design, if I remember correctly. Second - what about
->>>>>>>> triggers? We've had a long discussion about it and this design turned
->>>>>>>> out to be most fitting.
->>>>>>>
->>>>>>> Are on/off triggers really that useful for a LED that can produce 16
->>>>>>> million colors?
->>>>>>>
->>>>>>> I believe we should support patterns for RGB LEDs. Something like
->>>>>>> [ (time, r, g, b), ... ] . Ok, what about this one?
->>>>>>>
->>>>>>> Lets say we have
->>>>>>>
->>>>>>> /sys/class/pattern/lp5533::0
->>>>>>> /sys/class/pattern/software::0
->>>>>>>
->>>>>>> /sys/class/led/n900::red ; default trigger "lp5533::0:0"
->>>>>>> /sys/class/led/n900::green ; default trigger "lp5533::0:1"
->>>>>>> /sys/class/led/n900::blue ; default trigger "lp5533::0:2"
->>>>>>>
->>>>>>> Normally, pattern would correspond to one RGB LED. We could have
->>>>>>> attribute "/sys/class/pattern/lp5533::0/color" containing R,G,B for
->>>>>>> this pattern.
->>>>
->>>> Could you give an example on how to set a color for RGB LED using
->>>> this interface? Would it be compatible with LED triggers?
->>>> Where the "pattern" class would be implemented?
->>>
->>> Well, 'echo "50 60 70" > /sys/class/pattern/lp5533::0/color' should
->>> set the color for the led. 'echo "trigger-name" > trigger' would set
->>> the trigger, probably just toggling between LED off and set color for
->>> the old triggers.
->>>
->>> Where to implement the patterns is different question, but for example
->>> drivers/leds/pattern?
->>
->> I'd rather leave the pattern issue for now, since it seems to be
->> different from the problem Heiner was trying to solve with his LED RGB
->> extension. Moreover, hardware patterns are device specific and it could
->> be hard to propose a generic interface.
->> Drivers can always expose their custom sysfs attributes for configuring
->> the patterns.
->>
->> Regardless of the above, some of your considerations brought me an idea
->> on how to add generic and backwards compatible support for setting RGB
->> color at one go.
->>
->> Currently LED class drivers of RGB LED controllers expose three LED
->> class devices - one per R, G and B color component. I propose that
->> such drivers set LED_DEV_CAP_RGB flag for each LED class device they
->> register. LED core, seeing the flag, would create a generic "color"
->> sysfs attribute for each of the three LED class devices.
->>
->> The "color" attribute would contain "R G B" values. Setting the "color"
->> attribute of any of the three LED class devices would affect brightness
->> properties (i.e. constituent colors) of the remaining two ones.
->> It would result in disabling any active triggers and writing all the
->> three color settings to the RGB LED controller at one go.
->>
->> We would probably need additional op in the LED core : color_set.
->>
->> Having the color set to nonzero value would signify the the three LED
->> class devices are in sync and that setting a trigger on any of them
->> applies to the remaining two ones. It would have to be considered
->> whether existing triggers could be made compatible with synchronized
->> RGB LED class devices.
->>
->> I'm curious what do you think about the idea.
->>
->> Pavel, Heiner, others?
->>
- >
-> Exposing "coupled LED devices" as separate LED devices most likely is ok
-> when accessed from user space as the name of the led_classdev's indicates
-> that they belong together.
-> But how about a trigger wanting to set a RGB LED to a specific color?
-
-RGB triggers would use a new color_set op. It means that currently
-implemented triggers would be unable to set arbitrary color, but
-they could be used only in a monochrome context.
-
-> (That's not available yet but one possible use case for RGB LED's)
-> A trigger is bound to a led_classdev currently. In addition we'd need
-> to introduce some kind of super_led_classdev having links to the respective
-> R/G/B led_classdev's (+ trigger functions dealing with this super_led_classdev).
->
-> These changes / extensions are not needed if a RGB LED is exposed as one
-> led_classdev, just with flag LED_DEV_CAP_RGB set.
-> OK, we'd still have to change the sysfs interface as obviously setting
-> hue/sat/brightness via one "brightness" attribute is not acceptable.
-> However this constraint might not affect the kernel-internal trigger API
-> (usage of parameter brightness in led_trigger_event).
-
-We would still have to abuse brightness parameter semantics.
-
-> I see Pavel's point that there might be different types of multi-color LED's.
-> At least we have:
-> - multi-color LED's where each single LED is visible even if all are switched on
-> - multi-color LED's like RGB LED's where you usually just see a uniform color
-
-I think that if we are talking about RGB LEDs it is always the second
-case.
-
-> Last but not least regarding the patterns:
-> Something like proposed by Pavel is e.g. (partially) supported by the blink(1)
-> firmware. That would be an example of such a "hardware-accelerated" pattern.
->
-> As I see it the current blinking support then would be one special case of a pattern.
-> As a consequence once having pattern support we might be able to switch users of blinking
-> to pattern and remove the blinking support.
-
-Let's split patterns related discussion into a separate thread.
-It would be best if it began with a patch.
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+new file mode 100644
+index 0000000..b48c223
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+@@ -0,0 +1,32 @@
++*NXP - pca9532 PWM LED Driver
++
++The PCA9532 family is SMBus I/O expander optimized for dimming LEDs.
++The PWM support 256 steps.
++
++Required properties:
++	- compatible:
++		"nxp,pca9530"
++		"nxp,pca9531"
++		"nxp,pca9532"
++		"nxp,pca9533"
++	- reg -  I2C slave address
++
++Each led is represented as a sub-node of the nxp,pca9530.
++
++LED sub-node properties:
++- type: Output configuration
++	0 = NONE, 1 = LED, 2 = N2100_BEEP, 3 = GPIO
++
++Example:
++
++  ledBL: pca9530@60 {
++    compatible = "nxp,pca9530";
++    reg = <0x60>;
++
++    led0 {
++      type = <PCA9532_TYPE_LED>;
++    };
++  };
++
++For more product information please see the link below:
++http://nxp.com/documents/data_sheet/PCA9532.pdf
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index e3d3b1a..8694c83 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -21,6 +21,8 @@
+ #include <linux/workqueue.h>
+ #include <linux/leds-pca9532.h>
+ #include <linux/gpio.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
+ 
+ /* m =  num_leds*/
+ #define PCA9532_REG_INPUT(i)	((i) >> 3)
+@@ -86,9 +88,22 @@ static const struct pca9532_chip_info pca9532_chip_info_tbl[] = {
+ 	},
+ };
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id of_pca9532_leds_match[] = {
++	{ .compatible = "nxp,pca9530", .data = (void *)pca9530 },
++	{ .compatible = "nxp,pca9531", .data = (void *)pca9531 },
++	{ .compatible = "nxp,pca9532", .data = (void *)pca9532 },
++	{ .compatible = "nxp,pca9533", .data = (void *)pca9533 },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, of_pca9532_leds_match);
++#endif
++
+ static struct i2c_driver pca9532_driver = {
+ 	.driver = {
+ 		.name = "leds-pca953x",
++		.of_match_table = of_match_ptr(of_pca9532_leds_match),
+ 	},
+ 	.probe = pca9532_probe,
+ 	.remove = pca9532_remove,
+@@ -432,15 +447,55 @@ exit:
+ 	return err;
+ }
+ 
++struct pca9532_platform_data *pca9532_of_populate_pdata(struct device *dev,
++						      struct device_node *np)
++{
++	struct pca9532_platform_data *pdata;
++	struct device_node *child;
++	int devid = (int)of_match_device(of_pca9532_leds_match, dev)->data;
++	int maxleds = pca9532_chip_info_tbl[devid].num_leds;
++	int i = 0;
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return ERR_PTR(-ENOMEM);
++
++	for_each_child_of_node(np, child) {
++		of_property_read_string(child, "name", &pdata->leds[i].name);
++		of_property_read_u32(child, "type", &pdata->leds[i].type);
++		if (!pdata->leds[i].name)
++			pdata->leds[i].name = "?";
++		if (i >= maxleds)
++			break;
++	}
++
++	return pdata;
++}
++
+ static int pca9532_probe(struct i2c_client *client,
+ 	const struct i2c_device_id *id)
+ {
++	int devid;
+ 	struct pca9532_data *data = i2c_get_clientdata(client);
+ 	struct pca9532_platform_data *pca9532_pdata =
+ 			dev_get_platdata(&client->dev);
+-
+-	if (!pca9532_pdata)
+-		return -EIO;
++	struct device_node *np = client->dev.of_node;
++
++	if (!pca9532_pdata) {
++		if (np) {
++			pca9532_pdata =
++				pca9532_of_populate_pdata(&client->dev, np);
++			if (IS_ERR(pca9532_pdata))
++				return PTR_ERR(pca9532_pdata);
++		} else {
++			dev_err(&client->dev, "no platform data\n");
++			return -EINVAL;
++		}
++		devid = (int)of_match_device(
++			of_pca9532_leds_match, &client->dev)->data;
++	} else {
++		devid = id->driver_data;
++	}
+ 
+ 	if (!i2c_check_functionality(client->adapter,
+ 		I2C_FUNC_SMBUS_BYTE_DATA))
+@@ -450,7 +505,7 @@ static int pca9532_probe(struct i2c_client *client,
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->chip_info = &pca9532_chip_info_tbl[id->driver_data];
++	data->chip_info = &pca9532_chip_info_tbl[devid];
+ 
+ 	dev_info(&client->dev, "setting platform data\n");
+ 	i2c_set_clientdata(client, data);
+diff --git a/include/dt-bindings/leds/leds-pca9532.h b/include/dt-bindings/leds/leds-pca9532.h
+new file mode 100644
+index 0000000..4d917aa
+--- /dev/null
++++ b/include/dt-bindings/leds/leds-pca9532.h
+@@ -0,0 +1,18 @@
++/*
++ * This header provides constants for pca9532 LED bindings.
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef _DT_BINDINGS_LEDS_PCA9532_H
++#define _DT_BINDINGS_LEDS_PCA9532_H
++
++#define PCA9532_TYPE_NONE         0
++#define PCA9532_TYPE_LED          1
++#define PCA9532_TYPE_N2100_BEEP   2
++#define PCA9532_TYPE_GPIO         3
++#define PCA9532_LED_TIMER2        4
++
++#endif /* _DT_BINDINGS_LEDS_PCA9532_H */
+diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
+index b8d6fff..4970f51 100644
+--- a/include/linux/leds-pca9532.h
++++ b/include/linux/leds-pca9532.h
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/leds.h>
+ #include <linux/workqueue.h>
++#include <dt-bindings/leds/leds-pca9532.h>
+ 
+ enum pca9532_state {
+ 	PCA9532_OFF  = 0x0,
+@@ -24,16 +25,13 @@ enum pca9532_state {
+ 	PCA9532_PWM1 = 0x3
+ };
+ 
+-enum pca9532_type { PCA9532_TYPE_NONE, PCA9532_TYPE_LED,
+-	PCA9532_TYPE_N2100_BEEP, PCA9532_TYPE_GPIO };
+-
+ struct pca9532_led {
+ 	u8 id;
+ 	struct i2c_client *client;
+-	char *name;
++	const char *name;
+ 	struct led_classdev ldev;
+ 	struct work_struct work;
+-	enum pca9532_type type;
++	u32 type;
+ 	enum pca9532_state state;
+ };
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+1.8.3.1
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
