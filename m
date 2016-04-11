@@ -1,99 +1,104 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
- LED's
-Date: Sat, 9 Apr 2016 18:01:43 +0200
-Message-ID: <20160409160142.GD19362@xo-6d-61-c0.localdomain>
-References: <20160401135748.GD11860@amd>
- <56FEC444.4040106@gmail.com>
- <20160401211844.GA21768@amd>
- <5702DDD2.2030902@gmail.com>
- <20160405090141.GA23282@amd>
- <570415C4.5070003@gmail.com>
- <20160406085248.GB10196@amd>
- <5704DC93.6050104@gmail.com>
- <20160407204540.GA11202@amd>
- <5707FCC0.6000204@gmail.com>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH 1/1] leds: pca9532: Add device tree binding
+Date: Mon, 11 Apr 2016 14:17:18 +0800
+Message-ID: <570B416E.7020507@electromag.com.au>
+References: <1459912250-50878-1-git-send-email-preid@electromag.com.au>
+ <1459912250-50878-2-git-send-email-preid@electromag.com.au>
+ <20160407175755.GN32257@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5707FCC0.6000204@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, serge@hallyn.com
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:35007 "EHLO
+	anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750801AbcDKGR3 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Apr 2016 02:17:29 -0400
+In-Reply-To: <20160407175755.GN32257@rob-hp-laptop>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, riku.voipio@iki.fi, rpurdie@rpsys.net, j.anaszewski@samsung.com, devicetree@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi!
+On 8/04/2016 1:57 AM, Rob Herring wrote:
+> On Wed, Apr 06, 2016 at 11:10:50AM +0800, Phil Reid wrote:
+>> This patch adds basic device tree support for the pca9532 LEDs.
+>>
+>> Signed-off-by: Phil Reid <preid@electromag.com.au>
+>> ---
+>>   .../devicetree/bindings/leds/leds-pca9532.txt      | 32 +++++++++++
+>>   drivers/leds/leds-pca9532.c                        | 63 ++++++++++++++++++++--
+>>   include/dt-bindings/leds/leds-pca9532.h            | 18 +++++++
+>>   include/linux/leds-pca9532.h                       |  8 ++-
+>>   4 files changed, 112 insertions(+), 9 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>>   create mode 100644 include/dt-bindings/leds/leds-pca9532.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>> new file mode 100644
+>> index 0000000..b48c223
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>
+> Would leds-pca953x.txt be more appropriate.
+I have no objection. I just followed the driver file name.
+Other disucssions seem to indicate the preference to move away from
+the 'x' in driver names and just use one of the devices for the name.
+Note that there is a gpio-pca953x driver.
+Which support pca9534-9539 plus other gpio devices.
+Those devices don't have the same functionality as this series.
 
-> >>>What's tricky about patterns is that you need to control 3 (or more)
-> >>>leds at a time. Problem you are trying to solve here is ... control of
-> >>>3 leds, at the same time.
-> >>>
-> >>>So let's solve them together.
-> >>
-> >>OK, now I've got your point. So we'd need to have a means for defining
-> >>patterns. The interface could be located at /sys/class/leds/patterns.
-> >>
-> >>We'd need to have a flexible way for defining LED class devices involved
-> >>in a pattern. Since we cannot guarantee no space in a LED class device
-> >>name, then a single attribute containing space separated list is not an
-> >>option. We'd have to create a predefined set of attributes that would
-> >>contain LED class device name. Predefined implies that it would be
-> >>a fixed number, i.e. either some attributes would always remain unused
-> >>or, which is even worse, we could run out of free attributes for some
-> >>use cases.
-> >
-> >There's a better solution: make pattern behave as a trigger for leds
-> >it controls.
-> >
-> >So we'd have
-> >
-> >/sys/class/leds/patterns/lp5523
-> >
-> >then we'd have
-> >
-> >/sys/class/leds/lp5523::red/trigger = "lp5523:1"
-> >/sys/class/leds/lp5523::green/trigger = "lp5523:2"
-> >/sys/class/leds/lp5523::blue/trigger = "lp5523:3"
-> >
-> >(or something similar, I'd have to boot the n900 to see the exact
-> >names).
-> 
-> How about implementing patterns as a specific typer of triggers?
-> Let's say we have ledtrig-rgb-pattern:
+>
+>> @@ -0,0 +1,32 @@
+>> +*NXP - pca9532 PWM LED Driver
+>> +
+>> +The PCA9532 family is SMBus I/O expander optimized for dimming LEDs.
+>> +The PWM support 256 steps.
+>
+> supports
+>
+>> +
+>> +Required properties:
+>> +	- compatible:
+>> +		"nxp,pca9530"
+>> +		"nxp,pca9531"
+>> +		"nxp,pca9532"
+>> +		"nxp,pca9533"
+>> +	- reg -  I2C slave address
+>> +
+>> +Each led is represented as a sub-node of the nxp,pca9530.
+>> +
+>> +LED sub-node properties:
+>
+> What are sub-node names and how many?
+They don't seem to be important. It's a fallback for when label isn't defined.
+I just following leds-netxbig.txt
 
-Well, we'd need ledtrig-rgb-pattern-1, ledtrig-rgb-pattern-2, ... , as we
-can have more than one rgb led. But yes.
+>
+>> +- type: Output configuration
+>> +	0 = NONE, 1 = LED, 2 = N2100_BEEP, 3 = GPIO
+>
+> Add vendor prefix.
+Done.
+>
+>> +
+>> +Example:
+>> +
+>> +  ledBL: pca9530@60 {
+>> +    compatible = "nxp,pca9530";
+>> +    reg = <0x60>;
+>> +
+>> +    led0 {
+>> +      type = <PCA9532_TYPE_LED>;
+>> +    };
+>> +  };
+>> +
+>> +For more product information please see the link below:
+>> +http://nxp.com/documents/data_sheet/PCA9532.pdf
+>
+> Move this up to the top.
+Done, but note this doesn't follow the layout of other files in the folder.
 
-> After setting a trigger following sysfs attribute would appear
-> in a LED class device sysfs interface:
-> 
-> $cat /sys/class/lp5523::red/rgb_color
-> red green blue [none]
-> 
-> $echo "red" > /sys/class/leds/lp5523::red/rgb_color
-> 
-> and similarly
-> 
-> $echo "green" > /sys/class/leds/lp5523::green/rgb_color
-> $echo "blue" > /sys/class/leds/lp5523::blue/rgb_color
 
-Yes, that would work -- selecting channels from the pattern.
-
-> Similar approach could be applied for blink patterns:
-> There could be additional attributes provided for defining
-> the position in a blink sequence, or/and blink period.
-
-For patterns, I'd suggest array of (r g b time) values.
-
-Pattern engines can do stuff like "slowly turn LED from off to red, then switch color to
-white, then slowly turn it to yellow, then turn it off at once" with defined speeds
-for "slowly" and option of either linear on non-linear brightness ramping.
-
-The last option might be a bit too much, but I believe we should support the rest.
-
-Best regards,
-									Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Regards
+Phil Reid
