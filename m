@@ -1,110 +1,67 @@
-From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
-Subject: Re: [PATCH v2 1/1] leds: pca9532: Add device tree binding
-Date: Mon, 11 Apr 2016 17:25:22 +0800
-Message-ID: <570B6D82.6040807@electromag.com.au>
-References: <1460013772-129968-1-git-send-email-preid@electromag.com.au>
- <1460013772-129968-2-git-send-email-preid@electromag.com.au>
- <5706686F.7070102@samsung.com> <570B42F4.5070002@electromag.com.au>
- <570B628A.4090406@samsung.com>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v5 00/46] pwm: add support for atomic update
+Date: Tue, 12 Apr 2016 00:42:45 +0200
+Message-ID: <20160412004245.715db791@bbrezillon>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <570B628A.4090406-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, riku.voipio-X3B1VOXEql0@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB5OQWC4AKGQE5CFNH6Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <1459368249-13241-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-fbdev@vge
 List-Id: linux-leds@vger.kernel.org
 
-On 11/04/2016 4:38 PM, Jacek Anaszewski wrote:
-> On 04/11/2016 08:23 AM, Phil Reid wrote:
->> On 7/04/2016 10:02 PM, Jacek Anaszewski wrote:
->>> Hi Phil,
->>>
->>> Thanks for the update. Few more remarks below.
->>>
->>> On 04/07/2016 09:22 AM, Phil Reid wrote:
->>>> This patch adds basic device tree support for the pca9532 LEDs.
->>>>
->>>> Signed-off-by: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
->>>> ---
->>>>   .../devicetree/bindings/leds/leds-pca9532.txt      | 42 +++++++++++++
->>>>   drivers/leds/leds-pca9532.c                        | 69
->>>> ++++++++++++++++++++--
->>>>   include/dt-bindings/leds/leds-pca9532.h            | 23 ++++++++
->>>>   include/linux/leds-pca9532.h                       | 18 ++----
->>>>   4 files changed, 135 insertions(+), 17 deletions(-)
->>>>   create mode 100644
->>>> Documentation/devicetree/bindings/leds/leds-pca9532.txt
->>>>   create mode 100644 include/dt-bindings/leds/leds-pca9532.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
->>>> b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
->>>> new file mode 100644
->>>> index 0000000..284b96c
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
->>>> @@ -0,0 +1,42 @@
->>>> +*NXP - pca9532 PWM LED Driver
->>>> +
->>>> +The PCA9532 family is SMBus I/O expander optimized for dimming LEDs.
->>>> +The PWM support 256 steps.
->>>> +
->>>> +Required properties:
->>>> +    - compatible:
->>>> +        "nxp,pca9530"
->>>> +        "nxp,pca9531"
->>>> +        "nxp,pca9532"
->>>> +        "nxp,pca9533"
->>>> +    - reg -  I2C slave address
->>>> +
->>>> +Each led is represented as a sub-node of the nxp,pca9530.
->>>> +
->>>> +Optional sub-node properties:
->>>> +    - label: Name for this LED. If omitted, the label is taken from
->>>> the node name.
->>>
->>> Please also add a reference to common led bindings, as this property is
->>> documented there:
->>> "(see Documentation/devicetree/bindings/leds/common.txt):"
->> done.
->>
->>>
->>>> +    - type: Output configuration, see
->>>> dt-bindings/leds/leds-pca9532.h (default NONE)
->>>> +    - state: Initial LED state (default OFF)
->>>
->>> We already have "default-on" trigger for this purpose.
->> Not sure it does exactly the same thing.
->> This setting also associates a led with a particular PWM controller.
->> The chip has 2 shared PWM that each led can be controlled by.
->
-> default-on trigger sets the LED to max_brightness on init.
-> As I see pca9532_set_brightness() sets PCA9532_ON state if
-> passed LED_FULL and uses PCA9532_PWM0 for other values
-> greater than zero.
->
-> So, maybe it would make more sense if we used default-on trigger to
-> initialize LED to LED_FULL on init, but provide another DT property
-> 'default-pwm' to determine which PWM block should be used by default?
-> Currently I see that driver uses only PWM0:
->
-> led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
->
-> Alternatively the driver could expose a dedicated sysfs attribute
-> for changing the default pwm. This is of course out of this patch
-> scope.
->
-I'll drop the state bit for this patch.
-I ideally need to have the 2 PWMs controlling the LEDs but it's
-going to take a bit more work.
+Hi Thierry,
+
+On Wed, 30 Mar 2016 22:03:23 +0200
+Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+
+> Hello,
+> 
+> This series adds support for atomic PWM update, or IOW, the capability
+> to update all the parameters of a PWM device (enabled/disabled, period,
+> duty and polarity) in one go.
+> 
+> It also adds support for initial PWM state retrieval (or hardware readout),
+> which should allow smooth handover between the bootloader and Linux. For
+> example, critical PWM users (like critical regulators controlled by a PWM)
+> can query the current PWM state, and adapt the PWM config without having
+> to disable/enable the PWM, or abruptly change the period/dutycyle/polarity
+> config.
+> 
+> Thierry, I hope this version meets your expectations, if that's not the
+> case, could you let me know quickly so I can adjust the implementation
+> accordingly (I'd really like to get most of those changes in 4.7).
+
+Still haven't had a clear feedback from your side on this series (you
+commented on a few details, but nothing on the general approach). Could
+you please have at a quick look at it, and let me know if I should
+adjust the implementation?
+
+Note that I plan to send a new version  addressing comments made by
+other maintainers/developers by the end of the week. In the meantime,
+could you have a look at the first set of patches (patch 1 to 4 are
+completely independent), and apply them if you're happy with it.
+
+As you can see, I now have a lot of patches. This helps in showing the
+big picture, but also annoys people when I send this 50+ patchset. So,
+if you don't mind, I'd like to drop the changes touching PWM user
+drivers (to make them use the atomic API) until we get the other parts
+applied.
+
+Thanks,
+
+Boris
 
 -- 
-Regards
-Phil Reid
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
