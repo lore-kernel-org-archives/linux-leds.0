@@ -1,73 +1,58 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 0/4] LED trigger on MTD activity
-Date: Wed, 13 Apr 2016 10:36:22 +0200
-Message-ID: <570E0506.4040705@samsung.com>
-References: <1460494002-8578-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: [PATCH v2 0/3] Extend the LED panic trigger
+Date: Wed, 13 Apr 2016 15:08:16 -0300
+Message-ID: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19949 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754681AbcDMIg1 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Apr 2016 04:36:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O5K00IDRD8O7L00@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Wed, 13 Apr 2016 09:36:24 +0100 (BST)
-In-reply-to: <1460494002-8578-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Received: from mail-qg0-f41.google.com ([209.85.192.41]:34863 "EHLO
+	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754124AbcDMSIi (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Apr 2016 14:08:38 -0400
+Received: by mail-qg0-f41.google.com with SMTP id f105so49380328qge.2
+        for <linux-leds@vger.kernel.org>; Wed, 13 Apr 2016 11:08:38 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: linux-mtd@lists.infradead.org, linux-leds@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 
-Hi Ezequiel,
+As per commit 916fe619951f ("leds: trigger: Introduce a kernel
+panic LED trigger"), the kernel now supports a new LED trigger
+to hook on the panic blink.
 
-Thanks for the update. From the previous discussion I've inferred
-that it has been agreed on the whole patch to go through the LED tree.
+However, the only way of using this is to dedicate a LED device
+to this function.
 
-Applied whole patch set to the for-next branch of linux-leds.git,
-with acks from Boris, then.
+To overcome this limitation, the present series introduces the
+capability to switch the LED trigger of certain LED devices upon
+a kernel panic (using the panic notifier).
 
-Thanks,
-Jacek Anaszewski
+The decision of which LEDs should be switched to the panic trigger
+is left to each LED device driver. As an example, a devicetree
+boolean property is introduced and used in the leds-gpio driver.
 
-On 04/12/2016 10:46 PM, Ezequiel Garcia wrote:
-> After our recent discussion [1], here's a proper patchset.
->
-> The first patch is a minor cleanup which moves mtd_write_oob
-> out of mtd.h header.
->
-> The second patch introduces the LED MTD trigger.
->
-> The third patch removes the "nand-disk" LED trigger
-> from the NAND core.
->
-> The fourth patch completes the series by calling ledtrig_mtd_activity
-> on all MTD I/O activity paths.
->
-> Changes from v1:
->
->    * Split the patches, suggested by Boris.
->
-> Feedback is welcome!
->
-> [1] http://www.spinics.net/lists/linux-leds/msg05906.html
->
-> Ezequiel Garcia (4):
->    mtd: Uninline mtd_write_oob and move it to mtdcore.c
->    leds: trigger: Introduce a MTD (NAND/NOR) trigger
->    mtd: nand: Remove the "nand-disk" LED trigger
->    mtd: Hook I/O activity to the MTD LED trigger
->
->   drivers/leds/trigger/Kconfig       |  8 +++++++
->   drivers/leds/trigger/Makefile      |  1 +
->   drivers/leds/trigger/ledtrig-mtd.c | 45 ++++++++++++++++++++++++++++++++++++++
->   drivers/mtd/mtdcore.c              | 19 ++++++++++++++++
->   drivers/mtd/nand/nand_base.c       | 29 +-----------------------
->   include/linux/leds.h               |  6 +++++
->   include/linux/mtd/mtd.h            | 12 +---------
->   7 files changed, 81 insertions(+), 39 deletions(-)
->   create mode 100644 drivers/leds/trigger/ledtrig-mtd.c
->
+Feedback and other ideas on how to implement this are most welcomed.
+
+Changes from v1:
+
+  * Dropped the led_trigger_event_nosleep API, and instead just
+    clear the blink_delay_{on, off} when the panic is notified. 
+    This results in less changes.
+
+  * Changed the flag to LED_PANIC_INDICATOR, as requested by Jacek.
+
+  * Changed the firmware property name to "panic-indicator", as
+    requested by Jacek. 
+
+Ezequiel Garcia (3):
+  leds: triggers: Allow to switch the trigger to "panic" on a kernel
+    panic
+  devicetree: leds: Introduce "panic-indicator" optional property
+  leds: gpio: Support the "panic-indicator" firmware property
+
+ Documentation/devicetree/bindings/leds/common.txt |  3 ++
+ drivers/leds/led-triggers.c                       | 57 +++++++++++++++++++++++
+ drivers/leds/leds-gpio.c                          |  4 ++
+ include/linux/leds.h                              |  2 +
+ 4 files changed, 66 insertions(+)
+
+-- 
+2.7.0
