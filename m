@@ -1,71 +1,53 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2 0/4] LED trigger on MTD activity
-Date: Tue, 12 Apr 2016 22:58:48 +0200
-Message-ID: <20160412225848.7c386393@bbrezillon>
-References: <1460494002-8578-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 03/46] backlight: lm3630a_bl: stop
+ messing with the pwm->period field
+Date: Wed, 13 Apr 2016 09:25:11 +0100
+Message-ID: <20160413082511.GL8094@x1>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-4-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412110809.GI18882@ulmo.ba.sec> <20160412141613.GI8094@x1>
+ <20160412142608.GB25006@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:47956 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756364AbcDLU64 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 Apr 2016 16:58:56 -0400
-In-Reply-To: <1460494002-8578-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20160412142608.GB25006@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Milo Kim <milo.kim@ti.com>, Kamil Debski <k.debski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@baylibre.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Daniel Vetter <daniel.vetter@intel.com>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Jonathan Corbet <corbet@lwn.net>, lm-sensors@lm-sensors.org, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-input@vger.kernel.
 List-Id: linux-leds@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: linux-mtd@lists.infradead.org, linux-leds@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Tue, 12 Apr 2016 17:46:38 -0300
-Ezequiel Garcia <ezequiel@vanguardiasur.com.ar> wrote:
-
-> After our recent discussion [1], here's a proper patchset.
-> 
-> The first patch is a minor cleanup which moves mtd_write_oob
-> out of mtd.h header.
-> 
-> The second patch introduces the LED MTD trigger.
-> 
-> The third patch removes the "nand-disk" LED trigger
-> from the NAND core.
-> 
-> The fourth patch completes the series by calling ledtrig_mtd_activity
-> on all MTD I/O activity paths.
-
-LGTM.
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> 
-> Changes from v1:
-> 
->   * Split the patches, suggested by Boris.
-> 
-> Feedback is welcome!
-> 
-> [1] http://www.spinics.net/lists/linux-leds/msg05906.html
-> 
-> Ezequiel Garcia (4):
->   mtd: Uninline mtd_write_oob and move it to mtdcore.c
->   leds: trigger: Introduce a MTD (NAND/NOR) trigger
->   mtd: nand: Remove the "nand-disk" LED trigger
->   mtd: Hook I/O activity to the MTD LED trigger
-> 
->  drivers/leds/trigger/Kconfig       |  8 +++++++
->  drivers/leds/trigger/Makefile      |  1 +
->  drivers/leds/trigger/ledtrig-mtd.c | 45 ++++++++++++++++++++++++++++++++++++++
->  drivers/mtd/mtdcore.c              | 19 ++++++++++++++++
->  drivers/mtd/nand/nand_base.c       | 29 +-----------------------
->  include/linux/leds.h               |  6 +++++
->  include/linux/mtd/mtd.h            | 12 +---------
->  7 files changed, 81 insertions(+), 39 deletions(-)
->  create mode 100644 drivers/leds/trigger/ledtrig-mtd.c
-> 
-
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+T24gVHVlLCAxMiBBcHIgMjAxNiwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cgo+IE9uIFR1ZSwgQXBy
+IDEyLCAyMDE2IGF0IDAzOjE2OjEzUE0gKzAxMDAsIExlZSBKb25lcyB3cm90ZToKPiA+IE9uIFR1
+ZSwgMTIgQXByIDIwMTYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ID4gCj4gPiA+IE9uIFdlZCwg
+TWFyIDMwLCAyMDE2IGF0IDEwOjAzOjI2UE0gKzAyMDAsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToK
+PiA+ID4gPiBwd20tPnBlcmlvZCBmaWVsZCBpcyBub3Qgc3VwcG9zZWQgdG8gYmUgY2hhbmdlZCBi
+eSBQV00gdXNlcnMuIFRoZSBvbmx5Cj4gPiA+ID4gb25lcyBhdXRob3JpemVkIHRvIGNoYW5nZSBp
+dCBhcmUgdGhlIFBXTSBjb3JlIGFuZCBQV00gZHJpdmVycy4KPiA+ID4gPiAKPiA+ID4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9u
+cy5jb20+Cj4gPiA+ID4gLS0tCj4gPiA+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xtMzYz
+MGFfYmwuYyB8IDMgKy0tCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwg
+MiBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IEFwcGxpZWQsIHRoYW5rcy4KPiA+IAo+ID4gQXBw
+bGllZD8KPiAKPiBZb3UgZGlkbid0IHNwZWNpZmljYWxseSBBY2sgdGhpcyBvbmUsIGJ1dCBJIHBy
+ZXN1bWVkIHRoYXQgc2luY2UgdGhlCj4gY2hhbmdlIGlzIGVzc2VudGlhbGx5IHRoZSBzYW1lIGFz
+IGZvciBwd20tYmFja2xpZ2h0LCBhbmQgdGhpcyBpcyBhbm90aGVyCj4gcHJlcmVxdWlzaXRlIGZv
+ciB0aGUgcmVtYWluZGVyIG9mIHRoZSBzZXJpZXMgaXQgc2hvdWxkIGdvIGluIHRocm91Z2ggdGhl
+Cj4gUFdNIHRyZWUgYXMgd2VsbC4KCklmIHlvdSdyZSB0YWtpbmcgQmFja2xpZ2h0IHBhdGNoZXMg
+dGhyb3VnaCBhICFCYWNrbGlnaHQgdHJlZSwgeW91J3JlCmdvaW5nIHRvIGhhdmUgdG8gc2VuZCBv
+dXQgYSBwdWxsLXJlcXVlc3QuICBUaGVyZSBhcmUgbm8gY29uZmxpY3RzCmN1cnJlbnRseSwgc28g
+SSB3b24ndCB1c2UgaXQgcmlnaHQgYXdheSwgYnV0IEkgbmVlZCBpdCBpbiBteSBhcnNlbmFsCmlm
+IHRoZXkgZG8gb2NjdXIuCgotLSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3Mg
+TGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9y
+IEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxp
+bmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
