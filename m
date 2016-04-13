@@ -1,66 +1,114 @@
 From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: [PATCH v2 3/3] leds: gpio: Support the "panic-indicator" firmware property
-Date: Wed, 13 Apr 2016 15:08:19 -0300
-Message-ID: <1460570899-24642-4-git-send-email-ezequiel@vanguardiasur.com.ar>
+Subject: [PATCH v2 1/3] leds: triggers: Allow to switch the trigger to "panic" on a kernel panic
+Date: Wed, 13 Apr 2016 15:08:17 -0300
+Message-ID: <1460570899-24642-2-git-send-email-ezequiel@vanguardiasur.com.ar>
 References: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qg0-f41.google.com ([209.85.192.41]:34700 "EHLO
-	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754865AbcDMSIw (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Apr 2016 14:08:52 -0400
-Received: by mail-qg0-f41.google.com with SMTP id c6so49407439qga.1
-        for <linux-leds@vger.kernel.org>; Wed, 13 Apr 2016 11:08:51 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+List-Id: linux-leds@vger.kernel.org
 
-Calling a GPIO LEDs is quite likely to work even if the kernel
-has paniced, so they are ideal to blink in this situation.
-This commit adds support for the new "panic-indicator"
-firmware property, allowing to mark a given LED to blink on
-a kernel panic.
+This commit adds a new led_cdev flag LED_PANIC_INDICATOR, which
+allows to mark a specific LED to be switched to the "panic"
+trigger, on a kernel panic.
+
+This is useful to allow the user to assign a regular trigger
+to a given LED, and still blink that LED on a kernel panic.
 
 Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 ---
- drivers/leds/leds-gpio.c | 4 ++++
- include/linux/leds.h     | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/leds/led-triggers.c | 57 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/leds.h        |  1 +
+ 2 files changed, 58 insertions(+)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 61143f55597e..8229f063b483 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -127,6 +127,8 @@ static int create_gpio_led(const struct gpio_led *template,
- 	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
- 	if (!template->retain_state_suspended)
- 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
-+	if (template->panic_indicator)
-+		led_dat->cdev.flags |= LED_PANIC_INDICATOR;
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 2181581795d3..d27020daf711 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -148,6 +148,48 @@ void led_trigger_remove(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_remove);
  
- 	ret = gpiod_direction_output(led_dat->gpiod, state);
- 	if (ret < 0)
-@@ -200,6 +202,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
++/*
++ * This is a called in a special context by the atomic panic
++ * notifier. This means the trigger can be changed without
++ * worrying about locking.
++ */
++static void led_trigger_set_panic(struct led_classdev *led_cdev)
++{
++	struct led_trigger *trig;
++
++	list_for_each_entry(trig, &trigger_list, next_trig) {
++		if (strcmp("panic", trig->name))
++			continue;
++		if (led_cdev->trigger)
++			list_del(&led_cdev->trig_list);
++		list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
++
++		/* Avoid the delayed blink path */
++		led_cdev->blink_delay_on = 0;
++		led_cdev->blink_delay_off = 0;
++
++		led_cdev->trigger = trig;
++		if (trig->activate)
++			trig->activate(led_cdev);
++		break;
++	}
++}
++
++static int led_trigger_panic_notifier(struct notifier_block *nb,
++				      unsigned long code, void *unused)
++{
++	struct led_classdev *led_cdev;
++
++	list_for_each_entry(led_cdev, &leds_list, node)
++		if (led_cdev->flags & LED_PANIC_INDICATOR)
++			led_trigger_set_panic(led_cdev);
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block led_trigger_panic_nb = {
++	.notifier_call = led_trigger_panic_notifier,
++};
++
+ void led_trigger_set_default(struct led_classdev *led_cdev)
+ {
+ 	struct led_trigger *trig;
+@@ -356,6 +398,21 @@ void led_trigger_unregister_simple(struct led_trigger *trig)
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_unregister_simple);
  
- 		if (fwnode_property_present(child, "retain-state-suspended"))
- 			led.retain_state_suspended = 1;
-+		if (fwnode_property_present(child, "panic-indicator"))
-+			led.panic_indicator = 1;
- 
- 		ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
- 				      dev, NULL);
++static int __init leds_trigger_init(void)
++{
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &led_trigger_panic_nb);
++	return 0;
++}
++
++static void __exit leds_trigger_exit(void)
++{
++	atomic_notifier_chain_unregister(&panic_notifier_list,
++					 &led_trigger_panic_nb);
++}
++module_init(leds_trigger_init);
++module_exit(leds_trigger_exit);
++
+ MODULE_AUTHOR("Richard Purdie");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("LED Triggers Core");
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 49adf9c6e326..1067fb5f9296 100644
+index f203a8f89d30..49adf9c6e326 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -359,6 +359,7 @@ struct gpio_led {
- 	unsigned 	gpio;
- 	unsigned	active_low : 1;
- 	unsigned	retain_state_suspended : 1;
-+	unsigned	panic_indicator : 1;
- 	unsigned	default_state : 2;
- 	/* default_state should be one of LEDS_GPIO_DEFSTATE_(ON|OFF|KEEP) */
- 	struct gpio_desc *gpiod;
+@@ -50,6 +50,7 @@ struct led_classdev {
+ #define LED_SYSFS_DISABLE	(1 << 22)
+ #define LED_DEV_CAP_FLASH	(1 << 23)
+ #define LED_HW_PLUGGABLE	(1 << 24)
++#define LED_PANIC_INDICATOR	(1 << 25)
+ 
+ 	/* Set LED brightness level
+ 	 * Must not sleep. Use brightness_set_blocking for drivers
 -- 
 2.7.0
