@@ -1,37 +1,43 @@
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: [PATCH v2 2/3] devicetree: leds: Introduce "panic-indicator" optional property
-Date: Wed, 13 Apr 2016 15:08:18 -0300
-Message-ID: <1460570899-24642-3-git-send-email-ezequiel@vanguardiasur.com.ar>
-References: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v2 0/4] LED trigger on MTD activity
+Date: Wed, 13 Apr 2016 20:39:05 +0200
+Message-ID: <20160413203905.06371b4c@bbrezillon>
+References: <1460494002-8578-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+	<570E0506.4040705@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:50414 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750882AbcDMSjI (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Apr 2016 14:39:08 -0400
+In-Reply-To: <570E0506.4040705@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-mtd@lists.infradead.org, linux-leds@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>
 
-It's desirable to specify which LEDs are to be blinked on a kernel
-panic. Therefore, introduce a devicetree boolean property to mark
-which LEDs should be treated this way, if possible.
+Hi Jacek,
 
-Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
----
- Documentation/devicetree/bindings/leds/common.txt | 3 +++
- 1 file changed, 3 insertions(+)
+On Wed, 13 Apr 2016 10:36:22 +0200
+Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 68419843e32f..7b646a7808ce 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -37,6 +37,9 @@ Optional properties for child nodes:
-                      property is mandatory for the LEDs in the non-flash modes
-                      (e.g. torch or indicator).
- 
-+- panic-indicator : This properties specifies that the LED should be used,
-+		    if at all possible, as a panic indicator.
-+
- Required properties for flash LED child nodes:
- - flash-max-microamp : Maximum flash LED supply current in microamperes.
- - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
+> Hi Ezequiel,
+> 
+> Thanks for the update. From the previous discussion I've inferred
+> that it has been agreed on the whole patch to go through the LED tree.
+> 
+> Applied whole patch set to the for-next branch of linux-leds.git,
+> with acks from Boris, then.
+
+Can you provide an immutable branch containing those changes?
+
+Thanks,
+
+Boris
+
 -- 
-2.7.0
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
