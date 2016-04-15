@@ -1,42 +1,72 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 16/24] ARM: explicitly apply PWM config
- extracted from pwm_args
-Date: Fri, 15 Apr 2016 10:17:17 +0200
-Message-ID: <5710A38D.3050202@samsung.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
- <1460661464-11216-17-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 1/4] leds: core: add generic support for RGB Color
+ LED's
+Date: Fri, 15 Apr 2016 13:53:30 +0200
+Message-ID: <20160415115330.GA18196@amd>
+References: <20160401211844.GA21768@amd>
+ <5702DDD2.2030902@gmail.com>
+ <20160405090141.GA23282@amd>
+ <570415C4.5070003@gmail.com>
+ <20160406085248.GB10196@amd>
+ <5704DC93.6050104@gmail.com>
+ <20160407204540.GA11202@amd>
+ <5707FCC0.6000204@gmail.com>
+ <20160409160142.GD19362@xo-6d-61-c0.localdomain>
+ <570CA014.7000709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDKZNNNLXAHBBFOHYK4AKGQEWRDNIII-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-reply-to: <1460661464-11216-17-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-fbdev@vg
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56292 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428AbcDOLxh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 15 Apr 2016 07:53:37 -0400
+Content-Disposition: inline
+In-Reply-To: <570CA014.7000709@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Greg KH <greg@kroah.com>, linux-leds@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, pali.rohar@gmail.com, sre@kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, serge@hallyn.com
 
-On 04/14/2016 09:17 PM, Boris Brezillon wrote:
-> Call pwm_apply_args() just after requesting the PWM device so that the
-> polarity and period are initialized according to the information provided
-> in pwm_args.
-> 
-> This is an intermediate state, and pwm_apply_args() should be dropped as
-> soon as the atomic PWM infrastructure is in place and the driver makes
-> use of it.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+Hi!
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>How about implementing patterns as a specific typer of triggers?
+> >>Let's say we have ledtrig-rgb-pattern:
+> >
+> >Well, we'd need ledtrig-rgb-pattern-1, ledtrig-rgb-pattern-2, ... , as we
+> >can have more than one rgb led. But yes.
+> 
+> Triggers can have many listeners, i.e. led_trigger_event() sets
+> brightness on all LED class devices registered on given trigger.
+> We could have led_trigger_rgb_event() that would set brightness
+> on all groups-of-three LEDs registered on given rgb-trigger.
+
+I do not understand that.
+
+> I agree that ledtrig-rgb-pattern-1, ledtrig-rgb-pattern-2, etc. would
+> be also needed to add a capability of setting different colors on
+> different LED devices.
+
+Ok.
+
+> >For patterns, I'd suggest array of (r g b time) values.
+> >
+> >Pattern engines can do stuff like "slowly turn LED from off to red, then switch color to
+> >white, then slowly turn it to yellow, then turn it off at once" with defined speeds
+> >for "slowly" and option of either linear on non-linear brightness ramping.
+> >
+> >The last option might be a bit too much, but I believe we should support the rest.
+> 
+> Yes, that's an interesting idea. It also turns out that trigger based
+> patterns could be also used for defining generic patterns for a group
+> of monochrome LEDs.
+
+Yes, controlling monochrome LEDs synchronously is another task for
+patterns. Actually, N900 uses that to control 6 keyboard backlight
+LEDs synchronously... and yes, it would be somehow nice to preserve
+this functionality.
 
 Best regards,
-Krzysztof
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
