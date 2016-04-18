@@ -1,64 +1,27 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH] leds: ledtrig-ide-disk: Move ide_blink_delay to
- ledtrig_ide_activity()
-Date: Mon, 18 Apr 2016 16:57:15 +0200
-Message-ID: <20160418165715.4668ffa0@bbrezillon>
-References: <1460990446-24700-1-git-send-email-j.anaszewski@samsung.com>
+From: andreas11@elisaandreas.biz
+Subject: Greetings!!!
+Date: Mon, 18 Apr 2016 18:43:22 +0100
+Message-ID: <148752.90403.qm__13871.8703914948$1461001520$gmane$org@smtp106.biz.mail.gq1.yahoo.com>
+Reply-To: J_ericdaniels111@outlook.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:52470 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752041AbcDRO5S (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 18 Apr 2016 10:57:18 -0400
-In-Reply-To: <1460990446-24700-1-git-send-email-j.anaszewski@samsung.com>
+Received: from smtp106.biz.mail.gq1.yahoo.com ([98.137.12.181]:29493 "EHLO
+	smtp106.biz.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753319AbcDRRny convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 18 Apr 2016 13:43:54 -0400
+Content-Description: Mail message body
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, ezequiel@vanguardiasur.com.ar, pavel@ucw.cz
+To: "Mr. Eric" <andreas11@elisaandreas.biz>
 
-On Mon, 18 Apr 2016 16:40:46 +0200
-Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
-
-> Parameters delay_on and delay_off of led_trigger_blink_oneshot()
-> are pointers, to enable blink interval adjustment by LED class drivers
-> of the controllers that implement hardware blinking.
-> 
-> Move ide_blink_delay variable to ledtrig_ide_activity() in order to
-> prevent the situation when adjustment committed by one LED class
-> driver influences blink interval of the software fallback blink feature,
-> that is applied to the drivers that don't implement blink_set op.
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> ---
->  drivers/leds/trigger/ledtrig-ide-disk.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-ide-disk.c b/drivers/leds/trigger/ledtrig-ide-disk.c
-> index c02a3ac..15123d3 100644
-> --- a/drivers/leds/trigger/ledtrig-ide-disk.c
-> +++ b/drivers/leds/trigger/ledtrig-ide-disk.c
-> @@ -18,10 +18,11 @@
->  #define BLINK_DELAY 30
->  
->  DEFINE_LED_TRIGGER(ledtrig_ide);
-> -static unsigned long ide_blink_delay = BLINK_DELAY;
->  
->  void ledtrig_ide_activity(void)
->  {
-> +	unsigned long ide_blink_delay = BLINK_DELAY;
-> +
->  	led_trigger_blink_oneshot(ledtrig_ide,
->  				  &ide_blink_delay, &ide_blink_delay, 0);
->  }
-
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Hi, how are you? My name is J Eric Denials, External Financial Auditor =
+at Lloyds Banking Group plc., London. It is a pleasure to contact you a=
+t this time through this medium. I have a cool and legitimate deal to d=
+o with you as you're a foreigner, it will be mutually beneficial to bot=
+h. If you=E2=80=99re interested, urgently, get back to me for more expl=
+anation about the deal.
+Regards
+Eric
