@@ -1,27 +1,27 @@
-From: andreas11@elisaandreas.biz
-Subject: Greetings!!!
-Date: Mon, 18 Apr 2016 18:43:22 +0100
-Message-ID: <148752.90403.qm__13871.8703914948$1461001520$gmane$org@smtp106.biz.mail.gq1.yahoo.com>
-Reply-To: J_ericdaniels111@outlook.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from smtp106.biz.mail.gq1.yahoo.com ([98.137.12.181]:29493 "EHLO
-	smtp106.biz.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753319AbcDRRny convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 18 Apr 2016 13:43:54 -0400
-Content-Description: Mail message body
-Sender: linux-leds-owner@vger.kernel.org
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH] driver: leds: is31fl3196/99 dimmable dual/triple rgb driver
+Date: Mon, 18 Apr 2016 20:43:15 +0200
+Message-ID: <cover.1461004995.git.hns@goldelico.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org
 List-Id: linux-leds@vger.kernel.org
-To: "Mr. Eric" <andreas11@elisaandreas.biz>
 
-Hi, how are you? My name is J Eric Denials, External Financial Auditor =
-at Lloyds Banking Group plc., London. It is a pleasure to contact you a=
-t this time through this medium. I have a cool and legitimate deal to d=
-o with you as you're a foreigner, it will be mutually beneficial to bot=
-h. If you=E2=80=99re interested, urgently, get back to me for more expl=
-anation about the deal.
-Regards
-Eric
+This patch adds a driver for the is31fl3196/99 dimmable dual/triple rgb controller chips from ISSI.
+
+H. Nikolaus Schaller (1):
+  drivers: led: is31fl319x: 6/9-channel light effect led driver
+
+ .../devicetree/bindings/leds/is31fl319x.txt        |  41 +++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-is31fl319x.c                     | 406 +++++++++++++++++++++
+ include/linux/leds-is31fl319x.h                    |  24 ++
+ 5 files changed, 480 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
+ create mode 100644 drivers/leds/leds-is31fl319x.c
+ create mode 100644 include/linux/leds-is31fl319x.h
+
+-- 
+2.7.3
