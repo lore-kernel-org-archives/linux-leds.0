@@ -1,35 +1,30 @@
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
 Subject: Re: [PATCH] drivers: led: is31fl319x: 6/9-channel light effect led driver
-Date: Tue, 19 Apr 2016 19:21:05 +0200
-Message-ID: <80A3B3D8-2309-4A41-91F9-4A2EE6DDF975@goldelico.com>
-References: <cover.1461004995.git.hns@goldelico.com> <75127f4bf2bb11343bdff5bfb1129a092e668c61.1461004995.git.hns@goldelico.com> <20160418212504.29d67592.drivshin.allworx@gmail.com>
+Date: Tue, 19 Apr 2016 19:21:09 +0200
+Message-ID: <DE691B2A-3CE5-4AB7-B72D-A4C45CD70A0C@goldelico.com>
+References: <cover.1461004995.git.hns@goldelico.com> <75127f4bf2bb11343bdff5bfb1129a092e668c61.1461004995.git.hns@goldelico.com> <5715F6EF.9090909@samsung.com>
 Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.163]:37995 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753166AbcDSRYY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2016 13:24:24 -0400
-In-Reply-To: <20160418212504.29d67592.drivshin.allworx@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5715F6EF.9090909@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org
 List-Id: linux-leds@vger.kernel.org
-To: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org
 
-Hi David,
+Hi Jacek,
 
-
-> Am 19.04.2016 um 03:25 schrieb David Rivshin (Allworx) <drivshin.allworx@gmail.com>:
+> Am 19.04.2016 um 11:14 schrieb Jacek Anaszewski <j.anaszewski@samsung.com>:
 > 
 > Hi Nikolaus,
 > 
-> I recently submitted a driver for the IS31FL32xx family of devices, so
-> this driver caught my eye. I have a few comments below.
+> Thanks for the patch. Please refer to my remarks in the code.
+
+Thanks for the remarks!
+
 > 
-> On Mon, 18 Apr 2016 20:43:16 +0200
-> "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
-> 
+> On 04/18/2016 08:43 PM, H. Nikolaus Schaller wrote:
 >> This is a driver for the Integrated Silicon Solution Inc. LED driver
 >> chips IS31FL3196 and IS31FL3199. They can drive up to 6 or 9
 >> LEDs.
@@ -54,15 +49,15 @@ Hi David,
 >> 
 >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 >> ---
->> .../devicetree/bindings/leds/is31fl319x.txt        |  41 +++
->> drivers/leds/Kconfig                               |   8 +
->> drivers/leds/Makefile                              |   1 +
->> drivers/leds/leds-is31fl319x.c                     | 406 +++++++++++++++++++++
->> include/linux/leds-is31fl319x.h                    |  24 ++
->> 5 files changed, 480 insertions(+)
->> create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
->> create mode 100644 drivers/leds/leds-is31fl319x.c
->> create mode 100644 include/linux/leds-is31fl319x.h
+>>  .../devicetree/bindings/leds/is31fl319x.txt        |  41 +++
+>>  drivers/leds/Kconfig                               |   8 +
+>>  drivers/leds/Makefile                              |   1 +
+>>  drivers/leds/leds-is31fl319x.c                     | 406 +++++++++++++++++++++
+>>  include/linux/leds-is31fl319x.h                    |  24 ++
+>>  5 files changed, 480 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
+>>  create mode 100644 drivers/leds/leds-is31fl319x.c
+>>  create mode 100644 include/linux/leds-is31fl319x.h
 >> 
 >> diff --git a/Documentation/devicetree/bindings/leds/is31fl319x.txt b/Documentation/devicetree/bindings/leds/is31fl319x.txt
 >> new file mode 100644
@@ -75,33 +70,56 @@ Hi David,
 >> +Required properties:
 >> +- compatible : should be : "issi,is31fl3196" or "issi,is31fl3199".
 > 
-> From a quick look at the datasheets, I believe the Si-En SN3199 [1] 
-> is the same as the ISSI IS31FL3199. ISSI purchased Si-En in 2011,
-> and looks to have rebranded Si-En's existing LED controllers. 
-> Assuming the SN3199 is indeed the same as the IS31FL3199, I would
-> suggest adding a compatible string of "si-en,sn3199" both here
-> and in the driver itself (and update the Kconfig text as well). 
-> 
-> [1] http://www.si-en.com/product.asp?parentid=890
+> s/should be :/Should be/
 
-Sounds reasonable. Added.
+done.
 
 > 
 >> +- #address-cells: must be 1
 >> +- #size-cells: must be 0
+> 
+> s/must/Must/
+> 
+> Please begin the property description with a capital letter,
+> and also end it with a dot.
+> This remark applies also to the other properties.
+
+Done.
+
+> 
 >> +- reg: 0x64, 0x65, 0x66, 0x67.
 >> +
 >> +Optional properties:
 >> +- max-current-ma:	maximum led current (5..40 mA, default 20 mA)
+> 
+> There is leds-max-microamp property for this -
+> see Documentation/devicetree/bindings/leds/common.txt.
+
+Ah, I wasn't aware that this property should also apply to the whole chip (in that
+document it is described as a property for each individual LED).
+
+Renamed.
+
+> I'd rephrase this as follows:
+> 
+> - led-max-microamp: See Documentation/devicetree/bindings/leds/common.txt.
+>        Valid values: 50000 - 400000, step by (?) (rounded {up|down})
+>        Default: 20000
+> 
 >> +- audio-gain-db:	audio gain selection (0..21 dB. default 0 dB)
+> 
+> Please follow the aforementioned "Valid values" pattern.
+> It would also be nice to have more informative description on the
+> purpose of this property.
+
+Done.
+
+> 
 >> +- breathing & audio:	not implemented
 > 
-> I'm not certain, but that last line feels wrong to me. I would expect
-> to see just defined properties in this section, while that is more
-> commentary. I would just leave it out, myself.
+> There is no point in documenting unused properties.
 
-Yes, you are right. We had planned to add something and written the bindings
-document first but never implemented it (because we don't need it any more).
+Done.
 
 > 
 >> +
@@ -110,41 +128,13 @@ document first but never implemented it (because we don't need it any more).
 >> +LED sub-node properties:
 >> +- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
 >> +- reg : number of LED line (0 to 5 or 0 to 8 - not all need to be present)
-> 
-> Since the datasheets for these devices name the outputs "OUT1" through 
-> "OUT6"/"OUT9", I believe the correct range for the 'reg' property should 
-> be 1-6 and 1-9. At least that was the result of a discussion with Rob
-> Herring [2], and therefore how the IS31FL32xx binding/driver was done.
-> It also makes devicetrees easier to write relative to schematics which 
-> likely use the OUT1-N naming.
-> 
-> [2] http://www.spinics.net/lists/devicetree/msg116019.html
-
-Ok, done.
-
-> 
-> 
 >> +- linux,default-trigger : (optional)
 >> +   see Documentation/devicetree/bindings/leds/common.txt
 >> +
 >> +Examples:
 >> +
 >> +fancy_leds: is31fl3196@65 {
-> 
-> I believe the current preference would be to name the node by
-> its function, rather than the device. For example:
-> 	fancy_leds: leds@65
-
-Updated.
-
-> 
 >> +	compatible = "issi,is31fl319x";
-> 
-> I believe this should be "issi,is31fl3196" here.
-
-Indeed.
-
-> 
 >> +	#address-cells = <1>;
 >> +	#size-cells = <0>;
 >> +	reg = <0x65>;
@@ -160,69 +150,45 @@ Indeed.
 >> +		linux,default-trigger = "default-on";
 >> +	};
 >> +};
->> +
+> 
+> Generally I prefer to have DT bindings documentation in a separate
+> patch.
+
+Yes, you are right and not only you prefer it :)
+It just gets forgotten for such simple drivers...
+
+> 
 >> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
 >> index 2251478..f099bcb 100644
 >> --- a/drivers/leds/Kconfig
 >> +++ b/drivers/leds/Kconfig
 >> @@ -491,6 +491,14 @@ config LEDS_ASIC3
->> 	  cannot be used. This driver supports hardware blinking with an on+off
->> 	  period from 62ms to 125s. Say Y to enable LEDs on the HP iPAQ hx4700.
+>>  	  cannot be used. This driver supports hardware blinking with an on+off
+>>  	  period from 62ms to 125s. Say Y to enable LEDs on the HP iPAQ hx4700.
 >> 
 >> +config LEDS_IS31FL319X
 >> +	tristate "LED Support for IS31FL319x I2C chip"
-> 
-> Pedantic: "chips" (plural) seems appropriate here.
-
-:)
-
-> 
 >> +	depends on LEDS_CLASS && I2C
 >> +	help
 >> +	  This option enables support for LEDs connected to IS31FL3196
 >> +	  or IS31FL3199 LED driver chips accessed via the I2C bus.
 >> +	  Driver support brightness control and hardware-assisted blinking.
-> 
-> Pedantic: "supports" seems appropriate here.
-
-Ok.
-
-> 
-> I don't think this matters much, but I'm curious: any reason why this entry
-> is inserted in the middle of the list, rather than at the end?
-
-Hm. Probably by accident. We were working on it for a while and maybe
-appended it somewhere reasonable and rebasing has moved it around.
-
-> Or better, 
-> right before/after the IS31FL32XX entry?
-
-Ah, we were not aware that it exists. It appeared some weeks ago, right?
-
-Yes, that would be the logical position and IMHO before the FL32.
-
-I have also harmonized the config help with the is21fl32.
-
-> 
 >> +
->> config LEDS_TCA6507
->> 	tristate "LED Support for TCA6507 I2C chip"
->> 	depends on LEDS_CLASS && I2C
+>>  config LEDS_TCA6507
+>>  	tristate "LED Support for TCA6507 I2C chip"
+>>  	depends on LEDS_CLASS && I2C
 >> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
 >> index cb2013d..eee3010 100644
 >> --- a/drivers/leds/Makefile
 >> +++ b/drivers/leds/Makefile
 >> @@ -37,6 +37,7 @@ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
->> obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
->> obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
->> obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+>>  obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
+>>  obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+>>  obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
 >> +obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
-> 
-> Ditto.
-> 
->> obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
->> obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
->> obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+>>  obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+>>  obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
+>>  obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
 >> diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
 >> new file mode 100644
 >> index 0000000..e211c46
@@ -241,27 +207,6 @@ I have also harmonized the config help with the is21fl32.
 >> + * directory of this archive for more details.
 >> + *
 >> + * LED driver for the IS31FL3196/99 to drive 6 or 9 light effect LEDs.
-> 
-> I see that there are also 3190, 3191, and 3193 devices. Is it reasonable
-> to think that support for those devices could be added to this driver
-> in the future? I'm merely thinking of it from the POV that it is named
-> is31fl319x.c. 
-
-I wasn't even aware of the 0/1/3 variants. I have checked with the data
-sheet and could not find any significant difference except the number
-of outputs and which output pads are available.
-
-Since there isn't even any difference between the 3190 and 3191 except
-the date of publication, I assume it is all the same silion die selected after
-testing. So they package those with broken outputs 7-9 as 3196, with
-broken outputs 4-6 as 3193 etc. Would be very reasonable from a
-commecial/chip production point of view.
-
-So I have added all of them to the compatible strings. Since the driver
-already dynamically takes care of the number of leds it should simply
-work.
-
-> 
 >> + *
 >> + */
 >> +
@@ -273,6 +218,12 @@ work.
 >> +#include <linux/workqueue.h>
 >> +#include <linux/leds-is31fl319x.h>
 >> +#include <linux/of.h>
+> 
+> Please keep include directives in an alphabetical order.
+
+Done.
+
+> 
 >> +
 >> +/* register numbers */
 >> +#define IS31FL319X_SHUTDOWN	0x00
@@ -325,22 +276,6 @@ work.
 >> +	bool			work_scheduled;
 >> +	spinlock_t		lock;
 >> +	u8			reg_file[IS31FL319X_REG_CNT];
-> 
-> I would suggest using the regmap infrastructure if you need
-> to cache the register values. It also helpfully exports a
-> debugfs interface.
-
-There was an issue with regmap I don't exactly remember.
-
-Maybe it was because it is impossible to read (initial) values from the
-chip. Only write new ones. And check for chip presence can also only be
-done by checking if it responds or fails to a write command. So we would
-have to use tricks to make regmap work as intended.
-
-And it may introduce overhead in initialization and does
-not save memory.
-
-> 
 >> +
 >> +	struct is31fl319x_led {
 >> +		struct is31fl319x_chip	*chip;
@@ -351,9 +286,6 @@ not save memory.
 >> +static const struct i2c_device_id is31fl319x_id[] = {
 >> +	{ "is31fl3196", 6 },
 >> +	{ "is31fl3196", 9 },
-
-^^^there is also a bug using is31fl3196 twice
-
 >> +	{ }
 >> +};
 >> +MODULE_DEVICE_TABLE(i2c, is31fl319x_id);
@@ -392,21 +324,6 @@ not save memory.
 >> +	/* make subsequent changes run another schedule_work */
 >> +	is31->work_scheduled = false;
 >> +	spin_unlock_irqrestore(&is31->lock, flags);
-> 
-> I believe the LEDS core now handles the workqueues generically for 
-> blocking operations, so it's no longer needed in the individual drivers.
-
-We had a lot of trouble with locking and blocking especially if we
-want to indicate CPU or (root) disk activity.
-
-So it is implemented in a way that changes can be requested faster
-than the I2C bus can write new values to the chip.
-
-Only after one sequence of I2C writes is done, another work function
-can be scheduled. And each group of writes updates as many LEDs
-in parallel if necessary.
-
-> 
 >> +
 >> +	dev_dbg(&is31->client->dev, "write to chip\n");
 >> +
@@ -428,6 +345,15 @@ in parallel if necessary.
 >> +
 >> +		/* update output enable bits */
 >> +		on = led->brightness > LED_OFF;
+> 
+> It's more common to achieve the same in the following way:
+> 
+>                on = !!led->brightness;
+
+Hm. This is quite difficult to understand and assumes that LED_OFF is 0.
+If find brightness > LED_OFF much more readable.
+
+> 
 >> +		if (i < 3)
 >> +			ctrl1 |= on << i;	/* 0..2 => bit 0..2 */
 >> +		else if (i < 6)
@@ -436,16 +362,23 @@ in parallel if necessary.
 >> +			ctrl2 |= on << (i-6);	/* 6..8 => bit 0..2 */
 >> +	}
 > 
-> Is any locking needed while iterating over is31->leds[]? Is there any
-> opportunity for a race? 
+> Why are you iterating over all sub-LEDs? One LED class device should
+> control single sub-LED/iout.
 
-No, because our locking mechanism ensures that only one work function
-is running at a time.
+Because they share two common control registers which are updated
+in one batch (instead of individual read-modify-write which introduces race issues).
 
-Yes there is a small race if a brightness value is updated by an interrupt.
+And to properly control chip shutdown (code below) we must know when the last 
+LED was set to brightness 0. This means we have to loop over them anyways
+to get the aggregate state of all LEDs.
 
-But since the worker is already running, another one will be scheduled that
-will fix the value. So for an invisibly short moment there might be the wrong value.
+This is also the reason why I am hesitating to switch to the brand new
+brightness_set_blocking which appears to assume that each LED can and shall
+be controlled independently by independent i2c write commands. It could here,
+except for shutting down the chip if all LEDs are off (which is different from setting
+PWM to 0 for all LEDs). So this would probably increase I2C traffic compared to
+our batch mode (if any number of LEDs is modified since the last one, we trigger
+only a single i2c transaction for all LEDs).
 
 > 
 >> +
@@ -480,17 +413,6 @@ will fix the value. So for an invisibly short moment there might be the wrong va
 >> +	/* read PWM register */
 >> +	return is31fl319x_read(is31, IS31FL319X_PWM1 + (led - is31->leds));
 >> +}
-> 
-> I believe that the LEDS core remembers the last set brightness for each LED,
-> and will use it if no brightness_get function is implemented. Since all is31fl319x_brightness_get() does is retrieve the saved value from your cache, 
-> I think you can just eliminate is31fl319x_brightness_get() altogether.
-
-Well, we do not use it as a real getter because as you say the LEDS core remembers
-it.
-
-But we call it in the setter to determine if there is a change.
-
-> 
 >> +
 >> +static void is31fl319x_brightness_set(struct led_classdev *led_cdev,
 >> +				   enum led_brightness brightness)
@@ -504,17 +426,18 @@ But we call it in the setter to determine if there is a change.
 >> +	spin_lock_irqsave(&is31->lock, flags);
 >> +
 >> +	if (brightness != is31fl319x_brightness_get(led_cdev)) {
+> 
+> Current brightness is cached in led_cdev->brightness.
 
-Here.
+Hm. I could not find the code line where it is cached.
 
-Maybe we could inline the call to is31fl319x_read() and even inline
-is31fl319x_read because that is also the only location where it is used.
+And if I remember correctly (it is a while ago that we did develop
+this driver) experiments didn't show that it is cached there. Or the
+old value is not available inside the brightness setter but already
+the new one. Something like that was the reason why we cache
+it inside the driver.
 
-But it removes some inherent layering of the code (lowest level = read/write
-chip, get = know which registers to read, set = schedule work only if needed).
-
-I have left it as is for the next version. Let's see if there are more comments.
-
+> 
 >> +		if (!is31->work_scheduled) {
 >> +			schedule_work(&is31->work);
 >> +			is31->work_scheduled = true;
@@ -530,21 +453,29 @@ I have left it as is for the next version. Let's see if there are more comments.
 >> +{
 >> +	/* use software blink */
 >> +	return 1;
-> 
-> The Kconfig entry claims hardware blink support. The comment here
-> says the opposite. I believe this current implementation will result
-> in the LEDS core falling back to software blink, but the same result
-> would be achieved by just not setting the blink_set callback.
-> 
-
-Yes, you are right. We wanted to implement HW blinking later.
-So let's remove it here and from Kconfig.
-
 >> +}
->> +
+> 
+> This function is useless, please remove it.
+
+Ok.
+
+> 
 >> +#ifdef CONFIG_OF
+> 
+> Please provide only version for CONFIG_OF defined case and just fail
+> probing if of_node is NULL.
+
+Ok.
+
+> 
 >> +static struct is31fl319x_platform_data *
 >> +is31fl319x_led_dt_init(struct i2c_client *client, int num_leds)
+> 
+> Please rename it to is31fl319x_parse_dt.
+
+Done.
+
+> 
 >> +{
 >> +	struct device_node *np = client->dev.of_node, *child;
 >> +	struct is31fl319x_platform_data *pdata;
@@ -570,13 +501,6 @@ So let's remove it here and from Kconfig.
 >> +			of_get_property(child, "label", NULL) ? : child->name;
 >> +		led.default_trigger =
 >> +			of_get_property(child, "linux,default-trigger", NULL);
-> 
-> I believe it is better to use of_property_read_string() for these.
-
-Sounds good, because it does some error checks but makes error handling
-a little more complex (since it is an optional property).
-
-> 
 >> +		led.flags = 0;
 >> +		ret = of_property_read_u32(child, "reg", &reg);
 >> +		dev_dbg(&client->dev, "name = %s reg = %d\n", led.name, reg);
@@ -586,18 +510,6 @@ a little more complex (since it is an optional property).
 >> +		if (is31_leds[reg].name)
 >> +			dev_err(&client->dev, "duplicate led line %d for %s -> %s\n",
 >> +				reg, is31_leds[reg].name, led.name);
-> 
-> There are two errors (invalid DT) detected here, but the driver continues
-> to load. I believe the preference is for errors like this to result in the 
-> probe failing outright.
-
-I regard this type of error as a flaw that does not require the driver to probe completely.
-It simply uses the last of the duplicate definitions. By looking into the kernel log
-the error in DT can be easily seen and fixed (instead of wondering why all LEDs
-remain off).
-
-> 
-> 
 >> +		is31_leds[reg] = led;
 >> +	}
 >> +	pdata = devm_kzalloc(&client->dev,
@@ -641,6 +553,12 @@ remain off).
 >> +
 >> +	dev_dbg(&client->dev, "NUM_LEDS = %d num_leds = %d\n",
 >> +		NUM_LEDS, (int) id->driver_data);
+> 
+> I believe this is stray debug logging.
+
+I have merged it with the probe debug message to give more useful information.
+
+> 
 >> +
 >> +	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
 >> +		return -EIO;
@@ -649,6 +567,12 @@ remain off).
 >> +		pdata = is31fl319x_led_dt_init(client, (int) id->driver_data);
 >> +		if (IS_ERR(pdata)) {
 >> +			dev_err(&client->dev, "DT led error %d\n",
+> 
+> s/DT led error/DT parsing error/
+
+done.
+
+> 
 >> +				(int) PTR_ERR(pdata));
 >> +			return PTR_ERR(pdata);
 >> +		}
@@ -668,6 +592,16 @@ remain off).
 >> +		dev_err(&client->dev, "no response from chip write: err = %d\n",
 >> +			err);
 >> +		return -EPROBE_DEFER;	/* does not answer (yet) */
+> 
+> When can it happen? Does the chip have a long booting time or so?
+
+Hm. Rarely...
+
+So if it is not available on first attempt, there is no reason to probe later.
+
+I will make it return -EIO.
+
+> 
 >> +	}
 >> +
 >> +	for (i = 0; i < NUM_LEDS; i++) {
@@ -679,24 +613,10 @@ remain off).
 >> +			l->led_cdev.default_trigger
 >> +				= pdata->leds.leds[i].default_trigger;
 >> +			l->led_cdev.brightness_set = is31fl319x_brightness_set;
+
 >> +			l->led_cdev.blink_set = is31fl319x_blink_set;
-> 
-> I don't see led_cdev.brightness_get being set here. Although if you do 
-> remove is31fl319x_brightness_get(), it obviously won't need to be set.
-
-Well, it is used in our is31fl319x_brightness_set function so we can't
-remove it completely.
-
-> 
 >> +			err = led_classdev_register(&client->dev,
 >> +						    &l->led_cdev);
-> 
-> I would suggest using devm_led_classdev_register(). Then you can remove
-> all the calls to led_classdev_unregister() in error and cleanup paths.
-
-Ok.
-
-> 
 >> +			if (err < 0)
 >> +				goto exit;
 >> +		}
@@ -723,6 +643,18 @@ Ok.
 >> +		if (config2)
 >> +			is31fl319x_write(is31, IS31FL319X_CONFIG2, config2);
 >> +	}
+> 
+> Could you move the contents of this condition to is31fl319x_led_dt_init?
+
+What would that improve? It is intended as a timing optimization to skip the i2c write.
+With the implicit assumption that the register is already initialized to 0.
+
+Which I know think is not always the case. The chip might already be initialized by
+U-Boot or after a reboot when it was not powered down.
+
+So I think the condition must be removed completely.
+
+> 
 >> +
 >> +	schedule_work(&is31->work);	/* first update */
 >> +
@@ -797,11 +729,23 @@ Ok.
 >> +struct is31fl319x_platform_data {
 >> +	struct led_platform_data leds;
 >> +};
->> +
->> +#endif /* __LINUX_IS31FL319X_H */
 > 
+> We don't use led_platform_data for new drivers.
+> Device Tree has become a standard.
+> Effectively this header is not needed, please drop it.
 
-In the next days I will debug and test the fixes...
+Ok, fine with that!
+
+> 
+>> +#endif /* __LINUX_IS31FL319X_H */
+>> 
+> 
+> 
+> -- 
+> Best regards,
+> Jacek Anaszewski
+
+I will combine all this and resubmit V2 after testing.
 
 BR and thanks,
 Nikolaus
