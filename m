@@ -1,59 +1,38 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] drivers/leds/leds-ss4200: add depend on x86 arch
-Date: Tue, 19 Apr 2016 09:14:44 +0200
-Message-ID: <5715DAE4.7000900@samsung.com>
-References: <1460892472-7228-1-git-send-email-martin.dummer@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53496 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752173AbcDSHOt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2016 03:14:49 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O5V0050YDGL6C30@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 19 Apr 2016 08:14:45 +0100 (BST)
-In-reply-to: <1460892472-7228-1-git-send-email-martin.dummer@gmx.net>
-Sender: linux-leds-owner@vger.kernel.org
+From: Olliver Schinagl <oliver@schinagl.nl>
+Subject: [PATCHv1 0/6] leds: pca9653x: support inverted outputs and cleanups
+Date: Tue, 19 Apr 2016 09:40:44 +0200
+Message-ID: <1461051650-18824-1-git-send-email-oliver@schinagl.nl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Olliver Schinagl <oliver@schinagl.nl>
 List-Id: linux-leds@vger.kernel.org
-To: Martin Dummer <martin.dummer@gmx.net>
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
-Hi Martin,
+Using the pca963x for a while, I noticed something that may look like some
+i2c accessing issues where sometimes data was incorrectly written to the bus,
+possibly because we where not properly locking the i2c reads. Though I'm not
+familiar enough with the i2c framework to be certain reads need to be locked
+at all. A patch was added to properly lock i2c access more tightly.
 
-Thanks for the patch, applied.
+Furthermore there was no method to support inverted outputs. This series
+adds a property to the device tree to inform the driver that the output
+is inverted (active-high vs active-low).
 
-Best regards,
-Jacek Anaszewski
+Additionally, this patch set does some cleanups to please checkpatch, and
+removes a few magic values.
 
-On 04/17/2016 01:27 PM, Martin Dummer wrote:
-> There is only one x86 hardware where the driver leds-ss4200 applies to.
-> Add kconfig dependency to x86 architecture, fix help text whitespace.
->
-> Signed-off-by: Martin Dummer <martin.dummer@gmx.net>
-> ---
->   drivers/leds/Kconfig | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 2251478..5ae2834 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -413,10 +413,11 @@ config LEDS_INTEL_SS4200
->   	tristate "LED driver for Intel NAS SS4200 series"
->   	depends on LEDS_CLASS
->   	depends on PCI && DMI
-> +	depends on X86
->   	help
->   	  This option enables support for the Intel SS4200 series of
-> -	  Network Attached Storage servers.  You may control the hard
-> -	  drive or power LEDs on the front panel.  Using this driver
-> +	  Network Attached Storage servers. You may control the hard
-> +	  drive or power LEDs on the front panel. Using this driver
->   	  can stop the front LED from blinking after startup.
->
->   config LEDS_LT3593
->
+Olliver Schinagl (6):
+  leds: pca963x: Alphabetize headers
+  leds: pca963x: Lock i2c r/w access
+  leds: pca963x: Add defines and remove some magic values
+  leds: pca963x: Reduce magic values
+  leds: pca963x: Inform the output that it is inverted
+  leds: pca963x: Remove whitespace and checkpatch problems
+
+ Documentation/devicetree/bindings/leds/pca963x.txt |   1 +
+ drivers/leds/leds-pca963x.c                        | 243 ++++++++++++++-------
+ include/linux/platform_data/leds-pca963x.h         |   1 +
+ 3 files changed, 171 insertions(+), 74 deletions(-)
+
+-- 
+2.8.0.rc3
