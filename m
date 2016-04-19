@@ -1,24 +1,22 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2] drivers/leds/leds-ss4200.c: add DMI data for FSC SCALEO
- Home Server
-Date: Tue, 19 Apr 2016 09:14:05 +0200
-Message-ID: <5715DABD.9060203@samsung.com>
-References: <1460891675-6994-1-git-send-email-martin.dummer@gmx.net>
- <1461045108-3125-1-git-send-email-martin.dummer@gmx.net>
+Subject: Re: [PATCH] drivers/leds/leds-ss4200: add depend on x86 arch
+Date: Tue, 19 Apr 2016 09:14:44 +0200
+Message-ID: <5715DAE4.7000900@samsung.com>
+References: <1460892472-7228-1-git-send-email-martin.dummer@gmx.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:18765 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752373AbcDSHOJ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2016 03:14:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53496 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752173AbcDSHOt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2016 03:14:49 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O5V0088ADFID700@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 19 Apr 2016 08:14:06 +0100 (BST)
-In-reply-to: <1461045108-3125-1-git-send-email-martin.dummer@gmx.net>
+ with ESMTP id <0O5V0050YDGL6C30@mailout2.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 19 Apr 2016 08:14:45 +0100 (BST)
+In-reply-to: <1460892472-7228-1-git-send-email-martin.dummer@gmx.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Martin Dummer <martin.dummer@gmx.net>
@@ -26,45 +24,36 @@ Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org
 
 Hi Martin,
 
-On 04/19/2016 07:51 AM, Martin Dummer wrote:
-> The Intel NAS SS4200 was also sold by Fujitsu Siemens (FSC) under
-> the name "SCALEO Home Server". The hardware is equivalent.
->
-> This patch adds the DMI data of this rebranded device.
+Thanks for the patch, applied.
+
+Best regards,
+Jacek Anaszewski
+
+On 04/17/2016 01:27 PM, Martin Dummer wrote:
+> There is only one x86 hardware where the driver leds-ss4200 applies to.
+> Add kconfig dependency to x86 architecture, fix help text whitespace.
 >
 > Signed-off-by: Martin Dummer <martin.dummer@gmx.net>
 > ---
->   drivers/leds/leds-ss4200.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
+>   drivers/leds/Kconfig | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-> index 046cb70..732eb86 100644
-> --- a/drivers/leds/leds-ss4200.c
-> +++ b/drivers/leds/leds-ss4200.c
-> @@ -101,6 +101,19 @@ static struct dmi_system_id nas_led_whitelist[] __initdata = {
->   			DMI_MATCH(DMI_PRODUCT_VERSION, "1.00.00")
->   		}
->   	},
-> +	{
-> +		/*
-> +		 * FUJITSU SIEMENS SCALEO Home Server/SS4200-E
-> +		 * BIOS V090L 12/19/2007
-> +		 */
-> +		.callback = ss4200_led_dmi_callback,
-> +		.ident = "Fujitsu Siemens SCALEO Home Server",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU SIEMENS"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "SCALEO Home Server"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.00.00")
-> +		}
-> +	},
->   	{}
->   };
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2251478..5ae2834 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -413,10 +413,11 @@ config LEDS_INTEL_SS4200
+>   	tristate "LED driver for Intel NAS SS4200 series"
+>   	depends on LEDS_CLASS
+>   	depends on PCI && DMI
+> +	depends on X86
+>   	help
+>   	  This option enables support for the Intel SS4200 series of
+> -	  Network Attached Storage servers.  You may control the hard
+> -	  drive or power LEDs on the front panel.  Using this driver
+> +	  Network Attached Storage servers. You may control the hard
+> +	  drive or power LEDs on the front panel. Using this driver
+>   	  can stop the front LED from blinking after startup.
 >
+>   config LEDS_LT3593
 >
-
-Thanks for the update, applied.
-
--- 
-Best regards,
-Jacek Anaszewski
