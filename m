@@ -1,43 +1,41 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv1 0/6] leds: pca9653x: support inverted outputs and cleanups
-Date: Tue, 19 Apr 2016 15:42:51 +0200
-Message-ID: <CAPybu_2uZqR4exnS08taVYyr=ziK+EzuJy+_FxhbtqSiOE_=mw@mail.gmail.com>
-References: <1461051650-18824-1-git-send-email-oliver@schinagl.nl>
- <5715F927.3030102@samsung.com> <5715FCE8.7080106@schinagl.nl>
- <CAPybu_02_5pZ6pMkXwaHtjJAfXiWPniWEHcayRoCMypfgeLD_w@mail.gmail.com> <57163252.5090000@schinagl.nl>
+From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: Re: [PATCH v2 3/3] leds: gpio: Support the "panic-indicator" firmware property
+Date: Tue, 19 Apr 2016 13:18:36 -0300
+Message-ID: <CAAEAJfA6O8QV0zk9vnHwePaB7BFgtDVaAsTOm=LVh22eS6Lccg@mail.gmail.com>
+References: <1460570899-24642-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+	<1460570899-24642-4-git-send-email-ezequiel@vanguardiasur.com.ar>
+	<570F5B6B.3000702@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57163252.5090000-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:34820 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932826AbcDSQSi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2016 12:18:38 -0400
+Received: by mail-wm0-f45.google.com with SMTP id e201so20152035wme.0
+        for <linux-leds@vger.kernel.org>; Tue, 19 Apr 2016 09:18:37 -0700 (PDT)
+In-Reply-To: <570F5B6B.3000702@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 
-Hi again
+Hi Jacek,
 
-On Tue, Apr 19, 2016 at 3:27 PM, Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org> wrote:
-> Hey Ricardo,
+On 14 April 2016 at 05:57, Jacek Anaszewski <j.anaszewski@samsung.com> =
+wrote:
+> Hi Ezequiel,
+>
+> It would be good to update also leds-gpio bindings,
+> of course in a separate patch:
+>
+> Documentation/devicetree/bindings/leds/leds-gpio.txt
+>
 
-> Without actually looking at the code right now, but the driver does a
-> read/modify/write on the register, and a register is shared among several
-> leds. So in that regard, it makes sense and I don't think it's very
-> expensive to move the lock, since we have to lock for the write a few lines
-> down anyway.
+Yes, you are right. I will send a new series adding this.
 
-Actually, the code is only making sure that PCA963X_MODE2_DMBLNK is
-on. It is never cleared afterwards.
-
-It will be great if you could set that bit on probe and remove those
-two lines and verify that it works on real hardware.
-
-
-The move of the lock can be a bit expensive. i2c writes can take a
-while to be performed, this is why only ledout was protected
-initially.
-
-Best regards
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+--=20
+Ezequiel Garc=C3=ADa, VanguardiaSur
+www.vanguardiasur.com.ar
