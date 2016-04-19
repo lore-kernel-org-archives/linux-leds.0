@@ -1,514 +1,656 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 3/6] leds: pca963x: Add defines and remove some magic
- values
-Date: Tue, 19 Apr 2016 16:16:30 +0800
-Message-ID: <201604191636.GDE1OrKw%fengguang.wu@intel.com>
-References: <1461051650-18824-4-git-send-email-oliver@schinagl.nl>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] drivers: led: is31fl319x: 6/9-channel light effect led
+ driver
+Date: Tue, 19 Apr 2016 11:14:23 +0200
+Message-ID: <5715F6EF.9090909@samsung.com>
+References: <cover.1461004995.git.hns@goldelico.com>
+ <75127f4bf2bb11343bdff5bfb1129a092e668c61.1461004995.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1461051650-18824-4-git-send-email-oliver@schinagl.nl>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Olliver Schinagl <oliver@schinagl.nl>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <75127f4bf2bb11343bdff5bfb1129a092e668c61.1461004995.git.hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "H. Nikolaus Schaller" <hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-Jl6IXVxNIMRxAtABVqVhTwC/G2K4zDHf@public.gmane.org, marek-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org, letux-kernel-S0jZdbWzriLCfDggNXIi3w@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Nikolaus,
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the patch. Please refer to my remarks in the code.
 
-Hi,
+On 04/18/2016 08:43 PM, H. Nikolaus Schaller wrote:
+> This is a driver for the Integrated Silicon Solution Inc. LED driver
+> chips IS31FL3196 and IS31FL3199. They can drive up to 6 or 9
+> LEDs.
+>
+> Each LED is individually controllable in brightness (through pwm)
+> in 256 steps so that RGB LEDs can show any of ca. 16 Mio colors.
+>
+> The maximum current of the LEDs can be programmed and limited to
+> 5 .. 40mA through a device tree property.
+>
+> The chip is connected through I2C and can have one of 4 addresses (0x64 .. 0x67)
+> depending on how the AD pin is connected. The address is defined by the
+> reg property as usual.
+>
+> The chip also has a shutdown input which could be connected to a GPIO,
+> but this driver uses software shutdown if all LEDs are inactivated.
+>
+> The chip also has breathing and audio features which are not supported
+> by this driver.
+>
+> This driver was developed and tested on OMAP5 based Pyra handheld prototype.
+>
+> Signed-off-by: H. Nikolaus Schaller <hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>
+> ---
+>   .../devicetree/bindings/leds/is31fl319x.txt        |  41 +++
+>   drivers/leds/Kconfig                               |   8 +
+>   drivers/leds/Makefile                              |   1 +
+>   drivers/leds/leds-is31fl319x.c                     | 406 +++++++++++++++++++++
+>   include/linux/leds-is31fl319x.h                    |  24 ++
+>   5 files changed, 480 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
+>   create mode 100644 drivers/leds/leds-is31fl319x.c
+>   create mode 100644 include/linux/leds-is31fl319x.h
+>
+> diff --git a/Documentation/devicetree/bindings/leds/is31fl319x.txt b/Documentation/devicetree/bindings/leds/is31fl319x.txt
+> new file mode 100644
+> index 0000000..d13c7ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/is31fl319x.txt
+> @@ -0,0 +1,41 @@
+> +LEDs connected to is31fl319x RGB LED controller chip
+> +
+> +Required properties:
+> +- compatible : should be : "issi,is31fl3196" or "issi,is31fl3199".
 
-[auto build test ERROR on j.anaszewski-leds/for-next]
-[also build test ERROR on v4.6-rc4 next-20160419]
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+s/should be :/Should be/
 
-url:    https://github.com/0day-ci/linux/commits/Olliver-Schinagl/leds-pca9653x-support-inverted-outputs-and-cleanups/20160419-154536
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds for-next
-config: x86_64-randconfig-x010-201616 (attached as .config)
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+> +- #address-cells: must be 1
+> +- #size-cells: must be 0
 
-Note: the linux-review/Olliver-Schinagl/leds-pca9653x-support-inverted-outputs-and-cleanups/20160419-154536 HEAD 08d56036eb1d895519b5f9589b55341bed74f121 builds fine.
-      It only hurts bisectibility.
+s/must/Must/
 
-All errors (new ones prefixed by >>):
+Please begin the property description with a capital letter,
+and also end it with a dot.
+This remark applies also to the other properties.
 
-   drivers/leds/leds-pca963x.c: In function 'pca963x_brightness':
->> drivers/leds/leds-pca963x.c:220:4: error: 'PCA963X_PWM_BASE' undeclared (first use in this function)
-       PCA963X_PWM_BASE + pca963x->led_num,
-       ^
-   drivers/leds/leds-pca963x.c:220:4: note: each undeclared identifier is reported only once for each function it appears in
+> +- reg: 0x64, 0x65, 0x66, 0x67.
+> +
+> +Optional properties:
+> +- max-current-ma:	maximum led current (5..40 mA, default 20 mA)
 
-vim +/PCA963X_PWM_BASE +220 drivers/leds/leds-pca963x.c
+There is leds-max-microamp property for this -
+see Documentation/devicetree/bindings/leds/common.txt.
+I'd rephrase this as follows:
 
-75cb2e1d drivers/leds/leds-pca9633.c Peter Meerwald          2012-03-23  214  	case LED_OFF:
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  215  		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  216  			ledout_addr, ledout & ~mask);
-75cb2e1d drivers/leds/leds-pca9633.c Peter Meerwald          2012-03-23  217  		break;
-75cb2e1d drivers/leds/leds-pca9633.c Peter Meerwald          2012-03-23  218  	default:
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  219  		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
-56a1740c drivers/leds/leds-pca963x.c Ricardo Ribalda Delgado 2013-08-14 @220  			PCA963X_PWM_BASE + pca963x->led_num,
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  221  			brightness);
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  222  		if (ret < 0)
-5029a2e3 drivers/leds/leds-pca963x.c Andrew Lunn             2015-08-20  223  			goto unlock;
+- led-max-microamp: See Documentation/devicetree/bindings/leds/common.txt.
+         Valid values: 50000 - 400000, step by (?) (rounded {up|down})
+         Default: 20000
 
-:::::: The code at line 220 was first introduced by commit
-:::::: 56a1740c21e4396164265c3ec80e29990ddcdc36 leds-pca9633: Rename to leds-pca963x
+> +- audio-gain-db:	audio gain selection (0..21 dB. default 0 dB)
 
-:::::: TO: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-:::::: CC: Bryan Wu <cooloney@gmail.com>
+Please follow the aforementioned "Valid values" pattern.
+It would also be nice to have more informative description on the
+purpose of this property.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> +- breathing & audio:	not implemented
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+There is no point in documenting unused properties.
 
-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
-AQA=
+> +
+> +Each led is represented as a sub-node of the issi,is31fl319x device.
+> +
+> +LED sub-node properties:
+> +- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
+> +- reg : number of LED line (0 to 5 or 0 to 8 - not all need to be present)
+> +- linux,default-trigger : (optional)
+> +   see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Examples:
+> +
+> +fancy_leds: is31fl3196@65 {
+> +	compatible = "issi,is31fl319x";
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	reg = <0x65>;
+> +
+> +	led0: red-aux@0 {
+> +		label = "red:aux";
+> +		reg = <0>;
+> +	};
+> +
+> +	led1: green-power@4 {
+> +		label = "green:power";
+> +		reg = <4>;
+> +		linux,default-trigger = "default-on";
+> +	};
+> +};
 
---xHFwDpU9dbj6ez1V--
+Generally I prefer to have DT bindings documentation in a separate
+patch.
+
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2251478..f099bcb 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -491,6 +491,14 @@ config LEDS_ASIC3
+>   	  cannot be used. This driver supports hardware blinking with an on+off
+>   	  period from 62ms to 125s. Say Y to enable LEDs on the HP iPAQ hx4700.
+>
+> +config LEDS_IS31FL319X
+> +	tristate "LED Support for IS31FL319x I2C chip"
+> +	depends on LEDS_CLASS && I2C
+> +	help
+> +	  This option enables support for LEDs connected to IS31FL3196
+> +	  or IS31FL3199 LED driver chips accessed via the I2C bus.
+> +	  Driver support brightness control and hardware-assisted blinking.
+> +
+>   config LEDS_TCA6507
+>   	tristate "LED Support for TCA6507 I2C chip"
+>   	depends on LEDS_CLASS && I2C
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index cb2013d..eee3010 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -37,6 +37,7 @@ obj-$(CONFIG_LEDS_TCA6507)		+= leds-tca6507.o
+>   obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
+>   obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+>   obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
+> +obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
+>   obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
+>   obj-$(CONFIG_LEDS_OT200)		+= leds-ot200.o
+>   obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+> diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+> new file mode 100644
+> index 0000000..e211c46
+> --- /dev/null
+> +++ b/drivers/leds/leds-is31fl319x.c
+> @@ -0,0 +1,406 @@
+> +/*
+> + * Copyright 2015 Golden Delcious Computers
+> + *
+> + * Author: Nikolaus Schaller <hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>
+> + *
+> + * Based on leds-tca6507.c
+> + *
+> + * This file is subject to the terms and conditions of version 2 of
+> + * the GNU General Public License.  See the file COPYING in the main
+> + * directory of this archive for more details.
+> + *
+> + * LED driver for the IS31FL3196/99 to drive 6 or 9 light effect LEDs.
+> + *
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/leds.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/workqueue.h>
+> +#include <linux/leds-is31fl319x.h>
+> +#include <linux/of.h>
+
+Please keep include directives in an alphabetical order.
+
+> +
+> +/* register numbers */
+> +#define IS31FL319X_SHUTDOWN	0x00
+> +#define IS31FL319X_CTRL1	0x01
+> +#define IS31FL319X_CTRL2	0x02
+> +#define IS31FL319X_CONFIG1	0x03
+> +#define IS31FL319X_CONFIG2	0x04
+> +#define IS31FL319X_RAMP_MODE	0x05
+> +#define IS31FL319X_BREATH_MASK	0x06
+> +#define IS31FL319X_PWM1		0x07
+> +#define IS31FL319X_PWM2		0x08
+> +#define IS31FL319X_PWM3		0x09
+> +#define IS31FL319X_PWM4		0x0a
+> +#define IS31FL319X_PWM5		0x0b
+> +#define IS31FL319X_PWM6		0x0c
+> +#define IS31FL319X_PWM7		0x0d
+> +#define IS31FL319X_PWM8		0x0e
+> +#define IS31FL319X_PWM9		0x0f
+> +#define IS31FL319X_DATA_UPDATE	0x10
+> +#define IS31FL319X_T0_1		0x11
+> +#define IS31FL319X_T0_2		0x12
+> +#define IS31FL319X_T0_3		0x13
+> +#define IS31FL319X_T0_4		0x14
+> +#define IS31FL319X_T0_5		0x15
+> +#define IS31FL319X_T0_6		0x16
+> +#define IS31FL319X_T0_7		0x17
+> +#define IS31FL319X_T0_8		0x18
+> +#define IS31FL319X_T0_9		0x19
+> +#define IS31FL319X_T123_1	0x1a
+> +#define IS31FL319X_T123_2	0x1b
+> +#define IS31FL319X_T123_3	0x1c
+> +#define IS31FL319X_T4_1		0x1d
+> +#define IS31FL319X_T4_2		0x1e
+> +#define IS31FL319X_T4_3		0x1f
+> +#define IS31FL319X_T4_4		0x20
+> +#define IS31FL319X_T4_5		0x21
+> +#define IS31FL319X_T4_6		0x22
+> +#define IS31FL319X_T4_7		0x23
+> +#define IS31FL319X_T4_8		0x24
+> +#define IS31FL319X_T4_9		0x25
+> +#define IS31FL319X_TIME_UPDATE	0x26
+> +
+> +#define	IS31FL319X_REG_CNT	(IS31FL319X_TIME_UPDATE + 1)
+> +
+> +#define NUM_LEDS 9	/* max for 3199 chip */
+> +
+> +struct is31fl319x_chip {
+> +	struct i2c_client	*client;
+> +	struct work_struct	work;
+> +	bool			work_scheduled;
+> +	spinlock_t		lock;
+> +	u8			reg_file[IS31FL319X_REG_CNT];
+> +
+> +	struct is31fl319x_led {
+> +		struct is31fl319x_chip	*chip;
+> +		struct led_classdev	led_cdev;
+> +	} leds[NUM_LEDS];
+> +};
+> +
+> +static const struct i2c_device_id is31fl319x_id[] = {
+> +	{ "is31fl3196", 6 },
+> +	{ "is31fl3196", 9 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, is31fl319x_id);
+> +
+> +
+> +static int is31fl319x_write(struct is31fl319x_chip *is31, u8 reg, u8 byte)
+> +{
+> +	struct i2c_client *cl = is31->client;
+> +
+> +	if (reg >= IS31FL319X_REG_CNT)
+> +		return -EIO;
+> +	is31->reg_file[reg] = byte;	/* save in cache */
+> +	dev_dbg(&is31->client->dev, "write %02x to reg %02x\n", byte, reg);
+> +	return i2c_smbus_write_byte_data(cl, reg, byte);
+> +}
+> +
+> +static int is31fl319x_read(struct is31fl319x_chip *is31, u8 reg)
+> +{
+> +	if (reg >= IS31FL319X_REG_CNT)
+> +		return -EIO;
+> +	return is31->reg_file[reg];	/* read crom cache (can't read chip) */
+> +}
+> +
+> +static void is31fl319x_work(struct work_struct *work)
+> +{
+> +	struct is31fl319x_chip *is31 = container_of(work,
+> +						    struct is31fl319x_chip,
+> +						    work);
+> +	unsigned long flags;
+> +	int i;
+> +	u8 ctrl1, ctrl2;
+> +
+> +	dev_dbg(&is31->client->dev, "work called\n");
+> +
+> +	spin_lock_irqsave(&is31->lock, flags);
+> +	/* make subsequent changes run another schedule_work */
+> +	is31->work_scheduled = false;
+> +	spin_unlock_irqrestore(&is31->lock, flags);
+> +
+> +	dev_dbg(&is31->client->dev, "write to chip\n");
+> +
+> +	ctrl1 = 0;
+> +	ctrl2 = 0;
+> +
+> +	for (i = 0; i < NUM_LEDS; i++) {
+> +		struct led_classdev *led = &is31->leds[i].led_cdev;
+> +		bool on;
+> +
+> +		if (!is31->leds[i].led_cdev.name)
+> +			continue;
+> +
+> +		dev_dbg(&is31->client->dev, "set brightness %u for led %u\n",
+> +					    led->brightness, i);
+> +
+> +		/* update brightness register */
+> +		is31fl319x_write(is31, IS31FL319X_PWM1 + i, led->brightness);
+> +
+> +		/* update output enable bits */
+> +		on = led->brightness > LED_OFF;
+
+It's more common to achieve the same in the following way:
+
+                 on = !!led->brightness;
+
+> +		if (i < 3)
+> +			ctrl1 |= on << i;	/* 0..2 => bit 0..2 */
+> +		else if (i < 6)
+> +			ctrl1 |= on << (i+1);	/* 3..5 => bit 4..6 */
+> +		else
+> +			ctrl2 |= on << (i-6);	/* 6..8 => bit 0..2 */
+> +	}
+
+Why are you iterating over all sub-LEDs? One LED class device should
+control single sub-LED/iout.
+
+> +
+> +	/* check if any PWM is enabled or all outputs are now off */
+> +	if (ctrl1 > 0 || ctrl2 > 0) {
+> +		dev_dbg(&is31->client->dev, "power up\n");
+> +		is31fl319x_write(is31, IS31FL319X_CTRL1, ctrl1);
+> +		is31fl319x_write(is31, IS31FL319X_CTRL2, ctrl2);
+> +		/* update PWMs */
+> +		is31fl319x_write(is31, IS31FL319X_DATA_UPDATE, 0x00);
+> +		/* enable chip from shut down */
+> +		is31fl319x_write(is31, IS31FL319X_SHUTDOWN, 0x01);
+> +	} else {
+> +		dev_dbg(&is31->client->dev, "power down\n");
+> +		/* shut down */
+> +		is31fl319x_write(is31, IS31FL319X_SHUTDOWN, 0x00);
+> +	}
+> +
+> +	dev_dbg(&is31->client->dev, "work done\n");
+> +
+> +}
+> +
+> +/* NOTE: this may be called from within irq context, e.g. led_trigger_event */
+> +
+> +static int is31fl319x_brightness_get(struct led_classdev *led_cdev)
+> +{
+> +	struct is31fl319x_led *led = container_of(led_cdev,
+> +						  struct is31fl319x_led,
+> +						  led_cdev);
+> +	struct is31fl319x_chip *is31 = led->chip;
+> +
+> +	/* read PWM register */
+> +	return is31fl319x_read(is31, IS31FL319X_PWM1 + (led - is31->leds));
+> +}
+> +
+> +static void is31fl319x_brightness_set(struct led_classdev *led_cdev,
+> +				   enum led_brightness brightness)
+> +{
+> +	struct is31fl319x_led *led = container_of(led_cdev,
+> +						  struct is31fl319x_led,
+> +						  led_cdev);
+> +	struct is31fl319x_chip *is31 = led->chip;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&is31->lock, flags);
+> +
+> +	if (brightness != is31fl319x_brightness_get(led_cdev)) {
+
+Current brightness is cached in led_cdev->brightness.
+
+> +		if (!is31->work_scheduled) {
+> +			schedule_work(&is31->work);
+> +			is31->work_scheduled = true;
+> +		}
+> +	}
+> +
+> +	spin_unlock_irqrestore(&is31->lock, flags);
+> +}
+> +
+> +static int is31fl319x_blink_set(struct led_classdev *led_cdev,
+> +			     unsigned long *delay_on,
+> +			     unsigned long *delay_off)
+> +{
+> +	/* use software blink */
+> +	return 1;
+> +}
+
+This function is useless, please remove it.
+
+> +#ifdef CONFIG_OF
+
+Please provide only version for CONFIG_OF defined case and just fail
+probing if of_node is NULL.
+
+> +static struct is31fl319x_platform_data *
+> +is31fl319x_led_dt_init(struct i2c_client *client, int num_leds)
+
+Please rename it to is31fl319x_parse_dt.
+
+> +{
+> +	struct device_node *np = client->dev.of_node, *child;
+> +	struct is31fl319x_platform_data *pdata;
+> +	struct led_info *is31_leds;
+> +	int count;
+> +
+> +	count = of_get_child_count(np);
+> +	dev_dbg(&client->dev, "child count %d\n", count);
+> +	if (!count || count > NUM_LEDS)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	is31_leds = devm_kzalloc(&client->dev,
+> +			sizeof(struct led_info) * NUM_LEDS, GFP_KERNEL);
+> +	if (!is31_leds)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for_each_child_of_node(np, child) {
+> +		struct led_info led;
+> +		u32 reg;
+> +		int ret;
+> +
+> +		led.name =
+> +			of_get_property(child, "label", NULL) ? : child->name;
+> +		led.default_trigger =
+> +			of_get_property(child, "linux,default-trigger", NULL);
+> +		led.flags = 0;
+> +		ret = of_property_read_u32(child, "reg", &reg);
+> +		dev_dbg(&client->dev, "name = %s reg = %d\n", led.name, reg);
+> +		if (ret != 0 || reg < 0 || reg >= num_leds)
+> +			continue;
+> +
+> +		if (is31_leds[reg].name)
+> +			dev_err(&client->dev, "duplicate led line %d for %s -> %s\n",
+> +				reg, is31_leds[reg].name, led.name);
+> +		is31_leds[reg] = led;
+> +	}
+> +	pdata = devm_kzalloc(&client->dev,
+> +			sizeof(struct is31fl319x_platform_data), GFP_KERNEL);
+> +	if (!pdata)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pdata->leds.leds = is31_leds;
+> +	return pdata;
+> +}
+> +
+> +static const struct of_device_id of_is31fl319x_leds_match[] = {
+> +	{ .compatible = "issi,is31fl3196", (void *) 6 },
+> +	{ .compatible = "issi,is31fl3199", (void *) 9 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_is31fl319x_leds_match);
+> +
+> +#else
+> +static struct is31fl319x_platform_data *
+> +is31fl319x_led_dt_init(struct i2c_client *client)
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +
+> +#endif
+> +
+> +static int is31fl319x_probe(struct i2c_client *client,
+> +		const struct i2c_device_id *id)
+> +{
+> +	struct is31fl319x_chip *is31;
+> +	struct i2c_adapter *adapter;
+> +	struct is31fl319x_platform_data *pdata;
+> +	int err;
+> +	int i = 0;
+> +
+> +	adapter = to_i2c_adapter(client->dev.parent);
+> +	pdata = dev_get_platdata(&client->dev);
+> +
+> +	dev_dbg(&client->dev, "probe\n");
+> +
+> +	dev_dbg(&client->dev, "NUM_LEDS = %d num_leds = %d\n",
+> +		NUM_LEDS, (int) id->driver_data);
+
+I believe this is stray debug logging.
+
+> +
+> +	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
+> +		return -EIO;
+> +
+> +	if (!pdata) {
+> +		pdata = is31fl319x_led_dt_init(client, (int) id->driver_data);
+> +		if (IS_ERR(pdata)) {
+> +			dev_err(&client->dev, "DT led error %d\n",
+
+s/DT led error/DT parsing error/
+
+> +				(int) PTR_ERR(pdata));
+> +			return PTR_ERR(pdata);
+> +		}
+> +	}
+> +	is31 = devm_kzalloc(&client->dev, sizeof(*is31), GFP_KERNEL);
+> +	if (!is31)
+> +		return -ENOMEM;
+> +
+> +	is31->client = client;
+> +	INIT_WORK(&is31->work, is31fl319x_work);
+> +	spin_lock_init(&is31->lock);
+> +	i2c_set_clientdata(client, is31);
+> +
+> +	/* check for reply from chip (we can't read any registers) */
+> +	err = is31fl319x_write(is31, IS31FL319X_SHUTDOWN, 0x01);
+> +	if (err < 0) {
+> +		dev_err(&client->dev, "no response from chip write: err = %d\n",
+> +			err);
+> +		return -EPROBE_DEFER;	/* does not answer (yet) */
+
+When can it happen? Does the chip have a long booting time or so?
+
+> +	}
+> +
+> +	for (i = 0; i < NUM_LEDS; i++) {
+> +		struct is31fl319x_led *l = is31->leds + i;
+> +
+> +		l->chip = is31;
+> +		if (pdata->leds.leds[i].name && !pdata->leds.leds[i].flags) {
+> +			l->led_cdev.name = pdata->leds.leds[i].name;
+> +			l->led_cdev.default_trigger
+> +				= pdata->leds.leds[i].default_trigger;
+> +			l->led_cdev.brightness_set = is31fl319x_brightness_set;
+> +			l->led_cdev.blink_set = is31fl319x_blink_set;
+> +			err = led_classdev_register(&client->dev,
+> +						    &l->led_cdev);
+> +			if (err < 0)
+> +				goto exit;
+> +		}
+> +	}
+> +
+> +	if (client->dev.of_node) {
+> +		u32 val;
+> +		u8 config2 = 0;
+> +
+> +		if (of_property_read_u32(client->dev.of_node, "max-current-ma",
+> +					 &val)) {
+> +			if (val > 40)
+> +				val = 40;
+> +			if (val < 5)
+> +				val = 5;
+> +			config2 |= (((64 - val) / 5) & 0x7) << 4; /* CS */
+> +		}
+> +		if (of_property_read_u32(client->dev.of_node, "audio-gain-db",
+> +					 &val)) {
+> +			if (val > 21)
+> +				val = 21;
+> +			config2 |= val / 3; /* AGS */
+> +		}
+> +		if (config2)
+> +			is31fl319x_write(is31, IS31FL319X_CONFIG2, config2);
+> +	}
+
+Could you move the contents of this condition to is31fl319x_led_dt_init?
+
+> +
+> +	schedule_work(&is31->work);	/* first update */
+> +
+> +	dev_dbg(&client->dev, "probed\n");
+> +	return 0;
+> +exit:
+> +	dev_err(&client->dev, "led error %d\n", err);
+> +
+> +	while (i--) {
+> +		if (is31->leds[i].led_cdev.name)
+> +			led_classdev_unregister(&is31->leds[i].led_cdev);
+> +	}
+> +	return err;
+> +}
+> +
+> +static int is31fl319x_remove(struct i2c_client *client)
+> +{
+> +	int i;
+> +	struct is31fl319x_chip *is31 = i2c_get_clientdata(client);
+> +	struct is31fl319x_led *is31_leds = is31->leds;
+> +
+> +	for (i = 0; i < NUM_LEDS; i++) {
+> +		if (is31_leds[i].led_cdev.name)
+> +			led_classdev_unregister(&is31_leds[i].led_cdev);
+> +	}
+> +
+> +	cancel_work_sync(&is31->work);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct i2c_driver is31fl319x_driver = {
+> +	.driver   = {
+> +		.name    = "leds-is31fl319x",
+> +		.of_match_table = of_match_ptr(of_is31fl319x_leds_match),
+> +	},
+> +	.probe    = is31fl319x_probe,
+> +	.remove   = is31fl319x_remove,
+> +	.id_table = is31fl319x_id,
+> +};
+> +
+> +module_i2c_driver(is31fl319x_driver);
+> +
+> +MODULE_AUTHOR("H. Nikolaus Schaller <hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>");
+> +MODULE_DESCRIPTION("IS31FL319X LED driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/leds-is31fl319x.h b/include/linux/leds-is31fl319x.h
+> new file mode 100644
+> index 0000000..5f55abf
+> --- /dev/null
+> +++ b/include/linux/leds-is31fl319x.h
+> @@ -0,0 +1,24 @@
+> +/*
+> + * IS31FL3196 LED chip driver.
+> + *
+> + * Copyright (C) 2015 H. Nikolaus Schaller <hns-xXXSsgcRVICgSpxsJD1C4w@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+> + */
+> +
+> +#ifndef __LINUX_IS31FL319X_H
+> +#define __LINUX_IS31FL319X_H
+> +#include <linux/leds.h>
+> +
+> +struct is31fl319x_platform_data {
+> +	struct led_platform_data leds;
+> +};
+
+We don't use led_platform_data for new drivers.
+Device Tree has become a standard.
+Effectively this header is not needed, please drop it.
+
+> +#endif /* __LINUX_IS31FL319X_H */
+>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
