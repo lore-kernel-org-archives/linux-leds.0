@@ -1,87 +1,62 @@
 From: Olliver Schinagl <oliver@schinagl.nl>
-Subject: Re: [PATCHv1 0/6] leds: pca9653x: support inverted outputs and
- cleanups
-Date: Fri, 22 Apr 2016 09:21:35 +0200
-Message-ID: <5719D0FF.7090800@schinagl.nl>
+Subject: Re: [PATCH 5/6] leds: pca963x: Inform the output that it is inverted
+Date: Fri, 22 Apr 2016 14:38:56 +0200
+Message-ID: <571A1B60.3020804@schinagl.nl>
 References: <1461051650-18824-1-git-send-email-oliver@schinagl.nl>
- <5715F927.3030102@samsung.com> <5715FCE8.7080106@schinagl.nl>
- <CAPybu_02_5pZ6pMkXwaHtjJAfXiWPniWEHcayRoCMypfgeLD_w@mail.gmail.com>
- <57163252.5090000@schinagl.nl>
- <CAPybu_2uZqR4exnS08taVYyr=ziK+EzuJy+_FxhbtqSiOE_=mw@mail.gmail.com>
- <57172DFA.9030107@schinagl.nl>
- <CAPybu_2fys29MUTBCDPb+tpfCgbr9SL+LXq061Tq20_z7UO-Vg@mail.gmail.com>
- <5717430D.30702@schinagl.nl>
- <CAPybu_3=VdXR_X_00EiYMyhRPLsR40GW1kHS5rzdOkSzrCMVWg@mail.gmail.com>
- <571746A2.8040609@schinagl.nl>
- <CAPybu_2WXdGck_FtW2MQEiPU-oXA6yz8W3jGkUnABfbir82Jdg@mail.gmail.com>
+ <1461051650-18824-6-git-send-email-oliver@schinagl.nl>
+ <20160421150750.GA3116@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 7of9.schinagl.nl ([88.159.158.68]:35182 "EHLO 7of9.schinagl.nl"
+Received: from 7of9.schinagl.nl ([88.159.158.68]:40446 "EHLO 7of9.schinagl.nl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751697AbcDVHVx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Fri, 22 Apr 2016 03:21:53 -0400
-In-Reply-To: <CAPybu_2WXdGck_FtW2MQEiPU-oXA6yz8W3jGkUnABfbir82Jdg@mail.gmail.com>
+	id S1751096AbcDVMjO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Fri, 22 Apr 2016 08:39:14 -0400
+In-Reply-To: <20160421150750.GA3116@rob-hp-laptop>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Peter Meerwald <pmeerw@pmeerw.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Ricardo,
+Hey Rob,
 
-On 20-04-16 11:17, Ricardo Ribalda Delgado wrote:
-> Hello again
+On 21-04-16 17:07, Rob Herring wrote:
+> On Tue, Apr 19, 2016 at 09:40:49AM +0200, Olliver Schinagl wrote:
+>> When leds are connected in a totem-pole configuration, they can be
+>> connected either in a active-high, or active-low manor. The driver
+>> currently always assumes active-high. This patch adds the
+>> 'nxp,inverted-out' boolean property to tell the driver that the leds
+>> are driven active-low, or rather, that the behavior is inverted to what
+>> is normally expected.
+> How do I know what is normally expected?
+fair point, and in fact, you don't. The text is bad here.
 >
-> On Wed, Apr 20, 2016 at 11:06 AM, Olliver Schinagl <oliver@schinagl.nl> wrote:
->
->> The devil is in the details :)
-> :)
->>> Saving mode2 sounds like a good compromise then.
->>>
->>> But I still believe that we should limit the lock to ledout. No matter
->>> what we do, we cannot have two leds blinking at different frequencies
->>> on the same chip.
->> So to save a mutex a little bit, we take the risk that nobody else enables
->> the blink or if they do, enable it in the same way?
->> If it saves so much, then I guess its worth the risk I suppose?
-> Give me a day to go through the chip doc and see if I can find a good
-> compromise, that at least warranties that the leds that are enable
-> stay enabled ;)
-Right, I also went over the datasheet, and I think we can simplyfy two 
-things.
+>> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+>> ---
+>>   Documentation/devicetree/bindings/leds/pca963x.txt |  1 +
+>>   drivers/leds/leds-pca963x.c                        | 20 +++++++++++++-------
+>>   include/linux/platform_data/leds-pca963x.h         |  1 +
+>>   3 files changed, 15 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
+>> index dafbe99..7b23725 100644
+>> --- a/Documentation/devicetree/bindings/leds/pca963x.txt
+>> +++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+>> @@ -6,6 +6,7 @@ Required properties:
+>>   Optional properties:
+>>   - nxp,totem-pole : use totem pole (push-pull) instead of open-drain (pca9632 defaults
+>>     to open-drain, newer chips to totem pole)
+>> +  nxp,inverted-out: the connected leds are active-low, default to active-high
+> Just state what mode you want: nxp,active-low
+But that's not what happens, which is why my text is bad :) It depends 
+on how the board is wired and if it is push-pull or open-drain. Though 
+this goes beyond my electronics knowledge. So I'll reduce the text to 
+say exactly what we mean, inverted output (or not).
 
-For one, yes, move the mode2 register completly to the probe section. 
-Set the DMBLINK led to always 1. It does not get cleared, I was wrong. 
-We have to set it to as with 0 we do not get any blinking at all 
-(grpfreq gets ignored).
-
-Furthermore, we should change:
-  -    gdc = (time_on * 256) / period;
-+   gdc = 0x00;
-
-Because the calculation does not make sense. GDC is the global 
-brightness/pwm/dimming control. It is used to uniformly change the blink 
-rate on all the linked leds.
-
-"General brightness for the 16 outputs is controlled through 256 linear 
-steps to FFh"
-I don't think that is the intention of the gdc is it? Looking at the 
-original gdc code, it thus sets the global BRIGHTNESS based on the 
-period/on_time. I don't think that is what we expect when we enable blink.
-
- From my understanding, the grppwm is super-imposed, thus by setting gdc 
-to 0, we do not superimpose anything and the original brightness is 
-retained. (If i'm wrong here, we need to set gdc to 0xff.
-
-Because of this, I even recommend removing gdc all together, which saves 
-another i2c write.
-
-Or am I wrong here?
+Unless you can explain that it would be unrelated and it is actually 
+active-high/low. I'll be more than happy to oblige.
 
 Olliver
 >
-> Regards!
->
->
->
+> Rob
