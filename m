@@ -1,54 +1,89 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] Add LED driven by multiple gpio.
-Date: Wed, 27 Apr 2016 08:56:36 +0200
-Message-ID: <572062A4.6020601@samsung.com>
-References: <1461572078.2269.2.camel@dlinux> <571DE205.1000407@samsung.com>
+From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: Re: [PATCH 1/5] leds: triggers: Allow to switch the trigger to
+ "panic" on a kernel panic
+Date: Wed, 27 Apr 2016 17:10:35 -0300
+Message-ID: <CAAEAJfCnMMHc7yLf7fPCRUw7e4LAASJYLjE-vLwTU_KPLax3zg@mail.gmail.com>
+References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+	<1459801326-5541-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+	<20160424092551.GB23015@amd>
+	<20160424092951.GA25596@amd>
+	<571DBFAE.7060605@samsung.com>
+	<CAAEAJfC=O1akKKdW-9P7OkFZyDfE-ApbWhdYr7HPhszDrFcV1Q@mail.gmail.com>
+	<571F1593.8000400@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:56261 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750785AbcD0G4k (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 27 Apr 2016 02:56:40 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O6A001B95YD2Y40@mailout4.w1.samsung.com> for
- linux-leds@vger.kernel.org; Wed, 27 Apr 2016 07:56:37 +0100 (BST)
-In-reply-to: <571DE205.1000407@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <571F1593.8000400@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Bondar <bond@simicon.com>
-Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>
 
-On 04/25/2016 11:23 AM, Jacek Anaszewski wrote:
-> Hi Dmitry,
+On 26 April 2016 at 04:15, Jacek Anaszewski <j.anaszewski@samsung.com> =
+wrote:
+> Hi Ezequiel,
 >
-> First of all, please don't send patches as attachments but use
-> git send-email on each of them.
->
-> Regarding the driver - if the LEDs are not driven by some LED controller
-> device, then this patch fits better for GPIO subsystem IMO.
-
-Of course the driver should register LED class device anyway, but
-the main question is how the GPIO logic is implemented. Is it some
-publicly available chip or a circuit composed of discrete elements?
-
-> On 04/25/2016 10:14 AM, Dmitry Bondar wrote:
->> Hello, on our board we have one LED with 2 gpio connected to it:
->>   - when gpio0 is on and gpio1 on - LED is orange.
->>   - when gpio0 is on and gpio1 off - LED is green.
->>   - when gpio0 is off and gpio1 on - LED is red.
->>   - when gpio0 is off and gpio1 off - LED is off.
->> We want use led_trigger (nand-disk) on this LED.
->> Below patch which we use for get one LED on 2 gpios.
->> Can be this in mainline, or may be exist other - better way?
+> On 04/25/2016 06:27 PM, Ezequiel Garcia wrote:
+>>
+>> On 25 April 2016 at 03:56, Jacek Anaszewski <j.anaszewski@samsung.co=
+m>
+>> wrote:
+>>>
+>>> On 04/24/2016 11:29 AM, Pavel Machek wrote:
+>>>>
+>>>>
+>>>> On Sun 2016-04-24 11:25:51, Pavel Machek wrote:
+>>>>>
+>>>>>
+>>>>> On Mon 2016-04-04 17:22:02, Ezequiel Garcia wrote:
+>>>>>>
+>>>>>>
+>>>>>> This commit adds a new led_cdev flag LED_BLINK_AT_PANIC, which
+>>>>>> allows to mark a specific LED to be switched to the "panic"
+>>>>>> trigger, on a kernel panic.
+>>>>>>
+>>>>>> This is useful to allow the user to assign a regular trigger
+>>>>>> to a given LED, and still blink that LED on a kernel panic.
+>>>>>>
+>>>>>> Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>>    drivers/leds/led-triggers.c | 52
+>>>>>> +++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>    include/linux/leds.h        |  1 +
+>>>>>
+>>>>>
+>>>>>
+>>>>> Could we get this out of the core? I'm pretty sure most users are=
+ not
+>>>>> interested...
+>>>
+>>>
+>>>
+>>> Good point.
+>>>
+>>
+>> Not sure how we can get it out of the core, and still implement it.
+>>
+>> The goal is to run-time switch user-specified LEDs and blink them wh=
+en
+>> the kernel panics, and so it needs to mess up with some core private
+>> structures.
+>>
+>> Unless we don't want this feature at all.
 >>
 >
+> It seems that the entire added code can be easily moved to a separate
+> module, let's say led-panic-notifier.c ? It should select
+> LEDS_TRIGGER_PANIC, as it would make no sense to have the former enab=
+led
+> without the latter.
 >
 
-
--- 
-Best regards,
-Jacek Anaszewski
+OK, let me try that.
+--=20
+Ezequiel Garc=C3=ADa, VanguardiaSur
+www.vanguardiasur.com.ar
