@@ -1,75 +1,74 @@
 From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: [PATCH v3 0/3] Extend the LED panic trigger
-Date: Thu, 28 Apr 2016 19:03:37 -0300
-Message-ID: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:33185 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752571AbcD1WDy (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Apr 2016 18:03:54 -0400
-Received: by mail-pa0-f47.google.com with SMTP id zm5so41519158pac.0
-        for <linux-leds@vger.kernel.org>; Thu, 28 Apr 2016 15:03:53 -0700 (PDT)
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH v3 3/3] leds: gpio: Support the "panic-indicator" firmware property
+Date: Thu, 28 Apr 2016 19:03:40 -0300
+Message-ID: <1461881020-13964-4-git-send-email-ezequiel@vanguardiasur.com.ar>
+References: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+List-Id: linux-leds@vger.kernel.org
 
-As per commit 916fe619951f ("leds: trigger: Introduce a kernel
-panic LED trigger"), the kernel now supports a new LED trigger
-to hook on the panic blink.
+Calling a GPIO LEDs is quite likely to work even if the kernel
+has paniced, so they are ideal to blink in this situation.
+This commit adds support for the new "panic-indicator"
+firmware property, allowing to mark a given LED to blink on
+a kernel panic.
 
-However, the only way of using this is to dedicate a LED device,
-making it rather useless.
+Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+---
+ Documentation/devicetree/bindings/leds/leds-gpio.txt | 2 ++
+ drivers/leds/leds-gpio.c                             | 4 ++++
+ include/linux/leds.h                                 | 1 +
+ 3 files changed, 7 insertions(+)
 
-To overcome this limitation, the present series introduces the
-capability to switch the LED trigger of certain LED devices upon
-a kernel panic (using the panic notifier).
-
-The decision of which LEDs should be switched to the panic trigger
-is left to each LED device driver. As an example, a devicetree
-boolean property is introduced and used in the leds-gpio driver.
-
-The big change in this v3 is that I've moved the panic trigger
-switching away from the core code and it's now part of
-ledtrig-panic.c. Pavel, Jacek: How does it look?
-
-Changes from v2:
-
-  * Added Rob's "panic-indicator" devicetree property Acked-by.
-
-  * Fix typo, as pointed out by Robin Murphy.
-
-  * Documented "panic-indicator" in bindings/leds/leds-gpio.txt.
-
-  * Moved the panic trigger switching from the trigger core code,
-    to ledtrig-panic.c.
-
-Changes from v1:
-
-  * Dropped the led_trigger_event_nosleep API, and instead just
-    clear the blink_delay_{on, off} when the panic is notified. 
-    This results in less changes.
-
-  * Changed the flag to LED_PANIC_INDICATOR, as requested by Jacek.
-
-  * Changed the firmware property name to "panic-indicator", as
-    requested by Jacek. 
-
-Ezequiel Garcia (3):
-  leds: triggers: Allow to switch the trigger to "panic" on a kernel
-    panic
-  devicetree: leds: Introduce "panic-indicator" optional property
-  leds: gpio: Support the "panic-indicator" firmware property
-
- Documentation/devicetree/bindings/leds/common.txt  |  3 ++
- .../devicetree/bindings/leds/leds-gpio.txt         |  2 +
- drivers/leds/led-triggers.c                        |  2 +-
- drivers/leds/leds-gpio.c                           |  4 ++
- drivers/leds/leds.h                                |  1 +
- drivers/leds/trigger/Kconfig                       |  3 ++
- drivers/leds/trigger/ledtrig-panic.c               | 47 ++++++++++++++++++++++
- include/linux/leds.h                               |  2 +
- 8 files changed, 63 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+index fea1ebfe24a9..cbbeb1850910 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+@@ -23,6 +23,8 @@ LED sub-node properties:
+   property is not present.
+ - retain-state-suspended: (optional) The suspend state can be retained.Such
+   as charge-led gpio.
++- panic-indicator : (optional)
++  see Documentation/devicetree/bindings/leds/common.txt
+ 
+ Examples:
+ 
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 61143f55597e..8229f063b483 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -127,6 +127,8 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
+ 	if (!template->retain_state_suspended)
+ 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
++	if (template->panic_indicator)
++		led_dat->cdev.flags |= LED_PANIC_INDICATOR;
+ 
+ 	ret = gpiod_direction_output(led_dat->gpiod, state);
+ 	if (ret < 0)
+@@ -200,6 +202,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 
+ 		if (fwnode_property_present(child, "retain-state-suspended"))
+ 			led.retain_state_suspended = 1;
++		if (fwnode_property_present(child, "panic-indicator"))
++			led.panic_indicator = 1;
+ 
+ 		ret = create_gpio_led(&led, &priv->leds[priv->num_leds],
+ 				      dev, NULL);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 7e9fb00e15e8..d2b13066e781 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -365,6 +365,7 @@ struct gpio_led {
+ 	unsigned 	gpio;
+ 	unsigned	active_low : 1;
+ 	unsigned	retain_state_suspended : 1;
++	unsigned	panic_indicator : 1;
+ 	unsigned	default_state : 2;
+ 	/* default_state should be one of LEDS_GPIO_DEFSTATE_(ON|OFF|KEEP) */
+ 	struct gpio_desc *gpiod;
 -- 
 2.7.0
