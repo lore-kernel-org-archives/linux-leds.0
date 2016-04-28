@@ -1,44 +1,48 @@
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: [PATCH v3 2/3] devicetree: leds: Introduce "panic-indicator" optional property
-Date: Thu, 28 Apr 2016 19:03:39 -0300
-Message-ID: <1461881020-13964-3-git-send-email-ezequiel@vanguardiasur.com.ar>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 0/3] Extend the LED panic trigger
+Date: Fri, 29 Apr 2016 00:22:19 +0200
+Message-ID: <20160428222219.GA2155@amd>
 References: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:33460 "EHLO
-	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753957AbcD1WEE (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Apr 2016 18:04:04 -0400
-Received: by mail-pf0-f176.google.com with SMTP id 206so39385363pfu.0
-        for <linux-leds@vger.kernel.org>; Thu, 28 Apr 2016 15:04:03 -0700 (PDT)
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34593 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346AbcD1WWW (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Apr 2016 18:22:22 -0400
+Content-Disposition: inline
 In-Reply-To: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 
-It's desirable to specify which LEDs are to be blinked on a kernel
-panic. Therefore, introduce a devicetree boolean property to mark
-which LEDs should be treated this way, if possible.
+On Thu 2016-04-28 19:03:37, Ezequiel Garcia wrote:
+> As per commit 916fe619951f ("leds: trigger: Introduce a kernel
+> panic LED trigger"), the kernel now supports a new LED trigger
+> to hook on the panic blink.
+> 
+> However, the only way of using this is to dedicate a LED device,
+> making it rather useless.
+> 
+> To overcome this limitation, the present series introduces the
+> capability to switch the LED trigger of certain LED devices upon
+> a kernel panic (using the panic notifier).
+> 
+> The decision of which LEDs should be switched to the panic trigger
+> is left to each LED device driver. As an example, a devicetree
+> boolean property is introduced and used in the leds-gpio driver.
+> 
+> The big change in this v3 is that I've moved the panic trigger
+> switching away from the core code and it's now part of
+> ledtrig-panic.c. Pavel, Jacek: How does it look?
 
-Acked-by: Rob Herring <rob@kernel.org>
-Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
----
- Documentation/devicetree/bindings/leds/common.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Seems better now. Thanks for doing that.
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 68419843e32f..af10678ea2f6 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -37,6 +37,9 @@ Optional properties for child nodes:
-                      property is mandatory for the LEDs in the non-flash modes
-                      (e.g. torch or indicator).
- 
-+- panic-indicator : This property specifies that the LED should be used,
-+		    if at all possible, as a panic indicator.
-+
- Required properties for flash LED child nodes:
- - flash-max-microamp : Maximum flash LED supply current in microamperes.
- - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
+For the series:
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+									Pavel
 -- 
-2.7.0
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
