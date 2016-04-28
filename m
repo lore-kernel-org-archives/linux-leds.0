@@ -1,89 +1,75 @@
 From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [PATCH 1/5] leds: triggers: Allow to switch the trigger to
- "panic" on a kernel panic
-Date: Wed, 27 Apr 2016 17:10:35 -0300
-Message-ID: <CAAEAJfCnMMHc7yLf7fPCRUw7e4LAASJYLjE-vLwTU_KPLax3zg@mail.gmail.com>
-References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
-	<1459801326-5541-2-git-send-email-ezequiel@vanguardiasur.com.ar>
-	<20160424092551.GB23015@amd>
-	<20160424092951.GA25596@amd>
-	<571DBFAE.7060605@samsung.com>
-	<CAAEAJfC=O1akKKdW-9P7OkFZyDfE-ApbWhdYr7HPhszDrFcV1Q@mail.gmail.com>
-	<571F1593.8000400@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <571F1593.8000400@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>
+Subject: [PATCH v3 0/3] Extend the LED panic trigger
+Date: Thu, 28 Apr 2016 19:03:37 -0300
+Message-ID: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:33185 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752571AbcD1WDy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Apr 2016 18:03:54 -0400
+Received: by mail-pa0-f47.google.com with SMTP id zm5so41519158pac.0
+        for <linux-leds@vger.kernel.org>; Thu, 28 Apr 2016 15:03:53 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 
-On 26 April 2016 at 04:15, Jacek Anaszewski <j.anaszewski@samsung.com> =
-wrote:
-> Hi Ezequiel,
->
-> On 04/25/2016 06:27 PM, Ezequiel Garcia wrote:
->>
->> On 25 April 2016 at 03:56, Jacek Anaszewski <j.anaszewski@samsung.co=
-m>
->> wrote:
->>>
->>> On 04/24/2016 11:29 AM, Pavel Machek wrote:
->>>>
->>>>
->>>> On Sun 2016-04-24 11:25:51, Pavel Machek wrote:
->>>>>
->>>>>
->>>>> On Mon 2016-04-04 17:22:02, Ezequiel Garcia wrote:
->>>>>>
->>>>>>
->>>>>> This commit adds a new led_cdev flag LED_BLINK_AT_PANIC, which
->>>>>> allows to mark a specific LED to be switched to the "panic"
->>>>>> trigger, on a kernel panic.
->>>>>>
->>>>>> This is useful to allow the user to assign a regular trigger
->>>>>> to a given LED, and still blink that LED on a kernel panic.
->>>>>>
->>>>>> Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>>    drivers/leds/led-triggers.c | 52
->>>>>> +++++++++++++++++++++++++++++++++++++++++++++
->>>>>>    include/linux/leds.h        |  1 +
->>>>>
->>>>>
->>>>>
->>>>> Could we get this out of the core? I'm pretty sure most users are=
- not
->>>>> interested...
->>>
->>>
->>>
->>> Good point.
->>>
->>
->> Not sure how we can get it out of the core, and still implement it.
->>
->> The goal is to run-time switch user-specified LEDs and blink them wh=
-en
->> the kernel panics, and so it needs to mess up with some core private
->> structures.
->>
->> Unless we don't want this feature at all.
->>
->
-> It seems that the entire added code can be easily moved to a separate
-> module, let's say led-panic-notifier.c ? It should select
-> LEDS_TRIGGER_PANIC, as it would make no sense to have the former enab=
-led
-> without the latter.
->
+As per commit 916fe619951f ("leds: trigger: Introduce a kernel
+panic LED trigger"), the kernel now supports a new LED trigger
+to hook on the panic blink.
 
-OK, let me try that.
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+However, the only way of using this is to dedicate a LED device,
+making it rather useless.
+
+To overcome this limitation, the present series introduces the
+capability to switch the LED trigger of certain LED devices upon
+a kernel panic (using the panic notifier).
+
+The decision of which LEDs should be switched to the panic trigger
+is left to each LED device driver. As an example, a devicetree
+boolean property is introduced and used in the leds-gpio driver.
+
+The big change in this v3 is that I've moved the panic trigger
+switching away from the core code and it's now part of
+ledtrig-panic.c. Pavel, Jacek: How does it look?
+
+Changes from v2:
+
+  * Added Rob's "panic-indicator" devicetree property Acked-by.
+
+  * Fix typo, as pointed out by Robin Murphy.
+
+  * Documented "panic-indicator" in bindings/leds/leds-gpio.txt.
+
+  * Moved the panic trigger switching from the trigger core code,
+    to ledtrig-panic.c.
+
+Changes from v1:
+
+  * Dropped the led_trigger_event_nosleep API, and instead just
+    clear the blink_delay_{on, off} when the panic is notified. 
+    This results in less changes.
+
+  * Changed the flag to LED_PANIC_INDICATOR, as requested by Jacek.
+
+  * Changed the firmware property name to "panic-indicator", as
+    requested by Jacek. 
+
+Ezequiel Garcia (3):
+  leds: triggers: Allow to switch the trigger to "panic" on a kernel
+    panic
+  devicetree: leds: Introduce "panic-indicator" optional property
+  leds: gpio: Support the "panic-indicator" firmware property
+
+ Documentation/devicetree/bindings/leds/common.txt  |  3 ++
+ .../devicetree/bindings/leds/leds-gpio.txt         |  2 +
+ drivers/leds/led-triggers.c                        |  2 +-
+ drivers/leds/leds-gpio.c                           |  4 ++
+ drivers/leds/leds.h                                |  1 +
+ drivers/leds/trigger/Kconfig                       |  3 ++
+ drivers/leds/trigger/ledtrig-panic.c               | 47 ++++++++++++++++++++++
+ include/linux/leds.h                               |  2 +
+ 8 files changed, 63 insertions(+), 1 deletion(-)
+
+-- 
+2.7.0
