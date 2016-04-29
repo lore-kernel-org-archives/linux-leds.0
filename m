@@ -1,174 +1,85 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 1/3] leds: triggers: Allow to switch the trigger to
- "panic" on a kernel panic
-Date: Fri, 29 Apr 2016 09:20:06 +0200
-Message-ID: <57230B26.9010300@samsung.com>
-References: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1461881020-13964-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+Subject: Re: [PATCH] Add LED driven by multiple gpio.
+Date: Fri, 29 Apr 2016 14:42:39 +0200
+Message-ID: <572356BF.2040804@samsung.com>
+References: <1461572078.2269.2.camel@dlinux>
+ <20160426162658.761a88e7.drivshin.allworx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1461881020-13964-2-git-send-email-ezequiel@vanguardiasur.com.ar>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61551 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752964AbcD2Mmn (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 29 Apr 2016 08:42:43 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O6E00KQWBB43HA0@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Fri, 29 Apr 2016 13:42:40 +0100 (BST)
+In-reply-to: <20160426162658.761a88e7.drivshin.allworx@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: "David Rivshin (Allworx)" <drivshin.allworx@gmail.com>
+Cc: Dmitry Bondar <bond@simicon.com>, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
 
-Hi Ezequiel,
+Hi David,
 
-Thanks for the update. It's indeed reasonable to have all the
-switching infrastructure in ledtrig-panic.c.
+On 04/26/2016 10:26 PM, David Rivshin (Allworx) wrote:
+> On Mon, 25 Apr 2016 11:14:38 +0300
+> Dmitry Bondar <bond@simicon.com> wrote:
+>
+>> Hello, on our board we have one LED with 2 gpio connected to it:
+>>   - when gpio0 is on and gpio1 on - LED is orange.
+>>   - when gpio0 is on and gpio1 off - LED is green.
+>>   - when gpio0 is off and gpio1 on - LED is red.
+>>   - when gpio0 is off and gpio1 off - LED is off.
+>> We want use led_trigger (nand-disk) on this LED.
+>> Below patch which we use for get one LED on 2 gpios.
+>> Can be this in mainline, or may be exist other - better way?
+>>
+>
+> It sounds like what you have is two independent GPIO controlled LEDs:
+> one green and the other red (even if they are part of the same IC).
+> Given the current infrastructure, I have modeled such cases as two
+> separate LEDs in the devicetree, named <device>:green:<function> and
+> <device>:red:<function>. Userspace is then responsible for controlling
+> them appropriately to get the desired color.
+>
+> Unless I'm mistaken, in your case (nand-disk) there are blinking
+> combinations you wouldn't be able to achieve this way, but there
+> are a number you can do:
+> - off/green:  	green:nand-disk	red:off
+> - off/red: 	green:off 	red:nand-disk
+> - off/orange:	green:nand-disk	red:nand-disk
+> - green/orange:	green:on	red:nand-disk
+> - red/orange:	green:nand-disk	red:on
+> The other cases (e.g. green/red) would need an inverted nand-disk
+> trigger (on while inactive, off while active).
+>
+> I'm hoping that if the RGB LED framework comes to fruition, that there
+> will be some way to combine arbitrary single-color LED devices into a
+> logical RGB LED.
 
-I've noticed two minor issues below.
+It turns out that rgb-pattern trigger, we were discussing some time ago,
+would be useful also for LEDs of arbitrary colors. It should be given
+more generic name then, e.g. three-led-composite or so. The "color"
+sysfs attribute exposed by the trigger could be replaced with
+"subled_id", that would accept values 0, 1 or 2.
 
-On 04/29/2016 12:03 AM, Ezequiel Garcia wrote:
-> This commit adds a new led_cdev flag LED_PANIC_INDICATOR, which
-> allows to mark a specific LED to be switched to the "panic"
-> trigger, on a kernel panic.
->
-> This is useful to allow the user to assign a regular trigger
-> to a given LED, and still blink that LED on a kernel panic.
->
-> Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-> ---
->   drivers/leds/led-triggers.c          |  2 +-
->   drivers/leds/leds.h                  |  1 +
->   drivers/leds/trigger/Kconfig         |  3 +++
->   drivers/leds/trigger/ledtrig-panic.c | 47 ++++++++++++++++++++++++++++++++++++
->   include/linux/leds.h                 |  1 +
->   5 files changed, 53 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 2181581795d3..55fa65e1ae03 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -26,7 +26,7 @@
->    * Nests outside led_cdev->trigger_lock
->    */
->   static DECLARE_RWSEM(triggers_list_lock);
-> -static LIST_HEAD(trigger_list);
-> +LIST_HEAD(trigger_list);
->
->    /* Used by LED Class */
->
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index db3f20da7221..7d38e6b9a740 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -30,5 +30,6 @@ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
->
->   extern struct rw_semaphore leds_list_lock;
->   extern struct list_head leds_list;
-> +extern struct list_head trigger_list;
->
->   #endif	/* __LEDS_H_INCLUDED */
-> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-> index beac8c31c51b..4e4521c9072a 100644
-> --- a/drivers/leds/trigger/Kconfig
-> +++ b/drivers/leds/trigger/Kconfig
-> @@ -121,6 +121,9 @@ config LEDS_TRIGGER_PANIC
->   	depends on LEDS_TRIGGERS
->   	help
->   	  This allows LEDs to be configured to blink on a kernel panic.
-> +	  Enabling this option will allow to mark certain LEDs as 'panic-indicators',
+Brightness of such a compound LED could be set with:
 
-s/"panic-indicators"/panic indicators/
+led_trigger_3led_event(sturct led_trigger *trig,
+                        enum led_brightness led1,
+                        enum led_brightness led2,
+                        enum led_brightness led3)
 
-I understand that you referred here to the DT property name, but this
-is not obvious at first glance, and it is an implementation detail.
+Maybe we should think about making this scalable using
+C ellipsis feature:
 
-> +	  allowing to blink them on a kernel panic, even if they are set to
-> +	  a different trigger.
->   	  If unsure, say Y.
->
->   endif # LEDS_TRIGGERS
-> diff --git a/drivers/leds/trigger/ b/drivers/leds/trigger/ledtrig-panic.c
-> index 627b350c5ec3..3e447bd2064a 100644
-> --- a/drivers/leds/trigger/ledtrig-panic.c
-> +++ b/drivers/leds/trigger/ledtrig-panic.c
-> @@ -11,10 +11,54 @@
->
->   #include <linux/kernel.h>
->   #include <linux/init.h>
-> +#include <linux/notifier.h>
->   #include <linux/leds.h>
-> +#include "../leds.h"
->
->   static struct led_trigger *trigger;
->
-> +/*
-> + * This is a called in a special context by the atomic panic
-
-s/is a/is/
-
-> + * notifier. This means the trigger can be changed without
-> + * worrying about locking.
-> + */
-> +static void led_trigger_set_panic(struct led_classdev *led_cdev)
-> +{
-> +	struct led_trigger *trig;
-> +
-> +	list_for_each_entry(trig, &trigger_list, next_trig) {
-> +		if (strcmp("panic", trig->name))
-> +			continue;
-> +		if (led_cdev->trigger)
-> +			list_del(&led_cdev->trig_list);
-> +		list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
-> +
-> +		/* Avoid the delayed blink path */
-> +		led_cdev->blink_delay_on = 0;
-> +		led_cdev->blink_delay_off = 0;
-> +
-> +		led_cdev->trigger = trig;
-> +		if (trig->activate)
-> +			trig->activate(led_cdev);
-> +		break;
-> +	}
-> +}
-> +
-> +static int led_trigger_panic_notifier(struct notifier_block *nb,
-> +				      unsigned long code, void *unused)
-> +{
-> +	struct led_classdev *led_cdev;
-> +
-> +	list_for_each_entry(led_cdev, &leds_list, node)
-> +		if (led_cdev->flags & LED_PANIC_INDICATOR)
-> +			led_trigger_set_panic(led_cdev);
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block led_trigger_panic_nb = {
-> +	.notifier_call = led_trigger_panic_notifier,
-> +};
-> +
->   static long led_panic_blink(int state)
->   {
->   	led_trigger_event(trigger, state ? LED_FULL : LED_OFF);
-> @@ -23,6 +67,9 @@ static long led_panic_blink(int state)
->
->   static int __init ledtrig_panic_init(void)
->   {
-> +	atomic_notifier_chain_register(&panic_notifier_list,
-> +				       &led_trigger_panic_nb);
-> +
->   	led_trigger_register_simple("panic", &trigger);
->   	panic_blink = led_panic_blink;
->   	return 0;
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 19eb10278bea..7e9fb00e15e8 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -50,6 +50,7 @@ struct led_classdev {
->   #define LED_SYSFS_DISABLE	(1 << 22)
->   #define LED_DEV_CAP_FLASH	(1 << 23)
->   #define LED_HW_PLUGGABLE	(1 << 24)
-> +#define LED_PANIC_INDICATOR	(1 << 25)
->
->   	/* Set LED brightness level
->   	 * Must not sleep. Use brightness_set_blocking for drivers
->
-
+led_trigger_3led_event(sturct led_trigger *trig,
+                        enum led_brightness led1,
+                        ...)
 
 -- 
 Best regards,
