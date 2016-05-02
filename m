@@ -1,64 +1,100 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/5] leds: triggers: Allow to switch the trigger to
- "panic" on a kernel panic
-Date: Mon, 2 May 2016 09:06:04 +0200
-Message-ID: <20160502070604.GB13215@amd>
-References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
- <1459801326-5541-2-git-send-email-ezequiel@vanguardiasur.com.ar>
- <20160424092551.GB23015@amd>
- <20160424092951.GA25596@amd>
- <571DBFAE.7060605@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Anders Darander <anders@chargestorm.se>
+Subject: [PATCH] leds-pca963x: add bindings to invert polarity
+Date: Mon,  2 May 2016 11:41:44 +0200
+Message-ID: <1462182104-21450-1-git-send-email-anders@chargestorm.se>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34581 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751187AbcEBHGH (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 May 2016 03:06:07 -0400
-Content-Disposition: inline
-In-Reply-To: <571DBFAE.7060605@samsung.com>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:33977 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753351AbcEBJmL (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 May 2016 05:42:11 -0400
+Received: by mail-lf0-f52.google.com with SMTP id m64so28314323lfd.1
+        for <linux-leds@vger.kernel.org>; Mon, 02 May 2016 02:42:10 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>
+To: rpurdie@rpsys.net, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, j.anaszewski@samsung.com
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Anders Darander <anders@chargestorm.se>
 
-On Mon 2016-04-25 08:56:46, Jacek Anaszewski wrote:
-> On 04/24/2016 11:29 AM, Pavel Machek wrote:
-> >On Sun 2016-04-24 11:25:51, Pavel Machek wrote:
-> >>On Mon 2016-04-04 17:22:02, Ezequiel Garcia wrote:
-> >>>This commit adds a new led_cdev flag LED_BLINK_AT_PANIC, which
-> >>>allows to mark a specific LED to be switched to the "panic"
-> >>>trigger, on a kernel panic.
-> >>>
-> >>>This is useful to allow the user to assign a regular trigger
-> >>>to a given LED, and still blink that LED on a kernel panic.
-> >>>
-> >>>Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-> >>
-> >>
-> >>>  drivers/leds/led-triggers.c | 52 +++++++++++++++++++++++++++++++++++++++++++++
-> >>>  include/linux/leds.h        |  1 +
-> >>
-> >>Could we get this out of the core? I'm pretty sure most users are not
-> >>interested...
-> 
-> Good point.
+Add a new DT property, nxp,inverted, to invert the polarity of the output.
 
-Dunno. Perhaps we can have something like struct led *panic_led, which
-architecture can set, and then some helper that would blink the panic
-led...? Should be smaller than this and will only be compiled on
-platforms where it makes sense. On x86 we already have such support...
+Tested on PCA9634.
 
-> >Thinking about it some more....
-> >
-> >This is not really a trigger. This is very special. Maybe hard-coded
-> >handling, like we do for keyboard leds on x86 would be suitable?
-> 
-> Could you please spot the piece of code you have on mind?
+Signed-off-by: Anders Darander <anders@chargestorm.se>
+---
+ Documentation/devicetree/bindings/leds/pca963x.txt |  1 +
+ drivers/leds/leds-pca963x.c                        | 17 +++++++++++++++--
+ include/linux/platform_data/leds-pca963x.h         |  6 ++++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
-drivers/input/serio/i8042.c: * i8042_panic_blink() will turn the keyboard LEDs on or off and is called
-
-			       			   	     	 	  Pavel
+diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
+index dafbe99..68579c5 100644
+--- a/Documentation/devicetree/bindings/leds/pca963x.txt
++++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+@@ -7,6 +7,7 @@ Optional properties:
+ - nxp,totem-pole : use totem pole (push-pull) instead of open-drain (pca9632 defaults
+   to open-drain, newer chips to totem pole)
+ - nxp,hw-blink : use hardware blinking instead of software blinking
++- nxp,inverted: invert the polarity of the generated PWM
+ 
+ Each led is represented as a sub-node of the nxp,pca963x device.
+ 
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 407eba1..41b7648 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -294,6 +294,12 @@ pca963x_dt_init(struct i2c_client *client, struct pca963x_chipdef *chip)
+ 	else
+ 		pdata->blink_type = PCA963X_SW_BLINK;
+ 
++	/* default to non-inverted output, unless inverted is specified */
++	if (of_property_read_bool(np, "nxp,inverted"))
++		pdata->dir = PCA963X_INVERTED;
++	else
++		pdata->dir = PCA963X_NORMAL;
++
+ 	return pdata;
+ }
+ 
+@@ -395,11 +401,18 @@ static int pca963x_probe(struct i2c_client *client,
+ 	i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
+ 
+ 	if (pdata) {
++		u8 mode2 = i2c_smbus_read_byte_data(pca963x->chip->client,
++						    PCA963X_MODE2);
+ 		/* Configure output: open-drain or totem pole (push-pull) */
+ 		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
+-			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
++			mode2 |= 0x01;
+ 		else
+-			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
++			mode2 |= 0x05;
++		/* Configure direction: normal or inverted */
++		if (pdata->dir == PCA963X_INVERTED)
++			mode2 |= 0x10;
++		i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE2,
++					  mode2);
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/platform_data/leds-pca963x.h b/include/linux/platform_data/leds-pca963x.h
+index e731f00..54e845f 100644
+--- a/include/linux/platform_data/leds-pca963x.h
++++ b/include/linux/platform_data/leds-pca963x.h
+@@ -33,10 +33,16 @@ enum pca963x_blink_type {
+ 	PCA963X_HW_BLINK,
+ };
+ 
++enum pca963x_direction {
++	PCA963X_NORMAL,
++	PCA963X_INVERTED,
++};
++
+ struct pca963x_platform_data {
+ 	struct led_platform_data leds;
+ 	enum pca963x_outdrv outdrv;
+ 	enum pca963x_blink_type blink_type;
++	enum pca963x_direction dir;
+ };
+ 
+ #endif /* __LINUX_PCA963X_H*/
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.8.1
