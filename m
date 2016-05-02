@@ -1,83 +1,64 @@
-From: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 0/3] Extend the LED panic trigger
-Date: Fri, 29 Apr 2016 20:57:22 +0200
-Message-ID: <5723AE92.8020203@gmail.com>
-References: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/5] leds: triggers: Allow to switch the trigger to
+ "panic" on a kernel panic
+Date: Mon, 2 May 2016 09:06:04 +0200
+Message-ID: <20160502070604.GB13215@amd>
+References: <1459801326-5541-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <1459801326-5541-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <20160424092551.GB23015@amd>
+ <20160424092951.GA25596@amd>
+ <571DBFAE.7060605@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461881020-13964-1-git-send-email-ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34581 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187AbcEBHGH (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 2 May 2016 03:06:07 -0400
+Content-Disposition: inline
+In-Reply-To: <571DBFAE.7060605@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Richard Purdie <rpurdie@rpsys.net>
 
+On Mon 2016-04-25 08:56:46, Jacek Anaszewski wrote:
+> On 04/24/2016 11:29 AM, Pavel Machek wrote:
+> >On Sun 2016-04-24 11:25:51, Pavel Machek wrote:
+> >>On Mon 2016-04-04 17:22:02, Ezequiel Garcia wrote:
+> >>>This commit adds a new led_cdev flag LED_BLINK_AT_PANIC, which
+> >>>allows to mark a specific LED to be switched to the "panic"
+> >>>trigger, on a kernel panic.
+> >>>
+> >>>This is useful to allow the user to assign a regular trigger
+> >>>to a given LED, and still blink that LED on a kernel panic.
+> >>>
+> >>>Signed-off-by: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+> >>
+> >>
+> >>>  drivers/leds/led-triggers.c | 52 +++++++++++++++++++++++++++++++++++++++++++++
+> >>>  include/linux/leds.h        |  1 +
+> >>
+> >>Could we get this out of the core? I'm pretty sure most users are not
+> >>interested...
+> 
+> Good point.
 
+Dunno. Perhaps we can have something like struct led *panic_led, which
+architecture can set, and then some helper that would blink the panic
+led...? Should be smaller than this and will only be compiled on
+platforms where it makes sense. On x86 we already have such support...
 
-On 29/04/16 00:03, Ezequiel Garcia wrote:
-> As per commit 916fe619951f ("leds: trigger: Introduce a kernel
-> panic LED trigger"), the kernel now supports a new LED trigger
-> to hook on the panic blink.
->
-> However, the only way of using this is to dedicate a LED device,
-> making it rather useless.
->
-> To overcome this limitation, the present series introduces the
-> capability to switch the LED trigger of certain LED devices upon
-> a kernel panic (using the panic notifier).
->
-> The decision of which LEDs should be switched to the panic trigger
-> is left to each LED device driver. As an example, a devicetree
-> boolean property is introduced and used in the leds-gpio driver.
->
-> The big change in this v3 is that I've moved the panic trigger
-> switching away from the core code and it's now part of
-> ledtrig-panic.c. Pavel, Jacek: How does it look?
->
-> Changes from v2:
->
->    * Added Rob's "panic-indicator" devicetree property Acked-by.
->
->    * Fix typo, as pointed out by Robin Murphy.
->
->    * Documented "panic-indicator" in bindings/leds/leds-gpio.txt.
->
->    * Moved the panic trigger switching from the trigger core code,
->      to ledtrig-panic.c.
->
-> Changes from v1:
->
->    * Dropped the led_trigger_event_nosleep API, and instead just
->      clear the blink_delay_{on, off} when the panic is notified.
->      This results in less changes.
->
->    * Changed the flag to LED_PANIC_INDICATOR, as requested by Jacek.
->
->    * Changed the firmware property name to "panic-indicator", as
->      requested by Jacek.
->
-> Ezequiel Garcia (3):
->    leds: triggers: Allow to switch the trigger to "panic" on a kernel
->      panic
->    devicetree: leds: Introduce "panic-indicator" optional property
->    leds: gpio: Support the "panic-indicator" firmware property
->
->   Documentation/devicetree/bindings/leds/common.txt  |  3 ++
->   .../devicetree/bindings/leds/leds-gpio.txt         |  2 +
->   drivers/leds/led-triggers.c                        |  2 +-
->   drivers/leds/leds-gpio.c                           |  4 ++
->   drivers/leds/leds.h                                |  1 +
->   drivers/leds/trigger/Kconfig                       |  3 ++
->   drivers/leds/trigger/ledtrig-panic.c               | 47 ++++++++++++++++++++++
->   include/linux/leds.h                               |  2 +
->   8 files changed, 63 insertions(+), 1 deletion(-)
->
+> >Thinking about it some more....
+> >
+> >This is not really a trigger. This is very special. Maybe hard-coded
+> >handling, like we do for keyboard leds on x86 would be suitable?
+> 
+> Could you please spot the piece of code you have on mind?
 
-Looks good to me.
+drivers/input/serio/i8042.c: * i8042_panic_blink() will turn the keyboard LEDs on or off and is called
 
-Reviewed-by: Matthias Brugger <mbrugger-IBi9RG/b67k@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+			       			   	     	 	  Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
