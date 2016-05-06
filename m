@@ -1,42 +1,82 @@
-From: Olliver Schinagl <oliver@schinagl.nl>
-Subject: Re: [PATCH] leds-pca963x: add bindings to invert polarity
-Date: Wed, 4 May 2016 10:10:01 +0200
-Message-ID: <5729AE59.6000009@schinagl.nl>
-References: <1462182104-21450-1-git-send-email-anders@chargestorm.se>
- <5729A4AB.5080901@samsung.com> <20160504075508.GA22125@ad.chargestorm.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 7of9.schinagl.nl ([88.159.158.68]:44488 "EHLO 7of9.schinagl.nl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750993AbcEDIKJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 4 May 2016 04:10:09 -0400
-In-Reply-To: <20160504075508.GA22125@ad.chargestorm.se>
-Sender: linux-leds-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v6 0/9] mfd: max8997: Add regmap support
+Date: Fri, 06 May 2016 09:21:20 +0200
+Message-ID: <1462519289-2356-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-leds@vger.kernel.org
-To: Anders Darander <anders@chargestorm.se>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: rpurdie@rpsys.net, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Hey Jacek,
+Hi,
 
-On 04-05-16 09:55, Anders Darander wrote:
-> Hi,
->
-> Thanks for the info.
->
-> * Jacek Anaszewski <j.anaszewski@samsung.com> [160504 09:28]:
->> Please note that there has already been an attempt to add
->> the support for inverted output polarity to this driver and related
->> discussion [1]. This thread remains quiet for around two weeks.
-> Ah, nice coincidence! Unfortunately, I made the work earlier than his
-> posting, otherwise I could have spent the time on somethinge else. ;)
-Sorry to be so slacking with submitting this, I've been sitting on it 
-for 6 months now :) I just kept postponing in submitting it. But as they 
-say, great minds, and all that.
->
-> Well, then I hope v2 of his patches comes along.
->
-> Cheers,
-> Anders
->
+
+This is a rebase and extension of old Robert Baldyga's work. [0]
+
+Robert no longer works in Samsung.
+
+>From the original cover letter:
+"This patchset modifies max8997 driver and associated function drivers to use
+register maps instead of operating directly on i2c bus. This change allowed
+to simplify irq handling, and to move some initializations to individual
+function drivers. Hence now when some functions are not enabled, their i2c
+clients, regmaps and irqs are not registered."
+
+
+My changes (since Robert's v5)
+==============================
+1. Rebase on v4.6-rc6.
+2. Collect more acks.
+3. Add few fixes:
+   a. Haptic fix from Marek,
+   b. Extcon and RTC fix from me,
+   c. DTS fixes from Marek.
+
+DTS changes are independent but rest of them (extcon/input/MFD) rely
+on each other.
+
+One way of merging would be to pick everything (except DTS) through
+one tree. Or use tags.
+
+
+Best regards,
+Krzysztof
+
+[0] http://lkml.iu.edu/hypermail//linux/kernel/1411.1/03152.html
+
+
+Krzysztof Kozlowski (3):
+  extcon: max8997: Fix handling error code of regmap_irq_get_virq()
+  rtc: max8997: Check for ERRNO of regmap_irq_get_virq()
+  extcon: max8997: Fix inconsistent indenting
+
+Marek Szyprowski (3):
+  input: max8997-haptic: Fix NULL pointer dereference
+  ARM: dts: exynos: Fix regulator name to avoid forbidden character on
+    exynos4210-trats
+  ARM: dts: exynos: Add interrupt line to MAX8997 PMIC on
+    exynos4210-trats
+
+Robert Baldyga (3):
+  mfd: max8997: Use regmap to access registers
+  mfd: max8997: handle IRQs using regmap
+  mfd: max8997: Change irq names to upper case
+
+ arch/arm/boot/dts/exynos4210-trats.dts |   4 +-
+ drivers/extcon/extcon-max8997.c        |  72 ++++---
+ drivers/input/misc/max8997_haptic.c    |  40 ++--
+ drivers/leds/leds-max8997.c            |  13 +-
+ drivers/mfd/Kconfig                    |   3 +-
+ drivers/mfd/Makefile                   |   2 +-
+ drivers/mfd/max8997-irq.c              | 383 ---------------------------------
+ drivers/mfd/max8997.c                  | 245 ++++++++++++++-------
+ drivers/power/max8997_charger.c        |  33 +--
+ drivers/regulator/max8997.c            |  87 ++++----
+ drivers/rtc/rtc-max8997.c              |  60 +++---
+ include/linux/mfd/max8997-private.h    |  82 +++++--
+ 12 files changed, 392 insertions(+), 632 deletions(-)
+ delete mode 100644 drivers/mfd/max8997-irq.c
+
+-- 
+1.9.1
+
