@@ -1,47 +1,187 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v6 2/9] mfd: max8997: Use regmap to access registers
-Date: Fri, 06 May 2016 10:04:32 +0200
-Message-ID: <572C5010.1090102@samsung.com>
-References: <1462519289-2356-2-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-1-git-send-email-k.kozlowski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] leds: triggers: Allow to switch the trigger to
+ "panic" on a kernel panic
+Date: Fri, 06 May 2016 11:03:42 +0200
+Message-ID: <572C5DEE.3070307@samsung.com>
+References: <1461881020-13964-1-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <1461881020-13964-2-git-send-email-ezequiel@vanguardiasur.com.ar>
+ <57230B26.9010300@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58550 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbcEFIEi (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 6 May 2016 04:04:38 -0400
-In-reply-to: <1462519636-3250-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <57230B26.9010300-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
+On 04/29/2016 09:20 AM, Jacek Anaszewski wrote:
+> Hi Ezequiel,
+>
+> Thanks for the update. It's indeed reasonable to have all the
+> switching infrastructure in ledtrig-panic.c.
+>
+> I've noticed two minor issues below.
 
-On 05/06/2016 09:27 AM, Krzysztof Kozlowski wrote:
-> From: Robert Baldyga <r.baldyga@samsung.com>
->
-> This patch modifies max8997 driver and each associated function driver,
-> to use regmap instead of operating directly on i2c bus. It will allow to
-> simplify IRQ handling using regmap-irq.
->
-> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> [For extcon part]
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-> [For leds part]
-> Acked-by: Bryan Wu <cooloney@gmail.com>
->
+Since the merge window is imminent, I've addressed those issues by
+myself and applied the patch set to the for-next branch
+of linux-leds.git.
 
-Since I've replaced Bryan on the position of LED subsystem maintainer
-feel free to use my ack:
-
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-
--- 
-Best regards,
+Thanks,
 Jacek Anaszewski
+
+> On 04/29/2016 12:03 AM, Ezequiel Garcia wrote:
+>> This commit adds a new led_cdev flag LED_PANIC_INDICATOR, which
+>> allows to mark a specific LED to be switched to the "panic"
+>> trigger, on a kernel panic.
+>>
+>> This is useful to allow the user to assign a regular trigger
+>> to a given LED, and still blink that LED on a kernel panic.
+>>
+>> Signed-off-by: Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>
+>> ---
+>>   drivers/leds/led-triggers.c          |  2 +-
+>>   drivers/leds/leds.h                  |  1 +
+>>   drivers/leds/trigger/Kconfig         |  3 +++
+>>   drivers/leds/trigger/ledtrig-panic.c | 47
+>> ++++++++++++++++++++++++++++++++++++
+>>   include/linux/leds.h                 |  1 +
+>>   5 files changed, 53 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index 2181581795d3..55fa65e1ae03 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -26,7 +26,7 @@
+>>    * Nests outside led_cdev->trigger_lock
+>>    */
+>>   static DECLARE_RWSEM(triggers_list_lock);
+>> -static LIST_HEAD(trigger_list);
+>> +LIST_HEAD(trigger_list);
+>>
+>>    /* Used by LED Class */
+>>
+>> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+>> index db3f20da7221..7d38e6b9a740 100644
+>> --- a/drivers/leds/leds.h
+>> +++ b/drivers/leds/leds.h
+>> @@ -30,5 +30,6 @@ void led_set_brightness_nosleep(struct led_classdev
+>> *led_cdev,
+>>
+>>   extern struct rw_semaphore leds_list_lock;
+>>   extern struct list_head leds_list;
+>> +extern struct list_head trigger_list;
+>>
+>>   #endif    /* __LEDS_H_INCLUDED */
+>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>> index beac8c31c51b..4e4521c9072a 100644
+>> --- a/drivers/leds/trigger/Kconfig
+>> +++ b/drivers/leds/trigger/Kconfig
+>> @@ -121,6 +121,9 @@ config LEDS_TRIGGER_PANIC
+>>       depends on LEDS_TRIGGERS
+>>       help
+>>         This allows LEDs to be configured to blink on a kernel panic.
+>> +      Enabling this option will allow to mark certain LEDs as
+>> 'panic-indicators',
+>
+> s/"panic-indicators"/panic indicators/
+>
+> I understand that you referred here to the DT property name, but this
+> is not obvious at first glance, and it is an implementation detail.
+>
+>> +      allowing to blink them on a kernel panic, even if they are set to
+>> +      a different trigger.
+>>         If unsure, say Y.
+>>
+>>   endif # LEDS_TRIGGERS
+>> diff --git a/drivers/leds/trigger/ b/drivers/leds/trigger/ledtrig-panic.c
+>> index 627b350c5ec3..3e447bd2064a 100644
+>> --- a/drivers/leds/trigger/ledtrig-panic.c
+>> +++ b/drivers/leds/trigger/ledtrig-panic.c
+>> @@ -11,10 +11,54 @@
+>>
+>>   #include <linux/kernel.h>
+>>   #include <linux/init.h>
+>> +#include <linux/notifier.h>
+>>   #include <linux/leds.h>
+>> +#include "../leds.h"
+>>
+>>   static struct led_trigger *trigger;
+>>
+>> +/*
+>> + * This is a called in a special context by the atomic panic
+>
+> s/is a/is/
+>
+>> + * notifier. This means the trigger can be changed without
+>> + * worrying about locking.
+>> + */
+>> +static void led_trigger_set_panic(struct led_classdev *led_cdev)
+>> +{
+>> +    struct led_trigger *trig;
+>> +
+>> +    list_for_each_entry(trig, &trigger_list, next_trig) {
+>> +        if (strcmp("panic", trig->name))
+>> +            continue;
+>> +        if (led_cdev->trigger)
+>> +            list_del(&led_cdev->trig_list);
+>> +        list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
+>> +
+>> +        /* Avoid the delayed blink path */
+>> +        led_cdev->blink_delay_on = 0;
+>> +        led_cdev->blink_delay_off = 0;
+>> +
+>> +        led_cdev->trigger = trig;
+>> +        if (trig->activate)
+>> +            trig->activate(led_cdev);
+>> +        break;
+>> +    }
+>> +}
+>> +
+>> +static int led_trigger_panic_notifier(struct notifier_block *nb,
+>> +                      unsigned long code, void *unused)
+>> +{
+>> +    struct led_classdev *led_cdev;
+>> +
+>> +    list_for_each_entry(led_cdev, &leds_list, node)
+>> +        if (led_cdev->flags & LED_PANIC_INDICATOR)
+>> +            led_trigger_set_panic(led_cdev);
+>> +    return NOTIFY_DONE;
+>> +}
+>> +
+>> +static struct notifier_block led_trigger_panic_nb = {
+>> +    .notifier_call = led_trigger_panic_notifier,
+>> +};
+>> +
+>>   static long led_panic_blink(int state)
+>>   {
+>>       led_trigger_event(trigger, state ? LED_FULL : LED_OFF);
+>> @@ -23,6 +67,9 @@ static long led_panic_blink(int state)
+>>
+>>   static int __init ledtrig_panic_init(void)
+>>   {
+>> +    atomic_notifier_chain_register(&panic_notifier_list,
+>> +                       &led_trigger_panic_nb);
+>> +
+>>       led_trigger_register_simple("panic", &trigger);
+>>       panic_blink = led_panic_blink;
+>>       return 0;
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 19eb10278bea..7e9fb00e15e8 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -50,6 +50,7 @@ struct led_classdev {
+>>   #define LED_SYSFS_DISABLE    (1 << 22)
+>>   #define LED_DEV_CAP_FLASH    (1 << 23)
+>>   #define LED_HW_PLUGGABLE    (1 << 24)
+>> +#define LED_PANIC_INDICATOR    (1 << 25)
+>>
+>>       /* Set LED brightness level
+>>        * Must not sleep. Use brightness_set_blocking for drivers
+>>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
