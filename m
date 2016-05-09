@@ -1,50 +1,102 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v6 6/9] rtc: max8997: Check for ERRNO of
- regmap_irq_get_virq()
-Date: Sat, 7 May 2016 08:48:45 +0200
-Message-ID: <20160507064845.GD2890@piout.net>
-References: <1462519289-2356-2-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-1-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-5-git-send-email-k.kozlowski@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 0/9] mfd: max8997: Add regmap support
+Date: Mon, 9 May 2016 08:35:49 +0100
+Message-ID: <20160509073549.GC8324@dell>
+References: <1462519289-2356-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1462519636-3250-5-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1462519289-2356-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-input-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 06/05/2016 at 09:27:13 +0200, Krzysztof Kozlowski wrote :
-> The regmap_irq_get_virq() can return zero or negative ERRNO, so it is
-> insufficient to check only for non-zero value.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+On Fri, 06 May 2016, Krzysztof Kozlowski wrote:
+> This is a rebase and extension of old Robert Baldyga's work. [0]
+>=20
+> Robert no longer works in Samsung.
+>=20
+> From the original cover letter:
+> "This patchset modifies max8997 driver and associated function driver=
+s to use
+> register maps instead of operating directly on i2c bus. This change a=
+llowed
+> to simplify irq handling, and to move some initializations to individ=
+ual
+> function drivers. Hence now when some functions are not enabled, thei=
+r i2c
+> clients, regmaps and irqs are not registered."
+>=20
+>=20
+> My changes (since Robert's v5)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> 1. Rebase on v4.6-rc6.
+> 2. Collect more acks.
+> 3. Add few fixes:
+>    a. Haptic fix from Marek,
+>    b. Extcon and RTC fix from me,
+>    c. DTS fixes from Marek.
+>=20
+> DTS changes are independent but rest of them (extcon/input/MFD) rely
+> on each other.
+>=20
+> One way of merging would be to pick everything (except DTS) through
+> one tree. Or use tags.
 
-> ---
->  drivers/rtc/rtc-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-> index 4998aee0f07f..1a06e17ebe9b 100644
-> --- a/drivers/rtc/rtc-max8997.c
-> +++ b/drivers/rtc/rtc-max8997.c
-> @@ -497,7 +497,7 @@ static int max8997_rtc_probe(struct platform_device *pdev)
->  	}
->  
->  	virq = regmap_irq_get_virq(max8997->irq_data, MAX8997_PMICIRQ_RTCA1);
-> -	if (!virq) {
-> +	if (virq <= 0) {
->  		dev_err(&pdev->dev, "Failed to create mapping alarm IRQ\n");
->  		ret = -ENXIO;
->  		goto err_out;
-> -- 
-> 1.9.1
-> 
+I'd be happy to take the set, once you have collected all Acks.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> Best regards,
+> Krzysztof
+>=20
+> [0] http://lkml.iu.edu/hypermail//linux/kernel/1411.1/03152.html
+>=20
+>=20
+> Krzysztof Kozlowski (3):
+>   extcon: max8997: Fix handling error code of regmap_irq_get_virq()
+>   rtc: max8997: Check for ERRNO of regmap_irq_get_virq()
+>   extcon: max8997: Fix inconsistent indenting
+>=20
+> Marek Szyprowski (3):
+>   input: max8997-haptic: Fix NULL pointer dereference
+>   ARM: dts: exynos: Fix regulator name to avoid forbidden character o=
+n
+>     exynos4210-trats
+>   ARM: dts: exynos: Add interrupt line to MAX8997 PMIC on
+>     exynos4210-trats
+>=20
+> Robert Baldyga (3):
+>   mfd: max8997: Use regmap to access registers
+>   mfd: max8997: handle IRQs using regmap
+>   mfd: max8997: Change irq names to upper case
+>=20
+>  arch/arm/boot/dts/exynos4210-trats.dts |   4 +-
+>  drivers/extcon/extcon-max8997.c        |  72 ++++---
+>  drivers/input/misc/max8997_haptic.c    |  40 ++--
+>  drivers/leds/leds-max8997.c            |  13 +-
+>  drivers/mfd/Kconfig                    |   3 +-
+>  drivers/mfd/Makefile                   |   2 +-
+>  drivers/mfd/max8997-irq.c              | 383 -----------------------=
+----------
+>  drivers/mfd/max8997.c                  | 245 ++++++++++++++-------
+>  drivers/power/max8997_charger.c        |  33 +--
+>  drivers/regulator/max8997.c            |  87 ++++----
+>  drivers/rtc/rtc-max8997.c              |  60 +++---
+>  include/linux/mfd/max8997-private.h    |  82 +++++--
+>  12 files changed, 392 insertions(+), 632 deletions(-)
+>  delete mode 100644 drivers/mfd/max8997-irq.c
+>=20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
