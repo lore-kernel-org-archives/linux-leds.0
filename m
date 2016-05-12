@@ -1,8 +1,8 @@
 From: Olliver Schinagl <oliver@schinagl.nl>
 Subject: Re: [PATCHv1 0/6] leds: pca9653x: support inverted outputs and
  cleanups
-Date: Thu, 12 May 2016 11:04:19 +0200
-Message-ID: <57344713.6070901@schinagl.nl>
+Date: Thu, 12 May 2016 11:07:19 +0200
+Message-ID: <573447C7.1060100@schinagl.nl>
 References: <1461051650-18824-1-git-send-email-oliver@schinagl.nl>
  <5715F927.3030102@samsung.com> <5715FCE8.7080106@schinagl.nl>
  <CAPybu_02_5pZ6pMkXwaHtjJAfXiWPniWEHcayRoCMypfgeLD_w@mail.gmail.com>
@@ -12,13 +12,11 @@ References: <1461051650-18824-1-git-send-email-oliver@schinagl.nl>
  <CAPybu_2fys29MUTBCDPb+tpfCgbr9SL+LXq061Tq20_z7UO-Vg@mail.gmail.com>
  <5717430D.30702@schinagl.nl>
  <CAPybu_3=VdXR_X_00EiYMyhRPLsR40GW1kHS5rzdOkSzrCMVWg@mail.gmail.com>
- <571746A2.8040609@schinagl.nl>
- <CAPybu_2WXdGck_FtW2MQEiPU-oXA6yz8W3jGkUnABfbir82Jdg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_2WXdGck_FtW2MQEiPU-oXA6yz8W3jGkUnABfbir82Jdg@mail.gmail.com>
+In-Reply-To: <CAPybu_3=VdXR_X_00EiYMyhRPLsR40GW1kHS5rzdOkSzrCMVWg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Peter Meerwald <pmeerw@pmeerw.net>
@@ -88,7 +86,7 @@ Olliver
 > Regards!
 >
 > On Fri, Apr 22, 2016 at 10:48 AM, Ricardo Ribalda Delgado
-> <ricardo.ribalda@gmail.com> wrote:
+> <ricardo.ribalda@gmail.com>  wrote:
 >> Hi
 >>
 >> I  am on trip until next monday. I have arranged also some hw to be sent to
@@ -99,7 +97,7 @@ Olliver
 >>
 >> Regards!
 >>
->> On 22 Apr 2016 09:21, "Olliver Schinagl" <oliver@schinagl.nl> wrote:
+>> On 22 Apr 2016 09:21, "Olliver Schinagl"<oliver@schinagl.nl>  wrote:
 >>
 >> Hi Ricardo,
 >>
@@ -107,7 +105,7 @@ Olliver
 >> On 20-04-16 11:17, Ricardo Ribalda Delgado wrote:
 >>> Hello again
 >>>
->>> On Wed, Apr 20, 2016 at 11:06 AM, Olliver Schinagl <oliver@schinagl.nl>
+>>> On Wed, Apr 20, 2016 at 11:06 AM, Olliver Schinagl<oliver@schinagl.nl>
 >>> wrote:
 >>>
 >>>> The devil is in the details :)
@@ -160,4 +158,3 @@ Olliver
 >>>
 >>>
 >>>
->
