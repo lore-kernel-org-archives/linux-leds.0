@@ -1,53 +1,581 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 23/54] MAINTAINERS: Add file patterns for led device tree
- bindings
-Date: Mon, 23 May 2016 09:23:58 +0200
-Message-ID: <5742B00E.3010101@samsung.com>
-References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
- <1463907991-7916-24-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1463907991-7916-24-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+From: Tony Makkiel <tony.makkiel@daqri.com>
+Subject: [PATCH 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
+Date: Thu, 26 May 2016 11:26:08 +0100
+Message-ID: <1464258368-20021-1-git-send-email-tony.makkiel@daqri.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:36593 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751355AbcEZK3a (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 26 May 2016 06:29:30 -0400
+Received: by mail-wm0-f53.google.com with SMTP id n129so219907023wmn.1
+        for <linux-leds@vger.kernel.org>; Thu, 26 May 2016 03:29:29 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Tony Makkiel <tony.makkiel@daqri.com>, j.anaszewski@samsung.com
 
-Hi Geert,
+Datasheet: http://www.ti.com/lit/gpn/lp3952
 
-On 05/22/2016 11:06 AM, Geert Uytterhoeven wrote:
-> Submitters of device tree binding documentation may forget to CC
-> the subsystem maintainer if this is missing.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: linux-leds@vger.kernel.org
-> ---
-> Please apply this patch directly if you want to be involved in device
-> tree binding documentation for your subsystem.
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ec96da7cb006e823..82c82a72cb9cf02a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6701,6 +6701,7 @@ M:	Jacek Anaszewski <j.anaszewski@samsung.com>
->   L:	linux-leds@vger.kernel.org
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
->   S:	Maintained
-> +F:	Documentation/devicetree/bindings/leds/
->   F:	drivers/leds/
->   F:	include/linux/leds.h
->
->
+The chip can drive 2 sets of RGB leds. Controller can
+be controlled via PWM, I2C and audio sychnronisation.
+This driver use I2C to communicate with chip.
 
-Applied, thanks.
+Signed-off-by: Tony Makkiel <tony.makkiel@daqri.com>
+---
+ drivers/leds/Kconfig        |  12 ++
+ drivers/leds/Makefile       |   1 +
+ drivers/leds/leds-lp3952.c  | 411 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/leds-lp3952.h |  89 ++++++++++
+ 4 files changed, 513 insertions(+)
+ create mode 100644 drivers/leds/leds-lp3952.c
+ create mode 100644 include/linux/leds-lp3952.h
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 5ae2834..305faf9 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -228,6 +228,18 @@ config LEDS_LP3944
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called leds-lp3944.
+ 
++config LEDS_LP3952
++	tristate "LED Support for TI LP3952 2 channel LED driver"
++	depends on LEDS_CLASS
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  This option enables support for LEDs connected to the Texas
++	  Instruments LP3952 LED driver.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called leds-lp3952.
++
+ config LEDS_LP55XX_COMMON
+ 	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+ 	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index cb2013d..0684c86 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_LEDS_PCA9532)		+= leds-pca9532.o
+ obj-$(CONFIG_LEDS_GPIO_REGISTER)	+= leds-gpio-register.o
+ obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
+ obj-$(CONFIG_LEDS_LP3944)		+= leds-lp3944.o
++obj-$(CONFIG_LEDS_LP3952)		+= leds-lp3952.o
+ obj-$(CONFIG_LEDS_LP55XX_COMMON)	+= leds-lp55xx-common.o
+ obj-$(CONFIG_LEDS_LP5521)		+= leds-lp5521.o
+ obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
+diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+new file mode 100644
+index 0000000..8229d5a
+--- /dev/null
++++ b/drivers/leds/leds-lp3952.c
+@@ -0,0 +1,411 @@
++/*
++ * Copyright (c) 2016, DAQRI, LLC.
++ *
++ * License Terms: GNU General Public License v2
++ *
++ * leds-lp3952 - LED class driver for TI lp3952 controller
++ *
++ * Based on:
++ * leds-tlc9516 - LED class driver for TLC95XX series
++ * of I2C driven LED controllers from NXP
++ *
++ * Derived from leds-atmel-pwm, leds-bd2802 and initial PWM led 3952
++ * driver written by Alex Feinman
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++/*#define DEBUG 1*/
++
++#include <linux/io.h>
++#include <linux/pm.h>
++#include <linux/i2c.h>
++#include <linux/gpio.h>
++#include <linux/leds.h>
++#include <linux/acpi.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/reboot.h>
++#include <linux/regmap.h>
++#include <linux/notifier.h>
++#include <linux/platform_device.h>
++#include <linux/leds-lp3952.h>
++
++#define LP3952_REG_LED_CTRL                 0x00
++#define LP3952_REG_R1_BLNK_TIME_CTRL        0x01
++#define LP3952_REG_R1_BLNK_CYCLE_CTRL       0x02
++#define LP3952_REG_G1_BLNK_TIME_CTRL        0x03
++#define LP3952_REG_G1_BLNK_CYCLE_CTRL       0x04
++#define LP3952_REG_B1_BLNK_TIME_CTRL        0x05
++#define LP3952_REG_B1_BLNK_CYCLE_CTRL       0x06
++#define LP3952_REG_ENABLES                  0x0B
++#define LP3952_REG_PAT_GEN_CTRL             0x11
++#define LP3952_REG_RGB1_MAX_I_CTRL          0x12
++#define LP3952_REG_RGB2_MAX_I_CTRL          0x13
++#define LP3952_REG_CMD_0                    0x50
++#define LP3952_REG_RESET                    0x60
++
++#define REG_MAX                 LP3952_REG_RESET
++
++struct lp3952_ctrl_hdl {
++	struct led_classdev cdev;
++	char name[10];
++	enum lp3952_leds channel;
++	void *priv;
++};
++
++struct ptrn_gen_cmd {
++	union {
++		struct {
++			u16 tt:3;
++			u16 b:3;
++			u16 cet:4;
++			u16 g:3;
++			u16 r:3;
++		};
++		struct {
++			u8 lsb;
++			u8 msb;
++		} bytes;
++	};
++} __attribute__ ((packed));
++
++struct lp3952_led_array {
++	u8 ndev;
++	u32 enable_gpio;
++	struct regmap *regmap;
++	struct i2c_client *client;
++	struct ptrn_gen_cmd pgm[8];
++	struct lp3952_ctrl_hdl *leds;
++};
++
++int lp3952_register_write(struct i2c_client *client, u8 reg, u8 val)
++{
++	int ret;
++	struct lp3952_led_array *priv = i2c_get_clientdata(client);
++
++	ret = regmap_write(priv->regmap, reg, val);
++
++	if (ret)
++		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
++			__func__, reg, val, ret);
++	return ret;
++}
++
++int lp3952_register_read(struct i2c_client *client, u8 reg, u8 len,
++			 u8 *valarray)
++{
++	struct lp3952_led_array *priv = i2c_get_clientdata(client);
++	int ret = regmap_bulk_read(priv->regmap, reg, valarray, len);
++
++	if (ret < 0)
++		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
++			__func__, reg, valarray[0], ret);
++	return ret;
++}
++
++static void lp3952_on_off(struct lp3952_led_array *priv, enum lp3952_leds led,
++			  int on)
++{
++	int val = 1 << led;
++
++	dev_dbg(&priv->client->dev, "%s LED %d to %d\n", __func__, led, on);
++	if (LP3952_LED_ALL == led)
++		val = 0x3f;
++
++	regmap_update_bits(priv->regmap, LP3952_REG_LED_CTRL, val,
++			   on ? val : 0);
++}
++
++/*
++ * Using Imax to control brightness. There are 4 possible
++ * setting 25, 50, 75 and 100 % of Imax. Possible values are
++ * values 0-4. 0 meaning turn off.
++ */
++static int lp3952_set_brightness(struct led_classdev *cdev,
++				 enum lp3952_brightness b)
++{
++	unsigned int reg, val, shiftVal;
++	struct lp3952_ctrl_hdl *led = container_of(cdev,
++						   struct lp3952_ctrl_hdl,
++						   cdev);
++	struct lp3952_led_array *priv = (struct lp3952_led_array *)led->priv;
++
++	dev_dbg(cdev->dev, "Brightness request: %d on %d\n", b, led->channel);
++
++	if (LP3952_OFF == b) {
++		lp3952_on_off(priv, led->channel, LP3952_OFF);
++		return 0;
++	}
++
++	val = b - 1;
++	reg = LP3952_REG_RGB1_MAX_I_CTRL;
++	shiftVal = (led->channel - LP3952_BLUE_1) * 2;
++
++	if (led->channel > LP3952_RED_1) {
++		dev_err(cdev->dev, " %s Invalid LED requested", __func__);
++		return -EINVAL;
++	} else if (led->channel < LP3952_BLUE_1) {
++		shiftVal = led->channel * 2;
++		reg = LP3952_REG_RGB2_MAX_I_CTRL;
++	}
++	/* Enable the LED in case it is not enabled already */
++	lp3952_on_off(priv, led->channel, 1);
++	return (regmap_update_bits(priv->regmap, reg, 3 << shiftVal,
++				   val << shiftVal));
++}
++
++static void lp3952_brightness_ctrl(struct led_classdev *cdev,
++				   enum led_brightness b)
++{
++	int range = LED_HALF / 2;
++	enum lp3952_brightness val = LP3952_FULL_BRIGHT;
++
++	dev_dbg(cdev->dev, "Requested Brightness %d\n", b);
++
++	if (LED_OFF == b)
++		val = LP3952_OFF;
++	else if (b < (LED_HALF - range))
++		val = LP3952_QUARTER_BRIGHT;
++	else if (b <= LED_HALF)
++		val = LP3952_HALF_BRIGHT;
++	else if (b <= LED_HALF + range)
++		val = LP3952_THREE_QRTR_BRIGHT;
++
++	lp3952_set_brightness(cdev, val);
++}
++
++static int lp3952_register_led_classdev(struct lp3952_led_array *priv)
++{
++	int ret, i;
++	const char *led_name[] = {
++		"blue2",
++		"green2",
++		"red2",
++		"blue1",
++		"green1",
++		"red1"
++	};
++
++	for (i = 0; i < priv->ndev; i++) {
++		sprintf(priv->leds[i].name, "%s", led_name[i]);
++		priv->leds[i].cdev.name = priv->leds[i].name;
++		priv->leds[i].cdev.brightness = LED_OFF;
++		priv->leds[i].cdev.max_brightness = LED_FULL;
++		priv->leds[i].cdev.brightness_set_blocking =
++		    lp3952_brightness_ctrl;
++		priv->leds[i].channel = i;
++		priv->leds[i].priv = priv;
++
++		ret = led_classdev_register(&priv->client->dev,
++					    &priv->leds[i].cdev);
++		if (ret < 0) {
++			dev_err(&priv->client->dev,
++				"couldn't register LED %s\n",
++				priv->leds[i].cdev.name);
++			goto error;
++		}
++	}
++	return 0;
++
++error:
++	for (; i >= 0; i--)
++		led_classdev_unregister(&priv->leds[i].cdev);
++	return ret;
++}
++
++static void lp3952_unregister_led_classdev(struct lp3952_led_array *priv)
++{
++	int i;
++
++	for (i = 0; i < priv->ndev; i++)
++		led_classdev_unregister(&priv->leds[i].cdev);
++}
++
++static int lp3952_set_pattern_gen_cmd(struct lp3952_led_array *priv,
++				      u8 cmd_index, u8 r, u8 g, u8 b,
++				      enum lp3952_tt tt, enum lp3952_cet cet)
++{
++	struct ptrn_gen_cmd line = {
++		.r = r,
++		.g = g,
++		.b = b,
++		.cet = cet,
++		.tt = tt
++	};
++	if (cmd_index >= 8)
++		return -EINVAL;
++
++	priv->pgm[cmd_index] = line;
++	lp3952_register_write(priv->client, LP3952_REG_CMD_0 + cmd_index * 2,
++			      line.bytes.msb);
++	return (lp3952_register_write(priv->client,
++				      LP3952_REG_CMD_0 + cmd_index * 2 + 1,
++				      line.bytes.lsb));
++}
++
++static int lp3952_configure(struct lp3952_led_array *priv)
++{
++	int ret;
++
++	/* Disable any LEDs on from any previous conf. */
++	ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL, 0);
++	if (ret)
++		return ret;
++	/* enable rgb patter, loop */
++	lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL, 0x06);
++	/* Update Bit 6 (Active mode),1 and 0 for pattern Gen */
++	ret = regmap_update_bits(priv->regmap, LP3952_REG_ENABLES, 0x43, 0xfc);
++	if (ret)
++		return ret;
++	/* Set Cmd1 for RGB intensity,cmd and transition time */
++	return (lp3952_set_pattern_gen_cmd(priv, 0, I46, I71, I100, TT0,
++					   CET197));
++}
++
++static const struct regmap_config lp3952_regmap = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = REG_MAX,
++};
++
++static int lp3952_probe(struct i2c_client *client,
++			const struct i2c_device_id *id)
++{
++	int status;
++	struct lp3952_ctrl_hdl *leds;
++	struct lp3952_led_array *priv;
++	struct lp3952_platform_data *pdata = dev_get_platdata(&client->dev);
++
++	dev_info(&client->dev, "lp3952 probe\n");
++
++	if (!pdata) {
++		dev_err(&client->dev,
++			"lp3952: failed to obtain platform_data\n");
++		return -EINVAL;
++	}
++	priv = kzalloc(sizeof(struct lp3952_led_array), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->ndev = 6;
++
++	leds = kcalloc(priv->ndev, sizeof(*leds), GFP_KERNEL);
++	if (!leds) {
++		kfree(priv);
++		return -ENOMEM;
++	}
++	priv->leds = leds;
++	priv->client = client;
++	priv->enable_gpio = pdata->enable_gpio;
++	priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
++	if (IS_ERR(priv->regmap)) {
++		int err = PTR_ERR(priv->regmap);
++		dev_err(&client->dev, "Failed to allocate register map: %d\n",
++			err);
++		return err;
++	}
++	status = gpio_request(priv->enable_gpio, "lp3952_gpio");
++	if (status)
++		dev_warn(&client->dev, "Unable to disable reset gpio: %d\n",
++			 status);
++	status = gpio_direction_output(priv->enable_gpio, 1);
++	if (status)
++		dev_warn(&client->dev, "Unable to disable reset gpio: %d\n",
++			 status);
++	i2c_set_clientdata(client, priv);
++
++	status = lp3952_configure(priv);
++	if (status) {
++		dev_err(&client->dev, "Probe failed. Device not found (%d)\n",
++			status);
++		kfree(leds);
++		kfree(priv);
++		return status;
++	}
++	lp3952_register_led_classdev(priv);
++
++	lp3952_on_off(priv, LP3952_LED_ALL, 1);
++	return 0;
++}
++
++static int lp3952_remove(struct i2c_client *client)
++{
++	struct lp3952_led_array *priv;
++
++	priv = i2c_get_clientdata(client);
++	lp3952_on_off(priv, LP3952_LED_ALL, 0);
++
++	lp3952_unregister_led_classdev(priv);
++
++	kfree(priv->leds);
++	gpio_direction_input(priv->enable_gpio);
++	gpio_free(priv->enable_gpio);
++	kfree(priv);
++	return 0;
++}
++
++#ifdef CONFIG_PM
++static int lp3952_suspend(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct lp3952_led_array *priv = i2c_get_clientdata(client);
++
++	lp3952_on_off(priv, LP3952_LED_ALL, 0);
++	gpio_direction_input(priv->enable_gpio);
++	return 0;
++}
++
++static int lp3952_resume(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct lp3952_led_array *priv = i2c_get_clientdata(client);
++
++	gpio_direction_output(priv->enable_gpio, 1);
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(lp3952_pm, lp3952_suspend, lp3952_resume);
++#define LP3952_PM (&lp3952_pm)
++#else /* CONFIG_PM */
++#define LP3952_PM NULL
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id lp3952_acpi_match[] = {
++	{LP3952_NAME, 0},
++	{}
++};
++
++MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
++#endif
++
++static const struct i2c_device_id lp3952_id[] = {
++	{LP3952_NAME, 0},
++	{}
++};
++
++static struct i2c_driver lp3952_i2c_driver = {
++	.driver = {
++		   .name = LP3952_NAME,
++		   .owner = THIS_MODULE,
++		   .pm = LP3952_PM,
++#ifdef CONFIG_ACPI
++		   .acpi_match_table = ACPI_PTR(lp3952_acpi_match),
++#endif
++		   },
++	.probe = lp3952_probe,
++	.remove = __exit_p(lp3952_remove),
++	.id_table = lp3952_id,
++};
++
++module_i2c_driver(lp3952_i2c_driver);
++
++MODULE_AUTHOR("Tony Makkiel <tony.makkiel@daqri.com>");
++MODULE_DESCRIPTION("lp3952 I2C LED controller driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/leds-lp3952.h b/include/linux/leds-lp3952.h
+new file mode 100644
+index 0000000..1b1e7c3
+--- /dev/null
++++ b/include/linux/leds-lp3952.h
+@@ -0,0 +1,89 @@
++/*
++ * Copyright (C) 2016, DAQRI LLC
++ *
++ * License Terms: GPL v2
++ *
++ * TI lp3952 Controller driver
++ *
++ * Author: Tony Makkiel <tony.makkiel@daqri.com>
++ *
++ */
++
++#ifndef LEDS_LP3952_H_
++#define LEDS_LP3952_H_
++
++#define LP3952_NAME             "lp3952"
++#define LP3952_DEV_ADDR         0x54
++/* Following 2 MACRO are specific to Minnowboard Max
++ * Use the appropriate host specific values when
++ * instantiating device
++ */
++#define LP3952_BUS_ADDR         7
++#define LP3952_NRST_GPIO        464
++
++/* Transition Time in ms */
++enum lp3952_tt {
++	TT0,
++	TT55,
++	TT110,
++	TT221,
++	TT422,
++	TT885,
++	TT1770,
++	TT3539
++};
++
++/* Command Execution Time in ms */
++enum lp3952_cet {
++	CET197,
++	CET393,
++	CET590,
++	CET786,
++	CET1180,
++	CET1376,
++	CET1573,
++	CET1769,
++	CET1966,
++	CET2163,
++	CET2359,
++	CET2556,
++	CET2763,
++	CET2949,
++	CET3146
++};
++
++/* Max Current in % */
++enum lp3952_colour_I_log_0 {
++	I0,
++	I7,
++	I14,
++	I21,
++	I32,
++	I46,
++	I71,
++	I100
++};
++
++enum lp3952_brightness {
++	LP3952_OFF = 0,
++	LP3952_QUARTER_BRIGHT,
++	LP3952_HALF_BRIGHT,
++	LP3952_THREE_QRTR_BRIGHT,
++	LP3952_FULL_BRIGHT
++};
++
++enum lp3952_leds {
++	LP3952_BLUE_2,
++	LP3952_GREEN_2,
++	LP3952_RED_2,
++	LP3952_BLUE_1,
++	LP3952_GREEN_1,
++	LP3952_RED_1,
++	LP3952_LED_ALL
++};
++
++struct lp3952_platform_data {
++	u32 enable_gpio;
++};
++
++#endif /* LEDS_LP3952_H_ */
 -- 
-Best regards,
-Jacek Anaszewski
+1.9.1
