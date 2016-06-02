@@ -1,59 +1,105 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Thu, 02 Jun 2016 09:08:54 +0200
-Message-ID: <574FDB86.2070107@samsung.com>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
- <574EC8EE.5000509@samsung.com> <574FB967.7090201@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <574FB967.7090201@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] leds: handle suspend/resume in heartbeat trigger
+Date: Thu,  2 Jun 2016 15:41:46 +0200
+Message-ID: <1464874906-13120-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:33694 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751338AbcFBNly (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 2 Jun 2016 09:41:54 -0400
+Received: by mail-lf0-f45.google.com with SMTP id s64so34309143lfe.0
+        for <linux-leds@vger.kernel.org>; Thu, 02 Jun 2016 06:41:53 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-pm@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 06/02/2016 06:43 AM, Krzysztof Kozlowski wrote:
-> On 06/01/2016 01:37 PM, Jacek Anaszewski wrote:
->> Hi Krzysztof,
->>
->> One thing drew my attention while reviewing this again:
->> max8997_led_brightness_set() can sleep, but the brightness_set
->> op it is assigned to must not sleep. At the time when this driver was
->> merged we were delegating brightness setting to workqueues task
->> in LED class drivers that can sleep during this call.
->> This must have been overlooked, which is even more likely, taking into
->> account that the initial patch doesn't have LED maintainer's ack.
->>
->> The non-sleeping requirement is motivated by the fact that brightness
->> can be set from softirq context, e.g. when timer trigger is enabled.
->>
->> Currently LED class drivers don't have to use workqueue on their own,
->> but are required to use brightness_set_blocking op instead of
->> brightness_set if they can sleep while setting brightness.
->>
->> Apart of that, I think that operations in max8997_led_brightness_set()
->> should be protected with mutex to assure leaving the device in
->> a consistent state in case of concurrent calls.
->>
->> I am aware that this is out of this patch scope, but I'd be grateful
->> if you could apply those changes and test them on hardware if you have
->> an access to.
->
-> The problem you mention existed before the patch. It was using sleeping
-> primitives (mutex) before adding regmap so I understand you don't have
-> anything against this patch, right?
+The following phenomena was observed: when suspending the
+system, sometimes the heartbeat LED was left on, glowing and
+wasting power while the rest of the system is asleep, also
+disturbing power dissapation measures on the odd suspend
+cycle when it's left on.
 
-Right, I just wanted to indicate the problem. The patch itself is ok.
+Clearly this is not how we want the heartbeat trigger to
+work: it should turn off and leave the LED off during
+system suspend.
 
-> I can fix the issue but it will be a little bit trickier because I don't
-> have the hardware. Other guys in the team tested the patchset for me so
-> I rely on them in that matter. Anyway I'll work on it.
+This removes the heartbeat trigger when preparing suspend and
+restores it during resume. The trigger code will make sure all
+LEDs are left in OFF state after removing the trigger, and
+will re-enable the trigger on all LEDs after resuming.
 
-Ack.
+Cc: linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/leds/trigger/ledtrig-heartbeat.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
+diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+index 410c39c62dc7..c80e91152b6b 100644
+--- a/drivers/leds/trigger/ledtrig-heartbeat.c
++++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched.h>
+ #include <linux/leds.h>
+ #include <linux/reboot.h>
++#include <linux/suspend.h>
+ #include "../leds.h"
+ 
+ static int panic_heartbeats;
+@@ -154,6 +155,26 @@ static struct led_trigger heartbeat_led_trigger = {
+ 	.deactivate = heartbeat_trig_deactivate,
+ };
+ 
++static int heartbeat_pm_notifier(struct notifier_block *nb,
++				 unsigned long pm_event, void *unused)
++{
++	int rc;
++
++	switch (pm_event) {
++	case PM_SUSPEND_PREPARE:
++		led_trigger_unregister(&heartbeat_led_trigger);
++		break;
++	case PM_POST_SUSPEND:
++		rc = led_trigger_register(&heartbeat_led_trigger);
++		if (rc)
++			pr_err("could not re-register heartbeat trigger\n");
++		break;
++	default:
++		break;
++	}
++	return NOTIFY_DONE;
++}
++
+ static int heartbeat_reboot_notifier(struct notifier_block *nb,
+ 				     unsigned long code, void *unused)
+ {
+@@ -168,6 +189,10 @@ static int heartbeat_panic_notifier(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+ 
++static struct notifier_block heartbeat_pm_nb = {
++	.notifier_call = heartbeat_pm_notifier,
++};
++
+ static struct notifier_block heartbeat_reboot_nb = {
+ 	.notifier_call = heartbeat_reboot_notifier,
+ };
+@@ -184,12 +209,14 @@ static int __init heartbeat_trig_init(void)
+ 		atomic_notifier_chain_register(&panic_notifier_list,
+ 					       &heartbeat_panic_nb);
+ 		register_reboot_notifier(&heartbeat_reboot_nb);
++		register_pm_notifier(&heartbeat_pm_nb);
+ 	}
+ 	return rc;
+ }
+ 
+ static void __exit heartbeat_trig_exit(void)
+ {
++	unregister_pm_notifier(&heartbeat_pm_nb);
+ 	unregister_reboot_notifier(&heartbeat_reboot_nb);
+ 	atomic_notifier_chain_unregister(&panic_notifier_list,
+ 					 &heartbeat_panic_nb);
 -- 
-Best regards,
-Jacek Anaszewski
+2.4.11
