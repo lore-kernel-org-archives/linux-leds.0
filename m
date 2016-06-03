@@ -1,318 +1,156 @@
-From: Benjamin Tissoires <benjamin.tissoires-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] hid: migrate Riso Kagaku LED driver from USB misc to HID
-Date: Fri, 3 Jun 2016 10:46:50 +0200
-Message-ID: <20160603084650.GB6063@mail.corp.redhat.com>
-References: <3f0cf36d-16cf-0404-4b2d-0106a6f7616c@gmail.com>
- <20160527214543.GS23234@mail.corp.redhat.com>
- <47a4856e-0dbb-4b8a-f2b3-59dacd72a2a2@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] leds: handle suspend/resume in heartbeat trigger
+Date: Fri, 3 Jun 2016 11:32:13 +0200
+Message-ID: <CAPDyKFp3DnGp2MRQOSOpRHhuD5_2MiA2Wge01W6B43YHpQ8S8Q@mail.gmail.com>
+References: <1464874906-13120-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <47a4856e-0dbb-4b8a-f2b3-59dacd72a2a2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jiri Kosina <jikos-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Christian Vogel <vogelchr-InfKab39H3A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:36841 "EHLO
+	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbcFCJcQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Fri, 3 Jun 2016 05:32:16 -0400
+Received: by mail-wm0-f50.google.com with SMTP id n184so116915553wmn.1
+        for <linux-leds@vger.kernel.org>; Fri, 03 Jun 2016 02:32:15 -0700 (PDT)
+In-Reply-To: <1464874906-13120-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-On May 28 2016 or thereabouts, Heiner Kallweit wrote:
-> Am 27.05.2016 um 23:45 schrieb Benjamin Tissoires:
-> > On May 27 2016 or thereabouts, Heiner Kallweit wrote:
-> >> The Riso Kagaku Webmail Notifier (and its clones) is supported as part of
-> >> usb/misc/usbled driver currently. This patch migrates the driver for this
-> >> device to the HID subsystem.
-> >>
-> >> Benefits:
-> >> - Avoid using USB low-level calls and use the HID subsystem instead
-> >>   (as this device provides a USB HID interface)
-> >> - Use standard LED subsystem instead of proprietary sysfs entries,
-> >>   this allows e.g. to use the device with features like triggers
-> >>
-> >> I know at least one cheap clone coming with green and blue LED switched.
-> >> There's a module paramater to deal with this.
-> >>
-> >> There might be users of the current module, therefore so far allow
-> >> compilation of the new driver only if the old one is disabled.
-> >>
-> >> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> ---
-> >>  drivers/hid/Kconfig    |   9 +++
-> >>  drivers/hid/Makefile   |   1 +
-> >>  drivers/hid/hid-core.c |   2 +-
-> >>  drivers/hid/hid-rika.c | 171 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >>  4 files changed, 182 insertions(+), 1 deletion(-)
-> >>  create mode 100644 drivers/hid/hid-rika.c
-> >>
-> >> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> >> index 5646ca4..5ba75de 100644
-> >> --- a/drivers/hid/Kconfig
-> >> +++ b/drivers/hid/Kconfig
-> >> @@ -784,6 +784,15 @@ config HID_HYPERV_MOUSE
-> >>  	---help---
-> >>  	Select this option to enable the Hyper-V mouse driver.
-> >>  
-> >> +config HID_RIKA
-> >> +	tristate "Riso Kaguku Webmail Notifier USB LED"
-> >> +	depends on HIDRAW
-> >> +	depends on LEDS_CLASS
-> >> +	depends on USB_LED = 'n'
-> >> +	---help---
-> >> +	Support for the Riso Kagaku Webmail Notifier. This driver registers
-> >> +	a LED class instance for red, green, and blue color component.
-> >> +
-> >>  config HID_SMARTJOYPLUS
-> >>  	tristate "SmartJoy PLUS PS2/USB adapter support"
-> >>  	depends on HID
-> >> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> >> index a2fb562..406f6d0 100644
-> >> --- a/drivers/hid/Makefile
-> >> +++ b/drivers/hid/Makefile
-> >> @@ -91,6 +91,7 @@ obj-$(CONFIG_HID_STEELSERIES)	+= hid-steelseries.o
-> >>  obj-$(CONFIG_HID_SUNPLUS)	+= hid-sunplus.o
-> >>  obj-$(CONFIG_HID_GREENASIA)	+= hid-gaff.o
-> >>  obj-$(CONFIG_HID_THINGM)	+= hid-thingm.o
-> >> +obj-$(CONFIG_HID_RIKA)		+= hid-rika.o
-> >>  obj-$(CONFIG_HID_THRUSTMASTER)	+= hid-tmff.o
-> >>  obj-$(CONFIG_HID_TIVO)		+= hid-tivo.o
-> >>  obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
-> >> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> >> index 8ea3a26..db929dc 100644
-> >> --- a/drivers/hid/hid-core.c
-> >> +++ b/drivers/hid/hid-core.c
-> >> @@ -2008,6 +2008,7 @@ static const struct hid_device_id hid_have_special_driver[] = {
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PETALYNX, USB_DEVICE_ID_PETALYNX_MAXTER_REMOTE) },
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_KEYBOARD) },
-> >> +	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
-> >>  #if IS_ENABLED(CONFIG_HID_ROCCAT)
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ARVO) },
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ISKU) },
-> >> @@ -2486,7 +2487,6 @@ static const struct hid_device_id hid_ignore_list[] = {
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_SYNAPTICS, USB_DEVICE_ID_SYNAPTICS_DPAD) },
-> >>  #endif
-> >>  	{ HID_USB_DEVICE(USB_VENDOR_ID_YEALINK, USB_DEVICE_ID_YEALINK_P1K_P4K_B2K) },
-> >> -	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
-> > 
-> > Hi Heiner,
-> > 
-> > Just a quick remark before an actual review. If you remove
-> > unconditionally the driver from hid_ignore_list, the usb driver will
-> > never get a chance to be bound to it as hid core will keep a reference
-> > to it.
-> > 
-> > The solution is either to #ifdef this line or to port the full USB
-> > driver into a HID one (and so remove the USB one).
-> 
-> Right, thanks for the hint. For now I would enclose this line in
-> #if IS_ENABLED(CONFIG_USB_LED)
-> There might be users of the current USB driver (although the proprietary
-> sysfs interface isn't documented under Documentation/ABI) and it might
-> be a good idea to give them some time to migrate before removing the old
-> USB driver.
+On 2 June 2016 at 15:41, Linus Walleij <linus.walleij@linaro.org> wrote:
+> The following phenomena was observed: when suspending the
+> system, sometimes the heartbeat LED was left on, glowing and
+> wasting power while the rest of the system is asleep, also
+> disturbing power dissapation measures on the odd suspend
+> cycle when it's left on.
+>
+> Clearly this is not how we want the heartbeat trigger to
+> work: it should turn off and leave the LED off during
+> system suspend.
 
-Actually, it might be better to also carry on the old sysfs interface in
-your new hid driver (and mark it as deprecated in the docs). This way,
-people won't have to recompile the kernel to keep the old sysfs
-interface and you will have more testers (distributions will make a
-choice, and you will have people complaining).
+Agree!
 
-Cheers,
-Benjamin
+>
+> This removes the heartbeat trigger when preparing suspend and
+> restores it during resume. The trigger code will make sure all
+> LEDs are left in OFF state after removing the trigger, and
+> will re-enable the trigger on all LEDs after resuming.
 
-> 
-> Before submitting a v2 of the patch I'll wait for more review feedback.
-> 
-> Rgds, Heiner
-> > 
-> > Cheers,
-> > Benjamin
-> > 
-> >>  	{ }
-> >>  };
-> >>  
-> >> diff --git a/drivers/hid/hid-rika.c b/drivers/hid/hid-rika.c
-> >> new file mode 100644
-> >> index 0000000..d4d2087
-> >> --- /dev/null
-> >> +++ b/drivers/hid/hid-rika.c
-> >> @@ -0,0 +1,171 @@
-> >> +/*
-> >> + * Riso Kagaku Webmail Notifier USB RGB LED driver
-> >> + *
-> >> + * Copyright 2016 Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> + * Based on drivers/hid/hid-thingm.c and
-> >> + * drivers/usb/misc/usbled.c
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-> >> + * modify it under the terms of the GNU General Public License as
-> >> + * published by the Free Software Foundation, version 2.
-> >> + */
-> >> +
-> >> +#include <linux/hid.h>
-> >> +#include <linux/hidraw.h>
-> >> +#include <linux/leds.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/mutex.h>
-> >> +
-> >> +#include "hid-ids.h"
-> >> +
-> >> +#define REPORT_SIZE	6
-> >> +
-> >> +static unsigned const char riso_kagaku_tbl[] = {
-> >> +/* R+2G+4B -> riso kagaku color index */
-> >> +	[0] = 0, /* black   */
-> >> +	[1] = 2, /* red     */
-> >> +	[2] = 1, /* green   */
-> >> +	[3] = 5, /* yellow  */
-> >> +	[4] = 3, /* blue    */
-> >> +	[5] = 6, /* magenta */
-> >> +	[6] = 4, /* cyan    */
-> >> +	[7] = 7  /* white   */
-> >> +};
-> >> +
-> >> +#define RISO_KAGAKU_IX(r, g, b) riso_kagaku_tbl[((r)?1:0)+((g)?2:0)+((b)?4:0)]
-> >> +
-> >> +struct rika_led {
-> >> +	struct led_classdev	cdev;
-> >> +	struct rika_device	*rdev;
-> >> +	char			name[32];
-> >> +};
-> >> +
-> >> +struct rika_device {
-> >> +	struct rika_led		red;
-> >> +	struct rika_led		green;
-> >> +	struct rika_led		blue;
-> >> +	struct hid_device       *hdev;
-> >> +	struct mutex		lock;
-> >> +};
-> >> +
-> >> +#define to_rika_led(arg) container_of(arg, struct rika_led, cdev)
-> >> +
-> >> +static bool switch_green_blue;
-> >> +module_param(switch_green_blue, bool, 0);
-> >> +MODULE_PARM_DESC(switch_green_blue, "switch green and blue RGB component");
-> >> +
-> >> +static u8 rika_index(struct rika_device *rdev)
-> >> +{
-> >> +	enum led_brightness r, g, b;
-> >> +
-> >> +	r = rdev->red.cdev.brightness;
-> >> +	g = rdev->green.cdev.brightness;
-> >> +	b = rdev->blue.cdev.brightness;
-> >> +
-> >> +	if (switch_green_blue)
-> >> +		return RISO_KAGAKU_IX(r, b, g);
-> >> +	else
-> >> +		return RISO_KAGAKU_IX(r, g, b);
-> >> +}
-> >> +
-> >> +static int rika_write_color(struct led_classdev *cdev, enum led_brightness br)
-> >> +{
-> >> +	struct rika_led *rled = to_rika_led(cdev);
-> >> +	struct rika_device *rdev = rled->rdev;
-> >> +	__u8 buf[REPORT_SIZE] = {};
-> >> +	int ret;
-> >> +
-> >> +	buf[1] = rika_index(rdev);
-> >> +
-> >> +	mutex_lock(&rdev->lock);
-> >> +	ret = hid_hw_output_report(rdev->hdev, buf, REPORT_SIZE);
-> >> +	mutex_unlock(&rdev->lock);
-> >> +
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	return (ret == REPORT_SIZE) ? 0 : -EMSGSIZE;
-> >> +}
-> >> +
-> >> +static int rika_init_led(struct rika_led *led, const char *color_name,
-> >> +			 struct rika_device *rdev, int minor)
-> >> +{
-> >> +	snprintf(led->name, sizeof(led->name), "rika%d:%s", minor, color_name);
-> >> +	led->cdev.name = led->name;
-> >> +	led->cdev.max_brightness = 1;
-> >> +	led->cdev.brightness_set_blocking = rika_write_color;
-> >> +	led->cdev.flags = LED_HW_PLUGGABLE;
-> >> +	led->rdev = rdev;
-> >> +
-> >> +	return devm_led_classdev_register(&rdev->hdev->dev, &led->cdev);
-> >> +}
-> >> +
-> >> +static int rika_init_rgb(struct rika_device *rdev, int minor)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	/* Register the red diode */
-> >> +	ret = rika_init_led(&rdev->red, "red", rdev, minor);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* Register the green diode */
-> >> +	ret = rika_init_led(&rdev->green, "green", rdev, minor);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* Register the blue diode */
-> >> +	return rika_init_led(&rdev->blue, "blue", rdev, minor);
-> >> +}
-> >> +
-> >> +static int rika_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >> +{
-> >> +	struct rika_device *rdev;
-> >> +	int ret, minor;
-> >> +
-> >> +	rdev = devm_kzalloc(&hdev->dev, sizeof(*rdev), GFP_KERNEL);
-> >> +	if (!rdev)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	ret = hid_parse(hdev);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	rdev->hdev = hdev;
-> >> +	mutex_init(&rdev->lock);
-> >> +
-> >> +	ret = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	minor = ((struct hidraw *) hdev->hidraw)->minor;
-> >> +
-> >> +	ret = rika_init_rgb(rdev, minor);
-> >> +	if (ret) {
-> >> +		hid_hw_stop(hdev);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	dev_info(&hdev->dev, "RiKa Webmail Notifier %d initialized\n", minor);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct hid_device_id rika_table[] = {
-> >> +	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU,
-> >> +	  USB_DEVICE_ID_RI_KA_WEBMAIL) },
-> >> +	{ }
-> >> +};
-> >> +MODULE_DEVICE_TABLE(hid, rika_table);
-> >> +
-> >> +static struct hid_driver rika_driver = {
-> >> +	.name = "rika",
-> >> +	.probe = rika_probe,
-> >> +	.id_table = rika_table,
-> >> +};
-> >> +
-> >> +module_hid_driver(rika_driver);
-> >> +
-> >> +MODULE_LICENSE("GPL");
-> >> +MODULE_AUTHOR("Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>");
-> >> +MODULE_DESCRIPTION("Riso Kagaku Webmail Notifier USB RGB LED driver");
-> >> -- 
-> >> 2.8.2
-> >>
-> > 
-> 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I believe most other led-trigger types that should also be "suspended"
+in the similar fashion as the heartbeat. Perhaps not all, but least
+some more (timer, cpu, etc).
+
+I looked at the cpu trigger, which currently registers a syscore_ops
+to deal with suspend/resume. That means the trigger being suspended
+far later in system PM suspend phase, and I wonder if that is really
+necessary!?
+Does people really care about the cpu trigger being active that late
+in the system PM suspend phase!?
+
+More importantly, I think it could be problematic to allow it that
+late in system PM phase, at least for for those ARM SoC I have been
+working on which might use an i2c transfer to control the led.
+
+Okay, my point is, perhaps we should do this in a more generic manner
+and manage the suspend/resume of triggers in
+drivers/leds/led-triggers.c?
+
+If we need the suspend/resume trigger to be optional, we can add that
+as a configuration flag in struct led_trigger, to inform the
+led-triggers.c about the wanted behaviour. In that way, each
+led-trigger type don't have to register their own set of pm_notifiers.
+
+Some core comments below...
+
+>
+> Cc: linux-pm@vger.kernel.org
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/leds/trigger/ledtrig-heartbeat.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+> index 410c39c62dc7..c80e91152b6b 100644
+> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
+> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/leds.h>
+>  #include <linux/reboot.h>
+> +#include <linux/suspend.h>
+>  #include "../leds.h"
+>
+>  static int panic_heartbeats;
+> @@ -154,6 +155,26 @@ static struct led_trigger heartbeat_led_trigger = {
+>         .deactivate = heartbeat_trig_deactivate,
+>  };
+>
+> +static int heartbeat_pm_notifier(struct notifier_block *nb,
+> +                                unsigned long pm_event, void *unused)
+> +{
+> +       int rc;
+> +
+> +       switch (pm_event) {
+> +       case PM_SUSPEND_PREPARE:
+
+I think you should add:
+case PM_HIBERNATION_PREPARE:
+case PM_RESTORE_PREPARE:
+
+> +               led_trigger_unregister(&heartbeat_led_trigger);
+> +               break;
+> +       case PM_POST_SUSPEND:
+
+I think you should add:
+case PM_POST_HIBERNATION:
+case PM_POST_RESTORE:
+
+> +               rc = led_trigger_register(&heartbeat_led_trigger);
+> +               if (rc)
+> +                       pr_err("could not re-register heartbeat trigger\n");
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +       return NOTIFY_DONE;
+> +}
+> +
+>  static int heartbeat_reboot_notifier(struct notifier_block *nb,
+>                                      unsigned long code, void *unused)
+>  {
+> @@ -168,6 +189,10 @@ static int heartbeat_panic_notifier(struct notifier_block *nb,
+>         return NOTIFY_DONE;
+>  }
+>
+> +static struct notifier_block heartbeat_pm_nb = {
+> +       .notifier_call = heartbeat_pm_notifier,
+> +};
+> +
+>  static struct notifier_block heartbeat_reboot_nb = {
+>         .notifier_call = heartbeat_reboot_notifier,
+>  };
+> @@ -184,12 +209,14 @@ static int __init heartbeat_trig_init(void)
+>                 atomic_notifier_chain_register(&panic_notifier_list,
+>                                                &heartbeat_panic_nb);
+>                 register_reboot_notifier(&heartbeat_reboot_nb);
+> +               register_pm_notifier(&heartbeat_pm_nb);
+>         }
+>         return rc;
+>  }
+>
+>  static void __exit heartbeat_trig_exit(void)
+>  {
+> +       unregister_pm_notifier(&heartbeat_pm_nb);
+>         unregister_reboot_notifier(&heartbeat_reboot_nb);
+>         atomic_notifier_chain_unregister(&panic_notifier_list,
+>                                          &heartbeat_panic_nb);
+> --
+> 2.4.11
+>
+
+Besides my upper comments, this looks like a good approach!
+
+Kind regards
+Uffe
