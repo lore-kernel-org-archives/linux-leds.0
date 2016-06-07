@@ -1,335 +1,625 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH] hid: migrate Riso Kagaku LED driver from USB misc to HID
-Date: Fri, 3 Jun 2016 21:50:16 +0200
-Message-ID: <01bf994c-d192-53b1-12ff-ecf7f351b6be@gmail.com>
-References: <3f0cf36d-16cf-0404-4b2d-0106a6f7616c@gmail.com>
- <20160527214543.GS23234@mail.corp.redhat.com>
- <47a4856e-0dbb-4b8a-f2b3-59dacd72a2a2@gmail.com>
- <20160603084650.GB6063@mail.corp.redhat.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
+Date: Tue, 07 Jun 2016 10:42:44 +0200
+Message-ID: <57568904.3030900@samsung.com>
+References: <1464967219-31689-1-git-send-email-tony.makkiel@daqri.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34333 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752252AbcFCTuh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Fri, 3 Jun 2016 15:50:37 -0400
-In-Reply-To: <20160603084650.GB6063@mail.corp.redhat.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:42821 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754604AbcFGImt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jun 2016 04:42:49 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O8E00AA387A1K90@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 07 Jun 2016 09:42:46 +0100 (BST)
+In-reply-to: <1464967219-31689-1-git-send-email-tony.makkiel@daqri.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Christian Vogel <vogelchr@vogel.cx>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-input@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Tony Makkiel <tony.makkiel@daqri.com>
+Cc: linux-leds@vger.kernel.org, rpurdie@rpsys.net, rjw@rjwysocki.net, lenb@kernel.org
 
-Am 03.06.2016 um 10:46 schrieb Benjamin Tissoires:
-> On May 28 2016 or thereabouts, Heiner Kallweit wrote:
->> Am 27.05.2016 um 23:45 schrieb Benjamin Tissoires:
->>> On May 27 2016 or thereabouts, Heiner Kallweit wrote:
->>>> The Riso Kagaku Webmail Notifier (and its clones) is supported as part of
->>>> usb/misc/usbled driver currently. This patch migrates the driver for this
->>>> device to the HID subsystem.
->>>>
->>>> Benefits:
->>>> - Avoid using USB low-level calls and use the HID subsystem instead
->>>>   (as this device provides a USB HID interface)
->>>> - Use standard LED subsystem instead of proprietary sysfs entries,
->>>>   this allows e.g. to use the device with features like triggers
->>>>
->>>> I know at least one cheap clone coming with green and blue LED switched.
->>>> There's a module paramater to deal with this.
->>>>
->>>> There might be users of the current module, therefore so far allow
->>>> compilation of the new driver only if the old one is disabled.
->>>>
->>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>> ---
->>>>  drivers/hid/Kconfig    |   9 +++
->>>>  drivers/hid/Makefile   |   1 +
->>>>  drivers/hid/hid-core.c |   2 +-
->>>>  drivers/hid/hid-rika.c | 171 +++++++++++++++++++++++++++++++++++++++++++++++++
->>>>  4 files changed, 182 insertions(+), 1 deletion(-)
->>>>  create mode 100644 drivers/hid/hid-rika.c
->>>>
->>>> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
->>>> index 5646ca4..5ba75de 100644
->>>> --- a/drivers/hid/Kconfig
->>>> +++ b/drivers/hid/Kconfig
->>>> @@ -784,6 +784,15 @@ config HID_HYPERV_MOUSE
->>>>  	---help---
->>>>  	Select this option to enable the Hyper-V mouse driver.
->>>>  
->>>> +config HID_RIKA
->>>> +	tristate "Riso Kaguku Webmail Notifier USB LED"
->>>> +	depends on HIDRAW
->>>> +	depends on LEDS_CLASS
->>>> +	depends on USB_LED = 'n'
->>>> +	---help---
->>>> +	Support for the Riso Kagaku Webmail Notifier. This driver registers
->>>> +	a LED class instance for red, green, and blue color component.
->>>> +
->>>>  config HID_SMARTJOYPLUS
->>>>  	tristate "SmartJoy PLUS PS2/USB adapter support"
->>>>  	depends on HID
->>>> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
->>>> index a2fb562..406f6d0 100644
->>>> --- a/drivers/hid/Makefile
->>>> +++ b/drivers/hid/Makefile
->>>> @@ -91,6 +91,7 @@ obj-$(CONFIG_HID_STEELSERIES)	+= hid-steelseries.o
->>>>  obj-$(CONFIG_HID_SUNPLUS)	+= hid-sunplus.o
->>>>  obj-$(CONFIG_HID_GREENASIA)	+= hid-gaff.o
->>>>  obj-$(CONFIG_HID_THINGM)	+= hid-thingm.o
->>>> +obj-$(CONFIG_HID_RIKA)		+= hid-rika.o
->>>>  obj-$(CONFIG_HID_THRUSTMASTER)	+= hid-tmff.o
->>>>  obj-$(CONFIG_HID_TIVO)		+= hid-tivo.o
->>>>  obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
->>>> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
->>>> index 8ea3a26..db929dc 100644
->>>> --- a/drivers/hid/hid-core.c
->>>> +++ b/drivers/hid/hid-core.c
->>>> @@ -2008,6 +2008,7 @@ static const struct hid_device_id hid_have_special_driver[] = {
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PETALYNX, USB_DEVICE_ID_PETALYNX_MAXTER_REMOTE) },
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_KEYBOARD) },
->>>> +	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
->>>>  #if IS_ENABLED(CONFIG_HID_ROCCAT)
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ARVO) },
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ISKU) },
->>>> @@ -2486,7 +2487,6 @@ static const struct hid_device_id hid_ignore_list[] = {
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_SYNAPTICS, USB_DEVICE_ID_SYNAPTICS_DPAD) },
->>>>  #endif
->>>>  	{ HID_USB_DEVICE(USB_VENDOR_ID_YEALINK, USB_DEVICE_ID_YEALINK_P1K_P4K_B2K) },
->>>> -	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
->>>
->>> Hi Heiner,
->>>
->>> Just a quick remark before an actual review. If you remove
->>> unconditionally the driver from hid_ignore_list, the usb driver will
->>> never get a chance to be bound to it as hid core will keep a reference
->>> to it.
->>>
->>> The solution is either to #ifdef this line or to port the full USB
->>> driver into a HID one (and so remove the USB one).
->>
->> Right, thanks for the hint. For now I would enclose this line in
->> #if IS_ENABLED(CONFIG_USB_LED)
->> There might be users of the current USB driver (although the proprietary
->> sysfs interface isn't documented under Documentation/ABI) and it might
->> be a good idea to give them some time to migrate before removing the old
->> USB driver.
-> 
-> Actually, it might be better to also carry on the old sysfs interface in
-> your new hid driver (and mark it as deprecated in the docs). This way,
-> people won't have to recompile the kernel to keep the old sysfs
-> interface and you will have more testers (distributions will make a
-> choice, and you will have people complaining).
-> 
-I see your point, however:
-The old sysfs interface requires dealing with low-level USB data structures
-which are not (at least not easily) available in a HID driver.
-Also the old sysfs interface is not documented, therefore productive usage
-is at own risk anyway I'd say.
-The whole usbled driver is a 10 year old hack (lots of undocumented numeric
-values etc., sorry Greg) which was never refactored.
+Hi Tony,
 
-Additionally the LED core used in the new driver has an own (properly documented)
-sysfs interface. I'm not sure whether having two sysfs interfaces, controlling
-the same functionalities, in one driver is desirable.
+Thanks for the update. I have few more comments below.
 
-Regards, Heiner
+On 06/03/2016 05:20 PM, Tony Makkiel wrote:
+> The chip can drive 2 sets of RGB leds. Controller can
+> be controlled via PWM, I2C and audio synchronisation.
+> This driver uses I2C to communicate with the chip.
+>
+> Datasheet: http://www.ti.com/lit/gpn/lp3952
+>
+> Signed-off-by: Tony Makkiel <tony.makkiel@daqri.com>
+> ---
+>   drivers/leds/Kconfig        |  12 ++
+>   drivers/leds/Makefile       |   1 +
+>   drivers/leds/leds-lp3952.c  | 368 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/leds-lp3952.h |  83 ++++++++++
+>   4 files changed, 464 insertions(+)
+>   create mode 100644 drivers/leds/leds-lp3952.c
+>   create mode 100644 include/linux/leds-lp3952.h
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 5ae2834..305faf9 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -228,6 +228,18 @@ config LEDS_LP3944
+>   	  To compile this driver as a module, choose M here: the
+>   	  module will be called leds-lp3944.
+>
+> +config LEDS_LP3952
+> +	tristate "LED Support for TI LP3952 2 channel LED driver"
+> +	depends on LEDS_CLASS
+> +	depends on I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for LEDs connected to the Texas
+> +	  Instruments LP3952 LED driver.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called leds-lp3952.
+> +
+>   config LEDS_LP55XX_COMMON
+>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index cb2013d..0684c86 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -26,6 +26,7 @@ obj-$(CONFIG_LEDS_PCA9532)		+= leds-pca9532.o
+>   obj-$(CONFIG_LEDS_GPIO_REGISTER)	+= leds-gpio-register.o
+>   obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
+>   obj-$(CONFIG_LEDS_LP3944)		+= leds-lp3944.o
+> +obj-$(CONFIG_LEDS_LP3952)		+= leds-lp3952.o
+>   obj-$(CONFIG_LEDS_LP55XX_COMMON)	+= leds-lp55xx-common.o
+>   obj-$(CONFIG_LEDS_LP5521)		+= leds-lp5521.o
+>   obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
+> diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+> new file mode 100644
+> index 0000000..abdf23a
+> --- /dev/null
+> +++ b/drivers/leds/leds-lp3952.c
+> @@ -0,0 +1,368 @@
+> +/*
+> + * Copyright (c) 2016, DAQRI, LLC.
+> + *
+> + * License Terms: GNU General Public License v2
+> + *
+> + * leds-lp3952 - LED class driver for TI lp3952 controller
+> + *
+> + * Based on:
+> + * leds-tlc9516 - LED class driver for TLC95XX series
+> + * of I2C driven LED controllers from NXP
+> + *
+> + * Derived from leds-atmel-pwm, leds-bd2802 and initial PWM led 3952
+> + * driver written by Alex Feinman
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio.h>
+> +#include <linux/i2c.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/leds-lp3952.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm.h>
+> +#include <linux/reboot.h>
+> +#include <linux/regmap.h>
+> +
+> +#define LP3952_REG_LED_CTRL                 0x00
+> +#define LP3952_REG_R1_BLNK_TIME_CTRL        0x01
+> +#define LP3952_REG_R1_BLNK_CYCLE_CTRL       0x02
+> +#define LP3952_REG_G1_BLNK_TIME_CTRL        0x03
+> +#define LP3952_REG_G1_BLNK_CYCLE_CTRL       0x04
+> +#define LP3952_REG_B1_BLNK_TIME_CTRL        0x05
+> +#define LP3952_REG_B1_BLNK_CYCLE_CTRL       0x06
+> +#define LP3952_REG_ENABLES                  0x0B
+> +#define LP3952_REG_PAT_GEN_CTRL             0x11
+> +#define LP3952_REG_RGB1_MAX_I_CTRL          0x12
+> +#define LP3952_REG_RGB2_MAX_I_CTRL          0x13
+> +#define LP3952_REG_CMD_0                    0x50
+> +#define LP3952_REG_RESET                    0x60
+> +
+> +#define REG_MAX                 LP3952_REG_RESET
+> +
+> +struct lp3952_ctrl_hdl {
+> +	struct led_classdev cdev;
+> +	char name[15];
+> +	enum lp3952_leds channel;
+> +	void *priv;
+> +};
+> +
+> +struct ptrn_gen_cmd {
+> +	union {
+> +		struct {
+> +			u16 tt:3;
+> +			u16 b:3;
+> +			u16 cet:4;
+> +			u16 g:3;
+> +			u16 r:3;
+> +		};
+> +		struct {
+> +			u8 lsb;
+> +			u8 msb;
+> +		} bytes;
+> +	};
+> +} __packed;
+> +
+> +struct lp3952_led_array {
+> +	u8 ndev;
+> +	u32 enable_gpio;
+> +	struct regmap *regmap;
+> +	struct i2c_client *client;
+> +	struct ptrn_gen_cmd pgm[LP3952_CMD_REG_COUNT];
+> +	struct lp3952_ctrl_hdl *leds;
+> +};
+> +
+> +int lp3952_register_write(struct i2c_client *client, u8 reg, u8 val)
+> +{
+> +	int ret;
+> +	struct lp3952_led_array *priv = i2c_get_clientdata(client);
+> +
+> +	ret = regmap_write(priv->regmap, reg, val);
+> +
+> +	if (ret)
+> +		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
+> +			__func__, reg, val, ret);
+> +	return ret;
+> +}
+> +
+> +static void lp3952_on_off(struct lp3952_led_array *priv, enum lp3952_leds led,
 
-> Cheers,
-> Benjamin
-> 
->>
->> Before submitting a v2 of the patch I'll wait for more review feedback.
->>
->> Rgds, Heiner
->>>
->>> Cheers,
->>> Benjamin
->>>
->>>>  	{ }
->>>>  };
->>>>  
->>>> diff --git a/drivers/hid/hid-rika.c b/drivers/hid/hid-rika.c
->>>> new file mode 100644
->>>> index 0000000..d4d2087
->>>> --- /dev/null
->>>> +++ b/drivers/hid/hid-rika.c
->>>> @@ -0,0 +1,171 @@
->>>> +/*
->>>> + * Riso Kagaku Webmail Notifier USB RGB LED driver
->>>> + *
->>>> + * Copyright 2016 Heiner Kallweit <hkallweit1@gmail.com>
->>>> + * Based on drivers/hid/hid-thingm.c and
->>>> + * drivers/usb/misc/usbled.c
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or
->>>> + * modify it under the terms of the GNU General Public License as
->>>> + * published by the Free Software Foundation, version 2.
->>>> + */
->>>> +
->>>> +#include <linux/hid.h>
->>>> +#include <linux/hidraw.h>
->>>> +#include <linux/leds.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/mutex.h>
->>>> +
->>>> +#include "hid-ids.h"
->>>> +
->>>> +#define REPORT_SIZE	6
->>>> +
->>>> +static unsigned const char riso_kagaku_tbl[] = {
->>>> +/* R+2G+4B -> riso kagaku color index */
->>>> +	[0] = 0, /* black   */
->>>> +	[1] = 2, /* red     */
->>>> +	[2] = 1, /* green   */
->>>> +	[3] = 5, /* yellow  */
->>>> +	[4] = 3, /* blue    */
->>>> +	[5] = 6, /* magenta */
->>>> +	[6] = 4, /* cyan    */
->>>> +	[7] = 7  /* white   */
->>>> +};
->>>> +
->>>> +#define RISO_KAGAKU_IX(r, g, b) riso_kagaku_tbl[((r)?1:0)+((g)?2:0)+((b)?4:0)]
->>>> +
->>>> +struct rika_led {
->>>> +	struct led_classdev	cdev;
->>>> +	struct rika_device	*rdev;
->>>> +	char			name[32];
->>>> +};
->>>> +
->>>> +struct rika_device {
->>>> +	struct rika_led		red;
->>>> +	struct rika_led		green;
->>>> +	struct rika_led		blue;
->>>> +	struct hid_device       *hdev;
->>>> +	struct mutex		lock;
->>>> +};
->>>> +
->>>> +#define to_rika_led(arg) container_of(arg, struct rika_led, cdev)
->>>> +
->>>> +static bool switch_green_blue;
->>>> +module_param(switch_green_blue, bool, 0);
->>>> +MODULE_PARM_DESC(switch_green_blue, "switch green and blue RGB component");
->>>> +
->>>> +static u8 rika_index(struct rika_device *rdev)
->>>> +{
->>>> +	enum led_brightness r, g, b;
->>>> +
->>>> +	r = rdev->red.cdev.brightness;
->>>> +	g = rdev->green.cdev.brightness;
->>>> +	b = rdev->blue.cdev.brightness;
->>>> +
->>>> +	if (switch_green_blue)
->>>> +		return RISO_KAGAKU_IX(r, b, g);
->>>> +	else
->>>> +		return RISO_KAGAKU_IX(r, g, b);
->>>> +}
->>>> +
->>>> +static int rika_write_color(struct led_classdev *cdev, enum led_brightness br)
->>>> +{
->>>> +	struct rika_led *rled = to_rika_led(cdev);
->>>> +	struct rika_device *rdev = rled->rdev;
->>>> +	__u8 buf[REPORT_SIZE] = {};
->>>> +	int ret;
->>>> +
->>>> +	buf[1] = rika_index(rdev);
->>>> +
->>>> +	mutex_lock(&rdev->lock);
->>>> +	ret = hid_hw_output_report(rdev->hdev, buf, REPORT_SIZE);
->>>> +	mutex_unlock(&rdev->lock);
->>>> +
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	return (ret == REPORT_SIZE) ? 0 : -EMSGSIZE;
->>>> +}
->>>> +
->>>> +static int rika_init_led(struct rika_led *led, const char *color_name,
->>>> +			 struct rika_device *rdev, int minor)
->>>> +{
->>>> +	snprintf(led->name, sizeof(led->name), "rika%d:%s", minor, color_name);
->>>> +	led->cdev.name = led->name;
->>>> +	led->cdev.max_brightness = 1;
->>>> +	led->cdev.brightness_set_blocking = rika_write_color;
->>>> +	led->cdev.flags = LED_HW_PLUGGABLE;
->>>> +	led->rdev = rdev;
->>>> +
->>>> +	return devm_led_classdev_register(&rdev->hdev->dev, &led->cdev);
->>>> +}
->>>> +
->>>> +static int rika_init_rgb(struct rika_device *rdev, int minor)
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	/* Register the red diode */
->>>> +	ret = rika_init_led(&rdev->red, "red", rdev, minor);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	/* Register the green diode */
->>>> +	ret = rika_init_led(&rdev->green, "green", rdev, minor);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	/* Register the blue diode */
->>>> +	return rika_init_led(&rdev->blue, "blue", rdev, minor);
->>>> +}
->>>> +
->>>> +static int rika_probe(struct hid_device *hdev, const struct hid_device_id *id)
->>>> +{
->>>> +	struct rika_device *rdev;
->>>> +	int ret, minor;
->>>> +
->>>> +	rdev = devm_kzalloc(&hdev->dev, sizeof(*rdev), GFP_KERNEL);
->>>> +	if (!rdev)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	ret = hid_parse(hdev);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	rdev->hdev = hdev;
->>>> +	mutex_init(&rdev->lock);
->>>> +
->>>> +	ret = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	minor = ((struct hidraw *) hdev->hidraw)->minor;
->>>> +
->>>> +	ret = rika_init_rgb(rdev, minor);
->>>> +	if (ret) {
->>>> +		hid_hw_stop(hdev);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	dev_info(&hdev->dev, "RiKa Webmail Notifier %d initialized\n", minor);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static const struct hid_device_id rika_table[] = {
->>>> +	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU,
->>>> +	  USB_DEVICE_ID_RI_KA_WEBMAIL) },
->>>> +	{ }
->>>> +};
->>>> +MODULE_DEVICE_TABLE(hid, rika_table);
->>>> +
->>>> +static struct hid_driver rika_driver = {
->>>> +	.name = "rika",
->>>> +	.probe = rika_probe,
->>>> +	.id_table = rika_table,
->>>> +};
->>>> +
->>>> +module_hid_driver(rika_driver);
->>>> +
->>>> +MODULE_LICENSE("GPL");
->>>> +MODULE_AUTHOR("Heiner Kallweit <hkallweit1@gmail.com>");
->>>> +MODULE_DESCRIPTION("Riso Kagaku Webmail Notifier USB RGB LED driver");
->>>> -- 
->>>> 2.8.2
->>>>
->>>
->>
-> 
+s/led/led_id/ ?
+
+> +			  int on)
+> +{
+> +	int ret, val;
+> +
+> +	dev_dbg(&priv->client->dev, "%s LED %d to %d\n", __func__, led, on);
+> +
+> +	val = 1 << led;
+> +	if (led == LP3952_LED_ALL)
+> +		val = 0x3f;
+
+Please add macro definitions for bit fields instead of using numerical
+values directly.
+
+> +
+> +	ret = regmap_update_bits(priv->regmap, LP3952_REG_LED_CTRL, val,
+> +				 on ? val : 0);
+> +	if (ret)
+> +		dev_err(&priv->client->dev, "%s, Error %d\n", __func__, ret);
+> +}
+> +
+> +/*
+> + * Using Imax to control brightness. There are 4 possible
+> + * setting 25, 50, 75 and 100 % of Imax. Possible values are
+> + * values 0-4. 0 meaning turn off.
+> + */
+> +static int lp3952_set_brightness(struct led_classdev *cdev,
+> +				 enum led_brightness value)
+> +{
+> +	unsigned int reg, val, shift_val;
+> +	struct lp3952_ctrl_hdl *led = container_of(cdev,
+> +						   struct lp3952_ctrl_hdl,
+> +						   cdev);
+> +	struct lp3952_led_array *priv = (struct lp3952_led_array *)led->priv;
+> +
+> +	dev_dbg(cdev->dev, "Brightness request: %d on %d\n", value,
+> +		led->channel);
+> +
+> +	if (value == LED_OFF) {
+> +		lp3952_on_off(priv, led->channel, LED_OFF);
+> +		return 0;
+> +	}
+> +
+> +	val = value - 1;
+
+val is redundant. How about value-- instead?
+
+> +	reg = LP3952_REG_RGB1_MAX_I_CTRL;
+> +	shift_val = (led->channel - LP3952_BLUE_1) * 2;
+> +
+> +	if (led->channel > LP3952_RED_1) {
+> +		dev_err(cdev->dev, " %s Invalid LED requested", __func__);
+> +		return -EINVAL;
+> +	} else if (led->channel < LP3952_BLUE_1) {
+> +		shift_val = led->channel * 2;
+> +		reg = LP3952_REG_RGB2_MAX_I_CTRL;
+> +	}
+
+I'd rearrange this this way:
+
+if (led->channel > LP3952_RED_1) {
+	dev_err(cdev->dev, " %s Invalid LED requested", __func__);
+	return -EINVAL;
+}
+
+if (led->channel >= LP3952_BLUE_1) {
+	reg = LP3952_REG_RGB1_MAX_I_CTRL;
+	shift_val = (led->channel - LP3952_BLUE_1) * 2;
+} else
+	reg = LP3952_REG_RGB2_MAX_I_CTRL;
+	shift_val = led->channel * 2;
+}
+
+Also you should control here "enable_gpio", i.e. when
+all LEDs are turned off, it should be asserted low and raised high
+otherwise.
+
+> +	/* Enable the LED in case it is not enabled already */
+> +	lp3952_on_off(priv, led->channel, 1);
+> +
+> +	return (regmap_update_bits(priv->regmap, reg, 3 << shift_val,
+> +				   val << shift_val));
+> +}
+> +
+> +static int lp3952_register_led_classdev(struct lp3952_led_array *priv)
+> +{
+> +	int ret, i;
+> +	const char *led_name[] = {
+> +		"lp3952:blue2",
+> +		"lp3952:green2",
+> +		"lp3952:red2",
+> +		"lp3952:blue1",
+> +		"lp3952:green1",
+> +		"lp3952:red1"
+> +	};
+> +
+> +	for (i = 0; i < priv->ndev; i++) {
+> +		sprintf(priv->leds[i].name, "%s", led_name[i]);
+> +		priv->leds[i].cdev.name = priv->leds[i].name;
+> +		priv->leds[i].cdev.brightness = LED_OFF;
+> +		priv->leds[i].cdev.max_brightness = LP3952_BRIGHT_MAX;
+> +		priv->leds[i].cdev.brightness_set_blocking =
+> +				lp3952_set_brightness;
+> +		priv->leds[i].channel = i;
+> +		priv->leds[i].priv = priv;
+> +
+> +		ret = devm_led_classdev_register(&priv->client->dev,
+> +						 &priv->leds[i].cdev);
+> +		if (ret < 0) {
+> +			dev_err(&priv->client->dev,
+> +				"couldn't register LED %s\n",
+> +				priv->leds[i].cdev.name);
+> +			goto error;
+> +		}
+> +	}
+> +	return 0;
+> +
+> +error:
+> +	for (; i >= 0; i--)
+> +		devm_led_classdev_unregister(&priv->client->dev,
+> +					     &priv->leds[i].cdev);
+
+Resources acquired with devm prefixed API are released on driver
+removal.
+
+> +	return ret;
+> +}
+> +
+> +static void lp3952_unregister_led_classdev(struct lp3952_led_array *priv)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < priv->ndev; i++)
+> +		devm_led_classdev_unregister(&priv->client->dev,
+> +					     &priv->leds[i].cdev);
+> +}
+
+This is also not needed.
+
+> +static int lp3952_set_pattern_gen_cmd(struct lp3952_led_array *priv,
+> +				      u8 cmd_index, u8 r, u8 g, u8 b,
+> +				      enum lp3952_tt tt, enum lp3952_cet cet)
+> +{
+> +	int ret;
+> +	struct ptrn_gen_cmd line = {
+> +		.r = r,
+> +		.g = g,
+> +		.b = b,
+> +		.cet = cet,
+> +		.tt = tt
+> +	};
+
+Empty line here please.
+
+> +	if (cmd_index >= LP3952_CMD_REG_COUNT)
+> +		return -EINVAL;
+> +
+> +	priv->pgm[cmd_index] = line;
+> +	ret = lp3952_register_write(priv->client,
+> +				    LP3952_REG_CMD_0 + cmd_index * 2,
+> +				    line.bytes.msb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return (lp3952_register_write(priv->client,
+> +				      LP3952_REG_CMD_0 + cmd_index * 2 + 1,
+> +				      line.bytes.lsb));
+> +}
+> +
+> +static int lp3952_configure(struct lp3952_led_array *priv)
+> +{
+> +	int ret;
+> +
+> +	/* Disable any LEDs on from any previous conf. */
+> +	ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* enable rgb patter, loop */
+> +	ret = lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL,
+> +				    0x06);
+
+Please add bit field definitions and use them here,
+instead of 0x06 value. It makes code analysis easier.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Update Bit 6 (Active mode), Select both Led sets, Bit [1:0] */
+> +	ret = regmap_update_bits(priv->regmap, LP3952_REG_ENABLES, 0x43, 0xfc);
+
+The same applies to 0x43 and 0xfc.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Set Cmd1 for RGB intensity,cmd and transition time */
+> +	return (lp3952_set_pattern_gen_cmd(priv, 0, I46, I71, I100, TT0,
+> +					   CET197));
+> +}
+> +
+> +static const struct regmap_config lp3952_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = REG_MAX,
+> +};
+> +
+> +static int lp3952_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	int status;
+> +	struct lp3952_ctrl_hdl *leds;
+> +	struct lp3952_led_array *priv;
+> +	struct lp3952_platform_data *pdata = dev_get_platdata(&client->dev);
+> +
+> +	if (!pdata) {
+> +		dev_err(&client->dev,
+> +			"lp3952: failed to obtain platform_data\n");
+> +		return -EINVAL;
+> +	}
+
+Actually board files are deprecated. We use Device Tree instead now.
+Would it be possible to switch to using it for this driver?
+Please refer to Documentation/devicetree/bindings/leds/common.txt.
+
+> +	priv = devm_kzalloc(&client->dev, sizeof(struct lp3952_led_array),
+
+Instead of using struct type name it is more preferred to pass
+dereferenced pointer as an argument to sizeof. Here it would be:
+
+sizeof(*priv)
+
+> +			    GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->ndev = 6;
+> +
+> +	leds = devm_kcalloc(&client->dev, priv->ndev, sizeof(*leds),
+> +			    GFP_KERNEL);
+
+Like you're doing it here.
+
+> +	if (!leds) {
+> +		devm_kfree(&client->dev, priv);
+> +		return -ENOMEM;
+> +	}
+> +	priv->leds = leds;
+> +	priv->client = client;
+> +	priv->enable_gpio = pdata->enable_gpio;
+> +	priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
+> +	if (IS_ERR(priv->regmap)) {
+> +		int err = PTR_ERR(priv->regmap);
+> +
+> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
+> +			err);
+> +		return err;
+> +	}
+> +
+> +	status = gpio_request(priv->enable_gpio, "lp3952_gpio");
+> +	if (status)
+> +		dev_warn(&client->dev, "Unable to disable reset gpio: %d\n",
+> +			 status);
+> +
+> +	status = gpio_direction_output(priv->enable_gpio, 1);
+> +	if (status)
+> +		dev_warn(&client->dev, "Unable to disable reset gpio: %d\n",
+> +			 status);
+
+Please switch over to using devm_gpiod API.
+
+> +
+> +	i2c_set_clientdata(client, priv);
+> +
+> +	status = lp3952_configure(priv);
+> +	if (status) {
+> +		dev_err(&client->dev, "Probe failed. Device not found (%d)\n",
+> +			status);
+> +		devm_kfree(&client->dev, leds);
+> +		devm_kfree(&client->dev, priv);
+
+You don't need to call this expliciyly here. devm_kfree is useful
+in cases one wants to release devm_ prefixed resource allocation,
+but not necessarily tear down the driver.
+
+> +		return status;
+> +	}
+> +
+> +	status = lp3952_register_led_classdev(priv);
+> +	if (status) {
+> +		dev_err(&client->dev, "Unable to register led_classdev: %d\n",
+> +			status);
+> +		devm_kfree(&client->dev, leds);
+> +		devm_kfree(&client->dev, priv);
+
+Ditto.
+
+> +		return status;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lp3952_remove(struct i2c_client *client)
+> +{
+> +	struct lp3952_led_array *priv;
+> +
+> +	priv = i2c_get_clientdata(client);
+> +	lp3952_on_off(priv, LP3952_LED_ALL, 0);
+> +
+> +	lp3952_unregister_led_classdev(priv);
+> +
+> +	devm_kfree(&client->dev, priv->leds);
+
+Please remove the above line.
+
+> +	gpio_direction_input(priv->enable_gpio);
+> +	gpio_free(priv->enable_gpio);
+> +	devm_kfree(&client->dev, priv);
+
+Please remove the above line.
+
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id lp3952_id[] = {
+> +	{LP3952_NAME, 0},
+> +	{}
+> +};
+> +
+> +static struct i2c_driver lp3952_i2c_driver = {
+> +	.driver = {
+> +		   .name = LP3952_NAME,
+> +		   .owner = THIS_MODULE,
+> +		   },
+> +	.probe = lp3952_probe,
+> +	.remove = lp3952_remove,
+> +	.id_table = lp3952_id,
+> +};
+> +
+> +module_i2c_driver(lp3952_i2c_driver);
+> +
+> +MODULE_AUTHOR("Tony Makkiel <tony.makkiel@daqri.com>");
+> +MODULE_DESCRIPTION("lp3952 I2C LED controller driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/leds-lp3952.h b/include/linux/leds-lp3952.h
+> new file mode 100644
+> index 0000000..393f456
+> --- /dev/null
+> +++ b/include/linux/leds-lp3952.h
+> @@ -0,0 +1,83 @@
+> +/*
+> + * Copyright (C) 2016, DAQRI LLC
+> + *
+> + * License Terms: GPL v2
+> + *
+> + * TI lp3952 Controller driver
+> + *
+> + * Author: Tony Makkiel <tony.makkiel@daqri.com>
+> + *
+> + */
+> +
+> +#ifndef LEDS_LP3952_H_
+> +#define LEDS_LP3952_H_
+> +
+> +#define LP3952_NAME             "lp3952"
+> +#define LP3952_DEV_ADDR         0x54
+> +#define LP3952_CMD_REG_COUNT    8
+> +#define LP3952_BRIGHT_MAX       4
+> +/* Following 2 MACRO are specific to Minnowboard Max
+> + * Use the appropriate host specific values when
+> + * instantiating device
+> + */
+> +#define LP3952_BUS_ADDR         7
+> +#define LP3952_NRST_GPIO        464
+> +
+> +/* Transition Time in ms */
+> +enum lp3952_tt {
+> +	TT0,
+> +	TT55,
+> +	TT110,
+> +	TT221,
+> +	TT422,
+> +	TT885,
+> +	TT1770,
+> +	TT3539
+> +};
+> +
+> +/* Command Execution Time in ms */
+> +enum lp3952_cet {
+> +	CET197,
+> +	CET393,
+> +	CET590,
+> +	CET786,
+> +	CET1180,
+> +	CET1376,
+> +	CET1573,
+> +	CET1769,
+> +	CET1966,
+> +	CET2163,
+> +	CET2359,
+> +	CET2556,
+> +	CET2763,
+> +	CET2949,
+> +	CET3146
+> +};
+> +
+> +/* Max Current in % */
+> +enum lp3952_colour_I_log_0 {
+> +	I0,
+> +	I7,
+> +	I14,
+> +	I21,
+> +	I32,
+> +	I46,
+> +	I71,
+> +	I100
+> +};
+> +
+> +enum lp3952_leds {
+> +	LP3952_BLUE_2,
+> +	LP3952_GREEN_2,
+> +	LP3952_RED_2,
+> +	LP3952_BLUE_1,
+> +	LP3952_GREEN_1,
+> +	LP3952_RED_1,
+> +	LP3952_LED_ALL
+> +};
+> +
+> +struct lp3952_platform_data {
+> +	u32 enable_gpio;
+> +};
+> +
+> +#endif /* LEDS_LP3952_H_ */
+>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
