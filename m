@@ -1,71 +1,129 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Wed, 08 Jun 2016 16:30:55 +0200
-Message-ID: <57582C1F.5040306@samsung.com>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
- <20160608142621.GG14888@dell>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Tony Makkiel <tony.makkiel@daqri.com>
+Subject: Re: [PATCH v2 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
+Date: Wed, 8 Jun 2016 16:30:32 +0100
+Message-ID: <57583A18.3060206@daqri.com>
+References: <1464967219-31689-1-git-send-email-tony.makkiel@daqri.com>
+ <57568904.3030900@samsung.com> <5756C2FE.1020204@daqri.com>
+ <5756DE3E.5030207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBDKZNNNLXAHBBJWY4C5AKGQENSCUBYY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-reply-to: <20160608142621.GG14888@dell>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, r.baldyga-anjuHVi6/WSaMJb+Lgu22Q@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:38829 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752893AbcFHPai (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 8 Jun 2016 11:30:38 -0400
+Received: by mail-wm0-f53.google.com with SMTP id m124so22418844wme.1
+        for <linux-leds@vger.kernel.org>; Wed, 08 Jun 2016 08:30:37 -0700 (PDT)
+In-Reply-To: <5756DE3E.5030207@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
 
-On 06/08/2016 04:26 PM, Lee Jones wrote:
-> On Wed, 01 Jun 2016, Krzysztof Kozlowski wrote:
+Thank you for the comments Jacek.
+
+On 07/06/16 15:46, Jacek Anaszewski wrote:
+> On 06/07/2016 02:50 PM, Tony Makkiel wrote:
+>>
+>>
+>> On 07/06/16 09:42, Jacek Anaszewski wrote:
+>>> Hi Tony,
+>>>
+>>> Thanks for the update. I have few more comments below.
+>>>
+>>> I'd rearrange this this way:
+>>>
+>>> if (led->channel > LP3952_RED_1) {
+>>>      dev_err(cdev->dev, " %s Invalid LED requested", __func__);
+>>>      return -EINVAL;
+>>> }
+>>>
+>>> if (led->channel >= LP3952_BLUE_1) {
+>>>      reg = LP3952_REG_RGB1_MAX_I_CTRL;
+>>>      shift_val = (led->channel - LP3952_BLUE_1) * 2;
+>>> } else
+>>>      reg = LP3952_REG_RGB2_MAX_I_CTRL;
+>>>      shift_val = led->channel * 2;
+>>> }
+>>>
+>>> Also you should control here "enable_gpio", i.e. when
+>>> all LEDs are turned off, it should be asserted low and raised high
+>>> otherwise.
+>> Pulling the gpio low here could be a bad idea. The pin also act as a
+>> chip reset, which will revert all the registers to default values.
+>> So it might be better to toggle them only when the driver is
+>> loaded/removed.
 > 
->> From: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> This patch modifies max8997 driver and each associated function driver,
->> to use regmap instead of operating directly on i2c bus. It will allow to
->> simplify IRQ handling using regmap-irq.
->>
->> Signed-off-by: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> Acked-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Acked-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->> [k.kozlowski: Collect acks, rebase on v4.6-rc6]
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/extcon/extcon-max8997.c       |  31 ++++----
->>  drivers/input/misc/max8997_haptic.c   |  34 ++++----
->>  drivers/leds/leds-max8997.c           |  13 ++--
->>  drivers/mfd/Kconfig                   |   1 +
->>  drivers/mfd/max8997-irq.c             |  64 ++++++---------
->>  drivers/mfd/max8997.c                 | 141 +++++++++++++++-------------------
->>  drivers/power/max8997_charger.c       |  33 ++++----
->>  drivers/regulator/max8997-regulator.c |  87 ++++++++++-----------
+> Ack.
 > 
-> Is it just Mark's Ack you require?
-
-Yes, only Mark's is missing here. All other patches got everything they
-need.
-
-Best regards,
-Krzysztof
-
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+> [...]
+> 
+>>>> +static int lp3952_configure(struct lp3952_led_array *priv)
+>>>> +{
+>>>> +    int ret;
+>>>> +
+>>>> +    /* Disable any LEDs on from any previous conf. */
+>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL, 0);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    /* enable rgb patter, loop */
+>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL,
+>>>> +                    0x06);
+>>>
+>>> Please add bit field definitions and use them here,
+>>> instead of 0x06 value. It makes code analysis easier.
+>> I did not quite understand. Bit 1 enables pattern loop, Bit 2, enables
+>> pattern gen. Did you mean something like
+>>
+>> value = 1 << 1 | 1 << 2;
+>> ret = lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL,
+>>                             value);
+>>
+>> ?
+> 
+> You could have macros that would define values for these bits:
+> 
+> #define LP3952_PATTERN_LOOP BIT(1)
+> #define LP3952_PATTERN_GEN  BIT(2)
+> 
+> and then:
+> 
+> ret = lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL,
+>                             LP3952_PATTERN_LOOP | LP3952_PATTERN_GEN)
+> 
+> If in doubt, please refer to the other LED class drivers.
+> 
+> [...]
+>>>> +static int lp3952_probe(struct i2c_client *client,
+>>>> +            const struct i2c_device_id *id)
+>>>> +{
+>>>> +    int status;
+>>>> +    struct lp3952_ctrl_hdl *leds;
+>>>> +    struct lp3952_led_array *priv;
+>>>> +    struct lp3952_platform_data *pdata = dev_get_platdata(&client->dev);
+>>>> +
+>>>> +    if (!pdata) {
+>>>> +        dev_err(&client->dev,
+>>>> +            "lp3952: failed to obtain platform_data\n");
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>
+>>> Actually board files are deprecated. We use Device Tree instead now.
+>>> Would it be possible to switch to using it for this driver?
+>>> Please refer to Documentation/devicetree/bindings/leds/common.txt.
+>>>
+>> I will remove platform driver approach. My host board use ACPI instead of
+>> Device tree. I do not have firmware code, for the board. But shall
+>> try to emulate ACPI entry for the LED from kernel.
+> 
+> Len, Rafael - any advise on how to approach this case?
+> This I2C device is present on x86 Minnowboard Max board.
+> I've seen ACPI overlays RFC [1], would it apply to this driver?
+> 
+> [1] https://lwn.net/Articles/682084/
+> 
+Also thank you for the link Jacek, managed to build kernel with ACPI 
+overlay. Will send updated patch, with ACPI enumeration support and 
+all the other changes suggested.
