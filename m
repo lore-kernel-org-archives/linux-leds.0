@@ -1,77 +1,42 @@
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Subject: Moving drivers/leds/dell-led.c to drivers/platform/x86
-Date: Mon, 13 Jun 2016 15:49:42 +0200
-Message-ID: <20160613134942.GA2824@eudyptula.hq.kempniu.pl>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH 07/12] auxdisplay: Only descend into directory when
+ CONFIG_AUXDISPLAY is set
+Date: Mon, 13 Jun 2016 15:02:06 -0500
+Message-ID: <20160613200211.14790-8-afd@ti.com>
+References: <20160613200211.14790-1-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>
-Cc: Bob Rodgers <Robert_Rodgers@dell.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20160613200211.14790-1-afd@ti.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F .
+ Davis" <afd@ti.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi everyone,
-
-Back in January [1], while working on the dell-smbios module, I
-suggested that the code present in drivers/leds/dell-led.c could be
-moved to drivers/platform/x86 for coherency.  I decided to revisit that
-idea.
-
-dell-led consists of two major parts:
-
-  - the part handling an "Activity LED" present in Dell Latitude 2100
-    netbooks, introduced in 72dcd8d; it registers a LED device and uses
-    a special WMI interface to control its state,
-
-  - the part exposing a "microphone mute LED interface", introduced in
-    db6d8cc; this interface is used by sound/pci/hda/dell_wmi_helper.c;
-    while the original implementation also used a WMI interface, it was
-    changed to use dell-smbios in cf0d7ea and 0c41a08.
-
-I believe both parts could (and should) be moved to drivers/platform/x8=
-6
-as drivers/platform/x86/dell-laptop.c already handles a bunch of LEDs
-and drivers/leds/dell-led.c is the only dell-smbios user outside of
-drivers/platform/x86.
-
-My question to you, the maintainers of the relevant drivers and
-subsystems, is whether you would like to see such a move happen.  I hav=
-e
-prepared a draft patch series which:
-
-  - moves the "microphone mute LED interface" to dell-laptop.c,
-    effectively causing sound/pci/hda/dell_wmi_helper.c to depend on
-    CONFIG_DELL_LAPTOP instead of CONFIG_LEDS_DELL_NETBOOKS,
-
-  - moves the "Activity LED" part to a new file, tentatively called
-    drivers/platform/x86/dell-wmi-led.c.
-
-Merging the "Activity LED" part with drivers/platform/x86/dell-wmi.c is
-not really clean because dell-wmi handles a different GUID, which AFAIK
-is not related in any way to the GUID used by dell-led.
-
-So, before I spam *three* subsystem mailing lists with a bunch of
-patches, I would love to hear from the maintainers of both drivers/leds
-and drivers/platform/x86 whether there are any arguments against such a
-move.  Meanwhile, I will keep polishing the patch series and if there i=
-s
-no strong disagreement from any party involved, I will post the series
-next week or so, so that we can discuss code and not just ideas.
-
-As a side note, if anyone reading this has access to a Dell device whic=
-h
-has an "Activity LED" and/or a "microphone mute LED" currently supporte=
-d
-by dell-led, I would love to hear from you as I do not have the hardwar=
-e
-needed to practically test the patch series I am working on.
-
-Looking forward to hearing from you,
-
-[1] https://www.spinics.net/lists/platform-driver-x86/msg08143.html
-
---=20
-Best regards,
-Micha=C5=82 K=C4=99pie=C5=84
+V2hlbiBDT05GSUdfQVVYRElTUExBWSBpcyBub3Qgc2V0IG1ha2Ugd2lsbCBzdGlsbCBkZXNjZW5k
+IGludG8gdGhlCmF1eGRpc3BsYXkgZGlyZWN0b3J5IGJ1dCBub3RoaW5nIHdpbGwgYmUgYnVpbHQu
+IFRoaXMgcHJvZHVjZXMgdW5uZWVkZWQKYnVpbGQgYXJ0aWZhY3RzIGFuZCBtZXNzYWdlcyBpbiBh
+ZGRpdGlvbiB0byBzbG93aW5nIHRoZSBidWlsZC4KRml4IHRoaXMgaGVyZS4KClNpZ25lZC1vZmYt
+Ynk6IEFuZHJldyBGLiBEYXZpcyA8YWZkQHRpLmNvbT4KLS0tCiBkcml2ZXJzL01ha2VmaWxlIHwg
+MiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9NYWtlZmlsZSBiL2RyaXZlcnMvTWFrZWZpbGUKaW5kZXggNzgxNjJi
+YS4uYjQyMDJkMCAxMDA2NDQKLS0tIGEvZHJpdmVycy9NYWtlZmlsZQorKysgYi9kcml2ZXJzL01h
+a2VmaWxlCkBAIC05MCw3ICs5MCw3IEBAIG9iai15CQkJCSs9IGZpcmV3aXJlLwogb2JqLSQoQ09O
+RklHX1VJTykJCSs9IHVpby8KIG9iai0kKENPTkZJR19WRklPKQkJKz0gdmZpby8KIG9iai15CQkJ
+CSs9IGNkcm9tLwotb2JqLXkJCQkJKz0gYXV4ZGlzcGxheS8KK29iai0kKENPTkZJR19BVVhESVNQ
+TEFZKQkrPSBhdXhkaXNwbGF5Lwogb2JqLSQoQ09ORklHX1BDQ0FSRCkJCSs9IHBjbWNpYS8KIG9i
+ai0kKENPTkZJR19ESU8pCQkrPSBkaW8vCiBvYmotJChDT05GSUdfU0JVUykJCSs9IHNidXMvCi0t
+IAoyLjguMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+TGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpo
+dHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
