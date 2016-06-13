@@ -1,281 +1,150 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v2] hid: migrate Riso Kagaku LED driver from USB misc to HID
-Date: Sun, 12 Jun 2016 17:06:39 +0200
-Message-ID: <2e8c1dbe-1433-a347-75d6-1cbd59c74212@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v4 4/7] arm: use the new LED disk activity trigger
+Date: Mon, 13 Jun 2016 09:42:12 +0200
+Message-ID: <575E63D4.6030507@samsung.com>
+References: <20160610060021.12382-1-linz@li-pro.net>
+ <20160610060021.12382-4-linz@li-pro.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35469 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752791AbcFLPJW (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Sun, 12 Jun 2016 11:09:22 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64851 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932165AbcFMHmT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jun 2016 03:42:19 -0400
+In-reply-to: <20160610060021.12382-4-linz@li-pro.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-input@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Stephan Linz <linz@li-pro.net>
+Cc: linux-leds@vger.kernel.org, linux-ide@vger.kernel.org, =?ISO-8859-1?Q?Beno=EEt_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@armlinux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The Riso Kagaku Webmail Notifier (and its clones) is supported as part of
-usb/misc/usbled driver currently. This patch migrates the driver for this
-device to the HID subsystem.
+Hi all,
 
-Benefits:
-- Avoid using USB low-level calls and use the HID subsystem instead
-  (as this device provides a USB HID interface)
-- Use standard LED subsystem instead of proprietary sysfs entries,
-  this allows e.g. to use the device with features like triggers
+For consistency reasons this patch should be merged through LED tree,
+but I need an ack from relevant maintainer. Benoit, Tony?
 
-I know at least one cheap clone coming with green and blue LED switched.
-There's a module paramater to deal with this.
+Thanks,
+Jacek Anaszewski
 
-There might be users of the current module, therefore so far allow
-compilation of the new driver only if the old one is disabled.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- change config symbol from HID_RIKA to HID_RISO_KAGAKU
-- use full name Riso Kagaku instead of rika in several places
-- don't remove device from ignore list if CONFIG_USB_LED is defined
-- fix module parameter permissions
----
- drivers/hid/Kconfig           |   9 +++
- drivers/hid/Makefile          |   1 +
- drivers/hid/hid-core.c        |   3 +
- drivers/hid/hid-riso-kagaku.c | 171 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 184 insertions(+)
- create mode 100644 drivers/hid/hid-riso-kagaku.c
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 5646ca4..16fe27d 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -784,6 +784,15 @@ config HID_HYPERV_MOUSE
- 	---help---
- 	Select this option to enable the Hyper-V mouse driver.
- 
-+config HID_RISO_KAGAKU
-+	tristate "Riso Kagaku Webmail Notifier USB LED"
-+	depends on HID
-+	depends on LEDS_CLASS
-+	depends on USB_LED = 'n'
-+	---help---
-+	Support for the Riso Kagaku Webmail Notifier. This driver registers
-+	a LED class instance for red, green, and blue color component.
-+
- config HID_SMARTJOYPLUS
- 	tristate "SmartJoy PLUS PS2/USB adapter support"
- 	depends on HID
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index a2fb562..90300f3 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_HID_STEELSERIES)	+= hid-steelseries.o
- obj-$(CONFIG_HID_SUNPLUS)	+= hid-sunplus.o
- obj-$(CONFIG_HID_GREENASIA)	+= hid-gaff.o
- obj-$(CONFIG_HID_THINGM)	+= hid-thingm.o
-+obj-$(CONFIG_HID_RISO_KAGAKU)	+= hid-riso-kagaku.o
- obj-$(CONFIG_HID_THRUSTMASTER)	+= hid-tmff.o
- obj-$(CONFIG_HID_TIVO)		+= hid-tivo.o
- obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 8ea3a26..730589a 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2008,6 +2008,7 @@ static const struct hid_device_id hid_have_special_driver[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PETALYNX, USB_DEVICE_ID_PETALYNX_MAXTER_REMOTE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PRIMAX, USB_DEVICE_ID_PRIMAX_KEYBOARD) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
- #if IS_ENABLED(CONFIG_HID_ROCCAT)
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ARVO) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ROCCAT, USB_DEVICE_ID_ROCCAT_ISKU) },
-@@ -2486,7 +2487,9 @@ static const struct hid_device_id hid_ignore_list[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SYNAPTICS, USB_DEVICE_ID_SYNAPTICS_DPAD) },
- #endif
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_YEALINK, USB_DEVICE_ID_YEALINK_P1K_P4K_B2K) },
-+#if IS_ENABLED(CONFIG_USB_LED)
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU, USB_DEVICE_ID_RI_KA_WEBMAIL) },
-+#endif
- 	{ }
- };
- 
-diff --git a/drivers/hid/hid-riso-kagaku.c b/drivers/hid/hid-riso-kagaku.c
-new file mode 100644
-index 0000000..0a37f18
---- /dev/null
-+++ b/drivers/hid/hid-riso-kagaku.c
-@@ -0,0 +1,171 @@
-+/*
-+ * Riso Kagaku Webmail Notifier USB RGB LED driver
-+ *
-+ * Copyright 2016 Heiner Kallweit <hkallweit1@gmail.com>
-+ * Based on drivers/hid/hid-thingm.c and
-+ * drivers/usb/misc/usbled.c
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <linux/hid.h>
-+#include <linux/hidraw.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+#include "hid-ids.h"
-+
-+#define REPORT_SIZE	6
-+
-+static unsigned const char riso_kagaku_tbl[] = {
-+/* R+2G+4B -> riso kagaku color index */
-+	[0] = 0, /* black   */
-+	[1] = 2, /* red     */
-+	[2] = 1, /* green   */
-+	[3] = 5, /* yellow  */
-+	[4] = 3, /* blue    */
-+	[5] = 6, /* magenta */
-+	[6] = 4, /* cyan    */
-+	[7] = 7  /* white   */
-+};
-+
-+#define RISO_KAGAKU_IX(r, g, b) riso_kagaku_tbl[((r)?1:0)+((g)?2:0)+((b)?4:0)]
-+
-+struct rika_led {
-+	struct led_classdev	cdev;
-+	struct rika_device	*rdev;
-+	char			name[32];
-+};
-+
-+struct rika_device {
-+	struct rika_led		red;
-+	struct rika_led		green;
-+	struct rika_led		blue;
-+	struct hid_device       *hdev;
-+	struct mutex		lock;
-+};
-+
-+#define to_rika_led(arg) container_of(arg, struct rika_led, cdev)
-+
-+static bool switch_green_blue;
-+module_param(switch_green_blue, bool, S_IRUGO | S_IWUSR);
-+MODULE_PARM_DESC(switch_green_blue, "switch green and blue RGB component");
-+
-+static u8 rika_index(struct rika_device *rdev)
-+{
-+	enum led_brightness r, g, b;
-+
-+	r = rdev->red.cdev.brightness;
-+	g = rdev->green.cdev.brightness;
-+	b = rdev->blue.cdev.brightness;
-+
-+	if (switch_green_blue)
-+		return RISO_KAGAKU_IX(r, b, g);
-+	else
-+		return RISO_KAGAKU_IX(r, g, b);
-+}
-+
-+static int rika_write_color(struct led_classdev *cdev, enum led_brightness br)
-+{
-+	struct rika_led *rled = to_rika_led(cdev);
-+	struct rika_device *rdev = rled->rdev;
-+	__u8 buf[REPORT_SIZE] = {};
-+	int ret;
-+
-+	buf[1] = rika_index(rdev);
-+
-+	mutex_lock(&rdev->lock);
-+	ret = hid_hw_output_report(rdev->hdev, buf, REPORT_SIZE);
-+	mutex_unlock(&rdev->lock);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (ret == REPORT_SIZE) ? 0 : -EMSGSIZE;
-+}
-+
-+static int rika_init_led(struct rika_led *led, const char *color_name,
-+			 struct rika_device *rdev, int minor)
-+{
-+	snprintf(led->name, sizeof(led->name), "rika%d:%s", minor, color_name);
-+	led->cdev.name = led->name;
-+	led->cdev.max_brightness = 1;
-+	led->cdev.brightness_set_blocking = rika_write_color;
-+	led->cdev.flags = LED_HW_PLUGGABLE;
-+	led->rdev = rdev;
-+
-+	return devm_led_classdev_register(&rdev->hdev->dev, &led->cdev);
-+}
-+
-+static int rika_init_rgb(struct rika_device *rdev, int minor)
-+{
-+	int ret;
-+
-+	/* Register the red diode */
-+	ret = rika_init_led(&rdev->red, "red", rdev, minor);
-+	if (ret)
-+		return ret;
-+
-+	/* Register the green diode */
-+	ret = rika_init_led(&rdev->green, "green", rdev, minor);
-+	if (ret)
-+		return ret;
-+
-+	/* Register the blue diode */
-+	return rika_init_led(&rdev->blue, "blue", rdev, minor);
-+}
-+
-+static int rika_probe(struct hid_device *hdev, const struct hid_device_id *id)
-+{
-+	struct rika_device *rdev;
-+	int ret, minor;
-+
-+	rdev = devm_kzalloc(&hdev->dev, sizeof(*rdev), GFP_KERNEL);
-+	if (!rdev)
-+		return -ENOMEM;
-+
-+	ret = hid_parse(hdev);
-+	if (ret)
-+		return ret;
-+
-+	rdev->hdev = hdev;
-+	mutex_init(&rdev->lock);
-+
-+	ret = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
-+	if (ret)
-+		return ret;
-+
-+	minor = ((struct hidraw *) hdev->hidraw)->minor;
-+
-+	ret = rika_init_rgb(rdev, minor);
-+	if (ret) {
-+		hid_hw_stop(hdev);
-+		return ret;
-+	}
-+
-+	dev_info(&hdev->dev, "Riso Kagaku Webmail Notifier %d initialized\n", minor);
-+
-+	return 0;
-+}
-+
-+static const struct hid_device_id rika_table[] = {
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_RISO_KAGAKU,
-+	  USB_DEVICE_ID_RI_KA_WEBMAIL) },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(hid, rika_table);
-+
-+static struct hid_driver rika_driver = {
-+	.name = "riso-kagaku",
-+	.probe = rika_probe,
-+	.id_table = rika_table,
-+};
-+
-+module_hid_driver(rika_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Heiner Kallweit <hkallweit1@gmail.com>");
-+MODULE_DESCRIPTION("Riso Kagaku Webmail Notifier USB RGB LED driver");
--- 
-2.8.3
+On 06/10/2016 07:59 AM, Stephan Linz wrote:
+> - dts: rename 'ide-disk' to 'disk-activity'
+> - platform: rename 'ide-disk' to 'disk-activity'
+> - defconfig: rename 'LEDS_TRIGGER_IDE_DISK' to 'LEDS_TRIGGER_DISK'
+>
+> Signed-off-by: Stephan Linz <linz@li-pro.net>
+> ---
+>   arch/arm/boot/dts/am57xx-beagle-x15.dts  | 2 +-
+>   arch/arm/boot/dts/kirkwood-ns2lite.dts   | 2 +-
+>   arch/arm/boot/dts/kirkwood-topkick.dts   | 2 +-
+>   arch/arm/configs/collie_defconfig        | 2 +-
+>   arch/arm/configs/ixp4xx_defconfig        | 2 +-
+>   arch/arm/mach-davinci/board-dm644x-evm.c | 2 +-
+>   arch/arm/mach-omap1/board-osk.c          | 2 +-
+>   arch/arm/mach-pxa/spitz.c                | 2 +-
+>   8 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/am57xx-beagle-x15.dts b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+> index 81d6c30..c4d04c5 100644
+> --- a/arch/arm/boot/dts/am57xx-beagle-x15.dts
+> +++ b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+> @@ -86,7 +86,7 @@
+>   		led@3 {
+>   			label = "beagle-x15:usr3";
+>   			gpios = <&gpio7 15 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "ide-disk";
+> +			linux,default-trigger = "disk-activity";
+>   			default-state = "off";
+>   		};
+>   	};
+> diff --git a/arch/arm/boot/dts/kirkwood-ns2lite.dts b/arch/arm/boot/dts/kirkwood-ns2lite.dts
+> index 1f2ca60..2c661ad 100644
+> --- a/arch/arm/boot/dts/kirkwood-ns2lite.dts
+> +++ b/arch/arm/boot/dts/kirkwood-ns2lite.dts
+> @@ -26,7 +26,7 @@
+>   		blue-sata {
+>   			label = "ns2:blue:sata";
+>   			gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
+> -			linux,default-trigger = "ide-disk";
+> +			linux,default-trigger = "disk-activity";
+>   		};
+>   	};
+>   };
+> diff --git a/arch/arm/boot/dts/kirkwood-topkick.dts b/arch/arm/boot/dts/kirkwood-topkick.dts
+> index f5c8c0d..1e9a721 100644
+> --- a/arch/arm/boot/dts/kirkwood-topkick.dts
+> +++ b/arch/arm/boot/dts/kirkwood-topkick.dts
+> @@ -129,7 +129,7 @@
+>   		disk {
+>   			label = "topkick:yellow:disk";
+>   			gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
+> -			linux,default-trigger = "ide-disk";
+> +			linux,default-trigger = "disk-activity";
+>   		};
+>   		system2 {
+>   			label = "topkick:red:system";
+> diff --git a/arch/arm/configs/collie_defconfig b/arch/arm/configs/collie_defconfig
+> index 6c56ad0..52dbad5 100644
+> --- a/arch/arm/configs/collie_defconfig
+> +++ b/arch/arm/configs/collie_defconfig
+> @@ -76,7 +76,7 @@ CONFIG_LEDS_CLASS=y
+>   CONFIG_LEDS_LOCOMO=y
+>   CONFIG_LEDS_TRIGGERS=y
+>   CONFIG_LEDS_TRIGGER_TIMER=y
+> -CONFIG_LEDS_TRIGGER_IDE_DISK=y
+> +CONFIG_LEDS_TRIGGER_DISK=y
+>   # CONFIG_DNOTIFY is not set
+>   CONFIG_VFAT_FS=y
+>   CONFIG_TMPFS=y
+> diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
+> index 24636cf..cf4918a 100644
+> --- a/arch/arm/configs/ixp4xx_defconfig
+> +++ b/arch/arm/configs/ixp4xx_defconfig
+> @@ -180,7 +180,7 @@ CONFIG_LEDS_FSG=y
+>   CONFIG_LEDS_GPIO=y
+>   CONFIG_LEDS_TRIGGERS=y
+>   CONFIG_LEDS_TRIGGER_TIMER=y
+> -CONFIG_LEDS_TRIGGER_IDE_DISK=y
+> +CONFIG_LEDS_TRIGGER_DISK=y
+>   CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+>   CONFIG_RTC_CLASS=y
+>   CONFIG_RTC_DRV_ISL1208=y
+> diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+> index 68cc099..ab47b8e 100644
+> --- a/arch/arm/mach-davinci/board-dm644x-evm.c
+> +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+> @@ -288,7 +288,7 @@ static struct gpio_led evm_leds[] = {
+>   	{ .name = "DS2", .active_low = 1,
+>   		.default_trigger = "mmc0", },
+>   	{ .name = "DS1", .active_low = 1,
+> -		.default_trigger = "ide-disk", },
+> +		.default_trigger = "disk-activity", },
+>   };
+>
+>   static const struct gpio_led_platform_data evm_led_data = {
+> diff --git a/arch/arm/mach-omap1/board-osk.c b/arch/arm/mach-omap1/board-osk.c
+> index 209aecb..4dfb995 100644
+> --- a/arch/arm/mach-omap1/board-osk.c
+> +++ b/arch/arm/mach-omap1/board-osk.c
+> @@ -172,7 +172,7 @@ static struct gpio_led tps_leds[] = {
+>   	 * Also, D9 requires non-battery power.
+>   	 */
+>   	{ .gpio = OSK_TPS_GPIO_LED_D9, .name = "d9",
+> -			.default_trigger = "ide-disk", },
+> +			.default_trigger = "disk-activity", },
+>   	{ .gpio = OSK_TPS_GPIO_LED_D2, .name = "d2", },
+>   	{ .gpio = OSK_TPS_GPIO_LED_D3, .name = "d3", .active_low = 1,
+>   			.default_trigger = "heartbeat", },
+> diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+> index bd7cd8b..1080580 100644
+> --- a/arch/arm/mach-pxa/spitz.c
+> +++ b/arch/arm/mach-pxa/spitz.c
+> @@ -464,7 +464,7 @@ static struct gpio_led spitz_gpio_leds[] = {
+>   	},
+>   	{
+>   		.name			= "spitz:green:hddactivity",
+> -		.default_trigger	= "ide-disk",
+> +		.default_trigger	= "disk-activity",
+>   		.gpio			= SPITZ_GPIO_LED_GREEN,
+>   	},
+>   };
+>
