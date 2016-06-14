@@ -1,81 +1,57 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Developing Linux Kernel Driver for LED Driver
-Date: Tue, 14 Jun 2016 10:37:40 +0200
-Message-ID: <575FC254.8040900@samsung.com>
-References: <CAEwN+MA38ozhiZN-0XfeiZt9=Wr42yVU-HyzCzhMC1OzxxB=fg@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH] hsi: Build hsi_boardinfo.c into hsi core if enabled
+Date: Tue, 14 Jun 2016 11:13:04 -0500
+Message-ID: <57602D10.4080708@ti.com>
+References: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:64095 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbcFNIhn (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 14 Jun 2016 04:37:43 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O8R005N86MT6Z60@mailout1.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 14 Jun 2016 09:37:41 +0100 (BST)
-In-reply-to: <CAEwN+MA38ozhiZN-0XfeiZt9=Wr42yVU-HyzCzhMC1OzxxB=fg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxp
 List-Id: linux-leds@vger.kernel.org
-To: Raul Piper <raulpblooper@gmail.com>
-Cc: linux-leds@vger.kernel.org
 
-Hi Raul,
+If the HSI core is built as a module hsi_boardinfo may still
+be built-in as its Kconfig type is bool, which can cause build
+issues. Fix this by building this code into the HSI core when
+enabled.
 
-On 06/14/2016 05:22 AM, Raul Piper wrote:
-> Hi,
-> I am developing a Linux kernel driver(software) for a 16 channel LED
-> driver(this driverhere refers to the hardware of LED ) .Below are few
-> of its characteristics
->
-> DC input voltage range : 10 V to 28 V
-> Integrated boost converter with adaptive output voltage
-> 16 channels  and independent PWM brightness control
-> Up to 15 white LEDs per channel
-> On-board microcontroller for total device control through 4-wire
-> serial interface
-> LED short-circuit faults management
->
-> I have done some brute force work by creating a user space application
-> to do some portion of the LED glowing, I know its not a full fledged
-> work.
->
-> I want to know on the below points :
-> 1. How can I convert it into a GPIO driver and the standard ramework
-> with which I can integrate it.
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+This build error seems to be due to Kconfig symbol CONFIG_HSI_BOARDINFO
+being a bool but depending on a tristate (CONFIG_HSI). This is normally
+okay when it is just a flag to enable a feature in source, but the
+helper code file hsi_boardinfo.c is built as a separate entity when
+enabled. This patch is probably how it was intended, and is more like
+how others do this kind of thing.
 
-Please get acquainted with the LED subsystem documentation:
-Documentation/leds/leds-class.txt.
+This patch should be applied before the parent patch:
 
-You should also refer to the existing LED class drivers in drivers/leds
-to find out how LED class devices are being registered.
+ drivers/hsi/Makefile              | 3 ++-
+ drivers/hsi/{hsi.c => hsi_core.c} | 0
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ rename drivers/hsi/{hsi.c => hsi_core.c} (100%)
 
-> 2.The architecture of the user space application to test this driver
-
-LED class devices expose sysfs interface at /sys/class/leds, i.e.
-the LEDs can be controlled from bash.
-
-> 3.The requirement for the Device Tree configuration for this.
-
-Please refer to Documentation/devicetree/bindings/leds/common.txt
-and driver bindings in Documentation/devicetree/bindings/leds.
-
-> 4.The name of the LED class driver maintainer in the kernel linux, to
-> whom I have to send the patch?
-
-./scripts/get_maintainer.pl -f drivers/leds/ will give you the answer.
-
-> 5.Any other mandatory requirement to which I have to adhere to for
-> pushing the device driver to the main line.
-
-Please read the following documents:
-
-- Documentation/SubmittingPatches
-- Documentation/SubmittingDrivers
-- Documentation/SubmitChecklist
-
+diff --git a/drivers/hsi/Makefile b/drivers/hsi/Makefile
+index 360371e..9694478 100644
+--- a/drivers/hsi/Makefile
++++ b/drivers/hsi/Makefile
+@@ -1,7 +1,8 @@
+ #
+ # Makefile for HSI
+ #
+-obj-$(CONFIG_HSI_BOARDINFO)    += hsi_boardinfo.o
+ obj-$(CONFIG_HSI)              += hsi.o
++hsi-objs                       := hsi_core.o
++hsi-$(CONFIG_HSI_BOARDINFO)    += hsi_boardinfo.o
+ obj-y                          += controllers/
+ obj-y                          += clients/
+diff --git a/drivers/hsi/hsi.c b/drivers/hsi/hsi_core.c
+similarity index 100%
+rename from drivers/hsi/hsi.c
+rename to drivers/hsi/hsi_core.c
 -- 
-Best regards,
-Jacek Anaszewski
+2.8.3
