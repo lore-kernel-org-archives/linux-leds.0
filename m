@@ -1,129 +1,92 @@
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: Re: [PATCH v2] hid: migrate Riso Kagaku LED driver from USB misc to
- HID
-Date: Wed, 15 Jun 2016 09:31:53 +0200
-Message-ID: <20160615073153.GP24234@mail.corp.redhat.com>
-References: <2e8c1dbe-1433-a347-75d6-1cbd59c74212@gmail.com>
- <20160614214849.GO24234@mail.corp.redhat.com>
- <222a795a-b478-3dae-13a2-a805784eb8da@gmail.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: Moving drivers/leds/dell-led.c to drivers/platform/x86
+Date: Wed, 15 Jun 2016 10:05:16 +0200
+Message-ID: <20160615080516.GK29844@pali>
+References: <20160613134942.GA2824@eudyptula.hq.kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:38126 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751400AbcFOHb6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Wed, 15 Jun 2016 03:31:58 -0400
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <222a795a-b478-3dae-13a2-a805784eb8da@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20160613134942.GA2824@eudyptula.hq.kempniu.pl>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Darren Hart <dvhart@infradead.org>, Bob Rodgers <Robert_Rodgers@dell.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-input@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Jun 15 2016 or thereabouts, Heiner Kallweit wrote:
-> Am 14.06.2016 um 23:49 schrieb Benjamin Tissoires:
-> > On Jun 12 2016 or thereabouts, Heiner Kallweit wrote:
-> >> The Riso Kagaku Webmail Notifier (and its clones) is supported as part of
-> >> usb/misc/usbled driver currently. This patch migrates the driver for this
-> >> device to the HID subsystem.
-> >>
-> >> Benefits:
-> >> - Avoid using USB low-level calls and use the HID subsystem instead
-> >>   (as this device provides a USB HID interface)
-> >> - Use standard LED subsystem instead of proprietary sysfs entries,
-> >>   this allows e.g. to use the device with features like triggers
-> >>
-> >> I know at least one cheap clone coming with green and blue LED switched.
-> >> There's a module paramater to deal with this.
-> >>
-> >> There might be users of the current module, therefore so far allow
-> >> compilation of the new driver only if the old one is disabled.
-> >>
-> >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> >> ---
-> >> v2:
-> >> - change config symbol from HID_RIKA to HID_RISO_KAGAKU
-> >> - use full name Riso Kagaku instead of rika in several places
-> >> - don't remove device from ignore list if CONFIG_USB_LED is defined
-> >> - fix module parameter permissions
-> > 
-> > Thanks for the respin. This version (and the other for hid-rika) looks
-> > fine. Though I wonder if you should not call hid_hw_open() at the end of
-> > probe (and hid_hw_close() during remove) to keep the device opened.
-> > Otherwise I am unsure whether your usb commands will get treated (I
-> > might be wrong).
-> > 
-> When looking at other hid device drivers hid_hw_open seems to be needed
-> only if the device needs special treatment.
+On Monday 13 June 2016 15:49:42 Micha=C5=82 K=C4=99pie=C5=84 wrote:
+> Hi everyone,
+>=20
+> Back in January [1], while working on the dell-smbios module, I
+> suggested that the code present in drivers/leds/dell-led.c could be
+> moved to drivers/platform/x86 for coherency.  I decided to revisit th=
+at
+> idea.
+>=20
+> dell-led consists of two major parts:
+>=20
+>   - the part handling an "Activity LED" present in Dell Latitude 2100
+>     netbooks, introduced in 72dcd8d; it registers a LED device and us=
+es
+>     a special WMI interface to control its state,
+>=20
+>   - the part exposing a "microphone mute LED interface", introduced i=
+n
+>     db6d8cc; this interface is used by sound/pci/hda/dell_wmi_helper.=
+c;
+>     while the original implementation also used a WMI interface, it w=
+as
+>     changed to use dell-smbios in cf0d7ea and 0c41a08.
+>=20
+> I believe both parts could (and should) be moved to drivers/platform/=
+x86
+> as drivers/platform/x86/dell-laptop.c already handles a bunch of LEDs
+> and drivers/leds/dell-led.c is the only dell-smbios user outside of
+> drivers/platform/x86.
+>=20
+> My question to you, the maintainers of the relevant drivers and
+> subsystems, is whether you would like to see such a move happen.  I h=
+ave
+> prepared a draft patch series which:
+>=20
+>   - moves the "microphone mute LED interface" to dell-laptop.c,
+>     effectively causing sound/pci/hda/dell_wmi_helper.c to depend on
+>     CONFIG_DELL_LAPTOP instead of CONFIG_LEDS_DELL_NETBOOKS,
+>=20
+>   - moves the "Activity LED" part to a new file, tentatively called
+>     drivers/platform/x86/dell-wmi-led.c.
+>=20
+> Merging the "Activity LED" part with drivers/platform/x86/dell-wmi.c =
+is
+> not really clean because dell-wmi handles a different GUID, which AFA=
+IK
+> is not related in any way to the GUID used by dell-led.
+>=20
+> So, before I spam *three* subsystem mailing lists with a bunch of
+> patches, I would love to hear from the maintainers of both drivers/le=
+ds
+> and drivers/platform/x86 whether there are any arguments against such=
+ a
+> move.  Meanwhile, I will keep polishing the patch series and if there=
+ is
+> no strong disagreement from any party involved, I will post the serie=
+s
+> next week or so, so that we can discuss code and not just ideas.
+>=20
+> As a side note, if anyone reading this has access to a Dell device wh=
+ich
+> has an "Activity LED" and/or a "microphone mute LED" currently suppor=
+ted
+> by dell-led, I would love to hear from you as I do not have the hardw=
+are
+> needed to practically test the patch series I am working on.
+>=20
+> Looking forward to hearing from you,
+>=20
+> [1] https://www.spinics.net/lists/platform-driver-x86/msg08143.html
 
-Not exactly. hid_hw_open is called whenever someone opens the hidraw or
-input node (or any other resource attached to the HID device). This
-starts the input reading, but also calls usb_autopm_get_interface()
-which will prevent the device to be autosuspended. The drivers that call
-hid_hw_open() in their probe are the ones where we know no one will open
-the hidraw or input node but we need to poll for events.
+I was talking with Micha=C5=82 and I supports this move.
 
-> My Riso Kagaku and Dream Cheeky devices work fine with the new drivers
-> w/o calling hid_hw_open.
-
-Let's keep it that way then.
-
-> 
-> > There is also one high level comment I would like to do:
-> > even if your driver is better than usbled.c, people won't use it because
-> > distributions won't enable it as there is 2 issues:
-> > - one is you are breaking kernel ABI (we already discussed it)
-> > - the other one is that if people want to use your new hid drivers, they
-> >   have to disable CONFIG_USB_LED, which removes support of the
-> >   DELCOM_VISUAL_SIGNAL_INDICATOR
-> > 
-> Yes, I think you're right.
-> With regard to the Delcom Visual Signal Indicator:
-> The old USB LED driver supports only generation 1 of these devices which
-> have a not fully HID compliant interface.
-> In 2008 they were replace with generation 2 which has fully a HID
-> compliant interface. Generation 2 is not yet supported by the kernel.
-> (Currently I'm trying to get hold of such a device.)
-> 
-> Therefore it might be better to leave support for the Gen 1 Delcom device
-> at USB misc. However this would mean that we have to change the config
-> symbol for this driver so that it doesn't conflict with the other part
-> we're moving to hid.
-> Would changing the config symbol be an issue? For now we could select
-> the new config symbol automatically if CONFIG_USB_LED is set.
-
-Why would you change the old config symbol for the existing devices. If
-(and I don't think that's the best option) you were to add a new symbol,
-you could use this to select between HID and USB for the new drivers:
-CONFIG_USB_LED_LEGACY_SUPPORT would depend on CONFIG_USB_LED, and you
-choose to enable the HID driver based on CONFIG_USB_LED_LEGACY_SUPPORT.
-
-> 
-> > I really think it would not cost too much to do the whole change in 2
-> > passes:
-> > - move the entire usbled to hid, keeping the old sysfs API in place, and
-> >   eventually add a symlink from the old place (under the usb device) to
-> >   the HID device to keep path stable
-> 
-> I guess you don't mean symlink literally but adding a comment in Kconfig
-> that the driver was moved?
-
-No. I'd rather not having the files moved around when they are KABI. So
-either you add the old sysfs files directly at the same level, or you
-symlink to them. Some HID driver already take a pointer to the
-underlying USB device, so you can do the same.
-
-> 
-> > - then add support for the classdev for the whole 3 types of devices
-> > 
-> > Plus that would means only one driver to maintain instead of 3 that are
-> > close enough.
-> > 
-> > Cheers,
-> > Benjamin
-> > 
-> Regards, Heiner
-> 
-
-Cheers,
-Benjamin
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
