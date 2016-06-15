@@ -1,95 +1,73 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Moving drivers/leds/dell-led.c to drivers/platform/x86
-Date: Wed, 15 Jun 2016 12:10:20 +0200
-Message-ID: <5761298C.9030005@samsung.com>
-References: <20160613134942.GA2824@eudyptula.hq.kempniu.pl>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] hsi: Build hsi_boardinfo.c into hsi core if enabled
+Date: Wed, 15 Jun 2016 14:48:42 +0200
+Message-ID: <20160615124842.GA6702@earth>
+References: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
+ <57602D10.4080708@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-reply-to: <20160613134942.GA2824@eudyptula.hq.kempniu.pl>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?B?UGFsaSBSb2jDoXI=?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Bob Rodgers <Robert_Rodgers@dell.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58742 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753146AbcFOMsr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 15 Jun 2016 08:48:47 -0400
+Content-Disposition: inline
+In-Reply-To: <57602D10.4080708@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org, Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlab
 
-Hi Micha=C5=82,
 
-I have no objections.
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Jacek Anaszewski
+Hi Andrew,
 
-On 06/13/2016 03:49 PM, Micha=C5=82 K=C4=99pie=C5=84 wrote:
-> Hi everyone,
->
-> Back in January [1], while working on the dell-smbios module, I
-> suggested that the code present in drivers/leds/dell-led.c could be
-> moved to drivers/platform/x86 for coherency.  I decided to revisit th=
-at
-> idea.
->
-> dell-led consists of two major parts:
->
->    - the part handling an "Activity LED" present in Dell Latitude 210=
-0
->      netbooks, introduced in 72dcd8d; it registers a LED device and u=
-ses
->      a special WMI interface to control its state,
->
->    - the part exposing a "microphone mute LED interface", introduced =
-in
->      db6d8cc; this interface is used by sound/pci/hda/dell_wmi_helper=
-=2Ec;
->      while the original implementation also used a WMI interface, it =
-was
->      changed to use dell-smbios in cf0d7ea and 0c41a08.
->
-> I believe both parts could (and should) be moved to drivers/platform/=
-x86
-> as drivers/platform/x86/dell-laptop.c already handles a bunch of LEDs
-> and drivers/leds/dell-led.c is the only dell-smbios user outside of
-> drivers/platform/x86.
->
-> My question to you, the maintainers of the relevant drivers and
-> subsystems, is whether you would like to see such a move happen.  I h=
-ave
-> prepared a draft patch series which:
->
->    - moves the "microphone mute LED interface" to dell-laptop.c,
->      effectively causing sound/pci/hda/dell_wmi_helper.c to depend on
->      CONFIG_DELL_LAPTOP instead of CONFIG_LEDS_DELL_NETBOOKS,
->
->    - moves the "Activity LED" part to a new file, tentatively called
->      drivers/platform/x86/dell-wmi-led.c.
->
-> Merging the "Activity LED" part with drivers/platform/x86/dell-wmi.c =
-is
-> not really clean because dell-wmi handles a different GUID, which AFA=
-IK
-> is not related in any way to the GUID used by dell-led.
->
-> So, before I spam *three* subsystem mailing lists with a bunch of
-> patches, I would love to hear from the maintainers of both drivers/le=
-ds
-> and drivers/platform/x86 whether there are any arguments against such=
- a
-> move.  Meanwhile, I will keep polishing the patch series and if there=
- is
-> no strong disagreement from any party involved, I will post the serie=
-s
-> next week or so, so that we can discuss code and not just ideas.
->
-> As a side note, if anyone reading this has access to a Dell device wh=
-ich
-> has an "Activity LED" and/or a "microphone mute LED" currently suppor=
-ted
-> by dell-led, I would love to hear from you as I do not have the hardw=
-are
-> needed to practically test the patch series I am working on.
->
-> Looking forward to hearing from you,
->
-> [1] https://www.spinics.net/lists/platform-driver-x86/msg08143.html
->
+On Tue, Jun 14, 2016 at 11:13:04AM -0500, Andrew F. Davis wrote:
+> If the HSI core is built as a module hsi_boardinfo may still
+> be built-in as its Kconfig type is bool, which can cause build
+> issues. Fix this by building this code into the HSI core when
+> enabled.
+>=20
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+> This build error seems to be due to Kconfig symbol CONFIG_HSI_BOARDINFO
+> being a bool but depending on a tristate (CONFIG_HSI). This is normally
+> okay when it is just a flag to enable a feature in source, but the
+> helper code file hsi_boardinfo.c is built as a separate entity when
+> enabled. This patch is probably how it was intended, and is more like
+> how others do this kind of thing.
+>=20
+> This patch should be applied before the parent patch:
+
+Thanks, I applied both patches.
+
+-- Sebastian
+
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXYU6oAAoJENju1/PIO/qae6QP/35LQ3B8vO2lZZLD3fJoRLEz
+yJp80KFgWVGLlJIxoywl6Lm8tK1b48miCd73ee7Euagta3zJqZMutPO3lCiaExQh
+QXIykcVyzZXxa6AELhlPXbJlffoetyTvq7n831+Hk1IqhwOgCpm8jSVszgw11fyH
+FIDtsW7QpUnhq/lBIl+6yc8OYszH3N69Cv0sS3J5neDT2W9dochTcv01JEMAmFIL
+8TWT+5hZ/7WvvXt2tDJ03uP7aNbpDOAhutNaAjsYZEA9pX+SVa17O9eQGT5tAT5a
+0pWIFazcVt06+phTF28XlkPqVhSA0wtXeRoyLuz+UHFjGWJiwmbKTJ6QipFclEL7
+yXNE8V+g2FRiH4ZqBQ3EQtzusatln5CixirVF1wtPXp75mpZ9XHynDS2tvI6GmO+
+7jPGFRtp8QueA6LzlQN6AskCEm7BpVX2CbwTc4k3W5BDn3kmeVKdcd7a5fVLfN7Z
+y6e3kkYa8MSNfu/GFEXzeYfraIrtjwE2JfcqjDp8SgOcEaxI46n5fXNhqs4Mq/Kd
+FXUswYrJPl+hbCAklxt0YouQP55fzhBBc6FZIf3sCg/Tw1RhUs7ka0X0yKwGBp1r
+K8rHk8x9QA7ypJ66vOr4bYmqvXn5SzBb6pF4HkKLFDIrWYTrym/z2uD+H4wFq6ZN
+3viKiXS2qFAhhSbKm82E
+=h2dd
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
