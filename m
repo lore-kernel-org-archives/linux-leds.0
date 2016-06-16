@@ -1,90 +1,182 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Thu, 16 Jun 2016 16:07:27 +0100
-Message-ID: <20160616150727.GF4948@dell>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
- <20160608142621.GG14888@dell>
- <57582C1F.5040306@samsung.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2] hid: migrate Riso Kagaku LED driver from USB misc to
+ HID
+Date: Thu, 16 Jun 2016 20:34:55 +0200
+Message-ID: <11f17fef-67af-7316-9876-6b3863587f88@gmail.com>
+References: <2e8c1dbe-1433-a347-75d6-1cbd59c74212@gmail.com>
+ <20160614214849.GO24234@mail.corp.redhat.com>
+ <222a795a-b478-3dae-13a2-a805784eb8da@gmail.com>
+ <20160615073153.GP24234@mail.corp.redhat.com>
+ <73e058be-9c7a-3cc5-995e-dd0e708ec9ee@gmail.com>
+ <99be1c2f-8b58-4da5-23d4-d781d7c46e12@gmail.com>
+ <20160616070857.GA4236@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <rtc-linux+bncBDA7X7F2WUEBBBMBRO5QKGQE7QLYCDA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <57582C1F.5040306-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, r.baldyga-anjuHVi6/WSaMJb+Lgu22Q@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36805 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752512AbcFPSfO (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 16 Jun 2016 14:35:14 -0400
+In-Reply-To: <20160616070857.GA4236@kroah.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-input@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Wed, 08 Jun 2016, Krzysztof Kozlowski wrote:
+Am 16.06.2016 um 09:08 schrieb Greg Kroah-Hartman:
+> On Thu, Jun 16, 2016 at 07:45:35AM +0200, Heiner Kallweit wrote:
+>> Am 15.06.2016 um 22:59 schrieb Heiner Kallweit:
+>>> Am 15.06.2016 um 09:31 schrieb Benjamin Tissoires:
+>>>> On Jun 15 2016 or thereabouts, Heiner Kallweit wrote:
+>>>>> Am 14.06.2016 um 23:49 schrieb Benjamin Tissoires:
+>>>>>> On Jun 12 2016 or thereabouts, Heiner Kallweit wrote:
+>>>>>>> The Riso Kagaku Webmail Notifier (and its clones) is supported as part of
+>>>>>>> usb/misc/usbled driver currently. This patch migrates the driver for this
+>>>>>>> device to the HID subsystem.
+>>>>>>>
+>>>>>>> Benefits:
+>>>>>>> - Avoid using USB low-level calls and use the HID subsystem instead
+>>>>>>>   (as this device provides a USB HID interface)
+>>>>>>> - Use standard LED subsystem instead of proprietary sysfs entries,
+>>>>>>>   this allows e.g. to use the device with features like triggers
+>>>>>>>
+>>>>>>> I know at least one cheap clone coming with green and blue LED switched.
+>>>>>>> There's a module paramater to deal with this.
+>>>>>>>
+>>>>>>> There might be users of the current module, therefore so far allow
+>>>>>>> compilation of the new driver only if the old one is disabled.
+>>>>>>>
+>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>>>> ---
+>>>>>>> v2:
+>>>>>>> - change config symbol from HID_RIKA to HID_RISO_KAGAKU
+>>>>>>> - use full name Riso Kagaku instead of rika in several places
+>>>>>>> - don't remove device from ignore list if CONFIG_USB_LED is defined
+>>>>>>> - fix module parameter permissions
+>>>>>>
+>>>>>> Thanks for the respin. This version (and the other for hid-rika) looks
+>>>>>> fine. Though I wonder if you should not call hid_hw_open() at the end of
+>>>>>> probe (and hid_hw_close() during remove) to keep the device opened.
+>>>>>> Otherwise I am unsure whether your usb commands will get treated (I
+>>>>>> might be wrong).
+>>>>>>
+>>>>> When looking at other hid device drivers hid_hw_open seems to be needed
+>>>>> only if the device needs special treatment.
+>>>>
+>>>> Not exactly. hid_hw_open is called whenever someone opens the hidraw or
+>>>> input node (or any other resource attached to the HID device). This
+>>>> starts the input reading, but also calls usb_autopm_get_interface()
+>>>> which will prevent the device to be autosuspended. The drivers that call
+>>>> hid_hw_open() in their probe are the ones where we know no one will open
+>>>> the hidraw or input node but we need to poll for events.
+>>>>
+>>>>> My Riso Kagaku and Dream Cheeky devices work fine with the new drivers
+>>>>> w/o calling hid_hw_open.
+>>>>
+>>>> Let's keep it that way then.
+>>>>
+>>>>>
+>>>>>> There is also one high level comment I would like to do:
+>>>>>> even if your driver is better than usbled.c, people won't use it because
+>>>>>> distributions won't enable it as there is 2 issues:
+>>>>>> - one is you are breaking kernel ABI (we already discussed it)
+>>>>>> - the other one is that if people want to use your new hid drivers, they
+>>>>>>   have to disable CONFIG_USB_LED, which removes support of the
+>>>>>>   DELCOM_VISUAL_SIGNAL_INDICATOR
+>>>>>>
+>>>>> Yes, I think you're right.
+>>>>> With regard to the Delcom Visual Signal Indicator:
+>>>>> The old USB LED driver supports only generation 1 of these devices which
+>>>>> have a not fully HID compliant interface.
+>>>>> In 2008 they were replace with generation 2 which has fully a HID
+>>>>> compliant interface. Generation 2 is not yet supported by the kernel.
+>>>>> (Currently I'm trying to get hold of such a device.)
+>>>>>
+>>>>> Therefore it might be better to leave support for the Gen 1 Delcom device
+>>>>> at USB misc. However this would mean that we have to change the config
+>>>>> symbol for this driver so that it doesn't conflict with the other part
+>>>>> we're moving to hid.
+>>>>> Would changing the config symbol be an issue? For now we could select
+>>>>> the new config symbol automatically if CONFIG_USB_LED is set.
+>>>>
+>>>> Why would you change the old config symbol for the existing devices. If
+>>>> (and I don't think that's the best option) you were to add a new symbol,
+>>>> you could use this to select between HID and USB for the new drivers:
+>>>> CONFIG_USB_LED_LEGACY_SUPPORT would depend on CONFIG_USB_LED, and you
+>>>> choose to enable the HID driver based on CONFIG_USB_LED_LEGACY_SUPPORT.
+>>>>
+>>>>>
+>>>>>> I really think it would not cost too much to do the whole change in 2
+>>>>>> passes:
+>>>>>> - move the entire usbled to hid, keeping the old sysfs API in place, and
+>>>>>>   eventually add a symlink from the old place (under the usb device) to
+>>>>>>   the HID device to keep path stable
+>>>>>
+>>>>> I guess you don't mean symlink literally but adding a comment in Kconfig
+>>>>> that the driver was moved?
+>>>>
+>>>> No. I'd rather not having the files moved around when they are KABI. So
+>>>> either you add the old sysfs files directly at the same level, or you
+>>>> symlink to them. Some HID driver already take a pointer to the
+>>>> underlying USB device, so you can do the same.
+>>>>
+>>> OK, thanks for the further explanations. So, what I would do:
+>>> - merge new LED HID drivers to a "new USB LED" driver
+>>> - remove Riso Kagaku and Dream Cheeky support from old USB LED driver
+>>>   (the old driver then just supports the non-HID Gen 1 Delcom device)
+>>> - let new USB LED driver create sysmlinks in sysfs to not break the old ABI
+>>>
+>>> The latter can be achieved easier than expected as the old sysfs
+>>> attributes share the same semantics as the brightness attribute of
+>>> the new led_classdev. Means I don't have to implement the attribute
+>>> show / store ops for the old attributes.
+>>> Therefore I think we can do the change in one pass.
+>>>
+>>> For creating the symlinks I just need something like:
+>>>
+>>> ret = devm_led_classdev_register(&dcdev->hdev->dev, &led->cdev);
+>>> if (ret)
+>>> 	return ret;
+>>>
+>>> node = sysfs_get_dirent(led->cdev.dev->kobj.sd, "brightness");
+>>> kernfs_create_link(dcdev->hdev->dev.parent->kobj.sd, color_name, node);
+>>> sysfs_put(node);
+>>>
+>>> Looks a little bit scary but works perfectly fine here.
+>>> It creates the following link (same location as with old USB LED driver)
+>>> /sys/devices/pci0000:00/0000:00:14.0/usb1/1-6/1-6:1.0/green
+>>> like this:
+>>> green -> 0003:1D34:0004.0002/leds/dream_cheeky0:green/brightness
+>>>
+>>> The only issue so far is that kernfs_create_link is public but misses
+>>> an EXPORT_SYMBOL_GPL declaration. Therefore I can't use it in a module.
+>>> For my tests I exported it and the module worked fine.
+>>>
+>>> Seems like symlinking to kernfs_node is not supported yet for modules,
+>>> only symlinking to kobject.
+>>> Having said that I either have to convince the sysfs/kernfs maintainers
+>>> that this export is a good thing or the new USB LED driver is not available
+>>> as a module for now.
+>>>
+>> Greg, as original author of the USB LED driver you've been on cc anyway and
+>> just by chance you're also maintainer of sysfs / kernfs.
+>>
+>> Would exporting kernfs_create_link be fine with you and if yes: Should we
+>> add a sysfs_.. wrapper (e.g. sysfs_create_node_link) in linux/sysfs.h
+>> like for other kernfs_.. calls ?
+> 
+> Ick, no.  Wait, I wrote this?  Oh yeah, no, just delete it, and use your
+> new version instead.  No need to preserve this bizarre one-off api for
+> any reason, I don't think anyone uses it.  The device I had is
+> long-gone.  If anyone objects after we remove it, we can think about
+> adding it back, but for now, let's just delete it.
+> 
+OK, then I'll submit a patch for removing the old USB LED driver.
 
-> On 06/08/2016 04:26 PM, Lee Jones wrote:
-> > On Wed, 01 Jun 2016, Krzysztof Kozlowski wrote:
-> >=20
-> >> From: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>
-> >> This patch modifies max8997 driver and each associated function driver=
-,
-> >> to use regmap instead of operating directly on i2c bus. It will allow =
-to
-> >> simplify IRQ handling using regmap-irq.
-> >>
-> >> Signed-off-by: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>
-> >> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> Acked-by: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> >> Acked-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> >> Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> Acked-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> >> [k.kozlowski: Collect acks, rebase on v4.6-rc6]
-> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> Acked-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>  drivers/extcon/extcon-max8997.c       |  31 ++++----
-> >>  drivers/input/misc/max8997_haptic.c   |  34 ++++----
-> >>  drivers/leds/leds-max8997.c           |  13 ++--
-> >>  drivers/mfd/Kconfig                   |   1 +
-> >>  drivers/mfd/max8997-irq.c             |  64 ++++++---------
-> >>  drivers/mfd/max8997.c                 | 141 +++++++++++++++----------=
----------
-> >>  drivers/power/max8997_charger.c       |  33 ++++----
-> >>  drivers/regulator/max8997-regulator.c |  87 ++++++++++-----------
-> >=20
-> > Is it just Mark's Ack you require?
->=20
-> Yes, only Mark's is missing here. All other patches got everything they
-> need.
+Regards, Heiner
 
-I think you'd better re-submit and get Mark's attention.
-
-Also indicate that his Ack is all you need.
-
-Once received, I can take the set.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
-
---=20
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
----=20
-You received this message because you are subscribed to the Google Groups "=
-rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+> thanks,
+> 
+> greg k-h
+> 
