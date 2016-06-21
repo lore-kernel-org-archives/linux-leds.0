@@ -1,88 +1,51 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Add no-op gpio_led_register_device when LED
- subsystem is disabled
-Date: Tue, 21 Jun 2016 15:11:01 +0200
-Message-ID: <57693CE5.7050904@samsung.com>
-References: <20160613200211.14790-1-afd@ti.com>
- <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
- <57647DBD.2010406@ti.com> <57679E38.3080901@samsung.com>
- <57686A94.2010704@ti.com> <5768E815.5080706@samsung.com>
- <5769297A.4050608@ti.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 2/7] leds: documentation: 'ide-disk' to 'disk-activity'
+Date: Tue, 21 Jun 2016 16:05:32 +0100
+Message-ID: <20160621150532.GG3302@leverpostej>
+References: <20160608223000.433-1-linz@li-pro.net>
+ <20160608223000.433-2-linz@li-pro.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <5769297A.4050608@ti.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160608223000.433-2-linz@li-pro.net>
+Sender: linux-ide-owner@vger.kernel.org
+To: Stephan Linz <linz@li-pro.net>
+Cc: linux-leds@vger.kernel.org, linux-ide@vger.kernel.org, Joseph Jezak <josejx@gentoo.org>, Nico Macrionitis <acrux@cruxppc.org>, =?utf-8?B?SsO2cmc=?= Sommer <joerg@alea.gnuu.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 06/21/2016 01:48 PM, Andrew F. Davis wrote:
-> On 06/21/2016 02:09 AM, Jacek Anaszewski wrote:
->> Hi Andrew,
->>
->> This patch doesn't apply, please rebase onto recent LED tree.
->>
->> On 06/21/2016 12:13 AM, Andrew F. Davis wrote:
->>> Some systems use 'gpio_led_register_device' to make an in-memory copy of
->>> their LED device table so the original can be removed as .init.rodata.
->>> When the LED subsystem is not enabled source in the led directory is not
->>> built and so this function may be undefined. Fix this here.
->>>
->>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>> ---
->>>    include/linux/leds.h | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index d2b1306..a4a3da6 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -386,8 +386,16 @@ struct gpio_led_platform_data {
->>>                                           unsigned long *delay_off);
->>
->> Currently there is some stuff here, and in fact it has been for
->> a long time.
->>
->> Patch "[PATCH 12/12] leds: Only descend into leds directory when
->> CONFIG_NEW_LEDS is set" also doesn't apply.
->> What repository are you using?
->>
->
-> v4.7-rc4, it may not apply due to the surrounding lines being changed in
-> the other patches which may not be applied to your tree. It is a single
-> line change per patch so hopefully the merge conflict resolutions will
-> be trivial.
->
-> A better solution could have been getting an ack from each maintainer
-> and having someone pull the whole series into one tree, but parts have
-> already been picked so it may be a little late for that.
+On Thu, Jun 09, 2016 at 12:29:37AM +0200, Stephan Linz wrote:
+> Cc: Joseph Jezak <josejx@gentoo.org>
+> Cc: Nico Macrionitis <acrux@cruxppc.org>
+> Cc: J=C3=B6rg Sommer <joerg@alea.gnuu.de>
+> Signed-off-by: Stephan Linz <linz@li-pro.net>
+> ---
+>  Documentation/devicetree/bindings/leds/common.txt    | 2 +-
+>  Documentation/devicetree/bindings/leds/leds-gpio.txt | 2 +-
+>  Documentation/laptops/asus-laptop.txt                | 2 +-
+>  Documentation/leds/leds-class.txt                    | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Docu=
+mentation/devicetree/bindings/leds/common.txt
+> index af10678..1e97169 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -26,7 +26,7 @@ Optional properties for child nodes:
+>       "default-on" - LED will turn on (but for leds-gpio see "default=
+-state"
+>  		    property in Documentation/devicetree/bindings/gpio/led.txt)
+>       "heartbeat" - LED "double" flashes at a load average based rate
+> -     "ide-disk" - LED indicates disk activity
+> +     "disk-activity" - LED indicates disk activity
+>       "timer" - LED flashes at a fixed, configurable rate
 
-OK, I resolved the issues and applied, thanks.
+We should not break the binding.
 
->>>    };
->>>
->>> +#ifdef CONFIG_NEW_LEDS
->>>    struct platform_device *gpio_led_register_device(
->>>                   int id, const struct gpio_led_platform_data *pdata);
->>> +#else
->>> +static inline struct platform_device *gpio_led_register_device(
->>> +               int id, const struct gpio_led_platform_data *pdata)
->>> +{
->>> +       return 0;
->>> +}
->>> +#endif
->>>
->>>    enum cpu_led_event {
->>>           CPU_LED_IDLE_START,     /* CPU enters idle */
->>>
->>
->>
->
->
+Code must continue to support "ide-disk", though we can mark it
+deprecated in the binding documentation, and update the in-kernel dts
+files to use "disk-activity".
 
-
--- 
-Best regards,
-Jacek Anaszewski
+Thanks,
+Mark.
