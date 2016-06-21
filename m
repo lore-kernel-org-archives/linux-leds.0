@@ -1,51 +1,107 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 2/7] leds: documentation: 'ide-disk' to 'disk-activity'
-Date: Tue, 21 Jun 2016 16:05:32 +0100
-Message-ID: <20160621150532.GG3302@leverpostej>
-References: <20160608223000.433-1-linz@li-pro.net>
- <20160608223000.433-2-linz@li-pro.net>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/2] leds: ncp5623: Add device tree binding documentation
+Date: Tue, 21 Jun 2016 17:28:02 +0200
+Message-ID: <57695D02.2000109@samsung.com>
+References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
+ <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160608223000.433-2-linz@li-pro.net>
-Sender: linux-ide-owner@vger.kernel.org
-To: Stephan Linz <linz@li-pro.net>
-Cc: linux-leds@vger.kernel.org, linux-ide@vger.kernel.org, Joseph Jezak <josejx@gentoo.org>, Nico Macrionitis <acrux@cruxppc.org>, =?utf-8?B?SsO2cmc=?= Sommer <joerg@alea.gnuu.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Vaussard <florian.vaussard@gmail.com>
+Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Jun 09, 2016 at 12:29:37AM +0200, Stephan Linz wrote:
-> Cc: Joseph Jezak <josejx@gentoo.org>
-> Cc: Nico Macrionitis <acrux@cruxppc.org>
-> Cc: J=C3=B6rg Sommer <joerg@alea.gnuu.de>
-> Signed-off-by: Stephan Linz <linz@li-pro.net>
+Hi Florian,
+
+Thanks for the patch. I have two remarks below.
+
+On 06/21/2016 09:29 AM, Florian Vaussard wrote:
+> Add device tree binding documentation for On Semiconductor NCP5623 I2C
+> LED driver. The driver can independently control the PWM of the 3
+> channels with 32 levels of intensity.
+>
+> The current delivered by the current source can be controlled using the
+> led-max-microamp property. In order to control this value, it is also
+> necessary to know the current on the Iref pin, hence the
+> onnn,led-iref-microamp property. It is usually set using an external
+> bias resistor, following Iref = Vref/Rbias with Vref=0.6V.
+>
+> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
 > ---
->  Documentation/devicetree/bindings/leds/common.txt    | 2 +-
->  Documentation/devicetree/bindings/leds/leds-gpio.txt | 2 +-
->  Documentation/laptops/asus-laptop.txt                | 2 +-
->  Documentation/leds/leds-class.txt                    | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Docu=
-mentation/devicetree/bindings/leds/common.txt
-> index af10678..1e97169 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -26,7 +26,7 @@ Optional properties for child nodes:
->       "default-on" - LED will turn on (but for leds-gpio see "default=
--state"
->  		    property in Documentation/devicetree/bindings/gpio/led.txt)
->       "heartbeat" - LED "double" flashes at a load average based rate
-> -     "ide-disk" - LED indicates disk activity
-> +     "disk-activity" - LED indicates disk activity
->       "timer" - LED flashes at a fixed, configurable rate
+>   .../devicetree/bindings/leds/leds-ncp5623.txt      | 44 ++++++++++++++++++++++
+>   1 file changed, 44 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+> new file mode 100644
+> index 0000000..0dc8345
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+> @@ -0,0 +1,44 @@
+> +* ON Semiconductor - NCP5623 3-Channel LED Driver
+> +
+> +The NCP5623 is a 3-channel I2C LED driver. The brightness of each
+> +channel can be independently set using 32 levels. Each LED is represented
+> +as a sub-node of the device.
+> +
+> +Required properties:
+> +  - compatible: Should be "onnn,ncp5623"
+> +  - reg: I2C slave address (fixed to 0x38)
+> +  - #address-cells: must be 1
+> +  - #size-cells: must be 0
+> +  - onnn,led-iref-microamp: Current on the Iref pin in microampere
 
-We should not break the binding.
+I think that you don't need this property. Just provide the formula for
+calculating led-max-microamp value, similarly as you're doing that in
+the commit message.
 
-Code must continue to support "ide-disk", though we can mark it
-deprecated in the binding documentation, and update the in-kernel dts
-files to use "disk-activity".
+> +  - led-max-microamp: Desired maximum current for each LED in microampere
+> +                      (maximum 30000uA)
 
-Thanks,
-Mark.
+Please add instead of (maximum ...):
+
+Valid values: min - max, step by N (rounded {up|down})
+
+E.g.
+
+Valid values: 10000 - 30000, step by 1000 (rounded down)
+
+> +
+> +LED sub-node properties:
+> +  - reg : LED channel number (0..2)
+> +  - For other LED properties see:
+> +      Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +
+> +led1: ncp5623@38 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	compatible = "onnn,ncp5623";
+> +	reg = <0x38>;
+> +
+> +	led1_r@0 {
+> +		label = "ncp:power:red";
+> +		reg = <0>;
+> +		linux,default-trigger = "default-on";
+> +	};
+> +
+> +	led1_b@1 {
+> +		label = "ncp:power:blue";
+> +		reg = <1>;
+> +	};
+> +
+> +	led1_g@2 {
+> +		label = "ncp:power:green";
+> +		reg = <2>;
+> +	};
+> +};
+>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
