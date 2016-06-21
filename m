@@ -1,57 +1,85 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Add no-op gpio_led_register_device when LED
- subsystem is disabled
-Date: Tue, 21 Jun 2016 09:09:09 +0200
-Message-ID: <5768E815.5080706@samsung.com>
-References: <20160613200211.14790-1-afd@ti.com>
- <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
- <57647DBD.2010406@ti.com> <57679E38.3080901@samsung.com>
- <57686A94.2010704@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-reply-to: <57686A94.2010704@ti.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-i2c@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, lguest@lists.ozlabs.org, Samuel Ortiz <sameo@linux.intel.com>, Russell King <linux@armlinux.org.uk>, linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linuxppc-dev@lists.ozlabs.org
+From: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] leds: ncp5623: Add device tree binding documentation
+Date: Tue, 21 Jun 2016 09:29:13 +0200
+Message-ID: <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
+References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466494154-3786-1-git-send-email-florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-SGkgQW5kcmV3LAoKVGhpcyBwYXRjaCBkb2Vzbid0IGFwcGx5LCBwbGVhc2UgcmViYXNlIG9udG8g
-cmVjZW50IExFRCB0cmVlLgoKT24gMDYvMjEvMjAxNiAxMjoxMyBBTSwgQW5kcmV3IEYuIERhdmlz
-IHdyb3RlOgo+IFNvbWUgc3lzdGVtcyB1c2UgJ2dwaW9fbGVkX3JlZ2lzdGVyX2RldmljZScgdG8g
-bWFrZSBhbiBpbi1tZW1vcnkgY29weSBvZgo+IHRoZWlyIExFRCBkZXZpY2UgdGFibGUgc28gdGhl
-IG9yaWdpbmFsIGNhbiBiZSByZW1vdmVkIGFzIC5pbml0LnJvZGF0YS4KPiBXaGVuIHRoZSBMRUQg
-c3Vic3lzdGVtIGlzIG5vdCBlbmFibGVkIHNvdXJjZSBpbiB0aGUgbGVkIGRpcmVjdG9yeSBpcyBu
-b3QKPiBidWlsdCBhbmQgc28gdGhpcyBmdW5jdGlvbiBtYXkgYmUgdW5kZWZpbmVkLiBGaXggdGhp
-cyBoZXJlLgo+Cj4gU2lnbmVkLW9mZi1ieTogQW5kcmV3IEYuIERhdmlzIDxhZmRAdGkuY29tPgo+
-IC0tLQo+ICAgaW5jbHVkZS9saW51eC9sZWRzLmggfCA4ICsrKysrKysrCj4gICAxIGZpbGUgY2hh
-bmdlZCwgOCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9sZWRz
-LmggYi9pbmNsdWRlL2xpbnV4L2xlZHMuaAo+IGluZGV4IGQyYjEzMDYuLmE0YTNkYTYgMTAwNjQ0
-Cj4gLS0tIGEvaW5jbHVkZS9saW51eC9sZWRzLmgKPiArKysgYi9pbmNsdWRlL2xpbnV4L2xlZHMu
-aAo+IEBAIC0zODYsOCArMzg2LDE2IEBAIHN0cnVjdCBncGlvX2xlZF9wbGF0Zm9ybV9kYXRhIHsK
-PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcg
-KmRlbGF5X29mZik7CgpDdXJyZW50bHkgdGhlcmUgaXMgc29tZSBzdHVmZiBoZXJlLCBhbmQgaW4g
-ZmFjdCBpdCBoYXMgYmVlbiBmb3IKYSBsb25nIHRpbWUuCgpQYXRjaCAiW1BBVENIIDEyLzEyXSBs
-ZWRzOiBPbmx5IGRlc2NlbmQgaW50byBsZWRzIGRpcmVjdG9yeSB3aGVuCkNPTkZJR19ORVdfTEVE
-UyBpcyBzZXQiIGFsc28gZG9lc24ndCBhcHBseS4KV2hhdCByZXBvc2l0b3J5IGFyZSB5b3UgdXNp
-bmc/Cgo+ICAgfTsKPgo+ICsjaWZkZWYgQ09ORklHX05FV19MRURTCj4gICBzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpncGlvX2xlZF9yZWdpc3Rlcl9kZXZpY2UoCj4gICAgICAgICAgICAgICAgICBp
-bnQgaWQsIGNvbnN0IHN0cnVjdCBncGlvX2xlZF9wbGF0Zm9ybV9kYXRhICpwZGF0YSk7Cj4gKyNl
-bHNlCj4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZ3Bpb19sZWRfcmVn
-aXN0ZXJfZGV2aWNlKAo+ICsgICAgICAgICAgICAgICBpbnQgaWQsIGNvbnN0IHN0cnVjdCBncGlv
-X2xlZF9wbGF0Zm9ybV9kYXRhICpwZGF0YSkKPiArewo+ICsgICAgICAgcmV0dXJuIDA7Cj4gK30K
-PiArI2VuZGlmCj4KPiAgIGVudW0gY3B1X2xlZF9ldmVudCB7Cj4gICAgICAgICAgQ1BVX0xFRF9J
-RExFX1NUQVJULCAgICAgLyogQ1BVIGVudGVycyBpZGxlICovCj4KCgotLSAKQmVzdCByZWdhcmRz
-LApKYWNlayBBbmFzemV3c2tpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxpc3RzLm96
-bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
+Add device tree binding documentation for On Semiconductor NCP5623 I2C
+LED driver. The driver can independently control the PWM of the 3
+channels with 32 levels of intensity.
+
+The current delivered by the current source can be controlled using the
+led-max-microamp property. In order to control this value, it is also
+necessary to know the current on the Iref pin, hence the
+onnn,led-iref-microamp property. It is usually set using an external
+bias resistor, following Iref = Vref/Rbias with Vref=0.6V.
+
+Signed-off-by: Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+---
+ .../devicetree/bindings/leds/leds-ncp5623.txt      | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+new file mode 100644
+index 0000000..0dc8345
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+@@ -0,0 +1,44 @@
++* ON Semiconductor - NCP5623 3-Channel LED Driver
++
++The NCP5623 is a 3-channel I2C LED driver. The brightness of each
++channel can be independently set using 32 levels. Each LED is represented
++as a sub-node of the device.
++
++Required properties:
++  - compatible: Should be "onnn,ncp5623"
++  - reg: I2C slave address (fixed to 0x38)
++  - #address-cells: must be 1
++  - #size-cells: must be 0
++  - onnn,led-iref-microamp: Current on the Iref pin in microampere
++  - led-max-microamp: Desired maximum current for each LED in microampere
++                      (maximum 30000uA)
++
++LED sub-node properties:
++  - reg : LED channel number (0..2)
++  - For other LED properties see:
++      Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++led1: ncp5623@38 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "onnn,ncp5623";
++	reg = <0x38>;
++
++	led1_r@0 {
++		label = "ncp:power:red";
++		reg = <0>;
++		linux,default-trigger = "default-on";
++	};
++
++	led1_b@1 {
++		label = "ncp:power:blue";
++		reg = <1>;
++	};
++
++	led1_g@2 {
++		label = "ncp:power:green";
++		reg = <2>;
++	};
++};
+-- 
+2.5.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
