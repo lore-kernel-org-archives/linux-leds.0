@@ -1,28 +1,28 @@
 From: Florian Vaussard <florian.vaussard@heig-vd.ch>
 Subject: Re: [PATCH 1/2] leds: ncp5623: Add device tree binding documentation
-Date: Wed, 22 Jun 2016 08:08:21 +0200
-Message-ID: <59143a9b-ab51-bd3b-e9db-93680415d205@heig-vd.ch>
+Date: Wed, 22 Jun 2016 08:17:09 +0200
+Message-ID: <029fbebf-1fae-06c1-5cdb-07fe256d5130@heig-vd.ch>
 References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
  <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
- <57695D02.2000109@samsung.com>
+ <20160621215218.GA12971@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57695D02.2000109@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Florian Vaussard <florian.vaussard@gmail.com>
-Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailcl2.heig-vd.ch ([193.134.216.183]:53078 "EHLO heig-vd.ch"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750847AbcFVGV4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 22 Jun 2016 02:21:56 -0400
+In-Reply-To: <20160621215218.GA12971@rob-hp-laptop>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Florian Vaussard <florian.vaussard@gmail.com>
+Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Vaussard Florian <florian.vaussard@heig-vd.ch>
 
-Hi Jacek,
+Hi Rob,
 
-Le 21. 06. 16 =E0 17:28, Jacek Anaszewski a =E9crit :
-> Hi Florian,
->=20
-> Thanks for the patch. I have two remarks below.
->=20
-> On 06/21/2016 09:29 AM, Florian Vaussard wrote:
+Le 21. 06. 16 =E0 23:52, Rob Herring a =E9crit :
+> On Tue, Jun 21, 2016 at 09:29:13AM +0200, Florian Vaussard wrote:
 >> Add device tree binding documentation for On Semiconductor NCP5623 I=
 2C
 >> LED driver. The driver can independently control the PWM of the 3
@@ -38,14 +38,14 @@ o
 >>
 >> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
 >> ---
->>   .../devicetree/bindings/leds/leds-ncp5623.txt      | 44 ++++++++++=
-++++++++++++
->>   1 file changed, 44 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp=
-5623.txt
+>>  .../devicetree/bindings/leds/leds-ncp5623.txt      | 44 +++++++++++=
++++++++++++
+>>  1 file changed, 44 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5=
+623.txt
 >>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->> b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt=
+ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
 >> new file mode 100644
 >> index 0000000..0dc8345
 >> --- /dev/null
@@ -64,56 +64,29 @@ sented
 >> +  - #address-cells: must be 1
 >> +  - #size-cells: must be 0
 >> +  - onnn,led-iref-microamp: Current on the Iref pin in microampere
->=20
-> I think that you don't need this property. Just provide the formula f=
-or
-> calculating led-max-microamp value, similarly as you're doing that in
-> the commit message.
->=20
-
-I am not completely sure to understand your suggestion. So at the end, =
-I have to
-compute the value of the register (let call it 'ILED') that I need to s=
-end to
-chip to configure the current source. The formula is:
-
-ILED =3D 31 - 2400*Iref/led-max-microamp
-
-I need two pieces of information that depends on the hardware setup; th=
-e current
-on the Iref pin (which is setup by a bias resistor Iref =3D 0.6V/Rbias)=
-, and the
-desired output current (usually limited due to the chosen LED or the re=
-quired
-brightness).
-
-On the other hand, I could also simply ask people to put the right valu=
-e of
-'ILED' (between 0 - 31) directly in the device tree, but this is less u=
-ser-friendly.
-
 >> +  - led-max-microamp: Desired maximum current for each LED in micro=
 ampere
 >> +                      (maximum 30000uA)
+>> +
+>> +LED sub-node properties:
+>> +  - reg : LED channel number (0..2)
+>> +  - For other LED properties see:
+>> +      Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +Example:
+>> +
+>> +led1: ncp5623@38 {
+>> +	#address-cells =3D <1>;
+>> +	#size-cells =3D <0>;
+>> +	compatible =3D "onnn,ncp5623";
+>> +	reg =3D <0x38>;
+>> +
+>> +	led1_r@0 {
 >=20
-> Please add instead of (maximum ...):
->=20
-> Valid values: min - max, step by N (rounded {up|down})
->=20
-> E.g.
->=20
-> Valid values: 10000 - 30000, step by 1000 (rounded down)
+> Don't use underscores in node names.
 >=20
 
-This is unfortunately not a linear relationship,
+Sorry for the mistake, I will fix.
 
-led-max-microamp =3D 2400*Iref/(31-ILED)
-
-thus steps are not constant. This can be seen on figure 5 (p.9) of the =
-datasheet
-[1].
-
-Thanks for your review,
+Thanks for the review,
 =46lorian
-
-[1] http://www.onsemi.com/pub/Collateral/NCP5623-D.PDF
