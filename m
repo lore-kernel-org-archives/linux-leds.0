@@ -1,123 +1,72 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/2] leds: ncp5623: Add device tree binding documentation
-Date: Wed, 22 Jun 2016 10:52:59 +0200
-Message-ID: <576A51EB.8090800@samsung.com>
-References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
- <57695D02.2000109@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 2/7] leds: documentation: 'ide-disk' to 'disk-activity'
+Date: Wed, 22 Jun 2016 11:16:04 +0100
+Message-ID: <20160622101603.GC25837@leverpostej>
+References: <20160608223000.433-1-linz@li-pro.net>
+ <20160608223000.433-2-linz@li-pro.net>
+ <20160621150532.GG3302@leverpostej>
+ <576A447F.2020002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50770 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750799AbcFVIzX (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 22 Jun 2016 04:55:23 -0400
-In-reply-to: <57695D02.2000109@samsung.com>
+Received: from foss.arm.com ([217.140.101.70]:46431 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751695AbcFVKQK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 22 Jun 2016 06:16:10 -0400
+Content-Disposition: inline
+In-Reply-To: <576A447F.2020002@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Florian Vaussard <florian.vaussard@gmail.com>
-Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Stephan Linz <linz@li-pro.net>, linux-leds@vger.kernel.org, linux-ide@vger.kernel.org, Joseph Jezak <josejx@gentoo.org>, Nico Macrionitis <acrux@cruxppc.org>, =?utf-8?B?SsO2cmc=?= Sommer <joerg@alea.gnuu.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 
-On 06/21/2016 05:28 PM, Jacek Anaszewski wrote:
-> Hi Florian,
->
-> Thanks for the patch. I have two remarks below.
->
-> On 06/21/2016 09:29 AM, Florian Vaussard wrote:
->> Add device tree binding documentation for On Semiconductor NCP5623 I2C
->> LED driver. The driver can independently control the PWM of the 3
->> channels with 32 levels of intensity.
->>
->> The current delivered by the current source can be controlled using the
->> led-max-microamp property. In order to control this value, it is also
->> necessary to know the current on the Iref pin, hence the
->> onnn,led-iref-microamp property. It is usually set using an external
->> bias resistor, following Iref = Vref/Rbias with Vref=0.6V.
->>
->> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
->> ---
->>   .../devicetree/bindings/leds/leds-ncp5623.txt      | 44
->> ++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->> b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->> new file mode 100644
->> index 0000000..0dc8345
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->> @@ -0,0 +1,44 @@
->> +* ON Semiconductor - NCP5623 3-Channel LED Driver
->> +
->> +The NCP5623 is a 3-channel I2C LED driver. The brightness of each
->> +channel can be independently set using 32 levels. Each LED is
->> represented
->> +as a sub-node of the device.
->> +
->> +Required properties:
->> +  - compatible: Should be "onnn,ncp5623"
->> +  - reg: I2C slave address (fixed to 0x38)
->> +  - #address-cells: must be 1
->> +  - #size-cells: must be 0
->> +  - onnn,led-iref-microamp: Current on the Iref pin in microampere
->
-> I think that you don't need this property. Just provide the formula for
-> calculating led-max-microamp value, similarly as you're doing that in
-> the commit message.
->
->> +  - led-max-microamp: Desired maximum current for each LED in
->> microampere
->> +                      (maximum 30000uA)
->
-> Please add instead of (maximum ...):
->
-> Valid values: min - max, step by N (rounded {up|down})
->
-> E.g.
->
-> Valid values: 10000 - 30000, step by 1000 (rounded down)
->
->> +
->> +LED sub-node properties:
->> +  - reg : LED channel number (0..2)
->> +  - For other LED properties see:
->> +      Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Example:
->> +
->> +led1: ncp5623@38 {
->> +    #address-cells = <1>;
->> +    #size-cells = <0>;
->> +    compatible = "onnn,ncp5623";
->> +    reg = <0x38>;
->> +
->> +    led1_r@0 {
->> +        label = "ncp:power:red";
->> +        reg = <0>;
->> +        linux,default-trigger = "default-on";
+On Wed, Jun 22, 2016 at 09:55:43AM +0200, Jacek Anaszewski wrote:
+> On 06/21/2016 05:05 PM, Mark Rutland wrote:
+> >On Thu, Jun 09, 2016 at 12:29:37AM +0200, Stephan Linz wrote:
+> >>Cc: Joseph Jezak <josejx@gentoo.org>
+> >>Cc: Nico Macrionitis <acrux@cruxppc.org>
+> >>Cc: J=C3=B6rg Sommer <joerg@alea.gnuu.de>
+> >>Signed-off-by: Stephan Linz <linz@li-pro.net>
+> >>---
+> >>  Documentation/devicetree/bindings/leds/common.txt    | 2 +-
+> >>  Documentation/devicetree/bindings/leds/leds-gpio.txt | 2 +-
+> >>  Documentation/laptops/asus-laptop.txt                | 2 +-
+> >>  Documentation/leds/leds-class.txt                    | 2 +-
+> >>  4 files changed, 4 insertions(+), 4 deletions(-)
+> >>
+> >>diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Do=
+cumentation/devicetree/bindings/leds/common.txt
+> >>index af10678..1e97169 100644
+> >>--- a/Documentation/devicetree/bindings/leds/common.txt
+> >>+++ b/Documentation/devicetree/bindings/leds/common.txt
+> >>@@ -26,7 +26,7 @@ Optional properties for child nodes:
+> >>       "default-on" - LED will turn on (but for leds-gpio see "defa=
+ult-state"
+> >>  		    property in Documentation/devicetree/bindings/gpio/led.txt)
+> >>       "heartbeat" - LED "double" flashes at a load average based r=
+ate
+> >>-     "ide-disk" - LED indicates disk activity
+> >>+     "disk-activity" - LED indicates disk activity
+> >>       "timer" - LED flashes at a fixed, configurable rate
+> >
+> >We should not break the binding.
+> >
+> >Code must continue to support "ide-disk", though we can mark it
+> >deprecated in the binding documentation, and update the in-kernel dt=
+s
+> >files to use "disk-activity".
+>=20
+> The code in the version 4 of the patchset supports also "ide-disk".
 
-Please add also led-max-microamp to all child nodes in this example.
+Ah, sorry, I missed v4.
 
->> +    };
->> +
->> +    led1_b@1 {
->> +        label = "ncp:power:blue";
->> +        reg = <1>;
->> +    };
->> +
->> +    led1_g@2 {
->> +        label = "ncp:power:green";
->> +        reg = <2>;
->> +    };
->> +};
->>
->
->
+> Stephan, could you send a new version of this patch, with preserved
+> "ide-disk" property, marked as deprecated?
 
+With that, feel free to add:
 
--- 
-Best regards,
-Jacek Anaszewski
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
