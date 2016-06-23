@@ -1,229 +1,126 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/2] leds: ncp5623: Add device tree binding documentation
-Date: Thu, 23 Jun 2016 15:53:45 +0200
-Message-ID: <576BE9E9.7090807@samsung.com>
-References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1466494154-3786-2-git-send-email-florian.vaussard@heig-vd.ch>
- <57695D02.2000109@samsung.com>
- <59143a9b-ab51-bd3b-e9db-93680415d205@heig-vd.ch>
- <576A5191.4070402@samsung.com>
- <c97adf5a-7c5b-8602-83c1-f85854bd64d6@heig-vd.ch> <576B8E5D.90000@samsung.com>
- <576B9EB1.5040601@heig-vd.ch> <576BC63D.1030504@samsung.com>
- <576BCF95.4010508@heig-vd.ch>
+Subject: Re: [PATCH] leds: centralize definition of "default-state" property
+Date: Thu, 23 Jun 2016 15:58:29 +0200
+Message-ID: <576BEB05.4040801@samsung.com>
+References: <1466681880-12317-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <576BCF95.4010508@heig-vd.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Vaussard <florian.vaussard@heig-vd.ch>
-Cc: Florian Vaussard <florian.vaussard@gmail.com>, devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33522 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbcFWN6d (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 23 Jun 2016 09:58:33 -0400
+In-reply-to: <1466681880-12317-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>
 
-On 06/23/2016 02:01 PM, Florian Vaussard wrote:
->
->
-> On 06/23/2016 01:21 PM, Jacek Anaszewski wrote:
->> On 06/23/2016 10:32 AM, Florian Vaussard wrote:
->>> Hi Jacek,
->>>
->>> On 06/23/2016 09:23 AM, Jacek Anaszewski wrote:
->>>> On 06/22/2016 04:25 PM, Florian Vaussard wrote:
->>>>> Hi Jacek,
->>>>>
->>>>> Le 22. 06. 16 =E0 10:51, Jacek Anaszewski a =E9crit :
->>>>>> Hi Florian,
->>>>>>
->>>>>> On 06/22/2016 08:08 AM, Florian Vaussard wrote:
->>>>>>> Hi Jacek,
->>>>>>>
->>>>>>> Le 21. 06. 16 =E0 17:28, Jacek Anaszewski a =E9crit :
->>>>>>>> Hi Florian,
->>>>>>>>
->>>>>>>> Thanks for the patch. I have two remarks below.
->>>>>>>>
->>>>>>>> On 06/21/2016 09:29 AM, Florian Vaussard wrote:
->>>>>>>>> Add device tree binding documentation for On Semiconductor NC=
-P5623 I2C
->>>>>>>>> LED driver. The driver can independently control the PWM of t=
-he 3
->>>>>>>>> channels with 32 levels of intensity.
->>>>>>>>>
->>>>>>>>> The current delivered by the current source can be controlled=
- using the
->>>>>>>>> led-max-microamp property. In order to control this value, it=
- is also
->>>>>>>>> necessary to know the current on the Iref pin, hence the
->>>>>>>>> onnn,led-iref-microamp property. It is usually set using an e=
-xternal
->>>>>>>>> bias resistor, following Iref =3D Vref/Rbias with Vref=3D0.6V=
-=2E
->>>>>>>>>
->>>>>>>>> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
->>>>>>>>> ---
->>>>>>>>>       .../devicetree/bindings/leds/leds-ncp5623.txt      | 44
->>>>>>>>> ++++++++++++++++++++++
->>>>>>>>>       1 file changed, 44 insertions(+)
->>>>>>>>>       create mode 100644
->>>>>>>>> Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5=
-623.txt
->>>>>>>>> b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->>>>>>>>> new file mode 100644
->>>>>>>>> index 0000000..0dc8345
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
->>>>>>>>> @@ -0,0 +1,44 @@
->>>>>>>>> +* ON Semiconductor - NCP5623 3-Channel LED Driver
->>>>>>>>> +
->>>>>>>>> +The NCP5623 is a 3-channel I2C LED driver. The brightness of=
- each
->>>>>>>>> +channel can be independently set using 32 levels. Each LED i=
-s represented
->>>>>>>>> +as a sub-node of the device.
->>>>>>>>> +
->>>>>>>>> +Required properties:
->>>>>>>>> +  - compatible: Should be "onnn,ncp5623"
->>>>>>>>> +  - reg: I2C slave address (fixed to 0x38)
->>>>>>>>> +  - #address-cells: must be 1
->>>>>>>>> +  - #size-cells: must be 0
->>>>>>>>> +  - onnn,led-iref-microamp: Current on the Iref pin in micro=
-ampere
->>>>>>>>
->>>>>>>> I think that you don't need this property. Just provide the fo=
-rmula for
->>>>>>>> calculating led-max-microamp value, similarly as you're doing =
-that in
->>>>>>>> the commit message.
->>>>>>>>
->>>>>>>
->>>>>>> I am not completely sure to understand your suggestion. So at t=
-he end, I
->>>>>>> have to
->>>>>>> compute the value of the register (let call it 'ILED') that I n=
-eed to send to
->>>>>>> chip to configure the current source. The formula is:
->>>>>>>
->>>>>>> ILED =3D 31 - 2400*Iref/led-max-microamp
->>>>>>
->>>>>> led-max-microamp is the maximum current value for given LED.
->>>>>> According to the documentation it can be calculated as follows:
->>>>>>
->>>>>> ILEDmax =3D Iref * 2400 / (31 - n)
->>>>>>
->>>>>> Since this is global setting for all LEDs, then I'd always set n=
- to 30,
->>>>>> and calculate max_brightness value for each LED separately, basi=
-ng on
->>>>>> led-max-microamp property value. Effectively, I'm revoking my pr=
-evious
->>>>>> statement about setting max_brightness to fixed level.
->>>>>>
->>>>>
->>>>> Ok your proposal simplifies a bit the handling. Thus ILEDmax of t=
-he current
->>>>> source would be always equal to Iref * 2400 and we use the PWM to=
- limit the
->>>>> current inside the LED. The only downside of this approach is a r=
-educed number
->>>>> of possible PWM steps, thus a limited number of RGB colors.
->>>>
->>>> Yes, but by max_brightness being always 31, lowering led-max-micro=
-amp
->>>> results in decreasing the amount of current per brightness level.
->>>> Effectively, a human ability to notice perceived brightness level
->>>> change also decreases then.
->>>>
->>>> In the approach I proposed this limitation is reflected in reduced
->>>> amount of available brightness levels.
->>>>
->>>>> Regarding the DT binding, this would mean something like this:
->>>>>
->>>>> ncp5623@38 {
->>>>>       #address-cells =3D <1>;
->>>>>       #size-cells =3D <0>;
->>>>>       compatible =3D "onnn,ncp5623";
->>>>>       reg =3D <0x38>;
->>>>>       led-max-microamp =3D <30000>;
->>>>
->>>> Please drop it from here. It doesn't need to be configurable.
->>>> You can hard code this in the driver.
->>>>
->>>
->>> It is not user configurable, but it is a hardware configuration imp=
-osed by the
->>> bias resistor on the Iref pin (ILEDmax =3D 2400*Iref =3D 2400*0.6V/=
-Rbias). So I
->>> cannot hard code it as it can change from one design to another. An=
-d I need this
->>> piece of information to compute the maximum allowable PWM ratio.
->>
->> OK, please keep here the property you initially introduced for that:
->>
->> onnn,led-iref-microamp
->>
->
-> Ok.
->
->>>
->>>>>
->>>>>       ledr@0 {
->>>>>           label =3D "ncp:power:red";
->>>>>           reg =3D <0>;
->>>>>           linux,default-trigger =3D "default-on";
->>>>>           led-max-microamp =3D <5000>;
->>>>
->>>> Is 5mA the maximum allowed current value for the LEDs on the board
->>>> you're using? Is brightness level change easily noticeable by max
->>>> current set to 5mA and max_brightness set to 31? It would be good
->>>> to empirically check this configuration.
->>>>
->>>
->>> No the maximum is 20mA on our board, but limiting to 5mA is safer t=
-o avoid
->>> blinding the user :) This RGB led is quite powerful...
->>>
->>> Some experiments:
->>> 1) When setting the current source at 5mA, the PWM steps are easily=
- noticeable
->>> at low brightness (below 50%). Above the eye is not sensitive enoug=
-h. Thus on
->>> the 32768 possible colours, I agree that not all will be distinguis=
-hable.
->>> 2) When setting the current source at 20mA, the PWM steps are even =
-more visible
->>> at low brightness. As I have to keep the PWM ratio below 25% to sat=
-isfy the 5mA
->>> limit, all the 7 steps (brightness =3D [0; 7]) are clearly noticeab=
-le. This also
->>> means only 512 different colours. For sure in this case they are al=
-l
->>> distinguishable :)
->>>
->>> With your proposal, the hardware fix is probably to decrease Iref b=
-y increasing
->>> the bias resistor. This way the PWM steps would be smaller and less=
- noticeable.
->>> But a hardware fix is not always possible.
->>
->> It would be nice to have all 31 levels available per LED, but is it
->> feasible having that ILED register is global for all LEDs? It seems =
-that
->> we couldn't set different maximum current for each LED then.
->> Am I right or I am missing something?
->>
->
-> If led-max-microamp is different for each LED, we can select the high=
-est one and
-> use it to compute the ILED register. Then we limit the PWM ratio for =
-the LEDs
-> that have a lowest led-max-microamp. I guess that this is the best co=
-mpromise.
+Hi Linus,
 
-Sounds good. Please proceed accordingly.
+Thanks for the patch.
 
---=20
+Adding devicetree list and maintainers.
+
 Best regards,
 Jacek Anaszewski
+
+On 06/23/2016 01:38 PM, Linus Walleij wrote:
+> Four different drivers define the "default-state" property.
+> Move this into the common.txt common LEDs properties.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>   Documentation/devicetree/bindings/leds/common.txt           | 7 +++++++
+>   Documentation/devicetree/bindings/leds/leds-bcm6328.txt     | 2 +-
+>   Documentation/devicetree/bindings/leds/leds-bcm6358.txt     | 2 +-
+>   Documentation/devicetree/bindings/leds/leds-gpio.txt        | 9 ++-------
+>   Documentation/devicetree/bindings/leds/register-bit-led.txt | 9 ++-------
+>   5 files changed, 13 insertions(+), 16 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index af10678ea2f6..7ad54c6bcb10 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -19,6 +19,13 @@ Optional properties for child nodes:
+>   	  a device, i.e. no other LED class device can be assigned the same
+>   	  label.
+>
+> +- default-state : The initial state of the LED. Valid values are "on", "off",
+> +  and "keep". If the LED is already on or off and the default-state property is
+> +  set the to same value, then no glitch should be produced where the LED
+> +  momentarily turns off (or on). The "keep" setting will keep the LED at
+> +  whatever its current state is, without producing a glitch.  The default is
+> +  off if this property is not present.
+> +
+>   - linux,default-trigger :  This parameter, if present, is a
+>       string defining the trigger assigned to the LED.  Current triggers are:
+>        "backlight" - LED will act as a back-light, controlled by the framebuffer
+> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> index 3f48c1eaf085..ccebce597f37 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6328.txt
+> @@ -49,7 +49,7 @@ LED sub-node optional properties:
+>       - active-low : Boolean, makes LED active low.
+>         Default : false
+>       - default-state : see
+> -      Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +      Documentation/devicetree/bindings/leds/common.txt
+>       - linux,default-trigger : see
+>         Documentation/devicetree/bindings/leds/common.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-bcm6358.txt b/Documentation/devicetree/bindings/leds/leds-bcm6358.txt
+> index b22a55bcc65d..da5708e7b43b 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-bcm6358.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-bcm6358.txt
+> @@ -28,7 +28,7 @@ LED sub-node optional properties:
+>     - active-low : Boolean, makes LED active low.
+>       Default : false
+>     - default-state : see
+> -    Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +    Documentation/devicetree/bindings/leds/common.txt
+>     - linux,default-trigger : see
+>       Documentation/devicetree/bindings/leds/common.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> index cbbeb1850910..aad6bcbcab9d 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> @@ -14,13 +14,8 @@ LED sub-node properties:
+>     see Documentation/devicetree/bindings/leds/common.txt
+>   - linux,default-trigger :  (optional)
+>     see Documentation/devicetree/bindings/leds/common.txt
+> -- default-state:  (optional) The initial state of the LED.  Valid
+> -  values are "on", "off", and "keep".  If the LED is already on or off
+> -  and the default-state property is set the to same value, then no
+> -  glitch should be produced where the LED momentarily turns off (or
+> -  on).  The "keep" setting will keep the LED at whatever its current
+> -  state is, without producing a glitch.  The default is off if this
+> -  property is not present.
+> +- default-state:  (optional) The initial state of the LED.
+> +  see Documentation/devicetree/bindings/leds/common.txt
+>   - retain-state-suspended: (optional) The suspend state can be retained.Such
+>     as charge-led gpio.
+>   - panic-indicator : (optional)
+> diff --git a/Documentation/devicetree/bindings/leds/register-bit-led.txt b/Documentation/devicetree/bindings/leds/register-bit-led.txt
+> index 379cefdc0bda..59b56365f648 100644
+> --- a/Documentation/devicetree/bindings/leds/register-bit-led.txt
+> +++ b/Documentation/devicetree/bindings/leds/register-bit-led.txt
+> @@ -23,13 +23,8 @@ Optional properties:
+>     see Documentation/devicetree/bindings/leds/common.txt
+>   - linux,default-trigger : (optional)
+>     see Documentation/devicetree/bindings/leds/common.txt
+> -- default-state: (optional) The initial state of the LED. Valid
+> -  values are "on", "off", and "keep". If the LED is already on or off
+> -  and the default-state property is set the to same value, then no
+> -  glitch should be produced where the LED momentarily turns off (or
+> -  on). The "keep" setting will keep the LED at whatever its current
+> -  state is, without producing a glitch.  The default is off if this
+> -  property is not present.
+> +- default-state: (optional) The initial state of the LED
+> +  see Documentation/devicetree/bindings/leds/common.txt
+>
+>   Example:
+>
+>
