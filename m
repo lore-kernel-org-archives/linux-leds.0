@@ -1,392 +1,154 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 2/2] leds: Add driver for NCP5623 3-channel I2C LED
- driver
-Date: Mon, 27 Jun 2016 10:14:12 +0200
-Message-ID: <5770E054.5040608@samsung.com>
+From: Florian Vaussard <florian.vaussard@heig-vd.ch>
+Subject: Re: [PATCH v2 1/2] leds: ncp5623: Add device tree binding
+ documentation
+Date: Mon, 27 Jun 2016 10:30:07 +0200
+Message-ID: <4125a334-2e15-285d-2721-c007b30ed65d@heig-vd.ch>
 References: <1467010990-28070-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1467010990-28070-3-git-send-email-florian.vaussard@heig-vd.ch>
+ <1467010990-28070-2-git-send-email-florian.vaussard@heig-vd.ch>
+ <5770DF98.7010900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11080 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870AbcF0IOR (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jun 2016 04:14:17 -0400
-In-reply-to: <1467010990-28070-3-git-send-email-florian.vaussard@heig-vd.ch>
+Received: from mailcl2.heig-vd.ch ([193.134.216.183]:48417 "EHLO heig-vd.ch"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751248AbcF0IaS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Mon, 27 Jun 2016 04:30:18 -0400
+In-Reply-To: <5770DF98.7010900@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Florian Vaussard <florian.vaussard@gmail.com>
-Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Florian Vaussard <florian.vaussard@gmail.com>
+Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Vaussard Florian <florian.vaussard@heig-vd.ch>
 
-Hi Florian,
+Hi Jacek,
 
-Thanks for the update. I have few comments below.
+Le 27. 06. 16 =E0 10:11, Jacek Anaszewski a =E9crit :
+> Hi Florian,
+>=20
+> On 06/27/2016 09:03 AM, Florian Vaussard wrote:
+>> Add device tree binding documentation for On Semiconductor NCP5623 I=
+2C
+>> LED driver. The driver can independently control the PWM of the 3
+>> channels with 32 levels of intensity.
+>>
+>> The current delivered by the current source can also be controlled. =
+To
+>> do so, the led-max-microamp property is used by each LED sub-node. T=
+he
+>> maximum value is then found and used as a limit to compute the final
+>> intensity of the current source. If a LED happens to have a lower li=
+mit,
+>> the PWM is then used to limit the current to the requested value.
+>>
+>> In order to control the current source, it is also necessary to know
+>> the current on the Iref pin, hence the onnn,led-iref-microamp proper=
+ty.
+>> It is usually set using an external bias resistor, following
+>> Iref =3D Vref/Rbias with Vref=3D0.6V.
+>>
+>> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
+>> ---
+>>   .../devicetree/bindings/leds/leds-ncp5623.txt      | 60 ++++++++++=
+++++++++++++
+>>   1 file changed, 60 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp=
+5623.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>> b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>> new file mode 100644
+>> index 0000000..77dd7ad
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>> @@ -0,0 +1,60 @@
+>> +* ON Semiconductor - NCP5623 3-Channel LED Driver
+>> +
+>> +The NCP5623 is a 3-channel I2C LED driver. The brightness of each
+>> +channel can be independently set using 32 levels. Each LED is repre=
+sented
+>> +as a sub-node of the device.
+>> +
+>> +Required properties:
+>> +  - compatible: Should be "onnn,ncp5623"
+>> +  - reg: I2C slave address (fixed to 0x38)
+>> +  - #address-cells: must be 1
+>> +  - #size-cells: must be 0
+>> +  - onnn,led-iref-microamp: Current on the Iref pin in microampere.=
+ It depends
+>> +    on the value of the external bias resistor Rbias, following
+>> +    Iref =3D Vref / Rbias with Vref =3D 0.6V. This is used to set t=
+he intensity of
+>> +    the current that can be provided by the internal current source=
+, based on
+>> +    the maximum current permitted by LED sub-nodes (see below), but=
+ no more than
+>> +    Imax =3D 2400 * Iref.
+>> +
+>> +LED sub-nodes
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +Required properties:
+>> +  - reg : LED channel number (0..2)
+>> +  - led-max-microamp: Maximum allowable current inside the LED in m=
+icroampere.
+>> +    This property is used to limit the PWM ratio, based on the inte=
+nsity of the
+>> +    internal current source (see above).
+>> +
+>> +Optional properties:
+>> +  - label: Used for naming LEDs
+>=20
+> Instead of the above description use same reference to common led
+> bindings as below.
+>=20
 
-On 06/27/2016 09:03 AM, Florian Vaussard wrote:
-> The NCP5623 is a 3-channel LED driver from On Semiconductor controlled
-> through I2C. The PWM of each channel can be independently set with 32
-> distinct levels. In addition, the intensity of the current source can be
-> globally set using an external bias resistor fixing the reference
-> current (Iref) and a dedicated register (ILED), following the
-> relationship:
->
-> I = 2400*Iref/(31-ILED)
->
-> with Iref = Vref/Rbias, and Vref = 0.6V.
->
-> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
-> ---
->   drivers/leds/Kconfig        |  11 ++
->   drivers/leds/Makefile       |   1 +
->   drivers/leds/leds-ncp5623.c | 269 ++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 281 insertions(+)
->   create mode 100644 drivers/leds/leds-ncp5623.c
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 5ae2834..6d3e44d 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -588,6 +588,17 @@ config LEDS_BLINKM
->   	  This option enables support for the BlinkM RGB LED connected
->   	  through I2C. Say Y to enable support for the BlinkM LED.
->
-> +config LEDS_NCP5623
-> +	tristate "LED Support for NCP5623 I2C chip"
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	help
-> +	  This option enables support for LEDs connected to NCP5623
-> +	  LED driver chips accessed via the I2C bus.
-> +	  Driver supports brightness control.
-> +
-> +	  Say Y to enable this driver.
-> +
->   config LEDS_POWERNV
->   	tristate "LED support for PowerNV Platform"
->   	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index cb2013d..a2f0e10 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->   obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->   obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
->   obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-> +obj-$(CONFIG_LEDS_NCP5623)		+= leds-ncp5623.o
->
->   # LED SPI Drivers
->   obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/drivers/leds/leds-ncp5623.c b/drivers/leds/leds-ncp5623.c
-> new file mode 100644
-> index 0000000..6e4c969
-> --- /dev/null
-> +++ b/drivers/leds/leds-ncp5623.c
-> @@ -0,0 +1,269 @@
-> +/*
-> + * Copyright 2016 Florian Vaussard <florian.vaussard@heig-vd.ch>
-> + *
-> + * Based on leds-tlc591xx.c
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; version 2 of the License.
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/i2c.h>
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/slab.h>
-> +
-> +#define NCP5623_MAX_LEDS	3
-> +#define NCP5623_MAX_STEPS	31
-> +#define NCP5623_MAX_CURRENT	31
-> +#define NCP5623_MAX_CURRENT_UA	30000
-> +
-> +#define NCP5623_CMD_SHIFT	5
-> +#define CMD_SHUTDOWN		(0x00 << NCP5623_CMD_SHIFT)
-> +#define CMD_ILED		(0x01 << NCP5623_CMD_SHIFT)
-> +#define CMD_PWM1		(0x02 << NCP5623_CMD_SHIFT)
-> +#define CMD_PWM2		(0x03 << NCP5623_CMD_SHIFT)
-> +#define CMD_PWM3		(0x04 << NCP5623_CMD_SHIFT)
-> +#define CMD_UPWARD_DIM		(0x05 << NCP5623_CMD_SHIFT)
-> +#define CMD_DOWNWARD_DIM	(0x06 << NCP5623_CMD_SHIFT)
-> +#define CMD_DIM_STEP		(0x07 << NCP5623_CMD_SHIFT)
-> +
-> +#define LED_to_CMD(led)		((0x02 + led) << NCP5623_CMD_SHIFT)
+Ok.
 
-Please use only capital letters in the macro name.
+BTW I saw the thread about the "default-state" property on the DT list =
+and
+realized that it was not implemented in my driver. I wonder if standard=
+ LED
+properties (with label and default-trigger) should not be parsed by LED=
+ core
+(i.e. using a helper function) to avoid such mistake. This could also r=
+emove
+some boilerplate code in other LED drivers.
 
-> +
-> +#define NCP5623_DATA_MASK	GENMASK(NCP5623_CMD_SHIFT - 1, 0)
-> +#define NCP5623_CMD(cmd, data)	(cmd | (data & NCP5623_DATA_MASK))
-> +
-> +struct ncp5623_led {
-> +	bool active;
-> +	unsigned int led_no;
-> +	u32 led_max_current;
-> +	struct led_classdev ldev;
-> +	struct ncp5623_priv *priv;
-> +};
-> +
-> +struct ncp5623_priv {
-> +	struct ncp5623_led leds[NCP5623_MAX_LEDS];
-> +	u32 led_iref;
-> +	u32 leds_max_current;
-> +	struct i2c_client *client;
-> +};
-> +
-> +static struct ncp5623_led *ldev_to_led(struct led_classdev *ldev)
-> +{
-> +	return container_of(ldev, struct ncp5623_led, ldev);
-> +}
-> +
-> +static int ncp5623_send_cmd(struct ncp5623_priv *priv, u8 cmd, u8 data)
-> +{
-> +	char cmd_data[1] = { NCP5623_CMD(cmd, data) };
-> +	int err;
-> +
-> +	err = i2c_master_send(priv->client, cmd_data, ARRAY_SIZE(cmd_data));
-> +
-> +	return (err < 0 ? err : 0);
-> +}
-> +
-> +static int ncp5623_set_pwm(struct ncp5623_led *led, u8 brightness)
-> +{
-> +	struct ncp5623_priv *priv = led->priv;
-> +	u8 cmd;
+Best,
+=46lorian
 
-cmd is redundant here, you can pass the macro directly.
-
-> +
-> +	cmd = LED_to_CMD(led->led_no);
-> +
-> +	return ncp5623_send_cmd(priv, cmd, brightness);
-
-How about just one line:
-
-return ncp5623_send_cmd(led->priv, LED_TO_CMD(led->led_no), brightness);
-
-> +}
-> +
-> +static int ncp5623_brightness_set(struct led_classdev *led_cdev,
-> +				  enum led_brightness brightness)
-> +{
-> +	struct ncp5623_led *led = ldev_to_led(led_cdev);
-> +
-> +	return ncp5623_set_pwm(led, brightness);
-
-return ncp5623_set_pwm(ldev_to_led(led_cdev), brightness);
-
-> +}
-> +
-> +static void ncp5623_destroy_devices(struct ncp5623_priv *priv)
-> +{
-> +	struct ncp5623_led *led;
-> +	int i;
-> +
-> +	for (i = 0; i < NCP5623_MAX_LEDS; i++) {
-> +		led = &priv->leds[i];
-> +		if (led->active) {
-> +			led_classdev_unregister(&led->ldev);
-> +			led->active = false;
-> +		}
-> +	}
-> +}
-
-This function is redundant when using devm_led_classdev_register().
-
-> +
-> +static int ncp5623_configure(struct device *dev,
-> +			     struct ncp5623_priv *priv)
-> +{
-> +	unsigned int i;
-> +	unsigned int n;
-> +	struct ncp5623_led *led;
-> +	int effective_current;
-> +	int err;
-> +
-> +	/* Setup the internal current source, round down */
-> +	n = 2400 * priv->led_iref / priv->leds_max_current + 1;
-> +	if (n > NCP5623_MAX_CURRENT)
-> +		n = NCP5623_MAX_CURRENT;
-> +
-> +	effective_current = 2400 * priv->led_iref / n;
-> +	dev_dbg(dev, "setting maximum current to %u uA\n", effective_current);
-> +
-> +	err = ncp5623_send_cmd(priv, CMD_ILED, NCP5623_MAX_CURRENT - n);
-> +	if (err < 0) {
-> +		dev_err(dev, "cannot set the current\n");
-> +		return err;
-> +	}
-> +
-> +	/* Setup each individual LED */
-> +	for (i = 0; i < NCP5623_MAX_LEDS; i++) {
-> +		led = &priv->leds[i];
-> +
-> +		if (!led->active)
-> +			continue;
-> +
-> +		led->priv = priv;
-> +		led->led_no = i;
-> +		led->ldev.brightness_set_blocking = ncp5623_brightness_set;
-> +
-> +		led->ldev.max_brightness = led->led_max_current *
-> +			NCP5623_MAX_STEPS / effective_current;
-> +		if (led->ldev.max_brightness > NCP5623_MAX_STEPS)
-> +			led->ldev.max_brightness = NCP5623_MAX_STEPS;
-> +
-> +		err = devm_led_classdev_register(dev, &led->ldev);
-> +		if (err < 0) {
-> +			dev_err(dev, "couldn't register LED %s\n",
-> +				led->ldev.name);
-> +			goto exit;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +exit:
-> +	ncp5623_destroy_devices(priv);
-> +	return err;
-> +}
-> +
-> +static int ncp5623_parse_dt(struct ncp5623_priv *priv, struct device_node *np)
-> +{
-> +	struct device_node *child;
-> +	struct ncp5623_led *led;
-> +	u32 reg;
-> +	int count;
-> +	int err;
-> +
-> +	err = of_property_read_u32(np, "onnn,led-iref-microamp",
-> +				   &priv->led_iref);
-> +	if (err)
-> +		return -EINVAL;
-> +
-> +	priv->leds_max_current = 0;
-
-priv is allocated with kzalloc, so this is redundant.
-
-> +
-> +	count = of_get_child_count(np);
-> +	if (!count || count > NCP5623_MAX_LEDS)
-> +		return -EINVAL;
-> +
-> +	for_each_child_of_node(np, child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err)
-> +			return err;
-
-Empty line here please.
-
-> +		if (reg < 0 || reg >= NCP5623_MAX_LEDS) {
-> +			err = -EINVAL;
-> +			goto dt_child_parse_error;
-> +		}
-> +
-> +		led = &priv->leds[reg];
-> +		if (led->active) {
-> +			err = -EINVAL;
-> +			goto dt_child_parse_error;
-> +		}
- > +
-> +		led->active = true;
-
-Is the 'active' property really needed? You could verify if the LED
-has been already initialized e.g. by checking led->ldev.name for
-being NULL.
-
-> +
-> +		err = of_property_read_u32(child, "led-max-microamp",
-> +					   &led->led_max_current);
-> +		if (err || led->led_max_current > NCP5623_MAX_CURRENT_UA)
-> +			return -EINVAL;
-> +		if (led->led_max_current > priv->leds_max_current)
-> +			priv->leds_max_current = led->led_max_current;
-> +
-> +		led->ldev.name =
-> +			of_get_property(child, "label", NULL) ? : child->name;
-> +		led->ldev.default_trigger =
-> +			of_get_property(child, "linux,default-trigger", NULL);
-> +	}
-> +
-> +	return 0;
-> +
-> +dt_child_parse_error:
-> +	of_node_put(child);
-> +
-> +	return err;
-> +}
-> +
-> +static const struct of_device_id ncp5623_of_match[] = {
-> +	{ .compatible = "onnn,ncp5623" },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, ncp5623_of_match);
-> +
-> +static int ncp5623_probe(struct i2c_client *client,
-> +			 const struct i2c_device_id *id)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct ncp5623_priv *priv;
-> +	int err;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->client = client;
-> +	i2c_set_clientdata(client, priv);
-> +
-> +	err = ncp5623_parse_dt(priv, np);
-> +	if (err)
-> +		return err;
-> +
-> +	return ncp5623_configure(dev, priv);
-> +}
-> +
-> +static int ncp5623_remove(struct i2c_client *client)
-> +{
-> +	struct ncp5623_priv *priv = i2c_get_clientdata(client);
-> +
-> +	ncp5623_destroy_devices(priv);
-> +
-> +	return 0;
-> +}
-
-remove callback is not needed with devm prefixed registration.
-
-> +
-> +static const struct i2c_device_id ncp5623_id[] = {
-> +	{ "ncp5623" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ncp5623_id);
-> +
-> +static struct i2c_driver ncp5623_driver = {
-> +	.driver = {
-> +		.name = "ncp5623",
-> +		.of_match_table = of_match_ptr(ncp5623_of_match),
-> +	},
-> +	.probe = ncp5623_probe,
-> +	.remove = ncp5623_remove,
-> +	.id_table = ncp5623_id,
-> +};
-> +
-> +module_i2c_driver(ncp5623_driver);
-> +
-> +MODULE_AUTHOR("Florian Vaussard <florian.vaussard@heig-vd.ch>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("NCP5623 LED driver");
->
-
-
--- 
-Best regards,
-Jacek Anaszewski
+>> +  - default-trigger: see Documentation/devicetree/bindings/leds/com=
+mon.txt
+>> +
+>> +Example
+>> +=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +led1: ncp5623@38 {
+>> +    #address-cells =3D <1>;
+>> +    #size-cells =3D <0>;
+>> +    compatible =3D "onnn,ncp5623";
+>> +    reg =3D <0x38>;
+>> +    onnn,led-iref-microamp =3D <10>;
+>> +
+>> +    led1r@0 {
+>> +        label =3D "ncp:power:red";
+>> +        linux,default-trigger =3D "default-on";
+>> +        reg =3D <0>;
+>> +        led-max-microamp =3D <20000>;
+>> +    };
+>> +
+>> +    led1b@1 {
+>> +        label =3D "ncp:power:blue";
+>> +        reg =3D <1>;
+>> +        led-max-microamp =3D <20000>;
+>> +    };
+>> +
+>> +    led1g@2 {
+>> +        label =3D "ncp:power:green";
+>> +        reg =3D <2>;
+>> +        led-max-microamp =3D <20000>;
+>> +    };
+>> +};
+>>
+>=20
+>=20
