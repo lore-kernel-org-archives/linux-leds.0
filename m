@@ -1,51 +1,120 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v5 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
-Date: Mon, 27 Jun 2016 10:53:22 +0300
-Message-ID: <20160627075322.GR1718@lahna.fi.intel.com>
-References: <1465815119-7511-1-git-send-email-tony.makkiel@daqri.com>
- <1833687.53qtq4DcBM@vostro.rjw.lan>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2 1/2] leds: ncp5623: Add device tree binding documentation
+Date: Mon, 27 Jun 2016 10:11:04 +0200
+Message-ID: <5770DF98.7010900@samsung.com>
+References: <1467010990-28070-1-git-send-email-florian.vaussard@heig-vd.ch>
+ <1467010990-28070-2-git-send-email-florian.vaussard@heig-vd.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:52862 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751749AbcF0Hya (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Mon, 27 Jun 2016 03:54:30 -0400
-Content-Disposition: inline
-In-Reply-To: <1833687.53qtq4DcBM@vostro.rjw.lan>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32933 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751385AbcF0ILJ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jun 2016 04:11:09 -0400
+In-reply-to: <1467010990-28070-2-git-send-email-florian.vaussard@heig-vd.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Tony Makkiel <tony.makkiel@daqri.com>, linux-leds@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net
+To: Florian Vaussard <florian.vaussard@gmail.com>
+Cc: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
 
-On Fri, Jun 24, 2016 at 03:51:14PM +0200, Rafael J. Wysocki wrote:
-> > +#ifdef CONFIG_ACPI
-> > +static const struct acpi_device_id lp3952_acpi_match[] = {
-> > +	{LP3952_NAME, 0},
-> 
-> The above line is not necessary AFAICS.  Mika?
+Hi Florian,
 
-Indeed, it should not be there.
+On 06/27/2016 09:03 AM, Florian Vaussard wrote:
+> Add device tree binding documentation for On Semiconductor NCP5623 I2C
+> LED driver. The driver can independently control the PWM of the 3
+> channels with 32 levels of intensity.
+>
+> The current delivered by the current source can also be controlled. To
+> do so, the led-max-microamp property is used by each LED sub-node. The
+> maximum value is then found and used as a limit to compute the final
+> intensity of the current source. If a LED happens to have a lower limit,
+> the PWM is then used to limit the current to the requested value.
+>
+> In order to control the current source, it is also necessary to know
+> the current on the Iref pin, hence the onnn,led-iref-microamp property.
+> It is usually set using an external bias resistor, following
+> Iref = Vref/Rbias with Vref=0.6V.
+>
+> Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
+> ---
+>   .../devicetree/bindings/leds/leds-ncp5623.txt      | 60 ++++++++++++++++++++++
+>   1 file changed, 60 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+> new file mode 100644
+> index 0000000..77dd7ad
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+> @@ -0,0 +1,60 @@
+> +* ON Semiconductor - NCP5623 3-Channel LED Driver
+> +
+> +The NCP5623 is a 3-channel I2C LED driver. The brightness of each
+> +channel can be independently set using 32 levels. Each LED is represented
+> +as a sub-node of the device.
+> +
+> +Required properties:
+> +  - compatible: Should be "onnn,ncp5623"
+> +  - reg: I2C slave address (fixed to 0x38)
+> +  - #address-cells: must be 1
+> +  - #size-cells: must be 0
+> +  - onnn,led-iref-microamp: Current on the Iref pin in microampere. It depends
+> +    on the value of the external bias resistor Rbias, following
+> +    Iref = Vref / Rbias with Vref = 0.6V. This is used to set the intensity of
+> +    the current that can be provided by the internal current source, based on
+> +    the maximum current permitted by LED sub-nodes (see below), but no more than
+> +    Imax = 2400 * Iref.
+> +
+> +LED sub-nodes
+> +=============
+> +
+> +Required properties:
+> +  - reg : LED channel number (0..2)
+> +  - led-max-microamp: Maximum allowable current inside the LED in microampere.
+> +    This property is used to limit the PWM ratio, based on the intensity of the
+> +    internal current source (see above).
+> +
+> +Optional properties:
+> +  - label: Used for naming LEDs
 
-> > +	{LP3952_ACPI_NAME, 0},
-> > +	{}
-> > +};
-> > +
-> > +MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
-> > +#endif
-> > +
-> > +static struct i2c_driver lp3952_i2c_driver = {
-> > +	.driver = {
-> > +		   .name = LP3952_NAME,
-> > +		   .owner = THIS_MODULE,
-> > +#ifdef CONFIG_ACPI
-> > +		   .acpi_match_table = ACPI_PTR(lp3952_acpi_match),
-> > +#endif
+Instead of the above description use same reference to common led
+bindings as below.
 
-Also this #ifdeffery is not needed either.
+> +  - default-trigger: see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example
+> +=======
+> +
+> +led1: ncp5623@38 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	compatible = "onnn,ncp5623";
+> +	reg = <0x38>;
+> +	onnn,led-iref-microamp = <10>;
+> +
+> +	led1r@0 {
+> +		label = "ncp:power:red";
+> +		linux,default-trigger = "default-on";
+> +		reg = <0>;
+> +		led-max-microamp = <20000>;
+> +	};
+> +
+> +	led1b@1 {
+> +		label = "ncp:power:blue";
+> +		reg = <1>;
+> +		led-max-microamp = <20000>;
+> +	};
+> +
+> +	led1g@2 {
+> +		label = "ncp:power:green";
+> +		reg = <2>;
+> +		led-max-microamp = <20000>;
+> +	};
+> +};
+>
 
-> > +		   },
-> > +	.probe = lp3952_probe,
-> > +	.remove = lp3952_remove,
-> > +	.id_table = lp3952_id,
-> > +};
+
+-- 
+Best regards,
+Jacek Anaszewski
