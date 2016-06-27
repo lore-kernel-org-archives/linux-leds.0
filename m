@@ -1,61 +1,51 @@
-From: Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] leds: Add driver for NCP5623 3-channel I2C LED driver
-Date: Mon, 27 Jun 2016 07:46:49 +0200
-Message-ID: <51f6c4d4-e5af-97b6-e7d9-61f0093de134@heig-vd.ch>
-References: <1466494154-3786-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1466494154-3786-3-git-send-email-florian.vaussard@heig-vd.ch>
- <57695D45.60107@samsung.com> <20160626214902.GB21026@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160626214902.GB21026@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vaussard Florian <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+From: Florian Vaussard <florian.vaussard@gmail.com>
+Subject: [PATCH v2 0/2] leds: Add driver for NCP5623 3-channel I2C LED driver
+Date: Mon, 27 Jun 2016 09:03:08 +0200
+Message-ID: <1467010990-28070-1-git-send-email-florian.vaussard@heig-vd.ch>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35815 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750870AbcF0HDg (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jun 2016 03:03:36 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
 
-Hi Pavel,
+Hello,
 
-Le 26. 06. 16 =E0 23:49, Pavel Machek a =E9crit :
-> Hi!
->=20
->>> +struct ncp5623_led {
->>> +	bool active;
->>> +	unsigned int led_no;
->>> +	struct led_classdev ldev;
->>> +	struct work_struct work;
->>> +	struct ncp5623_priv *priv;
->>> +};
->>> +
->>> +struct ncp5623_priv {
->>> +	struct ncp5623_led leds[NCP5623_MAX_LEDS];
->>
->> Please allocate memory dynamically, depending on the number
->> of LEDs defined in a Device Tree.
->=20
-> MAX_LEDs is three. Are you sure overhead of dynamic allocation is
-> worth it?
->=20
-> And if this is for RGB leds... very probably device will want to use
-> all 3 channels.
->=20
+This series add a new driver for On Semiconductor NCP5623, a 3-channel I2C
+LED driver. It is used in our design to drive a RGB LED.
 
-I was about to raise the same question during the v2 of this patch. In =
-addition
-to your arguments, this also changes the way this array is indexed.
+The first patch introduces the device tree binding, while the second patch
+adds the driver itself.
 
-Currently the LED number is used as index, but with dynamic allocation =
-I have to
-use an abstract index. This makes some logic a bit harder, especially t=
-o check
-if the same LED is declared twice in the device tree (duplicated 'reg' =
-property).
+Best regards,
+Florian
 
-Best,
-=46lorian
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+Jacek: I did not addressed your request about dynamic allocation,
+as discussed by Pavel and me in the previous thread. Tell me if
+you are fine like this. Otherwise I will do the necessary changes.
+---
+Since v1:
+- Adapted the DT binding (led-max-microamp for each LED node)
+- Removed underscores from node names in the example
+- Use brightness_set_blocking to avoid workqueue
+- Introduced LED_to_CMD macro to avoid switch statement
+- Various other fixes
+
+Florian Vaussard (2):
+  leds: ncp5623: Add device tree binding documentation
+  leds: Add driver for NCP5623 3-channel I2C LED driver
+
+ .../devicetree/bindings/leds/leds-ncp5623.txt      |  60 +++++
+ drivers/leds/Kconfig                               |  11 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-ncp5623.c                        | 269 +++++++++++++++++++++
+ 4 files changed, 341 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+ create mode 100644 drivers/leds/leds-ncp5623.c
+
+-- 
+2.5.5
