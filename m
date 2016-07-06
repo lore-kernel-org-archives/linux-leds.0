@@ -1,46 +1,52 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v8 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
-Date: Wed, 6 Jul 2016 11:23:40 +0300
-Message-ID: <20160706082340.GV23527@lahna.fi.intel.com>
-References: <1467732628-2025-1-git-send-email-tony.makkiel@daqri.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1467732628-2025-1-git-send-email-tony.makkiel@daqri.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Tony Makkiel <tony.makkiel@daqri.com>
-Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net, rjw@rjwysocki.net, lenb@kernel.org
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 0/2] driver: leds: is31fl319x dimmable LED driver
+Date: Wed,  6 Jul 2016 12:02:42 +0200
+Message-ID: <cover.1467799364.git.hns@goldelico.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.163]:26873 "EHLO
+	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbcGFKCt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 6 Jul 2016 06:02:49 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org
 
-On Tue, Jul 05, 2016 at 04:30:28PM +0100, Tony Makkiel wrote:
-> +#ifdef CONFIG_ACPI
-> +static const struct acpi_device_id lp3952_acpi_match[] = {
-> +	{LP3952_ACPI_NAME, 0},
+Changes V2:
+* suggested by David Rifshin
+	* add more "compatible" strings for other chip variants/brands
+	* renumber output <reg> values to expect a range of 1..9
+	* fixes for typos and DT example, Kconfig message
+	* fix location in Makefile and Kconfig
+	* remove some dead/not implemented code
+	* use of_property_read_string for better error handling
+	* coding style improvements
+	* use devm_led_classdev_register and simplify error path
+* suggested by Jacek Anaszewski
+	* fix more typos & writing style
+	* separate bindings document into a second patch
+	* max current property renamed and define uA instead of mA
+	* debugging message improvements
+	* remove platform data and header file completely and therefore require DT
+	* use regmap to handle caching and locking + i2c serialization
+* suggested by Rob Herring
+	* bindings documentation style improvements
 
-I would just drop the silly macro and use
+V1: 2016-04-18 20:43:18:
+This patch adds a driver for the is31fl3196/99 dimmable dual/triple rgb
+controller chips from ISSI.
 
-	{ "TXNW3952" },
+H. Nikolaus Schaller (2):
+  drivers: led: is31fl319x: 1/3/6/9-channel light effect led driver
+  Bindings documentation for ISSI is31fl319x driver
 
-instead.
+ .../devicetree/bindings/leds/is31fl319x.txt        |  52 +++
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-is31fl319x.c                     | 354 +++++++++++++++++++++
+ 4 files changed, 415 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
+ create mode 100644 drivers/leds/leds-is31fl319x.c
 
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
-> +#endif
-> +
-> +static struct i2c_driver lp3952_i2c_driver = {
-> +	.driver = {
-> +			.name = LP3952_NAME,
-> +			.acpi_match_table = ACPI_PTR(lp3952_acpi_match),
-> +	},
-> +	.probe = lp3952_probe,
-> +	.remove = lp3952_remove,
-> +	.id_table = lp3952_id,
-> +};
-> +
-
-Anyway ACPI parts look good enough,
-
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+-- 
+2.7.3
