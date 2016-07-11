@@ -1,97 +1,97 @@
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [patch 46/66] leds: trigger: cpu: Convert to hotplug state machine
-Date: Mon, 11 Jul 2016 12:28:55 -0000
-Message-ID: <20160711122534.517251620@linutronix.de>
-References: <20160711122450.923603742@linutronix.de>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v10 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
+Date: Mon, 11 Jul 2016 15:10:07 +0200
+Message-ID: <57839AAF.6070805@samsung.com>
+References: <1468234129-26890-1-git-send-email-tony.makkiel@daqri.com>
+ <57838227.7070401@samsung.com> <5783857B.1030208@daqri.com>
+ <57838C2D.4060607@samsung.com> <57838F26.9050100@daqri.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:57453 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933950AbcGKMbR (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2016 08:31:17 -0400
-Content-Disposition: inline;
- filename=0046-leds-trigger-cpu-Convert-to-hotplug-state-machine.patch
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44654 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932115AbcGKNKM (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2016 09:10:12 -0400
+In-reply-to: <57838F26.9050100@daqri.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Richard Cochran <rcochran@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
+To: Tony <tony.makkiel@daqri.com>
+Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, rpurdie@rpsys.net, rjw@rjwysocki.net, lenb@kernel.org, mika.westerberg@linux.intel.com
 
-From: Richard Cochran <rcochran@linutronix.de>
+On 07/11/2016 02:20 PM, Tony wrote:
+>
+> Thank you for the comments Jacek.
+[...]
+>>>>> +static int lp3952_set_pattern_gen_cmd(struct lp3952_led_array *priv,
+>>>>> +                      u8 cmd_index, u8 r, u8 g, u8 b,
+>>>>> +                      enum lp3952_tt tt, enum lp3952_cet cet)
+>>>>> +{
+>>>>> +    int ret;
+>>>>> +    struct ptrn_gen_cmd line = {
+>>>>> +        .r = r,
+>>>>> +        .g = g,
+>>>>> +        .b = b,
+>>>>> +        .cet = cet,
+>>>>> +        .tt = tt
+>>>>> +    };
+>>>>> +
+>>>>> +    if (cmd_index >= LP3952_CMD_REG_COUNT)
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>> +    ret = lp3952_register_write(priv->client,
+>>>>> +                    LP3952_REG_CMD_0 + cmd_index * 2,
+>>>>> +                    line.bytes.msb);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    return (lp3952_register_write(priv->client,
+>>>>> +                      LP3952_REG_CMD_0 + cmd_index * 2 + 1,
+>>>>> +                      line.bytes.lsb));
+>>
+>> These brackets are redundant.
+>>
+>>>>> +}
+>>>>> +
+>>>>> +static int lp3952_configure(struct lp3952_led_array *priv)
+>>>>> +{
+>>>>> +    int ret;
+>>>>> +
+>>>>> +    /* Disable any LEDs on from any previous conf. */
+>>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL,
+>>>>> 0);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    /* enable rgb patter, loop */
+>>>>> +    ret = lp3952_register_write(priv->client,
+>>>>> LP3952_REG_PAT_GEN_CTRL,
+>>>>> +                    LP3952_PATRN_LOOP | LP3952_PATRN_GEN_EN);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    /* Update Bit 6 (Active mode), Select both Led sets, Bit [1:0] */
+>>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_ENABLES,
+>>>>> +                    LP3952_ACTIVE_MODE | LP3952_INT_B00ST_LDR);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    /* Set Cmd1 for RGB intensity,cmd and transition time */
+>>>>> +    return (lp3952_set_pattern_gen_cmd(priv, 0, I46, I71, I100, TT0,
+>>>>> +                       CET197));
+>>
+>> Ditto.
+>>
+>> If you agree I can remove them and take the patch.
+>
+> Yes please :). Thank you for your help.
 
-This is a straightforward conversion. We place this callback last
-in the list so that the LED illuminates only after a successful
-bring up sequence.
 
-Signed-off-by: Richard Cochran <rcochran@linutronix.de>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
----
- drivers/leds/trigger/ledtrig-cpu.c |   32 +++++++++++++++-----------------
- include/linux/cpuhotplug.h         |    1 +
- 2 files changed, 16 insertions(+), 17 deletions(-)
+Patch applied to the for-next branch of linux-leds.git.
 
---- a/drivers/leds/trigger/ledtrig-cpu.c
-+++ b/drivers/leds/trigger/ledtrig-cpu.c
-@@ -92,25 +92,17 @@ static struct syscore_ops ledtrig_cpu_sy
- 	.resume		= ledtrig_cpu_syscore_resume,
- };
- 
--static int ledtrig_cpu_notify(struct notifier_block *self,
--					   unsigned long action, void *hcpu)
-+static int ledtrig_starting_cpu(unsigned int cpu)
- {
--	switch (action & ~CPU_TASKS_FROZEN) {
--	case CPU_STARTING:
--		ledtrig_cpu(CPU_LED_START);
--		break;
--	case CPU_DYING:
--		ledtrig_cpu(CPU_LED_STOP);
--		break;
--	}
--
--	return NOTIFY_OK;
-+	ledtrig_cpu(CPU_LED_START);
-+	return 0;
- }
- 
--
--static struct notifier_block ledtrig_cpu_nb = {
--	.notifier_call = ledtrig_cpu_notify,
--};
-+static int ledtrig_dying_cpu(unsigned int cpu)
-+{
-+	ledtrig_cpu(CPU_LED_STOP);
-+	return 0;
-+}
- 
- static int __init ledtrig_cpu_init(void)
- {
-@@ -133,7 +125,13 @@ static int __init ledtrig_cpu_init(void)
- 	}
- 
- 	register_syscore_ops(&ledtrig_cpu_syscore_ops);
--	register_cpu_notifier(&ledtrig_cpu_nb);
-+
-+	/*
-+	 * FIXME: Why needs this to happen in the interrupt disabled
-+	 * low level bringup phase of a cpu?
-+	 */
-+	cpuhp_setup_state(CPUHP_AP_LEDTRIG_STARTING, "AP_LEDTRIG_STARTING",
-+			  ledtrig_starting_cpu, ledtrig_dying_cpu);
- 
- 	pr_info("ledtrig-cpu: registered to indicate activity on CPUs\n");
- 
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -47,6 +47,7 @@ enum cpuhp_state {
- 	CPUHP_AP_MARCO_TIMER_STARTING,
- 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
- 	CPUHP_AP_KVM_STARTING,
-+	CPUHP_AP_LEDTRIG_STARTING,
- 	CPUHP_AP_NOTIFY_STARTING,
- 	CPUHP_AP_ONLINE,
- 	CPUHP_TEARDOWN_CPU,
+Thank you for your effort and determination in submitting
+subsequent versions.
+
+-- 
+Best regards,
+Jacek Anaszewski
