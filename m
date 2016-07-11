@@ -1,562 +1,342 @@
-From: Tony <tony.makkiel@daqri.com>
-Subject: Re: [PATCH v10 1/1] leds: LED driver for TI LP3952 6-Channel Color
- LED
-Date: Mon, 11 Jul 2016 13:20:54 +0100
-Message-ID: <57838F26.9050100@daqri.com>
-References: <1468234129-26890-1-git-send-email-tony.makkiel@daqri.com>
- <57838227.7070401@samsung.com> <5783857B.1030208@daqri.com>
- <57838C2D.4060607@samsung.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH] leds: trigger: Introduce an USB port trigger
+Date: Mon, 11 Jul 2016 14:24:09 +0200
+Message-ID: <1468239883-22695-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37365 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753213AbcGKMU5 (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2016 08:20:57 -0400
-Received: by mail-wm0-f43.google.com with SMTP id i5so13437195wmg.0
-        for <linux-leds@vger.kernel.org>; Mon, 11 Jul 2016 05:20:56 -0700 (PDT)
-In-Reply-To: <57838C2D.4060607@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, rpurdie@rpsys.net, rjw@rjwysocki.net, lenb@kernel.org, mika.westerberg@linux.intel.com
 
+This commit adds a new trigger that can turn on LED when USB device get=
+s
+connected to the USB port. This can can useful for various home routers
+that have USB port and a proper LED telling user a device is connected.
 
-Thank you for the comments Jacek.
+The trigger gets its documentation file but basically it just requires
+specifying USB port in a Linux format (e.g. echo 1-1 > new_port).
 
-On 11/07/16 13:08, Jacek Anaszewski wrote:
+Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+---
+ Documentation/leds/ledtrig-usbport.txt |  47 ++++++++
+ drivers/leds/trigger/Kconfig           |   8 ++
+ drivers/leds/trigger/Makefile          |   1 +
+ drivers/leds/trigger/ledtrig-usbport.c | 196 +++++++++++++++++++++++++=
+++++++++
+ 4 files changed, 252 insertions(+)
+ create mode 100644 Documentation/leds/ledtrig-usbport.txt
+ create mode 100644 drivers/leds/trigger/ledtrig-usbport.c
 
->>>> @@ -228,6 +228,20 @@ config LEDS_LP3944
->>>>         To compile this driver as a module, choose M here: the
->>>>         module will be called leds-lp3944.
->>>>
->>>> +config LEDS_LP3952
->>>> +    tristate "LED Support for TI LP3952 2 channel LED driver"
->>>> +    depends on LEDS_CLASS
->>>> +    depends on I2C
->>>> +    depends on ACPI
->>>> +    depends on GPIOLIB
->>>
->>> Any specific reason for choosing "depends" instead of "select"?
->>
->> select causes "recursive dependency error".
->>
->>
->> drivers/gpio/Kconfig:34:error: recursive dependency detected!
->> For a resolution refer to Documentation/kbuild/kconfig-language.txt
->> subsection "Kconfig recursive dependency limitations"
->> drivers/gpio/Kconfig:34:    symbol GPIOLIB is selected by LEDS_LP3952
->> For a resolution refer to Documentation/kbuild/kconfig-language.txt
->> subsection "Kconfig recursive dependency limitations"
->> drivers/leds/Kconfig:231:    symbol LEDS_LP3952 depends on NEW_LEDS
->> For a resolution refer to Documentation/kbuild/kconfig-language.txt
->> subsection "Kconfig recursive dependency limitations"
->> drivers/leds/Kconfig:8:    symbol NEW_LEDS is selected by
->> BCMA_DRIVER_GPIO
->> For a resolution refer to Documentation/kbuild/kconfig-language.txt
->> subsection "Kconfig recursive dependency limitations"
->> drivers/bcma/Kconfig:97:    symbol BCMA_DRIVER_GPIO depends on GPIOLIB
+diff --git a/Documentation/leds/ledtrig-usbport.txt b/Documentation/led=
+s/ledtrig-usbport.txt
+new file mode 100644
+index 0000000..d31dba2
+--- /dev/null
++++ b/Documentation/leds/ledtrig-usbport.txt
+@@ -0,0 +1,47 @@
++USB port LED trigger
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++This LED trigger can be used for signaling user a presence of USB devi=
+ce in a
++given port. It simply turns on LED when device appears and turns it of=
+f when it
++disappears.
++
++It requires specifying a list of USB ports that should be observed. Us=
+ed format
++matches Linux kernel format and consists of a root hub number and a hu=
+b port
++separated by a dash (e.g. 3-1).
++
++This also allows handling devices with internal hubs (when root hub's =
+port has
++always a device (hub) connected). User can simply specify specify inte=
+rnal hub
++ports then (e.g. 1-1.1, 1-1.2, etc.).
++
++Please note that this trigger allows assigning multiple USB ports to a=
+ single
++LED. This can be useful in two cases:
++
++1) Device with single USB LED and few physical ports
++
++In such case LED will be turned on as long as there is at least one co=
+nnected
++USB device.
++
++2) Device with a physical port handled by few controllers
++
++Some devices have e.g. one controller per PHY standard. E.g. USB 2.0 p=
+hysical
++port may be handled by ohci-platform, ehci-platform and xhci-hcd. If t=
+here is
++only one LED user will most likely want to assign ports from all 3 hub=
+s.
++
++
++This trigger can be activated from user space on led class devices as =
+shown
++below:
++
++  echo usbport > trigger
++
++This adds the following sysfs attributes to the LED:
++
++  ports - allows listing all USB ports assigned to the trigger.
++
++  new_port - allows adding a new USB port by simply writing to it.
++
++Example use-case:
++
++  echo usbport > trigger
++  echo 4-1 > new_port
++  echo 2-1 > new_port
++  cat ports
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfi=
+g
+index 3f9ddb9..bdd6fd2 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -126,4 +126,12 @@ config LEDS_TRIGGER_PANIC
+ 	  a different trigger.
+ 	  If unsure, say Y.
+=20
++config LEDS_TRIGGER_USBPORT
++	tristate "USB port LED trigger"
++	depends on LEDS_TRIGGERS && USB
++	help
++	  This allows LEDs to be controlled by USB events. Enabling this opti=
+on
++	  allows specifying list of USB ports that should turn on LED when so=
+me
++	  USB device gets connected.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makef=
+ile
+index a72c43c..56e1741 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+=3D ledtrig-de=
+fault-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+=3D ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+=3D ledtrig-camera.o
+ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+=3D ledtrig-panic.o
++obj-$(CONFIG_LEDS_TRIGGER_USBPORT)	+=3D ledtrig-usbport.o
+diff --git a/drivers/leds/trigger/ledtrig-usbport.c b/drivers/leds/trig=
+ger/ledtrig-usbport.c
+new file mode 100644
+index 0000000..eb20a8f
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-usbport.c
+@@ -0,0 +1,196 @@
++/*
++ * USB port LED trigger
++ *
++ * Copyright (C) 2016 Rafa=C5=82 Mi=C5=82ecki <rafal.milecki@gmail.com=
 >
-> I didn't get this with my configuration, but it seems that it is
-> likely to happen. Let's abide by "depends on" then.
->
-> Besides, some redundant brackets are left, see below.
->
->>>
->>>> +    select REGMAP_I2C
->>>> +    help
->>>> +      This option enables support for LEDs connected to the Texas
->>>> +      Instruments LP3952 LED driver.
->>>> +
->>>> +      To compile this driver as a module, choose M here: the
->>>> +      module will be called leds-lp3952.
->>>> +
->>>>   config LEDS_LP55XX_COMMON
->>>>       tristate "Common Driver for TI/National
->>>> LP5521/5523/55231/5562/8501"
->>>>       depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 ||
->>>> LEDS_LP8501
->>>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->>>> index cb2013d..0684c86 100644
->>>> --- a/drivers/leds/Makefile
->>>> +++ b/drivers/leds/Makefile
->>>> @@ -26,6 +26,7 @@ obj-$(CONFIG_LEDS_PCA9532)        += leds-pca9532.o
->>>>   obj-$(CONFIG_LEDS_GPIO_REGISTER)    += leds-gpio-register.o
->>>>   obj-$(CONFIG_LEDS_GPIO)            += leds-gpio.o
->>>>   obj-$(CONFIG_LEDS_LP3944)        += leds-lp3944.o
->>>> +obj-$(CONFIG_LEDS_LP3952)        += leds-lp3952.o
->>>>   obj-$(CONFIG_LEDS_LP55XX_COMMON)    += leds-lp55xx-common.o
->>>>   obj-$(CONFIG_LEDS_LP5521)        += leds-lp5521.o
->>>>   obj-$(CONFIG_LEDS_LP5523)        += leds-lp5523.o
->>>> diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
->>>> new file mode 100644
->>>> index 0000000..c0eb2f4
->>>> --- /dev/null
->>>> +++ b/drivers/leds/leds-lp3952.c
->>>> @@ -0,0 +1,306 @@
->>>> +/*
->>>> + *    LED driver for TI lp3952 controller
->>>> + *
->>>> + *    Copyright (C) 2016, DAQRI, LLC.
->>>> + *    Author: Tony Makkiel <tony.makkiel@daqri.com>
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or
->>>> modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> + *
->>>> + */
->>>> +
->>>> +#include <linux/acpi.h>
->>>> +#include <linux/delay.h>
->>>> +#include <linux/gpio.h>
->>>> +#include <linux/i2c.h>
->>>> +#include <linux/io.h>
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/leds.h>
->>>> +#include <linux/leds-lp3952.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/notifier.h>
->>>> +#include <linux/platform_device.h>
->>>> +#include <linux/pm.h>
->>>> +#include <linux/reboot.h>
->>>> +#include <linux/regmap.h>
->>>> +
->>>> +static int lp3952_register_write(struct i2c_client *client, u8 reg,
->>>> u8 val)
->>>> +{
->>>> +    int ret;
->>>> +    struct lp3952_led_array *priv = i2c_get_clientdata(client);
->>>> +
->>>> +    ret = regmap_write(priv->regmap, reg, val);
->>>> +
->>>> +    if (ret)
->>>> +        dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
->>>> +            __func__, reg, val, ret);
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static void lp3952_on_off(struct lp3952_led_array *priv,
->>>> +              enum lp3952_leds led_id, bool on)
->>>> +{
->>>> +    int ret, val;
->>>> +
->>>> +    dev_dbg(&priv->client->dev, "%s LED %d to %d\n", __func__,
->>>> led_id, on);
->>>> +
->>>> +    val = 1 << led_id;
->>>> +    if (led_id == LP3952_LED_ALL)
->>>> +        val = LP3952_LED_MASK_ALL;
->>>> +
->>>> +    ret = regmap_update_bits(priv->regmap, LP3952_REG_LED_CTRL, val,
->>>> +                 on ? val : 0);
->>>> +    if (ret)
->>>> +        dev_err(&priv->client->dev, "%s, Error %d\n", __func__, ret);
->>>> +}
->>>> +
->>>> +/*
->>>> + * Using Imax to control brightness. There are 4 possible
->>>> + * setting 25, 50, 75 and 100 % of Imax. Possible values are
->>>> + * values 0-4. 0 meaning turn off.
->>>> + */
->>>> +static int lp3952_set_brightness(struct led_classdev *cdev,
->>>> +                 enum led_brightness value)
->>>> +{
->>>> +    unsigned int reg, shift_val;
->>>> +    struct lp3952_ctrl_hdl *led = container_of(cdev,
->>>> +                           struct lp3952_ctrl_hdl,
->>>> +                           cdev);
->>>> +    struct lp3952_led_array *priv = (struct lp3952_led_array
->>>> *)led->priv;
->>>> +
->>>> +    dev_dbg(cdev->dev, "Brightness request: %d on %d\n", value,
->>>> +        led->channel);
->>>> +
->>>> +    if (value == LED_OFF) {
->>>> +        lp3952_on_off(priv, led->channel, false);
->>>> +        return 0;
->>>> +    }
->>>> +
->>>> +    if (led->channel > LP3952_RED_1) {
->>>> +        dev_err(cdev->dev, " %s Invalid LED requested", __func__);
->>>> +        return -EINVAL;
->>>> +    }
->>>> +
->>>> +    if (led->channel >= LP3952_BLUE_1) {
->>>> +        reg = LP3952_REG_RGB1_MAX_I_CTRL;
->>>> +        shift_val = (led->channel - LP3952_BLUE_1) * 2;
->>>> +    } else {
->>>> +        reg = LP3952_REG_RGB2_MAX_I_CTRL;
->>>> +        shift_val = led->channel * 2;
->>>> +    }
->>>> +
->>>> +    /* Enable the LED in case it is not enabled already */
->>>> +    lp3952_on_off(priv, led->channel, true);
->>>> +
->>>> +    return regmap_update_bits(priv->regmap, reg, 3 << shift_val,
->>>> +                  --value << shift_val);
->>>> +}
->>>> +
->>>> +static int lp3952_get_label(struct device *dev, const char *label,
->>>> char *dest)
->>>> +{
->>>> +    int ret;
->>>> +    const char *str;
->>>> +
->>>> +    ret = device_property_read_string(dev, label, &str);
->>>> +    if (!ret)
->>>> +        strncpy(dest, str, LP3952_LABEL_MAX_LEN);
->>>> +
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static int lp3952_register_led_classdev(struct lp3952_led_array *priv)
->>>> +{
->>>> +    int i, acpi_ret, ret = -ENODEV;
->>>> +    static const char *led_name_hdl[LP3952_LED_ALL] = {
->>>> +        "blue2",
->>>> +        "green2",
->>>> +        "red2",
->>>> +        "blue1",
->>>> +        "green1",
->>>> +        "red1"
->>>> +    };
->>>> +
->>>> +    for (i = 0; i < LP3952_LED_ALL; i++) {
->>>> +        acpi_ret = lp3952_get_label(&priv->client->dev,
->>>> led_name_hdl[i],
->>>> +                        priv->leds[i].name);
->>>> +        if (acpi_ret)
->>>> +            continue;
->>>> +
->>>> +        priv->leds[i].cdev.name = priv->leds[i].name;
->>>> +        priv->leds[i].cdev.brightness = LED_OFF;
->>>> +        priv->leds[i].cdev.max_brightness = LP3952_BRIGHT_MAX;
->>>> +        priv->leds[i].cdev.brightness_set_blocking =
->>>> +                lp3952_set_brightness;
->>>> +        priv->leds[i].channel = i;
->>>> +        priv->leds[i].priv = priv;
->>>> +
->>>> +        ret = devm_led_classdev_register(&priv->client->dev,
->>>> +                         &priv->leds[i].cdev);
->>>> +        if (ret < 0) {
->>>> +            dev_err(&priv->client->dev,
->>>> +                "couldn't register LED %s\n",
->>>> +                priv->leds[i].cdev.name);
->>>> +            break;
->>>> +        }
->>>> +    }
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static int lp3952_set_pattern_gen_cmd(struct lp3952_led_array *priv,
->>>> +                      u8 cmd_index, u8 r, u8 g, u8 b,
->>>> +                      enum lp3952_tt tt, enum lp3952_cet cet)
->>>> +{
->>>> +    int ret;
->>>> +    struct ptrn_gen_cmd line = {
->>>> +        .r = r,
->>>> +        .g = g,
->>>> +        .b = b,
->>>> +        .cet = cet,
->>>> +        .tt = tt
->>>> +    };
->>>> +
->>>> +    if (cmd_index >= LP3952_CMD_REG_COUNT)
->>>> +        return -EINVAL;
->>>> +
->>>> +    ret = lp3952_register_write(priv->client,
->>>> +                    LP3952_REG_CMD_0 + cmd_index * 2,
->>>> +                    line.bytes.msb);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return (lp3952_register_write(priv->client,
->>>> +                      LP3952_REG_CMD_0 + cmd_index * 2 + 1,
->>>> +                      line.bytes.lsb));
->
-> These brackets are redundant.
->
->>>> +}
->>>> +
->>>> +static int lp3952_configure(struct lp3952_led_array *priv)
->>>> +{
->>>> +    int ret;
->>>> +
->>>> +    /* Disable any LEDs on from any previous conf. */
->>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL, 0);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    /* enable rgb patter, loop */
->>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_PAT_GEN_CTRL,
->>>> +                    LP3952_PATRN_LOOP | LP3952_PATRN_GEN_EN);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    /* Update Bit 6 (Active mode), Select both Led sets, Bit [1:0] */
->>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_ENABLES,
->>>> +                    LP3952_ACTIVE_MODE | LP3952_INT_B00ST_LDR);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    /* Set Cmd1 for RGB intensity,cmd and transition time */
->>>> +    return (lp3952_set_pattern_gen_cmd(priv, 0, I46, I71, I100, TT0,
->>>> +                       CET197));
->
-> Ditto.
->
-> If you agree I can remove them and take the patch.
++ *
++ * This program is free software; you can redistribute it and/or modif=
+y
++ * it under the terms of the GNU General Public License as published b=
+y
++ * the Free Software Foundation; either version 2 of the License, or (=
+at
++ * your option) any later version.
++ */
++
++#include <linux/device.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/usb.h>
++#include "../leds.h"
++
++struct usbport_trig_port {
++	char *name;
++	struct list_head list;
++};
++
++struct usbport_trig_data {
++	struct led_classdev *led_cdev;
++	struct list_head ports;
++	struct notifier_block nb;
++	int count; /* Amount of connected matching devices */
++};
++
++static ssize_t ports_show(struct device *dev, struct device_attribute =
+*attr,
++			  char *buf)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct usbport_trig_data *usbport_data =3D led_cdev->trigger_data;
++	struct usbport_trig_port *port;
++	ssize_t ret =3D 0;
++	int len;
++
++	list_for_each_entry(port, &usbport_data->ports, list) {
++		len =3D sprintf(buf + ret, "%s\n", port->name);
++		if (len >=3D 0)
++			ret +=3D len;
++	}
++
++	return ret;
++}
++
++static DEVICE_ATTR(ports, S_IRUSR, ports_show, NULL);
++
++static ssize_t new_port_store(struct device *dev, struct device_attrib=
+ute *attr,
++			      const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	struct usbport_trig_data *usbport_data =3D led_cdev->trigger_data;
++	struct usbport_trig_port *port;
++	size_t len;
++
++	port =3D kzalloc(sizeof(*port), GFP_KERNEL);
++	if (!port)
++		return -ENOMEM;
++
++	len =3D strlen(buf);
++	if (len && buf[len - 1] =3D=3D '\n')
++		len--;
++	if (!len)
++		return -EINVAL;
++
++	port->name =3D kzalloc(strlen(buf), GFP_KERNEL);
++	if (!port->name) {
++		kfree(port);
++		return -ENOMEM;
++	}
++	strncpy(port->name, buf, len);
++
++	list_add_tail(&port->list, &usbport_data->ports);
++
++	return size;
++}
++
++static DEVICE_ATTR(new_port, S_IWUSR, NULL, new_port_store);
++
++static bool usbport_trig_match(struct usbport_trig_data *usbport_data,
++			       struct usb_device *usb_dev)
++{
++	struct usbport_trig_port *port;
++	const char *name =3D dev_name(&usb_dev->dev);
++
++	list_for_each_entry(port, &usbport_data->ports, list) {
++		if (!strcmp(port->name, name))
++			return true;
++	}
++
++	return false;
++}
++
++static int usbport_trig_notify(struct notifier_block *nb, unsigned lon=
+g action,
++			       void *data)
++{
++	struct usbport_trig_data *usbport_data =3D
++		container_of(nb, struct usbport_trig_data, nb);
++	struct led_classdev *led_cdev =3D usbport_data->led_cdev;
++
++	switch (action) {
++	case USB_DEVICE_ADD:
++		if (usbport_trig_match(usbport_data, data)) {
++			if (usbport_data->count++ =3D=3D 0)
++				led_set_brightness_nosleep(led_cdev, LED_FULL);
++		}
++		break;
++	case USB_DEVICE_REMOVE:
++		if (usbport_trig_match(usbport_data, data)) {
++			if (--usbport_data->count =3D=3D 0)
++				led_set_brightness_nosleep(led_cdev, LED_OFF);
++		}
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static void usbport_trig_activate(struct led_classdev *led_cdev)
++{
++	struct usbport_trig_data *usbport_data;
++	int err;
++
++	usbport_data =3D kzalloc(sizeof(*usbport_data), GFP_KERNEL);
++	if (!usbport_data)
++		return;
++	usbport_data->led_cdev =3D led_cdev;
++	INIT_LIST_HEAD(&usbport_data->ports);
++	usbport_data->nb.notifier_call =3D usbport_trig_notify,
++	led_cdev->trigger_data =3D usbport_data;
++
++	err =3D device_create_file(led_cdev->dev, &dev_attr_ports);
++	if (err)
++		goto err_free;
++	err =3D device_create_file(led_cdev->dev, &dev_attr_new_port);
++	if (err)
++		goto err_remove_ports;
++
++	usb_register_notify(&usbport_data->nb);
++
++	led_cdev->activated =3D true;
++	return;
++
++err_free:
++	kfree(usbport_data);
++err_remove_ports:
++	device_remove_file(led_cdev->dev, &dev_attr_ports);
++}
++
++static void usbport_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct usbport_trig_data *usbport_data =3D led_cdev->trigger_data;
++	struct usbport_trig_port *port, *tmp;
++
++	if (!led_cdev->activated)
++		return;
++
++	usb_unregister_notify(&usbport_data->nb);
++
++	list_for_each_entry_safe(port, tmp, &usbport_data->ports, list) {
++		kfree(port->name);
++		list_del(&port->list);
++	}
++
++	device_remove_file(led_cdev->dev, &dev_attr_new_port);
++	device_remove_file(led_cdev->dev, &dev_attr_ports);
++	kfree(usbport_data);
++
++	led_cdev->activated =3D false;
++}
++
++static struct led_trigger usbport_led_trigger =3D {
++	.name     =3D "usbport",
++	.activate =3D usbport_trig_activate,
++	.deactivate =3D usbport_trig_deactivate,
++};
++
++static int __init usbport_trig_init(void)
++{
++	return led_trigger_register(&usbport_led_trigger);
++}
++
++static void __exit usbport_trig_exit(void)
++{
++	led_trigger_unregister(&usbport_led_trigger);
++}
++
++module_init(usbport_trig_init);
++module_exit(usbport_trig_exit);
++
++MODULE_AUTHOR("Rafa=C5=82 Mi=C5=82ecki <rafal.milecki@gmail.com>");
++MODULE_DESCRIPTION("USB port trigger");
++MODULE_LICENSE("GPL");
+--=20
+1.8.4.5
 
-Yes please :). Thank you for your help.
->
->>>> +}
->>>> +
->>>> +static const struct regmap_config lp3952_regmap = {
->>>> +    .reg_bits = 8,
->>>> +    .val_bits = 8,
->>>> +    .max_register = REG_MAX,
->>>> +    .cache_type = REGCACHE_RBTREE,
->>>> +};
->>>> +
->>>> +static int lp3952_probe(struct i2c_client *client,
->>>> +            const struct i2c_device_id *id)
->>>> +{
->>>> +    int status;
->>>> +    struct lp3952_ctrl_hdl *leds;
->>>> +    struct lp3952_led_array *priv;
->>>> +
->>>> +    priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
->>>> +    if (!priv)
->>>> +        return -ENOMEM;
->>>> +
->>>> +    leds = devm_kcalloc(&client->dev, LP3952_LED_ALL, sizeof(*leds),
->>>> +                GFP_KERNEL);
->>>> +    if (!leds) {
->>>> +        devm_kfree(&client->dev, priv);
->>>> +        return -ENOMEM;
->>>> +    }
->>>> +
->>>> +    priv->leds = leds;
->>>> +    priv->client = client;
->>>> +
->>>> +    priv->enable_gpio = devm_gpiod_get(&client->dev, "nrst",
->>>> +                       GPIOD_OUT_HIGH);
->>>> +    if (IS_ERR(priv->enable_gpio)) {
->>>> +        status = PTR_ERR(priv->enable_gpio);
->>>> +        dev_err(&client->dev, "Failed to enable gpio: %d\n", status);
->>>> +        return status;
->>>> +    }
->>>> +
->>>> +    priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
->>>> +    if (IS_ERR(priv->regmap)) {
->>>> +        int err = PTR_ERR(priv->regmap);
->>>> +
->>>> +        dev_err(&client->dev, "Failed to allocate register map: %d\n",
->>>> +            err);
->>>> +        return err;
->>>> +    }
->>>> +
->>>> +    i2c_set_clientdata(client, priv);
->>>> +
->>>> +    status = lp3952_configure(priv);
->>>> +    if (status) {
->>>> +        dev_err(&client->dev, "Probe failed. Device not found (%d)\n",
->>>> +            status);
->>>> +        return status;
->>>> +    }
->>>> +
->>>> +    status = lp3952_register_led_classdev(priv);
->>>> +    if (status) {
->>>> +        dev_err(&client->dev, "Unable to register led_classdev: %d\n",
->>>> +            status);
->>>> +        return status;
->>>> +    }
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int lp3952_remove(struct i2c_client *client)
->>>> +{
->>>> +    struct lp3952_led_array *priv;
->>>> +
->>>> +    priv = i2c_get_clientdata(client);
->>>> +    lp3952_on_off(priv, LP3952_LED_ALL, false);
->>>> +    gpiod_set_value(priv->enable_gpio, 0);
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static const struct i2c_device_id lp3952_id[] = {
->>>> +    {LP3952_NAME, 0},
->>>> +    {}
->>>> +};
->>>> +
->>>> +#ifdef CONFIG_ACPI
->>>> +static const struct acpi_device_id lp3952_acpi_match[] = {
->>>> +    {"TXNW3952", 0},
->>>> +    {}
->>>> +};
->>>> +
->>>> +MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
->>>> +#endif
->>>> +
->>>> +static struct i2c_driver lp3952_i2c_driver = {
->>>> +    .driver = {
->>>> +            .name = LP3952_NAME,
->>>> +            .acpi_match_table = ACPI_PTR(lp3952_acpi_match),
->>>> +    },
->>>> +    .probe = lp3952_probe,
->>>> +    .remove = lp3952_remove,
->>>> +    .id_table = lp3952_id,
->>>> +};
->>>> +
->>>> +module_i2c_driver(lp3952_i2c_driver);
->>>> +
->>>> +MODULE_AUTHOR("Tony Makkiel <tony.makkiel@daqri.com>");
->>>> +MODULE_DESCRIPTION("lp3952 I2C LED controller driver");
->>>> +MODULE_LICENSE("GPL v2");
->>>> diff --git a/include/linux/leds-lp3952.h b/include/linux/leds-lp3952.h
->>>> new file mode 100644
->>>> index 0000000..edd5ed6
->>>> --- /dev/null
->>>> +++ b/include/linux/leds-lp3952.h
->>>> @@ -0,0 +1,125 @@
->>>> +/*
->>>> + *    LED driver for TI lp3952 controller
->>>> + *
->>>> + *    Copyright (C) 2016, DAQRI, LLC.
->>>> + *    Author: Tony Makkiel <tony.makkiel@daqri.com>
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or
->>>> modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> + *
->>>> + */
->>>> +
->>>> +#ifndef LEDS_LP3952_H_
->>>> +#define LEDS_LP3952_H_
->>>> +
->>>> +#define LP3952_NAME                         "lp3952"
->>>> +#define LP3952_CMD_REG_COUNT                8
->>>> +#define LP3952_BRIGHT_MAX                   4
->>>> +#define LP3952_LABEL_MAX_LEN                15
->>>> +
->>>> +#define LP3952_REG_LED_CTRL                 0x00
->>>> +#define LP3952_REG_R1_BLNK_TIME_CTRL        0x01
->>>> +#define LP3952_REG_R1_BLNK_CYCLE_CTRL       0x02
->>>> +#define LP3952_REG_G1_BLNK_TIME_CTRL        0x03
->>>> +#define LP3952_REG_G1_BLNK_CYCLE_CTRL       0x04
->>>> +#define LP3952_REG_B1_BLNK_TIME_CTRL        0x05
->>>> +#define LP3952_REG_B1_BLNK_CYCLE_CTRL       0x06
->>>> +#define LP3952_REG_ENABLES                  0x0B
->>>> +#define LP3952_REG_PAT_GEN_CTRL             0x11
->>>> +#define LP3952_REG_RGB1_MAX_I_CTRL          0x12
->>>> +#define LP3952_REG_RGB2_MAX_I_CTRL          0x13
->>>> +#define LP3952_REG_CMD_0                    0x50
->>>> +#define LP3952_REG_RESET                    0x60
->>>> +#define REG_MAX                             LP3952_REG_RESET
->>>> +
->>>> +#define LP3952_PATRN_LOOP                   BIT(1)
->>>> +#define LP3952_PATRN_GEN_EN                 BIT(2)
->>>> +#define LP3952_INT_B00ST_LDR                BIT(2)
->>>> +#define LP3952_ACTIVE_MODE                  BIT(6)
->>>> +#define LP3952_LED_MASK_ALL                 0x3f
->>>> +
->>>> +/* Transition Time in ms */
->>>> +enum lp3952_tt {
->>>> +    TT0,
->>>> +    TT55,
->>>> +    TT110,
->>>> +    TT221,
->>>> +    TT422,
->>>> +    TT885,
->>>> +    TT1770,
->>>> +    TT3539
->>>> +};
->>>> +
->>>> +/* Command Execution Time in ms */
->>>> +enum lp3952_cet {
->>>> +    CET197,
->>>> +    CET393,
->>>> +    CET590,
->>>> +    CET786,
->>>> +    CET1180,
->>>> +    CET1376,
->>>> +    CET1573,
->>>> +    CET1769,
->>>> +    CET1966,
->>>> +    CET2163,
->>>> +    CET2359,
->>>> +    CET2556,
->>>> +    CET2763,
->>>> +    CET2949,
->>>> +    CET3146
->>>> +};
->>>> +
->>>> +/* Max Current in % */
->>>> +enum lp3952_colour_I_log_0 {
->>>> +    I0,
->>>> +    I7,
->>>> +    I14,
->>>> +    I21,
->>>> +    I32,
->>>> +    I46,
->>>> +    I71,
->>>> +    I100
->>>> +};
->>>> +
->>>> +enum lp3952_leds {
->>>> +    LP3952_BLUE_2,
->>>> +    LP3952_GREEN_2,
->>>> +    LP3952_RED_2,
->>>> +    LP3952_BLUE_1,
->>>> +    LP3952_GREEN_1,
->>>> +    LP3952_RED_1,
->>>> +    LP3952_LED_ALL
->>>> +};
->>>> +
->>>> +struct lp3952_ctrl_hdl {
->>>> +    struct led_classdev cdev;
->>>> +    char name[LP3952_LABEL_MAX_LEN];
->>>> +    enum lp3952_leds channel;
->>>> +    void *priv;
->>>> +};
->>>> +
->>>> +struct ptrn_gen_cmd {
->>>> +    union {
->>>> +        struct {
->>>> +            u16 tt:3;
->>>> +            u16 b:3;
->>>> +            u16 cet:4;
->>>> +            u16 g:3;
->>>> +            u16 r:3;
->>>> +        };
->>>> +        struct {
->>>> +            u8 lsb;
->>>> +            u8 msb;
->>>> +        } bytes;
->>>> +    };
->>>> +} __packed;
->>>> +
->>>> +struct lp3952_led_array {
->>>> +    struct regmap *regmap;
->>>> +    struct i2c_client *client;
->>>> +    struct gpio_desc *enable_gpio;
->>>> +    struct lp3952_ctrl_hdl *leds;
->>>> +};
->>>> +
->>>> +#endif /* LEDS_LP3952_H_ */
->>>>
->>>
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->
->
