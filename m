@@ -1,97 +1,53 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v10 1/1] leds: LED driver for TI LP3952 6-Channel Color LED
-Date: Mon, 11 Jul 2016 15:10:07 +0200
-Message-ID: <57839AAF.6070805@samsung.com>
-References: <1468234129-26890-1-git-send-email-tony.makkiel@daqri.com>
- <57838227.7070401@samsung.com> <5783857B.1030208@daqri.com>
- <57838C2D.4060607@samsung.com> <57838F26.9050100@daqri.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH 0/2] usb: add HCD providers
+Date: Tue, 12 Jul 2016 14:35:18 +0200
+Message-ID: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44654 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932115AbcGKNKM (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2016 09:10:12 -0400
-In-reply-to: <57838F26.9050100@daqri.com>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33422 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750943AbcGLMfh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 12 Jul 2016 08:35:37 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Tony <tony.makkiel@daqri.com>
-Cc: linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, rpurdie@rpsys.net, rjw@rjwysocki.net, lenb@kernel.org, mika.westerberg@linux.intel.com
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 
-On 07/11/2016 02:20 PM, Tony wrote:
->
-> Thank you for the comments Jacek.
-[...]
->>>>> +static int lp3952_set_pattern_gen_cmd(struct lp3952_led_array *priv,
->>>>> +                      u8 cmd_index, u8 r, u8 g, u8 b,
->>>>> +                      enum lp3952_tt tt, enum lp3952_cet cet)
->>>>> +{
->>>>> +    int ret;
->>>>> +    struct ptrn_gen_cmd line = {
->>>>> +        .r = r,
->>>>> +        .g = g,
->>>>> +        .b = b,
->>>>> +        .cet = cet,
->>>>> +        .tt = tt
->>>>> +    };
->>>>> +
->>>>> +    if (cmd_index >= LP3952_CMD_REG_COUNT)
->>>>> +        return -EINVAL;
->>>>> +
->>>>> +    ret = lp3952_register_write(priv->client,
->>>>> +                    LP3952_REG_CMD_0 + cmd_index * 2,
->>>>> +                    line.bytes.msb);
->>>>> +    if (ret)
->>>>> +        return ret;
->>>>> +
->>>>> +    return (lp3952_register_write(priv->client,
->>>>> +                      LP3952_REG_CMD_0 + cmd_index * 2 + 1,
->>>>> +                      line.bytes.lsb));
->>
->> These brackets are redundant.
->>
->>>>> +}
->>>>> +
->>>>> +static int lp3952_configure(struct lp3952_led_array *priv)
->>>>> +{
->>>>> +    int ret;
->>>>> +
->>>>> +    /* Disable any LEDs on from any previous conf. */
->>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_LED_CTRL,
->>>>> 0);
->>>>> +    if (ret)
->>>>> +        return ret;
->>>>> +
->>>>> +    /* enable rgb patter, loop */
->>>>> +    ret = lp3952_register_write(priv->client,
->>>>> LP3952_REG_PAT_GEN_CTRL,
->>>>> +                    LP3952_PATRN_LOOP | LP3952_PATRN_GEN_EN);
->>>>> +    if (ret)
->>>>> +        return ret;
->>>>> +
->>>>> +    /* Update Bit 6 (Active mode), Select both Led sets, Bit [1:0] */
->>>>> +    ret = lp3952_register_write(priv->client, LP3952_REG_ENABLES,
->>>>> +                    LP3952_ACTIVE_MODE | LP3952_INT_B00ST_LDR);
->>>>> +    if (ret)
->>>>> +        return ret;
->>>>> +
->>>>> +    /* Set Cmd1 for RGB intensity,cmd and transition time */
->>>>> +    return (lp3952_set_pattern_gen_cmd(priv, 0, I46, I71, I100, TT0,
->>>>> +                       CET197));
->>
->> Ditto.
->>
->> If you agree I can remove them and take the patch.
->
-> Yes please :). Thank you for your help.
+Hi,
 
+I was working on an "usbport" LED trigger driver and specifying its
+default state in DT. I realized I can't really determine numbering of
+USB ports on any device as it depends on compiled drivers and the
+loading orders.
 
-Patch applied to the for-next branch of linux-leds.git.
+It means that my physical USB port can be e.g. 1-1 or 2-1 depending on
+my current config/setup. I needed a way to specify a particular HCD in
+DT and then hardcode port number (as this part doesn't change).
 
-Thank you for your effort and determination in submitting
-subsequent versions.
+These 2 patches add providers to usb core subsystem. I successfully
+tested it with "usbport" trigger and generic-ohci, generic-ehci &
+generic-xhci.
 
--- 
-Best regards,
-Jacek Anaszewski
+The last (third) patch is not supposed to be applied, it's used only as
+a proof and example of how providers can be used.
+
+If there is anything wrong with this idea/implementation, please let me
+know.
+
+Rafa=C5=82 Mi=C5=82ecki (2):
+  usb: core: add support for HCD providers
+  ohci-platform: register HCD provider
+
+ drivers/usb/core/Makefile        |  1 +
+ drivers/usb/core/provider.c      | 79 ++++++++++++++++++++++++++++++++=
+++++++++
+ drivers/usb/host/ohci-platform.c |  9 +++++
+ include/linux/usb/provider.h     | 39 ++++++++++++++++++++
+ 4 files changed, 128 insertions(+)
+ create mode 100644 drivers/usb/core/provider.c
+ create mode 100644 include/linux/usb/provider.h
+
+--=20
+1.8.4.5
