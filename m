@@ -1,30 +1,33 @@
-From: Tony <tony.makkiel@daqri.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: +
  drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
  added to -mm tree
-Date: Wed, 13 Jul 2016 11:29:12 +0100
-Message-ID: <578617F8.7070208@daqri.com>
+Date: Wed, 13 Jul 2016 12:51:08 +0200
+Message-ID: <57861D1C.20704@samsung.com>
 References: <5785651c.d2JFDzyQUJLxRsYu%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:34346 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752206AbcGMK3j (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Jul 2016 06:29:39 -0400
-Received: by mail-wm0-f42.google.com with SMTP id p190so8492165wmp.1
-        for <linux-leds@vger.kernel.org>; Wed, 13 Jul 2016 03:29:14 -0700 (PDT)
-In-Reply-To: <5785651c.d2JFDzyQUJLxRsYu%akpm@linux-foundation.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:63707 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751346AbcGMKvL (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Jul 2016 06:51:11 -0400
+In-reply-to: <5785651c.d2JFDzyQUJLxRsYu%akpm@linux-foundation.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: akpm@linux-foundation.org, j.anaszewski@samsung.com, mika.westerberg@linux.intel.com, mm-commits@vger.kernel.org, linux-leds@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mika.westerberg@linux.intel.com, tony.makkiel@daqri.com, mm-commits@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Thank you for spotting this Andrew.
+Hi Andrew,
 
-Tested working with my setup.
+Thanks for the patch. I've merged it with the original one and updated
+for-next branch on linux-leds.git.
 
-On 12/07/16 22:46, akpm@linux-foundation.org wrote:
+Thanks,
+Jacek Anaszewski
+
+On 07/12/2016 11:46 PM, akpm@linux-foundation.org wrote:
 >
 > The patch titled
 >       Subject: drivers/leds/leds-lp3952.c: work around gcc-4.4.4 union initializer bug
@@ -134,3 +137,10 @@ On 12/07/16 22:46, akpm@linux-foundation.org wrote:
 > kernel-forkc-export-kernel_thread-to-modules.patch
 > slab-leaks3-default-y.patch
 >
+>
+>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
