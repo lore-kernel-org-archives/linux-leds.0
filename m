@@ -1,146 +1,77 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: +
- drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
- added to -mm tree
-Date: Wed, 13 Jul 2016 12:51:08 +0200
-Message-ID: <57861D1C.20704@samsung.com>
-References: <5785651c.d2JFDzyQUJLxRsYu%akpm@linux-foundation.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH V2 0/1] usb: add HCD providers
+Date: Wed, 13 Jul 2016 14:42:12 +0200
+Message-ID: <1468413734-9569-1-git-send-email-zajec5@gmail.com>
+References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:63707 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751346AbcGMKvL (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Jul 2016 06:51:11 -0400
-In-reply-to: <5785651c.d2JFDzyQUJLxRsYu%akpm@linux-foundation.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1468326921-26485-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: mika.westerberg@linux.intel.com, tony.makkiel@daqri.com, mm-commits@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Andrew,
+Hi again,
 
-Thanks for the patch. I've merged it with the original one and updated
-for-next branch on linux-leds.git.
+This is my second try of getting HCD providers into usb subsystem.
 
-Thanks,
-Jacek Anaszewski
+During discussion of V1 I realized there are about 26 drivers adding a
+single HCD and all of them would need to be modified. So instead I
+decided to put relevant code in usb_add_hcd. It checks if the HCD we
+register is a primary one and if so, it registers a proper provider.
 
-On 07/12/2016 11:46 PM, akpm@linux-foundation.org wrote:
->
-> The patch titled
->       Subject: drivers/leds/leds-lp3952.c: work around gcc-4.4.4 union initializer bug
-> has been added to the -mm tree.  Its filename is
->       drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
->
-> This patch should soon appear at
->      http://ozlabs.org/~akpm/mmots/broken-out/drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
-> and later at
->      http://ozlabs.org/~akpm/mmotm/broken-out/drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
->
-> Before you just go and hit "reply", please:
->     a) Consider who else should be cc'ed
->     b) Prefer to cc a suitable mailing list as well
->     c) Ideally: find the original patch on the mailing list and do a
->        reply-to-all to that, adding suitable additional cc's
->
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
->
-> The -mm tree is included into linux-next and is updated
-> there every 3-4 working days
->
-> ------------------------------------------------------
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: drivers/leds/leds-lp3952.c: work around gcc-4.4.4 union initializer bug
->
-> drivers/leds/leds-lp3952.c: In function 'lp3952_set_pattern_gen_cmd':
-> drivers/leds/leds-lp3952.c:156: error: unknown field 'r' specified in initializer
-> drivers/leds/leds-lp3952.c:156: warning: missing braces around initializer
-> drivers/leds/leds-lp3952.c:156: warning: (near initialization for 'line.<anonymous>')
-> drivers/leds/leds-lp3952.c:157: error: unknown field 'g' specified in initializer
-> drivers/leds/leds-lp3952.c:157: warning: excess elements in struct initializer
-> drivers/leds/leds-lp3952.c:157: warning: (near initialization for 'line')
-> drivers/leds/leds-lp3952.c:158: error: unknown field 'b' specified in initializer
-> drivers/leds/leds-lp3952.c:158: warning: excess elements in struct initializer
-> drivers/leds/leds-lp3952.c:158: warning: (near initialization for 'line')
-> drivers/leds/leds-lp3952.c:159: error: unknown field 'cet' specified in initializer
-> drivers/leds/leds-lp3952.c:159: warning: excess elements in struct initializer
-> drivers/leds/leds-lp3952.c:159: warning: (near initialization for 'line')
-> drivers/leds/leds-lp3952.c:160: error: unknown field 'tt' specified in initializer
-> drivers/leds/leds-lp3952.c:161: warning: excess elements in struct initializer
-> drivers/leds/leds-lp3952.c:161: warning: (near initialization for 'line')
->
-> Fixes: 1574a45ad7467d6a8c6 ("leds: LED driver for TI LP3952 6-Channel Color LED")
-> Cc: Tony Makkiel <tony.makkiel@daqri.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->
->   drivers/leds/leds-lp3952.c |   14 +++++++++-----
->   1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff -puN drivers/leds/leds-lp3952.c~drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug drivers/leds/leds-lp3952.c
-> --- a/drivers/leds/leds-lp3952.c~drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug
-> +++ a/drivers/leds/leds-lp3952.c
-> @@ -153,11 +153,15 @@ static int lp3952_set_pattern_gen_cmd(st
->   {
->   	int ret;
->   	struct ptrn_gen_cmd line = {
-> -		.r = r,
-> -		.g = g,
-> -		.b = b,
-> -		.cet = cet,
-> -		.tt = tt
-> +		{
-> +			{
-> +				.tt = tt,
-> +				.b = b,
-> +				.cet = cet,
-> +				.g = g,
-> +				.r = r,
-> +			},
-> +		},
->   	};
->
->   	if (cmd_index >= LP3952_CMD_REG_COUNT)
-> _
->
-> Patches currently in -mm which might be from akpm@linux-foundation.org are
->
-> i-need-old-gcc.patch
-> arch-alpha-kernel-systblss-remove-debug-check.patch
-> arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-> ocfs2-improve-recovery-performance-v2-fix.patch
-> ocfs2-dlm-disable-bug_on-when-dlm_lock_res_dropping_ref-is-cleared-before-dlm_deref_lockres_done_handler-fix.patch
-> mm.patch
-> mm-reorganize-slab-freelist-randomization-fix.patch
-> mm-balloon-use-general-non-lru-movable-page-feature-fix.patch
-> mm-compaction-split-freepages-without-holding-the-zone-lock-fix-2.patch
-> mm-frontswap-convert-frontswap_enabled-to-static-key-checkpatch-fixes.patch
-> mm-add-nr_zsmalloc-to-vmstat-fix.patch
-> mm-memcg-use-consistent-gfp-flags-during-readahead-checkpatch-fixes.patch
-> mm-thp-make-swapin-readahead-under-down_read-of-mmap_sem-fix-2-fix.patch
-> mm-fix-build-warnings-in-linux-compactionh-fix.patch
-> mm-update-the-comment-in-__isolate_free_page-checkpatch-fixes.patch
-> mm-zsmalloc-add-per-class-compact-trace-event-checkpatch-fixes.patch
-> nvme-dont-allocate-unused-nvme_major-fix.patch
-> treewide-replace-obsolete-_refok-by-__ref-checkpatch-fixes.patch
-> printk-create-pr_level-functions-fix.patch
-> kexec-ensure-user-memory-sizes-do-not-wrap-fix.patch
-> kexec-allow-architectures-to-override-boot-mapping-fix.patch
-> linux-next-rejects.patch
-> drivers-net-wireless-intel-iwlwifi-dvm-calibc-fix-min-warning.patch
-> drivers-leds-leds-lp3952c-work-around-gcc-444-union-initializer-bug.patch
-> bitmap-bitmap_equal-memcmp-optimization-fix.patch
-> kernel-forkc-export-kernel_thread-to-modules.patch
-> slab-leaks3-default-y.patch
->
->
->
+Please note that of_hcd_xlate_simple was also extended to allow getting
+shared HCD (which is used e.g. in case of XHCI).
 
+So now you can have something like:
 
--- 
-Best regards,
-Jacek Anaszewski
+ohci: ohci@21000 {
+	#usb-cells =3D <0>;
+	compatible =3D "generic-ohci";
+	reg =3D <0x00001000 0x1000>;
+	interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+};
+
+ehci: ehci@22000 {
+	#usb-cells =3D <0>;
+	compatible =3D "generic-ehci";
+	reg =3D <0x00002000 0x1000>;
+	interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+};
+
+xhci: xhci@23000 {
+	#usb-cells =3D <1>;
+	compatible =3D "generic-xhci";
+	reg =3D <0x00003000 0x1000>;
+	interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+};
+
+The last (second) patch is not supposed to be applied, it's used only a=
+s
+a proof and example of how providers can be used.
+
+Rafa=C5=82 Mi=C5=82ecki (1):
+  usb: core: add support for HCD providers
+
+ drivers/usb/core/Makefile     |  1 +
+ drivers/usb/core/hcd.c        |  8 ++++
+ drivers/usb/core/provider.c   | 99 +++++++++++++++++++++++++++++++++++=
+++++++++
+ include/dt-bindings/usb/usb.h |  7 +++
+ include/linux/usb/hcd.h       |  2 +
+ include/linux/usb/provider.h  | 39 +++++++++++++++++
+ 6 files changed, 156 insertions(+)
+ create mode 100644 drivers/usb/core/provider.c
+ create mode 100644 include/dt-bindings/usb/usb.h
+ create mode 100644 include/linux/usb/provider.h
+
+--=20
+1.8.4.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
