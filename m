@@ -1,144 +1,96 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH V2 PROOF OF CONCEPT 2/1] trigger: ledtrig-usbport: read initial state from DT
-Date: Wed, 13 Jul 2016 14:42:14 +0200
-Message-ID: <1468413734-9569-3-git-send-email-zajec5@gmail.com>
-References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
- <1468413734-9569-1-git-send-email-zajec5@gmail.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [PATCH V2 0/1] usb: add HCD providers
+Date: Wed, 13 Jul 2016 16:20:48 +0300
+Message-ID: <87lh15isi7.fsf@linux.intel.com>
+References: <1468326921-26485-1-git-send-email-zajec5@gmail.com> <1468413734-9569-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1468413734-9569-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:55786 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751037AbcGMNWV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+	Wed, 13 Jul 2016 09:22:21 -0400
+In-Reply-To: <1468413734-9569-1-git-send-email-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
 
-This allows specifying USB ports that should be observed by a trigger
-right after activating it. Example:
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-usb {
-	gpios =3D <&gpio 0 GPIO_ACTIVE_HIGH>;
-	linux,default-trigger =3D "usbport";
-	usb-controllers =3D <&ohci>, <&ehci>, <&xhci USB_HCD_SHARED>;
-	usb-ports =3D "1", "1", "1";
-};
 
-Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/leds/trigger/ledtrig-usbport.c | 72 ++++++++++++++++++++++++++=
-++++++++
- 1 file changed, 72 insertions(+)
+Hi,
 
-diff --git a/drivers/leds/trigger/ledtrig-usbport.c b/drivers/leds/trig=
-ger/ledtrig-usbport.c
-index eb20a8f..5724f63 100644
---- a/drivers/leds/trigger/ledtrig-usbport.c
-+++ b/drivers/leds/trigger/ledtrig-usbport.c
-@@ -12,8 +12,10 @@
- #include <linux/device.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/usb.h>
-+#include <linux/usb/provider.h>
- #include "../leds.h"
-=20
- struct usbport_trig_port {
-@@ -94,6 +96,75 @@ static bool usbport_trig_match(struct usbport_trig_d=
-ata *usbport_data,
- 	return false;
- }
-=20
-+static int usbport_trig_new_port(struct usbport_trig_data *usbport_dat=
-a,
-+				 int busnum, const char *suffix)
-+{
-+	struct usbport_trig_port *port;
-+	size_t len;
-+	int tmp;
-+
-+	tmp =3D busnum;
-+	len =3D 1;
-+	while (tmp >=3D 10) {
-+		tmp /=3D 10;
-+		len++;
-+	}
-+	len++; /* '-' */
-+	len +=3D strlen(suffix);
-+	len++; /* '\0' */
-+
-+	port =3D kzalloc(sizeof(*port), GFP_KERNEL);
-+	if (!port)
-+		return -ENOMEM;
-+
-+	port->name =3D kzalloc(len, GFP_KERNEL);
-+	if (!port->name) {
-+		kfree(port);
-+		return -ENOMEM;
-+	}
-+	snprintf(port->name, len, "%d-%s", busnum, suffix);
-+
-+	list_add_tail(&port->list, &usbport_data->ports);
-+
-+	return 0;
-+}
-+
-+static int usbport_trig_fill(struct usbport_trig_data *usbport_data)
-+{
-+	struct device_node *np =3D usbport_data->led_cdev->dev->of_node;
-+	struct of_phandle_args args;
-+	int count, i;
-+	int err =3D 0;
-+
-+	if (!np)
-+		return -ENOENT;
-+
-+	count =3D of_property_count_strings(np, "usb-ports");
-+	if (count < 0)
-+		return count;
-+
-+	for (i =3D 0; i < count; i++) {
-+		const char *port;
-+		struct usb_hcd *hcd;
-+
-+		err =3D of_property_read_string_index(np, "usb-ports", i, &port);
-+		if (err)
-+			continue;
-+
-+		err =3D of_parse_phandle_with_args(np, "usb-controllers", "#usb-cell=
-s", i, &args);
-+		if (err)
-+			continue;
-+
-+		hcd =3D of_hcd_get_from_provider(&args);
-+		if (!IS_ERR(hcd))
-+			usbport_trig_new_port(usbport_data, hcd->self.busnum, port);
-+
-+		of_node_put(args.np);
-+	}
-+
-+	return err;
-+}
-+
- static int usbport_trig_notify(struct notifier_block *nb, unsigned lon=
-g action,
- 			       void *data)
- {
-@@ -129,6 +200,7 @@ static void usbport_trig_activate(struct led_classd=
-ev *led_cdev)
- 		return;
- 	usbport_data->led_cdev =3D led_cdev;
- 	INIT_LIST_HEAD(&usbport_data->ports);
-+	usbport_trig_fill(usbport_data);
- 	usbport_data->nb.notifier_call =3D usbport_trig_notify,
- 	led_cdev->trigger_data =3D usbport_data;
-=20
---=20
-1.8.4.5
+Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> writes:
+> Hi again,
+>
+> This is my second try of getting HCD providers into usb subsystem.
+>
+> During discussion of V1 I realized there are about 26 drivers adding a
+> single HCD and all of them would need to be modified. So instead I
+> decided to put relevant code in usb_add_hcd. It checks if the HCD we
+> register is a primary one and if so, it registers a proper provider.
+>
+> Please note that of_hcd_xlate_simple was also extended to allow getting
+> shared HCD (which is used e.g. in case of XHCI).
+>
+> So now you can have something like:
+>
+> ohci: ohci@21000 {
+> 	#usb-cells =3D <0>;
+> 	compatible =3D "generic-ohci";
+> 	reg =3D <0x00001000 0x1000>;
+> 	interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> };
+>
+> ehci: ehci@22000 {
+> 	#usb-cells =3D <0>;
+> 	compatible =3D "generic-ehci";
+> 	reg =3D <0x00002000 0x1000>;
+> 	interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> };
+>
+> xhci: xhci@23000 {
+> 	#usb-cells =3D <1>;
+> 	compatible =3D "generic-xhci";
+> 	reg =3D <0x00003000 0x1000>;
+> 	interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> };
+>
+> The last (second) patch is not supposed to be applied, it's used only as
+> a proof and example of how providers can be used.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+nowhere here (or in previous patch) you clarify why exactly you need
+this. What is your LED trigger supposed to do? Why can't it handle ports
+changing number in different boots? Why do we need this at all? Why is
+your code DT-specific?
+
+There are still too many 'unknowns' here.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJXhkAwAAoJEIaOsuA1yqREgfUQAJm9E1DG1W9AaaospLHfMGTL
+d64cZOYdJqo6btLEdzUb0apnMWDNgflM93pgA9+6WpET+zJKyfQ5ldI+C4jcYSva
+Q6bQWDnd5FlpEYZSe5kjfK50RhMyG0LHu7WqHD44ZJNE2Mn58UK2dEmbwteFYgYu
+VnwijGL7g5mNaAWEfrTlDO1TQFikY/lggEM414e6acWGwkNIjF01ER8UWgYgvV6o
+WRGZVVgFXBbvJ1iao923GpwMJRK67grLw8dUCoI9Yl1AtYslOu8+kLOcW3JMQP+x
+UCBPR3WTfV1QuJh4hZa6QMXWIW4Xi9QcjY8uOa89tE8erXVrd5qfAoD3+D+i5+0Z
+PYAMEMe8NHnvpnvcqV2Ej1cdLc8o1kaH7TZamFd4Uzs27Oc5KpQGq+mEMXV6rDLu
+1Cix/BCyE/TWlgvajl79X3+OZV6zSIKD3/7jHgAb6sqv0XFvf1aIS3Hb2Z03rmwE
+CuaKdAepZMGix+YxpPpayTNbskfVpyGH6BQxb0+wXbYpdXlP+QAa6xUP93/6vuYn
+rx88fG6IWCMaMX7z3r3j4Kmy8GLvOanJByvTy2qZfyjKOb1Icao0QKktASKNZYiG
+xifWaGJLY/tjlVJsFoIt8lCv2IO3mdk8dzHQQyJ/LH/yZAm+EGJuAvirt3CPl8Tl
+1uyN5bMCi5OZieOha2Wd
+=PAxZ
+-----END PGP SIGNATURE-----
+--=-=-=--
