@@ -1,57 +1,108 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 PROOF OF CONCEPT 2/1] trigger: ledtrig-usbport: read
- initial state from DT
-Date: Wed, 13 Jul 2016 17:05:32 +0200
-Message-ID: <CACna6rwgjZoPiU1Qo_4PU35ZuovN-cBe5kVZpUQQPDUf1xQyLA@mail.gmail.com>
-References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
- <1468413734-9569-1-git-send-email-zajec5@gmail.com> <1468413734-9569-3-git-send-email-zajec5@gmail.com>
- <578654A7.2020909@samsung.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: [patch V2 43/67] leds/trigger/cpu: Convert to hotplug state machine
+Date: Wed, 13 Jul 2016 17:16:45 -0000
+Message-ID: <20160713153336.465496902@linutronix.de>
+References: <20160713153219.128052238@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <578654A7.2020909-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from [62.245.132.108] ([62.245.132.108]:40443 "EHLO
+	Galois.linutronix.de" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+	with ESMTP id S1752492AbcGMRTk (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Jul 2016 13:19:40 -0400
+Content-Disposition: inline;
+ filename=0042-leds-trigger-cpu-Convert-to-hotplug-state-machine.patch
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rt@linutronix.de, Richard Cochran <rcochran@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-On 13 July 2016 at 16:48, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> w=
-rote:
-> On 07/13/2016 02:42 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
->>
->> This allows specifying USB ports that should be observed by a trigge=
-r
->> right after activating it. Example:
->>
->> usb {
->>         gpios =3D <&gpio 0 GPIO_ACTIVE_HIGH>;
->>         linux,default-trigger =3D "usbport";
->>         usb-controllers =3D <&ohci>, <&ehci>, <&xhci USB_HCD_SHARED>=
-;
->>         usb-ports =3D "1", "1", "1";
->
->
-> Port is a numerical value, right?
-> Wouldn't it be better to define it as an array of integers?
->
-> e.g.: usb-ports =3D <1>. <1>, <1>;
+From: Richard Cochran <rcochran@linutronix.de>
 
-Not always. Let me quote this part of "usbport" documentation:
+This is a straightforward conversion. We place this callback last
+in the list so that the LED illuminates only after a successful
+bring up sequence.
 
-> This also allows handling devices with internal hubs (when root hub's=
- port has
-> always a device (hub) connected). User can simply specify specify int=
-ernal hub
-> ports then (e.g. 1-1.1, 1-1.2, etc.).
+Signed-off-by: Richard Cochran <rcochran@linutronix.de>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+---
+ drivers/leds/trigger/ledtrig-cpu.c | 32 +++++++++++++++-----------------
+ include/linux/cpuhotplug.h         |  1 +
+ 2 files changed, 16 insertions(+), 17 deletions(-)
 
-In such case we'd need usb-ports =3D "1.1", "1.2";
-
-Anyway, there is a discussion ongoing in:
-[PATCH V2 0/1] usb: add HCD providers
-so let's see if someone will have a better idea for referencing USB
-ports inside DT.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
+index 938467f..4a6a182 100644
+--- a/drivers/leds/trigger/ledtrig-cpu.c
++++ b/drivers/leds/trigger/ledtrig-cpu.c
+@@ -92,25 +92,17 @@ static struct syscore_ops ledtrig_cpu_syscore_ops = {
+ 	.resume		= ledtrig_cpu_syscore_resume,
+ };
+ 
+-static int ledtrig_cpu_notify(struct notifier_block *self,
+-					   unsigned long action, void *hcpu)
++static int ledtrig_starting_cpu(unsigned int cpu)
+ {
+-	switch (action & ~CPU_TASKS_FROZEN) {
+-	case CPU_STARTING:
+-		ledtrig_cpu(CPU_LED_START);
+-		break;
+-	case CPU_DYING:
+-		ledtrig_cpu(CPU_LED_STOP);
+-		break;
+-	}
+-
+-	return NOTIFY_OK;
++	ledtrig_cpu(CPU_LED_START);
++	return 0;
+ }
+ 
+-
+-static struct notifier_block ledtrig_cpu_nb = {
+-	.notifier_call = ledtrig_cpu_notify,
+-};
++static int ledtrig_dying_cpu(unsigned int cpu)
++{
++	ledtrig_cpu(CPU_LED_STOP);
++	return 0;
++}
+ 
+ static int __init ledtrig_cpu_init(void)
+ {
+@@ -133,7 +125,13 @@ static int __init ledtrig_cpu_init(void)
+ 	}
+ 
+ 	register_syscore_ops(&ledtrig_cpu_syscore_ops);
+-	register_cpu_notifier(&ledtrig_cpu_nb);
++
++	/*
++	 * FIXME: Why needs this to happen in the interrupt disabled
++	 * low level bringup phase of a cpu?
++	 */
++	cpuhp_setup_state(CPUHP_AP_LEDTRIG_STARTING, "AP_LEDTRIG_STARTING",
++			  ledtrig_starting_cpu, ledtrig_dying_cpu);
+ 
+ 	pr_info("ledtrig-cpu: registered to indicate activity on CPUs\n");
+ 
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index c052b04..ef7bfa6 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -43,6 +43,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
+ 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
+ 	CPUHP_AP_KVM_STARTING,
++	CPUHP_AP_LEDTRIG_STARTING,
+ 	CPUHP_AP_NOTIFY_STARTING,
+ 	CPUHP_AP_ONLINE,
+ 	CPUHP_TEARDOWN_CPU,
+-- 
+2.8.1
