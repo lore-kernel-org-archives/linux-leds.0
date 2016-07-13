@@ -1,96 +1,85 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 1/2] drivers: led: is31fl319x: 1/3/6/9-channel light
- effect led driver
-Date: Wed, 13 Jul 2016 09:45:01 +0200
-Message-ID: <5785F17D.3010108@samsung.com>
-References: <cover.1468007377.git.hns@goldelico.com>
- <524f16ecba240bacf57924f43ec38404cfdcde8f.1468007377.git.hns@goldelico.com>
- <57854FB0.1080605@gmail.com>
- <55F90A44-0B60-4342-8143-56F85EA24772@goldelico.com>
+From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/2] usb: add HCD providers
+Date: Wed, 13 Jul 2016 16:02:42 +0800
+Message-ID: <20160713080242.GA11863@shlinux2>
+References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
+ <20160713045140.GA29915@shlinux2>
+ <CACna6rw6QOuY247qvDmO4mKrW3y4yXoeM3qr8SXAwn3CuYAMpw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <55F90A44-0B60-4342-8143-56F85EA24772@goldelico.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org, Andrey Utkin <andrey_utkin@fastmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACna6rw6QOuY247qvDmO4mKrW3y4yXoeM3qr8SXAwn3CuYAMpw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Nikolaus,
+On Wed, Jul 13, 2016 at 07:21:09AM +0200, Rafa=C5=82 Mi=C5=82ecki wrote=
+:
+> On 13 July 2016 at 06:51, Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > On Tue, Jul 12, 2016 at 02:35:18PM +0200, Rafa=C5=82 Mi=C5=82ecki w=
+rote:
+> >> I was working on an "usbport" LED trigger driver and specifying it=
+s
+> >> default state in DT. I realized I can't really determine numbering=
+ of
+> >> USB ports on any device as it depends on compiled drivers and the
+> >> loading orders.
+> >>
+> >> It means that my physical USB port can be e.g. 1-1 or 2-1 dependin=
+g on
+> >> my current config/setup. I needed a way to specify a particular HC=
+D in
+> >> DT and then hardcode port number (as this part doesn't change).
+> >>
+> >
+> > I have a question:
+> >
+> > What does your "usbport" LED trigger for? What kinds of information
+> > you would like to show on LED?
+>=20
+> It's a trigger that turns on LED whenever USB device appears at
+> specified USB port. There are plenty of home routers that have USB
+> labeled LED(s). To support them nicely, first of all we need a trigge=
+r
+> that will watch for USB subsystem events. Secondly we need a way to
+> setup its initial state correctly as most users don't want to play
+> with sysfs on their own.
+>=20
+> I sent usbport trigger in:
+> [PATCH] leds: trigger: Introduce an USB port trigger
+> <1468239883-22695-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> https://lkml.org/lkml/2016/7/11/305
+> You may read commit message and ledtrig-usbport.txt for more details.
+>=20
 
-On 07/13/2016 08:09 AM, H. Nikolaus Schaller wrote:
-[...]
->>> +	/*
->>> +	 * Kernel conventions require per-LED led-max-microamp property.
->>> +	 * But the chip does not allow to limit individual LEDs.
->>> +	 * So we take minimum from all subnodes.
->>
->> Why minimum? Choose maximum and reduce max_brightness properties
->> of the sub-LEDs with lesser led-max-microamp.
->
-> Hm. Is this really the correct way to handle it?
->
-> Assume you connect an LED which is specified with 10mA peak current.
-> And another with 20mA peak current.
->
-> So you define led-max-microamp in the DT as 10 mA and 20 mA.
->
-> Firstly a user can set the brightness only to 50% of LED_FULL since it is limited
-> by a reduced max_brightness. And heshe finds that not all LEDs have the same
-> max_brightness. The first LED will have 127 and the second one 255 for reasons
-> not directly understandable.
+Well, it is an interesting use case. You can try to add provider (un)re=
+gister
+at hub driver (drivers/usb/core/hub.c) instead of each platform drivers=
+, you
+could refer my USB pwrseq as an example[1].
 
-You have to know that led-max-microamp property was introduced
-to standarize Device Tree definition of maximum brightness allowed for
-a sub-LED.
+=46or roothub, you can get the busnum through comparing controller's of=
+_node, for
+internal hub, you can get hub's dev name like (1-1) through comparing
+its of_node (you need to describe your hard-wired hub on dts).
 
-Earlier people defined max-brightness property in DT, but at
-some point we realized that brightness level is not a proper unit for
-describing a hardware property.
+http://www.spinics.net/lists/linux-usb/msg143699.html
 
-It was not global max-microamp setting that appears in recent LED
-controllers that drove the introduction of led-max-microamp property.
+Two more questions:
 
-If you question the idea of having different maximum brightness per
-sub-LEDs controlled by the same device, then it means that you have
-objections to the entire idea of LED subsystem max_brightness property,
-whereas it has been broadly accepted and successfully used for years.
+- How to support the USB device on the port when boots up?
+- Any cases we need to add mapping using new_port_store, the user may
+not know bus number for physical port.
 
-> This entangles "brightness" with "max-current" - which are IMHO two independent
-> things.
+--=20
 
-The fact that recent LED controllers use the same notion for one of its
-settings shouldn't mislead us.
-
-> Next, this will set the hardware limit to 20 mA. So there will be current peaks
-> of 20 mA for an LED where the DT developer thinks to have specified a led-max-microamp
-> of 10 mA. So you run the LED outside of its specs although the DT seems to
-> tell that it is inside and user-space thinks it is ok. This will reduce lifetime of LEDs.
-
-In what circumstances would such current peaks occur? On reset?
-Shouldn't such a device be considered as broken by design?
-What if all LEDs would have low amperage? Would there be some way
-to protect them from being damaged by current peaks?
-
-> So either "led-max-microamp" is the wrong name for this property (could better
-> be "led-max-average-microamp") or the whole logic is broken.
->
-> This is why we hesitate to hide (or even disable because you can't set the limit
-> to 10mA by DT) the current limiting chip feature by such a difficult to understand
-> automatic feature.
->
-> Using the minimum of all led-max-microamp keeps everything on the safe
-> side, running some LEDs with less current than specified. But never outside
-> of the spec. And all LEDs have the same max_brightness which is IMHO
-> more intuitive for the user.
->
-> Our original proposal was to define led-max-microamp for the whole chip
-> instead of individual LEDs, which is IMHO much easier to understand,
-> because it corresponds one-to-one with the data sheet.
-
-
-
--- 
-Best regards,
-Jacek Anaszewski
+Best Regards,
+Peter Chen
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
