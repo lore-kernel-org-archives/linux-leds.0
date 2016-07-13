@@ -1,194 +1,165 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 0/1] usb: add HCD providers
-Date: Wed, 13 Jul 2016 16:40:53 +0200
-Message-ID: <CACna6rxscQAE_hrM7Rnsntp5QZjL2kD0+mbuXgfo6kPQZ=UDJw@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V2 PROOF OF CONCEPT 2/1] trigger: ledtrig-usbport: read
+ initial state from DT
+Date: Wed, 13 Jul 2016 16:48:07 +0200
+Message-ID: <578654A7.2020909@samsung.com>
 References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
- <1468413734-9569-1-git-send-email-zajec5@gmail.com> <87lh15isi7.fsf@linux.intel.com>
- <CACna6rxGN5evQhRpNORUP4RP3-pMa292pQW=4=VWLLnzJyhJJw@mail.gmail.com> <87inw9ir4k.fsf@linux.intel.com>
+ <1468413734-9569-1-git-send-email-zajec5@gmail.com>
+ <1468413734-9569-3-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87inw9ir4k.fsf-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+In-reply-to: <1468413734-9569-3-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On 13 July 2016 at 15:50, Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> w=
-rote:
-> Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->> On 13 July 2016 at 15:20, Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org=
-> wrote:
->>> Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->>>> Hi again,
->>>>
->>>> This is my second try of getting HCD providers into usb subsystem.
->>>>
->>>> During discussion of V1 I realized there are about 26 drivers addi=
-ng a
->>>> single HCD and all of them would need to be modified. So instead I
->>>> decided to put relevant code in usb_add_hcd. It checks if the HCD =
-we
->>>> register is a primary one and if so, it registers a proper provide=
-r.
->>>>
->>>> Please note that of_hcd_xlate_simple was also extended to allow ge=
-tting
->>>> shared HCD (which is used e.g. in case of XHCI).
->>>>
->>>> So now you can have something like:
->>>>
->>>> ohci: ohci@21000 {
->>>>       #usb-cells =3D <0>;
->>>>       compatible =3D "generic-ohci";
->>>>       reg =3D <0x00001000 0x1000>;
->>>>       interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
->>>> };
->>>>
->>>> ehci: ehci@22000 {
->>>>       #usb-cells =3D <0>;
->>>>       compatible =3D "generic-ehci";
->>>>       reg =3D <0x00002000 0x1000>;
->>>>       interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
->>>> };
->>>>
->>>> xhci: xhci@23000 {
->>>>       #usb-cells =3D <1>;
->>>>       compatible =3D "generic-xhci";
->>>>       reg =3D <0x00003000 0x1000>;
->>>>       interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
->>>> };
->>>>
->>>> The last (second) patch is not supposed to be applied, it's used o=
-nly as
->>>> a proof and example of how providers can be used.
->>>
->>> nowhere here (or in previous patch) you clarify why exactly you nee=
-d
->>> this. What is your LED trigger supposed to do? Why can't it handle =
-ports
->>> changing number in different boots? Why do we need this at all? Why=
- is
->>> your code DT-specific?
->>>
->>> There are still too many 'unknowns' here.
->>
->> Are you sure you saw my reply to Peter's question?
->> <CACna6rw6QOuY247qvDmO4mKrW3y4yXoeM3qr8SXAwn3CuYAMpw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
->> http://www.spinics.net/lists/linux-usb/msg143708.html
->> http://marc.info/?l=3Dlinux-usb&m=3D146838735627093&w=3D2
->>
->> I think it should answer (some of?) your questions. Can you read it
->> and see if it gets a bit clearer?
+Hi Rafa=C5=82,
+
+On 07/13/2016 02:42 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
+> This allows specifying USB ports that should be observed by a trigger
+> right after activating it. Example:
 >
-> well, all that says is that you're writing a LED trigger to toggle LE=
-D
-> when a USB device gets added to a specified port. I don't think you n=
-eed
-> the actual port number for that. You should have a phandle to the act=
-ual
-> port, whatever its number is, or a phandle to the (root-)Hub and a po=
-rt
-> number from that hub.
+> usb {
+> 	gpios =3D <&gpio 0 GPIO_ACTIVE_HIGH>;
+> 	linux,default-trigger =3D "usbport";
+> 	usb-controllers =3D <&ohci>, <&ehci>, <&xhci USB_HCD_SHARED>;
+> 	usb-ports =3D "1", "1", "1";
+
+Port is a numerical value, right?
+Wouldn't it be better to define it as an array of integers?
+
+e.g.: usb-ports =3D <1>. <1>, <1>;
+
+> };
+
+Please provide a patch with DT bindings documentation for this
+trigger. I infer that usb-controllers and usb-ports are new
+properties.
+
+Adding also Felipe, Mark and Rob.
+
 >
-> The problem, really, is that DT descriptor of USB Hosts is very, very
-> minimal. Perhaps there's something more extensively defined from the
-> original Open Firmware USB Addendum.
-
-Thanks for your effort and looking at this closely. You're right, I'm
-interested in referencing USB ports, but I'm using controller phandle
-(and then I specify ports manually).
-
-Having each port described by DT would be helpful, it's just something
-I didn't find implemented, so I started looking for different ways. It
-seems I should have picked a different solution.
-
-So should I work on describing USB ports in DT instead? This looks
-like a complex thing to describe, so I'd like to ask for some guidance
-first. What do you think about following schema/example?
-
-ohci@1000 {
-        compatible =3D "generic-ohci";
-        reg =3D <0x00001000 0x1000>;
-        interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-
-        primary-hcd {
-                ohci_port0: port@0 {
-                        reg =3D <0>;
-                };
-
-                ohci_port1: port@1 {
-                        reg =3D <1>;
-                };
-        }
-};
-
-ehci@2000 {
-        compatible =3D "generic-ehci";
-        reg =3D <0x00002000 0x1000>;
-        interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-
-        primary-hcd {
-                ehci_port0: port@0 {
-                        reg =3D <0>;
-                };
-
-                ehci_port1: port@1 {
-                        reg =3D <1>;
-                };
-        }
-};
-
-xhci@3000 {
-        compatible =3D "generic-xhci";
-        reg =3D <0x00003000 0x1000>;
-        interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-
-        primary-hcd {
-        };
-
-        shared-hcd {
-                xhci_port0: port@0 {
-                        reg =3D <0>;
-                };
-        }
-};
-
-With such a DT struct, how could I query port for a Linux-assigned numb=
-er?
-
-=46or example with OHCI, EHCI and XHCI drivers compiled, Linux assigns
-number 4 to my XHCI's shared HCD's root hub:
-xhci-hcd 18023000.xhci: xHCI Host Controller
-xhci-hcd 18023000.xhci: new USB bus registered, assigned bus number 4
-hub 4-0:1.0: USB hub found
-hub 4-0:1.0: 1 port detected
-
-If I disable OHCI and EHCI I get:
-xhci-hcd xhci-hcd.0: xHCI Host Controller
-xhci-hcd xhci-hcd.0: new USB bus registered, assigned bus number 2
-hub 2-0:1.0: USB hub found
-hub 2-0:1.0: 1 port detected
-
-So I need my "usbport" trigger driver to be able to get "4-1" in the
-first case and "2-1" in the second case. I guess I should use
-&xhci_port0 but what then? How could I translate it into
-Linux-assigned numbering?
-
-
-> There's also no documentation for your new bindings nor are there any
-> user demonstrating how DT should be written to use these new bindings=
-=2E
+> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>   drivers/leds/trigger/ledtrig-usbport.c | 72 +++++++++++++++++++++++=
++++++++++++
+>   1 file changed, 72 insertions(+)
 >
-> IMO, if you're describing it in DT and you need a specific port name,
-> your bindings are wrong.
+> diff --git a/drivers/leds/trigger/ledtrig-usbport.c b/drivers/leds/tr=
+igger/ledtrig-usbport.c
+> index eb20a8f..5724f63 100644
+> --- a/drivers/leds/trigger/ledtrig-usbport.c
+> +++ b/drivers/leds/trigger/ledtrig-usbport.c
+> @@ -12,8 +12,10 @@
+>   #include <linux/device.h>
+>   #include <linux/leds.h>
+>   #include <linux/module.h>
+> +#include <linux/of.h>
+>   #include <linux/slab.h>
+>   #include <linux/usb.h>
+> +#include <linux/usb/provider.h>
+>   #include "../leds.h"
+>
+>   struct usbport_trig_port {
+> @@ -94,6 +96,75 @@ static bool usbport_trig_match(struct usbport_trig=
+_data *usbport_data,
+>   	return false;
+>   }
+>
+> +static int usbport_trig_new_port(struct usbport_trig_data *usbport_d=
+ata,
+> +				 int busnum, const char *suffix)
+> +{
+> +	struct usbport_trig_port *port;
+> +	size_t len;
+> +	int tmp;
+> +
+> +	tmp =3D busnum;
+> +	len =3D 1;
+> +	while (tmp >=3D 10) {
+> +		tmp /=3D 10;
+> +		len++;
+> +	}
+> +	len++; /* '-' */
+> +	len +=3D strlen(suffix);
+> +	len++; /* '\0' */
+> +
+> +	port =3D kzalloc(sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	port->name =3D kzalloc(len, GFP_KERNEL);
+> +	if (!port->name) {
+> +		kfree(port);
+> +		return -ENOMEM;
+> +	}
+> +	snprintf(port->name, len, "%d-%s", busnum, suffix);
+> +
+> +	list_add_tail(&port->list, &usbport_data->ports);
+> +
+> +	return 0;
+> +}
+> +
+> +static int usbport_trig_fill(struct usbport_trig_data *usbport_data)
+> +{
+> +	struct device_node *np =3D usbport_data->led_cdev->dev->of_node;
+> +	struct of_phandle_args args;
+> +	int count, i;
+> +	int err =3D 0;
+> +
+> +	if (!np)
+> +		return -ENOENT;
+> +
+> +	count =3D of_property_count_strings(np, "usb-ports");
+> +	if (count < 0)
+> +		return count;
+> +
+> +	for (i =3D 0; i < count; i++) {
+> +		const char *port;
+> +		struct usb_hcd *hcd;
+> +
+> +		err =3D of_property_read_string_index(np, "usb-ports", i, &port);
+> +		if (err)
+> +			continue;
+> +
+> +		err =3D of_parse_phandle_with_args(np, "usb-controllers", "#usb-ce=
+lls", i, &args);
+> +		if (err)
+> +			continue;
+> +
+> +		hcd =3D of_hcd_get_from_provider(&args);
+> +		if (!IS_ERR(hcd))
+> +			usbport_trig_new_port(usbport_data, hcd->self.busnum, port);
+> +
+> +		of_node_put(args.np);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>   static int usbport_trig_notify(struct notifier_block *nb, unsigned =
+long action,
+>   			       void *data)
+>   {
+> @@ -129,6 +200,7 @@ static void usbport_trig_activate(struct led_clas=
+sdev *led_cdev)
+>   		return;
+>   	usbport_data->led_cdev =3D led_cdev;
+>   	INIT_LIST_HEAD(&usbport_data->ports);
+> +	usbport_trig_fill(usbport_data);
+>   	usbport_data->nb.notifier_call =3D usbport_trig_notify,
+>   	led_cdev->trigger_data =3D usbport_data;
+>
+>
 
-OK, point taken. I'll make sure to document it once we agree how to
-proceed with implementation.
 
 --=20
-Rafa=C5=82
+Best regards,
+Jacek Anaszewski
 --
 To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
