@@ -1,81 +1,56 @@
-From: Peter Chen <hzpeterchen@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 0/2] usb: add HCD providers
-Date: Wed, 13 Jul 2016 12:51:40 +0800
-Message-ID: <20160713045140.GA29915@shlinux2>
-References: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
+Date: Wed, 13 Jul 2016 07:21:09 +0200
+Message-ID: <CACna6rw6QOuY247qvDmO4mKrW3y4yXoeM3qr8SXAwn3CuYAMpw@mail.gmail.com>
+References: <1468326921-26485-1-git-send-email-zajec5@gmail.com> <20160713045140.GA29915@shlinux2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:34891 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbcGMFAD (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 13 Jul 2016 01:00:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1468326921-26485-1-git-send-email-zajec5@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160713045140.GA29915@shlinux2>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 
-On Tue, Jul 12, 2016 at 02:35:18PM +0200, Rafa=C5=82 Mi=C5=82ecki wrote=
-:
-> Hi,
->=20
-> I was working on an "usbport" LED trigger driver and specifying its
-> default state in DT. I realized I can't really determine numbering of
-> USB ports on any device as it depends on compiled drivers and the
-> loading orders.
->=20
-> It means that my physical USB port can be e.g. 1-1 or 2-1 depending o=
-n
-> my current config/setup. I needed a way to specify a particular HCD i=
-n
-> DT and then hardcode port number (as this part doesn't change).
->=20
-
-I have a question:
-
-What does your "usbport" LED trigger for? What kinds of information
-you would like to show on LED?
-
-Peter
-
-> These 2 patches add providers to usb core subsystem. I successfully
-> tested it with "usbport" trigger and generic-ohci, generic-ehci &
-> generic-xhci.
->=20
-> The last (third) patch is not supposed to be applied, it's used only =
-as
-> a proof and example of how providers can be used.
->=20
-> If there is anything wrong with this idea/implementation, please let =
-me
-> know.
->=20
-> Rafa=C5=82 Mi=C5=82ecki (2):
->   usb: core: add support for HCD providers
->   ohci-platform: register HCD provider
->=20
->  drivers/usb/core/Makefile        |  1 +
->  drivers/usb/core/provider.c      | 79 ++++++++++++++++++++++++++++++=
-++++++++++
->  drivers/usb/host/ohci-platform.c |  9 +++++
->  include/linux/usb/provider.h     | 39 ++++++++++++++++++++
->  4 files changed, 128 insertions(+)
->  create mode 100644 drivers/usb/core/provider.c
->  create mode 100644 include/linux/usb/provider.h
->=20
-> --=20
-> 1.8.4.5
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" =
+On 13 July 2016 at 06:51, Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, Jul 12, 2016 at 02:35:18PM +0200, Rafa=C5=82 Mi=C5=82ecki wro=
+te:
+>> I was working on an "usbport" LED trigger driver and specifying its
+>> default state in DT. I realized I can't really determine numbering o=
+f
+>> USB ports on any device as it depends on compiled drivers and the
+>> loading orders.
+>>
+>> It means that my physical USB port can be e.g. 1-1 or 2-1 depending =
+on
+>> my current config/setup. I needed a way to specify a particular HCD =
 in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> DT and then hardcode port number (as this part doesn't change).
+>>
+>
+> I have a question:
+>
+> What does your "usbport" LED trigger for? What kinds of information
+> you would like to show on LED?
+
+It's a trigger that turns on LED whenever USB device appears at
+specified USB port. There are plenty of home routers that have USB
+labeled LED(s). To support them nicely, first of all we need a trigger
+that will watch for USB subsystem events. Secondly we need a way to
+setup its initial state correctly as most users don't want to play
+with sysfs on their own.
+
+I sent usbport trigger in:
+[PATCH] leds: trigger: Introduce an USB port trigger
+<1468239883-22695-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+https://lkml.org/lkml/2016/7/11/305
+You may read commit message and ledtrig-usbport.txt for more details.
 
 --=20
-
-Best Regards,
-Peter Chen
+Rafa=C5=82
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
