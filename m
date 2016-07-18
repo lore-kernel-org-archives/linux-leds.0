@@ -1,101 +1,88 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Subject: Re: [PATCH V2] leds: trigger: Introduce an USB port trigger
-Date: Mon, 18 Jul 2016 13:53:45 +0800
-Message-ID: <20160718055345.GF31293@shlinux2>
-References: <1468239883-22695-1-git-send-email-zajec5@gmail.com>
- <1468617060-29830-1-git-send-email-zajec5@gmail.com>
- <20160718023126.GB31293@shlinux2>
- <CACna6rxii6hkX6rOTbYXn90AoanP1UMKyCZrUjQ08w0eid4aDA@mail.gmail.com>
- <20160718054010.GE31293@shlinux2>
- <CACna6rxuiXS=cBkN4b9mzSBfcMdqpENyUmQ973p7yR1S=WotWA@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: lp3952: Store leds[LP3952_LED_ALL] in struct
+ lp3952_led_array
+Date: Mon, 18 Jul 2016 08:48:48 +0200
+Message-ID: <578C7BD0.80606@samsung.com>
+References: <1468721898.9106.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACna6rxuiXS=cBkN4b9mzSBfcMdqpENyUmQ973p7yR1S=WotWA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Felipe Balbi <balbi@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Pavel Machek <pavel@ucw.cz>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39965 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750857AbcGRGsx (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Mon, 18 Jul 2016 02:48:53 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OAI003K009EOA00@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 18 Jul 2016 07:48:50 +0100 (BST)
+In-reply-to: <1468721898.9106.1.camel@ingics.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Tony Makkiel <tony.makkiel@daqri.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-On Mon, Jul 18, 2016 at 07:57:34AM +0200, Rafa=C5=82 Mi=C5=82ecki wrote=
-:
-> On 18 July 2016 at 07:40, Peter Chen <hzpeterchen@gmail.com> wrote:
-> > On Mon, Jul 18, 2016 at 06:44:49AM +0200, Rafa=C5=82 Mi=C5=82ecki w=
-rote:
-> >> On 18 July 2016 at 04:31, Peter Chen <hzpeterchen@gmail.com> wrote=
-:
-> >> > On Fri, Jul 15, 2016 at 11:10:45PM +0200, Rafa=C5=82 Mi=C5=82eck=
-i wrote:
-> >> >> +
-> >> >> +usbport trigger:
-> >> >> +- usb-ports : List of USB ports that usbport should observed f=
-or turning on a
-> >> >> +           given LED.
-> >> >> +
-> >> >
-> >> > %s/should/should be
-> >>
-> >> Thanks.
-> >>
-> >>
-> >> >> diff --git a/drivers/leds/trigger/ledtrig-usbport.c b/drivers/l=
-eds/trigger/ledtrig-usbport.c
-> >> >> new file mode 100644
-> >> >> index 0000000..97b064c
-> >> >> --- /dev/null
-> >> >> +++ b/drivers/leds/trigger/ledtrig-usbport.c
-> >> >> @@ -0,0 +1,206 @@
-> >> >> +/*
-> >> >> + * USB port LED trigger
-> >> >> + *
-> >> >> + * Copyright (C) 2016 Rafa=C5=82 Mi=C5=82ecki <rafal.milecki@g=
-mail.com>
-> >> >> + *
-> >> >> + * This program is free software; you can redistribute it and/=
-or modify
-> >> >> + * it under the terms of the GNU General Public License as pub=
-lished by
-> >> >> + * the Free Software Foundation; either version 2 of the Licen=
-se, or (at
-> >> >> + * your option) any later version.
-> >> >> + */
-> >> >
+Hi Axel,
 
-In your COPYRIGHT, it says "or any later version". But afaik, It should
-not be on GPL v3.
+Thanks for catching this. I missed also redundant devm_kfree here.
+Would it be OK for you if I merged your cleanup with the original
+patch and added your Reviewed-by to the commit message instead?
+This driver hasn't been pushed to the mainline yet, so it would be
+nice not to introduce its original version with some shortcomings
+that need to be immediately fixed.
 
-Peter
-> >> > GPL v2 only.
-> >> >
-> >> >> +MODULE_AUTHOR("Rafa=C5=82 Mi=C5=82ecki <rafal.milecki@gmail.co=
-m>");
-> >> >> +MODULE_DESCRIPTION("USB port trigger");
-> >> >> +MODULE_LICENSE("GPL");
-> >> >
-> >> > GPL v2
-> >>
-> >> What's the reason for this? I don't have any real preference, but =
-I
-> >> never heard heard about kernel/Linux preference neither.
-> >>
-> >
-> > https://en.wikipedia.org/wiki/Linux_kernel
->=20
-> Well, Linux is released under GPL v2, I'm well aware of that. It mean=
-s
-> all its code needs to be GPL v2 compatible. There are multiple
-> compatible licenses: MIT, BSD 3-clause, BSD 2-clause. The one I used
-> allows treating code as GPL V2 as well. I could release this code
-> using MIT and it should be acceptable as well.
->=20
-> I still don't see what's wrong with the picked license.
->=20
-> --=20
-> Rafa=C5=82
+Best regards,
+Jacek Anaszewski
 
---=20
-
-Best Regards,
-Peter Chen
+On 07/17/2016 04:18 AM, Axel Lin wrote:
+> The LP3952_LED_ALL is known at compile time, so we can just store
+> leds[LP3952_LED_ALL] in struct lp3952_led_array rather than calling
+> devm_kcalloc() to allocate the memory.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>   drivers/leds/leds-lp3952.c  | 9 ---------
+>   include/linux/leds-lp3952.h | 2 +-
+>   2 files changed, 1 insertion(+), 10 deletions(-)
+>
+> diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+> index f6157c0..a73c8ff 100644
+> --- a/drivers/leds/leds-lp3952.c
+> +++ b/drivers/leds/leds-lp3952.c
+> @@ -215,21 +215,12 @@ static int lp3952_probe(struct i2c_client *client,
+>   			const struct i2c_device_id *id)
+>   {
+>   	int status;
+> -	struct lp3952_ctrl_hdl *leds;
+>   	struct lp3952_led_array *priv;
+>
+>   	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
+>   	if (!priv)
+>   		return -ENOMEM;
+>
+> -	leds = devm_kcalloc(&client->dev, LP3952_LED_ALL, sizeof(*leds),
+> -			    GFP_KERNEL);
+> -	if (!leds) {
+> -		devm_kfree(&client->dev, priv);
+> -		return -ENOMEM;
+> -	}
+> -
+> -	priv->leds = leds;
+>   	priv->client = client;
+>
+>   	priv->enable_gpio = devm_gpiod_get(&client->dev, "nrst",
+> diff --git a/include/linux/leds-lp3952.h b/include/linux/leds-lp3952.h
+> index edd5ed6..49b37ed 100644
+> --- a/include/linux/leds-lp3952.h
+> +++ b/include/linux/leds-lp3952.h
+> @@ -119,7 +119,7 @@ struct lp3952_led_array {
+>   	struct regmap *regmap;
+>   	struct i2c_client *client;
+>   	struct gpio_desc *enable_gpio;
+> -	struct lp3952_ctrl_hdl *leds;
+> +	struct lp3952_ctrl_hdl leds[LP3952_LED_ALL];
+>   };
+>
+>   #endif /* LEDS_LP3952_H_ */
+>
