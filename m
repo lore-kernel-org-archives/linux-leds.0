@@ -1,25 +1,79 @@
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 0/2] led: is31fl32xx: minor improvements
-Date: Mon, 18 Jul 2016 19:03:29 +0200
-Message-ID: <cover.1468861410.git.hns@goldelico.com>
+Subject: [PATCH v2 1/2] led: is31fl32xx: fix typo in id and match table names
+Date: Mon, 18 Jul 2016 19:03:30 +0200
+Message-ID: <c331dd80c8fe673ddcac843784bb314f9c8a5a5d.1468861410.git.hns@goldelico.com>
+References: <cover.1468861410.git.hns@goldelico.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1468861410.git.hns@goldelico.com>
+In-Reply-To: <cover.1468861410.git.hns@goldelico.com>
+References: <cover.1468861410.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, drivshin.allworx@gmail.com
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org, Andrey Utkin <andrey_utkin@fastmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>
 List-Id: linux-leds@vger.kernel.org
 
-Changes V2:
-* added tested&acked-by David Rivshin <drivshin@allworx.com> (received off-list)
-* fixes: (received off-list)
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Tested-by: David Rivshin <drivshin@allworx.com>
+Acked-by: David Rivshin <drivshin@allworx.com>
+---
+ drivers/leds/leds-is31fl32xx.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-2016-07-18 18:39:40: while developing the is31fl319x driver we found some minor issues relevant in the is31fl32xx driver.
-
-H. Nikolaus Schaller (2):
-  led: is31fl32xx: fix typo in id and match table names
-  led: is31fl32xx: define complete i2c_device_id table
-
- drivers/leds/leds-is31fl32xx.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+index c901d13..a53b71e 100644
+--- a/drivers/leds/leds-is31fl32xx.c
++++ b/drivers/leds/leds-is31fl32xx.c
+@@ -422,7 +422,7 @@ err:
+ 	return ret;
+ }
+ 
+-static const struct of_device_id of_is31fl31xx_match[] = {
++static const struct of_device_id of_is31fl32xx_match[] = {
+ 	{ .compatible = "issi,is31fl3236", .data = &is31fl3236_cdef, },
+ 	{ .compatible = "issi,is31fl3235", .data = &is31fl3235_cdef, },
+ 	{ .compatible = "issi,is31fl3218", .data = &is31fl3218_cdef, },
+@@ -432,7 +432,7 @@ static const struct of_device_id of_is31fl31xx_match[] = {
+ 	{},
+ };
+ 
+-MODULE_DEVICE_TABLE(of, of_is31fl31xx_match);
++MODULE_DEVICE_TABLE(of, of_is31fl32xx_match);
+ 
+ static int is31fl32xx_probe(struct i2c_client *client,
+ 			    const struct i2c_device_id *id)
+@@ -444,7 +444,7 @@ static int is31fl32xx_probe(struct i2c_client *client,
+ 	int count;
+ 	int ret = 0;
+ 
+-	of_dev_id = of_match_device(of_is31fl31xx_match, dev);
++	of_dev_id = of_match_device(of_is31fl32xx_match, dev);
+ 	if (!of_dev_id)
+ 		return -EINVAL;
+ 
+@@ -485,20 +485,20 @@ static int is31fl32xx_remove(struct i2c_client *client)
+  * i2c-core requires that id_table be non-NULL, even though
+  * it is not used for DeviceTree based instantiation.
+  */
+-static const struct i2c_device_id is31fl31xx_id[] = {
++static const struct i2c_device_id is31fl32xx_id[] = {
+ 	{},
+ };
+ 
+-MODULE_DEVICE_TABLE(i2c, is31fl31xx_id);
++MODULE_DEVICE_TABLE(i2c, is31fl32xx_id);
+ 
+ static struct i2c_driver is31fl32xx_driver = {
+ 	.driver = {
+ 		.name	= "is31fl32xx",
+-		.of_match_table = of_is31fl31xx_match,
++		.of_match_table = of_is31fl32xx_match,
+ 	},
+ 	.probe		= is31fl32xx_probe,
+ 	.remove		= is31fl32xx_remove,
+-	.id_table	= is31fl31xx_id,
++	.id_table	= is31fl32xx_id,
+ };
+ 
+ module_i2c_driver(is31fl32xx_driver);
 -- 
 2.7.3
