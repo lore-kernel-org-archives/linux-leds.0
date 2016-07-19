@@ -1,80 +1,84 @@
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v4 0/2] driver: leds: is31fl319x dimmable LED driver
-Date: Tue, 19 Jul 2016 10:03:30 +0200
-Message-ID: <cover.1468915411.git.hns@goldelico.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:23939 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470AbcGSIDt (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2016 04:03:49 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH v4 2/2] Bindings documentation for ISSI is31fl319x driver
+Date: Tue, 19 Jul 2016 10:03:32 +0200
+Message-ID: <c180cc66afdc0d0b40eb4cecaf15fe319875dcee.1468915412.git.hns@goldelico.com>
+References: <cover.1468915411.git.hns@goldelico.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1468915411.git.hns@goldelico.com>
+In-Reply-To: <cover.1468915411.git.hns@goldelico.com>
+References: <cover.1468915411.git.hns@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, drivshin.allworx@gmail.com
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org, Andrey Utkin <andrey_utkin@fastmail.com>
+List-Id: linux-leds@vger.kernel.org
 
-Changes V4 (mostly fixed by Andrey Utkin):
-* Fix struct is31fl319x_driver alignment
-* Rework chip matching as suggested by Jacek Anaszewski
-* Enhance macro-constants names
-* Traverse cdef.num_leds, not MAX_LEDS
-* Fix some checkpatch --strict notices
-* Fixup for MAX_LEDS -> cdef->num_leds
-* Fix lots of review notices
-    - macrodef for bits shift
-     - drop dev_err() on parse_dt() fail (thus inside parse_dt() every
-       failure must give a proper message)
-     - of_node_put() where needed
-     - rework is31fl319x_microamp_to_cs()
-     - destroy mutex properly
-* remove note that it is based on tca6507 driver (has deviated completely) (fixed by hns)
-* reject if any led current < current_min (fixed by hns)
-* simplify helper function is31fl319x_microamp_to_cs and round down (fixed by hns)
-* Drop extra empty line in Documentation/devicetree/bindings/leds/is31fl319x.txt
-* remove led-max-microamps global property in bindings documentation (fixed by hns)
-
-2016-07-08 21:49:42: Changes V3 (mostly done by Andrey Utkin):
-* general coding style improvements
-* added a mutex to properly serialize multiple calls to set_backlight
-* use regmap defaults (suggested by Jacek Anaszewski)
-* improve DT parsing (suggested by Jacek Anaszewski)
-* define dependency on REGMAP_I2C
-* minor code improvements
-
-2016-07-06 12:02:47: Changes V2:
-* suggested by David Rivshin
-	* add more "compatible" strings for other chip variants/brands
-	* renumber output <reg> values to expect a range of 1..9
-	* fixes for typos and DT example, Kconfig message
-	* fix location in Makefile and Kconfig
-	* remove some dead/not implemented code
-	* use of_property_read_string for better error handling
-	* coding style improvements
-	* use devm_led_classdev_register and simplify error path
-* suggested by Jacek Anaszewski
-	* fix more typos & writing style
-	* separate bindings document into a second patch
-	* max current property renamed and define uA instead of mA
-	* debugging message improvements
-	* remove platform data and header file completely and therefore require DT
-	* use regmap to handle caching and locking + i2c serialization
-* suggested by Rob Herring
-	* bindings documentation style improvements
-
-V1: 2016-04-18 20:43:18:
-This patch adds a driver for the is31fl3196/99 dimmable dual/triple rgb
-controller chips from ISSI.
-
-H. Nikolaus Schaller (2):
-  led: is31fl319x: 1/3/6/9-channel light effect led driver
-  Bindings documentation for ISSI is31fl319x driver
-
- .../devicetree/bindings/leds/is31fl319x.txt        |  56 +++
- drivers/leds/Kconfig                               |  12 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-is31fl319x.c                     | 442 +++++++++++++++++++++
- 4 files changed, 511 insertions(+)
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ .../devicetree/bindings/leds/is31fl319x.txt        | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
- create mode 100644 drivers/leds/leds-is31fl319x.c
 
+diff --git a/Documentation/devicetree/bindings/leds/is31fl319x.txt b/Documentation/devicetree/bindings/leds/is31fl319x.txt
+new file mode 100644
+index 0000000..c42c89c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/is31fl319x.txt
+@@ -0,0 +1,56 @@
++LEDs connected to is31fl319x LED controller chip
++
++Required properties:
++- compatible : Should be any of
++	"issi,is31fl3190"
++	"issi,is31fl3191"
++	"issi,is31fl3193"
++	"issi,is31fl3196"
++	"issi,is31fl3199"
++	"si-en,sn3199".
++- #address-cells: Must be 1.
++- #size-cells: Must be 0.
++- reg: 0x64, 0x65, 0x66, 0x67.
++
++Optional properties:
++- audio-gain-db : audio gain selection for external analog modulation input.
++	Valid values: 0 - 21, step by 3 (rounded down)
++	Default: 0
++
++Each led is represented as a sub-node of the issi,is31fl319x device.
++There can be less leds subnodes than the chip can support but not more.
++
++Required led sub-node properties:
++- reg : number of LED line
++	Valid values: 1 - number of leds supported by the chip variant.
++
++Optional led sub-node properties:
++- label : see Documentation/devicetree/bindings/leds/common.txt.
++- linux,default-trigger :
++	see Documentation/devicetree/bindings/leds/common.txt.
++- led-max-microamp : (optional)
++	Valid values: 5000 - 40000, step by 5000 (rounded down)
++	Default: 20000 (20 mA)
++	Note: a driver will take the lowest of all led limits since the
++	chip has a single global setting.
++
++Examples:
++
++fancy_leds: leds@65 {
++	compatible = "issi,is31fl3196";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x65>;
++
++	red_aux: led@1 {
++		label = "red:aux";
++		reg = <1>;
++		led-max-microamp = <10000>;
++	};
++
++	green_power: led@5 {
++		label = "green:power";
++		reg = <5>;
++		linux,default-trigger = "default-on";
++	};
++};
 -- 
 2.7.3
