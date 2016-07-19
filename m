@@ -1,75 +1,80 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 1/2] drivers: led: is31fl319x: 1/3/6/9-channel light
- effect led driver
-Date: Tue, 19 Jul 2016 08:59:40 +0200
-Message-ID: <578DCFDC.5030200@samsung.com>
-References: <cover.1468007377.git.hns@goldelico.com>
- <524f16ecba240bacf57924f43ec38404cfdcde8f.1468007377.git.hns@goldelico.com>
- <57854FB0.1080605@gmail.com>
- <71F3BE12-FFC9-4771-BF48-ABAC3ACEF4AD@goldelico.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <71F3BE12-FFC9-4771-BF48-ABAC3ACEF4AD@goldelico.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, David Rivshin <drivshin@allworx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org, Andrey Utkin <andrey_utkin@fastmail.com>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v4 0/2] driver: leds: is31fl319x dimmable LED driver
+Date: Tue, 19 Jul 2016 10:03:30 +0200
+Message-ID: <cover.1468915411.git.hns@goldelico.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:23939 "EHLO
+	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752470AbcGSIDt (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2016 04:03:49 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, drivshin.allworx@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, kernel@pyra-handheld.com, marek@goldelico.com, letux-kernel@openphoenux.org, Andrey Utkin <andrey_utkin@fastmail.com>
 
-Hi Nikolaus,
+Changes V4 (mostly fixed by Andrey Utkin):
+* Fix struct is31fl319x_driver alignment
+* Rework chip matching as suggested by Jacek Anaszewski
+* Enhance macro-constants names
+* Traverse cdef.num_leds, not MAX_LEDS
+* Fix some checkpatch --strict notices
+* Fixup for MAX_LEDS -> cdef->num_leds
+* Fix lots of review notices
+    - macrodef for bits shift
+     - drop dev_err() on parse_dt() fail (thus inside parse_dt() every
+       failure must give a proper message)
+     - of_node_put() where needed
+     - rework is31fl319x_microamp_to_cs()
+     - destroy mutex properly
+* remove note that it is based on tca6507 driver (has deviated completely) (fixed by hns)
+* reject if any led current < current_min (fixed by hns)
+* simplify helper function is31fl319x_microamp_to_cs and round down (fixed by hns)
+* Drop extra empty line in Documentation/devicetree/bindings/leds/is31fl319x.txt
+* remove led-max-microamps global property in bindings documentation (fixed by hns)
 
-On 07/15/2016 10:08 AM, H. Nikolaus Schaller wrote:
-> Hi Jacek,
->
->> Am 12.07.2016 um 22:14 schrieb Jacek Anaszewski <jacek.anaszewski@gmail.com>:
->>
->>>
->>> +
->>> +/*
->>> + * regmap is used as a cache of chip's register space,
->>> + * to avoid reading back brightness values from chip,
->>> + * which is known to hang.
->>> + */
->>> +struct is31fl319x_chip {
->>> +	struct i2c_client       *client;
->>> +	struct regmap           *regmap;
->>> +	struct mutex            lock;
->>> +	u32                     audio_gain_db;
->>> +
->>> +	struct is31fl319x_led {
->>> +		struct is31fl319x_chip  *chip;
->>> +		struct led_classdev     cdev;
->>> +		u32                     max_microamp;
->>> +		bool                    configured;
->>> +	} leds[NUM_LEDS];
->>> +};
->>> +
->>> +static const struct i2c_device_id is31fl319x_id[] = {
->>> +	{ "is31fl3190", 1 },
->>> +	{ "is31fl3191", 1 },
->>> +	{ "is31fl3193", 3 },
->>> +	{ "is31fl3196", 6 },
->>> +	{ "is31fl3199", 9 },
->>> +	{ "sn3199", 9 },
->>> +	{ }
->>> +};
->>> +MODULE_DEVICE_TABLE(i2c, is31fl319x_id);
->>
->> This is redundant - you have this info in of_is31fl319x_leds_match,
->> and you can obtain it with of_match_device().
->> Please compare drivers/leds/leds-is31fl32xx.c.
->
-> we have tried like is31fl32xx.c but it does not automatically load the driver
-> if compiled as module (like all other I2C clients do). Reason seems to
-> be that there is no i2c information in modalias database any more.
->
-> So perhaps the i31fl32 approach is also incomplete. Has it been tested
-> with loadable modules?
+2016-07-08 21:49:42: Changes V3 (mostly done by Andrey Utkin):
+* general coding style improvements
+* added a mutex to properly serialize multiple calls to set_backlight
+* use regmap defaults (suggested by Jacek Anaszewski)
+* improve DT parsing (suggested by Jacek Anaszewski)
+* define dependency on REGMAP_I2C
+* minor code improvements
 
-Having the issue clarified, please proceed accordingly in case of
-your driver.
+2016-07-06 12:02:47: Changes V2:
+* suggested by David Rivshin
+	* add more "compatible" strings for other chip variants/brands
+	* renumber output <reg> values to expect a range of 1..9
+	* fixes for typos and DT example, Kconfig message
+	* fix location in Makefile and Kconfig
+	* remove some dead/not implemented code
+	* use of_property_read_string for better error handling
+	* coding style improvements
+	* use devm_led_classdev_register and simplify error path
+* suggested by Jacek Anaszewski
+	* fix more typos & writing style
+	* separate bindings document into a second patch
+	* max current property renamed and define uA instead of mA
+	* debugging message improvements
+	* remove platform data and header file completely and therefore require DT
+	* use regmap to handle caching and locking + i2c serialization
+* suggested by Rob Herring
+	* bindings documentation style improvements
+
+V1: 2016-04-18 20:43:18:
+This patch adds a driver for the is31fl3196/99 dimmable dual/triple rgb
+controller chips from ISSI.
+
+H. Nikolaus Schaller (2):
+  led: is31fl319x: 1/3/6/9-channel light effect led driver
+  Bindings documentation for ISSI is31fl319x driver
+
+ .../devicetree/bindings/leds/is31fl319x.txt        |  56 +++
+ drivers/leds/Kconfig                               |  12 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-is31fl319x.c                     | 442 +++++++++++++++++++++
+ 4 files changed, 511 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/is31fl319x.txt
+ create mode 100644 drivers/leds/leds-is31fl319x.c
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.7.3
