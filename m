@@ -1,170 +1,42 @@
-From: Gadre Nayan <gadrenayan@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: gpio-led driver
-Date: Thu, 21 Jul 2016 11:29:01 +0530
-Message-ID: <CAKJ7aR4BxqCK6==0FOVTVVmrawXKw1Z6W5rJs5nwrNPJ+M7p_g@mail.gmail.com>
-References: <CAEwN+MA=hFvqhBsuzo2XJWgqeO6h7L126Z+YRfOZxPmdn=afCw@mail.gmail.com>
- <7B4F09F2-45F9-4E6F-81A5-955E6B1B4980@gmail.com> <CAKJ7aR6ga8b11tcQ9fPQUeW6kNYxNyz66f6+tmAFGzRr7=om+w@mail.gmail.com>
- <CAKJ7aR6BvA6i9A+ryHWwNZmsXkp3+=A2rs6GD=nQBFmRCuYBbg@mail.gmail.com>
- <CAEwN+MCSG80LATxpXRcrx7jrUOKizfibseP5sGJvkJn70ZaTFQ@mail.gmail.com> <CAEwN+MDUmadERvzt01M8D0Yi-G7mVnqBJ6ZyuDk3nJhctMJuzQ@mail.gmail.com>
+Date: Thu, 21 Jul 2016 08:40:32 +0200
+Message-ID: <57906E60.6060703@samsung.com>
+References: <CAEwN+MDByMJGjhc6x6TubV6XgubnZtTNM=jjNVVr8gsChhe9Rg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34245 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751119AbcGUF7D (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jul 2016 01:59:03 -0400
-Received: by mail-it0-f67.google.com with SMTP id u186so581887ita.1
-        for <linux-leds@vger.kernel.org>; Wed, 20 Jul 2016 22:59:02 -0700 (PDT)
-In-Reply-To: <CAEwN+MDUmadERvzt01M8D0Yi-G7mVnqBJ6ZyuDk3nJhctMJuzQ@mail.gmail.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49808 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbcGUGkh (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jul 2016 02:40:37 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OAN00GCHJVLMH10@mailout2.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 21 Jul 2016 07:40:34 +0100 (BST)
+In-reply-to: <CAEwN+MDByMJGjhc6x6TubV6XgubnZtTNM=jjNVVr8gsChhe9Rg@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Raul Piper <raulpblooper@gmail.com>
-Cc: linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
+Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-leds@vger.kernel.org
 
-Hi,
+Hi Raul,
 
-I used this:
+On 07/20/2016 01:17 PM, Raul Piper wrote:
+> Hi,
+> I wanted to know the part number for the leds-gpio.c in the
+> driver/leds folder and the device tree bindings for this driver .Can
+> some one point out to me where in Linux kernel it is?
 
-/*
-* XXX: Use a flat representation of the AM33XX interconnect.
-* The real AM33XX interconnect network is quite complex.Since
-* that will not bring real advantage to represent that in DT
-* for the moment, just use a fake OCP bus entry to represent
-* the whole bus hierarchy.
-*/
-ocp {
-          compatible = "simple-bus";
-          #address-cells = <1>;
-          #size-cells = <1>;
-           ranges;
-            ti,hwmods = "l3_main";
-           .
-           .
-           .
-          dali_gpio {
-             compatible = "arm,dali_gpio";
-             dali_TX = <9>;
-             dali_RX = <10>;
-           };
-}
+What do you mean by part number? This is generic driver for LEDs
+connected directly to a GPIO.
 
-Thanks
-Nayan Gadre.
+You can find DT documentation for it in the following location:
 
-On Thu, Jul 21, 2016 at 11:19 AM, Raul Piper <raulpblooper@gmail.com> wrote:
-> kindly cc the previous people in "To" .Sorry I missed in while replying you.
->
-> On Thu, Jul 21, 2016 at 11:17 AM, Raul Piper <raulpblooper@gmail.com> wrote:
->> HI,
->>
->> On Thu, Jul 21, 2016 at 9:43 AM, Gadre Nayan <gadrenayan@gmail.com> wrote:
->>> Hi,
->>>
->>> OF stands for open firmware, OF uses a format to represent platform
->>> information, which is called a device tree.
->>>
->>> An example of how the driver extracts information from device  tree:
->>>
->>> #if defined(CONFIG_OF)
->>> static const struct of_device_id dali_of_ids[] =
->>> {
->>>        { .compatible = "arm,dali_gpio", },
->>>        {},
->>> };
->>>
->>> MODULE_DEVICE_TABLE(of, dali_of_ids);
->>> #endif
->>>
->>> static struct platform_driver dali_driver = {
->>>         .driver = {
->>>                         .name = "dali_gpio",
->>>                         .of_match_table = of_match_ptr(dali_of_ids),
->>>         },
->>>         .probe = Dali_probe,
->>>         .remove = Dali_remove,
->>> };
->>>
->>> The driver is going to fetch information from the device tree later on
->>> (in probe) using the compatible property mentioned. So if the tree has
->>> the same compatible string then subsequent information can be obtained
->>> from that device tree node.
->>>
->>> Thanks
->>>
->> Can you please post the coresponding dt binding code?
->>
->>> On Thu, Jul 21, 2016 at 9:42 AM, Gadre Nayan <gadrenayan@gmail.com> wrote:
->>>> Hi,
->>>>
->>>> OF stands for open firmware, OF uses a format to represent platform
->>>> information, which is called a device tree.
->>>>
->>>> An example of how the driver extracts information from device  tree:
->>>>
->>>> #if defined(CONFIG_OF)
->>>> static const struct of_device_id dali_of_ids[] =
->>>> {
->>>>        { .compatible = "arm,dali_gpio", },
->>>>        {},
->>>> };
->>>>
->>>> MODULE_DEVICE_TABLE(of, dali_of_ids);
->>>> #endif
->>>>
->>>> static struct platform_driver dali_driver = {
->>>>         .driver = {
->>>>                         .name = "dali_gpio",
->>>>                         .of_match_table = of_match_ptr(dali_of_ids),
->>>>         },
->>>>         .probe = Dali_probe,
->>>>         .remove = Dali_remove,
->>>> };
->>>>
->>>> The driver is going to fetch information from the device tree later on
->>>> (in probe) using the compatible property mentioned. So if the tree has
->>>> the same compatible string then subsequent information can be obtained
->>>> from that device tree node.
->>>>
->>>> Thanks
->>>> Nayan Gadre
->>>>
->>>> On Wed, Jul 20, 2016 at 8:30 PM, Anish Kumar
->>>> <anish198519851985@gmail.com> wrote:
->>>>>
->>>>>
->>>>> On Jul 20, 2016, at 4:15 AM, Raul Piper <raulpblooper@gmail.com> wrote:
->>>>>
->>>>> Hi,
->>>>> I wanted to know the part number
->>>>>
->>>>>
->>>>> What is part number?
->>>>>
->>>>> for the leds-gpio.c in the driver/leds folder and the device tree bindings
->>>>> for this driver .Can some one point out to me where in Linux kernel it is?
->>>>>
->>>>> Also why below line has been used.Is it mandatory?
->>>>> ...
->>>>> .of_match_table = of_gpio_leds_match,
->>>>>
->>>>>
->>>>> This is needed when you are using device tree for getting the board settings
->>>>> but you can also do the same without this as well. Read up on device tree in
->>>>> kernel Documentation folder.
->>>>>
->>>>> },
->>>>>
->>>>> thanks in advance ,
->>>>> Rp
->>>>>
->>>>> _______________________________________________
->>>>> Kernelnewbies mailing list
->>>>> Kernelnewbies@kernelnewbies.org
->>>>> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
->>>>>
->>>>>
->>>>> _______________________________________________
->>>>> Kernelnewbies mailing list
->>>>> Kernelnewbies@kernelnewbies.org
->>>>> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
->>>>>
+Documentation/devicetree/bindings/leds/leds-gpio.txt
+
+-- 
+Best regards,
+Jacek Anaszewski
