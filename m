@@ -1,41 +1,109 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: gpio-led driver
-Date: Thu, 21 Jul 2016 08:40:32 +0200
-Message-ID: <57906E60.6060703@samsung.com>
-References: <CAEwN+MDByMJGjhc6x6TubV6XgubnZtTNM=jjNVVr8gsChhe9Rg@mail.gmail.com>
+Subject: Re: [PATCH] leds/trigger/cpu: move from CPU_STARTING to ONLINE level
+Date: Thu, 21 Jul 2016 08:48:49 +0200
+Message-ID: <57907051.5090200@samsung.com>
+References: <1469028295-14702-1-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49808 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbcGUGkh (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jul 2016 02:40:37 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OAN00GCHJVLMH10@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 21 Jul 2016 07:40:34 +0100 (BST)
-In-reply-to: <CAEwN+MDByMJGjhc6x6TubV6XgubnZtTNM=jjNVVr8gsChhe9Rg@mail.gmail.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59483 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917AbcGUGsy (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jul 2016 02:48:54 -0400
+In-reply-to: <1469028295-14702-1-git-send-email-bigeasy@linutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Raul Piper <raulpblooper@gmail.com>
-Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-leds@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Zijlstra <peterz@infradead.org>, Richard Purdie <rpurdie@rpsys.net>, Thomas Gleixner <tglx@linutronix.de>, linux-leds@vger.kernel.org, rt@linutronix.de
 
-Hi Raul,
+Hi Sebastian,
 
-On 07/20/2016 01:17 PM, Raul Piper wrote:
-> Hi,
-> I wanted to know the part number for the leds-gpio.c in the
-> driver/leds folder and the device tree bindings for this driver .Can
-> some one point out to me where in Linux kernel it is?
+On 07/20/2016 05:24 PM, Sebastian Andrzej Siewior wrote:
+> There is no need the ledtriger to be called *that* early in the hotplug
+> process (+ with disabled interrupts). As explained by Jacek Anaszewski [0]
+> there is no need for it.
+> Therefore this patch moves it to the ONLINE/PREPARE_DOWN level using the
+> dynamic registration for the id.
+>
+> [0] https://lkml.kernel.org/r/578C92BC.2070603@samsung.com
+>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-leds@vger.kernel.org
+> Cc: rt@linutronix.de
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>   drivers/leds/trigger/ledtrig-cpu.c | 16 ++++++++--------
+>   include/linux/cpuhotplug.h         |  1 -
+>   2 files changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
+> index 4a6a182d0a88..22f0634dd3fa 100644
+> --- a/drivers/leds/trigger/ledtrig-cpu.c
+> +++ b/drivers/leds/trigger/ledtrig-cpu.c
+> @@ -92,13 +92,13 @@ static struct syscore_ops ledtrig_cpu_syscore_ops = {
+>   	.resume		= ledtrig_cpu_syscore_resume,
+>   };
+>
+> -static int ledtrig_starting_cpu(unsigned int cpu)
+> +static int ledtrig_online_cpu(unsigned int cpu)
+>   {
+>   	ledtrig_cpu(CPU_LED_START);
+>   	return 0;
+>   }
+>
+> -static int ledtrig_dying_cpu(unsigned int cpu)
+> +static int ledtrig_prepare_down_cpu(unsigned int cpu)
+>   {
+>   	ledtrig_cpu(CPU_LED_STOP);
+>   	return 0;
+> @@ -107,6 +107,7 @@ static int ledtrig_dying_cpu(unsigned int cpu)
+>   static int __init ledtrig_cpu_init(void)
+>   {
+>   	int cpu;
+> +	int ret;
+>
+>   	/* Supports up to 9999 cpu cores */
+>   	BUILD_BUG_ON(CONFIG_NR_CPUS > 9999);
+> @@ -126,12 +127,11 @@ static int __init ledtrig_cpu_init(void)
+>
+>   	register_syscore_ops(&ledtrig_cpu_syscore_ops);
+>
+> -	/*
+> -	 * FIXME: Why needs this to happen in the interrupt disabled
+> -	 * low level bringup phase of a cpu?
+> -	 */
+> -	cpuhp_setup_state(CPUHP_AP_LEDTRIG_STARTING, "AP_LEDTRIG_STARTING",
+> -			  ledtrig_starting_cpu, ledtrig_dying_cpu);
+> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "AP_LEDTRIG_STARTING",
+> +				ledtrig_online_cpu, ledtrig_prepare_down_cpu);
+> +	if (ret < 0)
+> +		pr_err("CPU hotplug notifier for ledtrig-cpu could not be registered: %d\n",
+> +		       ret);
+>
+>   	pr_info("ledtrig-cpu: registered to indicate activity on CPUs\n");
+>
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 09ef54bcba39..282800b42627 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -65,7 +65,6 @@ enum cpuhp_state {
+>   	CPUHP_AP_ARM_CORESIGHT_STARTING,
+>   	CPUHP_AP_ARM_CORESIGHT4_STARTING,
+>   	CPUHP_AP_ARM64_ISNDEP_STARTING,
+> -	CPUHP_AP_LEDTRIG_STARTING,
+>   	CPUHP_AP_SMPCFD_DYING,
+>   	CPUHP_AP_X86_TBOOT_DYING,
+>   	CPUHP_AP_NOTIFY_STARTING,
+>
 
-What do you mean by part number? This is generic driver for LEDs
-connected directly to a GPIO.
-
-You can find DT documentation for it in the following location:
-
-Documentation/devicetree/bindings/leds/leds-gpio.txt
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
 -- 
 Best regards,
