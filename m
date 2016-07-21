@@ -1,97 +1,95 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] leds/trigger/cpu: move from CPU_STARTING to ONLINE level
-Date: Wed, 20 Jul 2016 17:24:55 +0200
-Message-ID: <1469028295-14702-1-git-send-email-bigeasy@linutronix.de>
+From: Gadre Nayan <gadrenayan@gmail.com>
+Subject: Re: gpio-led driver
+Date: Thu, 21 Jul 2016 09:42:18 +0530
+Message-ID: <CAKJ7aR6ga8b11tcQ9fPQUeW6kNYxNyz66f6+tmAFGzRr7=om+w@mail.gmail.com>
+References: <CAEwN+MA=hFvqhBsuzo2XJWgqeO6h7L126Z+YRfOZxPmdn=afCw@mail.gmail.com>
+ <7B4F09F2-45F9-4E6F-81A5-955E6B1B4980@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:59564 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753271AbcGTPZd (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 20 Jul 2016 11:25:33 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34389 "EHLO
+	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbcGUEMT (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 21 Jul 2016 00:12:19 -0400
+Received: by mail-it0-f67.google.com with SMTP id u186so474729ita.1
+        for <linux-leds@vger.kernel.org>; Wed, 20 Jul 2016 21:12:19 -0700 (PDT)
+In-Reply-To: <7B4F09F2-45F9-4E6F-81A5-955E6B1B4980@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Zijlstra <peterz@infradead.org>, Richard Purdie <rpurdie@rpsys.net>, Thomas Gleixner <tglx@linutronix.de>, linux-leds@vger.kernel.org, rt@linutronix.de
+To: Anish Kumar <anish198519851985@gmail.com>
+Cc: Raul Piper <raulpblooper@gmail.com>, linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
 
-There is no need the ledtriger to be called *that* early in the hotplug
-process (+ with disabled interrupts). As explained by Jacek Anaszewski [0]
-there is no need for it.
-Therefore this patch moves it to the ONLINE/PREPARE_DOWN level using the
-dynamic registration for the id.
+Hi,
 
-[0] https://lkml.kernel.org/r/578C92BC.2070603@samsung.com
+OF stands for open firmware, OF uses a format to represent platform
+information, which is called a device tree.
 
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-leds@vger.kernel.org
-Cc: rt@linutronix.de
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/leds/trigger/ledtrig-cpu.c | 16 ++++++++--------
- include/linux/cpuhotplug.h         |  1 -
- 2 files changed, 8 insertions(+), 9 deletions(-)
+An example of how the driver extracts information from device  tree:
 
-diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
-index 4a6a182d0a88..22f0634dd3fa 100644
---- a/drivers/leds/trigger/ledtrig-cpu.c
-+++ b/drivers/leds/trigger/ledtrig-cpu.c
-@@ -92,13 +92,13 @@ static struct syscore_ops ledtrig_cpu_syscore_ops = {
- 	.resume		= ledtrig_cpu_syscore_resume,
- };
- 
--static int ledtrig_starting_cpu(unsigned int cpu)
-+static int ledtrig_online_cpu(unsigned int cpu)
- {
- 	ledtrig_cpu(CPU_LED_START);
- 	return 0;
- }
- 
--static int ledtrig_dying_cpu(unsigned int cpu)
-+static int ledtrig_prepare_down_cpu(unsigned int cpu)
- {
- 	ledtrig_cpu(CPU_LED_STOP);
- 	return 0;
-@@ -107,6 +107,7 @@ static int ledtrig_dying_cpu(unsigned int cpu)
- static int __init ledtrig_cpu_init(void)
- {
- 	int cpu;
-+	int ret;
- 
- 	/* Supports up to 9999 cpu cores */
- 	BUILD_BUG_ON(CONFIG_NR_CPUS > 9999);
-@@ -126,12 +127,11 @@ static int __init ledtrig_cpu_init(void)
- 
- 	register_syscore_ops(&ledtrig_cpu_syscore_ops);
- 
--	/*
--	 * FIXME: Why needs this to happen in the interrupt disabled
--	 * low level bringup phase of a cpu?
--	 */
--	cpuhp_setup_state(CPUHP_AP_LEDTRIG_STARTING, "AP_LEDTRIG_STARTING",
--			  ledtrig_starting_cpu, ledtrig_dying_cpu);
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "AP_LEDTRIG_STARTING",
-+				ledtrig_online_cpu, ledtrig_prepare_down_cpu);
-+	if (ret < 0)
-+		pr_err("CPU hotplug notifier for ledtrig-cpu could not be registered: %d\n",
-+		       ret);
- 
- 	pr_info("ledtrig-cpu: registered to indicate activity on CPUs\n");
- 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 09ef54bcba39..282800b42627 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -65,7 +65,6 @@ enum cpuhp_state {
- 	CPUHP_AP_ARM_CORESIGHT_STARTING,
- 	CPUHP_AP_ARM_CORESIGHT4_STARTING,
- 	CPUHP_AP_ARM64_ISNDEP_STARTING,
--	CPUHP_AP_LEDTRIG_STARTING,
- 	CPUHP_AP_SMPCFD_DYING,
- 	CPUHP_AP_X86_TBOOT_DYING,
- 	CPUHP_AP_NOTIFY_STARTING,
--- 
-2.8.1
+#if defined(CONFIG_OF)
+static const struct of_device_id dali_of_ids[] =
+{
+       { .compatible = "arm,dali_gpio", },
+       {},
+};
+
+MODULE_DEVICE_TABLE(of, dali_of_ids);
+#endif
+
+static struct platform_driver dali_driver = {
+        .driver = {
+                        .name = "dali_gpio",
+                        .of_match_table = of_match_ptr(dali_of_ids),
+        },
+        .probe = Dali_probe,
+        .remove = Dali_remove,
+};
+
+The driver is going to fetch information from the device tree later on
+(in probe) using the compatible property mentioned. So if the tree has
+the same compatible string then subsequent information can be obtained
+from that device tree node.
+
+Thanks
+Nayan Gadre
+
+On Wed, Jul 20, 2016 at 8:30 PM, Anish Kumar
+<anish198519851985@gmail.com> wrote:
+>
+>
+> On Jul 20, 2016, at 4:15 AM, Raul Piper <raulpblooper@gmail.com> wrote:
+>
+> Hi,
+> I wanted to know the part number
+>
+>
+> What is part number?
+>
+> for the leds-gpio.c in the driver/leds folder and the device tree bindings
+> for this driver .Can some one point out to me where in Linux kernel it is?
+>
+> Also why below line has been used.Is it mandatory?
+> ...
+> .of_match_table = of_gpio_leds_match,
+>
+>
+> This is needed when you are using device tree for getting the board settings
+> but you can also do the same without this as well. Read up on device tree in
+> kernel Documentation folder.
+>
+> },
+>
+> thanks in advance ,
+> Rp
+>
+> _______________________________________________
+> Kernelnewbies mailing list
+> Kernelnewbies@kernelnewbies.org
+> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+>
+>
+> _______________________________________________
+> Kernelnewbies mailing list
+> Kernelnewbies@kernelnewbies.org
+> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+>
