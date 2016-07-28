@@ -1,26 +1,28 @@
-From: "sales15" <sales15@a.mrylw.net>
-Subject: Take the initiative to ensure that your orders continue
-Date: Wed, 27 Jul 2016 05:10:56 +0800
-Message-ID: <201607270510565275566@a.mrylw.net>
-Reply-To: 3183346925@qq.com
+From: Raul Piper <raulpblooper@gmail.com>
+Subject: Sample led driver dts file
+Date: Thu, 28 Jul 2016 15:33:55 +0530
+Message-ID: <CAEwN+MBTMi29n30vC6SM=-_Db3WXxv_w81yrYZf0+Rcn=74eKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="GB2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from [112.213.127.64] ([112.213.127.64]:33249 "EHLO a.mryLw.net"
-	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S932318AbcGZVUr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-	Tue, 26 Jul 2016 17:20:47 -0400
-Received: from MXIBRO4ZONSE9EK (unknown [61.242.59.204])
-	by a.mryLw.net (Postfix) with ESMTPA id 56C7E22916
-	for <linux-leds@vger.kernel.org>; Wed, 27 Jul 2016 12:57:59 +0800 (CST)
+Received: from mail-io0-f179.google.com ([209.85.223.179]:33913 "EHLO
+	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752056AbcG1KD4 (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 28 Jul 2016 06:03:56 -0400
+Received: by mail-io0-f179.google.com with SMTP id q83so95351076iod.1
+        for <linux-leds@vger.kernel.org>; Thu, 28 Jul 2016 03:03:56 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds <linux-leds@vger.kernel.org>
+To: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-leds@vger.kernel.org
 
-0MLQzc3iw7PNxbbT1+m9qC3KxtTasdjQ0CANCg0Kz+vBy73iuPy24Nb3tq/Kvc3iw7O/qreiv827
-p6Osx+u80yBRUS0tLS0tLT4gMzI0NjA3NTcwNyAg1rG909Hp1qS/zbun0MXPoiDKx7fx1ebKtaGi
-09DQpyANCtKyv8m8086i0MW6xaO6c3Vuc2Vzb2Z0c2FtDQoNCsjn09Cyu9Do0qq0y9DFz6KjrMfr
-u9i4tKGwsrvQ6NKqobGjrM7Sw8e9q7vhvavE+rXE08rP5L340NDGwbHOo6yyu9TZuPjE+rei0MW1
-xKGjDQoNCg0K16Ojusn60uLQy8Kho6E=
+Hi,
+Can any one please send me the sample led driver dts file.I tried the
+sample from the /documentation/devicetree/bindings/leds/<dts file> but
+I am getting some parsing error from the dtc compiler.
+is "#" required while including the .dtsi file inside the dts while
+referring any include files.
+Also can we dynamically buil teh dts file and push/copy it to kernel?
+Reboot required?
+
+Thanks in advance ,
+Rp
