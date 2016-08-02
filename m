@@ -1,11 +1,11 @@
 From: Baole Ni <baolex.ni@intel.com>
-Subject: [PATCH 0306/1285] Replace numeric parameter like 0444 with macro
-Date: Tue,  2 Aug 2016 18:58:36 +0800
-Message-ID: <20160802105836.1867-1-baolex.ni@intel.com>
+Subject: [PATCH 0304/1285] Replace numeric parameter like 0444 with macro
+Date: Tue,  2 Aug 2016 18:58:25 +0800
+Message-ID: <20160802105825.1728-1-baolex.ni@intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: rpurdie@rpsys.net, j.anaszewski@samsung.com, hal.rosenstock@gmail.com, dledford@redhat.com, sean.hefty@intel.com, bp@alien8.de
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, fabio.baltieri@gmail.com, u.kleine-koenig@pengutronix.de, chuansheng.liu@intel.com, baolex.ni@intel.com
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com, chuansheng.liu@intel.com, baolex.ni@intel.com
 List-Id: linux-leds@vger.kernel.org
 
 I find that the developers often just specified the numeric value
@@ -17,27 +17,39 @@ thus, I suggest replacing the numeric parameter with the macro.
 Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
 Signed-off-by: Baole Ni <baolex.ni@intel.com>
 ---
- drivers/leds/trigger/ledtrig-oneshot.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/leds/trigger/ledtrig-gpio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
-index b8ea9f0..052c805 100644
---- a/drivers/leds/trigger/ledtrig-oneshot.c
-+++ b/drivers/leds/trigger/ledtrig-oneshot.c
-@@ -117,10 +117,10 @@ static ssize_t led_delay_off_store(struct device *dev,
- 	return size;
+diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
+index 51288a4..6fc7ec0 100644
+--- a/drivers/leds/trigger/ledtrig-gpio.c
++++ b/drivers/leds/trigger/ledtrig-gpio.c
+@@ -90,7 +90,7 @@ static ssize_t gpio_trig_brightness_store(struct device *dev,
+ 
+ 	return n;
  }
+-static DEVICE_ATTR(desired_brightness, 0644, gpio_trig_brightness_show,
++static DEVICE_ATTR(desired_brightness, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, gpio_trig_brightness_show,
+ 		gpio_trig_brightness_store);
  
--static DEVICE_ATTR(delay_on, 0644, led_delay_on_show, led_delay_on_store);
--static DEVICE_ATTR(delay_off, 0644, led_delay_off_show, led_delay_off_store);
--static DEVICE_ATTR(invert, 0644, led_invert_show, led_invert_store);
--static DEVICE_ATTR(shot, 0200, NULL, led_shot);
-+static DEVICE_ATTR(delay_on, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, led_delay_on_show, led_delay_on_store);
-+static DEVICE_ATTR(delay_off, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, led_delay_off_show, led_delay_off_store);
-+static DEVICE_ATTR(invert, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, led_invert_show, led_invert_store);
-+static DEVICE_ATTR(shot, S_IWUSR, NULL, led_shot);
+ static ssize_t gpio_trig_inverted_show(struct device *dev,
+@@ -124,7 +124,7 @@ static ssize_t gpio_trig_inverted_store(struct device *dev,
  
- static void oneshot_trig_activate(struct led_classdev *led_cdev)
+ 	return n;
+ }
+-static DEVICE_ATTR(inverted, 0644, gpio_trig_inverted_show,
++static DEVICE_ATTR(inverted, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, gpio_trig_inverted_show,
+ 		gpio_trig_inverted_store);
+ 
+ static ssize_t gpio_trig_gpio_show(struct device *dev,
+@@ -174,7 +174,7 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
+ 
+ 	return ret ? ret : n;
+ }
+-static DEVICE_ATTR(gpio, 0644, gpio_trig_gpio_show, gpio_trig_gpio_store);
++static DEVICE_ATTR(gpio, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, gpio_trig_gpio_show, gpio_trig_gpio_store);
+ 
+ static void gpio_trig_activate(struct led_classdev *led)
  {
 -- 
 2.9.2
