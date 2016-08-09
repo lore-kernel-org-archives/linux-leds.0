@@ -1,90 +1,145 @@
 From: Paul Burton <paul.burton@imgtec.com>
-Subject: [PATCH 00/20] MIPS: SEAD3 device tree conversion
-Date: Tue, 9 Aug 2016 13:35:25 +0100
-Message-ID: <20160809123546.10190-1-paul.burton@imgtec.com>
+Subject: [PATCH 11/20] leds: Remove SEAD3 driver
+Date: Tue, 9 Aug 2016 13:35:36 +0100
+Message-ID: <20160809123546.10190-12-paul.burton@imgtec.com>
+References: <20160809123546.10190-1-paul.burton@imgtec.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:6073 "EHLO
-	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466AbcHIMgQ (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Aug 2016 08:36:16 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160809123546.10190-1-paul.burton@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@imgtec.com>, Ondrej Zary <linux@rainbow-software.org>, linux-fbdev@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Kefeng Wang <wangkefeng.wang@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, "Maciej W. Rozycki" <macro@linux-mips.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Simon Horman <horms+renesas@>
+Cc: Paul Burton <paul.burton@imgtec.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-Although the SEAD3 board has already made some minimal use of device
-tree, until now most peripherals have been left probed by platform code.
+SEAD3 is now using the generic syscon & regmap based register-bit-led
+driver, so remove the unused custom SEAD3 LED driver.
 
-This series converts all SEAD3 peripherals to instead be probed from
-device tree. The amount of platform code is significantly reduced
-leaving SEAD3 primed & ready for a wider task of genericising the
-kernel.
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+---
 
-Applies atop v4.8-rc1.
-
-Paul Burton (20):
-  MIPS: SEAD3: Split obj-y entries across lines
-  MIPS: SEAD3: Probe interrupt controllers using DT
-  MIPS: SEAD3: Probe UARTs using DT
-  MIPS: SEAD3: Use generic ns16550a earlycon support
-  MIPS: SEAD3: Probe ethernet controller using DT
-  usb: host: ehci-sead3: Support probing using device tree
-  MIPS: SEAD3: Probe EHCI controller using DT
-  usb: host: ehci-sead3: Remove non-DT probe code
-  SEAD3: Probe parallel flash via DT
-  MIPS: SEAD3: Use register-bit-led driver via DT for LEDs
-  leds: Remove SEAD3 driver
-  MIPS: SEAD3: Reset via generic syscon-reboot driver & DT
-  MIPS: SEAD3: Use generic restart-poweroff driver
-  MIPS: SEAD3: Parse memsize in DT shim
-  MIPS: SEAD3: Drop use of cobalt fbdev driver
-  fbdev: cobalt_lcdfb: Drop SEAD3 support
-  dt-bindings: img-ascii-lcd: Document a binding for simple ASCII LCDs
-  auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays
-  MIPS: SEAD3: Use img-ascii-lcd driver
-  MIPS: SEAD3: Remove custom read_persistent_clock
-
- .../bindings/auxdisplay/img-ascii-lcd.txt          |  17 +
- MAINTAINERS                                        |   6 +
- arch/mips/Kconfig                                  |   1 -
- arch/mips/boot/dts/mti/sead3.dts                   | 228 +++++++++++
- arch/mips/configs/sead3_defconfig                  |   8 +
- arch/mips/include/asm/mach-sead3/sead3-dtshim.h    |  29 ++
- arch/mips/include/asm/mips-boards/sead3int.h       |  32 --
- arch/mips/mti-sead3/Makefile                       |  10 +-
- arch/mips/mti-sead3/sead3-console.c                |  46 ---
- arch/mips/mti-sead3/sead3-display.c                |  77 ----
- arch/mips/mti-sead3/sead3-dtshim.c                 | 291 ++++++++++++++
- arch/mips/mti-sead3/sead3-init.c                   |  52 ---
- arch/mips/mti-sead3/sead3-int.c                    |  27 +-
- arch/mips/mti-sead3/sead3-lcd.c                    |  43 --
- arch/mips/mti-sead3/sead3-platform.c               | 223 -----------
- arch/mips/mti-sead3/sead3-reset.c                  |  40 --
- arch/mips/mti-sead3/sead3-setup.c                  |  77 +---
- arch/mips/mti-sead3/sead3-time.c                   |   8 -
- drivers/auxdisplay/Kconfig                         |   9 +
- drivers/auxdisplay/Makefile                        |   1 +
- drivers/auxdisplay/img-ascii-lcd.c                 | 443 +++++++++++++++++++++
- drivers/leds/Kconfig                               |  10 -
- drivers/leds/Makefile                              |   1 -
- drivers/leds/leds-sead3.c                          |  78 ----
- drivers/usb/host/ehci-sead3.c                      |  21 +-
- drivers/video/fbdev/Kconfig                        |   2 +-
- drivers/video/fbdev/cobalt_lcdfb.c                 |  42 --
- 27 files changed, 1061 insertions(+), 761 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/auxdisplay/img-ascii-lcd.txt
- create mode 100644 arch/mips/include/asm/mach-sead3/sead3-dtshim.h
- delete mode 100644 arch/mips/include/asm/mips-boards/sead3int.h
- delete mode 100644 arch/mips/mti-sead3/sead3-console.c
- delete mode 100644 arch/mips/mti-sead3/sead3-display.c
- create mode 100644 arch/mips/mti-sead3/sead3-dtshim.c
- delete mode 100644 arch/mips/mti-sead3/sead3-lcd.c
- delete mode 100644 arch/mips/mti-sead3/sead3-platform.c
- delete mode 100644 arch/mips/mti-sead3/sead3-reset.c
- create mode 100644 drivers/auxdisplay/img-ascii-lcd.c
+ drivers/leds/Kconfig      | 10 ------
+ drivers/leds/Makefile     |  1 -
+ drivers/leds/leds-sead3.c | 78 -----------------------------------------------
+ 3 files changed, 89 deletions(-)
  delete mode 100644 drivers/leds/leds-sead3.c
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 9dcc9b1..025de7e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -574,16 +574,6 @@ config LEDS_KTD2692
+ 
+ 	  Say Y to enable this driver.
+ 
+-config LEDS_SEAD3
+-	tristate "LED support for the MIPS SEAD 3 board"
+-	depends on LEDS_CLASS && MIPS_SEAD3
+-	help
+-	  Say Y here to include support for the FLED and PLED LEDs on SEAD3 eval
+-	  boards.
+-
+-	  This driver can also be built as a module. If so the module
+-	  will be called leds-sead3.
+-
+ config LEDS_IS31FL32XX
+ 	tristate "LED support for ISSI IS31FL32XX I2C LED controller family"
+ 	depends on LEDS_CLASS && I2C && OF
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 0684c86..da594cf 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -66,7 +66,6 @@ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+-obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
+ obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+ 
+ # LED SPI Drivers
+diff --git a/drivers/leds/leds-sead3.c b/drivers/leds/leds-sead3.c
+deleted file mode 100644
+index eb97a32..0000000
+--- a/drivers/leds/leds-sead3.c
++++ /dev/null
+@@ -1,78 +0,0 @@
+-/*
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+- * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
+- * Copyright (C) 2015 Imagination Technologies, Inc.
+- */
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/leds.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-
+-#include <asm/mips-boards/sead3-addr.h>
+-
+-static void sead3_pled_set(struct led_classdev *led_cdev,
+-		enum led_brightness value)
+-{
+-	writel(value, (void __iomem *)SEAD3_CPLD_P_LED);
+-}
+-
+-static void sead3_fled_set(struct led_classdev *led_cdev,
+-		enum led_brightness value)
+-{
+-	writel(value, (void __iomem *)SEAD3_CPLD_F_LED);
+-}
+-
+-static struct led_classdev sead3_pled = {
+-	.name		= "sead3::pled",
+-	.brightness_set = sead3_pled_set,
+-	.flags		= LED_CORE_SUSPENDRESUME,
+-};
+-
+-static struct led_classdev sead3_fled = {
+-	.name		= "sead3::fled",
+-	.brightness_set = sead3_fled_set,
+-	.flags		= LED_CORE_SUSPENDRESUME,
+-};
+-
+-static int sead3_led_probe(struct platform_device *pdev)
+-{
+-	int ret;
+-
+-	ret = led_classdev_register(&pdev->dev, &sead3_pled);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = led_classdev_register(&pdev->dev, &sead3_fled);
+-	if (ret < 0)
+-		led_classdev_unregister(&sead3_pled);
+-
+-	return ret;
+-}
+-
+-static int sead3_led_remove(struct platform_device *pdev)
+-{
+-	led_classdev_unregister(&sead3_pled);
+-	led_classdev_unregister(&sead3_fled);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver sead3_led_driver = {
+-	.probe		= sead3_led_probe,
+-	.remove		= sead3_led_remove,
+-	.driver		= {
+-		.name		= "sead3-led",
+-	},
+-};
+-
+-module_platform_driver(sead3_led_driver);
+-
+-MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
+-MODULE_DESCRIPTION("SEAD3 LED driver");
+-MODULE_LICENSE("GPL");
 -- 
 2.9.2
