@@ -1,276 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2 v3] leds: add PM8058 LEDs driver
-Date: Mon,  8 Aug 2016 20:11:51 +0200
-Message-ID: <1470679911-13669-2-git-send-email-linus.walleij@linaro.org>
-References: <1470679911-13669-1-git-send-email-linus.walleij@linaro.org>
+From: Paul Burton <paul.burton@imgtec.com>
+Subject: [PATCH 00/20] MIPS: SEAD3 device tree conversion
+Date: Tue, 9 Aug 2016 13:35:25 +0100
+Message-ID: <20160809123546.10190-1-paul.burton@imgtec.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:33126 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752132AbcHHSMC (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Mon, 8 Aug 2016 14:12:02 -0400
-Received: by mail-wm0-f51.google.com with SMTP id p129so22439207wmp.0
-        for <linux-leds@vger.kernel.org>; Mon, 08 Aug 2016 11:12:01 -0700 (PDT)
-In-Reply-To: <1470679911-13669-1-git-send-email-linus.walleij@linaro.org>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:6073 "EHLO
+	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752466AbcHIMgQ (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 9 Aug 2016 08:36:16 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@imgtec.com>, Ondrej Zary <linux@rainbow-software.org>, linux-fbdev@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Kefeng Wang <wangkefeng.wang@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, "Maciej W. Rozycki" <macro@linux-mips.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Simon Horman <horms+renesas@>
 
-This adds a driver for the six PM8058 LEDs, three ordinary LEDs,
-two "flash" LEDs and one "keypad" LED.
+Although the SEAD3 board has already made some minimal use of device
+tree, until now most peripherals have been left probed by platform code.
 
-The "keypad" and "flash" LEDs are not really hard-wired to these
-usecases: for example on the APQ8060 Dragonboard, the "keypad"
-LED is instead used to drive an IR LED used for the proximity
-sensor. The "flash" LEDs are just ordinary high-current LED
-drivers.
+This series converts all SEAD3 peripherals to instead be probed from
+device tree. The amount of platform code is significantly reduced
+leaving SEAD3 primed & ready for a wider task of genericising the
+kernel.
 
-Cc: linux-arm-msm@vger.kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- No changes, just resending.
-ChangeLog v1->v2:
-- Arrange #includes in alphabetical order
-- Use #define'd mask and shift and abstain from magic values
-- Drop surplus break; statements in switch clause
-- Put in the missed terminator {} in the OF match table
-- Use the devm_led_classdev_register() call to get managed resources
-- As a result drop the whole redundant .remove() clause
----
- drivers/leds/Kconfig       |   8 ++
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-pm8058.c | 188 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 197 insertions(+)
- create mode 100644 drivers/leds/leds-pm8058.c
+Applies atop v4.8-rc1.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 9dcc9b13d495..f499db5a8552 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -631,6 +631,14 @@ config LEDS_VERSATILE
- 	  This option enabled support for the LEDs on the ARM Versatile
- 	  and RealView boards. Say Y to enabled these.
- 
-+config LEDS_PM8058
-+	tristate "LED Support for the Qualcomm PM8058 PMIC"
-+	depends on MFD_PM8921_CORE
-+	depends on LEDS_CLASS
-+	help
-+	  Choose this option if you want to use the LED drivers in
-+	  the Qualcomm PM8058 PMIC.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 0684c865a1c0..220860c970ca 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
- obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
- obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
- obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-+obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
-new file mode 100644
-index 000000000000..70a6a48496cc
---- /dev/null
-+++ b/drivers/leds/leds-pm8058.c
-@@ -0,0 +1,188 @@
-+/* Copyright (c) 2010, 2011, 2016 The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define PM8058_LED_TYPE_COMMON	0x00
-+#define PM8058_LED_TYPE_KEYPAD	0x01
-+#define PM8058_LED_TYPE_FLASH	0x02
-+
-+#define PM8058_LED_TYPE_COMMON_MASK	0xf8
-+#define PM8058_LED_TYPE_KEYPAD_MASK	0xf0
-+#define PM8058_LED_TYPE_COMMON_SHIFT	3
-+#define PM8058_LED_TYPE_KEYPAD_SHIFT	4
-+
-+struct pm8058_led {
-+	struct regmap *map;
-+	unsigned int reg;
-+	u32 ledtype;
-+	struct led_classdev cdev;
-+};
-+
-+static void pm8058_led_set(struct led_classdev *cled,
-+	enum led_brightness value)
-+{
-+	struct pm8058_led *led;
-+	int ret = 0;
-+
-+	led = container_of(cled, struct pm8058_led, cdev);
-+	switch (led->ledtype) {
-+	case PM8058_LED_TYPE_COMMON:
-+		ret = regmap_update_bits(led->map, led->reg,
-+					 PM8058_LED_TYPE_COMMON_MASK,
-+					 value << PM8058_LED_TYPE_COMMON_SHIFT);
-+		break;
-+	case PM8058_LED_TYPE_KEYPAD:
-+	case PM8058_LED_TYPE_FLASH:
-+		ret = regmap_update_bits(led->map, led->reg,
-+					 PM8058_LED_TYPE_KEYPAD_MASK,
-+					 value << PM8058_LED_TYPE_KEYPAD_SHIFT);
-+		break;
-+	default:
-+		break;
-+	}
-+	if (ret)
-+		pr_err("Failed to set LED brightness\n");
-+}
-+
-+static enum led_brightness pm8058_led_get(struct led_classdev *cled)
-+{
-+	struct pm8058_led *led;
-+	int ret;
-+	u32 val;
-+
-+	led = container_of(cled, struct pm8058_led, cdev);
-+	switch (led->ledtype) {
-+	case PM8058_LED_TYPE_COMMON:
-+		ret = regmap_read(led->map, led->reg, &val);
-+		if (ret) {
-+			pr_err("Failed to get LED brightness\n");
-+			return LED_OFF;
-+		}
-+		return ((val & PM8058_LED_TYPE_COMMON_MASK) >>
-+			PM8058_LED_TYPE_COMMON_SHIFT);
-+	case PM8058_LED_TYPE_KEYPAD:
-+	case PM8058_LED_TYPE_FLASH:
-+		ret = regmap_read(led->map, led->reg, &val);
-+		if (ret) {
-+			pr_err("Failed to get LED brightness\n");
-+			return LED_OFF;
-+		}
-+		return ((val & PM8058_LED_TYPE_KEYPAD_MASK) >>
-+			PM8058_LED_TYPE_KEYPAD_SHIFT);
-+	default:
-+		break;
-+	}
-+
-+	return LED_OFF;
-+}
-+
-+static const struct of_device_id pm8058_leds_id_table[] = {
-+	{
-+		.compatible = "qcom,pm8058-led",
-+		.data = (void *)PM8058_LED_TYPE_COMMON
-+	},
-+	{
-+		.compatible = "qcom,pm8058-keypad-led",
-+		.data = (void *)PM8058_LED_TYPE_KEYPAD
-+	},
-+	{
-+		.compatible = "qcom,pm8058-flash-led",
-+		.data = (void *)PM8058_LED_TYPE_FLASH
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, pm8058_leds_id_table);
-+
-+static int pm8058_led_probe(struct platform_device *pdev)
-+{
-+	struct pm8058_led *led;
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+	struct regmap *map;
-+	const struct of_device_id *match;
-+	const char *state;
-+
-+	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
-+	if (led == NULL)
-+		return -ENOMEM;
-+
-+	match = of_match_node(pm8058_leds_id_table, np);
-+	if (!match)
-+		return -ENXIO;
-+	led->ledtype = (u32)match->data;
-+
-+	map = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!map) {
-+		dev_err(&pdev->dev, "Parent regmap unavailable.\n");
-+		return -ENXIO;
-+	}
-+	led->map = map;
-+
-+	ret = of_property_read_u32(np, "reg", &led->reg);
-+	if (ret) {
-+		dev_err(&pdev->dev, "no register offset specified\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Use label else node name */
-+	led->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
-+	led->cdev.default_trigger =
-+		of_get_property(np, "linux,default-trigger", NULL);
-+	led->cdev.brightness_set = pm8058_led_set;
-+	led->cdev.brightness_get = pm8058_led_get;
-+	led->cdev.max_brightness = 15;
-+
-+	state = of_get_property(np, "default-state", NULL);
-+	if (state) {
-+		if (!strcmp(state, "keep")) {
-+			led->cdev.brightness = pm8058_led_get(&led->cdev);
-+		} else if (!strcmp(state, "on")) {
-+			led->cdev.brightness = LED_FULL;
-+			pm8058_led_set(&led->cdev, LED_FULL);
-+		} else {
-+			led->cdev.brightness = LED_OFF;
-+			pm8058_led_set(&led->cdev, LED_OFF);
-+		}
-+	}
-+	led->cdev.flags	= LED_CORE_SUSPENDRESUME;
-+
-+	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to register led \"%s\"\n",
-+			led->cdev.name);
-+		return ret;
-+	}
-+	platform_set_drvdata(pdev, led);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver pm8058_led_driver = {
-+	.probe		= pm8058_led_probe,
-+	.driver		= {
-+		.name	= "pm8058-leds",
-+		.of_match_table = pm8058_leds_id_table,
-+	},
-+};
-+module_platform_driver(pm8058_led_driver);
-+
-+MODULE_DESCRIPTION("PM8058 LEDs driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:pm8058-leds");
+Paul Burton (20):
+  MIPS: SEAD3: Split obj-y entries across lines
+  MIPS: SEAD3: Probe interrupt controllers using DT
+  MIPS: SEAD3: Probe UARTs using DT
+  MIPS: SEAD3: Use generic ns16550a earlycon support
+  MIPS: SEAD3: Probe ethernet controller using DT
+  usb: host: ehci-sead3: Support probing using device tree
+  MIPS: SEAD3: Probe EHCI controller using DT
+  usb: host: ehci-sead3: Remove non-DT probe code
+  SEAD3: Probe parallel flash via DT
+  MIPS: SEAD3: Use register-bit-led driver via DT for LEDs
+  leds: Remove SEAD3 driver
+  MIPS: SEAD3: Reset via generic syscon-reboot driver & DT
+  MIPS: SEAD3: Use generic restart-poweroff driver
+  MIPS: SEAD3: Parse memsize in DT shim
+  MIPS: SEAD3: Drop use of cobalt fbdev driver
+  fbdev: cobalt_lcdfb: Drop SEAD3 support
+  dt-bindings: img-ascii-lcd: Document a binding for simple ASCII LCDs
+  auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays
+  MIPS: SEAD3: Use img-ascii-lcd driver
+  MIPS: SEAD3: Remove custom read_persistent_clock
+
+ .../bindings/auxdisplay/img-ascii-lcd.txt          |  17 +
+ MAINTAINERS                                        |   6 +
+ arch/mips/Kconfig                                  |   1 -
+ arch/mips/boot/dts/mti/sead3.dts                   | 228 +++++++++++
+ arch/mips/configs/sead3_defconfig                  |   8 +
+ arch/mips/include/asm/mach-sead3/sead3-dtshim.h    |  29 ++
+ arch/mips/include/asm/mips-boards/sead3int.h       |  32 --
+ arch/mips/mti-sead3/Makefile                       |  10 +-
+ arch/mips/mti-sead3/sead3-console.c                |  46 ---
+ arch/mips/mti-sead3/sead3-display.c                |  77 ----
+ arch/mips/mti-sead3/sead3-dtshim.c                 | 291 ++++++++++++++
+ arch/mips/mti-sead3/sead3-init.c                   |  52 ---
+ arch/mips/mti-sead3/sead3-int.c                    |  27 +-
+ arch/mips/mti-sead3/sead3-lcd.c                    |  43 --
+ arch/mips/mti-sead3/sead3-platform.c               | 223 -----------
+ arch/mips/mti-sead3/sead3-reset.c                  |  40 --
+ arch/mips/mti-sead3/sead3-setup.c                  |  77 +---
+ arch/mips/mti-sead3/sead3-time.c                   |   8 -
+ drivers/auxdisplay/Kconfig                         |   9 +
+ drivers/auxdisplay/Makefile                        |   1 +
+ drivers/auxdisplay/img-ascii-lcd.c                 | 443 +++++++++++++++++++++
+ drivers/leds/Kconfig                               |  10 -
+ drivers/leds/Makefile                              |   1 -
+ drivers/leds/leds-sead3.c                          |  78 ----
+ drivers/usb/host/ehci-sead3.c                      |  21 +-
+ drivers/video/fbdev/Kconfig                        |   2 +-
+ drivers/video/fbdev/cobalt_lcdfb.c                 |  42 --
+ 27 files changed, 1061 insertions(+), 761 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/auxdisplay/img-ascii-lcd.txt
+ create mode 100644 arch/mips/include/asm/mach-sead3/sead3-dtshim.h
+ delete mode 100644 arch/mips/include/asm/mips-boards/sead3int.h
+ delete mode 100644 arch/mips/mti-sead3/sead3-console.c
+ delete mode 100644 arch/mips/mti-sead3/sead3-display.c
+ create mode 100644 arch/mips/mti-sead3/sead3-dtshim.c
+ delete mode 100644 arch/mips/mti-sead3/sead3-lcd.c
+ delete mode 100644 arch/mips/mti-sead3/sead3-platform.c
+ delete mode 100644 arch/mips/mti-sead3/sead3-reset.c
+ create mode 100644 drivers/auxdisplay/img-ascii-lcd.c
+ delete mode 100644 drivers/leds/leds-sead3.c
+
 -- 
-2.7.4
+2.9.2
