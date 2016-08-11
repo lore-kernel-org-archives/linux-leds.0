@@ -1,41 +1,34 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2 v3] leds: pm8058: add device tree bindings
-Date: Wed, 10 Aug 2016 15:23:04 -0500
-Message-ID: <20160810202304.GA32491@rob-hp-laptop>
-References: <1470679911-13669-1-git-send-email-linus.walleij@linaro.org>
+From: Raul Piper <raulpblooper@gmail.com>
+Subject: Possible Sysfs for led class drivers
+Date: Thu, 11 Aug 2016 18:57:58 +0530
+Message-ID: <CAEwN+MBZqpKT5U+K93SdDQe4mCno3qULHy6=OZfjGcnTuUuKpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35433 "EHLO
-	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933743AbcHJUXG (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Wed, 10 Aug 2016 16:23:06 -0400
-Content-Disposition: inline
-In-Reply-To: <1470679911-13669-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:35120 "EHLO
+	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932222AbcHKN2F (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Thu, 11 Aug 2016 09:28:05 -0400
+Received: by mail-io0-f181.google.com with SMTP id m101so5851977ioi.2
+        for <linux-leds@vger.kernel.org>; Thu, 11 Aug 2016 06:28:04 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
 
-On Mon, Aug 08, 2016 at 08:11:50PM +0200, Linus Walleij wrote:
-> This adds the device tree bindings for the PM8058 LEDs.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: Andy Gross <andy.gross@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v2->v3:
-> - Rename the keypad LED in the example from "keypad" to
->   "pm8050:white:keypad"
-> ChangeLog v1->v2:
-> - Fix some spelling mistakes
-> - Reference common bindings directly without any local descriptions
-> ---
->  .../devicetree/bindings/leds/leds-pm8058.txt       | 67 ++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8058.txt
+Hi,
+I have scanned through some of the led sysfs interfaces of my hardware
+boards inside the /sys/class/leds and found these
+brightness,
+max_brightness
+trigger
+uevent
+invert
+sata
 
-Acked-by: Rob Herring <robh@kernel.org>
+I want to know can we add our own custom sysfs interface ?
+Does there exists a default list of interfaces provided by the led
+class subsystem? like brightness, max_brightness,trigger,uevent ,etc??
+
+Thanks in advance !
+Rgds
+Rp
