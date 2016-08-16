@@ -1,39 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2 v4] leds: pm8058: add device tree bindings
-Date: Tue, 16 Aug 2016 21:38:17 +0200
-Message-ID: <CACRpkdZoi1_xUzfA-AUB3uV-UvhC+51qrMPYd+01-ROyUg9v4w@mail.gmail.com>
-References: <1471339502-26123-1-git-send-email-linus.walleij@linaro.org> <20160816161452.GM26240@tuxbot>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20160816161452.GM26240@tuxbot>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] ARM: dts: add PM8058 LEDs to the APQ8060 Dragonboard
+Date: Tue, 16 Aug 2016 21:45:59 +0200
+Message-ID: <1471376759-9561-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35226 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751676AbcHPTqS (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 16 Aug 2016 15:46:18 -0400
+Received: by mail-wm0-f47.google.com with SMTP id f65so160678834wmi.0
+        for <linux-leds@vger.kernel.org>; Tue, 16 Aug 2016 12:46:17 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Andy Gross <andy.gross@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Tue, Aug 16, 2016 at 6:14 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Tue 16 Aug 02:25 PDT 2016, Linus Walleij wrote:
->
->> This adds the device tree bindings for the PM8058 LEDs.
->>
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-arm-msm@vger.kernel.org
->> Cc: Andy Gross <andy.gross@linaro.org>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> ChangeLog v3->v4:
->> - No changes, just reposting with the series.
->
-> You forgot to carry these:
->
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+This adds the PM8058 LEDs as used in the platform.
 
-Sorry! I bet Jacek can add them when applying.
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-leds@vger.kernel.org
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+These DT bindings have been ACKed by Rob Herring and Bjorn Andersson
+so I think the patch is safe to merge to the Qcom tree.
+---
+ arch/arm/boot/dts/qcom-apq8060-dragonboard.dts | 39 ++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
+index 0abc93e5bb00..b0800b988174 100644
+--- a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
++++ b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
+@@ -239,6 +239,45 @@
+ 						};
+ 					};
+ 				};
++
++				led@48 {
++					/*
++					 * The keypad LED @0x48 is routed to
++					 * the sensor board where it is
++					 * connected to an infrared LED
++					 * SFH4650 (60mW, @850nm) next to the
++					 * ambient light and proximity sensor
++					 * Capella Microsystems CM3605.
++					 */
++					compatible = "qcom,pm8058-keypad-led";
++					reg = <0x48>;
++					label = "proximity0";
++					default-state = "off";
++				};
++				led@131 {
++					compatible = "qcom,pm8058-led";
++					reg = <0x131>;
++					label = "pm8058:red";
++					default-state = "off";
++				};
++				led@132 {
++					/*
++					 * This is actually green too on my
++					 * board, but documented as yellow.
++					 */
++					compatible = "qcom,pm8058-led";
++					reg = <0x132>;
++					label = "pm8058:yellow";
++					default-state = "off";
++					linux,default-trigger = "mmc0";
++				};
++				led@133 {
++					compatible = "qcom,pm8058-led";
++					reg = <0x133>;
++					label = "pm8058:green";
++					default-state = "on";
++					linux,default-trigger = "heartbeat";
++				};
+ 			};
+ 		};
+ 
+-- 
+2.7.4
