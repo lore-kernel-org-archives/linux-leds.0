@@ -1,66 +1,66 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: make triggers explicitly non-modular
-Date: Tue, 16 Aug 2016 22:39:48 +0200
-Message-ID: <57B37A14.7050409@gmail.com>
-References: <20160815205448.20843-1-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] leds: do not overflow sysfs buffer in led_trigger_show
+Date: Tue, 16 Aug 2016 22:39:56 +0200
+Message-ID: <57B37A1C.2070707@gmail.com>
+References: <1471299614-10415-1-git-send-email-zach.brown@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160815205448.20843-1-paul.gortmaker@windriver.com>
+In-Reply-To: <1471299614-10415-1-git-send-email-zach.brown@ni.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+To: Zach Brown <zach.brown@ni.com>, rpurdie@rpsys.net, j.anaszewski@samsung.com
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, nathan.sullivan@ni.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Paul,
+Hi Zach,
 
-On 08/15/2016 10:54 PM, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
+On 08/16/2016 12:20 AM, Zach Brown wrote:
+> From: Nathan Sullivan <nathan.sullivan@ni.com>
 >
-> drivers/leds/trigger/Kconfig:menuconfig LEDS_TRIGGERS
-> drivers/leds/trigger/Kconfig:   bool "LED Trigger support"
+> Per the documentation, use scnprintf instead of sprintf to ensure there
+> is never more than PAGE_SIZE bytes of trigger names put into the
+> buffer.
 >
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the couple traces of modular infrastructure use, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> We don't replace module.h with init.h since the file doesn't need that.
-> However it does use EXPORT_SYMBOL, so we add the export.h header.
->
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
+> Signed-off-by: Zach Brown <zach.brown@ni.com>
 > ---
->   drivers/leds/led-triggers.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+>   drivers/leds/led-triggers.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
 >
 > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index c92702a684ce..f0b3d101994b 100644
+> index c92702a..8668538 100644
 > --- a/drivers/leds/led-triggers.c
 > +++ b/drivers/leds/led-triggers.c
-> @@ -11,7 +11,7 @@
->    *
->    */
+> @@ -81,21 +81,23 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+>   	down_read(&led_cdev->trigger_lock);
 >
-> -#include <linux/module.h>
-> +#include <linux/export.h>
->   #include <linux/kernel.h>
->   #include <linux/list.h>
->   #include <linux/spinlock.h>
-> @@ -357,7 +357,3 @@ void led_trigger_unregister_simple(struct led_trigger *trig)
->   	kfree(trig);
+>   	if (!led_cdev->trigger)
+> -		len += sprintf(buf+len, "[none] ");
+> +		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
+>   	else
+> -		len += sprintf(buf+len, "none ");
+> +		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
+>
+>   	list_for_each_entry(trig, &trigger_list, next_trig) {
+>   		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
+>   							trig->name))
+> -			len += sprintf(buf+len, "[%s] ", trig->name);
+> +			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
+> +					 trig->name);
+>   		else
+> -			len += sprintf(buf+len, "%s ", trig->name);
+> +			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
+> +					 trig->name);
+>   	}
+>   	up_read(&led_cdev->trigger_lock);
+>   	up_read(&triggers_list_lock);
+>
+> -	len += sprintf(len+buf, "\n");
+> +	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
+>   	return len;
 >   }
->   EXPORT_SYMBOL_GPL(led_trigger_unregister_simple);
-> -
-> -MODULE_AUTHOR("Richard Purdie");
-> -MODULE_LICENSE("GPL");
-> -MODULE_DESCRIPTION("LED Triggers Core");
+>   EXPORT_SYMBOL_GPL(led_trigger_show);
 >
 
 Thanks for the patch, applied.
