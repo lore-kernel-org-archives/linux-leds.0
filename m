@@ -1,69 +1,53 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: do not overflow sysfs buffer in led_trigger_show
-Date: Tue, 16 Aug 2016 22:39:56 +0200
-Message-ID: <57B37A1C.2070707@gmail.com>
-References: <1471299614-10415-1-git-send-email-zach.brown@ni.com>
+Subject: Re: [PATCH 1/2 v4] leds: pm8058: add device tree bindings
+Date: Tue, 16 Aug 2016 22:40:27 +0200
+Message-ID: <57B37A3B.7030009@gmail.com>
+References: <1471339502-26123-1-git-send-email-linus.walleij@linaro.org>
+ <20160816161452.GM26240@tuxbot>
+ <CACRpkdZoi1_xUzfA-AUB3uV-UvhC+51qrMPYd+01-ROyUg9v4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1471299614-10415-1-git-send-email-zach.brown@ni.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zach Brown <zach.brown@ni.com>, rpurdie@rpsys.net, j.anaszewski@samsung.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, nathan.sullivan@ni.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35515 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753265AbcHPUlF (ORCPT
+	<rfc822;linux-leds@vger.kernel.org>); Tue, 16 Aug 2016 16:41:05 -0400
+In-Reply-To: <CACRpkdZoi1_xUzfA-AUB3uV-UvhC+51qrMPYd+01-ROyUg9v4w@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Zach,
+Hi Linus, Bjorn,
 
-On 08/16/2016 12:20 AM, Zach Brown wrote:
-> From: Nathan Sullivan <nathan.sullivan@ni.com>
+On 08/16/2016 09:38 PM, Linus Walleij wrote:
+> On Tue, Aug 16, 2016 at 6:14 PM, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+>> On Tue 16 Aug 02:25 PDT 2016, Linus Walleij wrote:
+>>
+>>> This adds the device tree bindings for the PM8058 LEDs.
+>>>
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: linux-arm-msm@vger.kernel.org
+>>> Cc: Andy Gross <andy.gross@linaro.org>
+>>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>>> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>> ---
+>>> ChangeLog v3->v4:
+>>> - No changes, just reposting with the series.
+>>
+>> You forgot to carry these:
+>>
+>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Acked-by: Rob Herring <robh@kernel.org>
 >
-> Per the documentation, use scnprintf instead of sprintf to ensure there
-> is never more than PAGE_SIZE bytes of trigger names put into the
-> buffer.
->
-> Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
-> Signed-off-by: Zach Brown <zach.brown@ni.com>
-> ---
->   drivers/leds/led-triggers.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index c92702a..8668538 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -81,21 +81,23 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
->   	down_read(&led_cdev->trigger_lock);
->
->   	if (!led_cdev->trigger)
-> -		len += sprintf(buf+len, "[none] ");
-> +		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
->   	else
-> -		len += sprintf(buf+len, "none ");
-> +		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
->
->   	list_for_each_entry(trig, &trigger_list, next_trig) {
->   		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
->   							trig->name))
-> -			len += sprintf(buf+len, "[%s] ", trig->name);
-> +			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
-> +					 trig->name);
->   		else
-> -			len += sprintf(buf+len, "%s ", trig->name);
-> +			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
-> +					 trig->name);
->   	}
->   	up_read(&led_cdev->trigger_lock);
->   	up_read(&triggers_list_lock);
->
-> -	len += sprintf(len+buf, "\n");
-> +	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
->   	return len;
->   }
->   EXPORT_SYMBOL_GPL(led_trigger_show);
->
+> Sorry! I bet Jacek can add them when applying.
 
-Thanks for the patch, applied.
+Sure, no problem. Bjorn - thanks for your commitment.
+Patch set applied to the for-next branch of linux-leds.git.
+Thanks for pushing this, Linus.
 
 -- 
 Best regards,
