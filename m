@@ -1,45 +1,124 @@
-From: Raul Piper <raulpblooper@gmail.com>
-Subject: devm_gpiod_get usage to get the gpio num
-Date: Tue, 16 Aug 2016 15:58:53 +0530
-Message-ID: <CAEwN+MDkyOGCGrnWiPqSjxA1meSxJduGc1DCyH2dzOA=w4hLTQ@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2 v4] leds: pm8058: add device tree bindings
+Date: Tue, 16 Aug 2016 09:14:52 -0700
+Message-ID: <20160816161452.GM26240@tuxbot>
+References: <1471339502-26123-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36039 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752223AbcHPK2z (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 16 Aug 2016 06:28:55 -0400
-Received: by mail-it0-f68.google.com with SMTP id j124so4998708ith.3
-        for <linux-leds@vger.kernel.org>; Tue, 16 Aug 2016 03:28:55 -0700 (PDT)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471339502-26123-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
 
-Hi,
- devm_gpiod_get method takes 3 params after kernel 3.16 .
+On Tue 16 Aug 02:25 PDT 2016, Linus Walleij wrote:
 
-struct gpio_desc *gpiod;
+> This adds the device tree bindings for the PM8058 LEDs.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: Andy Gross <andy.gross@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v3->v4:
+> - No changes, just reposting with the series.
 
-gpiod = devm_gpiod_get(dev, "data-pin",GPIOD_OUT_HIGH)
+You forgot to carry these:
 
-where data-pin defintion in the device tree is :
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 
-data-pin = <&gpio2 51 GPIO_ACTIVE_HIGH>;
+Regards,
+Bjorn
 
-But this on inserting ht module givees "failed to parse DT (-2)
-
-GPIOD_OUT_HIGH is one of the gpiod flags :
-
-  enum gpiod_flags {
-         GPIOD_ASIS      = 0,
-          GPIOD_IN        = GPIOD_FLAGS_BIT_DIR_SET,
-        GPIOD_OUT_LOW   = GPIOD_FLAGS_BIT_DIR_SET |
-GPIOD_FLAGS_BIT_DIR_OUT,
-          GPIOD_OUT_HIGH  = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
-                           GPIOD_FLAGS_BIT_DIR_VAL,
- };
-
-what is wrong here?I just want to extract the gpio number for the dt parser.
-
-Thanks and Rgds,
-Rp
+> ChangeLog v2->v3:
+> - Rename the keypad LED in the example from "keypad" to
+>   "pm8050:white:keypad"
+> ChangeLog v1->v2:
+> - Fix some spelling mistakes
+> - Reference common bindings directly without any local descriptions
+> ---
+>  .../devicetree/bindings/leds/leds-pm8058.txt       | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pm8058.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pm8058.txt b/Documentation/devicetree/bindings/leds/leds-pm8058.txt
+> new file mode 100644
+> index 000000000000..89584c49aab2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-pm8058.txt
+> @@ -0,0 +1,67 @@
+> +Qualcomm PM8058 LED driver
+> +
+> +The Qualcomm PM8058 is a multi-functional device which contains
+> +an LED driver block for up to six LEDs: three normal LEDs, two
+> +"flash" LEDs and one "keypad backlight" LED. The names are
+> +quoted because sometimes these LED drivers are used for wildly
+> +different things than flash or keypad backlight: their names
+> +are more of a suggestion than a hard-wired usecase.
+> +
+> +Hardware-wise the different LEDs support slightly different
+> +output currents. The "flash" LEDs do not need to charge nor
+> +do they support external triggers. They are just powerful LED
+> +drivers.
+> +
+> +The LEDs appear as children to the PM8058 device, with the
+> +proper compatible string. For the PM8058 bindings see:
+> +mfd/qcom-pm8xxx.txt.
+> +
+> +Each LED is represented as a sub-node of the syscon device. Each
+> +node's name represents the name of the corresponding LED.
+> +
+> +LED sub-node properties:
+> +
+> +Required properties:
+> +- compatible: one of
+> +  "qcom,pm8058-led" (for the normal LEDs at 0x131, 0x132 and 0x133)
+> +  "qcom,pm8058-keypad-led" (for the "keypad" LED at 0x48)
+> +  "qcom,pm8058-flash-led" (for the "flash" LEDs at 0x49 and 0xFB)
+> +
+> +Optional properties:
+> +- label: see Documentation/devicetree/bindings/leds/common.txt
+> +- default-state: see Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +
+> +qcom,ssbi@500000 {
+> +	pmicintc: pmic@0 {
+> +		compatible = "qcom,pm8058";
+> +		led@48 {
+> +			compatible = "qcom,pm8058-keypad-led";
+> +			reg = <0x48>;
+> +			label = "pm8050:white:keypad";
+> +			default-state = "off";
+> +		};
+> +		led@131 {
+> +			compatible = "qcom,pm8058-led";
+> +			reg = <0x131>;
+> +			label = "pm8058:red";
+> +			default-state = "off";
+> +		};
+> +		led@132 {
+> +			compatible = "qcom,pm8058-led";
+> +			reg = <0x132>;
+> +			label = "pm8058:yellow";
+> +			default-state = "off";
+> +			linux,default-trigger = "mmc0";
+> +		};
+> +		led@133 {
+> +			compatible = "qcom,pm8058-led";
+> +			reg = <0x133>;
+> +			label = "pm8058:green";
+> +			default-state = "on";
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> -- 
+> 2.7.4
+> 
