@@ -1,84 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] ARM: dts: add PM8058 LEDs to the APQ8060 Dragonboard
-Date: Tue, 16 Aug 2016 21:45:59 +0200
-Message-ID: <1471376759-9561-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:35226 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751676AbcHPTqS (ORCPT
-	<rfc822;linux-leds@vger.kernel.org>); Tue, 16 Aug 2016 15:46:18 -0400
-Received: by mail-wm0-f47.google.com with SMTP id f65so160678834wmi.0
-        for <linux-leds@vger.kernel.org>; Tue, 16 Aug 2016 12:46:17 -0700 (PDT)
-Sender: linux-leds-owner@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: make triggers explicitly non-modular
+Date: Tue, 16 Aug 2016 22:39:48 +0200
+Message-ID: <57B37A14.7050409@gmail.com>
+References: <20160815205448.20843-1-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160815205448.20843-1-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Andy Gross <andy.gross@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-This adds the PM8058 LEDs as used in the platform.
+Hi Paul,
 
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-leds@vger.kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-These DT bindings have been ACKed by Rob Herring and Bjorn Andersson
-so I think the patch is safe to merge to the Qcom tree.
----
- arch/arm/boot/dts/qcom-apq8060-dragonboard.dts | 39 ++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+On 08/15/2016 10:54 PM, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+>
+> drivers/leds/trigger/Kconfig:menuconfig LEDS_TRIGGERS
+> drivers/leds/trigger/Kconfig:   bool "LED Trigger support"
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> We don't replace module.h with init.h since the file doesn't need that.
+> However it does use EXPORT_SYMBOL, so we add the export.h header.
+>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>   drivers/leds/led-triggers.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index c92702a684ce..f0b3d101994b 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -11,7 +11,7 @@
+>    *
+>    */
+>
+> -#include <linux/module.h>
+> +#include <linux/export.h>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+>   #include <linux/spinlock.h>
+> @@ -357,7 +357,3 @@ void led_trigger_unregister_simple(struct led_trigger *trig)
+>   	kfree(trig);
+>   }
+>   EXPORT_SYMBOL_GPL(led_trigger_unregister_simple);
+> -
+> -MODULE_AUTHOR("Richard Purdie");
+> -MODULE_LICENSE("GPL");
+> -MODULE_DESCRIPTION("LED Triggers Core");
+>
 
-diff --git a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-index 0abc93e5bb00..b0800b988174 100644
---- a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-+++ b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-@@ -239,6 +239,45 @@
- 						};
- 					};
- 				};
-+
-+				led@48 {
-+					/*
-+					 * The keypad LED @0x48 is routed to
-+					 * the sensor board where it is
-+					 * connected to an infrared LED
-+					 * SFH4650 (60mW, @850nm) next to the
-+					 * ambient light and proximity sensor
-+					 * Capella Microsystems CM3605.
-+					 */
-+					compatible = "qcom,pm8058-keypad-led";
-+					reg = <0x48>;
-+					label = "proximity0";
-+					default-state = "off";
-+				};
-+				led@131 {
-+					compatible = "qcom,pm8058-led";
-+					reg = <0x131>;
-+					label = "pm8058:red";
-+					default-state = "off";
-+				};
-+				led@132 {
-+					/*
-+					 * This is actually green too on my
-+					 * board, but documented as yellow.
-+					 */
-+					compatible = "qcom,pm8058-led";
-+					reg = <0x132>;
-+					label = "pm8058:yellow";
-+					default-state = "off";
-+					linux,default-trigger = "mmc0";
-+				};
-+				led@133 {
-+					compatible = "qcom,pm8058-led";
-+					reg = <0x133>;
-+					label = "pm8058:green";
-+					default-state = "on";
-+					linux,default-trigger = "heartbeat";
-+				};
- 			};
- 		};
- 
+Thanks for the patch, applied.
+
 -- 
-2.7.4
+Best regards,
+Jacek Anaszewski
