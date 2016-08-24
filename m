@@ -1,388 +1,115 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Subject: [PATCH V3] leds: trigger: Introduce an USB port trigger
-Date: Wed, 24 Aug 2016 00:03:29 +0200
-Message-ID: <20160823220404.9887-1-zajec5@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Felipe Balbi <balbi@kernel.org>
-Cc: Peter Chen <hzpeterchen@gmail.com>, linux-usb@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+From: mcgrof@kernel.org
+Subject: [PATCH v3 4/5] firmware: add usermode helper DECLARE_FW_LOADER_USER() annotation
+Date: Tue, 23 Aug 2016 17:45:06 -0700
+Message-ID: <1471999507-913-5-git-send-email-mcgrof@kernel.org>
+References: <1466117661-22075-1-git-send-email-mcgrof@kernel.org>
+ <1471999507-913-1-git-send-email-mcgrof@kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58664 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753048AbcHXAre (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 23 Aug 2016 20:47:34 -0400
+In-Reply-To: <1471999507-913-1-git-send-email-mcgrof@kernel.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: ming.lei@canonical.com, akpm@linux-foundation.org, gregkh@linuxfoundation.org
+Cc: daniel.wagner@bmw-carit.de, mmarek@suse.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, zohar@linux.vnet.ibm.com, broonie@kernel.org, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, teg@jklm.no, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-leds@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 
-This commit adds a new trigger responsible for turning on LED when USB
-device gets connected to the specified USB port. This can can useful for
-various home routers that have USB port(s) and a proper LED telling user
-a device is connected.
+We need to ensure no one else adds *anything* that requests the
+usermode helper without really meaning it, to police it we now have
+an SmPL script but no formal annotation is present to help us ensure
+the call has been validated.
 
-The trigger gets its documentation file but basically it just requires
-specifying USB port in a Linux format (e.g. echo 1-1 > new_port).
+Add a dummy DECLARE_FW_LOADER_USER() which we can use to annotate
+validated calls and also clearly outline the documentation over where
+the required usermode helper is documented.
 
-During work on this trigger there was a plan to add DT bindings for it,
-but there wasn't an agreement on the format yet. This can be worked on
-later, a sysfs interface is needed anyway for platforms not using DT.
+All other future callers can be reported via 0-day by making use of the
+Coccinelle SmPL patch.
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
+Cc: Abhay Salunke <Abhay_Salunke@dell.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
-V2: Trying to add DT support, idea postponed as it will take more time
-    to discuss the bindings.
-V3: Fix typos in commit and Documentation (thanks Jacek!)
-    Use "ports" sysfs file for adding and removing USB ports (thx Jacek)
-    Check if there is USB device connected after adding new USB port
-    Fix memory leak or two
+ drivers/firmware/dell_rbu.c                            | 1 +
+ drivers/leds/leds-lp55xx-common.c                      | 1 +
+ include/linux/firmware.h                               | 7 +++++++
+ scripts/coccinelle/api/request_firmware-usermode.cocci | 9 ++++++++-
+ 4 files changed, 17 insertions(+), 1 deletion(-)
 
-Felipe: I'd like to ask for your Ack before having this patch pushed.
----
- Documentation/leds/ledtrig-usbport.txt |  49 +++++++
- drivers/leds/trigger/Kconfig           |   8 ++
- drivers/leds/trigger/Makefile          |   1 +
- drivers/leds/trigger/ledtrig-usbport.c | 253 +++++++++++++++++++++++++++++++++
- 4 files changed, 311 insertions(+)
- create mode 100644 Documentation/leds/ledtrig-usbport.txt
- create mode 100644 drivers/leds/trigger/ledtrig-usbport.c
-
-diff --git a/Documentation/leds/ledtrig-usbport.txt b/Documentation/leds/ledtrig-usbport.txt
-new file mode 100644
-index 0000000..fa42227
---- /dev/null
-+++ b/Documentation/leds/ledtrig-usbport.txt
-@@ -0,0 +1,49 @@
-+USB port LED trigger
-+====================
-+
-+This LED trigger can be used for signalling to the user a presence of USB device
-+in a given port. It simply turns on LED when device appears and turns it off
-+when it disappears.
-+
-+It requires specifying a list of USB ports that should be observed. Used format
-+matches Linux kernel format and consists of a root hub number and a hub port
-+separated by a dash (e.g. 3-1).
-+
-+It is also possible to handle devices with internal hubs (that are always
-+connected to the root hub). User can simply specify internal hub ports then
-+(e.g. 1-1.1, 1-1.2, etc.).
-+
-+Please note that this trigger allows assigning multiple USB ports to a single
-+LED. This can be useful in two cases:
-+
-+1) Device with single USB LED and few physical ports
-+
-+In such a case LED will be turned on as long as there is at least one connected
-+USB device.
-+
-+2) Device with a physical port handled by few controllers
-+
-+Some devices have e.g. one controller per PHY standard. E.g. USB 3.0 physical
-+port may be handled by ohci-platform, ehci-platform and xhci-hcd. If there is
-+only one LED user will most likely want to assign ports from all 3 hubs.
-+
-+
-+This trigger can be activated from user space on led class devices as shown
-+below:
-+
-+  echo usbport > trigger
-+
-+This adds the following sysfs attributes to the LED:
-+
-+  ports - Reading it lists all USB ports assigned to the trigger. Writing USB
-+	  port number to it will make this driver start observing it. It's also
-+	  possible to remove USB port from observable list by writing it with a
-+	  "-" prefix.
-+
-+Example use-case:
-+
-+  echo usbport > trigger
-+  echo 4-1 > ports
-+  echo 2-1 > ports
-+  echo -4-1 > ports
-+  cat ports
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 3f9ddb9..bdd6fd2 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -126,4 +126,12 @@ config LEDS_TRIGGER_PANIC
- 	  a different trigger.
- 	  If unsure, say Y.
+diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
+index 2f452f1f7c8a..53b3869c0900 100644
+--- a/drivers/firmware/dell_rbu.c
++++ b/drivers/firmware/dell_rbu.c
+@@ -586,6 +586,7 @@ static ssize_t read_rbu_image_type(struct file *filp, struct kobject *kobj,
+ 	return size;
+ }
  
-+config LEDS_TRIGGER_USBPORT
-+	tristate "USB port LED trigger"
-+	depends on LEDS_TRIGGERS && USB
-+	help
-+	  This allows LEDs to be controlled by USB events. Enabling this option
-+	  allows specifying list of USB ports that should turn on LED when some
-+	  USB device gets connected.
-+
- endif # LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index a72c43c..56e1741 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
- obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
- obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
- obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
-+obj-$(CONFIG_LEDS_TRIGGER_USBPORT)	+= ledtrig-usbport.o
-diff --git a/drivers/leds/trigger/ledtrig-usbport.c b/drivers/leds/trigger/ledtrig-usbport.c
-new file mode 100644
-index 0000000..7f5237c
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-usbport.c
-@@ -0,0 +1,253 @@
++DECLARE_FW_LOADER_USER("Documentation/dell_rbu.txt");
+ static ssize_t write_rbu_image_type(struct file *filp, struct kobject *kobj,
+ 				    struct bin_attribute *bin_attr,
+ 				    char *buffer, loff_t pos, size_t count)
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 5377f22ff994..ce1d087979a1 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -219,6 +219,7 @@ out:
+ 	release_firmware(chip->fw);
+ }
+ 
++DECLARE_FW_LOADER_USER("Documentation/leds/leds-lp55xx.txt");
+ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+ {
+ 	const char *name = chip->cl->name;
+diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+index b1f9f0ccb8ac..147b3062039b 100644
+--- a/include/linux/firmware.h
++++ b/include/linux/firmware.h
+@@ -8,6 +8,13 @@
+ #define FW_ACTION_NOHOTPLUG 0
+ #define FW_ACTION_HOTPLUG 1
+ 
 +/*
-+ * USB port LED trigger
-+ *
-+ * Copyright (C) 2016 Rafał Miłecki <rafal@milecki@pl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or (at
-+ * your option) any later version.
++ * Helper for scripts/coccinelle/api/request_firmware-usermode.cocci
++ * and so users can also easily search for the respectively needed
++ * usermode helper.
 + */
++#define DECLARE_FW_LOADER_USER(__usermode_helper)
 +
-+#include <linux/device.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/usb.h>
-+#include "../leds.h"
+ struct firmware {
+ 	size_t size;
+ 	const u8 *data;
+diff --git a/scripts/coccinelle/api/request_firmware-usermode.cocci b/scripts/coccinelle/api/request_firmware-usermode.cocci
+index 94ab95cb7c75..1775fd3067e8 100644
+--- a/scripts/coccinelle/api/request_firmware-usermode.cocci
++++ b/scripts/coccinelle/api/request_firmware-usermode.cocci
+@@ -17,6 +17,13 @@
+ virtual report
+ virtual context
+ 
++@ r0 depends on report || context @
++declarer name DECLARE_FW_LOADER_USER;
++expression E;
++@@
 +
-+struct usbport_trig_port {
-+	char *name;
-+	struct list_head list;
-+};
++DECLARE_FW_LOADER_USER(E);
 +
-+struct usbport_trig_data {
-+	struct led_classdev *led_cdev;
-+	struct list_head ports;
-+	struct notifier_block nb;
-+	int count; /* Amount of connected matching devices */
-+};
-+
-+/* Helpers */
-+
-+/**
-+ * usbport_trig_usb_dev_observed - Check if dev is connected to observerd port
-+ */
-+static bool usbport_trig_usb_dev_observed(struct usbport_trig_data *usbport_data,
-+					  struct usb_device *usb_dev)
-+{
-+	struct usbport_trig_port *port;
-+	const char *name = dev_name(&usb_dev->dev);
-+
-+	list_for_each_entry(port, &usbport_data->ports, list) {
-+		if (!strcmp(port->name, name))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int usbport_trig_usb_dev_check(struct usb_device *usb_dev, void *data)
-+{
-+	struct usbport_trig_data *usbport_data = data;
-+
-+	if (usbport_trig_usb_dev_observed(usbport_data, usb_dev))
-+		usbport_data->count++;
-+
-+	return 0;
-+}
-+
-+/**
-+ * usbport_trig_update_count - Recalculate amount of connected matching devices
-+ */
-+static void usbport_trig_update_count(struct usbport_trig_data *usbport_data)
-+{
-+	struct led_classdev *led_cdev = usbport_data->led_cdev;
-+
-+	usbport_data->count = 0;
-+	usb_for_each_dev(usbport_data, usbport_trig_usb_dev_check);
-+	led_set_brightness_nosleep(led_cdev,
-+				   usbport_data->count ? LED_FULL : LED_OFF);
-+}
-+
-+/* Device attr */
-+
-+static ssize_t ports_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct usbport_trig_data *usbport_data = led_cdev->trigger_data;
-+	struct usbport_trig_port *port;
-+	ssize_t ret = 0;
-+	int len;
-+
-+	list_for_each_entry(port, &usbport_data->ports, list) {
-+		len = sprintf(buf + ret, "%s\n", port->name);
-+		if (len >= 0)
-+			ret += len;
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t ports_store(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t size)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct usbport_trig_data *usbport_data = led_cdev->trigger_data;
-+	struct usbport_trig_port *port;
-+	bool add = true;
-+	size_t len;
-+
-+	len = strlen(buf);
-+	/* See if this is add or remove request */
-+	if (len && buf[0] == '-') {
-+		add = false;
-+		buf++;
-+		len--;
-+	}
-+	/* For user convenience trim line break */
-+	if (len && buf[len - 1] == '\n')
-+		len--;
-+	if (!len)
-+		return -EINVAL;
-+
-+	if (add) {
-+		port = kzalloc(sizeof(*port), GFP_KERNEL);
-+		if (!port)
-+			return -ENOMEM;
-+		port->name = kzalloc(strlen(buf), GFP_KERNEL);
-+		if (!port->name) {
-+			kfree(port);
-+			return -ENOMEM;
-+		}
-+		strncpy(port->name, buf, len);
-+
-+		list_add_tail(&port->list, &usbport_data->ports);
-+
-+		usbport_trig_update_count(usbport_data);
-+	} else {
-+		struct usbport_trig_port *tmp;
-+		bool found = false;
-+
-+		list_for_each_entry_safe(port, tmp, &usbport_data->ports,
-+					 list) {
-+			if (strlen(port->name) == len &&
-+			    !strncmp(port->name, buf, len)) {
-+				list_del(&port->list);
-+				kfree(port->name);
-+				kfree(port);
-+
-+				found = true;
-+				break;
-+			}
-+		}
-+
-+		if (!found)
-+			return -ENOENT;
-+	}
-+
-+	usbport_trig_update_count(usbport_data);
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(ports, S_IRUSR | S_IWUSR, ports_show, ports_store);
-+
-+/* Init, exit, etc. */
-+
-+static int usbport_trig_notify(struct notifier_block *nb, unsigned long action,
-+			       void *data)
-+{
-+	struct usbport_trig_data *usbport_data =
-+		container_of(nb, struct usbport_trig_data, nb);
-+	struct led_classdev *led_cdev = usbport_data->led_cdev;
-+
-+	switch (action) {
-+	case USB_DEVICE_ADD:
-+		if (usbport_trig_usb_dev_observed(usbport_data, data)) {
-+			if (usbport_data->count++ == 0)
-+				led_set_brightness_nosleep(led_cdev, LED_FULL);
-+		}
-+		break;
-+	case USB_DEVICE_REMOVE:
-+		if (usbport_trig_usb_dev_observed(usbport_data, data)) {
-+			if (--usbport_data->count == 0)
-+				led_set_brightness_nosleep(led_cdev, LED_OFF);
-+		}
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static void usbport_trig_activate(struct led_classdev *led_cdev)
-+{
-+	struct usbport_trig_data *usbport_data;
-+	int err;
-+
-+	usbport_data = kzalloc(sizeof(*usbport_data), GFP_KERNEL);
-+	if (!usbport_data)
-+		return;
-+	usbport_data->led_cdev = led_cdev;
-+	INIT_LIST_HEAD(&usbport_data->ports);
-+	usbport_data->nb.notifier_call = usbport_trig_notify,
-+	led_cdev->trigger_data = usbport_data;
-+
-+	err = device_create_file(led_cdev->dev, &dev_attr_ports);
-+	if (err)
-+		goto err_free;
-+
-+	usb_register_notify(&usbport_data->nb);
-+
-+	led_cdev->activated = true;
-+	return;
-+
-+err_free:
-+	kfree(usbport_data);
-+}
-+
-+static void usbport_trig_deactivate(struct led_classdev *led_cdev)
-+{
-+	struct usbport_trig_data *usbport_data = led_cdev->trigger_data;
-+	struct usbport_trig_port *port, *tmp;
-+
-+	if (!led_cdev->activated)
-+		return;
-+
-+	usb_unregister_notify(&usbport_data->nb);
-+
-+	list_for_each_entry_safe(port, tmp, &usbport_data->ports, list) {
-+		list_del(&port->list);
-+		kfree(port->name);
-+		kfree(port);
-+	}
-+
-+	device_remove_file(led_cdev->dev, &dev_attr_ports);
-+	kfree(usbport_data);
-+
-+	led_cdev->activated = false;
-+}
-+
-+static struct led_trigger usbport_led_trigger = {
-+	.name     = "usbport",
-+	.activate = usbport_trig_activate,
-+	.deactivate = usbport_trig_deactivate,
-+};
-+
-+static int __init usbport_trig_init(void)
-+{
-+	return led_trigger_register(&usbport_led_trigger);
-+}
-+
-+static void __exit usbport_trig_exit(void)
-+{
-+	led_trigger_unregister(&usbport_led_trigger);
-+}
-+
-+module_init(usbport_trig_init);
-+module_exit(usbport_trig_exit);
-+
-+MODULE_AUTHOR("Rafał Miłecki <rafal@milecki@pl>");
-+MODULE_DESCRIPTION("USB port trigger");
-+MODULE_LICENSE("GPL");
+ @ r1 depends on report || context @
+ expression mod, name, dev, gfp, drv, cb;
+ position p;
+@@ -30,7 +37,7 @@ position p;
+ *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
+ )
+ 
+-@script:python depends on report@
++@script:python depends on report && !r0 @
+ p << r1.p;
+ @@
+ 
 -- 
-2.9.3
+2.9.2
