@@ -1,90 +1,55 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH V4] leds: trigger: Introduce an USB port trigger
-Date: Thu, 25 Aug 2016 08:49:48 -0400
-Message-ID: <20160825124948.GA15567@kroah.com>
-References: <20160825080546.27182-1-zajec5@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH RFC V3.5] leds: trigger: Introduce an USB port trigger
+Date: Thu, 25 Aug 2016 10:30:45 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1608251026010.1827-100000@iolanthe.rowland.org>
+References: <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49199 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932252AbcHYM45 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 25 Aug 2016 08:56:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20160825080546.27182-1-zajec5@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Felipe Balbi <balbi@kernel.org>, Peter Chen <hzpeterchen@gmail.com>, linux-usb@vger.kernel.org, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 
-On Thu, Aug 25, 2016 at 10:03:52AM +0200, Rafał Miłecki wrote:
-> +static void usbport_trig_activate(struct led_classdev *led_cdev)
-> +{
-> +	struct usbport_trig_data *usbport_data;
-> +	int err;
-> +
-> +	usbport_data = kzalloc(sizeof(*usbport_data), GFP_KERNEL);
-> +	if (!usbport_data)
-> +		return;
-> +	usbport_data->led_cdev = led_cdev;
-> +
-> +	/* Storing ports */
-> +	INIT_LIST_HEAD(&usbport_data->ports);
-> +	usbport_data->ports_dir = kobject_create_and_add("ports",
-> +							 &led_cdev->dev->kobj);
+On Thu, 25 Aug 2016, Jacek Anaszewski wrote:
 
-If you _ever_ find yourself in a driver having to use kobject calls,
-it's a HUGE hint that you are doing something wrong.
+> I'd see it as follows:
+> 
+> #cat available_ports
+> #1-1 1-2 2-1
+> 
+> #echo "1-1" > new_port
+> 
+> #cat observed_ports
+> #1-1
+> 
+> #echo "2-1" > new_port
+> 
+> #cat observed_ports
+> #1-1 2-1
+> 
+> We've already had few discussions about the sysfs designs trying
+> to break the one-value-per-file rule for LED class device, and
+> there was always strong resistance against.
 
-Hint, you are doing this wrong :)
+This scheme has multiple values in both the available_ports and 
+observed_ports files.  :-(  Not that I have any better suggestions...
 
-Use an attribute group if you need a subdirectory in sysfs, using a
-"raw" kobject like this hides it from all userspace tools and so no
-userspace program can see it (hint, try using libudev to access these
-files attached to the device...)
+> >> Also a description of the device connected to the port would be a nice
+> >> feature, however I am not certain about the feasibility thereof.
+> >
+> > What kind of description do you mean? Where should it be used / where
+> > should it appear?
+> >
+> 
+> Product name/symbol. Actually it should be USB subsystem responsibility
+> to provide the means for querying the product name by port id, if it
+> is possible at all.
 
-> +	if (!usbport_data->ports_dir)
-> +		goto err_free;
-> +
-> +	/* API for ports management */
-> +	err = device_create_file(led_cdev->dev, &dev_attr_new_port);
-> +	if (err)
-> +		goto err_put_ports;
-> +	err = device_create_file(led_cdev->dev, &dev_attr_remove_port);
-> +	if (err)
-> +		goto err_remove_new_port;
+	cat /sys/bus/usb/devices/PORT/product
+	cat /sys/bus/usb/devices/PORT/manufacturer
 
-Doesn't this race with userspace and fail?  Shouldn't the led core be
-creating your leds for you?
+These will work if there is a device registered under PORT.
 
-> +
-> +	/* Notifications */
-> +	usbport_data->nb.notifier_call = usbport_trig_notify,
-> +	led_cdev->trigger_data = usbport_data;
-> +	usb_register_notify(&usbport_data->nb);
-
-Don't abuse the USB notifier chain with stuff like this please, is that
-really necessary?  Why can't your hardware just tell you what USB ports
-are in use "out of band"?
-
-
-> +
-> +	led_cdev->activated = true;
-> +	return;
-> +
-> +err_remove_new_port:
-> +	device_remove_file(led_cdev->dev, &dev_attr_new_port);
-> +err_put_ports:
-> +	kobject_put(usbport_data->ports_dir);
-> +err_free:
-> +	kfree(usbport_data);
-> +}
-
-And again, why is this USB specific?  Why can't you use this same
-userspace api and codebase for PCI ports?  For a sdcard port?  For a
-thunderbolt port?
-
-thanks,
-
-greg k-h
+Alan Stern
