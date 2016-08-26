@@ -1,78 +1,71 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH RFC V3.5] leds: trigger: Introduce an USB port trigger
-Date: Fri, 26 Aug 2016 21:48:47 +0200
-Message-ID: <20160826194847.GB21442@amd>
-References: <20160823220404.9887-1-zajec5@gmail.com>
- <20160824175345.7033-1-zajec5@gmail.com>
- <ebef68e9-a987-3829-8823-827b2efc6626@samsung.com>
- <CACna6rzXDkVy6++KKcwomeXt5mxuitz-j5aXdqfH245Jv30Brg@mail.gmail.com>
- <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
+Date: Fri, 26 Aug 2016 21:50:34 +0200
+Message-ID: <20160826195034.GC21442@amd>
+References: <Pine.LNX.4.44L0.1608251026010.1827-100000@iolanthe.rowland.org>
+ <57BF3D64.3090402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
+In-Reply-To: <57BF3D64.3090402@gmail.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Jacek Anaszewski <j.anaszewski@samsung.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, open list:LED SUBSYST
 List-Id: linux-leds@vger.kernel.org
 
-On Thu 2016-08-25 11:04:38, Jacek Anaszewski wrote:
-> On 08/25/2016 10:29 AM, Rafał Miłecki wrote:
-> >On 25 August 2016 at 10:03, Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
-> >>On 08/24/2016 07:52 PM, Rafał Miłecki wrote:
-> >>>
-> >>>From: Rafał Miłecki <rafal@milecki.pl>
-> >>>
-> >>>This commit adds a new trigger responsible for turning on LED when USB
-> >>>device gets connected to the specified USB port. This can can useful for
-> >>>various home routers that have USB port(s) and a proper LED telling user
-> >>>a device is connected.
-> >>>
-> >>>The trigger gets its documentation file but basically it just requires
-> >>>specifying USB port in a Linux format (e.g. echo 1-1 > new_port).
-> >>>
-> >>>During work on this trigger there was a plan to add DT bindings for it,
-> >>>but there wasn't an agreement on the format yet. This can be worked on
-> >>>later, a sysfs interface is needed anyway for platforms not using DT.
-> >>>
-> >>>Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> >>>---
-> >>>V2: Trying to add DT support, idea postponed as it will take more time
-> >>>    to discuss the bindings.
-> >>>V3: Fix typos in commit and Documentation (thanks Jacek!)
-> >>>    Use "ports" sysfs file for adding and removing USB ports (thx Jacek)
-> >>>    Check if there is USB device connected after adding new USB port
-> >>>    Fix memory leak or two
-> >>>V3.5: Fix e-mail address (thanks Matthias)
-> >>>      Simplify conditions in usbport_trig_notify (thx Matthias)
-> >>>      Make "ports" a subdirectory with file per port, to match one value
-> >>>      per file sysfs rule (thanks Greg)
-> >>>      As "ports" couldn't be used for adding and removing ports anymore,
-> >>>      there are now "new_port" and "remove_port". Having them makes this
-> >>>      API also common with e.g. pci and usb buses.
+On Thu 2016-08-25 20:48:04, Jacek Anaszewski wrote:
+> On 08/25/2016 04:30 PM, Alan Stern wrote:
+> >On Thu, 25 Aug 2016, Jacek Anaszewski wrote:
+> >
+> >>I'd see it as follows:
 > >>
+> >>#cat available_ports
+> >>#1-1 1-2 2-1
 > >>
-> >>Now writing new_port with "1-1" produces a file named "1-1" in the
-> >>ports directory with 000 permissions. I think that what Greg had
-> >>on mind by referring to "one value per file" rule was a set of
-> >>files representing ports, like "1-1 1-2 2-1", and each file should be
-> >>readable/writeable.
+> >>#echo "1-1" > new_port
 > >>
-> >>For instance "echo 1 > 1-1" would enable the trigger for the port 1-1
-> >>and "echo 0 > 1-1" would disable it. The problem is that we don't know
-> >>the number of required ports at compilation time and the sysfs
-> >>attributes would have to be dynamically created on driver instantiation.
-> >>What is more, as the USB ports can dynamically appear/disappear in the
-> >>system, the files would have to be created/removed accordingly during
-> >>LED class device lifetime, which is not the best design for the sysfs
-> >>interface I think.
+> >>#cat observed_ports
+> >>#1-1
+> >>
+> >>#echo "2-1" > new_port
+> >>
+> >>#cat observed_ports
+> >>#1-1 2-1
+> >>
+> >>We've already had few discussions about the sysfs designs trying
+> >>to break the one-value-per-file rule for LED class device, and
+> >>there was always strong resistance against.
+> >
+> >This scheme has multiple values in both the available_ports and
+> >observed_ports files.  :-(  Not that I have any better suggestions...
+> 
+> Right, I forgot to add a note here, that this follows space
+> separated list pattern similarly as in case of triggers attribute.
+> Of course other suggestions are welcome.
+> 
+> >>>>Also a description of the device connected to the port would be a nice
+> >>>>feature, however I am not certain about the feasibility thereof.
+> >>>
+> >>>What kind of description do you mean? Where should it be used / where
+> >>>should it appear?
+> >>>
+> >>
+> >>Product name/symbol. Actually it should be USB subsystem responsibility
+> >>to provide the means for querying the product name by port id, if it
+> >>is possible at all.
+> >
+> >	cat /sys/bus/usb/devices/PORT/product
+> >	cat /sys/bus/usb/devices/PORT/manufacturer
+> >
+> >These will work if there is a device registered under PORT.
+> 
+> I've found only idProduct and idVendor files. They indeed uniquely
+> identify the device, but the numbers are not human readable.
 
-Could we add a flag to the USB port, instead? That way, USB code would
-take care of creating the enable file in its own directory.
-
-Is per-port control needed? Would just global control be sufficient?
+Actually, they don't. They identify device _type_. If you have two
+mice of the same type connected, they'll have same idProduct /
+idVendor values.
 
 									Pavel
 -- 
