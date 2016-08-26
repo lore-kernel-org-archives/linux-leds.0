@@ -1,76 +1,80 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH RFC V3.5] leds: trigger: Introduce an USB port trigger
-Date: Fri, 26 Aug 2016 17:58:23 +0200
-Message-ID: <CACna6rxs0X3wWp2BPdVgOK+0Hrmp3BM9WXcW4oihrcuhjV1W6g@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1608251026010.1827-100000@iolanthe.rowland.org> <57BF3D64.3090402@gmail.com>
+Date: Fri, 26 Aug 2016 21:48:47 +0200
+Message-ID: <20160826194847.GB21442@amd>
+References: <20160823220404.9887-1-zajec5@gmail.com>
+ <20160824175345.7033-1-zajec5@gmail.com>
+ <ebef68e9-a987-3829-8823-827b2efc6626@samsung.com>
+ <CACna6rzXDkVy6++KKcwomeXt5mxuitz-j5aXdqfH245Jv30Brg@mail.gmail.com>
+ <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <57BF3D64.3090402@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <d9d2ae14-c009-3518-ac4c-4b71abe91e88@samsung.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Pavel Machek <pavel>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 25 August 2016 at 20:48, Jacek Anaszewski <jacek.anaszewski@gmail.com> w=
-rote:
-> On 08/25/2016 04:30 PM, Alan Stern wrote:
->>
->> On Thu, 25 Aug 2016, Jacek Anaszewski wrote:
->>
->>> I'd see it as follows:
->>>
->>> #cat available_ports
->>> #1-1 1-2 2-1
->>>
->>> #echo "1-1" > new_port
->>>
->>> #cat observed_ports
->>> #1-1
->>>
->>> #echo "2-1" > new_port
->>>
->>> #cat observed_ports
->>> #1-1 2-1
->>>
->>> We've already had few discussions about the sysfs designs trying
->>> to break the one-value-per-file rule for LED class device, and
->>> there was always strong resistance against.
->>
->>
->> This scheme has multiple values in both the available_ports and
->> observed_ports files.  :-(  Not that I have any better suggestions...
->
->
-> Right, I forgot to add a note here, that this follows space
-> separated list pattern similarly as in case of triggers attribute.
-> Of course other suggestions are welcome.
+On Thu 2016-08-25 11:04:38, Jacek Anaszewski wrote:
+> On 08/25/2016 10:29 AM, Rafał Miłecki wrote:
+> >On 25 August 2016 at 10:03, Jacek Anaszewski <j.anaszewski@samsung.com> wrote:
+> >>On 08/24/2016 07:52 PM, Rafał Miłecki wrote:
+> >>>
+> >>>From: Rafał Miłecki <rafal@milecki.pl>
+> >>>
+> >>>This commit adds a new trigger responsible for turning on LED when USB
+> >>>device gets connected to the specified USB port. This can can useful for
+> >>>various home routers that have USB port(s) and a proper LED telling user
+> >>>a device is connected.
+> >>>
+> >>>The trigger gets its documentation file but basically it just requires
+> >>>specifying USB port in a Linux format (e.g. echo 1-1 > new_port).
+> >>>
+> >>>During work on this trigger there was a plan to add DT bindings for it,
+> >>>but there wasn't an agreement on the format yet. This can be worked on
+> >>>later, a sysfs interface is needed anyway for platforms not using DT.
+> >>>
+> >>>Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> >>>---
+> >>>V2: Trying to add DT support, idea postponed as it will take more time
+> >>>    to discuss the bindings.
+> >>>V3: Fix typos in commit and Documentation (thanks Jacek!)
+> >>>    Use "ports" sysfs file for adding and removing USB ports (thx Jacek)
+> >>>    Check if there is USB device connected after adding new USB port
+> >>>    Fix memory leak or two
+> >>>V3.5: Fix e-mail address (thanks Matthias)
+> >>>      Simplify conditions in usbport_trig_notify (thx Matthias)
+> >>>      Make "ports" a subdirectory with file per port, to match one value
+> >>>      per file sysfs rule (thanks Greg)
+> >>>      As "ports" couldn't be used for adding and removing ports anymore,
+> >>>      there are now "new_port" and "remove_port". Having them makes this
+> >>>      API also common with e.g. pci and usb buses.
+> >>
+> >>
+> >>Now writing new_port with "1-1" produces a file named "1-1" in the
+> >>ports directory with 000 permissions. I think that what Greg had
+> >>on mind by referring to "one value per file" rule was a set of
+> >>files representing ports, like "1-1 1-2 2-1", and each file should be
+> >>readable/writeable.
+> >>
+> >>For instance "echo 1 > 1-1" would enable the trigger for the port 1-1
+> >>and "echo 0 > 1-1" would disable it. The problem is that we don't know
+> >>the number of required ports at compilation time and the sysfs
+> >>attributes would have to be dynamically created on driver instantiation.
+> >>What is more, as the USB ports can dynamically appear/disappear in the
+> >>system, the files would have to be created/removed accordingly during
+> >>LED class device lifetime, which is not the best design for the sysfs
+> >>interface I think.
 
-So ppl have doubts about multiple values in a single sysfs file
-(whatever we call it: "ports" or "observed_ports"). Greg clearly said:
-> sysfs is "one value per file", here you are listing a bunch of things in
-> one sysfs file.  Please don't do that.
+Could we add a flag to the USB port, instead? That way, USB code would
+take care of creating the enable file in its own directory.
 
-What about my idea of using "ports" subdirectory and having each port
-as separated file inside that subdir? I think there are two ways of
-doing this:
+Is per-port control needed? Would just global control be sufficient?
 
-1) Having "ports" subdir with 0x0000 chmod files, one per each port
-specified as observable
-In this solution we need "new_port" and "remove_port" that can be used
-for management of observable ports.
-I think Jacek wasn't happy with this chmod and he believes Greg meant R/W f=
-iles.
-
-2) Having "ports" subdir with RW files, one per each existing physical port
-In this situation we don't need "new_port" or "remove_port". If we
-want port to be observable we just do:
-echo 1 > 1-1
-Implementing this solution needs reading more details from USB subsystem.
-
-Do you find any of solutions with "ports" subdir better than dealing
-with new-line/space separated values in a single sysfs file?
-
---=20
-Rafa=C5=82
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
