@@ -1,58 +1,161 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH RFC V3.5] leds: trigger: Introduce an USB port trigger
-Date: Mon, 29 Aug 2016 10:41:27 +0200
-Message-ID: <20160829084127.GA10529@amd>
-References: <Pine.LNX.4.44L0.1608251026010.1827-100000@iolanthe.rowland.org>
- <57BF3D64.3090402@gmail.com>
- <CACna6rxs0X3wWp2BPdVgOK+0Hrmp3BM9WXcW4oihrcuhjV1W6g@mail.gmail.com>
- <25cdf5e1-c3b5-e8a3-8213-f35a6f6160c2@samsung.com>
- <20160829080551.GA7987@amd>
- <CACna6rzkcpHN8jyB1dXKEgoN6xkO0qUGAjtGs6zEcJoFMo=M8Q@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2 10/19] leds: Remove SEAD3 driver
+Date: Mon, 29 Aug 2016 10:55:41 +0200
+Message-ID: <5f2e6c11-d4a7-dfa0-e94a-cf2a1cd66541@samsung.com>
+References: <20160826141751.13121-1-paul.burton@imgtec.com>
+ <20160826141751.13121-11-paul.burton@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55697 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750860AbcH2Ilb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 Aug 2016 04:41:31 -0400
-Content-Disposition: inline
-In-Reply-To: <CACna6rzkcpHN8jyB1dXKEgoN6xkO0qUGAjtGs6zEcJoFMo=M8Q@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20160826141751.13121-11-paul.burton@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Burton <paul.burton@imgtec.com>, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alan Stern <stern@rowland.harvard.edu>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Stephan Linz <linz@li-pro.net>, Matthias Brugger <mbrugger@suse.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>"open list:LED SUBSYSTEM" <l>
 
-On Mon 2016-08-29 10:21:48, Rafał Miłecki wrote:
-> On 29 August 2016 at 10:05, Pavel Machek <pavel@ucw.cz> wrote:
-> >> >2) Having "ports" subdir with RW files, one per each existing physical port
-> >> >In this situation we don't need "new_port" or "remove_port". If we
-> >> >want port to be observable we just do:
-> >> >echo 1 > 1-1
-> >> >Implementing this solution needs reading more details from USB subsystem.
-> >>
-> >> The situation here is clear IMO - the number of USB ports in the system
-> >> can change dynamically. I'm not sure if this can be handled easily with
-> >> sysfs, where we usually expose an interface for known set of settings.
-> >> struct attribute arrays are usually defined statically at the compile
-> >> time and filled with the variables, that are created with DEVICE_ATTR
-> >> macro.
-> >
-> > sysfs already exposes current view of all usb devices. Just use it.
-> 
-> We're talking about USB ports not devices, but this is still true. You
-> can find them in
-> /sys/bus/usb/devices/*/*-port*
-> 
-> I can't see how we could use them. How could I develop sysfs interface
-> in /sys/class/leds/*/ to allow userspace assigning USB ports to the
-> LED trigger?
+Hi Paul,
 
-Create /sys/bus/usb/devices/*/*-port*/led_trigger file?
+On 08/26/2016 04:17 PM, Paul Burton wrote:
+> SEAD3 is now using the generic syscon & regmap based register-bit-led
+> driver, so remove the unused custom SEAD3 LED driver.
+>
+> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/leds/Kconfig      | 10 ------
+>  drivers/leds/Makefile     |  1 -
+>  drivers/leds/leds-sead3.c | 78 -----------------------------------------------
+>  3 files changed, 89 deletions(-)
+>  delete mode 100644 drivers/leds/leds-sead3.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 9dcc9b1..025de7e 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -574,16 +574,6 @@ config LEDS_KTD2692
+>
+>  	  Say Y to enable this driver.
+>
+> -config LEDS_SEAD3
+> -	tristate "LED support for the MIPS SEAD 3 board"
+> -	depends on LEDS_CLASS && MIPS_SEAD3
+> -	help
+> -	  Say Y here to include support for the FLED and PLED LEDs on SEAD3 eval
+> -	  boards.
+> -
+> -	  This driver can also be built as a module. If so the module
+> -	  will be called leds-sead3.
+> -
+>  config LEDS_IS31FL32XX
+>  	tristate "LED support for ISSI IS31FL32XX I2C LED controller family"
+>  	depends on LEDS_CLASS && I2C && OF
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 0684c86..da594cf 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -66,7 +66,6 @@ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+>  obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+>  obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+>  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+> -obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
+>  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+>
+>  # LED SPI Drivers
+> diff --git a/drivers/leds/leds-sead3.c b/drivers/leds/leds-sead3.c
+> deleted file mode 100644
+> index eb97a32..0000000
+> --- a/drivers/leds/leds-sead3.c
+> +++ /dev/null
+> @@ -1,78 +0,0 @@
+> -/*
+> - * This file is subject to the terms and conditions of the GNU General Public
+> - * License.  See the file "COPYING" in the main directory of this archive
+> - * for more details.
+> - *
+> - * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
+> - * Copyright (C) 2015 Imagination Technologies, Inc.
+> - */
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/init.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/leds.h>
+> -#include <linux/err.h>
+> -#include <linux/io.h>
+> -
+> -#include <asm/mips-boards/sead3-addr.h>
+> -
+> -static void sead3_pled_set(struct led_classdev *led_cdev,
+> -		enum led_brightness value)
+> -{
+> -	writel(value, (void __iomem *)SEAD3_CPLD_P_LED);
+> -}
+> -
+> -static void sead3_fled_set(struct led_classdev *led_cdev,
+> -		enum led_brightness value)
+> -{
+> -	writel(value, (void __iomem *)SEAD3_CPLD_F_LED);
+> -}
+> -
+> -static struct led_classdev sead3_pled = {
+> -	.name		= "sead3::pled",
+> -	.brightness_set = sead3_pled_set,
+> -	.flags		= LED_CORE_SUSPENDRESUME,
+> -};
+> -
+> -static struct led_classdev sead3_fled = {
+> -	.name		= "sead3::fled",
+> -	.brightness_set = sead3_fled_set,
+> -	.flags		= LED_CORE_SUSPENDRESUME,
+> -};
+> -
+> -static int sead3_led_probe(struct platform_device *pdev)
+> -{
+> -	int ret;
+> -
+> -	ret = led_classdev_register(&pdev->dev, &sead3_pled);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	ret = led_classdev_register(&pdev->dev, &sead3_fled);
+> -	if (ret < 0)
+> -		led_classdev_unregister(&sead3_pled);
+> -
+> -	return ret;
+> -}
+> -
+> -static int sead3_led_remove(struct platform_device *pdev)
+> -{
+> -	led_classdev_unregister(&sead3_pled);
+> -	led_classdev_unregister(&sead3_fled);
+> -
+> -	return 0;
+> -}
+> -
+> -static struct platform_driver sead3_led_driver = {
+> -	.probe		= sead3_led_probe,
+> -	.remove		= sead3_led_remove,
+> -	.driver		= {
+> -		.name		= "sead3-led",
+> -	},
+> -};
+> -
+> -module_platform_driver(sead3_led_driver);
+> -
+> -MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
+> -MODULE_DESCRIPTION("SEAD3 LED driver");
+> -MODULE_LICENSE("GPL");
+>
 
-(Do you plan one USB trigger, or multiple ones?)
-									Pavel
+Currently the patch doesn't apply cleanly on the linux-leds.git,
+for-next branch, due to the fresh changes in the surrounding code in
+the drivers/leds/Makefile and Kconfig. Does this patch depend on
+the previous patches in this series, or I can take it now and apply
+to the LEDs git?
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best regards,
+Jacek Anaszewski
