@@ -1,176 +1,211 @@
-From: Paul Burton <paul.burton@imgtec.com>
-Subject: Re: [PATCH v2 10/19] leds: Remove SEAD3 driver
-Date: Tue, 30 Aug 2016 15:42:09 +0100
-Message-ID: <a3339cb1-e405-dfb8-9a73-42756bb4fe67@imgtec.com>
-References: <20160826141751.13121-1-paul.burton@imgtec.com>
- <20160826141751.13121-11-paul.burton@imgtec.com>
- <5f2e6c11-d4a7-dfa0-e94a-cf2a1cd66541@samsung.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH V4] leds: trigger: Introduce an USB port trigger
+Date: Tue, 30 Aug 2016 22:28:46 +0200
+Message-ID: <CACna6rzmfCi+77k8wtU=UvTGoL+XKhWwE86HNk8Xt8cK6j5zJQ@mail.gmail.com>
+References: <20160825080546.27182-1-zajec5@gmail.com> <20160825124948.GA15567@kroah.com>
+ <CACna6ryGYu_1EUPTSjhuaLnd=ANnjdCXHb1FXaz9P0J87vmRDA@mail.gmail.com> <20160830120556.GA24151@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:7065 "EHLO
-        mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbcH3OmY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 30 Aug 2016 10:42:24 -0400
-In-Reply-To: <5f2e6c11-d4a7-dfa0-e94a-cf2a1cd66541@samsung.com>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36858 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbcH3U2s (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 30 Aug 2016 16:28:48 -0400
+In-Reply-To: <20160830120556.GA24151@kroah.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Felipe Balbi <balbi@kernel.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 
-On 29/08/16 09:55, Jacek Anaszewski wrote:
-> Hi Paul,
-> 
-> On 08/26/2016 04:17 PM, Paul Burton wrote:
->> SEAD3 is now using the generic syscon & regmap based register-bit-led
->> driver, so remove the unused custom SEAD3 LED driver.
+On 30 August 2016 at 14:05, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Fri, Aug 26, 2016 at 05:38:05PM +0200, Rafa=C5=82 Mi=C5=82ecki wrote:
+>> On 25 August 2016 at 14:49, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> > On Thu, Aug 25, 2016 at 10:03:52AM +0200, Rafa=C5=82 Mi=C5=82ecki wrot=
+e:
+>> >> +static void usbport_trig_activate(struct led_classdev *led_cdev)
+>> >> +{
+>> >> +     struct usbport_trig_data *usbport_data;
+>> >> +     int err;
+>> >> +
+>> >> +     usbport_data =3D kzalloc(sizeof(*usbport_data), GFP_KERNEL);
+>> >> +     if (!usbport_data)
+>> >> +             return;
+>> >> +     usbport_data->led_cdev =3D led_cdev;
+>> >> +
+>> >> +     /* Storing ports */
+>> >> +     INIT_LIST_HEAD(&usbport_data->ports);
+>> >> +     usbport_data->ports_dir =3D kobject_create_and_add("ports",
+>> >> +                                                      &led_cdev->dev=
+->kobj);
+>> >
+>> > If you _ever_ find yourself in a driver having to use kobject calls,
+>> > it's a HUGE hint that you are doing something wrong.
+>> >
+>> > Hint, you are doing this wrong :)
+>> >
+>> > Use an attribute group if you need a subdirectory in sysfs, using a
+>> > "raw" kobject like this hides it from all userspace tools and so no
+>> > userspace program can see it (hint, try using libudev to access these
+>> > files attached to the device...)
 >>
->> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
->> ---
->>
->> Changes in v2: None
->>
->>  drivers/leds/Kconfig      | 10 ------
->>  drivers/leds/Makefile     |  1 -
->>  drivers/leds/leds-sead3.c | 78 -----------------------------------------------
->>  3 files changed, 89 deletions(-)
->>  delete mode 100644 drivers/leds/leds-sead3.c
->>
->> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->> index 9dcc9b1..025de7e 100644
->> --- a/drivers/leds/Kconfig
->> +++ b/drivers/leds/Kconfig
->> @@ -574,16 +574,6 @@ config LEDS_KTD2692
->>
->>        Say Y to enable this driver.
->>
->> -config LEDS_SEAD3
->> -    tristate "LED support for the MIPS SEAD 3 board"
->> -    depends on LEDS_CLASS && MIPS_SEAD3
->> -    help
->> -      Say Y here to include support for the FLED and PLED LEDs on SEAD3 eval
->> -      boards.
->> -
->> -      This driver can also be built as a module. If so the module
->> -      will be called leds-sead3.
->> -
->>  config LEDS_IS31FL32XX
->>      tristate "LED support for ISSI IS31FL32XX I2C LED controller family"
->>      depends on LEDS_CLASS && I2C && OF
->> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->> index 0684c86..da594cf 100644
->> --- a/drivers/leds/Makefile
->> +++ b/drivers/leds/Makefile
->> @@ -66,7 +66,6 @@ obj-$(CONFIG_LEDS_VERSATILE)        += leds-versatile.o
->>  obj-$(CONFIG_LEDS_MENF21BMC)        += leds-menf21bmc.o
->>  obj-$(CONFIG_LEDS_KTD2692)        += leds-ktd2692.o
->>  obj-$(CONFIG_LEDS_POWERNV)        += leds-powernv.o
->> -obj-$(CONFIG_LEDS_SEAD3)        += leds-sead3.o
->>  obj-$(CONFIG_LEDS_IS31FL32XX)        += leds-is31fl32xx.o
->>
->>  # LED SPI Drivers
->> diff --git a/drivers/leds/leds-sead3.c b/drivers/leds/leds-sead3.c
->> deleted file mode 100644
->> index eb97a32..0000000
->> --- a/drivers/leds/leds-sead3.c
->> +++ /dev/null
->> @@ -1,78 +0,0 @@
->> -/*
->> - * This file is subject to the terms and conditions of the GNU General Public
->> - * License.  See the file "COPYING" in the main directory of this archive
->> - * for more details.
->> - *
->> - * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
->> - * Copyright (C) 2015 Imagination Technologies, Inc.
->> - */
->> -#include <linux/kernel.h>
->> -#include <linux/module.h>
->> -#include <linux/init.h>
->> -#include <linux/platform_device.h>
->> -#include <linux/leds.h>
->> -#include <linux/err.h>
->> -#include <linux/io.h>
->> -
->> -#include <asm/mips-boards/sead3-addr.h>
->> -
->> -static void sead3_pled_set(struct led_classdev *led_cdev,
->> -        enum led_brightness value)
->> -{
->> -    writel(value, (void __iomem *)SEAD3_CPLD_P_LED);
->> -}
->> -
->> -static void sead3_fled_set(struct led_classdev *led_cdev,
->> -        enum led_brightness value)
->> -{
->> -    writel(value, (void __iomem *)SEAD3_CPLD_F_LED);
->> -}
->> -
->> -static struct led_classdev sead3_pled = {
->> -    .name        = "sead3::pled",
->> -    .brightness_set = sead3_pled_set,
->> -    .flags        = LED_CORE_SUSPENDRESUME,
->> -};
->> -
->> -static struct led_classdev sead3_fled = {
->> -    .name        = "sead3::fled",
->> -    .brightness_set = sead3_fled_set,
->> -    .flags        = LED_CORE_SUSPENDRESUME,
->> -};
->> -
->> -static int sead3_led_probe(struct platform_device *pdev)
->> -{
->> -    int ret;
->> -
->> -    ret = led_classdev_register(&pdev->dev, &sead3_pled);
->> -    if (ret < 0)
->> -        return ret;
->> -
->> -    ret = led_classdev_register(&pdev->dev, &sead3_fled);
->> -    if (ret < 0)
->> -        led_classdev_unregister(&sead3_pled);
->> -
->> -    return ret;
->> -}
->> -
->> -static int sead3_led_remove(struct platform_device *pdev)
->> -{
->> -    led_classdev_unregister(&sead3_pled);
->> -    led_classdev_unregister(&sead3_fled);
->> -
->> -    return 0;
->> -}
->> -
->> -static struct platform_driver sead3_led_driver = {
->> -    .probe        = sead3_led_probe,
->> -    .remove        = sead3_led_remove,
->> -    .driver        = {
->> -        .name        = "sead3-led",
->> -    },
->> -};
->> -
->> -module_platform_driver(sead3_led_driver);
->> -
->> -MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
->> -MODULE_DESCRIPTION("SEAD3 LED driver");
->> -MODULE_LICENSE("GPL");
->>
-> 
-> Currently the patch doesn't apply cleanly on the linux-leds.git,
-> for-next branch, due to the fresh changes in the surrounding code in
-> the drivers/leds/Makefile and Kconfig. Does this patch depend on
-> the previous patches in this series, or I can take it now and apply
-> to the LEDs git?
+>> Oops. Thanks for pointing groups to me. I was looking at sysfs.h
+>> earlier but I didn't realize group can be a subdirectory. I can see
+>> these sysfs_create_group(s) and friends now, thanks.
+>
+> No, use an attribute group, and name it, and the subdir will be created
+> automagically for you.
 
-Hi Jacek,
+Oh, so I got it wrong again. Thanks for explaining.
 
-Ideally the patches to the SEAD-3 board code & DT would go in first such
-that the board switches to the register-bit-led driver before this
-custom driver is removed. Otherwise we'll lose support for the LEDs in
-between you applying this patch & Ralf applying the rest.
 
-Having said that I doubt anyone actually uses the SEAD-3 LEDs so I don't
-mind so much if you & Ralf decide that's the easiest path forwards.
+>> >> +     if (!usbport_data->ports_dir)
+>> >> +             goto err_free;
+>> >> +
+>> >> +     /* API for ports management */
+>> >> +     err =3D device_create_file(led_cdev->dev, &dev_attr_new_port);
+>> >> +     if (err)
+>> >> +             goto err_put_ports;
+>> >> +     err =3D device_create_file(led_cdev->dev, &dev_attr_remove_port=
+);
+>> >> +     if (err)
+>> >> +             goto err_remove_new_port;
+>> >
+>> > Doesn't this race with userspace and fail?  Shouldn't the led core be
+>> > creating your leds for you?
+>>
+>> These questions aren't clear to me. What kind of race? Doing
+>> echo usbport > trigger
+>> results in trigger core calling usbport_trig_activate. We create new
+>> attributes and then we return.
+>
+> Why aren't the attributes present when the device is found?  What is
+> "trigger" for?
+>
+>> I'm also not creating any leds there. This already has to be LED
+>> available if you want to assign some trigger to it.
+>
+> That sounds really odd...
 
-Thanks,
-    Paul
+Please take a look at Documentation to get some idea of LED triggers:
+Documentation/leds/leds-class.txt
+
+Basically a LED (/sys/class/leds/foo/) can be controller with
+"brightness" sysfs file like this:
+echo 0 > brightness
+echo 5 > brightness
+echo 255 > brightness
+(most LEDs react only 0 and non-0 values).
+
+As you quite often need more complex LED management, there are
+triggers that were introduced in 2006 by c3bc9956ec52f ("[PATCH] LED:
+add LED trigger tupport"). Some triggers are trivial and could be
+implemented in userspace as well (e.g. "timer"). Some had to be
+implemented in kernelspace (CPU activity, MTD activity, etc.). Having
+few triggers compiled, you can assign them to LEDs at it pleases you.
+Your hardware may have generic LED (not labeled) and you can
+dynamically assign various triggers to it, depending e.g. on user
+actions. E.g. if user (using GUI or whatever) wants to see flash
+activity, your userspace script should do:
+echo mtd > /sys/class/leds/foo/trigger
+
+I hope it explains things a big and you can see know why trigger code
+is independent of creating LEDs. It's about layers and making things
+generic I believe.
+
+There is a place for LED driver that is responsible for creating
+"struct led_classdev" with proper callback setting brightness. It
+provides LED name, but is unaware of the way it should be
+lighted/turned off.
+There is LED subsystem.
+There are triggers that are unaware of LED hardware details and only
+set LED brightness using generic API.
+
+I'm obviously not author of all of that and I can't explain some
+design decisions, but I hope I gave you a clue how it works.
+
+
+>> >> +
+>> >> +     /* Notifications */
+>> >> +     usbport_data->nb.notifier_call =3D usbport_trig_notify,
+>> >> +     led_cdev->trigger_data =3D usbport_data;
+>> >> +     usb_register_notify(&usbport_data->nb);
+>> >
+>> > Don't abuse the USB notifier chain with stuff like this please, is tha=
+t
+>> > really necessary?  Why can't your hardware just tell you what USB port=
+s
+>> > are in use "out of band"?
+>>
+>> I totally don't understand this part. This LED trigger is supposed to
+>> react to USB devices appearing at specified ports. How else can I know
+>> there is a new USB device if not by notifications?
+>> I'm wondering if we are on the same page. Could it be my idea of this
+>> LED trigger is not clear at all? Could you take a look at commit
+>> message again, please? Mostly this part:
+>> > This commit adds a new trigger responsible for turning on LED when USB
+>> > device gets connected to the specified USB port. This can can useful f=
+or
+>> > various home routers that have USB port(s) and a proper LED telling us=
+er
+>> > a device is connected.
+>>
+>> Can I add something more to make it clear what this trigger is responsib=
+le for?
+>
+> Yes please, as I totally missed that.
+>
+> And the USB notifier was created for some "special" parts of the USB
+> core to use, this feels like an abuse of that in some way.  But it's
+> hard to define, I know...
+
+I didn't mean to abuse this USB notifier, can you think of any other
+way to achieve the same result? We could think about modifying USB
+core to call some symbol from the trigger driver (see usage of
+ledtrig_mtd_activity symbol) but is it any better than using
+notification block?
+
+
+>> >> +
+>> >> +     led_cdev->activated =3D true;
+>> >> +     return;
+>> >> +
+>> >> +err_remove_new_port:
+>> >> +     device_remove_file(led_cdev->dev, &dev_attr_new_port);
+>> >> +err_put_ports:
+>> >> +     kobject_put(usbport_data->ports_dir);
+>> >> +err_free:
+>> >> +     kfree(usbport_data);
+>> >> +}
+>> >
+>> > And again, why is this USB specific?  Why can't you use this same
+>> > userspace api and codebase for PCI ports?  For a sdcard port?  For a
+>> > thunderbolt port?
+>>
+>> I'm leaving this one unanswered as discussion on this continued in
+>> V3.5 thread below my reply:
+>> On 25 August 2016 at 07:14, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> w=
+rote:
+>> > Good question. I would like to extend this USB port trigger in the
+>> > future by reacting to USB activity. This involves playing with URBs
+>> > and I believe that at that point it'd be getting too much USB specific
+>> > to /rule them all/.
+>
+> No, I mean why not have this specific activity LED work for all types of
+> devices, not just USB.
+>
+> Not that this specific LED works for other types of USB activity.
+
+Sorry, I'm really trying my best, but I may be missing some point. I'm
+not sure if I'll answer your question as you expected.
+
+This patch adds only 1 trigger some users may be interested in, user
+is still free to assign any trigger he wants to any LED it has on his
+hardware. One day I plan to work on more triggers, so user can pick
+the one he wants (e.g. when using generic not-labeled LED):
+echo none > trigger
+echo usbport > trigger
+echo foo > trigger
+
+--=20
+Rafa=C5=82
