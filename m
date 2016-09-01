@@ -1,102 +1,113 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 Subject: Re: [PATCH V4] leds: trigger: Introduce an USB port trigger
-Date: Thu, 01 Sep 2016 09:26:54 +0200
-Message-ID: <73359592-1d91-7f50-c466-7057858d6ce7@samsung.com>
-References: <CACna6rxbUB=jAV+YH-N3hzBU0hbNMY=pdTswVW7h8i4G9g5pmQ@mail.gmail.com>
- <Pine.LNX.4.44L0.1608311420010.1889-100000@iolanthe.rowland.org>
- <CACna6rysV+zxKBUG49Zpu4oHLWsfCRVLFtmDdbY7NBcCO_676Q@mail.gmail.com>
- <CACna6ryCkidVcAAfwmucKSX3jMjHqMGaaV7aD6AZJn6VT3YezQ@mail.gmail.com>
+Date: Thu, 1 Sep 2016 10:36:01 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1609011032040.1386-100000@iolanthe.rowland.org>
+References: <73359592-1d91-7f50-c466-7057858d6ce7@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CACna6ryCkidVcAAfwmucKSX3jMjHqMGaaV7aD6AZJn6VT3YezQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <73359592-1d91-7f50-c466-7057858d6ce7@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 09/01/2016 07:25 AM, Rafał Miłecki wrote:
-> On 31 August 2016 at 21:00, Rafał Miłecki <zajec5@gmail.com> wrote:
->> On 31 August 2016 at 20:23, Alan Stern <stern@rowland.harvard.edu> wrote:
->>> On Tue, 30 Aug 2016, Rafał Miłecki wrote:
->>>> Not really as it won't cover some pretty common use cases. Many home
->>>> routers have few USB ports (2-5) and only 1 USB LED. It has to be
->>>> possible to assign few USB ports to a single LED (trigger). That way
->>>> LED should be turned on (and kept on) if there is at least 1 USB
->>>> device connected. You obviously can't do:
->>>> echo "usb1-1 usb1-2 usb2-1" > /sys/class/leds/foo/trigger
->>>>
->>>> This was already brought up by Rob (who mentioned CPU trigger) and I
->>>> replied him pretty much the same way in:
->>>> https://lkml.org/lkml/2016/7/29/38
->>>> (reply starts with "Anyway, the serious limitation I see").
->>>
->>> The code for a bunch of triggers must already be written.  What would
->>> the user do if he wanted to flash a single LED in response to both
->>> CPU activity and MTD activity?  If not
->>>
->>>         echo "cpu mtd" >/sys/class/leds/foo/trigger
->>>
->>> then what?
->>
->> Well, it sounds like a new feature then. Shall we add an extra API
->> with a request function for turning LED on? It could internally count
->> how many requests were raised and keep LED on as long as there is at
->> least 1 left. I guess we should implement it in trigger "subsystem"
->> (if I can call it so). Does it sound like a good plan?
->
-> I'm pretty sure noone ever planned to have more than 1 trigger
-> assigned to a single LED. I just realized there will be a problem with
-> proposed solution: sysfs files conflict.
->
-> Consider 2 existing triggers for a moment:
-> 1) oneshot: it creates following sysfs files:
-> /sys/class/leds/foo/delay_on
-> /sys/class/leds/foo/delay_off
-> /sys/class/leds/foo/invert
-> /sys/class/leds/foo/shot
-> 2) timer: it creates following sysfs files:
-> /sys/class/leds/foo/delay_on
-> /sys/class/leds/foo/delay_off
->
-> Activating both of them will probably cause a WARNING in sysfs. They
-> can't coexist :(
->
-> We should probably have per-trigger subdirs, e.g.:
-> /sys/class/leds/foo/trigger-oneshot/delay_on
-> /sys/class/leds/foo/trigger-oneshot/delay_off
-> /sys/class/leds/foo/trigger-oneshot/invert
-> /sys/class/leds/foo/trigger-oneshot/shot
-> /sys/class/leds/foo/trigger-timer/delay_on
-> /sys/class/leds/foo/trigger-timer/delay_off
-> but implementing it now would break the ABI.
->
-> One workaround I can see is doing triggers V2, they:
-> 1) Would put sysfs files in /sys/class/leds/foo/trigger-bar/
-> 2) Use new API for *requesting* LED to be on/off
-> 3) There would be a counter of requests in V2 API
-> 4) Multiple triggers V2 would be allowed to be used (assigned) at the same time
+On Thu, 1 Sep 2016, Jacek Anaszewski wrote:
 
-Currently we support only triggers dedicated to specific type of
-devices. Even in case of triggers that don't expose custom sysfs
-attributes, registered with led_trigger_register_simple(), device
-drivers have to generate trigger event with dedicated function, e.g:
+> On 09/01/2016 07:25 AM, Rafał Miłecki wrote:
+> > On 31 August 2016 at 21:00, Rafał Miłecki <zajec5@gmail.com> wrote:
+> >> On 31 August 2016 at 20:23, Alan Stern <stern@rowland.harvard.edu> wrote:
+> >>> On Tue, 30 Aug 2016, Rafał Miłecki wrote:
+> >>>> Not really as it won't cover some pretty common use cases. Many home
+> >>>> routers have few USB ports (2-5) and only 1 USB LED. It has to be
+> >>>> possible to assign few USB ports to a single LED (trigger). That way
+> >>>> LED should be turned on (and kept on) if there is at least 1 USB
+> >>>> device connected. You obviously can't do:
+> >>>> echo "usb1-1 usb1-2 usb2-1" > /sys/class/leds/foo/trigger
+> >>>>
+> >>>> This was already brought up by Rob (who mentioned CPU trigger) and I
+> >>>> replied him pretty much the same way in:
+> >>>> https://lkml.org/lkml/2016/7/29/38
+> >>>> (reply starts with "Anyway, the serious limitation I see").
+> >>>
+> >>> The code for a bunch of triggers must already be written.  What would
+> >>> the user do if he wanted to flash a single LED in response to both
+> >>> CPU activity and MTD activity?  If not
+> >>>
+> >>>         echo "cpu mtd" >/sys/class/leds/foo/trigger
+> >>>
+> >>> then what?
+> >>
+> >> Well, it sounds like a new feature then. Shall we add an extra API
+> >> with a request function for turning LED on? It could internally count
+> >> how many requests were raised and keep LED on as long as there is at
+> >> least 1 left. I guess we should implement it in trigger "subsystem"
+> >> (if I can call it so). Does it sound like a good plan?
+> >
+> > I'm pretty sure noone ever planned to have more than 1 trigger
+> > assigned to a single LED. I just realized there will be a problem with
+> > proposed solution: sysfs files conflict.
+> >
+> > Consider 2 existing triggers for a moment:
+> > 1) oneshot: it creates following sysfs files:
+> > /sys/class/leds/foo/delay_on
+> > /sys/class/leds/foo/delay_off
+> > /sys/class/leds/foo/invert
+> > /sys/class/leds/foo/shot
+> > 2) timer: it creates following sysfs files:
+> > /sys/class/leds/foo/delay_on
+> > /sys/class/leds/foo/delay_off
+> >
+> > Activating both of them will probably cause a WARNING in sysfs. They
+> > can't coexist :(
+> >
+> > We should probably have per-trigger subdirs, e.g.:
+> > /sys/class/leds/foo/trigger-oneshot/delay_on
+> > /sys/class/leds/foo/trigger-oneshot/delay_off
+> > /sys/class/leds/foo/trigger-oneshot/invert
+> > /sys/class/leds/foo/trigger-oneshot/shot
+> > /sys/class/leds/foo/trigger-timer/delay_on
+> > /sys/class/leds/foo/trigger-timer/delay_off
+> > but implementing it now would break the ABI.
+> >
+> > One workaround I can see is doing triggers V2, they:
+> > 1) Would put sysfs files in /sys/class/leds/foo/trigger-bar/
+> > 2) Use new API for *requesting* LED to be on/off
+> > 3) There would be a counter of requests in V2 API
+> > 4) Multiple triggers V2 would be allowed to be used (assigned) at the same time
+> 
+> Currently we support only triggers dedicated to specific type of
+> devices. Even in case of triggers that don't expose custom sysfs
+> attributes, registered with led_trigger_register_simple(), device
+> drivers have to generate trigger event with dedicated function, e.g:
+> 
+> - ledtrig-cpu: void ledtrig_cpu(enum cpu_led_event ledevt)
+> - ledtrig-disk: void ledtrig_disk_activity(void)
+> - ledtrig-mtd: void ledtrig_mtd_activity(void)
+> 
+> If one wanted to have the LED notified by different type of devices,
+> then they would have to implement a trigger that would exposed all
+> required types of API.
+> 
+> Unfortunately, there are many possible combinations of
+> triggers and that doesn't sound sane to add a new one when someone
+> will find it useful. Of course it would entail adding a call to the
+> new trigger API in the drivers, which doesn't seem like something
+> acceptable in the mainline.
 
-- ledtrig-cpu: void ledtrig_cpu(enum cpu_led_event ledevt)
-- ledtrig-disk: void ledtrig_disk_activity(void)
-- ledtrig-mtd: void ledtrig_mtd_activity(void)
+Maybe it would make more sense, in this case, to allow only three 
+possibilities for a USB port activity trigger.  Toggle the LED 
+whenever:
 
-If one wanted to have the LED notified by different type of devices,
-then they would have to implement a trigger that would exposed all
-required types of API.
+	There is activity on the specified port, or
 
-Unfortunately, there are many possible combinations of
-triggers and that doesn't sound sane to add a new one when someone
-will find it useful. Of course it would entail adding a call to the
-new trigger API in the drivers, which doesn't seem like something
-acceptable in the mainline.
+	There is any activity on any port on the specified hub, or
 
--- 
-Best regards,
-Jacek Anaszewski
+	There is any USB activity on any port.
+
+That ought to cover most of the normal use cases, and it would be
+simple enough to implement.
+
+Alan Stern
+
