@@ -1,46 +1,81 @@
-From: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
-Subject: Re: [PATCH] leds-pca963x: add bindings to invert polarity
-Date: Mon, 5 Sep 2016 13:02:10 +0200
-Message-ID: <20160905110210.bxno7zx7exmtu774@ad.chargestorm.se>
-References: <1462182104-21450-1-git-send-email-anders@chargestorm.se>
- <5729A4AB.5080901@samsung.com>
- <20160504075508.GA22125@ad.chargestorm.se>
- <5729AE59.6000009@schinagl.nl>
+From: Raul Piper <raulpblooper@gmail.com>
+Subject: Creating sysfs brightness for every led channels
+Date: Mon, 5 Sep 2016 23:57:35 +0530
+Message-ID: <CAEwN+MAZZW3aoohYUyeUySZFkytz_vUsKwzxaG3aK8AA5UZUpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5729AE59.6000009-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
-Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Ricardo Ribalda Delgado <ricardo.ribalda-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============7308622231108091351=="
+Return-path: <kernelnewbies-bounces@kernelnewbies.org>
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+	<mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+	<mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Sender: kernelnewbies-bounces@kernelnewbies.org
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
+To: linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
 List-Id: linux-leds@vger.kernel.org
 
+--===============7308622231108091351==
+Content-Type: multipart/alternative; boundary=001a114b80548ef76d053bc6d592
+
+--001a114b80548ef76d053bc6d592
+Content-Type: text/plain; charset=UTF-8
+
 Hi,
+I am trying to send the brightness value ( for 5 channels) by
+ echo "val1val2val3val4val5" > brightness ,
+But seems like even if I change the brightness type to enum or int in my
+driver ,I will never be able to send the brightness string because led
+class defines the brightness value as enum.
 
-* Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org> [160504 10:10]:
-> On 04-05-16 09:55, Anders Darander wrote:
-> > * Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> [160504 09:28]:
-> > > Please note that there has already been an attempt to add
-> > > the support for inverted output polarity to this driver and related
-> > > discussion [1]. This thread remains quiet for around two weeks.
-> > Ah, nice coincidence! Unfortunately, I made the work earlier than his
-> > posting, otherwise I could have spent the time on somethinge else. ;)
-> Sorry to be so slacking with submitting this, I've been sitting on it for 6
-> months now :) I just kept postponing in submitting it. But as they say,
-> great minds, and all that.
+*extern void led_set_brightness(struct led_classdev *led_cdev,
+enum led_brightness brightness);*
 
-> > Well, then I hope v2 of his patches comes along.
+Only possible way I am finding is to create attributes for each channel
+like brightness,default trigger,max_brightness and any user defined
+attributes, but i am not getting how to do this.
+Can some on please comment or post the link to the example driver.
+Do i have to call led_class_register for every channel and I have to
+ define every channel in the device tree?
+Thanks in advance !
+Regards,
+Rp
 
-Any news on a v2?
+--001a114b80548ef76d053bc6d592
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Otherwise, could we agree on a dt binding for the inverted output, and
-look into merging that prior to the rest of the series? I'd like to get
-rid of my local patch... 
+<div dir=3D"ltr">Hi,=C2=A0<div>I am trying to send the brightness value ( f=
+or 5 channels) by=C2=A0</div><div>=C2=A0echo &quot;val1val2val3val4val5&quo=
+t; &gt; brightness ,=C2=A0</div><div>But seems like even if I change the br=
+ightness type to enum or int in my driver ,I will never be able to send the=
+ brightness string because led class defines the brightness value as enum.<=
+/div><div><pre style=3D"padding:1em;overflow:auto"><font color=3D"#787878" =
+face=3D"monaco, courier new, courier, monospace"><span style=3D"font-size:1=
+2.35px"><b>extern void led_set_brightness(struct led_classdev *led_cdev,
+enum led_brightness brightness);</b></span><span style=3D"font-size:0.95em"=
+><b><br></b></span></font></pre></div><div>Only possible way I am finding i=
+s to create attributes for each channel like brightness,default trigger,max=
+_brightness and any user defined attributes, but i am not getting how to do=
+ this.</div><div>Can some on please comment or post the link to the example=
+ driver.</div><div>Do i have to call led_class_register for every channel a=
+nd I have to =C2=A0define every channel in the device tree?</div><div>Thank=
+s in advance !</div><div>Regards,</div><div>Rp</div></div>
 
-Cheers,
-Anders
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--001a114b80548ef76d053bc6d592--
+
+
+--===============7308622231108091351==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+
+--===============7308622231108091351==--
