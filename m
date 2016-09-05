@@ -1,77 +1,46 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: [PATCH V4] leds: trigger: Introduce an USB port trigger
-Date: Mon, 5 Sep 2016 11:28:41 +0200
-Message-ID: <CACna6rzKfhg=CcCoWFiR2rq=s2ghZgW3Y3NWN89YrNo=3=pqjw@mail.gmail.com>
-References: <fd6a12b6-334d-98c6-4492-ba36474d6b22@gmail.com> <Pine.LNX.4.44L0.1609032022470.11709-100000@netrider.rowland.org>
+From: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
+Subject: Re: [PATCH] leds-pca963x: add bindings to invert polarity
+Date: Mon, 5 Sep 2016 13:02:10 +0200
+Message-ID: <20160905110210.bxno7zx7exmtu774@ad.chargestorm.se>
+References: <1462182104-21450-1-git-send-email-anders@chargestorm.se>
+ <5729A4AB.5080901@samsung.com>
+ <20160504075508.GA22125@ad.chargestorm.se>
+ <5729AE59.6000009@schinagl.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33719 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932192AbcIEJ2n (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Sep 2016 05:28:43 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1609032022470.11709-100000@netrider.rowland.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5729AE59.6000009-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+Cc: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Ricardo Ribalda Delgado <ricardo.ribalda-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Richard Purdie <rpurdie@rpsys.net>, Felipe Balbi <balbi@kernel.org>, Peter Chen <hzpeterchen@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Jonathan Corbet <corbet@lwn.net>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephan Linz <linz@li-pro.net>, open list <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 
-On 4 September 2016 at 02:24, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Sat, 3 Sep 2016, Jacek Anaszewski wrote:
->
->> >> The remaining issue is the sysfs interface design for defining and
->> >> presenting multiple USB ports. I'm still in favour of a single
->> >> attribute with space separated list. This scheme is commonly used
->> >> in existing interfaces.
->> >
->> > No such interface is needed if you do things the way I outlined above.
->> > Each trigger would require the user to specify either one port, one
->> > hub, or nothing at all.  Multiple ports would not be used.
->>
->> The patch assumes that it is possible to register trigger for many
->> ports.
->
-> The patch could be changed to remove that assumption.
+Hi,
 
-I did this assumption for a reason. There are many devices with more
-than 1 USB port and these ports are handled by the same controllers,
-just different ports. Let me share USB details of my SmartRG SR400ac
-device with 2 physical USB ports:
+* Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org> [160504 10:10]:
+> On 04-05-16 09:55, Anders Darander wrote:
+> > * Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> [160504 09:28]:
+> > > Please note that there has already been an attempt to add
+> > > the support for inverted output polarity to this driver and related
+> > > discussion [1]. This thread remains quiet for around two weeks.
+> > Ah, nice coincidence! Unfortunately, I made the work earlier than his
+> > posting, otherwise I could have spent the time on somethinge else. ;)
+> Sorry to be so slacking with submitting this, I've been sitting on it for 6
+> months now :) I just kept postponing in submitting it. But as they say,
+> great minds, and all that.
 
-Physical USB 3.0 port is handled by following controllers and their
-root hub ports:
-1) OHCI's port 1
-2) EHCI's port 1
-3) XHCI's port 1
+> > Well, then I hope v2 of his patches comes along.
 
-Physical USB 2.0 port is handled by following controllers and their
-root hub ports:
-1) OHCI's port 2
-2) EHCI's port 2
+Any news on a v2?
 
+Otherwise, could we agree on a dt binding for the inverted output, and
+look into merging that prior to the rest of the series? I'd like to get
+rid of my local patch... 
 
-This devices has 3 separated LEDs. I'll list them and tell which ports
-should be assigned to them:
-
-bcm53xx:green:usb3 should have assigned:
-1) OHCI's port 1
-2) EHCI's port 1
-
-bcm53xx:white:usb3 should have assigned:
-1) XHCI's port 1
-
-bcm53xx:white:usb2 should have assigned:
-1) OHCI's port 2
-2) EHCI's port 2
-
-
-As you can see, I need to specify ports precisely. Assigning a single
-port is not enough. Assigning whole hub is too much. So none of:
->         echo usb1-4.2 >/sys/class/led/foo/trigger
->         echo hub1-4 >/sys/class/led/foo/trigger
->         echo usb >/sys/class/led/foo/trigger
-would be sufficient here :(
-
---=20
-Rafa=C5=82
+Cheers,
+Anders
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
