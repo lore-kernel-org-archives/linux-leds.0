@@ -1,299 +1,102 @@
-From: Tobias Doerffel <tobias.doerffel@ed-chemnitz.de>
-Subject: [RFC PATCH 1/3] leds: trigger: add activity LED trigger
-Date: Tue,  6 Sep 2016 14:10:46 +0200
-Message-ID: <1473163848-5408-2-git-send-email-tobias.doerffel@ed-chemnitz.de>
-References: <1473163848-5408-1-git-send-email-tobias.doerffel@ed-chemnitz.de>
+From: Amitesh Singh <singh.amitesh@gmail.com>
+Subject: Re: [PATCH] leds: oneshot - Allow default delay to be passed as an argument
+Date: Tue, 6 Sep 2016 20:35:21 +0530
+Message-ID: <CABKcAmUDjwGiT8PL6d2TqL+ro-05CxWdBpViYwhND_rb8oLYkg@mail.gmail.com>
+References: <20160903090331.GA15375@ami-desktop> <590baa53-8426-d2dc-803d-752bf6082c20@gmail.com>
+ <CABKcAmXSwgMbopurjrNU7fgPu58W-ZDbDi6VuUn2P2zOGATYLQ@mail.gmail.com> <d6bd7a38-8f85-e9fe-7b23-b2568757624f@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from dd13524.kasserver.com ([85.13.135.100]:50649 "EHLO
-        dd13524.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755945AbcIFMRs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2016 08:17:48 -0400
-In-Reply-To: <1473163848-5408-1-git-send-email-tobias.doerffel@ed-chemnitz.de>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34752 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756164AbcIFPFm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2016 11:05:42 -0400
+Received: by mail-oi0-f65.google.com with SMTP id v82so8351293oie.1
+        for <linux-leds@vger.kernel.org>; Tue, 06 Sep 2016 08:05:42 -0700 (PDT)
+In-Reply-To: <d6bd7a38-8f85-e9fe-7b23-b2568757624f@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Tobias Doerffel <tobias.doerffel@ed-chemnitz.de>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 
-The LED activity trigger allows device drivers to indicate device
-activity by blinking LEDs. A typical use case is to signal RX and/or
-TX activity on e.g. CAN busses or serial ports.
+On Sat, Sep 3, 2016 at 11:42 PM, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> On 09/03/2016 05:35 PM, Amitesh Singh wrote:
+>>
+>> Hello Jacek,
+>>
+>>
+>> On Sat, Sep 3, 2016 at 7:14 PM, Jacek Anaszewski
+>> <jacek.anaszewski@gmail.com <mailto:jacek.anaszewski@gmail.com>> wrote:
+>>
+>>     Hi Amitesh,
+>>
+>>
+>>     On 09/03/2016 11:03 AM, Amitesh Singh wrote:
+>>
+>>         This patch facilates the blink delay to be passed as
+>>         an argument at the time of module loading.
+>>         e.g.
+>>         insmod ledtrigg-oneshot.ko default_delay=100
+>>         ---
+>>          drivers/leds/trigger/ledtrig-oneshot.c | 7 +++++--
+>>          1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>>         diff --git a/drivers/leds/trigger/ledtrig-oneshot.c
+>>         b/drivers/leds/trigger/ledtrig-oneshot.c
+>>         index b8ea9f0..95933a1 100644
+>>         --- a/drivers/leds/trigger/ledtrig-oneshot.c
+>>         +++ b/drivers/leds/trigger/ledtrig-oneshot.c
+>>         @@ -22,6 +22,9 @@
+>>
+>>          #define DEFAULT_DELAY 100
+>>
+>>         +static unsigned long default_delay = DEFAULT_DELAY;
+>>         +module_param(default_delay, ulong, S_IRUGO|S_IWUSR);
+>>         +
+>>          struct oneshot_trig_data {
+>>                 unsigned int invert;
+>>          };
+>>         @@ -146,8 +149,8 @@ static void oneshot_trig_activate(struct
+>>         led_classdev *led_cdev)
+>>                 if (rc)
+>>                         goto err_out_invert;
+>>
+>>         -       led_cdev->blink_delay_on = DEFAULT_DELAY;
+>>         -       led_cdev->blink_delay_off = DEFAULT_DELAY;
+>>         +       led_cdev->blink_delay_on = default_delay;
+>>         +       led_cdev->blink_delay_off = default_delay;
+>>
+>>                 led_cdev->activated = true;
+>>
+>>
+>>
+>>
+>>     Why do you need this module parameter? You can change
+>>     delay_on and delay_off values from sysfs.
+>>
+>> Yes, indeed. If someone wants to change blink_delay, he has to change
+>> both delay_on and delay_off in case you want to blink with constant time
+>> ON and OFF (1 / (T + T) = 1/2T)
+>> This patch facilitates you to modify delay in one step in case of delay
+>> on and off are same which I think, is most used case.
+>
+>
+> I don't think this is real improvement. We spare two sysfs file
+> write operations only in case the default_delay param value passed
+> on module loading won't need to be altered later on.
+>
+> Moreover, three sysfs file writes needed for configuring oneshot
+> trigger (e.g. echo "oneshot" > trigger; echo 100 > delay_on;
+> echo 50 > delay_off) are not too expensive taking into account
+> usual frequency of setting LED trigger (surely less often than
+> once per second).
+>
+>
+This is for configuring the led trigger delay on/off parameter when I
+instantiate the driver from kernel space.
+I am instantiating oneshot trigger at the time of boot up.
 
-This is meant to replace similar code in various device drivers which
-register all their activity LEDs individually.
-
-Signed-off-by: Tobias Doerffel <tobias.doerffel@ed-chemnitz.de>
----
- drivers/leds/trigger/Kconfig            |  10 +++
- drivers/leds/trigger/Makefile           |   1 +
- drivers/leds/trigger/ledtrig-activity.c | 147 ++++++++++++++++++++++++++++++++
- include/linux/leds.h                    |  71 +++++++++++++++
- 4 files changed, 229 insertions(+)
- create mode 100644 drivers/leds/trigger/ledtrig-activity.c
-
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 3f9ddb9..ca69bac 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -33,6 +33,16 @@ config LEDS_TRIGGER_ONESHOT
- 
- 	  If unsure, say Y.
- 
-+config LEDS_TRIGGER_ACTIVITY
-+	tristate "LED Activity Trigger"
-+	depends on LEDS_TRIGGERS
-+	help
-+	  This allows device drivers to indicate device activity by blinking
-+	  LEDs. A typical use case is to signal RX and/or TX activity on e.g.
-+	  CAN busses or serial ports
-+
-+	  If unsure, say Y.
-+
- config LEDS_TRIGGER_DISK
- 	bool "LED Disk Trigger"
- 	depends on IDE_GD_ATA || ATA
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index a72c43c..8431f18 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -1,5 +1,6 @@
- obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
- obj-$(CONFIG_LEDS_TRIGGER_ONESHOT)	+= ledtrig-oneshot.o
-+obj-$(CONFIG_LEDS_TRIGGER_ACTIVITY)	+= ledtrig-activity.o
- obj-$(CONFIG_LEDS_TRIGGER_DISK)		+= ledtrig-disk.o
- obj-$(CONFIG_LEDS_TRIGGER_MTD)		+= ledtrig-mtd.o
- obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
-diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
-new file mode 100644
-index 0000000..fb71738
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-activity.c
-@@ -0,0 +1,147 @@
-+/*
-+ * Activity LED Trigger
-+ *
-+ * Copyright 2016 EDC Electronic Design Chemnitz GmbH
-+ *
-+ * Author: Tobias Doerffel <tobias.doerffel@ed-chemnitz.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/leds.h>
-+
-+static const char *activity_suffixes[ACTIVITY_LED_COUNT] = {
-+	[ACTIVITY_LED_RX] = "rx",
-+	[ACTIVITY_LED_TX] = "tx",
-+	[ACTIVITY_LED_RXTX] = "rxtx",
-+	[ACTIVITY_LED_RECONNECT] = "recon"
-+};
-+
-+void ledtrig_activity_event(struct activity_led_trigger *trig,
-+			    enum activity_led_event event)
-+{
-+	int i;
-+	int event_leds = 0;
-+	unsigned long led_delay = 0;
-+
-+	switch (event) {
-+	case ACTIVITY_LED_EVENT_START:
-+		for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+			if (trig->triggers[i].led_trig) {
-+				led_trigger_event(trig->triggers[i].led_trig,
-+						  LED_FULL);
-+			}
-+		}
-+		break;
-+	case ACTIVITY_LED_EVENT_STOP:
-+		for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+			if (trig->triggers[i].led_trig) {
-+				led_trigger_event(trig->triggers[i].led_trig,
-+						  LED_OFF);
-+			}
-+		}
-+		break;
-+	case ACTIVITY_LED_EVENT_RX:
-+		event_leds = (ACTIVITY_LEDS_RX | ACTIVITY_LEDS_RXTX);
-+		break;
-+	case ACTIVITY_LED_EVENT_TX:
-+		event_leds = (ACTIVITY_LEDS_TX | ACTIVITY_LEDS_RXTX);
-+		break;
-+	case ACTIVITY_LED_EVENT_RXTX:
-+		event_leds = ACTIVITY_LEDS_RXTX;
-+		break;
-+	case ACTIVITY_LED_EVENT_RECONNECT:
-+		event_leds = ACTIVITY_LEDS_RECONNECT;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+		led_delay = trig->triggers[i].delay;
-+		if (led_delay > 0 &&
-+		    (1 << trig->triggers[i].led) & event_leds) {
-+			led_trigger_blink_oneshot(trig->triggers[i].led_trig,
-+						  &led_delay, &led_delay, 1);
-+		}
-+	}
-+}
-+EXPORT_SYMBOL_GPL(ledtrig_activity_event);
-+
-+void ledtrig_activity_register(const char *name, int leds,
-+			       struct activity_led_trigger **tp)
-+{
-+	int i;
-+	struct activity_led_trigger *trig;
-+
-+	trig = kzalloc(sizeof(struct activity_led_trigger), GFP_KERNEL);
-+
-+	for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+		if (leds & (1 << i)) {
-+			trig->triggers[i].led = i;
-+			trig->triggers[i].delay = ACTIVITY_LED_DEFAULT_DELAY;
-+			snprintf(trig->triggers[i].led_trig_name,
-+				 sizeof(trig->triggers[i].led_trig_name),
-+				 "%s-%s", name, activity_suffixes[i]);
-+			led_trigger_register_simple(
-+						trig->triggers[i].led_trig_name,
-+						&trig->triggers[i].led_trig);
-+		}
-+	}
-+
-+	*tp = trig;
-+}
-+EXPORT_SYMBOL_GPL(ledtrig_activity_register);
-+
-+void ledtrig_activity_unregister(struct activity_led_trigger *trig)
-+{
-+	int i;
-+
-+	for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+		if (trig->triggers[i].led_trig) {
-+			led_trigger_unregister_simple(
-+						trig->triggers[i].led_trig);
-+		}
-+	}
-+
-+	kfree(trig);
-+}
-+EXPORT_SYMBOL_GPL(ledtrig_activity_unregister);
-+
-+void ledtrig_activity_rename(const char *name,
-+			     struct activity_led_trigger *trig)
-+{
-+	int i;
-+	char trig_name[TRIG_NAME_MAX];
-+
-+	for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+		if (trig->triggers[i].led_trig) {
-+			snprintf(trig_name, sizeof(trig_name),
-+				 "%s-%s", name, activity_suffixes[i]);
-+			led_trigger_rename_static(trig_name,
-+						  trig->triggers[i].led_trig);
-+		}
-+	}
-+}
-+EXPORT_SYMBOL_GPL(ledtrig_activity_rename);
-+
-+void ledtrig_activity_set_delay(struct activity_led_trigger *trig, int leds,
-+				unsigned long delay)
-+{
-+	int i;
-+
-+	for (i = 0; i < ACTIVITY_LED_COUNT; i++) {
-+		if (leds & (1 << i))
-+			trig->triggers[i].delay = delay;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(ledtrig_activity_set_delay);
-+
-+MODULE_AUTHOR("Tobias Doerffel <tobias.doerffel@ed-chemnitz.de>");
-+MODULE_DESCRIPTION("Activity LED trigger");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 8a3b5d2..8a37f97 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -414,4 +414,75 @@ static inline void ledtrig_cpu(enum cpu_led_event evt)
- }
- #endif
- 
-+/*
-+ * Activity LED trigger
-+ */
-+
-+enum activity_led_event {
-+	ACTIVITY_LED_EVENT_START,
-+	ACTIVITY_LED_EVENT_STOP,
-+	ACTIVITY_LED_EVENT_RX,
-+	ACTIVITY_LED_EVENT_TX,
-+	ACTIVITY_LED_EVENT_RXTX,
-+	ACTIVITY_LED_EVENT_RECONNECT,
-+};
-+
-+enum activity_led {
-+	ACTIVITY_LED_RX,
-+	ACTIVITY_LED_TX,
-+	ACTIVITY_LED_RXTX,
-+	ACTIVITY_LED_RECONNECT,
-+	ACTIVITY_LED_COUNT,
-+};
-+
-+#define	ACTIVITY_LEDS_RX		(1 << ACTIVITY_LED_RX)
-+#define	ACTIVITY_LEDS_TX		(1 << ACTIVITY_LED_TX)
-+#define	ACTIVITY_LEDS_RXTX		(1 << ACTIVITY_LED_RXTX)
-+#define	ACTIVITY_LEDS_RECONNECT	(1 << ACTIVITY_LED_RECONNECT)
-+
-+#define ACTIVITY_LED_DEFAULT_DELAY	50
-+
-+struct activity_led_event_trigger {
-+	struct led_trigger *led_trig;
-+	char led_trig_name[TRIG_NAME_MAX];
-+	int led;
-+	unsigned long delay;
-+};
-+
-+struct activity_led_trigger {
-+	struct activity_led_event_trigger triggers[ACTIVITY_LED_COUNT];
-+};
-+
-+#ifdef CONFIG_LEDS_TRIGGER_ACTIVITY
-+void ledtrig_activity_event(struct activity_led_trigger *trig,
-+			    enum activity_led_event event);
-+void ledtrig_activity_register(const char *name, int leds,
-+			       struct activity_led_trigger **tp);
-+void ledtrig_activity_unregister(struct activity_led_trigger *trig);
-+void ledtrig_activity_rename(const char *name,
-+			     struct activity_led_trigger *trig);
-+void ledtrig_activity_set_delay(struct activity_led_trigger *trig, int leds,
-+				unsigned long delay);
-+#else
-+void ledtrig_activity_event(struct activity_led_trigger *trig,
-+			    enum activity_led_event event)
-+{
-+}
-+void ledtrig_activity_register(const char *name, int leds,
-+			       struct activity_led_trigger **tp)
-+{
-+}
-+void ledtrig_activity_unregister(struct activity_led_trigger *trig)
-+{
-+}
-+void ledtrig_activity_rename(const char *name,
-+			     struct activity_led_trigger *trig)
-+{
-+}
-+void ledtrig_activity_set_delay(struct activity_led_trigger *trig, int leds,
-+				unsigned long delay)
-+{
-+}
-+#endif
-+
- #endif		/* __LINUX_LEDS_H_INCLUDED */
--- 
-2.1.4
+> --
+> Best regards,
+> Jacek Anaszewski
