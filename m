@@ -1,102 +1,30 @@
-From: Amitesh Singh <singh.amitesh@gmail.com>
-Subject: Re: [PATCH] leds: oneshot - Allow default delay to be passed as an argument
-Date: Tue, 6 Sep 2016 20:35:21 +0530
-Message-ID: <CABKcAmUDjwGiT8PL6d2TqL+ro-05CxWdBpViYwhND_rb8oLYkg@mail.gmail.com>
-References: <20160903090331.GA15375@ami-desktop> <590baa53-8426-d2dc-803d-752bf6082c20@gmail.com>
- <CABKcAmXSwgMbopurjrNU7fgPu58W-ZDbDi6VuUn2P2zOGATYLQ@mail.gmail.com> <d6bd7a38-8f85-e9fe-7b23-b2568757624f@gmail.com>
+From: David Lechner <david@lechnology.com>
+Subject: Re: [PATCH] leds: Introduce userspace leds driver
+Date: Tue, 6 Sep 2016 10:21:13 -0500
+Message-ID: <7839f0a8-2d08-2579-4652-f25572ac1ad4@lechnology.com>
+References: <1473128158-26915-1-git-send-email-david@lechnology.com>
+ <alpine.DEB.2.02.1609060708210.29281@pmeerw.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34752 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756164AbcIFPFm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2016 11:05:42 -0400
-Received: by mail-oi0-f65.google.com with SMTP id v82so8351293oie.1
-        for <linux-leds@vger.kernel.org>; Tue, 06 Sep 2016 08:05:42 -0700 (PDT)
-In-Reply-To: <d6bd7a38-8f85-e9fe-7b23-b2568757624f@gmail.com>
+Received: from vern.gendns.com ([206.190.152.46]:45260 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932180AbcIFPVQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 6 Sep 2016 11:21:16 -0400
+In-Reply-To: <alpine.DEB.2.02.1609060708210.29281@pmeerw.net>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+To: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
-On Sat, Sep 3, 2016 at 11:42 PM, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> On 09/03/2016 05:35 PM, Amitesh Singh wrote:
->>
->> Hello Jacek,
->>
->>
->> On Sat, Sep 3, 2016 at 7:14 PM, Jacek Anaszewski
->> <jacek.anaszewski@gmail.com <mailto:jacek.anaszewski@gmail.com>> wrote:
->>
->>     Hi Amitesh,
->>
->>
->>     On 09/03/2016 11:03 AM, Amitesh Singh wrote:
->>
->>         This patch facilates the blink delay to be passed as
->>         an argument at the time of module loading.
->>         e.g.
->>         insmod ledtrigg-oneshot.ko default_delay=100
->>         ---
->>          drivers/leds/trigger/ledtrig-oneshot.c | 7 +++++--
->>          1 file changed, 5 insertions(+), 2 deletions(-)
->>
->>         diff --git a/drivers/leds/trigger/ledtrig-oneshot.c
->>         b/drivers/leds/trigger/ledtrig-oneshot.c
->>         index b8ea9f0..95933a1 100644
->>         --- a/drivers/leds/trigger/ledtrig-oneshot.c
->>         +++ b/drivers/leds/trigger/ledtrig-oneshot.c
->>         @@ -22,6 +22,9 @@
->>
->>          #define DEFAULT_DELAY 100
->>
->>         +static unsigned long default_delay = DEFAULT_DELAY;
->>         +module_param(default_delay, ulong, S_IRUGO|S_IWUSR);
->>         +
->>          struct oneshot_trig_data {
->>                 unsigned int invert;
->>          };
->>         @@ -146,8 +149,8 @@ static void oneshot_trig_activate(struct
->>         led_classdev *led_cdev)
->>                 if (rc)
->>                         goto err_out_invert;
->>
->>         -       led_cdev->blink_delay_on = DEFAULT_DELAY;
->>         -       led_cdev->blink_delay_off = DEFAULT_DELAY;
->>         +       led_cdev->blink_delay_on = default_delay;
->>         +       led_cdev->blink_delay_off = default_delay;
->>
->>                 led_cdev->activated = true;
->>
->>
->>
->>
->>     Why do you need this module parameter? You can change
->>     delay_on and delay_off values from sysfs.
->>
->> Yes, indeed. If someone wants to change blink_delay, he has to change
->> both delay_on and delay_off in case you want to blink with constant time
->> ON and OFF (1 / (T + T) = 1/2T)
->> This patch facilitates you to modify delay in one step in case of delay
->> on and off are same which I think, is most used case.
+On 09/06/2016 12:09 AM, Peter Meerwald-Stadler wrote:
+> Hi,
 >
+>> This driver creates a userspace leds driver similar to uinput.
 >
-> I don't think this is real improvement. We spare two sysfs file
-> write operations only in case the default_delay param value passed
-> on module loading won't need to be altered later on.
+> is the module really called leds-user as claimed by Kconfig?
+> or rather uleds
 >
-> Moreover, three sysfs file writes needed for configuring oneshot
-> trigger (e.g. echo "oneshot" > trigger; echo 100 > delay_on;
-> echo 50 > delay_off) are not too expensive taking into account
-> usual frequency of setting LED trigger (surely less often than
-> once per second).
->
->
-This is for configuring the led trigger delay on/off parameter when I
-instantiate the driver from kernel space.
-I am instantiating oneshot trigger at the time of boot up.
 
-> --
-> Best regards,
-> Jacek Anaszewski
+It is supposed to be "uleds". Thanks for catching that.
