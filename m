@@ -1,112 +1,167 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: oneshot - Allow default delay to be passed as an
- argument
-Date: Tue, 6 Sep 2016 20:52:04 +0200
-Message-ID: <75dd68c6-cd62-57da-5ec5-ca0a85e96190@gmail.com>
-References: <20160903090331.GA15375@ami-desktop>
- <590baa53-8426-d2dc-803d-752bf6082c20@gmail.com>
- <CABKcAmXSwgMbopurjrNU7fgPu58W-ZDbDi6VuUn2P2zOGATYLQ@mail.gmail.com>
- <d6bd7a38-8f85-e9fe-7b23-b2568757624f@gmail.com>
- <CABKcAmUDjwGiT8PL6d2TqL+ro-05CxWdBpViYwhND_rb8oLYkg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v4 3/5] firmware: update usermode helper docs and add SmPL report
+Date: Tue,  6 Sep 2016 17:42:08 -0700
+Message-ID: <1473208930-6835-4-git-send-email-mcgrof@kernel.org>
+References: <1471999507-913-1-git-send-email-mcgrof@kernel.org>
+ <1473208930-6835-1-git-send-email-mcgrof@kernel.org>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36375 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965358AbcIFTEK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2016 15:04:10 -0400
-Received: by mail-wm0-f67.google.com with SMTP id l65so12265496wmf.3
-        for <linux-leds@vger.kernel.org>; Tue, 06 Sep 2016 12:04:09 -0700 (PDT)
-In-Reply-To: <CABKcAmUDjwGiT8PL6d2TqL+ro-05CxWdBpViYwhND_rb8oLYkg@mail.gmail.com>
+Received: from mail.kernel.org ([198.145.29.136]:54998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756166AbcIGAm3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 6 Sep 2016 20:42:29 -0400
+In-Reply-To: <1473208930-6835-1-git-send-email-mcgrof@kernel.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Amitesh Singh <singh.amitesh@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+To: ming.lei@canonical.com, akpm@linux-foundation.org, gregkh@linuxfoundation.org
+Cc: daniel.wagner@bmw-carit.de, mmarek@suse.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, zohar@linux.vnet.ibm.com, broonie@kernel.org, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, teg@jklm.no, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-leds@vger.kernel.org
 
-On 09/06/2016 05:05 PM, Amitesh Singh wrote:
-> On Sat, Sep 3, 2016 at 11:42 PM, Jacek Anaszewski
-> <jacek.anaszewski@gmail.com> wrote:
->> On 09/03/2016 05:35 PM, Amitesh Singh wrote:
->>>
->>> Hello Jacek,
->>>
->>>
->>> On Sat, Sep 3, 2016 at 7:14 PM, Jacek Anaszewski
->>> <jacek.anaszewski@gmail.com <mailto:jacek.anaszewski@gmail.com>> wrote:
->>>
->>>     Hi Amitesh,
->>>
->>>
->>>     On 09/03/2016 11:03 AM, Amitesh Singh wrote:
->>>
->>>         This patch facilates the blink delay to be passed as
->>>         an argument at the time of module loading.
->>>         e.g.
->>>         insmod ledtrigg-oneshot.ko default_delay=100
->>>         ---
->>>          drivers/leds/trigger/ledtrig-oneshot.c | 7 +++++--
->>>          1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>>         diff --git a/drivers/leds/trigger/ledtrig-oneshot.c
->>>         b/drivers/leds/trigger/ledtrig-oneshot.c
->>>         index b8ea9f0..95933a1 100644
->>>         --- a/drivers/leds/trigger/ledtrig-oneshot.c
->>>         +++ b/drivers/leds/trigger/ledtrig-oneshot.c
->>>         @@ -22,6 +22,9 @@
->>>
->>>          #define DEFAULT_DELAY 100
->>>
->>>         +static unsigned long default_delay = DEFAULT_DELAY;
->>>         +module_param(default_delay, ulong, S_IRUGO|S_IWUSR);
->>>         +
->>>          struct oneshot_trig_data {
->>>                 unsigned int invert;
->>>          };
->>>         @@ -146,8 +149,8 @@ static void oneshot_trig_activate(struct
->>>         led_classdev *led_cdev)
->>>                 if (rc)
->>>                         goto err_out_invert;
->>>
->>>         -       led_cdev->blink_delay_on = DEFAULT_DELAY;
->>>         -       led_cdev->blink_delay_off = DEFAULT_DELAY;
->>>         +       led_cdev->blink_delay_on = default_delay;
->>>         +       led_cdev->blink_delay_off = default_delay;
->>>
->>>                 led_cdev->activated = true;
->>>
->>>
->>>
->>>
->>>     Why do you need this module parameter? You can change
->>>     delay_on and delay_off values from sysfs.
->>>
->>> Yes, indeed. If someone wants to change blink_delay, he has to change
->>> both delay_on and delay_off in case you want to blink with constant time
->>> ON and OFF (1 / (T + T) = 1/2T)
->>> This patch facilitates you to modify delay in one step in case of delay
->>> on and off are same which I think, is most used case.
->>
->>
->> I don't think this is real improvement. We spare two sysfs file
->> write operations only in case the default_delay param value passed
->> on module loading won't need to be altered later on.
->>
->> Moreover, three sysfs file writes needed for configuring oneshot
->> trigger (e.g. echo "oneshot" > trigger; echo 100 > delay_on;
->> echo 50 > delay_off) are not too expensive taking into account
->> usual frequency of setting LED trigger (surely less often than
->> once per second).
->>
->>
-> This is for configuring the led trigger delay on/off parameter when I
-> instantiate the driver from kernel space.
-> I am instantiating oneshot trigger at the time of boot up.
+We've determined that very sadly we cannot nuke the usermode helper.
+The firmware code is a bit hard to follow, and so is the history,
+document the reasons for why we cannot remove the usermode helper and
+the only thing we can do is compartamentalize it.
 
-In other use cases, when the delay intervals need to be altered
-later, it doesn't introduce any gain. Even in your use case
-the gain is almost unnoticeable.
+While it, add a Coccinelle SmPL patch to help maintainers police
+for *infidels* still using the usermode helper. Its accepted that perhaps
+we can't get rid of all use cases, as otherwise we'd break userspace, so
+best we can do is go on a hunt and fix incorrect users of it. Drivers
+can only be transitioned out of the usermode helper once we know old
+userspace cannot be not be broken by a kernel change.
 
+The current SmPL patch reports:
+
+$ export COCCI=scripts/coccinelle/api/request_firmware-usermode.cocci
+$ make coccicheck MODE=report
+
+drivers/leds/leds-lp55xx-common.c:227:8-31: WARNING: please check if user really needs the usermode helper
+drivers/firmware/dell_rbu.c:622:17-40: WARNING: please check if user really needs the usermode helper
+
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org
+Cc: Abhay Salunke <Abhay_Salunke@dell.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ Documentation/firmware_class/README                | 36 ++++++++++++++++++---
+ .../coccinelle/api/request_firmware-usermode.cocci | 37 ++++++++++++++++++++++
+ 2 files changed, 68 insertions(+), 5 deletions(-)
+ create mode 100644 scripts/coccinelle/api/request_firmware-usermode.cocci
+
+diff --git a/Documentation/firmware_class/README b/Documentation/firmware_class/README
+index 20aca5901785..9f8b2daf4c7c 100644
+--- a/Documentation/firmware_class/README
++++ b/Documentation/firmware_class/README
+@@ -33,7 +33,7 @@
+ 	than 256, user should pass 'firmware_class.path=$CUSTOMIZED_PATH'
+ 	if firmware_class is built in kernel(the general situation)
+ 
+- 2), userspace:
++ 2), userspace: (AVOID)
+  	- /sys/class/firmware/xxx/{loading,data} appear.
+ 	- hotplug gets called with a firmware identifier in $FIRMWARE
+ 	  and the usual hotplug environment.
+@@ -41,14 +41,14 @@
+ 
+  3), kernel: Discard any previous partial load.
+ 
+- 4), userspace:
++ 4), userspace: (AVOID)
+ 		- hotplug: cat appropriate_firmware_image > \
+ 					/sys/class/firmware/xxx/data
+ 
+  5), kernel: grows a buffer in PAGE_SIZE increments to hold the image as it
+ 	 comes in.
+ 
+- 6), userspace:
++ 6), userspace: (AVOID)
+ 		- hotplug: echo 0 > /sys/class/firmware/xxx/loading
+ 
+  7), kernel: request_firmware() returns and the driver has the firmware
+@@ -66,8 +66,8 @@
+ 	 	copy_fw_to_device(fw_entry->data, fw_entry->size);
+ 	 release_firmware(fw_entry);
+ 
+- Sample/simple hotplug script:
+- ============================
++ Sample/simple hotplug script: (AVOID)
++ ==========================================
+ 
+ 	# Both $DEVPATH and $FIRMWARE are already provided in the environment.
+ 
+@@ -116,6 +116,32 @@ If you're a maintainer you can help police this with:
+ $ export COCCI=scripts/coccinelle/api/request_firmware-avoid-init-probe-init.cocci
+ $ make coccicheck MODE=report
+ 
++Usermode helper
++===============
++
++The firmware API supports a usermode helper that lets userspace fetch and
++hand off firmware to a driver through sysfs. While in theory this was a
++nice feature it also presented many issues, so in practice it should be
++avoided at all costs now.
++
++Only drivers that have a really good reason for a usermode helper should
++use it. This use case must be well documented. You should try really hard
++to avoid it, at all costs.
++
++CONFIG_FW_LOADER_USER_HELPER_FALLBACK: disabled by most distributions now
++CONFIG_FW_LOADER_USER_HELPER: still enabled by most disributions
++
++When CONFIG_FW_LOADER_USER_HELPER_FALLBACK is enabled request_firmware()
++*always* calls the usermode helpers. When CONFIG_FW_LOADER_USER_HELPER is
++enabled, only if you specifically ask for it wil the usermode helper be
++called. If CONFIG_FW_LOADER_USER_HELPER_FALLBACK is disabled drivers can
++still require the usermode helper by using request_firmware_nowait().
++
++To help police for user of the usermode helper you can use:
++
++$ export COCCI=scripts/coccinelle/api/request_firmware-avoid-init-probe-init.cocci
++$ make coccicheck MODE=report
++
+  about in-kernel persistence:
+  ---------------------------
+  Under some circumstances, as explained below, it would be interesting to keep
+diff --git a/scripts/coccinelle/api/request_firmware-usermode.cocci b/scripts/coccinelle/api/request_firmware-usermode.cocci
+new file mode 100644
+index 000000000000..94ab95cb7c75
+--- /dev/null
++++ b/scripts/coccinelle/api/request_firmware-usermode.cocci
+@@ -0,0 +1,37 @@
++// Avoid the usermode helper at all costs
++//
++// request_firmware_nowait() API enables explicit request for the
++// usermode helper. Chances are high its use is just a copy and
++// paste bug. Before you fix the driver be sure to *verify* no
++// usermode helper tool exists that would otherwise break if
++// we replace the driver to use a non-usermode helper variant.
++//
++// Confidence: High
++//
++// Reason for low confidence:
++//
++// Copyright: (C) 2016 Luis R. Rodriguez <mcgrof@kernel.org> GPLv2.
++//
++// Options: --include-headers
++
++virtual report
++virtual context
++
++@ r1 depends on report || context @
++expression mod, name, dev, gfp, drv, cb;
++position p;
++@@
++
++(
++*request_firmware_nowait@p(mod, false, name, dev, gfp, drv, cb)
++|
++*request_firmware_nowait@p(mod, 0, name, dev, gfp, drv, cb)
++|
++*request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
++)
++
++@script:python depends on report@
++p << r1.p;
++@@
++
++coccilib.report.print_report(p[0], "WARNING: please check if user really needs the usermode helper")
 -- 
-Best regards,
-Jacek Anaszewski
+2.9.2
