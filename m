@@ -1,69 +1,53 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [patch 2/2] leds: add driver for Mellanox systems leds
-Date: Wed, 7 Sep 2016 22:21:29 +0200
-Message-ID: <22943812-c4f8-3440-92a3-49b1827d3516@gmail.com>
-References: <1473259995-196607-1-git-send-email-vadimp@mellanox.com>
+Subject: Re: Creating sysfs brightness for every led channels
+Date: Wed, 7 Sep 2016 22:27:21 +0200
+Message-ID: <094425d1-4e0f-f702-4d57-94c21ca75217@gmail.com>
+References: <CAEwN+MAKgvtdB-tgoxzwAZgUk9rUp+YFaCY7qbKk4sg87zdDYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1473259995-196607-1-git-send-email-vadimp@mellanox.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vadimp@mellanox.com, rpurdie@rpsys.net, j.anaszewski@samsung.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jiri@resnulli.us, michaelsh@mellanox.com
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:34950 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbcIGU2A (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Sep 2016 16:28:00 -0400
+Received: by mail-wm0-f52.google.com with SMTP id w12so1295601wmf.0
+        for <linux-leds@vger.kernel.org>; Wed, 07 Sep 2016 13:27:59 -0700 (PDT)
+In-Reply-To: <CAEwN+MAKgvtdB-tgoxzwAZgUk9rUp+YFaCY7qbKk4sg87zdDYQ@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Raul Piper <raulpblooper@gmail.com>, linux-leds@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
 
-Hi Vadim,
+Hi Raul,
 
-Please just include these changes to the new version
-of the patch.
+On 09/05/2016 08:32 PM, Raul Piper wrote:
+> Hi,
+> I am trying to send the brightness value ( for 5 channels) by
+>  echo "val1val2val3val4val5" > brightness ,
 
-On 09/07/2016 04:53 PM, vadimp@mellanox.com wrote:
-> From: Vadim Pasternak <vadimp@mellanox.com>
+How did you infer this format?
+
+Please get acquainted with Documentation/leds/leds-class.txt
+and Documentation/ABI/testing/sysfs-class-led.
+
+> But seems like even if I change the brightness type to enum or int in
+> my driver ,I will never be able to send the brightness string because
+> led class defines the brightness value as enum.
+
+One LED class device can control one channel.
+
 >
-> Fix in comments 3KHz and 6KHz to 3Hz and 6Hz respectively.
+> extern void led_set_brightness(struct led_classdev *led_cdev,
+> enum led_brightness brightness);
 >
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> ---
->  drivers/leds/leds-mlxcpld.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
-> index 0ec2375..eeed35c 100644
-> --- a/drivers/leds/leds-mlxcpld.c
-> +++ b/drivers/leds/leds-mlxcpld.c
-> @@ -47,8 +47,8 @@
->  #define MLXPLAT_CPLD_LPC_REG_BASE_ADRR     0x2500 /* LPC bus access */
->
->  /* Color codes for leds */
-> -#define LED_OFFSET_HALF		0x01 /* Offset from solid for 3KHz blink */
-> -#define LED_OFFSET_FULL		0x02 /* Offset from solid for 6KHz blink */
-> +#define LED_OFFSET_HALF		0x01 /* Offset from solid for 3Hz blink */
-> +#define LED_OFFSET_FULL		0x02 /* Offset from solid for 6Hz blink */
->  #define LED_IS_OFF		0x00 /* Off */
->  #define LED_RED_STATIC_ON	0x05 /* Solid red */
->  #define LED_RED_BLINK_HALF	(LED_RED_STATIC_ON + LED_OFFSET_HALF)
-> @@ -237,7 +237,7 @@ static void mlxcpld_led_store_hw(u8 mask, u8 off, u8 vset)
->  	/* Each led is controlled through low or high nibble of the relevant
->  	 * CPLD register. Register offset is specified by off parameter.
->  	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red,
-> -	 * 0x6 for 3KHz blink red, 0xd for solid green, 0xe for 3KHz blink
-> +	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
->  	 * green.
->  	 * Parameter mask specifies which nibble is used for specific led: mask
->  	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
-> @@ -274,8 +274,8 @@ static int mlxcpld_led_blink(struct led_classdev *led,
->  {
->  	struct mlxcpld_led_priv *pled = cdev_to_priv(led);
->
-> -	/* HW supports two types of blinking: full (6KHz) and half (3KHz).
-> -	 * For delay on/off zero default setting 3KHz is used.
-> +	/* HW supports two types of blinking: full (6Hz) and half (3Hz).
-> +	 * For delay on/off zero default setting 3Hz is used.
->  	 */
->  	if (!(*delay_on == 0 && *delay_off == 0) &&
->  	    !(*delay_on == LED_BLINK_3HZ && *delay_off == LED_BLINK_3HZ) &&
->
+> Only possible way I am finding is to create attributes for each
+> channel like brightness,default trigger,max_brightness and any user
+> defined attributes, but i am not getting how to do this.
+> Can some on please comment or post the link to the example driver.
+> Do i have to call led_class_register for every channel and I have to
+> define every channel in the device tree?
+
+Just grep through drivers/leds and Documentation/devicetree/bindings/leds/.
 
 -- 
 Best regards,
