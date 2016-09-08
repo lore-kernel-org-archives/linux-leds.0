@@ -1,771 +1,688 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: RE: [patch v3] leds: add driver for Mellanox systems leds
-Date: Wed, 7 Sep 2016 21:17:29 +0000
-Message-ID: <AM5PR0501MB2097D056D54A1F7431802772A2F80@AM5PR0501MB2097.eurprd05.prod.outlook.com>
-References: <1473266571-7105-1-git-send-email-vadimp@mellanox.com>
- <806124d7-d98e-250c-e111-e3117cdfc405@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: vadimp@mellanox.com
+Subject: [patch v4] leds: add driver for Mellanox systems LEDs
+Date: Thu,  8 Sep 2016 07:25:53 +0000
+Message-ID: <1473319553-37195-1-git-send-email-vadimp@mellanox.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-db5eur01on0084.outbound.protection.outlook.com ([104.47.2.84]:13952
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750772AbcIHAus (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 7 Sep 2016 20:50:48 -0400
-In-Reply-To: <806124d7-d98e-250c-e111-e3117cdfc405@gmail.com>
-Content-Language: en-US
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:40987 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754211AbcIHGf3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Sep 2016 02:35:29 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>
-Cc: "dave@treblig.org" <dave@treblig.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, Michael Shych <michaelsh@mellanox.com>
+To: rpurdie@rpsys.net, j.anaszewski@samsung.com
+Cc: dave@treblig.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jiri@resnulli.us, michaelsh@mellanox.com, Vadim Pasternak <vadimp@mellanox.com>
 
-Hi Jacek,
+From: Vadim Pasternak <vadimp@mellanox.com>
 
-Thank you very much for review.
+This makes it possible to create a set of LEDs for Mellanox systems:
+"msx6710", "msx6720", "msb7700", "msn2700", "msx1410", "msn2410",
+"msb7800", "msn2740", "msn2100".
 
-> -----Original Message-----
-> From: Jacek Anaszewski [mailto:jacek.anaszewski@gmail.com]
-> Sent: Wednesday, September 07, 2016 11:21 PM
-> To: Vadim Pasternak <vadimp@mellanox.com>; rpurdie@rpsys.net;
-> j.anaszewski@samsung.com
-> Cc: dave@treblig.org; linux-leds@vger.kernel.org; linux-kernel@vger.kerne=
-l.org;
-> jiri@resnulli.us; Michael Shych <michaelsh@mellanox.com>
-> Subject: Re: [patch v3] leds: add driver for Mellanox systems leds
->=20
-> Hi Vadim,
->=20
-> Thanks for the update. Please refer to my comments in the code.
->=20
-> On 09/07/2016 06:42 PM, vadimp@mellanox.com wrote:
-> > From: Vadim Pasternak <vadimp@mellanox.com>
-> >
-> > This makes it possible to create a set of LEDs for Mellanox systems:
-> > "msx6710", "msx6720", "msb7700", "msn2700", "msx1410", "msn2410",
-> > "msb7800", "msn2740", "msn2100".
-> >
-> > Driver obtains led devices according to system configuration, provided
->=20
-> My previous remark is still valid:
->=20
-> s/led/LED/ here and in case of all other occurrences in the in-driver com=
-ments
->=20
-> > through system DMI data, like fan1:green, fan1:red and creates devices
-> > in
-> > form: "devicename:colour:function".
->=20
-> The "devicename" segment is still missing in the entries in
-> mlxcpld_led_default_profile and mlxcpld_led_msn2100_profile.
->=20
-> >
-> > led setting is controlled through on board CPLD Lattice device.
->=20
-> s/led/LED/
->=20
-> > For setting particular led off, solid, blink (blink requires
-> > ledtrig-timer module):
->=20
-> This is not true in case of frequencies supported by the hardware.
->=20
-> > echo 0 > /sys/class/leds/status\:green/brightness
->=20
-> Please remember to add devicename segment also in these examples, while
-> submitting the updated patch.
+Driver obtains LED devices according to system configuration, provided
+through system DMI data, like fan1:green, fan1:red and creates devices in
+form: "devicename:colour:function".
 
-In this example "status" is in role of device name.
-On panel systems have "psu#", "fan#", "uid", and "status" LEDs.
-Where "status" should indicate whole system health.
+LED setting is controlled through on board CPLD Lattice device.
+For setting particular LED off, solid, blink:
+echo 0 > /sys/class/leds/mlxcpld\:status\:green/brightness
+echo 1 > /sys/class/leds/mlxcpld\:status\:green/brightness
+echo timer > /sys/class/leds/mlxcpld\:status\:green/trigger
 
->=20
-> > echo 1 > /sys/class/leds/status\:green/brightness
-> > echo timer > /sys/class/leds/status\:green/trigger
-> >
-> > On module probing all leds are set green, on removing - off.
-> >
-> > Last setting overwrites previous, f.e. sequence for changing led from
-> > green - red - green:
-> > echo 1 > /sys/class/leds/psu\:green/brightness
-> > echo 1 > /sys/class/leds/psu\:red/brightness
-> > echo 1 > /sys/class/leds/psu\:green/brightness
-> > Note: leds cannot be turned on/off simultaneously.
-> >
-> > The Kconfig currently controlling compilation of this code is:
-> > drivers/leds/Kconfig:config LEDS_MLXCPLD
-> >
-> > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> > Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-> > ---
-> > v2->v3:
-> >  Fixes issues pointed out by Dave:
-> >  - fix in comments 3KHz and 6KHz to 3Hz and 6Hz respectively;
-> > ---
-> > v1->v2:
-> >  Fixes issues pointed out by Jacek:
-> >  - fix style in patch cover text;
-> >  - add doc file with hw description;
-> >  - arrange include directives in alphabetical order;
-> >  - make defines more clear;
-> >  - fix several comments for structure descriptions;
-> >  - add several empty lines between defentions;
-> >  - change max_brightness profile setting to 1 instead of LED_FULL;
-> >  - use capital letters for the enumerator;
-> >  - change in if (product =3D=3D NULL) to (!product);
-> >  - add comments to mlxcpld_led_store_hw;
-> >  - remove switch statement from mlxcpld_led_brightness;
-> >  - modify mlxcpld_led_blink;
-> >  - remove unnecessary devm_kfree in mlxcpld_led_config;
-> >  - remove switch statement from mlxcpld_led_config;
-> >  - remove platform_get_drvdata from mlxcpld_led_probe;
-> > ---
-> >  Documentation/leds/leds-mlxcpld.txt |  88 ++++++++
-> >  MAINTAINERS                         |   8 +
-> >  drivers/leds/Kconfig                |   8 +
-> >  drivers/leds/Makefile               |   1 +
-> >  drivers/leds/leds-mlxcpld.c         | 399
-> ++++++++++++++++++++++++++++++++++++
-> >  5 files changed, 504 insertions(+)
-> >  create mode 100644 Documentation/leds/leds-mlxcpld.txt
-> >  create mode 100644 drivers/leds/leds-mlxcpld.c
-> >
-> > diff --git a/Documentation/leds/leds-mlxcpld.txt
-> > b/Documentation/leds/leds-mlxcpld.txt
-> > new file mode 100644
-> > index 0000000..575d765
-> > --- /dev/null
-> > +++ b/Documentation/leds/leds-mlxcpld.txt
-> > @@ -0,0 +1,88 @@
-> > +ver leds-mlxcpld
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > +Driver for Mellanox systems leds.
-> > +Provide system led support for the nex Mellanox systems:
-> > +"msx6710", "msx6720", "msb7700", "msn2700", "msx1410", "msn2410",
-> > +"msb7800", "msn2740", "msn2100".
-> > +
-> > +Description
-> > +-----------
-> > +Driver provides the following leds for the systems "msx6710",
-> > +"msx6720", "msb7700", "msn2700", "msx1410", "msn2410", "msb7800",
-> "msn2740":
-> > +
-> > + "status"
-> > +  CPLD reg offset: 0x20
-> > +  Bits [3:0]
-> > +
-> > + "psu"
-> > +  CPLD reg offset: 0x20
-> > +  Bits [7:4]
-> > +
-> > + "fan1"
-> > +  CPLD reg offset: 0x21
-> > +  Bits [3:0]
-> > +
-> > + "fan2"
-> > +  CPLD reg offset: 0x21
-> > +  Bits [7:4]
-> > +
-> > + "fan3"
-> > +  CPLD reg offset: 0x22
-> > +  Bits [3:0]
-> > +
-> > + "fan4"
-> > +  CPLD reg offset: 0x22
-> > +  Bits [7:4]
-> > +
-> > + Color mask for all the above leds:
-> > +  [bit3,bit2,bit1,bit0] or
-> > +  [bit7,bit6,bit5,bit4]:
-> > +	[0,0,0,0] =3D LED OFF
-> > +	[0,1,0,1] =3D Red static ON
-> > +	[1,1,0,1] =3D Green static ON
-> > +	[0,1,1,0] =3D Red blink 3Hz
-> > +	[1,1,1,0] =3D Green blink 3Hz
-> > +	[0,1,1,1] =3D Red blink 6Hz
-> > +	[1,1,1,1] =3D Green blink 6Hz
-> > +
-> > +Driver provides the following leds for the system "msn2100":
-> > + "status"
-> > +  CPLD reg offset: 0x20
-> > +  Bits [3:0]
-> > +
-> > + "fan"
-> > +  CPLD reg offset: 0x21
-> > +  Bits [3:0]
-> > +
-> > + "psu1"
-> > +  CPLD reg offset: 0x23
-> > +  Bits [3:0]
-> > +
-> > + "psu2"
-> > +  CPLD reg offset: 0x23
-> > +  Bits [7:4]
-> > +
-> > + "uid"
-> > +  CPLD reg offset: 0x24
-> > +  Bits [3:0]
-> > +
-> > + Color mask for all the above leds, excepted uid:
-> > +  [bit3,bit2,bit1,bit0] or
-> > +  [bit7,bit6,bit5,bit4]:
-> > +	[0,0,0,0] =3D LED OFF
-> > +	[0,1,0,1] =3D Red static ON
-> > +	[1,1,0,1] =3D Green static ON
-> > +	[0,1,1,0] =3D Red blink 3Hz
-> > +	[1,1,1,0] =3D Green blink 3Hz
-> > +	[0,1,1,1] =3D Red blink 6Hz
-> > +	[1,1,1,1] =3D Green blink 6Hz
-> > +
-> > + Color mask for uid led:
-> > +  [bit3,bit2,bit1,bit0]:
-> > +	[0,0,0,0] =3D LED OFF
-> > +	[1,1,0,1] =3D Blue static ON
-> > +	[1,1,1,0] =3D Blue blink 3Hz
-> > +	[1,1,1,1] =3D Blue blink 6Hz
-> > +
-> > +Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
-> > +For 3Hz it is about 40 msec off and 40 msec on, for 6Hz - 80 msec off =
-and on.
->=20
-> I don't get this. In case of 3Hz the LED should blink three times per sec=
-ond, e.g
-> every 333ms, duty cycle 167ms. Am i missing something?
+On module probing all LEDs are set green, on removing - off.
 
-Yes, 3Hz should 333.
-My mistake.
+Last setting overwrites previous, f.e. sequence for
+changing LED from green - red - green:
+echo 1 > /sys/class/leds/mlxcpld\:psu\:green/brightness
+echo 1 > /sys/class/leds/mlxcpld\:psu\:red/brightness
+echo 1 > /sys/class/leds/mlxcpld\:psu\:green/brightness
+Note: LEDs cannot be turned on/off simultaneously.
 
->=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS index 0bbe4b1..adb9e9b 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -7655,6 +7655,14 @@ W:	http://www.mellanox.com
-> >  Q:	http://patchwork.ozlabs.org/project/netdev/list/
-> >  F:	drivers/net/ethernet/mellanox/mlxsw/
-> >
-> > +MELLANOX MLXCPLD LED DRIVER
-> > +M:	Vadim Pasternak <vadimp@mellanox.com>
-> > +L:	linux-leds@vger.kernel.org
-> > +S:	Supported
-> > +W:	http://www.mellanox.com
->=20
-> Is the documentation for this chip available on the website?
->=20
+The Kconfig currently controlling compilation of this code is:
+drivers/leds/Kconfig:config LEDS_MLXCPLD
 
-I have a problem to provide reference to such doc.
-Mellanox has per system CPLD register map description (this driver supports=
- currently about 10 systems).
-It contains different registers, among them several LED related.
-Others - resets, IO, etc. And also internal registers for debug purpose.
-I should verify it with our system engineers.
-Is it must now, or it can be added later?
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+---
+v3->v4
+ Fixes issues pointed out by Jacek:
+ - change in all commnets led to LED;
+ - add in defines prefix MLXCPLD;
+ - add to LED names device prefix mlxcpld;
+ - fix long comment stile;
+ - replace mlxcpld_led_brightness by mlxcpld_led_set_brightness;
+ - replace mlxcpld_led_blink by mlxcpld_led_blink_set
+---
+v2->v3:
+ Fixes issues pointed out by Dave:
+ - fix in comments 3KHz and 6KHz to 3Hz and 6Hz respectively;
+---
+v1->v2:
+ Fixes issues pointed out by Jacek:
+ - fix style in patch cover text;
+ - add doc file with hw description;
+ - arrange include directives in alphabetical order;
+ - make defines more clear;
+ - fix several comments for structure descriptions;
+ - add several empty lines between defentions;
+ - change max_brightness profile setting to 1 instead of LED_FULL;
+ - use capital letters for the enumerator;
+ - change in if (product == NULL) to (!product);
+ - add comments to mlxcpld_led_store_hw;
+ - remove switch statement from mlxcpld_led_brightness;
+ - modify mlxcpld_led_blink;
+ - remove unnecessary devm_kfree in mlxcpld_led_config;
+ - remove switch statement from mlxcpld_led_config;
+ - remove platform_get_drvdata from mlxcpld_led_probe;
+---
+ Documentation/leds/leds-mlxcpld.txt | 110 +++++++++
+ MAINTAINERS                         |   8 +
+ drivers/leds/Kconfig                |   8 +
+ drivers/leds/Makefile               |   1 +
+ drivers/leds/leds-mlxcpld.c         | 429 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 556 insertions(+)
+ create mode 100644 Documentation/leds/leds-mlxcpld.txt
+ create mode 100644 drivers/leds/leds-mlxcpld.c
 
-
-> > +F:	drivers/leds/leds-mlxcpld.c
-> > +F:	Documentation/leds/leds-mlxcpld.txt
-> > +
-> >  SOFT-ROCE DRIVER (rxe)
-> >  M:	Moni Shoua <monis@mellanox.com>
-> >  L:	linux-rdma@vger.kernel.org
-> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig index
-> > 9dcc9b1..4cd85be 100644
-> > --- a/drivers/leds/Kconfig
-> > +++ b/drivers/leds/Kconfig
-> > @@ -631,6 +631,14 @@ config LEDS_VERSATILE
-> >  	  This option enabled support for the LEDs on the ARM Versatile
-> >  	  and RealView boards. Say Y to enabled these.
-> >
-> > +config LEDS_MLXCPLD
-> > +	tristate "LED support for the Mellanox boards"
-> > +	depends on X86_64 && DMI
-> > +	depends on LEDS_CLASS
-> > +	help
-> > +	  This option enabled support for the LEDs on the Mellanox
-> > +	  boards. Say Y to enabled these.
-> > +
-> >  comment "LED Triggers"
-> >  source "drivers/leds/trigger/Kconfig"
-> >
-> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile index
-> > 0684c86..9a2494b 100644
-> > --- a/drivers/leds/Makefile
-> > +++ b/drivers/leds/Makefile
-> > @@ -68,6 +68,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+=3D leds-
-> ktd2692.o
-> >  obj-$(CONFIG_LEDS_POWERNV)		+=3D leds-powernv.o
-> >  obj-$(CONFIG_LEDS_SEAD3)		+=3D leds-sead3.o
-> >  obj-$(CONFIG_LEDS_IS31FL32XX)		+=3D leds-is31fl32xx.o
-> > +obj-$(CONFIG_LEDS_MLXCPLD)		+=3D leds-mlxcpld.o
-> >
-> >  # LED SPI Drivers
-> >  obj-$(CONFIG_LEDS_DAC124S085)		+=3D leds-dac124s085.o
-> > diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
-> > new file mode 100644 index 0000000..eeed35c
-> > --- /dev/null
-> > +++ b/drivers/leds/leds-mlxcpld.c
-> > @@ -0,0 +1,399 @@
-> > +/*
-> > + * drivers/leds/leds-mlxcpld.c
-> > + * Copyright (c) 2016 Mellanox Technologies. All rights reserved.
-> > + * Copyright (c) 2016 Vadim Pasternak <vadimp@mellanox.com>
-> > + *
-> > + * Redistribution and use in source and binary forms, with or without
-> > + * modification, are permitted provided that the following conditions =
-are
-> met:
-> > + *
-> > + * 1. Redistributions of source code must retain the above copyright
-> > + *    notice, this list of conditions and the following disclaimer.
-> > + * 2. Redistributions in binary form must reproduce the above copyrigh=
-t
-> > + *    notice, this list of conditions and the following disclaimer in =
-the
-> > + *    documentation and/or other materials provided with the distribut=
-ion.
-> > + * 3. Neither the names of the copyright holders nor the names of its
-> > + *    contributors may be used to endorse or promote products derived =
-from
-> > + *    this software without specific prior written permission.
-> > + *
-> > + * Alternatively, this software may be distributed under the terms of
-> > +the
-> > + * GNU General Public License ("GPL") version 2 as published by the
-> > +Free
-> > + * Software Foundation.
-> > + *
-> > + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-> CONTRIBUTORS "AS IS"
-> > + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-> LIMITED
-> > +TO, THE
-> > + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-> PARTICULAR
-> > +PURPOSE
-> > + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-> > +CONTRIBUTORS BE
-> > + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-> > +OR
-> > + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-> PROCUREMENT
-> > +OF
-> > + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-> > +BUSINESS
-> > + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-> > +WHETHER IN
-> > + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-> > +OTHERWISE)
-> > + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-> > +ADVISED OF THE
-> > + * POSSIBILITY OF SUCH DAMAGE.
-> > + */
-> > +
-> > +#include <linux/acpi.h>
-> > +#include <linux/device.h>
-> > +#include <linux/dmi.h>
-> > +#include <linux/hwmon.h>
-> > +#include <linux/hwmon-sysfs.h>
-> > +#include <linux/leds.h>
-> > +#include <linux/module.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/version.h>
-> > +
-> > +#define MLXPLAT_CPLD_LPC_REG_BASE_ADRR     0x2500 /* LPC bus access
-> */
-> > +
-> > +/* Color codes for leds */
-> > +#define LED_OFFSET_HALF		0x01 /* Offset from solid for 3Hz blink
-> */
-> > +#define LED_OFFSET_FULL		0x02 /* Offset from solid for 6Hz blink
-> */
-> > +#define LED_IS_OFF		0x00 /* Off */
-> > +#define LED_RED_STATIC_ON	0x05 /* Solid red */
-> > +#define LED_RED_BLINK_HALF	(LED_RED_STATIC_ON +
-> LED_OFFSET_HALF)
-> > +#define LED_RED_BLINK_FULL	(LED_RED_STATIC_ON +
-> LED_OFFSET_FULL)
-> > +#define LED_GREEN_STATIC_ON	0x0D /* Solid green */
-> > +#define LED_GREEN_BLINK_HALF	(LED_GREEN_STATIC_ON +
-> LED_OFFSET_HALF)
-> > +#define LED_GREEN_BLINK_FULL	(LED_GREEN_STATIC_ON +
-> LED_OFFSET_FULL)
-> > +#define LED_BLINK_3HZ		160 /* ~160 msec off/on */
-> > +#define LED_BLINK_6HZ		80 /* ~80 msec off/on */
->=20
-> Please add MLXCPLD prefix to these macros.
->=20
-> > +
-> > +/**
-> > + * mlxcpld_param - led access parameters:
-> > + * @offset - offset for led access in CPLD device
-> > + * @mask - mask for led access in CPLD device
-> > + * @base_color - base color code for led **/ struct mlxcpld_param {
-> > +	u8 offset;
-> > +	u8 mask;
-> > +	u8 base_color;
-> > +};
-> > +
-> > +/**
-> > + * mlxcpld_led_priv - led private data:
-> > + * @cled - led class device instance
-> > + * @param - led CPLD access parameters **/ struct mlxcpld_led_priv {
-> > +	struct led_classdev cdev;
-> > +	struct mlxcpld_param param;
-> > +};
-> > +
-> > +#define cdev_to_priv(c)		container_of(c, struct
-> mlxcpld_led_priv, cdev)
-> > +
-> > +/**
-> > + * mlxcpld_led_profile - system led profile (defined per system class)=
-:
-> > + * @offset - offset for led access in CPLD device
->=20
-> s/led/LED/ - here and in the other comments.
->=20
-> > + * @mask - mask for led access in CPLD device
-> > + * @base_color - base color code
-> > + * @brightness - default brightness setting (on/off)
-> > + * @name - led name
-> > +**/
-> > +struct mlxcpld_led_profile {
-> > +	u8 offset;
-> > +	u8 mask;
-> > +	u8 base_color;
-> > +	enum led_brightness brightness;
-> > +	const char *name;
-> > +};
-> > +
-> > +/**
-> > + * mlxcpld_led_pdata - system led private data
-> > + * @pdev - platform device pointer
-> > + * @pled - led class device instance
-> > + * @profile - system configuration profile
-> > + * @num_led_instances - number of led instances
-> > + * @lock - device access lock
-> > +**/
-> > +struct mlxcpld_led_pdata {
-> > +	struct platform_device *pdev;
-> > +	struct mlxcpld_led_priv *pled;
-> > +	struct mlxcpld_led_profile *profile;
-> > +	int num_led_instances;
-> > +	spinlock_t lock;
-> > +};
-> > +
-> > +static struct mlxcpld_led_pdata *mlxcpld_led;
-> > +
-> > +/* Default profile fit the next Mellanox systems:
-> > + * "msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
-> > + * "msn2410", "msb7800", "msn2740"
-> > + */
-> > +struct mlxcpld_led_profile mlxcpld_led_default_profile[] =3D {
-> > +	{
-> > +		0x21, 0xf0, LED_GREEN_STATIC_ON, 1, "fan1:green",
->=20
-> s/fan1:green/mlxcpld:fan1:green/
->=20
-> The same applies to the remaining entries.
->=20
-> > +	},
-> > +	{
-> > +		0x21, 0xf0, LED_RED_STATIC_ON, LED_OFF, "fan1:red",
-> > +	},
-> > +	{
-> > +		0x21, 0x0f, LED_GREEN_STATIC_ON, 1, "fan2:green",
-> > +	},
-> > +	{
-> > +		0x21, 0x0f, LED_RED_STATIC_ON, LED_OFF, "fan2:red",
-> > +	},
-> > +	{
-> > +		0x22, 0xf0, LED_GREEN_STATIC_ON, 1, "fan3:green",
-> > +	},
-> > +	{
-> > +		0x22, 0xf0, LED_RED_STATIC_ON, LED_OFF, "fan3:red",
-> > +	},
-> > +	{
-> > +		0x22, 0x0f, LED_GREEN_STATIC_ON, 1, "fan4:green",
-> > +	},
-> > +	{
-> > +		0x22, 0x0f, LED_RED_STATIC_ON, LED_OFF, "fan4:red",
-> > +	},
-> > +	{
-> > +		0x20, 0x0f, LED_GREEN_STATIC_ON, 1, "psu:green",
-> > +	},
-> > +	{
-> > +		0x20, 0x0f, LED_RED_STATIC_ON, LED_OFF, "psu:red",
-> > +	},
-> > +	{
-> > +		0x20, 0xf0, LED_GREEN_STATIC_ON, 1, "status:green",
-> > +	},
-> > +	{
-> > +		0x20, 0xf0, LED_RED_STATIC_ON, LED_OFF, "status:red",
-> > +	},
-> > +};
-> > +
-> > +/* Profile fit the Mellanox systems based on "msn2100" */ struct
-> > +mlxcpld_led_profile mlxcpld_led_msn2100_profile[] =3D {
-> > +	{
-> > +		0x21, 0xf0, LED_GREEN_STATIC_ON, 1, "fan:green",
-> > +	},
-> > +	{
-> > +		0x21, 0xf0, LED_RED_STATIC_ON, LED_OFF, "fan:red",
-> > +	},
-> > +	{
-> > +		0x23, 0xf0, LED_GREEN_STATIC_ON, 1, "psu1:green",
-> > +	},
-> > +	{
-> > +		0x23, 0xf0, LED_RED_STATIC_ON, LED_OFF, "psu1:red",
-> > +	},
-> > +	{
-> > +		0x23, 0x0f, LED_GREEN_STATIC_ON, 1, "psu2:green",
-> > +	},
-> > +	{
-> > +		0x23, 0x0f, LED_RED_STATIC_ON, LED_OFF, "psu2:red",
-> > +	},
-> > +	{
-> > +		0x20, 0xf0, LED_GREEN_STATIC_ON, 1, "status:green",
-> > +	},
-> > +	{
-> > +		0x20, 0xf0, LED_RED_STATIC_ON, LED_OFF, "status:red",
-> > +	},
-> > +	{
-> > +		0x24, 0xf0, LED_GREEN_STATIC_ON, LED_OFF,  "uid:blue",
-> > +	},
-> > +};
-> > +
-> > +enum mlxcpld_led_platform_types {
-> > +	MLXCPLD_LED_PLATFORM_DEFAULT,
-> > +	MLXCPLD_LED_PLATFORM_MSN2100,
-> > +};
-> > +
-> > +const char *mlx_product_names[] =3D {
-> > +	"DEFAULT",
-> > +	"MSN2100",
-> > +};
-> > +
-> > +static enum
-> > +mlxcpld_led_platform_types mlxcpld_led_platform_check_sys_type(void)
-> > +{
-> > +	const char *mlx_product_name;
-> > +	int i;
-> > +
-> > +	mlx_product_name =3D dmi_get_system_info(DMI_PRODUCT_NAME);
-> > +	if (!mlx_product_name)
-> > +		return MLXCPLD_LED_PLATFORM_DEFAULT;
-> > +
-> > +	for (i =3D 1;  i < ARRAY_SIZE(mlx_product_names); i++) {
-> > +		if (strstr(mlx_product_name, mlx_product_names[i]))
-> > +			return i;
-> > +	}
-> > +
-> > +	return MLXCPLD_LED_PLATFORM_DEFAULT; }
-> > +
-> > +static void mlxcpld_led_bus_access_func(u16 base, u8 offset, u8 rw_fla=
-g,
-> > +					u8 *data)
-> > +{
-> > +	u32 addr =3D base + offset;
-> > +
-> > +	if (rw_flag =3D=3D 0)
-> > +		outb(*data, addr);
-> > +	else
-> > +		*data =3D inb(addr);
-> > +}
-> > +
-> > +static void mlxcpld_led_store_hw(u8 mask, u8 off, u8 vset) {
-> > +	u8 nib, val;
-> > +
-> > +	/* Each led is controlled through low or high nibble of the relevant
-> > +	 * CPLD register. Register offset is specified by off parameter.
->=20
-> The preferred style for long (multi-line) comments is:
->=20
-> /*
->   * comment line 1
->   * comment line 2
->   */
->=20
->=20
-> > +	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red=
-,
-> > +	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
-> > +	 * green.
-> > +	 * Parameter mask specifies which nibble is used for specific led: ma=
-sk
-> > +	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
-> > +	 * higher nibble (bits from 4 to 7).
-> > +	 */
-> > +	spin_lock(&mlxcpld_led->lock);
-> > +	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR,
-> off, 1,
-> > +				    &val);
-> > +	nib =3D (mask =3D=3D 0xf0) ? vset : (vset << 4);
-> > +	val =3D (val & mask) | nib;
-> > +	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR,
-> off, 0,
-> > +				    &val);
-> > +	spin_unlock(&mlxcpld_led->lock);
-> > +}
-> > +
-> > +static void mlxcpld_led_brightness(struct led_classdev *led,
-> > +				   enum led_brightness value)
->=20
-> s/mlxcpld_led_brightness/mlxcpld_led_set_brightness/
->=20
-> > +{
-> > +	struct mlxcpld_led_priv *pled =3D cdev_to_priv(led);
-> > +
-> > +	if (value) {
-> > +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> > +				     pled->param.base_color);
-> > +		return;
-> > +	}
-> > +
-> > +	mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> > +			     LED_IS_OFF);
-> > +}
-> > +
-> > +static int mlxcpld_led_blink(struct led_classdev *led,
-> > +			     unsigned long *delay_on,
-> > +			     unsigned long *delay_off)
->=20
-> s/mlxcpld_led_blink/mlxcpld_led_blink_set/
->=20
-> > +{
-> > +	struct mlxcpld_led_priv *pled =3D cdev_to_priv(led);
-> > +
-> > +	/* HW supports two types of blinking: full (6Hz) and half (3Hz).
-> > +	 * For delay on/off zero default setting 3Hz is used.
-> > +	 */
-> > +	if (!(*delay_on =3D=3D 0 && *delay_off =3D=3D 0) &&
-> > +	    !(*delay_on =3D=3D LED_BLINK_3HZ && *delay_off =3D=3D LED_BLINK_3=
-HZ)
-> &&
-> > +	    !(*delay_on =3D=3D LED_BLINK_6HZ && *delay_off =3D=3D LED_BLINK_6=
-HZ))
-> > +		return -EINVAL;
-> > +
-> > +	if (*delay_on =3D=3D LED_BLINK_6HZ)
-> > +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> > +				     pled->param.base_color +
-> LED_OFFSET_FULL);
-> > +	else
-> > +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> > +				     pled->param.base_color +
-> LED_OFFSET_HALF);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int mlxcpld_led_config(struct device *dev,
-> > +			      struct mlxcpld_led_pdata *cpld) {
-> > +	int i;
-> > +	int err;
-> > +
-> > +	cpld->pled =3D devm_kzalloc(dev, sizeof(struct mlxcpld_led_priv) *
-> > +				  cpld->num_led_instances, GFP_KERNEL);
-> > +	if (!cpld->pled)
-> > +		return -ENOMEM;
-> > +
-> > +	for (i =3D 0; i < cpld->num_led_instances; i++) {
-> > +		cpld->pled[i].cdev.name =3D cpld->profile[i].name;
-> > +		cpld->pled[i].cdev.brightness =3D cpld->profile[i].brightness;
-> > +		cpld->pled[i].cdev.max_brightness =3D 1;
-> > +		cpld->pled[i].cdev.brightness_set =3D mlxcpld_led_brightness;
-> > +		cpld->pled[i].cdev.blink_set =3D mlxcpld_led_blink;
-> > +		cpld->pled[i].cdev.flags =3D LED_CORE_SUSPENDRESUME;
-> > +		err =3D devm_led_classdev_register(dev, &cpld->pled[i].cdev);
-> > +		if (err)
-> > +			return err;
-> > +
-> > +		cpld->pled[i].param.offset =3D mlxcpld_led->profile[i].offset;
-> > +		cpld->pled[i].param.mask =3D mlxcpld_led->profile[i].mask;
-> > +		cpld->pled[i].param.base_color =3D
-> > +					mlxcpld_led->profile[i].base_color;
-> > +
-> > +		if (mlxcpld_led->profile[i].brightness)
-> > +			mlxcpld_led_brightness(&cpld->pled[i].cdev,
-> > +					mlxcpld_led->profile[i].brightness);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __init mlxcpld_led_probe(struct platform_device *pdev) {
-> > +	enum mlxcpld_led_platform_types mlxcpld_led_plat =3D
-> > +
-> 	mlxcpld_led_platform_check_sys_type();
-> > +
-> > +	mlxcpld_led =3D devm_kzalloc(&pdev->dev, sizeof(*mlxcpld_led),
-> > +				   GFP_KERNEL);
-> > +	if (!mlxcpld_led)
-> > +		return -ENOMEM;
-> > +
-> > +	mlxcpld_led->pdev =3D pdev;
-> > +
-> > +	switch (mlxcpld_led_plat) {
-> > +	case MLXCPLD_LED_PLATFORM_MSN2100:
-> > +		mlxcpld_led->profile =3D mlxcpld_led_msn2100_profile;
-> > +		mlxcpld_led->num_led_instances =3D
-> > +				ARRAY_SIZE(mlxcpld_led_msn2100_profile);
-> > +		break;
-> > +
-> > +	default:
-> > +		mlxcpld_led->profile =3D mlxcpld_led_default_profile;
-> > +		mlxcpld_led->num_led_instances =3D
-> > +				ARRAY_SIZE(mlxcpld_led_default_profile);
-> > +		break;
-> > +	}
-> > +
-> > +	spin_lock_init(&mlxcpld_led->lock);
-> > +
-> > +	return mlxcpld_led_config(&pdev->dev, mlxcpld_led); }
-> > +
-> > +static struct platform_driver mlxcpld_led_driver =3D {
-> > +	.driver =3D {
-> > +		.name	=3D KBUILD_MODNAME,
-> > +	},
-> > +};
-> > +
-> > +static int __init mlxcpld_led_init(void) {
-> > +	struct platform_device *pdev;
-> > +	int err;
-> > +
-> > +	pdev =3D platform_device_register_simple(KBUILD_MODNAME, -1, NULL,
-> 0);
-> > +	if (!pdev) {
-> > +		pr_err("Device allocation failed\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	err =3D platform_driver_probe(&mlxcpld_led_driver, mlxcpld_led_probe)=
-;
-> > +	if (err) {
-> > +		pr_err("Probe platform driver failed\n");
-> > +		platform_device_unregister(pdev);
-> > +	}
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static void __exit mlxcpld_led_exit(void) {
-> > +	platform_device_unregister(mlxcpld_led->pdev);
-> > +	platform_driver_unregister(&mlxcpld_led_driver);
-> > +}
-> > +
-> > +module_init(mlxcpld_led_init);
-> > +module_exit(mlxcpld_led_exit);
-> > +
-> > +MODULE_AUTHOR("Vadim Pasternak (vadimp@mellanox.com)");
-> > +MODULE_DESCRIPTION("Mellanox board LED driver");
-> MODULE_LICENSE("GPL
-> > +v2"); MODULE_ALIAS("platform:leds_mlxcpld");
-> >
->=20
-> --
-> Best regards,
-> Jacek Anaszewski
-
-Best regards,
-Vadim.
+diff --git a/Documentation/leds/leds-mlxcpld.txt b/Documentation/leds/leds-mlxcpld.txt
+new file mode 100644
+index 0000000..7b4c2a3
+--- /dev/null
++++ b/Documentation/leds/leds-mlxcpld.txt
+@@ -0,0 +1,110 @@
++ver LEDs-mlxcpld
++==========================
++Driver for Mellanox systems LEDs.
++Provide system LED support for the nex Mellanox systems:
++"msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
++"msn2410", "msb7800", "msn2740", "msn2100".
++
++Description
++-----------
++Driver provides the following LEDs for the systems "msx6710", "msx6720",
++"msb7700", "msn2700", "msx1410", "msn2410", "msb7800", "msn2740":
++  mlxcpld:fan1:green
++  mlxcpld:fan1:red
++  mlxcpld:fan2:green
++  mlxcpld:fan2:red
++  mlxcpld:fan3:green
++  mlxcpld:fan3:red
++  mlxcpld:fan4:green
++  mlxcpld:fan4:red
++  mlxcpld:psu:green
++  mlxcpld:psu:red
++  mlxcpld:status:green
++  mlxcpld:status:red
++
++ "status"
++  CPLD reg offset: 0x20
++  Bits [3:0]
++
++ "psu"
++  CPLD reg offset: 0x20
++  Bits [7:4]
++
++ "fan1"
++  CPLD reg offset: 0x21
++  Bits [3:0]
++
++ "fan2"
++  CPLD reg offset: 0x21
++  Bits [7:4]
++
++ "fan3"
++  CPLD reg offset: 0x22
++  Bits [3:0]
++
++ "fan4"
++  CPLD reg offset: 0x22
++  Bits [7:4]
++
++ Color mask for all the above LEDs:
++  [bit3,bit2,bit1,bit0] or
++  [bit7,bit6,bit5,bit4]:
++	[0,0,0,0] = LED OFF
++	[0,1,0,1] = Red static ON
++	[1,1,0,1] = Green static ON
++	[0,1,1,0] = Red blink 3Hz
++	[1,1,1,0] = Green blink 3Hz
++	[0,1,1,1] = Red blink 6Hz
++	[1,1,1,1] = Green blink 6Hz
++
++Driver provides the following LEDs for the system "msn2100":
++  mlxcpld:fan:green
++  mlxcpld:fan:red
++  mlxcpld:psu1:green
++  mlxcpld:psu1:red
++  mlxcpld:psu2:green
++  mlxcpld:psu2:red
++  mlxcpld:status:green
++  mlxcpld:status:red
++  mlxcpld:uid:blue
++
++ "status"
++  CPLD reg offset: 0x20
++  Bits [3:0]
++
++ "fan"
++  CPLD reg offset: 0x21
++  Bits [3:0]
++
++ "psu1"
++  CPLD reg offset: 0x23
++  Bits [3:0]
++
++ "psu2"
++  CPLD reg offset: 0x23
++  Bits [7:4]
++
++ "uid"
++  CPLD reg offset: 0x24
++  Bits [3:0]
++
++ Color mask for all the above LEDs, excepted uid:
++  [bit3,bit2,bit1,bit0] or
++  [bit7,bit6,bit5,bit4]:
++	[0,0,0,0] = LED OFF
++	[0,1,0,1] = Red static ON
++	[1,1,0,1] = Green static ON
++	[0,1,1,0] = Red blink 3Hz
++	[1,1,1,0] = Green blink 3Hz
++	[0,1,1,1] = Red blink 6Hz
++	[1,1,1,1] = Green blink 6Hz
++
++ Color mask for uid LED:
++  [bit3,bit2,bit1,bit0]:
++	[0,0,0,0] = LED OFF
++	[1,1,0,1] = Blue static ON
++	[1,1,1,0] = Blue blink 3Hz
++	[1,1,1,1] = Blue blink 6Hz
++
++Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
++For 3Hz duty cylce is about 167 msec, for 6Hz is about 83 msec.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0bbe4b1..adb9e9b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7655,6 +7655,14 @@ W:	http://www.mellanox.com
+ Q:	http://patchwork.ozlabs.org/project/netdev/list/
+ F:	drivers/net/ethernet/mellanox/mlxsw/
+ 
++MELLANOX MLXCPLD LED DRIVER
++M:	Vadim Pasternak <vadimp@mellanox.com>
++L:	linux-leds@vger.kernel.org
++S:	Supported
++W:	http://www.mellanox.com
++F:	drivers/leds/leds-mlxcpld.c
++F:	Documentation/leds/leds-mlxcpld.txt
++
+ SOFT-ROCE DRIVER (rxe)
+ M:	Moni Shoua <monis@mellanox.com>
+ L:	linux-rdma@vger.kernel.org
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 9dcc9b1..4cd85be 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -631,6 +631,14 @@ config LEDS_VERSATILE
+ 	  This option enabled support for the LEDs on the ARM Versatile
+ 	  and RealView boards. Say Y to enabled these.
+ 
++config LEDS_MLXCPLD
++	tristate "LED support for the Mellanox boards"
++	depends on X86_64 && DMI
++	depends on LEDS_CLASS
++	help
++	  This option enabled support for the LEDs on the Mellanox
++	  boards. Say Y to enabled these.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 0684c86..9a2494b 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
+ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+ obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
+ obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
++obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
+new file mode 100644
+index 0000000..10b03c5
+--- /dev/null
++++ b/drivers/leds/leds-mlxcpld.c
+@@ -0,0 +1,429 @@
++/*
++ * drivers/leds/leds-mlxcpld.c
++ * Copyright (c) 2016 Mellanox Technologies. All rights reserved.
++ * Copyright (c) 2016 Vadim Pasternak <vadimp@mellanox.com>
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the names of the copyright holders nor the names of its
++ *    contributors may be used to endorse or promote products derived from
++ *    this software without specific prior written permission.
++ *
++ * Alternatively, this software may be distributed under the terms of the
++ * GNU General Public License ("GPL") version 2 as published by the Free
++ * Software Foundation.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/dmi.h>
++#include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/version.h>
++
++#define MLXPLAT_CPLD_LPC_REG_BASE_ADRR     0x2500 /* LPC bus access */
++
++/* Color codes for LEDs */
++#define MLXCPLD_LED_OFFSET_HALF		0x01 /* Offset from solid: 3Hz blink */
++#define MLXCPLD_LED_OFFSET_FULL		0x02 /* Offset from solid: 6Hz blink */
++#define MLXCPLD_LED_IS_OFF		0x00 /* Off */
++#define MLXCPLD_LED_RED_STATIC_ON	0x05 /* Solid red */
++#define MLXCPLD_LED_RED_BLINK_HALF	(MLXCPLD_LED_RED_STATIC_ON + \
++					 MLXCPLD_LED_OFFSET_HALF)
++#define MLXCPLD_LED_RED_BLINK_FULL	(MLXCPLD_LED_RED_STATIC_ON + \
++					 MLXCPLD_LED_OFFSET_FULL)
++#define MLXCPLD_LED_GREEN_STATIC_ON	0x0D /* Solid green */
++#define MLXCPLD_LED_GREEN_BLINK_HALF	(MLXCPLD_LED_GREEN_STATIC_ON + \
++					 MLXCPLD_LED_OFFSET_HALF)
++#define MLXCPLD_LED_GREEN_BLINK_FULL	(MLXCPLD_LED_GREEN_STATIC_ON + \
++					 MLXCPLD_LED_OFFSET_FULL)
++#define MLXCPLD_LED_BLINK_3HZ		167 /* ~167 msec off/on */
++#define MLXCPLD_LED_BLINK_6HZ		83 /* ~83 msec off/on */
++
++/**
++ * mlxcpld_param - LED access parameters:
++ * @offset - offset for LED access in CPLD device
++ * @mask - mask for LED access in CPLD device
++ * @base_color - base color code for LED
++**/
++struct mlxcpld_param {
++	u8 offset;
++	u8 mask;
++	u8 base_color;
++};
++
++/**
++ * mlxcpld_led_priv - LED private data:
++ * @cled - LED class device instance
++ * @param - LED CPLD access parameters
++**/
++struct mlxcpld_led_priv {
++	struct led_classdev cdev;
++	struct mlxcpld_param param;
++};
++
++#define cdev_to_priv(c)		container_of(c, struct mlxcpld_led_priv, cdev)
++
++/**
++ * mlxcpld_led_profile - system LED profile (defined per system class):
++ * @offset - offset for LED access in CPLD device
++ * @mask - mask for LED access in CPLD device
++ * @base_color - base color code
++ * @brightness - default brightness setting (on/off)
++ * @name - LED name
++**/
++struct mlxcpld_led_profile {
++	u8 offset;
++	u8 mask;
++	u8 base_color;
++	enum led_brightness brightness;
++	const char *name;
++};
++
++/**
++ * mlxcpld_led_pdata - system LED private data
++ * @pdev - platform device pointer
++ * @pled - LED class device instance
++ * @profile - system configuration profile
++ * @num_led_instances - number of LED instances
++ * @lock - device access lock
++**/
++struct mlxcpld_led_pdata {
++	struct platform_device *pdev;
++	struct mlxcpld_led_priv *pled;
++	struct mlxcpld_led_profile *profile;
++	int num_led_instances;
++	spinlock_t lock;
++};
++
++static struct mlxcpld_led_pdata *mlxcpld_led;
++
++/* Default profile fit the next Mellanox systems:
++ * "msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
++ * "msn2410", "msb7800", "msn2740"
++ */
++struct mlxcpld_led_profile mlxcpld_led_default_profile[] = {
++	{
++		0x21, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:fan1:green",
++	},
++	{
++		0x21, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:fan1:red",
++	},
++	{
++		0x21, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:fan2:green",
++	},
++	{
++		0x21, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:fan2:red",
++	},
++	{
++		0x22, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:fan3:green",
++	},
++	{
++		0x22, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:fan3:red",
++	},
++	{
++		0x22, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:fan4:green",
++	},
++	{
++		0x22, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:fan4:red",
++	},
++	{
++		0x20, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:psu:green",
++	},
++	{
++		0x20, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:psu:red",
++	},
++	{
++		0x20, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:status:green",
++	},
++	{
++		0x20, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:status:red",
++	},
++};
++
++/* Profile fit the Mellanox systems based on "msn2100" */
++struct mlxcpld_led_profile mlxcpld_led_msn2100_profile[] = {
++	{
++		0x21, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:fan:green",
++	},
++	{
++		0x21, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:fan:red",
++	},
++	{
++		0x23, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:psu1:green",
++	},
++	{
++		0x23, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:psu1:red",
++	},
++	{
++		0x23, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:psu2:green",
++	},
++	{
++		0x23, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:psu2:red",
++	},
++	{
++		0x20, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
++		"mlxcpld:status:green",
++	},
++	{
++		0x20, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
++		"mlxcpld:status:red",
++	},
++	{
++		0x24, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, LED_OFF,
++		"mlxcpld:uid:blue",
++	},
++};
++
++enum mlxcpld_led_platform_types {
++	MLXCPLD_LED_PLATFORM_DEFAULT,
++	MLXCPLD_LED_PLATFORM_MSN2100,
++};
++
++const char *mlx_product_names[] = {
++	"DEFAULT",
++	"MSN2100",
++};
++
++static enum
++mlxcpld_led_platform_types mlxcpld_led_platform_check_sys_type(void)
++{
++	const char *mlx_product_name;
++	int i;
++
++	mlx_product_name = dmi_get_system_info(DMI_PRODUCT_NAME);
++	if (!mlx_product_name)
++		return MLXCPLD_LED_PLATFORM_DEFAULT;
++
++	for (i = 1;  i < ARRAY_SIZE(mlx_product_names); i++) {
++		if (strstr(mlx_product_name, mlx_product_names[i]))
++			return i;
++	}
++
++	return MLXCPLD_LED_PLATFORM_DEFAULT;
++}
++
++static void mlxcpld_led_bus_access_func(u16 base, u8 offset, u8 rw_flag,
++					u8 *data)
++{
++	u32 addr = base + offset;
++
++	if (rw_flag == 0)
++		outb(*data, addr);
++	else
++		*data = inb(addr);
++}
++
++static void mlxcpld_led_store_hw(u8 mask, u8 off, u8 vset)
++{
++	u8 nib, val;
++
++	/*
++	 * Each LED is controlled through low or high nibble of the relevant
++	 * CPLD register. Register offset is specified by off parameter.
++	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red,
++	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
++	 * green.
++	 * Parameter mask specifies which nibble is used for specific LED: mask
++	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
++	 * higher nibble (bits from 4 to 7).
++	 */
++	spin_lock(&mlxcpld_led->lock);
++	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR, off, 1,
++				    &val);
++	nib = (mask == 0xf0) ? vset : (vset << 4);
++	val = (val & mask) | nib;
++	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR, off, 0,
++				    &val);
++	spin_unlock(&mlxcpld_led->lock);
++}
++
++static void mlxcpld_led_set_brightness(struct led_classdev *led,
++				       enum led_brightness value)
++{
++	struct mlxcpld_led_priv *pled = cdev_to_priv(led);
++
++	if (value) {
++		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
++				     pled->param.base_color);
++		return;
++	}
++
++	mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
++			     MLXCPLD_LED_IS_OFF);
++}
++
++static int mlxcpld_led_blink_set(struct led_classdev *led,
++				 unsigned long *delay_on,
++				 unsigned long *delay_off)
++{
++	struct mlxcpld_led_priv *pled = cdev_to_priv(led);
++
++	/* HW supports two types of blinking: full (6Hz) and half (3Hz).
++	 * For delay on/off zero default setting 3Hz is used.
++	 */
++	if (!(*delay_on == 0 && *delay_off == 0) &&
++	    !(*delay_on == MLXCPLD_LED_BLINK_3HZ &&
++	      *delay_off == MLXCPLD_LED_BLINK_3HZ) &&
++	    !(*delay_on == MLXCPLD_LED_BLINK_6HZ &&
++	      *delay_off == MLXCPLD_LED_BLINK_6HZ))
++		return -EINVAL;
++
++	if (*delay_on == MLXCPLD_LED_BLINK_6HZ)
++		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
++				     pled->param.base_color +
++				     MLXCPLD_LED_OFFSET_FULL);
++	else
++		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
++				     pled->param.base_color +
++				     MLXCPLD_LED_OFFSET_HALF);
++
++	return 0;
++}
++
++static int mlxcpld_led_config(struct device *dev,
++			      struct mlxcpld_led_pdata *cpld)
++{
++	int i;
++	int err;
++
++	cpld->pled = devm_kzalloc(dev, sizeof(struct mlxcpld_led_priv) *
++				  cpld->num_led_instances, GFP_KERNEL);
++	if (!cpld->pled)
++		return -ENOMEM;
++
++	for (i = 0; i < cpld->num_led_instances; i++) {
++		cpld->pled[i].cdev.name = cpld->profile[i].name;
++		cpld->pled[i].cdev.brightness = cpld->profile[i].brightness;
++		cpld->pled[i].cdev.max_brightness = 1;
++		cpld->pled[i].cdev.brightness_set = mlxcpld_led_set_brightness;
++		cpld->pled[i].cdev.blink_set = mlxcpld_led_blink_set;
++		cpld->pled[i].cdev.flags = LED_CORE_SUSPENDRESUME;
++		err = devm_led_classdev_register(dev, &cpld->pled[i].cdev);
++		if (err)
++			return err;
++
++		cpld->pled[i].param.offset = mlxcpld_led->profile[i].offset;
++		cpld->pled[i].param.mask = mlxcpld_led->profile[i].mask;
++		cpld->pled[i].param.base_color =
++					mlxcpld_led->profile[i].base_color;
++
++		if (mlxcpld_led->profile[i].brightness)
++			mlxcpld_led_set_brightness(&cpld->pled[i].cdev,
++					mlxcpld_led->profile[i].brightness);
++	}
++
++	return 0;
++}
++
++static int __init mlxcpld_led_probe(struct platform_device *pdev)
++{
++	enum mlxcpld_led_platform_types mlxcpld_led_plat =
++					mlxcpld_led_platform_check_sys_type();
++
++	mlxcpld_led = devm_kzalloc(&pdev->dev, sizeof(*mlxcpld_led),
++				   GFP_KERNEL);
++	if (!mlxcpld_led)
++		return -ENOMEM;
++
++	mlxcpld_led->pdev = pdev;
++
++	switch (mlxcpld_led_plat) {
++	case MLXCPLD_LED_PLATFORM_MSN2100:
++		mlxcpld_led->profile = mlxcpld_led_msn2100_profile;
++		mlxcpld_led->num_led_instances =
++				ARRAY_SIZE(mlxcpld_led_msn2100_profile);
++		break;
++
++	default:
++		mlxcpld_led->profile = mlxcpld_led_default_profile;
++		mlxcpld_led->num_led_instances =
++				ARRAY_SIZE(mlxcpld_led_default_profile);
++		break;
++	}
++
++	spin_lock_init(&mlxcpld_led->lock);
++
++	return mlxcpld_led_config(&pdev->dev, mlxcpld_led);
++}
++
++static struct platform_driver mlxcpld_led_driver = {
++	.driver = {
++		.name	= KBUILD_MODNAME,
++	},
++};
++
++static int __init mlxcpld_led_init(void)
++{
++	struct platform_device *pdev;
++	int err;
++
++	pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
++	if (!pdev) {
++		pr_err("Device allocation failed\n");
++		return -ENOMEM;
++	}
++
++	err = platform_driver_probe(&mlxcpld_led_driver, mlxcpld_led_probe);
++	if (err) {
++		pr_err("Probe platform driver failed\n");
++		platform_device_unregister(pdev);
++	}
++
++	return err;
++}
++
++static void __exit mlxcpld_led_exit(void)
++{
++	platform_device_unregister(mlxcpld_led->pdev);
++	platform_driver_unregister(&mlxcpld_led_driver);
++}
++
++module_init(mlxcpld_led_init);
++module_exit(mlxcpld_led_exit);
++
++MODULE_AUTHOR("Vadim Pasternak (vadimp@mellanox.com)");
++MODULE_DESCRIPTION("Mellanox board LED driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:leds_mlxcpld");
+-- 
+2.1.4
