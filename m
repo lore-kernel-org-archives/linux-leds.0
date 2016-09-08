@@ -1,721 +1,401 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [patch v4] leds: add driver for Mellanox systems LEDs
-Date: Thu, 08 Sep 2016 09:41:01 +0200
-Message-ID: <a5a27472-968c-5ea6-1152-27ef1ccd073d@samsung.com>
-References: <1473319553-37195-1-git-send-email-vadimp@mellanox.com>
+Subject: Re: [PATCH] leds: Introduce userspace leds driver
+Date: Thu, 08 Sep 2016 11:58:55 +0200
+Message-ID: <04c5ee0d-9bfb-6e0a-2616-6cf720fc8763@samsung.com>
+References: <1473128158-26915-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26535 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757702AbcIHHlI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Sep 2016 03:41:08 -0400
-In-reply-to: <1473319553-37195-1-git-send-email-vadimp@mellanox.com>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59025 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbcIHJ7B (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Sep 2016 05:59:01 -0400
+In-reply-to: <1473128158-26915-1-git-send-email-david@lechnology.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: vadimp@mellanox.com, rpurdie@rpsys.net
-Cc: dave@treblig.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jiri@resnulli.us, michaelsh@mellanox.com
+To: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
-Hi Vadim,
+Hi David,
 
-Thanks for the updated version. I found few more minor issues,
-please look below.
+Thanks for the patch. It is very nice. I have only one minor remark
+in the code.
 
-I actually have them fixed, so the patch is ready for being
-applied to the linux-leds.git.
+I think that it would be good to add a documentation for this
+driver to Documentation/leds, with exemplary C program instead
+of python one. The program could poll the dev node in a loop,
+which allows to conveniently check the impact of setting particular
+triggers and all other brightness change events.
 
-Please refer below and let me know if you have any objections.
-
-On 09/08/2016 09:25 AM, vadimp@mellanox.com wrote:
-> From: Vadim Pasternak <vadimp@mellanox.com>
+On 09/06/2016 04:15 AM, David Lechner wrote:
+> This driver creates a userspace leds driver similar to uinput.
 >
-> This makes it possible to create a set of LEDs for Mellanox systems:
-> "msx6710", "msx6720", "msb7700", "msn2700", "msx1410", "msn2410",
-> "msb7800", "msn2740", "msn2100".
+> New leds are created by opening /dev/uleds and writing a uleds_user_dev
+> struct. A new leds class device is registered with the name given in the
+> struct. Reading will return a single byte that is the current brightness.
+> The poll() syscall is also supported. It will be triggered whenever the
+> brightness changes.
 >
-> Driver obtains LED devices according to system configuration, provided
-> through system DMI data, like fan1:green, fan1:red and creates devices in
-
-s/fan1:green/mkxcpld:fan1:green/
-s/fan1:red/mkxcpld:fan1:red/
-
-> form: "devicename:colour:function".
->
-> LED setting is controlled through on board CPLD Lattice device.
-> For setting particular LED off, solid, blink:
-> echo 0 > /sys/class/leds/mlxcpld\:status\:green/brightness
-> echo 1 > /sys/class/leds/mlxcpld\:status\:green/brightness
-> echo timer > /sys/class/leds/mlxcpld\:status\:green/trigger
->
-> On module probing all LEDs are set green, on removing - off.
->
-> Last setting overwrites previous, f.e. sequence for
-> changing LED from green - red - green:
-> echo 1 > /sys/class/leds/mlxcpld\:psu\:green/brightness
-> echo 1 > /sys/class/leds/mlxcpld\:psu\:red/brightness
-> echo 1 > /sys/class/leds/mlxcpld\:psu\:green/brightness
-> Note: LEDs cannot be turned on/off simultaneously.
->
-> The Kconfig currently controlling compilation of this code is:
-> drivers/leds/Kconfig:config LEDS_MLXCPLD
->
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
-> v3->v4
->  Fixes issues pointed out by Jacek:
->  - change in all commnets led to LED;
->  - add in defines prefix MLXCPLD;
->  - add to LED names device prefix mlxcpld;
->  - fix long comment stile;
->  - replace mlxcpld_led_brightness by mlxcpld_led_set_brightness;
->  - replace mlxcpld_led_blink by mlxcpld_led_blink_set
-> ---
-> v2->v3:
->  Fixes issues pointed out by Dave:
->  - fix in comments 3KHz and 6KHz to 3Hz and 6Hz respectively;
-> ---
-> v1->v2:
->  Fixes issues pointed out by Jacek:
->  - fix style in patch cover text;
->  - add doc file with hw description;
->  - arrange include directives in alphabetical order;
->  - make defines more clear;
->  - fix several comments for structure descriptions;
->  - add several empty lines between defentions;
->  - change max_brightness profile setting to 1 instead of LED_FULL;
->  - use capital letters for the enumerator;
->  - change in if (product == NULL) to (!product);
->  - add comments to mlxcpld_led_store_hw;
->  - remove switch statement from mlxcpld_led_brightness;
->  - modify mlxcpld_led_blink;
->  - remove unnecessary devm_kfree in mlxcpld_led_config;
->  - remove switch statement from mlxcpld_led_config;
->  - remove platform_get_drvdata from mlxcpld_led_probe;
-> ---
->  Documentation/leds/leds-mlxcpld.txt | 110 +++++++++
->  MAINTAINERS                         |   8 +
->  drivers/leds/Kconfig                |   8 +
->  drivers/leds/Makefile               |   1 +
->  drivers/leds/leds-mlxcpld.c         | 429 ++++++++++++++++++++++++++++++++++++
->  5 files changed, 556 insertions(+)
->  create mode 100644 Documentation/leds/leds-mlxcpld.txt
->  create mode 100644 drivers/leds/leds-mlxcpld.c
 >
-> diff --git a/Documentation/leds/leds-mlxcpld.txt b/Documentation/leds/leds-mlxcpld.txt
-> new file mode 100644
-> index 0000000..7b4c2a3
-> --- /dev/null
-> +++ b/Documentation/leds/leds-mlxcpld.txt
-> @@ -0,0 +1,110 @@
-> +ver LEDs-mlxcpld
-> +==========================
-> +Driver for Mellanox systems LEDs.
-> +Provide system LED support for the nex Mellanox systems:
-> +"msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
-> +"msn2410", "msb7800", "msn2740", "msn2100".
-> +
-> +Description
-> +-----------
-> +Driver provides the following LEDs for the systems "msx6710", "msx6720",
-> +"msb7700", "msn2700", "msx1410", "msn2410", "msb7800", "msn2740":
-> +  mlxcpld:fan1:green
-> +  mlxcpld:fan1:red
-> +  mlxcpld:fan2:green
-> +  mlxcpld:fan2:red
-> +  mlxcpld:fan3:green
-> +  mlxcpld:fan3:red
-> +  mlxcpld:fan4:green
-> +  mlxcpld:fan4:red
-> +  mlxcpld:psu:green
-> +  mlxcpld:psu:red
-> +  mlxcpld:status:green
-> +  mlxcpld:status:red
-> +
-> + "status"
-> +  CPLD reg offset: 0x20
-> +  Bits [3:0]
-> +
-> + "psu"
-> +  CPLD reg offset: 0x20
-> +  Bits [7:4]
-> +
-> + "fan1"
-> +  CPLD reg offset: 0x21
-> +  Bits [3:0]
-> +
-> + "fan2"
-> +  CPLD reg offset: 0x21
-> +  Bits [7:4]
-> +
-> + "fan3"
-> +  CPLD reg offset: 0x22
-> +  Bits [3:0]
-> +
-> + "fan4"
-> +  CPLD reg offset: 0x22
-> +  Bits [7:4]
-> +
-> + Color mask for all the above LEDs:
-> +  [bit3,bit2,bit1,bit0] or
-> +  [bit7,bit6,bit5,bit4]:
-> +	[0,0,0,0] = LED OFF
-> +	[0,1,0,1] = Red static ON
-> +	[1,1,0,1] = Green static ON
-> +	[0,1,1,0] = Red blink 3Hz
-> +	[1,1,1,0] = Green blink 3Hz
-> +	[0,1,1,1] = Red blink 6Hz
-> +	[1,1,1,1] = Green blink 6Hz
-> +
-> +Driver provides the following LEDs for the system "msn2100":
-> +  mlxcpld:fan:green
-> +  mlxcpld:fan:red
-> +  mlxcpld:psu1:green
-> +  mlxcpld:psu1:red
-> +  mlxcpld:psu2:green
-> +  mlxcpld:psu2:red
-> +  mlxcpld:status:green
-> +  mlxcpld:status:red
-> +  mlxcpld:uid:blue
-> +
-> + "status"
-> +  CPLD reg offset: 0x20
-> +  Bits [3:0]
-> +
-> + "fan"
-> +  CPLD reg offset: 0x21
-> +  Bits [3:0]
-> +
-> + "psu1"
-> +  CPLD reg offset: 0x23
-> +  Bits [3:0]
-> +
-> + "psu2"
-> +  CPLD reg offset: 0x23
-> +  Bits [7:4]
-> +
-> + "uid"
-> +  CPLD reg offset: 0x24
-> +  Bits [3:0]
-> +
-> + Color mask for all the above LEDs, excepted uid:
-> +  [bit3,bit2,bit1,bit0] or
-> +  [bit7,bit6,bit5,bit4]:
-> +	[0,0,0,0] = LED OFF
-> +	[0,1,0,1] = Red static ON
-> +	[1,1,0,1] = Green static ON
-> +	[0,1,1,0] = Red blink 3Hz
-> +	[1,1,1,0] = Green blink 3Hz
-> +	[0,1,1,1] = Red blink 6Hz
-> +	[1,1,1,1] = Green blink 6Hz
-> +
-> + Color mask for uid LED:
-> +  [bit3,bit2,bit1,bit0]:
-> +	[0,0,0,0] = LED OFF
-> +	[1,1,0,1] = Blue static ON
-> +	[1,1,1,0] = Blue blink 3Hz
-> +	[1,1,1,1] = Blue blink 6Hz
-> +
-> +Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
-> +For 3Hz duty cylce is about 167 msec, for 6Hz is about 83 msec.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0bbe4b1..adb9e9b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7655,6 +7655,14 @@ W:	http://www.mellanox.com
->  Q:	http://patchwork.ozlabs.org/project/netdev/list/
->  F:	drivers/net/ethernet/mellanox/mlxsw/
+> Here is a sample python program that I used to test that it works as expected.
 >
-> +MELLANOX MLXCPLD LED DRIVER
-> +M:	Vadim Pasternak <vadimp@mellanox.com>
-> +L:	linux-leds@vger.kernel.org
-> +S:	Supported
-> +W:	http://www.mellanox.com
-> +F:	drivers/leds/leds-mlxcpld.c
-> +F:	Documentation/leds/leds-mlxcpld.txt
-> +
->  SOFT-ROCE DRIVER (rxe)
->  M:	Moni Shoua <monis@mellanox.com>
->  L:	linux-rdma@vger.kernel.org
+> #!/usr/bin/env python3
+>
+> import select
+> from threading import Timer
+>
+> ULEDS_MAX_NAME_SIZE = 80
+>
+> name = 'test'
+>
+>
+> def change_brightness(b):
+>     with open('/sys/class/leds/{}/brightness'.format(name) , 'w') as f:
+>        f.write(str(b))
+>
+>
+> with open('/dev/uleds', 'rb+', 0) as uleds:
+>     bname = name.encode("ascii")
+>     # create the leds class device
+>     uleds.write(bname + b'\0' * (ULEDS_MAX_NAME_SIZE - len(bname)))
+>
+>     # test that it works
+>     print(uleds.read(1))
+>
+>     # schedule some brighness changes at 1 second intervals
+>     Timer(1, change_brightness, (1,)).start()
+>     # this won't trigger poll since brighness does not change
+>     Timer(2, change_brightness, (1,)).start()
+>     Timer(3, change_brightness, (2,)).start()
+>
+>     # wait for the scheduled changes
+>     p = select.poll()
+>     p.register(uleds.fileno(), select.POLLIN)
+>     p.poll()
+>     print(uleds.read(1))
+>     p.poll()
+>     print(uleds.read(1))
+>
+>
+>
+>  drivers/leds/Kconfig       |   8 ++
+>  drivers/leds/Makefile      |   3 +
+>  drivers/leds/uleds.c       | 224 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/Kbuild  |   1 +
+>  include/uapi/linux/uleds.h |  23 +++++
+>  5 files changed, 259 insertions(+)
+>  create mode 100644 drivers/leds/uleds.c
+>  create mode 100644 include/uapi/linux/uleds.h
+>
 > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 9dcc9b1..4cd85be 100644
+> index 9dcc9b1..25c6168 100644
 > --- a/drivers/leds/Kconfig
 > +++ b/drivers/leds/Kconfig
 > @@ -631,6 +631,14 @@ config LEDS_VERSATILE
 >  	  This option enabled support for the LEDs on the ARM Versatile
 >  	  and RealView boards. Say Y to enabled these.
 >
-> +config LEDS_MLXCPLD
-> +	tristate "LED support for the Mellanox boards"
-> +	depends on X86_64 && DMI
+> +config LEDS_USER
+> +	tristate "Userspace LED support"
 > +	depends on LEDS_CLASS
 > +	help
-> +	  This option enabled support for the LEDs on the Mellanox
-> +	  boards. Say Y to enabled these.
+> +	  This option enables support for userspace LEDs. Say 'y' to enable this
+> +	  support in kernel. To compile this driver as a module, choose 'm' here:
+> +	  the module will be called leds-user.
 > +
 >  comment "LED Triggers"
 >  source "drivers/leds/trigger/Kconfig"
 >
 > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 0684c86..9a2494b 100644
+> index 0684c86..d723eeb 100644
 > --- a/drivers/leds/Makefile
 > +++ b/drivers/leds/Makefile
-> @@ -68,6 +68,7 @@ obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->  obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
->  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-> +obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
->
+> @@ -72,5 +72,8 @@ obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
 >  # LED SPI Drivers
 >  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-> diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
+>
+> +# LED Userspace Drivers
+> +obj-$(CONFIG_LEDS_USER)			+= uleds.o
+> +
+>  # LED Triggers
+>  obj-$(CONFIG_LEDS_TRIGGERS)		+= trigger/
+> diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
 > new file mode 100644
-> index 0000000..10b03c5
+> index 0000000..992bca4
 > --- /dev/null
-> +++ b/drivers/leds/leds-mlxcpld.c
-> @@ -0,0 +1,429 @@
+> +++ b/drivers/leds/uleds.c
+> @@ -0,0 +1,224 @@
 > +/*
-> + * drivers/leds/leds-mlxcpld.c
-> + * Copyright (c) 2016 Mellanox Technologies. All rights reserved.
-> + * Copyright (c) 2016 Vadim Pasternak <vadimp@mellanox.com>
+> + * Userspace driver for leds subsystem
 > + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions are met:
+> + * Copyright (C) 2016 David Lechner <david@lechnology.com>
 > + *
-> + * 1. Redistributions of source code must retain the above copyright
-> + *    notice, this list of conditions and the following disclaimer.
-> + * 2. Redistributions in binary form must reproduce the above copyright
-> + *    notice, this list of conditions and the following disclaimer in the
-> + *    documentation and/or other materials provided with the distribution.
-> + * 3. Neither the names of the copyright holders nor the names of its
-> + *    contributors may be used to endorse or promote products derived from
-> + *    this software without specific prior written permission.
+> + * Based on uinput.c: Aristeu Sergio Rozanski Filho <aris@cathedrallabs.org>
 > + *
-> + * Alternatively, this software may be distributed under the terms of the
-> + * GNU General Public License ("GPL") version 2 as published by the Free
-> + * Software Foundation.
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
 > + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-> + * POSSIBILITY OF SUCH DAMAGE.
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 > + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/device.h>
-> +#include <linux/dmi.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/platform_device.h>
+> +#include <linux/poll.h>
+> +#include <linux/sched.h>
 > +#include <linux/slab.h>
-> +#include <linux/version.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/fs.h>
+> +#include <linux/leds.h>
+> +#include <linux/miscdevice.h>
+
+Please arrange include directives in alphabetical order.
+
+> +#include <uapi/linux/uleds.h>
 > +
-> +#define MLXPLAT_CPLD_LPC_REG_BASE_ADRR     0x2500 /* LPC bus access */
+> +#define ULEDS_NAME		"uleds"
 > +
-> +/* Color codes for LEDs */
-> +#define MLXCPLD_LED_OFFSET_HALF		0x01 /* Offset from solid: 3Hz blink */
-> +#define MLXCPLD_LED_OFFSET_FULL		0x02 /* Offset from solid: 6Hz blink */
-> +#define MLXCPLD_LED_IS_OFF		0x00 /* Off */
-> +#define MLXCPLD_LED_RED_STATIC_ON	0x05 /* Solid red */
-> +#define MLXCPLD_LED_RED_BLINK_HALF	(MLXCPLD_LED_RED_STATIC_ON + \
-> +					 MLXCPLD_LED_OFFSET_HALF)
-> +#define MLXCPLD_LED_RED_BLINK_FULL	(MLXCPLD_LED_RED_STATIC_ON + \
-> +					 MLXCPLD_LED_OFFSET_FULL)
-> +#define MLXCPLD_LED_GREEN_STATIC_ON	0x0D /* Solid green */
-> +#define MLXCPLD_LED_GREEN_BLINK_HALF	(MLXCPLD_LED_GREEN_STATIC_ON + \
-> +					 MLXCPLD_LED_OFFSET_HALF)
-> +#define MLXCPLD_LED_GREEN_BLINK_FULL	(MLXCPLD_LED_GREEN_STATIC_ON + \
-> +					 MLXCPLD_LED_OFFSET_FULL)
-> +#define MLXCPLD_LED_BLINK_3HZ		167 /* ~167 msec off/on */
-> +#define MLXCPLD_LED_BLINK_6HZ		83 /* ~83 msec off/on */
-> +
-> +/**
-> + * mlxcpld_param - LED access parameters:
-> + * @offset - offset for LED access in CPLD device
-> + * @mask - mask for LED access in CPLD device
-> + * @base_color - base color code for LED
-> +**/
-> +struct mlxcpld_param {
-> +	u8 offset;
-> +	u8 mask;
-> +	u8 base_color;
+> +enum uleds_state {
+> +	ULEDS_STATE_UNKNOWN,
+> +	ULEDS_STATE_REGISTERED,
 > +};
 > +
-> +/**
-> + * mlxcpld_led_priv - LED private data:
-> + * @cled - LED class device instance
-> + * @param - LED CPLD access parameters
-> +**/
-> +struct mlxcpld_led_priv {
-> +	struct led_classdev cdev;
-> +	struct mlxcpld_param param;
+> +struct uleds_device {
+> +	struct uleds_user_dev	user_dev;
+> +	struct led_classdev	led_cdev;
+> +	struct mutex		mutex;
+> +	enum uleds_state	state;
+> +	wait_queue_head_t	waitq;
+> +	unsigned char		brightness;
+> +	unsigned char		new_data;
 > +};
 > +
-> +#define cdev_to_priv(c)		container_of(c, struct mlxcpld_led_priv, cdev)
-> +
-> +/**
-> + * mlxcpld_led_profile - system LED profile (defined per system class):
-> + * @offset - offset for LED access in CPLD device
-> + * @mask - mask for LED access in CPLD device
-> + * @base_color - base color code
-> + * @brightness - default brightness setting (on/off)
-> + * @name - LED name
-> +**/
-> +struct mlxcpld_led_profile {
-> +	u8 offset;
-> +	u8 mask;
-> +	u8 base_color;
-> +	enum led_brightness brightness;
-> +	const char *name;
-> +};
-> +
-> +/**
-> + * mlxcpld_led_pdata - system LED private data
-> + * @pdev - platform device pointer
-> + * @pled - LED class device instance
-> + * @profile - system configuration profile
-> + * @num_led_instances - number of LED instances
-> + * @lock - device access lock
-> +**/
-> +struct mlxcpld_led_pdata {
-> +	struct platform_device *pdev;
-> +	struct mlxcpld_led_priv *pled;
-> +	struct mlxcpld_led_profile *profile;
-> +	int num_led_instances;
-> +	spinlock_t lock;
-> +};
-> +
-> +static struct mlxcpld_led_pdata *mlxcpld_led;
-> +
-> +/* Default profile fit the next Mellanox systems:
-> + * "msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
-> + * "msn2410", "msb7800", "msn2740"
-> + */
-> +struct mlxcpld_led_profile mlxcpld_led_default_profile[] = {
-> +	{
-> +		0x21, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:fan1:green",
-> +	},
-> +	{
-> +		0x21, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:fan1:red",
-> +	},
-> +	{
-> +		0x21, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:fan2:green",
-> +	},
-> +	{
-> +		0x21, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:fan2:red",
-> +	},
-> +	{
-> +		0x22, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:fan3:green",
-> +	},
-> +	{
-> +		0x22, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:fan3:red",
-> +	},
-> +	{
-> +		0x22, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:fan4:green",
-> +	},
-> +	{
-> +		0x22, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:fan4:red",
-> +	},
-> +	{
-> +		0x20, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:psu:green",
-> +	},
-> +	{
-> +		0x20, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:psu:red",
-> +	},
-> +	{
-> +		0x20, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:status:green",
-> +	},
-> +	{
-> +		0x20, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:status:red",
-> +	},
-> +};
-> +
-> +/* Profile fit the Mellanox systems based on "msn2100" */
-> +struct mlxcpld_led_profile mlxcpld_led_msn2100_profile[] = {
-> +	{
-> +		0x21, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:fan:green",
-> +	},
-> +	{
-> +		0x21, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:fan:red",
-> +	},
-> +	{
-> +		0x23, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:psu1:green",
-> +	},
-> +	{
-> +		0x23, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:psu1:red",
-> +	},
-> +	{
-> +		0x23, 0x0f, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:psu2:green",
-> +	},
-> +	{
-> +		0x23, 0x0f, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:psu2:red",
-> +	},
-> +	{
-> +		0x20, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, 1,
-> +		"mlxcpld:status:green",
-> +	},
-> +	{
-> +		0x20, 0xf0, MLXCPLD_LED_RED_STATIC_ON, LED_OFF,
-> +		"mlxcpld:status:red",
-> +	},
-> +	{
-> +		0x24, 0xf0, MLXCPLD_LED_GREEN_STATIC_ON, LED_OFF,
-> +		"mlxcpld:uid:blue",
-> +	},
-> +};
-> +
-> +enum mlxcpld_led_platform_types {
-> +	MLXCPLD_LED_PLATFORM_DEFAULT,
-> +	MLXCPLD_LED_PLATFORM_MSN2100,
-> +};
-> +
-> +const char *mlx_product_names[] = {
-> +	"DEFAULT",
-> +	"MSN2100",
-> +};
-> +
-> +static enum
-> +mlxcpld_led_platform_types mlxcpld_led_platform_check_sys_type(void)
+> +static void uleds_brightness_set(struct led_classdev *led_cdev,
+> +				 enum led_brightness brightness)
 > +{
-> +	const char *mlx_product_name;
-> +	int i;
+> +	struct uleds_device *udev = container_of(led_cdev, struct uleds_device,
+> +						 led_cdev);
 > +
-> +	mlx_product_name = dmi_get_system_info(DMI_PRODUCT_NAME);
-> +	if (!mlx_product_name)
-> +		return MLXCPLD_LED_PLATFORM_DEFAULT;
+> +	if (udev->brightness != brightness) {
+> +		udev->brightness = brightness;
+> +		udev->new_data = 1;
+> +		wake_up_interruptible(&udev->waitq);
+> +	}
+> +}
 > +
-> +	for (i = 1;  i < ARRAY_SIZE(mlx_product_names); i++) {
-> +		if (strstr(mlx_product_name, mlx_product_names[i]))
-> +			return i;
+> +static int uleds_open(struct inode *inode, struct file *file)
+> +{
+> +	struct uleds_device *udev;
+> +
+> +	udev = kzalloc(sizeof(*udev), GFP_KERNEL);
+> +	if (!udev)
+> +		return -ENOMEM;
+> +
+> +	udev->led_cdev.name = udev->user_dev.name;
+> +	udev->led_cdev.max_brightness = LED_FULL;
+> +	udev->led_cdev.brightness_set = uleds_brightness_set;
+> +
+> +	mutex_init(&udev->mutex);
+> +	init_waitqueue_head(&udev->waitq);
+> +	udev->state = ULEDS_STATE_UNKNOWN;
+> +
+> +	file->private_data = udev;
+> +	nonseekable_open(inode, file);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t uleds_write(struct file *file, const char __user *buffer,
+> +			   size_t count, loff_t *ppos)
+> +{
+> +	struct uleds_device *udev = file->private_data;
+> +	int ret;
+> +
+> +	if (count == 0)
+> +		return 0;
+> +
+> +	ret = mutex_lock_interruptible(&udev->mutex);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (udev->state == ULEDS_STATE_REGISTERED) {
+> +		ret = -EBUSY;
+> +		goto out;
 > +	}
 > +
-> +	return MLXCPLD_LED_PLATFORM_DEFAULT;
-> +}
-> +
-> +static void mlxcpld_led_bus_access_func(u16 base, u8 offset, u8 rw_flag,
-> +					u8 *data)
-> +{
-> +	u32 addr = base + offset;
-> +
-> +	if (rw_flag == 0)
-> +		outb(*data, addr);
-> +	else
-> +		*data = inb(addr);
-> +}
-> +
-> +static void mlxcpld_led_store_hw(u8 mask, u8 off, u8 vset)
-> +{
-> +	u8 nib, val;
-> +
-> +	/*
-> +	 * Each LED is controlled through low or high nibble of the relevant
-> +	 * CPLD register. Register offset is specified by off parameter.
-> +	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red,
-> +	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
-> +	 * green.
-> +	 * Parameter mask specifies which nibble is used for specific LED: mask
-> +	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
-> +	 * higher nibble (bits from 4 to 7).
-> +	 */
-> +	spin_lock(&mlxcpld_led->lock);
-> +	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR, off, 1,
-> +				    &val);
-> +	nib = (mask == 0xf0) ? vset : (vset << 4);
-> +	val = (val & mask) | nib;
-> +	mlxcpld_led_bus_access_func(MLXPLAT_CPLD_LPC_REG_BASE_ADRR, off, 0,
-> +				    &val);
-> +	spin_unlock(&mlxcpld_led->lock);
-> +}
-> +
-> +static void mlxcpld_led_set_brightness(struct led_classdev *led,
-> +				       enum led_brightness value)\
-
-For consistency with the op name it will be better to rename it to
-mlxcpld_led_brightness_set.
-
-> +{
-> +	struct mlxcpld_led_priv *pled = cdev_to_priv(led);
-> +
-> +	if (value) {
-> +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> +				     pled->param.base_color);
-> +		return;
+> +	if (count != sizeof(struct uleds_user_dev)) {
+> +		ret = -EINVAL;
+> +		goto out;
 > +	}
 > +
-> +	mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> +			     MLXCPLD_LED_IS_OFF);
+> +	if (copy_from_user(&udev->user_dev, buffer,
+> +			   sizeof(struct uleds_user_dev))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	if (!udev->user_dev.name[0]) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ret = led_classdev_register(NULL, &udev->led_cdev);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	udev->state = ULEDS_STATE_REGISTERED;
+> +	ret = count;
+> +
+> +out:
+> +	mutex_unlock(&udev->mutex);
+> +
+> +	return ret;
 > +}
 > +
-> +static int mlxcpld_led_blink_set(struct led_classdev *led,
-> +				 unsigned long *delay_on,
-> +				 unsigned long *delay_off)
+> +static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
+> +			  loff_t *ppos)
 > +{
-> +	struct mlxcpld_led_priv *pled = cdev_to_priv(led);
+> +	struct uleds_device *udev = file->private_data;
+> +	ssize_t retval;
 > +
-> +	/* HW supports two types of blinking: full (6Hz) and half (3Hz).
-> +	 * For delay on/off zero default setting 3Hz is used.
-> +	 */
-> +	if (!(*delay_on == 0 && *delay_off == 0) &&
-> +	    !(*delay_on == MLXCPLD_LED_BLINK_3HZ &&
-> +	      *delay_off == MLXCPLD_LED_BLINK_3HZ) &&
-> +	    !(*delay_on == MLXCPLD_LED_BLINK_6HZ &&
-> +	      *delay_off == MLXCPLD_LED_BLINK_6HZ))
+> +	if (count == 0)
+> +		return 0;
+> +
+> +	if (count != 1)
 > +		return -EINVAL;
 > +
-> +	if (*delay_on == MLXCPLD_LED_BLINK_6HZ)
-> +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> +				     pled->param.base_color +
-> +				     MLXCPLD_LED_OFFSET_FULL);
-> +	else
-> +		mlxcpld_led_store_hw(pled->param.mask, pled->param.offset,
-> +				     pled->param.base_color +
-> +				     MLXCPLD_LED_OFFSET_HALF);
+> +	do {
+> +		retval = mutex_lock_interruptible(&udev->mutex);
+> +		if (retval)
+> +			return retval;
+> +
+> +		if (udev->state != ULEDS_STATE_REGISTERED) {
+> +			retval = -ENODEV;
+> +		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
+> +			retval = -EAGAIN;
+> +		} else {
+> +			retval = copy_to_user(buffer, &udev->brightness, 1);
+> +			udev->new_data = 0;
+> +			retval = 1;
+> +		}
+> +
+> +		mutex_unlock(&udev->mutex);
+> +
+> +		if (retval || count == 0)
+> +			break;
+> +
+> +		if (!(file->f_flags & O_NONBLOCK))
+> +			retval = wait_event_interruptible(udev->waitq,
+> +					udev->new_data ||
+> +					udev->state != ULEDS_STATE_REGISTERED);
+> +	} while (retval == 0);
+> +
+> +	return retval;
+> +}
+> +
+> +static unsigned int uleds_poll(struct file *file, poll_table *wait)
+> +{
+> +	struct uleds_device *udev = file->private_data;
+> +
+> +	poll_wait(file, &udev->waitq, wait);
+> +
+> +	if (udev->new_data)
+> +		return POLLIN | POLLRDNORM;
 > +
 > +	return 0;
 > +}
 > +
-> +static int mlxcpld_led_config(struct device *dev,
-> +			      struct mlxcpld_led_pdata *cpld)
+> +static int uleds_release(struct inode *inode, struct file *file)
 > +{
-> +	int i;
-> +	int err;
+> +	struct uleds_device *udev = file->private_data;
 > +
-> +	cpld->pled = devm_kzalloc(dev, sizeof(struct mlxcpld_led_priv) *
-> +				  cpld->num_led_instances, GFP_KERNEL);
-> +	if (!cpld->pled)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < cpld->num_led_instances; i++) {
-> +		cpld->pled[i].cdev.name = cpld->profile[i].name;
-> +		cpld->pled[i].cdev.brightness = cpld->profile[i].brightness;
-> +		cpld->pled[i].cdev.max_brightness = 1;
-> +		cpld->pled[i].cdev.brightness_set = mlxcpld_led_set_brightness;
-> +		cpld->pled[i].cdev.blink_set = mlxcpld_led_blink_set;
-> +		cpld->pled[i].cdev.flags = LED_CORE_SUSPENDRESUME;
-> +		err = devm_led_classdev_register(dev, &cpld->pled[i].cdev);
-> +		if (err)
-> +			return err;
-> +
-> +		cpld->pled[i].param.offset = mlxcpld_led->profile[i].offset;
-> +		cpld->pled[i].param.mask = mlxcpld_led->profile[i].mask;
-> +		cpld->pled[i].param.base_color =
-> +					mlxcpld_led->profile[i].base_color;
-> +
-> +		if (mlxcpld_led->profile[i].brightness)
-> +			mlxcpld_led_set_brightness(&cpld->pled[i].cdev,
-> +					mlxcpld_led->profile[i].brightness);
+> +	if (udev->state == ULEDS_STATE_REGISTERED) {
+> +		udev->state = ULEDS_STATE_UNKNOWN;
+> +		led_classdev_unregister(&udev->led_cdev);
 > +	}
+> +	kfree(udev);
 > +
 > +	return 0;
 > +}
 > +
-> +static int __init mlxcpld_led_probe(struct platform_device *pdev)
-> +{
-> +	enum mlxcpld_led_platform_types mlxcpld_led_plat =
-> +					mlxcpld_led_platform_check_sys_type();
-> +
-> +	mlxcpld_led = devm_kzalloc(&pdev->dev, sizeof(*mlxcpld_led),
-> +				   GFP_KERNEL);
-> +	if (!mlxcpld_led)
-> +		return -ENOMEM;
-> +
-> +	mlxcpld_led->pdev = pdev;
-> +
-> +	switch (mlxcpld_led_plat) {
-> +	case MLXCPLD_LED_PLATFORM_MSN2100:
-> +		mlxcpld_led->profile = mlxcpld_led_msn2100_profile;
-> +		mlxcpld_led->num_led_instances =
-> +				ARRAY_SIZE(mlxcpld_led_msn2100_profile);
-> +		break;
-> +
-> +	default:
-> +		mlxcpld_led->profile = mlxcpld_led_default_profile;
-> +		mlxcpld_led->num_led_instances =
-> +				ARRAY_SIZE(mlxcpld_led_default_profile);
-> +		break;
-> +	}
-> +
-> +	spin_lock_init(&mlxcpld_led->lock);
-> +
-> +	return mlxcpld_led_config(&pdev->dev, mlxcpld_led);
-> +}
-> +
-> +static struct platform_driver mlxcpld_led_driver = {
-> +	.driver = {
-> +		.name	= KBUILD_MODNAME,
-> +	},
+> +static const struct file_operations uleds_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= uleds_open,
+> +	.release	= uleds_release,
+> +	.read		= uleds_read,
+> +	.write		= uleds_write,
+> +	.poll		= uleds_poll,
+> +	.llseek		= no_llseek,
 > +};
 > +
-> +static int __init mlxcpld_led_init(void)
+> +static struct miscdevice uleds_misc = {
+> +	.fops		= &uleds_fops,
+> +	.minor		= MISC_DYNAMIC_MINOR,
+> +	.name		= ULEDS_NAME,
+> +};
+> +
+> +static int __init uleds_init(void)
 > +{
-> +	struct platform_device *pdev;
-> +	int err;
-> +
-> +	pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
-> +	if (!pdev) {
-> +		pr_err("Device allocation failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	err = platform_driver_probe(&mlxcpld_led_driver, mlxcpld_led_probe);
-> +	if (err) {
-> +		pr_err("Probe platform driver failed\n");
-> +		platform_device_unregister(pdev);
-> +	}
-> +
-> +	return err;
+> +	return misc_register(&uleds_misc);
 > +}
+> +module_init(uleds_init);
 > +
-> +static void __exit mlxcpld_led_exit(void)
+> +static void __exit uleds_exit(void)
 > +{
-> +	platform_device_unregister(mlxcpld_led->pdev);
-> +	platform_driver_unregister(&mlxcpld_led_driver);
+> +	misc_deregister(&uleds_misc);
 > +}
+> +module_exit(uleds_exit);
 > +
-> +module_init(mlxcpld_led_init);
-> +module_exit(mlxcpld_led_exit);
+> +MODULE_AUTHOR("David Lechner <david@lechnology.com>");
+> +MODULE_DESCRIPTION("Userspace driver for leds subsystem");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/uapi/linux/Kbuild b/include/uapi/linux/Kbuild
+> index 185f8ea..416f5e6 100644
+> --- a/include/uapi/linux/Kbuild
+> +++ b/include/uapi/linux/Kbuild
+> @@ -421,6 +421,7 @@ header-y += udp.h
+>  header-y += uhid.h
+>  header-y += uinput.h
+>  header-y += uio.h
+> +header-y += uleds.h
+>  header-y += ultrasound.h
+>  header-y += un.h
+>  header-y += unistd.h
+> diff --git a/include/uapi/linux/uleds.h b/include/uapi/linux/uleds.h
+> new file mode 100644
+> index 0000000..e78ed46
+> --- /dev/null
+> +++ b/include/uapi/linux/uleds.h
+> @@ -0,0 +1,23 @@
+> +/*
+> + * Userspace driver support for leds subsystem
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +#ifndef _UAPI__ULEDS_H_
+> +#define _UAPI__ULEDS_H_
 > +
-> +MODULE_AUTHOR("Vadim Pasternak (vadimp@mellanox.com)");
-
-We usually use angle brackets around the email address,
-so let's change it to:
-
-MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
-
-> +MODULE_DESCRIPTION("Mellanox board LED driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:leds_mlxcpld");
+> +#define ULEDS_MAX_NAME_SIZE	80
+> +
+> +struct uleds_user_dev {
+> +	char name[ULEDS_MAX_NAME_SIZE];
+> +};
+> +
+> +#endif /* _UAPI__ULEDS_H_ */
 >
-
 
 -- 
 Best regards,
