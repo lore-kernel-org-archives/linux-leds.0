@@ -1,42 +1,44 @@
-From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v2] leds: Introduce userspace leds driver
-Date: Thu, 8 Sep 2016 21:24:13 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1609082112270.13153@pmeerw.net>
+Date: Fri, 09 Sep 2016 09:21:16 +0200
+Message-ID: <84510542-4faa-9763-611a-be3890f3f1f7@samsung.com>
 References: <1473361440-9668-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from ns.pmeerw.net ([84.19.176.92]:41099 "EHLO pmeerw.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938685AbcIHTYR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 8 Sep 2016 15:24:17 -0400
-In-Reply-To: <1473361440-9668-1-git-send-email-david@lechnology.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1473361440-9668-1-git-send-email-david@lechnology.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 List-Id: linux-leds@vger.kernel.org
-To: David Lechner <david@lechnology.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
+Hi David,
 
+Thanks for the update. Even more nitpicking below.
+
+Please also rebase the patch on top of current linux-leds.git, for-next
+branch.
+
+On 09/08/2016 09:04 PM, David Lechner wrote:
 > This driver creates a userspace leds driver similar to uinput.
-
-nitpicking below
- 
+>
 > New leds are created by opening /dev/uleds and writing a uleds_user_dev
 > struct. A new leds class device is registered with the name given in the
 > struct. Reading will return a single byte that is the current brightness.
 > The poll() syscall is also supported. It will be triggered whenever the
 > brightness changes. Closing the file handle to /dev/uleds will remove
 > the leds class device.
-> 
+>
 > Signed-off-by: David Lechner <david@lechnology.com>
 > ---
-> 
+>
 > v2 changes:
-> 
+>
 > * sort #includes
 > * fix typo in Kconfig
 > * Add Documentation text file
-> 
+>
 >  Documentation/leds/uleds.txt | 105 ++++++++++++++++++++
 >  drivers/leds/Kconfig         |   8 ++
 >  drivers/leds/Makefile        |   3 +
@@ -47,7 +49,7 @@ nitpicking below
 >  create mode 100644 Documentation/leds/uleds.txt
 >  create mode 100644 drivers/leds/uleds.c
 >  create mode 100644 include/uapi/linux/uleds.h
-> 
+>
 > diff --git a/Documentation/leds/uleds.txt b/Documentation/leds/uleds.txt
 > new file mode 100644
 > index 0000000..1c033d8
@@ -65,9 +67,6 @@ nitpicking below
 > +=====
 > +
 > +When the driver is loaded, a character devices is created at /dev/uleds. To
-
-device is
-
 > +create a new leds class device, open /dev/uleds and write a uleds_user_dev
 > +structure to it.
 > +
@@ -76,9 +75,19 @@ device is
 > +    struct uleds_user_dev {
 > +        char name[ULEDS_MAX_NAME_SIZE];
 > +    };
+
+Maybe it would be worth to mention that these definitions are
+available in the public kernel API header.
+
 > +
 > +A new leds class device will be created with the name given. The name can be
+
+s/leds/LED/
+
 > +any valid file name, but consider using the leds class convention of
+
+s/leds class/LED class device naming convention/
+
 > +"devicename:color:function".
 > +
 > +The current brightness is found by reading a single byte from the character
@@ -87,6 +96,9 @@ device is
 > +when the brightness value changes.
 > +
 > +The leds class device will be removed when the open file handle to /dev/uleds
+
+s/leds/LED/
+
 > +is closed.
 > +
 > +
@@ -98,13 +110,16 @@ device is
 > + *
 > + * This program creates a new userspace leds class device and monitor it. A
 
-monitors
+s/leds/LED/
 
 > + * timestamp and brightness value is printed each time the brightness changes.
 > + *
 > + * Usage: uledmon <device-name>
 > + *
 > + * <device-name> is the name of the leds class device to be created. Pressing
+
+s/leds/LED/
+
 > + * CTRL+C will exit.
 > + */
 > +
@@ -172,7 +187,7 @@ monitors
 > @@ -631,6 +631,14 @@ config LEDS_VERSATILE
 >  	  This option enabled support for the LEDs on the ARM Versatile
 >  	  and RealView boards. Say Y to enabled these.
->  
+>
 > +config LEDS_USER
 > +	tristate "Userspace LED support"
 > +	depends on LEDS_CLASS
@@ -183,7 +198,7 @@ monitors
 > +
 >  comment "LED Triggers"
 >  source "drivers/leds/trigger/Kconfig"
->  
+>
 > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
 > index 0684c86..d723eeb 100644
 > --- a/drivers/leds/Makefile
@@ -191,7 +206,7 @@ monitors
 > @@ -72,5 +72,8 @@ obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
 >  # LED SPI Drivers
 >  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
->  
+>
 > +# LED Userspace Drivers
 > +obj-$(CONFIG_LEDS_USER)			+= uleds.o
 > +
@@ -468,9 +483,9 @@ monitors
 > +};
 > +
 > +#endif /* _UAPI__ULEDS_H_ */
-> 
+>
+
 
 -- 
-
-Peter Meerwald-Stadler
-+43-664-2444418 (mobile)
+Best regards,
+Jacek Anaszewski
