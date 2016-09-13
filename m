@@ -1,49 +1,61 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 1/6] leds: gpio: fix an unhandled error case in
- create_gpio_led
-Date: Tue, 13 Sep 2016 20:53:00 +0200
-Message-ID: <15945af0-24df-ff7c-73b7-7872dc5ed8bd@gmail.com>
+Subject: [PATCH 2/6] leds: gpio: add helper cdev_to_gpio_led_data
+Date: Tue, 13 Sep 2016 20:54:25 +0200
+Message-ID: <d7613a2a-a76b-e433-1709-69e2ceaaf179@gmail.com>
 References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35053 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759636AbcIMS6a (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 14:58:30 -0400
 In-Reply-To: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-leds@vger.kernel.org
 
-gpiod_get_value_cansleep returns 0, 1, or an error code.
-So far errors are not handled and treated the same as 1.
-Change this to bail out if an error code is returned and
-remove the double negation.
+Add a helper for the container_of as it's used more than once.
 
 Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/leds/leds-gpio.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/leds/leds-gpio.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 3599b2e..10c851e 100644
+index 10c851e..da4aa8e 100644
 --- a/drivers/leds/leds-gpio.c
 +++ b/drivers/leds/leds-gpio.c
-@@ -118,10 +118,13 @@ static int create_gpio_led(const struct gpio_led *template,
- 		led_dat->platform_gpio_blink_set = blink_set;
- 		led_dat->cdev.blink_set = gpio_blink_set;
- 	}
--	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP)
--		state = !!gpiod_get_value_cansleep(led_dat->gpiod);
--	else
-+	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP) {
-+		state = gpiod_get_value_cansleep(led_dat->gpiod);
-+		if (state < 0)
-+			return state;
-+	} else {
- 		state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
-+	}
- 	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
- 	if (!template->retain_state_suspended)
- 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+@@ -29,11 +29,16 @@ struct gpio_led_data {
+ 	gpio_blink_set_t platform_gpio_blink_set;
+ };
+ 
++static inline struct gpio_led_data *
++			cdev_to_gpio_led_data(struct led_classdev *led_cdev)
++{
++	return container_of(led_cdev, struct gpio_led_data, cdev);
++}
++
+ static void gpio_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+-	struct gpio_led_data *led_dat =
+-		container_of(led_cdev, struct gpio_led_data, cdev);
++	struct gpio_led_data *led_dat = cdev_to_gpio_led_data(led_cdev);
+ 	int level;
+ 
+ 	if (value == LED_OFF)
+@@ -63,8 +68,7 @@ static int gpio_led_set_blocking(struct led_classdev *led_cdev,
+ static int gpio_blink_set(struct led_classdev *led_cdev,
+ 	unsigned long *delay_on, unsigned long *delay_off)
+ {
+-	struct gpio_led_data *led_dat =
+-		container_of(led_cdev, struct gpio_led_data, cdev);
++	struct gpio_led_data *led_dat = cdev_to_gpio_led_data(led_cdev);
+ 
+ 	led_dat->blinking = 1;
+ 	return led_dat->platform_gpio_blink_set(led_dat->gpiod, GPIO_LED_BLINK,
 -- 
 2.9.2
