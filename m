@@ -1,79 +1,73 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 1/8] leds: gpio: introduce gpio_blink_set_t
-Date: Tue, 13 Sep 2016 08:03:08 +0200
-Message-ID: <f5a1f772-337f-af2b-b167-dafd129ac2b2@gmail.com>
+Subject: [PATCH 8/8] leds: gpio: fix and simplify error handling in
+ gpio_leds_create
+Date: Tue, 13 Sep 2016 08:03:54 +0200
+Message-ID: <5ec334aa-23b7-ac87-2159-3c27d0d42ba1@gmail.com>
+References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32865 "EHLO
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:32935 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750747AbcIMGEC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 02:04:02 -0400
-Received: by mail-wm0-f68.google.com with SMTP id b187so16631982wme.0
-        for <linux-leds@vger.kernel.org>; Mon, 12 Sep 2016 23:04:02 -0700 (PDT)
+        with ESMTP id S1751120AbcIMGEM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 02:04:12 -0400
+Received: by mail-wm0-f68.google.com with SMTP id b187so16632440wme.0
+        for <linux-leds@vger.kernel.org>; Mon, 12 Sep 2016 23:04:11 -0700 (PDT)
+In-Reply-To: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Introduce a typedef gpio_blink_set_t to improve readability of the code.
+Simplify the error handling and add a missing call to fwnode_handle_put
+when checking led.name.
 
 Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/leds/leds-gpio.c | 6 ++----
- include/linux/leds.h     | 9 ++++++---
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ drivers/leds/leds-gpio.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 9b991d4..3599b2e 100644
+index 381f6e0..29d9a13 100644
 --- a/drivers/leds/leds-gpio.c
 +++ b/drivers/leds/leds-gpio.c
-@@ -26,8 +26,7 @@ struct gpio_led_data {
- 	struct gpio_desc *gpiod;
- 	u8 can_sleep;
- 	u8 blinking;
--	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
--			unsigned long *delay_on, unsigned long *delay_off);
-+	gpio_blink_set_t platform_gpio_blink_set;
- };
+@@ -172,16 +172,15 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+ 		if (IS_ERR(led.gpiod)) {
+ 			fwnode_handle_put(child);
+-			ret = PTR_ERR(led.gpiod);
+-			goto err;
++			return ERR_CAST(led.gpiod);
+ 		}
  
- static void gpio_led_set(struct led_classdev *led_cdev,
-@@ -74,8 +73,7 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
+ 		ret = fwnode_property_read_string(child, "label", &led.name);
+ 		if (ret && IS_ENABLED(CONFIG_OF) && np)
+ 			led.name = np->name;
+ 		if (!led.name) {
+-			ret = -EINVAL;
+-			goto err;
++			fwnode_handle_put(child);
++			return ERR_PTR(-EINVAL);
+ 		}
  
- static int create_gpio_led(const struct gpio_led *template,
- 	struct gpio_led_data *led_dat, struct device *parent,
--	int (*blink_set)(struct gpio_desc *, int, unsigned long *,
--			 unsigned long *))
-+	gpio_blink_set_t blink_set)
- {
- 	int ret, state;
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+@@ -205,16 +204,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		ret = create_gpio_led(&led, led_dat, dev, NULL);
+ 		if (ret < 0) {
+ 			fwnode_handle_put(child);
+-			goto err;
++			return ERR_PTR(ret);
+ 		}
+ 		led_dat->cdev.dev->of_node = np;
+ 		priv->num_leds++;
+ 	}
  
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 8a3b5d2..ddfcb2d 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -359,6 +359,11 @@ struct led_platform_data {
- 	struct led_info	*leds;
- };
+ 	return priv;
+-
+-err:
+-	return ERR_PTR(ret);
+ }
  
-+struct gpio_desc;
-+typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
-+				unsigned long *delay_on,
-+				unsigned long *delay_off);
-+
- /* For the leds-gpio driver */
- struct gpio_led {
- 	const char *name;
-@@ -382,9 +387,7 @@ struct gpio_led_platform_data {
- #define GPIO_LED_NO_BLINK_LOW	0	/* No blink GPIO state low */
- #define GPIO_LED_NO_BLINK_HIGH	1	/* No blink GPIO state high */
- #define GPIO_LED_BLINK		2	/* Please, blink */
--	int		(*gpio_blink_set)(struct gpio_desc *desc, int state,
--					unsigned long *delay_on,
--					unsigned long *delay_off);
-+	gpio_blink_set_t	gpio_blink_set;
- };
- 
- #ifdef CONFIG_NEW_LEDS
+ static const struct of_device_id of_gpio_leds_match[] = {
 -- 
 2.9.2
