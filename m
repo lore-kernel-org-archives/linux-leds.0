@@ -1,59 +1,46 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 5/8] leds: gpio: simplify gpio_leds_create
-Date: Tue, 13 Sep 2016 08:03:31 +0200
-Message-ID: <a8f44760-8276-e52a-86f8-e2301a801d15@gmail.com>
-References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: linux-next: Tree for Sep 12 (leds/leds-mlxcpld.c)
+Date: Tue, 13 Sep 2016 09:12:26 +0200
+Message-ID: <b7750571-77d4-cc10-3fd6-364cc9869040@samsung.com>
+References: <20160912154216.724eb884@canb.auug.org.au>
+ <CGME20160912170143eucas1p14f9050dc4bd8a2793b7b03089970eadc@eucas1p1.samsung.com>
+ <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34418 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbcIMGEI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 02:04:08 -0400
-Received: by mail-wm0-f68.google.com with SMTP id g141so5655957wmd.1
-        for <linux-leds@vger.kernel.org>; Mon, 12 Sep 2016 23:04:07 -0700 (PDT)
-In-Reply-To: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:28242 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754450AbcIMHMd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 03:12:33 -0400
+In-reply-to: <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>, linux-leds@vger.kernel.org
 
-Definition of np can be moved into the loop as well to simplify
-the code a little.
+Hi Randy,
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/leds/leds-gpio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 09/12/2016 07:01 PM, Randy Dunlap wrote:
+> On 09/11/16 22:42, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20160909:
+>>
+>
+> on x86_64:
+>
+> ../drivers/leds/leds-mlxcpld.c: In function 'mlxcpld_led_bus_access_func':
+> ../drivers/leds/leds-mlxcpld.c:253:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+>    outb(*data, addr);
+>    ^
+> ../drivers/leds/leds-mlxcpld.c:255:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
+>    *data = inb(addr);
+>    ^
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 6b507cc..8e2ffc9 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -154,7 +154,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 	struct fwnode_handle *child;
- 	struct gpio_leds_priv *priv;
- 	int count, ret;
--	struct device_node *np;
- 
- 	count = device_get_child_node_count(dev);
- 	if (!count)
-@@ -168,6 +167,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
- 		struct gpio_led led = {};
- 		const char *state = NULL;
-+		struct device_node *np = to_of_node(child);
- 
- 		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
- 		if (IS_ERR(led.gpiod)) {
-@@ -176,8 +176,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			goto err;
- 		}
- 
--		np = to_of_node(child);
--
- 		if (fwnode_property_present(child, "label")) {
- 			fwnode_property_read_string(child, "label", &led.name);
- 		} else {
+Thanks for the report. Fixed the issues along with three other
+sparse warnings.
+
 -- 
-2.9.2
+Best regards,
+Jacek Anaszewski
