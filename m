@@ -1,45 +1,124 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: linux-next: Tree for Sep 12 (leds/leds-mlxcpld.c)
-Date: Tue, 13 Sep 2016 09:12:26 +0200
-Message-ID: <b7750571-77d4-cc10-3fd6-364cc9869040@samsung.com>
-References: <20160912154216.724eb884@canb.auug.org.au>
- <CGME20160912170143eucas1p14f9050dc4bd8a2793b7b03089970eadc@eucas1p1.samsung.com>
- <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
+Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
+Date: Tue, 13 Sep 2016 09:16:58 +0200
+Message-ID: <0af86c53-7583-8cff-1fbd-ef12f28d15f9@samsung.com>
+References: <CGME20160912085832eucas1p1e7332f761e5e0cb764a6831b9a519b70@eucas1p1.samsung.com>
+ <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28242 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754450AbcIMHMd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 03:12:33 -0400
-In-reply-to: <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28093 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751547AbcIMHRE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 03:17:04 -0400
+In-reply-to: <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>, linux-leds@vger.kernel.org
+To: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Randy,
+Hi Daniel,
 
-On 09/12/2016 07:01 PM, Randy Dunlap wrote:
-> On 09/11/16 22:42, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20160909:
->>
+On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
+> Hello!
 >
-> on x86_64:
+> Please consider if I made something wrong, sending this issue. This is
+> my first contact to the LKML.
+> By mistake, I accessed an LED via /sys/class/leds subsystem very fast in
+> an user application. I figured out, that the free user memory decreased
+> constantly. So I tried to analyze the Problem and wrote a litte script:
 >
-> ../drivers/leds/leds-mlxcpld.c: In function 'mlxcpld_led_bus_access_func':
-> ../drivers/leds/leds-mlxcpld.c:253:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
->    outb(*data, addr);
->    ^
-> ../drivers/leds/leds-mlxcpld.c:255:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
->    *data = inb(addr);
->    ^
+> #!/bin/sh
+> while [ 1 ]; do
+>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+> done
+>
+> And voila, I was able to reproduce the problem.
+> So I add a bit more debugging:
+>
+> #!/bin/sh
+> cnt=0
+> while [ 1 ]; do
+>         if [ `expr $cnt % 1000` -eq 0 ]; then
+>                 free | grep Mem: | cut -d' ' -f25
+>         fi
+>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>         let "cnt++"
+> done
+>
+> And huh? No memory is eaten anymore. So it looks like, the problem only
+> occours on heavy (fast) usage of /sys/class/leds subsystem.
+>
+> I rewrote the script and toggled a GPIO pin, but there was no problem
+> recognizable.
+>
+>
+> Some details about my test environment:
+> Hardware: Ti Sitara AM3357ZCZ with 128MiB memory
+> Kernel: vanilla 4.6
+>
+> The relevant part of my .dts:
+> #include "am33xx.dtsi"
+>
+> / {
+> ...
+>     cpus {
+>         cpu@0 {
+>             cpu0-supply = <&dcdc2_reg>;
+>             operating-points = <
+>                 /* kHz    uV */
+>                 800000  1300000
+>                 600000  1112000
+>                 300000   969000
+>             >;
+>         };
+>     };
+>
+>     memory {
+>         device_type = "memory";
+>         reg = <0x80000000 0x08000000>; /* 128 Mib */
+>     };
+> ...
+>
+>     leds {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&user_leds_s0>;
+>
+>         compatible = "gpio-leds";
+>
+> ...
+>         led2 {
+>             label = "2a_service_yellow";
+>             gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+>             linux,default-trigger = "2a_service_yellow";
+>             default-state = "off";
+>         };
+>
+> ...
+>     };
+> ...
+> };
+>
+> &am33xx_pinmux {
+>     pinctrl-names = "default";
+>     pinctrl-0 = <&gpio_misc_pins>;
+>
+> ...
+>     user_leds_s0: user_leds_s0 {
+>         pinctrl-single,pins = <
+> ...
+>             0x24 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* (T10)
+> gpmc_ad9.gpio0[23] */
+>         >;
+>     };
+> ...
+> };
+> ...
 
-Thanks for the report. Fixed the issues along with three other
-sparse warnings.
+Thanks for the report, I'll look into it.
 
 -- 
 Best regards,
