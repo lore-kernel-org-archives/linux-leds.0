@@ -1,125 +1,86 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
-Date: Tue, 13 Sep 2016 09:16:58 +0200
-Message-ID: <0af86c53-7583-8cff-1fbd-ef12f28d15f9@samsung.com>
-References: <CGME20160912085832eucas1p1e7332f761e5e0cb764a6831b9a519b70@eucas1p1.samsung.com>
- <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
+Subject: Re: [PATCH 2/8] leds: gpio: set max_brightness to 1
+Date: Tue, 13 Sep 2016 15:35:02 +0200
+Message-ID: <a5590de2-6b0b-f4cb-bd93-576795004bca@samsung.com>
+References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
+ <CGME20160913060410eucas1p2a02e6204477153843156938975d3b414@eucas1p2.samsung.com>
+ <34a66492-d95f-0616-9eb1-84e283cf3f1d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28093 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48893 "EHLO
         mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751547AbcIMHRE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 03:17:04 -0400
-In-reply-to: <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
+        with ESMTP id S1751438AbcIMNfP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Sep 2016 09:35:15 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ODG00LRY32NLI10@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 13 Sep 2016 14:35:11 +0100 (BST)
+In-reply-to: <34a66492-d95f-0616-9eb1-84e283cf3f1d@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Heiner Kallweit <hkallweit1@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Daniel,
+Hi Heiner,
 
-On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
-> Hello!
->
-> Please consider if I made something wrong, sending this issue. This is
-> my first contact to the LKML.
-> By mistake, I accessed an LED via /sys/class/leds subsystem very fast in
-> an user application. I figured out, that the free user memory decreased
-> constantly. So I tried to analyze the Problem and wrote a litte script:
->
-> #!/bin/sh
-> while [ 1 ]; do
->         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->         echo 0 > /sys/class/leds/2a_service_yellow/brightness
-> done
->
-> And voila, I was able to reproduce the problem.
-> So I add a bit more debugging:
->
-> #!/bin/sh
-> cnt=0
-> while [ 1 ]; do
->         if [ `expr $cnt % 1000` -eq 0 ]; then
->                 free | grep Mem: | cut -d' ' -f25
->         fi
->         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->         echo 0 > /sys/class/leds/2a_service_yellow/brightness
->         let "cnt++"
-> done
->
-> And huh? No memory is eaten anymore. So it looks like, the problem only
-> occours on heavy (fast) usage of /sys/class/leds subsystem.
->
-> I rewrote the script and toggled a GPIO pin, but there was no problem
-> recognizable.
->
->
-> Some details about my test environment:
-> Hardware: Ti Sitara AM3357ZCZ with 128MiB memory
-> Kernel: vanilla 4.6
->
-> The relevant part of my .dts:
-> #include "am33xx.dtsi"
->
-> / {
-> ...
->     cpus {
->         cpu@0 {
->             cpu0-supply = <&dcdc2_reg>;
->             operating-points = <
->                 /* kHz    uV */
->                 800000  1300000
->                 600000  1112000
->                 300000   969000
->             >;
->         };
->     };
->
->     memory {
->         device_type = "memory";
->         reg = <0x80000000 0x08000000>; /* 128 Mib */
->     };
-> ...
->
->     leds {
->         pinctrl-names = "default";
->         pinctrl-0 = <&user_leds_s0>;
->
->         compatible = "gpio-leds";
->
-> ...
->         led2 {
->             label = "2a_service_yellow";
->             gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
->             linux,default-trigger = "2a_service_yellow";
->             default-state = "off";
->         };
->
-> ...
->     };
-> ...
-> };
->
-> &am33xx_pinmux {
->     pinctrl-names = "default";
->     pinctrl-0 = <&gpio_misc_pins>;
->
-> ...
->     user_leds_s0: user_leds_s0 {
->         pinctrl-single,pins = <
-> ...
->             0x24 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* (T10)
-> gpmc_ad9.gpio0[23] */
->         >;
->     };
-> ...
-> };
-> ...
+Thanks for the patches. I'll happily take them all except this
+one, as it could break existing userspace clients.
 
-Thanks for the report, I'll look into it.
+Could you please remove this patch and rebase the rest of the
+patch set on top of patch 1/8?
 
--- 
-Best regards,
+Besides, please also cc linux-kernel@vger.kernel.org list.
+
+Thanks,
 Jacek Anaszewski
+
+On 09/13/2016 08:03 AM, Heiner Kallweit wrote:
+> GPIO-controlled LED's just have the status on or off.
+> Set max_brightness to 1 to reflect this.
+>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+>  drivers/leds/leds-gpio.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 3599b2e..3f64544 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -34,22 +34,16 @@ static void gpio_led_set(struct led_classdev *led_cdev,
+>  {
+>  	struct gpio_led_data *led_dat =
+>  		container_of(led_cdev, struct gpio_led_data, cdev);
+> -	int level;
+> -
+> -	if (value == LED_OFF)
+> -		level = 0;
+> -	else
+> -		level = 1;
+>
+>  	if (led_dat->blinking) {
+> -		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
+> +		led_dat->platform_gpio_blink_set(led_dat->gpiod, value,
+>  						 NULL, NULL);
+>  		led_dat->blinking = 0;
+>  	} else {
+>  		if (led_dat->can_sleep)
+> -			gpiod_set_value_cansleep(led_dat->gpiod, level);
+> +			gpiod_set_value_cansleep(led_dat->gpiod, value);
+>  		else
+> -			gpiod_set_value(led_dat->gpiod, level);
+> +			gpiod_set_value(led_dat->gpiod, value);
+>  	}
+>  }
+>
+> @@ -106,6 +100,7 @@ static int create_gpio_led(const struct gpio_led *template,
+>  			return -EINVAL;
+>  	}
+>
+> +	led_dat->cdev.max_brightness = 1;
+>  	led_dat->cdev.name = template->name;
+>  	led_dat->cdev.default_trigger = template->default_trigger;
+>  	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
+>
