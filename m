@@ -1,43 +1,68 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Subject: RE: [PATCH -next] leds: mlxcpld: fix return value check in
- mlxcpld_led_init()
-Date: Wed, 14 Sep 2016 07:10:01 +0000
-Message-ID: <6AADFAC011213A4C87B956458587ADB46B9952@SZXEMI508-MBX.china.huawei.com>
-References: <CGME20160913145849eucas1p1c1661ef621a39d2955b29710a3729e7b@eucas1p1.samsung.com>
- <1473778715-11283-1-git-send-email-weiyj.lk@gmail.com>
- <e5b6b992-4881-3e7d-5904-a7d690c9e66d@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/6] leds: gpio: fix an unhandled error case in
+ create_gpio_led
+Date: Wed, 14 Sep 2016 09:13:06 +0200
+Message-ID: <d5aa04b0-2e5b-7fc8-9a23-0882670175d4@samsung.com>
+References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
+ <CGME20160913185832eucas1p2d66fec4689db17f211d2557fe426e3d2@eucas1p2.samsung.com>
+ <15945af0-24df-ff7c-73b7-7872dc5ed8bd@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:30554 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752643AbcINHKe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Sep 2016 03:10:34 -0400
-In-Reply-To: <e5b6b992-4881-3e7d-5904-a7d690c9e66d@samsung.com>
-Content-Language: zh-CN
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:11473 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755204AbcINHNM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Sep 2016 03:13:12 -0400
+In-reply-to: <15945af0-24df-ff7c-73b7-7872dc5ed8bd@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Wei Yongjun <weiyj.lk@gmail.com>, Vadim Pasternak <vadimp@mellanox.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Jacek,
+Hi Heiner,
 
-> -----Original Message-----
-> From: Jacek Anaszewski [mailto:j.anaszewski@samsung.com]
-> Sent: Wednesday, September 14, 2016 2:56 PM
-> To: Wei Yongjun; Vadim Pasternak; Richard Purdie
-> Cc: weiyongjun (A); linux-leds@vger.kernel.org
-> Subject: Re: [PATCH -next] leds: mlxcpld: fix return value check in
-> mlxcpld_led_init()
-> 
-> Hi Wei,
-> 
-> 
-> Thanks for your patches. Would you mind if I merged them to the
-> original patch and added your Reviewed-by tag to the commit message?
+You dropped also patch 1/8 from the first version of the patch
+set but patch 2/6 from this series seems to be based on this
+change, which causes conflict when trying to apply it.
 
-Feel free to merge them, it is ok with me.
+Please also don't forget to add version number to the PATCH tag.
 
-Regards,
-Yongjun Wei
+On 09/13/2016 08:53 PM, Heiner Kallweit wrote:
+> gpiod_get_value_cansleep returns 0, 1, or an error code.
+> So far errors are not handled and treated the same as 1.
+> Change this to bail out if an error code is returned and
+> remove the double negation.
+>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+>  drivers/leds/leds-gpio.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 3599b2e..10c851e 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -118,10 +118,13 @@ static int create_gpio_led(const struct gpio_led *template,
+>  		led_dat->platform_gpio_blink_set = blink_set;
+>  		led_dat->cdev.blink_set = gpio_blink_set;
+>  	}
+> -	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP)
+> -		state = !!gpiod_get_value_cansleep(led_dat->gpiod);
+> -	else
+> +	if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP) {
+> +		state = gpiod_get_value_cansleep(led_dat->gpiod);
+> +		if (state < 0)
+> +			return state;
+> +	} else {
+>  		state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
+> +	}
+>  	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
+>  	if (!template->retain_state_suspended)
+>  		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
