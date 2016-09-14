@@ -1,41 +1,81 @@
-From: Daniel Romell <danielromell@gmail.com>
-Subject: [PATCH] leds: Only remove trigger if one is actually configured.
-Date: Wed, 14 Sep 2016 11:23:07 +0200
-Message-ID: <1473844987-21112-1-git-send-email-daro@hms.se>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v2 1/7] leds: gpio: introduce gpio_blink_set_t
+Date: Wed, 14 Sep 2016 20:54:12 +0200
+Message-ID: <8f9abb6b-d885-a0a9-dfe5-ad14ff322f77@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34478 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753254AbcINJXe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Sep 2016 05:23:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36345 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763232AbcINSz4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Sep 2016 14:55:56 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: rpurdie@rpsys.net, j.anaszewski@samsung.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Romell <daro@hms.se>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-In led_trigger_remove(), check if there is a trigger
-configured before calling led_trigger_set(). This will
-prevent some unnecessary work, and more importantly stop
-sending uevent change events when no change has in fact
-occurred.
+Introduce a typedef gpio_blink_set_t to improve readability of the code.
 
-Signed-off-by: Daniel Romell <daro@hms.se>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/leds/led-triggers.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2:
+- no change
+---
+ drivers/leds/leds-gpio.c | 6 ++----
+ include/linux/leds.h     | 9 ++++++---
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 59d6a3e..28c7a66 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -147,7 +147,8 @@ EXPORT_SYMBOL_GPL(led_trigger_set);
- void led_trigger_remove(struct led_classdev *led_cdev)
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 9b991d4..3599b2e 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -26,8 +26,7 @@ struct gpio_led_data {
+ 	struct gpio_desc *gpiod;
+ 	u8 can_sleep;
+ 	u8 blinking;
+-	int (*platform_gpio_blink_set)(struct gpio_desc *desc, int state,
+-			unsigned long *delay_on, unsigned long *delay_off);
++	gpio_blink_set_t platform_gpio_blink_set;
+ };
+ 
+ static void gpio_led_set(struct led_classdev *led_cdev,
+@@ -74,8 +73,7 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
+ 
+ static int create_gpio_led(const struct gpio_led *template,
+ 	struct gpio_led_data *led_dat, struct device *parent,
+-	int (*blink_set)(struct gpio_desc *, int, unsigned long *,
+-			 unsigned long *))
++	gpio_blink_set_t blink_set)
  {
- 	down_write(&led_cdev->trigger_lock);
--	led_trigger_set(led_cdev, NULL);
-+	if (led_cdev->trigger)
-+		led_trigger_set(led_cdev, NULL);
- 	up_write(&led_cdev->trigger_lock);
- }
- EXPORT_SYMBOL_GPL(led_trigger_remove);
+ 	int ret, state;
+ 
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 8a3b5d2..ddfcb2d 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -359,6 +359,11 @@ struct led_platform_data {
+ 	struct led_info	*leds;
+ };
+ 
++struct gpio_desc;
++typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
++				unsigned long *delay_on,
++				unsigned long *delay_off);
++
+ /* For the leds-gpio driver */
+ struct gpio_led {
+ 	const char *name;
+@@ -382,9 +387,7 @@ struct gpio_led_platform_data {
+ #define GPIO_LED_NO_BLINK_LOW	0	/* No blink GPIO state low */
+ #define GPIO_LED_NO_BLINK_HIGH	1	/* No blink GPIO state high */
+ #define GPIO_LED_BLINK		2	/* Please, blink */
+-	int		(*gpio_blink_set)(struct gpio_desc *desc, int state,
+-					unsigned long *delay_on,
+-					unsigned long *delay_off);
++	gpio_blink_set_t	gpio_blink_set;
+ };
+ 
+ #ifdef CONFIG_NEW_LEDS
 -- 
-2.7.4
+2.9.2
