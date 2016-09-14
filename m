@@ -1,54 +1,67 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 3/6] leds: gpio: simplify gpio_leds_create
-Date: Tue, 13 Sep 2016 20:55:27 +0200
-Message-ID: <64a4524a-0aa9-be7d-f0a3-3b7fcc711bab@gmail.com>
-References: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH -next] leds: mlxcpld: fix return value check in
+ mlxcpld_led_init()
+Date: Wed, 14 Sep 2016 08:55:30 +0200
+Message-ID: <e5b6b992-4881-3e7d-5904-a7d690c9e66d@samsung.com>
+References: <CGME20160913145849eucas1p1c1661ef621a39d2955b29710a3729e7b@eucas1p1.samsung.com>
+ <1473778715-11283-1-git-send-email-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5432fb03-ea18-a949-ce53-10fedc15f5d9@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:8768 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbcINGzg (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Sep 2016 02:55:36 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ODH00LDYF8K9080@mailout3.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Wed, 14 Sep 2016 07:55:32 +0100 (BST)
+In-reply-to: <1473778715-11283-1-git-send-email-weiyj.lk@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Wei Yongjun <weiyj.lk@gmail.com>, Vadim Pasternak <vadimp@mellanox.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-leds@vger.kernel.org
 
-Definition of np can be moved into the loop as well to simplify
-the code a little.
+Hi Wei,
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/leds/leds-gpio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 09/13/2016 04:58 PM, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> In case of error, the function platform_device_register_simple() returns
+> ERR_PTR() and never returns NULL. The NULL test in the return value
+> check should be replaced with IS_ERR().
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/leds/leds-mlxcpld.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
+> index 125ddfa..2ba76c1 100644
+> --- a/drivers/leds/leds-mlxcpld.c
+> +++ b/drivers/leds/leds-mlxcpld.c
+> @@ -401,9 +401,9 @@ static int __init mlxcpld_led_init(void)
+>  	int err;
+>
+>  	pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
+> -	if (!pdev) {
+> +	if (IS_ERR(pdev)) {
+>  		pr_err("Device allocation failed\n");
+> -		return -ENOMEM;
+> +		return PTR_ERR(pdev);
+>  	}
+>
+>  	err = platform_driver_probe(&mlxcpld_led_driver, mlxcpld_led_probe);
+>
+>
+>
+>
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index da4aa8e..171ba2f 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -159,7 +159,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 	struct fwnode_handle *child;
- 	struct gpio_leds_priv *priv;
- 	int count, ret;
--	struct device_node *np;
- 
- 	count = device_get_child_node_count(dev);
- 	if (!count)
-@@ -173,6 +172,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
- 		struct gpio_led led = {};
- 		const char *state = NULL;
-+		struct device_node *np = to_of_node(child);
- 
- 		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
- 		if (IS_ERR(led.gpiod)) {
-@@ -181,8 +181,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			goto err;
- 		}
- 
--		np = to_of_node(child);
--
- 		if (fwnode_property_present(child, "label")) {
- 			fwnode_property_read_string(child, "label", &led.name);
- 		} else {
+Thanks for your patches. Would you mind if I merged them to the
+original patch and added your Reviewed-by tag to the commit message?
+
 -- 
-2.9.2
+Best regards,
+Jacek Anaszewski
