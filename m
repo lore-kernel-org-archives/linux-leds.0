@@ -1,18 +1,19 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] leds: Introduce userspace leds driver
-Date: Thu, 15 Sep 2016 15:01:10 +0200
-Message-ID: <20160915130110.GI13132@amd>
-References: <1473361440-9668-1-git-send-email-david@lechnology.com>
- <84510542-4faa-9763-611a-be3890f3f1f7@samsung.com>
+Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
+Date: Thu, 15 Sep 2016 15:08:31 +0200
+Message-ID: <20160915130831.GJ13132@amd>
+References: <1473439776-15655-1-git-send-email-david@lechnology.com>
+ <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
+ <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59726 "EHLO
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59906 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938994AbcIONBM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 09:01:12 -0400
+        with ESMTP id S1751000AbcIONIe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 09:08:34 -0400
 Content-Disposition: inline
-In-Reply-To: <84510542-4faa-9763-611a-be3890f3f1f7@samsung.com>
+In-Reply-To: <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Jacek Anaszewski <j.anaszewski@samsung.com>
@@ -20,37 +21,27 @@ Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, li
 
 Hi!
 
-> >@@ -0,0 +1,23 @@
-> >+/*
-> >+ * Userspace driver support for leds subsystem
-> >+ *
-> >+ * This program is free software; you can redistribute it and/or modify
-> >+ * it under the terms of the GNU General Public License as published by
-> >+ * the Free Software Foundation; either version 2 of the License, or
-> >+ * (at your option) any later version.
-> >+ *
-> >+ * This program is distributed in the hope that it will be useful,
-> >+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >+ * GNU General Public License for more details.
-> >+ */
-> >+#ifndef _UAPI__ULEDS_H_
-> >+#define _UAPI__ULEDS_H_
+> >+	if (copy_from_user(&udev->user_dev, buffer,
+> >+			   sizeof(struct uleds_user_dev))) {
+> >+		ret = -EFAULT;
+> >+		goto out;
+> >+	}
 > >+
-> >+#define ULEDS_MAX_NAME_SIZE	80
+> >+	if (!udev->user_dev.name[0]) {
+> >+		ret = -EINVAL;
+> >+		goto out;
+> >+	}
 > >+
-> >+struct uleds_user_dev {
-> >+	char name[ULEDS_MAX_NAME_SIZE];
-> >+};
+> >+	ret = led_classdev_register(NULL, &udev->led_cdev);
+> >+	if (ret < 0)
+> >+		goto out;
 
-We already have path component length limit somewhere, right? Just use
-it?
+No sanity checking on the name -> probably a security hole. Do not
+push this upstream before this is fixed.
 
-(And is struct with char array good idea at all? Perphaps it can just
-use write() length up to something reasonable, and not bother with new
-header file for userspace?)
-
-									Pavel
+Thanks,
+								Pavel
+								
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
