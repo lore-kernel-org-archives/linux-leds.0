@@ -1,51 +1,62 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [patch] leds: add driver for Mellanox systems leds
-Date: Thu, 15 Sep 2016 16:53:58 +0200
-Message-ID: <4d4c0a66-f4e3-c37b-817d-495ff1b2f0d3@samsung.com>
-References: <1473255323-191745-1-git-send-email-vadimp@mellanox.com>
- <CGME20160915125230eucas1p22ed4b6b430fa4acc3f29e36c302430ce@eucas1p2.samsung.com>
- <20160915125222.GG13132@amd>
+Subject: Re: [PATCH v2] leds: Introduce userspace leds driver
+Date: Thu, 15 Sep 2016 16:54:09 +0200
+Message-ID: <69e2865f-8ba9-ea1a-594f-3de4131e3ea2@samsung.com>
+References: <1473361440-9668-1-git-send-email-david@lechnology.com>
+ <84510542-4faa-9763-611a-be3890f3f1f7@samsung.com>
+ <CGME20160915130121eucas1p2c9d50e28e391714182b63eb29709847b@eucas1p2.samsung.com>
+ <20160915130110.GI13132@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19133 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751032AbcIOOyK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 10:54:10 -0400
-In-reply-to: <20160915125222.GG13132@amd>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17785 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752426AbcIOOyP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 10:54:15 -0400
+In-reply-to: <20160915130110.GI13132@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, vadimp@mellanox.com
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jiri@resnulli.us, michaelsh@mellanox.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
 Hi Pavel,
 
-On 09/15/2016 02:52 PM, Pavel Machek wrote:
+On 09/15/2016 03:01 PM, Pavel Machek wrote:
 > Hi!
 >
->> +++ b/MAINTAINERS
->> @@ -7655,6 +7655,14 @@ W:	http://www.mellanox.com
->>  Q:	http://patchwork.ozlabs.org/project/netdev/list/
->>  F:	drivers/net/ethernet/mellanox/mlxsw/
->>
->> +MELLANOX MLXCPLD LED DRIVER
->> +M:	Vadim Pasternak <vadimp@mellanox.com>
->> +L:	linux-leds@vger.kernel.org
->> +S:	Supported
->> +W:	http://www.mellanox.com
+>>> @@ -0,0 +1,23 @@
+>>> +/*
+>>> + * Userspace driver support for leds subsystem
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + *
+>>> + * This program is distributed in the hope that it will be useful,
+>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + * GNU General Public License for more details.
+>>> + */
+>>> +#ifndef _UAPI__ULEDS_H_
+>>> +#define _UAPI__ULEDS_H_
+>>> +
+>>> +#define ULEDS_MAX_NAME_SIZE	80
+>>> +
+>>> +struct uleds_user_dev {
+>>> +	char name[ULEDS_MAX_NAME_SIZE];
+>>> +};
 >
-> Unless you have web page specificly about the LED hardware, I don't
-> think W: tag is useful here.
+> We already have path component length limit somewhere, right? Just use
+> it?
 >
+> (And is struct with char array good idea at all? Perphaps it can just
+> use write() length up to something reasonable, and not bother with new
+> header file for userspace?)
 
-I raised also similar objections during review. Eventually I left
-the entry after skimming through the MAINTAINERS and noticing few
-other similar examples.
-
-In fact, the link to the main page doesn't convey any better information
-than can be obtained after searching google. I'm dropping the entry
-then.
+In fact in this case the addition of another public header can be
+avoided.
 
 -- 
 Best regards,
