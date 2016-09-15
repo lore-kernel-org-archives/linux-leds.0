@@ -1,55 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Only remove trigger if one is actually configured.
-Date: Thu, 15 Sep 2016 13:48:16 +0200
-Message-ID: <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>
-References: <CGME20160914092340eucas1p27f875a415de6684be5b09872ab1b9ab6@eucas1p2.samsung.com>
- <1473844987-21112-1-git-send-email-daro@hms.se>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] leds: Introduce userspace leds driver
+Date: Thu, 15 Sep 2016 14:41:03 +0200
+Message-ID: <20160915124103.GF13132@amd>
+References: <1473128158-26915-1-git-send-email-david@lechnology.com>
+ <04c5ee0d-9bfb-6e0a-2616-6cf720fc8763@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:65242 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756385AbcIOLsW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 07:48:22 -0400
-In-reply-to: <1473844987-21112-1-git-send-email-daro@hms.se>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58911 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757106AbcIOMlG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2016 08:41:06 -0400
+Content-Disposition: inline
+In-Reply-To: <04c5ee0d-9bfb-6e0a-2616-6cf720fc8763@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Daniel Romell <danielromell@gmail.com>, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Romell <daro@hms.se>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
-Hi Daniel,
+Hi!
 
-On 09/14/2016 11:23 AM, Daniel Romell wrote:
-> In led_trigger_remove(), check if there is a trigger
-> configured before calling led_trigger_set(). This will
-> prevent some unnecessary work, and more importantly stop
-> sending uevent change events when no change has in fact
-> occurred.
->
-> Signed-off-by: Daniel Romell <daro@hms.se>
-> ---
->  drivers/leds/led-triggers.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 59d6a3e..28c7a66 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -147,7 +147,8 @@ EXPORT_SYMBOL_GPL(led_trigger_set);
->  void led_trigger_remove(struct led_classdev *led_cdev)
->  {
->  	down_write(&led_cdev->trigger_lock);
-> -	led_trigger_set(led_cdev, NULL);
-> +	if (led_cdev->trigger)
-> +		led_trigger_set(led_cdev, NULL);
->  	up_write(&led_cdev->trigger_lock);
->  }
->  EXPORT_SYMBOL_GPL(led_trigger_remove);
->
+> Thanks for the patch. It is very nice. I have only one minor remark
+> in the code.
+> 
+> I think that it would be good to add a documentation for this
+> driver to Documentation/leds, with exemplary C program instead
+> of python one. The program could poll the dev node in a loop,
+> which allows to conveniently check the impact of setting particular
+> triggers and all other brightness change events.
 
-Thanks for the patch. Applied.
+Actually, I'd say that python is fine -- it is used heavily in tools/.
 
--- 
+But perhaps the example program should go to tools/?
+
+> >def change_brightness(b):
+> >    with open('/sys/class/leds/{}/brightness'.format(name) , 'w') as f:
+> >       f.write(str(b))
+> >
+> >
+> >with open('/dev/uleds', 'rb+', 0) as uleds:
+> >    bname = name.encode("ascii")
+> >    # create the leds class device
+> >    uleds.write(bname + b'\0' * (ULEDS_MAX_NAME_SIZE - len(bname)))
+
+Umm. I don't see it in the kernel code. You let userspace provide a
+LED name?
+
+Where is the LED name tested for sanity? I guess there could be a lot
+of fun naming a led ".." for example...
+
 Best regards,
-Jacek Anaszewski
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
