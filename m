@@ -1,53 +1,68 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
-Date: Thu, 15 Sep 2016 16:54:35 +0200
-Message-ID: <5e86399e-65a0-9251-d08e-ab8bfe1f5fbb@samsung.com>
-References: <1473439776-15655-1-git-send-email-david@lechnology.com>
- <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
- <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
- <20160915130831.GJ13132@amd> <20160915133558.GA29883@amd>
+From: David Lechner <david@lechnology.com>
+Subject: Re: [PATCH v2] leds: Introduce userspace leds driver
+Date: Thu, 15 Sep 2016 10:25:11 -0500
+Message-ID: <48ba9d0b-9718-8411-3a1e-c2dd19f0adb5@lechnology.com>
+References: <1473361440-9668-1-git-send-email-david@lechnology.com>
+ <84510542-4faa-9763-611a-be3890f3f1f7@samsung.com>
+ <CGME20160915130121eucas1p2c9d50e28e391714182b63eb29709847b@eucas1p2.samsung.com>
+ <20160915130110.GI13132@amd>
+ <69e2865f-8ba9-ea1a-594f-3de4131e3ea2@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160915133558.GA29883@amd>
+In-Reply-To: <69e2865f-8ba9-ea1a-594f-3de4131e3ea2@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
-
-On 09/15/2016 03:35 PM, Pavel Machek wrote:
-> Hi!
+On 09/15/2016 09:54 AM, Jacek Anaszewski wrote:
+> Hi Pavel,
 >
->>>> +	if (copy_from_user(&udev->user_dev, buffer,
->>>> +			   sizeof(struct uleds_user_dev))) {
->>>> +		ret = -EFAULT;
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	if (!udev->user_dev.name[0]) {
->>>> +		ret = -EINVAL;
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	ret = led_classdev_register(NULL, &udev->led_cdev);
->>>> +	if (ret < 0)
->>>> +		goto out;
+> On 09/15/2016 03:01 PM, Pavel Machek wrote:
+>> Hi!
 >>
->> No sanity checking on the name -> probably a security hole. Do not
->> push this upstream before this is fixed.
+>>>> @@ -0,0 +1,23 @@
+>>>> +/*
+>>>> + * Userspace driver support for leds subsystem
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or
+>>>> modify
+>>>> + * it under the terms of the GNU General Public License as
+>>>> published by
+>>>> + * the Free Software Foundation; either version 2 of the License, or
+>>>> + * (at your option) any later version.
+>>>> + *
+>>>> + * This program is distributed in the hope that it will be useful,
+>>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>> + * GNU General Public License for more details.
+>>>> + */
+>>>> +#ifndef _UAPI__ULEDS_H_
+>>>> +#define _UAPI__ULEDS_H_
+>>>> +
+>>>> +#define ULEDS_MAX_NAME_SIZE    80
+>>>> +
+>>>> +struct uleds_user_dev {
+>>>> +    char name[ULEDS_MAX_NAME_SIZE];
+>>>> +};
+>>
+>> We already have path component length limit somewhere, right? Just use
+>> it?
+>>
+>> (And is struct with char array good idea at all? Perphaps it can just
+>> use write() length up to something reasonable, and not bother with new
+>> header file for userspace?)
 >
-> And actually... is it possible to have more then one userspace LED
-> with this interface? I do have RGB LED connect on /dev/ttyUSB0, and I
-> guess userspace driver would be appropriate, but it needs 3
-> channels...
+> In fact in this case the addition of another public header can be
+> avoided.
+>
 
-Each new successful write to /dev/uleds creates a new LED class device.
+The main reason I did it this way is in case someone wants to extend 
+this to also, for example, set the max_brightness value. If we use an 
+arbitrary size string, we could never add max_brightness without 
+breaking userspace.
 
-See Documentation/leds/uleds.txt.
-
--- 
-Best regards,
-Jacek Anaszewski
+If we are sure we will never want to pass any other parameters other 
+than name, then we can do away with the struct.
