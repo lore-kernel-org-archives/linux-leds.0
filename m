@@ -1,101 +1,101 @@
-From: Florian Vaussard <florian.vaussard@gmail.com>
-Subject: [PATCH v3 1/2] leds: ncp5623: Add device tree binding documentation
-Date: Fri, 16 Sep 2016 13:34:31 +0200
-Message-ID: <1474025672-5040-2-git-send-email-florian.vaussard@heig-vd.ch>
-References: <1474025672-5040-1-git-send-email-florian.vaussard@heig-vd.ch>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1474025672-5040-1-git-send-email-florian.vaussard@heig-vd.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Vaussard <florian.vaussard@heig-vd.ch>
+From: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>
+Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
+Date: Fri, 16 Sep 2016 14:08:34 +0200
+Message-ID: <b267fe46-34ed-4c1e-3c7f-45267baf5517@esd.eu>
+References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
+ <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mxu01.htp-tel.de ([81.14.242.8]:38034 "EHLO mxuout01.htp-tel.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759148AbcIPMIr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 16 Sep 2016 08:08:47 -0400
+In-Reply-To: <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Add device tree binding documentation for On Semiconductor NCP5623 I2C
-LED driver. The driver can independently control the PWM of the 3
-channels with 32 levels of intensity.
+Hi Jacek,
 
-The current delivered by the current source can also be controlled. To
-do so, the led-max-microamp property is used by each LED sub-node. The
-maximum value is then found and used as a limit to compute the final
-intensity of the current source. If a LED happens to have a lower limit,
-the PWM is then used to limit the current to the requested value.
+Am 16.09.2016 um 13:25 schrieb Jacek Anaszewski:
+> On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
+>> Hi Jacek,
+>>
+>> Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
+>>> Hi Daniel,
+>>>
+>>> On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
+>>>> Hello!
+>>>>
+>>>> Please consider if I made something wrong, sending this issue. This is
+>>>> my first contact to the LKML.
+>>>> By mistake, I accessed an LED via /sys/class/leds subsystem very fast in
+>>>> an user application. I figured out, that the free user memory decreased
+>>>> constantly. So I tried to analyze the Problem and wrote a litte script:
+>>>>
+>>>> #!/bin/sh
+>>>> while [ 1 ]; do
+>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>>>> done
+>>>>
+>>>> And voila, I was able to reproduce the problem.
+>>>> So I add a bit more debugging:
+>>>>
+>>>> #!/bin/sh
+>>>> cnt=0
+>>>> while [ 1 ]; do
+>>>>         if [ `expr $cnt % 1000` -eq 0 ]; then
+>>>>                 free | grep Mem: | cut -d' ' -f25
+>>>>         fi
+>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>>>>         let "cnt++"
+>>>> done
+>>>>
+>>>> And huh? No memory is eaten anymore. So it looks like, the problem only
+>>>> occours on heavy (fast) usage of /sys/class/leds subsystem.
+>>>>
+>>>> I rewrote the script and toggled a GPIO pin, but there was no problem
+>>>> recognizable.
+>>>
+>>> I've been unable to reproduce the problem with leds-aat1290 driver
+>>> and Samsung M0 board. It must be driver specific issue.
+>>> What driver did you use?
+>>>
+>> I defined LEDS_GPIO and so I'm using leds-gpio driver.
+>> danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
+>> -v "^# "
+>> CONFIG_INPUT_LEDS=y
+>> CONFIG_NEW_LEDS=y
+>> CONFIG_LEDS_CLASS=y
+>> CONFIG_LEDS_GPIO=y
+>> CONFIG_LEDS_TRIGGERS=y
+>> CONFIG_LEDS_TRIGGER_TIMER=y
+>> CONFIG_LEDS_TRIGGER_ONESHOT=y
+>> CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+>> CONFIG_LEDS_TRIGGER_GPIO=y
+>> CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+>> CONFIG_LEDS_TRIGGER_TRANSIENT=y
+>>
+>
+> Unfortunately I am still unable to reproduce the problem with leds-gpio.
+> I'm not observing any heavy usage with your test case:
+>
+> ~#free
+>               total       used       free     shared    buffers     cached
+> Mem:       1028092      61364     966728          0       8416      22396
+> -/+ buffers/cache:      30552     997540
+> Swap:            0          0          0
+>
+>
+> Actually you didn't give any numbers. What kernel version are you using?
+>
+As I wrote, the problems occurred in vanilla 4.6 kernel, but also in 4.4 
+kernel (with PREEMPT-RT Patchset).
 
-In order to control the current source, it is also necessary to know
-the current on the Iref pin, hence the onnn,led-iref-microamp property.
-It is usually set using an external bias resistor, following
-Iref = Vref/Rbias with Vref=0.6V.
-
-Signed-off-by: Florian Vaussard <florian.vaussard@heig-vd.ch>
----
- .../devicetree/bindings/leds/leds-ncp5623.txt      | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-ncp5623.txt b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
-new file mode 100644
-index 0000000..d83e509
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-ncp5623.txt
-@@ -0,0 +1,60 @@
-+* ON Semiconductor - NCP5623 3-Channel LED Driver
-+
-+The NCP5623 is a 3-channel I2C LED driver. The brightness of each
-+channel can be independently set using 32 levels. Each LED is represented
-+as a sub-node of the device.
-+
-+Required properties:
-+  - compatible: Should be "onnn,ncp5623"
-+  - reg: I2C slave address (fixed to 0x38)
-+  - #address-cells: must be 1
-+  - #size-cells: must be 0
-+  - onnn,led-iref-microamp: Current on the Iref pin in microampere. It depends
-+    on the value of the external bias resistor Rbias, following
-+    Iref = Vref / Rbias with Vref = 0.6V. This is used to set the intensity of
-+    the current that can be provided by the internal current source, based on
-+    the maximum current permitted by LED sub-nodes (see below), but no more than
-+    Imax = 2400 * Iref.
-+
-+LED sub-nodes
-+=============
-+
-+Required properties:
-+  - reg : LED channel number (0..2)
-+  - led-max-microamp: Maximum allowable current inside the LED in microampere.
-+    This property is used to limit the PWM ratio, based on the intensity of the
-+    internal current source (see above).
-+
-+Optional properties:
-+  - label: see Documentation/devicetree/bindings/leds/common.txt
-+  - linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example
-+=======
-+
-+led1: ncp5623@38 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	compatible = "onnn,ncp5623";
-+	reg = <0x38>;
-+	onnn,led-iref-microamp = <10>;
-+
-+	led1r@0 {
-+		label = "ncp:power:red";
-+		linux,default-trigger = "default-on";
-+		reg = <0>;
-+		led-max-microamp = <20000>;
-+	};
-+
-+	led1b@1 {
-+		label = "ncp:power:blue";
-+		reg = <1>;
-+		led-max-microamp = <20000>;
-+	};
-+
-+	led1g@2 {
-+		label = "ncp:power:green";
-+		reg = <2>;
-+		led-max-microamp = <20000>;
-+	};
-+};
--- 
-2.5.5
+Kind regards,
+Daniel
