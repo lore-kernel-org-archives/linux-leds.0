@@ -1,97 +1,55 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
-Date: Fri, 16 Sep 2016 13:25:07 +0200
-Message-ID: <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
-References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
- <CGME20160916081559eucas1p14d332c2eecb07992746c96b7163f5172@eucas1p1.samsung.com>
- <d78a668f-f2fa-da5e-7895-c3fc0ef272e7@esd.eu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46972 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933839AbcIPLZN (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 07:25:13 -0400
-In-reply-to: <d78a668f-f2fa-da5e-7895-c3fc0ef272e7@esd.eu>
-Sender: linux-leds-owner@vger.kernel.org
+From: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 0/2] leds: Add driver for NCP5623 3-channel I2C LED driver
+Date: Fri, 16 Sep 2016 13:34:30 +0200
+Message-ID: <1474025672-5040-1-git-send-email-florian.vaussard@heig-vd.ch>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
-> Hi Jacek,
->
-> Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
->> Hi Daniel,
->>
->> On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
->>> Hello!
->>>
->>> Please consider if I made something wrong, sending this issue. This is
->>> my first contact to the LKML.
->>> By mistake, I accessed an LED via /sys/class/leds subsystem very fast in
->>> an user application. I figured out, that the free user memory decreased
->>> constantly. So I tried to analyze the Problem and wrote a litte script:
->>>
->>> #!/bin/sh
->>> while [ 1 ]; do
->>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
->>> done
->>>
->>> And voila, I was able to reproduce the problem.
->>> So I add a bit more debugging:
->>>
->>> #!/bin/sh
->>> cnt=0
->>> while [ 1 ]; do
->>>         if [ `expr $cnt % 1000` -eq 0 ]; then
->>>                 free | grep Mem: | cut -d' ' -f25
->>>         fi
->>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
->>>         let "cnt++"
->>> done
->>>
->>> And huh? No memory is eaten anymore. So it looks like, the problem only
->>> occours on heavy (fast) usage of /sys/class/leds subsystem.
->>>
->>> I rewrote the script and toggled a GPIO pin, but there was no problem
->>> recognizable.
->>
->> I've been unable to reproduce the problem with leds-aat1290 driver
->> and Samsung M0 board. It must be driver specific issue.
->> What driver did you use?
->>
-> I defined LEDS_GPIO and so I'm using leds-gpio driver.
-> danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
-> -v "^# "
-> CONFIG_INPUT_LEDS=y
-> CONFIG_NEW_LEDS=y
-> CONFIG_LEDS_CLASS=y
-> CONFIG_LEDS_GPIO=y
-> CONFIG_LEDS_TRIGGERS=y
-> CONFIG_LEDS_TRIGGER_TIMER=y
-> CONFIG_LEDS_TRIGGER_ONESHOT=y
-> CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-> CONFIG_LEDS_TRIGGER_GPIO=y
-> CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-> CONFIG_LEDS_TRIGGER_TRANSIENT=y
->
+Hello,
 
-Unfortunately I am still unable to reproduce the problem with leds-gpio.
-I'm not observing any heavy usage with your test case:
+This series add a new driver for On Semiconductor NCP5623, a 3-channel I2C
+LED driver. It is used in our design to drive a RGB LED.
 
-~#free
-              total       used       free     shared    buffers     cached
-Mem:       1028092      61364     966728          0       8416      22396
--/+ buffers/cache:      30552     997540
-Swap:            0          0          0
+The first patch introduces the device tree binding, while the second patch
+adds the driver itself.
 
+Best regards,
+Florian
 
-Actually you didn't give any numbers. What kernel version are you using?
+---
+v2 -> v3:
+- Rebased on latest leds/for-next
+- Minor fixes to the binding documentation
+- Removed ncp5623_set_pwm() by inlining it directly inside the caller
+- Removed ncp5623_destroy_devices() as we are already using devm_ flavours
+- Got rid of the 'active' state variable by using 'led_no' instead
+- Some other cosmetic fixes
+v1 -> v2:
+- Adapted the DT binding (led-max-microamp for each LED node)
+- Removed underscores from node names in the example
+- Use brightness_set_blocking to avoid workqueue
+- Introduced LED_to_CMD macro to avoid switch statement
+- Various other fixes
+
+Florian Vaussard (2):
+  leds: ncp5623: Add device tree binding documentation
+  leds: Add driver for NCP5623 3-channel I2C LED driver
+
+ .../devicetree/bindings/leds/leds-ncp5623.txt      |  60 ++++++
+ drivers/leds/Kconfig                               |  11 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-ncp5623.c                        | 234 +++++++++++++++++++++
+ 4 files changed, 306 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ncp5623.txt
+ create mode 100644 drivers/leds/leds-ncp5623.c
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
