@@ -1,49 +1,159 @@
-From: David Lechner <david@lechnology.com>
-Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
-Date: Fri, 16 Sep 2016 10:41:20 -0500
-Message-ID: <a3a5c492-3c9a-9fd6-a601-c4fd6bcd3106@lechnology.com>
-References: <1473439776-15655-1-git-send-email-david@lechnology.com>
- <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
- <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
- <20160915130831.GJ13132@amd>
- <313cbae5-fd66-f0ae-79a9-a3f4273d6f9c@samsung.com>
- <d3f1810c-e97a-4460-1415-f54e8501cf64@lechnology.com>
- <20160916060718.GD13205@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
+Date: Fri, 16 Sep 2016 20:49:44 +0200
+Message-ID: <6f9326ea-0ff6-7ff7-58d5-210d0c3e7252@gmail.com>
+References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
+ <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
+ <CGME20160916120853eucas1p2474a728f5fc725b094ad1addab507b58@eucas1p2.samsung.com>
+ <b267fe46-34ed-4c1e-3c7f-45267baf5517@esd.eu>
+ <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
+ <20160916140626.GB391@kroah.com>
+ <aa2f963b-0d48-6746-4795-0033994814cd@samsung.com>
+ <20160916143951.GA20908@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vern.gendns.com ([206.190.152.46]:36723 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760234AbcIPPlV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 16 Sep 2016 11:41:21 -0400
-In-Reply-To: <20160916060718.GD13205@amd>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33253 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935345AbcIPSuX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 14:50:23 -0400
+In-Reply-To: <20160916143951.GA20908@kroah.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
+To: Greg KH <greg@kroah.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 09/16/2016 01:07 AM, Pavel Machek wrote:
-> Hi!
+On 09/16/2016 04:39 PM, Greg KH wrote:
+> On Fri, Sep 16, 2016 at 04:32:39PM +0200, Jacek Anaszewski wrote:
+>> On 09/16/2016 04:06 PM, Greg KH wrote:
+>>> On Fri, Sep 16, 2016 at 03:41:09PM +0200, Jacek Anaszewski wrote:
+>>>> On 09/16/2016 02:08 PM, Daniel Gorsulowski wrote:
+>>>>> Hi Jacek,
+>>>>>
+>>>>> Am 16.09.2016 um 13:25 schrieb Jacek Anaszewski:
+>>>>>> On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
+>>>>>>> Hi Jacek,
+>>>>>>>
+>>>>>>> Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
+>>>>>>>> Hi Daniel,
+>>>>>>>>
+>>>>>>>> On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
+>>>>>>>>> Hello!
+>>>>>>>>>
+>>>>>>>>> Please consider if I made something wrong, sending this issue. This is
+>>>>>>>>> my first contact to the LKML.
+>>>>>>>>> By mistake, I accessed an LED via /sys/class/leds subsystem very
+>>>>>>>>> fast in
+>>>>>>>>> an user application. I figured out, that the free user memory
+>>>>>>>>> decreased
+>>>>>>>>> constantly. So I tried to analyze the Problem and wrote a litte
+>>>>>>>>> script:
+>>>>>>>>>
+>>>>>>>>> #!/bin/sh
+>>>>>>>>> while [ 1 ]; do
+>>>>>>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>>>>>>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>>>>>>>>> done
+>>>>>>>>>
+>>>>>>>>> And voila, I was able to reproduce the problem.
+>>>>>>>>> So I add a bit more debugging:
+>>>>>>>>>
+>>>>>>>>> #!/bin/sh
+>>>>>>>>> cnt=0
+>>>>>>>>> while [ 1 ]; do
+>>>>>>>>>         if [ `expr $cnt % 1000` -eq 0 ]; then
+>>>>>>>>>                 free | grep Mem: | cut -d' ' -f25
+>>>>>>>>>         fi
+>>>>>>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>>>>>>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>>>>>>>>>         let "cnt++"
+>>>>>>>>> done
+>>>>>>>>>
+>>>>>>>>> And huh? No memory is eaten anymore. So it looks like, the problem
+>>>>>>>>> only
+>>>>>>>>> occours on heavy (fast) usage of /sys/class/leds subsystem.
+>>>>>>>>>
+>>>>>>>>> I rewrote the script and toggled a GPIO pin, but there was no problem
+>>>>>>>>> recognizable.
+>>>>>>>>
+>>>>>>>> I've been unable to reproduce the problem with leds-aat1290 driver
+>>>>>>>> and Samsung M0 board. It must be driver specific issue.
+>>>>>>>> What driver did you use?
+>>>>>>>>
+>>>>>>> I defined LEDS_GPIO and so I'm using leds-gpio driver.
+>>>>>>> danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
+>>>>>>> -v "^# "
+>>>>>>> CONFIG_INPUT_LEDS=y
+>>>>>>> CONFIG_NEW_LEDS=y
+>>>>>>> CONFIG_LEDS_CLASS=y
+>>>>>>> CONFIG_LEDS_GPIO=y
+>>>>>>> CONFIG_LEDS_TRIGGERS=y
+>>>>>>> CONFIG_LEDS_TRIGGER_TIMER=y
+>>>>>>> CONFIG_LEDS_TRIGGER_ONESHOT=y
+>>>>>>> CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+>>>>>>> CONFIG_LEDS_TRIGGER_GPIO=y
+>>>>>>> CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+>>>>>>> CONFIG_LEDS_TRIGGER_TRANSIENT=y
+>>>>>>>
+>>>>>>
+>>>>>> Unfortunately I am still unable to reproduce the problem with leds-gpio.
+>>>>>> I'm not observing any heavy usage with your test case:
+>>>>>>
+>>>>>> ~#free
+>>>>>>               total       used       free     shared    buffers
+>>>>>> cached
+>>>>>> Mem:       1028092      61364     966728          0       8416      22396
+>>>>>> -/+ buffers/cache:      30552     997540
+>>>>>> Swap:            0          0          0
+>>>>>>
+>>>>>>
+>>>>>> Actually you didn't give any numbers. What kernel version are you using?
+>>>>>>
+>>>>> As I wrote, the problems occurred in vanilla 4.6 kernel, but also in 4.4
+>>>>> kernel (with PREEMPT-RT Patchset).
+>>>>
+>>>> Heh, funny coincidence. I was testing this on recent linux-leds.git,
+>>>> for-next branch and was not able to detect the issue. It started to
+>>>> appear after resetting HEAD to 4.8-rc2 base. Finally it turned out
+>>>> that what fixes the issue is the most recent commit [1].
+>>>>
+>>>> Further investigation revealed that this is kobject_uevent_env(),
+>>>> called from led_trigger_set(), which causes memory leaks when called
+>>>> with high frequency.
+>>>
+>>> Really?  Where in kobject_uevent_env() is the memory leak?
+>>
+>> I'll chase it down when and will let you know. This may be
+>> non-trivial issue as it suffices to add "sleep 0.1" between
+>> brightness setting operations to prevent it.
 >
-> +static ssize_t uleds_read(struct file *file, char __user *buffer,
-> size_t count,
-> + loff_t *ppos)
-> +{
-> + struct uleds_device *udev = file->private_data;
-> + ssize_t retval;
-> +
-> + if (count == 0)
-> + return 0;
-> +
-> + if (count != 1)
-> + return -EINVAL;
->
-> This is quite anti-social. You are free to return 1 byte on any read
-> (short read), but please allow reads with bigger buffers.
->
-> Thanks,
-> 									Pavel
->
+> Why are you abusing uevents for flashing an LED?  Please don't do that,
+> it's not what that interface is for at all.
 
-Sure.
+It is called in a result of setting brightness value to LED_OFF,
+which also removes registered trigger if any.
+
+The rationale for calling kobject_uevent_env() is given in the
+relevant commit message:
+
+commit 52c47742f79d9240f90af9a6722fe8bb3fa8c0f9
+Author: Colin Cross <ccross@android.com>
+Date:   Mon Aug 27 09:31:49 2012 +0800
+
+     leds: triggers: send uevent when changing triggers
+
+     Some triggers create sysfs files when they are enabled. Send a uevent
+     "change" notification whenever the trigger is changed to allow 
+userspace
+     processes such as udev to modify permissions on the new files.
+
+     A change notification will also be sent during registration of led 
+class
+     devices or led triggers if the default trigger of an led class device
+     is found.
+
+
+-- 
+Best regards,
+Jacek Anaszewski
