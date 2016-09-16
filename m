@@ -1,128 +1,101 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
-Date: Fri, 16 Sep 2016 16:39:51 +0200
-Message-ID: <20160916143951.GA20908@kroah.com>
-References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
- <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
- <CGME20160916120853eucas1p2474a728f5fc725b094ad1addab507b58@eucas1p2.samsung.com>
- <b267fe46-34ed-4c1e-3c7f-45267baf5517@esd.eu>
- <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
- <20160916140626.GB391@kroah.com>
- <aa2f963b-0d48-6746-4795-0033994814cd@samsung.com>
+From: David Lechner <david@lechnology.com>
+Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
+Date: Fri, 16 Sep 2016 10:09:51 -0500
+Message-ID: <71c2cef3-c509-07e1-204b-82db154d7df3@lechnology.com>
+References: <1473439776-15655-1-git-send-email-david@lechnology.com>
+ <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
+ <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
+ <20160915130831.GJ13132@amd>
+ <313cbae5-fd66-f0ae-79a9-a3f4273d6f9c@samsung.com>
+ <a3496eea-dc5d-b9c7-bfa4-19b8f004d5ee@lechnology.com>
+ <20160916055014.GA13205@amd>
+ <b7c3ce51-e232-5dea-b413-f01bea59cc84@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <aa2f963b-0d48-6746-4795-0033994814cd@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vern.gendns.com ([206.190.152.46]:33276 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754330AbcIPPJx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 16 Sep 2016 11:09:53 -0400
+In-Reply-To: <b7c3ce51-e232-5dea-b413-f01bea59cc84@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
-On Fri, Sep 16, 2016 at 04:32:39PM +0200, Jacek Anaszewski wrote:
-> On 09/16/2016 04:06 PM, Greg KH wrote:
-> > On Fri, Sep 16, 2016 at 03:41:09PM +0200, Jacek Anaszewski wrote:
-> > > On 09/16/2016 02:08 PM, Daniel Gorsulowski wrote:
-> > > > Hi Jacek,
-> > > > 
-> > > > Am 16.09.2016 um 13:25 schrieb Jacek Anaszewski:
-> > > > > On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
-> > > > > > Hi Jacek,
-> > > > > > 
-> > > > > > Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
-> > > > > > > Hi Daniel,
-> > > > > > > 
-> > > > > > > On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
-> > > > > > > > Hello!
-> > > > > > > > 
-> > > > > > > > Please consider if I made something wrong, sending this issue. This is
-> > > > > > > > my first contact to the LKML.
-> > > > > > > > By mistake, I accessed an LED via /sys/class/leds subsystem very
-> > > > > > > > fast in
-> > > > > > > > an user application. I figured out, that the free user memory
-> > > > > > > > decreased
-> > > > > > > > constantly. So I tried to analyze the Problem and wrote a litte
-> > > > > > > > script:
-> > > > > > > > 
-> > > > > > > > #!/bin/sh
-> > > > > > > > while [ 1 ]; do
-> > > > > > > >         echo 1 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > > > >         echo 0 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > > > > done
-> > > > > > > > 
-> > > > > > > > And voila, I was able to reproduce the problem.
-> > > > > > > > So I add a bit more debugging:
-> > > > > > > > 
-> > > > > > > > #!/bin/sh
-> > > > > > > > cnt=0
-> > > > > > > > while [ 1 ]; do
-> > > > > > > >         if [ `expr $cnt % 1000` -eq 0 ]; then
-> > > > > > > >                 free | grep Mem: | cut -d' ' -f25
-> > > > > > > >         fi
-> > > > > > > >         echo 1 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > > > >         echo 0 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > > > >         let "cnt++"
-> > > > > > > > done
-> > > > > > > > 
-> > > > > > > > And huh? No memory is eaten anymore. So it looks like, the problem
-> > > > > > > > only
-> > > > > > > > occours on heavy (fast) usage of /sys/class/leds subsystem.
-> > > > > > > > 
-> > > > > > > > I rewrote the script and toggled a GPIO pin, but there was no problem
-> > > > > > > > recognizable.
-> > > > > > > 
-> > > > > > > I've been unable to reproduce the problem with leds-aat1290 driver
-> > > > > > > and Samsung M0 board. It must be driver specific issue.
-> > > > > > > What driver did you use?
-> > > > > > > 
-> > > > > > I defined LEDS_GPIO and so I'm using leds-gpio driver.
-> > > > > > danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
-> > > > > > -v "^# "
-> > > > > > CONFIG_INPUT_LEDS=y
-> > > > > > CONFIG_NEW_LEDS=y
-> > > > > > CONFIG_LEDS_CLASS=y
-> > > > > > CONFIG_LEDS_GPIO=y
-> > > > > > CONFIG_LEDS_TRIGGERS=y
-> > > > > > CONFIG_LEDS_TRIGGER_TIMER=y
-> > > > > > CONFIG_LEDS_TRIGGER_ONESHOT=y
-> > > > > > CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-> > > > > > CONFIG_LEDS_TRIGGER_GPIO=y
-> > > > > > CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-> > > > > > CONFIG_LEDS_TRIGGER_TRANSIENT=y
-> > > > > > 
-> > > > > 
-> > > > > Unfortunately I am still unable to reproduce the problem with leds-gpio.
-> > > > > I'm not observing any heavy usage with your test case:
-> > > > > 
-> > > > > ~#free
-> > > > >               total       used       free     shared    buffers
-> > > > > cached
-> > > > > Mem:       1028092      61364     966728          0       8416      22396
-> > > > > -/+ buffers/cache:      30552     997540
-> > > > > Swap:            0          0          0
-> > > > > 
-> > > > > 
-> > > > > Actually you didn't give any numbers. What kernel version are you using?
-> > > > > 
-> > > > As I wrote, the problems occurred in vanilla 4.6 kernel, but also in 4.4
-> > > > kernel (with PREEMPT-RT Patchset).
-> > > 
-> > > Heh, funny coincidence. I was testing this on recent linux-leds.git,
-> > > for-next branch and was not able to detect the issue. It started to
-> > > appear after resetting HEAD to 4.8-rc2 base. Finally it turned out
-> > > that what fixes the issue is the most recent commit [1].
-> > > 
-> > > Further investigation revealed that this is kobject_uevent_env(),
-> > > called from led_trigger_set(), which causes memory leaks when called
-> > > with high frequency.
-> > 
-> > Really?  Where in kobject_uevent_env() is the memory leak?
-> 
-> I'll chase it down when and will let you know. This may be
-> non-trivial issue as it suffices to add "sleep 0.1" between
-> brightness setting operations to prevent it.
+On 09/16/2016 02:07 AM, Jacek Anaszewski wrote:
+> On 09/16/2016 07:50 AM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>>>>> +    if (copy_from_user(&udev->user_dev, buffer,
+>>>>>>> +               sizeof(struct uleds_user_dev))) {
+>>>>>>> +        ret = -EFAULT;
+>>>>>>> +        goto out;
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    if (!udev->user_dev.name[0]) {
+>>>>>>> +        ret = -EINVAL;
+>>>>>>> +        goto out;
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    ret = led_classdev_register(NULL, &udev->led_cdev);
+>>>>>>> +    if (ret < 0)
+>>>>>>> +        goto out;
+>>>>>
+>>>>> No sanity checking on the name -> probably a security hole. Do not
+>>>>> push this upstream before this is fixed.
+>>>>
+>>>
+>>> If this is a serious security issue, then you should also raise an issue
+>>> with input maintainers because this is the extent of sanity checking for
+>>> uinput device names as well.
+>>
+>> I guess that should be fixed. But lets not add new ones.
+>>
+>>> I must confess that I am no security expert, so unless you can give
+>>> specific
+>>> examples of what potential threats are, I will not be able to guess
+>>> what I
+>>> need to do to fix it.
+>>>
+>>> After some digging around the kernel, I don't see many instances of
+>>> validating device node names. The best I have found so far comes from
+>>> create_entry() in binfmt_misc.c
+>>>
+>>>     if (!e->name[0] ||
+>>>         !strcmp(e->name, ".") ||
+>>>         !strcmp(e->name, "..") ||
+>>>         strchr(e->name, '/'))
+>>>         goto einval;
+>>>
+>>> Would something like this be a sufficient sanity check? I suppose we
+>>> could
+>>> also check for non-printing characters, but I don't think ignoring them
+>>> would be a security issue.
+>>
+>> That would be minimum, yes. I guess it would be better/easier to just
+>> limit the names to [a-zA-Z:-_0-9]*?
+>
+> Right, and we also could check if there are no more then two ":"
+> characters in the name.
+>
 
-Why are you abusing uevents for flashing an LED?  Please don't do that,
-it's not what that interface is for at all.
+Again, I am going to disagree here. docs/sysfs-rules.txt says nothing 
+about restricting characters for device names, so I don't think we 
+should do so here. In fact, the only thing it says about names is 
+"applications need to handle spaces and characters like '!' in the 
+name". My opinion is that if people want to give devices dumb names with 
+special characters and spaces, we should let them.
 
-greg k-h
+If someone can point out a real security issue here, then I will gladly 
+fix it, otherwise I am inclined to leave it as it is (with the checks 
+for '.', '..' and '/').
+
+If this was a regular userspace library, I would feel differently, but 
+since the kernel has limited means to pass errors to userspace, all of 
+these checks will pass the same -EINVAL to userspace if they fail. We 
+could print error messages to the kernel log, but it is really annoying 
+to have to check the kernel log to find out why your userspace 
+application is not working. Any if you are not a kernel hacker, you 
+would probably not even know to check the kernel logs.
