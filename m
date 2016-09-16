@@ -1,124 +1,520 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
-Date: Fri, 16 Sep 2016 16:06:26 +0200
-Message-ID: <20160916140626.GB391@kroah.com>
-References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
- <4d51014d-c8fa-4687-cae8-1a8dd0f79beb@samsung.com>
- <CGME20160916120853eucas1p2474a728f5fc725b094ad1addab507b58@eucas1p2.samsung.com>
- <b267fe46-34ed-4c1e-3c7f-45267baf5517@esd.eu>
- <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH V6] usb: core: Introduce a USB port LED trigger
+Date: Fri, 16 Sep 2016 16:13:48 +0200
+Message-ID: <20160916141438.24510-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39868 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757058AbcIPOGV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 16 Sep 2016 10:06:21 -0400
-Content-Disposition: inline
-In-Reply-To: <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:DOCUMENTATION" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Sep 16, 2016 at 03:41:09PM +0200, Jacek Anaszewski wrote:
-> On 09/16/2016 02:08 PM, Daniel Gorsulowski wrote:
-> > Hi Jacek,
-> > 
-> > Am 16.09.2016 um 13:25 schrieb Jacek Anaszewski:
-> > > On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
-> > > > Hi Jacek,
-> > > > 
-> > > > Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
-> > > > > Hi Daniel,
-> > > > > 
-> > > > > On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
-> > > > > > Hello!
-> > > > > > 
-> > > > > > Please consider if I made something wrong, sending this issue. This is
-> > > > > > my first contact to the LKML.
-> > > > > > By mistake, I accessed an LED via /sys/class/leds subsystem very
-> > > > > > fast in
-> > > > > > an user application. I figured out, that the free user memory
-> > > > > > decreased
-> > > > > > constantly. So I tried to analyze the Problem and wrote a litte
-> > > > > > script:
-> > > > > > 
-> > > > > > #!/bin/sh
-> > > > > > while [ 1 ]; do
-> > > > > >         echo 1 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > >         echo 0 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > > done
-> > > > > > 
-> > > > > > And voila, I was able to reproduce the problem.
-> > > > > > So I add a bit more debugging:
-> > > > > > 
-> > > > > > #!/bin/sh
-> > > > > > cnt=0
-> > > > > > while [ 1 ]; do
-> > > > > >         if [ `expr $cnt % 1000` -eq 0 ]; then
-> > > > > >                 free | grep Mem: | cut -d' ' -f25
-> > > > > >         fi
-> > > > > >         echo 1 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > >         echo 0 > /sys/class/leds/2a_service_yellow/brightness
-> > > > > >         let "cnt++"
-> > > > > > done
-> > > > > > 
-> > > > > > And huh? No memory is eaten anymore. So it looks like, the problem
-> > > > > > only
-> > > > > > occours on heavy (fast) usage of /sys/class/leds subsystem.
-> > > > > > 
-> > > > > > I rewrote the script and toggled a GPIO pin, but there was no problem
-> > > > > > recognizable.
-> > > > > 
-> > > > > I've been unable to reproduce the problem with leds-aat1290 driver
-> > > > > and Samsung M0 board. It must be driver specific issue.
-> > > > > What driver did you use?
-> > > > > 
-> > > > I defined LEDS_GPIO and so I'm using leds-gpio driver.
-> > > > danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
-> > > > -v "^# "
-> > > > CONFIG_INPUT_LEDS=y
-> > > > CONFIG_NEW_LEDS=y
-> > > > CONFIG_LEDS_CLASS=y
-> > > > CONFIG_LEDS_GPIO=y
-> > > > CONFIG_LEDS_TRIGGERS=y
-> > > > CONFIG_LEDS_TRIGGER_TIMER=y
-> > > > CONFIG_LEDS_TRIGGER_ONESHOT=y
-> > > > CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-> > > > CONFIG_LEDS_TRIGGER_GPIO=y
-> > > > CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-> > > > CONFIG_LEDS_TRIGGER_TRANSIENT=y
-> > > > 
-> > > 
-> > > Unfortunately I am still unable to reproduce the problem with leds-gpio.
-> > > I'm not observing any heavy usage with your test case:
-> > > 
-> > > ~#free
-> > >               total       used       free     shared    buffers
-> > > cached
-> > > Mem:       1028092      61364     966728          0       8416      22396
-> > > -/+ buffers/cache:      30552     997540
-> > > Swap:            0          0          0
-> > > 
-> > > 
-> > > Actually you didn't give any numbers. What kernel version are you using?
-> > > 
-> > As I wrote, the problems occurred in vanilla 4.6 kernel, but also in 4.4
-> > kernel (with PREEMPT-RT Patchset).
-> 
-> Heh, funny coincidence. I was testing this on recent linux-leds.git,
-> for-next branch and was not able to detect the issue. It started to
-> appear after resetting HEAD to 4.8-rc2 base. Finally it turned out
-> that what fixes the issue is the most recent commit [1].
-> 
-> Further investigation revealed that this is kobject_uevent_env(),
-> called from led_trigger_set(), which causes memory leaks when called
-> with high frequency.
+From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 
-Really?  Where in kobject_uevent_env() is the memory leak?
+This commit adds a new trigger responsible for turning on LED when USB
+device gets connected to the selected USB port. This can can useful for
+various home routers that have USB port(s) and a proper LED telling user
+a device is connected.
 
-thanks,
+The trigger gets its documentation file but basically it just requires
+enabling it and selecting USB ports (e.g. echo 1 > ports/usb1-1).
 
-greg k-h
+There was a long discussion on design of this driver. Its current state
+is a result of picking them most adjustable solution as others couldn't
+handle all cases.
+
+1) It wasn't possible for the driver to register separated trigger for
+   each USB port. Some physical USB ports are handled by more than one
+   controller and so by more than one USB port. E.g. USB 2.0 physical
+   port may be handled by OHCI's port and EHCI's port.
+   It's also not possible to assign more than 1 trigger to a single LED
+   and implementing such feature would be tricky due to syncing triggers
+   and sysfs conflicts with old triggers.
+
+2) Another idea was to register trigger per USB hub. This wouldn't allow
+   handling devices with multiple USB LEDs and controllers (hubs)
+   controlling more than 1 physical port. It's common for hubs to have
+   few ports and each may have its own LED.
+
+This final trigger is highly flexible. It allows selecting any USB ports
+for any LED. It was also modified (comparing to the initial version) to
+allow choosing ports rather than having user /guess/ proper names. It
+was successfully tested on SmartRG SR400ac which has 3 USB LEDs,
+2 physical ports and 3 controllers.
+
+It was noted USB subsystem already has usb-gadget and usb-host triggers
+but they are pretty trivial ones. They indicate activity only and can't
+have ports specified.
+
+In future it may be good idea to consider adding activity support to
+usbport as well. This should allow switching to this more generic driver
+and maybe marking old ones as obsolete.
+This can be implemented with another sysfs file for setting mode. The
+default mode wouldn't change so there won't be ABI breakage and so such
+feature can be safely implemented later.
+
+There was also an idea of supporting other devices (PCI, SDIO, etc.) but
+as this driver already contains some USB specific code (and will get
+more) these should be probably separated drivers (triggers).
+
+Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+---
+V2: Trying to add DT support, idea postponed as it will take more time
+    to discuss the bindings.
+V3: Fix typos in commit and Documentation (thanks Jacek!)
+    Use "ports" sysfs file for adding and removing USB ports (thx Jacek)
+    Check if there is USB device connected after adding new USB port
+    Fix memory leak or two
+V3.5: Fix e-mail address (thanks Matthias)
+      Simplify conditions in usbport_trig_notify (thx Matthias)
+      Make "ports" a subdirectory with file per port, to match one value
+      per file sysfs rule (thanks Greg)
+      As "ports" couldn't be used for adding and removing ports anymore,
+      there are now "new_port" and "remove_port". Having them makes this
+      API also common with e.g. pci and usb buses.
+V4: Add Documentation/ABI/testing/sysfs-class-led-trigger-usbport and
+    reference it in Documentation/leds/ledtrig-usbport.txt to avoid doc
+    duplication.
+V5: Update commit message to explain driver design & Documentation
+    Avoid specifying ports manually and dummy files (chmod 0000)
+    Don't use kobject_create_and_add but a struct attribute_group
+    Fix typo, improve comments, update Date
+V6: Move code to USB subsystem (thx Peter and Pavel)
+    Rebase on top of usb-next branch
+    Describe relation to existing USB triggers in commit message
+    Switch to GPL v2 (I just prefer it after reading Linus's arguments)
+
+Can someone from LED subsystem (Jacek? Richard?) give an Ack, if this
+patch looks OK to you, please? I hope it could help Greg taking it into
+usb-next.
+---
+ .../ABI/testing/sysfs-class-led-trigger-usbport    |  12 +
+ Documentation/leds/ledtrig-usbport.txt             |  41 +++
+ drivers/usb/core/Kconfig                           |   8 +
+ drivers/usb/core/Makefile                          |   2 +
+ drivers/usb/core/ledtrig-usbport.c                 | 314 +++++++++++++++++++++
+ 5 files changed, 377 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-usbport
+ create mode 100644 Documentation/leds/ledtrig-usbport.txt
+ create mode 100644 drivers/usb/core/ledtrig-usbport.c
+
+diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-usbport b/Documentation/ABI/testing/sysfs-class-led-trigger-usbport
+new file mode 100644
+index 0000000..f440e69
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-trigger-usbport
+@@ -0,0 +1,12 @@
++What:		/sys/class/leds/<led>/ports/<port>
++Date:		September 2016
++KernelVersion:	4.9
++Contact:	linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
++		linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
++Description:
++		Every dir entry represents a single USB port that can be
++		selected for the USB port trigger. Selecting ports makes trigger
++		observing them for any connected devices and lighting on LED if
++		there are any.
++		Echoing "1" value selects USB port. Echoing "0" unselects it.
++		Current state can be also read.
+diff --git a/Documentation/leds/ledtrig-usbport.txt b/Documentation/leds/ledtrig-usbport.txt
+new file mode 100644
+index 0000000..69f54bf
+--- /dev/null
++++ b/Documentation/leds/ledtrig-usbport.txt
+@@ -0,0 +1,41 @@
++USB port LED trigger
++====================
++
++This LED trigger can be used for signalling to the user a presence of USB device
++in a given port. It simply turns on LED when device appears and turns it off
++when it disappears.
++
++It requires selecting USB ports that should be observed. All available ones are
++listed as separated entries in a "ports" subdirectory. Selecting is handled by
++echoing "1" to a chosen port.
++
++Please note that this trigger allows selecting multiple USB ports for a single
++LED. This can be useful in two cases:
++
++1) Device with single USB LED and few physical ports
++
++In such a case LED will be turned on as long as there is at least one connected
++USB device.
++
++2) Device with a physical port handled by few controllers
++
++Some devices may have one controller per PHY standard. E.g. USB 3.0 physical
++port may be handled by ohci-platform, ehci-platform and xhci-hcd. If there is
++only one LED user will most likely want to assign ports from all 3 hubs.
++
++
++This trigger can be activated from user space on led class devices as shown
++below:
++
++  echo usbport > trigger
++
++This adds sysfs attributes to the LED that are documented in:
++Documentation/ABI/testing/sysfs-class-led-trigger-usbport
++
++Example use-case:
++
++  echo usbport > trigger
++  echo 1 > ports/usb1-port1
++  echo 1 > ports/usb2-port1
++  cat ports/usb1-port1
++  echo 0 > ports/usb1-port1
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index d6e43ce..0e5a889 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -82,3 +82,11 @@ config USB_OTG_FSM
+ 	help
+ 	  Implements OTG Finite State Machine as specified in On-The-Go
+ 	  and Embedded Host Supplement to the USB Revision 2.0 Specification.
++
++config USB_LEDS_TRIGGER_USBPORT
++	tristate "USB port LED trigger"
++	depends on USB && LEDS_TRIGGERS
++	help
++	  This driver allows LEDs to be controlled by USB events. Enabling this
++	  trigger allows specifying list of USB ports that should turn on LED
++	  when some USB device gets connected.
+diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
+index da36b78..b99b871 100644
+--- a/drivers/usb/core/Makefile
++++ b/drivers/usb/core/Makefile
+@@ -12,3 +12,5 @@ usbcore-$(CONFIG_PCI)		+= hcd-pci.o
+ usbcore-$(CONFIG_ACPI)		+= usb-acpi.o
+ 
+ obj-$(CONFIG_USB)		+= usbcore.o
++
++obj-$(CONFIG_USB_LEDS_TRIGGER_USBPORT)	+= ledtrig-usbport.o
+diff --git a/drivers/usb/core/ledtrig-usbport.c b/drivers/usb/core/ledtrig-usbport.c
+new file mode 100644
+index 0000000..3ed5162
+--- /dev/null
++++ b/drivers/usb/core/ledtrig-usbport.c
+@@ -0,0 +1,314 @@
++/*
++ * USB port LED trigger
++ *
++ * Copyright (C) 2016 Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/device.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/usb.h>
++
++struct usbport_trig_data {
++	struct led_classdev *led_cdev;
++	struct list_head ports;
++	struct notifier_block nb;
++	int count; /* Amount of connected matching devices */
++};
++
++struct usbport_trig_port {
++	struct usbport_trig_data *data;
++	struct usb_device *hub;
++	int portnum;
++	char *port_name;
++	bool observed;
++	struct device_attribute attr;
++	struct list_head list;
++};
++
++/***************************************
++ * Helpers
++ ***************************************/
++
++/**
++ * usbport_trig_usb_dev_observed - Check if dev is connected to observed port
++ */
++static bool usbport_trig_usb_dev_observed(struct usbport_trig_data *usbport_data,
++					  struct usb_device *usb_dev)
++{
++	struct usbport_trig_port *port;
++
++	if (!usb_dev->parent)
++		return false;
++
++	list_for_each_entry(port, &usbport_data->ports, list) {
++		if (usb_dev->parent == port->hub &&
++		    usb_dev->portnum == port->portnum)
++			return port->observed;
++	}
++
++	return false;
++}
++
++static int usbport_trig_usb_dev_check(struct usb_device *usb_dev, void *data)
++{
++	struct usbport_trig_data *usbport_data = data;
++
++	if (usbport_trig_usb_dev_observed(usbport_data, usb_dev))
++		usbport_data->count++;
++
++	return 0;
++}
++
++/**
++ * usbport_trig_update_count - Recalculate amount of connected matching devices
++ */
++static void usbport_trig_update_count(struct usbport_trig_data *usbport_data)
++{
++	struct led_classdev *led_cdev = usbport_data->led_cdev;
++
++	usbport_data->count = 0;
++	usb_for_each_dev(usbport_data, usbport_trig_usb_dev_check);
++	led_cdev->brightness_set(led_cdev,
++				 usbport_data->count ? LED_FULL : LED_OFF);
++}
++
++/***************************************
++ * Device attr
++ ***************************************/
++
++static ssize_t usbport_trig_port_show(struct device *dev,
++				      struct device_attribute *attr, char *buf)
++{
++	struct usbport_trig_port *port = container_of(attr,
++						      struct usbport_trig_port,
++						      attr);
++
++	return sprintf(buf, "%d\n", port->observed) + 1;
++}
++
++static ssize_t usbport_trig_port_store(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t size)
++{
++	struct usbport_trig_port *port = container_of(attr,
++						      struct usbport_trig_port,
++						      attr);
++
++	if (!strcmp(buf, "0") || !strcmp(buf, "0\n"))
++		port->observed = 0;
++	else if (!strcmp(buf, "1") || !strcmp(buf, "1\n"))
++		port->observed = 1;
++	else
++		return -EINVAL;
++
++	usbport_trig_update_count(port->data);
++
++	return size;
++}
++
++static struct attribute *ports_attrs[] = {
++	NULL,
++};
++static const struct attribute_group ports_group = {
++	.name = "ports",
++	.attrs = ports_attrs,
++};
++
++/***************************************
++ * Adding & removing ports
++ ***************************************/
++
++static int usbport_trig_add_port(struct usbport_trig_data *usbport_data,
++				 struct usb_device *usb_dev,
++				 const char *hub_name, int portnum)
++{
++	struct led_classdev *led_cdev = usbport_data->led_cdev;
++	struct usbport_trig_port *port;
++	size_t len;
++	int err;
++
++	port = kzalloc(sizeof(*port), GFP_KERNEL);
++	if (!port) {
++		err = -ENOMEM;
++		goto err_out;
++	}
++
++	port->data = usbport_data;
++	port->hub = usb_dev;
++	port->portnum = portnum;
++
++	len = strlen(hub_name) + 8;
++	port->port_name = kzalloc(len, GFP_KERNEL);
++	if (!port->port_name) {
++		err = -ENOMEM;
++		goto err_free_port;
++	}
++	snprintf(port->port_name, len, "%s-port%d", hub_name, portnum);
++
++	port->attr.attr.name = port->port_name;
++	port->attr.attr.mode = S_IRUSR | S_IWUSR;
++	port->attr.show = usbport_trig_port_show;
++	port->attr.store = usbport_trig_port_store;
++
++	err = sysfs_add_file_to_group(&led_cdev->dev->kobj, &port->attr.attr,
++				      ports_group.name);
++	if (err)
++		goto err_free_port_name;
++
++	list_add_tail(&port->list, &usbport_data->ports);
++
++	return 0;
++
++err_free_port_name:
++	kfree(port->port_name);
++err_free_port:
++	kfree(port);
++err_out:
++	return err;
++}
++
++static int usbport_trig_add_usb_dev_ports(struct usb_device *usb_dev,
++					  void *data)
++{
++	struct usbport_trig_data *usbport_data = data;
++	int i;
++
++	for (i = 1; i <= usb_dev->maxchild; i++)
++		usbport_trig_add_port(usbport_data, usb_dev,
++				      dev_name(&usb_dev->dev), i);
++
++	return 0;
++}
++
++static void usbport_trig_remove_port(struct usbport_trig_data *usbport_data,
++				     struct usbport_trig_port *port)
++{
++	struct led_classdev *led_cdev = usbport_data->led_cdev;
++
++	list_del(&port->list);
++	sysfs_remove_file_from_group(&led_cdev->dev->kobj, &port->attr.attr,
++				     ports_group.name);
++	kfree(port->port_name);
++	kfree(port);
++}
++
++static void usbport_trig_remove_usb_dev_ports(struct usbport_trig_data *usbport_data,
++					      struct usb_device *usb_dev)
++{
++	struct usbport_trig_port *port, *tmp;
++
++	list_for_each_entry_safe(port, tmp, &usbport_data->ports, list) {
++		if (port->hub == usb_dev)
++			usbport_trig_remove_port(usbport_data, port);
++	}
++}
++
++/***************************************
++ * Init, exit, etc.
++ ***************************************/
++
++static int usbport_trig_notify(struct notifier_block *nb, unsigned long action,
++			       void *data)
++{
++	struct usbport_trig_data *usbport_data =
++		container_of(nb, struct usbport_trig_data, nb);
++	struct led_classdev *led_cdev = usbport_data->led_cdev;
++	struct usb_device *usb_dev = data;
++	bool observed;
++
++	observed = usbport_trig_usb_dev_observed(usbport_data, usb_dev);
++
++	switch (action) {
++	case USB_DEVICE_ADD:
++		usbport_trig_add_usb_dev_ports(usb_dev, usbport_data);
++		if (observed && usbport_data->count++ == 0)
++			led_cdev->brightness_set(led_cdev, LED_FULL);
++		return NOTIFY_OK;
++	case USB_DEVICE_REMOVE:
++		usbport_trig_remove_usb_dev_ports(usbport_data, usb_dev);
++		if (observed && --usbport_data->count == 0)
++			led_cdev->brightness_set(led_cdev, LED_OFF);
++		return NOTIFY_OK;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static void usbport_trig_activate(struct led_classdev *led_cdev)
++{
++	struct usbport_trig_data *usbport_data;
++	int err;
++
++	usbport_data = kzalloc(sizeof(*usbport_data), GFP_KERNEL);
++	if (!usbport_data)
++		return;
++	usbport_data->led_cdev = led_cdev;
++
++	/* List of ports */
++	INIT_LIST_HEAD(&usbport_data->ports);
++	err = sysfs_create_group(&led_cdev->dev->kobj, &ports_group);
++	if (err)
++		goto err_free;
++	usb_for_each_dev(usbport_data, usbport_trig_add_usb_dev_ports);
++
++	/* Notifications */
++	usbport_data->nb.notifier_call = usbport_trig_notify,
++	led_cdev->trigger_data = usbport_data;
++	usb_register_notify(&usbport_data->nb);
++
++	led_cdev->activated = true;
++	return;
++
++err_free:
++	kfree(usbport_data);
++}
++
++static void usbport_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct usbport_trig_data *usbport_data = led_cdev->trigger_data;
++	struct usbport_trig_port *port, *tmp;
++
++	if (!led_cdev->activated)
++		return;
++
++	list_for_each_entry_safe(port, tmp, &usbport_data->ports, list) {
++		usbport_trig_remove_port(usbport_data, port);
++	}
++
++	usb_unregister_notify(&usbport_data->nb);
++
++	sysfs_remove_group(&led_cdev->dev->kobj, &ports_group);
++
++	kfree(usbport_data);
++
++	led_cdev->activated = false;
++}
++
++static struct led_trigger usbport_led_trigger = {
++	.name     = "usbport",
++	.activate = usbport_trig_activate,
++	.deactivate = usbport_trig_deactivate,
++};
++
++static int __init usbport_trig_init(void)
++{
++	return led_trigger_register(&usbport_led_trigger);
++}
++
++static void __exit usbport_trig_exit(void)
++{
++	led_trigger_unregister(&usbport_led_trigger);
++}
++
++module_init(usbport_trig_init);
++module_exit(usbport_trig_exit);
++
++MODULE_AUTHOR("Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>");
++MODULE_DESCRIPTION("USB port trigger");
++MODULE_LICENSE("GPL v2");
+-- 
+2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
