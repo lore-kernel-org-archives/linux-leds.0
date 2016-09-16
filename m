@@ -1,79 +1,137 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
-Date: Fri, 16 Sep 2016 09:07:45 +0200
-Message-ID: <b7c3ce51-e232-5dea-b413-f01bea59cc84@samsung.com>
-References: <1473439776-15655-1-git-send-email-david@lechnology.com>
- <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
- <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
- <20160915130831.GJ13132@amd>
- <313cbae5-fd66-f0ae-79a9-a3f4273d6f9c@samsung.com>
- <a3496eea-dc5d-b9c7-bfa4-19b8f004d5ee@lechnology.com>
- <20160916055014.GA13205@amd>
+Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
+Date: Fri, 16 Sep 2016 09:31:58 +0200
+Message-ID: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
+References: <CGME20160912085832eucas1p1e7332f761e5e0cb764a6831b9a519b70@eucas1p1.samsung.com>
+ <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33541 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34738 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755380AbcIPHHx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 03:07:53 -0400
-In-reply-to: <20160916055014.GA13205@amd>
+        with ESMTP id S1752388AbcIPHcE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 03:32:04 -0400
+In-reply-to: <d3cf2089-794f-f156-c5b9-ed749076c0dd@esd.eu>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, David Lechner <david@lechnology.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
+To: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 09/16/2016 07:50 AM, Pavel Machek wrote:
-> Hi!
->
->>>>>> +    if (copy_from_user(&udev->user_dev, buffer,
->>>>>> +               sizeof(struct uleds_user_dev))) {
->>>>>> +        ret = -EFAULT;
->>>>>> +        goto out;
->>>>>> +    }
->>>>>> +
->>>>>> +    if (!udev->user_dev.name[0]) {
->>>>>> +        ret = -EINVAL;
->>>>>> +        goto out;
->>>>>> +    }
->>>>>> +
->>>>>> +    ret = led_classdev_register(NULL, &udev->led_cdev);
->>>>>> +    if (ret < 0)
->>>>>> +        goto out;
->>>>
->>>> No sanity checking on the name -> probably a security hole. Do not
->>>> push this upstream before this is fixed.
->>>
->>
->> If this is a serious security issue, then you should also raise an issue
->> with input maintainers because this is the extent of sanity checking for
->> uinput device names as well.
->
-> I guess that should be fixed. But lets not add new ones.
->
->> I must confess that I am no security expert, so unless you can give specific
->> examples of what potential threats are, I will not be able to guess what I
->> need to do to fix it.
->>
->> After some digging around the kernel, I don't see many instances of
->> validating device node names. The best I have found so far comes from
->> create_entry() in binfmt_misc.c
->>
->> 	if (!e->name[0] ||
->> 	    !strcmp(e->name, ".") ||
->> 	    !strcmp(e->name, "..") ||
->> 	    strchr(e->name, '/'))
->> 		goto einval;
->>
->> Would something like this be a sufficient sanity check? I suppose we could
->> also check for non-printing characters, but I don't think ignoring them
->> would be a security issue.
->
-> That would be minimum, yes. I guess it would be better/easier to just
-> limit the names to [a-zA-Z:-_0-9]*?
+Hi Daniel,
 
-Right, and we also could check if there are no more then two ":"
-characters in the name.
+On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
+> Hello!
+>
+> Please consider if I made something wrong, sending this issue. This is
+> my first contact to the LKML.
+> By mistake, I accessed an LED via /sys/class/leds subsystem very fast in
+> an user application. I figured out, that the free user memory decreased
+> constantly. So I tried to analyze the Problem and wrote a litte script:
+>
+> #!/bin/sh
+> while [ 1 ]; do
+>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+> done
+>
+> And voila, I was able to reproduce the problem.
+> So I add a bit more debugging:
+>
+> #!/bin/sh
+> cnt=0
+> while [ 1 ]; do
+>         if [ `expr $cnt % 1000` -eq 0 ]; then
+>                 free | grep Mem: | cut -d' ' -f25
+>         fi
+>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
+>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
+>         let "cnt++"
+> done
+>
+> And huh? No memory is eaten anymore. So it looks like, the problem only
+> occours on heavy (fast) usage of /sys/class/leds subsystem.
+>
+> I rewrote the script and toggled a GPIO pin, but there was no problem
+> recognizable.
+
+I've been unable to reproduce the problem with leds-aat1290 driver
+and Samsung M0 board. It must be driver specific issue.
+What driver did you use?
+
+>
+> Some details about my test environment:
+> Hardware: Ti Sitara AM3357ZCZ with 128MiB memory
+> Kernel: vanilla 4.6
+>
+> The relevant part of my .dts:
+> #include "am33xx.dtsi"
+>
+> / {
+> ...
+>     cpus {
+>         cpu@0 {
+>             cpu0-supply = <&dcdc2_reg>;
+>             operating-points = <
+>                 /* kHz    uV */
+>                 800000  1300000
+>                 600000  1112000
+>                 300000   969000
+>             >;
+>         };
+>     };
+>
+>     memory {
+>         device_type = "memory";
+>         reg = <0x80000000 0x08000000>; /* 128 Mib */
+>     };
+> ...
+>
+>     leds {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&user_leds_s0>;
+>
+>         compatible = "gpio-leds";
+>
+> ...
+>         led2 {
+>             label = "2a_service_yellow";
+>             gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+>             linux,default-trigger = "2a_service_yellow";
+>             default-state = "off";
+>         };
+>
+> ...
+>     };
+> ...
+> };
+>
+> &am33xx_pinmux {
+>     pinctrl-names = "default";
+>     pinctrl-0 = <&gpio_misc_pins>;
+>
+> ...
+>     user_leds_s0: user_leds_s0 {
+>         pinctrl-single,pins = <
+> ...
+>             0x24 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* (T10)
+> gpmc_ad9.gpio0[23] */
+>         >;
+>     };
+> ...
+> };
+> ...
+>
+> Kind regards
+> Daniel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+
 
 -- 
 Best regards,
