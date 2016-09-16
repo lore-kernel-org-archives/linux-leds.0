@@ -1,46 +1,72 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v3] leds: Introduce userspace leds driver
-Date: Fri, 16 Sep 2016 08:07:18 +0200
-Message-ID: <20160916060718.GD13205@amd>
+Date: Fri, 16 Sep 2016 08:09:49 +0200
+Message-ID: <20160916060949.GE13205@amd>
 References: <1473439776-15655-1-git-send-email-david@lechnology.com>
  <CGME20160912081846eucas1p255044e49034685ad44400d6830ef0b95@eucas1p2.samsung.com>
  <80597ded-f4b4-2990-3eae-e72276296d1a@samsung.com>
  <20160915130831.GJ13132@amd>
- <313cbae5-fd66-f0ae-79a9-a3f4273d6f9c@samsung.com>
- <d3f1810c-e97a-4460-1415-f54e8501cf64@lechnology.com>
+ <20160915133558.GA29883@amd>
+ <5e86399e-65a0-9251-d08e-ab8bfe1f5fbb@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55779 "EHLO
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55807 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751690AbcIPGHV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 02:07:21 -0400
+        with ESMTP id S1751241AbcIPGJw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2016 02:09:52 -0400
 Content-Disposition: inline
-In-Reply-To: <d3f1810c-e97a-4460-1415-f54e8501cf64@lechnology.com>
+In-Reply-To: <5e86399e-65a0-9251-d08e-ab8bfe1f5fbb@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: David Lechner <david@lechnology.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
 
-Hi!
+On Thu 2016-09-15 16:54:35, Jacek Anaszewski wrote:
+> Hi Pavel,
+> 
+> On 09/15/2016 03:35 PM, Pavel Machek wrote:
+> >Hi!
+> >
+> >>>>+	if (copy_from_user(&udev->user_dev, buffer,
+> >>>>+			   sizeof(struct uleds_user_dev))) {
+> >>>>+		ret = -EFAULT;
+> >>>>+		goto out;
+> >>>>+	}
+> >>>>+
+> >>>>+	if (!udev->user_dev.name[0]) {
+> >>>>+		ret = -EINVAL;
+> >>>>+		goto out;
+> >>>>+	}
+> >>>>+
+> >>>>+	ret = led_classdev_register(NULL, &udev->led_cdev);
+> >>>>+	if (ret < 0)
+> >>>>+		goto out;
+> >>
+> >>No sanity checking on the name -> probably a security hole. Do not
+> >>push this upstream before this is fixed.
+> >
+> >And actually... is it possible to have more then one userspace LED
+> >with this interface? I do have RGB LED connect on /dev/ttyUSB0, and I
+> >guess userspace driver would be appropriate, but it needs 3
+> >channels...
+> 
+> Each new successful write to /dev/uleds creates a new LED class device.
+> 
+> See Documentation/leds/uleds.txt.
 
-+static ssize_t uleds_read(struct file *file, char __user *buffer,
-size_t count,
-+ loff_t *ppos)
-+{
-+ struct uleds_device *udev = file->private_data;
-+ ssize_t retval;
-+
-+ if (count == 0)
-+ return 0;
-+
-+ if (count != 1)
-+ return -EINVAL;
+Umm. No, only one write is permitted to /dev/uleds according to the
+code. In the email thread, it says:
 
-This is quite anti-social. You are free to return 1 byte on any read
-(short read), but please allow reads with bigger buffers.
+# With this patch, you can create multiple LEDs. You just have to open a
+# file handle to /dev/uleds for each LED that you want to create. Also,
+# the LED device is automatically destroyed when the file handle is
+# closed. I think this is nice because if the program that created it
+# crashes, then it is automatically cleaned up.
 
-Thanks,
+...which should be actually ok. Sorry for the noise.
+
+Best regards,
 									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
