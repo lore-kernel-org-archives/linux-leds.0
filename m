@@ -1,126 +1,39 @@
-From: Daniel Gorsulowski <daniel.gorsulowski@esd.eu>
-Subject: Re: [ISSUE] Memleak in LED sysfs on heavy usage
-Date: Mon, 19 Sep 2016 06:35:30 +0200
-Message-ID: <e850e474-2eab-540f-29e0-93c74f207435@esd.eu>
-References: <37b949b3-6a9a-b8e3-c164-5ac2d44c9b3c@samsung.com>
- <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH] leds: triggers: Check return value of kobject_uevent_env()
+Date: Mon, 19 Sep 2016 10:22:51 +0200
+Message-ID: <1474273371-6535-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mxu02.htp-tel.de ([81.14.242.9]:38154 "EHLO mxuout02.htp-tel.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750786AbcISEfr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 19 Sep 2016 00:35:47 -0400
-In-Reply-To: <7bb9a00e-0927-2fdc-5733-64bf922ebed6@samsung.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:38537 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938550AbcISIXG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 19 Sep 2016 04:23:06 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, greg@kroah.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Hi Jacek,
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-Am 16.09.2016 um 15:41 schrieb Jacek Anaszewski:
-> On 09/16/2016 02:08 PM, Daniel Gorsulowski wrote:
->> Hi Jacek,
->>
->> Am 16.09.2016 um 13:25 schrieb Jacek Anaszewski:
->>> On 09/16/2016 10:15 AM, Daniel Gorsulowski wrote:
->>>> Hi Jacek,
->>>>
->>>> Am 16.09.2016 um 09:31 schrieb Jacek Anaszewski:
->>>>> Hi Daniel,
->>>>>
->>>>> On 09/12/2016 10:50 AM, Daniel Gorsulowski wrote:
->>>>>> Hello!
->>>>>>
->>>>>> Please consider if I made something wrong, sending this issue. This is
->>>>>> my first contact to the LKML.
->>>>>> By mistake, I accessed an LED via /sys/class/leds subsystem very
->>>>>> fast in
->>>>>> an user application. I figured out, that the free user memory
->>>>>> decreased
->>>>>> constantly. So I tried to analyze the Problem and wrote a litte
->>>>>> script:
->>>>>>
->>>>>> #!/bin/sh
->>>>>> while [ 1 ]; do
->>>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->>>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
->>>>>> done
->>>>>>
->>>>>> And voila, I was able to reproduce the problem.
->>>>>> So I add a bit more debugging:
->>>>>>
->>>>>> #!/bin/sh
->>>>>> cnt=0
->>>>>> while [ 1 ]; do
->>>>>>         if [ `expr $cnt % 1000` -eq 0 ]; then
->>>>>>                 free | grep Mem: | cut -d' ' -f25
->>>>>>         fi
->>>>>>         echo 1 > /sys/class/leds/2a_service_yellow/brightness
->>>>>>         echo 0 > /sys/class/leds/2a_service_yellow/brightness
->>>>>>         let "cnt++"
->>>>>> done
->>>>>>
->>>>>> And huh? No memory is eaten anymore. So it looks like, the problem
->>>>>> only
->>>>>> occours on heavy (fast) usage of /sys/class/leds subsystem.
->>>>>>
->>>>>> I rewrote the script and toggled a GPIO pin, but there was no problem
->>>>>> recognizable.
->>>>>
->>>>> I've been unable to reproduce the problem with leds-aat1290 driver
->>>>> and Samsung M0 board. It must be driver specific issue.
->>>>> What driver did you use?
->>>>>
->>>> I defined LEDS_GPIO and so I'm using leds-gpio driver.
->>>> danielg@debby:~/opt/prj/ti-linux-kernel$ cat .config | grep LEDS | grep
->>>> -v "^# "
->>>> CONFIG_INPUT_LEDS=y
->>>> CONFIG_NEW_LEDS=y
->>>> CONFIG_LEDS_CLASS=y
->>>> CONFIG_LEDS_GPIO=y
->>>> CONFIG_LEDS_TRIGGERS=y
->>>> CONFIG_LEDS_TRIGGER_TIMER=y
->>>> CONFIG_LEDS_TRIGGER_ONESHOT=y
->>>> CONFIG_LEDS_TRIGGER_HEARTBEAT=y
->>>> CONFIG_LEDS_TRIGGER_GPIO=y
->>>> CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
->>>> CONFIG_LEDS_TRIGGER_TRANSIENT=y
->>>>
->>>
->>> Unfortunately I am still unable to reproduce the problem with leds-gpio.
->>> I'm not observing any heavy usage with your test case:
->>>
->>> ~#free
->>>               total       used       free     shared    buffers
->>> cached
->>> Mem:       1028092      61364     966728          0       8416      22396
->>> -/+ buffers/cache:      30552     997540
->>> Swap:            0          0          0
->>>
->>>
->>> Actually you didn't give any numbers. What kernel version are you using?
->>>
->> As I wrote, the problems occurred in vanilla 4.6 kernel, but also in 4.4
->> kernel (with PREEMPT-RT Patchset).
->
-> Heh, funny coincidence. I was testing this on recent linux-leds.git,
-> for-next branch and was not able to detect the issue. It started to
-> appear after resetting HEAD to 4.8-rc2 base. Finally it turned out
-> that what fixes the issue is the most recent commit [1].
->
-> Further investigation revealed that this is kobject_uevent_env(),
-> called from led_trigger_set(), which causes memory leaks when called
-> with high frequency.
->
-> CC GregKH.
->
-> [1]
-> https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=f3f624941be0fafb29fff5c1411fa433feca792c
->
-Nice to hear about the Fix, thanks for your investigation!
+Log error message if kobject_uevent_env() fails in led_trigger_set().
 
-Kind regards,
-Daniel
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+---
+ drivers/leds/led-triggers.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index c7a38d4..f538e8c 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -141,7 +141,8 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 	if (event) {
+ 		envp[0] = event;
+ 		envp[1] = NULL;
+-		kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp);
++		if (kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp))
++			pr_err("Error sending uevent after setting LED trigger\n");
+ 		kfree(event);
+ 	}
+ }
+-- 
+1.9.1
