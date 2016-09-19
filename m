@@ -1,39 +1,39 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: triggers: Check return value of kobject_uevent_env()
-Date: Mon, 19 Sep 2016 10:22:51 +0200
-Message-ID: <1474273371-6535-1-git-send-email-j.anaszewski@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38537 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938550AbcISIXG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 19 Sep 2016 04:23:06 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH] leds: triggers: Return from led_trigger_set() if there is
+ nothing to do
+Date: Mon, 19 Sep 2016 10:23:45 +0200
+Message-ID: <1474273425-6670-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, greg@kroah.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, daniel.gorsulowski@esd.eu, danielromell@gmail.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+List-Id: linux-leds@vger.kernel.org
 
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-Log error message if kobject_uevent_env() fails in led_trigger_set().
+If led_trigger_set() is called with "trig" argument set to NULL, and there
+is no trigger to remove then the function should return immediately so
+as to avoid doing unnecessary allocation and sending uevent.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Reported-by: Daniel Romell <daro@hms.se>
 ---
- drivers/leds/led-triggers.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/led-triggers.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index c7a38d4..f538e8c 100644
+index 59d6a3e..c7a38d4 100644
 --- a/drivers/leds/led-triggers.c
 +++ b/drivers/leds/led-triggers.c
-@@ -141,7 +141,8 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- 	if (event) {
- 		envp[0] = event;
- 		envp[1] = NULL;
--		kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp);
-+		if (kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp))
-+			pr_err("Error sending uevent after setting LED trigger\n");
- 		kfree(event);
- 	}
- }
+@@ -110,6 +110,9 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 	char *envp[2];
+ 	const char *name;
+ 
++	if (!led_cdev->trigger && !trig)
++		return;
++
+ 	name = trig ? trig->name : "none";
+ 	event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+ 
 -- 
 1.9.1
