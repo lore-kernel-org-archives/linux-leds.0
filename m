@@ -1,54 +1,63 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v3] leds: triggers: Check return value of
- kobject_uevent_env()
-Date: Tue, 20 Sep 2016 09:09:20 +0200
-Message-ID: <20160920070920.GC9768@kroah.com>
-References: <1474282344-11496-1-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: Only remove trigger if one is actually configured.
+Date: Tue, 20 Sep 2016 09:38:23 +0200
+Message-ID: <7aece952-ce5a-6f8f-eddc-4267d6964d20@samsung.com>
+References: <CGME20160914092340eucas1p27f875a415de6684be5b09872ab1b9ab6@eucas1p2.samsung.com>
+ <1473844987-21112-1-git-send-email-daro@hms.se>
+ <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33551 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbcITHJP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Sep 2016 03:09:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1474282344-11496-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Romell <danielromell@gmail.com>, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Romell <daro@hms.se>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
 
-On Mon, Sep 19, 2016 at 12:52:24PM +0200, Jacek Anaszewski wrote:
-> Log error message if kobject_uevent_env() fails in led_trigger_set().
-> 
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> ---
-> Changes from v1:
-> - switched to using dev_err() instead of pr_err()
-> Changes from v2:
-> - switched to using __func__ instead of explicit function name,
->   to simplify code maintenance
-> 
->  drivers/leds/led-triggers.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index c7a38d4..431123b 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -141,7 +141,9 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
->  	if (event) {
->  		envp[0] = event;
->  		envp[1] = NULL;
-> -		kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp);
-> +		if (kobject_uevent_env(&led_cdev->dev->kobj, KOBJ_CHANGE, envp))
-> +			dev_err(led_cdev->dev,
-> +				"%s: Error sending uevent\n", __func__);
->  		kfree(event);
->  	}
->  }
-> -- 
-> 1.9.1
+Hi Daniel,
 
+I dropped that patch because we need to fix the problem
+at the origin, i.e. inside led_trigger_set(). I submitted
+the patch [0] doing that, and credited you by adding
+Reported-by tag to the commit message.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
+Jacek Anaszewski
+
+On 09/15/2016 01:48 PM, Jacek Anaszewski wrote:
+> Hi Daniel,
+>
+> On 09/14/2016 11:23 AM, Daniel Romell wrote:
+>> In led_trigger_remove(), check if there is a trigger
+>> configured before calling led_trigger_set(). This will
+>> prevent some unnecessary work, and more importantly stop
+>> sending uevent change events when no change has in fact
+>> occurred.
+>>
+>> Signed-off-by: Daniel Romell <daro@hms.se>
+>> ---
+>>  drivers/leds/led-triggers.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index 59d6a3e..28c7a66 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -147,7 +147,8 @@ EXPORT_SYMBOL_GPL(led_trigger_set);
+>>  void led_trigger_remove(struct led_classdev *led_cdev)
+>>  {
+>>      down_write(&led_cdev->trigger_lock);
+>> -    led_trigger_set(led_cdev, NULL);
+>> +    if (led_cdev->trigger)
+>> +        led_trigger_set(led_cdev, NULL);
+>>      up_write(&led_cdev->trigger_lock);
+>>  }
+>>  EXPORT_SYMBOL_GPL(led_trigger_remove);
+>>
+>
+> Thanks for the patch. Applied.
+>
+
+[0] 
+https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=19afa7b4c4c9deebd312d293df2e2703de29e26a
