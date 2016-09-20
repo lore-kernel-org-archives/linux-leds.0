@@ -1,63 +1,76 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Only remove trigger if one is actually configured.
-Date: Tue, 20 Sep 2016 09:38:23 +0200
-Message-ID: <7aece952-ce5a-6f8f-eddc-4267d6964d20@samsung.com>
-References: <CGME20160914092340eucas1p27f875a415de6684be5b09872ab1b9ab6@eucas1p2.samsung.com>
- <1473844987-21112-1-git-send-email-daro@hms.se>
- <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>
+Subject: Re: [PATCH v4 0/3] leds: Introduce userspace leds driver
+Date: Tue, 20 Sep 2016 10:56:01 +0200
+Message-ID: <6b0e0eaa-1e13-e8ff-4b74-b7a608f15055@samsung.com>
+References: <CGME20160916191750eucas1p2437e0fa04cc99964b79cb774ef482e5a@eucas1p2.samsung.com>
+ <1474053410-24387-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>
+In-reply-to: <1474053410-24387-1-git-send-email-david@lechnology.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Romell <danielromell@gmail.com>, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Romell <daro@hms.se>
+To: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Daniel,
+Hi David,
 
-I dropped that patch because we need to fix the problem
-at the origin, i.e. inside led_trigger_set(). I submitted
-the patch [0] doing that, and credited you by adding
-Reported-by tag to the commit message.
+Thanks for applying the remarks. Since it is close to the merge
+window now, I'm applying the patch set to the for-4.10 branch of
+linux-leds.git.
 
 Thanks,
 Jacek Anaszewski
 
-On 09/15/2016 01:48 PM, Jacek Anaszewski wrote:
-> Hi Daniel,
+On 09/16/2016 09:16 PM, David Lechner wrote:
+> v2 changes:
 >
-> On 09/14/2016 11:23 AM, Daniel Romell wrote:
->> In led_trigger_remove(), check if there is a trigger
->> configured before calling led_trigger_set(). This will
->> prevent some unnecessary work, and more importantly stop
->> sending uevent change events when no change has in fact
->> occurred.
->>
->> Signed-off-by: Daniel Romell <daro@hms.se>
->> ---
->>  drivers/leds/led-triggers.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
->> index 59d6a3e..28c7a66 100644
->> --- a/drivers/leds/led-triggers.c
->> +++ b/drivers/leds/led-triggers.c
->> @@ -147,7 +147,8 @@ EXPORT_SYMBOL_GPL(led_trigger_set);
->>  void led_trigger_remove(struct led_classdev *led_cdev)
->>  {
->>      down_write(&led_cdev->trigger_lock);
->> -    led_trigger_set(led_cdev, NULL);
->> +    if (led_cdev->trigger)
->> +        led_trigger_set(led_cdev, NULL);
->>      up_write(&led_cdev->trigger_lock);
->>  }
->>  EXPORT_SYMBOL_GPL(led_trigger_remove);
->>
+> * sort #includes
+> * fix typo in Kconfig
+> * Add Documentation text file
 >
-> Thanks for the patch. Applied.
+> v3 changes:
 >
-
-[0] 
-https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=19afa7b4c4c9deebd312d293df2e2703de29e26a
+> * fix typos in docs
+> * rename "leds class"  to "LED class" in docs
+> * rebase on linux-leds/for-next
+>
+> v4 changes:
+>
+> * Use devm_led_classdev_register() instead of led_classdev_register()
+> * Clarified how to create multiple devices in documentation
+> * uledmon.c now uses blocking reads instead of poll()
+> * Add some sanity checking on user-provided device name to make sure it is not
+>   a directory name
+> * Reading from /dev/uleds allows any size read buffer - still only returns one
+>   byte regardless of size
+> * Reading from /dev/uleds blocks until the brightness is changed
+> * LEDS_MAX_NAME_SIZE is reduced to 64 to match existing name size limit
+> * New patch to use LEDS_MAX_NAME_SIZE in drivers/leds/led-class.c
+> * Moved example code to tool/leds/uledmon.c (new patch with Makefile)
+>
+> David Lechner (3):
+>   leds: Introduce userspace leds driver
+>   leds: Use macro for max device node name size
+>   tools/leds: Add uledmon program for monitoring userspace LEDs
+>
+>  Documentation/leds/uleds.txt |  36 +++++++
+>  drivers/leds/Kconfig         |   8 ++
+>  drivers/leds/Makefile        |   3 +
+>  drivers/leds/led-class.c     |   3 +-
+>  drivers/leds/uleds.c         | 230 +++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/Kbuild    |   1 +
+>  include/uapi/linux/uleds.h   |  23 +++++
+>  tools/Makefile               |   7 +-
+>  tools/leds/.gitignore        |   1 +
+>  tools/leds/Makefile          |  13 +++
+>  tools/leds/uledmon.c         |  62 ++++++++++++
+>  11 files changed, 383 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/leds/uleds.txt
+>  create mode 100644 drivers/leds/uleds.c
+>  create mode 100644 include/uapi/linux/uleds.h
+>  create mode 100644 tools/leds/.gitignore
+>  create mode 100644 tools/leds/Makefile
+>  create mode 100644 tools/leds/uledmon.c
+>
