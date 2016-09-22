@@ -1,29 +1,27 @@
-From: Daniel Romell <Daro@hms.se>
-Subject: Re: [PATCH] leds: Only remove trigger if one is actually configured.
-Date: Tue, 20 Sep 2016 12:53:53 +0000
-Message-ID: <VI1PR0601MB26726CFB3F71EBCA1BF7D530ACF70@VI1PR0601MB2672.eurprd06.prod.outlook.com>
-References: <CGME20160914092340eucas1p27f875a415de6684be5b09872ab1b9ab6@eucas1p2.samsung.com>
- <1473844987-21112-1-git-send-email-daro@hms.se>
- <75e5d60e-39e4-574f-5417-7532f1f19f1f@samsung.com>,<7aece952-ce5a-6f8f-eddc-4267d6964d20@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 1/3] leds: Introduce userspace leds driver
+Date: Thu, 22 Sep 2016 15:43:35 +0200
+Message-ID: <CACRpkdZH4aJxbbPOnmvCapPaw78+Wtu8pjpC=oWGJpAvmO+WVw@mail.gmail.com>
+References: <1474053410-24387-1-git-send-email-david@lechnology.com> <1474053410-24387-2-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-db5eur01on0088.outbound.protection.outlook.com ([104.47.2.88]:24288
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753090AbcITTYl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 20 Sep 2016 15:24:41 -0400
-In-Reply-To: <7aece952-ce5a-6f8f-eddc-4267d6964d20@samsung.com>
-Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1474053410-24387-2-git-send-email-david@lechnology.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi,
+On Fri, Sep 16, 2016 at 9:16 PM, David Lechner <david@lechnology.com> wrote:
 
-Yeah, I agree that was a better solution. I'll respond with an ACK on that =
-patch as well.
+> This driver creates a userspace leds driver similar to uinput.
 
-/ Daniel Romell
+Just out of curiosity: what is this used for?
+The typical usecase evades me, so I'd really want to know.
+
+> +See tools/leds/uledmon.c for an example userspace program.
+
+Where is this program? Not in this patch for sure.
+
+Yours,
+Linus Walleij
