@@ -1,60 +1,59 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] leds: Add driver for NCP5623 3-channel I2C LED
- driver
-Date: Sat, 24 Sep 2016 14:00:23 +0200
-Message-ID: <20160924120022.GB8696@amd>
-References: <1474025672-5040-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1474025672-5040-3-git-send-email-florian.vaussard@heig-vd.ch>
- <d6dfc1aa-941d-fdbb-5fda-74c85b571bc5@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v4 1/3] leds: Introduce userspace leds driver
+Date: Sat, 24 Sep 2016 14:06:03 +0200
+Message-ID: <20160924120603.GC8696@amd>
+References: <1474053410-24387-1-git-send-email-david@lechnology.com>
+ <1474053410-24387-2-git-send-email-david@lechnology.com>
+ <CACRpkdZH4aJxbbPOnmvCapPaw78+Wtu8pjpC=oWGJpAvmO+WVw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42605 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbcIXMGG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Sep 2016 08:06:06 -0400
 Content-Disposition: inline
-In-Reply-To: <d6dfc1aa-941d-fdbb-5fda-74c85b571bc5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+In-Reply-To: <CACRpkdZH4aJxbbPOnmvCapPaw78+Wtu8pjpC=oWGJpAvmO+WVw@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Lechner <david@lechnology.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>
 
 
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> Instead I propose the following:
+On Thu 2016-09-22 15:43:35, Linus Walleij wrote:
+> On Fri, Sep 16, 2016 at 9:16 PM, David Lechner <david@lechnology.com> wro=
+te:
 >=20
-> n_iled_max =3D
->      31 - (priv->led_iref * 2400 / priv->leds_max_current +
->            !!(priv->led_iref * 2400 % priv->leds_max_current))
+> > This driver creates a userspace leds driver similar to uinput.
 >=20
+> Just out of curiosity: what is this used for?
+> The typical usecase evades me, so I'd really want to know.
 
-div_round_up?
-
-Best regards,
+I have RGB led connected using ESP board over ttyUSB0. I guess I'll
+want to keep the driver in userspace, but I still may want "normal"
+/sys/class/leds interface for it.
 								Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlfmatYACgkQMOfwapXb+vLxHwCcDh15EfJsI96L2WBQiU686nsF
-2eQAn1rQsSoHuPeE+Dy/2GT1ThpRm5p0
-=wsxc
+iEYEARECAAYFAlfmbCsACgkQMOfwapXb+vKSoQCgnbfhRE2qb73dEIGt5jXDbhfQ
+VpkAoITHVy38oR+Q4T4JCtwZIHAtsRxS
+=QC4+
 -----END PGP SIGNATURE-----
 
---p4qYPpj5QlsIQJ0K--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--B4IIlcmfBL/1gGOG--
