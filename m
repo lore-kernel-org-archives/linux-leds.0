@@ -1,51 +1,38 @@
 From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] leds: ncp5623: Add device tree binding
- documentation
-Date: Sat, 24 Sep 2016 13:58:24 +0200
-Message-ID: <20160924115823.GA8696@amd>
+Subject: Re: [PATCH v3 2/2] leds: Add driver for NCP5623 3-channel I2C LED
+ driver
+Date: Sat, 24 Sep 2016 14:00:23 +0200
+Message-ID: <20160924120022.GB8696@amd>
 References: <1474025672-5040-1-git-send-email-florian.vaussard@heig-vd.ch>
- <1474025672-5040-2-git-send-email-florian.vaussard@heig-vd.ch>
+ <1474025672-5040-3-git-send-email-florian.vaussard@heig-vd.ch>
+ <d6dfc1aa-941d-fdbb-5fda-74c85b571bc5@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1474025672-5040-2-git-send-email-florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+In-Reply-To: <d6dfc1aa-941d-fdbb-5fda-74c85b571bc5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Florian Vaussard <florian.vaussard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Vaussard <florian.vaussard-EWQkb/GNqlFyDzI6CaY1VQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---zYM0uCDKw75PZbzx
+--p4qYPpj5QlsIQJ0K
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> +Example
-> +=3D=3D=3D=3D=3D=3D=3D
-> +
-> +led1: ncp5623@38 {
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +	compatible =3D "onnn,ncp5623";
-> +	reg =3D <0x38>;
-> +	onnn,led-iref-microamp =3D <10>;
-> +
-> +	led1r@0 {
-> +		label =3D "ncp:power:red";
-> +		linux,default-trigger =3D "default-on";
-=2E..
-> +	led1b@1 {
-> +		label =3D "ncp:power:blue";
-> +		reg =3D <1>;
+> Instead I propose the following:
+>=20
+> n_iled_max =3D
+>      31 - (priv->led_iref * 2400 / priv->leds_max_current +
+>            !!(priv->led_iref * 2400 % priv->leds_max_current))
+>=20
 
-Actually... the three LEDs are packaged such as this is one colorful
-light to the user, right? Some day we'll need to group them, so that
-kernel can automatically tell this is one led, and probably add extra
-attributes, such as values that produce white light.
+div_round_up?
 
 Best regards,
 								Pavel
@@ -54,19 +41,19 @@ Best regards,
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---zYM0uCDKw75PZbzx
+--p4qYPpj5QlsIQJ0K
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlfmal8ACgkQMOfwapXb+vKfSgCfYdfS0bEWuBVsrsZ5TrI0ql0B
-IjwAn1dsz2s01n/B90R2Bc2wE3/OpXYO
-=4MrU
+iEYEARECAAYFAlfmatYACgkQMOfwapXb+vLxHwCcDh15EfJsI96L2WBQiU686nsF
+2eQAn1rQsSoHuPeE+Dy/2GT1ThpRm5p0
+=wsxc
 -----END PGP SIGNATURE-----
 
---zYM0uCDKw75PZbzx--
+--p4qYPpj5QlsIQJ0K--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
