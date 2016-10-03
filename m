@@ -1,44 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] cleanup LED documentation and make it match reality
-Date: Mon, 3 Oct 2016 10:20:07 +0200
-Message-ID: <20161003082007.GA6277@kroah.com>
-References: <20161003081049.GA12419@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH] leds/leds-lp5523.txt: make documentation match reality
+Date: Mon, 3 Oct 2016 10:42:01 +0200
+Message-ID: <20161003084201.GA2685@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:33644 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751365AbcJCIUH (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 3 Oct 2016 04:20:07 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49448 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbcJCImH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 3 Oct 2016 04:42:07 -0400
 Content-Disposition: inline
-In-Reply-To: <20161003081049.GA12419@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: j.anaszewski@samsung.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>
+To: j.anaszewski@samsung.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, trivial@kernel.org
 
-On Mon, Oct 03, 2016 at 10:10:50AM +0200, Pavel Machek wrote:
-> 
-> sysfs-class-led fails to mention some important details. Also fix led
-> vs LED and english.
-> 
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> 
-> --- a/Documentation/ABI/testing/sysfs-class-led
-> +++ b/Documentation/ABI/testing/sysfs-class-led
-> @@ -4,16 +4,25 @@ KernelVersion:	2.6.17
->  Contact:	Richard Purdie <rpurdie@rpsys.net>
->  Description:
->  		Set the brightness of the LED. Most LEDs don't
-> -		have hardware brightness support so will just be turned on for
-> +		have hardware brightness support, so will just be turned on for
->  		non-zero brightness settings. The value is between 0 and
->  		/sys/class/leds/<led>/max_brightness.
->  
-> +		Writing 0 to this file clears active trigger.
-> +
-> +		Writing non-zero to this file while trigger is active changes the
-> +		top brightness trigger is going to use.
-> +		
 
-No trailing whitespace please...
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+Files are visible all the time, so remove incorrect notes.
+
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+index 0dbbd27..0961a06 100644
+--- a/Documentation/leds/leds-lp5523.txt
++++ b/Documentation/leds/leds-lp5523.txt
+@@ -34,8 +34,8 @@ There are two ways to run LED patterns.
+   Control interface for the engines:
+   x is 1 .. 3
+   enginex_mode : disabled, load, run
+-  enginex_load : microcode load (visible only in load mode)
+-  enginex_leds : led mux control (visible only in load mode)
++  enginex_load : microcode load
++  enginex_leds : led mux control
+=20
+   cd /sys/class/leds/lp5523:channel2/device
+   echo "load" > engine3_mode
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlfyGdkACgkQMOfwapXb+vIJLACdFa9EZ0XLhFMw/REgQ5ej7NHj
+UO4An0g828XSWxSwnibXUKexXdetIgwF
+=WVOB
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
