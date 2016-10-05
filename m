@@ -1,86 +1,59 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH 2/2] leds: core: Remove delayed_set_value property from struct
- led_classdev
-Date: Wed, 05 Oct 2016 12:03:32 +0200
-Message-ID: <1475661812-26215-2-git-send-email-j.anaszewski@samsung.com>
-References: <1475661812-26215-1-git-send-email-j.anaszewski@samsung.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] leds: leds-pca963x: add nxp,leds-suspend property
+Date: Wed, 5 Oct 2016 07:22:58 -0500
+Message-ID: <CAL_JsqKVR9nHoAXcFVPBXp1io7_WCL6Jsrv=oJKGBopatL27sQ@mail.gmail.com>
+References: <CGME20161005022942eucas1p2b092723a0c38c116cc971971e43b169e@eucas1p2.samsung.com>
+ <1475634572-18274-1-git-send-email-matt@ranostay.consulting> <0ba8033f-d0b3-8b2f-8ff4-fa47dcf50ba1@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42199 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754848AbcJEKDz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 5 Oct 2016 06:03:55 -0400
-In-reply-to: <1475661812-26215-1-git-send-email-j.anaszewski@samsung.com>
+Received: from mail.kernel.org ([198.145.29.136]:54428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751968AbcJEMXX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 5 Oct 2016 08:23:23 -0400
+In-Reply-To: <0ba8033f-d0b3-8b2f-8ff4-fa47dcf50ba1@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Fabio Baltieri <fabio.baltieri@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Matt Ranostay <mranostay@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Matt Ranostay <matt@ranostay.consulting>, Richard Purdie <rpurdie@rpsys.net>
 
-delayed_set_value property was introduced in the commit
-d23a22a74fde ("leds: delay led_set_brightness if stopping soft-blink").
-Its aim was to allow calling led_set_brightness() from hard irq context
-when soft blinking is enabled. Later LED core refactoring preserved
-the property, although in an ineffective way. That bug was harmless
-because in the new approach brightness setting is deferred until the
-next timer tick when software blinking is enabled.
+On Wed, Oct 5, 2016 at 3:09 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> Hi Matt,
+>
+> On 10/05/2016 04:29 AM, Matt Ranostay wrote:
+>>
+>> Allow the LED subsystem to blank the LEDS on suspend.
+>>
+>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
+>> ---
+>>  Documentation/devicetree/bindings/leds/pca963x.txt | 1 +
+>>  drivers/leds/leds-pca963x.c                        | 9 +++++++++
+>>  include/linux/platform_data/leds-pca963x.h         | 6 ++++++
+>>  3 files changed, 16 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt
+>> b/Documentation/devicetree/bindings/leds/pca963x.txt
+>> index dafbe9931c2b..61b1f037ebd0 100644
+>> --- a/Documentation/devicetree/bindings/leds/pca963x.txt
+>> +++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+>> @@ -7,6 +7,7 @@ Optional properties:
+>>  - nxp,totem-pole : use totem pole (push-pull) instead of open-drain
+>> (pca9632 defaults
+>>    to open-drain, newer chips to totem pole)
+>>  - nxp,hw-blink : use hardware blinking instead of software blinking
+>> +- nxp,leds-suspend : turn off LEDS on system suspend
+>
+>
+> How about making this property generic and adding it to the common LED
+> bindings?
+>
+> Cc Rob.
 
-Since LED brightness is assigned immediately in
-led_set_brightness_nosleep() or through struct led_classdev's
-blink_brightness while soft blinking is enabled, then
-delayed_set_value is no longer required.
+Fine with me though seems like keeping on would be less common. Maybe
+"keep-in-suspend". Also, if this is a user decision, then it should be
+a sysfs attr and shouldn't be in DT.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Fabio Baltieri <fabio.baltieri@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Andrew Lunn <andrew@lunn.ch>
----
- drivers/leds/led-core.c | 8 ++++----
- include/linux/leds.h    | 1 -
- 2 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 3bce448..2d0c75a 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -107,15 +107,15 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	int ret = 0;
- 
- 	if (led_cdev->flags & LED_BLINK_DISABLE) {
--		led_cdev->delayed_set_value = LED_OFF;
-+		led_cdev->brightness = LED_OFF;
- 		led_stop_software_blink(led_cdev);
- 		led_cdev->flags &= ~LED_BLINK_DISABLE;
- 	}
- 
--	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
-+	ret = __led_set_brightness(led_cdev, led_cdev->brightness);
- 	if (ret == -ENOTSUPP)
- 		ret = __led_set_brightness_blocking(led_cdev,
--					led_cdev->delayed_set_value);
-+					led_cdev->brightness);
- 	if (ret < 0 &&
- 	    /* LED HW might have been unplugged, therefore don't warn */
- 	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-@@ -260,7 +260,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
- 		return;
- 
- 	/* If brightness setting can sleep, delegate it to a work queue task */
--	led_cdev->delayed_set_value = value;
-+	led_cdev->brightness = value;
- 	schedule_work(&led_cdev->set_brightness_work);
- }
- EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ddfcb2d..52993de 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -92,7 +92,6 @@ struct led_classdev {
- 	void			(*flash_resume)(struct led_classdev *led_cdev);
- 
- 	struct work_struct	set_brightness_work;
--	int			delayed_set_value;
- 
- #ifdef CONFIG_LEDS_TRIGGERS
- 	/* Protects the trigger data below */
--- 
-1.9.1
+Rob
