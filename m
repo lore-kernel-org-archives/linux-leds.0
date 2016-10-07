@@ -1,66 +1,128 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH] hid-led.c: remove unneccessary underscores
-Date: Fri, 7 Oct 2016 20:46:26 +0200
-Message-ID: <87cd7be4-286e-a664-9111-e71975e6a30e@gmail.com>
-References: <20161003081626.GA18553@amd> <20161003094503.GC9131@amd>
- <20161007162556.GH30411@mail.corp.redhat.com>
+From: Zach Brown <zach.brown@ni.com>
+Subject: [RFC v3 2/3] phy: Encapsulate actions performed during link state
+ changes into function phy_adjust_link
+Date: Fri, 7 Oct 2016 16:14:56 -0500
+Message-ID: <1475874897-29720-3-git-send-email-zach.brown@ni.com>
+References: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20161007162556.GH30411@mail.corp.redhat.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Cc: j.anaszewski@samsung.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, jikos@kernel.org, linux-input@vger.kernel.org, trivial@kernel.org
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: f.fainelli@gmail.com
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, mlindner@marvell.com
 List-Id: linux-leds@vger.kernel.org
 
-Am 07.10.2016 um 18:25 schrieb Benjamin Tissoires:
-> On Oct 03 2016 or thereabouts, Pavel Machek wrote:
->> On Mon 2016-10-03 10:16:26, Pavel Machek wrote:
->>>
->>> u8 (and friends) can be used directly in kernel sources (not kernel
->>> headers).
->>>
->>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
->>
->> Zero day bot warned me that this is not quiet correct.
->>
->> This would be needed on top. Is there interest in fixed patch?
-> 
-> Having both __ and not __ in the same driver would be a little bit
-> weird. So I'd say we just continue with the existing code. Thanks for
-> the submission BTW!
-> 
-Reason for me to choose the __ types here was that hid_hw_raw_request
-defines the buffer argument as "__u8 *buf" and I wanted to be in line
-with that.
+During phy state machine state transitions some set of actions should
+occur whenever the link state changes. These actions should be
+encapsulated into a single function
 
-> Cheers,
-> Benjamin
-> 
->>
->> diff --git a/drivers/hid/hid-led.c b/drivers/hid/hid-led.c
->> index cd208ca..be659ca 100644
->> --- a/drivers/hid/hid-led.c
->> +++ b/drivers/hid/hid-led.c
->> @@ -57,8 +57,8 @@ union delcom_packet {
->>  		u8 cmd;
->>  	} rx;
->>  	struct {
->> -		le16 family_code;
->> -		le16 security_code;
->> +		__le16 family_code;
->> +		__le16 security_code;
->>  		u8 fw_version;
->>  	} fw;
->>  };
->>
->>
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-leds" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+This patch adds the phy_adjust_link function, which is called whenever
+phydev->adjust_link would have been called before. Actions that should
+occur whenever the phy link is adjusted can now be added to the
+phy_adjust_link function.
 
+Signed-off-by: Zach Brown <zach.brown@ni.com>
+---
+ drivers/net/phy/phy.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index c6f6683..f5721db 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -893,6 +893,11 @@ void phy_start(struct phy_device *phydev)
+ }
+ EXPORT_SYMBOL(phy_start);
+ 
++static void phy_adjust_link(struct phy_device *phydev)
++{
++	phydev->adjust_link(phydev->attached_dev);
++}
++
+ /**
+  * phy_state_machine - Handle the state machine
+  * @work: work_struct that describes the work to be done
+@@ -935,7 +940,7 @@ void phy_state_machine(struct work_struct *work)
+ 		if (!phydev->link) {
+ 			phydev->state = PHY_NOLINK;
+ 			netif_carrier_off(phydev->attached_dev);
+-			phydev->adjust_link(phydev->attached_dev);
++			phy_adjust_link(phydev);
+ 			break;
+ 		}
+ 
+@@ -948,7 +953,7 @@ void phy_state_machine(struct work_struct *work)
+ 		if (err > 0) {
+ 			phydev->state = PHY_RUNNING;
+ 			netif_carrier_on(phydev->attached_dev);
+-			phydev->adjust_link(phydev->attached_dev);
++			phy_adjust_link(phydev);
+ 
+ 		} else if (0 == phydev->link_timeout--)
+ 			needs_aneg = true;
+@@ -975,7 +980,7 @@ void phy_state_machine(struct work_struct *work)
+ 			}
+ 			phydev->state = PHY_RUNNING;
+ 			netif_carrier_on(phydev->attached_dev);
+-			phydev->adjust_link(phydev->attached_dev);
++			phy_adjust_link(phydev);
+ 		}
+ 		break;
+ 	case PHY_FORCING:
+@@ -991,7 +996,7 @@ void phy_state_machine(struct work_struct *work)
+ 				needs_aneg = true;
+ 		}
+ 
+-		phydev->adjust_link(phydev->attached_dev);
++		phy_adjust_link(phydev);
+ 		break;
+ 	case PHY_RUNNING:
+ 		/* Only register a CHANGE if we are polling and link changed
+@@ -1020,7 +1025,7 @@ void phy_state_machine(struct work_struct *work)
+ 			netif_carrier_off(phydev->attached_dev);
+ 		}
+ 
+-		phydev->adjust_link(phydev->attached_dev);
++		phy_adjust_link(phydev);
+ 
+ 		if (phy_interrupt_is_valid(phydev))
+ 			err = phy_config_interrupt(phydev,
+@@ -1030,7 +1035,7 @@ void phy_state_machine(struct work_struct *work)
+ 		if (phydev->link) {
+ 			phydev->link = 0;
+ 			netif_carrier_off(phydev->attached_dev);
+-			phydev->adjust_link(phydev->attached_dev);
++			phy_adjust_link(phydev);
+ 			do_suspend = true;
+ 		}
+ 		break;
+@@ -1054,7 +1059,7 @@ void phy_state_machine(struct work_struct *work)
+ 				} else	{
+ 					phydev->state = PHY_NOLINK;
+ 				}
+-				phydev->adjust_link(phydev->attached_dev);
++				phy_adjust_link(phydev);
+ 			} else {
+ 				phydev->state = PHY_AN;
+ 				phydev->link_timeout = PHY_AN_TIMEOUT;
+@@ -1070,7 +1075,7 @@ void phy_state_machine(struct work_struct *work)
+ 			} else	{
+ 				phydev->state = PHY_NOLINK;
+ 			}
+-			phydev->adjust_link(phydev->attached_dev);
++			phy_adjust_link(phydev);
+ 		}
+ 		break;
+ 	}
+-- 
+2.7.4
