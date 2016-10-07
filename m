@@ -1,7 +1,7 @@
 From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: [PATCH 07/10] leds: i2cs: Add I2CS FPGA leds driver
-Date: Fri,  7 Oct 2016 18:21:06 +0300
-Message-ID: <1475853669-22480-8-git-send-email-pantelis.antoniou@konsulko.com>
+Subject: [PATCH 10/10] hwmon: i2cs-fan: Add hwmon dts binding documentation
+Date: Fri,  7 Oct 2016 18:21:09 +0300
+Message-ID: <1475853669-22480-11-git-send-email-pantelis.antoniou@konsulko.com>
 References: <1475853669-22480-1-git-send-email-pantelis.antoniou@konsulko.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
 In-Reply-To: <1475853669-22480-1-git-send-email-pantelis.antoniou@konsulko.com>
@@ -12,277 +12,41 @@ List-Id: linux-leds@vger.kernel.org
 
 From: Georgi Vlaev <gvlaev@juniper.net>
 
-Add support for the FRU faceplate status LEDs (OK, FAIL,
-ACTIVE, STANDBY) controlled by the Juniper I2CS FPGA. This
-driver is a jnx-i2cs-core client.
+Adds the I2CS Fan Tray hwmon device tree node documentation.
 
 Signed-off-by: Georgi Vlaev <gvlaev@juniper.net>
 [Ported from Juniper kernel]
 Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 ---
- drivers/leds/Kconfig         |   9 ++
- drivers/leds/Makefile        |   1 +
- drivers/leds/leds-jnx-i2cs.c | 219 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 229 insertions(+)
- create mode 100644 drivers/leds/leds-jnx-i2cs.c
+ Documentation/devicetree/bindings/hwmon/i2cs-fan.txt | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 7a628c6..45c6612 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -659,6 +659,15 @@ config LEDS_MLXCPLD
- 	  This option enabled support for the LEDs on the Mellanox
- 	  boards. Say Y to enabled these.
- 
-+config LEDS_JNX_I2CS
-+	tristate "LED support for the Juniper Networks I2CS FPGA"
-+	depends on LEDS_CLASS && I2C
-+	select REGMAP_I2C
-+	help
-+	  This option enables support for the FRU faceplate status
-+	  LEDs (OK, FAIL, ACTIVE, STANDBY) controlled by the Juniper
-+	  I2CS FPGA.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 3965070..1ce2d0b 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -71,6 +71,7 @@ obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
- obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
- obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
- obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
-+obj-$(CONFIG_LEDS_JNX_I2CS)		+= leds-jnx-i2cs.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-jnx-i2cs.c b/drivers/leds/leds-jnx-i2cs.c
+diff --git a/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt b/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
 new file mode 100644
-index 0000000..c2d7274
+index 0000000..4ef880c
 --- /dev/null
-+++ b/drivers/leds/leds-jnx-i2cs.c
-@@ -0,0 +1,219 @@
-+/*
-+ * Juniper Networks I2CS FPGA LEDs driver
-+ *
-+ * Copyright (C) 2016 Juniper Networks
-+ * Author: Georgi Vlaev <gvlaev@juniper.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
++++ b/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
+@@ -0,0 +1,19 @@
++Hwmon driver for Juniper fan trays on I2CS Slave FPGA
 +
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/of.h>
-+#include <linux/delay.h>
-+#include <linux/leds.h>
-+#include <linux/i2c.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/jnx-i2cs-core.h>
++Required properties:
 +
-+#define FRU_LEDS	4 /* Total LEDs (active, fail, ok, standby) */
-+#define HW_BLINK_LEDS	3 /* LEDs with hw blink cap (standby not supported) */
++- compatible: "i2cs-fan-hwmon"
 +
-+/*
-+ * I2CS fru_led [0x12]
-+ *
-+ * bit 6   | bit 5    | bit 4   |...                        | bit 0
-+ * blink_ok|blink_fail|blink_act|led_standby|led_ok|led_fail|led_act
-+ */
++Optional properties:
 +
-+/* TODO: Use the regmap from the parent MFD */
-+static struct regmap_config i2cs_leds_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = I2CS_SPARE_OE,
++- num-fans: fans per tray (default 14)
++
++- tach-factor: TACH count scaling factor (default 120)
++
++Example:
++
++fan-hwmon {
++	compatible = "jnx,i2cs-fan-hwmon";
++	num-fans = <6>;
++	tach-factor = <33>;
 +};
-+
-+struct i2cs_led {
-+	struct led_classdev lc;
-+	struct regmap *regmap;
-+	struct work_struct work;
-+	int blink;
-+	int on;
-+	int bit;
-+};
-+
-+struct i2cs_led_data {
-+	int num_leds;
-+	struct i2cs_led *leds;
-+};
-+
-+static void jnx_i2cs_leds_work(struct work_struct *work)
-+{
-+	struct i2cs_led *led = container_of(work, struct i2cs_led, work);
-+
-+	int mask = (BIT(led->bit) << 4) | BIT(led->bit);
-+	int value = ((led->blink << led->bit) << 4) | (led->on << led->bit);
-+
-+	regmap_update_bits(led->regmap, I2CS_FRU_LED, mask, value & 0x7f);
-+}
-+
-+static void jnx_i2cs_leds_brightness_set(struct led_classdev *lc,
-+				 enum led_brightness brightness)
-+{
-+	struct i2cs_led *led = container_of(lc, struct i2cs_led, lc);
-+
-+	led->on = (brightness != LED_OFF);
-+	led->blink = 0; /* always turn off hw blink on brightness_set() */
-+	schedule_work(&led->work);
-+}
-+
-+static int jnx_i2cs_leds_blink_set(struct led_classdev *lc,
-+				   unsigned long *delay_on,
-+				   unsigned long *delay_off)
-+{
-+	struct i2cs_led *led = container_of(lc, struct i2cs_led, lc);
-+
-+	led->blink = (*delay_on > 0);
-+	led->on = led->blink; /* 'on' bit should be set if blinking */
-+	schedule_work(&led->work);
-+
-+	return 0;
-+}
-+
-+static int jnx_i2cs_leds_init_one(struct device *dev, struct device_node *np,
-+				  struct i2cs_led_data *ild,
-+				  struct regmap *regmap, int num)
-+{
-+	struct i2cs_led *led;
-+	const char *string;
-+	bool hw_blink;
-+	int ret;
-+	u32 reg;
-+
-+	ret = of_property_read_u32(np, "reg", &reg);
-+	if (ret || reg >= FRU_LEDS)
-+		return -ENODEV;
-+
-+	led = &ild->leds[num];
-+	led->bit = reg;
-+	led->regmap = regmap;
-+
-+	if (!of_property_read_string(np, "label", &string))
-+		led->lc.name = string;
-+	else
-+		led->lc.name = np->name;
-+
-+	if (!of_property_read_string(np, "linux,default-trigger", &string))
-+		led->lc.default_trigger = string;
-+
-+	led->lc.brightness = LED_OFF;
-+	led->lc.brightness_set = jnx_i2cs_leds_brightness_set;
-+	if (led->bit <= HW_BLINK_LEDS) {
-+		hw_blink = of_property_read_bool(np, "hw-blink");
-+		if (hw_blink)
-+			led->lc.blink_set = jnx_i2cs_leds_blink_set;
-+	}
-+
-+	ret = devm_led_classdev_register(dev, &led->lc);
-+	if (ret)
-+		return ret;
-+
-+	INIT_WORK(&led->work, jnx_i2cs_leds_work);
-+
-+	return 0;
-+}
-+
-+static int jnx_i2cs_leds_of_init(struct device *dev, struct i2cs_led_data *ild)
-+{
-+	struct device_node *child, *np = dev->of_node;
-+	struct regmap *regmap;
-+	struct i2c_client *client;
-+	int ret, num_leds, i = 0;
-+
-+	if (!dev->parent)
-+		return -ENODEV;
-+
-+	client = i2c_verify_client(dev->parent);
-+	if (!client)
-+		return -ENODEV;
-+
-+	regmap = devm_regmap_init_i2c(client, &i2cs_leds_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "Failed to allocate register map\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	num_leds = of_get_child_count(np);
-+	if (!num_leds || num_leds > FRU_LEDS)
-+		return -ENODEV;
-+
-+	ild->num_leds = num_leds;
-+	ild->leds = devm_kzalloc(dev, sizeof(struct i2cs_led) * num_leds,
-+				 GFP_KERNEL);
-+	if (!ild->leds)
-+		return -ENOMEM;
-+
-+	for_each_child_of_node(np, child) {
-+		ret = jnx_i2cs_leds_init_one(dev, child, ild, regmap, i++);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int jnx_i2cs_leds_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct i2cs_led_data *ild;
-+	int ret;
-+
-+	ild = devm_kzalloc(dev, sizeof(*ild), GFP_KERNEL);
-+	if (!ild)
-+		return -ENOMEM;
-+
-+	ret = jnx_i2cs_leds_of_init(dev, ild);
-+	if (ret < 0)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, ild);
-+
-+	return 0;
-+}
-+
-+static int jnx_i2cs_leds_remove(struct platform_device *pdev)
-+{
-+	struct i2cs_led_data *ild = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < ild->num_leds; i++) {
-+		devm_led_classdev_unregister(&pdev->dev, &ild->leds[i].lc);
-+		cancel_work_sync(&ild->leds[i].work);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id jnx_i2cs_leds_match[] = {
-+	{ .compatible = "jnx,leds-i2cs", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, jnx_i2cs_leds_match);
-+
-+static struct platform_driver jnx_i2cs_leds_driver = {
-+	.driver = {
-+		.name  = "leds-i2cs",
-+		.of_match_table = jnx_i2cs_leds_match,
-+	},
-+	.probe = jnx_i2cs_leds_probe,
-+	.remove = jnx_i2cs_leds_remove,
-+};
-+
-+module_platform_driver(jnx_i2cs_leds_driver);
-+
-+MODULE_DESCRIPTION("Juniper Networks I2CS leds driver");
-+MODULE_AUTHOR("Georgi Vlaev <gvlaev@juniper.net>");
-+MODULE_LICENSE("GPL");
 -- 
 1.9.1
 
