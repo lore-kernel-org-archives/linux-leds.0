@@ -1,120 +1,73 @@
-From: Alexander Kurz <akurz@blala.de>
-Subject: Re: [PATCH] leds: leds-mc13783: Fix MC13892 keypad led access
-Date: Mon, 10 Oct 2016 14:52:28 +0200 (CEST)
-Message-ID: <alpine.DEB.2.00.1610101443040.24427@blala.de>
-References: <CGME20161009134104eucas1p17d4028424741a2b6c758b268e50e6e12@eucas1p1.samsung.com> <1476020267-17178-1-git-send-email-akurz@blala.de> <fdbc8f96-3a9b-b87e-467d-5279353811d9@samsung.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gbGVkczogbGVkcy1tYzEzNzgzOiBGaXggTUMxMzg5MiBr?=
+ =?UTF-8?B?ZXlwYWQgbGVkIGFjY2Vzcw==?=
+Date: Mon, 10 Oct 2016 15:22:06 +0300
+Message-ID: <1476102126.310584619@f351.i.mail.ru>
+References: <CGME20161009134104eucas1p17d4028424741a2b6c758b268e50e6e12@eucas1p1.samsung.com>
+ <1476020267-17178-1-git-send-email-akurz@blala.de>
+ <fdbc8f96-3a9b-b87e-467d-5279353811d9@samsung.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vs81.iboxed.net ([185.82.85.146]:44866 "EHLO vs81.iboxed.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751713AbcJJMzf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 Oct 2016 08:55:35 -0400
+Received: from fallback6.mail.ru ([94.100.181.147]:35349 "EHLO
+        fallback6.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbcJJNAV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 10 Oct 2016 09:00:21 -0400
+Received: from f351.i.mail.ru (f351.i.mail.ru [217.69.140.247])
+        by fallback6.mail.ru (mPOP.Fallback_MX) with ESMTP id C7DAA372C022
+        for <linux-leds@vger.kernel.org>; Mon, 10 Oct 2016 15:22:16 +0300 (MSK)
 In-Reply-To: <fdbc8f96-3a9b-b87e-467d-5279353811d9@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Alexander Shiyan <shc_work@mail.ru>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org
+To: =?UTF-8?B?SmFjZWsgQW5hc3pld3NraQ==?= <j.anaszewski@samsung.com>
+Cc: =?UTF-8?B?QnJ5YW4gV3U=?= <cooloney@gmail.com>, linux-leds@vger.kernel.org, =?UTF-8?B?QWxleGFuZGVyIEt1cno=?= <akurz@blala.de>, =?UTF-8?B?UmljaGFyZCBQdXJkaWU=?= <rpurdie@rpsys.net>
 
-Hi Jacek,
-
-On Mon, 10 Oct 2016, Jacek Anaszewski wrote:
-
-> Hi Alexander,
-> 
-> Thanks for the patch.
-> 
-> On 10/09/2016 03:37 PM, Alexander Kurz wrote:
-> > Fix the register access shift argument calculation introduced with
-> > commit a59ce6584d56 ("leds: leds-mc13783: Add MC34708 LED support")
-> > and re-enable access to the "keypad" led for MC13892 MFC devices.
-> > 
-> > Signed-off-by: Alexander Kurz <akurz@blala.de>
-> > ---
-> >  drivers/leds/leds-mc13783.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-> > index a2e4c17..2421cf10 100644
-> > --- a/drivers/leds/leds-mc13783.c
-> > +++ b/drivers/leds/leds-mc13783.c
-> > @@ -84,8 +84,9 @@ static int mc13xxx_led_set(struct led_classdev *led_cdev,
-> >  	case MC13892_LED_MD:
-> >  	case MC13892_LED_AD:
-> >  	case MC13892_LED_KP:
-> > -		reg = (led->id - MC13892_LED_MD) / 2;
-> > -		shift = 3 + (led->id - MC13892_LED_MD) * 12;
-> > +		off = led->id - MC13892_LED_MD;
-> > +		reg = off / 2;
-> > +		shift = 3 + (off - reg * 2) * 12;
-> >  		break;
-> >  	case MC13892_LED_R:
-> >  	case MC13892_LED_G:
-> > 
-> 
-> While trying to analyze these calculations I noticed a discrepancy
-> between DT documentation and the enum in the header file.
-> 
-> Documentation/devicetree/bindings/mfd/mc13xxx.txt:
-> 
-> MC13892 LED IDs:
->     0  : Main display
->     1  : AUX display
->     2  : Keypad
->     3  : Red
->     4  : Green
->     5  : Blue
-> 
-> include/linux/mfd/mc13xxx.h:
-> 
-> enum {
->         /* MC13783 LED IDs */
->         MC13783_LED_MD,
->         MC13783_LED_AD,
->         MC13783_LED_KP,
->         MC13783_LED_R1,
->         MC13783_LED_G1,
->         MC13783_LED_B1,
->         MC13783_LED_R2,
->         MC13783_LED_G2,
->         MC13783_LED_B2,
->         MC13783_LED_R3,
->         MC13783_LED_G3,
->         MC13783_LED_B3,
->         /* MC13892 LED IDs */
->         MC13892_LED_MD,
->         MC13892_LED_AD,
->         MC13892_LED_KP,
->         MC13892_LED_R,
->         MC13892_LED_G,
->         MC13892_LED_B,
->         /* MC34708 LED IDs */
->         MC34708_LED_R,
->         MC34708_LED_G,
-> }
-> 
-> Keypad LED enum identifier is 15, but documentation states
-> that it is 2. The code seems to expect the former:
-> 
-> off = led->id - MC13892_LED_MD; //15 - 13 = 2
-> reg = off / 2; // 2 / 2 = 1
-> shift = 3 + (off - reg * 2) * 12; // 3 + (2 - 1*2) = 3
-> 
-> It should write value << 3 to the register 52.
-> 
-> According to the documentation [0] LEDKP0, LEDKP1 and LEDKP2
-> are driven by bits 9,10 and 11 respectively. The calculations
-> don't seem to be in line with that. Could you point what I
-> am missing?
-> 
-> [0] http://www.nxp.com/files/analog/doc/data_sheet/MC13892.pdf
-
-The numbering mentioned in the DT documentation is used as offset
-for the device specific struct mc13xxx_led_devtype.led_min
->                if (of_property_read_u32(child, "reg", &tmp))
->                        continue;
->                pdata->led[i].id = leds->devtype->led_min + tmp;
-e.g. MC13892_LED_KP = MC13892_LED_MD + 2
-
-Hope this clarifies your question,
-regards, Alexander
+PtCf0L7QvdC10LTQtdC70YzQvdC40LosIDEwINC+0LrRgtGP0LHRgNGPIDIwMTYsIDE1OjE0ICsw
+MzowMCDQvtGCIEphY2VrIEFuYXN6ZXdza2kgPGouYW5hc3pld3NraUBzYW1zdW5nLmNvbT46Cj4K
+PkhpIEFsZXhhbmRlciwKPgo+VGhhbmtzIGZvciB0aGUgcGF0Y2guCj4KPk9uIDEwLzA5LzIwMTYg
+MDM6MzcgUE0sIEFsZXhhbmRlciBLdXJ6IHdyb3RlOgo+PiBGaXggdGhlIHJlZ2lzdGVyIGFjY2Vz
+cyBzaGlmdCBhcmd1bWVudCBjYWxjdWxhdGlvbiBpbnRyb2R1Y2VkIHdpdGgKPj4gY29tbWl0IGE1
+OWNlNjU4NGQ1NiAoImxlZHM6IGxlZHMtbWMxMzc4MzogQWRkIE1DMzQ3MDggTEVEIHN1cHBvcnQi
+KQo+PiBhbmQgcmUtZW5hYmxlIGFjY2VzcyB0byB0aGUgImtleXBhZCIgbGVkIGZvciBNQzEzODky
+IE1GQyBkZXZpY2VzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgS3VyeiA8IGFrdXJ6
+QGJsYWxhLmRlID4KPj4gLS0tCj4+ICBkcml2ZXJzL2xlZHMvbGVkcy1tYzEzNzgzLmMgfCA1ICsr
+Ky0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+
+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9sZWRzL2xlZHMtbWMxMzc4My5jIGIvZHJpdmVycy9s
+ZWRzL2xlZHMtbWMxMzc4My5jCj4+IGluZGV4IGEyZTRjMTcuLjI0MjFjZjEwIDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL2xlZHMvbGVkcy1tYzEzNzgzLmMKPj4gKysrIGIvZHJpdmVycy9sZWRzL2xl
+ZHMtbWMxMzc4My5jCj4+IEBAIC04NCw4ICs4NCw5IEBAIHN0YXRpYyBpbnQgbWMxM3h4eF9sZWRf
+c2V0KHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2LAo+PiAgY2FzZSBNQzEzODkyX0xFRF9N
+RDoKPj4gIGNhc2UgTUMxMzg5Ml9MRURfQUQ6Cj4+ICBjYXNlIE1DMTM4OTJfTEVEX0tQOgo+PiAt
+cmVnID0gKGxlZC0+aWQgLSBNQzEzODkyX0xFRF9NRCkgLyAyOwo+PiAtc2hpZnQgPSAzICsgKGxl
+ZC0+aWQgLSBNQzEzODkyX0xFRF9NRCkgKiAxMjsKPj4gK29mZiA9IGxlZC0+aWQgLSBNQzEzODky
+X0xFRF9NRDsKPj4gK3JlZyA9IG9mZiAvIDI7Cj4+ICtzaGlmdCA9IDMgKyAob2ZmIC0gcmVnICog
+MikgKiAxMjsKPj4gIGJyZWFrOwo+PiAgY2FzZSBNQzEzODkyX0xFRF9SOgo+PiAgY2FzZSBNQzEz
+ODkyX0xFRF9HOgo+Pgo+Cj5XaGlsZSB0cnlpbmcgdG8gYW5hbHl6ZSB0aGVzZSBjYWxjdWxhdGlv
+bnMgSSBub3RpY2VkIGEgZGlzY3JlcGFuY3kKPmJldHdlZW4gRFQgZG9jdW1lbnRhdGlvbiBhbmQg
+dGhlIGVudW0gaW4gdGhlIGhlYWRlciBmaWxlLgo+Cj5Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvbWZkL21jMTN4eHgudHh0Ogo+Cj5NQzEzODkyIExFRCBJRHM6Cj7CoMKgwqDCoMKg
+MCAgOiBNYWluIGRpc3BsYXkKPsKgwqDCoMKgwqAxICA6IEFVWCBkaXNwbGF5Cj7CoMKgwqDCoMKg
+MiAgOiBLZXlwYWQKPsKgwqDCoMKgwqAzICA6IFJlZAo+wqDCoMKgwqDCoDQgIDogR3JlZW4KPsKg
+wqDCoMKgwqA1ICA6IEJsdWUKPgo+aW5jbHVkZS9saW51eC9tZmQvbWMxM3h4eC5oOgo+Cj5lbnVt
+IHsKPsKgwqDCoMKgwqDCoMKgwqDCoC8qIE1DMTM3ODMgTEVEIElEcyAqLwo+wqDCoMKgwqDCoMKg
+wqDCoMKgTUMxMzc4M19MRURfTUQsCj7CoMKgwqDCoMKgwqDCoMKgwqBNQzEzNzgzX0xFRF9BRCwK
+PsKgwqDCoMKgwqDCoMKgwqDCoE1DMTM3ODNfTEVEX0tQLAo+wqDCoMKgwqDCoMKgwqDCoMKgTUMx
+Mzc4M19MRURfUjEsCj7CoMKgwqDCoMKgwqDCoMKgwqBNQzEzNzgzX0xFRF9HMSwKPsKgwqDCoMKg
+wqDCoMKgwqDCoE1DMTM3ODNfTEVEX0IxLAo+wqDCoMKgwqDCoMKgwqDCoMKgTUMxMzc4M19MRURf
+UjIsCj7CoMKgwqDCoMKgwqDCoMKgwqBNQzEzNzgzX0xFRF9HMiwKPsKgwqDCoMKgwqDCoMKgwqDC
+oE1DMTM3ODNfTEVEX0IyLAo+wqDCoMKgwqDCoMKgwqDCoMKgTUMxMzc4M19MRURfUjMsCj7CoMKg
+wqDCoMKgwqDCoMKgwqBNQzEzNzgzX0xFRF9HMywKPsKgwqDCoMKgwqDCoMKgwqDCoE1DMTM3ODNf
+TEVEX0IzLAo+wqDCoMKgwqDCoMKgwqDCoMKgLyogTUMxMzg5MiBMRUQgSURzICovCj7CoMKgwqDC
+oMKgwqDCoMKgwqBNQzEzODkyX0xFRF9NRCwKPsKgwqDCoMKgwqDCoMKgwqDCoE1DMTM4OTJfTEVE
+X0FELAo+wqDCoMKgwqDCoMKgwqDCoMKgTUMxMzg5Ml9MRURfS1AsCj7CoMKgwqDCoMKgwqDCoMKg
+wqBNQzEzODkyX0xFRF9SLAo+wqDCoMKgwqDCoMKgwqDCoMKgTUMxMzg5Ml9MRURfRywKPsKgwqDC
+oMKgwqDCoMKgwqDCoE1DMTM4OTJfTEVEX0IsCj7CoMKgwqDCoMKgwqDCoMKgwqAvKiBNQzM0NzA4
+IExFRCBJRHMgKi8KPsKgwqDCoMKgwqDCoMKgwqDCoE1DMzQ3MDhfTEVEX1IsCj7CoMKgwqDCoMKg
+wqDCoMKgwqBNQzM0NzA4X0xFRF9HLAo+fQo+Cj5LZXlwYWQgTEVEIGVudW0gaWRlbnRpZmllciBp
+cyAxNSwgYnV0IGRvY3VtZW50YXRpb24gc3RhdGVzCj50aGF0IGl0IGlzIDIuIFRoZSBjb2RlIHNl
+ZW1zIHRvIGV4cGVjdCB0aGUgZm9ybWVyOgoKVGhlIGRyaXZlciB1c2VzIGNhbGN1bGF0aW9uOgoK
+aWYgKG9mX3Byb3BlcnR5X3JlYWRfdTMyKGNoaWxkLCAicmVnIiwgJnRtcCkpCiAgY29udGludWU7
+CnBkYXRhLT5sZWRbaV0uaWQgPSBsZWRzLT5kZXZ0eXBlLT5sZWRfbWluICsgdG1wOwoKV2hlcmUg
+bGVkX21pbiA9IE1DMTM4OTJfTEVEX01EIGZvciBNQzEzODkyLgoKLS0tCgo=
