@@ -1,99 +1,116 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 08/10] leds: Add binding for Juniper's I2CS FPGA
-Date: Mon, 10 Oct 2016 11:41:45 +0200
-Message-ID: <36af086b-ffae-8f69-ee32-6a2956822bc6@samsung.com>
-References: <1475853669-22480-1-git-send-email-pantelis.antoniou@konsulko.com>
- <CGME20161007152351eucas1p1685ee4ca39b4b8845ae5076a023445d5@eucas1p1.samsung.com>
- <1475853669-22480-9-git-send-email-pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH] leds: leds-mc13783: Fix MC13892 keypad led access
+Date: Mon, 10 Oct 2016 14:14:04 +0200
+Message-ID: <fdbc8f96-3a9b-b87e-467d-5279353811d9@samsung.com>
+References: <CGME20161009134104eucas1p17d4028424741a2b6c758b268e50e6e12@eucas1p1.samsung.com>
+ <1476020267-17178-1-git-send-email-akurz@blala.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-reply-to: <1475853669-22480-9-git-send-email-pantelis.antoniou@konsulko.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jean Delvare <jdelvare@suse.com>, Peter Rosin <peda@axentia.se>, Avirup Banerjee <abanerjee@juniper.net>, Georgi Vlaev <gvlaev@juniper.net>, Guenter Roeck <linux@roeck-us.net>, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org, linux-hwmon@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:51313 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbcJJMOy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 10 Oct 2016 08:14:54 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OET005KVZBJKO00@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Mon, 10 Oct 2016 13:14:07 +0100 (BST)
+In-reply-to: <1476020267-17178-1-git-send-email-akurz@blala.de>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Alexander Kurz <akurz@blala.de>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Alexander Shiyan <shc_work@mail.ru>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org
 
-Hi Pantelis,
+Hi Alexander,
 
-On 10/07/2016 05:21 PM, Pantelis Antoniou wrote:
-> From: Georgi Vlaev <gvlaev@juniper.net>
+Thanks for the patch.
+
+On 10/09/2016 03:37 PM, Alexander Kurz wrote:
+> Fix the register access shift argument calculation introduced with
+> commit a59ce6584d56 ("leds: leds-mc13783: Add MC34708 LED support")
+> and re-enable access to the "keypad" led for MC13892 MFC devices.
 >
-> Document bindings for the I2CS FPGA leds.
->
-> Signed-off-by: Georgi Vlaev <gvlaev@juniper.net>
-> [Ported from Juniper kernel]
-> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
 > ---
->  .../devicetree/bindings/leds/leds-i2cs.txt         | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-i2cs.txt
+>  drivers/leds/leds-mc13783.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/leds/leds-i2cs.txt b/Documentation/devicetree/bindings/leds/leds-i2cs.txt
-> new file mode 100644
-> index 0000000..100e584
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-i2cs.txt
-> @@ -0,0 +1,34 @@
-> +Juniper I2CS LED driver.
-> +
-> +This is present in Juniper platforms that use a I2CS Slave FPGA.
-> +
-> +Required properties:
-> +  - compatible: must be "jnx,leds-i2cs"
-
-s/compatible:/compatible :/
-
-Also treat the description as a regular sentence, i.e. begin it
-with a capital letter and put a dot at the end.
-
-> +  - #address-cells : must be 1.
-> +  - #size-cells : must be 0.
-
-s/must/Must/
-
-> +Each led is represented as a sub-node of the jnx,leds-i2cs device.
-> +
-> +LED sub-node properties:
-> +- label : (optional) see Documentation/devicetree/bindings/leds/common.txt
-> +- reg : number of LED
-> +- linux,default-trigger : (optional)
-> +   see Documentation/devicetree/bindings/leds/common.txt
-
-Driver uses also "hw-blink" property. Please document it here, but
-add also a prefix:
-
-jnx,hw-blink
-
-Also "jnx" entry should be added to 
-Documentation/devicetree/bindings/vendor-prefixes.txt.
-
-> +Example:
-> +
-> +leds_fpc0: leds-jnx-i2cs {
-> +	compatible = "jnx,leds-i2cs";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	fpc0-fail {
-> +		reg = <1>;
-
-It would be good to provide also an example of "label"
-property to suggest LED class device name according to
-the LED class device naming convention.
-See Documentation/leds/leds-class.txt for details.
-
-> +		linux,default-trigger = "fpc0-fail";
-> +	};
-> +
-> +	fpc0-ok {
-> +		reg = <2>;
-> +		linux,default-trigger = "fpc0-ok";
-> +	};
-> +};
+> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+> index a2e4c17..2421cf10 100644
+> --- a/drivers/leds/leds-mc13783.c
+> +++ b/drivers/leds/leds-mc13783.c
+> @@ -84,8 +84,9 @@ static int mc13xxx_led_set(struct led_classdev *led_cdev,
+>  	case MC13892_LED_MD:
+>  	case MC13892_LED_AD:
+>  	case MC13892_LED_KP:
+> -		reg = (led->id - MC13892_LED_MD) / 2;
+> -		shift = 3 + (led->id - MC13892_LED_MD) * 12;
+> +		off = led->id - MC13892_LED_MD;
+> +		reg = off / 2;
+> +		shift = 3 + (off - reg * 2) * 12;
+>  		break;
+>  	case MC13892_LED_R:
+>  	case MC13892_LED_G:
 >
 
+While trying to analyze these calculations I noticed a discrepancy
+between DT documentation and the enum in the header file.
+
+Documentation/devicetree/bindings/mfd/mc13xxx.txt:
+
+MC13892 LED IDs:
+     0  : Main display
+     1  : AUX display
+     2  : Keypad
+     3  : Red
+     4  : Green
+     5  : Blue
+
+include/linux/mfd/mc13xxx.h:
+
+enum {
+         /* MC13783 LED IDs */
+         MC13783_LED_MD,
+         MC13783_LED_AD,
+         MC13783_LED_KP,
+         MC13783_LED_R1,
+         MC13783_LED_G1,
+         MC13783_LED_B1,
+         MC13783_LED_R2,
+         MC13783_LED_G2,
+         MC13783_LED_B2,
+         MC13783_LED_R3,
+         MC13783_LED_G3,
+         MC13783_LED_B3,
+         /* MC13892 LED IDs */
+         MC13892_LED_MD,
+         MC13892_LED_AD,
+         MC13892_LED_KP,
+         MC13892_LED_R,
+         MC13892_LED_G,
+         MC13892_LED_B,
+         /* MC34708 LED IDs */
+         MC34708_LED_R,
+         MC34708_LED_G,
+}
+
+Keypad LED enum identifier is 15, but documentation states
+that it is 2. The code seems to expect the former:
+
+off = led->id - MC13892_LED_MD; //15 - 13 = 2
+reg = off / 2; // 2 / 2 = 1
+shift = 3 + (off - reg * 2) * 12; // 3 + (2 - 1*2) = 3
+
+It should write value << 3 to the register 52.
+
+According to the documentation [0] LEDKP0, LEDKP1 and LEDKP2
+are driven by bits 9,10 and 11 respectively. The calculations
+don't seem to be in line with that. Could you point what I
+am missing?
+
+[0] http://www.nxp.com/files/analog/doc/data_sheet/MC13892.pdf
 
 -- 
 Best regards,
