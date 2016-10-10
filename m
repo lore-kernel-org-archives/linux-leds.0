@@ -1,68 +1,57 @@
-From: Alexander Kurz <akurz@blala.de>
-Subject: Re: [PATCH] leds: leds-mc13783: Fix MC13892 keypad led access
-Date: Sun, 9 Oct 2016 21:15:49 +0200 (CEST)
-Message-ID: <alpine.DEB.2.00.1610092107280.19108@blala.de>
-References: <1476020267-17178-1-git-send-email-akurz@blala.de> <1476034906.546043706@f136.i.mail.ru>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [RFC v3 3/3] phy,leds: add support for led triggers on phy link
+ state change
+Date: Mon, 10 Oct 2016 02:03:32 -0700
+Message-ID: <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
+References: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
+ <1475874897-29720-4-git-send-email-zach.brown@ni.com>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-598520180-644786759-1476040550=:19108"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from vs81.iboxed.net ([185.82.85.146]:44766 "EHLO vs81.iboxed.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752148AbcJITUT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 9 Oct 2016 15:20:19 -0400
-In-Reply-To: <1476034906.546043706@f136.i.mail.ru>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33146 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbcJJJDg (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 10 Oct 2016 05:03:36 -0400
+In-Reply-To: <1475874897-29720-4-git-send-email-zach.brown@ni.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>
+To: Zach Brown <zach.brown@ni.com>
+Cc: mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----598520180-644786759-1476040550=:19108
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Sun, 9 Oct 2016, Alexander Shiyan wrote:
-
-> >Воскресенье,  9 октября 2016, 16:37 +03:00 от Alexander Kurz <akurz@blala.de>:
-> >
-> >Fix the register access shift argument calculation introduced with
-> >commit a59ce6584d56 ("leds: leds-mc13783: Add MC34708 LED support")
-> >and re-enable access to the "keypad" led for MC13892 MFC devices.
-> >
-> >Signed-off-by: Alexander Kurz < akurz@blala.de >
-> >---
-> > drivers/leds/leds-mc13783.c | 5 +++--
-> > 1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> >diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-> >index a2e4c17..2421cf10 100644
-> >--- a/drivers/leds/leds-mc13783.c
-> >+++ b/drivers/leds/leds-mc13783.c
-> >@@ -84,8 +84,9 @@ static int mc13xxx_led_set(struct led_classdev *led_cdev,
-> > case MC13892_LED_MD:
-> > case MC13892_LED_AD:
-> > case MC13892_LED_KP:
-> >-reg = (led->id - MC13892_LED_MD) / 2;
-> >-shift = 3 + (led->id - MC13892_LED_MD) * 12;
-> >+off = led->id - MC13892_LED_MD;
-> >+reg = off / 2;
-> >+shift = 3 + (off - reg * 2) * 12;
-> > break;
-> > case MC13892_LED_R:
-> > case MC13892_LED_G:
+On 10/07/2016 02:14 PM, Zach Brown wrote:
+> From: Josh Cartwright <josh.cartwright@ni.com>
 > 
-> I am suspect the next caclulation is more readable:
+> Create an option CONFIG_LED_TRIGGER_PHY (default n), which will
+> create a set of led triggers for each instantiated PHY device.  There is
+> one LED trigger per link-speed, per-phy.
 > 
-> reg = (led->id - MC13892_LED_MD) / 2;
-> off = ((led->id - MC13892_LED_MD) % 2) * 12;
-> shift = 3 +  off;
-Probably yes, but it introduces different styles of calculating
-basically the same data in this function (see some lines above and
-below the patched lines / not visible in the patch context)
-I just kept it to a uniform style.
+> This allows for a user to configure their system to allow a set of LEDs
+> to represent link state changes on the phy.
 
----598520180-644786759-1476040550=:19108--
+Seems like we are past the RFC state now, so you might want to prefix
+your patches with [PATCH ..] now. Also, the typical prefix used for
+PHYLIB changes is net: phy: foo
+
+Other than that:
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+
+Andrew, are you happy with this implementation?
+
+[snip]
+
+> +
+> +#ifdef CONFIG_LED_TRIGGER_PHY
+> +
+> +#include <linux/leds.h>
+> +#include <linux/phy.h>
+> +
+> +#define PHY_LINK_LED_MAX_TRIGGERS	5
+> +#define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE	7
+> +#define PHY_MII_BUS_ID_SIZE	(20 - 3)
+
+This particular constant may be something worth moving to
+include/linux/phy.h eventually.
+-- 
+Florian
