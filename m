@@ -1,28 +1,42 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [RFC v3 3/3] phy,leds: add support for led triggers on phy link
- state change
-Date: Tue, 11 Oct 2016 22:56:46 +0200
-Message-ID: <20161011205646.GG14094@lunn.ch>
-References: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
- <1475874897-29720-4-git-send-email-zach.brown@ni.com>
- <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4 1/3] skge: Rename LED_OFF and LED_ON in marvel skge
+ driver to avoid conflicts with leds namespace
+Date: Tue, 11 Oct 2016 14:14:07 -0700
+Message-ID: <20161011141407.3b233e83@xeon-e3>
+References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
+ <1476217580-21229-2-git-send-email-zach.brown@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Zach Brown <zach.brown@ni.com>, mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1476217580-21229-2-git-send-email-zach.brown@ni.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Zach Brown <zach.brown@ni.com>
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, mlindner@marvell.com
 List-Id: linux-leds@vger.kernel.org
 
-> Andrew, are you happy with this implementation?
+On Tue, 11 Oct 2016 15:26:18 -0500
+Zach Brown <zach.brown@ni.com> wrote:
 
-Sorry, been to busy with other things to follow the discussion.
+> Adding led support for phy causes namespace conflicts for some
+> phy drivers.
+> 
+> The marvel skge driver declared an enum for representing the states of
+> Link LED Register. The enum contained constant LED_OFF which conflicted
+> with declartation found in linux/leds.h.
+> LED_OFF changed to LED_REG_OFF
+> Also changed LED_ON to LED_REG_ON to avoid possible future conflict and
+> for consistency.
+> 
+> Signed-off-by: Zach Brown <zach.brown@ni.com>
 
-What would be nice to see is a comment about how the link to LEDs in
-the PHYs is made. Often there is a couple of LEDs in the RJ45 socket
-driven by the PHY. They can show link, speed, packet Rx/Tx, etc. How
-are these triggers related to these LEDs?
-
-    Andrew
+Sure, that's fine but not sure why skge would be including linux/leds.h
+anyway.
