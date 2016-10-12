@@ -1,48 +1,38 @@
 From: Zach Brown <zach.brown@ni.com>
-Subject: Re: [PATCH v4 1/3] skge: Rename LED_OFF and LED_ON in marvel skge
- driver to avoid conflicts with leds namespace
-Date: Tue, 11 Oct 2016 16:29:39 -0500
-Message-ID: <20161011212938.GA24636@zach-desktop>
-References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
- <1476217580-21229-2-git-send-email-zach.brown@ni.com>
- <20161011141407.3b233e83@xeon-e3>
+Subject: Re: [RFC v3 3/3] phy,leds: add support for led triggers on phy link
+ state change
+Date: Wed, 12 Oct 2016 10:57:58 -0500
+Message-ID: <20161012155757.GA29538@zach-desktop>
+References: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
+ <1475874897-29720-4-git-send-email-zach.brown@ni.com>
+ <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161011141407.3b233e83@xeon-e3>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, mlindner@marvell.com
+In-Reply-To: <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Oct 11, 2016 at 02:14:07PM -0700, Stephen Hemminger wrote:
-> On Tue, 11 Oct 2016 15:26:18 -0500
-> Zach Brown <zach.brown@ni.com> wrote:
->
-> > Adding led support for phy causes namespace conflicts for some
-> > phy drivers.
-> >
-> > The marvel skge driver declared an enum for representing the states of
-> > Link LED Register. The enum contained constant LED_OFF which conflicted
-> > with declartation found in linux/leds.h.
-> > LED_OFF changed to LED_REG_OFF
-> > Also changed LED_ON to LED_REG_ON to avoid possible future conflict and
-> > for consistency.
-> >
-> > Signed-off-by: Zach Brown <zach.brown@ni.com>
->
-> Sure, that's fine but not sure why skge would be including linux/leds.h
-> anyway.
+On Mon, Oct 10, 2016 at 02:03:32AM -0700, Florian Fainelli wrote:
+> > +
+> > +#ifdef CONFIG_LED_TRIGGER_PHY
+> > +
+> > +#include <linux/leds.h>
+> > +#include <linux/phy.h>
+> > +
+> > +#define PHY_LINK_LED_MAX_TRIGGERS	5
+> > +#define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE	7
+> > +#define PHY_MII_BUS_ID_SIZE	(20 - 3)
+> 
+> This particular constant may be something worth moving to
+> include/linux/phy.h eventually.
+> -- 
+> Florian
 
-It's pretty convoluted. Here's the chain of includes.
-skge -> netdevice -> dsa -> phy -> phy_led_triggers -> leds
+MII_BUS_ID_SIZE is defined in include/linux/phy.h but it's defined after
+phy_led_triggers.h is included so phy_led_triggers.h doesn't have access.
+I could move the definition of MII_BUS_ID_SIZE above the include, but that
+seemed ugly. Do you have any suggestions?
