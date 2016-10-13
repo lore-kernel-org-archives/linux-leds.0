@@ -1,38 +1,54 @@
-From: Zach Brown <zach.brown@ni.com>
-Subject: Re: [RFC v3 3/3] phy,leds: add support for led triggers on phy link
- state change
-Date: Wed, 12 Oct 2016 10:57:58 -0500
-Message-ID: <20161012155757.GA29538@zach-desktop>
-References: <1475874897-29720-1-git-send-email-zach.brown@ni.com>
- <1475874897-29720-4-git-send-email-zach.brown@ni.com>
- <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH v4 3/3] net: phy: leds: add support for led triggers on
+ phy link state change
+Date: Thu, 13 Oct 2016 10:46:34 -0400 (EDT)
+Message-ID: <20161013.104634.2079376697690971907.davem@davemloft.net>
+References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
+        <1476217580-21229-4-git-send-email-zach.brown@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1eb3afdb-0236-65e3-64be-09cc6eeda533@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([184.105.139.130]:33572 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbcJMOqh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Oct 2016 10:46:37 -0400
+In-Reply-To: <1476217580-21229-4-git-send-email-zach.brown@ni.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: zach.brown@ni.com
+Cc: f.fainelli@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, andrew@lunn.ch
 
-On Mon, Oct 10, 2016 at 02:03:32AM -0700, Florian Fainelli wrote:
-> > +
-> > +#ifdef CONFIG_LED_TRIGGER_PHY
-> > +
-> > +#include <linux/leds.h>
-> > +#include <linux/phy.h>
-> > +
-> > +#define PHY_LINK_LED_MAX_TRIGGERS	5
-> > +#define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE	7
-> > +#define PHY_MII_BUS_ID_SIZE	(20 - 3)
+From: Zach Brown <zach.brown@ni.com>
+Date: Tue, 11 Oct 2016 15:26:20 -0500
+
+> From: Josh Cartwright <josh.cartwright@ni.com>
 > 
-> This particular constant may be something worth moving to
-> include/linux/phy.h eventually.
-> -- 
-> Florian
+> Create an option CONFIG_LED_TRIGGER_PHY (default n), which will
+> create a set of led triggers for each instantiated PHY device.  There is
+> one LED trigger per link-speed, per-phy.
+> 
+> This allows for a user to configure their system to allow a set of LEDs
+> to represent link state changes on the phy.
+> 
+> Signed-off-by: Josh Cartwright <josh.cartwright@ni.com>
+> Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
+> Signed-off-by: Zach Brown <zach.brown@ni.com>
+ ...
+> +	static const char * const name_suffix[] = {
+> +		"10Mbps",
+> +		"100Mbps",
+> +		"1Gbps",
+> +		"2.5Gbps",
+> +		"10Gbps",
 
-MII_BUS_ID_SIZE is defined in include/linux/phy.h but it's defined after
-phy_led_triggers.h is included so phy_led_triggers.h doesn't have access.
-I could move the definition of MII_BUS_ID_SIZE above the include, but that
-seemed ugly. Do you have any suggestions?
+This choice of both the array size and the speeds to support seems
+entirely arbitrary and is inappropriate for a generic driver of this
+kind.
+
+This seems to be hard coding this to support the list of speeds
+supported by whatever driver you want to use with this new LED
+facility, and sorry that's not how we build nice generic pieces of
+infrastructure.
+
+Thanks.
