@@ -1,54 +1,36 @@
 From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH v4 3/3] net: phy: leds: add support for led triggers on
  phy link state change
-Date: Thu, 13 Oct 2016 10:46:34 -0400 (EDT)
-Message-ID: <20161013.104634.2079376697690971907.davem@davemloft.net>
-References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
-        <1476217580-21229-4-git-send-email-zach.brown@ni.com>
+Date: Thu, 13 Oct 2016 11:59:56 -0400 (EDT)
+Message-ID: <20161013.115956.2197317299874950600.davem@davemloft.net>
+References: <1476217580-21229-4-git-send-email-zach.brown@ni.com>
+ <20161013.104634.2079376697690971907.davem@davemloft.net>
+ <20161013154246.GA17387@zach-desktop>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:33572 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbcJMOqh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Oct 2016 10:46:37 -0400
-In-Reply-To: <1476217580-21229-4-git-send-email-zach.brown@ni.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20161013154246.GA17387@zach-desktop>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: zach.brown@ni.com
-Cc: f.fainelli@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, andrew@lunn.ch
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, mlindner@marvell.com
+List-Id: linux-leds@vger.kernel.org
 
 From: Zach Brown <zach.brown@ni.com>
-Date: Tue, 11 Oct 2016 15:26:20 -0500
+Date: Thu, 13 Oct 2016 10:42:46 -0500
 
-> From: Josh Cartwright <josh.cartwright@ni.com>
-> 
-> Create an option CONFIG_LED_TRIGGER_PHY (default n), which will
-> create a set of led triggers for each instantiated PHY device.  There is
-> one LED trigger per link-speed, per-phy.
-> 
-> This allows for a user to configure their system to allow a set of LEDs
-> to represent link state changes on the phy.
-> 
-> Signed-off-by: Josh Cartwright <josh.cartwright@ni.com>
-> Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
-> Signed-off-by: Zach Brown <zach.brown@ni.com>
- ...
-> +	static const char * const name_suffix[] = {
-> +		"10Mbps",
-> +		"100Mbps",
-> +		"1Gbps",
-> +		"2.5Gbps",
-> +		"10Gbps",
+> Do you have suggestions on how to better handle the choice of the array size
+> and the speeds?
 
-This choice of both the array size and the speeds to support seems
-entirely arbitrary and is inappropriate for a generic driver of this
-kind.
+All of the speed values are simply the rate in bits per second.
 
-This seems to be hard coding this to support the list of speeds
-supported by whatever driver you want to use with this new LED
-facility, and sorry that's not how we build nice generic pieces of
-infrastructure.
-
-Thanks.
+There is therefore no reason you can't just print the raw value and
+scale it to whatever is appropriate ("MB/s", "GB/s", etc.)
