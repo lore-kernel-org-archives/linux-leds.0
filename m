@@ -1,68 +1,34 @@
-From: Zach Brown <zach.brown@ni.com>
+From: Andrew Lunn <andrew@lunn.ch>
 Subject: Re: [PATCH v4 3/3] net: phy: leds: add support for led triggers on
  phy link state change
-Date: Thu, 13 Oct 2016 10:42:46 -0500
-Message-ID: <20161013154246.GA17387@zach-desktop>
+Date: Thu, 13 Oct 2016 18:40:30 +0200
+Message-ID: <20161013164030.GB1286@lunn.ch>
 References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
  <1476217580-21229-4-git-send-email-zach.brown@ni.com>
  <20161013.104634.2079376697690971907.davem@davemloft.net>
+ <20161013154246.GA17387@zach-desktop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-dm3nam03on0100.outbound.protection.outlook.com ([104.47.41.100]:37472
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755880AbcJMQT3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 13 Oct 2016 12:19:29 -0400
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-In-Reply-To: <20161013.104634.2079376697690971907.davem@davemloft.net>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20161013154246.GA17387@zach-desktop>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Zach Brown <zach.brown@ni.com>
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, David Miller <davem@davemloft.net>, linux-leds@vger.kernel.org, mlindner@marvell.com
 List-Id: linux-leds@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: f.fainelli@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, andrew@lunn.ch
 
-On Thu, Oct 13, 2016 at 10:46:34AM -0400, David Miller wrote:
-> From: Zach Brown <zach.brown@ni.com>
-> Date: Tue, 11 Oct 2016 15:26:20 -0500
-> 
-> > From: Josh Cartwright <josh.cartwright@ni.com>
-> > 
-> > Create an option CONFIG_LED_TRIGGER_PHY (default n), which will
-> > create a set of led triggers for each instantiated PHY device.  There is
-> > one LED trigger per link-speed, per-phy.
-> > 
-> > This allows for a user to configure their system to allow a set of LEDs
-> > to represent link state changes on the phy.
-> > 
-> > Signed-off-by: Josh Cartwright <josh.cartwright@ni.com>
-> > Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
-> > Signed-off-by: Zach Brown <zach.brown@ni.com>
->  ...
-> > +	static const char * const name_suffix[] = {
-> > +		"10Mbps",
-> > +		"100Mbps",
-> > +		"1Gbps",
-> > +		"2.5Gbps",
-> > +		"10Gbps",
-> 
-> This choice of both the array size and the speeds to support seems
-> entirely arbitrary and is inappropriate for a generic driver of this
-> kind.
-> 
-> This seems to be hard coding this to support the list of speeds
-> supported by whatever driver you want to use with this new LED
-> facility, and sorry that's not how we build nice generic pieces of
-> infrastructure.
-> 
-> Thanks.
+> Do you have suggestions on how to better handle the choice of the array size
+> and the speeds?
 
-The speeds listed are the speeds found in the phy_speed_to_str function in phy.c.
-They are also the speeds found in the struct phy_setting settings array,
-which is commented with
-"/* A mapping of all SUPPORTED settings to speed/duplex */"
-We believed they represented the commonly supported speeds of phys.
+phydev->supported lists the speeds this phy supports.
 
-Do you have suggestions on how to better handle the choice of the array size
-and the speeds?
-
-Thanks.
+	Andrew
