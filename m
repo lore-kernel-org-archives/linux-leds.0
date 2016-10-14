@@ -1,34 +1,46 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 3/3] net: phy: leds: add support for led triggers on
- phy link state change
-Date: Thu, 13 Oct 2016 18:40:30 +0200
-Message-ID: <20161013164030.GB1286@lunn.ch>
-References: <1476217580-21229-1-git-send-email-zach.brown@ni.com>
- <1476217580-21229-4-git-send-email-zach.brown@ni.com>
- <20161013.104634.2079376697690971907.davem@davemloft.net>
- <20161013154246.GA17387@zach-desktop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20161013154246.GA17387@zach-desktop>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Zach Brown <zach.brown@ni.com>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, David Miller <davem@davemloft.net>, linux-leds@vger.kernel.org, mlindner@marvell.com
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] leds: lp3952: Export I2C module alias information for module autoload
+Date: Fri, 14 Oct 2016 09:23:34 -0300
+Message-ID: <1476447814-7996-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-> Do you have suggestions on how to better handle the choice of the array size
-> and the speeds?
+If the driver is built as a module, I2C module alias information is not
+filled so the module won't be autoloaded if the device isn't registered
+over ACPI. Export the I2C device table alias with MODULE_DEVICE_TABLE()
+macro so the information is exported in the module.
 
-phydev->supported lists the speeds this phy supports.
+Before this patch:
 
-	Andrew
+$ modinfo drivers/leds/leds-lp3952.ko | grep alias
+alias:          acpi*:TXNW3952:*
+
+After this patch:
+
+$ modinfo drivers/leds/leds-lp3952.ko | grep alias
+alias:          i2c:lp3952
+alias:          acpi*:TXNW3952:*
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+
+ drivers/leds/leds-lp3952.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+index a73c8ff08530..4847e89883a7 100644
+--- a/drivers/leds/leds-lp3952.c
++++ b/drivers/leds/leds-lp3952.c
+@@ -274,6 +274,7 @@ static const struct i2c_device_id lp3952_id[] = {
+ 	{LP3952_NAME, 0},
+ 	{}
+ };
++MODULE_DEVICE_TABLE(i2c, lp3952_id);
+ 
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id lp3952_acpi_match[] = {
+-- 
+2.7.4
