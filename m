@@ -1,72 +1,61 @@
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: Re: [PATCH 10/10] hwmon: i2cs-fan: Add hwmon dts binding documentation
-Date: Mon, 17 Oct 2016 22:12:58 +0300
-Message-ID: <E38D5F40-C626-4143-82C3-916ECFEE30C7@konsulko.com>
-References: <1475853669-22480-1-git-send-email-pantelis.antoniou@konsulko.com> <1475853669-22480-11-git-send-email-pantelis.antoniou@konsulko.com> <20161010202903.GA9122@rob-hp-laptop>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20161010202903.GA9122@rob-hp-laptop>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Jean Delvare <jdelvare@suse.com>, Peter Rosin <peda@axentia.se>, Avirup Banerjee <abanerjee@juniper.net>, Georgi Vlaev <gvlaev@juniper.net>, Guenter Roeck <linux@roeck-us.net>, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org, linux-hwmon@vger.kernel.org
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v5 4/4] net: phy: leds: add support for led triggers on
+ phy link state change
+Date: Tue, 18 Oct 2016 09:13:50 +0200
+Message-ID: <20161018071350.GG26778@lunn.ch>
+References: <1476719395-28273-1-git-send-email-zach.brown@ni.com>
+ <1476719395-28273-5-git-send-email-zach.brown@ni.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <1476719395-28273-5-git-send-email-zach.brown@ni.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Zach Brown <zach.brown@ni.com>
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org, mlindner@marvell.com
 List-Id: linux-leds@vger.kernel.org
 
+On Mon, Oct 17, 2016 at 10:49:55AM -0500, Zach Brown wrote:
+> Create an option CONFIG_LED_TRIGGER_PHY (default n), which will create a
+> set of led triggers for each instantiated PHY device. There is one LED
+> trigger per link-speed, per-phy.
+> The triggers are registered during phy_attach and unregistered during
+> phy_detach.
+> 
+> This allows for a user to configure their system to allow a set of LEDs
+> not controlled by the phy to represent link state changes on the phy.
+> LEDS controlled by the phy are unaffected.
+> 
+> For example, we have a board where some of the leds in the
+> RJ45 socket are controlled by the phy, but others are not. Using the
+> triggers provided by this patch the leds not controlled by the phy can
+> be configured to show the current speed of the ethernet connection. The
+> leds controlled by the phy are unaffected.
 
-> On Oct 10, 2016, at 23:29 , Rob Herring <robh@kernel.org> wrote:
->=20
-> On Fri, Oct 07, 2016 at 06:21:09PM +0300, Pantelis Antoniou wrote:
->> From: Georgi Vlaev <gvlaev@juniper.net>
->>=20
->> Adds the I2CS Fan Tray hwmon device tree node documentation.
->>=20
->> Signed-off-by: Georgi Vlaev <gvlaev@juniper.net>
->> [Ported from Juniper kernel]
->> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
->> ---
->> Documentation/devicetree/bindings/hwmon/i2cs-fan.txt | 19 =
-+++++++++++++++++++
->> 1 file changed, 19 insertions(+)
->> create mode 100644 =
-Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
->>=20
->> diff --git a/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt =
-b/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
->> new file mode 100644
->> index 0000000..4ef880c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hwmon/i2cs-fan.txt
->> @@ -0,0 +1,19 @@
->> +Hwmon driver for Juniper fan trays on I2CS Slave FPGA
->=20
-> This is a h/w description, not a driver.
->=20
->> +
->> +Required properties:
->> +
->> +- compatible: "i2cs-fan-hwmon"
->=20
-> I doubt any fan control h/w has "hwmon" in the name.
->=20
->> +
->> +Optional properties:
->> +
->> +- num-fans: fans per tray (default 14)
->> +
->> +- tach-factor: TACH count scaling factor (default 120)
->=20
-> vendor prefixes needed.
->=20
->> +
->> +Example:
->> +
->> +fan-hwmon {
->> +	compatible =3D "jnx,i2cs-fan-hwmon";
->> +	num-fans =3D <6>;
->> +	tach-factor =3D <33>;
->> +};
->> --=20
->> 1.9.1
+Is there a clear path how we generalise this, so it could also be used
+to control PHY LEDs?
 
-OK on all three.=
+The idea i had a while ago was that the PHY LEDS would also have a
+list of triggers which mapped to what the PHY controller could do. So
+to enable the PHY LED to show RxTx activity, you would enable the RxTx
+trigger on the PHY LED.
+
+This needs an extension to the PHY code, in that these triggers are
+specific to the LED, not general across all LEDs. But this is not too
+big an issue.
+
+We could end up that if a PHY LED can be used as a generic LED, your
+'manual' trigger could be used on it. But it could also support the
+PHY driven 'automatic' link status indication trigger. Do we want two
+triggers for the same or similar information?
+
+	 Andrew
