@@ -1,67 +1,155 @@
-From: Zach Brown <zach.brown@ni.com>
-Subject: Re: [PATCH v5 4/4] net: phy: leds: add support for led triggers on
- phy link state change
-Date: Tue, 18 Oct 2016 09:50:07 -0500
-Message-ID: <20161018145007.GA16835@zach-desktop>
-References: <1476719395-28273-1-git-send-email-zach.brown@ni.com>
- <1476719395-28273-5-git-send-email-zach.brown@ni.com>
- <20161018071350.GG26778@lunn.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Matt Ranostay <mranostay@gmail.com>
+Subject: [PATCH] leds: pca963x: add runtime pm support
+Date: Tue, 18 Oct 2016 08:17:17 -0700
+Message-ID: <1476803837-25171-1-git-send-email-matt@ranostay.consulting>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0130.outbound.protection.outlook.com ([104.47.37.130]:61366
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758512AbcJROuR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Oct 2016 10:50:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20161018071350.GG26778@lunn.ch>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35317 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761794AbcJRPRX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Oct 2016 11:17:23 -0400
+Received: by mail-pf0-f196.google.com with SMTP id s8so15390665pfj.2
+        for <linux-leds@vger.kernel.org>; Tue, 18 Oct 2016 08:17:23 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: f.fainelli@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, rpurdie@rpsys.net, j.anaszewski@samsung.com, linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Matt Ranostay <matt@ranostay.consulting>, Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-On Tue, Oct 18, 2016 at 09:13:50AM +0200, Andrew Lunn wrote:
-> On Mon, Oct 17, 2016 at 10:49:55AM -0500, Zach Brown wrote:
-> > Create an option CONFIG_LED_TRIGGER_PHY (default n), which will create a
-> > set of led triggers for each instantiated PHY device. There is one LED
-> > trigger per link-speed, per-phy.
-> > The triggers are registered during phy_attach and unregistered during
-> > phy_detach.
-> >
-> > This allows for a user to configure their system to allow a set of LEDs
-> > not controlled by the phy to represent link state changes on the phy.
-> > LEDS controlled by the phy are unaffected.
-> >
-> > For example, we have a board where some of the leds in the
-> > RJ45 socket are controlled by the phy, but others are not. Using the
-> > triggers provided by this patch the leds not controlled by the phy can
-> > be configured to show the current speed of the ethernet connection. The
-> > leds controlled by the phy are unaffected.
->
-> Is there a clear path how we generalise this, so it could also be used
-> to control PHY LEDs?
->
+Allow chip to enter low power state when no LEDs are being lit or in
+blink mode.
 
-No, this patch set is only concerned with generic LEDs not PHY LEDs.
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
+---
+ drivers/leds/leds-pca963x.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-> The idea i had a while ago was that the PHY LEDS would also have a
-> list of triggers which mapped to what the PHY controller could do. So
-> to enable the PHY LED to show RxTx activity, you would enable the RxTx
-> trigger on the PHY LED.
->
-> This needs an extension to the PHY code, in that these triggers are
-> specific to the LED, not general across all LEDs. But this is not too
-> big an issue.
->
-> We could end up that if a PHY LED can be used as a generic LED, your
-> 'manual' trigger could be used on it. But it could also support the
-> PHY driven 'automatic' link status indication trigger. Do we want two
-> triggers for the same or similar information?
->
-
-If generic LEDs can only use the 'manual' triggers then having two triggers
-for the same or similar information would be okay. The focus of this patch set
-was to allow generic LEDs to represent the current speed of the phy, which is
-very useful when the PHY LEDs don't for whatever reason i.e they don't exist or
-are busy representing another aspect.
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 407eba11e187..a6b954b31fcd 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -35,6 +35,7 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/leds-pca963x.h>
++#include <linux/pm_runtime.h>
+ 
+ /* LED select registers determine the source that drives LED outputs */
+ #define PCA963X_LED_OFF		0x0	/* LED driver off */
+@@ -108,6 +109,7 @@ struct pca963x_led {
+ 	struct pca963x *chip;
+ 	struct led_classdev led_cdev;
+ 	int led_num; /* 0 .. 15 potentially */
++	enum led_brightness brightness;
+ 	char name[32];
+ 	u8 gdc;
+ 	u8 gfrq;
+@@ -116,6 +118,8 @@ struct pca963x_led {
+ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 			       enum led_brightness brightness)
+ {
++	struct i2c_client *client = pca963x->chip->client;
++	enum led_brightness prev_brightness = pca963x->brightness;
+ 	u8 ledout_addr = pca963x->chip->chipdef->ledout_base
+ 		+ (pca963x->led_num / 4);
+ 	u8 ledout;
+@@ -123,8 +127,12 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 	u8 mask = 0x3 << shift;
+ 	int ret;
+ 
++	if (brightness == prev_brightness)
++		return 0;
++
+ 	mutex_lock(&pca963x->chip->mutex);
+ 	ledout = i2c_smbus_read_byte_data(pca963x->chip->client, ledout_addr);
++
+ 	switch (brightness) {
+ 	case LED_FULL:
+ 		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
+@@ -132,6 +140,9 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 			(ledout & ~mask) | (PCA963X_LED_ON << shift));
+ 		break;
+ 	case LED_OFF:
++		ret = pm_runtime_put(&client->dev);
++		if (ret < 0)
++			goto unlock;
+ 		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
+ 			ledout_addr, ledout & ~mask);
+ 		break;
+@@ -146,7 +157,15 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 			(ledout & ~mask) | (PCA963X_LED_PWM << shift));
+ 		break;
+ 	}
++
++	if (prev_brightness == LED_OFF) {
++		ret = pm_runtime_get_sync(&client->dev);
++		if (ret < 0)
++			goto unlock;
++	}
+ unlock:
++	pca963x->brightness = brightness;
++
+ 	mutex_unlock(&pca963x->chip->mutex);
+ 	return ret;
+ }
+@@ -350,6 +369,7 @@ static int pca963x_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	i2c_set_clientdata(client, pca963x_chip);
++	dev_set_drvdata(&client->dev, client);
+ 
+ 	mutex_init(&pca963x_chip->mutex);
+ 	pca963x_chip->chipdef = chip;
+@@ -402,6 +422,12 @@ static int pca963x_probe(struct i2c_client *client,
+ 			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
+ 	}
+ 
++	err = pm_runtime_set_active(&client->dev);
++	if (err)
++		goto exit;
++	pm_runtime_enable(&client->dev);
++	pm_runtime_idle(&client->dev);
++
+ 	return 0;
+ 
+ exit:
+@@ -416,16 +442,37 @@ static int pca963x_remove(struct i2c_client *client)
+ 	struct pca963x *pca963x = i2c_get_clientdata(client);
+ 	int i;
+ 
++	pm_runtime_disable(&client->dev);
++
+ 	for (i = 0; i < pca963x->chipdef->n_leds; i++)
+ 		led_classdev_unregister(&pca963x->leds[i].led_cdev);
+ 
+ 	return 0;
+ }
+ 
++static int pca963x_runtime_suspend(struct device *dev)
++{
++	struct i2c_client *client = dev_get_drvdata(dev);
++
++	return i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
++}
++
++static int pca963x_runtime_resume(struct device *dev)
++{
++	struct i2c_client *client = dev_get_drvdata(dev);
++
++	return i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
++}
++
++const static struct dev_pm_ops pca963x_pms = {
++	SET_RUNTIME_PM_OPS(pca963x_runtime_suspend, pca963x_runtime_resume, NULL)
++};
++
+ static struct i2c_driver pca963x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca963x",
+ 		.of_match_table = of_match_ptr(of_pca963x_match),
++		.pm	= &pca963x_pms,
+ 	},
+ 	.probe	= pca963x_probe,
+ 	.remove	= pca963x_remove,
+-- 
+2.7.4
