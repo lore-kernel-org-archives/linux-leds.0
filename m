@@ -1,141 +1,135 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 1/2] leds: core: Add led_notify_brightness_change helper function
-Date: Wed, 19 Oct 2016 15:33:54 +0200
-Message-ID: <20161019133355.6192-2-hdegoede@redhat.com>
+Subject: [PATCH 2/2] platform: x86: dell-*: Call led_notify_brightness_change on kbd brightness change
+Date: Wed, 19 Oct 2016 15:33:55 +0200
+Message-ID: <20161019133355.6192-3-hdegoede@redhat.com>
 References: <20161019133355.6192-1-hdegoede@redhat.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:42846 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755784AbcJSOLe (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:11:34 -0400
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <20161019133355.6192-1-hdegoede@redhat.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: platform-driver-x86-owner@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+List-Id: linux-leds@vger.kernel.org
 
-In some use-cases led hardware may autonomously change its brightness,
-userspace may want to be able to listen for this happening.
-
-The standard way to listen for sysfs attributes changing is for userspace
-to poll for POLL_PRI on the attribute. This commit adds a
-led_notify_brightness_change helper function allowing drivers to signal
-userspace this way.
-
-This is documented in Documentation/ABI/testing/sysfs-class-led,
-as documented there this is only intended to signal autonomous changes
-done by the hardware and it is not the intention to do a sysfs_notify
-for triggers and blinking.
-
-One use-case for this is the keyboard backlight used on some laptops,
-which is controlled by a hardwired (firmware handled) hotkey. In this
-case we want to signal userspace of the brightness changes triggered
-by the hotkey (which does not generate key events).
+Make dell-wmi call led_notify_brightness_change on the kbd_led led_classdev
+registered by dell-laptop when the kbd backlight brightness changes.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- Documentation/ABI/testing/sysfs-class-led |  5 +++++
- drivers/leds/led-class.c                  |  9 +++++++++
- drivers/leds/led-core.c                   |  6 ++++++
- include/linux/leds.h                      | 12 ++++++++++++
- 4 files changed, 32 insertions(+)
+ drivers/platform/x86/Kconfig       |  1 +
+ drivers/platform/x86/dell-laptop.c | 13 ++++++++++++-
+ drivers/platform/x86/dell-smbios.c |  4 ++++
+ drivers/platform/x86/dell-smbios.h |  2 ++
+ drivers/platform/x86/dell-wmi.c    |  6 ++++++
+ 5 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 86ace28..518b674 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -7,6 +7,11 @@ Description:
- 		have hardware brightness support so will just be turned on for
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
-+		The file supports poll() to detect changes, changes are only
-+		signalled when the hardware / firmware changes the brightness
-+		itself and the driver can detect this. Changes done by
-+		kernel triggers / software blinking and writing the brightness
-+		file are not signalled.
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 81b8dcc..9b6101c 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -124,6 +124,7 @@ config DELL_WMI
+ 	depends on INPUT
+ 	depends on ACPI_VIDEO || ACPI_VIDEO = n
+ 	depends on DELL_SMBIOS
++	select NEW_LEDS
+ 	select INPUT_SPARSEKMAP
+ 	---help---
+ 	  Say Y here if you want to support WMI-based hotkeys on Dell laptops.
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+index 2c2f02b..6cb55d7 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -1942,6 +1942,8 @@ static struct led_classdev kbd_led = {
  
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index aa84e5b..3427a65 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -203,6 +203,14 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 		dev_warn(parent, "Led %s renamed to %s due to name collision",
- 				led_cdev->name, dev_name(led_cdev->dev));
- 
-+	led_cdev->brightness_kn = sysfs_get_dirent(led_cdev->dev->kobj.sd,
-+						   "brightness");
-+	if (!led_cdev->brightness_kn) {
-+		dev_err(led_cdev->dev, "Error getting brightness kernfs_node\n");
-+		device_unregister(led_cdev->dev);
-+		return -ENODEV;
+ static int __init kbd_led_init(struct device *dev)
+ {
++	int ret;
++
+ 	kbd_init();
+ 	if (!kbd_led_present)
+ 		return -ENODEV;
+@@ -1953,7 +1955,15 @@ static int __init kbd_led_init(struct device *dev)
+ 		if (kbd_led.max_brightness)
+ 			kbd_led.max_brightness--;
+ 	}
+-	return led_classdev_register(dev, &kbd_led);
++	ret = led_classdev_register(dev, &kbd_led);
++	if (ret) {
++		kbd_led_present = false;
++		return ret;
 +	}
 +
- #ifdef CONFIG_LEDS_TRIGGERS
- 	init_rwsem(&led_cdev->trigger_lock);
- #endif
-@@ -254,6 +262,7 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
- 
- 	flush_work(&led_cdev->set_brightness_work);
- 
-+	sysfs_put(led_cdev->brightness_kn);
- 	device_unregister(led_cdev->dev);
- 
- 	down_write(&leds_list_lock);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 3bce448..ec085a6 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -308,6 +308,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
++	dell_kbd_backlight_led = &kbd_led;
++
++	return 0;
  }
- EXPORT_SYMBOL_GPL(led_update_brightness);
  
-+void led_notify_brightness_change(struct led_classdev *led_cdev)
-+{
-+	sysfs_notify_dirent(led_cdev->brightness_kn);
-+}
-+EXPORT_SYMBOL_GPL(led_notify_brightness_change);
-+
- /* Caller must ensure led_cdev->led_access held */
- void led_sysfs_disable(struct led_classdev *led_cdev)
+ static void brightness_set_exit(struct led_classdev *led_cdev,
+@@ -1966,6 +1976,7 @@ static void kbd_led_exit(void)
  {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ddfcb2d..203eb26 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -13,6 +13,7 @@
- #define __LINUX_LEDS_H_INCLUDED
- 
- #include <linux/device.h>
-+#include <linux/kernfs.h>
- #include <linux/list.h>
+ 	if (!kbd_led_present)
+ 		return;
++	dell_kbd_backlight_led = NULL;
+ 	kbd_led.brightness_set = brightness_set_exit;
+ 	led_classdev_unregister(&kbd_led);
+ }
+diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
+index d2412ab..7934953 100644
+--- a/drivers/platform/x86/dell-smbios.c
++++ b/drivers/platform/x86/dell-smbios.c
+@@ -21,6 +21,7 @@
  #include <linux/mutex.h>
- #include <linux/rwsem.h>
-@@ -94,6 +95,8 @@ struct led_classdev {
- 	struct work_struct	set_brightness_work;
- 	int			delayed_set_value;
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/leds.h>
+ #include "../../firmware/dcdbas.h"
+ #include "dell-smbios.h"
  
-+	struct kernfs_node	*brightness_kn;
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- 	/* Protects the trigger data below */
- 	struct rw_semaphore	 trigger_lock;
-@@ -193,6 +196,15 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
- extern int led_update_brightness(struct led_classdev *led_cdev);
+@@ -40,6 +41,9 @@ static int da_command_code;
+ static int da_num_tokens;
+ static struct calling_interface_token *da_tokens;
  
- /**
-+ * led_notify_brightness_change - Notify userspace of hw brightness changes
-+ * @led_cdev: the LED to do the notify on
-+ *
-+ * Let any users waiting for POLL_PRI on the led's brightness sysfs
-+ * atrribute know that the brightness has been changed.
-+ */
-+extern void led_notify_brightness_change(struct led_classdev *led_cdev);
++struct led_classdev *dell_kbd_backlight_led;
++EXPORT_SYMBOL_GPL(dell_kbd_backlight_led);
 +
-+/**
-  * led_sysfs_disable - disable LED sysfs interface
-  * @led_cdev: the LED to set
-  *
+ int dell_smbios_error(int value)
+ {
+ 	switch (value) {
+diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+index ec7d40a..ba7b90c 100644
+--- a/drivers/platform/x86/dell-smbios.h
++++ b/drivers/platform/x86/dell-smbios.h
+@@ -35,6 +35,8 @@ struct calling_interface_token {
+ 	};
+ };
+ 
++extern struct led_classdev *dell_kbd_backlight_led;
++
+ int dell_smbios_error(int value);
+ 
+ struct calling_interface_buffer *dell_smbios_get_buffer(void);
+diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+index da2fe18..de5ac59 100644
+--- a/drivers/platform/x86/dell-wmi.c
++++ b/drivers/platform/x86/dell-wmi.c
+@@ -36,6 +36,7 @@
+ #include <linux/acpi.h>
+ #include <linux/string.h>
+ #include <linux/dmi.h>
++#include <linux/leds.h>
+ #include <acpi/video.h>
+ #include "dell-smbios.h"
+ 
+@@ -319,6 +320,11 @@ static void dell_wmi_process_key(int type, int code)
+ 	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
+ 		return;
+ 
++	if (type == 0x0011 && dell_kbd_backlight_led &&
++			(code == 0x01e1 || code == 0x02ea ||
++			 code == 0x02eb || code == 0x02ec || code == 0x02f6))
++		led_notify_brightness_change(dell_kbd_backlight_led);
++
+ 	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
+ }
+ 
 -- 
 2.9.3
