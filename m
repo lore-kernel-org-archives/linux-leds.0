@@ -1,67 +1,61 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] cleanup LED documentation and make it match reality
-Date: Wed, 19 Oct 2016 10:46:05 +0200
-Message-ID: <9be41492-4bc8-3a8f-3947-2e3fe9d7aa61@samsung.com>
-References: <CGME20161003081122eucas1p1d125c5f55f171b1ca5e4e1d28a3ad4b1@eucas1p1.samsung.com>
- <20161003081049.GA12419@amd>
- <a9dcb6e9-a1bf-df4e-7030-8480392a7955@samsung.com> <20161003093841.GA9131@amd>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 1/2] leds: core: Add led_notify_brightness_change helper
+ function
+Date: Wed, 19 Oct 2016 18:07:47 +0200
+Message-ID: <e6f111e6-f921-4f96-3d21-89a16774880a@redhat.com>
+References: <20161019133355.6192-1-hdegoede@redhat.com>
+ <20161019133355.6192-2-hdegoede@redhat.com> <20161019135958.GE1689@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20161003093841.GA9131@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:17595 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S943656AbcJSQHw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 19 Oct 2016 12:07:52 -0400
+In-Reply-To: <20161019135958.GE1689@pali>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-On 10/03/2016 11:38 AM, Pavel Machek wrote:
-> Hi!
+Hi,
+
+On 19-10-16 15:59, Pali Rohár wrote:
+> On Wednesday 19 October 2016 15:33:54 Hans de Goede wrote:
+>> +		itself and the driver can detect this. Changes done by
+>> +		kernel triggers / software blinking and writing the brightness
+>> +		file are not signalled.
 >
->> Thanks for the patch.
->>
->> On 10/03/2016 10:10 AM, Pavel Machek wrote:
->>>
->>> sysfs-class-led fails to mention some important details. Also fix led
->>> vs LED and english.
->>>
->>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
->>>
->>> --- a/Documentation/ABI/testing/sysfs-class-led
->>> +++ b/Documentation/ABI/testing/sysfs-class-led
->>> @@ -4,16 +4,25 @@ KernelVersion:	2.6.17
->>> Contact:	Richard Purdie <rpurdie@rpsys.net>
->>> Description:
->>> 		Set the brightness of the LED. Most LEDs don't
->>> -		have hardware brightness support so will just be turned on for
->>> +		have hardware brightness support, so will just be turned on for
->>> 		non-zero brightness settings. The value is between 0 and
->>> 		/sys/class/leds/<led>/max_brightness.
->>>
->>> +		Writing 0 to this file clears active trigger.
->>> +
->>> +		Writing non-zero to this file while trigger is active changes the
->>> +		top brightness trigger is going to use.
->>
->> This is true only in case of timer trigger, as it uses blink_brightness
->> property from struct led_classdev to cache current brightness, when the
->> the LED is in the off cycle. This is part of software blink fallback
->> functionality.
->>
->> In case of heartbeat trigger max_brightness is always used for top level
->> brightness. We'd need to refactor the trigger a bit to allow for
->> different top brightness levels.
->
-> Ok, do you think you could update the documenation to match the
-> reality? It is quite important to know what is the intended behaviour
-> and what are the bugs.
+> Why? In case you have desktop application which show current brightness
+> level and you change manually it via echo something > /sys/ then that
+> application does not have any information about your change. And so it
+> show old value...
 
-Applied the patch (removed extra empty line) after improving heartbeat
-trigger [0] to support brightness levels other then max_brightness.
+Well it seems like a bad idea to me to notify on changes caused by
+triggers and blinking, even though those are visible under sysfs
+if polling the brightness attribute. At which point it seemed to make
+sense to only notify on changes done autonomously by the hardware,
+rather then from any software (running on the main CPU).
 
-[0] 
-https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=9a1d1e6f926a4d1f4a31a7a37abece9e44455b43
+As for specifically not notifying on write, the sysfs interface is root only,
+so usually there will be a single daemon controlling the brightness,
+and any users can go through that daemon and it can distribute change
+messages itself (and will do so for the POLL_PRI events).
 
--- 
-Best regards,
-Jacek Anaszewski
+Since the usual use case is a single writing process, which is also
+the same single process listening for POLL_PRI, it seems unnecessary
+to me to notify the process about the write it has just done.
+
+But if people think that we should consider multiple simultaneous
+users (which seems like a bad idea to me, because of coordination
+issues, but the API does allow it) and therefor should notify
+of the brightness change on a write, I'm fine with doing a new
+version implementing those semantics instead.
+
+Either way notifying on brightness changes caused by triggers /
+blinking seems like a bad idea to me.
+
+Regards,
+
+Hans
