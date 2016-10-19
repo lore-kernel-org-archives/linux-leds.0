@@ -1,46 +1,67 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 0/2] Add led_notify_brightness_change led-core function and use in dell-wmi driver
-Date: Wed, 19 Oct 2016 15:33:53 +0200
-Message-ID: <20161019133355.6192-1-hdegoede@redhat.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:33622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S942341AbcJSOta (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:49:30 -0400
-Sender: linux-leds-owner@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] cleanup LED documentation and make it match reality
+Date: Wed, 19 Oct 2016 10:46:05 +0200
+Message-ID: <9be41492-4bc8-3a8f-3947-2e3fe9d7aa61@samsung.com>
+References: <CGME20161003081122eucas1p1d125c5f55f171b1ca5e4e1d28a3ad4b1@eucas1p1.samsung.com>
+ <20161003081049.GA12419@amd>
+ <a9dcb6e9-a1bf-df4e-7030-8480392a7955@samsung.com> <20161003093841.GA9131@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20161003093841.GA9131@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
 List-Id: linux-leds@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi All,
+On 10/03/2016 11:38 AM, Pavel Machek wrote:
+> Hi!
+>
+>> Thanks for the patch.
+>>
+>> On 10/03/2016 10:10 AM, Pavel Machek wrote:
+>>>
+>>> sysfs-class-led fails to mention some important details. Also fix led
+>>> vs LED and english.
+>>>
+>>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+>>>
+>>> --- a/Documentation/ABI/testing/sysfs-class-led
+>>> +++ b/Documentation/ABI/testing/sysfs-class-led
+>>> @@ -4,16 +4,25 @@ KernelVersion:	2.6.17
+>>> Contact:	Richard Purdie <rpurdie@rpsys.net>
+>>> Description:
+>>> 		Set the brightness of the LED. Most LEDs don't
+>>> -		have hardware brightness support so will just be turned on for
+>>> +		have hardware brightness support, so will just be turned on for
+>>> 		non-zero brightness settings. The value is between 0 and
+>>> 		/sys/class/leds/<led>/max_brightness.
+>>>
+>>> +		Writing 0 to this file clears active trigger.
+>>> +
+>>> +		Writing non-zero to this file while trigger is active changes the
+>>> +		top brightness trigger is going to use.
+>>
+>> This is true only in case of timer trigger, as it uses blink_brightness
+>> property from struct led_classdev to cache current brightness, when the
+>> the LED is in the off cycle. This is part of software blink fallback
+>> functionality.
+>>
+>> In case of heartbeat trigger max_brightness is always used for top level
+>> brightness. We'd need to refactor the trigger a bit to allow for
+>> different top brightness levels.
+>
+> Ok, do you think you could update the documenation to match the
+> reality? It is quite important to know what is the intended behaviour
+> and what are the bugs.
 
-I was annoyed by the kbd-backlight on my Dell XPS 9550 not working well
-together with the GNOME3 ui for kbd-backlight control.
+Applied the patch (removed extra empty line) after improving heartbeat
+trigger [0] to support brightness levels other then max_brightness.
 
-Part of the problem here is that the hotkey on the laptop's keyboard to
-control the kbd backlight is fully handled in firmware. So dell-wmi does
-not send any key-presses for it. This is the right thing todo since
-sending such key-presses will result in userspace adjusting the backlight,
-while this has already been done by the firmware.
+[0] 
+https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=9a1d1e6f926a4d1f4a31a7a37abece9e44455b43
 
-OTOH userspace should really still get some sort of event when this happens,
-just like e.g. on some systems with hardwired volume-up/down buttons the
-alsa mixer interface will send events to notify userspace about the changed
-volume.
-
-Checking other sysfs drivers, there is a standard way to notify userspace
-about changes to a sysfs attributes underlying value. This patch-set adds
-a led_notify_brightness_change led-core function using this standard
-mechanism and makes the dell-wmi driver call led_notify_brightness_change
-on the kbd_backlight led_classdev when the firmware has changed the
-brightness. Together with some userspace changes / fixes this leads to
-a much nicer / more integrated experience wrt kbd backlight control.
-
-Currently this patch-set introduces only 1 user (dell-wmi) of the new
-led_notify_brightness_change function, but I plan to also fix the same
-issue on thinkpads (soon), and also one some HP models (when I can borrow
-one, hopefully also soon).
-
-Regards,
-
-Hans
+-- 
+Best regards,
+Jacek Anaszewski
