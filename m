@@ -1,113 +1,83 @@
-From: Matt Ranostay <mranostay@gmail.com>
-Subject: Re: [PATCH v2] leds: pca963x: enable low-power state
-Date: Wed, 19 Oct 2016 23:15:32 -0700
-Message-ID: <90AFFEE8-1022-4A0E-B88C-836DB225C468@gmail.com>
-References: <CGME20161020000405eucas1p1db947d4d5abdb1d0cd8fe65b1bfb69af@eucas1p1.samsung.com> <1476921828-4184-1-git-send-email-matt@ranostay.consulting> <b0662ce1-d6ba-19d3-2f8b-49b4dacc3d9b@samsung.com>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 1/2] leds: core: Add led_notify_brightness_change helper
+ function
+Date: Thu, 20 Oct 2016 08:42:53 +0200
+Message-ID: <6edc21a8-fd9d-f3c4-77f2-aaa17ed5683a@samsung.com>
+References: <20161019133355.6192-1-hdegoede@redhat.com>
+ <20161019133355.6192-2-hdegoede@redhat.com> <20161019135958.GE1689@pali>
+ <CGME20161019160756eucas1p16549bdf4b7db9a91126752e81682ce67@eucas1p1.samsung.com>
+ <e6f111e6-f921-4f96-3d21-89a16774880a@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:32940 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753195AbcJTGPf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 20 Oct 2016 02:15:35 -0400
-Received: by mail-pf0-f193.google.com with SMTP id i85so4565605pfa.0
-        for <linux-leds@vger.kernel.org>; Wed, 19 Oct 2016 23:15:35 -0700 (PDT)
-In-Reply-To: <b0662ce1-d6ba-19d3-2f8b-49b4dacc3d9b@samsung.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17635 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753309AbcJTGnA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 20 Oct 2016 02:43:00 -0400
+In-reply-to: <e6f111e6-f921-4f96-3d21-89a16774880a@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Matt Ranostay <matt@ranostay.consulting>, Tony Lindgren <tony@atomide.com>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
+Hi Hans,
 
+How about exploiting recently added userspace driver for the LED
+subsystem ((drivers/leds/uleds.c, available in linux-next) instead?
 
-> On Oct 19, 2016, at 23:08, Jacek Anaszewski <j.anaszewski@samsung.com> wro=
-te:
->=20
-> Hi Matt,
->=20
-> Thanks for the update.
-> Let me cc also authors of the driver.
->=20
->> On 10/20/2016 02:03 AM, Matt Ranostay wrote:
->> Allow chip to enter low power state when no LEDs are being lit or in
->> blink mode.
->>=20
->> Cc: Tony Lindgren <tony@atomide.com>
->> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
->> ---
->> Changes from v1:
->> * remove runtime pm
->> * count leds that are off, if all then enter low-power state
->>=20
->> drivers/leds/leds-pca963x.c | 24 +++++++++++++++++++++---
->> 1 file changed, 21 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
->> index 407eba11e187..797dffc42c59 100644
->> --- a/drivers/leds/leds-pca963x.c
->> +++ b/drivers/leds/leds-pca963x.c
->> @@ -179,14 +179,32 @@ static void pca963x_blink(struct pca963x_led *pca96=
-3x)
->>    mutex_unlock(&pca963x->chip->mutex);
->> }
->>=20
->> +static int pca963x_power_state(struct pca963x_led *pca963x)
->> +{
->> +    int i, leds_on =3D 0;
->> +
->> +    for (i =3D 0; i < pca963x->chip->chipdef->n_leds; i++) {
->> +        if (pca963x->chip->leds[i].led_cdev.brightness > 0)
->> +            leds_on++;
->> +    }
->=20
-> You could avoid executing this loop on every brightness setting,
-> if you added a counter and incremented/decremented it when turning
-> a LED on/off respectively. Then you could write PCA963X_MODE1 on
-> counter transitions from 0 to 1 and from 1 to 0.
+If the LED class device to be observed implemented its internal trigger
+for generating kernel events upon device brightness change, then the
+userspace could create virtual LED class device, register on the
+trigger and poll the obtained file descriptor.
 
-Thought of that but seems so low bandwidth it wouldn't matter. But have no i=
-ssue adding a counter if required of course in v3
->=20
->> +
->> +    return i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE=
-1,
->> +                     leds_on ? 0 : BIT(4));
->> +}
->> +
->> static int pca963x_led_set(struct led_classdev *led_cdev,
->>    enum led_brightness value)
->> {
->>    struct pca963x_led *pca963x;
->> +    int ret;
->>=20
->>    pca963x =3D container_of(led_cdev, struct pca963x_led, led_cdev);
->>=20
->> -    return pca963x_brightness(pca963x, value);
->> +    ret =3D pca963x_brightness(pca963x, value);
->> +    if (ret < 0)
->> +        return ret;
->> +
->> +    return pca963x_power_state(pca963x);
->> }
->>=20
->> static int pca963x_blink_set(struct led_classdev *led_cdev,
->> @@ -391,8 +409,8 @@ static int pca963x_probe(struct i2c_client *client,
->>            goto exit;
->>    }
->>=20
->> -    /* Disable LED all-call address and set normal mode */
->> -    i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
->> +    /* Disable LED all-call address, and power down initially */
->> +    i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
->>=20
->>    if (pdata) {
->>        /* Configure output: open-drain or totem pole (push-pull) */
->>=20
->=20
->=20
-> --=20
-> Best regards,
-> Jacek Anaszewski
+See tools/leds/uledmon.c.
+
+Best regards,
+Jacek Anaszewski
+
+On 10/19/2016 06:07 PM, Hans de Goede wrote:
+> Hi,
+>
+> On 19-10-16 15:59, Pali Rohár wrote:
+>> On Wednesday 19 October 2016 15:33:54 Hans de Goede wrote:
+>>> +        itself and the driver can detect this. Changes done by
+>>> +        kernel triggers / software blinking and writing the brightness
+>>> +        file are not signalled.
+>>
+>> Why? In case you have desktop application which show current brightness
+>> level and you change manually it via echo something > /sys/ then that
+>> application does not have any information about your change. And so it
+>> show old value...
+>
+> Well it seems like a bad idea to me to notify on changes caused by
+> triggers and blinking, even though those are visible under sysfs
+> if polling the brightness attribute. At which point it seemed to make
+> sense to only notify on changes done autonomously by the hardware,
+> rather then from any software (running on the main CPU).
+>
+> As for specifically not notifying on write, the sysfs interface is root
+> only,
+> so usually there will be a single daemon controlling the brightness,
+> and any users can go through that daemon and it can distribute change
+> messages itself (and will do so for the POLL_PRI events).
+>
+> Since the usual use case is a single writing process, which is also
+> the same single process listening for POLL_PRI, it seems unnecessary
+> to me to notify the process about the write it has just done.
+>
+> But if people think that we should consider multiple simultaneous
+> users (which seems like a bad idea to me, because of coordination
+> issues, but the API does allow it) and therefor should notify
+> of the brightness change on a write, I'm fine with doing a new
+> version implementing those semantics instead.
+>
+> Either way notifying on brightness changes caused by triggers /
+> blinking seems like a bad idea to me.
+>
+> Regards,
+>
+> Hans
+>
+>
+>
