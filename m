@@ -1,68 +1,67 @@
-From: Julia Cartwright <julia@ni.com>
-Subject: Re: [PATCH] leds: Add user LED driver for NIC78bx device
-Date: Fri, 21 Oct 2016 16:33:47 -0500
-Message-ID: <20161021213347.GA15895@jcartwri.amer.corp.natinst.com>
-References: <CGME20161021063441eucas1p221cdc9bd704f03ad367df8cf59fa35e6@eucas1p2.samsung.com>
- <1477031633-70909-1-git-send-email-hui.chun.ong@ni.com>
- <335a9cd9-2af7-2d7c-12ab-1000dddbd0d6@samsung.com>
+From: <office@franztextilmanufaktur.com>
+Subject: (unknown)
+Date: Sun, 23 Oct 2016 00:53:46 -0000
+Message-ID: <147718402661.1195.7330094711439656428@charter.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: application/zip; name="EMAIL_336414432_linux-leds.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from skprod3.natinst.com ([130.164.80.24]:37630 "EHLO ni.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933445AbcJUVfE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 21 Oct 2016 17:35:04 -0400
-In-Reply-To: <335a9cd9-2af7-2d7c-12ab-1000dddbd0d6@samsung.com>
-Content-Disposition: inline
+Received: from 71-14-28-163.static.dctr.al.charter.com ([71.14.28.163]:44300
+        "HELO charter.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S935093AbcJWAxu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 22 Oct 2016 20:53:50 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Hui Chun Ong <hui.chun.ong@ni.com>, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jonathan.hearn@ni.com, Brad Mouring <brad.mouring@ni.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-leds@vger.kernel.org
 
-On Fri, Oct 21, 2016 at 02:56:15PM +0200, Jacek Anaszewski wrote:
-> Hi Hui,
-> 
-> Thanks for the patch. I have few comments in the code below.
-> 
-> On 10/21/2016 08:33 AM, Hui Chun Ong wrote:
-> > Add the driver to support User LEDs on PXI Embedded Controller.
-> > 
-> > Signed-off-by: Hui Chun Ong <hui.chun.ong@ni.com>
-> > Signed-off-by: Brad Mouring <brad.mouring@ni.com>
-[..]
-> 
-> > +
-> > +struct ni78bx_led {
-> > +	u8 bit;
-> > +	u8 mask;
-> > +	struct led_classdev cdev;
-> > +};
-> > +
-> > +static inline struct ni78bx_led *to_ni78bx_led(struct led_classdev *cdev)
-> > +{
-> > +	return container_of(cdev, struct ni78bx_led, cdev);
-> > +}
-> > +
-> > +static void ni78bx_brightness_set(struct led_classdev *cdev,
-> > +				  enum led_brightness brightness)
-> > +{
-> > +	struct ni78bx_led *nled = to_ni78bx_led(cdev);
-> > +	u8 value;
-> > +
-> > +	mutex_lock(&led_lock);
-> 
-> You can use spin_lock_irqsave() instead, since we are not going to sleep
-> while accessing memory mapped registers.
-
-Could you explain why spin_lock_irqsave() is appropriate here?  This
-device doesn't have an interrupt to be synchronized with.  I could
-understand spin_lock()/spin_unlock(), maybe, but why disable interrupts?
-
-Is what you're saying that the set/get brightness calls can be re-entered
-by LED consumers in hardirq context?
-
-The systems this driver is deployed to is much more sensitive to RT
-execution latency than anything else, which is why I take pause to
-unnecessary interrupt mask twiddling/preemption disabling :).
-
-   Julia
+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
+AQBYAAAATgoAAAAA
