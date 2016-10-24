@@ -1,47 +1,122 @@
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v2 3/4] platform: x86: dell-*: Call
- led_notify_brightness_change on kbd brightness change
-Date: Mon, 24 Oct 2016 15:34:59 +0200
-Message-ID: <20161024133459.GD12154@pali>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2 2/4] platform: x86: dell-smbios: Add a generic
+ dell-smbios notifier chain
+Date: Mon, 24 Oct 2016 15:37:31 +0200
+Message-ID: <4cdb7bb1-2b16-e009-3309-433b1a306d54@redhat.com>
 References: <20161023194652.24335-1-hdegoede@redhat.com>
- <20161023194652.24335-3-hdegoede@redhat.com>
+ <20161023194652.24335-2-hdegoede@redhat.com> <20161024133105.GC12154@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161023194652.24335-3-hdegoede@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:39088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934306AbcJXNhg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 24 Oct 2016 09:37:36 -0400
+In-Reply-To: <20161024133105.GC12154@pali>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-On Sunday 23 October 2016 21:46:51 Hans de Goede wrote:
-> diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-> index da2fe18..f86e774 100644
-> --- a/drivers/platform/x86/dell-wmi.c
-> +++ b/drivers/platform/x86/dell-wmi.c
-> @@ -319,6 +319,11 @@ static void dell_wmi_process_key(int type, int code)
->  	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
->  		return;
->  
-> +	if (type == 0x0011 && (code == 0x01e1 || code == 0x02ea ||
-> +			 code == 0x02eb || code == 0x02ec || code == 0x02f6))
-> +		dell_smbios_call_notifier(
-> +			dell_smbios_kbd_backlight_brightness_changed, NULL);
-> +
->  	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
->  }
->  
+Hi,
 
-This part of patch is ugly. Some random numbers are checked and then
-notifier is called. We already have big table with explanation of those
-events... It is not possible to extend it with some flag or somehow
-other that value should be called via notifier?
+On 24-10-16 15:31, Pali Rohár wrote:
+> On Sunday 23 October 2016 21:46:50 Hans de Goede wrote:
+>> There are several cases where events handled in one of the dell-* drivers
+>> need to be propagated to another dell-* driver.
+>>
+>> This commits add 3 generic functions:
+>> dell_smbios_register_notifier()
+>> dell_smbios_unregister_notifier()
+>> dell_smbios_call_notifier()
+>>
+>> It currently only defines 1 action:
+>> dell_smbios_kbd_backlight_brightness_changed
+>>
+>> Which is intended to propagate kbd_backlight_brightness_changed wmi
+>> events from dell-wmi to dell-laptop (which contains the actual kbd
+>> backlight driver).
+>>
+>> This is only somewhat dell smbios related, both dell-wmi and dell-laptop
+>> use smbios functions and I do not want to put the notifier head in
+>> either driver, as that will make the 2 drivers depend on each other.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v2:
+>> -This is a new patch in v2 of this patch-set
+>> ---
+>>  drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
+>>  drivers/platform/x86/dell-smbios.h | 11 +++++++++++
+>>  2 files changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
+>> index d2412ab..8b96bdf 100644
+>> --- a/drivers/platform/x86/dell-smbios.c
+>> +++ b/drivers/platform/x86/dell-smbios.c
+>> @@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
+>>  }
+>>  EXPORT_SYMBOL_GPL(dell_smbios_find_token);
+>>
+>> +static ATOMIC_NOTIFIER_HEAD(dell_smbios_chain_head);
+>> +
+>> +int dell_smbios_register_notifier(struct notifier_block *nb)
+>> +{
+>> +	return atomic_notifier_chain_register(&dell_smbios_chain_head, nb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(dell_smbios_register_notifier);
+>> +
+>> +int dell_smbios_unregister_notifier(struct notifier_block *nb)
+>> +{
+>> +	return atomic_notifier_chain_unregister(&dell_smbios_chain_head, nb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(dell_smbios_unregister_notifier);
+>> +
+>> +void dell_smbios_call_notifier(unsigned long action, void *data)
+>> +{
+>> +	atomic_notifier_call_chain(&dell_smbios_chain_head, action, data);
+>> +}
+>> +EXPORT_SYMBOL_GPL(dell_smbios_call_notifier);
+>> +
+>>  static void __init parse_da_table(const struct dmi_header *dm)
+>>  {
+>>  	/* Final token is a terminator, so we don't want to copy it */
+>> diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+>> index ec7d40a..e91f13f 100644
+>> --- a/drivers/platform/x86/dell-smbios.h
+>> +++ b/drivers/platform/x86/dell-smbios.h
+>> @@ -16,6 +16,8 @@
+>>  #ifndef _DELL_SMBIOS_H_
+>>  #define _DELL_SMBIOS_H_
+>>
+>> +struct notifier_block;
+>> +
+>>  /* This structure will be modified by the firmware when we enter
+>>   * system management mode, hence the volatiles */
+>>
+>> @@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
+>>  void dell_smbios_send_request(int class, int select);
+>>
+>>  struct calling_interface_token *dell_smbios_find_token(int tokenid);
+>> +
+>> +enum dell_smbios_notifier_actions {
+>> +	dell_smbios_kbd_backlight_brightness_changed,
+>> +};
+>> +
+>> +int dell_smbios_register_notifier(struct notifier_block *nb);
+>> +int dell_smbios_unregister_notifier(struct notifier_block *nb);
+>> +void dell_smbios_call_notifier(unsigned long action, void *data);
+>> +
+>>  #endif
+>
+> That is better but technically speaking those notifiers do not have
+> nothing common with dell-smbios :-(
 
-Btw, personally I would use uppercase DELL_SMBIOS_KBD_... name from that
-enum, but I do not know what is correct coding style here for kernel.
+Well WMI events get enabled via a SMBIOS call, and dell-laptop uses
+SMBIOS exclusively, so it seems to fit. Basically this is a case of
+we have to put this somewhere and dell-smbios is the best fit IMHO.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Regards,
+
+Hans
