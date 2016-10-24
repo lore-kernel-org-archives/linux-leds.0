@@ -1,88 +1,119 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 2/2] led: core: Fix blink_brightness setting race
-Date: Sun, 23 Oct 2016 21:47:26 +0200
-Message-ID: <20161023194726.24388-2-hdegoede@redhat.com>
-References: <20161023194726.24388-1-hdegoede@redhat.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH v2 2/4] platform: x86: dell-smbios: Add a generic
+ dell-smbios notifier chain
+Date: Mon, 24 Oct 2016 15:31:05 +0200
+Message-ID: <20161024133105.GC12154@pali>
+References: <20161023194652.24335-1-hdegoede@redhat.com>
+ <20161023194652.24335-2-hdegoede@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753493AbcJWTrc (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 23 Oct 2016 15:47:32 -0400
-In-Reply-To: <20161023194726.24388-1-hdegoede@redhat.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33335 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936517AbcJXNbI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 Oct 2016 09:31:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20161023194652.24335-2-hdegoede@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-All 3 of led_timer_func, led_set_brightness and led_set_software_blink
-set blink_brightness. If led_timer_func or led_set_software_blink race
-with led_set_brightness they may end up overwriting the new
-blink_brightness. The new atomic work_flags does not protect against
-this as it just protects the flags and not blink_brightness.
+On Sunday 23 October 2016 21:46:50 Hans de Goede wrote:
+> There are several cases where events handled in one of the dell-* drivers
+> need to be propagated to another dell-* driver.
+> 
+> This commits add 3 generic functions:
+> dell_smbios_register_notifier()
+> dell_smbios_unregister_notifier()
+> dell_smbios_call_notifier()
+> 
+> It currently only defines 1 action:
+> dell_smbios_kbd_backlight_brightness_changed
+> 
+> Which is intended to propagate kbd_backlight_brightness_changed wmi
+> events from dell-wmi to dell-laptop (which contains the actual kbd
+> backlight driver).
+> 
+> This is only somewhat dell smbios related, both dell-wmi and dell-laptop
+> use smbios functions and I do not want to put the notifier head in
+> either driver, as that will make the 2 drivers depend on each other.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> -This is a new patch in v2 of this patch-set
+> ---
+>  drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
+>  drivers/platform/x86/dell-smbios.h | 11 +++++++++++
+>  2 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
+> index d2412ab..8b96bdf 100644
+> --- a/drivers/platform/x86/dell-smbios.c
+> +++ b/drivers/platform/x86/dell-smbios.c
+> @@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
+>  }
+>  EXPORT_SYMBOL_GPL(dell_smbios_find_token);
+>  
+> +static ATOMIC_NOTIFIER_HEAD(dell_smbios_chain_head);
+> +
+> +int dell_smbios_register_notifier(struct notifier_block *nb)
+> +{
+> +	return atomic_notifier_chain_register(&dell_smbios_chain_head, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(dell_smbios_register_notifier);
+> +
+> +int dell_smbios_unregister_notifier(struct notifier_block *nb)
+> +{
+> +	return atomic_notifier_chain_unregister(&dell_smbios_chain_head, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(dell_smbios_unregister_notifier);
+> +
+> +void dell_smbios_call_notifier(unsigned long action, void *data)
+> +{
+> +	atomic_notifier_call_chain(&dell_smbios_chain_head, action, data);
+> +}
+> +EXPORT_SYMBOL_GPL(dell_smbios_call_notifier);
+> +
+>  static void __init parse_da_table(const struct dmi_header *dm)
+>  {
+>  	/* Final token is a terminator, so we don't want to copy it */
+> diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+> index ec7d40a..e91f13f 100644
+> --- a/drivers/platform/x86/dell-smbios.h
+> +++ b/drivers/platform/x86/dell-smbios.h
+> @@ -16,6 +16,8 @@
+>  #ifndef _DELL_SMBIOS_H_
+>  #define _DELL_SMBIOS_H_
+>  
+> +struct notifier_block;
+> +
+>  /* This structure will be modified by the firmware when we enter
+>   * system management mode, hence the volatiles */
+>  
+> @@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
+>  void dell_smbios_send_request(int class, int select);
+>  
+>  struct calling_interface_token *dell_smbios_find_token(int tokenid);
+> +
+> +enum dell_smbios_notifier_actions {
+> +	dell_smbios_kbd_backlight_brightness_changed,
+> +};
+> +
+> +int dell_smbios_register_notifier(struct notifier_block *nb);
+> +int dell_smbios_unregister_notifier(struct notifier_block *nb);
+> +void dell_smbios_call_notifier(unsigned long action, void *data);
+> +
+>  #endif
 
-This commit introduces a new new_blink_brightness value which gets
-set by led_set_brightness and read by led_timer_func on LED on, fixing
-this.
+That is better but technically speaking those notifiers do not have
+nothing common with dell-smbios :-( Driver dell-smbios.ko provides API
+for sending SMBIOS requests via SMM. Maybe move those functions into
+separate module (and built statically into kernel)? Just speculation, do
+not have something useful in my mind.
 
-Dealing with the new brightness at LED on time, makes the new
-brightness apply sooner, which also fixes a led_set_brightness which
-happens while a oneshot blink which ends in LED on is running not
-getting applied.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/leds/led-core.c | 14 +++++++-------
- include/linux/leds.h    |  1 +
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 17a0964..d474f97 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -81,17 +81,17 @@ static void led_timer_function(unsigned long data)
- 	brightness = led_get_brightness(led_cdev);
- 	if (!brightness) {
- 		/* Time to switch the LED on. */
--		brightness = led_cdev->blink_brightness;
-+		if (test_and_clear_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-+					&led_cdev->work_flags))
-+			brightness = led_cdev->new_blink_brightness;
-+		else
-+			brightness = led_cdev->blink_brightness;
- 		delay = led_cdev->blink_delay_on;
- 	} else {
- 		/* Store the current brightness value to be able
- 		 * to restore it when the delay_off period is over.
--		 * Do it only if there is no pending blink brightness
--		 * change, to avoid overwriting the new value.
- 		 */
--		if (!test_and_clear_bit(LED_BLINK_BRIGHTNESS_CHANGE,
--					&led_cdev->work_flags))
--			led_cdev->blink_brightness = brightness;
-+		led_cdev->blink_brightness = brightness;
- 		brightness = LED_OFF;
- 		delay = led_cdev->blink_delay_off;
- 	}
-@@ -260,7 +260,7 @@ void led_set_brightness(struct led_classdev *led_cdev,
- 		} else {
- 			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
- 				&led_cdev->work_flags);
--			led_cdev->blink_brightness = brightness;
-+			led_cdev->new_blink_brightness = brightness;
- 		}
- 		return;
- 	}
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index cff9df7..6669404 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -87,6 +87,7 @@ struct led_classdev {
- 	unsigned long		 blink_delay_on, blink_delay_off;
- 	struct timer_list	 blink_timer;
- 	int			 blink_brightness;
-+	int			 new_blink_brightness;
- 	void			(*flash_resume)(struct led_classdev *led_cdev);
- 
- 	struct work_struct	set_brightness_work;
 -- 
-2.9.3
+Pali Rohár
+pali.rohar@gmail.com
