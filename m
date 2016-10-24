@@ -1,53 +1,79 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2 2/4] platform: x86: dell-smbios: Add a generic
- dell-smbios notifier chain
-Date: Mon, 24 Oct 2016 15:45:02 +0200
-Message-ID: <762cceac-d807-0c3d-7469-267cc850f874@redhat.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH v2 3/4] platform: x86: dell-*: Call
+ led_notify_brightness_change on kbd brightness change
+Date: Mon, 24 Oct 2016 15:51:01 +0200
+Message-ID: <20161024135101.GF12154@pali>
 References: <20161023194652.24335-1-hdegoede@redhat.com>
- <20161023194652.24335-2-hdegoede@redhat.com> <20161024133105.GC12154@pali>
- <4cdb7bb1-2b16-e009-3309-433b1a306d54@redhat.com>
- <20161024134339.GE12154@pali>
+ <20161023194652.24335-3-hdegoede@redhat.com>
+ <20161024133459.GD12154@pali>
+ <48df1537-4f76-6c7b-cb50-9c1aeaf41b6c@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934306AbcJXNpH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 24 Oct 2016 09:45:07 -0400
-In-Reply-To: <20161024134339.GE12154@pali>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35571 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934306AbcJXNvE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 Oct 2016 09:51:04 -0400
+Content-Disposition: inline
+In-Reply-To: <48df1537-4f76-6c7b-cb50-9c1aeaf41b6c@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
 Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi,
+On Monday 24 October 2016 15:43:50 Hans de Goede wrote:
+> Hi,
+> 
+> On 24-10-16 15:34, Pali Rohár wrote:
+> >On Sunday 23 October 2016 21:46:51 Hans de Goede wrote:
+> >>diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+> >>index da2fe18..f86e774 100644
+> >>--- a/drivers/platform/x86/dell-wmi.c
+> >>+++ b/drivers/platform/x86/dell-wmi.c
+> >>@@ -319,6 +319,11 @@ static void dell_wmi_process_key(int type, int code)
+> >> 	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
+> >> 		return;
+> >>
+> >>+	if (type == 0x0011 && (code == 0x01e1 || code == 0x02ea ||
+> >>+			 code == 0x02eb || code == 0x02ec || code == 0x02f6))
+> >>+		dell_smbios_call_notifier(
+> >>+			dell_smbios_kbd_backlight_brightness_changed, NULL);
+> >>+
+> >> 	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
+> >> }
+> >>
+> >
+> >This part of patch is ugly. Some random numbers are checked and then
+> >notifier is called. We already have big table with explanation of those
+> >events... It is not possible to extend it with some flag or somehow
+> >other that value should be called via notifier?
+> 
+> Nope, sparse_keymaps are a well defined API for, well, keymaps! The problem
+> really is this commit:
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/platform/x86?id=e075b3c898e4055ec62a1f0ed7f3b8e62814bfb6
+> 
+> Which mixes status-events and key-press events in one sparse-keymap,
+> which happens to work because so far all the status events are
+> using { KE_IGNORE, 0x...., { KEY_RESERVED } }, but now we want to
+> actually do something and that shows that the above commit really
+> is a bad idea (at least for the 0x0011 type events, if we (partially)
+> revert that, then the ugly if goes away and I can simply insert
+> the dell_smbios_call_notifier() above the break in the original
+> switch-case handling for 0x0011 type events.
+> 
+> So shall I revert the 0011 part of the mentioned commit?
 
-On 24-10-16 15:43, Pali Rohár wrote:
-> On Monday 24 October 2016 15:37:31 Hans de Goede wrote:
->> Well WMI events get enabled via a SMBIOS call,
->
-> This is truth only for few laptops and only for one WMI event.
-> Everything else is automatically enabled, no call is needed to issue.
->
->> and dell-laptop uses SMBIOS exclusively
->
-> IIRC dell-led.ko uses also dell-smbio.ko, so it is not exclusive for
-> dell-laptop.
->
->> so it seems to fit. Basically this is a case of
->> we have to put this somewhere and dell-smbios is the best fit IMHO.
->
-> Agree, we need to put it somewhere...
->
-> Basically we need to solve problem how (currently) 3 kernel modules can
-> communicate. Does not kernel support such "bus/event" mechanism for
-> this?
+Does not help us, because keyboard backlight change event is also in
+dell_wmi_keymap_type_0000 table.
 
-Yes it does, that is exactly what notifiers are for, but we need to
-declare the bus somewhere. I still believe dell-smbios is the best
-place.
+Another idea: instead of struct key_entry create new structure which
+reflect information which comes from dell's WMI:
+u16 type (key, event or ignore)
+u16 code (wmi code)
+union { key, event } (linux keycode or enum notifier event)
 
-Regards,
-
-Hans
+-- 
+Pali Rohár
+pali.rohar@gmail.com
