@@ -1,279 +1,68 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 1/2] led: core: Use atomic bit-field for the blink-flags
-Date: Tue, 25 Oct 2016 09:01:50 +0200
-Message-ID: <a434ac6a-c6c9-29c7-5a0c-74f912164378@samsung.com>
-References: <20161023194726.24388-1-hdegoede@redhat.com>
- <CGME20161024204440epcas4p457599ba91315070dc8e060f4be9d4eb0@epcas4p4.samsung.com>
- <151bb743-4ca5-d783-a061-f89f9824f673@gmail.com>
+From: Hui Chun Ong <hui.chun.ong@ni.com>
+Subject: Re: [PATCH] leds: Add user LED driver for NIC78bx device
+Date: Tue, 25 Oct 2016 10:07:08 +0000
+Message-ID: <1477390026.2682.3.camel@ni.com>
+References: <CGME20161021063441eucas1p221cdc9bd704f03ad367df8cf59fa35e6@eucas1p2.samsung.com>
+         <1477031633-70909-1-git-send-email-hui.chun.ong@ni.com>
+         <335a9cd9-2af7-2d7c-12ab-1000dddbd0d6@samsung.com>
+         <20161021213347.GA15895@jcartwri.amer.corp.natinst.com>
+         <5bd2fac9-0fe7-4445-e0a6-0342b08f7e33@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:14251 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754754AbcJYHCn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 25 Oct 2016 03:02:43 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFL00EUVCV6XF50@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Tue, 25 Oct 2016 08:01:54 +0100 (BST)
-In-reply-to: <151bb743-4ca5-d783-a061-f89f9824f673@gmail.com>
+Received: from mail-co1nam03on0092.outbound.protection.outlook.com ([104.47.40.92]:55219
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933206AbcJYMkw (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 25 Oct 2016 08:40:52 -0400
+In-Reply-To: <5bd2fac9-0fe7-4445-e0a6-0342b08f7e33@gmail.com>
+Content-Language: en-US
+Content-ID: <47626D64ED652541B61E7A9D6A30A689@namprd04.prod.outlook.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org
+To: Julia Cartwright <julia.cartwright@ni.com>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Jonathan Hearn <jonathan.hearn@ni.com>, Brad Mouring <brad.mouring@ni.com>
 
-On 10/24/2016 10:43 PM, Jacek Anaszewski wrote:
-> Hi Hans,
->
-> Thanks for the patch.
->
-> On 10/23/2016 09:47 PM, Hans de Goede wrote:
->> All the LED_BLINK* flags are accessed read-modify-write from e.g.
->> led_set_brightness and led_blink_set_oneshot while both
->> set_brightness_work and the blink_timer may be running.
->>
->> If these race then the modify step done by one of them may be lost,
->> switch the LED_BLINK* flags to a new atomic work_flags bit-field
->> to avoid this race.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>  drivers/leds/led-class.c |  1 +
->>  drivers/leds/led-core.c  | 59
->> ++++++++++++++++++++++++++++--------------------
->>  include/linux/leds.h     | 17 ++++++--------
->>  3 files changed, 42 insertions(+), 35 deletions(-)
->>
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 3427a65..abd8ebc 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -211,6 +211,7 @@ int led_classdev_register(struct device *parent,
->> struct led_classdev *led_cdev)
->>          return -ENODEV;
->>      }
->>
->> +    led_cdev->work_flags = 0;
->>  #ifdef CONFIG_LEDS_TRIGGERS
->>      init_rwsem(&led_cdev->trigger_lock);
->>  #endif
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index e2e5cc7..17a0964 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -19,6 +19,13 @@
->>  #include <linux/rwsem.h>
->>  #include "leds.h"
->>
->> +#define LED_BLINK_SW            0
->> +#define LED_BLINK_ONESHOT        1
->> +#define LED_BLINK_ONESHOT_STOP        2
->> +#define LED_BLINK_INVERT        3
->> +#define LED_BLINK_BRIGHTNESS_CHANGE     4
->> +#define LED_BLINK_DISABLE        5
->> +
->>  DECLARE_RWSEM(leds_list_lock);
->>  EXPORT_SYMBOL_GPL(leds_list_lock);
->>
->> @@ -61,12 +68,13 @@ static void led_timer_function(unsigned long data)
->>
->>      if (!led_cdev->blink_delay_on || !led_cdev->blink_delay_off) {
->>          led_set_brightness_nosleep(led_cdev, LED_OFF);
->> -        led_cdev->flags &= ~LED_BLINK_SW;
->> +        clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
->>          return;
->>      }
->>
->> -    if (led_cdev->flags & LED_BLINK_ONESHOT_STOP) {
->> -        led_cdev->flags &=  ~(LED_BLINK_ONESHOT_STOP | LED_BLINK_SW);
->> +    if (test_and_clear_bit(LED_BLINK_ONESHOT_STOP,
->> +                   &led_cdev->work_flags)) {
->> +        clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
->>          return;
->>      }
->>
->> @@ -81,10 +89,9 @@ static void led_timer_function(unsigned long data)
->>           * Do it only if there is no pending blink brightness
->>           * change, to avoid overwriting the new value.
->>           */
->> -        if (!(led_cdev->flags & LED_BLINK_BRIGHTNESS_CHANGE))
->> +        if (!test_and_clear_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->> +                    &led_cdev->work_flags))
->>              led_cdev->blink_brightness = brightness;
->> -        else
->> -            led_cdev->flags &= ~LED_BLINK_BRIGHTNESS_CHANGE;
->>          brightness = LED_OFF;
->>          delay = led_cdev->blink_delay_off;
->>      }
->> @@ -95,13 +102,15 @@ static void led_timer_function(unsigned long data)
->>       * the final blink state so that the led is toggled each delay_on +
->>       * delay_off milliseconds in worst case.
->>       */
->> -    if (led_cdev->flags & LED_BLINK_ONESHOT) {
->> -        if (led_cdev->flags & LED_BLINK_INVERT) {
->> +    if (test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags)) {
->> +        if (test_bit(LED_BLINK_INVERT, &led_cdev->work_flags)) {
->>              if (brightness)
->> -                led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
->> +                set_bit(LED_BLINK_ONESHOT_STOP,
->> +                    &led_cdev->work_flags);
->>          } else {
->>              if (!brightness)
->> -                led_cdev->flags |= LED_BLINK_ONESHOT_STOP;
->> +                set_bit(LED_BLINK_ONESHOT_STOP,
->> +                    &led_cdev->work_flags);
->>          }
->>      }
->>
->> @@ -114,10 +123,9 @@ static void set_brightness_delayed(struct
->> work_struct *ws)
->>          container_of(ws, struct led_classdev, set_brightness_work);
->>      int ret = 0;
->>
->> -    if (led_cdev->flags & LED_BLINK_DISABLE) {
->> +    if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
->>          led_cdev->delayed_set_value = LED_OFF;
->>          led_stop_software_blink(led_cdev);
->> -        led_cdev->flags &= ~LED_BLINK_DISABLE;
->>      }
->>
->>      ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
->> @@ -160,7 +168,7 @@ static void led_set_software_blink(struct
->> led_classdev *led_cdev,
->>          return;
->>      }
->>
->> -    led_cdev->flags |= LED_BLINK_SW;
->> +    set_bit(LED_BLINK_SW, &led_cdev->work_flags);
->>      mod_timer(&led_cdev->blink_timer, jiffies + 1);
->>  }
->>
->> @@ -169,7 +177,7 @@ static void led_blink_setup(struct led_classdev
->> *led_cdev,
->>               unsigned long *delay_on,
->>               unsigned long *delay_off)
->>  {
->> -    if (!(led_cdev->flags & LED_BLINK_ONESHOT) &&
->> +    if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
->>          led_cdev->blink_set &&
->>          !led_cdev->blink_set(led_cdev, delay_on, delay_off))
->>          return;
->> @@ -196,8 +204,8 @@ void led_blink_set(struct led_classdev *led_cdev,
->>  {
->>      del_timer_sync(&led_cdev->blink_timer);
->>
->> -    led_cdev->flags &= ~LED_BLINK_ONESHOT;
->> -    led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
->> +    clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
->> +    clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
->>
->>      led_blink_setup(led_cdev, delay_on, delay_off);
->>  }
->> @@ -208,17 +216,17 @@ void led_blink_set_oneshot(struct led_classdev
->> *led_cdev,
->>                 unsigned long *delay_off,
->>                 int invert)
->>  {
->> -    if ((led_cdev->flags & LED_BLINK_ONESHOT) &&
->> +    if (test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
->>           timer_pending(&led_cdev->blink_timer))
->>          return;
->>
->> -    led_cdev->flags |= LED_BLINK_ONESHOT;
->> -    led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
->> +    set_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
->> +    clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
->>
->>      if (invert)
->> -        led_cdev->flags |= LED_BLINK_INVERT;
->> +        set_bit(LED_BLINK_INVERT, &led_cdev->work_flags);
->>      else
->> -        led_cdev->flags &= ~LED_BLINK_INVERT;
->> +        clear_bit(LED_BLINK_INVERT, &led_cdev->work_flags);
->>
->>      led_blink_setup(led_cdev, delay_on, delay_off);
->>  }
->> @@ -229,7 +237,7 @@ void led_stop_software_blink(struct led_classdev
->> *led_cdev)
->>      del_timer_sync(&led_cdev->blink_timer);
->>      led_cdev->blink_delay_on = 0;
->>      led_cdev->blink_delay_off = 0;
->> -    led_cdev->flags &= ~LED_BLINK_SW;
->> +    clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
->>  }
->>  EXPORT_SYMBOL_GPL(led_stop_software_blink);
->>
->> @@ -240,17 +248,18 @@ void led_set_brightness(struct led_classdev
->> *led_cdev,
->>       * If software blink is active, delay brightness setting
->>       * until the next timer tick.
->>       */
->> -    if (led_cdev->flags & LED_BLINK_SW) {
->> +    if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
->>          /*
->>           * If we need to disable soft blinking delegate this to the
->>           * work queue task to avoid problems in case we are called
->>           * from hard irq context.
->>           */
->>          if (brightness == LED_OFF) {
->> -            led_cdev->flags |= LED_BLINK_DISABLE;
->> +            set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
->>              schedule_work(&led_cdev->set_brightness_work);
->>          } else {
->> -            led_cdev->flags |= LED_BLINK_BRIGHTNESS_CHANGE;
->> +            set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->> +                &led_cdev->work_flags);
->>              led_cdev->blink_brightness = brightness;
->>          }
->>          return;
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index eebcd8c..cff9df7 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -43,16 +43,13 @@ struct led_classdev {
->>  #define LED_UNREGISTERING    (1 << 1)
->>      /* Upper 16 bits reflect control information */
->>  #define LED_CORE_SUSPENDRESUME    (1 << 16)
->> -#define LED_BLINK_SW        (1 << 17)
->> -#define LED_BLINK_ONESHOT    (1 << 18)
->> -#define LED_BLINK_ONESHOT_STOP    (1 << 19)
->> -#define LED_BLINK_INVERT    (1 << 20)
->> -#define LED_BLINK_BRIGHTNESS_CHANGE (1 << 21)
->> -#define LED_BLINK_DISABLE    (1 << 22)
->> -#define LED_SYSFS_DISABLE    (1 << 23)
->> -#define LED_DEV_CAP_FLASH    (1 << 24)
->> -#define LED_HW_PLUGGABLE    (1 << 25)
->> -#define LED_PANIC_INDICATOR    (1 << 26)
->> +#define LED_SYSFS_DISABLE    (1 << 17)
->> +#define LED_DEV_CAP_FLASH    (1 << 18)
->> +#define LED_HW_PLUGGABLE    (1 << 19)
->> +#define LED_PANIC_INDICATOR    (1 << 20)
->> +
->> +    /* set_brightness_work / blink_timer flags, atomic, private. */
->> +    unsigned long        work_flags;
->
-> LED_BLINK_SW is now modified in ledtrig-heartbeat.c [0], so it'd have
-> to remain visible outside of LED subsystem.
-> I'll do the suitable fixup to patch [0] and will reorder the patches
-> when this one is applied.
-
-Of course not this one, but its updated version, that leaves the
-flags in leds.h. I didn't express myself accurately above.
-
-
->>
->>      /* Set LED brightness level
->>       * Must not sleep. Use brightness_set_blocking for drivers
->>
->
-> [0]
-> https://git.kernel.org/cgit/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=e1474371c8cf2c4751a60b0ca201c7b48010035b
->
->
-
-
--- 
-Best regards,
-Jacek Anaszewski
+SGkgSmFjZWssDQoNCk9uIFN1biwgMjAxNi0xMC0yMyBhdCAxNjoxMiArMDIwMCwgSmFjZWsgQW5h
+c3pld3NraSB3cm90ZToNCj4gSGkgSnVsaWEsDQo+IA0KPiBPbiAxMC8yMS8yMDE2IDExOjMzIFBN
+LCBKdWxpYSBDYXJ0d3JpZ2h0IHdyb3RlOg0KPiA+IA0KPiA+IE9uIEZyaSwgT2N0IDIxLCAyMDE2
+IGF0IDAyOjU2OjE1UE0gKzAyMDAsIEphY2VrIEFuYXN6ZXdza2kgd3JvdGU6DQo+ID4gPiANCj4g
+PiA+IEhpIEh1aSwNCj4gPiA+IA0KPiA+ID4gVGhhbmtzIGZvciB0aGUgcGF0Y2guIEkgaGF2ZSBm
+ZXcgY29tbWVudHMgaW4gdGhlIGNvZGUgYmVsb3cuDQo+ID4gPiANCj4gPiA+IE9uIDEwLzIxLzIw
+MTYgMDg6MzMgQU0sIEh1aSBDaHVuIE9uZyB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiA+IEFkZCB0
+aGUgZHJpdmVyIHRvIHN1cHBvcnQgVXNlciBMRURzIG9uIFBYSSBFbWJlZGRlZCBDb250cm9sbGVy
+Lg0KPiA+ID4gPiANCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogSHVpIENodW4gT25nIDxodWkuY2h1
+bi5vbmdAbmkuY29tPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBCcmFkIE1vdXJpbmcgPGJyYWQu
+bW91cmluZ0BuaS5jb20+DQo+ID4gWy4uXQ0KPiA+ID4gDQo+ID4gPiANCj4gPiA+ID4gDQo+ID4g
+PiA+ICsNCj4gPiA+ID4gK3N0cnVjdCBuaTc4YnhfbGVkIHsNCj4gPiA+ID4gKwl1OCBiaXQ7DQo+
+ID4gPiA+ICsJdTggbWFzazsNCj4gPiA+ID4gKwlzdHJ1Y3QgbGVkX2NsYXNzZGV2IGNkZXY7DQo+
+ID4gPiA+ICt9Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBuaTc4
+YnhfbGVkICp0b19uaTc4YnhfbGVkKHN0cnVjdA0KPiA+ID4gPiBsZWRfY2xhc3NkZXYgKmNkZXYp
+DQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJcmV0dXJuIGNvbnRhaW5lcl9vZihjZGV2LCBzdHJ1Y3Qg
+bmk3OGJ4X2xlZCwgY2Rldik7DQo+ID4gPiA+ICt9DQo+ID4gPiA+ICsNCj4gPiA+ID4gK3N0YXRp
+YyB2b2lkIG5pNzhieF9icmlnaHRuZXNzX3NldChzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpjZGV2LA0K
+PiA+ID4gPiArCQkJCcKgwqBlbnVtIGxlZF9icmlnaHRuZXNzDQo+ID4gPiA+IGJyaWdodG5lc3Mp
+DQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJc3RydWN0IG5pNzhieF9sZWQgKm5sZWQgPSB0b19uaTc4
+YnhfbGVkKGNkZXYpOw0KPiA+ID4gPiArCXU4IHZhbHVlOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJ
+bXV0ZXhfbG9jaygmbGVkX2xvY2spOw0KPiA+ID4gWW91IGNhbiB1c2Ugc3Bpbl9sb2NrX2lycXNh
+dmUoKSBpbnN0ZWFkLCBzaW5jZSB3ZSBhcmUgbm90IGdvaW5nDQo+ID4gPiB0byBzbGVlcA0KPiA+
+ID4gd2hpbGUgYWNjZXNzaW5nIG1lbW9yeSBtYXBwZWQgcmVnaXN0ZXJzLg0KPiA+IENvdWxkIHlv
+dSBleHBsYWluIHdoeSBzcGluX2xvY2tfaXJxc2F2ZSgpIGlzIGFwcHJvcHJpYXRlDQo+ID4gaGVy
+ZT/CoMKgVGhpcw0KPiA+IGRldmljZSBkb2Vzbid0IGhhdmUgYW4gaW50ZXJydXB0IHRvIGJlIHN5
+bmNocm9uaXplZCB3aXRoLsKgwqBJIGNvdWxkDQo+ID4gdW5kZXJzdGFuZCBzcGluX2xvY2soKS9z
+cGluX3VubG9jaygpLCBtYXliZSwgYnV0IHdoeSBkaXNhYmxlDQo+ID4gaW50ZXJydXB0cz8NCj4g
+YnJpZ2h0bmVzc19zZXQgb3AgY2FuIGJlIGNhbGxlZCBmcm9tIGF0b21pYyBjb250ZXh0IGUuZy4g
+aW4gY2FzZSBvZg0KPiB0aW1lciB0cmlnZ2VyLiBUaGUgY29kZSB0aGF0IHJ1bnMgaW4gdGhlIGlu
+dGVycnVwdCBjb250ZXh0IGNhbm5vdA0KPiBzbGVlcA0KPiBkdWUgdG8gcmVhc29ucyBleHBsYWlu
+ZWQgaW4gWzBdLCB3aGVyZWFzIG11dGV4IGNhbiBzbGVlcCBvbg0KPiBjb250ZW50aW9uLg0KPiAN
+Cj4gc3Bpbl9sb2NrKCkgaXMgYXBwcm9wcmlhdGUgb25seSBpbiBhIGhhcmQgaXJxIGhhbmRsZXIu
+DQo+IA0KPiA+IA0KPiA+IElzIHdoYXQgeW91J3JlIHNheWluZyB0aGF0IHRoZSBzZXQvZ2V0IGJy
+aWdodG5lc3MgY2FsbHMgY2FuIGJlIHJlLQ0KPiA+IGVudGVyZWQNCj4gPiBieSBMRUQgY29uc3Vt
+ZXJzIGluIGhhcmRpcnEgY29udGV4dD8NCj4gPiANCj4gPiBUaGUgc3lzdGVtcyB0aGlzIGRyaXZl
+ciBpcyBkZXBsb3llZCB0byBpcyBtdWNoIG1vcmUgc2Vuc2l0aXZlIHRvIFJUDQo+ID4gZXhlY3V0
+aW9uIGxhdGVuY3kgdGhhbiBhbnl0aGluZyBlbHNlLCB3aGljaCBpcyB3aHkgSSB0YWtlIHBhdXNl
+IHRvDQo+ID4gdW5uZWNlc3NhcnkgaW50ZXJydXB0IG1hc2sgdHdpZGRsaW5nL3ByZWVtcHRpb24g
+ZGlzYWJsaW5nIDopLg0KPiBbMF0gaHR0cDovL3d3dy5tYWtlbGludXgubmV0L2xkZDMvY2hwLTUt
+c2VjdC01DQo+IA0KSSdtIHVwZGF0ZSB0aGUgZHJpdmVyIHRvIHVzZSBzcGluX2xvY2tfaXJxc2F2
+ZS4gVGhhbmtzIGZvciB0aGUNCmZlZWRiYWNrLg==
