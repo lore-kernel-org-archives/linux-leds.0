@@ -1,51 +1,95 @@
-From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v3 2/5] platform: x86: thinkpad: Call led_notify_brightness_change on kbd brightness change
-Date: Wed, 26 Oct 2016 19:51:03 +0200
-Message-ID: <201610261951.03527@pali>
-References: <20161026174118.3431-1-hdegoede@redhat.com> <20161026174118.3431-2-hdegoede@redhat.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart21113274.KeL6cJecXN";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+From: Matt Ranostay <mranostay@gmail.com>
+Subject: [PATCH v3] leds: pca963x: enable low-power state
+Date: Wed, 26 Oct 2016 21:04:44 -0700
+Message-ID: <1477541084-4979-1-git-send-email-matt@ranostay.consulting>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35749 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753283AbcJZRvG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Oct 2016 13:51:06 -0400
-In-Reply-To: <20161026174118.3431-2-hdegoede@redhat.com>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35863 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbcJ0EEt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 Oct 2016 00:04:49 -0400
+Received: by mail-pf0-f193.google.com with SMTP id n85so1294181pfi.3
+        for <linux-leds@vger.kernel.org>; Wed, 26 Oct 2016 21:04:49 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Matt Ranostay <matt@ranostay.consulting>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
---nextPart21113274.KeL6cJecXN
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Allow chip to enter low power state when no LEDs are being lit or in
+blink mode.
 
-On Wednesday 26 October 2016 19:41:15 Hans de Goede wrote:
-> +	TP_HKEY_EV_THINKLIGHT		=3D 0x1012, /* Thinklight/kbd backlight */
+Cc: Peter Meerwald <p.meerwald@bct-electronic.com>,
+Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
+---
+ drivers/leds/leds-pca963x.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-Hi! Do you have some documentation for this number? When it is send?=20
-When keyboard baklight level is changed or when thinklight is turned=20
-on/off? Or in both cases?
-
-=2D-=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---nextPart21113274.KeL6cJecXN
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEABECAAYFAlgQ7QcACgkQi/DJPQPkQ1IifgCfebG3LMXtBNYxNAbZt/0lxcAq
-Ag4AoJJrd3odcyAjF7PWgXS5tbRuXbQR
-=LhS5
------END PGP SIGNATURE-----
-
---nextPart21113274.KeL6cJecXN--
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index b6ce1f2ec33e..e1767369776f 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -103,6 +103,7 @@ struct pca963x {
+ 	struct mutex mutex;
+ 	struct i2c_client *client;
+ 	struct pca963x_led *leds;
++	int leds_on;
+ };
+ 
+ struct pca963x_led {
+@@ -180,14 +181,40 @@ static void pca963x_blink(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
+ }
+ 
++static int pca963x_power_state(struct pca963x_led *pca963x)
++{
++	int i, ret = 0, leds_on = 0;
++	int prev_leds = pca963x->chip->leds_on;
++
++	for (i = 0; i < pca963x->chip->chipdef->n_leds; i++) {
++		if (pca963x->chip->leds[i].led_cdev.brightness > 0)
++			leds_on++;
++	}
++
++	if (leds_on != prev_leds && !(leds_on && prev_leds)) {
++		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
++						PCA963X_MODE1,
++						leds_on ? 0 : BIT(4));
++	}
++
++	pca963x->chip->leds_on = leds_on;
++
++	return ret;
++}
++
+ static int pca963x_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+ 	struct pca963x_led *pca963x;
++	int ret;
+ 
+ 	pca963x = container_of(led_cdev, struct pca963x_led, led_cdev);
+ 
+-	return pca963x_brightness(pca963x, value);
++	ret = pca963x_brightness(pca963x, value);
++	if (ret < 0)
++		return ret;
++
++	return pca963x_power_state(pca963x);
+ }
+ 
+ static unsigned int pca963x_period_scale(struct pca963x_led *pca963x,
+@@ -403,8 +430,8 @@ static int pca963x_probe(struct i2c_client *client,
+ 			goto exit;
+ 	}
+ 
+-	/* Disable LED all-call address and set normal mode */
+-	i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
++	/* Disable LED all-call address, and power down initially */
++	i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
+ 
+ 	if (pdata) {
+ 		/* Configure output: open-drain or totem pole (push-pull) */
+-- 
+2.7.4
