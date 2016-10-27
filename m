@@ -1,63 +1,71 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 1/4] leds: core: Add support for poll()ing the sysfs
- brightness attr for changes.
-Date: Thu, 27 Oct 2016 10:03:47 +0200
-Message-ID: <492fe32c-84d2-da34-c761-8f32888bb998@samsung.com>
-References: <20161023194652.24335-1-hdegoede@redhat.com>
- <c103b787-bd78-3a16-0d20-a2c14a91ad02@gmail.com>
- <CGME20161026151915eucas1p27f8f1ba12e843b8d10f3b20966066565@eucas1p2.samsung.com>
- <596538b5-32d7-4a5e-d561-62b6321dea56@redhat.com>
- <e4f7b016-1ad4-09bc-0e0f-2737e3e20edc@samsung.com>
- <5e452f77-730f-69e5-58cc-7c217dee0082@redhat.com>
+From: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 5/5] platform: x86: dell-*: Simplify
+ dell-rbtn integration with dell-laptop [untested]
+Date: Thu, 27 Oct 2016 13:46:33 +0200
+Message-ID: <3b38c193-7b19-3170-b14e-3627844cbec0@redhat.com>
+References: <20161026174118.3431-1-hdegoede@redhat.com>
+	<20161026174118.3431-5-hdegoede@redhat.com>
+	<20161027103845.GT12154@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-reply-to: <5e452f77-730f-69e5-58cc-7c217dee0082@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <20161027103845.GT12154@pali>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
+	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
+List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
+	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Matthew Garrett <mjg59-1xO5oi07KQx4cg9Nei1l7Q@public.gmane.org>, Henrique de Moraes Holschuh <ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org>, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Darren Hart <dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On 10/27/2016 09:33 AM, Hans de Goede wrote:
-> Hi,
->
-> On 27-10-16 08:58, Jacek Anaszewski wrote:
->> Hi,
->>
->> On 10/26/2016 05:18 PM, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 24-10-16 22:43, Jacek Anaszewski wrote:
->>>> Hi Hans,
->>>>
->>>> Thanks for the update.
->>>> Could you please rebase your patches onto recent linux-leds.git,
->>>> for-next branch?
->>>
->>> Done, I will send a v3 soon (today or tomorrow).
->>>
->>>> Also it would be convenient to have sample application for polling
->>>> brightness changes in tools/leds.
->>>
->>> I'm sorry but I do not have time to create such a sample application.
->>
->> You must have tested your solution somehow.
->
-> Yes, as is made clear by the other patches in this set, I'm using
-> it with keyboard backlight control led interfaces. Which in userspace
-> are handled by upower which provides a dbus interface which is used
-> by gnome-settings-daemon.
->
->> Just polish the code a bit,
->> add a Makefile and that's it. Compare tools/leds/uledmon.c - it doesn't
->> need to be anything big.
->
-> upower uses gio which is really not suitable for this, so I would need
-> to create something from scratch.
-
-Okay, so I'll have to do it myself, when I'll find a moment.
-
--- 
-Best regards,
-Jacek Anaszewski
+SGksCgpPbiAyNy0xMC0xNiAxMjozOCwgUGFsaSBSb2jDoXIgd3JvdGU6Cj4gT24gV2VkbmVzZGF5
+IDI2IE9jdG9iZXIgMjAxNiAxOTo0MToxOCBIYW5zIGRlIEdvZWRlIHdyb3RlOgo+PiBVc2UgZGVs
+bF9zbWJpb3Mqbm90aWZpZXIgZm9yIGRlbGwtbGFwdG9wIHRvIGxpc3RlbiB0byBkZWxsLXJidG4g
+c2xpZGVyCj4+IGV2ZW50cywgcmVwbGFjZSBkZWxsX3JidG5fbm90aWZpZXJfcmVnaXN0ZXIoKSAv
+Cj4+IGRlbGxfcmJ0bl9ub3RpZmllcl91bnJlZ2lzdGVyKCkgd2l0aCBhIHNpbmdsZSBkZWxsX3Ji
+dG5faGFzX3Jma2lsbCgpIHVzZWQKPj4gYnkgZGVsbC1sYXB0b3AgdG8gZGVjaWRlIHdoZXRoZXIg
+b3Igbm90IHRvIHVzZSB0aGUgaTgwNDIgZmlsdGVyIGFuZCB1c2VkCj4+IGJ5IGRlbGwtcmJ0biB0
+byBhdXRvLXJlbW92ZSBpdHMgcmZraWxsIGludGVyZmFjZSB3aGVuIGNhbGxlZC4KPj4KPj4gVGhp
+cyByZXN1bHRzIGluIGEgbmljZSBjbGVhbnVwLCBkb3duc2lkZSBpcyB0aGF0IHRoZSByZmtpbGwg
+aW50ZXJmYWNlCj4+IG9mIGRlbGwtcmJ0biBpcyBub3QgYXV0b21hdGljYWxseSByZS1lbmFibGVk
+IG9uIHJtbW9kIGRlbGwtbGFwdG9wLCB0aGlzCj4+IG5vdyByZXF1aXJlcyBybW1vZCArIGluc21v
+ZCBvZiBkZWxsLXJidG4uIEJ1dCBwZW9wbGUgd2hvIGRvIG5vdCB3YW50Cj4+IGRlbGwtbGFwdG9w
+IGZvciBzb21lIHJlYXNvbiB3aWxsIGhhdmUgaXQgYmxhY2tsaXN0ZWQgYW55d2F5cywgc28gdGhp
+cwo+PiBpcyBub3QgYW4gaXNzdWUgYW5kIHRoZXJlIGlzIGEgd29yay1hcm91bmQuCj4+Cj4+IFNp
+Z25lZC1vZmYtYnk6IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhhdC5jb20+Cj4+IC0tLQo+
+PiBDaGFuZ2VzIGluIHYyOgo+PiAtVGhpcyBpcyBhIG5ldyBwYXRjaCBpbiB2MiBvZiBteSBwbGF0
+Zm9ybS94ODYvZGVsbC0qIG5vdGlmaWVyIHNldCBpbnRlbmRlZAo+PiAgdG8gc2hvdyBob3cgZGVs
+bF9zbWJpb3Mqbm90aWZpZXIgY2FuIGJlIHVzZWQgdG8gaW1wcm92ZSB0aGUgZGVsbC1yYnRuCj4+
+ICBpbnRlZ3JhdGlvbiB0b28KPj4gQ2hhbmdlcyBpbiB2MzoKPj4gLUNhbGwgZGVsbF9yYnRuX2hh
+c19yZmtpbGxfZnVuYyBpbnN0ZWFkIG9mIGRlbGxfcmJ0bl9oYXNfcmZraWxsLCBzbyB0aGF0IHRo
+ZQo+PiAgZHluYW1pYyBzeW1ib2wgZGFuY2Ugd2UgZG8gdG8gYWxsb3cgbG9hZGluZyB3aXRob3V0
+IGRlbGwtcmJ0biBhY3R1YWxseSB3b3Jrcy4KPj4gLS0tCj4+ICBkcml2ZXJzL3BsYXRmb3JtL3g4
+Ni9LY29uZmlnICAgICAgIHwgIDEgKwo+PiAgZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC1sYXB0
+b3AuYyB8IDUzICsrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICBkcml2ZXJzL3Bs
+YXRmb3JtL3g4Ni9kZWxsLXJidG4uYyAgIHwgNjMgKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPj4gIGRyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtcmJ0bi5oICAgfCAgNSAr
+LS0KPj4gIGRyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtc21iaW9zLmggfCAgMSArCj4+ICA1IGZp
+bGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDk0IGRlbGV0aW9ucygtKQo+Cj4gTG9va3Mg
+bGlrZSB0aGF0IGZvciBwcmV2ZW50aW5nIHNlbmRpbmcgZXZlbnQgdGhhdCByZmtpbGwgc3dpdGNo
+IHdhcwo+IGNoYW5nZWQgYnkgaGFyZHdhcmUgc2xpZGVyIHdlIG11c3QgYWx3YXlzIGRyb3AgYXRr
+IGk4MDQyIGtleWNvZGUuLi4KPgo+IE5lZWRzIHRvIGNoZWNrIGlmIGtleSBpcyByZWFsbHkgc2Vu
+ZCBieSBib3RoIGRlbGwtcmJ0biBhbmQgYWxzbyBieSBhdGsKPiBpODA0MiBrZXlib2FyZCBkcml2
+ZXIgYW5kIGlmIHllcyB0aGVuIGk4MDQyX2luc3RhbGxfZmlsdGVyKCkgaXMgYWx3YXlzCj4gbmVl
+ZGVkIChpZiByYnRuIGlzIHRoZXJlIG9yIG5vdCkuLi4KCkJ1dCB0aGlzIGlzIG5vdCByZWxhdGVk
+IHRvIHRoaXMgcGF0Y2gsIHJpZ2h0PyBUaGlzIHBhdGNoIGRvZXMgbm90IGNoYW5nZQphbnkgYmVo
+YXZpb3IuIE90aGVyIHRoZW4geW91ciBjb25jZXJucyBhYm91dCB3aGVyZSB0byBwdXQgdGhlIG5v
+dGlmaWVyLApkbyB5b3UgbGlrZSB0aGUgYXBwcm9hY2ggb2YgdGhpcyBwYXRjaD8KClJlZ2FyZHMs
+CgpIYW5zCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhlIENvbW1hbmQgTGluZTogUmVpbnZlbnRl
+ZCBmb3IgTW9kZXJuIERldmVsb3BlcnMKRGlkIHRoZSByZXN1cmdlbmNlIG9mIENMSSB0b29saW5n
+IGNhdGNoIHlvdSBieSBzdXJwcmlzZT8KUmVjb25uZWN0IHdpdGggdGhlIGNvbW1hbmQgbGluZSBh
+bmQgYmVjb21lIG1vcmUgcHJvZHVjdGl2ZS4gCkxlYXJuIHRoZSBuZXcgLk5FVCBhbmQgQVNQLk5F
+VCBDTEkuIEdldCB5b3VyIGZyZWUgY29weSEKaHR0cDovL3NkbS5saW5rL3RlbGVyaWsKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaWJtLWFjcGktZGV2ZWwg
+bWFpbGluZyBsaXN0CmlibS1hY3BpLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9pYm0tYWNwaS1kZXZlbAo=
