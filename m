@@ -1,92 +1,135 @@
-From: <bunny43200@yahoo.com>
-Subject: 79977414282865 linux-leds
-Date: Fri, 28 Oct 2016 20:52:35 -0000
-Message-ID: <147768795558.26039.16720161914489011802@inside-server.com>
-Mime-Version: 1.0
-Content-Type: application/zip; name="wulinux-leds.zip"
-Content-Transfer-Encoding: base64
+From: Matt Ranostay <mranostay@gmail.com>
+Subject: [PATCH v5] leds: pca963x: enable low-power state
+Date: Fri, 28 Oct 2016 18:20:42 -0700
+Message-ID: <1477704042-6598-1-git-send-email-matt@ranostay.consulting>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from padme.inside-server.com ([85.94.76.79]:53003 "HELO
-        inside-server.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1755922AbcJ1Uwl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Oct 2016 16:52:41 -0400
-Content-Disposition: attachment
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33821 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935196AbcJ2BU6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Oct 2016 21:20:58 -0400
+Received: by mail-pf0-f195.google.com with SMTP id u84so2574760pfj.1
+        for <linux-leds@vger.kernel.org>; Fri, 28 Oct 2016 18:20:58 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
+Cc: Matt Ranostay <matt@ranostay.consulting>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-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
-SwUGAAAAAAEAAQBVAAAAJBAAAAAA
+Allow chip to enter low power state when no LEDs are being lit or in
+blink mode.
+
+Cc: Peter Meerwald <p.meerwald@bct-electronic.com>,
+Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
+---
+Changes from v1:
+* remove runtime pm
+* count leds that are off, if all then enter low-power state
+
+Changes from v2:
+* add reference count of leds to reduce i2c transactions
+
+Changes from v3:
+* switch to checking bitmask to reduce i2c transactions
+
+Changes from v4:
+* mutex lock during power mangement routine
+* simplify the led bitmask check
+
+ drivers/leds/leds-pca963x.c | 40 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index b6ce1f2ec33e..46fbf935944a 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -103,6 +103,7 @@ struct pca963x {
+ 	struct mutex mutex;
+ 	struct i2c_client *client;
+ 	struct pca963x_led *leds;
++	unsigned long leds_on;
+ };
+ 
+ struct pca963x_led {
+@@ -124,7 +125,6 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 	u8 mask = 0x3 << shift;
+ 	int ret;
+ 
+-	mutex_lock(&pca963x->chip->mutex);
+ 	ledout = i2c_smbus_read_byte_data(pca963x->chip->client, ledout_addr);
+ 	switch (brightness) {
+ 	case LED_FULL:
+@@ -141,14 +141,13 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
+ 			PCA963X_PWM_BASE + pca963x->led_num,
+ 			brightness);
+ 		if (ret < 0)
+-			goto unlock;
++			return ret;
+ 		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
+ 			ledout_addr,
+ 			(ledout & ~mask) | (PCA963X_LED_PWM << shift));
+ 		break;
+ 	}
+-unlock:
+-	mutex_unlock(&pca963x->chip->mutex);
++
+ 	return ret;
+ }
+ 
+@@ -180,14 +179,41 @@ static void pca963x_blink(struct pca963x_led *pca963x)
+ 	mutex_unlock(&pca963x->chip->mutex);
+ }
+ 
++static int pca963x_power_state(struct pca963x_led *pca963x)
++{
++	unsigned long *leds_on = &pca963x->chip->leds_on;
++	unsigned long cached_leds = pca963x->chip->leds_on;
++
++	if (pca963x->led_cdev.brightness)
++		set_bit(pca963x->led_num, leds_on);
++	else
++		clear_bit(pca963x->led_num, leds_on);
++
++	if (!(*leds_on) != !cached_leds)
++		return i2c_smbus_write_byte_data(pca963x->chip->client,
++			PCA963X_MODE1, *leds_on ? 0 : BIT(4));
++
++	return 0;
++}
++
+ static int pca963x_led_set(struct led_classdev *led_cdev,
+ 	enum led_brightness value)
+ {
+ 	struct pca963x_led *pca963x;
++	int ret;
+ 
+ 	pca963x = container_of(led_cdev, struct pca963x_led, led_cdev);
+ 
+-	return pca963x_brightness(pca963x, value);
++	mutex_lock(&pca963x->chip->mutex);
++
++	ret = pca963x_brightness(pca963x, value);
++	if (ret < 0)
++		goto unlock;
++	ret = pca963x_power_state(pca963x);
++
++unlock:
++	mutex_unlock(&pca963x->chip->mutex);
++	return ret;
+ }
+ 
+ static unsigned int pca963x_period_scale(struct pca963x_led *pca963x,
+@@ -403,8 +429,8 @@ static int pca963x_probe(struct i2c_client *client,
+ 			goto exit;
+ 	}
+ 
+-	/* Disable LED all-call address and set normal mode */
+-	i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
++	/* Disable LED all-call address, and power down initially */
++	i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
+ 
+ 	if (pdata) {
+ 		/* Configure output: open-drain or totem pole (push-pull) */
+-- 
+2.7.4
