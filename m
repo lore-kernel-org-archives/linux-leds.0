@@ -1,147 +1,84 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v5] leds: pca963x: enable low-power state
-Date: Mon, 31 Oct 2016 23:06:08 +0100
-Message-ID: <b502ec25-5b79-08d4-531c-8d54fe2bcb35@gmail.com>
-References: <1477704042-6598-1-git-send-email-matt@ranostay.consulting>
+Subject: Re: [PATCH v2] Add LED / GPIO support for the PC Engines APU2.
+Date: Mon, 31 Oct 2016 23:18:59 +0100
+Message-ID: <5995c213-848f-dfb3-3a86-f6ddd32f87e4@gmail.com>
+References: <e8fbcb33-bf50-9118-8943-c3f3d0833da3@crc.id.au>
+ <a0b21db6-aa1b-bcda-ff33-94ce7b3a8c46@gmail.com>
+ <c522f9bd-e6e4-1932-30d9-b1cc579d3172@crc.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35861 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S947362AbcJaWGt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 31 Oct 2016 18:06:49 -0400
-Received: by mail-wm0-f68.google.com with SMTP id c17so20245533wmc.3
-        for <linux-leds@vger.kernel.org>; Mon, 31 Oct 2016 15:06:48 -0700 (PDT)
-In-Reply-To: <1477704042-6598-1-git-send-email-matt@ranostay.consulting>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c522f9bd-e6e4-1932-30d9-b1cc579d3172@crc.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steven Haigh <netwiz@crc.id.au>, linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Matt Ranostay <mranostay@gmail.com>, linux-leds@vger.kernel.org
-Cc: Matt Ranostay <matt@ranostay.consulting>, Peter Meerwald <p.meerwald@bct-electronic.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Hi Matt,
+Hi,
 
-On 10/29/2016 03:20 AM, Matt Ranostay wrote:
-> Allow chip to enter low power state when no LEDs are being lit or in
-> blink mode.
+On 10/30/2016 02:43 PM, Steven Haigh wrote:
+> Thanks for the feedback.
 >
-> Cc: Peter Meerwald <p.meerwald@bct-electronic.com>,
-> Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Matt Ranostay <matt@ranostay.consulting>
-> ---
-> Changes from v1:
-> * remove runtime pm
-> * count leds that are off, if all then enter low-power state
+> The difficult part here is that these are not my drivers, but are both
+> GPL - and I feel should be included upstream.
 >
-> Changes from v2:
-> * add reference count of leds to reduce i2c transactions
+> While I'm not a C coder, I may be able to do minor changes, but this was
+> my best effort of putting something together that does actually work -
+> but may benefit from the expertise of the associated lists to improve.
 >
-> Changes from v3:
-> * switch to checking bitmask to reduce i2c transactions
+> On 30/10/16 23:06, Jacek Anaszewski wrote:
+>> Hi Steven,
+>>
+>> Thanks for the patches. Few initial notes:
+>>
+>> - generally it is preferred to submit patches with "git send-email",
+>>   which simplifies review, as the remarks can be added directly in the
+>>   code, in a reply to the patch,
+>> - if you want do add some overall description of the patch set then you
+>>   can add --cover-letter switch which will generate template for this
+>>   purpose.
+>> - please also use scripts/checkpatch.pl before submission
+>> - make sure that the patches are based on the master branch of
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git,
+>> - always add on CC the maintainers of the affected kernel subsystems -
+>>   this information can be found in the MAINTAINERS file
+>> - in case of LED drivers cc also linux-kernel@vger.kernel.org,
+>> - subscribe to the mailing list related to the subsystem the patches
+>>   are dedicated to, and skim through some recent patches and reviews -
+>>   it can allow for eliminating some common problems from your driver
+>>   and reducing the number of review iterations.
+>>
+>> Regarding the patches - gpio-nct5104d.c seems to be targeted for
+>> GPIO subsystem - you should add Linus Walleij and
+>> linux-gpio@vger.kernel.org on cc.
 >
-> Changes from v4:
-> * mutex lock during power mangement routine
-> * simplify the led bitmask check
+> Correct, the nct5104 is required for the leds-apu2 module. They both
+> co-exist to address the LEDs on the PC Engines APU2 board. There are
+> requirements for the leds_gpio module on leds-apu2 as well - but I
+> couldn't figure out how to reference this.
 >
->  drivers/leds/leds-pca963x.c | 40 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 7 deletions(-)
+>> For leds-apu2.c - you shouldn't register gpio driver in the LED
+>> subsystem but add the relevant dependency in the Kconfig. Nonetheless
+>> I can't find gpio-apu2.c driver in the mainline kernel.
+>>
+>> You should also use devm_led_classdev_register() for registering LED
+>> class device. Please follow the design of the other LED class drivers
+>> using platform_device_register_simple() for probing.
 >
-> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> index b6ce1f2ec33e..46fbf935944a 100644
-> --- a/drivers/leds/leds-pca963x.c
-> +++ b/drivers/leds/leds-pca963x.c
-> @@ -103,6 +103,7 @@ struct pca963x {
->  	struct mutex mutex;
->  	struct i2c_client *client;
->  	struct pca963x_led *leds;
-> +	unsigned long leds_on;
->  };
+> You've gone above my head here :P
 >
->  struct pca963x_led {
-> @@ -124,7 +125,6 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
->  	u8 mask = 0x3 << shift;
->  	int ret;
+> As mentioned, I was hoping it would be possible to get someone to pick
+> it up and run with it based on my initial throwing of things together.
 >
-> -	mutex_lock(&pca963x->chip->mutex);
->  	ledout = i2c_smbus_read_byte_data(pca963x->chip->client, ledout_addr);
->  	switch (brightness) {
->  	case LED_FULL:
-> @@ -141,14 +141,13 @@ static int pca963x_brightness(struct pca963x_led *pca963x,
->  			PCA963X_PWM_BASE + pca963x->led_num,
->  			brightness);
->  		if (ret < 0)
-> -			goto unlock;
-> +			return ret;
->  		ret = i2c_smbus_write_byte_data(pca963x->chip->client,
->  			ledout_addr,
->  			(ledout & ~mask) | (PCA963X_LED_PWM << shift));
->  		break;
->  	}
-> -unlock:
-> -	mutex_unlock(&pca963x->chip->mutex);
-> +
->  	return ret;
->  }
->
-> @@ -180,14 +179,41 @@ static void pca963x_blink(struct pca963x_led *pca963x)
->  	mutex_unlock(&pca963x->chip->mutex);
->  }
->
-> +static int pca963x_power_state(struct pca963x_led *pca963x)
-> +{
-> +	unsigned long *leds_on = &pca963x->chip->leds_on;
-> +	unsigned long cached_leds = pca963x->chip->leds_on;
-> +
-> +	if (pca963x->led_cdev.brightness)
-> +		set_bit(pca963x->led_num, leds_on);
-> +	else
-> +		clear_bit(pca963x->led_num, leds_on);
-> +
-> +	if (!(*leds_on) != !cached_leds)
-> +		return i2c_smbus_write_byte_data(pca963x->chip->client,
-> +			PCA963X_MODE1, *leds_on ? 0 : BIT(4));
-> +
-> +	return 0;
-> +}
-> +
->  static int pca963x_led_set(struct led_classdev *led_cdev,
->  	enum led_brightness value)
->  {
->  	struct pca963x_led *pca963x;
-> +	int ret;
->
->  	pca963x = container_of(led_cdev, struct pca963x_led, led_cdev);
->
-> -	return pca963x_brightness(pca963x, value);
-> +	mutex_lock(&pca963x->chip->mutex);
-> +
-> +	ret = pca963x_brightness(pca963x, value);
-> +	if (ret < 0)
-> +		goto unlock;
-> +	ret = pca963x_power_state(pca963x);
-> +
-> +unlock:
-> +	mutex_unlock(&pca963x->chip->mutex);
-> +	return ret;
->  }
->
->  static unsigned int pca963x_period_scale(struct pca963x_led *pca963x,
-> @@ -403,8 +429,8 @@ static int pca963x_probe(struct i2c_client *client,
->  			goto exit;
->  	}
->
-> -	/* Disable LED all-call address and set normal mode */
-> -	i2c_smbus_write_byte_data(client, PCA963X_MODE1, 0x00);
-> +	/* Disable LED all-call address, and power down initially */
-> +	i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
->
->  	if (pdata) {
->  		/* Configure output: open-drain or totem pole (push-pull) */
->
+> If that's not possible, I can keep hunting for someone to clean things
+> up a little bit and try again at a later stage?
 
-Applied, thanks.
+You should have mentioned your intention in the cover letter. Besides,
+linux-leds list is not regularly tracked by most developers -
+adding linux-kernel@vger.kernel.org on CC (done) increases the
+chance for the response you're looking for, i.e. the person who has the
+hardware and personal interest in having these drivers in the
+mainline kernel.
 
 -- 
 Best regards,
