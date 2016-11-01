@@ -1,129 +1,208 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v4 4/4] platform: x86: dell-*: Call led_notify_brightness_change on kbd brightness change
-Date: Tue,  1 Nov 2016 14:37:48 +0100
-Message-ID: <20161101133748.7168-4-hdegoede@redhat.com>
-References: <20161101133748.7168-1-hdegoede@redhat.com>
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20161101133748.7168-1-hdegoede@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2] leds: Add user LED driver for NIC78bx device
+Date: Tue, 1 Nov 2016 18:48:07 +0100
+Message-ID: <777ec6a8-d5c1-698c-12f0-3158956ff474@gmail.com>
+References: <CGME20161027110331epcas3p332bf735529a71e5c5efa66adf4312785@epcas3p3.samsung.com>
+ <1477566173-124969-1-git-send-email-hui.chun.ong@ni.com>
+ <d61aa980-9519-df29-6fef-cc6e4ac182d6@samsung.com>
+ <1477988581.5623.17.camel@ni.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36714 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753481AbcKARss (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Nov 2016 13:48:48 -0400
+Received: by mail-wm0-f66.google.com with SMTP id c17so23654141wmc.3
+        for <linux-leds@vger.kernel.org>; Tue, 01 Nov 2016 10:48:47 -0700 (PDT)
+In-Reply-To: <1477988581.5623.17.camel@ni.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Hui Chun Ong <hui.chun.ong@ni.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>
+Cc: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, Julia Cartwright <julia.cartwright@ni.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Jonathan Hearn <jonathan.hearn@ni.com>, Brad Mouring <brad.mouring@ni.com>
 
-Make dell-wmi call led_notify_brightness_change on the kbd_led led_classdev
-registered by dell-laptop when the kbd backlight brightness changes.
+Hi Hui.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v2:
--Use the new dell_smbios*notify functionality
-Changes in v3:
--Simplify the if condition for calling led_notify_brightness_change
-Changes in v4:
--Adjust for dell_smbios_*_notifier to dell_laptop_*_notifier rename
----
- drivers/platform/x86/dell-laptop.c | 28 +++++++++++++++++++++++++++-
- drivers/platform/x86/dell-wmi.c    | 14 +++++++++-----
- 2 files changed, 36 insertions(+), 6 deletions(-)
+On 11/01/2016 09:23 AM, Hui Chun Ong wrote:
+> Hi Jacek,
+>
+> On Fri, 2016-10-28 at 12:08 +0200, Jacek Anaszewski wrote:
+>> Hi Hui,
+>>
+>> Thanks for the update.
+>>
+>> On 10/27/2016 01:02 PM, Hui Chun Ong wrote:
+>>>
+>>> Add the driver to support User LEDs on PXI Embedded Controller.
+>>>
+>>> Signed-off-by: Hui Chun Ong <hui.chun.ong@ni.com>
+>>> Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+>>> ---
+>>> v1: Update code to use spinlock.
+>>>     Change from acpi_driver to platform_driver.
+>>>     Create struct ni78bx_led_data to aggregate static variables.
+>>> ---
+>>>  drivers/leds/Kconfig       |  11 +++
+>>>  drivers/leds/Makefile      |   1 +
+>>>  drivers/leds/leds-ni78bx.c | 209 +++++++++++++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 221 insertions(+)
+>>>  create mode 100644 drivers/leds/leds-ni78bx.c
+>>>
+>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>> index 7a628c6..5540795 100644
+>>> --- a/drivers/leds/Kconfig
+>>> +++ b/drivers/leds/Kconfig
+>>> @@ -659,6 +659,17 @@ config LEDS_MLXCPLD
+>>>  	  This option enabled support for the LEDs on the Mellanox
+>>>  	  boards. Say Y to enabled these.
+>>>
+>>> +config LEDS_NI78BX
+>>> +	tristate "LED support for NI PXI NIC78bx devices"
+>>> +	depends on LEDS_CLASS
+>>> +	depends on X86 && ACPI
+>>> +	help
+>>> +	  This option enables support for the User1 and User2 LEDs on NI
+>>> +	  PXI NIC78bx devices.
+>>> +
+>>> +	  To compile this driver as a module, choose M here: the module
+>>> +	  will be called leds-ni78bx.
+>>> +
+>>>  comment "LED Triggers"
+>>>  source "drivers/leds/trigger/Kconfig"
+>>>
+>>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>>> index 3965070..9758d1e 100644
+>>> --- a/drivers/leds/Makefile
+>>> +++ b/drivers/leds/Makefile
+>>> @@ -71,6 +71,7 @@ obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
+>>>  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+>>>  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>>>  obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+>>> +obj-$(CONFIG_LEDS_NI78BX)		+= leds-ni78bx.o
+>>>
+>>>  # LED SPI Drivers
+>>>  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+>>> diff --git a/drivers/leds/leds-ni78bx.c b/drivers/leds/leds-ni78bx.c
+>>> new file mode 100644
+>>> index 0000000..c5682ee
+>>> --- /dev/null
+>>> +++ b/drivers/leds/leds-ni78bx.c
+>>> @@ -0,0 +1,209 @@
+>>> +/*
+>>> + * Copyright (C) 2016 National Instruments Corp.
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + *
+>>> + * This program is distributed in the hope that it will be useful,
+>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + * GNU General Public License for more details.
+>>> + */
+>>> +
+>>> +#include
+>>> +#include
+>>> +#include
+>>> +#include
+>>> +#include
+>>> +
+>>> +#define NIC78BX_USER1_LED_MASK		0x3
+>>> +#define NIC78BX_USER1_GREEN_LED		BIT(0)
+>>> +#define NIC78BX_USER1_YELLOW_LED	BIT(1)
+>>> +
+>>> +#define NIC78BX_USER2_LED_MASK		0xC
+>>> +#define NIC78BX_USER2_GREEN_LED		BIT(2)
+>>> +#define NIC78BX_USER2_YELLOW_LED	BIT(3)
+>>> +
+>>> +#define NIC78BX_LOCK_REG_OFFSET		1
+>>> +#define NIC78BX_LOCK_VALUE		0xA5
+>>> +#define NIC78BX_UNLOCK_VALUE		0x5A
+>>> +
+>>> +#define USER_LED_IO_SIZE		2
+>> This macro also requires prefix.
+>>
+>>>
+>>> +
+>>> +struct ni78bx_led_data {
+>>> +	u16 io_base;
+>>> +	spinlock_t lock;
+>>> +	struct platform_device *pdev;
+>>> +};
+>>> +
+>>> +struct ni78bx_led {
+>>> +	u8 bit;
+>>> +	u8 mask;
+>>> +	struct ni78bx_led_data *data;
+>>> +	struct led_classdev cdev;
+>>> +};
+>>> +
+>>> +static inline struct ni78bx_led *to_ni78bx_led(struct led_classdev *cdev)
+>>> +{
+>>> +	return container_of(cdev, struct ni78bx_led, cdev);
+>>> +}
+>>> +
+>>> +static void ni78bx_brightness_set(struct led_classdev *cdev,
+>>> +				  enum led_brightness brightness)
+>>> +{
+>>> +	struct ni78bx_led *nled = to_ni78bx_led(cdev);
+>>> +	unsigned long flags;
+>>> +	u8 value;
+>>> +
+>>> +	spin_lock_irqsave(&nled->data->lock, flags);
+>>> +	value = inb(nled->data->io_base);
+>>> +
+>>> +	if (brightness) {
+>>> +		value &= ~nled->mask;
+>>> +		value |= nled->bit;
+>>> +	} else {
+>>> +		value &= ~nled->bit;
+>>> +	}
+>>> +
+>>> +	outb(value, nled->data->io_base);
+>>> +	spin_unlock_irqrestore(&nled->data->lock, flags);
+>>> +}
+>>> +
+>>> +static enum led_brightness ni78bx_brightness_get(struct led_classdev *cdev)
+>>> +{
+>>> +	struct ni78bx_led *nled = to_ni78bx_led(cdev);
+>>> +	unsigned long flags;
+>>> +	u8 value;
+>>> +
+>>> +	spin_lock_irqsave(&nled->data->lock, flags);
+>>> +	value = inb(nled->data->io_base);
+>>> +	spin_unlock_irqrestore(&nled->data->lock, flags);
+>>> +
+>>> +	return (value & nled->bit) ? 1 : LED_OFF;
+>>> +}
+>>> +
+>>> +static struct ni78bx_led ni78bx_leds[] = {
+>>> +	{
+>>> +		.bit = NIC78BX_USER1_GREEN_LED,
+>>> +		.mask = NIC78BX_USER1_LED_MASK,
+>>> +		.cdev = {
+>>> +			.name = "nilrt:green:user1",
+>> Why nilrt prefix? There is some discrepancy in the naming allover
+>> this patch. You have:
+>>
+>> - NIC78bx in the commit title
+>> - ni78bx in the function prefixes
+>> - nilrt in the LED class device names
+>>
+>> Please make it uniform. What actually the device name is?
+>>
+> The device name is NIC78bx. I'll update all ni78bx references to
+> nic78bx. However, for the LED class device name, I'm hoping to
+> use a more generic name and not device specific name since
+> essentially it's just a user controllable LEDs. Something like
+> "niled:green:user1" or "green:user1".
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 2c2f02b..c9cd1d5 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -1942,6 +1942,8 @@ static struct led_classdev kbd_led = {
- 
- static int __init kbd_led_init(struct device *dev)
- {
-+	int ret;
-+
- 	kbd_init();
- 	if (!kbd_led_present)
- 		return -ENODEV;
-@@ -1953,7 +1955,11 @@ static int __init kbd_led_init(struct device *dev)
- 		if (kbd_led.max_brightness)
- 			kbd_led.max_brightness--;
- 	}
--	return led_classdev_register(dev, &kbd_led);
-+	ret = led_classdev_register(dev, &kbd_led);
-+	if (ret)
-+		kbd_led_present = false;
-+
-+	return ret;
- }
- 
- static void brightness_set_exit(struct led_classdev *led_cdev,
-@@ -1970,6 +1976,23 @@ static void kbd_led_exit(void)
- 	led_classdev_unregister(&kbd_led);
- }
- 
-+static int dell_laptop_notifier_call(struct notifier_block *nb,
-+				     unsigned long action, void *data)
-+{
-+	switch (action) {
-+	case dell_laptop_kbd_backlight_brightness_changed:
-+		if (kbd_led_present)
-+			led_notify_brightness_change(&kbd_led);
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block dell_laptop_notifier = {
-+	.notifier_call = dell_laptop_notifier_call,
-+};
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_buffer *buffer;
-@@ -2013,6 +2036,8 @@ static int __init dell_init(void)
- 		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
- 				    &dell_debugfs_fops);
- 
-+	dell_laptop_register_notifier(&dell_laptop_notifier);
-+
- 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
- 		return 0;
- 
-@@ -2064,6 +2089,7 @@ static int __init dell_init(void)
- 
- static void __exit dell_exit(void)
- {
-+	dell_laptop_unregister_notifier(&dell_laptop_notifier);
- 	debugfs_remove_recursive(dell_laptop_dir);
- 	if (quirks && quirks->touchpad_led)
- 		touchpad_led_exit();
-diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-index da2fe18..8e67061 100644
---- a/drivers/platform/x86/dell-wmi.c
-+++ b/drivers/platform/x86/dell-wmi.c
-@@ -287,11 +287,11 @@ static const struct key_entry dell_wmi_keymap_type_0011[] __initconst = {
- 	{ KE_IGNORE, 0xfff1, { KEY_RESERVED } },
- 
- 	/* Keyboard backlight level changed */
--	{ KE_IGNORE, 0x01e1, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ea, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02eb, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ec, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02f6, { KEY_RESERVED } },
-+	{ KE_IGNORE, 0x01e1, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ea, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02eb, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ec, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02f6, { KEY_KBDILLUMTOGGLE } },
- };
- 
- static struct input_dev *dell_wmi_input_dev;
-@@ -319,6 +319,10 @@ static void dell_wmi_process_key(int type, int code)
- 	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
- 		return;
- 
-+	if (key->keycode == KEY_KBDILLUMTOGGLE)
-+		dell_laptop_call_notifier(
-+			dell_laptop_kbd_backlight_brightness_changed, NULL);
-+
- 	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
- }
- 
+LED class devince naming convention is <devicename:colour:function>.
+See "LED Device Naming" section in Documentation/leds/leds-class.txt.
+Please use nic78bx also for devicename segment.
+
 -- 
-2.9.3
+Best regards,
+Jacek Anaszewski
