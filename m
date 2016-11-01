@@ -1,174 +1,104 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v4 1/4] leds: core: Add support for poll()ing the sysfs brightness attr for changes.
-Date: Tue,  1 Nov 2016 14:37:45 +0100
-Message-ID: <20161101133748.7168-1-hdegoede@redhat.com>
+Subject: [PATCH v4 3/4] platform: x86: dell-*: Add a generic dell-laptop notifier chain
+Date: Tue,  1 Nov 2016 14:37:47 +0100
+Message-ID: <20161101133748.7168-3-hdegoede@redhat.com>
+References: <20161101133748.7168-1-hdegoede@redhat.com>
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20161101133748.7168-1-hdegoede@redhat.com>
 Sender: platform-driver-x86-owner@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add support for userspace using poll() for POLL_PRI on the sysfs brightness
-attr to watch for brightness changes.
+There are several cases where events handled in one of the dell-* drivers
+need to be propagated to another dell-* driver.
 
-This commit adds a led_notify_brightness_change helper function for
-waking up any poll() waiters; and calls this after any brightness changes
-(after any led_classdev->brightness_set[_blocking] calls have completed).
+This commits add 3 generic functions:
+dell_laptop_register_notifier()
+dell_laptop_unregister_notifier()
+dell_laptop_call_notifier()
 
-In some use-cases led hardware may autonomously change its brightness,
-e.g. the keyboard backlight used on some laptops is controlled by a
-hardwired (firmware handled) hotkey. led_notify_brightness_change is
-exported for use by drivers which can detect such autonomous changes.
+It currently only defines 1 action:
+dell_laptop_kbd_backlight_brightness_changed
 
-This commit also updates the Documentation/ABI/testing/sysfs-class-led
-documentation to document that userspace may now poll on the brightness
-attribute.
+Which is intended to propagate kbd_backlight_brightness_changed wmi
+events from dell-wmi to dell-laptop (which contains the actual kbd
+backlight driver).
+
+These functions are put in dell-smbios as both dell-wmi and dell-laptop
+use smbios functions and I do not want to put the notifier head in
+either driver, as that will make the 2 drivers depend on each other.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
 Changes in v2:
--Wakeup / notify userspace on any brightness changes, not just on
- autonomous changes done by the hw
+-This is a new patch in v2 of this patch-set
 Changes in v3:
--Rebase on linux-leds/for-next
+-No changes
 Changes in v4:
--No Changes
+-Rename functions from dell_smbios_*_notifier to dell_laptop_*_notifier
 ---
- Documentation/ABI/testing/sysfs-class-led |  8 ++++++--
- drivers/leds/led-class.c                  |  9 +++++++++
- drivers/leds/led-core.c                   | 16 +++++++++++++++-
- include/linux/leds.h                      | 12 ++++++++++++
- 4 files changed, 42 insertions(+), 3 deletions(-)
+ drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
+ drivers/platform/x86/dell-smbios.h | 11 +++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 491cdee..0af5191 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -1,12 +1,16 @@
- What:		/sys/class/leds/<led>/brightness
--Date:		March 2006
--KernelVersion:	2.6.17
-+Date:		March 2006 (poll October 2016)
-+KernelVersion:	2.6.17 (poll since 4.10)
- Contact:	Richard Purdie <rpurdie@rpsys.net>
- Description:
- 		Set the brightness of the LED. Most LEDs don't
- 		have hardware brightness support, so will just be turned on for
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
-+		The file supports poll() to detect brightness changes, in
-+		some cases the hardware / firmware may change the brightness
-+		autonomously, poll() should be woken up in this case too,
-+		but not all drivers may support this.
- 
- 		Writing 0 to this file clears active trigger.
- 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 731e4eb..c8d2d67 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -204,6 +204,14 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
- 		dev_warn(parent, "Led %s renamed to %s due to name collision",
- 				led_cdev->name, dev_name(led_cdev->dev));
- 
-+	led_cdev->brightness_kn = sysfs_get_dirent(led_cdev->dev->kobj.sd,
-+						   "brightness");
-+	if (!led_cdev->brightness_kn) {
-+		dev_err(led_cdev->dev, "Error getting brightness kernfs_node\n");
-+		device_unregister(led_cdev->dev);
-+		return -ENODEV;
-+	}
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- 	init_rwsem(&led_cdev->trigger_lock);
- #endif
-@@ -255,6 +263,7 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
- 
- 	flush_work(&led_cdev->set_brightness_work);
- 
-+	sysfs_put(led_cdev->brightness_kn);
- 	device_unregister(led_cdev->dev);
- 
- 	down_write(&leds_list_lock);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 2d0c75a..af78279 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -33,16 +33,24 @@ static int __led_set_brightness(struct led_classdev *led_cdev,
- 
- 	led_cdev->brightness_set(led_cdev, value);
- 
-+	led_notify_brightness_change(led_cdev);
-+
- 	return 0;
+diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
+index d2412ab..bceb382 100644
+--- a/drivers/platform/x86/dell-smbios.c
++++ b/drivers/platform/x86/dell-smbios.c
+@@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
  }
+ EXPORT_SYMBOL_GPL(dell_smbios_find_token);
  
- static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
- 					 enum led_brightness value)
- {
-+	int ret;
++static ATOMIC_NOTIFIER_HEAD(dell_laptop_chain_head);
 +
- 	if (!led_cdev->brightness_set_blocking)
- 		return -ENOTSUPP;
- 
--	return led_cdev->brightness_set_blocking(led_cdev, value);
-+	ret = led_cdev->brightness_set_blocking(led_cdev, value);
-+	if (ret >= 0)
-+		led_notify_brightness_change(led_cdev);
-+
-+	return ret;
- }
- 
- static void led_timer_function(unsigned long data)
-@@ -308,6 +316,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_update_brightness);
- 
-+void led_notify_brightness_change(struct led_classdev *led_cdev)
++int dell_laptop_register_notifier(struct notifier_block *nb)
 +{
-+	sysfs_notify_dirent(led_cdev->brightness_kn);
++	return atomic_notifier_chain_register(&dell_laptop_chain_head, nb);
 +}
-+EXPORT_SYMBOL_GPL(led_notify_brightness_change);
++EXPORT_SYMBOL_GPL(dell_laptop_register_notifier);
 +
- /* Caller must ensure led_cdev->led_access held */
- void led_sysfs_disable(struct led_classdev *led_cdev)
++int dell_laptop_unregister_notifier(struct notifier_block *nb)
++{
++	return atomic_notifier_chain_unregister(&dell_laptop_chain_head, nb);
++}
++EXPORT_SYMBOL_GPL(dell_laptop_unregister_notifier);
++
++void dell_laptop_call_notifier(unsigned long action, void *data)
++{
++	atomic_notifier_call_chain(&dell_laptop_chain_head, action, data);
++}
++EXPORT_SYMBOL_GPL(dell_laptop_call_notifier);
++
+ static void __init parse_da_table(const struct dmi_header *dm)
  {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 52993de..f034c2d 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -13,6 +13,7 @@
- #define __LINUX_LEDS_H_INCLUDED
+ 	/* Final token is a terminator, so we don't want to copy it */
+diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+index ec7d40a..b8e01cc 100644
+--- a/drivers/platform/x86/dell-smbios.h
++++ b/drivers/platform/x86/dell-smbios.h
+@@ -16,6 +16,8 @@
+ #ifndef _DELL_SMBIOS_H_
+ #define _DELL_SMBIOS_H_
  
- #include <linux/device.h>
-+#include <linux/kernfs.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
-@@ -93,6 +94,8 @@ struct led_classdev {
- 
- 	struct work_struct	set_brightness_work;
- 
-+	struct kernfs_node	*brightness_kn;
++struct notifier_block;
 +
- #ifdef CONFIG_LEDS_TRIGGERS
- 	/* Protects the trigger data below */
- 	struct rw_semaphore	 trigger_lock;
-@@ -192,6 +195,15 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
- extern int led_update_brightness(struct led_classdev *led_cdev);
+ /* This structure will be modified by the firmware when we enter
+  * system management mode, hence the volatiles */
  
- /**
-+ * led_notify_brightness_change - Notify userspace of brightness changes
-+ * @led_cdev: the LED to do the notify on
-+ *
-+ * Let any users waiting for POLL_PRI on the led's brightness sysfs
-+ * atrribute know that the brightness has been changed.
-+ */
-+extern void led_notify_brightness_change(struct led_classdev *led_cdev);
+@@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
+ void dell_smbios_send_request(int class, int select);
+ 
+ struct calling_interface_token *dell_smbios_find_token(int tokenid);
 +
-+/**
-  * led_sysfs_disable - disable LED sysfs interface
-  * @led_cdev: the LED to set
-  *
++enum dell_laptop_notifier_actions {
++	dell_laptop_kbd_backlight_brightness_changed,
++};
++
++int dell_laptop_register_notifier(struct notifier_block *nb);
++int dell_laptop_unregister_notifier(struct notifier_block *nb);
++void dell_laptop_call_notifier(unsigned long action, void *data);
++
+ #endif
 -- 
 2.9.3
