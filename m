@@ -1,84 +1,77 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v3 0/6] Add support for IR transmitters
-Date: Wed, 2 Nov 2016 20:57:55 +0100
-Message-ID: <d94abce2-d11d-3776-3724-e2560c217ed2@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v3 5/6] Documentation: bindings: add documentation for
+ ir-spi device driver
+Date: Thu, 03 Nov 2016 09:32:54 +0100
+Message-ID: <70f4426b-e2e6-1fb7-187a-65ed4bce0668@samsung.com>
 References: <20161102104010.26959-1-andi.shyti@samsung.com>
+ <CGME20161102104149epcas5p4da68197e232df7ad922f2f9cb0714a43@epcas5p4.samsung.com>
+ <20161102104010.26959-6-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161102104010.26959-1-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:13567 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754031AbcKCIdB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Nov 2016 04:33:01 -0400
+In-reply-to: <20161102104010.26959-6-andi.shyti@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-Am 02.11.2016 um 11:40 schrieb Andi Shyti:
-> Hi,
-> 
-> The main goal is to add support in the rc framework for IR
-> transmitters, which currently is only supported by lirc but that
-> is not the preferred way.
-> 
-> The last patch adds support for an IR transmitter driven by
-> the MOSI line of an SPI controller, it's the case of the Samsung
-> TM2(e) board which support is currently ongoing.
-> 
-> The last patch adds support for an IR transmitter driven by
-> the MOSI line of an SPI controller, it's the case of the Samsung
-> TM2(e) board which support is currently ongoing.
-> 
-> Thanks Sean for your prompt reviews.
-> 
-> Andi
-> 
-> Changelog from version 1:
-> 
-> The RFC is now PATCH. The main difference is that this version
-> doesn't try to add the any bit streaming protocol and doesn't
-> modify any LIRC interface specification.
-> 
-> patch 1: updates all the drivers using rc_allocate_device
-> patch 2: fixed errors and warning reported from the kbuild test
->          robot
-> patch 5: this patch has been dropped and replaced with a new one
->          which avoids waiting for transmitters.
-> patch 6: added new properties to the dts specification
-> patch 7: the driver uses the pulse/space input and converts it to
->          a bit stream.
-> 
-> 
-> Changelog from version 2:
-> 
-> The original patch number 5 has been abandoned because it was not
-> bringing much benenfit.
-> 
-> patch 1: rebased on the new kernel.
-> patch 3: removed the sysfs attribute protocol for transmitters
-> patch 5: the binding has been moved to the leds section instead
->          of the media. Fixed all the comments from Rob
-> patch 6: fixed all the comments from Sean added also Sean's
->          review.
-> 
-> Andi Shyti (6):
->   [media] rc-main: assign driver type during allocation
->   [media] rc-main: split setup and unregister functions
->   [media] rc-core: add support for IR raw transmitters
->   [media] rc-ir-raw: do not generate any receiving thread for raw
->     transmitters
->   Documentation: bindings: add documentation for ir-spi device driver
->   [media] rc: add support for IR LEDs driven through SPI
-> 
 Hi Andi,
 
-at least patches 1 and 2 conflict with recent extensions. See commits
-ddbf7d5a698c "rc: core: add managed versions of rc_allocate_device and
-rc_register_device" and b6f3ece38733 "[media] rc: nuvoton: use managed
-versions of rc_allocate_device and rc_register_device".
+Only DT bindings of LED class drivers should be placed in
+Documentation/devicetree/bindings/leds. Please move it to the
+media bindings.
 
-It would be good if you could rebase your patch set on top of the
-latest master branch of media tree. Most likely you will have to make
-changes to the recently introduced managed versions of
-rc_allocate_device and rc_register_device.
+Thanks,
+Jacek Anaszewski
 
-Rgds, Heiner
+On 11/02/2016 11:40 AM, Andi Shyti wrote:
+> Document the ir-spi driver's binding which is a IR led driven
+> through the SPI line.
+>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  .../devicetree/bindings/leds/spi-ir-led.txt        | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/spi-ir-led.txt
+>
+> diff --git a/Documentation/devicetree/bindings/leds/spi-ir-led.txt b/Documentation/devicetree/bindings/leds/spi-ir-led.txt
+> new file mode 100644
+> index 0000000..896b699
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/spi-ir-led.txt
+> @@ -0,0 +1,29 @@
+> +Device tree bindings for IR LED connected through SPI bus which is used as
+> +remote controller.
+> +
+> +The IR LED switch is connected to the MOSI line of the SPI device and the data
+> +are delivered thourgh that.
+> +
+> +Required properties:
+> +	- compatible: should be "ir-spi-led".
+> +
+> +Optional properties:
+> +	- duty-cycle: 8 bit balue that represents the percentage of one period
+> +	  in which the signal is active.  It can be 50, 60, 70, 75, 80 or 90.
+> +	- led-active-low: boolean value that specifies whether the output is
+> +	  negated with a NOT gate.
+> +	- power-supply: specifies the power source. It can either be a regulator
+> +	  or a gpio which enables a regulator, i.e. a regulator-fixed as
+> +	  described in
+> +	  Documentation/devicetree/bindings/regulator/fixed-regulator.txt
+> +
+> +Example:
+> +
+> +	irled@0 {
+> +		compatible = "ir-spi-led";
+> +		reg = <0x0>;
+> +		spi-max-frequency = <5000000>;
+> +		power-supply = <&vdd_led>;
+> +		led-active-low;
+> +		duty-cycle = /bits/ 8 <60>;
+> +	};
+>
