@@ -1,158 +1,239 @@
-From: Hui Chun Ong <hui.chun.ong@ni.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v2] leds: Add user LED driver for NIC78bx device
-Date: Thu, 3 Nov 2016 14:43:30 +0000
-Message-ID: <1478184209.2893.3.camel@ni.com>
+Date: Thu, 03 Nov 2016 17:02:42 +0100
+Message-ID: <6b53023f-0cc6-4e80-b205-07a0689cf285@samsung.com>
 References: <CGME20161027110331epcas3p332bf735529a71e5c5efa66adf4312785@epcas3p3.samsung.com>
-         <1477566173-124969-1-git-send-email-hui.chun.ong@ni.com>
-         <d61aa980-9519-df29-6fef-cc6e4ac182d6@samsung.com>
-         <1477988581.5623.17.camel@ni.com>
-         <777ec6a8-d5c1-698c-12f0-3158956ff474@gmail.com>
+ <1477566173-124969-1-git-send-email-hui.chun.ong@ni.com>
+ <d61aa980-9519-df29-6fef-cc6e4ac182d6@samsung.com>
+ <1477988581.5623.17.camel@ni.com>
+ <777ec6a8-d5c1-698c-12f0-3158956ff474@gmail.com>
+ <1478184209.2893.3.camel@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-co1nam03on0133.outbound.protection.outlook.com ([104.47.40.133]:45504
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757108AbcKCPQW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:16:22 -0400
-In-Reply-To: <777ec6a8-d5c1-698c-12f0-3158956ff474@gmail.com>
-Content-Language: en-US
-Content-ID: <782694DB0FB727488B24C91097D45D4F@namprd04.prod.outlook.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44860 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932716AbcKCQCs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Nov 2016 12:02:48 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OG200986PWLBP30@mailout2.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Thu, 03 Nov 2016 16:02:45 +0000 (GMT)
+In-reply-to: <1478184209.2893.3.camel@ni.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>
+To: Hui Chun Ong <hui.chun.ong@ni.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>
 Cc: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, Julia Cartwright <julia.cartwright@ni.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Jonathan Hearn <jonathan.hearn@ni.com>, Brad Mouring <brad.mouring@ni.com>
 
-SGkgSmFjZWssDQoNCk9uIFR1ZSwgMjAxNi0xMS0wMSBhdCAxODo0OCArMDEwMCwgSmFjZWsgQW5h
-c3pld3NraSB3cm90ZToNCj4gSGkgSHVpLg0KPiANCj4gT24gMTEvMDEvMjAxNiAwOToyMyBBTSwg
-SHVpIENodW4gT25nIHdyb3RlOg0KPiA+IA0KPiA+IEhpIEphY2VrLA0KPiA+IA0KPiA+IE9uIEZy
-aSwgMjAxNi0xMC0yOCBhdCAxMjowOCArMDIwMCwgSmFjZWsgQW5hc3pld3NraSB3cm90ZToNCj4g
-PiA+IA0KPiA+ID4gSGkgSHVpLA0KPiA+ID4gDQo+ID4gPiBUaGFua3MgZm9yIHRoZSB1cGRhdGUu
-DQo+ID4gPiANCj4gPiA+IE9uIDEwLzI3LzIwMTYgMDE6MDIgUE0sIEh1aSBDaHVuIE9uZyB3cm90
-ZToNCj4gPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4gPiBBZGQgdGhlIGRyaXZlciB0byBzdXBwb3J0
-IFVzZXIgTEVEcyBvbiBQWEkgRW1iZWRkZWQgQ29udHJvbGxlci4NCj4gPiA+ID4gDQo+ID4gPiA+
-IFNpZ25lZC1vZmYtYnk6IEh1aSBDaHVuIE9uZyA8aHVpLmNodW4ub25nQG5pLmNvbT4NCj4gPiA+
-ID4gU2lnbmVkLW9mZi1ieTogQnJhZCBNb3VyaW5nIDxicmFkLm1vdXJpbmdAbmkuY29tPg0KPiA+
-ID4gPiAtLS0NCj4gPiA+ID4gdjE6IFVwZGF0ZSBjb2RlIHRvIHVzZSBzcGlubG9jay4NCj4gPiA+
-ID4gwqDCoMKgwqBDaGFuZ2UgZnJvbSBhY3BpX2RyaXZlciB0byBwbGF0Zm9ybV9kcml2ZXIuDQo+
-ID4gPiA+IMKgwqDCoMKgQ3JlYXRlIHN0cnVjdCBuaTc4YnhfbGVkX2RhdGEgdG8gYWdncmVnYXRl
-IHN0YXRpYyB2YXJpYWJsZXMuDQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiDCoGRyaXZlcnMvbGVkcy9L
-Y29uZmlnwqDCoMKgwqDCoMKgwqB8wqDCoDExICsrKw0KPiA+ID4gPiDCoGRyaXZlcnMvbGVkcy9N
-YWtlZmlsZcKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gPiA+ID4gwqBkcml2ZXJzL2xlZHMvbGVk
-cy1uaTc4YnguYyB8IDIwOSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysNCj4gPiA+ID4gwqAzIGZpbGVzIGNoYW5nZWQsIDIyMSBpbnNlcnRpb25zKCspDQo+ID4g
-PiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbGVkcy9sZWRzLW5pNzhieC5jDQo+ID4g
-PiA+IA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9sZWRzL0tjb25maWcgYi9kcml2ZXJz
-L2xlZHMvS2NvbmZpZw0KPiA+ID4gPiBpbmRleCA3YTYyOGM2Li41NTQwNzk1IDEwMDY0NA0KPiA+
-ID4gPiAtLS0gYS9kcml2ZXJzL2xlZHMvS2NvbmZpZw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2xl
-ZHMvS2NvbmZpZw0KPiA+ID4gPiBAQCAtNjU5LDYgKzY1OSwxNyBAQCBjb25maWcgTEVEU19NTFhD
-UExEDQo+ID4gPiA+IMKgCcKgwqBUaGlzIG9wdGlvbiBlbmFibGVkIHN1cHBvcnQgZm9yIHRoZSBM
-RURzIG9uIHRoZSBNZWxsYW5veA0KPiA+ID4gPiDCoAnCoMKgYm9hcmRzLiBTYXkgWSB0byBlbmFi
-bGVkIHRoZXNlLg0KPiA+ID4gPiANCj4gPiA+ID4gK2NvbmZpZyBMRURTX05JNzhCWA0KPiA+ID4g
-PiArCXRyaXN0YXRlICJMRUQgc3VwcG9ydCBmb3IgTkkgUFhJIE5JQzc4YnggZGV2aWNlcyINCj4g
-PiA+ID4gKwlkZXBlbmRzIG9uIExFRFNfQ0xBU1MNCj4gPiA+ID4gKwlkZXBlbmRzIG9uIFg4NiAm
-JiBBQ1BJDQo+ID4gPiA+ICsJaGVscA0KPiA+ID4gPiArCcKgwqBUaGlzIG9wdGlvbiBlbmFibGVz
-IHN1cHBvcnQgZm9yIHRoZSBVc2VyMSBhbmQgVXNlcjIgTEVEcyBvbiBOSQ0KPiA+ID4gPiArCcKg
-wqBQWEkgTklDNzhieCBkZXZpY2VzLg0KPiA+ID4gPiArDQo+ID4gPiA+ICsJwqDCoFRvIGNvbXBp
-bGUgdGhpcyBkcml2ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZSBtb2R1bGUNCj4g
-PiA+ID4gKwnCoMKgd2lsbCBiZSBjYWxsZWQgbGVkcy1uaTc4YnguDQo+ID4gPiA+ICsNCj4gPiA+
-ID4gwqBjb21tZW50ICJMRUQgVHJpZ2dlcnMiDQo+ID4gPiA+IMKgc291cmNlICJkcml2ZXJzL2xl
-ZHMvdHJpZ2dlci9LY29uZmlnIg0KPiA+ID4gPiANCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbGVkcy9NYWtlZmlsZSBiL2RyaXZlcnMvbGVkcy9NYWtlZmlsZQ0KPiA+ID4gPiBpbmRleCAz
-OTY1MDcwLi45NzU4ZDFlIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2xlZHMvTWFrZWZp
-bGUNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9sZWRzL01ha2VmaWxlDQo+ID4gPiA+IEBAIC03MSw2
-ICs3MSw3IEBAIG9iai0kKENPTkZJR19MRURTX0lTMzFGTDMxOVgpCQkrPSBsZWRzLWlzMzFmbDMx
-OXgubw0KPiA+ID4gPiDCoG9iai0kKENPTkZJR19MRURTX0lTMzFGTDMyWFgpCQkrPSBsZWRzLWlz
-MzFmbDMyeHgubw0KPiA+ID4gPiDCoG9iai0kKENPTkZJR19MRURTX1BNODA1OCkJCSs9IGxlZHMt
-cG04MDU4Lm8NCj4gPiA+ID4gwqBvYmotJChDT05GSUdfTEVEU19NTFhDUExEKQkJKz0gbGVkcy1t
-bHhjcGxkLm8NCj4gPiA+ID4gK29iai0kKENPTkZJR19MRURTX05JNzhCWCkJCSs9IGxlZHMtbmk3
-OGJ4Lm8NCj4gPiA+ID4gDQo+ID4gPiA+IMKgIyBMRUQgU1BJIERyaXZlcnMNCj4gPiA+ID4gwqBv
-YmotJChDT05GSUdfTEVEU19EQUMxMjRTMDg1KQkJKz0gbGVkcy1kYWMxMjRzMDg1Lm8NCj4gPiA+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy9sZWRzLW5pNzhieC5jIGIvZHJpdmVycy9sZWRz
-L2xlZHMtbmk3OGJ4LmMNCj4gPiA+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiA+ID4gaW5k
-ZXggMDAwMDAwMC4uYzU2ODJlZQ0KPiA+ID4gPiAtLS0gL2Rldi9udWxsDQo+ID4gPiA+ICsrKyBi
-L2RyaXZlcnMvbGVkcy9sZWRzLW5pNzhieC5jDQo+ID4gPiA+IEBAIC0wLDAgKzEsMjA5IEBADQo+
-ID4gPiA+ICsvKg0KPiA+ID4gPiArICogQ29weXJpZ2h0IChDKSAyMDE2IE5hdGlvbmFsIEluc3Ry
-dW1lbnRzIENvcnAuDQo+ID4gPiA+ICsgKg0KPiA+ID4gPiArICogVGhpcyBwcm9ncmFtIGlzIGZy
-ZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkNCj4gPiA+
-ID4gKyAqIGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vu
-c2UgYXMgcHVibGlzaGVkIGJ5DQo+ID4gPiA+ICsgKiB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0
-aW9uOyBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSBMaWNlbnNlLCBvcg0KPiA+ID4gPiArICogKGF0
-IHlvdXIgb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4NCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsg
-KiBUaGlzIHByb2dyYW0gaXMgZGlzdHJpYnV0ZWQgaW4gdGhlIGhvcGUgdGhhdCBpdCB3aWxsIGJl
-IHVzZWZ1bCwNCj4gPiA+ID4gKyAqIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5UWTsgd2l0aG91dCBl
-dmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mDQo+ID4gPiA+ICsgKiBNRVJDSEFOVEFCSUxJVFkg
-b3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuwqDCoFNlZSB0aGUNCj4gPiA+ID4g
-KyAqIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvciBtb3JlIGRldGFpbHMuDQo+ID4gPiA+
-ICsgKi8NCj4gPiA+ID4gKw0KPiA+ID4gPiArI2luY2x1ZGUNCj4gPiA+ID4gKyNpbmNsdWRlDQo+
-ID4gPiA+ICsjaW5jbHVkZQ0KPiA+ID4gPiArI2luY2x1ZGUNCj4gPiA+ID4gKyNpbmNsdWRlDQo+
-ID4gPiA+ICsNCj4gPiA+ID4gKyNkZWZpbmUgTklDNzhCWF9VU0VSMV9MRURfTUFTSwkJMHgzDQo+
-ID4gPiA+ICsjZGVmaW5lIE5JQzc4QlhfVVNFUjFfR1JFRU5fTEVECQlCSVQoMCkNCj4gPiA+ID4g
-KyNkZWZpbmUgTklDNzhCWF9VU0VSMV9ZRUxMT1dfTEVECUJJVCgxKQ0KPiA+ID4gPiArDQo+ID4g
-PiA+ICsjZGVmaW5lIE5JQzc4QlhfVVNFUjJfTEVEX01BU0sJCTB4Qw0KPiA+ID4gPiArI2RlZmlu
-ZSBOSUM3OEJYX1VTRVIyX0dSRUVOX0xFRAkJQklUKDIpDQo+ID4gPiA+ICsjZGVmaW5lIE5JQzc4
-QlhfVVNFUjJfWUVMTE9XX0xFRAlCSVQoMykNCj4gPiA+ID4gKw0KPiA+ID4gPiArI2RlZmluZSBO
-SUM3OEJYX0xPQ0tfUkVHX09GRlNFVAkJMQ0KPiA+ID4gPiArI2RlZmluZSBOSUM3OEJYX0xPQ0tf
-VkFMVUUJCTB4QTUNCj4gPiA+ID4gKyNkZWZpbmUgTklDNzhCWF9VTkxPQ0tfVkFMVUUJCTB4NUEN
-Cj4gPiA+ID4gKw0KPiA+ID4gPiArI2RlZmluZSBVU0VSX0xFRF9JT19TSVpFCQkyDQo+ID4gPiBU
-aGlzIG1hY3JvIGFsc28gcmVxdWlyZXMgcHJlZml4Lg0KPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4g
-PiANCj4gPiA+ID4gKw0KPiA+ID4gPiArc3RydWN0IG5pNzhieF9sZWRfZGF0YSB7DQo+ID4gPiA+
-ICsJdTE2IGlvX2Jhc2U7DQo+ID4gPiA+ICsJc3BpbmxvY2tfdCBsb2NrOw0KPiA+ID4gPiArCXN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7DQo+ID4gPiA+ICt9Ow0KPiA+ID4gPiArDQo+ID4g
-PiA+ICtzdHJ1Y3Qgbmk3OGJ4X2xlZCB7DQo+ID4gPiA+ICsJdTggYml0Ow0KPiA+ID4gPiArCXU4
-IG1hc2s7DQo+ID4gPiA+ICsJc3RydWN0IG5pNzhieF9sZWRfZGF0YSAqZGF0YTsNCj4gPiA+ID4g
-KwlzdHJ1Y3QgbGVkX2NsYXNzZGV2IGNkZXY7DQo+ID4gPiA+ICt9Ow0KPiA+ID4gPiArDQo+ID4g
-PiA+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBuaTc4YnhfbGVkICp0b19uaTc4YnhfbGVkKHN0cnVj
-dCBsZWRfY2xhc3NkZXYgKmNkZXYpDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJcmV0dXJuIGNvbnRh
-aW5lcl9vZihjZGV2LCBzdHJ1Y3Qgbmk3OGJ4X2xlZCwgY2Rldik7DQo+ID4gPiA+ICt9DQo+ID4g
-PiA+ICsNCj4gPiA+ID4gK3N0YXRpYyB2b2lkIG5pNzhieF9icmlnaHRuZXNzX3NldChzdHJ1Y3Qg
-bGVkX2NsYXNzZGV2ICpjZGV2LA0KPiA+ID4gPiArCQkJCcKgwqBlbnVtIGxlZF9icmlnaHRuZXNz
-IGJyaWdodG5lc3MpDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJc3RydWN0IG5pNzhieF9sZWQgKm5s
-ZWQgPSB0b19uaTc4YnhfbGVkKGNkZXYpOw0KPiA+ID4gPiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7
-DQo+ID4gPiA+ICsJdTggdmFsdWU7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlzcGluX2xvY2tfaXJx
-c2F2ZSgmbmxlZC0+ZGF0YS0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gPiArCXZhbHVlID0gaW5iKG5s
-ZWQtPmRhdGEtPmlvX2Jhc2UpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJaWYgKGJyaWdodG5lc3Mp
-IHsNCj4gPiA+ID4gKwkJdmFsdWUgJj0gfm5sZWQtPm1hc2s7DQo+ID4gPiA+ICsJCXZhbHVlIHw9
-IG5sZWQtPmJpdDsNCj4gPiA+ID4gKwl9IGVsc2Ugew0KPiA+ID4gPiArCQl2YWx1ZSAmPSB+bmxl
-ZC0+Yml0Ow0KPiA+ID4gPiArCX0NCj4gPiA+ID4gKw0KPiA+ID4gPiArCW91dGIodmFsdWUsIG5s
-ZWQtPmRhdGEtPmlvX2Jhc2UpOw0KPiA+ID4gPiArCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJm5s
-ZWQtPmRhdGEtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiAr
-c3RhdGljIGVudW0gbGVkX2JyaWdodG5lc3Mgbmk3OGJ4X2JyaWdodG5lc3NfZ2V0KHN0cnVjdCBs
-ZWRfY2xhc3NkZXYgKmNkZXYpDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJc3RydWN0IG5pNzhieF9s
-ZWQgKm5sZWQgPSB0b19uaTc4YnhfbGVkKGNkZXYpOw0KPiA+ID4gPiArCXVuc2lnbmVkIGxvbmcg
-ZmxhZ3M7DQo+ID4gPiA+ICsJdTggdmFsdWU7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlzcGluX2xv
-Y2tfaXJxc2F2ZSgmbmxlZC0+ZGF0YS0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gPiArCXZhbHVlID0g
-aW5iKG5sZWQtPmRhdGEtPmlvX2Jhc2UpOw0KPiA+ID4gPiArCXNwaW5fdW5sb2NrX2lycXJlc3Rv
-cmUoJm5sZWQtPmRhdGEtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArCXJldHVy
-biAodmFsdWUgJiBubGVkLT5iaXQpID8gMSA6IExFRF9PRkY7DQo+ID4gPiA+ICt9DQo+ID4gPiA+
-ICsNCj4gPiA+ID4gK3N0YXRpYyBzdHJ1Y3Qgbmk3OGJ4X2xlZCBuaTc4YnhfbGVkc1tdID0gew0K
-PiA+ID4gPiArCXsNCj4gPiA+ID4gKwkJLmJpdCA9IE5JQzc4QlhfVVNFUjFfR1JFRU5fTEVELA0K
-PiA+ID4gPiArCQkubWFzayA9IE5JQzc4QlhfVVNFUjFfTEVEX01BU0ssDQo+ID4gPiA+ICsJCS5j
-ZGV2ID0gew0KPiA+ID4gPiArCQkJLm5hbWUgPSAibmlscnQ6Z3JlZW46dXNlcjEiLA0KPiA+ID4g
-V2h5IG5pbHJ0IHByZWZpeD8gVGhlcmUgaXMgc29tZSBkaXNjcmVwYW5jeSBpbiB0aGUgbmFtaW5n
-IGFsbG92ZXINCj4gPiA+IHRoaXMgcGF0Y2guIFlvdSBoYXZlOg0KPiA+ID4gDQo+ID4gPiAtIE5J
-Qzc4YnggaW4gdGhlIGNvbW1pdCB0aXRsZQ0KPiA+ID4gLSBuaTc4YnggaW4gdGhlIGZ1bmN0aW9u
-IHByZWZpeGVzDQo+ID4gPiAtIG5pbHJ0IGluIHRoZSBMRUQgY2xhc3MgZGV2aWNlIG5hbWVzDQo+
-ID4gPiANCj4gPiA+IFBsZWFzZSBtYWtlIGl0IHVuaWZvcm0uIFdoYXQgYWN0dWFsbHkgdGhlIGRl
-dmljZSBuYW1lIGlzPw0KPiA+ID4gDQo+ID4gVGhlIGRldmljZSBuYW1lIGlzIE5JQzc4YnguIEkn
-bGwgdXBkYXRlIGFsbCBuaTc4YnggcmVmZXJlbmNlcyB0bw0KPiA+IG5pYzc4YnguIEhvd2V2ZXIs
-IGZvciB0aGUgTEVEIGNsYXNzIGRldmljZSBuYW1lLCBJJ20gaG9waW5nIHRvDQo+ID4gdXNlIGEg
-bW9yZSBnZW5lcmljIG5hbWUgYW5kIG5vdCBkZXZpY2Ugc3BlY2lmaWMgbmFtZSBzaW5jZQ0KPiA+
-IGVzc2VudGlhbGx5IGl0J3MganVzdCBhIHVzZXIgY29udHJvbGxhYmxlIExFRHMuIFNvbWV0aGlu
-ZyBsaWtlDQo+ID4gIm5pbGVkOmdyZWVuOnVzZXIxIiBvciAiZ3JlZW46dXNlcjEiLg0KPiBMRUQg
-Y2xhc3MgZGV2aW5jZSBuYW1pbmcgY29udmVudGlvbiBpcyAuDQo+IFNlZSAiTEVEIERldmljZSBO
-YW1pbmciIHNlY3Rpb24gaW4gRG9jdW1lbnRhdGlvbi9sZWRzL2xlZHMtY2xhc3MudHh0Lg0KPiBQ
-bGVhc2UgdXNlIG5pYzc4YnggYWxzbyBmb3IgZGV2aWNlbmFtZSBzZWdtZW50Lg0KPiANCkF0IE5h
-dGlvbmFsIEluc3RydW1lbnRzIHdlIGhhdmUgYSBmYW1pbHkgb2YgcHJvZHVjdHMgdGhhdCBleHBv
-c2VzIExFRHMNCmNvbnRyb2wgdG8gdGhlIHVzZXIuIFRoZSBiYWNrZW5kIExFRCBjb250cm9sIG1l
-Y2hhbmlzbSBpcyBoYXJkd2FyZcKgDQpzcGVjaWZpYyBidXQgYXQgdGhlIGZyb250LWVuZCB3ZSB3
-YW50IHRvIHByb3ZpZGUgYSBjb21tb24gaW50ZXJmYWNlIHRvwqANCnRoZcKgdXNlcnNwYWNlLsKg
-DQoNCk91ciBwcm9kdWN0IGlzIGd1YXJhbnRlZWQgd2l0aCBhIHVuaXF1ZSBMRUQgY29udHJvbCBt
-ZWNoYW5pc20gZm9yIGVhY2jCoA0KcHJvZHVjdCwgdGh1cywgdGhlcmUgaXMgbm8gcmlzayBmb3Ig
-Y29sbGlzaW9uLiBXZSBoYXZlIGRvbmUgdGhpcyBmb3LCoA0KdGhlIHBhc3QgMjAgeWVhcnMgYW5k
-IGhhdmUgYnVpbHQgYXBwbGljYXRpb24gYXJvdW5kIGEgY29tbW9uIGludGVyZmFjZcKgDQpvbiBv
-dGhlciBPUyBwbGF0Zm9ybSB3aGljaCB3ZSBob3BlIHRvIHJlcGxpY2F0ZSBpbiBMaW51eC4NCg0K
-VGhlICJuaWxydCIgcHJlZml4IHRoYXQgd2UgcHJvcG9zZSB0byB1c2UgaXMgb3VyIHByZWZlcnJl
-ZCBjb21tb27CoA0KZGV2aWNlbmFtZSBmb3IgdGhlIGZhbWlseSBvZiBwcm9kdWN0cyB0aGF0IHN1
-cHBvcnQgdGhpcyBmZWF0dXJlIGFzIEnCoA0KZGVzY3JpYmVkIGl0IGFib3ZlLg0K
+Hi Hui,
+
+On 11/03/2016 03:43 PM, Hui Chun Ong wrote:
+> Hi Jacek,
+>
+> On Tue, 2016-11-01 at 18:48 +0100, Jacek Anaszewski wrote:
+>> Hi Hui.
+>>
+>> On 11/01/2016 09:23 AM, Hui Chun Ong wrote:
+>>>
+>>> Hi Jacek,
+>>>
+>>> On Fri, 2016-10-28 at 12:08 +0200, Jacek Anaszewski wrote:
+>>>>
+>>>> Hi Hui,
+>>>>
+>>>> Thanks for the update.
+>>>>
+>>>> On 10/27/2016 01:02 PM, Hui Chun Ong wrote:
+>>>>>
+>>>>>
+>>>>> Add the driver to support User LEDs on PXI Embedded Controller.
+>>>>>
+>>>>> Signed-off-by: Hui Chun Ong <hui.chun.ong@ni.com>
+>>>>> Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+>>>>> ---
+>>>>> v1: Update code to use spinlock.
+>>>>>     Change from acpi_driver to platform_driver.
+>>>>>     Create struct ni78bx_led_data to aggregate static variables.
+>>>>> ---
+>>>>>  drivers/leds/Kconfig       |  11 +++
+>>>>>  drivers/leds/Makefile      |   1 +
+>>>>>  drivers/leds/leds-ni78bx.c | 209 +++++++++++++++++++++++++++++++++++++++++++++
+>>>>>  3 files changed, 221 insertions(+)
+>>>>>  create mode 100644 drivers/leds/leds-ni78bx.c
+>>>>>
+>>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>>>> index 7a628c6..5540795 100644
+>>>>> --- a/drivers/leds/Kconfig
+>>>>> +++ b/drivers/leds/Kconfig
+>>>>> @@ -659,6 +659,17 @@ config LEDS_MLXCPLD
+>>>>>  	  This option enabled support for the LEDs on the Mellanox
+>>>>>  	  boards. Say Y to enabled these.
+>>>>>
+>>>>> +config LEDS_NI78BX
+>>>>> +	tristate "LED support for NI PXI NIC78bx devices"
+>>>>> +	depends on LEDS_CLASS
+>>>>> +	depends on X86 && ACPI
+>>>>> +	help
+>>>>> +	  This option enables support for the User1 and User2 LEDs on NI
+>>>>> +	  PXI NIC78bx devices.
+>>>>> +
+>>>>> +	  To compile this driver as a module, choose M here: the module
+>>>>> +	  will be called leds-ni78bx.
+>>>>> +
+>>>>>  comment "LED Triggers"
+>>>>>  source "drivers/leds/trigger/Kconfig"
+>>>>>
+>>>>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>>>>> index 3965070..9758d1e 100644
+>>>>> --- a/drivers/leds/Makefile
+>>>>> +++ b/drivers/leds/Makefile
+>>>>> @@ -71,6 +71,7 @@ obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
+>>>>>  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+>>>>>  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>>>>>  obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+>>>>> +obj-$(CONFIG_LEDS_NI78BX)		+= leds-ni78bx.o
+>>>>>
+>>>>>  # LED SPI Drivers
+>>>>>  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+>>>>> diff --git a/drivers/leds/leds-ni78bx.c b/drivers/leds/leds-ni78bx.c
+>>>>> new file mode 100644
+>>>>> index 0000000..c5682ee
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/leds/leds-ni78bx.c
+>>>>> @@ -0,0 +1,209 @@
+>>>>> +/*
+>>>>> + * Copyright (C) 2016 National Instruments Corp.
+>>>>> + *
+>>>>> + * This program is free software; you can redistribute it and/or modify
+>>>>> + * it under the terms of the GNU General Public License as published by
+>>>>> + * the Free Software Foundation; either version 2 of the License, or
+>>>>> + * (at your option) any later version.
+>>>>> + *
+>>>>> + * This program is distributed in the hope that it will be useful,
+>>>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>>> + * GNU General Public License for more details.
+>>>>> + */
+>>>>> +
+>>>>> +#include
+>>>>> +#include
+>>>>> +#include
+>>>>> +#include
+>>>>> +#include
+>>>>> +
+>>>>> +#define NIC78BX_USER1_LED_MASK		0x3
+>>>>> +#define NIC78BX_USER1_GREEN_LED		BIT(0)
+>>>>> +#define NIC78BX_USER1_YELLOW_LED	BIT(1)
+>>>>> +
+>>>>> +#define NIC78BX_USER2_LED_MASK		0xC
+>>>>> +#define NIC78BX_USER2_GREEN_LED		BIT(2)
+>>>>> +#define NIC78BX_USER2_YELLOW_LED	BIT(3)
+>>>>> +
+>>>>> +#define NIC78BX_LOCK_REG_OFFSET		1
+>>>>> +#define NIC78BX_LOCK_VALUE		0xA5
+>>>>> +#define NIC78BX_UNLOCK_VALUE		0x5A
+>>>>> +
+>>>>> +#define USER_LED_IO_SIZE		2
+>>>> This macro also requires prefix.
+>>>>
+>>>>>
+>>>>>
+>>>>> +
+>>>>> +struct ni78bx_led_data {
+>>>>> +	u16 io_base;
+>>>>> +	spinlock_t lock;
+>>>>> +	struct platform_device *pdev;
+>>>>> +};
+>>>>> +
+>>>>> +struct ni78bx_led {
+>>>>> +	u8 bit;
+>>>>> +	u8 mask;
+>>>>> +	struct ni78bx_led_data *data;
+>>>>> +	struct led_classdev cdev;
+>>>>> +};
+>>>>> +
+>>>>> +static inline struct ni78bx_led *to_ni78bx_led(struct led_classdev *cdev)
+>>>>> +{
+>>>>> +	return container_of(cdev, struct ni78bx_led, cdev);
+>>>>> +}
+>>>>> +
+>>>>> +static void ni78bx_brightness_set(struct led_classdev *cdev,
+>>>>> +				  enum led_brightness brightness)
+>>>>> +{
+>>>>> +	struct ni78bx_led *nled = to_ni78bx_led(cdev);
+>>>>> +	unsigned long flags;
+>>>>> +	u8 value;
+>>>>> +
+>>>>> +	spin_lock_irqsave(&nled->data->lock, flags);
+>>>>> +	value = inb(nled->data->io_base);
+>>>>> +
+>>>>> +	if (brightness) {
+>>>>> +		value &= ~nled->mask;
+>>>>> +		value |= nled->bit;
+>>>>> +	} else {
+>>>>> +		value &= ~nled->bit;
+>>>>> +	}
+>>>>> +
+>>>>> +	outb(value, nled->data->io_base);
+>>>>> +	spin_unlock_irqrestore(&nled->data->lock, flags);
+>>>>> +}
+>>>>> +
+>>>>> +static enum led_brightness ni78bx_brightness_get(struct led_classdev *cdev)
+>>>>> +{
+>>>>> +	struct ni78bx_led *nled = to_ni78bx_led(cdev);
+>>>>> +	unsigned long flags;
+>>>>> +	u8 value;
+>>>>> +
+>>>>> +	spin_lock_irqsave(&nled->data->lock, flags);
+>>>>> +	value = inb(nled->data->io_base);
+>>>>> +	spin_unlock_irqrestore(&nled->data->lock, flags);
+>>>>> +
+>>>>> +	return (value & nled->bit) ? 1 : LED_OFF;
+>>>>> +}
+>>>>> +
+>>>>> +static struct ni78bx_led ni78bx_leds[] = {
+>>>>> +	{
+>>>>> +		.bit = NIC78BX_USER1_GREEN_LED,
+>>>>> +		.mask = NIC78BX_USER1_LED_MASK,
+>>>>> +		.cdev = {
+>>>>> +			.name = "nilrt:green:user1",
+>>>> Why nilrt prefix? There is some discrepancy in the naming allover
+>>>> this patch. You have:
+>>>>
+>>>> - NIC78bx in the commit title
+>>>> - ni78bx in the function prefixes
+>>>> - nilrt in the LED class device names
+>>>>
+>>>> Please make it uniform. What actually the device name is?
+>>>>
+>>> The device name is NIC78bx. I'll update all ni78bx references to
+>>> nic78bx. However, for the LED class device name, I'm hoping to
+>>> use a more generic name and not device specific name since
+>>> essentially it's just a user controllable LEDs. Something like
+>>> "niled:green:user1" or "green:user1".
+>> LED class devince naming convention is .
+>> See "LED Device Naming" section in Documentation/leds/leds-class.txt.
+>> Please use nic78bx also for devicename segment.
+>>
+> At National Instruments we have a family of products that exposes LEDs
+> control to the user. The backend LED control mechanism is hardware
+> specific but at the front-end we want to provide a common interface to
+> the userspace.
+>
+> Our product is guaranteed with a unique LED control mechanism for each
+> product, thus, there is no risk for collision. We have done this for
+> the past 20 years and have built application around a common interface
+> on other OS platform which we hope to replicate in Linux.
+>
+> The "nilrt" prefix that we propose to use is our preferred common
+> devicename for the family of products that support this feature as I
+> described it above.
+>
+
+Thanks for the explanation. Let's stay by "nilrt" then.
+
+-- 
+Best regards,
+Jacek Anaszewski
