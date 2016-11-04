@@ -1,33 +1,66 @@
-From: Charles Howard QC <CHowardQC@1kbw.co.uk>
-Subject: Re: Problems with item delivery, n.68676435
-Date: Fri, 4 Nov 2016 08:41:40 +0000
-Message-ID: <786822F8-AF21-4A5E-9156-DA661D319C60@1kbw.co.uk>
-References: <E61C48C433E7C96AB6B3FA47E3701311@vger.kernel.org>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH] leds: Add mutex protection in brightness_show()
+Date: Fri, 4 Nov 2016 12:53:17 +0100
+Message-ID: <fb98c74d-137d-cffb-6d56-2f3aeed1a3d6@redhat.com>
+References: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.premieritnetworks.com ([185.35.24.17]:45707 "EHLO
-        mx1.premieritnetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbcKDI5e (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 4 Nov 2016 04:57:34 -0400
-Received: from [192.168.167.10] (port=12578 helo=cjsm.1kbw.co.uk)
-        by horza.premieritnetworks.com (relay2.premieritnetworks.com [185.35.24.18]:25)
-        with esmtps (TLSv1.2:AES256-SHA:256)
-        id 1c2a4F-00074J-PW (Exim 4.84_2) for linux-leds@vger.kernel.org
-        (return-path <CHowardQC@1kbw.co.uk>); Fri, 04 Nov 2016 08:41:43 +0000
-In-Reply-To: <E61C48C433E7C96AB6B3FA47E3701311@vger.kernel.org>
-Content-Language: en-US
-Content-ID: <CD643210F72E8B4583B8D7AEB5593F54@1kbw.co.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-leds@vger.kernel.org
-To: FedEx Ground <linux-leds@vger.kernel.org>
 
-please send me telephone no to ring re this .I cann ot download delivery label 
-> On 3 Nov 2016, at 20:24, FedEx Ground <linux-leds@vger.kernel.org> wrote:
-> 
-> Hello,
-> We could not deliver your item. Please, download Delivery Label attached to this email.
-> Kinyonna Yeakley - Area Manager FedEx , CA
-> Warm regards
-> <post_info_asgHE.zip>
+Hi,
+
+On 04-11-16 08:52, Jacek Anaszewski wrote:
+> Initially the claim about no need for lock in brightness_show()
+> was valid as the function was just returning unchanged
+> LED brightness. After the addition of led_update_brightness() this
+> is no longer true, as the function can change the brightness if
+> a LED class driver implements brightness_get op. It can lead to
+> races between led_update_brightness() and led_set_brightness(),
+> resulting in overwriting new brightness with the old one before
+> the former is written to the device.
+>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> ---
+>  drivers/leds/led-class.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 731e4eb..0c2307b 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>
+> -	/* no lock needed for this */
+> +	mutex_lock(&led_cdev->led_access);
+>  	led_update_brightness(led_cdev);
+> +	mutex_unlock(&led_cdev->led_access);
+>
+>  	return sprintf(buf, "%u\n", led_cdev->brightness);
+>  }
+>
+
+I'm afraid that this fix is not enough, the led_access lock is only
+held when the brightness is being updated through sysfs, not for
+trigger / sw-blinking updates (which cannot take a mutex as they
+may be called from non blocking contexts).
+
+We may need to consider to add a spinlock to the led_classdev and
+always lock that when calling into the driver, except for when
+the driver has a brightness_set_blocking callback. Which will need
+special handling.
+
+Regards,
+
+Hans
