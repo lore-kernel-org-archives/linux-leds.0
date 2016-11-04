@@ -1,102 +1,81 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] leds: Add mutex protection in brightness_show()
-Date: Fri, 4 Nov 2016 17:46:07 +0100
-Message-ID: <9367cc2f-5ce9-0443-bb87-66198d437061@redhat.com>
-References: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
- <CGME20161104115324epcas3p32bee0b0f57ae8d1141ded4fa1d1f2ae2@epcas3p3.samsung.com>
- <fb98c74d-137d-cffb-6d56-2f3aeed1a3d6@redhat.com>
- <9d28f3d3-1d3d-c670-a102-3e2698764fdd@samsung.com>
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: RE: [patch v1 1/1] leds: verify vendor and change license in mlxcpld
+ driver
+Date: Fri, 4 Nov 2016 10:18:09 +0000
+Message-ID: <AM5PR0501MB209782547DD4F220935BCA96A2A20@AM5PR0501MB2097.eurprd05.prod.outlook.com>
+References: <CGME20161103171933epcas3p44d4939851092122a5fb9c985eb125770@epcas3p4.samsung.com>
+ <1478200639-190079-1-git-send-email-vadimp@mellanox.com>
+ <e4180b0b-f09f-a9f4-930d-127311704e36@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:49028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932541AbcKDQqM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 4 Nov 2016 12:46:12 -0400
-In-Reply-To: <9d28f3d3-1d3d-c670-a102-3e2698764fdd@samsung.com>
+Received: from mail-db5eur01on0069.outbound.protection.outlook.com ([104.47.2.69]:27669
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932283AbcKDRtB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 4 Nov 2016 13:49:01 -0400
+In-Reply-To: <e4180b0b-f09f-a9f4-930d-127311704e36@samsung.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>
 
-Hi,
+Hi Jacek,
 
-On 04-11-16 17:06, Jacek Anaszewski wrote:
-> Hi Hans,
->
-> On 11/04/2016 12:53 PM, Hans de Goede wrote:
->> Hi,
->>
->> On 04-11-16 08:52, Jacek Anaszewski wrote:
->>> Initially the claim about no need for lock in brightness_show()
->>> was valid as the function was just returning unchanged
->>> LED brightness. After the addition of led_update_brightness() this
->>> is no longer true, as the function can change the brightness if
->>> a LED class driver implements brightness_get op. It can lead to
->>> races between led_update_brightness() and led_set_brightness(),
->>> resulting in overwriting new brightness with the old one before
->>> the former is written to the device.
->>>
->>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->>> Cc: Hans de Goede <hdegoede@redhat.com>
->>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>> Cc: Pavel Machek <pavel@ucw.cz>
->>> Cc: Andrew Lunn <andrew@lunn.ch>
->>> ---
->>>  drivers/leds/led-class.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>> index 731e4eb..0c2307b 100644
->>> --- a/drivers/leds/led-class.c
->>> +++ b/drivers/leds/led-class.c
->>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
->>>  {
->>>      struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>>
->>> -    /* no lock needed for this */
->>> +    mutex_lock(&led_cdev->led_access);
->>>      led_update_brightness(led_cdev);
->>> +    mutex_unlock(&led_cdev->led_access);
->>>
->>>      return sprintf(buf, "%u\n", led_cdev->brightness);
->>>  }
->>>
->>
->> I'm afraid that this fix is not enough, the led_access lock is only
->> held when the brightness is being updated through sysfs, not for
->> trigger / sw-blinking updates (which cannot take a mutex as they
->> may be called from non blocking contexts).
->>
->> We may need to consider to add a spinlock to the led_classdev and
->> always lock that when calling into the driver, except for when
->> the driver has a brightness_set_blocking callback. Which will need
->> special handling.
->
-> led_update_brightness() currently has two users besides LED subsystem
-> (at least grep reports those places):
->
-> 1. v4l2-flash-led-class wrapper, for which led_access mutex was
->    introduced. Its purpose was to disable LED sysfs interface while
->    v4l2-flash wrapper takes over control of LED class device
->    (not saying that the mutex wasn't missing even without this
->     use case). Now I've realized that the call to
->     led_sysfs_is_disabled() is missing in this patch.
-> 2. /drivers/platform/x86/thinkpad_acpi.c - it calls
->    led_update_brightness() on suspend
->
-> I think that the best we can now do is to add
-> lockdep_assert_held(&led_cdev->led_access) in led_update_brightness()
-> and a description saying that the caller has to acquire led_access
-> lock before calling it. Similarly as in case of
-> led_sysfs_disable()/led_sysfs_disable().
+Thank you very much.
+Vadim.
 
-The problem is not only callers of led_update_brightness() not holding
-led_cdev->led_access, the problem is also callers of led_set_brightness
-not holding led_cdev->led_access and they cannot take this lock because
-they may be called from a non-blocking context.
-
-Regards,
-
-Hans
+> -----Original Message-----
+> From: Jacek Anaszewski [mailto:j.anaszewski@samsung.com]
+> Sent: Friday, November 04, 2016 10:38 AM
+> To: Vadim Pasternak <vadimp@mellanox.com>; rpurdie@rpsys.net
+> Cc: linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; jiri@resnul=
+li.us
+> Subject: Re: [patch v1 1/1] leds: verify vendor and change license in mlx=
+cpld
+> driver
+>=20
+> Hi Vadim,
+>=20
+> On 11/03/2016 08:17 PM, Vadim Pasternak wrote:
+> > Verify that vendor is Mellanox as the first step of initialization.
+> > If it is not - return ENODEV.
+> > Change module license from "GPL v2" to "Dual BSD/GPL".
+> >
+> > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+> > ---
+> >  drivers/leds/leds-mlxcpld.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
+> > index 197ab9b..281482e 100644
+> > --- a/drivers/leds/leds-mlxcpld.c
+> > +++ b/drivers/leds/leds-mlxcpld.c
+> > @@ -400,6 +400,9 @@ static int __init mlxcpld_led_init(void)
+> >  	struct platform_device *pdev;
+> >  	int err;
+> >
+> > +	if (!dmi_match(DMI_CHASSIS_VENDOR, "Mellanox Technologies Ltd."))
+> > +		return -ENODEV;
+> > +
+> >  	pdev =3D platform_device_register_simple(KBUILD_MODNAME, -1, NULL,
+> 0);
+> >  	if (IS_ERR(pdev)) {
+> >  		pr_err("Device allocation failed\n"); @@ -426,5 +429,5 @@
+> > module_exit(mlxcpld_led_exit);
+> >
+> >  MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
+> > MODULE_DESCRIPTION("Mellanox board LED driver"); -
+> MODULE_LICENSE("GPL
+> > v2");
+> > +MODULE_LICENSE("Dual BSD/GPL");
+> >  MODULE_ALIAS("platform:leds_mlxcpld");
+> >
+>=20
+> Thanks for the patch. Applied.
+>=20
+> --
+> Best regards,
+> Jacek Anaszewski
