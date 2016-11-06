@@ -1,81 +1,92 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: RE: [patch v1 1/1] leds: verify vendor and change license in mlxcpld
- driver
-Date: Fri, 4 Nov 2016 10:18:09 +0000
-Message-ID: <AM5PR0501MB209782547DD4F220935BCA96A2A20@AM5PR0501MB2097.eurprd05.prod.outlook.com>
-References: <CGME20161103171933epcas3p44d4939851092122a5fb9c985eb125770@epcas3p4.samsung.com>
- <1478200639-190079-1-git-send-email-vadimp@mellanox.com>
- <e4180b0b-f09f-a9f4-930d-127311704e36@samsung.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 2/2] leds: core: Remove delayed_set_value property from
+ struct led_classdev
+Date: Sun, 6 Nov 2016 14:49:06 +0100
+Message-ID: <5839241e-e69e-40ea-9a6a-da2ff291117e@gmail.com>
+References: <1475661812-26215-1-git-send-email-j.anaszewski@samsung.com>
+ <1475661812-26215-2-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-db5eur01on0069.outbound.protection.outlook.com ([104.47.2.69]:27669
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932283AbcKDRtB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 4 Nov 2016 13:49:01 -0400
-In-Reply-To: <e4180b0b-f09f-a9f4-930d-127311704e36@samsung.com>
-Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1475661812-26215-2-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>
 
-Hi Jacek,
+Withdrawing this patch as it breaks restoring brightness
+on resume.
 
-Thank you very much.
-Vadim.
+Thanks,
+Jacek Anaszewski
 
-> -----Original Message-----
-> From: Jacek Anaszewski [mailto:j.anaszewski@samsung.com]
-> Sent: Friday, November 04, 2016 10:38 AM
-> To: Vadim Pasternak <vadimp@mellanox.com>; rpurdie@rpsys.net
-> Cc: linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; jiri@resnul=
-li.us
-> Subject: Re: [patch v1 1/1] leds: verify vendor and change license in mlx=
-cpld
-> driver
->=20
-> Hi Vadim,
->=20
-> On 11/03/2016 08:17 PM, Vadim Pasternak wrote:
-> > Verify that vendor is Mellanox as the first step of initialization.
-> > If it is not - return ENODEV.
-> > Change module license from "GPL v2" to "Dual BSD/GPL".
-> >
-> > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> > ---
-> >  drivers/leds/leds-mlxcpld.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
-> > index 197ab9b..281482e 100644
-> > --- a/drivers/leds/leds-mlxcpld.c
-> > +++ b/drivers/leds/leds-mlxcpld.c
-> > @@ -400,6 +400,9 @@ static int __init mlxcpld_led_init(void)
-> >  	struct platform_device *pdev;
-> >  	int err;
-> >
-> > +	if (!dmi_match(DMI_CHASSIS_VENDOR, "Mellanox Technologies Ltd."))
-> > +		return -ENODEV;
-> > +
-> >  	pdev =3D platform_device_register_simple(KBUILD_MODNAME, -1, NULL,
-> 0);
-> >  	if (IS_ERR(pdev)) {
-> >  		pr_err("Device allocation failed\n"); @@ -426,5 +429,5 @@
-> > module_exit(mlxcpld_led_exit);
-> >
-> >  MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
-> > MODULE_DESCRIPTION("Mellanox board LED driver"); -
-> MODULE_LICENSE("GPL
-> > v2");
-> > +MODULE_LICENSE("Dual BSD/GPL");
-> >  MODULE_ALIAS("platform:leds_mlxcpld");
-> >
->=20
-> Thanks for the patch. Applied.
->=20
-> --
-> Best regards,
-> Jacek Anaszewski
+On 10/05/2016 12:03 PM, Jacek Anaszewski wrote:
+> delayed_set_value property was introduced in the commit
+> d23a22a74fde ("leds: delay led_set_brightness if stopping soft-blink").
+> Its aim was to allow calling led_set_brightness() from hard irq context
+> when soft blinking is enabled. Later LED core refactoring preserved
+> the property, although in an ineffective way. That bug was harmless
+> because in the new approach brightness setting is deferred until the
+> next timer tick when software blinking is enabled.
+>
+> Since LED brightness is assigned immediately in
+> led_set_brightness_nosleep() or through struct led_classdev's
+> blink_brightness while soft blinking is enabled, then
+> delayed_set_value is no longer required.
+>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Fabio Baltieri <fabio.baltieri@gmail.com>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> ---
+>  drivers/leds/led-core.c | 8 ++++----
+>  include/linux/leds.h    | 1 -
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 3bce448..2d0c75a 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -107,15 +107,15 @@ static void set_brightness_delayed(struct work_struct *ws)
+>  	int ret = 0;
+>
+>  	if (led_cdev->flags & LED_BLINK_DISABLE) {
+> -		led_cdev->delayed_set_value = LED_OFF;
+> +		led_cdev->brightness = LED_OFF;
+>  		led_stop_software_blink(led_cdev);
+>  		led_cdev->flags &= ~LED_BLINK_DISABLE;
+>  	}
+>
+> -	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+> +	ret = __led_set_brightness(led_cdev, led_cdev->brightness);
+>  	if (ret == -ENOTSUPP)
+>  		ret = __led_set_brightness_blocking(led_cdev,
+> -					led_cdev->delayed_set_value);
+> +					led_cdev->brightness);
+>  	if (ret < 0 &&
+>  	    /* LED HW might have been unplugged, therefore don't warn */
+>  	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
+> @@ -260,7 +260,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
+>  		return;
+>
+>  	/* If brightness setting can sleep, delegate it to a work queue task */
+> -	led_cdev->delayed_set_value = value;
+> +	led_cdev->brightness = value;
+>  	schedule_work(&led_cdev->set_brightness_work);
+>  }
+>  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index ddfcb2d..52993de 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -92,7 +92,6 @@ struct led_classdev {
+>  	void			(*flash_resume)(struct led_classdev *led_cdev);
+>
+>  	struct work_struct	set_brightness_work;
+> -	int			delayed_set_value;
+>
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  	/* Protects the trigger data below */
+>
