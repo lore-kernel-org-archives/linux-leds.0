@@ -1,92 +1,115 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 2/2] leds: core: Remove delayed_set_value property from
- struct led_classdev
-Date: Sun, 6 Nov 2016 14:49:06 +0100
-Message-ID: <5839241e-e69e-40ea-9a6a-da2ff291117e@gmail.com>
-References: <1475661812-26215-1-git-send-email-j.anaszewski@samsung.com>
- <1475661812-26215-2-git-send-email-j.anaszewski@samsung.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH] leds: Add mutex protection in brightness_show()
+Date: Sun, 6 Nov 2016 15:52:42 +0100
+Message-ID: <1189fd14-a0a6-867e-1082-e84771f29014@redhat.com>
+References: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
+ <CGME20161104115324epcas3p32bee0b0f57ae8d1141ded4fa1d1f2ae2@epcas3p3.samsung.com>
+ <fb98c74d-137d-cffb-6d56-2f3aeed1a3d6@redhat.com>
+ <9d28f3d3-1d3d-c670-a102-3e2698764fdd@samsung.com>
+ <9367cc2f-5ce9-0443-bb87-66198d437061@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1475661812-26215-2-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:39168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752038AbcKFOwr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 6 Nov 2016 09:52:47 -0500
+In-Reply-To: <9367cc2f-5ce9-0443-bb87-66198d437061@redhat.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
 
-Withdrawing this patch as it breaks restoring brightness
-on resume.
+Hi,
 
-Thanks,
-Jacek Anaszewski
+On 04-11-16 17:46, Hans de Goede wrote:
+> Hi,
+>
+> On 04-11-16 17:06, Jacek Anaszewski wrote:
+>> Hi Hans,
+>>
+>> On 11/04/2016 12:53 PM, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 04-11-16 08:52, Jacek Anaszewski wrote:
+>>>> Initially the claim about no need for lock in brightness_show()
+>>>> was valid as the function was just returning unchanged
+>>>> LED brightness. After the addition of led_update_brightness() this
+>>>> is no longer true, as the function can change the brightness if
+>>>> a LED class driver implements brightness_get op. It can lead to
+>>>> races between led_update_brightness() and led_set_brightness(),
+>>>> resulting in overwriting new brightness with the old one before
+>>>> the former is written to the device.
+>>>>
+>>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>>> Cc: Hans de Goede <hdegoede@redhat.com>
+>>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>>>> Cc: Pavel Machek <pavel@ucw.cz>
+>>>> Cc: Andrew Lunn <andrew@lunn.ch>
+>>>> ---
+>>>>  drivers/leds/led-class.c | 3 ++-
+>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>>>> index 731e4eb..0c2307b 100644
+>>>> --- a/drivers/leds/led-class.c
+>>>> +++ b/drivers/leds/led-class.c
+>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
+>>>>  {
+>>>>      struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>>>
+>>>> -    /* no lock needed for this */
+>>>> +    mutex_lock(&led_cdev->led_access);
+>>>>      led_update_brightness(led_cdev);
+>>>> +    mutex_unlock(&led_cdev->led_access);
+>>>>
+>>>>      return sprintf(buf, "%u\n", led_cdev->brightness);
+>>>>  }
+>>>>
+>>>
+>>> I'm afraid that this fix is not enough, the led_access lock is only
+>>> held when the brightness is being updated through sysfs, not for
+>>> trigger / sw-blinking updates (which cannot take a mutex as they
+>>> may be called from non blocking contexts).
+>>>
+>>> We may need to consider to add a spinlock to the led_classdev and
+>>> always lock that when calling into the driver, except for when
+>>> the driver has a brightness_set_blocking callback. Which will need
+>>> special handling.
+>>
+>> led_update_brightness() currently has two users besides LED subsystem
+>> (at least grep reports those places):
+>>
+>> 1. v4l2-flash-led-class wrapper, for which led_access mutex was
+>>    introduced. Its purpose was to disable LED sysfs interface while
+>>    v4l2-flash wrapper takes over control of LED class device
+>>    (not saying that the mutex wasn't missing even without this
+>>     use case). Now I've realized that the call to
+>>     led_sysfs_is_disabled() is missing in this patch.
+>> 2. /drivers/platform/x86/thinkpad_acpi.c - it calls
+>>    led_update_brightness() on suspend
+>>
+>> I think that the best we can now do is to add
+>> lockdep_assert_held(&led_cdev->led_access) in led_update_brightness()
+>> and a description saying that the caller has to acquire led_access
+>> lock before calling it. Similarly as in case of
+>> led_sysfs_disable()/led_sysfs_disable().
+>
+> The problem is not only callers of led_update_brightness() not holding
+> led_cdev->led_access, the problem is also callers of led_set_brightness
+> not holding led_cdev->led_access and they cannot take this lock because
+> they may be called from a non-blocking context.
 
-On 10/05/2016 12:03 PM, Jacek Anaszewski wrote:
-> delayed_set_value property was introduced in the commit
-> d23a22a74fde ("leds: delay led_set_brightness if stopping soft-blink").
-> Its aim was to allow calling led_set_brightness() from hard irq context
-> when soft blinking is enabled. Later LED core refactoring preserved
-> the property, although in an ineffective way. That bug was harmless
-> because in the new approach brightness setting is deferred until the
-> next timer tick when software blinking is enabled.
->
-> Since LED brightness is assigned immediately in
-> led_set_brightness_nosleep() or through struct led_classdev's
-> blink_brightness while soft blinking is enabled, then
-> delayed_set_value is no longer required.
->
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Fabio Baltieri <fabio.baltieri@gmail.com>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> ---
->  drivers/leds/led-core.c | 8 ++++----
->  include/linux/leds.h    | 1 -
->  2 files changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 3bce448..2d0c75a 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -107,15 +107,15 @@ static void set_brightness_delayed(struct work_struct *ws)
->  	int ret = 0;
->
->  	if (led_cdev->flags & LED_BLINK_DISABLE) {
-> -		led_cdev->delayed_set_value = LED_OFF;
-> +		led_cdev->brightness = LED_OFF;
->  		led_stop_software_blink(led_cdev);
->  		led_cdev->flags &= ~LED_BLINK_DISABLE;
->  	}
->
-> -	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
-> +	ret = __led_set_brightness(led_cdev, led_cdev->brightness);
->  	if (ret == -ENOTSUPP)
->  		ret = __led_set_brightness_blocking(led_cdev,
-> -					led_cdev->delayed_set_value);
-> +					led_cdev->brightness);
->  	if (ret < 0 &&
->  	    /* LED HW might have been unplugged, therefore don't warn */
->  	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-> @@ -260,7 +260,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
->  		return;
->
->  	/* If brightness setting can sleep, delegate it to a work queue task */
-> -	led_cdev->delayed_set_value = value;
-> +	led_cdev->brightness = value;
->  	schedule_work(&led_cdev->set_brightness_work);
->  }
->  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index ddfcb2d..52993de 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -92,7 +92,6 @@ struct led_classdev {
->  	void			(*flash_resume)(struct led_classdev *led_cdev);
->
->  	struct work_struct	set_brightness_work;
-> -	int			delayed_set_value;
->
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	/* Protects the trigger data below */
->
+Thinking more about this, using a spinlock is also not going to work
+because led_cdev->brightness_set_blocking and led_cdev->brightness_get
+can both block and thus cannot be called with a spinlock held.
+
+I think that we need to just make this a problem of the led drivers
+and in include/linux/leds.h document that the led-core does not do
+locking and that the drivers themselves need to protect against
+their brightness_set / brightness_get callbacks when necessary.
+
+Regards,
+
+Hans
