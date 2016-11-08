@@ -1,195 +1,84 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4 1/4] leds: core: Add support for poll()ing the sysfs
- brightness attr for changes.
-Date: Tue, 08 Nov 2016 12:52:48 +0100
-Message-ID: <5021470c-705b-6920-708e-dd5fca13951f@samsung.com>
-References: <CGME20161101133800eucas1p19df1b7f85ad751fcf98e60277b207296@eucas1p1.samsung.com>
- <20161101133748.7168-1-hdegoede@redhat.com>
+Subject: Re: [PATCH 1/2] led: core: Use atomic bit-field for the blink-flags
+Date: Tue, 08 Nov 2016 13:04:41 +0100
+Message-ID: <03b2ba63-37d6-4ad9-e7c9-a465c37c1114@samsung.com>
+References: <20161023194726.24388-1-hdegoede@redhat.com>
+ <CGME20161024204440epcas4p457599ba91315070dc8e060f4be9d4eb0@epcas4p4.samsung.com>
+ <151bb743-4ca5-d783-a061-f89f9824f673@gmail.com>
+ <a434ac6a-c6c9-29c7-5a0c-74f912164378@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16063 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:16770 "EHLO
         mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbcKHLwz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Nov 2016 06:52:55 -0500
-In-reply-to: <20161101133748.7168-1-hdegoede@redhat.com>
+        with ESMTP id S1752997AbcKHMEq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Nov 2016 07:04:46 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OGB00F4BO7VBB10@mailout4.w1.samsung.com> for
+ linux-leds@vger.kernel.org; Tue, 08 Nov 2016 12:04:43 +0000 (GMT)
+In-reply-to: <a434ac6a-c6c9-29c7-5a0c-74f912164378@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>
-Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Hans de Goede <hdegoede@redhat.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
 Hi Hans,
 
-I've tested it with userspace test application and it seems to work
-well both with hardware leds-aat1290 driver and drivers/leds/uleds.c.
+On 10/25/2016 09:01 AM, Jacek Anaszewski wrote:
+> On 10/24/2016 10:43 PM, Jacek Anaszewski wrote:
+>> Hi Hans,
+>>
+>> Thanks for the patch.
+>>
+>> On 10/23/2016 09:47 PM, Hans de Goede wrote:
+>>> All the LED_BLINK* flags are accessed read-modify-write from e.g.
+>>> led_set_brightness and led_blink_set_oneshot while both
+>>> set_brightness_work and the blink_timer may be running.
 
-Applied to the for-next branch of linux-leds.git.
+[...]
 
-Thanks,
+>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>> index eebcd8c..cff9df7 100644
+>>> --- a/include/linux/leds.h
+>>> +++ b/include/linux/leds.h
+>>> @@ -43,16 +43,13 @@ struct led_classdev {
+>>>  #define LED_UNREGISTERING    (1 << 1)
+>>>      /* Upper 16 bits reflect control information */
+>>>  #define LED_CORE_SUSPENDRESUME    (1 << 16)
+>>> -#define LED_BLINK_SW        (1 << 17)
+>>> -#define LED_BLINK_ONESHOT    (1 << 18)
+>>> -#define LED_BLINK_ONESHOT_STOP    (1 << 19)
+>>> -#define LED_BLINK_INVERT    (1 << 20)
+>>> -#define LED_BLINK_BRIGHTNESS_CHANGE (1 << 21)
+>>> -#define LED_BLINK_DISABLE    (1 << 22)
+>>> -#define LED_SYSFS_DISABLE    (1 << 23)
+>>> -#define LED_DEV_CAP_FLASH    (1 << 24)
+>>> -#define LED_HW_PLUGGABLE    (1 << 25)
+>>> -#define LED_PANIC_INDICATOR    (1 << 26)
+>>> +#define LED_SYSFS_DISABLE    (1 << 17)
+>>> +#define LED_DEV_CAP_FLASH    (1 << 18)
+>>> +#define LED_HW_PLUGGABLE    (1 << 19)
+>>> +#define LED_PANIC_INDICATOR    (1 << 20)
+>>> +
+>>> +    /* set_brightness_work / blink_timer flags, atomic, private. */
+>>> +    unsigned long        work_flags;
+>>
+>> LED_BLINK_SW is now modified in ledtrig-heartbeat.c [0], so it'd have
+>> to remain visible outside of LED subsystem.
+
+Are you OK with leaving the flags in leds.h, changed to identifiers?
+If so, then I can submit version 2.
+
+>> I'll do the suitable fixup to patch [0] and will reorder the patches
+>> when this one is applied.
+>
+> Of course not this one, but its updated version, that leaves the
+> flags in leds.h. I didn't express myself accurately above.
+>
+
+-- 
+Best regards,
 Jacek Anaszewski
-
-On 11/01/2016 02:37 PM, Hans de Goede wrote:
-> Add support for userspace using poll() for POLL_PRI on the sysfs brightness
-> attr to watch for brightness changes.
->
-> This commit adds a led_notify_brightness_change helper function for
-> waking up any poll() waiters; and calls this after any brightness changes
-> (after any led_classdev->brightness_set[_blocking] calls have completed).
->
-> In some use-cases led hardware may autonomously change its brightness,
-> e.g. the keyboard backlight used on some laptops is controlled by a
-> hardwired (firmware handled) hotkey. led_notify_brightness_change is
-> exported for use by drivers which can detect such autonomous changes.
->
-> This commit also updates the Documentation/ABI/testing/sysfs-class-led
-> documentation to document that userspace may now poll on the brightness
-> attribute.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v2:
-> -Wakeup / notify userspace on any brightness changes, not just on
->  autonomous changes done by the hw
-> Changes in v3:
-> -Rebase on linux-leds/for-next
-> Changes in v4:
-> -No Changes
-> ---
->  Documentation/ABI/testing/sysfs-class-led |  8 ++++++--
->  drivers/leds/led-class.c                  |  9 +++++++++
->  drivers/leds/led-core.c                   | 16 +++++++++++++++-
->  include/linux/leds.h                      | 12 ++++++++++++
->  4 files changed, 42 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-> index 491cdee..0af5191 100644
-> --- a/Documentation/ABI/testing/sysfs-class-led
-> +++ b/Documentation/ABI/testing/sysfs-class-led
-> @@ -1,12 +1,16 @@
->  What:		/sys/class/leds/<led>/brightness
-> -Date:		March 2006
-> -KernelVersion:	2.6.17
-> +Date:		March 2006 (poll October 2016)
-> +KernelVersion:	2.6.17 (poll since 4.10)
->  Contact:	Richard Purdie <rpurdie@rpsys.net>
->  Description:
->  		Set the brightness of the LED. Most LEDs don't
->  		have hardware brightness support, so will just be turned on for
->  		non-zero brightness settings. The value is between 0 and
->  		/sys/class/leds/<led>/max_brightness.
-> +		The file supports poll() to detect brightness changes, in
-> +		some cases the hardware / firmware may change the brightness
-> +		autonomously, poll() should be woken up in this case too,
-> +		but not all drivers may support this.
->
->  		Writing 0 to this file clears active trigger.
->
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 731e4eb..c8d2d67 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -204,6 +204,14 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  		dev_warn(parent, "Led %s renamed to %s due to name collision",
->  				led_cdev->name, dev_name(led_cdev->dev));
->
-> +	led_cdev->brightness_kn = sysfs_get_dirent(led_cdev->dev->kobj.sd,
-> +						   "brightness");
-> +	if (!led_cdev->brightness_kn) {
-> +		dev_err(led_cdev->dev, "Error getting brightness kernfs_node\n");
-> +		device_unregister(led_cdev->dev);
-> +		return -ENODEV;
-> +	}
-> +
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	init_rwsem(&led_cdev->trigger_lock);
->  #endif
-> @@ -255,6 +263,7 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
->
->  	flush_work(&led_cdev->set_brightness_work);
->
-> +	sysfs_put(led_cdev->brightness_kn);
->  	device_unregister(led_cdev->dev);
->
->  	down_write(&leds_list_lock);
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 2d0c75a..af78279 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -33,16 +33,24 @@ static int __led_set_brightness(struct led_classdev *led_cdev,
->
->  	led_cdev->brightness_set(led_cdev, value);
->
-> +	led_notify_brightness_change(led_cdev);
-> +
->  	return 0;
->  }
->
->  static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
->  					 enum led_brightness value)
->  {
-> +	int ret;
-> +
->  	if (!led_cdev->brightness_set_blocking)
->  		return -ENOTSUPP;
->
-> -	return led_cdev->brightness_set_blocking(led_cdev, value);
-> +	ret = led_cdev->brightness_set_blocking(led_cdev, value);
-> +	if (ret >= 0)
-> +		led_notify_brightness_change(led_cdev);
-> +
-> +	return ret;
->  }
->
->  static void led_timer_function(unsigned long data)
-> @@ -308,6 +316,12 @@ int led_update_brightness(struct led_classdev *led_cdev)
->  }
->  EXPORT_SYMBOL_GPL(led_update_brightness);
->
-> +void led_notify_brightness_change(struct led_classdev *led_cdev)
-> +{
-> +	sysfs_notify_dirent(led_cdev->brightness_kn);
-> +}
-> +EXPORT_SYMBOL_GPL(led_notify_brightness_change);
-> +
->  /* Caller must ensure led_cdev->led_access held */
->  void led_sysfs_disable(struct led_classdev *led_cdev)
->  {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 52993de..f034c2d 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -13,6 +13,7 @@
->  #define __LINUX_LEDS_H_INCLUDED
->
->  #include <linux/device.h>
-> +#include <linux/kernfs.h>
->  #include <linux/list.h>
->  #include <linux/mutex.h>
->  #include <linux/rwsem.h>
-> @@ -93,6 +94,8 @@ struct led_classdev {
->
->  	struct work_struct	set_brightness_work;
->
-> +	struct kernfs_node	*brightness_kn;
-> +
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	/* Protects the trigger data below */
->  	struct rw_semaphore	 trigger_lock;
-> @@ -192,6 +195,15 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
->  extern int led_update_brightness(struct led_classdev *led_cdev);
->
->  /**
-> + * led_notify_brightness_change - Notify userspace of brightness changes
-> + * @led_cdev: the LED to do the notify on
-> + *
-> + * Let any users waiting for POLL_PRI on the led's brightness sysfs
-> + * atrribute know that the brightness has been changed.
-> + */
-> +extern void led_notify_brightness_change(struct led_classdev *led_cdev);
-> +
-> +/**
->   * led_sysfs_disable - disable LED sysfs interface
->   * @led_cdev: the LED to set
->   *
->
