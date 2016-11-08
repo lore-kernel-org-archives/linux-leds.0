@@ -1,129 +1,134 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Add mutex protection in brightness_show()
-Date: Mon, 07 Nov 2016 10:11:10 +0100
-Message-ID: <32b106fa-1315-3e27-07b6-1f91ac9773c4@samsung.com>
-References: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
- <CGME20161104115324epcas3p32bee0b0f57ae8d1141ded4fa1d1f2ae2@epcas3p3.samsung.com>
- <fb98c74d-137d-cffb-6d56-2f3aeed1a3d6@redhat.com>
- <9d28f3d3-1d3d-c670-a102-3e2698764fdd@samsung.com>
- <9367cc2f-5ce9-0443-bb87-66198d437061@redhat.com>
- <1189fd14-a0a6-867e-1082-e84771f29014@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12207 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbcKGJLQ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Nov 2016 04:11:16 -0500
-In-reply-to: <1189fd14-a0a6-867e-1082-e84771f29014@redhat.com>
-Sender: linux-leds-owner@vger.kernel.org
+Subject: [PATCH/RFC v2] tools/leds: Add led_notify_mon program for monitoring
+ brightness changes
+Date: Tue, 08 Nov 2016 12:36:34 +0100
+Message-ID: <1478604994-29854-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-leds@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>
 
-Hi,
+LED subsystem supports POLLPRI on "brightness" sysfs file of LED
+class devices. This tool demonstrates how to use the feature.
 
-On 11/06/2016 03:52 PM, Hans de Goede wrote:
-> Hi,
->
-> On 04-11-16 17:46, Hans de Goede wrote:
->> Hi,
->>
->> On 04-11-16 17:06, Jacek Anaszewski wrote:
->>> Hi Hans,
->>>
->>> On 11/04/2016 12:53 PM, Hans de Goede wrote:
->>>> Hi,
->>>>
->>>> On 04-11-16 08:52, Jacek Anaszewski wrote:
->>>>> Initially the claim about no need for lock in brightness_show()
->>>>> was valid as the function was just returning unchanged
->>>>> LED brightness. After the addition of led_update_brightness() this
->>>>> is no longer true, as the function can change the brightness if
->>>>> a LED class driver implements brightness_get op. It can lead to
->>>>> races between led_update_brightness() and led_set_brightness(),
->>>>> resulting in overwriting new brightness with the old one before
->>>>> the former is written to the device.
->>>>>
->>>>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->>>>> Cc: Hans de Goede <hdegoede@redhat.com>
->>>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>>>> Cc: Pavel Machek <pavel@ucw.cz>
->>>>> Cc: Andrew Lunn <andrew@lunn.ch>
->>>>> ---
->>>>>  drivers/leds/led-class.c | 3 ++-
->>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>>>> index 731e4eb..0c2307b 100644
->>>>> --- a/drivers/leds/led-class.c
->>>>> +++ b/drivers/leds/led-class.c
->>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
->>>>>  {
->>>>>      struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>>>>
->>>>> -    /* no lock needed for this */
->>>>> +    mutex_lock(&led_cdev->led_access);
->>>>>      led_update_brightness(led_cdev);
->>>>> +    mutex_unlock(&led_cdev->led_access);
->>>>>
->>>>>      return sprintf(buf, "%u\n", led_cdev->brightness);
->>>>>  }
->>>>>
->>>>
->>>> I'm afraid that this fix is not enough, the led_access lock is only
->>>> held when the brightness is being updated through sysfs, not for
->>>> trigger / sw-blinking updates (which cannot take a mutex as they
->>>> may be called from non blocking contexts).
->>>>
->>>> We may need to consider to add a spinlock to the led_classdev and
->>>> always lock that when calling into the driver, except for when
->>>> the driver has a brightness_set_blocking callback. Which will need
->>>> special handling.
->>>
->>> led_update_brightness() currently has two users besides LED subsystem
->>> (at least grep reports those places):
->>>
->>> 1. v4l2-flash-led-class wrapper, for which led_access mutex was
->>>    introduced. Its purpose was to disable LED sysfs interface while
->>>    v4l2-flash wrapper takes over control of LED class device
->>>    (not saying that the mutex wasn't missing even without this
->>>     use case). Now I've realized that the call to
->>>     led_sysfs_is_disabled() is missing in this patch.
->>> 2. /drivers/platform/x86/thinkpad_acpi.c - it calls
->>>    led_update_brightness() on suspend
->>>
->>> I think that the best we can now do is to add
->>> lockdep_assert_held(&led_cdev->led_access) in led_update_brightness()
->>> and a description saying that the caller has to acquire led_access
->>> lock before calling it. Similarly as in case of
->>> led_sysfs_disable()/led_sysfs_disable().
->>
->> The problem is not only callers of led_update_brightness() not holding
->> led_cdev->led_access, the problem is also callers of led_set_brightness
->> not holding led_cdev->led_access and they cannot take this lock because
->> they may be called from a non-blocking context.
->
-> Thinking more about this, using a spinlock is also not going to work
-> because led_cdev->brightness_set_blocking and led_cdev->brightness_get
-> can both block and thus cannot be called with a spinlock held.
->
-> I think that we need to just make this a problem of the led drivers
-> and in include/linux/leds.h document that the led-core does not do
-> locking and that the drivers themselves need to protect against
-> their brightness_set / brightness_get callbacks when necessary.
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+---
+Changes since v1:
+- added lseek which fixes non-blocking poll() behaviour
 
-Thanks for the analysis. Either way, this patch, with the modification
-I mentioned in my previous message is required to assure proper
-LED sysfs locking.
+ tools/leds/Makefile         |  4 +--
+ tools/leds/led_notify_mon.c | 83 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 85 insertions(+), 2 deletions(-)
+ create mode 100644 tools/leds/led_notify_mon.c
 
-Regarding the races between user and atomic context, I think that
-it should be system root's responsibility to define LED access
-policy. If a LED is registered for any trigger events then setting
-brightness from user space should be made impossible. Such a hint
-could be even added to the Documentation/leds/leds-class.txt.
-
+diff --git a/tools/leds/Makefile b/tools/leds/Makefile
+index c03a79e..0fa948a 100644
+--- a/tools/leds/Makefile
++++ b/tools/leds/Makefile
+@@ -3,11 +3,11 @@
+ CC = $(CROSS_COMPILE)gcc
+ CFLAGS = -Wall -Wextra -g -I../../include/uapi
+ 
+-all: uledmon
++all: uledmon led_notify_mon
+ %: %.c
+ 	$(CC) $(CFLAGS) -o $@ $^
+ 
+ clean:
+-	$(RM) uledmon
++	$(RM) uledmon led_notify_mon
+ 
+ .PHONY: all clean
+diff --git a/tools/leds/led_notify_mon.c b/tools/leds/led_notify_mon.c
+new file mode 100644
+index 0000000..8b6e6f9
+--- /dev/null
++++ b/tools/leds/led_notify_mon.c
+@@ -0,0 +1,83 @@
++/*
++ * led_notify_mon.c
++ *
++ * This program monitors LED brightness change notifications,
++ * either having its origin in the hardware or in the software.
++ * A timestamp and brightness value is printed each time the brightness changes.
++ *
++ * Usage: led_notify_mon <device-name>
++ *
++ * <device-name> is the name of the LED class device to be monitored. Pressing
++ * CTRL+C will exit.
++ */
++
++#include <fcntl.h>
++#include <poll.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <unistd.h>
++
++#include <linux/uleds.h>
++
++int main(int argc, char const *argv[])
++{
++	int fd, ret;
++	char brightness_file_path[LEDS_MAX_NAME_SIZE + 11];
++	struct pollfd pollfd;
++	struct timespec ts;
++	char buf[11];
++
++	if (argc != 2) {
++		fprintf(stderr, "Requires <device-name> argument\n");
++		return 1;
++	}
++
++	snprintf(brightness_file_path, LEDS_MAX_NAME_SIZE,
++		 "/sys/class/leds/%s/brightness", argv[1]);
++
++	fd = open(brightness_file_path, O_RDONLY);
++	if (fd == -1) {
++		printf("Failed to open %s file\n", brightness_file_path);
++		return 1;
++	}
++
++	ret = read(fd, buf, sizeof(buf));
++	if (ret < 0) {
++		printf("Failed to read %s file\n", brightness_file_path);
++		goto err_read;
++	}
++
++	pollfd.fd = fd;
++	pollfd.events = POLLPRI;
++
++	while (1) {
++		ret = poll(&pollfd, 1, -1);
++		if (ret == -1) {
++			printf("Failed to poll %s file (%d)\n",
++				brightness_file_path, ret);
++			ret = 1;
++			break;
++		}
++
++		clock_gettime(CLOCK_MONOTONIC, &ts);
++
++		ret = read(fd, buf, sizeof(buf));
++		if (ret < 0)
++			break;
++
++		ret = lseek(pollfd.fd, 0, SEEK_SET);
++		if (ret < 0) {
++			printf("lseek failed (%d)\n", ret);
++			break;
++		}
++
++		printf("[%ld.%09ld] %d\n", ts.tv_sec, ts.tv_nsec, atoi(buf));
++	}
++
++err_read:
++	close(fd);
++
++	return ret;
++}
 -- 
-Best regards,
-Jacek Anaszewski
+1.9.1
