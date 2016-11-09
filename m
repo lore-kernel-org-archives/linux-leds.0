@@ -1,106 +1,156 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 2/2] led: core: Fix blink_brightness setting race
-Date: Wed, 09 Nov 2016 12:48:31 +0100
-Message-ID: <7d25f269-99e3-2936-8155-d725dd800c0f@samsung.com>
-References: <20161023194726.24388-1-hdegoede@redhat.com>
- <CGME20161023194735eucas1p1b5e2abb7994c3c13c8fcb6553e70623c@eucas1p1.samsung.com>
- <20161023194726.24388-2-hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH/RFC v2] tools/leds: Add led_notify_mon program for
+ monitoring brightness changes
+Date: Wed, 9 Nov 2016 12:50:05 +0100
+Message-ID: <60631830-50a3-7215-15f5-d47cd73d2fc0@redhat.com>
+References: <1478604994-29854-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58707 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751652AbcKILsg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2016 06:48:36 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGD0027WI4XZA00@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Wed, 09 Nov 2016 11:48:33 +0000 (GMT)
-In-reply-to: <20161023194726.24388-2-hdegoede@redhat.com>
+Received: from mx1.redhat.com ([209.132.183.28]:39086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750792AbcKILuI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 9 Nov 2016 06:50:08 -0500
+In-Reply-To: <1478604994-29854-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi Hans,
+Hi,
 
-On 10/23/2016 09:47 PM, Hans de Goede wrote:
-> All 3 of led_timer_func, led_set_brightness and led_set_software_blink
-> set blink_brightness. If led_timer_func or led_set_software_blink race
-> with led_set_brightness they may end up overwriting the new
-> blink_brightness. The new atomic work_flags does not protect against
-> this as it just protects the flags and not blink_brightness.
+On 08-11-16 12:36, Jacek Anaszewski wrote:
+> LED subsystem supports POLLPRI on "brightness" sysfs file of LED
+> class devices. This tool demonstrates how to use the feature.
 >
-> This commit introduces a new new_blink_brightness value which gets
-> set by led_set_brightness and read by led_timer_func on LED on, fixing
-> this.
->
-> Dealing with the new brightness at LED on time, makes the new
-> brightness apply sooner, which also fixes a led_set_brightness which
-> happens while a oneshot blink which ends in LED on is running not
-> getting applied.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+
+Thank you.
+
+Patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
 > ---
->  drivers/leds/led-core.c | 14 +++++++-------
->  include/linux/leds.h    |  1 +
->  2 files changed, 8 insertions(+), 7 deletions(-)
+> Changes since v1:
+> - added lseek which fixes non-blocking poll() behaviour
 >
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 17a0964..d474f97 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -81,17 +81,17 @@ static void led_timer_function(unsigned long data)
->  	brightness = led_get_brightness(led_cdev);
->  	if (!brightness) {
->  		/* Time to switch the LED on. */
-> -		brightness = led_cdev->blink_brightness;
-> +		if (test_and_clear_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-> +					&led_cdev->work_flags))
-> +			brightness = led_cdev->new_blink_brightness;
-> +		else
-> +			brightness = led_cdev->blink_brightness;
->  		delay = led_cdev->blink_delay_on;
->  	} else {
->  		/* Store the current brightness value to be able
->  		 * to restore it when the delay_off period is over.
-> -		 * Do it only if there is no pending blink brightness
-> -		 * change, to avoid overwriting the new value.
->  		 */
-> -		if (!test_and_clear_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-> -					&led_cdev->work_flags))
-> -			led_cdev->blink_brightness = brightness;
-> +		led_cdev->blink_brightness = brightness;
->  		brightness = LED_OFF;
->  		delay = led_cdev->blink_delay_off;
->  	}
-> @@ -260,7 +260,7 @@ void led_set_brightness(struct led_classdev *led_cdev,
->  		} else {
->  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->  				&led_cdev->work_flags);
-> -			led_cdev->blink_brightness = brightness;
-> +			led_cdev->new_blink_brightness = brightness;
->  		}
->  		return;
->  	}
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index cff9df7..6669404 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -87,6 +87,7 @@ struct led_classdev {
->  	unsigned long		 blink_delay_on, blink_delay_off;
->  	struct timer_list	 blink_timer;
->  	int			 blink_brightness;
-> +	int			 new_blink_brightness;
->  	void			(*flash_resume)(struct led_classdev *led_cdev);
+>  tools/leds/Makefile         |  4 +--
+>  tools/leds/led_notify_mon.c | 83 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 85 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/leds/led_notify_mon.c
 >
->  	struct work_struct	set_brightness_work;
+> diff --git a/tools/leds/Makefile b/tools/leds/Makefile
+> index c03a79e..0fa948a 100644
+> --- a/tools/leds/Makefile
+> +++ b/tools/leds/Makefile
+> @@ -3,11 +3,11 @@
+>  CC = $(CROSS_COMPILE)gcc
+>  CFLAGS = -Wall -Wextra -g -I../../include/uapi
 >
-
-Applied, thanks.
-
--- 
-Best regards,
-Jacek Anaszewski
+> -all: uledmon
+> +all: uledmon led_notify_mon
+>  %: %.c
+>  	$(CC) $(CFLAGS) -o $@ $^
+>
+>  clean:
+> -	$(RM) uledmon
+> +	$(RM) uledmon led_notify_mon
+>
+>  .PHONY: all clean
+> diff --git a/tools/leds/led_notify_mon.c b/tools/leds/led_notify_mon.c
+> new file mode 100644
+> index 0000000..8b6e6f9
+> --- /dev/null
+> +++ b/tools/leds/led_notify_mon.c
+> @@ -0,0 +1,83 @@
+> +/*
+> + * led_notify_mon.c
+> + *
+> + * This program monitors LED brightness change notifications,
+> + * either having its origin in the hardware or in the software.
+> + * A timestamp and brightness value is printed each time the brightness changes.
+> + *
+> + * Usage: led_notify_mon <device-name>
+> + *
+> + * <device-name> is the name of the LED class device to be monitored. Pressing
+> + * CTRL+C will exit.
+> + */
+> +
+> +#include <fcntl.h>
+> +#include <poll.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <time.h>
+> +#include <unistd.h>
+> +
+> +#include <linux/uleds.h>
+> +
+> +int main(int argc, char const *argv[])
+> +{
+> +	int fd, ret;
+> +	char brightness_file_path[LEDS_MAX_NAME_SIZE + 11];
+> +	struct pollfd pollfd;
+> +	struct timespec ts;
+> +	char buf[11];
+> +
+> +	if (argc != 2) {
+> +		fprintf(stderr, "Requires <device-name> argument\n");
+> +		return 1;
+> +	}
+> +
+> +	snprintf(brightness_file_path, LEDS_MAX_NAME_SIZE,
+> +		 "/sys/class/leds/%s/brightness", argv[1]);
+> +
+> +	fd = open(brightness_file_path, O_RDONLY);
+> +	if (fd == -1) {
+> +		printf("Failed to open %s file\n", brightness_file_path);
+> +		return 1;
+> +	}
+> +
+> +	ret = read(fd, buf, sizeof(buf));
+> +	if (ret < 0) {
+> +		printf("Failed to read %s file\n", brightness_file_path);
+> +		goto err_read;
+> +	}
+> +
+> +	pollfd.fd = fd;
+> +	pollfd.events = POLLPRI;
+> +
+> +	while (1) {
+> +		ret = poll(&pollfd, 1, -1);
+> +		if (ret == -1) {
+> +			printf("Failed to poll %s file (%d)\n",
+> +				brightness_file_path, ret);
+> +			ret = 1;
+> +			break;
+> +		}
+> +
+> +		clock_gettime(CLOCK_MONOTONIC, &ts);
+> +
+> +		ret = read(fd, buf, sizeof(buf));
+> +		if (ret < 0)
+> +			break;
+> +
+> +		ret = lseek(pollfd.fd, 0, SEEK_SET);
+> +		if (ret < 0) {
+> +			printf("lseek failed (%d)\n", ret);
+> +			break;
+> +		}
+> +
+> +		printf("[%ld.%09ld] %d\n", ts.tv_sec, ts.tv_nsec, atoi(buf));
+> +	}
+> +
+> +err_read:
+> +	close(fd);
+> +
+> +	return ret;
+> +}
+>
