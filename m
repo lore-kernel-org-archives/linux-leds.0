@@ -1,156 +1,39 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH/RFC v2] tools/leds: Add led_notify_mon program for
- monitoring brightness changes
-Date: Wed, 9 Nov 2016 12:50:05 +0100
-Message-ID: <60631830-50a3-7215-15f5-d47cd73d2fc0@redhat.com>
-References: <1478604994-29854-1-git-send-email-j.anaszewski@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v2] leds: ledtrig-heartbeat: Make top brightness adjustable
+Date: Wed, 09 Nov 2016 12:50:52 +0100
+Message-ID: <8f673a7e-3a35-314a-202c-a4998c4bbe0e@samsung.com>
+References: <1478688226-4158-1-git-send-email-j.anaszewski@samsung.com>
+ <CGME20161109112635epcas2p225952cdacd535b52b4bdc17e46378e29@epcas2p2.samsung.com>
+ <20161109112117.GA1556@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750792AbcKILuI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 9 Nov 2016 06:50:08 -0500
-In-Reply-To: <1478604994-29854-1-git-send-email-j.anaszewski@samsung.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51871 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbcKILvd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2016 06:51:33 -0500
+In-reply-to: <20161109112117.GA1556@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Hi,
+Hi Pavel,
 
-On 08-11-16 12:36, Jacek Anaszewski wrote:
-> LED subsystem supports POLLPRI on "brightness" sysfs file of LED
-> class devices. This tool demonstrates how to use the feature.
+On 11/09/2016 12:21 PM, Pavel Machek wrote:
+> On Wed 2016-11-09 11:43:46, Jacek Anaszewski wrote:
+>> LED class heartbeat trigger allowed only for blinking with max_brightness
+>> value. This patch adds more flexibility by exploiting part of LED core
+>> software blink infrastructure.
+>>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 >
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-
-Thank you.
-
-Patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-> ---
-> Changes since v1:
-> - added lseek which fixes non-blocking poll() behaviour
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 >
->  tools/leds/Makefile         |  4 +--
->  tools/leds/led_notify_mon.c | 83 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 85 insertions(+), 2 deletions(-)
->  create mode 100644 tools/leds/led_notify_mon.c
->
-> diff --git a/tools/leds/Makefile b/tools/leds/Makefile
-> index c03a79e..0fa948a 100644
-> --- a/tools/leds/Makefile
-> +++ b/tools/leds/Makefile
-> @@ -3,11 +3,11 @@
->  CC = $(CROSS_COMPILE)gcc
->  CFLAGS = -Wall -Wextra -g -I../../include/uapi
->
-> -all: uledmon
-> +all: uledmon led_notify_mon
->  %: %.c
->  	$(CC) $(CFLAGS) -o $@ $^
->
->  clean:
-> -	$(RM) uledmon
-> +	$(RM) uledmon led_notify_mon
->
->  .PHONY: all clean
-> diff --git a/tools/leds/led_notify_mon.c b/tools/leds/led_notify_mon.c
-> new file mode 100644
-> index 0000000..8b6e6f9
-> --- /dev/null
-> +++ b/tools/leds/led_notify_mon.c
-> @@ -0,0 +1,83 @@
-> +/*
-> + * led_notify_mon.c
-> + *
-> + * This program monitors LED brightness change notifications,
-> + * either having its origin in the hardware or in the software.
-> + * A timestamp and brightness value is printed each time the brightness changes.
-> + *
-> + * Usage: led_notify_mon <device-name>
-> + *
-> + * <device-name> is the name of the LED class device to be monitored. Pressing
-> + * CTRL+C will exit.
-> + */
-> +
-> +#include <fcntl.h>
-> +#include <poll.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <time.h>
-> +#include <unistd.h>
-> +
-> +#include <linux/uleds.h>
-> +
-> +int main(int argc, char const *argv[])
-> +{
-> +	int fd, ret;
-> +	char brightness_file_path[LEDS_MAX_NAME_SIZE + 11];
-> +	struct pollfd pollfd;
-> +	struct timespec ts;
-> +	char buf[11];
-> +
-> +	if (argc != 2) {
-> +		fprintf(stderr, "Requires <device-name> argument\n");
-> +		return 1;
-> +	}
-> +
-> +	snprintf(brightness_file_path, LEDS_MAX_NAME_SIZE,
-> +		 "/sys/class/leds/%s/brightness", argv[1]);
-> +
-> +	fd = open(brightness_file_path, O_RDONLY);
-> +	if (fd == -1) {
-> +		printf("Failed to open %s file\n", brightness_file_path);
-> +		return 1;
-> +	}
-> +
-> +	ret = read(fd, buf, sizeof(buf));
-> +	if (ret < 0) {
-> +		printf("Failed to read %s file\n", brightness_file_path);
-> +		goto err_read;
-> +	}
-> +
-> +	pollfd.fd = fd;
-> +	pollfd.events = POLLPRI;
-> +
-> +	while (1) {
-> +		ret = poll(&pollfd, 1, -1);
-> +		if (ret == -1) {
-> +			printf("Failed to poll %s file (%d)\n",
-> +				brightness_file_path, ret);
-> +			ret = 1;
-> +			break;
-> +		}
-> +
-> +		clock_gettime(CLOCK_MONOTONIC, &ts);
-> +
-> +		ret = read(fd, buf, sizeof(buf));
-> +		if (ret < 0)
-> +			break;
-> +
-> +		ret = lseek(pollfd.fd, 0, SEEK_SET);
-> +		if (ret < 0) {
-> +			printf("lseek failed (%d)\n", ret);
-> +			break;
-> +		}
-> +
-> +		printf("[%ld.%09ld] %d\n", ts.tv_sec, ts.tv_nsec, atoi(buf));
-> +	}
-> +
-> +err_read:
-> +	close(fd);
-> +
-> +	return ret;
-> +}
->
+
+Thanks. Reapplied on top of blink_brightness race fixes.
+
+-- 
+Best regards,
+Jacek Anaszewski
