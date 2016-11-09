@@ -1,57 +1,64 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: Add mutex protection in brightness_show()
-Date: Wed, 9 Nov 2016 13:38:00 +0100
-Message-ID: <20161109123800.GB3488@amd>
-References: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 5/6] Documentation: bindings: add documentation for
+ ir-spi device driver
+Date: Wed, 9 Nov 2016 12:26:21 -0600
+Message-ID: <20161109182621.ttfxtdt32q3cqce7@rob-hp-laptop>
+References: <20161102104010.26959-1-andi.shyti@samsung.com>
+ <CGME20161102104149epcas5p4da68197e232df7ad922f2f9cb0714a43@epcas5p4.samsung.com>
+ <20161102104010.26959-6-andi.shyti@samsung.com>
+ <70f4426b-e2e6-1fb7-187a-65ed4bce0668@samsung.com>
+ <20161103101048.ofyoko4mkcypf44u@gangnam.samsung>
+ <70e31ed5-e1ec-cac3-3c3d-02c75f1418bd@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1478245962-15706-1-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>
-List-Id: linux-leds@vger.kernel.org
-
-
---OwLcNYc0lM97+oe1
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35654 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754740AbcKIS0X (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2016 13:26:23 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <70e31ed5-e1ec-cac3-3c3d-02c75f1418bd@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi!
+On Thu, Nov 03, 2016 at 11:39:21AM +0100, Jacek Anaszewski wrote:
+> On 11/03/2016 11:10 AM, Andi Shyti wrote:
+> > Hi Jacek,
+> > 
+> > > Only DT bindings of LED class drivers should be placed in
+> > > Documentation/devicetree/bindings/leds. Please move it to the
+> > > media bindings.
+> > 
+> > that's where I placed it first, but Rob asked me to put it in the
+> > LED directory and Cc the LED mailining list.
+> > 
+> > That's the discussion of the version 2:
+> > 
+> > https://lkml.org/lkml/2016/9/12/380
+> > 
+> > Rob, Jacek, could you please agree where I can put the binding?
+> 
+> I'm not sure if this is a good approach. I've noticed also that
+> backlight bindings have been moved to leds, whereas they don't look
+> similarly.
+> 
+> We have common.txt LED bindings, that all LED class drivers' bindings
+> have to follow. Neither backlight bindings nor these ones do that,
+> which introduces some mess.
 
-> Initially the claim about no need for lock in brightness_show()
-> was valid as the function was just returning unchanged
-> LED brightness. After the addition of led_update_brightness() this
+And there are probably LED bindings that don't follow common.txt either. 
 
-The claim was probably wrong from the day one, unless brightness is of
-type "atomic_t".
+> Eventually adding a sub-directory, e.g. remote_control could make it
+> somehow logically justified, but still - shouldn't bindings be
+> placed in the documentation directory related to the subsystem of the
+> driver they are predestined to?
 
-             /* Ensures consistent access to the LED Flash Class device */
-	        struct mutex            led_access;
-		};
+No. While binding directories often mirror the driver directories, they 
+are not the same. Bindings are grouped by types of h/w and IR LEDs are a 
+type of LED.
 
-This should really list fields that are protected by led_access.
+If you prefer a sub-dir, that is fine with me.
 
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---OwLcNYc0lM97+oe1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlgjGKgACgkQMOfwapXb+vIxrwCdGTR0RbgD5NA6YN1x/DWqvZpe
-b/IAniQs5JGkdiPr4EjHG63jIszjc453
-=04Ip
------END PGP SIGNATURE-----
-
---OwLcNYc0lM97+oe1--
+Rob
