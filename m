@@ -1,175 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Tony Lindgren <tony@atomide.com>
 Subject: Re: PM regression with LED changes in next-20161109
-Date: Thu, 10 Nov 2016 14:55:18 +0100
-Message-ID: <7cc1ba55-1bd0-ae3f-5c9b-f16efb8dcc80@samsung.com>
+Date: Thu, 10 Nov 2016 08:11:49 -0700
+Message-ID: <20161110151149.GB27724@atomide.com>
 References: <20161109192301.GS26979@atomide.com>
- <28234714-3994-6747-9cf8-1ff0b3257f7a@gmail.com>
- <CGME20161110084919epcas3p2e8fbdd2905cabe15c5301b7a8e22416c@epcas3p2.samsung.com>
- <f627c778-4378-e5da-09dd-3e0fb2ea4aba@redhat.com>
- <5bd5333e-0dbb-6333-0a48-ca4d3a990f9c@samsung.com>
- <d2941e6f-d277-a68d-2837-00b628dd3be7@redhat.com>
+ <621758ce-dd3f-41ad-d9b8-b8e34538700e@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <d2941e6f-d277-a68d-2837-00b628dd3be7@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>
-Cc: linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>, Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:58632 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933480AbcKJPLx (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 10 Nov 2016 10:11:53 -0500
+Content-Disposition: inline
+In-Reply-To: <621758ce-dd3f-41ad-d9b8-b8e34538700e@redhat.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
-
-On 11/10/2016 02:04 PM, Hans de Goede wrote:
+* Hans de Goede <hdegoede@redhat.com> [161110 01:35]:
 > Hi,
->
-> On 10-11-16 13:56, Jacek Anaszewski wrote:
->> Hi,
->>
->> On 11/10/2016 09:49 AM, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 09-11-16 21:45, Jacek Anaszewski wrote:
->>>> Hi Tony,
->>>>
->>>> On 11/09/2016 08:23 PM, Tony Lindgren wrote:
->>>>> Hi,
->>>>>
->>>>> Looks like commit 883d32ce3385 ("leds: core: Add support for poll()ing
->>>>> the sysfs brightness attr for changes.") breaks runtime PM for me.
->>>>>
->>>>> On my omap dm3730 based test system, idle power consumption is over 70
->>>>> times higher now with this patch! It goes from about 6mW for the core
->>>>> system to over 440mW during idle meaning there's some busy timer now
->>>>> active.
->>>>>
->>>>> Reverting this patch fixes the issue. Any ideas?
->>>>
->>>> Thanks for the report. This is probably caused by
->>>> sysfs_notify_dirent().
->>>> I'm afraid that we can't keep this feature in the current shape.
->>>> Hans, I'm dropping the patch. We probably will have to delegate this
->>>> call to a workqueue task. Think about use cases when the LED is blinked
->>>> with high frequency e.g. from ledtrig-disk.c.
->>>
->>> sysfs_notify_dirent() already uses a workqueue, here is the actual
->>> implementation of it (from fs/kernfs/file.c) :
->>>
->>> void kernfs_notify(struct kernfs_node *kn)
->>> {
->>>         static DECLARE_WORK(kernfs_notify_work, kernfs_notify_workfn);
->>>         unsigned long flags;
->>>
->>>         if (WARN_ON(kernfs_type(kn) != KERNFS_FILE))
->>>                 return;
->>>
->>>         spin_lock_irqsave(&kernfs_notify_lock, flags);
->>>         if (!kn->attr.notify_next) {
->>>                 kernfs_get(kn);
->>>                 kn->attr.notify_next = kernfs_notify_list;
->>>                 kernfs_notify_list = kn;
->>>                 schedule_work(&kernfs_notify_work);
->>>         }
->>>         spin_unlock_irqrestore(&kernfs_notify_lock, flags);
->>> }
->>
->> Indeed. As a next step of this investigation Tony could disable
->> particular calls made in kernfs_notify_workfn to check what
->> exactly causes excessive power consumption.
->>
->>> So using a workqueue is not going to help. Note that I already
->>> feared this, which is why my initial implementation only called
->>> sysfs_notify_dirent() for user initiated changes and not for
->>> triggers / blinking.
->>
->> AFAIR there were no calls to led_notify_brightness_change() in
->> the initial implementation and it was entirely predestined for
->> being called by LED class drivers on brightness changes made
->> by firmware.
->>
->>> I think we may need to reconsider what getting the brightness
->>> sysfs atrribute actually returns. Currently when a LED is
->>> blinking it will return 0 resp. the actual brightness depending
->>> on when in the blink cycle the user reads the brightness
->>> sysfs atrribute.
->>>
->>> So a user can do "echo 128 > brightness && cat brightness" and
->>> get out 0, or 128, depending purely on timing.
->>>
->>> This seems to contradict what Documentation/ABI/testing/sysfs-class-led
->>> has to say:
->>>
->>> What:           /sys/class/leds/<led>/brightness
->>> Date:           March 2006
->>> KernelVersion:  2.6.17
->>> Contact:        Richard Purdie <rpurdie@rpsys.net>
->>> Description:
->>>                 Set the brightness of the LED. Most LEDs don't
->>>                 have hardware brightness support, so will just be turned
->>> on for
->>>                 non-zero brightness settings. The value is between 0 and
->>>                 /sys/class/leds/<led>/max_brightness.
->>>
->>>                 Writing 0 to this file clears active trigger.
->>>
->>>                 Writing non-zero to this file while trigger is active
->>> changes the
->>>                 top brightness trigger is going to use.
->>>
->>> Even though it only talks about writing, the logical thing would be for
->>> reading to be the exact opposite of writing, so we would get:
->>>
->>>                 Reading from this file while a trigger is active returns
->>> the
->>>                 top brightness trigger is going to use.
->>>
->>> The current docs say not about (sw) blinking, but that should be treated
->>> just
->>> like a trigger IMHO.
->>
->> You'r right, we should describe the semantics on reading, but it would
->> have to be as follows:
->>
->> Reading from this file returns LED brightness at given moment, i.e.
->> even though LED class device brightness setting is greater than 0, the
->> momentary brightness can be 0 if the readout occurred during low phase
->> of blink cycle.
->
-> Why would it need to read like this, because this is the current behavior ?
+> 
+> On 09-11-16 20:23, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > Looks like commit 883d32ce3385 ("leds: core: Add support for poll()ing
+> > the sysfs brightness attr for changes.") breaks runtime PM for me.
+> > 
+> > On my omap dm3730 based test system, idle power consumption is over 70
+> > times higher now with this patch! It goes from about 6mW for the core
+> > system to over 440mW during idle meaning there's some busy timer now
+> > active.
+> 
+> Do you have any blinking LEDs or LED triggers defined on the system ?
 
-We have led_update_brightness() which was introduced long time ago and
-is used in brightness_show(). Note that if LED controller changed
-actual LED brightness e.g. due to battery voltage dropping below
-certain threshold, we wouldn't be able to find it out otherwise
-(except if we added separate sysfs file for that).
+There are some configured in the dts file:
 
->
-> I doubt anyone is relying on this current behavior because it is really
-> unpredictable which value one can get.
->
-> I believe it would be better to change the read semantics to follow
-> the write semantics, this would be much more consistent.
->
-> Making the read behavior match the write behavior should be easy I would
-> be happy to write a patch for this.
+$ grep -i led arch/arm/boot/dts/*torpedo*.dts*
 
-Let's better agree on the description of the current semantics.
-It has been around for a long time.
+And the gpio controlled led1 is configured to blink with
+linux,default-trigger = "cpu0".
 
->>> If we can get consensus on what the read behavior for the brightness
->>> attribute
->>> should be, then I think that a better poll() behavior will automatically
->>> follow
->>> from that.
->>
->> It seems that we should get back to your initial approach. i.e. only
->> brightness changes caused by hardware should be reported.
->
-> Ok, if you really want to keep the read behavior as is, I can provide
-> an updated patch for this.
+> > Reverting this patch fixes the issue. Any ideas?
+> 
+> All I can think of is something calling led_set_brightness quite often,
+> the patch in question makes led_set_brightness somewhat more expensive,
+> but it should not cause such a big difference unless something is
+> really calling led_set_brightness quite often maybe something is calling
+> it with the same value all the time ?
 
-Yes please.
+I don't think this one has any brightness control.
 
--- 
-Best regards,
-Jacek Anaszewski
+Regards,
+
+Tony
