@@ -1,81 +1,85 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Hans de Goede <hdegoede@redhat.com>
 Subject: Re: PM regression with LED changes in next-20161109
-Date: Thu, 10 Nov 2016 17:36:06 +0100
-Message-ID: <20161110163606.GD28832@amd>
+Date: Thu, 10 Nov 2016 17:44:42 +0100
+Message-ID: <de3b4ae7-6a08-2a03-d80e-059c71c58aed@redhat.com>
 References: <20161109192301.GS26979@atomide.com>
  <28234714-3994-6747-9cf8-1ff0b3257f7a@gmail.com>
  <CGME20161110084919epcas3p2e8fbdd2905cabe15c5301b7a8e22416c@epcas3p2.samsung.com>
  <f627c778-4378-e5da-09dd-3e0fb2ea4aba@redhat.com>
  <5bd5333e-0dbb-6333-0a48-ca4d3a990f9c@samsung.com>
- <d2941e6f-d277-a68d-2837-00b628dd3be7@redhat.com>
- <7cc1ba55-1bd0-ae3f-5c9b-f16efb8dcc80@samsung.com>
+ <20161110162925.GA28832@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AkbCVLjbJ9qUtAXD"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56336 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934104AbcKJQgK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Nov 2016 11:36:10 -0500
-Content-Disposition: inline
-In-Reply-To: <7cc1ba55-1bd0-ae3f-5c9b-f16efb8dcc80@samsung.com>
+Received: from mx1.redhat.com ([209.132.183.28]:44188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934615AbcKJQoq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 10 Nov 2016 11:44:46 -0500
+In-Reply-To: <20161110162925.GA28832@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>
+To: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>
 
+Hi,
 
---AkbCVLjbJ9qUtAXD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10-11-16 17:29, Pavel Machek wrote:
+> Hi!
+>
+>>>>> Looks like commit 883d32ce3385 ("leds: core: Add support for poll()ing
+>>>>> the sysfs brightness attr for changes.") breaks runtime PM for me.
+>>>>>
+>>>>> On my omap dm3730 based test system, idle power consumption is over 70
+>>>>> times higher now with this patch! It goes from about 6mW for the core
+>>>>> system to over 440mW during idle meaning there's some busy timer now
+>>>>> active.
+>>>>>
+>>>>> Reverting this patch fixes the issue. Any ideas?
+>
+> Are you using any LED that toggles with high frequency? Like perhaps
+> LED that is lit when CPU is active?
+>
+>>> So a user can do "echo 128 > brightness && cat brightness" and
+>>> get out 0, or 128, depending purely on timing.
+> ...
+>>>                Reading from this file while a trigger is active returns
+>>> the
+>>>                top brightness trigger is going to use.
+>
+> Yes, that sounds sane.
+>
+>> It seems that we should get back to your initial approach. i.e. only
+>> brightness changes caused by hardware should be reported.
+>
+> I don't think enabling poll() here is good idea. Some hardware won't
+> be able to tell you that it changed the state. Returning maximum
+> brightness trigger is going to use seems easier/better.
 
-Hi!
+The idea here is to allow userspace to poll() on the brightness
+sysfs atrribute to detect changes autonomously done by the hardware,
+such as e.g. happens on both Dell and Thinkpad laptops when pressing
+the keyboard backlight cycle hotkey. Note that these keys do not
+generate key-press events, the cycling through the brightness levels
+(including off) is done entirely in firmware.
 
+But we do get other ACPI events for this which we can use to let
+userspace know this happens, which is something which user-
+interfaces which allow control over the kbd backlight want to know.
 
-> >>>The current docs say not about (sw) blinking, but that should be treat=
-ed
-> >>>just
-> >>>like a trigger IMHO.
-> >>
-> >>You'r right, we should describe the semantics on reading, but it would
-> >>have to be as follows:
-> >>
-> >>Reading from this file returns LED brightness at given moment, i.e.
-> >>even though LED class device brightness setting is greater than 0, the
-> >>momentary brightness can be 0 if the readout occurred during low phase
-> >>of blink cycle.
-> >
-> >Why would it need to read like this, because this is the current behavio=
-r ?
->=20
-> We have led_update_brightness() which was introduced long time ago and
-> is used in brightness_show(). Note that if LED controller changed
-> actual LED brightness e.g. due to battery voltage dropping below
-> certain threshold, we wouldn't be able to find it out otherwise
-> (except if we added separate sysfs file for that).
+I understand that we will not always be able to do this, here is the
+Documentation/ABI/testing/sysfs-class-led text I have in mind:
 
-And we should have a separate sysfs file for that. Note that on some
-hardware leds, you are able to let hardware control them, but if you
-do, you can't really tell the current state. Examples are n900 and
-thinkpad-acpi. So it is better we don't pretend we can get that value
-for userspace.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+		The file supports poll() to detect changes, changes are only
+		signalled when this file is written or when the hardware /
+		firmware changes the brightness itself and the driver can detect
+		this. Changes done by kernel triggers / software blinking are
+		not signalled.
 
---AkbCVLjbJ9qUtAXD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Note the "and the driver can detect this" language, that has been there
+since v1 of the poll() notification patch since I already expected not
+all hardware to be able to signal this.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Regards,
 
-iEYEARECAAYFAlgkofYACgkQMOfwapXb+vJZAgCgpeZKks6yw8bm7Pg1TBobhYMN
-dagAoLC7Q4i37KVwL/KgqQvBLcyZIoSx
-=3Nms
------END PGP SIGNATURE-----
-
---AkbCVLjbJ9qUtAXD--
+Hans
