@@ -1,109 +1,122 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: PM regression with LED changes in next-20161109
-Date: Fri, 11 Nov 2016 18:03:02 +0100
-Message-ID: <f7c9b2be-0003-f342-a4c7-802532faa424@gmail.com>
-References: <20161109192301.GS26979@atomide.com>
- <28234714-3994-6747-9cf8-1ff0b3257f7a@gmail.com>
- <CGME20161110084919epcas3p2e8fbdd2905cabe15c5301b7a8e22416c@epcas3p2.samsung.com>
- <f627c778-4378-e5da-09dd-3e0fb2ea4aba@redhat.com>
- <5bd5333e-0dbb-6333-0a48-ca4d3a990f9c@samsung.com>
- <20161110162925.GA28832@amd> <20161110175537.GF27724@atomide.com>
- <20161110202910.GE28832@amd> <80b645e7-c3fa-8001-d9b1-c3c8c40394fd@gmail.com>
- <20161111120114.GA1076@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:36692 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933443AbcKKRDr (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 11 Nov 2016 12:03:47 -0500
-In-Reply-To: <20161111120114.GA1076@amd>
-Sender: linux-leds-owner@vger.kernel.org
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH] leds: uleds: make max_brightness configurable
+Date: Fri, 11 Nov 2016 11:35:29 -0600
+Message-ID: <1478885730-23190-1-git-send-email-david@lechnology.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: David Lechner <david@lechnology.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Hans de Goede <hdegoede@redhat.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>
 
-On 11/11/2016 01:01 PM, Pavel Machek wrote:
-> On Thu 2016-11-10 22:34:07, Jacek Anaszewski wrote:
->> Hi,
->>
->> On 11/10/2016 09:29 PM, Pavel Machek wrote:
->>> On Thu 2016-11-10 10:55:37, Tony Lindgren wrote:
->>>> * Pavel Machek <pavel@ucw.cz> [161110 09:29]:
->>>>> Hi!
->>>>>
->>>>>>>>> Looks like commit 883d32ce3385 ("leds: core: Add support for poll()ing
->>>>>>>>> the sysfs brightness attr for changes.") breaks runtime PM for me.
->>>>>>>>>
->>>>>>>>> On my omap dm3730 based test system, idle power consumption is over 70
->>>>>>>>> times higher now with this patch! It goes from about 6mW for the core
->>>>>>>>> system to over 440mW during idle meaning there's some busy timer now
->>>>>>>>> active.
->>>>>>>>>
->>>>>>>>> Reverting this patch fixes the issue. Any ideas?
->>>>>
->>>>> Are you using any LED that toggles with high frequency? Like perhaps
->>>>> LED that is lit when CPU is active?
->>>>
->>>> Yeah one of them seems to have cpu0 as the default trigger.
->>>
->>> Aha. Its quite obvious we don't want to notify sysfs each time that
->>> one is toggled, right?
->>>
->>> IMO brightness should display max brightness for the trigger, as Hans
->>> suggested, anything else is madness for trigger such as cpu activity.
->>
->> Are you suggesting that we should revert changes introduced
->> by below patch?
->>
->> commit 29d76dfa29fe22583aefddccda0bc56aa81035dc
->> Author: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
->> Date:   Tue Mar 18 09:47:48 2008 +0000
->>
->>     leds: Add support to leds with readable status
->>
->>     Some led hardware allows drivers to query the led state, and this patch
->>     adds a hook to let the led class take advantage of that information when
->>     available.
->>
->>     Without this functionality, when access to the led hardware is not
->>     exclusive (i.e. firmware or hardware might change its state behind the
->>     kernel's back), reality goes out of sync with the led class' idea of
->> what
->>     the led is doing, which is annoying at best.
->
-> Hmm. So userland can read the LED state, and it can get _some_ value
-> back, but it can not know if it is current state or not.
->
-> I don't think that's a good interface. I see it is from 2008... is
-> someone using it? Maybe it is too late for revert.
+This adds support for configuring max_brightness when setting up a
+userspace LED device. It also requires changing the brightness value
+returned from a single byte to an integer. Since the uleds driver has
+not made it into the mainline kernel yet, this is not breaking userspace.
 
-I can imagine it being used in flash LED use case. E.g. one
-could use oneshot trigger to trigger flash strobe, and then
-he could periodically read brightness file to check, for whatever
-reason, whether the flash is strobing.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/leds/uleds.c       | 16 +++++++++++-----
+ include/uapi/linux/uleds.h |  1 +
+ tools/leds/uledmon.c       |  5 +++--
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
-> But I'd certainly not extend it with poll.
-
-We could add a dedicated file e.g. hw_brightness_change for that
-(maybe someone will have a better candidate for the file name).
-
-This way it would be semantically consistent to report only
-hardware originating brightness changes on it, which was the
-initial reason for adding the brightness change notification
-feature.
-
-Moreover, LED class drivers could report on this file the
-brightness level which was set by the firmware, which wouldn't
-affect current LED class device brightness setting, unless
-brightness file is read (and brightness_get op is supported).
-
-> IMO reading/polling should only be available with some triggers. It
-> does not make sense with "CPU load" trigger. It makes sense with
-> "keyboard light changeable by hardware" trigger.
-
-
+diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
+index 2bbc73a..5e9e8a1 100644
+--- a/drivers/leds/uleds.c
++++ b/drivers/leds/uleds.c
+@@ -39,7 +39,7 @@ struct uleds_device {
+ 	struct mutex		mutex;
+ 	enum uleds_state	state;
+ 	wait_queue_head_t	waitq;
+-	unsigned char		brightness;
++	int			brightness;
+ 	bool			new_data;
+ };
+ 
+@@ -67,7 +67,6 @@ static int uleds_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 
+ 	udev->led_cdev.name = udev->user_dev.name;
+-	udev->led_cdev.max_brightness = LED_FULL;
+ 	udev->led_cdev.brightness_set = uleds_brightness_set;
+ 
+ 	mutex_init(&udev->mutex);
+@@ -117,6 +116,12 @@ static ssize_t uleds_write(struct file *file, const char __user *buffer,
+ 		goto out;
+ 	}
+ 
++	if (udev->user_dev.max_brightness <= 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++	udev->led_cdev.max_brightness = udev->user_dev.max_brightness;
++
+ 	ret = devm_led_classdev_register(uleds_misc.this_device,
+ 					 &udev->led_cdev);
+ 	if (ret < 0)
+@@ -138,7 +143,7 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
+ 	struct uleds_device *udev = file->private_data;
+ 	ssize_t retval;
+ 
+-	if (count == 0)
++	if (count < sizeof(udev->brightness))
+ 		return 0;
+ 
+ 	do {
+@@ -151,9 +156,10 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
+ 		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
+ 			retval = -EAGAIN;
+ 		} else if (udev->new_data) {
+-			retval = copy_to_user(buffer, &udev->brightness, 1);
++			retval = copy_to_user(buffer, &udev->brightness,
++					      sizeof(udev->brightness));
+ 			udev->new_data = false;
+-			retval = 1;
++			retval = sizeof(udev->brightness);
+ 		}
+ 
+ 		mutex_unlock(&udev->mutex);
+diff --git a/include/uapi/linux/uleds.h b/include/uapi/linux/uleds.h
+index 2545b79..3788d5e 100644
+--- a/include/uapi/linux/uleds.h
++++ b/include/uapi/linux/uleds.h
+@@ -18,6 +18,7 @@
+ 
+ struct uleds_user_dev {
+ 	char name[LEDS_MAX_NAME_SIZE];
++	int max_brightness;
+ };
+ 
+ #endif /* _UAPI__ULEDS_H_ */
+diff --git a/tools/leds/uledmon.c b/tools/leds/uledmon.c
+index 44d8634..163da85 100644
+--- a/tools/leds/uledmon.c
++++ b/tools/leds/uledmon.c
+@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
+ {
+ 	struct uleds_user_dev uleds_dev;
+ 	int fd, ret;
+-	unsigned char brightness;
++	int brightness;
+ 	struct timespec ts;
+ 
+ 	if (argc != 2) {
+@@ -31,6 +31,7 @@ int main(int argc, char const *argv[])
+ 	}
+ 
+ 	strncpy(uleds_dev.name, argv[1], LEDS_MAX_NAME_SIZE);
++	uleds_dev.max_brightness = 100;
+ 
+ 	fd = open("/dev/uleds", O_RDWR);
+ 	if (fd == -1) {
+@@ -46,7 +47,7 @@ int main(int argc, char const *argv[])
+ 	}
+ 
+ 	while (1) {
+-		ret = read(fd, &brightness, 1);
++		ret = read(fd, &brightness, sizeof(brightness));
+ 		if (ret == -1) {
+ 			perror("Failed to read from /dev/uleds");
+ 			close(fd);
 -- 
-Best regards,
-Jacek Anaszewski
+2.7.4
