@@ -1,109 +1,86 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: Three different LED brightnesses (was Re: PM regression with LED
- changes in next-20161109)
-Date: Sun, 13 Nov 2016 21:45:25 +0100
-Message-ID: <20161113204525.GA15072@amd>
-References: <20161110175537.GF27724@atomide.com>
- <20161110202910.GE28832@amd>
- <80b645e7-c3fa-8001-d9b1-c3c8c40394fd@gmail.com>
- <20161111120114.GA1076@amd>
- <f7c9b2be-0003-f342-a4c7-802532faa424@gmail.com>
- <d7ddbbb0-b99c-14a3-f462-3534b5ec67e6@redhat.com>
- <20161111221224.GB10983@amd>
- <3ca04742-6376-5a88-8d10-5b88fcd8f5e5@redhat.com>
- <20161113091054.GA17790@amd>
- <3a3bb3f8-e54a-e7d0-da30-7f90b00c29b3@redhat.com>
+From: "Dr. Felix Collins" <felixcollinsfnb2@gmail.com>
+Subject: PLEASE VIEW THE ATTACHED FILE AND CONTACT ME.
+Date: Mon, 14 Nov 2016 07:43:19 +0000 (UTC)
+Message-ID: <1666584935.3489547.1479109399212__1598.9770451144$1479110238$gmane$org@mail.yahoo.com>
+References: <1666584935.3489547.1479109399212.ref@mail.yahoo.com>
+Reply-To: "Dr. Felix Collins" <felixcollinsa@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: multipart/mixed;
+        boundary="----=_Part_3489546_1885277376.1479109399212"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34627 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933451AbcKMUp3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Nov 2016 15:45:29 -0500
-Content-Disposition: inline
-In-Reply-To: <3a3bb3f8-e54a-e7d0-da30-7f90b00c29b3@redhat.com>
+Received: from nm33-vm5.bullet.mail.ne1.yahoo.com ([98.138.229.69]:58821 "EHLO
+        nm33-vm5.bullet.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753357AbcKNH4z (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 14 Nov 2016 02:56:55 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>
+
+------=_Part_3489546_1885277376.1479109399212
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+------=_Part_3489546_1885277376.1479109399212
+Content-Type: application/msword
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="FROM FIRST NATIONAL BANK OF SOUTH AFRICA (F.N.B)..rtf"
+Content-ID: <f03ac67e-da25-e224-9d59-4c56ed95efcb@yahoo.com>
 
-> >No, that's just adding more mess on the system.
-> >
-> >Here's better proposal:
-> >
-> >brightness (write): what we do today. (Mess, but too late to change it)
-> >	   (read): -Esomething or what we do today (if someone
-> >	   	   	       	       	  	   acutally uses it)
->=20
-> As said Jacek has already nacked any changes to read behavior.
->=20
-> >           (poll): -Esomething
->=20
-> Making poll() on sysfs attributes return -Esomething is not possible,
-> the internal sysfs API does not allow this.
->=20
-> >current_brightness (write): -Esomething, or maybe change brightness
-> >		   for triggers that can work with that
-> >              (read, poll): if the current trigger can get current
-> >	             state of led, do it, otherwise -Esomething...
-> >		     or maybe file should be simply hidden from sysfs.
->=20
-> So write is -EINVAL and read is the same as what brightness currently doe=
-s,
-> so I see no use in introducing this new file.
+e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzcxNzd7XGZvbnR0Ymx7XGYwXGZz
+d2lzc1xmY2hhcnNldDAgQXJpYWw7fX0NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgNS40MS4xNS4x
+NTEyO31cdmlld2tpbmQ0XHVjMVxwYXJkXGYwXGZzMjQgSSBhbSBGZWxpeCBDb2xsaW5zLCBJIHdv
+cmsgd2l0aCB0aGUgRklSU1QgTkFUSU9OQUwgQkFOSyBPRiBTT1VUSCBBRlJJQ0EgKEYuTi5CKS5c
+cGFyDQpQbGVhc2UgY29udGFjdCBtZSB3aXRoIHRoaXMgZW1haWwgYWRkcmVzc2VzLlxwYXINCmZl
+bGl4Y29sbGluc2FAZ21haWwuY29tXHBhcg0KUGxlYXNlIGNhbGwgbWUgb24gbXkgcHJpdmF0ZSBu
+dW1iZXIgKCsyNy03OSAtMTQxLTIzODUpXHBhcg0KXHBhcg0KXHBhcg0KQVRURU5USU9OOiBTSVIv
+TUFEQU0sXHBhcg0KXHBhcg0KSSBkbyB1bmRlcnN0YW5kIHRoZSBjb25jZXJuIHRoaXMgbGV0dGVy
+IHdpbGwgYnJpbmcgdG8geW91IGZvciB0aGUgZmFjdCB0aGF0IGl0IGNvbWVzIGZyb20gYSB0b3Rh
+bCBzdHJhbmdlciwgYnV0IGJlIHJlc3QgYXNzdXJlZCBmb3IgaXQgY29tZXMgd2l0aCBnb29kIGlu
+dGVudGlvbnMuIEkgZ290IHlvdXIgY29udGFjdCB0aHJvdWdoIHRoZSBTb3V0aCBBZnJpY2FuIElu
+dGVybmF0aW9uYWwgRXhjaGFuZ2UgTmV0d29yayBPbi1saW5lIGhlcmUgaW4gSm9oYW5uZXNidXJn
+LCBTb3V0aCBBZnJpY2EuIEZvciBwdXJwb3NlIG9mIGludHJvZHVjdGlvbiBJIGFtIEZlbGl4IENv
+bGxpbnMsIEkgd29yayB3aXRoIHRoZSBGSVJTVCBOQVRJT05BTCBCQU5LIE9GIFNPVVRIIEFGUklD
+QSAoRi5OLkIpICBUaGVyZSBpcyBhbiBhY2NvdW50IG9wZW5lZCBpbiB0aGlzIGJhbmsgc2luY2Ug
+MTk4MCBhbmQgc2luY2UgMTk5NSBub2JvZHkgaGFzIG9wZXJhdGVkIG9uIHRoaXMgYWNjb3VudCBh
+Z2Fpbi4gQWZ0ZXIgZ29pbmcgdGhyb3VnaCBzb21lIG9sZCBmaWxlcyBpbiB0aGUgcmVjb3Jkcywg
+SSBkaXNjb3ZlcmVkIHRoYXQgaWYgSSBkb24ndCByZW1pdCB0aGlzIG1vbmV5IG91dCB1cmdlbnRs
+eSBpdCB3b3VsZCBiZSBmb3JmZWl0ZWQgZm9yIG5vdGhpbmcuXHBhcg0KXHBhcg0KVGhlIG93bmVy
+IG9mIHRoaXMgYWNjb3VudCBpcyBNci4gU21pdGggLkIuIEFuZHJlYXMsIGEgZm9yZWlnbmVyIGFu
+ZCBhIG1pbmVyIGF0IEtydWdlciBHb2xkIENvLW9wZXJhdGlvbiwgYSBnZW9sb2dpc3QgYnkgcHJv
+ZmVzc2lvbiBhbmQgaGUgZGllZCBzaW5jZSAxOTk0LiBObyBvdGhlciBwZXJzb24ga25vd3MgYWJv
+dXQgdGhpcyBhY2NvdW50IG9yIGFueXRoaW5nIGNvbmNlcm5pbmcgaXQsIHRoZSBhY2NvdW50IGhh
+cyBubyBvdGhlciBiZW5lZmljaWFyeSBhbmQgbXkgaW52ZXN0aWdhdGlvbiBwcm92ZWQgdG8gbWUg
+YXMgd2VsbCB0aGF0IHRoZSBjb21wYW55IGRvZXMgbm90IGtub3cgYW55dGhpbmcgYWJvdXQgdGhp
+cyBhY2NvdW50IGFuZCB0aGUgYW1vdW50IGludm9sdmVkIGlzIFVTRCQ3NSwwMDAuMDAwLDAwICgg
+U2V2ZW50eSBGaXZlIE1pbGxpb24gVW5pdGVkIFN0YXRlcyBEb2xsYXJzKS4gSSBhbSBvbmx5IGNv
+bnRhY3RpbmcgeW91IGFzIGEgZm9yZWlnbmVyIGJlY2F1c2UgdGhpcyBtb25leSBjYW5ub3QgYmUg
+YXBwcm92ZWQgdG8gYSBsb2NhbCBiYW5rIGhlcmUsIGJ1dCBjYW4gb25seSBiZSBhcHByb3ZlZCB0
+byBhbnkgZm9yZWlnbiBhY2NvdW50IGJlY2F1c2UgdGhlIG1vbmV5IGlzIGluIFVuaXRlZCBTdGF0
+ZXMgRG9sbGFycyBhbmQgdGhlIGZvcm1lciBvd25lciBvZiB0aGUgYWNjb3VudCBNci4gU21pdGgg
+LkIgLiBBbmRyZWFzIGlzIGEgZm9yZWlnbmVyIHRvby4gSSBuZWVkIGEgdHJ1dGhmdWwgcGVyc29u
+IGluIHRoaXMgYnVzaW5lc3MgYmVjYXVzZSBJIGRvbid0IHdhbnQgdG8gbWFrZSBtaXN0YWtlcy5c
+cGFyDQpccGFyDQogSSBuZWVkIHlvdXIgc3Ryb25nIGFzc3VyYW5jZSBhbmQgdHJ1c3QuIFdpdGgg
+bXkgcG9zaXRpb24gbm93IGluIG9mZmljZSBJIGNhbiB0cmFuc2ZlciB0aGlzIG1vbmV5IHRvIGFu
+eSBmb3JlaWduIHJlbGlhYmxlIGFjY291bnQsIHRocm91Z2ggb24tbGluZSBiYW5raW5nIG9yIFRl
+bGVncmFwaGljIFRyYW5zZmVyIChULlQpIHdoaWNoIHlvdSBjYW4gcHJvdmlkZSB3aXRoIGFzc3Vy
+YW5jZSB0aGF0IHRoaXMgbW9uZXkgd2lsbCBiZSBpbnRhY3QgcGVuZGluZyBteSBwaHlzaWNhbCBh
+cnJpdmFsIHRvIHlvdXIgY291bnRyeSBmb3Igc2hhcmluZy4gSSB3aWxsIGFwcGx5IGZvciBhbm51
+YWwgbGVhdmUgdG8gZ2V0IGEgdmlzYSBpbW1lZGlhdGVseSBJIGhlYXIgZnJvbSB5b3UgdGhhdCB5
+b3UgYXJlIHJlYWR5IHRvIGFjdCBhbmQgcmVjZWl2ZSB0aGlzIG1vbmV5IGluIHlvdXIgYWNjb3Vu
+dC4gQXQgdGhlIGNvbmNsdXNpb24gb2YgdGhpcyBidXNpbmVzcywgSSB3aWxsIGNvbWUgdG8geW91
+ciBjb3VudHJ5IGZvciB3aXRoZHJhd2FsIGFuZCBzaGFyaW5nIGFuZCBvdGhlciBpbnZlc3RtZW50
+cy4geW91IHdpbGwgYmUgZ2l2ZW4gNDAlIG9mIHRoZSB0b3RhbCBhbW91bnQsIDUwJSB3aWxsIGJl
+IGZvciBtZSAsIGFuZCB3aGlsZSAxMCUgd2lsbCBiZSBmb3IgZXhwZW5zZXMgYm90aCBwYXJ0aWVz
+IG1pZ2h0IGluY3VyIGR1cmluZyB0aGUgcHJvY2VzcyBvZiB0cmFuc2ZlcnJpbmcgdGhpcyBtb25l
+eS5ccGFyDQpccGFyDQpUaGVyZWZvcmUsIGlmIHlvdSBhcmUgd2lsbGluZyBhbmQgaW50ZXJlc3Rl
+ZCB0byByZW5kZXIgdGhlIG5lZWRlZCBhc3Npc3RhbmNlLCBFbmRlYXZvciB0byByZXBseSB0aHJv
+dWdoIG15IGVtYWlsIGFkZHJlc3MsIEkgYWxzbyBuZWVkIHlvdXIgcHJpdmF0ZSBwaG9uZSBhbmQg
+ZmF4IG51bWJlcnMgZm9yIGVhc3kgY29tbXVuaWNhdGlvbi4gSSB3aWxsIGdpdmUgbW9yZSBjbGFy
+aWZpY2F0aW9ucyBvbiB0aGUgbW9kYWxpdGllcyBuZWVkZWQgZm9yIHRoZSBzdWNjZXNzZnVsIGNv
+bXBsZXRpb24gb2YgdGhpcyB0cmFuc2FjdGlvbi5ccGFyDQpccGFyDQpccGFyDQpCZXN0IFJlZ2Fy
+ZHMsXHBhcg0KRHIuIEZlbGl4IENvbGxpbnNccGFyDQogXHBhcg0KfQ0KAA==
 
-No, read is not same as current brightness file. Currently, reading
-brightness file returns either current brightness or maximum
-brightness, and userspace can't tell which is which.
-
-> >trigger_max_brightness (read,write): change the maximum brightness for
-> >		       a trigger.
-> >	       (poll): -Esomething
->=20
-> The write behavior here is the same as what brightness currently does
-> and the read behavior is that of what I suggested for
-
-No, it is not. "brightness" behaviour is currently broken, as it sets
-either current brightness or maximum trigger brightness.
-
-> We've 2 sorts of brightness really:
->=20
-> 1) transient brightness, aka current brightness, when blinking or
-> triggers are used this will switch many times a second
-> between off and some on level.
->=20
-> 2) non-transient brightness, for non blinking leds this is the
-> actual brightness, for blinking leds this is the brightness
-> level used when the led is on.
-
-Yes, and we want reasonable interface where userspace sees those two
-brightnesses.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlgo0OUACgkQMOfwapXb+vKF8wCggW5FxPc9J+i9Dbc0N473Gfmp
-TgYAoJVAyrjIij7H81udzI3QRS9Cyguk
-=h1zT
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+------=_Part_3489546_1885277376.1479109399212--
