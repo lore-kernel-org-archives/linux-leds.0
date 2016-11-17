@@ -1,43 +1,30 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v5 1/6] leds: triggers: Add current_brightness trigger parameter
-Date: Thu, 17 Nov 2016 23:24:36 +0100
-Message-ID: <20161117222441.31464-1-hdegoede@redhat.com>
+Subject: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
+Date: Thu, 17 Nov 2016 23:24:37 +0100
+Message-ID: <20161117222441.31464-2-hdegoede@redhat.com>
+References: <20161117222441.31464-1-hdegoede@redhat.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39328 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:48614 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752190AbcKQWYr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Nov 2016 17:24:47 -0500
+        id S1752808AbcKQWYt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Nov 2016 17:24:49 -0500
+In-Reply-To: <20161117222441.31464-1-hdegoede@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-In some cases it may be desirable for userspace to be notified when
-a trigger event happens. This commit adds support for a poll-able
-current_brightness trigger specific sysfs attribute which triggers
-may register:
+Add a trigger to control keyboard backlight LED devices. Note that in
+some cases the keyboard backlight control is hardwired (taken care of
+in firmware outside of the kernels control), in that case this triggers
+main purpose is to allow userspace to monitor these changes.
 
-What:		/sys/class/leds/<led>/current_brightness
-Date:		November 2016
-KernelVersion:	4.10
-Description:
-	Triggers which support it may register a current_brightness
-	file. This file supports poll() to detect when the trigger
-	modifies the brightness of the LED.
-	Reading this file will always return the current brightness
-	of the LED.
-	Writing this file sets the current brightness of the LED,
-	without influencing the trigger.
+The ledtrig_kbd_backlight function has a set_brightness parameter to
+differentiate between full backlight control through the trigger
+(set_brightness set to true) or change notification only (false).
 
-This commit adds 3 functions triggers which want to support this can use:
-
-void led_trigger_add_current_brightness(struct led_classdev *cdev);
-void led_trigger_remove_current_brightness(struct led_classdev *cdev);
-void led_trigger_notify_current_brightness_change(struct led_classdev *);
-
-The add / remove functions are to be used as, or called from the triggers
-activate / deactivate callbacks and when an event happens the trigger can
-call the notify function to wake-up any poll() waiters.
+Note the Kconfig option for this is a bool because the code is so
+small that it is not worth the overhead of being a module.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
@@ -45,168 +32,108 @@ Changes in v5:
 -This is a new patch in v5 of this patch-set (replacing earlier attempts
  at similar functionality)
 ---
- Documentation/ABI/testing/sysfs-class-led | 15 +++++-
- drivers/leds/led-triggers.c               | 81 +++++++++++++++++++++++++++++++
- drivers/leds/leds.h                       |  3 ++
- include/linux/leds.h                      |  3 ++
- 4 files changed, 101 insertions(+), 1 deletion(-)
+ drivers/leds/trigger/Kconfig                 | 10 ++++++++
+ drivers/leds/trigger/Makefile                |  1 +
+ drivers/leds/trigger/ledtrig-kbd-backlight.c | 38 ++++++++++++++++++++++++++++
+ include/linux/leds.h                         |  8 ++++++
+ 4 files changed, 57 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-kbd-backlight.c
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 491cdee..b8cb74d 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -33,7 +33,8 @@ Description:
- 		You can change triggers in a similar manner to the way an IO
- 		scheduler is chosen. Trigger specific parameters can appear in
- 		/sys/class/leds/<led> once a given trigger is selected. For
--		their documentation see sysfs-class-led-trigger-*.
-+		their documentation see sysfs-class-led-trigger-*. Also see
-+		the trigger specific current_brightness file described below.
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 3f9ddb9..350e2c7 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -67,6 +67,16 @@ config LEDS_TRIGGER_BACKLIGHT
  
- What:		/sys/class/leds/<led>/inverted
- Date:		January 2011
-@@ -44,3 +45,15 @@ Description:
- 		gpio and backlight triggers. In case of the backlight trigger,
- 		it is useful when driving a LED which is intended to indicate
- 		a device in a standby like state.
-+
-+What:		/sys/class/leds/<led>/current_brightness
-+Date:		November 2016
-+KernelVersion:	4.10
-+Description:
-+		Triggers which support it may register a current_brightness
-+		file. This file supports poll() to detect when the trigger
-+		modifies the brightness of the LED.
-+		Reading this file will always return the current brightness
-+		of the LED.
-+		Writing this file sets the current brightness of the LED,
-+		without influencing the trigger.
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 431123b..d2ed9c2 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -102,6 +102,87 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
- }
- EXPORT_SYMBOL_GPL(led_trigger_show);
+ 	  If unsure, say N.
  
-+static ssize_t current_brightness_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
++config LEDS_TRIGGER_KBD_BACKLIGHT
++	bool "LED keyboard backlight Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  This trigger can control keyboard backlight LED devices,
++	  it also allows user-space to monitor keyboard backlight brightness
++	  changes done through e.g. hotkeys on some laptops.
++
++	  If unsure, say Y.
++
+ config LEDS_TRIGGER_CPU
+ 	bool "LED CPU Trigger"
+ 	depends on LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index a72c43c..be6b249 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_LEDS_TRIGGER_DISK)		+= ledtrig-disk.o
+ obj-$(CONFIG_LEDS_TRIGGER_MTD)		+= ledtrig-mtd.o
+ obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
+ obj-$(CONFIG_LEDS_TRIGGER_BACKLIGHT)	+= ledtrig-backlight.o
++obj-$(CONFIG_LEDS_TRIGGER_KBD_BACKLIGHT) += ledtrig-kbd-backlight.o
+ obj-$(CONFIG_LEDS_TRIGGER_GPIO)		+= ledtrig-gpio.o
+ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
+ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+diff --git a/drivers/leds/trigger/ledtrig-kbd-backlight.c b/drivers/leds/trigger/ledtrig-kbd-backlight.c
+new file mode 100644
+index 0000000..353ee92
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-kbd-backlight.c
+@@ -0,0 +1,38 @@
++/*
++ * LED Trigger for keyboard backlight control
++ *
++ * Copyright 2016, Hans de Goede <hdegoede@redhat.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/leds.h>
++#include "../leds.h"
++
++static struct led_trigger kbd_backlight_trigger = {
++	.name     = "kbd-backlight",
++	.activate = led_trigger_add_current_brightness,
++	.deactivate = led_trigger_remove_current_brightness,
++};
++
++void ledtrig_kbd_backlight(bool set_brightness, enum led_brightness brightness)
 +{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	if (set_brightness)
++		led_trigger_event(&kbd_backlight_trigger, brightness);
 +
-+	led_update_brightness(led_cdev);
-+
-+	return sprintf(buf, "%u\n", led_cdev->brightness);
++	led_trigger_notify_current_brightness_change(&kbd_backlight_trigger);
 +}
++EXPORT_SYMBOL_GPL(ledtrig_kbd_backlight);
 +
-+static ssize_t current_brightness_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t size)
++static int __init kbd_backlight_trig_init(void)
 +{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	unsigned long state;
-+	ssize_t ret;
-+
-+	mutex_lock(&led_cdev->led_access);
-+
-+	if (led_sysfs_is_disabled(led_cdev)) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
-+
-+	ret = kstrtoul(buf, 10, &state);
-+	if (ret)
-+		goto unlock;
-+
-+	/* _nosleep version so as to not stop sw blinking */
-+	led_set_brightness_nosleep(led_cdev, state);
-+
-+	/* Let any listeners know the brighness changed */
-+	if (led_cdev->current_brightness_kn)
-+		sysfs_notify_dirent(led_cdev->current_brightness_kn);
-+
-+	ret = size;
-+unlock:
-+	mutex_unlock(&led_cdev->led_access);
-+	return ret;
++	return led_trigger_register(&kbd_backlight_trigger);
 +}
-+
-+static DEVICE_ATTR_RW(current_brightness);
-+
-+void led_trigger_add_current_brightness(struct led_classdev *led_cdev)
-+{
-+	int ret;
-+
-+	ret = device_create_file(led_cdev->dev, &dev_attr_current_brightness);
-+	if (ret) {
-+		dev_err(led_cdev->dev, "Error creating current_brightness\n");
-+		return;
-+	}
-+
-+	led_cdev->current_brightness_kn =
-+		sysfs_get_dirent(led_cdev->dev->kobj.sd, "current_brightness");
-+	if (!led_cdev->current_brightness_kn)
-+		dev_err(led_cdev->dev, "Error getting current_brightness kn\n");
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_add_current_brightness);
-+
-+void led_trigger_remove_current_brightness(struct led_classdev *led_cdev)
-+{
-+	sysfs_put(led_cdev->current_brightness_kn);
-+	led_cdev->current_brightness_kn = NULL;
-+	device_remove_file(led_cdev->dev, &dev_attr_current_brightness);
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_remove_current_brightness);
-+
-+void led_trigger_notify_current_brightness_change(struct led_trigger *trig)
-+{
-+	struct led_classdev *led_cdev;
-+
-+	read_lock(&trig->leddev_list_lock);
-+	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
-+		if (led_cdev->current_brightness_kn)
-+			sysfs_notify_dirent(led_cdev->current_brightness_kn);
-+	}
-+	read_unlock(&trig->leddev_list_lock);
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_notify_current_brightness_change);
-+
- /* Caller must ensure led_cdev->trigger_lock held */
- void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- {
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 7d38e6b..3d06ee6 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -27,6 +27,9 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
- 				enum led_brightness value);
- void led_set_brightness_nosleep(struct led_classdev *led_cdev,
- 				enum led_brightness value);
-+void led_trigger_add_current_brightness(struct led_classdev *cdev);
-+void led_trigger_remove_current_brightness(struct led_classdev *cdev);
-+void led_trigger_notify_current_brightness_change(struct led_trigger *trig);
- 
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
++device_initcall(kbd_backlight_trig_init);
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 569cb53..d3eb992 100644
+index d3eb992..870b8c2 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -13,6 +13,7 @@
- #define __LINUX_LEDS_H_INCLUDED
- 
- #include <linux/device.h>
-+#include <linux/kernfs.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
-@@ -108,6 +109,8 @@ struct led_classdev {
- 	void			*trigger_data;
- 	/* true if activated - deactivate routine uses it to do cleanup */
- 	bool			activated;
-+	/* For triggers with current_brightness sysfs attribute */
-+	struct kernfs_node	*current_brightness_kn;
+@@ -353,6 +353,14 @@ static inline void ledtrig_flash_ctrl(bool on) {}
+ static inline void ledtrig_torch_ctrl(bool on) {}
  #endif
  
- 	/* Ensures consistent access to the LED Flash Class device */
++#ifdef CONFIG_LEDS_TRIGGER_KBD_BACKLIGHT
++extern void ledtrig_kbd_backlight(bool set_brightness,
++				  enum led_brightness brightness);
++#else
++static inline void ledtrig_kbd_backlight(bool set_brightness,
++					 enum led_brightness brightness) {}
++#endif
++
+ /*
+  * Generic LED platform data for describing LED names and default triggers.
+  */
 -- 
 2.9.3
