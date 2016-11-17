@@ -1,115 +1,212 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: LEDs that change brightness "itself" -- that's a trigger. Re: PM
- regression with LED changes in next-20161109
-Date: Thu, 17 Nov 2016 23:12:57 +0100
-Message-ID: <94321807-31e5-c1e3-1e79-5abf3bf2e554@redhat.com>
-References: <cb0aa3ce-ee48-66b8-510c-bd70917afec9@redhat.com>
- <b5ae20d7-8394-7ad5-1830-13173e9105c4@gmail.com>
- <9b476f85-d45e-deb6-335d-fc56f6d90350@redhat.com>
- <127cdd42-6fd8-c671-60b7-3826b351577f@samsung.com>
- <15cafbf5-d842-e184-2fd4-65f8272f505a@redhat.com>
- <CGME20161115103141epcas2p251f2521354a8cd7b9dfcfe55bfa482f0@epcas2p2.samsung.com>
- <20161115103133.GA22860@amd>
- <4e392d5d-eb10-f285-517e-976a55c3e318@samsung.com>
- <20161115111154.GA5482@amd> <128aae59-b790-42f1-7d66-81391c9330c3@redhat.com>
- <20161115114859.GA7018@amd> <aeccbb02-6e33-390c-d72d-2a580dd67ed8@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v5 1/6] leds: triggers: Add current_brightness trigger parameter
+Date: Thu, 17 Nov 2016 23:24:36 +0100
+Message-ID: <20161117222441.31464-1-hdegoede@redhat.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:43424 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:39328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751320AbcKQWNC (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Nov 2016 17:13:02 -0500
-In-Reply-To: <aeccbb02-6e33-390c-d72d-2a580dd67ed8@redhat.com>
+        id S1752190AbcKQWYr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Nov 2016 17:24:47 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>
+To: Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Hi,
+In some cases it may be desirable for userspace to be notified when
+a trigger event happens. This commit adds support for a poll-able
+current_brightness trigger specific sysfs attribute which triggers
+may register:
 
-On 15-11-16 13:06, Hans de Goede wrote:
-> Hi,
->
-> On 15-11-16 12:48, Pavel Machek wrote:
->> Hi!
->>
->>>>>> The LED you are talking about _has_ a trigger, implemented in
->>>>>> hardware. That trigger can change LED brightness behind kernel's (and
->>>>>> userspace's) back. Don't pretend the trigger does not exist, it does.
->>>>>>
->>>>>> And when you do that, you'll have nice place to report changes to
->>>>>> userspace -- trigger can now export that information, and offer poll()
->>>>>> interface.
->>>>>
->>>>> Well, that sounds interesting. It is logically justifiable.
->>>>
->>>> Thanks.
->>>>
->>>>> I initially proposed exactly this solution, with recently
->>>>> added userspace LED being a trigger listener. It seems a bit
->>>>> awkward though. How would you listen to the trigger events?
->>>>
->>>> Trigger exposes a file in sysfs, with poll() working on that file
->>>
->>> Hmm, a new file would give the advantage of making it easy for
->>> userspace to see if the trigger is poll-able, this is likely
->>> better then my own proposal I just send.
->>
->> Good.
->>
->>>> (and
->>>> probably read exposing the current brightness).
->>>
->>> If we do this, can we please make it mirror brightness, iow
->>> also make it writable, that will make it easier for userspace
->>> to deal with it. We can simply re-use the existing show / store
->>> methods for brightness for this.
->>
->> Actually, echo 0 > brightness disables the trigger, IIRC. I'd avoid
->> that here, you want to be able to turn off the backlight but still
->> keep the trigger (and be notified of future changes).
->
-> True, that is easy to do the store method will just need to call
-> led_set_brightness_nosleep instead of led_set_brightness, this
-> will skip the checks to stop blinking in led_set_brightness and
-> otherwise is equivalent.
->
->>> I suggest we call it:
->>>
->>> trigger_brightness
->>>
->>> And only register it when a poll-able trigger is present.
->>
->> I'd call it 'current_brightness', but that's no big deal. Yes, only
->> registering it for poll-able triggers makes sense.
->
-> current_brightness works for me. I will take a shot a patch-set
-> implementing this.
+What:		/sys/class/leds/<led>/current_brightness
+Date:		November 2016
+KernelVersion:	4.10
+Description:
+	Triggers which support it may register a current_brightness
+	file. This file supports poll() to detect when the trigger
+	modifies the brightness of the LED.
+	Reading this file will always return the current brightness
+	of the LED.
+	Writing this file sets the current brightness of the LED,
+	without influencing the trigger.
 
-Done, this actually turned out pretty nice, the trigger also helps
-in propagating the change events from dell-wmi to the led-classdev
-in dell-laptop without needing the ugly hacks I needed before.
+This commit adds 3 functions triggers which want to support this can use:
 
-v5 coming up.
+void led_trigger_add_current_brightness(struct led_classdev *cdev);
+void led_trigger_remove_current_brightness(struct led_classdev *cdev);
+void led_trigger_notify_current_brightness_change(struct led_classdev *);
 
-Regards,
+The add / remove functions are to be used as, or called from the triggers
+activate / deactivate callbacks and when an event happens the trigger can
+call the notify function to wake-up any poll() waiters.
 
-Hans
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v5:
+-This is a new patch in v5 of this patch-set (replacing earlier attempts
+ at similar functionality)
+---
+ Documentation/ABI/testing/sysfs-class-led | 15 +++++-
+ drivers/leds/led-triggers.c               | 81 +++++++++++++++++++++++++++++++
+ drivers/leds/leds.h                       |  3 ++
+ include/linux/leds.h                      |  3 ++
+ 4 files changed, 101 insertions(+), 1 deletion(-)
 
-
-
->
->
->
->>
->>>> Key difference is that only triggers where this makes sense (keyboard
->>>> backlight) expose it and carry the overhead. CPU trigger would
->>>> definitely not do this.
->>>
->>> Ack only having some triggers pollable is important.
->>
->> Thanks,
->>                                     Pavel
->>
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 491cdee..b8cb74d 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -33,7 +33,8 @@ Description:
+ 		You can change triggers in a similar manner to the way an IO
+ 		scheduler is chosen. Trigger specific parameters can appear in
+ 		/sys/class/leds/<led> once a given trigger is selected. For
+-		their documentation see sysfs-class-led-trigger-*.
++		their documentation see sysfs-class-led-trigger-*. Also see
++		the trigger specific current_brightness file described below.
+ 
+ What:		/sys/class/leds/<led>/inverted
+ Date:		January 2011
+@@ -44,3 +45,15 @@ Description:
+ 		gpio and backlight triggers. In case of the backlight trigger,
+ 		it is useful when driving a LED which is intended to indicate
+ 		a device in a standby like state.
++
++What:		/sys/class/leds/<led>/current_brightness
++Date:		November 2016
++KernelVersion:	4.10
++Description:
++		Triggers which support it may register a current_brightness
++		file. This file supports poll() to detect when the trigger
++		modifies the brightness of the LED.
++		Reading this file will always return the current brightness
++		of the LED.
++		Writing this file sets the current brightness of the LED,
++		without influencing the trigger.
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 431123b..d2ed9c2 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -102,6 +102,87 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_show);
+ 
++static ssize_t current_brightness_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	led_update_brightness(led_cdev);
++
++	return sprintf(buf, "%u\n", led_cdev->brightness);
++}
++
++static ssize_t current_brightness_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	unsigned long state;
++	ssize_t ret;
++
++	mutex_lock(&led_cdev->led_access);
++
++	if (led_sysfs_is_disabled(led_cdev)) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	ret = kstrtoul(buf, 10, &state);
++	if (ret)
++		goto unlock;
++
++	/* _nosleep version so as to not stop sw blinking */
++	led_set_brightness_nosleep(led_cdev, state);
++
++	/* Let any listeners know the brighness changed */
++	if (led_cdev->current_brightness_kn)
++		sysfs_notify_dirent(led_cdev->current_brightness_kn);
++
++	ret = size;
++unlock:
++	mutex_unlock(&led_cdev->led_access);
++	return ret;
++}
++
++static DEVICE_ATTR_RW(current_brightness);
++
++void led_trigger_add_current_brightness(struct led_classdev *led_cdev)
++{
++	int ret;
++
++	ret = device_create_file(led_cdev->dev, &dev_attr_current_brightness);
++	if (ret) {
++		dev_err(led_cdev->dev, "Error creating current_brightness\n");
++		return;
++	}
++
++	led_cdev->current_brightness_kn =
++		sysfs_get_dirent(led_cdev->dev->kobj.sd, "current_brightness");
++	if (!led_cdev->current_brightness_kn)
++		dev_err(led_cdev->dev, "Error getting current_brightness kn\n");
++}
++EXPORT_SYMBOL_GPL(led_trigger_add_current_brightness);
++
++void led_trigger_remove_current_brightness(struct led_classdev *led_cdev)
++{
++	sysfs_put(led_cdev->current_brightness_kn);
++	led_cdev->current_brightness_kn = NULL;
++	device_remove_file(led_cdev->dev, &dev_attr_current_brightness);
++}
++EXPORT_SYMBOL_GPL(led_trigger_remove_current_brightness);
++
++void led_trigger_notify_current_brightness_change(struct led_trigger *trig)
++{
++	struct led_classdev *led_cdev;
++
++	read_lock(&trig->leddev_list_lock);
++	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
++		if (led_cdev->current_brightness_kn)
++			sysfs_notify_dirent(led_cdev->current_brightness_kn);
++	}
++	read_unlock(&trig->leddev_list_lock);
++}
++EXPORT_SYMBOL_GPL(led_trigger_notify_current_brightness_change);
++
+ /* Caller must ensure led_cdev->trigger_lock held */
+ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ {
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 7d38e6b..3d06ee6 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -27,6 +27,9 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
+ 				enum led_brightness value);
+ void led_set_brightness_nosleep(struct led_classdev *led_cdev,
+ 				enum led_brightness value);
++void led_trigger_add_current_brightness(struct led_classdev *cdev);
++void led_trigger_remove_current_brightness(struct led_classdev *cdev);
++void led_trigger_notify_current_brightness_change(struct led_trigger *trig);
+ 
+ extern struct rw_semaphore leds_list_lock;
+ extern struct list_head leds_list;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 569cb53..d3eb992 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -13,6 +13,7 @@
+ #define __LINUX_LEDS_H_INCLUDED
+ 
+ #include <linux/device.h>
++#include <linux/kernfs.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+@@ -108,6 +109,8 @@ struct led_classdev {
+ 	void			*trigger_data;
+ 	/* true if activated - deactivate routine uses it to do cleanup */
+ 	bool			activated;
++	/* For triggers with current_brightness sysfs attribute */
++	struct kernfs_node	*current_brightness_kn;
+ #endif
+ 
+ 	/* Ensures consistent access to the LED Flash Class device */
+-- 
+2.9.3
