@@ -1,153 +1,148 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Fri, 18 Nov 2016 09:55:43 +0100
-Message-ID: <af5a6b68-310d-85ec-16db-5c9036f38ba5@samsung.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v5 3/6] leds: triggers: Add support for read-only triggers
+Date: Fri, 18 Nov 2016 10:04:31 +0100
+Message-ID: <d70ddd38-2994-c403-114f-ef05f0ddb8c4@redhat.com>
 References: <20161117222441.31464-1-hdegoede@redhat.com>
- <CGME20161117222450epcas2p28613abfdc50444385e6849315754f51c@epcas2p2.samsung.com>
- <20161117222441.31464-2-hdegoede@redhat.com>
+ <CGME20161117222452epcas4p43b390da988281f298b01c5dae1425469@epcas4p4.samsung.com>
+ <20161117222441.31464-3-hdegoede@redhat.com>
+ <b44e1e67-d609-5876-b79b-c28d2093c50e@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-reply-to: <20161117222441.31464-2-hdegoede@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>
-Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:33068 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751971AbcKRJEf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 18 Nov 2016 04:04:35 -0500
+In-Reply-To: <b44e1e67-d609-5876-b79b-c28d2093c50e@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>
+Cc: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Hans,
+Hi,
 
-Thanks for the patch.
+On 18-11-16 09:52, Jacek Anaszewski wrote:
+> Hi Hans,
+>
+> Thanks for the new patch set.
+>
+> On 11/17/2016 11:24 PM, Hans de Goede wrote:
+>> In some cases an LED is controlled through a hardwired (taken care of
+>> in firmware outside of the kernels control) trigger.
+>>
+>> Add an LED_TRIGGER_READ_ONLY flag for this and disallow user-space
+>> changing the trigger when this flag is set.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v5:
+>> -This is a new patch in v5 of this patch-set
+>> ---
+>>  drivers/leds/led-class.c    | 2 +-
+>>  drivers/leds/led-triggers.c | 5 +++++
+>>  include/linux/leds.h        | 1 +
+>>  3 files changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>> index 326ee6e..56f32cc 100644
+>> --- a/drivers/leds/led-class.c
+>> +++ b/drivers/leds/led-class.c
+>> @@ -54,7 +54,7 @@ static ssize_t brightness_store(struct device *dev,
+>>      if (ret)
+>>          goto unlock;
+>>
+>> -    if (state == LED_OFF)
+>> +    if (state == LED_OFF && !(led_cdev->flags & LED_TRIGGER_READ_ONLY))
+>>          led_trigger_remove(led_cdev);
+>>      led_set_brightness(led_cdev, state);
+>>
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index d2ed9c2..9669104 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -37,6 +37,11 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
+>>      struct led_trigger *trig;
+>>      int ret = count;
+>>
+>> +    if (led_cdev->flags & LED_TRIGGER_READ_ONLY) {
+>> +        dev_err(led_cdev->dev, "Error this led triggers is hardwired and cannot be changed\n");
+>> +        return -EINVAL;
+>
+> It means that after a trigger is once assigned to a LED class device
+> it will be impossible to deactivate it.
 
-I think we need less generic trigger name.
-With present name we pretend that all kbd-backlight controllers
-can change LED brightness autonomously.
+No this flag is not set by the trigger code, it is set by the LED
+driver itself, to indicate there is a hardwired trigger.
 
-How about kbd-backlight-pollable ?
+> Why not leaving it to the
+> user's decision whether they want to have hw brightness changes
+> notifications?
 
-Best regards,
-Jacek Anaszewski
+The user cannot disable the hotkey -> keyboard-backlight-led link
+and the trigger represents this link.
 
-On 11/17/2016 11:24 PM, Hans de Goede wrote:
-> Add a trigger to control keyboard backlight LED devices. Note that in
-> some cases the keyboard backlight control is hardwired (taken care of
-> in firmware outside of the kernels control), in that case this triggers
-> main purpose is to allow userspace to monitor these changes.
+More over, if we allow changing the trigger, then writing 0
+to the brightness attribute will remove the trigger and make
+the device no longer poll-able, and writing 0 is exactly what
+the systemd-backlight service does when restoring backlight
+settings on boot and the kbd-backlight was off at the last
+shutdown.
+
+This again shows how poorly thought out the old "brightness"
+file API is, all systemd-backlight want to do is set the
+brightness to 0, but as a side effect it will also unlink the
+trigger, because writing 0 has 2 effects for one system call.
+Anyways this is not something we can fix.
+
+
+> This way we disable the possibility to set different
+> trigger like e.g. timer, after this one is set, which is not
+> a non-realistic scenario.
+
+Then we would have 2 triggers active, as the hotkey trigger
+is part of the firmware of the laptop and is never going away.
+
+> Generally it is quite odd to add a functionality that once
+> set is latched. If one will set such a trigger by mistake, then
+> system restart will be required to reset this (unless the driver
+> is built as a module).
+
+This is not under user-control, the is controlled by the
+LED driver by setting the flag before registering the LED and
+this is on purpose, because the trigger is hardwired.
+
+TL;DR:
+
+1) We've decided to model the hotkey -> kbd-backlight control link as a trigger
+2) This is hardwired in the laptop's firmware therefor the trigger cannot
+    be changed
+3) Thus we need support for read-only triggers
+
+Regards,
+
+Hans
+
+
+
 >
-> The ledtrig_kbd_backlight function has a set_brightness parameter to
-> differentiate between full backlight control through the trigger
-> (set_brightness set to true) or change notification only (false).
+>> +    }
+>> +
+>>      mutex_lock(&led_cdev->led_access);
+>>
+>>      if (led_sysfs_is_disabled(led_cdev)) {
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 870b8c2..e076b74 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -47,6 +47,7 @@ struct led_classdev {
+>>  #define LED_DEV_CAP_FLASH    (1 << 18)
+>>  #define LED_HW_PLUGGABLE    (1 << 19)
+>>  #define LED_PANIC_INDICATOR    (1 << 20)
+>> +#define LED_TRIGGER_READ_ONLY   (1 << 21)
+>>
+>>      /* set_brightness_work / blink_timer flags, atomic, private. */
+>>      unsigned long        work_flags;
+>>
 >
-> Note the Kconfig option for this is a bool because the code is so
-> small that it is not worth the overhead of being a module.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v5:
-> -This is a new patch in v5 of this patch-set (replacing earlier attempts
->  at similar functionality)
-> ---
->  drivers/leds/trigger/Kconfig                 | 10 ++++++++
->  drivers/leds/trigger/Makefile                |  1 +
->  drivers/leds/trigger/ledtrig-kbd-backlight.c | 38 ++++++++++++++++++++++++++++
->  include/linux/leds.h                         |  8 ++++++
->  4 files changed, 57 insertions(+)
->  create mode 100644 drivers/leds/trigger/ledtrig-kbd-backlight.c
->
-> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-> index 3f9ddb9..350e2c7 100644
-> --- a/drivers/leds/trigger/Kconfig
-> +++ b/drivers/leds/trigger/Kconfig
-> @@ -67,6 +67,16 @@ config LEDS_TRIGGER_BACKLIGHT
->
->  	  If unsure, say N.
->
-> +config LEDS_TRIGGER_KBD_BACKLIGHT
-> +	bool "LED keyboard backlight Trigger"
-> +	depends on LEDS_TRIGGERS
-> +	help
-> +	  This trigger can control keyboard backlight LED devices,
-> +	  it also allows user-space to monitor keyboard backlight brightness
-> +	  changes done through e.g. hotkeys on some laptops.
-> +
-> +	  If unsure, say Y.
-> +
->  config LEDS_TRIGGER_CPU
->  	bool "LED CPU Trigger"
->  	depends on LEDS_TRIGGERS
-> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-> index a72c43c..be6b249 100644
-> --- a/drivers/leds/trigger/Makefile
-> +++ b/drivers/leds/trigger/Makefile
-> @@ -4,6 +4,7 @@ obj-$(CONFIG_LEDS_TRIGGER_DISK)		+= ledtrig-disk.o
->  obj-$(CONFIG_LEDS_TRIGGER_MTD)		+= ledtrig-mtd.o
->  obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
->  obj-$(CONFIG_LEDS_TRIGGER_BACKLIGHT)	+= ledtrig-backlight.o
-> +obj-$(CONFIG_LEDS_TRIGGER_KBD_BACKLIGHT) += ledtrig-kbd-backlight.o
->  obj-$(CONFIG_LEDS_TRIGGER_GPIO)		+= ledtrig-gpio.o
->  obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
->  obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
-> diff --git a/drivers/leds/trigger/ledtrig-kbd-backlight.c b/drivers/leds/trigger/ledtrig-kbd-backlight.c
-> new file mode 100644
-> index 0000000..353ee92
-> --- /dev/null
-> +++ b/drivers/leds/trigger/ledtrig-kbd-backlight.c
-> @@ -0,0 +1,38 @@
-> +/*
-> + * LED Trigger for keyboard backlight control
-> + *
-> + * Copyright 2016, Hans de Goede <hdegoede@redhat.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/device.h>
-> +#include <linux/leds.h>
-> +#include "../leds.h"
-> +
-> +static struct led_trigger kbd_backlight_trigger = {
-> +	.name     = "kbd-backlight",
-> +	.activate = led_trigger_add_current_brightness,
-> +	.deactivate = led_trigger_remove_current_brightness,
-> +};
-> +
-> +void ledtrig_kbd_backlight(bool set_brightness, enum led_brightness brightness)
-> +{
-> +	if (set_brightness)
-> +		led_trigger_event(&kbd_backlight_trigger, brightness);
-> +
-> +	led_trigger_notify_current_brightness_change(&kbd_backlight_trigger);
-> +}
-> +EXPORT_SYMBOL_GPL(ledtrig_kbd_backlight);
-> +
-> +static int __init kbd_backlight_trig_init(void)
-> +{
-> +	return led_trigger_register(&kbd_backlight_trigger);
-> +}
-> +device_initcall(kbd_backlight_trig_init);
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index d3eb992..870b8c2 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -353,6 +353,14 @@ static inline void ledtrig_flash_ctrl(bool on) {}
->  static inline void ledtrig_torch_ctrl(bool on) {}
->  #endif
->
-> +#ifdef CONFIG_LEDS_TRIGGER_KBD_BACKLIGHT
-> +extern void ledtrig_kbd_backlight(bool set_brightness,
-> +				  enum led_brightness brightness);
-> +#else
-> +static inline void ledtrig_kbd_backlight(bool set_brightness,
-> +					 enum led_brightness brightness) {}
-> +#endif
-> +
->  /*
->   * Generic LED platform data for describing LED names and default triggers.
->   */
 >
