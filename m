@@ -1,166 +1,95 @@
-From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard
-	backlight trigger
-Date: Sun, 20 Nov 2016 20:45:49 +0100
-Message-ID: <201611202045.50048@pali>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 1/6] leds: triggers: Add current_brightness trigger
+ parameter
+Date: Sun, 20 Nov 2016 23:12:50 +0100
+Message-ID: <20161120221249.GA26571@amd>
 References: <20161117222441.31464-1-hdegoede@redhat.com>
-	<20161120162116.GA15737@amd>
-	<acd1691b-56be-c902-feff-7ecf38ea102a@redhat.com>
+ <201611201559.24614@pali>
+ <fc7f4360-a9ae-5ec8-46f0-b078a5901d8f@redhat.com>
+ <201611202040.46333@pali>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2724269659929980200=="
-Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <acd1691b-56be-c902-feff-7ecf38ea102a-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
-	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
-List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
-	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Matthew Garrett <mjg59-1xO5oi07KQx4cg9Nei1l7Q@public.gmane.org>, Henrique de Moraes Holschuh <ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org>, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Darren Hart <dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39532 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbcKTWMz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 20 Nov 2016 17:12:55 -0500
+Content-Disposition: inline
+In-Reply-To: <201611202040.46333@pali>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
---===============2724269659929980200==
-Content-Type: multipart/signed; boundary="nextPart2960607.WFKbCDr2Mv";
-	protocol="application/pgp-signature"; micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
 
---nextPart2960607.WFKbCDr2Mv
-Content-Type: Text/Plain;
-  charset="utf-8"
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sunday 20 November 2016 19:48:02 Hans de Goede wrote:
-> HI,
->=20
-> On 20-11-16 17:21, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >>>>>>> Thanks for the patch.
-> >>>>>>>=20
-> >>>>>>> I think we need less generic trigger name.
-> >>>>>>> With present name we pretend that all kbd-backlight
-> >>>>>>> controllers can change LED brightness autonomously.
-> >>>>>>>=20
-> >>>>>>> How about kbd-backlight-pollable ?
-> >>>>>>=20
-> >>>>>> This is a trigger to control kbd-backlights, in the
-> >>>>>> current use-case the brightness change is already done
-> >>>>>> by the firmware, hence the set_brightness argument to
-> >>>>>> ledtrig_kbd_backlight(), so that we can avoid setting
-> >>>>>> it again.
-> >>>>>>=20
-> >>>>>> But I can see future cases where we do want to have some
-> >>>>>> event (e.g. a wmi hotkey event on a laptop where the firmware
-> >>>>>> does not do the adjustment automatically) which does
-> >>>>>> lead to actually updating the brightness.
-> >>>>>>=20
-> >>>>>> So I decided to go with a generic kbd-backlight trigger,
-> >>>>>> which in the future can also be used to directly control
-> >>>>>> kbd-backlight brightness; and not just to make ot
-> >>>>>> poll-able.
-> >>>>>=20
-> >>>>> I thought that kbd-backlight stands for "keyboard backlight",
-> >>>>=20
-> >>>> It does.
-> >>>>=20
-> >>>>> that's why I assessed it is too generic.
-> >>>>=20
-> >>>> The whole purpose of the trigger as implemented is to be
-> >>>> generic, as it seems senseless to implement a one off
-> >>>> trigger for just the dell / thinkpad case.
-> >>>>=20
-> >>>>> It seems however to be
-> >>>>> the other way round - if kbd-backlight means that this is
-> >>>>> a trigger only for use with dell-laptop keyboard driver
-> >>>>> (I see kbd namespacing prefix in the driver functions) than it
-> >>>>> is not generic at all.
-> >>>>=20
-> >>>> The trigger as implemented is generic, if you think
-> >>>> otherwise, please let me know which part is not generic
-> >>>> according to you.
-> >>>=20
-> >>> I think I was too meticulous here. In the end of the previous
-> >>> message I mentioned that we cannot guarantee that all keyboard
-> >>> backlight controllers can adjust brightness autonomously.
-> >>> Nonetheless, for the ones that cannot do that it would make no
-> >>> sense to have a trigger. In view of that this trigger is generic
-> >>> enough.
-> >>>=20
-> >>> I'll wait for Pavel's opinion before merging the patch set
-> >>> as he was also involved in this whole thread.
-> >=20
-> > If we have a keyboard backlight that may be changed automatically,
-> > I'd go for trigger. If we know for sure that hardware will not
-> > change brightnes "on its own", I'd not put a trigger there (and
-> > polling makes no sense). If we don't know... I guess I'd go for
-> > trigger.
-> >=20
-> > We can do various white/blacklists if we really want to..
-> >=20
-> >> As pointed in other email, we do not know if HW really controls
-> >> keyboard backlight, so adding "fake" trigger on machines without
-> >> HW control is not a good idea.
-> >=20
-> > Well, if we know that hardware will not change the brightness on
-> > its own, yes, I'd avoid the trigger. If we don't know (as is
-> > common on ACPI machines, I'd keep the trigger).
->=20
-> Right, this is taken care of by the default_trigger field of the
-> led_classdev, we only set the "kbd-backlight" default_trigger on
-> (kbd-backlight) LED devices where we know we have a hotkey directly
-> controlling the brightness.
->=20
-> Regards,
->=20
-> Hans
+Hi!
 
-Hm... now I'm thinking... should not be there a generic readonly led=20
-trigger named "managed by hw" (or similar name)? Only LED drivers (not=20
-userspace) could set it and when set it tells that hw could on its own=20
-change level of LED. Not keyboard backlight specific, but generic for=20
-led subsystem.
+> > > If I understood correctly we need to handle two things:
+> > >=20
+> > > 1) Provide poll() for userspace when LED level is changed (either
+> > > by HW
+> > >=20
+> > >    or other user call)
+> > >=20
+> > > 2) Deal with fact that on _some_ hardware, special key is hardwired
+> > > to
+> > >=20
+> > >    change LED level
+> > >=20
+> > > So why for 1) we cannot use existing sysfs file "brightness"? I do
+> > > not see any problem with it.
+> >=20
+> > That was our first attempt at this, but because the brightness may
+> > also be changed by triggers / blink-timers, we need to wakeup poll()
+> > in those cases too (anything else would be inconsistent) and doing
+> > such a wakeup in that case has turned out to cause too much overhead
+> > in some cases (even if userspace is not listening), specifically the
+> > idle power uses on some systems got multiplied by a factor of 5 or
+> > more.
+> >=20
+> > So this approach was rejected.
+>=20
+> But approach with exporting new sysfs file with name current_brightness=
+=20
+> with existence of old brightness sysfs file is not good and in my=20
+> opinion it is even worst as current situation (=3D without poll
+> support).
 
-It not this what is needed for keyboard backlight LED drivers?
+It is neccessary, see the current discussion.
 
-=2D-=20
-Pali Roh=C3=A1r
-pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+> What happen in next 5 years? Somebody point that sysfs file "brightness"=
+=20
 
---nextPart2960607.WFKbCDr2Mv
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+current_brightness will only appear on machines and in situations,
+where we, well, can report current brightness. When you read
+"brightness" file, you don't know if you are getting current
+brightness or not, and it can't be changed easily.
+
+Please go through the discussion. This design was chosen for a reason.
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v1
 
-iEYEABECAAYFAlgx/W4ACgkQi/DJPQPkQ1LPggCgn3jnjuQRXthI1/dXtuWe/xXh
-xUQAoJ5lqf6kV6Y3NOWoNmLfNeIJPmb+
-=BBaz
+iEYEARECAAYFAlgyH+EACgkQMOfwapXb+vIMNwCfWmcyvn5y6K4hNrlz9JDdAmCH
+V/UAmwagDUokf7N0yGcKgqvn6VCbJQpu
+=4t6G
 -----END PGP SIGNATURE-----
 
---nextPart2960607.WFKbCDr2Mv--
-
-
---===============2724269659929980200==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-
---===============2724269659929980200==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-ibm-acpi-devel mailing list
-ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel
-
---===============2724269659929980200==--
+--Dxnq1zWXvFF0Q93v--
