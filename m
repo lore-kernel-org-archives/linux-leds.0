@@ -1,58 +1,127 @@
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Mon, 21 Nov 2016 11:16:00 +0100
-Message-ID: <42d20332-8f81-47cd-dd10-6e9ed5123169@redhat.com>
+Date: Mon, 21 Nov 2016 11:24:26 +0100
+Message-ID: <0c4e7840-064c-5d8a-c5eb-8afe71727fcd@samsung.com>
 References: <20161117222441.31464-1-hdegoede@redhat.com>
  <55cdf83d-2233-151f-08e1-11d4619e8fd5@redhat.com>
- <7b8252c4-bb2a-01dd-2404-9b81c192fb6a@gmail.com>
- <CGME20161120150524epcas2p1f634a13bf220f21e7dd95b272b28594c@epcas2p1.samsung.com>
- <201611201605.17631@pali> <d6b177fc-313f-6597-4c8c-fc3c6f48778a@samsung.com>
- <2e1ddcc3-489d-bab1-ebb9-dad02db7b37c@redhat.com>
- <20161121101209.GC13735@pali>
+ <7b8252c4-bb2a-01dd-2404-9b81c192fb6a@gmail.com> <201611201605.17631@pali>
+ <CGME20161120162126epcas3p353e606ebc3d4f0868ff2937ec0e95c14@epcas3p3.samsung.com>
+ <20161120162116.GA15737@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53262 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752332AbcKUKQE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 21 Nov 2016 05:16:04 -0500
-In-Reply-To: <20161121101209.GC13735@pali>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61102 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751264AbcKUKYd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Nov 2016 05:24:33 -0500
+In-reply-to: <20161120162116.GA15737@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
 Hi,
 
-On 21-11-16 11:12, Pali Rohár wrote:
-> On Monday 21 November 2016 10:31:33 Hans de Goede wrote:
->> Pali, I'm sorry that you don't like the LED side design, but there
->> has been a long discussion about this (which you apparently missed)
->> and this really is the best way forward.
+On 11/20/2016 05:21 PM, Pavel Machek wrote:
+> Hi!
 >
-> Yea, I thought that I should have missed something as I was not able to
-> find all needed information about it in my mailbox.
+>>>>>>> Thanks for the patch.
+>>>>>>>
+>>>>>>> I think we need less generic trigger name.
+>>>>>>> With present name we pretend that all kbd-backlight controllers
+>>>>>>> can change LED brightness autonomously.
+>>>>>>>
+>>>>>>> How about kbd-backlight-pollable ?
+>>>>>>
+>>>>>> This is a trigger to control kbd-backlights, in the
+>>>>>> current use-case the brightness change is already done
+>>>>>> by the firmware, hence the set_brightness argument to
+>>>>>> ledtrig_kbd_backlight(), so that we can avoid setting
+>>>>>> it again.
+>>>>>>
+>>>>>> But I can see future cases where we do want to have some
+>>>>>> event (e.g. a wmi hotkey event on a laptop where the firmware
+>>>>>> does not do the adjustment automatically) which does
+>>>>>> lead to actually updating the brightness.
+>>>>>>
+>>>>>> So I decided to go with a generic kbd-backlight trigger,
+>>>>>> which in the future can also be used to directly control
+>>>>>> kbd-backlight brightness; and not just to make ot
+>>>>>> poll-able.
+>>>>>
+>>>>> I thought that kbd-backlight stands for "keyboard backlight",
+>>>>
+>>>> It does.
+>>>>
+>>>>> that's why I assessed it is too generic.
+>>>>
+>>>> The whole purpose of the trigger as implemented is to be
+>>>> generic, as it seems senseless to implement a one off
+>>>> trigger for just the dell / thinkpad case.
+>>>>
+>>>>> It seems however to be
+>>>>> the other way round - if kbd-backlight means that this is
+>>>>> a trigger only for use with dell-laptop keyboard driver
+>>>>> (I see kbd namespacing prefix in the driver functions) than it is
+>>>>> not generic at all.
+>>>>
+>>>> The trigger as implemented is generic, if you think
+>>>> otherwise, please let me know which part is not generic
+>>>> according to you.
+>>>
+>>> I think I was too meticulous here. In the end of the previous
+>>> message I mentioned that we cannot guarantee that all keyboard
+>>> backlight controllers can adjust brightness autonomously.
+>>> Nonetheless, for the ones that cannot do that it would make no sense
+>>> to have a trigger. In view of that this trigger is generic enough.
+>>>
+>>> I'll wait for Pavel's opinion before merging the patch set
+>>> as he was also involved in this whole thread.
 >
-> Is that discussion somewhere logged/available? That could help to
-> describe and understand all problems hidden behind.
+> If we have a keyboard backlight that may be changed automatically, I'd
+> go for trigger. If we know for sure that hardware will not change
+> brightnes "on its own", I'd not put a trigger there (and polling makes
+> no sense). If we don't know... I guess I'd go for trigger.
 >
->> Have you looked at what the new design means for the platform/x86
->> patches ? Gone is the ugly dell_laptop_notifier as the event
->> forwarding between dell-wmi and dell-laptop is now handles by
->> the led-trigger subsys.
+> We can do various white/blacklists if we really want to..
 >
-> Yes, I saw that ugly dell_lpatop notifier is not there. If there is some
-> more information about decision and pro/coins about this approach I
-> would like to read it before.
+>> As pointed in other email, we do not know if HW really controls keyboard backlight,
+>> so adding "fake" trigger on machines without HW control is not a good idea.
+>
+> Well, if we know that hardware will not change the brightness on its
+> own, yes, I'd avoid the trigger. If we don't know (as is common on
+> ACPI machines, I'd keep the trigger).
 
-It is discussed in this thread:
+I'd drop the trigger approach due to the mess it can make in peoples'
+minds due to the fact that LED class device handles trigger events
+generated by itself.
 
-https://www.spinics.net/lists/linux-leds/msg07049.html
+I have an impression that we're trying to abuse trigger mechanism,
+e.g. the need for set_brightness parameter to ledtrig_kbd_backlight(),
+which actually prevents setting brightness, and its only task is
+to generate brightness change notification.
 
-Unfortunately the starter of the thread dropped the Cc: platform-driver-x86@vger.kernel.org
-the original patch that thread is about had.
+I'd add a file hw_brightness_change or async_brightness or something
+similar and make it only readable/pollable. current_brightness is
+ambiguous and questionable.
 
-Regards,
+This is quite specific hardware feature so it needs specific handling
+and a separate sysfs file. We could add polling on brightness and
+apply some event filtering as proposed by Pali, by it could result
+in losing crucial brightness changes in some use cases.
 
-Hans
+Therefore a separate file for this specific feature is needed.
+There still remains objection raised by Hans related to polling
+a sysfs file to detect changes on the other sysfs file, but in either
+case we need to make some workaround, be it circular trigger or
+inconsistent polling. The advantage of the latter is that it explicitly
+advertises additional LED class device feature.
+
+The file and corresponding op should be compiled only when turned on in
+kernel config, and LED class devices which need that feature should
+select in the kernel config.
+
+-- 
+Best regards,
+Jacek Anaszewski
