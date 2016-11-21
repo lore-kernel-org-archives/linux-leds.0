@@ -1,127 +1,158 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Hans de Goede <hdegoede@redhat.com>
 Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Mon, 21 Nov 2016 11:24:26 +0100
-Message-ID: <0c4e7840-064c-5d8a-c5eb-8afe71727fcd@samsung.com>
+Date: Mon, 21 Nov 2016 11:42:57 +0100
+Message-ID: <3d623840-34c0-9d93-9eba-92e4198e4fff@redhat.com>
 References: <20161117222441.31464-1-hdegoede@redhat.com>
  <55cdf83d-2233-151f-08e1-11d4619e8fd5@redhat.com>
  <7b8252c4-bb2a-01dd-2404-9b81c192fb6a@gmail.com> <201611201605.17631@pali>
  <CGME20161120162126epcas3p353e606ebc3d4f0868ff2937ec0e95c14@epcas3p3.samsung.com>
  <20161120162116.GA15737@amd>
+ <0c4e7840-064c-5d8a-c5eb-8afe71727fcd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:61102 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751264AbcKUKYd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Nov 2016 05:24:33 -0500
-In-reply-to: <20161120162116.GA15737@amd>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <0c4e7840-064c-5d8a-c5eb-8afe71727fcd@samsung.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
 Hi,
 
-On 11/20/2016 05:21 PM, Pavel Machek wrote:
-> Hi!
+On 21-11-16 11:24, Jacek Anaszewski wrote:
+> Hi,
 >
->>>>>>> Thanks for the patch.
+> On 11/20/2016 05:21 PM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>>>>>> Thanks for the patch.
+>>>>>>>>
+>>>>>>>> I think we need less generic trigger name.
+>>>>>>>> With present name we pretend that all kbd-backlight controllers
+>>>>>>>> can change LED brightness autonomously.
+>>>>>>>>
+>>>>>>>> How about kbd-backlight-pollable ?
 >>>>>>>
->>>>>>> I think we need less generic trigger name.
->>>>>>> With present name we pretend that all kbd-backlight controllers
->>>>>>> can change LED brightness autonomously.
+>>>>>>> This is a trigger to control kbd-backlights, in the
+>>>>>>> current use-case the brightness change is already done
+>>>>>>> by the firmware, hence the set_brightness argument to
+>>>>>>> ledtrig_kbd_backlight(), so that we can avoid setting
+>>>>>>> it again.
 >>>>>>>
->>>>>>> How about kbd-backlight-pollable ?
+>>>>>>> But I can see future cases where we do want to have some
+>>>>>>> event (e.g. a wmi hotkey event on a laptop where the firmware
+>>>>>>> does not do the adjustment automatically) which does
+>>>>>>> lead to actually updating the brightness.
+>>>>>>>
+>>>>>>> So I decided to go with a generic kbd-backlight trigger,
+>>>>>>> which in the future can also be used to directly control
+>>>>>>> kbd-backlight brightness; and not just to make ot
+>>>>>>> poll-able.
 >>>>>>
->>>>>> This is a trigger to control kbd-backlights, in the
->>>>>> current use-case the brightness change is already done
->>>>>> by the firmware, hence the set_brightness argument to
->>>>>> ledtrig_kbd_backlight(), so that we can avoid setting
->>>>>> it again.
->>>>>>
->>>>>> But I can see future cases where we do want to have some
->>>>>> event (e.g. a wmi hotkey event on a laptop where the firmware
->>>>>> does not do the adjustment automatically) which does
->>>>>> lead to actually updating the brightness.
->>>>>>
->>>>>> So I decided to go with a generic kbd-backlight trigger,
->>>>>> which in the future can also be used to directly control
->>>>>> kbd-backlight brightness; and not just to make ot
->>>>>> poll-able.
+>>>>>> I thought that kbd-backlight stands for "keyboard backlight",
 >>>>>
->>>>> I thought that kbd-backlight stands for "keyboard backlight",
+>>>>> It does.
+>>>>>
+>>>>>> that's why I assessed it is too generic.
+>>>>>
+>>>>> The whole purpose of the trigger as implemented is to be
+>>>>> generic, as it seems senseless to implement a one off
+>>>>> trigger for just the dell / thinkpad case.
+>>>>>
+>>>>>> It seems however to be
+>>>>>> the other way round - if kbd-backlight means that this is
+>>>>>> a trigger only for use with dell-laptop keyboard driver
+>>>>>> (I see kbd namespacing prefix in the driver functions) than it is
+>>>>>> not generic at all.
+>>>>>
+>>>>> The trigger as implemented is generic, if you think
+>>>>> otherwise, please let me know which part is not generic
+>>>>> according to you.
 >>>>
->>>> It does.
+>>>> I think I was too meticulous here. In the end of the previous
+>>>> message I mentioned that we cannot guarantee that all keyboard
+>>>> backlight controllers can adjust brightness autonomously.
+>>>> Nonetheless, for the ones that cannot do that it would make no sense
+>>>> to have a trigger. In view of that this trigger is generic enough.
 >>>>
->>>>> that's why I assessed it is too generic.
->>>>
->>>> The whole purpose of the trigger as implemented is to be
->>>> generic, as it seems senseless to implement a one off
->>>> trigger for just the dell / thinkpad case.
->>>>
->>>>> It seems however to be
->>>>> the other way round - if kbd-backlight means that this is
->>>>> a trigger only for use with dell-laptop keyboard driver
->>>>> (I see kbd namespacing prefix in the driver functions) than it is
->>>>> not generic at all.
->>>>
->>>> The trigger as implemented is generic, if you think
->>>> otherwise, please let me know which part is not generic
->>>> according to you.
->>>
->>> I think I was too meticulous here. In the end of the previous
->>> message I mentioned that we cannot guarantee that all keyboard
->>> backlight controllers can adjust brightness autonomously.
->>> Nonetheless, for the ones that cannot do that it would make no sense
->>> to have a trigger. In view of that this trigger is generic enough.
->>>
->>> I'll wait for Pavel's opinion before merging the patch set
->>> as he was also involved in this whole thread.
+>>>> I'll wait for Pavel's opinion before merging the patch set
+>>>> as he was also involved in this whole thread.
+>>
+>> If we have a keyboard backlight that may be changed automatically, I'd
+>> go for trigger. If we know for sure that hardware will not change
+>> brightnes "on its own", I'd not put a trigger there (and polling makes
+>> no sense). If we don't know... I guess I'd go for trigger.
+>>
+>> We can do various white/blacklists if we really want to..
+>>
+>>> As pointed in other email, we do not know if HW really controls keyboard backlight,
+>>> so adding "fake" trigger on machines without HW control is not a good idea.
+>>
+>> Well, if we know that hardware will not change the brightness on its
+>> own, yes, I'd avoid the trigger. If we don't know (as is common on
+>> ACPI machines, I'd keep the trigger).
 >
-> If we have a keyboard backlight that may be changed automatically, I'd
-> go for trigger. If we know for sure that hardware will not change
-> brightnes "on its own", I'd not put a trigger there (and polling makes
-> no sense). If we don't know... I guess I'd go for trigger.
+> I'd drop the trigger approach due to the mess it can make in peoples'
+> minds due to the fact that LED class device handles trigger events
+> generated by itself.
+
+That is actually not true. I believe that Pavel Machek was entirely
+right that we should model this as a trigger. Take e.g. Dell laptops,
+there are 2 different drivers there on for the Dell smbios ACPI
+interface, which is the one registering the led_classdev to query /
+control the kbd backlight and then there is a completely separate
+driver for receiving WMI events, the dell-wmi driver (both can be
+build and insmod-ed completely separate from one another), which
+actually gets events that the brightness was changed by the hotkey.
+
+Before the trigger approach we had a custom dell_laptop notifier
+chain in a dell-common module to propagate events from one to
+the other, with the trigger approach this hack is all gone.
+
+> I have an impression that we're trying to abuse trigger mechanism,
+> e.g. the need for set_brightness parameter to ledtrig_kbd_backlight(),
+> which actually prevents setting brightness, and its only task is
+> to generate brightness change notification.
+
+In the dell / thinkpad case yes, but maybe we will get another
+laptop where we do actually need to actually update the brightness
+ourselves on some event, in that case we will also want to notify
+userspace.
+
+> I'd add a file hw_brightness_change or async_brightness or something
+> similar and make it only readable/pollable. current_brightness is
+> ambiguous and questionable.
 >
-> We can do various white/blacklists if we really want to..
+> This is quite specific hardware feature so it needs specific handling
+> and a separate sysfs file. We could add polling on brightness and
+> apply some event filtering as proposed by Pali, by it could result
+> in losing crucial brightness changes in some use cases.
 >
->> As pointed in other email, we do not know if HW really controls keyboard backlight,
->> so adding "fake" trigger on machines without HW control is not a good idea.
+> Therefore a separate file for this specific feature is needed.
+> There still remains objection raised by Hans related to polling
+> a sysfs file to detect changes on the other sysfs file, but in either
+> case we need to make some workaround, be it circular trigger or
+> inconsistent polling. The advantage of the latter is that it explicitly
+> advertises additional LED class device feature.
 >
-> Well, if we know that hardware will not change the brightness on its
-> own, yes, I'd avoid the trigger. If we don't know (as is common on
-> ACPI machines, I'd keep the trigger).
+> The file and corresponding op should be compiled only when turned on in
+> kernel config, and LED class devices which need that feature should
+> select in the kernel config.
 
-I'd drop the trigger approach due to the mess it can make in peoples'
-minds due to the fact that LED class device handles trigger events
-generated by itself.
+I do not understand why you're changing your mind on this.
 
-I have an impression that we're trying to abuse trigger mechanism,
-e.g. the need for set_brightness parameter to ledtrig_kbd_backlight(),
-which actually prevents setting brightness, and its only task is
-to generate brightness change notification.
+The current_brightness approach with a trigger works well and is
+generic, other triggers (which don't fire too often) can easily
+also add current_brightness to allow userspace to monitor for changes,
+which is why I added shared current_brightness code to led-triggers.c,
+so that this code can be re-used.
 
-I'd add a file hw_brightness_change or async_brightness or something
-similar and make it only readable/pollable. current_brightness is
-ambiguous and questionable.
+Pavel Machek is completely right that this should be modeled as
+a trigger and I think that doing some one-off special sysfs
+file called hw_brightness_change for this case is bad design when
+we've a better generic solution.
 
-This is quite specific hardware feature so it needs specific handling
-and a separate sysfs file. We could add polling on brightness and
-apply some event filtering as proposed by Pali, by it could result
-in losing crucial brightness changes in some use cases.
+Regards,
 
-Therefore a separate file for this specific feature is needed.
-There still remains objection raised by Hans related to polling
-a sysfs file to detect changes on the other sysfs file, but in either
-case we need to make some workaround, be it circular trigger or
-inconsistent polling. The advantage of the latter is that it explicitly
-advertises additional LED class device feature.
-
-The file and corresponding op should be compiled only when turned on in
-kernel config, and LED class devices which need that feature should
-select in the kernel config.
-
--- 
-Best regards,
-Jacek Anaszewski
+Hans
