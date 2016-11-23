@@ -1,79 +1,87 @@
-From: Glenn Golden <gdg@zplane.com>
-Subject: Re: [ibm-acpi-devel] [PATCH v5 2/6] leds: triggers: Add a keyboard
- backlight trigger
-Date: Tue, 22 Nov 2016 08:20:01 -0700
-Message-ID: <20161122152001.GE757@huh.zplane.com>
-References: <7b8252c4-bb2a-01dd-2404-9b81c192fb6a@gmail.com>
- <201611201605.17631@pali>
- <CGME20161120162126epcas3p353e606ebc3d4f0868ff2937ec0e95c14@epcas3p3.samsung.com>
- <20161120162116.GA15737@amd>
- <0c4e7840-064c-5d8a-c5eb-8afe71727fcd@samsung.com>
- <3d623840-34c0-9d93-9eba-92e4198e4fff@redhat.com>
- <05766b18-026a-2af3-def8-9289ddb55234@samsung.com>
- <4fcc36c6-498b-0ce7-a7c8-28c214ccef88@redhat.com>
- <ff098b73-202a-200b-5c84-e96d33199d54@samsung.com>
- <20161122145825.GS13735@pali>
-Reply-To: gdg@zplane.com
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [RFC] Documentation: media,
+ leds: move IR LED remote controllers from media to LED
+Date: Wed, 23 Nov 2016 11:28:56 +0900
+Message-ID: <20161123022856.gliio3nyfclx6hj2@gangnam.samsung>
+References: <20161110132650.5109-1-andi.shyti@samsung.com>
+ <CGME20161122141450epcas4p4a07f3db61d459fe775cbad7048affe7a@epcas4p4.samsung.com>
+ <20161122121440.627f1c16@vento.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:41792 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932417AbcKVPUF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 22 Nov 2016 10:20:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20161122145825.GS13735@pali>
+Received: from mailout2.samsung.com ([203.254.224.25]:49966 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753651AbcKWC27 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Nov 2016 21:28:59 -0500
+Content-disposition: inline
+In-reply-to: <20161122121440.627f1c16@vento.lan>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, ibm-acpi-devel@lists.sourceforge.net, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, linux-leds@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 
-Pali Roh=E1r <pali.rohar@gmail.com> [2016-11-22 15:58:25 +0100]:
-> On Monday 21 November 2016 14:29:00 Jacek Anaszewski wrote:
-> > Let's wait until every involved part agrees (Pavel, Pali).
->=20
-> Ok, I read that discussion on linux-leds ML and finally understand
-> motivation and results.
->=20
-> Personally I still do not like current approach and big problem what I
-> see is that I was not able to understand *why* introduction of
-> current_brightness is needed and how userspace application should use
-> it, before I read whole that linux-leds discussion.
->=20
-> For people who already understand situation it is probably OK, but when
-> I first time saw this patch series I just said WTF and description in
-> Documentation files nor in commit messages did not help me.
->=20
-> I would suggest to properly document *current* behaviour of LED sysfs
-> files in Documentation/ABI before doing any decision how to solve
-> current problem.
->=20
-> Without correct documentation how sysfs LED interface behave in
-> different situations (trigger is active; zero is written to brightness;
-> brightness is read when blinking is active; etc) it is really hard to
-> discuss about those problems. As many people (me included) first looked
-> at those documentation files and think that info written here is correct
-> and handle everything...
->=20
-=20
-+1 on the above sentiment, sense of frustration well expressed.
+Hi Mauro,
 
-I went thru the same sequence of wtf-ing as Pali describes before coming
-away with any level of real understanding.  IMO, this is a great example
-of an issue which is 90% doc vs. 10% technical.
+> > this is purely a request for comments after a discussion had with
+> > Rob and Jacek [*] about where to place the ir leds binding. Rob wants
+> > the binding to be under led, while Jacek wants it in media...
+> > "Ubi maior minor cessat": it goes to LED and they can be organized
+> > in a subdirectory.
+> > 
+> > Standing to Rob "Bindings are grouped by types of h/w and IR LEDs
+> > are a type of LED": all remote controllers have an IR LED as core
+> > device, even though the framework is under drivers/media/rc/, thus
+> > they naturally belong to the LED binding group.
+> > 
+> > Please, let me know if this is the right approach.
+> 
+> IMHO, this is wrong. 
+> 
+> Ok, if you look at just the diode, the physics of an IR Light-emitting Diode
+> (LED) is identical  to the one for a visible light LED, just like the physics
+> of the LED diodes inside a display. Btw, the physics of an IR detector
+> diode is almost identical to the physics of a LED.
+> 
+> Yet, the hardware where those diodes are connected are very different,
+> and so their purpose.
+> 
+> The same way I don't think it would make sense to represent a LED
+> display using the same approach as a flash light, I don't think we
+> should to it for IR LEDs.
+> 
+> A visible light LED is used either to work as a flash light for a camera
+> or as a way to indicate a status. No machine2machine protocol there.
+> The circuitry for them is usually just a gatway that will turn it on
+> or off.
+> 
+> With regards to the IR hardware, an IR LED is used for machine2machine
+> signaling. It is part of a modulator circuit that uses a carrier of about
+> 40kHz to modulate 16 or 32 bits words.
+> 
+> The IR device hardware usually also have another diode (the IR detector)
+> that receives IR rays. Visually, they look identical.
+> 
+> IMHO, it makes much more sense to keep both IR detector and light-emitting
+> diodes described together, as they are part of the same circuitry and
+> have a way more similarities than a flash light or a LED display.
 
-Hearing statements made earlier such as "the variable name doesn't matter
-much" (approximate paraphrase) makes me worry, and must respectfully
-disagree.  I am not involved at all in development or patches on this,
-just a lowly Joe User type, and as such, can tell you that out here in
-the cheap seats, the naming really does matter.
+thanks for the reply, I agree with you, that's why I first put
+the ir-spi of tm2 in the media directory where all the ir leds
+devices are. That's what Jacek recommended and what you are
+recommending (that's also why this is an RFC and not a patch).
 
-Please respect views of Pali as stated above and concentrate on documentati=
-on.
+Rob, if I place the tm2 ir-spi in the led bindings in a
+sub-directory it will be the only device there for the time
+being. But the ir-spi it's not unique in its kind, there are many
+others and they are all under the media directory. My opinion is
+that all the ir-leds devices should be in the same place.
 
-As an aside from complaining though: Major tip o' the hat to all the
-motivated and devoted devs on this ACPI work throughout many years;
-it's really very much appreciated, despite the occasional whining (as
-mine above).
+Would, then, make sense to split the ir-leds devices in two
+different locations?
+
+Would it be a valid alternative to create instead an 'rc'
+directory for the ir-leds bindings that can either be under
+media or in the higher directory?
+
+Thanks,
+Andi
