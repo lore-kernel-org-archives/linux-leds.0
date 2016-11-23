@@ -1,87 +1,79 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [RFC] Documentation: media,
- leds: move IR LED remote controllers from media to LED
-Date: Wed, 23 Nov 2016 11:28:56 +0900
-Message-ID: <20161123022856.gliio3nyfclx6hj2@gangnam.samsung>
-References: <20161110132650.5109-1-andi.shyti@samsung.com>
- <CGME20161122141450epcas4p4a07f3db61d459fe775cbad7048affe7a@epcas4p4.samsung.com>
- <20161122121440.627f1c16@vento.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:49966 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753651AbcKWC27 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Nov 2016 21:28:59 -0500
-Content-disposition: inline
-In-reply-to: <20161122121440.627f1c16@vento.lan>
-Sender: linux-leds-owner@vger.kernel.org
+From: tnhuynh@apm.com
+Subject: [PATCH V1] leds: pca955x: Add ACPI support for pca955x
+Date: Wed, 23 Nov 2016 15:42:26 +0700
+Message-ID: <1479890546-22644-1-git-send-email-tnhuynh@apm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Loc Ho <lho@apm.com>, Thang Nguyen <tqnguyen@apm.com>, Phong Vo <pvo@apm.com>, patches@apm.com, Tin Huynh <tnhuynh@apm.com>
 List-Id: linux-leds@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi Mauro,
+From: Tin Huynh <tnhuynh@apm.com>
 
-> > this is purely a request for comments after a discussion had with
-> > Rob and Jacek [*] about where to place the ir leds binding. Rob wants
-> > the binding to be under led, while Jacek wants it in media...
-> > "Ubi maior minor cessat": it goes to LED and they can be organized
-> > in a subdirectory.
-> > 
-> > Standing to Rob "Bindings are grouped by types of h/w and IR LEDs
-> > are a type of LED": all remote controllers have an IR LED as core
-> > device, even though the framework is under drivers/media/rc/, thus
-> > they naturally belong to the LED binding group.
-> > 
-> > Please, let me know if this is the right approach.
-> 
-> IMHO, this is wrong. 
-> 
-> Ok, if you look at just the diode, the physics of an IR Light-emitting Diode
-> (LED) is identical  to the one for a visible light LED, just like the physics
-> of the LED diodes inside a display. Btw, the physics of an IR detector
-> diode is almost identical to the physics of a LED.
-> 
-> Yet, the hardware where those diodes are connected are very different,
-> and so their purpose.
-> 
-> The same way I don't think it would make sense to represent a LED
-> display using the same approach as a flash light, I don't think we
-> should to it for IR LEDs.
-> 
-> A visible light LED is used either to work as a flash light for a camera
-> or as a way to indicate a status. No machine2machine protocol there.
-> The circuitry for them is usually just a gatway that will turn it on
-> or off.
-> 
-> With regards to the IR hardware, an IR LED is used for machine2machine
-> signaling. It is part of a modulator circuit that uses a carrier of about
-> 40kHz to modulate 16 or 32 bits words.
-> 
-> The IR device hardware usually also have another diode (the IR detector)
-> that receives IR rays. Visually, they look identical.
-> 
-> IMHO, it makes much more sense to keep both IR detector and light-emitting
-> diodes described together, as they are part of the same circuitry and
-> have a way more similarities than a flash light or a LED display.
+This patch enables ACPI support for leds-pca955x driver.
 
-thanks for the reply, I agree with you, that's why I first put
-the ir-spi of tm2 in the media directory where all the ir leds
-devices are. That's what Jacek recommended and what you are
-recommending (that's also why this is an RFC and not a patch).
+Signed-off-by: Tin Huynh <tnhuynh@apm.com>
+---
+ drivers/leds/leds-pca955x.c |   26 +++++++++++++++++++++++++-
+ 1 files changed, 25 insertions(+), 1 deletions(-)
 
-Rob, if I place the tm2 ir-spi in the led bindings in a
-sub-directory it will be the only device there for the time
-being. But the ir-spi it's not unique in its kind, there are many
-others and they are all under the media directory. My opinion is
-that all the ir-leds devices should be in the same place.
-
-Would, then, make sense to split the ir-leds devices in two
-different locations?
-
-Would it be a valid alternative to create instead an 'rc'
-directory for the ir-leds bindings that can either be under
-media or in the higher directory?
-
-Thanks,
-Andi
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 840401a..8770090 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -40,6 +40,7 @@
+  *  bits the chip supports.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/string.h>
+@@ -100,6 +101,17 @@ struct pca955x_chipdef {
+ };
+ MODULE_DEVICE_TABLE(i2c, pca955x_id);
+ 
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id pca955x_acpi_ids[] = {
++	{ .id = "PCA9550", .driver_data = pca9550 },
++	{ .id = "PCA9551", .driver_data = pca9551 },
++	{ .id = "PCA9552", .driver_data = pca9552 },
++	{ .id = "PCA9553", .driver_data = pca9553 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pca955x_acpi_ids);
++#endif
++
+ struct pca955x {
+ 	struct mutex lock;
+ 	struct pca955x_led *leds;
+@@ -250,7 +262,18 @@ static int pca955x_probe(struct i2c_client *client,
+ 	struct led_platform_data *pdata;
+ 	int i, err;
+ 
+-	chip = &pca955x_chipdefs[id->driver_data];
++	if (id)
++		chip = &pca955x_chipdefs[id->driver_data];
++#ifdef CONFIG_ACPI
++	else {
++		const struct acpi_device_id *acpi_id;
++
++		acpi_id = acpi_match_device(pca955x_acpi_ids, &client->dev);
++		if (!acpi_id)
++			return -ENODEV;
++		chip = &pca955x_chipdefs[acpi_id->driver_data];
++	}
++#endif
+ 	adapter = to_i2c_adapter(client->dev.parent);
+ 	pdata = dev_get_platdata(&client->dev);
+ 
+@@ -358,6 +381,7 @@ static int pca955x_remove(struct i2c_client *client)
+ static struct i2c_driver pca955x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca955x",
++		.acpi_match_table = ACPI_PTR(pca955x_acpi_ids),
+ 	},
+ 	.probe	= pca955x_probe,
+ 	.remove	= pca955x_remove,
+-- 
+1.7.1
