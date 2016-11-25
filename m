@@ -1,88 +1,66 @@
-From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard
-	backlight trigger
-Date: Thu, 24 Nov 2016 22:45:00 +0100
-Message-ID: <201611242245.00217@pali>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
+Date: Fri, 25 Nov 2016 09:33:30 +0100
+Message-ID: <afdfe71f-6f39-6f4b-4c92-47142d6267d3@samsung.com>
 References: <05766b18-026a-2af3-def8-9289ddb55234@samsung.com>
-	<201611241751.27696@pali>
-	<5238be1f-d669-07e6-c796-5bc0126cb456@gmail.com>
+ <201611241751.27696@pali> <5238be1f-d669-07e6-c796-5bc0126cb456@gmail.com>
+ <CGME20161124214512epcas4p493721bb45b10e1f41a8ea38e01d6e471@epcas4p4.samsung.com>
+ <201611242245.00217@pali>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1931691018824131776=="
-Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <5238be1f-d669-07e6-c796-5bc0126cb456-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
-	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
-List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
-	<mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Matthew Garrett <mjg59-1xO5oi07KQx4cg9Nei1l7Q@public.gmane.org>, ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Henrique de Moraes Holschuh <ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org>, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, gdg-EWGI23mR1M3QT0dZR+AlfA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Darren Hart <dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:60535 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753832AbcKYIoo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Nov 2016 03:44:44 -0500
+In-reply-to: <201611242245.00217@pali>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: gdg@zplane.com, Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
---===============1931691018824131776==
-Content-Type: multipart/signed; boundary="nextPart1715910.zuKnYXRVBk";
-	protocol="application/pgp-signature"; micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+On 11/24/2016 10:45 PM, Pali Rohár wrote:
+> On Thursday 24 November 2016 22:35:52 Jacek Anaszewski wrote:
+>>> I understood that we cannot notify about changes done by CPU
+>>> trigger due to high power usage... Or not?
+>>
+>> Exactly.
+>
+> So in this case exporting any new sysfs file (or using existing) which
+> report POLLPRI events for LED devices with active trigger is not
+> accepted.
 
---nextPart1715910.zuKnYXRVBk
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Why so? The new feature would be made optional so existing users
+wouldn't be affected, unless they enabled it in the kernel
+config.
 
-On Thursday 24 November 2016 22:35:52 Jacek Anaszewski wrote:
-> > I understood that we cannot notify about changes done by CPU
-> > trigger due to high power usage... Or not?
->=20
-> Exactly.
+> This means that trigger itself is problematic and trigger code should
+> tell to led subsystem if it should send POLLPRI events to userspace or
+> not. E.g. cpu trigger should tell led subsystem that events must not be
+> sent and e.g. rfkill trigger could tell that events can be sent...
 
-So in this case exporting any new sysfs file (or using existing) which=20
-report POLLPRI events for LED devices with active trigger is not=20
-accepted.
+It would entail changes in all triggers, I'd like to avoid for the
+reasons I provided in one of the previous messages.
 
-This means that trigger itself is problematic and trigger code should=20
-tell to led subsystem if it should send POLLPRI events to userspace or=20
-not. E.g. cpu trigger should tell led subsystem that events must not be=20
-sent and e.g. rfkill trigger could tell that events can be sent...
+I've just looked one more time at POLLPRI description in poll(2)
+documentation:
 
-=2D-=20
-Pali Roh=C3=A1r
-pali.rohar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+"There is urgent data to read (e.g., out-of-band data on TCP socket;
+pseudoterminal master in packet mode has seen state change in slave)."
 
---nextPart1715910.zuKnYXRVBk
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+I don't think that brightness changes originating from triggers fall
+into this category, whereas the ones originating from hardware do.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+In view of the above we could report hw brightness changes with POLLPRI
+on brightness file, but unfortunately we can't because it is impossible
+to guarantee that readout of brightness file will return the brightness
+the POLLPRI was meant to notify about.
 
-iEYEABECAAYFAlg3X1wACgkQi/DJPQPkQ1LKogCeKXfwqeo8RIEg4wAxax1e/iID
-4AYAoJuM1yCIA7H13SL+hGg9aw7sc09B
-=ElIW
------END PGP SIGNATURE-----
+That's why a separate read only file seems to be the only proper
+solution. Moreover, the file should return the brightness from the time
+of last POLLPRI.
 
---nextPart1715910.zuKnYXRVBk--
-
-
---===============1931691018824131776==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-
---===============1931691018824131776==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-ibm-acpi-devel mailing list
-ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel
-
---===============1931691018824131776==--
+-- 
+Best regards,
+Jacek Anaszewski
