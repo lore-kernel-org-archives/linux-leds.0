@@ -1,33 +1,38 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH V3] leds: pca955x: Add ACPI support for pca955x
-Date: Wed, 30 Nov 2016 12:01:45 +0200
-Message-ID: <20161130100145.GF1459@lahna.fi.intel.com>
-References: <1480475311-14385-1-git-send-email-tnhuynh@apm.com>
- <302ebc57-6f52-b0ff-e354-0c67556a88ed@samsung.com>
- <7efcf021-72c9-328a-ad88-4c226e8b5d6d@samsung.com>
- <CANQ9TuAc8S-Q2Wx_qkJLLMd8dH7XDiGchB7EesPW1is9oFqWhA@mail.gmail.com>
- <c1d0e813-9e1e-b387-735a-2c8f39c5308e@samsung.com>
- <dc989a8b92342d2ceb63381ae9dc019d@mail.gmail.com>
- <10443ff4-67ff-d474-401f-21fa7f33a9a5@samsung.com>
- <328afec669295cbc3a4338a4347e7067@mail.gmail.com>
- <959f287f-74c1-d790-4f36-9c7ac053bc8e@axentia.se>
- <d1751969-3c8f-d4c0-8e99-74b9dd26bd98@samsung.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH V4] leds: pca955x: Add ACPI support for pca955x
+Date: Wed, 30 Nov 2016 11:23:31 +0100
+Message-ID: <15a2678c-f224-a83e-082f-49a5fd36cc38@samsung.com>
+References: <1480499245-25781-1-git-send-email-tnhuynh@apm.com>
+ <CGME20161130100042epcas2p2af1319fc4718c205b7b1f9f5a0c40492@epcas2p2.samsung.com>
+ <20161130100030.GE1459@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <d1751969-3c8f-d4c0-8e99-74b9dd26bd98@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Peter Rosin <peda@axentia.se>, Phong Vo <pvo@apm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Loc Ho <lho@apm.com>, Thang Nguyen <tqnguyen@apm.com>, patches <patches@apm.com>, Tin Huynh <tnhuynh@apm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <20161130100030.GE1459@lahna.fi.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Tin Huynh <tnhuynh@apm.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Richard Purdie <rpurdie@rpsys.net>, Peter Rosin <peda@axentia.se>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Loc Ho <lho@apm.com>, Thang Nguyen <tqnguyen@apm.com>, Phong Vo <pvo@apm.com>, patches@apm.com
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Nov 30, 2016 at 10:58:33AM +0100, Jacek Anaszewski wrote:
-> It certainly downgrades code readability, but in case there is
-> similar surrounding code there are two options to keep the things
-> consistent - either stick to the current style or change it.
-> IMHO the latter would generate only unnecessary noise in this
-> particular case.
+Hi Tin,
 
-Also that's the style we have been using when adding ACPI support to
-drivers.
+Thanks for the patch.
+
+On 11/30/2016 11:00 AM, Mika Westerberg wrote:
+> On Wed, Nov 30, 2016 at 04:47:25PM +0700, Tin Huynh wrote:
+>> This patch enables ACPI support for leds-pca955x driver.
+>>
+>> Signed-off-by: Tin Huynh <tnhuynh@apm.com>
+>
+> Looks good to me now,
+>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Thanks for the review, Mika.
+
+Patch applied to the for-next branch of linux-leds.git.
+
+-- 
+Best regards,
+Jacek Anaszewski
