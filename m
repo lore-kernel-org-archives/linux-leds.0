@@ -1,59 +1,87 @@
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: leds-gpio: no GPIO labels (in debugfs)
-Date: Thu, 01 Dec 2016 09:45:40 +0100
-Message-ID: <80b3fbe0-5200-e80e-a7f4-99b45d65b165@samsung.com>
-References: <CGME20161130162439epcas2p4c540b29ad1d0856e8c5a7155e4d999cf@epcas2p4.samsung.com>
- <3428499.pbM7ylo2PO@ws-stein>
+Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
+Date: Thu, 01 Dec 2016 15:08:56 +0100
+Message-ID: <f57a35f7-85ec-7f90-44c9-2ae98e12ca46@samsung.com>
+References: <05766b18-026a-2af3-def8-9289ddb55234@samsung.com>
+ <201611241751.27696@pali> <5238be1f-d669-07e6-c796-5bc0126cb456@gmail.com>
+ <CGME20161124214512epcas4p493721bb45b10e1f41a8ea38e01d6e471@epcas4p4.samsung.com>
+ <201611242245.00217@pali> <afdfe71f-6f39-6f4b-4c92-47142d6267d3@samsung.com>
+ <20161125100140.GC4062@amd> <b159c2e1-dbf7-1ee3-707c-82891c7194db@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40270 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbcLAI6A (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2016 03:58:00 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OHI002MT0C7Y270@mailout2.w1.samsung.com> for
- linux-leds@vger.kernel.org; Thu, 01 Dec 2016 08:45:43 +0000 (GMT)
-In-reply-to: <3428499.pbM7ylo2PO@ws-stein>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-reply-to: <b159c2e1-dbf7-1ee3-707c-82891c7194db@redhat.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Cc: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, gdg@zplane.com, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Alexander,
+Hi,
 
-On 11/30/2016 05:24 PM, Alexander Stein wrote:
+On 11/25/2016 12:14 PM, Hans de Goede wrote:
 > Hi,
 >
-> I jut noticed that the used GPIOs for leds-gpio do not have an actual label
-> which is visible in debugfs (/sys/kernel/debug/gpio):
->> gpiochip4: GPIOs 368-383, parent: spi/spi0.2, mcp23s17, can sleep:
->>  gpio-369 P0.1 (?           ) out hi
->>  gpio-370 P0.2 (?           ) out lo
->>  gpio-371 P0.3 (?           ) out lo
->>  gpio-372 P0.4 (?           ) out lo
->>  gpio-373 P0.5 (?           ) out lo
->>  gpio-374 P0.6 (?           ) out lo
+> On 25-11-16 11:01, Pavel Machek wrote:
+>> Hi!
+>>
+>>> In view of the above we could report hw brightness changes with POLLPRI
+>>> on brightness file, but unfortunately we can't because it is impossible
+>>> to guarantee that readout of brightness file will return the brightness
+>>> the POLLPRI was meant to notify about.
+>>
+>> Agreed here.
+>>
+>>> That's why a separate read only file seems to be the only proper
+>>> solution.
+>>
+>> Yes please. And lets make self-changing leds into a trigger, as
+>> proposed, and as Hans' patch should be already doing.
+>>
+>>> Moreover, the file should return the brightness from the time
+>>> of last POLLPRI.
+>>
+>> Not sure I agree here. Normally, kernel returns current state for
+>> variables, does not track "old" state.
 >
-> The reason is that the call to devm_get_gpiod_from_child() in
-> gpio_leds_create() eventually calls "gpiod_request(desc, NULL);" in
-> fwnode_get_named_gpiod. So no label attached to GPIO, hence "?" output.
->
-> As we have already a gpiod in create_gpio_led(), devm_gpio_request_one() with
-> the proper label is not called.
-> I don't know much of that code, so what would be needed to have a proper GPIO
-> label? And how?
+> Agreed, storing the last state just unnecessarily complicates things.
 
- From the LED subsystem perspective everything looks OK both
-in the case when label is defined and without it (node name is
-used for the LED class device name then).
+It is mandatory to secure a reliable readout of the brightness value
+set by the hardware. Without it, we could end up reading brightness
+set in the meantime either by trigger or by userspace. Knowing that
+value can be useful in case hardware tries to lower the brightness
+level set by the user for some reason (e.g. low battery voltage).
 
-Since this seems to be an issue within GPIOLIB internals,
-I'm adding Linus Walleij.
+However, I'd tweak the file name a bit, to make it clear
+what property the file represents - the brightness changed
+by the hardware, effectively I'm proposing the property:
 
--- 
+brightness_hw_changed
+
 Best regards,
 Jacek Anaszewski
+
+>
+> So do we have a consensus on implementing a new hw_brightness_change
+> sysfs attribute now, which only some LEDs will have, can be polled
+> to detect changed done autonomously by the hardware and returns
+> the current / actual LED brightness when read ?
+>
+> As for the modeling how the hotkey controls the LED as a trigger,
+> although I do like this from one pov, I can see Jacek's point that
+> this is confusing as there really is nothing to configure here,
+> where as normally a user could do "echo none > trigger" to break
+> the link. So I think that is best (cleanest /minimal non confusing
+> API) with just the hw_brightness_change sysfs-attribute and not
+> model this as a trigger.
+>
+> That, or fall back to my latest patch-set as posted, I still like
+> that one the most.
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
