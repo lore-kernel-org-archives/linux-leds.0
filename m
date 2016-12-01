@@ -1,87 +1,61 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Thu, 01 Dec 2016 15:08:56 +0100
-Message-ID: <f57a35f7-85ec-7f90-44c9-2ae98e12ca46@samsung.com>
-References: <05766b18-026a-2af3-def8-9289ddb55234@samsung.com>
- <201611241751.27696@pali> <5238be1f-d669-07e6-c796-5bc0126cb456@gmail.com>
- <CGME20161124214512epcas4p493721bb45b10e1f41a8ea38e01d6e471@epcas4p4.samsung.com>
- <201611242245.00217@pali> <afdfe71f-6f39-6f4b-4c92-47142d6267d3@samsung.com>
- <20161125100140.GC4062@amd> <b159c2e1-dbf7-1ee3-707c-82891c7194db@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] leds: pca955x: Add ACPI support
+Date: Thu, 1 Dec 2016 23:12:12 +0300
+Message-ID: <20161201201212.GA4015@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-reply-to: <b159c2e1-dbf7-1ee3-707c-82891c7194db@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, gdg@zplane.com, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:28044 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757491AbcLAUM1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2016 15:12:27 -0500
+Content-Disposition: inline
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: tnhuynh@apm.com
+Cc: linux-leds@vger.kernel.org
 
-Hi,
+Hello Tin Huynh,
 
-On 11/25/2016 12:14 PM, Hans de Goede wrote:
-> Hi,
->
-> On 25-11-16 11:01, Pavel Machek wrote:
->> Hi!
->>
->>> In view of the above we could report hw brightness changes with POLLPRI
->>> on brightness file, but unfortunately we can't because it is impossible
->>> to guarantee that readout of brightness file will return the brightness
->>> the POLLPRI was meant to notify about.
->>
->> Agreed here.
->>
->>> That's why a separate read only file seems to be the only proper
->>> solution.
->>
->> Yes please. And lets make self-changing leds into a trigger, as
->> proposed, and as Hans' patch should be already doing.
->>
->>> Moreover, the file should return the brightness from the time
->>> of last POLLPRI.
->>
->> Not sure I agree here. Normally, kernel returns current state for
->> variables, does not track "old" state.
->
-> Agreed, storing the last state just unnecessarily complicates things.
+This is a semi-automatic email about new static checker warnings.
 
-It is mandatory to secure a reliable readout of the brightness value
-set by the hardware. Without it, we could end up reading brightness
-set in the meantime either by trigger or by userspace. Knowing that
-value can be useful in case hardware tries to lower the brightness
-level set by the user for some reason (e.g. low battery voltage).
+The patch f00662b45979: "leds: pca955x: Add ACPI support" from Nov 
+30, 2016, leads to the following Smatch complaint:
 
-However, I'd tweak the file name a bit, to make it clear
-what property the file represents - the brightness changed
-by the hardware, effectively I'm proposing the property:
+drivers/leds/leds-pca955x.c:284 pca955x_probe()
+	 error: we previously assumed 'id' could be null (see line 263)
 
-brightness_hw_changed
+drivers/leds/leds-pca955x.c
+   262	
+   263		if (id) {
+                   ^^^^
+We added a new NULL check.
 
-Best regards,
-Jacek Anaszewski
+   264			chip = &pca955x_chipdefs[id->driver_data];
+   265		} else {
+   266			const struct acpi_device_id *acpi_id;
+   267	
+   268			acpi_id = acpi_match_device(pca955x_acpi_ids, &client->dev);
+   269			if (!acpi_id)
+   270				return -ENODEV;
+   271			chip = &pca955x_chipdefs[acpi_id->driver_data];
+   272		}
+   273		adapter = to_i2c_adapter(client->dev.parent);
+   274		pdata = dev_get_platdata(&client->dev);
+   275	
+   276		/* Make sure the slave address / chip type combo given is possible */
+   277		if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
+   278		    chip->slv_addr) {
+   279			dev_err(&client->dev, "invalid slave address %02x\n",
+   280					client->addr);
+   281			return -ENODEV;
+   282		}
+   283	
+   284		dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
+   285				"slave address 0x%02x\n",
+   286				id->name, chip->bits, client->addr);
+                                ^^^^^^^^^
+But the old code assumed "id" was non-NULL.
 
->
-> So do we have a consensus on implementing a new hw_brightness_change
-> sysfs attribute now, which only some LEDs will have, can be polled
-> to detect changed done autonomously by the hardware and returns
-> the current / actual LED brightness when read ?
->
-> As for the modeling how the hotkey controls the LED as a trigger,
-> although I do like this from one pov, I can see Jacek's point that
-> this is confusing as there really is nothing to configure here,
-> where as normally a user could do "echo none > trigger" to break
-> the link. So I think that is best (cleanest /minimal non confusing
-> API) with just the hw_brightness_change sysfs-attribute and not
-> model this as a trigger.
->
-> That, or fall back to my latest patch-set as posted, I still like
-> that one the most.
->
-> Regards,
->
-> Hans
->
->
->
->
+regards,
+dan carpenter
