@@ -1,109 +1,65 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH V5] leds: pca955x: Add ACPI support for pca955x
-Date: Fri, 02 Dec 2016 09:40:05 +0100
-Message-ID: <991a5ed9-f91d-ef2b-46df-0e71b30ea0e2@samsung.com>
-References: <CGME20161202043935epcas3p4a265da1fbc45fb7de8e9ec2a0f308e18@epcas3p4.samsung.com>
- <1480653553-22911-1-git-send-email-tnhuynh@apm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: leds-gpio: no GPIO labels (in debugfs)
+Date: Fri, 2 Dec 2016 13:51:13 +0100
+Message-ID: <CACRpkdaDy=40qdFeU8KEf=hDyTdw2MWteZYx7iK4tOCM94CSNg@mail.gmail.com>
+References: <CGME20161130162439epcas2p4c540b29ad1d0856e8c5a7155e4d999cf@epcas2p4.samsung.com>
+ <3428499.pbM7ylo2PO@ws-stein> <80b3fbe0-5200-e80e-a7f4-99b45d65b165@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <1480653553-22911-1-git-send-email-tnhuynh@apm.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Tin Huynh <tnhuynh@apm.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Richard Purdie <rpurdie@rpsys.net>, Peter Rosin <peda@axentia.se>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Loc Ho <lho@apm.com>, Thang Nguyen <tqnguyen@apm.com>, Phong Vo <pvo@apm.com>, patches@apm.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:35417 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932607AbcLBMvP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Dec 2016 07:51:15 -0500
+Received: by mail-qk0-f172.google.com with SMTP id n204so277453070qke.2
+        for <linux-leds@vger.kernel.org>; Fri, 02 Dec 2016 04:51:14 -0800 (PST)
+In-Reply-To: <80b3fbe0-5200-e80e-a7f4-99b45d65b165@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Tin,
+On Thu, Dec 1, 2016 at 9:45 AM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> On 11/30/2016 05:24 PM, Alexander Stein wrote:
 
-On 12/02/2016 05:39 AM, Tin Huynh wrote:
-> This patch enables ACPI support for leds-pca955x driver.
+>> I jut noticed that the used GPIOs for leds-gpio do not have an actual
+>> label
+>> which is visible in debugfs (/sys/kernel/debug/gpio):
+>>>
+>>> gpiochip4: GPIOs 368-383, parent: spi/spi0.2, mcp23s17, can sleep:
+>>>  gpio-369 P0.1 (?           ) out hi
+>>>  gpio-370 P0.2 (?           ) out lo
+>>>  gpio-371 P0.3 (?           ) out lo
+>>>  gpio-372 P0.4 (?           ) out lo
+>>>  gpio-373 P0.5 (?           ) out lo
+>>>  gpio-374 P0.6 (?           ) out lo
+>>
+>> The reason is that the call to devm_get_gpiod_from_child() in
+>> gpio_leds_create() eventually calls "gpiod_request(desc, NULL);" in
+>> fwnode_get_named_gpiod. So no label attached to GPIO, hence "?" output.
+>>
+>> As we have already a gpiod in create_gpio_led(), devm_gpio_request_one()
+>> with
+>> the proper label is not called.
+>> I don't know much of that code, so what would be needed to have a proper
+>> GPIO
+>> label? And how?
 >
-> Signed-off-by: Tin Huynh <tnhuynh@apm.com>
-> ---
->  drivers/leds/leds-pca955x.c |   24 ++++++++++++++++++++++--
->  1 files changed, 22 insertions(+), 2 deletions(-)
+> From the LED subsystem perspective everything looks OK both
+> in the case when label is defined and without it (node name is
+> used for the LED class device name then).
 >
-> Change from V4:
->  -Using client->name instead of id->name to avoid NULL pointer in ACPI.
->
-> Change from V3:
->  -Drop ".id =" and ".driver_data =" from pca955x_acpi_ids initializers.
->
-> Change from V2:
->  -Correct coding conventions.
->
-> Change from V1:
->  -Remove CONFIG_ACPI.
->
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index 840401a..78a7ce8 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -40,6 +40,7 @@
->   *  bits the chip supports.
->   */
->
-> +#include <linux/acpi.h>
->  #include <linux/module.h>
->  #include <linux/delay.h>
->  #include <linux/string.h>
-> @@ -100,6 +101,15 @@ struct pca955x_chipdef {
->  };
->  MODULE_DEVICE_TABLE(i2c, pca955x_id);
->
-> +static const struct acpi_device_id pca955x_acpi_ids[] = {
-> +	{ "PCA9550",  pca9550 },
-> +	{ "PCA9551",  pca9551 },
-> +	{ "PCA9552",  pca9552 },
-> +	{ "PCA9553",  pca9553 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, pca955x_acpi_ids);
-> +
->  struct pca955x {
->  	struct mutex lock;
->  	struct pca955x_led *leds;
-> @@ -250,7 +260,16 @@ static int pca955x_probe(struct i2c_client *client,
->  	struct led_platform_data *pdata;
->  	int i, err;
->
-> -	chip = &pca955x_chipdefs[id->driver_data];
-> +	if (id) {
-> +		chip = &pca955x_chipdefs[id->driver_data];
-> +	} else {
-> +		const struct acpi_device_id *acpi_id;
-> +
-> +		acpi_id = acpi_match_device(pca955x_acpi_ids, &client->dev);
-> +		if (!acpi_id)
-> +			return -ENODEV;
-> +		chip = &pca955x_chipdefs[acpi_id->driver_data];
-> +	}
->  	adapter = to_i2c_adapter(client->dev.parent);
->  	pdata = dev_get_platdata(&client->dev);
->
-> @@ -264,7 +283,7 @@ static int pca955x_probe(struct i2c_client *client,
->
->  	dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
->  			"slave address 0x%02x\n",
-> -			id->name, chip->bits, client->addr);
-> +			client->name, chip->bits, client->addr);
->
->  	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
->  		return -EIO;
-> @@ -358,6 +377,7 @@ static int pca955x_remove(struct i2c_client *client)
->  static struct i2c_driver pca955x_driver = {
->  	.driver = {
->  		.name	= "leds-pca955x",
-> +		.acpi_match_table = ACPI_PTR(pca955x_acpi_ids),
->  	},
->  	.probe	= pca955x_probe,
->  	.remove	= pca955x_remove,
->
+> Since this seems to be an issue within GPIOLIB internals,
+> I'm adding Linus Walleij.
 
-Thanks for the quick reaction. Replaced v4 with v5 on the for-next
-branch.
+The consumer label is entirely optional, it's just a very nice thing to
+get right for debugging and feeling you have everything in check on
+the system.
 
--- 
-Best regards,
-Jacek Anaszewski
+So it's not a bug, it is an optional feature.
+
+If you want to fix it better looking I guess dig into the code :)
+
+Yours,
+Linus Walleij
