@@ -1,61 +1,95 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] leds: pca955x: Add ACPI support
-Date: Thu, 1 Dec 2016 23:12:12 +0300
-Message-ID: <20161201201212.GA4015@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:28044 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757491AbcLAUM1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2016 15:12:27 -0500
-Content-Disposition: inline
-Sender: linux-leds-owner@vger.kernel.org
+From: Tin Huynh <tnhuynh@apm.com>
+Subject: [PATCH V5] leds: pca955x: Add ACPI support for pca955x
+Date: Fri,  2 Dec 2016 11:39:13 +0700
+Message-ID: <1480653553-22911-1-git-send-email-tnhuynh@apm.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Peter Rosin <peda@axentia.se>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Loc Ho <lho@apm.com>, Thang Nguyen <tqnguyen@apm.com>, Phong Vo <pvo@apm.com>, patches@apm.com, Tin Huynh <tnhuynh@apm.com>
 List-Id: linux-leds@vger.kernel.org
-To: tnhuynh@apm.com
-Cc: linux-leds@vger.kernel.org
 
-Hello Tin Huynh,
+This patch enables ACPI support for leds-pca955x driver.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Tin Huynh <tnhuynh@apm.com>
+---
+ drivers/leds/leds-pca955x.c |   24 ++++++++++++++++++++++--
+ 1 files changed, 22 insertions(+), 2 deletions(-)
 
-The patch f00662b45979: "leds: pca955x: Add ACPI support" from Nov 
-30, 2016, leads to the following Smatch complaint:
+Change from V4:
+ -Using client->name instead of id->name to avoid NULL pointer in ACPI.
+ 
+Change from V3:
+ -Drop ".id =" and ".driver_data =" from pca955x_acpi_ids initializers.
 
-drivers/leds/leds-pca955x.c:284 pca955x_probe()
-	 error: we previously assumed 'id' could be null (see line 263)
+Change from V2:
+ -Correct coding conventions.
 
-drivers/leds/leds-pca955x.c
-   262	
-   263		if (id) {
-                   ^^^^
-We added a new NULL check.
+Change from V1:
+ -Remove CONFIG_ACPI.
 
-   264			chip = &pca955x_chipdefs[id->driver_data];
-   265		} else {
-   266			const struct acpi_device_id *acpi_id;
-   267	
-   268			acpi_id = acpi_match_device(pca955x_acpi_ids, &client->dev);
-   269			if (!acpi_id)
-   270				return -ENODEV;
-   271			chip = &pca955x_chipdefs[acpi_id->driver_data];
-   272		}
-   273		adapter = to_i2c_adapter(client->dev.parent);
-   274		pdata = dev_get_platdata(&client->dev);
-   275	
-   276		/* Make sure the slave address / chip type combo given is possible */
-   277		if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
-   278		    chip->slv_addr) {
-   279			dev_err(&client->dev, "invalid slave address %02x\n",
-   280					client->addr);
-   281			return -ENODEV;
-   282		}
-   283	
-   284		dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
-   285				"slave address 0x%02x\n",
-   286				id->name, chip->bits, client->addr);
-                                ^^^^^^^^^
-But the old code assumed "id" was non-NULL.
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 840401a..78a7ce8 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -40,6 +40,7 @@
+  *  bits the chip supports.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/string.h>
+@@ -100,6 +101,15 @@ struct pca955x_chipdef {
+ };
+ MODULE_DEVICE_TABLE(i2c, pca955x_id);
+ 
++static const struct acpi_device_id pca955x_acpi_ids[] = {
++	{ "PCA9550",  pca9550 },
++	{ "PCA9551",  pca9551 },
++	{ "PCA9552",  pca9552 },
++	{ "PCA9553",  pca9553 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pca955x_acpi_ids);
++
+ struct pca955x {
+ 	struct mutex lock;
+ 	struct pca955x_led *leds;
+@@ -250,7 +260,16 @@ static int pca955x_probe(struct i2c_client *client,
+ 	struct led_platform_data *pdata;
+ 	int i, err;
+ 
+-	chip = &pca955x_chipdefs[id->driver_data];
++	if (id) {
++		chip = &pca955x_chipdefs[id->driver_data];
++	} else {
++		const struct acpi_device_id *acpi_id;
++
++		acpi_id = acpi_match_device(pca955x_acpi_ids, &client->dev);
++		if (!acpi_id)
++			return -ENODEV;
++		chip = &pca955x_chipdefs[acpi_id->driver_data];
++	}
+ 	adapter = to_i2c_adapter(client->dev.parent);
+ 	pdata = dev_get_platdata(&client->dev);
+ 
+@@ -264,7 +283,7 @@ static int pca955x_probe(struct i2c_client *client,
+ 
+ 	dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
+ 			"slave address 0x%02x\n",
+-			id->name, chip->bits, client->addr);
++			client->name, chip->bits, client->addr);
+ 
+ 	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
+ 		return -EIO;
+@@ -358,6 +377,7 @@ static int pca955x_remove(struct i2c_client *client)
+ static struct i2c_driver pca955x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca955x",
++		.acpi_match_table = ACPI_PTR(pca955x_acpi_ids),
+ 	},
+ 	.probe	= pca955x_probe,
+ 	.remove	= pca955x_remove,
+-- 
+1.7.1
 
-regards,
-dan carpenter
