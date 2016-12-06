@@ -1,65 +1,78 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: leds-gpio: no GPIO labels (in debugfs)
-Date: Fri, 2 Dec 2016 13:51:13 +0100
-Message-ID: <CACRpkdaDy=40qdFeU8KEf=hDyTdw2MWteZYx7iK4tOCM94CSNg@mail.gmail.com>
-References: <CGME20161130162439epcas2p4c540b29ad1d0856e8c5a7155e4d999cf@epcas2p4.samsung.com>
- <3428499.pbM7ylo2PO@ws-stein> <80b3fbe0-5200-e80e-a7f4-99b45d65b165@samsung.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] DT: leds: Improve examples by adding some context
+Date: Tue,  6 Dec 2016 09:32:03 +0100
+Message-ID: <20161206083203.1726-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:35417 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932607AbcLBMvP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Dec 2016 07:51:15 -0500
-Received: by mail-qk0-f172.google.com with SMTP id n204so277453070qke.2
-        for <linux-leds@vger.kernel.org>; Fri, 02 Dec 2016 04:51:14 -0800 (PST)
-In-Reply-To: <80b3fbe0-5200-e80e-a7f4-99b45d65b165@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Thu, Dec 1, 2016 at 9:45 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> On 11/30/2016 05:24 PM, Alexander Stein wrote:
+From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 
->> I jut noticed that the used GPIOs for leds-gpio do not have an actual
->> label
->> which is visible in debugfs (/sys/kernel/debug/gpio):
->>>
->>> gpiochip4: GPIOs 368-383, parent: spi/spi0.2, mcp23s17, can sleep:
->>>  gpio-369 P0.1 (?           ) out hi
->>>  gpio-370 P0.2 (?           ) out lo
->>>  gpio-371 P0.3 (?           ) out lo
->>>  gpio-372 P0.4 (?           ) out lo
->>>  gpio-373 P0.5 (?           ) out lo
->>>  gpio-374 P0.6 (?           ) out lo
->>
->> The reason is that the call to devm_get_gpiod_from_child() in
->> gpio_leds_create() eventually calls "gpiod_request(desc, NULL);" in
->> fwnode_get_named_gpiod. So no label attached to GPIO, hence "?" output.
->>
->> As we have already a gpiod in create_gpio_led(), devm_gpio_request_one()
->> with
->> the proper label is not called.
->> I don't know much of that code, so what would be needed to have a proper
->> GPIO
->> label? And how?
->
-> From the LED subsystem perspective everything looks OK both
-> in the case when label is defined and without it (node name is
-> used for the LED class device name then).
->
-> Since this seems to be an issue within GPIOLIB internals,
-> I'm adding Linus Walleij.
+During my work on some new LED trigger I tried adding example similar to
+the existing ones which received following comment from Rob:
+> It's not really clear in the example this is an LED node as it is
+> incomplete.
 
-The consumer label is entirely optional, it's just a very nice thing to
-get right for debugging and feeling you have everything in check on
-the system.
+Keeping that in mind I suggest adding context for the existing example
+entries in hope to make documentation more clear.
 
-So it's not a bug, it is an optional feature.
+Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+---
+Should this patch go through linux-leds tree?
 
-If you want to fix it better looking I guess dig into the code :)
+Richard, Jacek: would you take it?
+---
+ Documentation/devicetree/bindings/leds/common.txt | 28 +++++++++++++++--------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 696be57..24b6560 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -61,16 +61,24 @@ property can be omitted.
+ 
+ Examples:
+ 
+-system-status {
+-	label = "Status";
+-	linux,default-trigger = "heartbeat";
+-	...
++gpio-leds {
++	compatible = "gpio-leds";
++
++	system-status {
++		label = "Status";
++		linux,default-trigger = "heartbeat";
++		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+-camera-flash {
+-	label = "Flash";
+-	led-sources = <0>, <1>;
+-	led-max-microamp = <50000>;
+-	flash-max-microamp = <320000>;
+-	flash-max-timeout-us = <500000>;
++max77693-led {
++	compatible = "maxim,max77693-led";
++
++	camera-flash {
++		label = "Flash";
++		led-sources = <0>, <1>;
++		led-max-microamp = <50000>;
++		flash-max-microamp = <320000>;
++		flash-max-timeout-us = <500000>;
++	};
+ };
+-- 
+2.10.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
