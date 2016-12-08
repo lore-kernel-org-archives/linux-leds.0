@@ -1,77 +1,97 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH 0/7] Move dell-led to drivers/platform/x86
-Date: Thu,  8 Dec 2016 13:36:11 +0100
-Message-ID: <20161208123618.28603-1-kernel@kempniu.pl>
+Subject: [PATCH 6/7] dell-led: remove code related to mic mute LED
+Date: Thu,  8 Dec 2016 13:36:17 +0100
+Message-ID: <20161208123618.28603-7-kernel@kempniu.pl>
+References: <20161208123618.28603-1-kernel@kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Sender: platform-driver-x86-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161208123618.28603-1-kernel@kempniu.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: Bob Rodgers <Robert_Rodgers@dell.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, Hui Wang <hui.wang@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch series moves the dell-led driver from the LED subsystem to
-the x86 platform driver subsystem.  I decided to also CC the sound
-subsystem contacts for the whole series as
-sound/pci/hda/dell_wmi_helper.c is also affected.
+With dell_micmute_led_set() moved to drivers/platform/x86/dell-laptop.c,
+all remnants of the mic mute LED handling code can be removed from
+drivers/leds/dell-led.c, restoring it back to the state it was in before
+db6d8cc ("dell-led: add mic mute led interface").
 
-The original motivation behind this effort was to move all code using
-the dell-smbios module to the x86 platform driver subsystem.  While I
-was investigating the possibilites to do that, it quickly emerged that
-dell-led can and in fact should be moved to the x86 platform driver
-subsystem in its entirety.
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+---
+ drivers/leds/Kconfig    |  1 -
+ drivers/leds/dell-led.c | 25 +++++++------------------
+ 2 files changed, 7 insertions(+), 19 deletions(-)
 
-dell-led consists of two major parts:
-
-  - the part exposing a microphone mute LED interface, introduced in
-    db6d8cc ("dell-led: add mic mute led interface"); this interface is
-    used by sound/pci/hda/dell_wmi_helper.c; while the original
-    implementation used a WMI interface, it was changed to use
-    dell-smbios in cf0d7ea ("dell-led: use dell_smbios_find_token() for
-    finding mic DMI tokens") and 0c41a08 ("dell-led: use
-    dell_smbios_send_request() for performing SMBIOS calls"),
-
-  - the part handling an activity LED present in Dell Latitude 2100
-    netbooks, introduced in 72dcd8d ("leds: Add Dell Business Class
-    Netbook LED driver"); it binds to a specific WMI GUID and then
-    registers a LED device which is controlled using WMI (i.e. it is
-    basically a WMI driver).
-
-Patches 1-4 clean up the microphone mute LED interface to minimize the
-amount of code moved around.
-  
-Patch 5 moves the microphone mute LED interface to
-drivers/platform/x86/dell-laptop.c, effectively causing
-sound/pci/hda/dell_wmi_helper.c to depend on CONFIG_DELL_LAPTOP instead
-of CONFIG_LEDS_DELL_NETBOOKS.
-    
-Patch 6 reverts dell-led to the state it was in after its initial commit
-72dcd8d ("leds: Add Dell Business Class Netbook LED driver") by removing
-all remnants of the microphone mute LED handling code.
-
-Patch 7 moves all that is left of dell-led (i.e. the activity LED part,
-as originally implemented), to a new module which is placed in
-drivers/platform/x86/dell-wmi-led.c.
-
-This patch series is based on linux-leds/for-4.11 as the LED subsystem
-is affected by all patches except patch 3.
-
-If anyone reading this has access to a Dell device which has an activity
-LED and/or a microphone mute LED currently supported by dell-led, I
-would love to hear from you as I do not have the hardware needed to
-practically test this patch series.
-
- drivers/leds/Kconfig                               |  9 ---
- drivers/leds/Makefile                              |  1 -
- drivers/platform/x86/Kconfig                       |  8 +++
- drivers/platform/x86/Makefile                      |  1 +
- drivers/platform/x86/dell-laptop.c                 | 28 ++++++++
- .../dell-led.c => platform/x86/dell-wmi-led.c}     | 75 +++-------------------
- include/linux/dell-led.h                           |  6 +-
- sound/pci/hda/dell_wmi_helper.c                    | 18 +++---
- 8 files changed, 55 insertions(+), 91 deletions(-)
- rename drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} (73%)
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index c621cbb..f29b869 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -458,7 +458,6 @@ config LEDS_DELL_NETBOOKS
+ 	tristate "External LED on Dell Business Netbooks"
+ 	depends on LEDS_CLASS
+ 	depends on X86 && ACPI_WMI
+-	depends on DELL_SMBIOS
+ 	help
+ 	  This adds support for the Latitude 2100 and similar
+ 	  notebooks that have an external LED.
+diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+index c9cc36a..e5c5738 100644
+--- a/drivers/leds/dell-led.c
++++ b/drivers/leds/dell-led.c
+@@ -15,15 +15,12 @@
+ #include <linux/leds.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+-#include <linux/dmi.h>
+-#include "../platform/x86/dell-smbios.h"
+ 
+ MODULE_AUTHOR("Louis Davis/Jim Dailey");
+ MODULE_DESCRIPTION("Dell LED Control Driver");
+ MODULE_LICENSE("GPL");
+ 
+ #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
+-#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
+ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ 
+ /* Error Result Codes: */
+@@ -184,29 +181,21 @@ static int __init dell_led_init(void)
+ {
+ 	int error = 0;
+ 
+-	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
++	if (!wmi_has_guid(DELL_LED_BIOS_GUID))
+ 		return -ENODEV;
+ 
+-	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
+-		error = led_off();
+-		if (error != 0)
+-			return -ENODEV;
+-
+-		error = led_classdev_register(NULL, &dell_led);
+-	}
++	error = led_off();
++	if (error != 0)
++		return -ENODEV;
+ 
+-	return error;
++	return led_classdev_register(NULL, &dell_led);
+ }
+ 
+ static void __exit dell_led_exit(void)
+ {
+-	int error = 0;
++	led_classdev_unregister(&dell_led);
+ 
+-	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
+-		error = led_off();
+-		if (error == 0)
+-			led_classdev_unregister(&dell_led);
+-	}
++	led_off();
+ }
+ 
+ module_init(dell_led_init);
 -- 
 2.10.2
