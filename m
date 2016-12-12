@@ -1,124 +1,142 @@
-From: Pali =?utf-8?q?Roh=C3=A1r?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH 0/7] Move dell-led to drivers/platform/x86
-Date: Sun, 11 Dec 2016 11:45:37 +0100
-Message-ID: <201612111145.37777@pali>
-References: <CGME20161208123909epcas3p23229f5e0d337e19a27b272211798d364@epcas3p2.samsung.com> <20161208123618.28603-1-kernel@kempniu.pl> <327c8edc-5a1e-8a94-85b2-4a2febc03352@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart9382632.rKynATlCas";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <327c8edc-5a1e-8a94-85b2-4a2febc03352@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, mario.limonciello@dell.com
-Cc: =?utf-8?q?Micha=C5=82_K=C4=99pie=C5=84?= <kernel@kempniu.pl>, Richard Purdie <rpurdie@rpsys.net>, Matthew Garrett <mjg59@srcf.ucam.org>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, Hui Wang <hui.wang@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [GIT PULL] LED updates for 4.10
+Date: Mon, 12 Dec 2016 12:21:22 +0100
+Message-ID: <1481541682-11626-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49216 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbcLLLVf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 12 Dec 2016 06:21:35 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, akurz@blala.de, david@lechnology.com, fb@ltec.ch, geliangtang@gmail.com, hdegoede@redhat.com, hui.chun.ong@ni.com, javier@osg.samsung.com, linus.walleij@linaro.org, mranostay@gmail.com, pavel@ucw.cz, tnhuynh@apm.com, vadimp@mellanox.com
 
---nextPart9382632.rKynATlCas
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-On Thursday 08 December 2016 15:26:37 Jacek Anaszewski wrote:
-> Hi Micha=C5=82,
->=20
-> Thanks for the patch set.
->=20
-> On 12/08/2016 01:36 PM, Micha=C5=82 K=C4=99pie=C5=84 wrote:
-> > This patch series moves the dell-led driver from the LED subsystem
-> > to the x86 platform driver subsystem.  I decided to also CC the
-> > sound subsystem contacts for the whole series as
-> > sound/pci/hda/dell_wmi_helper.c is also affected.
-> >=20
-> > The original motivation behind this effort was to move all code
-> > using the dell-smbios module to the x86 platform driver subsystem.
-> >  While I was investigating the possibilites to do that, it quickly
-> > emerged that dell-led can and in fact should be moved to the x86
-> > platform driver subsystem in its entirety.
-> >=20
-> > dell-led consists of two major parts:
-> >   - the part exposing a microphone mute LED interface, introduced
-> >   in
-> >  =20
-> >     db6d8cc ("dell-led: add mic mute led interface"); this
-> >     interface is used by sound/pci/hda/dell_wmi_helper.c; while
-> >     the original implementation used a WMI interface, it was
-> >     changed to use dell-smbios in cf0d7ea ("dell-led: use
-> >     dell_smbios_find_token() for finding mic DMI tokens") and
-> >     0c41a08 ("dell-led: use
-> >     dell_smbios_send_request() for performing SMBIOS calls"),
-> >  =20
-> >   - the part handling an activity LED present in Dell Latitude 2100
-> >  =20
-> >     netbooks, introduced in 72dcd8d ("leds: Add Dell Business Class
-> >     Netbook LED driver"); it binds to a specific WMI GUID and then
-> >     registers a LED device which is controlled using WMI (i.e. it
-> >     is basically a WMI driver).
-> >=20
-> > Patches 1-4 clean up the microphone mute LED interface to minimize
-> > the amount of code moved around.
-> >=20
-> > Patch 5 moves the microphone mute LED interface to
-> > drivers/platform/x86/dell-laptop.c, effectively causing
-> > sound/pci/hda/dell_wmi_helper.c to depend on CONFIG_DELL_LAPTOP
-> > instead of CONFIG_LEDS_DELL_NETBOOKS.
-> >=20
-> > Patch 6 reverts dell-led to the state it was in after its initial
-> > commit 72dcd8d ("leds: Add Dell Business Class Netbook LED
-> > driver") by removing all remnants of the microphone mute LED
-> > handling code.
-> >=20
-> > Patch 7 moves all that is left of dell-led (i.e. the activity LED
-> > part, as originally implemented), to a new module which is placed
-> > in drivers/platform/x86/dell-wmi-led.c.
-> >=20
-> > This patch series is based on linux-leds/for-4.11 as the LED
-> > subsystem is affected by all patches except patch 3.
-> >=20
-> > If anyone reading this has access to a Dell device which has an
-> > activity LED and/or a microphone mute LED currently supported by
-> > dell-led, I would love to hear from you as I do not have the
-> > hardware needed to practically test this patch series.
->=20
-> I think that it is necessary to find someone who will give their
-> Tested-by.
->=20
-> What I can accept immediately is moving the driver in the current
-> shape to x86 platform drivers. I could expose a stable branch with
-> that patch for the x86 platform maintainers then.
+Please pull LED updates for 4.10 merge cycle.
 
-Adding Mario Limonciello from @dell to discussion.
+>From the things that need to be highlighted there are:
+- userspace LED class driver - it can be useful for testing triggers
+  and can also be used to implement virtual LEDs,
+- LED class driver for NIC78bx device,
+- LED core fixes for preventing potential races while setting brightness
+  when software blinking is enabled,
+- improvements in LED documentation to mention semantics on changing
+  brightness while trigger is active.
 
-Mario, any chance you could be able to test this patch series?
+Also please note that this time we have a dependency between MFD, ARM and
+LED trees exposed on ib-mfd-arm-leds-v4.10 branch in mfd.git. The branch,
+containing a single patch:
 
-> >  drivers/leds/Kconfig                               |  9 ---
-> >  drivers/leds/Makefile                              |  1 -
-> >  drivers/platform/x86/Kconfig                       |  8 +++
-> >  drivers/platform/x86/Makefile                      |  1 +
-> >  drivers/platform/x86/dell-laptop.c                 | 28 ++++++++
-> >  .../dell-led.c =3D> platform/x86/dell-wmi-led.c}     | 75
-> >  +++------------------- include/linux/dell-led.h                 =20
-> >          |  6 +- sound/pci/hda/dell_wmi_helper.c                 =20
-> >   | 18 +++--- 8 files changed, 55 insertions(+), 91 deletions(-)
-> >  rename drivers/{leds/dell-led.c =3D> platform/x86/dell-wmi-led.c}
-> >  (73%)
+40a3a0f "mfd: qcom-pm8xxx: Clean up PM8XXX namespace"
 
-=2D-=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+has been merged to linux-leds.
 
---nextPart9382632.rKynATlCas
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-iEYEABECAAYFAlhNLlEACgkQi/DJPQPkQ1IcQACgpW6xP38Wv7FV6PzQVSp+Cudj
-4MkAn0wsnppyy5pYIM3sZkyMPWWzrNQJ
-=iluJ
------END PGP SIGNATURE-----
+are available in the git repository at:
 
---nextPart9382632.rKynATlCas--
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.10
+
+for you to fetch changes up to 44b3e31d540e917a4d2292b902ade63fa1748d9a:
+
+  leds: pca955x: Add ACPI support (2016-12-02 09:31:50 +0100)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED updates for 4.10 merge cycle.
+
+----------------------------------------------------------------
+Alexander Kurz (1):
+      leds: mc13783: Fix MC13892 keypad led access
+
+David Lechner (3):
+      leds: Introduce userspace LED class driver
+      leds: Use macro for max device node name size
+      tools/leds: Add uledmon program for monitoring userspace LEDs
+
+Felix Brack (1):
+      leds: pca9532: Use default trigger value from platform data
+
+Geliang Tang (1):
+      leds: leds-cobalt-raq: use builtin_platform_driver
+
+Hans de Goede (2):
+      led: core: Use atomic bit-field for the blink-flags
+      led: core: Fix blink_brightness setting race
+
+Hui Chun Ong (1):
+      leds: Add user LED driver for NIC78bx device
+
+Jacek Anaszewski (1):
+      Merge tag 'ib-mfd-arm-leds-v4.10' of git://git.kernel.org/.../lee/mfd into linux-leds/for-next
+
+Javier Martinez Canillas (2):
+      leds: lp3952: Export I2C module alias information for module autoload
+      leds: netxbig: fix module autoload for OF registration
+
+Linus Walleij (1):
+      mfd: qcom-pm8xxx: Clean up PM8XXX namespace
+
+Matt Ranostay (2):
+      leds: pca963x: workaround group blink scaling issue
+      leds: pca963x: enable low-power state
+
+Pavel Machek (3):
+      leds/leds-lp5523.txt: make documentation match reality
+      ledtrig-cpu.c: fix english
+      cleanup LED documentation and make it match reality
+
+Tin Huynh (2):
+      leds: pca963x: Add ACPI support
+      leds: pca955x: Add ACPI support
+
+Vadim Pasternak (1):
+      leds: verify vendor and change license in mlxcpld driver
+
+ Documentation/ABI/testing/sysfs-class-led          |  14 +-
+ Documentation/devicetree/bindings/leds/pca963x.txt |   3 +
+ Documentation/leds/leds-lp5523.txt                 |   4 +-
+ Documentation/leds/uleds.txt                       |  36 ++++
+ arch/arm/configs/multi_v7_defconfig                |   2 +-
+ arch/arm/configs/pxa_defconfig                     |   1 -
+ arch/arm/configs/qcom_defconfig                    |   1 -
+ drivers/leds/Kconfig                               |  21 +-
+ drivers/leds/Makefile                              |   4 +
+ drivers/leds/led-class.c                           |   4 +-
+ drivers/leds/led-core.c                            |  62 +++---
+ drivers/leds/leds-cobalt-raq.c                     |   6 +-
+ drivers/leds/leds-lp3952.c                         |   1 +
+ drivers/leds/leds-mc13783.c                        |   5 +-
+ drivers/leds/leds-mlxcpld.c                        |   5 +-
+ drivers/leds/leds-netxbig.c                        |   1 +
+ drivers/leds/leds-nic78bx.c                        | 209 ++++++++++++++++++
+ drivers/leds/leds-pca9532.c                        |   2 +-
+ drivers/leds/leds-pca955x.c                        |  24 ++-
+ drivers/leds/leds-pca963x.c                        |  80 ++++++-
+ drivers/leds/trigger/ledtrig-cpu.c                 |   2 +-
+ drivers/leds/uleds.c                               | 235 +++++++++++++++++++++
+ drivers/mfd/Kconfig                                |  14 +-
+ drivers/mfd/Makefile                               |   2 +-
+ drivers/mfd/{pm8921-core.c => qcom-pm8xxx.c}       |  42 ++--
+ include/linux/leds.h                               |  25 ++-
+ include/uapi/linux/Kbuild                          |   1 +
+ include/uapi/linux/uleds.h                         |  24 +++
+ tools/Makefile                                     |   7 +-
+ tools/leds/.gitignore                              |   1 +
+ tools/leds/Makefile                                |  13 ++
+ tools/leds/uledmon.c                               |  63 ++++++
+ 32 files changed, 807 insertions(+), 107 deletions(-)
+ create mode 100644 Documentation/leds/uleds.txt
+ create mode 100644 drivers/leds/leds-nic78bx.c
+ create mode 100644 drivers/leds/uleds.c
+ rename drivers/mfd/{pm8921-core.c => qcom-pm8xxx.c} (92%)
+ create mode 100644 include/uapi/linux/uleds.h
+ create mode 100644 tools/leds/.gitignore
+ create mode 100644 tools/leds/Makefile
+ create mode 100644 tools/leds/uledmon.c
