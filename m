@@ -1,27 +1,37 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 4/5] firmware: add SmPL report for custom fallback
- mechanism
-Date: Tue, 13 Dec 2016 07:13:33 +0100 (CET)
-Message-ID: <alpine.DEB.2.10.1612130713100.3164@hadrien>
-References: <20161213030828.17820-1-mcgrof@kernel.org> <20161213030828.17820-5-mcgrof@kernel.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 4/5] firmware: add SmPL report for custom fallback mechanism
+Date: Tue, 13 Dec 2016 10:44:22 +0100
+Message-ID: <10f8c7f7-a255-4830-65f0-a040d8236bf1@samsung.com>
+References: <20161213030828.17820-1-mcgrof@kernel.org>
+ <CGME20161213030855epcas2p154c4db65f0d1e5b0c47979dc8500517d@epcas2p1.samsung.com>
+ <20161213030828.17820-5-mcgrof@kernel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:28603 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932305AbcLMGNo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 13 Dec 2016 01:13:44 -0500
-In-Reply-To: <20161213030828.17820-5-mcgrof@kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56191 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932511AbcLMJod (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Dec 2016 04:44:33 -0500
+In-reply-to: <20161213030828.17820-5-mcgrof@kernel.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Gilles Muller <Gilles.Muller@lip6.fr>, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.kernel.org
+To: woogyom.kim@gmail.com
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.k
 
+Hi Milo,
 
+Could you please verify if leds-lp55xx-common.c driver
+really needs a custom firmware loading fallback mechanism?
+See [0] to gain some background knowledge, especially patch 3/5 seems
+to provide a big amount of information.
 
-On Mon, 12 Dec 2016, Luis R. Rodriguez wrote:
+[0] https://lkml.org/lkml/2016/12/12/717
 
+Thanks,
+Jacek Anaszewski
+
+On 12/13/2016 04:08 AM, Luis R. Rodriguez wrote:
 > Even though most distributions today disable the fallback mechanism
 > by default we've determined that we cannot remove them from the kernel.
 > This is not well understood so document the reason and logic behind that.
@@ -53,10 +63,6 @@ On Mon, 12 Dec 2016, Luis R. Rodriguez wrote:
 > Cc: linux-leds@vger.kernel.org
 > Cc: Abhay Salunke <Abhay_Salunke@dell.com>
 > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-
-Acked-by: Julia.Lawall@lip6.fr
-
-
 > ---
 >  .../driver-api/firmware/fallback-mechanisms.rst    | 17 ++++++++++
 >  .../api/request_firmware-custom-fallback.cocci     | 37 ++++++++++++++++++++++
@@ -141,7 +147,4 @@ Acked-by: Julia.Lawall@lip6.fr
 > +@@
 > +
 > +coccilib.report.print_report(p[0], "WARNING: please check if driver really needs a custom fallback mechanism")
-> --
-> 2.10.1
->
 >
