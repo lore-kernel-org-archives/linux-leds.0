@@ -1,29 +1,90 @@
-From: <Mario.Limonciello@dell.com>
-Subject: Re: [PATCH 0/7] Move dell-led to drivers/platform/x86
-Date: Sun, 11 Dec 2016 17:13:41 +0000
-Message-ID: <00c7k8btg2g3lgupdy340rwj.1481476421177@email.android.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK() annotation
+Date: Tue, 13 Dec 2016 20:04:29 +0100
+Message-ID: <20161213190429.GC8676@amd>
+References: <20161213030828.17820-1-mcgrof@kernel.org>
+ <20161213030828.17820-6-mcgrof@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: pali.rohar@gmail.com, j.anaszewski@samsung.com, anthony.wong@canonical.com
-Cc: mjg59@srcf.ucam.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, tiwai@suse.com, Jim.Dailey@dell.com, kernel@kempniu.pl, alex.hung@canonical.com, rpurdie@rpsys.net, dvhart@infradead.org, platform-driver-x86@vger.kernel.org, Louis.Davis@dell.com, linux-leds@vger.kernel.org, hui.wang@canonical.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44920 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932964AbcLMTEc (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Dec 2016 14:04:32 -0500
+Content-Disposition: inline
+In-Reply-To: <20161213030828.17820-6-mcgrof@kernel.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.kernel.org
 
-add Anthony Wong @ Canonical.
 
-I'm about to go on break and won't have access to hardware for a while.
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anthony,
+Hi!
 
-Your team has this hardware more readily available than I do. Would you be able to have someone on the team verify this series?
+> We need to ensure that when driver developers use the custom firmware
+> fallback mechanism it was not a copy and paste bug. These use cases on
+> upstream drivers are rare, we only have 2 upstream users and its for
+> really old drivers. Since valid uses are rare but possible enable a
+> white-list for its use, and use this same white-list annotation to refer
+> to the documentation covering the custom use case.
+
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -219,6 +219,7 @@ static void lp55xx_firmware_loaded(const struct firmw=
+are *fw, void *context)
+>  	release_firmware(chip->fw);
+>  }
+> =20
+> +DECLARE_FW_CUSTOM_FALLBACK("Documentation/leds/leds-lp55xx.txt");
+>  static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+>  {
+>  	const char *name =3D chip->cl->name;
+
+The driver does:
+
+static void lp55xx_firmware_loaded(const struct firmware *fw, void
+*context)
+{
+	struct lp55xx_chip *chip =3D context;
+	        struct device *dev =3D &chip->cl->dev;
+		        enum lp55xx_engine_index idx =3D
+			chip->engine_idx;
+
+        if (!fw) {
+	                dev_err(dev, "firmware request failed\n");
+			                goto out;
+					     }
+        ...
+out:
+        /* firmware should be released for other channel use */
+	        release_firmware(chip->fw);
+}
+
+
+Does that match the "custom fallback" definition?
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--oJ71EGRlYNjSvfq7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlhQRj0ACgkQMOfwapXb+vIeegCgiLV8bB4jtuxqxwCgeycXSIfo
+o3sAoJ8WX91yWWSKuvuaGRky1cVjAzyM
+=KDWS
+-----END PGP SIGNATURE-----
+
+--oJ71EGRlYNjSvfq7--
