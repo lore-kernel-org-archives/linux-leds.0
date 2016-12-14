@@ -1,90 +1,44 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK() annotation
-Date: Tue, 13 Dec 2016 20:04:29 +0100
-Message-ID: <20161213190429.GC8676@amd>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: Re: [PATCH 4/5] firmware: add SmPL report for custom fallback
+ mechanism
+Date: Wed, 14 Dec 2016 10:48:37 +0900
+Message-ID: <271c9d23-d35e-252b-d03b-651457112d28@gmail.com>
 References: <20161213030828.17820-1-mcgrof@kernel.org>
- <20161213030828.17820-6-mcgrof@kernel.org>
+ <CGME20161213030855epcas2p154c4db65f0d1e5b0c47979dc8500517d@epcas2p1.samsung.com>
+ <20161213030828.17820-5-mcgrof@kernel.org>
+ <10f8c7f7-a255-4830-65f0-a040d8236bf1@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44920 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932964AbcLMTEc (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Dec 2016 14:04:32 -0500
-Content-Disposition: inline
-In-Reply-To: <20161213030828.17820-6-mcgrof@kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:35129 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753149AbcLNBu3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Dec 2016 20:50:29 -0500
+In-Reply-To: <10f8c7f7-a255-4830-65f0-a040d8236bf1@samsung.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.k
 
+Hi Jacek,
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/13/2016 06:44 PM, Jacek Anaszewski wrote:
+>
+> Could you please verify if leds-lp55xx-common.c driver
+> really needs a custom firmware loading fallback mechanism?
 
-Hi!
+Thanks for sharing this. The lp55xx-common uses this mechanism to load 
+and run LED effect manually, so this could be a misuse case.
+I think the right solution is providing device attributes.
 
-> We need to ensure that when driver developers use the custom firmware
-> fallback mechanism it was not a copy and paste bug. These use cases on
-> upstream drivers are rare, we only have 2 upstream users and its for
-> really old drivers. Since valid uses are rare but possible enable a
-> white-list for its use, and use this same white-list annotation to refer
-> to the documentation covering the custom use case.
+At this moment, four drivers use lp55xx-common code.
 
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -219,6 +219,7 @@ static void lp55xx_firmware_loaded(const struct firmw=
-are *fw, void *context)
->  	release_firmware(chip->fw);
->  }
-> =20
-> +DECLARE_FW_CUSTOM_FALLBACK("Documentation/leds/leds-lp55xx.txt");
->  static int lp55xx_request_firmware(struct lp55xx_chip *chip)
->  {
->  	const char *name =3D chip->cl->name;
+- lp5521, lp5523: OK if we do not support FW loading fallback mechanism
+- lp5562, lp8501: need to create additional sysfs alternatively.
 
-The driver does:
+However, we should be careful because I'm not sure this modification 
+will generate the regression (breaking the user-space) or not.
 
-static void lp55xx_firmware_loaded(const struct firmware *fw, void
-*context)
-{
-	struct lp55xx_chip *chip =3D context;
-	        struct device *dev =3D &chip->cl->dev;
-		        enum lp55xx_engine_index idx =3D
-			chip->engine_idx;
-
-        if (!fw) {
-	                dev_err(dev, "firmware request failed\n");
-			                goto out;
-					     }
-        ...
-out:
-        /* firmware should be released for other channel use */
-	        release_firmware(chip->fw);
-}
-
-
-Does that match the "custom fallback" definition?
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlhQRj0ACgkQMOfwapXb+vIeegCgiLV8bB4jtuxqxwCgeycXSIfo
-o3sAoJ8WX91yWWSKuvuaGRky1cVjAzyM
-=KDWS
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+Best regards,
+Milo
