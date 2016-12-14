@@ -1,143 +1,141 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 7/7] dell-led: move driver to drivers/platform/x86/dell-wmi-led.c
-Date: Wed, 14 Dec 2016 04:05:41 +0200
-Message-ID: <CAHp75VeH2YqSSSwYdvd44Q6nOQ4AJEOP8tYggA3hD2KTukZ0HQ@mail.gmail.com>
-References: <20161208123618.28603-1-kernel@kempniu.pl> <20161208123618.28603-8-kernel@kempniu.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161208123618.28603-8-kernel@kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bob Rodgers <Robert_Rodgers@dell.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, Hui Wang <hui.wang@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 0/6] Add support for IR transmitters
+Date: Wed, 14 Dec 2016 23:00:24 +0900
+Message-ID: <20161214140030.28537-1-andi.shyti@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Sean Young <sean-hENCXIMQXOg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Dec 8, 2016 at 2:36 PM, Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempni=
-u.pl> wrote:
-> The dell-led driver handles a specific WMI GUID present on some Dell
-> laptops and as such it belongs in the x86 platform driver subsystem.
-> Source code is moved along with the relevant Kconfig and Makefile
-> entries with some minor modifications:
->
->   - Kconfig option is renamed from COFIG_LEDS_DELL_NETBOOKS to
+Hi,
 
-Typo here, CONFIG_...
+The main goal is to add support in the rc framework for IR
+transmitters, which currently is only supported by lirc but that
+is not the preferred way.
 
->     CONFIG_DELL_WMI_LED,
+The last patch adds support for an IR transmitter driven by
+the MOSI line of an SPI controller, it's the case of the Samsung
+TM2(e) board which support is currently ongoing.
 
-Do we care about current configuration or we just suggest users to
-follow this by themselves?
+The last patch adds support for an IR transmitter driven by
+the MOSI line of an SPI controller, it's the case of the Samsung
+TM2(e) board which support is currently ongoing.
 
->
->   - the X86 Kconfig dependency is removed as the whole
->     drivers/platform/x86 menu depends on it, so there is no need to
->     duplicate it,
->
->   - one comment line is updated to reflect the change in the name of the
->     module's source file.
->
+Thanks,
+Andi
 
-While here, please follow our pattern for subject lines, i.e.
-"platform/x86: driver: Description".
+Changelog from version 1:
+-------------------------
+The RFC is now PATCH. The main difference is that this version
+doesn't try to add the any bit streaming protocol and doesn't
+modify any LIRC interface specification.
 
-> Signed-off-by: Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempniu.pl>
-> ---
->  drivers/leds/Kconfig                                     | 8 --------
->  drivers/leds/Makefile                                    | 1 -
->  drivers/platform/x86/Kconfig                             | 8 ++++++++
->  drivers/platform/x86/Makefile                            | 1 +
->  drivers/{leds/dell-led.c =3D> platform/x86/dell-wmi-led.c} | 2 +-
->  5 files changed, 10 insertions(+), 10 deletions(-)
->  rename drivers/{leds/dell-led.c =3D> platform/x86/dell-wmi-led.c} (99%)
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index f29b869..5af3fb2 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -454,14 +454,6 @@ config LEDS_ADP5520
->           To compile this driver as a module, choose M here: the module w=
-ill
->           be called leds-adp5520.
->
-> -config LEDS_DELL_NETBOOKS
-> -       tristate "External LED on Dell Business Netbooks"
-> -       depends on LEDS_CLASS
-> -       depends on X86 && ACPI_WMI
-> -       help
-> -         This adds support for the Latitude 2100 and similar
-> -         notebooks that have an external LED.
-> -
->  config LEDS_MC13783
->         tristate "LED Support for MC13XXX PMIC"
->         depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 6b82737..558d246 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -52,7 +52,6 @@ obj-$(CONFIG_LEDS_REGULATOR)          +=3D leds-regulat=
-or.o
->  obj-$(CONFIG_LEDS_INTEL_SS4200)                +=3D leds-ss4200.o
->  obj-$(CONFIG_LEDS_LT3593)              +=3D leds-lt3593.o
->  obj-$(CONFIG_LEDS_ADP5520)             +=3D leds-adp5520.o
-> -obj-$(CONFIG_LEDS_DELL_NETBOOKS)       +=3D dell-led.o
->  obj-$(CONFIG_LEDS_MC13783)             +=3D leds-mc13783.o
->  obj-$(CONFIG_LEDS_NS2)                 +=3D leds-ns2.o
->  obj-$(CONFIG_LEDS_NETXBIG)             +=3D leds-netxbig.o
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 81b8dcc..f9018e8 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -143,6 +143,14 @@ config DELL_WMI_AIO
->           To compile this driver as a module, choose M here: the module w=
-ill
->           be called dell-wmi-aio.
->
-> +config DELL_WMI_LED
-> +       tristate "External LED on Dell Business Netbooks"
-> +       depends on LEDS_CLASS
-> +       depends on ACPI_WMI
-> +       help
-> +         This adds support for the Latitude 2100 and similar
-> +         notebooks that have an external LED.
-> +
->  config DELL_SMO8800
->         tristate "Dell Latitude freefall driver (ACPI SMO88XX)"
->         depends on ACPI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
-e
-> index 2efa86d..b061817 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -15,6 +15,7 @@ obj-$(CONFIG_DELL_SMBIOS)     +=3D dell-smbios.o
->  obj-$(CONFIG_DELL_LAPTOP)      +=3D dell-laptop.o
->  obj-$(CONFIG_DELL_WMI)         +=3D dell-wmi.o
->  obj-$(CONFIG_DELL_WMI_AIO)     +=3D dell-wmi-aio.o
-> +obj-$(CONFIG_DELL_WMI_LED)     +=3D dell-wmi-led.o
->  obj-$(CONFIG_DELL_SMO8800)     +=3D dell-smo8800.o
->  obj-$(CONFIG_DELL_RBTN)                +=3D dell-rbtn.o
->  obj-$(CONFIG_ACER_WMI)         +=3D acer-wmi.o
-> diff --git a/drivers/leds/dell-led.c b/drivers/platform/x86/dell-wmi-led.=
-c
-> similarity index 99%
-> rename from drivers/leds/dell-led.c
-> rename to drivers/platform/x86/dell-wmi-led.c
-> index e5c5738..7486c01 100644
-> --- a/drivers/leds/dell-led.c
-> +++ b/drivers/platform/x86/dell-wmi-led.c
-> @@ -1,5 +1,5 @@
->  /*
+patch 1: updates all the drivers using rc_allocate_device
+patch 2: fixed errors and warning reported from the kbuild test
+         robot
+patch 5: this patch has been dropped and replaced with a new one
+         which avoids waiting for transmitters.
+patch 6: added new properties to the dts specification
+patch 7: the driver uses the pulse/space input and converts it to
+         a bit stream.
 
-> - * dell_led.c - Dell LED Driver
-> + * dell-wmi-led.c - Dell WMI LED Driver
 
-That's exactly the point why better to take a chance to remove file
-name from the file.
+Changelog from version 2:
+-------------------------
+The original patch number 5 has been abandoned because it was not
+bringing much benenfit.
 
->   *
->   * Copyright (C) 2010 Dell Inc.
->   * Louis Davis <louis_davis@dell.com>
+patch 1: rebased on the new kernel.
+patch 3: removed the sysfs attribute protocol for transmitters
+patch 5: the binding has been moved to the leds section instead
+         of the media. Fixed all the comments from Rob
+patch 6: fixed all the comments from Sean added also Sean's
+         review.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Changelog from version 3:
+-------------------------
+Added the patches Sean's review.
+
+patch 1: commit ddbf7d5a has introduced the devm_* managed version
+	 of rc_allocate_device and rc_register_device, this patch
+	 has been rebased on top of it and adds the driver type
+	 as a parameter of the devm_rc_allocate_device.
+patch 3: fixes a warning from the kbuild test robot
+patch 5: after a discussion with Rob, despite mine, Jacek's and
+	 Mauro's objections [*] the binding has been placed under
+	 leds/irled/spi-ir-led.txt
+patch 6: uses the new devm_* allocation and registration rc
+	 functions
+
+[*] https://www.spinics.net/lists/linux-leds/msg07062.html
+    https://www.spinics.net/lists/linux-leds/msg07164.html
+    https://www.spinics.net/lists/linux-leds/msg07167.html
+
+Andi Shyti (6):
+  [media] rc-main: assign driver type during allocation
+  [media] rc-main: split setup and unregister functions
+  [media] rc-core: add support for IR raw transmitters
+  [media] rc-ir-raw: do not generate any receiving thread for raw
+    transmitters
+  Documentation: bindings: add documentation for ir-spi device driver
+  [media] rc: add support for IR LEDs driven through SPI
+
+ .../devicetree/bindings/leds/irled/spi-ir-led.txt  |  29 +++
+ drivers/hid/hid-picolcd_cir.c                      |   3 +-
+ drivers/media/cec/cec-core.c                       |   3 +-
+ drivers/media/common/siano/smsir.c                 |   3 +-
+ drivers/media/i2c/ir-kbd-i2c.c                     |   2 +-
+ drivers/media/pci/bt8xx/bttv-input.c               |   2 +-
+ drivers/media/pci/cx23885/cx23885-input.c          |  11 +-
+ drivers/media/pci/cx88/cx88-input.c                |   3 +-
+ drivers/media/pci/dm1105/dm1105.c                  |   3 +-
+ drivers/media/pci/mantis/mantis_input.c            |   2 +-
+ drivers/media/pci/saa7134/saa7134-input.c          |   2 +-
+ drivers/media/pci/smipcie/smipcie-ir.c             |   3 +-
+ drivers/media/pci/ttpci/budget-ci.c                |   2 +-
+ drivers/media/rc/Kconfig                           |   9 +
+ drivers/media/rc/Makefile                          |   1 +
+ drivers/media/rc/ati_remote.c                      |   3 +-
+ drivers/media/rc/ene_ir.c                          |   3 +-
+ drivers/media/rc/fintek-cir.c                      |   3 +-
+ drivers/media/rc/gpio-ir-recv.c                    |   3 +-
+ drivers/media/rc/igorplugusb.c                     |   3 +-
+ drivers/media/rc/iguanair.c                        |   3 +-
+ drivers/media/rc/img-ir/img-ir-hw.c                |   2 +-
+ drivers/media/rc/img-ir/img-ir-raw.c               |   3 +-
+ drivers/media/rc/imon.c                            |   3 +-
+ drivers/media/rc/ir-hix5hd2.c                      |   3 +-
+ drivers/media/rc/ir-spi.c                          | 199 +++++++++++++++++++++
+ drivers/media/rc/ite-cir.c                         |   3 +-
+ drivers/media/rc/mceusb.c                          |   3 +-
+ drivers/media/rc/meson-ir.c                        |   3 +-
+ drivers/media/rc/nuvoton-cir.c                     |   3 +-
+ drivers/media/rc/rc-ir-raw.c                       |  17 +-
+ drivers/media/rc/rc-loopback.c                     |   3 +-
+ drivers/media/rc/rc-main.c                         | 186 +++++++++++--------
+ drivers/media/rc/redrat3.c                         |   3 +-
+ drivers/media/rc/serial_ir.c                       |   3 +-
+ drivers/media/rc/st_rc.c                           |   3 +-
+ drivers/media/rc/streamzap.c                       |   3 +-
+ drivers/media/rc/sunxi-cir.c                       |   3 +-
+ drivers/media/rc/ttusbir.c                         |   3 +-
+ drivers/media/rc/winbond-cir.c                     |   3 +-
+ drivers/media/usb/au0828/au0828-input.c            |   3 +-
+ drivers/media/usb/cx231xx/cx231xx-input.c          |   2 +-
+ drivers/media/usb/dvb-usb-v2/dvb_usb_core.c        |   3 +-
+ drivers/media/usb/dvb-usb/dvb-usb-remote.c         |   3 +-
+ drivers/media/usb/em28xx/em28xx-input.c            |   2 +-
+ drivers/media/usb/tm6000/tm6000-input.c            |   3 +-
+ include/media/rc-core.h                            |  15 +-
+ 47 files changed, 408 insertions(+), 168 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
+ create mode 100644 drivers/media/rc/ir-spi.c
+
+-- 
+2.10.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
