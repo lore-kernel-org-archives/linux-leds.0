@@ -1,44 +1,45 @@
-From: Milo Kim <woogyom.kim@gmail.com>
-Subject: Re: [PATCH 4/5] firmware: add SmPL report for custom fallback
- mechanism
-Date: Wed, 14 Dec 2016 10:48:37 +0900
-Message-ID: <271c9d23-d35e-252b-d03b-651457112d28@gmail.com>
-References: <20161213030828.17820-1-mcgrof@kernel.org>
- <CGME20161213030855epcas2p154c4db65f0d1e5b0c47979dc8500517d@epcas2p1.samsung.com>
- <20161213030828.17820-5-mcgrof@kernel.org>
- <10f8c7f7-a255-4830-65f0-a040d8236bf1@samsung.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 4/7] dell-led: remove dell_app_wmi_led_set()
+Date: Wed, 14 Dec 2016 03:54:59 +0200
+Message-ID: <CAHp75VfTLrY_MBphzg2idGhQbvnjyf7+9-BQjD37TXnucj+nMw@mail.gmail.com>
+References: <20161208123618.28603-1-kernel@kempniu.pl> <20161208123618.28603-5-kernel@kempniu.pl>
+ <201612111140.48561@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35129 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753149AbcLNBu3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Dec 2016 20:50:29 -0500
-In-Reply-To: <10f8c7f7-a255-4830-65f0-a040d8236bf1@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201612111140.48561@pali>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Louis Davis <Louis_Davis@dell.com>, Jim Dailey <Jim_Dailey@dell.com>, Alex Hung <alex.hung@canonical.com>, Hui Wang <hui.wang@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.k
 
-Hi Jacek,
-
-On 12/13/2016 06:44 PM, Jacek Anaszewski wrote:
+On Sun, Dec 11, 2016 at 12:40 PM, Pali Roh=C3=A1r <pali.rohar@gmail.com> wr=
+ote:
+> On Thursday 08 December 2016 13:36:15 Micha=C5=82 K=C4=99pie=C5=84 wrote:
+>> All calls to dell_app_wmi_led_set() have been replaced with direct
+>> calls to dell_micmute_led_set(), so the former can be safely removed
+>> along with its related enum.
+>>
+>> Signed-off-by: Micha=C5=82 K=C4=99pie=C5=84 <kernel@kempniu.pl>
 >
-> Could you please verify if leds-lp55xx-common.c driver
-> really needs a custom firmware loading fallback mechanism?
+> I would suggest to squash patches 2,3,4 into one. But I let decision to
+> alsa & led maintainers.
 
-Thanks for sharing this. The lp55xx-common uses this mechanism to load 
-and run LED effect manually, so this could be a misuse case.
-I think the right solution is providing device attributes.
+I don't like the part where we are exporting something for just one
+moment. So, +1 to squashed version.
 
-At this moment, four drivers use lp55xx-common code.
+>
+> Anyway, for patches 2,3,4 you can add my Reviewed-by. It is nice cleanup
+>
+> Reviewed-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+>
+> --
+> Pali Roh=C3=A1r
+> pali.rohar@gmail.com
 
-- lp5521, lp5523: OK if we do not support FW loading fallback mechanism
-- lp5562, lp8501: need to create additional sysfs alternatively.
 
-However, we should be careful because I'm not sure this modification 
-will generate the regression (breaking the user-space) or not.
 
-Best regards,
-Milo
+--=20
+With Best Regards,
+Andy Shevchenko
