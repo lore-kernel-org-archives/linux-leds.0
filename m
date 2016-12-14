@@ -1,7 +1,8 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v4 3/6] [media] rc-core: add support for IR raw transmitters
-Date: Wed, 14 Dec 2016 23:00:27 +0900
-Message-ID: <20161214140030.28537-4-andi.shyti@samsung.com>
+Subject: [PATCH v4 4/6] [media] rc-ir-raw: do not generate any receiving thread
+ for raw transmitters
+Date: Wed, 14 Dec 2016 23:00:28 +0900
+Message-ID: <20161214140030.28537-5-andi.shyti@samsung.com>
 References: <20161214140030.28537-1-andi.shyti@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20161214140030.28537-1-andi.shyti@samsung.com>
@@ -10,123 +11,44 @@ To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-leds@vger.kernel.org
 
-IR raw transmitter driver type is specified in the enum
-rc_driver_type as RC_DRIVER_IR_RAW_TX which includes all those
-devices that transmit raw stream of bit to a receiver.
+Raw IR transmitters do not need any thread listening for
+occurring events. Check the driver type before running the
+thread.
 
-The data are provided by userspace applications, therefore they
-don't need any input device allocation, but still they need to be
-registered as raw devices.
-
-Suggested-by: Sean Young <sean@mess.org>
 Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 Reviewed-by: Sean Young <sean@mess.org>
 ---
- drivers/media/rc/rc-main.c | 42 +++++++++++++++++++++++++-----------------
- include/media/rc-core.h    |  9 ++++++---
- 2 files changed, 31 insertions(+), 20 deletions(-)
+ drivers/media/rc/rc-ir-raw.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
-index 59fac96..1ddecca 100644
---- a/drivers/media/rc/rc-main.c
-+++ b/drivers/media/rc/rc-main.c
-@@ -1365,20 +1365,24 @@ struct rc_dev *rc_allocate_device(enum rc_driver_type type)
- 	if (!dev)
- 		return NULL;
+diff --git a/drivers/media/rc/rc-ir-raw.c b/drivers/media/rc/rc-ir-raw.c
+index 1c42a9f..9938e42 100644
+--- a/drivers/media/rc/rc-ir-raw.c
++++ b/drivers/media/rc/rc-ir-raw.c
+@@ -270,12 +270,19 @@ int ir_raw_event_register(struct rc_dev *dev)
+ 	INIT_KFIFO(dev->raw->kfifo);
  
--	dev->input_dev = input_allocate_device();
--	if (!dev->input_dev) {
--		kfree(dev);
--		return NULL;
--	}
-+	if (type != RC_DRIVER_IR_RAW_TX) {
-+		dev->input_dev = input_allocate_device();
-+		if (!dev->input_dev) {
-+			kfree(dev);
-+			return NULL;
-+		}
-+
-+		dev->input_dev->getkeycode = ir_getkeycode;
-+		dev->input_dev->setkeycode = ir_setkeycode;
-+		input_set_drvdata(dev->input_dev, dev);
+ 	spin_lock_init(&dev->raw->lock);
+-	dev->raw->thread = kthread_run(ir_raw_event_thread, dev->raw,
+-				       "rc%u", dev->minor);
  
--	dev->input_dev->getkeycode = ir_getkeycode;
--	dev->input_dev->setkeycode = ir_setkeycode;
--	input_set_drvdata(dev->input_dev, dev);
-+		setup_timer(&dev->timer_keyup, ir_timer_keyup,
-+						(unsigned long)dev);
- 
--	spin_lock_init(&dev->rc_map.lock);
--	spin_lock_init(&dev->keylock);
-+		spin_lock_init(&dev->rc_map.lock);
-+		spin_lock_init(&dev->keylock);
-+	}
- 	mutex_init(&dev->lock);
--	setup_timer(&dev->timer_keyup, ir_timer_keyup, (unsigned long)dev);
- 
- 	dev->dev.type = &rc_dev_type;
- 	dev->dev.class = &rc_class;
-@@ -1507,7 +1511,7 @@ static int rc_setup_rx_device(struct rc_dev *dev)
- 
- static void rc_free_rx_device(struct rc_dev *dev)
- {
--	if (!dev)
-+	if (!dev || dev->driver_type == RC_DRIVER_IR_RAW_TX)
- 		return;
- 
- 	ir_free_table(&dev->rc_map);
-@@ -1537,7 +1541,8 @@ int rc_register_device(struct rc_dev *dev)
- 	atomic_set(&dev->initialized, 0);
- 
- 	dev->dev.groups = dev->sysfs_groups;
--	dev->sysfs_groups[attr++] = &rc_dev_protocol_attr_grp;
-+	if (dev->driver_type != RC_DRIVER_IR_RAW_TX)
-+		dev->sysfs_groups[attr++] = &rc_dev_protocol_attr_grp;
- 	if (dev->s_filter)
- 		dev->sysfs_groups[attr++] = &rc_dev_filter_attr_grp;
- 	if (dev->s_wakeup_filter)
-@@ -1555,11 +1560,14 @@ int rc_register_device(struct rc_dev *dev)
- 		dev->input_name ?: "Unspecified device", path ?: "N/A");
- 	kfree(path);
- 
--	rc = rc_setup_rx_device(dev);
--	if (rc)
--		goto out_dev;
+-	if (IS_ERR(dev->raw->thread)) {
+-		rc = PTR_ERR(dev->raw->thread);
+-		goto out;
++	/*
++	 * raw transmitters do not need any event registration
++	 * because the event is coming from userspace
++	 */
 +	if (dev->driver_type != RC_DRIVER_IR_RAW_TX) {
-+		rc = rc_setup_rx_device(dev);
-+		if (rc)
-+			goto out_dev;
-+	}
++		dev->raw->thread = kthread_run(ir_raw_event_thread, dev->raw,
++					       "rc%u", dev->minor);
++
++		if (IS_ERR(dev->raw->thread)) {
++			rc = PTR_ERR(dev->raw->thread);
++			goto out;
++		}
+ 	}
  
--	if (dev->driver_type == RC_DRIVER_IR_RAW) {
-+	if (dev->driver_type == RC_DRIVER_IR_RAW ||
-+				dev->driver_type == RC_DRIVER_IR_RAW_TX) {
- 		if (!raw_init) {
- 			request_module_nowait("ir-lirc-codec");
- 			raw_init = true;
-diff --git a/include/media/rc-core.h b/include/media/rc-core.h
-index ba92c86..e6cb336 100644
---- a/include/media/rc-core.h
-+++ b/include/media/rc-core.h
-@@ -32,13 +32,16 @@ do {								\
- /**
-  * enum rc_driver_type - type of the RC output
-  *
-- * @RC_DRIVER_SCANCODE:	Driver or hardware generates a scancode
-- * @RC_DRIVER_IR_RAW:	Driver or hardware generates pulse/space sequences.
-- *			It needs a Infra-Red pulse/space decoder
-+ * @RC_DRIVER_SCANCODE:	 Driver or hardware generates a scancode
-+ * @RC_DRIVER_IR_RAW:	 Driver or hardware generates pulse/space sequences.
-+ *			 It needs a Infra-Red pulse/space decoder
-+ * @RC_DRIVER_IR_RAW_TX: Device transmitter only,
-+ *			 driver requires pulse/space data sequence.
-  */
- enum rc_driver_type {
- 	RC_DRIVER_SCANCODE = 0,
- 	RC_DRIVER_IR_RAW,
-+	RC_DRIVER_IR_RAW_TX,
- };
- 
- /**
+ 	mutex_lock(&ir_raw_handler_lock);
 -- 
 2.10.2
