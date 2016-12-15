@@ -1,244 +1,145 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when using get_gpiod_from_child
-Date: Thu, 15 Dec 2016 09:53:21 +0100
-Message-ID: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:51467 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757457AbcLOIy2 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 15 Dec 2016 03:54:28 -0500
-Sender: linux-leds-owner@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK() annotation
+Date: Thu, 15 Dec 2016 10:32:12 +0100
+Message-ID: <6ad65e16-18c6-83c5-72db-053abc909ef8@gmail.com>
+References: <20161213030828.17820-1-mcgrof@kernel.org>
+ <20161213030828.17820-6-mcgrof@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161213030828.17820-6-mcgrof@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com
+Cc: daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.kernel.org, woogyom.kim@gmail.com
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
 
-Currently all users of fwnode_get_named_gpiod() have no way to specify a
-label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-With this change a proper label is used.
-Also adjust all users so they can pass a label, properly retrieved from
-device tree properties.
+Hi Luis,
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-This patchset addresses the problem described in
-https://www.spinics.net/lists/linux-leds/msg07233.html
+Thanks for the patch.
 
-I can only verify leds-gpio usage, but changes to gpio_keys_polled and
-amba-clcd-nomadik seem pretty straight forward.
+On 12/13/2016 04:08 AM, Luis R. Rodriguez wrote:
+> We need to ensure that when driver developers use the custom firmware
+> fallback mechanism it was not a copy and paste bug. These use cases on
+> upstream drivers are rare, we only have 2 upstream users and its for
+> really old drivers. Since valid uses are rare but possible enable a
+> white-list for its use, and use this same white-list annotation to refer
+> to the documentation covering the custom use case.
+>
+> New faulty users can be reported via 0-day now.
+>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: linux-leds@vger.kernel.org
+> Cc: Abhay Salunke <Abhay_Salunke@dell.com>
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+> ---
+>  Documentation/driver-api/firmware/fallback-mechanisms.rst     | 7 +++++--
+>  drivers/firmware/dell_rbu.c                                   | 1 +
+>  drivers/leds/leds-lp55xx-common.c                             | 1 +
+>  include/linux/firmware.h                                      | 7 +++++++
+>  scripts/coccinelle/api/request_firmware-custom-fallback.cocci | 9 ++++++++-
+>  5 files changed, 22 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+> index 955c11d6ff9d..b51673e40439 100644
+> --- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
+> +++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+> @@ -184,8 +184,11 @@ load firmware for you through a custom path.
+>
+>  The custom fallback mechanism can often be enabled by mistake. We currently
+>  have only 2 users of it, and little justification to enable it for other users.
+> -Since it is a common driver developer mistake to enable it, help police for
+> -new users of the custom fallback mechanism with::
+> +Since it is a common driver developer mistake to enable it, driver developers
+> +should use DECLARE_FW_CUSTOM_FALLBACK() to both white-list and validate their
+> +use and also refer to the documentation for the custom loading solution.
+> +
+> +Invalid users of the custom fallback mechanism can be policed using::
 
-If this is the right thing to do, I need to know who I shall CC for
-patch approval.
+double colon at the end of line
 
- drivers/gpio/devres.c                     |  6 ++++--
- drivers/gpio/gpiolib.c                    |  6 ++++--
- drivers/input/keyboard/gpio_keys_polled.c | 11 ++++++-----
- drivers/leds/leds-gpio.c                  | 13 +++++++------
- drivers/video/fbdev/amba-clcd-nomadik.c   |  9 +++++----
- include/linux/gpio/consumer.h             | 12 ++++++++----
- 6 files changed, 34 insertions(+), 23 deletions(-)
+>
+>          $ export COCCI=scripts/coccinelle/api/request_firmware-avoid-init-probe-init.cocci
+>          $ make coccicheck MODE=report
+> diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
+> index 2f452f1f7c8a..3f2aa35bc54d 100644
+> --- a/drivers/firmware/dell_rbu.c
+> +++ b/drivers/firmware/dell_rbu.c
+> @@ -586,6 +586,7 @@ static ssize_t read_rbu_image_type(struct file *filp, struct kobject *kobj,
+>  	return size;
+>  }
+>
+> +DECLARE_FW_CUSTOM_FALLBACK("Documentation/dell_rbu.txt");
+>  static ssize_t write_rbu_image_type(struct file *filp, struct kobject *kobj,
+>  				    struct bin_attribute *bin_attr,
+>  				    char *buffer, loff_t pos, size_t count)
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 5377f22ff994..04161428ee3b 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -219,6 +219,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
+>  	release_firmware(chip->fw);
+>  }
+>
+> +DECLARE_FW_CUSTOM_FALLBACK("Documentation/leds/leds-lp55xx.txt");
+>  static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+>  {
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index b760cbb..892aa1b 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -127,13 +127,15 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-  * @child:	firmware node (child of @dev)
-+ * @label:	label for GPIO
-  *
-  * GPIO descriptors returned from this function are automatically disposed on
-  * driver detach.
-  */
- struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 					    const char *con_id,
--					    struct fwnode_handle *child)
-+					    struct fwnode_handle *child,
-+					    const char *label)
- {
- 	static const char * const suffixes[] = { "gpios", "gpio" };
- 	char prop_name[32]; /* 32 is max size of property name */
-@@ -154,7 +156,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 			snprintf(prop_name, sizeof(prop_name), "%s",
- 							       suffixes[i]);
- 
--		desc = fwnode_get_named_gpiod(child, prop_name);
-+		desc = fwnode_get_named_gpiod(child, prop_name, label);
- 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
- 			break;
- 	}
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 868128a..b56a5ae 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3246,6 +3246,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
-  * @fwnode:	handle of the firmware node
-  * @propname:	name of the firmware property representing the GPIO
-+ * @label:	label for GPIO
-  *
-  * This function can be used for drivers that get their configuration
-  * from firmware.
-@@ -3257,7 +3258,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  * In case of error an ERR_PTR() is returned.
-  */
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname)
-+					 const char *propname,
-+					 const char *label)
- {
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
- 	bool active_low = false;
-@@ -3287,7 +3289,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	if (IS_ERR(desc))
- 		return desc;
- 
--	ret = gpiod_request(desc, NULL);
-+	ret = gpiod_request(desc, label);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index 62bdb1d..01087c7 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -167,7 +167,12 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 	device_for_each_child_node(dev, child) {
- 		struct gpio_desc *desc;
- 
--		desc = devm_get_gpiod_from_child(dev, NULL, child);
-+		button = &pdata->buttons[pdata->nbuttons++];
-+
-+		fwnode_property_read_string(child, "label", &button->desc);
-+
-+		desc = devm_get_gpiod_from_child(dev, NULL, child,
-+						 button->desc);
- 		if (IS_ERR(desc)) {
- 			error = PTR_ERR(desc);
- 			if (error != -EPROBE_DEFER)
-@@ -177,8 +182,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 			fwnode_handle_put(child);
- 			return ERR_PTR(error);
- 		}
--
--		button = &pdata->buttons[pdata->nbuttons++];
- 		button->gpiod = desc;
- 
- 		if (fwnode_property_read_u32(child, "linux,code", &button->code)) {
-@@ -188,8 +191,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		fwnode_property_read_string(child, "label", &button->desc);
--
- 		if (fwnode_property_read_u32(child, "linux,input-type",
- 					     &button->type))
- 			button->type = EV_KEY;
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index d400dca..7557788 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		const char *state = NULL;
- 		struct device_node *np = to_of_node(child);
- 
--		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
--		if (IS_ERR(led.gpiod)) {
--			fwnode_handle_put(child);
--			return ERR_CAST(led.gpiod);
--		}
--
- 		ret = fwnode_property_read_string(child, "label", &led.name);
- 		if (ret && IS_ENABLED(CONFIG_OF) && np)
- 			led.name = np->name;
-@@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
-+		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-+						      led.name);
-+		if (IS_ERR(led.gpiod)) {
-+			fwnode_handle_put(child);
-+			return ERR_CAST(led.gpiod);
-+		}
-+
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led.default_trigger);
- 
-diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-index 0c06fca..22e963e 100644
---- a/drivers/video/fbdev/amba-clcd-nomadik.c
-+++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-@@ -184,7 +184,8 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- {
- 	dev_info(dev, "TPG110 display init\n");
- 
--	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode);
-+	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-+					   "grestb");
- 	if (IS_ERR(grestb)) {
- 		dev_err(dev, "no GRESTB GPIO\n");
- 		return;
-@@ -192,19 +193,19 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- 	/* This asserts the GRESTB signal, putting the display into reset */
- 	gpiod_direction_output(grestb, 1);
- 
--	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode);
-+	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, "scen");
- 	if (IS_ERR(scen)) {
- 		dev_err(dev, "no SCEN GPIO\n");
- 		return;
- 	}
- 	gpiod_direction_output(scen, 0);
--	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode);
-+	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, "scl");
- 	if (IS_ERR(scl)) {
- 		dev_err(dev, "no SCL GPIO\n");
- 		return;
- 	}
- 	gpiod_direction_output(scl, 0);
--	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode);
-+	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, "sda");
- 	if (IS_ERR(sda)) {
- 		dev_err(dev, "no SDA GPIO\n");
- 		return;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fb0fde6..82b4014 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -135,10 +135,12 @@ int desc_to_gpio(const struct gpio_desc *desc);
- struct fwnode_handle;
- 
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname);
-+					 const char *propname,
-+					 const char *label);
- struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 					    const char *con_id,
--					    struct fwnode_handle *child);
-+					    struct fwnode_handle *child,
-+					    const char *label);
- #else /* CONFIG_GPIOLIB */
- 
- static inline int gpiod_count(struct device *dev, const char *con_id)
-@@ -412,13 +414,15 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
- struct fwnode_handle;
- 
- static inline struct gpio_desc *fwnode_get_named_gpiod(
--	struct fwnode_handle *fwnode, const char *propname)
-+	struct fwnode_handle *fwnode, const char *propname,
-+	const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
- 
- static inline struct gpio_desc *devm_get_gpiod_from_child(
--	struct device *dev, const char *con_id, struct fwnode_handle *child)
-+	struct device *dev, const char *con_id, struct fwnode_handle *child,
-+	const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
+For this LED class driver:
+
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
+
+>  	const char *name = chip->cl->name;
+> diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+> index b1f9f0ccb8ac..e6ca19c03dcc 100644
+> --- a/include/linux/firmware.h
+> +++ b/include/linux/firmware.h
+> @@ -8,6 +8,13 @@
+>  #define FW_ACTION_NOHOTPLUG 0
+>  #define FW_ACTION_HOTPLUG 1
+>
+> +/*
+> + * Helper for scripts/coccinelle/api/request_firmware-custom-fallback.cocci
+> + * and so users can also easily search for the documentation for the
+> + * respectively needed custom fallback mechanism.
+> + */
+> +#define DECLARE_FW_CUSTOM_FALLBACK(__usermode_helper)
+> +
+>  struct firmware {
+>  	size_t size;
+>  	const u8 *data;
+> diff --git a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
+> index c7598cfc4780..68cacab35b76 100644
+> --- a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
+> +++ b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
+> @@ -17,6 +17,13 @@
+>  virtual report
+>  virtual context
+>
+> +@ r0 depends on report || context @
+> +declarer name DECLARE_FW_CUSTOM_FALLBACK;
+> +expression E;
+> +@@
+> +
+> +DECLARE_FW_CUSTOM_FALLBACK(E);
+> +
+>  @ r1 depends on report || context @
+>  expression mod, name, dev, gfp, drv, cb;
+>  position p;
+> @@ -30,7 +37,7 @@ position p;
+>  *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
+>  )
+>
+> -@script:python depends on report@
+> +@script:python depends on report && !r0 @
+>  p << r1.p;
+>  @@
+>
+>
+
 -- 
-2.10.2
+Best regards,
+Jacek Anaszewski
