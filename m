@@ -1,229 +1,244 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v4 2/6] [media] rc-main: split setup and unregister functions
-Date: Wed, 14 Dec 2016 23:00:26 +0900
-Message-ID: <20161214140030.28537-3-andi.shyti@samsung.com>
-References: <20161214140030.28537-1-andi.shyti@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20161214140030.28537-1-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when using get_gpiod_from_child
+Date: Thu, 15 Dec 2016 09:53:21 +0100
+Message-ID: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:51467 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757457AbcLOIy2 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 15 Dec 2016 03:54:28 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
 
-Move the input device allocation, map and protocol handling to
-different functions.
+Currently all users of fwnode_get_named_gpiod() have no way to specify a
+label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+With this change a proper label is used.
+Also adjust all users so they can pass a label, properly retrieved from
+device tree properties.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Sean Young <sean@mess.org>
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 ---
- drivers/media/rc/rc-main.c | 143 +++++++++++++++++++++++++--------------------
- 1 file changed, 81 insertions(+), 62 deletions(-)
+This patchset addresses the problem described in
+https://www.spinics.net/lists/linux-leds/msg07233.html
 
-diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
-index a6bbceb..59fac96 100644
---- a/drivers/media/rc/rc-main.c
-+++ b/drivers/media/rc/rc-main.c
-@@ -1436,16 +1436,12 @@ struct rc_dev *devm_rc_allocate_device(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_rc_allocate_device);
- 
--int rc_register_device(struct rc_dev *dev)
-+static int rc_setup_rx_device(struct rc_dev *dev)
+I can only verify leds-gpio usage, but changes to gpio_keys_polled and
+amba-clcd-nomadik seem pretty straight forward.
+
+If this is the right thing to do, I need to know who I shall CC for
+patch approval.
+
+ drivers/gpio/devres.c                     |  6 ++++--
+ drivers/gpio/gpiolib.c                    |  6 ++++--
+ drivers/input/keyboard/gpio_keys_polled.c | 11 ++++++-----
+ drivers/leds/leds-gpio.c                  | 13 +++++++------
+ drivers/video/fbdev/amba-clcd-nomadik.c   |  9 +++++----
+ include/linux/gpio/consumer.h             | 12 ++++++++----
+ 6 files changed, 34 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index b760cbb..892aa1b 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -127,13 +127,15 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+  * @dev:	GPIO consumer
+  * @con_id:	function within the GPIO consumer
+  * @child:	firmware node (child of @dev)
++ * @label:	label for GPIO
+  *
+  * GPIO descriptors returned from this function are automatically disposed on
+  * driver detach.
+  */
+ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+-					    struct fwnode_handle *child)
++					    struct fwnode_handle *child,
++					    const char *label)
  {
--	static bool raw_init = false; /* raw decoders loaded? */
--	struct rc_map *rc_map;
--	const char *path;
--	int attr = 0;
--	int minor;
- 	int rc;
-+	struct rc_map *rc_map;
+ 	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+@@ -154,7 +156,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+ 							       suffixes[i]);
  
--	if (!dev || !dev->map_name)
-+	if (!dev->map_name)
- 		return -EINVAL;
- 
- 	rc_map = rc_map_get(dev->map_name);
-@@ -1454,6 +1450,19 @@ int rc_register_device(struct rc_dev *dev)
- 	if (!rc_map || !rc_map->scan || rc_map->size == 0)
- 		return -EINVAL;
- 
-+	rc = ir_setkeytable(dev, rc_map);
-+	if (rc)
-+		return rc;
-+
-+	if (dev->change_protocol) {
-+		u64 rc_type = (1ll << rc_map->rc_type);
-+
-+		rc = dev->change_protocol(dev, &rc_type);
-+		if (rc < 0)
-+			goto out_table;
-+		dev->enabled_protocols = rc_type;
-+	}
-+
- 	set_bit(EV_KEY, dev->input_dev->evbit);
- 	set_bit(EV_REP, dev->input_dev->evbit);
- 	set_bit(EV_MSC, dev->input_dev->evbit);
-@@ -1463,6 +1472,61 @@ int rc_register_device(struct rc_dev *dev)
- 	if (dev->close)
- 		dev->input_dev->close = ir_close;
- 
-+	/*
-+	 * Default delay of 250ms is too short for some protocols, especially
-+	 * since the timeout is currently set to 250ms. Increase it to 500ms,
-+	 * to avoid wrong repetition of the keycodes. Note that this must be
-+	 * set after the call to input_register_device().
-+	 */
-+	dev->input_dev->rep[REP_DELAY] = 500;
-+
-+	/*
-+	 * As a repeat event on protocols like RC-5 and NEC take as long as
-+	 * 110/114ms, using 33ms as a repeat period is not the right thing
-+	 * to do.
-+	 */
-+	dev->input_dev->rep[REP_PERIOD] = 125;
-+
-+	/* rc_open will be called here */
-+	rc = input_register_device(dev->input_dev);
-+	if (rc)
-+		goto out_table;
-+
-+	dev->input_dev->dev.parent = &dev->dev;
-+	memcpy(&dev->input_dev->id, &dev->input_id, sizeof(dev->input_id));
-+	dev->input_dev->phys = dev->input_phys;
-+	dev->input_dev->name = dev->input_name;
-+
-+	return 0;
-+
-+out_table:
-+	ir_free_table(&dev->rc_map);
-+
-+	return rc;
-+}
-+
-+static void rc_free_rx_device(struct rc_dev *dev)
-+{
-+	if (!dev)
-+		return;
-+
-+	ir_free_table(&dev->rc_map);
-+
-+	input_unregister_device(dev->input_dev);
-+	dev->input_dev = NULL;
-+}
-+
-+int rc_register_device(struct rc_dev *dev)
-+{
-+	static bool raw_init = false; /* raw decoders loaded? */
-+	const char *path;
-+	int attr = 0;
-+	int minor;
-+	int rc;
-+
-+	if (!dev)
-+		return -EINVAL;
-+
- 	minor = ida_simple_get(&rc_ida, 0, RC_DEV_MAX, GFP_KERNEL);
- 	if (minor < 0)
- 		return minor;
-@@ -1486,39 +1550,15 @@ int rc_register_device(struct rc_dev *dev)
- 	if (rc)
- 		goto out_unlock;
- 
--	rc = ir_setkeytable(dev, rc_map);
--	if (rc)
--		goto out_dev;
--
--	dev->input_dev->dev.parent = &dev->dev;
--	memcpy(&dev->input_dev->id, &dev->input_id, sizeof(dev->input_id));
--	dev->input_dev->phys = dev->input_phys;
--	dev->input_dev->name = dev->input_name;
--
--	rc = input_register_device(dev->input_dev);
--	if (rc)
--		goto out_table;
--
--	/*
--	 * Default delay of 250ms is too short for some protocols, especially
--	 * since the timeout is currently set to 250ms. Increase it to 500ms,
--	 * to avoid wrong repetition of the keycodes. Note that this must be
--	 * set after the call to input_register_device().
--	 */
--	dev->input_dev->rep[REP_DELAY] = 500;
--
--	/*
--	 * As a repeat event on protocols like RC-5 and NEC take as long as
--	 * 110/114ms, using 33ms as a repeat period is not the right thing
--	 * to do.
--	 */
--	dev->input_dev->rep[REP_PERIOD] = 125;
--
- 	path = kobject_get_path(&dev->dev.kobj, GFP_KERNEL);
- 	dev_info(&dev->dev, "%s as %s\n",
- 		dev->input_name ?: "Unspecified device", path ?: "N/A");
- 	kfree(path);
- 
-+	rc = rc_setup_rx_device(dev);
-+	if (rc)
-+		goto out_dev;
-+
- 	if (dev->driver_type == RC_DRIVER_IR_RAW) {
- 		if (!raw_init) {
- 			request_module_nowait("ir-lirc-codec");
-@@ -1526,36 +1566,20 @@ int rc_register_device(struct rc_dev *dev)
- 		}
- 		rc = ir_raw_event_register(dev);
- 		if (rc < 0)
--			goto out_input;
--	}
--
--	if (dev->change_protocol) {
--		u64 rc_type = (1ll << rc_map->rc_type);
--		rc = dev->change_protocol(dev, &rc_type);
--		if (rc < 0)
--			goto out_raw;
--		dev->enabled_protocols = rc_type;
-+			goto out_rx;
+-		desc = fwnode_get_named_gpiod(child, prop_name);
++		desc = fwnode_get_named_gpiod(child, prop_name, label);
+ 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+ 			break;
  	}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 868128a..b56a5ae 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3246,6 +3246,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
+  * @fwnode:	handle of the firmware node
+  * @propname:	name of the firmware property representing the GPIO
++ * @label:	label for GPIO
+  *
+  * This function can be used for drivers that get their configuration
+  * from firmware.
+@@ -3257,7 +3258,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * In case of error an ERR_PTR() is returned.
+  */
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname)
++					 const char *propname,
++					 const char *label)
+ {
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	bool active_low = false;
+@@ -3287,7 +3289,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (IS_ERR(desc))
+ 		return desc;
  
- 	/* Allow the RC sysfs nodes to be accessible */
- 	atomic_set(&dev->initialized, 1);
+-	ret = gpiod_request(desc, NULL);
++	ret = gpiod_request(desc, label);
+ 	if (ret)
+ 		return ERR_PTR(ret);
  
--	IR_dprintk(1, "Registered rc%u (driver: %s, remote: %s, mode %s)\n",
-+	IR_dprintk(1, "Registered rc%u (driver: %s)\n",
- 		   dev->minor,
--		   dev->driver_name ? dev->driver_name : "unknown",
--		   rc_map->name ? rc_map->name : "unknown",
--		   dev->driver_type == RC_DRIVER_IR_RAW ? "raw" : "cooked");
-+		   dev->driver_name ? dev->driver_name : "unknown");
+diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+index 62bdb1d..01087c7 100644
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@ -167,7 +167,12 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 	device_for_each_child_node(dev, child) {
+ 		struct gpio_desc *desc;
  
- 	return 0;
- 
--out_raw:
--	if (dev->driver_type == RC_DRIVER_IR_RAW)
--		ir_raw_event_unregister(dev);
--out_input:
--	input_unregister_device(dev->input_dev);
--	dev->input_dev = NULL;
--out_table:
--	ir_free_table(&dev->rc_map);
-+out_rx:
-+	rc_free_rx_device(dev);
- out_dev:
- 	device_del(&dev->dev);
- out_unlock:
-@@ -1601,12 +1625,7 @@ void rc_unregister_device(struct rc_dev *dev)
- 	if (dev->driver_type == RC_DRIVER_IR_RAW)
- 		ir_raw_event_unregister(dev);
- 
--	/* Freeing the table should also call the stop callback */
--	ir_free_table(&dev->rc_map);
--	IR_dprintk(1, "Freed keycode table\n");
+-		desc = devm_get_gpiod_from_child(dev, NULL, child);
++		button = &pdata->buttons[pdata->nbuttons++];
++
++		fwnode_property_read_string(child, "label", &button->desc);
++
++		desc = devm_get_gpiod_from_child(dev, NULL, child,
++						 button->desc);
+ 		if (IS_ERR(desc)) {
+ 			error = PTR_ERR(desc);
+ 			if (error != -EPROBE_DEFER)
+@@ -177,8 +182,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 			fwnode_handle_put(child);
+ 			return ERR_PTR(error);
+ 		}
 -
--	input_unregister_device(dev->input_dev);
--	dev->input_dev = NULL;
-+	rc_free_rx_device(dev);
+-		button = &pdata->buttons[pdata->nbuttons++];
+ 		button->gpiod = desc;
  
- 	device_del(&dev->dev);
+ 		if (fwnode_property_read_u32(child, "linux,code", &button->code)) {
+@@ -188,8 +191,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 			return ERR_PTR(-EINVAL);
+ 		}
  
+-		fwnode_property_read_string(child, "label", &button->desc);
+-
+ 		if (fwnode_property_read_u32(child, "linux,input-type",
+ 					     &button->type))
+ 			button->type = EV_KEY;
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index d400dca..7557788 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		const char *state = NULL;
+ 		struct device_node *np = to_of_node(child);
+ 
+-		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+-		if (IS_ERR(led.gpiod)) {
+-			fwnode_handle_put(child);
+-			return ERR_CAST(led.gpiod);
+-		}
+-
+ 		ret = fwnode_property_read_string(child, "label", &led.name);
+ 		if (ret && IS_ENABLED(CONFIG_OF) && np)
+ 			led.name = np->name;
+@@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
++		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
++						      led.name);
++		if (IS_ERR(led.gpiod)) {
++			fwnode_handle_put(child);
++			return ERR_CAST(led.gpiod);
++		}
++
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led.default_trigger);
+ 
+diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
+index 0c06fca..22e963e 100644
+--- a/drivers/video/fbdev/amba-clcd-nomadik.c
++++ b/drivers/video/fbdev/amba-clcd-nomadik.c
+@@ -184,7 +184,8 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+ {
+ 	dev_info(dev, "TPG110 display init\n");
+ 
+-	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode);
++	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
++					   "grestb");
+ 	if (IS_ERR(grestb)) {
+ 		dev_err(dev, "no GRESTB GPIO\n");
+ 		return;
+@@ -192,19 +193,19 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+ 	/* This asserts the GRESTB signal, putting the display into reset */
+ 	gpiod_direction_output(grestb, 1);
+ 
+-	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode);
++	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, "scen");
+ 	if (IS_ERR(scen)) {
+ 		dev_err(dev, "no SCEN GPIO\n");
+ 		return;
+ 	}
+ 	gpiod_direction_output(scen, 0);
+-	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode);
++	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, "scl");
+ 	if (IS_ERR(scl)) {
+ 		dev_err(dev, "no SCL GPIO\n");
+ 		return;
+ 	}
+ 	gpiod_direction_output(scl, 0);
+-	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode);
++	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, "sda");
+ 	if (IS_ERR(sda)) {
+ 		dev_err(dev, "no SDA GPIO\n");
+ 		return;
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index fb0fde6..82b4014 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -135,10 +135,12 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ struct fwnode_handle;
+ 
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname);
++					 const char *propname,
++					 const char *label);
+ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+-					    struct fwnode_handle *child);
++					    struct fwnode_handle *child,
++					    const char *label);
+ #else /* CONFIG_GPIOLIB */
+ 
+ static inline int gpiod_count(struct device *dev, const char *con_id)
+@@ -412,13 +414,15 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ struct fwnode_handle;
+ 
+ static inline struct gpio_desc *fwnode_get_named_gpiod(
+-	struct fwnode_handle *fwnode, const char *propname)
++	struct fwnode_handle *fwnode, const char *propname,
++	const char *label)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *devm_get_gpiod_from_child(
+-	struct device *dev, const char *con_id, struct fwnode_handle *child)
++	struct device *dev, const char *con_id, struct fwnode_handle *child,
++	const char *label)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
 -- 
 2.10.2
