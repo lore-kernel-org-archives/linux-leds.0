@@ -1,8 +1,8 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v5 5/6] Documentation: bindings: add documentation for ir-spi
- device driver
-Date: Fri, 16 Dec 2016 15:12:17 +0900
-Message-ID: <20161216061218.5906-6-andi.shyti@samsung.com>
+Subject: [PATCH v5 4/6] [media] rc-ir-raw: do not generate any receiving thread
+ for raw transmitters
+Date: Fri, 16 Dec 2016 15:12:16 +0900
+Message-ID: <20161216061218.5906-5-andi.shyti@samsung.com>
 References: <20161216061218.5906-1-andi.shyti@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <20161216061218.5906-1-andi.shyti@samsung.com>
@@ -11,50 +11,44 @@ To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-leds@vger.kernel.org
 
-Document the ir-spi driver's binding which is a IR led driven
-through the SPI line.
+Raw IR transmitters do not need any thread listening for
+occurring events. Check the driver type before running the
+thread.
 
 Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 Reviewed-by: Sean Young <sean@mess.org>
 ---
- .../devicetree/bindings/leds/irled/spi-ir-led.txt  | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
+ drivers/media/rc/rc-ir-raw.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt b/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
-new file mode 100644
-index 0000000..896b699
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
-@@ -0,0 +1,29 @@
-+Device tree bindings for IR LED connected through SPI bus which is used as
-+remote controller.
+diff --git a/drivers/media/rc/rc-ir-raw.c b/drivers/media/rc/rc-ir-raw.c
+index 1c42a9f..9938e42 100644
+--- a/drivers/media/rc/rc-ir-raw.c
++++ b/drivers/media/rc/rc-ir-raw.c
+@@ -270,12 +270,19 @@ int ir_raw_event_register(struct rc_dev *dev)
+ 	INIT_KFIFO(dev->raw->kfifo);
+ 
+ 	spin_lock_init(&dev->raw->lock);
+-	dev->raw->thread = kthread_run(ir_raw_event_thread, dev->raw,
+-				       "rc%u", dev->minor);
+ 
+-	if (IS_ERR(dev->raw->thread)) {
+-		rc = PTR_ERR(dev->raw->thread);
+-		goto out;
++	/*
++	 * raw transmitters do not need any event registration
++	 * because the event is coming from userspace
++	 */
++	if (dev->driver_type != RC_DRIVER_IR_RAW_TX) {
++		dev->raw->thread = kthread_run(ir_raw_event_thread, dev->raw,
++					       "rc%u", dev->minor);
 +
-+The IR LED switch is connected to the MOSI line of the SPI device and the data
-+are delivered thourgh that.
-+
-+Required properties:
-+	- compatible: should be "ir-spi-led".
-+
-+Optional properties:
-+	- duty-cycle: 8 bit balue that represents the percentage of one period
-+	  in which the signal is active.  It can be 50, 60, 70, 75, 80 or 90.
-+	- led-active-low: boolean value that specifies whether the output is
-+	  negated with a NOT gate.
-+	- power-supply: specifies the power source. It can either be a regulator
-+	  or a gpio which enables a regulator, i.e. a regulator-fixed as
-+	  described in
-+	  Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+
-+Example:
-+
-+	irled@0 {
-+		compatible = "ir-spi-led";
-+		reg = <0x0>;
-+		spi-max-frequency = <5000000>;
-+		power-supply = <&vdd_led>;
-+		led-active-low;
-+		duty-cycle = /bits/ 8 <60>;
-+	};
++		if (IS_ERR(dev->raw->thread)) {
++			rc = PTR_ERR(dev->raw->thread);
++			goto out;
++		}
+ 	}
+ 
+ 	mutex_lock(&ir_raw_handler_lock);
 -- 
 2.10.2
