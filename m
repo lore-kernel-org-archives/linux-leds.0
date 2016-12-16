@@ -1,143 +1,234 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v5 0/6] Add support for IR transmitters
-Date: Fri, 16 Dec 2016 15:12:12 +0900
-Message-ID: <20161216061218.5906-1-andi.shyti@samsung.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:53758 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751664AbcLPGMf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2016 01:12:35 -0500
-Sender: linux-leds-owner@vger.kernel.org
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 2/6] [media] rc-main: split setup and unregister functions
+Date: Fri, 16 Dec 2016 15:12:14 +0900
+Message-ID: <20161216061218.5906-3-andi.shyti@samsung.com>
+References: <20161216061218.5906-1-andi.shyti@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20161216061218.5906-1-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Sean Young <sean-hENCXIMQXOg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-Hi,
+Move the input device allocation, map and protocol handling to
+different functions.
 
-The main goal is to add support in the rc framework for IR
-transmitters, which currently is only supported by lirc but that
-is not the preferred way.
+Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Sean Young <sean-hENCXIMQXOg@public.gmane.org>
+---
+ drivers/media/rc/rc-main.c | 143 +++++++++++++++++++++++++--------------------
+ 1 file changed, 81 insertions(+), 62 deletions(-)
 
-The last patch adds support for an IR transmitter driven by
-the MOSI line of an SPI controller, it's the case of the Samsung
-TM2(e) board which support is currently ongoing.
-
-The last patch adds support for an IR transmitter driven by
-the MOSI line of an SPI controller, it's the case of the Samsung
-TM2(e) board which support is currently ongoing.
-
-Thanks,
-Andi
-
-Changelog from version 4:
--------------------------
-patch 2: fixed a slip on a copy/paste. Thanks again Sean!
-
-Changelog from version 3:
--------------------------
-Added the patches Sean's review.
-
-patch 1: commit ddbf7d5a has introduced the devm_* managed version
-	 of rc_allocate_device and rc_register_device, this patch
-	 has been rebased on top of it and adds the driver type
-	 as a parameter of the devm_rc_allocate_device.
-patch 3: fixes a warning from the kbuild test robot
-patch 5: after a discussion with Rob, despite mine, Jacek's and
-	 Mauro's objections [*] the binding has been placed under
-	 leds/irled/spi-ir-led.txt
-patch 6: uses the new devm_* allocation and registration rc
-	 functions
-
-[*] https://www.spinics.net/lists/linux-leds/msg07062.html
-    https://www.spinics.net/lists/linux-leds/msg07164.html
-    https://www.spinics.net/lists/linux-leds/msg07167.html
-
-Changelog from version 2:
--------------------------
-The original patch number 5 has been abandoned because it was not
-bringing much benenfit.
-
-patch 1: rebased on the new kernel.
-patch 3: removed the sysfs attribute protocol for transmitters
-patch 5: the binding has been moved to the leds section instead
-         of the media. Fixed all the comments from Rob
-patch 6: fixed all the comments from Sean added also Sean's
-         review.
-
-Changelog from version 1:
--------------------------
-The RFC is now PATCH. The main difference is that this version
-doesn't try to add the any bit streaming protocol and doesn't
-modify any LIRC interface specification.
-
-patch 1: updates all the drivers using rc_allocate_device
-patch 2: fixed errors and warning reported from the kbuild test
-         robot
-patch 5: this patch has been dropped and replaced with a new one
-         which avoids waiting for transmitters.
-patch 6: added new properties to the dts specification
-patch 7: the driver uses the pulse/space input and converts it to
-         a bit stream.
-
-Andi Shyti (6):
-  [media] rc-main: assign driver type during allocation
-  [media] rc-main: split setup and unregister functions
-  [media] rc-core: add support for IR raw transmitters
-  [media] rc-ir-raw: do not generate any receiving thread for raw
-    transmitters
-  Documentation: bindings: add documentation for ir-spi device driver
-  [media] rc: add support for IR LEDs driven through SPI
-
- .../devicetree/bindings/leds/irled/spi-ir-led.txt  |  29 +++
- drivers/hid/hid-picolcd_cir.c                      |   3 +-
- drivers/media/cec/cec-core.c                       |   4 +-
- drivers/media/common/siano/smsir.c                 |   3 +-
- drivers/media/i2c/ir-kbd-i2c.c                     |   2 +-
- drivers/media/pci/bt8xx/bttv-input.c               |   2 +-
- drivers/media/pci/cx23885/cx23885-input.c          |  11 +-
- drivers/media/pci/cx88/cx88-input.c                |   3 +-
- drivers/media/pci/dm1105/dm1105.c                  |   3 +-
- drivers/media/pci/mantis/mantis_input.c            |   2 +-
- drivers/media/pci/saa7134/saa7134-input.c          |   2 +-
- drivers/media/pci/smipcie/smipcie-ir.c             |   3 +-
- drivers/media/pci/ttpci/budget-ci.c                |   2 +-
- drivers/media/rc/Kconfig                           |   9 +
- drivers/media/rc/Makefile                          |   1 +
- drivers/media/rc/ati_remote.c                      |   3 +-
- drivers/media/rc/ene_ir.c                          |   3 +-
- drivers/media/rc/fintek-cir.c                      |   3 +-
- drivers/media/rc/gpio-ir-recv.c                    |   3 +-
- drivers/media/rc/igorplugusb.c                     |   3 +-
- drivers/media/rc/iguanair.c                        |   3 +-
- drivers/media/rc/img-ir/img-ir-hw.c                |   2 +-
- drivers/media/rc/img-ir/img-ir-raw.c               |   3 +-
- drivers/media/rc/imon.c                            |   3 +-
- drivers/media/rc/ir-hix5hd2.c                      |   3 +-
- drivers/media/rc/ir-spi.c                          | 199 +++++++++++++++++++++
- drivers/media/rc/ite-cir.c                         |   3 +-
- drivers/media/rc/mceusb.c                          |   3 +-
- drivers/media/rc/meson-ir.c                        |   3 +-
- drivers/media/rc/nuvoton-cir.c                     |   3 +-
- drivers/media/rc/rc-ir-raw.c                       |  17 +-
- drivers/media/rc/rc-loopback.c                     |   3 +-
- drivers/media/rc/rc-main.c                         | 186 +++++++++++--------
- drivers/media/rc/redrat3.c                         |   3 +-
- drivers/media/rc/serial_ir.c                       |   3 +-
- drivers/media/rc/st_rc.c                           |   3 +-
- drivers/media/rc/streamzap.c                       |   3 +-
- drivers/media/rc/sunxi-cir.c                       |   3 +-
- drivers/media/rc/ttusbir.c                         |   3 +-
- drivers/media/rc/winbond-cir.c                     |   3 +-
- drivers/media/usb/au0828/au0828-input.c            |   3 +-
- drivers/media/usb/cx231xx/cx231xx-input.c          |   2 +-
- drivers/media/usb/dvb-usb-v2/dvb_usb_core.c        |   3 +-
- drivers/media/usb/dvb-usb/dvb-usb-remote.c         |   3 +-
- drivers/media/usb/em28xx/em28xx-input.c            |   2 +-
- drivers/media/usb/tm6000/tm6000-input.c            |   3 +-
- include/media/rc-core.h                            |  15 +-
- 47 files changed, 409 insertions(+), 168 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
- create mode 100644 drivers/media/rc/ir-spi.c
-
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index a6bbceb..7cc700d 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1436,16 +1436,12 @@ struct rc_dev *devm_rc_allocate_device(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_rc_allocate_device);
+ 
+-int rc_register_device(struct rc_dev *dev)
++static int rc_setup_rx_device(struct rc_dev *dev)
+ {
+-	static bool raw_init = false; /* raw decoders loaded? */
+-	struct rc_map *rc_map;
+-	const char *path;
+-	int attr = 0;
+-	int minor;
+ 	int rc;
++	struct rc_map *rc_map;
+ 
+-	if (!dev || !dev->map_name)
++	if (!dev->map_name)
+ 		return -EINVAL;
+ 
+ 	rc_map = rc_map_get(dev->map_name);
+@@ -1454,6 +1450,19 @@ int rc_register_device(struct rc_dev *dev)
+ 	if (!rc_map || !rc_map->scan || rc_map->size == 0)
+ 		return -EINVAL;
+ 
++	rc = ir_setkeytable(dev, rc_map);
++	if (rc)
++		return rc;
++
++	if (dev->change_protocol) {
++		u64 rc_type = (1ll << rc_map->rc_type);
++
++		rc = dev->change_protocol(dev, &rc_type);
++		if (rc < 0)
++			goto out_table;
++		dev->enabled_protocols = rc_type;
++	}
++
+ 	set_bit(EV_KEY, dev->input_dev->evbit);
+ 	set_bit(EV_REP, dev->input_dev->evbit);
+ 	set_bit(EV_MSC, dev->input_dev->evbit);
+@@ -1463,6 +1472,61 @@ int rc_register_device(struct rc_dev *dev)
+ 	if (dev->close)
+ 		dev->input_dev->close = ir_close;
+ 
++	/*
++	 * Default delay of 250ms is too short for some protocols, especially
++	 * since the timeout is currently set to 250ms. Increase it to 500ms,
++	 * to avoid wrong repetition of the keycodes. Note that this must be
++	 * set after the call to input_register_device().
++	 */
++	dev->input_dev->rep[REP_DELAY] = 500;
++
++	/*
++	 * As a repeat event on protocols like RC-5 and NEC take as long as
++	 * 110/114ms, using 33ms as a repeat period is not the right thing
++	 * to do.
++	 */
++	dev->input_dev->rep[REP_PERIOD] = 125;
++
++	dev->input_dev->dev.parent = &dev->dev;
++	memcpy(&dev->input_dev->id, &dev->input_id, sizeof(dev->input_id));
++	dev->input_dev->phys = dev->input_phys;
++	dev->input_dev->name = dev->input_name;
++
++	/* rc_open will be called here */
++	rc = input_register_device(dev->input_dev);
++	if (rc)
++		goto out_table;
++
++	return 0;
++
++out_table:
++	ir_free_table(&dev->rc_map);
++
++	return rc;
++}
++
++static void rc_free_rx_device(struct rc_dev *dev)
++{
++	if (!dev)
++		return;
++
++	ir_free_table(&dev->rc_map);
++
++	input_unregister_device(dev->input_dev);
++	dev->input_dev = NULL;
++}
++
++int rc_register_device(struct rc_dev *dev)
++{
++	static bool raw_init = false; /* raw decoders loaded? */
++	const char *path;
++	int attr = 0;
++	int minor;
++	int rc;
++
++	if (!dev)
++		return -EINVAL;
++
+ 	minor = ida_simple_get(&rc_ida, 0, RC_DEV_MAX, GFP_KERNEL);
+ 	if (minor < 0)
+ 		return minor;
+@@ -1486,39 +1550,15 @@ int rc_register_device(struct rc_dev *dev)
+ 	if (rc)
+ 		goto out_unlock;
+ 
+-	rc = ir_setkeytable(dev, rc_map);
+-	if (rc)
+-		goto out_dev;
+-
+-	dev->input_dev->dev.parent = &dev->dev;
+-	memcpy(&dev->input_dev->id, &dev->input_id, sizeof(dev->input_id));
+-	dev->input_dev->phys = dev->input_phys;
+-	dev->input_dev->name = dev->input_name;
+-
+-	rc = input_register_device(dev->input_dev);
+-	if (rc)
+-		goto out_table;
+-
+-	/*
+-	 * Default delay of 250ms is too short for some protocols, especially
+-	 * since the timeout is currently set to 250ms. Increase it to 500ms,
+-	 * to avoid wrong repetition of the keycodes. Note that this must be
+-	 * set after the call to input_register_device().
+-	 */
+-	dev->input_dev->rep[REP_DELAY] = 500;
+-
+-	/*
+-	 * As a repeat event on protocols like RC-5 and NEC take as long as
+-	 * 110/114ms, using 33ms as a repeat period is not the right thing
+-	 * to do.
+-	 */
+-	dev->input_dev->rep[REP_PERIOD] = 125;
+-
+ 	path = kobject_get_path(&dev->dev.kobj, GFP_KERNEL);
+ 	dev_info(&dev->dev, "%s as %s\n",
+ 		dev->input_name ?: "Unspecified device", path ?: "N/A");
+ 	kfree(path);
+ 
++	rc = rc_setup_rx_device(dev);
++	if (rc)
++		goto out_dev;
++
+ 	if (dev->driver_type == RC_DRIVER_IR_RAW) {
+ 		if (!raw_init) {
+ 			request_module_nowait("ir-lirc-codec");
+@@ -1526,36 +1566,20 @@ int rc_register_device(struct rc_dev *dev)
+ 		}
+ 		rc = ir_raw_event_register(dev);
+ 		if (rc < 0)
+-			goto out_input;
+-	}
+-
+-	if (dev->change_protocol) {
+-		u64 rc_type = (1ll << rc_map->rc_type);
+-		rc = dev->change_protocol(dev, &rc_type);
+-		if (rc < 0)
+-			goto out_raw;
+-		dev->enabled_protocols = rc_type;
++			goto out_rx;
+ 	}
+ 
+ 	/* Allow the RC sysfs nodes to be accessible */
+ 	atomic_set(&dev->initialized, 1);
+ 
+-	IR_dprintk(1, "Registered rc%u (driver: %s, remote: %s, mode %s)\n",
++	IR_dprintk(1, "Registered rc%u (driver: %s)\n",
+ 		   dev->minor,
+-		   dev->driver_name ? dev->driver_name : "unknown",
+-		   rc_map->name ? rc_map->name : "unknown",
+-		   dev->driver_type == RC_DRIVER_IR_RAW ? "raw" : "cooked");
++		   dev->driver_name ? dev->driver_name : "unknown");
+ 
+ 	return 0;
+ 
+-out_raw:
+-	if (dev->driver_type == RC_DRIVER_IR_RAW)
+-		ir_raw_event_unregister(dev);
+-out_input:
+-	input_unregister_device(dev->input_dev);
+-	dev->input_dev = NULL;
+-out_table:
+-	ir_free_table(&dev->rc_map);
++out_rx:
++	rc_free_rx_device(dev);
+ out_dev:
+ 	device_del(&dev->dev);
+ out_unlock:
+@@ -1601,12 +1625,7 @@ void rc_unregister_device(struct rc_dev *dev)
+ 	if (dev->driver_type == RC_DRIVER_IR_RAW)
+ 		ir_raw_event_unregister(dev);
+ 
+-	/* Freeing the table should also call the stop callback */
+-	ir_free_table(&dev->rc_map);
+-	IR_dprintk(1, "Freed keycode table\n");
+-
+-	input_unregister_device(dev->input_dev);
+-	dev->input_dev = NULL;
++	rc_free_rx_device(dev);
+ 
+ 	device_del(&dev->dev);
+ 
 -- 
 2.10.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
