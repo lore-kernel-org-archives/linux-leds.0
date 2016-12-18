@@ -1,67 +1,49 @@
-From: Milo Kim <woogyom.kim@gmail.com>
-Subject: Re: [PATCH 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK() annotation
-Date: Sun, 18 Dec 2016 12:50:43 +0900
-Message-ID: <7292444e-43d8-3561-2835-34b75a650107@gmail.com>
-References: <20161213030828.17820-1-mcgrof@kernel.org>
- <20161213030828.17820-6-mcgrof@kernel.org> <20161213190429.GC8676@amd>
- <20161216092241.GO13946@wotan.suse.de> <20161216092919.GA26091@amd>
- <20161216095906.GS13946@wotan.suse.de> <20161216101405.GA29069@amd>
- <20161216105648.GT13946@wotan.suse.de> <20161216112700.GB29069@amd>
- <20161216161017.GU13946@wotan.suse.de> <20161216161455.GV13946@wotan.suse.de>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v5 2/6] [media] rc-main: split setup and unregister
+ functions
+Date: Sun, 18 Dec 2016 18:06:10 +0900
+Message-ID: <20161218090610.2whlhabeoxx74ldu@gangnam.samsung>
+References: <20161216061218.5906-1-andi.shyti@samsung.com>
+ <20161216061218.5906-3-andi.shyti@samsung.com>
+ <20161216121026.GA31618@gofer.mess.org>
+ <CGME20161216141636epcas4p16388dfbda7e061e0d1c3809fcad3b8fd@epcas4p1.samsung.com>
+ <20161216141629.GA32757@gofer.mess.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35546 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757127AbcLRDuy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Dec 2016 22:50:54 -0500
-In-Reply-To: <20161216161455.GV13946@wotan.suse.de>
+Received: from mailout2.samsung.com ([203.254.224.25]:36613 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbcLRJGN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 18 Dec 2016 04:06:13 -0500
+Content-disposition: inline
+In-reply-to: <20161216141629.GA32757@gofer.mess.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org
+To: Sean Young <sean@mess.org>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-Hi Luis,
+Hi Sean,
 
-On 12/17/2016 01:14 AM, Luis R. Rodriguez wrote:
-> Milo if sysfs is used can't the old userspace be mapped to use the new
-> sysfs interface through a wrapper of some sort ? What exactly would be
-> needed to ensure old userspace will not break?
+> On Fri, Dec 16, 2016 at 12:10:26PM +0000, Sean Young wrote:
+> > Sorry to add to your woes, but there are some checkpatch warnings and
+> > errors. Please can you correct these. One is below.
+> 
+> Actually, the changes are pretty minor, I can fix them up before sending
+> them to Mauro. Sorry for bothering you.
 
-LP5521 and LP5523 have two ways to load hex code from the userspace - 
-the sysfs and firmware I/F. So user program supports both interfaces. 
-Even if the firmware I/F is not available, user can still run LED effect 
-through the sysfs.
+yes, it's an error on the previous code:
 
-However, LP5562 and LP8501 support only single way which is the firmware 
-I/F. So user-space program for LP5562/8501 should be modified if lp55xx 
-removes the interface. My idea is
+ERROR: do not initialise statics to false
+#109: FILE: drivers/media/rc/rc-main.c:1521:
++       static bool raw_init = false; /* raw decoders loaded? */
 
-   Phase 1)
-   - create sysfs in LP5562 and LP8501
-   - use new sysfs inside the firmware I/F loading callback
-   - mark the firmware callback as a deprecated interface
+total: 1 errors, 0 warnings, 196 lines checked
 
-   Phase 2)
-   - remove the firmware I/F after all user program fixes the interface
-     (but the problem is how can we get to know when this is done?)
+I noticed this already before, but I preferred to leave it
+in its original status.
 
- > Why has no one cried
- > after the v4.0 custom fallback mechanism breaking ?
+No worries, if you want I will send the fix, it's indeed quite
+an easy fix.
 
-Well, I don't know the reason exactly but my guess is they maybe still 
-using old kernel.
-
- > How wide spread is this custom userspace ?
-
-Device manufactures in Asia & North America requested lp55xx drivers, 
-but I don't know how many vendors uses the firmware I/F. Some vendors 
-embeds the binary code inside the driver instead of using user-program.
-
-I understood it's a kind of troublesome work in terms of the 
-maintenance. Sorry for that. I hope we have a consensus to resolve it.
-Thanks!
-
-Best regards,
-Milo
+Thanks,
+Andi
