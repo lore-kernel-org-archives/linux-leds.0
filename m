@@ -1,119 +1,96 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Wed, 21 Dec 2016 19:49:48 +0100
-Message-ID: <20161221184948.GB21636@amd>
-References: <201611242245.00217@pali>
- <afdfe71f-6f39-6f4b-4c92-47142d6267d3@samsung.com>
- <20161125100140.GC4062@amd>
- <e32e3d6c-5d6d-c882-21d9-8028c8311b0b@samsung.com>
- <20161125110557.GA13204@amd>
- <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
- <20161125144859.GA20139@amd>
- <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
- <20161125204045.GA28036@amd>
- <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK() annotation
+Date: Wed, 21 Dec 2016 21:33:37 +0100
+Message-ID: <7e33c395-347d-f480-e8e9-d3b50a25e063@gmail.com>
+References: <20161216092919.GA26091@amd>
+ <20161216095906.GS13946@wotan.suse.de> <20161216101405.GA29069@amd>
+ <20161216105648.GT13946@wotan.suse.de> <20161216112700.GB29069@amd>
+ <20161216161017.GU13946@wotan.suse.de> <20161216161455.GV13946@wotan.suse.de>
+ <7292444e-43d8-3561-2835-34b75a650107@gmail.com> <20161219200835.GA7135@amd>
+ <1e47fd1d-53e0-75c7-0c25-42f4c6ccd818@gmail.com> <20161221184902.GA21636@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50572 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933193AbcLUSuO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Dec 2016 13:50:14 -0500
-Content-Disposition: inline
-In-Reply-To: <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:36282 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753819AbcLUUeb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Dec 2016 15:34:31 -0500
+In-Reply-To: <20161221184902.GA21636@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Milo Kim <woogyom.kim@gmail.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.orga
 
+Hi,
 
---xgyAXRrhYN0wYx8y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/21/2016 07:49 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>>>> Milo if sysfs is used can't the old userspace be mapped to use the new
+>>>>> sysfs interface through a wrapper of some sort ? What exactly would be
+>>>>> needed to ensure old userspace will not break?
+>>>>
+>>>> LP5521 and LP5523 have two ways to load hex code from the userspace - the
+>>>> sysfs and firmware I/F. So user program supports both interfaces. Even if
+>>>> the firmware I/F is not available, user can still run LED effect through the
+>>>> sysfs.
+>>>>
+>>>> However, LP5562 and LP8501 support only single way which is the firmware
+>>>> I/F. So user-space program for LP5562/8501 should be modified if lp55xx
+>>>> removes the interface. My idea is
+>>>
+>>> Actually... it would be good to have some reasonable interface for RGB
+>>> LEDs. This way, we need separate "firmware" for each LED
+>>> controller. It would be good to have common format for LED effects.
+>>
+>> We still haven't tried trigger approach discussed over half a year ago.
+>> If we used firmware approach we would still have to overcome the problem
+>> of defining the LED class drivers affected by the firmware program.
+> 
+> The firmware approach is in the tree today :-(.
 
-Hi!
+to RGB LEDs? What exactly do you have on mind?
 
-> >>>In my eyes trigger approach is neccessary at least for some hardware,
-> >>>and things it pretty clear: trigger on =3D=3D LED changes without
-> >>>userspace involvement. trigger off =3D=3D userspace controls the LED.
-> >>
-> >>It is likely that it would break many existing users.
-> >
-> >Can you elaborate on that?
->=20
-> There might exist users that adjust LED brightness while having
-> active trigger. The best example is default-on trigger - it sets
-> brightness only on init, but remains active all the time. Whereas
-> this could be fixed, there is another case: think of changing blinking
-> brightness - it would be impossible.
+> 
+>>>> Device manufactures in Asia & North America requested lp55xx drivers, but I
+>>>> don't know how many vendors uses the firmware I/F. Some vendors embeds the
+>>>> binary code inside the driver instead of using user-program.
+>>>
+>>> Nokia N900 uses lp55xx, and I have custom scripts interfacing sysfs.
+>>>
+>>> Maemo uses the LEDs, too, but maemo is not open source.
+>>>
+>>> So no, I don't think there's anything important that could be broken.
+>>
+>> We can't guarantee that. Is there any problem in just using the
+>> currently introduced DECLARE_FW_CUSTOM_FALLBACK() in
+>> drivers/leds/leds-lp55xx-common.c?
+> 
+> Well, it would be good to get rid of the custom fallback
+> functionality. And no, we don't need to "guarantee" that.  Removing
+> obscure functionality noone uses is far game... providing noone
+> complains ;-).
 
-I don't see the breakage. For existing blinking and default-on
-triggers, existing behaviour would be kept. Difference would be that
-for hardware that changes triggers itself (like the keyboard light) we
-would present it as a trigger. And you are right -- there would be
-user visible changes there. You could not assign blinking, because
-=2E. it already has a trigger. But I believe it is reasonable.
+As Milo explained:
 
-> >I just tried with leds on thinkpad
-> >
-> >root@duo:/sys/class/leds/tpacpi::power# echo 1 > brightness
-> >root@duo:/sys/class/leds/tpacpi::power# echo 0 > brightness
-> >root@duo:/sys/class/leds/tpacpi::power# cat trigger
-> >[none] bluetooth-power kbd-scrollock kbd-numlock kbd-capslock
-> >kbd-kanalock kbd-shiftlock kbd-altgrlock kbd-ctrllock kbd-altlock
-> >kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock AC-online
-> >BAT0-charging-or-full BAT0-charging BAT0-full
-> >BAT0-charging-blink-full-solid rfkill0 phy0rx phy0tx phy0assoc
-> >phy0radio phy0tpt mmc0 timer pattern rfkill1 hci0-power rfkill74
-> >heartbeat
-> >root@duo:/sys/class/leds/tpacpi::power#
-> >
-> >I can control the LED from userspace, but then there's no way to put
-> >the LED back to firmware control. That's just broken.
-> >
-> >Do you have a proposal how to handle that?
->=20
-> Isn't it under firmware control all the time?
+> Why has no one cried
+> after the v4.0 custom fallback mechanism breaking ?
 
-I'm not 100% sure in the thinkpad case. In the N900 case, we have LED
-that displays (user_brightness || (user_enabled_indicator && cpu_activity)).
+"Well, I don't know the reason exactly but my guess is they maybe still
+using old kernel."
 
-I believe clean way to do that would be a trigger.
+and after that:
 
-> >>>So I'd do the trigger here. It is same way we can handle LEDs on
-> >>>thinkpad. Yes, it means you won't be able to do oneshot trigger on
-> >>>backlight. I don't think that's a huge problem.
-> >>
-> >>There have been voices in this discussion claiming the opposite. :-)
-> >
-> >Well, lets ignore those voices until the voices understand the current
-> >design :-).
->=20
-> Sheer user is not interested in design, but in usability.
+"Device manufactures in Asia & North America requested lp55xx drivers"
 
-Well, end user is not expected to touch /sys files directly -- we
-should create a script for that. /sys should be logical and map well
-to what we do in kernel. Being "nice to use from shell" is
-secondary...
+These should be sufficient arguments for us for keeping the API
+unchanged. If the users decided to upgrade their kernel then they
+would be surprised by the API change.
 
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+DECLARE_FW_CUSTOM_FALLBACK macro seems to have been designed for
+handling exactly this type of cases.
 
---xgyAXRrhYN0wYx8y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlhazswACgkQMOfwapXb+vIKagCfcBXI53dLtA8od5JiBw/i3clT
-ObQAnRKM8v3qPrli2/wjyQELvQt8XQHQ
-=wmJD
------END PGP SIGNATURE-----
-
---xgyAXRrhYN0wYx8y--
+-- 
+Best regards,
+Jacek Anaszewski
