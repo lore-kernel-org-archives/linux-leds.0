@@ -1,33 +1,42 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 5/6] Documentation: bindings: add documentation for
- ir-spi device driver
-Date: Thu, 22 Dec 2016 10:40:29 -0600
-Message-ID: <20161222164029.7qr3dxr5lnnyrrqh@rob-hp-laptop>
-References: <20161218111138.12831-1-andi.shyti@samsung.com>
- <20161218111138.12831-6-andi.shyti@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36030 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965076AbcLVQkd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 22 Dec 2016 11:40:33 -0500
-Content-Disposition: inline
-In-Reply-To: <20161218111138.12831-6-andi.shyti@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH] MAINTAINERS: Update Jacek Anaszewski's email address
+Date: Thu, 22 Dec 2016 18:24:44 +0100
+Message-ID: <1482427484-4102-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sean Young <sean@mess.org>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On Sun, Dec 18, 2016 at 08:11:37PM +0900, Andi Shyti wrote:
-> Document the ir-spi driver's binding which is a IR led driven
-> through the SPI line.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Sean Young <sean@mess.org>
-> ---
->  .../devicetree/bindings/leds/irled/spi-ir-led.txt  | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
+My previous email address is no longer valid.
+>From now on, jacek.anaszewski@gmail.com should be used instead.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1cd38a7..b61650d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1719,7 +1719,7 @@ F:	drivers/staging/media/platform/s5p-cec/
+ 
+ ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
+ M:	Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+-M:	Jacek Anaszewski <j.anaszewski@samsung.com>
++M:	Jacek Anaszewski <jacek.anaszewski@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+@@ -7070,7 +7070,7 @@ F:	drivers/scsi/53c700*
+ 
+ LED SUBSYSTEM
+ M:	Richard Purdie <rpurdie@rpsys.net>
+-M:	Jacek Anaszewski <j.anaszewski@samsung.com>
++M:	Jacek Anaszewski <jacek.anaszewski@gmail.com>
+ L:	linux-leds@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+ S:	Maintained
+-- 
+2.1.4
