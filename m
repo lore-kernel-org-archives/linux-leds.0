@@ -1,187 +1,142 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 3/5] backlight: lm3533: Support initialization from Device Tree
-Date: Mon, 26 Dec 2016 10:11:51 -0800
-Message-ID: <20161226181153.11271-3-bjorn.andersson@linaro.org>
+Subject: [PATCH v4 2/5] mfd: lm3533: Support initialization from Device Tree
+Date: Mon, 26 Dec 2016 10:11:50 -0800
+Message-ID: <20161226181153.11271-2-bjorn.andersson@linaro.org>
 References: <20161226181153.11271-1-bjorn.andersson@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20161226181153.11271-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, Jingoo Han <jingoohan1@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-leds@vger.kernel.org
 
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Implement support for initialization of the lm3533 backlight from Device
-Tree.
+Implement support for initialization of the lm3533 driver core and
+probing child devices from Device Tree.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-This patch only depends on the acceptance of the DT binding (doesn't have to be
-merged together with the mfd patch).
-
 Changes since v3:
-- Moved backlight DT parsing from mfd driver
-- Gave driver its own compatible
+- Moved parsing of child of nodes into each child driver
+- Use of_platform_populate() to instanciate child devices
 
- drivers/video/backlight/lm3533_bl.c | 98 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 95 insertions(+), 3 deletions(-)
+ drivers/mfd/lm3533-core.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-diff --git a/drivers/video/backlight/lm3533_bl.c b/drivers/video/backlight/lm3533_bl.c
-index 0e2337f367b6..2f132199e604 100644
---- a/drivers/video/backlight/lm3533_bl.c
-+++ b/drivers/video/backlight/lm3533_bl.c
-@@ -22,6 +22,7 @@
+diff --git a/drivers/mfd/lm3533-core.c b/drivers/mfd/lm3533-core.c
+index 5abcbb2e8849..f147677f05ff 100644
+--- a/drivers/mfd/lm3533-core.c
++++ b/drivers/mfd/lm3533-core.c
+@@ -18,6 +18,8 @@
+ #include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/mfd/core.h>
++#include <linux/of_gpio.h>
++#include <linux/of_platform.h>
+ #include <linux/regmap.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -512,6 +514,11 @@ static int lm3533_device_init(struct lm3533 *lm3533)
+ 	lm3533_device_bl_init(lm3533);
+ 	lm3533_device_led_init(lm3533);
  
++	if (lm3533->dev->of_node) {
++		of_platform_populate(lm3533->dev->of_node, NULL, NULL,
++				     lm3533->dev);
++	}
++
+ 	ret = sysfs_create_group(&lm3533->dev->kobj, &lm3533_attribute_group);
+ 	if (ret < 0) {
+ 		dev_err(lm3533->dev, "failed to create sysfs attributes\n");
+@@ -588,10 +595,73 @@ static const struct regmap_config regmap_config = {
+ 	.precious_reg	= lm3533_precious_register,
+ };
  
- #define LM3533_HVCTRLBANK_COUNT		2
-+#define LM3533_BL_DEFAULT_BRIGHTNESS	200
- #define LM3533_BL_MAX_BRIGHTNESS	255
- 
- #define LM3533_REG_CTRLBANK_AB_BCONF	0x1a
-@@ -269,6 +270,86 @@ static int lm3533_bl_setup(struct lm3533_bl *bl,
- 	return lm3533_ctrlbank_set_pwm(&bl->cb, pdata->pwm);
- }
- 
-+static int lm3533_of_parse_pwm_zones(struct device_node *node)
++static int lm3533_of_parse_enum(struct device *dev, const char *propname,
++				const unsigned int *match, size_t num_matches)
 +{
-+	const char *propname = "ti,pwm-zones";
-+	u32 zones[5];
-+	int count;
++	size_t i;
 +	int ret;
-+	int i;
-+
-+	count = of_property_count_u32_elems(node, propname);
-+	if (count == -EINVAL)
-+		return 0;
-+	if (count <= 0)
-+		return count;
-+	if (count >= ARRAY_SIZE(zones))
-+		return -EINVAL;
-+
-+	ret = of_property_read_u32_array(node, propname, zones, count);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Enable pwm input, and enable the selected zones */
-+	ret = BIT(0);
-+	for (i = 0; i < count; i++)
-+		ret |= BIT(zones[i] + 1);
-+
-+	return ret;
-+}
-+
-+static struct lm3533_bl_platform_data *lm3533_bl_of_parse(struct device *dev,
-+							  int *id)
-+{
-+	struct lm3533_bl_platform_data *bl_pdata;
-+	struct device_node *node = dev->of_node;
-+	int ret;
-+	u32 reg;
 +	u32 val;
 +
-+	bl_pdata = devm_kzalloc(dev, sizeof(*bl_pdata), GFP_KERNEL);
-+	if (!bl_pdata)
-+		return NULL;
-+
-+	ret = of_property_read_u32(node, "reg", &reg);
++	ret = of_property_read_u32(dev->of_node, propname, &val);
 +	if (ret < 0) {
-+		dev_err(dev, "invalid reg property\n");
-+		return NULL;
-+	}
-+	*id = reg;
-+
-+	ret = of_property_read_string(node, "label",
-+				      (const char **)&bl_pdata->name);
-+	if (ret < 0) {
-+		dev_err(dev, "unable to parse label\n");
-+		return NULL;
++		dev_err(dev, "failed to parse %s\n", propname);
++		return ret;
 +	}
 +
-+	ret = of_property_read_u32(node, "led-max-microamp", &val);
-+	if (ret < 0) {
-+		dev_err(dev, "unable to parse led-max-microamp\n");
-+		return NULL;
++	for (i = 0; i < num_matches; i++) {
++		if (val == match[i])
++			return i;
 +	}
-+	bl_pdata->max_current = val;
 +
-+	val = LM3533_BL_DEFAULT_BRIGHTNESS;
-+	ret = of_property_read_u32(node, "default-brightness", &val);
-+	if (ret < 0 && ret != -EINVAL) {
-+		dev_err(dev, "unable to parse default-brightness\n");
-+		return NULL;
-+	}
-+	bl_pdata->default_brightness = val;
-+
-+	ret = lm3533_of_parse_pwm_zones(node);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to parse ti,pwm-zones\n");
-+		return NULL;
-+	}
-+	bl_pdata->pwm = ret;
-+
-+	return bl_pdata;
++	dev_err(dev, "unsupported value of %s\n", propname);
++	return -EINVAL;
 +}
 +
- static int lm3533_bl_probe(struct platform_device *pdev)
++static int lm3533_pdata_from_of_node(struct device *dev)
++{
++	struct lm3533_platform_data *pdata;
++	int ret;
++	const unsigned int freqs[] = {
++		[LM3533_BOOST_FREQ_500KHZ] = 500000,
++		[LM3533_BOOST_FREQ_1000KHZ] = 1000000,
++	};
++	const unsigned int ovps[] = {
++		[LM3533_BOOST_OVP_16V] = 16000,
++		[LM3533_BOOST_OVP_24V] = 24000,
++		[LM3533_BOOST_OVP_32V] = 32000,
++		[LM3533_BOOST_OVP_40V] = 40000,
++	};
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	pdata->gpio_hwen = of_get_named_gpio(dev->of_node, "hwen-gpios", 0);
++	if (pdata->gpio_hwen < 0)
++		return pdata->gpio_hwen;
++
++	ret = lm3533_of_parse_enum(dev, "ti,boost-freq-hz",
++				   freqs, ARRAY_SIZE(freqs));
++	if (ret < 0)
++		return ret;
++	pdata->boost_freq = ret;
++
++	ret = lm3533_of_parse_enum(dev, "ti,boost-ovp-mv",
++				   ovps, ARRAY_SIZE(ovps));
++	if (ret < 0)
++		return ret;
++	pdata->boost_ovp = ret;
++
++	dev->platform_data = pdata;
++
++	return 0;
++}
++
+ static int lm3533_i2c_probe(struct i2c_client *i2c,
+ 					const struct i2c_device_id *id)
  {
  	struct lm3533 *lm3533;
-@@ -277,6 +358,7 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 	struct backlight_device *bd;
- 	struct backlight_properties props;
- 	int ret;
-+	int id;
++	int ret;
  
- 	dev_dbg(&pdev->dev, "%s\n", __func__);
+ 	dev_dbg(&i2c->dev, "%s\n", __func__);
  
-@@ -284,14 +366,17 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 	if (!lm3533)
- 		return -EINVAL;
+@@ -608,6 +678,12 @@ static int lm3533_i2c_probe(struct i2c_client *i2c,
+ 	lm3533->dev = &i2c->dev;
+ 	lm3533->irq = i2c->irq;
  
-+	id = pdev->id;
- 	pdata = dev_get_platdata(&pdev->dev);
-+	if (!pdata)
-+		pdata = lm3533_bl_of_parse(&pdev->dev, &id);
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "no platform data\n");
- 		return -EINVAL;
- 	}
- 
--	if (pdev->id < 0 || pdev->id >= LM3533_HVCTRLBANK_COUNT) {
--		dev_err(&pdev->dev, "illegal backlight id %d\n", pdev->id);
-+	if (id < 0 || id >= LM3533_HVCTRLBANK_COUNT) {
-+		dev_err(&pdev->dev, "illegal backlight id %d\n", id);
- 		return -EINVAL;
- 	}
- 
-@@ -300,7 +385,7 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	bl->lm3533 = lm3533;
--	bl->id = pdev->id;
-+	bl->id = id;
- 
- 	bl->cb.lm3533 = lm3533;
- 	bl->cb.id = lm3533_bl_get_ctrlbank_id(bl);
-@@ -394,10 +479,17 @@ static void lm3533_bl_shutdown(struct platform_device *pdev)
- 	lm3533_ctrlbank_disable(&bl->cb);
++	if (i2c->dev.of_node) {
++		ret = lm3533_pdata_from_of_node(lm3533->dev);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	return lm3533_device_init(lm3533);
  }
  
-+static const struct of_device_id lm3533_bl_of_match[] = {
-+	{ .compatible = "ti,lm3533-backlight", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, lm3533_bl_of_match);
-+
- static struct platform_driver lm3533_bl_driver = {
- 	.driver = {
- 		.name	= "lm3533-backlight",
- 		.pm	= &lm3533_bl_pm_ops,
-+		.of_match_table = lm3533_bl_of_match,
- 	},
- 	.probe		= lm3533_bl_probe,
- 	.remove		= lm3533_bl_remove,
 -- 
 2.11.0
