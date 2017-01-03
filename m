@@ -1,21 +1,33 @@
-From: "Dr. David White" <"wd."@eagle.ocn.ne.jp>
-Subject: Urgent Please;;
-Date: Tue, 3 Jan 2017 02:34:38 +0900 (JST)
-Message-ID: <603429211.116392312.1483378478267.JavaMail.root__40869.211665313$1483379670$gmane$org@eagle.ocn.ne.jp>
-Reply-To: "Dr. David White" <david_white34@mynet.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/5] devicetree: mfd: Add binding for the TI LM3533
+Date: Tue, 3 Jan 2017 10:56:48 -0600
+Message-ID: <20170103165648.wotwuihc5i4tscp5@rob-hp-laptop>
+References: <20161226181153.11271-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mbkd0234.ocn.ad.jp ([153.149.233.35]:39732 "EHLO
-        mbkd0234.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932719AbdABRwU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 2 Jan 2017 12:52:20 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161226181153.11271-1-bjorn.andersson@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, Jingoo Han <jingoohan1@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-leds@vger.kernel.org
 
-Dear,
-With due respect to your person and much sincerity of purpose. I have a business proposal which I will like to handle with you and $14.5 Million USD is involve. But be rest assured that everything is legal and risk free as I have concluded all the arrangements and the legal papers that will back the transaction up. Kindly indicate your interest as to enable me tell you more detail of the proposal. Waiting for your urgent response.
+On Mon, Dec 26, 2016 at 10:11:49AM -0800, Bjorn Andersson wrote:
+> From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> 
+> Add the binding for the Texas Instruments LM3533 lighting power
+> solution.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> I had Acks from Jonathan and Rob on v3, but dropped these due to the added
+> compatible properties.
+> 
+> Changes since v3:
+> - Added compatible to sub-nodes, per Lee's requested to treat them as separate
+>   pieces.
 
-Yours Faithfully,
-Dr. David White
+Acked-by: Rob Herring <robh@kernel.org>
