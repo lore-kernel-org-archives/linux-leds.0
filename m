@@ -1,188 +1,54 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v5 5/5] leds: lm3533: Support initialization from Device Tree
-Date: Wed,  4 Jan 2017 03:50:50 -0800
-Message-ID: <20170104115050.24770-5-bjorn.andersson@linaro.org>
-References: <20170104115050.24770-1-bjorn.andersson@linaro.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: add LED_ON brightness as boolean value
+Date: Wed, 4 Jan 2017 20:59:00 +0100
+Message-ID: <b3ac3619-3b80-a9ab-fa0c-b56685291fd6@gmail.com>
+References: <CGME20170104134122epcas1p48ee63a75c2e159b06d792ec8bc7d4e6d@epcas1p4.samsung.com>
+ <20170104134107.24902-1-andi.shyti@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170104115050.24770-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20170104134107.24902-1-andi.shyti@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+To: Andi Shyti <andi.shyti@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-leds@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Hi Andi,
 
-Implement support for initialization of the lm3533 LED driver from
-Device Tree.
+Thanks for the patch.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On 01/04/2017 02:41 PM, Andi Shyti wrote:
+> Some devices do not handle the led brightness or simply don't
+> care about it. Conceptually said devices want to just switch on
+> or off the led. It is useless in this case to have a 255 range
+> of brightness, while just having an LED_ON and LED_OFF improves
+> the boolean meaning of the led status.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  include/linux/leds.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 569cb531094c..0258f9c49034 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -27,6 +27,7 @@ struct device;
+>  
+>  enum led_brightness {
+>  	LED_OFF		= 0,
+> +	LED_ON,
 
-Note that this patch can be merged independently of the other patches in the
-series, pending approval of the DT binding.
+Now lack of explicit value assignment to LED_ON looks weird
+since it is surrounded by other initializer values.
+I'd prefer to have "LED_ON = 1," in this line.
 
-Changes since v4:
-- None
+>  	LED_HALF	= 127,
+>  	LED_FULL	= 255,
+>  };
+> 
 
-Changes since v3:
-- Moved LED DT parsing from mfd driver
-- Gave driver its own compatible
-
- drivers/leds/leds-lm3533.c | 98 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 95 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-index 5b529dc013d2..3eedad0ea9df 100644
---- a/drivers/leds/leds-lm3533.c
-+++ b/drivers/leds/leds-lm3533.c
-@@ -15,6 +15,7 @@
- #include <linux/leds.h>
- #include <linux/mfd/core.h>
- #include <linux/mutex.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-@@ -648,12 +649,92 @@ static int lm3533_led_setup(struct lm3533_led *led,
- 	return lm3533_ctrlbank_set_pwm(&led->cb, pdata->pwm);
- }
- 
-+static int lm3533_of_parse_pwm_zones(struct device_node *node)
-+{
-+	const char *propname = "ti,pwm-zones";
-+	u32 zones[5];
-+	int count;
-+	int ret;
-+	int i;
-+
-+	count = of_property_count_u32_elems(node, propname);
-+	if (count == -EINVAL)
-+		return 0;
-+	if (count <= 0)
-+		return count;
-+	if (count >= ARRAY_SIZE(zones))
-+		return -EINVAL;
-+
-+	ret = of_property_read_u32_array(node, propname, zones, count);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Enable pwm input, and enable the selected zones */
-+	ret = BIT(0);
-+	for (i = 0; i < count; i++)
-+		ret |= BIT(zones[i] + 1);
-+
-+	return ret;
-+}
-+
-+static struct lm3533_led_platform_data *lm3533_led_of_parse(struct device *dev,
-+							    int *id)
-+{
-+	struct lm3533_led_platform_data *led_pdata;
-+	struct device_node *node = dev->of_node;
-+	int ret;
-+	u32 reg;
-+	u32 val;
-+
-+	led_pdata = devm_kzalloc(dev, sizeof(*led_pdata), GFP_KERNEL);
-+	if (!led_pdata)
-+		return NULL;
-+
-+	ret = of_property_read_u32(node, "reg", &reg);
-+	if (ret < 0) {
-+		dev_err(dev, "invalid reg property\n");
-+		return NULL;
-+	}
-+	*id = reg;
-+
-+	ret = of_property_read_string(node, "label",
-+				      (const char **)&led_pdata->name);
-+	if (ret < 0) {
-+		dev_err(dev, "unable to parse label\n");
-+		return NULL;
-+	}
-+
-+	ret = of_property_read_u32(node, "led-max-microamp", &val);
-+	if (ret < 0) {
-+		dev_err(dev, "unable to parse led-max-microamp\n");
-+		return NULL;
-+	}
-+	led_pdata->max_current = val;
-+
-+	ret = of_property_read_string(node, "linux,default-trigger",
-+				      &led_pdata->default_trigger);
-+	if (ret < 0 && ret != -EINVAL) {
-+		dev_err(dev, "unable to parse default-trigger\n");
-+		return NULL;
-+	}
-+
-+	ret = lm3533_of_parse_pwm_zones(node);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to parse ti,pwm-zones\n");
-+		return NULL;
-+	}
-+	led_pdata->pwm = ret;
-+
-+	return led_pdata;
-+}
-+
- static int lm3533_led_probe(struct platform_device *pdev)
- {
- 	struct lm3533 *lm3533;
- 	struct lm3533_led_platform_data *pdata;
- 	struct lm3533_led *led;
- 	int ret;
-+	int id;
- 
- 	dev_dbg(&pdev->dev, "%s\n", __func__);
- 
-@@ -661,14 +742,18 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 	if (!lm3533)
- 		return -EINVAL;
- 
-+	id = pdev->id;
- 	pdata = dev_get_platdata(&pdev->dev);
-+	if (!pdata)
-+		pdata = lm3533_led_of_parse(&pdev->dev, &id);
-+
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "no platform data\n");
- 		return -EINVAL;
- 	}
- 
--	if (pdev->id < 0 || pdev->id >= LM3533_LVCTRLBANK_COUNT) {
--		dev_err(&pdev->dev, "illegal LED id %d\n", pdev->id);
-+	if (id < 0 || id >= LM3533_LVCTRLBANK_COUNT) {
-+		dev_err(&pdev->dev, "illegal LED id %d\n", id);
- 		return -EINVAL;
- 	}
- 
-@@ -684,7 +769,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 	led->cdev.blink_set = lm3533_led_blink_set;
- 	led->cdev.brightness = LED_OFF;
- 	led->cdev.groups = lm3533_led_attribute_groups,
--	led->id = pdev->id;
-+	led->id = id;
- 
- 	mutex_init(&led->mutex);
- 
-@@ -739,9 +824,16 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
- 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
- }
- 
-+static const struct of_device_id lm3533_led_of_match[] = {
-+	{ .compatible = "ti,lm3533-led", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, lm3533_led_of_match);
-+
- static struct platform_driver lm3533_led_driver = {
- 	.driver = {
- 		.name = "lm3533-leds",
-+		.of_match_table = lm3533_led_of_match,
- 	},
- 	.probe		= lm3533_led_probe,
- 	.remove		= lm3533_led_remove,
 -- 
-2.11.0
+Best regards,
+Jacek Anaszewski
