@@ -1,163 +1,36 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 2/5] mfd: lm3533: Support initialization from Device
- Tree
-Date: Wed, 4 Jan 2017 11:54:24 +0000
-Message-ID: <20170104115424.GH27589@dell>
-References: <20161226181153.11271-1-bjorn.andersson@linaro.org>
- <20161226181153.11271-2-bjorn.andersson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161226181153.11271-2-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH] leds: add LED_ON brightness as boolean value
+Date: Wed, 04 Jan 2017 22:41:07 +0900
+Message-ID: <20170104134107.24902-1-andi.shyti@samsung.com>
+References: <CGME20170104134122epcas1p48ee63a75c2e159b06d792ec8bc7d4e6d@epcas1p4.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 26 Dec 2016, Bjorn Andersson wrote:
+Some devices do not handle the led brightness or simply don't
+care about it. Conceptually said devices want to just switch on
+or off the led. It is useless in this case to have a 255 range
+of brightness, while just having an LED_ON and LED_OFF improves
+the boolean meaning of the led status.
 
-> From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-> 
-> Implement support for initialization of the lm3533 driver core and
-> probing child devices from Device Tree.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-> 
-> Changes since v3:
-> - Moved parsing of child of nodes into each child driver
-> - Use of_platform_populate() to instanciate child devices
-> 
->  drivers/mfd/lm3533-core.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
-> 
-> diff --git a/drivers/mfd/lm3533-core.c b/drivers/mfd/lm3533-core.c
-> index 5abcbb2e8849..f147677f05ff 100644
-> --- a/drivers/mfd/lm3533-core.c
-> +++ b/drivers/mfd/lm3533-core.c
-> @@ -18,6 +18,8 @@
->  #include <linux/gpio.h>
->  #include <linux/i2c.h>
->  #include <linux/mfd/core.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/of_platform.h>
->  #include <linux/regmap.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
-> @@ -512,6 +514,11 @@ static int lm3533_device_init(struct lm3533 *lm3533)
->  	lm3533_device_bl_init(lm3533);
->  	lm3533_device_led_init(lm3533);
->  
-> +	if (lm3533->dev->of_node) {
-> +		of_platform_populate(lm3533->dev->of_node, NULL, NULL,
-> +				     lm3533->dev);
-> +	}
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ include/linux/leds.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I think it's save to call of_platform_populate(), even if !of_node.
-It will just fail and return an error code, which you are ignoring
-anyway.
-
->  	ret = sysfs_create_group(&lm3533->dev->kobj, &lm3533_attribute_group);
->  	if (ret < 0) {
->  		dev_err(lm3533->dev, "failed to create sysfs attributes\n");
-> @@ -588,10 +595,73 @@ static const struct regmap_config regmap_config = {
->  	.precious_reg	= lm3533_precious_register,
->  };
->  
-> +static int lm3533_of_parse_enum(struct device *dev, const char *propname,
-> +				const unsigned int *match, size_t num_matches)
-> +{
-> +	size_t i;
-> +	int ret;
-> +	u32 val;
-> +
-> +	ret = of_property_read_u32(dev->of_node, propname, &val);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to parse %s\n", propname);
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num_matches; i++) {
-> +		if (val == match[i])
-> +			return i;
-> +	}
-> +
-> +	dev_err(dev, "unsupported value of %s\n", propname);
-> +	return -EINVAL;
-> +}
-> +
-> +static int lm3533_pdata_from_of_node(struct device *dev)
-> +{
-> +	struct lm3533_platform_data *pdata;
-> +	int ret;
-> +	const unsigned int freqs[] = {
-> +		[LM3533_BOOST_FREQ_500KHZ] = 500000,
-> +		[LM3533_BOOST_FREQ_1000KHZ] = 1000000,
-> +	};
-> +	const unsigned int ovps[] = {
-> +		[LM3533_BOOST_OVP_16V] = 16000,
-> +		[LM3533_BOOST_OVP_24V] = 24000,
-> +		[LM3533_BOOST_OVP_32V] = 32000,
-> +		[LM3533_BOOST_OVP_40V] = 40000,
-> +	};
-> +
-> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> +	if (!pdata)
-> +		return -ENOMEM;
-> +
-> +	pdata->gpio_hwen = of_get_named_gpio(dev->of_node, "hwen-gpios", 0);
-> +	if (pdata->gpio_hwen < 0)
-> +		return pdata->gpio_hwen;
-> +
-> +	ret = lm3533_of_parse_enum(dev, "ti,boost-freq-hz",
-> +				   freqs, ARRAY_SIZE(freqs));
-> +	if (ret < 0)
-> +		return ret;
-> +	pdata->boost_freq = ret;
-> +
-> +	ret = lm3533_of_parse_enum(dev, "ti,boost-ovp-mv",
-> +				   ovps, ARRAY_SIZE(ovps));
-> +	if (ret < 0)
-> +		return ret;
-> +	pdata->boost_ovp = ret;
-> +
-> +	dev->platform_data = pdata;
-> +
-> +	return 0;
-> +}
-> +
->  static int lm3533_i2c_probe(struct i2c_client *i2c,
->  					const struct i2c_device_id *id)
->  {
->  	struct lm3533 *lm3533;
-> +	int ret;
->  
->  	dev_dbg(&i2c->dev, "%s\n", __func__);
->  
-> @@ -608,6 +678,12 @@ static int lm3533_i2c_probe(struct i2c_client *i2c,
->  	lm3533->dev = &i2c->dev;
->  	lm3533->irq = i2c->irq;
->  
-> +	if (i2c->dev.of_node) {
-
-I'd prefer this check to be placed in lm3533_pdata_from_of_node().
-
-Just return silently if !dev->of_node.
-
-> +		ret = lm3533_pdata_from_of_node(lm3533->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	return lm3533_device_init(lm3533);
->  }
->  
-
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 569cb531094c..0258f9c49034 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -27,6 +27,7 @@ struct device;
+ 
+ enum led_brightness {
+ 	LED_OFF		= 0,
++	LED_ON,
+ 	LED_HALF	= 127,
+ 	LED_FULL	= 255,
+ };
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
