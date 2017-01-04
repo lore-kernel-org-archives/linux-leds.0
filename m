@@ -1,22 +1,20 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v5 3/5] backlight: lm3533: Support initialization from Device Tree
-Date: Wed,  4 Jan 2017 03:50:48 -0800
-Message-ID: <20170104115050.24770-3-bjorn.andersson@linaro.org>
+Subject: [PATCH v5 5/5] leds: lm3533: Support initialization from Device Tree
+Date: Wed,  4 Jan 2017 03:50:50 -0800
+Message-ID: <20170104115050.24770-5-bjorn.andersson@linaro.org>
 References: <20170104115050.24770-1-bjorn.andersson@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170104115050.24770-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Implement support for initialization of the lm3533 backlight from Device
-Tree.
+Implement support for initialization of the lm3533 LED driver from
+Device Tree.
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
@@ -25,29 +23,29 @@ Note that this patch can be merged independently of the other patches in the
 series, pending approval of the DT binding.
 
 Changes since v4:
-- Acks from Pavel and Jingoo
+- None
 
 Changes since v3:
-- Moved backlight DT parsing from mfd driver
+- Moved LED DT parsing from mfd driver
 - Gave driver its own compatible
 
- drivers/video/backlight/lm3533_bl.c | 98 +++++++++++++++++++++++++++++++++++--
+ drivers/leds/leds-lm3533.c | 98 ++++++++++++++++++++++++++++++++++++++++++++--
  1 file changed, 95 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/video/backlight/lm3533_bl.c b/drivers/video/backlight/lm3533_bl.c
-index 0e2337f367b6..2f132199e604 100644
---- a/drivers/video/backlight/lm3533_bl.c
-+++ b/drivers/video/backlight/lm3533_bl.c
-@@ -22,6 +22,7 @@
+diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+index 5b529dc013d2..3eedad0ea9df 100644
+--- a/drivers/leds/leds-lm3533.c
++++ b/drivers/leds/leds-lm3533.c
+@@ -15,6 +15,7 @@
+ #include <linux/leds.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
- 
- #define LM3533_HVCTRLBANK_COUNT		2
-+#define LM3533_BL_DEFAULT_BRIGHTNESS	200
- #define LM3533_BL_MAX_BRIGHTNESS	255
- 
- #define LM3533_REG_CTRLBANK_AB_BCONF	0x1a
-@@ -269,6 +270,86 @@ static int lm3533_bl_setup(struct lm3533_bl *bl,
- 	return lm3533_ctrlbank_set_pwm(&bl->cb, pdata->pwm);
+@@ -648,12 +649,92 @@ static int lm3533_led_setup(struct lm3533_led *led,
+ 	return lm3533_ctrlbank_set_pwm(&led->cb, pdata->pwm);
  }
  
 +static int lm3533_of_parse_pwm_zones(struct device_node *node)
@@ -78,17 +76,17 @@ index 0e2337f367b6..2f132199e604 100644
 +	return ret;
 +}
 +
-+static struct lm3533_bl_platform_data *lm3533_bl_of_parse(struct device *dev,
-+							  int *id)
++static struct lm3533_led_platform_data *lm3533_led_of_parse(struct device *dev,
++							    int *id)
 +{
-+	struct lm3533_bl_platform_data *bl_pdata;
++	struct lm3533_led_platform_data *led_pdata;
 +	struct device_node *node = dev->of_node;
 +	int ret;
 +	u32 reg;
 +	u32 val;
 +
-+	bl_pdata = devm_kzalloc(dev, sizeof(*bl_pdata), GFP_KERNEL);
-+	if (!bl_pdata)
++	led_pdata = devm_kzalloc(dev, sizeof(*led_pdata), GFP_KERNEL);
++	if (!led_pdata)
 +		return NULL;
 +
 +	ret = of_property_read_u32(node, "reg", &reg);
@@ -99,7 +97,7 @@ index 0e2337f367b6..2f132199e604 100644
 +	*id = reg;
 +
 +	ret = of_property_read_string(node, "label",
-+				      (const char **)&bl_pdata->name);
++				      (const char **)&led_pdata->name);
 +	if (ret < 0) {
 +		dev_err(dev, "unable to parse label\n");
 +		return NULL;
@@ -110,83 +108,81 @@ index 0e2337f367b6..2f132199e604 100644
 +		dev_err(dev, "unable to parse led-max-microamp\n");
 +		return NULL;
 +	}
-+	bl_pdata->max_current = val;
++	led_pdata->max_current = val;
 +
-+	val = LM3533_BL_DEFAULT_BRIGHTNESS;
-+	ret = of_property_read_u32(node, "default-brightness", &val);
++	ret = of_property_read_string(node, "linux,default-trigger",
++				      &led_pdata->default_trigger);
 +	if (ret < 0 && ret != -EINVAL) {
-+		dev_err(dev, "unable to parse default-brightness\n");
++		dev_err(dev, "unable to parse default-trigger\n");
 +		return NULL;
 +	}
-+	bl_pdata->default_brightness = val;
 +
 +	ret = lm3533_of_parse_pwm_zones(node);
 +	if (ret < 0) {
 +		dev_err(dev, "failed to parse ti,pwm-zones\n");
 +		return NULL;
 +	}
-+	bl_pdata->pwm = ret;
++	led_pdata->pwm = ret;
 +
-+	return bl_pdata;
++	return led_pdata;
 +}
 +
- static int lm3533_bl_probe(struct platform_device *pdev)
+ static int lm3533_led_probe(struct platform_device *pdev)
  {
  	struct lm3533 *lm3533;
-@@ -277,6 +358,7 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 	struct backlight_device *bd;
- 	struct backlight_properties props;
+ 	struct lm3533_led_platform_data *pdata;
+ 	struct lm3533_led *led;
  	int ret;
 +	int id;
  
  	dev_dbg(&pdev->dev, "%s\n", __func__);
  
-@@ -284,14 +366,17 @@ static int lm3533_bl_probe(struct platform_device *pdev)
+@@ -661,14 +742,18 @@ static int lm3533_led_probe(struct platform_device *pdev)
  	if (!lm3533)
  		return -EINVAL;
  
 +	id = pdev->id;
  	pdata = dev_get_platdata(&pdev->dev);
 +	if (!pdata)
-+		pdata = lm3533_bl_of_parse(&pdev->dev, &id);
++		pdata = lm3533_led_of_parse(&pdev->dev, &id);
++
  	if (!pdata) {
  		dev_err(&pdev->dev, "no platform data\n");
  		return -EINVAL;
  	}
  
--	if (pdev->id < 0 || pdev->id >= LM3533_HVCTRLBANK_COUNT) {
--		dev_err(&pdev->dev, "illegal backlight id %d\n", pdev->id);
-+	if (id < 0 || id >= LM3533_HVCTRLBANK_COUNT) {
-+		dev_err(&pdev->dev, "illegal backlight id %d\n", id);
+-	if (pdev->id < 0 || pdev->id >= LM3533_LVCTRLBANK_COUNT) {
+-		dev_err(&pdev->dev, "illegal LED id %d\n", pdev->id);
++	if (id < 0 || id >= LM3533_LVCTRLBANK_COUNT) {
++		dev_err(&pdev->dev, "illegal LED id %d\n", id);
  		return -EINVAL;
  	}
  
-@@ -300,7 +385,7 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+@@ -684,7 +769,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 	led->cdev.blink_set = lm3533_led_blink_set;
+ 	led->cdev.brightness = LED_OFF;
+ 	led->cdev.groups = lm3533_led_attribute_groups,
+-	led->id = pdev->id;
++	led->id = id;
  
- 	bl->lm3533 = lm3533;
--	bl->id = pdev->id;
-+	bl->id = id;
+ 	mutex_init(&led->mutex);
  
- 	bl->cb.lm3533 = lm3533;
- 	bl->cb.id = lm3533_bl_get_ctrlbank_id(bl);
-@@ -394,10 +479,17 @@ static void lm3533_bl_shutdown(struct platform_device *pdev)
- 	lm3533_ctrlbank_disable(&bl->cb);
+@@ -739,9 +824,16 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
+ 	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
  }
  
-+static const struct of_device_id lm3533_bl_of_match[] = {
-+	{ .compatible = "ti,lm3533-backlight", },
++static const struct of_device_id lm3533_led_of_match[] = {
++	{ .compatible = "ti,lm3533-led", },
 +	{ },
 +};
-+MODULE_DEVICE_TABLE(of, lm3533_bl_of_match);
++MODULE_DEVICE_TABLE(of, lm3533_led_of_match);
 +
- static struct platform_driver lm3533_bl_driver = {
+ static struct platform_driver lm3533_led_driver = {
  	.driver = {
- 		.name	= "lm3533-backlight",
- 		.pm	= &lm3533_bl_pm_ops,
-+		.of_match_table = lm3533_bl_of_match,
+ 		.name = "lm3533-leds",
++		.of_match_table = lm3533_led_of_match,
  	},
- 	.probe		= lm3533_bl_probe,
- 	.remove		= lm3533_bl_remove,
+ 	.probe		= lm3533_led_probe,
+ 	.remove		= lm3533_led_remove,
 -- 
 2.11.0
