@@ -1,170 +1,80 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v2 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK()
- annotation
-Date: Mon, 9 Jan 2017 22:09:51 +0100 (CET)
-Message-ID: <alpine.DEB.2.20.1701092207430.2029@hadrien>
-References: <20161216111038.22064-1-mcgrof@kernel.org> <20161216111038.22064-6-mcgrof@kernel.org> <alpine.DEB.2.10.1612191121450.2994@hadrien> <20170109204654.GD13946@wotan.suse.de>
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Subject: Re: [PATCH 3/7] ALSA: hda - use dell_micmute_led_set() instead of
+ dell_app_wmi_led_set()
+Date: Tue, 10 Jan 2017 06:28:53 +0100
+Message-ID: <20170110052853.GA1291@kmp-mobile.hq.kempniu.pl>
+References: <20161208123618.28603-1-kernel@kempniu.pl>
+ <20161208123618.28603-4-kernel@kempniu.pl>
+ <201612111140.38170@pali>
+ <20161215144628.GB22695@kmp-mobile.hq.kempniu.pl>
+ <1481816580.2090.5.camel@Pali-Nokia-N900>
+ <20161215192253.GA4776@kmp-mobile.hq.kempniu.pl>
+ <20170109132631.GA14411@ozzy.nask.waw.pl>
+ <s5h8tqk1e98.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22868 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932505AbdAIVJz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 9 Jan 2017 16:09:55 -0500
-In-Reply-To: <20170109204654.GD13946@wotan.suse.de>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <s5h8tqk1e98.wl-tiwai@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Alex Hung <alex.hung@canonical.com>, Anthony Wong <anthony.wong@canonical.com>, Hui Wang <hui.wang@canonical.com>, Jim Dailey <Jim_Dailey@dell.com>, Louis Davis <Louis_Davis@dell.com>, Bob Rodgers <Robert_Rodgers@dell.com>, pali.rohar@gmail.com, Darren Hart <dvhart@infradead.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Matthew Garrett <mjg59@srcf.ucam.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Gilles Muller <Gilles.Muller@lip6.fr>, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org
 
+> On Mon, 09 Jan 2017 14:26:31 +0100,
+> Michał Kępień wrote:
+> > 
+> > > > On Thu Dec 15 15:46:28 2016 Michał Kępień <kernel@kempniu.pl> wrote:
+> > > > > > On Thursday 08 December 2016 13:36:14 Michał Kępień wrote:
+> > > > > > > --- a/sound/pci/hda/dell_wmi_helper.c
+> > > > > > > +++ b/sound/pci/hda/dell_wmi_helper.c
+> > > > > > > @@ -6,7 +6,7 @@
+> > > > > > > #include <linux/dell-led.h>
+> > > > > > > 
+> > > > > > > static int dell_led_value;
+> > > > > > > -static int (*dell_led_set_func)(int, int);
+> > > > > > > +static int (*dell_led_set_func)(int);
+> > > > > > 
+> > > > > > Suggestion: what about changing name to dell_micmute_led_set_func to 
+> > > > > > match real function name which is used after this patch?
+> > > > > 
+> > > > > While I like the idea itself, implementing it will double the number of
+> > > > > lines that this patch changes (6 vs. 12), arguably making its intention
+> > > > 
+> > > > If some patch makes final result of code better then metric number of lines is not priority.
+> > > > 
+> > > > > less clear.   Please let me know if you would really like this to happen
+> > > > > (perhaps as a separate patch?), otherwise I will skip this idea in v2.
+> > > > > 
+> > > > > -- 
+> > > > > Best regards,
+> > > > > Michał Kępień
+> > > > 
+> > > > If it will be in this or another following patch... I dot care. But this is sound subsystem, so sound maintainers need to decide what they prefer.
+> > > 
+> > > Good point.  Jaroslav, Takashi, I will patiently wait for your opinion
+> > > on this patch and Pali's suggestion quoted above before I post v2 of
+> > > this series.
+> > 
+> > As it has already been a month since I posted this patch series, this is
+> > just a reminder that I am waiting for comments from the sound subsystem
+> > maintainers before I post v2.
+> > 
+> > Jaroslav, Takashi, I could really use your input.  Please let me know if
+> > something is unclear.  Thanks,
+> 
+> Sorry, the last post was overseen as I already went off to vacation.
 
+No worries, thank you for getting back to me.
 
-On Mon, 9 Jan 2017, Luis R. Rodriguez wrote:
+> The rename can be done in another patch.  Doing multiple things in a
+> single patch often leads to more confusion and error-prone.
+> 
+> Other than that, I'm fine with rename.
 
-> On Mon, Dec 19, 2016 at 11:23:17AM +0100, Julia Lawall wrote:
-> >
-> >
-> > On Fri, 16 Dec 2016, Luis R. Rodriguez wrote:
-> >
-> > > We need to ensure that when driver developers use the custom firmware
-> > > fallback mechanism it was not a copy and paste bug. These use cases on
-> > > upstream drivers are rare, we only have 2 upstream users and its for
-> > > really old drivers. Since valid uses are rare but possible enable a
-> > > white-list for its use, and use this same white-list annotation to refer
-> > > to the documentation covering the custom use case.
-> > >
-> > > New faulty users can be reported via 0-day now.
-> > >
-> > > Cc: Fengguang Wu <fengguang.wu@intel.com>
-> > > Cc: Richard Purdie <rpurdie@rpsys.net>
-> > > Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > > Cc: linux-leds@vger.kernel.org
-> > > Cc: Abhay Salunke <Abhay_Salunke@dell.com>
-> > > Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> > > ---
-> > >  Documentation/driver-api/firmware/fallback-mechanisms.rst     | 7 +++++--
-> > >  drivers/firmware/dell_rbu.c                                   | 1 +
-> > >  drivers/leds/leds-lp55xx-common.c                             | 1 +
-> > >  include/linux/firmware.h                                      | 7 +++++++
-> > >  scripts/coccinelle/api/request_firmware-custom-fallback.cocci | 9 ++++++++-
-> > >  5 files changed, 22 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > index b87a292153c6..73f509a8d2de 100644
-> > > --- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > +++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > @@ -184,8 +184,11 @@ load firmware for you through a custom path.
-> > >
-> > >  The custom fallback mechanism can often be enabled by mistake. We currently
-> > >  have only 2 users of it, and little justification to enable it for other users.
-> > > -Since it is a common driver developer mistake to enable it, help police for
-> > > -new users of the custom fallback mechanism with::
-> > > +Since it is a common driver developer mistake to enable it, driver developers
-> > > +should use DECLARE_FW_CUSTOM_FALLBACK() to both white-list and validate their
-> > > +use and also refer to the documentation for the custom loading solution.
-> > > +
-> > > +Invalid users of the custom fallback mechanism can be policed using::
-> > >
-> > >          $ export COCCI=scripts/coccinelle/api/request_firmware-avoid-init-probe-init.cocci
-> > >          $ make coccicheck MODE=report
-> > > diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
-> > > index 2f452f1f7c8a..3f2aa35bc54d 100644
-> > > --- a/drivers/firmware/dell_rbu.c
-> > > +++ b/drivers/firmware/dell_rbu.c
-> > > @@ -586,6 +586,7 @@ static ssize_t read_rbu_image_type(struct file *filp, struct kobject *kobj,
-> > >  	return size;
-> > >  }
-> > >
-> > > +DECLARE_FW_CUSTOM_FALLBACK("Documentation/dell_rbu.txt");
-> > >  static ssize_t write_rbu_image_type(struct file *filp, struct kobject *kobj,
-> > >  				    struct bin_attribute *bin_attr,
-> > >  				    char *buffer, loff_t pos, size_t count)
-> > > diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> > > index 5377f22ff994..04161428ee3b 100644
-> > > --- a/drivers/leds/leds-lp55xx-common.c
-> > > +++ b/drivers/leds/leds-lp55xx-common.c
-> > > @@ -219,6 +219,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
-> > >  	release_firmware(chip->fw);
-> > >  }
-> > >
-> > > +DECLARE_FW_CUSTOM_FALLBACK("Documentation/leds/leds-lp55xx.txt");
-> > >  static int lp55xx_request_firmware(struct lp55xx_chip *chip)
-> > >  {
-> > >  	const char *name = chip->cl->name;
-> > > diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-> > > index b1f9f0ccb8ac..e6ca19c03dcc 100644
-> > > --- a/include/linux/firmware.h
-> > > +++ b/include/linux/firmware.h
-> > > @@ -8,6 +8,13 @@
-> > >  #define FW_ACTION_NOHOTPLUG 0
-> > >  #define FW_ACTION_HOTPLUG 1
-> > >
-> > > +/*
-> > > + * Helper for scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > + * and so users can also easily search for the documentation for the
-> > > + * respectively needed custom fallback mechanism.
-> > > + */
-> > > +#define DECLARE_FW_CUSTOM_FALLBACK(__usermode_helper)
-> > > +
-> > >  struct firmware {
-> > >  	size_t size;
-> > >  	const u8 *data;
-> > > diff --git a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > index c7598cfc4780..68cacab35b76 100644
-> > > --- a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > +++ b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > @@ -17,6 +17,13 @@
-> > >  virtual report
-> > >  virtual context
-> > >
-> > > +@ r0 depends on report || context @
-> > > +declarer name DECLARE_FW_CUSTOM_FALLBACK;
-> > > +expression E;
-> > > +@@
-> > > +
-> > > +DECLARE_FW_CUSTOM_FALLBACK(E);
-> > > +
-> > >  @ r1 depends on report || context @
-> > >  expression mod, name, dev, gfp, drv, cb;
-> > >  position p;
-> > > @@ -30,7 +37,7 @@ position p;
-> > >  *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
-> >
-> > It looks suspicious that your added a new rule r0, that the python rule
-> > below depends on r0 failing, and that the rule with the * (context mode)
-> > does not depend on r0 in any way.
->
-> You're right, the context mode would report all cases, I've changed it as follows:
->
-> diff --git a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> index 68cacab35b76..9548e5be9c0e 100644
-> --- a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> +++ b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> @@ -24,7 +24,7 @@ expression E;
->
->  DECLARE_FW_CUSTOM_FALLBACK(E);
->
-> -@ r1 depends on report || context @
-> +@ r1 depends on !r0 && report || context @
->  expression mod, name, dev, gfp, drv, cb;
->  position p;
->  @@
-> @@ -37,7 +37,7 @@ position p;
->  *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
->  )
->
-> -@script:python depends on report && !r0 @
-> +@script:python depends on report && r1 @
->  p << r1.p;
->  @@
+Thank you for your comments, I will keep them in mind for v2.
 
-It is never useful in a python rule to mention an inherited rule in the
-depends line that is also mentioned in the metavariable list.  A python
-rule is only applied if all the metavariables are bound.  Thus, the use of
-r1.p means that r1 has to be satisfied.
-
-If you need further suggestions, just send the whole thing again, and I
-will take a look.
-
-julia
+-- 
+Best regards,
+Michał Kępień
