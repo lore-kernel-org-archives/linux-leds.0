@@ -1,179 +1,55 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [PATCH v2 5/5] firmware: add DECLARE_FW_CUSTOM_FALLBACK()
- annotation
-Date: Tue, 10 Jan 2017 15:43:22 +0100
-Message-ID: <20170110144322.GF13946@wotan.suse.de>
-References: <20161216111038.22064-1-mcgrof@kernel.org>
- <20161216111038.22064-6-mcgrof@kernel.org>
- <alpine.DEB.2.10.1612191121450.2994@hadrien>
- <20170109204654.GD13946@wotan.suse.de>
- <alpine.DEB.2.20.1701092207430.2029@hadrien>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Tue, 10 Jan 2017 20:57:28 +0100
+Message-ID: <276e7387-2c87-3bd4-8992-57a928e33dfc@gmail.com>
+References: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
+ <CACRpkdb1gyXH0+O6P5scVD5_go07fbc3ydp61rG=7CypdXvJ2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:46719 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758377AbdAJOn3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 10 Jan 2017 09:43:29 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1701092207430.2029@hadrien>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb1gyXH0+O6P5scVD5_go07fbc3ydp61rG=7CypdXvJ2A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org, ming.lei@canonical.com, daniel.wagner@bmw-carit.de, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Gilles Muller <Gilles.Muller@lip6.fr>, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.or
 
-On Mon, Jan 09, 2017 at 10:09:51PM +0100, Julia Lawall wrote:
-> 
-> 
-> On Mon, 9 Jan 2017, Luis R. Rodriguez wrote:
-> 
-> > On Mon, Dec 19, 2016 at 11:23:17AM +0100, Julia Lawall wrote:
-> > >
-> > >
-> > > On Fri, 16 Dec 2016, Luis R. Rodriguez wrote:
-> > >
-> > > > We need to ensure that when driver developers use the custom firmware
-> > > > fallback mechanism it was not a copy and paste bug. These use cases on
-> > > > upstream drivers are rare, we only have 2 upstream users and its for
-> > > > really old drivers. Since valid uses are rare but possible enable a
-> > > > white-list for its use, and use this same white-list annotation to refer
-> > > > to the documentation covering the custom use case.
-> > > >
-> > > > New faulty users can be reported via 0-day now.
-> > > >
-> > > > Cc: Fengguang Wu <fengguang.wu@intel.com>
-> > > > Cc: Richard Purdie <rpurdie@rpsys.net>
-> > > > Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > > > Cc: linux-leds@vger.kernel.org
-> > > > Cc: Abhay Salunke <Abhay_Salunke@dell.com>
-> > > > Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> > > > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> > > > ---
-> > > >  Documentation/driver-api/firmware/fallback-mechanisms.rst     | 7 +++++--
-> > > >  drivers/firmware/dell_rbu.c                                   | 1 +
-> > > >  drivers/leds/leds-lp55xx-common.c                             | 1 +
-> > > >  include/linux/firmware.h                                      | 7 +++++++
-> > > >  scripts/coccinelle/api/request_firmware-custom-fallback.cocci | 9 ++++++++-
-> > > >  5 files changed, 22 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > > index b87a292153c6..73f509a8d2de 100644
-> > > > --- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > > +++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> > > > @@ -184,8 +184,11 @@ load firmware for you through a custom path.
-> > > >
-> > > >  The custom fallback mechanism can often be enabled by mistake. We currently
-> > > >  have only 2 users of it, and little justification to enable it for other users.
-> > > > -Since it is a common driver developer mistake to enable it, help police for
-> > > > -new users of the custom fallback mechanism with::
-> > > > +Since it is a common driver developer mistake to enable it, driver developers
-> > > > +should use DECLARE_FW_CUSTOM_FALLBACK() to both white-list and validate their
-> > > > +use and also refer to the documentation for the custom loading solution.
-> > > > +
-> > > > +Invalid users of the custom fallback mechanism can be policed using::
-> > > >
-> > > >          $ export COCCI=scripts/coccinelle/api/request_firmware-avoid-init-probe-init.cocci
-> > > >          $ make coccicheck MODE=report
-> > > > diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
-> > > > index 2f452f1f7c8a..3f2aa35bc54d 100644
-> > > > --- a/drivers/firmware/dell_rbu.c
-> > > > +++ b/drivers/firmware/dell_rbu.c
-> > > > @@ -586,6 +586,7 @@ static ssize_t read_rbu_image_type(struct file *filp, struct kobject *kobj,
-> > > >  	return size;
-> > > >  }
-> > > >
-> > > > +DECLARE_FW_CUSTOM_FALLBACK("Documentation/dell_rbu.txt");
-> > > >  static ssize_t write_rbu_image_type(struct file *filp, struct kobject *kobj,
-> > > >  				    struct bin_attribute *bin_attr,
-> > > >  				    char *buffer, loff_t pos, size_t count)
-> > > > diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> > > > index 5377f22ff994..04161428ee3b 100644
-> > > > --- a/drivers/leds/leds-lp55xx-common.c
-> > > > +++ b/drivers/leds/leds-lp55xx-common.c
-> > > > @@ -219,6 +219,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
-> > > >  	release_firmware(chip->fw);
-> > > >  }
-> > > >
-> > > > +DECLARE_FW_CUSTOM_FALLBACK("Documentation/leds/leds-lp55xx.txt");
-> > > >  static int lp55xx_request_firmware(struct lp55xx_chip *chip)
-> > > >  {
-> > > >  	const char *name = chip->cl->name;
-> > > > diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-> > > > index b1f9f0ccb8ac..e6ca19c03dcc 100644
-> > > > --- a/include/linux/firmware.h
-> > > > +++ b/include/linux/firmware.h
-> > > > @@ -8,6 +8,13 @@
-> > > >  #define FW_ACTION_NOHOTPLUG 0
-> > > >  #define FW_ACTION_HOTPLUG 1
-> > > >
-> > > > +/*
-> > > > + * Helper for scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > > + * and so users can also easily search for the documentation for the
-> > > > + * respectively needed custom fallback mechanism.
-> > > > + */
-> > > > +#define DECLARE_FW_CUSTOM_FALLBACK(__usermode_helper)
-> > > > +
-> > > >  struct firmware {
-> > > >  	size_t size;
-> > > >  	const u8 *data;
-> > > > diff --git a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > > index c7598cfc4780..68cacab35b76 100644
-> > > > --- a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > > +++ b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > > > @@ -17,6 +17,13 @@
-> > > >  virtual report
-> > > >  virtual context
-> > > >
-> > > > +@ r0 depends on report || context @
-> > > > +declarer name DECLARE_FW_CUSTOM_FALLBACK;
-> > > > +expression E;
-> > > > +@@
-> > > > +
-> > > > +DECLARE_FW_CUSTOM_FALLBACK(E);
-> > > > +
-> > > >  @ r1 depends on report || context @
-> > > >  expression mod, name, dev, gfp, drv, cb;
-> > > >  position p;
-> > > > @@ -30,7 +37,7 @@ position p;
-> > > >  *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
-> > >
-> > > It looks suspicious that your added a new rule r0, that the python rule
-> > > below depends on r0 failing, and that the rule with the * (context mode)
-> > > does not depend on r0 in any way.
-> >
-> > You're right, the context mode would report all cases, I've changed it as follows:
-> >
-> > diff --git a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > index 68cacab35b76..9548e5be9c0e 100644
-> > --- a/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > +++ b/scripts/coccinelle/api/request_firmware-custom-fallback.cocci
-> > @@ -24,7 +24,7 @@ expression E;
-> >
-> >  DECLARE_FW_CUSTOM_FALLBACK(E);
-> >
-> > -@ r1 depends on report || context @
-> > +@ r1 depends on !r0 && report || context @
-> >  expression mod, name, dev, gfp, drv, cb;
-> >  position p;
-> >  @@
-> > @@ -37,7 +37,7 @@ position p;
-> >  *request_firmware_nowait@p(mod, FW_ACTION_NOHOTPLUG, name, dev, gfp, drv, cb)
-> >  )
-> >
-> > -@script:python depends on report && !r0 @
-> > +@script:python depends on report && r1 @
-> >  p << r1.p;
-> >  @@
-> 
-> It is never useful in a python rule to mention an inherited rule in the
-> depends line that is also mentioned in the metavariable list.  A python
-> rule is only applied if all the metavariables are bound.  Thus, the use of
-> r1.p means that r1 has to be satisfied.
-> 
-> If you need further suggestions, just send the whole thing again, and I
-> will take a look.
+Hi Linus,
 
-Sure, I can just also drop context support for now as what we really are after
-are the reports, and that works well.
+On 01/09/2017 03:53 PM, Linus Walleij wrote:
+> On Thu, Dec 15, 2016 at 9:53 AM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
+> 
+>> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+>> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+>> With this change a proper label is used.
+>> Also adjust all users so they can pass a label, properly retrieved from
+>> device tree properties.
+>>
+>> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+>> ---
+>> This patchset addresses the problem described in
+>> https://www.spinics.net/lists/linux-leds/msg07233.html
+>>
+>> I can only verify leds-gpio usage, but changes to gpio_keys_polled and
+>> amba-clcd-nomadik seem pretty straight forward.
+> 
+> I I like this, I have been annoyed by this too. Thank you for
+> looking into this.
+> 
+>> If this is the right thing to do, I need to know who I shall CC for
+>> patch approval.
+> 
+> I can simply test and merge the CLCD patch myself.
+> 
+> Ideally I'd like Dmitry Torokhov to ACK the input patch
+> and Jacek to ACK the LEDs patch and I will merge it.
 
-  Luis
+For leds-gpio driver:
+
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+
+-- 
+Best regards,
+Jacek Anaszewski
