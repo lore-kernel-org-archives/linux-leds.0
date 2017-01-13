@@ -1,240 +1,128 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Fri, 13 Jan 2017 12:01:38 +0100
-Message-ID: <11509256.sASrU01HFQ@amdc3058>
-References: <CGME20170112164013epcas5p41425c343028efaff169f1a9ed38b4365@epcas5p4.samsung.com>
- <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
+Date: Fri, 13 Jan 2017 11:17:34 -0800
+Message-ID: <20170113191734.GB17467@localhost.localdomain>
+References: <20161125100140.GC4062@amd>
+ <e32e3d6c-5d6d-c882-21d9-8028c8311b0b@samsung.com>
+ <20161125110557.GA13204@amd>
+ <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
+ <20161125144859.GA20139@amd>
+ <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
+ <20161125204045.GA28036@amd>
+ <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
+ <20161221184948.GB21636@amd>
+ <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51416 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbdAMLBq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Jan 2017 06:01:46 -0500
-In-reply-to: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Received: from bombadil.infradead.org ([198.137.202.9]:60018 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750760AbdAMTRp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Jan 2017 14:17:45 -0500
+Content-Disposition: inline
+In-Reply-To: <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Hans de Goede <hdegoede@redhat.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-
-Hi,
-
-On Thursday, January 12, 2017 05:39:24 PM Alexander Stein wrote:
-> Currently all users of fwnode_get_named_gpiod() have no way to specify a
-> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-> With this change a proper label is used.
-> Also adjust all users so they can pass a label, properly retrieved from
-> device tree properties.
+On Fri, Dec 23, 2016 at 10:55:34PM +0100, Jacek Anaszewski wrote:
+> Hi,
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
-> v2:
-> * Non-RFC
-> * This patch is rebased on gpio/for-next branch and cherry-picked commit
-> 2715bbe from https://bitbucket.org/andy-shev/linux.git
+> On 12/21/2016 07:49 PM, Pavel Machek wrote:
+> > Hi!
+> > 
+> >>>>> In my eyes trigger approach is neccessary at least for some hardware,
+> >>>>> and things it pretty clear: trigger on == LED changes without
+> >>>>> userspace involvement. trigger off == userspace controls the LED.
+> >>>>
+> >>>> It is likely that it would break many existing users.
+> >>>
+> >>> Can you elaborate on that?
+> >>
+> >> There might exist users that adjust LED brightness while having
+> >> active trigger. The best example is default-on trigger - it sets
+> >> brightness only on init, but remains active all the time. Whereas
+> >> this could be fixed, there is another case: think of changing blinking
+> >> brightness - it would be impossible.
+> > 
+> > I don't see the breakage. For existing blinking and default-on
+> > triggers, existing behaviour would be kept. Difference would be that
+> > for hardware that changes triggers itself (like the keyboard light) we
+> > would present it as a trigger. And you are right -- there would be
+> > user visible changes there. You could not assign blinking, because
+> > .. it already has a trigger. But I believe it is reasonable.
 > 
->  drivers/gpio/devres.c                     |  5 +++--
->  drivers/gpio/gpiolib.c                    |  5 +++--
->  drivers/input/keyboard/gpio_keys.c        |  3 ++-
->  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
->  drivers/leds/leds-gpio.c                  | 13 +++++++------
->  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
-
-For fbdev part:
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
->  include/linux/gpio/consumer.h             | 12 ++++++++----
->  7 files changed, 33 insertions(+), 20 deletions(-)
+> We've already received negative feedback regarding blocking
+> application of different trigger when hw brightness change notifications
+> are enabled. One solution to that is making the notifications
+> orthogonal to the trigger mechanism. The other possibility is to allow
+> for having more than one active trigger for a LED.
 > 
-> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-> index 6d77b60..d196be7 100644
-> --- a/drivers/gpio/devres.c
-> +++ b/drivers/gpio/devres.c
-> @@ -140,7 +140,8 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	char prop_name[32]; /* 32 is max size of property name */
->  	struct gpio_desc **dr;
-> @@ -160,7 +161,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  			snprintf(prop_name, sizeof(prop_name), "%s",
->  					    gpio_suffixes[i]);
->  
-> -		desc = fwnode_get_named_gpiod(child, prop_name, flags);
-> +		desc = fwnode_get_named_gpiod(child, prop_name, flags, label);
->  		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
->  			break;
->  	}
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 46a4334..59d3d96 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -3317,7 +3317,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
->   */
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
->  	unsigned long lflags = 0;
-> @@ -3348,7 +3349,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  	if (IS_ERR(desc))
->  		return desc;
->  
-> -	ret = gpiod_request(desc, NULL);
-> +	ret = gpiod_request(desc, label);
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-> index 9de4b87..2ec74d9 100644
-> --- a/drivers/input/keyboard/gpio_keys.c
-> +++ b/drivers/input/keyboard/gpio_keys.c
-> @@ -481,7 +481,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->  	spin_lock_init(&bdata->lock);
->  
->  	if (child) {
-> -		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_IN);
-> +		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +							 GPIOD_IN, desc);
->  		if (IS_ERR(bdata->gpiod)) {
->  			error = PTR_ERR(bdata->gpiod);
->  			if (error == -ENOENT) {
-> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-> index fd7ab4d..5e35c56 100644
-> --- a/drivers/input/keyboard/gpio_keys_polled.c
-> +++ b/drivers/input/keyboard/gpio_keys_polled.c
-> @@ -305,7 +305,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
->  
->  			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
->  								 child,
-> -								 GPIOD_IN);
-> +								 GPIOD_IN,
-> +								 button->desc);
->  			if (IS_ERR(bdata->gpiod)) {
->  				error = PTR_ERR(bdata->gpiod);
->  				if (error != -EPROBE_DEFER)
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 00cc671..6c4825d 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  		const char *state = NULL;
->  		struct device_node *np = to_of_node(child);
->  
-> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_ASIS);
-> -		if (IS_ERR(led.gpiod)) {
-> -			fwnode_handle_put(child);
-> -			return ERR_CAST(led.gpiod);
-> -		}
-> -
->  		ret = fwnode_property_read_string(child, "label", &led.name);
->  		if (ret && IS_ENABLED(CONFIG_OF) && np)
->  			led.name = np->name;
-> @@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  			return ERR_PTR(-EINVAL);
->  		}
->  
-> +		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +						      GPIOD_ASIS, led.name);
-> +		if (IS_ERR(led.gpiod)) {
-> +			fwnode_handle_put(child);
-> +			return ERR_CAST(led.gpiod);
-> +		}
-> +
->  		fwnode_property_read_string(child, "linux,default-trigger",
->  					    &led.default_trigger);
->  
-> diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-> index 2e800d7..9175ad9 100644
-> --- a/drivers/video/fbdev/amba-clcd-nomadik.c
-> +++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-> @@ -185,22 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
->  	dev_info(dev, "TPG110 display init\n");
->  
->  	/* This asserts the GRESTB signal, putting the display into reset */
-> -	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode, GPIOD_OUT_HIGH);
-> +	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-> +					   GPIOD_OUT_HIGH, "grestb");
->  	if (IS_ERR(grestb)) {
->  		dev_err(dev, "no GRESTB GPIO\n");
->  		return;
->  	}
-> -	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, GPIOD_OUT_LOW);
-> +	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
-> +					 GPIOD_OUT_LOW, "scen");
->  	if (IS_ERR(scen)) {
->  		dev_err(dev, "no SCEN GPIO\n");
->  		return;
->  	}
-> -	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW);
-> +	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
-> +					"scl");
->  	if (IS_ERR(scl)) {
->  		dev_err(dev, "no SCL GPIO\n");
->  		return;
->  	}
-> -	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW);
-> +	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
-> +					"sda");
->  	if (IS_ERR(sda)) {
->  		dev_err(dev, "no SDA GPIO\n");
->  		return;
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index 930d100..80bad7e 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -136,11 +136,13 @@ struct fwnode_handle;
->  
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags);
-> +					 enum gpiod_flags dflags,
-> +					 const char *label);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags);
-> +					    enum gpiod_flags flags,
-> +					    const char *label);
->  #else /* CONFIG_GPIOLIB */
->  
->  static inline int gpiod_count(struct device *dev, const char *con_id)
-> @@ -416,7 +418,8 @@ struct fwnode_handle;
->  static inline
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
-> @@ -425,7 +428,8 @@ static inline
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
+> We could think of defining a special type of persistent trigger that
+> would be always enabled.
+> 
+> Best regards,
+> Jacek Anaszewski
+> 
+> 
+> >>> I just tried with leds on thinkpad
+> >>>
+> >>> root@duo:/sys/class/leds/tpacpi::power# echo 1 > brightness
+> >>> root@duo:/sys/class/leds/tpacpi::power# echo 0 > brightness
+> >>> root@duo:/sys/class/leds/tpacpi::power# cat trigger
+> >>> [none] bluetooth-power kbd-scrollock kbd-numlock kbd-capslock
+> >>> kbd-kanalock kbd-shiftlock kbd-altgrlock kbd-ctrllock kbd-altlock
+> >>> kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock AC-online
+> >>> BAT0-charging-or-full BAT0-charging BAT0-full
+> >>> BAT0-charging-blink-full-solid rfkill0 phy0rx phy0tx phy0assoc
+> >>> phy0radio phy0tpt mmc0 timer pattern rfkill1 hci0-power rfkill74
+> >>> heartbeat
+> >>> root@duo:/sys/class/leds/tpacpi::power#
+> >>>
+> >>> I can control the LED from userspace, but then there's no way to put
+> >>> the LED back to firmware control. That's just broken.
+> >>>
+> >>> Do you have a proposal how to handle that?
+> >>
+> >> Isn't it under firmware control all the time?
+> > 
+> > I'm not 100% sure in the thinkpad case. In the N900 case, we have LED
+> > that displays (user_brightness || (user_enabled_indicator && cpu_activity)).
+> > 
+> > I believe clean way to do that would be a trigger.
+> > 
+> >>>>> So I'd do the trigger here. It is same way we can handle LEDs on
+> >>>>> thinkpad. Yes, it means you won't be able to do oneshot trigger on
+> >>>>> backlight. I don't think that's a huge problem.
+> >>>>
+> >>>> There have been voices in this discussion claiming the opposite. :-)
+> >>>
+> >>> Well, lets ignore those voices until the voices understand the current
+> >>> design :-).
+> >>
+> >> Sheer user is not interested in design, but in usability.
+> > 
+> > Well, end user is not expected to touch /sys files directly -- we
+> > should create a script for that. /sys should be logical and map well
+> > to what we do in kernel. Being "nice to use from shell" is
+> > secondary...
+> > 
+> > 								Pavel
+> > 
+
+This seems to have stalled out. From the driver/platform/x86 perspective, I
+believe we're still waiting on the leds subsystem mechanism to be decided on.
+Hans, you said you'd send a v6 once that was squared away I believe.
+
+For now, I'm marking these as "changes requested" and archiving the patches.
+Will revisit once the LEDs bits are sorted and v6 lands on the list.
+
+
+If I've missed some context some place, please point me at it.
+
+Thanks,
+
+-- 
+Darren Hart
+Intel Open Source Technology Center
