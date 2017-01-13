@@ -1,20 +1,28 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
  using get_gpiod_from_child
-Date: Thu, 12 Jan 2017 10:17:42 -0800
-Message-ID: <20170112181742.GA7475@dtor-ws>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Date: Fri, 13 Jan 2017 12:01:38 +0100
+Message-ID: <11509256.sASrU01HFQ@amdc3058>
+References: <CGME20170112164013epcas5p41425c343028efaff169f1a9ed38b4365@epcas5p4.samsung.com>
+ <20170112163924.4414-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:51416 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbdAMLBq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Jan 2017 06:01:46 -0500
+In-reply-to: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Jan 12, 2017 at 05:39:24PM +0100, Alexander Stein wrote:
+
+Hi,
+
+On Thursday, January 12, 2017 05:39:24 PM Alexander Stein wrote:
 > Currently all users of fwnode_get_named_gpiod() have no way to specify a
 > label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
 > With this change a proper label is used.
@@ -34,13 +42,19 @@ On Thu, Jan 12, 2017 at 05:39:24PM +0100, Alexander Stein wrote:
 >  drivers/gpio/gpiolib.c                    |  5 +++--
 >  drivers/input/keyboard/gpio_keys.c        |  3 ++-
 >  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
-
-For input:
-
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
 >  drivers/leds/leds-gpio.c                  | 13 +++++++------
 >  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
+
+For fbdev part:
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
 >  include/linux/gpio/consumer.h             | 12 ++++++++----
 >  7 files changed, 33 insertions(+), 20 deletions(-)
 > 
@@ -224,9 +238,3 @@ Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 >  {
 >  	return ERR_PTR(-ENOSYS);
 >  }
-> -- 
-> 2.10.2
-> 
-
--- 
-Dmitry
