@@ -1,42 +1,100 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Sun, 15 Jan 2017 16:05:27 +0100
-Message-ID: <07206fba-cca1-3f2f-c2b3-ed4605558d19@redhat.com>
-References: <20161125110557.GA13204@amd>
- <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
- <20161125144859.GA20139@amd>
- <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
- <20161125204045.GA28036@amd> <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
- <20161221184948.GB21636@amd> <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
- <20170113191734.GB17467@localhost.localdomain>
- <eae37524-50bf-5601-3137-663d707ffa5e@redhat.com>
- <20170115122552.GA4665@khazad-dum.debian.net>
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+Subject: [PATCH v2 0/6] Move dell-led to drivers/platform/x86
+Date: Mon, 16 Jan 2017 14:21:58 +0100
+Message-ID: <20170116132204.6421-1-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170115122552.GA4665@khazad-dum.debian.net>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Darren Hart <dvhart@infradead.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33814 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751081AbdAPNW0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Jan 2017 08:22:26 -0500
+Received: by mail-lf0-f65.google.com with SMTP id q89so12617957lfi.1
+        for <linux-leds@vger.kernel.org>; Mon, 16 Jan 2017 05:22:25 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Anthony Wong <anthony.wong@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Hi,
+This patch series moves the dell-led driver from the LED subsystem to
+the x86 platform driver subsystem.
 
-On 15-01-17 13:25, Henrique de Moraes Holschuh wrote:
-> On Sun, 15 Jan 2017, Hans de Goede wrote:
->> Do you want me to also send out a new version of the platform patches when
->> I send the next shot at the LED side of things, or shall I keep those
->> in my personal tree until the LED api is finalized ?
->
-> If you don't sent the entire patch set here, please keep me CC'd.  You
-> guys seem to have some misconceptions about how the ThinkPad LEDs work.
+The original motivation behind this effort was to move all code using
+the dell-smbios module to the x86 platform driver subsystem.  While I
+was investigating the possibilities to do that, it quickly emerged that
+dell-led can and in fact should be moved to the x86 platform driver
+subsystem in its entirety.
 
-Right, note the main focus of these patches is the keyboard backlight control,
-not any other LEDs on the Thinkpads.
+dell-led consists of two major parts:
 
-Eitherway I'll keep you Cc-ed.
+  - the part exposing a microphone mute LED interface, introduced in
+    db6d8cc00773 ("dell-led: add mic mute led interface"); this
+    interface is used by sound/pci/hda/dell_wmi_helper.c; while the
+    original implementation used a WMI interface, it was changed to use
+    dell-smbios in cf0d7ea33596 ("dell-led: use dell_smbios_find_token()
+    for finding mic DMI tokens") and 0c41a08e131d ("dell-led: use
+    dell_smbios_send_request() for performing SMBIOS calls"),
 
-Regards,
+  - the part handling an activity LED present in Dell Latitude 2100
+    netbooks, introduced in 72dcd8d08aca ("leds: Add Dell Business Class
+    Netbook LED driver"); it binds to a specific WMI GUID and then
+    registers a LED device which is controlled using WMI (i.e. it is
+    essentially a WMI driver).
 
-Hans
+Patches 1 and 2 clean up the microphone mute LED interface to minimize
+the amount of code moved around.
+
+Patch 3 updates a variable name in sound/pci/hda/dell_wmi_helper.c so
+that it better matches that variable's role.
+
+Patch 4 moves the microphone mute LED interface to
+drivers/platform/x86/dell-laptop.c, effectively causing
+sound/pci/hda/dell_wmi_helper.c to depend on CONFIG_DELL_LAPTOP instead
+of CONFIG_LEDS_DELL_NETBOOKS.
+
+Patch 5 reverts dell-led to the state it was in after its initial commit
+72dcd8d08aca ("leds: Add Dell Business Class Netbook LED driver") by
+removing all remnants of the microphone mute LED handling code.
+
+Patch 6 moves all that is left of dell-led (i.e. the activity LED part,
+as originally implemented), to a new module which is placed in
+drivers/platform/x86/dell-wmi-led.c.
+
+As all patches except patch 3 in this series affect the LED subsystem,
+the series is based on linux-leds/for-4.11.
+
+Anthony, I would be grateful if you could test this patch series on the
+Dell machines you have access to that were previously supported by
+dell-led as Jacek needs a Tested-by from someone to sign off on these
+changes.  Please note the Kconfig option rename done by the last patch.
+Thanks!
+
+Changes from v1:
+
+  - Squash patches 2-4 from v1 into a single patch (#2 in v2).
+
+  - Add patch 3.
+
+  - Fix subject pattern in patch 4.
+
+  - Slight commit message adjustments, including fixing a typo
+    ("COFIG_LEDS_DELL_NETBOOKS") in patch 6.
+
+  - Remove the name of the module's source file from the header comment
+    in drivers/platform/x86/dell-wmi-led.c to avoid the need to update
+    it in the future.
+
+ drivers/leds/Kconfig                               |  9 ---
+ drivers/leds/Makefile                              |  1 -
+ drivers/platform/x86/Kconfig                       |  8 +++
+ drivers/platform/x86/Makefile                      |  1 +
+ drivers/platform/x86/dell-laptop.c                 | 28 ++++++++
+ .../dell-led.c => platform/x86/dell-wmi-led.c}     | 75 ++--------------------
+ include/linux/dell-led.h                           |  6 +-
+ sound/pci/hda/dell_wmi_helper.c                    | 30 ++++-----
+ 8 files changed, 60 insertions(+), 98 deletions(-)
+ rename drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} (73%)
+
+-- 
+2.11.0
