@@ -1,154 +1,42 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v2 4/6] platform/x86: dell-laptop: import dell_micmute_led_set() from drivers/leds/dell-led.c
-Date: Mon, 16 Jan 2017 14:22:02 +0100
-Message-ID: <20170116132204.6421-5-kernel@kempniu.pl>
+Subject: [PATCH v2 1/6] dell-led: remove GUID check from dell_micmute_led_set()
+Date: Mon, 16 Jan 2017 14:21:59 +0100
+Message-ID: <20170116132204.6421-2-kernel@kempniu.pl>
 References: <20170116132204.6421-1-kernel@kempniu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170116132204.6421-1-kernel@kempniu.pl>
-Sender: platform-driver-x86-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Anthony Wong <anthony.wong@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-To ensure all users of dell-smbios are in drivers/platform/x86, move the
-dell_micmute_led_set() method from drivers/leds/dell-led.c to
-drivers/platform/x86/dell-laptop.c.
+As dell_micmute_led_set() no longer uses the dell_wmi_perform_query()
+method, which was removed in commit 0c41a08e131d ("dell-led: use
+dell_smbios_send_request() for performing SMBIOS calls"), the
+DELL_APP_GUID check is redundant and thus can be safely removed.
 
 Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
 ---
- drivers/leds/dell-led.c            | 29 -----------------------------
- drivers/platform/x86/dell-laptop.c | 28 ++++++++++++++++++++++++++++
- sound/pci/hda/dell_wmi_helper.c    |  6 +++---
- 3 files changed, 31 insertions(+), 32 deletions(-)
+ drivers/leds/dell-led.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-index f9002d9bb757..c9cc36a7c890 100644
+index b3d6e9c15cf9..e8e8f67224c1 100644
 --- a/drivers/leds/dell-led.c
 +++ b/drivers/leds/dell-led.c
-@@ -16,7 +16,6 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/dmi.h>
--#include <linux/dell-led.h>
- #include "../platform/x86/dell-smbios.h"
+@@ -51,9 +51,6 @@ static int dell_micmute_led_set(int state)
+ 	struct calling_interface_buffer *buffer;
+ 	struct calling_interface_token *token;
  
- MODULE_AUTHOR("Louis Davis/Jim Dailey");
-@@ -43,34 +42,6 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
- #define CMD_LED_OFF	17
- #define CMD_LED_BLINK	18
- 
--#define GLOBAL_MIC_MUTE_ENABLE	0x364
--#define GLOBAL_MIC_MUTE_DISABLE	0x365
--
--int dell_micmute_led_set(int state)
--{
--	struct calling_interface_buffer *buffer;
--	struct calling_interface_token *token;
--
--	if (state == 0)
--		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
--	else if (state == 1)
--		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
--	else
--		return -EINVAL;
--
--	if (!token)
+-	if (!wmi_has_guid(DELL_APP_GUID))
 -		return -ENODEV;
 -
--	buffer = dell_smbios_get_buffer();
--	buffer->input[0] = token->location;
--	buffer->input[1] = token->value;
--	dell_smbios_send_request(1, 0);
--	dell_smbios_release_buffer();
--
--	return state;
--}
--EXPORT_SYMBOL_GPL(dell_micmute_led_set);
--
- struct bios_args {
- 	unsigned char length;
- 	unsigned char result_code;
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 2c2f02b2e08a..277656c74343 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -30,6 +30,7 @@
- #include <linux/i8042.h>
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/dell-led.h>
- #include <acpi/video.h>
- #include "dell-rbtn.h"
- #include "dell-smbios.h"
-@@ -42,6 +43,8 @@
- #define KBD_LED_AUTO_50_TOKEN 0x02EB
- #define KBD_LED_AUTO_75_TOKEN 0x02EC
- #define KBD_LED_AUTO_100_TOKEN 0x02F6
-+#define GLOBAL_MIC_MUTE_ENABLE 0x364
-+#define GLOBAL_MIC_MUTE_DISABLE 0x365
- 
- struct quirk_entry {
- 	u8 touchpad_led;
-@@ -1970,6 +1973,31 @@ static void kbd_led_exit(void)
- 	led_classdev_unregister(&kbd_led);
- }
- 
-+int dell_micmute_led_set(int state)
-+{
-+	struct calling_interface_buffer *buffer;
-+	struct calling_interface_token *token;
-+
-+	if (state == 0)
-+		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
-+	else if (state == 1)
-+		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
-+	else
-+		return -EINVAL;
-+
-+	if (!token)
-+		return -ENODEV;
-+
-+	buffer = dell_smbios_get_buffer();
-+	buffer->input[0] = token->location;
-+	buffer->input[1] = token->value;
-+	dell_smbios_send_request(1, 0);
-+	dell_smbios_release_buffer();
-+
-+	return state;
-+}
-+EXPORT_SYMBOL_GPL(dell_micmute_led_set);
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_buffer *buffer;
-diff --git a/sound/pci/hda/dell_wmi_helper.c b/sound/pci/hda/dell_wmi_helper.c
-index 516237ad6ef5..7efa7bd7acb2 100644
---- a/sound/pci/hda/dell_wmi_helper.c
-+++ b/sound/pci/hda/dell_wmi_helper.c
-@@ -2,7 +2,7 @@
-  * to be included from codec driver
-  */
- 
--#if IS_ENABLED(CONFIG_LEDS_DELL_NETBOOKS)
-+#if IS_ENABLED(CONFIG_DELL_LAPTOP)
- #include <linux/dell-led.h>
- 
- static int dell_led_value;
-@@ -67,10 +67,10 @@ static void alc_fixup_dell_wmi(struct hda_codec *codec,
- 	}
- }
- 
--#else /* CONFIG_LEDS_DELL_NETBOOKS */
-+#else /* CONFIG_DELL_LAPTOP */
- static void alc_fixup_dell_wmi(struct hda_codec *codec,
- 			       const struct hda_fixup *fix, int action)
- {
- }
- 
--#endif /* CONFIG_LEDS_DELL_NETBOOKS */
-+#endif /* CONFIG_DELL_LAPTOP */
+ 	if (state == 0)
+ 		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+ 	else if (state == 1)
 -- 
 2.11.0
