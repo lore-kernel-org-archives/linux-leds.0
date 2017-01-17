@@ -1,155 +1,134 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 6/6] dell-led: move driver to
- drivers/platform/x86/dell-wmi-led.c
-Date: Mon, 16 Jan 2017 21:49:54 +0100
-Message-ID: <b702265e-893e-e3b1-1262-f959d230d552@gmail.com>
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+Subject: [PATCH v2 6+/6] platform/x86: dell-wmi-led: fix coding style issues
+Date: Tue, 17 Jan 2017 08:17:14 +0100
+Message-ID: <20170117071714.21594-1-kernel@kempniu.pl>
 References: <20170116132204.6421-1-kernel@kempniu.pl>
- <20170116132204.6421-7-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170116132204.6421-7-kernel@kempniu.pl>
+In-Reply-To: <20170116132204.6421-1-kernel@kempniu.pl>
 Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Anthony Wong <anthony.wong@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Michał,
+Fix coding style issues in dell-wmi-led which checkpatch complains about
+to make sure the module gets a clean start in the x86 platform driver
+subsystem.
 
-Thanks for the patch set.
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+---
+This is an extra patch that Jacek asked for [1].
 
-Would you mind fixing also the following issues raised by
-checkpatch.pl?:
+[1] https://lkml.org/lkml/2017/1/16/631
 
-WARNING: Missing a blank line after declarations
-#376: FILE: drivers/platform/x86/dell-wmi-led.c:64:
-+	struct bios_args args;
-+	args.length = length;
+ drivers/platform/x86/dell-wmi-led.c | 41 +++++++++++++++----------------------
+ 1 file changed, 16 insertions(+), 25 deletions(-)
 
-WARNING: Block comments use * on subsequent lines
-#460: FILE: drivers/platform/x86/dell-wmi-led.c:148:
-+	/* The Dell LED delay is based on 125ms intervals.
-+	   Need to round up to next interval. */
-
-WARNING: Block comments use a trailing */ on a separate line
-#460: FILE: drivers/platform/x86/dell-wmi-led.c:148:
-+	   Need to round up to next interval. */
-
-WARNING: Comparisons should place the constant on the right side of the test
-#463: FILE: drivers/platform/x86/dell-wmi-led.c:151:
-+	if (0 == on_eighths)
-
-WARNING: Comparisons should place the constant on the right side of the test
-#470: FILE: drivers/platform/x86/dell-wmi-led.c:158:
-+	if (0 == off_eighths)
-
-The fixes could be placed in an incremental patch after this one.
-
-Best regards,
-Jacek Anaszewski
-
-
-On 01/16/2017 02:22 PM, Michał Kępień wrote:
-> The dell-led driver handles a specific WMI GUID present on some Dell
-> laptops and as such it belongs in the x86 platform driver subsystem.
-> Source code is moved along with the relevant Kconfig and Makefile
-> entries, with some minor modifications:
-> 
->   - Kconfig option is renamed from CONFIG_LEDS_DELL_NETBOOKS to
->     CONFIG_DELL_WMI_LED,
-> 
->   - the X86 Kconfig dependency is removed as the whole
->     drivers/platform/x86 menu depends on it, so there is no need to
->     duplicate it,
-> 
->   - the name of the module's source file is removed from the header
->     comment to avoid the need to update it in the future.
-> 
-> Signed-off-by: Michał Kępień <kernel@kempniu.pl>
-> ---
->  drivers/leds/Kconfig                                     | 8 --------
->  drivers/leds/Makefile                                    | 1 -
->  drivers/platform/x86/Kconfig                             | 8 ++++++++
->  drivers/platform/x86/Makefile                            | 1 +
->  drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} | 2 --
->  5 files changed, 9 insertions(+), 11 deletions(-)
->  rename drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} (99%)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index f29b8698ca88..5af3fb2f52e4 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -454,14 +454,6 @@ config LEDS_ADP5520
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called leds-adp5520.
->  
-> -config LEDS_DELL_NETBOOKS
-> -	tristate "External LED on Dell Business Netbooks"
-> -	depends on LEDS_CLASS
-> -	depends on X86 && ACPI_WMI
-> -	help
-> -	  This adds support for the Latitude 2100 and similar
-> -	  notebooks that have an external LED.
-> -
->  config LEDS_MC13783
->  	tristate "LED Support for MC13XXX PMIC"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 6b8273736478..558d24675454 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -52,7 +52,6 @@ obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
->  obj-$(CONFIG_LEDS_INTEL_SS4200)		+= leds-ss4200.o
->  obj-$(CONFIG_LEDS_LT3593)		+= leds-lt3593.o
->  obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
-> -obj-$(CONFIG_LEDS_DELL_NETBOOKS)	+= dell-led.o
->  obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
->  obj-$(CONFIG_LEDS_NS2)			+= leds-ns2.o
->  obj-$(CONFIG_LEDS_NETXBIG)		+= leds-netxbig.o
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 81b8dcca8891..f9018e8c1e49 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -143,6 +143,14 @@ config DELL_WMI_AIO
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called dell-wmi-aio.
->  
-> +config DELL_WMI_LED
-> +	tristate "External LED on Dell Business Netbooks"
-> +	depends on LEDS_CLASS
-> +	depends on ACPI_WMI
-> +	help
-> +	  This adds support for the Latitude 2100 and similar
-> +	  notebooks that have an external LED.
-> +
->  config DELL_SMO8800
->  	tristate "Dell Latitude freefall driver (ACPI SMO88XX)"
->  	depends on ACPI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 2efa86d2a1a7..b061817ecaf1 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -15,6 +15,7 @@ obj-$(CONFIG_DELL_SMBIOS)	+= dell-smbios.o
->  obj-$(CONFIG_DELL_LAPTOP)	+= dell-laptop.o
->  obj-$(CONFIG_DELL_WMI)		+= dell-wmi.o
->  obj-$(CONFIG_DELL_WMI_AIO)	+= dell-wmi-aio.o
-> +obj-$(CONFIG_DELL_WMI_LED)	+= dell-wmi-led.o
->  obj-$(CONFIG_DELL_SMO8800)	+= dell-smo8800.o
->  obj-$(CONFIG_DELL_RBTN)		+= dell-rbtn.o
->  obj-$(CONFIG_ACER_WMI)		+= acer-wmi.o
-> diff --git a/drivers/leds/dell-led.c b/drivers/platform/x86/dell-wmi-led.c
-> similarity index 99%
-> rename from drivers/leds/dell-led.c
-> rename to drivers/platform/x86/dell-wmi-led.c
-> index e5c57389efd6..d0232c7f1909 100644
-> --- a/drivers/leds/dell-led.c
-> +++ b/drivers/platform/x86/dell-wmi-led.c
-> @@ -1,6 +1,4 @@
->  /*
-> - * dell_led.c - Dell LED Driver
-> - *
->   * Copyright (C) 2010 Dell Inc.
->   * Louis Davis <louis_davis@dell.com>
->   * Jim Dailey <jim_dailey@dell.com>
-> 
+diff --git a/drivers/platform/x86/dell-wmi-led.c b/drivers/platform/x86/dell-wmi-led.c
+index d0232c7f1909..8753c4fc36b8 100644
+--- a/drivers/platform/x86/dell-wmi-led.c
++++ b/drivers/platform/x86/dell-wmi-led.c
+@@ -46,21 +46,16 @@ struct bios_args {
+ 	unsigned char off_time;
+ };
+ 
+-static int dell_led_perform_fn(u8 length,
+-		u8 result_code,
+-		u8 device_id,
+-		u8 command,
+-		u8 on_time,
+-		u8 off_time)
++static int dell_led_perform_fn(u8 length, u8 result_code, u8 device_id,
++			       u8 command, u8 on_time, u8 off_time)
+ {
+-	struct bios_args *bios_return;
+-	u8 return_code;
+-	union acpi_object *obj;
+ 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
++	struct bios_args *bios_return, args;
+ 	struct acpi_buffer input;
++	union acpi_object *obj;
+ 	acpi_status status;
++	u8 return_code;
+ 
+-	struct bios_args args;
+ 	args.length = length;
+ 	args.result_code = result_code;
+ 	args.device_id = device_id;
+@@ -71,11 +66,7 @@ static int dell_led_perform_fn(u8 length,
+ 	input.length = sizeof(struct bios_args);
+ 	input.pointer = &args;
+ 
+-	status = wmi_evaluate_method(DELL_LED_BIOS_GUID,
+-		1,
+-		1,
+-		&input,
+-		&output);
++	status = wmi_evaluate_method(DELL_LED_BIOS_GUID, 1, 1, &input, &output);
+ 
+ 	if (ACPI_FAILURE(status))
+ 		return status;
+@@ -84,7 +75,7 @@ static int dell_led_perform_fn(u8 length,
+ 
+ 	if (!obj)
+ 		return -EINVAL;
+-	else if (obj->type != ACPI_TYPE_BUFFER) {
++	if (obj->type != ACPI_TYPE_BUFFER) {
+ 		kfree(obj);
+ 		return -EINVAL;
+ 	}
+@@ -117,8 +108,7 @@ static int led_off(void)
+ 		0);			/* not used */
+ }
+ 
+-static int led_blink(unsigned char on_eighths,
+-		unsigned char off_eighths)
++static int led_blink(unsigned char on_eighths, unsigned char off_eighths)
+ {
+ 	return dell_led_perform_fn(5,	/* Length of command */
+ 		INTERFACE_ERROR,	/* Init to  INTERFACE_ERROR */
+@@ -129,7 +119,7 @@ static int led_blink(unsigned char on_eighths,
+ }
+ 
+ static void dell_led_set(struct led_classdev *led_cdev,
+-		enum led_brightness value)
++			 enum led_brightness value)
+ {
+ 	if (value == LED_OFF)
+ 		led_off();
+@@ -138,24 +128,25 @@ static void dell_led_set(struct led_classdev *led_cdev,
+ }
+ 
+ static int dell_led_blink(struct led_classdev *led_cdev,
+-		unsigned long *delay_on,
+-		unsigned long *delay_off)
++			  unsigned long *delay_on, unsigned long *delay_off)
+ {
+ 	unsigned long on_eighths;
+ 	unsigned long off_eighths;
+ 
+-	/* The Dell LED delay is based on 125ms intervals.
+-	   Need to round up to next interval. */
++	/*
++	 * The Dell LED delay is based on 125ms intervals.
++	 * Need to round up to next interval.
++	 */
+ 
+ 	on_eighths = (*delay_on + 124) / 125;
+-	if (0 == on_eighths)
++	if (on_eighths == 0)
+ 		on_eighths = 1;
+ 	if (on_eighths > 255)
+ 		on_eighths = 255;
+ 	*delay_on = on_eighths * 125;
+ 
+ 	off_eighths = (*delay_off + 124) / 125;
+-	if (0 == off_eighths)
++	if (off_eighths == 0)
+ 		off_eighths = 1;
+ 	if (off_eighths > 255)
+ 		off_eighths = 255;
+-- 
+2.11.0
