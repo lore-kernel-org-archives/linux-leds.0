@@ -1,46 +1,39 @@
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v2 6/6] dell-led: move driver to
- drivers/platform/x86/dell-wmi-led.c
-Date: Tue, 17 Jan 2017 12:28:17 +0100
-Message-ID: <20170117112817.GD32502@pali>
-References: <20170116132204.6421-1-kernel@kempniu.pl>
- <20170116132204.6421-7-kernel@kempniu.pl>
- <b702265e-893e-e3b1-1262-f959d230d552@gmail.com>
- <20170117110809.GC26116@xo-6d-61-c0.localdomain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Tue, 17 Jan 2017 16:07:07 +0100
+Message-ID: <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
+References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170117110809.GC26116@xo-6d-61-c0.localdomain>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Richard Purdie <rpurdie@rpsys.net>, Darren Hart <dvhart@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Anthony Wong <anthony.wong@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tuesday 17 January 2017 12:08:09 Pavel Machek wrote:
-> Hi!
-> 
-> > Thanks for the patch set.
-> > 
-> > Would you mind fixing also the following issues raised by
-> > checkpatch.pl?:
-> > 
-> > WARNING: Missing a blank line after declarations
-> > #376: FILE: drivers/platform/x86/dell-wmi-led.c:64:
-> > +	struct bios_args args;
-> ...
-> > The fixes could be placed in an incremental patch after this one.
-> 
-> Anyway, move itself is ok (and the checkpatch issues are not that serious anyway.)
-> 
-> Thanks,
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+On Thu, Jan 12, 2017 at 5:39 PM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-Yes, this patch does not change code, just move one file to other
-location. You can add my Reviewed-by.
+> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+> With this change a proper label is used.
+> Also adjust all users so they can pass a label, properly retrieved from
+> device tree properties.
+>
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+> v2:
+> * Non-RFC
+> * This patch is rebased on gpio/for-next branch and cherry-picked commit
+> 2715bbe from https://bitbucket.org/andy-shev/linux.git
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Patch applied on top of Andy's patch.
+
+Let's see if this all builds and works :)
+
+Yours,
+Linus Walleij
