@@ -1,98 +1,95 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: gpio: Add pinctrl PM select sleep,default state in
- suspend/resume
-Date: Fri, 20 Jan 2017 22:59:38 +0100
-Message-ID: <dba34fd0-acd2-6b18-364b-882ec85764fd@gmail.com>
-References: <20170120164553.27565-1-enric.balletbo@collabora.com>
+Subject: Re: [PATCH V2 1/2] dt-bindings: leds: document new led-triggers
+ property
+Date: Fri, 20 Jan 2017 23:35:20 +0100
+Message-ID: <29f27028-20f3-3eb9-502f-1b51958640f9@gmail.com>
+References: <20170120215605.15728-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170120164553.27565-1-enric.balletbo@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35183 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbdATWhA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2017 17:37:00 -0500
+In-Reply-To: <20170120215605.15728-1-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
-Hi Enric,
+Hi Rafał,
 
-LED subsystem core already registers its pm ops.
-(see drivers/leds/led-class.c and leds_class_dev_pm_ops).
-It results in setting brightness of all LED class devices marked
-with LED_CORE_SUSPENDRESUME flag to 0 on suspend and bringing
-back previous brightness on resume.
-
-In this case you would have to track the state of all LED
-class devices exposed by leds-gpio and call
-pinctrl_pm_select_sleep_state() when they all are off.
-Now, if in this state and turning any of the LEDs on,
-then pinctrl_pm_select_default_state() would have to be called.
-
-Compare the following patch:
-
-commit a8c170b015ff6695641bdfbdb74729411ba1e9e5
-Author: Matt Ranostay <mranostay@gmail.com>
-Date:   Fri Oct 28 18:20:42 2016 -0700
-
-    leds: pca963x: enable low-power state
-
-    Allow chip to enter low power state when no LEDs are being lit or in
-    blink mode.
-
-
-On 01/20/2017 05:45 PM, Enric Balletbo i Serra wrote:
-> This patch allows users to use an alternate pinctrl "sleep" in order to
-> clamp outputs to a wanted state at suspend.
+On 01/20/2017 10:56 PM, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Some LEDs can be related to particular devices described in DT. This
+> property allows specifying such relations. E.g. USB LED should usually
+> be used to indicate some USB port(s) state.
+> 
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 > ---
->  drivers/leds/leds-gpio.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> V2: Replace "usb-ports" with "led-triggers" property which is more generic and
+>     allows specifying other devices as well.
 > 
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index d400dca..a2e9bdb 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -20,6 +20,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/property.h>
->  #include <linux/slab.h>
-> +#include <linux/pm.h>
+> When bindings patch is related to some followup implementation, they usually go
+> through the same tree.
+> 
+> Greg: this patch is based on top of e64b8cc72bf9 ("DT: leds: Improve examples by
+> adding some context") from kernel/git/j.anaszewski/linux-leds.git . Is there any
+> way to solve this dependency issue? Or should this patch wait until 3.11 is
+> released?
+> ---
+>  Documentation/devicetree/bindings/leds/common.txt | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 24b656014089..17632a041196 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -49,6 +49,17 @@ Optional properties for child nodes:
+>  - panic-indicator : This property specifies that the LED should be used,
+>  		    if at all possible, as a panic indicator.
 >  
->  struct gpio_led_data {
->  	struct led_classdev cdev;
-> @@ -269,12 +270,31 @@ static void gpio_led_shutdown(struct platform_device *pdev)
->  	}
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static int gpio_led_suspend(struct device *dev)
-> +{
-> +	pinctrl_pm_select_sleep_state(dev);
+> +- led-triggers : List of devices that should trigger this LED activity. Some
+> +		 LEDs can be related to a specific device and should somehow
+> +		 indicate its state. E.g. USB 2.0 LED may react to device(s) in
+> +		 a USB 2.0 port(s). Another common example is switch or router
+> +		 with multiple Ethernet ports each of them having its own LED
+> +		 assigned (assuminled-trigger-usbportg they are not hardwired).
+> +		 In such cases this property should contain phandle(s) of
+> +		 related device(s). In many cases LED can be related to more
+> +		 than one device (e.g. one USB LED vs. multiple USB ports) so a
+> +		 list of entries can be specified.
 > +
-> +	return 0;
-> +}
+
+This implies that it is possible to define multiple triggers for
+a LED class device but it is not supported by LED Trigger core.
+There is linux,default-trigger property which allows to define one
+trigger that will be initially assigned.
+
+I am aware that this is renamed usb-ports property from v1,
+that attempts to address Rob's comment, but we can't do that this way.
+Maybe usb-ports property could be documented in led-trigger-usbport's
+specific bindings and a reference to it could be added next to the
+related entry on the list of the available LED triggers (which is
+actually missing) in Documentation/devicetree/bindings/leds/common.txt.
+
+>  Required properties for flash LED child nodes:
+>  - flash-max-microamp : Maximum flash LED supply current in microamperes.
+>  - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
+> @@ -69,6 +80,11 @@ gpio-leds {
+>  		linux,default-trigger = "heartbeat";
+>  		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+>  	};
 > +
-> +static int gpio_led_resume(struct device *dev)
-> +{
-> +	pinctrl_pm_select_default_state(dev);
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(gpio_led_pm, gpio_led_suspend, gpio_led_resume);
-> +
->  static struct platform_driver gpio_led_driver = {
->  	.probe		= gpio_led_probe,
->  	.shutdown	= gpio_led_shutdown,
->  	.driver		= {
->  		.name	= "leds-gpio",
->  		.of_match_table = of_gpio_leds_match,
-> +		.pm	= &gpio_led_pm,
->  	},
+> +	usb {
+> +		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+> +		led-triggers = <&ohci_port1>, <&ehci_port1>;
+> +	};
 >  };
 >  
+>  max77693-led {
 > 
 
 -- 
