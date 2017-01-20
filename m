@@ -1,28 +1,68 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [PATCH v4 2/2] firmware: add DECLARE_FW_CUSTOM_FALLBACK()
- annotation
-Date: Thu, 19 Jan 2017 22:38:52 +0100
-Message-ID: <20170119213852.GL13946@wotan.suse.de>
-References: <20161213030828.17820-4-mcgrof@kernel.org>
- <20170112144250.12376-1-mcgrof@kernel.org>
- <20170112144250.12376-3-mcgrof@kernel.org>
- <20170119113111.GO28024@kroah.com>
- <20170119160825.GI13946@wotan.suse.de>
- <20170119161435.GA13166@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170119161435.GA13166@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, ming.lei@canonical.com, bp@alien8.de, wagi@monom.org, teg@jklm.no, mchehab@osg.samsung.com, zajec5@gmail.com, linux-kernel@vger.kernel.org, markivx@codeaurora.org, stephen.boyd@linaro.org, broonie@kernel.org, zohar@linux.vnet.ibm.com, tiwai@suse.de, johannes@sipsolutions.net, chunkeey@googlemail.com, hauke@hauke-m.de, jwboyer@fedoraproject.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org, jslaby@suse.com, torvalds@linux-foundation.org, luto@amacapital.net, fengguang.wu@intel.com, rpurdie@rpsys.net, j.anaszewski@samsung.com, Abhay_Salunke@dell.com, Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, dhowells@redhat.com, bjorn.andersson@linaro.org, arend.vanspriel@broadcom.com, kvalo@codeaurora.org, linux-leds@vger.k
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH] leds: gpio: Add pinctrl PM select sleep,default state in suspend/resume
+Date: Fri, 20 Jan 2017 17:45:53 +0100
+Message-ID: <20170120164553.27565-1-enric.balletbo@collabora.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46427 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751583AbdATQzj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2017 11:55:39 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 19, 2017 at 05:14:36PM +0100, Greg KH wrote:
-> In short, don't worry about this, it's not a big deal nor really worth
-> the effort.
+This patch allows users to use an alternate pinctrl "sleep" in order to
+clamp outputs to a wanted state at suspend.
 
-Fine by me, I'll drop these two patches.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+ drivers/leds/leds-gpio.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-  Luis
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index d400dca..a2e9bdb 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -20,6 +20,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
++#include <linux/pm.h>
+ 
+ struct gpio_led_data {
+ 	struct led_classdev cdev;
+@@ -269,12 +270,31 @@ static void gpio_led_shutdown(struct platform_device *pdev)
+ 	}
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int gpio_led_suspend(struct device *dev)
++{
++	pinctrl_pm_select_sleep_state(dev);
++
++	return 0;
++}
++
++static int gpio_led_resume(struct device *dev)
++{
++	pinctrl_pm_select_default_state(dev);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(gpio_led_pm, gpio_led_suspend, gpio_led_resume);
++
+ static struct platform_driver gpio_led_driver = {
+ 	.probe		= gpio_led_probe,
+ 	.shutdown	= gpio_led_shutdown,
+ 	.driver		= {
+ 		.name	= "leds-gpio",
+ 		.of_match_table = of_gpio_leds_match,
++		.pm	= &gpio_led_pm,
+ 	},
+ };
+ 
+-- 
+2.9.3
