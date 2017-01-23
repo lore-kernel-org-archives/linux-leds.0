@@ -1,34 +1,33 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] Documentation: devicetree: Add document bindings for
- leds-mt6323
-Date: Mon, 23 Jan 2017 14:51:04 -0600
-Message-ID: <20170123205104.e4gocnesuhngfxi5@rob-hp-laptop>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] Documentation: devicetree: Add LED subnode binding
+ for MT6323 PMIC
+Date: Mon, 23 Jan 2017 14:51:22 -0600
+Message-ID: <20170123205122.i74wkzswdtlrc3qs@rob-hp-laptop>
 References: <1485143685-11808-1-git-send-email-sean.wang@mediatek.com>
- <1485143685-11808-2-git-send-email-sean.wang@mediatek.com>
+ <1485143685-11808-3-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36566 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbdAWUvL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 23 Jan 2017 15:51:11 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1485143685-11808-2-git-send-email-sean.wang@mediatek.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <1485143685-11808-3-git-send-email-sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
+Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, keyhaede-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: sean.wang@mediatek.com
-Cc: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, keyhaede@gmail.com
 
-On Mon, Jan 23, 2017 at 11:54:42AM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On Mon, Jan 23, 2017 at 11:54:43AM +0800, sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org wrote:
+> From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 > 
 > This patch adds documentation for devicetree bindings
-> for LED support on MT6323 PMIC
+> for LED support as the subnode of MT6323 PMIC
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 > ---
->  .../devicetree/bindings/leds/leds-mt6323.txt       | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+>  Documentation/devicetree/bindings/mfd/mt6397.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
