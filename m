@@ -1,58 +1,40 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] mfd: mt6397: Add MT6323 LED support into MT6397
- driver
-Date: Mon, 23 Jan 2017 12:16:11 +0000
-Message-ID: <20170123121611.GO16020@dell>
-References: <1485143685-11808-1-git-send-email-sean.wang@mediatek.com>
- <1485143685-11808-5-git-send-email-sean.wang@mediatek.com>
+From: Joyes Dadi <"YD."@biscuit.ocn.ne.jp>
+Subject: Urgent Please,,
+Date: Mon, 23 Jan 2017 23:07:49 +0900 (JST)
+Message-ID: <1028184183.25784289.1485180469689.JavaMail.root__40245.8354401917$1485181283$gmane$org@biscuit.ocn.ne.jp>
+Reply-To: Joyes Dadi <joyesdadi767@citromail.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1485143685-11808-5-git-send-email-sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
-Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, keyhaede-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mbkd0331.ocn.ad.jp ([153.149.236.32]:32863 "EHLO
+        mbkd0331.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdAWOUz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 23 Jan 2017 09:20:55 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 23 Jan 2017, sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org wrote:
+Good Day Dear,
 
-> From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> 
-> Add compatible string as "mt6323-led" that will make
-> the OF core spawn child devices for the LED subnode
-> of that MT6323 MFD device.
-> 
-> Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> ---
->  drivers/mfd/mt6397-core.c | 4 ++++
->  1 file changed, 4 insertions(+)
+My name is Ms. Joyes Dadi, I am glad you are reading this letter and I hope
+we will start our communication and I know that this message will look strange,
+surprising and probably unbelievable to you, but it is the reality. I want to
+make a donation of money to you.
 
-Applied, thanks.
+I contact you by the will of God. I am a firm German woman specialized in
+mining gold and diamonds in Africa. But now, I'm very sick of a cancer. My
+husband died in an accident two years ago with our two children and now I have
+cancer of the esophagus that damaged almost all the cells in my system/agencies
+and I'll die soon according to my doctor.
 
-> diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
-> index e14d8b0..8e601c8 100644
-> --- a/drivers/mfd/mt6397-core.c
-> +++ b/drivers/mfd/mt6397-core.c
-> @@ -48,6 +48,10 @@
->  		.name = "mt6323-regulator",
->  		.of_compatible = "mediatek,mt6323-regulator"
->  	},
-> +	{
-> +		.name = "mt6323-led",
-> +		.of_compatible = "mediatek,mt6323-led"
-> +	},
->  };
->  
->  static const struct mfd_cell mt6397_devs[] = {
+My most concern now is, we grew up in the orphanage and were married in
+orphanage. If I die this deposited fund will soon be left alone in the hand of
+the bank, and I do want to it that  way. Please, if you can be reliable and
+sincere to accept my humble proposal; I have (10.5Millions Euro) in a fixed
+deposit account; I will order the Bank to transfer the money into your account
+in your country immediately, and then you will take the fund to  your country
+and invest it to the orphanage homes Please, answer as quickly as possible.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+God bless you.
+Ms. Joyes Dadi
+Email: joyesdadi767@citromail.hu
