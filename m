@@ -1,107 +1,569 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Tue, 24 Jan 2017 13:32:43 +0100
-Message-ID: <20170124123243.GA8688@amd>
-References: <20161125100140.GC4062@amd>
- <e32e3d6c-5d6d-c882-21d9-8028c8311b0b@samsung.com>
- <20161125110557.GA13204@amd>
- <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
- <20161125144859.GA20139@amd>
- <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
- <20161125204045.GA28036@amd>
- <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
- <20161221184948.GB21636@amd>
- <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 3/4] leds: Add LED support for MT6323 PMIC
+Date: Tue, 24 Jan 2017 23:51:23 +0100
+Message-ID: <62acfd5d-6455-d89b-9169-71337319311f@gmail.com>
+References: <1485143685-11808-1-git-send-email-sean.wang@mediatek.com>
+ <1485143685-11808-4-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45438 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbdAXMcq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 24 Jan 2017 07:32:46 -0500
-Content-Disposition: inline
-In-Reply-To: <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485143685-11808-4-git-send-email-sean.wang@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sean.wang@mediatek.com, rpurdie@rpsys.net, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, keyhaede@gmail.com
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
+Hi Sean,
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch. Please find my comments in the code below.
 
-Hi!
+On 01/23/2017 04:54 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> MT6323 PMIC is a multi-function device that includes
+> LED function. It allows attaching upto 4 LEDs which can
 
-> >> There might exist users that adjust LED brightness while having
-> >> active trigger. The best example is default-on trigger - it sets
-> >> brightness only on init, but remains active all the time. Whereas
-> >> this could be fixed, there is another case: think of changing blinking
-> >> brightness - it would be impossible.
-> >=20
-> > I don't see the breakage. For existing blinking and default-on
-> > triggers, existing behaviour would be kept. Difference would be that
-> > for hardware that changes triggers itself (like the keyboard light) we
-> > would present it as a trigger. And you are right -- there would be
-> > user visible changes there. You could not assign blinking, because
-> > .. it already has a trigger. But I believe it is reasonable.
->=20
-> We've already received negative feedback regarding blocking
-> application of different trigger when hw brightness change
-> notifications
+s/upto/up to/
 
-Actually sometimes we'll get negative feedback for anything we do. I
-still believe exposing the backlight case as a trigger is a right thing.
+> either be on, off or dimmed and/or blinked with the the
+> controller.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/leds/Kconfig       |   8 +
+>  drivers/leds/Makefile      |   1 +
+>  drivers/leds/leds-mt6323.c | 391 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 400 insertions(+)
+>  create mode 100644 drivers/leds/leds-mt6323.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index c621cbb..30095fc 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -117,6 +117,14 @@ config LEDS_MIKROTIK_RB532
+>  	  This option enables support for the so called "User LED" of
+>  	  Mikrotik's Routerboard 532.
+>  
+> +config LEDS_MT6323
+> +	tristate "LED Support for Mediatek MT6323 PMIC"
+> +	depends on LEDS_CLASS
+> +	depends on MFD_MT6397
+> +
+> +	help
+> +	  This option enables support for on-chip LED drivers found on
+> +	  Mediatek MT6323 PMIC.
+> +
+>  config LEDS_S3C24XX
+>  	tristate "LED Support for Samsung S3C24XX GPIO LEDs"
+>  	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 6b82737..4feb332 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -72,6 +72,7 @@ obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+>  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>  obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+>  obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
+> +obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
+> new file mode 100644
+> index 0000000..de3006d
+> --- /dev/null
+> +++ b/drivers/leds/leds-mt6323.c
+> @@ -0,0 +1,391 @@
+> +/*
+> + * LED driver for Mediatek MT6323 PMIC
+> + *
+> + * Copyright (C) 2017 Sean Wang <sean.wang@mediatek.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/leds.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/mt6397/core.h>
+> +#include <linux/mfd/mt6323/registers.h>
+> +#include <linux/module.h>
 
-> are enabled. One solution to that is making the notifications
-> orthogonal to the trigger mechanism. The other possibility is to allow
-> for having more than one active trigger for a LED.
->=20
-> We could think of defining a special type of persistent trigger that
-> would be always enabled.
+Please sort include directives alphabetically.
 
-Yes, that could be done. I'd not call it persistent trigger, but
-with right name...
+> +
+> +/* Register to enable 32K clock common for LED device */
+> +#define MTK_MT6323_TOP_CKPDN0         0x0102
 
-#1:
+How about dropping MTK and leaving MT6323 prefix?
+The same applies to the other macros.
 
-Apparently some LEDs change themselves, and we can't find how or
-when. That's thinkpad battery LED, for example.
+> +#define RG_DRV_32K_CK_PDN	      BIT(11)
+> +#define RG_DRV_32K_CK_PDN_MASK	      BIT(11)
 
-#2:
+These macros also require MT6323 prefix.
 
-Then there are some LEDs that change themselves, and we can get
-notifications. We should make it very clear that we'll not send
-notifications kernel did itself.
+> +
+> +/* Register to enable individual clock for LED device */
+> +#define MTK_MT6323_TOP_CKPDN2         0x010E
+> +#define RG_ISINK_CK_PDN(i)	      BIT(i)
+> +#define RG_ISINK_CK_PDN_MASK(i)       BIT(i)
+> +
+> +/* Register to select clock source */
+> +#define MTK_MT6323_TOP_CKCON1	      0x0126
+> +#define RG_ISINK_CK_SEL_MASK(i)	      (BIT(10) << (i))
+> +
+> +/* Register to setup the duty cycle of the blink */
+> +#define MTK_MT6323_ISINK_CON0(i)      (0x0330 + 0x8 * (i))
+> +#define ISINK_DIM_DUTY(i)	      (((i) << 8) & GENMASK(12, 8))
+> +#define ISINK_DIM_DUTY_MASK	      GENMASK(12, 8)
+> +
+> +/* Register to setup the period of the blink */
+> +#define MTK_MT6323_ISINK_CON1(i)      (0x0332 + 0x8 * (i))
+> +#define ISINK_DIM_FSEL(i)	      ((i) & GENMASK(15, 0))
+> +#define ISINK_DIM_FSEL_MASK	      GENMASK(15, 0)
+> +
+> +/* Register to control the brightness */
+> +#define MTK_MT6323_ISINK_CON2(i)      (0x0334 + 0x8 * (i))
+> +#define ISINK_CH_STEP(i)	      (((i) << 12) & GENMASK(14, 12))
+> +#define ISINK_CH_STEP_MASK	      GENMASK(14, 12)
+> +#define ISINK_SFSTR0_TC(i)	      (((i) << 1) & GENMASK(2, 1))
+> +#define ISINK_SFSTR0_TC_MASK	      GENMASK(2, 1)
+> +#define ISINK_SFSTR0_EN		      BIT(0)
+> +#define ISINK_SFSTR0_EN_MASK	      BIT(0)
+> +
+> +/* Register to LED channel enablement */
+> +#define MTK_MT6323_ISINK_EN_CTRL      0x0356
+> +#define ISINK_CH_EN(i)		      BIT(i)
+> +#define ISINK_CH_EN_MASK(i)	      BIT(i)
+> +
+> +#define MTK_MAX_PERIOD		      10000
+> +#define MTK_MAX_DEVICES			  4
+> +#define MTK_MAX_BRIGHTNESS		  6
+> +
+> +struct mtk_led;
 
-So... for #1 and #2 something like
+This is redundant.
 
-led/hardware_changes_brightness=20
+> +struct mtk_leds;
+> +
+> +/**
+> + * struct mtk_led - state container for the LED device
+> + * @id: the identifier in MT6323 LED device
+> + * @parent: the pointer to MT6323 LED controller
+> + * @cdev: LED class device for this LED device
+> + * @current_brightness: current state of the LED device
+> + */
+> +struct mtk_led {
+> +	int    id;
+> +	struct mtk_leds *parent;
+> +	struct led_classdev cdev;
+> +	u8 current_brightness;
+> +};
+> +
+> +/* struct mtk_leds -	state container for holding LED controller
 
-and for #2
+Please stick to the kernel doc format consistently:
 
-led/poll_for_hardware_brightness_change
+/**
+ *
 
-where poll() wakes the userspace up when the brightness changes, and
-read() can get new brightness...?
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> + *			of the driver
+> + * @dev:		The device pointer
+> + * @hw:			The underlying hardware providing shared
+> +			bus for the register operations
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+leading " *" is missing here
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> + * @led_num:		How much the LED device the controller could control
+> + * @lock:		The lock among process context
+> + * @led:		The array that contains the state of individual
+> +			LED device
 
-iEYEARECAAYFAliHSWsACgkQMOfwapXb+vL1uwCcCw39hoZr0PqRxZbutMT4XYyw
-a20AmwUA9+uQ2FvhNlwYwxey8aiqfGVy
-=lLe3
------END PGP SIGNATURE-----
+Ditto.
 
---+QahgC5+KEYLbs62--
+> + */
+> +struct mtk_leds {
+> +	struct device	*dev;
+> +	struct mt6397_chip *hw;
+> +	u8     led_num;
+> +	/* protect among process context */
+> +	struct mutex	 lock;
+> +	struct mtk_led	 led[4];
+> +};
+> +
+> +static void mtk_led_hw_off(struct led_classdev *cdev)
+> +{
+> +	struct mtk_led *led = container_of(cdev, struct mtk_led, cdev);
+> +	struct mtk_leds *leds = led->parent;
+> +	struct regmap *regmap = leds->hw->regmap;
+> +	unsigned int status;
+> +
+> +	status = ISINK_CH_EN(led->id);
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_EN_CTRL,
+> +			   ISINK_CH_EN_MASK(led->id), ~status);
+
+Let's check return value. The same applies the other occurrences
+of regmap API calls.
+
+> +
+> +	usleep_range(100, 300);
+
+Just out of curiosity - does the data sheet mention it or is it inferred
+empirically?
+
+> +	regmap_update_bits(regmap, MTK_MT6323_TOP_CKPDN2,
+> +			   RG_ISINK_CK_PDN_MASK(led->id),
+> +			   RG_ISINK_CK_PDN(led->id));
+> +
+> +	dev_dbg(leds->dev, "%s called for led%d\n",
+> +		__func__, led->id);
+
+Let's remove this debug logging.
+
+> +}
+> +
+> +static u8 get_mtk_led_hw_brightness(struct led_classdev *cdev)
+> +{
+> +	struct mtk_led *led = container_of(cdev, struct mtk_led, cdev);
+> +	struct mtk_leds *leds = led->parent;
+> +	struct regmap *regmap = leds->hw->regmap;
+> +	unsigned int status;
+> +
+> +	regmap_read(regmap, MTK_MT6323_TOP_CKPDN2, &status);
+> +	if (status & RG_ISINK_CK_PDN_MASK(led->id))
+> +		return 0;
+> +
+> +	regmap_read(regmap, MTK_MT6323_ISINK_EN_CTRL, &status);
+> +	if (!(status & ISINK_CH_EN(led->id)))
+> +		return 0;
+> +
+> +	regmap_read(regmap, MTK_MT6323_ISINK_CON2(led->id), &status);
+> +	return  ((status & ISINK_CH_STEP_MASK) >> 12) + 1;
+
+What is 12? Please add a macro for it.
+
+> +}
+> +
+> +static void mtk_led_hw_on(struct led_classdev *cdev)
+> +{
+> +	struct mtk_led *led = container_of(cdev, struct mtk_led, cdev);
+> +	struct mtk_leds *leds = led->parent;
+> +	struct regmap *regmap = leds->hw->regmap;
+> +	unsigned int status;
+> +
+> +	/* Setup required clock source, enable the corresponding
+
+Kernel style comments please:
+
+/*
+ *
+ */
+
+The same applies to the other occurrences thereof.
+Refer to Documentation/process/coding-style.rst (chapter 8).
+
+> +	 * clock and channel and let work with continuous blink as
+> +	 * the default
+> +	 */
+> +	regmap_update_bits(regmap, MTK_MT6323_TOP_CKCON1,
+> +			   RG_ISINK_CK_SEL_MASK(led->id), 0);
+> +
+> +	status = RG_ISINK_CK_PDN(led->id);
+> +	regmap_update_bits(regmap, MTK_MT6323_TOP_CKPDN2,
+> +			   RG_ISINK_CK_PDN_MASK(led->id), ~status);
+> +
+> +	usleep_range(100, 300);
+> +
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_EN_CTRL,
+> +			   ISINK_CH_EN_MASK(led->id),
+> +			   ISINK_CH_EN(led->id));
+> +
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_CON2(led->id),
+> +			   ISINK_CH_STEP_MASK,
+> +			   ISINK_CH_STEP(1));
+> +
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_CON0(led->id),
+> +			   ISINK_DIM_DUTY_MASK, ISINK_DIM_DUTY(31));
+> +
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_CON1(led->id),
+> +			   ISINK_DIM_FSEL_MASK, ISINK_DIM_FSEL(1000));
+> +
+> +	led->current_brightness = 1;
+> +
+> +	dev_dbg(leds->dev, "%s called for led%d\n",
+> +		__func__, led->id);
+
+Let's remove this debug logging.
+
+> +}
+> +
+> +static int mtk_led_set_blink(struct led_classdev *cdev,
+> +			     unsigned long *delay_on,
+> +			     unsigned long *delay_off)
+> +{
+> +	struct mtk_led *led = container_of(cdev, struct mtk_led, cdev);
+> +	struct mtk_leds *leds = led->parent;
+> +	struct regmap *regmap = leds->hw->regmap;
+> +	u16 period;
+> +	u8 duty_cycle, duty_hw;
+> +
+> +	/* Units are in ms , if over the hardware able
+> +	 * to support, fallback into software blink
+> +	 */
+> +	if (*delay_on + *delay_off > MTK_MAX_PERIOD)
+> +		return -EINVAL;
+> +
+> +	/* LED subsystem requires a default user
+> +	 * friendly blink pattern for the LED so using
+> +	 * 1Hz duty cycle 50% here if without specific
+> +	 * value delay_on and delay off being assigned
+> +	 */
+> +	if (*delay_on == 0 && *delay_off == 0) {
+> +		*delay_on = 500;
+> +		*delay_off = 500;
+> +	}
+> +
+> +	period = *delay_on + *delay_off;
+> +
+> +	/* duty_cycle is the percentage of period during
+> +	 * which the led is ON
+> +	 */
+> +	duty_cycle = 100 * (*delay_on) / period;
+> +
+> +	mutex_lock(&leds->lock);
+> +
+> +	if (!led->current_brightness)
+> +		mtk_led_hw_on(cdev);
+> +
+> +	duty_hw = DIV_ROUND_CLOSEST(duty_cycle * 1000, 3125);
+
+Please add a macro for 3125.
+
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_CON0(led->id),
+> +			   ISINK_DIM_DUTY_MASK, ISINK_DIM_DUTY(duty_hw));
+> +
+> +	regmap_update_bits(regmap, MTK_MT6323_ISINK_CON1(led->id),
+> +			   ISINK_DIM_FSEL_MASK, ISINK_DIM_FSEL(period - 1));
+> +
+> +	mutex_unlock(&leds->lock);
+> +
+> +	dev_dbg(leds->dev, "%s: Hardware blink! period=%dms duty=%d for led%d\n",
+> +		__func__, period, duty_cycle, led->id);
+
+Let's remove this debug logging.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_led_set_brightness(struct led_classdev *cdev,
+> +				  enum led_brightness brightness)
+> +{
+> +	struct mtk_led *led = container_of(cdev, struct mtk_led, cdev);
+> +	struct mtk_leds *leds = led->parent;
+> +	struct regmap *regmap = leds->hw->regmap;
+> +
+> +	mutex_lock(&leds->lock);
+> +
+> +	if (!led->current_brightness && brightness)
+> +		mtk_led_hw_on(cdev);
+> +
+> +	if (brightness) {
+> +		/* Setup current output for the corresponding
+> +		 * brightness level
+> +		 */
+> +		regmap_update_bits(regmap, MTK_MT6323_ISINK_CON2(led->id),
+> +				   ISINK_CH_STEP_MASK,
+> +				   ISINK_CH_STEP(brightness - 1));
+> +
+> +		regmap_update_bits(regmap, MTK_MT6323_ISINK_CON2(led->id),
+> +				   ISINK_SFSTR0_TC_MASK | ISINK_SFSTR0_EN_MASK,
+> +				   ISINK_SFSTR0_TC(2) | ISINK_SFSTR0_EN);
+> +
+> +		dev_dbg(leds->dev, "Update led brightness:%d\n",
+> +			brightness);
+
+Let's remove this debug logging.
+
+> +	}
+> +
+> +	if (!brightness)
+> +		mtk_led_hw_off(cdev);
+
+It could be enclosed in "else " case of the above "if (brightness)"
+condition.
+
+> +	led->current_brightness = brightness;
+> +
+> +	mutex_unlock(&leds->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mt6323_led_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device_node *child;
+> +	struct mt6397_chip *hw = dev_get_drvdata(pdev->dev.parent);
+> +	struct mtk_leds *leds;
+> +	int ret, i = 0, count;
+> +	const char *state;
+> +	unsigned int status;
+> +
+> +	count = of_get_child_count(np);
+> +	if (!count)
+> +		return -ENODEV;
+> +
+> +	/* The number the LEDs on MT6323 could be support is
+> +	 * up to MTK_MAX_DEVICES
+> +	 */
+> +	count = (count <= MTK_MAX_DEVICES) ? count : MTK_MAX_DEVICES;
+> +
+> +	leds = devm_kzalloc(dev, sizeof(struct mtk_leds) +
+> +			    sizeof(struct mtk_led) * count,
+> +			    GFP_KERNEL);
+> +	if (!leds)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, leds);
+> +	leds->dev = dev;
+> +
+> +	/* leds->hw points to the underlying bus for the register
+> +	 * controlled
+> +	 */
+> +	leds->hw = hw;
+> +	mutex_init(&leds->lock);
+> +	leds->led_num = count;
+> +
+> +	status = RG_DRV_32K_CK_PDN;
+> +	regmap_update_bits(leds->hw->regmap, MTK_MT6323_TOP_CKPDN0,
+> +			   RG_DRV_32K_CK_PDN_MASK, ~status);
+> +
+> +	/* Waiting for 32K stable prior to give the default value
+
+Could you shed more light on this statement? How data sheet explains
+that?
+
+> +	 * to each LED state decided through these useful common
+> +	 * propertys such as label, linux,default-trigger and
+
+s/propertys/properties/
+
+> +	 * default-state
+> +	 */
+> +	usleep_range(300, 500);
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +		leds->led[i].cdev.name =
+> +			of_get_property(child, "label", NULL) ? :
+> +					child->name;
+> +		leds->led[i].cdev.default_trigger = of_get_property(child,
+> +						    "linux,default-trigger",
+> +						    NULL);
+> +		leds->led[i].cdev.max_brightness = MTK_MAX_BRIGHTNESS;
+> +		leds->led[i].cdev.brightness_set_blocking =
+> +					mtk_led_set_brightness;
+> +		leds->led[i].cdev.blink_set = mtk_led_set_blink;
+> +		leds->led[i].id = i;
+> +		leds->led[i].parent = leds;
+> +		state = of_get_property(child, "default-state", NULL);
+> +		if (state) {
+> +			if (!strcmp(state, "keep")) {
+> +				leds->led[i].current_brightness =
+> +				get_mtk_led_hw_brightness(&leds->led[i].cdev);
+> +			} else if (!strcmp(state, "on")) {
+> +				mtk_led_set_brightness(&leds->led[i].cdev, 1);
+> +			} else  {
+> +				mtk_led_set_brightness(&leds->led[i].cdev,
+> +						       0);
+> +			}
+> +		}
+> +		ret = devm_led_classdev_register(dev, &leds->led[i].cdev);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Failed to register LED: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +		leds->led[i].cdev.dev->of_node = child;
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mt6323_led_remove(struct platform_device *pdev)
+> +{
+> +	struct mtk_leds *leds = platform_get_drvdata(pdev);
+> +	int i;
+> +
+> +	/* Turned the LED to OFF state if driver removal */
+
+s/if/on/
+
+> +	for (i = 0 ; i < leds->led_num ; i++)
+> +		mtk_led_hw_off(&leds->led[i].cdev);
+> +
+> +	regmap_update_bits(leds->hw->regmap, MTK_MT6323_TOP_CKPDN0,
+> +			   RG_DRV_32K_CK_PDN_MASK, RG_DRV_32K_CK_PDN);
+
+Please add mutex_destroy here.
+
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mt6323_led_dt_match[] = {
+> +	{ .compatible = "mediatek,mt6323-led" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mt6323_led_dt_match);
+> +
+> +static struct platform_driver mt6323_led_driver = {
+> +	.probe		= mt6323_led_probe,
+> +	.remove		= mt6323_led_remove,
+> +	.driver		= {
+> +		.name	= "mt6323-led",
+> +		.of_match_table = mt6323_led_dt_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(mt6323_led_driver);
+> +
+> +MODULE_DESCRIPTION("LED driver for Mediatek MT6323 PMIC");
+> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+> +MODULE_LICENSE("GPL v2");
+
+MODULE_LICENSE("GPL") since you are allowing also later version.
+
+Please also adress the following sparse warnings:
+
+drivers/leds/leds-mt6323.c:166:9: warning: cast truncates bits from
+constant value (7ffffffff000 becomes fffff000)
+drivers/leds/leds-mt6323.c:170:9: warning: cast truncates bits from
+constant value (1fffffffff00 becomes ffffff00)
+drivers/leds/leds-mt6323.c:173:9: warning: cast truncates bits from
+constant value (ffffffffffff becomes ffffffff)
+drivers/leds/leds-mt6323.c:221:9: warning: cast truncates bits from
+constant value (1fffffffff00 becomes ffffff00)
+drivers/leds/leds-mt6323.c:224:9: warning: cast truncates bits from
+constant value (ffffffffffff becomes ffffffff)
+drivers/leds/leds-mt6323.c:251:17: warning: cast truncates bits from
+constant value (7ffffffff000 becomes fffff000)
+drivers/leds/leds-mt6323.c:255:17: warning: cast truncates bits from
+constant value (7ffffffff becomes ffffffff
+
+-- 
+Best regards,
+Jacek Anaszewski
