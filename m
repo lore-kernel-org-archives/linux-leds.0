@@ -1,95 +1,95 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: [PATCH V2 1/2] dt-bindings: leds: document new led-triggers
- property
-Date: Wed, 25 Jan 2017 10:18:06 +0100
-Message-ID: <2aed99c3-7ebe-8b16-5d75-8d0d5b20c27e@gmail.com>
-References: <20170120215605.15728-1-zajec5@gmail.com>
- <29f27028-20f3-3eb9-502f-1b51958640f9@gmail.com>
- <20170123164537.ldq6de64adjkefbr@rob-hp-laptop>
- <d54867f6-5b29-c5a1-db26-ae9d9640e22c@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
+Date: Wed, 25 Jan 2017 14:12:12 +0100
+Message-ID: <2e51843c-7393-95b8-ddc3-aabba111bd90@redhat.com>
+References: <20161125100140.GC4062@amd>
+ <e32e3d6c-5d6d-c882-21d9-8028c8311b0b@samsung.com>
+ <20161125110557.GA13204@amd>
+ <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
+ <20161125144859.GA20139@amd>
+ <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
+ <20161125204045.GA28036@amd> <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
+ <20161221184948.GB21636@amd> <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
+ <20170124123243.GA8688@amd> <c2ef272a-8bfb-2911-5b8a-73635252fbc1@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35671 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751376AbdAYJSK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jan 2017 04:18:10 -0500
-In-Reply-To: <d54867f6-5b29-c5a1-db26-ae9d9640e22c@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <c2ef272a-8bfb-2911-5b8a-73635252fbc1@gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
-On 01/23/2017 09:51 PM, Jacek Anaszewski wrote:
-> On 01/23/2017 05:45 PM, Rob Herring wrote:
->> On Fri, Jan 20, 2017 at 11:35:20PM +0100, Jacek Anaszewski wrote:
->>> Hi Rafał,
->>>
->>> On 01/20/2017 10:56 PM, Rafał Miłecki wrote:
->>>> From: Rafał Miłecki <rafal@milecki.pl>
->>>>
->>>> Some LEDs can be related to particular devices described in DT. This
->>>> property allows specifying such relations. E.g. USB LED should usually
->>>> be used to indicate some USB port(s) state.
->>>>
->>>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->>>> ---
->>>> V2: Replace "usb-ports" with "led-triggers" property which is more generic and
->>>>     allows specifying other devices as well.
->>>>
->>>> When bindings patch is related to some followup implementation, they usually go
->>>> through the same tree.
->>>>
->>>> Greg: this patch is based on top of e64b8cc72bf9 ("DT: leds: Improve examples by
->>>> adding some context") from kernel/git/j.anaszewski/linux-leds.git . Is there any
->>>> way to solve this dependency issue? Or should this patch wait until 3.11 is
->>>> released?
->>>> ---
->>>>  Documentation/devicetree/bindings/leds/common.txt | 16 ++++++++++++++++
->>>>  1 file changed, 16 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->>>> index 24b656014089..17632a041196 100644
->>>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>>> @@ -49,6 +49,17 @@ Optional properties for child nodes:
->>>>  - panic-indicator : This property specifies that the LED should be used,
->>>>  		    if at all possible, as a panic indicator.
->>>>
->>>> +- led-triggers : List of devices that should trigger this LED activity. Some
->>>> +		 LEDs can be related to a specific device and should somehow
->>>> +		 indicate its state. E.g. USB 2.0 LED may react to device(s) in
->>>> +		 a USB 2.0 port(s). Another common example is switch or router
->>>> +		 with multiple Ethernet ports each of them having its own LED
->>>> +		 assigned (assuminled-trigger-usbportg they are not hardwired).
->>>> +		 In such cases this property should contain phandle(s) of
->>>> +		 related device(s). In many cases LED can be related to more
->>>> +		 than one device (e.g. one USB LED vs. multiple USB ports) so a
->>>> +		 list of entries can be specified.
->>>> +
->>>
->>> This implies that it is possible to define multiple triggers for
->>> a LED class device but it is not supported by LED Trigger core.
+Hi,
+
+On 01/24/2017 11:56 PM, Jacek Anaszewski wrote:
+> Hi,
+>
+> On 01/24/2017 01:32 PM, Pavel Machek wrote:
+>> Hi!
 >>
->> Not really relevant for designing (and future proofing) a binding.
+>>>>> There might exist users that adjust LED brightness while having
+>>>>> active trigger. The best example is default-on trigger - it sets
+>>>>> brightness only on init, but remains active all the time. Whereas
+>>>>> this could be fixed, there is another case: think of changing blinking
+>>>>> brightness - it would be impossible.
+>>>>
+>>>> I don't see the breakage. For existing blinking and default-on
+>>>> triggers, existing behaviour would be kept. Difference would be that
+>>>> for hardware that changes triggers itself (like the keyboard light) we
+>>>> would present it as a trigger. And you are right -- there would be
+>>>> user visible changes there. You could not assign blinking, because
+>>>> .. it already has a trigger. But I believe it is reasonable.
+>>>
+>>> We've already received negative feedback regarding blocking
+>>> application of different trigger when hw brightness change
+>>> notifications
+>>
+>> Actually sometimes we'll get negative feedback for anything we do. I
+>> still believe exposing the backlight case as a trigger is a right thing.
+>>
+>>> are enabled. One solution to that is making the notifications
+>>> orthogonal to the trigger mechanism. The other possibility is to allow
+>>> for having more than one active trigger for a LED.
+>>>
+>>> We could think of defining a special type of persistent trigger that
+>>> would be always enabled.
+>>
+>> Yes, that could be done. I'd not call it persistent trigger, but
+>> with right name...
+>>
+>> #1:
+>>
+>> Apparently some LEDs change themselves, and we can't find how or
+>> when. That's thinkpad battery LED, for example.
+>>
+>> #2:
+>>
+>> Then there are some LEDs that change themselves, and we can get
+>> notifications. We should make it very clear that we'll not send
+>> notifications kernel did itself.
+>>
+>> So... for #1 and #2 something like
+>>
+>> led/hardware_changes_brightness
+>>
+>> and for #2
+>>
+>> led/poll_for_hardware_brightness_change
+>>
+>> where poll() wakes the userspace up when the brightness changes, and
+>> read() can get new brightness...?
 >
-> But relevant for LED Trigger ABI, which would have to be changed to
-> support the semantics in this form. I think that changing the property
-> name to linux,trigger-sources would make its purpose more clear.
->
-> Note that we have to also associate somehow this property with the
-> triggers that will make use of the information it provides. I can
-> imagine also other compound triggers that could benefit on it.
->
-> What follows, the trigger sources would trigger LED activity only
-> if the LED class device was assigned appropriate trigger. We need to
-> define somewhere which triggers support this property.
->
-> Trigger specific bindings?
+> Well, it is almost the same as hw_brightness_change I proposed
+> earlier. Persistent triggers OTOH would be more generic and it would
+> fit for the trigger approach Hans already implemented.
 
-Maybe this is something I'm missing. Why adding this "led-triggers" property
-would mean/require ABI breakage?
+I have spend most of my time yesterday implementing the brightness_hw_changed
+solution. I've just finished testing this on my XPS 15, so I'm going to post
+the patches now. It would be nice if we can move forward with that as agreed
+upon.
 
-AFAIU adding support for "led-triggers" to the "usbport" trigger driver (see
-patch 2/2) didn't break anything, I hope?
+Regards,
+
+Hans
