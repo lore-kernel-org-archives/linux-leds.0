@@ -1,88 +1,69 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v5 2/6] leds: triggers: Add a keyboard backlight trigger
-Date: Tue, 24 Jan 2017 23:56:34 +0100
-Message-ID: <c2ef272a-8bfb-2911-5b8a-73635252fbc1@gmail.com>
-References: <20161125100140.GC4062@amd>
- <e32e3d6c-5d6d-c882-21d9-8028c8311b0b@samsung.com>
- <20161125110557.GA13204@amd>
- <2367b9a7-68f7-2038-0d3a-a9561055b4f6@samsung.com>
- <20161125144859.GA20139@amd>
- <9844f7b3-c3e8-99d8-61b6-1550b1b8ab7e@samsung.com>
- <20161125204045.GA28036@amd> <b35b19a0-5abd-154a-cf3b-d4a7f7e76f00@gmail.com>
- <20161221184948.GB21636@amd> <eb246ac1-bed1-a1c7-8d69-e5529c774322@gmail.com>
- <20170124123243.GA8688@amd>
+From: <bunny43200@yahoo.com>
+Subject: (unknown)
+Date: Wed, 25 Jan 2017 08:24:30 -0000
+Message-ID: <148533267078.6151.12508358559628274805@vermontel.net>
+Reply-To: <bunny43200@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170124123243.GA8688@amd>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, gdg@zplane.com, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Richard Purdie <rpurdie@rpsys.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: application/zip; name="PRESIDENT-9742328762-linux-leds.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from vtelinet-216-66-106-251.vermontel.net ([216.66.106.251]:35381
+        "HELO vermontel.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1751297AbdAYIYe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jan 2017 03:24:34 -0500
+Subject: 
+Content-Disposition: attachment
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds <linux-leds@vger.kernel.org>
 
-Hi,
-
-On 01/24/2017 01:32 PM, Pavel Machek wrote:
-> Hi!
-> 
->>>> There might exist users that adjust LED brightness while having
->>>> active trigger. The best example is default-on trigger - it sets
->>>> brightness only on init, but remains active all the time. Whereas
->>>> this could be fixed, there is another case: think of changing blinking
->>>> brightness - it would be impossible.
->>>
->>> I don't see the breakage. For existing blinking and default-on
->>> triggers, existing behaviour would be kept. Difference would be that
->>> for hardware that changes triggers itself (like the keyboard light) we
->>> would present it as a trigger. And you are right -- there would be
->>> user visible changes there. You could not assign blinking, because
->>> .. it already has a trigger. But I believe it is reasonable.
->>
->> We've already received negative feedback regarding blocking
->> application of different trigger when hw brightness change
->> notifications
-> 
-> Actually sometimes we'll get negative feedback for anything we do. I
-> still believe exposing the backlight case as a trigger is a right thing.
-> 
->> are enabled. One solution to that is making the notifications
->> orthogonal to the trigger mechanism. The other possibility is to allow
->> for having more than one active trigger for a LED.
->>
->> We could think of defining a special type of persistent trigger that
->> would be always enabled.
-> 
-> Yes, that could be done. I'd not call it persistent trigger, but
-> with right name...
-> 
-> #1:
-> 
-> Apparently some LEDs change themselves, and we can't find how or
-> when. That's thinkpad battery LED, for example.
-> 
-> #2:
-> 
-> Then there are some LEDs that change themselves, and we can get
-> notifications. We should make it very clear that we'll not send
-> notifications kernel did itself.
-> 
-> So... for #1 and #2 something like
-> 
-> led/hardware_changes_brightness 
-> 
-> and for #2
-> 
-> led/poll_for_hardware_brightness_change
-> 
-> where poll() wakes the userspace up when the brightness changes, and
-> read() can get new brightness...?
-
-Well, it is almost the same as hw_brightness_change I proposed
-earlier. Persistent triggers OTOH would be more generic and it would
-fit for the trigger approach Hans already implemented.
-
-
--- 
-Best regards,
-Jacek Anaszewski
+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
+AAEAAQBTAAAAjwoAAAAA
