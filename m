@@ -1,7 +1,7 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v6 4/4] platform/x86/dell-*: Call led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Wed, 25 Jan 2017 17:11:30 +0100
-Message-ID: <20170125161130.5424-5-hdegoede@redhat.com>
+Subject: [PATCH v6 1/4] leds: class: Add new optional brightness_hw_changed attribute
+Date: Wed, 25 Jan 2017 17:11:27 +0100
+Message-ID: <20170125161130.5424-2-hdegoede@redhat.com>
 References: <20170125161130.5424-1-hdegoede@redhat.com>
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <20170125161130.5424-1-hdegoede@redhat.com>
@@ -10,136 +10,197 @@ To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
 Cc: linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-leds@vger.kernel.org
 
-Make dell-wmi notify on hotkey kbd brightness changes, listen for this
-in dell-laptop and call led_classdev_notify_brightness_hw_changed.
+Some LEDs may have their brightness level changed autonomously
+(outside of kernel control) by hardware / firmware. This commit
+adds support for an optional brightness_hw_changed attribute to
+signal such changes to userspace (if a driver can detect them):
 
-This will allow userspace to monitor (poll) for brightness changes on
-these LEDs caused by the hotkey.
+What:		/sys/class/leds/<led>/brightness_hw_changed
+Date:		January 2017
+KernelVersion:	4.11
+Description:
+		Last hardware set brightness level for this LED. Some LEDs
+		may be changed autonomously by hardware/firmware. Only LEDs
+		where this happens and the driver can detect this, will
+		have this file.
+
+		This file supports poll() to detect when the hardware
+		changes the brightness.
+
+		Reading this file will return the last brightness level set
+		by the hardware, this may be different from the current
+		brightness.
+
+Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
+their flags field and call led_classdev_notify_brightness_hw_changed()
+with the hardware set brightness when they detect a hardware / firmware
+triggered brightness change.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Changes in v2:
--Use the new dell_smbios*notify functionality
-Changes in v3:
--Simplify the if condition for calling led_notify_brightness_change
-Changes in v4:
--Adjust for dell_smbios_*_notifier to dell_laptop_*_notifier rename
-Changes in v5:
--Switch to new led-trigger based API for notifying userspace about
- keyboard backlight brightness changes.
-Changes in v6:
--Switch to new brightness_hw_changed LED class API
 ---
- drivers/platform/x86/dell-laptop.c | 30 +++++++++++++++++++++++++++++-
- drivers/platform/x86/dell-wmi.c    | 14 +++++++++-----
- 2 files changed, 38 insertions(+), 6 deletions(-)
+Changes in v6:
+-New patch in v6 of this set, replacing previous trigger based API
+---
+ Documentation/ABI/testing/sysfs-class-led | 16 +++++++++
+ drivers/leds/led-class.c                  | 57 +++++++++++++++++++++++++++++++
+ include/linux/leds.h                      |  8 +++++
+ 3 files changed, 81 insertions(+)
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 14392a0..7af485e 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -1937,6 +1937,7 @@ static int kbd_led_level_set(struct led_classdev *led_cdev,
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 491cdee..9f6e75d 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -23,6 +23,22 @@ Description:
+ 		If the LED does not support different brightness levels, this
+ 		should be 1.
  
- static struct led_classdev kbd_led = {
- 	.name           = "dell::kbd_backlight",
-+	.flags		= LED_BRIGHT_HW_CHANGED,
- 	.brightness_set_blocking = kbd_led_level_set,
- 	.brightness_get = kbd_led_level_get,
- 	.groups         = kbd_led_groups,
-@@ -1944,6 +1945,8 @@ static struct led_classdev kbd_led = {
- 
- static int __init kbd_led_init(struct device *dev)
- {
-+	int ret;
++What:		/sys/class/leds/<led>/brightness_hw_changed
++Date:		January 2017
++KernelVersion:	4.11
++Description:
++		Last hardware set brightness level for this LED. Some LEDs
++		may be changed autonomously by hardware/firmware. Only LEDs
++		where this happens and the driver can detect this, will have
++		this file.
 +
- 	kbd_init();
- 	if (!kbd_led_present)
- 		return -ENODEV;
-@@ -1955,7 +1958,11 @@ static int __init kbd_led_init(struct device *dev)
- 		if (kbd_led.max_brightness)
- 			kbd_led.max_brightness--;
- 	}
--	return led_classdev_register(dev, &kbd_led);
-+	ret = led_classdev_register(dev, &kbd_led);
-+	if (ret)
-+		kbd_led_present = false;
++		This file supports poll() to detect when the hardware changes
++		the brightness.
 +
-+	return ret;
- }
- 
- static void brightness_set_exit(struct led_classdev *led_cdev,
-@@ -1972,6 +1979,24 @@ static void kbd_led_exit(void)
- 	led_classdev_unregister(&kbd_led);
- }
- 
-+static int dell_laptop_notifier_call(struct notifier_block *nb,
-+				     unsigned long action, void *data)
-+{
-+	switch (action) {
-+	case DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED:
-+		if (kbd_led_present)
-+			led_classdev_notify_brightness_hw_changed(
-+				&kbd_led, kbd_led_level_get(&kbd_led));
-+		break;
-+	}
++		Reading this file will return the last brightness level set
++		by the hardware, this may be different from the current
++		brightness.
 +
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block dell_laptop_notifier = {
-+	.notifier_call = dell_laptop_notifier_call,
-+};
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_buffer *buffer;
-@@ -2015,6 +2040,8 @@ static int __init dell_init(void)
- 		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
- 				    &dell_debugfs_fops);
- 
-+	dell_laptop_register_notifier(&dell_laptop_notifier);
-+
- 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
- 		return 0;
- 
-@@ -2066,6 +2093,7 @@ static int __init dell_init(void)
- 
- static void __exit dell_exit(void)
- {
-+	dell_laptop_unregister_notifier(&dell_laptop_notifier);
- 	debugfs_remove_recursive(dell_laptop_dir);
- 	if (quirks && quirks->touchpad_led)
- 		touchpad_led_exit();
-diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-index 75e6370..15740b5 100644
---- a/drivers/platform/x86/dell-wmi.c
-+++ b/drivers/platform/x86/dell-wmi.c
-@@ -297,11 +297,11 @@ static const struct key_entry dell_wmi_keymap_type_0011[] __initconst = {
- 	{ KE_IGNORE, 0xfff1, { KEY_RESERVED } },
- 
- 	/* Keyboard backlight level changed */
--	{ KE_IGNORE, 0x01e1, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ea, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02eb, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ec, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02f6, { KEY_RESERVED } },
-+	{ KE_IGNORE, 0x01e1, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ea, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02eb, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ec, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02f6, { KEY_KBDILLUMTOGGLE } },
+ What:		/sys/class/leds/<led>/trigger
+ Date:		March 2006
+ KernelVersion:	2.6.17
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 326ee6e..27aa7b6 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -103,6 +103,52 @@ static const struct attribute_group *led_groups[] = {
+ 	NULL,
  };
  
- static struct input_dev *dell_wmi_input_dev;
-@@ -329,6 +329,10 @@ static void dell_wmi_process_key(int type, int code)
- 	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
- 		return;
- 
-+	if (key->keycode == KEY_KBDILLUMTOGGLE)
-+		dell_laptop_call_notifier(
-+			DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED, NULL);
++static ssize_t brightness_hw_changed_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
 +
- 	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
- }
++	return sprintf(buf, "%u\n", led_cdev->brightness_hw_changed);
++}
++
++static DEVICE_ATTR_RO(brightness_hw_changed);
++
++static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
++{
++	struct device *dev = led_cdev->dev;
++	int ret;
++
++	ret = device_create_file(dev, &dev_attr_brightness_hw_changed);
++	if (ret) {
++		dev_err(dev, "Error creating brightness_hw_changed\n");
++		return ret;
++	}
++
++	led_cdev->brightness_hw_changed_kn =
++		sysfs_get_dirent(dev->kobj.sd, "brightness_hw_changed");
++	if (!led_cdev->brightness_hw_changed_kn) {
++		dev_err(dev, "Error getting brightness_hw_changed kn\n");
++		device_remove_file(dev, &dev_attr_brightness_hw_changed);
++		return -ENXIO;
++	}
++
++	return 0;
++}
++
++static void led_remove_brightness_hw_changed(struct led_classdev *led_cdev)
++{
++	sysfs_put(led_cdev->brightness_hw_changed_kn);
++	device_remove_file(led_cdev->dev, &dev_attr_brightness_hw_changed);
++}
++
++void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_cdev,
++					       enum led_brightness brightness)
++{
++	led_cdev->brightness_hw_changed = brightness;
++	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
++}
++EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
++
+ /**
+  * led_classdev_suspend - suspend an led_classdev.
+  * @led_cdev: the led_classdev to suspend.
+@@ -204,6 +250,14 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 		dev_warn(parent, "Led %s renamed to %s due to name collision",
+ 				led_cdev->name, dev_name(led_cdev->dev));
  
++	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
++		ret = led_add_brightness_hw_changed(led_cdev);
++		if (ret) {
++			device_unregister(led_cdev->dev);
++			return ret;
++		}
++	}
++
+ 	led_cdev->work_flags = 0;
+ #ifdef CONFIG_LEDS_TRIGGERS
+ 	init_rwsem(&led_cdev->trigger_lock);
+@@ -256,6 +310,9 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
+ 
+ 	flush_work(&led_cdev->set_brightness_work);
+ 
++	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED)
++		led_remove_brightness_hw_changed(led_cdev);
++
+ 	device_unregister(led_cdev->dev);
+ 
+ 	down_write(&leds_list_lock);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 569cb53..aa452c8 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -13,6 +13,7 @@
+ #define __LINUX_LEDS_H_INCLUDED
+ 
+ #include <linux/device.h>
++#include <linux/kernfs.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+@@ -35,6 +36,7 @@ struct led_classdev {
+ 	const char		*name;
+ 	enum led_brightness	 brightness;
+ 	enum led_brightness	 max_brightness;
++	enum led_brightness	 brightness_hw_changed;
+ 	int			 flags;
+ 
+ 	/* Lower 16 bits reflect status */
+@@ -46,6 +48,7 @@ struct led_classdev {
+ #define LED_DEV_CAP_FLASH	(1 << 18)
+ #define LED_HW_PLUGGABLE	(1 << 19)
+ #define LED_PANIC_INDICATOR	(1 << 20)
++#define LED_BRIGHT_HW_CHANGED	(1 << 21)
+ 
+ 	/* set_brightness_work / blink_timer flags, atomic, private. */
+ 	unsigned long		work_flags;
+@@ -99,6 +102,9 @@ struct led_classdev {
+ 	struct work_struct	set_brightness_work;
+ 	int			delayed_set_value;
+ 
++	/* For LEDs with brightness_hw_changed sysfs attribute */
++	struct kernfs_node	*brightness_hw_changed_kn;
++
+ #ifdef CONFIG_LEDS_TRIGGERS
+ 	/* Protects the trigger data below */
+ 	struct rw_semaphore	 trigger_lock;
+@@ -123,6 +129,8 @@ extern void devm_led_classdev_unregister(struct device *parent,
+ 					 struct led_classdev *led_cdev);
+ extern void led_classdev_suspend(struct led_classdev *led_cdev);
+ extern void led_classdev_resume(struct led_classdev *led_cdev);
++extern void led_classdev_notify_brightness_hw_changed(
++	struct led_classdev *led_cdev, enum led_brightness brightness);
+ 
+ /**
+  * led_blink_set - set blinking with software fallback
 -- 
 2.9.3
