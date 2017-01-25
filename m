@@ -1,112 +1,97 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v6 3/4] platform/x86/dell-*: Add a generic dell-laptop notifier chain
-Date: Wed, 25 Jan 2017 17:11:29 +0100
-Message-ID: <20170125161130.5424-4-hdegoede@redhat.com>
+Subject: [PATCH v6 2/4] platform/x86/thinkpad: Call led_classdev_notify_brightness_hw_changed on kbd brightness change
+Date: Wed, 25 Jan 2017 17:11:28 +0100
+Message-ID: <20170125161130.5424-3-hdegoede@redhat.com>
 References: <20170125161130.5424-1-hdegoede@redhat.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750906AbdAYQLu (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 25 Jan 2017 11:11:50 -0500
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <20170125161130.5424-1-hdegoede@redhat.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: platform-driver-x86-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
 Cc: linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+List-Id: linux-leds@vger.kernel.org
 
-There are several cases where events handled in one of the dell-* drivers
-need to be propagated to another dell-* driver.
+Make thinkpad_acpi call led_classdev_notify_brightness_hw_changed on the
+kbd_led led_classdev registered by thinkpad_acpi when the kbd backlight
+brightness is changed through the hotkey.
 
-This commits add 3 generic functions:
-dell_laptop_register_notifier()
-dell_laptop_unregister_notifier()
-dell_laptop_call_notifier()
-
-It currently only defines 1 action:
-DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED
-
-Which is intended to propagate kbd_backlight_brightness_changed wmi
-events from dell-wmi to dell-laptop (which contains the actual kbd
-backlight driver).
-
-These functions are put in dell-smbios as both dell-wmi and dell-laptop
-use smbios functions and I do not want to put the notifier head in
-either driver, as that will make the 2 drivers depend on each other.
+This will allow userspace to monitor (poll) for brightness changes on
+these LEDs caused by the hotkey.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
-Changes in v2:
--This is a new patch in v2 of this patch-set
 Changes in v3:
--No changes
+-This is a new patch in v3 of this patch-set
 Changes in v4:
--Rename functions from dell_smbios_*_notifier to dell_laptop_*_notifier
+-No changes
 Changes in v5:
--Dropped due to new led-trigger based approach making this unnecessary
+-Switch to new led-trigger based API for notifying userspace about
+ keyboard backlight brightness changes.
+-Also call ledtrig_kbd_backlight() for laptops with a thinklight
+-Rename the hotkey defines from THINKLIGHT to KBD_LIGHT since they
+ are shared between the thinklight and the keyboard backlight
 Changes in v6:
--Re-introduced as led-trigger based approach got nacked
+-Switch to new brightness_hw_changed LED class API
 ---
- drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
- drivers/platform/x86/dell-smbios.h | 11 +++++++++++
- 2 files changed, 31 insertions(+)
+ drivers/platform/x86/thinkpad_acpi.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
-index d2412ab..bceb382 100644
---- a/drivers/platform/x86/dell-smbios.c
-+++ b/drivers/platform/x86/dell-smbios.c
-@@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index cacb43f..6249292 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -163,6 +163,7 @@ enum tpacpi_hkey_event_t {
+ 	TP_HKEY_EV_HOTKEY_BASE		= 0x1001, /* first hotkey (FN+F1) */
+ 	TP_HKEY_EV_BRGHT_UP		= 0x1010, /* Brightness up */
+ 	TP_HKEY_EV_BRGHT_DOWN		= 0x1011, /* Brightness down */
++	TP_HKEY_EV_KBD_LIGHT		= 0x1012, /* Thinklight/kbd backlight */
+ 	TP_HKEY_EV_VOL_UP		= 0x1015, /* Volume up or unmute */
+ 	TP_HKEY_EV_VOL_DOWN		= 0x1016, /* Volume down or unmute */
+ 	TP_HKEY_EV_VOL_MUTE		= 0x1017, /* Mixer output mute */
+@@ -1959,7 +1960,7 @@ enum {	/* Positions of some of the keys in hotkey masks */
+ 	TP_ACPI_HKEY_HIBERNATE_MASK	= 1 << TP_ACPI_HOTKEYSCAN_FNF12,
+ 	TP_ACPI_HKEY_BRGHTUP_MASK	= 1 << TP_ACPI_HOTKEYSCAN_FNHOME,
+ 	TP_ACPI_HKEY_BRGHTDWN_MASK	= 1 << TP_ACPI_HOTKEYSCAN_FNEND,
+-	TP_ACPI_HKEY_THNKLGHT_MASK	= 1 << TP_ACPI_HOTKEYSCAN_FNPAGEUP,
++	TP_ACPI_HKEY_KBD_LIGHT_MASK	= 1 << TP_ACPI_HOTKEYSCAN_FNPAGEUP,
+ 	TP_ACPI_HKEY_ZOOM_MASK		= 1 << TP_ACPI_HOTKEYSCAN_FNSPACE,
+ 	TP_ACPI_HKEY_VOLUP_MASK		= 1 << TP_ACPI_HOTKEYSCAN_VOLUMEUP,
+ 	TP_ACPI_HKEY_VOLDWN_MASK	= 1 << TP_ACPI_HOTKEYSCAN_VOLUMEDOWN,
+@@ -2344,7 +2345,7 @@ static void hotkey_read_nvram(struct tp_nvram_state *n, const u32 m)
+ 		n->display_toggle = !!(d & TP_NVRAM_MASK_HKT_DISPLAY);
+ 		n->hibernate_toggle = !!(d & TP_NVRAM_MASK_HKT_HIBERNATE);
+ 	}
+-	if (m & TP_ACPI_HKEY_THNKLGHT_MASK) {
++	if (m & TP_ACPI_HKEY_KBD_LIGHT_MASK) {
+ 		d = nvram_read_byte(TP_NVRAM_ADDR_THINKLIGHT);
+ 		n->thinklight_toggle = !!(d & TP_NVRAM_MASK_THINKLIGHT);
+ 	}
+@@ -5193,6 +5194,7 @@ static struct tpacpi_led_classdev tpacpi_led_kbdlight = {
+ 	.led_classdev = {
+ 		.name		= "tpacpi::kbd_backlight",
+ 		.max_brightness	= 2,
++		.flags		= LED_BRIGHT_HW_CHANGED,
+ 		.brightness_set	= &kbdlight_sysfs_set,
+ 		.brightness_get	= &kbdlight_sysfs_get,
+ 	}
+@@ -5222,6 +5224,8 @@ static int __init kbdlight_init(struct ibm_init_struct *iibm)
+ 		return rc;
+ 	}
+ 
++	tpacpi_hotkey_driver_mask_set(hotkey_driver_mask |
++				      TP_ACPI_HKEY_KBD_LIGHT_MASK);
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(dell_smbios_find_token);
  
-+static ATOMIC_NOTIFIER_HEAD(dell_laptop_chain_head);
-+
-+int dell_laptop_register_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_register(&dell_laptop_chain_head, nb);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_register_notifier);
-+
-+int dell_laptop_unregister_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_unregister(&dell_laptop_chain_head, nb);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_unregister_notifier);
-+
-+void dell_laptop_call_notifier(unsigned long action, void *data)
-+{
-+	atomic_notifier_call_chain(&dell_laptop_chain_head, action, data);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_call_notifier);
-+
- static void __init parse_da_table(const struct dmi_header *dm)
- {
- 	/* Final token is a terminator, so we don't want to copy it */
-diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
-index ec7d40a..45cbc22 100644
---- a/drivers/platform/x86/dell-smbios.h
-+++ b/drivers/platform/x86/dell-smbios.h
-@@ -16,6 +16,8 @@
- #ifndef _DELL_SMBIOS_H_
- #define _DELL_SMBIOS_H_
+@@ -9169,6 +9173,10 @@ static void tpacpi_driver_event(const unsigned int hkey_event)
+ 			volume_alsa_notify_change();
+ 		}
+ 	}
++	if (tp_features.kbdlight && hkey_event == TP_HKEY_EV_KBD_LIGHT)
++		led_classdev_notify_brightness_hw_changed(
++			&tpacpi_led_kbdlight.led_classdev,
++			kbdlight_sysfs_get(NULL));
+ }
  
-+struct notifier_block;
-+
- /* This structure will be modified by the firmware when we enter
-  * system management mode, hence the volatiles */
- 
-@@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
- void dell_smbios_send_request(int class, int select);
- 
- struct calling_interface_token *dell_smbios_find_token(int tokenid);
-+
-+enum dell_laptop_notifier_actions {
-+	DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED,
-+};
-+
-+int dell_laptop_register_notifier(struct notifier_block *nb);
-+int dell_laptop_unregister_notifier(struct notifier_block *nb);
-+void dell_laptop_call_notifier(unsigned long action, void *data);
-+
- #endif
+ static void hotkey_driver_event(const unsigned int scancode)
 -- 
 2.9.3
