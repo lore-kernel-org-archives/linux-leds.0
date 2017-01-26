@@ -1,45 +1,83 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Thu, 26 Jan 2017 16:10:30 +0100
-Message-ID: <CAMuHMdVP+wmv0yWQsB589eWWHxCU=q=VMj6FuqPBAzt_VfNdew@mail.gmail.com>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
- <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
- <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com> <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v6 1/4] leds: class: Add new optional
+ brightness_hw_changed attribute
+Date: Thu, 26 Jan 2017 20:51:24 +0100
+Message-ID: <70a01088-f772-6dec-a505-bf058cc2b0dd@gmail.com>
+References: <20170125161130.5424-1-hdegoede@redhat.com>
+ <20170125161130.5424-2-hdegoede@redhat.com> <20170125164936.GE7936@pali>
+ <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com> <20170126083338.GA6085@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34930 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753034AbdAZPKi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Jan 2017 10:10:38 -0500
-In-Reply-To: <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20170126083338.GA6085@pali>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi Linus,
+On 01/26/2017 09:33 AM, Pali Rohár wrote:
+> On Wednesday 25 January 2017 22:35:53 Jacek Anaszewski wrote:
+>> On 01/25/2017 05:49 PM, Pali Rohár wrote:
+>>> On Wednesday 25 January 2017 17:11:27 Hans de Goede wrote:
+>>>> Some LEDs may have their brightness level changed autonomously
+>>>> (outside of kernel control) by hardware / firmware. This commit
+>>>> adds support for an optional brightness_hw_changed attribute to
+>>>> signal such changes to userspace (if a driver can detect them):
+>>>>
+>>>> What:		/sys/class/leds/<led>/brightness_hw_changed
+>>>> Date:		January 2017
+>>>> KernelVersion:	4.11
+>>>> Description:
+>>>> 		Last hardware set brightness level for this LED. Some LEDs
+>>>> 		may be changed autonomously by hardware/firmware. Only LEDs
+>>>> 		where this happens and the driver can detect this, will
+>>>> 		have this file.
+>>>>
+>>>> 		This file supports poll() to detect when the hardware
+>>>> 		changes the brightness.
+>>>>
+>>>> 		Reading this file will return the last brightness level set
+>>>> 		by the hardware, this may be different from the current
+>>>> 		brightness.
+> 
+> In which situation this attribute may be different?
+> 
+> I think some information should be present in this description...
 
-On Thu, Jan 26, 2017 at 3:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jan 24, 2017 at 12:18 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->
->> -gpio-780 (?): gpiod_set_debounce: missing set() or set_debounce() operations
->> +gpio-780 (SW30): gpiod_set_debounce: missing set() or set_debounce() operations
->
-> And there is a special problem.
->
-> I wanted, at one point, to take the timer-based debouncing code out of
-> the GPIO keys input driver and make it into a generic fallback in
-> gpiolib so that *any* GPIO controller could be made to provide
-> debounce.
->
-> I ran into some obstacle feelin it was impossible IIRC but do not
-> remember what it was.
+The first sentence in description says:
 
-Are these real problems? They are debug prints.
+"Last hardware set brightness level for this LED" - i.e. it may be
+different from the _actual_ brightness, which could have been set by
+LED class driver.
 
-Gr{oetje,eeting}s,
+>>>> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
+>>>> their flags field and call led_classdev_notify_brightness_hw_changed()
+>>>> with the hardware set brightness when they detect a hardware / firmware
+>>>> triggered brightness change.
+>>>>
+>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>
+>>> Just speculation: What about using name 'actual_brightness'? It provides
+>>> same output on read as actual_brightness from /sys/class/backlight/.
+>>
+>> This name is ambiguous. Propagating it to the LED subsystem only because
+>> it exists in backlight is not sufficient argument IMHO.
+> 
+> I thought that having same name could help userspace and also to have
+> consistency between similar subsystems. But ok, that was just my
+> speculation.
 
-                        Geert
+Please also note the "actual" would be ambiguous especially in view
+of my above explanation.
+
+> I have just one small suggestion in current name "brightness_hw_changed".
+> As it provides regular read() capability I would suggest to not indicate
+> "activity" (changed) in name...
+
+Without "changed" one could think that brightness file (the one we have
+currently) doesn't reflect hardware state.
+
+-- 
+Best regards,
+Jacek Anaszewski
