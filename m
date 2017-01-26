@@ -1,64 +1,72 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: ktd2692: avoid harmless maybe-uninitialized warning
-Date: Wed, 25 Jan 2017 23:36:27 +0100
-Message-ID: <20170125223627.GA27700@amd>
-References: <20170125222247.1210546-1-arnd@arndb.de>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH v6 1/4] leds: class: Add new optional
+ brightness_hw_changed attribute
+Date: Thu, 26 Jan 2017 09:33:44 +0100
+Message-ID: <20170126083338.GA6085@pali>
+References: <20170125161130.5424-1-hdegoede@redhat.com>
+ <20170125161130.5424-2-hdegoede@redhat.com>
+ <20170125164936.GE7936@pali>
+ <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60780 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752475AbdAYWgf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Jan 2017 17:36:35 -0500
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170125222247.1210546-1-arnd@arndb.de>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Wednesday 25 January 2017 22:35:53 Jacek Anaszewski wrote:
+> On 01/25/2017 05:49 PM, Pali Rohár wrote:
+> > On Wednesday 25 January 2017 17:11:27 Hans de Goede wrote:
+> >> Some LEDs may have their brightness level changed autonomously
+> >> (outside of kernel control) by hardware / firmware. This commit
+> >> adds support for an optional brightness_hw_changed attribute to
+> >> signal such changes to userspace (if a driver can detect them):
+> >>
+> >> What:		/sys/class/leds/<led>/brightness_hw_changed
+> >> Date:		January 2017
+> >> KernelVersion:	4.11
+> >> Description:
+> >> 		Last hardware set brightness level for this LED. Some LEDs
+> >> 		may be changed autonomously by hardware/firmware. Only LEDs
+> >> 		where this happens and the driver can detect this, will
+> >> 		have this file.
+> >>
+> >> 		This file supports poll() to detect when the hardware
+> >> 		changes the brightness.
+> >>
+> >> 		Reading this file will return the last brightness level set
+> >> 		by the hardware, this may be different from the current
+> >> 		brightness.
 
---X1bOJ3K7DJ5YkBrT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In which situation this attribute may be different?
 
-On Wed 2017-01-25 23:22:36, Arnd Bergmann wrote:
-> gcc gets confused about the control flow in ktd2692_parse_dt(), causing
-> it to warn about what seems like a potential bug:
->=20
-> drivers/leds/leds-ktd2692.c: In function 'ktd2692_probe':
-> drivers/leds/leds-ktd2692.c:244:15: error: '*((void *)&led_cfg+8)' may be=
- used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
-> drivers/leds/leds-ktd2692.c:225:7: error: 'led_cfg.flash_max_microamp' ma=
-y be used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
-> drivers/leds/leds-ktd2692.c:232:3: error: 'led_cfg.movie_max_microamp' ma=
-y be used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
->=20
-> The code is fine, and slightly reworking it in an equivalent way lets
-> gcc figure that out too, which gets rid of the warning.
->=20
-> Fixes: 77e7915b15bb ("leds: ktd2692: Add missing of_node_put")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+I think some information should be present in this description...
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+> >> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
+> >> their flags field and call led_classdev_notify_brightness_hw_changed()
+> >> with the hardware set brightness when they detect a hardware / firmware
+> >> triggered brightness change.
+> >>
+> >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > 
+> > Just speculation: What about using name 'actual_brightness'? It provides
+> > same output on read as actual_brightness from /sys/class/backlight/.
+> 
+> This name is ambiguous. Propagating it to the LED subsystem only because
+> it exists in backlight is not sufficient argument IMHO.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I thought that having same name could help userspace and also to have
+consistency between similar subsystems. But ok, that was just my
+speculation.
 
---X1bOJ3K7DJ5YkBrT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I have just one small suggestion in current name "brightness_hw_changed".
+As it provides regular read() capability I would suggest to not indicate
+"activity" (changed) in name...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAliJKGsACgkQMOfwapXb+vLUcwCgpZ86UMyTpFDykXpTxQWUax4a
-wTcAoKZxXz9jjppVJxtgSTUSB/ofnjqe
-=6MTF
------END PGP SIGNATURE-----
-
---X1bOJ3K7DJ5YkBrT--
+-- 
+Pali Rohár
+pali.rohar@gmail.com
