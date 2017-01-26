@@ -1,90 +1,69 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v6 1/4] leds: class: Add new optional
- brightness_hw_changed attribute
-Date: Thu, 26 Jan 2017 21:04:06 +0100
-Message-ID: <937f728f-9d36-d8db-0ed1-c6d8cd1b090e@gmail.com>
-References: <20170125161130.5424-1-hdegoede@redhat.com>
- <20170125161130.5424-2-hdegoede@redhat.com> <20170125164936.GE7936@pali>
- <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com> <20170126083338.GA6085@pali>
- <70a01088-f772-6dec-a505-bf058cc2b0dd@gmail.com>
+Subject: Re: [PATCH] leds: ktd2692: avoid harmless maybe-uninitialized warning
+Date: Thu, 26 Jan 2017 21:20:13 +0100
+Message-ID: <e8e07af6-788b-751c-c200-54bba4934611@gmail.com>
+References: <20170125222247.1210546-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <70a01088-f772-6dec-a505-bf058cc2b0dd@gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35086 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752256AbdAZUVD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Jan 2017 15:21:03 -0500
+In-Reply-To: <20170125222247.1210546-1-arnd@arndb.de>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/26/2017 08:51 PM, Jacek Anaszewski wrote:
-> On 01/26/2017 09:33 AM, Pali Rohár wrote:
->> On Wednesday 25 January 2017 22:35:53 Jacek Anaszewski wrote:
->>> On 01/25/2017 05:49 PM, Pali Rohár wrote:
->>>> On Wednesday 25 January 2017 17:11:27 Hans de Goede wrote:
->>>>> Some LEDs may have their brightness level changed autonomously
->>>>> (outside of kernel control) by hardware / firmware. This commit
->>>>> adds support for an optional brightness_hw_changed attribute to
->>>>> signal such changes to userspace (if a driver can detect them):
->>>>>
->>>>> What:		/sys/class/leds/<led>/brightness_hw_changed
->>>>> Date:		January 2017
->>>>> KernelVersion:	4.11
->>>>> Description:
->>>>> 		Last hardware set brightness level for this LED. Some LEDs
->>>>> 		may be changed autonomously by hardware/firmware. Only LEDs
->>>>> 		where this happens and the driver can detect this, will
->>>>> 		have this file.
->>>>>
->>>>> 		This file supports poll() to detect when the hardware
->>>>> 		changes the brightness.
->>>>>
->>>>> 		Reading this file will return the last brightness level set
->>>>> 		by the hardware, this may be different from the current
->>>>> 		brightness.
->>
->> In which situation this attribute may be different?
->>
->> I think some information should be present in this description...
-> 
-> The first sentence in description says:
-> 
-> "Last hardware set brightness level for this LED" - i.e. it may be
-> different from the _actual_ brightness, which could have been set by
-> LED class driver.
-> 
->>>>> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
->>>>> their flags field and call led_classdev_notify_brightness_hw_changed()
->>>>> with the hardware set brightness when they detect a hardware / firmware
->>>>> triggered brightness change.
->>>>>
->>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>>>
->>>> Just speculation: What about using name 'actual_brightness'? It provides
->>>> same output on read as actual_brightness from /sys/class/backlight/.
->>>
->>> This name is ambiguous. Propagating it to the LED subsystem only because
->>> it exists in backlight is not sufficient argument IMHO.
->>
->> I thought that having same name could help userspace and also to have
->> consistency between similar subsystems. But ok, that was just my
->> speculation.
-> 
-> Please also note the "actual" would be ambiguous especially in view
-> of my above explanation.
-> 
->> I have just one small suggestion in current name "brightness_hw_changed".
->> As it provides regular read() capability I would suggest to not indicate
->> "activity" (changed) in name...
-> 
-> Without "changed" one could think that brightness file (the one we have
-> currently) doesn't reflect hardware state.
+Hi Arnd,
 
-A new, possibly better name has just come to my mind.
-Since the file has two purposes: to notify about brightness changes
-made by hardware and caching last such a change, then we could call
-it hw_brightness_cache. Now there is no activity in the file name.
+Thanks for the patch, applied.
 
--- 
 Best regards,
 Jacek Anaszewski
+
+On 01/25/2017 11:22 PM, Arnd Bergmann wrote:
+> gcc gets confused about the control flow in ktd2692_parse_dt(), causing
+> it to warn about what seems like a potential bug:
+> 
+> drivers/leds/leds-ktd2692.c: In function 'ktd2692_probe':
+> drivers/leds/leds-ktd2692.c:244:15: error: '*((void *)&led_cfg+8)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> drivers/leds/leds-ktd2692.c:225:7: error: 'led_cfg.flash_max_microamp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> drivers/leds/leds-ktd2692.c:232:3: error: 'led_cfg.movie_max_microamp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> 
+> The code is fine, and slightly reworking it in an equivalent way lets
+> gcc figure that out too, which gets rid of the warning.
+> 
+> Fixes: 77e7915b15bb ("leds: ktd2692: Add missing of_node_put")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/leds/leds-ktd2692.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+> index bf23ba191ad0..45296aaca9da 100644
+> --- a/drivers/leds/leds-ktd2692.c
+> +++ b/drivers/leds/leds-ktd2692.c
+> @@ -270,15 +270,15 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
+>  		return -ENXIO;
+>  
+>  	led->ctrl_gpio = devm_gpiod_get(dev, "ctrl", GPIOD_ASIS);
+> -	if (IS_ERR(led->ctrl_gpio)) {
+> -		ret = PTR_ERR(led->ctrl_gpio);
+> +	ret = PTR_ERR_OR_ZERO(led->ctrl_gpio);
+> +	if (ret) {
+>  		dev_err(dev, "cannot get ctrl-gpios %d\n", ret);
+>  		return ret;
+>  	}
+>  
+>  	led->aux_gpio = devm_gpiod_get(dev, "aux", GPIOD_ASIS);
+> -	if (IS_ERR(led->aux_gpio)) {
+> -		ret = PTR_ERR(led->aux_gpio);
+> +	ret = PTR_ERR_OR_ZERO(led->aux_gpio);
+> +	if (ret) {
+>  		dev_err(dev, "cannot get aux-gpios %d\n", ret);
+>  		return ret;
+>  	}
+> 
