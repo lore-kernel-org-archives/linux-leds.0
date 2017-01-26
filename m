@@ -1,69 +1,122 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: ktd2692: avoid harmless maybe-uninitialized warning
-Date: Thu, 26 Jan 2017 21:20:13 +0100
-Message-ID: <e8e07af6-788b-751c-c200-54bba4934611@gmail.com>
-References: <20170125222247.1210546-1-arnd@arndb.de>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v6 1/4] leds: class: Add new optional
+ brightness_hw_changed attribute
+Date: Thu, 26 Jan 2017 22:12:03 +0100
+Message-ID: <20170126211203.GA23841@amd>
+References: <20170125161130.5424-1-hdegoede@redhat.com>
+ <20170125161130.5424-2-hdegoede@redhat.com>
+ <2e3375d0-42fb-8123-06f9-df6877fb4264@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35086 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbdAZUVD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Jan 2017 15:21:03 -0500
-In-Reply-To: <20170125222247.1210546-1-arnd@arndb.de>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2e3375d0-42fb-8123-06f9-df6877fb4264@gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Arnd,
 
-Thanks for the patch, applied.
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Jacek Anaszewski
+Hi!
 
-On 01/25/2017 11:22 PM, Arnd Bergmann wrote:
-> gcc gets confused about the control flow in ktd2692_parse_dt(), causing
-> it to warn about what seems like a potential bug:
-> 
-> drivers/leds/leds-ktd2692.c: In function 'ktd2692_probe':
-> drivers/leds/leds-ktd2692.c:244:15: error: '*((void *)&led_cfg+8)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> drivers/leds/leds-ktd2692.c:225:7: error: 'led_cfg.flash_max_microamp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> drivers/leds/leds-ktd2692.c:232:3: error: 'led_cfg.movie_max_microamp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> 
-> The code is fine, and slightly reworking it in an equivalent way lets
-> gcc figure that out too, which gets rid of the warning.
-> 
-> Fixes: 77e7915b15bb ("leds: ktd2692: Add missing of_node_put")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/leds/leds-ktd2692.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
-> index bf23ba191ad0..45296aaca9da 100644
-> --- a/drivers/leds/leds-ktd2692.c
-> +++ b/drivers/leds/leds-ktd2692.c
-> @@ -270,15 +270,15 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
->  		return -ENXIO;
->  
->  	led->ctrl_gpio = devm_gpiod_get(dev, "ctrl", GPIOD_ASIS);
-> -	if (IS_ERR(led->ctrl_gpio)) {
-> -		ret = PTR_ERR(led->ctrl_gpio);
-> +	ret = PTR_ERR_OR_ZERO(led->ctrl_gpio);
-> +	if (ret) {
->  		dev_err(dev, "cannot get ctrl-gpios %d\n", ret);
->  		return ret;
->  	}
->  
->  	led->aux_gpio = devm_gpiod_get(dev, "aux", GPIOD_ASIS);
-> -	if (IS_ERR(led->aux_gpio)) {
-> -		ret = PTR_ERR(led->aux_gpio);
-> +	ret = PTR_ERR_OR_ZERO(led->aux_gpio);
-> +	if (ret) {
->  		dev_err(dev, "cannot get aux-gpios %d\n", ret);
->  		return ret;
->  	}
-> 
+> Thanks for the patch. I have a few comments below.
+>=20
+> On 01/25/2017 05:11 PM, Hans de Goede wrote:
+> > Some LEDs may have their brightness level changed autonomously
+> > (outside of kernel control) by hardware / firmware. This commit
+> > adds support for an optional brightness_hw_changed attribute to
+> > signal such changes to userspace (if a driver can detect them):
+> >=20
+> > What:		/sys/class/leds/<led>/brightness_hw_changed
+> > Date:		January 2017
+> > KernelVersion:	4.11
+> > Description:
+> > 		Last hardware set brightness level for this LED. Some LEDs
+> > 		may be changed autonomously by hardware/firmware. Only LEDs
+> > 		where this happens and the driver can detect this, will
+> > 		have this file.
+> >=20
+> > 		This file supports poll() to detect when the hardware
+> > 		changes the brightness.
+> >=20
+> > 		Reading this file will return the last brightness level set
+> > 		by the hardware, this may be different from the current
+> > 		brightness.
+> >=20
+> > Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
+> > their flags field and call led_classdev_notify_brightness_hw_changed()
+> > with the hardware set brightness when they detect a hardware / firmware
+> > triggered brightness change.
+> >=20
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > ---
+> > Changes in v6:
+> > -New patch in v6 of this set, replacing previous trigger based API
+> > ---
+> >  Documentation/ABI/testing/sysfs-class-led | 16 +++++++++
+> >  drivers/leds/led-class.c                  | 57 +++++++++++++++++++++++=
+++++++++
+> >  include/linux/leds.h                      |  8 +++++
+> >  3 files changed, 81 insertions(+)
+> >=20
+> > diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/=
+ABI/testing/sysfs-class-led
+> > index 491cdee..9f6e75d 100644
+> > --- a/Documentation/ABI/testing/sysfs-class-led
+> > +++ b/Documentation/ABI/testing/sysfs-class-led
+> > @@ -23,6 +23,22 @@ Description:
+> >  		If the LED does not support different brightness levels, this
+> >  		should be 1.
+> > =20
+> > +What:		/sys/class/leds/<led>/brightness_hw_changed
+> > +Date:		January 2017
+> > +KernelVersion:	4.11
+> > +Description:
+> > +		Last hardware set brightness level for this LED. Some LEDs
+> > +		may be changed autonomously by hardware/firmware. Only LEDs
+> > +		where this happens and the driver can detect this, will have
+> > +		this file.
+> > +
+> > +		This file supports poll() to detect when the hardware changes
+> > +		the brightness.
+> > +
+> > +		Reading this file will return the last brightness level set
+> > +		by the hardware, this may be different from the current
+> > +		brightness.
+>=20
+> Let's return -ENODATA when no such an event occurred till the moment
+> of file reading.
+
+I'd do that.
+
+Actually, maybe we should make this undefined behaviour. "Reading this
+file will return the last brightness level set by the hardware. If the
+software changed the brightness in the meantime, maybe due to active
+trigger, the result is undefined, and it may return error."
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAliKZiMACgkQMOfwapXb+vJ1bACgofdIdzUz6DGfbZi3HkwaVpu8
+nTAAoIFBpWL7E4KYHQtCKERldGBmAOkw
+=79vb
+-----END PGP SIGNATURE-----
+
+--T4sUOijqQbZv57TR--
