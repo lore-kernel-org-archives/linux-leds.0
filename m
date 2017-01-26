@@ -1,72 +1,34 @@
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v6 1/4] leds: class: Add new optional
- brightness_hw_changed attribute
-Date: Thu, 26 Jan 2017 09:33:44 +0100
-Message-ID: <20170126083338.GA6085@pali>
-References: <20170125161130.5424-1-hdegoede@redhat.com>
- <20170125161130.5424-2-hdegoede@redhat.com>
- <20170125164936.GE7936@pali>
- <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Thu, 26 Jan 2017 15:44:42 +0100
+Message-ID: <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
+References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+ <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com> <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b43ec266-d5ba-d974-b964-25fe82115db5@gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Wednesday 25 January 2017 22:35:53 Jacek Anaszewski wrote:
-> On 01/25/2017 05:49 PM, Pali Rohár wrote:
-> > On Wednesday 25 January 2017 17:11:27 Hans de Goede wrote:
-> >> Some LEDs may have their brightness level changed autonomously
-> >> (outside of kernel control) by hardware / firmware. This commit
-> >> adds support for an optional brightness_hw_changed attribute to
-> >> signal such changes to userspace (if a driver can detect them):
-> >>
-> >> What:		/sys/class/leds/<led>/brightness_hw_changed
-> >> Date:		January 2017
-> >> KernelVersion:	4.11
-> >> Description:
-> >> 		Last hardware set brightness level for this LED. Some LEDs
-> >> 		may be changed autonomously by hardware/firmware. Only LEDs
-> >> 		where this happens and the driver can detect this, will
-> >> 		have this file.
-> >>
-> >> 		This file supports poll() to detect when the hardware
-> >> 		changes the brightness.
-> >>
-> >> 		Reading this file will return the last brightness level set
-> >> 		by the hardware, this may be different from the current
-> >> 		brightness.
+On Tue, Jan 24, 2017 at 12:18 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-In which situation this attribute may be different?
+> -gpio-780 (?): gpiod_set_debounce: missing set() or set_debounce() operations
+> +gpio-780 (SW30): gpiod_set_debounce: missing set() or set_debounce() operations
 
-I think some information should be present in this description...
+And there is a special problem.
 
-> >> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
-> >> their flags field and call led_classdev_notify_brightness_hw_changed()
-> >> with the hardware set brightness when they detect a hardware / firmware
-> >> triggered brightness change.
-> >>
-> >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> > 
-> > Just speculation: What about using name 'actual_brightness'? It provides
-> > same output on read as actual_brightness from /sys/class/backlight/.
-> 
-> This name is ambiguous. Propagating it to the LED subsystem only because
-> it exists in backlight is not sufficient argument IMHO.
+I wanted, at one point, to take the timer-based debouncing code out of
+the GPIO keys input driver and make it into a generic fallback in
+gpiolib so that *any* GPIO controller could be made to provide
+debounce.
 
-I thought that having same name could help userspace and also to have
-consistency between similar subsystems. But ok, that was just my
-speculation.
+I ran into some obstacle feelin it was impossible IIRC but do not
+remember what it was.
 
-I have just one small suggestion in current name "brightness_hw_changed".
-As it provides regular read() capability I would suggest to not indicate
-"activity" (changed) in name...
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Yours,
+Linus Walleij
