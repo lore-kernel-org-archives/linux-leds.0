@@ -1,134 +1,138 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v6 2/4] platform/x86/thinkpad: Call
- led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Sat, 28 Jan 2017 16:34:05 +0100
-Message-ID: <d0a2e85a-10b8-57af-6f8e-8799b077f3eb@redhat.com>
-References: <20170125161130.5424-1-hdegoede@redhat.com>
- <20170125161130.5424-3-hdegoede@redhat.com>
- <CAHp75VcotSMy3wmmYcaWVSzpVSvHY8zxTydLiFCt1wdcxdb1Ww@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH] tools/leds: Add led_hw_brightness_mon program
+Date: Sun, 29 Jan 2017 12:52:31 +0100
+Message-ID: <1485690751-4824-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752010AbdA1PeS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 28 Jan 2017 10:34:18 -0500
-In-Reply-To: <CAHp75VcotSMy3wmmYcaWVSzpVSvHY8zxTydLiFCt1wdcxdb1Ww@mail.gmail.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34722 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbdA2Lx4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 29 Jan 2017 06:53:56 -0500
+Received: by mail-wm0-f67.google.com with SMTP id c85so70201320wmi.1
+        for <linux-leds@vger.kernel.org>; Sun, 29 Jan 2017 03:53:28 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, Platform Driver <platform-driver-x86@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
 
-Hi,
+LED subsystem supports POLLPRI on "brightness_hw_changed" sysfs file
+of LED class devices. This tool demonstrates how to use the feature.
 
-On 01/28/2017 02:36 PM, Andy Shevchenko wrote:
-> On Wed, Jan 25, 2017 at 6:11 PM, Hans de Goede <hdegoede@redhat.com> wrote:
->> Make thinkpad_acpi call led_classdev_notify_brightness_hw_changed on the
->> kbd_led led_classdev registered by thinkpad_acpi when the kbd backlight
->> brightness is changed through the hotkey.
->>
->> This will allow userspace to monitor (poll) for brightness changes on
->> these LEDs caused by the hotkey.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->
-> I didn't see v7 of this and consequent patches. What's going on?
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+---
+ tools/leds/Makefile                |  4 +-
+ tools/leds/led_hw_brightness_mon.c | 84 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+), 2 deletions(-)
+ create mode 100644 tools/leds/led_hw_brightness_mon.c
 
-As I said in the cover-letter of v6 the platform patches were mainly
-there to document the usage of the new LED api. Since there were no
-changes to the api I did not post a v7 of the platform/x86 patches,
-also I've not yet tested the thinkpad changes as adjusted for the
-new LED api.
-
-Once the LED side is merged, I'll re-post the platform patches.
-
-Regards,
-
-Hans
-
-
-
-
->
->> ---
->> Changes in v3:
->> -This is a new patch in v3 of this patch-set
->> Changes in v4:
->> -No changes
->> Changes in v5:
->> -Switch to new led-trigger based API for notifying userspace about
->>  keyboard backlight brightness changes.
->> -Also call ledtrig_kbd_backlight() for laptops with a thinklight
->> -Rename the hotkey defines from THINKLIGHT to KBD_LIGHT since they
->>  are shared between the thinklight and the keyboard backlight
->> Changes in v6:
->> -Switch to new brightness_hw_changed LED class API
->> ---
->>  drivers/platform/x86/thinkpad_acpi.c | 12 ++++++++++--
->>  1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
->> index cacb43f..6249292 100644
->> --- a/drivers/platform/x86/thinkpad_acpi.c
->> +++ b/drivers/platform/x86/thinkpad_acpi.c
->> @@ -163,6 +163,7 @@ enum tpacpi_hkey_event_t {
->>         TP_HKEY_EV_HOTKEY_BASE          = 0x1001, /* first hotkey (FN+F1) */
->>         TP_HKEY_EV_BRGHT_UP             = 0x1010, /* Brightness up */
->>         TP_HKEY_EV_BRGHT_DOWN           = 0x1011, /* Brightness down */
->> +       TP_HKEY_EV_KBD_LIGHT            = 0x1012, /* Thinklight/kbd backlight */
->>         TP_HKEY_EV_VOL_UP               = 0x1015, /* Volume up or unmute */
->>         TP_HKEY_EV_VOL_DOWN             = 0x1016, /* Volume down or unmute */
->>         TP_HKEY_EV_VOL_MUTE             = 0x1017, /* Mixer output mute */
->> @@ -1959,7 +1960,7 @@ enum {    /* Positions of some of the keys in hotkey masks */
->>         TP_ACPI_HKEY_HIBERNATE_MASK     = 1 << TP_ACPI_HOTKEYSCAN_FNF12,
->>         TP_ACPI_HKEY_BRGHTUP_MASK       = 1 << TP_ACPI_HOTKEYSCAN_FNHOME,
->>         TP_ACPI_HKEY_BRGHTDWN_MASK      = 1 << TP_ACPI_HOTKEYSCAN_FNEND,
->> -       TP_ACPI_HKEY_THNKLGHT_MASK      = 1 << TP_ACPI_HOTKEYSCAN_FNPAGEUP,
->> +       TP_ACPI_HKEY_KBD_LIGHT_MASK     = 1 << TP_ACPI_HOTKEYSCAN_FNPAGEUP,
->>         TP_ACPI_HKEY_ZOOM_MASK          = 1 << TP_ACPI_HOTKEYSCAN_FNSPACE,
->>         TP_ACPI_HKEY_VOLUP_MASK         = 1 << TP_ACPI_HOTKEYSCAN_VOLUMEUP,
->>         TP_ACPI_HKEY_VOLDWN_MASK        = 1 << TP_ACPI_HOTKEYSCAN_VOLUMEDOWN,
->> @@ -2344,7 +2345,7 @@ static void hotkey_read_nvram(struct tp_nvram_state *n, const u32 m)
->>                 n->display_toggle = !!(d & TP_NVRAM_MASK_HKT_DISPLAY);
->>                 n->hibernate_toggle = !!(d & TP_NVRAM_MASK_HKT_HIBERNATE);
->>         }
->> -       if (m & TP_ACPI_HKEY_THNKLGHT_MASK) {
->> +       if (m & TP_ACPI_HKEY_KBD_LIGHT_MASK) {
->>                 d = nvram_read_byte(TP_NVRAM_ADDR_THINKLIGHT);
->>                 n->thinklight_toggle = !!(d & TP_NVRAM_MASK_THINKLIGHT);
->>         }
->> @@ -5193,6 +5194,7 @@ static struct tpacpi_led_classdev tpacpi_led_kbdlight = {
->>         .led_classdev = {
->>                 .name           = "tpacpi::kbd_backlight",
->>                 .max_brightness = 2,
->> +               .flags          = LED_BRIGHT_HW_CHANGED,
->>                 .brightness_set = &kbdlight_sysfs_set,
->>                 .brightness_get = &kbdlight_sysfs_get,
->>         }
->> @@ -5222,6 +5224,8 @@ static int __init kbdlight_init(struct ibm_init_struct *iibm)
->>                 return rc;
->>         }
->>
->> +       tpacpi_hotkey_driver_mask_set(hotkey_driver_mask |
->> +                                     TP_ACPI_HKEY_KBD_LIGHT_MASK);
->>         return 0;
->>  }
->>
->> @@ -9169,6 +9173,10 @@ static void tpacpi_driver_event(const unsigned int hkey_event)
->>                         volume_alsa_notify_change();
->>                 }
->>         }
->> +       if (tp_features.kbdlight && hkey_event == TP_HKEY_EV_KBD_LIGHT)
->> +               led_classdev_notify_brightness_hw_changed(
->> +                       &tpacpi_led_kbdlight.led_classdev,
->> +                       kbdlight_sysfs_get(NULL));
->>  }
->>
->>  static void hotkey_driver_event(const unsigned int scancode)
->> --
->> 2.9.3
->>
->
->
->
+diff --git a/tools/leds/Makefile b/tools/leds/Makefile
+index c03a79e..078b666 100644
+--- a/tools/leds/Makefile
++++ b/tools/leds/Makefile
+@@ -3,11 +3,11 @@
+ CC = $(CROSS_COMPILE)gcc
+ CFLAGS = -Wall -Wextra -g -I../../include/uapi
+ 
+-all: uledmon
++all: uledmon led_hw_brightness_mon
+ %: %.c
+ 	$(CC) $(CFLAGS) -o $@ $^
+ 
+ clean:
+-	$(RM) uledmon
++	$(RM) uledmon led_hw_brightness_mon
+ 
+ .PHONY: all clean
+diff --git a/tools/leds/led_hw_brightness_mon.c b/tools/leds/led_hw_brightness_mon.c
+new file mode 100644
+index 0000000..1a97064
+--- /dev/null
++++ b/tools/leds/led_hw_brightness_mon.c
+@@ -0,0 +1,84 @@
++/*
++ * led_hw_brightness_mon.c
++ *
++ * This program monitors LED brightness level changes having its origin
++ * in hardware/firmware, i.e. outside of kernel control.
++ * A timestamp and brightness value is printed each time the brightness changes.
++ *
++ * Usage: led_notify_mon <device-name>
++ *
++ * <device-name> is the name of the LED class device to be monitored. Pressing
++ * CTRL+C will exit.
++ */
++
++#include <errno.h>
++#include <fcntl.h>
++#include <poll.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <unistd.h>
++
++#include <linux/uleds.h>
++
++int main(int argc, char const *argv[])
++{
++	int fd, ret;
++	char brightness_file_path[LED_MAX_NAME_SIZE + 11];
++	struct pollfd pollfd;
++	struct timespec ts;
++	char buf[11];
++
++	if (argc != 2) {
++		fprintf(stderr, "Requires <device-name> argument\n");
++		return 1;
++	}
++
++	snprintf(brightness_file_path, LED_MAX_NAME_SIZE,
++		 "/sys/class/leds/%s/brightness_hw_changed", argv[1]);
++
++	fd = open(brightness_file_path, O_RDONLY);
++	if (fd == -1) {
++		printf("Failed to open %s file\n", brightness_file_path);
++		return 1;
++	}
++
++	/*
++	 * read may fail if no hw brightness change has occurred so far,
++	 * but it is required to avoid spurious poll notifications in
++	 * the opposite case.
++	 */
++	read(fd, buf, sizeof(buf));
++
++	pollfd.fd = fd;
++	pollfd.events = POLLPRI;
++
++	while (1) {
++		ret = poll(&pollfd, 1, -1);
++		if (ret == -1) {
++			printf("Failed to poll %s file (%d)\n",
++				brightness_file_path, ret);
++			ret = 1;
++			break;
++		}
++
++		clock_gettime(CLOCK_MONOTONIC, &ts);
++
++		ret = read(fd, buf, sizeof(buf));
++		if (ret < 0)
++			break;
++
++		ret = lseek(pollfd.fd, 0, SEEK_SET);
++		if (ret < 0) {
++			printf("lseek failed (%d)\n", ret);
++			break;
++		}
++
++		printf("[%ld.%09ld] %d\n", ts.tv_sec, ts.tv_nsec, atoi(buf));
++	}
++
++	close(fd);
++
++	return ret;
++}
+-- 
+2.1.4
