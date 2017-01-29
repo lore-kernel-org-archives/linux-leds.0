@@ -1,58 +1,42 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH] tools/leds: Add led_hw_brightness_mon program
-Date: Sun, 29 Jan 2017 17:56:06 +0100
-Message-ID: <20170129165606.GA7949@amd>
+Date: Sun, 29 Jan 2017 20:28:43 +0100
+Message-ID: <61ee0726-7a5e-9596-b8bd-5ff29c3c0988@gmail.com>
 References: <1485690751-4824-1-git-send-email-jacek.anaszewski@gmail.com>
+ <20170129165606.GA7949@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50874 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751883AbdA2RCK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 29 Jan 2017 12:02:10 -0500
-Content-Disposition: inline
-In-Reply-To: <1485690751-4824-1-git-send-email-jacek.anaszewski@gmail.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33353 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751766AbdA2TaS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 29 Jan 2017 14:30:18 -0500
+Received: by mail-wm0-f65.google.com with SMTP id v77so11395368wmv.0
+        for <linux-leds@vger.kernel.org>; Sun, 29 Jan 2017 11:29:32 -0800 (PST)
+In-Reply-To: <20170129165606.GA7949@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: linux-leds@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
+On 01/29/2017 05:56 PM, Pavel Machek wrote:
+> On Sun 2017-01-29 12:52:31, Jacek Anaszewski wrote:
+>> LED subsystem supports POLLPRI on "brightness_hw_changed" sysfs file
+>> of LED class devices. This tool demonstrates how to use the feature.
+>>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Hans de Goede <hdegoede@redhat.com>
+> 
+> I'd name it something shorter. We have "uledmon" so
+> "led_hw_brightness_mon" is little out of place.
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I had the same doubts, but didn't finally manage to devise
+something more concise. Feel free to propose better name.
+For now I'm applying the patch as is. Thanks.
 
-On Sun 2017-01-29 12:52:31, Jacek Anaszewski wrote:
-> LED subsystem supports POLLPRI on "brightness_hw_changed" sysfs file
-> of LED class devices. This tool demonstrates how to use the feature.
->=20
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-
-I'd name it something shorter. We have "uledmon" so
-"led_hw_brightness_mon" is little out of place.
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-							Pavel
-						=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAliOHqYACgkQMOfwapXb+vJw6QCeNKbufxTfXTXxCZshVhFr61pY
-dlkAn2Ey0St3If06sQ/cgC+epC6IeSZp
-=sVr6
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
+-- 
+Best regards,
+Jacek Anaszewski
