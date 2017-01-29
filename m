@@ -1,306 +1,154 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v7] leds: class: Add new optional brightness_hw_changed
- attribute
-Date: Sun, 29 Jan 2017 14:21:25 +0100
-Message-ID: <410b20ee-a867-a21c-2d7d-3ab0a43a6957@redhat.com>
-References: <20170127074135.3748-1-hdegoede@redhat.com>
- <20170127115840.GA8512@amd> <9573330a-5037-388f-be03-dfd421c5cba5@gmail.com>
+Subject: Re: [PATCH] tools/leds: Add led_hw_brightness_mon program
+Date: Sun, 29 Jan 2017 14:37:17 +0100
+Message-ID: <f760c3d4-db3d-b680-ee83-2fd562153102@redhat.com>
+References: <1485690751-4824-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <9573330a-5037-388f-be03-dfd421c5cba5@gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60620 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751159AbdA2NiJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 29 Jan 2017 08:38:09 -0500
+In-Reply-To: <1485690751-4824-1-git-send-email-jacek.anaszewski@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>
 
 Hi,
 
-On 01/29/2017 12:48 PM, Jacek Anaszewski wrote:
-> Hi Hans,
+On 01/29/2017 12:52 PM, Jacek Anaszewski wrote:
+> LED subsystem supports POLLPRI on "brightness_hw_changed" sysfs file
+> of LED class devices. This tool demonstrates how to use the feature.
 >
-> Thanks for addressing my remarks.
-> While testing the feature I came across one issue, please refer below.
->
-> On 01/27/2017 12:58 PM, Pavel Machek wrote:
->> On Fri 2017-01-27 08:41:35, Hans de Goede wrote:
->>> Some LEDs may have their brightness level changed autonomously
->>> (outside of kernel control) by hardware / firmware. This commit
->>> adds support for an optional brightness_hw_changed attribute to
->>> signal such changes to userspace (if a driver can detect them):
->>>
->>> What:		/sys/class/leds/<led>/brightness_hw_changed
->>> Date:		January 2017
->>> KernelVersion:	4.11
->>> Description:
->>> 		Last hardware set brightness level for this LED. Some LEDs
->>> 		may be changed autonomously by hardware/firmware. Only LEDs
->>> 		where this happens and the driver can detect this, will
->>> 		have this file.
->>>
->>> 		This file supports poll() to detect when the hardware
->>> 		changes the brightness.
->>>
->>> 		Reading this file will return the last brightness level set
->>> 		by the hardware, this may be different from the current
->>> 		brightness.
->>>
->>> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
->>> their flags field and call led_classdev_notify_brightness_hw_changed()
->>> with the hardware set brightness when they detect a hardware / firmware
->>> triggered brightness change.
->>>
->>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>
->> Acked-by: Pavel Machek <pavel@ucw.cz>
->>
->>> ---
->>> Changes in v6:
->>> -New patch in v6 of this set, replacing previous trigger based API
->>> Changes in v7
->>> -Return -ENODATA when brightness_hw_changed gets read before any
->>>  hw brightness change event as happened
->>> -Make the hw_brightness_changed attr presence configurable through Kconfig
->>> ---
->>>  Documentation/ABI/testing/sysfs-class-led | 17 +++++++
->>>  drivers/leds/Kconfig                      |  9 ++++
->>>  drivers/leds/led-class.c                  | 73 +++++++++++++++++++++++++++++++
->>>  include/linux/leds.h                      | 15 +++++++
->>>  4 files changed, 114 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
->>> index 491cdee..5f67f7a 100644
->>> --- a/Documentation/ABI/testing/sysfs-class-led
->>> +++ b/Documentation/ABI/testing/sysfs-class-led
->>> @@ -23,6 +23,23 @@ Description:
->>>  		If the LED does not support different brightness levels, this
->>>  		should be 1.
->>>
->>> +What:		/sys/class/leds/<led>/brightness_hw_changed
->>> +Date:		January 2017
->>> +KernelVersion:	4.11
->>> +Description:
->>> +		Last hardware set brightness level for this LED. Some LEDs
->>> +		may be changed autonomously by hardware/firmware. Only LEDs
->>> +		where this happens and the driver can detect this, will have
->>> +		this file.
->>> +
->>> +		This file supports poll() to detect when the hardware changes
->>> +		the brightness.
->>> +
->>> +		Reading this file will return the last brightness level set
->>> +		by the hardware, this may be different from the current
->>> +		brightness. Reading this file when no hw brightness change
->>> +		event has happened will return an ENODATA error.
->>> +
->>>  What:		/sys/class/leds/<led>/trigger
->>>  Date:		March 2006
->>>  KernelVersion:	2.6.17
->>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>> index c621cbb..275f467 100644
->>> --- a/drivers/leds/Kconfig
->>> +++ b/drivers/leds/Kconfig
->>> @@ -29,6 +29,15 @@ config LEDS_CLASS_FLASH
->>>  	  for the flash related features of a LED device. It can be built
->>>  	  as a module.
->>>
->>> +config LEDS_BRIGHTNESS_HW_CHANGED
->>> +	bool "LED Class brightness_hw_changed attribute support"
->>> +	depends on LEDS_CLASS
->>> +	help
->>> +	  This option enables support for the brightness_hw_changed attribute
->>> +	  for led sysfs class devices under /sys/class/leds.
->>> +
->>> +	  See Documentation/ABI/testing/sysfs-class-led for details.
->>> +
->>>  comment "LED drivers"
->>>
->>>  config LEDS_88PM860X
->>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>> index 326ee6e..2f8c843 100644
->>> --- a/drivers/leds/led-class.c
->>> +++ b/drivers/leds/led-class.c
->>> @@ -103,6 +103,65 @@ static const struct attribute_group *led_groups[] = {
->>>  	NULL,
->>>  };
->>>
->>> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
->>> +static ssize_t brightness_hw_changed_show(struct device *dev,
->>> +		struct device_attribute *attr, char *buf)
->>> +{
->>> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +
->>> +	if (led_cdev->brightness_hw_changed == -1)
->>> +		return -ENODATA;
->>> +
->>> +	return sprintf(buf, "%u\n", led_cdev->brightness_hw_changed);
->>> +}
->>> +
->>> +static DEVICE_ATTR_RO(brightness_hw_changed);
->>> +
->>> +static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
->>> +{
->>> +	struct device *dev = led_cdev->dev;
->>> +	int ret;
->>> +
->>> +	ret = device_create_file(dev, &dev_attr_brightness_hw_changed);
->>> +	if (ret) {
->>> +		dev_err(dev, "Error creating brightness_hw_changed\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	led_cdev->brightness_hw_changed_kn =
->>> +		sysfs_get_dirent(dev->kobj.sd, "brightness_hw_changed");
->>> +	if (!led_cdev->brightness_hw_changed_kn) {
->>> +		dev_err(dev, "Error getting brightness_hw_changed kn\n");
->>> +		device_remove_file(dev, &dev_attr_brightness_hw_changed);
->>> +		return -ENXIO;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void led_remove_brightness_hw_changed(struct led_classdev *led_cdev)
->>> +{
->>> +	sysfs_put(led_cdev->brightness_hw_changed_kn);
->>> +	device_remove_file(led_cdev->dev, &dev_attr_brightness_hw_changed);
->>> +}
->>> +void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_cdev,
->>> +					       enum led_brightness brightness)
->>> +{
->>> +	led_cdev->brightness_hw_changed = brightness;
->>> +	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
->>> +}
->>> +EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
->
-> If you forget to set LED_BRIGHT_HW_CHANGED in the driver calling this
-> API, then you get NULL pointer dereference here due to uninitialized
-> led_cdev->brightness_hw_changed_kn.
->
-> In order to avoid that let's make the
-> led_classdev_notify_brightness_hw_changed() return int and return
-> -EINVAL from it if LED_BRIGHT_HW_CHANGED flag is not set.
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
 
-That requires adding error checking to all callers, since this
-error will only happen if there is a bug in the kernel / driver
-code I've instead done this:
+Looks good to me:
 
-void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_cdev,
-                                                enum led_brightness brightness)
-{
-         if (WARN_ON(!led_cdev->brightness_hw_changed_kn))
-                 return;
-
-         led_cdev->brightness_hw_changed = brightness;
-         sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
-}
-
-With avoids the need for error checks in all callers, while still catching
-the error.
-
-> Moreover, Documentation/leds/leds-class.txt should provide
-> information that the flag should be set to make the
-> brightness_hw_changed available. Currently only the commit message
-> seems to mention that.
-
-Ok, I will update Documentation/leds/leds-class.txt for v8.
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
 Regards,
 
 Hans
 
 
+
+> ---
+>  tools/leds/Makefile                |  4 +-
+>  tools/leds/led_hw_brightness_mon.c | 84 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 86 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/leds/led_hw_brightness_mon.c
 >
->>> +#else
->>> +static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
->>> +{
->>> +	return 0;
->>> +}
->>> +static void led_remove_brightness_hw_changed(struct led_classdev *led_cdev)
->>> +{
->>> +}
->>> +#endif
->>> +
->>>  /**
->>>   * led_classdev_suspend - suspend an led_classdev.
->>>   * @led_cdev: the led_classdev to suspend.
->>> @@ -204,10 +263,21 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>>  		dev_warn(parent, "Led %s renamed to %s due to name collision",
->>>  				led_cdev->name, dev_name(led_cdev->dev));
->>>
->>> +	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
->>> +		ret = led_add_brightness_hw_changed(led_cdev);
->>> +		if (ret) {
->>> +			device_unregister(led_cdev->dev);
->>> +			return ret;
->>> +		}
->>> +	}
->>> +
->>>  	led_cdev->work_flags = 0;
->>>  #ifdef CONFIG_LEDS_TRIGGERS
->>>  	init_rwsem(&led_cdev->trigger_lock);
->>>  #endif
->>> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
->>> +	led_cdev->brightness_hw_changed = -1;
->>> +#endif
->>>  	mutex_init(&led_cdev->led_access);
->>>  	/* add to the list of leds */
->>>  	down_write(&leds_list_lock);
->>> @@ -256,6 +326,9 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
->>>
->>>  	flush_work(&led_cdev->set_brightness_work);
->>>
->>> +	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED)
->>> +		led_remove_brightness_hw_changed(led_cdev);
->>> +
->>>  	device_unregister(led_cdev->dev);
->>>
->>>  	down_write(&leds_list_lock);
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index 569cb53..c771153 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -13,6 +13,7 @@
->>>  #define __LINUX_LEDS_H_INCLUDED
->>>
->>>  #include <linux/device.h>
->>> +#include <linux/kernfs.h>
->>>  #include <linux/list.h>
->>>  #include <linux/mutex.h>
->>>  #include <linux/rwsem.h>
->>> @@ -46,6 +47,7 @@ struct led_classdev {
->>>  #define LED_DEV_CAP_FLASH	(1 << 18)
->>>  #define LED_HW_PLUGGABLE	(1 << 19)
->>>  #define LED_PANIC_INDICATOR	(1 << 20)
->>> +#define LED_BRIGHT_HW_CHANGED	(1 << 21)
->>>
->>>  	/* set_brightness_work / blink_timer flags, atomic, private. */
->>>  	unsigned long		work_flags;
->>> @@ -110,6 +112,11 @@ struct led_classdev {
->>>  	bool			activated;
->>>  #endif
->>>
->>> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
->>> +	int			 brightness_hw_changed;
->>> +	struct kernfs_node	*brightness_hw_changed_kn;
->>> +#endif
->>> +
->>>  	/* Ensures consistent access to the LED Flash Class device */
->>>  	struct mutex		led_access;
->>>  };
->>> @@ -422,4 +429,12 @@ static inline void ledtrig_cpu(enum cpu_led_event evt)
->>>  }
->>>  #endif
->>>
->>> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
->>> +extern void led_classdev_notify_brightness_hw_changed(
->>> +	struct led_classdev *led_cdev, enum led_brightness brightness);
->>> +#else
->>> +static inline void led_classdev_notify_brightness_hw_changed(
->>> +	struct led_classdev *led_cdev, enum led_brightness brightness) { }
->>> +#endif
->>> +
->>>  #endif		/* __LINUX_LEDS_H_INCLUDED */
->>
+> diff --git a/tools/leds/Makefile b/tools/leds/Makefile
+> index c03a79e..078b666 100644
+> --- a/tools/leds/Makefile
+> +++ b/tools/leds/Makefile
+> @@ -3,11 +3,11 @@
+>  CC = $(CROSS_COMPILE)gcc
+>  CFLAGS = -Wall -Wextra -g -I../../include/uapi
+>
+> -all: uledmon
+> +all: uledmon led_hw_brightness_mon
+>  %: %.c
+>  	$(CC) $(CFLAGS) -o $@ $^
+>
+>  clean:
+> -	$(RM) uledmon
+> +	$(RM) uledmon led_hw_brightness_mon
+>
+>  .PHONY: all clean
+> diff --git a/tools/leds/led_hw_brightness_mon.c b/tools/leds/led_hw_brightness_mon.c
+> new file mode 100644
+> index 0000000..1a97064
+> --- /dev/null
+> +++ b/tools/leds/led_hw_brightness_mon.c
+> @@ -0,0 +1,84 @@
+> +/*
+> + * led_hw_brightness_mon.c
+> + *
+> + * This program monitors LED brightness level changes having its origin
+> + * in hardware/firmware, i.e. outside of kernel control.
+> + * A timestamp and brightness value is printed each time the brightness changes.
+> + *
+> + * Usage: led_notify_mon <device-name>
+> + *
+> + * <device-name> is the name of the LED class device to be monitored. Pressing
+> + * CTRL+C will exit.
+> + */
+> +
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <poll.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <time.h>
+> +#include <unistd.h>
+> +
+> +#include <linux/uleds.h>
+> +
+> +int main(int argc, char const *argv[])
+> +{
+> +	int fd, ret;
+> +	char brightness_file_path[LED_MAX_NAME_SIZE + 11];
+> +	struct pollfd pollfd;
+> +	struct timespec ts;
+> +	char buf[11];
+> +
+> +	if (argc != 2) {
+> +		fprintf(stderr, "Requires <device-name> argument\n");
+> +		return 1;
+> +	}
+> +
+> +	snprintf(brightness_file_path, LED_MAX_NAME_SIZE,
+> +		 "/sys/class/leds/%s/brightness_hw_changed", argv[1]);
+> +
+> +	fd = open(brightness_file_path, O_RDONLY);
+> +	if (fd == -1) {
+> +		printf("Failed to open %s file\n", brightness_file_path);
+> +		return 1;
+> +	}
+> +
+> +	/*
+> +	 * read may fail if no hw brightness change has occurred so far,
+> +	 * but it is required to avoid spurious poll notifications in
+> +	 * the opposite case.
+> +	 */
+> +	read(fd, buf, sizeof(buf));
+> +
+> +	pollfd.fd = fd;
+> +	pollfd.events = POLLPRI;
+> +
+> +	while (1) {
+> +		ret = poll(&pollfd, 1, -1);
+> +		if (ret == -1) {
+> +			printf("Failed to poll %s file (%d)\n",
+> +				brightness_file_path, ret);
+> +			ret = 1;
+> +			break;
+> +		}
+> +
+> +		clock_gettime(CLOCK_MONOTONIC, &ts);
+> +
+> +		ret = read(fd, buf, sizeof(buf));
+> +		if (ret < 0)
+> +			break;
+> +
+> +		ret = lseek(pollfd.fd, 0, SEEK_SET);
+> +		if (ret < 0) {
+> +			printf("lseek failed (%d)\n", ret);
+> +			break;
+> +		}
+> +
+> +		printf("[%ld.%09ld] %d\n", ts.tv_sec, ts.tv_nsec, atoi(buf));
+> +	}
+> +
+> +	close(fd);
+> +
+> +	return ret;
+> +}
 >
