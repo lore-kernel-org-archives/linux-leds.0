@@ -1,298 +1,167 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v8] leds: class: Add new optional brightness_hw_changed
- attribute
-Date: Sun, 29 Jan 2017 20:28:50 +0100
-Message-ID: <111e4747-cd56-ac82-13ac-82b7f83dac52@gmail.com>
-References: <20170129134252.6185-1-hdegoede@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170129134252.6185-1-hdegoede@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 2/2] gpio: Add the devm_fwnode_get_index_gpiod_from_child() helper
+Date: Mon, 30 Jan 2017 16:41:49 +0100
+Message-ID: <1485790909-2915-3-git-send-email-boris.brezillon@free-electrons.com>
+References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Boris Brezillon <boris.brezillon@free-electrons.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+devm_fwnode_get_gpiod_from_child() currently allows GPIO users to
+request a GPIO that is defined in a child fwnode instead of directly in
+the device fwnode.
+Extend this API by adding the devm_fwnode_get_index_gpiod_from_child()
+helper which does the same except you can also specify an index in case
+the 'xx-gpios' property describe several GPIOs.
 
-On 01/29/2017 02:42 PM, Hans de Goede wrote:
-> Some LEDs may have their brightness level changed autonomously
-> (outside of kernel control) by hardware / firmware. This commit
-> adds support for an optional brightness_hw_changed attribute to
-> signal such changes to userspace (if a driver can detect them):
-> 
-> What:		/sys/class/leds/<led>/brightness_hw_changed
-> Date:		January 2017
-> KernelVersion:	4.11
-> Description:
-> 		Last hardware set brightness level for this LED. Some LEDs
-> 		may be changed autonomously by hardware/firmware. Only LEDs
-> 		where this happens and the driver can detect this, will
-> 		have this file.
-> 
-> 		This file supports poll() to detect when the hardware
-> 		changes the brightness.
-> 
-> 		Reading this file will return the last brightness level set
-> 		by the hardware, this may be different from the current
-> 		brightness.
-> 
-> Drivers which want to support this, simply add LED_BRIGHT_HW_CHANGED to
-> their flags field and call led_classdev_notify_brightness_hw_changed()
-> with the hardware set brightness when they detect a hardware / firmware
-> triggered brightness change.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
-> Changes in v6:
-> -New patch in v6 of this set, replacing previous trigger based API
-> Changes in v7
-> -Return -ENODATA when brightness_hw_changed gets read before any
->  hw brightness change event as happened
-> -Make the hw_brightness_changed attr presence configurable through Kconfig
-> Changes in v8
-> -Add WARN_ON in case a driver calls led_classdev_notify_brightness_hw_changed
->  without setting the LED_BRIGHT_HW_CHANGED flag
-> -Document the need for LED_BRIGHT_HW_CHANGED in
->  Documentation/leds/leds-class.txt
-> ---
->  Documentation/ABI/testing/sysfs-class-led | 17 +++++++
->  Documentation/leds/leds-class.txt         | 15 ++++++
->  drivers/leds/Kconfig                      |  9 ++++
->  drivers/leds/led-class.c                  | 76 +++++++++++++++++++++++++++++++
->  include/linux/leds.h                      | 15 ++++++
->  5 files changed, 132 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-> index 491cdee..5f67f7a 100644
-> --- a/Documentation/ABI/testing/sysfs-class-led
-> +++ b/Documentation/ABI/testing/sysfs-class-led
-> @@ -23,6 +23,23 @@ Description:
->  		If the LED does not support different brightness levels, this
->  		should be 1.
->  
-> +What:		/sys/class/leds/<led>/brightness_hw_changed
-> +Date:		January 2017
-> +KernelVersion:	4.11
-> +Description:
-> +		Last hardware set brightness level for this LED. Some LEDs
-> +		may be changed autonomously by hardware/firmware. Only LEDs
-> +		where this happens and the driver can detect this, will have
-> +		this file.
-> +
-> +		This file supports poll() to detect when the hardware changes
-> +		the brightness.
-> +
-> +		Reading this file will return the last brightness level set
-> +		by the hardware, this may be different from the current
-> +		brightness. Reading this file when no hw brightness change
-> +		event has happened will return an ENODATA error.
-> +
->  What:		/sys/class/leds/<led>/trigger
->  Date:		March 2006
->  KernelVersion:	2.6.17
-> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-> index f1f7ec9..836cb16 100644
-> --- a/Documentation/leds/leds-class.txt
-> +++ b/Documentation/leds/leds-class.txt
-> @@ -65,6 +65,21 @@ LED subsystem core exposes following API for setting brightness:
->  		blinking, returns -EBUSY if software blink fallback is enabled.
->  
->  
-> +LED registration API
-> +====================
-> +
-> +A driver wanting to register a LED classdev for use by other drivers /
-> +userspace needs to allocate and fill a led_classdev struct and then call
-> +[devm_]led_classdev_register. If the non devm version is used the driver
-> +must call led_classdev_unregister from its remove function before
-> +free-ing the led_classdev struct.
-> +
-> +If the driver can detect hardware initiated brightness changes and thus
-> +wants to have a brightness_hw_changed attribute then the LED_BRIGHT_HW_CHANGED
-> +flag must be set in flags before registering. Calling
-> +led_classdev_notify_brightness_hw_changed on a classdev not registered with
-> +the LED_BRIGHT_HW_CHANGED flag is a bug and will trigger a WARN_ON.
-> +
->  Hardware accelerated blink of LEDs
->  ==================================
->  
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index c621cbb..275f467 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -29,6 +29,15 @@ config LEDS_CLASS_FLASH
->  	  for the flash related features of a LED device. It can be built
->  	  as a module.
->  
-> +config LEDS_BRIGHTNESS_HW_CHANGED
-> +	bool "LED Class brightness_hw_changed attribute support"
-> +	depends on LEDS_CLASS
-> +	help
-> +	  This option enables support for the brightness_hw_changed attribute
-> +	  for led sysfs class devices under /sys/class/leds.
-> +
-> +	  See Documentation/ABI/testing/sysfs-class-led for details.
-> +
->  comment "LED drivers"
->  
->  config LEDS_88PM860X
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 326ee6e..f2b0a80 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -103,6 +103,68 @@ static const struct attribute_group *led_groups[] = {
->  	NULL,
->  };
->  
-> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-> +static ssize_t brightness_hw_changed_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +
-> +	if (led_cdev->brightness_hw_changed == -1)
-> +		return -ENODATA;
-> +
-> +	return sprintf(buf, "%u\n", led_cdev->brightness_hw_changed);
-> +}
-> +
-> +static DEVICE_ATTR_RO(brightness_hw_changed);
-> +
-> +static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
-> +{
-> +	struct device *dev = led_cdev->dev;
-> +	int ret;
-> +
-> +	ret = device_create_file(dev, &dev_attr_brightness_hw_changed);
-> +	if (ret) {
-> +		dev_err(dev, "Error creating brightness_hw_changed\n");
-> +		return ret;
-> +	}
-> +
-> +	led_cdev->brightness_hw_changed_kn =
-> +		sysfs_get_dirent(dev->kobj.sd, "brightness_hw_changed");
-> +	if (!led_cdev->brightness_hw_changed_kn) {
-> +		dev_err(dev, "Error getting brightness_hw_changed kn\n");
-> +		device_remove_file(dev, &dev_attr_brightness_hw_changed);
-> +		return -ENXIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void led_remove_brightness_hw_changed(struct led_classdev *led_cdev)
-> +{
-> +	sysfs_put(led_cdev->brightness_hw_changed_kn);
-> +	device_remove_file(led_cdev->dev, &dev_attr_brightness_hw_changed);
-> +}
-> +
-> +void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_cdev,
-> +					       enum led_brightness brightness)
-> +{
-> +	if (WARN_ON(!led_cdev->brightness_hw_changed_kn))
-> +		return;
-> +
-> +	led_cdev->brightness_hw_changed = brightness;
-> +	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
-> +}
-> +EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
-> +#else
-> +static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
-> +{
-> +	return 0;
-> +}
-> +static void led_remove_brightness_hw_changed(struct led_classdev *led_cdev)
-> +{
-> +}
-> +#endif
-> +
->  /**
->   * led_classdev_suspend - suspend an led_classdev.
->   * @led_cdev: the led_classdev to suspend.
-> @@ -204,10 +266,21 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  		dev_warn(parent, "Led %s renamed to %s due to name collision",
->  				led_cdev->name, dev_name(led_cdev->dev));
->  
-> +	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
-> +		ret = led_add_brightness_hw_changed(led_cdev);
-> +		if (ret) {
-> +			device_unregister(led_cdev->dev);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	led_cdev->work_flags = 0;
->  #ifdef CONFIG_LEDS_TRIGGERS
->  	init_rwsem(&led_cdev->trigger_lock);
->  #endif
-> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-> +	led_cdev->brightness_hw_changed = -1;
-> +#endif
->  	mutex_init(&led_cdev->led_access);
->  	/* add to the list of leds */
->  	down_write(&leds_list_lock);
-> @@ -256,6 +329,9 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
->  
->  	flush_work(&led_cdev->set_brightness_work);
->  
-> +	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED)
-> +		led_remove_brightness_hw_changed(led_cdev);
-> +
->  	device_unregister(led_cdev->dev);
->  
->  	down_write(&leds_list_lock);
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 569cb53..c771153 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -13,6 +13,7 @@
->  #define __LINUX_LEDS_H_INCLUDED
->  
->  #include <linux/device.h>
-> +#include <linux/kernfs.h>
->  #include <linux/list.h>
->  #include <linux/mutex.h>
->  #include <linux/rwsem.h>
-> @@ -46,6 +47,7 @@ struct led_classdev {
->  #define LED_DEV_CAP_FLASH	(1 << 18)
->  #define LED_HW_PLUGGABLE	(1 << 19)
->  #define LED_PANIC_INDICATOR	(1 << 20)
-> +#define LED_BRIGHT_HW_CHANGED	(1 << 21)
->  
->  	/* set_brightness_work / blink_timer flags, atomic, private. */
->  	unsigned long		work_flags;
-> @@ -110,6 +112,11 @@ struct led_classdev {
->  	bool			activated;
->  #endif
->  
-> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-> +	int			 brightness_hw_changed;
-> +	struct kernfs_node	*brightness_hw_changed_kn;
-> +#endif
-> +
->  	/* Ensures consistent access to the LED Flash Class device */
->  	struct mutex		led_access;
->  };
-> @@ -422,4 +429,12 @@ static inline void ledtrig_cpu(enum cpu_led_event evt)
->  }
->  #endif
->  
-> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-> +extern void led_classdev_notify_brightness_hw_changed(
-> +	struct led_classdev *led_cdev, enum led_brightness brightness);
-> +#else
-> +static inline void led_classdev_notify_brightness_hw_changed(
-> +	struct led_classdev *led_cdev, enum led_brightness brightness) { }
-> +#endif
-> +
->  #endif		/* __LINUX_LEDS_H_INCLUDED */
-> 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpio/devres.c         | 15 ++++++++-------
+ drivers/gpio/gpiolib.c        |  9 +++++----
+ include/linux/gpio/consumer.h | 21 +++++++++++++++------
+ 3 files changed, 28 insertions(+), 17 deletions(-)
 
-Thanks for the addressing my remarks. Patch applied.
-
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index dfbbd92d21b6..be5f947570db 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -123,18 +123,19 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+ EXPORT_SYMBOL(devm_gpiod_get_index);
+ 
+ /**
+- * devm_fwnode_get_gpiod_from_child - get a GPIO descriptor from a device's
+- *				      child node
++ * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
++ *					    device's child node
+  * @dev:	GPIO consumer
+  * @con_id:	function within the GPIO consumer
++ * @index:	index of the GPIO to obtain in the consumer
+  * @child:	firmware node (child of @dev)
+  *
+  * GPIO descriptors returned from this function are automatically disposed on
+  * driver detach.
+  */
+-struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+-						   const char *con_id,
+-						   struct fwnode_handle *child)
++struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
++						const char *con_id, int index,
++						struct fwnode_handle *child)
+ {
+ 	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+@@ -155,7 +156,7 @@ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+ 							       suffixes[i]);
+ 
+-		desc = fwnode_get_named_gpiod(child, prop_name);
++		desc = fwnode_get_named_gpiod(child, prop_name, index);
+ 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+ 			break;
+ 	}
+@@ -169,7 +170,7 @@ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+ 
+ 	return desc;
+ }
+-EXPORT_SYMBOL(devm_fwnode_get_gpiod_from_child);
++EXPORT_SYMBOL(devm_fwnode_get_index_gpiod_from_child);
+ 
+ /**
+  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 86bf3b84ada5..9b7a7734e742 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3309,6 +3309,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
+  * @fwnode:	handle of the firmware node
+  * @propname:	name of the firmware property representing the GPIO
++ * @index:	index of the GPIO to obtain in the consumer
+  *
+  * This function can be used for drivers that get their configuration
+  * from firmware.
+@@ -3320,7 +3321,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * In case of error an ERR_PTR() is returned.
+  */
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname)
++					 const char *propname, int index)
+ {
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	bool active_low = false;
+@@ -3333,8 +3334,8 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (is_of_node(fwnode)) {
+ 		enum of_gpio_flags flags;
+ 
+-		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
+-						&flags);
++		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname,
++						index, &flags);
+ 		if (!IS_ERR(desc)) {
+ 			active_low = flags & OF_GPIO_ACTIVE_LOW;
+ 			single_ended = flags & OF_GPIO_SINGLE_ENDED;
+@@ -3342,7 +3343,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	} else if (is_acpi_node(fwnode)) {
+ 		struct acpi_gpio_info info;
+ 
+-		desc = acpi_node_get_gpiod(fwnode, propname, 0, &info);
++		desc = acpi_node_get_gpiod(fwnode, propname, index, &info);
+ 		if (!IS_ERR(desc))
+ 			active_low = info.polarity == GPIO_ACTIVE_LOW;
+ 	}
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 2ce4bc164735..5d1125198fd7 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -135,10 +135,11 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ struct fwnode_handle;
+ 
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname);
+-struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+-						const char *con_id,
++					 const char *propname, int index);
++struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
++						const char *con_id, int index,
+ 						struct fwnode_handle *child);
++
+ #else /* CONFIG_GPIOLIB */
+ 
+ static inline int gpiod_count(struct device *dev, const char *con_id)
+@@ -412,19 +413,27 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ struct fwnode_handle;
+ 
+ static inline struct gpio_desc *fwnode_get_named_gpiod(
+-	struct fwnode_handle *fwnode, const char *propname)
++	struct fwnode_handle *fwnode, const char *propname, int index)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+-static inline struct gpio_desc *devm_fwnode_get_gpiod_from_child(
+-	struct device *dev, const char *con_id, struct fwnode_handle *child)
++static inline struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(
++	struct device *dev, const char *con_id, int index,
++	struct fwnode_handle *child)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ #endif /* CONFIG_GPIOLIB */
+ 
++static inline struct gpio_desc *
++devm_fwnode_get_gpiod_from_child(struct device *dev, const char *con_id,
++				 struct fwnode_handle *child)
++{
++	return devm_fwnode_get_index_gpiod_from_child(dev, con_id, 0, child);
++}
++
+ #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
+ 
+ int gpiod_export(struct gpio_desc *desc, bool direction_may_change);
 -- 
-Best regards,
-Jacek Anaszewski
+2.7.4
+
