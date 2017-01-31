@@ -1,119 +1,212 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Tue, 31 Jan 2017 20:42:02 +0100
-Message-ID: <20170131204202.7b589ca6@bbrezillon>
-References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
-        <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
-        <20170131010607.GC35974@dtor-ws>
-        <20170131090432.72a1b1b8@bbrezillon>
-        <20170131084447.GD8311@dtor-ws>
-        <20170131100721.22c2388d@bbrezillon>
-        <20170131091155.GH8311@dtor-ws>
-        <20170131102424.7b68c0d4@bbrezillon>
-        <20170131183936.GB13642@dtor-ws>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v6 5/5] leds: lm3533: Support initialization from Device
+ Tree
+Date: Tue, 31 Jan 2017 22:15:55 +0100
+Message-ID: <2bd1d1a7-9892-25bc-21fe-980a637e4d2f@gmail.com>
+References: <20170130211719.31017-1-bjorn.andersson@linaro.org>
+ <20170130211719.31017-5-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:59520 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752093AbdAaTmU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 31 Jan 2017 14:42:20 -0500
-In-Reply-To: <20170131183936.GB13642@dtor-ws>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170130211719.31017-5-bjorn.andersson@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>
 
-On Tue, 31 Jan 2017 10:39:36 -0800
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+Hi Bjorn,
 
-> On Tue, Jan 31, 2017 at 10:24:24AM +0100, Boris Brezillon wrote:
-> > On Tue, 31 Jan 2017 01:11:55 -0800
-> > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >   
-> > > On Tue, Jan 31, 2017 at 10:07:21AM +0100, Boris Brezillon wrote:  
-> > > > On Tue, 31 Jan 2017 00:44:47 -0800
-> > > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > >     
-> > > > > On Tue, Jan 31, 2017 at 09:04:32AM +0100, Boris Brezillon wrote:    
-> > > > > > On Mon, 30 Jan 2017 17:06:07 -0800
-> > > > > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > > > >       
-> > > > > > > On Mon, Jan 30, 2017 at 04:41:48PM +0100, Boris Brezillon wrote:      
-> > > > > > > > Rename devm_get_gpiod_from_child() into
-> > > > > > > > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-> > > > > > > > function is operating on a fwnode object.        
-> > > > > > > 
-> > > > > > > I believe this is completely pointless rename. Are you planning on
-> > > > > > > adding devm_of_get_gpiod_from_child()? Or
-> > > > > > > devm_acpt_get_gpiod_from_child()? (I sure hope not).      
-> > > > > > 
-> > > > > > Of course not.
-> > > > > >       
-> > > > > > > 
-> > > > > > > Also, on what object? Does it take fwnode as first argument? Or maybe we
-> > > > > > > should call it devm_dev_const_charp_fwnode_get_gpiod_from_child() so we
-> > > > > > > know types of all arguments?      
-> > > > > > 
-> > > > > > Linus suggested to rename this function [1]. I personally don't care
-> > > > > > much about the name, though I agree with Linus that names should be
-> > > > > > consistent and descriptive. Moreover, he's the maintainer, and I tend
-> > > > > > to follow maintainers suggestion when I contribute to a specific
-> > > > > > subsystem.      
-> > > > > 
-> > > > > OK, I did not know that that was Linus' request, my objection still
-> > > > > stands.
-> > > > >     
-> > > > > > 
-> > > > > > IIUC, you're concerned about the length of this function name. If I had
-> > > > > > to drop something it would be the _from_child() suffix, because the
-> > > > > > function is not even checking that the child parameter is actually a
-> > > > > > direct child (or a descendant) of device->fwnode.      
-> > > > > 
-> > > > > OK, that sounds better. Actually, we already have
-> > > > > fwnode_get_named_gpiod(), unfortunately it does not do suffixes
-> > > > > permutations. There are also no users, except
-> > > > > devm_get_gpiod_from_child(). So I would:
-> > > > > 
-> > > > > - rename fwnode_get_named_gpiod() -> static __fwnode_get_named_gpiod()
-> > > > > - made new fwnode_get_named_gpiod() that did suffix permutation and
-> > > > >   called __fwnode_get_named_gpiod() (or pulled its implementation
-> > > > >   inline)    
-> > > > 
-> > > > Sorry but I don't follow you. Why do you need
-> > > > __fwnode_get_named_gpiod(),    
-> > > 
-> > > You do not need it, it will just reduce size of the patch if you use
-> > > it. I'd be perfectly fine not with having it and have everything in
-> > > fwnode_get_named_gpiod().  
-> > 
-> > Okay.
-> >   
-> > >   
-> > > > and what is the suffix permutation you're
-> > > > mentioning here?    
-> > > 
-> > > devm_get_gpiod_from_child() tries to apply "-gpio" and "-gpios" suffixes
-> > > to the supplied GPIO ID while current fwnode_get_named_gpiod() takes
-> > > property name literally.  
-> > 
-> > fwnode_get_named_gpiod() just mimics what of_get_named_gpiod_flags(),
-> > acpi_node_get_gpiod(), of_find_gpio() and acpi_find_gpio() do. It would
-> > be weird/inconsistent to have the con_id suffixing logic moved in the
-> > fwnode_get_named_gpiod() (if that's what you're suggesting, but I'm not
-> > sure it is).  
+Thanks for the patch.
+
+On 01/30/2017 10:17 PM, Bjorn Andersson wrote:
+> From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 > 
-> Hmm, yeah, I agree, that would be weird. Then let's leave
-> devm_get_gpiod_from_child() as is ;)
+> Implement support for initialization of the lm3533 LED driver from
+> Device Tree.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Note that this patch can be merged independently of the other patches in the
+> series.
+> 
+> Changes since v5:
+> - None
+> 
+> Changes since v4:
+> - None
+> 
+> Changes since v3:
+> - Moved LED DT parsing from mfd driver
+> - Gave driver its own compatible
+> 
+>  drivers/leds/leds-lm3533.c | 98 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 95 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+> index 5b529dc013d2..3eedad0ea9df 100644
+> --- a/drivers/leds/leds-lm3533.c
+> +++ b/drivers/leds/leds-lm3533.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/mfd/core.h>
+>  #include <linux/mutex.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  
+> @@ -648,12 +649,92 @@ static int lm3533_led_setup(struct lm3533_led *led,
+>  	return lm3533_ctrlbank_set_pwm(&led->cb, pdata->pwm);
+>  }
+>  
+> +static int lm3533_of_parse_pwm_zones(struct device_node *node)
+> +{
+> +	const char *propname = "ti,pwm-zones";
+> +	u32 zones[5];
+> +	int count;
+> +	int ret;
+> +	int i;
+> +
+> +	count = of_property_count_u32_elems(node, propname);
+> +	if (count == -EINVAL)
+> +		return 0;
+> +	if (count <= 0)
+> +		return count;
+> +	if (count >= ARRAY_SIZE(zones))
+> +		return -EINVAL;
+> +
+> +	ret = of_property_read_u32_array(node, propname, zones, count);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Enable pwm input, and enable the selected zones */
+> +	ret = BIT(0);
+> +	for (i = 0; i < count; i++)
+> +		ret |= BIT(zones[i] + 1);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct lm3533_led_platform_data *lm3533_led_of_parse(struct device *dev,
+> +							    int *id)
+> +{
+> +	struct lm3533_led_platform_data *led_pdata;
+> +	struct device_node *node = dev->of_node;
+> +	int ret;
+> +	u32 reg;
+> +	u32 val;
+> +
+> +	led_pdata = devm_kzalloc(dev, sizeof(*led_pdata), GFP_KERNEL);
+> +	if (!led_pdata)
+> +		return NULL;
+> +
+> +	ret = of_property_read_u32(node, "reg", &reg);
+> +	if (ret < 0) {
+> +		dev_err(dev, "invalid reg property\n");
+> +		return NULL;
+> +	}
+> +	*id = reg;
+> +
+> +	ret = of_property_read_string(node, "label",
+> +				      (const char **)&led_pdata->name);
 
-Changing the internal implementation has never been the goal of this
-patch. As explained in the commit log, I'm just renaming the function
-to make it consistent with other fwnode functions (as suggested by
-Linus).
-What's happening here is exactly the kind of discussion I wanted to
-avoid, and the reason I decided to not change the
-devm_get_gpiod_from_child() prototype/name in the first place.
+leds/common.txt says:
 
-Linus, is this something you really care about? If that's the case, can
-you step in?
+- label :  The label for this LED. If omitted, the label is taken from
+           the node name.
+
+Please refer to the other LED class drivers.
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "unable to parse label\n");
+> +		return NULL;
+> +	}
+> +
+> +	ret = of_property_read_u32(node, "led-max-microamp", &val);
+> +	if (ret < 0) {
+> +		dev_err(dev, "unable to parse led-max-microamp\n");
+> +		return NULL;
+> +	}
+> +	led_pdata->max_current = val;
+> +
+> +	ret = of_property_read_string(node, "linux,default-trigger",
+> +				      &led_pdata->default_trigger);
+> +	if (ret < 0 && ret != -EINVAL) {
+> +		dev_err(dev, "unable to parse default-trigger\n");
+> +		return NULL;
+> +	}
+> +
+> +	ret = lm3533_of_parse_pwm_zones(node);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to parse ti,pwm-zones\n");
+> +		return NULL;
+> +	}
+> +	led_pdata->pwm = ret;
+> +
+> +	return led_pdata;
+> +}
+> +
+>  static int lm3533_led_probe(struct platform_device *pdev)
+>  {
+>  	struct lm3533 *lm3533;
+>  	struct lm3533_led_platform_data *pdata;
+>  	struct lm3533_led *led;
+>  	int ret;
+> +	int id;
+>  
+>  	dev_dbg(&pdev->dev, "%s\n", __func__);
+>  
+> @@ -661,14 +742,18 @@ static int lm3533_led_probe(struct platform_device *pdev)
+>  	if (!lm3533)
+>  		return -EINVAL;
+>  
+> +	id = pdev->id;
+>  	pdata = dev_get_platdata(&pdev->dev);
+> +	if (!pdata)
+> +		pdata = lm3533_led_of_parse(&pdev->dev, &id);
+> +
+>  	if (!pdata) {
+>  		dev_err(&pdev->dev, "no platform data\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (pdev->id < 0 || pdev->id >= LM3533_LVCTRLBANK_COUNT) {
+> -		dev_err(&pdev->dev, "illegal LED id %d\n", pdev->id);
+> +	if (id < 0 || id >= LM3533_LVCTRLBANK_COUNT) {
+> +		dev_err(&pdev->dev, "illegal LED id %d\n", id);
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -684,7 +769,7 @@ static int lm3533_led_probe(struct platform_device *pdev)
+>  	led->cdev.blink_set = lm3533_led_blink_set;
+>  	led->cdev.brightness = LED_OFF;
+>  	led->cdev.groups = lm3533_led_attribute_groups,
+> -	led->id = pdev->id;
+> +	led->id = id;
+>  
+>  	mutex_init(&led->mutex);
+>  
+> @@ -739,9 +824,16 @@ static void lm3533_led_shutdown(struct platform_device *pdev)
+>  	lm3533_led_set(&led->cdev, LED_OFF);		/* disable blink */
+>  }
+>  
+> +static const struct of_device_id lm3533_led_of_match[] = {
+> +	{ .compatible = "ti,lm3533-led", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, lm3533_led_of_match);
+> +
+>  static struct platform_driver lm3533_led_driver = {
+>  	.driver = {
+>  		.name = "lm3533-leds",
+> +		.of_match_table = lm3533_led_of_match,
+>  	},
+>  	.probe		= lm3533_led_probe,
+>  	.remove		= lm3533_led_remove,
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
