@@ -1,157 +1,64 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v6 2/5] mfd: lm3533: Support initialization from Device Tree
-Date: Mon, 30 Jan 2017 13:17:16 -0800
-Message-ID: <20170130211719.31017-2-bjorn.andersson@linaro.org>
-References: <20170130211719.31017-1-bjorn.andersson@linaro.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
+Date: Tue, 31 Jan 2017 09:04:32 +0100
+Message-ID: <20170131090432.72a1b1b8@bbrezillon>
+References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+        <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
+        <20170131010607.GC35974@dtor-ws>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170130211719.31017-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20170131010607.GC35974@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Jingoo Han <jingoohan1@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>
 List-Id: linux-leds@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+On Mon, 30 Jan 2017 17:06:07 -0800
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-Implement support for initialization of the lm3533 driver core and
-probing child devices from Device Tree.
+> On Mon, Jan 30, 2017 at 04:41:48PM +0100, Boris Brezillon wrote:
+> > Rename devm_get_gpiod_from_child() into
+> > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
+> > function is operating on a fwnode object.  
+> 
+> I believe this is completely pointless rename. Are you planning on
+> adding devm_of_get_gpiod_from_child()? Or
+> devm_acpt_get_gpiod_from_child()? (I sure hope not).
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/mfd/lm3533-core.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+Of course not.
 
-Note that this patch can be merged independently of the other patches in the
-series.
+> 
+> Also, on what object? Does it take fwnode as first argument? Or maybe we
+> should call it devm_dev_const_charp_fwnode_get_gpiod_from_child() so we
+> know types of all arguments?
 
-Changes since v5:
-- Added comment re of_platform_populate()
+Linus suggested to rename this function [1]. I personally don't care
+much about the name, though I agree with Linus that names should be
+consistent and descriptive. Moreover, he's the maintainer, and I tend
+to follow maintainers suggestion when I contribute to a specific
+subsystem.
 
-Changes since v4:
-- Moved of_node check into lm3533_pdata_from_of_node()
+IIUC, you're concerned about the length of this function name. If I had
+to drop something it would be the _from_child() suffix, because the
+function is not even checking that the child parameter is actually a
+direct child (or a descendant) of device->fwnode. Also, if we want to
+be consistent with the rest of the GPIO API, we could rename it
+devm_gpiod_get_from_fwnode() (with the function in added in patch 2
+renamed into devm_gpiod_get_from_fwnode()).
 
-Changes since v3:
-- Moved parsing of child of nodes into each child driver
-- Use of_platform_populate() to instanciate child devices
+Linus, what do you think?
 
+One last thing, I don't want to start a discussion where we're
+bikeshedding on a function name instead of focusing on the
+functionality, so if it turns into this kind of discussion I'll
+probably implement devm_fwnode_get_gpiod_from_child() directly in the
+atmel NAND driver and wait for an agreement before switching to the
+official version.
 
-diff --git a/drivers/mfd/lm3533-core.c b/drivers/mfd/lm3533-core.c
-index 5abcbb2e8849..89c79328c78e 100644
---- a/drivers/mfd/lm3533-core.c
-+++ b/drivers/mfd/lm3533-core.c
-@@ -18,6 +18,8 @@
- #include <linux/gpio.h>
- #include <linux/i2c.h>
- #include <linux/mfd/core.h>
-+#include <linux/of_gpio.h>
-+#include <linux/of_platform.h>
- #include <linux/regmap.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-@@ -512,6 +514,16 @@ static int lm3533_device_init(struct lm3533 *lm3533)
- 	lm3533_device_bl_init(lm3533);
- 	lm3533_device_led_init(lm3533);
- 
-+	/*
-+	 * Check of_node as of_platform_populate treats NULL as the root node,
-+	 * which would cause side effects in certain unlikely DT/non-DT hybrid
-+	 * solutions.
-+	 */
-+	if (lm3533->dev->of_node) {
-+		of_platform_populate(lm3533->dev->of_node, NULL, NULL,
-+				     lm3533->dev);
-+	}
-+
- 	ret = sysfs_create_group(&lm3533->dev->kobj, &lm3533_attribute_group);
- 	if (ret < 0) {
- 		dev_err(lm3533->dev, "failed to create sysfs attributes\n");
-@@ -588,10 +600,76 @@ static const struct regmap_config regmap_config = {
- 	.precious_reg	= lm3533_precious_register,
- };
- 
-+static int lm3533_of_parse_enum(struct device *dev, const char *propname,
-+				const unsigned int *match, size_t num_matches)
-+{
-+	size_t i;
-+	int ret;
-+	u32 val;
-+
-+	ret = of_property_read_u32(dev->of_node, propname, &val);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to parse %s\n", propname);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < num_matches; i++) {
-+		if (val == match[i])
-+			return i;
-+	}
-+
-+	dev_err(dev, "unsupported value of %s\n", propname);
-+	return -EINVAL;
-+}
-+
-+static int lm3533_pdata_from_of_node(struct device *dev)
-+{
-+	struct lm3533_platform_data *pdata;
-+	int ret;
-+	const unsigned int freqs[] = {
-+		[LM3533_BOOST_FREQ_500KHZ] = 500000,
-+		[LM3533_BOOST_FREQ_1000KHZ] = 1000000,
-+	};
-+	const unsigned int ovps[] = {
-+		[LM3533_BOOST_OVP_16V] = 16000,
-+		[LM3533_BOOST_OVP_24V] = 24000,
-+		[LM3533_BOOST_OVP_32V] = 32000,
-+		[LM3533_BOOST_OVP_40V] = 40000,
-+	};
-+
-+	if (!dev->of_node)
-+		return 0;
-+
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
-+
-+	pdata->gpio_hwen = of_get_named_gpio(dev->of_node, "hwen-gpios", 0);
-+	if (pdata->gpio_hwen < 0)
-+		return pdata->gpio_hwen;
-+
-+	ret = lm3533_of_parse_enum(dev, "ti,boost-freq-hz",
-+				   freqs, ARRAY_SIZE(freqs));
-+	if (ret < 0)
-+		return ret;
-+	pdata->boost_freq = ret;
-+
-+	ret = lm3533_of_parse_enum(dev, "ti,boost-ovp-mv",
-+				   ovps, ARRAY_SIZE(ovps));
-+	if (ret < 0)
-+		return ret;
-+	pdata->boost_ovp = ret;
-+
-+	dev->platform_data = pdata;
-+
-+	return 0;
-+}
-+
- static int lm3533_i2c_probe(struct i2c_client *i2c,
- 					const struct i2c_device_id *id)
- {
- 	struct lm3533 *lm3533;
-+	int ret;
- 
- 	dev_dbg(&i2c->dev, "%s\n", __func__);
- 
-@@ -608,6 +686,10 @@ static int lm3533_i2c_probe(struct i2c_client *i2c,
- 	lm3533->dev = &i2c->dev;
- 	lm3533->irq = i2c->irq;
- 
-+	ret = lm3533_pdata_from_of_node(lm3533->dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	return lm3533_device_init(lm3533);
- }
- 
--- 
-2.11.0
+Regards,
+
+Boris
+
+[1]https://www.spinics.net/lists/arm-kernel/msg558986.html
