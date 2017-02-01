@@ -1,98 +1,241 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Wed, 1 Feb 2017 15:51:06 +0100
-Message-ID: <CACRpkdaO=1+JHs2qtVULyN1B1pfajc=UF-V_N+Ej_i5SMv-pPQ@mail.gmail.com>
-References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
- <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
- <20170131010607.GC35974@dtor-ws> <20170131090432.72a1b1b8@bbrezillon>
- <20170131084447.GD8311@dtor-ws> <20170131100721.22c2388d@bbrezillon>
- <20170131091155.GH8311@dtor-ws> <20170131102424.7b68c0d4@bbrezillon>
- <20170131183936.GB13642@dtor-ws> <20170131204202.7b589ca6@bbrezillon>
- <CACRpkdbr6BGm3mJ_2XOAuootK-ruibiGsG8=LvKhrz1cpUrnhA@mail.gmail.com> <20170201142228.053e2041@bbrezillon>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] dt-bindings: leds: document new led-triggers
+ property
+Date: Wed, 1 Feb 2017 16:56:07 +0100
+Message-ID: <d3535c2c-2a7c-4e8d-552c-666f76043b7d@gmail.com>
+References: <20170120215605.15728-1-zajec5@gmail.com>
+ <29f27028-20f3-3eb9-502f-1b51958640f9@gmail.com>
+ <CACna6rx-qJ5eLMOUbMcaAxaOp9avrj1sa-8zZo2m+rVvY+Kvjw@mail.gmail.com>
+ <46084d98-fddb-1b92-e9ca-d55957a442ae@gmail.com>
+ <CACna6rx5HsSb=rXCjVth_2ed87tUSBJEZHHxTC_S1YOztLjp1A@mail.gmail.com>
+ <ccc870b2-5857-507a-9c54-9a14ea60d3e5@gmail.com>
+ <f9bda1d6-4265-8fe6-58ba-d6da5b462a0c@milecki.pl>
+ <c4f1d3c4-d972-e305-abb9-a5c6e9e184e9@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:35344 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751213AbdBAOvI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Feb 2017 09:51:08 -0500
-Received: by mail-it0-f52.google.com with SMTP id 203so18109905ith.0
-        for <linux-leds@vger.kernel.org>; Wed, 01 Feb 2017 06:51:07 -0800 (PST)
-In-Reply-To: <20170201142228.053e2041@bbrezillon>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c4f1d3c4-d972-e305-abb9-a5c6e9e184e9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
 
-On Wed, Feb 1, 2017 at 2:22 PM, Boris Brezillon
-<boris.brezillon@free-electrons.com> wrote:
-> On Wed, 1 Feb 2017 14:05:43 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
-
->> > Linus, is this something you really care about? If that's the case, can
->> > you step in?
+On 01/31/2017 10:34 PM, Jacek Anaszewski wrote:
+> On 01/31/2017 05:11 PM, Rafał Miłecki wrote:
+>> On 01/25/2017 10:04 PM, Jacek Anaszewski wrote:
+>>> On 01/25/2017 10:03 AM, Rafał Miłecki wrote:
+>>>> On 21 January 2017 at 22:42, Jacek Anaszewski
+>>>> <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>> On 01/21/2017 05:24 PM, Rafał Miłecki wrote:
+>>>>>> On 20 January 2017 at 23:35, Jacek Anaszewski
+>>>>>> <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>>>> On 01/20/2017 10:56 PM, Rafał Miłecki wrote:
+>>>>>>>> From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+>>>>>>>>
+>>>>>>>> Some LEDs can be related to particular devices described in DT. This
+>>>>>>>> property allows specifying such relations. E.g. USB LED should
+>>>>>>>> usually
+>>>>>>>> be used to indicate some USB port(s) state.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+>>>>>>>> ---
+>>>>>>>> V2: Replace "usb-ports" with "led-triggers" property which is
+>>>>>>>> more generic and
+>>>>>>>>     allows specifying other devices as well.
+>>>>>>>>
+>>>>>>>> When bindings patch is related to some followup implementation,
+>>>>>>>> they usually go
+>>>>>>>> through the same tree.
+>>>>>>>>
+>>>>>>>> Greg: this patch is based on top of e64b8cc72bf9 ("DT: leds:
+>>>>>>>> Improve examples by
+>>>>>>>> adding some context") from kernel/git/j.anaszewski/linux-leds.git
+>>>>>>>> . Is there any
+>>>>>>>> way to solve this dependency issue? Or should this patch wait
+>>>>>>>> until 3.11 is
+>>>>>>>> released?
+>>>>>>>> ---
+>>>>>>>>  Documentation/devicetree/bindings/leds/common.txt | 16
+>>>>>>>> ++++++++++++++++
+>>>>>>>>  1 file changed, 16 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>> b/Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>> index 24b656014089..17632a041196 100644
+>>>>>>>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>> @@ -49,6 +49,17 @@ Optional properties for child nodes:
+>>>>>>>>  - panic-indicator : This property specifies that the LED should
+>>>>>>>> be used,
+>>>>>>>>                   if at all possible, as a panic indicator.
+>>>>>>>>
+>>>>>>>> +- led-triggers : List of devices that should trigger this LED
+>>>>>>>> activity. Some
+>>>>>>>> +              LEDs can be related to a specific device and
+>>>>>>>> should somehow
+>>>>>>>> +              indicate its state. E.g. USB 2.0 LED may react to
+>>>>>>>> device(s) in
+>>>>>>>> +              a USB 2.0 port(s). Another common example is
+>>>>>>>> switch or router
+>>>>>>>> +              with multiple Ethernet ports each of them having
+>>>>>>>> its own LED
+>>>>>>>> +              assigned (assuminled-trigger-usbportg they are not
+>>>>>>>> hardwired).
+>>>>>>>> +              In such cases this property should contain
+>>>>>>>> phandle(s) of
+>>>>>>>> +              related device(s). In many cases LED can be
+>>>>>>>> related to more
+>>>>>>>> +              than one device (e.g. one USB LED vs. multiple USB
+>>>>>>>> ports) so a
+>>>>>>>> +              list of entries can be specified.
+>>>>>>>> +
+>>>>>>>
+>>>>>>> This implies that it is possible to define multiple triggers for
+>>>>>>> a LED class device but it is not supported by LED Trigger core.
+>>>>>>> There is linux,default-trigger property which allows to define one
+>>>>>>> trigger that will be initially assigned.
+>>>>>
+>>>>>> With proposed "led-triggers" property one could assign different
+>>>>>> trigger *sources* to a LED. You could e.g. assign 2 USB ports, network
+>>>>>> device & CPU to a single LED. For reason explained above Linux
+>>>>>> couldn't support all of them at once.
+>>>>>>
+>>>>>>
+>>>>>>> I am aware that this is renamed usb-ports property from v1,
+>>>>>>> that attempts to address Rob's comment, but we can't do that this
+>>>>>>> way.
+>>>>>>> Maybe usb-ports property could be documented in led-trigger-usbport's
+>>>>>>> specific bindings and a reference to it could be added next to the
+>>>>>>> related entry on the list of the available LED triggers (which is
+>>>>>>> actually missing) in
+>>>>>>> Documentation/devicetree/bindings/leds/common.txt.
+>>>>>>
+>>>>>> I'm wondering if we need to care about this Linux limitation and if it
+>>>>>> should stop us from adding this flexible DT property. Maybe we could
+>>>>>> live with Linux having limitation of supporting one trigger type at a
+>>>>>> time?
+>>>>>
+>>>>> That's what I meant. Generally I have objections to the generic
+>>>>> property for defining list of allowed triggers. That's why I proposed
+>>>>> to stay by usb-ports property that would be specific to only one
+>>>>> trigger: led-trigger-usbport.
+>>>>>
+>>>>> led-trigger-usbport in fact is an entirely new type of LED trigger.
+>>>>> LED triggers is a kernel based source of events. All existing triggers
+>>>>> react only to a single, well defined source of events, whereas
+>>>>> led-trigger-usbport allows to define the scope of events (usb ports)
+>>>>> to notify about. Activity on each port is treated similarly and the LED
+>>>>> class device that listens to the trigger notifications doesn't know
+>>>>> which exact port triggered the notification.
+>>>>>
+>>>>> From this POV led-trigger-usbport is kind of facade, which allows
+>>>>> for it to fit well into the LED Trigger design and API, and usb ports
+>>>>> are not identical with LED triggers, but sit rather one level below.
+>>>>> It is led-trigger-usbport which is visible to the LED subsystem, and
+>>>>> not every single usb port.
+>>>>>
+>>>>>> So e.g. if one assigns 2 USB ports + network device + CPU and
+>>>>>> decides to use "usport" trigger driver he'll get LED indicating status
+>>>>>> of USB ports only.
+>>>>>
+>>>>> How would it be different from the current state? Only in limiting
+>>>>> the scope of triggers available for a LED class device.
+>>>>
+>>>> It won't differ from the current state. I just wanted to make it clear
+>>>> Linux trigger drivers may respect only selected "led-triggers" values
+>>>> (phandles). Like "usbport" respecting USB port phandles but ignoring
+>>>> CPU ones, net ones, etc.
+>>>
+>>> This is the ambiguity I want to avoid. According to my analysis from
+>>> the previous message, physical usb port is one level below usbport LED
+>>> trigger, and it should be reflected in DT binding documentation. You
+>>> can't write usb1-port1 (using the convention from Documentation/leds/
+>>> ledtrig-usbport.txt) to the "triggers" sysfs file. You can only register
+>>> usbport trigger which can be configured to notify about activity on
+>>> usb1-port1.
+>>>
+>>> That's why I proposed linux,trigger-sources name for that.
+>>> Let's not confuse LED triggers with events originating from physical
+>>> devices or other sources of kernel events, being in turn translated by
+>>> LED triggers to LED brightness changes.
+>>>
+>>> This is a thing about naming. It is tempting to call sources of kernel
+>>> events "triggers", but they are not LED triggers on they own. LED
+>>> trigger is a driver that registers itself in LED Trigger core using
+>>> led_trigger_register() API.
 >>
->> I can only throw up my hands...
->
-> Sorry for forcing your hand like this, but this is the kind of
-> discussion I'm not comfortable with (when I need to argue on something
-> I'm not completely convinced of, or I don't have opinion on).
-
-Sorry, I'm just too stressed by all patches. I now read back on the
-context below.
-
->> The way I percieved it, a new function
->> was added, but I guess it could be that the diffstat was so
->> convoluted in the other patch (by the way that diff sometimes give
->> very confusing stuff unless you use the right fuzz) so I misunderstood
->> some other renaming as introducing a new function.
->
-> Indeed, a new function is added (see patch 2), and this new function is
-> taking an additional 'index' parameter. If that's a problem, I can also
-> change the prototype of devm_get_gpiod_from_child() and patch all
-> existing users of this function, but I fear we'll end up with pretty
-> much the same discussion :-/.
-
-Yeah.
-
->> Please drop the patch if it is controversial.
+>> Thanks a lot Jacek for this explanation (and sorry but I needed a bit of
+>> time to
+>> think about this). I can finally see your point, I think we're on the
+>> same page
+>> now.
 >>
->> The name of the function *is* confusing though but maybe it's not
->> the biggest problem in the world.
+>> I think that for all this time I was thinking from the pure DT
+>> perspective. If
+>> you ignore fact that Linux has multiple LED trigger drivers, then
+>> "led-triggers"
+>> may not sound that bad.
+>>
+>> After reading your description however I can see this property can be
+>> misleading
+>> as Linux people may think "drivers" when seeing "triggers".
+>>
+>> I still think this is a useful property and I hope we can still find a
+>> way to
+>> name it in a sane way: to be nice from DT PoV and march Linux LEDs
+>> subsystem.
 >
-> I can still name the new function as you suggested
-> (devm_fwnode_get_index_gpiod_from_child()), and keep the existing one
-> unchanged if you want.
+> I also see the need for this property.
+>
+>> I think we should still work on some generic property (without linux,
+>> prefix) as
+>> this seems to be something generic, not really specific to Linux
+>> implementation.
+>> Specifying relation between LED and devices is something than AFAICS can be
+>> reused by other systems as well.
+>>
+>> So my suggestion is to try some new name & leave linux,default-trigger
+>> to allow
+>> specifying one single trigger driver as required by current Linux
+>> implementation.
+>>
+>> What do you think about this?
+>>
+>> There are few suggestions to came to my mind:
+>> "trigger-sources"
+>> "trigger-devices"
+>> "led-trigger-devices"
+>> "led-related-devices"
+>> "led-event-devices"
+>
+> trigger-devices would work in this specific use case,
+> where we can give phandles to usb ports. Nonetheless, we
+> have also other kernel based events serving as trigger
+> sources - e.g. timer.
+>
+> In this case I'd go for trigger-sources, but we'd need
+> to have some generic way of defining the source like timer.
 
-But that is just insane. Then it is just better to apply this and the
-other patch making the situation manageable.
+I'd leave timer for later discussion but I'm glad you brought this problem.
+Maybe we could discuss this on another example that is more supported like
+GPIOs?
 
-This is a good time to do it too since I'm anyways patching around
-in all the consumers this merge window.
+We know this property allows specifying USB ports and we want it to support
+mixing various sources. So a very simple sample case seems to be using it for
+specifying GPIO as trigger source.
 
-Dmitry: is this such a big deal to you?
+Is this possible to mix various entries in a list assigned to single property?
+Let's say:
+trigger-sources =
+	<&ohci_port1>,
+	<&ehci_port1>,
+	<&gpio 1 GPIO_ACTIVE_HIGH>;
 
-commit 40b7318319281b1bdec804f6435f26cadd329c13
-"gpio: Support for unified device properties interface"
-
-by Mika Westerberg introduced
-
-fwnode_get_named_gpiod()
-devm_get_gpiod_from_child()
-
-Both are taking a fwnode as argument and the naming is as
-inconsistent as it can be.
-
-Some more churn should be expected as a side
-effect of naming this function wrong in the first place.
-The fwnode API change was on fast-forward and mistakes
-were made, also by me, mea culpa.
-
-When I write kernel code, I usually intuitively look for a function doing
-what I want, this naming is unintuitive, and it has confused me so
-it will confuse others.
-
-Can I please apply these two patches?
-
-Yours,
-Linus Walleij
+Is this possible to support this? If so, which function I can use to detect
+what is pointed by a phandle?
+I'm not that familiar with DT and I'm not sure how to handle this.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
