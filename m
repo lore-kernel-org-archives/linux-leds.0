@@ -1,26 +1,40 @@
-From: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: =?utf-8?Q?=D0=9A=D0=9B=D0=98=D0=95=D0=9D=D0=A2=D0=A1=D0?=
-        =?utf-8?Q?=9A=D0=98=D0=95_=D0=91=D0=90=D0=97=D0=AB_=D1=82?=
-        =?utf-8?Q?=D0=B5=D0=BB_+79139230330_Skype=3A_prodawez390_?=
-        =?utf-8?Q?Email=3A_prodawez393=40gmail=2Ecom_=D0=A3=D0=B7?=
-        =?utf-8?Q?=D0=BD=D0=B0=D0=B9=D1=82=D0=B5_=D0=BF=D0=BE=D0?=
-        =?utf-8?Q?=B4=D1=80=D0=BE=D0=B1=D0=BD=D0=B5=D0=B5!?=
-Date: Thu, 2 Feb 2017 00:14:40 +0300
-Message-ID: <30CA560919CDE3508C89C07C682D1FF0@vger.kernel.org>
-Reply-To: "linux-leds@vger.kernel.org" <prodawez393@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
+Date: Thu, 2 Feb 2017 12:07:02 +0200
+Message-ID: <20170202100702.GE2053@lahna.fi.intel.com>
+References: <20170131090432.72a1b1b8@bbrezillon>
+ <20170131084447.GD8311@dtor-ws>
+ <20170131100721.22c2388d@bbrezillon>
+ <20170131091155.GH8311@dtor-ws>
+ <20170131102424.7b68c0d4@bbrezillon>
+ <20170131183936.GB13642@dtor-ws>
+ <20170131204202.7b589ca6@bbrezillon>
+ <CACRpkdbr6BGm3mJ_2XOAuootK-ruibiGsG8=LvKhrz1cpUrnhA@mail.gmail.com>
+ <20170201142228.053e2041@bbrezillon>
+ <CACRpkdaO=1+JHs2qtVULyN1B1pfajc=UF-V_N+Ej_i5SMv-pPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8";
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from [185.164.137.230] ([185.164.137.230]:56686 "EHLO gl.ramandt.be"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1751046AbdBBH5e (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 2 Feb 2017 02:57:34 -0500
-Received: from 185.164.137.230 (localhost.localdomain [127.0.0.1])
-        by gl.ramandt.be (Postfix) with SMTP id 822D6A2894
-        for <linux-leds@vger.kernel.org>; Wed,  1 Feb 2017 17:15:17 +0000 (UTC)
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaO=1+JHs2qtVULyN1B1pfajc=UF-V_N+Ej_i5SMv-pPQ@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
 
-КЛИЕНТСКИЕ БАЗЫ тел +79139230330 Skype: prodawez390 Email: prodawez393@gmail.com Узнайте подробнее!
+On Wed, Feb 01, 2017 at 03:51:06PM +0100, Linus Walleij wrote:
+> fwnode_get_named_gpiod()
+> devm_get_gpiod_from_child()
+> 
+> Both are taking a fwnode as argument and the naming is as
+> inconsistent as it can be.
+> 
+> Some more churn should be expected as a side
+> effect of naming this function wrong in the first place.
+> The fwnode API change was on fast-forward and mistakes
+> were made, also by me, mea culpa.
+
+The name fwnode_get_named_gpiod() tries to follow of_get_named_gpio() so
+that we can easily convert a driver to use fwnodes instead. The other
+function is named so because we look child fwnodes under a device. For
+that, yes certainly we could have invented a better name ;-)
