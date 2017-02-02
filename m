@@ -1,203 +1,209 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Thu,  2 Feb 2017 14:53:10 +0100
-Message-ID: <1486043591-6278-2-git-send-email-boris.brezillon@free-electrons.com>
-References: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH V2 1/2] dt-bindings: leds: document new led-triggers
+ property
+Date: Thu, 2 Feb 2017 21:44:12 +0100
+Message-ID: <f5cd17e7-2560-acdd-79c6-7dc1b0988e73@gmail.com>
+References: <20170120215605.15728-1-zajec5@gmail.com>
+ <29f27028-20f3-3eb9-502f-1b51958640f9@gmail.com>
+ <CACna6rx-qJ5eLMOUbMcaAxaOp9avrj1sa-8zZo2m+rVvY+Kvjw@mail.gmail.com>
+ <46084d98-fddb-1b92-e9ca-d55957a442ae@gmail.com>
+ <CACna6rx5HsSb=rXCjVth_2ed87tUSBJEZHHxTC_S1YOztLjp1A@mail.gmail.com>
+ <ccc870b2-5857-507a-9c54-9a14ea60d3e5@gmail.com>
+ <f9bda1d6-4265-8fe6-58ba-d6da5b462a0c@milecki.pl>
+ <c4f1d3c4-d972-e305-abb9-a5c6e9e184e9@gmail.com>
+ <d3535c2c-2a7c-4e8d-552c-666f76043b7d@gmail.com>
+ <93896405-5ee0-ea85-72b1-5774c13a0c36@gmail.com>
+ <438140b2-896f-6a58-2529-9d30db6d4fde@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:51445 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751206AbdBBNx0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Feb 2017 08:53:26 -0500
-In-Reply-To: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34109 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbdBBUpC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Feb 2017 15:45:02 -0500
+In-Reply-To: <438140b2-896f-6a58-2529-9d30db6d4fde@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-Rename devm_get_gpiod_from_child() into
-devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-function is operating on a fwnode object.
+On 02/01/2017 10:55 PM, Rafał Miłecki wrote:
+> On 02/01/2017 10:26 PM, Jacek Anaszewski wrote:
+>> On 02/01/2017 04:56 PM, Rafał Miłecki wrote:
+>>> On 01/31/2017 10:34 PM, Jacek Anaszewski wrote:
+>>>> On 01/31/2017 05:11 PM, Rafał Miłecki wrote:
+>>>>> Thanks a lot Jacek for this explanation (and sorry but I needed a
+>>>>> bit of
+>>>>> time to
+>>>>> think about this). I can finally see your point, I think we're on the
+>>>>> same page
+>>>>> now.
+>>>>>
+>>>>> I think that for all this time I was thinking from the pure DT
+>>>>> perspective. If
+>>>>> you ignore fact that Linux has multiple LED trigger drivers, then
+>>>>> "led-triggers"
+>>>>> may not sound that bad.
+>>>>>
+>>>>> After reading your description however I can see this property can be
+>>>>> misleading
+>>>>> as Linux people may think "drivers" when seeing "triggers".
+>>>>>
+>>>>> I still think this is a useful property and I hope we can still find a
+>>>>> way to
+>>>>> name it in a sane way: to be nice from DT PoV and march Linux LEDs
+>>>>> subsystem.
+>>>>
+>>>> I also see the need for this property.
+>>>>
+>>>>> I think we should still work on some generic property (without linux,
+>>>>> prefix) as
+>>>>> this seems to be something generic, not really specific to Linux
+>>>>> implementation.
+>>>>> Specifying relation between LED and devices is something than AFAICS
+>>>>> can be
+>>>>> reused by other systems as well.
+>>>>>
+>>>>> So my suggestion is to try some new name & leave linux,default-trigger
+>>>>> to allow
+>>>>> specifying one single trigger driver as required by current Linux
+>>>>> implementation.
+>>>>>
+>>>>> What do you think about this?
+>>>>>
+>>>>> There are few suggestions to came to my mind:
+>>>>> "trigger-sources"
+>>>>> "trigger-devices"
+>>>>> "led-trigger-devices"
+>>>>> "led-related-devices"
+>>>>> "led-event-devices"
+>>>>
+>>>> trigger-devices would work in this specific use case,
+>>>> where we can give phandles to usb ports. Nonetheless, we
+>>>> have also other kernel based events serving as trigger
+>>>> sources - e.g. timer.
+>>>>
+>>>> In this case I'd go for trigger-sources, but we'd need
+>>>> to have some generic way of defining the source like timer.
+>>>
+>>> I'd leave timer for later discussion but I'm glad you brought this
+>>> problem.
+>>> Maybe we could discuss this on another example that is more supported
+>>> like
+>>> GPIOs?
+>>>
+>>> We know this property allows specifying USB ports and we want it to
+>>> support
+>>> mixing various sources. So a very simple sample case seems to be using
+>>> it for
+>>> specifying GPIO as trigger source.
+>>>
+>>> Is this possible to mix various entries in a list assigned to single
+>>> property?
+>>> Let's say:
+>>> trigger-sources =
+>>>     <&ohci_port1>,
+>>>     <&ehci_port1>,
+>>>     <&gpio 1 GPIO_ACTIVE_HIGH>;
+>>
+>> According to my knowledge all elements in the list are elements
+>> of one array, no matter if they are comma separated or space separated
+>> in "<>" brackets. DT maintainer would have to confirm that though.
+> 
+> This matches my knowledge as well.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/devres.c                     | 15 ++++++++-------
- drivers/input/keyboard/gpio_keys.c        |  6 ++++--
- drivers/input/keyboard/gpio_keys_polled.c |  8 ++++----
- drivers/leds/leds-gpio.c                  |  5 +++--
- drivers/video/fbdev/amba-clcd-nomadik.c   | 16 ++++++++--------
- include/linux/gpio/consumer.h             | 20 ++++++++++----------
- 6 files changed, 37 insertions(+), 33 deletions(-)
+Having that, we would be limited to a list of fixed size
+tuples IMHO.
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 89969e887e5d..cd1bd1c3d2c0 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -123,7 +123,8 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- EXPORT_SYMBOL(devm_gpiod_get_index);
- 
- /**
-- * devm_get_gpiod_from_child - get a GPIO descriptor from a device's child node
-+ * devm_fwnode_get_gpiod_from_child - get a GPIO descriptor from a device's
-+ *				      child node
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-  * @child:	firmware node (child of @dev)
-@@ -135,11 +136,11 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
-  * On successfull request the GPIO pin is configured in accordance with
-  * provided @flags.
-  */
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label)
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label)
- {
- 	static const char * const suffixes[] = { "gpios", "gpio" };
- 	char prop_name[32]; /* 32 is max size of property name */
-@@ -174,7 +175,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_get_gpiod_from_child);
-+EXPORT_SYMBOL(devm_fwnode_get_gpiod_from_child);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 2ec74d90ef78..13372782dffe 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -481,8 +481,10 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
- 	spin_lock_init(&bdata->lock);
- 
- 	if (child) {
--		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
--							 GPIOD_IN, desc);
-+		bdata->gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL,
-+								child,
-+								GPIOD_IN,
-+								desc);
- 		if (IS_ERR(bdata->gpiod)) {
- 			error = PTR_ERR(bdata->gpiod);
- 			if (error == -ENOENT) {
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index 5e35c565e341..b3c8d5e7985c 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -303,10 +303,10 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 				return -EINVAL;
- 			}
- 
--			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
--								 child,
--								 GPIOD_IN,
--								 button->desc);
-+			bdata->gpiod = devm_fwnode_get_gpiod_from_child(dev,
-+								NULL, child,
-+								GPIOD_IN,
-+								button->desc);
- 			if (IS_ERR(bdata->gpiod)) {
- 				error = PTR_ERR(bdata->gpiod);
- 				if (error != -EPROBE_DEFER)
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 6c4825d96693..066fc7590729 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -182,8 +182,9 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
--						      GPIOD_ASIS, led.name);
-+		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
-+							     GPIOD_ASIS,
-+							     led.name);
- 		if (IS_ERR(led.gpiod)) {
- 			fwnode_handle_put(child);
- 			return ERR_CAST(led.gpiod);
-diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-index 9175ad9034e1..476ff3f4d466 100644
---- a/drivers/video/fbdev/amba-clcd-nomadik.c
-+++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-@@ -185,26 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- 	dev_info(dev, "TPG110 display init\n");
- 
- 	/* This asserts the GRESTB signal, putting the display into reset */
--	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
--					   GPIOD_OUT_HIGH, "grestb");
-+	grestb = devm_fwnode_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-+						  GPIOD_OUT_HIGH, "grestb");
- 	if (IS_ERR(grestb)) {
- 		dev_err(dev, "no GRESTB GPIO\n");
- 		return;
- 	}
--	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
--					 GPIOD_OUT_LOW, "scen");
-+	scen = devm_fwnode_get_gpiod_from_child(dev, "scen", &np->fwnode,
-+						GPIOD_OUT_LOW, "scen");
- 	if (IS_ERR(scen)) {
- 		dev_err(dev, "no SCEN GPIO\n");
- 		return;
- 	}
--	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
--					"scl");
-+	scl = devm_fwnode_get_gpiod_from_child(dev, "scl", &np->fwnode,
-+					       GPIOD_OUT_LOW, "scl");
- 	if (IS_ERR(scl)) {
- 		dev_err(dev, "no SCL GPIO\n");
- 		return;
- 	}
--	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
--					"sda");
-+	sda = devm_fwnode_get_gpiod_from_child(dev, "sda", &np->fwnode,
-+					       GPIOD_OUT_LOW, "sda");
- 	if (IS_ERR(sda)) {
- 		dev_err(dev, "no SDA GPIO\n");
- 		return;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 80bad7ebde04..f32f49e96c0b 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -138,11 +138,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname,
- 					 enum gpiod_flags dflags,
- 					 const char *label);
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label);
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label);
- #else /* CONFIG_GPIOLIB */
- 
- static inline int gpiod_count(struct device *dev, const char *con_id)
-@@ -425,11 +425,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- }
- 
- static inline
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label)
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
+> 
+>>> Is this possible to support this? If so, which function I can use to
+>>> detect
+>>> what is pointed by a phandle?
+>>> I'm not that familiar with DT and I'm not sure how to handle this.
+>>
+>> I wonder if this is correct way to go. Maybe we should think of
+>> creating entirely new trigger mechanism that would allow for having
+>> multiple active triggers at a time.
+> 
+> I'm OK with reworking Linux's triggers if it need be. I think we should
+> agree
+> on binding(s) first though.
+
+I was thinking of creating entirely new mechanism (new sysfs file),
+as we can't break existing users.
+
+
+> 
+>> Of course trigger-sources would be still useful for defining
+>> a list of devices of the same type like in case of usbport trigger.
+>> Nonetheless, I have a problem with this property being a part of
+>> LED class device DT bindings. Triggers are not tightly coupled with
+>> LED class devices, but trigger-sources being a list of usb ports
+>> would be applicable only to usbport trigger. What if there was
+>> another combo trigger e.g. for reporting activity on mulitple GPIOs?
+> 
+> That was exactly my point with above trigger-sources example including 2
+> USB
+> ports & GPIO.
+
+How usbport trigger would make use use of information about GPIO?
+Does it mean that in this approach triggers would arbitrarily choose
+trigger-sources applicable for them?
+
+> 
+>> Should we have separate list of trigger sources per any possible
+>> existing trigger type? Aren't we going to far from pure hardware
+>> description the Device Tree was initially predestined to?
+> 
+> That would simplify things, but it gets us back to *multiple* properties
+> like
+> led-usb-triggers (or led-usb-trigger-sources)
+> led-pci-triggers (or led-pci-trigger-sources)
+> led-gpio-triggers (or led-gpio-trigger-sources)
+> etc.
+
+Right, I was rather skeptical in my question - I don't like this
+solution too.
+
+> Last time Rob said he's not going to accept something like this, see:
+> 
+> On 23 January 2017 at 17:45, Rob Herring <robh@kernel.org> wrote:
+>> I'm not going to accept something specific to USB. So the choice is make
+>> the existing property work for USB or design something more flexible and
+>> generic.
+> 
+> So I think the main question right now is if this is possible to support
+> mixed
+> entries in a list like that
+> trigger-sources =
+>     <&ohci_port1>,
+>     <&ehci_port1>,
+>     <&gpio 1 GPIO_ACTIVE_HIGH>;
+> 
+> I posted as example.
+> 
+> I was also trying to find help on IRC #devicetree channel but didn't get
+> any
+> response:
+> [09:15] <rmilecki> hi, i've a question about mixing various entries in a
+> single list
+> [09:16] <rmilecki> is this possible to have different /syntax/ in every
+> list element
+> [09:16] <rmilecki> and have driver detect what does it reference?
+> [09:16] <rmilecki> i'll post an example
+> [09:17] <rmilecki> trigger-sources = <&ohci_port1>, <&ehci_port1>,
+> <&gpio 1 GPIO_ACTIVE_HIGH>;
+> [09:18] <rmilecki> this question is related to my work in [PATCH V2 1/2]
+> dt-bindings: leds: document new led-triggers property
+> [09:18] <rmilecki> beware, there is a long discussion in that thread
+> 
+> Rob: do you still follow this thread? We'd like to use single property
+> as you
+> suggested, but is it possible to work with something like trigger-sources
+> example posted above?
+> 
+
 -- 
-2.7.4
+Best regards,
+Jacek Anaszewski
