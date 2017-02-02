@@ -1,51 +1,47 @@
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Thu, 2 Feb 2017 12:53:23 +0100
-Message-ID: <20170202125323.29f6ecb5@bbrezillon>
-References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
-        <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
-        <CACRpkdbVFsKvUWisrxpSWu=C2c-BNMGcaaH0MfNfD3eY0_VNEA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbVFsKvUWisrxpSWu=C2c-BNMGcaaH0MfNfD3eY0_VNEA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v3 0/2] gpio: Add the devm_fwnode_get_index_gpiod_from_child() helper
+Date: Thu,  2 Feb 2017 14:53:09 +0100
+Message-ID: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:51439 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751001AbdBBNx0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Feb 2017 08:53:26 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>
 
-On Thu, 2 Feb 2017 11:53:17 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
+Hello Linus,
 
-> On Mon, Jan 30, 2017 at 4:41 PM, Boris Brezillon
-> <boris.brezillon@free-electrons.com> wrote:
-> 
-> > Rename devm_get_gpiod_from_child() into
-> > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-> > function is operating on a fwnode object.
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>  
-> 
-> All right! So we settled we're gonna merge this and the other patch and
-> we have the necessary ACKs.
-> 
-> This is unfortunately not applying because I have a bunch of other patches
-> touching the same files (that's why I think it's a good opportunity to
-> rename it now, as mentioned IIRC).
-> 
-> Could you rebase this on the following branch:
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-gpiod-flags
+Here is the v3 rebased on your ib-gpiod-flags branch.
 
-While rebasing I noticed that you forgot to add the label parameter to
-the kernel doc header in commit b2987d7438e0 ("gpio: Pass GPIO label
-down to gpiod_request").
+Thanks,
 
-> 
-> Then I will apply it on top of that immutable branch and pull it into the
-> devel branch of gpio so that we get it in and also have an immutable
-> branch with all changes if some other subsystem maintainer needs it
-> because of clashes.
-> 
-> Yours,
-> Linus Walleij
+Boris
+
+---
+Changes since v2:
+- Rebase on the ib-gpiod-flags
+
+Changes since v1:
+- Rename the devm_get_gpiod_from_child() helper into
+  devm_fwnode_get_gpiod_from_child()
+- Define as a static inline wrapper around
+  devm_fwnode_get_gpiod_from_child()
+
+Boris Brezillon (2):
+  gpio: Rename devm_get_gpiod_from_child()
+  gpio: Add the devm_fwnode_get_index_gpiod_from_child() helper
+
+ drivers/gpio/devres.c                     | 18 +++++++++-------
+ drivers/gpio/gpiolib.c                    |  9 ++++----
+ drivers/input/keyboard/gpio_keys.c        |  6 ++++--
+ drivers/input/keyboard/gpio_keys_polled.c |  8 +++----
+ drivers/leds/leds-gpio.c                  |  5 +++--
+ drivers/video/fbdev/amba-clcd-nomadik.c   | 16 +++++++-------
+ include/linux/gpio/consumer.h             | 35 ++++++++++++++++++++-----------
+ 7 files changed, 57 insertions(+), 40 deletions(-)
+
+-- 
+2.7.4
