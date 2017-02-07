@@ -1,192 +1,230 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: pca9532: Extend pca9532 device tree support
-Date: Tue, 7 Feb 2017 21:45:27 +0100
-Message-ID: <f1649865-87cd-eb1c-68de-184990f64661@gmail.com>
-References: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
+Subject: Re: [PATCH V2 1/2] dt-bindings: leds: document new led-triggers
+ property
+Date: Tue, 7 Feb 2017 22:41:25 +0100
+Message-ID: <630fd822-e95a-b0db-4da2-ddea9eaf0b1e@gmail.com>
+References: <20170120215605.15728-1-zajec5@gmail.com>
+ <29f27028-20f3-3eb9-502f-1b51958640f9@gmail.com>
+ <CACna6rx-qJ5eLMOUbMcaAxaOp9avrj1sa-8zZo2m+rVvY+Kvjw@mail.gmail.com>
+ <46084d98-fddb-1b92-e9ca-d55957a442ae@gmail.com>
+ <CACna6rx5HsSb=rXCjVth_2ed87tUSBJEZHHxTC_S1YOztLjp1A@mail.gmail.com>
+ <ccc870b2-5857-507a-9c54-9a14ea60d3e5@gmail.com>
+ <f9bda1d6-4265-8fe6-58ba-d6da5b462a0c@milecki.pl>
+ <c4f1d3c4-d972-e305-abb9-a5c6e9e184e9@gmail.com>
+ <d3535c2c-2a7c-4e8d-552c-666f76043b7d@gmail.com>
+ <93896405-5ee0-ea85-72b1-5774c13a0c36@gmail.com>
+ <438140b2-896f-6a58-2529-9d30db6d4fde@gmail.com>
+ <f5cd17e7-2560-acdd-79c6-7dc1b0988e73@gmail.com>
+ <aa97923a-d46c-ad90-a96a-0017129daeb8@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34209 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754394AbdBGUyz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Feb 2017 15:54:55 -0500
-In-Reply-To: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36830 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932076AbdBGVnD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Feb 2017 16:43:03 -0500
+In-Reply-To: <aa97923a-d46c-ad90-a96a-0017129daeb8@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Felix Brack <fb@ltec.ch>, riku.voipio@iki.fi, rpurdie@rpsys.net, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: f.brack@eets.ch
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-Hi Felix,
+On 02/03/2017 12:00 AM, Rafał Miłecki wrote:
+> On 02/02/2017 09:44 PM, Jacek Anaszewski wrote:
+>> On 02/01/2017 10:55 PM, Rafał Miłecki wrote:
+>>> On 02/01/2017 10:26 PM, Jacek Anaszewski wrote:
+>>>> On 02/01/2017 04:56 PM, Rafał Miłecki wrote:
+>>>>> On 01/31/2017 10:34 PM, Jacek Anaszewski wrote:
+>>>>>> On 01/31/2017 05:11 PM, Rafał Miłecki wrote:
+>>>>>>> Thanks a lot Jacek for this explanation (and sorry but I needed a
+>>>>>>> bit of
+>>>>>>> time to
+>>>>>>> think about this). I can finally see your point, I think we're on
+>>>>>>> the
+>>>>>>> same page
+>>>>>>> now.
+>>>>>>>
+>>>>>>> I think that for all this time I was thinking from the pure DT
+>>>>>>> perspective. If
+>>>>>>> you ignore fact that Linux has multiple LED trigger drivers, then
+>>>>>>> "led-triggers"
+>>>>>>> may not sound that bad.
+>>>>>>>
+>>>>>>> After reading your description however I can see this property
+>>>>>>> can be
+>>>>>>> misleading
+>>>>>>> as Linux people may think "drivers" when seeing "triggers".
+>>>>>>>
+>>>>>>> I still think this is a useful property and I hope we can still
+>>>>>>> find a
+>>>>>>> way to
+>>>>>>> name it in a sane way: to be nice from DT PoV and march Linux LEDs
+>>>>>>> subsystem.
+>>>>>>
+>>>>>> I also see the need for this property.
+>>>>>>
+>>>>>>> I think we should still work on some generic property (without
+>>>>>>> linux,
+>>>>>>> prefix) as
+>>>>>>> this seems to be something generic, not really specific to Linux
+>>>>>>> implementation.
+>>>>>>> Specifying relation between LED and devices is something than AFAICS
+>>>>>>> can be
+>>>>>>> reused by other systems as well.
+>>>>>>>
+>>>>>>> So my suggestion is to try some new name & leave
+>>>>>>> linux,default-trigger
+>>>>>>> to allow
+>>>>>>> specifying one single trigger driver as required by current Linux
+>>>>>>> implementation.
+>>>>>>>
+>>>>>>> What do you think about this?
+>>>>>>>
+>>>>>>> There are few suggestions to came to my mind:
+>>>>>>> "trigger-sources"
+>>>>>>> "trigger-devices"
+>>>>>>> "led-trigger-devices"
+>>>>>>> "led-related-devices"
+>>>>>>> "led-event-devices"
+>>>>>>
+>>>>>> trigger-devices would work in this specific use case,
+>>>>>> where we can give phandles to usb ports. Nonetheless, we
+>>>>>> have also other kernel based events serving as trigger
+>>>>>> sources - e.g. timer.
+>>>>>>
+>>>>>> In this case I'd go for trigger-sources, but we'd need
+>>>>>> to have some generic way of defining the source like timer.
+>>>>>
+>>>>> I'd leave timer for later discussion but I'm glad you brought this
+>>>>> problem.
+>>>>> Maybe we could discuss this on another example that is more supported
+>>>>> like
+>>>>> GPIOs?
+>>>>>
+>>>>> We know this property allows specifying USB ports and we want it to
+>>>>> support
+>>>>> mixing various sources. So a very simple sample case seems to be using
+>>>>> it for
+>>>>> specifying GPIO as trigger source.
+>>>>>
+>>>>> Is this possible to mix various entries in a list assigned to single
+>>>>> property?
+>>>>> Let's say:
+>>>>> trigger-sources =
+>>>>>     <&ohci_port1>,
+>>>>>     <&ehci_port1>,
+>>>>>     <&gpio 1 GPIO_ACTIVE_HIGH>;
+>>>>
+>>>> According to my knowledge all elements in the list are elements
+>>>> of one array, no matter if they are comma separated or space separated
+>>>> in "<>" brackets. DT maintainer would have to confirm that though.
+>>>
+>>> This matches my knowledge as well.
+>>
+>> Having that, we would be limited to a list of fixed size
+>> tuples IMHO.
+> 
+> That sounds OK. Now I spent some time thinking about this I think it can
+> work.
+> First of all we may need something like #sources-cells to extend our
+> property
+> in the future.
+> Secondly it should be possible to detect type of phandle node by trying
+> things
+> one by one. We should be e.g. able to check is phandle is for GPIO by
+> trying
+> of_find_gpiochip_by_xlate.
+> 
+> 
+>>>>> Is this possible to support this? If so, which function I can use to
+>>>>> detect
+>>>>> what is pointed by a phandle?
+>>>>> I'm not that familiar with DT and I'm not sure how to handle this.
+>>>>
+>>>> I wonder if this is correct way to go. Maybe we should think of
+>>>> creating entirely new trigger mechanism that would allow for having
+>>>> multiple active triggers at a time.
+>>>
+>>> I'm OK with reworking Linux's triggers if it need be. I think we should
+>>> agree
+>>> on binding(s) first though.
+>>
+>> I was thinking of creating entirely new mechanism (new sysfs file),
+>> as we can't break existing users.
+> 
+> Agree.
+> 
+> 
+>>>> Of course trigger-sources would be still useful for defining
+>>>> a list of devices of the same type like in case of usbport trigger.
+>>>> Nonetheless, I have a problem with this property being a part of
+>>>> LED class device DT bindings. Triggers are not tightly coupled with
+>>>> LED class devices, but trigger-sources being a list of usb ports
+>>>> would be applicable only to usbport trigger. What if there was
+>>>> another combo trigger e.g. for reporting activity on mulitple GPIOs?
+>>>
+>>> That was exactly my point with above trigger-sources example including 2
+>>> USB
+>>> ports & GPIO.
+>>
+>> How usbport trigger would make use use of information about GPIO?
+>> Does it mean that in this approach triggers would arbitrarily choose
+>> trigger-sources applicable for them?
+> 
+> It wouldn't. It would simply ignore it.
+> 
+> We could modify ledtrig-gpio.c however to support this new property
+> (ex-"led-triggers") and make use of specified GPIO(s). Of course
+> ledtrig-gpio
+> would ignore specified USB ports. One type per LED trigger driver.
 
-Thanks for the patch.
+Frankly speaking I don't like this too much. It would be hard
+to infer from the bindings which trigger sources will be used by which
+trigger.
 
-On 02/07/2017 07:11 PM, Felix Brack wrote:
-> This patch extends the device tree support for the pca9532 allowing LEDs to blink, dim or even being unchanged, i.e. not being turned off during driver initialization.
+I'd like to propose something different, i.e. trigger specific
+trigger-sources property, but defined in a separate DT node
+for each LED trigger:
 
-Isn't it possible to apply desired settings with existing LED subsystem
-brightness file, and delay_on/off files exposed by timer trigger?
+led1-usbport-trig: usbport-trig {
+	trigger-type = "usbport";
+	trigger-sources = <&usb-port1>, <&usb-port2>, <usb-port3>;
+	led-dev = <&led1>;
+};
+
+led1-compound-gpio-trig: compound-gpio-trig {
+	trigger-type = "oneshot";
+	trigger-sources = <&gpio1>, <&gpio2>, <&gpio3>;
+	led-dev = <&led1>;
+};
+
+led1: led1 {
+	compound-triggers = <&led1-usbport-trig>. <&led1-compound-gpio-trig>;
+}
+
+This way when applying usbport trigger to led1, we would know how
+to configure it for this particular LED. If we had led2, we could
+define different subset of usb ports to trigger it. In case of
+hypothetical compound-gpio trigger, the driver would know
+which gpios should generate LED events.
+
+This is a freshly devised idea, just a subject for a discussion.
 
 Best regards,
 Jacek Anaszewski
 
-> Signed-off-by: Felix Brack <fb@ltec.ch>
-> ---
->  .../devicetree/bindings/leds/leds-pca9532.txt      | 22 ++++++++++++
->  drivers/leds/leds-pca9532.c                        | 41 +++++++++++++++++++++-
->  include/linux/leds-pca9532.h                       |  4 +--
->  3 files changed, 64 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-> index 198f3ba..81b6563 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-> +++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-> @@ -11,12 +11,24 @@ Required properties:
->  		"nxp,pca9533"
->  	- reg -  I2C slave address
->  
-> +Optional properties:
-> +	- psc0: 8 bit prescaler value according to NXP data sheet
-> +	- pwm0: 8 bit PWM value according to NXP data sheet
-> +	- psc1: 8 bit prescaler value according to NXP data sheet
-> +	- pwm1: 8 bit PWM value according to NXP data sheet
-> +
->  Each led is represented as a sub-node of the nxp,pca9530.
->  
->  Optional sub-node properties:
->  	- label: see Documentation/devicetree/bindings/leds/common.txt
->  	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
->  	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
-> +	- default-state: see Documentation/devicetree/bindings/leds/common.txt
-> +	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
-> +	  In addition to the values mentioned in the document above the additional
-> +	  values "pwm0" and "pwm1" are valid. The corresponding LED will blink
-> +	  or will be dimmed depending on the configuration of prescaler and pwm
-> +	  values (see optional node properties above).
->  
->  Example:
->    #include <dt-bindings/leds/leds-pca9532.h>
-> @@ -24,6 +36,8 @@ Example:
->    leds: pca9530@60 {
->      compatible = "nxp,pca9530";
->      reg = <0x60>;
-> +    psc0 = <0x97>; // blink frequency 1Hz
-> +    pwm0 = <0x80>; // 50% duty cycle (500ms On / 500ms Off)
->  
->      red-power {
->        label = "pca:red:power";
-> @@ -33,6 +47,14 @@ Example:
->        label = "pca:green:power";
->        type = <PCA9532_TYPE_LED>;
->      };
-> +    kernel-booting {
-> +    	type = <PCA9532_TYPE_LED>;
-> +    	default-state = "pwm0";
-> +    };
-> +    sys-stat {
-> +    	type = <PCA9532_TYPE_LED>;
-> +    	default-state = "keep"; // don't touch, was set by U-Boot
-> +    };
->    };
->  
->  For more product information please see the link below:
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index 06e6310..3353739 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -254,6 +254,21 @@ static void pca9532_input_work(struct work_struct *work)
->  	mutex_unlock(&data->update_lock);
->  }
->  
-> +static enum pca9532_state pca9532_getled(struct pca9532_led *led)
-> +{
-> +	struct i2c_client *client = led->client;
-> +	struct pca9532_data *data = i2c_get_clientdata(client);
-> +	u8 maxleds = data->chip_info->num_leds;
-> +	char reg;
-> +	enum pca9532_state ret;
-> +
-> +	mutex_lock(&data->update_lock);
-> +	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-> +	ret = reg >> LED_NUM(led->id)/2;
-> +	mutex_unlock(&data->update_lock);
-> +	return ret;
-> +}
-> +
->  #ifdef CONFIG_LEDS_PCA9532_GPIO
->  static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
->  {
-> @@ -366,7 +381,10 @@ static int pca9532_configure(struct i2c_client *client,
->  			gpios++;
->  			break;
->  		case PCA9532_TYPE_LED:
-> -			led->state = pled->state;
-> +			if (pled->state == PCA9532_KEEP)
-> +				led->state = pca9532_getled(led);
-> +			else
-> +				led->state = pled->state;
->  			led->name = pled->name;
->  			led->ldev.name = led->name;
->  			led->ldev.default_trigger = pled->default_trigger;
-> @@ -456,6 +474,8 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
->  	const struct of_device_id *match;
->  	int devid, maxleds;
->  	int i = 0;
-> +	const char *state;
-> +	u32 val;
->  
->  	match = of_match_device(of_pca9532_leds_match, dev);
->  	if (!match)
-> @@ -468,6 +488,15 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
->  	if (!pdata)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (!of_property_read_u32(np, "psc0", &val))
-> +		pdata->psc[0] = val & 0xff;
-> +	if (!of_property_read_u32(np, "pwm0", &val))
-> +		pdata->pwm[0] = val & 0xff;
-> +	if (!of_property_read_u32(np, "psc1", &val))
-> +		pdata->psc[1] = val & 0xff;
-> +	if (!of_property_read_u32(np, "pwm1", &val))
-> +		pdata->pwm[1] = val & 0xff;
-> +
->  	for_each_child_of_node(np, child) {
->  		if (of_property_read_string(child, "label",
->  					    &pdata->leds[i].name))
-> @@ -475,6 +504,16 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
->  		of_property_read_u32(child, "type", &pdata->leds[i].type);
->  		of_property_read_string(child, "linux,default-trigger",
->  					&pdata->leds[i].default_trigger);
-> +		if (!of_property_read_string(child, "default-state", &state)) {
-> +			if (!strcmp(state, "on"))
-> +				pdata->leds[i].state = PCA9532_ON;
-> +			else if (!strcmp(state, "keep"))
-> +				pdata->leds[i].state = PCA9532_KEEP;
-> +			else if (!strcmp(state, "pwm0"))
-> +				pdata->leds[i].state = PCA9532_PWM0;
-> +			else if (!strcmp(state, "pwm1"))
-> +				pdata->leds[i].state = PCA9532_PWM1;
-> +		}
->  		if (++i >= maxleds) {
->  			of_node_put(child);
->  			break;
-> diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
-> index d215b45..a327b1aa 100644
-> --- a/include/linux/leds-pca9532.h
-> +++ b/include/linux/leds-pca9532.h
-> @@ -22,7 +22,8 @@ enum pca9532_state {
->  	PCA9532_OFF  = 0x0,
->  	PCA9532_ON   = 0x1,
->  	PCA9532_PWM0 = 0x2,
-> -	PCA9532_PWM1 = 0x3
-> +	PCA9532_PWM1 = 0x3,
-> +	PCA9532_KEEP = 0xff
->  };
->  
->  struct pca9532_led {
-> @@ -44,4 +45,3 @@ struct pca9532_platform_data {
->  };
->  
->  #endif /* __LINUX_PCA9532_H */
-> -
+>>>> Should we have separate list of trigger sources per any possible
+>>>> existing trigger type? Aren't we going to far from pure hardware
+>>>> description the Device Tree was initially predestined to?
+>>>
+>>> That would simplify things, but it gets us back to *multiple* properties
+>>> like
+>>> led-usb-triggers (or led-usb-trigger-sources)
+>>> led-pci-triggers (or led-pci-trigger-sources)
+>>> led-gpio-triggers (or led-gpio-trigger-sources)
+>>> etc.
+>>
+>> Right, I was rather skeptical in my question - I don't like this
+>> solution too.
 > 
