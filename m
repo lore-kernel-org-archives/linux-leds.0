@@ -1,64 +1,47 @@
-From: Jelle Martijn Kok <jmkok@youcom.nl>
-Subject: [PATCH] leds-pwm: the startup brightness can be specified
-Date: Thu, 9 Feb 2017 15:00:00 +0100
-Message-ID: <aed1129a-993a-91d9-7b14-13c3424ee0f4@solutionsradio.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 3/4] leds: Add LED support for MT6323 PMIC
+Date: Thu, 9 Feb 2017 15:23:44 +0100
+Message-ID: <20170209142344.GA23373@xo-6d-61-c0.localdomain>
+References: <1486520357-13096-1-git-send-email-sean.wang@mediatek.com>
+ <1486520357-13096-4-git-send-email-sean.wang@mediatek.com>
+ <a410da2e-ce5f-6263-2d7d-79f4b358a848@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from wsrg017.solrad.nl ([85.17.73.78]:42570 "EHLO wsrg017.solrad.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751600AbdBIOSH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 9 Feb 2017 09:18:07 -0500
-Received: from blue.youcom.nl (blue.youcom.nl [83.163.255.248])
-        by wsrg017.solrad.nl (Postfix) with ESMTPS id BCAA32B81896
-        for <linux-leds@vger.kernel.org>; Thu,  9 Feb 2017 15:00:01 +0100 (CET)
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <a410da2e-ce5f-6263-2d7d-79f4b358a848@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, keyhaede@gmail.com, sean.wang@mediatek.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, rpurdie@rpsys.net, linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
 
-Upto now the leds-pwm are either on or off at startup. This allows the
-dts to specify the startup brightness
+Hi!
 
-Signed-off-by: Jelle Martijn Kok <jmkok@youcom.nl>
----
-  drivers/leds/leds-pwm.c  | 5 ++++-
-  include/linux/leds_pwm.h | 1 +
-  2 files changed, 5 insertions(+), 1 deletion(-)
+> > +/*
+> > + * Register for MT6323_ISINK_CON0 to setup the
+> > + * duty cycle of the blink
+> > + */
+> > +#define MT6323_ISINK_CON0(i)		(MT6323_ISINK0_CON0 + 0x8 * (i))
+> > +#define MT6323_ISINK_DIM_DUTY_MASK	(0x1f << 8)
+> > +#define MT6323_ISINK_DIM_DUTY(i)	(((i) << 8) & \
+> > +					MT6323_ISINK_DIM_DUTY_MASK)
+> > +
+> > +/*
+> > + * Register to setup the period of the blink
+> > + */
+> 
+> This fits in a single line, so can be wrapped with /* */ like :
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index a9145aa..4799f36 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -97,7 +97,7 @@ static int led_pwm_add(struct device *dev, struct 
-led_pwm_priv *priv,
-  	led_data->active_low = led->active_low;
-  	led_data->cdev.name = led->name;
-  	led_data->cdev.default_trigger = led->default_trigger;
--	led_data->cdev.brightness = LED_OFF;
-+	led_data->cdev.brightness = led->default_brightness;
-  	led_data->cdev.max_brightness = led->max_brightness;
-  	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
-  @@ -159,6 +159,9 @@ static int led_pwm_create_of(struct device *dev, 
-struct led_pwm_priv *priv)
-  		led.active_low = of_property_read_bool(child, "active-low");
-  		of_property_read_u32(child, "max-brightness",
-  				     &led.max_brightness);
-+		led.default_brightness = LED_OFF;
-+		of_property_read_u32(child, "brightness",
-+				     &led.default_brightness);
-   		ret = led_pwm_add(dev, priv, &led, child);
-  		if (ret) {
-diff --git a/include/linux/leds_pwm.h b/include/linux/leds_pwm.h
-index a65e964..7e70438 100644
---- a/include/linux/leds_pwm.h
-+++ b/include/linux/leds_pwm.h
-@@ -11,6 +11,7 @@ struct led_pwm {
-  	u8 		active_low;
-  	unsigned 	max_brightness;
-  	unsigned	pwm_period_ns;
-+	unsigned 	default_brightness;
-  };
-   struct led_pwm_platform_data {
--- 
-2.1.4
+People do this to make blocks stand out, and to make it similar to other blocks
+above. I believe this is ok.
+
+									Pavel
