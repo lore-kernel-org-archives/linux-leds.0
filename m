@@ -1,115 +1,226 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v8 4/7] platform/x86/dell-*: Add a generic dell-laptop notifier chain
-Date: Thu,  9 Feb 2017 16:44:14 +0100
-Message-ID: <20170209154417.19040-5-hdegoede@redhat.com>
+Subject: [PATCH v8 2/7] platform/x86/thinkpad_acpi: Use brightness_set_blocking callback for LEDs
+Date: Thu,  9 Feb 2017 16:44:12 +0100
+Message-ID: <20170209154417.19040-3-hdegoede@redhat.com>
 References: <20170209154417.19040-1-hdegoede@redhat.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752597AbdBIQkO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 9 Feb 2017 11:40:14 -0500
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <20170209154417.19040-1-hdegoede@redhat.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: platform-driver-x86-owner@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
 Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-There are several cases where events handled in one of the dell-* drivers
-need to be propagated to another dell-* driver.
+Now a days the LED core can take care of executing brightness_set from
+a workqueue if it needs to sleep, make use of this and remove a bunch
+of DIY code for this.
 
-This commits add 3 generic functions:
-dell_laptop_register_notifier()
-dell_laptop_unregister_notifier()
-dell_laptop_call_notifier()
-
-It currently only defines 1 action:
-DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED
-
-Which is intended to propagate kbd_backlight_brightness_changed wmi
-events from dell-wmi to dell-laptop (which contains the actual kbd
-backlight driver).
-
-These functions are put in dell-smbios as both dell-wmi and dell-laptop
-use smbios functions and I do not want to put the notifier head in
-either driver, as that will make the 2 drivers depend on each other.
+Since this commit removes the workqueue usage for LEDs, the
+led_sysfs_blink_set callback may now also sleep, this is fine.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
-Changes in v2:
--This is a new patch in v2 of this patch-set
-Changes in v3:
--No changes
-Changes in v4:
--Rename functions from dell_smbios_*_notifier to dell_laptop_*_notifier
-Changes in v5:
--Dropped due to new led-trigger based approach making this unnecessary
-Changes in v6:
--Re-introduced as led-trigger based approach got nacked
 Changes in v8:
--Change from atomic to blocking notifier as some of the called notifier
- callbacks may take a mutex
+-New patch in v8 of this patch-set
 ---
- drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
- drivers/platform/x86/dell-smbios.h | 11 +++++++++++
- 2 files changed, 31 insertions(+)
+ drivers/platform/x86/thinkpad_acpi.c | 80 ++++++++----------------------------
+ 1 file changed, 16 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
-index d2412ab..0a57234 100644
---- a/drivers/platform/x86/dell-smbios.c
-+++ b/drivers/platform/x86/dell-smbios.c
-@@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 0680bb3..f51833f 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -372,11 +372,9 @@ enum led_status_t {
+ 	TPACPI_LED_BLINK,
+ };
+ 
+-/* Special LED class that can defer work */
++/* tpacpi LED class */
+ struct tpacpi_led_classdev {
+ 	struct led_classdev led_classdev;
+-	struct work_struct work;
+-	enum led_status_t new_state;
+ 	int led;
+ };
+ 
+@@ -5156,24 +5154,10 @@ static bool kbdlight_is_supported(void)
+ 	return status & BIT(9);
  }
- EXPORT_SYMBOL_GPL(dell_smbios_find_token);
  
-+static BLOCKING_NOTIFIER_HEAD(dell_laptop_chain_head);
-+
-+int dell_laptop_register_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&dell_laptop_chain_head, nb);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_register_notifier);
-+
-+int dell_laptop_unregister_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&dell_laptop_chain_head, nb);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_unregister_notifier);
-+
-+void dell_laptop_call_notifier(unsigned long action, void *data)
-+{
-+	blocking_notifier_call_chain(&dell_laptop_chain_head, action, data);
-+}
-+EXPORT_SYMBOL_GPL(dell_laptop_call_notifier);
-+
- static void __init parse_da_table(const struct dmi_header *dm)
+-static void kbdlight_set_worker(struct work_struct *work)
+-{
+-	struct tpacpi_led_classdev *data =
+-			container_of(work, struct tpacpi_led_classdev, work);
+-
+-	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
+-		kbdlight_set_level(data->new_state);
+-}
+-
+-static void kbdlight_sysfs_set(struct led_classdev *led_cdev,
++static int kbdlight_sysfs_set(struct led_classdev *led_cdev,
+ 			enum led_brightness brightness)
  {
- 	/* Final token is a terminator, so we don't want to copy it */
-diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
-index ec7d40a..45cbc22 100644
---- a/drivers/platform/x86/dell-smbios.h
-+++ b/drivers/platform/x86/dell-smbios.h
-@@ -16,6 +16,8 @@
- #ifndef _DELL_SMBIOS_H_
- #define _DELL_SMBIOS_H_
+-	struct tpacpi_led_classdev *data =
+-			container_of(led_cdev,
+-				     struct tpacpi_led_classdev,
+-				     led_classdev);
+-	data->new_state = brightness;
+-	queue_work(tpacpi_wq, &data->work);
++	return kbdlight_set_level(brightness);
+ }
  
-+struct notifier_block;
-+
- /* This structure will be modified by the firmware when we enter
-  * system management mode, hence the volatiles */
+ static enum led_brightness kbdlight_sysfs_get(struct led_classdev *led_cdev)
+@@ -5191,7 +5175,7 @@ static struct tpacpi_led_classdev tpacpi_led_kbdlight = {
+ 	.led_classdev = {
+ 		.name		= "tpacpi::kbd_backlight",
+ 		.max_brightness	= 2,
+-		.brightness_set	= &kbdlight_sysfs_set,
++		.brightness_set_blocking = &kbdlight_sysfs_set,
+ 		.brightness_get	= &kbdlight_sysfs_get,
+ 	}
+ };
+@@ -5203,7 +5187,6 @@ static int __init kbdlight_init(struct ibm_init_struct *iibm)
+ 	vdbg_printk(TPACPI_DBG_INIT, "initializing kbdlight subdriver\n");
  
-@@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
- void dell_smbios_send_request(int class, int select);
+ 	TPACPI_ACPIHANDLE_INIT(hkey);
+-	INIT_WORK(&tpacpi_led_kbdlight.work, kbdlight_set_worker);
  
- struct calling_interface_token *dell_smbios_find_token(int tokenid);
-+
-+enum dell_laptop_notifier_actions {
-+	DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED,
-+};
-+
-+int dell_laptop_register_notifier(struct notifier_block *nb);
-+int dell_laptop_unregister_notifier(struct notifier_block *nb);
-+void dell_laptop_call_notifier(unsigned long action, void *data);
-+
- #endif
+ 	if (!kbdlight_is_supported()) {
+ 		tp_features.kbdlight = 0;
+@@ -5227,7 +5210,6 @@ static void kbdlight_exit(void)
+ {
+ 	if (tp_features.kbdlight)
+ 		led_classdev_unregister(&tpacpi_led_kbdlight.led_classdev);
+-	flush_workqueue(tpacpi_wq);
+ }
+ 
+ static int kbdlight_set_level_and_update(int level)
+@@ -5356,25 +5338,11 @@ static int light_set_status(int status)
+ 	return -ENXIO;
+ }
+ 
+-static void light_set_status_worker(struct work_struct *work)
+-{
+-	struct tpacpi_led_classdev *data =
+-			container_of(work, struct tpacpi_led_classdev, work);
+-
+-	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
+-		light_set_status((data->new_state != TPACPI_LED_OFF));
+-}
+-
+-static void light_sysfs_set(struct led_classdev *led_cdev,
++static int light_sysfs_set(struct led_classdev *led_cdev,
+ 			enum led_brightness brightness)
+ {
+-	struct tpacpi_led_classdev *data =
+-		container_of(led_cdev,
+-			     struct tpacpi_led_classdev,
+-			     led_classdev);
+-	data->new_state = (brightness != LED_OFF) ?
+-				TPACPI_LED_ON : TPACPI_LED_OFF;
+-	queue_work(tpacpi_wq, &data->work);
++	return light_set_status((brightness != LED_OFF) ?
++				TPACPI_LED_ON : TPACPI_LED_OFF);
+ }
+ 
+ static enum led_brightness light_sysfs_get(struct led_classdev *led_cdev)
+@@ -5385,7 +5353,7 @@ static enum led_brightness light_sysfs_get(struct led_classdev *led_cdev)
+ static struct tpacpi_led_classdev tpacpi_led_thinklight = {
+ 	.led_classdev = {
+ 		.name		= "tpacpi::thinklight",
+-		.brightness_set	= &light_sysfs_set,
++		.brightness_set_blocking = &light_sysfs_set,
+ 		.brightness_get	= &light_sysfs_get,
+ 	}
+ };
+@@ -5401,7 +5369,6 @@ static int __init light_init(struct ibm_init_struct *iibm)
+ 		TPACPI_ACPIHANDLE_INIT(lght);
+ 	}
+ 	TPACPI_ACPIHANDLE_INIT(cmos);
+-	INIT_WORK(&tpacpi_led_thinklight.work, light_set_status_worker);
+ 
+ 	/* light not supported on 570, 600e/x, 770e, 770x, G4x, R30, R31 */
+ 	tp_features.light = (cmos_handle || lght_handle) && !ledb_handle;
+@@ -5435,7 +5402,6 @@ static int __init light_init(struct ibm_init_struct *iibm)
+ static void light_exit(void)
+ {
+ 	led_classdev_unregister(&tpacpi_led_thinklight.led_classdev);
+-	flush_workqueue(tpacpi_wq);
+ }
+ 
+ static int light_read(struct seq_file *m)
+@@ -5702,29 +5668,21 @@ static int led_set_status(const unsigned int led,
+ 	return rc;
+ }
+ 
+-static void led_set_status_worker(struct work_struct *work)
+-{
+-	struct tpacpi_led_classdev *data =
+-		container_of(work, struct tpacpi_led_classdev, work);
+-
+-	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
+-		led_set_status(data->led, data->new_state);
+-}
+-
+-static void led_sysfs_set(struct led_classdev *led_cdev,
++static int led_sysfs_set(struct led_classdev *led_cdev,
+ 			enum led_brightness brightness)
+ {
+ 	struct tpacpi_led_classdev *data = container_of(led_cdev,
+ 			     struct tpacpi_led_classdev, led_classdev);
++	enum led_status_t new_state;
+ 
+ 	if (brightness == LED_OFF)
+-		data->new_state = TPACPI_LED_OFF;
++		new_state = TPACPI_LED_OFF;
+ 	else if (tpacpi_led_state_cache[data->led] != TPACPI_LED_BLINK)
+-		data->new_state = TPACPI_LED_ON;
++		new_state = TPACPI_LED_ON;
+ 	else
+-		data->new_state = TPACPI_LED_BLINK;
++		new_state = TPACPI_LED_BLINK;
+ 
+-	queue_work(tpacpi_wq, &data->work);
++	return led_set_status(data->led, new_state);
+ }
+ 
+ static int led_sysfs_blink_set(struct led_classdev *led_cdev,
+@@ -5741,10 +5699,7 @@ static int led_sysfs_blink_set(struct led_classdev *led_cdev,
+ 	} else if ((*delay_on != 500) || (*delay_off != 500))
+ 		return -EINVAL;
+ 
+-	data->new_state = TPACPI_LED_BLINK;
+-	queue_work(tpacpi_wq, &data->work);
+-
+-	return 0;
++	return led_set_status(data->led, TPACPI_LED_BLINK);
+ }
+ 
+ static enum led_brightness led_sysfs_get(struct led_classdev *led_cdev)
+@@ -5773,7 +5728,6 @@ static void led_exit(void)
+ 			led_classdev_unregister(&tpacpi_leds[i].led_classdev);
+ 	}
+ 
+-	flush_workqueue(tpacpi_wq);
+ 	kfree(tpacpi_leds);
+ }
+ 
+@@ -5787,7 +5741,7 @@ static int __init tpacpi_init_led(unsigned int led)
+ 	if (!tpacpi_led_names[led])
+ 		return 0;
+ 
+-	tpacpi_leds[led].led_classdev.brightness_set = &led_sysfs_set;
++	tpacpi_leds[led].led_classdev.brightness_set_blocking = &led_sysfs_set;
+ 	tpacpi_leds[led].led_classdev.blink_set = &led_sysfs_blink_set;
+ 	if (led_supported == TPACPI_LED_570)
+ 		tpacpi_leds[led].led_classdev.brightness_get =
+@@ -5795,8 +5749,6 @@ static int __init tpacpi_init_led(unsigned int led)
+ 
+ 	tpacpi_leds[led].led_classdev.name = tpacpi_led_names[led];
+ 
+-	INIT_WORK(&tpacpi_leds[led].work, led_set_status_worker);
+-
+ 	rc = led_classdev_register(&tpacpi_pdev->dev,
+ 				&tpacpi_leds[led].led_classdev);
+ 	if (rc < 0)
 -- 
 2.9.3
