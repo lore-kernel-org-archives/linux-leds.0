@@ -1,188 +1,105 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v8 7/7] platform/x86/dell-*: Call led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Thu,  9 Feb 2017 16:44:17 +0100
-Message-ID: <20170209154417.19040-8-hdegoede@redhat.com>
+Subject: [PATCH v8 5/7] platform/x86/dell-laptop: Refactor kbd_led_triggers_store()
+Date: Thu,  9 Feb 2017 16:44:15 +0100
+Message-ID: <20170209154417.19040-6-hdegoede@redhat.com>
 References: <20170209154417.19040-1-hdegoede@redhat.com>
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:33108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752327AbdBIQJu (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 9 Feb 2017 11:09:50 -0500
 In-Reply-To: <20170209154417.19040-1-hdegoede@redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
 Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
 
-Make dell-wmi notify on hotkey kbd brightness changes, listen for this
-in dell-laptop and call led_classdev_notify_brightness_hw_changed.
-
-This will allow userspace to monitor (poll) for brightness changes on
-these LEDs caused by the hotkey.
+Return -EINVAL immediately on invalid input, rather then doing
+the straight path in an if block and returning -EINVAL at the end
+of the function.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Changes in v2:
--Use the new dell_smbios*notify functionality
-Changes in v3:
--Simplify the if condition for calling led_notify_brightness_change
-Changes in v4:
--Adjust for dell_smbios_*_notifier to dell_laptop_*_notifier rename
-Changes in v5:
--Switch to new led-trigger based API for notifying userspace about
- keyboard backlight brightness changes.
-Changes in v6:
--Switch to new brightness_hw_changed LED class API
-Changes in v8:
--Cache last set brightness value and only call
- led_classdev_notify_brightness_hw_changed if the brightness has changed,
- this is necessary because the WMI events get triggered when we set the
- brightness ourselves too
 ---
- drivers/platform/x86/dell-laptop.c | 47 +++++++++++++++++++++++++++++++++++++-
- drivers/platform/x86/dell-wmi.c    | 14 ++++++++----
- 2 files changed, 55 insertions(+), 6 deletions(-)
+Changes in v8:
+-New patch in v8 of this patch-set
+---
+ drivers/platform/x86/dell-laptop.c | 63 +++++++++++++++++++-------------------
+ 1 file changed, 32 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 70951f3..f30938b 100644
+index 14392a0..a2913a5 100644
 --- a/drivers/platform/x86/dell-laptop.c
 +++ b/drivers/platform/x86/dell-laptop.c
-@@ -1133,6 +1133,7 @@ static u8 kbd_previous_level;
- static u8 kbd_previous_mode_bit;
- 
- static bool kbd_led_present;
-+static enum led_brightness kbd_led_brightness;
- static DEFINE_MUTEX(kbd_led_mutex);
- 
- /*
-@@ -1943,6 +1944,7 @@ static enum led_brightness kbd_led_level_get(struct led_classdev *led_cdev)
- static int kbd_led_level_set(struct led_classdev *led_cdev,
- 			     enum led_brightness value)
- {
-+	enum led_brightness new_brightness = value;
- 	struct kbd_state state;
- 	struct kbd_state new_state;
- 	u16 num;
-@@ -1971,6 +1973,8 @@ static int kbd_led_level_set(struct led_classdev *led_cdev,
- 		ret = -ENXIO;
+@@ -1660,38 +1660,39 @@ static ssize_t kbd_led_triggers_store(struct device *dev,
+ 		}
  	}
  
-+	if (ret == 0)
-+		kbd_led_brightness = new_brightness;
- out:
- 	mutex_unlock(&kbd_led_mutex);
- 	return ret;
-@@ -1978,6 +1982,7 @@ static int kbd_led_level_set(struct led_classdev *led_cdev,
+-	if (trigger_bit != -1) {
+-		new_state = state;
+-		if (trigger[0] == '+')
+-			new_state.triggers |= BIT(trigger_bit);
+-		else {
+-			new_state.triggers &= ~BIT(trigger_bit);
+-			/* NOTE: trackstick bit (2) must be disabled when
+-			 *       disabling touchpad bit (1), otherwise touchpad
+-			 *       bit (1) will not be disabled */
+-			if (trigger_bit == 1)
+-				new_state.triggers &= ~BIT(2);
+-		}
+-		if ((kbd_info.triggers & new_state.triggers) !=
+-		    new_state.triggers)
+-			return -EINVAL;
+-		if (new_state.triggers && !triggers_enabled) {
+-			new_state.mode_bit = KBD_MODE_BIT_TRIGGER;
+-			kbd_set_level(&new_state, kbd_previous_level);
+-		} else if (new_state.triggers == 0) {
+-			kbd_set_level(&new_state, 0);
+-		}
+-		if (!(kbd_info.modes & BIT(new_state.mode_bit)))
+-			return -EINVAL;
+-		ret = kbd_set_state_safe(&new_state, &state);
+-		if (ret)
+-			return ret;
+-		if (new_state.mode_bit != KBD_MODE_BIT_OFF)
+-			kbd_previous_mode_bit = new_state.mode_bit;
+-		return count;
+-	}
++	if (trigger_bit == -1)
++		return -EINVAL;
  
- static struct led_classdev kbd_led = {
- 	.name           = "dell::kbd_backlight",
-+	.flags		= LED_BRIGHT_HW_CHANGED,
- 	.brightness_set_blocking = kbd_led_level_set,
- 	.brightness_get = kbd_led_level_get,
- 	.groups         = kbd_led_groups,
-@@ -1985,6 +1990,8 @@ static struct led_classdev kbd_led = {
- 
- static int __init kbd_led_init(struct device *dev)
- {
-+	int ret;
-+
- 	kbd_init();
- 	if (!kbd_led_present)
- 		return -ENODEV;
-@@ -1996,7 +2003,12 @@ static int __init kbd_led_init(struct device *dev)
- 		if (kbd_led.max_brightness)
- 			kbd_led.max_brightness--;
- 	}
--	return led_classdev_register(dev, &kbd_led);
-+	kbd_led_brightness = kbd_led_level_get(&kbd_led);
-+	ret = led_classdev_register(dev, &kbd_led);
-+	if (ret)
-+		kbd_led_present = false;
-+
-+	return ret;
- }
- 
- static void brightness_set_exit(struct led_classdev *led_cdev,
-@@ -2013,6 +2025,36 @@ static void kbd_led_exit(void)
- 	led_classdev_unregister(&kbd_led);
- }
- 
-+static int dell_laptop_notifier_call(struct notifier_block *nb,
-+				     unsigned long action, void *data)
-+{
-+	enum led_brightness brightness;
-+
-+	switch (action) {
-+	case DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED:
-+		if (!kbd_led_present)
-+			break;
-+
-+		mutex_lock(&kbd_led_mutex);
-+
-+		brightness = kbd_led_level_get(&kbd_led);
-+		if (kbd_led_brightness != brightness) {
-+			kbd_led_brightness = brightness;
-+			led_classdev_notify_brightness_hw_changed(&kbd_led,
-+								  brightness);
-+		}
-+
-+		mutex_unlock(&kbd_led_mutex);
-+		break;
+-	return -EINVAL;
++	new_state = state;
++	if (trigger[0] == '+')
++		new_state.triggers |= BIT(trigger_bit);
++	else {
++		new_state.triggers &= ~BIT(trigger_bit);
++		/*
++		 * NOTE: trackstick bit (2) must be disabled when
++		 *       disabling touchpad bit (1), otherwise touchpad
++		 *       bit (1) will not be disabled
++		 */
++		if (trigger_bit == 1)
++			new_state.triggers &= ~BIT(2);
 +	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block dell_laptop_notifier = {
-+	.notifier_call = dell_laptop_notifier_call,
-+};
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_buffer *buffer;
-@@ -2056,6 +2098,8 @@ static int __init dell_init(void)
- 		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
- 				    &dell_debugfs_fops);
- 
-+	dell_laptop_register_notifier(&dell_laptop_notifier);
-+
- 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
- 		return 0;
- 
-@@ -2107,6 +2151,7 @@ static int __init dell_init(void)
- 
- static void __exit dell_exit(void)
- {
-+	dell_laptop_unregister_notifier(&dell_laptop_notifier);
- 	debugfs_remove_recursive(dell_laptop_dir);
- 	if (quirks && quirks->touchpad_led)
- 		touchpad_led_exit();
-diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-index 75e6370..15740b5 100644
---- a/drivers/platform/x86/dell-wmi.c
-+++ b/drivers/platform/x86/dell-wmi.c
-@@ -297,11 +297,11 @@ static const struct key_entry dell_wmi_keymap_type_0011[] __initconst = {
- 	{ KE_IGNORE, 0xfff1, { KEY_RESERVED } },
- 
- 	/* Keyboard backlight level changed */
--	{ KE_IGNORE, 0x01e1, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ea, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02eb, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02ec, { KEY_RESERVED } },
--	{ KE_IGNORE, 0x02f6, { KEY_RESERVED } },
-+	{ KE_IGNORE, 0x01e1, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ea, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02eb, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02ec, { KEY_KBDILLUMTOGGLE } },
-+	{ KE_IGNORE, 0x02f6, { KEY_KBDILLUMTOGGLE } },
- };
- 
- static struct input_dev *dell_wmi_input_dev;
-@@ -329,6 +329,10 @@ static void dell_wmi_process_key(int type, int code)
- 	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
- 		return;
- 
-+	if (key->keycode == KEY_KBDILLUMTOGGLE)
-+		dell_laptop_call_notifier(
-+			DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED, NULL);
-+
- 	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
++	if ((kbd_info.triggers & new_state.triggers) !=
++	    new_state.triggers)
++		return -EINVAL;
++	if (new_state.triggers && !triggers_enabled) {
++		new_state.mode_bit = KBD_MODE_BIT_TRIGGER;
++		kbd_set_level(&new_state, kbd_previous_level);
++	} else if (new_state.triggers == 0) {
++		kbd_set_level(&new_state, 0);
++	}
++	if (!(kbd_info.modes & BIT(new_state.mode_bit)))
++		return -EINVAL;
++	ret = kbd_set_state_safe(&new_state, &state);
++	if (ret)
++		return ret;
++	if (new_state.mode_bit != KBD_MODE_BIT_OFF)
++		kbd_previous_mode_bit = new_state.mode_bit;
++	return count;
  }
  
+ static ssize_t kbd_led_triggers_show(struct device *dev,
 -- 
 2.9.3
