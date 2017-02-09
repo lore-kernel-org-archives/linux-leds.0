@@ -1,81 +1,120 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] leds-pwm: the startup brightness can be specified
-Date: Thu, 9 Feb 2017 22:31:10 +0100
-Message-ID: <c4aebca4-d5a1-aaa7-d69b-8d0e4d4d8ba8@gmail.com>
-References: <aed1129a-993a-91d9-7b14-13c3424ee0f4@solutionsradio.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <aed1129a-993a-91d9-7b14-13c3424ee0f4-Cb7RZHV19h6nMLx/lKYAZdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jelle Martijn Kok <jmkok-i3KCcyIX/XtmR6Xm/wNWPw@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Paulo Costa <me@paulo.costa.nom.br>
+Subject: [PATCH v2] leds/trigger/cpu: Add LED trigger for all CPUs aggregated
+Date: Thu,  9 Feb 2017 21:07:35 -0200
+Message-ID: <20170209230735.27007-1-me@paulo.costa.nom.br>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33052 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751301AbdBIXKG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Feb 2017 18:10:06 -0500
+Received: by mail-qk0-f195.google.com with SMTP id 11so2813951qkl.0
+        for <linux-leds@vger.kernel.org>; Thu, 09 Feb 2017 15:09:27 -0800 (PST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Paulo Costa <me@paulo.costa.nom.br>
 
-Hi Jelle,
+Currently there is one CPU led trigger per cpu ('cpu0', 'cpu1', ...)
 
-Thanks for the patch.
+This patch adds a new trigger, 'cpu', with brightness proportional to
+the number of active CPUs.
 
-On 02/09/2017 03:00 PM, Jelle Martijn Kok wrote:
-> Upto now the leds-pwm are either on or off at startup. This allows the
-> dts to specify the startup brightness
-> 
-> Signed-off-by: Jelle Martijn Kok <jmkok-i3KCcyIX/XtmR6Xm/wNWPw@public.gmane.org>
-> ---
->  drivers/leds/leds-pwm.c  | 5 ++++-
->  include/linux/leds_pwm.h | 1 +
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index a9145aa..4799f36 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -97,7 +97,7 @@ static int led_pwm_add(struct device *dev, struct
-> led_pwm_priv *priv,
->      led_data->active_low = led->active_low;
->      led_data->cdev.name = led->name;
->      led_data->cdev.default_trigger = led->default_trigger;
-> -    led_data->cdev.brightness = LED_OFF;
-> +    led_data->cdev.brightness = led->default_brightness;
->      led_data->cdev.max_brightness = led->max_brightness;
->      led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
->  @@ -159,6 +159,9 @@ static int led_pwm_create_of(struct device *dev,
-> struct led_pwm_priv *priv)
->          led.active_low = of_property_read_bool(child, "active-low");
->          of_property_read_u32(child, "max-brightness",
->                       &led.max_brightness);
-> +        led.default_brightness = LED_OFF;
-> +        of_property_read_u32(child, "brightness",
-> +                     &led.default_brightness);
+If multiple brightness levels aren't supported on the LED,
+it effectively indicates if there is any CPU active.
 
-At first you would have to submit a patch for
-Documentation/devicetree/bindings/leds/common.txt that would add
-brightness property. The question is whether it is really needed?
-You can set brightness from userspace via sysfs API.
+This is particularly useful on tiny linux boards with more CPU cores than LED pins.
 
-By the way, I have a question to DT maintainers: is DT a proper
-place for defining this type of configuration that can be set via
-userspace scripts? Shouldn't DT describe only hardware properties and
-constraints resulting from board configuration?
+Signed-off-by: Paulo Costa <me@paulo.costa.nom.br>
+CC: Pavel Machek <pavel@ucw.cz>
+---
+v2:
+* Fix concurrency issues during initialization
+* Round up the division
+---
+ drivers/leds/trigger/ledtrig-cpu.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
->           ret = led_pwm_add(dev, priv, &led, child);
->          if (ret) {
-> diff --git a/include/linux/leds_pwm.h b/include/linux/leds_pwm.h
-> index a65e964..7e70438 100644
-> --- a/include/linux/leds_pwm.h
-> +++ b/include/linux/leds_pwm.h
-> @@ -11,6 +11,7 @@ struct led_pwm {
->      u8         active_low;
->      unsigned     max_brightness;
->      unsigned    pwm_period_ns;
-> +    unsigned     default_brightness;
->  };
->   struct led_pwm_platform_data {
-
+diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
+index 22f0634..06ec733 100644
+--- a/drivers/leds/trigger/ledtrig-cpu.c
++++ b/drivers/leds/trigger/ledtrig-cpu.c
+@@ -31,12 +31,16 @@
+ #define MAX_NAME_LEN	8
+ 
+ struct led_trigger_cpu {
++	bool is_active;
+ 	char name[MAX_NAME_LEN];
+ 	struct led_trigger *_trig;
+ };
+ 
+ static DEFINE_PER_CPU(struct led_trigger_cpu, cpu_trig);
+ 
++static struct led_trigger *trig_cpu_all;
++static atomic_t num_active_cpus = ATOMIC_INIT(0);
++
+ /**
+  * ledtrig_cpu - emit a CPU event as a trigger
+  * @evt: CPU event to be emitted
+@@ -47,26 +51,46 @@ static DEFINE_PER_CPU(struct led_trigger_cpu, cpu_trig);
+ void ledtrig_cpu(enum cpu_led_event ledevt)
+ {
+ 	struct led_trigger_cpu *trig = this_cpu_ptr(&cpu_trig);
++	bool is_active = trig->is_active;
+ 
+ 	/* Locate the correct CPU LED */
+ 	switch (ledevt) {
+ 	case CPU_LED_IDLE_END:
+ 	case CPU_LED_START:
+ 		/* Will turn the LED on, max brightness */
+-		led_trigger_event(trig->_trig, LED_FULL);
++		is_active = true;
+ 		break;
+ 
+ 	case CPU_LED_IDLE_START:
+ 	case CPU_LED_STOP:
+ 	case CPU_LED_HALTED:
+ 		/* Will turn the LED off */
+-		led_trigger_event(trig->_trig, LED_OFF);
++		is_active = false;
+ 		break;
+ 
+ 	default:
+ 		/* Will leave the LED as it is */
+ 		break;
+ 	}
++
++	if (is_active != trig->is_active) {
++		unsigned int active_cpus;
++		unsigned int total_cpus;
++
++		/* Update trigger state */
++		trig->is_active = is_active;
++		atomic_add(is_active ? 1 : -1, &num_active_cpus);
++		active_cpus = atomic_read(&num_active_cpus);
++		total_cpus = num_present_cpus();
++
++		led_trigger_event(trig->_trig,
++			is_active ? LED_FULL : LED_OFF);
++
++
++		led_trigger_event(trig_cpu_all,
++			DIV_ROUND_UP(LED_FULL * active_cpus, total_cpus));
++
++	}
+ }
+ EXPORT_SYMBOL(ledtrig_cpu);
+ 
+@@ -113,6 +137,11 @@ static int __init ledtrig_cpu_init(void)
+ 	BUILD_BUG_ON(CONFIG_NR_CPUS > 9999);
+ 
+ 	/*
++	 * Registering a trigger for all CPUs.
++	 */
++	led_trigger_register_simple("cpu", &trig_cpu_all);
++
++	/*
+ 	 * Registering CPU led trigger for each CPU core here
+ 	 * ignores CPU hotplug, but after this CPU hotplug works
+ 	 * fine with this trigger.
 -- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.9.3
