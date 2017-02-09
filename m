@@ -1,65 +1,97 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: pca9532: Extend pca9532 device tree support
-Date: Thu, 9 Feb 2017 15:24:08 +0100
-Message-ID: <20170209142408.GB23373@xo-6d-61-c0.localdomain>
-References: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
- <f1649865-87cd-eb1c-68de-184990f64661@gmail.com>
- <c23bd1c9-934b-c1c6-e9ff-8d2041c52d09@ltec.ch>
- <725c338e-af4c-1332-6c27-462c2dc1b97f@gmail.com>
- <3bfc9206-18c7-470b-ca53-d7bdb9a34f0a@ltec.ch>
+Subject: Re: [PATCH] leds/trigger/cpu: Add LED trigger for all CPUs aggregated
+Date: Thu, 9 Feb 2017 15:25:17 +0100
+Message-ID: <20170209142517.GA23284@xo-6d-61-c0.localdomain>
+References: <20170208000239.29152-1-me@paulo.costa.nom.br>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60817 "EHLO
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60870 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbdBIOY7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Feb 2017 09:24:59 -0500
+        with ESMTP id S1753157AbdBIO0d (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Feb 2017 09:26:33 -0500
 Content-Disposition: inline
-In-Reply-To: <3bfc9206-18c7-470b-ca53-d7bdb9a34f0a@ltec.ch>
+In-Reply-To: <20170208000239.29152-1-me@paulo.costa.nom.br>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Felix Brack <fb@ltec.ch>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, riku.voipio@iki.fi, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, f.brack@eets.ch
+To: Paulo Costa <me@paulo.costa.nom.br>
+Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
 
 Hi!
 
-> >> This might be a misunderstanding. My patch is not meant to replace
-> >> anything for driving the LEDs once the kernel is fully loaded. The LED
-> >> subsystem offers quite a lot of possibilities to do this.
-> >>
-> >> My patch mainly deals with the 'default' state of the LEDs immediately
-> >> when the driver gets loaded.
-> >> Here is an example: I have a system with a LED named 'RUN' which is
-> >> turned on steady by U-Boot (indicating "system booting"). When the
-> >> PCA9532 driver loads this LED gets turned off due to initialization.
-> >> However I would like it remain lit until later a script will make that
-> >> 'RUN' LED blink (indicating "system running"). This script will of
-> >> course use the existing LED subsystem to do so. To keep the 'RUN' LED
-> >> lit I need the DT property 'default-state' being set to 'PCA9532_KEEP'.
-> > 
-> > It looks like all you need is default-state property.
+> Currently there is one CPU led trigger per cpu ('cpu0', 'cpu1', ...)
 > 
-> For the example with keeping the 'RUN' led turned on, yes. However I
-> would have to configure PSC and PWM registers to make the 'RUN' LED
-> blink, for example.
+> This patch adds a new trigger, 'cpu', with brightness proportional to
+>  the number of active CPUs.
+> 
+> If multiple brightness levels aren't supported on the LED,
+> it effectively indicates if there is any CPU active.
+> 
+> This is particularly useful on tiny linux boards with more CPU cores than LED pins.
 
-Is that really useful? Keeping the state from u-boot until userland can take
-control... ok, why not.
+> +static struct led_trigger_cpu_all all_trig;
+> +
+> +static bool ledtrig_cpu_initialized;
 
-If it is useful, right, you can do it. But it will have to be generic for all
-the LEDs, not like this.
+Umm. This variable looks quite like a lock, but without barriers etc. Are you sure that is ok?
 
-You'll want something like
+> @@ -47,26 +57,44 @@ static DEFINE_PER_CPU(struct led_trigger_cpu, cpu_trig);
+>  void ledtrig_cpu(enum cpu_led_event ledevt)
+>  {
+>  	struct led_trigger_cpu *trig = this_cpu_ptr(&cpu_trig);
+> +	bool is_active = trig->cpu_is_active;
+> +
+> +	/* Ignore if this is being called before initialization. */
+> +	if (!ledtrig_cpu_initialized)
+> +		return;
+>  
+>  	/* Locate the correct CPU LED */
+>  	switch (ledevt) {
+>  	case CPU_LED_IDLE_END:
+>  	case CPU_LED_START:
+>  		/* Will turn the LED on, max brightness */
+> -		led_trigger_event(trig->_trig, LED_FULL);
+> +		is_active = true;
+>  		break;
+>  
+>  	case CPU_LED_IDLE_START:
+>  	case CPU_LED_STOP:
+>  	case CPU_LED_HALTED:
+>  		/* Will turn the LED off */
+> -		led_trigger_event(trig->_trig, LED_OFF);
+> +		is_active = false;
+>  		break;
+>  
+>  	default:
+>  		/* Will leave the LED as it is */
+>  		break;
+>  	}
+> +
+> +	if (is_active != trig->cpu_is_active) {
+> +		// Update trigger state
 
-default_trigger = blinking;
-default_trigger_parameters = < 2 sec on, 1 sec off >;
+C style comments, please.
 
-or something. You may want to coordinate with the USB LED people, which want
-default triggers with parametrs.
+> +		trig->cpu_is_active = is_active;
+> +		atomic_add(is_active ? 1 : -1, &all_trig.num_active);
 
-									Pavel
+In particular, are you sure that with all the activity during startup, it can't get
+desynchronized?
 
+Hmm. is_initialized should be atomic_t, or set_bit should be used. But it will
+probably not cause problems in practice.
 
+I guess the trigger actually will self-synchronize with the actual CPU state,
+eventually. So I guess it is ok, but...
+
+> +		led_trigger_event(all_trig._trig,
+> +			LED_FULL * atomic_read(&all_trig.num_active) /
+> +			num_present_cpus());
+
+DIV_ROUND_UP? :-)
+
+THanks,
 									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
