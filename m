@@ -1,120 +1,71 @@
-From: Paulo Costa <me@paulo.costa.nom.br>
-Subject: [PATCH v2] leds/trigger/cpu: Add LED trigger for all CPUs aggregated
-Date: Thu,  9 Feb 2017 21:07:35 -0200
-Message-ID: <20170209230735.27007-1-me@paulo.costa.nom.br>
+From: Felix Brack <fb@ltec.ch>
+Subject: Re: [PATCH] leds: pca9532: Extend pca9532 device tree support
+Date: Fri, 10 Feb 2017 17:26:32 +0100
+Message-ID: <1e470346-3394-c2aa-2fa4-508928c178d2@ltec.ch>
+References: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
+ <f1649865-87cd-eb1c-68de-184990f64661@gmail.com>
+ <c23bd1c9-934b-c1c6-e9ff-8d2041c52d09@ltec.ch>
+ <725c338e-af4c-1332-6c27-462c2dc1b97f@gmail.com>
+ <3bfc9206-18c7-470b-ca53-d7bdb9a34f0a@ltec.ch>
+ <20170209142408.GB23373@xo-6d-61-c0.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33052 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbdBIXKG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Feb 2017 18:10:06 -0500
-Received: by mail-qk0-f195.google.com with SMTP id 11so2813951qkl.0
-        for <linux-leds@vger.kernel.org>; Thu, 09 Feb 2017 15:09:27 -0800 (PST)
+Received: from mail.ltec.ch ([95.143.48.181]:54396 "EHLO mail.ltec.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751767AbdBJQ12 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 10 Feb 2017 11:27:28 -0500
+In-Reply-To: <20170209142408.GB23373@xo-6d-61-c0.localdomain>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Paulo Costa <me@paulo.costa.nom.br>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, riku.voipio@iki.fi, rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Currently there is one CPU led trigger per cpu ('cpu0', 'cpu1', ...)
+Hello Pavel, Hello Jacek
 
-This patch adds a new trigger, 'cpu', with brightness proportional to
-the number of active CPUs.
+On 09.02.2017 15:24, Pavel Machek wrote:
+> Hi!
+> 
+>>>> This might be a misunderstanding. My patch is not meant to replace
+>>>> anything for driving the LEDs once the kernel is fully loaded. The LED
+>>>> subsystem offers quite a lot of possibilities to do this.
+>>>>
+>>>> My patch mainly deals with the 'default' state of the LEDs immediately
+>>>> when the driver gets loaded.
+>>>> Here is an example: I have a system with a LED named 'RUN' which is
+>>>> turned on steady by U-Boot (indicating "system booting"). When the
+>>>> PCA9532 driver loads this LED gets turned off due to initialization.
+>>>> However I would like it remain lit until later a script will make that
+>>>> 'RUN' LED blink (indicating "system running"). This script will of
+>>>> course use the existing LED subsystem to do so. To keep the 'RUN' LED
+>>>> lit I need the DT property 'default-state' being set to 'PCA9532_KEEP'.
+>>>
+>>> It looks like all you need is default-state property.
+>>
+>> For the example with keeping the 'RUN' led turned on, yes. However I
+>> would have to configure PSC and PWM registers to make the 'RUN' LED
+>> blink, for example.
+> 
+> Is that really useful? Keeping the state from u-boot until userland can take
+> control... ok, why not.
+> 
+> If it is useful, right, you can do it. But it will have to be generic for all
+> the LEDs, not like this.
+> 
+> You'll want something like
+> 
+> default_trigger = blinking;
+> default_trigger_parameters = < 2 sec on, 1 sec off >;
+> 
+> or something. You may want to coordinate with the USB LED people, which want
+> default triggers with parametrs.
+> 
+>
+Okay, I absolutely agree with you two. The driver should hide hardware
+specific details (such as chip registers) as much as possible. My
+approach does the opposite!
+I will submit a new version of the patch that should conform much better
+to existing DT bindings for LEDs.
 
-If multiple brightness levels aren't supported on the LED,
-it effectively indicates if there is any CPU active.
-
-This is particularly useful on tiny linux boards with more CPU cores than LED pins.
-
-Signed-off-by: Paulo Costa <me@paulo.costa.nom.br>
-CC: Pavel Machek <pavel@ucw.cz>
----
-v2:
-* Fix concurrency issues during initialization
-* Round up the division
----
- drivers/leds/trigger/ledtrig-cpu.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
-index 22f0634..06ec733 100644
---- a/drivers/leds/trigger/ledtrig-cpu.c
-+++ b/drivers/leds/trigger/ledtrig-cpu.c
-@@ -31,12 +31,16 @@
- #define MAX_NAME_LEN	8
- 
- struct led_trigger_cpu {
-+	bool is_active;
- 	char name[MAX_NAME_LEN];
- 	struct led_trigger *_trig;
- };
- 
- static DEFINE_PER_CPU(struct led_trigger_cpu, cpu_trig);
- 
-+static struct led_trigger *trig_cpu_all;
-+static atomic_t num_active_cpus = ATOMIC_INIT(0);
-+
- /**
-  * ledtrig_cpu - emit a CPU event as a trigger
-  * @evt: CPU event to be emitted
-@@ -47,26 +51,46 @@ static DEFINE_PER_CPU(struct led_trigger_cpu, cpu_trig);
- void ledtrig_cpu(enum cpu_led_event ledevt)
- {
- 	struct led_trigger_cpu *trig = this_cpu_ptr(&cpu_trig);
-+	bool is_active = trig->is_active;
- 
- 	/* Locate the correct CPU LED */
- 	switch (ledevt) {
- 	case CPU_LED_IDLE_END:
- 	case CPU_LED_START:
- 		/* Will turn the LED on, max brightness */
--		led_trigger_event(trig->_trig, LED_FULL);
-+		is_active = true;
- 		break;
- 
- 	case CPU_LED_IDLE_START:
- 	case CPU_LED_STOP:
- 	case CPU_LED_HALTED:
- 		/* Will turn the LED off */
--		led_trigger_event(trig->_trig, LED_OFF);
-+		is_active = false;
- 		break;
- 
- 	default:
- 		/* Will leave the LED as it is */
- 		break;
- 	}
-+
-+	if (is_active != trig->is_active) {
-+		unsigned int active_cpus;
-+		unsigned int total_cpus;
-+
-+		/* Update trigger state */
-+		trig->is_active = is_active;
-+		atomic_add(is_active ? 1 : -1, &num_active_cpus);
-+		active_cpus = atomic_read(&num_active_cpus);
-+		total_cpus = num_present_cpus();
-+
-+		led_trigger_event(trig->_trig,
-+			is_active ? LED_FULL : LED_OFF);
-+
-+
-+		led_trigger_event(trig_cpu_all,
-+			DIV_ROUND_UP(LED_FULL * active_cpus, total_cpus));
-+
-+	}
- }
- EXPORT_SYMBOL(ledtrig_cpu);
- 
-@@ -113,6 +137,11 @@ static int __init ledtrig_cpu_init(void)
- 	BUILD_BUG_ON(CONFIG_NR_CPUS > 9999);
- 
- 	/*
-+	 * Registering a trigger for all CPUs.
-+	 */
-+	led_trigger_register_simple("cpu", &trig_cpu_all);
-+
-+	/*
- 	 * Registering CPU led trigger for each CPU core here
- 	 * ignores CPU hotplug, but after this CPU hotplug works
- 	 * fine with this trigger.
--- 
-2.9.3
+many thanks, Felix
