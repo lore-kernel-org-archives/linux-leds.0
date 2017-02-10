@@ -1,72 +1,61 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH] leds-pwm: the startup brightness can be specified
-Date: Fri, 10 Feb 2017 21:56:14 +0100
-Message-ID: <20170210205614.GA6576@amd>
-References: <aed1129a-993a-91d9-7b14-13c3424ee0f4@solutionsradio.com>
- <c4aebca4-d5a1-aaa7-d69b-8d0e4d4d8ba8@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] leds/trigger/cpu: Add LED trigger for all CPUs
+ aggregated
+Date: Fri, 10 Feb 2017 22:25:17 +0100
+Message-ID: <20170210212517.GB7711@amd>
+References: <20170209230735.27007-1-me@paulo.costa.nom.br>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43568 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbdBJVZT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Feb 2017 16:25:19 -0500
 Content-Disposition: inline
-In-Reply-To: <c4aebca4-d5a1-aaa7-d69b-8d0e4d4d8ba8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jelle Martijn Kok <jmkok-i3KCcyIX/XtmR6Xm/wNWPw@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20170209230735.27007-1-me@paulo.costa.nom.br>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Paulo Costa <me@paulo.costa.nom.br>
+Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>
 
 
---9jxsPFA5p3P2qPhR
+--H+4ONPRPur6+Ovig
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> > +        led.default_brightness =3D LED_OFF;
-> > +        of_property_read_u32(child, "brightness",
-> > +                     &led.default_brightness);
+On Thu 2017-02-09 21:07:35, Paulo Costa wrote:
+> Currently there is one CPU led trigger per cpu ('cpu0', 'cpu1', ...)
 >=20
-> At first you would have to submit a patch for
-> Documentation/devicetree/bindings/leds/common.txt that would add
-> brightness property. The question is whether it is really needed?
-> You can set brightness from userspace via sysfs API.
+> This patch adds a new trigger, 'cpu', with brightness proportional to
+> the number of active CPUs.
 >=20
-> By the way, I have a question to DT maintainers: is DT a proper
-> place for defining this type of configuration that can be set via
-> userspace scripts? Shouldn't DT describe only hardware properties and
-> constraints resulting from board configuration?
+> If multiple brightness levels aren't supported on the LED,
+> it effectively indicates if there is any CPU active.
+>=20
+> This is particularly useful on tiny linux boards with more CPU cores than=
+ LED pins.
+>=20
+> Signed-off-by: Paulo Costa <me@paulo.costa.nom.br>
 
-Well, if the hardware has label "half - power, full - transmitting" on
-a LED, we might want kernel to turn it to half power on bootup.
-
-If you have a "disk activity LED" on a PC, it is driven by
-hardware. On arm notebook, it would be nice if "disk activity LED"
-worked, too. Preferably even when running fsck in init=3D/bin/bash
-mode. We already provide that, AFAICT, so having ability to set
-constant brightness sounds sane to me.
-
-									Pavel
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---9jxsPFA5p3P2qPhR
+--H+4ONPRPur6+Ovig
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlieKO0ACgkQMOfwapXb+vIqTQCdGHPO6QE+nyznczYBcyeukNae
-KYkAn1Mide5P1hrotu0lfzGM6x05+J8B
-=PZ7e
+iEYEARECAAYFAlieL70ACgkQMOfwapXb+vLuIgCfaV7QwnGTILca/qGEBdEbVcXp
+NGkAmgNG2xREKOHmHVt9qnMBKEcsNuq8
+=jXY5
 -----END PGP SIGNATURE-----
 
---9jxsPFA5p3P2qPhR--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--H+4ONPRPur6+Ovig--
