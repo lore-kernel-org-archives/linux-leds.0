@@ -1,32 +1,48 @@
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Subject: Re: [PATCH v2 0/6] Move dell-led to drivers/platform/x86
-Date: Mon, 13 Feb 2017 12:26:40 +0100
-Message-ID: <20170213112640.GA1188@ozzy.nask.waw.pl>
-References: <20170116132204.6421-1-kernel@kempniu.pl>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v8 3/7] platform/x86/thinkpad: Call led_classdev_notify_brightness_hw_changed
+ on kbd brightness change
+Date: Tue, 14 Feb 2017 00:52:53 +0200
+Message-ID: <CAHp75Vdt4SNOuYTkxg_F+pSs3FY8zA9jdOWG+Cp8hzxS7vtsVQ@mail.gmail.com>
+References: <20170209154417.19040-1-hdegoede@redhat.com> <20170209154417.19040-4-hdegoede@redhat.com>
+ <1486663705.1046615.875913456.7B8ADABA@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170116132204.6421-1-kernel@kempniu.pl>
+In-Reply-To: <1486663705.1046615.875913456.7B8ADABA@webmail.messagingengine.com>
 Sender: platform-driver-x86-owner@vger.kernel.org
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Anthony Wong <anthony.wong@canonical.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Platform Driver <platform-driver-x86@vger.kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi everyone,
+On Thu, Feb 9, 2017 at 8:08 PM, Henrique de Moraes Holschuh
+<hmh@hmh.eng.br> wrote:
+> On Thu, Feb 9, 2017, at 13:44, Hans de Goede wrote:
+>> Make thinkpad_acpi call led_classdev_notify_brightness_hw_changed on the
+>> kbd_led led_classdev registered by thinkpad_acpi when the kbd backlight
+>> brightness is changed through the hotkey.
+>>
+>> This will allow userspace to monitor (poll) for brightness changes on
+>> these LEDs caused by the hotkey.
+>
+> It will *often* do so, you assume the thinkpad firmware is far more well
+> behaved than it really is :-(
+>
+> It is model/bios-revision specific.  Fortunately, it should works on
+> most models, and there really isn't a better way of doing this (other
+> than adding the event to the NVRAM poll set of some very old models,
+> which is also not worth doing unless you can actually test it).
+>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
 
-It has been almost a month since I posted v2, so I hope sending a
-reminder is okay.
+Thanks, thinkpad_acpi bits are applied to testing
 
-Jaroslav, Takashi, could you please ack this patch series from the sound
-subsystem perspective?  Patches 2-4 touch it.
+>
+> --
+>   Henrique Holschuh
 
-Anthony, have you and your team perhaps had a chance to test this patch
-series on actual hardware?
 
-Thanks,
 
 -- 
-Best regards,
-Michał Kępień
+With Best Regards,
+Andy Shevchenko
