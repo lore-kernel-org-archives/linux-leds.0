@@ -1,62 +1,63 @@
-From: Willy Tarreau <w@1wt.eu>
-Subject: Re: [PATCH] leds/trigger/activity: add a system activity LED trigger
-Date: Wed, 15 Feb 2017 11:42:12 +0100
-Message-ID: <20170215104212.GC19195@1wt.eu>
-References: <1486856514-9634-1-git-send-email-w@1wt.eu>
- <20170215102426.GB29330@amd>
+From: Alex Hung <alex.hung@canonical.com>
+Subject: Re: [PATCH v2 0/6] Move dell-led to
+	drivers/platform/x86
+Date: Wed, 15 Feb 2017 19:56:52 +0800
+Message-ID: <CAJ=jqua0W3fmoJFqqVgG2Eq=9E-4toXC0UyQH3TyxZiTtNsODw@mail.gmail.com>
+References: <20170116132204.6421-1-kernel@kempniu.pl>
+ <20170213112640.GA1188@ozzy.nask.waw.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:41416 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751577AbdBOKmV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Feb 2017 05:42:21 -0500
-Content-Disposition: inline
-In-Reply-To: <20170215102426.GB29330@amd>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170213112640.GA1188@ozzy.nask.waw.pl>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Anthony Wong <anthony.wong@canonical.com>, Takashi Iwai <tiwai@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Pavel!
-
-On Wed, Feb 15, 2017 at 11:24:26AM +0100, Pavel Machek wrote:
-> On Sun 2017-02-12 00:41:54, Willy Tarreau wrote:
-> > The "activity" trigger was inspired by the heartbeat one, but aims at
-> > providing instant indication of the immediate CPU usage. Under idle
-> > condition, it flashes 10ms every second. At 100% usage, it flashes
-> > 90ms every 100ms. The blinking frequency increases from 1 to 10 Hz
-> > until either the load is high enough to saturate one CPU core or 50%
-> > load is reached on a single-core system. Then past this point only the
-> > duty cycle increases from 10 to 90%.
-> > 
-> > This results in a very visible activity reporting allowing one to
-> > immediately tell whether a machine is under load or not, making it
-> > quite suitable to be used in clusters.
-> > 
-> > Signed-off-by: Willy Tarreau <w@1wt.eu>
-> 
-> Hmm. Evil question. Why not use LEDS_TRIGGER_CPU instead?
-> 
-> Recently it gained support for "summarizing" all the cpus onto one
-> led.
-
-That's not an evil question, it's perfectly correct as it's the first
-one I've tried :-) But it's basically an all on or all off report, you
-see if the CPU is instantly being used or not. Also, when the CPU is
-idle you have no way to tell the machine is not dead, and when it's
-saturated you have no way to check it's not stuck. In the end I found
-the lack of progressivity in the visual report to be very problematic
-for my typical use case where I want to be able to spot in one second
-if a machine in my build farm is under-loaded.
-
-I thought about modifying the cpu trigger to support a different mode
-of reporting but I noticed that the two approaches are quite different
-and very likely suit different purposes, even if there can be some
-overlap for a number of use cases. I think that most users just want
-to see if something is running or draining their battery and CPU is
-better suited there. But to differenciate between 10, 50 and 100%
-usage, it really is not (at least for me).
-
-Cheers,
-Willy
+SGksCgpJIHRlc3RlZCB0aGUgcGF0Y2hlcyB3aXRoIHRoZSBmb2xsb3dpbmcgc2V0dXAuIFBsZWFz
+ZSBub3RlIEkgdGVzdGVkCnRoZSBtaWNyb3Bob25lIG11dGUgbGVkIGJ5IEdVSSwgYXMgdGhlIGhv
+dGtleSBkb2VzIG5vdCB3b3JrIG9uIHRoaXMKc3lzdGVtLgoKMS4gRG93bmxvYWRlZCB0aGUgYmVs
+b3cgcGF0Y2hlcyBmcm9tIHBhdGNod29yawoKOTUxODczNyBBd2FpdGluZyBVcHN0cmVhbSBbdjIs
+MS82XSBkZWxsLWxlZDogcmVtb3ZlIEdVSUQgY2hlY2sgZnJvbQpkZWxsX21pY211dGVfbGVkX3Nl
+dCgpCjk1MTg3NjEgQXdhaXRpbmcgVXBzdHJlYW0gW3YyLDIvNl0gQUxTQTogaGRhIC0gdXNlCmRl
+bGxfbWljbXV0ZV9sZWRfc2V0KCkgaW5zdGVhZCBvZiBkZWxsX2FwcF93bWlfbGVkX3NldCgpCjk1
+MTg3NDEgQXdhaXRpbmcgVXBzdHJlYW0gW3YyLDMvNl0gQUxTQTogaGRhIC0gcmVuYW1lCmRlbGxf
+bGVkX3NldF9mdW5jIHRvIGRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMKOTUxODcyNSBBd2FpdGlu
+ZyBVcHN0cmVhbSBbdjIsNC82XSBwbGF0Zm9ybS94ODY6IGRlbGwtbGFwdG9wOiBpbXBvcnQKZGVs
+bF9taWNtdXRlX2xlZF9zZXQoKSBmcm9tIGRyaXZlcnMvbGVkcy9kZWxsLWxlZC5jCjk1MTg3Mjcg
+QXdhaXRpbmcgVXBzdHJlYW0gW3YyLDUvNl0gZGVsbC1sZWQ6IHJlbW92ZSBjb2RlIHJlbGF0ZWQg
+dG8gbWljIG11dGUgTEVECjk1MTg3MzUgQXdhaXRpbmcgVXBzdHJlYW0gW3YyLDYvNl0gZGVsbC1s
+ZWQ6IG1vdmUgZHJpdmVyIHRvCmRyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtd21pLWxlZC5jCjk1
+MjAwNTMgQXdhaXRpbmcgVXBzdHJlYW0gW3YyLDYrLzZdIHBsYXRmb3JtL3g4NjogZGVsbC13bWkt
+bGVkOiBmaXgKY29kaW5nIHN0eWxlIGlzc3VlcwoKMi4gSW5zdGFsbGVkIFVidW50dSAxNi4xMCAo
+TGludXgga2VybmVsIDQuOCkgb24gRGVsbCBMYXRpdHVkZSA3MTgwCgogIC0+IE1pY3JvcGhvbmUg
+bXV0ZSBsZWQgd29ya3MgYXMgZXhwZWN0ZWQKCjMuIEFwcGxpZWQgZG93bmxvYWRlZCBwYXRjaGVz
+IHRvIGtlcm5lbCA0Ljggd2l0aG91dCBhbnkgY29uZmxpY3RzLCBidXQKa2VybmVsIHdpbGwgbm90
+IGNvbXBpbGUgc3VjY2Vzc2Z1bGx5LgoKNC4gSW5zdGFsbGVkIFVidW50dSBaZXN0eSBrZXJuZWwg
+KExpbnV4IGtlcm5lbCA0LjkpCgogIC0+IE1pY3JvcGhvbmUgbXV0ZSBsZWQgd29ya3MgYXMgZXhw
+ZWN0ZWQKCjUuIEFwcGxpZWQgYW5kIGNvbXBpbGVkIGRvd25sb2FkZWQgcGF0Y2hlcyB0byBrZXJu
+ZWwgNC45CgogIC0+IE1pY3JvcGhvbmUgbXV0ZSBsZWQgZG9lcyBub3Qgd29yawoKNi4gQ29tcGls
+ZWQgYW5kIGluc3RhbGxlZCBMaW51eCBrZXJuZWwgNC4xMCByYzgKCiAgLT4gTWljcm9waG9uZSBt
+dXRlIGxlZCBkb2VzIG5vdCB3b3JrCgo3LiBBcHBsaWVkIGFuZCBjb21waWxlZCBkb3dubG9hZGVk
+IHBhdGNoZXMgdG8ga2VybmVsIDQuMTAgcmM4CgogIC0+IE1pY3JvcGhvbmUgbXV0ZSBsZWQgZG9l
+cyBub3Qgd29yawoKCgpPbiBNb24sIEZlYiAxMywgMjAxNyBhdCA3OjI2IFBNLCBNaWNoYcWCIEvE
+mXBpZcWEIDxrZXJuZWxAa2VtcG5pdS5wbD4gd3JvdGU6Cj4gSGkgZXZlcnlvbmUsCj4KPiBJdCBo
+YXMgYmVlbiBhbG1vc3QgYSBtb250aCBzaW5jZSBJIHBvc3RlZCB2Miwgc28gSSBob3BlIHNlbmRp
+bmcgYQo+IHJlbWluZGVyIGlzIG9rYXkuCj4KPiBKYXJvc2xhdiwgVGFrYXNoaSwgY291bGQgeW91
+IHBsZWFzZSBhY2sgdGhpcyBwYXRjaCBzZXJpZXMgZnJvbSB0aGUgc291bmQKPiBzdWJzeXN0ZW0g
+cGVyc3BlY3RpdmU/ICBQYXRjaGVzIDItNCB0b3VjaCBpdC4KPgo+IEFudGhvbnksIGhhdmUgeW91
+IGFuZCB5b3VyIHRlYW0gcGVyaGFwcyBoYWQgYSBjaGFuY2UgdG8gdGVzdCB0aGlzIHBhdGNoCj4g
+c2VyaWVzIG9uIGFjdHVhbCBoYXJkd2FyZT8KPgo+IFRoYW5rcywKPgo+IC0tCj4gQmVzdCByZWdh
+cmRzLAo+IE1pY2hhxYIgS8SZcGllxYQKCgoKLS0gCkNoZWVycywKQWxleCBIdW5nCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGlu
+ZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXBy
+b2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
