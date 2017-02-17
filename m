@@ -1,60 +1,63 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 0/6] Move dell-led to drivers/platform/x86
-Date: Thu, 16 Feb 2017 23:11:37 +0100
-Message-ID: <afe740e3-7a66-2f2e-00f9-914e89e3f646@gmail.com>
-References: <20170116132204.6421-1-kernel@kempniu.pl>
- <20170213112640.GA1188@ozzy.nask.waw.pl>
- <CAJ=jqua0W3fmoJFqqVgG2Eq=9E-4toXC0UyQH3TyxZiTtNsODw@mail.gmail.com>
- <20170215135455.GA2014@ozzy.nask.waw.pl>
- <CAJ=jquaJazMKRsKdq=tpPNq=CBtFPcau6SW3nr738v-zTXfC4g@mail.gmail.com>
- <20170216092747.GA1350@ozzy.nask.waw.pl>
- <CAJ=jqub6AwXBeAahmMguq_h4jTkDbxxEL9=T1aLPOOENMdeLcw@mail.gmail.com>
- <20170216113258.GD1350@ozzy.nask.waw.pl>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v8 3/7] platform/x86/thinkpad: Call
+ led_classdev_notify_brightness_hw_changed on kbd brightness change
+Date: Thu, 16 Feb 2017 19:45:31 -0800
+Message-ID: <20170217034531.GB25241@wisp>
+References: <20170209154417.19040-1-hdegoede@redhat.com>
+ <20170209154417.19040-4-hdegoede@redhat.com>
+ <1486663705.1046615.875913456.7B8ADABA@webmail.messagingengine.com>
+ <CAHp75Vdt4SNOuYTkxg_F+pSs3FY8zA9jdOWG+Cp8hzxS7vtsVQ@mail.gmail.com>
+ <40d0f346-5090-ef01-4ee7-69b72458cfa2@redhat.com>
+ <CAHp75VcFE6Jxnk8qBjPst4w9DP3KLNmxzg1ZSwzz5Qw9xhdmRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170216113258.GD1350@ozzy.nask.waw.pl>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Alex Hung <alex.hung@canonical.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Anthony Wong <anthony.wong@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([65.50.211.133]:40586 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754684AbdBQDpi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 16 Feb 2017 22:45:38 -0500
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcFE6Jxnk8qBjPst4w9DP3KLNmxzg1ZSwzz5Qw9xhdmRg@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Andy Shevchenko <andy@infradead.org>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Platform Driver <platform-driver-x86@vger.kernel.org>, linux-leds@vger.kernel.org
 
-Hi Michał,
+On Tue, Feb 14, 2017 at 11:33:49AM +0200, Andy Shevchenko wrote:
+> On Tue, Feb 14, 2017 at 11:25 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> > On 13-02-17 23:52, Andy Shevchenko wrote:
+> >> On Thu, Feb 9, 2017 at 8:08 PM, Henrique de Moraes Holschuh
+> >> <hmh@hmh.eng.br> wrote:
+> >>> On Thu, Feb 9, 2017, at 13:44, Hans de Goede wrote:
+> 
+> >>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> >>> Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+> 
+> >> Thanks, thinkpad_acpi bits are applied to testing
+> 
+> > Thank you, so the Dell bits are waiting for Pali's ack ?
+> > Note the Dell bits have been tested on actual hardware too.
+> 
+> This cycle shows a flaw in my understanding of process. I've
+> mistakenly pushed couple of patches without maintainers' review. So, I
+> guess from now on we highly recommend to have a tag from actual
+> maintainer before we are going to proceed.
+> 
+> Darren, if you think this is too strong, what would be better approach?
 
-On 02/16/2017 12:32 PM, Michał Kępień wrote:
->> The led stops working after 4th patch "platform/x86: dell-laptop:
->> import dell_micmute_led_set() from drivers/leds/dell-led.c", and the
->> .config is with CONFIG_DELL_LAPTOP=m
->>
->> However, I found dell-laptop is not loaded on Latitude 7480 as its
->> chassis type is Notebook (10), instead of 8 (Portable) or 9 (Laptop).
->> That's also what I see for newer Dell laptops.
->>
->> After I added the below entry into dell-laptop, the led works fine.
->> This is not in kernel 4.10 rc8 either, and I will submit a patch for
->> it.
->>
->>         {
->>                 .matches = {
->>                         DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
->>                         DMI_MATCH(DMI_CHASSIS_TYPE, "10"), /*Notebook*/
->>                 },
->>         },
-> 
-> Great, so it all makes sense now.  Thanks once again for investigating.
-> 
-> For maintainers' convenience, I am planning to submit a v3 with all the
-> tags supplied by everyone who reviewed this series and also some minor
-> coding style tweaks suggested along the way.
-> 
-> Alex, in the light of your findings quoted above, would it be okay to
-> also apply your Tested-by to all patches?
-> 
-> Jacek, Pavel, which linux-leds branch would you like me to base v3 on?
+What I've discussed with the various driver maintainers is they should reply
+within a week, and after that, I (now Andy and/or I) will make the decision.
 
-Please use for-next branch for that.
+I try to stick to this especially for functional changes. For DMI matches and
+new HIDs and other trivial things, I usually just queue to testing and ask the
+maintainer if they have any objections, and take silence for accent :)
+
+I do think there is value in getting the patch into testing as soon as possible,
+even while waiting for the driver maintainer to get to it. The risk would be
+accidentally committing a patch a maintainer objects to. I don't think this has
+happened yet as an email from the maintainer can trigger dropping the patch. We
+can discuss how to manage the corner cases offline.
 
 -- 
-Best regards,
-Jacek Anaszewski
+Darren Hart
+Intel Open Source Technology Center
