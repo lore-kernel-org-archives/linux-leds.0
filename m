@@ -1,146 +1,95 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v3 7/7] platform/x86: dell-wmi-led: fix coding style issues
-Date: Fri, 17 Feb 2017 08:57:53 +0100
-Message-ID: <20170217075753.12702-8-kernel@kempniu.pl>
+Subject: [PATCH v3 2/7] ALSA: hda - use dell_micmute_led_set()
+	instead of dell_app_wmi_led_set()
+Date: Fri, 17 Feb 2017 08:57:48 +0100
+Message-ID: <20170217075753.12702-3-kernel@kempniu.pl>
 References: <20170217075753.12702-1-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-Sender: platform-driver-x86-owner@vger.kernel.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alex Hung <alex.hung@canonical.com>, alsa-devel@alsa-project.org, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Fix coding style issues in dell-wmi-led to make sure the module gets a
-clean start in the x86 platform driver subsystem.
-
-Signed-off-by: Michał Kępień <kernel@kempniu.pl>
----
- drivers/platform/x86/dell-wmi-led.c | 66 +++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/platform/x86/dell-wmi-led.c b/drivers/platform/x86/dell-wmi-led.c
-index d0232c7f1909..a0c7e99530ef 100644
---- a/drivers/platform/x86/dell-wmi-led.c
-+++ b/drivers/platform/x86/dell-wmi-led.c
-@@ -46,37 +46,29 @@ struct bios_args {
- 	unsigned char off_time;
- };
- 
--static int dell_led_perform_fn(u8 length,
--		u8 result_code,
--		u8 device_id,
--		u8 command,
--		u8 on_time,
--		u8 off_time)
-+static int dell_led_perform_fn(u8 length, u8 result_code, u8 device_id,
-+			       u8 command, u8 on_time, u8 off_time)
- {
--	struct bios_args *bios_return;
--	u8 return_code;
--	union acpi_object *obj;
- 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-+	struct bios_args *bios_return;
- 	struct acpi_buffer input;
-+	union acpi_object *obj;
- 	acpi_status status;
-+	u8 return_code;
- 
--	struct bios_args args;
--	args.length = length;
--	args.result_code = result_code;
--	args.device_id = device_id;
--	args.command = command;
--	args.on_time = on_time;
--	args.off_time = off_time;
-+	struct bios_args args = {
-+		.length = length,
-+		.result_code = result_code,
-+		.device_id = device_id,
-+		.command = command,
-+		.on_time = on_time,
-+		.off_time = off_time
-+	};
- 
- 	input.length = sizeof(struct bios_args);
- 	input.pointer = &args;
- 
--	status = wmi_evaluate_method(DELL_LED_BIOS_GUID,
--		1,
--		1,
--		&input,
--		&output);
--
-+	status = wmi_evaluate_method(DELL_LED_BIOS_GUID, 1, 1, &input, &output);
- 	if (ACPI_FAILURE(status))
- 		return status;
- 
-@@ -84,7 +76,7 @@ static int dell_led_perform_fn(u8 length,
- 
- 	if (!obj)
- 		return -EINVAL;
--	else if (obj->type != ACPI_TYPE_BUFFER) {
-+	if (obj->type != ACPI_TYPE_BUFFER) {
- 		kfree(obj);
- 		return -EINVAL;
- 	}
-@@ -117,8 +109,7 @@ static int led_off(void)
- 		0);			/* not used */
- }
- 
--static int led_blink(unsigned char on_eighths,
--		unsigned char off_eighths)
-+static int led_blink(unsigned char on_eighths, unsigned char off_eighths)
- {
- 	return dell_led_perform_fn(5,	/* Length of command */
- 		INTERFACE_ERROR,	/* Init to  INTERFACE_ERROR */
-@@ -129,7 +120,7 @@ static int led_blink(unsigned char on_eighths,
- }
- 
- static void dell_led_set(struct led_classdev *led_cdev,
--		enum led_brightness value)
-+			 enum led_brightness value)
- {
- 	if (value == LED_OFF)
- 		led_off();
-@@ -138,27 +129,22 @@ static void dell_led_set(struct led_classdev *led_cdev,
- }
- 
- static int dell_led_blink(struct led_classdev *led_cdev,
--		unsigned long *delay_on,
--		unsigned long *delay_off)
-+			  unsigned long *delay_on, unsigned long *delay_off)
- {
- 	unsigned long on_eighths;
- 	unsigned long off_eighths;
- 
--	/* The Dell LED delay is based on 125ms intervals.
--	   Need to round up to next interval. */
-+	/*
-+	 * The Dell LED delay is based on 125ms intervals.
-+	 * Need to round up to next interval.
-+	 */
- 
--	on_eighths = (*delay_on + 124) / 125;
--	if (0 == on_eighths)
--		on_eighths = 1;
--	if (on_eighths > 255)
--		on_eighths = 255;
-+	on_eighths = DIV_ROUND_UP(*delay_on, 125);
-+	on_eighths = clamp_t(unsigned long, on_eighths, 1, 255);
- 	*delay_on = on_eighths * 125;
- 
--	off_eighths = (*delay_off + 124) / 125;
--	if (0 == off_eighths)
--		off_eighths = 1;
--	if (off_eighths > 255)
--		off_eighths = 255;
-+	off_eighths = DIV_ROUND_UP(*delay_off, 125);
-+	off_eighths = clamp_t(unsigned long, off_eighths, 1, 255);
- 	*delay_off = off_eighths * 125;
- 
- 	led_blink(on_eighths, off_eighths);
--- 
-2.11.1
+VGhlIGRlbGxfYXBwX3dtaV9sZWRfc2V0KCkgbWV0aG9kIGludHJvZHVjZWQgaW4gY29tbWl0IGRi
+NmQ4Y2MwMDc3MwooImRlbGwtbGVkOiBhZGQgbWljIG11dGUgbGVkIGludGVyZmFjZSIpIHdhcyBp
+bXBsZW1lbnRlZCBhcyBhbiBlYXNpbHkKZXh0ZW5zaWJsZSBlbnRyeSBwb2ludCBmb3Igb3RoZXIg
+bW9kdWxlcyB0byBzZXQgdGhlIHN0YXRlIG9mIHZhcmlvdXMKTEVEcy4gIEhvd2V2ZXIsIGFsbW9z
+dCB0aHJlZSB5ZWFycyBsYXRlciBpdCBpcyBzdGlsbCBvbmx5IHVzZWQgdG8KY29udHJvbCB0aGUg
+bWljIG11dGUgTEVELCBzbyBpdCB3aWxsIGJlIHJlcGxhY2VkIHdpdGggZGlyZWN0IGNhbGxzIHRv
+CmRlbGxfbWljbXV0ZV9sZWRfc2V0KCkuCgpTaWduZWQtb2ZmLWJ5OiBNaWNoYcWCIEvEmXBpZcWE
+IDxrZXJuZWxAa2VtcG5pdS5wbD4KVGVzdGVkLWJ5OiBBbGV4IEh1bmcgPGFsZXguaHVuZ0BjYW5v
+bmljYWwuY29tPgpSZXZpZXdlZC1ieTogUGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29t
+PgpBY2tlZC1ieTogVGFrYXNoaSBJd2FpIDx0aXdhaUBzdXNlLmRlPgotLS0KIGRyaXZlcnMvbGVk
+cy9kZWxsLWxlZC5jICAgICAgICAgfCAyMCArKy0tLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9s
+aW51eC9kZWxsLWxlZC5oICAgICAgICB8ICA2ICstLS0tLQogc291bmQvcGNpL2hkYS9kZWxsX3dt
+aV9oZWxwZXIuYyB8IDEyICsrKysrKy0tLS0tLQogMyBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlv
+bnMoKyksIDI5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy9kZWxsLWxl
+ZC5jIGIvZHJpdmVycy9sZWRzL2RlbGwtbGVkLmMKaW5kZXggZThlOGY2NzIyNGMxLi5mOTAwMmQ5
+YmI3NTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbGVkcy9kZWxsLWxlZC5jCisrKyBiL2RyaXZlcnMv
+bGVkcy9kZWxsLWxlZC5jCkBAIC00Niw3ICs0Niw3IEBAIE1PRFVMRV9BTElBUygid21pOiIgREVM
+TF9MRURfQklPU19HVUlEKTsKICNkZWZpbmUgR0xPQkFMX01JQ19NVVRFX0VOQUJMRQkweDM2NAog
+I2RlZmluZSBHTE9CQUxfTUlDX01VVEVfRElTQUJMRQkweDM2NQogCi1zdGF0aWMgaW50IGRlbGxf
+bWljbXV0ZV9sZWRfc2V0KGludCBzdGF0ZSkKK2ludCBkZWxsX21pY211dGVfbGVkX3NldChpbnQg
+c3RhdGUpCiB7CiAJc3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciAqYnVmZmVyOwogCXN0
+cnVjdCBjYWxsaW5nX2ludGVyZmFjZV90b2tlbiAqdG9rZW47CkBAIC02OSwyMyArNjksNyBAQCBz
+dGF0aWMgaW50IGRlbGxfbWljbXV0ZV9sZWRfc2V0KGludCBzdGF0ZSkKIAogCXJldHVybiBzdGF0
+ZTsKIH0KLQotaW50IGRlbGxfYXBwX3dtaV9sZWRfc2V0KGludCB3aGljaGxlZCwgaW50IG9uKQot
+ewotCWludCBzdGF0ZSA9IDA7Ci0KLQlzd2l0Y2ggKHdoaWNobGVkKSB7Ci0JY2FzZSBERUxMX0xF
+RF9NSUNNVVRFOgotCQlzdGF0ZSA9IGRlbGxfbWljbXV0ZV9sZWRfc2V0KG9uKTsKLQkJYnJlYWs7
+Ci0JZGVmYXVsdDoKLQkJcHJfd2FybigibGVkIHR5cGUgJXggaXMgbm90IHN1cHBvcnRlZFxuIiwg
+d2hpY2hsZWQpOwotCQlicmVhazsKLQl9Ci0KLQlyZXR1cm4gc3RhdGU7Ci19Ci1FWFBPUlRfU1lN
+Qk9MX0dQTChkZWxsX2FwcF93bWlfbGVkX3NldCk7CitFWFBPUlRfU1lNQk9MX0dQTChkZWxsX21p
+Y211dGVfbGVkX3NldCk7CiAKIHN0cnVjdCBiaW9zX2FyZ3MgewogCXVuc2lnbmVkIGNoYXIgbGVu
+Z3RoOwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9kZWxsLWxlZC5oIGIvaW5jbHVkZS9saW51
+eC9kZWxsLWxlZC5oCmluZGV4IDcwMDliOGJlYzc3Yi4uM2YwMzNjNDgwNzFlIDEwMDY0NAotLS0g
+YS9pbmNsdWRlL2xpbnV4L2RlbGwtbGVkLmgKKysrIGIvaW5jbHVkZS9saW51eC9kZWxsLWxlZC5o
+CkBAIC0xLDEwICsxLDYgQEAKICNpZm5kZWYgX19ERUxMX0xFRF9IX18KICNkZWZpbmUgX19ERUxM
+X0xFRF9IX18KIAotZW51bSB7Ci0JREVMTF9MRURfTUlDTVVURSwKLX07Ci0KLWludCBkZWxsX2Fw
+cF93bWlfbGVkX3NldChpbnQgd2hpY2hsZWQsIGludCBvbik7CitpbnQgZGVsbF9taWNtdXRlX2xl
+ZF9zZXQoaW50IG9uKTsKIAogI2VuZGlmCmRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL2RlbGxf
+d21pX2hlbHBlci5jIGIvc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxwZXIuYwppbmRleCAxOWQ0
+MWRhNzlmOTMuLmUxMjhjODA5Njc3MiAxMDA2NDQKLS0tIGEvc291bmQvcGNpL2hkYS9kZWxsX3dt
+aV9oZWxwZXIuYworKysgYi9zb3VuZC9wY2kvaGRhL2RlbGxfd21pX2hlbHBlci5jCkBAIC02LDcg
+KzYsNyBAQAogI2luY2x1ZGUgPGxpbnV4L2RlbGwtbGVkLmg+CiAKIHN0YXRpYyBpbnQgZGVsbF9s
+ZWRfdmFsdWU7Ci1zdGF0aWMgaW50ICgqZGVsbF9sZWRfc2V0X2Z1bmMpKGludCwgaW50KTsKK3N0
+YXRpYyBpbnQgKCpkZWxsX2xlZF9zZXRfZnVuYykoaW50KTsKIHN0YXRpYyB2b2lkICgqZGVsbF9v
+bGRfY2FwX2hvb2spKHN0cnVjdCBoZGFfY29kZWMgKiwKIAkJCSAgICAgICAgIHN0cnVjdCBzbmRf
+a2NvbnRyb2wgKiwKIAkJCQkgc3RydWN0IHNuZF9jdGxfZWxlbV92YWx1ZSAqKTsKQEAgLTI3LDcg
+KzI3LDcgQEAgc3RhdGljIHZvaWQgdXBkYXRlX2RlbGxfd21pX21pY211dGVfbGVkKHN0cnVjdCBo
+ZGFfY29kZWMgKmNvZGVjLAogCQkJcmV0dXJuOwogCQlkZWxsX2xlZF92YWx1ZSA9IHZhbDsKIAkJ
+aWYgKGRlbGxfbGVkX3NldF9mdW5jKQotCQkJZGVsbF9sZWRfc2V0X2Z1bmMoREVMTF9MRURfTUlD
+TVVURSwgZGVsbF9sZWRfdmFsdWUpOworCQkJZGVsbF9sZWRfc2V0X2Z1bmMoZGVsbF9sZWRfdmFs
+dWUpOwogCX0KIH0KIApAQCAtNDAsMTQgKzQwLDE0IEBAIHN0YXRpYyB2b2lkIGFsY19maXh1cF9k
+ZWxsX3dtaShzdHJ1Y3QgaGRhX2NvZGVjICpjb2RlYywKIAogCWlmIChhY3Rpb24gPT0gSERBX0ZJ
+WFVQX0FDVF9QUk9CRSkgewogCQlpZiAoIWRlbGxfbGVkX3NldF9mdW5jKQotCQkJZGVsbF9sZWRf
+c2V0X2Z1bmMgPSBzeW1ib2xfcmVxdWVzdChkZWxsX2FwcF93bWlfbGVkX3NldCk7CisJCQlkZWxs
+X2xlZF9zZXRfZnVuYyA9IHN5bWJvbF9yZXF1ZXN0KGRlbGxfbWljbXV0ZV9sZWRfc2V0KTsKIAkJ
+aWYgKCFkZWxsX2xlZF9zZXRfZnVuYykgewotCQkJY29kZWNfd2Fybihjb2RlYywgIkZhaWxlZCB0
+byBmaW5kIGRlbGwgd21pIHN5bWJvbCBkZWxsX2FwcF93bWlfbGVkX3NldFxuIik7CisJCQljb2Rl
+Y193YXJuKGNvZGVjLCAiRmFpbGVkIHRvIGZpbmQgZGVsbCB3bWkgc3ltYm9sIGRlbGxfbWljbXV0
+ZV9sZWRfc2V0XG4iKTsKIAkJCXJldHVybjsKIAkJfQogCiAJCXJlbW92ZWZ1bmMgPSB0cnVlOwot
+CQlpZiAoZGVsbF9sZWRfc2V0X2Z1bmMoREVMTF9MRURfTUlDTVVURSwgZmFsc2UpID49IDApIHsK
+KwkJaWYgKGRlbGxfbGVkX3NldF9mdW5jKGZhbHNlKSA+PSAwKSB7CiAJCQlkZWxsX2xlZF92YWx1
+ZSA9IDA7CiAJCQlpZiAoc3BlYy0+Z2VuLm51bV9hZGNfbmlkcyA+IDEgJiYgIXNwZWMtPmdlbi5k
+eW5fYWRjX3N3aXRjaCkKIAkJCQljb2RlY19kYmcoY29kZWMsICJTa2lwcGluZyBtaWNtdXRlIExF
+RCBjb250cm9sIGR1ZSB0byBzZXZlcmFsIEFEQ3MiKTsKQEAgLTYxLDcgKzYxLDcgQEAgc3RhdGlj
+IHZvaWQgYWxjX2ZpeHVwX2RlbGxfd21pKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjLAogCX0KIAog
+CWlmIChkZWxsX2xlZF9zZXRfZnVuYyAmJiAoYWN0aW9uID09IEhEQV9GSVhVUF9BQ1RfRlJFRSB8
+fCByZW1vdmVmdW5jKSkgewotCQlzeW1ib2xfcHV0KGRlbGxfYXBwX3dtaV9sZWRfc2V0KTsKKwkJ
+c3ltYm9sX3B1dChkZWxsX21pY211dGVfbGVkX3NldCk7CiAJCWRlbGxfbGVkX3NldF9mdW5jID0g
+TlVMTDsKIAkJZGVsbF9vbGRfY2FwX2hvb2sgPSBOVUxMOwogCX0KLS0gCjIuMTEuMQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWls
+aW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2Et
+cHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVsCg==
