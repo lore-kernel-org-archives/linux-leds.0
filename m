@@ -1,76 +1,158 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v3 3/7] ALSA: hda - rename dell_led_set_func to
-	dell_micmute_led_set_func
-Date: Fri, 17 Feb 2017 08:57:49 +0100
-Message-ID: <20170217075753.12702-4-kernel@kempniu.pl>
+Subject: [PATCH v3 4/7] platform/x86: dell-laptop: import dell_micmute_led_set() from drivers/leds/dell-led.c
+Date: Fri, 17 Feb 2017 08:57:50 +0100
+Message-ID: <20170217075753.12702-5-kernel@kempniu.pl>
 References: <20170217075753.12702-1-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org, Alex Hung <alex.hung@canonical.com>, alsa-devel@alsa-project.org, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-V2l0aCBkZWxsX2FwcF93bWlfbGVkX3NldCgpIHJlcGxhY2VkIGJ5IGRlbGxfbWljbXV0ZV9sZWRf
-c2V0KCksIHJlbmFtZQp0aGUgZnVuY3Rpb24gcG9pbnRlciB0byB0aGUgbGF0dGVyIGZvciBjb25z
-aXN0ZW5jeS4KClNpZ25lZC1vZmYtYnk6IE1pY2hhxYIgS8SZcGllxYQgPGtlcm5lbEBrZW1wbml1
-LnBsPgpUZXN0ZWQtYnk6IEFsZXggSHVuZyA8YWxleC5odW5nQGNhbm9uaWNhbC5jb20+ClJldmll
-d2VkLWJ5OiBQYWxpIFJvaMOhciA8cGFsaS5yb2hhckBnbWFpbC5jb20+CkFja2VkLWJ5OiBUYWth
-c2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+Ci0tLQogc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxw
-ZXIuYyB8IDIwICsrKysrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0
-aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvc291bmQvcGNpL2hkYS9kZWxs
-X3dtaV9oZWxwZXIuYyBiL3NvdW5kL3BjaS9oZGEvZGVsbF93bWlfaGVscGVyLmMKaW5kZXggZTEy
-OGM4MDk2NzcyLi41MTYyMzdhZDZlZjUgMTAwNjQ0Ci0tLSBhL3NvdW5kL3BjaS9oZGEvZGVsbF93
-bWlfaGVscGVyLmMKKysrIGIvc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxwZXIuYwpAQCAtNiw3
-ICs2LDcgQEAKICNpbmNsdWRlIDxsaW51eC9kZWxsLWxlZC5oPgogCiBzdGF0aWMgaW50IGRlbGxf
-bGVkX3ZhbHVlOwotc3RhdGljIGludCAoKmRlbGxfbGVkX3NldF9mdW5jKShpbnQpOworc3RhdGlj
-IGludCAoKmRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMpKGludCk7CiBzdGF0aWMgdm9pZCAoKmRl
-bGxfb2xkX2NhcF9ob29rKShzdHJ1Y3QgaGRhX2NvZGVjICosCiAJCQkgICAgICAgICBzdHJ1Y3Qg
-c25kX2tjb250cm9sICosCiAJCQkJIHN0cnVjdCBzbmRfY3RsX2VsZW1fdmFsdWUgKik7CkBAIC0x
-OCw3ICsxOCw3IEBAIHN0YXRpYyB2b2lkIHVwZGF0ZV9kZWxsX3dtaV9taWNtdXRlX2xlZChzdHJ1
-Y3QgaGRhX2NvZGVjICpjb2RlYywKIAlpZiAoZGVsbF9vbGRfY2FwX2hvb2spCiAJCWRlbGxfb2xk
-X2NhcF9ob29rKGNvZGVjLCBrY29udHJvbCwgdWNvbnRyb2wpOwogCi0JaWYgKCF1Y29udHJvbCB8
-fCAhZGVsbF9sZWRfc2V0X2Z1bmMpCisJaWYgKCF1Y29udHJvbCB8fCAhZGVsbF9taWNtdXRlX2xl
-ZF9zZXRfZnVuYykKIAkJcmV0dXJuOwogCWlmIChzdHJjbXAoIkNhcHR1cmUgU3dpdGNoIiwgdWNv
-bnRyb2wtPmlkLm5hbWUpID09IDAgJiYgdWNvbnRyb2wtPmlkLmluZGV4ID09IDApIHsKIAkJLyog
-VE9ETzogSG93IGRvIEkgdmVyaWZ5IGlmIGl0J3MgYSBtb25vIG9yIHN0ZXJlbyBoZXJlPyAqLwpA
-QCAtMjYsOCArMjYsOCBAQCBzdGF0aWMgdm9pZCB1cGRhdGVfZGVsbF93bWlfbWljbXV0ZV9sZWQo
-c3RydWN0IGhkYV9jb2RlYyAqY29kZWMsCiAJCWlmICh2YWwgPT0gZGVsbF9sZWRfdmFsdWUpCiAJ
-CQlyZXR1cm47CiAJCWRlbGxfbGVkX3ZhbHVlID0gdmFsOwotCQlpZiAoZGVsbF9sZWRfc2V0X2Z1
-bmMpCi0JCQlkZWxsX2xlZF9zZXRfZnVuYyhkZWxsX2xlZF92YWx1ZSk7CisJCWlmIChkZWxsX21p
-Y211dGVfbGVkX3NldF9mdW5jKQorCQkJZGVsbF9taWNtdXRlX2xlZF9zZXRfZnVuYyhkZWxsX2xl
-ZF92YWx1ZSk7CiAJfQogfQogCkBAIC0zOSwxNSArMzksMTUgQEAgc3RhdGljIHZvaWQgYWxjX2Zp
-eHVwX2RlbGxfd21pKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjLAogCWJvb2wgcmVtb3ZlZnVuYyA9
-IGZhbHNlOwogCiAJaWYgKGFjdGlvbiA9PSBIREFfRklYVVBfQUNUX1BST0JFKSB7Ci0JCWlmICgh
-ZGVsbF9sZWRfc2V0X2Z1bmMpCi0JCQlkZWxsX2xlZF9zZXRfZnVuYyA9IHN5bWJvbF9yZXF1ZXN0
-KGRlbGxfbWljbXV0ZV9sZWRfc2V0KTsKLQkJaWYgKCFkZWxsX2xlZF9zZXRfZnVuYykgeworCQlp
-ZiAoIWRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMpCisJCQlkZWxsX21pY211dGVfbGVkX3NldF9m
-dW5jID0gc3ltYm9sX3JlcXVlc3QoZGVsbF9taWNtdXRlX2xlZF9zZXQpOworCQlpZiAoIWRlbGxf
-bWljbXV0ZV9sZWRfc2V0X2Z1bmMpIHsKIAkJCWNvZGVjX3dhcm4oY29kZWMsICJGYWlsZWQgdG8g
-ZmluZCBkZWxsIHdtaSBzeW1ib2wgZGVsbF9taWNtdXRlX2xlZF9zZXRcbiIpOwogCQkJcmV0dXJu
-OwogCQl9CiAKIAkJcmVtb3ZlZnVuYyA9IHRydWU7Ci0JCWlmIChkZWxsX2xlZF9zZXRfZnVuYyhm
-YWxzZSkgPj0gMCkgeworCQlpZiAoZGVsbF9taWNtdXRlX2xlZF9zZXRfZnVuYyhmYWxzZSkgPj0g
-MCkgewogCQkJZGVsbF9sZWRfdmFsdWUgPSAwOwogCQkJaWYgKHNwZWMtPmdlbi5udW1fYWRjX25p
-ZHMgPiAxICYmICFzcGVjLT5nZW4uZHluX2FkY19zd2l0Y2gpCiAJCQkJY29kZWNfZGJnKGNvZGVj
-LCAiU2tpcHBpbmcgbWljbXV0ZSBMRUQgY29udHJvbCBkdWUgdG8gc2V2ZXJhbCBBRENzIik7CkBA
-IC02MCw5ICs2MCw5IEBAIHN0YXRpYyB2b2lkIGFsY19maXh1cF9kZWxsX3dtaShzdHJ1Y3QgaGRh
-X2NvZGVjICpjb2RlYywKIAogCX0KIAotCWlmIChkZWxsX2xlZF9zZXRfZnVuYyAmJiAoYWN0aW9u
-ID09IEhEQV9GSVhVUF9BQ1RfRlJFRSB8fCByZW1vdmVmdW5jKSkgeworCWlmIChkZWxsX21pY211
-dGVfbGVkX3NldF9mdW5jICYmIChhY3Rpb24gPT0gSERBX0ZJWFVQX0FDVF9GUkVFIHx8IHJlbW92
-ZWZ1bmMpKSB7CiAJCXN5bWJvbF9wdXQoZGVsbF9taWNtdXRlX2xlZF9zZXQpOwotCQlkZWxsX2xl
-ZF9zZXRfZnVuYyA9IE5VTEw7CisJCWRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMgPSBOVUxMOwog
-CQlkZWxsX29sZF9jYXBfaG9vayA9IE5VTEw7CiAJfQogfQotLSAKMi4xMS4xCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcg
-bGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDovL21haWxtYW4uYWxzYS1wcm9q
-ZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+To ensure all users of dell-smbios are in drivers/platform/x86, move the
+dell_micmute_led_set() method from drivers/leds/dell-led.c to
+drivers/platform/x86/dell-laptop.c.
+
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+Tested-by: Alex Hung <alex.hung@canonical.com>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/leds/dell-led.c            | 29 -----------------------------
+ drivers/platform/x86/dell-laptop.c | 28 ++++++++++++++++++++++++++++
+ sound/pci/hda/dell_wmi_helper.c    |  6 +++---
+ 3 files changed, 31 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+index f9002d9bb757..c9cc36a7c890 100644
+--- a/drivers/leds/dell-led.c
++++ b/drivers/leds/dell-led.c
+@@ -16,7 +16,6 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/dmi.h>
+-#include <linux/dell-led.h>
+ #include "../platform/x86/dell-smbios.h"
+ 
+ MODULE_AUTHOR("Louis Davis/Jim Dailey");
+@@ -43,34 +42,6 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ #define CMD_LED_OFF	17
+ #define CMD_LED_BLINK	18
+ 
+-#define GLOBAL_MIC_MUTE_ENABLE	0x364
+-#define GLOBAL_MIC_MUTE_DISABLE	0x365
+-
+-int dell_micmute_led_set(int state)
+-{
+-	struct calling_interface_buffer *buffer;
+-	struct calling_interface_token *token;
+-
+-	if (state == 0)
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+-	else if (state == 1)
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+-	else
+-		return -EINVAL;
+-
+-	if (!token)
+-		return -ENODEV;
+-
+-	buffer = dell_smbios_get_buffer();
+-	buffer->input[0] = token->location;
+-	buffer->input[1] = token->value;
+-	dell_smbios_send_request(1, 0);
+-	dell_smbios_release_buffer();
+-
+-	return state;
+-}
+-EXPORT_SYMBOL_GPL(dell_micmute_led_set);
+-
+ struct bios_args {
+ 	unsigned char length;
+ 	unsigned char result_code;
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+index 14392a01ab36..9e35205779c0 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -29,6 +29,7 @@
+ #include <linux/mm.h>
+ #include <linux/i8042.h>
+ #include <linux/debugfs.h>
++#include <linux/dell-led.h>
+ #include <linux/seq_file.h>
+ #include <acpi/video.h>
+ #include "dell-rbtn.h"
+@@ -42,6 +43,8 @@
+ #define KBD_LED_AUTO_50_TOKEN 0x02EB
+ #define KBD_LED_AUTO_75_TOKEN 0x02EC
+ #define KBD_LED_AUTO_100_TOKEN 0x02F6
++#define GLOBAL_MIC_MUTE_ENABLE 0x0364
++#define GLOBAL_MIC_MUTE_DISABLE 0x0365
+ 
+ struct quirk_entry {
+ 	u8 touchpad_led;
+@@ -1972,6 +1975,31 @@ static void kbd_led_exit(void)
+ 	led_classdev_unregister(&kbd_led);
+ }
+ 
++int dell_micmute_led_set(int state)
++{
++	struct calling_interface_buffer *buffer;
++	struct calling_interface_token *token;
++
++	if (state == 0)
++		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
++	else if (state == 1)
++		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
++	else
++		return -EINVAL;
++
++	if (!token)
++		return -ENODEV;
++
++	buffer = dell_smbios_get_buffer();
++	buffer->input[0] = token->location;
++	buffer->input[1] = token->value;
++	dell_smbios_send_request(1, 0);
++	dell_smbios_release_buffer();
++
++	return state;
++}
++EXPORT_SYMBOL_GPL(dell_micmute_led_set);
++
+ static int __init dell_init(void)
+ {
+ 	struct calling_interface_buffer *buffer;
+diff --git a/sound/pci/hda/dell_wmi_helper.c b/sound/pci/hda/dell_wmi_helper.c
+index 516237ad6ef5..7efa7bd7acb2 100644
+--- a/sound/pci/hda/dell_wmi_helper.c
++++ b/sound/pci/hda/dell_wmi_helper.c
+@@ -2,7 +2,7 @@
+  * to be included from codec driver
+  */
+ 
+-#if IS_ENABLED(CONFIG_LEDS_DELL_NETBOOKS)
++#if IS_ENABLED(CONFIG_DELL_LAPTOP)
+ #include <linux/dell-led.h>
+ 
+ static int dell_led_value;
+@@ -67,10 +67,10 @@ static void alc_fixup_dell_wmi(struct hda_codec *codec,
+ 	}
+ }
+ 
+-#else /* CONFIG_LEDS_DELL_NETBOOKS */
++#else /* CONFIG_DELL_LAPTOP */
+ static void alc_fixup_dell_wmi(struct hda_codec *codec,
+ 			       const struct hda_fixup *fix, int action)
+ {
+ }
+ 
+-#endif /* CONFIG_LEDS_DELL_NETBOOKS */
++#endif /* CONFIG_DELL_LAPTOP */
+-- 
+2.11.1
