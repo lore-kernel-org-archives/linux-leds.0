@@ -1,158 +1,131 @@
-From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v3 4/7] platform/x86: dell-laptop: import dell_micmute_led_set() from drivers/leds/dell-led.c
-Date: Fri, 17 Feb 2017 08:57:50 +0100
-Message-ID: <20170217075753.12702-5-kernel@kempniu.pl>
-References: <20170217075753.12702-1-kernel@kempniu.pl>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 1/4] Documentation: devicetree: Add document bindings
+ for leds-mt6323
+Date: Fri, 17 Feb 2017 22:54:32 +0100
+Message-ID: <1e9d956d-791e-f9f3-324d-22f63a7542e0@gmail.com>
+References: <1487311560-26684-1-git-send-email-sean.wang@mediatek.com>
+ <1487311560-26684-2-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1487311560-26684-2-git-send-email-sean.wang@mediatek.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: sean.wang@mediatek.com, rpurdie@rpsys.net, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, keyhaede@gmail.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
 
-To ensure all users of dell-smbios are in drivers/platform/x86, move the
-dell_micmute_led_set() method from drivers/leds/dell-led.c to
-drivers/platform/x86/dell-laptop.c.
+Hi Sean,
 
-Signed-off-by: Michał Kępień <kernel@kempniu.pl>
-Tested-by: Alex Hung <alex.hung@canonical.com>
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Takashi Iwai <tiwai@suse.de>
----
- drivers/leds/dell-led.c            | 29 -----------------------------
- drivers/platform/x86/dell-laptop.c | 28 ++++++++++++++++++++++++++++
- sound/pci/hda/dell_wmi_helper.c    |  6 +++---
- 3 files changed, 31 insertions(+), 32 deletions(-)
+I've noticed some issues here, please refer below.
 
-diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-index f9002d9bb757..c9cc36a7c890 100644
---- a/drivers/leds/dell-led.c
-+++ b/drivers/leds/dell-led.c
-@@ -16,7 +16,6 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/dmi.h>
--#include <linux/dell-led.h>
- #include "../platform/x86/dell-smbios.h"
- 
- MODULE_AUTHOR("Louis Davis/Jim Dailey");
-@@ -43,34 +42,6 @@ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
- #define CMD_LED_OFF	17
- #define CMD_LED_BLINK	18
- 
--#define GLOBAL_MIC_MUTE_ENABLE	0x364
--#define GLOBAL_MIC_MUTE_DISABLE	0x365
--
--int dell_micmute_led_set(int state)
--{
--	struct calling_interface_buffer *buffer;
--	struct calling_interface_token *token;
--
--	if (state == 0)
--		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
--	else if (state == 1)
--		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
--	else
--		return -EINVAL;
--
--	if (!token)
--		return -ENODEV;
--
--	buffer = dell_smbios_get_buffer();
--	buffer->input[0] = token->location;
--	buffer->input[1] = token->value;
--	dell_smbios_send_request(1, 0);
--	dell_smbios_release_buffer();
--
--	return state;
--}
--EXPORT_SYMBOL_GPL(dell_micmute_led_set);
--
- struct bios_args {
- 	unsigned char length;
- 	unsigned char result_code;
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 14392a01ab36..9e35205779c0 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -29,6 +29,7 @@
- #include <linux/mm.h>
- #include <linux/i8042.h>
- #include <linux/debugfs.h>
-+#include <linux/dell-led.h>
- #include <linux/seq_file.h>
- #include <acpi/video.h>
- #include "dell-rbtn.h"
-@@ -42,6 +43,8 @@
- #define KBD_LED_AUTO_50_TOKEN 0x02EB
- #define KBD_LED_AUTO_75_TOKEN 0x02EC
- #define KBD_LED_AUTO_100_TOKEN 0x02F6
-+#define GLOBAL_MIC_MUTE_ENABLE 0x0364
-+#define GLOBAL_MIC_MUTE_DISABLE 0x0365
- 
- struct quirk_entry {
- 	u8 touchpad_led;
-@@ -1972,6 +1975,31 @@ static void kbd_led_exit(void)
- 	led_classdev_unregister(&kbd_led);
- }
- 
-+int dell_micmute_led_set(int state)
-+{
-+	struct calling_interface_buffer *buffer;
-+	struct calling_interface_token *token;
-+
-+	if (state == 0)
-+		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
-+	else if (state == 1)
-+		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
-+	else
-+		return -EINVAL;
-+
-+	if (!token)
-+		return -ENODEV;
-+
-+	buffer = dell_smbios_get_buffer();
-+	buffer->input[0] = token->location;
-+	buffer->input[1] = token->value;
-+	dell_smbios_send_request(1, 0);
-+	dell_smbios_release_buffer();
-+
-+	return state;
-+}
-+EXPORT_SYMBOL_GPL(dell_micmute_led_set);
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_buffer *buffer;
-diff --git a/sound/pci/hda/dell_wmi_helper.c b/sound/pci/hda/dell_wmi_helper.c
-index 516237ad6ef5..7efa7bd7acb2 100644
---- a/sound/pci/hda/dell_wmi_helper.c
-+++ b/sound/pci/hda/dell_wmi_helper.c
-@@ -2,7 +2,7 @@
-  * to be included from codec driver
-  */
- 
--#if IS_ENABLED(CONFIG_LEDS_DELL_NETBOOKS)
-+#if IS_ENABLED(CONFIG_DELL_LAPTOP)
- #include <linux/dell-led.h>
- 
- static int dell_led_value;
-@@ -67,10 +67,10 @@ static void alc_fixup_dell_wmi(struct hda_codec *codec,
- 	}
- }
- 
--#else /* CONFIG_LEDS_DELL_NETBOOKS */
-+#else /* CONFIG_DELL_LAPTOP */
- static void alc_fixup_dell_wmi(struct hda_codec *codec,
- 			       const struct hda_fixup *fix, int action)
- {
- }
- 
--#endif /* CONFIG_LEDS_DELL_NETBOOKS */
-+#endif /* CONFIG_DELL_LAPTOP */
+On 02/17/2017 07:05 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> This patch adds documentation for devicetree bindings
+> for LED support on MT6323 PMIC
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../devicetree/bindings/leds/leds-mt6323.txt       | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> new file mode 100644
+> index 0000000..a968258
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> @@ -0,0 +1,60 @@
+> +Device Tree Bindings for LED support on MT6323 PMIC
+> +
+> +MT6323 LED controller is subfunction provided by
+> +MT6323 PMIC, so the LED controller are defined as
+
+s/controller/controllers/
+
+> +the subnode of the function node provided by MT6323
+> +PMIC controller that is being defined as one kind of
+> +Muti-Function Device (MFD) using shared bus called
+> +PMIC wrapper for each subfunction to access remote
+> +MT6323 PMIC hardware.
+> +
+> +For MT6323 MFD bindings see:
+> +Documentation/devicetree/bindings/mfd/mt6397.txt
+> +For MediaTek PMIC wrapper bindings see:
+> +Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +
+> +There's sub-node for the LED controller that describes
+> +the initial behavior for each LED physically and currently
+> +only four LED sub-nodes could be supported.
+
+s/could/can/
+
+> +
+> +Required properties:
+> +- compatible : must be "mediatek,mt6323-led"
+
+s/must/Must/
+
+and please put dot at the end of sentence.
+
+> +
+> +Optional properties:
+> +- label : (optional)
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger : (optional)
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +- default-state: (optional) The initial state of the LED
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +
+> +&pwrap {
+> +	pmic: mt6323 {
+> +		compatible = "mediatek,mt6323";
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <150 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
+> +		mt6323led: mt6323led{
+> +			compatible = "mediatek,mt6323-led";
+> +
+> +			led0: isink0 {
+> +				label = "LED0"
+
+Currently these nodes refer to particular LED iout only by name,
+but AFAIK DT node parsing order is not guaranteed. Therefore
+it is customary to use reg property for defining the iout for
+which the child node is predestined.
+
+Please compare DT bindings of the other LED class devices.
+
+> +				linux,default-trigger = "timer";
+> +				default-state = "on";
+> +			};
+> +			led1: isink1 {
+> +				label = "LED1";
+> +				default-state = "on";
+> +			};
+> +			led2: isink2 {
+> +				label = "LED2";
+> +				linux,default-trigger = "timer";
+> +				default-state = "off";
+> +			};
+> +		};
+> +	};
+> +};
+> 
+
 -- 
-2.11.1
+Best regards,
+Jacek Anaszewski
