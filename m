@@ -1,95 +1,99 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v3 2/7] ALSA: hda - use dell_micmute_led_set()
-	instead of dell_app_wmi_led_set()
-Date: Fri, 17 Feb 2017 08:57:48 +0100
-Message-ID: <20170217075753.12702-3-kernel@kempniu.pl>
+Subject: [PATCH v3 5/7] dell-led: remove code related to mic mute LED
+Date: Fri, 17 Feb 2017 08:57:51 +0100
+Message-ID: <20170217075753.12702-6-kernel@kempniu.pl>
 References: <20170217075753.12702-1-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org, Alex Hung <alex.hung@canonical.com>, alsa-devel@alsa-project.org, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-VGhlIGRlbGxfYXBwX3dtaV9sZWRfc2V0KCkgbWV0aG9kIGludHJvZHVjZWQgaW4gY29tbWl0IGRi
-NmQ4Y2MwMDc3MwooImRlbGwtbGVkOiBhZGQgbWljIG11dGUgbGVkIGludGVyZmFjZSIpIHdhcyBp
-bXBsZW1lbnRlZCBhcyBhbiBlYXNpbHkKZXh0ZW5zaWJsZSBlbnRyeSBwb2ludCBmb3Igb3RoZXIg
-bW9kdWxlcyB0byBzZXQgdGhlIHN0YXRlIG9mIHZhcmlvdXMKTEVEcy4gIEhvd2V2ZXIsIGFsbW9z
-dCB0aHJlZSB5ZWFycyBsYXRlciBpdCBpcyBzdGlsbCBvbmx5IHVzZWQgdG8KY29udHJvbCB0aGUg
-bWljIG11dGUgTEVELCBzbyBpdCB3aWxsIGJlIHJlcGxhY2VkIHdpdGggZGlyZWN0IGNhbGxzIHRv
-CmRlbGxfbWljbXV0ZV9sZWRfc2V0KCkuCgpTaWduZWQtb2ZmLWJ5OiBNaWNoYcWCIEvEmXBpZcWE
-IDxrZXJuZWxAa2VtcG5pdS5wbD4KVGVzdGVkLWJ5OiBBbGV4IEh1bmcgPGFsZXguaHVuZ0BjYW5v
-bmljYWwuY29tPgpSZXZpZXdlZC1ieTogUGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29t
-PgpBY2tlZC1ieTogVGFrYXNoaSBJd2FpIDx0aXdhaUBzdXNlLmRlPgotLS0KIGRyaXZlcnMvbGVk
-cy9kZWxsLWxlZC5jICAgICAgICAgfCAyMCArKy0tLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9s
-aW51eC9kZWxsLWxlZC5oICAgICAgICB8ICA2ICstLS0tLQogc291bmQvcGNpL2hkYS9kZWxsX3dt
-aV9oZWxwZXIuYyB8IDEyICsrKysrKy0tLS0tLQogMyBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlv
-bnMoKyksIDI5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy9kZWxsLWxl
-ZC5jIGIvZHJpdmVycy9sZWRzL2RlbGwtbGVkLmMKaW5kZXggZThlOGY2NzIyNGMxLi5mOTAwMmQ5
-YmI3NTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbGVkcy9kZWxsLWxlZC5jCisrKyBiL2RyaXZlcnMv
-bGVkcy9kZWxsLWxlZC5jCkBAIC00Niw3ICs0Niw3IEBAIE1PRFVMRV9BTElBUygid21pOiIgREVM
-TF9MRURfQklPU19HVUlEKTsKICNkZWZpbmUgR0xPQkFMX01JQ19NVVRFX0VOQUJMRQkweDM2NAog
-I2RlZmluZSBHTE9CQUxfTUlDX01VVEVfRElTQUJMRQkweDM2NQogCi1zdGF0aWMgaW50IGRlbGxf
-bWljbXV0ZV9sZWRfc2V0KGludCBzdGF0ZSkKK2ludCBkZWxsX21pY211dGVfbGVkX3NldChpbnQg
-c3RhdGUpCiB7CiAJc3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciAqYnVmZmVyOwogCXN0
-cnVjdCBjYWxsaW5nX2ludGVyZmFjZV90b2tlbiAqdG9rZW47CkBAIC02OSwyMyArNjksNyBAQCBz
-dGF0aWMgaW50IGRlbGxfbWljbXV0ZV9sZWRfc2V0KGludCBzdGF0ZSkKIAogCXJldHVybiBzdGF0
-ZTsKIH0KLQotaW50IGRlbGxfYXBwX3dtaV9sZWRfc2V0KGludCB3aGljaGxlZCwgaW50IG9uKQot
-ewotCWludCBzdGF0ZSA9IDA7Ci0KLQlzd2l0Y2ggKHdoaWNobGVkKSB7Ci0JY2FzZSBERUxMX0xF
-RF9NSUNNVVRFOgotCQlzdGF0ZSA9IGRlbGxfbWljbXV0ZV9sZWRfc2V0KG9uKTsKLQkJYnJlYWs7
-Ci0JZGVmYXVsdDoKLQkJcHJfd2FybigibGVkIHR5cGUgJXggaXMgbm90IHN1cHBvcnRlZFxuIiwg
-d2hpY2hsZWQpOwotCQlicmVhazsKLQl9Ci0KLQlyZXR1cm4gc3RhdGU7Ci19Ci1FWFBPUlRfU1lN
-Qk9MX0dQTChkZWxsX2FwcF93bWlfbGVkX3NldCk7CitFWFBPUlRfU1lNQk9MX0dQTChkZWxsX21p
-Y211dGVfbGVkX3NldCk7CiAKIHN0cnVjdCBiaW9zX2FyZ3MgewogCXVuc2lnbmVkIGNoYXIgbGVu
-Z3RoOwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9kZWxsLWxlZC5oIGIvaW5jbHVkZS9saW51
-eC9kZWxsLWxlZC5oCmluZGV4IDcwMDliOGJlYzc3Yi4uM2YwMzNjNDgwNzFlIDEwMDY0NAotLS0g
-YS9pbmNsdWRlL2xpbnV4L2RlbGwtbGVkLmgKKysrIGIvaW5jbHVkZS9saW51eC9kZWxsLWxlZC5o
-CkBAIC0xLDEwICsxLDYgQEAKICNpZm5kZWYgX19ERUxMX0xFRF9IX18KICNkZWZpbmUgX19ERUxM
-X0xFRF9IX18KIAotZW51bSB7Ci0JREVMTF9MRURfTUlDTVVURSwKLX07Ci0KLWludCBkZWxsX2Fw
-cF93bWlfbGVkX3NldChpbnQgd2hpY2hsZWQsIGludCBvbik7CitpbnQgZGVsbF9taWNtdXRlX2xl
-ZF9zZXQoaW50IG9uKTsKIAogI2VuZGlmCmRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL2RlbGxf
-d21pX2hlbHBlci5jIGIvc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxwZXIuYwppbmRleCAxOWQ0
-MWRhNzlmOTMuLmUxMjhjODA5Njc3MiAxMDA2NDQKLS0tIGEvc291bmQvcGNpL2hkYS9kZWxsX3dt
-aV9oZWxwZXIuYworKysgYi9zb3VuZC9wY2kvaGRhL2RlbGxfd21pX2hlbHBlci5jCkBAIC02LDcg
-KzYsNyBAQAogI2luY2x1ZGUgPGxpbnV4L2RlbGwtbGVkLmg+CiAKIHN0YXRpYyBpbnQgZGVsbF9s
-ZWRfdmFsdWU7Ci1zdGF0aWMgaW50ICgqZGVsbF9sZWRfc2V0X2Z1bmMpKGludCwgaW50KTsKK3N0
-YXRpYyBpbnQgKCpkZWxsX2xlZF9zZXRfZnVuYykoaW50KTsKIHN0YXRpYyB2b2lkICgqZGVsbF9v
-bGRfY2FwX2hvb2spKHN0cnVjdCBoZGFfY29kZWMgKiwKIAkJCSAgICAgICAgIHN0cnVjdCBzbmRf
-a2NvbnRyb2wgKiwKIAkJCQkgc3RydWN0IHNuZF9jdGxfZWxlbV92YWx1ZSAqKTsKQEAgLTI3LDcg
-KzI3LDcgQEAgc3RhdGljIHZvaWQgdXBkYXRlX2RlbGxfd21pX21pY211dGVfbGVkKHN0cnVjdCBo
-ZGFfY29kZWMgKmNvZGVjLAogCQkJcmV0dXJuOwogCQlkZWxsX2xlZF92YWx1ZSA9IHZhbDsKIAkJ
-aWYgKGRlbGxfbGVkX3NldF9mdW5jKQotCQkJZGVsbF9sZWRfc2V0X2Z1bmMoREVMTF9MRURfTUlD
-TVVURSwgZGVsbF9sZWRfdmFsdWUpOworCQkJZGVsbF9sZWRfc2V0X2Z1bmMoZGVsbF9sZWRfdmFs
-dWUpOwogCX0KIH0KIApAQCAtNDAsMTQgKzQwLDE0IEBAIHN0YXRpYyB2b2lkIGFsY19maXh1cF9k
-ZWxsX3dtaShzdHJ1Y3QgaGRhX2NvZGVjICpjb2RlYywKIAogCWlmIChhY3Rpb24gPT0gSERBX0ZJ
-WFVQX0FDVF9QUk9CRSkgewogCQlpZiAoIWRlbGxfbGVkX3NldF9mdW5jKQotCQkJZGVsbF9sZWRf
-c2V0X2Z1bmMgPSBzeW1ib2xfcmVxdWVzdChkZWxsX2FwcF93bWlfbGVkX3NldCk7CisJCQlkZWxs
-X2xlZF9zZXRfZnVuYyA9IHN5bWJvbF9yZXF1ZXN0KGRlbGxfbWljbXV0ZV9sZWRfc2V0KTsKIAkJ
-aWYgKCFkZWxsX2xlZF9zZXRfZnVuYykgewotCQkJY29kZWNfd2Fybihjb2RlYywgIkZhaWxlZCB0
-byBmaW5kIGRlbGwgd21pIHN5bWJvbCBkZWxsX2FwcF93bWlfbGVkX3NldFxuIik7CisJCQljb2Rl
-Y193YXJuKGNvZGVjLCAiRmFpbGVkIHRvIGZpbmQgZGVsbCB3bWkgc3ltYm9sIGRlbGxfbWljbXV0
-ZV9sZWRfc2V0XG4iKTsKIAkJCXJldHVybjsKIAkJfQogCiAJCXJlbW92ZWZ1bmMgPSB0cnVlOwot
-CQlpZiAoZGVsbF9sZWRfc2V0X2Z1bmMoREVMTF9MRURfTUlDTVVURSwgZmFsc2UpID49IDApIHsK
-KwkJaWYgKGRlbGxfbGVkX3NldF9mdW5jKGZhbHNlKSA+PSAwKSB7CiAJCQlkZWxsX2xlZF92YWx1
-ZSA9IDA7CiAJCQlpZiAoc3BlYy0+Z2VuLm51bV9hZGNfbmlkcyA+IDEgJiYgIXNwZWMtPmdlbi5k
-eW5fYWRjX3N3aXRjaCkKIAkJCQljb2RlY19kYmcoY29kZWMsICJTa2lwcGluZyBtaWNtdXRlIExF
-RCBjb250cm9sIGR1ZSB0byBzZXZlcmFsIEFEQ3MiKTsKQEAgLTYxLDcgKzYxLDcgQEAgc3RhdGlj
-IHZvaWQgYWxjX2ZpeHVwX2RlbGxfd21pKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjLAogCX0KIAog
-CWlmIChkZWxsX2xlZF9zZXRfZnVuYyAmJiAoYWN0aW9uID09IEhEQV9GSVhVUF9BQ1RfRlJFRSB8
-fCByZW1vdmVmdW5jKSkgewotCQlzeW1ib2xfcHV0KGRlbGxfYXBwX3dtaV9sZWRfc2V0KTsKKwkJ
-c3ltYm9sX3B1dChkZWxsX21pY211dGVfbGVkX3NldCk7CiAJCWRlbGxfbGVkX3NldF9mdW5jID0g
-TlVMTDsKIAkJZGVsbF9vbGRfY2FwX2hvb2sgPSBOVUxMOwogCX0KLS0gCjIuMTEuMQoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWls
-aW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2Et
-cHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVsCg==
+With dell_micmute_led_set() moved to drivers/platform/x86/dell-laptop.c,
+all remnants of the mic mute LED handling code can be removed from
+drivers/leds/dell-led.c, restoring it back to the state it was in before
+commit db6d8cc00773 ("dell-led: add mic mute led interface").
+
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+Tested-by: Alex Hung <alex.hung@canonical.com>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+---
+ drivers/leds/Kconfig    |  1 -
+ drivers/leds/dell-led.c | 25 +++++++------------------
+ 2 files changed, 7 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 275f467956ee..8d1b4c9b3bda 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -467,7 +467,6 @@ config LEDS_DELL_NETBOOKS
+ 	tristate "External LED on Dell Business Netbooks"
+ 	depends on LEDS_CLASS
+ 	depends on X86 && ACPI_WMI
+-	depends on DELL_SMBIOS
+ 	help
+ 	  This adds support for the Latitude 2100 and similar
+ 	  notebooks that have an external LED.
+diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
+index c9cc36a7c890..e5c57389efd6 100644
+--- a/drivers/leds/dell-led.c
++++ b/drivers/leds/dell-led.c
+@@ -15,15 +15,12 @@
+ #include <linux/leds.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+-#include <linux/dmi.h>
+-#include "../platform/x86/dell-smbios.h"
+ 
+ MODULE_AUTHOR("Louis Davis/Jim Dailey");
+ MODULE_DESCRIPTION("Dell LED Control Driver");
+ MODULE_LICENSE("GPL");
+ 
+ #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
+-#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
+ MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
+ 
+ /* Error Result Codes: */
+@@ -184,29 +181,21 @@ static int __init dell_led_init(void)
+ {
+ 	int error = 0;
+ 
+-	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
++	if (!wmi_has_guid(DELL_LED_BIOS_GUID))
+ 		return -ENODEV;
+ 
+-	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
+-		error = led_off();
+-		if (error != 0)
+-			return -ENODEV;
+-
+-		error = led_classdev_register(NULL, &dell_led);
+-	}
++	error = led_off();
++	if (error != 0)
++		return -ENODEV;
+ 
+-	return error;
++	return led_classdev_register(NULL, &dell_led);
+ }
+ 
+ static void __exit dell_led_exit(void)
+ {
+-	int error = 0;
++	led_classdev_unregister(&dell_led);
+ 
+-	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
+-		error = led_off();
+-		if (error == 0)
+-			led_classdev_unregister(&dell_led);
+-	}
++	led_off();
+ }
+ 
+ module_init(dell_led_init);
+-- 
+2.11.1
