@@ -1,63 +1,58 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH v8 3/7] platform/x86/thinkpad: Call
- led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Thu, 16 Feb 2017 19:45:31 -0800
-Message-ID: <20170217034531.GB25241@wisp>
-References: <20170209154417.19040-1-hdegoede@redhat.com>
- <20170209154417.19040-4-hdegoede@redhat.com>
- <1486663705.1046615.875913456.7B8ADABA@webmail.messagingengine.com>
- <CAHp75Vdt4SNOuYTkxg_F+pSs3FY8zA9jdOWG+Cp8hzxS7vtsVQ@mail.gmail.com>
- <40d0f346-5090-ef01-4ee7-69b72458cfa2@redhat.com>
- <CAHp75VcFE6Jxnk8qBjPst4w9DP3KLNmxzg1ZSwzz5Qw9xhdmRg@mail.gmail.com>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH v3 0/4] leds: add leds-mt6323 support on MT7623 SoC
+Date: Fri, 17 Feb 2017 14:05:56 +0800
+Message-ID: <1487311560-26684-1-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:40586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754684AbdBQDpi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 16 Feb 2017 22:45:38 -0500
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcFE6Jxnk8qBjPst4w9DP3KLNmxzg1ZSwzz5Qw9xhdmRg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, keyhaede@gmail.com, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-leds@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Andy Shevchenko <andy@infradead.org>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Platform Driver <platform-driver-x86@vger.kernel.org>, linux-leds@vger.kernel.org
 
-On Tue, Feb 14, 2017 at 11:33:49AM +0200, Andy Shevchenko wrote:
-> On Tue, Feb 14, 2017 at 11:25 AM, Hans de Goede <hdegoede@redhat.com> wrote:
-> > On 13-02-17 23:52, Andy Shevchenko wrote:
-> >> On Thu, Feb 9, 2017 at 8:08 PM, Henrique de Moraes Holschuh
-> >> <hmh@hmh.eng.br> wrote:
-> >>> On Thu, Feb 9, 2017, at 13:44, Hans de Goede wrote:
-> 
-> >>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> >>> Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-> 
-> >> Thanks, thinkpad_acpi bits are applied to testing
-> 
-> > Thank you, so the Dell bits are waiting for Pali's ack ?
-> > Note the Dell bits have been tested on actual hardware too.
-> 
-> This cycle shows a flaw in my understanding of process. I've
-> mistakenly pushed couple of patches without maintainers' review. So, I
-> guess from now on we highly recommend to have a tag from actual
-> maintainer before we are going to proceed.
-> 
-> Darren, if you think this is too strong, what would be better approach?
+From: Sean Wang <sean.wang@mediatek.com>
 
-What I've discussed with the various driver maintainers is they should reply
-within a week, and after that, I (now Andy and/or I) will make the decision.
+MT7623 SoC uses MT6323 PMIC as the default power supply
+which has LED function insides. The patchset introduces
+the LED support for MT6323 with on, off and hardware
+dimmed and blinked and it should work on other similar
+SoCs if also using MT6323.
 
-I try to stick to this especially for functional changes. For DMI matches and
-new HIDs and other trivial things, I usually just queue to testing and ask the
-maintainer if they have any objections, and take silence for accent :)
+Changes since v1:
+- fixed typo in the comments
+- sorted include directives alphabetically
+- applied all register definitions with MT6323 prefix
+- removed the redundant structure declaration
+- fixed coding style defined in kernel doc format consistently
+- added error handling into all the occurrences where regmap APIs
+  are used
+- removed loudly debug message
+- made magic constant into meaningful macro
+- added missing mutex_destroy when module removed called
+- updated module license with GPL
+- fixed sparse warnings
 
-I do think there is value in getting the patch into testing as soon as possible,
-even while waiting for the driver maintainer to get to it. The risk would be
-accidentally committing a patch a maintainer objects to. I don't think this has
-happened yet as an email from the maintainer can trigger dropping the patch. We
-can discuss how to manage the corner cases offline.
+Changes since v2:
+- fixed the typo in devicetree Documentation
+- cleaned up the style and explanation in the comments
+- applied all macro/struct/function definitions with MT6323 prefix
+- put the logic about the setup from device tree into the function for simplicity
+
+Sean Wang (4):
+  Documentation: devicetree: Add document bindings for leds-mt6323
+  Documentation: devicetree: Add LED subnode binding for MT6323 PMIC
+  leds: Add LED support for MT6323 PMIC
+  mfd: mt6397: Add MT6323 LED support into MT6397 driver
+
+ .../devicetree/bindings/leds/leds-mt6323.txt       |  60 +++
+ Documentation/devicetree/bindings/mfd/mt6397.txt   |   4 +
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-mt6323.c                         | 470 +++++++++++++++++++++
+ drivers/mfd/mt6397-core.c                          |   4 +
+ 6 files changed, 547 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+ create mode 100644 drivers/leds/leds-mt6323.c
 
 -- 
-Darren Hart
-Intel Open Source Technology Center
+1.9.1
