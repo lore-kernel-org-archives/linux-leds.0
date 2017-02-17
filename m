@@ -1,99 +1,76 @@
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-Subject: [PATCH v3 5/7] dell-led: remove code related to mic mute LED
-Date: Fri, 17 Feb 2017 08:57:51 +0100
-Message-ID: <20170217075753.12702-6-kernel@kempniu.pl>
+Subject: [PATCH v3 3/7] ALSA: hda - rename dell_led_set_func to
+	dell_micmute_led_set_func
+Date: Fri, 17 Feb 2017 08:57:49 +0100
+Message-ID: <20170217075753.12702-4-kernel@kempniu.pl>
 References: <20170217075753.12702-1-kernel@kempniu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alex Hung <alex.hung@canonical.com>, alsa-devel@alsa-project.org, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-With dell_micmute_led_set() moved to drivers/platform/x86/dell-laptop.c,
-all remnants of the mic mute LED handling code can be removed from
-drivers/leds/dell-led.c, restoring it back to the state it was in before
-commit db6d8cc00773 ("dell-led: add mic mute led interface").
-
-Signed-off-by: Michał Kępień <kernel@kempniu.pl>
-Tested-by: Alex Hung <alex.hung@canonical.com>
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
----
- drivers/leds/Kconfig    |  1 -
- drivers/leds/dell-led.c | 25 +++++++------------------
- 2 files changed, 7 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 275f467956ee..8d1b4c9b3bda 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -467,7 +467,6 @@ config LEDS_DELL_NETBOOKS
- 	tristate "External LED on Dell Business Netbooks"
- 	depends on LEDS_CLASS
- 	depends on X86 && ACPI_WMI
--	depends on DELL_SMBIOS
- 	help
- 	  This adds support for the Latitude 2100 and similar
- 	  notebooks that have an external LED.
-diff --git a/drivers/leds/dell-led.c b/drivers/leds/dell-led.c
-index c9cc36a7c890..e5c57389efd6 100644
---- a/drivers/leds/dell-led.c
-+++ b/drivers/leds/dell-led.c
-@@ -15,15 +15,12 @@
- #include <linux/leds.h>
- #include <linux/slab.h>
- #include <linux/module.h>
--#include <linux/dmi.h>
--#include "../platform/x86/dell-smbios.h"
- 
- MODULE_AUTHOR("Louis Davis/Jim Dailey");
- MODULE_DESCRIPTION("Dell LED Control Driver");
- MODULE_LICENSE("GPL");
- 
- #define DELL_LED_BIOS_GUID "F6E4FE6E-909D-47cb-8BAB-C9F6F2F8D396"
--#define DELL_APP_GUID "A80593CE-A997-11DA-B012-B622A1EF5492"
- MODULE_ALIAS("wmi:" DELL_LED_BIOS_GUID);
- 
- /* Error Result Codes: */
-@@ -184,29 +181,21 @@ static int __init dell_led_init(void)
- {
- 	int error = 0;
- 
--	if (!wmi_has_guid(DELL_LED_BIOS_GUID) && !wmi_has_guid(DELL_APP_GUID))
-+	if (!wmi_has_guid(DELL_LED_BIOS_GUID))
- 		return -ENODEV;
- 
--	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
--		error = led_off();
--		if (error != 0)
--			return -ENODEV;
--
--		error = led_classdev_register(NULL, &dell_led);
--	}
-+	error = led_off();
-+	if (error != 0)
-+		return -ENODEV;
- 
--	return error;
-+	return led_classdev_register(NULL, &dell_led);
- }
- 
- static void __exit dell_led_exit(void)
- {
--	int error = 0;
-+	led_classdev_unregister(&dell_led);
- 
--	if (wmi_has_guid(DELL_LED_BIOS_GUID)) {
--		error = led_off();
--		if (error == 0)
--			led_classdev_unregister(&dell_led);
--	}
-+	led_off();
- }
- 
- module_init(dell_led_init);
--- 
-2.11.1
+V2l0aCBkZWxsX2FwcF93bWlfbGVkX3NldCgpIHJlcGxhY2VkIGJ5IGRlbGxfbWljbXV0ZV9sZWRf
+c2V0KCksIHJlbmFtZQp0aGUgZnVuY3Rpb24gcG9pbnRlciB0byB0aGUgbGF0dGVyIGZvciBjb25z
+aXN0ZW5jeS4KClNpZ25lZC1vZmYtYnk6IE1pY2hhxYIgS8SZcGllxYQgPGtlcm5lbEBrZW1wbml1
+LnBsPgpUZXN0ZWQtYnk6IEFsZXggSHVuZyA8YWxleC5odW5nQGNhbm9uaWNhbC5jb20+ClJldmll
+d2VkLWJ5OiBQYWxpIFJvaMOhciA8cGFsaS5yb2hhckBnbWFpbC5jb20+CkFja2VkLWJ5OiBUYWth
+c2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+Ci0tLQogc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxw
+ZXIuYyB8IDIwICsrKysrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0
+aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvc291bmQvcGNpL2hkYS9kZWxs
+X3dtaV9oZWxwZXIuYyBiL3NvdW5kL3BjaS9oZGEvZGVsbF93bWlfaGVscGVyLmMKaW5kZXggZTEy
+OGM4MDk2NzcyLi41MTYyMzdhZDZlZjUgMTAwNjQ0Ci0tLSBhL3NvdW5kL3BjaS9oZGEvZGVsbF93
+bWlfaGVscGVyLmMKKysrIGIvc291bmQvcGNpL2hkYS9kZWxsX3dtaV9oZWxwZXIuYwpAQCAtNiw3
+ICs2LDcgQEAKICNpbmNsdWRlIDxsaW51eC9kZWxsLWxlZC5oPgogCiBzdGF0aWMgaW50IGRlbGxf
+bGVkX3ZhbHVlOwotc3RhdGljIGludCAoKmRlbGxfbGVkX3NldF9mdW5jKShpbnQpOworc3RhdGlj
+IGludCAoKmRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMpKGludCk7CiBzdGF0aWMgdm9pZCAoKmRl
+bGxfb2xkX2NhcF9ob29rKShzdHJ1Y3QgaGRhX2NvZGVjICosCiAJCQkgICAgICAgICBzdHJ1Y3Qg
+c25kX2tjb250cm9sICosCiAJCQkJIHN0cnVjdCBzbmRfY3RsX2VsZW1fdmFsdWUgKik7CkBAIC0x
+OCw3ICsxOCw3IEBAIHN0YXRpYyB2b2lkIHVwZGF0ZV9kZWxsX3dtaV9taWNtdXRlX2xlZChzdHJ1
+Y3QgaGRhX2NvZGVjICpjb2RlYywKIAlpZiAoZGVsbF9vbGRfY2FwX2hvb2spCiAJCWRlbGxfb2xk
+X2NhcF9ob29rKGNvZGVjLCBrY29udHJvbCwgdWNvbnRyb2wpOwogCi0JaWYgKCF1Y29udHJvbCB8
+fCAhZGVsbF9sZWRfc2V0X2Z1bmMpCisJaWYgKCF1Y29udHJvbCB8fCAhZGVsbF9taWNtdXRlX2xl
+ZF9zZXRfZnVuYykKIAkJcmV0dXJuOwogCWlmIChzdHJjbXAoIkNhcHR1cmUgU3dpdGNoIiwgdWNv
+bnRyb2wtPmlkLm5hbWUpID09IDAgJiYgdWNvbnRyb2wtPmlkLmluZGV4ID09IDApIHsKIAkJLyog
+VE9ETzogSG93IGRvIEkgdmVyaWZ5IGlmIGl0J3MgYSBtb25vIG9yIHN0ZXJlbyBoZXJlPyAqLwpA
+QCAtMjYsOCArMjYsOCBAQCBzdGF0aWMgdm9pZCB1cGRhdGVfZGVsbF93bWlfbWljbXV0ZV9sZWQo
+c3RydWN0IGhkYV9jb2RlYyAqY29kZWMsCiAJCWlmICh2YWwgPT0gZGVsbF9sZWRfdmFsdWUpCiAJ
+CQlyZXR1cm47CiAJCWRlbGxfbGVkX3ZhbHVlID0gdmFsOwotCQlpZiAoZGVsbF9sZWRfc2V0X2Z1
+bmMpCi0JCQlkZWxsX2xlZF9zZXRfZnVuYyhkZWxsX2xlZF92YWx1ZSk7CisJCWlmIChkZWxsX21p
+Y211dGVfbGVkX3NldF9mdW5jKQorCQkJZGVsbF9taWNtdXRlX2xlZF9zZXRfZnVuYyhkZWxsX2xl
+ZF92YWx1ZSk7CiAJfQogfQogCkBAIC0zOSwxNSArMzksMTUgQEAgc3RhdGljIHZvaWQgYWxjX2Zp
+eHVwX2RlbGxfd21pKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjLAogCWJvb2wgcmVtb3ZlZnVuYyA9
+IGZhbHNlOwogCiAJaWYgKGFjdGlvbiA9PSBIREFfRklYVVBfQUNUX1BST0JFKSB7Ci0JCWlmICgh
+ZGVsbF9sZWRfc2V0X2Z1bmMpCi0JCQlkZWxsX2xlZF9zZXRfZnVuYyA9IHN5bWJvbF9yZXF1ZXN0
+KGRlbGxfbWljbXV0ZV9sZWRfc2V0KTsKLQkJaWYgKCFkZWxsX2xlZF9zZXRfZnVuYykgeworCQlp
+ZiAoIWRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMpCisJCQlkZWxsX21pY211dGVfbGVkX3NldF9m
+dW5jID0gc3ltYm9sX3JlcXVlc3QoZGVsbF9taWNtdXRlX2xlZF9zZXQpOworCQlpZiAoIWRlbGxf
+bWljbXV0ZV9sZWRfc2V0X2Z1bmMpIHsKIAkJCWNvZGVjX3dhcm4oY29kZWMsICJGYWlsZWQgdG8g
+ZmluZCBkZWxsIHdtaSBzeW1ib2wgZGVsbF9taWNtdXRlX2xlZF9zZXRcbiIpOwogCQkJcmV0dXJu
+OwogCQl9CiAKIAkJcmVtb3ZlZnVuYyA9IHRydWU7Ci0JCWlmIChkZWxsX2xlZF9zZXRfZnVuYyhm
+YWxzZSkgPj0gMCkgeworCQlpZiAoZGVsbF9taWNtdXRlX2xlZF9zZXRfZnVuYyhmYWxzZSkgPj0g
+MCkgewogCQkJZGVsbF9sZWRfdmFsdWUgPSAwOwogCQkJaWYgKHNwZWMtPmdlbi5udW1fYWRjX25p
+ZHMgPiAxICYmICFzcGVjLT5nZW4uZHluX2FkY19zd2l0Y2gpCiAJCQkJY29kZWNfZGJnKGNvZGVj
+LCAiU2tpcHBpbmcgbWljbXV0ZSBMRUQgY29udHJvbCBkdWUgdG8gc2V2ZXJhbCBBRENzIik7CkBA
+IC02MCw5ICs2MCw5IEBAIHN0YXRpYyB2b2lkIGFsY19maXh1cF9kZWxsX3dtaShzdHJ1Y3QgaGRh
+X2NvZGVjICpjb2RlYywKIAogCX0KIAotCWlmIChkZWxsX2xlZF9zZXRfZnVuYyAmJiAoYWN0aW9u
+ID09IEhEQV9GSVhVUF9BQ1RfRlJFRSB8fCByZW1vdmVmdW5jKSkgeworCWlmIChkZWxsX21pY211
+dGVfbGVkX3NldF9mdW5jICYmIChhY3Rpb24gPT0gSERBX0ZJWFVQX0FDVF9GUkVFIHx8IHJlbW92
+ZWZ1bmMpKSB7CiAJCXN5bWJvbF9wdXQoZGVsbF9taWNtdXRlX2xlZF9zZXQpOwotCQlkZWxsX2xl
+ZF9zZXRfZnVuYyA9IE5VTEw7CisJCWRlbGxfbWljbXV0ZV9sZWRfc2V0X2Z1bmMgPSBOVUxMOwog
+CQlkZWxsX29sZF9jYXBfaG9vayA9IE5VTEw7CiAJfQogfQotLSAKMi4xMS4xCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcg
+bGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDovL21haWxtYW4uYWxzYS1wcm9q
+ZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
