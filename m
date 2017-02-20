@@ -1,109 +1,84 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 0/7] Move dell-led to drivers/platform/x86
-Date: Fri, 17 Feb 2017 23:15:24 +0100
-Message-ID: <ae94a1a6-822d-68f6-3533-b9e1a4d3296a@gmail.com>
-References: <20170217075753.12702-1-kernel@kempniu.pl>
+Subject: [GIT PULL] LED updates for 4.11
+Date: Mon, 20 Feb 2017 21:46:34 +0100
+Message-ID: <1487623594-3699-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170217075753.12702-1-kernel@kempniu.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Matthew Garrett <mjg59@srcf.ucam.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Alex Hung <alex.hung@canonical.com>, linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36824 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750829AbdBTUze (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Feb 2017 15:55:34 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, hdegoede@redhat.com, arnd@arndb.de, andi.shyti@samsung.com, rafal@milecki.pl, pavel@ucw.cz
 
-Hi Michał,
+Hi Linus,
 
-Thanks for collecting relevant credits.
-I've applied the patchset to the for-4.12 branch of linux-leds.git.
+Please pull LED updates for 4.11 merge cycle.
+
+New features and improvements:
+- add new optional brightness_hw_changed attribute for the LEDs that
+  may have their brightness level changed autonomously, (outside of
+  kernel control) by hardware / firmware. The attribute supports
+  userspace notifications through POLLPRI events
+- add led_brightness_hw_mon tool that demonstrates how to use the
+  aforementioned feature
+- add LED_ON enum for LEDs that can be only turned on/off, and don't
+  allow setting other brightness levels
+- allow for adjusting heartbeat trigger blink brightness level
+
+Fixes and cleanups:
+- avoid harmless maybe-uninitialized warning in leds-ktd2692.c
+- add context to the existing example entries in common LED bindings
+  to make the documentation more clear
+
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.11
+
+for you to fetch changes up to fb3d769173d26268d7bf068094a599bb28b2ac63:
+
+  leds: ledtrig-heartbeat: Make top brightness adjustable (2017-02-14 22:20:24 +0100)
 
 Best regards,
 Jacek Anaszewski
 
-On 02/17/2017 08:57 AM, Michał Kępień wrote:
-> This patch series moves the dell-led driver from the LED subsystem to
-> the x86 platform driver subsystem.
-> 
-> The original motivation behind this effort was to move all code using
-> the dell-smbios module to the x86 platform driver subsystem.  While I
-> was investigating the possibilities to do that, it quickly emerged that
-> dell-led can and in fact should be moved to the x86 platform driver
-> subsystem in its entirety.
-> 
-> dell-led consists of two major parts:
-> 
->   - the part exposing a microphone mute LED interface, introduced in
->     db6d8cc00773 ("dell-led: add mic mute led interface"); this
->     interface is used by sound/pci/hda/dell_wmi_helper.c; while the
->     original implementation used a WMI interface, it was changed to use
->     dell-smbios in cf0d7ea33596 ("dell-led: use dell_smbios_find_token()
->     for finding mic DMI tokens") and 0c41a08e131d ("dell-led: use
->     dell_smbios_send_request() for performing SMBIOS calls"),
-> 
->   - the part handling an activity LED present in Dell Latitude 2100
->     netbooks, introduced in 72dcd8d08aca ("leds: Add Dell Business Class
->     Netbook LED driver"); it binds to a specific WMI GUID and then
->     registers a LED device which is controlled using WMI (i.e. it is
->     essentially a WMI driver).
-> 
-> Patches 1 and 2 clean up the microphone mute LED interface to minimize
-> the amount of code moved around.
-> 
-> Patch 3 updates a variable name in sound/pci/hda/dell_wmi_helper.c so
-> that it better matches that variable's role.
-> 
-> Patch 4 moves the microphone mute LED interface to
-> drivers/platform/x86/dell-laptop.c, effectively causing
-> sound/pci/hda/dell_wmi_helper.c to depend on CONFIG_DELL_LAPTOP instead
-> of CONFIG_LEDS_DELL_NETBOOKS.
-> 
-> Patch 5 reverts dell-led to the state it was in after its initial commit
-> 72dcd8d08aca ("leds: Add Dell Business Class Netbook LED driver") by
-> removing all remnants of the microphone mute LED handling code.
-> 
-> Patch 6 moves all that is left of dell-led (i.e. the activity LED part,
-> as originally implemented), to a new module which is placed in
-> drivers/platform/x86/dell-wmi-led.c.
-> 
-> Patch 7 fixes coding style issues in drivers/platform/x86/dell-wmi-led.c
-> to make sure it gets a clean start in the x86 platform driver subsystem.
-> 
-> As all patches except patch 3 in this series affect the LED subsystem,
-> the series is based on linux-leds/for-next.
-> 
-> Changes from v2:
-> 
->   - Add patch 7 fixing coding style issues (feedback from Joe and Andy
->     taken into account).
-> 
->   - Add leading zero to constants in patch 4.
-> 
->   - Move dell-led.h include one line higher in patch 4.
-> 
-> Changes from v1:
-> 
->   - Squash patches 2-4 from v1 into a single patch (#2 in v2).
-> 
->   - Add patch 3.
-> 
->   - Fix subject pattern in patch 4.
-> 
->   - Slight commit message adjustments, including fixing a typo
->     ("COFIG_LEDS_DELL_NETBOOKS") in patch 6.
-> 
->   - Remove the name of the module's source file from the header comment
->     in drivers/platform/x86/dell-wmi-led.c to avoid the need to update
->     it in the future.
-> 
->  drivers/leds/Kconfig                               |   9 --
->  drivers/leds/Makefile                              |   1 -
->  drivers/platform/x86/Kconfig                       |   8 ++
->  drivers/platform/x86/Makefile                      |   1 +
->  drivers/platform/x86/dell-laptop.c                 |  28 ++++
->  .../dell-led.c => platform/x86/dell-wmi-led.c}     | 141 +++++----------------
->  include/linux/dell-led.h                           |   6 +-
->  sound/pci/hda/dell_wmi_helper.c                    |  30 ++---
->  8 files changed, 86 insertions(+), 138 deletions(-)
->  rename drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} (56%)
-> 
+----------------------------------------------------------------
+LEDs for 4.11
+
+----------------------------------------------------------------
+Andi Shyti (1):
+      leds: add LED_ON brightness as boolean value
+
+Arnd Bergmann (1):
+      leds: ktd2692: avoid harmless maybe-uninitialized warning
+
+Hans de Goede (1):
+      leds: class: Add new optional brightness_hw_changed attribute
+
+Jacek Anaszewski (2):
+      tools/leds: Add led_hw_brightness_mon program
+      leds: ledtrig-heartbeat: Make top brightness adjustable
+
+Rafał Miłecki (1):
+      DT: leds: Improve examples by adding some context
+
+ Documentation/ABI/testing/sysfs-class-led         | 17 +++++
+ Documentation/devicetree/bindings/leds/common.txt | 28 +++++---
+ Documentation/leds/leds-class.txt                 | 15 ++++
+ drivers/leds/Kconfig                              |  9 +++
+ drivers/leds/led-class.c                          | 76 ++++++++++++++++++++
+ drivers/leds/leds-ktd2692.c                       |  8 +--
+ drivers/leds/trigger/ledtrig-heartbeat.c          | 15 ++--
+ include/linux/leds.h                              | 16 +++++
+ tools/leds/Makefile                               |  4 +-
+ tools/leds/led_hw_brightness_mon.c                | 84 +++++++++++++++++++++++
+ 10 files changed, 252 insertions(+), 20 deletions(-)
+ create mode 100644 tools/leds/led_hw_brightness_mon.c
