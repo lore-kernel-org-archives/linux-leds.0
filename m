@@ -1,84 +1,113 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED updates for 4.11
-Date: Mon, 20 Feb 2017 21:46:34 +0100
-Message-ID: <1487623594-3699-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH v8 5/7] platform/x86/dell-laptop: Refactor
+ kbd_led_triggers_store()
+Date: Tue, 21 Feb 2017 15:02:19 +0100
+Message-ID: <20170221140219.GE9795@pali>
+References: <20170209154417.19040-1-hdegoede@redhat.com>
+ <20170209154417.19040-6-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36824 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750829AbdBTUze (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Feb 2017 15:55:34 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170209154417.19040-6-hdegoede@redhat.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, hdegoede@redhat.com, arnd@arndb.de, andi.shyti@samsung.com, rafal@milecki.pl, pavel@ucw.cz
 
-Hi Linus,
+On Thursday 09 February 2017 16:44:15 Hans de Goede wrote:
+> Return -EINVAL immediately on invalid input, rather then doing
+> the straight path in an if block and returning -EINVAL at the end
+> of the function.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Please pull LED updates for 4.11 merge cycle.
+Ok, you can add my Reviewed-by.
 
-New features and improvements:
-- add new optional brightness_hw_changed attribute for the LEDs that
-  may have their brightness level changed autonomously, (outside of
-  kernel control) by hardware / firmware. The attribute supports
-  userspace notifications through POLLPRI events
-- add led_brightness_hw_mon tool that demonstrates how to use the
-  aforementioned feature
-- add LED_ON enum for LEDs that can be only turned on/off, and don't
-  allow setting other brightness levels
-- allow for adjusting heartbeat trigger blink brightness level
+> ---
+> Changes in v8:
+> -New patch in v8 of this patch-set
+> ---
+>  drivers/platform/x86/dell-laptop.c | 63 +++++++++++++++++++-------------------
+>  1 file changed, 32 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+> index 14392a0..a2913a5 100644
+> --- a/drivers/platform/x86/dell-laptop.c
+> +++ b/drivers/platform/x86/dell-laptop.c
+> @@ -1660,38 +1660,39 @@ static ssize_t kbd_led_triggers_store(struct device *dev,
+>  		}
+>  	}
+>  
+> -	if (trigger_bit != -1) {
+> -		new_state = state;
+> -		if (trigger[0] == '+')
+> -			new_state.triggers |= BIT(trigger_bit);
+> -		else {
+> -			new_state.triggers &= ~BIT(trigger_bit);
+> -			/* NOTE: trackstick bit (2) must be disabled when
+> -			 *       disabling touchpad bit (1), otherwise touchpad
+> -			 *       bit (1) will not be disabled */
+> -			if (trigger_bit == 1)
+> -				new_state.triggers &= ~BIT(2);
+> -		}
+> -		if ((kbd_info.triggers & new_state.triggers) !=
+> -		    new_state.triggers)
+> -			return -EINVAL;
+> -		if (new_state.triggers && !triggers_enabled) {
+> -			new_state.mode_bit = KBD_MODE_BIT_TRIGGER;
+> -			kbd_set_level(&new_state, kbd_previous_level);
+> -		} else if (new_state.triggers == 0) {
+> -			kbd_set_level(&new_state, 0);
+> -		}
+> -		if (!(kbd_info.modes & BIT(new_state.mode_bit)))
+> -			return -EINVAL;
+> -		ret = kbd_set_state_safe(&new_state, &state);
+> -		if (ret)
+> -			return ret;
+> -		if (new_state.mode_bit != KBD_MODE_BIT_OFF)
+> -			kbd_previous_mode_bit = new_state.mode_bit;
+> -		return count;
+> -	}
+> +	if (trigger_bit == -1)
+> +		return -EINVAL;
+>  
+> -	return -EINVAL;
+> +	new_state = state;
+> +	if (trigger[0] == '+')
+> +		new_state.triggers |= BIT(trigger_bit);
+> +	else {
+> +		new_state.triggers &= ~BIT(trigger_bit);
+> +		/*
+> +		 * NOTE: trackstick bit (2) must be disabled when
+> +		 *       disabling touchpad bit (1), otherwise touchpad
+> +		 *       bit (1) will not be disabled
+> +		 */
+> +		if (trigger_bit == 1)
+> +			new_state.triggers &= ~BIT(2);
+> +	}
+> +	if ((kbd_info.triggers & new_state.triggers) !=
+> +	    new_state.triggers)
+> +		return -EINVAL;
+> +	if (new_state.triggers && !triggers_enabled) {
+> +		new_state.mode_bit = KBD_MODE_BIT_TRIGGER;
+> +		kbd_set_level(&new_state, kbd_previous_level);
+> +	} else if (new_state.triggers == 0) {
+> +		kbd_set_level(&new_state, 0);
+> +	}
+> +	if (!(kbd_info.modes & BIT(new_state.mode_bit)))
+> +		return -EINVAL;
+> +	ret = kbd_set_state_safe(&new_state, &state);
+> +	if (ret)
+> +		return ret;
+> +	if (new_state.mode_bit != KBD_MODE_BIT_OFF)
+> +		kbd_previous_mode_bit = new_state.mode_bit;
+> +	return count;
+>  }
+>  
+>  static ssize_t kbd_led_triggers_show(struct device *dev,
 
-Fixes and cleanups:
-- avoid harmless maybe-uninitialized warning in leds-ktd2692.c
-- add context to the existing example entries in common LED bindings
-  to make the documentation more clear
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.11
-
-for you to fetch changes up to fb3d769173d26268d7bf068094a599bb28b2ac63:
-
-  leds: ledtrig-heartbeat: Make top brightness adjustable (2017-02-14 22:20:24 +0100)
-
-Best regards,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LEDs for 4.11
-
-----------------------------------------------------------------
-Andi Shyti (1):
-      leds: add LED_ON brightness as boolean value
-
-Arnd Bergmann (1):
-      leds: ktd2692: avoid harmless maybe-uninitialized warning
-
-Hans de Goede (1):
-      leds: class: Add new optional brightness_hw_changed attribute
-
-Jacek Anaszewski (2):
-      tools/leds: Add led_hw_brightness_mon program
-      leds: ledtrig-heartbeat: Make top brightness adjustable
-
-Rafał Miłecki (1):
-      DT: leds: Improve examples by adding some context
-
- Documentation/ABI/testing/sysfs-class-led         | 17 +++++
- Documentation/devicetree/bindings/leds/common.txt | 28 +++++---
- Documentation/leds/leds-class.txt                 | 15 ++++
- drivers/leds/Kconfig                              |  9 +++
- drivers/leds/led-class.c                          | 76 ++++++++++++++++++++
- drivers/leds/leds-ktd2692.c                       |  8 +--
- drivers/leds/trigger/ledtrig-heartbeat.c          | 15 ++--
- include/linux/leds.h                              | 16 +++++
- tools/leds/Makefile                               |  4 +-
- tools/leds/led_hw_brightness_mon.c                | 84 +++++++++++++++++++++++
- 10 files changed, 252 insertions(+), 20 deletions(-)
- create mode 100644 tools/leds/led_hw_brightness_mon.c
+-- 
+Pali Rohár
+pali.rohar@gmail.com
