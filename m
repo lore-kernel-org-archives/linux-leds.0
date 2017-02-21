@@ -1,202 +1,130 @@
 From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v8 7/7] platform/x86/dell-*: Call
- led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Tue, 21 Feb 2017 15:11:08 +0100
-Message-ID: <20170221141108.GG9795@pali>
+Subject: Re: [PATCH v8 4/7] platform/x86/dell-*: Add a generic dell-laptop
+ notifier chain
+Date: Tue, 21 Feb 2017 15:18:02 +0100
+Message-ID: <20170221141802.GH9795@pali>
 References: <20170209154417.19040-1-hdegoede@redhat.com>
- <20170209154417.19040-8-hdegoede@redhat.com>
+ <20170209154417.19040-5-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170209154417.19040-8-hdegoede@redhat.com>
+In-Reply-To: <20170209154417.19040-5-hdegoede@redhat.com>
 Sender: platform-driver-x86-owner@vger.kernel.org
 To: Hans de Goede <hdegoede@redhat.com>
 Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thursday 09 February 2017 16:44:17 Hans de Goede wrote:
-> Make dell-wmi notify on hotkey kbd brightness changes, listen for this
-> in dell-laptop and call led_classdev_notify_brightness_hw_changed.
+On Thursday 09 February 2017 16:44:14 Hans de Goede wrote:
+> There are several cases where events handled in one of the dell-* drivers
+> need to be propagated to another dell-* driver.
 > 
-> This will allow userspace to monitor (poll) for brightness changes on
-> these LEDs caused by the hotkey.
+> This commits add 3 generic functions:
+> dell_laptop_register_notifier()
+> dell_laptop_unregister_notifier()
+> dell_laptop_call_notifier()
 > 
+> It currently only defines 1 action:
+> DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED
+> 
+> Which is intended to propagate kbd_backlight_brightness_changed wmi
+> events from dell-wmi to dell-laptop (which contains the actual kbd
+> backlight driver).
+> 
+> These functions are put in dell-smbios as both dell-wmi and dell-laptop
+> use smbios functions and I do not want to put the notifier head in
+> either driver, as that will make the 2 drivers depend on each other.
+
+As wrote in previous emails I do not like adding some totally
+SMBIOS-unrelated functions to SMBIOS driver. Basically dell-smbios.ko is
+driver for sending smbios calls and this new laptop notifier is for
+sending events between other dell drivers.
+
+But I remember that we have not find any clean or better solution yet.
+
+So I will let this patch open for other people...
+
+If somebody has better idea how to solve this problem let us know.
+
 > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Changes in v2:
-> -Use the new dell_smbios*notify functionality
-> Changes in v3:
-> -Simplify the if condition for calling led_notify_brightness_change
-> Changes in v4:
-> -Adjust for dell_smbios_*_notifier to dell_laptop_*_notifier rename
-> Changes in v5:
-> -Switch to new led-trigger based API for notifying userspace about
->  keyboard backlight brightness changes.
-> Changes in v6:
-> -Switch to new brightness_hw_changed LED class API
-> Changes in v8:
-> -Cache last set brightness value and only call
->  led_classdev_notify_brightness_hw_changed if the brightness has changed,
->  this is necessary because the WMI events get triggered when we set the
->  brightness ourselves too
-
-NAK. This does not work. Brightness can and already is handled also by
-userspace application from Dell libsmbios package. Not every brightness
-change is going via kernel driver and so new variable kbd_led_brightness
-contains just random value.
-
 > ---
->  drivers/platform/x86/dell-laptop.c | 47 +++++++++++++++++++++++++++++++++++++-
->  drivers/platform/x86/dell-wmi.c    | 14 ++++++++----
->  2 files changed, 55 insertions(+), 6 deletions(-)
+> Changes in v2:
+> -This is a new patch in v2 of this patch-set
+> Changes in v3:
+> -No changes
+> Changes in v4:
+> -Rename functions from dell_smbios_*_notifier to dell_laptop_*_notifier
+> Changes in v5:
+> -Dropped due to new led-trigger based approach making this unnecessary
+> Changes in v6:
+> -Re-introduced as led-trigger based approach got nacked
+> Changes in v8:
+> -Change from atomic to blocking notifier as some of the called notifier
+>  callbacks may take a mutex
+> ---
+>  drivers/platform/x86/dell-smbios.c | 20 ++++++++++++++++++++
+>  drivers/platform/x86/dell-smbios.h | 11 +++++++++++
+>  2 files changed, 31 insertions(+)
 > 
-> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-> index 70951f3..f30938b 100644
-> --- a/drivers/platform/x86/dell-laptop.c
-> +++ b/drivers/platform/x86/dell-laptop.c
-> @@ -1133,6 +1133,7 @@ static u8 kbd_previous_level;
->  static u8 kbd_previous_mode_bit;
->  
->  static bool kbd_led_present;
-> +static enum led_brightness kbd_led_brightness;
->  static DEFINE_MUTEX(kbd_led_mutex);
->  
->  /*
-> @@ -1943,6 +1944,7 @@ static enum led_brightness kbd_led_level_get(struct led_classdev *led_cdev)
->  static int kbd_led_level_set(struct led_classdev *led_cdev,
->  			     enum led_brightness value)
->  {
-> +	enum led_brightness new_brightness = value;
->  	struct kbd_state state;
->  	struct kbd_state new_state;
->  	u16 num;
-> @@ -1971,6 +1973,8 @@ static int kbd_led_level_set(struct led_classdev *led_cdev,
->  		ret = -ENXIO;
->  	}
->  
-> +	if (ret == 0)
-> +		kbd_led_brightness = new_brightness;
->  out:
->  	mutex_unlock(&kbd_led_mutex);
->  	return ret;
-> @@ -1978,6 +1982,7 @@ static int kbd_led_level_set(struct led_classdev *led_cdev,
->  
->  static struct led_classdev kbd_led = {
->  	.name           = "dell::kbd_backlight",
-> +	.flags		= LED_BRIGHT_HW_CHANGED,
->  	.brightness_set_blocking = kbd_led_level_set,
->  	.brightness_get = kbd_led_level_get,
->  	.groups         = kbd_led_groups,
-> @@ -1985,6 +1990,8 @@ static struct led_classdev kbd_led = {
->  
->  static int __init kbd_led_init(struct device *dev)
->  {
-> +	int ret;
-> +
->  	kbd_init();
->  	if (!kbd_led_present)
->  		return -ENODEV;
-> @@ -1996,7 +2003,12 @@ static int __init kbd_led_init(struct device *dev)
->  		if (kbd_led.max_brightness)
->  			kbd_led.max_brightness--;
->  	}
-> -	return led_classdev_register(dev, &kbd_led);
-> +	kbd_led_brightness = kbd_led_level_get(&kbd_led);
-> +	ret = led_classdev_register(dev, &kbd_led);
-> +	if (ret)
-> +		kbd_led_present = false;
-> +
-> +	return ret;
+> diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
+> index d2412ab..0a57234 100644
+> --- a/drivers/platform/x86/dell-smbios.c
+> +++ b/drivers/platform/x86/dell-smbios.c
+> @@ -105,6 +105,26 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
 >  }
+>  EXPORT_SYMBOL_GPL(dell_smbios_find_token);
 >  
->  static void brightness_set_exit(struct led_classdev *led_cdev,
-> @@ -2013,6 +2025,36 @@ static void kbd_led_exit(void)
->  	led_classdev_unregister(&kbd_led);
->  }
->  
-> +static int dell_laptop_notifier_call(struct notifier_block *nb,
-> +				     unsigned long action, void *data)
+> +static BLOCKING_NOTIFIER_HEAD(dell_laptop_chain_head);
+> +
+> +int dell_laptop_register_notifier(struct notifier_block *nb)
 > +{
-> +	enum led_brightness brightness;
-> +
-> +	switch (action) {
-> +	case DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED:
-> +		if (!kbd_led_present)
-> +			break;
-> +
-> +		mutex_lock(&kbd_led_mutex);
-> +
-> +		brightness = kbd_led_level_get(&kbd_led);
-> +		if (kbd_led_brightness != brightness) {
-> +			kbd_led_brightness = brightness;
-> +			led_classdev_notify_brightness_hw_changed(&kbd_led,
-> +								  brightness);
-> +		}
-> +
-> +		mutex_unlock(&kbd_led_mutex);
-> +		break;
-> +	}
-> +
-> +	return NOTIFY_OK;
+> +	return blocking_notifier_chain_register(&dell_laptop_chain_head, nb);
 > +}
+> +EXPORT_SYMBOL_GPL(dell_laptop_register_notifier);
 > +
-> +static struct notifier_block dell_laptop_notifier = {
-> +	.notifier_call = dell_laptop_notifier_call,
+> +int dell_laptop_unregister_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_unregister(&dell_laptop_chain_head, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(dell_laptop_unregister_notifier);
+> +
+> +void dell_laptop_call_notifier(unsigned long action, void *data)
+> +{
+> +	blocking_notifier_call_chain(&dell_laptop_chain_head, action, data);
+> +}
+> +EXPORT_SYMBOL_GPL(dell_laptop_call_notifier);
+> +
+>  static void __init parse_da_table(const struct dmi_header *dm)
+>  {
+>  	/* Final token is a terminator, so we don't want to copy it */
+> diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+> index ec7d40a..45cbc22 100644
+> --- a/drivers/platform/x86/dell-smbios.h
+> +++ b/drivers/platform/x86/dell-smbios.h
+> @@ -16,6 +16,8 @@
+>  #ifndef _DELL_SMBIOS_H_
+>  #define _DELL_SMBIOS_H_
+>  
+> +struct notifier_block;
+> +
+>  /* This structure will be modified by the firmware when we enter
+>   * system management mode, hence the volatiles */
+>  
+> @@ -43,4 +45,13 @@ void dell_smbios_release_buffer(void);
+>  void dell_smbios_send_request(int class, int select);
+>  
+>  struct calling_interface_token *dell_smbios_find_token(int tokenid);
+> +
+> +enum dell_laptop_notifier_actions {
+> +	DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED,
 > +};
 > +
->  static int __init dell_init(void)
->  {
->  	struct calling_interface_buffer *buffer;
-> @@ -2056,6 +2098,8 @@ static int __init dell_init(void)
->  		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
->  				    &dell_debugfs_fops);
->  
-> +	dell_laptop_register_notifier(&dell_laptop_notifier);
+> +int dell_laptop_register_notifier(struct notifier_block *nb);
+> +int dell_laptop_unregister_notifier(struct notifier_block *nb);
+> +void dell_laptop_call_notifier(unsigned long action, void *data);
 > +
->  	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
->  		return 0;
->  
-> @@ -2107,6 +2151,7 @@ static int __init dell_init(void)
->  
->  static void __exit dell_exit(void)
->  {
-> +	dell_laptop_unregister_notifier(&dell_laptop_notifier);
->  	debugfs_remove_recursive(dell_laptop_dir);
->  	if (quirks && quirks->touchpad_led)
->  		touchpad_led_exit();
-> diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-> index 75e6370..15740b5 100644
-> --- a/drivers/platform/x86/dell-wmi.c
-> +++ b/drivers/platform/x86/dell-wmi.c
-> @@ -297,11 +297,11 @@ static const struct key_entry dell_wmi_keymap_type_0011[] __initconst = {
->  	{ KE_IGNORE, 0xfff1, { KEY_RESERVED } },
->  
->  	/* Keyboard backlight level changed */
-> -	{ KE_IGNORE, 0x01e1, { KEY_RESERVED } },
-> -	{ KE_IGNORE, 0x02ea, { KEY_RESERVED } },
-> -	{ KE_IGNORE, 0x02eb, { KEY_RESERVED } },
-> -	{ KE_IGNORE, 0x02ec, { KEY_RESERVED } },
-> -	{ KE_IGNORE, 0x02f6, { KEY_RESERVED } },
-> +	{ KE_IGNORE, 0x01e1, { KEY_KBDILLUMTOGGLE } },
-> +	{ KE_IGNORE, 0x02ea, { KEY_KBDILLUMTOGGLE } },
-> +	{ KE_IGNORE, 0x02eb, { KEY_KBDILLUMTOGGLE } },
-> +	{ KE_IGNORE, 0x02ec, { KEY_KBDILLUMTOGGLE } },
-> +	{ KE_IGNORE, 0x02f6, { KEY_KBDILLUMTOGGLE } },
->  };
->  
->  static struct input_dev *dell_wmi_input_dev;
-> @@ -329,6 +329,10 @@ static void dell_wmi_process_key(int type, int code)
->  	if (type == 0x0000 && code == 0xe025 && !wmi_requires_smbios_request)
->  		return;
->  
-> +	if (key->keycode == KEY_KBDILLUMTOGGLE)
-> +		dell_laptop_call_notifier(
-> +			DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED, NULL);
-> +
->  	sparse_keymap_report_entry(dell_wmi_input_dev, key, 1, true);
->  }
->  
+>  #endif
 
 -- 
 Pali Rohár
