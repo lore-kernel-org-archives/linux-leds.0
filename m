@@ -1,52 +1,114 @@
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: LED devices & poll() for brightness attribute
-Date: Wed, 22 Feb 2017 13:39:29 +0100
-Message-ID: <20170222123929.GD21558@pali>
-References: <20170222090630.GB21558@pali>
- <20170222122557.GA3807@amd>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH] leds: core: use deferred probing if default trigger isn't
+ available yet
+Date: Wed, 22 Feb 2017 21:35:52 +0100
+Message-ID: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34855 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754723AbdBVMjd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Feb 2017 07:39:33 -0500
-Content-Disposition: inline
-In-Reply-To: <20170222122557.GA3807@amd>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34313 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934225AbdBVUm4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Feb 2017 15:42:56 -0500
+Received: by mail-wr0-f195.google.com with SMTP id 89so1818848wrr.1
+        for <linux-leds@vger.kernel.org>; Wed, 22 Feb 2017 12:42:55 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Wednesday 22 February 2017 13:25:57 Pavel Machek wrote:
-> Hi!
-> 
-> > But this support is useful just for one single central userspace
-> > application which will control all leds in system other application
-> > which will change state by /sys/class/leds/ will de-synchronize that one
-> > central application.
-> 
-> Yes. Does it matter for some real use case?
+When registering a LED device we have the option to set a default trigger.
+Depending on load order of drivers this trigger may not be available yet.
+(affected LED device in my case: a DT-configured GPIO LED)
+So far if the default trigger can't be found this error is silently
+ignored.
 
-Yes. E.g. systemd has already some support for changing leds. And I do
-not want to be forced to use systemd (or any other specific application)
-just because it already controls leds.
+Let's change this to return EPROBE_DEFER if the default trigger can't be
+found. This gives the system the chance to probe the LED device later
+once the trigger is available.
 
-And my own application for controlling leds should know current state of
-them if it is possible.
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+---
+ drivers/leds/led-class.c    |  6 +++++-
+ drivers/leds/led-triggers.c | 11 ++++++++---
+ include/linux/leds.h        |  5 +++--
+ 3 files changed, 16 insertions(+), 6 deletions(-)
 
-> > So I think new ABI is not sufficient and I would propose to add poll()
-> > support also for changes done by userspace, write() to attribute
-> > /sys/class/leds/.../brightness.
-> 
-> Not easily possible, as we have triggers, and this was discussed in
-> great great lengths before. Please go through that discussion.
-
-Without triggers and blinking it should be possible.
-
-Just notify only when some application do echo > brightness.
-
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index f2b0a80a..efe4f5a3 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -295,7 +295,11 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 	led_init_core(led_cdev);
+ 
+ #ifdef CONFIG_LEDS_TRIGGERS
+-	led_trigger_set_default(led_cdev);
++	ret = led_trigger_set_default(led_cdev);
++	if (ret) {
++		led_classdev_unregister(led_cdev);
++		return ret;
++	}
+ #endif
+ 
+ 	dev_dbg(parent, "Registered led device: %s\n",
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 431123b0..bad9e986 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -157,21 +157,26 @@ void led_trigger_remove(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_remove);
+ 
+-void led_trigger_set_default(struct led_classdev *led_cdev)
++int led_trigger_set_default(struct led_classdev *led_cdev)
+ {
+ 	struct led_trigger *trig;
++	int ret = -EPROBE_DEFER;
+ 
+ 	if (!led_cdev->default_trigger)
+-		return;
++		return 0;
+ 
+ 	down_read(&triggers_list_lock);
+ 	down_write(&led_cdev->trigger_lock);
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+-		if (!strcmp(led_cdev->default_trigger, trig->name))
++		if (!strcmp(led_cdev->default_trigger, trig->name)) {
+ 			led_trigger_set(led_cdev, trig);
++			ret = 0;
++		}
+ 	}
+ 	up_write(&led_cdev->trigger_lock);
+ 	up_read(&triggers_list_lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_set_default);
+ 
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 38c0bd7c..3e36ce31 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -280,7 +280,7 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
+ 				      unsigned long *delay_on,
+ 				      unsigned long *delay_off,
+ 				      int invert);
+-extern void led_trigger_set_default(struct led_classdev *led_cdev);
++extern int led_trigger_set_default(struct led_classdev *led_cdev);
+ extern void led_trigger_set(struct led_classdev *led_cdev,
+ 			struct led_trigger *trigger);
+ extern void led_trigger_remove(struct led_classdev *led_cdev);
+@@ -326,7 +326,8 @@ static inline void led_trigger_blink_oneshot(struct led_trigger *trigger,
+ 				      unsigned long *delay_on,
+ 				      unsigned long *delay_off,
+ 				      int invert) {}
+-static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
++static inline int led_trigger_set_default(struct led_classdev *led_cdev)
++							{ return 0; }
+ static inline void led_trigger_set(struct led_classdev *led_cdev,
+ 				struct led_trigger *trigger) {}
+ static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.11.1
