@@ -1,90 +1,103 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: core: use deferred probing if default trigger
- isn't available yet
-Date: Thu, 23 Feb 2017 22:08:11 +0100
-Message-ID: <20170223210811.GC19376@amd>
-References: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
+Subject: Re: LED devices & poll() for brightness attribute
+Date: Thu, 23 Feb 2017 22:03:21 +0100
+Message-ID: <20170223210321.GB19376@amd>
+References: <20170222090630.GB21558@pali>
+ <20170223144852.GD24201@pali>
+ <20170223202333.GA19376@amd>
+ <201702232144.54558@pali>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5QAgd0e35j3NYeGe"
+        protocol="application/pgp-signature"; boundary="hQiwHBbRI9kgIhsi"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34293 "EHLO
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34422 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751222AbdBWVIO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Feb 2017 16:08:14 -0500
+        with ESMTP id S1751282AbdBWVM3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Feb 2017 16:12:29 -0500
 Content-Disposition: inline
-In-Reply-To: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
+In-Reply-To: <201702232144.54558@pali>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org
 
 
---5QAgd0e35j3NYeGe
+--hQiwHBbRI9kgIhsi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2017-02-22 21:35:52, Heiner Kallweit wrote:
-> When registering a LED device we have the option to set a default trigger.
-> Depending on load order of drivers this trigger may not be available yet.
-> (affected LED device in my case: a DT-configured GPIO LED)
-> So far if the default trigger can't be found this error is silently
-> ignored.
+Hi!
+
+> > > > 2) there may be more then one
+> > >=20
+> > > Yes and script can be adjusted to use specific one (config option
+> > > for script).
+> >=20
+> > No, you should autoconfigure it,
 >=20
-> Let's change this to return EPROBE_DEFER if the default trigger can't be
-> found. This gives the system the chance to probe the LED device later
-> once the trigger is available.
-
-I see a lot of EPROBE_DEFERs on N900, and it is quite nasty, as it
-spams a log a lot.
-
-Rather then re-trying LED registration few times, could we make sure
-leds are always registered after triggers or something like that?
-
-     	 		   	 	     	       	    Pavel
-
-
+> Why? Because you prefer autoconfiguration and all other people must use=
+=20
+> it only? Does not seems a good argument.
 >=20
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> ---
->  drivers/leds/led-class.c    |  6 +++++-
->  drivers/leds/led-triggers.c | 11 ++++++++---
->  include/linux/leds.h        |  5 +++--
->  3 files changed, 16 insertions(+), 6 deletions(-)
+> For machine which does not change, static policy file is enough too. And=
+=20
+> for this simple case it will work correctly.
 >=20
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index f2b0a80a..efe4f5a3 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -295,7 +295,11 @@ int led_classdev_register(struct device *parent, str=
-uct led_classdev *led_cdev)
->  	led_init_core(led_cdev);
-> =20
->  #ifdef CONFIG_LEDS_TRIGGERS
-> -	led_trigger_set_default(led_cdev);
-> +	ret =3D led_trigger_set_default(led_cdev);
-> +	if (ret) {
-> +		led_classdev_unregister(led_cdev);
-> +		return ret;
-> +	}
+> Why everybody must be forced to use some autoconfiguration and does not=
+=20
+> allow user to use his own manual configuration?
 
+Why everybody must be forced to poll() on brightness file?
+
+> > actually. See N900, there are 6 leds controlling one backlight.
+>=20
+> I'm not saying that one script must be universal for everything. My=20
+> script is enough for machine with single keyboard led. And for other=20
+> people who have only one backlight keyboard it will work fine too.
+
+> For other cases something other could be written...
+
+For other cases, you need to communicate with the desktop.
+
+> > And I don't want led/brightness file to be used for interprocess
+> > communication.
+>=20
+> You are not forced to use something. I'm proposing extending current ABI=
+=20
+> which can be used for processes who want those notification.
+
+Your proposal does not help you with your problem, unless you get
+desktop people to poll() on the brightness files, and do something
+inteligent with the results.
+
+Hmm. And doing something inteligent will be quite hard given that we
+have 6 of those files on N900.
+
+So, if you seriously want to do this, can you
+
+1) write specification explaining how desktops should poll() the
+brightness files
+
+2) get someone to volunteer to implement that specification for at
+least GNOME and KDE?
+
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---5QAgd0e35j3NYeGe
+--hQiwHBbRI9kgIhsi
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlivTzsACgkQMOfwapXb+vJsIACfWO6G5/hUDFsZ5hCPZjdIR7ax
-6qMAnAsKPbka5hNZWd8uA11S3UhNfJDB
-=viTG
+iEYEARECAAYFAlivThkACgkQMOfwapXb+vL75gCaA4LlSC2sU0sBazrWHcrQcuR6
+mtcAnivB4Bz56Cpq1snHeT/qkR01RO9L
+=op+z
 -----END PGP SIGNATURE-----
 
---5QAgd0e35j3NYeGe--
+--hQiwHBbRI9kgIhsi--
