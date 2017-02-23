@@ -1,28 +1,32 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
 Subject: Re: [PATCH] leds: core: use deferred probing if default trigger isn't
  available yet
-Date: Thu, 23 Feb 2017 22:23:02 +0100
-Message-ID: <1f9ec7ec-b1ce-48ab-b0f0-dbdbf4e7e18f@gmail.com>
+Date: Thu, 23 Feb 2017 22:25:46 +0100
+Message-ID: <2e89ab77-2e33-47dd-035e-a84f1885c554@gmail.com>
 References: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
- <20170223210811.GC19376@amd>
+ <72e43bca-6b3d-8907-fdb3-d95c36d6f737@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35477 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751170AbdBWV0B (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Feb 2017 16:26:01 -0500
-Received: by mail-wm0-f67.google.com with SMTP id u63so52062wmu.2
-        for <linux-leds@vger.kernel.org>; Thu, 23 Feb 2017 13:25:59 -0800 (PST)
-In-Reply-To: <20170223210811.GC19376@amd>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36745 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbdBWV0C (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Feb 2017 16:26:02 -0500
+Received: by mail-wr0-f194.google.com with SMTP id z61so338295wrc.3
+        for <linux-leds@vger.kernel.org>; Thu, 23 Feb 2017 13:26:01 -0800 (PST)
+In-Reply-To: <72e43bca-6b3d-8907-fdb3-d95c36d6f737@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Am 23.02.2017 um 22:08 schrieb Pavel Machek:
-> On Wed 2017-02-22 21:35:52, Heiner Kallweit wrote:
+Am 23.02.2017 um 22:04 schrieb Jacek Anaszewski:
+> Hi Heiner,
+> 
+> Thanks for the patch. I have one comment below.
+> 
+> On 02/22/2017 09:35 PM, Heiner Kallweit wrote:
 >> When registering a LED device we have the option to set a default trigger.
 >> Depending on load order of drivers this trigger may not be available yet.
 >> (affected LED device in my case: a DT-configured GPIO LED)
@@ -32,31 +36,6 @@ Am 23.02.2017 um 22:08 schrieb Pavel Machek:
 >> Let's change this to return EPROBE_DEFER if the default trigger can't be
 >> found. This gives the system the chance to probe the LED device later
 >> once the trigger is available.
-> 
-> I see a lot of EPROBE_DEFERs on N900, and it is quite nasty, as it
-> spams a log a lot.
-> 
-Usually error messages are printed only if there is an error and it is not
-EPROBE_DEFER. However indeed there still may be several drivers not
-taking into account that a subsystem they depend on may return
-EPROBE_DEFER and this should not be treated as "hard error".
-
-> Rather then re-trying LED registration few times, could we make sure
-> leds are always registered after triggers or something like that?
-> 
-I'm afraid if guaranteeing a particular order would be possible w/o
-significant effort then the whole deferred probing concept wouldn't exist.
-
-I could imagine that we can try reordering definitions in the DTS to
-ensure a certain load order. But this might be somewhat fragile.
-So using the existing concept of deferred probing seems to me to be
-the cleaner solution.
-
-Heiner
-
->      	 		   	 	     	       	    Pavel
-> 
-> 
 >>
 >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 >> ---
@@ -80,4 +59,81 @@ Heiner
 >> +		led_classdev_unregister(led_cdev);
 >> +		return ret;
 >> +	}
+>>  #endif
+>>  
+>>  	dev_dbg(parent, "Registered led device: %s\n",
+>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+>> index 431123b0..bad9e986 100644
+>> --- a/drivers/leds/led-triggers.c
+>> +++ b/drivers/leds/led-triggers.c
+>> @@ -157,21 +157,26 @@ void led_trigger_remove(struct led_classdev *led_cdev)
+>>  }
+>>  EXPORT_SYMBOL_GPL(led_trigger_remove);
+>>  
+>> -void led_trigger_set_default(struct led_classdev *led_cdev)
+>> +int led_trigger_set_default(struct led_classdev *led_cdev)
+>>  {
+>>  	struct led_trigger *trig;
+>> +	int ret = -EPROBE_DEFER;
+>>  
+>>  	if (!led_cdev->default_trigger)
+>> -		return;
+>> +		return 0;
+>>  
+>>  	down_read(&triggers_list_lock);
+>>  	down_write(&led_cdev->trigger_lock);
+>>  	list_for_each_entry(trig, &trigger_list, next_trig) {
+>> -		if (!strcmp(led_cdev->default_trigger, trig->name))
+>> +		if (!strcmp(led_cdev->default_trigger, trig->name)) {
+>>  			led_trigger_set(led_cdev, trig);
+>> +			ret = 0;
+> 
+> I wonder why we don't break the loop after matching the trigger?
+> 
+> I think that we can add break here while we are at it since LED Trigger
+> core doesn't allow for registering two triggers with the same name.
+> 
+Indeed.
+
+> Would you mind sending an update and mention it also in the commit
+> message?
+> 
+Fine with me if we can silently improve the existing code ..
+
+> Best regards,
+> Jacek Anaszewski
+> 
+>> +		}
+>>  	}
+>>  	up_write(&led_cdev->trigger_lock);
+>>  	up_read(&triggers_list_lock);
+>> +
+>> +	return ret;
+>>  }
+>>  EXPORT_SYMBOL_GPL(led_trigger_set_default);
+>>  
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 38c0bd7c..3e36ce31 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -280,7 +280,7 @@ extern void led_trigger_blink_oneshot(struct led_trigger *trigger,
+>>  				      unsigned long *delay_on,
+>>  				      unsigned long *delay_off,
+>>  				      int invert);
+>> -extern void led_trigger_set_default(struct led_classdev *led_cdev);
+>> +extern int led_trigger_set_default(struct led_classdev *led_cdev);
+>>  extern void led_trigger_set(struct led_classdev *led_cdev,
+>>  			struct led_trigger *trigger);
+>>  extern void led_trigger_remove(struct led_classdev *led_cdev);
+>> @@ -326,7 +326,8 @@ static inline void led_trigger_blink_oneshot(struct led_trigger *trigger,
+>>  				      unsigned long *delay_on,
+>>  				      unsigned long *delay_off,
+>>  				      int invert) {}
+>> -static inline void led_trigger_set_default(struct led_classdev *led_cdev) {}
+>> +static inline int led_trigger_set_default(struct led_classdev *led_cdev)
+>> +							{ return 0; }
+>>  static inline void led_trigger_set(struct led_classdev *led_cdev,
+>>  				struct led_trigger *trigger) {}
+>>  static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
+>>
 > 
