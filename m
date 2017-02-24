@@ -1,102 +1,45 @@
-From: <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH v4 1/4] Documentation: devicetree: Add document bindings for leds-mt6323
-Date: Sat, 25 Feb 2017 02:47:18 +0800
-Message-ID: <1487962041-6548-2-git-send-email-sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH v4 2/4] Documentation: devicetree: Add LED subnode binding for MT6323 PMIC
+Date: Sat, 25 Feb 2017 02:47:19 +0800
+Message-ID: <1487962041-6548-3-git-send-email-sean.wang@mediatek.com>
 References: <1487962041-6548-1-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1487962041-6548-1-git-send-email-sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, keyhaede-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:14791 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751420AbdBXSrt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Feb 2017 13:47:49 -0500
+In-Reply-To: <1487962041-6548-1-git-send-email-sean.wang@mediatek.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, keyhaede@gmail.com, Sean Wang <sean.wang@mediatek.com>
 
-From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+From: Sean Wang <sean.wang@mediatek.com>
 
 This patch adds documentation for devicetree bindings
-for LED support on MT6323 PMIC
+for LED support as the subnode of MT6323 PMIC
 
-Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- .../devicetree/bindings/leds/leds-mt6323.txt       | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+ Documentation/devicetree/bindings/mfd/mt6397.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
-new file mode 100644
-index 0000000..950b8c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
-@@ -0,0 +1,64 @@
-+Device Tree Bindings for LED support on MT6323 PMIC
-+
-+MT6323 LED controller is subfunction provided by
-+MT6323 PMIC, so the LED controllers are defined as
-+the subnode of the function node provided by MT6323
-+PMIC controller that is being defined as one kind of
-+Muti-Function Device (MFD) using shared bus called
-+PMIC wrapper for each subfunction to access remote
-+MT6323 PMIC hardware.
-+
-+For MT6323 MFD bindings see:
-+Documentation/devicetree/bindings/mfd/mt6397.txt
-+For MediaTek PMIC wrapper bindings see:
-+Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-+
-+There's sub-node for the LED controller that describes
-+the initial behavior for each LED physically and currently
-+only four LED sub-nodes can be supported.
-+
-+Required properties:
-+- compatible : Must be "mediatek,mt6323-led"
-+- reg : LED channel number (0..3)
-+
-+Optional properties:
-+- label : (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger : (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt
-+- default-state: (optional) The initial state of the LED
-+  see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+&pwrap {
-+	pmic: mt6323 {
-+		compatible = "mediatek,mt6323";
-+		interrupt-parent = <&pio>;
-+		interrupts = <150 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		mt6323led: mt6323led{
-+			compatible = "mediatek,mt6323-led";
-+
-+			led0: isink0 {
-+				reg = <0>;
-+				label = "LED0"
-+				linux,default-trigger = "timer";
-+				default-state = "on";
-+			};
-+			led1: isink1 {
-+				reg = <1>;
-+				label = "LED1";
-+				default-state = "on";
-+			};
-+			led2: isink2 {
-+				reg = <2>;
-+				label = "LED2";
-+				linux,default-trigger = "timer";
-+				default-state = "off";
-+			};
-+		};
-+	};
-+};
+diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+index 949c85f..c568d52 100644
+--- a/Documentation/devicetree/bindings/mfd/mt6397.txt
++++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
+@@ -34,6 +34,10 @@ Optional subnodes:
+ - clk
+ 	Required properties:
+ 		- compatible: "mediatek,mt6397-clk"
++- led
++	Required properties:
++		- compatible: "mediatek,mt6323-led"
++	see Documentation/devicetree/bindings/leds/leds-mt6323.txt
+ 
+ Example:
+ 	pwrap: pwrap@1000f000 {
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
