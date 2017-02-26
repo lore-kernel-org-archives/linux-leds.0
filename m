@@ -1,110 +1,124 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: core: use deferred probing if default trigger isn't
- available yet
-Date: Sun, 26 Feb 2017 18:09:52 +0100
-Message-ID: <bce2bdc3-85df-fa5f-10ed-73907ae06460@gmail.com>
-References: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
- <72e43bca-6b3d-8907-fdb3-d95c36d6f737@gmail.com>
- <2e89ab77-2e33-47dd-035e-a84f1885c554@gmail.com>
+Subject: Re: [PATCH v4 1/4] Documentation: devicetree: Add document bindings
+ for leds-mt6323
+Date: Sun, 26 Feb 2017 18:35:11 +0100
+Message-ID: <709ff2c2-38f3-a3dd-f686-de3db873997d@gmail.com>
+References: <1487962041-6548-1-git-send-email-sean.wang@mediatek.com>
+ <1487962041-6548-2-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33117 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbdBZRRl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 26 Feb 2017 12:17:41 -0500
-Received: by mail-wr0-f193.google.com with SMTP id g10so7497301wrg.0
-        for <linux-leds@vger.kernel.org>; Sun, 26 Feb 2017 09:17:40 -0800 (PST)
-In-Reply-To: <2e89ab77-2e33-47dd-035e-a84f1885c554@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1487962041-6548-2-git-send-email-sean.wang@mediatek.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: sean.wang@mediatek.com, rpurdie@rpsys.net, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, keyhaede@gmail.com, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 02/23/2017 10:25 PM, Heiner Kallweit wrote:
-> Am 23.02.2017 um 22:04 schrieb Jacek Anaszewski:
->> Hi Heiner,
->>
->> Thanks for the patch. I have one comment below.
->>
->> On 02/22/2017 09:35 PM, Heiner Kallweit wrote:
->>> When registering a LED device we have the option to set a default trigger.
->>> Depending on load order of drivers this trigger may not be available yet.
->>> (affected LED device in my case: a DT-configured GPIO LED)
->>> So far if the default trigger can't be found this error is silently
->>> ignored.
->>>
->>> Let's change this to return EPROBE_DEFER if the default trigger can't be
->>> found. This gives the system the chance to probe the LED device later
->>> once the trigger is available.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> ---
->>> ---
->>>  drivers/leds/led-class.c    |  6 +++++-
->>>  drivers/leds/led-triggers.c | 11 ++++++++---
->>>  include/linux/leds.h        |  5 +++--
->>>  3 files changed, 16 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>> index f2b0a80a..efe4f5a3 100644
->>> --- a/drivers/leds/led-class.c
->>> +++ b/drivers/leds/led-class.c
->>> @@ -295,7 +295,11 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>>  	led_init_core(led_cdev);
->>>  
->>>  #ifdef CONFIG_LEDS_TRIGGERS
->>> -	led_trigger_set_default(led_cdev);
->>> +	ret = led_trigger_set_default(led_cdev);
->>> +	if (ret) {
->>> +		led_classdev_unregister(led_cdev);
->>> +		return ret;
->>> +	}
->>>  #endif
->>>  
->>>  	dev_dbg(parent, "Registered led device: %s\n",
->>> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
->>> index 431123b0..bad9e986 100644
->>> --- a/drivers/leds/led-triggers.c
->>> +++ b/drivers/leds/led-triggers.c
->>> @@ -157,21 +157,26 @@ void led_trigger_remove(struct led_classdev *led_cdev)
->>>  }
->>>  EXPORT_SYMBOL_GPL(led_trigger_remove);
->>>  
->>> -void led_trigger_set_default(struct led_classdev *led_cdev)
->>> +int led_trigger_set_default(struct led_classdev *led_cdev)
->>>  {
->>>  	struct led_trigger *trig;
->>> +	int ret = -EPROBE_DEFER;
->>>  
->>>  	if (!led_cdev->default_trigger)
->>> -		return;
->>> +		return 0;
->>>  
->>>  	down_read(&triggers_list_lock);
->>>  	down_write(&led_cdev->trigger_lock);
->>>  	list_for_each_entry(trig, &trigger_list, next_trig) {
->>> -		if (!strcmp(led_cdev->default_trigger, trig->name))
->>> +		if (!strcmp(led_cdev->default_trigger, trig->name)) {
->>>  			led_trigger_set(led_cdev, trig);
->>> +			ret = 0;
->>
->> I wonder why we don't break the loop after matching the trigger?
->>
->> I think that we can add break here while we are at it since LED Trigger
->> core doesn't allow for registering two triggers with the same name.
->>
-> Indeed.
+Hi Sean,
+
+Thanks for the update. I have one comment below.
+
+On 02/24/2017 07:47 PM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
->> Would you mind sending an update and mention it also in the commit
->> message?
->>
-> Fine with me if we can silently improve the existing code ..
+> This patch adds documentation for devicetree bindings
+> for LED support on MT6323 PMIC
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../devicetree/bindings/leds/leds-mt6323.txt       | 64 ++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> new file mode 100644
+> index 0000000..950b8c6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+> @@ -0,0 +1,64 @@
+> +Device Tree Bindings for LED support on MT6323 PMIC
+> +
+> +MT6323 LED controller is subfunction provided by
+> +MT6323 PMIC, so the LED controllers are defined as
+> +the subnode of the function node provided by MT6323
+> +PMIC controller that is being defined as one kind of
+> +Muti-Function Device (MFD) using shared bus called
+> +PMIC wrapper for each subfunction to access remote
+> +MT6323 PMIC hardware.
+> +
+> +For MT6323 MFD bindings see:
+> +Documentation/devicetree/bindings/mfd/mt6397.txt
+> +For MediaTek PMIC wrapper bindings see:
+> +Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +
+> +There's sub-node for the LED controller that describes
+> +the initial behavior for each LED physically and currently
+> +only four LED sub-nodes can be supported.
+> +
+> +Required properties:
+> +- compatible : Must be "mediatek,mt6323-led"
+> +- reg : LED channel number (0..3)
+> +
+> +Optional properties:
+> +- label : (optional)
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger : (optional)
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +- default-state: (optional) The initial state of the LED
+> +  see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +
+> +&pwrap {
+> +	pmic: mt6323 {
+> +		compatible = "mediatek,mt6323";
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <150 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
+> +		mt6323led: mt6323led{
+> +			compatible = "mediatek,mt6323-led";
 
-We shouldn't enclose unrelated changes in a patch, but in this
-case you're modifying the condition body anyway, so adding suitable
-comment in the commit message should be enough.
+You require here also:
+
+#address-cells = <1>;
+#size-cells = <0>;
+
+Without these entries you should notice a warning from dtc compiler.
+
+
+> +
+> +			led0: isink0 {
+> +				reg = <0>;
+> +				label = "LED0"
+> +				linux,default-trigger = "timer";
+> +				default-state = "on";
+> +			};
+> +			led1: isink1 {
+> +				reg = <1>;
+> +				label = "LED1";
+> +				default-state = "on";
+> +			};
+> +			led2: isink2 {
+> +				reg = <2>;
+> +				label = "LED2";
+> +				linux,default-trigger = "timer";
+> +				default-state = "off";
+> +			};
+> +		};
+> +	};
+> +};
+> 
 
 -- 
 Best regards,
