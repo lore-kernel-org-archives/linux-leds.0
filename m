@@ -1,57 +1,65 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [WARNING: A/V UNSCANNABLE][Merge tag 'media/v4.11-1' of git]
- ff58d005cd: BUG: unable to handle kernel NULL pointer dereference at 0000039c
-Date: Sat, 25 Feb 2017 10:02:44 -0800
-Message-ID: <CA+55aFy+ER8cYV02eZsKAOLnZBWY96zNWqUFWSWT1+3sZD4XnQ@mail.gmail.com>
-References: <58b07b30.9XFLj9Hhl7F6HMc2%fengguang.wu@intel.com>
- <CA+55aFytXj+TZ_TanbxcY0KgRTrV7Vvr=fWON8tioUGmYHYiNA@mail.gmail.com> <20170225090741.GA20463@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: core: use deferred probing if default trigger isn't
+ available yet
+Date: Sun, 26 Feb 2017 18:10:56 +0100
+Message-ID: <82111085-baf8-efb9-d195-47153aa3b918@gmail.com>
+References: <39873979-0231-1605-1d37-9ee29c6a0286@gmail.com>
+ <20170223210811.GC19376@amd> <1f9ec7ec-b1ce-48ab-b0f0-dbdbf4e7e18f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20170225090741.GA20463@gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: kernel test robot <fengguang.wu@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sean Young <sean@mess.org>, Ruslan Ruslichenko <rruslich@cisco.com>, LKP <lkp@01.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, kernel@stlinux.com, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36998 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbdBZRMi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 26 Feb 2017 12:12:38 -0500
+Received: by mail-wm0-f41.google.com with SMTP id v77so46734329wmv.0
+        for <linux-leds@vger.kernel.org>; Sun, 26 Feb 2017 09:11:43 -0800 (PST)
+In-Reply-To: <1f9ec7ec-b1ce-48ab-b0f0-dbdbf4e7e18f@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Sat, Feb 25, 2017 at 1:07 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> So, should we revert the hw-retrigger change:
->
->   a9b4f08770b4 x86/ioapic: Restore IO-APIC irq_chip retrigger callback
->
-> ... until we managed to fix CONFIG_DEBUG_SHIRQ=y? If you'd like to revert it
-> upstream straight away:
->
-> Acked-by: Ingo Molnar <mingo@kernel.org>
+On 02/23/2017 10:23 PM, Heiner Kallweit wrote:
+> Am 23.02.2017 um 22:08 schrieb Pavel Machek:
+>> On Wed 2017-02-22 21:35:52, Heiner Kallweit wrote:
+>>> When registering a LED device we have the option to set a default trigger.
+>>> Depending on load order of drivers this trigger may not be available yet.
+>>> (affected LED device in my case: a DT-configured GPIO LED)
+>>> So far if the default trigger can't be found this error is silently
+>>> ignored.
+>>>
+>>> Let's change this to return EPROBE_DEFER if the default trigger can't be
+>>> found. This gives the system the chance to probe the LED device later
+>>> once the trigger is available.
+>>
+>> I see a lot of EPROBE_DEFERs on N900, and it is quite nasty, as it
+>> spams a log a lot.
+>>
+> Usually error messages are printed only if there is an error and it is not
+> EPROBE_DEFER. However indeed there still may be several drivers not
+> taking into account that a subsystem they depend on may return
+> EPROBE_DEFER and this should not be treated as "hard error".
+> 
+>> Rather then re-trying LED registration few times, could we make sure
+>> leds are always registered after triggers or something like that?
+>>
+> I'm afraid if guaranteeing a particular order would be possible w/o
+> significant effort then the whole deferred probing concept wouldn't exist.
+> 
+> I could imagine that we can try reordering definitions in the DTS to
+> ensure a certain load order. But this might be somewhat fragile.
+> So using the existing concept of deferred probing seems to me to be
+> the cleaner solution.
 
-So I'm in no huge hurry to revert that commit as long as we're still
-in the merge window or early -rc's.
+We could go for a solution similar to v4l2-async.c mechanism which
+allows for deferring video pipeline linking until all video pipeline
+entities are probed, but in the LED subsystem case I think it would be
+an overengineering. V4L2 media device has to wait for completion of
+probing of several v4l2 drivers, whereas here we've got to wait for
+a single driver. EPROBE_DEFER seems to fit for that ideally.
 
->From a debug standpoint, the spurious early interrupts are fine, and
-hopefully will help us find more broken drivers.
-
-It's just that I'd like to revert it before the actual 4.11 release,
-unless we can find a better solution.
-
-Because it really seems like the interrupt re-trigger is entirely
-bogus. It's not an _actual_ "re-trigger the interrupt that may have
-gotten lost", it's some code that ends up triggering it for no good
-reason.
-
-So I'd actually hope that we could figure out why IRQS_PENDING got
-set, and perhaps fix the underlying cause?
-
-There are several things that set IRQS_PENDING, ranging from "try to
-test mis-routed interrupts while irqd was working", to "prepare for
-suspend losing the irq for us", to "irq auto-probing uses it on
-unassigned probable irqs".
-
-The *actual* reason to re-send, namely getting a nested irq that we
-had to drop because we got a second one while still handling the first
-(or because it was disabled), is just one case.
-
-Personally, I'd suspect some left-over state from auto-probing earlier
-in the boot, but I don't know. Could we fix that underlying issue?
-
-                 Linus
+-- 
+Best regards,
+Jacek Anaszewski
