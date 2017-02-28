@@ -1,79 +1,103 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 1/2] leds: core: add struct device_node pointer to the
- struct led_classdev
-Date: Tue, 28 Feb 2017 22:20:18 +0100
-Message-ID: <a535b820-b29f-252f-ba55-25a2f376f773@gmail.com>
-References: <20170227222300.2060-1-zajec5@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+Date: Tue, 28 Feb 2017 22:38:41 +0100
+Message-ID: <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
+References: <20170228120452.10043-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33209 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbdB1Vaw (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Feb 2017 16:30:52 -0500
-Received: by mail-wm0-f67.google.com with SMTP id v77so4358473wmv.0
-        for <linux-leds@vger.kernel.org>; Tue, 28 Feb 2017 13:30:14 -0800 (PST)
-In-Reply-To: <20170227222300.2060-1-zajec5@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170228120452.10043-1-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
 Hi Rafał,
 
-Thanks for the patch. How about following what has been already
-done for spi, i.e. adding a wrapper of_led_classdev_register()
-(please refer to of_register_spi_device() in drivers/spi/spi.c)?
+Thanks for continuing this effort.
+
+I think that it would be simpler if we could initially see
+a complete sample dts implementation containing all required DT
+nodes. The example could contain timer trigger as well as usb-port
+trigger specific bindings.
+
+I suppose that we should see DT nodes containing #list-cells
+properties that define the quantity of phandle arguments.
+
+It seems that this approach allows for defining a list of elements
+with variable number of arguments, i.e. what you were initially
+asking for.
+
 
 Best regards,
 Jacek Anaszewski
 
-On 02/27/2017 11:22 PM, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+On 02/28/2017 01:04 PM, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 > 
-> This allows every led_classdev_register user to set of_node before
-> calling that function. Thanks to this LEDs core code may access DT node
-> during LED registration (e.g. to read extra info).
+> There was a long discussion on describing LED trigger sources in DT.
+> Few solutions were posted but neither was clear & flexible enough. It's
+> really hard to design DT bindings for a LED node that will allow
+> describing any kinds of triggers.
 > 
-> A small disadvantage of this imlementation is keeping of_node pointer in
-> two places: struct led_classdev and struct device.
-> Another solutions were:
-> 1) Passing pointer with a led_classdev_register call
->    This would require changing & complicating the API.
-> 2) Moving allocation part of led_classdev_register to separated function
->    This would make registering LED even more complicated.
+> Finally Jacek suggested a different design. It involved using separated
+> DT node for each trigger.
 > 
-> Having duplicated pointer semms like a reasonable trade-off.
+> This documentation follows that idea. It really simplifies DT bindings
+> and allows clear support for different trigger types. With this solution
+> every type can have its own specific properties.
 > 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> Please note an example will be added later with the first supported
+> trigger bindings. The point is to have nodes like:
+> foo-trigger {
+> 	trigger-type = "foo";
+> 	...
+> };
+> 
+> Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 > ---
->  drivers/leds/led-class.c | 1 +
->  include/linux/leds.h     | 1 +
->  2 files changed, 2 insertions(+)
+>  Documentation/devicetree/bindings/leds/common.txt   |  3 +++
+>  Documentation/devicetree/bindings/leds/triggers.txt | 13 +++++++++++++
+>  2 files changed, 16 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/triggers.txt
 > 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 326ee6e925a2..9db9d05e4832 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -199,6 +199,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->  				led_cdev, led_cdev->groups, "%s", name);
->  	if (IS_ERR(led_cdev->dev))
->  		return PTR_ERR(led_cdev->dev);
-> +	led_cdev->dev->of_node = led_cdev->of_node;
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 696be5792625..0bc91556a47a 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -49,6 +49,9 @@ Optional properties for child nodes:
+>  - panic-indicator : This property specifies that the LED should be used,
+>  		    if at all possible, as a panic indicator.
 >  
->  	if (ret)
->  		dev_warn(parent, "Led %s renamed to %s due to name collision",
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 569cb531094c..7dc4a679f376 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -85,6 +85,7 @@ struct led_classdev {
->  				     unsigned long *delay_off);
->  
->  	struct device		*dev;
-> +	struct device_node	*of_node;
->  	const struct attribute_group	**groups;
->  
->  	struct list_head	 node;			/* LED Device list */
+> +- triggers : List of nodes of triggers that should control this LED state. For
+> +	     more details see triggers.txt.
+> +
+>  Required properties for flash LED child nodes:
+>  - flash-max-microamp : Maximum flash LED supply current in microamperes.
+>  - flash-max-timeout-us : Maximum timeout in microseconds after which the flash
+> diff --git a/Documentation/devicetree/bindings/leds/triggers.txt b/Documentation/devicetree/bindings/leds/triggers.txt
+> new file mode 100644
+> index 000000000000..a1fbf3a75d67
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/triggers.txt
+> @@ -0,0 +1,13 @@
+> +Common trigger properties.
+> +
+> +Triggers describe the way LEDs should be controlled, e.g. under what conditions
+> +they should be turned on or off. Depending on a trigger type various events can
+> +be used to determine a LED state. Some triggers can be hardware independent
+> +(e.g. time based), some can react to a specific hardware events.
+> +
+> +Common properties:
+> +- trigger-type : Type of a trigger. Choosing a trigger determines what kind of
+> +		 events will be used to control LED. See specific trigger
+> +		 documentation for more details.
+> +
+> +More properties can be available depending on the chosen trigger type.
 > 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
