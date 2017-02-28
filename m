@@ -1,82 +1,84 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Subject: [PATCH 3/4] dt-bindings: leds: document binding for LED timer trigger
-Date: Tue, 28 Feb 2017 13:04:51 +0100
-Message-ID: <20170228120452.10043-3-zajec5@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 4/4] leds: triggers: support timer trigger DT bindings
+Date: Tue, 28 Feb 2017 13:04:52 +0100
+Message-ID: <20170228120452.10043-4-zajec5@gmail.com>
 References: <20170228120452.10043-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34136 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbdB1MR1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Feb 2017 07:17:27 -0500
-In-Reply-To: <20170228120452.10043-1-zajec5@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170228120452.10043-1-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 
-Timer trigger is one of the simplest, hardware independent triggers. It
-just blinks LED with a given intervals.
+Timer trigger has 2 parameters: delay on and delay off times. This patch
+allows specifying "timer" trigger in DT including both time values.
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 ---
- .../devicetree/bindings/leds/triggers-timer.txt        | 18 ++++++++++++++++++
- Documentation/devicetree/bindings/leds/triggers.txt    | 17 +++++++++++++++++
- 2 files changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/triggers-timer.txt
+ drivers/leds/led-triggers.c          |  2 +-
+ drivers/leds/trigger/ledtrig-timer.c | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/triggers-timer.txt b/Documentation/devicetree/bindings/leds/triggers-timer.txt
-new file mode 100644
-index 000000000000..0e6c81d6f81b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/triggers-timer.txt
-@@ -0,0 +1,18 @@
-+Timer LED trigger properties.
-+
-+Timer trigger enables and disables LED with a given time intervals. It's example
-+usage may be a simple indication that system is alive & working (to some point
-+at least).
-+
-+Properties:
-+- trigger-type : Must be "timer".
-+- delay-on : Amount of time (in milliseconds) LED stays enabled.
-+- delay-off : Amount of time (in milliseconds) LED stays disabled.
-+
-+Examples:
-+
-+timer-trigger {
-+	trigger-type = "timer";
-+	delay-on = <300>;
-+	delay-off = <1000>;
-+};
-diff --git a/Documentation/devicetree/bindings/leds/triggers.txt b/Documentation/devicetree/bindings/leds/triggers.txt
-index a1fbf3a75d67..8d8daa027bee 100644
---- a/Documentation/devicetree/bindings/leds/triggers.txt
-+++ b/Documentation/devicetree/bindings/leds/triggers.txt
-@@ -11,3 +11,20 @@ Common properties:
- 		 documentation for more details.
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 83897e0d6b76..c53c20d676cd 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -181,7 +181,7 @@ static void led_trigger_of_read_trigger(struct led_classdev *led_cdev)
+ 	}
  
- More properties can be available depending on the chosen trigger type.
+ 	/* Check if trigger specified in DT is supported */
+-	if (1) /* TODO */
++	if (strcmp(trigger_type, "timer"))
+ 		goto err_node_put;
+ 
+ 	led_cdev->default_trigger = trigger_type;
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+index 8d09327b5719..98b58469d705 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -17,6 +17,7 @@
+ #include <linux/device.h>
+ #include <linux/ctype.h>
+ #include <linux/leds.h>
++#include <linux/of.h>
+ 
+ static ssize_t led_delay_on_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+@@ -71,10 +72,25 @@ static ssize_t led_delay_off_store(struct device *dev,
+ static DEVICE_ATTR(delay_on, 0644, led_delay_on_show, led_delay_on_store);
+ static DEVICE_ATTR(delay_off, 0644, led_delay_off_show, led_delay_off_store);
+ 
++static void ledtrig_timer_of_read(struct led_classdev *led_cdev)
++{
++	struct device_node *np = led_cdev->trigger_node;
 +
-+Examples:
++	if (!np)
++		return;
 +
-+timer_trigger: timer-trigger {
-+	trigger-type = "timer";
-+	...
-+};
++	of_property_read_u32(np, "delay-on",
++			     (u32 *)&led_cdev->blink_delay_on);
++	of_property_read_u32(np, "delay-off",
++			     (u32 *)&led_cdev->blink_delay_off);
++}
 +
-+gpio-leds {
-+	compatible = "gpio-leds";
+ static void timer_trig_activate(struct led_classdev *led_cdev)
+ {
+ 	int rc;
+ 
++	ledtrig_timer_of_read(led_cdev);
 +
-+	system-status {
-+		label = "Status";
-+		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
-+		triggers = <&timer_trigger>;
-+	};
-+};
+ 	led_cdev->trigger_data = NULL;
+ 
+ 	rc = device_create_file(led_cdev->dev, &dev_attr_delay_on);
 -- 
 2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
