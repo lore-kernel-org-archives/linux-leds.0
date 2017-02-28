@@ -1,84 +1,121 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/4] leds: triggers: support timer trigger DT bindings
-Date: Tue, 28 Feb 2017 13:04:52 +0100
-Message-ID: <20170228120452.10043-4-zajec5@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH 2/4] leds: triggers: add early support for trigger-type DT property
+Date: Tue, 28 Feb 2017 13:04:50 +0100
+Message-ID: <20170228120452.10043-2-zajec5@gmail.com>
 References: <20170228120452.10043-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170228120452.10043-1-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34873 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751883AbdB1MhN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Feb 2017 07:37:13 -0500
+In-Reply-To: <20170228120452.10043-1-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 
-From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Timer trigger has 2 parameters: delay on and delay off times. This patch
-allows specifying "timer" trigger in DT including both time values.
+This adds support for getting DT node pointed in "triggers" property
+and reading its "trigger-type". This will allow:
+1) Activating proper trigger as specified in DT
+2) Accessing DT info in specific triggers
 
-Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Please note there is a validation of specified trigger type. This
+requires documenting every supported value instead of blindly mapping
+them into Linux triggers.
+
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 ---
- drivers/leds/led-triggers.c          |  2 +-
- drivers/leds/trigger/ledtrig-timer.c | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/leds/led-triggers.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/leds.h        |  1 +
+ 2 files changed, 42 insertions(+)
 
 diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 83897e0d6b76..c53c20d676cd 100644
+index 572ede298d68..83897e0d6b76 100644
 --- a/drivers/leds/led-triggers.c
 +++ b/drivers/leds/led-triggers.c
-@@ -181,7 +181,7 @@ static void led_trigger_of_read_trigger(struct led_classdev *led_cdev)
- 	}
- 
- 	/* Check if trigger specified in DT is supported */
--	if (1) /* TODO */
-+	if (strcmp(trigger_type, "timer"))
- 		goto err_node_put;
- 
- 	led_cdev->default_trigger = trigger_type;
-diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
-index 8d09327b5719..98b58469d705 100644
---- a/drivers/leds/trigger/ledtrig-timer.c
-+++ b/drivers/leds/trigger/ledtrig-timer.c
-@@ -17,6 +17,7 @@
+@@ -16,6 +16,7 @@
+ #include <linux/list.h>
+ #include <linux/spinlock.h>
  #include <linux/device.h>
- #include <linux/ctype.h>
- #include <linux/leds.h>
 +#include <linux/of.h>
+ #include <linux/timer.h>
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
+@@ -157,11 +158,48 @@ void led_trigger_remove(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_remove);
  
- static ssize_t led_delay_on_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
-@@ -71,10 +72,25 @@ static ssize_t led_delay_off_store(struct device *dev,
- static DEVICE_ATTR(delay_on, 0644, led_delay_on_show, led_delay_on_store);
- static DEVICE_ATTR(delay_off, 0644, led_delay_off_show, led_delay_off_store);
- 
-+static void ledtrig_timer_of_read(struct led_classdev *led_cdev)
++static void led_trigger_of_read_trigger(struct led_classdev *led_cdev)
 +{
-+	struct device_node *np = led_cdev->trigger_node;
++	struct device *dev = led_cdev->dev;
++	struct device_node *led_np = dev_of_node(dev);
++	struct of_phandle_args args;
++	const char *trigger_type;
++	int err;
 +
-+	if (!np)
++	if (!led_np)
 +		return;
 +
-+	of_property_read_u32(np, "delay-on",
-+			     (u32 *)&led_cdev->blink_delay_on);
-+	of_property_read_u32(np, "delay-off",
-+			     (u32 *)&led_cdev->blink_delay_off);
++	/* Currently we support only 1 trigger at a time */
++	err = of_parse_phandle_with_args(led_np, "triggers", NULL, 0, &args);
++	if (err)
++		return;
++
++	err = of_property_read_string(args.np, "trigger-type", &trigger_type);
++	if (err) {
++		dev_err(dev, "Failed to read trigger type\n");
++		goto err_node_put;
++	}
++
++	/* Check if trigger specified in DT is supported */
++	if (1) /* TODO */
++		goto err_node_put;
++
++	led_cdev->default_trigger = trigger_type;
++	led_cdev->trigger_node = args.np;
++
++	return;
++
++err_node_put:
++	of_node_put(args.np);
 +}
 +
- static void timer_trig_activate(struct led_classdev *led_cdev)
+ int led_trigger_set_default(struct led_classdev *led_cdev)
  {
- 	int rc;
+ 	struct led_trigger *trig;
+ 	int ret = -EPROBE_DEFER;
  
-+	ledtrig_timer_of_read(led_cdev);
++	led_trigger_of_read_trigger(led_cdev);
 +
- 	led_cdev->trigger_data = NULL;
+ 	if (!led_cdev->default_trigger)
+ 		return 0;
  
- 	rc = device_create_file(led_cdev->dev, &dev_attr_delay_on);
+@@ -252,6 +290,9 @@ void led_trigger_unregister(struct led_trigger *trig)
+ 		up_write(&led_cdev->trigger_lock);
+ 	}
+ 	up_read(&leds_list_lock);
++
++	if (led_cdev->trigger_node)
++		of_node_put(led_cdev->trigger_node);
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_unregister);
+ 
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 97ff66e3e8c4..bb6dcb9da4a9 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -106,6 +106,7 @@ struct led_classdev {
+ 
+ 	struct led_trigger	*trigger;
+ 	struct list_head	 trig_list;
++	struct device_node	*trigger_node;
+ 	void			*trigger_data;
+ 	/* true if activated - deactivate routine uses it to do cleanup */
+ 	bool			activated;
 -- 
 2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
