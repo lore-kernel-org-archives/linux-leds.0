@@ -1,48 +1,49 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
-Date: Tue, 28 Feb 2017 16:12:20 -0600
-Message-ID: <CAL_JsqL-N4HfsG=py+w1NsBOJZzS1kbRM5J6dC-EE-rg9r9C2g@mail.gmail.com>
-References: <20170228120452.10043-1-zajec5@gmail.com> <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
- <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Subject: Re: [PATCH v8 7/7] platform/x86/dell-*: Call
+ led_classdev_notify_brightness_hw_changed on kbd brightness change
+Date: Wed, 1 Mar 2017 12:15:58 +0100
+Message-ID: <20170301111558.GC3185@pali>
+References: <20170221145043.GK9795@pali>
+ <0aed5655-11db-e632-0213-95779b780cb2@redhat.com>
+ <20170221151317.GN9795@pali>
+ <af30d146-8eb3-fbf7-7041-e719d8f9a5ac@redhat.com>
+ <20170221170838.GO9795@pali>
+ <7bb7c48f-789e-8b4c-b76b-1389d7fbbfb7@redhat.com>
+ <20170222084935.GA21558@pali>
+ <cf1aceaf-9177-2223-6f36-afdb5c47ee31@redhat.com>
+ <20170222120109.GC21558@pali>
+ <035b56e6-b606-c632-35cf-00f880abcbf5@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751710AbdCAAJ1 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 28 Feb 2017 19:09:27 -0500
-In-Reply-To: <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34420 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbdCALQx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Mar 2017 06:16:53 -0500
+Content-Disposition: inline
+In-Reply-To: <035b56e6-b606-c632-35cf-00f880abcbf5@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-On Tue, Feb 28, 2017 at 3:51 PM, Rafał Miłecki <zajec5@gmail.com> wrote:
-> On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
->>
->> I think that it would be simpler if we could initially see
->> a complete sample dts implementation containing all required DT
->> nodes. The example could contain timer trigger as well as usb-port
->> trigger specific bindings.
->
->
-> Please take a look at attached patch. I used it on Tenda AC9 with:
+On Wednesday 22 February 2017 13:20:46 Hans de Goede wrote:
+> 1) These events do not happen 100s of times per second, they happen
+> almost never
 
-I'm not sure about this extra level of indirection. I don't see the need.
+100 events per second is probably not happening, but on my Latitude I
+see that sometimes more events are delayed and delivered at once.
 
-> usb_trigger: usb-trigger {
->         trigger-type = "usbport";
+> 2) This is the best we can do given the firmware interface we have
 
-Why do we need to know the type? The trigger device knows what type it
-is. All we should need to know here is what device(s) controls an LED.
-The rest the kernel can figure out.
+What about just dropping upcoming one event in interval of next 2-3
+second? Instead of trying to remember last state in kernel and then
+trying to mach if received event was that which was caused by change?
 
->         ports = <&ohci_port1>, <&ehci_port1>;
-> };
->
-> usb {
->         label = "bcm53xx:blue:usb";
->         gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
->         triggers = <&usb_trigger>;
-> };
+This would allow us to reduce doing one SMM call for each received
+event and I think it would be same reliable as your approach.
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
