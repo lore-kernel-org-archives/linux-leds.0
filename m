@@ -1,222 +1,39 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
-Date: Wed, 1 Mar 2017 22:04:37 +0100
-Message-ID: <28982a47-20b5-f90b-c1d8-b470e4019a08@gmail.com>
-References: <20170228120452.10043-1-zajec5@gmail.com>
- <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
- <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v8 0/7] platform/x86: Notify userspace about hotkeys
+ changing kbd-backlight brightness
+Date: Thu, 2 Mar 2017 01:10:48 +0200
+Message-ID: <CAHp75VfMyp9XzG6w0H60JhxpdRYfv5NuO-T9ZevPc4KT19fbGw@mail.gmail.com>
+References: <20170209154417.19040-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <290ed068-2518-50ef-4d02-394bef8b7ee9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20170209154417.19040-1-hdegoede@redhat.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 02/28/2017 10:51 PM, Rafał Miłecki wrote:
-> On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
->> I think that it would be simpler if we could initially see
->> a complete sample dts implementation containing all required DT
->> nodes. The example could contain timer trigger as well as usb-port
->> trigger specific bindings.
-> 
-> Please take a look at attached patch. I used it on Tenda AC9 with:
-> 
-> usb_trigger: usb-trigger {
->     trigger-type = "usbport";
->     ports = <&ohci_port1>, <&ehci_port1>;
-> };
-> 
-> usb {
->     label = "bcm53xx:blue:usb";
->     gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
->     triggers = <&usb_trigger>;
-> };
+On Thu, Feb 9, 2017 at 5:44 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-OK, I got it, thanks.
+> Here is v8 of the platform drivers changes matching / using the new
+> v8 LED subsys led_classdev_notify_brightness_hw_changed() functionality
+> queued in -next.
+>
+> There have been some changes (and preparation patches added) compared
+> to the previous versions since the new LED api requires the driver to
+> only call led_classdev_notify_brightness_hw_changed() on hotkey triggered
+> changes and the ACPI events indicating brightness changes also get
+> triggered when setting the brightness to led_set_brightness (or sysfs).
+>
+> This series depends on the patch adding
+> led_classdev_notify_brightness_hw_changed() to the LED subsystem,
+> Jacek can you create a stable branch with just that patch which the
+> platform/x86 platform maintainers can merge, so that they can apply
+> this series ?
 
-> 
->> I suppose that we should see DT nodes containing #list-cells
->> properties that define the quantity of phandle arguments.
->>
->> It seems that this approach allows for defining a list of elements
->> with variable number of arguments, i.e. what you were initially
->> asking for.
-> 
-> Are you sure we need #list-cells? Can't we simply use
-> of_count_phandle_with_args(np, "triggers", NULL);
-> ?
-
-I'm not sure, I just read the function documentation :-)
-I haven't verified nor have I used this API.
-
-> 
-> From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
-> Date: Mon, 3 Oct 2016 16:49:05 +0200
-> Subject: [PATCH] usb: core: read USB ports from DT in the usbport LED
-> trigger
->  driver
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/triggers-usbport.txt  | 19 ++++++++
->  drivers/leds/led-triggers.c                        |  3 +-
->  drivers/usb/core/ledtrig-usbport.c                 | 56
-> ++++++++++++++++++++++
->  3 files changed, 77 insertions(+), 1 deletion(-)
->  create mode 100644
-> Documentation/devicetree/bindings/leds/triggers-usbport.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/triggers-usbport.txt
-> b/Documentation/devicetree/bindings/leds/triggers-usbport.txt
-> new file mode 100644
-> index 000000000000..10e55122cded
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/triggers-usbport.txt
-> @@ -0,0 +1,19 @@
-> +USB port LED trigger properties.
-> +
-> +USB port trigger can be used for signalling to the user a presence of USB
-> +device(s) in given ports. It's possible to specify USB ports in DT by
-> providing
-> +their references.
-> +
-> +Properties:
-> +- trigger-type : Must be "usbport".
-> +- ports : List of USB ports related to this LED. Some devices may have
-> one USB
-> +      LED for all ports, other may have few of them (e.g. USB version
-> +      specific). It's used by usbport trigger for reading a list of ports
-> +      that should cause LED to turn on whenver device get connected.
-> +
-> +Examples:
-> +
-> +usbport-trigger {
-> +    trigger-type = "usbport";
-> +    ports = <&ohci_port1>, <&ehci_port1>;
-> +};
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index c53c20d676cd..1d8bda9755ca 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -181,7 +181,8 @@ static void led_trigger_of_read_trigger(struct
-> led_classdev *led_cdev)
->      }
-> 
->      /* Check if trigger specified in DT is supported */
-> -    if (strcmp(trigger_type, "timer"))
-> +    if (strcmp(trigger_type, "timer") &&
-> +        strcmp(trigger_type, "usbport"))
->          goto err_node_put;
-> 
->      led_cdev->default_trigger = trigger_type;
-> diff --git a/drivers/usb/core/ledtrig-usbport.c
-> b/drivers/usb/core/ledtrig-usbport.c
-> index 1713248ab15a..599f7e6b0ba8 100644
-> --- a/drivers/usb/core/ledtrig-usbport.c
-> +++ b/drivers/usb/core/ledtrig-usbport.c
-> @@ -11,8 +11,10 @@
->  #include <linux/device.h>
->  #include <linux/leds.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/slab.h>
->  #include <linux/usb.h>
-> +#include <linux/usb/of.h>
-> 
->  struct usbport_trig_data {
->      struct led_classdev *led_cdev;
-> @@ -123,6 +125,58 @@ static const struct attribute_group ports_group = {
->   * Adding & removing ports
->   ***************************************/
-> 
-> +/**
-> + * usbport_trig_port_observed - Check if port should be observed
-> + *
-> + * Each LED may have list of related USB ports specified in a DT. This
-> function
-> + * reads them using ports property and sets a proper state.
-> + */
-> +static bool usbport_trig_port_observed(struct usbport_trig_data
-> *usbport_data,
-> +                       struct usb_device *usb_dev, int port1)
-> +{
-> +    struct device_node *led_np = usbport_data->led_cdev->trigger_node;
-> +    struct device *dev = usbport_data->led_cdev->dev;
-> +    struct of_phandle_args args;
-> +    struct device_node *port_np;
-> +    int count, i;
-> +
-> +    if (!led_np)
-> +        return false;
-> +
-> +    /* Get node of port being added */
-> +    port_np = usb_of_get_child_node(usb_dev->dev.of_node, port1);
-> +    if (!port_np)
-> +        return false;
-> +
-> +    /* Amount of ports this LED references */
-> +    count = of_count_phandle_with_args(led_np, "ports", NULL);
-> +    if (count < 0) {
-> +        dev_warn(dev, "Failed to get USB ports for %s\n",
-> +             led_np->full_name);
-> +        return false;
-> +    }
-> +
-> +    /* Check if port is on this LED's list */
-> +    for (i = 0; i < count; i++) {
-> +        int err;
-> +
-> +        err = of_parse_phandle_with_args(led_np, "ports", NULL, i,
-> +                         &args);
-> +        if (err) {
-> +            dev_err(dev, "Failed to get USB port phandle at index %d:
-> %d\n",
-> +                i, err);
-> +            continue;
-> +        }
-> +
-> +        of_node_put(args.np);
-> +
-> +        if (args.np == port_np)
-> +            return true;
-> +    }
-> +
-> +    return false;
-> +}
-> +
->  static int usbport_trig_add_port(struct usbport_trig_data *usbport_data,
->                   struct usb_device *usb_dev,
->                   const char *hub_name, int portnum)
-> @@ -141,6 +195,7 @@ static int usbport_trig_add_port(struct
-> usbport_trig_data *usbport_data,
->      port->data = usbport_data;
->      port->hub = usb_dev;
->      port->portnum = portnum;
-> +    port->observed = usbport_trig_port_observed(usbport_data, usb_dev,
-> portnum);
-> 
->      len = strlen(hub_name) + 8;
->      port->port_name = kzalloc(len, GFP_KERNEL);
-> @@ -255,6 +310,7 @@ static void usbport_trig_activate(struct
-> led_classdev *led_cdev)
->      if (err)
->          goto err_free;
->      usb_for_each_dev(usbport_data, usbport_trig_add_usb_dev_ports);
-> +    usbport_trig_update_count(usbport_data);
-> 
->      /* Notifications */
->      usbport_data->nb.notifier_call = usbport_trig_notify,
+I briefly read the discussion and looks like I'll wait for v9 after
+merge window is closed.
 
 -- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With Best Regards,
+Andy Shevchenko
