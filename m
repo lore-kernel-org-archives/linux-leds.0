@@ -1,66 +1,82 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v8 7/7] platform/x86/dell-*: Call
- led_classdev_notify_brightness_hw_changed on kbd brightness change
-Date: Wed, 1 Mar 2017 13:02:58 +0100
-Message-ID: <8c181bbc-e786-16c7-39f7-80d4be502066@redhat.com>
-References: <20170221145043.GK9795@pali>
- <0aed5655-11db-e632-0213-95779b780cb2@redhat.com>
- <20170221151317.GN9795@pali>
- <af30d146-8eb3-fbf7-7041-e719d8f9a5ac@redhat.com>
- <20170221170838.GO9795@pali>
- <7bb7c48f-789e-8b4c-b76b-1389d7fbbfb7@redhat.com>
- <20170222084935.GA21558@pali>
- <cf1aceaf-9177-2223-6f36-afdb5c47ee31@redhat.com>
- <20170222120109.GC21558@pali>
- <035b56e6-b606-c632-35cf-00f880abcbf5@redhat.com>
- <20170301111558.GC3185@pali>
+Subject: Re: [PATCH v8 1/7] platform/x86/thinkpad_acpi: Stop setting
+ led_classdev brightness directly
+Date: Wed, 1 Mar 2017 13:04:07 +0100
+Message-ID: <47535f24-6fde-26d8-fdeb-5ab00631769a@redhat.com>
+References: <20170209154417.19040-1-hdegoede@redhat.com>
+ <20170209154417.19040-2-hdegoede@redhat.com> <20170301112700.GD3185@pali>
+ <7400ebde-21bf-6a36-9ee7-ec1b2c7b5d02@redhat.com>
+ <20170301120004.GE3185@pali>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170301111558.GC3185@pali>
+In-Reply-To: <20170301120004.GE3185@pali>
 Sender: platform-driver-x86-owner@vger.kernel.org
 To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Marco Trevisan <mail@3v1n0.net>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+HI,
 
-On 01-03-17 12:15, Pali Rohár wrote:
-> On Wednesday 22 February 2017 13:20:46 Hans de Goede wrote:
->> 1) These events do not happen 100s of times per second, they happen
->> almost never
+On 01-03-17 13:00, Pali Rohár wrote:
+> On Wednesday 01 March 2017 12:57:42 Hans de Goede wrote:
+>> Hi,
+>>
+>> On 01-03-17 12:27, Pali Rohár wrote:
+>>> On Thursday 09 February 2017 16:44:11 Hans de Goede wrote:
+>>>> There is no need to set the led_classdev's brightness value from
+>>>> its set_brightness callback, this is taken care of by the led-core and
+>>>> thinkpad_acpi really should not be mucking with it.
+>>>>
+>>>> Note that kbdlight_set_level_and_update() is still used by the old
+>>>> thinpad_acpi specific sysfs interface for the led, so we cannot
+>>>> remove it.
+>>>>
+>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>> ---
+>>>> Changes in v8:
+>>>> -New patch in v8 of this patch-set
+>>>> ---
+>>>> drivers/platform/x86/thinkpad_acpi.c | 4 +---
+>>>> 1 file changed, 1 insertion(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+>>>> index cacb43f..0680bb3 100644
+>>>> --- a/drivers/platform/x86/thinkpad_acpi.c
+>>>> +++ b/drivers/platform/x86/thinkpad_acpi.c
+>>>> @@ -5095,8 +5095,6 @@ static int kbdlight_set_level(int level)
+>>>> 	return 0;
+>>>> }
+>>>>
+>>>> -static int kbdlight_set_level_and_update(int level);
+>>>> -
+>>>> static int kbdlight_get_level(void)
+>>>> {
+>>>> 	int status = 0;
+>>>> @@ -5164,7 +5162,7 @@ static void kbdlight_set_worker(struct work_struct *work)
+>>>> 			container_of(work, struct tpacpi_led_classdev, work);
+>>>>
+>>>> 	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
+>>>> -		kbdlight_set_level_and_update(data->new_state);
+>>>> +		kbdlight_set_level(data->new_state);
+>>>> }
+>>>>
+>>>> static void kbdlight_sysfs_set(struct led_classdev *led_cdev,
+>>>
+>>> Hi! This change was added in commit afcedebc6a0 (thinkpad_acpi: save
+>>> kbdlight state on suspend and restore it on resume). It is really OK to
+>>> revert that change?
+>>
+>> Yes, as explained on the commit msg, kbdlight_set_worker is only used
+>> from ledclass callbacks and the led core already update led_cdev->brightness
+>> when calling those.
 >
-> 100 events per second is probably not happening, but on my Latitude I
-> see that sometimes more events are delayed and delivered at once.
->
->> 2) This is the best we can do given the firmware interface we have
->
-> What about just dropping upcoming one event in interval of next 2-3
-> second? Instead of trying to remember last state in kernel and then
-> trying to mach if received event was that which was caused by change?
+> Ok, I wrote it because of adding Marco to discussion so he has chance to
+> comment this change -- as it is basically revert of his commit...
 
-That is way more racy then the solution with the kernel remembering
-the brightness. With my proposed solution there is basically no race,
-the only downside is the driver seeing a brightness change caused by
-libsmbios as one caused by the hotkeys, but it will do so 100%
-reliably and that is something which I believe we can live with
-just fine.
-
-> This would allow us to reduce doing one SMM call for each received
-> event and I think it would be same reliable as your approach.
-
-As I explained *already* we already have only one SMM call for reach
-received event, we pass the read-back brightness into
-led_classdev_notify_brightness_hw_changed and when userspace
-reads the new brightness_hw_changed event in response to the wakeup
-the led-core will use the value passed through
-led_classdev_notify_brightness_hw_changed so only 1 SMM call happens
-per event.
-
-Also again this does not happen 100 times per second you're really
-trying to optimize something which does not need any optimization
-at all here.
+No it is not, it removes a one line change he made amongst many others,
+the important parts of his commit are in other parts of it.
 
 Regards,
 
