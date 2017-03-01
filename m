@@ -1,83 +1,70 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v8 1/7] platform/x86/thinkpad_acpi: Stop setting
- led_classdev brightness directly
-Date: Wed, 1 Mar 2017 13:04:07 +0100
-Message-ID: <47535f24-6fde-26d8-fdeb-5ab00631769a@redhat.com>
-References: <20170209154417.19040-1-hdegoede@redhat.com>
- <20170209154417.19040-2-hdegoede@redhat.com> <20170301112700.GD3185@pali>
- <7400ebde-21bf-6a36-9ee7-ec1b2c7b5d02@redhat.com>
- <20170301120004.GE3185@pali>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+Date: Wed, 1 Mar 2017 22:04:30 +0100
+Message-ID: <386c5b7b-0bc0-d286-6cbb-745a5adbc1e9@gmail.com>
+References: <20170228120452.10043-1-zajec5@gmail.com>
+ <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
+ <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+ <CAL_JsqL-N4HfsG=py+w1NsBOJZzS1kbRM5J6dC-EE-rg9r9C2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170301120004.GE3185@pali>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Marco Trevisan <mail@3v1n0.net>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32885 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750813AbdCAVP0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Mar 2017 16:15:26 -0500
+In-Reply-To: <CAL_JsqL-N4HfsG=py+w1NsBOJZzS1kbRM5J6dC-EE-rg9r9C2g@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
-HI,
-
-On 01-03-17 13:00, Pali Rohár wrote:
-> On Wednesday 01 March 2017 12:57:42 Hans de Goede wrote:
->> Hi,
->>
->> On 01-03-17 12:27, Pali Rohár wrote:
->>> On Thursday 09 February 2017 16:44:11 Hans de Goede wrote:
->>>> There is no need to set the led_classdev's brightness value from
->>>> its set_brightness callback, this is taken care of by the led-core and
->>>> thinkpad_acpi really should not be mucking with it.
->>>>
->>>> Note that kbdlight_set_level_and_update() is still used by the old
->>>> thinpad_acpi specific sysfs interface for the led, so we cannot
->>>> remove it.
->>>>
->>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>>> ---
->>>> Changes in v8:
->>>> -New patch in v8 of this patch-set
->>>> ---
->>>> drivers/platform/x86/thinkpad_acpi.c | 4 +---
->>>> 1 file changed, 1 insertion(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
->>>> index cacb43f..0680bb3 100644
->>>> --- a/drivers/platform/x86/thinkpad_acpi.c
->>>> +++ b/drivers/platform/x86/thinkpad_acpi.c
->>>> @@ -5095,8 +5095,6 @@ static int kbdlight_set_level(int level)
->>>> 	return 0;
->>>> }
->>>>
->>>> -static int kbdlight_set_level_and_update(int level);
->>>> -
->>>> static int kbdlight_get_level(void)
->>>> {
->>>> 	int status = 0;
->>>> @@ -5164,7 +5162,7 @@ static void kbdlight_set_worker(struct work_struct *work)
->>>> 			container_of(work, struct tpacpi_led_classdev, work);
->>>>
->>>> 	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
->>>> -		kbdlight_set_level_and_update(data->new_state);
->>>> +		kbdlight_set_level(data->new_state);
->>>> }
->>>>
->>>> static void kbdlight_sysfs_set(struct led_classdev *led_cdev,
+On 02/28/2017 11:12 PM, Rob Herring wrote:
+> On Tue, Feb 28, 2017 at 3:51 PM, Rafał Miłecki <zajec5@gmail.com> wrote:
+>> On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
 >>>
->>> Hi! This change was added in commit afcedebc6a0 (thinkpad_acpi: save
->>> kbdlight state on suspend and restore it on resume). It is really OK to
->>> revert that change?
+>>> I think that it would be simpler if we could initially see
+>>> a complete sample dts implementation containing all required DT
+>>> nodes. The example could contain timer trigger as well as usb-port
+>>> trigger specific bindings.
 >>
->> Yes, as explained on the commit msg, kbdlight_set_worker is only used
->> from ledclass callbacks and the led core already update led_cdev->brightness
->> when calling those.
->
-> Ok, I wrote it because of adding Marco to discussion so he has chance to
-> comment this change -- as it is basically revert of his commit...
+>>
+>> Please take a look at attached patch. I used it on Tenda AC9 with:
+> 
+> I'm not sure about this extra level of indirection. I don't see the need.
+> 
+>> usb_trigger: usb-trigger {
+>>         trigger-type = "usbport";
+> 
+> Why do we need to know the type? The trigger device knows what type it
+> is. All we should need to know here is what device(s) controls an LED.
+> The rest the kernel can figure out.
 
-No it is not, it removes a one line change he made amongst many others,
-the important parts of his commit are in other parts of it.
+The thing is that in the proposed approach the trigger is not necessary
+a device. The trigger node is here only a container with initialization
+data.
 
-Regards,
+We could have e,g, two such nodes with different set of ports
+(say usb1-trigger and usb2-trigger). Then if we had two LED nodes usb1
+and usb2, the former could have its triggers property initialized
+to &usb1-trigger and the latter to &usb2-trigger. Thanks to that both
+LEDs after executing "echo usbport > triggers" would listen to events
+from different set of usb ports.
 
-Hans
+Also, e.g. for the timer trigger we could define two separate DT nodes
+with different delay intervals.
+
+>>         ports = <&ohci_port1>, <&ehci_port1>;
+>> };
+>>
+>> usb {
+>>         label = "bcm53xx:blue:usb";
+>>         gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
+>>         triggers = <&usb_trigger>;
+>> };
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
