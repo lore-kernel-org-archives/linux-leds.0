@@ -1,81 +1,116 @@
 From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH v8 1/7] platform/x86/thinkpad_acpi: Stop setting
- led_classdev brightness directly
-Date: Wed, 1 Mar 2017 13:00:04 +0100
-Message-ID: <20170301120004.GE3185@pali>
-References: <20170209154417.19040-1-hdegoede@redhat.com>
- <20170209154417.19040-2-hdegoede@redhat.com>
- <20170301112700.GD3185@pali>
- <7400ebde-21bf-6a36-9ee7-ec1b2c7b5d02@redhat.com>
+Subject: Re: [PATCH v8 7/7] platform/x86/dell-*: Call
+ led_classdev_notify_brightness_hw_changed on kbd brightness change
+Date: Wed, 1 Mar 2017 13:55:32 +0100
+Message-ID: <20170301125532.GF3185@pali>
+References: <20170221151317.GN9795@pali>
+ <af30d146-8eb3-fbf7-7041-e719d8f9a5ac@redhat.com>
+ <20170221170838.GO9795@pali>
+ <7bb7c48f-789e-8b4c-b76b-1389d7fbbfb7@redhat.com>
+ <20170222084935.GA21558@pali>
+ <cf1aceaf-9177-2223-6f36-afdb5c47ee31@redhat.com>
+ <20170222120109.GC21558@pali>
+ <035b56e6-b606-c632-35cf-00f880abcbf5@redhat.com>
+ <20170301111558.GC3185@pali>
+ <8c181bbc-e786-16c7-39f7-80d4be502066@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:32778 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbdCAMAp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Mar 2017 07:00:45 -0500
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7400ebde-21bf-6a36-9ee7-ec1b2c7b5d02@redhat.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <8c181bbc-e786-16c7-39f7-80d4be502066@redhat.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
 To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, Marco Trevisan <mail@3v1n0.net>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-On Wednesday 01 March 2017 12:57:42 Hans de Goede wrote:
+On Wednesday 01 March 2017 13:02:58 Hans de Goede wrote:
 > Hi,
 > 
-> On 01-03-17 12:27, Pali Rohár wrote:
-> >On Thursday 09 February 2017 16:44:11 Hans de Goede wrote:
-> >>There is no need to set the led_classdev's brightness value from
-> >>its set_brightness callback, this is taken care of by the led-core and
-> >>thinkpad_acpi really should not be mucking with it.
-> >>
-> >>Note that kbdlight_set_level_and_update() is still used by the old
-> >>thinpad_acpi specific sysfs interface for the led, so we cannot
-> >>remove it.
-> >>
-> >>Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> >>---
-> >>Changes in v8:
-> >>-New patch in v8 of this patch-set
-> >>---
-> >> drivers/platform/x86/thinkpad_acpi.c | 4 +---
-> >> 1 file changed, 1 insertion(+), 3 deletions(-)
-> >>
-> >>diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> >>index cacb43f..0680bb3 100644
-> >>--- a/drivers/platform/x86/thinkpad_acpi.c
-> >>+++ b/drivers/platform/x86/thinkpad_acpi.c
-> >>@@ -5095,8 +5095,6 @@ static int kbdlight_set_level(int level)
-> >> 	return 0;
-> >> }
-> >>
-> >>-static int kbdlight_set_level_and_update(int level);
-> >>-
-> >> static int kbdlight_get_level(void)
-> >> {
-> >> 	int status = 0;
-> >>@@ -5164,7 +5162,7 @@ static void kbdlight_set_worker(struct work_struct *work)
-> >> 			container_of(work, struct tpacpi_led_classdev, work);
-> >>
-> >> 	if (likely(tpacpi_lifecycle == TPACPI_LIFE_RUNNING))
-> >>-		kbdlight_set_level_and_update(data->new_state);
-> >>+		kbdlight_set_level(data->new_state);
-> >> }
-> >>
-> >> static void kbdlight_sysfs_set(struct led_classdev *led_cdev,
+> On 01-03-17 12:15, Pali Rohár wrote:
+> >On Wednesday 22 February 2017 13:20:46 Hans de Goede wrote:
+> >>1) These events do not happen 100s of times per second, they happen
+> >>almost never
 > >
-> >Hi! This change was added in commit afcedebc6a0 (thinkpad_acpi: save
-> >kbdlight state on suspend and restore it on resume). It is really OK to
-> >revert that change?
+> >100 events per second is probably not happening, but on my Latitude I
+> >see that sometimes more events are delayed and delivered at once.
+> >
+> >>2) This is the best we can do given the firmware interface we have
+> >
+> >What about just dropping upcoming one event in interval of next 2-3
+> >second? Instead of trying to remember last state in kernel and then
+> >trying to mach if received event was that which was caused by change?
 > 
-> Yes, as explained on the commit msg, kbdlight_set_worker is only used
-> from ledclass callbacks and the led core already update led_cdev->brightness
-> when calling those.
+> That is way more racy then the solution with the kernel remembering
+> the brightness. With my proposed solution there is basically no race,
 
-Ok, I wrote it because of adding Marco to discussion so he has chance to
-comment this change -- as it is basically revert of his commit...
+Is is racy. When you change keyboard backlight via LED sysfs and also in
+that time kernel receive hardware event about changed backlight, kernel
+do not know if that event comes as reaction to change via LED sysfs or
+as autonomous firmware decision or as reaction to pressing key for
+changing keyboard backlight (managed by firmware).
+
+I'm not talking here about userspace libsmbios. All is just by
+autonomous firmware, keyboard usage and LED sysfs API.
+
+And how is my idea about dropping exactly one event for one request for
+changing backlight via LED sysfs API more racy as yours?
+
+Received event from firmware has only the timestamp, no more information
+yet (*). Therefore state of events does is not ordered and any two
+events are basically same.
+
+In your provides patch you are adding additional information to event.
+It is currently read brightness level in time when was event delivered,
+not state of time when event was created. Which means you cannot swap
+any two received events anymore as they are part of current driver
+state.
+
+In my idea I do not add any additional information to event. Which means
+all received events are same in current driver state and I can swap
+them. So I can decide to drop one event when driver is changing
+backlight level. And because I can swap received events it does not
+matter if I drop "correct" one (that which was really generated by my
+backlight level change) or any other before or after (as they are same).
+The only important is that kernel use correct number of firmware events.
+
+Idea for time interval of 2-3 seconds is that if event is delivered
+later as after 3 seconds it is probably useless as driver application
+code can be already out-of-sync. But this time interval is just another
+idea and we do not need to use it.
+
+(*) Looks like for some machines in dell-wmi.c we know also which
+brightness level was set by firmware, but it is not used now and we
+still have machines without this information.
+
+> the only downside is the driver seeing a brightness change caused by
+> libsmbios as one caused by the hotkeys, but it will do so 100%
+> reliably and that is something which I believe we can live with
+> just fine.
+> 
+> >This would allow us to reduce doing one SMM call for each received
+> >event and I think it would be same reliable as your approach.
+> 
+> As I explained *already* we already have only one SMM call for reach
+> received event, we pass the read-back brightness into
+> led_classdev_notify_brightness_hw_changed and when userspace
+> reads the new brightness_hw_changed event in response to the wakeup
+> the led-core will use the value passed through
+> led_classdev_notify_brightness_hw_changed so only 1 SMM call happens
+> per event.
+> 
+> Also again this does not happen 100 times per second you're really
+> trying to optimize something which does not need any optimization
+> at all here.
+
+We have reports that on some Dell notebooks is issuing SMM call causing
+freezing kernel for about 1-3 seconds (as firmware stay in SMM mode for
+a longer time...).
+
+> Regards,
+> 
+> Hans
+> 
 
 -- 
 Pali Rohár
