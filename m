@@ -1,80 +1,84 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Subject: [PATCH V2 2/2] leds: gpio: use OF variant of LED registering function
-Date: Mon,  6 Mar 2017 06:19:45 +0100
-Message-ID: <20170306051945.14857-2-zajec5@gmail.com>
-References: <20170306051945.14857-1-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+Date: Mon, 6 Mar 2017 07:06:32 +0100
+Message-ID: <b80fe65c-2fc9-94ac-9de2-29aee6b62033@milecki.pl>
+References: <20170228120452.10043-1-zajec5@gmail.com>
+ <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
+ <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+ <CAL_JsqL-N4HfsG=py+w1NsBOJZzS1kbRM5J6dC-EE-rg9r9C2g@mail.gmail.com>
+ <386c5b7b-0bc0-d286-6cbb-745a5adbc1e9@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36290 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752890AbdCFFT6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2017 00:19:58 -0500
-Received: by mail-lf0-f67.google.com with SMTP id g70so10995210lfh.3
-        for <linux-leds@vger.kernel.org>; Sun, 05 Mar 2017 21:19:57 -0800 (PST)
-In-Reply-To: <20170306051945.14857-1-zajec5@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <386c5b7b-0bc0-d286-6cbb-745a5adbc1e9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 
-From: Rafał Miłecki <rafal@milecki.pl>
+On 03/01/2017 10:04 PM, Jacek Anaszewski wrote:
+> On 02/28/2017 11:12 PM, Rob Herring wrote:
+>> On Tue, Feb 28, 2017 at 3:51 PM, Rafał Miłecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
+>>>>
+>>>> I think that it would be simpler if we could initially see
+>>>> a complete sample dts implementation containing all required DT
+>>>> nodes. The example could contain timer trigger as well as usb-port
+>>>> trigger specific bindings.
+>>>
+>>>
+>>> Please take a look at attached patch. I used it on Tenda AC9 with:
+>>
+>> I'm not sure about this extra level of indirection. I don't see the need.
+>>
+>>> usb_trigger: usb-trigger {
+>>>         trigger-type = "usbport";
+>>
+>> Why do we need to know the type? The trigger device knows what type it
+>> is. All we should need to know here is what device(s) controls an LED.
+>> The rest the kernel can figure out.
+>
+> The thing is that in the proposed approach the trigger is not necessary
+> a device. The trigger node is here only a container with initialization
+> data.
+>
+> We could have e,g, two such nodes with different set of ports
+> (say usb1-trigger and usb2-trigger). Then if we had two LED nodes usb1
+> and usb2, the former could have its triggers property initialized
+> to &usb1-trigger and the latter to &usb2-trigger. Thanks to that both
+> LEDs after executing "echo usbport > triggers" would listen to events
+> from different set of usb ports.
+>
+> Also, e.g. for the timer trigger we could define two separate DT nodes
+> with different delay intervals.
 
-In leds-gpio we support LEDs specified in DT so we should use
-(devm_)of_led_classdev_register. This allows passing DT node as argument
-for use by the LED subsystem.
+Hi Rob, what do you think about this?
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
----
-V2: Use the new devm_of_led_classdev_register function.
----
- drivers/leds/leds-gpio.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Jacek is correct, we could have e.g.
+timer-trigger-1 {
+	trigger-type = "timer";
+	delay-on = <200>;
+	delay-off = <500>;
+};
+timer-trigger-2 {
+	trigger-type = "timer";
+	delay-on = <500>;
+	delay-off = <1000>;
+};
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index d400dcaf4d29..c5230249f136 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -77,7 +77,7 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
- 
- static int create_gpio_led(const struct gpio_led *template,
- 	struct gpio_led_data *led_dat, struct device *parent,
--	gpio_blink_set_t blink_set)
-+	struct device_node *np, gpio_blink_set_t blink_set)
- {
- 	int ret, state;
- 
-@@ -139,7 +139,7 @@ static int create_gpio_led(const struct gpio_led *template,
- 	if (ret < 0)
- 		return ret;
- 
--	return devm_led_classdev_register(parent, &led_dat->cdev);
-+	return devm_of_led_classdev_register(parent, np, &led_dat->cdev);
- }
- 
- struct gpio_leds_priv {
-@@ -206,7 +206,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		if (fwnode_property_present(child, "panic-indicator"))
- 			led.panic_indicator = 1;
- 
--		ret = create_gpio_led(&led, led_dat, dev, NULL);
-+		ret = create_gpio_led(&led, led_dat, dev, np, NULL);
- 		if (ret < 0) {
- 			fwnode_handle_put(child);
- 			return ERR_PTR(ret);
-@@ -240,9 +240,9 @@ static int gpio_led_probe(struct platform_device *pdev)
- 
- 		priv->num_leds = pdata->num_leds;
- 		for (i = 0; i < priv->num_leds; i++) {
--			ret = create_gpio_led(&pdata->leds[i],
--					      &priv->leds[i],
--					      &pdev->dev, pdata->gpio_blink_set);
-+			ret = create_gpio_led(&pdata->leds[i], &priv->leds[i],
-+					      &pdev->dev, NULL,
-+					      pdata->gpio_blink_set);
- 			if (ret < 0)
- 				return ret;
- 		}
--- 
-2.11.0
+or something like:
+usbport-2-0-trigger {
+	trigger-type = "usbport";
+	ports = <&ohci_port1>, <&ehci_port1>;
+};
+usbport-3-0-trigger {
+	trigger-type = "usbport";
+	ports = <&xhci_port1>;
+};
+
+Does it make more sense?
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
