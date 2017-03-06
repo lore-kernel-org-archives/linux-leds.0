@@ -1,73 +1,81 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 2/2] ARM: dts: motorola-cpcap-mapphone: add LEDs
-Date: Mon, 6 Mar 2017 08:11:18 -0800
-Message-ID: <20170306161118.GI20572@atomide.com>
-References: <20170305172234.24120-1-sre@kernel.org>
- <20170305172234.24120-2-sre@kernel.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+Date: Mon, 6 Mar 2017 20:59:54 +0100
+Message-ID: <41dac3a5-39fb-5740-106a-980b3107fac0@gmail.com>
+References: <20170228120452.10043-1-zajec5@gmail.com>
+ <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
+ <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+ <28982a47-20b5-f90b-c1d8-b470e4019a08@gmail.com>
+ <cd92c387-f484-4806-c5fd-9c55d0fc0aef@milecki.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:38016 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752709AbdCFQMk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:12:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20170305172234.24120-2-sre@kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34972 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753649AbdCFUAl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2017 15:00:41 -0500
+In-Reply-To: <cd92c387-f484-4806-c5fd-9c55d0fc0aef@milecki.pl>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-* Sebastian Reichel <sre@kernel.org> [170305 09:24]:
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> ---
->  arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi | 30 ++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+On 03/06/2017 07:16 AM, Rafał Miłecki wrote:
+> On 03/01/2017 10:04 PM, Jacek Anaszewski wrote:
+>> On 02/28/2017 10:51 PM, Rafał Miłecki wrote:
+>>> On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
+>>>> I think that it would be simpler if we could initially see
+>>>> a complete sample dts implementation containing all required DT
+>>>> nodes. The example could contain timer trigger as well as usb-port
+>>>> trigger specific bindings.
+>>>
+>>> Please take a look at attached patch. I used it on Tenda AC9 with:
+>>>
+>>> usb_trigger: usb-trigger {
+>>>     trigger-type = "usbport";
+>>>     ports = <&ohci_port1>, <&ehci_port1>;
+>>> };
+>>>
+>>> usb {
+>>>     label = "bcm53xx:blue:usb";
+>>>     gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
+>>>     triggers = <&usb_trigger>;
+>>> };
+>>
+>> OK, I got it, thanks.
+>>
+>>>
+>>>> I suppose that we should see DT nodes containing #list-cells
+>>>> properties that define the quantity of phandle arguments.
+>>>>
+>>>> It seems that this approach allows for defining a list of elements
+>>>> with variable number of arguments, i.e. what you were initially
+>>>> asking for.
+>>>
+>>> Are you sure we need #list-cells? Can't we simply use
+>>> of_count_phandle_with_args(np, "triggers", NULL);
+>>> ?
+>>
+>> I'm not sure, I just read the function documentation :-)
+>> I haven't verified nor have I used this API.
 > 
-> diff --git a/arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi b/arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi
-> index 9970985e685b..e02982d69854 100644
-> --- a/arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi
-> +++ b/arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi
-> @@ -38,6 +38,36 @@
->  
->  			interrupts = <23 IRQ_TYPE_NONE>;
->  		};
-> +
-> +		led_red: led-red {
-> +			compatible = "motorola,cpcap-led-red";
-> +			vdd-supply = <&sw5>;
-> +			label = "status-led:red";
-> +		};
-> +
-> +		led_green: led-green {
-> +			compatible = "motorola,cpcap-led-green";
-> +			vdd-supply = <&sw5>;
-> +			label = "status-led:green";
-> +		};
-> +
-> +		led_blue: led-blue {
-> +			compatible = "motorola,cpcap-led-blue";
-> +			vdd-supply = <&sw5>;
-> +			label = "status-led:blue";
-> +		};
-> +
-> +		led_adl: led-adl {
-> +			compatible = "motorola,cpcap-led-adl";
-> +			vdd-supply = <&sw5>;
-> +			label = "button-backlight";
-> +		};
-> +
-> +		led_cp: led-cp {
-> +			compatible = "motorola,cpcap-led-cp";
-> +			vdd-supply = <&sw5>;
-> +			label = "shift-key-light";
-> +		};
->  	};
->  };
+> So we could use #list-cells to support something like:
+> 
+> usb {
+>     label = "bcm53xx:blue:usb";
+>     gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
+>     triggers = <&usb_trigger 1 2>, <&timer_trigger 3 4 5>;
+> };
+> 
+> but I don't see any need for this. Just specifying triggers like:
+> triggers = <&usb_trigger>, <&timer_trigger>, <&foo>;
+> should be always enough, especially with the new trigger nodes you
+> suggested.
 
-Applying into omap-for-v4.12/dt-droid4 thanks. I added minimal
-description to the patch saying "Add LEDs".
+Indeed, it seems to be not needed for this approach.
+I'm OK with this design.
 
-Regards,
-
-Tony
+-- 
+Best regards,
+Jacek Anaszewski
