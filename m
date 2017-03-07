@@ -1,93 +1,180 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH 1/2] leds: cpcap: new driver
-Date: Tue, 7 Mar 2017 12:55:49 +0100
-Message-ID: <20170307115549.GA914@amd>
-References: <20170305172234.24120-1-sre@kernel.org>
- <20170306221147.GA24272@amd>
- <20170306233859.GQ20572@atomide.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH V2 1/2] leds: core: add OF variants of LED registering
+ functions
+Date: Tue, 7 Mar 2017 13:05:47 +0100
+Message-ID: <20170307120547.GA2740@amd>
+References: <20170306051945.14857-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48726 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754483AbdCGMNS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2017 07:13:18 -0500
 Content-Disposition: inline
-In-Reply-To: <20170306233859.GQ20572-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170306051945.14857-1-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
 
---2oS5YaxWCcQjTEyO
+--vtzGhvizbBRQ85DL
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> * Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> [170306 14:13]:
-> > > Motorola CPCAP is a PMIC found in multiple smartphones.
-> > > This driver adds support for the chip's LED controllers.
-> > > It has explicit support for all controllers used by the
-> > > Droid 4. Since no datasheets are available the other
-> > > available controllers are not supported until somebody
-> > > verified, that the register layout matches.
-> >=20
-> > This of course leads me to two questions:
-> >=20
-> > 1) Where can I get Droid 4?
+On Mon 2017-03-06 06:19:44, Rafa=C5=82 Mi=C5=82ecki wrote:
+> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
 >=20
-> There's plenty of them available used for a few tens of $/=E2=82=AC
-> on ebay as it was a popular phone on Verizon network in the
-> US. It works fine on 3G networks outside the U.S, 4G probably
-> only works in the US.
-
-Ok, and more importantly, 2G should work outside U.S., too, good.
-
-> > 2) How well is it supported?
+> These new functions allow passing an additional device_node argument
+> that will be internally set for created LED device. Thanks to this LED
+> core code and triggers will be able to access DT node for reading extra
+> info.
 >=20
-> Basic things like UART, MMC, eMMC, WLAN, I2C, SPI, HDMI,
-> clocks, PMIC and regulators work with lots of other dts
-> configured devices heading into tomorrow's Linux next in my
-> dts branch omap-for-v4.12/dt-droid4. LCD related patches have
-> been posted but are not yet in next.
+> The easiest solution for achieving this was reworking old functions to
+> more generic ones & adding simple defines for API compatibility.
 >=20
-> Things that currently don't work are ADC, USB, charging,
-> audio and modems. The modems are on OHCI/EHCI, audio is on the
-> PMIC similar to the twl4030. I'm slowly working on a driver for
-> ADC/USB/charging with few more issues to sort out. I do have
-> ADC/USB/charging working with my current hacks though.
+> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
 
-2 cores and more importantly 1GB of RAM. Nice. OTOH, I'm avoiding N950
-due to its crazy "security" system and this one is even worse. RAM and
-CPUs are nice, but phone calls are what is important for me. And
-battery charging, I guess. Serial port on the USB connector _is_ nice,
-OTOH.=20
+Both patches: Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Anyway, good luck, and thanks for the pointers. I will get Droid 4 if
-it is easy. But I guess I'll stick to N900 for now. I want something
-that can do voice calls.
+> ---
+> V2: Use new functions instead of adding property to the struct led_classd=
+ev.
+> ---
+>  drivers/leds/led-class.c | 26 ++++++++++++++++----------
+>  include/linux/leds.h     | 14 ++++++++++----
+>  2 files changed, 26 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 95d971aa2440..349d334d2e98 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -182,11 +182,14 @@ static int led_classdev_next_name(const char *init_=
+name, char *name,
+>  }
+> =20
+>  /**
+> - * led_classdev_register - register a new object of led_classdev class.
+> - * @parent: The device to register.
+> + * of_led_classdev_register - register a new object of led_classdev clas=
+s.
+> + *
+> + * @parent: parent of LED device
+>   * @led_cdev: the led_classdev structure for this device.
+> + * @np: DT node describing this LED
+>   */
+> -int led_classdev_register(struct device *parent, struct led_classdev *le=
+d_cdev)
+> +int of_led_classdev_register(struct device *parent, struct device_node *=
+np,
+> +			    struct led_classdev *led_cdev)
+>  {
+>  	char name[LED_MAX_NAME_SIZE];
+>  	int ret;
+> @@ -199,6 +202,7 @@ int led_classdev_register(struct device *parent, stru=
+ct led_classdev *led_cdev)
+>  				led_cdev, led_cdev->groups, "%s", name);
+>  	if (IS_ERR(led_cdev->dev))
+>  		return PTR_ERR(led_cdev->dev);
+> +	led_cdev->dev->of_node =3D np;
+> =20
+>  	if (ret)
+>  		dev_warn(parent, "Led %s renamed to %s due to name collision",
+> @@ -234,7 +238,7 @@ int led_classdev_register(struct device *parent, stru=
+ct led_classdev *led_cdev)
+> =20
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(led_classdev_register);
+> +EXPORT_SYMBOL_GPL(of_led_classdev_register);
+> =20
+>  /**
+>   * led_classdev_unregister - unregisters a object of led_properties clas=
+s.
+> @@ -276,12 +280,14 @@ static void devm_led_classdev_release(struct device=
+ *dev, void *res)
+>  }
+> =20
+>  /**
+> - * devm_led_classdev_register - resource managed led_classdev_register()
+> - * @parent: The device to register.
+> + * devm_of_led_classdev_register - resource managed led_classdev_registe=
+r()
+> + *
+> + * @parent: parent of LED device
+>   * @led_cdev: the led_classdev structure for this device.
+>   */
+> -int devm_led_classdev_register(struct device *parent,
+> -			       struct led_classdev *led_cdev)
+> +int devm_of_led_classdev_register(struct device *parent,
+> +				  struct device_node *np,
+> +				  struct led_classdev *led_cdev)
+>  {
+>  	struct led_classdev **dr;
+>  	int rc;
+> @@ -290,7 +296,7 @@ int devm_led_classdev_register(struct device *parent,
+>  	if (!dr)
+>  		return -ENOMEM;
+> =20
+> -	rc =3D led_classdev_register(parent, led_cdev);
+> +	rc =3D of_led_classdev_register(parent, np, led_cdev);
+>  	if (rc) {
+>  		devres_free(dr);
+>  		return rc;
+> @@ -301,7 +307,7 @@ int devm_led_classdev_register(struct device *parent,
+> =20
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(devm_led_classdev_register);
+> +EXPORT_SYMBOL_GPL(devm_of_led_classdev_register);
+> =20
+>  static int devm_led_classdev_match(struct device *dev, void *res, void *=
+data)
+>  {
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 0518903778b6..00dcb9f8293b 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -114,10 +114,16 @@ struct led_classdev {
+>  	struct mutex		led_access;
+>  };
+> =20
+> -extern int led_classdev_register(struct device *parent,
+> -				 struct led_classdev *led_cdev);
+> -extern int devm_led_classdev_register(struct device *parent,
+> -				      struct led_classdev *led_cdev);
+> +extern int of_led_classdev_register(struct device *parent,
+> +				    struct device_node *np,
+> +				    struct led_classdev *led_cdev);
+> +#define led_classdev_register(parent, led_cdev)				\
+> +	of_led_classdev_register(parent, NULL, led_cdev)
+> +extern int devm_of_led_classdev_register(struct device *parent,
+> +					 struct device_node *np,
+> +					 struct led_classdev *led_cdev);
+> +#define devm_led_classdev_register(parent, led_cdev)			\
+> +	devm_of_led_classdev_register(parent, NULL, led_cdev)
+>  extern void led_classdev_unregister(struct led_classdev *led_cdev);
+>  extern void devm_led_classdev_unregister(struct device *parent,
+>  					 struct led_classdev *led_cdev);
 
-Best regards,
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---2oS5YaxWCcQjTEyO
+--vtzGhvizbBRQ85DL
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAli+n8UACgkQMOfwapXb+vJq4gCdGpQqY2GuDCuWynKx1fboYIhL
-dt8AoKp3QQAOXNyXskHhGP2IJgAbmTse
-=MFIY
+iEYEARECAAYFAli+ohsACgkQMOfwapXb+vImgQCeKmcSJ1mU6wYcR1lCiWxZqdq8
+qiQAnjKVPL005+zOMu6Kz+zA6qEaKoXR
+=n352
 -----END PGP SIGNATURE-----
 
---2oS5YaxWCcQjTEyO--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--vtzGhvizbBRQ85DL--
