@@ -1,75 +1,70 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: BCM53573: Don't use nonexistent
- "default-off" LED trigger
-Date: Wed, 8 Mar 2017 09:31:44 -0800
-Message-ID: <42bce8ea-f1dc-2018-33f1-d296ccd7b677@gmail.com>
-References: <20170308064105.26619-1-zajec5@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: New problems after f363a870eaef ("leds: core: use deferred probing if
+ default trigger isn't available yet")
+Date: Wed, 8 Mar 2017 10:13:37 +0100
+Message-ID: <CACna6rx-mDw0UQ-hxQ+S-McP3HbitqncDgUVa-mrd7FPPGXykQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33061 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751616AbdCHRcS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 12:32:18 -0500
-In-Reply-To: <20170308064105.26619-1-zajec5@gmail.com>
+Received: from mail-ot0-f180.google.com ([74.125.82.180]:34580 "EHLO
+        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751616AbdCHUFb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 15:05:31 -0500
+Received: by mail-ot0-f180.google.com with SMTP id o24so41579625otb.1
+        for <linux-leds@vger.kernel.org>; Wed, 08 Mar 2017 12:04:18 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Hauke Mehrtens <hauke@hauke-m.de>, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 
-On 03/07/2017 10:41 PM, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
-> 
-> Such a trigger doesn't exist in Linux and is not needed as LED is being
-> turned off by default. This could cause errors in LEDs core code when
-> trying to set default trigger.
-> 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Hi,
 
-Since you are fixing something, what's the proper Fixes: tag for this
-commit? Likewise for the second patch.
+I backported commit f363a870eaef ("leds: core: use deferred probing if
+default trigger isn't available yet") to my standard kernel and
+noticed some problems when using it.
 
-Thanks
+First of all my LEDs stopped working despite having all triggers
+enabled. It has appeared to be caused by my DTS files using invalid
+"default-off" trigger. I already sent patches fixing this:
+[1/2] ARM: dts: BCM53573: Don't use nonexistent "default-off" LED trigger
+[2/2] ARM: dts: BCM5301X: Don't use nonexistent "default-off" LED trigger
+but maybe there are more devices regressed by this change? Does it
+count as breaking DT files compatibility?
 
-> ---
->  arch/arm/boot/dts/bcm47189-tenda-ac9.dts | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-> index 6bdd79567cbd..34417dac1cd0 100644
-> --- a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-> +++ b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-> @@ -26,19 +26,16 @@
->  		usb {
->  			label = "bcm53xx:blue:usb";
->  			gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
-> -			linux,default-trigger = "default-off";
->  		};
->  
->  		wps {
->  			label = "bcm53xx:blue:wps";
->  			gpios = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
-> -			linux,default-trigger = "default-off";
->  		};
->  
->  		5ghz {
->  			label = "bcm53xx:blue:5ghz";
->  			gpios = <&chipcommon 11 GPIO_ACTIVE_HIGH>;
-> -			linux,default-trigger = "default-off";
->  		};
->  
->  		system {
-> @@ -54,7 +51,6 @@
->  		2ghz {
->  			label = "bcm53xx:blue:2ghz";
->  			gpios = <&pcie0_chipcommon 3 GPIO_ACTIVE_HIGH>;
-> -			linux,default-trigger = "default-off";
->  		};
->  	};
->  
-> 
+Related problem is that with this change user won't get any LED
+working even if there is only a single trigger missing. People may
+decide not to use some triggers for various reasons. Let's say I don't
+care about USB support and I disable whole USB subsystem including
+"usbport" trigger. If my DTS file includes "userport" default trigger
+for any LED, I won't get any LED registered at all. I'd definitely
+want to have other LEDs working.
 
+Finally this commit introduces delay when e.g. mixing built-in with
+modules. Thanks to DTS files a lot of devices can share a single
+kernel. I don't want to bloat it (the kernel) so I keep subsystem
+modules & extra triggers as modules. I built-in leds-gpio and
+ledtrig-default-on as they are used by 99% of devices and are needed
+early to indicate device/kernel is alive. With the commit in question
+LEDs don't get registered/enabled until are triggers are ready and
+some triggers need to be loaded as modules from rootfs. This delays
+settings LEDs to some initial state indicating e.g. device is powered
+on.
 
--- 
-Florian
+Because of these problems I'd like to suggest reverting that commit
+and look for a different solution.
+
+Unfortunately first of all I need to ask for a better explanation of
+the problem. I read commit description but this load order doesn't
+make sense to me. If you take a look at led_trigger_register, you'll
+see it iterates over registered LEDs and enables just-loaded trigger
+for these using it as default one. I also just tested this feature and
+it works as expected for me. I loaded ledtrig-timer.ko and LED with
+linux,default-trigger =3D "timer" started blinking nicely!
+
+Heiner: can you describe what exactly was a problem for you? Why you
+needed deffer solution and why you decided to keep setting trigger in
+led_trigger_register function? They seems like 2 competing solutions
+of the same problem.
+
+--=20
+Rafa=C5=82
