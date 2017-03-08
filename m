@@ -1,40 +1,26 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 Subject: Re: New problems after f363a870eaef ("leds: core: use deferred
  probing if default trigger isn't available yet")
-Date: Wed, 8 Mar 2017 21:24:38 +0100
-Message-ID: <a12aa6e1-da13-b585-daf4-cfc8e02c9b31@gmail.com>
+Date: Wed, 8 Mar 2017 21:32:16 +0100
+Message-ID: <89448e55-9e1a-83af-7c02-b9c18da9cfc1@gmail.com>
 References: <CACna6rx-mDw0UQ-hxQ+S-McP3HbitqncDgUVa-mrd7FPPGXykQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:35274 "EHLO
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:32939 "EHLO
         mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754463AbdCHUdc (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 15:33:32 -0500
-Received: by mail-wr0-f170.google.com with SMTP id g10so31562873wrg.2
-        for <linux-leds@vger.kernel.org>; Wed, 08 Mar 2017 12:33:21 -0800 (PST)
+        with ESMTP id S1754413AbdCHU72 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 15:59:28 -0500
+Received: by mail-wr0-f170.google.com with SMTP id u48so31986815wrc.0
+        for <linux-leds@vger.kernel.org>; Wed, 08 Mar 2017 12:57:40 -0800 (PST)
 In-Reply-To: <CACna6rx-mDw0UQ-hxQ+S-McP3HbitqncDgUVa-mrd7FPPGXykQ@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 
-Hi Rafał,
-
-Thanks for this detailed report and analysis.
-I've dropped the patch in question.
-
-I think that Heiner mentioned his problem in the commit
-message - the situation when the trigger to be set is not
-yet registered is silently ignored.
-
-Probably he solution would be adding dev_warn() (?)
-in led_trigger_set_default() when no trigger is matched.
-
-Best regards,
-Jacek Anaszewski
-
-On 03/08/2017 10:13 AM, Rafał Miłecki wrote:
+Am 08.03.2017 um 10:13 schrieb Rafał Miłecki:
 > Hi,
 > 
 > I backported commit f363a870eaef ("leds: core: use deferred probing if
@@ -79,6 +65,18 @@ On 03/08/2017 10:13 AM, Rafał Miłecki wrote:
 > it works as expected for me. I loaded ledtrig-timer.ko and LED with
 > linux,default-trigger = "timer" started blinking nicely!
 > 
+Uuhh, you're absolutely right, my fault.
+Based on the code in led_classdev_register I assumed that there must
+be an issue with triggers exported by drivers loaded later.
+And I only tested that there was no such issue after applying the patch.
+But I didn't test that the issue actually existed before.
+So yes, the patch can be reverted.
+
+But there's at least something good with it: It helped to clean up
+some DT's ..
+
+Sorry again and thanks for the analysis, Heiner
+
 > Heiner: can you describe what exactly was a problem for you? Why you
 > needed deffer solution and why you decided to keep setting trigger in
 > led_trigger_register function? They seems like 2 competing solutions
