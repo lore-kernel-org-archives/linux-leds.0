@@ -1,80 +1,75 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Florian Fainelli <f.fainelli@gmail.com>
 Subject: Re: [PATCH 1/2] ARM: dts: BCM53573: Don't use nonexistent
  "default-off" LED trigger
-Date: Wed, 8 Mar 2017 11:20:59 +0100
-Message-ID: <20170308102058.GA7772@amd>
+Date: Wed, 8 Mar 2017 09:31:44 -0800
+Message-ID: <42bce8ea-f1dc-2018-33f1-d296ccd7b677@gmail.com>
 References: <20170308064105.26619-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5249990969863276331=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170308064105.26619-1-zajec5@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-leds@vger.kernel.org, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-leds@vger.kernel.org
-
-
---===============5249990969863276331==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-
-
---SUOF0GtieIMvvwua
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33061 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751616AbdCHRcS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 12:32:18 -0500
+In-Reply-To: <20170308064105.26619-1-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Hauke Mehrtens <hauke@hauke-m.de>, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
 
-On Wed 2017-03-08 07:41:04, Rafa=C5=82 Mi=C5=82ecki wrote:
-> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
->=20
+On 03/07/2017 10:41 PM, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
+> 
 > Such a trigger doesn't exist in Linux and is not needed as LED is being
 > turned off by default. This could cause errors in LEDs core code when
 > trying to set default trigger.
->=20
-> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> 
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 
-For both patches:
+Since you are fixing something, what's the proper Fixes: tag for this
+commit? Likewise for the second patch.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Thanks
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> ---
+>  arch/arm/boot/dts/bcm47189-tenda-ac9.dts | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
+> index 6bdd79567cbd..34417dac1cd0 100644
+> --- a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
+> +++ b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
+> @@ -26,19 +26,16 @@
+>  		usb {
+>  			label = "bcm53xx:blue:usb";
+>  			gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "default-off";
+>  		};
+>  
+>  		wps {
+>  			label = "bcm53xx:blue:wps";
+>  			gpios = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "default-off";
+>  		};
+>  
+>  		5ghz {
+>  			label = "bcm53xx:blue:5ghz";
+>  			gpios = <&chipcommon 11 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "default-off";
+>  		};
+>  
+>  		system {
+> @@ -54,7 +51,6 @@
+>  		2ghz {
+>  			label = "bcm53xx:blue:2ghz";
+>  			gpios = <&pcie0_chipcommon 3 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "default-off";
+>  		};
+>  	};
+>  
+> 
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAli/2woACgkQMOfwapXb+vIv1ACgu0FpUa8eDJBXRKK7uylnVA3q
-WiUAoK2wPHozxjSeHkzkKmzvC/qIr+J3
-=6pT2
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
-
-
---===============5249990969863276331==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5249990969863276331==--
+-- 
+Florian
