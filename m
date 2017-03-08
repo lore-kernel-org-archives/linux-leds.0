@@ -1,44 +1,62 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH V2 1/2] leds: core: add OF variants of LED registering
- functions
-Date: Tue, 7 Mar 2017 20:30:42 +0100
-Message-ID: <8b220e23-f138-55ff-67c5-26520328c9b3@gmail.com>
-References: <20170306051945.14857-1-zajec5@gmail.com>
- <20170307120547.GA2740@amd>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: BCM53573: Don't use nonexistent "default-off" LED trigger
+Date: Wed,  8 Mar 2017 07:41:04 +0100
+Message-ID: <20170308064105.26619-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32774 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756051AbdCGT7K (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2017 14:59:10 -0500
-Received: by mail-wr0-f196.google.com with SMTP id g10so1586661wrg.0
-        for <linux-leds@vger.kernel.org>; Tue, 07 Mar 2017 11:59:09 -0800 (PST)
-In-Reply-To: <20170307120547.GA2740@amd>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33761 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755454AbdCHGl5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Mar 2017 01:41:57 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Hauke Mehrtens <hauke@hauke-m.de>, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 
-On 03/07/2017 01:05 PM, Pavel Machek wrote:
-> On Mon 2017-03-06 06:19:44, Rafał Miłecki wrote:
->> From: Rafał Miłecki <rafal@milecki.pl>
->>
->> These new functions allow passing an additional device_node argument
->> that will be internally set for created LED device. Thanks to this LED
->> core code and triggers will be able to access DT node for reading extra
->> info.
->>
->> The easiest solution for achieving this was reworking old functions to
->> more generic ones & adding simple defines for API compatibility.
->>
->> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> 
-> Both patches: Acked-by: Pavel Machek <pavel@ucw.cz>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Applied, thanks.
+Such a trigger doesn't exist in Linux and is not needed as LED is being
+turned off by default. This could cause errors in LEDs core code when
+trying to set default trigger.
 
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+ arch/arm/boot/dts/bcm47189-tenda-ac9.dts | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
+index 6bdd79567cbd..34417dac1cd0 100644
+--- a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
++++ b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
+@@ -26,19 +26,16 @@
+ 		usb {
+ 			label = "bcm53xx:blue:usb";
+ 			gpios = <&chipcommon 1 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "default-off";
+ 		};
+ 
+ 		wps {
+ 			label = "bcm53xx:blue:wps";
+ 			gpios = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "default-off";
+ 		};
+ 
+ 		5ghz {
+ 			label = "bcm53xx:blue:5ghz";
+ 			gpios = <&chipcommon 11 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "default-off";
+ 		};
+ 
+ 		system {
+@@ -54,7 +51,6 @@
+ 		2ghz {
+ 			label = "bcm53xx:blue:2ghz";
+ 			gpios = <&pcie0_chipcommon 3 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "default-off";
+ 		};
+ 	};
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.11.0
