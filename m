@@ -1,18 +1,19 @@
 From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: BCM53573: Don't use nonexistent
+Subject: Re: [PATCH 2/2] ARM: dts: BCM5301X: Don't use nonexistent
  "default-off" LED trigger
-Date: Thu, 9 Mar 2017 12:33:28 -0800
-Message-ID: <80dbc17b-c250-5027-e2cf-9e0e372ae6e4@gmail.com>
+Date: Thu, 9 Mar 2017 12:33:46 -0800
+Message-ID: <b0dc618c-5fd3-e2a0-570d-bbd901a2d137@gmail.com>
 References: <20170308064105.26619-1-zajec5@gmail.com>
+ <20170308064105.26619-2-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:32768 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbdCIUde (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2017 15:33:34 -0500
-In-Reply-To: <20170308064105.26619-1-zajec5@gmail.com>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:32930 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbdCIUdu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2017 15:33:50 -0500
+In-Reply-To: <20170308064105.26619-2-zajec5@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
