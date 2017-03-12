@@ -1,43 +1,102 @@
-From: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: BCM53573: Don't use nonexistent
- "default-off" LED trigger
-Date: Fri, 10 Mar 2017 09:44:42 -0800
-Message-ID: <3414f628-6b78-dc5a-4abf-ec5f40e7a4ee@gmail.com>
-References: <20170308064105.26619-1-zajec5@gmail.com>
- <42bce8ea-f1dc-2018-33f1-d296ccd7b677@gmail.com> <20170310132049.GC11875@amd>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+Date: Sun, 12 Mar 2017 06:44:42 -0500
+Message-ID: <20170312114442.qtzwwjd6qrviam6v@rob-hp-laptop>
+References: <20170228120452.10043-1-zajec5@gmail.com>
+ <a6d25fb5-db5e-5643-b150-23588944674a@gmail.com>
+ <290ed068-2518-50ef-4d02-394bef8b7ee9@gmail.com>
+ <CAL_JsqL-N4HfsG=py+w1NsBOJZzS1kbRM5J6dC-EE-rg9r9C2g@mail.gmail.com>
+ <386c5b7b-0bc0-d286-6cbb-745a5adbc1e9@gmail.com>
+ <b80fe65c-2fc9-94ac-9de2-29aee6b62033@milecki.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170310132049.GC11875@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Hauke Mehrtens <hauke-5/S+JYg5SzeELgA04lAiVw@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:34605 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755704AbdCLLoq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 12 Mar 2017 07:44:46 -0400
+Content-Disposition: inline
+In-Reply-To: <b80fe65c-2fc9-94ac-9de2-29aee6b62033@milecki.pl>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 03/10/2017 05:20 AM, Pavel Machek wrote:
-> On Wed 2017-03-08 09:31:44, Florian Fainelli wrote:
->> On 03/07/2017 10:41 PM, Rafał Miłecki wrote:
->>> From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
->>>
->>> Such a trigger doesn't exist in Linux and is not needed as LED is being
->>> turned off by default. This could cause errors in LEDs core code when
->>> trying to set default trigger.
->>>
->>> Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
->>
->> Since you are fixing something, what's the proper Fixes: tag for this
->> commit? Likewise for the second patch.
+On Mon, Mar 06, 2017 at 07:06:32AM +0100, Rafał Miłecki wrote:
+> On 03/01/2017 10:04 PM, Jacek Anaszewski wrote:
+> > On 02/28/2017 11:12 PM, Rob Herring wrote:
+> > > On Tue, Feb 28, 2017 at 3:51 PM, Rafał Miłecki <zajec5@gmail.com> wrote:
+> > > > On 02/28/2017 10:38 PM, Jacek Anaszewski wrote:
+> > > > > 
+> > > > > I think that it would be simpler if we could initially see
+> > > > > a complete sample dts implementation containing all required DT
+> > > > > nodes. The example could contain timer trigger as well as usb-port
+> > > > > trigger specific bindings.
+> > > > 
+> > > > 
+> > > > Please take a look at attached patch. I used it on Tenda AC9 with:
+> > > 
+> > > I'm not sure about this extra level of indirection. I don't see the need.
+> > > 
+> > > > usb_trigger: usb-trigger {
+> > > >         trigger-type = "usbport";
+> > > 
+> > > Why do we need to know the type? The trigger device knows what type it
+> > > is. All we should need to know here is what device(s) controls an LED.
+> > > The rest the kernel can figure out.
+> > 
+> > The thing is that in the proposed approach the trigger is not necessary
+> > a device. The trigger node is here only a container with initialization
+> > data.
+> > 
+> > We could have e,g, two such nodes with different set of ports
+> > (say usb1-trigger and usb2-trigger). Then if we had two LED nodes usb1
+> > and usb2, the former could have its triggers property initialized
+> > to &usb1-trigger and the latter to &usb2-trigger. Thanks to that both
+> > LEDs after executing "echo usbport > triggers" would listen to events
+> > from different set of usb ports.
+> > 
+> > Also, e.g. for the timer trigger we could define two separate DT nodes
+> > with different delay intervals.
 > 
-> Lets not make submitting patches any harder than it already is.
+> Hi Rob, what do you think about this?
+> 
+> Jacek is correct, we could have e.g.
+> timer-trigger-1 {
+> 	trigger-type = "timer";
+> 	delay-on = <200>;
+> 	delay-off = <500>;
+> };
+> timer-trigger-2 {
+> 	trigger-type = "timer";
+> 	delay-on = <500>;
+> 	delay-off = <1000>;
+> };
 
-If it was fixing something that was already in Linus' tree, it's
-important to know so I can queue the patch for the appropriate pull
-request targeting e.g: v4.11-rcX, this is not needed here as Rafal later
-indicated.
--- 
-Florian
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is just letting the Linux driver structure define/influence the 
+binding. This could all be described with a single LED property like 
+"led-blink-pattern". The fact that it gets implemented by the timer 
+trigger is irrelevant to the binding.
+
+Plus timer based triggering seems more like user controlled than 
+platform or hardware defined. So trying to create a binding for all 
+Linux triggers is a mistake. The only thing we need here is a way to 
+associate an LED with a h/w device. 
+
+> 
+> or something like:
+> usbport-2-0-trigger {
+> 	trigger-type = "usbport";
+> 	ports = <&ohci_port1>, <&ehci_port1>;
+> };
+> usbport-3-0-trigger {
+> 	trigger-type = "usbport";
+> 	ports = <&xhci_port1>;
+> };
+> 
+> Does it make more sense?
+
+No, for the reasons above.
+
+Rob
