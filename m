@@ -1,73 +1,48 @@
-From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] dt-bindings: mfd: Add LED subnode binding for
- MT6323 PMIC
-Date: Tue, 14 Mar 2017 13:40:09 +0800
-Message-ID: <1489470009.1870.6.camel@mtkswgap22>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 4/4] mfd: mt6397: Add MT6323 LED support into MT6397
+ driver
+Date: Tue, 14 Mar 2017 14:42:37 +0000
+Message-ID: <20170314144237.5b3kxhri4frmhboy@dell>
 References: <1488549385-19899-1-git-send-email-sean.wang@mediatek.com>
-         <1488549385-19899-3-git-send-email-sean.wang@mediatek.com>
-         <c86eacdb-d5c8-2f0a-11f1-1a3bc623b4b0@gmail.com>
+ <1488549385-19899-5-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c86eacdb-d5c8-2f0a-11f1-1a3bc623b4b0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, keyhaede-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1488549385-19899-5-git-send-email-sean.wang@mediatek.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: sean.wang@mediatek.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, keyhaede@gmail.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 2017-03-13 at 13:00 +0100, Matthias Brugger wrote:
-> 
-> On 03/03/17 14:56, sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org wrote:
-> > From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> >
-> > This patch adds documentation for devicetree bindings
-> > for LED support as the subnode of MT6323 PMIC
-> >
-> > Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/mt6397.txt | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
-> > index 949c85f..522a3bb 100644
-> > --- a/Documentation/devicetree/bindings/mfd/mt6397.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
-> > @@ -6,6 +6,7 @@ MT6397/MT6323 is a multifunction device with the following sub modules:
-> >  - Audio codec
-> >  - GPIO
-> >  - Clock
-> > +- LED
-> >
-> >  It is interfaced to host controller using SPI interface by a proprietary hardware
-> >  called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
-> > @@ -34,6 +35,10 @@ Optional subnodes:
-> >  - clk
-> >  	Required properties:
-> >  		- compatible: "mediatek,mt6397-clk"
-> > +- led
-> > +	Required properties:
-> > +		- compatible: "mediatek,mt6323-led"
-> > +	see Documentation/devicetree/bindings/leds/leds-mt6323.txt
-> 
-> Part of this patch is already part of linux-next:
-> 05daab3 ("Documentation: devicetree: Add LED subnode binding for MT6323 
-> PMIC")
-> 
-Hi Matthias,
-
-There is still small differences from the merged patch. 
-
-I will submit the series for the next version based on newer kernel and
-
-split the already merged ones out. Thanks for your kindly remainder.
-
-	Sean
-> Regards,
-> Matthias
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gRnJpLCAwMyBNYXIgMjAxNywgc2Vhbi53YW5nQG1lZGlhdGVrLmNvbSB3cm90ZToKCj4gRnJv
+bTogU2VhbiBXYW5nIDxzZWFuLndhbmdAbWVkaWF0ZWsuY29tPgo+IAo+IEFkZCBjb21wYXRpYmxl
+IHN0cmluZyBhcyAibXQ2MzIzLWxlZCIgdGhhdCB3aWxsIG1ha2UKPiB0aGUgT0YgY29yZSBzcGF3
+biBjaGlsZCBkZXZpY2VzIGZvciB0aGUgTEVEIHN1Ym5vZGUKPiBvZiB0aGF0IE1UNjMyMyBNRkQg
+ZGV2aWNlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNlYW4gV2FuZyA8c2Vhbi53YW5nQG1lZGlhdGVr
+LmNvbT4KPiAtLS0KPiAgZHJpdmVycy9tZmQvbXQ2Mzk3LWNvcmUuYyB8IDQgKysrKwo+ICAxIGZp
+bGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCgpGb3IgbXkgb3duIHJlZmVyZW5jZToKICBBY2tl
+ZC1mb3ItTUZELWJ5OiBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPgoKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9tZmQvbXQ2Mzk3LWNvcmUuYyBiL2RyaXZlcnMvbWZkL210NjM5Ny1jb3Jl
+LmMKPiBpbmRleCBlMTRkOGIwLi44ZTYwMWM4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWZkL210
+NjM5Ny1jb3JlLmMKPiArKysgYi9kcml2ZXJzL21mZC9tdDYzOTctY29yZS5jCj4gQEAgLTQ4LDYg
+KzQ4LDEwIEBACj4gIAkJLm5hbWUgPSAibXQ2MzIzLXJlZ3VsYXRvciIsCj4gIAkJLm9mX2NvbXBh
+dGlibGUgPSAibWVkaWF0ZWssbXQ2MzIzLXJlZ3VsYXRvciIKPiAgCX0sCj4gKwl7CgpQdXQgdGhp
+cyBvbiB0aGUgbGluZSBhYm92ZS4KCj4gKwkJLm5hbWUgPSAibXQ2MzIzLWxlZCIsCj4gKwkJLm9m
+X2NvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2MzIzLWxlZCIKPiArCX0sCj4gIH07Cj4gIAo+ICBz
+dGF0aWMgY29uc3Qgc3RydWN0IG1mZF9jZWxsIG10NjM5N19kZXZzW10gPSB7CgotLSAKTGVlIEpv
+bmVzCkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9y
+ZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZh
+Y2Vib29rIHwgVHdpdHRlciB8IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
