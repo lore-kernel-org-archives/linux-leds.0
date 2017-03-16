@@ -1,97 +1,102 @@
-From: <office@franztextilmanufaktur.com>
-Subject: (unknown)
-Date: Wed, 15 Mar 2017 05:22:08 -0000
-Message-ID: <148955532861.28984.7811135977936734122@zaural.ru>
-Reply-To: <office@franztextilmanufaktur.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v8 7/7] platform/x86/dell-*: Call
+ led_classdev_notify_brightness_hw_changed on kbd brightness change
+Date: Thu, 16 Mar 2017 11:11:01 +0100
+Message-ID: <707e2a4e-ab96-a8a8-e2ba-07c3521108c3@redhat.com>
+References: <20170221170838.GO9795@pali>
+ <7bb7c48f-789e-8b4c-b76b-1389d7fbbfb7@redhat.com>
+ <20170222084935.GA21558@pali>
+ <cf1aceaf-9177-2223-6f36-afdb5c47ee31@redhat.com>
+ <20170222120109.GC21558@pali>
+ <035b56e6-b606-c632-35cf-00f880abcbf5@redhat.com>
+ <20170301111558.GC3185@pali>
+ <8c181bbc-e786-16c7-39f7-80d4be502066@redhat.com>
+ <20170301125532.GF3185@pali>
+ <e66822f3-b47c-e986-c819-87dfb56568ba@redhat.com>
+ <20170303120020.GD25757@pali>
+ <595f88da-a0ee-005e-b22d-ee04cfe20628@redhat.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_3306363114_linux-leds.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from ws170.zone31-163-147.zaural.ru ([31.163.147.170]:37211 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1750819AbdCOFWN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Mar 2017 01:22:13 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from mx1.redhat.com ([209.132.183.28]:58580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbdCPKLg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 16 Mar 2017 06:11:36 -0400
+In-Reply-To: <595f88da-a0ee-005e-b22d-ee04cfe20628@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds <linux-leds@vger.kernel.org>
+To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org
 
-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
+HI,
+
+On 06-03-17 14:39, Hans de Goede wrote:
+> Hi,
+>
+> On 03-03-17 13:00, Pali Rohár wrote:
+>> On Wednesday 01 March 2017 14:58:45 Hans de Goede wrote:
+>>>> In my idea I do not add any additional information to event. Which means
+>>>> all received events are same in current driver state and I can swap
+>>>> them. So I can decide to drop one event when driver is changing
+>>>> backlight level. And because I can swap received events it does not
+>>>> matter if I drop "correct" one (that which was really generated by my
+>>>> backlight level change) or any other before or after (as they are same).
+>>>> The only important is that kernel use correct number of firmware events.
+>>>>
+>>>> Idea for time interval of 2-3 seconds is that if event is delivered
+>>>> later as after 3 seconds it is probably useless as driver application
+>>>> code can be already out-of-sync. But this time interval is just another
+>>>> idea and we do not need to use it.
+>>>
+>>> I really don't like the 2-3 seconds stuff, but I'm fine with going
+>>> with your idea of just swallowing one event after a sysfs-write
+>>> without the timeout stuff.
+>>
+>> Ok. I'm fine with just dropping exactly one event after setting new
+>> value via sysfs. It is OK for you?
+>
+> Yes that will work for me. I will prepare a new version. Note I probably
+> will not have time for this till the end of this week.
+>
+> One thing I was wondering, is what will happen if we write the
+> same value to the sysfs brightness file twice, do we get events
+> for both writes?  One way to avoid this problem would be to compare
+> the written value to the last known value and discard the write
+> (avoiding an expensive SMM call) if they are equal.
+>
+> Discarding double writes does introduce a race between hotkey changes
+> vs sysfs writes, if a hotkey change has been made but the event has
+> not yet been handled then a sysfs write may be seen as being double
+> and get discarded even though it is not double. OTOH if the hotkey
+> press wins the race then the result would have been the write being
+> discarded anyways, so I don't think this is a real problem.
+>
+> You're input on this would be appreciated. If writing the same value
+> twice does not generate events then we must filter out the double
+> writes. If it does drop events we can choose, the simplest would be
+> to not filter in that case, avoiding any races (and userspace normally
+> should not write the same value twice, but we cannot assume that).
+
+Ok, I've spend some time on this today. As I was afraid no new wmi
+events are generated when writing the same value to sysfs twice,
+making the ignore one event after write approach tricky.
+
+But luckily I've found a better fix, the kbd led related wmi events
+with a type of 0x0010 are only send when using the hotkeys.
+
+So if we ignore the events with a type of 0x0011, by dropping the
+part of the patch which was mapping those to KEY_KBDILLUMTOGGLE
+instead of to KEY_RESERVED, we only end up calling
+dell_laptop_call_notifier from dell-wmi.c on hotkey presses and
+we can drop the current vs new brightness comparison which
+you disliked from dell-laptop.c.
+
+So we can fix this by making the patch smaller :)
+
+I will prepare a v9 with these changes and send that out later
+today.
+
+Regards,
+
+Hans
