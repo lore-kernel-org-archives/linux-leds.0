@@ -1,14 +1,16 @@
 From: <sean.wang@mediatek.com>
-Subject: [PATCH v6 0/4] leds: add leds-mt6323 support on MT7623 SoC
-Date: Mon, 20 Mar 2017 14:47:23 +0800
-Message-ID: <1489992447-13007-1-git-send-email-sean.wang@mediatek.com>
+Subject: [PATCH v6 1/4] dt-bindings: leds: Add document bindings for leds-mt6323
+Date: Mon, 20 Mar 2017 14:47:24 +0800
+Message-ID: <1489992447-13007-2-git-send-email-sean.wang@mediatek.com>
+References: <1489992447-13007-1-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38463 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752374AbdCTGrg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Mar 2017 02:47:36 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39758 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752925AbdCTGrp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Mar 2017 02:47:45 -0400
+In-Reply-To: <1489992447-13007-1-git-send-email-sean.wang@mediatek.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, lee.jones@linaro.org, matthias.bgg@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
@@ -16,81 +18,80 @@ Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-mediatek@lists
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-MT7623 SoC uses MT6323 PMIC as the default power supply which has LED function
-insides. The patchset introduces the LED support for MT6323 with on, off and
-hardware dimmed and blinked and it should work on other similar SoCs if also
-using MT6323.
+This patch adds documentation for devicetree bindings for LED support on
+MT6323 PMIC.
 
-Changes since v1:
-- fixed typo in the comments
-- sorted include directives alphabetically
-- applied all register definitions with MT6323 prefix
-- removed the redundant structure declaration
-- fixed coding style defined in kernel doc format consistently
-- added error handling into all the occurrences where regmap APIs
-  are used
-- removed loudly debug message
-- made magic constant into meaningful macro
-- added missing mutex_destroy when module removed called
-- updated module license with GPL
-- fixed sparse warnings
-
-Changes since v2:
-- fixed the typo in devicetree Documentation
-- cleaned up the style and explanation in the comments
-- applied all macro/struct/function definitions with MT6323 prefix
-- put the logic about the setup from device tree into function for simplicity
-
-Changes since v3:
-- changed the variable current_brightness into the proper type
-- removed the redundant member led_num from mt6323_leds structure
-- collected the brightness setting into mt6323_led_hw_brightness() call
-- added brightness_get() support into the core layer
-- fixed zero duty cycle handling due to hardware doesn't support
-- fixed duty cycle calculation mapping to the hardware register
-- added the brightness as the input in mt6323_led_hw_on() call
-- enhanced error handling in mt6323_led_set_dt_default() call
-- fixed potential issue which caused accessing unallocated memory if excessive
-  the led controller nodes are defined
-- fixed redundant memory allocation in mt6323_leds structure
-- added reg property for defining the led controller for which the child
-  node is predestined
-
-Changes since v4:
-- enhanced the example in leds-mt6323.txt for patch 1/4 with adding the missing
-  #address-cell and #size-cell, correcting sub-node naming with led@0 style,
-  removing the unrelated setup for LED and moving the description for the node
-  properties into the right place
-- enhanced the documentation in mt6397.txt for patch 2/4
-- changed the subject prefixes into "dt-bindings: ..." for the device tree commits
-- fixed that missing of_node_put() in the error path called from mt6323_led_probe()
-- fixed that incorrect duty_cycle calculation mapping into the hardware register in
-case duty ratio is lower than 1/64 rather than 0
-
-Changes since v5:
-- changed codebase into 4.11-rc1
-- split the already merged ones out from patch #2 and #4 on v4
-- fixed line wrap to 72-80 char for patch #1
-- grouped properties by required and optional for patch #1
-- enhanced the node identifier for the example with "mt6323: pmic" instead of
-"pmic: mt6323" for patch #1
-
-Sean Wang (4):
-  dt-bindings: leds: Add document bindings for leds-mt6323
-  dt-bindings: mfd: Add the description for LED as the sub module
-  leds: Add LED support for MT6323 PMIC
-  mfd: mt6397: Align the placement at which the mfd_cell of LED is
-    defined
-
- .../devicetree/bindings/leds/leds-mt6323.txt       |  60 +++
- Documentation/devicetree/bindings/mfd/mt6397.txt   |   1 +
- drivers/leds/Kconfig                               |   8 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-mt6323.c                         | 502 +++++++++++++++++++++
- drivers/mfd/mt6397-core.c                          |   3 +-
- 6 files changed, 573 insertions(+), 2 deletions(-)
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ .../devicetree/bindings/leds/leds-mt6323.txt       | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
- create mode 100644 drivers/leds/leds-mt6323.c
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+new file mode 100644
+index 0000000..ac38472
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+@@ -0,0 +1,60 @@
++Device Tree Bindings for LED support on MT6323 PMIC
++
++MT6323 LED controller is subfunction provided by MT6323 PMIC, so the LED
++controllers are defined as the subnode of the function node provided by MT6323
++PMIC controller that is being defined as one kind of Muti-Function Device (MFD)
++using shared bus called PMIC wrapper for each subfunction to access remote
++MT6323 PMIC hardware.
++
++For MT6323 MFD bindings see:
++Documentation/devicetree/bindings/mfd/mt6397.txt
++For MediaTek PMIC wrapper bindings see:
++Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
++
++Required properties:
++- compatible : Must be "mediatek,mt6323-led"
++- address-cells : Must be 1
++- size-cells : Must be 0
++
++Each led is represented as a child node of the mediatek,mt6323-led that
++describes the initial behavior for each LED physically and currently only four
++LED child nodes can be supported.
++
++Required properties for the LED child node:
++- reg : LED channel number (0..3)
++
++Optional properties for the LED child node:
++- label : See Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
++- default-state: See Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++	mt6323: pmic {
++		compatible = "mediatek,mt6323";
++
++		...
++
++		mt6323led: leds {
++			compatible = "mediatek,mt6323-led";
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			led@0 {
++				reg = <0>;
++				label = "LED0";
++				linux,default-trigger = "timer";
++				default-state = "on";
++			};
++			led@1 {
++				reg = <1>;
++				label = "LED1";
++				default-state = "off";
++			};
++			led@2 {
++				reg = <2>;
++				label = "LED2";
++				default-state = "on";
++			};
++		};
++	};
 -- 
 1.9.1
