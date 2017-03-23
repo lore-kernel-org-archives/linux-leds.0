@@ -1,111 +1,105 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 1/2] leds: lp3952: Remove ACPI support for lp3952
-Date: Thu, 23 Mar 2017 20:49:34 +0100
-Message-ID: <de44a986-abd9-da16-5fdb-2d50dded320c@gmail.com>
-References: <20170323191749.26469-1-andriy.shevchenko@linux.intel.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
+Date: Thu, 23 Mar 2017 21:37:49 +0100
+Message-ID: <20170323203749.GB8563@amd>
+References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36102 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753892AbdCWTue (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Mar 2017 15:50:34 -0400
-Received: by mail-wm0-f65.google.com with SMTP id x124so1330812wmf.3
-        for <linux-leds@vger.kernel.org>; Thu, 23 Mar 2017 12:50:32 -0700 (PDT)
-In-Reply-To: <20170323191749.26469-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170323055435.29197-1-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
-Cc: Tony Makkiel <tony.makkiel@daqri.com>
 
-On 03/23/2017 08:17 PM, Andy Shevchenko wrote:
-> In ACPI world any ID should be carefully chosen and registered
-> officially. The discussion [1] as I read it gets to wilful assignment
-> an ID for non-existing real DSDT example.
-> 
-> Rafael already told [2] how this device would be enumerated using
-> compatible string. To be more precise look at the possible DSDT excerpt
-> below:
-> 
-> 	Device (LDX0) {
-> 		Name (_HID, "PRP0001")
-> 		Name (_DDN, "TI LP3952 compatible led driver")
-> 		...
-> 	})
-> 
-> 	Name (_DSD, Package () {
-> 		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-> 		Package () {
-> 			Package () {"compatible", "ti,lp3952"},
-> 			...
-> 		}
-> 	})
-> 
-> Based on above, remove non-official ACPI IDs and enumeration from the
-> driver.
-> 
-> Note: currently driver has no compatible strings at all, to make above
-> working one should add at least one.
-> 
-> [1] https://e2e.ti.com/support/power_management/led_driver/f/192/t/524926
-> [2] https://www.spinics.net/lists/linux-acpi/msg67125.html
-> 
-> Cc: Tony Makkiel <tony.makkiel@daqri.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/leds/Kconfig       |  1 -
->  drivers/leds/leds-lp3952.c | 11 -----------
->  2 files changed, 12 deletions(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index e9ba04dcb7cf..8075d2ebccff 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -249,7 +249,6 @@ config LEDS_LP3952
->  	tristate "LED Support for TI LP3952 2 channel LED driver"
->  	depends on LEDS_CLASS
->  	depends on I2C
-> -	depends on ACPI
->  	depends on GPIOLIB
->  	select REGMAP_I2C
->  	help
-> diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
-> index 4847e89883a7..5184436b8905 100644
-> --- a/drivers/leds/leds-lp3952.c
-> +++ b/drivers/leds/leds-lp3952.c
-> @@ -10,7 +10,6 @@
->   *
->   */
->  
-> -#include <linux/acpi.h>
->  #include <linux/delay.h>
->  #include <linux/gpio.h>
->  #include <linux/i2c.h>
-> @@ -276,19 +275,9 @@ static const struct i2c_device_id lp3952_id[] = {
->  };
->  MODULE_DEVICE_TABLE(i2c, lp3952_id);
->  
-> -#ifdef CONFIG_ACPI
-> -static const struct acpi_device_id lp3952_acpi_match[] = {
-> -	{"TXNW3952", 0},
-> -	{}
-> -};
-> -
-> -MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
-> -#endif
-> -
->  static struct i2c_driver lp3952_i2c_driver = {
->  	.driver = {
->  			.name = LP3952_NAME,
-> -			.acpi_match_table = ACPI_PTR(lp3952_acpi_match),
->  	},
->  	.probe = lp3952_probe,
->  	.remove = lp3952_remove,
-> 
 
-Both patches 1/2 and 2/2 applied. Thanks.
+--eAbsdosE1cNLO4uF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best regards,
-Jacek Anaszewski
+Hi!
+
+> The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
+> PMICs from Qualcomm. It can operate on fixed parameters or based on a
+> lookup-table, altering the duty cycle over time - which provides the
+> means for e.g. hardware assisted transitions of LED brightness.
+
+Ok, this is not first hardware that supports something like this. We
+have similar hardware that can do blinking on Nokia N900 -- please
+take a look at leds-lp55*.c
+
+And it would be really good to provide hardware abstraction. We really
+don't want to have different userspace for LPG and for N900 and for
+=2E..
+
+Which probably means finding subset that makes sense for everyone.
+
+Hmm. What is difference between "ping_pong" and "reverse"? And do we
+really want it? That seems little .. too specialized.
+
+How are different channels on RGB LED synchronized?
+
+> +What:		/sys/class/leds/<led>/pattern
+> +Date:		March 2017
+> +KernelVersion:	4.12
+> +Contact:	Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> +Description:
+> +		Comma-separated list of duty cycle values to output from
+> +		the ramp generator. Values should be in the range of 0
+> +		to 511.
+
+We normally do "space separated" in sysfs.
+
+Can your engine do "smooth transitions"? For example if you want to
+slowly turn on the LED on, can you do something more clever than
+
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+=2E..
+496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
+510, 511
+
+? What is the maximum length of the pattern?
+
+Could we do patterns in form of "delay brightness delay brightness"
+=2E... ?
+
+> +static enum led_brightness lpg_brightnes_get(struct led_classdev *cdev)
+> +{
+> +	struct lpg *lpg =3D container_of(cdev, struct lpg, cdev);
+> +	unsigned long max =3D (1 << lpg->pwm_size) - 1;
+> +
+> +	if (!lpg->enabled)
+> +		return LED_OFF;
+> +
+> +	return lpg->pwm_value * cdev->max_brightness / max;
+> +}
+
+Does this return something reasonable when pattern is running?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--eAbsdosE1cNLO4uF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAljUMh0ACgkQMOfwapXb+vLKHACghUg3NSTDsr2+HgeZuVy+xIj3
+/BEAn2tKEbzi/drr/dQuilW3rIvLK1UG
+=4Fv6
+-----END PGP SIGNATURE-----
+
+--eAbsdosE1cNLO4uF--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
