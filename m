@@ -1,69 +1,79 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: mt6323: Fix an off by one bug in probe
-Date: Thu, 23 Mar 2017 12:16:55 +0100
-Message-ID: <20170323111655.GA12792@amd>
-References: <20170323104049.GC20154@mwanda>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v1 1/2] Revert "i2c: mux: pca954x: Add ACPI support for
+ pca954x"
+Date: Thu, 23 Mar 2017 12:21:59 +0100
+Message-ID: <e4f3c6fd-3a91-ad9f-ba43-605f850d1524@axentia.se>
+References: <20170321191310.32957-1-andriy.shevchenko@linux.intel.com>
+ <01b7c79e-c52f-8e87-59a8-2eb17a72d733@axentia.se>
+ <1490187942.19767.161.camel@linux.intel.com>
+ <7d5fba14-d3f1-dfaa-ac7d-5001ccf370a1@axentia.se> <20170323100403.GA9307@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58741 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbdCWLQ6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Mar 2017 07:16:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20170323104049.GC20154@mwanda>
+Received: from mail-he1eur01on0105.outbound.protection.outlook.com ([104.47.0.105]:11124
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932780AbdCWLWI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 23 Mar 2017 07:22:08 -0400
+In-Reply-To: <20170323100403.GA9307@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Sean Wang <sean.wang@mediatek.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Tin Huynh <tnhuynh@apm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
+On 2017-03-23 11:04, Pavel Machek wrote:
+> On Thu 2017-03-23 08:45:58, Peter Rosin wrote:
+>> On 2017-03-22 14:05, Andy Shevchenko wrote:
+>>> On Wed, 2017-03-22 at 11:23 +0100, Peter Rosin wrote:
+>>>> On 2017-03-21 20:13, Andy Shevchenko wrote:
+>>>>> In ACPI world any ID should be carefully chosen and registered
+>>>>> officially. The commit bbf9d262a147 seems did a wrong assumption
+>>>>> because
+>>>>> PCA is the registered PNP ID for "PHILIPS BU ADD ON CARD". I'm
+>>>>> pretty
+>>>>> sure this prefix has nothing to do with the driver in question.
+>>>>
+>>>> [Cc: leds people, in case they know any details]
+>>>>
+>>>> Hmmm, a couple of questions about that "pretty sure"...
+>>>
+>>> I didn't neither see the *real* excerpt from DSDT nor hear anything
+>>> about official IDs from Phillips.
+>>>
+>>>> Philips and NXP are pretty much just different faces of the same coin,
+>>>> IIUC.
+>>>
+>>> Good to know.
+>>>
+>>> While I might be mistaken, I would like to remove a confusion until we
+>>> get an official confirmation either in *real* existing product on the
+>>> market or letter from Phillips representatives (see above).
+>>
+>> Right, I don't disagree with the revert at all. The IDs were
+>> apparently just grabbed and, as you point out, that is not the ACPI
+>> way.
+>>
+>> One more question though, the revert (patch 1/2) should probably be
+>> queued up for current (4.11) and sent to stable as well (4.10 is the
+>> only version affected), but what about patch 2/2? Is that 4.12
+> 
+> Sent to stable? What serious bug it fixes?
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Pavel,
 
-On Thu 2017-03-23 13:40:49, Dan Carpenter wrote:
-> It should be ">=3D MT6323_MAX_LEDS" instead of ">".  Also "reg" is a u32
-> so it can't be negative and we can remove the test for negative values.
->=20
-> Fixes: 216ec6cc4c19 ("leds: Add LED support for MT6323 PMIC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It obviously fixes the bug that someone might start depending on these
+ACPI IDs when they shouldn't, which potentially stops that someone from
+later complaining when it no longer works. I thought that this was
+probably serious and qualified under "oh, that's not good". Because
+regressions are nasty. Now that I look closer on the stable rules I
+suppose it also disqualifies as it is on the theoretical side.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Also, the general tone from Andy indicates a certain amount of frustration
+with the whole issue, which perhaps has no bearing on the seriousness,
+but what do I know?
 
+So, I'm still seeking guidance on how to handle these two patches.
 
-> diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
-> index 48081bccbea5..8893c74e9a1f 100644
-> --- a/drivers/leds/leds-mt6323.c
-> +++ b/drivers/leds/leds-mt6323.c
-> @@ -417,7 +417,7 @@ static int mt6323_led_probe(struct platform_device *p=
-dev)
->  			goto put_child_node;
->  		}
-> =20
-> -		if (reg < 0 || reg > MT6323_MAX_LEDS || leds->led[reg]) {
-> +		if (reg >=3D MT6323_MAX_LEDS || leds->led[reg]) {
->  			dev_err(dev, "Invalid led reg %u\n", reg);
->  			ret =3D -EINVAL;
->  			goto put_child_node;
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAljTrqcACgkQMOfwapXb+vL80QCgkbm4xkqm3DyxQOPXGOV2RHnr
-z7cAn1jMMfv/9ewRNV4LWhQe71ZYsa69
-=0p98
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+Cheers,
+peda
