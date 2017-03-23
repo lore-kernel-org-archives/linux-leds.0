@@ -1,56 +1,49 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] Revert "i2c: mux: pca954x: Add ACPI support for
- pca954x"
-Date: Thu, 23 Mar 2017 14:16:32 +0200
-Message-ID: <1490271392.19767.186.camel@linux.intel.com>
-References: <20170321191310.32957-1-andriy.shevchenko@linux.intel.com>
-         <01b7c79e-c52f-8e87-59a8-2eb17a72d733@axentia.se>
-         <1490187942.19767.161.camel@linux.intel.com>
-         <7d5fba14-d3f1-dfaa-ac7d-5001ccf370a1@axentia.se>
-         <20170323100403.GA9307@amd>
-         <e4f3c6fd-3a91-ad9f-ba43-605f850d1524@axentia.se>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCHv2 1/2] mfd: cpcap: Add missing include dependencies
+Date: Thu, 23 Mar 2017 07:52:15 -0700
+Message-ID: <20170323145215.GK10760@atomide.com>
+References: <20170322000912.24210-1-sre@kernel.org>
+ <20170322092708.GA26771@amd>
+ <20170322155716.GC10760@atomide.com>
+ <20170323010005.xc3phqrimdcrbti4@earth>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:16263 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932085AbdCWMTl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 23 Mar 2017 08:19:41 -0400
-In-Reply-To: <e4f3c6fd-3a91-ad9f-ba43-605f850d1524@axentia.se>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170323010005.xc3phqrimdcrbti4@earth>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Tin Huynh <tnhuynh@apm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
-On Thu, 2017-03-23 at 12:21 +0100, Peter Rosin wrote:
-> On 2017-03-23 11:04, Pavel Machek wrote:
-> > On Thu 2017-03-23 08:45:58, Peter Rosin wrote:
-> > > On 2017-03-22 14:05, Andy Shevchenko wrote:
-> > > > On Wed, 2017-03-22 at 11:23 +0100, Peter Rosin wrote:
-> > > > > On 2017-03-21 20:13, Andy Shevchenko wrote:
-
-> Also, the general tone from Andy indicates a certain amount of
-> frustration
-> with the whole issue,
-
-I'm sorry for my tone, it begins with amount of abuse case of GPIO for
-ACPI in kernel followed by wilfully invented ACPI IDs in the drivers.
-
->  which perhaps has no bearing on the seriousness,
-> but what do I know?
+* Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> [170322 18:02]:
+> Hi,
 > 
-> So, I'm still seeking guidance on how to handle these two patches.
+> On Wed, Mar 22, 2017 at 08:57:16AM -0700, Tony Lindgren wrote:
+> > * Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> [170322 02:29]:
+> > > On Wed 2017-03-22 01:09:11, Sebastian Reichel wrote:
+> > > > This fixes compilation for files, that try to include the
+> > > > cpcap header in alphabetically sorted #include lists.
+> > > > 
+> > > > Signed-off-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > 
+> > > Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+> > 
+> > Hmm I wonder why I never ran into this so far. No objections
+> > to the patch though if it fixes the issue with all the necessary
+> > headers included.
+> 
+> Because you usually sort includes differently moving headers
+> from linux/subdir/XYZ after linux/XYZ. That way regmap.h and
+> device.h will already be included when the compiler includes
+> motorola-cpcap.h.
 
-I have no strong opinion, but IDs might collide in the future if PCAxxxx
-will be assigned to something else and the patch will go stable@ (yeah,
-OTOH it's quite unlikely).
+Ah OK yeah I do that usually. Your patch seems OK to me:
 
-So, we may postpone any stable@ back porting up to some real issue
-appears. Regarding second one, it's not important at all (could be even
-dropped). Consider it as example how to use _DSD and PRP0001 in ACPI
-case for DT-enabled drivers.
+Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
