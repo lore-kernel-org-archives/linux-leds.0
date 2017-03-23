@@ -1,49 +1,98 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv2 1/2] mfd: cpcap: Add missing include dependencies
-Date: Thu, 23 Mar 2017 07:52:15 -0700
-Message-ID: <20170323145215.GK10760@atomide.com>
-References: <20170322000912.24210-1-sre@kernel.org>
- <20170322092708.GA26771@amd>
- <20170322155716.GC10760@atomide.com>
- <20170323010005.xc3phqrimdcrbti4@earth>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170323010005.xc3phqrimdcrbti4@earth>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 1/2] leds: lp3952: Remove ACPI support for lp3952
+Date: Thu, 23 Mar 2017 21:17:48 +0200
+Message-ID: <20170323191749.26469-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:23533 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752325AbdCWTRy (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 23 Mar 2017 15:17:54 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tony Makkiel <tony.makkiel@daqri.com>
 
-* Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> [170322 18:02]:
-> Hi,
-> 
-> On Wed, Mar 22, 2017 at 08:57:16AM -0700, Tony Lindgren wrote:
-> > * Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> [170322 02:29]:
-> > > On Wed 2017-03-22 01:09:11, Sebastian Reichel wrote:
-> > > > This fixes compilation for files, that try to include the
-> > > > cpcap header in alphabetically sorted #include lists.
-> > > > 
-> > > > Signed-off-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > > 
-> > > Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> > 
-> > Hmm I wonder why I never ran into this so far. No objections
-> > to the patch though if it fixes the issue with all the necessary
-> > headers included.
-> 
-> Because you usually sort includes differently moving headers
-> from linux/subdir/XYZ after linux/XYZ. That way regmap.h and
-> device.h will already be included when the compiler includes
-> motorola-cpcap.h.
+In ACPI world any ID should be carefully chosen and registered
+officially. The discussion [1] as I read it gets to wilful assignment
+an ID for non-existing real DSDT example.
 
-Ah OK yeah I do that usually. Your patch seems OK to me:
+Rafael already told [2] how this device would be enumerated using
+compatible string. To be more precise look at the possible DSDT excerpt
+below:
 
-Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+	Device (LDX0) {
+		Name (_HID, "PRP0001")
+		Name (_DDN, "TI LP3952 compatible led driver")
+		...
+	})
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Name (_DSD, Package () {
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package () {
+			Package () {"compatible", "ti,lp3952"},
+			...
+		}
+	})
+
+Based on above, remove non-official ACPI IDs and enumeration from the
+driver.
+
+Note: currently driver has no compatible strings at all, to make above
+working one should add at least one.
+
+[1] https://e2e.ti.com/support/power_management/led_driver/f/192/t/524926
+[2] https://www.spinics.net/lists/linux-acpi/msg67125.html
+
+Cc: Tony Makkiel <tony.makkiel@daqri.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/leds/Kconfig       |  1 -
+ drivers/leds/leds-lp3952.c | 11 -----------
+ 2 files changed, 12 deletions(-)
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index e9ba04dcb7cf..8075d2ebccff 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -249,7 +249,6 @@ config LEDS_LP3952
+ 	tristate "LED Support for TI LP3952 2 channel LED driver"
+ 	depends on LEDS_CLASS
+ 	depends on I2C
+-	depends on ACPI
+ 	depends on GPIOLIB
+ 	select REGMAP_I2C
+ 	help
+diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+index 4847e89883a7..5184436b8905 100644
+--- a/drivers/leds/leds-lp3952.c
++++ b/drivers/leds/leds-lp3952.c
+@@ -10,7 +10,6 @@
+  *
+  */
+ 
+-#include <linux/acpi.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <linux/i2c.h>
+@@ -276,19 +275,9 @@ static const struct i2c_device_id lp3952_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, lp3952_id);
+ 
+-#ifdef CONFIG_ACPI
+-static const struct acpi_device_id lp3952_acpi_match[] = {
+-	{"TXNW3952", 0},
+-	{}
+-};
+-
+-MODULE_DEVICE_TABLE(acpi, lp3952_acpi_match);
+-#endif
+-
+ static struct i2c_driver lp3952_i2c_driver = {
+ 	.driver = {
+ 			.name = LP3952_NAME,
+-			.acpi_match_table = ACPI_PTR(lp3952_acpi_match),
+ 	},
+ 	.probe = lp3952_probe,
+ 	.remove = lp3952_remove,
+-- 
+2.11.0
