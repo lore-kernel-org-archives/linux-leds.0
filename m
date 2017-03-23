@@ -1,71 +1,80 @@
 From: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv2 1/2] mfd: cpcap: Add missing include dependencies
-Date: Thu, 23 Mar 2017 02:00:05 +0100
-Message-ID: <20170323010005.xc3phqrimdcrbti4@earth>
+Subject: Re: [PATCHv2 2/2] leds: cpcap: new driver
+Date: Thu, 23 Mar 2017 02:04:43 +0100
+Message-ID: <20170323010443.uzv4xs3ne2mjpm7i@earth>
 References: <20170322000912.24210-1-sre@kernel.org>
- <20170322092708.GA26771@amd>
- <20170322155716.GC10760@atomide.com>
+ <20170322000912.24210-2-sre@kernel.org>
+ <30b1d220-730e-445d-cab1-8bb776a5b917@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r33pvsik226nkcrw"
+        protocol="application/pgp-signature"; boundary="gzotn4vkdd4ws2f5"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170322155716.GC10760-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <30b1d220-730e-445d-cab1-8bb776a5b917-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
 
---r33pvsik226nkcrw
+--gzotn4vkdd4ws2f5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Jacek,
 
-On Wed, Mar 22, 2017 at 08:57:16AM -0700, Tony Lindgren wrote:
-> * Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> [170322 02:29]:
-> > On Wed 2017-03-22 01:09:11, Sebastian Reichel wrote:
-> > > This fixes compilation for files, that try to include the
-> > > cpcap header in alphabetically sorted #include lists.
-> > >=20
-> > > Signed-off-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> >=20
-> > Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+On Wed, Mar 22, 2017 at 09:24:35PM +0100, Jacek Anaszewski wrote:
+> > +#define CPCAP_LED_OFF 0x0000
+> > +#define CPCAP_LED_ON 0x01
 >=20
-> Hmm I wonder why I never ran into this so far. No objections
-> to the patch though if it fixes the issue with all the necessary
-> headers included.
+> In this case you can do very well without CPCAP_LED_OFF and
+> CPCAP_LED_ON, since we have both counterparts in the core:
+> LED_OFF and LED_ON.
 
-Because you usually sort includes differently moving headers
-=66rom linux/subdir/XYZ after linux/XYZ. That way regmap.h and
-device.h will already be included when the compiler includes
-motorola-cpcap.h.
+I will use them in PATCHv3.
+
+> > +static const struct of_device_id cpcap_led_of_match[] =3D {
+> > +	{ .compatible =3D "motorola,cpcap-led-red", .data =3D &cpcap_led_red =
+},
+>=20
+> checkpatch.pl complains here:
+>=20
+> WARNING: DT compatible string vendor "motorola" appears un-documented
+>=20
+> Are you adding vendor prefix in some other patch?
+
+Yes, the vendor prefix is added in rtc-next [0].
+
+Since it's just a checkpatch warning and fixed in linux-next I
+suggest to ignore it instead of bothering with an immutable branch.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git/comm=
+it/?h=3Drtc-next&id=3D0522de00929e9e9ee51235fc40035179e4d45381
 
 -- Sebastian
 
---r33pvsik226nkcrw
+--gzotn4vkdd4ws2f5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljTHhIACgkQ2O7X88g7
-+pqZaA/9FkTpwUyE5w4QKvskYnRBUEcqaXA07+rNOCs+hBMUSEBdfEHsDqxcKoPa
-RGxMnMM+j+nH7MfrFmRrnu6k+S2GZPANnr7JxvdlOQg0Mj036K6AVughkjTrc9Gf
-o2nRPjFkTjRgLvsctqjD97IY4Qb3Wg8AovwMArY2glO1Nw0Wijl6yUFlzIao0JD4
-8f59++YeYXXEhp7E25iKCChmC7IqdwoVQqDIUARBvgL3zXeTvySeHgWNf6wHK6/P
-+qYWqcD4qJZmwsazJq4QLifBWfTP5hhzcoO9lcLIpPi5DRAeBfu1w1uITLKR0V82
-CnPqyJkXVQWUdVCkUKzhCL9fVltFA1lm+gp0wv4Ju14MlasNxpkvFIKTVPA+vfd0
-GI4mEx+SHuF+aDRNK5kI5qy4RSDssQDtREvo9C0uDMHniqaqcBSNuxFkHpJj+vP8
-hgITd2iY5IDo6VhqtBohLIknS7M1tLJESDamj4GT8Wdni/0rxFlZBz7Kz58Ijg6X
-avA5xgvy9rUV9izJxmZEwEcNTG99JLyneqA3WWQT4CKXGe6BjTBCwaUAA/tVm6JK
-ZMj0if3vb3uQpyt4WjO7jeEAPxmxmc1opKuh6ksLziTPas0+cgzY67ybOQZKJO5y
-tSh/BFk3YRsPQrdLNa01paR1ciYGQGn2NweAFcVqd0wKcx9wmZo=
-=yT+p
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljTHysACgkQ2O7X88g7
++pr4bw//QtXecG2osrnIcD1NSEZB6kBsvNDNhHEhtFM7j/d8C+5mV/m06kcKto2O
+jZ9iNz79B21+eyBrDVm2Y54y4MohKXxTHc9gq3DYsdaO4X91fZ9cpr/3xTeMOEnN
+yJszTQrQt5xdUytVt22TpZkC009t/+yRjA/ZAbHahOPeEbzIqR9iSfU0PVNaCUGF
+RdnoBkPs+LywzEoh4ImOjYXk0phSVePVGnHgiCRzKbA2pMkU41luL9koKHhuRDcP
+h8LzI6uv5FgEJJ3OYm7Ky73pRClb4dll/poPZxGG3BKU1Y6AGWrk8+IzoLxh2Sa6
+SDEjiopHwR5fPY3sCsIta3zmOSKGsNaV/j2Us9MH4a4LCEEemen6tVugX4udUEe3
+Plbiv7gpf0EYdaAANfGNmI2tutAsJn+1IjmUMY3C8Fu16pGUaX+GWuQ0YcWjs9eC
+EzJycBfAXShCRtfNHD8NOOKJqGMjF3RzjcVaEOTclM4s2MQOu7Gm0MEtPwNoMeHv
+O7jhMBkB65yFe17IGoRnPZnr1ROnNONqZS4MwRpw9c6l1ziOBaGQhYT9vX3CjnVE
+3VYPXcjVqURBuHeOHeJflB5COn/4ycITpSsmzmnuYkTvwEXtQA/P21X0VHowHNYr
+SyAAsxdIH2BpBxJe4L2nQcXlIHyETc+DBFkgSHz4pRLOdJ3qqPo=
+=XLx9
 -----END PGP SIGNATURE-----
 
---r33pvsik226nkcrw--
+--gzotn4vkdd4ws2f5--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
