@@ -1,105 +1,43 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Thu, 23 Mar 2017 21:37:49 +0100
-Message-ID: <20170323203749.GB8563@amd>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170323055435.29197-1-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Sebastian Reichel <sre@kernel.org>
+Subject: [PATCHv3 1/2] mfd: cpcap: Add missing include dependencies
+Date: Fri, 24 Mar 2017 09:47:31 +0100
+Message-ID: <20170324084732.31255-1-sre@kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:37440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750952AbdCXIrk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 24 Mar 2017 04:47:40 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
+This fixes compilation for files, that try to include the
+cpcap header in alphabetically sorted #include lists.
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
+---
+Changes since PATCHv2:
+ - Add Acked-by from Tony & Pavel
+---
+ include/linux/mfd/motorola-cpcap.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hi!
-
-> The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
-> PMICs from Qualcomm. It can operate on fixed parameters or based on a
-> lookup-table, altering the duty cycle over time - which provides the
-> means for e.g. hardware assisted transitions of LED brightness.
-
-Ok, this is not first hardware that supports something like this. We
-have similar hardware that can do blinking on Nokia N900 -- please
-take a look at leds-lp55*.c
-
-And it would be really good to provide hardware abstraction. We really
-don't want to have different userspace for LPG and for N900 and for
-=2E..
-
-Which probably means finding subset that makes sense for everyone.
-
-Hmm. What is difference between "ping_pong" and "reverse"? And do we
-really want it? That seems little .. too specialized.
-
-How are different channels on RGB LED synchronized?
-
-> +What:		/sys/class/leds/<led>/pattern
-> +Date:		March 2017
-> +KernelVersion:	4.12
-> +Contact:	Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> +Description:
-> +		Comma-separated list of duty cycle values to output from
-> +		the ramp generator. Values should be in the range of 0
-> +		to 511.
-
-We normally do "space separated" in sysfs.
-
-Can your engine do "smooth transitions"? For example if you want to
-slowly turn on the LED on, can you do something more clever than
-
-0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-=2E..
-496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
-510, 511
-
-? What is the maximum length of the pattern?
-
-Could we do patterns in form of "delay brightness delay brightness"
-=2E... ?
-
-> +static enum led_brightness lpg_brightnes_get(struct led_classdev *cdev)
-> +{
-> +	struct lpg *lpg =3D container_of(cdev, struct lpg, cdev);
-> +	unsigned long max =3D (1 << lpg->pwm_size) - 1;
-> +
-> +	if (!lpg->enabled)
-> +		return LED_OFF;
-> +
-> +	return lpg->pwm_value * cdev->max_brightness / max;
-> +}
-
-Does this return something reasonable when pattern is running?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAljUMh0ACgkQMOfwapXb+vLKHACghUg3NSTDsr2+HgeZuVy+xIj3
-/BEAn2tKEbzi/drr/dQuilW3rIvLK1UG
-=4Fv6
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/include/linux/mfd/motorola-cpcap.h b/include/linux/mfd/motorola-cpcap.h
+index 793aa695faa0..aefc49cb7ba9 100644
+--- a/include/linux/mfd/motorola-cpcap.h
++++ b/include/linux/mfd/motorola-cpcap.h
+@@ -14,6 +14,9 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/device.h>
++#include <linux/regmap.h>
++
+ #define CPCAP_VENDOR_ST		0
+ #define CPCAP_VENDOR_TI		1
+ 
+-- 
+2.11.0
