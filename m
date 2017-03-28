@@ -1,68 +1,50 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCHv3 1/2] mfd: cpcap: Add missing include dependencies
-Date: Mon, 27 Mar 2017 20:38:24 +0200
-Message-ID: <e4f0fb62-8fe1-bf32-6aee-b87c04bbd942@gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [GIT PULL] Immutable branch between MFD and LEDS due for the v4.12
+ merge window
+Date: Tue, 28 Mar 2017 09:13:42 +0100
+Message-ID: <20170328081342.5iobnc55sq3zucgt@dell>
 References: <20170324084732.31255-1-sre@kernel.org>
- <d1a18390-fb5f-e192-a54c-1c2574238225@gmail.com>
- <20170327142608.qcobnqrvyu7u4ybz@dell>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35757 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751522AbdC0Sjw (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Mar 2017 14:39:52 -0400
-In-Reply-To: <20170327142608.qcobnqrvyu7u4ybz@dell>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170324084732.31255-1-sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/27/2017 04:26 PM, Lee Jones wrote:
-> On Fri, 24 Mar 2017, Jacek Anaszewski wrote:
->> On 03/24/2017 09:47 AM, Sebastian Reichel wrote:
->>> This fixes compilation for files, that try to include the
->>> cpcap header in alphabetically sorted #include lists.
->>>
->>> Acked-by: Pavel Machek <pavel@ucw.cz>
->>> Acked-by: Tony Lindgren <tony@atomide.com>
->>> Signed-off-by: Sebastian Reichel <sre@kernel.org>
->>> ---
->>> Changes since PATCHv2:
->>>  - Add Acked-by from Tony & Pavel
->>> ---
->>>  include/linux/mfd/motorola-cpcap.h | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/include/linux/mfd/motorola-cpcap.h b/include/linux/mfd/motorola-cpcap.h
->>> index 793aa695faa0..aefc49cb7ba9 100644
->>> --- a/include/linux/mfd/motorola-cpcap.h
->>> +++ b/include/linux/mfd/motorola-cpcap.h
->>> @@ -14,6 +14,9 @@
->>>   * published by the Free Software Foundation.
->>>   */
->>>  
->>> +#include <linux/device.h>
->>> +#include <linux/regmap.h>
->>> +
->>>  #define CPCAP_VENDOR_ST		0
->>>  #define CPCAP_VENDOR_TI		1
->>
->> Both patches applied to the for-next branch of linux-leds.git, thanks.
-> 
-> Que?
+Enjoy!
 
-Ah, sorry, for some reason I silently assumed that Tony gave ack on
-your behalf :-) Probably due to lack of your activity in the subject
-and Tony's understanding thereof [0].
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
-Can I have your ack for this patch going through LED tree then?
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-leds-v4.12
 
-[0] https://lkml.org/lkml/2017/3/23/413
+for you to fetch changes up to 4f9ab0c1570800002e77515888600ca2e3dce4a9:
+
+  mfd: cpcap: Add missing include dependencies (2017-03-28 09:09:50 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD and LEDS due for the v4.12 merge window
+
+----------------------------------------------------------------
+Sebastian Reichel (1):
+      mfd: cpcap: Add missing include dependencies
+
+ include/linux/mfd/motorola-cpcap.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
 -- 
-Best regards,
-Jacek Anaszewski
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
