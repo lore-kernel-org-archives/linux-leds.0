@@ -1,277 +1,101 @@
-From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] DT: leds: Add Qualcomm Light Pulse Generator binding
-Date: Wed, 29 Mar 2017 12:26:40 -0700
-Message-ID: <20170329192640.GO20094@minitux>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323055435.29197-2-bjorn.andersson@linaro.org>
- <20170329022649.wp5uvt2akufgihwh@rob-hp-laptop>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCHv3 2/2] leds: cpcap: new driver
+Date: Wed, 29 Mar 2017 23:38:42 +0200
+Message-ID: <20170329213842.5xsmyfl64iy5qs6n@earth>
+References: <20170324084732.31255-1-sre@kernel.org>
+ <20170324084732.31255-2-sre@kernel.org>
+ <b3a00d96-7eda-4f7f-62f8-364954449b6b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wp3q2qllhnihsrmd"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170329022649.wp5uvt2akufgihwh@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <b3a00d96-7eda-4f7f-62f8-364954449b6b@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 28 Mar 19:26 PDT 2017, Rob Herring wrote:
 
-> On Wed, Mar 22, 2017 at 10:54:35PM -0700, Bjorn Andersson wrote:
-> > This adds the binding document describing the three hardware blocks
-> > related to the Light Pulse Generator found in a wide range of Qualcomm
-> > PMICs.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+--wp3q2qllhnihsrmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Mar 29, 2017 at 09:12:57PM +0200, Jacek Anaszewski wrote:
+> On 03/24/2017 09:47 AM, Sebastian Reichel wrote:
+> > Motorola CPCAP is a PMIC (power management integrated circuit) found
+> > in multiple smartphones. This driver adds support for the chip's LED
+> > controllers. This introduces support for all controllers used by the
+> > Droid 4. According to Motorola's driver (no datasheets available)
+> > there a couple of more LED controllers. I did not add support for
+> > them, since I cannot verify that they work with my modifications.
+> >=20
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > Signed-off-by: Sebastian Reichel <sre@kernel.org>
 > > ---
-> >  .../devicetree/bindings/leds/leds-qcom-lpg.txt     | 194 +++++++++++++++++++++
-> >  1 file changed, 194 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> > Changes since PATCHv1:
+> >  - binding: reference common led binding for label
+> >  - drop DEBUG define (leftover)
+> >  - s/led/LED/g in debug prints
+> >  - order includes alphabetically
+> >  - introduce mutex, since led API is not atomic
+> >  - register led class after initial register setup
+> >  - use GPLv2+ in header
+> >  - drop unsupported leds from driver
+> >=20
+> > Changes since PATCHv2:
+> >  - use standard defines instead CPCAP_LED_OFF and CPCAP_LED_ON
+> >=20
+> > Notes:
+> >  - The "motorola" vendor-prefix is added via rtc-next
+> > ---
+> >  .../devicetree/bindings/leds/cpcap-leds.txt        |  29 +++
+> >  drivers/leds/Kconfig                               |   9 +
+> >  drivers/leds/Makefile                              |   1 +
+> >  drivers/leds/leds-cpcap.c                          | 239 +++++++++++++=
+++++++++
+> >  4 files changed, 278 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/leds/cpcap-leds.t=
+xt
+> >  create mode 100644 drivers/leds/leds-cpcap.c
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/leds/cpcap-leds.txt b/Do=
+cumentation/devicetree/bindings/leds/cpcap-leds.txt
 > > new file mode 100644
-> > index 000000000000..fb9edd89119d
+> > index 000000000000..ebf7cdc7f70c
 > > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> > @@ -0,0 +1,194 @@
-> > +Binding for Qualcomm Light Pulse Generator
-> > +
-> > +The Qualcomm Light Pulse Generator consists of three different hardware blocks;
-> > +a ramp generator with lookup table, the light pulse generator and a three
-> > +channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
-> > +Each of these are described individually below.
-> > +
-> > += Lookup Table (LUT)
-> > +
-> > +- compatible:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: must be "qcom,spmi-lpg-lut"
-> > +
-> > +- reg:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: base address of the LUT block
-> > +
-> > +- qcom,lut-size:
-> > +	Usage: required
-> > +	Value type: <u32>
-> > +	Definition: number of elements available in the lookup table
-> > +
-> > += Light Pulse Generator (LPG)
-> > +The Light Pulse Generator can operate either as a standard PWM controller or in
-> > +a more advanced lookup-table based mode. These are described separately below.
-> > +
-> > +- compatible:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: must be "qcom,spmi-lpg"
-> > +
-> > +- reg:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: base address of the LPG block
-> > +
-> > +== PWM mode
-> > +
-> > +- #pwm-cells:
-> > +	Usage: required
-> > +	Value type: <u32>
-> > +	Definition: must be 1
-> > +
-> > +== Lookup-table mode
-> > +
-> > +- cell-index:
-> 
-> This is a standard though not used property name. Perhaps "reg" or a 
-> vendor property instead.
-> 
+> > +++ b/Documentation/devicetree/bindings/leds/cpcap-leds.txt
+>=20
+> I've changed cpcap-leds.txt to leds-cpcap.txt to match the prevailing
+> pattern for LED DT bindings file names.
+>=20
+> Please let me know if you have any objections.
 
-The node already has a "reg", this is the "natural" id of the
-LPG-channel, as used to reference a certain ramp-generator in the LUT.
+Acked-by: Sebastian Reichel <sre@kernel.org>
 
-I did model this as an argument of the qcom,lut property below, but felt
-it's not a question of "which LUT" or any "configuration of the LUT" it
-is a property of the LPG.
+-- Sebastian
 
-I can convert this to a qcom,lpg-id or something like that if you
-prefer.
+--wp3q2qllhnihsrmd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +	Usage: required, when referencing a LUT
-> > +	Value type: <u32>
-> > +	Definition: id of the LPG, used to associate the LPG with a particular
-> > +		    ramp generator in the LUT block
-> > +
-> > +- default-state:
-> > +	Usage: optional
-> > +	Value type: <string>
-> > +	Definition: default state, as defined in common.txt
-> > +
-> > +- label:
-> > +	Usage: optional
-> > +	Value type: <string>
-> > +	Definition: label of the LED, as defined in common.txt
-> > +
-> > +- linux,default-trigger:
-> > +	Usage: optional
-> > +	Value type: <string>
-> > +	Definition: default trigger, as defined in common.txt
-> > +
-> > +- qcom,tri-led:
-> > +	Usage: optional
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: a phandle of a TRILED node and a single u32 denoting which
-> > +		    output channel to control
-> > +
-> > +- qcom,lut:
-> > +	Usage: optional
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: phandle of a LUT node
-> > +
-> > +- qcom,dtest:
-> > +	Usage: optional
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: configures the output into an internal test line of the
-> > +		    pmic. A first u32 defines which test line to use and the
-> > +		    second cell configures how the value should be outputed
-> > +		    (available lines and configuration differs between PMICs)
-> > +
-> > +- qcom,pattern:
-> > +	Usage: optional
-> > +	Value type: <u16-list>
-> > +	Definition: list of 16 bit duty cycle values to make up the pattern to
-> > +		    be programmed into the LUT. Values should be in the range
-> > +		    [0,512).
-> > +
-> > +- qcom,pattern-length-ms:
-> > +	Usage: optional
-> > +	Value type: <u32>
-> > +	Definition: duration, in milliseconds, of the ramp generator running
-> > +		    one pass over the defined pattern
-> > +
-> > +- qcom,pattern-pause-lo-ms:
-> > +	Usage: optional
-> > +	Value type: <u32>
-> > +	Definition: duration, in milliseconds, for the ramp generator to pause
-> > +		    before iterating over the pattern
-> > +
-> > +- qcom,pattern-pause-hi-ms:
-> > +	Usage: optional
-> > +	Value type: <u32>
-> > +	Definition: duration, in milliseconds, for the ramp generator to pause
-> > +		    after iterating over the pattern
-> > +
-> > +- qcom,pattern-ping-pong:
-> > +	Usage: optional
-> > +	Value type: <boolean>
-> > +	Definition: denotes that the ramp generator should reverse direction
-> > +		    when reaching the end of the pattern, instead of wrapping
-> > +		    to the beginning
-> > +
-> > +- qcom,pattern-oneshot:
-> > +	Usage: optional
-> > +	Value type: <boolean>
-> > +	Definition: denotes that the ramp generator should stop after a single
-> > +		    pass over the pattern
-> > +
-> > +- qcom,pattern-reverse:
-> > +	Usage: optional
-> > +	Value type: <boolean>
-> > +	Definition: denotes that the ramp generator should operate backwards
-> > +		    over the pattern
-> 
-> The pattern related properties should be common if we put them in DT 
-> which I think is debatable.
-> 
+-----BEGIN PGP SIGNATURE-----
 
-A few years back I saw one other chip that had a similar pattern style,
-using these properties for the LP5xx - that is what's being requested -
-would have to be implemented by something reading the pattern and
-generating firmware to be run on the chip. This should be possible to
-do, but there are a lot functionality in the LP55xx chips that you would
-not be able to use with such an approach.
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljcKWEACgkQ2O7X88g7
++prFhg/+NGlO4VjO16aWok7mHrBgq9o0/fc/12uOYCdTvHZgeHX9z7AchinA3puJ
+PvsdIi8UlfEWkifxIzWeRaZXkD4SjrqrRX7qVqclDMUk0soNMgaCybXIU/RNECJ8
+Tt3zLBJXqYYvUlzJkPaJy1vlhJwNC+iU8tPKeiV+HUa8j7vO8sPVg6bkb1bvaAhp
+bJPP2udu0gXDjZcvTWkGt8dpBhvxbvcITOXSoepFD2zrYSO+xkVbIMX9HT5T3BpV
+PX6zh3k2VvDhtYES2eNebz+QspTpgOCG3QBnVcIeB+ctFSyynAVSSfwKtntJKKgt
+SQb6Tc4NuxKunWaSxOZF+eDkjAJ09QYEkB9AAaX0xrb9XLO5vJ8wsMAT53Z7jnmp
+JjxuH70h29bw45E7fGN66JLgxaqcxYla0MuBsekE/tUvqi7U2JcbU/PJJXbUgnxX
+QFNsW92QkuDt0fRwfBkVtZyPE3feURBzQzbIGfdH6L+/Ldk47JUjLIOIK8WLq7Cz
++HBfZB35wxnAaENTpFnOzQSJ7NUYUixLu2SecWaUqts+4I0RuD/9mfkbC1XLp0zd
+i4UGJ67WW0iesEu1p8SZw+0OFOJVPoByrTwR+HigTYFBnXaW4ByuUNIrROduWa5p
+9dTjlL7moVC4THd8TtNhSU3Hrqgc5lk6q0tOkTZPEWmMbBB8yzA=
+=kFod
+-----END PGP SIGNATURE-----
 
-> > +
-> > += LED Current Sink (TRILED)
-> > +
-> > +- compatible:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: must be "qcom,spmi-tri-led"
-> > +
-> > +- reg:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: base address of the TRILED block
-> > +
-> > +- qcom,power-source:
-> > +	Usage: required
-> > +	Value type: <u32>
-> > +	Definition: power-source used to drive the output, as defined in the
-> > +		    datasheet
-> > +
-> > += EXAMPLE:
-> > +The following example defines a single output of the PMI8994, sinking current
-> > +into a LED in a natural pulsating pattern:
-> > +
-> > +&spmi_bus {
-> > +	pmic@3 {
-> > +		compatible = "qcom,pmi8994", "qcom,spmi-pmic";
-> 
-> typo.
-> 
-
-Sorry, I don't see the typo.
-
-> > +		reg = <0x3 SPMI_USID>;
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		pmi8994_lpg_lut: lpg-lut@b000 {
-> > +			compatible = "qcom,spmi-lpg-lut";
-> > +			reg = <0xb000>;
-> > +
-> > +			qcom,lut-size = <24>;
-> > +		};
-> > +
-> > +		lpg@b200 {
-> > +			compatible = "qcom,spmi-lpg";
-> > +			reg = <0xb200>;
-> > +
-> > +			cell-index = <2>;
-> > +
-> > +			label = "lpg:green:user0";
-> > +
-> > +			qcom,tri-led = <&pmi8994_tri_led 1>;
-> > +			qcom,lut = <&pmi8994_lpg_lut>;
-> > +
-> > +			qcom,pattern = /bits/ 16 <9 20 42 86 158 256 353
-> > +						  425 469 491 502 507>;
-> > +			qcom,pattern-length-ms = <1337>;
-> > +			qcom,pattern-ping-pong;
-> > +
-> > +			default-state = "on";
-> > +		};
-> > +
-> > +		pmi8994_tri_led: tri-led@d000 {
-> 
-> It may make more sense to make the LED(s) and their properties a sub 
-> node of this. You could always use the PWM binding to link back to the 
-> LPG. The pattern/LUT is really just a queue of PWM settings. That's not 
-> all that different than a PWM based audio buzzer. There was a DMA based 
-> PWM binding the other day for audio.
-> 
-
-The TRILED is a separate hardware block from the LPG and for 3
-(predefined) LPG channel it serves as one of the options for routing the
-signal out of the PMIC. 
-
-As an example, on DB820c I drive the fourth user-LED by routing one of
-the LPG channels to a MPP configured as current-sink.
-
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--wp3q2qllhnihsrmd--
