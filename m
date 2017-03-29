@@ -1,254 +1,72 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] DT: leds: Add Qualcomm Light Pulse Generator binding
-Date: Tue, 28 Mar 2017 21:26:49 -0500
-Message-ID: <20170329022649.wp5uvt2akufgihwh@rob-hp-laptop>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323055435.29197-2-bjorn.andersson@linaro.org>
+From: Felix Brack <fb@ltec.ch>
+Subject: Re: [PATCH] leds: pca9532: Extend pca9532 device tree support
+Date: Wed, 29 Mar 2017 16:26:13 +0200
+Message-ID: <e4b6f127-5e5a-04c4-a87f-f6ceeba82a23@ltec.ch>
+References: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
+ <f1649865-87cd-eb1c-68de-184990f64661@gmail.com>
+ <c23bd1c9-934b-c1c6-e9ff-8d2041c52d09@ltec.ch>
+ <725c338e-af4c-1332-6c27-462c2dc1b97f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170323055435.29197-2-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.ltec.ch ([95.143.48.181]:39431 "EHLO mail.ltec.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751410AbdC2Oq6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 29 Mar 2017 10:46:58 -0400
+In-Reply-To: <725c338e-af4c-1332-6c27-462c2dc1b97f@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, riku.voipio@iki.fi, rpurdie@rpsys.net, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: f.brack@eets.ch
 
-On Wed, Mar 22, 2017 at 10:54:35PM -0700, Bjorn Andersson wrote:
-> This adds the binding document describing the three hardware blocks
-> related to the Light Pulse Generator found in a wide range of Qualcomm
-> PMICs.
+Hello Jacek,
+
+On 08.02.2017 20:42, Jacek Anaszewski wrote:
+> Hi Felix,
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/leds-qcom-lpg.txt     | 194 +++++++++++++++++++++
->  1 file changed, 194 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> On 02/08/2017 05:12 PM, Felix Brack wrote:
+>> Hello Jacek,
+>>
+>> On 07.02.2017 21:45, Jacek Anaszewski wrote:
+>>> Hi Felix,
+>>>
+>>> Thanks for the patch.
+>>>
+>>> On 02/07/2017 07:11 PM, Felix Brack wrote:
+>>>> This patch extends the device tree support for the pca9532 allowing LEDs to blink, dim or even being unchanged, i.e. not being turned off during driver initialization.
+>>>
+>>> Isn't it possible to apply desired settings with existing LED subsystem
+>>> brightness file, and delay_on/off files exposed by timer trigger?
+>>>
+>>> Best regards,
+>>> Jacek Anaszewski
+>>>
+>>
+>> This might be a misunderstanding. My patch is not meant to replace
+>> anything for driving the LEDs once the kernel is fully loaded. The LED
+>> subsystem offers quite a lot of possibilities to do this.
+>>
+>> My patch mainly deals with the 'default' state of the LEDs immediately
+>> when the driver gets loaded.
+>> Here is an example: I have a system with a LED named 'RUN' which is
+>> turned on steady by U-Boot (indicating "system booting"). When the
+>> PCA9532 driver loads this LED gets turned off due to initialization.
+>> However I would like it remain lit until later a script will make that
+>> 'RUN' LED blink (indicating "system running"). This script will of
+>> course use the existing LED subsystem to do so. To keep the 'RUN' LED
+>> lit I need the DT property 'default-state' being set to 'PCA9532_KEEP'.
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> new file mode 100644
-> index 000000000000..fb9edd89119d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> @@ -0,0 +1,194 @@
-> +Binding for Qualcomm Light Pulse Generator
-> +
-> +The Qualcomm Light Pulse Generator consists of three different hardware blocks;
-> +a ramp generator with lookup table, the light pulse generator and a three
-> +channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
-> +Each of these are described individually below.
-> +
-> += Lookup Table (LUT)
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,spmi-lpg-lut"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: base address of the LUT block
-> +
-> +- qcom,lut-size:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: number of elements available in the lookup table
-> +
-> += Light Pulse Generator (LPG)
-> +The Light Pulse Generator can operate either as a standard PWM controller or in
-> +a more advanced lookup-table based mode. These are described separately below.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,spmi-lpg"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: base address of the LPG block
-> +
-> +== PWM mode
-> +
-> +- #pwm-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: must be 1
-> +
-> +== Lookup-table mode
-> +
-> +- cell-index:
-
-This is a standard though not used property name. Perhaps "reg" or a 
-vendor property instead.
-
-> +	Usage: required, when referencing a LUT
-> +	Value type: <u32>
-> +	Definition: id of the LPG, used to associate the LPG with a particular
-> +		    ramp generator in the LUT block
-> +
-> +- default-state:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: default state, as defined in common.txt
-> +
-> +- label:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: label of the LED, as defined in common.txt
-> +
-> +- linux,default-trigger:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: default trigger, as defined in common.txt
-> +
-> +- qcom,tri-led:
-> +	Usage: optional
-> +	Value type: <prop-encoded-array>
-> +	Definition: a phandle of a TRILED node and a single u32 denoting which
-> +		    output channel to control
-> +
-> +- qcom,lut:
-> +	Usage: optional
-> +	Value type: <prop-encoded-array>
-> +	Definition: phandle of a LUT node
-> +
-> +- qcom,dtest:
-> +	Usage: optional
-> +	Value type: <prop-encoded-array>
-> +	Definition: configures the output into an internal test line of the
-> +		    pmic. A first u32 defines which test line to use and the
-> +		    second cell configures how the value should be outputed
-> +		    (available lines and configuration differs between PMICs)
-> +
-> +- qcom,pattern:
-> +	Usage: optional
-> +	Value type: <u16-list>
-> +	Definition: list of 16 bit duty cycle values to make up the pattern to
-> +		    be programmed into the LUT. Values should be in the range
-> +		    [0,512).
-> +
-> +- qcom,pattern-length-ms:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: duration, in milliseconds, of the ramp generator running
-> +		    one pass over the defined pattern
-> +
-> +- qcom,pattern-pause-lo-ms:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: duration, in milliseconds, for the ramp generator to pause
-> +		    before iterating over the pattern
-> +
-> +- qcom,pattern-pause-hi-ms:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: duration, in milliseconds, for the ramp generator to pause
-> +		    after iterating over the pattern
-> +
-> +- qcom,pattern-ping-pong:
-> +	Usage: optional
-> +	Value type: <boolean>
-> +	Definition: denotes that the ramp generator should reverse direction
-> +		    when reaching the end of the pattern, instead of wrapping
-> +		    to the beginning
-> +
-> +- qcom,pattern-oneshot:
-> +	Usage: optional
-> +	Value type: <boolean>
-> +	Definition: denotes that the ramp generator should stop after a single
-> +		    pass over the pattern
-> +
-> +- qcom,pattern-reverse:
-> +	Usage: optional
-> +	Value type: <boolean>
-> +	Definition: denotes that the ramp generator should operate backwards
-> +		    over the pattern
-
-The pattern related properties should be common if we put them in DT 
-which I think is debatable.
-
-> +
-> += LED Current Sink (TRILED)
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,spmi-tri-led"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: base address of the TRILED block
-> +
-> +- qcom,power-source:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: power-source used to drive the output, as defined in the
-> +		    datasheet
-> +
-> += EXAMPLE:
-> +The following example defines a single output of the PMI8994, sinking current
-> +into a LED in a natural pulsating pattern:
-> +
-> +&spmi_bus {
-> +	pmic@3 {
-> +		compatible = "qcom,pmi8994", "qcom,spmi-pmic";
-
-typo.
-
-> +		reg = <0x3 SPMI_USID>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		pmi8994_lpg_lut: lpg-lut@b000 {
-> +			compatible = "qcom,spmi-lpg-lut";
-> +			reg = <0xb000>;
-> +
-> +			qcom,lut-size = <24>;
-> +		};
-> +
-> +		lpg@b200 {
-> +			compatible = "qcom,spmi-lpg";
-> +			reg = <0xb200>;
-> +
-> +			cell-index = <2>;
-> +
-> +			label = "lpg:green:user0";
-> +
-> +			qcom,tri-led = <&pmi8994_tri_led 1>;
-> +			qcom,lut = <&pmi8994_lpg_lut>;
-> +
-> +			qcom,pattern = /bits/ 16 <9 20 42 86 158 256 353
-> +						  425 469 491 502 507>;
-> +			qcom,pattern-length-ms = <1337>;
-> +			qcom,pattern-ping-pong;
-> +
-> +			default-state = "on";
-> +		};
-> +
-> +		pmi8994_tri_led: tri-led@d000 {
-
-It may make more sense to make the LED(s) and their properties a sub 
-node of this. You could always use the PWM binding to link back to the 
-LPG. The pattern/LUT is really just a queue of PWM settings. That's not 
-all that different than a PWM based audio buzzer. There was a DMA based 
-PWM binding the other day for audio.
-
-Rob
-
-> +			compatible = "qcom,spmi-tri-led";
-> +			reg = <0xd000>;
-> +
-> +			qcom,power-source = <1>;
-> +		};
-> +	};
-> +};
-> -- 
-> 2.12.0
+> It looks like all you need is default-state property.
+> I'd rather avoid exposing prescaler and pwm registers in DT.
 > 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+For the time being there seems to be no generic timer configuration by
+means of the DT. I have therefore decided to remove the code dealing
+with prescaler and pwm from my patch. This will prevent those registers
+from being exposed to the DT. What will remain is the default-state.
+
+Should I send an updated version (v2) of this patch or would it be
+better to send a 'new' patch?
+
+regards, Felix
