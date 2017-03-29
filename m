@@ -1,80 +1,71 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Wed, 29 Mar 2017 12:07:25 -0700
-Message-ID: <20170329190725.GN20094@minitux>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323203749.GB8563@amd>
- <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv3 2/2] leds: cpcap: new driver
+Date: Wed, 29 Mar 2017 21:12:57 +0200
+Message-ID: <b3a00d96-7eda-4f7f-62f8-364954449b6b@gmail.com>
+References: <20170324084732.31255-1-sre@kernel.org>
+ <20170324084732.31255-2-sre@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pg0-f41.google.com ([74.125.83.41]:33891 "EHLO
-        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752944AbdC2THa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Mar 2017 15:07:30 -0400
-Received: by mail-pg0-f41.google.com with SMTP id 21so15876405pgg.1
-        for <linux-leds@vger.kernel.org>; Wed, 29 Mar 2017 12:07:29 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170324084732.31255-2-sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-On Tue 28 Mar 19:17 PDT 2017, Rob Herring wrote:
+Hi Sebastian,
 
-> On Thu, Mar 23, 2017 at 09:37:49PM +0100, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
-> > > PMICs from Qualcomm. It can operate on fixed parameters or based on a
-> > > lookup-table, altering the duty cycle over time - which provides the
-> > > means for e.g. hardware assisted transitions of LED brightness.
-> > 
-> > Ok, this is not first hardware that supports something like this. We
-> > have similar hardware that can do blinking on Nokia N900 -- please
-> > take a look at leds-lp55*.c
+On 03/24/2017 09:47 AM, Sebastian Reichel wrote:
+> Motorola CPCAP is a PMIC (power management integrated circuit) found
+> in multiple smartphones. This driver adds support for the chip's LED
+> controllers. This introduces support for all controllers used by the
+> Droid 4. According to Motorola's driver (no datasheets available)
+> there a couple of more LED controllers. I did not add support for
+> them, since I cannot verify that they work with my modifications.
 > 
-> And perhaps some alignment on the bindings too if the N900 has bindings.
+> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+> Signed-off-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+> Changes since PATCHv1:
+>  - binding: reference common led binding for label
+>  - drop DEBUG define (leftover)
+>  - s/led/LED/g in debug prints
+>  - order includes alphabetically
+>  - introduce mutex, since led API is not atomic
+>  - register led class after initial register setup
+>  - use GPLv2+ in header
+>  - drop unsupported leds from driver
 > 
-
-There is a binding for ti,lp55xx, but there's nothing I can reuse from
-that binding...because it's completely different hardware.
-
-> > And it would be really good to provide hardware abstraction. We really
-> > don't want to have different userspace for LPG and for N900 and for
+> Changes since PATCHv2:
+>  - use standard defines instead CPCAP_LED_OFF and CPCAP_LED_ON
 > 
-> I'm interested in what this looks like as several AOSP platforms do 
-> tri-color LEDs with custom sysfs extensions.
+> Notes:
+>  - The "motorola" vendor-prefix is added via rtc-next
+> ---
+>  .../devicetree/bindings/leds/cpcap-leds.txt        |  29 +++
+>  drivers/leds/Kconfig                               |   9 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-cpcap.c                          | 239 +++++++++++++++++++++
+>  4 files changed, 278 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/cpcap-leds.txt
+>  create mode 100644 drivers/leds/leds-cpcap.c
 > 
+> diff --git a/Documentation/devicetree/bindings/leds/cpcap-leds.txt b/Documentation/devicetree/bindings/leds/cpcap-leds.txt
+> new file mode 100644
+> index 000000000000..ebf7cdc7f70c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/cpcap-leds.txt
 
-How to model RGB LEDs has been discussed many times before and I was
-hoping for that discussion to come to some conclusion during the last 2
-years, but now I couldn't wait more - we need this driver for db820c.
+I've changed cpcap-leds.txt to leds-cpcap.txt to match the prevailing
+pattern for LED DT bindings file names.
 
-With this driver, as with many existing, you will have 3 LEDs that you
-set independently.
+Please let me know if you have any objections.
 
-I did implement blinking by using the PWM straight off, so you can't set
-brightness or synchronize the multiple channels. Perhaps this should be
-changed to use the ramp generator.
-
-To synchronize patterns I suggest that we extend the LUT binding to
-describe groups and when any LPG trigger a restart of the pattern-walker
-we trigger all that are grouped.
-
-These two changes combined allows you to set brightness and blink with a
-RGB-LED.
-
-
-But I will have to dig up some hardware that uses the LPG for driving a
-RGB-LED to be able to test this (and I do prefer that to be done with
-some incremental patches at some later time, if acceptable).
-
-> Do any of the Dragonboards have tri-color LEDs?
-> 
-
-No.
-
-Regards,
-Bjorn
+-- 
+Best regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
