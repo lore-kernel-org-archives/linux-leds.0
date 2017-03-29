@@ -1,71 +1,54 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv3 2/2] leds: cpcap: new driver
-Date: Wed, 29 Mar 2017 21:12:57 +0200
-Message-ID: <b3a00d96-7eda-4f7f-62f8-364954449b6b@gmail.com>
-References: <20170324084732.31255-1-sre@kernel.org>
- <20170324084732.31255-2-sre@kernel.org>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: Stable branch dell-laptop-changes-for-4.12
+Date: Wed, 29 Mar 2017 12:25:20 -0700
+Message-ID: <20170329192520.GA15472@localhost.localdomain>
+References: <992db922-efe5-ed64-2af0-7f3f7d7a4ec9@poczta.onet.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170324084732.31255-2-sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([65.50.211.133]:45163 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752592AbdC2TZY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Mar 2017 15:25:24 -0400
+Content-Disposition: inline
+In-Reply-To: <992db922-efe5-ed64-2af0-7f3f7d7a4ec9@poczta.onet.pl>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <anjack@poczta.onet.pl>
+Cc: Andy Shevchenko <andy@infradead.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Sebastian,
+On Sun, Mar 26, 2017 at 10:18:45AM +0200, Jacek Anaszewski wrote:
+> Hi Andy, Darren,
+> 
+> I've created stable branch dell-laptop-changes-for-4.12
+> 
+> in the repository
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+> 
+> for you to merge due to the conflict in linux-next:
+> 
+> Today's linux-next merge of the leds tree got a conflict in:
+> 
+>   drivers/platform/x86/dell-laptop.c
+> 
+> between commit:
+> 
+>   573eedacfba3 ("platform/x86: dell-*: Call new led hw_changed API on
+> kbd brightness change")
+> 
+> from the drivers-x86 tree and commit:
+> 
+>   44319ab7e0ed ("platform/x86: dell-laptop: import
+> dell_micmute_led_set() from drivers/leds/dell-led.c")
+> 
+> from the leds tree.
+> 
 
-On 03/24/2017 09:47 AM, Sebastian Reichel wrote:
-> Motorola CPCAP is a PMIC (power management integrated circuit) found
-> in multiple smartphones. This driver adds support for the chip's LED
-> controllers. This introduces support for all controllers used by the
-> Droid 4. According to Motorola's driver (no datasheets available)
-> there a couple of more LED controllers. I did not add support for
-> them, since I cannot verify that they work with my modifications.
-> 
-> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> Signed-off-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
-> Changes since PATCHv1:
->  - binding: reference common led binding for label
->  - drop DEBUG define (leftover)
->  - s/led/LED/g in debug prints
->  - order includes alphabetically
->  - introduce mutex, since led API is not atomic
->  - register led class after initial register setup
->  - use GPLv2+ in header
->  - drop unsupported leds from driver
-> 
-> Changes since PATCHv2:
->  - use standard defines instead CPCAP_LED_OFF and CPCAP_LED_ON
-> 
-> Notes:
->  - The "motorola" vendor-prefix is added via rtc-next
-> ---
->  .../devicetree/bindings/leds/cpcap-leds.txt        |  29 +++
->  drivers/leds/Kconfig                               |   9 +
->  drivers/leds/Makefile                              |   1 +
->  drivers/leds/leds-cpcap.c                          | 239 +++++++++++++++++++++
->  4 files changed, 278 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/cpcap-leds.txt
->  create mode 100644 drivers/leds/leds-cpcap.c
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/cpcap-leds.txt b/Documentation/devicetree/bindings/leds/cpcap-leds.txt
-> new file mode 100644
-> index 000000000000..ebf7cdc7f70c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/cpcap-leds.txt
+Thank you Jacek. I've queued this to testing and will update for-next provided
+it all comes back clean from testing.
 
-I've changed cpcap-leds.txt to leds-cpcap.txt to match the prevailing
-pattern for LED DT bindings file names.
-
-Please let me know if you have any objections.
 
 -- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Darren Hart
+VMware Open Source Technology Center
