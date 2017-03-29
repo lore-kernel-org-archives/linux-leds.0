@@ -1,80 +1,80 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: pca9532: Extend pca9532 device tree support
-Date: Wed, 29 Mar 2017 20:29:15 +0200
-Message-ID: <203b1577-b6d9-a3a6-4a7c-a9dac9325863@gmail.com>
-References: <aed3d861-eb7d-7bad-1fe2-73b5b3299a0c@ltec.ch>
- <f1649865-87cd-eb1c-68de-184990f64661@gmail.com>
- <c23bd1c9-934b-c1c6-e9ff-8d2041c52d09@ltec.ch>
- <725c338e-af4c-1332-6c27-462c2dc1b97f@gmail.com>
- <e4b6f127-5e5a-04c4-a87f-f6ceeba82a23@ltec.ch>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
+Date: Wed, 29 Mar 2017 12:07:25 -0700
+Message-ID: <20170329190725.GN20094@minitux>
+References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
+ <20170323203749.GB8563@amd>
+ <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34991 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752333AbdC2SaD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Mar 2017 14:30:03 -0400
-In-Reply-To: <e4b6f127-5e5a-04c4-a87f-f6ceeba82a23@ltec.ch>
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:33891 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752944AbdC2THa (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Mar 2017 15:07:30 -0400
+Received: by mail-pg0-f41.google.com with SMTP id 21so15876405pgg.1
+        for <linux-leds@vger.kernel.org>; Wed, 29 Mar 2017 12:07:29 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Felix Brack <fb@ltec.ch>, riku.voipio@iki.fi, rpurdie@rpsys.net, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: f.brack@eets.ch
+To: Rob Herring <robh@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-Hi Felix,
+On Tue 28 Mar 19:17 PDT 2017, Rob Herring wrote:
 
-On 03/29/2017 04:26 PM, Felix Brack wrote:
-> Hello Jacek,
+> On Thu, Mar 23, 2017 at 09:37:49PM +0100, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
+> > > PMICs from Qualcomm. It can operate on fixed parameters or based on a
+> > > lookup-table, altering the duty cycle over time - which provides the
+> > > means for e.g. hardware assisted transitions of LED brightness.
+> > 
+> > Ok, this is not first hardware that supports something like this. We
+> > have similar hardware that can do blinking on Nokia N900 -- please
+> > take a look at leds-lp55*.c
 > 
-> On 08.02.2017 20:42, Jacek Anaszewski wrote:
->> Hi Felix,
->>
->> On 02/08/2017 05:12 PM, Felix Brack wrote:
->>> Hello Jacek,
->>>
->>> On 07.02.2017 21:45, Jacek Anaszewski wrote:
->>>> Hi Felix,
->>>>
->>>> Thanks for the patch.
->>>>
->>>> On 02/07/2017 07:11 PM, Felix Brack wrote:
->>>>> This patch extends the device tree support for the pca9532 allowing LEDs to blink, dim or even being unchanged, i.e. not being turned off during driver initialization.
->>>>
->>>> Isn't it possible to apply desired settings with existing LED subsystem
->>>> brightness file, and delay_on/off files exposed by timer trigger?
->>>>
->>>> Best regards,
->>>> Jacek Anaszewski
->>>>
->>>
->>> This might be a misunderstanding. My patch is not meant to replace
->>> anything for driving the LEDs once the kernel is fully loaded. The LED
->>> subsystem offers quite a lot of possibilities to do this.
->>>
->>> My patch mainly deals with the 'default' state of the LEDs immediately
->>> when the driver gets loaded.
->>> Here is an example: I have a system with a LED named 'RUN' which is
->>> turned on steady by U-Boot (indicating "system booting"). When the
->>> PCA9532 driver loads this LED gets turned off due to initialization.
->>> However I would like it remain lit until later a script will make that
->>> 'RUN' LED blink (indicating "system running"). This script will of
->>> course use the existing LED subsystem to do so. To keep the 'RUN' LED
->>> lit I need the DT property 'default-state' being set to 'PCA9532_KEEP'.
->>
->> It looks like all you need is default-state property.
->> I'd rather avoid exposing prescaler and pwm registers in DT.
->>
+> And perhaps some alignment on the bindings too if the N900 has bindings.
 > 
-> For the time being there seems to be no generic timer configuration by
-> means of the DT. I have therefore decided to remove the code dealing
-> with prescaler and pwm from my patch. This will prevent those registers
-> from being exposed to the DT. What will remain is the default-state.
+
+There is a binding for ti,lp55xx, but there's nothing I can reuse from
+that binding...because it's completely different hardware.
+
+> > And it would be really good to provide hardware abstraction. We really
+> > don't want to have different userspace for LPG and for N900 and for
 > 
-> Should I send an updated version (v2) of this patch or would it be
-> better to send a 'new' patch?
+> I'm interested in what this looks like as several AOSP platforms do 
+> tri-color LEDs with custom sysfs extensions.
+> 
 
-Please use current patch title and add v2 to the [PATCH] tag.
+How to model RGB LEDs has been discussed many times before and I was
+hoping for that discussion to come to some conclusion during the last 2
+years, but now I couldn't wait more - we need this driver for db820c.
 
--- 
-Best regards,
-Jacek Anaszewski
+With this driver, as with many existing, you will have 3 LEDs that you
+set independently.
+
+I did implement blinking by using the PWM straight off, so you can't set
+brightness or synchronize the multiple channels. Perhaps this should be
+changed to use the ramp generator.
+
+To synchronize patterns I suggest that we extend the LUT binding to
+describe groups and when any LPG trigger a restart of the pattern-walker
+we trigger all that are grouped.
+
+These two changes combined allows you to set brightness and blink with a
+RGB-LED.
+
+
+But I will have to dig up some hardware that uses the LPG for driving a
+RGB-LED to be able to test this (and I do prefer that to be done with
+some incremental patches at some later time, if acceptable).
+
+> Do any of the Dragonboards have tri-color LEDs?
+> 
+
+No.
+
+Regards,
+Bjorn
