@@ -1,127 +1,136 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Thu, 30 Mar 2017 09:43:09 +0200
-Message-ID: <20170330074309.GA28533@amd>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323203749.GB8563@amd>
- <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
- <20170329190725.GN20094@minitux>
- <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45342 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932650AbdC3HnO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 30 Mar 2017 03:43:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20170330000955.GP20094@minitux>
-Sender: linux-leds-owner@vger.kernel.org
+From: Felix Brack <fb@ltec.ch>
+Subject: [PATCH v2] Extend pca9532 device tree support
+Date: Thu, 30 Mar 2017 15:33:53 +0200
+Message-ID: <1490880833-22199-1-git-send-email-fb@ltec.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jacek.anaszewski@gmail.com, rpurdie@rpsys.net, pavel@ucw.cz, mark.rutland@arm.com, riku.voipio@iki.fi, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, fb@ltec.ch
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
+This patch extends the device tree support for the pca9532 by adding
+the leds 'default-state' property.
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v2:
+- remove prescaler and pwm configuration by none generic
+  DT properties
 
-Hi!
+Signed-off-by: Felix Brack <fb@ltec.ch>
+---
+ .../devicetree/bindings/leds/leds-pca9532.txt      | 10 +++++++
+ drivers/leds/leds-pca9532.c                        | 31 +++++++++++++++++++++-
+ include/linux/leds-pca9532.h                       |  4 +--
+ 3 files changed, 42 insertions(+), 3 deletions(-)
 
-> > > There is a binding for ti,lp55xx, but there's nothing I can reuse from
-> > > that binding...because it's completely different hardware.
-> >=20
-> > Agreed, if you drop the pattern stuff from the binding, at least for no=
-w.=20
->=20
-> I do not have a strong preference to expose these knobs in devicetree
-> and I do fear that finding some common "pattern" bindings that suits
-> everyone will be very difficult.
->=20
-> So I'll drop them from the binding for now.
-
-Ok.
-
-> > If you want driver merged quickly, I believe the best way would be to
-> > leave out pattern support for now. We can merge the basic driver
-> > easily to 4.12.
-> >=20
->=20
-> I'm not that much in a hurry and would rather see that we resolve any
-> outstanding issues with the implementation of the pattern handling.
-
-Ok, good.
-
-> But regardless of this we still have the problem that the typical
-> Qualcomm PMIC has 8 LPG-blocks and any triple could be driving a
-> RGB-LED. So we would have to create some sort of in-driver-wrapper
-> around any three instances exposing them as a single LED to the user.
-
-Yes, I believe we should do the wrapping. In N900 case,=20
-
-> I rather expose the individual channels and make sure that when we
-> trigger a blink operation or enable a pattern (i.e. the two operations
-> that do require synchronization) we will perform that synchronization
-> under the hood.
-
-First, we need a way to tell userspace which LEDs are synchronized,
-because otherwise it will be confusing.
-
-Second, there are more issues than just patterns with the RGB
-LED. Most important is ability to set particular colors. You want to
-set the RGB LED to "white", but that does not mean you can set
-red=3Dgreen=3Dblue=3D1.0. You want color to look the same on LCD and on the
-LED, which means coefficients for white and some kind of function for
-brightness-to-PWM conversion.
-
-> > Incremental patches sound like a good idea, yes.
-> >=20
-> > I'd say that testing with actual RGB LED is not a requirement... as
-> > long as we design reasonable interface where the synchronizaction will
-> > be easy.
-> >=20
->=20
-> As this relates to the board layout (which LPG-channels are hooked to a
-> RGB) I think it makes sense to expose a mechanism in devicetree to
-> indicate which channels should have their pattern/blink synchronized.
->=20
-> We should be able to extend the LUT (the hardware that actually
-> implements the pattern-walker logic) with a DT-property like:
->=20
->   qcom,synchronize-group-0 =3D <1, 2, 3>;
->   qcom,synchronize-group-1 =3D <5, 6, 7>;
->=20
-> And whenever we configure a pattern involving one of the affected LEDs
-> from a group we start all of them.
-
-Yes we need some kind of grouping.
-
-Additional complexity in the N900 case... groups can actually be
-configured at run time. Original Maemo used that ability to group 6
-keyboard backlight leds, and then run pattern on them. OTOH... I don't
-think we _need_ to support that functionality.
-
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAljctw0ACgkQMOfwapXb+vIrMQCeIZt9fkw52hT1PppKaJg9P4+E
-Eo0An1YKTHTIz7iFlaF1yVJckmImnIUA
-=lvJ+
------END PGP SIGNATURE-----
-
---9jxsPFA5p3P2qPhR--
+diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+index 198f3ba..8374075 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+@@ -17,6 +17,8 @@ Optional sub-node properties:
+ 	- label: see Documentation/devicetree/bindings/leds/common.txt
+ 	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
+ 	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
++	- default-state: see Documentation/devicetree/bindings/leds/common.txt
++	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
+ 
+ Example:
+   #include <dt-bindings/leds/leds-pca9532.h>
+@@ -33,6 +35,14 @@ Example:
+       label = "pca:green:power";
+       type = <PCA9532_TYPE_LED>;
+     };
++    kernel-booting {
++    	type = <PCA9532_TYPE_LED>;
++    	default-state = "on";
++    };
++    sys-stat {
++    	type = <PCA9532_TYPE_LED>;
++    	default-state = "keep"; // don't touch, was set by U-Boot
++    };
+   };
+ 
+ For more product information please see the link below:
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index 06e6310..66ef280 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -254,6 +254,21 @@ static void pca9532_input_work(struct work_struct *work)
+ 	mutex_unlock(&data->update_lock);
+ }
+ 
++static enum pca9532_state pca9532_getled(struct pca9532_led *led)
++{
++	struct i2c_client *client = led->client;
++	struct pca9532_data *data = i2c_get_clientdata(client);
++	u8 maxleds = data->chip_info->num_leds;
++	char reg;
++	enum pca9532_state ret;
++
++	mutex_lock(&data->update_lock);
++	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
++	ret = reg >> LED_NUM(led->id)/2;
++	mutex_unlock(&data->update_lock);
++	return ret;
++}
++
+ #ifdef CONFIG_LEDS_PCA9532_GPIO
+ static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+ {
+@@ -366,7 +381,10 @@ static int pca9532_configure(struct i2c_client *client,
+ 			gpios++;
+ 			break;
+ 		case PCA9532_TYPE_LED:
+-			led->state = pled->state;
++			if (pled->state == PCA9532_KEEP)
++				led->state = pca9532_getled(led);
++			else
++				led->state = pled->state;
+ 			led->name = pled->name;
+ 			led->ldev.name = led->name;
+ 			led->ldev.default_trigger = pled->default_trigger;
+@@ -456,6 +474,7 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+ 	const struct of_device_id *match;
+ 	int devid, maxleds;
+ 	int i = 0;
++	const char *state;
+ 
+ 	match = of_match_device(of_pca9532_leds_match, dev);
+ 	if (!match)
+@@ -475,6 +494,16 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+ 		of_property_read_u32(child, "type", &pdata->leds[i].type);
+ 		of_property_read_string(child, "linux,default-trigger",
+ 					&pdata->leds[i].default_trigger);
++		if (!of_property_read_string(child, "default-state", &state)) {
++			if (!strcmp(state, "on"))
++				pdata->leds[i].state = PCA9532_ON;
++			else if (!strcmp(state, "keep"))
++				pdata->leds[i].state = PCA9532_KEEP;
++			else if (!strcmp(state, "pwm0"))
++				pdata->leds[i].state = PCA9532_PWM0;
++			else if (!strcmp(state, "pwm1"))
++				pdata->leds[i].state = PCA9532_PWM1;
++		}
+ 		if (++i >= maxleds) {
+ 			of_node_put(child);
+ 			break;
+diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
+index d215b45..a327b1aa 100644
+--- a/include/linux/leds-pca9532.h
++++ b/include/linux/leds-pca9532.h
+@@ -22,7 +22,8 @@ enum pca9532_state {
+ 	PCA9532_OFF  = 0x0,
+ 	PCA9532_ON   = 0x1,
+ 	PCA9532_PWM0 = 0x2,
+-	PCA9532_PWM1 = 0x3
++	PCA9532_PWM1 = 0x3,
++	PCA9532_KEEP = 0xff
+ };
+ 
+ struct pca9532_led {
+@@ -44,4 +45,3 @@ struct pca9532_platform_data {
+ };
+ 
+ #endif /* __LINUX_PCA9532_H */
+-
+-- 
+2.7.4
