@@ -1,7 +1,7 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Fri, 7 Apr 2017 14:54:40 +0200
-Message-ID: <20170407125440.GD4756@amd>
+Date: Fri, 7 Apr 2017 15:32:23 +0200
+Message-ID: <20170407133223.GE4756@amd>
 References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
  <20170323203749.GB8563@amd>
  <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
@@ -10,69 +10,80 @@ References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
  <20170330000955.GP20094@minitux>
  <20170330074309.GA28533@amd>
  <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
+ <20170403190032.GX20094@minitux>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="T6xhMxlHU34Bk0ad"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34165 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755455AbdDGNc0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 7 Apr 2017 09:32:26 -0400
 Content-Disposition: inline
-In-Reply-To: <bf999f34-4509-6f0b-602c-f82d50a18e97-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170403190032.GX20094@minitux>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
 
---EP0wieDxd4TSJjHq
+--T6xhMxlHU34Bk0ad
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > Second, there are more issues than just patterns with the RGB
-> > LED. Most important is ability to set particular colors. You want to
-> > set the RGB LED to "white", but that does not mean you can set
-> > red=3Dgreen=3Dblue=3D1.0. You want color to look the same on LCD and on=
- the
-> > LED, which means coefficients for white and some kind of function for
-> > brightness-to-PWM conversion.
+> > In both RGB and pattern approaches we should assess
+> > if it is acceptable to provide a pattern for trigger name,
+> > e.g. blink-pattern-{num_intervals}.
+> >=20
+> > If so, then "echo transition-pattern-15" would create a directory
+> > e.g. transition_intervals with files interval_0 to interval_14,
+> > that could be adjusted by userspace.
 >=20
-> Shouldn't we leave that entirely to the userspace? Can we come up
-> with coefficients that will guarantee the same result on all existing
-> LCD devices?
+> Having a RGB-trigger that proxy a accepts a userspace request of a
+> brightness-tripple and sets the brightness on the individual associated
+> LEDs sounds reasonable - but should probably be generalized to any
+> number of LEDs.
 
-I don't think we should. We want (red =3D 70%, green =3D 80%, blue =3D 20%)
-to look approximately the same on all the hardware. That's currently
-not the case; even (red =3D green =3D blue =3D 100%) is not white.
+Well..  Generalizing for any number of leds would be nice -- because
+hardware can do that. OTOH, if we do that, we'll not have a place
+where to do "white-adjustment".
 
-I believe easiest solution is "the kernel does the work", as it does
-for LCD screens.
+> A slightly related matter is the question on how to use a single LED for
+> multiple trigger sources, e.g. how do I get a single LED to show
+> activity of two MMCs?.
 
-[Now... as long as userspace has enough information to display white
-and specific colors, I don't care much -- having kernel present
-coefficients for userspace would work, too.]
+We normally don't do that. We'd either have a trigger for a single
+MMC, or trigger of all the MMCs..
 
-								Pavel
+> For the patterns I don't know how a trigger for this would look like,
+> how would setting the pattern of a trigger be propagated down to the
+> hardware?
 
+Well... I'm not sure if we _want_ to do triggers for
+patterns. LED triggers change rather quickly (100 times a second?) so
+doing them in kernel makes sense. Patterns take 10s of seconds, so we
+do not need to handle them in kernel.=20
+
+Thanks,
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---EP0wieDxd4TSJjHq
+--T6xhMxlHU34Bk0ad
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAljnjBAACgkQMOfwapXb+vIsPwCaAuSwGfzfcVoXSxU/XgiNB0gs
-sPkAn1HXmiqsDLIGCLDlb9+jgz+FuLYE
-=paYp
+iEYEARECAAYFAljnlOcACgkQMOfwapXb+vJCeQCaA8Ubkvy5deDBVVyCPP1kjPiy
+uHYAn0lZxGn18ENXi0Naj8B/TOsS5NyX
+=nJm0
 -----END PGP SIGNATURE-----
 
---EP0wieDxd4TSJjHq--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--T6xhMxlHU34Bk0ad--
