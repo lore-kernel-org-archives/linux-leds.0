@@ -1,102 +1,127 @@
 From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Sun, 9 Apr 2017 14:32:18 +0200
-Message-ID: <57efaf4f-c875-ffe8-1af1-dca854261870@gmail.com>
-References: <20170323203749.GB8563@amd>
- <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
- <20170329190725.GN20094@minitux> <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux> <20170330074309.GA28533@amd>
- <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
- <20170403190032.GX20094@minitux>
- <dce7f2b1-8d1d-1c5d-5fa5-54c22b6f4758@gmail.com>
- <20170407202603.GC15143@minitux> <20170408133904.GA9020@amd>
+Subject: Re: [PATCH v2] Extend pca9532 device tree support
+Date: Sun, 9 Apr 2017 14:37:42 +0200
+Message-ID: <2f3815ab-71e1-b63d-aba8-167e11f719de@gmail.com>
+References: <1490880833-22199-1-git-send-email-fb@ltec.ch>
+ <b54c77d5-b4f7-9517-8c5b-9200c766204a@gmail.com> <20170406155005.GA10363@amd>
+ <a8509d26-6e35-e2f7-9784-90f3c54accbf@gmail.com>
+ <ec012568-f540-4e87-d8c4-4065fbcd1c2a@ltec.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170408133904.GA9020@amd>
+In-Reply-To: <ec012568-f540-4e87-d8c4-4065fbcd1c2a-GovowT2ENgg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felix Brack <fb-GovowT2ENgg@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, riku.voipio-X3B1VOXEql0@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Hello Felix,
 
-On 04/08/2017 03:39 PM, Pavel Machek wrote:
-> Hi!
+On 04/07/2017 10:22 AM, Felix Brack wrote:
+> Hello Jacek,
 > 
->> [..]
->>>> For the patterns I don't know how a trigger for this would look like,
->>>> how would setting the pattern of a trigger be propagated down to the
->>>> hardware?
+> On 06.04.2017 21:00, Jacek Anaszewski wrote:
+>> Hi Pavel,
+>>
+>> On 04/06/2017 05:50 PM, Pavel Machek wrote:
+>>> Hi!
 >>>
->>> We'd need a new op and API similar to blink_set()/led_blink_set().
+>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>>>>> index 198f3ba..8374075 100644
+>>>>> --- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+>>>>> @@ -17,6 +17,8 @@ Optional sub-node properties:
+>>>>>  	- label: see Documentation/devicetree/bindings/leds/common.txt
+>>>>>  	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
+>>>>>  	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
+>>>>> +	- default-state: see Documentation/devicetree/bindings/leds/common.txt
+>>>>> +	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
+>>>>>  
+>>>>>  Example:
+>>>>>    #include <dt-bindings/leds/leds-pca9532.h>
+>>>>> @@ -33,6 +35,14 @@ Example:
+>>>>>        label = "pca:green:power";
+>>>>>        type = <PCA9532_TYPE_LED>;
+>>>>>      };
+>>>>> +    kernel-booting {
+>>>>> +    	type = <PCA9532_TYPE_LED>;
+>>>>> +    	default-state = "on";
+>>>>> +    };
+>>>>> +    sys-stat {
+>>>>> +    	type = <PCA9532_TYPE_LED>;
+>>>>> +    	default-state = "keep"; // don't touch, was set by U-Boot
+>>>>> +    };
+>>>>
+>>>> Adjusted above indentation to match the preceding lines.
 >>>
+>>>>> @@ -475,6 +494,16 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+>>>>>  		of_property_read_u32(child, "type", &pdata->leds[i].type);
+>>>>>  		of_property_read_string(child, "linux,default-trigger",
+>>>>>  					&pdata->leds[i].default_trigger);
+>>>>> +		if (!of_property_read_string(child, "default-state", &state)) {
+>>>>> +			if (!strcmp(state, "on"))
+>>>>> +				pdata->leds[i].state = PCA9532_ON;
+>>>>> +			else if (!strcmp(state, "keep"))
+>>>>> +				pdata->leds[i].state = PCA9532_KEEP;
+>>>>> +			else if (!strcmp(state, "pwm0"))
+>>>>> +				pdata->leds[i].state = PCA9532_PWM0;
+>>>>> +			else if (!strcmp(state, "pwm1"))
+>>>>> +				pdata->leds[i].state = PCA9532_PWM1;
+>>>>> +		}
+>>>>>  		if (++i >= maxleds) {
+>>>>>  			of_node_put(child);
+>>>>>  			break;
+>>>
+>>> This seems to look for "pwm0" and "pwm1" strings, which do not seem to
+>>> be documented.
+>>>
+>>> Plus... is it useful to have default-state? We already have default
+>>> trigger. If we keep the value by default (on PC, we do something like
+>>> that) this patch should not be neccessary?
 >>
->> I've tried to find different LED circuits with some sort of pattern
->> generator in an attempt to figure out how to design this interface, but
->> turned out to be quite hard to find examples; the three I can compare
->> are:
->>
->> * LP5xx series "implements" pattern generation by executing code.
->>
->> * Qualcomm LPG iterates over 2-64 brightness-values in a pattern, at a
->>   fixed rate with knobs to configure what happens before starting and
->>   after finishing iterating over the defined values. It does not support
->>   smooth transitions between values.
->>
->> * AS3676 supports a pattern of 32 values controlling if the output
->>   should be enabled or disabled for each 32.5ms (or 250ms) time period.
->>   The delay before repeating the pattern can be configured. It support
->>   smooth transitions between the states.
->>
->>
->> So, while I think I see how you would like to architect this interface I
->> am not sure how to figure out the details.
->>
->> The pattern definition would have to be expressive enough to support the
->> features of LP5xx and direct enough to support the limited AS3676. It
->> would likely have to express transitions, so that the LPG could generate
->> intermediate steps (and we will have to adapt the resolution of the
->> ramps based on the other LPGs in the system).
->>
->> How do we do with patterns that are implementable by the LP5xx but are
->> not with the LPG? Should we reject those or should we do some sort of
->> best-effort approach in the kernel?
+>> Thanks for the heads-up. Dropping the patch for now.
 > 
-> Lets say you get series of
+> No, please do not drop the patch.
 > 
-> (red, green, blue, delta_t )
-
-In order to make it possible we'd have to have a means for mapping
-LED class devices to red, green and blue. In effect I see the problem
-of introducing a new mechanism for creating compound LED class device
-out of existing LED class devices as the first one to address.
-
-Once we have compound LED class device, that would expose an interface
-for operating on the particular color brightnesses, then we can build
-upon it the pattern engine. Actually, the same compound LED mechanism
-would be necessary for defining blink patterns for strings of monochrome
-LEDs.
-
-> points, meaning "in delta_t msec, change color to red, green,
-> blue. Lets ignore other channels for now. delta_t of 0 would be step
-> change. Would such interface work for you?
+>> I guess that pwm0/1 got propagated to v2 by an omission.
+>>
 > 
-> Simple compiler from this to LP5XX code should not be hard to
-> do. AS3676 ... I'm not sure what to do, AFAICT it is too limited.
+> Yes, I agree. However the two strings do not break anything and behave
+> analog to the 'on' or 'keep' string. Though this code could be removed
+> if absolutely necessary. An alternative would be to add a description
+> for the strings. Just to be clear: these strings have nothing to with
+> the exposition of device specific registers to the DT.
+> 
+>> Regarding default-on: Felix, do you have any use case that require
+>> default-on set to "keep"?
+>>
+> 
+> This patch is not about 'default-on' which is a value that could be
+> assigned to the property 'linux,default-trigger' (according to DT
+> bindings documentation file 'common.txt').
+> My patch does not introduce anything new with the'keep' state, it rather
+> completes the existing bindings according to the description in
+> Documentation/devicetree/bindings/leds/common.txt which states:
+> 
+> ....
+> - default-state : The initial state of the LED. Valid values are "on",
+> "off", and "keep". If the LED is already on or off and the default-state
+> property is set the to same value, then no glitch should be produced
+> where the LED momentarily turns off (or on). The "keep" setting will
+> keep the LED at whatever its current state is, without producing a
+> glitch.  The default is off if this property is not present.
+> ....
+> 
+> One of my use cases is to turn a LED on by U-Boot. This LED must remain
+> on until eventually, under certain conditions, some userland code
+> changes it's state.
+> Setting 'default-state' to 'keep' is how you can sort of tell the
+> kernel, or better the driver, 'not to initialize the LED' which would
+> turn it off.
 
-Our new API for setting blink patterns could be defined so that it
-does not guarantee setting the requested pattern, but applies only
-what the hardware can support and returns the applied settings.
-E.g. this way the driver could reduce the requested brightness
-transition resolution.
-
-There is also a question if we should provide software fallback
-for patterns not supported by the hardware and to what extent.
-In case of blink support for a single LED we do that but in case
-of more complex patterns it would require more complex logic,
-and at least for now I'd avoid it.
+Thanks for the explanation. Could you please sent v3 with removed pwm*
+cases then?
 
 -- 
 Best regards,
