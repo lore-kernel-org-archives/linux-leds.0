@@ -1,85 +1,113 @@
-From: <office@franztextilmanufaktur.com>
-Subject: (unknown)
-Date: Mon, 10 Apr 2017 11:47:41 -0000
-Message-ID: <149182486126.7747.2466277185811156397@mts-nn.ru>
-Reply-To: <office@franztextilmanufaktur.com>
+From: Juergen Schindele <schindele@nentec.de>
+Subject: Switching off LED triggers udev
+Date: Mon, 10 Apr 2017 16:29:30 +0200
+Message-ID: <1803981.yiQbQ3iWBI@sherry>
+Reply-To: schindele@nentec.de
 Mime-Version: 1.0
-Content-Type: application/zip; name="1707926450225_linux-leds.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 95-37-234-76.dynamic.mts-nn.ru ([95.37.234.76]:33285 "HELO
-        mts-nn.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1753169AbdDJLrq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 Apr 2017 07:47:46 -0400
-Content-Disposition: attachment
-Subject: 
+Received: from gate.nentec.de ([213.218.23.37]:20800 "HELO dmz-mail.nentec.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1752912AbdDJOjk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 10 Apr 2017 10:39:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.nentec.de (Postfix) with ESMTP id 5F9EF17E0574
+        for <linux-leds@vger.kernel.org>; Mon, 10 Apr 2017 16:20:18 +0200 (CEST)
+Received: from zimbra.nentec.de ([127.0.0.1])
+        by localhost (zimbra.nentec.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GtjUP_3hiVL9 for <linux-leds@vger.kernel.org>;
+        Mon, 10 Apr 2017 16:20:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.nentec.de (Postfix) with ESMTP id 46E7217E0860
+        for <linux-leds@vger.kernel.org>; Mon, 10 Apr 2017 16:20:18 +0200 (CEST)
+Received: from zimbra.nentec.de ([127.0.0.1])
+        by localhost (zimbra.nentec.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id FzNoUuBawiFA for <linux-leds@vger.kernel.org>;
+        Mon, 10 Apr 2017 16:20:18 +0200 (CEST)
+Received: from sherry.localnet (sherry.nentec.de [153.92.64.8])
+        by zimbra.nentec.de (Postfix) with ESMTPS id 313F217E0574
+        for <linux-leds@vger.kernel.org>; Mon, 10 Apr 2017 16:20:18 +0200 (CEST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 
-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
-AAAAHw4AAAAA
+Hello List,
+i hope i found the right addres for this small problem.
+I have a userspace daemon which controls leds via sysfs API
+"/sys/class/leds/Soft1/brightness". Each time i turn the LED off
+by writing 0 to brightness the /proc/sys/kernel/hotplug deamon 
+is called with "ACTION:change SUBSYSTEM:leds DEVNAME:(null) 
+DEVPATH:/devices/...."
+
+from led-class.c ----------------------------
+        if (state == LED_OFF)
+                led_trigger_remove(led_cdev);
+        __led_set_brightness(led_cdev, state);
+
+But in fact there is no change of trigger because "none" was setup between 
+enabling LED and disabling it. So from my point of view there is no change
+from "none" to "remove" which justifies a "kobject_uevent_env(&led_cdev->dev-
+>kobj, KOBJ_CHANGE, envp)".
+
+To solve this problem of unusefull waste of CPU-time i suggest the following 
+patch. Please consider the implementation which saved a lot of valuable CPU-
+power in my case:
+
+Index: drivers/leds/led-triggers.c
+===================================================================
+--- drivers/leds/led-triggers.c (Revision 14968)
++++ drivers/leds/led-triggers.c (Arbeitskopie)
+@@ -106,10 +106,11 @@
+        const char *name;
+ 
+        name = trig ? trig->name : "none";
+-       event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+ 
+        /* Remove any existing trigger */
+        if (led_cdev->trigger) {
++               event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
++
+                write_lock_irqsave(&led_cdev->trigger->leddev_list_lock, 
+flags);
+                list_del(&led_cdev->trig_list);
+                write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock,
+@@ -122,6 +123,8 @@
+                led_set_brightness(led_cdev, LED_OFF);
+        }
+        if (trig) {
++               event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
++
+                write_lock_irqsave(&trig->leddev_list_lock, flags);
+                list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
+                write_unlock_irqrestore(&trig->leddev_list_lock, flags);
+
+Thank you for your attention
+-- 
+i. A.
+Jürgen Schindele
+Softwareentwicklung
+
+PSI Nentec GmbH
+Greschbachstraße 12
+76229 Karlsruhe
+Deutschland
+Telefon: +49 721 94249-51
+Telefax: +49 721 94249-10
+schindele@nentec.de
+www.nentec.de
+
+Geschäftsführung: Klaus Becker, Wolfgang Fischer
+Sitz der Gesellschaft: Karlsruhe
+Handelsregister: Amtsgericht Mannheim HRB 107658
+
+Diese E-Mail enthält vertrauliche oder rechtlich geschützte Informationen. 
+Wenn Sie nicht der vorgesehene Empfänger sind, informieren Sie bitte sofort 
+den Absender und löschen Sie diese E-Mail. Das unbefugte Kopieren dieser E-
+Mail oder die unbefugte Weitergabe der enthaltenen Informationen ist nicht 
+gestattet.
+
+The information contained in this message is confidential or protected by law. 
+If you are not the intended recipient, please contact the sender and delete 
+this message. Any unauthorised copying of this message or unauthorised 
+distribution of the information contained herein is prohibited. 
