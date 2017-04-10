@@ -1,112 +1,130 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: Switching off LED triggers udev
-Date: Mon, 10 Apr 2017 20:42:23 +0200
-Message-ID: <c44f614e-d430-e045-fb90-f2654211b9a6@gmail.com>
-References: <1803981.yiQbQ3iWBI@sherry>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
+Date: Mon, 10 Apr 2017 12:19:48 -0700
+Message-ID: <20170410191948.GE15143@minitux>
+References: <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
+ <20170329190725.GN20094@minitux>
+ <20170329222301.GB7977@amd>
+ <20170330000955.GP20094@minitux>
+ <20170330074309.GA28533@amd>
+ <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
+ <20170403190032.GX20094@minitux>
+ <dce7f2b1-8d1d-1c5d-5fa5-54c22b6f4758@gmail.com>
+ <20170407202603.GC15143@minitux>
+ <20170408133904.GA9020@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33340 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbdDJSnI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 10 Apr 2017 14:43:08 -0400
-Received: by mail-wr0-f196.google.com with SMTP id l28so5485951wre.0
-        for <linux-leds@vger.kernel.org>; Mon, 10 Apr 2017 11:43:08 -0700 (PDT)
-In-Reply-To: <1803981.yiQbQ3iWBI@sherry>
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:34407 "EHLO
+        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753192AbdDJTTw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 10 Apr 2017 15:19:52 -0400
+Received: by mail-pf0-f178.google.com with SMTP id c198so26539338pfc.1
+        for <linux-leds@vger.kernel.org>; Mon, 10 Apr 2017 12:19:51 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20170408133904.GA9020@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: schindele@nentec.de, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-Hi Juergen.
+On Sat 08 Apr 06:39 PDT 2017, Pavel Machek wrote:
 
-On 04/10/2017 04:29 PM, Juergen Schindele wrote:
-> Hello List,
-> i hope i found the right addres for this small problem.
-> I have a userspace daemon which controls leds via sysfs API
-> "/sys/class/leds/Soft1/brightness". Each time i turn the LED off
-> by writing 0 to brightness the /proc/sys/kernel/hotplug deamon 
-> is called with "ACTION:change SUBSYSTEM:leds DEVNAME:(null) 
-> DEVPATH:/devices/...."
+> Hi!
 > 
-> from led-class.c ----------------------------
->         if (state == LED_OFF)
->                 led_trigger_remove(led_cdev);
->         __led_set_brightness(led_cdev, state);
+> > [..]
+> > > > For the patterns I don't know how a trigger for this would look like,
+> > > > how would setting the pattern of a trigger be propagated down to the
+> > > > hardware?
+> > > 
+> > > We'd need a new op and API similar to blink_set()/led_blink_set().
+> > > 
+> > 
+> > I've tried to find different LED circuits with some sort of pattern
+> > generator in an attempt to figure out how to design this interface, but
+> > turned out to be quite hard to find examples; the three I can compare
+> > are:
+> > 
+> > * LP5xx series "implements" pattern generation by executing code.
+> > 
+> > * Qualcomm LPG iterates over 2-64 brightness-values in a pattern, at a
+> >   fixed rate with knobs to configure what happens before starting and
+> >   after finishing iterating over the defined values. It does not support
+> >   smooth transitions between values.
+> > 
+> > * AS3676 supports a pattern of 32 values controlling if the output
+> >   should be enabled or disabled for each 32.5ms (or 250ms) time period.
+> >   The delay before repeating the pattern can be configured. It support
+> >   smooth transitions between the states.
+> > 
+> > 
+> > So, while I think I see how you would like to architect this interface I
+> > am not sure how to figure out the details.
+> > 
+> > The pattern definition would have to be expressive enough to support the
+> > features of LP5xx and direct enough to support the limited AS3676. It
+> > would likely have to express transitions, so that the LPG could generate
+> > intermediate steps (and we will have to adapt the resolution of the
+> > ramps based on the other LPGs in the system).
+> > 
+> > How do we do with patterns that are implementable by the LP5xx but are
+> > not with the LPG? Should we reject those or should we do some sort of
+> > best-effort approach in the kernel?
 > 
-> But in fact there is no change of trigger because "none" was setup between 
-> enabling LED and disabling it. So from my point of view there is no change
-> from "none" to "remove" which justifies a "kobject_uevent_env(&led_cdev->dev-
->> kobj, KOBJ_CHANGE, envp)".
+> Lets say you get series of
 > 
-> To solve this problem of unusefull waste of CPU-time i suggest the following 
-> patch. Please consider the implementation which saved a lot of valuable CPU-
-> power in my case:
+> (red, green, blue, delta_t )
 > 
-> Index: drivers/leds/led-triggers.c
-> ===================================================================
-> --- drivers/leds/led-triggers.c (Revision 14968)
-> +++ drivers/leds/led-triggers.c (Arbeitskopie)
-> @@ -106,10 +106,11 @@
->         const char *name;
->  
->         name = trig ? trig->name : "none";
-> -       event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
->  
->         /* Remove any existing trigger */
->         if (led_cdev->trigger) {
-> +               event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
-> +
->                 write_lock_irqsave(&led_cdev->trigger->leddev_list_lock, 
-> flags);
->                 list_del(&led_cdev->trig_list);
->                 write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock,
-> @@ -122,6 +123,8 @@
->                 led_set_brightness(led_cdev, LED_OFF);
->         }
->         if (trig) {
-> +               event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
-> +
->                 write_lock_irqsave(&trig->leddev_list_lock, flags);
->                 list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
->                 write_unlock_irqrestore(&trig->leddev_list_lock, flags);
+> points, meaning "in delta_t msec, change color to red, green,
+> blue. Lets ignore other channels for now. delta_t of 0 would be step
+> change. Would such interface work for you?
 > 
-> Thank you for your attention
 
-In 4.9 we have the following patch that should fix your problem,
-please let us know if it works for you:
-
-commit fbfa197afddd13f9bdca1c822f5d5730b50639eb
-Author: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Date:   Sun Sep 18 20:24:29 2016 +0200
-
-    leds: triggers: Return from led_trigger_set() if there is nothing to do
-
-    If led_trigger_set() is called with "trig" argument set to NULL, and
-there
-    is no trigger to remove then the function should return immediately so
-    as to avoid doing unnecessary allocation and sending uevent.
-
-    Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-    Reported-by: Daniel Romell <daro@hms.se>
-    Acked-by Daniel Romell <daro@hms.se>
-
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 59d6a3e..c7a38d4 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -110,6 +110,9 @@ void led_trigger_set(struct led_classdev *led_cdev,
-struct led_trigger *trig)
-        char *envp[2];
-        const char *name;
-
-+       if (!led_cdev->trigger && !trig)
-+               return;
-+
-        name = trig ? trig->name : "none";
-        event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+So I presume this would be input to the RGB trigger that we discussed.
+But in my current device I have 6 LEDs, that are not in any RGB-like
+configuration. So we would need to come up with an interface that looks
+to be the same in both single-LED and RGB-LED setups.
 
 
--- 
-Best regards,
-Jacek Anaszewski
+This should be sufficient to describe a subset of the patterns I've seen
+so far in products.
+
+But let's consider the standard use case for an RGB LED on an Android
+phone; continuously blinking (pulsing based on patterns) as you have
+some notifications waiting. In this case you want the LED hardware to do
+all the work, so that you can deep-idle the CPU. So we would need to
+introduce a "repeat pattern"-command.
+
+Then consider the fact that you want your patterns to have decent
+resolution, but you have a limited amount of storage. So we either have
+to be able to detect palindromes or have a way to represent this.
+
+> Simple compiler from this to LP5XX code should not be hard to
+> do.
+
+It sounds fairly straight forward to convert a pattern to instructions,
+but we do have an extremely limited amount of storage so it must be a
+quite good implementation for people to be able to use it for anything
+real.
+
+We could implement some optimization steps where we try to detect slopes
+and generate ramp-instructions instead of set-pwm + wait instructions,
+use some variables to handle ramp up/down and we could probably generate
+some jump instructions to implement loops.
+
+But do we really want this logic in the kernel, for each LED chip
+supporting patterns?
+
+> AS3676 ... I'm not sure what to do, AFAICT it is too limited.
+> 
+
+So out of the three examples I've looked at we're skipping one and we're
+abstracting away most functionality from another.
+
+I'm sorry for being pessimistic about this, but while I can see the
+theoretical benefit of providing a uniform interface for this to user
+space I see three very different pieces of hardware that would be used
+in three different ways in products.
+
+Regards,
+Bjorn
