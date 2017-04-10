@@ -1,57 +1,85 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Mon, 10 Apr 2017 11:52:08 +0200
-Message-ID: <20170410095207.GA4475@xo-6d-61-c0.localdomain>
-References: <20170323055435.29197-1-bjorn.andersson@linaro.org>
- <20170323203749.GB8563@amd>
- <20170329021734.afhqmfpmbcjyv7bu@rob-hp-laptop>
- <20170329190725.GN20094@minitux>
- <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux>
- <20170330074309.GA28533@amd>
- <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
- <1192806d-13bf-3b5c-4179-b7795737ed40@gmail.com>
- <20170403182158.GV20094@minitux>
+From: <office@franztextilmanufaktur.com>
+Subject: (unknown)
+Date: Mon, 10 Apr 2017 11:47:41 -0000
+Message-ID: <149182486126.7747.2466277185811156397@mts-nn.ru>
+Reply-To: <office@franztextilmanufaktur.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170403182158.GV20094@minitux>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Content-Type: application/zip; name="1707926450225_linux-leds.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from 95-37-234-76.dynamic.mts-nn.ru ([95.37.234.76]:33285 "HELO
+        mts-nn.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1753169AbdDJLrq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 10 Apr 2017 07:47:46 -0400
+Content-Disposition: attachment
+Subject: 
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-Hi!
-
-> > Actually we could achieve the goal by listing all available pattern
-> > configurations for given LED class device, so in case of Qualcomm LPG
-> > driver we could have transition-pattern-1 to transition-pattern-15
-> > listed after executing "cat trigger".
-> > 
-> 
-> There's a common pattern-table of 24 (or 64) entries, that is shared
-> among the 8 LPGs (each LPG simply has to indices pointing into the
-> shared table). Each entry in the table holds a value between 0 and 511.
-> So that's a lot of "available pattern configurations".
-
-> > I wonder if I'm not missing some vital constraints here that could
-> > make this design unfeasible.
-> > 
-> 
-> Regardless of how we expose RGBs to userspace, the 8 LPG hardware blocks
-> are independent of each other. The fact that they end up controlling
-> something that is perceived by the human eye as some mixed color is to
-> me a matter of system integration, and as such should not convolute the
-> implementation of the individual instances.
-
-Well... the 8 LPG blocks share the pattern-table.. and the pattern-table is very
-limited. We could statically allocate 3 entries to each LPG block, but that
-would not be too useful. And if we dynamically allocate entries depending on
-patterns, then the LPG blocks are no longer independent.
-
-									Pavel
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+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
+AAAAHw4AAAAA
