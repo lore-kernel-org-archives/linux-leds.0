@@ -1,86 +1,70 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 1/2] leds: cpcap: new driver
-Date: Tue, 11 Apr 2017 22:19:03 +0200
-Message-ID: <20170411201903.GA14911@amd>
+Date: Tue, 11 Apr 2017 22:20:08 +0200
+Message-ID: <20170411202008.GB14911@amd>
 References: <20170305172234.24120-1-sre@kernel.org>
  <20170306221147.GA24272@amd>
- <20170307171926.wscaogsrdmxc2opz@earth>
+ <20170306233859.GQ20572@atomide.com>
+ <20170307115549.GA914@amd>
+ <20170307162640.GS20572@atomide.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43949 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752753AbdDKUUL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 11 Apr 2017 16:20:11 -0400
 Content-Disposition: inline
-In-Reply-To: <20170307171926.wscaogsrdmxc2opz@earth>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170307162640.GS20572@atomide.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---M9NhX3UHpAaciwkO
-Content-Type: text/plain; charset=utf-8
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> On Mon, Mar 06, 2017 at 11:11:47PM +0100, Pavel Machek wrote:
-> > > Motorola CPCAP is a PMIC found in multiple smartphones.
-> > > This driver adds support for the chip's LED controllers.
-> > > It has explicit support for all controllers used by the
-> > > Droid 4. Since no datasheets are available the other
-> > > available controllers are not supported until somebody
-> > > verified, that the register layout matches.
-> >=20
-> > This of course leads me to two questions:
-> >=20
-> > 1) Where can I get Droid 4?
+On Tue 2017-03-07 08:26:40, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [170307 03:57]:
+> > 2 cores and more importantly 1GB of RAM. Nice. OTOH, I'm avoiding N950
+> > due to its crazy "security" system and this one is even worse.
 >=20
-> I got a used one on Ebay for 42=E2=82=AC incl. shipping & customs. The tr=
-ick
-> is clicking the worldwide option, since they are pretty expensive in
-> EU (they only exist with US LTE modem, so they were not sold here
-> officially).
+> Yeah this security crap sucks big time in general. It just slows
+> down Linux development on usable devices making most of them throw
+> away bricks that nobody bothers to work on.
 >=20
-> > 2) How well is it supported?
+> > Anyway, good luck, and thanks for the pointers. I will get Droid 4 if
+> > it is easy. But I guess I'll stick to N900 for now. I want something
+> > that can do voice calls.
 >=20
-> UART + WLAN works with mainline master branch. As written by Tony
-> we have a couple of patches ready for 4.12. Big open tasks are the
-> cameras and the modems. Cameras are handled via co-processor in the
-> stock system (that's about all I know about them so far) and modems are
-> connected via USB + GPIOs (and for the 2G/3G modem an additional UART).
-> LTE modem support seems simple (USB-CDC based), but does not work
-> in EU and 2G/3G looks like much work. Modem voice support will be
-> simpler than on N900, though (data goes directly to the audio codec).
-> Speaking about audio codec: I'm currently working on that.
+> Yeah.. For a security free solution, let's hope pyra will be able to
+> make voice calls too :)
+>=20
+> Meanwhile, using droid 4 with a lapdock as a low power laptop is
+> probably few weeks away, which means I can use it :p
 
-Thanks for all the information. It looks like a nice and powerful
-machine, but I'm looking for a phone, first. (I'd actually like
-something smaller than n900, preferably 3 times smaller... but... as
-long as it calls it will have to do :-) ).
-
-Best regards,
-								Pavel
-
+Turning phones into laptops, nice ;-). I think I'll keep the thinkpad
+for a while, but yes, interesting machine.
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---M9NhX3UHpAaciwkO
+--CdrF4e02JqNVZeln
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAljtOjcACgkQMOfwapXb+vL1mgCcCkFkwzboCiuh1m2JaaDVoOZP
-Sr8An0OQsz8X+3/tIaXP10FuMGBRWfIY
-=1U34
+iEYEARECAAYFAljtOngACgkQMOfwapXb+vKFkQCfctNIIleyEGhWc2Zp/VsyRoJZ
++eEAn3hMhhbvWV+Nb3Qel5FnVByZTWVP
+=3jSB
 -----END PGP SIGNATURE-----
 
---M9NhX3UHpAaciwkO--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--CdrF4e02JqNVZeln--
