@@ -1,149 +1,86 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Tue, 11 Apr 2017 19:54:31 +0200
-Message-ID: <20170411175431.GA25483@amd>
-References: <20170329190725.GN20094@minitux>
- <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux>
- <20170330074309.GA28533@amd>
- <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
- <20170403190032.GX20094@minitux>
- <dce7f2b1-8d1d-1c5d-5fa5-54c22b6f4758@gmail.com>
- <20170407202603.GC15143@minitux>
- <20170408133904.GA9020@amd>
- <20170410191948.GE15143@minitux>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH 1/2] leds: cpcap: new driver
+Date: Tue, 11 Apr 2017 22:19:03 +0200
+Message-ID: <20170411201903.GA14911@amd>
+References: <20170305172234.24120-1-sre@kernel.org>
+ <20170306221147.GA24272@amd>
+ <20170307171926.wscaogsrdmxc2opz@earth>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39656 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbdDKRye (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 11 Apr 2017 13:54:34 -0400
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170410191948.GE15143@minitux>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20170307171926.wscaogsrdmxc2opz@earth>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > How do we do with patterns that are implementable by the LP5xx but are
-> > > not with the LPG? Should we reject those or should we do some sort of
-> > > best-effort approach in the kernel?
+> On Mon, Mar 06, 2017 at 11:11:47PM +0100, Pavel Machek wrote:
+> > > Motorola CPCAP is a PMIC found in multiple smartphones.
+> > > This driver adds support for the chip's LED controllers.
+> > > It has explicit support for all controllers used by the
+> > > Droid 4. Since no datasheets are available the other
+> > > available controllers are not supported until somebody
+> > > verified, that the register layout matches.
 > >=20
-> > Lets say you get series of
+> > This of course leads me to two questions:
 > >=20
-> > (red, green, blue, delta_t )
-> >=20
-> > points, meaning "in delta_t msec, change color to red, green,
-> > blue. Lets ignore other channels for now. delta_t of 0 would be step
-> > change. Would such interface work for you?
+> > 1) Where can I get Droid 4?
 >=20
-> So I presume this would be input to the RGB trigger that we discussed.
-> But in my current device I have 6 LEDs, that are not in any RGB-like
-> configuration. So we would need to come up with an interface that looks
-> to be the same in both single-LED and RGB-LED setups.
-
-Ok.
-
-> This should be sufficient to describe a subset of the patterns I've seen
-> so far in products.
+> I got a used one on Ebay for 42=E2=82=AC incl. shipping & customs. The tr=
+ick
+> is clicking the worldwide option, since they are pretty expensive in
+> EU (they only exist with US LTE modem, so they were not sold here
+> officially).
 >=20
-> But let's consider the standard use case for an RGB LED on an Android
-> phone; continuously blinking (pulsing based on patterns) as you have
-> some notifications waiting. In this case you want the LED hardware to do
-> all the work, so that you can deep-idle the CPU. So we would need to
-> introduce a "repeat pattern"-command.
-
-I'd say have additional parameter with number of repetitions. Yes. In
-your case you can do 1 and infinity, LP5XX can do 1-255 or infinity.
-
-> Then consider the fact that you want your patterns to have decent
-> resolution, but you have a limited amount of storage. So we either have
-> to be able to detect palindromes or have a way to represent this.
-
-I'm not sure how common hardware support for palindromes is going to
-be. I'd say "detect", but...
-
-> > Simple compiler from this to LP5XX code should not be hard to
-> > do.
+> > 2) How well is it supported?
 >=20
-> It sounds fairly straight forward to convert a pattern to instructions,
-> but we do have an extremely limited amount of storage so it must be a
-> quite good implementation for people to be able to use it for anything
-> real.
->=20
-> We could implement some optimization steps where we try to detect slopes
-> and generate ramp-instructions instead of set-pwm + wait instructions,
-> use some variables to handle ramp up/down and we could probably generate
-> some jump instructions to implement loops.
+> UART + WLAN works with mainline master branch. As written by Tony
+> we have a couple of patches ready for 4.12. Big open tasks are the
+> cameras and the modems. Cameras are handled via co-processor in the
+> stock system (that's about all I know about them so far) and modems are
+> connected via USB + GPIOs (and for the 2G/3G modem an additional UART).
+> LTE modem support seems simple (USB-CDC based), but does not work
+> in EU and 2G/3G looks like much work. Modem voice support will be
+> simpler than on N900, though (data goes directly to the audio codec).
+> Speaking about audio codec: I'm currently working on that.
 
-Actually it is easier than that. Hardware can do slopes itself. If we
-see change with non-zero delta_t, we issue slope, otherwise we issue
-set_value.
+Thanks for all the information. It looks like a nice and powerful
+machine, but I'm looking for a phone, first. (I'd actually like
+something smaller than n900, preferably 3 times smaller... but... as
+long as it calls it will have to do :-) ).
 
-Here's example "compiler": https://gitlab.com/tui/tui/blob/master/ofone/not=
-cc.py
-Here's example "program": https://gitlab.com/tui/tui/blob/master/ofone/test=
-s.notcc/primes.nc
-
-> But do we really want this logic in the kernel, for each LED chip
-> supporting patterns?
-
-I'd say so, yes. It should be, dunno, 200? 500? lines of code for
-LP5XX?  Sounds acceptable.
-
-Otherwise we'd have to have led-chip-dependend part in userspace. That
-would be ok... but we'd _still_ need led-chip-dependend part in the
-kernel... and driver spread between kernel and userland is difficult.
-
-The code needs to be created, anyway, so lets put it in kernel.
-
-> > AS3676 ... I'm not sure what to do, AFAICT it is too limited.
-> >=20
->=20
-> So out of the three examples I've looked at we're skipping one and we're
-> abstracting away most functionality from another.
-
-Well. We don't need to _skip_ AS3676, but its pattern engine is
-basically useless for anything involving different PWM levels.
-
-And abstracting away most of LP5XX functionality... well, you can
-compute prime numbers on that chip (see example above), but you better
-should not. And patterns we'll pretty much expose all the functionality.
-
-> I'm sorry for being pessimistic about this, but while I can see the
-> theoretical benefit of providing a uniform interface for this to user
-> space I see three very different pieces of hardware that would be used
-> in three different ways in products.
-
-Three different pieces of hardware, at least two of them used in
-phones to provide blinking leds... I'd say common interface is the
-right thing to do.
+Best regards,
 								Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---nFreZHaLTZJo0R7j
+--M9NhX3UHpAaciwkO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAljtGFYACgkQMOfwapXb+vJSywCeJhYyYRUM+sWGkYeuMj5uaN86
-c+4AnjvCxlGHSUsMsfjvhG95H4j8GyNg
-=yWVe
+iEYEARECAAYFAljtOjcACgkQMOfwapXb+vL1mgCcCkFkwzboCiuh1m2JaaDVoOZP
+Sr8An0OQsz8X+3/tIaXP10FuMGBRWfIY
+=1U34
 -----END PGP SIGNATURE-----
 
---nFreZHaLTZJo0R7j--
+--M9NhX3UHpAaciwkO--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
