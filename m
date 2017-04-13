@@ -1,194 +1,132 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] leds: Add driver for Qualcomm LPG
-Date: Tue, 11 Apr 2017 16:17:39 -0700
-Message-ID: <20170411231739.GH15143@minitux>
-References: <20170329222301.GB7977@amd>
- <20170330000955.GP20094@minitux>
- <20170330074309.GA28533@amd>
- <bf999f34-4509-6f0b-602c-f82d50a18e97@gmail.com>
- <20170403190032.GX20094@minitux>
- <dce7f2b1-8d1d-1c5d-5fa5-54c22b6f4758@gmail.com>
- <20170407202603.GC15143@minitux>
- <20170408133904.GA9020@amd>
- <20170410191948.GE15143@minitux>
- <20170411175431.GA25483@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Felix Brack <fb@ltec.ch>
+Subject: [PATCH v3] leds: pca9532: Extend pca9532 device tree support
+Date: Thu, 13 Apr 2017 09:51:38 +0200
+Message-ID: <1492069898-19920-1-git-send-email-fb@ltec.ch>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:36799 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752747AbdDKXRn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 11 Apr 2017 19:17:43 -0400
-Received: by mail-pf0-f174.google.com with SMTP id o126so5061556pfb.3
-        for <linux-leds@vger.kernel.org>; Tue, 11 Apr 2017 16:17:43 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170411175431.GA25483@amd>
+Received: from mail.ltec.ch ([95.143.48.181]:52497 "EHLO mail.ltec.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756166AbdDMHwO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 13 Apr 2017 03:52:14 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, rpurdie@rpsys.net, riku.voipio@iki.fi, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, fb@ltec.ch
 
-On Tue 11 Apr 10:54 PDT 2017, Pavel Machek wrote:
+This patch extends the device tree support for the pca9532 by adding
+the leds 'default-state' property.
 
-> Hi!
-> 
-> > > > How do we do with patterns that are implementable by the LP5xx but are
-> > > > not with the LPG? Should we reject those or should we do some sort of
-> > > > best-effort approach in the kernel?
-> > > 
-> > > Lets say you get series of
-> > > 
-> > > (red, green, blue, delta_t )
-> > > 
-> > > points, meaning "in delta_t msec, change color to red, green,
-> > > blue. Lets ignore other channels for now. delta_t of 0 would be step
-> > > change. Would such interface work for you?
-> > 
-> > So I presume this would be input to the RGB trigger that we discussed.
-> > But in my current device I have 6 LEDs, that are not in any RGB-like
-> > configuration. So we would need to come up with an interface that looks
-> > to be the same in both single-LED and RGB-LED setups.
-> 
-> Ok.
-> 
-> > This should be sufficient to describe a subset of the patterns I've seen
-> > so far in products.
-> > 
-> > But let's consider the standard use case for an RGB LED on an Android
-> > phone; continuously blinking (pulsing based on patterns) as you have
-> > some notifications waiting. In this case you want the LED hardware to do
-> > all the work, so that you can deep-idle the CPU. So we would need to
-> > introduce a "repeat pattern"-command.
-> 
-> I'd say have additional parameter with number of repetitions. Yes. In
-> your case you can do 1 and infinity, LP5XX can do 1-255 or infinity.
-> 
+Signed-off-by: Felix Brack <fb@ltec.ch>
+---
+ .../devicetree/bindings/leds/leds-pca9532.txt      | 10 ++++++++
+ drivers/leds/leds-pca9532.c                        | 27 +++++++++++++++++++++-
+ include/linux/leds-pca9532.h                       |  4 ++--
+ 3 files changed, 38 insertions(+), 3 deletions(-)
 
-Sounds reasonable.
-
-> > Then consider the fact that you want your patterns to have decent
-> > resolution, but you have a limited amount of storage. So we either have
-> > to be able to detect palindromes or have a way to represent this.
-> 
-> I'm not sure how common hardware support for palindromes is going to
-> be. I'd say "detect", but...
-> 
-
-Even with the LP5xx I presume you would want to implement a natural
-pulse by running back and forth over something like a section of a
-sigmoid function - rather than encoding all the values for both raise
-and falling edge.
-
-But its easy to detect these patterns, so lets just have the drivers do
-it for now.
-
-> > > Simple compiler from this to LP5XX code should not be hard to
-> > > do.
-> > 
-> > It sounds fairly straight forward to convert a pattern to instructions,
-> > but we do have an extremely limited amount of storage so it must be a
-> > quite good implementation for people to be able to use it for anything
-> > real.
-> > 
-> > We could implement some optimization steps where we try to detect slopes
-> > and generate ramp-instructions instead of set-pwm + wait instructions,
-> > use some variables to handle ramp up/down and we could probably generate
-> > some jump instructions to implement loops.
-> 
-> Actually it is easier than that. Hardware can do slopes itself. If we
-> see change with non-zero delta_t, we issue slope, otherwise we issue
-> set_value.
-> 
-
-So given a sequence of x, delta_t, y, delta_t', z, delta_t'' the
-hardware should:
-
-* set the brightness to x at time 0
-* set the brightness to y at time delta_t
-* set the brightness to z at time delta_t + delta_t'
-* if repeating we will start the next sequence at time delta_t +
-  delta_t' + delta_t''
-
-
-The question is how to define the intermediate segments. We could say
-that the transition between two points must always be some ramp or we
-expect user space to use small enough delta_t so any differences between
-hardware with or without ramp support are not noticeable.
-
-In the prior LPG would have to make up intermediate values to create a
-ramp effect, with some heuristics for not consuming to much lookup-table
-space.
-
-With the latter approach the LP55xx would probably be expected to drop
-intermediate values that lay on the path between two other values in an
-effort to reduce memory used.
-
-
-I see a problem with the first approach in that with the LPG we could
-overcommit to a smooth curve and later not have enough room to configure
-some other curve (for some other LED).
-
-So I would like to suggest that we go with the latter approach.
-
-> Here's example "compiler": https://gitlab.com/tui/tui/blob/master/ofone/notcc.py
-> Here's example "program": https://gitlab.com/tui/tui/blob/master/ofone/tests.notcc/primes.nc
-> 
-> > But do we really want this logic in the kernel, for each LED chip
-> > supporting patterns?
-> 
-> I'd say so, yes. It should be, dunno, 200? 500? lines of code for
-> LP5XX?  Sounds acceptable.
-> 
-> Otherwise we'd have to have led-chip-dependend part in userspace. That
-> would be ok... but we'd _still_ need led-chip-dependend part in the
-> kernel... and driver spread between kernel and userland is difficult.
-> 
-> The code needs to be created, anyway, so lets put it in kernel.
-> 
-
-My background is in consumer devices, where humans would generate the
-sequence and just encode this in user space, you wouldn't recompile this
-on the fly - and the LP5xx use of firmware files seems to indicate a
-similar behavior.
-
-But I think what we're discussing here fits the driver I'm trying to
-upstream reasonably well, so if you think this is ok for the LP5xx we
-should be good.
-
-> > > AS3676 ... I'm not sure what to do, AFAICT it is too limited.
-> > > 
-> > 
-> > So out of the three examples I've looked at we're skipping one and we're
-> > abstracting away most functionality from another.
-> 
-> Well. We don't need to _skip_ AS3676, but its pattern engine is
-> basically useless for anything involving different PWM levels.
-> 
-
-Yes
-
-> And abstracting away most of LP5XX functionality... well, you can
-> compute prime numbers on that chip (see example above), but you better
-> should not. And patterns we'll pretty much expose all the functionality.
-> 
-
-Ok
-
-> > I'm sorry for being pessimistic about this, but while I can see the
-> > theoretical benefit of providing a uniform interface for this to user
-> > space I see three very different pieces of hardware that would be used
-> > in three different ways in products.
-> 
-> Three different pieces of hardware, at least two of them used in
-> phones to provide blinking leds... I'd say common interface is the
-> right thing to do.
-
-All three of them are used in phones, to provide blinking light. With
-some allowance for fitting points to the hardware's capabilities and the
-ability to reject incompatible patterns it should be possible to support
-some common cases.
-
-I'll take a stab at this for the LPG and we can discuss from there.
-
-Regards,
-Bjorn
+diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+index 198f3ba..f769c52 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+@@ -17,6 +17,8 @@ Optional sub-node properties:
+ 	- label: see Documentation/devicetree/bindings/leds/common.txt
+ 	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
+ 	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
++	- default-state: see Documentation/devicetree/bindings/leds/common.txt
++	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
+ 
+ Example:
+   #include <dt-bindings/leds/leds-pca9532.h>
+@@ -33,6 +35,14 @@ Example:
+       label = "pca:green:power";
+       type = <PCA9532_TYPE_LED>;
+     };
++    kernel-booting {
++      type = <PCA9532_TYPE_LED>;
++      default-state = "on";
++    };
++    sys-stat {
++      type = <PCA9532_TYPE_LED>;
++      default-state = "keep"; // don't touch, was set by U-Boot
++    };
+   };
+ 
+ For more product information please see the link below:
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index 06e6310..7fea18b 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -254,6 +254,21 @@ static void pca9532_input_work(struct work_struct *work)
+ 	mutex_unlock(&data->update_lock);
+ }
+ 
++static enum pca9532_state pca9532_getled(struct pca9532_led *led)
++{
++	struct i2c_client *client = led->client;
++	struct pca9532_data *data = i2c_get_clientdata(client);
++	u8 maxleds = data->chip_info->num_leds;
++	char reg;
++	enum pca9532_state ret;
++
++	mutex_lock(&data->update_lock);
++	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
++	ret = reg >> LED_NUM(led->id)/2;
++	mutex_unlock(&data->update_lock);
++	return ret;
++}
++
+ #ifdef CONFIG_LEDS_PCA9532_GPIO
+ static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+ {
+@@ -366,7 +381,10 @@ static int pca9532_configure(struct i2c_client *client,
+ 			gpios++;
+ 			break;
+ 		case PCA9532_TYPE_LED:
+-			led->state = pled->state;
++			if (pled->state == PCA9532_KEEP)
++				led->state = pca9532_getled(led);
++			else
++				led->state = pled->state;
+ 			led->name = pled->name;
+ 			led->ldev.name = led->name;
+ 			led->ldev.default_trigger = pled->default_trigger;
+@@ -456,6 +474,7 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+ 	const struct of_device_id *match;
+ 	int devid, maxleds;
+ 	int i = 0;
++	const char *state;
+ 
+ 	match = of_match_device(of_pca9532_leds_match, dev);
+ 	if (!match)
+@@ -475,6 +494,12 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+ 		of_property_read_u32(child, "type", &pdata->leds[i].type);
+ 		of_property_read_string(child, "linux,default-trigger",
+ 					&pdata->leds[i].default_trigger);
++		if (!of_property_read_string(child, "default-state", &state)) {
++			if (!strcmp(state, "on"))
++				pdata->leds[i].state = PCA9532_ON;
++			else if (!strcmp(state, "keep"))
++				pdata->leds[i].state = PCA9532_KEEP;
++		}
+ 		if (++i >= maxleds) {
+ 			of_node_put(child);
+ 			break;
+diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
+index d215b45..5e240b2 100644
+--- a/include/linux/leds-pca9532.h
++++ b/include/linux/leds-pca9532.h
+@@ -22,7 +22,8 @@ enum pca9532_state {
+ 	PCA9532_OFF  = 0x0,
+ 	PCA9532_ON   = 0x1,
+ 	PCA9532_PWM0 = 0x2,
+-	PCA9532_PWM1 = 0x3
++	PCA9532_PWM1 = 0x3,
++	PCA9532_KEEP = 0xff,
+ };
+ 
+ struct pca9532_led {
+@@ -44,4 +45,3 @@ struct pca9532_platform_data {
+ };
+ 
+ #endif /* __LINUX_PCA9532_H */
+-
+-- 
+2.7.4
