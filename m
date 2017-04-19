@@ -1,53 +1,145 @@
-From: <bunny43200@yahoo.com>
-Subject: (unknown)
-Date: Mon, 17 Apr 2017 03:09:28 -0000
-Message-ID: <149239856803.20709.17732059446287830636@e-client.com.br>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3] leds: pca9532: Extend pca9532 device tree support
+Date: Wed, 19 Apr 2017 20:42:05 +0200
+Message-ID: <119b40f8-76bf-5d9d-54a2-58ad99cc2dc2@gmail.com>
+References: <1492069898-19920-1-git-send-email-fb@ltec.ch>
 Mime-Version: 1.0
-Content-Type: application/zip; name="TRAMP-5135069821-linux-leds.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 172-177-0-131.e-client.com.br ([131.0.177.172]:44140 "HELO
-        e-client.com.br" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S932401AbdDQDJh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 16 Apr 2017 23:09:37 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36447 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030949AbdDSSmy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 19 Apr 2017 14:42:54 -0400
+In-Reply-To: <1492069898-19920-1-git-send-email-fb@ltec.ch>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds <linux-leds@vger.kernel.org>
+To: Felix Brack <fb@ltec.ch>, pavel@ucw.cz, rpurdie@rpsys.net, riku.voipio@iki.fi, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-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
+Hi Felix,
+
+On 04/13/2017 09:51 AM, Felix Brack wrote:
+> This patch extends the device tree support for the pca9532 by adding
+> the leds 'default-state' property.
+> 
+> Signed-off-by: Felix Brack <fb@ltec.ch>
+> ---
+>  .../devicetree/bindings/leds/leds-pca9532.txt      | 10 ++++++++
+>  drivers/leds/leds-pca9532.c                        | 27 +++++++++++++++++++++-
+>  include/linux/leds-pca9532.h                       |  4 ++--
+>  3 files changed, 38 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+> index 198f3ba..f769c52 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+> @@ -17,6 +17,8 @@ Optional sub-node properties:
+>  	- label: see Documentation/devicetree/bindings/leds/common.txt
+>  	- type: Output configuration, see dt-bindings/leds/leds-pca9532.h (default NONE)
+>  	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
+> +	- default-state: see Documentation/devicetree/bindings/leds/common.txt
+> +	  This property is only valid for sub-nodes of type <PCA9532_TYPE_LED>.
+>  
+>  Example:
+>    #include <dt-bindings/leds/leds-pca9532.h>
+> @@ -33,6 +35,14 @@ Example:
+>        label = "pca:green:power";
+>        type = <PCA9532_TYPE_LED>;
+>      };
+> +    kernel-booting {
+> +      type = <PCA9532_TYPE_LED>;
+> +      default-state = "on";
+> +    };
+> +    sys-stat {
+> +      type = <PCA9532_TYPE_LED>;
+> +      default-state = "keep"; // don't touch, was set by U-Boot
+> +    };
+>    };
+>  
+>  For more product information please see the link below:
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index 06e6310..7fea18b 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+> @@ -254,6 +254,21 @@ static void pca9532_input_work(struct work_struct *work)
+>  	mutex_unlock(&data->update_lock);
+>  }
+>  
+> +static enum pca9532_state pca9532_getled(struct pca9532_led *led)
+> +{
+> +	struct i2c_client *client = led->client;
+> +	struct pca9532_data *data = i2c_get_clientdata(client);
+> +	u8 maxleds = data->chip_info->num_leds;
+> +	char reg;
+> +	enum pca9532_state ret;
+> +
+> +	mutex_lock(&data->update_lock);
+> +	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
+> +	ret = reg >> LED_NUM(led->id)/2;
+> +	mutex_unlock(&data->update_lock);
+> +	return ret;
+> +}
+> +
+>  #ifdef CONFIG_LEDS_PCA9532_GPIO
+>  static int pca9532_gpio_request_pin(struct gpio_chip *gc, unsigned offset)
+>  {
+> @@ -366,7 +381,10 @@ static int pca9532_configure(struct i2c_client *client,
+>  			gpios++;
+>  			break;
+>  		case PCA9532_TYPE_LED:
+> -			led->state = pled->state;
+> +			if (pled->state == PCA9532_KEEP)
+> +				led->state = pca9532_getled(led);
+> +			else
+> +				led->state = pled->state;
+>  			led->name = pled->name;
+>  			led->ldev.name = led->name;
+>  			led->ldev.default_trigger = pled->default_trigger;
+> @@ -456,6 +474,7 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+>  	const struct of_device_id *match;
+>  	int devid, maxleds;
+>  	int i = 0;
+> +	const char *state;
+>  
+>  	match = of_match_device(of_pca9532_leds_match, dev);
+>  	if (!match)
+> @@ -475,6 +494,12 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+>  		of_property_read_u32(child, "type", &pdata->leds[i].type);
+>  		of_property_read_string(child, "linux,default-trigger",
+>  					&pdata->leds[i].default_trigger);
+> +		if (!of_property_read_string(child, "default-state", &state)) {
+> +			if (!strcmp(state, "on"))
+> +				pdata->leds[i].state = PCA9532_ON;
+> +			else if (!strcmp(state, "keep"))
+> +				pdata->leds[i].state = PCA9532_KEEP;
+> +		}
+>  		if (++i >= maxleds) {
+>  			of_node_put(child);
+>  			break;
+> diff --git a/include/linux/leds-pca9532.h b/include/linux/leds-pca9532.h
+> index d215b45..5e240b2 100644
+> --- a/include/linux/leds-pca9532.h
+> +++ b/include/linux/leds-pca9532.h
+> @@ -22,7 +22,8 @@ enum pca9532_state {
+>  	PCA9532_OFF  = 0x0,
+>  	PCA9532_ON   = 0x1,
+>  	PCA9532_PWM0 = 0x2,
+> -	PCA9532_PWM1 = 0x3
+> +	PCA9532_PWM1 = 0x3,
+> +	PCA9532_KEEP = 0xff,
+>  };
+>  
+>  struct pca9532_led {
+> @@ -44,4 +45,3 @@ struct pca9532_platform_data {
+>  };
+>  
+>  #endif /* __LINUX_PCA9532_H */
+> -
+> 
+
+Applied, thanks.
+
+-- 
+Best regards,
+Jacek Anaszewski
