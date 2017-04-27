@@ -1,36 +1,53 @@
-From: Anders Darander <anders@chargestorm.se>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Subject: Re: [PATCH v2] leds-pca963x: add bindings to invert polarity
-Date: Thu, 27 Apr 2017 08:45:09 +0200
-Message-ID: <20170427064509.ev2syo7mpku5pzxi@ad.chargestorm.se>
+Date: Thu, 27 Apr 2017 13:51:44 +0200
+Message-ID: <20170427115144.GA23352@amd>
 References: <20170427063733.32323-1-anders@chargestorm.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170427063733.32323-1-anders@chargestorm.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: rpurdie@rpsys.net
+In-Reply-To: <20170427063733.32323-1-anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
+Cc: jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi all,
 
-* Anders Darander <anders@chargestorm.se> [170427 08:37]:
-> Add a new DT property, nxp,inverted-out, to invert the polarity of the output.
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2017-04-27 08:37:33, Anders Darander wrote:
+> Add a new DT property, nxp,inverted-out, to invert the polarity of the ou=
+tput.
+>=20
 > Tested on PCA9634.
+>=20
+> Signed-off-by: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
 
-I'm making a 2nd attempt at this. The ability to invert the output from
-the PCA9634 is important, and I'd like to avoid out-of-tree patches as
-much as possible.
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-In replies to my previous attempt [1] another attempt at adding this
-support was mentioned [2]. However, that attempt seems to have stalled
-[3]. Even if the rest of the fixes / improvements from that series
-aren't merged, I'd like to see the support for the inverted output.
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Cheers,
-Anders
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-[1] https://lkml.org/lkml/2016/5/4/120
-[2] https://lkml.org/lkml/2016/4/19/90
-[3] https://lkml.org/lkml/2016/9/6/187
+iEYEARECAAYFAlkB21AACgkQMOfwapXb+vJcUgCdEVdoxv5HWY78eND/qzrcCZ/9
+nO4AoJKtv6N/NzkS5GMCbKT7uxCPXcxS
+=tuGZ
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
