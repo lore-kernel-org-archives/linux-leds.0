@@ -1,50 +1,99 @@
-From: David Lin <dtwlin@google.com>
-Subject: Re: [PATCH] led: ledtrig-transient: replace timer_list with hrtimer
-Date: Wed, 26 Apr 2017 20:48:09 -0700
-Message-ID: <CAPzFB+XPO4rW58tksTah1j3mLHOBaLi4EECnNiO5kZqPsT356w@mail.gmail.com>
-References: <20170424044254.145192-1-dtwlin@google.com> <d6b3d00b-938a-e61e-ce6d-96adacf73396@gmail.com>
- <CAPzFB+U3aLkM7Q2cubdMmtnJp-oCqGKGp2_Q-n2nkbyeh07JgA@mail.gmail.com> <475626da-5fb2-c03c-cdf7-feb42ee6b672@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yw0-f173.google.com ([209.85.161.173]:34344 "EHLO
-        mail-yw0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751929AbdD0Dsl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Apr 2017 23:48:41 -0400
-Received: by mail-yw0-f173.google.com with SMTP id k11so9948493ywb.1
-        for <linux-leds@vger.kernel.org>; Wed, 26 Apr 2017 20:48:40 -0700 (PDT)
-In-Reply-To: <475626da-5fb2-c03c-cdf7-feb42ee6b672@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
+Subject: [PATCH v2] leds-pca963x: add bindings to invert polarity
+Date: Thu, 27 Apr 2017 08:37:33 +0200
+Message-ID: <20170427063733.32323-1-anders@chargestorm.se>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: rpurdie@rpsys.net, pavel@ucw.cz, robh@kernel.org, Rom Lemarchand <romlem@google.com>, Joel Fernandes <joelaf@google.com>, stable@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 25, 2017 at 1:15 PM, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->> However, there's a need to
->> support hrtimer if the LED subsystem claims support the use case of
->> vibrator (please see Documentation/leds/ledtrig-transient.txt) as even
->> a 5ms of variation is perceivable to the user. I'm thinking if a
->> better interim solution is to introduce a
->> LEDS_TRIGGER_TRANSIENT_HRTIMER config to work with both timers in
->> compile time. Would you agree?
->
-> I think that it would be better if LED class driver set a flag
-> marking itself as capable of setting brightness with high rate.
-> I'd limit that only to leds-gpio and devices driven through
-> memory mapped registers.
->
-> Having the flag e.g. LED_BRIGHTNESS_FAST, we could add support for
-> hr timers also to ledtrig-timer.
+Add a new DT property, nxp,inverted-out, to invert the polarity of the output.
 
-Can I resubmit the patch implementing LED_BRIGHTNESS_FAST using hrtimer?
+Tested on PCA9634.
 
->
-> You can try also the other option mentioned by Pavel in [1].
+Signed-off-by: Anders Darander <anders-7UjN0b3lYz2SbKU13Z4Etw@public.gmane.org>
+---
+ Documentation/devicetree/bindings/leds/pca963x.txt |  1 +
+ drivers/leds/leds-pca963x.c                        | 17 +++++++++++++++--
+ include/linux/platform_data/leds-pca963x.h         |  6 ++++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
-Thanks, Pavel. It does look like that input-ff is a more appropriate
-subsystem for implementing a vibrator/haptics driver. It also seems
-that it's relying on the userspace to control the timing of the
-play/stop events which is likely to be less accurate than a hrtimer in
-the kernel. But it provides more effect control than the LED
-subsystem.
+diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
+index dfbdb123a9bf..4eee41482041 100644
+--- a/Documentation/devicetree/bindings/leds/pca963x.txt
++++ b/Documentation/devicetree/bindings/leds/pca963x.txt
+@@ -10,6 +10,7 @@ Optional properties:
+ - nxp,period-scale : In some configurations, the chip blinks faster than expected.
+ 		     This parameter provides a scaling ratio (fixed point, decimal divided
+ 		     by 1000) to compensate, e.g. 1300=1.3x and 750=0.75x.
++- nxp,inverted-out: invert the polarity of the generated PWM
+ 
+ Each led is represented as a sub-node of the nxp,pca963x device.
+ 
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index ded1e4dac36a..3bf9a1271819 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -342,6 +342,12 @@ pca963x_dt_init(struct i2c_client *client, struct pca963x_chipdef *chip)
+ 	if (of_property_read_u32(np, "nxp,period-scale", &chip->scaling))
+ 		chip->scaling = 1000;
+ 
++	/* default to non-inverted output, unless inverted is specified */
++	if (of_property_read_bool(np, "nxp,inverted-out"))
++		pdata->dir = PCA963X_INVERTED;
++	else
++		pdata->dir = PCA963X_NORMAL;
++
+ 	return pdata;
+ }
+ 
+@@ -452,11 +458,18 @@ static int pca963x_probe(struct i2c_client *client,
+ 	i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
+ 
+ 	if (pdata) {
++		u8 mode2 = i2c_smbus_read_byte_data(pca963x->chip->client,
++						    PCA963X_MODE2);
+ 		/* Configure output: open-drain or totem pole (push-pull) */
+ 		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
+-			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
++			mode2 |= 0x01;
+ 		else
+-			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
++			mode2 |= 0x05;
++		/* Configure direction: normal or inverted */
++		if (pdata->dir == PCA963X_INVERTED)
++			mode2 |= 0x10;
++		i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE2,
++					  mode2);
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/platform_data/leds-pca963x.h b/include/linux/platform_data/leds-pca963x.h
+index e731f0036329..54e845ffb5ed 100644
+--- a/include/linux/platform_data/leds-pca963x.h
++++ b/include/linux/platform_data/leds-pca963x.h
+@@ -33,10 +33,16 @@ enum pca963x_blink_type {
+ 	PCA963X_HW_BLINK,
+ };
+ 
++enum pca963x_direction {
++	PCA963X_NORMAL,
++	PCA963X_INVERTED,
++};
++
+ struct pca963x_platform_data {
+ 	struct led_platform_data leds;
+ 	enum pca963x_outdrv outdrv;
+ 	enum pca963x_blink_type blink_type;
++	enum pca963x_direction dir;
+ };
+ 
+ #endif /* __LINUX_PCA963X_H*/
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
