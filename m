@@ -1,14 +1,14 @@
 From: David Lin <dtwlin@google.com>
-Subject: [PATCH 2/3] leds: Add the LED_BRIGHTNESS_FAST flag
-Date: Sun, 30 Apr 2017 14:37:00 -0700
-Message-ID: <20170430213701.12297-3-dtwlin@google.com>
+Subject: [PATCH 3/3] led: ledtrig-transient: add support for hrtimer
+Date: Sun, 30 Apr 2017 14:37:01 -0700
+Message-ID: <20170430213701.12297-4-dtwlin@google.com>
 References: <20170430213701.12297-1-dtwlin@google.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pg0-f48.google.com ([74.125.83.48]:36216 "EHLO
-        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1950719AbdD3VhY (ORCPT
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:34997 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1950734AbdD3VhY (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sun, 30 Apr 2017 17:37:24 -0400
-Received: by mail-pg0-f48.google.com with SMTP id t7so37998875pgt.3
+Received: by mail-pf0-f180.google.com with SMTP id v14so68331583pfd.2
         for <linux-leds@vger.kernel.org>; Sun, 30 Apr 2017 14:37:24 -0700 (PDT)
 In-Reply-To: <20170430213701.12297-1-dtwlin@google.com>
 Sender: linux-leds-owner@vger.kernel.org
@@ -16,45 +16,121 @@ List-Id: linux-leds@vger.kernel.org
 To: corbet@lwn.net, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, hdegoede@redhat.com, mark.rutland@arm.com, tony.makkiel@daqri.com, linz@li-pro.net
 Cc: robh@kernel.org, romlem@google.com, joelaf@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, David Lin <dtwlin@google.com>
 
-This patch adds the LED_BRIGHTNESS_FAST flag to allow the driver to
-indicate that the brightness_set() callback is implemented on a fastpath
-so that the LED core may choose to for example use a hrtimer to
-implement the duration of a trigger for better timing accuracy.
+This patch adds a hrtimer to ledtrig-transient so that when driver is
+registered with LED_BRIGHTNESS_FAST, the hrtimer is used for the better
+time accuracy in handling the duration.
 
-Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: David Lin <dtwlin@google.com>
 ---
- Documentation/leds/leds-class.txt | 5 +++++
- include/linux/leds.h              | 1 +
- 2 files changed, 6 insertions(+)
+ drivers/leds/trigger/ledtrig-transient.c | 59 +++++++++++++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index 836cb16d6f09..70d7a3dca621 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -80,6 +80,11 @@ flag must be set in flags before registering. Calling
- led_classdev_notify_brightness_hw_changed on a classdev not registered with
- the LED_BRIGHT_HW_CHANGED flag is a bug and will trigger a WARN_ON.
+diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+index 7e6011bd3646..63be54772596 100644
+--- a/drivers/leds/trigger/ledtrig-transient.c
++++ b/drivers/leds/trigger/ledtrig-transient.c
+@@ -24,15 +24,18 @@
+ #include <linux/device.h>
+ #include <linux/slab.h>
+ #include <linux/timer.h>
++#include <linux/hrtimer.h>
+ #include <linux/leds.h>
+ #include "../leds.h"
  
-+Optionally, the driver may choose to register with the LED_BRIGHTNESS_FAST flag.
-+This flag indicates that the driver implements the brightness_set() callback
-+function using a fastpath so the LED core can use hrtimer if the driver requires
-+high precision for the trigger timing.
+ struct transient_trig_data {
++	struct led_classdev *led_cdev;
+ 	int activate;
+ 	int state;
+ 	int restore_state;
+ 	unsigned long duration;
+ 	struct timer_list timer;
++	struct hrtimer hrtimer;
+ };
+ 
+ static void transient_timer_function(unsigned long data)
+@@ -44,6 +47,54 @@ static void transient_timer_function(unsigned long data)
+ 	led_set_brightness_nosleep(led_cdev, transient_data->restore_state);
+ }
+ 
++static enum hrtimer_restart transient_hrtimer_function(struct hrtimer *timer)
++{
++	struct transient_trig_data *transient_data =
++		container_of(timer, struct transient_trig_data, hrtimer);
 +
- Hardware accelerated blink of LEDs
- ==================================
++	transient_timer_function((unsigned long)transient_data->led_cdev);
++
++	return HRTIMER_NORESTART;
++}
++
++static inline void transient_timer_setup(struct led_classdev *led_cdev)
++{
++	struct transient_trig_data *tdata = led_cdev->trigger_data;
++
++	if (led_cdev->flags & LED_BRIGHTNESS_FAST) {
++		tdata->led_cdev = led_cdev;
++		hrtimer_init(&tdata->hrtimer, CLOCK_MONOTONIC,
++			     HRTIMER_MODE_REL);
++		tdata->hrtimer.function = transient_hrtimer_function;
++	} else {
++		setup_timer(&tdata->timer, transient_timer_function,
++			    (unsigned long)led_cdev);
++	}
++}
++
++static inline void transient_timer_start(struct led_classdev *led_cdev)
++{
++	struct transient_trig_data *tdata = led_cdev->trigger_data;
++
++	if (led_cdev->flags & LED_BRIGHTNESS_FAST) {
++		hrtimer_start(&tdata->hrtimer, ms_to_ktime(tdata->duration),
++			      HRTIMER_MODE_REL);
++	} else {
++		mod_timer(&tdata->timer,
++			  jiffies + msecs_to_jiffies(tdata->duration));
++	}
++}
++
++static inline void transient_timer_cancel(struct led_classdev *led_cdev)
++{
++	struct transient_trig_data *tdata = led_cdev->trigger_data;
++
++	if (led_cdev->flags & LED_BRIGHTNESS_FAST)
++		hrtimer_cancel(&tdata->hrtimer);
++	else
++		del_timer_sync(&tdata->timer);
++}
++
+ static ssize_t transient_activate_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+@@ -70,7 +121,7 @@ static ssize_t transient_activate_store(struct device *dev,
  
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index f9d10a9efcbe..78d2880ccd39 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -49,6 +49,7 @@ struct led_classdev {
- #define LED_HW_PLUGGABLE	BIT(19)
- #define LED_PANIC_INDICATOR	BIT(20)
- #define LED_BRIGHT_HW_CHANGED	BIT(21)
-+#define LED_BRIGHTNESS_FAST	BIT(22)
+ 	/* cancel the running timer */
+ 	if (state == 0 && transient_data->activate == 1) {
+-		del_timer(&transient_data->timer);
++		transient_timer_cancel(led_cdev);
+ 		transient_data->activate = state;
+ 		led_set_brightness_nosleep(led_cdev,
+ 					transient_data->restore_state);
+@@ -84,8 +135,7 @@ static ssize_t transient_activate_store(struct device *dev,
+ 		led_set_brightness_nosleep(led_cdev, transient_data->state);
+ 		transient_data->restore_state =
+ 		    (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
+-		mod_timer(&transient_data->timer,
+-			  jiffies + msecs_to_jiffies(transient_data->duration));
++		transient_timer_start(led_cdev);
+ 	}
  
- 	/* set_brightness_work / blink_timer flags, atomic, private. */
- 	unsigned long		work_flags;
+ 	/* state == 0 && transient_data->activate == 0
+@@ -182,8 +232,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
+ 	if (rc)
+ 		goto err_out_state;
+ 
+-	setup_timer(&tdata->timer, transient_timer_function,
+-		    (unsigned long) led_cdev);
++	transient_timer_setup(led_cdev);
+ 	led_cdev->activated = true;
+ 
+ 	return;
 -- 
 2.13.0.rc0.306.g87b477812d-goog
