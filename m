@@ -1,89 +1,44 @@
-From: <bunny43200@yahoo.com>
-Subject: 6760 linux-leds
-Date: Fri, 28 Apr 2017 17:09:28 -0000
-Message-ID: <149339936819.22260.10464838141298488313@hinet.net>
-Mime-Version: 1.0
-Content-Type: application/zip; name="9806730.zip"
-Content-Transfer-Encoding: base64
+From: David Lin <dtwlin@google.com>
+Subject: [PATCH 0/3] led: ledtrig-transient: add support for hrtimer
+Date: Sun, 30 Apr 2017 14:36:58 -0700
+Message-ID: <20170430213701.12297-1-dtwlin@google.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 114-45-149-248.dynamic-ip.hinet.net ([114.45.149.248]:40738
-        "HELO hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S1422829AbdD1RJv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Apr 2017 13:09:51 -0400
-Content-Disposition: attachment
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:32992 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1950393AbdD3VhU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 30 Apr 2017 17:37:20 -0400
+Received: by mail-pg0-f41.google.com with SMTP id y4so32761399pge.0
+        for <linux-leds@vger.kernel.org>; Sun, 30 Apr 2017 14:37:20 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
+To: corbet@lwn.net, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, hdegoede@redhat.com, mark.rutland@arm.com, tony.makkiel@daqri.com, linz@li-pro.net
+Cc: robh@kernel.org, romlem@google.com, joelaf@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, David Lin <dtwlin@google.com>
 
-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
+Hi,
+
+These patch series add the LED_BRIGHTNESS_FAST flag support for
+ledtrig-transient to use hrtimer so that platforms with high-resolution timer
+support can have better accuracy in the trigger duration timing. The need for
+this support is driven by the fact that Android has removed the timed_ouput [1]
+and is now using led-trigger for handling vibrator control which requires the
+timer to be accurate up to a millisecond. However, this flag support would also
+allow hrtimer to co-exist with the ktimer without causing warning to the
+existing drivers [2].
+
+David
+
+[1] https://patchwork.kernel.org/patch/8664831/
+[2] https://lkml.org/lkml/2015/4/28/260
+
+David Lin (3):
+  leds: Replace flags bit shift with BIT() macros
+  leds: Add the LED_BRIGHTNESS_FAST flag
+  led: ledtrig-transient: add support for hrtimer
+
+ Documentation/leds/leds-class.txt        |  5 +++
+ drivers/leds/trigger/ledtrig-transient.c | 59 +++++++++++++++++++++++++++++---
+ include/linux/leds.h                     | 13 +++----
+ 3 files changed, 66 insertions(+), 11 deletions(-)
+
+-- 
+2.13.0.rc0.306.g87b477812d-goog
