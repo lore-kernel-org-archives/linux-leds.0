@@ -1,136 +1,138 @@
-From: David Lin <dtwlin@google.com>
-Subject: [PATCH 3/3] led: ledtrig-transient: add support for hrtimer
-Date: Sun, 30 Apr 2017 14:37:01 -0700
-Message-ID: <20170430213701.12297-4-dtwlin@google.com>
-References: <20170430213701.12297-1-dtwlin@google.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED updates for 4.12
+Date: Mon,  1 May 2017 21:03:34 +0200
+Message-ID: <1493665414-7352-1-git-send-email-jacek.anaszewski@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:34997 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1950734AbdD3VhY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 30 Apr 2017 17:37:24 -0400
-Received: by mail-pf0-f180.google.com with SMTP id v14so68331583pfd.2
-        for <linux-leds@vger.kernel.org>; Sun, 30 Apr 2017 14:37:24 -0700 (PDT)
-In-Reply-To: <20170430213701.12297-1-dtwlin@google.com>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33970 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbdEATEb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 1 May 2017 15:04:31 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: corbet@lwn.net, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, hdegoede@redhat.com, mark.rutland@arm.com, tony.makkiel@daqri.com, linz@li-pro.net
-Cc: robh@kernel.org, romlem@google.com, joelaf@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, David Lin <dtwlin@google.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, fb@ltec.ch, sre@kernel.org, andriy.shevchenko@linux.intel.com, dan.carpenter@oracle.com, sean.wang@mediatek.com, rafal@milecki.pl, kernel@kempniu.pl, me@paulo.costa.nom.br
 
-This patch adds a hrtimer to ledtrig-transient so that when driver is
-registered with LED_BRIGHTNESS_FAST, the hrtimer is used for the better
-time accuracy in handling the duration.
+Hi Linus,
 
-Signed-off-by: David Lin <dtwlin@google.com>
----
- drivers/leds/trigger/ledtrig-transient.c | 59 +++++++++++++++++++++++++++++---
- 1 file changed, 54 insertions(+), 5 deletions(-)
+Please pull LED updates for 4.12 merge cycle.
 
-diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
-index 7e6011bd3646..63be54772596 100644
---- a/drivers/leds/trigger/ledtrig-transient.c
-+++ b/drivers/leds/trigger/ledtrig-transient.c
-@@ -24,15 +24,18 @@
- #include <linux/device.h>
- #include <linux/slab.h>
- #include <linux/timer.h>
-+#include <linux/hrtimer.h>
- #include <linux/leds.h>
- #include "../leds.h"
- 
- struct transient_trig_data {
-+	struct led_classdev *led_cdev;
- 	int activate;
- 	int state;
- 	int restore_state;
- 	unsigned long duration;
- 	struct timer_list timer;
-+	struct hrtimer hrtimer;
- };
- 
- static void transient_timer_function(unsigned long data)
-@@ -44,6 +47,54 @@ static void transient_timer_function(unsigned long data)
- 	led_set_brightness_nosleep(led_cdev, transient_data->restore_state);
- }
- 
-+static enum hrtimer_restart transient_hrtimer_function(struct hrtimer *timer)
-+{
-+	struct transient_trig_data *transient_data =
-+		container_of(timer, struct transient_trig_data, hrtimer);
-+
-+	transient_timer_function((unsigned long)transient_data->led_cdev);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static inline void transient_timer_setup(struct led_classdev *led_cdev)
-+{
-+	struct transient_trig_data *tdata = led_cdev->trigger_data;
-+
-+	if (led_cdev->flags & LED_BRIGHTNESS_FAST) {
-+		tdata->led_cdev = led_cdev;
-+		hrtimer_init(&tdata->hrtimer, CLOCK_MONOTONIC,
-+			     HRTIMER_MODE_REL);
-+		tdata->hrtimer.function = transient_hrtimer_function;
-+	} else {
-+		setup_timer(&tdata->timer, transient_timer_function,
-+			    (unsigned long)led_cdev);
-+	}
-+}
-+
-+static inline void transient_timer_start(struct led_classdev *led_cdev)
-+{
-+	struct transient_trig_data *tdata = led_cdev->trigger_data;
-+
-+	if (led_cdev->flags & LED_BRIGHTNESS_FAST) {
-+		hrtimer_start(&tdata->hrtimer, ms_to_ktime(tdata->duration),
-+			      HRTIMER_MODE_REL);
-+	} else {
-+		mod_timer(&tdata->timer,
-+			  jiffies + msecs_to_jiffies(tdata->duration));
-+	}
-+}
-+
-+static inline void transient_timer_cancel(struct led_classdev *led_cdev)
-+{
-+	struct transient_trig_data *tdata = led_cdev->trigger_data;
-+
-+	if (led_cdev->flags & LED_BRIGHTNESS_FAST)
-+		hrtimer_cancel(&tdata->hrtimer);
-+	else
-+		del_timer_sync(&tdata->timer);
-+}
-+
- static ssize_t transient_activate_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-@@ -70,7 +121,7 @@ static ssize_t transient_activate_store(struct device *dev,
- 
- 	/* cancel the running timer */
- 	if (state == 0 && transient_data->activate == 1) {
--		del_timer(&transient_data->timer);
-+		transient_timer_cancel(led_cdev);
- 		transient_data->activate = state;
- 		led_set_brightness_nosleep(led_cdev,
- 					transient_data->restore_state);
-@@ -84,8 +135,7 @@ static ssize_t transient_activate_store(struct device *dev,
- 		led_set_brightness_nosleep(led_cdev, transient_data->state);
- 		transient_data->restore_state =
- 		    (transient_data->state == LED_FULL) ? LED_OFF : LED_FULL;
--		mod_timer(&transient_data->timer,
--			  jiffies + msecs_to_jiffies(transient_data->duration));
-+		transient_timer_start(led_cdev);
- 	}
- 
- 	/* state == 0 && transient_data->activate == 0
-@@ -182,8 +232,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
- 	if (rc)
- 		goto err_out_state;
- 
--	setup_timer(&tdata->timer, transient_timer_function,
--		    (unsigned long) led_cdev);
-+	transient_timer_setup(led_cdev);
- 	led_cdev->activated = true;
- 
- 	return;
--- 
-2.13.0.rc0.306.g87b477812d-goog
+In this development cycle there were two interactions with other
+subsystems:
+  - mfd: merged a single patch from it, that prevents leds-cpcap build break
+  - x86 platform drivers: exposed a set of dell-led related patches
+                          for it to merge
+
+Besides that, regular LED updates contain what follows:
+
+New drivers:
+
+- add LED support for MT6323 PMIC
+
+- add LED support for Motorola CPCAP PMIC
+
+New features and improvements:
+
+- add LED trigger for all CPUs aggregated which is useful
+  on tiny boards with more CPU cores than LED pins
+
+- add OF variants of LED registering functions as a preparation
+  for adding generic support for Device Tree parsing
+
+- dell-led improvements and cleanups, followed by moving it to the
+  x86 platform driver subsystem which is a more appropriate place for it
+
+- Extend pca9532 Device Tree support by adding the LEDs
+  'default-state' property
+
+- Extend pca963x Device Tree support by adding nxp,inverted-out property
+  for inverting the polarity of the output
+
+- Remove ACPI support for lp3952 since it relied on a non-official
+  ACPI IDs
+
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.12
+
+for you to fetch changes up to 28c5fe99016d28f15d1b825df8acb1558a3a63a1:
+
+  leds: pca9532: Extend pca9532 device tree support (2017-04-19 20:27:50 +0200)
+
+Best regards,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED updates for 4.12
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      leds: lp3952: Remove ACPI support for lp3952
+      leds: lp3952: Use 'if (ret)' pattern
+
+Dan Carpenter (1):
+      leds: mt6323: Fix an off by one bug in probe
+
+Felix Brack (1):
+      leds: pca9532: Extend pca9532 device tree support
+
+Jacek Anaszewski (1):
+      Merge tag 'ib-mfd-leds-v4.12' of git://git.kernel.org/.../lee/mfd into for-next
+
+Michał Kępień (7):
+      dell-led: remove GUID check from dell_micmute_led_set()
+      ALSA: hda - use dell_micmute_led_set() instead of dell_app_wmi_led_set()
+      ALSA: hda - rename dell_led_set_func to dell_micmute_led_set_func
+      platform/x86: dell-laptop: import dell_micmute_led_set() from drivers/leds/dell-led.c
+      dell-led: remove code related to mic mute LED
+      dell-led: move driver to drivers/platform/x86/dell-wmi-led.c
+      platform/x86: dell-wmi-led: fix coding style issues
+
+Paulo Costa (1):
+      leds/trigger/cpu: Add LED trigger for all CPUs aggregated
+
+Rafał Miłecki (2):
+      leds: core: add OF variants of LED registering functions
+      leds: gpio: use OF variant of LED registering function
+
+Sean Wang (2):
+      leds: Add LED support for MT6323 PMIC
+      dt-bindings: leds: Add document bindings for leds-mt6323
+
+Sebastian Reichel (2):
+      mfd: cpcap: Add missing include dependencies
+      leds: cpcap: new driver
+
+ .../devicetree/bindings/leds/leds-cpcap.txt        |  29 ++
+ .../devicetree/bindings/leds/leds-mt6323.txt       |  60 +++
+ .../devicetree/bindings/leds/leds-pca9532.txt      |  10 +
+ drivers/leds/Kconfig                               |  27 +-
+ drivers/leds/Makefile                              |   3 +-
+ drivers/leds/led-class.c                           |  26 +-
+ drivers/leds/leds-cpcap.c                          | 239 ++++++++++
+ drivers/leds/leds-gpio.c                           |  12 +-
+ drivers/leds/leds-lp3952.c                         |  18 +-
+ drivers/leds/leds-mt6323.c                         | 502 +++++++++++++++++++++
+ drivers/leds/leds-pca9532.c                        |  27 +-
+ drivers/leds/trigger/ledtrig-cpu.c                 |  33 +-
+ drivers/platform/x86/Kconfig                       |   8 +
+ drivers/platform/x86/Makefile                      |   1 +
+ drivers/platform/x86/dell-laptop.c                 |  28 ++
+ .../dell-led.c => platform/x86/dell-wmi-led.c}     | 141 ++----
+ include/linux/dell-led.h                           |   6 +-
+ include/linux/leds-pca9532.h                       |   4 +-
+ include/linux/leds.h                               |  14 +-
+ include/linux/mfd/motorola-cpcap.h                 |   3 +
+ sound/pci/hda/dell_wmi_helper.c                    |  30 +-
+ 21 files changed, 1043 insertions(+), 178 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-cpcap.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+ create mode 100644 drivers/leds/leds-cpcap.c
+ create mode 100644 drivers/leds/leds-mt6323.c
+ rename drivers/{leds/dell-led.c => platform/x86/dell-wmi-led.c} (56%)
