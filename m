@@ -1,46 +1,75 @@
-From: David Lin <dtwlin@google.com>
-Subject: Re: [PATCH 0/3] led: ledtrig-transient: add support for hrtimer
-Date: Wed, 3 May 2017 17:28:46 -0700
-Message-ID: <CAPzFB+U25eX9H9DTxxPj9FH4r3OrmS8mWgK2Ye-OdAXkf=4p7Q@mail.gmail.com>
-References: <20170430213701.12297-1-dtwlin@google.com>
+From: <office@franztextilmanufaktur.com>
+Subject: 25019 linux-leds
+Date: Thu, 04 May 2017 04:58:21 -0000
+Message-ID: <149387390106.27002.7115751267520371822@ppbk.co.th>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170430213701.12297-1-dtwlin@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, rpurdie@rpsys.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz, hdegoede@redhat.com, mark.rutland@arm.com, Tony Makkiel <tony.makkiel@daqri.com>, Stephan Linz <linz@li-pro.net>
-Cc: robh@kernel.org, Rom Lemarchand <romlem@google.com>, Joel Fernandes <joelaf@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, David Lin <dtwlin@google.com>, Greg KH <gregkh@linuxfoundation.org>
+Content-Type: application/zip; name="104994292973396.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from owa.ppbk.co.th ([171.99.190.26]:20291 "HELO ppbk.co.th"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S932077AbdEDE62 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 4 May 2017 00:58:28 -0400
+Content-Disposition: attachment
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-+Cc: Greg KH
-
-On Sun, Apr 30, 2017 at 2:36 PM, David Lin <dtwlin@google.com> wrote:
-> Hi,
->
-> These patch series add the LED_BRIGHTNESS_FAST flag support for
-> ledtrig-transient to use hrtimer so that platforms with high-resolution timer
-> support can have better accuracy in the trigger duration timing. The need for
-> this support is driven by the fact that Android has removed the timed_ouput [1]
-> and is now using led-trigger for handling vibrator control which requires the
-> timer to be accurate up to a millisecond. However, this flag support would also
-> allow hrtimer to co-exist with the ktimer without causing warning to the
-> existing drivers [2].
->
-> David
->
-> [1] https://patchwork.kernel.org/patch/8664831/
-> [2] https://lkml.org/lkml/2015/4/28/260
->
-> David Lin (3):
->   leds: Replace flags bit shift with BIT() macros
->   leds: Add the LED_BRIGHTNESS_FAST flag
->   led: ledtrig-transient: add support for hrtimer
->
->  Documentation/leds/leds-class.txt        |  5 +++
->  drivers/leds/trigger/ledtrig-transient.c | 59 +++++++++++++++++++++++++++++---
->  include/linux/leds.h                     | 13 +++----
->  3 files changed, 66 insertions(+), 11 deletions(-)
->
-> --
-> 2.13.0.rc0.306.g87b477812d-goog
->
+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
+RgwAAAAA
