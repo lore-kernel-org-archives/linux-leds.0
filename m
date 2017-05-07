@@ -1,86 +1,64 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 3/3]: Add build support PCEngines APU1/APU2 drivers
-Date: Fri, 5 May 2017 22:05:51 +0200
-Message-ID: <1312d519-eb1e-f628-5796-c690be9350ce@gmail.com>
-References: <52d5bb5e-8992-caab-d59d-4935d36f37da@gmx.com>
+From: sanshan zhang <sanshan.zhang@nxp.com>
+Subject: [PATCH] leds/trigger: system can't enter suspend.
+Date: Sun, 7 May 2017 10:01:21 +0800
+Message-ID: <1494122481-15228-1-git-send-email-sanshan.zhang@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34090 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbdEEUGg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 May 2017 16:06:36 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z129so3362950wmb.1
-        for <linux-leds@vger.kernel.org>; Fri, 05 May 2017 13:06:36 -0700 (PDT)
-In-Reply-To: <52d5bb5e-8992-caab-d59d-4935d36f37da@gmx.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, pavel@ucw.cz, j.anaszewski@samsung.com, rpurdie@rpsys.net
 List-Id: linux-leds@vger.kernel.org
-To: Luigi Baldoni <aloisio@gmx.com>, linux-leds@vger.kernel.org
 
-Hi Luigi,
+From: zhang sanshan <sanshan.zhang@nxp.com>
 
-On 05/04/2017 01:00 PM, Luigi Baldoni wrote:
-> This patch adds build support for PCEngines APU1/APU2 LEDs drivers.
-> 
-> Signed-off-by: Christian Herzog <daduke@daduke.org>
-> 
-> ---
->  drivers/leds/Kconfig     |   22 ++++
->  drivers/leds/Makefile    |    2
->  2 files changed, 24 insertions(+)
-> 
-> Index: b/drivers/leds/Kconfig
-> ===================================================================
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -694,6 +694,28 @@ config LEDS_NIC78BX
->        To compile this driver as a module, choose M here: the module
->        will be called leds-nic78bx.
-> 
-> +config LEDS_APU
-> +    tristate "Front LED support for pcengines apu boards"
-> +    depends on LEDS_CLASS
-> +    depends on X86 && DMI
-> +    help
-> +      This driver makes the pcengines apu front LEDs accessible from
-> +      userspace programs through the leds subsystem.
-> +
-> +      To compile this driver as a module, choose M here: the
-> +      module will be called leds-apu.
-> +
-> +config LEDS_APU2
-> +    tristate "Front LED support for pcengines apu2 boards"
-> +    depends on LEDS_CLASS
-> +    depends on X86 && DMI
-> +    help
-> +      This driver makes the pcengines apu2 front LEDs accessible from
-> +      userspace programs through the leds subsystem.
-> +
-> +      To compile this driver as a module, choose M here: the
-> +      module will be called leds-apu2.
-> +
->  comment "LED Triggers"
->  source "drivers/leds/trigger/Kconfig"
-> 
-> Index: b/drivers/leds/Makefile
-> ===================================================================
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -73,6 +73,8 @@ obj-$(CONFIG_LEDS_PM8058)        += leds-pm805
->  obj-$(CONFIG_LEDS_MLXCPLD)        += leds-mlxcpld.o
->  obj-$(CONFIG_LEDS_NIC78BX)        += leds-nic78bx.o
->  obj-$(CONFIG_LEDS_MT6323)        += leds-mt6323.o
-> +obj-$(CONFIG_LEDS_APU)            += leds-apu.o
-> +obj-$(CONFIG_LEDS_APU2)            += leds-apu2.o
-> 
->  # LED SPI Drivers
->  obj-$(CONFIG_LEDS_DAC124S085)        += leds-dac124s085.o
-> 
+system can't enter suspend when enable led heartbeat.
 
-Please don't split Kconfig and Makefile modifications from the driver,
-since it would break bisect and doesn't have logical justification.
+pm will call heartbeat_pm_notifier when suspend.
+system will prepare led states, and led_trigger_unregister
+will use led_trigger_set to set trigger.
+kobject_uevent_env will send event,it will call ep_poll_callback
+to hold a wakeup source if we enable wakelock in kernel.
+So that system can't enter suspend.
 
+If we set led device tigger to NONE, there is not need to
+send notification to user space.
+
+Change-Id: I9f7ee5764d7e31b9a225dae5517cb36137675f9d
+Signed-off-by: zhang sanshan <sanshan.zhang@nxp.com>
+Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
+---
+ drivers/leds/led-triggers.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 431123b..f03c2bd1 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -108,13 +108,10 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 	unsigned long flags;
+ 	char *event = NULL;
+ 	char *envp[2];
+-	const char *name;
+ 
+ 	if (!led_cdev->trigger && !trig)
+ 		return;
+ 
+-	name = trig ? trig->name : "none";
+-	event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+ 
+ 	/* Remove any existing trigger */
+ 	if (led_cdev->trigger) {
+@@ -138,6 +135,10 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 			trig->activate(led_cdev);
+ 	}
+ 
++	if (NULL != trig)
++		event = kasprintf(GFP_KERNEL, "TRIGGER=%s", trig->name);
++	else
++		return;
+ 	if (event) {
+ 		envp[0] = event;
+ 		envp[1] = NULL;
 -- 
-Best regards,
-Jacek Anaszewski
+1.9.1
