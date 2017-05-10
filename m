@@ -1,52 +1,106 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 0/3] led: ledtrig-transient: add support for hrtimer
-Date: Tue, 9 May 2017 22:43:45 +0200
-Message-ID: <d9f9dd95-b5c4-8447-1391-594b461f805c@gmail.com>
-References: <20170430213701.12297-1-dtwlin@google.com>
- <20170508210602.GA7260@amd>
+Subject: Re: [PATCH] leds/trigger: system can't enter suspend.
+Date: Wed, 10 May 2017 22:51:06 +0200
+Message-ID: <3ab1fb5d-7c79-f276-3f10-59fdbb2ab79f@gmail.com>
+References: <1494122481-15228-1-git-send-email-sanshan.zhang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34039 "EHLO
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:32942 "EHLO
         mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbdEIUod (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 9 May 2017 16:44:33 -0400
-In-Reply-To: <20170508210602.GA7260@amd>
+        with ESMTP id S1753162AbdEJUvx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 May 2017 16:51:53 -0400
+In-Reply-To: <1494122481-15228-1-git-send-email-sanshan.zhang@nxp.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, David Lin <dtwlin@google.com>
-Cc: corbet@lwn.net, rpurdie@rpsys.net, hdegoede@redhat.com, mark.rutland@arm.com, tony.makkiel@daqri.com, linz@li-pro.net, robh@kernel.org, romlem@google.com, joelaf@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: sanshan zhang <sanshan.zhang@nxp.com>, linux-kernel@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, pavel@ucw.cz, j.anaszewski@samsung.com, rpurdie@rpsys.net
 
-On 05/08/2017 11:06 PM, Pavel Machek wrote:
-> On Sun 2017-04-30 14:36:58, David Lin wrote:
->> Hi,
->>
->> These patch series add the LED_BRIGHTNESS_FAST flag support for
->> ledtrig-transient to use hrtimer so that platforms with high-resolution timer
->> support can have better accuracy in the trigger duration timing. The need for
->> this support is driven by the fact that Android has removed the timed_ouput [1]
->> and is now using led-trigger for handling vibrator control which requires the
->> timer to be accurate up to a millisecond. However, this flag support would also
->> allow hrtimer to co-exist with the ktimer without causing warning to the
->> existing drivers [2].
-> 
-> Yes, and objection still stands: You are misusing LED subsystem for
-> vibration motors. We already have support for haptic feedback in input
-> subsystem.
+Hi Zhang,
 
-Regardless of whether it is a misuse or not (ledtrig-transient
-documentation suggests that it is one of use cases) we have to keep
-it as it has been around for a long time and it has userspace users [0].
+Thanks for the patch.
 
-Moreover there seems to be broad consensus about it among kernel
-people [1].
+I'd rather keep sending uevent on setting trigger to "none".
 
+We could get rid of the problem you're trying to fix,
+by modifying heartbeat_pm_notifier() so that it didn't go
+through the whole procedure of unregistering/registering
+the trigger on suspend/resume.
 
-[0]
-https://android.googlesource.com/platform%2Fhardware%2Flibhardware/+/61701df363310a5cbd95e3e1638baa9526e42c9b
-[1] https://patchwork.kernel.org/patch/8664831/
+Instead of that we would need to add suspend/resume
+ops to the struct led_trigger, that could be implemented
+by triggers similarly to activate/deactivate.
 
--- 
+We'd need also the led_trigger_suspend{resume}() API
+that would iterate through all LED class devices registered
+on given trigger and call their suspend/resume ops.
+
+In this specifc case of ledtrig-heartbeat, that suspend
+op would need only to call
+
+del_timer_sync(&led_cdev->trigger_data->timer);
+
+and resume would need to call setup_timer() accordingly.
+
+led_trigger_suspend{resume} would replace
+led_trigger_unregister{register} in heartbeat_pm_notifier().
+
+I hope this rough design makes sense :-)
+
 Best regards,
 Jacek Anaszewski
+
+
+On 05/07/2017 04:01 AM, sanshan zhang wrote:
+> From: zhang sanshan <sanshan.zhang@nxp.com>
+> 
+> system can't enter suspend when enable led heartbeat.
+> 
+> pm will call heartbeat_pm_notifier when suspend.
+> system will prepare led states, and led_trigger_unregister
+> will use led_trigger_set to set trigger.
+> kobject_uevent_env will send event,it will call ep_poll_callback
+> to hold a wakeup source if we enable wakelock in kernel.
+> So that system can't enter suspend.
+> 
+> If we set led device tigger to NONE, there is not need to
+> send notification to user space.
+> 
+> Change-Id: I9f7ee5764d7e31b9a225dae5517cb36137675f9d
+> Signed-off-by: zhang sanshan <sanshan.zhang@nxp.com>
+> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
+> ---
+>  drivers/leds/led-triggers.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 431123b..f03c2bd1 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -108,13 +108,10 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+>  	unsigned long flags;
+>  	char *event = NULL;
+>  	char *envp[2];
+> -	const char *name;
+>  
+>  	if (!led_cdev->trigger && !trig)
+>  		return;
+>  
+> -	name = trig ? trig->name : "none";
+> -	event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+>  
+>  	/* Remove any existing trigger */
+>  	if (led_cdev->trigger) {
+> @@ -138,6 +135,10 @@ void led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+>  			trig->activate(led_cdev);
+>  	}
+>  
+> +	if (NULL != trig)
+> +		event = kasprintf(GFP_KERNEL, "TRIGGER=%s", trig->name);
+> +	else
+> +		return;
+>  	if (event) {
+>  		envp[0] = event;
+>  		envp[1] = NULL;
+> 
