@@ -1,32 +1,59 @@
-From: "Thomas Credit Firm" <miorellana@salud.gob.sv>
-Subject: APPLY FOR YOUR URGENT LOAN AT 2%
-Date: Fri, 12 May 2017 11:53:45 +0100
-Message-ID: <20170512105359.BD18E4807243__2780.23179057545$1494587129$gmane$org@mail.salud.gob.sv>
-Reply-To: thomascreditfirm@gmail.com
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH] leds: pca955x: add GPIO support
+Date: Sat, 13 May 2017 13:26:01 +0200
+Message-ID: <20170513112601.GA21785@amd>
+References: <1494311772-21872-1-git-send-email-clg@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail.salud.gob.sv ([190.5.143.2]:60821 "EHLO mail.salud.gob.sv"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757704AbdELLFM (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 12 May 2017 07:05:12 -0400
-Content-Description: Mail message body
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1494311772-21872-1-git-send-email-clg-Bxea+6Xhats@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg-Bxea+6Xhats@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: receipt <miorellana@salud.gob.sv>
 
-* Do you need an urgent loan? We offer all kinds of loan
-* Very fast and urgent transfer to your bank account. 
-* Payment begins (6) months after you get the money in your bank account 
-* Low interest rates 2% 
-* Payment of long-term (1-30 years) duration 
-For more information and loan application form through the Contact now 
 
-E-mail:  Thomascreditfirm@gmail.com 
-Thomas B. Dawson 
-THOMAS CREDIT FIRM
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+On Tue 2017-05-09 08:36:12, C=E9dric Le Goater wrote:
+> The PCA955x family of chips are I2C LED blinkers whose pins not used
+> to control LEDs can be used as general purpose I/Os (GPIOs).
+>=20
+> The following adds support for device tree and Open Firmware to be
+> able do define different operation modes for each pin. See bindings
+> documentation for more details. The pca955x driver is then extended
+> with a gpio_chip when pins are operating in GPIO mode.
+
+Actually.. maybe better solution would be to turn this into GPIO
+driver, and then use gpio-leds on top...?
+
+What is the difference between pin in GPIO mode and pin in LED mode?
+
+     	    	       	       	      	   	    	   Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlkW7UkACgkQMOfwapXb+vKzGACfWXV7JhLdPktnY+YCGt+kb1e/
+K8oAoKW7rBaY4VOH+tA4jYU7DTYUocfQ
+=Syhz
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
