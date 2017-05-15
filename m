@@ -1,59 +1,64 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
 Subject: Re: [PATCH] leds: pca955x: add GPIO support
-Date: Sat, 13 May 2017 13:26:01 +0200
-Message-ID: <20170513112601.GA21785@amd>
+Date: Mon, 15 May 2017 08:29:06 +0200
+Message-ID: <b1834a28-f094-0c46-4ac1-7830575701c7@kaod.org>
 References: <1494311772-21872-1-git-send-email-clg@kaod.org>
+ <20170513112601.GA21785@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1494311772-21872-1-git-send-email-clg-Bxea+6Xhats@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg-Bxea+6Xhats@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from 10.mo4.mail-out.ovh.net ([188.165.33.109]:33384 "EHLO
+        10.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758878AbdEOGp1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 May 2017 02:45:27 -0400
+Received: from player772.ha.ovh.net (b6.ovh.net [213.186.33.56])
+        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 65EDA64D4F
+        for <linux-leds@vger.kernel.org>; Mon, 15 May 2017 08:29:18 +0200 (CEST)
+In-Reply-To: <20170513112601.GA21785@amd>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>
 
+Hello,
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/13/2017 01:26 PM, Pavel Machek wrote:
+> On Tue 2017-05-09 08:36:12, Cédric Le Goater wrote:
+>> The PCA955x family of chips are I2C LED blinkers whose pins not used
+>> to control LEDs can be used as general purpose I/Os (GPIOs).
+>>
+>> The following adds support for device tree and Open Firmware to be
+>> able do define different operation modes for each pin. See bindings
+>> documentation for more details. The pca955x driver is then extended
+>> with a gpio_chip when pins are operating in GPIO mode.
+> 
+> Actually.. maybe better solution would be to turn this into GPIO
+> driver, and then use gpio-leds on top...?
 
-On Tue 2017-05-09 08:36:12, C=E9dric Le Goater wrote:
-> The PCA955x family of chips are I2C LED blinkers whose pins not used
-> to control LEDs can be used as general purpose I/Os (GPIOs).
->=20
-> The following adds support for device tree and Open Firmware to be
-> able do define different operation modes for each pin. See bindings
-> documentation for more details. The pca955x driver is then extended
-> with a gpio_chip when pins are operating in GPIO mode.
+yes probably. We could introduce a new driver for the PCA955[0-3]
+when all pins are in GPIO mode. I have taken the approach of the 
+leds-pca9532 which behaves quite similarly. 
 
-Actually.. maybe better solution would be to turn this into GPIO
-driver, and then use gpio-leds on top...?
+> What is the difference between pin in GPIO mode and pin in LED mode?
 
-What is the difference between pin in GPIO mode and pin in LED mode?
+Well, first of all the PCA955[0-3] are LED blinkers chips, and not 
+GPIO chips. So you have an extra couple registers to set the frequency 
+and the pwm.
 
-     	    	       	       	      	   	    	   Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+As for the pins in GPIO mode, here is what the specs says : 
 
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+- For input, set LEDn to high-impedance (01) and then read the pin 
+  state via the input register.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+- For output, LED output pin is HIGH when the output is programmed 
+  as high-impedance, and LOW when the output is programmed LOW through 
+  the LS register. The output can also be pulse-width controlled when 
+  PWM0 or PWM1 are used.
 
-iEYEARECAAYFAlkW7UkACgkQMOfwapXb+vKzGACfWXV7JhLdPktnY+YCGt+kb1e/
-K8oAoKW7rBaY4VOH+tA4jYU7DTYUocfQ
-=Syhz
------END PGP SIGNATURE-----
+So for output, GPIO control is quite similar to LED control. For input,
+the INPUTx registers need to be read.
 
---1yeeQ81UyVL57Vl7--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+
+C. 
