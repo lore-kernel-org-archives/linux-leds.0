@@ -1,129 +1,41 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH 2/2] leds: trigger: gpio: Use threaded IRQ
-Date: Fri, 26 May 2017 15:17:47 +0200
-Message-ID: <468b1585fa64ee73ed8bea3e274a0816cd4b6160.1495804666.git.jan.kiszka@siemens.com>
-References: <cover.1495804666.git.jan.kiszka@siemens.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1495804666.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1495804666.git.jan.kiszka@siemens.com>
-References: <cover.1495804666.git.jan.kiszka@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED fix for 4.12-rc3
+Date: Fri, 26 May 2017 21:52:39 +0200
+Message-ID: <1495828359-3307-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36542 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933961AbdEZTxh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 26 May 2017 15:53:37 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, tnhuynh@apm.com
 
-This both simplifies the code because we can drop the workqueue
-indirection, and it enables using the trigger for GPIOs that work with
-threaded IRQs themselves.
+Hi Linus,
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- drivers/leds/trigger/ledtrig-gpio.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+Please pull single LED fix for 4.12-rc3.
 
-diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
-index 93d6b82e6437..8891e88d54dd 100644
---- a/drivers/leds/trigger/ledtrig-gpio.c
-+++ b/drivers/leds/trigger/ledtrig-gpio.c
-@@ -14,14 +14,12 @@
- #include <linux/init.h>
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
--#include <linux/workqueue.h>
- #include <linux/leds.h>
- #include <linux/slab.h>
- #include "../leds.h"
- 
- struct gpio_trig_data {
- 	struct led_classdev *led;
--	struct work_struct work;
- 
- 	unsigned desired_brightness;	/* desired brightness when led is on */
- 	unsigned inverted;		/* true when gpio is inverted */
-@@ -32,22 +30,8 @@ static irqreturn_t gpio_trig_irq(int irq, void *_led)
- {
- 	struct led_classdev *led = _led;
- 	struct gpio_trig_data *gpio_data = led->trigger_data;
--
--	/* just schedule_work since gpio_get_value can sleep */
--	schedule_work(&gpio_data->work);
--
--	return IRQ_HANDLED;
--};
--
--static void gpio_trig_work(struct work_struct *work)
--{
--	struct gpio_trig_data *gpio_data = container_of(work,
--			struct gpio_trig_data, work);
- 	int tmp;
- 
--	if (!gpio_data->gpio)
--		return;
--
- 	tmp = gpio_get_value_cansleep(gpio_data->gpio);
- 	if (gpio_data->inverted)
- 		tmp = !tmp;
-@@ -61,6 +45,8 @@ static void gpio_trig_work(struct work_struct *work)
- 	} else {
- 		led_set_brightness_nosleep(gpio_data->led, LED_OFF);
- 	}
-+
-+	return IRQ_HANDLED;
- }
- 
- static ssize_t gpio_trig_brightness_show(struct device *dev,
-@@ -120,7 +106,7 @@ static ssize_t gpio_trig_inverted_store(struct device *dev,
- 	gpio_data->inverted = inverted;
- 
- 	/* After inverting, we need to update the LED. */
--	schedule_work(&gpio_data->work);
-+	gpio_trig_irq(0, led);
- 
- 	return n;
- }
-@@ -147,7 +133,6 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
- 	ret = sscanf(buf, "%u", &gpio);
- 	if (ret < 1) {
- 		dev_err(dev, "couldn't read gpio number\n");
--		flush_work(&gpio_data->work);
- 		return -EINVAL;
- 	}
- 
-@@ -161,8 +146,8 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
- 		return n;
- 	}
- 
--	ret = request_irq(gpio_to_irq(gpio), gpio_trig_irq,
--			IRQF_SHARED | IRQF_TRIGGER_RISING
-+	ret = request_threaded_irq(gpio_to_irq(gpio), NULL, gpio_trig_irq,
-+			IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_RISING
- 			| IRQF_TRIGGER_FALLING, "ledtrig-gpio", led);
- 	if (ret) {
- 		dev_err(dev, "request_irq failed with error %d\n", ret);
-@@ -171,7 +156,7 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
- 			free_irq(gpio_to_irq(gpio_data->gpio), led);
- 		gpio_data->gpio = gpio;
- 		/* After changing the GPIO, we need to update the LED. */
--		schedule_work(&gpio_data->work);
-+		gpio_trig_irq(0, led);
- 	}
- 
- 	return ret ? ret : n;
-@@ -201,7 +186,6 @@ static void gpio_trig_activate(struct led_classdev *led)
- 
- 	gpio_data->led = led;
- 	led->trigger_data = gpio_data;
--	INIT_WORK(&gpio_data->work, gpio_trig_work);
- 	led->activated = true;
- 
- 	return;
-@@ -224,7 +208,6 @@ static void gpio_trig_deactivate(struct led_classdev *led)
- 		device_remove_file(led->dev, &dev_attr_gpio);
- 		device_remove_file(led->dev, &dev_attr_inverted);
- 		device_remove_file(led->dev, &dev_attr_desired_brightness);
--		flush_work(&gpio_data->work);
- 		if (gpio_data->gpio != 0)
- 			free_irq(gpio_to_irq(gpio_data->gpio), led);
- 		kfree(gpio_data);
--- 
-2.12.0
+leds-pca955x driver uses only i2c_smbus API and thus it should pass
+I2C_FUNC_SMBUS_BYTE_DATA flag to i2c_check_functionality().
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led_fixes_for_4-12-rc3
+
+for you to fetch changes up to aace34c0bb8ea3c8bdcec865b6a4be4db0a68e33:
+
+  leds: pca955x: Correct I2C Functionality (2017-05-22 21:12:44 +0200)
+
+Best regards,
+Jacek Anaszewski
+
+Tin Huynh (1):
+      leds: pca955x: Correct I2C Functionality
+
+ drivers/leds/leds-pca955x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
