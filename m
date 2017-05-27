@@ -1,41 +1,44 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fix for 4.12-rc3
-Date: Fri, 26 May 2017 21:52:39 +0200
-Message-ID: <1495828359-3307-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 0/2] leds: trigger: gpio: Add update point / use threaded IRQ
+Date: Sat, 27 May 2017 18:02:31 +0300
+Message-ID: <CAHp75VdCiMoJjBg3UTSXoAoTZsDDhWYrzeHYV8Yds1hF4oX6xw@mail.gmail.com>
+References: <cover.1495804666.git.jan.kiszka@siemens.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36542 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933961AbdEZTxh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 26 May 2017 15:53:37 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:35857 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751209AbdE0PCd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 27 May 2017 11:02:33 -0400
+In-Reply-To: <cover.1495804666.git.jan.kiszka@siemens.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, tnhuynh@apm.com
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Linus,
+On Fri, May 26, 2017 at 4:17 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> See patches for details.
+>
 
-Please pull single LED fix for 4.12-rc3.
+FWIW:
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-leds-pca955x driver uses only i2c_smbus API and thus it should pass
-I2C_FUNC_SMBUS_BYTE_DATA flag to i2c_check_functionality().
+P.S. Of course it would be also nice to convert to GPIO descriptors,
+though it's not related to this series.
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> Jan Kiszka (2):
+>   leds: trigger: gpio: Refresh LED state after GPIO change
+>   leds: trigger: gpio: Use threaded IRQ
+>
+>  drivers/leds/trigger/ledtrig-gpio.c | 29 +++++++----------------------
+>  1 file changed, 7 insertions(+), 22 deletions(-)
+>
+> --
+> 2.12.0
+>
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led_fixes_for_4-12-rc3
-
-for you to fetch changes up to aace34c0bb8ea3c8bdcec865b6a4be4db0a68e33:
-
-  leds: pca955x: Correct I2C Functionality (2017-05-22 21:12:44 +0200)
-
-Best regards,
-Jacek Anaszewski
-
-Tin Huynh (1):
-      leds: pca955x: Correct I2C Functionality
-
- drivers/leds/leds-pca955x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- 
+With Best Regards,
+Andy Shevchenko
