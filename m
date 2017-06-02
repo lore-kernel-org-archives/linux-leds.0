@@ -1,36 +1,49 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V1 1/2] leds: leds-qti-rgb: Add LED driver for QTI TRI_LED
- module
-Date: Thu, 1 Jun 2017 21:31:40 +0200
-Message-ID: <2c01fa38-b711-56af-5458-e726540d37ea@gmail.com>
-References: <20170531061541.10808-1-fenglinw@codeaurora.org>
- <20170531061541.10808-2-fenglinw@codeaurora.org> <20170531075536.GA13028@amd>
- <001301d2d9e7$3102b720$93082560$@codeaurora.org> <20170531165540.GA9371@amd>
- <002d01d2da6e$42a987b0$c7fc9710$@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <002d01d2da6e$42a987b0$c7fc9710$@codeaurora.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wu Fenglin <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, 'Pavel Machek' <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Richard Purdie' <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, 'Rob Herring' <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Mark Rutland' <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, subbaram-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, aghayal-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org, wruan-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, kgunda-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Subject: [PATCH] leds: bcm6328: fix signal source assignment for leds 4 to 7
+Date: Fri,  2 Jun 2017 14:17:05 +0200
+Message-ID: <20170602121705.9645-1-jonas.gorski@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35374 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbdFBMRH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Jun 2017 08:17:07 -0400
+Received: by mail-wm0-f68.google.com with SMTP id g15so18610774wmc.2
+        for <linux-leds@vger.kernel.org>; Fri, 02 Jun 2017 05:17:06 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-Hi Wu,
+Each nibble represents 4 LEDs, and in case of the higher register, bit 0
+represents LED 4, so we need to use modulus for the LED number as well.
 
-On 06/01/2017 02:30 AM, Wu Fenglin wrote:
-> Thanks Pavel.
-> I will remove these two dts properties and define the default on/off time
-> values in C code.
+Fixes: fd7b025a238d0a5440bfa26c585eb78097bf48dc ("leds: add BCM6328 LED driver")
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+ drivers/leds/leds-bcm6328.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-There are many things to sort out regarding your patch. I'll be able to
-give you a detailed feedback probably no sooner than at the weekend.
-
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 1548259297c1..2cfd9389ee96 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -242,7 +242,7 @@ static int bcm6328_hwled(struct device *dev, struct device_node *nc, u32 reg,
+ 
+ 		spin_lock_irqsave(lock, flags);
+ 		val = bcm6328_led_read(addr);
+-		val |= (BIT(reg) << (((sel % 4) * 4) + 16));
++		val |= (BIT(reg % 4) << (((sel % 4) * 4) + 16));
+ 		bcm6328_led_write(addr, val);
+ 		spin_unlock_irqrestore(lock, flags);
+ 	}
+@@ -269,7 +269,7 @@ static int bcm6328_hwled(struct device *dev, struct device_node *nc, u32 reg,
+ 
+ 		spin_lock_irqsave(lock, flags);
+ 		val = bcm6328_led_read(addr);
+-		val |= (BIT(reg) << ((sel % 4) * 4));
++		val |= (BIT(reg % 4) << ((sel % 4) * 4));
+ 		bcm6328_led_write(addr, val);
+ 		spin_unlock_irqrestore(lock, flags);
+ 	}
 -- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.11.0
