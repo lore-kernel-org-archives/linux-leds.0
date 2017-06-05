@@ -1,168 +1,218 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: Remove SEAD-3 driver
-Date: Sun, 4 Jun 2017 20:54:17 +0200
-Message-ID: <719d876e-2ec6-c33b-43eb-74800523837c@gmail.com>
-References: <20170602220007.6927-1-paul.burton@imgtec.com>
+Subject: Re: [[PATCH]] drivers: leds/trigger: system cannot enter suspend
+Date: Mon, 5 Jun 2017 21:27:18 +0200
+Message-ID: <9d1f4e47-0713-043a-4359-db8f856e0b0e@gmail.com>
+References: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35994 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbdFDSzC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 4 Jun 2017 14:55:02 -0400
-Received: by mail-wm0-f66.google.com with SMTP id k15so26743826wmh.3
-        for <linux-leds@vger.kernel.org>; Sun, 04 Jun 2017 11:55:01 -0700 (PDT)
-In-Reply-To: <20170602220007.6927-1-paul.burton@imgtec.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36134 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751181AbdFET2E (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Jun 2017 15:28:04 -0400
+Received: by mail-wm0-f65.google.com with SMTP id k15so31463072wmh.3
+        for <linux-leds@vger.kernel.org>; Mon, 05 Jun 2017 12:28:03 -0700 (PDT)
+In-Reply-To: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Paul Burton <paul.burton@imgtec.com>, linux-leds@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>, Ralf Baechle <ralf@linux-mips.org>, Richard Purdie <rpurdie@rpsys.net>, linux-mips@linux-mips.org
+To: Zhang Bo <bo.zhang@nxp.com>, linux-arm-kernel@lists.infradead.org
+Cc: pavel@ucw.cz, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Paul,
+Hi Zhang,
 
-On 06/03/2017 12:00 AM, Paul Burton wrote:
-> SEAD3 is using the generic syscon & regmap based register-bit-led
-> driver as of commit c764583f40b8 ("MIPS: SEAD3: Use register-bit-led
-> driver via DT for LEDs") merged in the v4.9 cycle. As such the custom
-> SEAD-3 LED driver is now unused, so remove it.
+Thanks for the patch. It seems to be almost ready to merge.
+Just two issues below.
+
+Please also always cc linux-leds@vger.kernel.org when modifying
+LED subsystem.
+
+On 06/05/2017 09:36 AM, Zhang Bo wrote:
+> System cannot enter suspend mode because of heartbeat led trigger.
+> Heartbeat_pm_notifier is called when system prepare to enter suspend
+> mode, then call led_trigger_unregister to change the trigger of led device
+> to none. It will send uevent message and the wakeup source count changed.
 > 
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
+> Add suspend/resume ops to the struct led_trigger, implement these two ops
+> for ledtrig-heartbeat. Add led_trigger_suspend/led_trigger_resume funcitons
+> to iterate through all LED class devices registered on given trigger and
+> call their suspend/resume ops and disable/enable sysfs at the same time.
 > 
+> Call led_trigger_suspend{resuem} API in pm_notifier function to
+> suspend/resume all led devices listed in given trigger.
+> 
+> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
 > ---
-> 
->  drivers/leds/Kconfig      | 10 ------
->  drivers/leds/Makefile     |  1 -
->  drivers/leds/leds-sead3.c | 78 -----------------------------------------------
->  3 files changed, 89 deletions(-)
->  delete mode 100644 drivers/leds/leds-sead3.c
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 6c2999872090..1e47b9182c33 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -590,16 +590,6 @@ config LEDS_KTD2692
->  
->  	  Say Y to enable this driver.
->  
-> -config LEDS_SEAD3
-> -	tristate "LED support for the MIPS SEAD 3 board"
-> -	depends on LEDS_CLASS && MIPS_SEAD3
-> -	help
-> -	  Say Y here to include support for the FLED and PLED LEDs on SEAD3 eval
-> -	  boards.
-> -
-> -	  This driver can also be built as a module. If so the module
-> -	  will be called leds-sead3.
-> -
->  config LEDS_IS31FL319X
->  	tristate "LED Support for ISSI IS31FL319x I2C LED controller family"
->  	depends on LEDS_CLASS && I2C && OF
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 45f133962ed8..8c056dd047e2 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -66,7 +66,6 @@ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
->  obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
->  obj-$(CONFIG_LEDS_KTD2692)		+= leds-ktd2692.o
->  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
-> -obj-$(CONFIG_LEDS_SEAD3)		+= leds-sead3.o
->  obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
->  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
->  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
-> diff --git a/drivers/leds/leds-sead3.c b/drivers/leds/leds-sead3.c
-> deleted file mode 100644
-> index eb97a3271bb3..000000000000
-> --- a/drivers/leds/leds-sead3.c
-> +++ /dev/null
-> @@ -1,78 +0,0 @@
-> -/*
-> - * This file is subject to the terms and conditions of the GNU General Public
-> - * License.  See the file "COPYING" in the main directory of this archive
-> - * for more details.
-> - *
-> - * Copyright (C) 2012 MIPS Technologies, Inc.  All rights reserved.
-> - * Copyright (C) 2015 Imagination Technologies, Inc.
-> - */
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/leds.h>
-> -#include <linux/err.h>
-> -#include <linux/io.h>
-> -
-> -#include <asm/mips-boards/sead3-addr.h>
-> -
-> -static void sead3_pled_set(struct led_classdev *led_cdev,
-> -		enum led_brightness value)
-> -{
-> -	writel(value, (void __iomem *)SEAD3_CPLD_P_LED);
-> -}
-> -
-> -static void sead3_fled_set(struct led_classdev *led_cdev,
-> -		enum led_brightness value)
-> -{
-> -	writel(value, (void __iomem *)SEAD3_CPLD_F_LED);
-> -}
-> -
-> -static struct led_classdev sead3_pled = {
-> -	.name		= "sead3::pled",
-> -	.brightness_set = sead3_pled_set,
-> -	.flags		= LED_CORE_SUSPENDRESUME,
-> -};
-> -
-> -static struct led_classdev sead3_fled = {
-> -	.name		= "sead3::fled",
-> -	.brightness_set = sead3_fled_set,
-> -	.flags		= LED_CORE_SUSPENDRESUME,
-> -};
-> -
-> -static int sead3_led_probe(struct platform_device *pdev)
-> -{
-> -	int ret;
-> -
-> -	ret = led_classdev_register(&pdev->dev, &sead3_pled);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = led_classdev_register(&pdev->dev, &sead3_fled);
-> -	if (ret < 0)
-> -		led_classdev_unregister(&sead3_pled);
-> -
-> -	return ret;
-> -}
-> -
-> -static int sead3_led_remove(struct platform_device *pdev)
-> -{
-> -	led_classdev_unregister(&sead3_pled);
-> -	led_classdev_unregister(&sead3_fled);
-> -
-> -	return 0;
-> -}
-> -
-> -static struct platform_driver sead3_led_driver = {
-> -	.probe		= sead3_led_probe,
-> -	.remove		= sead3_led_remove,
-> -	.driver		= {
-> -		.name		= "sead3-led",
-> -	},
-> -};
-> -
-> -module_platform_driver(sead3_led_driver);
-> -
-> -MODULE_AUTHOR("Kristian Kielhofner <kris@krisk.org>");
-> -MODULE_DESCRIPTION("SEAD3 LED driver");
-> -MODULE_LICENSE("GPL");
-> 
+>  drivers/leds/led-triggers.c              | 34 +++++++++++++++++++++++++++++++
+>  drivers/leds/trigger/ledtrig-heartbeat.c | 35 ++++++++++++++++++++++++++------
+>  include/linux/leds.h                     |  6 ++++++
+>  3 files changed, 69 insertions(+), 6 deletions(-)
+>  mode change 100644 => 100755 drivers/leds/led-triggers.c
+>  mode change 100644 => 100755 drivers/leds/trigger/ledtrig-heartbeat.c
+>  mode change 100644 => 100755 include/linux/leds.h
 
-Applied, thanks.
+You accidentally changed file permissions.
+
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> old mode 100644
+> new mode 100755
+> index 431123b..1cb1674
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -333,6 +333,40 @@ void led_trigger_blink_oneshot(struct led_trigger *trig,
+>  }
+>  EXPORT_SYMBOL_GPL(led_trigger_blink_oneshot);
+>  
+> +void led_trigger_suspend(struct led_trigger *trig)
+> +{
+> +	struct led_classdev *led_cdev;
+> +
+> +	if (!trig)
+> +		return;
+> +
+> +	read_lock(&trig->leddev_list_lock);
+> +	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
+> +		if (led_cdev->trigger->suspend)
+> +			led_cdev->trigger->suspend(led_cdev);
+> +		led_sysfs_disable(led_cdev);
+
+Could you share what kind of problem this call to led_syfs_disable()
+solves? Did you come across one?
+
+> +	}
+> +	read_unlock(&trig->leddev_list_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_suspend);
+> +
+> +void led_trigger_resume(struct led_trigger *trig)
+> +{
+> +	struct led_classdev *led_cdev;
+> +
+> +	if (!trig)
+> +		return;
+> +
+> +	read_lock(&trig->leddev_list_lock);
+> +	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
+> +		if (led_cdev->trigger->resume)
+> +			led_cdev->trigger->resume(led_cdev);
+> +		led_sysfs_enable(led_cdev);
+> +	}
+> +	read_unlock(&trig->leddev_list_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_resume);
+> +
+>  void led_trigger_register_simple(const char *name, struct led_trigger **tp)
+>  {
+>  	struct led_trigger *trig;
+> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
+> old mode 100644
+> new mode 100755
+> index afa3b40..8f779dd
+> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
+> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
+> @@ -142,6 +142,7 @@ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
+>  	led_heartbeat_function(heartbeat_data->timer.data);
+>  	set_bit(LED_BLINK_SW, &led_cdev->work_flags);
+>  	led_cdev->activated = true;
+> +	led_cdev->suspended = false;
+>  }
+>  
+>  static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
+> @@ -154,6 +155,30 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
+>  		kfree(heartbeat_data);
+>  		clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
+>  		led_cdev->activated = false;
+> +		led_cdev->suspended = false;
+> +	}
+> +}
+> +
+> +static void heartbeat_trig_resume(struct led_classdev *led_cdev)
+> +{
+> +	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
+> +
+> +	if (led_cdev->suspended) {
+> +		setup_timer(&heartbeat_data->timer,
+> +			    led_heartbeat_function, (unsigned long) led_cdev);
+> +		heartbeat_data->phase = 0;
+> +		led_heartbeat_function(heartbeat_data->timer.data);
+> +		led_cdev->suspended = false;
+> +	}
+> +}
+> +
+> +static void heartbeat_trig_suspend(struct led_classdev *led_cdev)
+> +{
+> +	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
+> +
+> +	if (led_cdev->activated && !led_cdev->suspended) {
+> +		del_timer_sync(&heartbeat_data->timer);
+> +		led_cdev->suspended = true;
+>  	}
+>  }
+>  
+> @@ -161,25 +186,23 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
+>  	.name     = "heartbeat",
+>  	.activate = heartbeat_trig_activate,
+>  	.deactivate = heartbeat_trig_deactivate,
+> +	.suspend = heartbeat_trig_suspend,
+> +	.resume = heartbeat_trig_resume,
+>  };
+>  
+>  static int heartbeat_pm_notifier(struct notifier_block *nb,
+>  				 unsigned long pm_event, void *unused)
+>  {
+> -	int rc;
+> -
+>  	switch (pm_event) {
+>  	case PM_SUSPEND_PREPARE:
+>  	case PM_HIBERNATION_PREPARE:
+>  	case PM_RESTORE_PREPARE:
+> -		led_trigger_unregister(&heartbeat_led_trigger);
+> +		led_trigger_suspend(&heartbeat_led_trigger);
+>  		break;
+>  	case PM_POST_SUSPEND:
+>  	case PM_POST_HIBERNATION:
+>  	case PM_POST_RESTORE:
+> -		rc = led_trigger_register(&heartbeat_led_trigger);
+> -		if (rc)
+> -			pr_err("could not re-register heartbeat trigger\n");
+> +		led_trigger_resume(&heartbeat_led_trigger);
+>  		break;
+>  	default:
+>  		break;
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> old mode 100644
+> new mode 100755
+> index 64c56d4..b792950
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -111,6 +111,7 @@ struct led_classdev {
+>  	void			*trigger_data;
+>  	/* true if activated - deactivate routine uses it to do cleanup */
+>  	bool			activated;
+> +	bool			suspended;
+>  #endif
+>  
+>  #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+> @@ -254,6 +255,8 @@ struct led_trigger {
+>  	const char	 *name;
+>  	void		(*activate)(struct led_classdev *led_cdev);
+>  	void		(*deactivate)(struct led_classdev *led_cdev);
+> +	void		(*suspend)(struct led_classdev *led_cdev);
+> +	void		(*resume)(struct led_classdev *led_cdev);
+>  
+>  	/* LEDs under control by this trigger (for simple triggers) */
+>  	rwlock_t	  leddev_list_lock;
+> @@ -291,6 +294,9 @@ extern void led_trigger_set(struct led_classdev *led_cdev,
+>  			struct led_trigger *trigger);
+>  extern void led_trigger_remove(struct led_classdev *led_cdev);
+>  
+> +extern void led_trigger_suspend(struct led_trigger *trig);
+> +extern void led_trigger_resume(struct led_trigger *trig);
+> +
+>  static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
+>  {
+>  	return led_cdev->trigger_data;
+> 
 
 -- 
 Best regards,
