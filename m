@@ -1,219 +1,70 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [[PATCH]] drivers: leds/trigger: system cannot enter suspend
-Date: Mon, 5 Jun 2017 21:27:18 +0200
-Message-ID: <9d1f4e47-0713-043a-4359-db8f856e0b0e@gmail.com>
-References: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] leds: leds-qti-rgb: Add LED driver for QTI
+ TRI_LED module
+Date: Mon, 5 Jun 2017 23:16:09 +0200
+Message-ID: <20170605211609.GA9035@amd>
+References: <20170601072723.12760-1-fenglinw@codeaurora.org>
+ <8058ed85-5a64-8dc3-99ea-1ad8128e043d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36134 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751181AbdFET2E (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Jun 2017 15:28:04 -0400
-Received: by mail-wm0-f65.google.com with SMTP id k15so31463072wmh.3
-        for <linux-leds@vger.kernel.org>; Mon, 05 Jun 2017 12:28:03 -0700 (PDT)
-In-Reply-To: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <8058ed85-5a64-8dc3-99ea-1ad8128e043d-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, subbaram-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, aghayal-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org, wruan-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, kgunda-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Zhang Bo <bo.zhang@nxp.com>, linux-arm-kernel@lists.infradead.org
-Cc: pavel@ucw.cz, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Zhang,
 
-Thanks for the patch. It seems to be almost ready to merge.
-Just two issues below.
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please also always cc linux-leds@vger.kernel.org when modifying
-LED subsystem.
+Hi!
 
-On 06/05/2017 09:36 AM, Zhang Bo wrote:
-> System cannot enter suspend mode because of heartbeat led trigger.
-> Heartbeat_pm_notifier is called when system prepare to enter suspend
-> mode, then call led_trigger_unregister to change the trigger of led device
-> to none. It will send uevent message and the wakeup source count changed.
-> 
-> Add suspend/resume ops to the struct led_trigger, implement these two ops
-> for ledtrig-heartbeat. Add led_trigger_suspend/led_trigger_resume funcitons
-> to iterate through all LED class devices registered on given trigger and
-> call their suspend/resume ops and disable/enable sysfs at the same time.
-> 
-> Call led_trigger_suspend{resuem} API in pm_notifier function to
-> suspend/resume all led devices listed in given trigger.
-> 
-> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
-> ---
->  drivers/leds/led-triggers.c              | 34 +++++++++++++++++++++++++++++++
->  drivers/leds/trigger/ledtrig-heartbeat.c | 35 ++++++++++++++++++++++++++------
->  include/linux/leds.h                     |  6 ++++++
->  3 files changed, 69 insertions(+), 6 deletions(-)
->  mode change 100644 => 100755 drivers/leds/led-triggers.c
->  mode change 100644 => 100755 drivers/leds/trigger/ledtrig-heartbeat.c
->  mode change 100644 => 100755 include/linux/leds.h
+> Generally I came to a conclusion that it will be best to register
+> additional LED RGB class device in an addition to three LED class
+> devices representing each color. In order to avoid hard to solve
+> locking problems I propose to allow for simultaneous access to LED
+> class devices and LED RGB class device gathering them.
+>=20
+> All in all, currently we also don't give an exclusive access to
+> a particular LED class device, which always can lead to overwriting
+> current brightness by another process. These issues must be arbitrated
+> by user space.
+>=20
+> I propose that LED RGB class device exposed following files:
+>=20
+> - red_brightness
+> - green_brightness
+> - blue_brightness
+> - latch_color
 
-You accidentally changed file permissions.
+Actually, I'd just do single file, "rgb_brightness" with 3
+values. Overhead of writing 3 values is pretty much 0.
+									Pavel
 
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> old mode 100644
-> new mode 100755
-> index 431123b..1cb1674
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -333,6 +333,40 @@ void led_trigger_blink_oneshot(struct led_trigger *trig,
->  }
->  EXPORT_SYMBOL_GPL(led_trigger_blink_oneshot);
->  
-> +void led_trigger_suspend(struct led_trigger *trig)
-> +{
-> +	struct led_classdev *led_cdev;
-> +
-> +	if (!trig)
-> +		return;
-> +
-> +	read_lock(&trig->leddev_list_lock);
-> +	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
-> +		if (led_cdev->trigger->suspend)
-> +			led_cdev->trigger->suspend(led_cdev);
-> +		led_sysfs_disable(led_cdev);
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Could you share what kind of problem this call to led_syfs_disable()
-solves? Did you come across one?
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> +	}
-> +	read_unlock(&trig->leddev_list_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(led_trigger_suspend);
-> +
-> +void led_trigger_resume(struct led_trigger *trig)
-> +{
-> +	struct led_classdev *led_cdev;
-> +
-> +	if (!trig)
-> +		return;
-> +
-> +	read_lock(&trig->leddev_list_lock);
-> +	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
-> +		if (led_cdev->trigger->resume)
-> +			led_cdev->trigger->resume(led_cdev);
-> +		led_sysfs_enable(led_cdev);
-> +	}
-> +	read_unlock(&trig->leddev_list_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(led_trigger_resume);
-> +
->  void led_trigger_register_simple(const char *name, struct led_trigger **tp)
->  {
->  	struct led_trigger *trig;
-> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
-> old mode 100644
-> new mode 100755
-> index afa3b40..8f779dd
-> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
-> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-> @@ -142,6 +142,7 @@ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
->  	led_heartbeat_function(heartbeat_data->timer.data);
->  	set_bit(LED_BLINK_SW, &led_cdev->work_flags);
->  	led_cdev->activated = true;
-> +	led_cdev->suspended = false;
->  }
->  
->  static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
-> @@ -154,6 +155,30 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
->  		kfree(heartbeat_data);
->  		clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
->  		led_cdev->activated = false;
-> +		led_cdev->suspended = false;
-> +	}
-> +}
-> +
-> +static void heartbeat_trig_resume(struct led_classdev *led_cdev)
-> +{
-> +	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
-> +
-> +	if (led_cdev->suspended) {
-> +		setup_timer(&heartbeat_data->timer,
-> +			    led_heartbeat_function, (unsigned long) led_cdev);
-> +		heartbeat_data->phase = 0;
-> +		led_heartbeat_function(heartbeat_data->timer.data);
-> +		led_cdev->suspended = false;
-> +	}
-> +}
-> +
-> +static void heartbeat_trig_suspend(struct led_classdev *led_cdev)
-> +{
-> +	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
-> +
-> +	if (led_cdev->activated && !led_cdev->suspended) {
-> +		del_timer_sync(&heartbeat_data->timer);
-> +		led_cdev->suspended = true;
->  	}
->  }
->  
-> @@ -161,25 +186,23 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
->  	.name     = "heartbeat",
->  	.activate = heartbeat_trig_activate,
->  	.deactivate = heartbeat_trig_deactivate,
-> +	.suspend = heartbeat_trig_suspend,
-> +	.resume = heartbeat_trig_resume,
->  };
->  
->  static int heartbeat_pm_notifier(struct notifier_block *nb,
->  				 unsigned long pm_event, void *unused)
->  {
-> -	int rc;
-> -
->  	switch (pm_event) {
->  	case PM_SUSPEND_PREPARE:
->  	case PM_HIBERNATION_PREPARE:
->  	case PM_RESTORE_PREPARE:
-> -		led_trigger_unregister(&heartbeat_led_trigger);
-> +		led_trigger_suspend(&heartbeat_led_trigger);
->  		break;
->  	case PM_POST_SUSPEND:
->  	case PM_POST_HIBERNATION:
->  	case PM_POST_RESTORE:
-> -		rc = led_trigger_register(&heartbeat_led_trigger);
-> -		if (rc)
-> -			pr_err("could not re-register heartbeat trigger\n");
-> +		led_trigger_resume(&heartbeat_led_trigger);
->  		break;
->  	default:
->  		break;
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> old mode 100644
-> new mode 100755
-> index 64c56d4..b792950
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -111,6 +111,7 @@ struct led_classdev {
->  	void			*trigger_data;
->  	/* true if activated - deactivate routine uses it to do cleanup */
->  	bool			activated;
-> +	bool			suspended;
->  #endif
->  
->  #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-> @@ -254,6 +255,8 @@ struct led_trigger {
->  	const char	 *name;
->  	void		(*activate)(struct led_classdev *led_cdev);
->  	void		(*deactivate)(struct led_classdev *led_cdev);
-> +	void		(*suspend)(struct led_classdev *led_cdev);
-> +	void		(*resume)(struct led_classdev *led_cdev);
->  
->  	/* LEDs under control by this trigger (for simple triggers) */
->  	rwlock_t	  leddev_list_lock;
-> @@ -291,6 +294,9 @@ extern void led_trigger_set(struct led_classdev *led_cdev,
->  			struct led_trigger *trigger);
->  extern void led_trigger_remove(struct led_classdev *led_cdev);
->  
-> +extern void led_trigger_suspend(struct led_trigger *trig);
-> +extern void led_trigger_resume(struct led_trigger *trig);
-> +
->  static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
->  {
->  	return led_cdev->trigger_data;
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
--- 
-Best regards,
-Jacek Anaszewski
+iEYEARECAAYFAlk1yhkACgkQMOfwapXb+vIAwACgjhajnN742qdDzvMP2Pq4zDbZ
+i6YAn2sKMgy6i+eD1ReaFXeJK3+5p3mt
+=l7qr
+-----END PGP SIGNATURE-----
+
+--FCuugMFkClbJLl1L--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
