@@ -1,74 +1,100 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V4 1/2] dt-bindings: leds: document new trigger-sources
- property
-Date: Wed, 7 Jun 2017 16:00:43 -0500
-Message-ID: <20170607210043.4uf6zltvppzx5nso@rob-hp-laptop>
-References: <20170529140142.13496-2-zajec5@gmail.com>
- <20170530092706.927-1-zajec5@gmail.com>
- <20170530092706.927-2-zajec5@gmail.com>
+Subject: Re: [PATCH V2 1/2] leds: leds-qti-rgb: Add LED driver for QTI
+ TRI_LED module
+Date: Wed, 7 Jun 2017 17:08:17 -0500
+Message-ID: <20170607220817.psmcljxaqlwrqxnm@rob-hp-laptop>
+References: <20170601072723.12760-1-fenglinw@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170530092706.927-2-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20170601072723.12760-1-fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+To: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, subbaram-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, aghayal-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org, wruan-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, kgunda-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, May 30, 2017 at 11:27:04AM +0200, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+On Thu, Jun 01, 2017 at 03:25:01PM +0800, fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org wrote:
+> From: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 > 
-> Some LEDs can be related to a specific device(s) described in the DT.
-> This property allows specifying such relations. E.g. USB LED should
-> usually be used to indicate some USB port(s) state.
+> QTI TRI_LED module has 3 current sinks for LED driver and each is
+> controlled by a PWM channel used for LED dimming or blinking. Add
+> the driver to support it.
 > 
-> Please note this binding is designed to be generic and not influenced by
-> any operating system design. Linux developers may find "trigger" part a
-> bit confusing since in Linux triggers are separated drivers. It
-> shouldn't define the binding though (we shouldn't add an extra level of
-> indirection).
-> 
-> Signed-off-by: Rafał Miłecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+> Signed-off-by: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 > ---
-> V2: Replace "usb-ports" with "led-triggers" property which is more generic and
->     allows specifying other devices as well.
-> V3: Use "trigger-sources" which is even more accurate as devices aren't
->     precisely triggers.
-> V4: Update example to use the correct property
-> ---
->  Documentation/devicetree/bindings/leds/common.txt | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  .../devicetree/bindings/leds/leds-qti-rgb.txt      |  46 ++
+
+It's preferred to make bindings a separate patch.
+
+>  drivers/leds/Kconfig                               |   8 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-qti-rgb.c                        | 623 +++++++++++++++++++++
+>  4 files changed, 678 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
+>  create mode 100644 drivers/leds/leds-qti-rgb.c
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> index 24b656014089..7efaa2cff624 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -49,6 +49,19 @@ Optional properties for child nodes:
->  - panic-indicator : This property specifies that the LED should be used,
->  		    if at all possible, as a panic indicator.
->  
-> +- trigger-sources : List of devices which should be used as a source triggering
-> +		    this LED activity. Some LEDs can be related to a specific
-> +		    device and should somehow indicate its state. E.g. USB 2.0
-> +		    LED may react to device(s) in a USB 2.0 port(s).
-> +		    Another common example is switch or router with multiple
-> +		    Ethernet ports each of them having its own LED assigned
-> +		    (assuming they are not hardwired). In such cases this
-> +		    property should contain phandle(s) of related source
-> +		    device(s).
-> +		    In many cases LED can be related to more than one device
-> +		    (e.g. one USB LED vs. multiple USB ports) so a list of
-> +		    sources can be specified.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt b/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
+> new file mode 100644
+> index 0000000..2ca93f9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
+> @@ -0,0 +1,46 @@
+> +Qualcomm Technologies, Inc. TRI_LED driver specific bindings
 > +
+> +This binding document describes the properties of TRI_LED module in
+> +Qualcomm Technologies, Inc. PMIC chips.
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: Must be "qcom,leds-rgb".
 
-Where's #source-cells documented?
+If the block is called TRI_LED, then use "tri-led" in the name.
 
-I really prefer if we have consistency in naming with "<prop>s" and 
-"#<prop>-cells". #source-cells is also not very clear what it is for. 
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: Register base of the TRI_LED module and length.
+> +
+> +- pwm-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: A list of string to label the PWM devices defined in pwms
+> +		property which are using for controlling LEDs.
+> +		It must be: "red", "green", "blue".
+> +
+> +- pwms:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: A list of the PWM devices (phandles) used for controlling
+> +		LEDs.
+> +
+> +- qcom,support-blink:
+> +	Usage: optional
+> +	Value type: <prop-encoded-array>
+> +	Definition: An array of integer values to indicate if "red", "green",
+> +		"blue" LED support blink control. The values are listed as
+> +		the fixed order for "red", "green", "blue" LED.
+> +
+> +Example:
+> +
+> +	pmi8998_rgb: rgb@d000{
 
-Rob
+Need to state somewhere this must be a sub-node of the PMIC and show 
+that here.
+
+Also, need a space before {.
+
+> +		compatible = "qcom,leds-rgb";
+> +		reg = <0xd000 0x100>;
+> +		pwm-names = "red", "green", "blue";
+> +		pwms =  <&pmi8998_pwm_5 0 1000000>,
+> +			<&pmi8998_pwm_4 0 1000000>,
+> +			<&pmi8998_pwm_3 0 1000000>;
+> +		qcom,support-blink = <1 1 1>;
+> +	};
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
