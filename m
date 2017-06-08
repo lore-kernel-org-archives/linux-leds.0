@@ -1,208 +1,67 @@
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH 4/4] mfd: tps65217: Instantiate sub-devices from device tree
-Date: Thu, 8 Jun 2017 15:16:11 +0200
-Message-ID: <CAFqH_53v32iODN4xhoh4ho4s6grxknEDS3Ak6CHBcTAQo6fDNw@mail.gmail.com>
-References: <20170607103242.16008-1-enric.balletbo@collabora.com>
- <20170607103242.16008-4-enric.balletbo@collabora.com> <6359abe2-9a21-78a2-f5ea-87e2e3335af3@ti.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH V5 0/2] usb: introduce "trigger-sources" DT property for usbport trigger
+Date: Thu,  8 Jun 2017 18:08:30 +0200
+Message-ID: <20170608160833.1567-1-zajec5@gmail.com>
+References: <20170530092706.927-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6359abe2-9a21-78a2-f5ea-87e2e3335af3@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, linux-input@vger.kernel.org, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34457 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750919AbdFHQJA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Jun 2017 12:09:00 -0400
+In-Reply-To: <20170530092706.927-1-zajec5@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 
-2017-06-07 18:05 GMT+02:00 Grygorii Strashko <grygorii.strashko@ti.com>:
->
->
-> On 06/07/2017 05:32 AM, Enric Balletbo i Serra wrote:
->> The driver boots only via device tree but currently all the MFD sub-devices
->> are instatiated independently of the device tree configuration, i.e
->> although tps65217-charger is disabled by default it's instantiated by the
->> MFD driver.
->>
->> Instead of register all sub-devices, if the TPS65217 device tree node has a
->> sub-node enabled, try to instatiate them as MFD sub-devices but not
->> instantiate sub-nodes that are not enabled.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>   drivers/mfd/tps65217.c       | 56 +++++++-------------------------------------
->>   include/linux/mfd/tps65217.h |  6 -----
->>   2 files changed, 9 insertions(+), 53 deletions(-)
->>
->> diff --git a/drivers/mfd/tps65217.c b/drivers/mfd/tps65217.c
->> index f769c7d..9effdda 100644
->> --- a/drivers/mfd/tps65217.c
->> +++ b/drivers/mfd/tps65217.c
->> @@ -33,14 +33,7 @@
->>   #include <linux/mfd/core.h>
->>   #include <linux/mfd/tps65217.h>
->>
->> -static struct resource charger_resources[] = {
->> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_AC, "AC"),
->> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_USB, "USB"),
->> -};
->> -
->> -static struct resource pb_resources[] = {
->> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_PB, "PB"),
->> -};
->
-> May be I messed smth, but how about interrupts for charger and pwrbutton?
->
+From: Rafał Miłecki <rafal@milecki.pl>
 
-I might be wrong but as this driver is DT-only these resources came
-from the DT. The driver calls platform_get_irq_byname and then
-of_irq_get_byname.
+This version of my patchset (V5) differs by renaming #source-cells to the
+#trigger-source-cells and documenting it in the leds/common.txt.
 
-i.e arch/arm/boot/dts/am335x-bone-common.dtsi
+I'd epxect both patches to go through Greg's usb.git if accepted.
 
-&tps {
-        charger {
-                interrupts = <0>, <1>;
-                interrupt-names = "USB", "AC";
-                status = "okay";
-        };
+For a reference (and before someome comes with already rejected solution) see
+below history of this work:
 
-        pwrbutton {
-                interrupts = <2>;
-                status = "okay";
-        };
-};
+1) [PATCH V2] leds: trigger: Introduce an USB port trigger
+My initial try of adding "usb-ports" property. Rob said it should be more
+generic.
 
->> +#define TPS65217_NUM_IRQ     3
->>
->>   static void tps65217_irq_lock(struct irq_data *data)
->>   {
->> @@ -86,29 +79,6 @@ static struct irq_chip tps65217_irq_chip = {
->>       .irq_disable            = tps65217_irq_disable,
->>   };
->>
->> -static struct mfd_cell tps65217s[] = {
->> -     {
->> -             .name = "tps65217-pmic",
->> -             .of_compatible = "ti,tps65217-pmic",
->> -     },
->> -     {
->> -             .name = "tps65217-bl",
->> -             .of_compatible = "ti,tps65217-bl",
->> -     },
->> -     {
->> -             .name = "tps65217-charger",
->> -             .num_resources = ARRAY_SIZE(charger_resources),
->> -             .resources = charger_resources,
->> -             .of_compatible = "ti,tps65217-charger",
->> -     },
->> -     {
->> -             .name = "tps65217-pwrbutton",
->> -             .num_resources = ARRAY_SIZE(pb_resources),
->> -             .resources = pb_resources,
->> -             .of_compatible = "ti,tps65217-pwrbutton",
->> -     },
->> -};
->> -
->>   static irqreturn_t tps65217_irq_thread(int irq, void *data)
->>   {
->>       struct tps65217 *tps = data;
->> @@ -359,23 +329,8 @@ static int tps65217_probe(struct i2c_client *client,
->>               return ret;
->>       }
->>
->> -     if (client->irq) {
->> +     if (client->irq)
->>               tps65217_irq_init(tps, client->irq);
->> -     } else {
->> -             int i;
->> -
->> -             /* Don't tell children about IRQ resources which won't fire */
->> -             for (i = 0; i < ARRAY_SIZE(tps65217s); i++)
->> -                     tps65217s[i].num_resources = 0;
->> -     }
->> -
->> -     ret = devm_mfd_add_devices(tps->dev, -1, tps65217s,
->> -                                ARRAY_SIZE(tps65217s), NULL, 0,
->> -                                tps->irq_domain);
->> -     if (ret < 0) {
->> -             dev_err(tps->dev, "mfd_add_devices failed: %d\n", ret);
->> -             return ret;
->> -     }
->
-> And as I remember there was a request to use mfd_add_devices()
-> and not of_platform_populate() for mfd sub-devices instantiation.
->
+2) [PATCH 1/2] dt-bindings: leds: document new usb-ports property
+Rob still didn't like it due to being USB specific.
 
->From what I know or you add the sub-devices via mfd_add_devices or
-using the DT with of_platform_populate, and the first is probably the
-preferred, but in this specific case this driver is DT-only so IMHO
-makes more sense adding via the DT, there are already some bindings
-i.e:
- arch/arm/boot/dts/tps65217.dtsi
- arch/arm/boot/dts/am335x-bone-common.dtsi
+3) [PATCH V2 1/2] dt-bindings: leds: document new led-triggers property
+Jacek didn't like it's more generic than what Linux can already support. Later
+we agreed (?) that Linux limitations shouldn't influence DT structure.
+Jacek still wanted a specific trigger but Rob said he won't accept something
+specific to the USB.
+Jacek suggested "trigger-sources" and Rob agreed on the name.
+Jacek suggested trying triggers as separated nodes.
 
-Let me explain a bit more,  assume that you have another AM335x with
-the TPS65217 PMIC but you don't want the charger because is not wired
-in your board. Your board DT will include the tps65217.dtsi, in this
-file you can see:
+4) [PATCH 1/4] dt-bindings: leds: document property for LED triggers
+This patch was trying to use separated nodes for triggers, e.g.:
+foo-trigger { trigger-type = "foo"; };
+Rob didn't like this extra level of indirection. He said Linux drivers shouldn't
+define/influence the binding.
 
-&tps {
-       ...
-        charger {
-                compatible = "ti,tps65217-charger";
-                status = "disabled";
-        };
-        ...
-};
+So finally I came with this patchset. It doesn't try to use separated nodes for
+triggers anymore and it uses the name that was mostly accepted I think. It
+should be generic and not influenced by Linux design.
 
-Seems that's fine but actually not works as expected, the TPS65217 MFD
-registers all the sub-devices so the charger is enabled and running
-even you have status = "disabled" in your DT. This looks incoherent to
-me, hence I replaced the devm_mfd_add_devices for the
-of_platform_populate which takes care of the status propriety and only
-calls the probe of the sub-devices that match and are enabled (status
-= "okay").
+Rafał Miłecki (3):
+  dt-bindings: leds: document new trigger-sources property
+  usb: core: read USB ports from DT in the usbport LED trigger driver
+  ARM: BCM53573: Specify ports for USB LED for Tenda AC9
 
->
->>
->>       ret = tps65217_reg_read(tps, TPS65217_REG_CHIPID, &version);
->>       if (ret < 0) {
->> @@ -384,6 +339,13 @@ static int tps65217_probe(struct i2c_client *client,
->>               return ret;
->>       }
->>
->> +     ret = of_platform_populate(client->dev.of_node, NULL, NULL,
->> +                                &client->dev);
->> +     if (ret) {
->> +             dev_err(&client->dev, "Failed to register sub-devices\n");
->> +             return ret;
->> +     }
->> +
->>       /* Set the PMIC to shutdown on PWR_EN toggle */
->>       if (status_off) {
->>               ret = tps65217_set_bits(tps, TPS65217_REG_STATUS,
->> diff --git a/include/linux/mfd/tps65217.h b/include/linux/mfd/tps65217.h
->> index eac2857..dfc51f5 100644
->> --- a/include/linux/mfd/tps65217.h
->> +++ b/include/linux/mfd/tps65217.h
->> @@ -236,12 +236,6 @@ struct tps65217_bl_pdata {
->>       int dft_brightness;
->>   };
->>
->> -/* Interrupt numbers */
->> -#define TPS65217_IRQ_USB             0
->> -#define TPS65217_IRQ_AC                      1
->> -#define TPS65217_IRQ_PB                      2
->> -#define TPS65217_NUM_IRQ             3
->> -
->>   /**
->>    * struct tps65217_board - packages regulator init data
->>    * @tps65217_regulator_data: regulator initialization values
->>
->
-> --
-> regards,
-> -grygorii
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ Documentation/devicetree/bindings/leds/common.txt | 35 +++++++++++++-
+ arch/arm/boot/dts/bcm47189-tenda-ac9.dts          |  1 +
+ arch/arm/boot/dts/bcm53573.dtsi                   |  4 ++
+ drivers/usb/core/ledtrig-usbport.c                | 56 +++++++++++++++++++++++
+ 4 files changed, 94 insertions(+), 2 deletions(-)
+
+-- 
+2.11.0
