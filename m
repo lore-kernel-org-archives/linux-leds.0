@@ -1,101 +1,111 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] leds: leds-qti-rgb: Add LED driver for QTI
- TRI_LED module
-Date: Wed, 7 Jun 2017 17:08:17 -0500
-Message-ID: <20170607220817.psmcljxaqlwrqxnm@rob-hp-laptop>
-References: <20170601072723.12760-1-fenglinw@codeaurora.org>
+From: Bruce Zhang <bo.zhang@nxp.com>
+Subject: RE: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
+Date: Thu, 8 Jun 2017 02:57:16 +0000
+Message-ID: <AM3PR04MB4045292078845DDB27718BD8AC90@AM3PR04MB404.eurprd04.prod.outlook.com>
+References: <1496803810-57154-1-git-send-email-bo.zhang@nxp.com>
+ <20170607071256.GA3230@amd>
+ <CACRpkdacymETLuRmpn07HUKHvrjWc85Jdj0s0qk44zTcaALa9w@mail.gmail.com>
+ <20170607103129.GA13227@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170601072723.12760-1-fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, subbaram-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, aghayal-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org, wruan-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org, kgunda-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-db5eur01on0045.outbound.protection.outlook.com ([104.47.2.45]:41888
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751433AbdFHC5U (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 7 Jun 2017 22:57:20 -0400
+In-Reply-To: <20170607103129.GA13227@amd>
+Content-Language: en-US
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Thu, Jun 01, 2017 at 03:25:01PM +0800, fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org wrote:
-> From: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> 
-> QTI TRI_LED module has 3 current sinks for LED driver and each is
-> controlled by a PWM channel used for LED dimming or blinking. Add
-> the driver to support it.
-> 
-> Signed-off-by: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/leds-qti-rgb.txt      |  46 ++
+Hi,
 
-It's preferred to make bindings a separate patch.
+As suspend/resume procedure is as below:
+pm_notifier_call_chain(PM_SUSPEND_PREPARE)->device suspend -> syscore suspe=
+nd -> enter suspend mode -> syscore resume -> device resume -> pm_notifier_=
+call_chain(PM_POST_SUSPEND).
+If led brightness control depends on other device/hardware (such as I2C), t=
+he LED turn off action should be earlier than device suspend. pm_notifier m=
+ay be a suitable method to turn off LED.
 
->  drivers/leds/Kconfig                               |   8 +
->  drivers/leds/Makefile                              |   1 +
->  drivers/leds/leds-qti-rgb.c                        | 623 +++++++++++++++++++++
->  4 files changed, 678 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
->  create mode 100644 drivers/leds/leds-qti-rgb.c
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt b/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
-> new file mode 100644
-> index 0000000..2ca93f9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-qti-rgb.txt
-> @@ -0,0 +1,46 @@
-> +Qualcomm Technologies, Inc. TRI_LED driver specific bindings
-> +
-> +This binding document describes the properties of TRI_LED module in
-> +Qualcomm Technologies, Inc. PMIC chips.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Must be "qcom,leds-rgb".
+Best Regards,
+Bo
 
-If the block is called TRI_LED, then use "tri-led" in the name.
+-----Original Message-----
+From: Pavel Machek [mailto:pavel@ucw.cz]=20
+Sent: Wednesday, June 07, 2017 6:31 PM
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bruce Zhang <bo.zhang@nxp.com>; Ulf Hansson <ulf.hansson@linaro.org>; l=
+inux-arm-kernel@lists.infradead.org; Jacek Anaszewski <jacek.anaszewski@gma=
+il.com>; Richard Purdie <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
+Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspen=
+d
 
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: Register base of the TRI_LED module and length.
-> +
-> +- pwm-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: A list of string to label the PWM devices defined in pwms
-> +		property which are using for controlling LEDs.
-> +		It must be: "red", "green", "blue".
-> +
-> +- pwms:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: A list of the PWM devices (phandles) used for controlling
-> +		LEDs.
-> +
-> +- qcom,support-blink:
-> +	Usage: optional
-> +	Value type: <prop-encoded-array>
-> +	Definition: An array of integer values to indicate if "red", "green",
-> +		"blue" LED support blink control. The values are listed as
-> +		the fixed order for "red", "green", "blue" LED.
-> +
-> +Example:
-> +
-> +	pmi8998_rgb: rgb@d000{
+Hi!
 
-Need to state somewhere this must be a sub-node of the PMIC and show 
-that here.
+On Wed 2017-06-07 11:46:10, Linus Walleij wrote:
+> On Wed, Jun 7, 2017 at 9:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>=20
+> > Core reason is that 5ab92a7cb is wrong. (Very wrong; it papers over=20
+> > the issue for one trigger, but we have more than one... Even if=20
+> > special handling for heartbeat is warranted, that handling would be=20
+> > "turn the led off" not "unregister the trigger", which is=20
+> > userland-visible action.)
+>=20
+> OK yeah I guess you're right.
+>=20
+> I just couldn't think about anything better and didn't get any review=20
+> at the time, so mistakes were made.
+>=20
+> > That one should be reverted, then maybe the driver should be fixed=20
+> > to turn the led off during suspend.
+>=20
+> Do you mean that the heartbeat trigger driver should be fixed to turn=20
+> off the LED during sleep?
+>=20
+> That is essentially what I was trying to achieve.
 
-Also, need a space before {.
+I don't think we should be fixing it at trigger level.
 
-> +		compatible = "qcom,leds-rgb";
-> +		reg = <0xd000 0x100>;
-> +		pwm-names = "red", "green", "blue";
-> +		pwms =  <&pmi8998_pwm_5 0 1000000>,
-> +			<&pmi8998_pwm_4 0 1000000>,
-> +			<&pmi8998_pwm_3 0 1000000>;
-> +		qcom,support-blink = <1 1 1>;
-> +	};
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+If userspace keeps blinking using "brightness" attribute, would we like the=
+ LED to be off during suspend? I think so.
+
+> The reason it is done as it is, is that the trigger sets up a timer to=20
+> do its job, and the timer may trigger between the point you turn off=20
+> the LED and the system really goes to suspend, again maybe turning the=20
+> LED on and again leaving the system with a glowing LED at suspend.
+
+> The patch also solves the following phenomenon, sorry for not writing=20
+> in the commit:
+>=20
+> - Turn off LED
+> - Suspend I2C hardware
+> - Timer trigger
+> - Trying to blink the LED using I2C
+> - Crap in the console about the failed I2C transaction
+> - Actual suspen happens
+> - System comes online
+> - Trying to blink the LED using I2C
+> - Crap in the console about the failed I2C transaction
+> - Resume I2C hardware
+>=20
+> It's just very fragile this trigger, turning off the LED from the PM=20
+> notifier is obviously not enough, we also need to disable the timer,=20
+> and then take it back online after resume.
+
+No, leave the timer alone, and actually leave the trigger alone.
+
+Simply make the driver turn the LED off in .suspend() callback, and then ig=
+nore further requests until .resume(). That will get rid of power drain _an=
+d_ "failed I2C transaction" messages, right?
+
+(Actually, I tested with the heartbeat trigger, and it is not re-installed =
+after resume. Another reason to revert the patch).
+
+Thanks,
+
+									Pavel
