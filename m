@@ -1,134 +1,280 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
-Date: Thu, 8 Jun 2017 22:27:38 +0200
-Message-ID: <711ac25b-ee32-1bd6-8a18-1e261b445920@gmail.com>
-References: <1496803810-57154-1-git-send-email-bo.zhang@nxp.com>
- <20170607071256.GA3230@amd>
- <CACRpkdacymETLuRmpn07HUKHvrjWc85Jdj0s0qk44zTcaALa9w@mail.gmail.com>
- <20170607103129.GA13227@amd>
- <AM3PR04MB4045292078845DDB27718BD8AC90@AM3PR04MB404.eurprd04.prod.outlook.com>
+From: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] mfd: tps65217: Instantiate sub-devices from device tree
+Date: Thu, 8 Jun 2017 23:35:35 +0200
+Message-ID: <CAFqH_52rU7ZBG_Muy2JHoqJGdXOdsNfmtJxsZoPRyx3V1aWmFw@mail.gmail.com>
+References: <20170607103242.16008-1-enric.balletbo@collabora.com>
+ <20170607103242.16008-4-enric.balletbo@collabora.com> <6359abe2-9a21-78a2-f5ea-87e2e3335af3@ti.com>
+ <CAFqH_53v32iODN4xhoh4ho4s6grxknEDS3Ak6CHBcTAQo6fDNw@mail.gmail.com> <578f348c-509f-79d3-9770-73c9fcffe19c@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34574 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751445AbdFHU2Z (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Jun 2017 16:28:25 -0400
-Received: by mail-lf0-f67.google.com with SMTP id o28so3847261lfk.1
-        for <linux-leds@vger.kernel.org>; Thu, 08 Jun 2017 13:28:24 -0700 (PDT)
-In-Reply-To: <AM3PR04MB4045292078845DDB27718BD8AC90@AM3PR04MB404.eurprd04.prod.outlook.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <578f348c-509f-79d3-9770-73c9fcffe19c-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland@arm.c>
 List-Id: linux-leds@vger.kernel.org
-To: Bruce Zhang <bo.zhang@nxp.com>, Pavel Machek <pavel@ucw.cz>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Bruce,
-
-On 06/08/2017 04:57 AM, Bruce Zhang wrote:
-> Hi,
-> 
-> As suspend/resume procedure is as below:
-> pm_notifier_call_chain(PM_SUSPEND_PREPARE)->device suspend -> syscore suspend -> enter suspend mode -> syscore resume -> device resume -> pm_notifier_call_chain(PM_POST_SUSPEND).
-> If led brightness control depends on other device/hardware (such as I2C), the LED turn off action should be earlier than device suspend. pm_notifier may be a suitable method to turn off LED.
-
-OK, so I agree that the most proper fix to the discussed problem
-would be ignoring brightness setting requests after suspend, as Pavel
-suggested.
-
-led_classdev_suspend() already turns the LED off and
-led_classdev_resume() brings the brightness back.
-
-Also led_set_brightness_nosleep() and led_set_brightness_sync()
-don't propagate brightness change to the driver if LED_SUSPENDED
-is set.
-
-There are two problems though:
-1. __led_set_brightness() and __led_set_brightness_blocking() don't
-   check the flag, and they can be called from set_brightness_delayed(),
-   that was already queued at the time of setting LED_SUSPENDED flag.
-2. LED_SUSPENDED flag is accessed in a non-atomic way.
-
-The solution as I see it would be respectively:
-1. Return from __led_set_brightness() and
-   __led_set_brightness_blocking() if LED_SUSPENDED is set.
-2. Switch to accessing struct led_classdev's flags with use of
-   bitops. Fortunately those flags are mainly set prior LED class
-   device registration and only LED_SYSFS_DISABLE, LED_SUSPENDED
-   and LED_UNREGISTERING are accessed afterwards, and only in the LED
-   core, so only those places would have to be modified.
-
-Best regards,
-Jacek Anaszewski
-
-> -----Original Message-----
-> From: Pavel Machek [mailto:pavel@ucw.cz] 
-> Sent: Wednesday, June 07, 2017 6:31 PM
-> To: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bruce Zhang <bo.zhang@nxp.com>; Ulf Hansson <ulf.hansson@linaro.org>; linux-arm-kernel@lists.infradead.org; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Richard Purdie <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
-> Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
-> 
-> Hi!
-> 
-> On Wed 2017-06-07 11:46:10, Linus Walleij wrote:
->> On Wed, Jun 7, 2017 at 9:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
+2017-06-08 19:11 GMT+02:00 Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>:
+>
+>
+> On 06/08/2017 08:16 AM, Enric Balletbo Serra wrote:
+>> 2017-06-07 18:05 GMT+02:00 Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>:
+>>>
+>>>
+>>> On 06/07/2017 05:32 AM, Enric Balletbo i Serra wrote:
+>>>> The driver boots only via device tree but currently all the MFD sub-devices
+>>>> are instatiated independently of the device tree configuration, i.e
+>>>> although tps65217-charger is disabled by default it's instantiated by the
+>>>> MFD driver.
+>>>>
+>>>> Instead of register all sub-devices, if the TPS65217 device tree node has a
+>>>> sub-node enabled, try to instatiate them as MFD sub-devices but not
+>>>> instantiate sub-nodes that are not enabled.
+>>>>
+>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>>> ---
+>>>>    drivers/mfd/tps65217.c       | 56 +++++++-------------------------------------
+>>>>    include/linux/mfd/tps65217.h |  6 -----
+>>>>    2 files changed, 9 insertions(+), 53 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mfd/tps65217.c b/drivers/mfd/tps65217.c
+>>>> index f769c7d..9effdda 100644
+>>>> --- a/drivers/mfd/tps65217.c
+>>>> +++ b/drivers/mfd/tps65217.c
+>>>> @@ -33,14 +33,7 @@
+>>>>    #include <linux/mfd/core.h>
+>>>>    #include <linux/mfd/tps65217.h>
+>>>>
+>>>> -static struct resource charger_resources[] = {
+>>>> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_AC, "AC"),
+>>>> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_USB, "USB"),
+>>>> -};
+>>>> -
+>>>> -static struct resource pb_resources[] = {
+>>>> -     DEFINE_RES_IRQ_NAMED(TPS65217_IRQ_PB, "PB"),
+>>>> -};
+>>>
+>>> May be I messed smth, but how about interrupts for charger and pwrbutton?
+>>>
 >>
->>> Core reason is that 5ab92a7cb is wrong. (Very wrong; it papers over 
->>> the issue for one trigger, but we have more than one... Even if 
->>> special handling for heartbeat is warranted, that handling would be 
->>> "turn the led off" not "unregister the trigger", which is 
->>> userland-visible action.)
+>> I might be wrong but as this driver is DT-only these resources came
+>> from the DT. The driver calls platform_get_irq_byname and then
+>> of_irq_get_byname.
 >>
->> OK yeah I guess you're right.
+>> i.e arch/arm/boot/dts/am335x-bone-common.dtsi
 >>
->> I just couldn't think about anything better and didn't get any review 
->> at the time, so mistakes were made.
+>> &tps {
+>>          charger {
+>>                  interrupts = <0>, <1>;
+>>                  interrupt-names = "USB", "AC";
+>>                  status = "okay";
+>>          };
 >>
->>> That one should be reverted, then maybe the driver should be fixed 
->>> to turn the led off during suspend.
+>>          pwrbutton {
+>>                  interrupts = <2>;
+>>                  status = "okay";
+>>          };
+>> };
+>
+> Sry, but this make no sense - those IRQ configuration is static,
+> so it should be defined in arch/arm/boot/dts/tps65217.dtsi at least.
+
+I was describing the state-of-art not what should be. If you mean that
+what doesn't make sense have these interrupts portions in the DT and
+the resources in the driver I'm completely agree. So we have two
+options:
+
+ 1) Get rid of the irq resources from tps65217 MFD driver and
+configure all with the DT (these patches)
+ 2) Get rid of the DT portions as doesn't make sense have them in two places.
+
+If we select 2) at least we have the problem that currently all
+sub-devices are instantiated and there is no way to disable a
+sub-device (the problem I'm trying to solve) hence I proposed 1)
+
+> But, again, it also not required, because it is strictly static for
+> this particular device and so defined in code.
+
+DT describes the hardware and I guess is full of static data so I
+don't think this would be a problem.
+
+> And  platform_get_irq_byname() should perfectly work with mfd_add_devices().
+>
+
+Agree, for a DT-only driver it would check first in the DT
+(of_irq_get_byname) and if it fails get the resource with
+platform_get_resource_byname. I don't have an answer here about if
+it's preferred provide this info in the DT or hard-coded in the
+driver.
+
+> Also not that  tps65217.dtsi included in below files, but
+>
+> ./arch/arm/boot/dts/am335x-bone-common.dtsi:/include/ "tps65217.dtsi"
+> ./arch/arm/boot/dts/am335x-chilisom.dtsi:/include/ "tps65217.dtsi"
+> ./arch/arm/boot/dts/am335x-nano.dts:#include "tps65217.dtsi"
+> ./arch/arm/boot/dts/am335x-pepper.dts:/include/ "tps65217.dtsi"
+> ./arch/arm/boot/dts/am335x-sl50.dts:#include "tps65217.dtsi"
+>
+> but IRQs defined only in
+> ./arch/arm/boot/dts/am335x-bone-common.dtsi:            interrupt-names = "USB", "AC";
+> ./arch/arm/boot/dts/am335x-chiliboard.dts:              interrupt-names = "USB", "AC";
+>
+> So how are other boards working?
+>
+
+Because on those that the IRQs are not defined it gets the data from
+the platform resources. Again a mesh that we need to solve.
+
+>
 >>
->> Do you mean that the heartbeat trigger driver should be fixed to turn 
->> off the LED during sleep?
+>>>> +#define TPS65217_NUM_IRQ     3
+>>>>
+>>>>    static void tps65217_irq_lock(struct irq_data *data)
+>>>>    {
+>>>> @@ -86,29 +79,6 @@ static struct irq_chip tps65217_irq_chip = {
+>>>>        .irq_disable            = tps65217_irq_disable,
+>>>>    };
+>>>>
+>>>> -static struct mfd_cell tps65217s[] = {
+>>>> -     {
+>>>> -             .name = "tps65217-pmic",
+>>>> -             .of_compatible = "ti,tps65217-pmic",
+>>>> -     },
+>>>> -     {
+>>>> -             .name = "tps65217-bl",
+>>>> -             .of_compatible = "ti,tps65217-bl",
+>>>> -     },
+>>>> -     {
+>>>> -             .name = "tps65217-charger",
+>>>> -             .num_resources = ARRAY_SIZE(charger_resources),
+>>>> -             .resources = charger_resources,
+>>>> -             .of_compatible = "ti,tps65217-charger",
+>>>> -     },
+>>>> -     {
+>>>> -             .name = "tps65217-pwrbutton",
+>>>> -             .num_resources = ARRAY_SIZE(pb_resources),
+>>>> -             .resources = pb_resources,
+>>>> -             .of_compatible = "ti,tps65217-pwrbutton",
+>>>> -     },
+>>>> -};
+>>>> -
+>>>>    static irqreturn_t tps65217_irq_thread(int irq, void *data)
+>>>>    {
+>>>>        struct tps65217 *tps = data;
+>>>> @@ -359,23 +329,8 @@ static int tps65217_probe(struct i2c_client *client,
+>>>>                return ret;
+>>>>        }
+>>>>
+>>>> -     if (client->irq) {
+>>>> +     if (client->irq)
+>>>>                tps65217_irq_init(tps, client->irq);
+>>>> -     } else {
+>>>> -             int i;
+>>>> -
+>>>> -             /* Don't tell children about IRQ resources which won't fire */
+>>>> -             for (i = 0; i < ARRAY_SIZE(tps65217s); i++)
+>>>> -                     tps65217s[i].num_resources = 0;
+>>>> -     }
+>>>> -
+>>>> -     ret = devm_mfd_add_devices(tps->dev, -1, tps65217s,
+>>>> -                                ARRAY_SIZE(tps65217s), NULL, 0,
+>>>> -                                tps->irq_domain);
+>>>> -     if (ret < 0) {
+>>>> -             dev_err(tps->dev, "mfd_add_devices failed: %d\n", ret);
+>>>> -             return ret;
+>>>> -     }
+>>>
+>>> And as I remember there was a request to use mfd_add_devices()
+>>> and not of_platform_populate() for mfd sub-devices instantiation.
+>>>
 >>
->> That is essentially what I was trying to achieve.
-> 
-> I don't think we should be fixing it at trigger level.
-> 
-> If userspace keeps blinking using "brightness" attribute, would we like the LED to be off during suspend? I think so.
-> 
->> The reason it is done as it is, is that the trigger sets up a timer to 
->> do its job, and the timer may trigger between the point you turn off 
->> the LED and the system really goes to suspend, again maybe turning the 
->> LED on and again leaving the system with a glowing LED at suspend.
-> 
->> The patch also solves the following phenomenon, sorry for not writing 
->> in the commit:
+>>  From what I know or you add the sub-devices via mfd_add_devices or
+>> using the DT with of_platform_populate, and the first is probably the
+>> preferred, but in this specific case this driver is DT-only so IMHO
+>> makes more sense adding via the DT, there are already some bindings
+>> i.e:
+>>   arch/arm/boot/dts/tps65217.dtsi
+>>   arch/arm/boot/dts/am335x-bone-common.dtsi
 >>
->> - Turn off LED
->> - Suspend I2C hardware
->> - Timer trigger
->> - Trying to blink the LED using I2C
->> - Crap in the console about the failed I2C transaction
->> - Actual suspen happens
->> - System comes online
->> - Trying to blink the LED using I2C
->> - Crap in the console about the failed I2C transaction
->> - Resume I2C hardware
+>> Let me explain a bit more,  assume that you have another AM335x with
+>> the TPS65217 PMIC but you don't want the charger because is not wired
+>> in your board. Your board DT will include the tps65217.dtsi, in this
+>> file you can see:
 >>
->> It's just very fragile this trigger, turning off the LED from the PM 
->> notifier is obviously not enough, we also need to disable the timer, 
->> and then take it back online after resume.
-> 
-> No, leave the timer alone, and actually leave the trigger alone.
-> 
-> Simply make the driver turn the LED off in .suspend() callback, and then ignore further requests until .resume(). That will get rid of power drain _and_ "failed I2C transaction" messages, right?
-> 
-> (Actually, I tested with the heartbeat trigger, and it is not re-installed after resume. Another reason to revert the patch).
-> 
-> Thanks,
-> 
-> 									Pavel
+>> &tps {
+>>         ...
+>>          charger {
+>>                  compatible = "ti,tps65217-charger";
+>>                  status = "disabled";
+>>          };
+>>          ...
+>> };
+>>
+>> Seems that's fine but actually not works as expected, the TPS65217 MFD
+>> registers all the sub-devices so the charger is enabled and running
+>> even you have status = "disabled" in your DT. This looks incoherent to
+>> me, hence I replaced the devm_mfd_add_devices() for the
+>> of_platform_populate which takes care of the status propriety and only
+>> calls the probe of the sub-devices that match and are enabled (status
+>> = "okay").
+>
+> I can't find links on corresponding discussions, but mfd_add_devices() is
+> preferred for MDF devices. Below is one commit i've found. Also you can compare number of
+> drivers using mfd_add_devices() and of_platform_populate().
+>
+
+I don't think this a valid argument, I can also provide you a commit
+that does exactly the contrary, replaces mfd_add_devices for
+of_platform_populate (commit bb03ffb96c72)
+
+>
+> regarding your problem - I think, It might be reasonable from your side to propose change to
+> mfd_add_device() which will take into account 'status = "disabled";' DT property.
+>
+
+Yes this is another solution to the problem that I thought, modify the
+mfd-core to check if a device is available for use by calling
+of_device_is_available and only add the sub-devices that are enabled.
+
+Please, let's focus on how to solve the problem. Guess it's clear what
+I'm trying to solve. To sum up, I think there are two ways to solve
+the problem
+
+ 1) Get rid of the irq resources from tps65217 MFD driver and
+configure all with the DT and of_platform_populate (these patches)
+ 2) Get rid of the DT portions as doesn't make sense have them in two places.
+     +  2.1) Modify mfd-core to only instantiate the the sub-device is
+device has status = "okay"
+
+I don't mind to implement 2 + 2.1 if this is what people thinks is the
+best. The *main* purpose of these patches was start this discussion to
+find the solution.
+
+I think at this point we need the maintainer's thoughts?
+
+> ---
+> commit 4531156db726d27e593d35800d43c74be4e393b9
+> Author: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> Date:   Mon Sep 19 13:09:05 2016 +0530
+>
+>     mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
+>
+>     mfd_add_devices enables parsing device tree nodes without compatibles
+>     for regulators and gpio modules. Replace of_platform_populate with
+>     mfd_add_devices. mfd_cell currently is populated with regulators,
+>     gpio and powerbutton.
+>
+>     Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+>     Signed-off-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+>
+>
+>
+>
 > --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-> 
+> regards,
+> -grygorii
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
