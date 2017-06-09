@@ -1,91 +1,221 @@
-From: Bruce Zhang <bo.zhang@nxp.com>
-Subject: RE: [[PATCH]] drivers: leds/trigger: system cannot enter suspend
-Date: Fri, 9 Jun 2017 13:01:31 +0000
-Message-ID: <AM3PR04MB4041CD5659C02FF30AF159A8ACE0@AM3PR04MB404.eurprd04.prod.outlook.com>
-References: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
- <CACRpkdZpMsqt9gjehSQ5c86LyqhZcnYF7QuGk=N4JTi-GJ1SMA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: tps65217: Update binding documentation.
+Date: Fri, 9 Jun 2017 09:03:09 -0500
+Message-ID: <20170609140309.zhagc5g662d4la3z@rob-hp-laptop>
+References: <20170607103242.16008-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-db5eur01on0073.outbound.protection.outlook.com ([104.47.2.73]:5517
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751577AbdFINBg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 9 Jun 2017 09:01:36 -0400
-In-Reply-To: <CACRpkdZpMsqt9gjehSQ5c86LyqhZcnYF7QuGk=N4JTi-GJ1SMA@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33786 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbdFIODM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2017 10:03:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20170607103242.16008-1-enric.balletbo@collabora.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Ulf Hansson <ulf.hansson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>, javier@dowhile0.org
 
-QXQgZmlyc3Qgd2Ugc2hvdWxkIGNoZWNrIHRoYXQgd2hldGhlciBleGlzdCB0aGUgdXNlIGNhc2Ug
-dGhhdCBMRUQgdHVybiBvbi9vZmYgaXMgYmFzZWQgb24gb3RoZXIgZGV2aWNlKHN1Y2ggYXMgSTJD
-KS4gSWYgdHJ1ZSwgaG93IHRvIGd1YXJhbnRlZSB0aGUgb3RoZXIgZGV2aWNlcyhzdWNoIGFzIEky
-QykgYXJlIGF2YWlsYWJsZSB3aGVuIHR1cm4gb2ZmIExFRC4gTWF5YmUgcG1fbm90aWZpZXIgaXMg
-YWNjZXB0ZWQgbWV0aG9kIHRvIHByb2Nlc3MgdGhpcyBjYXNlLCBiZWNhdXNlIHBtX25vdGlmaWVy
-IGNhbGxiYWNrIGZ1bmN0aW9uIGlzIGV4ZWN1dGVkIGJlZm9yZSBvdGhlciBkZXZpY2VzIGVudGVy
-IHN1c3BlbmQgbW9kZS4NCg0KSWYgd2UgZG9uJ3QgbmVlZCB0byBjYXJlIHN1Y2ggY2FzZSBvciBu
-b3QgZXhpc3Qgc3VjaCB1c2UgY2FzZSBpbiBhcHBsaWNhdGlvbiwgd2UgY2FuIHJldmVydCB0aGUg
-cGF0Y2ggNWFiOTJhN2NiLg0KDQpCZXN0IFJlZ2FyZHMsDQpCcnVjZQ0KDQotLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpA
-bGluYXJvLm9yZ10gDQpTZW50OiBGcmlkYXksIEp1bmUgMDksIDIwMTcgNzoyNSBQTQ0KVG86IEJy
-dWNlIFpoYW5nIDxiby56aGFuZ0BueHAuY29tPg0KQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZzsgSmFjZWsgQW5hc3pld3NraSA8amFjZWsuYW5hc3pld3NraUBnbWFpbC5j
-b20+OyBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4NClN1YmplY3Q6IFJlOiBbW1BBVENIXV0g
-ZHJpdmVyczogbGVkcy90cmlnZ2VyOiBzeXN0ZW0gY2Fubm90IGVudGVyIHN1c3BlbmQNCg0KT24g
-TW9uLCBKdW4gNSwgMjAxNyBhdCA5OjM2IEFNLCBaaGFuZyBCbyA8Ym8uemhhbmdAbnhwLmNvbT4g
-d3JvdGU6DQoNCj4gU3lzdGVtIGNhbm5vdCBlbnRlciBzdXNwZW5kIG1vZGUgYmVjYXVzZSBvZiBo
-ZWFydGJlYXQgbGVkIHRyaWdnZXIuDQoNCkFzIG1lbnRpb25lZCB0aGlzIHNob3VsZCBub3QgYmUg
-YSBwcm9ibGVtLg0KDQo+IEhlYXJ0YmVhdF9wbV9ub3RpZmllciBpcyBjYWxsZWQgd2hlbiBzeXN0
-ZW0gcHJlcGFyZSB0byBlbnRlciBzdXNwZW5kIA0KPiBtb2RlLCB0aGVuIGNhbGwgbGVkX3RyaWdn
-ZXJfdW5yZWdpc3RlciB0byBjaGFuZ2UgdGhlIHRyaWdnZXIgb2YgbGVkIA0KPiBkZXZpY2UgdG8g
-bm9uZS4gSXQgd2lsbCBzZW5kIHVldmVudCBtZXNzYWdlIGFuZCB0aGUgd2FrZXVwIHNvdXJjZSBj
-b3VudCBjaGFuZ2VkLg0KPg0KPiBBZGQgc3VzcGVuZC9yZXN1bWUgb3BzIHRvIHRoZSBzdHJ1Y3Qg
-bGVkX3RyaWdnZXIsIGltcGxlbWVudCB0aGVzZSB0d28gDQo+IG9wcyBmb3IgbGVkdHJpZy1oZWFy
-dGJlYXQuIEFkZCBsZWRfdHJpZ2dlcl9zdXNwZW5kL2xlZF90cmlnZ2VyX3Jlc3VtZSANCj4gZnVu
-Y2l0b25zIHRvIGl0ZXJhdGUgdGhyb3VnaCBhbGwgTEVEIGNsYXNzIGRldmljZXMgcmVnaXN0ZXJl
-ZCBvbiBnaXZlbiANCj4gdHJpZ2dlciBhbmQgY2FsbCB0aGVpciBzdXNwZW5kL3Jlc3VtZSBvcHMg
-YW5kIGRpc2FibGUvZW5hYmxlIHN5c2ZzIGF0IHRoZSBzYW1lIHRpbWUuDQo+DQo+IENhbGwgbGVk
-X3RyaWdnZXJfc3VzcGVuZHtyZXN1ZW19IEFQSSBpbiBwbV9ub3RpZmllciBmdW5jdGlvbiB0byAN
-Cj4gc3VzcGVuZC9yZXN1bWUgYWxsIGxlZCBkZXZpY2VzIGxpc3RlZCBpbiBnaXZlbiB0cmlnZ2Vy
-Lg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBaaGFuZyBCbyA8Ym8uemhhbmdAbnhwLmNvbT4NCg0KVGhl
-IHBhdGNoIGlzIG5pY2UgYmVjYXVzZSBpdCBmaXhlcyBteSBzbG9wcHkgYXBwcm9hY2ggb2YganVz
-dCBhZGRpbmcvcmVtb3ZpbmcgdGhlIHRyaWdnZXIgbWFkZSBlYXJsaWVyLg0KDQpJdCBzdG9wcyB1
-bnNvbGljaXRlZCBJMkMgdHJhZmZpYyBhbmQgb3RoZXIgbmFzdGluZXMgZnJvbSBoYXBwZW5pbmcg
-ZHVyaW5nIHRoZSBzdXNwZW5kL3Jlc3VtZSBjeWNsZS4NCg0KSSB3b3VsZCBldmVuIGFkZDoNCg0K
-Rml4ZXM6IDVhYjkyYTdjYjgyYyAoImxlZHM6IGhhbmRsZSBzdXNwZW5kL3Jlc3VtZSBpbiBoZWFy
-dGJlYXQgdHJpZ2dlciIpDQoNCiguLi4pDQo+ICtzdGF0aWMgdm9pZCBoZWFydGJlYXRfdHJpZ19y
-ZXN1bWUoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVkX2NkZXYpIHsNCj4gKyAgICAgICBzdHJ1Y3Qg
-aGVhcnRiZWF0X3RyaWdfZGF0YSAqaGVhcnRiZWF0X2RhdGEgPSANCj4gK2xlZF9jZGV2LT50cmln
-Z2VyX2RhdGE7DQo+ICsNCj4gKyAgICAgICBpZiAobGVkX2NkZXYtPnN1c3BlbmRlZCkgew0KPiAr
-ICAgICAgICAgICAgICAgc2V0dXBfdGltZXIoJmhlYXJ0YmVhdF9kYXRhLT50aW1lciwNCj4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGxlZF9oZWFydGJlYXRfZnVuY3Rpb24sICh1bnNpZ25l
-ZCBsb25nKSBsZWRfY2Rldik7DQo+ICsgICAgICAgICAgICAgICBoZWFydGJlYXRfZGF0YS0+cGhh
-c2UgPSAwOw0KPiArICAgICAgICAgICAgICAgbGVkX2hlYXJ0YmVhdF9mdW5jdGlvbihoZWFydGJl
-YXRfZGF0YS0+dGltZXIuZGF0YSk7DQo+ICsgICAgICAgICAgICAgICBsZWRfY2Rldi0+c3VzcGVu
-ZGVkID0gZmFsc2U7DQo+ICsgICAgICAgfQ0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBoZWFy
-dGJlYXRfdHJpZ19zdXNwZW5kKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2KSB7DQo+ICsg
-ICAgICAgc3RydWN0IGhlYXJ0YmVhdF90cmlnX2RhdGEgKmhlYXJ0YmVhdF9kYXRhID0gDQo+ICts
-ZWRfY2Rldi0+dHJpZ2dlcl9kYXRhOw0KPiArDQo+ICsgICAgICAgaWYgKGxlZF9jZGV2LT5hY3Rp
-dmF0ZWQgJiYgIWxlZF9jZGV2LT5zdXNwZW5kZWQpIHsNCj4gKyAgICAgICAgICAgICAgIGRlbF90
-aW1lcl9zeW5jKCZoZWFydGJlYXRfZGF0YS0+dGltZXIpOw0KPiArICAgICAgICAgICAgICAgbGVk
-X2NkZXYtPnN1c3BlbmRlZCA9IHRydWU7DQo+ICAgICAgICAgfQ0KDQpBcmUgd2Ugc3VyZSB0aGF0
-IHRoZSBMRUQgaXMgKm9mZiogYXQgdGhpcyBwb2ludCBzbyB5b3UgZG9uJ3Qgc3VzcGVuZC9yZXN1
-bWUgd2l0aCBhIGdsb3dpbmcgTEVEPw0KDQpFbHNlIGluc2VydCBhIGNhbGwgdG8gbWFrZSBzdXJl
-IHRoYXQgaXQncyBsaWtlIHNvLCBhbmQgbWF5YmUgZXZlbiBhIHZhcmlhYmxlIHRvIGhvbGQgdGhl
-IGN1cnJlbnQgc3RhdGUgKG9mZi9vbikgYWNyb3NzIHRoZSBzdXNwZW5kL3Jlc3VtZSBjeWNsZS4N
-Cg0KPiBAQCAtMTYxLDI1ICsxODYsMjMgQEAgc3RhdGljIHZvaWQgaGVhcnRiZWF0X3RyaWdfZGVh
-Y3RpdmF0ZShzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldikNCj4gICAgICAgICAubmFtZSAg
-ICAgPSAiaGVhcnRiZWF0IiwNCj4gICAgICAgICAuYWN0aXZhdGUgPSBoZWFydGJlYXRfdHJpZ19h
-Y3RpdmF0ZSwNCj4gICAgICAgICAuZGVhY3RpdmF0ZSA9IGhlYXJ0YmVhdF90cmlnX2RlYWN0aXZh
-dGUsDQo+ICsgICAgICAgLnN1c3BlbmQgPSBoZWFydGJlYXRfdHJpZ19zdXNwZW5kLA0KPiArICAg
-ICAgIC5yZXN1bWUgPSBoZWFydGJlYXRfdHJpZ19yZXN1bWUsDQooLi4uKQ0KPiArICAgICAgIHZv
-aWQgICAgICAgICAgICAoKnN1c3BlbmQpKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2KTsN
-Cj4gKyAgICAgICB2b2lkICAgICAgICAgICAgKCpyZXN1bWUpKHN0cnVjdCBsZWRfY2xhc3NkZXYg
-KmxlZF9jZGV2KTsNCg0KDQpUaGVzZSBuYW1lcyBkbyBub3QgY29ycmVzcG9ucyB0byB0aGUgYWN0
-dWFsIFBNIGNhbGxzIHRoZXkgYXJlIHV0aWxpemVkIGZvci4NCg0KTmFtZSB0aGVtDQoucG1fcHJl
-cGFyZV9zdXNwZW5kKCkNCi5wbV9wb3N0X3N1c3BlbmQoKQ0KDQpJbnN0ZWFkLCB0aGlzIGluZGlj
-YXRlcyBiZXR0ZXIgdGhlIHBsYWNlIHdoZW4gdGhleSBnZXQgY2FsbGVkLg0KDQpZb3VycywNCkxp
-bnVzIFdhbGxlaWoNCg==
+On Wed, Jun 07, 2017 at 12:32:39PM +0200, Enric Balletbo i Serra wrote:
+> This patch adds a new binding documentation for the TPS65217 MFD and
+> updates the documentation for all the sub-devices in accordance to get
+> each individual sub-driver functioning correctly.
+
+Explain why breaking compatibility is okay.
+
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>  .../bindings/input/tps65218-pwrbutton.txt          |   2 +-
+>  .../bindings/leds/backlight/tps65217-backlight.txt |  24 ++---
+>  Documentation/devicetree/bindings/mfd/tps65217.txt | 100 +++++++++++++++++++++
+>  .../devicetree/bindings/regulator/tps65217.txt     |   8 +-
+>  4 files changed, 119 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65217.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
+> index 8682ab6..603a3f0 100644
+> --- a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
+> +++ b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
+> @@ -1,7 +1,7 @@
+>  Texas Instruments TPS65217 and TPS65218 power button
+>  
+>  This module is part of the TPS65217/TPS65218. For more details about the whole
+> -TPS65217 chip see Documentation/devicetree/bindings/regulator/tps65217.txt.
+> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
+>  
+>  This driver provides a simple power button event via an Interrupt.
+>  
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+> index 5fb9279..a1bc465 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+> @@ -1,11 +1,13 @@
+> -TPS65217 family of regulators
+> +Texas Instruments TPS65217 backlight regulator
+> +
+> +This module is part of the TPS65217. For more details about the whole
+> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
+>  
+>  The TPS65217 chip contains a boost converter and current sinks which can be
+>  used to drive LEDs for use as backlights.
+>  
+>  Required properties:
+> -- compatible: "ti,tps65217"
+> -- reg: I2C slave address
+> +- compatible: "ti,tps65217-bl"
+>  - backlight: node for specifying WLED1 and WLED2 lines in TPS65217
+>  - isel: selection bit, valid values: 1 for ISEL1 (low-level) and 2 for ISEL2 (high-level)
+>  - fdim: PWM dimming frequency, valid values: 100, 200, 500, 1000
+> @@ -15,13 +17,13 @@ Each regulator is defined using the standard binding for regulators.
+>  
+>  Example:
+>  
+> -	tps: tps@24 {
+> -		reg = <0x24>;
+> -		compatible = "ti,tps65217";
+> -		backlight {
+> -			isel = <1>;  /* 1 - ISET1, 2 ISET2 */
+> -			fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
+> -			default-brightness = <50>;
+> -		};
+> +&tps {
+> +	backlight {
+> +		compatible = "ti,tps65217-bl";
+> +		status = "okay";
+> +		isel = <1>;  /* 1 - ISET1, 2 ISET2 */
+> +		fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
+> +		default-brightness = <50>;
+>  	};
+> +};
+>  
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65217.txt b/Documentation/devicetree/bindings/mfd/tps65217.txt
+> new file mode 100644
+> index 0000000..40c84ba
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65217.txt
+> @@ -0,0 +1,100 @@
+> +Texas Instruments TPS65217 Single-Chip PMIC for Battery-Powered Systems
+> +
+> +Required properties:
+> +- compatible: "ti,tps65217"
+> +- reg: I2C slave address.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells: The number of cells to describe an IRQ, this should be 1.
+> +- backlight: Child node that specify the backlight regulator sub-device. See:
+> +	Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+> +- charger: Child node that specify the charger sub-device. See:
+> +	Documentation/devicetree/bindings/power/supply/tps65217_charger.txt
+> +- pwrbutton: Child node that specify the power button sub-device. See:
+> +	Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
+> +- regulators: List of child nodes that specify the regulator initialization
+> +	data. See:
+> +	Documentation/devicetree/bindings/regulator/tps65217.txt.
+> +
+> +Optional properties:
+> +- ti,pmic-shutdown-controller: Telling the PMIC to shutdown on PWR_EN toggle.
+> +
+> +Example:
+> +
+> +	tps: tps@24 {
+> +		compatible = "ti,tps65217";
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		ti,pmic-shutdown-controller;
+> +
+> +		backlight {
+> +			compatible = "ti,tps65217-bl";
+> +			status = "disabled";
+> +		};
+> +
+> +		charger {
+> +			compatible = "ti,tps65217-charger";
+> +			status = "disabled";
+> +		};
+> +
+> +		pwrbutton {
+> +			compatible = "ti,tps65217-pwrbutton";
+> +			status = "disabled";
+> +		};
+> +
+> +		regulators {
+> +			compatible = "ti,tps65217-pmic";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			dcdc1_reg: dcdc1 {
+> +				regulator-min-microvolt = <900000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			dcdc2_reg: dcdc2 {
+> +				regulator-min-microvolt = <900000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			dcdc3_reg: dcc3 {
+> +				regulator-min-microvolt = <900000>;
+> +				regulator-max-microvolt = <1500000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo1_reg: ldo1 {
+> +				regulator-min-microvolt = <1000000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo2_reg: ldo2 {
+> +				regulator-min-microvolt = <900000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo3_reg: ldo3 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo4_reg: ldo4 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +		};
+> +	};
+> +
+> diff --git a/Documentation/devicetree/bindings/regulator/tps65217.txt b/Documentation/devicetree/bindings/regulator/tps65217.txt
+> index 4f05d20..2d9b519 100644
+> --- a/Documentation/devicetree/bindings/regulator/tps65217.txt
+> +++ b/Documentation/devicetree/bindings/regulator/tps65217.txt
+> @@ -1,8 +1,10 @@
+> -TPS65217 family of regulators
+> +Texas Instruments TPS65217 family of regulators
+> +
+> +This module is part of the TPS65217. For more details about the whole
+> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
+>  
+>  Required properties:
+> -- compatible: "ti,tps65217"
+> -- reg: I2C slave address
+> +- compatible: "ti,tps65217-pmic"
+>  - regulators: list of regulators provided by this controller, must be named
+>    after their hardware counterparts: dcdc[1-3] and ldo[1-4]
+>  - regulators: This is the list of child nodes that specify the regulator
+
+regulators twice? Fix that while you're here.
+
+> -- 
+> 2.9.3
+> 
