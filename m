@@ -1,146 +1,91 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Subject: Re: [PATCH] leds: pca955x: add GPIO support
-Date: Fri, 9 Jun 2017 13:13:21 +0200
-Message-ID: <24ff150b-0c12-3b5c-fbcd-5b8bedce3139@kaod.org>
-References: <1494311772-21872-1-git-send-email-clg@kaod.org>
- <20b94199-a154-53cd-96d1-910ae3de1085@gmail.com>
- <7d30134c-c8c6-3475-1a7a-534199167b5c@kaod.org>
- <e03da89b-b5b3-0a32-bca8-621bfa0bc305@gmail.com>
+From: Bruce Zhang <bo.zhang@nxp.com>
+Subject: RE: [[PATCH]] drivers: leds/trigger: system cannot enter suspend
+Date: Fri, 9 Jun 2017 13:01:31 +0000
+Message-ID: <AM3PR04MB4041CD5659C02FF30AF159A8ACE0@AM3PR04MB404.eurprd04.prod.outlook.com>
+References: <1496648191-134355-1-git-send-email-bo.zhang@nxp.com>
+ <CACRpkdZpMsqt9gjehSQ5c86LyqhZcnYF7QuGk=N4JTi-GJ1SMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 4.mo6.mail-out.ovh.net ([87.98.184.159]:34201 "EHLO
-        4.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751633AbdFILNd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2017 07:13:33 -0400
-Received: from player787.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 2E4A1E31BD
-        for <linux-leds@vger.kernel.org>; Fri,  9 Jun 2017 13:13:31 +0200 (CEST)
-In-Reply-To: <e03da89b-b5b3-0a32-bca8-621bfa0bc305@gmail.com>
+Received: from mail-db5eur01on0073.outbound.protection.outlook.com ([104.47.2.73]:5517
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751577AbdFINBg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 9 Jun 2017 09:01:36 -0400
+In-Reply-To: <CACRpkdZpMsqt9gjehSQ5c86LyqhZcnYF7QuGk=N4JTi-GJ1SMA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Ulf Hansson <ulf.hansson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hello,
-
->>> Thanks for the patch.
->>>
->>> Generally I'd split it into two patches:
->>> 1/2: addition of  LED class specific DT support
->>> 2/2: addition of GPIO support (for this one please cc also
->>>      GPIO subsystem maintainer)
->>
->> OK. I will in next version.
->>  
->>> Please also see my comments below.
->>>
->>> On 05/09/2017 08:36 AM, Cédric Le Goater wrote:
->>>> The PCA955x family of chips are I2C LED blinkers whose pins not used
->>>> to control LEDs can be used as general purpose I/Os (GPIOs).
->>>>
->>>> The following adds support for device tree and Open Firmware to be
->>>> able do define different operation modes for each pin. See bindings
->>>> documentation for more details. The pca955x driver is then extended
->>>> with a gpio_chip when pins are operating in GPIO mode.
->>>>
->>>> Signed-off-by: Cédric Le Goater <clg@kaod.org>
->>>> ---
->>>>  .../devicetree/bindings/leds/leds-pca955x.txt      | 103 ++++++++
->>>>  drivers/leds/Kconfig                               |  11 +
->>>>  drivers/leds/leds-pca955x.c                        | 290 ++++++++++++++++++---
->>>>  3 files changed, 374 insertions(+), 30 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
->>>> new file mode 100644
->>>> index 000000000000..98d1053dd1b0
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
->>>> @@ -0,0 +1,103 @@
->>>> +LEDs connected to pca9550, pca9551, pca9552, pca9553,
->>>> +
->>>> +Required properties:
->>>> +- compatible : should be one of :
->>>> +	"nxp,pca9550"
->>>> +	"nxp,pca9551"
->>>> +	"nxp,pca9552"
->>>> +	"nxp,pca9553"
->>>> +- #address-cells: must be 1
->>>> +- #size-cells: must be 0
->>>> +- reg: I2C slave address. depends on the model.
->>>> +
->>>> +Optional properties:
->>>> +- gpio-controller: allows pins to be used as GPIOs.
->>>> +- #gpio-cells: if present, must not be 0.
->>>> +- gpio-base : base number of the pins used as GPIOs. If there are more
->>>> +              than one, they should be contiguous. See 'type' property
->>>> +              below.
->>>> +
->>>> +LED sub-node properties:
->>>> +- reg   : number of LED line.
->>>> +		from 0 to  1 in pca9550
->>>> +		from 0 to  7 in pca9551
->>>> +		from 0 to 15 in pca9552
->>>> +		from 0 to  3 in pca9553
->>>> +- compatible: either "none", "led" (default) or "gpio".
->>>> +- label : (optional)
->>>> +          see Documentation/devicetree/bindings/leds/common.txt
->>>> +- linux,default-trigger : (optional)
->>>> +          see Documentation/devicetree/bindings/leds/common.txt
->>>> +
->>>> +Examples:
->>>> +
->>>> +pca9552: pca9552@60 {
->>>> +	compatible = "nxp,pca9552";
->>>> +	#address-cells = <1>;
->>>> +        #size-cells = <0>;
->>>> +	reg = <0x60>;
->>>> +
->>>> +	gpio-controller;
->>>> +	#gpio-cells = <2>;
->>>> +	gpio-base = <12>;
->>>> +
->>>> +	gpio@12 {
->>>> +		label = "GPIO12";
->>>> +		reg = <12>;
->>>> +		compatible = "gpio";
->>>> +	};
->>>> +	gpio@13 {
->>>> +		label = "GPIO13";
->>>> +		reg = <13>;
->>>> +		compatible = "gpio";
->>>> +	};
->>>> +	gpio@14 {
->>>> +		label = "GPIO14";
->>>> +		reg = <14>;
->>>> +		compatible = "gpio";
->>>> +	};
->>>> +	gpio@15 {
->>>> +		label = "GPIO15";
->>>> +		reg = <15>;
->>>> +		compatible = "gpio";
->>>> +	};
->>>
->>> I think that for GPIO pins we should have GPIO specific bindings,
->>> but DT maintainer would have to give his opinion here.
->>
->> I have got my inspiration from the tca6507 bindings.
-> 
-> Right, but AFAIK there was no DT maintainer position at that time
-> and those bindings don't have relevant ack. I'd rather wait for
-> DT maintainer opinion so as to avoid spawning wrong practices.
->
->>> Also I'm not sure if using compatible property this way is correct.
->>
->> yes.
-
-So, is the usage of the 'compatible' property correct ? 
-
-If not, we could use a 'type' property with an include file defining 
-the possible values. This is a common pattern.
-
-Thanks,
-
-C. 
+QXQgZmlyc3Qgd2Ugc2hvdWxkIGNoZWNrIHRoYXQgd2hldGhlciBleGlzdCB0aGUgdXNlIGNhc2Ug
+dGhhdCBMRUQgdHVybiBvbi9vZmYgaXMgYmFzZWQgb24gb3RoZXIgZGV2aWNlKHN1Y2ggYXMgSTJD
+KS4gSWYgdHJ1ZSwgaG93IHRvIGd1YXJhbnRlZSB0aGUgb3RoZXIgZGV2aWNlcyhzdWNoIGFzIEky
+QykgYXJlIGF2YWlsYWJsZSB3aGVuIHR1cm4gb2ZmIExFRC4gTWF5YmUgcG1fbm90aWZpZXIgaXMg
+YWNjZXB0ZWQgbWV0aG9kIHRvIHByb2Nlc3MgdGhpcyBjYXNlLCBiZWNhdXNlIHBtX25vdGlmaWVy
+IGNhbGxiYWNrIGZ1bmN0aW9uIGlzIGV4ZWN1dGVkIGJlZm9yZSBvdGhlciBkZXZpY2VzIGVudGVy
+IHN1c3BlbmQgbW9kZS4NCg0KSWYgd2UgZG9uJ3QgbmVlZCB0byBjYXJlIHN1Y2ggY2FzZSBvciBu
+b3QgZXhpc3Qgc3VjaCB1c2UgY2FzZSBpbiBhcHBsaWNhdGlvbiwgd2UgY2FuIHJldmVydCB0aGUg
+cGF0Y2ggNWFiOTJhN2NiLg0KDQpCZXN0IFJlZ2FyZHMsDQpCcnVjZQ0KDQotLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpA
+bGluYXJvLm9yZ10gDQpTZW50OiBGcmlkYXksIEp1bmUgMDksIDIwMTcgNzoyNSBQTQ0KVG86IEJy
+dWNlIFpoYW5nIDxiby56aGFuZ0BueHAuY29tPg0KQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZzsgSmFjZWsgQW5hc3pld3NraSA8amFjZWsuYW5hc3pld3NraUBnbWFpbC5j
+b20+OyBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4NClN1YmplY3Q6IFJlOiBbW1BBVENIXV0g
+ZHJpdmVyczogbGVkcy90cmlnZ2VyOiBzeXN0ZW0gY2Fubm90IGVudGVyIHN1c3BlbmQNCg0KT24g
+TW9uLCBKdW4gNSwgMjAxNyBhdCA5OjM2IEFNLCBaaGFuZyBCbyA8Ym8uemhhbmdAbnhwLmNvbT4g
+d3JvdGU6DQoNCj4gU3lzdGVtIGNhbm5vdCBlbnRlciBzdXNwZW5kIG1vZGUgYmVjYXVzZSBvZiBo
+ZWFydGJlYXQgbGVkIHRyaWdnZXIuDQoNCkFzIG1lbnRpb25lZCB0aGlzIHNob3VsZCBub3QgYmUg
+YSBwcm9ibGVtLg0KDQo+IEhlYXJ0YmVhdF9wbV9ub3RpZmllciBpcyBjYWxsZWQgd2hlbiBzeXN0
+ZW0gcHJlcGFyZSB0byBlbnRlciBzdXNwZW5kIA0KPiBtb2RlLCB0aGVuIGNhbGwgbGVkX3RyaWdn
+ZXJfdW5yZWdpc3RlciB0byBjaGFuZ2UgdGhlIHRyaWdnZXIgb2YgbGVkIA0KPiBkZXZpY2UgdG8g
+bm9uZS4gSXQgd2lsbCBzZW5kIHVldmVudCBtZXNzYWdlIGFuZCB0aGUgd2FrZXVwIHNvdXJjZSBj
+b3VudCBjaGFuZ2VkLg0KPg0KPiBBZGQgc3VzcGVuZC9yZXN1bWUgb3BzIHRvIHRoZSBzdHJ1Y3Qg
+bGVkX3RyaWdnZXIsIGltcGxlbWVudCB0aGVzZSB0d28gDQo+IG9wcyBmb3IgbGVkdHJpZy1oZWFy
+dGJlYXQuIEFkZCBsZWRfdHJpZ2dlcl9zdXNwZW5kL2xlZF90cmlnZ2VyX3Jlc3VtZSANCj4gZnVu
+Y2l0b25zIHRvIGl0ZXJhdGUgdGhyb3VnaCBhbGwgTEVEIGNsYXNzIGRldmljZXMgcmVnaXN0ZXJl
+ZCBvbiBnaXZlbiANCj4gdHJpZ2dlciBhbmQgY2FsbCB0aGVpciBzdXNwZW5kL3Jlc3VtZSBvcHMg
+YW5kIGRpc2FibGUvZW5hYmxlIHN5c2ZzIGF0IHRoZSBzYW1lIHRpbWUuDQo+DQo+IENhbGwgbGVk
+X3RyaWdnZXJfc3VzcGVuZHtyZXN1ZW19IEFQSSBpbiBwbV9ub3RpZmllciBmdW5jdGlvbiB0byAN
+Cj4gc3VzcGVuZC9yZXN1bWUgYWxsIGxlZCBkZXZpY2VzIGxpc3RlZCBpbiBnaXZlbiB0cmlnZ2Vy
+Lg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBaaGFuZyBCbyA8Ym8uemhhbmdAbnhwLmNvbT4NCg0KVGhl
+IHBhdGNoIGlzIG5pY2UgYmVjYXVzZSBpdCBmaXhlcyBteSBzbG9wcHkgYXBwcm9hY2ggb2YganVz
+dCBhZGRpbmcvcmVtb3ZpbmcgdGhlIHRyaWdnZXIgbWFkZSBlYXJsaWVyLg0KDQpJdCBzdG9wcyB1
+bnNvbGljaXRlZCBJMkMgdHJhZmZpYyBhbmQgb3RoZXIgbmFzdGluZXMgZnJvbSBoYXBwZW5pbmcg
+ZHVyaW5nIHRoZSBzdXNwZW5kL3Jlc3VtZSBjeWNsZS4NCg0KSSB3b3VsZCBldmVuIGFkZDoNCg0K
+Rml4ZXM6IDVhYjkyYTdjYjgyYyAoImxlZHM6IGhhbmRsZSBzdXNwZW5kL3Jlc3VtZSBpbiBoZWFy
+dGJlYXQgdHJpZ2dlciIpDQoNCiguLi4pDQo+ICtzdGF0aWMgdm9pZCBoZWFydGJlYXRfdHJpZ19y
+ZXN1bWUoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVkX2NkZXYpIHsNCj4gKyAgICAgICBzdHJ1Y3Qg
+aGVhcnRiZWF0X3RyaWdfZGF0YSAqaGVhcnRiZWF0X2RhdGEgPSANCj4gK2xlZF9jZGV2LT50cmln
+Z2VyX2RhdGE7DQo+ICsNCj4gKyAgICAgICBpZiAobGVkX2NkZXYtPnN1c3BlbmRlZCkgew0KPiAr
+ICAgICAgICAgICAgICAgc2V0dXBfdGltZXIoJmhlYXJ0YmVhdF9kYXRhLT50aW1lciwNCj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGxlZF9oZWFydGJlYXRfZnVuY3Rpb24sICh1bnNpZ25l
+ZCBsb25nKSBsZWRfY2Rldik7DQo+ICsgICAgICAgICAgICAgICBoZWFydGJlYXRfZGF0YS0+cGhh
+c2UgPSAwOw0KPiArICAgICAgICAgICAgICAgbGVkX2hlYXJ0YmVhdF9mdW5jdGlvbihoZWFydGJl
+YXRfZGF0YS0+dGltZXIuZGF0YSk7DQo+ICsgICAgICAgICAgICAgICBsZWRfY2Rldi0+c3VzcGVu
+ZGVkID0gZmFsc2U7DQo+ICsgICAgICAgfQ0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBoZWFy
+dGJlYXRfdHJpZ19zdXNwZW5kKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2KSB7DQo+ICsg
+ICAgICAgc3RydWN0IGhlYXJ0YmVhdF90cmlnX2RhdGEgKmhlYXJ0YmVhdF9kYXRhID0gDQo+ICts
+ZWRfY2Rldi0+dHJpZ2dlcl9kYXRhOw0KPiArDQo+ICsgICAgICAgaWYgKGxlZF9jZGV2LT5hY3Rp
+dmF0ZWQgJiYgIWxlZF9jZGV2LT5zdXNwZW5kZWQpIHsNCj4gKyAgICAgICAgICAgICAgIGRlbF90
+aW1lcl9zeW5jKCZoZWFydGJlYXRfZGF0YS0+dGltZXIpOw0KPiArICAgICAgICAgICAgICAgbGVk
+X2NkZXYtPnN1c3BlbmRlZCA9IHRydWU7DQo+ICAgICAgICAgfQ0KDQpBcmUgd2Ugc3VyZSB0aGF0
+IHRoZSBMRUQgaXMgKm9mZiogYXQgdGhpcyBwb2ludCBzbyB5b3UgZG9uJ3Qgc3VzcGVuZC9yZXN1
+bWUgd2l0aCBhIGdsb3dpbmcgTEVEPw0KDQpFbHNlIGluc2VydCBhIGNhbGwgdG8gbWFrZSBzdXJl
+IHRoYXQgaXQncyBsaWtlIHNvLCBhbmQgbWF5YmUgZXZlbiBhIHZhcmlhYmxlIHRvIGhvbGQgdGhl
+IGN1cnJlbnQgc3RhdGUgKG9mZi9vbikgYWNyb3NzIHRoZSBzdXNwZW5kL3Jlc3VtZSBjeWNsZS4N
+Cg0KPiBAQCAtMTYxLDI1ICsxODYsMjMgQEAgc3RhdGljIHZvaWQgaGVhcnRiZWF0X3RyaWdfZGVh
+Y3RpdmF0ZShzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldikNCj4gICAgICAgICAubmFtZSAg
+ICAgPSAiaGVhcnRiZWF0IiwNCj4gICAgICAgICAuYWN0aXZhdGUgPSBoZWFydGJlYXRfdHJpZ19h
+Y3RpdmF0ZSwNCj4gICAgICAgICAuZGVhY3RpdmF0ZSA9IGhlYXJ0YmVhdF90cmlnX2RlYWN0aXZh
+dGUsDQo+ICsgICAgICAgLnN1c3BlbmQgPSBoZWFydGJlYXRfdHJpZ19zdXNwZW5kLA0KPiArICAg
+ICAgIC5yZXN1bWUgPSBoZWFydGJlYXRfdHJpZ19yZXN1bWUsDQooLi4uKQ0KPiArICAgICAgIHZv
+aWQgICAgICAgICAgICAoKnN1c3BlbmQpKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2KTsN
+Cj4gKyAgICAgICB2b2lkICAgICAgICAgICAgKCpyZXN1bWUpKHN0cnVjdCBsZWRfY2xhc3NkZXYg
+KmxlZF9jZGV2KTsNCg0KDQpUaGVzZSBuYW1lcyBkbyBub3QgY29ycmVzcG9ucyB0byB0aGUgYWN0
+dWFsIFBNIGNhbGxzIHRoZXkgYXJlIHV0aWxpemVkIGZvci4NCg0KTmFtZSB0aGVtDQoucG1fcHJl
+cGFyZV9zdXNwZW5kKCkNCi5wbV9wb3N0X3N1c3BlbmQoKQ0KDQpJbnN0ZWFkLCB0aGlzIGluZGlj
+YXRlcyBiZXR0ZXIgdGhlIHBsYWNlIHdoZW4gdGhleSBnZXQgY2FsbGVkLg0KDQpZb3VycywNCkxp
+bnVzIFdhbGxlaWoNCg==
