@@ -1,74 +1,73 @@
-From: <office@franztextilmanufaktur.com>
-Subject: (unknown)
-Date: Fri, 09 Jun 2017 03:35:09 -0000
-Message-ID: <149697930997.12490.12105060048148948526@tobolsknauka.ru>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH 4/4] mfd: tps65217: Instantiate sub-devices from device tree
+Date: Fri, 9 Jun 2017 11:55:05 +0200
+Message-ID: <CAFqH_50MDAAMcj0RW8Vzu71n=vAHAukpGw--mn3+PZBfj+m88w@mail.gmail.com>
+References: <20170607103242.16008-1-enric.balletbo@collabora.com>
+ <20170607103242.16008-4-enric.balletbo@collabora.com> <6359abe2-9a21-78a2-f5ea-87e2e3335af3@ti.com>
+ <CAFqH_53v32iODN4xhoh4ho4s6grxknEDS3Ak6CHBcTAQo6fDNw@mail.gmail.com>
+ <578f348c-509f-79d3-9770-73c9fcffe19c@ti.com> <CAFqH_52rU7ZBG_Muy2JHoqJGdXOdsNfmtJxsZoPRyx3V1aWmFw@mail.gmail.com>
+ <CABxcv=mN6=hbDSqrVkwSL8zccCntN7m_3DP6ZCbkOT6CLw+skQ@mail.gmail.com>
+ <fba09819-7d7e-57bb-c147-46c39098cff8@ti.com> <CABxcv=nzCreCSm9wkY+Kv_-vmoQN12Ct=_VegsfTrbe6H-1hTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="173662.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from tobolsknauka.ru ([178.46.154.119]:36476 "HELO tobolsknauka.ru"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751479AbdFIDfT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 8 Jun 2017 23:35:19 -0400
-Content-Disposition: attachment
-Subject: 
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABxcv=nzCreCSm9wkY+Kv_-vmoQN12Ct=_VegsfTrbe6H-1hTw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, linux-input@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>Pavel Machek <p>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
 
-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
+Hello Grygorii, Javier,
+
+2017-06-09 2:00 GMT+02:00 Javier Martinez Canillas <javier@dowhile0.org>:
+> Hello Grygorii,
+>
+> [snip]
+>
+>>>
+>>> For tps65218 couldn't instead of using mfd_add_devices() for all the
+>>> sub-devs, had used of_platform_populate() for the ones that have
+>>> device nodes and mfd_add_devices() only for the "tps65218-regulator"?
+>>>
+>>> The commit talks about nodes without compatibles but's actually about
+>>> sub-devices without an associated device node. For me it makes sense
+>>> to use of_platform_populate() when the MFD has device nodes for their
+>>> sub-devices and mfd_add_devices() when DT knows nothing about the
+>>> sub-devices.
+>>
+>> FYI. Below is link discussion I'm referring to between Mark Brown and Andrew F. Davis
+>> https://lkml.org/lkml/2015/10/22/823
+>> the same - https://groups.google.com/forum/#!topic/linux.kernel/wQsdSpPMroQ
+>>
+>
+> Thanks a lot for the pointer. There's a subtle difference between the
+> argument you made and the one that Mark is making in this thread
+> though.
+>
+> Because you said (sorry if I misunderstood) that mfd_add_devices()
+> should be used instead of of_device_populate() even when sub-devices
+> are described as DT nodes (as is the case in the commit you shared)
+> while Mark is saying that if the sub-devs IP blocks are part of the
+> MFD, then it shouldn't be exposed in the DT and be instantiated via
+> mfd_add_devices() and I absolutely agree with that.
+>
+> So I was arguing for using of_device_populate() if the sub-devices are
+> described in the DT. If that makes sense or not to expose the
+> sub-devices in the DT for this particular driver is a different
+> discussion and I can't comment on that since I'm not familiar with the
+> HW.
+>
+
+I'm agree with Grygorii here that has no sense describe the static
+interrupts resources in the DT here unless DT maintainers prefer have
+them (dunno their preferences). OTOH, for the charger we need a way to
+disable (or having a mfd propriety or having a DT subnode with the
+status). I have a new idea that might be acceptable by Grygorii and
+also solve my use case. Let me prepare a second patchset and lets
+continue the discussion there?
+
+Best regards,
+ Enric
+
+> Best regards,
+> Javier
