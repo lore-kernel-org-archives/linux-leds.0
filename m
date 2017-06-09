@@ -1,221 +1,164 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: tps65217: Update binding documentation.
-Date: Fri, 9 Jun 2017 09:03:09 -0500
-Message-ID: <20170609140309.zhagc5g662d4la3z@rob-hp-laptop>
-References: <20170607103242.16008-1-enric.balletbo@collabora.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
+Date: Fri, 9 Jun 2017 22:47:15 +0200
+Message-ID: <e83c61cd-2895-aff7-f0a8-8a7e02d8d8e1@gmail.com>
+References: <1496803810-57154-1-git-send-email-bo.zhang@nxp.com>
+ <20170607071256.GA3230@amd>
+ <CACRpkdacymETLuRmpn07HUKHvrjWc85Jdj0s0qk44zTcaALa9w@mail.gmail.com>
+ <20170607103129.GA13227@amd>
+ <AM3PR04MB4045292078845DDB27718BD8AC90@AM3PR04MB404.eurprd04.prod.outlook.com>
+ <711ac25b-ee32-1bd6-8a18-1e261b445920@gmail.com>
+ <AM3PR04MB404B44A56FC58C12D3DF2A68ACE0@AM3PR04MB404.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33786 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbdFIODM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2017 10:03:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20170607103242.16008-1-enric.balletbo@collabora.com>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34373 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751536AbdFIUsB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2017 16:48:01 -0400
+Received: by mail-wr0-f195.google.com with SMTP id u101so9107724wrc.1
+        for <linux-leds@vger.kernel.org>; Fri, 09 Jun 2017 13:48:00 -0700 (PDT)
+In-Reply-To: <AM3PR04MB404B44A56FC58C12D3DF2A68ACE0@AM3PR04MB404.eurprd04.prod.outlook.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>, javier@dowhile0.org
+To: Bruce Zhang <bo.zhang@nxp.com>, Pavel Machek <pavel@ucw.cz>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On Wed, Jun 07, 2017 at 12:32:39PM +0200, Enric Balletbo i Serra wrote:
-> This patch adds a new binding documentation for the TPS65217 MFD and
-> updates the documentation for all the sub-devices in accordance to get
-> each individual sub-driver functioning correctly.
+Hi Bruce,
 
-Explain why breaking compatibility is okay.
-
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->  .../bindings/input/tps65218-pwrbutton.txt          |   2 +-
->  .../bindings/leds/backlight/tps65217-backlight.txt |  24 ++---
->  Documentation/devicetree/bindings/mfd/tps65217.txt | 100 +++++++++++++++++++++
->  .../devicetree/bindings/regulator/tps65217.txt     |   8 +-
->  4 files changed, 119 insertions(+), 15 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/tps65217.txt
+On 06/09/2017 04:57 AM, Bruce Zhang wrote:
+> Hi Jacek,
 > 
-> diff --git a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
-> index 8682ab6..603a3f0 100644
-> --- a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
-> +++ b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
-> @@ -1,7 +1,7 @@
->  Texas Instruments TPS65217 and TPS65218 power button
->  
->  This module is part of the TPS65217/TPS65218. For more details about the whole
-> -TPS65217 chip see Documentation/devicetree/bindings/regulator/tps65217.txt.
-> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
->  
->  This driver provides a simple power button event via an Interrupt.
->  
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
-> index 5fb9279..a1bc465 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
-> @@ -1,11 +1,13 @@
-> -TPS65217 family of regulators
-> +Texas Instruments TPS65217 backlight regulator
-> +
-> +This module is part of the TPS65217. For more details about the whole
-> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
->  
->  The TPS65217 chip contains a boost converter and current sinks which can be
->  used to drive LEDs for use as backlights.
->  
->  Required properties:
-> -- compatible: "ti,tps65217"
-> -- reg: I2C slave address
-> +- compatible: "ti,tps65217-bl"
->  - backlight: node for specifying WLED1 and WLED2 lines in TPS65217
->  - isel: selection bit, valid values: 1 for ISEL1 (low-level) and 2 for ISEL2 (high-level)
->  - fdim: PWM dimming frequency, valid values: 100, 200, 500, 1000
-> @@ -15,13 +17,13 @@ Each regulator is defined using the standard binding for regulators.
->  
->  Example:
->  
-> -	tps: tps@24 {
-> -		reg = <0x24>;
-> -		compatible = "ti,tps65217";
-> -		backlight {
-> -			isel = <1>;  /* 1 - ISET1, 2 ISET2 */
-> -			fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
-> -			default-brightness = <50>;
-> -		};
-> +&tps {
-> +	backlight {
-> +		compatible = "ti,tps65217-bl";
-> +		status = "okay";
-> +		isel = <1>;  /* 1 - ISET1, 2 ISET2 */
-> +		fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
-> +		default-brightness = <50>;
->  	};
-> +};
->  
-> diff --git a/Documentation/devicetree/bindings/mfd/tps65217.txt b/Documentation/devicetree/bindings/mfd/tps65217.txt
-> new file mode 100644
-> index 0000000..40c84ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/tps65217.txt
-> @@ -0,0 +1,100 @@
-> +Texas Instruments TPS65217 Single-Chip PMIC for Battery-Powered Systems
-> +
-> +Required properties:
-> +- compatible: "ti,tps65217"
-> +- reg: I2C slave address.
-> +- interrupt-controller: Marks the device node as an interrupt controller.
-> +- #interrupt-cells: The number of cells to describe an IRQ, this should be 1.
-> +- backlight: Child node that specify the backlight regulator sub-device. See:
-> +	Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
-> +- charger: Child node that specify the charger sub-device. See:
-> +	Documentation/devicetree/bindings/power/supply/tps65217_charger.txt
-> +- pwrbutton: Child node that specify the power button sub-device. See:
-> +	Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
-> +- regulators: List of child nodes that specify the regulator initialization
-> +	data. See:
-> +	Documentation/devicetree/bindings/regulator/tps65217.txt.
-> +
-> +Optional properties:
-> +- ti,pmic-shutdown-controller: Telling the PMIC to shutdown on PWR_EN toggle.
-> +
-> +Example:
-> +
-> +	tps: tps@24 {
-> +		compatible = "ti,tps65217";
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +
-> +		ti,pmic-shutdown-controller;
-> +
-> +		backlight {
-> +			compatible = "ti,tps65217-bl";
-> +			status = "disabled";
-> +		};
-> +
-> +		charger {
-> +			compatible = "ti,tps65217-charger";
-> +			status = "disabled";
-> +		};
-> +
-> +		pwrbutton {
-> +			compatible = "ti,tps65217-pwrbutton";
-> +			status = "disabled";
-> +		};
-> +
-> +		regulators {
-> +			compatible = "ti,tps65217-pmic";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			dcdc1_reg: dcdc1 {
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			dcdc2_reg: dcdc2 {
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			dcdc3_reg: dcc3 {
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo1_reg: ldo1 {
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo2_reg: ldo2 {
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo3_reg: ldo3 {
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo4_reg: ldo4 {
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +		};
-> +	};
-> +
-> diff --git a/Documentation/devicetree/bindings/regulator/tps65217.txt b/Documentation/devicetree/bindings/regulator/tps65217.txt
-> index 4f05d20..2d9b519 100644
-> --- a/Documentation/devicetree/bindings/regulator/tps65217.txt
-> +++ b/Documentation/devicetree/bindings/regulator/tps65217.txt
-> @@ -1,8 +1,10 @@
-> -TPS65217 family of regulators
-> +Texas Instruments TPS65217 family of regulators
-> +
-> +This module is part of the TPS65217. For more details about the whole
-> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
->  
->  Required properties:
-> -- compatible: "ti,tps65217"
-> -- reg: I2C slave address
-> +- compatible: "ti,tps65217-pmic"
->  - regulators: list of regulators provided by this controller, must be named
->    after their hardware counterparts: dcdc[1-3] and ldo[1-4]
->  - regulators: This is the list of child nodes that specify the regulator
+> I think that no change need to make for __led_set_brightness() and __led_set_brightness_blocking() function. Because led_classdev_suspend() need to turn off LED with these API. set_brightness_delayed() is the same level API as __led_set_brightness(). No need to add LED_SUSPENDED checking as well.
 
-regulators twice? Fix that while you're here.
+Indeed, it would be even harmful with the current sequence of
+instructions in the led_classdev_suspend().
 
-> -- 
-> 2.9.3
+So, the only action to take is to revert the commit 5ab92a7cb8.
+
+Would you mind submitting the patch so that everyone interested
+could give their ack?
+
+Best regards,
+Jacek Anaszewski
+
+> -----Original Message-----
+> From: Jacek Anaszewski [mailto:jacek.anaszewski@gmail.com] 
+> Sent: Friday, June 09, 2017 4:28 AM
+> To: Bruce Zhang <bo.zhang@nxp.com>; Pavel Machek <pavel@ucw.cz>; Linus Walleij <linus.walleij@linaro.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>; linux-arm-kernel@lists.infradead.org; Richard Purdie <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
+> Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
+> 
+> Hi Bruce,
+> 
+> On 06/08/2017 04:57 AM, Bruce Zhang wrote:
+>> Hi,
+>>
+>> As suspend/resume procedure is as below:
+>> pm_notifier_call_chain(PM_SUSPEND_PREPARE)->device suspend -> syscore suspend -> enter suspend mode -> syscore resume -> device resume -> pm_notifier_call_chain(PM_POST_SUSPEND).
+>> If led brightness control depends on other device/hardware (such as I2C), the LED turn off action should be earlier than device suspend. pm_notifier may be a suitable method to turn off LED.
+> 
+> OK, so I agree that the most proper fix to the discussed problem would be ignoring brightness setting requests after suspend, as Pavel suggested.
+> 
+> led_classdev_suspend() already turns the LED off and
+> led_classdev_resume() brings the brightness back.
+> 
+> Also led_set_brightness_nosleep() and led_set_brightness_sync() don't propagate brightness change to the driver if LED_SUSPENDED is set.
+> 
+> There are two problems though:
+> 1. __led_set_brightness() and __led_set_brightness_blocking() don't
+>    check the flag, and they can be called from set_brightness_delayed(),
+>    that was already queued at the time of setting LED_SUSPENDED flag.
+> 2. LED_SUSPENDED flag is accessed in a non-atomic way.
+> 
+> The solution as I see it would be respectively:
+> 1. Return from __led_set_brightness() and
+>    __led_set_brightness_blocking() if LED_SUSPENDED is set.
+> 2. Switch to accessing struct led_classdev's flags with use of
+>    bitops. Fortunately those flags are mainly set prior LED class
+>    device registration and only LED_SYSFS_DISABLE, LED_SUSPENDED
+>    and LED_UNREGISTERING are accessed afterwards, and only in the LED
+>    core, so only those places would have to be modified.
+> 
+> Best regards,
+> Jacek Anaszewski
+> 
+>> -----Original Message-----
+>> From: Pavel Machek [mailto:pavel@ucw.cz]
+>> Sent: Wednesday, June 07, 2017 6:31 PM
+>> To: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Bruce Zhang <bo.zhang@nxp.com>; Ulf Hansson 
+>> <ulf.hansson@linaro.org>; linux-arm-kernel@lists.infradead.org; Jacek 
+>> Anaszewski <jacek.anaszewski@gmail.com>; Richard Purdie 
+>> <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
+>> Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter 
+>> suspend
+>>
+>> Hi!
+>>
+>> On Wed 2017-06-07 11:46:10, Linus Walleij wrote:
+>>> On Wed, Jun 7, 2017 at 9:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>>>
+>>>> Core reason is that 5ab92a7cb is wrong. (Very wrong; it papers over 
+>>>> the issue for one trigger, but we have more than one... Even if 
+>>>> special handling for heartbeat is warranted, that handling would be 
+>>>> "turn the led off" not "unregister the trigger", which is 
+>>>> userland-visible action.)
+>>>
+>>> OK yeah I guess you're right.
+>>>
+>>> I just couldn't think about anything better and didn't get any review 
+>>> at the time, so mistakes were made.
+>>>
+>>>> That one should be reverted, then maybe the driver should be fixed 
+>>>> to turn the led off during suspend.
+>>>
+>>> Do you mean that the heartbeat trigger driver should be fixed to turn 
+>>> off the LED during sleep?
+>>>
+>>> That is essentially what I was trying to achieve.
+>>
+>> I don't think we should be fixing it at trigger level.
+>>
+>> If userspace keeps blinking using "brightness" attribute, would we like the LED to be off during suspend? I think so.
+>>
+>>> The reason it is done as it is, is that the trigger sets up a timer 
+>>> to do its job, and the timer may trigger between the point you turn 
+>>> off the LED and the system really goes to suspend, again maybe 
+>>> turning the LED on and again leaving the system with a glowing LED at suspend.
+>>
+>>> The patch also solves the following phenomenon, sorry for not writing 
+>>> in the commit:
+>>>
+>>> - Turn off LED
+>>> - Suspend I2C hardware
+>>> - Timer trigger
+>>> - Trying to blink the LED using I2C
+>>> - Crap in the console about the failed I2C transaction
+>>> - Actual suspen happens
+>>> - System comes online
+>>> - Trying to blink the LED using I2C
+>>> - Crap in the console about the failed I2C transaction
+>>> - Resume I2C hardware
+>>>
+>>> It's just very fragile this trigger, turning off the LED from the PM 
+>>> notifier is obviously not enough, we also need to disable the timer, 
+>>> and then take it back online after resume.
+>>
+>> No, leave the timer alone, and actually leave the trigger alone.
+>>
+>> Simply make the driver turn the LED off in .suspend() callback, and then ignore further requests until .resume(). That will get rid of power drain _and_ "failed I2C transaction" messages, right?
+>>
+>> (Actually, I tested with the heartbeat trigger, and it is not re-installed after resume. Another reason to revert the patch).
+>>
+>> Thanks,
+>>
+>> 									Pavel
+>> --
+>> (english) http://www.livejournal.com/~pavelmachek
+>> (cesky, pictures) 
+>> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>>
+> 
 > 
