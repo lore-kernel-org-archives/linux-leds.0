@@ -1,167 +1,74 @@
-From: Bruce Zhang <bo.zhang@nxp.com>
-Subject: RE: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspend
-Date: Fri, 9 Jun 2017 02:57:49 +0000
-Message-ID: <AM3PR04MB404B44A56FC58C12D3DF2A68ACE0@AM3PR04MB404.eurprd04.prod.outlook.com>
-References: <1496803810-57154-1-git-send-email-bo.zhang@nxp.com>
- <20170607071256.GA3230@amd>
- <CACRpkdacymETLuRmpn07HUKHvrjWc85Jdj0s0qk44zTcaALa9w@mail.gmail.com>
- <20170607103129.GA13227@amd>
- <AM3PR04MB4045292078845DDB27718BD8AC90@AM3PR04MB404.eurprd04.prod.outlook.com>
- <711ac25b-ee32-1bd6-8a18-1e261b445920@gmail.com>
+From: <office@franztextilmanufaktur.com>
+Subject: (unknown)
+Date: Fri, 09 Jun 2017 03:35:09 -0000
+Message-ID: <149697930997.12490.12105060048148948526@tobolsknauka.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: application/zip; name="173662.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0077.outbound.protection.outlook.com ([104.47.1.77]:38741
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751479AbdFIC5w (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 8 Jun 2017 22:57:52 -0400
-In-Reply-To: <711ac25b-ee32-1bd6-8a18-1e261b445920@gmail.com>
-Content-Language: en-US
+Received: from tobolsknauka.ru ([178.46.154.119]:36476 "HELO tobolsknauka.ru"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751479AbdFIDfT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 8 Jun 2017 23:35:19 -0400
+Content-Disposition: attachment
+Subject: 
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: linux-leds@vger.kernel.org
 
-Hi Jacek,
-
-I think that no change need to make for __led_set_brightness() and __led_se=
-t_brightness_blocking() function. Because led_classdev_suspend() need to tu=
-rn off LED with these API. set_brightness_delayed() is the same level API a=
-s __led_set_brightness(). No need to add LED_SUSPENDED checking as well.
-
-Best Regards,
-Bo
-
------Original Message-----
-From: Jacek Anaszewski [mailto:jacek.anaszewski@gmail.com]=20
-Sent: Friday, June 09, 2017 4:28 AM
-To: Bruce Zhang <bo.zhang@nxp.com>; Pavel Machek <pavel@ucw.cz>; Linus Wall=
-eij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>; linux-arm-kernel@lists.infradead.=
-org; Richard Purdie <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
-Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter suspen=
-d
-
-Hi Bruce,
-
-On 06/08/2017 04:57 AM, Bruce Zhang wrote:
-> Hi,
->=20
-> As suspend/resume procedure is as below:
-> pm_notifier_call_chain(PM_SUSPEND_PREPARE)->device suspend -> syscore sus=
-pend -> enter suspend mode -> syscore resume -> device resume -> pm_notifie=
-r_call_chain(PM_POST_SUSPEND).
-> If led brightness control depends on other device/hardware (such as I2C),=
- the LED turn off action should be earlier than device suspend. pm_notifier=
- may be a suitable method to turn off LED.
-
-OK, so I agree that the most proper fix to the discussed problem would be i=
-gnoring brightness setting requests after suspend, as Pavel suggested.
-
-led_classdev_suspend() already turns the LED off and
-led_classdev_resume() brings the brightness back.
-
-Also led_set_brightness_nosleep() and led_set_brightness_sync() don't propa=
-gate brightness change to the driver if LED_SUSPENDED is set.
-
-There are two problems though:
-1. __led_set_brightness() and __led_set_brightness_blocking() don't
-   check the flag, and they can be called from set_brightness_delayed(),
-   that was already queued at the time of setting LED_SUSPENDED flag.
-2. LED_SUSPENDED flag is accessed in a non-atomic way.
-
-The solution as I see it would be respectively:
-1. Return from __led_set_brightness() and
-   __led_set_brightness_blocking() if LED_SUSPENDED is set.
-2. Switch to accessing struct led_classdev's flags with use of
-   bitops. Fortunately those flags are mainly set prior LED class
-   device registration and only LED_SYSFS_DISABLE, LED_SUSPENDED
-   and LED_UNREGISTERING are accessed afterwards, and only in the LED
-   core, so only those places would have to be modified.
-
-Best regards,
-Jacek Anaszewski
-
-> -----Original Message-----
-> From: Pavel Machek [mailto:pavel@ucw.cz]
-> Sent: Wednesday, June 07, 2017 6:31 PM
-> To: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bruce Zhang <bo.zhang@nxp.com>; Ulf Hansson=20
-> <ulf.hansson@linaro.org>; linux-arm-kernel@lists.infradead.org; Jacek=20
-> Anaszewski <jacek.anaszewski@gmail.com>; Richard Purdie=20
-> <rpurdie@rpsys.net>; linux-leds@vger.kernel.org
-> Subject: Re: [[PATCH v2]] drivers: leds/trigger: system cannot enter=20
-> suspend
->=20
-> Hi!
->=20
-> On Wed 2017-06-07 11:46:10, Linus Walleij wrote:
->> On Wed, Jun 7, 2017 at 9:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
->>
->>> Core reason is that 5ab92a7cb is wrong. (Very wrong; it papers over=20
->>> the issue for one trigger, but we have more than one... Even if=20
->>> special handling for heartbeat is warranted, that handling would be=20
->>> "turn the led off" not "unregister the trigger", which is=20
->>> userland-visible action.)
->>
->> OK yeah I guess you're right.
->>
->> I just couldn't think about anything better and didn't get any review=20
->> at the time, so mistakes were made.
->>
->>> That one should be reverted, then maybe the driver should be fixed=20
->>> to turn the led off during suspend.
->>
->> Do you mean that the heartbeat trigger driver should be fixed to turn=20
->> off the LED during sleep?
->>
->> That is essentially what I was trying to achieve.
->=20
-> I don't think we should be fixing it at trigger level.
->=20
-> If userspace keeps blinking using "brightness" attribute, would we like t=
-he LED to be off during suspend? I think so.
->=20
->> The reason it is done as it is, is that the trigger sets up a timer=20
->> to do its job, and the timer may trigger between the point you turn=20
->> off the LED and the system really goes to suspend, again maybe=20
->> turning the LED on and again leaving the system with a glowing LED at su=
-spend.
->=20
->> The patch also solves the following phenomenon, sorry for not writing=20
->> in the commit:
->>
->> - Turn off LED
->> - Suspend I2C hardware
->> - Timer trigger
->> - Trying to blink the LED using I2C
->> - Crap in the console about the failed I2C transaction
->> - Actual suspen happens
->> - System comes online
->> - Trying to blink the LED using I2C
->> - Crap in the console about the failed I2C transaction
->> - Resume I2C hardware
->>
->> It's just very fragile this trigger, turning off the LED from the PM=20
->> notifier is obviously not enough, we also need to disable the timer,=20
->> and then take it back online after resume.
->=20
-> No, leave the timer alone, and actually leave the trigger alone.
->=20
-> Simply make the driver turn the LED off in .suspend() callback, and then =
-ignore further requests until .resume(). That will get rid of power drain _=
-and_ "failed I2C transaction" messages, right?
->=20
-> (Actually, I tested with the heartbeat trigger, and it is not re-installe=
-d after resume. Another reason to revert the patch).
->=20
-> Thanks,
->=20
-> 									Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures)=20
-> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
->=20
+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
