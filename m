@@ -1,284 +1,173 @@
-From: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] dt-bindings: tps65217: Update binding documentation.
-Date: Sat, 10 Jun 2017 00:30:47 +0200
-Message-ID: <CAFqH_53+diszv4QtKU0CgVPb3TO-MeDWjbPpFQuVzLXZsQ=Zog@mail.gmail.com>
-References: <20170607103242.16008-1-enric.balletbo@collabora.com> <20170609140309.zhagc5g662d4la3z@rob-hp-laptop>
+From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg-Bxea+6Xhats@public.gmane.org>
+Subject: Re: [PATCH] leds: pca955x: add GPIO support
+Date: Sat, 10 Jun 2017 08:00:11 +0200
+Message-ID: <0c67f60f-8815-5f44-2b96-ffde5c7289e7@kaod.org>
+References: <1494311772-21872-1-git-send-email-clg@kaod.org>
+ <20b94199-a154-53cd-96d1-910ae3de1085@gmail.com>
+ <7d30134c-c8c6-3475-1a7a-534199167b5c@kaod.org>
+ <e03da89b-b5b3-0a32-bca8-621bfa0bc305@gmail.com>
+ <24ff150b-0c12-3b5c-fbcd-5b8bedce3139@kaod.org>
+ <0c738e3d-4c13-9ba2-d1ef-50e471019756@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170609140309.zhagc5g662d4la3z@rob-hp-laptop>
+In-Reply-To: <0c738e3d-4c13-9ba2-d1ef-50e471019756-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Javier
+To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hello Rob,
-
-2017-06-09 16:03 GMT+02:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> On Wed, Jun 07, 2017 at 12:32:39PM +0200, Enric Balletbo i Serra wrote:
->> This patch adds a new binding documentation for the TPS65217 MFD and
->> updates the documentation for all the sub-devices in accordance to get
->> each individual sub-driver functioning correctly.
->
-> Explain why breaking compatibility is okay.
->
-
-We had some discussion in patch 4 that make me rethink a bit all this,
-please let me send a new version and continue the discussion there
-(now I'm not sure if I'll break the compatibility or not)
-
-But let me ask a question. The TPS65217 MFD has different sub-nodes
-(charger, backlight, pwrbutton, regulators) in DT, I suspect the
-answer is no, but is it ok that some of them were not described in the
-DT because there is nothing to configure?
-
-i.e: Have this because the resources of charger and pwrbutton are
-static so can be hard-coded in the driver
-
-&tps {
-        compatible = "ti,tps65217";
-        interrupt-controller;
-        #interrupt-cells = <1>;
-
-        regulators {
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-                dcdc1_reg: regulator@0 {
-                        reg = <0>;
-                ...
-       };
-};
-
-instead of :
-
-&tps {
-        compatible = "ti,tps65217";
-        interrupt-controller;
-        #interrupt-cells = <1>;
-
-        charger {
-                compatible = "ti,tps65217-charger";
-                interrupts = <0>, <1>;
-                interrupt-names = "USB", "AC";
-        };
-
-        pwrbutton {
-                compatible = "ti,tps65217-pwrbutton";
-                interrupts = <2>;
-        };
-
-        regulators {
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-                dcdc1_reg: regulator@0 {
-                        reg = <0>;
-                ...
-       };
-};
-
-Best regards,
- Enric
-
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> ---
->>  .../bindings/input/tps65218-pwrbutton.txt          |   2 +-
->>  .../bindings/leds/backlight/tps65217-backlight.txt |  24 ++---
->>  Documentation/devicetree/bindings/mfd/tps65217.txt | 100 +++++++++++++++++++++
->>  .../devicetree/bindings/regulator/tps65217.txt     |   8 +-
->>  4 files changed, 119 insertions(+), 15 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65217.txt
+On 06/09/2017 10:56 PM, Jacek Anaszewski wrote:
+> Hi Rob,
+> 
+> On 06/09/2017 01:13 PM, Cédric Le Goater wrote:
+>> Hello,
 >>
->> diff --git a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
->> index 8682ab6..603a3f0 100644
->> --- a/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
->> +++ b/Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
->> @@ -1,7 +1,7 @@
->>  Texas Instruments TPS65217 and TPS65218 power button
+>>>>> Thanks for the patch.
+>>>>>
+>>>>> Generally I'd split it into two patches:
+>>>>> 1/2: addition of  LED class specific DT support
+>>>>> 2/2: addition of GPIO support (for this one please cc also
+>>>>>      GPIO subsystem maintainer)
+>>>>
+>>>> OK. I will in next version.
+>>>>  
+>>>>> Please also see my comments below.
+>>>>>
+>>>>> On 05/09/2017 08:36 AM, Cédric Le Goater wrote:
+>>>>>> The PCA955x family of chips are I2C LED blinkers whose pins not used
+>>>>>> to control LEDs can be used as general purpose I/Os (GPIOs).
+>>>>>>
+>>>>>> The following adds support for device tree and Open Firmware to be
+>>>>>> able do define different operation modes for each pin. See bindings
+>>>>>> documentation for more details. The pca955x driver is then extended
+>>>>>> with a gpio_chip when pins are operating in GPIO mode.
+>>>>>>
+>>>>>> Signed-off-by: Cédric Le Goater <clg-Bxea+6Xhats@public.gmane.org>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/leds/leds-pca955x.txt      | 103 ++++++++
+>>>>>>  drivers/leds/Kconfig                               |  11 +
+>>>>>>  drivers/leds/leds-pca955x.c                        | 290 ++++++++++++++++++---
+>>>>>>  3 files changed, 374 insertions(+), 30 deletions(-)
+>>>>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..98d1053dd1b0
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
+>>>>>> @@ -0,0 +1,103 @@
+>>>>>> +LEDs connected to pca9550, pca9551, pca9552, pca9553,
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible : should be one of :
+>>>>>> +	"nxp,pca9550"
+>>>>>> +	"nxp,pca9551"
+>>>>>> +	"nxp,pca9552"
+>>>>>> +	"nxp,pca9553"
+>>>>>> +- #address-cells: must be 1
+>>>>>> +- #size-cells: must be 0
+>>>>>> +- reg: I2C slave address. depends on the model.
+>>>>>> +
+>>>>>> +Optional properties:
+>>>>>> +- gpio-controller: allows pins to be used as GPIOs.
+>>>>>> +- #gpio-cells: if present, must not be 0.
+>>>>>> +- gpio-base : base number of the pins used as GPIOs. If there are more
+>>>>>> +              than one, they should be contiguous. See 'type' property
+>>>>>> +              below.
+>>>>>> +
+>>>>>> +LED sub-node properties:
+>>>>>> +- reg   : number of LED line.
+>>>>>> +		from 0 to  1 in pca9550
+>>>>>> +		from 0 to  7 in pca9551
+>>>>>> +		from 0 to 15 in pca9552
+>>>>>> +		from 0 to  3 in pca9553
+>>>>>> +- compatible: either "none", "led" (default) or "gpio".
+>>>>>> +- label : (optional)
+>>>>>> +          see Documentation/devicetree/bindings/leds/common.txt
+>>>>>> +- linux,default-trigger : (optional)
+>>>>>> +          see Documentation/devicetree/bindings/leds/common.txt
+>>>>>> +
+>>>>>> +Examples:
+>>>>>> +
+>>>>>> +pca9552: pca9552@60 {
+>>>>>> +	compatible = "nxp,pca9552";
+>>>>>> +	#address-cells = <1>;
+>>>>>> +        #size-cells = <0>;
+>>>>>> +	reg = <0x60>;
+>>>>>> +
+>>>>>> +	gpio-controller;
+>>>>>> +	#gpio-cells = <2>;
+>>>>>> +	gpio-base = <12>;
+>>>>>> +
+>>>>>> +	gpio@12 {
+>>>>>> +		label = "GPIO12";
+>>>>>> +		reg = <12>;
+>>>>>> +		compatible = "gpio";
+>>>>>> +	};
+>>>>>> +	gpio@13 {
+>>>>>> +		label = "GPIO13";
+>>>>>> +		reg = <13>;
+>>>>>> +		compatible = "gpio";
+>>>>>> +	};
+>>>>>> +	gpio@14 {
+>>>>>> +		label = "GPIO14";
+>>>>>> +		reg = <14>;
+>>>>>> +		compatible = "gpio";
+>>>>>> +	};
+>>>>>> +	gpio@15 {
+>>>>>> +		label = "GPIO15";
+>>>>>> +		reg = <15>;
+>>>>>> +		compatible = "gpio";
+>>>>>> +	};
+>>>>>
+>>>>> I think that for GPIO pins we should have GPIO specific bindings,
+>>>>> but DT maintainer would have to give his opinion here.
+>>>>
+>>>> I have got my inspiration from the tca6507 bindings.
+>>>
+>>> Right, but AFAIK there was no DT maintainer position at that time
+>>> and those bindings don't have relevant ack. I'd rather wait for
+>>> DT maintainer opinion so as to avoid spawning wrong practices.
+>>>
+>>>>> Also I'm not sure if using compatible property this way is correct.
+>>>>
+>>>> yes.
 >>
->>  This module is part of the TPS65217/TPS65218. For more details about the whole
->> -TPS65217 chip see Documentation/devicetree/bindings/regulator/tps65217.txt.
->> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
+>> So, is the usage of the 'compatible' property correct ? 
 >>
->>  This driver provides a simple power button event via an Interrupt.
->>
->> diff --git a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
->> index 5fb9279..a1bc465 100644
->> --- a/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
->> +++ b/Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
->> @@ -1,11 +1,13 @@
->> -TPS65217 family of regulators
->> +Texas Instruments TPS65217 backlight regulator
->> +
->> +This module is part of the TPS65217. For more details about the whole
->> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
->>
->>  The TPS65217 chip contains a boost converter and current sinks which can be
->>  used to drive LEDs for use as backlights.
->>
->>  Required properties:
->> -- compatible: "ti,tps65217"
->> -- reg: I2C slave address
->> +- compatible: "ti,tps65217-bl"
->>  - backlight: node for specifying WLED1 and WLED2 lines in TPS65217
->>  - isel: selection bit, valid values: 1 for ISEL1 (low-level) and 2 for ISEL2 (high-level)
->>  - fdim: PWM dimming frequency, valid values: 100, 200, 500, 1000
->> @@ -15,13 +17,13 @@ Each regulator is defined using the standard binding for regulators.
->>
->>  Example:
->>
->> -     tps: tps@24 {
->> -             reg = <0x24>;
->> -             compatible = "ti,tps65217";
->> -             backlight {
->> -                     isel = <1>;  /* 1 - ISET1, 2 ISET2 */
->> -                     fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
->> -                     default-brightness = <50>;
->> -             };
->> +&tps {
->> +     backlight {
->> +             compatible = "ti,tps65217-bl";
->> +             status = "okay";
->> +             isel = <1>;  /* 1 - ISET1, 2 ISET2 */
->> +             fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
->> +             default-brightness = <50>;
->>       };
->> +};
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/tps65217.txt b/Documentation/devicetree/bindings/mfd/tps65217.txt
->> new file mode 100644
->> index 0000000..40c84ba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/tps65217.txt
->> @@ -0,0 +1,100 @@
->> +Texas Instruments TPS65217 Single-Chip PMIC for Battery-Powered Systems
->> +
->> +Required properties:
->> +- compatible: "ti,tps65217"
->> +- reg: I2C slave address.
->> +- interrupt-controller: Marks the device node as an interrupt controller.
->> +- #interrupt-cells: The number of cells to describe an IRQ, this should be 1.
->> +- backlight: Child node that specify the backlight regulator sub-device. See:
->> +     Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
->> +- charger: Child node that specify the charger sub-device. See:
->> +     Documentation/devicetree/bindings/power/supply/tps65217_charger.txt
->> +- pwrbutton: Child node that specify the power button sub-device. See:
->> +     Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
->> +- regulators: List of child nodes that specify the regulator initialization
->> +     data. See:
->> +     Documentation/devicetree/bindings/regulator/tps65217.txt.
->> +
->> +Optional properties:
->> +- ti,pmic-shutdown-controller: Telling the PMIC to shutdown on PWR_EN toggle.
->> +
->> +Example:
->> +
->> +     tps: tps@24 {
->> +             compatible = "ti,tps65217";
->> +             interrupt-controller;
->> +             #interrupt-cells = <1>;
->> +
->> +             ti,pmic-shutdown-controller;
->> +
->> +             backlight {
->> +                     compatible = "ti,tps65217-bl";
->> +                     status = "disabled";
->> +             };
->> +
->> +             charger {
->> +                     compatible = "ti,tps65217-charger";
->> +                     status = "disabled";
->> +             };
->> +
->> +             pwrbutton {
->> +                     compatible = "ti,tps65217-pwrbutton";
->> +                     status = "disabled";
->> +             };
->> +
->> +             regulators {
->> +                     compatible = "ti,tps65217-pmic";
->> +                     #address-cells = <1>;
->> +                     #size-cells = <0>;
->> +
->> +                     dcdc1_reg: dcdc1 {
->> +                             regulator-min-microvolt = <900000>;
->> +                             regulator-max-microvolt = <1800000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     dcdc2_reg: dcdc2 {
->> +                             regulator-min-microvolt = <900000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     dcdc3_reg: dcc3 {
->> +                             regulator-min-microvolt = <900000>;
->> +                             regulator-max-microvolt = <1500000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     ldo1_reg: ldo1 {
->> +                             regulator-min-microvolt = <1000000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     ldo2_reg: ldo2 {
->> +                             regulator-min-microvolt = <900000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     ldo3_reg: ldo3 {
->> +                             regulator-min-microvolt = <1800000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +
->> +                     ldo4_reg: ldo4 {
->> +                             regulator-min-microvolt = <1800000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-boot-on;
->> +                             regulator-always-on;
->> +                     };
->> +             };
->> +     };
->> +
->> diff --git a/Documentation/devicetree/bindings/regulator/tps65217.txt b/Documentation/devicetree/bindings/regulator/tps65217.txt
->> index 4f05d20..2d9b519 100644
->> --- a/Documentation/devicetree/bindings/regulator/tps65217.txt
->> +++ b/Documentation/devicetree/bindings/regulator/tps65217.txt
->> @@ -1,8 +1,10 @@
->> -TPS65217 family of regulators
->> +Texas Instruments TPS65217 family of regulators
->> +
->> +This module is part of the TPS65217. For more details about the whole
->> +TPS65217 chip see Documentation/devicetree/bindings/mfd/tps65217.txt.
->>
->>  Required properties:
->> -- compatible: "ti,tps65217"
->> -- reg: I2C slave address
->> +- compatible: "ti,tps65217-pmic"
->>  - regulators: list of regulators provided by this controller, must be named
->>    after their hardware counterparts: dcdc[1-3] and ldo[1-4]
->>  - regulators: This is the list of child nodes that specify the regulator
->
-> regulators twice? Fix that while you're here.
->
+>> If not, we could use a 'type' property with an include file defining 
+>> the possible values. This is a common pattern.
+> 
+> Could you please confirm if using compatible property this way
+> is acceptable?
+> 
+> It follows Documentation/devicetree/bindings/leds/tca6507.txt.
 
-Sure, I can add this change as well.
+No big deal if not. The alternative would be something like : 
 
->> --
->> 2.9.3
->>
+	gpio@15 {
+		reg = <15>;
+		type = <PCA955X_TYPE_GPIO>;
+	};
+
+	led@0 {
+		label = "red:power";
+		linux,default-trigger = "default-on";
+		reg = <0>;
+		type = <PCA955X_TYPE_LED>;
+	};
+	led@1 {
+		label = "green:power";
+		reg = <1>;
+		type = <PCA955X_TYPE_LED>;
+	};
+
+Thanks,
+
+C.
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
