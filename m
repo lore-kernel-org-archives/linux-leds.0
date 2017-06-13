@@ -1,40 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [[PATCH]] Revert "leds: handle suspend/resume in heartbeat trigger"
-Date: Tue, 13 Jun 2017 11:35:22 +0200
-Message-ID: <CACRpkdY6-REXoXjWNUrfCuPn3GYHhV0di7Lhbb=wRhBtPC0+mA@mail.gmail.com>
-References: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: tps65217: Update binding documentation.
+Date: Tue, 13 Jun 2017 09:43:20 -0500
+Message-ID: <CAL_JsqJ8--8Wj9L3LFDrUpeQ33MUu3RwZfxM2x5tAr0Dp4uVqg@mail.gmail.com>
+References: <20170607103242.16008-1-enric.balletbo@collabora.com>
+ <20170609140309.zhagc5g662d4la3z@rob-hp-laptop> <CAFqH_53+diszv4QtKU0CgVPb3TO-MeDWjbPpFQuVzLXZsQ=Zog@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:36240 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbdFMJfX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Jun 2017 05:35:23 -0400
-Received: by mail-it0-f50.google.com with SMTP id m47so37493039iti.1
-        for <linux-leds@vger.kernel.org>; Tue, 13 Jun 2017 02:35:23 -0700 (PDT)
-In-Reply-To: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
+Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753311AbdFMOnm (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 13 Jun 2017 10:43:42 -0400
+In-Reply-To: <CAFqH_53+diszv4QtKU0CgVPb3TO-MeDWjbPpFQuVzLXZsQ=Zog@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Zhang Bo <bo.zhang@nxp.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Tony
 
-On Tue, Jun 13, 2017 at 4:39 AM, Zhang Bo <bo.zhang@nxp.com> wrote:
-
-> This reverts commit 5ab92a7cb82c66bf30685583a38a18538e3807db.
+On Fri, Jun 9, 2017 at 5:30 PM, Enric Balletbo Serra
+<eballetbo@gmail.com> wrote:
+> Hello Rob,
 >
-> System cannot enter suspend mode because of heartbeat led trigger.
-> In autosleep_wq, try_to_suspend function will try to enter suspend
-> mode in specific period. it will get wakeup_count then call pm_notifier
-> chain callback function and freeze processes.
-> Heartbeat_pm_notifier is called and it call led_trigger_unregister to
-> change the trigger of led device to none. It will send uevent message
-> and the wakeup source count changed. As wakeup_count changed, suspend
-> will abort.
+> 2017-06-09 16:03 GMT+02:00 Rob Herring <robh@kernel.org>:
+>> On Wed, Jun 07, 2017 at 12:32:39PM +0200, Enric Balletbo i Serra wrote:
+>>> This patch adds a new binding documentation for the TPS65217 MFD and
+>>> updates the documentation for all the sub-devices in accordance to get
+>>> each individual sub-driver functioning correctly.
+>>
+>> Explain why breaking compatibility is okay.
+>>
 >
-> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
+> We had some discussion in patch 4 that make me rethink a bit all this,
+> please let me send a new version and continue the discussion there
+> (now I'm not sure if I'll break the compatibility or not)
+>
+> But let me ask a question. The TPS65217 MFD has different sub-nodes
+> (charger, backlight, pwrbutton, regulators) in DT, I suspect the
+> answer is no, but is it ok that some of them were not described in the
+> DT because there is nothing to configure?
 
-OK I was stupid, lesson learned.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+But you are configuring the interrupts. I'm all for not creating nodes
+just for the purpose instantiating a driver (DT is not the only way to
+create platform devices) when the parent node is sufficient. We see
+both models, but we don't really want a mixture of both ways so I'd
+stick with the latter here.
 
-Yours,
-Linus Walleij
+> i.e: Have this because the resources of charger and pwrbutton are
+> static so can be hard-coded in the driver
+>
+> &tps {
+>         compatible = "ti,tps65217";
+>         interrupt-controller;
+>         #interrupt-cells = <1>;
+>
+>         regulators {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+>                 dcdc1_reg: regulator@0 {
+>                         reg = <0>;
+>                 ...
+>        };
+> };
+>
+> instead of :
+>
+> &tps {
+>         compatible = "ti,tps65217";
+>         interrupt-controller;
+>         #interrupt-cells = <1>;
+>
+>         charger {
+>                 compatible = "ti,tps65217-charger";
+>                 interrupts = <0>, <1>;
+>                 interrupt-names = "USB", "AC";
+>         };
+>
+>         pwrbutton {
+>                 compatible = "ti,tps65217-pwrbutton";
+>                 interrupts = <2>;
+>         };
+>
+>         regulators {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+>                 dcdc1_reg: regulator@0 {
+>                         reg = <0>;
+>                 ...
+>        };
+> };
