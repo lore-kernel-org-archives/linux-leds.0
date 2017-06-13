@@ -1,104 +1,66 @@
-From: Zhang Bo <bo.zhang@nxp.com>
-Subject: [[PATCH]] Revert "leds: handle suspend/resume in heartbeat trigger"
-Date: Tue, 13 Jun 2017 10:39:20 +0800
-Message-ID: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [[PATCH]] Revert "leds: handle suspend/resume in heartbeat
+ trigger"
+Date: Tue, 13 Jun 2017 09:31:24 +0200
+Message-ID: <20170613073124.GA16077@amd>
+References: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-he1eur01on0042.outbound.protection.outlook.com ([104.47.0.42]:36994
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751589AbdFMClL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 12 Jun 2017 22:41:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48248 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751955AbdFMHb1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Jun 2017 03:31:27 -0400
+Content-Disposition: inline
+In-Reply-To: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: rpurdie@rpsys.net, pavel@ucw.cz, jacek.anaszewski@gmail.com, linus.walleij@linaro.org, ulf.hansson@linaro.org, grygorii.strashko@ti.com, linux-leds@vger.kernel.org
+To: Zhang Bo <bo.zhang@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, linus.walleij@linaro.org, ulf.hansson@linaro.org, grygorii.strashko@ti.com, linux-leds@vger.kernel.org
 
-This reverts commit 5ab92a7cb82c66bf30685583a38a18538e3807db.
 
-System cannot enter suspend mode because of heartbeat led trigger.
-In autosleep_wq, try_to_suspend function will try to enter suspend
-mode in specific period. it will get wakeup_count then call pm_notifier
-chain callback function and freeze processes.
-Heartbeat_pm_notifier is called and it call led_trigger_unregister to
-change the trigger of led device to none. It will send uevent message
-and the wakeup source count changed. As wakeup_count changed, suspend
-will abort.
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
----
- drivers/leds/trigger/ledtrig-heartbeat.c | 31 -------------------------------
- 1 file changed, 31 deletions(-)
+On Tue 2017-06-13 10:39:20, Zhang Bo wrote:
+> This reverts commit 5ab92a7cb82c66bf30685583a38a18538e3807db.
+>=20
+> System cannot enter suspend mode because of heartbeat led trigger.
+> In autosleep_wq, try_to_suspend function will try to enter suspend
+> mode in specific period. it will get wakeup_count then call pm_notifier
+> chain callback function and freeze processes.
+> Heartbeat_pm_notifier is called and it call led_trigger_unregister to
+> change the trigger of led device to none. It will send uevent message
+> and the wakeup source count changed. As wakeup_count changed, suspend
+> will abort.
+>=20
+> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
 
-diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
-index afa3b40..e95ea65 100644
---- a/drivers/leds/trigger/ledtrig-heartbeat.c
-+++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-@@ -20,7 +20,6 @@
- #include <linux/sched/loadavg.h>
- #include <linux/leds.h>
- #include <linux/reboot.h>
--#include <linux/suspend.h>
- #include "../leds.h"
- 
- static int panic_heartbeats;
-@@ -163,30 +162,6 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
- 	.deactivate = heartbeat_trig_deactivate,
- };
- 
--static int heartbeat_pm_notifier(struct notifier_block *nb,
--				 unsigned long pm_event, void *unused)
--{
--	int rc;
--
--	switch (pm_event) {
--	case PM_SUSPEND_PREPARE:
--	case PM_HIBERNATION_PREPARE:
--	case PM_RESTORE_PREPARE:
--		led_trigger_unregister(&heartbeat_led_trigger);
--		break;
--	case PM_POST_SUSPEND:
--	case PM_POST_HIBERNATION:
--	case PM_POST_RESTORE:
--		rc = led_trigger_register(&heartbeat_led_trigger);
--		if (rc)
--			pr_err("could not re-register heartbeat trigger\n");
--		break;
--	default:
--		break;
--	}
--	return NOTIFY_DONE;
--}
--
- static int heartbeat_reboot_notifier(struct notifier_block *nb,
- 				     unsigned long code, void *unused)
- {
-@@ -201,10 +176,6 @@ static int heartbeat_panic_notifier(struct notifier_block *nb,
- 	return NOTIFY_DONE;
- }
- 
--static struct notifier_block heartbeat_pm_nb = {
--	.notifier_call = heartbeat_pm_notifier,
--};
--
- static struct notifier_block heartbeat_reboot_nb = {
- 	.notifier_call = heartbeat_reboot_notifier,
- };
-@@ -221,14 +192,12 @@ static int __init heartbeat_trig_init(void)
- 		atomic_notifier_chain_register(&panic_notifier_list,
- 					       &heartbeat_panic_nb);
- 		register_reboot_notifier(&heartbeat_reboot_nb);
--		register_pm_notifier(&heartbeat_pm_nb);
- 	}
- 	return rc;
- }
- 
- static void __exit heartbeat_trig_exit(void)
- {
--	unregister_pm_notifier(&heartbeat_pm_nb);
- 	unregister_reboot_notifier(&heartbeat_reboot_nb);
- 	atomic_notifier_chain_unregister(&panic_notifier_list,
- 					 &heartbeat_panic_nb);
--- 
-1.9.1
+Yes, this makes sense. Turning led off should be done at driver level.
+
+As this fixes a regression, it would be kind of nice to get it to
+v4.12...
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlk/lMwACgkQMOfwapXb+vIXZgCeK4qfkwlip1ntu5d+4CCcqR6o
+yJ4AoI88+TPGEgJOQBA2+RHvbmccXcri
+=mBsD
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
