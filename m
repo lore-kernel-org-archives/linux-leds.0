@@ -1,118 +1,118 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 6/8] leds: as3645a: Add LED flash class driver
-Date: Thu, 15 Jun 2017 01:21:36 +0300
-Message-ID: <20170614222135.GT12407@valkosipuli.retiisi.org.uk>
+Date: Thu, 15 Jun 2017 00:28:33 +0200
+Message-ID: <20170614222833.GA26406@amd>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
  <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
  <20170614213941.GC10200@amd>
+ <20170614222135.GT12407@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
 Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170614213941.GC10200@amd>
+In-Reply-To: <20170614222135.GT12407@valkosipuli.retiisi.org.uk>
 Sender: linux-media-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
+To: Sakari Ailus <sakari.ailus@iki.fi>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
 
-Thanks for the review!
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 14, 2017 at 11:39:41PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > From: Sakari Ailus <sakari.ailus@iki.fi>
-> 
-> That address no longer works, right?
+Hi!
 
-Why wouldn't it work? Or... do you know something I don't? :-)
+> Thanks for the review!
 
-> 
-> > Add a LED flash class driver for the as3654a flash controller. A V4L2 flash
-> > driver for it already exists (drivers/media/i2c/as3645a.c), and this driver
-> > is based on that.
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> > + * Based on drivers/media/i2c/as3645a.c.
-> > + *
-> > + * Contact: Sakari Ailus <sakari.ailus@iki.fi>
-> 
-> So I believe it should not be here.
-> 
-> > +/*
-> > + * as3645a_set_config - Set flash configuration registers
-> > + * @flash: The flash
-> > + *
-> 
-> /** for linuxdoc? 
+You are welcome :-).
 
-Fixed.
+> On Wed, Jun 14, 2017 at 11:39:41PM +0200, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > > From: Sakari Ailus <sakari.ailus@iki.fi>
+> >=20
+> > That address no longer works, right?
+>=20
+> Why wouldn't it work? Or... do you know something I don't? :-)
 
-> 
-> > +	struct as3645a *flash = fled_to_as3645a(fled);
-> > +	int rval;
-> > +
-> > +	/* NOTE: reading register clear fault status */
-> 
-> clears.
+Aha. I thought I was removing it from source files because it was no
+longer working, but maybe I'm misremembering?=20
 
-Fixed.
+> > > +static unsigned int as3645a_current_to_reg(struct as3645a *flash, bo=
+ol is_flash,
+> > > +					   unsigned int ua)
+> > > +{
+> > > +	struct {
+> > > +		unsigned int min;
+> > > +		unsigned int max;
+> > > +		unsigned int step;
+> > > +	} __mms[] =3D {
+> > > +		{
+> > > +			AS_TORCH_INTENSITY_MIN,
+> > > +			flash->cfg.assist_max_ua,
+> > > +			AS_TORCH_INTENSITY_STEP
+> > > +		},
+> > > +		{
+> > > +			AS_FLASH_INTENSITY_MIN,
+> > > +			flash->cfg.flash_max_ua,
+> > > +			AS_FLASH_INTENSITY_STEP
+> > > +		},
+> > > +	}, *mms =3D &__mms[is_flash];
+> > > +
+> > > +	if (ua < mms->min)
+> > > +		ua =3D mms->min;
+> >=20
+> > That's some... seriously interesting code. And you are forcing gcc to
+> > create quite interesting structure on stack. Would it be easier to do
+> > normal if()... without this magic?
+> >=20
+> > > +	struct v4l2_flash_config cfg =3D {
+> > > +		.torch_intensity =3D {
+> > > +			.min =3D AS_TORCH_INTENSITY_MIN,
+> > > +			.max =3D flash->cfg.assist_max_ua,
+> > > +			.step =3D AS_TORCH_INTENSITY_STEP,
+> > > +			.val =3D flash->cfg.assist_max_ua,
+> > > +		},
+> > > +		.indicator_intensity =3D {
+> > > +			.min =3D AS_INDICATOR_INTENSITY_MIN,
+> > > +			.max =3D flash->cfg.indicator_max_ua,
+> > > +			.step =3D AS_INDICATOR_INTENSITY_STEP,
+> > > +			.val =3D flash->cfg.indicator_max_ua,
+> > > +		},
+> > > +	};
+> >=20
+> > Ugh. And here you have copy of the above struct, + .val. Can it be
+> > somehow de-duplicated?
+>=20
+> The flash_brightness_set callback uses micro-Amps as the unit and the dri=
+ver
+> needs to convert that to its own specific units. Yeah, there would be
+> probably an easier way, too. But that'd likely require changes to the LED
+> flash class.
 
-> 
-> > +static unsigned int as3645a_current_to_reg(struct as3645a *flash, bool is_flash,
-> > +					   unsigned int ua)
-> > +{
-> > +	struct {
-> > +		unsigned int min;
-> > +		unsigned int max;
-> > +		unsigned int step;
-> > +	} __mms[] = {
-> > +		{
-> > +			AS_TORCH_INTENSITY_MIN,
-> > +			flash->cfg.assist_max_ua,
-> > +			AS_TORCH_INTENSITY_STEP
-> > +		},
-> > +		{
-> > +			AS_FLASH_INTENSITY_MIN,
-> > +			flash->cfg.flash_max_ua,
-> > +			AS_FLASH_INTENSITY_STEP
-> > +		},
-> > +	}, *mms = &__mms[is_flash];
-> > +
-> > +	if (ua < mms->min)
-> > +		ua = mms->min;
-> 
-> That's some... seriously interesting code. And you are forcing gcc to
-> create quite interesting structure on stack. Would it be easier to do
-> normal if()... without this magic?
-> 
-> > +	struct v4l2_flash_config cfg = {
-> > +		.torch_intensity = {
-> > +			.min = AS_TORCH_INTENSITY_MIN,
-> > +			.max = flash->cfg.assist_max_ua,
-> > +			.step = AS_TORCH_INTENSITY_STEP,
-> > +			.val = flash->cfg.assist_max_ua,
-> > +		},
-> > +		.indicator_intensity = {
-> > +			.min = AS_INDICATOR_INTENSITY_MIN,
-> > +			.max = flash->cfg.indicator_max_ua,
-> > +			.step = AS_INDICATOR_INTENSITY_STEP,
-> > +			.val = flash->cfg.indicator_max_ua,
-> > +		},
-> > +	};
-> 
-> Ugh. And here you have copy of the above struct, + .val. Can it be
-> somehow de-duplicated?
+Can as3645a_current_to_reg just access struct v4l2_flash_config so
+that it does not have to recreate its look-alike on the fly?
 
-The flash_brightness_set callback uses micro-Amps as the unit and the driver
-needs to convert that to its own specific units. Yeah, there would be
-probably an easier way, too. But that'd likely require changes to the LED
-flash class.
+Thanks,
+							Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
--- 
-Kind regards,
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAllBuJEACgkQMOfwapXb+vJ+8QCcCsoVaIFQEOd80FhHgMqrySzk
+bgwAoI0s1W1JFjJCSMh4f9cGZIQrh0Wt
+=yC9s
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
