@@ -1,49 +1,45 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH 5/8] v4l2-flash: Flash ops aren't mandatory
-Date: Wed, 14 Jun 2017 12:47:16 +0300
-Message-ID: <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH 3/8] dt: bindings: Add a binding for referencing EEPROM from camera sensors
+Date: Wed, 14 Jun 2017 12:47:14 +0300
+Message-ID: <1497433639-13101-4-git-send-email-sakari.ailus@linux.intel.com>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1497433639-13101-1-git-send-email-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-None of the flash operations are not mandatory and therefore there should
-be no need for the flash ops structure either. Accept NULL.
+Many camera sensor devices contain EEPROM chips that describe the
+properties of a given unit --- the data is specific to a given unit can
+thus is not stored e.g. in user space or the driver.
 
-Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Some sensors embed the EEPROM chip and it can be accessed through the
+sensor's I2C interface. This property is to be used for devices where the
+EEPROM chip is accessed through a different I2C address than the sensor.
+
+The intent is to later provide this information to the user space.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/media/v4l2-core/v4l2-flash-led-class.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/media/video-interfaces.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-index 6d69119..fdb79da 100644
---- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
-+++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-@@ -18,7 +18,7 @@
- #include <media/v4l2-flash-led-class.h>
+diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+index a18d9b2..ae259924 100644
+--- a/Documentation/devicetree/bindings/media/video-interfaces.txt
++++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
+@@ -76,6 +76,9 @@ Optional properties
  
- #define has_flash_op(v4l2_flash, op)				\
--	(v4l2_flash && v4l2_flash->ops->op)
-+	(v4l2_flash && v4l2_flash->ops && v4l2_flash->ops->op)
+ - lens-focus: A phandle to the node of the focus lens controller.
  
- #define call_flash_op(v4l2_flash, op, arg)			\
- 		(has_flash_op(v4l2_flash, op) ?			\
-@@ -618,7 +618,7 @@ struct v4l2_flash *v4l2_flash_init(
- 	struct v4l2_subdev *sd;
- 	int ret;
++- eeprom: A phandle to the node of the EEPROM describing the camera sensor
++  (i.e. device specific calibration data), in case it differs from the
++  sensor node.
  
--	if (!fled_cdev || !ops || !config)
-+	if (!fled_cdev || !config)
- 		return ERR_PTR(-EINVAL);
- 
- 	led_cdev = &fled_cdev->led_cdev;
+ Optional endpoint properties
+ ----------------------------
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
