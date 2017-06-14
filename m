@@ -1,75 +1,33 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 8/8] arm: dts: omap3: N9/N950: Add AS3645A camera flash
-Date: Wed, 14 Jun 2017 12:47:19 +0300
-Message-ID: <1497433639-13101-9-git-send-email-sakari.ailus@linux.intel.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 0/8] Support registering lens, flash and EEPROM devices
+Date: Wed, 14 Jun 2017 12:53:46 +0300
+Message-ID: <20170614095346.GG12407@valkosipuli.retiisi.org.uk>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
 Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz, Sakari Ailus <sakari.ailus@iki.fi>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@iki.fi>
+On Wed, Jun 14, 2017 at 12:47:11PM +0300, Sakari Ailus wrote:
+> Hi folks,
+> 
+> This set adds support for async registering of lens, flash and EEPROM
+> devices, as well as support for this in the smiapp driver and a LED driver
+> for the as3645a.
+> 
+> The lens and flash devices are entities in the media graph whereas the
+> EEPROM is at least currently not. By providing the association information
+> it is possible to add the flash device to the media graph.
 
-Add the as3645a flash controller to the DT source as well as the flash
-property with the as3645a device phandle to the sensor DT node.
+I forgot to add that this set depends on another set Niklas recently posted:
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- arch/arm/boot/dts/omap3-n9.dts       |  1 +
- arch/arm/boot/dts/omap3-n950-n9.dtsi | 14 ++++++++++++++
- arch/arm/boot/dts/omap3-n950.dts     |  1 +
- 3 files changed, 16 insertions(+)
+<URL:http://www.spinics.net/lists/linux-media/msg116906.html>
 
-diff --git a/arch/arm/boot/dts/omap3-n9.dts b/arch/arm/boot/dts/omap3-n9.dts
-index b9e58c5..f95e7b1 100644
---- a/arch/arm/boot/dts/omap3-n9.dts
-+++ b/arch/arm/boot/dts/omap3-n9.dts
-@@ -26,6 +26,7 @@
- 		clocks = <&isp 0>;
- 		clock-frequency = <9600000>;
- 		nokia,nvm-size = <(16 * 64)>;
-+		flash = <&as3645a>;
- 		port {
- 			smia_1_1: endpoint {
- 				link-frequencies = /bits/ 64 <199200000 210000000 499200000>;
-diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-index df3366f..8bd6673 100644
---- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-+++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-@@ -265,6 +265,20 @@
- 
- &i2c2 {
- 	clock-frequency = <400000>;
-+
-+	as3645a: flash@30 {
-+		reg = <0x30>;
-+		compatible = "ams,as3645a";
-+		flash {
-+			flash-timeout-us = <150000>;
-+			flash-max-microamp = <320000>;
-+			led-max-microamp = <60000>;
-+			peak-current-limit = <1750000>;
-+		};
-+		indicator {
-+			led-max-microamp = <10000>;
-+		};
-+	};
- };
- 
- &i2c3 {
-diff --git a/arch/arm/boot/dts/omap3-n950.dts b/arch/arm/boot/dts/omap3-n950.dts
-index 646601a..8fca038 100644
---- a/arch/arm/boot/dts/omap3-n950.dts
-+++ b/arch/arm/boot/dts/omap3-n950.dts
-@@ -60,6 +60,7 @@
- 		clocks = <&isp 0>;
- 		clock-frequency = <9600000>;
- 		nokia,nvm-size = <(16 * 64)>;
-+		flash = <&as3645a>;
- 		port {
- 			smia_1_1: endpoint {
- 				link-frequencies = /bits/ 64 <210000000 333600000 398400000>;
 -- 
-2.1.4
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
