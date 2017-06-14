@@ -1,123 +1,116 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Sakari Ailus <sakari.ailus@iki.fi>
 Subject: Re: [PATCH 6/8] leds: as3645a: Add LED flash class driver
-Date: Wed, 14 Jun 2017 23:39:41 +0200
-Message-ID: <20170614213941.GC10200@amd>
+Date: Thu, 15 Jun 2017 01:10:29 +0300
+Message-ID: <20170614221028.GS12407@valkosipuli.retiisi.org.uk>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
  <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
+ <343d88ea-c839-6682-df84-844f92bc9050@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="w7PDEPdKQumQfZlR"
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
-List-Id: linux-leds@vger.kernel.org
-
-
---w7PDEPdKQumQfZlR
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:51946 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751606AbdFNWKf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 14 Jun 2017 18:10:35 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <343d88ea-c839-6682-df84-844f92bc9050@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz
 
-Hi!
+Hi Jacek,
 
-> From: Sakari Ailus <sakari.ailus@iki.fi>
+Thanks for the review!
 
-That address no longer works, right?
+I have to say I found the v4l2-flash-led-class framework quite useful, now
+that I refactored a driver for using it. Now we have a user for the
+indicator, too. :-)
 
-> Add a LED flash class driver for the as3654a flash controller. A V4L2 fla=
-sh
-> driver for it already exists (drivers/media/i2c/as3645a.c), and this driv=
-er
-> is based on that.
->=20
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+On Wed, Jun 14, 2017 at 11:15:24PM +0200, Jacek Anaszewski wrote:
+> > +static __maybe_unused int as3645a_suspend(struct device *dev)
+> > +{
+> > +	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct as3645a *flash = i2c_get_clientdata(client);
+> > +	int rval;
+> > +
+> > +	rval = as3645a_set_control(flash, AS_MODE_EXT_TORCH, false);
+> > +	dev_dbg(dev, "Suspend %s\n", rval < 0 ? "failed" : "ok");
+> > +
+> > +	return rval;
+> > +}
+> > +
+> > +static __maybe_unused int as3645a_resume(struct device *dev)
+> > +{
+> > +	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct as3645a *flash = i2c_get_clientdata(client);
+> > +	int rval;
+> > +
+> > +	rval = as3645a_setup(flash);
+> > +
+> 
+> nitpicking: inconsistent coding style - there is no empty line before
+> dev_dbg() in the as3645a_suspend().
 
-> + * Based on drivers/media/i2c/as3645a.c.
-> + *
-> + * Contact: Sakari Ailus <sakari.ailus@iki.fi>
+Added one for as3645a_suspend() --- it should have been there.
 
-So I believe it should not be here.
+> 
+> > +	dev_dbg(dev, "Resume %s\n", rval < 0 ? "fail" : "ok");
+> > +
+> > +	return rval;
+> > +}
 
-> +/*
-> + * as3645a_set_config - Set flash configuration registers
-> + * @flash: The flash
-> + *
+...
 
-/** for linuxdoc?=20
+> > +static int as3645a_led_class_setup(struct as3645a *flash)
+> > +{
+> > +	struct led_classdev *fled_cdev = &flash->fled.led_cdev;
+> > +	struct led_classdev *iled_cdev = &flash->iled_cdev;
+> > +	struct led_flash_setting *cfg;
+> > +	int rval;
+> > +
+> > +	iled_cdev->name = "as3645a indicator";
+> > +	iled_cdev->brightness_set_blocking = as3645a_set_indicator_brightness;
+> > +	iled_cdev->max_brightness =
+> > +		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
+> > +
+> > +	rval = led_classdev_register(&flash->client->dev, iled_cdev);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	cfg = &flash->fled.brightness;
+> > +	cfg->min = AS_FLASH_INTENSITY_MIN;
+> > +	cfg->max = flash->cfg.flash_max_ua;
+> > +	cfg->step = AS_FLASH_INTENSITY_STEP;
+> > +	cfg->val = flash->cfg.flash_max_ua;
+> > +
+> > +	cfg = &flash->fled.timeout;
+> > +	cfg->min = AS_FLASH_TIMEOUT_MIN;
+> > +	cfg->max = flash->cfg.flash_timeout_us;
+> > +	cfg->step = AS_FLASH_TIMEOUT_STEP;
+> > +	cfg->val = flash->cfg.flash_timeout_us;
+> > +
+> > +	flash->fled.ops = &as3645a_led_flash_ops;
+> > +
+> > +	fled_cdev->name = "as3645a flash";
+> 
+> LED class device name should be taken from label DT property,
+> or DT node name if the former wasn't defined.
+> 
+> Also LED device naming convention defines colon as a separator
+> between name segments.
 
-> +	struct as3645a *flash =3D fled_to_as3645a(fled);
-> +	int rval;
-> +
-> +	/* NOTE: reading register clear fault status */
+Right. I'll fix that.
 
-clears.
+I just realised I'm missing DT binding documentation for this device; I'll
+add that, too.
 
-> +static unsigned int as3645a_current_to_reg(struct as3645a *flash, bool i=
-s_flash,
-> +					   unsigned int ua)
-> +{
-> +	struct {
-> +		unsigned int min;
-> +		unsigned int max;
-> +		unsigned int step;
-> +	} __mms[] =3D {
-> +		{
-> +			AS_TORCH_INTENSITY_MIN,
-> +			flash->cfg.assist_max_ua,
-> +			AS_TORCH_INTENSITY_STEP
-> +		},
-> +		{
-> +			AS_FLASH_INTENSITY_MIN,
-> +			flash->cfg.flash_max_ua,
-> +			AS_FLASH_INTENSITY_STEP
-> +		},
-> +	}, *mms =3D &__mms[is_flash];
-> +
-> +	if (ua < mms->min)
-> +		ua =3D mms->min;
+Is the preference to allow freely chosen node names for the LEDs? Now that
+there's the label, too, this appears to be somewhat duplicated information.
 
-That's some... seriously interesting code. And you are forcing gcc to
-create quite interesting structure on stack. Would it be easier to do
-normal if()... without this magic?
+-- 
+Kind regards,
 
-> +	struct v4l2_flash_config cfg =3D {
-> +		.torch_intensity =3D {
-> +			.min =3D AS_TORCH_INTENSITY_MIN,
-> +			.max =3D flash->cfg.assist_max_ua,
-> +			.step =3D AS_TORCH_INTENSITY_STEP,
-> +			.val =3D flash->cfg.assist_max_ua,
-> +		},
-> +		.indicator_intensity =3D {
-> +			.min =3D AS_INDICATOR_INTENSITY_MIN,
-> +			.max =3D flash->cfg.indicator_max_ua,
-> +			.step =3D AS_INDICATOR_INTENSITY_STEP,
-> +			.val =3D flash->cfg.indicator_max_ua,
-> +		},
-> +	};
-
-Ugh. And here you have copy of the above struct, + .val. Can it be
-somehow de-duplicated?
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---w7PDEPdKQumQfZlR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAllBrR0ACgkQMOfwapXb+vKLXQCfR+tvSBp4kY3dlPDYmF9g3//B
-dlgAoIA87/cHb8hv8V74+0QwtZvP1W7O
-=0ZJ9
------END PGP SIGNATURE-----
-
---w7PDEPdKQumQfZlR--
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
