@@ -1,43 +1,42 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 2/8] dt: bindings: Add lens-focus binding for image sensors
-Date: Wed, 14 Jun 2017 12:47:13 +0300
-Message-ID: <1497433639-13101-3-git-send-email-sakari.ailus@linux.intel.com>
+Subject: [PATCH 1/8] dt: bindings: Add a binding for flash devices associated to a sensor
+Date: Wed, 14 Jun 2017 12:47:12 +0300
+Message-ID: <1497433639-13101-2-git-send-email-sakari.ailus@linux.intel.com>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:34312 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752323AbdFNJrn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 14 Jun 2017 05:47:43 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz
+List-Id: linux-leds@vger.kernel.org
 
-The lens-focus property contains a phandle to the lens voice coil driver
-that is associated to the sensor; typically both are contained in the same
-camera module.
+Camera flash drivers (and LEDs) are separate from the sensor devices in
+DT. In order to make an association between the two, provide the
+association information to the software.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- Documentation/devicetree/bindings/media/video-interfaces.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/media/video-interfaces.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
-index 9723f7e..a18d9b2 100644
+index 9cd2a36..9723f7e 100644
 --- a/Documentation/devicetree/bindings/media/video-interfaces.txt
 +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-@@ -74,6 +74,8 @@ Optional properties
- - flash: phandle referring to the flash driver chip. A flash driver may
-   have multiple flashes connected to it.
+@@ -67,6 +67,14 @@ are required in a relevant parent node:
+ 		    identifier, should be 1.
+  - #size-cells    : should be zero.
  
-+- lens-focus: A phandle to the node of the focus lens controller.
 +
- 
++Optional properties
++-------------------
++
++- flash: phandle referring to the flash driver chip. A flash driver may
++  have multiple flashes connected to it.
++
++
  Optional endpoint properties
  ----------------------------
+ 
 -- 
 2.1.4
