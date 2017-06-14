@@ -1,123 +1,132 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [[PATCH]] Revert "leds: handle suspend/resume in heartbeat
- trigger"
-Date: Tue, 13 Jun 2017 20:44:50 +0200
-Message-ID: <8be98820-a9cf-23e3-c041-9db698d3b54e@gmail.com>
-References: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:32944 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753641AbdFMSph (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Jun 2017 14:45:37 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u62so14265220lfg.0
-        for <linux-leds@vger.kernel.org>; Tue, 13 Jun 2017 11:45:37 -0700 (PDT)
-In-Reply-To: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH 4/8] v4l2-flash: Use led_classdev instead of led_classdev_flash for indicator
+Date: Wed, 14 Jun 2017 12:47:15 +0300
+Message-ID: <1497433639-13101-5-git-send-email-sakari.ailus@linux.intel.com>
+References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1497433639-13101-1-git-send-email-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Zhang Bo <bo.zhang@nxp.com>, linux-arm-kernel@lists.infradead.org
-Cc: rpurdie@rpsys.net, pavel@ucw.cz, linus.walleij@linaro.org, ulf.hansson@linaro.org, grygorii.strashko@ti.com, linux-leds@vger.kernel.org
 
-Hi Bo,
+The V4L2 flash class initialisation expects struct led_classdev_flash that
+describes an indicator but only uses struct led_classdev which is a field
+iled_cdev in the struct. Use struct iled_cdev only.
 
-On 06/13/2017 04:39 AM, Zhang Bo wrote:
-> This reverts commit 5ab92a7cb82c66bf30685583a38a18538e3807db.
-> 
-> System cannot enter suspend mode because of heartbeat led trigger.
-> In autosleep_wq, try_to_suspend function will try to enter suspend
-> mode in specific period. it will get wakeup_count then call pm_notifier
-> chain callback function and freeze processes.
-> Heartbeat_pm_notifier is called and it call led_trigger_unregister to
-> change the trigger of led device to none. It will send uevent message
-> and the wakeup source count changed. As wakeup_count changed, suspend
-> will abort.
-> 
-> Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
-> ---
->  drivers/leds/trigger/ledtrig-heartbeat.c | 31 -------------------------------
->  1 file changed, 31 deletions(-)
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
-> index afa3b40..e95ea65 100644
-> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
-> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-> @@ -20,7 +20,6 @@
->  #include <linux/sched/loadavg.h>
->  #include <linux/leds.h>
->  #include <linux/reboot.h>
-> -#include <linux/suspend.h>
->  #include "../leds.h"
->  
->  static int panic_heartbeats;
-> @@ -163,30 +162,6 @@ static void heartbeat_trig_deactivate(struct led_classdev *led_cdev)
->  	.deactivate = heartbeat_trig_deactivate,
->  };
->  
-> -static int heartbeat_pm_notifier(struct notifier_block *nb,
-> -				 unsigned long pm_event, void *unused)
-> -{
-> -	int rc;
-> -
-> -	switch (pm_event) {
-> -	case PM_SUSPEND_PREPARE:
-> -	case PM_HIBERNATION_PREPARE:
-> -	case PM_RESTORE_PREPARE:
-> -		led_trigger_unregister(&heartbeat_led_trigger);
-> -		break;
-> -	case PM_POST_SUSPEND:
-> -	case PM_POST_HIBERNATION:
-> -	case PM_POST_RESTORE:
-> -		rc = led_trigger_register(&heartbeat_led_trigger);
-> -		if (rc)
-> -			pr_err("could not re-register heartbeat trigger\n");
-> -		break;
-> -	default:
-> -		break;
-> -	}
-> -	return NOTIFY_DONE;
-> -}
-> -
->  static int heartbeat_reboot_notifier(struct notifier_block *nb,
->  				     unsigned long code, void *unused)
->  {
-> @@ -201,10 +176,6 @@ static int heartbeat_panic_notifier(struct notifier_block *nb,
->  	return NOTIFY_DONE;
->  }
->  
-> -static struct notifier_block heartbeat_pm_nb = {
-> -	.notifier_call = heartbeat_pm_notifier,
-> -};
-> -
->  static struct notifier_block heartbeat_reboot_nb = {
->  	.notifier_call = heartbeat_reboot_notifier,
->  };
-> @@ -221,14 +192,12 @@ static int __init heartbeat_trig_init(void)
->  		atomic_notifier_chain_register(&panic_notifier_list,
->  					       &heartbeat_panic_nb);
->  		register_reboot_notifier(&heartbeat_reboot_nb);
-> -		register_pm_notifier(&heartbeat_pm_nb);
->  	}
->  	return rc;
->  }
->  
->  static void __exit heartbeat_trig_exit(void)
->  {
-> -	unregister_pm_notifier(&heartbeat_pm_nb);
->  	unregister_reboot_notifier(&heartbeat_reboot_nb);
->  	atomic_notifier_chain_unregister(&panic_notifier_list,
->  					 &heartbeat_panic_nb);
-> 
+Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+---
+ drivers/media/v4l2-core/v4l2-flash-led-class.c | 19 +++++++------------
+ include/media/v4l2-flash-led-class.h           |  6 +++---
+ 2 files changed, 10 insertions(+), 15 deletions(-)
 
-Thanks for the patch.
-
-Added tag:
-
- Fixes: 5ab92a7cb82c ("leds: handle suspend/resume in heartbeat trigger")
-
-and applied to the fixes-for-4.12-rc6 branch of linux-leds.git.
-
+diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+index 7b82881..6d69119 100644
+--- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
++++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+@@ -110,7 +110,7 @@ static void v4l2_flash_set_led_brightness(struct v4l2_flash *v4l2_flash,
+ 		led_set_brightness_sync(&v4l2_flash->fled_cdev->led_cdev,
+ 					brightness);
+ 	} else {
+-		led_set_brightness_sync(&v4l2_flash->iled_cdev->led_cdev,
++		led_set_brightness_sync(v4l2_flash->iled_cdev,
+ 					brightness);
+ 	}
+ }
+@@ -133,7 +133,7 @@ static int v4l2_flash_update_led_brightness(struct v4l2_flash *v4l2_flash,
+ 			return 0;
+ 		led_cdev = &v4l2_flash->fled_cdev->led_cdev;
+ 	} else {
+-		led_cdev = &v4l2_flash->iled_cdev->led_cdev;
++		led_cdev = v4l2_flash->iled_cdev;
+ 	}
+ 
+ 	ret = led_update_brightness(led_cdev);
+@@ -529,8 +529,7 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ 	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
+ 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+ 	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+-	struct led_classdev_flash *iled_cdev = v4l2_flash->iled_cdev;
+-	struct led_classdev *led_cdev_ind = NULL;
++	struct led_classdev *led_cdev_ind = v4l2_flash->iled_cdev;
+ 	int ret = 0;
+ 
+ 	if (!v4l2_fh_is_singular(&fh->vfh))
+@@ -543,9 +542,7 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ 
+ 	mutex_unlock(&led_cdev->led_access);
+ 
+-	if (iled_cdev) {
+-		led_cdev_ind = &iled_cdev->led_cdev;
+-
++	if (led_cdev_ind) {
+ 		mutex_lock(&led_cdev_ind->led_access);
+ 
+ 		led_sysfs_disable(led_cdev_ind);
+@@ -578,7 +575,7 @@ static int v4l2_flash_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ 	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
+ 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+ 	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+-	struct led_classdev_flash *iled_cdev = v4l2_flash->iled_cdev;
++	struct led_classdev *led_cdev_ind = v4l2_flash->iled_cdev;
+ 	int ret = 0;
+ 
+ 	if (!v4l2_fh_is_singular(&fh->vfh))
+@@ -593,9 +590,7 @@ static int v4l2_flash_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ 
+ 	mutex_unlock(&led_cdev->led_access);
+ 
+-	if (iled_cdev) {
+-		struct led_classdev *led_cdev_ind = &iled_cdev->led_cdev;
+-
++	if (led_cdev_ind) {
+ 		mutex_lock(&led_cdev_ind->led_access);
+ 		led_sysfs_enable(led_cdev_ind);
+ 		mutex_unlock(&led_cdev_ind->led_access);
+@@ -614,7 +609,7 @@ static const struct v4l2_subdev_ops v4l2_flash_subdev_ops;
+ struct v4l2_flash *v4l2_flash_init(
+ 	struct device *dev, struct fwnode_handle *fwn,
+ 	struct led_classdev_flash *fled_cdev,
+-	struct led_classdev_flash *iled_cdev,
++	struct led_classdev *iled_cdev,
+ 	const struct v4l2_flash_ops *ops,
+ 	struct v4l2_flash_config *config)
+ {
+diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-flash-led-class.h
+index f9dcd54..54e31a8 100644
+--- a/include/media/v4l2-flash-led-class.h
++++ b/include/media/v4l2-flash-led-class.h
+@@ -85,7 +85,7 @@ struct v4l2_flash_config {
+  */
+ struct v4l2_flash {
+ 	struct led_classdev_flash *fled_cdev;
+-	struct led_classdev_flash *iled_cdev;
++	struct led_classdev *iled_cdev;
+ 	const struct v4l2_flash_ops *ops;
+ 
+ 	struct v4l2_subdev sd;
+@@ -124,7 +124,7 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
+ struct v4l2_flash *v4l2_flash_init(
+ 	struct device *dev, struct fwnode_handle *fwn,
+ 	struct led_classdev_flash *fled_cdev,
+-	struct led_classdev_flash *iled_cdev,
++	struct led_classdev *iled_cdev,
+ 	const struct v4l2_flash_ops *ops,
+ 	struct v4l2_flash_config *config);
+ 
+@@ -140,7 +140,7 @@ void v4l2_flash_release(struct v4l2_flash *v4l2_flash);
+ static inline struct v4l2_flash *v4l2_flash_init(
+ 	struct device *dev, struct fwnode_handle *fwn,
+ 	struct led_classdev_flash *fled_cdev,
+-	struct led_classdev_flash *iled_cdev,
++	struct led_classdev *iled_cdev,
+ 	const struct v4l2_flash_ops *ops,
+ 	struct v4l2_flash_config *config)
+ {
 -- 
-Best regards,
-Jacek Anaszewski
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
