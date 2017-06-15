@@ -1,124 +1,112 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: Re: [PATCH 8/8] arm: dts: omap3: N9/N950: Add AS3645A camera flash
-Date: Thu, 15 Jun 2017 12:15:37 +0200
-Message-ID: <20170615101537.wbahrypnwcd5jkdn@earth>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 6/8] leds: as3645a: Add LED flash class driver
+Date: Thu, 15 Jun 2017 12:43:09 +0200
+Message-ID: <20170615104309.GA16845@amd>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
- <1497433639-13101-9-git-send-email-sakari.ailus@linux.intel.com>
+ <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
+ <20170614213941.GC10200@amd>
+ <20170614222135.GT12407@valkosipuli.retiisi.org.uk>
+ <20170614222833.GA26406@amd>
+ <20170614224304.GW12407@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6365dckl7rmwu6rx"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44583 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750777AbdFOKPl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2017 06:15:41 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57731 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752306AbdFOKnN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2017 06:43:13 -0400
 Content-Disposition: inline
-In-Reply-To: <1497433639-13101-9-git-send-email-sakari.ailus@linux.intel.com>
+In-Reply-To: <20170614224304.GW12407@valkosipuli.retiisi.org.uk>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, pavel@ucw.cz, Sakari Ailus <sakari.ailus@iki.fi>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org
 
 
---6365dckl7rmwu6rx
+--mP3DRpeJDSE+ciuQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Krasny den!
 
-On Wed, Jun 14, 2017 at 12:47:19PM +0300, Sakari Ailus wrote:
-> From: Sakari Ailus <sakari.ailus@iki.fi>
+> > > Thanks for the review!
+> >=20
+> > You are welcome :-).
+> >=20
+> > > On Wed, Jun 14, 2017 at 11:39:41PM +0200, Pavel Machek wrote:
+> > > > Hi!
+> > > >=20
+> > > > > From: Sakari Ailus <sakari.ailus@iki.fi>
+> > > >=20
+> > > > That address no longer works, right?
+> > >=20
+> > > Why wouldn't it work? Or... do you know something I don't? :-)
+> >=20
+> > Aha. I thought I was removing it from source files because it was no
+> > longer working, but maybe I'm misremembering?=20
 >=20
-> Add the as3645a flash controller to the DT source as well as the flash
-> property with the as3645a device phandle to the sensor DT node.
+> That was probably my @maxwell.research.nokia.com address. :-) There are no
+> occurrences of that in the kernel source anymore.
+
+I guess it probably was someone else using @iki.fi address, and I am
+confused.
+
+> > > > > +	struct v4l2_flash_config cfg =3D {
+> > > > > +		.torch_intensity =3D {
+> > > > > +			.min =3D AS_TORCH_INTENSITY_MIN,
+> > > > > +			.max =3D flash->cfg.assist_max_ua,
+> > > > > +			.step =3D AS_TORCH_INTENSITY_STEP,
+> > > > > +			.val =3D flash->cfg.assist_max_ua,
+> > > > > +		},
+> > > > > +		.indicator_intensity =3D {
+> > > > > +			.min =3D AS_INDICATOR_INTENSITY_MIN,
+> > > > > +			.max =3D flash->cfg.indicator_max_ua,
+> > > > > +			.step =3D AS_INDICATOR_INTENSITY_STEP,
+> > > > > +			.val =3D flash->cfg.indicator_max_ua,
+> > > > > +		},
+> > > > > +	};
+> > > >=20
+> > > > Ugh. And here you have copy of the above struct, + .val. Can it be
+> > > > somehow de-duplicated?
+> > >=20
+> > > The flash_brightness_set callback uses micro-Amps as the unit and the=
+ driver
+> > > needs to convert that to its own specific units. Yeah, there would be
+> > > probably an easier way, too. But that'd likely require changes to the=
+ LED
+> > > flash class.
+> >=20
+> > Can as3645a_current_to_reg just access struct v4l2_flash_config so
+> > that it does not have to recreate its look-alike on the fly?
 >=20
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
--- Sebastian
-
-> ---
->  arch/arm/boot/dts/omap3-n9.dts       |  1 +
->  arch/arm/boot/dts/omap3-n950-n9.dtsi | 14 ++++++++++++++
->  arch/arm/boot/dts/omap3-n950.dts     |  1 +
->  3 files changed, 16 insertions(+)
+> struct v4l2_flash_config is only needed as an argument for
+> v4l2_flash_init(). I'll split that into two functions in this occasion,
+> it'll be nicer.
 >=20
-> diff --git a/arch/arm/boot/dts/omap3-n9.dts b/arch/arm/boot/dts/omap3-n9.=
-dts
-> index b9e58c5..f95e7b1 100644
-> --- a/arch/arm/boot/dts/omap3-n9.dts
-> +++ b/arch/arm/boot/dts/omap3-n9.dts
-> @@ -26,6 +26,7 @@
->  		clocks =3D <&isp 0>;
->  		clock-frequency =3D <9600000>;
->  		nokia,nvm-size =3D <(16 * 64)>;
-> +		flash =3D <&as3645a>;
->  		port {
->  			smia_1_1: endpoint {
->  				link-frequencies =3D /bits/ 64 <199200000 210000000 499200000>;
-> diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/oma=
-p3-n950-n9.dtsi
-> index df3366f..8bd6673 100644
-> --- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> +++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> @@ -265,6 +265,20 @@
-> =20
->  &i2c2 {
->  	clock-frequency =3D <400000>;
-> +
-> +	as3645a: flash@30 {
-> +		reg =3D <0x30>;
-> +		compatible =3D "ams,as3645a";
-> +		flash {
-> +			flash-timeout-us =3D <150000>;
-> +			flash-max-microamp =3D <320000>;
-> +			led-max-microamp =3D <60000>;
-> +			peak-current-limit =3D <1750000>;
-> +		};
-> +		indicator {
-> +			led-max-microamp =3D <10000>;
-> +		};
-> +	};
->  };
-> =20
->  &i2c3 {
-> diff --git a/arch/arm/boot/dts/omap3-n950.dts b/arch/arm/boot/dts/omap3-n=
-950.dts
-> index 646601a..8fca038 100644
-> --- a/arch/arm/boot/dts/omap3-n950.dts
-> +++ b/arch/arm/boot/dts/omap3-n950.dts
-> @@ -60,6 +60,7 @@
->  		clocks =3D <&isp 0>;
->  		clock-frequency =3D <9600000>;
->  		nokia,nvm-size =3D <(16 * 64)>;
-> +		flash =3D <&as3645a>;
->  		port {
->  			smia_1_1: endpoint {
->  				link-frequencies =3D /bits/ 64 <210000000 333600000 398400000>;
-> --=20
-> 2.1.4
->=20
+> We now have more or less the same conversion implemented in three or so
+> times, there have to be ways to make that easier for drivers. I think that
+> could be done later, as well as adding support for checking the flash
+> strobe status.
 
---6365dckl7rmwu6rx
+Ok, thanks!
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--mP3DRpeJDSE+ciuQ
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAllCXkMACgkQ2O7X88g7
-+pqnsA/+L/KlOTqWCbU1yc8OLzEIYXdZwFJirbiADe+ah3oNBFtw+gXEBPW49ZN5
-D8bB9YgfPCcauzulew7yGCY8Hc6XFpbyOC4w4RDwIH5cWzT1GvsSzAArunmH+gvV
-fqrLxjCaIqR39nWyGIwZm0Xy239Lh8nG23hMHL4+Wc2nW6tl96rx6e9AUK6pbnFu
-YwfehnztmW4ZOn4FeAHXN4DIW7pfA+ptYput+alO/5T+1qU8rLWtZQz6WTztnuW4
-+RWOuPTc2cZr/jugd+dJUqUXdXUf5ZD86u5oOhaAizuHna0+JtfM/qlTvh2cG6+3
-jt+nuSLDwELNKqktKz66kdwarxr++3anlOd9hO6ClP6vMvkMqBE5yABfLn50Ux8c
-F6dhbLt/o7hYa6ctdAhvAKsqhC58p7RwhEQ5Qw+rpkBU0FU2cv98gP0shvwAqn4i
-qlFvwi35qse7Sa18qY0mnKIoQ7+j2W1PHlE4Mq0O60CQCb03vHmRtgP98AwUnbYp
-JnNZjCX/sd7t5i9C6c6mfMHhciOmup6DboSAOjJpgFj3b+/j2TxRIUN4maWNAzq8
-3Bs59mGyX/8vcMj5mCbeZ1kiNDaq6SIdJF7PUAq+m7GGeAeEY/bbrCKkAo9fc8kU
-Tc5FThvDtYT/gD5eoyul1YvowdQmAFYqcD92qz4hsxmyEERue3s=
-=EgCU
+iEYEARECAAYFAllCZL0ACgkQMOfwapXb+vJNXwCgtYgv935ZK7uxMJ1EWkQKmTrx
++z4AoJ6gtFJ3En8G2FfcqzdTc0GiX1/N
+=N3JL
 -----END PGP SIGNATURE-----
 
---6365dckl7rmwu6rx--
+--mP3DRpeJDSE+ciuQ--
