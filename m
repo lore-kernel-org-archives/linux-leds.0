@@ -1,74 +1,133 @@
-From: Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH 5/8] v4l2-flash: Flash ops aren't mandatory
-Date: Thu, 15 Jun 2017 14:51:19 +0200
-Message-ID: <20170615125118.ja4ghpyzdwa5qkvh@earth>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 6/8] leds: as3645a: Add LED flash class driver
+Date: Thu, 15 Jun 2017 15:01:47 +0200
+Message-ID: <6d27154d-4550-d1ae-8b7a-07dcaaee69ac@gmail.com>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
- <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
- <20170615092425.xcgeiu65yxawczr5@earth>
- <20170615123209.GD12407@valkosipuli.retiisi.org.uk>
+ <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
+ <343d88ea-c839-6682-df84-844f92bc9050@gmail.com>
+ <20170614221028.GS12407@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ih6uqwmmuphhrzuf"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170615123209.GD12407-S+BSfZ9RZZmRSg0ZkenSGLdO1Tsj/99ntUK59QYPAWc@public.gmane.org>
+In-Reply-To: <20170614221028.GS12407-S+BSfZ9RZZmRSg0ZkenSGLdO1Tsj/99ntUK59QYPAWc@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Sakari,
 
---ih6uqwmmuphhrzuf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/15/2017 12:10 AM, Sakari Ailus wrote:
+> Hi Jacek,
+> 
+> Thanks for the review!
 
-Hi,
+You're welcome!
 
-On Thu, Jun 15, 2017 at 03:32:10PM +0300, Sakari Ailus wrote:
-> On Thu, Jun 15, 2017 at 11:24:26AM +0200, Sebastian Reichel wrote:
-> > On Wed, Jun 14, 2017 at 12:47:16PM +0300, Sakari Ailus wrote:
-> > > None of the flash operations are not mandatory and therefore there sh=
-ould
-> > > be no need for the flash ops structure either. Accept NULL.
-> >=20
-> > I think you negated one time too much :). Otherwise:
-> >=20
-> > Reviewed-by: Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
->=20
-> Thanks!
->=20
-> The new one reads:
->=20
-> None of the flash operations are mandatory and therefore there should be =
-no
-> need for the flash ops structure either. Accept NULL.
+> I have to say I found the v4l2-flash-led-class framework quite useful, now
+> that I refactored a driver for using it. Now we have a user for the
+> indicator, too. :-)
 
-Fine with me.
+Nice :-). I'm also surprised that v4l2-flash API is also used in
+drivers/staging/greybus/light.c which popped up with kbuild test robot
+complaints.
 
--- Sebastian
+> On Wed, Jun 14, 2017 at 11:15:24PM +0200, Jacek Anaszewski wrote:
+>>> +static __maybe_unused int as3645a_suspend(struct device *dev)
+>>> +{
+>>> +	struct i2c_client *client = to_i2c_client(dev);
+>>> +	struct as3645a *flash = i2c_get_clientdata(client);
+>>> +	int rval;
+>>> +
+>>> +	rval = as3645a_set_control(flash, AS_MODE_EXT_TORCH, false);
+>>> +	dev_dbg(dev, "Suspend %s\n", rval < 0 ? "failed" : "ok");
+>>> +
+>>> +	return rval;
+>>> +}
+>>> +
+>>> +static __maybe_unused int as3645a_resume(struct device *dev)
+>>> +{
+>>> +	struct i2c_client *client = to_i2c_client(dev);
+>>> +	struct as3645a *flash = i2c_get_clientdata(client);
+>>> +	int rval;
+>>> +
+>>> +	rval = as3645a_setup(flash);
+>>> +
+>>
+>> nitpicking: inconsistent coding style - there is no empty line before
+>> dev_dbg() in the as3645a_suspend().
+> 
+> Added one for as3645a_suspend() --- it should have been there.
+> 
+>>
+>>> +	dev_dbg(dev, "Resume %s\n", rval < 0 ? "fail" : "ok");
+>>> +
+>>> +	return rval;
+>>> +}
+> 
+> ...
+> 
+>>> +static int as3645a_led_class_setup(struct as3645a *flash)
+>>> +{
+>>> +	struct led_classdev *fled_cdev = &flash->fled.led_cdev;
+>>> +	struct led_classdev *iled_cdev = &flash->iled_cdev;
+>>> +	struct led_flash_setting *cfg;
+>>> +	int rval;
+>>> +
+>>> +	iled_cdev->name = "as3645a indicator";
+>>> +	iled_cdev->brightness_set_blocking = as3645a_set_indicator_brightness;
+>>> +	iled_cdev->max_brightness =
+>>> +		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
+>>> +
+>>> +	rval = led_classdev_register(&flash->client->dev, iled_cdev);
+>>> +	if (rval < 0)
+>>> +		return rval;
+>>> +
+>>> +	cfg = &flash->fled.brightness;
+>>> +	cfg->min = AS_FLASH_INTENSITY_MIN;
+>>> +	cfg->max = flash->cfg.flash_max_ua;
+>>> +	cfg->step = AS_FLASH_INTENSITY_STEP;
+>>> +	cfg->val = flash->cfg.flash_max_ua;
+>>> +
+>>> +	cfg = &flash->fled.timeout;
+>>> +	cfg->min = AS_FLASH_TIMEOUT_MIN;
+>>> +	cfg->max = flash->cfg.flash_timeout_us;
+>>> +	cfg->step = AS_FLASH_TIMEOUT_STEP;
+>>> +	cfg->val = flash->cfg.flash_timeout_us;
+>>> +
+>>> +	flash->fled.ops = &as3645a_led_flash_ops;
+>>> +
+>>> +	fled_cdev->name = "as3645a flash";
+>>
+>> LED class device name should be taken from label DT property,
+>> or DT node name if the former wasn't defined.
+>>
+>> Also LED device naming convention defines colon as a separator
+>> between name segments.
+> 
+> Right. I'll fix that.
+> 
+> I just realised I'm missing DT binding documentation for this device; I'll
+> add that, too.
+> 
+> Is the preference to allow freely chosen node names for the LEDs? Now that
+> there's the label, too, this appears to be somewhat duplicated information.
 
---ih6uqwmmuphhrzuf
-Content-Type: application/pgp-signature; name="signature.asc"
+It depends on whether the sub-leds are identified by reg property.
+In this case usually common prefix is used followed by reg value,
+e.g. led@1, led@2 etc.
 
------BEGIN PGP SIGNATURE-----
+Otherwise prevailing scheme is e.g.:
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAllCgsYACgkQ2O7X88g7
-+pqjCQ/+M2CPvVg20s0qtvUk8dzJUxgHoBo4yLLeGMAHlJiG2ma/ma0OvwBW8tN1
-tbQyU4gXl7s4vdmRT/dHJhwxhdIfTM5DWG1KpWf5rSDzw7yvL0KMbnIFwPcq2Gcg
-xRl5llGBjiPYPnzh2jr5u04MQSHCgHPYn723yiLhIhPgmjmiIeGLT01/eNGN9flE
-N142iAyV1HNHpf17nDk6Tq/VqH2x/oW/qEfGbDOlWbvV3qP2ljNlxpP5bzJK1kMe
-3GFL+KAOObeSk3ZsRvH9MgNsifB0yE0B8Ljo3gwpv7+yv2FjLkyQiPe/JSL/HGHF
-fvXwjxRXY7KQidk/QNKLvOK1wOicQxUq68pbbkyblpxekeJqFdIXY3aEUoX1w8oB
-zaYYQouQU+PtUe34QQKme1EYkNfMw7V8/PtV8qfNszXosVeqHDYQXYegQJ2V5bcf
-whybbt6dwiPgb8JroJ7st/Fod8UBy1jS6/XSb93VcGl0MPXbnngf09FrranBPG68
-VY9DmkS3wPPqWlx9+faBqmPlpSeDcBROLrwGXAy69aMc6Nw3Chh3+VSdE6LG8+SX
-Rk6GUboyi3MzyZoJ6zCCJNsMQKUVKh2GrS7j9aIk37UkIv492AKPEZ7z3EcLU9JV
-q7ekfu/TWjjxVhwPFm7CQrODcf2mpGwP1BLdRZW8FXQNKGeoVK8=
-=Jbq8
------END PGP SIGNATURE-----
+        blue-power {
+		...
+                label = "netxbig:blue:power";
+	}
 
---ih6uqwmmuphhrzuf--
+-- 
+Best regards,
+Jacek Anaszewski
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
