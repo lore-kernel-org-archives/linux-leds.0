@@ -1,112 +1,185 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 6/8] leds: as3645a: Add LED flash class driver
-Date: Thu, 15 Jun 2017 12:43:09 +0200
-Message-ID: <20170615104309.GA16845@amd>
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: Re: [PATCH 4/8] v4l2-flash: Use led_classdev instead of
+ led_classdev_flash for indicator
+Date: Thu, 15 Jun 2017 12:45:12 +0200
+Message-ID: <20170615104512.3qoplzxbhcwfeins@earth>
 References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
- <1497433639-13101-7-git-send-email-sakari.ailus@linux.intel.com>
- <20170614213941.GC10200@amd>
- <20170614222135.GT12407@valkosipuli.retiisi.org.uk>
- <20170614222833.GA26406@amd>
- <20170614224304.GW12407@valkosipuli.retiisi.org.uk>
+ <1497433639-13101-5-git-send-email-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qnkw72h6ycc7wl33"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57731 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752306AbdFOKnN (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2017 06:43:13 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44679 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdFOKpR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2017 06:45:17 -0400
 Content-Disposition: inline
-In-Reply-To: <20170614224304.GW12407@valkosipuli.retiisi.org.uk>
+In-Reply-To: <1497433639-13101-5-git-send-email-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, pavel@ucw.cz
 
 
---mP3DRpeJDSE+ciuQ
+--qnkw72h6ycc7wl33
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Krasny den!
+Hi,
 
-> > > Thanks for the review!
-> >=20
-> > You are welcome :-).
-> >=20
-> > > On Wed, Jun 14, 2017 at 11:39:41PM +0200, Pavel Machek wrote:
-> > > > Hi!
-> > > >=20
-> > > > > From: Sakari Ailus <sakari.ailus@iki.fi>
-> > > >=20
-> > > > That address no longer works, right?
-> > >=20
-> > > Why wouldn't it work? Or... do you know something I don't? :-)
-> >=20
-> > Aha. I thought I was removing it from source files because it was no
-> > longer working, but maybe I'm misremembering?=20
+On Wed, Jun 14, 2017 at 12:47:15PM +0300, Sakari Ailus wrote:
+> The V4L2 flash class initialisation expects struct led_classdev_flash that
+> describes an indicator but only uses struct led_classdev which is a field
+> iled_cdev in the struct. Use struct iled_cdev only.
 >=20
-> That was probably my @maxwell.research.nokia.com address. :-) There are no
-> occurrences of that in the kernel source anymore.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-I guess it probably was someone else using @iki.fi address, and I am
-confused.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-> > > > > +	struct v4l2_flash_config cfg =3D {
-> > > > > +		.torch_intensity =3D {
-> > > > > +			.min =3D AS_TORCH_INTENSITY_MIN,
-> > > > > +			.max =3D flash->cfg.assist_max_ua,
-> > > > > +			.step =3D AS_TORCH_INTENSITY_STEP,
-> > > > > +			.val =3D flash->cfg.assist_max_ua,
-> > > > > +		},
-> > > > > +		.indicator_intensity =3D {
-> > > > > +			.min =3D AS_INDICATOR_INTENSITY_MIN,
-> > > > > +			.max =3D flash->cfg.indicator_max_ua,
-> > > > > +			.step =3D AS_INDICATOR_INTENSITY_STEP,
-> > > > > +			.val =3D flash->cfg.indicator_max_ua,
-> > > > > +		},
-> > > > > +	};
-> > > >=20
-> > > > Ugh. And here you have copy of the above struct, + .val. Can it be
-> > > > somehow de-duplicated?
-> > >=20
-> > > The flash_brightness_set callback uses micro-Amps as the unit and the=
- driver
-> > > needs to convert that to its own specific units. Yeah, there would be
-> > > probably an easier way, too. But that'd likely require changes to the=
- LED
-> > > flash class.
-> >=20
-> > Can as3645a_current_to_reg just access struct v4l2_flash_config so
-> > that it does not have to recreate its look-alike on the fly?
+-- Sebastian
+
+> ---
+>  drivers/media/v4l2-core/v4l2-flash-led-class.c | 19 +++++++------------
+>  include/media/v4l2-flash-led-class.h           |  6 +++---
+>  2 files changed, 10 insertions(+), 15 deletions(-)
 >=20
-> struct v4l2_flash_config is only needed as an argument for
-> v4l2_flash_init(). I'll split that into two functions in this occasion,
-> it'll be nicer.
+> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/med=
+ia/v4l2-core/v4l2-flash-led-class.c
+> index 7b82881..6d69119 100644
+> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> @@ -110,7 +110,7 @@ static void v4l2_flash_set_led_brightness(struct v4l2=
+_flash *v4l2_flash,
+>  		led_set_brightness_sync(&v4l2_flash->fled_cdev->led_cdev,
+>  					brightness);
+>  	} else {
+> -		led_set_brightness_sync(&v4l2_flash->iled_cdev->led_cdev,
+> +		led_set_brightness_sync(v4l2_flash->iled_cdev,
+>  					brightness);
+>  	}
+>  }
+> @@ -133,7 +133,7 @@ static int v4l2_flash_update_led_brightness(struct v4=
+l2_flash *v4l2_flash,
+>  			return 0;
+>  		led_cdev =3D &v4l2_flash->fled_cdev->led_cdev;
+>  	} else {
+> -		led_cdev =3D &v4l2_flash->iled_cdev->led_cdev;
+> +		led_cdev =3D v4l2_flash->iled_cdev;
+>  	}
+> =20
+>  	ret =3D led_update_brightness(led_cdev);
+> @@ -529,8 +529,7 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, st=
+ruct v4l2_subdev_fh *fh)
+>  	struct v4l2_flash *v4l2_flash =3D v4l2_subdev_to_v4l2_flash(sd);
+>  	struct led_classdev_flash *fled_cdev =3D v4l2_flash->fled_cdev;
+>  	struct led_classdev *led_cdev =3D &fled_cdev->led_cdev;
+> -	struct led_classdev_flash *iled_cdev =3D v4l2_flash->iled_cdev;
+> -	struct led_classdev *led_cdev_ind =3D NULL;
+> +	struct led_classdev *led_cdev_ind =3D v4l2_flash->iled_cdev;
+>  	int ret =3D 0;
+> =20
+>  	if (!v4l2_fh_is_singular(&fh->vfh))
+> @@ -543,9 +542,7 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, st=
+ruct v4l2_subdev_fh *fh)
+> =20
+>  	mutex_unlock(&led_cdev->led_access);
+> =20
+> -	if (iled_cdev) {
+> -		led_cdev_ind =3D &iled_cdev->led_cdev;
+> -
+> +	if (led_cdev_ind) {
+>  		mutex_lock(&led_cdev_ind->led_access);
+> =20
+>  		led_sysfs_disable(led_cdev_ind);
+> @@ -578,7 +575,7 @@ static int v4l2_flash_close(struct v4l2_subdev *sd, s=
+truct v4l2_subdev_fh *fh)
+>  	struct v4l2_flash *v4l2_flash =3D v4l2_subdev_to_v4l2_flash(sd);
+>  	struct led_classdev_flash *fled_cdev =3D v4l2_flash->fled_cdev;
+>  	struct led_classdev *led_cdev =3D &fled_cdev->led_cdev;
+> -	struct led_classdev_flash *iled_cdev =3D v4l2_flash->iled_cdev;
+> +	struct led_classdev *led_cdev_ind =3D v4l2_flash->iled_cdev;
+>  	int ret =3D 0;
+> =20
+>  	if (!v4l2_fh_is_singular(&fh->vfh))
+> @@ -593,9 +590,7 @@ static int v4l2_flash_close(struct v4l2_subdev *sd, s=
+truct v4l2_subdev_fh *fh)
+> =20
+>  	mutex_unlock(&led_cdev->led_access);
+> =20
+> -	if (iled_cdev) {
+> -		struct led_classdev *led_cdev_ind =3D &iled_cdev->led_cdev;
+> -
+> +	if (led_cdev_ind) {
+>  		mutex_lock(&led_cdev_ind->led_access);
+>  		led_sysfs_enable(led_cdev_ind);
+>  		mutex_unlock(&led_cdev_ind->led_access);
+> @@ -614,7 +609,7 @@ static const struct v4l2_subdev_ops v4l2_flash_subdev=
+_ops;
+>  struct v4l2_flash *v4l2_flash_init(
+>  	struct device *dev, struct fwnode_handle *fwn,
+>  	struct led_classdev_flash *fled_cdev,
+> -	struct led_classdev_flash *iled_cdev,
+> +	struct led_classdev *iled_cdev,
+>  	const struct v4l2_flash_ops *ops,
+>  	struct v4l2_flash_config *config)
+>  {
+> diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-fl=
+ash-led-class.h
+> index f9dcd54..54e31a8 100644
+> --- a/include/media/v4l2-flash-led-class.h
+> +++ b/include/media/v4l2-flash-led-class.h
+> @@ -85,7 +85,7 @@ struct v4l2_flash_config {
+>   */
+>  struct v4l2_flash {
+>  	struct led_classdev_flash *fled_cdev;
+> -	struct led_classdev_flash *iled_cdev;
+> +	struct led_classdev *iled_cdev;
+>  	const struct v4l2_flash_ops *ops;
+> =20
+>  	struct v4l2_subdev sd;
+> @@ -124,7 +124,7 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_fl=
+ash(struct v4l2_ctrl *c)
+>  struct v4l2_flash *v4l2_flash_init(
+>  	struct device *dev, struct fwnode_handle *fwn,
+>  	struct led_classdev_flash *fled_cdev,
+> -	struct led_classdev_flash *iled_cdev,
+> +	struct led_classdev *iled_cdev,
+>  	const struct v4l2_flash_ops *ops,
+>  	struct v4l2_flash_config *config);
+> =20
+> @@ -140,7 +140,7 @@ void v4l2_flash_release(struct v4l2_flash *v4l2_flash=
+);
+>  static inline struct v4l2_flash *v4l2_flash_init(
+>  	struct device *dev, struct fwnode_handle *fwn,
+>  	struct led_classdev_flash *fled_cdev,
+> -	struct led_classdev_flash *iled_cdev,
+> +	struct led_classdev *iled_cdev,
+>  	const struct v4l2_flash_ops *ops,
+>  	struct v4l2_flash_config *config)
+>  {
+> --=20
+> 2.1.4
 >=20
-> We now have more or less the same conversion implemented in three or so
-> times, there have to be ways to make that easier for drivers. I think that
-> could be done later, as well as adding support for checking the flash
-> strobe status.
 
-Ok, thanks!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---mP3DRpeJDSE+ciuQ
+--qnkw72h6ycc7wl33
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAllCZL0ACgkQMOfwapXb+vJNXwCgtYgv935ZK7uxMJ1EWkQKmTrx
-+z4AoJ6gtFJ3En8G2FfcqzdTc0GiX1/N
-=N3JL
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAllCZS0ACgkQ2O7X88g7
++ppmaRAAmiYetGTVZORV+kQvcBSuhEhyneUPsUkJIwVCGtNctHiCQa6Rl+SWaxpm
+LqZmFGPmdnKQONu0uv9BRCM2Yo7CYtWTdpya+YTmuH83FzjFEFzFksYVurfa0BLe
+/gncBcFE+XuLpBraN0u4W/2EUBoH7KARJ1eSAyQN7gVjCXnnXJDoY0uAL9oSG2qG
+YM/Ai2uJtuTDnOferhipyw0HOHuFmY7SNpmfFVVzKobAgxQF+bnoKHH055YnSREK
+xgbQO71QTCpU4MipPa7WivjcblyO9QLxGLJ+r5vlpOD2gOQEZ/lnEFveh/PRyR0+
+4V71H28QBEM3RsjHdZVSWaeF6a/4MwVB72Wydb5LpvBar9nHQeeD1xdYvwTZ38o+
+6s5VdOVcZg7O1PwFEHsf0TXT9T1J1PCzuz8srJS+/716zpNsFlWWlSSzZ//+RSPf
+dPDfXfiY1K0U1R3UQpLI6UmB8OMIdNoMpNoXiDlYtM7/eyS0TgxW0ENVKbG3i9ly
+Yro7uWYKnzgvTHWrgcIjBuPigy5nnOwao8+7fWTDhGaWtv1g8Cg2O83+xgiHAbiY
+gEpebIp086NQAktqcJVZT8Es7qllOXA/N3Yw4OGKeBX/JaONRb0fUIRsznwSkZWy
+t3AHGpJrY5iIyk42q1iLZsWG3MiDjlhJo2qryqkYydiQHbqOSVk=
+=EC5X
 -----END PGP SIGNATURE-----
 
---mP3DRpeJDSE+ciuQ--
+--qnkw72h6ycc7wl33--
