@@ -1,40 +1,29 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/8] dt: bindings: Add a binding for referencing EEPROM
- from camera sensors
-Date: Sun, 18 Jun 2017 09:05:53 -0500
-Message-ID: <20170617003949.uq4qldmbzx227cj3@rob-hp-laptop>
-References: <1497433639-13101-1-git-send-email-sakari.ailus@linux.intel.com>
- <1497433639-13101-4-git-send-email-sakari.ailus@linux.intel.com>
+From: Julian Smith <sinara_group@126.com>
+Subject: Product Inquiry
+Date: Mon, 26 Jun 2017 17:51:49 -0400 (EDT)
+Message-ID: <20170626215149.7B0362CC3A@mail.dealer.com>
+Reply-To: sinara-group@bk.ru
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:35842 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753137AbdFROFz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 18 Jun 2017 10:05:55 -0400
-Content-Disposition: inline
-In-Reply-To: <1497433639-13101-4-git-send-email-sakari.ailus@linux.intel.com>
+Received: from host238-201-177-94.serverdedicati.aruba.it ([94.177.201.238]:33961
+        "EHLO mail.dealer.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751471AbdF0CZb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 26 Jun 2017 22:25:31 -0400
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, pavel@ucw.cz
+To: linux-leds@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 12:47:14PM +0300, Sakari Ailus wrote:
-> Many camera sensor devices contain EEPROM chips that describe the
-> properties of a given unit --- the data is specific to a given unit can
-> thus is not stored e.g. in user space or the driver.
-> 
-> Some sensors embed the EEPROM chip and it can be accessed through the
-> sensor's I2C interface. This property is to be used for devices where the
-> EEPROM chip is accessed through a different I2C address than the sensor.
-> 
-> The intent is to later provide this information to the user space.
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> ---
->  Documentation/devicetree/bindings/media/video-interfaces.txt | 3 +++
->  1 file changed, 3 insertions(+)
+Hello, 
 
-Acked-by: Rob Herring <robh@kernel.org>
+My name is Ms Julian Smith and i am from Sinara Group Co.
+We are glad to know about your company from the web and we are interested in
+your products.Please send us your Latest catalog and price list for our
+trial order. 
+
+Julian Smith, 
+Purchasing Manager
+Sinara Group Co.
+7 Krasnogo Znameni Ave.
+Vladivostok,690106,Ukraine
