@@ -1,29 +1,37 @@
-From: Julian Smith <sinara_group@126.com>
-Subject: Product Inquiry
-Date: Mon, 26 Jun 2017 17:51:49 -0400 (EDT)
-Message-ID: <20170626215149.7B0362CC3A@mail.dealer.com>
-Reply-To: sinara-group@bk.ru
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V5 2/2] usb: core: read USB ports from DT in the usbport
+ LED trigger driver
+Date: Tue, 27 Jun 2017 09:15:43 +0200
+Message-ID: <CACna6rzv=jwiXyPyv4RX5LDiZxZTAcvsamY6vqUgY6cMdC_S9w@mail.gmail.com>
+References: <20170530092706.927-1-zajec5@gmail.com> <20170608160833.1567-1-zajec5@gmail.com>
+ <20170608160833.1567-3-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from host238-201-177-94.serverdedicati.aruba.it ([94.177.201.238]:33961
-        "EHLO mail.dealer.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751471AbdF0CZb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 26 Jun 2017 22:25:31 -0400
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170608160833.1567-3-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
 
-Hello, 
+On 8 June 2017 at 18:08, Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Rafa=C5=82 Mi=C5=82ecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+>
+> This uses DT info to read relation description of LEDs and USB ports. If
+> DT has properly described LEDs, trigger will know when to turn them on.
+>
+> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
 
-My name is Ms Julian Smith and i am from Sinara Group Co.
-We are glad to know about your company from the web and we are interested in
-your products.Please send us your Latest catalog and price list for our
-trial order. 
+Hi Greg,
 
-Julian Smith, 
-Purchasing Manager
-Sinara Group Co.
-7 Krasnogo Znameni Ave.
-Vladivostok,690106,Ukraine
+do you mind if I ask about this patchset?
+[PATCH V5 1/2] dt-bindings: leds: document new trigger-sources property
+[PATCH V5 2/2] usb: core: read USB ports from DT in the usbport LED
+trigger driver
+
+Would that be appropriable to get it through your tree?
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
