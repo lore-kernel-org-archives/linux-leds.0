@@ -1,37 +1,76 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V5 2/2] usb: core: read USB ports from DT in the usbport
- LED trigger driver
-Date: Tue, 27 Jun 2017 09:15:43 +0200
-Message-ID: <CACna6rzv=jwiXyPyv4RX5LDiZxZTAcvsamY6vqUgY6cMdC_S9w@mail.gmail.com>
-References: <20170530092706.927-1-zajec5@gmail.com> <20170608160833.1567-1-zajec5@gmail.com>
- <20170608160833.1567-3-zajec5@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] leds: lp55xx: make various arrays static const
+Date: Thu, 29 Jun 2017 18:57:38 +0100
+Message-ID: <20170629175738.12467-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170608160833.1567-3-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:41074 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752343AbdF2R5l (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Jun 2017 13:57:41 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8 June 2017 at 18:08, Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> From: Rafa=C5=82 Mi=C5=82ecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
->
-> This uses DT info to read relation description of LEDs and USB ports. If
-> DT has properly described LEDs, trigger will know when to turn them on.
->
-> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal-g1n6cQUeyibVItvQsEIGlw@public.gmane.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Greg,
+Several arrays are currently on-stack and instead should be made
+static const.
 
-do you mind if I ask about this patchset?
-[PATCH V5 1/2] dt-bindings: leds: document new trigger-sources property
-[PATCH V5 2/2] usb: core: read USB ports from DT in the usbport LED
-trigger driver
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/leds/leds-lp5523.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Would that be appropriable to get it through your tree?
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index e9ba8cd32d66..924e50aefb00 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -168,13 +168,13 @@ static int lp5523_post_init_device(struct lp55xx_chip *chip)
+ static void lp5523_load_engine(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 mask[] = {
++	static const u8 mask[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+ 		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+ 		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+ 	};
+ 
+-	u8 val[] = {
++	static const u8 val[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_LOAD_ENG1,
+ 		[LP55XX_ENGINE_2] = LP5523_LOAD_ENG2,
+ 		[LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
+@@ -188,7 +188,7 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
+ static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 page_sel[] = {
++	static const u8 page_sel[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
+ 		[LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
+ 		[LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
+@@ -208,7 +208,7 @@ static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
+ static void lp5523_stop_engine(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 mask[] = {
++	static const u8 mask[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+ 		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+ 		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+@@ -505,7 +505,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
+ {
+ 	struct lp55xx_engine *engine = &chip->engines[nr - 1];
+ 	int ret;
+-	u8 mux_page[] = {
++	static const u8 mux_page[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_PAGE_MUX1,
+ 		[LP55XX_ENGINE_2] = LP5523_PAGE_MUX2,
+ 		[LP55XX_ENGINE_3] = LP5523_PAGE_MUX3,
+-- 
+2.11.0
