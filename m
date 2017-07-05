@@ -1,100 +1,92 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: lp55xx: make various arrays static const
-Date: Fri, 30 Jun 2017 23:26:50 +0200
-Message-ID: <1d5d4c21-32db-447e-1715-54a7eb959ad0@gmail.com>
-References: <20170629175738.12467-1-colin.king@canonical.com>
- <d57c8cab-4577-d227-64df-553b948566d9@gmail.com> <20170629204831.GA763@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <20170629204831.GA763@amd>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Colin King <colin.king@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] LED updates for 4.13
+Date: Wed,  5 Jul 2017 22:05:20 +0200
+Message-ID: <1499285120-3909-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36138 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753658AbdGEUGN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 5 Jul 2017 16:06:13 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, colin.king@canonical.com, paul.burton@imgtec.com, jan.kiszka@siemens.com, linus.walleij@linaro.org, anders@chargestorm.se
 
-Hi,
+Hi Linus,
 
-On 06/29/2017 10:48 PM, Pavel Machek wrote:
-> Hi!
-> 
->> Thanks for the patch.
->>
->> Do you have some profiling results showing the benefit of these changes?
->> It seems that these functions are called only on driver initialization.
->> Making the local arrays static will prevent releasing this memory even
->> though it will be no longer needed.
->>
->> Anyway, the size of arrays is 3 bytes, so the impact of these changes
->> seems to be virtually negligible. I am not taking this patch unless
->> you are able to provide the numbers showing the gain.
-> 
-> C will have to initialize the array on stack, then copy values
+Please pull LED updates for 4.13.
 
-OK, similar justification is used in case of few other similar patches.
+This time we're removing more than adding:
 
-Applied to the for-next branch of linux-leds.git. It's rather
-cosmetic change so only a few days of testing before sending
-upstream should be enough.
+Remove drivers:
 
-Thanks,
-Jacek Anaszewski
+leds-versatile:
+  - all users of the Versatile LED driver are deleted and replaced
+    with the very generic leds-syscon
 
-> there.. which is ugly. "static const" also tells the reader what is
-> going on there (nothing).
-> 
-> I'd say this is a good patch.
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
->>> +++ b/drivers/leds/leds-lp5523.c
->>> @@ -168,13 +168,13 @@ static int lp5523_post_init_device(struct lp55xx_chip *chip)
->>>  static void lp5523_load_engine(struct lp55xx_chip *chip)
->>>  {
->>>  	enum lp55xx_engine_index idx = chip->engine_idx;
->>> -	u8 mask[] = {
->>> +	static const u8 mask[] = {
->>>  		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
->>>  		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
->>>  		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
->>>  	};
->>>  
->>> -	u8 val[] = {
->>> +	static const u8 val[] = {
->>>  		[LP55XX_ENGINE_1] = LP5523_LOAD_ENG1,
->>>  		[LP55XX_ENGINE_2] = LP5523_LOAD_ENG2,
->>>  		[LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
->>> @@ -188,7 +188,7 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
->>>  static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
->>>  {
->>>  	enum lp55xx_engine_index idx = chip->engine_idx;
->>> -	u8 page_sel[] = {
->>> +	static const u8 page_sel[] = {
->>>  		[LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
->>>  		[LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
->>>  		[LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
->>> @@ -208,7 +208,7 @@ static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
->>>  static void lp5523_stop_engine(struct lp55xx_chip *chip)
->>>  {
->>>  	enum lp55xx_engine_index idx = chip->engine_idx;
->>> -	u8 mask[] = {
->>> +	static const u8 mask[] = {
->>>  		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
->>>  		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
->>>  		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
->>> @@ -505,7 +505,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
->>>  {
->>>  	struct lp55xx_engine *engine = &chip->engines[nr - 1];
->>>  	int ret;
->>> -	u8 mux_page[] = {
->>> +	static const u8 mux_page[] = {
->>>  		[LP55XX_ENGINE_1] = LP5523_PAGE_MUX1,
->>>  		[LP55XX_ENGINE_2] = LP5523_PAGE_MUX2,
->>>  		[LP55XX_ENGINE_3] = LP5523_PAGE_MUX3,
->>>
-> 
+leds-sead3:
+  - SEAD3 is using the generic leds-syscon & regmap based register-bit-led
+    driver
 
--- 
+LED class drivers improvements:
+
+ledtrig-gpio:
+  - use threaded IRQ, which both simplifies the code because we can drop
+    the workqueue indirection, and it enables using the trigger for GPIOs
+    that work with threaded IRQs themselves
+  - refresh LED state after GPIO change since the new GPIO may have a different
+    state than the old one
+
+leds-lp55xx:
+  - make various arrays static const
+
+leds-pca963x:
+  - add bindings to invert polarity
+
 Best regards,
 Jacek Anaszewski
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.13
+
+for you to fetch changes up to 4d1707c1c6901906707b9419cac8d9c84bc17d88:
+
+  leds: lp55xx: make various arrays static const (2017-06-30 23:15:44 +0200)
+
+----------------------------------------------------------------
+LED updates for 4.13
+
+----------------------------------------------------------------
+Anders Darander (1):
+      leds: pca963x: Add bindings to invert polarity
+
+Colin Ian King (1):
+      leds: lp55xx: make various arrays static const
+
+Jan Kiszka (2):
+      leds: trigger: gpio: Refresh LED state after GPIO change
+      leds: trigger: gpio: Use threaded IRQ
+
+Linus Walleij (1):
+      leds: Delete obsolete Versatile driver
+
+Paul Burton (1):
+      leds: Remove SEAD-3 driver
+
+ Documentation/devicetree/bindings/leds/pca963x.txt |   1 +
+ drivers/leds/Kconfig                               |  18 ----
+ drivers/leds/Makefile                              |   2 -
+ drivers/leds/leds-lp5523.c                         |  10 +-
+ drivers/leds/leds-pca963x.c                        |  17 +++-
+ drivers/leds/leds-sead3.c                          |  78 ---------------
+ drivers/leds/leds-versatile.c                      | 110 ---------------------
+ drivers/leds/trigger/ledtrig-gpio.c                |  29 ++----
+ include/linux/platform_data/leds-pca963x.h         |   6 ++
+ 9 files changed, 34 insertions(+), 237 deletions(-)
+ delete mode 100644 drivers/leds/leds-sead3.c
+ delete mode 100644 drivers/leds/leds-versatile.c
