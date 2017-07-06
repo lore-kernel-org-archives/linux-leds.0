@@ -1,59 +1,57 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 3/3] DT: leds: Add Qualcomm Light Pulse Generator
- binding
-Date: Sat, 15 Jul 2017 22:35:29 -0700
-Message-ID: <20170716053529.GS1618@tuxbook>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 1/3] leds: core: Introduce generic pattern interface
+Date: Thu, 6 Jul 2017 05:18:01 +0200
+Message-ID: <20170706031801.GB12954@xo-6d-61-c0.localdomain>
 References: <20170714224520.467-1-bjorn.andersson@linaro.org>
- <20170714224520.467-4-bjorn.andersson@linaro.org>
- <20170715091439.GC26602@amd>
+ <20170714224520.467-2-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:34222 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbdGPFfa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 16 Jul 2017 01:35:30 -0400
-Received: by mail-pf0-f174.google.com with SMTP id q85so62567751pfq.1
-        for <linux-leds@vger.kernel.org>; Sat, 15 Jul 2017 22:35:30 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170715091439.GC26602@amd>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20170714224520.467-2-bjorn.andersson@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
-On Sat 15 Jul 02:14 PDT 2017, Pavel Machek wrote:
+Hi!
 
-> Hi!
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
 > 
-> > This adds the binding document describing the three hardware blocks
-> > related to the Light Pulse Generator found in a wide range of Qualcomm
-> > PMICs.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > 
-> > Changes since v1:
-> > - Dropped custom pattern properties
-> > - Renamed cell-index to qcom,lpg-channel to clarify its purpose
-> > 
-> >  .../devicetree/bindings/leds/leds-qcom-lpg.txt     | 145 +++++++++++++++++++++
-> >  1 file changed, 145 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> > new file mode 100644
-> > index 000000000000..cc9ffee6586b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> > @@ -0,0 +1,145 @@
-> > +Binding for Qualcomm Light Pulse Generator
-> > +
-> 
-> Can we use similar format to other files in the directory?
-> 
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
 
-Sure thing, I'll rework this patch.
+> @@ -61,3 +61,23 @@ Description:
+>  		gpio and backlight triggers. In case of the backlight trigger,
+>  		it is useful when driving a LED which is intended to indicate
+>  		a device in a standby like state.
+> +
+> +What:		/sys/class/leds/<led>/pattern
+> +Date:		July 2017
+> +KernelVersion:	4.14
+> +Description:
+> +		Specify a pattern for the LED, for LED hardware that support
+> +		altering the brightness as a function of time.
+> +
+> +		The pattern is given by a series of tuples, of brightness and
+> +		duration (ms). The LED is expected to traverse the series and
+> +		each brightness value for the specified duration.
+> +
+> +		Additionally a repeat marker ":|" can be appended to the
+> +		series, which should cause the pattern to be repeated
+> +		endlessly.
+> +
+> +		As LED hardware might have different capabilities and precision
+> +		the requested pattern might be slighly adjusted by the driver
+> +		and the resulting pattern of such operation should be returned
+> +		when this file is read.
 
-Regards,
-Bjorn
+Well. I believe this is mostly useful for RGB LEDs. Unfortunately, having patterns
+per-LED will present opportunity for different channels becoming de-synchronized
+from each other, which will not look nice.
+
+Best regards,
+										Pavel
