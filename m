@@ -1,19 +1,35 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/2 v2] leds: tlc591xx: add missing of_node_put
-Date: Sat, 15 Jul 2017 11:58:17 +0200
-Message-ID: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:41719
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751156AbdGOKXT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 15 Jul 2017 06:23:19 -0400
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH 1/2 v2] leds: tlc591xx: merge conditional tests
+Date: Sat, 15 Jul 2017 11:58:18 +0200
+Message-ID: <1500112699-770-2-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Richard Purdie <rpurdie@rpsys.net>
 Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-This series first merges two conditionals and then adds of_node_put on
-jumping out of for_each_child_of_node.
+Merge conditionals that have the same then branch, to prepare for extending
+that branch with of_node_put.
 
-v2 adds the merge of conditionals, resulting in fewer of_node_put calls.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/leds/leds-tlc591xx.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+index 30453164..fcc87ee 100644
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -232,9 +232,8 @@ struct tlc591xx {
+ 		err = of_property_read_u32(child, "reg", &reg);
+ 		if (err)
+ 			return err;
+-		if (reg < 0 || reg >= tlc591xx->max_leds)
+-			return -EINVAL;
+-		if (priv->leds[reg].active)
++		if (reg < 0 || reg >= tlc591xx->max_leds ||
++		    priv->leds[reg].active)
+ 			return -EINVAL;
+ 		priv->leds[reg].active = true;
+ 		priv->leds[reg].ldev.name =
