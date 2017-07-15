@@ -1,67 +1,105 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] Qualcomm Light Pulse Generator
-Date: Sat, 15 Jul 2017 11:10:32 +0200
-Message-ID: <20170715091032.GA26602@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 3/3] DT: leds: Add Qualcomm Light Pulse Generator
+ binding
+Date: Sat, 15 Jul 2017 11:14:39 +0200
+Message-ID: <20170715091439.GC26602@amd>
 References: <20170714224520.467-1-bjorn.andersson@linaro.org>
+ <20170714224520.467-4-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="R+My9LyyhiUvIEro"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42014 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbdGOJOl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 15 Jul 2017 05:14:41 -0400
 Content-Disposition: inline
-In-Reply-To: <20170714224520.467-1-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <20170714224520.467-4-bjorn.andersson@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
 
---EeQfGwPcQSOJBaQU
+--R+My9LyyhiUvIEro
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This series introduces a generic pattern interface in the LED class and a
-> driver for the Qualcomm Light Pulse Generator.
+> This adds the binding document describing the three hardware blocks
+> related to the Light Pulse Generator found in a wide range of Qualcomm
+> PMICs.
 >=20
-> Bjorn Andersson (3):
->   leds: core: Introduce generic pattern interface
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>=20
+> Changes since v1:
+> - Dropped custom pattern properties
+> - Renamed cell-index to qcom,lpg-channel to clarify its purpose
+>=20
+>  .../devicetree/bindings/leds/leds-qcom-lpg.txt     | 145 +++++++++++++++=
+++++++
+>  1 file changed, 145 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.=
+txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/D=
+ocumentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> new file mode 100644
+> index 000000000000..cc9ffee6586b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> @@ -0,0 +1,145 @@
+> +Binding for Qualcomm Light Pulse Generator
+> +
 
-This one should be last. Let me review that, it is important to get
-this one right.
+Can we use similar format to other files in the directory?
 
->   leds: Add driver for Qualcomm LPG
+> +The Qualcomm Light Pulse Generator consists of three different hardware =
+blocks;
+> +a ramp generator with lookup table, the light pulse generator and a three
+> +channel current sink. These blocks are found in a wide range of Qualcomm=
+ PMICs.
+> +Each of these are described individually below.
+> +
+> +=3D Lookup Table (LUT)
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "qcom,spmi-lpg-lut"
 
->   DT: leds: Add Qualcomm Light Pulse Generator binding
+I guess we don't need to know type of the compatible atribute, other
+files say
 
-This one should be first.
+Required properties:
 
-And I guess I'd prefer the driver to go in first, before the generic
-pattern interface.
+- compatible : Must be "skyworks,aat1290".
+- flen-gpios : Must be device tree identifier of the flash device
+=2E..
 
-Thanks,
+which is easier to understand.
 
+Best regards,
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---EeQfGwPcQSOJBaQU
+--R+My9LyyhiUvIEro
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAllp3AgACgkQMOfwapXb+vLhHgCeN/KtvfbPoo8MzxUTI7SkL+f9
-+DMAoKo8NHDSy3w7JaGJjEWr8kZj/YI6
-=xmas
+iEYEARECAAYFAllp3P8ACgkQMOfwapXb+vJpSACfSMx8nE/jnmftXvprgP2Ee+Yd
+NU8AoLah4Bkvdmqruqfed+zK4O0twF1L
+=rclI
 -----END PGP SIGNATURE-----
 
---EeQfGwPcQSOJBaQU--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--R+My9LyyhiUvIEro--
