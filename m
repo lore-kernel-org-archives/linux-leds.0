@@ -1,67 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 2/2 v2] leds: tlc591xx: add missing of_node_put
-Date: Sat, 15 Jul 2017 11:58:19 +0200
-Message-ID: <1500112699-770-3-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 0/2 v2] leds: tlc591xx: add missing of_node_put
+Date: Sat, 15 Jul 2017 20:55:00 +0200
+Message-ID: <20170715185500.GA8487@amd>
+References: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51397 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbdGOSzD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 15 Jul 2017 14:55:03 -0400
+Content-Disposition: inline
+In-Reply-To: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Richard Purdie <rpurdie@rpsys.net>, kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so a
-return from the loop requires an of_node_put.
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-// <smpl>
-@@
-local idexpression n;
-expression e,e1;
-iterator name for_each_child_of_node;
-@@
+On Sat 2017-07-15 11:58:17, Julia Lawall wrote:
+> This series first merges two conditionals and then adds of_node_put on
+> jumping out of for_each_child_of_node.
+>=20
+> v2 adds the merge of conditionals, resulting in fewer of_node_put
+calls.
 
- for_each_child_of_node(e1,n) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-// </smpl>
+Both patches:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
----
- drivers/leds/leds-tlc591xx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Thanks,
+									Pavel
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index fcc87ee..f5357f6 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -230,11 +230,15 @@ struct tlc591xx {
- 
- 	for_each_child_of_node(np, child) {
- 		err = of_property_read_u32(child, "reg", &reg);
--		if (err)
-+		if (err) {
-+			of_node_put(child);
- 			return err;
-+		}
- 		if (reg < 0 || reg >= tlc591xx->max_leds ||
--		    priv->leds[reg].active)
-+		    priv->leds[reg].active) {
-+			of_node_put(child);
- 			return -EINVAL;
-+		}
- 		priv->leds[reg].active = true;
- 		priv->leds[reg].ldev.name =
- 			of_get_property(child, "label", NULL) ? : child->name;
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAllqZQQACgkQMOfwapXb+vIqigCgolTwhL/MnegkhgAZ2egKB9xA
+kZoAnA93UqDJzgKqLhXBy8rfdloJt+wK
+=HNMA
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
