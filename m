@@ -1,46 +1,30 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 0/3] Qualcomm Light Pulse Generator
-Date: Thu, 6 Jul 2017 05:18:13 +0200
-Message-ID: <20170706031813.GC12954@xo-6d-61-c0.localdomain>
-References: <20170714224520.467-1-bjorn.andersson@linaro.org>
- <20170715091032.GA26602@amd>
- <20170716053429.GR1618@tuxbook>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 0/2 v2] leds: tlc591xx: add missing of_node_put
+Date: Sun, 16 Jul 2017 18:55:14 +0200
+Message-ID: <a0ee66e6-3242-b057-c9ce-c192cffe55e8@gmail.com>
+References: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170716053429.GR1618@tuxbook>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+Hi Julia,
 
-> > >   DT: leds: Add Qualcomm Light Pulse Generator binding
-> > 
-> > This one should be first.
-> > 
-> 
-> Okay, no problems.
-> 
-> > And I guess I'd prefer the driver to go in first, before the generic
-> > pattern interface.
-> > 
-> 
-> The driver won't compile without the additions to the header file. Would
-> you like the rest of the driver to go in first, then the generic
-> interface and finally the pattern part of the driver?
-> 
-> Large portions of the driver doesn't make sense without the pattern
-> part, so I think I would prefer it to go in as one patch.
+Thanks for the patch set.
 
-Can we get minimum driver without the pattern parts?
+On 07/15/2017 11:58 AM, Julia Lawall wrote:
+> This series first merges two conditionals and then adds of_node_put on
+> jumping out of for_each_child_of_node.
+> 
+> v2 adds the merge of conditionals, resulting in fewer of_node_put calls.
 
-Sorry about the additional work.
+Applied to the for-next branch of linux-leds.git.
 
-Best regards,
-									Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best regards,
+Jacek Anaszewski
