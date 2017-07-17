@@ -1,158 +1,96 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 3/3] DT: leds: Add Qualcomm Light Pulse Generator
- binding
-Date: Mon, 17 Jul 2017 23:08:46 +0200
-Message-ID: <8c5d2d85-24ac-2ff9-8512-f669063edf4c@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/3] leds: core: Introduce generic pattern interface
+Date: Mon, 17 Jul 2017 16:39:36 -0700
+Message-ID: <20170717233936.GB20973@minitux>
 References: <20170714224520.467-1-bjorn.andersson@linaro.org>
- <20170714224520.467-4-bjorn.andersson@linaro.org>
- <aefc36fc-9c16-e8da-b684-6e77ec96c662@gmail.com>
- <20170717044430.GW1618@tuxbook>
+ <20170714224520.467-2-bjorn.andersson@linaro.org>
+ <20170706031801.GB12954@xo-6d-61-c0.localdomain>
+ <beb9b4c3-4922-1ebb-5017-a4b791cdb4d7@gmail.com>
+ <20170716211456.GV1618@tuxbook>
+ <61a2d8d2-7bf0-c8ff-90a2-728d8368da0a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170717044430.GW1618@tuxbook>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:36371 "EHLO
+        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbdGQXjk (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Jul 2017 19:39:40 -0400
+Received: by mail-pf0-f174.google.com with SMTP id q86so2170027pfl.3
+        for <linux-leds@vger.kernel.org>; Mon, 17 Jul 2017 16:39:40 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <61a2d8d2-7bf0-c8ff-90a2-728d8368da0a@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
-On 07/17/2017 06:44 AM, Bjorn Andersson wrote:
-> On Sun 16 Jul 11:49 PDT 2017, Jacek Anaszewski wrote:
->> On 07/15/2017 12:45 AM, Bjorn Andersson wrote:
->>> diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
->>> new file mode 100644
->>> index 000000000000..cc9ffee6586b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
->>> @@ -0,0 +1,145 @@
->>> +Binding for Qualcomm Light Pulse Generator
->>> +
->>> +The Qualcomm Light Pulse Generator consists of three different hardware blocks;
->>
->> Is there a freely available documentation thereof?
->>
+On Mon 17 Jul 14:08 PDT 2017, Jacek Anaszewski wrote:
+
+> On 07/16/2017 11:14 PM, Bjorn Andersson wrote:
+> > On Sun 16 Jul 11:49 PDT 2017, Jacek Anaszewski wrote:
+> >> On 07/06/2017 05:18 AM, Pavel Machek wrote:
+[..]
+> >> I've been working on addition of RGB LED support to the LED core for
+> >> some time now, in the way as we agreed upon at [0], but it turns out to
+> >> be less trivial if we want to do it in an elegant way.
+> >>
+> > 
+> > Generally 3 predefined LPG blocks are routed to the TRILED current sink.
+> > 
+> > Exposing the TRILED block as a RGB LED instance would make sense in its
+> > own, but it doesn't give us a coherent solution for the LPG.
+> > 
+> > The current board I'm working on (DragonBoard820c) has 4 LEDs, 3 of them
+> > are connected to the TRILED and the fourth is on a "GPIO" in current
+> > sink mode.
+> > 
+> > By having each LPG represented as a LED device gives us a unified view
+> > of the hardware even though there are two different types of current
+> > sinks.
+> > 
+> > 
+> > Further more, per the 96boards specification we're expected to have
+> > different triggers on the different "colors" of the TRILED.
 > 
-> The only publicly available Qualcomm PMIC documentation that I'm aware
-> of only have the PWM hardware block, so it will be possible to use this
-> driver but with limited functionality.
-
-I asked because having an access to the doc would speed up the
-contribution process a lot I think. Of course we will manage to make it
-also basing on the details you're providing us with, but it will take
-a bit longer, taking into account the device complexity.
-
-> [..]
->>> += Light Pulse Generator (LPG)
->>> +The Light Pulse Generator can operate either as a standard PWM controller or in
->>> +a more advanced lookup-table based mode. These are described separately below.
->>
->> Why a user would prefer one option over the other? I assume that both
->> controllers offer at least slightly different capabilities.
->> If so, then it could be the driver which would decide which one fits
->> better for the requested LED class device configuration.
->>
+> What is the function of TRILED block then? My first impression was
+> that it allows for setting brightness on all three LED synchronously?
 > 
-> I have never seen this hardware block been used as a PWM, but I imagine
-> it to be used when someone has another driver that expects to be able to
-> use the PWM API to control an output.
 
-We have already leds-pwm driver and related DT bindings. We could think
-of making some part of leds-pwm code reusable. I'd skip it for now
-though.
+It's nothing more than one hardware block providing 3 current sinks.
 
-> In this case the node would need a #pwm-cells property, which it doesn't
-> when it's acting as a LED and it wouldn't make much sense to expose the
-> pin as a LED at the same time.
+> > 
+> > So I do not agree with imposing this kind of decisions on the board
+> > design just to support this higher level feature.
+> > 
+> >> Less elegant way would be duplicating led-core functions and changing
+> >> single enum led_brightness argument with the three ones (or a struct
+> >> containing three brightness components)
+> >>
+> >> I chose to go the elegant way and tried to introduce led_classdev_base
+> >> type that would be customizable with the set of ops, that would allow
+> >> for making the number of brightness components to be set at once
+> >> customizable. This of course entails significant amount of changes in
+> >> the LED core and some changes in LED Trigger core.
+> >>
+> > 
+> > I think that the RGB interface has to be a "frontend" of any
+> > configurable LED instances and not tied to a particular hardware
+> > controller.
 > 
-> Perhaps I overthought this? Maybe I should just leave the PWM mode out
-> for now and it could be added in the future?
-
-Sounds reasonable.
-
-> [..]
->>> +&spmi_bus {
->>> +	pmic@3 {
->>> +		compatible = "qcom,pmi8994", "qcom,spmi-pmic";
->>> +		reg = <0x3 SPMI_USID>;
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>> +
->>> +		pmi8994_lpg_lut: lpg-lut@b000 {
->>> +			compatible = "qcom,spmi-lpg-lut";
->>> +			reg = <0xb000>;
->>> +
->>> +			qcom,lut-size = <24>;
->>> +		};
->>> +
->>> +		lpg@b200 {
->>> +			compatible = "qcom,spmi-lpg";
->>> +			reg = <0xb200>;
->>> +
->>> +			cell-index = <2>;
->>> +
->>> +			label = "lpg:green:user0";
->>> +
->>> +			qcom,tri-led = <&pmi8994_tri_led 1>;
->>> +			qcom,lut = <&pmi8994_lpg_lut>;
->>> +
->>> +			default-state = "on";
->>> +		};
->>> +
->>> +		pmi8994_tri_led: tri-led@d000 {
->>> +			compatible = "qcom,spmi-tri-led";
->>> +			reg = <0xd000>;
->>> +
->>> +			qcom,power-source = <1>;
->>> +		};
->>
->> Such a design is uncommon for LED class DT bindings. It should
->> suffice to have a single DT LED node per LED. I have an impression
->> that you're exposing too many hardware details here.
->> You can use led-sources property (see Documentation/devicetree/bindings
->> /leds/common.txt and drivers/leds/leds-max77693.c where it is used).
->>
+> That doesn't assure brightness setting synchronization which is
+> especially vital in case of triggers like timer.
 > 
-> The LUT is shared among the (up to) 8 LPG blocks, so while I did
-> consider just including the LUT in each LPG block it didn't look nice
-> and I had to implement the LUT as a singleton in the driver itself.
-> 
-> The TRILED is only one of the available current sinks in the PMIC that
-> can be driven by the LPG; the other one I use so far is a special GPIO
-> pin acting as a current sink.
-> 
-> Also the power-source configuration is shared among the three channels
-> of the TRILED, so it doesn't really make sense to put this configuration
-> in the LPG blocks themselves.
 
-I'll mention led-sources once again. Probably it could be of help here.
+If you look at any available Android based device you can see what
+happens when you set red, then green and then blue brightness
+independently - from user space even. The LED might be
+red/green/blue/purple whatever, but I would argue that it's not
+noticeable due to the short duration between the updates.
 
-> 
-> And note that these are different blocks within the Qualcomm PMIC, with
-> my design only one of them is actually representing the LED instance.
 
-Maybe the core of the driver should be placed in MFD subsystem then?
+The case where synchronization matters is if you have pattern
+transitions as you're extending the time of the transition and you can
+spot the color variation in the transitions.
 
->> It is also not clear to me why single green color LED presented here
->> would have to use tri-led sink? I suppose that the sink is predestined
->> for three-color LEDs.
->>
-> 
-> The board I'm working on (DragonBoard820c) has 4 green LEDs, the first 3
-> are connected to the 3 channels of the TRILED and the fourth is
-> connected to a special GPIO in current sink mode. But I choose to
-> shorted the example to one channel.
-> 
-> So I end up having one LUT node, four LPG nodes, one TRILED and one GPIO
-> node and the user space is presented with a unified interface to all
-> four.
-
-Generally I'd prefer to have a single LED class driver for this device,
-or alternatively a LED class driver for a LED cell of MFD device.
-DT bindings would define which hw blocks are LED related.
-All routing related issues should be solvable with use of led-sources
-property.
-
--- 
-Best regards,
-Jacek Anaszewski
+Regards,
+Bjorn
