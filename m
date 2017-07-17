@@ -1,90 +1,140 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 0/3] Qualcomm Light Pulse Generator
-Date: Sun, 16 Jul 2017 23:15:42 +0200
-Message-ID: <20170716211542.GA25658@amd>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 3/3] DT: leds: Add Qualcomm Light Pulse Generator
+ binding
+Date: Sun, 16 Jul 2017 21:44:30 -0700
+Message-ID: <20170717044430.GW1618@tuxbook>
 References: <20170714224520.467-1-bjorn.andersson@linaro.org>
- <20170715091032.GA26602@amd>
- <20170716053429.GR1618@tuxbook>
- <20170706031813.GC12954@xo-6d-61-c0.localdomain>
- <20170716205304.GU1618@tuxbook>
+ <20170714224520.467-4-bjorn.andersson@linaro.org>
+ <aefc36fc-9c16-e8da-b684-6e77ec96c662@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170716205304.GU1618@tuxbook>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
-List-Id: linux-leds@vger.kernel.org
-
-
---wRRV7LY7NUeQGEoC
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:34853 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbdGQEoe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Jul 2017 00:44:34 -0400
+Received: by mail-pf0-f175.google.com with SMTP id e199so9418687pfh.2
+        for <linux-leds@vger.kernel.org>; Sun, 16 Jul 2017 21:44:34 -0700 (PDT)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aefc36fc-9c16-e8da-b684-6e77ec96c662@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
-Hi!
+On Sun 16 Jul 11:49 PDT 2017, Jacek Anaszewski wrote:
+> On 07/15/2017 12:45 AM, Bjorn Andersson wrote:
+> > diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> > new file mode 100644
+> > index 000000000000..cc9ffee6586b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+> > @@ -0,0 +1,145 @@
+> > +Binding for Qualcomm Light Pulse Generator
+> > +
+> > +The Qualcomm Light Pulse Generator consists of three different hardware blocks;
+> 
+> Is there a freely available documentation thereof?
+> 
 
-> > > > >   DT: leds: Add Qualcomm Light Pulse Generator binding
-> > > >=20
-> > > > This one should be first.
-> > > >=20
-> > >=20
-> > > Okay, no problems.
-> > >=20
-> > > > And I guess I'd prefer the driver to go in first, before the generic
-> > > > pattern interface.
-> > > >=20
-> > >=20
-> > > The driver won't compile without the additions to the header file. Wo=
-uld
-> > > you like the rest of the driver to go in first, then the generic
-> > > interface and finally the pattern part of the driver?
-> > >=20
-> > > Large portions of the driver doesn't make sense without the pattern
-> > > part, so I think I would prefer it to go in as one patch.
-> >=20
-> > Can we get minimum driver without the pattern parts?
->=20
-> It's possible to do, but I must admit I find it slightly contrived.
->=20
-> The overall design of different parts of the driver does relate to how I
-> decided to structure and implement the pattern support, so this would
-> mean that the driver we merge has a conceptual dependency on a
-> out-of-tree part.
+The only publicly available Qualcomm PMIC documentation that I'm aware
+of only have the PWM hardware block, so it will be possible to use this
+driver but with limited functionality.
 
-Ok... but I guess that's something we can live with?
+[..]
+> > += Light Pulse Generator (LPG)
+> > +The Light Pulse Generator can operate either as a standard PWM controller or in
+> > +a more advanced lookup-table based mode. These are described separately below.
+> 
+> Why a user would prefer one option over the other? I assume that both
+> controllers offer at least slightly different capabilities.
+> If so, then it could be the driver which would decide which one fits
+> better for the requested LED class device configuration.
+> 
 
-> May I ask about the reasoning for your request? Is it just to not leave
-> the driver hanging while we conclude the discussion on the pattern
-> interface?
+I have never seen this hardware block been used as a PWM, but I imagine
+it to be used when someone has another driver that expects to be able to
+use the PWM API to control an output.
 
-Yes; it would be good to have driver in the tree. OTOH new userland
-interface is a "big" decission, and we'll have to support the
-interface "forever" once it is merged.
+In this case the node would need a #pwm-cells property, which it doesn't
+when it's acting as a LED and it wouldn't make much sense to expose the
+pin as a LED at the same time.
 
-Actually even complete driver (but w/o the userland interface) would
-be acceptable. Drivers we can fix. Userland interfaces... not so.
+Perhaps I overthought this? Maybe I should just leave the PWM mode out
+for now and it could be added in the future?
 
-Best regards,
-   	       	       	      	   	    		      Pavel
+[..]
+> > +&spmi_bus {
+> > +	pmic@3 {
+> > +		compatible = "qcom,pmi8994", "qcom,spmi-pmic";
+> > +		reg = <0x3 SPMI_USID>;
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		pmi8994_lpg_lut: lpg-lut@b000 {
+> > +			compatible = "qcom,spmi-lpg-lut";
+> > +			reg = <0xb000>;
+> > +
+> > +			qcom,lut-size = <24>;
+> > +		};
+> > +
+> > +		lpg@b200 {
+> > +			compatible = "qcom,spmi-lpg";
+> > +			reg = <0xb200>;
+> > +
+> > +			cell-index = <2>;
+> > +
+> > +			label = "lpg:green:user0";
+> > +
+> > +			qcom,tri-led = <&pmi8994_tri_led 1>;
+> > +			qcom,lut = <&pmi8994_lpg_lut>;
+> > +
+> > +			default-state = "on";
+> > +		};
+> > +
+> > +		pmi8994_tri_led: tri-led@d000 {
+> > +			compatible = "qcom,spmi-tri-led";
+> > +			reg = <0xd000>;
+> > +
+> > +			qcom,power-source = <1>;
+> > +		};
+> 
+> Such a design is uncommon for LED class DT bindings. It should
+> suffice to have a single DT LED node per LED. I have an impression
+> that you're exposing too many hardware details here.
+> You can use led-sources property (see Documentation/devicetree/bindings
+> /leds/common.txt and drivers/leds/leds-max77693.c where it is used).
+> 
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+The LUT is shared among the (up to) 8 LPG blocks, so while I did
+consider just including the LUT in each LPG block it didn't look nice
+and I had to implement the LUT as a singleton in the driver itself.
 
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The TRILED is only one of the available current sinks in the PMIC that
+can be driven by the LPG; the other one I use so far is a special GPIO
+pin acting as a current sink.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Also the power-source configuration is shared among the three channels
+of the TRILED, so it doesn't really make sense to put this configuration
+in the LPG blocks themselves.
 
-iEYEARECAAYFAllr134ACgkQMOfwapXb+vIoJQCgmt6ZwDGOeBe7uR47r8d1ANlI
-AX0An0oClmxzY5MTdSFLabJxz6fKCK8Z
-=Wqy+
------END PGP SIGNATURE-----
 
---wRRV7LY7NUeQGEoC--
+And note that these are different blocks within the Qualcomm PMIC, with
+my design only one of them is actually representing the LED instance.
+
+> It is also not clear to me why single green color LED presented here
+> would have to use tri-led sink? I suppose that the sink is predestined
+> for three-color LEDs.
+> 
+
+The board I'm working on (DragonBoard820c) has 4 green LEDs, the first 3
+are connected to the 3 channels of the TRILED and the fourth is
+connected to a special GPIO in current sink mode. But I choose to
+shorted the example to one channel.
+
+So I end up having one LUT node, four LPG nodes, one TRILED and one GPIO
+node and the user space is presented with a unified interface to all
+four.
+
+Regards,
+Bjorn
