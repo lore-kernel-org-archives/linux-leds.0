@@ -1,116 +1,81 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RFC 09/19] v4l2-fwnode: Add conveniences function for parsing generic references
-Date: Tue, 18 Jul 2017 22:03:51 +0300
-Message-ID: <20170718190401.14797-10-sakari.ailus@linux.intel.com>
+Subject: [RFC 10/19] v4l2-fwnode: Add convenience function for parsing common external refs
+Date: Tue, 18 Jul 2017 22:03:52 +0300
+Message-ID: <20170718190401.14797-11-sakari.ailus@linux.intel.com>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60040 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60042 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751962AbdGRTEH (ORCPT
+        by vger.kernel.org with ESMTP id S1751929AbdGRTEG (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 15:04:07 -0400
+        Tue, 18 Jul 2017 15:04:06 -0400
 In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
 
-Add function v4l2_fwnode_reference_count() for counting external
-references and v4l2_fwnode_reference_parse() for parsing them as async
-sub-devices.
+Add v4l2_fwnode_parse_reference_sensor_common for parsing common
+sensor properties that refer to adjacent devices such as flash or lens
+driver chips.
 
-This can be done on e.g. flash or lens async sub-devices that are not part
-of but are associated with a sensor.
-
-struct v4l2_async_notifier.max_subdevs field is added to contain the
-maximum number of sub-devices in a notifier to reflect the memory
-allocated for the subdevs array.
+As this is an association only, there's little a regular driver needs to
+know about these devices as such.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/v4l2-core/v4l2-fwnode.c | 53 +++++++++++++++++++++++++++++++++++
- include/media/v4l2-fwnode.h           |  8 ++++++
- 2 files changed, 61 insertions(+)
+ drivers/media/v4l2-core/v4l2-fwnode.c | 27 +++++++++++++++++++++++++++
+ include/media/v4l2-fwnode.h           |  3 +++
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index c3ad9e31e4cb..bfc9e38766f3 100644
+index bfc9e38766f3..8671262eb22c 100644
 --- a/drivers/media/v4l2-core/v4l2-fwnode.c
 +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -433,6 +433,59 @@ int v4l2_fwnode_endpoints_parse(
+@@ -486,6 +486,33 @@ int v4l2_fwnode_reference_parse(
  }
- EXPORT_SYMBOL_GPL(v4l2_fwnode_endpoints_parse);
+ EXPORT_SYMBOL_GPL(v4l2_fwnode_reference_parse);
  
-+int v4l2_fwnode_reference_parse(
-+	struct device *dev, struct v4l2_async_notifier *notifier,
-+	const char *prop, const char *nargs_prop, unsigned int nargs,
-+	size_t asd_struct_size,
-+	int (*parse_single)(struct device *dev,
-+			    struct fwnode_reference_args *args,
-+			    struct v4l2_async_subdev *asd))
++int v4l2_fwnode_reference_parse_sensor_common(
++	struct device *dev, struct v4l2_async_notifier *notifier)
 +{
-+	struct fwnode_reference_args args;
-+	unsigned int max_subdevs = notifier->max_subdevs;
-+	int ret;
++	static const struct {
++		char *name;
++		char *cells;
++		unsigned int nr_cells;
++	} props[] = {
++		{ "flash", NULL, 0 },
++		{ "lens-focus", NULL, 0 },
++	};
++	unsigned int i;
++	int rval;
 +
-+	if (asd_struct_size < sizeof(struct v4l2_async_subdev))
-+		return -EINVAL;
-+
-+	while (!fwnode_property_get_reference_args(
-+		       dev_fwnode(dev), prop, nargs_prop, nargs,
-+		       max_subdevs - notifier->max_subdevs, NULL))
-+		max_subdevs++;
-+
-+	ret = notifier_realloc(dev, notifier, max_subdevs);
-+	if (ret)
-+		return ret;
-+
-+	for (ret = -ENOENT; !fwnode_property_get_reference_args(
-+				     dev_fwnode(dev), prop, nargs_prop, nargs,
-+				     notifier->num_subdevs, &args) &&
-+		     !WARN_ON(notifier->num_subdevs >= notifier->max_subdevs);
-+	     notifier->num_subdevs++) {
-+		struct v4l2_async_subdev *asd;
-+
-+		asd = devm_kzalloc(dev, asd_struct_size, GFP_KERNEL);
-+		if (!asd) {
-+			fwnode_handle_put(args.fwnode);
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+
-+		ret = parse_single ? parse_single(dev, &args, asd) : 0;
-+		fwnode_handle_put(args.fwnode);
-+		if (ret)
-+			goto error;
-+
-+		notifier->subdevs[notifier->num_subdevs] = asd;
-+		asd->match.fwnode.fwnode = args.fwnode;
-+		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
++	for (i = 0; i < ARRAY_SIZE(props); i++) {
++		rval = v4l2_fwnode_reference_parse(
++			dev, notifier, props[i].name, props[i].cells,
++			props[i].nr_cells, sizeof(struct v4l2_async_subdev),
++			NULL);
++		if (rval < 0 && rval != -ENOENT)
++			return rval;
 +	}
 +
-+error:
-+	return ret;
++	return rval;
 +}
-+EXPORT_SYMBOL_GPL(v4l2_fwnode_reference_parse);
++EXPORT_SYMBOL_GPL(v4l2_fwnode_reference_parse_sensor_common);
 +
  MODULE_LICENSE("GPL");
  MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
  MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
 diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-index 6ba1a0bbc328..e27526bd744d 100644
+index e27526bd744d..8cd4f8a75c3d 100644
 --- a/include/media/v4l2-fwnode.h
 +++ b/include/media/v4l2-fwnode.h
-@@ -110,4 +110,12 @@ int v4l2_fwnode_endpoints_parse(
- 			    struct v4l2_fwnode_endpoint *vep,
+@@ -118,4 +118,7 @@ int v4l2_fwnode_reference_parse(
+ 			    struct fwnode_reference_args *args,
  			    struct v4l2_async_subdev *asd));
  
-+int v4l2_fwnode_reference_parse(
-+	struct device *dev, struct v4l2_async_notifier *notifier,
-+	const char *prop, const char *nargs_prop, unsigned int nargs,
-+	size_t asd_struct_size,
-+	int (*parse_single)(struct device *dev,
-+			    struct fwnode_reference_args *args,
-+			    struct v4l2_async_subdev *asd));
++int v4l2_fwnode_reference_parse_sensor_common(
++	struct device *dev, struct v4l2_async_notifier *notifier);
 +
  #endif /* _V4L2_FWNODE_H */
 -- 
