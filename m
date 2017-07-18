@@ -1,22 +1,23 @@
 From: Niklas =?iso-8859-1?Q?S=F6derlund?=
         <niklas.soderlund@ragnatech.se>
-Subject: Re: [RFC 18/19] v4l2-fwnode: Add abstracted sub-device notifiers
-Date: Tue, 18 Jul 2017 23:19:22 +0200
-Message-ID: <20170718211922.GI28538@bigcity.dyn.berto.se>
+Subject: Re: [RFC 02/19] v4l: async: add subnotifier registration for
+ subdevices
+Date: Tue, 18 Jul 2017 23:28:51 +0200
+Message-ID: <20170718212851.GJ28538@bigcity.dyn.berto.se>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <20170718190401.14797-19-sakari.ailus@linux.intel.com>
+ <20170718190401.14797-3-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:35711 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbdGRVTZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2017 17:19:25 -0400
-Received: by mail-lf0-f45.google.com with SMTP id w198so22834735lff.2
-        for <linux-leds@vger.kernel.org>; Tue, 18 Jul 2017 14:19:25 -0700 (PDT)
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:32778 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbdGRV2y (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2017 17:28:54 -0400
+Received: by mail-lf0-f43.google.com with SMTP id z78so23278101lff.0
+        for <linux-leds@vger.kernel.org>; Tue, 18 Jul 2017 14:28:53 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20170718190401.14797-19-sakari.ailus@linux.intel.com>
+In-Reply-To: <20170718190401.14797-3-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@linux.intel.com>
@@ -24,201 +25,261 @@ Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@id
 
 Hi Sakari,
 
-Thanks for your hard work!
+Just a heads up, I posted a new version of this patch today which 
+addresses a few short comings in v4l2_async_notifier_unregister() which 
+exists in this patch. With the latest patches the re-probing of 
+subdevices, disregarding if they are master or sub notifiers is 
+addressed.
 
-On 2017-07-18 22:04:00 +0300, Sakari Ailus wrote:
-> Add notifiers for sub-devices. The notifiers themselves are not visible for
-> the sub-device drivers but instead are accessed through interface functions
+Also the latest version do not expose the new equivalent of 
+v4l2_async_subnotifier_* outside v4l2-async.c and do similar things as 
+you do here by hiding the (un)registration of subnotifiers inside the 
+v4l2-async framework. So unfortunately to make use of the fixes in your 
+series some rework is needed of my patch(es).
 
-I might be missing it, but I can't find a interface function to set the 
-bound()/unbind() callbacks on a sub-notifiers :-) Is this intentional or 
-only not present in this RFC?
-
-> v4l2_subdev_fwnode_endpoints_parse() and
-> v4l2_subdev_fwnode_reference_parse_sensor_common().
-
-
+On 2017-07-18 22:03:44 +0300, Sakari Ailus wrote:
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> When the registered() callback of v4l2_subdev_internal_ops is called the
+> subdevice has access to the master devices v4l2_dev and it's called with
+> the async frameworks list_lock held. In this context the subdevice can
+> register its own notifiers to allow for incremental discovery of
+> subdevices.
+> 
+> The master device registers the subdevices closest to itself in its
+> notifier while the subdevice(s) register notifiers for their closest
+> neighboring devices when they are registered. Using this incremental
+> approach two problems can be solved:
+> 
+> 1. The master device no longer has to care how many devices exist in
+>    the pipeline. It only needs to care about its closest subdevice and
+>    arbitrary long pipelines can be created without having to adapt the
+>    master device for each case.
+> 
+> 2. Subdevices which are represented as a single DT node but register
+>    more than one subdevice can use this to improve the pipeline
+>    discovery, since the subdevice driver is the only one who knows which
+>    of its subdevices is linked with which subdevice of a neighboring DT
+>    node.
+> 
+> To enable subdevices to register/unregister notifiers from the
+> registered()/unregistered() callback v4l2_async_subnotifier_register()
+> and v4l2_async_subnotifier_unregister() are added. These new notifier
+> register functions are similar to the master device equivalent functions
+> but run without taking the v4l2-async list_lock which already is held
+> when the registered()/unregistered() callbacks are called.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 > ---
->  drivers/media/v4l2-core/v4l2-async.c  | 27 +++++++++++++++++----
->  drivers/media/v4l2-core/v4l2-subdev.c | 44 +++++++++++++++++++++++++++++++++--
->  include/media/v4l2-fwnode.h           |  1 +
->  include/media/v4l2-subdev.h           | 11 +++++++++
->  4 files changed, 77 insertions(+), 6 deletions(-)
+>  Documentation/media/kapi/v4l2-subdev.rst | 20 ++++++++++
+>  drivers/media/v4l2-core/v4l2-async.c     | 65 +++++++++++++++++++++++++++-----
+>  include/media/v4l2-async.h               | 22 +++++++++++
+>  3 files changed, 98 insertions(+), 9 deletions(-)
 > 
+> diff --git a/Documentation/media/kapi/v4l2-subdev.rst b/Documentation/media/kapi/v4l2-subdev.rst
+> index e1f0b726e438..e308f30887a8 100644
+> --- a/Documentation/media/kapi/v4l2-subdev.rst
+> +++ b/Documentation/media/kapi/v4l2-subdev.rst
+> @@ -262,6 +262,26 @@ is called. After all subdevices have been located the .complete() callback is
+>  called. When a subdevice is removed from the system the .unbind() method is
+>  called. All three callbacks are optional.
+>  
+> +Subdevice drivers might in turn register subnotifier objects with an
+> +array of other subdevice descriptors that the subdevice needs for its
+> +own operation. Subnotifiers are an extension of the bridge drivers
+> +notifier to allow for a incremental registering and matching of
+> +subdevices. This is useful when a driver only has information about
+> +which subdevice is closest to itself and would require knowledge from the
+> +driver of that subdevice to know which other subdevice(s) lie beyond.
+> +By registering subnotifiers drivers can incrementally move the subdevice
+> +matching down the chain of drivers. This is performed using the
+> +:c:func:`v4l2_async_subnotifier_register` call. To unregister the
+> +subnotifier the driver has to call
+> +:c:func:`v4l2_async_subnotifier_unregister`. These functions and their
+> +arguments behave almost the same as the bridge driver notifiers
+> +described above and are treated equally by the V4L2 core when matching
+> +asynchronously registered subdevices. The differences are that the
+> +subnotifier functions act on :c:type:`v4l2_subdev` instead of
+> +:c:type:`v4l2_device` and that they should be called from the subdevice's
+> +``.registered()`` and ``.unregistered()``
+> +:c:type:`v4l2_subdev_internal_ops` callbacks instead of at probe time.
+> +
+>  V4L2 sub-device userspace API
+>  -----------------------------
+>  
 > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 55fa7106345c..411deadf5d85 100644
+> index 268e19724809..d2ce39ac402e 100644
 > --- a/drivers/media/v4l2-core/v4l2-async.c
 > +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -134,10 +134,14 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
+> @@ -163,8 +163,9 @@ static void v4l2_async_cleanup(struct v4l2_subdev *sd)
+>  	sd->dev = NULL;
+>  }
 >  
->  	if (notifier->bound) {
->  		ret = notifier->bound(notifier, sd, asd);
-> -		if (ret < 0) {
-> -			v4l2_device_unregister_subdev(sd);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto err_unregister;
-> +	}
-> +
-> +	if (sd->subnotifier) {
-> +		ret = v4l2_async_subnotifier_register(sd, sd->subnotifier);
-> +		if (ret < 0)
-> +			goto err_unbind;
+> -int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
+> -				 struct v4l2_async_notifier *notifier)
+> +static int v4l2_async_do_notifier_register(struct v4l2_device *v4l2_dev,
+> +					   struct v4l2_async_notifier *notifier,
+> +					   bool subnotifier)
+>  {
+>  	struct v4l2_subdev *sd, *tmp;
+>  	struct v4l2_async_subdev *asd;
+> @@ -196,8 +197,17 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
+>  		list_add_tail(&asd->list, &notifier->waiting);
 >  	}
 >  
->  	/* Remove from the waiting list */
-> @@ -152,6 +156,15 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
->  		return notifier->complete(notifier);
+> -	mutex_lock(&list_lock);
+> +	if (subnotifier)
+> +		lockdep_assert_held(&list_lock);
+> +	else
+> +		mutex_lock(&list_lock);
+>  
+> +	/*
+> +	 * This function can be called recursively so the list
+> +	 * might be modified in a recursive call. Start from the
+> +	 * top of the list each iteration.
+> +	 */
+> +again:
+>  	list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
+>  		int ret;
+>  
+> @@ -207,21 +217,39 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
+>  
+>  		ret = v4l2_async_test_notify(notifier, sd, asd);
+>  		if (ret < 0) {
+> -			mutex_unlock(&list_lock);
+> +			if (!subnotifier)
+> +				mutex_unlock(&list_lock);
+>  			return ret;
+>  		}
+> +		goto again;
+>  	}
+>  
+>  	/* Keep also completed notifiers on the list */
+>  	list_add(&notifier->list, &notifier_list);
+>  
+> -	mutex_unlock(&list_lock);
+> +	if (!subnotifier)
+> +		mutex_unlock(&list_lock);
 >  
 >  	return 0;
-> +
-> +err_unbind:
-> +	if (notifier->unbind)
-> +		notifier->unbind(notifier, sd, asd);
-> +
-> +err_unregister:
-> +	v4l2_device_unregister_subdev(sd);
-> +
-> +	return ret;
 >  }
->  
->  static void v4l2_async_cleanup(struct v4l2_subdev *sd)
-> @@ -283,6 +296,9 @@ v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
->  		/* If we handled USB devices, we'd have to lock the parent too */
->  		device_release_driver(d);
->  
-> +		if (sd->subnotifier)
-> +			v4l2_async_subnotifier_unregister(sd->subnotifier);
 > +
->  		if (notifier->unbind)
->  			notifier->unbind(notifier, sd, sd->asd);
->  
-> @@ -396,6 +412,9 @@ void v4l2_async_unregister_subdev(struct v4l2_subdev *sd)
->  
->  	v4l2_async_cleanup(sd);
->  
-> +	if (sd->subnotifier)
-> +		v4l2_async_subnotifier_unregister(sd->subnotifier);
+> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
+> +				    struct v4l2_async_notifier *notifier)
+> +{
+> +	return v4l2_async_do_notifier_register(sd->v4l2_dev, notifier, true);
+> +}
+> +EXPORT_SYMBOL(v4l2_async_subnotifier_register);
 > +
->  	if (notifier->unbind)
->  		notifier->unbind(notifier, sd, sd->asd);
+> +int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
+> +				 struct v4l2_async_notifier *notifier)
+> +{
+> +	return v4l2_async_do_notifier_register(v4l2_dev, notifier, false);
+> +}
+>  EXPORT_SYMBOL(v4l2_async_notifier_register);
 >  
-> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> index 43fefa73e0a3..a6976d4a52ac 100644
-> --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> @@ -25,9 +25,10 @@
->  
->  #include <media/v4l2-ctrls.h>
->  #include <media/v4l2-device.h>
-> -#include <media/v4l2-ioctl.h>
-> -#include <media/v4l2-fh.h>
->  #include <media/v4l2-event.h>
-> +#include <media/v4l2-fh.h>
-> +#include <media/v4l2-fwnode.h>
-> +#include <media/v4l2-ioctl.h>
->  
->  static int subdev_fh_init(struct v4l2_subdev_fh *fh, struct v4l2_subdev *sd)
+> -void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+> +static void
+> +v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
+> +				  bool subnotifier)
 >  {
-> @@ -626,3 +627,42 @@ void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
->  	v4l2_subdev_notify(sd, V4L2_DEVICE_NOTIFY_EVENT, (void *)ev);
->  }
->  EXPORT_SYMBOL_GPL(v4l2_subdev_notify_event);
-> +
-> +static struct v4l2_async_notifier *v4l2_subdev_get_subnotifier(
-> +	struct v4l2_subdev *sd)
-> +{
-> +	if (sd->subnotifier)
-> +		return sd->subnotifier;
-> +
-> +	return (sd->subnotifier = devm_kzalloc(
-> +			sd->dev, sizeof(*sd->subnotifier), GFP_KERNEL));
-> +}
-> +
-> +int v4l2_subdev_fwnode_endpoints_parse(
-> +	struct v4l2_subdev *sd,	size_t asd_struct_size,
-> +	int (*parse_single)(struct device *dev,
-> +			    struct v4l2_fwnode_endpoint *vep,
-> +			    struct v4l2_async_subdev *asd))
-> +{
-> +	struct v4l2_async_notifier *subnotifier =
-> +		v4l2_subdev_get_subnotifier(sd);
-> +
-> +	if (!subnotifier)
-> +		return -ENOMEM;
-> +
-> +	return v4l2_fwnode_endpoints_parse(sd->dev, subnotifier,
-> +					   asd_struct_size, parse_single);
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_endpoints_parse);
-> +
-> +int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd)
-> +{
-> +	struct v4l2_async_notifier *subnotifier =
-> +		v4l2_subdev_get_subnotifier(sd);
-> +
-> +	if (!subnotifier)
-> +		return -ENOMEM;
-> +
-> +	return v4l2_fwnode_reference_parse_sensor_common(sd->dev, subnotifier);
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_reference_parse_sensor_common);
-> diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-> index 8cd4f8a75c3d..0a3f869ead52 100644
-> --- a/include/media/v4l2-fwnode.h
-> +++ b/include/media/v4l2-fwnode.h
-> @@ -27,6 +27,7 @@
->  struct fwnode_handle;
->  struct v4l2_async_notifier;
->  struct v4l2_async_subdev;
-> +struct v4l2_subdev;
+>  	struct v4l2_subdev *sd, *tmp;
+>  	unsigned int notif_n_subdev = notifier->num_subdevs;
+> @@ -238,7 +266,10 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  			"Failed to allocate device cache!\n");
+>  	}
 >  
->  /**
->   * struct v4l2_fwnode_bus_mipi_csi2 - MIPI CSI-2 bus data structure
-> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-> index 0f92ebd2d710..e309a2e2030b 100644
-> --- a/include/media/v4l2-subdev.h
-> +++ b/include/media/v4l2-subdev.h
-> @@ -43,6 +43,7 @@ struct v4l2_ctrl_handler;
->  struct v4l2_event;
->  struct v4l2_event_subscription;
->  struct v4l2_fh;
-> +struct v4l2_fwnode_endpoint;
->  struct v4l2_subdev;
->  struct v4l2_subdev_fh;
->  struct tuner_setup;
-> @@ -793,6 +794,7 @@ struct v4l2_subdev_platform_data {
->   *	list.
->   * @asd: Pointer to respective &struct v4l2_async_subdev.
->   * @notifier: Pointer to the managing notifier.
-> + * @subnotifier: Pointer to the async sub-device notifier.
->   * @pdata: common part of subdevice platform data
->   *
->   * Each instance of a subdev driver should create this struct, either
-> @@ -823,6 +825,7 @@ struct v4l2_subdev {
->  	struct list_head async_list;
->  	struct v4l2_async_subdev *asd;
->  	struct v4l2_async_notifier *notifier;
-> +	struct v4l2_async_notifier *subnotifier;
->  	struct v4l2_subdev_platform_data *pdata;
+> -	mutex_lock(&list_lock);
+> +	if (subnotifier)
+> +		lockdep_assert_held(&list_lock);
+> +	else
+> +		mutex_lock(&list_lock);
+>  
+>  	list_del(&notifier->list);
+>  
+> @@ -265,15 +296,20 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  			put_device(d);
+>  	}
+>  
+> -	mutex_unlock(&list_lock);
+> +	if (!subnotifier)
+> +		mutex_unlock(&list_lock);
+>  
+>  	/*
+>  	 * Call device_attach() to reprobe devices
+>  	 *
+>  	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
+>  	 * executed.
+> +	 * TODO: If we are unregistering a subdevice notifier we can't reprobe
+> +	 * since the lock_list is held by the master device and attaching that
+> +	 * device would call v4l2_async_register_subdev() and end in a deadlock
+> +	 * on list_lock.
+>  	 */
+> -	while (i--) {
+> +	while (i-- && !subnotifier) {
+>  		struct device *d = dev[i];
+>  
+>  		if (d && device_attach(d) < 0) {
+> @@ -297,6 +333,17 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  	 * upon notifier registration.
+>  	 */
+>  }
+> +
+> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier)
+> +{
+> +	v4l2_async_do_notifier_unregister(notifier, true);
+> +}
+> +EXPORT_SYMBOL(v4l2_async_subnotifier_unregister);
+> +
+> +void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+> +{
+> +	v4l2_async_do_notifier_unregister(notifier, false);
+> +}
+>  EXPORT_SYMBOL(v4l2_async_notifier_unregister);
+>  
+>  int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+> diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+> index 056cae0af2f0..8c7519fce5b9 100644
+> --- a/include/media/v4l2-async.h
+> +++ b/include/media/v4l2-async.h
+> @@ -105,6 +105,18 @@ struct v4l2_async_notifier {
 >  };
 >  
-> @@ -1001,4 +1004,12 @@ void v4l2_subdev_init(struct v4l2_subdev *sd,
->  void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
->  			      const struct v4l2_event *ev);
+>  /**
+> + * v4l2_async_notifier_register - registers a subdevice asynchronous subnotifier
+> + *
+> + * @sd: pointer to &struct v4l2_subdev
+> + * @notifier: pointer to &struct v4l2_async_notifier
+> + *
+> + * This function assumes the async list_lock is already locked, allowing it to
+> + * be used from the struct v4l2_subdev_internal_ops registered() callback.
+> + */
+> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
+> +				    struct v4l2_async_notifier *notifier);
+> +
+> +/**
+>   * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
+>   *
+>   * @v4l2_dev: pointer to &struct v4l2_device
+> @@ -114,6 +126,16 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
+>  				 struct v4l2_async_notifier *notifier);
 >  
-> +int v4l2_subdev_fwnode_endpoints_parse(
-> +	struct v4l2_subdev *sd,	size_t asd_struct_size,
-> +	int (*parse_single)(struct device *dev,
-> +			    struct v4l2_fwnode_endpoint *vep,
-> +			    struct v4l2_async_subdev *asd));
+>  /**
+> + * v4l2_async_subnotifier_unregister - unregisters a asynchronous subnotifier
+> + *
+> + * @notifier: pointer to &struct v4l2_async_notifier
+> + *
+> + * This function assumes the async list_lock is already locked, allowing it to
+> + * be used from the struct v4l2_subdev_internal_ops unregistered() callback.
+> + */
+> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier);
 > +
-> +int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd);
-> +
->  #endif
+> +/**
+>   * v4l2_async_notifier_unregister - unregisters a subdevice asynchronous notifier
+>   *
+>   * @notifier: pointer to &struct v4l2_async_notifier
 > -- 
 > 2.11.0
 > 
