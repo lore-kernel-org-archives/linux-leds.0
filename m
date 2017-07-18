@@ -1,204 +1,116 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RFC 18/19] v4l2-fwnode: Add abstracted sub-device notifiers
-Date: Tue, 18 Jul 2017 22:04:00 +0300
-Message-ID: <20170718190401.14797-19-sakari.ailus@linux.intel.com>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60042 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752019AbdGRTEJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 15:04:09 -0400
-In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [RFC 00/19] Async sub-notifiers and how to use them
+Date: Tue, 18 Jul 2017 22:03:42 +0300
+Message-ID: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
+List-Id: linux-leds@vger.kernel.org
 
-Add notifiers for sub-devices. The notifiers themselves are not visible for
-the sub-device drivers but instead are accessed through interface functions
-v4l2_subdev_fwnode_endpoints_parse() and
-v4l2_subdev_fwnode_reference_parse_sensor_common().
+Hi folks,
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/v4l2-core/v4l2-async.c  | 27 +++++++++++++++++----
- drivers/media/v4l2-core/v4l2-subdev.c | 44 +++++++++++++++++++++++++++++++++--
- include/media/v4l2-fwnode.h           |  1 +
- include/media/v4l2-subdev.h           | 11 +++++++++
- 4 files changed, 77 insertions(+), 6 deletions(-)
+This RFC patchset achieves a number of things which I've put to the same
+patchset for they need to be show together to demonstrate the use cases.
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 55fa7106345c..411deadf5d85 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -134,10 +134,14 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
- 
- 	if (notifier->bound) {
- 		ret = notifier->bound(notifier, sd, asd);
--		if (ret < 0) {
--			v4l2_device_unregister_subdev(sd);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto err_unregister;
-+	}
-+
-+	if (sd->subnotifier) {
-+		ret = v4l2_async_subnotifier_register(sd, sd->subnotifier);
-+		if (ret < 0)
-+			goto err_unbind;
- 	}
- 
- 	/* Remove from the waiting list */
-@@ -152,6 +156,15 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
- 		return notifier->complete(notifier);
- 
- 	return 0;
-+
-+err_unbind:
-+	if (notifier->unbind)
-+		notifier->unbind(notifier, sd, asd);
-+
-+err_unregister:
-+	v4l2_device_unregister_subdev(sd);
-+
-+	return ret;
- }
- 
- static void v4l2_async_cleanup(struct v4l2_subdev *sd)
-@@ -283,6 +296,9 @@ v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
- 		/* If we handled USB devices, we'd have to lock the parent too */
- 		device_release_driver(d);
- 
-+		if (sd->subnotifier)
-+			v4l2_async_subnotifier_unregister(sd->subnotifier);
-+
- 		if (notifier->unbind)
- 			notifier->unbind(notifier, sd, sd->asd);
- 
-@@ -396,6 +412,9 @@ void v4l2_async_unregister_subdev(struct v4l2_subdev *sd)
- 
- 	v4l2_async_cleanup(sd);
- 
-+	if (sd->subnotifier)
-+		v4l2_async_subnotifier_unregister(sd->subnotifier);
-+
- 	if (notifier->unbind)
- 		notifier->unbind(notifier, sd, sd->asd);
- 
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index 43fefa73e0a3..a6976d4a52ac 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -25,9 +25,10 @@
- 
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
--#include <media/v4l2-ioctl.h>
--#include <media/v4l2-fh.h>
- #include <media/v4l2-event.h>
-+#include <media/v4l2-fh.h>
-+#include <media/v4l2-fwnode.h>
-+#include <media/v4l2-ioctl.h>
- 
- static int subdev_fh_init(struct v4l2_subdev_fh *fh, struct v4l2_subdev *sd)
- {
-@@ -626,3 +627,42 @@ void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
- 	v4l2_subdev_notify(sd, V4L2_DEVICE_NOTIFY_EVENT, (void *)ev);
- }
- EXPORT_SYMBOL_GPL(v4l2_subdev_notify_event);
-+
-+static struct v4l2_async_notifier *v4l2_subdev_get_subnotifier(
-+	struct v4l2_subdev *sd)
-+{
-+	if (sd->subnotifier)
-+		return sd->subnotifier;
-+
-+	return (sd->subnotifier = devm_kzalloc(
-+			sd->dev, sizeof(*sd->subnotifier), GFP_KERNEL));
-+}
-+
-+int v4l2_subdev_fwnode_endpoints_parse(
-+	struct v4l2_subdev *sd,	size_t asd_struct_size,
-+	int (*parse_single)(struct device *dev,
-+			    struct v4l2_fwnode_endpoint *vep,
-+			    struct v4l2_async_subdev *asd))
-+{
-+	struct v4l2_async_notifier *subnotifier =
-+		v4l2_subdev_get_subnotifier(sd);
-+
-+	if (!subnotifier)
-+		return -ENOMEM;
-+
-+	return v4l2_fwnode_endpoints_parse(sd->dev, subnotifier,
-+					   asd_struct_size, parse_single);
-+}
-+EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_endpoints_parse);
-+
-+int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd)
-+{
-+	struct v4l2_async_notifier *subnotifier =
-+		v4l2_subdev_get_subnotifier(sd);
-+
-+	if (!subnotifier)
-+		return -ENOMEM;
-+
-+	return v4l2_fwnode_reference_parse_sensor_common(sd->dev, subnotifier);
-+}
-+EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_reference_parse_sensor_common);
-diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-index 8cd4f8a75c3d..0a3f869ead52 100644
---- a/include/media/v4l2-fwnode.h
-+++ b/include/media/v4l2-fwnode.h
-@@ -27,6 +27,7 @@
- struct fwnode_handle;
- struct v4l2_async_notifier;
- struct v4l2_async_subdev;
-+struct v4l2_subdev;
- 
- /**
-  * struct v4l2_fwnode_bus_mipi_csi2 - MIPI CSI-2 bus data structure
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index 0f92ebd2d710..e309a2e2030b 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -43,6 +43,7 @@ struct v4l2_ctrl_handler;
- struct v4l2_event;
- struct v4l2_event_subscription;
- struct v4l2_fh;
-+struct v4l2_fwnode_endpoint;
- struct v4l2_subdev;
- struct v4l2_subdev_fh;
- struct tuner_setup;
-@@ -793,6 +794,7 @@ struct v4l2_subdev_platform_data {
-  *	list.
-  * @asd: Pointer to respective &struct v4l2_async_subdev.
-  * @notifier: Pointer to the managing notifier.
-+ * @subnotifier: Pointer to the async sub-device notifier.
-  * @pdata: common part of subdevice platform data
-  *
-  * Each instance of a subdev driver should create this struct, either
-@@ -823,6 +825,7 @@ struct v4l2_subdev {
- 	struct list_head async_list;
- 	struct v4l2_async_subdev *asd;
- 	struct v4l2_async_notifier *notifier;
-+	struct v4l2_async_notifier *subnotifier;
- 	struct v4l2_subdev_platform_data *pdata;
- };
- 
-@@ -1001,4 +1004,12 @@ void v4l2_subdev_init(struct v4l2_subdev *sd,
- void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
- 			      const struct v4l2_event *ev);
- 
-+int v4l2_subdev_fwnode_endpoints_parse(
-+	struct v4l2_subdev *sd,	size_t asd_struct_size,
-+	int (*parse_single)(struct device *dev,
-+			    struct v4l2_fwnode_endpoint *vep,
-+			    struct v4l2_async_subdev *asd));
-+
-+int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd);
-+
- #endif
+I don't really intend this to compete with Niklas's patchset but much of
+the problem area addressed by the two is the same.
+
+Comments would be welcome.
+
+- Add AS3645A LED flash class driver.
+
+- Add async notifiers (by Niklas).
+
+- V4L2 sub-device node registration is moved to take place at the same time
+  with the registration of the sub-device itself. With this change,
+  sub-device node registration behaviour is aligned with video node
+  registration.
+
+- The former is made possible by moving the bound() callback after
+  sub-device registration.
+
+- As all the device node registration and link creation is done as the
+  respective devices are probed, there is no longer dependency to the
+  notifier complete callback which as itself is seen problematic. The
+  complete callback still exists but there's no need to use it, pending
+  changes in individual drivers.
+
+  See:
+  <URL:http://www.spinics.net/lists/linux-media/msg118323.html>
+
+  As a result, if a part of the media device fails to initialise because it
+  is e.g. physically broken, it will be possible to use what works.
+
+- Finally, the use of the async sub-notifier is hidden in the framework and
+  all a driver (such as smiapp) needs to do is to call
+  v4l2_subdev_fwnode_reference_parse_sensor_common() in its probe()
+  function to find out the associated devices (lens and flash). This
+  approach makes it possible to later on to rework the sub-notifier
+  implementation without touching driver code. Endpoints can be parsed
+  similarly by simply calling v4l2_subdev_fwnode_endpoints_parse() for
+  driver's probe function.
+
+The patches depend on this branch currently:
+
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=as3645a-leds-base>
+
+It's essentially the V4L2 flash class patches I've posted earlier today and
+a stash of fwnode property API improvements.
+
+
+Niklas Söderlund (1):
+  v4l: async: add subnotifier registration for subdevices
+
+Sakari Ailus (18):
+  device property: Introduce fwnode_property_get_reference_args
+  dt: bindings: Add a binding for flash devices associated to a sensor
+  dt: bindings: Add lens-focus binding for image sensors
+  leds: as3645a: Add LED flash class driver
+  leds: as3645a: Separate flash and indicator LED sub-devices
+  v4l: fwnode: Support generic parsing of graph endpoints in V4L2
+  arm: dts: omap3: N9/N950: Add AS3645A camera flash
+  v4l2-fwnode: Add conveniences function for parsing generic references
+  v4l2-fwnode: Add convenience function for parsing common external refs
+  v4l2-async: Register sub-devices before calling bound callback
+  v4l2-subdev: Support registering V4L2 sub-device nodes one by one
+  v4l2-device: Register sub-device nodes at sub-device registration time
+  omap3isp: Move sub-device link creation to notifier bound callback
+  omap3isp: Initialise "crashed" media entity enum in probe
+  omap3isp: Move media device registration to probe
+  omap3isp: Drop the async notifier callback
+  v4l2-fwnode: Add abstracted sub-device notifiers
+  smiapp: Add support for flash and lens devices
+
+ .../devicetree/bindings/media/video-interfaces.txt |  10 +
+ Documentation/media/kapi/v4l2-subdev.rst           |  20 +
+ MAINTAINERS                                        |   6 +
+ arch/arm/boot/dts/omap3-n9.dts                     |   1 +
+ arch/arm/boot/dts/omap3-n950-n9.dtsi               |  14 +
+ arch/arm/boot/dts/omap3-n950.dts                   |   1 +
+ drivers/acpi/property.c                            |  27 +
+ drivers/base/property.c                            |  12 +
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-as3645a.c                        | 762 +++++++++++++++++++++
+ drivers/media/i2c/smiapp/smiapp-core.c             |   5 +
+ drivers/media/platform/omap3isp/isp.c              | 144 ++--
+ drivers/media/platform/omap3isp/isp.h              |   3 -
+ drivers/media/v4l2-core/v4l2-async.c               |  96 ++-
+ drivers/media/v4l2-core/v4l2-device.c              | 139 ++--
+ drivers/media/v4l2-core/v4l2-fwnode.c              | 174 +++++
+ drivers/media/v4l2-core/v4l2-subdev.c              |  44 +-
+ drivers/of/property.c                              |  31 +
+ include/linux/fwnode.h                             |  19 +
+ include/linux/property.h                           |   4 +
+ include/media/v4l2-async.h                         |  26 +-
+ include/media/v4l2-fwnode.h                        |  21 +
+ include/media/v4l2-subdev.h                        |  11 +
+ 24 files changed, 1388 insertions(+), 191 deletions(-)
+ create mode 100644 drivers/leds/leds-as3645a.c
+
 -- 
 2.11.0
