@@ -1,7 +1,7 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RFC 17/19] omap3isp: Drop the async notifier callback
-Date: Tue, 18 Jul 2017 22:03:59 +0300
-Message-ID: <20170718190401.14797-18-sakari.ailus@linux.intel.com>
+Subject: [RFC 12/19] v4l2-subdev: Support registering V4L2 sub-device nodes one by one
+Date: Tue, 18 Jul 2017 22:03:54 +0300
+Message-ID: <20170718190401.14797-13-sakari.ailus@linux.intel.com>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
@@ -10,44 +10,160 @@ To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
 List-Id: linux-leds@vger.kernel.org
 
-v4l2_device_register_subdev_nodes() is now nop and can be dropped without
-side effects. Do so.
+Just like video devices, V4L2 sub-device nodes can and should be registered
+as soon as possible. Support this by providing
+v4l2_device_register_subdev_node() function.
+v4l2_device_register_subdev_nodes() continues to work just as it used to.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/platform/omap3isp/isp.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/media/v4l2-core/v4l2-device.c | 99 ++++++++++++++++++++---------------
+ include/media/v4l2-device.h           | 12 +++++
+ 2 files changed, 70 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 68c02ea1fe6f..ae867eb3fd15 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2102,18 +2102,6 @@ static int isp_subdev_notifier_bound(struct v4l2_async_notifier *async,
- 	return isp_link_entity(isp, &sd->entity, isd->bus.interface);
+diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
+index 937c6de85606..0c0c4772c00a 100644
+--- a/drivers/media/v4l2-core/v4l2-device.c
++++ b/drivers/media/v4l2-core/v4l2-device.c
+@@ -222,58 +222,75 @@ static void v4l2_device_release_subdev_node(struct video_device *vdev)
+ 	kfree(vdev);
  }
  
--static int isp_subdev_notifier_complete(struct v4l2_async_notifier *async)
--{
--	struct isp_device *isp = container_of(async, struct isp_device,
--					      notifier);
--	struct v4l2_device *v4l2_dev = &isp->v4l2_dev;
+-int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
++int v4l2_device_register_subdev_node(struct v4l2_device *v4l2_dev,
++				     struct v4l2_subdev *sd)
+ {
+ 	struct video_device *vdev;
 -	struct v4l2_subdev *sd;
--	struct isp_bus_cfg *bus;
--	int ret;
--
--        return v4l2_device_register_subdev_nodes(&isp->v4l2_dev);
--}
--
- /*
-  * isp_probe - Probe ISP platform device
-  * @pdev: Pointer to ISP platform device
-@@ -2289,7 +2277,6 @@ static int isp_probe(struct platform_device *pdev)
- 		goto error_register_entities;
+ 	int err;
  
- 	isp->notifier.bound = isp_subdev_notifier_bound;
--	isp->notifier.complete = isp_subdev_notifier_complete;
+-	/* Register a device node for every subdev marked with the
+-	 * V4L2_SUBDEV_FL_HAS_DEVNODE flag.
+-	 */
+-	list_for_each_entry(sd, &v4l2_dev->subdevs, list) {
+-		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE))
+-			continue;
++	/* Bail out if the V4L2_SUBDEV_FL_HAS_DEVNODE flag isn't set. */
++	if (!(sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE))
++		return 0;
  
- 	ret = v4l2_async_notifier_register(&isp->v4l2_dev, &isp->notifier);
- 	if (ret)
+-		if (sd->devnode)
+-			continue;
++	/* Was the device node already registered? If yes, then return here. */
++	if (sd->devnode)
++		return 0;
+ 
+-		vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
+-		if (!vdev) {
++	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
++	if (!vdev)
++		return -ENOMEM;
++
++	video_set_drvdata(vdev, sd);
++	strlcpy(vdev->name, sd->name, sizeof(vdev->name));
++	vdev->v4l2_dev = v4l2_dev;
++	vdev->fops = &v4l2_subdev_fops;
++	vdev->release = v4l2_device_release_subdev_node;
++	vdev->ctrl_handler = sd->ctrl_handler;
++	err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
++				      sd->owner);
++	if (err < 0)
++		goto clean_up;
++
++	sd->devnode = vdev;
++#if defined(CONFIG_MEDIA_CONTROLLER)
++	sd->entity.info.dev.major = VIDEO_MAJOR;
++	sd->entity.info.dev.minor = vdev->minor;
++
++	/* Interface is created by __video_register_device() */
++	if (vdev->v4l2_dev->mdev) {
++		struct media_link *link;
++
++		link = media_create_intf_link(&sd->entity,
++					      &vdev->intf_devnode->intf,
++					      MEDIA_LNK_FL_ENABLED);
++		if (!link) {
+ 			err = -ENOMEM;
+ 			goto clean_up;
+ 		}
++	}
++#endif
+ 
+-		video_set_drvdata(vdev, sd);
+-		strlcpy(vdev->name, sd->name, sizeof(vdev->name));
+-		vdev->v4l2_dev = v4l2_dev;
+-		vdev->fops = &v4l2_subdev_fops;
+-		vdev->release = v4l2_device_release_subdev_node;
+-		vdev->ctrl_handler = sd->ctrl_handler;
+-		err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
+-					      sd->owner);
+-		if (err < 0) {
+-			kfree(vdev);
++	return 0;
++
++clean_up:
++	video_unregister_device(vdev);
++	kfree(vdev);
++
++	return err;
++}
++EXPORT_SYMBOL_GPL(v4l2_device_register_subdev_node);
++
++int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
++{
++	struct v4l2_subdev *sd;
++	int err;
++
++	list_for_each_entry(sd, &v4l2_dev->subdevs, list) {
++		int err;
++
++		err = v4l2_device_register_subdev_node(v4l2_dev, sd);
++		if (err < 0)
+ 			goto clean_up;
+-		}
+-		sd->devnode = vdev;
+-#if defined(CONFIG_MEDIA_CONTROLLER)
+-		sd->entity.info.dev.major = VIDEO_MAJOR;
+-		sd->entity.info.dev.minor = vdev->minor;
+-
+-		/* Interface is created by __video_register_device() */
+-		if (vdev->v4l2_dev->mdev) {
+-			struct media_link *link;
+-
+-			link = media_create_intf_link(&sd->entity,
+-						      &vdev->intf_devnode->intf,
+-						      MEDIA_LNK_FL_ENABLED);
+-			if (!link) {
+-				err = -ENOMEM;
+-				goto clean_up;
+-			}
+-		}
+-#endif
+ 	}
+ 	return 0;
+ 
+diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+index 8ffa94009d1a..8b19c1f5bacd 100644
+--- a/include/media/v4l2-device.h
++++ b/include/media/v4l2-device.h
+@@ -189,6 +189,18 @@ int __must_check v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+ void v4l2_device_unregister_subdev(struct v4l2_subdev *sd);
+ 
+ /**
++ * v4l2_device_register_subdev_node - Registers device nodes for a subdev
++ *	of the v4l2 device. The call is a no-op unless the
++ *	%V4L2_SUBDEV_FL_HAS_DEVNODE subdev flag is set.
++ *
++ * @v4l2_dev: pointer to struct v4l2_device
++ * @sd: pointer to struct v4l2_subdev
++ */
++int __must_check
++v4l2_device_register_subdev_node(struct v4l2_device *v4l2_dev,
++				 struct v4l2_subdev *sd);
++
++/**
+  * v4l2_device_register_subdev_nodes - Registers device nodes for all subdevs
+  *	of the v4l2 device that are marked with
+  *	the %V4L2_SUBDEV_FL_HAS_DEVNODE flag.
 -- 
 2.11.0
