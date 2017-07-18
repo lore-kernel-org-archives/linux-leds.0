@@ -1,68 +1,228 @@
-From: <bunny43200@yahoo.com>
-Subject: (unknown)
-Date: Tue, 18 Jul 2017 20:36:47 -0000
-Message-ID: <150041020740.2695.552197022326657895@hinet.net>
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Subject: Re: [RFC 18/19] v4l2-fwnode: Add abstracted sub-device notifiers
+Date: Tue, 18 Jul 2017 23:19:22 +0200
+Message-ID: <20170718211922.GI28538@bigcity.dyn.berto.se>
+References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
+ <20170718190401.14797-19-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_51788859886_linux-leds.zip
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 118-160-98-202.dynamic-ip.hinet.net ([118.160.98.202]:60449
-        "HELO hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S1751465AbdGRUgw (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2017 16:36:52 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35711 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751962AbdGRVTZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2017 17:19:25 -0400
+Received: by mail-lf0-f45.google.com with SMTP id w198so22834735lff.2
+        for <linux-leds@vger.kernel.org>; Tue, 18 Jul 2017 14:19:25 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20170718190401.14797-19-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl
 
-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
-BADTAVBLBQYAAAAAAQABAF8AAACOCgAAAAA=
+Hi Sakari,
+
+Thanks for your hard work!
+
+On 2017-07-18 22:04:00 +0300, Sakari Ailus wrote:
+> Add notifiers for sub-devices. The notifiers themselves are not visible for
+> the sub-device drivers but instead are accessed through interface functions
+
+I might be missing it, but I can't find a interface function to set the 
+bound()/unbind() callbacks on a sub-notifiers :-) Is this intentional or 
+only not present in this RFC?
+
+> v4l2_subdev_fwnode_endpoints_parse() and
+> v4l2_subdev_fwnode_reference_parse_sensor_common().
+
+
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-async.c  | 27 +++++++++++++++++----
+>  drivers/media/v4l2-core/v4l2-subdev.c | 44 +++++++++++++++++++++++++++++++++--
+>  include/media/v4l2-fwnode.h           |  1 +
+>  include/media/v4l2-subdev.h           | 11 +++++++++
+>  4 files changed, 77 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> index 55fa7106345c..411deadf5d85 100644
+> --- a/drivers/media/v4l2-core/v4l2-async.c
+> +++ b/drivers/media/v4l2-core/v4l2-async.c
+> @@ -134,10 +134,14 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
+>  
+>  	if (notifier->bound) {
+>  		ret = notifier->bound(notifier, sd, asd);
+> -		if (ret < 0) {
+> -			v4l2_device_unregister_subdev(sd);
+> -			return ret;
+> -		}
+> +		if (ret < 0)
+> +			goto err_unregister;
+> +	}
+> +
+> +	if (sd->subnotifier) {
+> +		ret = v4l2_async_subnotifier_register(sd, sd->subnotifier);
+> +		if (ret < 0)
+> +			goto err_unbind;
+>  	}
+>  
+>  	/* Remove from the waiting list */
+> @@ -152,6 +156,15 @@ static int v4l2_async_test_notify(struct v4l2_async_notifier *notifier,
+>  		return notifier->complete(notifier);
+>  
+>  	return 0;
+> +
+> +err_unbind:
+> +	if (notifier->unbind)
+> +		notifier->unbind(notifier, sd, asd);
+> +
+> +err_unregister:
+> +	v4l2_device_unregister_subdev(sd);
+> +
+> +	return ret;
+>  }
+>  
+>  static void v4l2_async_cleanup(struct v4l2_subdev *sd)
+> @@ -283,6 +296,9 @@ v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
+>  		/* If we handled USB devices, we'd have to lock the parent too */
+>  		device_release_driver(d);
+>  
+> +		if (sd->subnotifier)
+> +			v4l2_async_subnotifier_unregister(sd->subnotifier);
+> +
+>  		if (notifier->unbind)
+>  			notifier->unbind(notifier, sd, sd->asd);
+>  
+> @@ -396,6 +412,9 @@ void v4l2_async_unregister_subdev(struct v4l2_subdev *sd)
+>  
+>  	v4l2_async_cleanup(sd);
+>  
+> +	if (sd->subnotifier)
+> +		v4l2_async_subnotifier_unregister(sd->subnotifier);
+> +
+>  	if (notifier->unbind)
+>  		notifier->unbind(notifier, sd, sd->asd);
+>  
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index 43fefa73e0a3..a6976d4a52ac 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -25,9 +25,10 @@
+>  
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-device.h>
+> -#include <media/v4l2-ioctl.h>
+> -#include <media/v4l2-fh.h>
+>  #include <media/v4l2-event.h>
+> +#include <media/v4l2-fh.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-ioctl.h>
+>  
+>  static int subdev_fh_init(struct v4l2_subdev_fh *fh, struct v4l2_subdev *sd)
+>  {
+> @@ -626,3 +627,42 @@ void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
+>  	v4l2_subdev_notify(sd, V4L2_DEVICE_NOTIFY_EVENT, (void *)ev);
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_subdev_notify_event);
+> +
+> +static struct v4l2_async_notifier *v4l2_subdev_get_subnotifier(
+> +	struct v4l2_subdev *sd)
+> +{
+> +	if (sd->subnotifier)
+> +		return sd->subnotifier;
+> +
+> +	return (sd->subnotifier = devm_kzalloc(
+> +			sd->dev, sizeof(*sd->subnotifier), GFP_KERNEL));
+> +}
+> +
+> +int v4l2_subdev_fwnode_endpoints_parse(
+> +	struct v4l2_subdev *sd,	size_t asd_struct_size,
+> +	int (*parse_single)(struct device *dev,
+> +			    struct v4l2_fwnode_endpoint *vep,
+> +			    struct v4l2_async_subdev *asd))
+> +{
+> +	struct v4l2_async_notifier *subnotifier =
+> +		v4l2_subdev_get_subnotifier(sd);
+> +
+> +	if (!subnotifier)
+> +		return -ENOMEM;
+> +
+> +	return v4l2_fwnode_endpoints_parse(sd->dev, subnotifier,
+> +					   asd_struct_size, parse_single);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_endpoints_parse);
+> +
+> +int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd)
+> +{
+> +	struct v4l2_async_notifier *subnotifier =
+> +		v4l2_subdev_get_subnotifier(sd);
+> +
+> +	if (!subnotifier)
+> +		return -ENOMEM;
+> +
+> +	return v4l2_fwnode_reference_parse_sensor_common(sd->dev, subnotifier);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_reference_parse_sensor_common);
+> diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
+> index 8cd4f8a75c3d..0a3f869ead52 100644
+> --- a/include/media/v4l2-fwnode.h
+> +++ b/include/media/v4l2-fwnode.h
+> @@ -27,6 +27,7 @@
+>  struct fwnode_handle;
+>  struct v4l2_async_notifier;
+>  struct v4l2_async_subdev;
+> +struct v4l2_subdev;
+>  
+>  /**
+>   * struct v4l2_fwnode_bus_mipi_csi2 - MIPI CSI-2 bus data structure
+> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+> index 0f92ebd2d710..e309a2e2030b 100644
+> --- a/include/media/v4l2-subdev.h
+> +++ b/include/media/v4l2-subdev.h
+> @@ -43,6 +43,7 @@ struct v4l2_ctrl_handler;
+>  struct v4l2_event;
+>  struct v4l2_event_subscription;
+>  struct v4l2_fh;
+> +struct v4l2_fwnode_endpoint;
+>  struct v4l2_subdev;
+>  struct v4l2_subdev_fh;
+>  struct tuner_setup;
+> @@ -793,6 +794,7 @@ struct v4l2_subdev_platform_data {
+>   *	list.
+>   * @asd: Pointer to respective &struct v4l2_async_subdev.
+>   * @notifier: Pointer to the managing notifier.
+> + * @subnotifier: Pointer to the async sub-device notifier.
+>   * @pdata: common part of subdevice platform data
+>   *
+>   * Each instance of a subdev driver should create this struct, either
+> @@ -823,6 +825,7 @@ struct v4l2_subdev {
+>  	struct list_head async_list;
+>  	struct v4l2_async_subdev *asd;
+>  	struct v4l2_async_notifier *notifier;
+> +	struct v4l2_async_notifier *subnotifier;
+>  	struct v4l2_subdev_platform_data *pdata;
+>  };
+>  
+> @@ -1001,4 +1004,12 @@ void v4l2_subdev_init(struct v4l2_subdev *sd,
+>  void v4l2_subdev_notify_event(struct v4l2_subdev *sd,
+>  			      const struct v4l2_event *ev);
+>  
+> +int v4l2_subdev_fwnode_endpoints_parse(
+> +	struct v4l2_subdev *sd,	size_t asd_struct_size,
+> +	int (*parse_single)(struct device *dev,
+> +			    struct v4l2_fwnode_endpoint *vep,
+> +			    struct v4l2_async_subdev *asd));
+> +
+> +int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd);
+> +
+>  #endif
+> -- 
+> 2.11.0
+> 
+
+-- 
+Regards,
+Niklas Söderlund
