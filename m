@@ -1,82 +1,76 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RFC 10/19] v4l2-fwnode: Add convenience function for parsing common external refs
-Date: Tue, 18 Jul 2017 22:03:52 +0300
-Message-ID: <20170718190401.14797-11-sakari.ailus@linux.intel.com>
+Subject: [RFC 08/19] arm: dts: omap3: N9/N950: Add AS3645A camera flash
+Date: Tue, 18 Jul 2017 22:03:50 +0300
+Message-ID: <20170718190401.14797-9-sakari.ailus@linux.intel.com>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60042 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751929AbdGRTEG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 15:04:06 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
+Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl, Sakari Ailus <sakari.ailus@iki.fi>
+List-Id: linux-leds@vger.kernel.org
 
-Add v4l2_fwnode_parse_reference_sensor_common for parsing common
-sensor properties that refer to adjacent devices such as flash or lens
-driver chips.
+From: Sakari Ailus <sakari.ailus@iki.fi>
 
-As this is an association only, there's little a regular driver needs to
-know about these devices as such.
+Add the as3645a flash controller to the DT source as well as the flash
+property with the as3645a device phandle to the sensor DT node.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/media/v4l2-core/v4l2-fwnode.c | 27 +++++++++++++++++++++++++++
- include/media/v4l2-fwnode.h           |  3 +++
- 2 files changed, 30 insertions(+)
+ arch/arm/boot/dts/omap3-n9.dts       |  1 +
+ arch/arm/boot/dts/omap3-n950-n9.dtsi | 14 ++++++++++++++
+ arch/arm/boot/dts/omap3-n950.dts     |  1 +
+ 3 files changed, 16 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index bfc9e38766f3..8671262eb22c 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -486,6 +486,33 @@ int v4l2_fwnode_reference_parse(
- }
- EXPORT_SYMBOL_GPL(v4l2_fwnode_reference_parse);
+diff --git a/arch/arm/boot/dts/omap3-n9.dts b/arch/arm/boot/dts/omap3-n9.dts
+index b9e58c536afd..a2944010f62f 100644
+--- a/arch/arm/boot/dts/omap3-n9.dts
++++ b/arch/arm/boot/dts/omap3-n9.dts
+@@ -26,6 +26,7 @@
+ 		clocks = <&isp 0>;
+ 		clock-frequency = <9600000>;
+ 		nokia,nvm-size = <(16 * 64)>;
++		flash = <&as3645a_flash &as3645a_indicator>;
+ 		port {
+ 			smia_1_1: endpoint {
+ 				link-frequencies = /bits/ 64 <199200000 210000000 499200000>;
+diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+index df3366fa5409..e15722b83a70 100644
+--- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
++++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+@@ -265,6 +265,20 @@
  
-+int v4l2_fwnode_reference_parse_sensor_common(
-+	struct device *dev, struct v4l2_async_notifier *notifier)
-+{
-+	static const struct {
-+		char *name;
-+		char *cells;
-+		unsigned int nr_cells;
-+	} props[] = {
-+		{ "flash", NULL, 0 },
-+		{ "lens-focus", NULL, 0 },
+ &i2c2 {
+ 	clock-frequency = <400000>;
++
++	as3645a: flash@30 {
++		reg = <0x30>;
++		compatible = "ams,as3645a";
++		as3645a_flash: flash {
++			flash-timeout-us = <150000>;
++			flash-max-microamp = <320000>;
++			led-max-microamp = <60000>;
++			peak-current-limit = <1750000>;
++		};
++		as3645a_indicator: indicator {
++			led-max-microamp = <10000>;
++		};
 +	};
-+	unsigned int i;
-+	int rval;
-+
-+	for (i = 0; i < ARRAY_SIZE(props); i++) {
-+		rval = v4l2_fwnode_reference_parse(
-+			dev, notifier, props[i].name, props[i].cells,
-+			props[i].nr_cells, sizeof(struct v4l2_async_subdev),
-+			NULL);
-+		if (rval < 0 && rval != -ENOENT)
-+			return rval;
-+	}
-+
-+	return rval;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_fwnode_reference_parse_sensor_common);
-+
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
- MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-index e27526bd744d..8cd4f8a75c3d 100644
---- a/include/media/v4l2-fwnode.h
-+++ b/include/media/v4l2-fwnode.h
-@@ -118,4 +118,7 @@ int v4l2_fwnode_reference_parse(
- 			    struct fwnode_reference_args *args,
- 			    struct v4l2_async_subdev *asd));
+ };
  
-+int v4l2_fwnode_reference_parse_sensor_common(
-+	struct device *dev, struct v4l2_async_notifier *notifier);
-+
- #endif /* _V4L2_FWNODE_H */
+ &i2c3 {
+diff --git a/arch/arm/boot/dts/omap3-n950.dts b/arch/arm/boot/dts/omap3-n950.dts
+index 646601a3ebd8..8fca0384d2df 100644
+--- a/arch/arm/boot/dts/omap3-n950.dts
++++ b/arch/arm/boot/dts/omap3-n950.dts
+@@ -60,6 +60,7 @@
+ 		clocks = <&isp 0>;
+ 		clock-frequency = <9600000>;
+ 		nokia,nvm-size = <(16 * 64)>;
++		flash = <&as3645a>;
+ 		port {
+ 			smia_1_1: endpoint {
+ 				link-frequencies = /bits/ 64 <210000000 333600000 398400000>;
 -- 
 2.11.0
