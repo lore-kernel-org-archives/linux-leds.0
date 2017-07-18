@@ -1,289 +1,105 @@
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Subject: Re: [RFC 02/19] v4l: async: add subnotifier registration for
- subdevices
-Date: Tue, 18 Jul 2017 23:28:51 +0200
-Message-ID: <20170718212851.GJ28538@bigcity.dyn.berto.se>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <20170718190401.14797-3-sakari.ailus@linux.intel.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 1/3] leds: core: Introduce generic pattern interface
+Date: Tue, 18 Jul 2017 23:36:58 +0200
+Message-ID: <2bcbd6b6-02cd-2aa1-32d7-04f59bb53e64@gmail.com>
+References: <20170714224520.467-1-bjorn.andersson@linaro.org>
+ <20170714224520.467-2-bjorn.andersson@linaro.org>
+ <20170706031801.GB12954@xo-6d-61-c0.localdomain>
+ <beb9b4c3-4922-1ebb-5017-a4b791cdb4d7@gmail.com>
+ <20170716211456.GV1618@tuxbook>
+ <61a2d8d2-7bf0-c8ff-90a2-728d8368da0a@gmail.com>
+ <20170717233936.GB20973@minitux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:32778 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbdGRV2y (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2017 17:28:54 -0400
-Received: by mail-lf0-f43.google.com with SMTP id z78so23278101lff.0
-        for <linux-leds@vger.kernel.org>; Tue, 18 Jul 2017 14:28:53 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170718190401.14797-3-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170717233936.GB20973@minitux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl
 
-Hi Sakari,
+On 07/18/2017 01:39 AM, Bjorn Andersson wrote:
+> On Mon 17 Jul 14:08 PDT 2017, Jacek Anaszewski wrote:
+> 
+>> On 07/16/2017 11:14 PM, Bjorn Andersson wrote:
+>>> On Sun 16 Jul 11:49 PDT 2017, Jacek Anaszewski wrote:
+>>>> On 07/06/2017 05:18 AM, Pavel Machek wrote:
+> [..]
+>>>> I've been working on addition of RGB LED support to the LED core for
+>>>> some time now, in the way as we agreed upon at [0], but it turns out to
+>>>> be less trivial if we want to do it in an elegant way.
+>>>>
+>>>
+>>> Generally 3 predefined LPG blocks are routed to the TRILED current sink.
+>>>
+>>> Exposing the TRILED block as a RGB LED instance would make sense in its
+>>> own, but it doesn't give us a coherent solution for the LPG.
+>>>
+>>> The current board I'm working on (DragonBoard820c) has 4 LEDs, 3 of them
+>>> are connected to the TRILED and the fourth is on a "GPIO" in current
+>>> sink mode.
+>>>
+>>> By having each LPG represented as a LED device gives us a unified view
+>>> of the hardware even though there are two different types of current
+>>> sinks.
+>>>
+>>>
+>>> Further more, per the 96boards specification we're expected to have
+>>> different triggers on the different "colors" of the TRILED.
+>>
+>> What is the function of TRILED block then? My first impression was
+>> that it allows for setting brightness on all three LED synchronously?
+>>
+> 
+> It's nothing more than one hardware block providing 3 current sinks.
 
-Just a heads up, I posted a new version of this patch today which 
-addresses a few short comings in v4l2_async_notifier_unregister() which 
-exists in this patch. With the latest patches the re-probing of 
-subdevices, disregarding if they are master or sub notifiers is 
-addressed.
+What's the benefit of grouping three sinks? Is there some other gain
+besides possibility of turning on/off the whole block at once?
 
-Also the latest version do not expose the new equivalent of 
-v4l2_async_subnotifier_* outside v4l2-async.c and do similar things as 
-you do here by hiding the (un)registration of subnotifiers inside the 
-v4l2-async framework. So unfortunately to make use of the fixes in your 
-series some rework is needed of my patch(es).
 
-On 2017-07-18 22:03:44 +0300, Sakari Ailus wrote:
-> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>>>
+>>> So I do not agree with imposing this kind of decisions on the board
+>>> design just to support this higher level feature.
+>>>
+>>>> Less elegant way would be duplicating led-core functions and changing
+>>>> single enum led_brightness argument with the three ones (or a struct
+>>>> containing three brightness components)
+>>>>
+>>>> I chose to go the elegant way and tried to introduce led_classdev_base
+>>>> type that would be customizable with the set of ops, that would allow
+>>>> for making the number of brightness components to be set at once
+>>>> customizable. This of course entails significant amount of changes in
+>>>> the LED core and some changes in LED Trigger core.
+>>>>
+>>>
+>>> I think that the RGB interface has to be a "frontend" of any
+>>> configurable LED instances and not tied to a particular hardware
+>>> controller.
+>>
+>> That doesn't assure brightness setting synchronization which is
+>> especially vital in case of triggers like timer.
+>>
 > 
-> When the registered() callback of v4l2_subdev_internal_ops is called the
-> subdevice has access to the master devices v4l2_dev and it's called with
-> the async frameworks list_lock held. In this context the subdevice can
-> register its own notifiers to allow for incremental discovery of
-> subdevices.
-> 
-> The master device registers the subdevices closest to itself in its
-> notifier while the subdevice(s) register notifiers for their closest
-> neighboring devices when they are registered. Using this incremental
-> approach two problems can be solved:
-> 
-> 1. The master device no longer has to care how many devices exist in
->    the pipeline. It only needs to care about its closest subdevice and
->    arbitrary long pipelines can be created without having to adapt the
->    master device for each case.
-> 
-> 2. Subdevices which are represented as a single DT node but register
->    more than one subdevice can use this to improve the pipeline
->    discovery, since the subdevice driver is the only one who knows which
->    of its subdevices is linked with which subdevice of a neighboring DT
->    node.
-> 
-> To enable subdevices to register/unregister notifiers from the
-> registered()/unregistered() callback v4l2_async_subnotifier_register()
-> and v4l2_async_subnotifier_unregister() are added. These new notifier
-> register functions are similar to the master device equivalent functions
-> but run without taking the v4l2-async list_lock which already is held
-> when the registered()/unregistered() callbacks are called.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  Documentation/media/kapi/v4l2-subdev.rst | 20 ++++++++++
->  drivers/media/v4l2-core/v4l2-async.c     | 65 +++++++++++++++++++++++++++-----
->  include/media/v4l2-async.h               | 22 +++++++++++
->  3 files changed, 98 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/media/kapi/v4l2-subdev.rst b/Documentation/media/kapi/v4l2-subdev.rst
-> index e1f0b726e438..e308f30887a8 100644
-> --- a/Documentation/media/kapi/v4l2-subdev.rst
-> +++ b/Documentation/media/kapi/v4l2-subdev.rst
-> @@ -262,6 +262,26 @@ is called. After all subdevices have been located the .complete() callback is
->  called. When a subdevice is removed from the system the .unbind() method is
->  called. All three callbacks are optional.
->  
-> +Subdevice drivers might in turn register subnotifier objects with an
-> +array of other subdevice descriptors that the subdevice needs for its
-> +own operation. Subnotifiers are an extension of the bridge drivers
-> +notifier to allow for a incremental registering and matching of
-> +subdevices. This is useful when a driver only has information about
-> +which subdevice is closest to itself and would require knowledge from the
-> +driver of that subdevice to know which other subdevice(s) lie beyond.
-> +By registering subnotifiers drivers can incrementally move the subdevice
-> +matching down the chain of drivers. This is performed using the
-> +:c:func:`v4l2_async_subnotifier_register` call. To unregister the
-> +subnotifier the driver has to call
-> +:c:func:`v4l2_async_subnotifier_unregister`. These functions and their
-> +arguments behave almost the same as the bridge driver notifiers
-> +described above and are treated equally by the V4L2 core when matching
-> +asynchronously registered subdevices. The differences are that the
-> +subnotifier functions act on :c:type:`v4l2_subdev` instead of
-> +:c:type:`v4l2_device` and that they should be called from the subdevice's
-> +``.registered()`` and ``.unregistered()``
-> +:c:type:`v4l2_subdev_internal_ops` callbacks instead of at probe time.
-> +
->  V4L2 sub-device userspace API
->  -----------------------------
->  
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 268e19724809..d2ce39ac402e 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -163,8 +163,9 @@ static void v4l2_async_cleanup(struct v4l2_subdev *sd)
->  	sd->dev = NULL;
->  }
->  
-> -int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-> -				 struct v4l2_async_notifier *notifier)
-> +static int v4l2_async_do_notifier_register(struct v4l2_device *v4l2_dev,
-> +					   struct v4l2_async_notifier *notifier,
-> +					   bool subnotifier)
->  {
->  	struct v4l2_subdev *sd, *tmp;
->  	struct v4l2_async_subdev *asd;
-> @@ -196,8 +197,17 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
->  		list_add_tail(&asd->list, &notifier->waiting);
->  	}
->  
-> -	mutex_lock(&list_lock);
-> +	if (subnotifier)
-> +		lockdep_assert_held(&list_lock);
-> +	else
-> +		mutex_lock(&list_lock);
->  
-> +	/*
-> +	 * This function can be called recursively so the list
-> +	 * might be modified in a recursive call. Start from the
-> +	 * top of the list each iteration.
-> +	 */
-> +again:
->  	list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
->  		int ret;
->  
-> @@ -207,21 +217,39 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
->  
->  		ret = v4l2_async_test_notify(notifier, sd, asd);
->  		if (ret < 0) {
-> -			mutex_unlock(&list_lock);
-> +			if (!subnotifier)
-> +				mutex_unlock(&list_lock);
->  			return ret;
->  		}
-> +		goto again;
->  	}
->  
->  	/* Keep also completed notifiers on the list */
->  	list_add(&notifier->list, &notifier_list);
->  
-> -	mutex_unlock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_unlock(&list_lock);
->  
->  	return 0;
->  }
-> +
-> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-> +				    struct v4l2_async_notifier *notifier)
-> +{
-> +	return v4l2_async_do_notifier_register(sd->v4l2_dev, notifier, true);
-> +}
-> +EXPORT_SYMBOL(v4l2_async_subnotifier_register);
-> +
-> +int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-> +				 struct v4l2_async_notifier *notifier)
-> +{
-> +	return v4l2_async_do_notifier_register(v4l2_dev, notifier, false);
-> +}
->  EXPORT_SYMBOL(v4l2_async_notifier_register);
->  
-> -void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-> +static void
-> +v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
-> +				  bool subnotifier)
->  {
->  	struct v4l2_subdev *sd, *tmp;
->  	unsigned int notif_n_subdev = notifier->num_subdevs;
-> @@ -238,7 +266,10 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  			"Failed to allocate device cache!\n");
->  	}
->  
-> -	mutex_lock(&list_lock);
-> +	if (subnotifier)
-> +		lockdep_assert_held(&list_lock);
-> +	else
-> +		mutex_lock(&list_lock);
->  
->  	list_del(&notifier->list);
->  
-> @@ -265,15 +296,20 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  			put_device(d);
->  	}
->  
-> -	mutex_unlock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_unlock(&list_lock);
->  
->  	/*
->  	 * Call device_attach() to reprobe devices
->  	 *
->  	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
->  	 * executed.
-> +	 * TODO: If we are unregistering a subdevice notifier we can't reprobe
-> +	 * since the lock_list is held by the master device and attaching that
-> +	 * device would call v4l2_async_register_subdev() and end in a deadlock
-> +	 * on list_lock.
->  	 */
-> -	while (i--) {
-> +	while (i-- && !subnotifier) {
->  		struct device *d = dev[i];
->  
->  		if (d && device_attach(d) < 0) {
-> @@ -297,6 +333,17 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  	 * upon notifier registration.
->  	 */
->  }
-> +
-> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier)
-> +{
-> +	v4l2_async_do_notifier_unregister(notifier, true);
-> +}
-> +EXPORT_SYMBOL(v4l2_async_subnotifier_unregister);
-> +
-> +void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-> +{
-> +	v4l2_async_do_notifier_unregister(notifier, false);
-> +}
->  EXPORT_SYMBOL(v4l2_async_notifier_unregister);
->  
->  int v4l2_async_register_subdev(struct v4l2_subdev *sd)
-> diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-> index 056cae0af2f0..8c7519fce5b9 100644
-> --- a/include/media/v4l2-async.h
-> +++ b/include/media/v4l2-async.h
-> @@ -105,6 +105,18 @@ struct v4l2_async_notifier {
->  };
->  
->  /**
-> + * v4l2_async_notifier_register - registers a subdevice asynchronous subnotifier
-> + *
-> + * @sd: pointer to &struct v4l2_subdev
-> + * @notifier: pointer to &struct v4l2_async_notifier
-> + *
-> + * This function assumes the async list_lock is already locked, allowing it to
-> + * be used from the struct v4l2_subdev_internal_ops registered() callback.
-> + */
-> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-> +				    struct v4l2_async_notifier *notifier);
-> +
-> +/**
->   * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
->   *
->   * @v4l2_dev: pointer to &struct v4l2_device
-> @@ -114,6 +126,16 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
->  				 struct v4l2_async_notifier *notifier);
->  
->  /**
-> + * v4l2_async_subnotifier_unregister - unregisters a asynchronous subnotifier
-> + *
-> + * @notifier: pointer to &struct v4l2_async_notifier
-> + *
-> + * This function assumes the async list_lock is already locked, allowing it to
-> + * be used from the struct v4l2_subdev_internal_ops unregistered() callback.
-> + */
-> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier);
-> +
-> +/**
->   * v4l2_async_notifier_unregister - unregisters a subdevice asynchronous notifier
->   *
->   * @notifier: pointer to &struct v4l2_async_notifier
-> -- 
-> 2.11.0
-> 
+> If you look at any available Android based device you can see what
+> happens when you set red, then green and then blue brightness
+> independently - from user space even. The LED might be
+> red/green/blue/purple whatever, but I would argue that it's not
+> noticeable due to the short duration between the updates.
+
+> The case where synchronization matters is if you have pattern
+> transitions as you're extending the time of the transition and you can
+> spot the color variation in the transitions.
+
+It would require more thorough analysis across various devices
+programmed via different buses. Probably in most cases applying
+the userspace frontend mentioned by you would work just fine.
+
+And when it comes to higher frequencies, we have had already
+attempts of adding hr timer support for "fast LEDs" like the
+ones driven through GPIOs, and those could benefit from the
+kernel level synchronization.
 
 -- 
-Regards,
-Niklas Söderlund
+Best regards,
+Jacek Anaszewski
