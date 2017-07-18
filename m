@@ -1,72 +1,53 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RFC 15/19] omap3isp: Initialise "crashed" media entity enum in probe
-Date: Tue, 18 Jul 2017 22:03:57 +0300
-Message-ID: <20170718190401.14797-16-sakari.ailus@linux.intel.com>
+Subject: [RFC 17/19] omap3isp: Drop the async notifier callback
+Date: Tue, 18 Jul 2017 22:03:59 +0300
+Message-ID: <20170718190401.14797-18-sakari.ailus@linux.intel.com>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60014 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751995AbdGRTEI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 15:04:08 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
+List-Id: linux-leds@vger.kernel.org
 
-Initialise the struct isp_device.crashed media entity enum field when the
-ISP's local media entities have been registered, in probe. This is to make
-sure that the enumeration is initialised and large enough when the media
-device is made visible.
+v4l2_device_register_subdev_nodes() is now nop and can be dropped without
+side effects. Do so.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/platform/omap3isp/isp.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/media/platform/omap3isp/isp.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
 diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index ef6ce2b214ce..90da8343b3dd 100644
+index 68c02ea1fe6f..ae867eb3fd15 100644
 --- a/drivers/media/platform/omap3isp/isp.c
 +++ b/drivers/media/platform/omap3isp/isp.c
-@@ -1592,6 +1592,7 @@ static void isp_pm_complete(struct device *dev)
- 
- static void isp_unregister_entities(struct isp_device *isp)
- {
-+	media_entity_enum_cleanup(&isp->crashed);
- 	omap3isp_csi2_unregister_entities(&isp->isp_csi2a);
- 	omap3isp_ccp2_unregister_entities(&isp->isp_ccp2);
- 	omap3isp_ccdc_unregister_entities(&isp->isp_ccdc);
-@@ -1730,6 +1731,10 @@ static int isp_register_entities(struct isp_device *isp)
- 	if (ret < 0)
- 		goto done;
- 
-+	ret = media_entity_enum_init(&isp->crashed, &isp->media_dev);
-+	if (ret)
-+		return ret;
-+
- done:
- 	if (ret < 0)
- 		isp_unregister_entities(isp);
-@@ -1997,8 +2002,6 @@ static int isp_remove(struct platform_device *pdev)
- 	isp_detach_iommu(isp);
- 	__omap3isp_put(isp, false);
- 
--	media_entity_enum_cleanup(&isp->crashed);
--
- 	return 0;
+@@ -2102,18 +2102,6 @@ static int isp_subdev_notifier_bound(struct v4l2_async_notifier *async,
+ 	return isp_link_entity(isp, &sd->entity, isd->bus.interface);
  }
  
-@@ -2108,10 +2111,6 @@ static int isp_subdev_notifier_complete(struct v4l2_async_notifier *async)
- 	struct isp_bus_cfg *bus;
- 	int ret;
- 
--	ret = media_entity_enum_init(&isp->crashed, &isp->media_dev);
--	if (ret)
--		return ret;
+-static int isp_subdev_notifier_complete(struct v4l2_async_notifier *async)
+-{
+-	struct isp_device *isp = container_of(async, struct isp_device,
+-					      notifier);
+-	struct v4l2_device *v4l2_dev = &isp->v4l2_dev;
+-	struct v4l2_subdev *sd;
+-	struct isp_bus_cfg *bus;
+-	int ret;
 -
- 	ret = v4l2_device_register_subdev_nodes(&isp->v4l2_dev);
- 	if (ret < 0)
- 		return ret;
+-        return v4l2_device_register_subdev_nodes(&isp->v4l2_dev);
+-}
+-
+ /*
+  * isp_probe - Probe ISP platform device
+  * @pdev: Pointer to ISP platform device
+@@ -2289,7 +2277,6 @@ static int isp_probe(struct platform_device *pdev)
+ 		goto error_register_entities;
+ 
+ 	isp->notifier.bound = isp_subdev_notifier_bound;
+-	isp->notifier.complete = isp_subdev_notifier_complete;
+ 
+ 	ret = v4l2_async_notifier_register(&isp->v4l2_dev, &isp->notifier);
+ 	if (ret)
 -- 
 2.11.0
