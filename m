@@ -1,461 +1,212 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 2/2] v4l2-flash-led-class: Create separate sub-devices for indicators
-Date: Tue, 18 Jul 2017 21:41:07 +0300
-Message-ID: <20170718184107.10598-3-sakari.ailus@linux.intel.com>
-References: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
+Subject: [RFC 01/19] device property: Introduce fwnode_property_get_reference_args
+Date: Tue, 18 Jul 2017 22:03:43 +0300
+Message-ID: <20170718190401.14797-2-sakari.ailus@linux.intel.com>
+References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59682 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59938 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751465AbdGRSlK (ORCPT
+        by vger.kernel.org with ESMTP id S1751510AbdGRTED (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 14:41:10 -0400
-In-Reply-To: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
+        Tue, 18 Jul 2017 15:04:03 -0400
+In-Reply-To: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
+Cc: linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl
 
-The V4L2 flash interface allows controlling multiple LEDs through a single
-sub-devices if, and only if, these LEDs are of different types. This
-approach scales badly for flash controllers that drive multiple flash LEDs
-or for LED specific associations. Essentially, the original assumption of a
-LED driver chip that drives a single flash LED and an indicator LED is no
-longer valid.
+The new fwnode_property_get_reference_args() interface amends the fwnode
+property API with the functionality of both of_parse_phandle_with_args()
+and __acpi_node_get_property_reference().
 
-Address the matter by registering one sub-device per LED.
+The semantics is slightly different: the cells property is ignored on ACPI
+as the number of arguments can be explicitly obtained from the firmware
+interface.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/leds/leds-aat1290.c                    |   4 +-
- drivers/leds/leds-max77693.c                   |   4 +-
- drivers/media/v4l2-core/v4l2-flash-led-class.c | 112 +++++++++++++++----------
- drivers/staging/greybus/light.c                |  24 ++++--
- include/media/v4l2-flash-led-class.h           |  41 ++++++---
- 5 files changed, 117 insertions(+), 68 deletions(-)
+ drivers/acpi/property.c  | 27 +++++++++++++++++++++++++++
+ drivers/base/property.c  | 12 ++++++++++++
+ drivers/of/property.c    | 31 +++++++++++++++++++++++++++++++
+ include/linux/fwnode.h   | 19 +++++++++++++++++++
+ include/linux/property.h |  4 ++++
+ 5 files changed, 93 insertions(+)
 
-diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
-index a21e19297745..424898e6c69d 100644
---- a/drivers/leds/leds-aat1290.c
-+++ b/drivers/leds/leds-aat1290.c
-@@ -432,7 +432,7 @@ static void aat1290_init_v4l2_flash_config(struct aat1290_led *led,
- 	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->name,
- 		sizeof(v4l2_sd_cfg->dev_name));
- 
--	s = &v4l2_sd_cfg->torch_intensity;
-+	s = &v4l2_sd_cfg->intensity;
- 	s->min = led->mm_current_scale[0];
- 	s->max = led_cfg->max_mm_current;
- 	s->step = 1;
-@@ -504,7 +504,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
- 
- 	/* Create V4L2 Flash subdev. */
- 	led->v4l2_flash = v4l2_flash_init(dev, of_fwnode_handle(sub_node),
--					  fled_cdev, NULL, &v4l2_flash_ops,
-+					  fled_cdev, &v4l2_flash_ops,
- 					  &v4l2_sd_cfg);
- 	if (IS_ERR(led->v4l2_flash)) {
- 		ret = PTR_ERR(led->v4l2_flash);
-diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
-index 2d3062d53325..adf0f191f794 100644
---- a/drivers/leds/leds-max77693.c
-+++ b/drivers/leds/leds-max77693.c
-@@ -856,7 +856,7 @@ static void max77693_init_v4l2_flash_config(struct max77693_sub_led *sub_led,
- 		 "%s %d-%04x", sub_led->fled_cdev.led_cdev.name,
- 		 i2c_adapter_id(i2c->adapter), i2c->addr);
- 
--	s = &v4l2_sd_cfg->torch_intensity;
-+	s = &v4l2_sd_cfg->intensity;
- 	s->min = TORCH_IOUT_MIN;
- 	s->max = sub_led->fled_cdev.led_cdev.max_brightness * TORCH_IOUT_STEP;
- 	s->step = TORCH_IOUT_STEP;
-@@ -931,7 +931,7 @@ static int max77693_register_led(struct max77693_sub_led *sub_led,
- 
- 	/* Register in the V4L2 subsystem. */
- 	sub_led->v4l2_flash = v4l2_flash_init(dev, of_fwnode_handle(sub_node),
--					      fled_cdev, NULL, &v4l2_flash_ops,
-+					      fled_cdev, &v4l2_flash_ops,
- 					      &v4l2_sd_cfg);
- 	if (IS_ERR(sub_led->v4l2_flash)) {
- 		ret = PTR_ERR(sub_led->v4l2_flash);
-diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-index aabc85dbb8b5..b017bdb4aaab 100644
---- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
-+++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-@@ -197,7 +197,7 @@ static int v4l2_flash_s_ctrl(struct v4l2_ctrl *c)
- {
- 	struct v4l2_flash *v4l2_flash = v4l2_ctrl_to_v4l2_flash(c);
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
--	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct led_classdev *led_cdev = fled_cdev ? &fled_cdev->led_cdev : NULL;
- 	struct v4l2_ctrl **ctrls = v4l2_flash->ctrls;
- 	bool external_strobe;
- 	int ret = 0;
-@@ -299,10 +299,26 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 			  struct v4l2_flash_ctrl_data *ctrl_init_data)
- {
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
--	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct led_classdev *led_cdev = fled_cdev ? &fled_cdev->led_cdev : NULL;
- 	struct v4l2_ctrl_config *ctrl_cfg;
- 	u32 mask;
- 
-+	/* Init INDICATOR_INTENSITY ctrl data */
-+	if (v4l2_flash->iled_cdev) {
-+		ctrl_init_data[INDICATOR_INTENSITY].cid =
-+					V4L2_CID_FLASH_INDICATOR_INTENSITY;
-+		ctrl_cfg = &ctrl_init_data[INDICATOR_INTENSITY].config;
-+		__lfs_to_v4l2_ctrl_config(&flash_cfg->intensity,
-+					  ctrl_cfg);
-+		ctrl_cfg->id = V4L2_CID_FLASH_INDICATOR_INTENSITY;
-+		ctrl_cfg->min = 0;
-+		ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
-+				  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	}
-+
-+	if (!led_cdev || WARN_ON(!(led_cdev->flags & LED_DEV_CAP_FLASH)))
-+		return;
-+
- 	/* Init FLASH_FAULT ctrl data */
- 	if (flash_cfg->flash_faults) {
- 		ctrl_init_data[FLASH_FAULT].cid = V4L2_CID_FLASH_FAULT;
-@@ -330,27 +346,11 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 	/* Init TORCH_INTENSITY ctrl data */
- 	ctrl_init_data[TORCH_INTENSITY].cid = V4L2_CID_FLASH_TORCH_INTENSITY;
- 	ctrl_cfg = &ctrl_init_data[TORCH_INTENSITY].config;
--	__lfs_to_v4l2_ctrl_config(&flash_cfg->torch_intensity, ctrl_cfg);
-+	__lfs_to_v4l2_ctrl_config(&flash_cfg->intensity, ctrl_cfg);
- 	ctrl_cfg->id = V4L2_CID_FLASH_TORCH_INTENSITY;
- 	ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
- 			  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
- 
--	/* Init INDICATOR_INTENSITY ctrl data */
--	if (v4l2_flash->iled_cdev) {
--		ctrl_init_data[INDICATOR_INTENSITY].cid =
--					V4L2_CID_FLASH_INDICATOR_INTENSITY;
--		ctrl_cfg = &ctrl_init_data[INDICATOR_INTENSITY].config;
--		__lfs_to_v4l2_ctrl_config(&flash_cfg->indicator_intensity,
--					  ctrl_cfg);
--		ctrl_cfg->id = V4L2_CID_FLASH_INDICATOR_INTENSITY;
--		ctrl_cfg->min = 0;
--		ctrl_cfg->flags = V4L2_CTRL_FLAG_VOLATILE |
--				  V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
--	}
--
--	if (!(led_cdev->flags & LED_DEV_CAP_FLASH))
--		return;
--
- 	/* Init FLASH_STROBE ctrl data */
- 	ctrl_init_data[FLASH_STROBE].cid = V4L2_CID_FLASH_STROBE;
- 	ctrl_cfg = &ctrl_init_data[FLASH_STROBE].config;
-@@ -485,7 +485,8 @@ static int __sync_device_with_v4l2_controls(struct v4l2_flash *v4l2_flash)
- 	struct v4l2_ctrl **ctrls = v4l2_flash->ctrls;
- 	int ret = 0;
- 
--	v4l2_flash_set_led_brightness(v4l2_flash, ctrls[TORCH_INTENSITY]);
-+	if (ctrls[TORCH_INTENSITY])
-+		v4l2_flash_set_led_brightness(v4l2_flash, ctrls[TORCH_INTENSITY]);
- 
- 	if (ctrls[INDICATOR_INTENSITY])
- 		v4l2_flash_set_led_brightness(v4l2_flash,
-@@ -527,19 +528,21 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
- {
- 	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
--	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct led_classdev *led_cdev = fled_cdev ? &fled_cdev->led_cdev : NULL;
- 	struct led_classdev *led_cdev_ind = v4l2_flash->iled_cdev;
- 	int ret = 0;
- 
- 	if (!v4l2_fh_is_singular(&fh->vfh))
- 		return 0;
- 
--	mutex_lock(&led_cdev->led_access);
-+	if (led_cdev) {
-+		mutex_lock(&led_cdev->led_access);
- 
--	led_sysfs_disable(led_cdev);
--	led_trigger_remove(led_cdev);
-+		led_sysfs_disable(led_cdev);
-+		led_trigger_remove(led_cdev);
- 
--	mutex_unlock(&led_cdev->led_access);
-+		mutex_unlock(&led_cdev->led_access);
-+	}
- 
- 	if (led_cdev_ind) {
- 		mutex_lock(&led_cdev_ind->led_access);
-@@ -556,9 +559,11 @@ static int v4l2_flash_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
- 
- 	return 0;
- out_sync_device:
--	mutex_lock(&led_cdev->led_access);
--	led_sysfs_enable(led_cdev);
--	mutex_unlock(&led_cdev->led_access);
-+	if (led_cdev) {
-+		mutex_lock(&led_cdev->led_access);
-+		led_sysfs_enable(led_cdev);
-+		mutex_unlock(&led_cdev->led_access);
-+	}
- 
- 	if (led_cdev_ind) {
- 		mutex_lock(&led_cdev_ind->led_access);
-@@ -573,21 +578,24 @@ static int v4l2_flash_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
- {
- 	struct v4l2_flash *v4l2_flash = v4l2_subdev_to_v4l2_flash(sd);
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
--	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
-+	struct led_classdev *led_cdev = fled_cdev ? &fled_cdev->led_cdev : NULL;
- 	struct led_classdev *led_cdev_ind = v4l2_flash->iled_cdev;
- 	int ret = 0;
- 
- 	if (!v4l2_fh_is_singular(&fh->vfh))
- 		return 0;
- 
--	mutex_lock(&led_cdev->led_access);
-+	if (led_cdev) {
-+		mutex_lock(&led_cdev->led_access);
- 
--	if (v4l2_flash->ctrls[STROBE_SOURCE])
--		ret = v4l2_ctrl_s_ctrl(v4l2_flash->ctrls[STROBE_SOURCE],
-+		if (v4l2_flash->ctrls[STROBE_SOURCE])
-+			ret = v4l2_ctrl_s_ctrl(
-+				v4l2_flash->ctrls[STROBE_SOURCE],
- 				V4L2_FLASH_STROBE_SOURCE_SOFTWARE);
--	led_sysfs_enable(led_cdev);
-+		led_sysfs_enable(led_cdev);
- 
--	mutex_unlock(&led_cdev->led_access);
-+		mutex_unlock(&led_cdev->led_access);
-+	}
- 
- 	if (led_cdev_ind) {
- 		mutex_lock(&led_cdev_ind->led_access);
-@@ -605,25 +613,19 @@ static const struct v4l2_subdev_internal_ops v4l2_flash_subdev_internal_ops = {
- 
- static const struct v4l2_subdev_ops v4l2_flash_subdev_ops;
- 
--struct v4l2_flash *v4l2_flash_init(
-+static struct v4l2_flash *__v4l2_flash_init(
- 	struct device *dev, struct fwnode_handle *fwn,
--	struct led_classdev_flash *fled_cdev,
--	struct led_classdev *iled_cdev,
--	const struct v4l2_flash_ops *ops,
--	struct v4l2_flash_config *config)
-+	struct led_classdev_flash *fled_cdev, struct led_classdev *iled_cdev,
-+	const struct v4l2_flash_ops *ops, struct v4l2_flash_config *config)
- {
- 	struct v4l2_flash *v4l2_flash;
--	struct led_classdev *led_cdev;
- 	struct v4l2_subdev *sd;
- 	int ret;
- 
--	if (!fled_cdev || !config)
-+	if (!config)
- 		return ERR_PTR(-EINVAL);
- 
--	led_cdev = &fled_cdev->led_cdev;
--
--	v4l2_flash = devm_kzalloc(led_cdev->dev, sizeof(*v4l2_flash),
--					GFP_KERNEL);
-+	v4l2_flash = devm_kzalloc(dev, sizeof(*v4l2_flash), GFP_KERNEL);
- 	if (!v4l2_flash)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -632,7 +634,7 @@ struct v4l2_flash *v4l2_flash_init(
- 	v4l2_flash->iled_cdev = iled_cdev;
- 	v4l2_flash->ops = ops;
- 	sd->dev = dev;
--	sd->fwnode = fwn ? fwn : dev_fwnode(led_cdev->dev);
-+	sd->fwnode = fwn ? fwn : dev_fwnode(dev);
- 	v4l2_subdev_init(sd, &v4l2_flash_subdev_ops);
- 	sd->internal_ops = &v4l2_flash_subdev_internal_ops;
- 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-@@ -664,8 +666,26 @@ struct v4l2_flash *v4l2_flash_init(
- 
- 	return ERR_PTR(ret);
- }
-+
-+struct v4l2_flash *v4l2_flash_init(
-+	struct device *dev, struct fwnode_handle *fwn,
-+	struct led_classdev_flash *fled_cdev,
-+	const struct v4l2_flash_ops *ops,
-+	struct v4l2_flash_config *config)
-+{
-+	return __v4l2_flash_init(dev, fwn, fled_cdev, NULL, ops, config);
-+}
- EXPORT_SYMBOL_GPL(v4l2_flash_init);
- 
-+struct v4l2_flash *v4l2_flash_indicator_init(
-+	struct device *dev, struct fwnode_handle *fwn,
-+	struct led_classdev *iled_cdev,
-+	struct v4l2_flash_config *config)
-+{
-+	return __v4l2_flash_init(dev, fwn, NULL, iled_cdev, NULL, config);
-+}
-+EXPORT_SYMBOL_GPL(v4l2_flash_indicator_init);
-+
- void v4l2_flash_release(struct v4l2_flash *v4l2_flash)
- {
- 	struct v4l2_subdev *sd;
-diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-index b25c117ec41a..17de450ee7e5 100644
---- a/drivers/staging/greybus/light.c
-+++ b/drivers/staging/greybus/light.c
-@@ -58,6 +58,7 @@ struct gb_light {
- 	bool			ready;
- #if IS_REACHABLE(CONFIG_V4L2_FLASH_LED_CLASS)
- 	struct v4l2_flash	*v4l2_flash;
-+	struct v4l2_flash	*v4l2_flash_ind;
- #endif
- };
- 
-@@ -534,7 +535,7 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- {
- 	struct gb_connection *connection = get_conn_from_light(light);
- 	struct device *dev = &connection->bundle->dev;
--	struct v4l2_flash_config sd_cfg = { 0 };
-+	struct v4l2_flash_config sd_cfg = { 0 }, sd_cfg_ind = { 0 };
- 	struct led_classdev_flash *fled;
- 	struct led_classdev *iled = NULL;
- 	struct gb_channel *channel_torch, *channel_ind, *channel_flash;
-@@ -543,12 +544,12 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- 	channel_torch = get_channel_from_mode(light, GB_CHANNEL_MODE_TORCH);
- 	if (channel_torch)
- 		__gb_lights_channel_v4l2_config(&channel_torch->intensity_uA,
--						&sd_cfg.torch_intensity);
-+						&sd_cfg.intensity);
- 
- 	channel_ind = get_channel_from_mode(light, GB_CHANNEL_MODE_INDICATOR);
- 	if (channel_ind) {
- 		__gb_lights_channel_v4l2_config(&channel_ind->intensity_uA,
--						&sd_cfg.indicator_intensity);
-+						&sd_cfg_ind.intensity);
- 		iled = &channel_ind->fled.led_cdev;
- 	}
- 
-@@ -558,6 +559,8 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- 	fled = &channel_flash->fled;
- 
- 	snprintf(sd_cfg.dev_name, sizeof(sd_cfg.dev_name), "%s", light->name);
-+	snprintf(sd_cfg_ind.dev_name, sizeof(sd_cfg_ind.dev_name),
-+		 "%s indicator", light->name);
- 
- 	/* Set the possible values to faults, in our case all faults */
- 	sd_cfg.flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
-@@ -566,21 +569,32 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- 		LED_FAULT_UNDER_VOLTAGE | LED_FAULT_INPUT_VOLTAGE |
- 		LED_FAULT_LED_OVER_TEMPERATURE;
- 
--	light->v4l2_flash = v4l2_flash_init(dev, NULL, fled, iled,
--					    &v4l2_flash_ops, &sd_cfg);
-+	light->v4l2_flash = v4l2_flash_init(dev, NULL, fled, &v4l2_flash_ops,
-+					    &sd_cfg);
- 	if (IS_ERR_OR_NULL(light->v4l2_flash)) {
- 		ret = PTR_ERR(light->v4l2_flash);
- 		goto out_free;
- 	}
- 
-+	if (channel_ind) {
-+		light->v4l2_flash_ind =
-+			v4l2_flash_indicator_init(dev, NULL, iled, &sd_cfg_ind);
-+		if (IS_ERR_OR_NULL(light->v4l2_flash_ind)) {
-+			ret = PTR_ERR(light->v4l2_flash_ind);
-+			goto out_free;
-+		}
-+	}
-+
- 	return ret;
- 
- out_free:
-+	v4l2_flash_release(light->v4l2_flash);
- 	return ret;
- }
- 
- static void gb_lights_light_v4l2_unregister(struct gb_light *light)
- {
-+	v4l2_flash_release(light->v4l2_flash_ind);
- 	v4l2_flash_release(light->v4l2_flash);
- }
- #else
-diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-flash-led-class.h
-index 54e31a805a88..c3f39992f3fa 100644
---- a/include/media/v4l2-flash-led-class.h
-+++ b/include/media/v4l2-flash-led-class.h
-@@ -56,8 +56,7 @@ struct v4l2_flash_ops {
-  * struct v4l2_flash_config - V4L2 Flash sub-device initialization data
-  * @dev_name:			the name of the media entity,
-  *				unique in the system
-- * @torch_intensity:		constraints for the LED in torch mode
-- * @indicator_intensity:	constraints for the indicator LED
-+ * @intensity:			non-flash strobe constraints for the LED
-  * @flash_faults:		bitmask of flash faults that the LED flash class
-  *				device can report; corresponding LED_FAULT* bit
-  *				definitions are available in the header file
-@@ -66,8 +65,7 @@ struct v4l2_flash_ops {
-  */
- struct v4l2_flash_config {
- 	char dev_name[32];
--	struct led_flash_setting torch_intensity;
--	struct led_flash_setting indicator_intensity;
-+	struct led_flash_setting intensity;
- 	u32 flash_faults;
- 	unsigned int has_external_strobe:1;
- };
-@@ -110,8 +108,6 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
-  * @dev:	flash device, e.g. an I2C device
-  * @fwn:	fwnode_handle of the LED, may be NULL if the same as device's
-  * @fled_cdev:	LED flash class device to wrap
-- * @iled_cdev:	LED flash class device representing indicator LED associated
-- *		with fled_cdev, may be NULL
-  * @ops:	V4L2 Flash device ops
-  * @config:	initialization data for V4L2 Flash sub-device
-  *
-@@ -124,9 +120,24 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
- struct v4l2_flash *v4l2_flash_init(
- 	struct device *dev, struct fwnode_handle *fwn,
- 	struct led_classdev_flash *fled_cdev,
--	struct led_classdev *iled_cdev,
--	const struct v4l2_flash_ops *ops,
--	struct v4l2_flash_config *config);
-+	const struct v4l2_flash_ops *ops, struct v4l2_flash_config *config);
-+
-+/**
-+ * v4l2_flash_indicator_init - initialize V4L2 indicator sub-device
-+ * @dev:	flash device, e.g. an I2C device
-+ * @fwn:	fwnode_handle of the LED, may be NULL if the same as device's
-+ * @iled_cdev:	LED flash class device representing the indicator LED
-+ * @config:	initialization data for V4L2 Flash sub-device
-+ *
-+ * Create V4L2 Flash sub-device wrapping given LED subsystem device.
-+ *
-+ * Returns: A valid pointer, or, when an error occurs, the return
-+ * value is encoded using ERR_PTR(). Use IS_ERR() to check and
-+ * PTR_ERR() to obtain the numeric return value.
-+ */
-+struct v4l2_flash *v4l2_flash_indicator_init(
-+	struct device *dev, struct fwnode_handle *fwn,
-+	struct led_classdev *iled_cdev, struct v4l2_flash_config *config);
- 
- /**
-  * v4l2_flash_release - release V4L2 Flash sub-device
-@@ -139,10 +150,14 @@ void v4l2_flash_release(struct v4l2_flash *v4l2_flash);
- #else
- static inline struct v4l2_flash *v4l2_flash_init(
- 	struct device *dev, struct fwnode_handle *fwn,
--	struct led_classdev_flash *fled_cdev,
--	struct led_classdev *iled_cdev,
--	const struct v4l2_flash_ops *ops,
--	struct v4l2_flash_config *config)
-+	struct led_classdev_flash *fled_cdev, struct v4l2_flash_config *config)
-+{
-+	return NULL;
-+}
-+
-+static inline struct v4l2_flash *v4l2_flash_indicator_init(
-+	struct device *dev, struct fwnode_handle *fwn,
-+	struct led_classdev *iled_cdev, struct v4l2_flash_config *config)
- {
+diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+index f8d60051efb8..b39497cd3f7f 100644
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -1195,6 +1195,32 @@ acpi_fwnode_get_named_child_node(const struct fwnode_handle *fwnode,
  	return NULL;
  }
+ 
++static int
++acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
++			       const char *prop, const char *nargs_prop,
++			       unsigned int args_count, unsigned int index,
++			       struct fwnode_reference_args *args)
++{
++	struct acpi_reference_args acpi_args;
++	unsigned int i;
++	int ret;
++
++	ret = __acpi_node_get_property_reference(fwnode, prop, index,
++						 args_count, &acpi_args);
++	if (ret < 0)
++		return ret;
++	if (!args)
++		return 0;
++
++	args->nargs = acpi_args.nargs;
++	args->fwnode = acpi_fwnode_handle(acpi_args.adev);
++
++	for (i = 0; i < NR_OF_FWNODE_REFERENCE_ARGS; i++)
++		args->args[i] = i < acpi_args.nargs ? acpi_args.args[i] : 0;
++
++	return 0;
++}
++
+ static struct fwnode_handle *
+ acpi_fwnode_graph_get_next_endpoint(const struct fwnode_handle *fwnode,
+ 				    struct fwnode_handle *prev)
+@@ -1248,6 +1274,7 @@ static int acpi_fwnode_graph_parse_endpoint(const struct fwnode_handle *fwnode,
+ 		.get_parent = acpi_node_get_parent,			\
+ 		.get_next_child_node = acpi_get_next_subnode,		\
+ 		.get_named_child_node = acpi_fwnode_get_named_child_node, \
++		.get_reference_args = acpi_fwnode_get_reference_args,	\
+ 		.graph_get_next_endpoint =				\
+ 			acpi_fwnode_graph_get_next_endpoint,		\
+ 		.graph_get_remote_endpoint =				\
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 673e2353a2fb..369b5471198f 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -665,6 +665,18 @@ int fwnode_property_match_string(const struct fwnode_handle *fwnode,
+ }
+ EXPORT_SYMBOL_GPL(fwnode_property_match_string);
+ 
++/**
++ */
++int fwnode_property_get_reference_args(const struct fwnode_handle *fwnode,
++				       const char *prop, const char *nargs_prop,
++				       unsigned int nargs, unsigned int index,
++				       struct fwnode_reference_args *args)
++{
++	return fwnode_call_int_op(fwnode, get_reference_args, prop, nargs_prop,
++				  nargs, index, args);
++}
++EXPORT_SYMBOL_GPL(fwnode_property_get_reference_args);
++
+ static int property_copy_string_array(struct property_entry *dst,
+ 				      const struct property_entry *src)
+ {
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index ae46a6f0ea36..2350103f8be6 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -891,6 +891,36 @@ of_fwnode_get_named_child_node(const struct fwnode_handle *fwnode,
+ 	return NULL;
+ }
+ 
++static int
++of_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
++			     const char *prop, const char *nargs_prop,
++			     unsigned int nargs, unsigned int index,
++			     struct fwnode_reference_args *args)
++{
++	struct of_phandle_args of_args;
++	unsigned int i;
++	int ret;
++
++	if (nargs_prop)
++		ret = of_parse_phandle_with_args(to_of_node(fwnode), prop,
++						 nargs_prop, index, &of_args);
++	else
++		ret = of_parse_phandle_with_fixed_args(to_of_node(fwnode), prop,
++						       nargs, index, &of_args);
++	if (ret < 0)
++		return ret;
++	if (!args)
++		return 0;
++
++	args->nargs = of_args.args_count;
++	args->fwnode = of_fwnode_handle(of_args.np);
++
++	for (i = 0; i < NR_OF_FWNODE_REFERENCE_ARGS; i++)
++		args->args[i] = i < of_args.args_count ? of_args.args[i] : 0;
++
++	return 0;
++}
++
+ static struct fwnode_handle *
+ of_fwnode_graph_get_next_endpoint(const struct fwnode_handle *fwnode,
+ 				  struct fwnode_handle *prev)
+@@ -949,6 +979,7 @@ const struct fwnode_operations of_fwnode_ops = {
+ 	.get_parent = of_fwnode_get_parent,
+ 	.get_next_child_node = of_fwnode_get_next_child_node,
+ 	.get_named_child_node = of_fwnode_get_named_child_node,
++	.get_reference_args = of_fwnode_get_reference_args,
+ 	.graph_get_next_endpoint = of_fwnode_graph_get_next_endpoint,
+ 	.graph_get_remote_endpoint = of_fwnode_graph_get_remote_endpoint,
+ 	.graph_get_port_parent = of_fwnode_graph_get_port_parent,
+diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
+index 7b50ee4edcfc..218fe03544c9 100644
+--- a/include/linux/fwnode.h
++++ b/include/linux/fwnode.h
+@@ -33,6 +33,20 @@ struct fwnode_endpoint {
+ 	const struct fwnode_handle *local_fwnode;
+ };
+ 
++#define NR_OF_FWNODE_REFERENCE_ARGS	8
++
++/**
++ * struct fwnode_reference_args - Fwnode reference with additional arguments
++ * @fwnode:- A reference to the base fwnode
++ * @nargs: Number of elements in @args array
++ * @args: Integer arguments on the fwnode
++ */
++struct fwnode_reference_args {
++	struct fwnode_handle *fwnode;
++	unsigned int nargs;
++	unsigned int args[NR_OF_FWNODE_REFERENCE_ARGS];
++};
++
+ /**
+  * struct fwnode_operations - Operations for fwnode interface
+  * @get: Get a reference to an fwnode.
+@@ -46,6 +60,7 @@ struct fwnode_endpoint {
+  * @get_parent: Return the parent of an fwnode.
+  * @get_next_child_node: Return the next child node in an iteration.
+  * @get_named_child_node: Return a child node with a given name.
++ * @get_reference_args: Return a reference pointed to by a property, with args
+  * @graph_get_next_endpoint: Return an endpoint node in an iteration.
+  * @graph_get_remote_endpoint: Return the remote endpoint node of a local
+  *			       endpoint node.
+@@ -73,6 +88,10 @@ struct fwnode_operations {
+ 	struct fwnode_handle *
+ 	(*get_named_child_node)(const struct fwnode_handle *fwnode,
+ 				const char *name);
++	int (*get_reference_args)(const struct fwnode_handle *fwnode,
++				  const char *prop, const char *nargs_prop,
++				  unsigned int nargs, unsigned int index,
++				  struct fwnode_reference_args *args);
+ 	struct fwnode_handle *
+ 	(*graph_get_next_endpoint)(const struct fwnode_handle *fwnode,
+ 				   struct fwnode_handle *prev);
+diff --git a/include/linux/property.h b/include/linux/property.h
+index edff3f89e755..6bebee13c5e0 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -73,6 +73,10 @@ int fwnode_property_read_string(const struct fwnode_handle *fwnode,
+ 				const char *propname, const char **val);
+ int fwnode_property_match_string(const struct fwnode_handle *fwnode,
+ 				 const char *propname, const char *string);
++int fwnode_property_get_reference_args(const struct fwnode_handle *fwnode,
++				       const char *prop, const char *nargs_prop,
++				       unsigned int nargs, unsigned int index,
++				       struct fwnode_reference_args *args);
+ 
+ struct fwnode_handle *fwnode_get_parent(const struct fwnode_handle *fwnode);
+ struct fwnode_handle *fwnode_get_next_parent(
 -- 
 2.11.0
