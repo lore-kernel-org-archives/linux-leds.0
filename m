@@ -1,212 +1,96 @@
-From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] DT: leds: Add Qualcomm Light Pulse Generator
- binding
-Date: Mon, 17 Jul 2017 17:03:15 -0700
-Message-ID: <20170718000314.GC20973@minitux>
-References: <20170714224520.467-1-bjorn.andersson@linaro.org>
- <20170714224520.467-4-bjorn.andersson@linaro.org>
- <aefc36fc-9c16-e8da-b684-6e77ec96c662@gmail.com>
- <20170717044430.GW1618@tuxbook>
- <8c5d2d85-24ac-2ff9-8512-f669063edf4c@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <8c5d2d85-24ac-2ff9-8512-f669063edf4c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v1.1 1/1] v4l2-flash: Flash ops aren't mandatory
+Date: Tue, 18 Jul 2017 20:36:23 +0300
+Message-ID: <20170718173623.7821-1-sakari.ailus@linux.intel.com>
+References: <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59044 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751433AbdGRRg2 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 18 Jul 2017 13:36:28 -0400
+In-Reply-To: <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz, jacek.anaszewski@gmail.com
 
-On Mon 17 Jul 14:08 PDT 2017, Jacek Anaszewski wrote:
+None of the flash operations are mandatory and therefore there should be
+no need for the flash ops structure either. Accept NULL.
 
-> On 07/17/2017 06:44 AM, Bjorn Andersson wrote:
-> > On Sun 16 Jul 11:49 PDT 2017, Jacek Anaszewski wrote:
-> >> On 07/15/2017 12:45 AM, Bjorn Andersson wrote:
-> >>> diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> >>> new file mode 100644
-> >>> index 000000000000..cc9ffee6586b
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-> >>> @@ -0,0 +1,145 @@
-> >>> +Binding for Qualcomm Light Pulse Generator
-> >>> +
-> >>> +The Qualcomm Light Pulse Generator consists of three different hardware blocks;
-> >>
-> >> Is there a freely available documentation thereof?
-> >>
-> > 
-> > The only publicly available Qualcomm PMIC documentation that I'm aware
-> > of only have the PWM hardware block, so it will be possible to use this
-> > driver but with limited functionality.
-> 
-> I asked because having an access to the doc would speed up the
-> contribution process a lot I think. Of course we will manage to make it
-> also basing on the details you're providing us with, but it will take
-> a bit longer, taking into account the device complexity.
-> 
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+Hi folks,
 
-I agree that it would be convenient. Please do let me know if there are
-any parts that are unclear and I'll try to explain things further.
+I'm planning to get this one plus "v4l2-flash: Use led_classdev instead of
+led_classdev_flash for indicator" to linux-media in the near future. The
+rest still needs work.
 
-> > [..]
-> >>> += Light Pulse Generator (LPG)
-> >>> +The Light Pulse Generator can operate either as a standard PWM controller or in
-> >>> +a more advanced lookup-table based mode. These are described separately below.
-> >>
-> >> Why a user would prefer one option over the other? I assume that both
-> >> controllers offer at least slightly different capabilities.
-> >> If so, then it could be the driver which would decide which one fits
-> >> better for the requested LED class device configuration.
-> >>
-> > 
-> > I have never seen this hardware block been used as a PWM, but I imagine
-> > it to be used when someone has another driver that expects to be able to
-> > use the PWM API to control an output.
-> 
-> We have already leds-pwm driver and related DT bindings. We could think
-> of making some part of leds-pwm code reusable. I'd skip it for now
-> though.
-> 
+since v1:
 
-I know of a few different attempts where people have tried to start off
-with a PWM driver and leds-pwm and then extend that to support patterns.
+- Use has_flash_op() in __fill_ctrl_init_data() to check an op exists.
 
->From this I concluded that any LED use cases better be implemented in
-this way, but still offer the system designer to use the hardware block
-as a PWM source - if any other device drivers/use cases expects a PWM
-source.
+ drivers/media/v4l2-core/v4l2-flash-led-class.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> > In this case the node would need a #pwm-cells property, which it doesn't
-> > when it's acting as a LED and it wouldn't make much sense to expose the
-> > pin as a LED at the same time.
-> > 
-> > Perhaps I overthought this? Maybe I should just leave the PWM mode out
-> > for now and it could be added in the future?
-> 
-> Sounds reasonable.
-> 
-> > [..]
-> >>> +&spmi_bus {
-> >>> +	pmic@3 {
-> >>> +		compatible = "qcom,pmi8994", "qcom,spmi-pmic";
-> >>> +		reg = <0x3 SPMI_USID>;
-> >>> +		#address-cells = <1>;
-> >>> +		#size-cells = <0>;
-> >>> +
-> >>> +		pmi8994_lpg_lut: lpg-lut@b000 {
-> >>> +			compatible = "qcom,spmi-lpg-lut";
-> >>> +			reg = <0xb000>;
-> >>> +
-> >>> +			qcom,lut-size = <24>;
-> >>> +		};
-> >>> +
-> >>> +		lpg@b200 {
-> >>> +			compatible = "qcom,spmi-lpg";
-> >>> +			reg = <0xb200>;
-> >>> +
-> >>> +			cell-index = <2>;
-> >>> +
-> >>> +			label = "lpg:green:user0";
-> >>> +
-> >>> +			qcom,tri-led = <&pmi8994_tri_led 1>;
-> >>> +			qcom,lut = <&pmi8994_lpg_lut>;
-> >>> +
-> >>> +			default-state = "on";
-> >>> +		};
-> >>> +
-> >>> +		pmi8994_tri_led: tri-led@d000 {
-> >>> +			compatible = "qcom,spmi-tri-led";
-> >>> +			reg = <0xd000>;
-> >>> +
-> >>> +			qcom,power-source = <1>;
-> >>> +		};
-> >>
-> >> Such a design is uncommon for LED class DT bindings. It should
-> >> suffice to have a single DT LED node per LED. I have an impression
-> >> that you're exposing too many hardware details here.
-> >> You can use led-sources property (see Documentation/devicetree/bindings
-> >> /leds/common.txt and drivers/leds/leds-max77693.c where it is used).
-> >>
-> > 
-> > The LUT is shared among the (up to) 8 LPG blocks, so while I did
-> > consider just including the LUT in each LPG block it didn't look nice
-> > and I had to implement the LUT as a singleton in the driver itself.
-> > 
-> > The TRILED is only one of the available current sinks in the PMIC that
-> > can be driven by the LPG; the other one I use so far is a special GPIO
-> > pin acting as a current sink.
-> > 
-> > Also the power-source configuration is shared among the three channels
-> > of the TRILED, so it doesn't really make sense to put this configuration
-> > in the LPG blocks themselves.
-> 
-> I'll mention led-sources once again. Probably it could be of help here.
-> 
-
-I wasn't aware of the led-sources, thanks for highlighting it (once more).
-
-Perhaps if we go with your suggested redesign of having a single node
-for all LPG related parts the led-sources would be used for some of
-those channels to tie them to the TRILED...
-
-> > 
-> > And note that these are different blocks within the Qualcomm PMIC, with
-> > my design only one of them is actually representing the LED instance.
-> 
-> Maybe the core of the driver should be placed in MFD subsystem then?
-> 
-
-If we're to move things around I would say the current sink (TRILED)
-should go elsewhere, and we should hide the LUT somewhere (although it's
-very much tied to the LPG block) and then keep the LPG as "the LED
-driver".
-
-The overarching PMIC driver is already a MFD, so I don't think it makes
-sense to group some of the MFD children into a new MFD.
-
-> >> It is also not clear to me why single green color LED presented here
-> >> would have to use tri-led sink? I suppose that the sink is predestined
-> >> for three-color LEDs.
-> >>
-> > 
-> > The board I'm working on (DragonBoard820c) has 4 green LEDs, the first 3
-> > are connected to the 3 channels of the TRILED and the fourth is
-> > connected to a special GPIO in current sink mode. But I choose to
-> > shorted the example to one channel.
-> > 
-> > So I end up having one LUT node, four LPG nodes, one TRILED and one GPIO
-> > node and the user space is presented with a unified interface to all
-> > four.
-> 
-> Generally I'd prefer to have a single LED class driver for this device,
-> or alternatively a LED class driver for a LED cell of MFD device.
-> DT bindings would define which hw blocks are LED related.
-> All routing related issues should be solvable with use of led-sources
-> property.
-> 
-
-Based on the fact that I'm writing a driver for a MFD child block and
-there can be 1-8 instances of the hardware block, we got a pretty nice
-representation of the hardware in DT.  But for e.g. GPIOs we do have a
-single driver instance for multiple blocks, so it wouldn't be the only
-case.
-
-The DeviceTree would in this case be a single node covering the N LPG
-blocks, the TRILED and the LUT and would have to have N child nodes to
-express the properties of each channel. The driver would register a
-led_cdev for each of the channels.
-
-
-My initial concern with this approach is that we have a variable number
-of LPG blocks and the LUT and TRILED blocks are not found in all PMICs.
-But if we are allowed to rely on "reg-names" we would be fine and it
-would reduce the complexity of tying the multiple devices together a
-bit.
-
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+index 6d69119ff097..aabc85dbb8b5 100644
+--- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
++++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+@@ -18,7 +18,7 @@
+ #include <media/v4l2-flash-led-class.h>
+ 
+ #define has_flash_op(v4l2_flash, op)				\
+-	(v4l2_flash && v4l2_flash->ops->op)
++	(v4l2_flash && v4l2_flash->ops && v4l2_flash->ops->op)
+ 
+ #define call_flash_op(v4l2_flash, op, arg)			\
+ 		(has_flash_op(v4l2_flash, op) ?			\
+@@ -299,7 +299,6 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+ 			  struct v4l2_flash_ctrl_data *ctrl_init_data)
+ {
+ 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+-	const struct led_flash_ops *fled_cdev_ops = fled_cdev->ops;
+ 	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
+ 	struct v4l2_ctrl_config *ctrl_cfg;
+ 	u32 mask;
+@@ -376,7 +375,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+ 	}
+ 
+ 	/* Init STROBE_STATUS ctrl data */
+-	if (fled_cdev_ops->strobe_get) {
++	if (has_flash_op(fled_cdev, strobe_get)) {
+ 		ctrl_init_data[STROBE_STATUS].cid =
+ 					V4L2_CID_FLASH_STROBE_STATUS;
+ 		ctrl_cfg = &ctrl_init_data[STROBE_STATUS].config;
+@@ -386,7 +385,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+ 	}
+ 
+ 	/* Init FLASH_TIMEOUT ctrl data */
+-	if (fled_cdev_ops->timeout_set) {
++	if (has_flash_op(fled_cdev, timeout_set)) {
+ 		ctrl_init_data[FLASH_TIMEOUT].cid = V4L2_CID_FLASH_TIMEOUT;
+ 		ctrl_cfg = &ctrl_init_data[FLASH_TIMEOUT].config;
+ 		__lfs_to_v4l2_ctrl_config(&fled_cdev->timeout, ctrl_cfg);
+@@ -394,7 +393,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
+ 	}
+ 
+ 	/* Init FLASH_INTENSITY ctrl data */
+-	if (fled_cdev_ops->flash_brightness_set) {
++	if (has_flash_op(fled_cdev, flash_brightness_set)) {
+ 		ctrl_init_data[FLASH_INTENSITY].cid = V4L2_CID_FLASH_INTENSITY;
+ 		ctrl_cfg = &ctrl_init_data[FLASH_INTENSITY].config;
+ 		__lfs_to_v4l2_ctrl_config(&fled_cdev->brightness, ctrl_cfg);
+@@ -618,7 +617,7 @@ struct v4l2_flash *v4l2_flash_init(
+ 	struct v4l2_subdev *sd;
+ 	int ret;
+ 
+-	if (!fled_cdev || !ops || !config)
++	if (!fled_cdev || !config)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	led_cdev = &fled_cdev->led_cdev;
+-- 
+2.11.0
