@@ -1,96 +1,45 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v1.1 1/1] v4l2-flash: Flash ops aren't mandatory
-Date: Tue, 18 Jul 2017 20:36:23 +0300
-Message-ID: <20170718173623.7821-1-sakari.ailus@linux.intel.com>
-References: <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59044 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751433AbdGRRg2 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 18 Jul 2017 13:36:28 -0400
-In-Reply-To: <1497433639-13101-6-git-send-email-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+Subject: [PATCH 0/2] Create sub-device per LED
+Date: Tue, 18 Jul 2017 21:41:05 +0300
+Message-ID: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
 List-Id: linux-leds@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, sebastian.reichel@collabora.co.uk, robh@kernel.org, pavel@ucw.cz, jacek.anaszewski@gmail.com
 
-None of the flash operations are mandatory and therefore there should be
-no need for the flash ops structure either. Accept NULL.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
----
 Hi folks,
 
-I'm planning to get this one plus "v4l2-flash: Use led_classdev instead of
-led_classdev_flash for indicator" to linux-media in the near future. The
-rest still needs work.
+The original design decision in the V4L2 flash API allows controlling a two
+LEDs (an indicator and a flash) through a single sub-device. This covered
+virtually all flash driver chips back then but this no longer holds as
+there are many LED driver chips with multiple flash LED outputs. This
+necessitates creating as many sub-devices as there are flash LEDs.
 
-since v1:
+Additionally the flash LEDs can be associated to different sensors. This is
+not unconceivable although not very probable.
 
-- Use has_flash_op() in __fill_ctrl_init_data() to check an op exists.
+This patchset splits the indicator and flash LEDs exposed by the V4L2 flash
+class framework into multiple sub-devices. This way the driver creates the
+sub-devices individually for each LED which will also facilitate fwnode
+matching (e.g. will you refer to LED or a LED driver chip with a phandle?).
 
- drivers/media/v4l2-core/v4l2-flash-led-class.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+I'll post that set soonish.
 
-diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-index 6d69119ff097..aabc85dbb8b5 100644
---- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
-+++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
-@@ -18,7 +18,7 @@
- #include <media/v4l2-flash-led-class.h>
- 
- #define has_flash_op(v4l2_flash, op)				\
--	(v4l2_flash && v4l2_flash->ops->op)
-+	(v4l2_flash && v4l2_flash->ops && v4l2_flash->ops->op)
- 
- #define call_flash_op(v4l2_flash, op, arg)			\
- 		(has_flash_op(v4l2_flash, op) ?			\
-@@ -299,7 +299,6 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 			  struct v4l2_flash_ctrl_data *ctrl_init_data)
- {
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
--	const struct led_flash_ops *fled_cdev_ops = fled_cdev->ops;
- 	struct led_classdev *led_cdev = &fled_cdev->led_cdev;
- 	struct v4l2_ctrl_config *ctrl_cfg;
- 	u32 mask;
-@@ -376,7 +375,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 	}
- 
- 	/* Init STROBE_STATUS ctrl data */
--	if (fled_cdev_ops->strobe_get) {
-+	if (has_flash_op(fled_cdev, strobe_get)) {
- 		ctrl_init_data[STROBE_STATUS].cid =
- 					V4L2_CID_FLASH_STROBE_STATUS;
- 		ctrl_cfg = &ctrl_init_data[STROBE_STATUS].config;
-@@ -386,7 +385,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 	}
- 
- 	/* Init FLASH_TIMEOUT ctrl data */
--	if (fled_cdev_ops->timeout_set) {
-+	if (has_flash_op(fled_cdev, timeout_set)) {
- 		ctrl_init_data[FLASH_TIMEOUT].cid = V4L2_CID_FLASH_TIMEOUT;
- 		ctrl_cfg = &ctrl_init_data[FLASH_TIMEOUT].config;
- 		__lfs_to_v4l2_ctrl_config(&fled_cdev->timeout, ctrl_cfg);
-@@ -394,7 +393,7 @@ static void __fill_ctrl_init_data(struct v4l2_flash *v4l2_flash,
- 	}
- 
- 	/* Init FLASH_INTENSITY ctrl data */
--	if (fled_cdev_ops->flash_brightness_set) {
-+	if (has_flash_op(fled_cdev, flash_brightness_set)) {
- 		ctrl_init_data[FLASH_INTENSITY].cid = V4L2_CID_FLASH_INTENSITY;
- 		ctrl_cfg = &ctrl_init_data[FLASH_INTENSITY].config;
- 		__lfs_to_v4l2_ctrl_config(&fled_cdev->brightness, ctrl_cfg);
-@@ -618,7 +617,7 @@ struct v4l2_flash *v4l2_flash_init(
- 	struct v4l2_subdev *sd;
- 	int ret;
- 
--	if (!fled_cdev || !ops || !config)
-+	if (!fled_cdev || !config)
- 		return ERR_PTR(-EINVAL);
- 
- 	led_cdev = &fled_cdev->led_cdev;
+These go on top of the other flash patches here:
+
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=for-4.14-2>
+
+Sakari Ailus (2):
+  staging: greybus: light: Don't leak memory for no gain
+  v4l2-flash-led-class: Create separate sub-devices for indicators
+
+ drivers/leds/leds-aat1290.c                    |   4 +-
+ drivers/leds/leds-max77693.c                   |   4 +-
+ drivers/media/v4l2-core/v4l2-flash-led-class.c | 112 +++++++++++++++----------
+ drivers/staging/greybus/light.c                |  33 +++++---
+ include/media/v4l2-flash-led-class.h           |  41 ++++++---
+ 5 files changed, 119 insertions(+), 75 deletions(-)
+
 -- 
 2.11.0
