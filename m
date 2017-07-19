@@ -1,46 +1,50 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 1/1] v4l2-flash-led-class: Document v4l2_flash_init() references
-Date: Thu, 20 Jul 2017 01:40:31 +0300
-Message-ID: <20170719224031.12133-1-sakari.ailus@linux.intel.com>
-References: <20170719115934.GA23510@amd>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 2/2] v4l2-flash-led-class: Create separate sub-devices
+ for indicators
+Date: Thu, 20 Jul 2017 01:42:46 +0300
+Message-ID: <20170719224246.2hmxu6ba7ihv3owv@valkosipuli.retiisi.org.uk>
+References: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
+ <20170718184107.10598-3-sakari.ailus@linux.intel.com>
+ <20170719120246.GB23510@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170719115934.GA23510@amd>
+Content-Disposition: inline
+In-Reply-To: <20170719120246.GB23510@amd>
 Sender: linux-media-owner@vger.kernel.org
-To: pavel@ucw.cz
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
 List-Id: linux-leds@vger.kernel.org
 
-The v4l2_flash_init() keeps a reference to the ops struct but not to the
-config struct (nor anything it contains). Document this.
+On Wed, Jul 19, 2017 at 02:02:46PM +0200, Pavel Machek wrote:
+> On Tue 2017-07-18 21:41:07, Sakari Ailus wrote:
+> > The V4L2 flash interface allows controlling multiple LEDs through a single
+> > sub-devices if, and only if, these LEDs are of different types. This
+> > approach scales badly for flash controllers that drive multiple flash LEDs
+> > or for LED specific associations. Essentially, the original assumption of a
+> > LED driver chip that drives a single flash LED and an indicator LED is no
+> > longer valid.
+> > 
+> > Address the matter by registering one sub-device per LED.
+> > 
+> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- include/media/v4l2-flash-led-class.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks!
 
-diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-flash-led-class.h
-index c3f39992f3fa..6f4825b6a352 100644
---- a/include/media/v4l2-flash-led-class.h
-+++ b/include/media/v4l2-flash-led-class.h
-@@ -112,6 +112,9 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
-  * @config:	initialization data for V4L2 Flash sub-device
-  *
-  * Create V4L2 Flash sub-device wrapping given LED subsystem device.
-+ * The ops pointer is stored by the V4L2 flash framework. No
-+ * references are held to config nor its contents once this function
-+ * has returned.
-  *
-  * Returns: A valid pointer, or, when an error occurs, the return
-  * value is encoded using ERR_PTR(). Use IS_ERR() to check and
-@@ -130,6 +133,9 @@ struct v4l2_flash *v4l2_flash_init(
-  * @config:	initialization data for V4L2 Flash sub-device
-  *
-  * Create V4L2 Flash sub-device wrapping given LED subsystem device.
-+ * The ops pointer is stored by the V4L2 flash framework. No
-+ * references are held to config nor its contents once this function
-+ * has returned.
-  *
-  * Returns: A valid pointer, or, when an error occurs, the return
-  * value is encoded using ERR_PTR(). Use IS_ERR() to check and
+> 
+> Does anything need to be done with drivers/media/i2c/adp1653.c ?
+
+Well, it does expose the two LEDs through the same sub-device. I don't
+think that'd really be an issue. The drivers/media/i2c/as3645a.c does the
+same, I think it's fine to keep that.
+
+Effectively only new drivers will have the new behaviour (apart from the
+greybus staging driver).
+
 -- 
-2.11.0
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
