@@ -1,47 +1,71 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC 18/19] v4l2-fwnode: Add abstracted sub-device notifiers
-Date: Thu, 20 Jul 2017 01:20:10 +0300
-Message-ID: <20170719222010.m4s3b3vy4f3l4d5t@valkosipuli.retiisi.org.uk>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <20170718190401.14797-19-sakari.ailus@linux.intel.com>
- <20170718211922.GI28538@bigcity.dyn.berto.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:54498 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753467AbdGSWUP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 19 Jul 2017 18:20:15 -0400
-Content-Disposition: inline
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [RFC 1/1] v4l2-subdev: Add a function to set sub-device notifier callbacks
+Date: Thu, 20 Jul 2017 01:33:29 +0300
+Message-ID: <20170719223329.10112-1-sakari.ailus@linux.intel.com>
+References: <20170718211922.GI28538@bigcity.dyn.berto.se>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170718211922.GI28538@bigcity.dyn.berto.se>
-Sender: linux-leds-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
+To: niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl
 List-Id: linux-leds@vger.kernel.org
-To: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl
 
-Hi Niklas,
+The sub-device's sub-notifier is hidded in the sub-device and not meant to
+be accessed directly by drivers. Still the driver may wish to set callbacks
+to the notifier. Add a function to do that:
+v4l2_subdev_notifier_set_callbacks().
 
-Thanks for the review!
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+Well, this appears to be quite straightforward. The code is entirely untested
+but trivial at the same time. 
 
-On Tue, Jul 18, 2017 at 11:19:22PM +0200, Niklas Söderlund wrote:
-> Hi Sakari,
-> 
-> Thanks for your hard work!
-> 
-> On 2017-07-18 22:04:00 +0300, Sakari Ailus wrote:
-> > Add notifiers for sub-devices. The notifiers themselves are not visible for
-> > the sub-device drivers but instead are accessed through interface functions
-> 
-> I might be missing it, but I can't find a interface function to set the 
-> bound()/unbind() callbacks on a sub-notifiers :-) Is this intentional or 
-> only not present in this RFC?
+ drivers/media/v4l2-core/v4l2-subdev.c | 20 ++++++++++++++++++++
+ include/media/v4l2-subdev.h           |  6 ++++++
+ 2 files changed, 26 insertions(+)
 
-It's not present since I didn't need it. :-)
-
-I'll add that for v2.
-
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index a6976d4a52ac..8629224bfdba 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -666,3 +666,23 @@ int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd)
+ 	return v4l2_fwnode_reference_parse_sensor_common(sd->dev, subnotifier);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_subdev_fwnode_reference_parse_sensor_common);
++
++int v4l2_subdev_notifier_set_callbacks(
++	struct v4l2_subdev *sd,
++	int (*bound)(struct v4l2_async_notifier *notifier,
++		     struct v4l2_subdev *subdev,
++		     struct v4l2_async_subdev *asd),
++	int (*complete)(struct v4l2_async_notifier *notifier))
++{
++	struct v4l2_async_notifier *subnotifier =
++		v4l2_subdev_get_subnotifier(sd);
++
++	if (!subnotifier)
++		return -ENOMEM;
++
++	subnotifier->bound = bound;
++	subnotifier->complete = complete;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(v4l2_subdev_notifier_set_callbacks);
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index e309a2e2030b..ee85b64ad4f4 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -1012,4 +1012,10 @@ int v4l2_subdev_fwnode_endpoints_parse(
+ 
+ int v4l2_subdev_fwnode_reference_parse_sensor_common(struct v4l2_subdev *sd);
+ 
++int v4l2_subdev_notifier_set_callbacks(
++	struct v4l2_subdev *sd,
++	int (*bound)(struct v4l2_async_notifier *notifier,
++		     struct v4l2_subdev *subdev,
++		     struct v4l2_async_subdev *asd),
++	int (*complete)(struct v4l2_async_notifier *notifier));
+ #endif
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+2.11.0
