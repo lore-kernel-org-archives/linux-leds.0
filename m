@@ -1,50 +1,57 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH 2/2] v4l2-flash-led-class: Create separate sub-devices
- for indicators
-Date: Thu, 20 Jul 2017 01:42:46 +0300
-Message-ID: <20170719224246.2hmxu6ba7ihv3owv@valkosipuli.retiisi.org.uk>
-References: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
- <20170718184107.10598-3-sakari.ailus@linux.intel.com>
- <20170719120246.GB23510@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/1] v4l2-flash-led-class: Document v4l2_flash_init()
+ references
+Date: Thu, 20 Jul 2017 08:50:25 +0200
+Message-ID: <20170720065024.GA25904@amd>
+References: <20170719115934.GA23510@amd>
+ <20170719224031.12133-1-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54531 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933473AbdGTGu2 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 20 Jul 2017 02:50:28 -0400
 Content-Disposition: inline
-In-Reply-To: <20170719120246.GB23510@amd>
-Sender: linux-media-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
+In-Reply-To: <20170719224031.12133-1-sakari.ailus@linux.intel.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com
 
-On Wed, Jul 19, 2017 at 02:02:46PM +0200, Pavel Machek wrote:
-> On Tue 2017-07-18 21:41:07, Sakari Ailus wrote:
-> > The V4L2 flash interface allows controlling multiple LEDs through a single
-> > sub-devices if, and only if, these LEDs are of different types. This
-> > approach scales badly for flash controllers that drive multiple flash LEDs
-> > or for LED specific associations. Essentially, the original assumption of a
-> > LED driver chip that drives a single flash LED and an indicator LED is no
-> > longer valid.
-> > 
-> > Address the matter by registering one sub-device per LED.
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2017-07-20 01:40:31, Sakari Ailus wrote:
+> The v4l2_flash_init() keeps a reference to the ops struct but not to the
+> config struct (nor anything it contains). Document this.
+>=20
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
 Thanks!
+							Pavel
+						=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> 
-> Does anything need to be done with drivers/media/i2c/adp1653.c ?
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Well, it does expose the two LEDs through the same sub-device. I don't
-think that'd really be an issue. The drivers/media/i2c/as3645a.c does the
-same, I think it's fine to keep that.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Effectively only new drivers will have the new behaviour (apart from the
-greybus staging driver).
+iEYEARECAAYFAllwUrAACgkQMOfwapXb+vK4UgCgorvKo4tZOMU2FKiD7yHSkV4M
+Wr4AoJLuoCjOYhkAOQmlBSMAPkGyTQ6l
+=9A+7
+-----END PGP SIGNATURE-----
 
--- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+--nFreZHaLTZJo0R7j--
