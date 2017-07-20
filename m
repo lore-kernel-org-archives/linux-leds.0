@@ -1,76 +1,71 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC 00/19] Async sub-notifiers and how to use them
-Date: Thu, 20 Jul 2017 19:14:01 +0300
-Message-ID: <20170720161400.ijud3kppizb44acw@valkosipuli.retiisi.org.uk>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC 11/19] v4l2-async: Register sub-devices before calling bound
+ callback
+Date: Thu, 20 Jul 2017 18:23:38 +0200
+Message-ID: <84bdb8a9-389b-1fe9-f050-4d4452f5aebd@xs4all.nl>
 References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <eb0ff309-bdf5-30f9-06da-2fc6c35fbf6a@xs4all.nl>
+ <20170718190401.14797-12-sakari.ailus@linux.intel.com>
+ <03f4a632-30b8-bdc8-2b03-fa7c3eb811a1@xs4all.nl>
+ <20170720160954.47rbdwpxx6d4ezvq@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <eb0ff309-bdf5-30f9-06da-2fc6c35fbf6a@xs4all.nl>
+In-Reply-To: <20170720160954.47rbdwpxx6d4ezvq@valkosipuli.retiisi.org.uk>
 Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
+To: Sakari Ailus <sakari.ailus@iki.fi>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
 List-Id: linux-leds@vger.kernel.org
 
-Hi Hans,
-
-Thanks for the review.
-
-On Wed, Jul 19, 2017 at 01:42:55PM +0200, Hans Verkuil wrote:
-> On 18/07/17 21:03, Sakari Ailus wrote:
-> > Hi folks,
-> > 
-> > This RFC patchset achieves a number of things which I've put to the same
-> > patchset for they need to be show together to demonstrate the use cases.
-> > 
-> > I don't really intend this to compete with Niklas's patchset but much of
-> > the problem area addressed by the two is the same.
-> > 
-> > Comments would be welcome.
-> > 
-> > - Add AS3645A LED flash class driver.
-> > 
-> > - Add async notifiers (by Niklas).
-> > 
-> > - V4L2 sub-device node registration is moved to take place at the same time
-> >   with the registration of the sub-device itself. With this change,
-> >   sub-device node registration behaviour is aligned with video node
-> >   registration.
-> > 
-> > - The former is made possible by moving the bound() callback after
-> >   sub-device registration.
-> > 
-> > - As all the device node registration and link creation is done as the
-> >   respective devices are probed, there is no longer dependency to the
-> >   notifier complete callback which as itself is seen problematic. The
-> >   complete callback still exists but there's no need to use it, pending
-> >   changes in individual drivers.
-> > 
-> >   See:
-> >   <URL:http://www.spinics.net/lists/linux-media/msg118323.html>
-> > 
-> >   As a result, if a part of the media device fails to initialise because it
-> >   is e.g. physically broken, it will be possible to use what works.
+On 20/07/17 18:09, Sakari Ailus wrote:
+> Hi Hans,
 > 
-> I've got major problems with this from a userspace point of view. In the vast
-> majority of cases you just want to bail out if one or more subdevs fail.
+> On Wed, Jul 19, 2017 at 01:24:54PM +0200, Hans Verkuil wrote:
+>> On 18/07/17 21:03, Sakari Ailus wrote:
+>>> The async notifier supports three callbacks to the notifier: bound, unbound
+>>> and complete. The complete callback has been traditionally used for
+>>> creating the sub-device nodes.
+>>>
+>>> This approach has an inherent weakness: if registration of a single
+>>> sub-device fails for whatever reason, it renders the entire media device
+>>> unusable even if only that piece of hardware is not working. This is a
+>>> problem in particular in systems with multiple independent image pipelines
+>>> on a single device. We have had such devices (e.g. omap3isp) supported for
+>>> a number of years and the problem is growing more pressing as time passes
+>>> so there is an incentive to resolve this.
+>>
+>> I don't think this is a good reason. If one of the subdevices fail, then your
+>> hardware is messed up and there is no point in continuing.
+> 
+> That's entirely untrue in general case.
+> 
+> If you have e.g. a mobile phone with a single camera, yes, you're right.
+> But most mobile phones have two cameras these days. Embedded systems may
+> have many, think of automotive use cases: you could have five or ten
+> cameras there.
 
-I admit it's easier for the user space if the device becomes available only
-when all its component drivers have registered.
+These are all very recent developments. Today userspace can safely assume
+that either everything would be up and running, or nothing at all.
 
-Also remember that video nodes are registered in the file system right on
-device probe time. It's only sub-device and media device node registration
-that has taken place in the notifier's complete handler.
+> It is not feasible to prevent the entire system from working if a single
+> component is at fault --- this is really any component such as a lens
+> controller.
 
-There are things how we could do this easier, for instance providing events
-on the media device on entity registration and possibly registration state
-(whether all entities have been registered).
+All I am saying is that there should be a way to indicate that you accept
+that parts are faulty, and that you (i.e. userspace) are able to detect
+and handle that.
 
-This way the user space can easily choose whether it would like to proceed
-using a partially functional device (or not).
+You can't just change the current behavior and expect existing applications
+to work. E.g. says a sensor failed. Today the application might detect that
+the video node didn't come up, so something is seriously wrong with the hardware
+and it shows a message on the display. If this would change and the video node
+*would* come up, even though there is no sensor the behavior of the application
+would almost certainly change unexpectedly.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+How to select which behavior you want isn't easy. The only thing I can come up
+with is a module option. Not very elegant, unfortunately. But it doesn't
+belong in the DT, and when userspace gets involved it is already too late.
+
+Regards,
+
+	Hans
