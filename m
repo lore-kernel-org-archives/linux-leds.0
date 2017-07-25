@@ -1,26 +1,105 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RFC 08/19] arm: dts: omap3: N9/N950: Add AS3645A camera flash
-Date: Sat, 22 Jul 2017 11:40:06 +0200
-Message-ID: <20170722094006.GB8064@xo-6d-61-c0.localdomain>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <20170718190401.14797-9-sakari.ailus@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/2] staging: greybus: light: Don't leak memory for no
+ gain
+Date: Tue, 25 Jul 2017 14:30:31 +0200
+Message-ID: <20170725123031.GB27516@localhost>
+References: <20170718184107.10598-1-sakari.ailus@linux.intel.com>
+ <20170718184107.10598-2-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37509 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbdGYMah (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 25 Jul 2017 08:30:37 -0400
 Content-Disposition: inline
-In-Reply-To: <20170718190401.14797-9-sakari.ailus@linux.intel.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se, hverkuil@xs4all.nl, Sakari Ailus <sakari.ailus@iki.fi>
+In-Reply-To: <20170718184107.10598-2-sakari.ailus@linux.intel.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com, Rui Miguel Silva <rmfrfs@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 
-On Tue 2017-07-18 22:03:50, Sakari Ailus wrote:
-> From: Sakari Ailus <sakari.ailus@iki.fi>
-> 
-> Add the as3645a flash controller to the DT source as well as the flash
-> property with the as3645a device phandle to the sensor DT node.
+[ +CC: Rui and Greg ]
+
+On Tue, Jul 18, 2017 at 09:41:06PM +0300, Sakari Ailus wrote:
+> Memory for struct v4l2_flash_config is allocated in
+> gb_lights_light_v4l2_register() for no gain and yet the allocated memory is
+> leaked; the struct isn't used outside the function. Fix this.
 > 
 > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+>  drivers/staging/greybus/light.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+> index 129ceed39829..b25c117ec41a 100644
+> --- a/drivers/staging/greybus/light.c
+> +++ b/drivers/staging/greybus/light.c
+> @@ -534,25 +534,21 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
+>  {
+>  	struct gb_connection *connection = get_conn_from_light(light);
+>  	struct device *dev = &connection->bundle->dev;
+> -	struct v4l2_flash_config *sd_cfg;
+> +	struct v4l2_flash_config sd_cfg = { 0 };
+>  	struct led_classdev_flash *fled;
+>  	struct led_classdev *iled = NULL;
+>  	struct gb_channel *channel_torch, *channel_ind, *channel_flash;
+>  	int ret = 0;
+>  
+> -	sd_cfg = kcalloc(1, sizeof(*sd_cfg), GFP_KERNEL);
+> -	if (!sd_cfg)
+> -		return -ENOMEM;
+> -
+>  	channel_torch = get_channel_from_mode(light, GB_CHANNEL_MODE_TORCH);
+>  	if (channel_torch)
+>  		__gb_lights_channel_v4l2_config(&channel_torch->intensity_uA,
+> -						&sd_cfg->torch_intensity);
+> +						&sd_cfg.torch_intensity);
+>  
+>  	channel_ind = get_channel_from_mode(light, GB_CHANNEL_MODE_INDICATOR);
+>  	if (channel_ind) {
+>  		__gb_lights_channel_v4l2_config(&channel_ind->intensity_uA,
+> -						&sd_cfg->indicator_intensity);
+> +						&sd_cfg.indicator_intensity);
+>  		iled = &channel_ind->fled.led_cdev;
+>  	}
+>  
+> @@ -561,17 +557,17 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
+>  
+>  	fled = &channel_flash->fled;
+>  
+> -	snprintf(sd_cfg->dev_name, sizeof(sd_cfg->dev_name), "%s", light->name);
+> +	snprintf(sd_cfg.dev_name, sizeof(sd_cfg.dev_name), "%s", light->name);
+>  
+>  	/* Set the possible values to faults, in our case all faults */
+> -	sd_cfg->flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
+> +	sd_cfg.flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
+>  		LED_FAULT_OVER_TEMPERATURE | LED_FAULT_SHORT_CIRCUIT |
+>  		LED_FAULT_OVER_CURRENT | LED_FAULT_INDICATOR |
+>  		LED_FAULT_UNDER_VOLTAGE | LED_FAULT_INPUT_VOLTAGE |
+>  		LED_FAULT_LED_OVER_TEMPERATURE;
+>  
+>  	light->v4l2_flash = v4l2_flash_init(dev, NULL, fled, iled,
+> -					    &v4l2_flash_ops, sd_cfg);
+> +					    &v4l2_flash_ops, &sd_cfg);
+>  	if (IS_ERR_OR_NULL(light->v4l2_flash)) {
+>  		ret = PTR_ERR(light->v4l2_flash);
+>  		goto out_free;
+> @@ -580,7 +576,6 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
+>  	return ret;
+>  
+>  out_free:
+> -	kfree(sd_cfg);
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+This looks a bit lazy, even if I just noticed that you repurpose this
+error label (without renaming it) in you second patch.
+
+
+>  	return ret;
+>  }
+
+And while it's fine to take this through linux-media, it would still be
+good to keep the maintainers on CC.
+
+Thanks,
+Johan
