@@ -1,8 +1,8 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [patch v1 1/1] leds: add driver for support Mellanox regmap LEDs
  for BMC
-Date: Wed, 26 Jul 2017 21:09:32 +0200
-Message-ID: <bdb4b5d2-a4b3-3820-e321-b18211722f46@gmail.com>
+Date: Wed, 26 Jul 2017 21:09:43 +0200
+Message-ID: <7731bb33-da17-7c0f-ed70-9bfb4010daf8@gmail.com>
 References: <1501001663-22209-1-git-send-email-vadimp@mellanox.com>
  <1501001663-22209-2-git-send-email-vadimp@mellanox.com>
  <0f5f9998-94d3-2650-6b2c-f73cb6b11dd4@gmail.com>
@@ -11,16 +11,16 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37694 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbdGZTKQ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Jul 2017 15:10:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t138so2163498wmt.4
-        for <linux-leds@vger.kernel.org>; Wed, 26 Jul 2017 12:10:15 -0700 (PDT)
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33464 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751553AbdGZTK0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Jul 2017 15:10:26 -0400
+Received: by mail-wr0-f193.google.com with SMTP id y43so22754710wrd.0
+        for <linux-leds@vger.kernel.org>; Wed, 26 Jul 2017 12:10:26 -0700 (PDT)
 In-Reply-To: <AM4PR05MB3330F31FE30D3AD7985E4CFAA2B90@AM4PR05MB3330.eurprd05.prod.outlook.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
+To: Vadim Pasternak <vadimp@mellanox.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>
 Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>
 
 Hi Vadim,
