@@ -1,37 +1,31 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RFC 04/19] dt: bindings: Add lens-focus binding for image
- sensors
-Date: Fri, 28 Jul 2017 14:45:11 +0200
-Message-ID: <20170728124509.GB10543@localhost>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <20170718190401.14797-5-sakari.ailus@linux.intel.com>
- <dcd84739-7e83-e07f-9290-a066013af102@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <dcd84739-7e83-e07f-9290-a066013af102@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: [patch v3 0/1] Introduce support for mlxreg LED driver
+Date: Mon, 31 Jul 2017 16:21:30 +0000
+Message-ID: <1501518091-100730-1-git-send-email-vadimp@mellanox.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:39316 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752113AbdGaOYo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 31 Jul 2017 10:24:44 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: j.anaszewski@samsung.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, lee.jones@linaro.org, robh+dt@kernel.org, jiri@resnulli.us, =jacek.anaszewski@gmail.com, pavel@ucw.cz, Vadim Pasternak <vadimp@mellanox.com>
 
-Hi!
+This patch introduces LED driver, based on regmap interface.
+This patch depends on previously sent:
+[patch v2 1/2] mfd: Add Mellanox regmap core driver
+because it includes include/linux/platform_data/mlxreg.h from this patch.
 
-> Is the lens-focus phandle specific to voice-coil controllers? What about
-> motor-controlled focus systems? What when there are multiple motors? E.g.
-> one for the focus, one for the iris control (yes, we have that).
+Vadim Pasternak (1):
+  leds: add driver for support Mellanox regmap LEDs for BMC
 
-I'd say motor vs. coil is not important. Iris control should go to
-lens-iris: or something.
+ MAINTAINERS                |   1 +
+ drivers/leds/Kconfig       |  10 ++
+ drivers/leds/Makefile      |   1 +
+ drivers/leds/leds-mlxreg.c | 299 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 311 insertions(+)
+ create mode 100644 drivers/leds/leds-mlxreg.c
 
-> What if you have two sensors (stereoscopic) controlled by one motor?
-
-Are there such systems? I'd say lets solve it if we see it...
-
-> >  - flash: phandle referring to the flash driver chip. A flash driver may
-> >    have multiple flashes connected to it.
-> >  
-> > +- lens-focus: A phandle to the node of the focus lens controller.
-> > +
-> >  
+-- 
+2.1.4
