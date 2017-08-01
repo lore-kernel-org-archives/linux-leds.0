@@ -1,59 +1,81 @@
-From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
-Subject: [PATCH v2 0/4] leds: pca955x: add GPIO support
-Date: Tue,  1 Aug 2017 14:09:05 +0200
-Message-ID: <1501589349-5681-1-git-send-email-clg@kaod.org>
+From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg-Bxea+6Xhats@public.gmane.org>
+Subject: [PATCH v2 2/4] leds: pca955x: use devm_led_classdev_register
+Date: Tue,  1 Aug 2017 14:09:07 +0200
+Message-ID: <1501589349-5681-3-git-send-email-clg@kaod.org>
+References: <1501589349-5681-1-git-send-email-clg@kaod.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 2.mo178.mail-out.ovh.net ([46.105.39.61]:38646 "EHLO
-        2.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751008AbdHAM1V (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Aug 2017 08:27:21 -0400
-Received: from player715.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 6C7E94B1BD
-        for <linux-leds@vger.kernel.org>; Tue,  1 Aug 2017 14:09:37 +0200 (CEST)
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1501589349-5681-1-git-send-email-clg-Bxea+6Xhats@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg-Bxea+6Xhats@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
 
-The PCA955x family of chips are I2C LED blinkers whose pins not used
-to control LEDs can be used as general purpose I/Os (GPIOs).
+This lets us remove the loop doing the cleanup in case of failure and
+also the remove handler of the i2c_driver.
 
-The following adds support for device tree and Open Firmware to be
-able do define different operation modes for each pin. See bindings
-documentation for more details. The pca955x driver is then extended
-with a gpio_chip when pins are operating in GPIO mode.
+Signed-off-by: Cédric Le Goater <clg-Bxea+6Xhats@public.gmane.org>
+---
+ drivers/leds/leds-pca955x.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
 
-The driver follows the scheme of the leds-pca9532 driver which behaves
-quite similarly.
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 3afd481a760f..a8918ff0a7e9 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -412,10 +412,10 @@ static int pca955x_probe(struct i2c_client *client,
+ 		pca955x_led->led_cdev.name = pca955x_led->name;
+ 		pca955x_led->led_cdev.brightness_set_blocking = pca955x_led_set;
  
-
-Thanks,
-
-C.
-
-Changes since v1:
-
- - split the patchset in two : DT support and GPIO support
- - introduced the use of devm_led_classdev_register()
- - replaced the 'compatible' property with 'type' 
- - removed the 'gpio-base' property
+-		err = led_classdev_register(&client->dev,
+-					&pca955x_led->led_cdev);
+-		if (err < 0)
+-			goto exit;
++		err = devm_led_classdev_register(&client->dev,
++						 &pca955x_led->led_cdev);
++		if (err)
++			return err;
+ 	}
  
-Cédric Le Goater (4):
-  leds: pca955x: add device tree support
-  leds: pca955x: use devm_led_classdev_register
-  leds: pca955x: add GPIO support
-  dt-bindings leds: add pca955x
-
- .../devicetree/bindings/leds/leds-pca955x.txt      |  88 +++++++
- drivers/leds/Kconfig                               |  11 +
- drivers/leds/leds-pca955x.c                        | 263 +++++++++++++++++----
- include/dt-bindings/leds/leds-pca955x.h            |  16 ++
- 4 files changed, 333 insertions(+), 45 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
- create mode 100644 include/dt-bindings/leds/leds-pca955x.h
-
+ 	/* Turn off LEDs */
+@@ -433,23 +433,6 @@ static int pca955x_probe(struct i2c_client *client,
+ 	pca955x_write_psc(client, 1, 0);
+ 
+ 	return 0;
+-
+-exit:
+-	while (i--)
+-		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-
+-	return err;
+-}
+-
+-static int pca955x_remove(struct i2c_client *client)
+-{
+-	struct pca955x *pca955x = i2c_get_clientdata(client);
+-	int i;
+-
+-	for (i = 0; i < pca955x->chipdef->bits; i++)
+-		led_classdev_unregister(&pca955x->leds[i].led_cdev);
+-
+-	return 0;
+ }
+ 
+ static struct i2c_driver pca955x_driver = {
+@@ -459,7 +442,6 @@ static struct i2c_driver pca955x_driver = {
+ 		.of_match_table = of_match_ptr(of_pca955x_match),
+ 	},
+ 	.probe	= pca955x_probe,
+-	.remove	= pca955x_remove,
+ 	.id_table = pca955x_id,
+ };
+ 
 -- 
 2.7.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
