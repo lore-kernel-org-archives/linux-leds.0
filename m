@@ -1,64 +1,172 @@
-From: <bunny43200@yahoo.com>
-Subject: (unknown)
-Date: Mon, 31 Jul 2017 16:54:50 -0000
-Message-ID: <150152009046.2725.6112723887259763257@permonline.ru>
+From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
+Subject: [PATCH v2 1/4] leds: pca955x: add device tree support
+Date: Tue,  1 Aug 2017 14:09:06 +0200
+Message-ID: <1501589349-5681-2-git-send-email-clg@kaod.org>
+References: <1501589349-5681-1-git-send-email-clg@kaod.org>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_621609019_linux-leds.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 90.150.183.78.permonline.ru ([90.150.183.78]:46791 "HELO
-        permonline.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1750949AbdGaQyy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 31 Jul 2017 12:54:54 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from 1.mo178.mail-out.ovh.net ([178.33.251.53]:48705 "EHLO
+        1.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbdHAM1X (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Aug 2017 08:27:23 -0400
+Received: from player715.ha.ovh.net (b9.ovh.net [213.186.33.59])
+        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 9C5904AF18
+        for <linux-leds@vger.kernel.org>; Tue,  1 Aug 2017 14:09:47 +0200 (CEST)
+In-Reply-To: <1501589349-5681-1-git-send-email-clg@kaod.org>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
 
-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
+It will be used in a following patch to define different operation
+modes for each pin.
+
+Signed-off-by: Cédric Le Goater <clg@kaod.org>
+---
+ drivers/leds/leds-pca955x.c | 89 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 84 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 9a873118ea5f..3afd481a760f 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -41,14 +41,17 @@
+  */
+ 
+ #include <linux/acpi.h>
+-#include <linux/module.h>
+-#include <linux/delay.h>
+-#include <linux/string.h>
+ #include <linux/ctype.h>
+-#include <linux/leds.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/gpio.h>
+ #include <linux/i2c.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ 
+ /* LED select registers determine the source that drives LED outputs */
+ #define PCA955X_LS_LED_ON	0x0	/* Output LOW */
+@@ -122,6 +125,12 @@ struct pca955x_led {
+ 	struct led_classdev	led_cdev;
+ 	int			led_num;	/* 0 .. 15 potentially */
+ 	char			name[32];
++	const char		*default_trigger;
++};
++
++struct pca955x_platform_data {
++	struct pca955x_led	*leds;
++	int			num_leds;
+ };
+ 
+ /* 8 bits per input register */
+@@ -250,6 +259,70 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_OF)
++static struct pca955x_platform_data *
++pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
++{
++	struct device_node *np = client->dev.of_node;
++	struct device_node *child;
++	struct pca955x_platform_data *pdata;
++	int count;
++
++	count = of_get_child_count(np);
++	if (!count || count > chip->bits)
++		return ERR_PTR(-ENODEV);
++
++	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return ERR_PTR(-ENOMEM);
++
++	pdata->leds = devm_kzalloc(&client->dev,
++				   sizeof(struct pca955x_led) * chip->bits,
++				   GFP_KERNEL);
++	if (!pdata->leds)
++		return ERR_PTR(-ENOMEM);
++
++	for_each_child_of_node(np, child) {
++		const char *name;
++		u32 reg;
++		int res;
++
++		res = of_property_read_u32(child, "reg", &reg);
++		if ((res != 0) || (reg >= chip->bits))
++			continue;
++
++		if (of_property_read_string(child, "label", &name))
++			name = child->name;
++
++		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
++			 "%s", name);
++
++		of_property_read_string(child, "linux,default-trigger",
++					&pdata->leds[reg].default_trigger);
++	}
++
++	pdata->num_leds = chip->bits;
++
++	return pdata;
++}
++
++static const struct of_device_id of_pca955x_match[] = {
++	{ .compatible = "nxp,pca9550", .data = (void *)pca9550 },
++	{ .compatible = "nxp,pca9551", .data = (void *)pca9551 },
++	{ .compatible = "nxp,pca9552", .data = (void *)pca9552 },
++	{ .compatible = "nxp,pca9553", .data = (void *)pca9553 },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, of_pca955x_match);
++#else
++static struct pca955x_platform_data *
++pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
++{
++	return ERR_PTR(-ENODEV);
++}
++#endif
++
+ static int pca955x_probe(struct i2c_client *client,
+ 					const struct i2c_device_id *id)
+ {
+@@ -257,8 +330,8 @@ static int pca955x_probe(struct i2c_client *client,
+ 	struct pca955x_led *pca955x_led;
+ 	struct pca955x_chipdef *chip;
+ 	struct i2c_adapter *adapter;
+-	struct led_platform_data *pdata;
+ 	int i, err;
++	struct pca955x_platform_data *pdata;
+ 
+ 	if (id) {
+ 		chip = &pca955x_chipdefs[id->driver_data];
+@@ -272,6 +345,11 @@ static int pca955x_probe(struct i2c_client *client,
+ 	}
+ 	adapter = to_i2c_adapter(client->dev.parent);
+ 	pdata = dev_get_platdata(&client->dev);
++	if (!pdata) {
++		pdata =	pca955x_pdata_of_init(client, chip);
++		if (IS_ERR(pdata))
++			return PTR_ERR(pdata);
++	}
+ 
+ 	/* Make sure the slave address / chip type combo given is possible */
+ 	if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
+@@ -378,6 +456,7 @@ static struct i2c_driver pca955x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca955x",
+ 		.acpi_match_table = ACPI_PTR(pca955x_acpi_ids),
++		.of_match_table = of_match_ptr(of_pca955x_match),
+ 	},
+ 	.probe	= pca955x_probe,
+ 	.remove	= pca955x_remove,
+-- 
+2.7.5
