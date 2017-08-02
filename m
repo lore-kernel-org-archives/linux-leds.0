@@ -1,72 +1,70 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 0/4] leds: pca955x: add GPIO support
-Date: Wed, 2 Aug 2017 14:48:44 +0200
-Message-ID: <20170802124844.GA3123@amd>
-References: <1501589349-5681-1-git-send-email-clg@kaod.org>
- <20170802113351.GA2528@amd>
- <dad22552-3314-c315-a3c5-89e6718230b0@kaod.org>
+From: <Margery@topl.com>
+Subject: (unknown)
+Date: Wed, 02 Aug 2017 17:07:52 -0000
+Message-ID: <150169367286.2725.6342328494074027263@hitv.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Content-Type: application/zip; name="EMAIL_1585037780_linux-leds.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53617 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbdHBMsr (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Aug 2017 08:48:47 -0400
-Content-Disposition: inline
-In-Reply-To: <dad22552-3314-c315-a3c5-89e6718230b0@kaod.org>
+Received: from cable-pppoe-89-251-152-255.kzn.hitv.ru ([89.251.152.255]:40029
+        "HELO hitv.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1752195AbdHBRHz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Aug 2017 13:07:55 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>
-Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
+To: Pettit@kbba.com
 
-
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed 2017-08-02 13:57:29, C=E9dric Le Goater wrote:
-> On 08/02/2017 01:33 PM, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >> The PCA955x family of chips are I2C LED blinkers whose pins not used
-> >> to control LEDs can be used as general purpose I/Os (GPIOs).
-> >>
-> >> The following adds support for device tree and Open Firmware to be
-> >> able do define different operation modes for each pin. See bindings
-> >> documentation for more details. The pca955x driver is then extended
-> >> with a gpio_chip when pins are operating in GPIO mode.
-> >>
-> >> The driver follows the scheme of the leds-pca9532 driver which behaves
-> >> quite similarly.
-> >=20
-> > Is there reason not to treat pca955x chip as a GPIO extender, and then
-> > use leds-gpio on top?
->=20
-> I would say mostly because there is already a leds-pca955x driver and
-> that the primary nature of the chip is being a LED blinker. It also=20
-> supports different blinking rates.
-
-Ok, I guess gpio-led driver can not to blinking, so this makes sense.
-
-      	    	     	    	       		    	       Pavel
-							      =20
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlmByiwACgkQMOfwapXb+vL7HwCfcI4EiMeNtiQvqeF4Zu3lIVHk
-94kAoK4bpMn5s1wLxikE9elBVjxlIbtj
-=YiFS
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
+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
