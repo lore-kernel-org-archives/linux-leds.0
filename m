@@ -1,124 +1,111 @@
-From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg-Bxea+6Xhats@public.gmane.org>
-Subject: [PATCH v2 4/4] dt-bindings leds: add pca955x
-Date: Tue,  1 Aug 2017 14:09:09 +0200
-Message-ID: <1501589349-5681-5-git-send-email-clg@kaod.org>
-References: <1501589349-5681-1-git-send-email-clg@kaod.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [patch v3 1/1] leds: add driver for support Mellanox regmap LEDs
+ for BMC
+Date: Wed, 2 Aug 2017 10:38:58 +0200
+Message-ID: <20170802083858.GA754@amd>
+References: <1501518091-100730-1-git-send-email-vadimp@mellanox.com>
+ <1501518091-100730-2-git-send-email-vadimp@mellanox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1501589349-5681-1-git-send-email-clg-Bxea+6Xhats@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg-Bxea+6Xhats@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46331 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752641AbdHBIjB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Aug 2017 04:39:01 -0400
+Content-Disposition: inline
+In-Reply-To: <1501518091-100730-2-git-send-email-vadimp@mellanox.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: j.anaszewski@samsung.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, lee.jones@linaro.org, robh+dt@kernel.org, jiri@resnulli.us, =jacek.anaszewski@gmail.com
 
-This adds the devicetree bindings for the PCA955x I2C LED blinkers.
 
-Signed-off-by: Cédric Le Goater <clg-Bxea+6Xhats@public.gmane.org>
----
- .../devicetree/bindings/leds/leds-pca955x.txt      | 88 ++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-new file mode 100644
-index 000000000000..7984efb767b4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-@@ -0,0 +1,88 @@
-+* NXP - pca955x LED driver
-+
-+The PCA955x family of chips are I2C LED blinkers whose pins not used
-+to control LEDs can be used as general purpose I/Os. The GPIO pins can
-+be input or output, and output pins can also be pulse-width controlled.
-+
-+Required properties:
-+- compatible : should be one of :
-+	"nxp,pca9550"
-+	"nxp,pca9551"
-+	"nxp,pca9552"
-+	"nxp,pca9553"
-+- #address-cells: must be 1
-+- #size-cells: must be 0
-+- reg: I2C slave address. depends on the model.
-+
-+Optional properties:
-+- gpio-controller: allows pins to be used as GPIOs.
-+- #gpio-cells: must be 2.
-+- gpio-line-names: define the names of the GPIO lines
-+
-+LED sub-node properties:
-+- reg : number of LED line.
-+		from 0 to  1 for the pca9550
-+		from 0 to  7 for the pca9551
-+		from 0 to 15 for the pca9552
-+		from 0 to  3 for the pca9553
-+- type: (optional) either
-+	PCA9532_TYPE_NONE
-+	PCA9532_TYPE_LED
-+	PCA9532_TYPE_GPIO
-+	see dt-bindings/leds/leds-pca955x.h (default to LED)
-+- label : (optional)
-+	see Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger : (optional)
-+	see Documentation/devicetree/bindings/leds/common.txt
-+
-+Examples:
-+
-+pca9552: pca9552@60 {
-+	compatible = "nxp,pca9552";
-+	#address-cells = <1>;
-+        #size-cells = <0>;
-+	reg = <0x60>;
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-line-names = "GPIO12", "GPIO13", "GPIO14", "GPIO15";
-+
-+	gpio@12 {
-+		reg = <12>;
-+		type = <PCA955X_TYPE_GPIO>;
-+	};
-+	gpio@13 {
-+		reg = <13>;
-+		type = <PCA955X_TYPE_GPIO>;
-+	};
-+	gpio@14 {
-+		reg = <14>;
-+		type = <PCA955X_TYPE_GPIO>;
-+	};
-+	gpio@15 {
-+		reg = <15>;
-+		type = <PCA955X_TYPE_GPIO>;
-+	};
-+
-+	led@0 {
-+		label = "red:power";
-+		linux,default-trigger = "default-on";
-+		reg = <0>;
-+		type = <PCA955X_TYPE_LED>;
-+	};
-+	led@1 {
-+		label = "green:power";
-+		reg = <1>;
-+		type = <PCA955X_TYPE_LED>;
-+	};
-+	led@2 {
-+		label = "pca9552:yellow";
-+		reg = <2>;
-+		type = <PCA955X_TYPE_LED>;
-+	};
-+	led@3 {
-+		label = "pca9552:white";
-+		reg = <3>;
-+		type = <PCA955X_TYPE_LED>;
-+	};
-+};
--- 
-2.7.5
+Hi!
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Driver obtains LED devices according to system configuration and creates
+> devices in form: "devicename:color:function", like
+> The full path is to be:
+> /sys/class/leds/mlxreg\:status\:amber/brightness
+> After timer trigger activation:
+> echo timer > /sys/class/leds/mlxreg\:status\:amber/trigger
+> Attributes for LED blinking will appaer in sysfs infrastructure:
+> /sys/class/leds/mlxreg\:status\:amber/delay_off
+> /sys/class/leds/mlxreg\:status\:amber/delay_on
+>=20
+> LED setting is controlled through the on-board programmable devices,
+> which exports its register map. This device could be attached to any
+> bus type, for which register mapping is supported.
+>=20
+> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+
+=2E..
+
+> +/* Codes for LEDs. */
+> +#define MLXREG_LED_OFFSET_HALF	0x01 /* Offset from solid: 3Hz blink */
+> +#define MLXREG_LED_OFFSET_FULL	0x02 /* Offset from solid: 6Hz
+
+Can it do half brightness?
+
+> +	ret =3D regmap_read(pdata->regmap, led_pdata->led->reg, &regval);
+> +	if (ret < 0) {
+> +		dev_warn(led_pdata->led_cdev.dev, "Failed to get current brightness, e=
+rror: %d\n",
+> +			 ret);
+> +		/* Assume the LED is OFF */
+> +		ret =3D LED_OFF;
+> +		goto access_error;
+
+Just "return  LED_OFF;".
+
+> +	if (regval >=3D led_pdata->base_color &&
+> +	    regval <=3D (led_pdata->base_color + MLXREG_LED_OFFSET_FULL))
+> +		ret =3D LED_FULL;
+> +	else
+> +		ret =3D LED_OFF;
+
+Because it does not seem so here.
+
+> +	for (i =3D 0; i < pdata->counter; i++, data++) {
+> +		led_data =3D &pdata->data[i];
+> +		led_cdev =3D &led_data->led_cdev;
+> +		led_data->data_parent =3D priv;
+> +		if (strstr(data->label, "red")) {
+> +			brightness =3D LED_OFF;
+> +			led_data->base_color =3D MLXREG_LED_RED_SOLID;
+> +		} else if (strstr(data->label, "amber")) {
+> +			brightness =3D LED_OFF;
+> +			led_data->base_color =3D MLXREG_LED_AMBER_SOLID;
+> +		} else {
+> +			brightness =3D LED_OFF;
+> +			led_data->base_color =3D MLXREG_LED_GREEN_SOLID;
+> +		}
+
+i don't know about the future, but you may check for "green"
+substring, too? (Besides the fact that substring search is
+"interesting"...)
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmBj6IACgkQMOfwapXb+vLuMQCgjq8vL2DGKiBmWsj2uSvyLScx
++5YAnRcUdYOJ5yABxgaLeZh33Llp3CdD
+=LCU7
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
