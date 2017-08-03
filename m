@@ -1,380 +1,446 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: [patch v2 1/1 - resend] Documentation: dt-bindings: Add Device Tree bindings for Mellanox programming devices
-Date: Thu,  3 Aug 2017 12:04:19 +0000
-Message-ID: <1501761859-22149-2-git-send-email-vadimp@mellanox.com>
-References: <1501761859-22149-1-git-send-email-vadimp@mellanox.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [patch v4 1/1] leds: add driver for support Mellanox regmap LEDs
+ for BMC
+Date: Thu, 3 Aug 2017 13:43:43 +0200
+Message-ID: <1b74dfb3-c1aa-6d3e-36fb-a9a19d75d507@gmail.com>
+References: <1501761791-21995-1-git-send-email-vadimp@mellanox.com>
+ <1501761791-21995-2-git-send-email-vadimp@mellanox.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35502 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752478AbdHCKHN (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Aug 2017 06:07:13 -0400
-In-Reply-To: <1501761859-22149-1-git-send-email-vadimp@mellanox.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35383 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751079AbdHCLo1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Aug 2017 07:44:27 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r77so1878355wmd.2
+        for <linux-leds@vger.kernel.org>; Thu, 03 Aug 2017 04:44:26 -0700 (PDT)
+In-Reply-To: <1501761791-21995-2-git-send-email-vadimp@mellanox.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, lee.jones@linaro.org, pavel@ucw.cz, j.anaszewski@samsung.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jiri@resnulli.us, jacek.anaszewski@gmail.com, Vadim Pasternak <vadimp@mellanox.com>
+To: Vadim Pasternak <vadimp@mellanox.com>, j.anaszewski@samsung.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, lee.jones@linaro.org, robh+dt@kernel.org, jiri@resnulli.us, pavel@ucw.cz
 
-The mlxreg a multifunction device driver handling LEDs, events, exposing
-through sysfs reset signal, and reset causes info. These components share
-a common register space.
+Hi Vadim,
 
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
----
- .../devicetree/bindings/mfd/mellanox,mlxreg-core   | 346 +++++++++++++++++++++
- 1 file changed, 346 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
+Thanks for the update. I'm still worried about variable
+naming. Please refer below.
 
-diff --git a/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
-new file mode 100644
-index 0000000..a90933e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
-@@ -0,0 +1,346 @@
-+Mellanox programmable device control.
-+-------------------------------------
-+This binding defines the device control interface over I2C bus for Mellanox BMC
-+based switches.
-+
-+Required properties:
-+- compatible = "mellanox,mlxreg-i2c",
-+	       "mellanox,mlxreg-i2c-16",
-+	       "mellanox,mlxreg-core";
-+- #address-cells : must be 1;
-+- #size-cells : must be 0;
-+- reg : I2C address;
-+
-+Optional properties:
-+- interrupt-parent : phandle of parent interrupt controller;
-+- interrupts : interrupt line;
-+- deferred - I2C deferred bus phandle;
-+	     For example, for the case when device attached to I2C bus number 4
-+	     performs dynamic attachment of device to bus 12 upon some event.
-+	     Due to this reason bus 4 is enforced to be activated after bus 12;
-+- cell - top aggregation register offset;
-+- mask - top aggregation register mask;
-+- psu - power supply unit nodes:
-+	- aggr_mask - effective bit in aggregation mask;
-+	- reg - register offset for all group members;
-+	- mask - register mask;
-+	- phandles - list of relevant device nodes;
-+- fan - fan unit nodes:
-+	- aggr_mask - effective bit in aggregation mask;
-+	- reg - register offset for all group members;
-+	- mask - register mask;
-+	- phandles - list of relevant device nodes;
-+- pwr - power cable nodes.
-+	- aggr_mask - effective bit in aggregation mask;
-+	- reg - register offset for all group members;
-+	- mask - register mask;
-+	- phandles - list of relevant device nodes;
-+- host - host side nodes (CPU host side for BMC):
-+	- aggr_mask - effective bit in aggregation mask;
-+	- reg - register offset for all group members;
-+	- mask - register mask;
-+	- phandles - list of relevant device nodes;
-+- asic - asic nodes.
-+	- aggr_mask - effective bit in aggregation mask;
-+	- regs - register offsets array per group member;
-+	- masks = register masks  array per group member;
-+	- phandles - list of relevant device nodes;
-+- reset - reset nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- reset_name - reset control node:
-+		- reg - register offset;
-+		- mask - attribute mask;
-+- cause - reset cause nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- cause_name - cause info node:
-+		- reg - register offset;
-+		- mask - attribute mask;
-+- mux - mux nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- mux_name - mux control node:
-+		- reg - register offset;
-+		- mask - attribute mask;
-+		- bit - effective bit;
-+- gprw - general purpose register nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- gprw_name - general purpose read-write register;
-+		- reg - register offset;
-+		- mask - attribute mask;
-+- gpro - general purpose register nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- gpro_name - general purpose read only register.
-+		- reg - register offset.
-+		- mask - attribute mask.
-+- led - led nodes:
-+	- #address-cells : must be 1;
-+	- #size-cells : must be 0;
-+	- led_name-color - led control node:
-+		- label - symbolic name;
-+		- reg - register offset;
-+		- mask - attribute mask;
-+
-+Example:
-+	mlxcpld-mng-ctrl@71 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-parent = <&gpio>;
-+		interrupts = <ASPEED_GPIO(S, 1) 2>;
-+		compatible = "mellanox,mlxcpld-ctrl-i2c";
-+		reg = <0x71>;
-+		deferred = <&i2c6>;
-+		cell = <0x3a>;
-+		mask = <0x4c>;
-+
-+		psu {
-+			aggr_mask = <0x08>;
-+			reg = <0x58>;
-+			mask = <0x03>;
-+			phandles = <&psu1_eeprom &psu2_eeprom>;
-+		};
-+
-+		pwr {
-+			aggr_mask = <0x08>;
-+			reg = <0x64>;
-+			mask = <0x03>;
-+			phandles = <&psu1_ctrl &psu2_ctrl>;
-+		};
-+
-+		fan {
-+			aggr_mask = <0x40>;
-+			reg = <0x88>;
-+			mask = <0x0f>;
-+			phandles = <&fan1_eeprom &fan2_eeprom &fan3_eeprom
-+				    &fan4_eeprom>;
-+		};
-+
-+		mux {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			uart_sel {
-+				reg = <0x30>;
-+				mask = <0xef>;
-+				bit = <0x00>;
-+			};
-+			spi_burn_bios_ci {
-+				reg = <0x32>;
-+				mask = <0xfe>;
-+				bit = <0x00>;
-+				of-phandle = <&spi2>;
-+			};
-+			spi_burn_ncsi {
-+				reg = <0x32>;
-+				mask = <0xfd>;
-+				bit = <0x00>;
-+				of-phandle = <&spi2>;
-+			};
-+			bmc_uart_en {
-+				reg = <0x32>;
-+				mask = <0xdf>;
-+				bit = <0x00>;
-+			};
-+			safe_bios1 {
-+				reg = <0x35>;
-+				mask = <0xfb>;
-+				bit = <0x01>;
-+			};
-+			safe_bios2 {
-+				reg = <0x35>;
-+				mask = <0xf7>;
-+				bit = <0x01>;
-+			};
-+			safe_bios_disable {
-+				reg = <0x35>;
-+				mask = <0xdf>;
-+				bit = <0x01>;
-+			};
-+		};
-+
-+		led {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status-green {
-+				reg = <0x20>;
-+				mask = <0xf0>;
-+			};
-+			status-red {
-+				reg = <0x20>;
-+				mask = <0xf0>;
-+			};
-+			status-amber {
-+				reg = <0x20>;
-+				mask = <0xf0>;
-+			};
-+			fan1-green {
-+				reg = <0x21>;
-+				mask = <0xf0>;
-+			};
-+			fan1-red {
-+				reg = <0x21>;
-+				mask = <0xf0>;
-+			};
-+			fan2-green {
-+				reg = <0x21>;
-+				mask = <0x0f>;
-+			};
-+			fan2-red {
-+				reg = <0x21>;
-+				mask = <0x0f>;
-+			};
-+			fan3-green {
-+				reg = <0x22>;
-+				mask = <0xf0>;
-+			};
-+			fan3-red {
-+				label = "fan3:red";
-+				reg = <0x22>;
-+				mask = <0xf0>;
-+			};
-+			fan4-green {
-+				reg = <0x22>;
-+				mask = <0x0f>;
-+			};
-+			fan4-red {
-+				reg = <0x22>;
-+				mask = <0x0f>;
-+			};
-+		};
-+
-+		reset {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			bmc_reset_soft {
-+				reg = <0x17>;
-+				mask = <0xfd>;
-+			};
-+			system_reset_hard {
-+				reg = <0x17>;
-+				mask = <0xfe>;
-+			};
-+			cpu_reset_soft {
-+				reg = <0x17>;
-+				mask = <0xf7>;
-+			};
-+			ps1_on {
-+				reg = <0x30>;
-+				mask = <0xfe>;
-+			};
-+			ps2_on {
-+				label = "ps2_on";
-+				reg = <0x30>;
-+				mask = <0xfd>;
-+			};
-+			sys_power_cycle {
-+				reg = <0x30>;
-+				mask = <0xfb>;
-+			};
-+			mng_pg_ovrd {
-+				reg = <0x30>;
-+				mask = <0xf7>;
-+			};
-+			cpu_reset_hard {
-+				reg = <0x30>;
-+				mask = <0xdf>;
-+			};
-+		};
-+
-+		cause {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			ac_power_cycle {
-+				reg = <0x1d>;
-+				mask = <0xfe>;
-+			};
-+			dc_power_cycle {
-+				reg = <0x1d>;
-+				mask = <0xfd>;
-+			};
-+			cpu_power_down {
-+				reg = <0x1d>;
-+				mask = <0xfb>;
-+			};
-+			cpu_reboot {
-+				reg = <0x1d>;
-+				mask = <0xf7>;
-+			};
-+			cpu_shutdown {
-+				reg = <0x1d>;
-+				mask = <0xef>;
-+			};
-+			cpu_watchdog {
-+				reg = <0x1d>;
-+				mask = <0xef>;
-+			};
-+			cpu_kernel_panic {
-+				reg = <0x1d>;
-+				mask = <0xef>;
-+			};
-+			bmc_warm_reset {
-+				reg = <0x71>;
-+				mask = <0xfe>;
-+			};
-+			bmc_upgrade {
-+				reg = <0x2e>;
-+				mask = <0xf7>;
-+			};
-+		};
-+
-+		gpro {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			version {
-+				reg = <0x00>;
-+				mask = <0xff>;
-+				bit = <0xff>;
-+			};
-+		};
-+	};
-+
-+	mlxcpld-swb-ctrl@72 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-parent = <&gpio>;
-+		interrupts = <ASPEED_GPIO(S, 1) 2>;
-+		compatible = "mellanox,mlxcpld-ctrl-i2c";
-+		reg = <0x72>;
-+		deferred = <&i2c12>;
-+		cell = <0x40>;
-+		mask = <0x01>;
-+
-+		asic {
-+			aggr_mask = <0x01>;
-+			regs = <0x50>;
-+			masks = <0x03>;
-+			phandles = <&asic_thermal>;
-+		};
-+
-+		gpro {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			version {
-+				reg = <0x01>;
-+				mask = <0xff>;
-+				bit = <0xff>;
-+			};
-+		};
-+
-+		reset {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			asic_reset {
-+				reg = <0x19>;
-+				mask = <0xf7>;
-+			};
-+			phy_reset {
-+				reg = <0x19>;
-+				mask = <0xef>;
-+			};
-+		};
-+
-+	};
+On 08/03/2017 02:03 PM, Vadim Pasternak wrote:
+> Driver obtains LED devices according to system configuration and creates
+> devices in form: "devicename:color:function", like
+> The full path is to be:
+> /sys/class/leds/mlxreg\:status\:amber/brightness
+> After timer trigger activation:
+> echo timer > /sys/class/leds/mlxreg\:status\:amber/trigger
+> Attributes for LED blinking will appaer in sysfs infrastructure:
+> /sys/class/leds/mlxreg\:status\:amber/delay_off
+> /sys/class/leds/mlxreg\:status\:amber/delay_on
+> 
+> LED setting is controlled through the on-board programmable devices,
+> which exports its register map. This device could be attached to any
+> bus type, for which register mapping is supported.
+> 
+> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+> v3->v4
+>  Comments pointed out by Jacek:
+>  - add led in declaration mlxreg_led_store_hw and mlxreg_led_get_hw;
+>  - rearrange local variables names in mlxreg_led_config;
+>  Comments pointed out by Pavel:
+>  - replace _HALF/_FULL with BLINK_3HZ/BLINK_6HZ;
+>  - in mlxreg_led_get_hw just return after access error;
+>  - explicit check for green led is not added, since control device can be
+>    programmed for blue LED and this case it reuses masks of green LED.
+> v2->v3:
+>  Comments pointed out by Jacek:
+>  - fix order in includes;
+>  - add declaration pdata in mlxreg_led_store_hw and mlxreg_led_get_hw;
+>  - add declaration of led_data in mlxreg_led_config;
+>  - use LED_ON in assignment instead of 1;
+>  - fix mutex call in mlxreg_led_remove;
+> v1->v2:
+>  Comments pointed out by Jacek:
+>  - remove macros MLXREG_MAP and MLXREG_CDEV;
+>  - brightness_set_blocking insteaf of brightness_set, this fix allows
+>    removing of context validation and workqueue and also three fields from
+>    struct mlxreg_core_led_data in mlxreg.h;
+>  - remove MLXREG_LED_NAME;
+>  - extend Kconfig description;
+>  Changes added by Vadim:
+>  - remove unnecessary includes after dropping workqueue;
+> ---
+>  MAINTAINERS                |   1 +
+>  drivers/leds/Kconfig       |  10 ++
+>  drivers/leds/Makefile      |   1 +
+>  drivers/leds/leds-mlxreg.c | 297 +++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 309 insertions(+)
+>  create mode 100644 drivers/leds/leds-mlxreg.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 205d397..ac6b0d0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8566,6 +8566,7 @@ M:	Vadim Pasternak <vadimp@mellanox.com>
+>  L:	linux-leds@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/leds/leds-mlxcpld.c
+> +F:	drivers/leds/leds-mlxreg.c
+>  F:	Documentation/leds/leds-mlxcpld.txt
+>  
+>  MELLANOX PLATFORM DRIVER
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 594b24d..1c6563d 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -657,6 +657,16 @@ config LEDS_MLXCPLD
+>  	  This option enabled support for the LEDs on the Mellanox
+>  	  boards. Say Y to enabled these.
+>  
+> +config LEDS_MLXREG
+> +	tristate "LED support for the Mellanox BMC cards"
+> +	depends on LEDS_CLASS
+> +	help
+> +	  This option enabled support for the LEDs on the Mellanox BMC cards.
+> +	  The driver can be activated from the device tree or by the direct
+> +	  platform device add call. Say Y to enabled these. To compile this
+> +	  driver as a module, choose 'M' here: the module will be called
+> +	  leds-mlxreg.
+> +
+>  config LEDS_USER
+>  	tristate "Userspace LED support"
+>  	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 909dae6..3eb76e5 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -69,6 +69,7 @@ obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
+>  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
+>  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>  obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+> +obj-$(CONFIG_LEDS_MLXREG)		+= leds-mlxreg.o
+>  obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
+>  obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  
+> diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
+> new file mode 100644
+> index 0000000..41ba10e
+> --- /dev/null
+> +++ b/drivers/leds/leds-mlxreg.c
+> @@ -0,0 +1,297 @@
+> +/*
+> + * Copyright (c) 2017 Mellanox Technologies. All rights reserved.
+> + * Copyright (c) 2017 Vadim Pasternak <vadimp@mellanox.com>
+> + *
+> + * Redistribution and use in source and binary forms, with or without
+> + * modification, are permitted provided that the following conditions are met:
+> + *
+> + * 1. Redistributions of source code must retain the above copyright
+> + *    notice, this list of conditions and the following disclaimer.
+> + * 2. Redistributions in binary form must reproduce the above copyright
+> + *    notice, this list of conditions and the following disclaimer in the
+> + *    documentation and/or other materials provided with the distribution.
+> + * 3. Neither the names of the copyright holders nor the names of its
+> + *    contributors may be used to endorse or promote products derived from
+> + *    this software without specific prior written permission.
+> + *
+> + * Alternatively, this software may be distributed under the terms of the
+> + * GNU General Public License ("GPL") version 2 as published by the Free
+> + * Software Foundation.
+> + *
+> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+> + * POSSIBILITY OF SUCH DAMAGE.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_data/mlxreg.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +/* Codes for LEDs. */
+> +#define MLXREG_LED_OFFSET_BLINK_3HZ	0x01 /* Offset from solid: 3Hz blink */
+> +#define MLXREG_LED_OFFSET_BLINK_6HZ	0x02 /* Offset from solid: 6Hz blink */
+> +#define MLXREG_LED_IS_OFF		0x00 /* Off */
+> +#define MLXREG_LED_RED_SOLID		0x05 /* Solid red */
+> +#define MLXREG_LED_GREEN_SOLID		0x0D /* Solid green */
+> +#define MLXREG_LED_AMBER_SOLID		0x09 /* Solid amber */
+> +#define MLXREG_LED_BLINK_3HZ		167 /* ~167 msec off/on - HW support */
+> +#define MLXREG_LED_BLINK_6HZ		83 /* ~83 msec off/on - HW support */
+> +
+> +#define cdev_to_priv(c) container_of(c, struct mlxreg_core_led_data, led_cdev)
+> +
+> +/**
+> + * struct mlxreg_led_priv_data - platform private data:
+> + *
+> + * @pdev: platform device;
+> + * @pdata: platform data;
+> + * @access_lock: mutex for attribute IO access;
+> + */
+> +struct mlxreg_led_priv_data {
+> +	struct platform_device *pdev;
+> +	struct mlxreg_core_led_platform_data *pdata;
+> +	struct mutex access_lock; /* protect IO operations */
+> +};
+> +
+> +static int
+> +mlxreg_led_store_hw(struct mlxreg_core_led_data *led_pdata, u8 vset)
+> +{
+> +	struct mlxreg_led_priv_data *priv = led_pdata->data_parent;
+> +	struct mlxreg_core_led_platform_data *pdata = priv->pdata;
+> +	struct mlxreg_core_data *led = led_pdata->led;
+> +	u32 regval;
+> +	u32 nib;
+> +	int ret;
+> +
+> +	/*
+> +	 * Each LED is controlled through low or high nibble of the relevant
+> +	 * register byte. Register offset is specified by off parameter.
+> +	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red,
+> +	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
+> +	 * green.
+> +	 * Parameter mask specifies which nibble is used for specific LED: mask
+> +	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
+> +	 * higher nibble (bits from 4 to 7).
+> +	 */
+> +	mutex_lock(&priv->access_lock);
+> +
+> +	ret = regmap_read(pdata->regmap, led->reg, &regval);
+> +	if (ret)
+> +		goto access_error;
+> +
+> +	nib = (ror32(led->mask, led->bit) == 0xf0) ? rol32(vset, led->bit) :
+> +	      rol32(vset, led->bit + 4);
+> +	regval = (regval & led->mask) | nib;
+> +
+> +	ret = regmap_write(pdata->regmap, led->reg, regval);
+> +
+> +access_error:
+> +	mutex_unlock(&priv->access_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static enum led_brightness
+> +mlxreg_led_get_hw(struct mlxreg_core_led_data *led_pdata)
+> +{
+> +	struct mlxreg_led_priv_data *priv = led_pdata->data_parent;
+> +	struct mlxreg_core_led_platform_data *pdata = priv->pdata;
+> +	struct mlxreg_core_data *led = led_pdata->led;
+> +	u32 regval;
+> +	int ret;
+> +
+> +	/*
+> +	 * Each LED is controlled through low or high nibble of the relevant
+> +	 * register byte. Register offset is specified by off parameter.
+> +	 * Parameter vset provides color code: 0x0 for off, 0x5 for solid red,
+> +	 * 0x6 for 3Hz blink red, 0xd for solid green, 0xe for 3Hz blink
+> +	 * green.
+> +	 * Parameter mask specifies which nibble is used for specific LED: mask
+> +	 * 0xf0 - lower nibble is to be used (bits from 0 to 3), mask 0x0f -
+> +	 * higher nibble (bits from 4 to 7).
+> +	 */
+> +	ret = regmap_read(pdata->regmap, led->reg, &regval);
+> +	if (ret < 0) {
+> +		dev_warn(led_pdata->led_cdev.dev, "Failed to get current brightness, error: %d\n",
+> +			 ret);
+> +		/* Assume the LED is OFF */
+> +		return LED_OFF;
+> +	}
+> +
+> +	regval = regval & ~led->mask;
+> +	regval = (ror32(led->mask, led->bit) == 0xf0) ? ror32(regval, led->bit)
+> +		 : ror32(regval, led->bit + 4);
+> +	if (regval >= led_pdata->base_color &&
+> +	    regval <= (led_pdata->base_color + MLXREG_LED_OFFSET_BLINK_6HZ))
+> +		ret = LED_FULL;
+> +	else
+> +		ret = LED_OFF;
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +mlxreg_led_brightness_set(struct led_classdev *cled, enum led_brightness value)
+> +{
+> +	struct mlxreg_core_led_data *led_pdata = cdev_to_priv(cled);
+> +
+> +	if (value)
+> +		return mlxreg_led_store_hw(led_pdata, led_pdata->base_color);
+> +	else
+> +		return mlxreg_led_store_hw(led_pdata, MLXREG_LED_IS_OFF);
+> +}
+> +
+> +static enum led_brightness
+> +mlxreg_led_brightness_get(struct led_classdev *cled)
+> +{
+> +	struct mlxreg_core_led_data *led_pdata = cdev_to_priv(cled);
+> +
+> +	return mlxreg_led_get_hw(led_pdata);
+> +}
+> +
+> +static int
+> +mlxreg_led_blink_set(struct led_classdev *cled, unsigned long *delay_on,
+> +		     unsigned long *delay_off)
+> +{
+> +	struct mlxreg_core_led_data *led_pdata = cdev_to_priv(cled);
+> +	int err;
+> +
+> +	/*
+> +	 * HW supports two types of blinking: full (6Hz) and half (3Hz).
+> +	 * For delay on/off zero LED is setting to solid color. For others
+> +	 * combination blinking is to be controlled by the software timer.
+> +	 */
+> +	if (!(*delay_on == 0 && *delay_off == 0) &&
+> +	    !(*delay_on == MLXREG_LED_BLINK_3HZ &&
+> +	      *delay_off == MLXREG_LED_BLINK_3HZ) &&
+> +	    !(*delay_on == MLXREG_LED_BLINK_6HZ &&
+> +	      *delay_off == MLXREG_LED_BLINK_6HZ))
+> +		return -EINVAL;
+> +
+> +	if (*delay_on == MLXREG_LED_BLINK_6HZ)
+> +		err = mlxreg_led_store_hw(led_pdata, led_pdata->base_color +
+> +					  MLXREG_LED_OFFSET_BLINK_6HZ);
+> +	else if (*delay_on == MLXREG_LED_BLINK_3HZ)
+> +		err = mlxreg_led_store_hw(led_pdata, led_pdata->base_color +
+> +					  MLXREG_LED_OFFSET_BLINK_3HZ);
+> +	else
+> +		err = mlxreg_led_store_hw(led_pdata, led_pdata->base_color);
+> +
+> +	return err;
+> +}
+> +
+> +static int mlxreg_led_config(struct mlxreg_led_priv_data *priv)
+> +{
+> +	struct mlxreg_core_led_platform_data *pdata = priv->pdata;
+> +	struct mlxreg_core_led_data *led_data = pdata->led_data;
+
+Please keep the naming consistent. In this function the variable of
+"struct mlxreg_core_led_data" type is named "led_data" and above it is
+'led_pdata'.
+
+We have also "struct mlxreg_core_led_platform_data *pdata" for which
+led_pdata would fit much better.
+
+> +	struct mlxreg_core_data *led = led_data->led;
+> +	struct mlxreg_core_led_data *data;
+> +	struct led_classdev *led_cdev;
+> +	int brightness;
+> +	int i;
+> +	int err;
+> +
+> +	for (i = 0; i < pdata->counter; i++, led_data++, led++) {
+> +		data = led_data;
+
+'data' seems to be redundant. You can use led_data directly.
+Anyway, we will have to wait for a review from mfd side. The whole set
+will go through an integration branch presumably.
+
+> +		led_cdev = &data->led_cdev;
+> +		data->data_parent = priv;
+> +		if (strstr(led->label, "red")) {
+> +			brightness = LED_OFF;
+> +			data->base_color = MLXREG_LED_RED_SOLID;
+> +		} else if (strstr(led->label, "amber")) {
+> +			brightness = LED_OFF;
+> +			data->base_color = MLXREG_LED_AMBER_SOLID;
+> +		} else {
+> +			brightness = LED_OFF;
+> +			data->base_color = MLXREG_LED_GREEN_SOLID;
+> +		}
+> +		sprintf(data->led_cdev_name, "%s:%s", "mlxreg",
+> +			led->label);
+> +		led_cdev->name = data->led_cdev_name;
+> +		led_cdev->brightness = brightness;
+> +		led_cdev->max_brightness = LED_ON;
+> +		led_cdev->brightness_set_blocking =
+> +						mlxreg_led_brightness_set;
+> +		led_cdev->brightness_get = mlxreg_led_brightness_get;
+> +		led_cdev->blink_set = mlxreg_led_blink_set;
+> +		led_cdev->flags = LED_CORE_SUSPENDRESUME;
+> +		data->led = led;
+> +		err = devm_led_classdev_register(&priv->pdev->dev, led_cdev);
+> +		if (err)
+> +			return err;
+> +
+> +		if (led_cdev->brightness)
+> +			mlxreg_led_brightness_set(led_cdev,
+> +						  led_cdev->brightness);
+> +		dev_info(led_cdev->dev, "label: %s, mask: 0x%02x, offset:0x%02x\n",
+> +			 led->label, led->mask, led->reg);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mlxreg_led_probe(struct platform_device *pdev)
+> +{
+> +	struct mlxreg_core_led_platform_data *pdata;
+> +	struct mlxreg_led_priv_data *priv;
+> +
+> +	pdata = dev_get_platdata(&pdev->dev);
+> +	if (!pdata) {
+> +		dev_err(&pdev->dev, "Failed to get platform data.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&priv->access_lock);
+> +	priv->pdev = pdev;
+> +	priv->pdata = pdata;
+> +
+> +	return mlxreg_led_config(priv);
+> +}
+> +
+> +static int mlxreg_led_remove(struct platform_device *pdev)
+> +{
+> +	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+> +
+> +	mutex_destroy(&priv->access_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mlxreg_led_dt_match[] = {
+> +	{ .compatible = "mellanox,leds-mlxreg" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, mlxreg_dt_match);
+> +
+> +static struct platform_driver mlxreg_led_driver = {
+> +	.driver = {
+> +	    .name = "leds-mlxreg",
+> +	    .of_match_table = of_match_ptr(mlxreg_led_dt_match),
+> +	},
+> +	.probe = mlxreg_led_probe,
+> +	.remove = mlxreg_led_remove,
+> +};
+> +
+> +module_platform_driver(mlxreg_led_driver);
+> +
+> +MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
+> +MODULE_DESCRIPTION("Mellanox LED regmap driver");
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_ALIAS("platform:leds-mlxreg");
+> 
+
 -- 
-2.1.4
+Best regards,
+Jacek Anaszewski
