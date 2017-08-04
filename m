@@ -1,53 +1,90 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: blinkm: constify attribute_group structures.
-Date: Fri, 4 Aug 2017 21:57:33 +0200
-Message-ID: <c8a12023-33fc-8dab-cf36-1457c20cb225@gmail.com>
-References: <7f7a15506ee3ccb8d2d54e3f3209f5cd1105f031.1501827866.git.arvind.yadav.cs@gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [RFC 00/19] Async sub-notifiers and how to use them
+Date: Fri, 4 Aug 2017 21:25:22 +0300
+Message-ID: <4fa22637-c58e-79e3-be22-575b0a4ff3f9@iki.fi>
+References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
+ <eb0ff309-bdf5-30f9-06da-2fc6c35fbf6a@xs4all.nl>
+ <20170720161400.ijud3kppizb44acw@valkosipuli.retiisi.org.uk>
+ <20170721065754.GC20077@bigcity.dyn.berto.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36840 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbdHDT6Q (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 4 Aug 2017 15:58:16 -0400
-In-Reply-To: <7f7a15506ee3ccb8d2d54e3f3209f5cd1105f031.1501827866.git.arvind.yadav.cs@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170721065754.GC20077@bigcity.dyn.berto.se>
+Sender: linux-media-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com
 List-Id: linux-leds@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, jansimon.moeller@gmx.de, rpurdie@rpsys.net, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Arvind,
-
-Thanks for the patch.
-
-On 08/04/2017 08:25 AM, Arvind Yadav wrote:
-> attribute_group are not supposed to change at runtime. All functions
-> working with attribute_group provided by <linux/sysfs.h> work with
-> const attribute_group. So mark the non-const structs as const.
+Niklas Söderlund wrote:
+> Hi Sakari,
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/leds/leds-blinkm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 2017-07-20 19:14:01 +0300, Sakari Ailus wrote:
+>> Hi Hans,
+>>
+>> Thanks for the review.
+>>
+>> On Wed, Jul 19, 2017 at 01:42:55PM +0200, Hans Verkuil wrote:
+>>> On 18/07/17 21:03, Sakari Ailus wrote:
+>>>> Hi folks,
+>>>>
+>>>> This RFC patchset achieves a number of things which I've put to the same
+>>>> patchset for they need to be show together to demonstrate the use cases.
+>>>>
+>>>> I don't really intend this to compete with Niklas's patchset but much of
+>>>> the problem area addressed by the two is the same.
+>>>>
+>>>> Comments would be welcome.
+>>>>
+>>>> - Add AS3645A LED flash class driver.
+>>>>
+>>>> - Add async notifiers (by Niklas).
+>>>>
+>>>> - V4L2 sub-device node registration is moved to take place at the same time
+>>>>   with the registration of the sub-device itself. With this change,
+>>>>   sub-device node registration behaviour is aligned with video node
+>>>>   registration.
+>>>>
+>>>> - The former is made possible by moving the bound() callback after
+>>>>   sub-device registration.
+>>>>
+>>>> - As all the device node registration and link creation is done as the
+>>>>   respective devices are probed, there is no longer dependency to the
+>>>>   notifier complete callback which as itself is seen problematic. The
+>>>>   complete callback still exists but there's no need to use it, pending
+>>>>   changes in individual drivers.
+>>>>
+>>>>   See:
+>>>>   <URL:http://www.spinics.net/lists/linux-media/msg118323.html>
+>>>>
+>>>>   As a result, if a part of the media device fails to initialise because it
+>>>>   is e.g. physically broken, it will be possible to use what works.
+>>>
+>>> I've got major problems with this from a userspace point of view. In the vast
+>>> majority of cases you just want to bail out if one or more subdevs fail.
+>>
+>> I admit it's easier for the user space if the device becomes available only
+>> when all its component drivers have registered.
+>>
+>> Also remember that video nodes are registered in the file system right on
+>> device probe time. It's only sub-device and media device node registration
+>> that has taken place in the notifier's complete handler.
 > 
-> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-> index 617fe97..d03ed6b 100644
-> --- a/drivers/leds/leds-blinkm.c
-> +++ b/drivers/leds/leds-blinkm.c
-> @@ -298,7 +298,7 @@ static ssize_t store_test(struct device *dev, struct device_attribute *attr,
->  	NULL,
->  };
->  
-> -static struct attribute_group blinkm_group = {
-> +static const struct attribute_group blinkm_group = {
->  	.name = "blinkm",
->  	.attrs = blinkm_attrs,
->  };
-> 
+> Is this always the case? In the R-Car VIN driver I register the video 
+> devices using video_register_device() in the complete handler. Am I 
+> doing things wrong in that driver? I had a patch where I moved the 
+> video_register_device() call to probe time but it got shoot down in 
+> review and was dropped.
 
-Applied to the for-next branch of linux-leds.git.
+I don't think the current implementation is wrong, it's just different
+from other drivers; there's really no requirement regarding this AFAIU.
+It's one of the things where no attention has been paid I presume.
+
+However doing anything that can fail earlier on would be nicer since
+there's no reasonable way to signal an error from complete callback either.
 
 -- 
-Best regards,
-Jacek Anaszewski
+Regards,
+
+Sakari Ailus
+sakari.ailus@iki.fi
