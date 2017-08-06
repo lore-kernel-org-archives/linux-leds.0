@@ -1,90 +1,186 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC 00/19] Async sub-notifiers and how to use them
-Date: Fri, 4 Aug 2017 21:25:22 +0300
-Message-ID: <4fa22637-c58e-79e3-be22-575b0a4ff3f9@iki.fi>
-References: <20170718190401.14797-1-sakari.ailus@linux.intel.com>
- <eb0ff309-bdf5-30f9-06da-2fc6c35fbf6a@xs4all.nl>
- <20170720161400.ijud3kppizb44acw@valkosipuli.retiisi.org.uk>
- <20170721065754.GC20077@bigcity.dyn.berto.se>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] leds: pca955x: add device tree support
+Date: Sun, 6 Aug 2017 23:42:27 +0200
+Message-ID: <83142a40-1aba-6f8f-57a2-6542e7e91ecf@gmail.com>
+References: <1501589349-5681-1-git-send-email-clg@kaod.org>
+ <1501589349-5681-2-git-send-email-clg@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170721065754.GC20077@bigcity.dyn.berto.se>
-Sender: linux-media-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, laurent.pinchart@ideasonboard.com
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1501589349-5681-2-git-send-email-clg-Bxea+6Xhats@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg-Bxea+6Xhats@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Niklas Söderlund wrote:
-> Hi Sakari,
-> 
-> On 2017-07-20 19:14:01 +0300, Sakari Ailus wrote:
->> Hi Hans,
->>
->> Thanks for the review.
->>
->> On Wed, Jul 19, 2017 at 01:42:55PM +0200, Hans Verkuil wrote:
->>> On 18/07/17 21:03, Sakari Ailus wrote:
->>>> Hi folks,
->>>>
->>>> This RFC patchset achieves a number of things which I've put to the same
->>>> patchset for they need to be show together to demonstrate the use cases.
->>>>
->>>> I don't really intend this to compete with Niklas's patchset but much of
->>>> the problem area addressed by the two is the same.
->>>>
->>>> Comments would be welcome.
->>>>
->>>> - Add AS3645A LED flash class driver.
->>>>
->>>> - Add async notifiers (by Niklas).
->>>>
->>>> - V4L2 sub-device node registration is moved to take place at the same time
->>>>   with the registration of the sub-device itself. With this change,
->>>>   sub-device node registration behaviour is aligned with video node
->>>>   registration.
->>>>
->>>> - The former is made possible by moving the bound() callback after
->>>>   sub-device registration.
->>>>
->>>> - As all the device node registration and link creation is done as the
->>>>   respective devices are probed, there is no longer dependency to the
->>>>   notifier complete callback which as itself is seen problematic. The
->>>>   complete callback still exists but there's no need to use it, pending
->>>>   changes in individual drivers.
->>>>
->>>>   See:
->>>>   <URL:http://www.spinics.net/lists/linux-media/msg118323.html>
->>>>
->>>>   As a result, if a part of the media device fails to initialise because it
->>>>   is e.g. physically broken, it will be possible to use what works.
->>>
->>> I've got major problems with this from a userspace point of view. In the vast
->>> majority of cases you just want to bail out if one or more subdevs fail.
->>
->> I admit it's easier for the user space if the device becomes available only
->> when all its component drivers have registered.
->>
->> Also remember that video nodes are registered in the file system right on
->> device probe time. It's only sub-device and media device node registration
->> that has taken place in the notifier's complete handler.
-> 
-> Is this always the case? In the R-Car VIN driver I register the video 
-> devices using video_register_device() in the complete handler. Am I 
-> doing things wrong in that driver? I had a patch where I moved the 
-> video_register_device() call to probe time but it got shoot down in 
-> review and was dropped.
+Hi Cedric,
 
-I don't think the current implementation is wrong, it's just different
-from other drivers; there's really no requirement regarding this AFAIU.
-It's one of the things where no attention has been paid I presume.
+Thanks for the updated patch set.
+Please refer below to my comments.
 
-However doing anything that can fail earlier on would be nicer since
-there's no reasonable way to signal an error from complete callback either.
+On 08/01/2017 02:09 PM, Cédric Le Goater wrote:
+> It will be used in a following patch to define different operation
+> modes for each pin.
+> 
+> Signed-off-by: Cédric Le Goater <clg-Bxea+6Xhats@public.gmane.org>
+> ---
+>  drivers/leds/leds-pca955x.c | 89 ++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 84 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index 9a873118ea5f..3afd481a760f 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -41,14 +41,17 @@
+>   */
+>  
+>  #include <linux/acpi.h>
+> -#include <linux/module.h>
+> -#include <linux/delay.h>
+> -#include <linux/string.h>
+>  #include <linux/ctype.h>
+> -#include <linux/leds.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+> +#include <linux/gpio.h>
+>  #include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of.h>
+>  #include <linux/slab.h>
+> +#include <linux/string.h>
+>  
+>  /* LED select registers determine the source that drives LED outputs */
+>  #define PCA955X_LS_LED_ON	0x0	/* Output LOW */
+> @@ -122,6 +125,12 @@ struct pca955x_led {
+>  	struct led_classdev	led_cdev;
+>  	int			led_num;	/* 0 .. 15 potentially */
+>  	char			name[32];
+> +	const char		*default_trigger;
+> +};
+> +
+> +struct pca955x_platform_data {
+> +	struct pca955x_led	*leds;
+> +	int			num_leds;
+>  };
+>  
+>  /* 8 bits per input register */
+> @@ -250,6 +259,70 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  	return 0;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_OF)
+> +static struct pca955x_platform_data *
+> +pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+> +{
+> +	struct device_node *np = client->dev.of_node;
+> +	struct device_node *child;
+> +	struct pca955x_platform_data *pdata;
+> +	int count;
+> +
+> +	count = of_get_child_count(np);
+> +	if (!count || count > chip->bits)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pdata->leds = devm_kzalloc(&client->dev,
+> +				   sizeof(struct pca955x_led) * chip->bits,
+> +				   GFP_KERNEL);
+> +	if (!pdata->leds)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for_each_child_of_node(np, child) {
+> +		const char *name;
+> +		u32 reg;
+> +		int res;
+> +
+> +		res = of_property_read_u32(child, "reg", &reg);
+> +		if ((res != 0) || (reg >= chip->bits))
+> +			continue;
+> +
+> +		if (of_property_read_string(child, "label", &name))
+> +			name = child->name;
+> +
+> +		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
+> +			 "%s", name);
+> +
+> +		of_property_read_string(child, "linux,default-trigger",
+> +					&pdata->leds[reg].default_trigger);
+> +	}
+> +
+> +	pdata->num_leds = chip->bits;
+> +
+> +	return pdata;
+> +}
+> +
+> +static const struct of_device_id of_pca955x_match[] = {
+> +	{ .compatible = "nxp,pca9550", .data = (void *)pca9550 },
+> +	{ .compatible = "nxp,pca9551", .data = (void *)pca9551 },
+> +	{ .compatible = "nxp,pca9552", .data = (void *)pca9552 },
+> +	{ .compatible = "nxp,pca9553", .data = (void *)pca9553 },
+> +	{},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, of_pca955x_match);
+> +#else
+> +static struct pca955x_platform_data *
+> +pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +#endif
+> +
+>  static int pca955x_probe(struct i2c_client *client,
+>  					const struct i2c_device_id *id)
+>  {
+> @@ -257,8 +330,8 @@ static int pca955x_probe(struct i2c_client *client,
+>  	struct pca955x_led *pca955x_led;
+>  	struct pca955x_chipdef *chip;
+>  	struct i2c_adapter *adapter;
+> -	struct led_platform_data *pdata;
+>  	int i, err;
+> +	struct pca955x_platform_data *pdata;
+>  
+>  	if (id) {
+>  		chip = &pca955x_chipdefs[id->driver_data];
+> @@ -272,6 +345,11 @@ static int pca955x_probe(struct i2c_client *client,
+>  	}
+>  	adapter = to_i2c_adapter(client->dev.parent);
+>  	pdata = dev_get_platdata(&client->dev);
+> +	if (!pdata) {
+> +		pdata =	pca955x_pdata_of_init(client, chip);
+> +		if (IS_ERR(pdata))
+> +			return PTR_ERR(pdata);
+> +	}
+
+Since from this moment pdata should be in every case available you
+could get rid of "if (pdata) check" right after
+
+"if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))".
+
+
+
+>  	/* Make sure the slave address / chip type combo given is possible */
+>  	if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
+> @@ -378,6 +456,7 @@ static struct i2c_driver pca955x_driver = {
+>  	.driver = {
+>  		.name	= "leds-pca955x",
+>  		.acpi_match_table = ACPI_PTR(pca955x_acpi_ids),
+> +		.of_match_table = of_match_ptr(of_pca955x_match),
+>  	},
+>  	.probe	= pca955x_probe,
+>  	.remove	= pca955x_remove,
+> 
 
 -- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@iki.fi
+Best regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
