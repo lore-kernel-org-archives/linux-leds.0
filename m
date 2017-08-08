@@ -1,54 +1,64 @@
 From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH] leds: Convert to using %pOF instead of full_name
-Date: Tue, 8 Aug 2017 10:09:50 +0200
-Message-ID: <20170808080950.GC12854@amd>
-References: <20170718214339.7774-31-robh@kernel.org>
+Subject: Re: [patch v2 1/2] mfd: Add Mellanox regmap core driver
+Date: Tue, 8 Aug 2017 10:17:11 +0200
+Message-ID: <20170808081711.GE12854@amd>
+References: <1501108094-16898-1-git-send-email-vadimp@mellanox.com>
+ <1501108094-16898-2-git-send-email-vadimp@mellanox.com>
+ <20170807155836.uqa2nezqqheg6so6@dell>
+ <AM4PR05MB3330A1043B618D723EFF4C8DA28A0@AM4PR05MB3330.eurprd05.prod.outlook.com>
+ <20170808070211.ikxbzkygymlolavv@dell>
+ <AM4PR05MB33301E39B8BB39F68D49B30DA28A0@AM4PR05MB3330.eurprd05.prod.outlook.com>
+ <20170808074523.GA12854@amd>
+ <AM4PR05MB33300159962297EEC58F1BDAA28A0@AM4PR05MB3330.eurprd05.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jousvV0MzM2p6OtC"
+        protocol="application/pgp-signature"; boundary="y2zxS2PfCDLh6JVG"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170718214339.7774-31-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <AM4PR05MB33300159962297EEC58F1BDAA28A0-n5Jp0YuYvM1LPiJj6BpYmdqRiQSDpxhJvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org" <jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org>, "jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---jousvV0MzM2p6OtC
+--y2zxS2PfCDLh6JVG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2017-07-18 16:43:11, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
+Hi!
+
+> > > And such code can't be placed under drivers/platform/x86/.
+> >=20
+> > So aim for drivers/platform/mlx ...?
+> >=20
 >=20
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
-> Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> So you suggest to move drivers/platform/x86/mlxcpld-hotplug.c to
+> drivers/platform/mellanox/mlxcpld-hotplug.c and extend thr driver
+> with DTS support (mlxreg_core_dev_enable/mlxreg_core_dev_disable)?
 
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+If this leads to less code duplication -- yes, by all means do that.
 
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---jousvV0MzM2p6OtC
+--y2zxS2PfCDLh6JVG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlmJcc4ACgkQMOfwapXb+vLb/gCeJ48MLvP0MqsQnkYdXX5wNkK9
-yHkAnim8uJNIaDHCVyHyif7H+Ya8pgAA
-=SyIj
+iEYEARECAAYFAlmJc4cACgkQMOfwapXb+vJYTACfQQD6hKIWUK5gHcOFQHBqf3Oj
+YTQAnjmtLxVhTV6YRSu9mCk6EZBoXyb0
+=lZGD
 -----END PGP SIGNATURE-----
 
---jousvV0MzM2p6OtC--
+--y2zxS2PfCDLh6JVG--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
