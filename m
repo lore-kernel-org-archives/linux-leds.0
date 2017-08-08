@@ -1,129 +1,159 @@
-From: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Subject: RE: [patch v2 1/2] mfd: Add Mellanox regmap core driver
-Date: Tue, 8 Aug 2017 05:59:19 +0000
-Message-ID: <AM4PR05MB3330A1043B618D723EFF4C8DA28A0@AM4PR05MB3330.eurprd05.prod.outlook.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [patch v2 1/2] mfd: Add Mellanox regmap core driver
+Date: Tue, 8 Aug 2017 08:02:11 +0100
+Message-ID: <20170808070211.ikxbzkygymlolavv@dell>
 References: <1501108094-16898-1-git-send-email-vadimp@mellanox.com>
  <1501108094-16898-2-git-send-email-vadimp@mellanox.com>
  <20170807155836.uqa2nezqqheg6so6@dell>
+ <AM4PR05MB3330A1043B618D723EFF4C8DA28A0@AM4PR05MB3330.eurprd05.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170807155836.uqa2nezqqheg6so6@dell>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <AM4PR05MB3330A1043B618D723EFF4C8DA28A0-n5Jp0YuYvM1LPiJj6BpYmdqRiQSDpxhJvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
 Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pavel-+ZI9xUNit7I@public.gmane.org" <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org" <jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org>, "jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGVlIEpvbmVzIFttYWls
-dG86bGVlLmpvbmVzQGxpbmFyby5vcmddDQo+IFNlbnQ6IE1vbmRheSwgQXVndXN0IDA3LCAyMDE3
-IDY6NTkgUE0NCj4gVG86IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1lbGxhbm94LmNvbT4NCj4g
-Q2M6IHJvYmgrZHRAa2VybmVsLm9yZzsgcGF2ZWxAdWN3LmN6OyBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gai5hbmFzemV3c2tpQHNhbXN1bmcuY29tOyBycHVyZGllQHJwc3lzLm5ldDsg
-bGludXgtDQo+IGxlZHNAdmdlci5rZXJuZWwub3JnOyBqaXJpQHJlc251bGxpLnVzOyBqYWNlay5h
-bmFzemV3c2tpQGdtYWlsLmNvbQ0KPiBTdWJqZWN0OiBSZTogW3BhdGNoIHYyIDEvMl0gbWZkOiBB
-ZGQgTWVsbGFub3ggcmVnbWFwIGNvcmUgZHJpdmVyDQo+IA0KPiBPbiBXZWQsIDI2IEp1bCAyMDE3
-LCBWYWRpbSBQYXN0ZXJuYWsgd3JvdGU6DQo+IA0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBjb3JlIHJl
-Z21hcCBwbGF0Zm9ybSBkcml2ZXIgZm9yIE1lbGxhbm94IEJNQyBjYXJkcw0KPiA+IHdpdGggdGhl
-IHByb2dyYW1tYWJsZSBkZXZjaWVzIGJhc2VkIGNoYXNzaXMgY29udHJvbC4gVGhlIGRldmljZQ0K
-PiA+IGxvZ2ljcywgY29udHJvbGxlZCBieSBzb2Z0d2FyZSBpbmNsdWRlczoNCj4gPiAtIEludGVy
-cnVwdCBoYW5kbGluZyBmb3IgY2hhc3NpcywgQVNJQywgQ1BVIGV2ZW50czsNCj4gPiAtIExFRCBo
-YW5kbGluZzsNCj4gPiAtIEV4cG9zZXMgdGhyb3VnaCBzeXNmcyBtdXgsIHJlc2V0IHNpZ25hbHMs
-IHJlc2V0IGNhdXNlIG5vdGlmaWNhdGlvbjsNCj4gPiBUaGUgcGF0Y2ggcHJvdmlkZXMgc3VwcG9y
-dCBmb3IgdGhlIGFjY2VzcyB0byBwcm9ncmFtbWFibGUgZGV2aWNlDQo+ID4gdGhyb3VnaCB0aGUg
-cmVnaXN0ZXIgbWFwIGFuZCBhbGxvd3MgZHluYW1pYyBkZXZpY2UgdHJlZSBtYW5pcHVsYXRpb24N
-Cj4gPiBhdCBydW50aW1lIGZvciByZW1vdmFibGUgZGV2aWNlcy4NCj4gPg0KPiA+IFRoaXMgZHJp
-dmVyIHJlcXVpcmVzIGFjdGl2YXRvciBkcml2ZXIsIHdoaWNoIHJlc3BvbnNpYmlsaXR5IGlzIHRv
-DQo+ID4gY3JlYXRlIHJlZ2lzdGVyIG1hcCBhbmQgcGFzcyBpdCB0byByZWdtYXAgY29yZS4gU3Vj
-aCBhY3RpdmF0b3IgY291bGQNCj4gPiBiZSBiYXNlZCBmb3IgZXhhbXBsZSBvbiBJMkMsIFNQSSBv
-ciAgTU1JTyBpbnRlcmZhY2UuDQo+ID4NCj4gPiBEcml2ZXJzIGV4cG9zZXMgdGhlIG51bWJlciBv
-ZiBod21vbiBhdHRyaWJ1dGVzIHRvIHN5c2ZzIGFjY29yZGluZyB0bw0KPiA+IHRoZSBhdHRyaWJ1
-dGUgZ3JvdXBzLCBkZWZpbmVkIGluIHRoZSBkZXZpY2UgdHJlZS4gVGhlc2UgYXR0cmlidXRlcw0K
-PiA+IHdpbGwgYmUgbG9jYXRlZCBmb3IgZXhhbXBsZSBpbiAvc3lzL2NsYXNzL2h3bW9uL2h3bW9u
-WCBmb2xkZXIsIHdoaWNoDQo+ID4gaXMgYSBzeW1ib2xpYyBsaW5rIHRvIGZvciBleGFtcGxlOg0K
-PiA+IC9zeXMvYnVzL2kyYy9kZXZpY2VzLzQtMDA3Mi9tbHhyZWctY29yZS4xMTM4L2h3bW9uL2h3
-bW9uMTAuDQo+ID4gVGhlIGF0dHJpYnV0ZXMgYXJlIGRpdmlkZWQgdG8gdGhlIGdyb3VwcywgbGlr
-ZSBpbiB0aGUgYmVsb3cgZXhhbXBsZToNCj4gPiAgTVVYIG5vZGVzDQo+ID4gIC0gc2FmZV9iaW9z
-X2Rpc2FibGUNCj4gPiAgLSBzcGlfYnVybl9iaW9zX2NpDQo+ID4gIC0gc3BpX2J1cm5fbmNzaQ0K
-PiA+ICAtIHVhcnRfc2VsDQo+ID4gIFJlc2V0IG5vZGVzOg0KPiA+ICAtIHN5c19wb3dlcl9jeWNs
-ZQ0KPiA+ICAtIGJtY191cGdyYWRlDQo+ID4gIC0gYXNpY19yZXNldA0KPiA+ICBDYXVzZSBvZiBy
-ZXNldCBub2RlczoNCj4gPiAgLSBjcHVfa2VybmVsX3BhbmljDQo+ID4gIC0gY3B1X3NodXRkb3du
-DQo+ID4gIC0gYm1jX3dhcm1fcmVzZXQNCj4gPiAgUFNVIG5vZGVzJyBzdGF0dXNlcw0KPiA+ICAt
-IHBzdTENCj4gPiAgLSBwc3UyDQo+ID4gIEZBTiBub2Rlcycgc3RhdHVzZXM6DQo+ID4gIC0gZmFu
-MQ0KPiA+ICAtIGZhbjINCj4gPiAgUG93ZXIgY2FibGUgbm9kZXMnIHN0YXR1c2VzOg0KPiA+ICAt
-IHB3cjENCj4gPiAgLSBwd3IyDQo+ID4gIEFzaWMgbm9kZXMnIHN0YXR1c2VzOg0KPiA+ICAtIGFz
-aWMxDQo+ID4gIC0gYXNpYzINCj4gPiAgR2VuZXJhbCBwdXJwb3NlIFJXIG5vZGVzOg0KPiA+ICAt
-IHZlcnNpb24NCj4gPg0KPiA+IERyaXZlcnMgYWxzbyBwcm9iZXMgTEVEIHBsYXRmb3JtIGRyaXZl
-ciwgaW4gY2FzZSBkZXZpY2UgdHJlZQ0KPiA+IGRlc2NyaXB0aW9uIGNvbnRhaW5zIExFRCBub2Rl
-cy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1lbGxh
-bm94LmNvbT4NCj4gPiAtLS0NCj4gPiB2MS0+djI6DQo+ID4gIENvbW1lbnRzIHBvaW50ZWQgb3V0
-IGJ5IFBhdmVsOg0KPiA+ICAtIFJlbW92ZSBleHRyYSBuZXcgbGluZSBpbiBtZWxsYW5veCxtbHhy
-ZWctY29yZTsNCj4gPiAgLSBSZXBsYWNlIHRocmVlIE5PVCB3aXRoIG9uZSBpbiBtbHhyZWdfY29y
-ZV9hdHRyX3Nob3c7DQo+ID4gIC0gTWFrZSBlcnJvciBtZXNzYWdlIGluIG1seHJlZ19jb3JlX3dv
-cmtfaGVscGVyIHNob3J0ZXI7DQo+ID4gIC0gTWFrZSBhdHRyaWJ1dGUgYXNzaWdubWVudCBtb3Jl
-IHJlYWRhYmxlOw0KPiA+ICAtIFNlcGFyYXRlIG1lbGxhbm94LG1seHJlZy1jb3JlIGZpbGUgZm9y
-IHNlbmRpbmcgdG8gRFQgbWFpbmF0YW5lcnMuDQo+ID4gIENvbW1lbnRzIHBvaW50ZWQgb3V0IGJ5
-IEphY2VrOg0KPiA+ICAtIFNpbmNlICBicmlnaHRuZXNzX3NldF9ibG9ja2luZyBpcyB1c2VkIGlu
-c3RlYWQgb2YNCj4gPiAgICBicmlnaHRuZXNzX3NldCwgdGhyZWUgZmllbGRzIGZyb20gbWx4cmVn
-X2NvcmVfbGVkX2RhdGEuDQo+ID4gLS0tDQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Zl
-bmRvci1wcmVmaXhlcy50eHQgICAgICAgIHwgICAgMSArDQo+ID4gIE1BSU5UQUlORVJTICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgNyArDQo+ID4gIGRyaXZlcnMv
-bWZkL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxNSArDQo+ID4g
-IGRyaXZlcnMvbWZkL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAg
-MSArDQo+ID4gIGRyaXZlcnMvbWZkL21seHJlZy1jb3JlLmMgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgMTI1NyArKysrKysrKysrKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2xpbnV4L3BsYXRm
-b3JtX2RhdGEvbWx4cmVnLmggICAgICAgICAgICAgICB8ICAgODcgKysNCj4gPiAgNiBmaWxlcyBj
-aGFuZ2VkLCAxMzY4IGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
-cnMvbWZkL21seHJlZy1jb3JlLmMgIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+IGluY2x1ZGUvbGlu
-dXgvcGxhdGZvcm1fZGF0YS9tbHhyZWcuaA0KPiANCj4gSSdtIG5vdCBzdXJlIHdoYXQgdGhpcyBk
-cml2ZXIgaXMsIGJ1dCBpdCBpc24ndCBhbiBNRkQgZHJpdmVyLiAgTUZEIGRyaXZlcnMNCj4gcHVy
-cG9zZSBpcyB0byBzZXQgdXAgc2hhcmVkIHJlc291cmNlcywgdGhlbiByZWdpc3RlciBjaGlsZCBk
-ZXZpY2UgZHJpdmVycw0KPiB3aGljaCBsaXZlIGluIG90aGVyIHN1YnN5c3RlbXMuICBTaW5jZSB0
-aGlzIGRldmljZSBhcHBlYXJzIHRvIGJlIG5ldHdvcmtpbmcNCj4gcmVsYXRlZCwgcGVyaGFwcyBp
-dCBtaWdodCBmaW5kIGEgc3VpdGFibGUgaG9tZSBpbiBkcml2ZXJzL25ldC4gIEZhaWxpbmcgdGhh
-dCwgeW91DQo+IG5lZWQgdG8gc3BsaXQgb3V0IGVhY2ggb2YgdGhlIGZ1bmN0aW9ucyBpbnRvIHRo
-ZWlyIG93biBzdWJzeXN0ZW1zOw0KPiBkcml2ZXJzL2lucHV0LCBkcml2ZXJzL2h3bW9uLCBkcml2
-ZXJzL3Jlc2V0LCBldGMgYW5kIHN1cHBseSBhbiBNRkQgZHJpdmVyIHRvDQo+IHJlZ2lzdGVyIHRo
-ZW0gYWxsLg0KDQpIaSBMZWUsDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseS4NCg0KVGhpcyBk
-cml2ZXIgc2V0cyB0aGUgc2hhcmVkIHJlc291cmNlcyBvZiBwcm9ncmFtbWFibGUgKENQTEQgb3Ig
-RlBHQSkgZGV2aWNlcy4gVGhpcyBkZXZpY2VzIGFyZSB1c2VkIHRvIGNvbnRyb2wgZGlmZmVyZW50
-IGZ1bmN0aW9uYWxpdGllcywgbGlrZSBMRUQsIFdhdGNoZG9nLCAgUFdNLCBJQy4NClN5c3RlbSBj
-YW4gYmUgZXF1aXBwZWQgd2l0aCBzZXZlcmFsIHByb2dyYW1tYWJsZSBkZXZpY2VzLCBlYWNoIG9m
-IHRoZW0gY2FuIGNvbnRhaW4gbG9naWMgZm9yIExFRCwgV0QsIFBXTSwgSUMuIENvbmZpZ3VyYXRp
-b24gaXMgY29taW5nIGZyb20gRFRTLg0KDQpBY3R1YWxseSBpdCBkb2Vzbid0IGRlYWwgd2l0aCB0
-aGUgbmV0d29ya2luZyBhdCBhbGwuDQpJbiBjb3JlIGRyaXZlciBJIHB1dCBjb2RlLCB3aGljaCBw
-YXJzZXMgZGV2aWNlIHRhYmxlIHRyZWUsIGV4cG9zZXMgc2V2ZXJhbCB0eXBlcyBvZiByZWdpc3Rl
-cnMgdG8gc3lzZnMgYW5kIHRoZW4gcmVnaXN0ZXIgYSBjaGlsZCBkZXZpY2UuDQoNClRoaXMgdmVy
-c2lvbiBvZiB0aGUgZHJpdmVyIGhhcyBiZWVuIHByb3ZpZGVkIGZvciBzeXN0ZW0gd2l0aCBCTUMg
-Y2FyZC4gVGhpcyBzeXN0ZW0gaXMgZXF1aXBwZWQgd2l0aCBmb3VyIENQTERzLiBPbmUgb2YgdGhl
-c2UgQ1BMRCBoYXMgTEVEIGNvbnRyb2wgbG9naWMsIGFsbCBvZiB0aGVtIGhhdmUgSUMgbG9naWMu
-DQpPbiB0aGVzZSBzeXN0ZW0gV0QgYW5kIFBXTSBhcmUgY29udHJvbGxlZCBieSBCTUMgU29DIChB
-c3BlZWQgMjUyMCkuDQoNClJlZ2lzdGVycyB3aXRoIHJlc2V0IGFuZCByZXNldCBjYXVzZSBpbmZv
-LCBqdXN0IGV4cG9zZWQgdG8gdGhlIHVzZXIgc3BhY2UgdGhyb3VnaCBzeXNmcyBhbmQgaW4gQk1D
-IHRoZXkganVzdCB1c2VkIGJ5IElQTUkgZGVtb24gYW5kIGRvZXNuJ3QgaGF2ZSBzcGVjaWFsIGhh
-bmRsaW5nIGluIGtlcm5lbCBhbmQgZG9lc24ndCByZXF1aXJlIGtlcm5lbCBkcml2ZXIuDQoNCkkg
-YW0gcGxhbm5pbmcgdG8gYWRkIHRoZSBkcml2ZXJzIGZvciBXRCBhbmQgUFdNIGluIHRoZSBmdXR1
-cmUsIHdoZW4gd2UnbGwgaGF2ZSB0aGUgc3lzdGVtcyByZXF1aXJlZCBzdWNoIGZ1bmN0aW9uYWxp
-dGllcy4NCkN1cnJlbnRseSBJIHN1cHBvcnQgb25seSBMRUQgZHJpdmVyLCB3aGljaCBpcyBsb2Nh
-dGVkIGluIGRyaXZlcnMvbGVkcy4NCkFuZCB0aGVyZSBpcyBubyBzcGVjaWFsIHBsYWNlIGZvciBJ
-Qywgc28gSSBsb2NhdGVkIHRoaXMgY29kZSB3aXRoaW4gIHRoZSByZWdtYXAgY29yZSBkcml2ZXIu
-DQoNCk1haW4gcHVycG9zZSBvZiBJQyBwYXJ0IGlzIGhvdHBsdWcgY29udHJvbCBmb3IgdGhlIGR5
-bmFtaWMgdW5pdHMgb3IgY29tcG9uZW50cywgZm9yIGV4YW1wbGUgZm9yIFBTVXMsIEZBTnMuDQpG
-b3IgZXhhbXBsZSB0aGUgYmVsb3cgcmVjb3JkIHNwZWNpZmllcyBwcm9ncmFtbWFibGUgZGV2aWNl
-IHJlZ2lzdGVyIGFuZCBtYXNrLCB3aGljaCB0cmlnZ2VycyBwcm9iaW5nIG9yIHJlbW92aW5nIHJl
-bGV2YW50IFBTVSBjb250cm9sbGVyIGRyaXZlcjogIA0KCQlwd3Igew0KCQkJYWdncl9tYXNrID0g
-PDB4MDg+Ow0KCQkJcmVnID0gPDB4NjQ+Ow0KCQkJbWFzayA9IDwweDAzPjsNCgkJCXBoYW5kbGVz
-ID0gPCZwc3UxX2N0cmwgJnBzdTJfY3RybD47DQoJCX07DQoNClNvLCBjdXJyZW50bHkgSSBoYXZl
-IG1mZCByZWxhdGVkIGRyaXZlciBpbiBkcml2ZXJzL2xlZHMsIGFuZCBnb2luZyB0byBoYXZlIGFs
-c28gZHJpdmVycyBpbiBkcml2ZXJzL3dhdGNoZG9nIGFuZCBkcml2ZXJzL2h3bW9uIChvciBkcml2
-ZXJzL3B3bSkuDQpBbmQgZm9yIElDIGZ1bmN0aW9uYWxpdHkgdGhlcmUgaXMgbm8gc3VpdGFibGUg
-cGxhY2UsIHNvIGl0IHNlZW1zIHRvIGJlIGxvZ2ljYWwgdG8gbm90IHNwbGl0IGl0IGludG8gdGhl
-IHNlcGFyYXRlIGRyaXZlciBhbmQga2VlcCBpdCB3aXRoaW4gbWx4cmVnLWNvcmUuDQoNCiBXaGF0
-IGRvIHlvdSB0aGluaz8NCg0KVGhhbmtzLA0KVmFkaW0uDQoNCj4gDQo+IC0tDQo+IExlZSBKb25l
-cw0KPiBMaW5hcm8gU1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkIExpbmFyby5v
-cmcg4pSCIE9wZW4gc291cmNlDQo+IHNvZnR3YXJlIGZvciBBUk0gU29DcyBGb2xsb3cgTGluYXJv
-OiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nDQo=
+On Tue, 08 Aug 2017, Vadim Pasternak wrote:
+> > -----Original Message-----
+> > From: Lee Jones [mailto:lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org]
+> > Sent: Monday, August 07, 2017 6:59 PM
+> > To: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+> > Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org; pavel-+ZI9xUNit7I@public.gmane.org; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> > j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org; linux-
+> > leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org; jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+> > Subject: Re: [patch v2 1/2] mfd: Add Mellanox regmap core driver
+> > 
+> > On Wed, 26 Jul 2017, Vadim Pasternak wrote:
+> > 
+> > > This patch adds core regmap platform driver for Mellanox BMC cards
+> > > with the programmable devcies based chassis control. The device
+> > > logics, controlled by software includes:
+> > > - Interrupt handling for chassis, ASIC, CPU events;
+> > > - LED handling;
+> > > - Exposes through sysfs mux, reset signals, reset cause notification;
+> > > The patch provides support for the access to programmable device
+> > > through the register map and allows dynamic device tree manipulation
+> > > at runtime for removable devices.
+> > >
+> > > This driver requires activator driver, which responsibility is to
+> > > create register map and pass it to regmap core. Such activator could
+> > > be based for example on I2C, SPI or  MMIO interface.
+> > >
+> > > Drivers exposes the number of hwmon attributes to sysfs according to
+> > > the attribute groups, defined in the device tree. These attributes
+> > > will be located for example in /sys/class/hwmon/hwmonX folder, which
+> > > is a symbolic link to for example:
+> > > /sys/bus/i2c/devices/4-0072/mlxreg-core.1138/hwmon/hwmon10.
+> > > The attributes are divided to the groups, like in the below example:
+> > >  MUX nodes
+> > >  - safe_bios_disable
+> > >  - spi_burn_bios_ci
+> > >  - spi_burn_ncsi
+> > >  - uart_sel
+> > >  Reset nodes:
+> > >  - sys_power_cycle
+> > >  - bmc_upgrade
+> > >  - asic_reset
+> > >  Cause of reset nodes:
+> > >  - cpu_kernel_panic
+> > >  - cpu_shutdown
+> > >  - bmc_warm_reset
+> > >  PSU nodes' statuses
+> > >  - psu1
+> > >  - psu2
+> > >  FAN nodes' statuses:
+> > >  - fan1
+> > >  - fan2
+> > >  Power cable nodes' statuses:
+> > >  - pwr1
+> > >  - pwr2
+> > >  Asic nodes' statuses:
+> > >  - asic1
+> > >  - asic2
+> > >  General purpose RW nodes:
+> > >  - version
+> > >
+> > > Drivers also probes LED platform driver, in case device tree
+> > > description contains LED nodes.
+> > >
+> > > Signed-off-by: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+> > > ---
+> > > v1->v2:
+> > >  Comments pointed out by Pavel:
+> > >  - Remove extra new line in mellanox,mlxreg-core;
+> > >  - Replace three NOT with one in mlxreg_core_attr_show;
+> > >  - Make error message in mlxreg_core_work_helper shorter;
+> > >  - Make attribute assignment more readable;
+> > >  - Separate mellanox,mlxreg-core file for sending to DT mainataners.
+> > >  Comments pointed out by Jacek:
+> > >  - Since  brightness_set_blocking is used instead of
+> > >    brightness_set, three fields from mlxreg_core_led_data.
+> > > ---
+> > >  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+> > >  MAINTAINERS                                        |    7 +
+> > >  drivers/mfd/Kconfig                                |   15 +
+> > >  drivers/mfd/Makefile                               |    1 +
+> > >  drivers/mfd/mlxreg-core.c                          | 1257 ++++++++++++++++++++
+> > >  include/linux/platform_data/mlxreg.h               |   87 ++
+> > >  6 files changed, 1368 insertions(+)
+> > >  create mode 100644 drivers/mfd/mlxreg-core.c  create mode 100644
+> > > include/linux/platform_data/mlxreg.h
+> > 
+> > I'm not sure what this driver is, but it isn't an MFD driver.  MFD drivers
+> > purpose is to set up shared resources, then register child device drivers
+> > which live in other subsystems.  Since this device appears to be networking
+> > related, perhaps it might find a suitable home in drivers/net.  Failing that, you
+> > need to split out each of the functions into their own subsystems;
+> > drivers/input, drivers/hwmon, drivers/reset, etc and supply an MFD driver to
+> > register them all.
+> 
+> Hi Lee,
+> 
+> Thank you for your reply.
+> 
+> This driver sets the shared resources of programmable (CPLD or FPGA) devices. This devices are used to control different functionalities, like LED, Watchdog,  PWM, IC.
+> System can be equipped with several programmable devices, each of them can contain logic for LED, WD, PWM, IC. Configuration is coming from DTS.
+> 
+> Actually it doesn't deal with the networking at all.
+> In core driver I put code, which parses device table tree, exposes several types of registers to sysfs and then register a child device.
+> 
+> This version of the driver has been provided for system with BMC card. This system is equipped with four CPLDs. One of these CPLD has LED control logic, all of them have IC logic.
+> On these system WD and PWM are controlled by BMC SoC (Aspeed 2520).
+> 
+> Registers with reset and reset cause info, just exposed to the user space through sysfs and in BMC they just used by IPMI demon and doesn't have special handling in kernel and doesn't require kernel driver.
+> 
+> I am planning to add the drivers for WD and PWM in the future, when we'll have the systems required such functionalities.
+> Currently I support only LED driver, which is located in drivers/leds.
+> And there is no special place for IC, so I located this code within  the regmap core driver.
+> 
+> Main purpose of IC part is hotplug control for the dynamic units or components, for example for PSUs, FANs.
+> For example the below record specifies programmable device register and mask, which triggers probing or removing relevant PSU controller driver:  
+> 		pwr {
+> 			aggr_mask = <0x08>;
+> 			reg = <0x64>;
+> 			mask = <0x03>;
+> 			phandles = <&psu1_ctrl &psu2_ctrl>;
+> 		};
+> 
+> So, currently I have mfd related driver in drivers/leds, and going to have also drivers in drivers/watchdog and drivers/hwmon (or drivers/pwm).
+> And for IC functionality there is no suitable place, so it seems to be logical to not split it into the separate driver and keep it within mlxreg-core.
+> 
+>  What do you think?
+
+Why don't you extend the support you already provide in
+drivers/platform?  This seems like a logical place for an all
+encompassing device which cannot be split out to individual
+subsystems.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
