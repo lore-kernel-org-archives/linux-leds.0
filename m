@@ -1,51 +1,59 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 3/3] v4l2-flash-led-class: Document v4l2_flash_init() references
-Date: Wed,  9 Aug 2017 14:15:55 +0300
-Message-ID: <20170809111555.30147-4-sakari.ailus@linux.intel.com>
-References: <20170809111555.30147-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH v2 0/3] Create sub-device per LED
+Date: Wed,  9 Aug 2017 14:15:52 +0300
+Message-ID: <20170809111555.30147-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44080 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44028 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752214AbdHILP7 (ORCPT
+        by vger.kernel.org with ESMTP id S1752106AbdHILP7 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Aug 2017 07:15:59 -0400
-In-Reply-To: <20170809111555.30147-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, viresh.kumar@linaro.org, Rui Miguel Silva <rmfrfs@gmail.com>
 
-The v4l2_flash_init() keeps a reference to the ops struct but not to the
-config struct (nor anything it contains). Document this.
+Hi folks,
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- include/media/v4l2-flash-led-class.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+The original design decision in the V4L2 flash API allows controlling a two
+LEDs (an indicator and a flash) through a single sub-device. This covered
+virtually all flash driver chips back then but this no longer holds as
+there are many LED driver chips with multiple flash LED outputs. This
+necessitates creating as many sub-devices as there are flash LEDs.
 
-diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-flash-led-class.h
-index c3f39992f3fa..6f4825b6a352 100644
---- a/include/media/v4l2-flash-led-class.h
-+++ b/include/media/v4l2-flash-led-class.h
-@@ -112,6 +112,9 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
-  * @config:	initialization data for V4L2 Flash sub-device
-  *
-  * Create V4L2 Flash sub-device wrapping given LED subsystem device.
-+ * The ops pointer is stored by the V4L2 flash framework. No
-+ * references are held to config nor its contents once this function
-+ * has returned.
-  *
-  * Returns: A valid pointer, or, when an error occurs, the return
-  * value is encoded using ERR_PTR(). Use IS_ERR() to check and
-@@ -130,6 +133,9 @@ struct v4l2_flash *v4l2_flash_init(
-  * @config:	initialization data for V4L2 Flash sub-device
-  *
-  * Create V4L2 Flash sub-device wrapping given LED subsystem device.
-+ * The ops pointer is stored by the V4L2 flash framework. No
-+ * references are held to config nor its contents once this function
-+ * has returned.
-  *
-  * Returns: A valid pointer, or, when an error occurs, the return
-  * value is encoded using ERR_PTR(). Use IS_ERR() to check and
+Additionally the flash LEDs can be associated to different sensors. This is
+not unconceivable although not very probable.
+
+This patchset splits the indicator and flash LEDs exposed by the V4L2 flash
+class framework into multiple sub-devices. This way the driver creates the
+sub-devices individually for each LED which will also facilitate fwnode
+matching (e.g. will you refer to LED or a LED driver chip with a phandle?).
+
+since v1:
+
+- Drop patch "staging: greybus: light: Don't leak memory for no gain" in
+  favour of Rui's "staging: greybus: light: fix memory leak in v4l2
+  register".
+
+- Rebase "staging: greybus: light: fix memory leak in v4l2 register" on
+  "media: v4l2-flash: Use led_classdev instead of led_classdev_flash for
+  indicator" already in mediatree.
+
+- Add "v4l2-flash-led-class: Document v4l2_flash_init() references" to the
+  set.
+
+Rui Miguel Silva (1):
+  staging: greybus: light: fix memory leak in v4l2 register
+
+Sakari Ailus (2):
+  v4l2-flash-led-class: Create separate sub-devices for indicators
+  v4l2-flash-led-class: Document v4l2_flash_init() references
+
+ drivers/leds/leds-aat1290.c                    |   4 +-
+ drivers/leds/leds-max77693.c                   |   4 +-
+ drivers/media/v4l2-core/v4l2-flash-led-class.c | 113 +++++++++++++++----------
+ drivers/staging/greybus/light.c                |  42 ++++-----
+ include/media/v4l2-flash-led-class.h           |  47 +++++++---
+ 5 files changed, 127 insertions(+), 83 deletions(-)
+
 -- 
 2.11.0
