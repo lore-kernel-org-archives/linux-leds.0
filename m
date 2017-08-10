@@ -1,105 +1,71 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v3 1/3] staging: greybus: light: fix memory leak in v4l2 register
-Date: Thu, 10 Aug 2017 18:49:45 +0300
-Message-ID: <20170810154947.2283-2-sakari.ailus@linux.intel.com>
-References: <20170810154947.2283-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH v3 0/3] Create sub-device per LED
+Date: Thu, 10 Aug 2017 18:49:44 +0300
+Message-ID: <20170810154947.2283-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60262 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60248 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752457AbdHJPtu (ORCPT
+        by vger.kernel.org with ESMTP id S1752243AbdHJPtu (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
         Thu, 10 Aug 2017 11:49:50 -0400
-In-Reply-To: <20170810154947.2283-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, viresh.kumar@linaro.org, Rui Miguel Silva <rmfrfs@gmail.com>
 
-From: Rui Miguel Silva <rmfrfs@gmail.com>
+Hi folks,
 
-We are allocating memory for the v4l2 flash configuration structure and
-leak it in the normal path. Just use the stack for this as we do not
-use it outside of this function.
+The original design decision in the V4L2 flash API allows controlling a two
+LEDs (an indicator and a flash) through a single sub-device. This covered
+virtually all flash driver chips back then but this no longer holds as
+there are many LED driver chips with multiple flash LED outputs. This
+necessitates creating as many sub-devices as there are flash LEDs.
 
-Also use IS_ERR() instead of IS_ERR_OR_NULL() to check return value from
-v4l2_flash_init() for it never returns NULL.
+Additionally the flash LEDs can be associated to different sensors. This is
+not unconceivable although not very probable.
 
-Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
-Reported-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Rui Miguel Silva <rmfrfs@gmail.com>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/staging/greybus/light.c | 29 +++++++++--------------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
+This patchset splits the indicator and flash LEDs exposed by the V4L2 flash
+class framework into multiple sub-devices. This way the driver creates the
+sub-devices individually for each LED which will also facilitate fwnode
+matching (e.g. will you refer to LED or a LED driver chip with a phandle?).
 
-diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-index 129ceed39829..81469d087e74 100644
---- a/drivers/staging/greybus/light.c
-+++ b/drivers/staging/greybus/light.c
-@@ -534,25 +534,20 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- {
- 	struct gb_connection *connection = get_conn_from_light(light);
- 	struct device *dev = &connection->bundle->dev;
--	struct v4l2_flash_config *sd_cfg;
-+	struct v4l2_flash_config sd_cfg = { {0} };
- 	struct led_classdev_flash *fled;
- 	struct led_classdev *iled = NULL;
- 	struct gb_channel *channel_torch, *channel_ind, *channel_flash;
--	int ret = 0;
--
--	sd_cfg = kcalloc(1, sizeof(*sd_cfg), GFP_KERNEL);
--	if (!sd_cfg)
--		return -ENOMEM;
- 
- 	channel_torch = get_channel_from_mode(light, GB_CHANNEL_MODE_TORCH);
- 	if (channel_torch)
- 		__gb_lights_channel_v4l2_config(&channel_torch->intensity_uA,
--						&sd_cfg->torch_intensity);
-+						&sd_cfg.torch_intensity);
- 
- 	channel_ind = get_channel_from_mode(light, GB_CHANNEL_MODE_INDICATOR);
- 	if (channel_ind) {
- 		__gb_lights_channel_v4l2_config(&channel_ind->intensity_uA,
--						&sd_cfg->indicator_intensity);
-+						&sd_cfg.indicator_intensity);
- 		iled = &channel_ind->fled.led_cdev;
- 	}
- 
-@@ -561,27 +556,21 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
- 
- 	fled = &channel_flash->fled;
- 
--	snprintf(sd_cfg->dev_name, sizeof(sd_cfg->dev_name), "%s", light->name);
-+	snprintf(sd_cfg.dev_name, sizeof(sd_cfg.dev_name), "%s", light->name);
- 
- 	/* Set the possible values to faults, in our case all faults */
--	sd_cfg->flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
-+	sd_cfg.flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
- 		LED_FAULT_OVER_TEMPERATURE | LED_FAULT_SHORT_CIRCUIT |
- 		LED_FAULT_OVER_CURRENT | LED_FAULT_INDICATOR |
- 		LED_FAULT_UNDER_VOLTAGE | LED_FAULT_INPUT_VOLTAGE |
- 		LED_FAULT_LED_OVER_TEMPERATURE;
- 
- 	light->v4l2_flash = v4l2_flash_init(dev, NULL, fled, iled,
--					    &v4l2_flash_ops, sd_cfg);
--	if (IS_ERR_OR_NULL(light->v4l2_flash)) {
--		ret = PTR_ERR(light->v4l2_flash);
--		goto out_free;
--	}
-+					    &v4l2_flash_ops, &sd_cfg);
-+	if (IS_ERR(light->v4l2_flash))
-+		return PTR_ERR(light->v4l2_flash);
- 
--	return ret;
--
--out_free:
--	kfree(sd_cfg);
--	return ret;
-+	return 0;
- }
- 
- static void gb_lights_light_v4l2_unregister(struct gb_light *light)
+	Note that this set depends on patch 85f7ff9702bc ("media:
+	v4l2-flash: Use led_classdev instead of led_classdev_flash for
+	indicator") in mediatree master.
+
+since v2:
+
+- Add Hans's acks and Rui's reviewed-by.
+
+- Use IS_ERR() instead of IS_ERR_OR_NULL() to check v4l2_flash_init()
+  success --- it never returns NULL.
+
+since v1:
+
+- Drop patch "staging: greybus: light: Don't leak memory for no gain" in
+  favour of Rui's "staging: greybus: light: fix memory leak in v4l2
+  register".
+
+- Rebase "staging: greybus: light: fix memory leak in v4l2 register" on
+  "media: v4l2-flash: Use led_classdev instead of led_classdev_flash for
+  indicator" already in mediatree.
+
+- Add "v4l2-flash-led-class: Document v4l2_flash_init() references" to the
+  set.
+
+Rui Miguel Silva (1):
+  staging: greybus: light: fix memory leak in v4l2 register
+
+Sakari Ailus (2):
+  v4l2-flash-led-class: Create separate sub-devices for indicators
+  v4l2-flash-led-class: Document v4l2_flash_init() references
+
+ drivers/leds/leds-aat1290.c                    |   4 +-
+ drivers/leds/leds-max77693.c                   |   4 +-
+ drivers/media/v4l2-core/v4l2-flash-led-class.c | 113 +++++++++++++++----------
+ drivers/staging/greybus/light.c                |  42 ++++-----
+ include/media/v4l2-flash-led-class.h           |  47 +++++++---
+ 5 files changed, 127 insertions(+), 83 deletions(-)
+
 -- 
 2.11.0
