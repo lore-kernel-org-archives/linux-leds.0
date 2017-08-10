@@ -1,132 +1,64 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 1/3] staging: greybus: light: fix memory leak in v4l2
- register
-Date: Thu, 10 Aug 2017 15:09:45 +0200
-Message-ID: <acfb7270-5a5e-3e98-f28a-a565d0a54797@xs4all.nl>
+Subject: Re: [PATCH v2 3/3] v4l2-flash-led-class: Document v4l2_flash_init()
+ references
+Date: Thu, 10 Aug 2017 15:16:02 +0200
+Message-ID: <b50ed1f3-d4e1-998e-0001-3f09e36fb701@xs4all.nl>
 References: <20170809111555.30147-1-sakari.ailus@linux.intel.com>
- <20170809111555.30147-2-sakari.ailus@linux.intel.com>
- <cec7fc27-25eb-8769-6795-c377307c5f57@xs4all.nl>
+ <20170809111555.30147-4-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:45721 "EHLO
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:44318 "EHLO
         lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751972AbdHJNJr (ORCPT
+        by vger.kernel.org with ESMTP id S1751972AbdHJNQE (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 10 Aug 2017 09:09:47 -0400
-In-Reply-To: <cec7fc27-25eb-8769-6795-c377307c5f57@xs4all.nl>
+        Thu, 10 Aug 2017 09:16:04 -0400
+In-Reply-To: <20170809111555.30147-4-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
 Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, laurent.pinchart@ideasonboard.com, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, viresh.kumar@linaro.org, Rui Miguel Silva <rmfrfs@gmail.com>
 
-On 10/08/17 15:02, Hans Verkuil wrote:
-> On 09/08/17 13:15, Sakari Ailus wrote:
->> From: Rui Miguel Silva <rmfrfs@gmail.com>
->>
->> We are allocating memory for the v4l2 flash configuration structure and
->> leak it in the normal path. Just use the stack for this as we do not
->> use it outside of this function.
+On 09/08/17 13:15, Sakari Ailus wrote:
+> The v4l2_flash_init() keeps a reference to the ops struct but not to the
+> config struct (nor anything it contains). Document this.
 > 
-> I'm not sure why this is part of this patch series. This is a greybus
-> bug fix, right? And independent from the other two patches.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Ah, I see. The second patch sits on top of this change. Sorry, I was a bit
-too quick there.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
 
 	Hans
 
+> ---
+>  include/media/v4l2-flash-led-class.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
->>
->> Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
->> Reported-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Signed-off-by: Rui Miguel Silva <rmfrfs@gmail.com>
->> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  drivers/staging/greybus/light.c | 29 +++++++++--------------------
->>  1 file changed, 9 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
->> index 129ceed39829..0771db418f84 100644
->> --- a/drivers/staging/greybus/light.c
->> +++ b/drivers/staging/greybus/light.c
->> @@ -534,25 +534,20 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
->>  {
->>  	struct gb_connection *connection = get_conn_from_light(light);
->>  	struct device *dev = &connection->bundle->dev;
->> -	struct v4l2_flash_config *sd_cfg;
->> +	struct v4l2_flash_config sd_cfg = { {0} };
-> 
-> Just use '= {};'
-> 
->>  	struct led_classdev_flash *fled;
->>  	struct led_classdev *iled = NULL;
->>  	struct gb_channel *channel_torch, *channel_ind, *channel_flash;
->> -	int ret = 0;
->> -
->> -	sd_cfg = kcalloc(1, sizeof(*sd_cfg), GFP_KERNEL);
->> -	if (!sd_cfg)
->> -		return -ENOMEM;
->>  
->>  	channel_torch = get_channel_from_mode(light, GB_CHANNEL_MODE_TORCH);
->>  	if (channel_torch)
->>  		__gb_lights_channel_v4l2_config(&channel_torch->intensity_uA,
->> -						&sd_cfg->torch_intensity);
->> +						&sd_cfg.torch_intensity);
->>  
->>  	channel_ind = get_channel_from_mode(light, GB_CHANNEL_MODE_INDICATOR);
->>  	if (channel_ind) {
->>  		__gb_lights_channel_v4l2_config(&channel_ind->intensity_uA,
->> -						&sd_cfg->indicator_intensity);
->> +						&sd_cfg.indicator_intensity);
->>  		iled = &channel_ind->fled.led_cdev;
->>  	}
->>  
->> @@ -561,27 +556,21 @@ static int gb_lights_light_v4l2_register(struct gb_light *light)
->>  
->>  	fled = &channel_flash->fled;
->>  
->> -	snprintf(sd_cfg->dev_name, sizeof(sd_cfg->dev_name), "%s", light->name);
->> +	snprintf(sd_cfg.dev_name, sizeof(sd_cfg.dev_name), "%s", light->name);
->>  
->>  	/* Set the possible values to faults, in our case all faults */
->> -	sd_cfg->flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
->> +	sd_cfg.flash_faults = LED_FAULT_OVER_VOLTAGE | LED_FAULT_TIMEOUT |
->>  		LED_FAULT_OVER_TEMPERATURE | LED_FAULT_SHORT_CIRCUIT |
->>  		LED_FAULT_OVER_CURRENT | LED_FAULT_INDICATOR |
->>  		LED_FAULT_UNDER_VOLTAGE | LED_FAULT_INPUT_VOLTAGE |
->>  		LED_FAULT_LED_OVER_TEMPERATURE;
->>  
->>  	light->v4l2_flash = v4l2_flash_init(dev, NULL, fled, iled,
->> -					    &v4l2_flash_ops, sd_cfg);
->> -	if (IS_ERR_OR_NULL(light->v4l2_flash)) {
->> -		ret = PTR_ERR(light->v4l2_flash);
->> -		goto out_free;
->> -	}
->> +					    &v4l2_flash_ops, &sd_cfg);
->> +	if (IS_ERR_OR_NULL(light->v4l2_flash))
-> 
-> Just IS_ERR since v4l2_flash_init() never returns NULL.
-> 
->> +		return PTR_ERR(light->v4l2_flash);
->>  
->> -	return ret;
->> -
->> -out_free:
->> -	kfree(sd_cfg);
->> -	return ret;
->> +	return 0;
->>  }
->>  
->>  static void gb_lights_light_v4l2_unregister(struct gb_light *light)
->>
-> 
-> After those two changes:
-> 
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> Regards,
-> 
-> 	Hans
+> diff --git a/include/media/v4l2-flash-led-class.h b/include/media/v4l2-flash-led-class.h
+> index c3f39992f3fa..6f4825b6a352 100644
+> --- a/include/media/v4l2-flash-led-class.h
+> +++ b/include/media/v4l2-flash-led-class.h
+> @@ -112,6 +112,9 @@ static inline struct v4l2_flash *v4l2_ctrl_to_v4l2_flash(struct v4l2_ctrl *c)
+>   * @config:	initialization data for V4L2 Flash sub-device
+>   *
+>   * Create V4L2 Flash sub-device wrapping given LED subsystem device.
+> + * The ops pointer is stored by the V4L2 flash framework. No
+> + * references are held to config nor its contents once this function
+> + * has returned.
+>   *
+>   * Returns: A valid pointer, or, when an error occurs, the return
+>   * value is encoded using ERR_PTR(). Use IS_ERR() to check and
+> @@ -130,6 +133,9 @@ struct v4l2_flash *v4l2_flash_init(
+>   * @config:	initialization data for V4L2 Flash sub-device
+>   *
+>   * Create V4L2 Flash sub-device wrapping given LED subsystem device.
+> + * The ops pointer is stored by the V4L2 flash framework. No
+> + * references are held to config nor its contents once this function
+> + * has returned.
+>   *
+>   * Returns: A valid pointer, or, when an error occurs, the return
+>   * value is encoded using ERR_PTR(). Use IS_ERR() to check and
 > 
