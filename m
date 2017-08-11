@@ -1,83 +1,93 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Subject: Re: [PATCH v3 3/4] leds: pca955x: add GPIO support
-Date: Fri, 11 Aug 2017 17:11:14 +0200
-Message-ID: <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org>
+Date: Fri, 11 Aug 2017 17:37:42 +0200
+Message-ID: <20170811153742.GA31267@amd>
 References: <1502199760-763-1-git-send-email-clg@kaod.org>
- <1502199760-763-4-git-send-email-clg@kaod.org> <20170811134757.GA22561@amd>
+ <1502199760-763-4-git-send-email-clg@kaod.org>
+ <20170811134757.GA22561@amd>
+ <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 13.mo4.mail-out.ovh.net ([178.33.251.8]:51708 "EHLO
-        13.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbdHKPbG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 11 Aug 2017 11:31:06 -0400
-Received: from player772.ha.ovh.net (b6.ovh.net [213.186.33.56])
-        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 2E8F689B9A
-        for <linux-leds@vger.kernel.org>; Fri, 11 Aug 2017 17:11:24 +0200 (CEST)
-In-Reply-To: <20170811134757.GA22561@amd>
-Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <9330f31a-110c-8398-8cd1-764f8dd358e9-Bxea+6Xhats@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg-Bxea+6Xhats@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
 
-Hello,
 
-On 08/11/2017 03:47 PM, Pavel Machek wrote:
-> Hi!
-> 
->> The PCA955x family of chips are I2C LED blinkers whose pins not used
->> to control LEDs can be used as general purpose I/Os (GPIOs).
->>
->> The following adds such a support by defining different operation
->> modes for the pins (See bindings documentation for more details). The
->> pca955x driver is then extended with a gpio_chip when some of pins are
->> operating as GPIOs. The default operating mode is to behave as a LED.
->>
->> The GPIO support is conditioned by CONFIG_LEDS_PCA955X_GPIO.
->>
->> Signed-off-by: Cédric Le Goater <clg@kaod.org>
-> 
-> For the series,
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> with minor comments below.
-> 
->> @@ -125,6 +130,7 @@ struct pca955x_led {
->>  	struct led_classdev	led_cdev;
->>  	int			led_num;	/* 0 .. 15 potentially */
->>  	char			name[32];
->> +	u32			type;
-> 
-> u32 is highly non-standard here. enum pca955x_led_type?
->
-> 
->> +/*
->> + * Read the INPUT register, which contains the state of LEDs.
->> + */
->> +static u8 pca955x_read_input(struct i2c_client *client, int n)
->> +{
->> +	return (u8)i2c_smbus_read_byte_data(client, n);
->> +}
-> 
-> Is the cast needed? Should you attempt to handle errors?
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ah. this is a left over. I can fix in a resend.
+Hi!
 
->> +#ifndef _DT_BINDINGS_LEDS_PCA955X_H
->> +#define _DT_BINDINGS_LEDS_PCA955X_H
->> +
->> +#define PCA955X_TYPE_NONE         0
->> +#define PCA955X_TYPE_LED          1
->> +#define PCA955X_TYPE_GPIO         2
-> 
-> And make these into the new enum pca955x_led_type?
+> > with minor comments below.
+> >=20
+> >> @@ -125,6 +130,7 @@ struct pca955x_led {
+> >>  	struct led_classdev	led_cdev;
+> >>  	int			led_num;	/* 0 .. 15 potentially */
+> >>  	char			name[32];
+> >> +	u32			type;
+> >=20
+> > u32 is highly non-standard here. enum pca955x_led_type?
+> >
+> >=20
+> >> +/*
+> >> + * Read the INPUT register, which contains the state of LEDs.
+> >> + */
+> >> +static u8 pca955x_read_input(struct i2c_client *client, int n)
+> >> +{
+> >> +	return (u8)i2c_smbus_read_byte_data(client, n);
+> >> +}
+> >=20
+> > Is the cast needed? Should you attempt to handle errors?
+>=20
+> ah. this is a left over. I can fix in a resend.
 
-These are used in the device tree bindings, so we should keep the u32
-I think.
+No need to resend just for this.
 
-Thanks,
+Should you WARN_ON() if the read_byte_data returns < 0 or something?
 
-C.
+https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-smbu=
+s-read-byte-data.html
+
+> >> +#ifndef _DT_BINDINGS_LEDS_PCA955X_H
+> >> +#define _DT_BINDINGS_LEDS_PCA955X_H
+> >> +
+> >> +#define PCA955X_TYPE_NONE         0
+> >> +#define PCA955X_TYPE_LED          1
+> >> +#define PCA955X_TYPE_GPIO         2
+> >=20
+> > And make these into the new enum pca955x_led_type?
+>=20
+> These are used in the device tree bindings, so we should keep the u32
+> I think.
+
+Aha, ok, makes sense.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmNz0YACgkQMOfwapXb+vI0HQCbBMCLB5pi7GcbnlRkSEQdl9kP
+7jgAoJL/czbd76sjPWTxcyyppIOMtPC+
+=mmO4
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
