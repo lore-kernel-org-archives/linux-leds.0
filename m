@@ -1,38 +1,50 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] leds: Convert to using %pOF instead of full_name
-Date: Sun, 13 Aug 2017 00:32:27 +0200
-Message-ID: <958ac012-c676-3bf7-88ea-c555404628fd@gmail.com>
-References: <20170718214339.7774-31-robh@kernel.org>
- <20170808080950.GC12854@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: RGB support prototype
+Date: Sun, 13 Aug 2017 00:48:18 +0200
+Message-ID: <20170812224818.GA5960@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170808080950.GC12854@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51637 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752023AbdHLWsU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Aug 2017 18:48:20 -0400
+Content-Disposition: inline
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On 08/08/2017 10:09 AM, Pavel Machek wrote:
-> On Tue 2017-07-18 16:43:11, Rob Herring wrote:
->> Now that we have a custom printf format specifier, convert users of
->> full_name to use %pOF instead. This is preparation to remove storing
->> of the full path string for each node.
->>
->> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
->> Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> 
 
-Applied, thanks.
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Hi!
+
+You mentioned you was working on RGB support prototype. Could you post
+copy of the patches (even if unfinished)?
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--UlVJffcvxoiEqYs2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmPhbIACgkQMOfwapXb+vLrCQCgqa+l7wjOcbbF2prQ1O8uApzL
+MGAAn0o1mx/GsypRUbbRrPBozFCthSL6
+=1idO
+-----END PGP SIGNATURE-----
+
+--UlVJffcvxoiEqYs2--
