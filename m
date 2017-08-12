@@ -1,77 +1,76 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg-Bxea+6Xhats@public.gmane.org>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v3 3/4] leds: pca955x: add GPIO support
-Date: Fri, 11 Aug 2017 18:26:19 +0200
-Message-ID: <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org>
+Date: Sat, 12 Aug 2017 10:42:13 +0200
+Message-ID: <20170812084213.GA20383@amd>
 References: <1502199760-763-1-git-send-email-clg@kaod.org>
- <1502199760-763-4-git-send-email-clg@kaod.org> <20170811134757.GA22561@amd>
- <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org> <20170811153742.GA31267@amd>
+ <1502199760-763-4-git-send-email-clg@kaod.org>
+ <20170811134757.GA22561@amd>
+ <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org>
+ <20170811153742.GA31267@amd>
+ <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170811153742.GA31267@amd>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54510 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750771AbdHLImQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Aug 2017 04:42:16 -0400
+Content-Disposition: inline
+In-Reply-To: <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>
+Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
 
-On 08/11/2017 05:37 PM, Pavel Machek wrote:
-> Hi!
-> 
->>> with minor comments below.
->>>
->>>> @@ -125,6 +130,7 @@ struct pca955x_led {
->>>>  	struct led_classdev	led_cdev;
->>>>  	int			led_num;	/* 0 .. 15 potentially */
->>>>  	char			name[32];
->>>> +	u32			type;
->>>
->>> u32 is highly non-standard here. enum pca955x_led_type?
->>>
->>>
->>>> +/*
->>>> + * Read the INPUT register, which contains the state of LEDs.
->>>> + */
->>>> +static u8 pca955x_read_input(struct i2c_client *client, int n)
->>>> +{
->>>> +	return (u8)i2c_smbus_read_byte_data(client, n);
->>>> +}
->>>
->>> Is the cast needed? Should you attempt to handle errors?
->>
->> ah. this is a left over. I can fix in a resend.
-> 
-> No need to resend just for this.
-> 
-> Should you WARN_ON() if the read_byte_data returns < 0 or something?
-> 
-> https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-smbus-read-byte-data.html
 
-I don't think so as this is just to read the gpio value. 
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suppose that the i2c layer will output some errors before 
-if it catches some invalid state.
+Hi!
 
-C.
+> >>>> +static u8 pca955x_read_input(struct i2c_client *client, int n)
+> >>>> +{
+> >>>> +	return (u8)i2c_smbus_read_byte_data(client, n);
+> >>>> +}
+> >>>
+> >>> Is the cast needed? Should you attempt to handle errors?
+> >>
+> >> ah. this is a left over. I can fix in a resend.
+> >=20
+> > No need to resend just for this.
+> >=20
+> > Should you WARN_ON() if the read_byte_data returns < 0 or something?
+> >=20
+> > https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-=
+smbus-read-byte-data.html
+>=20
+> I don't think so as this is just to read the gpio value.=20
+>=20
+> I suppose that the i2c layer will output some errors before=20
+> if it catches some invalid state.
 
->>>> +#ifndef _DT_BINDINGS_LEDS_PCA955X_H
->>>> +#define _DT_BINDINGS_LEDS_PCA955X_H
->>>> +
->>>> +#define PCA955X_TYPE_NONE         0
->>>> +#define PCA955X_TYPE_LED          1
->>>> +#define PCA955X_TYPE_GPIO         2
->>>
->>> And make these into the new enum pca955x_led_type?
->>
->> These are used in the device tree bindings, so we should keep the u32
->> I think.
-> 
-> Aha, ok, makes sense.
-> 									Pavel
-> 
+Normally its driver's job to output errors. (Same for write).
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmOv2UACgkQMOfwapXb+vIjygCfQtXb+LNcFvkf2dr/Ff6OfAv7
+fw0AoIpfinpkgvpeuftrJQt+duapRowm
+=IwHr
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
