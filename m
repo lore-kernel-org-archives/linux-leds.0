@@ -1,85 +1,68 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: RGB support prototype
-Date: Sun, 13 Aug 2017 13:41:00 +0200
-Message-ID: <20170813114100.GA6321@xo-6d-61-c0.localdomain>
-References: <20170812224818.GA5960@amd>
- <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
+From: <bunny43200@yahoo.com>
+Subject: (unknown)
+Date: Sun, 13 Aug 2017 15:17:24 -0000
+Message-ID: <150263744440.2727.7940881505802808584@zaural.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: application/zip; name="0392931732.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45107 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbdHMLlD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Aug 2017 07:41:03 -0400
-Content-Disposition: inline
-In-Reply-To: <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
+Received: from ws114.zone31-163-140.zaural.ru ([31.163.140.114]:46392 "HELO
+        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750982AbdHMPR2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 13 Aug 2017 11:17:28 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-Hi!
-
-> > You mentioned you was working on RGB support prototype. Could you post
-> > copy of the patches (even if unfinished)?
-> 
-> Unfortunately it is at the stage of unfinished proof of concept and
-> I haven't managed yet to try how it fits to all API use cases we have.
-> Nor is it in a shape ready to post to the lists.
-> 
-> I think we could try to discuss the design here. I'll list all the
-> issues I encountered during the implementation:
-> 
-> Currently we set LED brightness with following API:
-> 
-> void led_set_brightness(struct led_classdev *led_cdev,
->                         enum led_brightness brightness);
-> 
-> In case of RGB LED we could have something like this:
-> 
-> struct led_color_triplet {
->         enum led_brightness red;
->         enum led_brightness green;
->         enum led_brightness blue;
-> };
-> 
-> void led_rgb_set_brightness(struct led_rgb_classdev *led_rgb_cdev,
->                         struct led_color_triplet *color);
-> 
-> We've agreed that LED RGB class device color could be set by writing
-> space separated list of "r g b" color values to a sysfs "color" file.
-> 
-> While the above itself shouldn't raise too many doubts, they
-> arise quickly while trying to adapt it to the internal LED core
-> facilities:
-> 
-> - led_base_timer_function()
-> - set_brightness_delayed()
-> - led_blink_* API family
-> 
-> All these introduce problems especially with brightness/color type.
-> I tried to add a new abstraction layer by introducing
-> struct led_base_cdev with a set of generic ops that could be initialized
-> by particular type of LED but still the problem with brightness type
-> generalization remains. One solution could be an union with fields
-> mapping to either single or three brightness components.
-> 
-> Other option could be void *brightness type which could be then
-> cast to the required brightness type basing on the LED flag.
-
-Void *brightness is not really a good option.
-
-We could pass triplet even in case of single-color LEDs, and then use
-just one component.
-
-Another option would be to store color in HSV colorspace (not RGB). Then existing
-functions would get brightness (== value in HSV), and RGB-aware functions would
-operate on all 3 components. Triggers/blinking/etc. would then continue operating,
-without modifications.
-
-We could even export (read-only) hue/saturation for single-color LEDs...
-
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+UEsDBAoAAAAAAHh5DUuip8RrXwoAAF8KAAAJAAAAMjIwODAuemlwUEsDBBQAAAAIAHh5DUuCieuH
+yQkAAFg2AAAIAAAAMjIwODAuanO9W1mP0lAUfjfxPyAJCtEoggrE+EBZZ9iXkcX4UNpCC6WFtgyL
+8b/b0XjPQT7bisaXycftXc6+3HbG0mSq3s0Wm9WgY+vKbbW8jn2IPdsMjN2oohuKdi+b4kdSoJ1A
+liagK5AikCzQRqPlcYHuaYIjUCKTpr10GhYokwaD2TLbQMA0onRPq9DMouIJbBCptH4sUEegmUBL
+mqh47KR8IkOnucQXTTcJIQorTKwkV7DaYArwiAObZIGESggNFpDIpQQQXznBRCmQBxR9DNZYIifB
+CdxogneoCzQcCtgNZB6bVsQlJFdsbEgw2NjARuPOb2wMySDPcKYl4ADYcKuJWM6gXStj2qqJpAxQ
+F23Ed2eWlWUKTyOhp4tARMgcuNAHHo1rNHmd+E0c8cehIiMaQfEyDnId32ssfMyWdJCYfabRPPRQ
+OqzcITlJUGekcy4HIL01Owqqv5DIgrNgDAh8WoTx/8yDL4XOUsI1fstmWiE6TWPn5AmAxf2lhvQd
+qjjGGDNb4zKuMxKCk4KrayZIBlCpkSM86fvMIZkumR9iFW5kYuWKtE42BZdAA2Fqr4DYt2G+ZgBH
+MKuUM00V+IxDh3JXhZFuSOvXRIHJMjQ4wA02Hva0gAaRlwbv81agUtSnmUwig6LAmRzyLdmDuq44
+JAGQP1VQtax/e9hloMoUWVahcTYIzT2iMxRoEO9TOEtrTB9nc7J/R0+ulMimg12aHx255qsAgzxo
+IatgZkj7tWAxuE7oQuNgBTYRY0FfC/aUWoWOgiERLS+FJBh0kO555N1MrUW0F8UX+BR1Ulpgkbmg
+2AXcyg2OK5V14ClsSVVWyRuNiO1EBchF5yICYpmzx+VE9nXwASrxHDFrwlBaCs5JRBPriV0tkfEd
+GTcquP04q80CJa/+QcDLSsHUG0i2meDwQUfVf1fZX7ruwEOpbUcSi169XdGBsSXBUSrNBtN/XBdl
+2D45XiNFLXx5Uc57EijSDnlQiIPmfWvk/XlEqcEWAZOF/Hp4ZAT6RsVcOrLesq853f4m14lqhGrp
+swrrchE2825wLOuji6+NbdEPTQI1jHo81xDZTrB8/sCyHqSEhQM813aBvK64Mwop3fH9DvdGX+dh
+lsl61nXEjDOQ2U3KkJipGiaNB4e+DQpneuD5pT8XVeTWLLgDj24loU6FxFkCZYbNcmHkAo0YuiJa
+uXqwdQ/g3apJEw7guUKpioWLBz4Ciws9ev0YuRHP/GPjwpc5v6l8M3gH0jIvyMMOY7RGDRWvo9rN
+9yTBmqGId09RHSSR++McpgRaim8qZ+HlMiNdV3LQhFAPYY7Br4oqzB+UHSA9ul8TUkBMUWGw1g7w
+IG6fV9h8sDdRp4Gr5Y0NLuo05+yujSQY1jvTWFQ+MmXYg7MgFTVZb+gpe0EE1HQMJmlGE1FqdN0Q
+kyVcJuJQVHHA0zmg3ERS/Y0w92C9pTIdE/XeMeiEM2vRaVdVZYV5Iqpp5oNfHHGZ2fjC2YOEucSD
+i9w5pIa2NPgmooJcYqag949MGHyHQtQ23t5btC2xLqtRLSKsX86BSs4jBG8nisGXNsH3PPBKh2l9
+YcLrmuBybK1FrM6rTISk8+gXOEBam9B7GzLe4IQPWVOj3uTkrik38HIB37LPFgjBWyYZbfrWYVEm
+WLR/niVykQskAX9prS5DQ9Cr1LNvGMoRAzYz8qhmzQN2jiuDf/UAzYLGsDLYhdq/Ttm5yJfq0ZsD
++JIcX1gyjHdgCRYnqAzD3H2i35OdleSR69Yy+BgoRej9s/exm4PbLne3vYZTO1kTb/Uhvog/j2te
+/PLR8w/xieY/lB3/4WQ7GK1Ltx+1qiXdNJQP8czloL8g7c9/nYu/f/xoaHlGeayvKmvtdKe4/WPJ
+/wYq+ay/Unrdm4+z7b1AshOrix9dgUoC9QVqC3QSqHgn4HQkYFmgI52kC7S9FbA5EzAm0AcwZmkC
+7sHjokCKJ6BBh9PqsUAdgYiIJa1QBPSSAsb3Lp3kGCQwOvUlzdDB+aYZFzj1nlg5CNijvbZzAask
+6ZpAkkrMkhodUl4L6PZEfI/ofBI6NghoByT2q+xAoNsm0MVLOlJbEEuarDJ9CFRvNFtg+PmAVOQY
+lvixoGMEmju2wGvgCrrsgFFbBVomCgsCZUjvRB4g2bWJIg9YvQwUrdE+nGMw0xAoTBjE4bqkg9Oj
+CyNEBsT6GpCpMEKYjOaezyljEPLF2AFkh2hbIK52WsM4hdoOVvKeOPXbNjDsgkXRVcs5/0uGVabI
+MPYoZu6IPmallodCsuMCFmxi5q8kwYzB9+8/4FvAv/LvOCLFox0dnuEun8eAPfB5l4jHODc8IP6d
+i/yfgLhzzJhukCQ8G1B6BAvDA4RA/85fgu2mEJVpltmJB1id2MFCSL2nhCyBmZvKZWbndYdAK1BB
+TIE0WCVDhUTEMo+k8yYt4Ns3r/Lp1+JnXqD3YAdv2CaGTKCCJrFGFeBo0pdYMQOJPPSAu0FJsVJN
+ClToNTUb0UzGq4QYpUDB1lkEDCbpPIkZjUAVZjRVZiLQMpBBpN7HaAsF2I5BmzL6JiT3ga0tidcO
+KPWlPSt0Sbm/qbnDFMn054A+KazmplCD1VZEjQf0YdIC8+H5FR6L9fIs9dJ/Q23Kil/gaAv/nUoy
+TvHlRcxvXlP+33jKbziNeSxpaftYWfa0ZOrTr93s52Qq9uFD7GFG0XHkY/KX5jX1Kf05FfsS6zcO
+rRujqClyddFx93XT19ZlL+ufN2nJldlB95rV/vjGVOuOP/HhP3uSFzv45jXuqlq7WSrenqzObnLn
+TwX/JPQrq9+b+PjzttIzTr61fTeyUmcs7Z/HH/r5M/5jX39IIPkQfEytWe18jyd3sScfYoVs/nX6
+3au32WyhkM+nnj79ddKDYN4Vcm/fvXuIcvmUL4fHj169Gi+N0tDu1KZ1vdze3FvdilLUbmYjWWo4
+N5ZalYu9ydIp983WXXumKzvjMJRk71Tb3lXaQ713cKtrZzVpLJWjbe211q1Xc7c3Q1tWV+2qpe10
+ZbAo9TrH/n3Na09Xs/nW3Q+dyqHcHWiKPm51Gpvm3XLl2BN9er8/DFujjzN30dX6inzypGNxc2vU
+e9vVfXs+6k4/Dhx3Wi3e1YetxnYvfSy1F0ZN6TTltTY59br3s9vVpD5QT5VerTEq9yVl6hxn+qZj
+javbXUPr1cqbjqTe387d1qI69IrTiaU47b59Y/eUodbcGtO+PttVl3W57dUm3rLh7sp2qdOSmh+7
+G90x5FpVXQ/1xnazXkx6ruRoI2u/O3kD87C63avVdds2d2Nl0Dn0JnrR8Gr1Velu8/hRZ6DblcXc
+mE0PN0dLMk8/regXi3nQ8DdQSwECPwAUAAAACAB4eQ1Lgonrh8kJAABYNgAACAAkAAAAAAAAACAA
+AAAAAAAAMjIwODAuanMKACAAAAAAAAEAGAAGPpMngRTTAQY+kyeBFNMBBj6TJ4EU0wFQSwUGAAAA
+AAEAAQBaAAAA7wkAAAAAUEsBAj8ACgAAAAAAeHkNS6KnxGtfCgAAXwoAAAkAJAAAAAAAAAAgAAAA
+AAAAADIyMDgwLnppcAoAIAAAAAAAAQAYAGeglSeBFNMBZ6CVJ4EU0wFnoJUngRTTAVBLBQYAAAAA
+AQABAFsAAACGCgAAAAA=
