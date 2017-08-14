@@ -1,68 +1,98 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] leds: add LED driver for CR0014114 board
-Date: Mon, 14 Aug 2017 09:28:06 -0500
-Message-ID: <CAL_JsqJw18uCCLAd+rraiDr3meLvDkpOwLwqLLB5E5psHho2Jw@mail.gmail.com>
-References: <20170814115355.9437-1-oleg@kaa.org.ua>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: RGB support prototype
+Date: Mon, 14 Aug 2017 20:26:30 +0200
+Message-ID: <d295d76a-3a51-cb94-d452-8f68d3d65a67@gmail.com>
+References: <20170812224818.GA5960@amd>
+ <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
+ <20170813114100.GA6321@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170814115355.9437-1-oleg-CGGh1czddphUq1AO9QMCaQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Oleh Kravchenko <oleg-CGGh1czddphUq1AO9QMCaQ@public.gmane.org>
-Cc: Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:38437 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbdHNS1O (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Aug 2017 14:27:14 -0400
+In-Reply-To: <20170813114100.GA6321@xo-6d-61-c0.localdomain>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Please CC DT list for bindings and make bindings a separate patch.
+Hi,
 
-On Mon, Aug 14, 2017 at 6:53 AM, Oleh Kravchenko <oleg-CGGh1czddphUq1AO9QMCaQ@public.gmane.org> wrote:
-> This patch adds a LED class driver for the RGB LEDs found on
-> the Crane Merchandising System CR0014114 LEDs board.
->
-> Driver creates LED devices with name written using the following
-> pattern "LABEL-{N}:{red,green,blue}:".
->
-> Signed-off-by: Oleh Kravchenko <oleg-CGGh1czddphUq1AO9QMCaQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/leds-cr0014114.txt    |  23 ++
->  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->  drivers/leds/Kconfig                               |  12 +
->  drivers/leds/Makefile                              |   1 +
->  drivers/leds/leds-cr0014114.c                      | 352 +++++++++++++++++++++
->  5 files changed, 389 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-cr0014114.txt
->  create mode 100644 drivers/leds/leds-cr0014114.c
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-cr0014114.txt b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-> new file mode 100644
-> index 000000000000..6a399cb65388
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-> @@ -0,0 +1,23 @@
-> +Crane Merchandising System SPI LED board CR0014114
-> +==================================================
-> +
-> +Required properties:
-> +- compatible: "cms,cr0014114"
-> +
-> +Optional properties:
-> +- label: prefix for LED names. If omitted the label is taken from the node name.
+On 08/13/2017 01:41 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> You mentioned you was working on RGB support prototype. Could you post
+>>> copy of the patches (even if unfinished)?
+>>
+>> Unfortunately it is at the stage of unfinished proof of concept and
+>> I haven't managed yet to try how it fits to all API use cases we have.
+>> Nor is it in a shape ready to post to the lists.
+>>
+>> I think we could try to discuss the design here. I'll list all the
+>> issues I encountered during the implementation:
+>>
+>> Currently we set LED brightness with following API:
+>>
+>> void led_set_brightness(struct led_classdev *led_cdev,
+>>                         enum led_brightness brightness);
+>>
+>> In case of RGB LED we could have something like this:
+>>
+>> struct led_color_triplet {
+>>         enum led_brightness red;
+>>         enum led_brightness green;
+>>         enum led_brightness blue;
+>> };
+>>
+>> void led_rgb_set_brightness(struct led_rgb_classdev *led_rgb_cdev,
+>>                         struct led_color_triplet *color);
+>>
+>> We've agreed that LED RGB class device color could be set by writing
+>> space separated list of "r g b" color values to a sysfs "color" file.
+>>
+>> While the above itself shouldn't raise too many doubts, they
+>> arise quickly while trying to adapt it to the internal LED core
+>> facilities:
+>>
+>> - led_base_timer_function()
+>> - set_brightness_delayed()
+>> - led_blink_* API family
+>>
+>> All these introduce problems especially with brightness/color type.
+>> I tried to add a new abstraction layer by introducing
+>> struct led_base_cdev with a set of generic ops that could be initialized
+>> by particular type of LED but still the problem with brightness type
+>> generalization remains. One solution could be an union with fields
+>> mapping to either single or three brightness components.
+>>
+>> Other option could be void *brightness type which could be then
+>> cast to the required brightness type basing on the LED flag.
+> 
+> Void *brightness is not really a good option.
+> 
+> We could pass triplet even in case of single-color LEDs, and then use
+> just one component.
+> 
+> Another option would be to store color in HSV colorspace (not RGB). Then existing
+> functions would get brightness (== value in HSV), and RGB-aware functions would
+> operate on all 3 components. Triggers/blinking/etc. would then continue operating,
+> without modifications.
+> 
+> We could even export (read-only) hue/saturation for single-color LEDs...
 
-label generally is the full name, not a prefix. It kind of defeats the
-point of label if the name is the same. You might as well move this
-into the driver.
+Related patches from Heiner Kallweit are still sitting on devel branch
+of linux-leds.git:
 
-> +- leds-per-board: RGB leds per board, minimal value is 6
-> +- num-boards: number of LED boards on SPI bus, usually 1
+https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/log/?h=devel
 
->From the driver, looks like you just need the total led count?
+Possibly it can serve as a basis for further development.
 
-It also appears that the driver knows the color arrangement. Perhaps
-you should have child nodes for each LED as the LED binding defines.
-reg can have 2 cells if you need to define board# and led#. And label
-can be the full label name if you keep label in the DT.
+I liked that approach because it was compatible with monochrome
+LEDs and triggers.
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best regards,
+Jacek Anaszewski
