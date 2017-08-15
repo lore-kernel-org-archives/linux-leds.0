@@ -1,227 +1,283 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2] leds: add LED driver for CR0014114 board
-Date: Tue, 15 Aug 2017 19:42:46 +0200
-Message-ID: <33519a27-a953-ac36-283e-13dff019082f@gmail.com>
-References: <20170814115355.9437-1-oleg@kaa.org.ua>
- <a3b2efc2-8501-207e-363d-975d1a3ed0ff@gmail.com>
- <e1d38ada-2413-90ac-c297-890429385862@kaa.org.ua>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+From: Paulo Costa <me@paulo.costa.nom.br>
+Subject: [RFC] ledtrig-dither: A Poor man's adjustable LED brightness.
+Date: Tue, 15 Aug 2017 18:35:41 -0300
+Message-ID: <20170815213541.26985-1-me@paulo.costa.nom.br>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:34048 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751580AbdHORnb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2017 13:43:31 -0400
-Received: by mail-wr0-f170.google.com with SMTP id y96so1895034wrc.1
-        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2017 10:43:30 -0700 (PDT)
-In-Reply-To: <e1d38ada-2413-90ac-c297-890429385862@kaa.org.ua>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37882 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751119AbdHOVgE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2017 17:36:04 -0400
+Received: by mail-qk0-f193.google.com with SMTP id x77so1852509qka.4
+        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2017 14:36:04 -0700 (PDT)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Oleh Kravchenko <oleg@kaa.org.ua>, linux-leds@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>
+To: linux-leds@vger.kernel.org
+Cc: Paulo Costa <me@paulo.costa.nom.br>
 
-Hi Oleh,
+While many LED drivers support adjustable brightness levels, usually
+via PWM hardware, most can only be set to ON or OFF.
 
-On 08/15/2017 02:28 PM, Oleh Kravchenko wrote:
-> Hi Jacek,
-> 
-> Thanks for your comments, please see my replies below.
-> 
-> On 14.08.17 22:44, Jacek Anaszewski wrote:
->> Hi Oleh,
->>
->> Thanks for the patch. Please see my comments below.
->>
->> On 08/14/2017 01:53 PM, Oleh Kravchenko wrote:
->>> This patch adds a LED class driver for the RGB LEDs found on
->>> the Crane Merchandising System CR0014114 LEDs board.
->>>
->>> Driver creates LED devices with name written using the following
->>> pattern "LABEL-{N}:{red,green,blue}:".
->> LED device naming is already defined to "devicename:colour:function"
->> in Documentation/leds/leds-class.txt. Please stick to this scheme.
-> 
-> I tried to follow this rule with this pattern "LABEL-{N}:{red,green,blue}:".
-> What is wrong with it?
-> 
-> Can I use this pattern?
-> cr0014114:red:0
-> cr0014114:green:0
-> cr0014114:blue:0
-> cr0014114:red:1
-> cr0014114:green:1
-> cr0014114:blue:1
-> cr0014114:red:2
-> cr0014114:green:2
-> cr0014114:blue:2
-> ...
+Well, I wish I could adjust the brightness of every led.
+What if we can fake PWMs with kernel timers?
 
-This pattern looks fine. How "LABEL-(N)" corresponds with cr0014114?
-This description is misleading.
+This led trigger tries to do that, in hacky way:
+- Assign 'dither' to myled/trigger
+- A new led device 'myled:dither' is created
+- The brightness of myled will quickly switch between 0 and max_brightness, with the time average value defined by 'myled:dither/brightness'
+- Human is fooled and thinks the brightness is adjustable.
 
->>> +static void cr0014114_calc_crc(u8 *buf, const size_t len)
->>> +{
->>> +	u8	crc;
->>> +	size_t	i;
->>> +
->>> +	for (i = 1, crc = 1; i < len - 1; i++)
->>> +		crc += buf[i];
->>> +
->>> +	crc |= BIT(7);
->>> +
->>> +	/* special case when CRC matches to SPI commands */
->>> +	switch (crc) {
->>> +	case CMD_SET_BRIGHTNESS:
->>> +	case CMD_INIT_REENUMERATE:
->>> +	case CMD_NEXT_REENUMERATE:
->>> +		crc = 0xfe;
->>> +		break;
->>> +	}
->> Wouldn't "if" fit better here?
-> 
-> I tried it's looks ugly for me, but if you insist I will use "if".
-> 
->     if (crc == CMD_SET_BRIGHTNESS ||
->         crc == CMD_INIT_REENUMERATE ||
->         crc == CMD_NEXT_REENUMERATE)
->             crc = 0xfe;
+There are a number of issues in that:
+- The underlying LED has to be fast, since it will be ajusted many times per second.
+  E.g., GPIO leds are OK, USB Keyboard capslock led aren't.
+- kernel timers have low time resolution (dependent on HZ), so:
+  - Timing variances has to be accounter for and compensated.
+  - Since the the smallest between time_on and time_off is limited to a jiffie,
+    blinking slows down and flickering becomes visible when brightness is near-zero and near-max.
+  - Setting kernel to 1000Hz is much better than 100Hz
 
-It better reflects what is going on here. switch suggests
-the need to differentiate actions depending on multiple possible
-states, which is not the case here.
+Despite being hacky, it works surprisingly well. You can see a demo on https://youtu.be/PIyMW8uwOmE
 
->>> +
->>> +	buf[len - 1] = crc;
->>> +}
->>> +
->>> +static void cr0014114_leds_work(struct work_struct *work)
->>> +{
->>> +	int			ret;
->>> +	size_t			i;
->>> +	struct cr0014114	*priv = container_of(work,
->>> +					struct cr0014114, leds_work);
->>> +	u8			data[priv->leds_count + 2];
->>> +	unsigned long		udelay, now = jiffies;
->>> +
->>> +	/* to avoid SPI mistiming with firmware we should wait some time */
->>> +	if (time_after(priv->leds_delay, now)) {
->>> +		udelay = jiffies_to_usecs(priv->leds_delay - now);
->>> +		usleep_range(udelay, udelay + 1);
->>> +	}
->>> +
->>> +	data[0] = CMD_SET_BRIGHTNESS;
->>> +	for (i = 0; i < priv->leds_count; i++)
->>> +		data[i + 1] = priv->leds[i].brightness;
->> Why do you set three LEDs at once? We expose each LED as a single
->> LED class device in the LED subsystem.
-> 
-> Unfortunately board should receive brightness
-> for all 18 LEDs (or 6 RGB LEDs) at one time.
-> 
-> On CR0014114 you can't update only one LED, you should update them all :)
+A better integration that bypasses using a trigger and a new led would be even better, but I'm leaving that in the future.
+---
+ drivers/leds/trigger/Kconfig          |   9 ++
+ drivers/leds/trigger/Makefile         |   1 +
+ drivers/leds/trigger/ledtrig-dither.c | 202 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 212 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-dither.c
 
-Ack.
-
->>> +	cr0014114_calc_crc(data, sizeof(data));
->>> +
->>> +	ret = spi_write(priv->spi, data, sizeof(data));
->> Could you please describe the layout of registers driving the brightness
->> of each LED ?
-> 
-> +----+-----------------------------------+----+
-> | CMD|             BRIGHTNESS            |CRC |
-> +----+-----------------------------------+----+
-> |    | LED0| LED1| LED2| LED3| LED4| LED5|    |
-> |    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+    |
-> |    |R|G|B|R|G|B|R|G|B|R|G|B|R|G|B|R|G|B|    |
-> | 1  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ 1  |
-> |    |1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|    |
-> |    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+    |
-> |    |               18                  |    |
-> +----+-----------------------------------+----+
-> |                    20                       |
-> +---------------------------------------------+
-> 
-> Boards can be connected to the chain:
->     SPI -> board0 -> board1 -> board2 ..
-> 
-> in this case only BRIGHTNESS length (18 -> 36 -> 54) will be increased.
-
-Thanks for the description.
-
-> 
->>> +	if (ret)
->>> +		dev_err(priv->dev, "spi_write() error %d\n", ret);
->>> +
->>> +	priv->leds_delay = jiffies + msecs_to_jiffies(DEF_FW_DELAY_MSEC);
->>> +}
->>> +
->>> +static void cr0014114_test(struct cr0014114 *priv)
->>> +{
->>> +	unsigned int		mdelay;
->>> +	size_t			i;
->>> +	struct led_classdev	*ldev;
->>> +
->>> +	/* blink all LEDs in 500 milliseconds */
->>> +	mdelay = 500 / priv->leds_count - DEF_FW_DELAY_MSEC;
->>> +	if (mdelay < DEF_FW_DELAY_MSEC)
->>> +		mdelay = DEF_FW_DELAY_MSEC;
->>> +
->>> +	for (i = 0; i < priv->leds_count; i++) {
->>> +		ldev = &priv->leds[i].ldev;
->>> +
->>> +		ldev->brightness_set(ldev, DEF_MAX_BRIGHTNESS);
->>> +		msleep(mdelay);
->>> +		ldev->brightness_set(ldev, LED_OFF);
->>> +	}
->>> +}
->> Is this function really required? It seems to mimic timer trigger.
-> 
-> No, this function is not really needed.
-> I will remove it.
-> 
->>> +	queue_work(led->priv->wq, &led->priv->leds_work);
->>> +}
->>> +
->>> +static int cr0014114_led_create(struct cr0014114 *priv,
->>> +				struct cr0014114_led *led,
->>> +				size_t id,
->>> +				const char *color)
->>> +{
->>> +	int ret;
->>> +
->>> +	led->priv = priv;
->>> +	snprintf(led->name, sizeof(led->name), "%s-%zd:%s:",
->>> +		 priv->label, id, color);
->>> +
->>> +	led->ldev.name			= led->name;
->>> +	led->ldev.brightness		= LED_OFF;
->>> +	led->ldev.max_brightness	= DEF_MAX_BRIGHTNESS;
->>> +	led->ldev.brightness_set	= cr0014114_set_brightness;
->> Please use brightness_set_blocking op and remove workqueue.
-> 
-> If driver will send data often than 10 ms, board will hangs up.
-> How I can workaround it with brightness_set_blocking?
-
-brightness_set_blocking op is executed in the workqueue internally
-by the LED core, so you can sleep in it safely.
-
->>> +
->>> +	/* setup recount timer to workaround buggy firmware */
->>> +	mod_timer(&priv->recount_timer, jiffies + DEF_RECOUNT_DELAY);
->> Could you share some details on why it is needed?
-> 
-> Board (or boards if they in chain) time to time losing synchronization
-> with SPI.
-> So we should recount LEDs on them to avoid this.
-
-Is it recommended way to fix the issue?
-Is there an openly available documentation for this LED controller?
-
->From the code it looks like the recount can result in spurious
-LED blinks.
-
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 3f9ddb9f..5a23ab7a 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -127,3 +127,12 @@ config LEDS_TRIGGER_PANIC
+ 	  If unsure, say Y.
+ 
+ endif # LEDS_TRIGGERS
++
++config LEDS_TRIGGER_DITHER
++	tristate "LED Dithering Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  The poor man's PWM led. It uses kernel timers to quickly switch leds ON
++	  and OFF, simulating adjustable brightness. Some flickering may be visible,
++	  but the overall effect is convincing.
++	  If unsure, say Y.
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index a72c43cf..5a4d7039 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
++obj-$(CONFIG_LEDS_TRIGGER_DITHER)	+= ledtrig-dither.o
+diff --git a/drivers/leds/trigger/ledtrig-dither.c b/drivers/leds/trigger/ledtrig-dither.c
+new file mode 100644
+index 00000000..cf8d8baf
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-dither.c
+@@ -0,0 +1,202 @@
++/*
++ * Dithering LED trigger
++ *
++ * Author: Paulo Costa <me@paulo.costa.nom.br>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/leds.h>
++#include <linux/slab.h>
++#include <linux/printk.h>
++#include <linux/ktime.h>
++#include <linux/timer.h>
++#include "../leds.h"
++
++#define WRAPPER_LED_SUFIX ":dither"
++
++// The target blink period.
++// But since timers have a pretty low resolution, the actual blink period is likely to be bigger
++#define DITHER_MIN_PERIOD_MS 20
++// And this is the maximum period we can tolerate
++#define DITHER_MAX_PERIOD_MS 1000
++
++struct ledtrig_dither_data {
++	struct led_classdev *actual_led;
++	struct led_classdev wrapper_led;
++	struct timer_list timer;
++	ktime_t updated_at;
++	enum led_brightness target_value;
++	enum led_brightness actual_value;
++
++	int error;
++
++    int min_time_on;
++    int min_time_off;
++	int max_time_on;
++    int max_time_off;
++	int min_error;
++	int max_error;
++};
++
++static inline struct ledtrig_dither_data * led_to_data(struct led_classdev *led)
++{
++	return container_of(led, struct ledtrig_dither_data, wrapper_led);
++}
++
++static void dither_update_error(struct ledtrig_dither_data* dither)
++{
++	ktime_t now = ktime_get();
++	int elapsed =  ktime_to_us(ktime_sub(now, dither->updated_at));
++
++	dither->updated_at = now;
++
++	dither->error += elapsed * (dither->actual_value - dither->target_value);
++	if (dither->error < dither->min_error) {
++		dither->error = dither->min_error;
++	} else if (dither->error > dither->max_error) {
++		dither->error = dither->max_error;
++	}
++}
++
++
++static void dither_update_brightness(struct ledtrig_dither_data* dither)
++{
++	int error_speed;
++	int timeout;
++	if ((dither->error < 0) || ( (dither->error == 0) && (dither->target_value > dither->wrapper_led.max_brightness / 2) ) ) {
++		led_set_brightness_nosleep(dither->actual_led, dither->actual_led->max_brightness);
++		dither->actual_value = dither->wrapper_led.max_brightness;
++	} else {
++		led_set_brightness_nosleep(dither->actual_led, LED_OFF);
++		dither->actual_value = LED_OFF;
++	}
++
++	//Calculate how long it takes to cross error=0, and schedules the timer accordingly
++	error_speed = dither->target_value - dither->actual_value;
++	if (error_speed == 0) {
++		// We're stable, no need to reschedule the timer until the value has changed.
++		return;
++	} else {
++		timeout = DIV_ROUND_UP(dither->error, error_speed);
++
++		//We don't want to blink too fast and waster CPU -- Ensures a minimum time before calling the timer.
++		if (dither->actual_value && (dither->min_time_on >= dither->min_time_off) && (timeout < dither->min_time_on)) {
++			timeout = dither->min_time_on;
++		}
++		if (!dither->actual_value && (dither->min_time_off >= dither->min_time_on) && (timeout < dither->min_time_off)) {
++			timeout = dither->min_time_off;
++		}
++
++		mod_timer(&dither->timer, jiffies + usecs_to_jiffies(timeout));
++	}
++}
++
++static void dither_set(struct led_classdev *led, enum led_brightness value)
++{
++	struct ledtrig_dither_data *dither = led_to_data(led);
++
++	del_timer_sync(&dither->timer);
++
++	dither->min_time_on  = 1000 * DITHER_MIN_PERIOD_MS * value / led->max_brightness;
++	dither->min_time_off = 1000 * DITHER_MIN_PERIOD_MS * (led->max_brightness - value) / led->max_brightness;
++
++	dither->max_time_on  = 1000 * DITHER_MAX_PERIOD_MS * value / led->max_brightness;
++	dither->max_time_off = 1000 * DITHER_MAX_PERIOD_MS * (led->max_brightness - value) / led->max_brightness;
++	dither->max_error = dither->max_time_on  * (led->max_brightness - value);
++	dither->min_error = dither->max_time_off * -value;
++
++	dither_update_error(dither);
++	dither->target_value = value;
++	dither_update_brightness(dither);
++}
++
++static void dither_timer(unsigned long data)
++{
++	struct ledtrig_dither_data* dither = (struct ledtrig_dither_data*)data;
++	dither_update_error(dither);
++	dither_update_brightness(dither);
++}
++
++static void ledtrig_dither_activate(struct led_classdev *led)
++{
++	char* wrapper_name;
++	struct ledtrig_dither_data* dither_data;
++
++	wrapper_name = kzalloc(strlen(led->name) + strlen(WRAPPER_LED_SUFIX) + 1, GFP_KERNEL);
++	if (!wrapper_name)
++		goto err_wrapper_name;
++	strcpy(wrapper_name, led->name);
++	strcat(wrapper_name, WRAPPER_LED_SUFIX);
++
++	dither_data = kzalloc(sizeof(*dither_data), GFP_KERNEL);
++	if (!dither_data)
++		goto err_dither_data;
++	dither_data->actual_led = led;
++	dither_data->wrapper_led.name = wrapper_name;
++	dither_data->wrapper_led.brightness_set = dither_set;
++	dither_data->wrapper_led.max_brightness = LED_FULL;
++	dither_data->wrapper_led.flags = LED_CORE_SUSPENDRESUME;
++
++	if (led_classdev_register(led->dev, &dither_data->wrapper_led))
++		goto err_register_wrapper;
++
++	setup_timer(&dither_data->timer, dither_timer, (unsigned long)dither_data);
++
++	led->trigger_data = dither_data;
++	led->activated = true;
++
++	dither_data->updated_at = ktime_get();
++	dither_data->error = 0;
++	dither_set(&dither_data->wrapper_led, 0);
++	return;
++
++err_register_wrapper:
++	kfree(dither_data);
++err_dither_data:
++	kfree(wrapper_name);
++err_wrapper_name:
++	return;
++}
++
++static void ledtrig_dither_deactivate(struct led_classdev *led)
++{
++	struct ledtrig_dither_data *dither_data = led->trigger_data;
++
++	if (led->activated) {
++		led_classdev_unregister(&dither_data->wrapper_led);
++		del_timer_sync(&dither_data->timer);
++		kfree(dither_data->wrapper_led.name);
++		kfree(dither_data);
++		led->activated = false;
++	}
++}
++
++static struct led_trigger ledtrig_dither = {
++	.name = "dither",
++	.activate = ledtrig_dither_activate,
++	.deactivate = ledtrig_dither_deactivate
++};
++
++static int __init ledtrig_dither_init(void)
++{
++	led_trigger_register(&ledtrig_dither);
++	return 0;
++}
++module_init(ledtrig_dither_init);
++
++static void __exit ledtrig_dither_exit(void)
++{
++	led_trigger_unregister(&ledtrig_dither);
++}
++module_exit(ledtrig_dither_exit);
++
++MODULE_DESCRIPTION("LED Trigger for fake brightness adjustment via dithering");
++MODULE_AUTHOR("Paulo Costa");
++MODULE_LICENSE("GPL");
 -- 
-Best regards,
-Jacek Anaszewski
+2.11.0
