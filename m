@@ -1,122 +1,82 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH 1/3] dt: bindings: Document DT bindings for Analog
- devices as3645a
-Date: Wed, 16 Aug 2017 23:57:06 +0300
-Message-ID: <20170816205706.rcg3lz6hg2wgjphw@valkosipuli.retiisi.org.uk>
-References: <20170816125440.27534-1-sakari.ailus@linux.intel.com>
- <20170816125514.27634-1-sakari.ailus@linux.intel.com>
- <8b966328-138a-5777-f8b5-692e692567e8@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RFC] ledtrig-dither: A Poor man's adjustable LED brightness.
+Date: Thu, 17 Aug 2017 00:30:22 +0200
+Message-ID: <20170816223022.GA13540@amd>
+References: <20170815213541.26985-1-me@paulo.costa.nom.br>
+ <20170815223413.GA8886@amd>
+ <CADbEYbk5US=SDpwPV8SLNsZMwrYgktPcXRp8RjYpm9+6iC8HAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55544 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752105AbdHPU5J (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 16 Aug 2017 16:57:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35433 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752353AbdHPWaY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Aug 2017 18:30:24 -0400
 Content-Disposition: inline
-In-Reply-To: <8b966328-138a-5777-f8b5-692e692567e8@gmail.com>
+In-Reply-To: <CADbEYbk5US=SDpwPV8SLNsZMwrYgktPcXRp8RjYpm9+6iC8HAA@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+To: Paulo Costa <me@paulo.costa.nom.br>
+Cc: linux-leds@vger.kernel.org
 
-Hi Jacek,
 
-Thanks for the review.
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 16, 2017 at 10:27:27PM +0200, Jacek Anaszewski wrote:
-> Hi Sakari,
-> 
-> Thanks for the patch. One issue below.
-> 
-> On 08/16/2017 02:55 PM, Sakari Ailus wrote:
-> > From: Sakari Ailus <sakari.ailus@iki.fi>
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---
-> >  .../devicetree/bindings/leds/ams,as3645a.txt       | 56 ++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > new file mode 100644
-> > index 000000000000..00066e3f9036
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > @@ -0,0 +1,56 @@
-> > +Analog devices AS3645A device tree bindings
-> > +
-> > +The AS3645A flash LED controller can drive two LEDs, one high current
-> > +flash LED and one indicator LED. The high current flash LED can be
-> > +used in torch mode as well.
-> > +
-> > +Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
-> > +and b are included in the range.
-> > +
-> > +
-> > +Required properties
-> > +===================
-> > +
-> > +compatible	: Must be "ams,as3645a".
-> > +reg		: The I2C address of the device. Typically 0x30.
-> > +
-> > +
-> > +Required properties of the "flash" child node
-> > +=============================================
-> > +
-> > +flash-timeout-us: Flash timeout in microseconds. The value must be in
-> > +		  the range [100000, 850000] and divisible by 50000.
-> > +flash-max-microamp: Maximum flash current in microamperes. Has to be
-> > +		    in the range between [200000, 500000] and
-> > +		    divisible by 20000.
-> > +led-max-microamp: Maximum torch (assist) current in microamperes. The
-> > +		  value must be in the range between [20000, 160000] and
-> > +		  divisible by 20000.
-> > +ams,input-max-microamp: Maximum flash controller input current. The
-> > +			value must be in the range [1250000, 2000000]
-> > +			and divisible by 50000.
-> > +
-> > +
-> > +Required properties of the "indicator" child node
-> > +=================================================
-> > +
-> > +led-max-microamp: Maximum indicator current. The allowed values are
-> > +		  2500, 5000, 7500 and 10000.
-> 
-> Most LED bindings mention also optional label property in the form:
-> 
-> - label : See Documentation/devicetree/bindings/leds/common.txt
-> 
-> > +
-> > +Example
-> > +=======
-> > +
-> > +	as3645a: flash@30 {
-> > +		reg = <0x30>;
-> > +		compatible = "ams,as3645a";
-> > +		flash {
-> 
-> 			label = "as3645a:flash";
-> 
-> > +			flash-timeout-us = <150000>;
-> > +			flash-max-microamp = <320000>;
-> > +			led-max-microamp = <60000>;
-> > +			ams,input-max-microamp = <1750000>;
-> > +		};
-> > +		indicator {
-> 
-> 			label = "as3645a:indicator";
-> 
-> > +			led-max-microamp = <10000>;
-> > +		};
-> > +	};
-> > 
+On Wed 2017-08-16 00:55:04, Paulo Costa wrote:
+> > Hmm. Can we simply use blinking trigger to do that?
+>=20
+> To some extent...
+>=20
+> If you just want to have 50% brightness, set timeon=3D1, timeoff=3D1 and
+> you are done.
+>=20
+> But, accurately seting the brightness to weird numbers is harder.
+> E.g., To get 37% brightness your only chance is to set timeon=3D37,
+> timeoff=3D63 (Or multiples of it).
+>=20
+> The larger delay causes very visible flickering, which sucks.
 
-I'll make the above fixes for v2 (and add flash child node label property).
+Well, to set 37% brightness you just set timeon=3D1 timeoff=3D2 ;-).
 
--- 
-Regards,
+> This trigger uses error propagation to continously adjusts the delay,
+> getting a higher blink frequency and accurate average brightness.
+>=20
+> E.g., For 37% it will alternate between 33% (timeon=3D1,timeoff=3D2) and
+> 50% (timeon=3D1,timeoff=3D1)
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Hmm, ok, clever.
+
+> Unfortunately, it doesn't really help when the brightness is near 0%
+> or near 100%.
+> E.g., for 1% brightness, this trigger it is equivalent to
+> timeon=3D1,timeoff=3D99 -- Flickering is very visible.
+
+Hmm. You could do led=3Don, udelay(100), led=3Doff. Do that 100 times a
+second, and I believe you'll get quite nice low levels.
+
+Now... nice hack. Probably can be improved. But is it suitable for
+mainline?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmUx34ACgkQMOfwapXb+vIpzACfU8TGoPftd10SvTi7tG8Fv4mB
+CNIAoJLXwDQli+reJEwhhlphOZ+v6pFM
+=SXKZ
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
