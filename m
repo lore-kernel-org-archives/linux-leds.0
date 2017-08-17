@@ -1,47 +1,54 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 1/3] staging: greybus: light: fix memory leak in v4l2
- register
-Date: Thu, 17 Aug 2017 11:14:57 -0700
-Message-ID: <20170817181457.GA8740@kroah.com>
-References: <20170810154947.2283-1-sakari.ailus@linux.intel.com>
- <20170810154947.2283-2-sakari.ailus@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20170810154947.2283-2-sakari.ailus@linux.intel.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: devel@driverdev.osuosl.org, laurent.pinchart@ideasonboard.com, viresh.kumar@linaro.org, Johan Hovold <johan@kernel.org>, greybus-dev@lists.linaro.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH] leds: pca955x: Prevent crippled LED device name
+Date: Thu, 17 Aug 2017 22:56:04 +0200
+Message-ID: <1503003364-14952-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33856 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753297AbdHQU5I (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Aug 2017 16:57:08 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p14so1717440wrg.1
+        for <linux-leds@vger.kernel.org>; Thu, 17 Aug 2017 13:57:07 -0700 (PDT)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: colin.king@canonical.com, dan.carpenter@oracle.com, ncase@xes-inc.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-On Thu, Aug 10, 2017 at 06:49:45PM +0300, Sakari Ailus wrote:
-> From: Rui Miguel Silva <rmfrfs@gmail.com>
-> 
-> We are allocating memory for the v4l2 flash configuration structure and
-> leak it in the normal path. Just use the stack for this as we do not
-> use it outside of this function.
-> 
-> Also use IS_ERR() instead of IS_ERR_OR_NULL() to check return value from
-> v4l2_flash_init() for it never returns NULL.
-> 
-> Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
-> Reported-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Signed-off-by: Rui Miguel Silva <rmfrfs@gmail.com>
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  drivers/staging/greybus/light.c | 29 +++++++++--------------------
->  1 file changed, 9 insertions(+), 20 deletions(-)
+In case platform data provided empty LED name string the resulting
+LED class device name would be crippled. Use corresponding LED chip
+bit in place of "function" segment of LED class device name then to
+make the LEDs at least distinguishable.
 
-Does not apply to my tree :(
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Reported-by: Colin King <colin.king@canonical.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Suggested-by: Nate Case <ncase@xes-inc.com>
+---
+ drivers/leds/leds-pca955x.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index f062d1e..09303fd 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -473,10 +473,14 @@ static int pca955x_probe(struct i2c_client *client,
+ 			 * Platform data can specify LED names and
+ 			 * default triggers
+ 			 */
+-			if (pdata->leds[i].name)
+-				snprintf(pca955x_led->name,
+-					sizeof(pca955x_led->name), "pca955x:%s",
+-					pdata->leds[i].name);
++			if (pdata->leds[i].name[0] == '\0')
++				snprintf(pdata->leds[i].name,
++					sizeof(pdata->leds[i].name), "%d", i);
++
++			snprintf(pca955x_led->name,
++				sizeof(pca955x_led->name), "pca955x:%s",
++				pdata->leds[i].name);
++
+ 			if (pdata->leds[i].default_trigger)
+ 				pca955x_led->led_cdev.default_trigger =
+ 					pdata->leds[i].default_trigger;
+-- 
+2.1.4
