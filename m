@@ -1,68 +1,63 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH 1/1] dt: bindings: Add a binding for flash devices associated to a sensor
-Date: Fri, 18 Aug 2017 15:58:57 +0300
-Message-ID: <20170818125857.13430-1-sakari.ailus@linux.intel.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v2 0/3] AS3645A flash support
+Date: Sun, 20 Aug 2017 00:24:07 +0300
+Message-ID: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Camera flash drivers (and LEDs) are separate from the sensor devices in
-DT. In order to make an association between the two, provide the
-association information to the software.
+Hi everyone,
 
-Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
----
-Hi Rob and Jacek, others,
+This set adds support for the AS3645A flash driver which can be found e.g.
+in Nokia N9.
 
-I know I've submitted previous versions of this patch that I have changed
-since getting your acks... that's bad. I realised there will be problems
-due to the vague referencing in the old version.
+The set depeds on the flash patches here so I'd prefer to merge this
+through mediatree.
 
-Instead of referring to the flash LED controller itself, the references are
-now suggested to be made to the LEDs explicitly.
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=flash>
 
-While most of the time all LEDs are associated to the same camera sensor,
-there's nothing that suggests that this will always be the case. This will
-work rather nicely with this change to the V4L2 flash class:
+Since v1:
 
-<URL:https://git.linuxtv.org/sailus/media_tree.git/commit/?h=flash&id=ef62781f4468d93ba8328caf7db629add453e01d>
+- Fix flash label use.
 
-An alternative to this could be to refer to the LEDs using the LED
-controller node and integer arguments. That would require e.g. #led-cells
-property to tell how many arguments there are. The actual LEDs also have
-device nodes already so I thought using them would probably be a good idea
-so we continue to have a single way to refer to LEDs.
+- Drop "flash" property from sensors in N9 DTS patch. This will reappear in
+  a sepeate patch after the "flash" binding documentation patch.
 
-Let me know your thoughts / if you're ok with the patch.
+- Remove PM support from the driver (the LED framework handles this).
 
- Documentation/devicetree/bindings/media/video-interfaces.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+- Enable runtime PM un as3645a driver.
 
-diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
-index 852041a7480c..fee73cf2a714 100644
---- a/Documentation/devicetree/bindings/media/video-interfaces.txt
-+++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-@@ -67,6 +67,14 @@ are required in a relevant parent node:
- 		    identifier, should be 1.
-  - #size-cells    : should be zero.
- 
-+
-+Optional properties
-+-------------------
-+
-+- flash: An array of phandles referring to the flash LED, a sub-node
-+  of the LED driver device node.
-+
-+
- Optional endpoint properties
- ----------------------------
- 
+- Add I²C device ID table for module autoloading.
+
+- Add label to the binding examples as well as reference to common.txt.
+
+- Document label as an optional property for both LED sub-nodes.
+
+Since the RFC set:
+
+- Add back the DT binding documentation I lost long ago.
+
+- Use colon (":") in the default names instead of a space.
+
+Sakari Ailus (3):
+  dt: bindings: Document DT bindings for Analog devices as3645a
+  leds: as3645a: Add LED flash class driver
+  arm: dts: omap3: N9/N950: Add AS3645A camera flash
+
+ .../devicetree/bindings/leds/ams,as3645a.txt       |  71 ++
+ MAINTAINERS                                        |   6 +
+ arch/arm/boot/dts/omap3-n950-n9.dtsi               |  14 +
+ drivers/leds/Kconfig                               |   8 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-as3645a.c                        | 770 +++++++++++++++++++++
+ 6 files changed, 870 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
+ create mode 100644 drivers/leds/leds-as3645a.c
+
 -- 
 2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
