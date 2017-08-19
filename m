@@ -1,63 +1,104 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 0/3] AS3645A flash support
-Date: Sun, 20 Aug 2017 00:24:07 +0300
-Message-ID: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog devices as3645a
+Date: Sun, 20 Aug 2017 00:24:08 +0300
+Message-ID: <20170819212410.3084-2-sakari.ailus@linux.intel.com>
+References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42606 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751631AbdHSVYM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 19 Aug 2017 17:24:12 -0400
+In-Reply-To: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 
-Hi everyone,
+From: Sakari Ailus <sakari.ailus@iki.fi>
 
-This set adds support for the AS3645A flash driver which can be found e.g.
-in Nokia N9.
-
-The set depeds on the flash patches here so I'd prefer to merge this
-through mediatree.
-
-<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=flash>
-
-Since v1:
-
-- Fix flash label use.
-
-- Drop "flash" property from sensors in N9 DTS patch. This will reappear in
-  a sepeate patch after the "flash" binding documentation patch.
-
-- Remove PM support from the driver (the LED framework handles this).
-
-- Enable runtime PM un as3645a driver.
-
-- Add I²C device ID table for module autoloading.
-
-- Add label to the binding examples as well as reference to common.txt.
-
-- Document label as an optional property for both LED sub-nodes.
-
-Since the RFC set:
-
-- Add back the DT binding documentation I lost long ago.
-
-- Use colon (":") in the default names instead of a space.
-
-Sakari Ailus (3):
-  dt: bindings: Document DT bindings for Analog devices as3645a
-  leds: as3645a: Add LED flash class driver
-  arm: dts: omap3: N9/N950: Add AS3645A camera flash
-
- .../devicetree/bindings/leds/ams,as3645a.txt       |  71 ++
- MAINTAINERS                                        |   6 +
- arch/arm/boot/dts/omap3-n950-n9.dtsi               |  14 +
- drivers/leds/Kconfig                               |   8 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-as3645a.c                        | 770 +++++++++++++++++++++
- 6 files changed, 870 insertions(+)
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 71 ++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
- create mode 100644 drivers/leds/leds-as3645a.c
 
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+new file mode 100644
+index 000000000000..12c5ef26ec73
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+@@ -0,0 +1,71 @@
++Analog devices AS3645A device tree bindings
++
++The AS3645A flash LED controller can drive two LEDs, one high current
++flash LED and one indicator LED. The high current flash LED can be
++used in torch mode as well.
++
++Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
++and b are included in the range.
++
++Please also see common.txt in the same directory.
++
++
++Required properties
++===================
++
++compatible	: Must be "ams,as3645a".
++reg		: The I2C address of the device. Typically 0x30.
++
++
++Required properties of the "flash" child node
++=============================================
++
++flash-timeout-us: Flash timeout in microseconds. The value must be in
++		  the range [100000, 850000] and divisible by 50000.
++flash-max-microamp: Maximum flash current in microamperes. Has to be
++		    in the range between [200000, 500000] and
++		    divisible by 20000.
++led-max-microamp: Maximum torch (assist) current in microamperes. The
++		  value must be in the range between [20000, 160000] and
++		  divisible by 20000.
++ams,input-max-microamp: Maximum flash controller input current. The
++			value must be in the range [1250000, 2000000]
++			and divisible by 50000.
++
++
++Optional properties of the "flash" child node
++=============================================
++
++label		: The label of the flash LED.
++
++
++Required properties of the "indicator" child node
++=================================================
++
++led-max-microamp: Maximum indicator current. The allowed values are
++		  2500, 5000, 7500 and 10000.
++
++Optional properties of the "indicator" child node
++=================================================
++
++label		: The label of the indicator LED.
++
++
++Example
++=======
++
++	as3645a@30 {
++		reg = <0x30>;
++		compatible = "ams,as3645a";
++		flash {
++			flash-timeout-us = <150000>;
++			flash-max-microamp = <320000>;
++			led-max-microamp = <60000>;
++			ams,input-max-microamp = <1750000>;
++			label = "as3645a:flash";
++		};
++		indicator {
++			led-max-microamp = <10000>;
++			label = "as3645a:indicator";
++		};
++	};
 -- 
 2.11.0
