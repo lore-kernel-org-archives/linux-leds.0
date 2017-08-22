@@ -1,120 +1,67 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
- devices as3645a
-Date: Tue, 22 Aug 2017 20:34:54 +0200
-Message-ID: <93a8cb02-2eb9-e0d5-ec0f-b39193ccccf5@gmail.com>
-References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
- <20170819212410.3084-2-sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH] leds: pca955x: Prevent crippled LED device name
+Date: Tue, 22 Aug 2017 20:46:12 +0200
+Message-ID: <3bc8fb83-4006-3945-ec59-45bb81eac8f5@gmail.com>
+References: <1503003364-14952-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33794 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752381AbdHVSfj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Aug 2017 14:35:39 -0400
-In-Reply-To: <20170819212410.3084-2-sakari.ailus@linux.intel.com>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34952 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752236AbdHVSqz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Aug 2017 14:46:55 -0400
+Received: by mail-lf0-f65.google.com with SMTP id d202so3091518lfd.2
+        for <linux-leds@vger.kernel.org>; Tue, 22 Aug 2017 11:46:54 -0700 (PDT)
+In-Reply-To: <1503003364-14952-1-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
-Cc: javier@dowhile0.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+To: linux-leds@vger.kernel.org
+Cc: colin.king@canonical.com, dan.carpenter@oracle.com, ncase@xes-inc.com
 
-Hi Sakari,
+Hi all,
 
-Thanks for the update.
+Provided that no objections have appeared for last few days,
+I'm applying the patch to the for-next branch of linux-leds.git.
 
-On 08/19/2017 11:24 PM, Sakari Ailus wrote:
-> From: Sakari Ailus <sakari.ailus@iki.fi>
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  .../devicetree/bindings/leds/ams,as3645a.txt       | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> new file mode 100644
-> index 000000000000..12c5ef26ec73
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> @@ -0,0 +1,71 @@
-> +Analog devices AS3645A device tree bindings
-> +
-> +The AS3645A flash LED controller can drive two LEDs, one high current
-> +flash LED and one indicator LED. The high current flash LED can be
-> +used in torch mode as well.
-> +
-> +Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
-> +and b are included in the range.
-> +
-> +Please also see common.txt in the same directory.
-> +
-> +
-> +Required properties
-> +===================
-> +
-> +compatible	: Must be "ams,as3645a".
-> +reg		: The I2C address of the device. Typically 0x30.
-> +
-> +
-> +Required properties of the "flash" child node
-> +=============================================
-> +
-> +flash-timeout-us: Flash timeout in microseconds. The value must be in
-> +		  the range [100000, 850000] and divisible by 50000.
-> +flash-max-microamp: Maximum flash current in microamperes. Has to be
-> +		    in the range between [200000, 500000] and
-> +		    divisible by 20000.
-> +led-max-microamp: Maximum torch (assist) current in microamperes. The
-> +		  value must be in the range between [20000, 160000] and
-> +		  divisible by 20000.
-> +ams,input-max-microamp: Maximum flash controller input current. The
-> +			value must be in the range [1250000, 2000000]
-> +			and divisible by 50000.
-> +
-> +
-> +Optional properties of the "flash" child node
-> +=============================================
-> +
-> +label		: The label of the flash LED.
-> +
-> +
-> +Required properties of the "indicator" child node
-> +=================================================
-> +
-> +led-max-microamp: Maximum indicator current. The allowed values are
-> +		  2500, 5000, 7500 and 10000.
-> +
-> +Optional properties of the "indicator" child node
-> +=================================================
-> +
-> +label		: The label of the indicator LED.
-> +
-> +
-> +Example
-> +=======
-> +
-> +	as3645a@30 {
-> +		reg = <0x30>;
-> +		compatible = "ams,as3645a";
-> +		flash {
-> +			flash-timeout-us = <150000>;
-> +			flash-max-microamp = <320000>;
-> +			led-max-microamp = <60000>;
-> +			ams,input-max-microamp = <1750000>;
-> +			label = "as3645a:flash";
-> +		};
-> +		indicator {
-> +			led-max-microamp = <10000>;
-> +			label = "as3645a:indicator";
-> +		};
-> +	};
-> 
-
-For the patch going through media tree:
-
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-
--- 
-Best regards,
+Thanks,
 Jacek Anaszewski
+
+On 08/17/2017 10:56 PM, Jacek Anaszewski wrote:
+> In case platform data provided empty LED name string the resulting
+> LED class device name would be crippled. Use corresponding LED chip
+> bit in place of "function" segment of LED class device name then to
+> make the LEDs at least distinguishable.
+> 
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Reported-by: Colin King <colin.king@canonical.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Suggested-by: Nate Case <ncase@xes-inc.com>
+> ---
+>  drivers/leds/leds-pca955x.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index f062d1e..09303fd 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -473,10 +473,14 @@ static int pca955x_probe(struct i2c_client *client,
+>  			 * Platform data can specify LED names and
+>  			 * default triggers
+>  			 */
+> -			if (pdata->leds[i].name)
+> -				snprintf(pca955x_led->name,
+> -					sizeof(pca955x_led->name), "pca955x:%s",
+> -					pdata->leds[i].name);
+> +			if (pdata->leds[i].name[0] == '\0')
+> +				snprintf(pdata->leds[i].name,
+> +					sizeof(pdata->leds[i].name), "%d", i);
+> +
+> +			snprintf(pca955x_led->name,
+> +				sizeof(pca955x_led->name), "pca955x:%s",
+> +				pdata->leds[i].name);
+> +
+>  			if (pdata->leds[i].default_trigger)
+>  				pca955x_led->led_cdev.default_trigger =
+>  					pdata->leds[i].default_trigger;
+> 
