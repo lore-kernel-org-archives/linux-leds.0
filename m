@@ -1,38 +1,59 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
  devices as3645a
-Date: Tue, 22 Aug 2017 19:28:10 -0500
-Message-ID: <20170823002810.d4qiyghf4ti4vpa2@rob-hp-laptop>
+Date: Wed, 23 Aug 2017 10:33:15 +0300
+Message-ID: <20170823073315.clz5u5pbontskrvm@paasikivi.fi.intel.com>
 References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
  <20170819212410.3084-2-sakari.ailus@linux.intel.com>
+ <20170823002810.d4qiyghf4ti4vpa2@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:42676 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753329AbdHWHdT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 23 Aug 2017 03:33:19 -0400
 Content-Disposition: inline
-In-Reply-To: <20170819212410.3084-2-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+In-Reply-To: <20170823002810.d4qiyghf4ti4vpa2@rob-hp-laptop>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-media@vger.kernel.org, javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 
-On Sun, Aug 20, 2017 at 12:24:08AM +0300, Sakari Ailus wrote:
-> From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+Hi Rob,
 
-Commit msg?
+On Tue, Aug 22, 2017 at 07:28:10PM -0500, Rob Herring wrote:
+> On Sun, Aug 20, 2017 at 12:24:08AM +0300, Sakari Ailus wrote:
+> > From: Sakari Ailus <sakari.ailus@iki.fi>
+> 
+> Commit msg?
 
-> Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+I'll add:
 
-Shouldn't author and SoB be the same email?
+Document DT bindings for analog devices as3645a flash LED controller which
+also supports an indicator LED.
 
-> ---
->  .../devicetree/bindings/leds/ams,as3645a.txt       | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
+> 
+> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+> Shouldn't author and SoB be the same email?
 
-Otherwise,
+I'll change that.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> > ---
+> >  .../devicetree/bindings/leds/ams,as3645a.txt       | 71 ++++++++++++++++++++++
+> >  1 file changed, 71 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
+> 
+> Otherwise,
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Thanks!
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
