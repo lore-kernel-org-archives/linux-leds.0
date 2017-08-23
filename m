@@ -1,67 +1,38 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: pca955x: Prevent crippled LED device name
-Date: Tue, 22 Aug 2017 20:46:12 +0200
-Message-ID: <3bc8fb83-4006-3945-ec59-45bb81eac8f5@gmail.com>
-References: <1503003364-14952-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
+ devices as3645a
+Date: Tue, 22 Aug 2017 19:28:10 -0500
+Message-ID: <20170823002810.d4qiyghf4ti4vpa2@rob-hp-laptop>
+References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
+ <20170819212410.3084-2-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34952 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752236AbdHVSqz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Aug 2017 14:46:55 -0400
-Received: by mail-lf0-f65.google.com with SMTP id d202so3091518lfd.2
-        for <linux-leds@vger.kernel.org>; Tue, 22 Aug 2017 11:46:54 -0700 (PDT)
-In-Reply-To: <1503003364-14952-1-git-send-email-jacek.anaszewski@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170819212410.3084-2-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: colin.king@canonical.com, dan.carpenter@oracle.com, ncase@xes-inc.com
 
-Hi all,
+On Sun, Aug 20, 2017 at 12:24:08AM +0300, Sakari Ailus wrote:
+> From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
 
-Provided that no objections have appeared for last few days,
-I'm applying the patch to the for-next branch of linux-leds.git.
+Commit msg?
 
-Thanks,
-Jacek Anaszewski
+> Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 
-On 08/17/2017 10:56 PM, Jacek Anaszewski wrote:
-> In case platform data provided empty LED name string the resulting
-> LED class device name would be crippled. Use corresponding LED chip
-> bit in place of "function" segment of LED class device name then to
-> make the LEDs at least distinguishable.
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Reported-by: Colin King <colin.king@canonical.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Suggested-by: Nate Case <ncase@xes-inc.com>
+Shouldn't author and SoB be the same email?
+
 > ---
->  drivers/leds/leds-pca955x.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index f062d1e..09303fd 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -473,10 +473,14 @@ static int pca955x_probe(struct i2c_client *client,
->  			 * Platform data can specify LED names and
->  			 * default triggers
->  			 */
-> -			if (pdata->leds[i].name)
-> -				snprintf(pca955x_led->name,
-> -					sizeof(pca955x_led->name), "pca955x:%s",
-> -					pdata->leds[i].name);
-> +			if (pdata->leds[i].name[0] == '\0')
-> +				snprintf(pdata->leds[i].name,
-> +					sizeof(pdata->leds[i].name), "%d", i);
-> +
-> +			snprintf(pca955x_led->name,
-> +				sizeof(pca955x_led->name), "pca955x:%s",
-> +				pdata->leds[i].name);
-> +
->  			if (pdata->leds[i].default_trigger)
->  				pca955x_led->led_cdev.default_trigger =
->  					pdata->leds[i].default_trigger;
-> 
+>  .../devicetree/bindings/leds/ams,as3645a.txt       | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3645a.txt
+
+Otherwise,
+
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
