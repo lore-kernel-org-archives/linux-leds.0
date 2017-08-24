@@ -1,418 +1,54 @@
-From: Willy Tarreau <w@1wt.eu>
-Subject: Re: [PATCH] leds/trigger/activity: add a system activity LED trigger
-Date: Thu, 24 Aug 2017 14:07:57 +0200
-Message-ID: <20170824120757.GB19597@1wt.eu>
-References: <1486856514-9634-1-git-send-email-w@1wt.eu>
- <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH 1/4] leds: aat1290: make array max_mm_current_percent static const
+Date: Thu, 24 Aug 2017 14:00:52 +0100
+Message-ID: <20170824130055.23642-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="uAKRQypu60I7Lcqm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:52747 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751615AbdHXNA6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Aug 2017 09:00:58 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Don't populate the array max_mm_current_percent on the stack, instead
+make it static const.  Makes the object code smaller by over 280 bytes:
 
-Hi Jacek,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   7225	   1936	     64	   9225	   2409	./drivers/leds/leds-aat1290.o
 
-On Thu, Mar 09, 2017 at 09:48:39PM +0100, Jacek Anaszewski wrote:
-> Hi Willy,
-> 
-> Thanks for the patch.
-> 
-> Unfortunately I'm getting following build break, while trying to
-> test it on recent linux-next:
-> 
-> drivers/leds/trigger/ledtrig-activity.c: In function
-> 'led_activity_function':
-> drivers/leds/trigger/ledtrig-activity.c:67:14: error: implicit
-> declaration of function 'cputime64_to_jiffies64'
-> [-Werror=implicit-function-declaration]
->   curr_idle = cputime64_to_jiffies64(curr_idle);
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6847	   2032	     64	   8943	   22ef	./drivers/leds/leds-aat1290.o`
 
-It took me longer than I hoped to get back to this, but here's a new
-version which works on 4.13-rc6 by not relying on jiffies anymore.
-
-Thanks!
-Willy
-
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="0001-leds-trigger-activity-add-a-system-activity-LED-trig.patch"
-
->From 655256adb790590bbc0c35a9e34bf0a22ea95b5d Mon Sep 17 00:00:00 2001
-From: Willy Tarreau <w@1wt.eu>
-Date: Fri, 10 Feb 2017 19:45:07 +0100
-Subject: leds/trigger/activity: add a system activity LED trigger
-
-The "activity" trigger was inspired by the heartbeat one, but aims at
-providing instant indication of the immediate CPU usage. Under idle
-condition, it flashes 10ms every second. At 100% usage, it flashes
-90ms every 100ms. The blinking frequency increases from 1 to 10 Hz
-until either the load is high enough to saturate one CPU core or 50%
-load is reached on a single-core system. Then past this point only the
-duty cycle increases from 10 to 90%.
-
-This results in a very visible activity reporting allowing one to
-immediately tell whether a machine is under load or not, making it
-quite suitable to be used in clusters.
-
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-since v1:
-  - update to 4.13-rc6 by getting rid of cputime64_to_jiffies64()
-  - fix behaviour on NO_HZ where cumulated idle time could be wrong
----
- drivers/leds/trigger/Kconfig            |   9 +
- drivers/leds/trigger/Makefile           |   1 +
- drivers/leds/trigger/ledtrig-activity.c | 297 ++++++++++++++++++++++++++++++++
- 3 files changed, 307 insertions(+)
- create mode 100644 drivers/leds/trigger/ledtrig-activity.c
+ drivers/leds/leds-aat1290.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 3f9ddb9..8432d9e 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -77,6 +77,15 @@ config LEDS_TRIGGER_CPU
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index a21e19297745..35fcb0ca9092 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -314,8 +314,10 @@ static void aat1290_led_validate_mm_current(struct aat1290_led *led,
+ static int init_mm_current_scale(struct aat1290_led *led,
+ 			struct aat1290_led_config_data *cfg)
+ {
+-	int max_mm_current_percent[] = { 20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
+-						63, 71, 79, 89, 100 };
++	static const int max_mm_current_percent[] = {
++		20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
++		63, 71, 79, 89, 100
++	};
+ 	int i, max_mm_current =
+ 			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
  
- 	  If unsure, say N.
- 
-+config LEDS_TRIGGER_ACTIVITY
-+	tristate "LED activity Trigger"
-+	depends on LEDS_TRIGGERS
-+	help
-+	  This allows LEDs to be controlled by a immediate CPU usage.
-+	  The flash frequency and duty cycle varies from faint flashes to
-+	  intense brightness depending on the instant CPU load.
-+	  If unsure, say Y.
-+
- config LEDS_TRIGGER_GPIO
- 	tristate "LED GPIO Trigger"
- 	depends on LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index a72c43c..e572ce57 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
- obj-$(CONFIG_LEDS_TRIGGER_BACKLIGHT)	+= ledtrig-backlight.o
- obj-$(CONFIG_LEDS_TRIGGER_GPIO)		+= ledtrig-gpio.o
- obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
-+obj-$(CONFIG_LEDS_TRIGGER_ACTIVITY)	+= ledtrig-activity.o
- obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
- obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
- obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
-diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
-new file mode 100644
-index 0000000..6f00235
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-activity.c
-@@ -0,0 +1,297 @@
-+/*
-+ * Activity LED trigger
-+ *
-+ * Copyright (C) 2017 Willy Tarreau <w@1wt.eu>
-+ * Partially based on Atsushi Nemoto's ledtrig-heartbeat.c.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/kernel_stat.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/timer.h>
-+#include <linux/sched.h>
-+#include <linux/leds.h>
-+#include <linux/reboot.h>
-+#include <linux/suspend.h>
-+#include "../leds.h"
-+
-+static int panic_detected;
-+
-+struct activity_data {
-+	struct timer_list timer;
-+	u64 last_used;
-+	u64 last_boot;
-+	int time_left;
-+	int state;
-+	int invert;
-+};
-+
-+static void led_activity_function(unsigned long data)
-+{
-+	struct led_classdev *led_cdev = (struct led_classdev *)data;
-+	struct activity_data *activity_data = led_cdev->trigger_data;
-+	struct timespec boot_time;
-+	unsigned int target;
-+	unsigned int usage;
-+	int delay;
-+	u64 curr_used;
-+	u64 curr_boot;
-+	s32 diff_used;
-+	s32 diff_boot;
-+	int cpus;
-+	int i;
-+
-+	if (unlikely(panic_detected)) {
-+		/* full brightness in case of panic */
-+		led_set_brightness_nosleep(led_cdev, led_cdev->max_brightness);
-+		return;
-+	}
-+
-+	get_monotonic_boottime(&boot_time);
-+
-+	cpus = 0;
-+	curr_used = 0;
-+
-+	for_each_possible_cpu(i) {
-+		curr_used += kcpustat_cpu(i).cpustat[CPUTIME_USER]
-+			  +  kcpustat_cpu(i).cpustat[CPUTIME_NICE]
-+			  +  kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]
-+			  +  kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]
-+			  +  kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
-+		cpus++;
-+	}
-+
-+	/* We come here every 100ms in the worst case, so that's 100M ns of
-+	 * cumulated time. By dividing by 2^16, we get the time resolution
-+	 * down to 16us, ensuring we won't overflow 32-bit computations below
-+	 * even up to 3k CPUs, while keeping divides cheap on smaller systems.
-+	 */
-+	curr_boot = timespec_to_ns(&boot_time) * cpus;
-+	diff_boot = (curr_boot - activity_data->last_boot) >> 16;
-+	diff_used = (curr_used - activity_data->last_used) >> 16;
-+	activity_data->last_boot = curr_boot;
-+	activity_data->last_used = curr_used;
-+
-+	if (diff_boot <= 0 || diff_used < 0)
-+		usage = 0;
-+	else if (diff_used >= diff_boot)
-+		usage = 100;
-+	else
-+		usage = 100 * diff_used / diff_boot;
-+
-+	/*
-+	 * Now we know the total boot_time multiplied by the number of CPUs, and
-+	 * the total idle+wait time for all CPUs. We'll compare how they evolved
-+	 * since last call. The % of overall CPU usage is :
-+	 *
-+	 *      1 - delta_idle / delta_boot
-+	 *
-+	 * What we want is that when the CPU usage is zero, the LED must blink
-+	 * slowly with very faint flashes that are detectable but not disturbing
-+	 * (typically 10ms every second, or 10ms ON, 990ms OFF). Then we want
-+	 * blinking frequency to increase up to the point where the load is
-+	 * enough to saturate one core in multi-core systems or 50% in single
-+	 * core systems. At this point it should reach 10 Hz with a 10/90 duty
-+	 * cycle (10ms ON, 90ms OFF). After this point, the blinking frequency
-+	 * remains stable (10 Hz) and only the duty cycle increases to report
-+	 * the activity, up to the point where we have 90ms ON, 10ms OFF when
-+	 * all cores are saturated. It's important that the LED never stays in
-+	 * a steady state so that it's easy to distinguish an idle or saturated
-+	 * machine from a hung one.
-+	 *
-+	 * This gives us :
-+	 *   - a target CPU usage of min(50%, 100%/#CPU) for a 10% duty cycle
-+	 *     (10ms ON, 90ms OFF)
-+	 *   - below target :
-+	 *      ON_ms  = 10
-+	 *      OFF_ms = 90 + (1 - usage/target) * 900
-+	 *   - above target :
-+	 *      ON_ms  = 10 + (usage-target)/(100%-target) * 80
-+	 *      OFF_ms = 90 - (usage-target)/(100%-target) * 80
-+	 *
-+	 * In order to keep a good responsiveness, we cap the sleep time to
-+	 * 100 ms and keep track of the sleep time left. This allows us to
-+	 * quickly change it if needed.
-+	 */
-+
-+	activity_data->time_left -= 100;
-+	if (activity_data->time_left <= 0) {
-+		activity_data->time_left = 0;
-+		activity_data->state = !activity_data->state;
-+		led_set_brightness_nosleep(led_cdev,
-+			(activity_data->state ^ activity_data->invert) ?
-+			led_cdev->max_brightness : LED_OFF);
-+	}
-+
-+	target = (cpus > 1) ? (100 / cpus) : 50;
-+
-+	if (usage < target)
-+		delay = activity_data->state ?
-+			10 :                        /* ON  */
-+			990 - 900 * usage / target; /* OFF */
-+	else
-+		delay = activity_data->state ?
-+			10 + 80 * (usage - target) / (100 - target) : /* ON  */
-+			90 - 80 * (usage - target) / (100 - target);  /* OFF */
-+
-+
-+	if (!activity_data->time_left || delay <= activity_data->time_left)
-+		activity_data->time_left = delay;
-+
-+	delay = min_t(int, activity_data->time_left, 100);
-+	mod_timer(&activity_data->timer, jiffies + msecs_to_jiffies(delay));
-+}
-+
-+static ssize_t led_invert_show(struct device *dev,
-+                               struct device_attribute *attr, char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct activity_data *activity_data = led_cdev->trigger_data;
-+
-+	return sprintf(buf, "%u\n", activity_data->invert);
-+}
-+
-+static ssize_t led_invert_store(struct device *dev,
-+                                struct device_attribute *attr,
-+                                const char *buf, size_t size)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct activity_data *activity_data = led_cdev->trigger_data;
-+	unsigned long state;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &state);
-+	if (ret)
-+		return ret;
-+
-+	activity_data->invert = !!state;
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(invert, 0644, led_invert_show, led_invert_store);
-+
-+static void activity_activate(struct led_classdev *led_cdev)
-+{
-+	struct activity_data *activity_data;
-+	int rc;
-+
-+	activity_data = kzalloc(sizeof(*activity_data), GFP_KERNEL);
-+	if (!activity_data)
-+		return;
-+
-+	led_cdev->trigger_data = activity_data;
-+	rc = device_create_file(led_cdev->dev, &dev_attr_invert);
-+	if (rc) {
-+		kfree(led_cdev->trigger_data);
-+		return;
-+	}
-+
-+	setup_timer(&activity_data->timer,
-+		    led_activity_function, (unsigned long)led_cdev);
-+	led_activity_function(activity_data->timer.data);
-+	led_cdev->activated = true;
-+}
-+
-+static void activity_deactivate(struct led_classdev *led_cdev)
-+{
-+	struct activity_data *activity_data = led_cdev->trigger_data;
-+
-+	if (led_cdev->activated) {
-+		del_timer_sync(&activity_data->timer);
-+		device_remove_file(led_cdev->dev, &dev_attr_invert);
-+		kfree(activity_data);
-+		led_cdev->activated = false;
-+	}
-+}
-+
-+static struct led_trigger activity_led_trigger = {
-+	.name       = "activity",
-+	.activate   = activity_activate,
-+	.deactivate = activity_deactivate,
-+};
-+
-+static int activity_pm_notifier(struct notifier_block *nb,
-+                                unsigned long pm_event, void *unused)
-+{
-+	int rc;
-+
-+	switch (pm_event) {
-+	case PM_SUSPEND_PREPARE:
-+	case PM_HIBERNATION_PREPARE:
-+	case PM_RESTORE_PREPARE:
-+		led_trigger_unregister(&activity_led_trigger);
-+		break;
-+	case PM_POST_SUSPEND:
-+	case PM_POST_HIBERNATION:
-+	case PM_POST_RESTORE:
-+		rc = led_trigger_register(&activity_led_trigger);
-+		if (rc)
-+			pr_err("could not re-register activity trigger\n");
-+		break;
-+	default:
-+		break;
-+	}
-+	return NOTIFY_DONE;
-+}
-+
-+static int activity_reboot_notifier(struct notifier_block *nb,
-+                                    unsigned long code, void *unused)
-+{
-+	led_trigger_unregister(&activity_led_trigger);
-+	return NOTIFY_DONE;
-+}
-+
-+static int activity_panic_notifier(struct notifier_block *nb,
-+                                   unsigned long code, void *unused)
-+{
-+	panic_detected = 1;
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block activity_pm_nb = {
-+	.notifier_call = activity_pm_notifier,
-+};
-+
-+static struct notifier_block activity_reboot_nb = {
-+	.notifier_call = activity_reboot_notifier,
-+};
-+
-+static struct notifier_block activity_panic_nb = {
-+	.notifier_call = activity_panic_notifier,
-+};
-+
-+static int __init activity_init(void)
-+{
-+	int rc = led_trigger_register(&activity_led_trigger);
-+
-+	if (!rc) {
-+		atomic_notifier_chain_register(&panic_notifier_list,
-+					       &activity_panic_nb);
-+		register_reboot_notifier(&activity_reboot_nb);
-+		register_pm_notifier(&activity_pm_nb);
-+	}
-+	return rc;
-+}
-+
-+static void __exit activity_exit(void)
-+{
-+	unregister_pm_notifier(&activity_pm_nb);
-+	unregister_reboot_notifier(&activity_reboot_nb);
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					 &activity_panic_nb);
-+	led_trigger_unregister(&activity_led_trigger);
-+}
-+
-+module_init(activity_init);
-+module_exit(activity_exit);
-+
-+MODULE_AUTHOR("Willy Tarreau <w@1wt.eu>");
-+MODULE_DESCRIPTION("Activity LED trigger");
-+MODULE_LICENSE("GPL");
 -- 
-1.7.12.1
-
-
---uAKRQypu60I7Lcqm--
+2.14.1
