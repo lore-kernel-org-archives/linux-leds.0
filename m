@@ -1,62 +1,60 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 3/4] leds: pca955x: add GPIO support
-Date: Thu, 24 Aug 2017 22:03:59 +0200
-Message-ID: <c403ddf1-a26c-1ccc-f722-eacac6115c34@gmail.com>
-References: <1502199760-763-1-git-send-email-clg@kaod.org>
- <1502199760-763-4-git-send-email-clg@kaod.org> <20170811134757.GA22561@amd>
- <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org> <20170811153742.GA31267@amd>
- <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org> <20170812084213.GA20383@amd>
- <4a6d3c67-c7ac-664c-2506-8c5e0530a2c1@kaod.org>
+Subject: Re: [PATCH 1/4] leds: aat1290: make array max_mm_current_percent
+ static const
+Date: Thu, 24 Aug 2017 22:38:49 +0200
+Message-ID: <c33bd764-6804-f811-559b-9ea0624b5501@gmail.com>
+References: <20170824130055.23642-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34708 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753246AbdHXUEn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Aug 2017 16:04:43 -0400
-In-Reply-To: <4a6d3c67-c7ac-664c-2506-8c5e0530a2c1@kaod.org>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170824130055.23642-1-colin.king@canonical.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
 
-Hi Cedric,
+Hi Colin,
 
-On 08/24/2017 01:30 PM, Cédric Le Goater wrote:
-> On 08/12/2017 10:42 AM, Pavel Machek wrote:
->> Hi!
->>
->>>>>>> +static u8 pca955x_read_input(struct i2c_client *client, int n)
->>>>>>> +{
->>>>>>> +	return (u8)i2c_smbus_read_byte_data(client, n);
->>>>>>> +}
->>>>>>
->>>>>> Is the cast needed? Should you attempt to handle errors?
->>>>>
->>>>> ah. this is a left over. I can fix in a resend.
->>>>
->>>> No need to resend just for this.
->>>>
->>>> Should you WARN_ON() if the read_byte_data returns < 0 or something?
->>>>
->>>> https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-smbus-read-byte-data.html
->>>
->>> I don't think so as this is just to read the gpio value. 
->>>
->>> I suppose that the i2c layer will output some errors before 
->>> if it catches some invalid state.
->>
->> Normally its driver's job to output errors. (Same for write).
-> 
-> ok. I can respin the patchset with an extra patch adding checks
-> for I2C errors (see below). In which order would you want that, 
-> before the gpio support or after ? 
+Thanks for the path set, applied.
 
-I'd prefer an incremental patch. The patch set has received 10
-days of testing and the merge window is imminent. Not the best
-moment to respin the for-next branch.
-
--- 
 Best regards,
 Jacek Anaszewski
+
+On 08/24/2017 03:00 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array max_mm_current_percent on the stack, instead
+> make it static const.  Makes the object code smaller by over 280 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    7225	   1936	     64	   9225	   2409	./drivers/leds/leds-aat1290.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    6847	   2032	     64	   8943	   22ef	./drivers/leds/leds-aat1290.o`
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/leds/leds-aat1290.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+> index a21e19297745..35fcb0ca9092 100644
+> --- a/drivers/leds/leds-aat1290.c
+> +++ b/drivers/leds/leds-aat1290.c
+> @@ -314,8 +314,10 @@ static void aat1290_led_validate_mm_current(struct aat1290_led *led,
+>  static int init_mm_current_scale(struct aat1290_led *led,
+>  			struct aat1290_led_config_data *cfg)
+>  {
+> -	int max_mm_current_percent[] = { 20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
+> -						63, 71, 79, 89, 100 };
+> +	static const int max_mm_current_percent[] = {
+> +		20, 22, 25, 28, 32, 36, 40, 45, 50, 56,
+> +		63, 71, 79, 89, 100
+> +	};
+>  	int i, max_mm_current =
+>  			AAT1290_MAX_MM_CURRENT(cfg->max_flash_current);
+>  
+> 
