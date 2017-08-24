@@ -1,62 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH 4/4] leds: lp8501: make several arrays static const
-Date: Thu, 24 Aug 2017 14:00:55 +0100
-Message-ID: <20170824130055.23642-4-colin.king@canonical.com>
-References: <20170824130055.23642-1-colin.king@canonical.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 3/4] leds: pca955x: add GPIO support
+Date: Thu, 24 Aug 2017 22:03:59 +0200
+Message-ID: <c403ddf1-a26c-1ccc-f722-eacac6115c34@gmail.com>
+References: <1502199760-763-1-git-send-email-clg@kaod.org>
+ <1502199760-763-4-git-send-email-clg@kaod.org> <20170811134757.GA22561@amd>
+ <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org> <20170811153742.GA31267@amd>
+ <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org> <20170812084213.GA20383@amd>
+ <4a6d3c67-c7ac-664c-2506-8c5e0530a2c1@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170824130055.23642-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34708 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753246AbdHXUEn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Aug 2017 16:04:43 -0400
+In-Reply-To: <4a6d3c67-c7ac-664c-2506-8c5e0530a2c1@kaod.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Cedric,
 
-Don't populate the arrays on the stack, instead make them static const.
-Makes the object code smaller by 50 bytes:
+On 08/24/2017 01:30 PM, Cédric Le Goater wrote:
+> On 08/12/2017 10:42 AM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>>>>> +static u8 pca955x_read_input(struct i2c_client *client, int n)
+>>>>>>> +{
+>>>>>>> +	return (u8)i2c_smbus_read_byte_data(client, n);
+>>>>>>> +}
+>>>>>>
+>>>>>> Is the cast needed? Should you attempt to handle errors?
+>>>>>
+>>>>> ah. this is a left over. I can fix in a resend.
+>>>>
+>>>> No need to resend just for this.
+>>>>
+>>>> Should you WARN_ON() if the read_byte_data returns < 0 or something?
+>>>>
+>>>> https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-smbus-read-byte-data.html
+>>>
+>>> I don't think so as this is just to read the gpio value. 
+>>>
+>>> I suppose that the i2c layer will output some errors before 
+>>> if it catches some invalid state.
+>>
+>> Normally its driver's job to output errors. (Same for write).
+> 
+> ok. I can respin the patchset with an extra patch adding checks
+> for I2C errors (see below). In which order would you want that, 
+> before the gpio support or after ? 
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   5058	   1552	     64	   6674	   1a12	drivers/leds/leds-lp8501.o
+I'd prefer an incremental patch. The patch set has received 10
+days of testing and the merge window is imminent. Not the best
+moment to respin the for-next branch.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   4788	   1776	     64	   6628	   19e4	drivers/leds/leds-lp8501.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/leds/leds-lp8501.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-index 3f9675bd214a..3adb113cf02e 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -118,19 +118,19 @@ static int lp8501_post_init_device(struct lp55xx_chip *chip)
- static void lp8501_load_engine(struct lp55xx_chip *chip)
- {
- 	enum lp55xx_engine_index idx = chip->engine_idx;
--	u8 mask[] = {
-+	static const u8 mask[] = {
- 		[LP55XX_ENGINE_1] = LP8501_MODE_ENG1_M,
- 		[LP55XX_ENGINE_2] = LP8501_MODE_ENG2_M,
- 		[LP55XX_ENGINE_3] = LP8501_MODE_ENG3_M,
- 	};
- 
--	u8 val[] = {
-+	static const u8 val[] = {
- 		[LP55XX_ENGINE_1] = LP8501_LOAD_ENG1,
- 		[LP55XX_ENGINE_2] = LP8501_LOAD_ENG2,
- 		[LP55XX_ENGINE_3] = LP8501_LOAD_ENG3,
- 	};
- 
--	u8 page_sel[] = {
-+	static const u8 page_sel[] = {
- 		[LP55XX_ENGINE_1] = LP8501_PAGE_ENG1,
- 		[LP55XX_ENGINE_2] = LP8501_PAGE_ENG2,
- 		[LP55XX_ENGINE_3] = LP8501_PAGE_ENG3,
 -- 
-2.14.1
+Best regards,
+Jacek Anaszewski
