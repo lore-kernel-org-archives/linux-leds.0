@@ -1,266 +1,418 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Subject: Re: [PATCH v3 3/4] leds: pca955x: add GPIO support
-Date: Thu, 24 Aug 2017 13:30:07 +0200
-Message-ID: <4a6d3c67-c7ac-664c-2506-8c5e0530a2c1@kaod.org>
-References: <1502199760-763-1-git-send-email-clg@kaod.org>
- <1502199760-763-4-git-send-email-clg@kaod.org> <20170811134757.GA22561@amd>
- <9330f31a-110c-8398-8cd1-764f8dd358e9@kaod.org> <20170811153742.GA31267@amd>
- <b585f234-6ad6-e63f-f4ec-f7d1efaf83ca@kaod.org> <20170812084213.GA20383@amd>
+From: Willy Tarreau <w@1wt.eu>
+Subject: Re: [PATCH] leds/trigger/activity: add a system activity LED trigger
+Date: Thu, 24 Aug 2017 14:07:57 +0200
+Message-ID: <20170824120757.GB19597@1wt.eu>
+References: <1486856514-9634-1-git-send-email-w@1wt.eu>
+ <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from 3.mo179.mail-out.ovh.net ([178.33.251.175]:46608 "EHLO
-        3.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751300AbdHXLhj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Aug 2017 07:37:39 -0400
-Received: from player794.ha.ovh.net (b6.ovh.net [213.186.33.56])
-        by mo179.mail-out.ovh.net (Postfix) with ESMTP id DF3D65CCB4
-        for <linux-leds@vger.kernel.org>; Thu, 24 Aug 2017 13:30:17 +0200 (CEST)
-In-Reply-To: <20170812084213.GA20383@amd>
-Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="uAKRQypu60I7Lcqm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
 
-On 08/12/2017 10:42 AM, Pavel Machek wrote:
-> Hi!
+
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Jacek,
+
+On Thu, Mar 09, 2017 at 09:48:39PM +0100, Jacek Anaszewski wrote:
+> Hi Willy,
 > 
->>>>>> +static u8 pca955x_read_input(struct i2c_client *client, int n)
->>>>>> +{
->>>>>> +	return (u8)i2c_smbus_read_byte_data(client, n);
->>>>>> +}
->>>>>
->>>>> Is the cast needed? Should you attempt to handle errors?
->>>>
->>>> ah. this is a left over. I can fix in a resend.
->>>
->>> No need to resend just for this.
->>>
->>> Should you WARN_ON() if the read_byte_data returns < 0 or something?
->>>
->>> https://linuxtv.org/downloads/v4l-dvb-internals/device-drivers/API-i2c-smbus-read-byte-data.html
->>
->> I don't think so as this is just to read the gpio value. 
->>
->> I suppose that the i2c layer will output some errors before 
->> if it catches some invalid state.
+> Thanks for the patch.
 > 
-> Normally its driver's job to output errors. (Same for write).
+> Unfortunately I'm getting following build break, while trying to
+> test it on recent linux-next:
+> 
+> drivers/leds/trigger/ledtrig-activity.c: In function
+> 'led_activity_function':
+> drivers/leds/trigger/ledtrig-activity.c:67:14: error: implicit
+> declaration of function 'cputime64_to_jiffies64'
+> [-Werror=implicit-function-declaration]
+>   curr_idle = cputime64_to_jiffies64(curr_idle);
 
-ok. I can respin the patchset with an extra patch adding checks
-for I2C errors (see below). In which order would you want that, 
-before the gpio support or after ? 
+It took me longer than I hoped to get back to this, but here's a new
+version which works on 4.13-rc6 by not relying on jiffies anymore.
 
-Thanks,
+Thanks!
+Willy
 
-C.  
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="0001-leds-trigger-activity-add-a-system-activity-LED-trig.patch"
 
->From c52749964ee435eec8dc5b8634f7f76cf637e7b1 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
-Date: Thu, 24 Aug 2017 13:27:45 +0200
-Subject: [PATCH] leds: pca955x: check for I2C errors
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+>From 655256adb790590bbc0c35a9e34bf0a22ea95b5d Mon Sep 17 00:00:00 2001
+From: Willy Tarreau <w@1wt.eu>
+Date: Fri, 10 Feb 2017 19:45:07 +0100
+Subject: leds/trigger/activity: add a system activity LED trigger
 
-This should also allow probing to fail when a pca955x chip is not
-found on a I2C bus.
+The "activity" trigger was inspired by the heartbeat one, but aims at
+providing instant indication of the immediate CPU usage. Under idle
+condition, it flashes 10ms every second. At 100% usage, it flashes
+90ms every 100ms. The blinking frequency increases from 1 to 10 Hz
+until either the load is high enough to saturate one CPU core or 50%
+load is reached on a single-core system. Then past this point only the
+duty cycle increases from 10 to 90%.
 
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
+This results in a very visible activity reporting allowing one to
+immediately tell whether a machine is under load or not, making it
+quite suitable to be used in clusters.
+
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+
 ---
- drivers/leds/leds-pca955x.c | 89 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 70 insertions(+), 19 deletions(-)
+since v1:
+  - update to 4.13-rc6 by getting rid of cputime64_to_jiffies64()
+  - fix behaviour on NO_HZ where cumulated idle time could be wrong
+---
+ drivers/leds/trigger/Kconfig            |   9 +
+ drivers/leds/trigger/Makefile           |   1 +
+ drivers/leds/trigger/ledtrig-activity.c | 297 ++++++++++++++++++++++++++++++++
+ 3 files changed, 307 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-activity.c
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index f062d1e7640f..17ac7cf2728d 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -165,13 +165,18 @@ static inline u8 pca955x_ledsel(u8 oldval, int led_num, int state)
-  * Write to frequency prescaler register, used to program the
-  * period of the PWM output.  period = (PSCx + 1) / 38
-  */
--static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
- {
- 	struct pca955x *pca955x = i2c_get_clientdata(client);
-+	int ret;
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 3f9ddb9..8432d9e 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -77,6 +77,15 @@ config LEDS_TRIGGER_CPU
  
--	i2c_smbus_write_byte_data(client,
-+	ret = i2c_smbus_write_byte_data(client,
- 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 2*n,
- 		val);
-+	if (ret < 0)
-+		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
-+			__func__, n, val, ret);
-+	return ret;
- }
+ 	  If unsure, say N.
  
- /*
-@@ -181,38 +186,57 @@ static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
-  *
-  * Duty cycle is (256 - PWMx) / 256
-  */
--static void pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
- {
- 	struct pca955x *pca955x = i2c_get_clientdata(client);
-+	int ret;
- 
--	i2c_smbus_write_byte_data(client,
-+	ret = i2c_smbus_write_byte_data(client,
- 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 1 + 2*n,
- 		val);
-+	if (ret < 0)
-+		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
-+			__func__, n, val, ret);
-+	return ret;
- }
- 
++config LEDS_TRIGGER_ACTIVITY
++	tristate "LED activity Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  This allows LEDs to be controlled by a immediate CPU usage.
++	  The flash frequency and duty cycle varies from faint flashes to
++	  intense brightness depending on the instant CPU load.
++	  If unsure, say Y.
 +
- /*
-  * Write to LED selector register, which determines the source that
-  * drives the LED output.
-  */
--static void pca955x_write_ls(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_ls(struct i2c_client *client, int n, u8 val)
- {
- 	struct pca955x *pca955x = i2c_get_clientdata(client);
-+	int ret;
- 
--	i2c_smbus_write_byte_data(client,
-+	ret = i2c_smbus_write_byte_data(client,
- 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n,
- 		val);
-+	if (ret < 0)
-+		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
-+			__func__, n, val, ret);
-+	return ret;
- }
- 
- /*
-  * Read the LED selector register, which determines the source that
-  * drives the LED output.
-  */
--static u8 pca955x_read_ls(struct i2c_client *client, int n)
-+static int pca955x_read_ls(struct i2c_client *client, int n, u8 *val)
- {
- 	struct pca955x *pca955x = i2c_get_clientdata(client);
-+	int ret;
- 
--	return (u8) i2c_smbus_read_byte_data(client,
-+	ret = i2c_smbus_read_byte_data(client,
- 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
-+			__func__, n, ret);
-+		return ret;
+ config LEDS_TRIGGER_GPIO
+ 	tristate "LED GPIO Trigger"
+ 	depends on LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index a72c43c..e572ce57 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
+ obj-$(CONFIG_LEDS_TRIGGER_BACKLIGHT)	+= ledtrig-backlight.o
+ obj-$(CONFIG_LEDS_TRIGGER_GPIO)		+= ledtrig-gpio.o
+ obj-$(CONFIG_LEDS_TRIGGER_CPU)		+= ledtrig-cpu.o
++obj-$(CONFIG_LEDS_TRIGGER_ACTIVITY)	+= ledtrig-activity.o
+ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+new file mode 100644
+index 0000000..6f00235
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-activity.c
+@@ -0,0 +1,297 @@
++/*
++ * Activity LED trigger
++ *
++ * Copyright (C) 2017 Willy Tarreau <w@1wt.eu>
++ * Partially based on Atsushi Nemoto's ledtrig-heartbeat.c.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/kernel_stat.h>
++#include <linux/init.h>
++#include <linux/slab.h>
++#include <linux/timer.h>
++#include <linux/sched.h>
++#include <linux/leds.h>
++#include <linux/reboot.h>
++#include <linux/suspend.h>
++#include "../leds.h"
++
++static int panic_detected;
++
++struct activity_data {
++	struct timer_list timer;
++	u64 last_used;
++	u64 last_boot;
++	int time_left;
++	int state;
++	int invert;
++};
++
++static void led_activity_function(unsigned long data)
++{
++	struct led_classdev *led_cdev = (struct led_classdev *)data;
++	struct activity_data *activity_data = led_cdev->trigger_data;
++	struct timespec boot_time;
++	unsigned int target;
++	unsigned int usage;
++	int delay;
++	u64 curr_used;
++	u64 curr_boot;
++	s32 diff_used;
++	s32 diff_boot;
++	int cpus;
++	int i;
++
++	if (unlikely(panic_detected)) {
++		/* full brightness in case of panic */
++		led_set_brightness_nosleep(led_cdev, led_cdev->max_brightness);
++		return;
 +	}
-+	*val = (u8) ret;
-+	return 0;
- }
- 
- static int pca955x_led_set(struct led_classdev *led_cdev,
-@@ -223,6 +247,7 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- 	u8 ls;
- 	int chip_ls;	/* which LSx to use (0-3 potentially) */
- 	int ls_led;	/* which set of bits within LSx to use (0-3) */
++
++	get_monotonic_boottime(&boot_time);
++
++	cpus = 0;
++	curr_used = 0;
++
++	for_each_possible_cpu(i) {
++		curr_used += kcpustat_cpu(i).cpustat[CPUTIME_USER]
++			  +  kcpustat_cpu(i).cpustat[CPUTIME_NICE]
++			  +  kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]
++			  +  kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]
++			  +  kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
++		cpus++;
++	}
++
++	/* We come here every 100ms in the worst case, so that's 100M ns of
++	 * cumulated time. By dividing by 2^16, we get the time resolution
++	 * down to 16us, ensuring we won't overflow 32-bit computations below
++	 * even up to 3k CPUs, while keeping divides cheap on smaller systems.
++	 */
++	curr_boot = timespec_to_ns(&boot_time) * cpus;
++	diff_boot = (curr_boot - activity_data->last_boot) >> 16;
++	diff_used = (curr_used - activity_data->last_used) >> 16;
++	activity_data->last_boot = curr_boot;
++	activity_data->last_used = curr_used;
++
++	if (diff_boot <= 0 || diff_used < 0)
++		usage = 0;
++	else if (diff_used >= diff_boot)
++		usage = 100;
++	else
++		usage = 100 * diff_used / diff_boot;
++
++	/*
++	 * Now we know the total boot_time multiplied by the number of CPUs, and
++	 * the total idle+wait time for all CPUs. We'll compare how they evolved
++	 * since last call. The % of overall CPU usage is :
++	 *
++	 *      1 - delta_idle / delta_boot
++	 *
++	 * What we want is that when the CPU usage is zero, the LED must blink
++	 * slowly with very faint flashes that are detectable but not disturbing
++	 * (typically 10ms every second, or 10ms ON, 990ms OFF). Then we want
++	 * blinking frequency to increase up to the point where the load is
++	 * enough to saturate one core in multi-core systems or 50% in single
++	 * core systems. At this point it should reach 10 Hz with a 10/90 duty
++	 * cycle (10ms ON, 90ms OFF). After this point, the blinking frequency
++	 * remains stable (10 Hz) and only the duty cycle increases to report
++	 * the activity, up to the point where we have 90ms ON, 10ms OFF when
++	 * all cores are saturated. It's important that the LED never stays in
++	 * a steady state so that it's easy to distinguish an idle or saturated
++	 * machine from a hung one.
++	 *
++	 * This gives us :
++	 *   - a target CPU usage of min(50%, 100%/#CPU) for a 10% duty cycle
++	 *     (10ms ON, 90ms OFF)
++	 *   - below target :
++	 *      ON_ms  = 10
++	 *      OFF_ms = 90 + (1 - usage/target) * 900
++	 *   - above target :
++	 *      ON_ms  = 10 + (usage-target)/(100%-target) * 80
++	 *      OFF_ms = 90 - (usage-target)/(100%-target) * 80
++	 *
++	 * In order to keep a good responsiveness, we cap the sleep time to
++	 * 100 ms and keep track of the sleep time left. This allows us to
++	 * quickly change it if needed.
++	 */
++
++	activity_data->time_left -= 100;
++	if (activity_data->time_left <= 0) {
++		activity_data->time_left = 0;
++		activity_data->state = !activity_data->state;
++		led_set_brightness_nosleep(led_cdev,
++			(activity_data->state ^ activity_data->invert) ?
++			led_cdev->max_brightness : LED_OFF);
++	}
++
++	target = (cpus > 1) ? (100 / cpus) : 50;
++
++	if (usage < target)
++		delay = activity_data->state ?
++			10 :                        /* ON  */
++			990 - 900 * usage / target; /* OFF */
++	else
++		delay = activity_data->state ?
++			10 + 80 * (usage - target) / (100 - target) : /* ON  */
++			90 - 80 * (usage - target) / (100 - target);  /* OFF */
++
++
++	if (!activity_data->time_left || delay <= activity_data->time_left)
++		activity_data->time_left = delay;
++
++	delay = min_t(int, activity_data->time_left, 100);
++	mod_timer(&activity_data->timer, jiffies + msecs_to_jiffies(delay));
++}
++
++static ssize_t led_invert_show(struct device *dev,
++                               struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct activity_data *activity_data = led_cdev->trigger_data;
++
++	return sprintf(buf, "%u\n", activity_data->invert);
++}
++
++static ssize_t led_invert_store(struct device *dev,
++                                struct device_attribute *attr,
++                                const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct activity_data *activity_data = led_cdev->trigger_data;
++	unsigned long state;
 +	int ret;
- 
- 	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
- 	pca955x = pca955x_led->pca955x;
-@@ -232,7 +257,9 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- 
- 	mutex_lock(&pca955x->lock);
- 
--	ls = pca955x_read_ls(pca955x->client, chip_ls);
-+	ret = pca955x_read_ls(pca955x->client, chip_ls, &ls);
++
++	ret = kstrtoul(buf, 0, &state);
 +	if (ret)
 +		return ret;
- 
- 	switch (value) {
- 	case LED_FULL:
-@@ -252,13 +279,17 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- 		 * OFF, HALF, or FULL.  But, this is probably better than
- 		 * just turning off for all other values.
- 		 */
--		pca955x_write_pwm(pca955x->client, 1,
--				255 - value);
-+		ret = pca955x_write_pwm(pca955x->client, 1,
-+					255 - value);
-+		if (ret)
-+			return ret;
- 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
- 		break;
- 	}
- 
--	pca955x_write_ls(pca955x->client, chip_ls, ls);
-+	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
-+	if (ret)
-+		return ret;
- 
- 	mutex_unlock(&pca955x->lock);
- 
-@@ -269,9 +300,18 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- /*
-  * Read the INPUT register, which contains the state of LEDs.
-  */
--static u8 pca955x_read_input(struct i2c_client *client, int n)
-+static int pca955x_read_input(struct i2c_client *client, int n, u8 *val)
- {
--	return (u8)i2c_smbus_read_byte_data(client, n);
-+	int ret = i2c_smbus_read_byte_data(client, n);
 +
-+	if (ret < 0) {
-+		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
-+			__func__, n, ret);
-+		return ret;
++	activity_data->invert = !!state;
++
++	return size;
++}
++
++static DEVICE_ATTR(invert, 0644, led_invert_show, led_invert_store);
++
++static void activity_activate(struct led_classdev *led_cdev)
++{
++	struct activity_data *activity_data;
++	int rc;
++
++	activity_data = kzalloc(sizeof(*activity_data), GFP_KERNEL);
++	if (!activity_data)
++		return;
++
++	led_cdev->trigger_data = activity_data;
++	rc = device_create_file(led_cdev->dev, &dev_attr_invert);
++	if (rc) {
++		kfree(led_cdev->trigger_data);
++		return;
 +	}
-+	*val = (u8) ret;
-+	return 0;
 +
- }
- 
- static int pca955x_gpio_request_pin(struct gpio_chip *gc, unsigned int offset)
-@@ -301,7 +341,10 @@ static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct pca955x *pca955x = gpiochip_get_data(gc);
- 	struct pca955x_led *led = &pca955x->leds[offset];
--	u8 reg = pca955x_read_input(pca955x->client, led->led_num / 8);
-+	u8 reg = 0;
++	setup_timer(&activity_data->timer,
++		    led_activity_function, (unsigned long)led_cdev);
++	led_activity_function(activity_data->timer.data);
++	led_cdev->activated = true;
++}
 +
-+	/* There is nothing we can do about errors */
-+	pca955x_read_input(pca955x->client, led->led_num / 8, &reg);
- 
- 	return !!(reg & (1 << (led->led_num % 8)));
- }
-@@ -496,14 +539,22 @@ static int pca955x_probe(struct i2c_client *client,
- 	}
- 
- 	/* PWM0 is used for half brightness or 50% duty cycle */
--	pca955x_write_pwm(client, 0, 255-LED_HALF);
-+	err = pca955x_write_pwm(client, 0, 255-LED_HALF);
-+	if (err)
-+		return err;
- 
- 	/* PWM1 is used for variable brightness, default to OFF */
--	pca955x_write_pwm(client, 1, 0);
-+	err = pca955x_write_pwm(client, 1, 0);
-+	if (err)
-+		return err;
- 
- 	/* Set to fast frequency so we do not see flashing */
--	pca955x_write_psc(client, 0, 0);
--	pca955x_write_psc(client, 1, 0);
-+	err = pca955x_write_psc(client, 0, 0);
-+	if (err)
-+		return err;
-+	err = pca955x_write_psc(client, 1, 0);
-+	if (err)
-+		return err;
- 
- #ifdef CONFIG_LEDS_PCA955X_GPIO
- 	if (ngpios) {
++static void activity_deactivate(struct led_classdev *led_cdev)
++{
++	struct activity_data *activity_data = led_cdev->trigger_data;
++
++	if (led_cdev->activated) {
++		del_timer_sync(&activity_data->timer);
++		device_remove_file(led_cdev->dev, &dev_attr_invert);
++		kfree(activity_data);
++		led_cdev->activated = false;
++	}
++}
++
++static struct led_trigger activity_led_trigger = {
++	.name       = "activity",
++	.activate   = activity_activate,
++	.deactivate = activity_deactivate,
++};
++
++static int activity_pm_notifier(struct notifier_block *nb,
++                                unsigned long pm_event, void *unused)
++{
++	int rc;
++
++	switch (pm_event) {
++	case PM_SUSPEND_PREPARE:
++	case PM_HIBERNATION_PREPARE:
++	case PM_RESTORE_PREPARE:
++		led_trigger_unregister(&activity_led_trigger);
++		break;
++	case PM_POST_SUSPEND:
++	case PM_POST_HIBERNATION:
++	case PM_POST_RESTORE:
++		rc = led_trigger_register(&activity_led_trigger);
++		if (rc)
++			pr_err("could not re-register activity trigger\n");
++		break;
++	default:
++		break;
++	}
++	return NOTIFY_DONE;
++}
++
++static int activity_reboot_notifier(struct notifier_block *nb,
++                                    unsigned long code, void *unused)
++{
++	led_trigger_unregister(&activity_led_trigger);
++	return NOTIFY_DONE;
++}
++
++static int activity_panic_notifier(struct notifier_block *nb,
++                                   unsigned long code, void *unused)
++{
++	panic_detected = 1;
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block activity_pm_nb = {
++	.notifier_call = activity_pm_notifier,
++};
++
++static struct notifier_block activity_reboot_nb = {
++	.notifier_call = activity_reboot_notifier,
++};
++
++static struct notifier_block activity_panic_nb = {
++	.notifier_call = activity_panic_notifier,
++};
++
++static int __init activity_init(void)
++{
++	int rc = led_trigger_register(&activity_led_trigger);
++
++	if (!rc) {
++		atomic_notifier_chain_register(&panic_notifier_list,
++					       &activity_panic_nb);
++		register_reboot_notifier(&activity_reboot_nb);
++		register_pm_notifier(&activity_pm_nb);
++	}
++	return rc;
++}
++
++static void __exit activity_exit(void)
++{
++	unregister_pm_notifier(&activity_pm_nb);
++	unregister_reboot_notifier(&activity_reboot_nb);
++	atomic_notifier_chain_unregister(&panic_notifier_list,
++					 &activity_panic_nb);
++	led_trigger_unregister(&activity_led_trigger);
++}
++
++module_init(activity_init);
++module_exit(activity_exit);
++
++MODULE_AUTHOR("Willy Tarreau <w@1wt.eu>");
++MODULE_DESCRIPTION("Activity LED trigger");
++MODULE_LICENSE("GPL");
 -- 
-2.13.5
+1.7.12.1
+
+
+--uAKRQypu60I7Lcqm--
