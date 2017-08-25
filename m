@@ -1,35 +1,38 @@
 From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH 0/2] leds: gpio: Allow retaining state on shutdown
-Date: Fri, 25 Aug 2017 16:05:01 +0930
-Message-ID: <20170825063503.31577-1-andrew@aj.id.au>
+Subject: [PATCH 1/2] dt-bindings: leds: gpio: Add optional retain-state-shutdown property
+Date: Fri, 25 Aug 2017 16:05:02 +0930
+Message-ID: <20170825063503.31577-2-andrew@aj.id.au>
+References: <20170825063503.31577-1-andrew@aj.id.au>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170825063503.31577-1-andrew@aj.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: Andrew Jeffery <andrew@aj.id.au>, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello,
+On BMC systems it's sometimes necessary for a LED to retain its state
+across a BMC reset (which is independent of the host system state). Add
+a devicetree property to describe this behaviour. The property would
+typically be used in conjunction with 'default-state = "keep"'.
 
-LEDs controlled by BMCs are sometimes required to retain their state across BMC
-resets. BMC resets may occur whilst the host is alive, thus the chassis and
-host system remain powered up. In these two patches I define an new devicetree
-property to describe the behaviour for GPIO LEDs and add support to the
-leds-gpio driver.
-
-Please review!
-
-Cheers,
-
-Andrew
-
-Andrew Jeffery (2):
-  dt-bindings: leds: gpio: Add optional retain-state-shutdown property
-  leds: gpio: Allow LED to retain state at shutdown
-
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
  Documentation/devicetree/bindings/leds/leds-gpio.txt | 3 +++
- drivers/leds/leds-gpio.c                             | 7 ++++++-
- include/linux/leds.h                                 | 2 ++
- 3 files changed, 11 insertions(+), 1 deletion(-)
+ 1 file changed, 3 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+index 76535ca37120..a48dda268f81 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+@@ -18,6 +18,9 @@ LED sub-node properties:
+   see Documentation/devicetree/bindings/leds/common.txt
+ - retain-state-suspended: (optional) The suspend state can be retained.Such
+   as charge-led gpio.
++- retain-state-shutdown: (optional) Retain the state of the LED on shutdown.
++  Useful in BMC systems, for example when the BMC is rebooted while the host
++  remains up.
+ - panic-indicator : (optional)
+   see Documentation/devicetree/bindings/leds/common.txt
+ 
 -- 
 2.11.0
