@@ -1,75 +1,57 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH 2/2] leds: gpio: Allow LED to retain state at shutdown
-Date: Fri, 25 Aug 2017 16:05:03 +0930
-Message-ID: <20170825063503.31577-3-andrew@aj.id.au>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 2/2] leds: gpio: Allow LED to retain state at shutdown
+Date: Fri, 25 Aug 2017 09:32:39 +0200
+Message-ID: <20170825073239.GB15494@amd>
 References: <20170825063503.31577-1-andrew@aj.id.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170825063503.31577-1-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Andrew Jeffery <andrew@aj.id.au>, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
+ <20170825063503.31577-3-andrew@aj.id.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54305 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754187AbdHYHcl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Aug 2017 03:32:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20170825063503.31577-3-andrew@aj.id.au>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-leds@vger.kernel.org, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
 
-In some systems, such as BMCs, we want to retain the state of LEDs
-across a reboot of the BMC whilst the host remains up.
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/leds/leds-gpio.c | 7 ++++++-
- include/linux/leds.h     | 2 ++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+--5I6of5zJg18YgZEa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index e753ba93ba1e..764c31301f90 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -134,6 +134,8 @@ static int create_gpio_led(const struct gpio_led *template,
- 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 	if (template->panic_indicator)
- 		led_dat->cdev.flags |= LED_PANIC_INDICATOR;
-+	if (template->retain_state_shutdown)
-+		led_dat->cdev.flags |= LED_RETAIN_AT_SHUTDOWN;
- 
- 	ret = gpiod_direction_output(led_dat->gpiod, state);
- 	if (ret < 0)
-@@ -205,6 +207,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 
- 		if (fwnode_property_present(child, "retain-state-suspended"))
- 			led.retain_state_suspended = 1;
-+		if (fwnode_property_present(child, "retain-state-shutdown"))
-+			led.retain_state_shutdown = 1;
- 		if (fwnode_property_present(child, "panic-indicator"))
- 			led.panic_indicator = 1;
- 
-@@ -267,7 +271,8 @@ static void gpio_led_shutdown(struct platform_device *pdev)
- 	for (i = 0; i < priv->num_leds; i++) {
- 		struct gpio_led_data *led = &priv->leds[i];
- 
--		gpio_led_set(&led->cdev, LED_OFF);
-+		if (!(led->cdev.flags & LED_RETAIN_AT_SHUTDOWN))
-+			gpio_led_set(&led->cdev, LED_OFF);
- 	}
- }
- 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 64c56d454f7d..bf6db4fe895b 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -49,6 +49,7 @@ struct led_classdev {
- #define LED_HW_PLUGGABLE	(1 << 19)
- #define LED_PANIC_INDICATOR	(1 << 20)
- #define LED_BRIGHT_HW_CHANGED	(1 << 21)
-+#define LED_RETAIN_AT_SHUTDOWN	(1 << 22)
- 
- 	/* set_brightness_work / blink_timer flags, atomic, private. */
- 	unsigned long		work_flags;
-@@ -392,6 +393,7 @@ struct gpio_led {
- 	unsigned	retain_state_suspended : 1;
- 	unsigned	panic_indicator : 1;
- 	unsigned	default_state : 2;
-+	unsigned	retain_state_shutdown : 1;
- 	/* default_state should be one of LEDS_GPIO_DEFSTATE_(ON|OFF|KEEP) */
- 	struct gpio_desc *gpiod;
- };
--- 
-2.11.0
+On Fri 2017-08-25 16:05:03, Andrew Jeffery wrote:
+> In some systems, such as BMCs, we want to retain the state of LEDs
+> across a reboot of the BMC whilst the host remains up.
+
+I'd spell out what BMC is...
+
+Otherwise series looks good.
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--5I6of5zJg18YgZEa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmf0pcACgkQMOfwapXb+vK2bQCdHsMlxUDUGCrKSU0qXN6A/oF8
+xLwAoJdV1UxnnPeOWeGpUOStV5SM1e5d
+=eGz1
+-----END PGP SIGNATURE-----
+
+--5I6of5zJg18YgZEa--
