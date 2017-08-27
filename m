@@ -1,40 +1,65 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 2/2] leds: gpio: Allow LED to retain state at shutdown
-Date: Sun, 27 Aug 2017 13:01:15 +0200
-Message-ID: <3b89ad70-7024-b4ac-bf4e-49a02d12da51@gmail.com>
-References: <20170825063503.31577-1-andrew@aj.id.au>
- <20170825063503.31577-3-andrew@aj.id.au> <20170825073239.GB15494@amd>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [[PATCH]] Revert "leds: handle suspend/resume in heartbeat
+ trigger"
+Date: Sun, 27 Aug 2017 14:46:36 +0200
+Message-ID: <20170827124636.GA2038@kroah.com>
+References: <1497321560-46817-1-git-send-email-bo.zhang@nxp.com>
+ <CAMuHMdUjZHpEQKmhCGnqtZjw_PK5PeQe2kEH6TTKfS8Ne2+drQ@mail.gmail.com>
+ <20170823193419.GA7965@amd>
+ <CAMuHMdXm_WQh8-krQgT2+nfr3xTuDvnHbK3B+qJJaeVsvRu5gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37634 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbdH0LCA (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Aug 2017 07:02:00 -0400
-In-Reply-To: <20170825073239.GB15494@amd>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33785 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751300AbdH0Mq3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 27 Aug 2017 08:46:29 -0400
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXm_WQh8-krQgT2+nfr3xTuDvnHbK3B+qJJaeVsvRu5gw@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, rpurdie@rpsys.net, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Pavel Machek <pavel@ucw.cz>, stable <stable@vger.kernel.org>, Zhang Bo <bo.zhang@nxp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "ltsi-dev@lists.linuxfoundation.org" <ltsi-dev@lists.linuxfoundation.org>
 
-Hi Andrew,
-
-On 08/25/2017 09:32 AM, Pavel Machek wrote:
-> On Fri 2017-08-25 16:05:03, Andrew Jeffery wrote:
->> In some systems, such as BMCs, we want to retain the state of LEDs
->> across a reboot of the BMC whilst the host remains up.
+On Fri, Aug 25, 2017 at 10:23:11AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Aug 23, 2017 at 9:34 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> >> On Tue, Jun 13, 2017 at 4:39 AM, Zhang Bo <bo.zhang@nxp.com> wrote:
+> >> > This reverts commit 5ab92a7cb82c66bf30685583a38a18538e3807db.
+> >> >
+> >> > System cannot enter suspend mode because of heartbeat led trigger.
+> >> > In autosleep_wq, try_to_suspend function will try to enter suspend
+> >> > mode in specific period. it will get wakeup_count then call pm_notifier
+> >> > chain callback function and freeze processes.
+> >> > Heartbeat_pm_notifier is called and it call led_trigger_unregister to
+> >> > change the trigger of led device to none. It will send uevent message
+> >> > and the wakeup source count changed. As wakeup_count changed, suspend
+> >> > will abort.
+> >> >
+> >> > Signed-off-by: Zhang Bo <bo.zhang@nxp.com>
+> >>
+> >> While investigating an heartbeat LED issue in v4.9.40-ltsi, I stumpled on this
+> >> revert (commit 436c4c45b5b9562b ("Revert "leds: handle suspend/resume in
+> >> heartbeat trigger"") in v4.12-rc6), which was not backported to v4.9 (yet).
+> >>
+> >> Interestingly, while running v4.9.x on r8a7791/koelsch with an LED configured
+> >> for heartbeat, I can actually suspend the system using s2ram.
+> >> However, after system resume the heartbeat LED no longer flashes.
+> >> /sys/class/leds/LED6/trigger shows the trigger is still "none", and thus
+> >> wasn't restored to "heartbeat" by the notifier.
+> >> There's no "could not re-register heartbeat trigger" message printed.
+> >>
+> >> Backporting the revert fixes this.
+> >
+> > You have my Acked-by: if you want to submit this to some -stable
+> > kernels...
 > 
-> I'd spell out what BMC is...
-
-I agree with Pavel. Please give the expansion of the acronym
-in both DT patch and the driver commit message.
-
+> Thank you!
 > 
-> Otherwise series looks good.
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Greg: Can you please queue 436c4c45b5b9562b ("Revert "leds: handle
+> suspend/resume in heartbeat trigger"") for v4.9.x or v4.9-ltsi?
+> Thanks!
 
--- 
-Best regards,
-Jacek Anaszewski
+Now applied, thanks.
+
+greg k-h
