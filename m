@@ -1,66 +1,81 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v3 2/3] leds: as3645a: Add LED flash class driver
-Date: Mon, 28 Aug 2017 13:04:51 +0200
-Message-ID: <20170828110451.GB492@amd>
-References: <20170823081100.11733-1-sakari.ailus@linux.intel.com>
- <20170823081100.11733-3-sakari.ailus@linux.intel.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
+ devices as3645a
+Date: Mon, 28 Aug 2017 13:09:52 +0200
+Message-ID: <20170828110951.GC492@amd>
+References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
+ <20170819212410.3084-2-sakari.ailus@linux.intel.com>
+ <20170828103351.GF18012@amd>
+ <46aaf723-a657-3b43-7be7-8d899d3db9c3@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170823081100.11733-3-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+In-Reply-To: <46aaf723-a657-3b43-7be7-8d899d3db9c3@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 List-Id: linux-leds@vger.kernel.org
 
 
---KFztAG8eRSV9hGtP
+--iFRdW5/EC4oqxDHL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2017-08-23 11:10:59, Sakari Ailus wrote:
-> Add a LED flash class driver for the as3654a flash controller. A V4L2 fla=
-sh
-> driver for it already exists (drivers/media/i2c/as3645a.c), and this driv=
-er
-> is based on that.
+Hi!
 
-We do not want to have two drivers for same hardware... how is that
-supposed to work?
+> Thanks for the review!
+>=20
+> On 08/28/17 13:33, Pavel Machek wrote:
+> > Hi!
+> >=20
+> >> +
+> >> +Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
+> >> +and b are included in the range.
+> >=20
+> > Normally I've seen <a, b> for closed ranges, (a, b) for open
+> > ranges. Is that different in your country?
+>=20
+> I guess there are different notations. :-) I've seen regular parentheses
+> being used for open ranges, too, but not < and >.
+>=20
+> Open range is documented in a related well written Wikipedia article:
+>=20
+> <URL:https://en.wikipedia.org/wiki/Open_range>
+>=20
+> Are there such open ranges in Czechia? For instance, reindeer generally
+> roam freely in Finnish Lappland.
 
-Yes, we might want to have both LED and v4l2 interface for a single
-LED, because v4l2 is just too hairy to use, but we should not
-duplicate drivers for that.
+:-). Well, we have pigs and roes roaming freely in the woods, but
+would not normally call it open range.
 
-We _might_ want to do some helpers; as these LED drivers are all quite
-similar, it should be possible to have "flash led driver" and just
-link it to v4l2 and LED interfaces...
+> What comes to the patch, I guess "interval" could be a more appropriate
+> term to use in this case:
+>=20
+> <URL:https://en.wikipedia.org/wiki/Interval_(mathematics)>
+>=20
+> The patch is in line with the Wikipedia article in notation but not in
+> terminology. I'll send a fix.
 
-								Pavel
-							=09
-
+Ok, that was really nitpicking, thanks!
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---KFztAG8eRSV9hGtP
+--iFRdW5/EC4oqxDHL
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlmj+NMACgkQMOfwapXb+vIsTQCfeJ2mbl5kw0F1KRV06I5qdava
-V0gAniQ/ty/wRVriN2CtcwCkzJZu04KT
-=b6lL
+iEYEARECAAYFAlmj+f8ACgkQMOfwapXb+vKT8wCeP7CFUOb2o/Zi58xXCmOWFDTE
+cngAnjV1r76Q6zIJ8X28ISzD+isjVrwk
+=ZoXD
 -----END PGP SIGNATURE-----
 
---KFztAG8eRSV9hGtP--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--iFRdW5/EC4oqxDHL--
