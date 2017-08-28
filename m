@@ -1,62 +1,66 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 1/3] dt: bindings: Document DT bindings for Analog
- devices as3645a
-Date: Mon, 28 Aug 2017 13:00:09 +0200
-Message-ID: <20170828110008.GA492@amd>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v3 2/3] leds: as3645a: Add LED flash class driver
+Date: Mon, 28 Aug 2017 13:04:51 +0200
+Message-ID: <20170828110451.GB492@amd>
 References: <20170823081100.11733-1-sakari.ailus@linux.intel.com>
- <20170823081100.11733-2-sakari.ailus@linux.intel.com>
+ <20170823081100.11733-3-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56901 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbdH1LAL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Aug 2017 07:00:11 -0400
+        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170823081100.11733-2-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20170823081100.11733-3-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, javier@dowhile0.org, jacek.anaszewski@gmail.com
 
 
---UlVJffcvxoiEqYs2
+--KFztAG8eRSV9hGtP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Wed 2017-08-23 11:10:59, Sakari Ailus wrote:
+> Add a LED flash class driver for the as3654a flash controller. A V4L2 fla=
+sh
+> driver for it already exists (drivers/media/i2c/as3645a.c), and this driv=
+er
+> is based on that.
 
-> +led-max-microamp: Maximum torch (assist) current in microamperes. The
-> +		  value must be in the range between [20000, 160000] and
-> +		  divisible by 20000.
-> +ams,input-max-microamp: Maximum flash controller input current. The
+We do not want to have two drivers for same hardware... how is that
+supposed to work?
 
-"in microamperes".
+Yes, we might want to have both LED and v4l2 interface for a single
+LED, because v4l2 is just too hairy to use, but we should not
+duplicate drivers for that.
 
-> +			value must be in the range [1250000, 2000000]
-> +			and divisible by 50000.
+We _might_ want to do some helpers; as these LED drivers are all quite
+similar, it should be possible to have "flash led driver" and just
+link it to v4l2 and LED interfaces...
 
-Is there any reason for "ams," prefix here?
+								Pavel
+							=09
 
-Best regards,
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---UlVJffcvxoiEqYs2
+--KFztAG8eRSV9hGtP
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlmj97gACgkQMOfwapXb+vL0AwCfTK/KopJd8g0ti8wnQgLDFHjv
-eK4An1kQh3Rt6rGSyqD0BX+u2dMmxZ89
-=lOvG
+iEYEARECAAYFAlmj+NMACgkQMOfwapXb+vIsTQCfeJ2mbl5kw0F1KRV06I5qdava
+V0gAniQ/ty/wRVriN2CtcwCkzJZu04KT
+=b6lL
 -----END PGP SIGNATURE-----
 
---UlVJffcvxoiEqYs2--
+--KFztAG8eRSV9hGtP--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
