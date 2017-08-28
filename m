@@ -1,58 +1,37 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds-PowerNV: Delete an error message for a failed memory
- allocation in powernv_led_create()
-Date: Mon, 28 Aug 2017 22:23:38 +0200
-Message-ID: <d45c4034-1bb9-e812-8853-e56cf6f128de@gmail.com>
-References: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
+From: Brandon Wyman <bjwyman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: gpio: Add optional
+ retain-state-shutdown property
+Date: Mon, 28 Aug 2017 16:13:36 -0500
+Message-ID: <CAK_vbW2BJjKa0dKoVjbRE++-2VB+3fM0DQ7u3DnwD2Tj-4bY7w@mail.gmail.com>
+References: <20170828001711.19662-1-andrew@aj.id.au> <20170828001711.19662-2-andrew@aj.id.au>
+ <20170828101952.GE18012@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170828101952.GE18012@amd>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, OpenBMC Maillist <openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Markus,
+On Mon, Aug 28, 2017 at 5:19 AM, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
+> On Mon 2017-08-28 09:47:10, Andrew Jeffery wrote:
+>> On Baseboard Management Controller (BMC) systems it's sometimes
+>> necessary for a LED to retain its state across a BMC reset (which is
+>> independent of the host system state). Add a devicetree property to
+>> describe this behaviour. The property would typically be used in
+>> conjunction with 'default-state = "keep"'.
+>>
+>> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+>
+> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+>
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 
-Thanks for the patch.
-
-On 08/27/2017 10:10 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 27 Aug 2017 22:00:22 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/leds/leds-powernv.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
-> index b2a98c7b521b..b1adbd70ce2e 100644
-> --- a/drivers/leds/leds-powernv.c
-> +++ b/drivers/leds/leds-powernv.c
-> @@ -224,12 +224,8 @@ static int powernv_led_create(struct device *dev,
->  	powernv_led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
->  						powernv_led->loc_code,
->  						led_type_desc);
-> -	if (!powernv_led->cdev.name) {
-> -		dev_err(dev,
-> -			"%s: Memory allocation failed for classdev name\n",
-> -			__func__);
-> +	if (!powernv_led->cdev.name)
->  		return -ENOMEM;
-> -	}
->  
->  	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
->  	powernv_led->cdev.brightness_get = powernv_brightness_get;
-> 
-
-Applied.
-
--- 
-Best regards,
-Jacek Anaszewski
+Tested-by: Brandon Wyman <bjwyman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
