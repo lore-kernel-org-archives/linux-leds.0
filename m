@@ -1,100 +1,62 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 1/3] dt: bindings: Document DT bindings for Analog
  devices as3645a
-Date: Mon, 28 Aug 2017 13:48:26 +0300
-Message-ID: <46aaf723-a657-3b43-7be7-8d899d3db9c3@linux.intel.com>
-References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
- <20170819212410.3084-2-sakari.ailus@linux.intel.com>
- <20170828103351.GF18012@amd>
+Date: Mon, 28 Aug 2017 13:00:09 +0200
+Message-ID: <20170828110008.GA492@amd>
+References: <20170823081100.11733-1-sakari.ailus@linux.intel.com>
+ <20170823081100.11733-2-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="657O4RNNq5hUhSDejv2brW1f2E6QAE8h7"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170828103351.GF18012@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56901 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbdH1LAL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Aug 2017 07:00:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20170823081100.11733-2-sakari.ailus@linux.intel.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, javier@dowhile0.org, jacek.anaszewski@gmail.com
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---657O4RNNq5hUhSDejv2brW1f2E6QAE8h7
-Content-Type: multipart/mixed; boundary="1lh2qTPEfsfsPVV0tXUoWheoVvoXfDqO1";
- protected-headers="v1"
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org,
- jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
- devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Message-ID: <46aaf723-a657-3b43-7be7-8d899d3db9c3-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
- devices as3645a
-References: <20170819212410.3084-1-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
- <20170819212410.3084-2-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
- <20170828103351.GF18012@amd>
-In-Reply-To: <20170828103351.GF18012@amd>
 
---1lh2qTPEfsfsPVV0tXUoWheoVvoXfDqO1
-Content-Type: text/plain; charset=ISO-8859-1
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Pavel,
+Hi!
 
-Thanks for the review!
+> +led-max-microamp: Maximum torch (assist) current in microamperes. The
+> +		  value must be in the range between [20000, 160000] and
+> +		  divisible by 20000.
+> +ams,input-max-microamp: Maximum flash controller input current. The
 
-On 08/28/17 13:33, Pavel Machek wrote:
-> Hi!
->=20
->> +
->> +Ranges below noted as [a, b] are closed ranges between a and b, i.e. =
-a
->> +and b are included in the range.
->=20
-> Normally I've seen <a, b> for closed ranges, (a, b) for open
-> ranges. Is that different in your country?
+"in microamperes".
 
-I guess there are different notations. :-) I've seen regular parentheses
-being used for open ranges, too, but not < and >.
+> +			value must be in the range [1250000, 2000000]
+> +			and divisible by 50000.
 
-Open range is documented in a related well written Wikipedia article:
+Is there any reason for "ams," prefix here?
 
-<URL:https://en.wikipedia.org/wiki/Open_range>
-
-Are there such open ranges in Czechia? For instance, reindeer generally
-roam freely in Finnish Lappland.
-
-What comes to the patch, I guess "interval" could be a more appropriate
-term to use in this case:
-
-<URL:https://en.wikipedia.org/wiki/Interval_(mathematics)>
-
-The patch is in line with the Wikipedia article in notation but not in
-terminology. I'll send a fix.
-
+Best regards,
+									Pavel
 --=20
-Regards,
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Sakari Ailus
-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
-
-
---1lh2qTPEfsfsPVV0tXUoWheoVvoXfDqO1--
-
---657O4RNNq5hUhSDejv2brW1f2E6QAE8h7
+--UlVJffcvxoiEqYs2
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iHUEAREIAB0WIQTw0Dd6DU8lp5I47+VtQDYbbijBkwUCWaP0+gAKCRBtQDYbbijB
-kzeYAP9xdcH28zg2oBOcwflI5n5+08BmtbYA4kifizv5SrjbOgD9GupwKunplw3/
-zOU1PnrPBG4mqZz0NOzxHTdUxYWling=
-=CKza
+iEYEARECAAYFAlmj97gACgkQMOfwapXb+vL0AwCfTK/KopJd8g0ti8wnQgLDFHjv
+eK4An1kQh3Rt6rGSyqD0BX+u2dMmxZ89
+=lOvG
 -----END PGP SIGNATURE-----
 
---657O4RNNq5hUhSDejv2brW1f2E6QAE8h7--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--UlVJffcvxoiEqYs2--
