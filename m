@@ -1,81 +1,59 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 1/3] dt: bindings: Document DT bindings for Analog
- devices as3645a
-Date: Mon, 28 Aug 2017 13:09:52 +0200
-Message-ID: <20170828110951.GC492@amd>
-References: <20170819212410.3084-1-sakari.ailus@linux.intel.com>
- <20170819212410.3084-2-sakari.ailus@linux.intel.com>
- <20170828103351.GF18012@amd>
- <46aaf723-a657-3b43-7be7-8d899d3db9c3@linux.intel.com>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 0/2] leds: gpio: Allow retaining state on shutdown
+Date: Mon, 28 Aug 2017 22:22:49 +0200
+Message-ID: <abb247bd-fc16-54cf-3dc1-fbba575e5fdb@gmail.com>
+References: <20170828001711.19662-1-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <46aaf723-a657-3b43-7be7-8d899d3db9c3@linux.intel.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, javier@dowhile0.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170828001711.19662-1-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Andrew,
 
---iFRdW5/EC4oqxDHL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the update.
 
-Hi!
+On 08/28/2017 02:17 AM, Andrew Jeffery wrote:
+> Hello,
+> 
+> LEDs controlled by Baseboard Management Controllers (BMCs) are sometimes
+> required to retain their state across BMC resets. BMC resets may occur whilst
+> the host is alive, thus the chassis and host system remain powered up. In these
+> two patches I define an new devicetree property to describe the behaviour for
+> GPIO LEDs and add support to the leds-gpio driver.
+> 
+> Changes in v2:
+> * Expand BMC to Baseboard Management Controller at least once in each commit
+>   message.
+> 
+> v1: https://lkml.org/lkml/2017/8/25/44
+> 
+> Please review!
+> 
+> Cheers,
+> 
+> Andrew
+> 
+> Andrew Jeffery (2):
+>   dt-bindings: leds: gpio: Add optional retain-state-shutdown property
+>   leds: gpio: Allow LED to retain state at shutdown
+> 
+>  Documentation/devicetree/bindings/leds/leds-gpio.txt | 3 +++
+>  drivers/leds/leds-gpio.c                             | 7 ++++++-
+>  include/linux/leds.h                                 | 2 ++
+>  3 files changed, 11 insertions(+), 1 deletion(-)
+> 
 
-> Thanks for the review!
->=20
-> On 08/28/17 13:33, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >> +
-> >> +Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
-> >> +and b are included in the range.
-> >=20
-> > Normally I've seen <a, b> for closed ranges, (a, b) for open
-> > ranges. Is that different in your country?
->=20
-> I guess there are different notations. :-) I've seen regular parentheses
-> being used for open ranges, too, but not < and >.
->=20
-> Open range is documented in a related well written Wikipedia article:
->=20
-> <URL:https://en.wikipedia.org/wiki/Open_range>
->=20
-> Are there such open ranges in Czechia? For instance, reindeer generally
-> roam freely in Finnish Lappland.
+Patchset applied to the for-next branch of linux-leds.git, thanks.
 
-:-). Well, we have pigs and roes roaming freely in the woods, but
-would not normally call it open range.
-
-> What comes to the patch, I guess "interval" could be a more appropriate
-> term to use in this case:
->=20
-> <URL:https://en.wikipedia.org/wiki/Interval_(mathematics)>
->=20
-> The patch is in line with the Wikipedia article in notation but not in
-> terminology. I'll send a fix.
-
-Ok, that was really nitpicking, thanks!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---iFRdW5/EC4oqxDHL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlmj+f8ACgkQMOfwapXb+vKT8wCeP7CFUOb2o/Zi58xXCmOWFDTE
-cngAnjV1r76Q6zIJ8X28ISzD+isjVrwk
-=ZoXD
------END PGP SIGNATURE-----
-
---iFRdW5/EC4oqxDHL--
+-- 
+Best regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
