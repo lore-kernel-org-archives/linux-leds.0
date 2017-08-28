@@ -1,119 +1,76 @@
-From: Willy Tarreau <w@1wt.eu>
-Subject: Re: [PATCH] leds/trigger/activity: add a system activity LED trigger
-Date: Mon, 28 Aug 2017 08:57:45 +0200
-Message-ID: <20170828065745.GA26097@1wt.eu>
-References: <1486856514-9634-1-git-send-email-w@1wt.eu>
- <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
- <20170824120757.GB19597@1wt.eu>
- <ca324dc7-3c26-2d7b-dbb0-7d7cd2462d4b@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RFC] ledtrig-dither: A Poor man's adjustable LED brightness.
+Date: Mon, 28 Aug 2017 11:10:33 +0200
+Message-ID: <20170828091033.GB25025@amd>
+References: <20170815213541.26985-1-me@paulo.costa.nom.br>
+ <20170815223413.GA8886@amd>
+ <CADbEYbk5US=SDpwPV8SLNsZMwrYgktPcXRp8RjYpm9+6iC8HAA@mail.gmail.com>
+ <20170816223022.GA13540@amd>
+ <CADbEYbkGYO7dSuMcK4SjtWch+2GjPL7axPuk7UHohWLCfkj61Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52680 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752220AbdH1JKf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Aug 2017 05:10:35 -0400
 Content-Disposition: inline
-In-Reply-To: <ca324dc7-3c26-2d7b-dbb0-7d7cd2462d4b@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <CADbEYbkGYO7dSuMcK4SjtWch+2GjPL7axPuk7UHohWLCfkj61Q@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Paulo Costa <me@paulo.costa.nom.br>
+Cc: linux-leds@vger.kernel.org
 
-Hi Jacek,
 
-On Sun, Aug 27, 2017 at 06:44:05PM +0200, Jacek Anaszewski wrote:
-> Hi Willy,
-> 
-> Thanks for the updated patch.
-> 
-> One formal note: please send the patches with git send-email instead
-> of attaching them to the message.
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, I hesitated and wanted to reply. Will do it the other way next
-time, sorry for the hassle.
+On Thu 2017-08-17 01:21:37, Paulo Costa wrote:
+> > Hmm. You could do led=3Don, udelay(100), led=3Doff. Do that 100 times a
+> > second, and I believe you'll get quite nice low levels.
+>=20
+> I don't want to keep the CPU busy on a delay() just for blinking led,
+> even if only for a few micros.
 
-> > diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
-> > new file mode 100644
-> > index 0000000..6f00235
-> > --- /dev/null
-> > +++ b/drivers/leds/trigger/ledtrig-activity.c
-> > @@ -0,0 +1,297 @@
-> > +/*
-> > + * Activity LED trigger
-> > + *
-> > + * Copyright (C) 2017 Willy Tarreau <w@1wt.eu>
-> > + * Partially based on Atsushi Nemoto's ledtrig-heartbeat.c.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + */
-> > +#include <linux/module.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/kernel_stat.h>
-> > +#include <linux/init.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/timer.h>
-> > +#include <linux/sched.h>
-> > +#include <linux/leds.h>
-> > +#include <linux/reboot.h>
-> > +#include <linux/suspend.h>
-> 
-> Please sort the includes alphabetically.
+Well... it will enable you to have nice low brigtness. Few
+microseconds should not be a problem.
 
-I'm amazed I did this, I suspect I inherited it from the original file
-because I'm also used to annoy people for the same thing! Shame on me!
+> > Now... nice hack. Probably can be improved. But is it suitable for
+> > mainline?
+>=20
+> Thank you =3D)
+>=20
+> It's a proof of concept for now, definitely not ready for mainline.
+>=20
+> Instead of a LED trigger + wrapper LED entry, I think this should kick in
+> if we set 'myled/dither=3D1' or something like that.
+>=20
+> Now, do you think it would be a nice addition / Should I put more work on=
+ it?
 
-> > +	activity_data->time_left -= 100;
-> > +	if (activity_data->time_left <= 0) {
-> > +		activity_data->time_left = 0;
-> > +		activity_data->state = !activity_data->state;
-> > +		led_set_brightness_nosleep(led_cdev,
-> > +			(activity_data->state ^ activity_data->invert) ?
-> > +			led_cdev->max_brightness : LED_OFF);
-> 
-> Have you considered making the top brightness adjustable? I'd make it
-> possible especially that we have a similar solution in the
-> ledtrig-heartbeat.c already - see the following patch in 4.12:
-> 
-> commit fb3d769173d26268d7bf068094a599bb28b2ac63
-> Author: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Date:   Wed Nov 9 11:43:46 2016 +0100
-(...)
+Actually, I'm not sure. Sounds a bit too hacky to me... Your
+choice. If your goal is to learn about kernel, you are on the right
+track :-).
 
-I never thought about it and it makes a lot of sense actually. I'll check
-this commit, thanks for the pointer.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> > +	switch (pm_event) {
-> > +	case PM_SUSPEND_PREPARE:
-> > +	case PM_HIBERNATION_PREPARE:
-> > +	case PM_RESTORE_PREPARE:
-> > +		led_trigger_unregister(&activity_led_trigger);
-> > +		break;
-> > +	case PM_POST_SUSPEND:
-> > +	case PM_POST_HIBERNATION:
-> > +	case PM_POST_RESTORE:
-> > +		rc = led_trigger_register(&activity_led_trigger);
-> > +		if (rc)
-> > +			pr_err("could not re-register activity trigger\n");
-> > +		break;
-> > +	default:
-> > +		break;
-> > +	}
-> > +	return NOTIFY_DONE;
-> > +}
-> 
-> It turned out to cause problems in ledtrig-heartbeat.c and was reverted.
-> Please don't register pm notifier and remove related facilities from the
-> patch according to the following revert patch:
-> 
-> commit 436c4c45b5b9562b59cedbb51b7343ab4a6dd8cc
-> Author: Zhang Bo <bo.zhang@nxp.com>
-> Date:   Tue Jun 13 10:39:20 2017 +0800
+--Fba/0zbH8Xs+Fj9o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-OK fine for me. I thought it was mandatory to properly handle pm
-eventhough I was not particularly interested in this for this
-specific purpose.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I'll send you an updated patch ASAP.
+iEYEARECAAYFAlmj3gkACgkQMOfwapXb+vIjvwCeOMmwzD5Do6VhGqz/QOPP1Ohj
++dMAnAlJC/nSXToPRN1rhJuZQ56ouTgy
+=Dmqb
+-----END PGP SIGNATURE-----
 
-Thanks very much for your review,
-Willy
+--Fba/0zbH8Xs+Fj9o--
