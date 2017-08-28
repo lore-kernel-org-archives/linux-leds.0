@@ -1,172 +1,119 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] leds: pca955x: Don't invert requested value in pca955x_gpio_set_value()
-Date: Mon, 28 Aug 2017 15:15:59 +0930
-Message-ID: <20170828054559.16654-1-andrew@aj.id.au>
+From: Willy Tarreau <w@1wt.eu>
+Subject: Re: [PATCH] leds/trigger/activity: add a system activity LED trigger
+Date: Mon, 28 Aug 2017 08:57:45 +0200
+Message-ID: <20170828065745.GA26097@1wt.eu>
+References: <1486856514-9634-1-git-send-email-w@1wt.eu>
+ <5aefe1c8-1d3d-7056-4e51-f0a3d473d3bc@gmail.com>
+ <20170824120757.GB19597@1wt.eu>
+ <ca324dc7-3c26-2d7b-dbb0-7d7cd2462d4b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ca324dc7-3c26-2d7b-dbb0-7d7cd2462d4b@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Andrew Jeffery <andrew@aj.id.au>, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, clg@kaod.org, bjwyman@gmail.com, openbmc@lists.ozlabs.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-The PCA9552 lines can be used either for driving LEDs or as GPIOs. The
-manual states that for LEDs, the operation is open-drain:
+Hi Jacek,
 
-         The LSn LED select registers determine the source of the LED data.
+On Sun, Aug 27, 2017 at 06:44:05PM +0200, Jacek Anaszewski wrote:
+> Hi Willy,
+> 
+> Thanks for the updated patch.
+> 
+> One formal note: please send the patches with git send-email instead
+> of attaching them to the message.
 
-           00 = output is set LOW (LED on)
-           01 = output is set high-impedance (LED off; default)
-           10 = output blinks at PWM0 rate
-           11 = output blinks at PWM1 rate
+Yep, I hesitated and wanted to reply. Will do it the other way next
+time, sorry for the hassle.
 
-For GPIOs it suggests a pull-up so that the open-case drives the line
-high:
+> > diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+> > new file mode 100644
+> > index 0000000..6f00235
+> > --- /dev/null
+> > +++ b/drivers/leds/trigger/ledtrig-activity.c
+> > @@ -0,0 +1,297 @@
+> > +/*
+> > + * Activity LED trigger
+> > + *
+> > + * Copyright (C) 2017 Willy Tarreau <w@1wt.eu>
+> > + * Partially based on Atsushi Nemoto's ledtrig-heartbeat.c.
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + */
+> > +#include <linux/module.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/kernel_stat.h>
+> > +#include <linux/init.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/timer.h>
+> > +#include <linux/sched.h>
+> > +#include <linux/leds.h>
+> > +#include <linux/reboot.h>
+> > +#include <linux/suspend.h>
+> 
+> Please sort the includes alphabetically.
 
-         For use as output, connect external pull-up resistor to the pin
-         and size it according to the DC recommended operating
-         characteristics.  LED output pin is HIGH when the output is
-         programmed as high-impedance, and LOW when the output is
-         programmed LOW through the ‘LED selector’ register.  The output
-         can be pulse-width controlled when PWM0 or PWM1 are used.
+I'm amazed I did this, I suspect I inherited it from the original file
+because I'm also used to annoy people for the same thing! Shame on me!
 
-Now, I have a hardware design that uses the LED controller to control
-LEDs. However, for $reasons, we're using the leds-gpio driver to drive
-the them. The reasons are here are a tangent but lead to the discovery
-of the inversion, which manifested as the LEDs being set to full
-brightness at boot when we expected them to be off.
+> > +	activity_data->time_left -= 100;
+> > +	if (activity_data->time_left <= 0) {
+> > +		activity_data->time_left = 0;
+> > +		activity_data->state = !activity_data->state;
+> > +		led_set_brightness_nosleep(led_cdev,
+> > +			(activity_data->state ^ activity_data->invert) ?
+> > +			led_cdev->max_brightness : LED_OFF);
+> 
+> Have you considered making the top brightness adjustable? I'd make it
+> possible especially that we have a similar solution in the
+> ledtrig-heartbeat.c already - see the following patch in 4.12:
+> 
+> commit fb3d769173d26268d7bf068094a599bb28b2ac63
+> Author: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Date:   Wed Nov 9 11:43:46 2016 +0100
+(...)
 
-As we're driving the LEDs through leds-gpio, this means wending our way
-through the gpiochip abstractions. So with that in mind we need to
-describe an active-low GPIO configuration to drive the LEDs as though
-they were GPIOs.
+I never thought about it and it makes a lot of sense actually. I'll check
+this commit, thanks for the pointer.
 
-The set() gpiochip callback in leds-pca955x does the following:
+> > +	switch (pm_event) {
+> > +	case PM_SUSPEND_PREPARE:
+> > +	case PM_HIBERNATION_PREPARE:
+> > +	case PM_RESTORE_PREPARE:
+> > +		led_trigger_unregister(&activity_led_trigger);
+> > +		break;
+> > +	case PM_POST_SUSPEND:
+> > +	case PM_POST_HIBERNATION:
+> > +	case PM_POST_RESTORE:
+> > +		rc = led_trigger_register(&activity_led_trigger);
+> > +		if (rc)
+> > +			pr_err("could not re-register activity trigger\n");
+> > +		break;
+> > +	default:
+> > +		break;
+> > +	}
+> > +	return NOTIFY_DONE;
+> > +}
+> 
+> It turned out to cause problems in ledtrig-heartbeat.c and was reverted.
+> Please don't register pm notifier and remove related facilities from the
+> patch according to the following revert patch:
+> 
+> commit 436c4c45b5b9562b59cedbb51b7343ab4a6dd8cc
+> Author: Zhang Bo <bo.zhang@nxp.com>
+> Date:   Tue Jun 13 10:39:20 2017 +0800
 
-         ...
-         if (val)
-                pca955x_led_set(&led->led_cdev, LED_FULL);
-         else
-                pca955x_led_set(&led->led_cdev, LED_OFF);
-         ...
+OK fine for me. I thought it was mandatory to properly handle pm
+eventhough I was not particularly interested in this for this
+specific purpose.
 
-Where LED_FULL = 255. pca955x_led_set() in turn does:
+I'll send you an updated patch ASAP.
 
-         ...
-         switch (value) {
-         case LED_FULL:
-                ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
-                break;
-         ...
-
-Where PCA955X_LS_LED_ON is defined as:
-
-         #define PCA955X_LS_LED_ON	0x0	/* Output LOW */
-
-So here we have some type confusion: We've crossed domains from GPIO
-behaviour to LED behaviour without accounting for possible inversions
-in the process.
-
-Stepping back to leds-gpio for a moment, during probe() we call
-create_gpio_led(), which eventually executes:
-
-         if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP) {
-                state = gpiod_get_value_cansleep(led_dat->gpiod);
-                if (state < 0)
-                        return state;
-         } else {
-                state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
-         }
-         ...
-         ret = gpiod_direction_output(led_dat->gpiod, state);
-
-In the devicetree the GPIO is annotated as active-low, and
-gpiod_get_value_cansleep() handles this for us:
-
-         int gpiod_get_value_cansleep(const struct gpio_desc *desc)
-         {
-                 int value;
-
-                 might_sleep_if(extra_checks);
-                 VALIDATE_DESC(desc);
-                 value = _gpiod_get_raw_value(desc);
-                 if (value < 0)
-                         return value;
-
-                 if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-                         value = !value;
-
-                 return value;
-         }
-
-_gpiod_get_raw_value() in turn calls through the get() callback for the
-gpiochip implementation, so returning to our get() implementation in
-leds-pca955x we find we extract the raw value from hardware:
-
-         static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-         {
-                 struct pca955x *pca955x = gpiochip_get_data(gc);
-                 struct pca955x_led *led = &pca955x->leds[offset];
-                 u8 reg = pca955x_read_input(pca955x->client, led->led_num / 8);
-
-                 return !!(reg & (1 << (led->led_num % 8)));
-         }
-
-This behaviour is not symmetric with that of set(), where the val is
-inverted by the driver.
-
-Closing the loop on the GPIO_ACTIVE_LOW inversions,
-gpiod_direction_output(), like gpiod_get_value_cansleep(), handles it
-for us:
-
-         int gpiod_direction_output(struct gpio_desc *desc, int value)
-         {
-                  VALIDATE_DESC(desc);
-                  if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-                           value = !value;
-                  else
-                           value = !!value;
-                  return _gpiod_direction_output_raw(desc, value);
-         }
-
-All-in-all, with a value of 'keep' for default-state property in a
-leds-gpio child node, the current state of the hardware will in-fact be
-inverted; precisely the opposite of what was intended.
-
-Rework leds-pca955x so that we avoid the incorrect inversion and clarify
-the semantics with respect to GPIO.
-
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/leds/leds-pca955x.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index 09303fd1fdc6..8b8f81cf10cb 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -61,6 +61,9 @@
- #define PCA955X_LS_BLINK0	0x2	/* Blink at PWM0 rate */
- #define PCA955X_LS_BLINK1	0x3	/* Blink at PWM1 rate */
- 
-+#define PCA955X_GPIO_HIGH	LED_OFF
-+#define PCA955X_GPIO_LOW	LED_FULL
-+
- enum pca955x_type {
- 	pca9550,
- 	pca9551,
-@@ -292,9 +295,9 @@ static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
- 	struct pca955x_led *led = &pca955x->leds[offset];
- 
- 	if (val)
--		pca955x_led_set(&led->led_cdev, LED_FULL);
-+		pca955x_led_set(&led->led_cdev, PCA955X_GPIO_HIGH);
- 	else
--		pca955x_led_set(&led->led_cdev, LED_OFF);
-+		pca955x_led_set(&led->led_cdev, PCA955X_GPIO_LOW);
- }
- 
- static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
--- 
-2.11.0
+Thanks very much for your review,
+Willy
