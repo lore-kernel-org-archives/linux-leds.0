@@ -1,7 +1,7 @@
 From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: [patch v1 1/3] platform/mellanox: Introduce Mellanox hardware platform hotplug driver
-Date: Tue, 29 Aug 2017 18:02:23 +0000
-Message-ID: <1504029745-192558-2-git-send-email-vadimp@mellanox.com>
+Subject: [patch v1 2/3] platform/x86: mlx-platform: modify hotplug device activation
+Date: Tue, 29 Aug 2017 18:02:24 +0000
+Message-ID: <1504029745-192558-3-git-send-email-vadimp@mellanox.com>
 References: <1504029745-192558-1-git-send-email-vadimp@mellanox.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1504029745-192558-1-git-send-email-vadimp@mellanox.com>
@@ -10,818 +10,348 @@ To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, jiri@resnulli.us, pavel@ucw.cz, Vadim Pasternak <vadimp@mellanox.com>
 List-Id: linux-leds@vger.kernel.org
 
-It introduces mlxreg-hotplug driver with the generic regmap interface for
-hardware access to the programmable device with interrupt controlling
-logic. Where the programmable devices can be attached to different
-interfaces types, like I2C, LPC, SPI.
-Driver has been tested on systems based on x86 and ARM architectures.
+It modifies mlx-platform driver hotplug interface. Instead driver
+mlxcpld-hotplug, which is to be removed, mlx-platform will use more
+generic architecture independent and regmap based mlxreg-hotplug
+driver.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
- MAINTAINERS                                |   5 +
- drivers/platform/Kconfig                   |   2 +
- drivers/platform/Makefile                  |   1 +
- drivers/platform/mellanox/Kconfig          |  25 +
- drivers/platform/mellanox/Makefile         |   1 +
- drivers/platform/mellanox/mlxreg-hotplug.c | 712 +++++++++++++++++++++++++++++
- 6 files changed, 746 insertions(+)
- create mode 100644 drivers/platform/mellanox/Kconfig
- create mode 100644 drivers/platform/mellanox/Makefile
- create mode 100644 drivers/platform/mellanox/mlxreg-hotplug.c
+ drivers/platform/x86/Kconfig        |   9 --
+ drivers/platform/x86/Makefile       |   1 -
+ drivers/platform/x86/mlx-platform.c | 225 +++++++++++++++++++++++++++---------
+ 3 files changed, 172 insertions(+), 63 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 205d397..ccc7fa3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8544,6 +8544,11 @@ W:	http://www.mellanox.com
- Q:	http://patchwork.ozlabs.org/project/netdev/list/
- F:	drivers/net/ethernet/mellanox/mlxsw/
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 80b8795..ae6043a 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1109,15 +1109,6 @@ config MLX_PLATFORM
  
-+MELLANOX HARDWARE PLATFORM SUPPORT
-+M:	Vadim Pasternak <vadimp@mellanox.com>
-+S:	Maintained
-+F:	drivers/platform/mellanox/
-+
- MELLANOX FIRMWARE FLASH LIBRARY (mlxfw)
- M:	Yotam Gigi <yotamg@mellanox.com>
- L:	netdev@vger.kernel.org
-diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
-index c11db8b..d4c2e42 100644
---- a/drivers/platform/Kconfig
-+++ b/drivers/platform/Kconfig
-@@ -8,3 +8,5 @@ endif
- source "drivers/platform/goldfish/Kconfig"
+ 	  If you have a Mellanox system, say Y or M here.
  
- source "drivers/platform/chrome/Kconfig"
-+
-+source "drivers/platform/mellanox/Kconfig"
-diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
-index ca26925..bd87ce0 100644
---- a/drivers/platform/Makefile
-+++ b/drivers/platform/Makefile
-@@ -3,6 +3,7 @@
- #
- 
- obj-$(CONFIG_X86)		+= x86/
-+obj-$(CONFIG_MELLANOX_PLATFORM)	+= mellanox/
- obj-$(CONFIG_MIPS)		+= mips/
- obj-$(CONFIG_OLPC)		+= olpc/
- obj-$(CONFIG_GOLDFISH)		+= goldfish/
-diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
-new file mode 100644
-index 0000000..6df0a56
---- /dev/null
-+++ b/drivers/platform/mellanox/Kconfig
-@@ -0,0 +1,25 @@
-+#
-+# Platform support for Mellanox hardware
-+#
-+
-+menuconfig MELLANOX_PLATFORM
-+	bool "Platform support for Mellanox hardware"
-+	depends on (X86 && !OF) || ARM || COMPILE_TEST
-+	---help---
-+	  Say Y here to get to see options for platform support for
-+	  Mellanox systems. This option alone does not add any kernel code.
-+
-+	  If you say N, all options in this submenu will be skipped and disabled.
-+
-+if MELLANOX_PLATFORM
-+
-+config MLXREG_HOTPLUG
-+	tristate "Mellanox platform hotplug driver support"
-+	depends on REGMAP
-+	depends on HWMON
-+	depends on I2C
-+	---help---
-+	  This driver handles hot-plug events for the power suppliers, power
-+	  cables and fans on the wide range Mellanox IB and Ethernet systems.
-+
-+endif # MELLANOX_PLATFORM
-diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
-new file mode 100644
-index 0000000..f58d089
---- /dev/null
-+++ b/drivers/platform/mellanox/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
-diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-new file mode 100644
-index 0000000..9a954e2
---- /dev/null
-+++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-@@ -0,0 +1,712 @@
-+/*
-+ * Copyright (c) 2017 Mellanox Technologies. All rights reserved.
-+ * Copyright (c) 2017 Vadim Pasternak <vadimp@mellanox.com>
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions are met:
-+ *
-+ * 1. Redistributions of source code must retain the above copyright
-+ *    notice, this list of conditions and the following disclaimer.
-+ * 2. Redistributions in binary form must reproduce the above copyright
-+ *    notice, this list of conditions and the following disclaimer in the
-+ *    documentation and/or other materials provided with the distribution.
-+ * 3. Neither the names of the copyright holders nor the names of its
-+ *    contributors may be used to endorse or promote products derived from
-+ *    this software without specific prior written permission.
-+ *
-+ * Alternatively, this software may be distributed under the terms of the
-+ * GNU General Public License ("GPL") version 2 as published by the Free
-+ * Software Foundation.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-+ * POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio.h>
-+#include <linux/hwmon.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/interrupt.h>
-+#include <linux/i2c.h>
+-config MLX_CPLD_PLATFORM
+-	tristate "Mellanox platform hotplug driver support"
+-	default n
+-	select HWMON
+-	select I2C
+-	---help---
+-	  This driver handles hot-plug events for the power suppliers, power
+-	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+-
+ config INTEL_TURBO_MAX_3
+ 	bool "Intel Turbo Boost Max Technology 3.0 enumeration driver"
+ 	depends on X86_64 && SCHED_MC_PRIO
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 91cec17..c2c1c06 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -81,5 +81,4 @@ obj-$(CONFIG_INTEL_TELEMETRY)	+= intel_telemetry_core.o \
+ obj-$(CONFIG_INTEL_PMC_CORE)    += intel_pmc_core.o
+ obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
+ obj-$(CONFIG_MLX_PLATFORM)	+= mlx-platform.o
+-obj-$(CONFIG_MLX_CPLD_PLATFORM)	+= mlxcpld-hotplug.o
+ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index 8f98c21..fa21a3c 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -35,20 +35,22 @@
+ #include <linux/dmi.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-mux.h>
 +#include <linux/io.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/i2c-mux-reg.h>
+-#include <linux/platform_data/mlxcpld-hotplug.h>
 +#include <linux/platform_data/mlxreg.h>
-+#include <linux/platform_device.h>
 +#include <linux/regmap.h>
-+#include <linux/wait.h>
-+#include <linux/workqueue.h>
-+
-+/* Offset of event and mask registers from status register. */
-+#define MLXREG_HOTPLUG_EVENT_OFF	1
-+#define MLXREG_HOTPLUG_MASK_OFF		2
-+#define MLXREG_HOTPLUG_AGGR_MASK_OFF	1
-+
-+/* ASIC health parameters. */
-+#define MLXREG_HOTPLUG_HEALTH_MASK	0x02
-+#define MLXREG_HOTPLUG_RST_CNTR		3
-+
-+#define MLXREG_HOTPLUG_PROP_OKAY	"okay"
-+#define MLXREG_HOTPLUG_PROP_DISABLED	"disabled"
-+#define MLXREG_HOTPLUG_PROP_STATUS	"status"
-+
-+#define MLXREG_HOTPLUG_ATTRS_MAX	24
-+
-+/**
-+ * struct mlxreg_hotplug_priv_data - platform private data:
-+ * @irq: platform device interrupt number;
-+ * @pdev: platform device;
-+ * @plat: platform data;
-+ * @dwork: delayed work template;
-+ * @lock: spin lock;
-+ * @hwmon: hwmon device;
-+ * @mlxreg_hotplug_attr: sysfs attributes array;
-+ * @mlxreg_hotplug_dev_attr: sysfs sensor device attribute array;
-+ * @group: sysfs attribute group;
-+ * @groups: list of sysfs attribute group for hwmon registration;
-+ * @cell: location of top aggregation interrupt register;
-+ * @mask: top aggregation interrupt common mask;
-+ * @aggr_cache: last value of aggregation register status;
-+ */
-+struct mlxreg_hotplug_priv_data {
-+	int irq;
-+	struct device *dev;
-+	struct platform_device *pdev;
-+	struct mlxreg_hotplug_platform_data *plat;
-+	struct regmap *regmap;
-+	struct delayed_work dwork_irq;
-+	struct delayed_work dwork;
-+	spinlock_t lock; /* sync with interrupt */
-+	struct device *hwmon;
-+	struct attribute *mlxreg_hotplug_attr[MLXREG_HOTPLUG_ATTRS_MAX + 1];
-+	struct sensor_device_attribute_2
-+			mlxreg_hotplug_dev_attr[MLXREG_HOTPLUG_ATTRS_MAX];
-+	struct attribute_group group;
-+	const struct attribute_group *groups[2];
-+	u32 cell;
-+	u32 mask;
-+	u32 aggr_cache;
-+	bool after_probe;
+ 
+ #define MLX_PLAT_DEVICE_NAME		"mlxplat"
+ 
+ /* LPC bus IO offsets */
+ #define MLXPLAT_CPLD_LPC_I2C_BASE_ADRR		0x2000
+ #define MLXPLAT_CPLD_LPC_REG_BASE_ADRR		0x2500
+-#define MLXPLAT_CPLD_LPC_REG_AGGR_ADRR		0x253a
+-#define MLXPLAT_CPLD_LPC_REG_PSU_ADRR		0x2558
+-#define MLXPLAT_CPLD_LPC_REG_PWR_ADRR		0x2564
+-#define MLXPLAT_CPLD_LPC_REG_FAN_ADRR		0x2588
++#define MLXPLAT_CPLD_LPC_REG_AGGR_ADRR		0x3a
++#define MLXPLAT_CPLD_LPC_REG_PSU_ADRR		0x58
++#define MLXPLAT_CPLD_LPC_REG_PWR_ADRR		0x64
++#define MLXPLAT_CPLD_LPC_REG_FAN_ADRR		0x88
+ #define MLXPLAT_CPLD_LPC_IO_RANGE		0x100
+ #define MLXPLAT_CPLD_LPC_I2C_CH1_OFF		0xdb
+ #define MLXPLAT_CPLD_LPC_I2C_CH2_OFF		0xda
+@@ -138,86 +140,192 @@ static struct i2c_mux_reg_platform_data mlxplat_mux_data[] = {
+ };
+ 
+ /* Platform hotplug devices */
+-static struct mlxcpld_hotplug_device mlxplat_mlxcpld_psu[] = {
++static struct i2c_board_info mlxplat_mlxcpld_psu[] = {
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c02", 0x51) },
+-		.bus = 10,
++		I2C_BOARD_INFO("24c02", 0x51),
+ 	},
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c02", 0x50) },
+-		.bus = 10,
++		I2C_BOARD_INFO("24c02", 0x50),
+ 	},
+ };
+ 
+-static struct mlxcpld_hotplug_device mlxplat_mlxcpld_pwr[] = {
++static struct i2c_board_info mlxplat_mlxcpld_pwr[] = {
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("dps460", 0x59) },
+-		.bus = 10,
++		I2C_BOARD_INFO("dps460", 0x59),
+ 	},
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("dps460", 0x58) },
+-		.bus = 10,
++		I2C_BOARD_INFO("dps460", 0x58),
+ 	},
+ };
+ 
+-static struct mlxcpld_hotplug_device mlxplat_mlxcpld_fan[] = {
++static struct i2c_board_info mlxplat_mlxcpld_fan[] = {
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c32", 0x50) },
+-		.bus = 11,
++		I2C_BOARD_INFO("24c32", 0x50),
+ 	},
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c32", 0x50) },
+-		.bus = 12,
++		I2C_BOARD_INFO("24c32", 0x50),
+ 	},
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c32", 0x50) },
+-		.bus = 13,
++		I2C_BOARD_INFO("24c32", 0x50),
+ 	},
+ 	{
+-		.brdinfo = { I2C_BOARD_INFO("24c32", 0x50) },
+-		.bus = 14,
++		I2C_BOARD_INFO("24c32", 0x50),
+ 	},
+ };
+ 
+ /* Platform hotplug default data */
++static struct mlxreg_core_data mlxplat_mlxcpld_default_psu_items_data[] = {
++	{
++		.label = "psu1",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_ADRR,
++		.mask = BIT(0),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_psu[0],
++		.hpdev.nr = 10,
++	},
++	{
++		.label = "psu2",
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_ADRR,
++		.mask = BIT(1),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_psu[1],
++		.hpdev.nr = 10,
++	},
 +};
 +
-+#if defined(CONFIG_OF)
-+/**
-+ * struct mlxreg_hotplug_device_en - Open Firmware property for enabling device
-+ *
-+ * @name - property name;
-+ * @value - property value string;
-+ * @length - length of proprty value string;
-+ *
-+ * The structure is used for the devices, which require some dynamic
-+ * selection operation allowing access to them.
-+ */
-+static struct property mlxreg_hotplug_device_en = {
-+	.name = MLXREG_HOTPLUG_PROP_STATUS,
-+	.value = MLXREG_HOTPLUG_PROP_OKAY,
-+	.length = sizeof(MLXREG_HOTPLUG_PROP_OKAY),
++static struct mlxreg_core_data mlxplat_mlxcpld_default_pwr_items_data[] = {
++	{
++		.label = "pwr1",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
++		.mask = BIT(0),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[0],
++		.hpdev.nr = 10,
++	},
++	{
++		.label = "pwr2",
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
++		.mask = BIT(1),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[1],
++		.hpdev.nr = 10,
++	},
 +};
 +
-+/**
-+ * struct mlxreg_hotplug_device_dis - Open Firmware property for disabling
-+ * device
-+ *
-+ * @name - property name;
-+ * @value - property value string;
-+ * @length - length of proprty value string;
-+ *
-+ * The structure is used for the devices, which require some dynamic
-+ * selection operation disallowing access to them.
-+ */
-+static struct property mlxreg_hotplug_device_dis = {
-+	.name = MLXREG_HOTPLUG_PROP_STATUS,
-+	.value = MLXREG_HOTPLUG_PROP_DISABLED,
-+	.length = sizeof(MLXREG_HOTPLUG_PROP_DISABLED),
++static struct mlxreg_core_data mlxplat_mlxcpld_default_fan_items_data[] = {
++	{
++		.label = "fan1",
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
++		.mask = BIT(0),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_fan[0],
++		.hpdev.nr = 11,
++	},
++	{
++		.label = "fan2",
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
++		.mask = BIT(1),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_fan[1],
++		.hpdev.nr = 12,
++	},
++	{
++		.label = "fan3",
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
++		.mask = BIT(2),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_fan[2],
++		.hpdev.nr = 13,
++	},
++	{
++		.label = "fan4",
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
++		.mask = BIT(3),
++		.hpdev.brdinfo = &mlxplat_mlxcpld_fan[3],
++		.hpdev.nr = 14,
++	},
 +};
 +
-+static int mlxreg_hotplug_of_device_create(struct mlxreg_core_data *data)
-+{
-+	return of_update_property(data->np, &mlxreg_hotplug_device_en);
-+}
++static struct mlxreg_core_item mlxplat_mlxcpld_default_items[] = {
++	{
++		.data = mlxplat_mlxcpld_default_psu_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_PSU_MASK_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_PSU_ADRR,
++		.mask = MLXPLAT_CPLD_PSU_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_psu),
++		.inversed = 1,
++		.health = false,
++	},
++	{
++		.data = mlxplat_mlxcpld_default_pwr_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_PWR_MASK_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
++		.mask = MLXPLAT_CPLD_PWR_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_pwr),
++		.inversed = 0,
++		.health = false,
++	},
++	{
++		.data = mlxplat_mlxcpld_default_fan_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_FAN_MASK_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
++		.mask = MLXPLAT_CPLD_FAN_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_fan),
++		.inversed = 1,
++		.health = false,
++	},
++};
 +
-+static void mlxreg_hotplug_of_device_destroy(struct mlxreg_core_data *data)
+ static
+-struct mlxcpld_hotplug_platform_data mlxplat_mlxcpld_default_data = {
+-	.top_aggr_offset = MLXPLAT_CPLD_LPC_REG_AGGR_ADRR,
+-	.top_aggr_mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
+-	.top_aggr_psu_mask = MLXPLAT_CPLD_AGGR_PSU_MASK_DEF,
+-	.psu_reg_offset = MLXPLAT_CPLD_LPC_REG_PSU_ADRR,
+-	.psu_mask = MLXPLAT_CPLD_PSU_MASK,
+-	.psu_count = ARRAY_SIZE(mlxplat_mlxcpld_psu),
+-	.psu = mlxplat_mlxcpld_psu,
+-	.top_aggr_pwr_mask = MLXPLAT_CPLD_AGGR_PWR_MASK_DEF,
+-	.pwr_reg_offset = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
+-	.pwr_mask = MLXPLAT_CPLD_PWR_MASK,
+-	.pwr_count = ARRAY_SIZE(mlxplat_mlxcpld_pwr),
+-	.pwr = mlxplat_mlxcpld_pwr,
+-	.top_aggr_fan_mask = MLXPLAT_CPLD_AGGR_FAN_MASK_DEF,
+-	.fan_reg_offset = MLXPLAT_CPLD_LPC_REG_FAN_ADRR,
+-	.fan_mask = MLXPLAT_CPLD_FAN_MASK,
+-	.fan_count = ARRAY_SIZE(mlxplat_mlxcpld_fan),
+-	.fan = mlxplat_mlxcpld_fan,
++struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_default_data = {
++	.items = mlxplat_mlxcpld_default_items,
++	.counter = ARRAY_SIZE(mlxplat_mlxcpld_default_items),
++	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_ADRR,
++	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
+ };
+ 
+ /* Platform hotplug MSN21xx system family data */
++static struct mlxreg_core_item mlxplat_mlxcpld_msn21xx_items[] = {
++	{
++		.data = mlxplat_mlxcpld_default_pwr_items_data,
++		.aggr_mask = MLXPLAT_CPLD_AGGR_PWR_MASK_DEF,
++		.reg = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
++		.mask = MLXPLAT_CPLD_PWR_MASK,
++		.count = ARRAY_SIZE(mlxplat_mlxcpld_pwr),
++		.inversed = 0,
++		.health = false,
++	},
++};
++
+ static
+-struct mlxcpld_hotplug_platform_data mlxplat_mlxcpld_msn21xx_data = {
+-	.top_aggr_offset = MLXPLAT_CPLD_LPC_REG_AGGR_ADRR,
+-	.top_aggr_mask = MLXPLAT_CPLD_AGGR_MASK_MSN21XX,
+-	.top_aggr_pwr_mask = MLXPLAT_CPLD_AGGR_MASK_MSN21XX,
+-	.pwr_reg_offset = MLXPLAT_CPLD_LPC_REG_PWR_ADRR,
+-	.pwr_mask = MLXPLAT_CPLD_PWR_MASK,
+-	.pwr_count = ARRAY_SIZE(mlxplat_mlxcpld_pwr),
++struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_msn21xx_data = {
++	.items = mlxplat_mlxcpld_msn21xx_items,
++	.counter = ARRAY_SIZE(mlxplat_mlxcpld_msn21xx_items),
++	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_ADRR,
++	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
++};
++
++static int
++mlxplat_mlxcpld_reg_read(void *context, unsigned int reg, unsigned int *val)
 +{
-+	of_update_property(data->np, &mlxreg_hotplug_device_dis);
-+	of_node_clear_flag(data->np, OF_POPULATED);
-+}
-+#else
-+static int mlxreg_hotplug_of_device_create(struct mlxreg_core_data *data)
-+{
++	*val = ioread8(context + reg);
 +	return 0;
-+}
-+
-+static void mlxreg_hotplug_of_device_destroy(struct mlxreg_core_data *data)
-+{
-+}
-+#endif
-+
-+static int mlxreg_hotplug_device_create(struct mlxreg_core_data *data)
-+{
-+	data->hpdev.adapter = i2c_get_adapter(data->hpdev.nr);
-+	if (!data->hpdev.adapter)
-+		return -EFAULT;
-+
-+	data->hpdev.client = i2c_new_device(data->hpdev.adapter,
-+					    data->hpdev.brdinfo);
-+	if (!data->hpdev.client) {
-+		i2c_put_adapter(data->hpdev.adapter);
-+		data->hpdev.adapter = NULL;
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static void mlxreg_hotplug_device_destroy(struct mlxreg_core_data *data)
-+{
-+	if (data->hpdev.client) {
-+		i2c_unregister_device(data->hpdev.client);
-+		data->hpdev.client = NULL;
-+	}
-+
-+	if (data->hpdev.adapter) {
-+		i2c_put_adapter(data->hpdev.adapter);
-+		data->hpdev.adapter = NULL;
-+	}
-+}
-+
-+static int mlxreg_hotplug_dev_enable(struct mlxreg_core_data *data)
-+{
-+	int err;
-+
-+	/* Enable and create device. */
-+	if (data->np)
-+		err = mlxreg_hotplug_of_device_create(data);
-+	else
-+		err = mlxreg_hotplug_device_create(data);
-+
-+	return err;
-+}
-+
-+static void mlxreg_hotplug_dev_disable(struct mlxreg_core_data *data)
-+{
-+	/* Disable and unregister platform device. */
-+	if (data->np)
-+		mlxreg_hotplug_of_device_destroy(data);
-+	else
-+		mlxreg_hotplug_device_destroy(data);
-+}
-+
-+static ssize_t mlxreg_hotplug_attr_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct mlxreg_hotplug_priv_data *priv = dev_get_drvdata(dev);
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	int index = to_sensor_dev_attr_2(attr)->index;
-+	int nr = to_sensor_dev_attr_2(attr)->nr;
-+	struct mlxreg_core_item *item;
-+	struct mlxreg_core_data *data;
-+	u32 regval;
-+	int ret;
-+
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	item = pdata->items + nr;
-+	data = item->data + index;
-+
-+	ret = regmap_read(priv->regmap, data->reg, &regval);
-+	if (ret)
-+		return ret;
-+
-+	if (item->health) {
-+		regval &= data->mask;
-+	} else {
-+		/* Bit = 0 : functional if item->inversed is true. */
-+		if (item->inversed)
-+			regval = !(regval & data->mask);
-+		else
-+			regval = !!(regval & data->mask);
-+	}
-+
-+	return sprintf(buf, "%u\n", regval);
 +}
 +
 +static int
-+mlxreg_hotplug_attr_init(struct mlxreg_hotplug_priv_data *priv)
++mlxplat_mlxcpld_reg_write(void *context, unsigned int reg, unsigned int val)
 +{
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	struct mlxreg_core_item *item;
-+	struct mlxreg_core_data *data;
-+	int num_attrs = 0, id = 0, i, j;
-+
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	item = pdata->items;
-+
-+	for (i = 0; i < pdata->counter; i++)
-+		num_attrs += (item + i)->count;
-+
-+	priv->group.attrs = devm_kzalloc(&priv->pdev->dev, num_attrs *
-+					 sizeof(struct attribute *),
-+					 GFP_KERNEL);
-+	if (!priv->group.attrs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pdata->counter; i++, item++) {
-+		data = item->data;
-+		for (j = 0; j < item->count; j++, data++, id++) {
-+			priv->mlxreg_hotplug_attr[id] =
-+			&priv->mlxreg_hotplug_dev_attr[id].dev_attr.attr;
-+			priv->mlxreg_hotplug_attr[id]->name =
-+				devm_kasprintf(&priv->pdev->dev, GFP_KERNEL,
-+					       data->label);
-+
-+			if (!priv->mlxreg_hotplug_attr[id]->name) {
-+				dev_err(priv->dev, "Memory allocation failed for attr %d.\n",
-+					id);
-+				return -ENOMEM;
-+			}
-+
-+			priv->mlxreg_hotplug_dev_attr[id].dev_attr.attr.mode =
-+									0444;
-+			priv->mlxreg_hotplug_dev_attr[id].dev_attr.show =
-+						mlxreg_hotplug_attr_show;
-+			priv->mlxreg_hotplug_dev_attr[id].nr = i;
-+			priv->mlxreg_hotplug_dev_attr[id].index = j;
-+			sysfs_attr_init(
-+			&priv->mlxreg_hotplug_dev_attr[id].dev_attr.attr);
-+		}
-+	}
-+
-+	priv->group.attrs = priv->mlxreg_hotplug_attr;
-+	priv->groups[0] = &priv->group;
-+	priv->groups[1] = NULL;
-+
++	iowrite8(val, context + reg);
 +	return 0;
 +}
 +
-+static void
-+mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
-+			   struct mlxreg_core_item *item)
-+{
-+	struct mlxreg_core_data *data;
-+	u32 asserted, regval, bit;
-+	int ret;
-+
-+	/*
-+	 * Validate if item related to received signal type is valid.
-+	 * It should never happen, excepted the situation when some
-+	 * piece of hardware is broken. In such situation just produce
-+	 * error message and return. Caller must continue to handle the
-+	 * signals from other devices if any.
-+	 */
-+	if (unlikely(!item)) {
-+		dev_err(priv->dev, "False signal: at offset:mask 0x%02x:0x%02x.\n",
-+			item->reg, item->mask);
-+
-+		return;
-+	}
-+
-+	/* Mask event. */
-+	ret = regmap_write(priv->regmap, item->reg + MLXREG_HOTPLUG_MASK_OFF,
-+			   0);
-+	if (ret)
-+		goto access_error;
-+
-+	/* Read status. */
-+	ret = regmap_read(priv->regmap, item->reg, &regval);
-+	if (ret)
-+		goto access_error;
-+
-+	/* Set asserted bits and save last status. */
-+	regval &= item->mask;
-+	asserted = item->cache ^ regval;
-+	item->cache = regval;
-+
-+	for_each_set_bit(bit, (unsigned long *)&asserted, 8) {
-+		data = item->data + bit;
-+		if (regval & BIT(bit)) {
-+			if (item->inversed)
-+				mlxreg_hotplug_dev_disable(data);
-+			else
-+				mlxreg_hotplug_dev_enable(data);
-+		} else {
-+			if (item->inversed)
-+				mlxreg_hotplug_dev_enable(data);
-+			else
-+				mlxreg_hotplug_dev_disable(data);
-+		}
-+	}
-+
-+	/* Acknowledge event. */
-+	ret = regmap_write(priv->regmap, item->reg + MLXREG_HOTPLUG_EVENT_OFF,
-+			   0);
-+	if (ret)
-+		goto access_error;
-+
-+	/* Unmask event. */
-+	ret = regmap_write(priv->regmap, item->reg + MLXREG_HOTPLUG_MASK_OFF,
-+			   item->mask);
-+	if (ret)
-+		goto access_error;
-+
-+	return;
-+
-+access_error:
-+	dev_err(priv->dev, "Failed to complete workqueue.\n");
-+}
-+
-+static void
-+mlxreg_hotplug_health_work_helper(struct mlxreg_hotplug_priv_data *priv,
-+				  struct mlxreg_core_item *item)
-+{
-+	struct mlxreg_core_data *data = item->data;
-+	u32 regval;
-+	int i, ret;
-+
-+	for (i = 0; i < item->count; i++, data++) {
-+		/* Mask event. */
-+		ret = regmap_write(priv->regmap, data->reg +
-+				   MLXREG_HOTPLUG_MASK_OFF, 0);
-+		if (ret)
-+			goto access_error;
-+
-+		/* Read status. */
-+		ret = regmap_read(priv->regmap, data->reg, &regval);
-+		if (ret)
-+			goto access_error;
-+
-+		regval &= data->mask;
-+		item->cache = regval;
-+		if (regval == MLXREG_HOTPLUG_HEALTH_MASK) {
-+			if ((data->health_cntr++ == MLXREG_HOTPLUG_RST_CNTR) ||
-+			    !priv->after_probe) {
-+				mlxreg_hotplug_dev_enable(data);
-+				data->attached = true;
-+			}
-+		} else {
-+			if (data->attached) {
-+				mlxreg_hotplug_dev_disable(data);
-+				data->attached = false;
-+				data->health_cntr = 0;
-+			}
-+		}
-+
-+		/* Acknowledge event. */
-+		ret = regmap_write(priv->regmap, data->reg +
-+				   MLXREG_HOTPLUG_EVENT_OFF, 0);
-+		if (ret)
-+			goto access_error;
-+
-+		/* Unmask event. */
-+		ret = regmap_write(priv->regmap, data->reg +
-+				   MLXREG_HOTPLUG_MASK_OFF, data->mask);
-+		if (ret)
-+			goto access_error;
-+	}
-+
-+	return;
-+
-+access_error:
-+	dev_err(priv->dev, "Failed to complete workqueue.\n");
-+}
-+
-+/*
-+ * mlxreg_hotplug_work_handler - performs traversing of device interrupt
-+ * registers according to the below hierarchy schema:
-+ *
-+ *				Aggregation registers (status/mask)
-+ * PSU registers:		*---*
-+ * *-----------------*		|   |
-+ * |status/event/mask|----->    | * |
-+ * *-----------------*		|   |
-+ * Power registers:		|   |
-+ * *-----------------*		|   |
-+ * |status/event/mask|----->    | * |
-+ * *-----------------*		|   |
-+ * FAN registers:		|   |--> CPU
-+ * *-----------------*		|   |
-+ * |status/event/mask|----->    | * |
-+ * *-----------------*		|   |
-+ * ASIC registers:		|   |
-+ * *-----------------*		|   |
-+ * |status/event/mask|----->    | * |
-+ * *-----------------*		|   |
-+ *				*---*
-+ *
-+ * In case some system changed are detected: FAN in/out, PSU in/out, power
-+ * cable attached/detached, ASIC helath good/bad, relevant device is created
-+ * or destroyed.
-+ */
-+static void mlxreg_hotplug_work_handler(struct work_struct *work)
-+{
-+	struct mlxreg_hotplug_priv_data *priv = container_of(work,
-+			struct mlxreg_hotplug_priv_data, dwork_irq.work);
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	struct mlxreg_core_item *item;
-+	unsigned long flags;
-+	u32 regval, aggr_asserted;
-+	int i;
-+	int ret;
-+
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	item = pdata->items;
-+	/* Mask aggregation event. */
-+	ret = regmap_write(priv->regmap, pdata->cell +
-+			   MLXREG_HOTPLUG_AGGR_MASK_OFF, 0);
-+	if (ret < 0)
-+		goto access_error;
-+
-+	/* Read aggregation status. */
-+	ret = regmap_read(priv->regmap, pdata->cell, &regval);
-+	if (ret)
-+		goto access_error;
-+
-+	regval &= pdata->mask;
-+	aggr_asserted = priv->aggr_cache ^ regval;
-+	priv->aggr_cache = regval;
-+
-+	/* Handle topology and health configuration changes. */
-+	for (i = 0; i < pdata->counter; i++, item++) {
-+		if (aggr_asserted & item->aggr_mask) {
-+			if (item->health)
-+				mlxreg_hotplug_health_work_helper(priv, item);
-+			else
-+				mlxreg_hotplug_work_helper(priv, item);
-+		}
-+	}
-+
-+	if (aggr_asserted) {
-+		spin_lock_irqsave(&priv->lock, flags);
-+
-+		/*
-+		 * It is possible, that some signals have been inserted, while
-+		 * interrupt has been masked by mlxreg_hotplug_work_handler.
-+		 * In this case such signals will be missed. In order to handle
-+		 * these signals delayed work is canceled and work task
-+		 * re-scheduled for immediate execution. It allows to handle
-+		 * missed signals, if any. In other case work handler just
-+		 * validates that no new signals have been received during
-+		 * masking.
-+		 */
-+		cancel_delayed_work(&priv->dwork_irq);
-+		schedule_delayed_work(&priv->dwork_irq, 0);
-+
-+		spin_unlock_irqrestore(&priv->lock, flags);
-+
-+		return;
-+	}
-+
-+	/* Unmask aggregation event (no need acknowledge). */
-+	ret = regmap_write(priv->regmap, pdata->cell +
-+			   MLXREG_HOTPLUG_AGGR_MASK_OFF, pdata->mask);
-+	if (ret)
-+		goto access_error;
-+
-+	return;
-+
-+access_error:
-+	dev_err(priv->dev, "Failed to complete workqueue.\n");
-+}
-+
-+static int mlxreg_hotplug_set_irq(struct mlxreg_hotplug_priv_data *priv)
-+{
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	struct mlxreg_core_item *item;
-+	int i;
-+	int ret;
-+
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	item = pdata->items;
-+
-+	for (i = 0; i < pdata->counter; i++, item++) {
-+		/* Clear group presense event. */
-+		ret = regmap_write(priv->regmap, item->reg +
-+				   MLXREG_HOTPLUG_EVENT_OFF, 0);
-+		if (ret)
-+			goto access_error;
-+
-+		/* Set group initial status as mask and unmask group event. */
-+		if (item->inversed) {
-+			item->cache = item->mask;
-+			ret = regmap_write(priv->regmap, item->reg +
-+					   MLXREG_HOTPLUG_MASK_OFF,
-+					   item->mask);
-+			if (ret)
-+				goto access_error;
-+		}
-+	}
-+
-+	/* Keep aggregation initial status as zero and unmask events. */
-+	ret = regmap_write(priv->regmap, pdata->cell +
-+			   MLXREG_HOTPLUG_AGGR_MASK_OFF, pdata->mask);
-+	if (ret)
-+		goto access_error;
-+
-+	/* Invoke work handler for initializing hot plug devices setting. */
-+	mlxreg_hotplug_work_handler(&priv->dwork_irq.work);
-+
-+	enable_irq(priv->irq);
-+
-+	return 0;
-+
-+access_error:
-+	dev_err(priv->dev, "Failed to set interrupts.\n");
-+
-+	enable_irq(priv->irq);
-+
-+	return ret;
-+}
-+
-+static void mlxreg_hotplug_unset_irq(struct mlxreg_hotplug_priv_data *priv)
-+{
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	struct mlxreg_core_item *item;
-+	struct mlxreg_core_data *data;
-+	int count, i, j;
-+
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	item = pdata->items;
-+	disable_irq(priv->irq);
-+	cancel_delayed_work_sync(&priv->dwork_irq);
-+
-+	/* Mask aggregation event. */
-+	regmap_write(priv->regmap, pdata->cell + MLXREG_HOTPLUG_AGGR_MASK_OFF,
-+		     0);
-+
-+	/* Clear topology configurations. */
-+	for (i = 0; i < pdata->counter; i++, item++) {
-+		data = item->data;
-+		/* Mask group presense event. */
-+		regmap_write(priv->regmap, data->reg + MLXREG_HOTPLUG_MASK_OFF,
-+			     0);
-+		/* Clear group presense event. */
-+		regmap_write(priv->regmap, data->reg +
-+			     MLXREG_HOTPLUG_EVENT_OFF, 0);
-+
-+		/* Remove all the attached devices in group. */
-+		count = item->count;
-+		for (j = 0; j < count; j++, data++)
-+			mlxreg_hotplug_dev_disable(data);
-+	}
-+}
-+
-+static irqreturn_t mlxreg_hotplug_irq_handler(int irq, void *dev)
-+{
-+	struct mlxreg_hotplug_priv_data *priv =
-+				(struct mlxreg_hotplug_priv_data *)dev;
-+
-+	/* Schedule work task for immediate execution.*/
-+	schedule_delayed_work(&priv->dwork_irq, 0);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mlxreg_hotplug_probe(struct platform_device *pdev)
-+{
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+	struct mlxreg_hotplug_priv_data *priv;
-+	int err;
-+
-+	pdata = dev_get_platdata(&pdev->dev);
-+	if (!pdata) {
-+		dev_err(&pdev->dev, "Failed to get platform data.\n");
-+		return -EINVAL;
-+	}
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	if (pdata->irq) {
-+		priv->irq = pdata->irq;
-+	} else {
-+		priv->irq = platform_get_irq(pdev, 0);
-+		if (priv->irq < 0) {
-+			dev_err(&pdev->dev, "Failed to get platform irq: %d\n",
-+				priv->irq);
-+			return priv->irq;
-+		}
-+	}
-+
-+	priv->regmap = pdata->regmap;
-+	priv->dev = pdev->dev.parent;
-+	priv->pdev = pdev;
-+
-+	err = devm_request_irq(&pdev->dev, priv->irq,
-+			       mlxreg_hotplug_irq_handler, IRQF_TRIGGER_FALLING
-+			       | IRQF_SHARED, "mlxreg-hotplug", priv);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to request irq: %d\n", err);
-+		return err;
-+	}
-+
-+	disable_irq(priv->irq);
-+	spin_lock_init(&priv->lock);
-+	INIT_DELAYED_WORK(&priv->dwork_irq, mlxreg_hotplug_work_handler);
-+	/* Perform initial interrupts setup. */
-+	mlxreg_hotplug_set_irq(priv);
-+
-+	priv->after_probe = true;
-+	dev_set_drvdata(&pdev->dev, priv);
-+
-+	err = mlxreg_hotplug_attr_init(priv);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to allocate attributes: %d\n",
-+			err);
-+		return err;
-+	}
-+
-+	priv->hwmon = devm_hwmon_device_register_with_groups(&pdev->dev,
-+					"mlxreg_hotplug", priv, priv->groups);
-+	if (IS_ERR(priv->hwmon)) {
-+		dev_err(&pdev->dev, "Failed to register hwmon device %ld\n",
-+			PTR_ERR(priv->hwmon));
-+		return PTR_ERR(priv->hwmon);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mlxreg_hotplug_remove(struct platform_device *pdev)
-+{
-+	struct mlxreg_hotplug_priv_data *priv = dev_get_drvdata(&pdev->dev);
-+
-+	/* Clean interrupts setup. */
-+	mlxreg_hotplug_unset_irq(priv);
-+
-+	return 0;
-+}
-+
-+#if defined(CONFIG_OF)
-+static const struct of_device_id mlxreg_hotplug_dt_match[] = {
-+	{ .compatible = "mellanox,mlxreg-hotplug" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, mlxreg_hotplug_dt_match);
-+#endif
-+
-+static struct platform_driver mlxreg_hotplug_driver = {
-+	.driver = {
-+	    .name = "mlxreg-hotplug",
-+	    .of_match_table = of_match_ptr(mlxreg_hotplug_dt_match),
-+	},
-+	.probe = mlxreg_hotplug_probe,
-+	.remove = mlxreg_hotplug_remove,
-+};
-+
-+module_platform_driver(mlxreg_hotplug_driver);
-+
-+MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
-+MODULE_DESCRIPTION("Mellanox regmap hotplug platform driver");
-+MODULE_LICENSE("Dual BSD/GPL");
-+MODULE_ALIAS("platform:mlxreg-hotplug");
++const struct regmap_config mlxplat_mlxcpld_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 255,
++	.reg_read = mlxplat_mlxcpld_reg_read,
++	.reg_write = mlxplat_mlxcpld_reg_write,
+ };
+ 
+ static struct resource mlxplat_mlxcpld_resources[] = {
+-	[0] = DEFINE_RES_IRQ_NAMED(17, "mlxcpld-hotplug"),
++	[0] = DEFINE_RES_IRQ_NAMED(17, "mlxreg-hotplug"),
+ };
+ 
+ struct platform_device *mlxplat_dev;
+-struct mlxcpld_hotplug_platform_data *mlxplat_hotplug;
++struct mlxreg_core_hotplug_platform_data *mlxplat_hotplug;
+ 
+ static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
+ {
+@@ -289,7 +397,8 @@ static struct dmi_system_id mlxplat_dmi_table[] __initdata = {
+ static int __init mlxplat_init(void)
+ {
+ 	struct mlxplat_priv *priv;
+-	int i, err;
++	void __iomem *base;
++	int i, err = 0;
+ 
+ 	if (!dmi_check_system(mlxplat_dmi_table))
+ 		return -ENODEV;
+@@ -328,8 +437,18 @@ static int __init mlxplat_init(void)
+ 		}
+ 	}
+ 
++	base = devm_ioport_map(&mlxplat_dev->dev,
++			       mlxplat_lpc_resources[1].start, 1);
++	if (IS_ERR(base))
++		goto fail_platform_mux_register;
++
++	mlxplat_hotplug->regmap = devm_regmap_init(&mlxplat_dev->dev, NULL,
++					base, &mlxplat_mlxcpld_regmap_config);
++	if (IS_ERR(mlxplat_hotplug->regmap))
++		goto fail_platform_mux_register;
++
+ 	priv->pdev_hotplug = platform_device_register_resndata(
+-				&mlxplat_dev->dev, "mlxcpld-hotplug",
++				&mlxplat_dev->dev, "mlxreg-hotplug",
+ 				PLATFORM_DEVID_NONE,
+ 				mlxplat_mlxcpld_resources,
+ 				ARRAY_SIZE(mlxplat_mlxcpld_resources),
 -- 
 2.1.4
