@@ -1,84 +1,48 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/1] dt: bindings: Add a binding for flash devices
- associated to a sensor
-Date: Tue, 29 Aug 2017 11:43:09 -0500
-Message-ID: <20170829164309.shx2v2acucmvrs7y@rob-hp-laptop>
-References: <20170818125857.13430-1-sakari.ailus@linux.intel.com>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: gpio: Add optional
+ retain-state-shutdown property
+Date: Tue, 29 Aug 2017 21:13:05 +0200
+Message-ID: <f7a7f905-3743-0c83-affd-a9ec7e20159f@gmail.com>
+References: <20170828001711.19662-1-andrew@aj.id.au>
+ <20170828001711.19662-2-andrew@aj.id.au> <20170828101952.GE18012@amd>
+ <CAK_vbW2BJjKa0dKoVjbRE++-2VB+3fM0DQ7u3DnwD2Tj-4bY7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37562 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751250AbdH2QnL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Aug 2017 12:43:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20170818125857.13430-1-sakari.ailus@linux.intel.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAK_vbW2BJjKa0dKoVjbRE++-2VB+3fM0DQ7u3DnwD2Tj-4bY7w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Brandon Wyman <bjwyman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, OpenBMC Maillist <openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 
-On Fri, Aug 18, 2017 at 03:58:57PM +0300, Sakari Ailus wrote:
-> Camera flash drivers (and LEDs) are separate from the sensor devices in
-> DT. In order to make an association between the two, provide the
-> association information to the software.
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
-> Hi Rob and Jacek, others,
-> 
-> I know I've submitted previous versions of this patch that I have changed
-> since getting your acks... that's bad. I realised there will be problems
-> due to the vague referencing in the old version.
-> 
-> Instead of referring to the flash LED controller itself, the references are
-> now suggested to be made to the LEDs explicitly.
-> 
-> While most of the time all LEDs are associated to the same camera sensor,
-> there's nothing that suggests that this will always be the case. This will
-> work rather nicely with this change to the V4L2 flash class:
-> 
-> <URL:https://git.linuxtv.org/sailus/media_tree.git/commit/?h=flash&id=ef62781f4468d93ba8328caf7db629add453e01d>
-> 
-> An alternative to this could be to refer to the LEDs using the LED
-> controller node and integer arguments. That would require e.g. #led-cells
-> property to tell how many arguments there are. The actual LEDs also have
-> device nodes already so I thought using them would probably be a good idea
-> so we continue to have a single way to refer to LEDs.
+Hi Brandon,
 
-There are some advantages to this approach, but I don't think it fits 
-the normal pattern since we do have LED nodes.
-
+On 08/28/2017 11:13 PM, Brandon Wyman wrote:
+> On Mon, Aug 28, 2017 at 5:19 AM, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
+>> On Mon 2017-08-28 09:47:10, Andrew Jeffery wrote:
+>>> On Baseboard Management Controller (BMC) systems it's sometimes
+>>> necessary for a LED to retain its state across a BMC reset (which is
+>>> independent of the host system state). Add a devicetree property to
+>>> describe this behaviour. The property would typically be used in
+>>> conjunction with 'default-state = "keep"'.
+>>>
+>>> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+>>
+>> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+>>
+>> --
+>> (english) http://www.livejournal.com/~pavelmachek
+>> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 > 
-> Let me know your thoughts / if you're ok with the patch.
+> Tested-by: Brandon Wyman <bjwyman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-So, I think this patch is the right way to do it.
+Added this tag to both patches (1/2 and 2/2), thanks.
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-> 
->  Documentation/devicetree/bindings/media/video-interfaces.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> index 852041a7480c..fee73cf2a714 100644
-> --- a/Documentation/devicetree/bindings/media/video-interfaces.txt
-> +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> @@ -67,6 +67,14 @@ are required in a relevant parent node:
->  		    identifier, should be 1.
->   - #size-cells    : should be zero.
->  
-> +
-> +Optional properties
-> +-------------------
-> +
-> +- flash: An array of phandles referring to the flash LED, a sub-node
-> +  of the LED driver device node.
-> +
-> +
->  Optional endpoint properties
->  ----------------------------
->  
-> -- 
-> 2.11.0
-> 
+-- 
+Best regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
