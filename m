@@ -1,93 +1,289 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [patch v4 1/2] mfd: Add Mellanox regmap core driver
-Date: Wed, 30 Aug 2017 12:59:56 +0200
-Message-ID: <20170830105955.GB4926@amd>
-References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
- <1504029616-192277-2-git-send-email-vadimp@mellanox.com>
+From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
+Subject: [PATCH] leds: pca955x: check for I2C errors
+Date: Wed, 30 Aug 2017 13:25:51 +0200
+Message-ID: <20170830112551.3493-1-clg@kaod.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1504029616-192277-2-git-send-email-vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from 8.mo3.mail-out.ovh.net ([87.98.172.249]:46462 "EHLO
+        8.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbdH3Lf7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2017 07:35:59 -0400
+Received: from player732.ha.ovh.net (b6.ovh.net [213.186.33.56])
+        by mo3.mail-out.ovh.net (Postfix) with ESMTP id 3A9D813644E
+        for <linux-leds@vger.kernel.org>; Wed, 30 Aug 2017 13:26:09 +0200 (CEST)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
 
+This should also allow probing to fail when a pca955x chip is not
+found on a I2C bus.
 
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Cédric Le Goater <clg@kaod.org>
+---
 
-Hi!
+ Andrew,
 
->  Cause of reset nodes:
->  - cpu_kernel_panic
->  - cpu_shutdown
->  - bmc_warm_reset
+ The patch conflicts with your patch :
 
-This is not really suitable for hwmon, right?
+   "leds: pca955x: Don't invert requested value in pca955x_gpio_set_value()"
 
-Can you talk to
+ and I have chosen to be in sync with the 'for-next' branch of the
+ linux-leds git repo. Depending on the reviews we will have to respin
+ one or the other.
 
-Date: Mon, 28 Aug 2017 09:31:30 -0700
-=46rom: Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, cphealy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org,
-Subject: [PATCH v6 1/2] platform: Add driver for RAVE Supervisory Processor
+ Cheers,
 
-? He's currently trying to add very similar interface to the kernel,
-too.
+ C.
 
-+What:          /sys/devices/platform/*/serial*/serial*-*/reset_reason
-+Date:          Aug 2017
-+Contact:       "Andrey Smirnov" <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:    (RO) Indicates reason for last reset.
+ drivers/leds/leds-pca955x.c | 114 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 83 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 09303fd1fdc6..905729191d3e 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -165,13 +165,18 @@ static inline u8 pca955x_ledsel(u8 oldval, int led_num, int state)
+  * Write to frequency prescaler register, used to program the
+  * period of the PWM output.  period = (PSCx + 1) / 38
+  */
+-static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
++static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+ {
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
++	int ret;
+ 
+-	i2c_smbus_write_byte_data(client,
++	ret = i2c_smbus_write_byte_data(client,
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 2*n,
+ 		val);
++	if (ret < 0)
++		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
++			__func__, n, val, ret);
++	return ret;
+ }
+ 
+ /*
+@@ -181,38 +186,56 @@ static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+  *
+  * Duty cycle is (256 - PWMx) / 256
+  */
+-static void pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
++static int pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
+ {
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
++	int ret;
+ 
+-	i2c_smbus_write_byte_data(client,
++	ret = i2c_smbus_write_byte_data(client,
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 1 + 2*n,
+ 		val);
++	if (ret < 0)
++		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
++			__func__, n, val, ret);
++	return ret;
+ }
+ 
+ /*
+  * Write to LED selector register, which determines the source that
+  * drives the LED output.
+  */
+-static void pca955x_write_ls(struct i2c_client *client, int n, u8 val)
++static int pca955x_write_ls(struct i2c_client *client, int n, u8 val)
+ {
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
++	int ret;
+ 
+-	i2c_smbus_write_byte_data(client,
++	ret = i2c_smbus_write_byte_data(client,
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n,
+ 		val);
++	if (ret < 0)
++		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
++			__func__, n, val, ret);
++	return ret;
+ }
+ 
+ /*
+  * Read the LED selector register, which determines the source that
+  * drives the LED output.
+  */
+-static u8 pca955x_read_ls(struct i2c_client *client, int n)
++static int pca955x_read_ls(struct i2c_client *client, int n, u8 *val)
+ {
+ 	struct pca955x *pca955x = i2c_get_clientdata(client);
++	int ret;
+ 
+-	return (u8) i2c_smbus_read_byte_data(client,
++	ret = i2c_smbus_read_byte_data(client,
+ 		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
++	if (ret < 0) {
++		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
++			__func__, n, ret);
++		return ret;
++	}
++	*val = (u8)ret;
++	return 0;
+ }
+ 
+ static int pca955x_led_set(struct led_classdev *led_cdev,
+@@ -223,6 +246,7 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+ 	u8 ls;
+ 	int chip_ls;	/* which LSx to use (0-3 potentially) */
+ 	int ls_led;	/* which set of bits within LSx to use (0-3) */
++	int ret;
+ 
+ 	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
+ 	pca955x = pca955x_led->pca955x;
+@@ -232,7 +256,9 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+ 
+ 	mutex_lock(&pca955x->lock);
+ 
+-	ls = pca955x_read_ls(pca955x->client, chip_ls);
++	ret = pca955x_read_ls(pca955x->client, chip_ls, &ls);
++	if (ret)
++		goto out;
+ 
+ 	switch (value) {
+ 	case LED_FULL:
+@@ -252,26 +278,37 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+ 		 * OFF, HALF, or FULL.  But, this is probably better than
+ 		 * just turning off for all other values.
+ 		 */
+-		pca955x_write_pwm(pca955x->client, 1,
+-				255 - value);
++		ret = pca955x_write_pwm(pca955x->client, 1, 255 - value);
++		if (ret)
++			goto out;
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
+ 		break;
+ 	}
+ 
+-	pca955x_write_ls(pca955x->client, chip_ls, ls);
++	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
+ 
++out:
+ 	mutex_unlock(&pca955x->lock);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ #ifdef CONFIG_LEDS_PCA955X_GPIO
+ /*
+  * Read the INPUT register, which contains the state of LEDs.
+  */
+-static u8 pca955x_read_input(struct i2c_client *client, int n)
++static int pca955x_read_input(struct i2c_client *client, int n, u8 *val)
+ {
+-	return (u8)i2c_smbus_read_byte_data(client, n);
++	int ret = i2c_smbus_read_byte_data(client, n);
 +
-+               The following values can be reported:
-+                   * 0  -> Normal Power Off
-+                   * 1  -> Hardware Watchdog
-+                   * 2  -> Software Watchdog
-+                   * 3  -> Input Voltage Out Of Range
-+                   * 4  -> Host Requested
-+                   * 5  -> Temperature Out Of Range
-+                   * 6  -> User Requested (via long Power Button
-press)
-+                   * 7  -> Illegal Configuration Word
-+                   * 8  -> Illegal Insturction
-+                   * 9  -> Illegal Trap
-+                   * 10 -> Unknown
-+                   * 11 -> Crew Panel Requested
++	if (ret < 0) {
++		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
++			__func__, n, ret);
++		return ret;
++	}
++	*val = (u8)ret;
++	return 0;
 +
-+                NOTE: Codes 7,8 and 9 pertain to exceptions happening
-+                in supervisory processor/its firmware and not host
-+                CPU.
-
-We really want something common between different machines.
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlmmmqsACgkQMOfwapXb+vLGygCbBSbk1mindegCEwIDTXj16SZF
-xDMAn2B9ALeAGthjTmCG6dS0YglNmN8O
-=hpKn
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ }
+ 
+ static int pca955x_gpio_request_pin(struct gpio_chip *gc, unsigned int offset)
+@@ -285,23 +322,32 @@ static int pca955x_gpio_request_pin(struct gpio_chip *gc, unsigned int offset)
+ 	return -EBUSY;
+ }
+ 
+-static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
+-				   int val)
++static int pca955x_set_value(struct gpio_chip *gc, unsigned int offset,
++			     int val)
+ {
+ 	struct pca955x *pca955x = gpiochip_get_data(gc);
+ 	struct pca955x_led *led = &pca955x->leds[offset];
+ 
+ 	if (val)
+-		pca955x_led_set(&led->led_cdev, LED_FULL);
++		return pca955x_led_set(&led->led_cdev, LED_FULL);
+ 	else
+-		pca955x_led_set(&led->led_cdev, LED_OFF);
++		return pca955x_led_set(&led->led_cdev, LED_OFF);
++}
++
++static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
++				   int val)
++{
++	pca955x_set_value(gc, offset, val);
+ }
+ 
+ static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct pca955x *pca955x = gpiochip_get_data(gc);
+ 	struct pca955x_led *led = &pca955x->leds[offset];
+-	u8 reg = pca955x_read_input(pca955x->client, led->led_num / 8);
++	u8 reg = 0;
++
++	/* There is nothing we can do about errors */
++	pca955x_read_input(pca955x->client, led->led_num / 8, &reg);
+ 
+ 	return !!(reg & (1 << (led->led_num % 8)));
+ }
+@@ -310,17 +356,13 @@ static int pca955x_gpio_direction_input(struct gpio_chip *gc,
+ 					unsigned int offset)
+ {
+ 	/* To use as input ensure pin is not driven */
+-	pca955x_gpio_set_value(gc, offset, 0);
+-
+-	return 0;
++	return pca955x_set_value(gc, offset, 0);
+ }
+ 
+ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
+ 					 unsigned int offset, int val)
+ {
+-	pca955x_gpio_set_value(gc, offset, val);
+-
+-	return 0;
++	return pca955x_set_value(gc, offset, val);
+ }
+ #endif /* CONFIG_LEDS_PCA955X_GPIO */
+ 
+@@ -495,19 +537,29 @@ static int pca955x_probe(struct i2c_client *client,
+ 				return err;
+ 
+ 			/* Turn off LED */
+-			pca955x_led_set(&pca955x_led->led_cdev, LED_OFF);
++			err = pca955x_led_set(&pca955x_led->led_cdev, LED_OFF);
++			if (err)
++				return err;
+ 		}
+ 	}
+ 
+ 	/* PWM0 is used for half brightness or 50% duty cycle */
+-	pca955x_write_pwm(client, 0, 255-LED_HALF);
++	err = pca955x_write_pwm(client, 0, 255 - LED_HALF);
++	if (err)
++		return err;
+ 
+ 	/* PWM1 is used for variable brightness, default to OFF */
+-	pca955x_write_pwm(client, 1, 0);
++	err = pca955x_write_pwm(client, 1, 0);
++	if (err)
++		return err;
+ 
+ 	/* Set to fast frequency so we do not see flashing */
+-	pca955x_write_psc(client, 0, 0);
+-	pca955x_write_psc(client, 1, 0);
++	err = pca955x_write_psc(client, 0, 0);
++	if (err)
++		return err;
++	err = pca955x_write_psc(client, 1, 0);
++	if (err)
++		return err;
+ 
+ #ifdef CONFIG_LEDS_PCA955X_GPIO
+ 	if (ngpios) {
+-- 
+2.13.5
