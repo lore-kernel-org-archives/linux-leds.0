@@ -1,79 +1,300 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: RE: [patch v1 0/3] drivers/platform: replace module
- x86/mlxcpld-hotplug with mellanox/mlxreg-hotplug
-Date: Wed, 30 Aug 2017 19:33:46 +0000
-Message-ID: <AM4PR05MB333036B0EDAAF384381E3407A29C0@AM4PR05MB3330.eurprd05.prod.outlook.com>
-References: <1504029745-192558-1-git-send-email-vadimp@mellanox.com>
- <CAHp75VcQjgDd5Eut5Ln6Di57-_DXRH5dyS92qtjwUb4tchx3VA@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: pca955x: check for I2C errors
+Date: Wed, 30 Aug 2017 22:00:30 +0200
+Message-ID: <f171c638-4190-30ba-94dc-36fdf9ed10de@gmail.com>
+References: <20170830112551.3493-1-clg@kaod.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VcQjgDd5Eut5Ln6Di57-_DXRH5dyS92qtjwUb4tchx3VA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?utf-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>, Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36658 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbdH3UBR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2017 16:01:17 -0400
+Received: by mail-wr0-f194.google.com with SMTP id 40so4542857wrv.3
+        for <linux-leds@vger.kernel.org>; Wed, 30 Aug 2017 13:01:17 -0700 (PDT)
+In-Reply-To: <20170830112551.3493-1-clg@kaod.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>, linux-leds@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
-IFttYWlsdG86YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBB
-dWd1c3QgMzAsIDIwMTcgMTA6MzIgUE0NCj4gVG86IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1l
-bGxhbm94LmNvbT4NCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRh
-dGlvbi5vcmc+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgUGxhdGZvcm0gRHJp
-dmVyIDxwbGF0Zm9ybS1kcml2ZXItDQo+IHg4NkB2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBMRUQg
-U3Vic3lzdGVtIDxsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZz47DQo+IEphY2VrIEFuYXN6ZXdz
-a2kgPGphY2VrLmFuYXN6ZXdza2lAZ21haWwuY29tPjsgTGVlIEpvbmVzDQo+IDxsZWUuam9uZXNA
-bGluYXJvLm9yZz47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBKacWZw60gUMOt
-cmtvDQo+IDxqaXJpQHJlc251bGxpLnVzPjsgUGF2ZWwgTWFjaGVrIDxwYXZlbEB1Y3cuY3o+DQo+
-IFN1YmplY3Q6IFJlOiBbcGF0Y2ggdjEgMC8zXSBkcml2ZXJzL3BsYXRmb3JtOiByZXBsYWNlIG1v
-ZHVsZSB4ODYvbWx4Y3BsZC0NCj4gaG90cGx1ZyB3aXRoIG1lbGxhbm94L21seHJlZy1ob3RwbHVn
-DQo+IA0KPiBPbiBUdWUsIEF1ZyAyOSwgMjAxNyBhdCA5OjAyIFBNLCBWYWRpbSBQYXN0ZXJuYWsg
-PHZhZGltcEBtZWxsYW5veC5jb20+DQo+IHdyb3RlOg0KPiA+IFRoZSBwYXRjaHNldCBtb2RpZmll
-cyB4ODYvbWx4Y3BsZC1ob3RwbHVnLmMgZm9yIG1ha2luZyBpdCBhcmNoaXRlY3R1cmUNCj4gPiBp
-bmRlcGVuZGVudCwgcmVuYW1lcyB0byBtbHhyZWctaG90cGx1ZyBhbmQgbW92ZXMgaXQgZnJvbQ0K
-PiA+IGRyaXZlcnMvcGxhdGZvcm0veDg2IGZvbGRlciB0byBuZXcgZHJpdmVycy9wbGF0Zm9ybS9t
-ZWxsYW5veCBmb2xkZXIuDQo+ID4gVGhpcyBtb2RpZmljYXRpb24gYWxzbyBpbnRyb2R1Y2VzIHJl
-Z21hcCBpbnRlcmZhY2UgZm9yIG1seHJlZy1ob3RwbHVnDQo+ID4gZHJpdmVyIHRvIGFsbG93IGhv
-dHBsdWcgZXZlbnQgZnVuY3Rpb25hbGl0eSBvdmVyIHByb2dyYW1tYWJsZSBkZXZpY2VzDQo+ID4g
-bG9naWMsIHdoZW4gdGhlc2UgZGV2aWNlcyBjYW4gYmUgYXR0YWNoZWQgdG8gZGlmZmVyZW50IGlu
-dGVyZmFjZXMNCj4gPiB0eXBlcywgbGlrZSBJMkMsIExQQywgU1BJLg0KPiA+IE1vZHVsZSBpbmNs
-dWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvbWx4Y3BsZC1ob3RwbHVnLmggaXMgcmVtb3ZlZCBhbmQN
-Cj4gPiBuZXcgbW9kdWxlIGluY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9tbHhyZWcuaCBpcyB0
-byBiZSB1c2VkIGluc3RlYWQuDQo+ID4gRHJpdmVyIGRyaXZlcnMvcGxhdGZvcm0veDg2L21seC1w
-bGF0Zm9ybS5jIGlzIHVwZGF0ZWQgYWNjb3JkaW5nIHRvIG5ldw0KPiA+IGludGVyZmFjZS4NCj4g
-PiBSZWxldmFudCBNYWtlZmlsZSBhbmQgS2NvbmZpZyBhcmUgdXBkYXRlZC4NCj4gPg0KPiA+IFRo
-aXMgcGF0Y2hzZXQgZGVwZW5kcyBvbiBwcmV2aW91c2x5IHNlbnQ6DQo+ID4gW3BhdGNoIHY0IDEv
-Ml0gbWZkOiBBZGQgTWVsbGFub3ggcmVnbWFwIGNvcmUgZHJpdmVyIGJlY2F1c2UgaXQNCj4gPiBp
-bmNsdWRlcyBpbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvbWx4cmVnLmggZnJvbSB0aGlzIHBh
-dGNoLg0KPiA+DQo+IA0KPiBJJ20gZmluZSB3aXRoIHRoaXMgZnJvbSBQRHg4NiBwcm9zcGVjdGl2
-ZSAoc2luY2UgZHJpdmVyIGlzIGdvaW5nIHRvIGJlDQo+IG11bHRpcGxhdGZvcm0pLg0KPiANCj4g
-V2hpbGUgSSdtIGdpdmluZyB5b3UgbXkuLi4NCj4gDQo+IEFja2VkLWJ5OiBBbmR5IFNoZXZjaGVu
-a28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+IA0KPiAuLi5JIHdvdWxkIHN0aWxsIGxp
-a2UgdG8gaGF2ZSBhIGNvbnNlbnN1cyB3aXRoIERhcnJlbiBvbiBpdC4NCj4gDQoNCkhpIEFuZHks
-DQoNClRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgcmVwbHkuDQoNClRoYW5rcywNClZhZGlt
-Lg0KPiANCj4gPiBWYWRpbSBQYXN0ZXJuYWsgKDMpOg0KPiA+ICAgcGxhdGZvcm0vbWVsbGFub3g6
-IEludHJvZHVjZSBNZWxsYW5veCBoYXJkd2FyZSBwbGF0Zm9ybSBob3RwbHVnIGRyaXZlcg0KPiA+
-ICAgcGxhdGZvcm0veDg2OiBtbHgtcGxhdGZvcm06IG1vZGlmeSBob3RwbHVnIGRldmljZSBhY3Rp
-dmF0aW9uDQo+ID4gICBwbGF0Zm9ybS94ODY6IG1seGNwbGQtaG90cGx1ZzogZHJpdmVyIHJlbW92
-aW5nDQo+ID4NCj4gPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgIDEyICstDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vS2NvbmZpZyAgICAgICAgICAgICAg
-ICAgICAgICB8ICAgMiArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vTWFrZWZpbGUgICAgICAgICAg
-ICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvS2NvbmZp
-ZyAgICAgICAgICAgICB8ICAyNSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvTWFr
-ZWZpbGUgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gv
-bWx4cmVnLWhvdHBsdWcuYyAgICB8IDcxMg0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKw0K
-PiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9LY29uZmlnICAgICAgICAgICAgICAgICAgfCAgIDkg
-LQ0KPiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9NYWtlZmlsZSAgICAgICAgICAgICAgICAgfCAg
-IDEgLQ0KPiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9tbHgtcGxhdGZvcm0uYyAgICAgICAgICAg
-fCAyMjUgKysrKysrLS0NCj4gPiAgZHJpdmVycy9wbGF0Zm9ybS94ODYvbWx4Y3BsZC1ob3RwbHVn
-LmMgICAgICAgIHwgNTE1IC0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiAgaW5jbHVkZS9saW51eC9w
-bGF0Zm9ybV9kYXRhL21seGNwbGQtaG90cGx1Zy5oIHwgIDk5IC0tLS0NCj4gPiAgMTEgZmlsZXMg
-Y2hhbmdlZCwgOTE4IGluc2VydGlvbnMoKyksIDY4NCBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2Rl
-DQo+ID4gMTAwNjQ0IGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvS2NvbmZpZyAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0DQo+ID4gZHJpdmVycy9wbGF0Zm9ybS9tZWxsYW5veC9NYWtlZmlsZQ0KPiA+ICBj
-cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9wbGF0Zm9ybS9tZWxsYW5veC9tbHhyZWctaG90cGx1
-Zy5jDQo+ID4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9tbHhjcGxk
-LWhvdHBsdWcuYw0KPiA+ICBkZWxldGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9wbGF0Zm9y
-bV9kYXRhL21seGNwbGQtaG90cGx1Zy5oDQo+ID4NCj4gPiAtLQ0KPiA+IDIuMS40DQo+ID4NCj4g
-DQo+IA0KPiANCj4gLS0NCj4gV2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0K
+Hi Cedric,
+
+Thanks for the patch.
+
+On 08/30/2017 01:25 PM, Cédric Le Goater wrote:
+> This should also allow probing to fail when a pca955x chip is not
+> found on a I2C bus.
+> 
+> Signed-off-by: Cédric Le Goater <clg@kaod.org>
+> ---
+> 
+>  Andrew,
+> 
+>  The patch conflicts with your patch :
+> 
+>    "leds: pca955x: Don't invert requested value in pca955x_gpio_set_value()"
+> 
+>  and I have chosen to be in sync with the 'for-next' branch of the
+>  linux-leds git repo. Depending on the reviews we will have to respin
+>  one or the other.
+
+Applied yours as first.
+
+Best regards,
+Jacek Anaszewski
+
+
+>  Cheers,
+> 
+>  C.
+> 
+>  drivers/leds/leds-pca955x.c | 114 ++++++++++++++++++++++++++++++++------------
+>  1 file changed, 83 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index 09303fd1fdc6..905729191d3e 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -165,13 +165,18 @@ static inline u8 pca955x_ledsel(u8 oldval, int led_num, int state)
+>   * Write to frequency prescaler register, used to program the
+>   * period of the PWM output.  period = (PSCx + 1) / 38
+>   */
+> -static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+> +static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+>  {
+>  	struct pca955x *pca955x = i2c_get_clientdata(client);
+> +	int ret;
+>  
+> -	i2c_smbus_write_byte_data(client,
+> +	ret = i2c_smbus_write_byte_data(client,
+>  		pca95xx_num_input_regs(pca955x->chipdef->bits) + 2*n,
+>  		val);
+> +	if (ret < 0)
+> +		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
+> +			__func__, n, val, ret);
+> +	return ret;
+>  }
+>  
+>  /*
+> @@ -181,38 +186,56 @@ static void pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+>   *
+>   * Duty cycle is (256 - PWMx) / 256
+>   */
+> -static void pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
+> +static int pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
+>  {
+>  	struct pca955x *pca955x = i2c_get_clientdata(client);
+> +	int ret;
+>  
+> -	i2c_smbus_write_byte_data(client,
+> +	ret = i2c_smbus_write_byte_data(client,
+>  		pca95xx_num_input_regs(pca955x->chipdef->bits) + 1 + 2*n,
+>  		val);
+> +	if (ret < 0)
+> +		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
+> +			__func__, n, val, ret);
+> +	return ret;
+>  }
+>  
+>  /*
+>   * Write to LED selector register, which determines the source that
+>   * drives the LED output.
+>   */
+> -static void pca955x_write_ls(struct i2c_client *client, int n, u8 val)
+> +static int pca955x_write_ls(struct i2c_client *client, int n, u8 val)
+>  {
+>  	struct pca955x *pca955x = i2c_get_clientdata(client);
+> +	int ret;
+>  
+> -	i2c_smbus_write_byte_data(client,
+> +	ret = i2c_smbus_write_byte_data(client,
+>  		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n,
+>  		val);
+> +	if (ret < 0)
+> +		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
+> +			__func__, n, val, ret);
+> +	return ret;
+>  }
+>  
+>  /*
+>   * Read the LED selector register, which determines the source that
+>   * drives the LED output.
+>   */
+> -static u8 pca955x_read_ls(struct i2c_client *client, int n)
+> +static int pca955x_read_ls(struct i2c_client *client, int n, u8 *val)
+>  {
+>  	struct pca955x *pca955x = i2c_get_clientdata(client);
+> +	int ret;
+>  
+> -	return (u8) i2c_smbus_read_byte_data(client,
+> +	ret = i2c_smbus_read_byte_data(client,
+>  		pca95xx_num_input_regs(pca955x->chipdef->bits) + 4 + n);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
+> +			__func__, n, ret);
+> +		return ret;
+> +	}
+> +	*val = (u8)ret;
+> +	return 0;
+>  }
+>  
+>  static int pca955x_led_set(struct led_classdev *led_cdev,
+> @@ -223,6 +246,7 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  	u8 ls;
+>  	int chip_ls;	/* which LSx to use (0-3 potentially) */
+>  	int ls_led;	/* which set of bits within LSx to use (0-3) */
+> +	int ret;
+>  
+>  	pca955x_led = container_of(led_cdev, struct pca955x_led, led_cdev);
+>  	pca955x = pca955x_led->pca955x;
+> @@ -232,7 +256,9 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  
+>  	mutex_lock(&pca955x->lock);
+>  
+> -	ls = pca955x_read_ls(pca955x->client, chip_ls);
+> +	ret = pca955x_read_ls(pca955x->client, chip_ls, &ls);
+> +	if (ret)
+> +		goto out;
+>  
+>  	switch (value) {
+>  	case LED_FULL:
+> @@ -252,26 +278,37 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  		 * OFF, HALF, or FULL.  But, this is probably better than
+>  		 * just turning off for all other values.
+>  		 */
+> -		pca955x_write_pwm(pca955x->client, 1,
+> -				255 - value);
+> +		ret = pca955x_write_pwm(pca955x->client, 1, 255 - value);
+> +		if (ret)
+> +			goto out;
+>  		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
+>  		break;
+>  	}
+>  
+> -	pca955x_write_ls(pca955x->client, chip_ls, ls);
+> +	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
+>  
+> +out:
+>  	mutex_unlock(&pca955x->lock);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_LEDS_PCA955X_GPIO
+>  /*
+>   * Read the INPUT register, which contains the state of LEDs.
+>   */
+> -static u8 pca955x_read_input(struct i2c_client *client, int n)
+> +static int pca955x_read_input(struct i2c_client *client, int n, u8 *val)
+>  {
+> -	return (u8)i2c_smbus_read_byte_data(client, n);
+> +	int ret = i2c_smbus_read_byte_data(client, n);
+> +
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
+> +			__func__, n, ret);
+> +		return ret;
+> +	}
+> +	*val = (u8)ret;
+> +	return 0;
+> +
+>  }
+>  
+>  static int pca955x_gpio_request_pin(struct gpio_chip *gc, unsigned int offset)
+> @@ -285,23 +322,32 @@ static int pca955x_gpio_request_pin(struct gpio_chip *gc, unsigned int offset)
+>  	return -EBUSY;
+>  }
+>  
+> -static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
+> -				   int val)
+> +static int pca955x_set_value(struct gpio_chip *gc, unsigned int offset,
+> +			     int val)
+>  {
+>  	struct pca955x *pca955x = gpiochip_get_data(gc);
+>  	struct pca955x_led *led = &pca955x->leds[offset];
+>  
+>  	if (val)
+> -		pca955x_led_set(&led->led_cdev, LED_FULL);
+> +		return pca955x_led_set(&led->led_cdev, LED_FULL);
+>  	else
+> -		pca955x_led_set(&led->led_cdev, LED_OFF);
+> +		return pca955x_led_set(&led->led_cdev, LED_OFF);
+> +}
+> +
+> +static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
+> +				   int val)
+> +{
+> +	pca955x_set_value(gc, offset, val);
+>  }
+>  
+>  static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
+>  {
+>  	struct pca955x *pca955x = gpiochip_get_data(gc);
+>  	struct pca955x_led *led = &pca955x->leds[offset];
+> -	u8 reg = pca955x_read_input(pca955x->client, led->led_num / 8);
+> +	u8 reg = 0;
+> +
+> +	/* There is nothing we can do about errors */
+> +	pca955x_read_input(pca955x->client, led->led_num / 8, &reg);
+>  
+>  	return !!(reg & (1 << (led->led_num % 8)));
+>  }
+> @@ -310,17 +356,13 @@ static int pca955x_gpio_direction_input(struct gpio_chip *gc,
+>  					unsigned int offset)
+>  {
+>  	/* To use as input ensure pin is not driven */
+> -	pca955x_gpio_set_value(gc, offset, 0);
+> -
+> -	return 0;
+> +	return pca955x_set_value(gc, offset, 0);
+>  }
+>  
+>  static int pca955x_gpio_direction_output(struct gpio_chip *gc,
+>  					 unsigned int offset, int val)
+>  {
+> -	pca955x_gpio_set_value(gc, offset, val);
+> -
+> -	return 0;
+> +	return pca955x_set_value(gc, offset, val);
+>  }
+>  #endif /* CONFIG_LEDS_PCA955X_GPIO */
+>  
+> @@ -495,19 +537,29 @@ static int pca955x_probe(struct i2c_client *client,
+>  				return err;
+>  
+>  			/* Turn off LED */
+> -			pca955x_led_set(&pca955x_led->led_cdev, LED_OFF);
+> +			err = pca955x_led_set(&pca955x_led->led_cdev, LED_OFF);
+> +			if (err)
+> +				return err;
+>  		}
+>  	}
+>  
+>  	/* PWM0 is used for half brightness or 50% duty cycle */
+> -	pca955x_write_pwm(client, 0, 255-LED_HALF);
+> +	err = pca955x_write_pwm(client, 0, 255 - LED_HALF);
+> +	if (err)
+> +		return err;
+>  
+>  	/* PWM1 is used for variable brightness, default to OFF */
+> -	pca955x_write_pwm(client, 1, 0);
+> +	err = pca955x_write_pwm(client, 1, 0);
+> +	if (err)
+> +		return err;
+>  
+>  	/* Set to fast frequency so we do not see flashing */
+> -	pca955x_write_psc(client, 0, 0);
+> -	pca955x_write_psc(client, 1, 0);
+> +	err = pca955x_write_psc(client, 0, 0);
+> +	if (err)
+> +		return err;
+> +	err = pca955x_write_psc(client, 1, 0);
+> +	if (err)
+> +		return err;
+>  
+>  #ifdef CONFIG_LEDS_PCA955X_GPIO
+>  	if (ngpios) {
+> 
