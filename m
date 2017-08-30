@@ -1,80 +1,79 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [patch v1 0/3] drivers/platform: replace module
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: RE: [patch v1 0/3] drivers/platform: replace module
  x86/mlxcpld-hotplug with mellanox/mlxreg-hotplug
-Date: Wed, 30 Aug 2017 22:32:17 +0300
-Message-ID: <CAHp75VcQjgDd5Eut5Ln6Di57-_DXRH5dyS92qtjwUb4tchx3VA@mail.gmail.com>
+Date: Wed, 30 Aug 2017 19:33:46 +0000
+Message-ID: <AM4PR05MB333036B0EDAAF384381E3407A29C0@AM4PR05MB3330.eurprd05.prod.outlook.com>
 References: <1504029745-192558-1-git-send-email-vadimp@mellanox.com>
+ <CAHp75VcQjgDd5Eut5Ln6Di57-_DXRH5dyS92qtjwUb4tchx3VA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33851 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbdH3TcT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2017 15:32:19 -0400
-In-Reply-To: <1504029745-192558-1-git-send-email-vadimp@mellanox.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VcQjgDd5Eut5Ln6Di57-_DXRH5dyS92qtjwUb4tchx3VA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?utf-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>, Pavel Machek <pavel@ucw.cz>
 
-On Tue, Aug 29, 2017 at 9:02 PM, Vadim Pasternak <vadimp@mellanox.com> wrote:
-> The patchset modifies x86/mlxcpld-hotplug.c for making it architecture
-> independent, renames to mlxreg-hotplug and moves it from
-> drivers/platform/x86 folder to new drivers/platform/mellanox folder.
-> This modification also introduces regmap interface for mlxreg-hotplug
-> driver to allow hotplug event functionality over programmable devices
-> logic, when these devices can be attached to different interfaces types,
-> like I2C, LPC, SPI.
-> Module include/linux/platform_data/mlxcpld-hotplug.h is removed and new
-> module include/linux/platform_data/mlxreg.h is to be used instead.
-> Driver drivers/platform/x86/mlx-platform.c is updated according to new
-> interface.
-> Relevant Makefile and Kconfig are updated.
->
-> This patchset depends on previously sent:
-> [patch v4 1/2] mfd: Add Mellanox regmap core driver
-> because it includes include/linux/platform_data/mlxreg.h from this patch.
->
-
-I'm fine with this from PDx86 prospective (since driver is going to be
-multiplatform).
-
-While I'm giving you my...
-
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-...I would still like to have a consensus with Darren on it.
-
-
-> Vadim Pasternak (3):
->   platform/mellanox: Introduce Mellanox hardware platform hotplug driver
->   platform/x86: mlx-platform: modify hotplug device activation
->   platform/x86: mlxcpld-hotplug: driver removing
->
->  MAINTAINERS                                   |  12 +-
->  drivers/platform/Kconfig                      |   2 +
->  drivers/platform/Makefile                     |   1 +
->  drivers/platform/mellanox/Kconfig             |  25 +
->  drivers/platform/mellanox/Makefile            |   1 +
->  drivers/platform/mellanox/mlxreg-hotplug.c    | 712 ++++++++++++++++++++++++++
->  drivers/platform/x86/Kconfig                  |   9 -
->  drivers/platform/x86/Makefile                 |   1 -
->  drivers/platform/x86/mlx-platform.c           | 225 ++++++--
->  drivers/platform/x86/mlxcpld-hotplug.c        | 515 -------------------
->  include/linux/platform_data/mlxcpld-hotplug.h |  99 ----
->  11 files changed, 918 insertions(+), 684 deletions(-)
->  create mode 100644 drivers/platform/mellanox/Kconfig
->  create mode 100644 drivers/platform/mellanox/Makefile
->  create mode 100644 drivers/platform/mellanox/mlxreg-hotplug.c
->  delete mode 100644 drivers/platform/x86/mlxcpld-hotplug.c
->  delete mode 100644 include/linux/platform_data/mlxcpld-hotplug.h
->
-> --
-> 2.1.4
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IFttYWlsdG86YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBB
+dWd1c3QgMzAsIDIwMTcgMTA6MzIgUE0NCj4gVG86IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1l
+bGxhbm94LmNvbT4NCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRh
+dGlvbi5vcmc+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgUGxhdGZvcm0gRHJp
+dmVyIDxwbGF0Zm9ybS1kcml2ZXItDQo+IHg4NkB2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBMRUQg
+U3Vic3lzdGVtIDxsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZz47DQo+IEphY2VrIEFuYXN6ZXdz
+a2kgPGphY2VrLmFuYXN6ZXdza2lAZ21haWwuY29tPjsgTGVlIEpvbmVzDQo+IDxsZWUuam9uZXNA
+bGluYXJvLm9yZz47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBKacWZw60gUMOt
+cmtvDQo+IDxqaXJpQHJlc251bGxpLnVzPjsgUGF2ZWwgTWFjaGVrIDxwYXZlbEB1Y3cuY3o+DQo+
+IFN1YmplY3Q6IFJlOiBbcGF0Y2ggdjEgMC8zXSBkcml2ZXJzL3BsYXRmb3JtOiByZXBsYWNlIG1v
+ZHVsZSB4ODYvbWx4Y3BsZC0NCj4gaG90cGx1ZyB3aXRoIG1lbGxhbm94L21seHJlZy1ob3RwbHVn
+DQo+IA0KPiBPbiBUdWUsIEF1ZyAyOSwgMjAxNyBhdCA5OjAyIFBNLCBWYWRpbSBQYXN0ZXJuYWsg
+PHZhZGltcEBtZWxsYW5veC5jb20+DQo+IHdyb3RlOg0KPiA+IFRoZSBwYXRjaHNldCBtb2RpZmll
+cyB4ODYvbWx4Y3BsZC1ob3RwbHVnLmMgZm9yIG1ha2luZyBpdCBhcmNoaXRlY3R1cmUNCj4gPiBp
+bmRlcGVuZGVudCwgcmVuYW1lcyB0byBtbHhyZWctaG90cGx1ZyBhbmQgbW92ZXMgaXQgZnJvbQ0K
+PiA+IGRyaXZlcnMvcGxhdGZvcm0veDg2IGZvbGRlciB0byBuZXcgZHJpdmVycy9wbGF0Zm9ybS9t
+ZWxsYW5veCBmb2xkZXIuDQo+ID4gVGhpcyBtb2RpZmljYXRpb24gYWxzbyBpbnRyb2R1Y2VzIHJl
+Z21hcCBpbnRlcmZhY2UgZm9yIG1seHJlZy1ob3RwbHVnDQo+ID4gZHJpdmVyIHRvIGFsbG93IGhv
+dHBsdWcgZXZlbnQgZnVuY3Rpb25hbGl0eSBvdmVyIHByb2dyYW1tYWJsZSBkZXZpY2VzDQo+ID4g
+bG9naWMsIHdoZW4gdGhlc2UgZGV2aWNlcyBjYW4gYmUgYXR0YWNoZWQgdG8gZGlmZmVyZW50IGlu
+dGVyZmFjZXMNCj4gPiB0eXBlcywgbGlrZSBJMkMsIExQQywgU1BJLg0KPiA+IE1vZHVsZSBpbmNs
+dWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvbWx4Y3BsZC1ob3RwbHVnLmggaXMgcmVtb3ZlZCBhbmQN
+Cj4gPiBuZXcgbW9kdWxlIGluY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9tbHhyZWcuaCBpcyB0
+byBiZSB1c2VkIGluc3RlYWQuDQo+ID4gRHJpdmVyIGRyaXZlcnMvcGxhdGZvcm0veDg2L21seC1w
+bGF0Zm9ybS5jIGlzIHVwZGF0ZWQgYWNjb3JkaW5nIHRvIG5ldw0KPiA+IGludGVyZmFjZS4NCj4g
+PiBSZWxldmFudCBNYWtlZmlsZSBhbmQgS2NvbmZpZyBhcmUgdXBkYXRlZC4NCj4gPg0KPiA+IFRo
+aXMgcGF0Y2hzZXQgZGVwZW5kcyBvbiBwcmV2aW91c2x5IHNlbnQ6DQo+ID4gW3BhdGNoIHY0IDEv
+Ml0gbWZkOiBBZGQgTWVsbGFub3ggcmVnbWFwIGNvcmUgZHJpdmVyIGJlY2F1c2UgaXQNCj4gPiBp
+bmNsdWRlcyBpbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvbWx4cmVnLmggZnJvbSB0aGlzIHBh
+dGNoLg0KPiA+DQo+IA0KPiBJJ20gZmluZSB3aXRoIHRoaXMgZnJvbSBQRHg4NiBwcm9zcGVjdGl2
+ZSAoc2luY2UgZHJpdmVyIGlzIGdvaW5nIHRvIGJlDQo+IG11bHRpcGxhdGZvcm0pLg0KPiANCj4g
+V2hpbGUgSSdtIGdpdmluZyB5b3UgbXkuLi4NCj4gDQo+IEFja2VkLWJ5OiBBbmR5IFNoZXZjaGVu
+a28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+IA0KPiAuLi5JIHdvdWxkIHN0aWxsIGxp
+a2UgdG8gaGF2ZSBhIGNvbnNlbnN1cyB3aXRoIERhcnJlbiBvbiBpdC4NCj4gDQoNCkhpIEFuZHks
+DQoNClRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgcmVwbHkuDQoNClRoYW5rcywNClZhZGlt
+Lg0KPiANCj4gPiBWYWRpbSBQYXN0ZXJuYWsgKDMpOg0KPiA+ICAgcGxhdGZvcm0vbWVsbGFub3g6
+IEludHJvZHVjZSBNZWxsYW5veCBoYXJkd2FyZSBwbGF0Zm9ybSBob3RwbHVnIGRyaXZlcg0KPiA+
+ICAgcGxhdGZvcm0veDg2OiBtbHgtcGxhdGZvcm06IG1vZGlmeSBob3RwbHVnIGRldmljZSBhY3Rp
+dmF0aW9uDQo+ID4gICBwbGF0Zm9ybS94ODY6IG1seGNwbGQtaG90cGx1ZzogZHJpdmVyIHJlbW92
+aW5nDQo+ID4NCj4gPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgIDEyICstDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vS2NvbmZpZyAgICAgICAgICAgICAg
+ICAgICAgICB8ICAgMiArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vTWFrZWZpbGUgICAgICAgICAg
+ICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvS2NvbmZp
+ZyAgICAgICAgICAgICB8ICAyNSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvTWFr
+ZWZpbGUgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gv
+bWx4cmVnLWhvdHBsdWcuYyAgICB8IDcxMg0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKw0K
+PiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9LY29uZmlnICAgICAgICAgICAgICAgICAgfCAgIDkg
+LQ0KPiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9NYWtlZmlsZSAgICAgICAgICAgICAgICAgfCAg
+IDEgLQ0KPiA+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9tbHgtcGxhdGZvcm0uYyAgICAgICAgICAg
+fCAyMjUgKysrKysrLS0NCj4gPiAgZHJpdmVycy9wbGF0Zm9ybS94ODYvbWx4Y3BsZC1ob3RwbHVn
+LmMgICAgICAgIHwgNTE1IC0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiAgaW5jbHVkZS9saW51eC9w
+bGF0Zm9ybV9kYXRhL21seGNwbGQtaG90cGx1Zy5oIHwgIDk5IC0tLS0NCj4gPiAgMTEgZmlsZXMg
+Y2hhbmdlZCwgOTE4IGluc2VydGlvbnMoKyksIDY4NCBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2Rl
+DQo+ID4gMTAwNjQ0IGRyaXZlcnMvcGxhdGZvcm0vbWVsbGFub3gvS2NvbmZpZyAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0DQo+ID4gZHJpdmVycy9wbGF0Zm9ybS9tZWxsYW5veC9NYWtlZmlsZQ0KPiA+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9wbGF0Zm9ybS9tZWxsYW5veC9tbHhyZWctaG90cGx1
+Zy5jDQo+ID4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9tbHhjcGxk
+LWhvdHBsdWcuYw0KPiA+ICBkZWxldGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9wbGF0Zm9y
+bV9kYXRhL21seGNwbGQtaG90cGx1Zy5oDQo+ID4NCj4gPiAtLQ0KPiA+IDIuMS40DQo+ID4NCj4g
+DQo+IA0KPiANCj4gLS0NCj4gV2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0K
