@@ -1,58 +1,39 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: pca955x: check for I2C errors
-Date: Thu, 31 Aug 2017 22:23:39 +0200
-Message-ID: <4baeabee-870a-feb9-00b6-1b827971b586@gmail.com>
-References: <20170830112551.3493-1-clg@kaod.org>
- <f171c638-4190-30ba-94dc-36fdf9ed10de@gmail.com>
- <1504137842.5933.24.camel@aj.id.au>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: gpio: Add optional
+ retain-state-shutdown property
+Date: Thu, 31 Aug 2017 16:28:40 -0500
+Message-ID: <20170831212840.ecr2p4nra52xvzrz@rob-hp-laptop>
+References: <20170828001711.19662-1-andrew@aj.id.au>
+ <20170828001711.19662-2-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34897 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbdHaUY0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 31 Aug 2017 16:24:26 -0400
-Received: by mail-wm0-f65.google.com with SMTP id e204so671345wma.2
-        for <linux-leds@vger.kernel.org>; Thu, 31 Aug 2017 13:24:25 -0700 (PDT)
-In-Reply-To: <1504137842.5933.24.camel@aj.id.au>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170828001711.19662-2-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-leds@vger.kernel.org, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
 List-Id: linux-leds@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>, linux-leds@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
 
-On 08/31/2017 02:04 AM, Andrew Jeffery wrote:
-> On Wed, 2017-08-30 at 22:00 +0200, Jacek Anaszewski wrote:
->> Hi Cedric,
->>
->> Thanks for the patch.
->>
->> On 08/30/2017 01:25 PM, Cédric Le Goater wrote:
->>> This should also allow probing to fail when a pca955x chip is not
->>> found on a I2C bus.
->>>
->>>>> Signed-off-by: Cédric Le Goater <clg@kaod.org>
->>> ---
->>>
->>>  Andrew,
->>>
->>>  The patch conflicts with your patch :
->>>
->>>    "leds: pca955x: Don't invert requested value in pca955x_gpio_set_value()"
->>>
->>>  and I have chosen to be in sync with the 'for-next' branch of the
->>>  linux-leds git repo. Depending on the reviews we will have to respin
->>>  one or the other.
->>
->> Applied yours as first.
->>
-> 
-> No worries, I'll resend.
+On Mon, Aug 28, 2017 at 09:47:10AM +0930, Andrew Jeffery wrote:
+> On Baseboard Management Controller (BMC) systems it's sometimes
+> necessary for a LED to retain its state across a BMC reset (which is
+> independent of the host system state). Add a devicetree property to
+> describe this behaviour. The property would typically be used in
+> conjunction with 'default-state = "keep"'.
 
-Thanks. I'll target it for 4.15 anyway (or late 4.14 fix) to give time
-for the clients to test it and complain if it would cause some serious
-but non-obvious problems.
+A bit quick on the applying of this...
 
--- 
-Best regards,
-Jacek Anaszewski
+I don't understand how this works. The BMC usecase is interesting but 
+that's fairly irrelevant to the binding. How do you know the GPIO state 
+thru a reset? You're doing a core reset, but not reseting the GPIO 
+controller?
+
+When you use 'default-state = "keep"' but not this property? Seems like 
+the same thing to me. Presumably the bootloader would just distinguish 
+between a warm and cold reset to decide whether to re-init the state.
+
+Finally, if we do have this property, why is it GPIO specific. You could 
+just as easily have a LED controller IC and want to do the same thing.
+
+Rob
