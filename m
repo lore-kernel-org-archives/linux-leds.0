@@ -1,102 +1,423 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] Documentation: small fixes for LEDs, hide notes about
- vibration
-Date: Thu, 31 Aug 2017 10:09:11 +0200
-Message-ID: <20170831080911.GA9597@amd>
-References: <20170828095051.GA19930@amd>
- <991f8a29-75b7-891d-cd33-a1e50f91e67d@gmail.com>
- <20170829203846.GB21650@amd>
- <08225c07-9467-c146-98e7-66ccb4265624@gmail.com>
+Subject: Re: RGB support prototype
+Date: Thu, 31 Aug 2017 11:33:00 +0200
+Message-ID: <20170831093300.GA15759@amd>
+References: <20170812224818.GA5960@amd>
+ <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
+ <20170813114100.GA6321@xo-6d-61-c0.localdomain>
+ <d295d76a-3a51-cb94-d452-8f68d3d65a67@gmail.com>
+ <20170830145121.GA22595@amd>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34663 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbdHaJdD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 31 Aug 2017 05:33:03 -0400
 Content-Disposition: inline
-In-Reply-To: <08225c07-9467-c146-98e7-66ccb4265624@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net, Andrew Morton <akpm@osdl.org>, linux-leds@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20170830145121.GA22595@amd>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, hkallweit1@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
 
---2fHTh5uZTiUOsy+g
+--k+w/mQv8wyuph6w0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2017-08-30 22:44:00, Jacek Anaszewski wrote:
-> Hi,
->=20
-> On 08/29/2017 10:38 PM, Pavel Machek wrote:
-> > Hi!
+Hi!
+
+> > > We could even export (read-only) hue/saturation for single-color LEDs=
+=2E..
 > >=20
-> >>> -As a specific example of this use-case, let's look at vibrate featur=
-e on
-> >>> -phones. Vibrate function on phones is implemented using PWM pins on =
-SoC or
-> >>> -PMIC. There is a need to activate one shot timer to control the vibr=
-ate
-> >>> -feature, to prevent user space crashes leaving the phone in vibrate =
-mode
-> >>> -permanently causing the battery to drain.
-> >>
-> >> I'm not sure if it is a good idea to remove this description. Users wi=
-ll
-> >> still be able to use transient trigger this way. It has been around for
-> >> five years already and there are users which employ it in this
-> >> particular way [0].
-
-Actually, I checked, and no ARM mainline board does that.
-
-> > I am. Yes, people were doing that, but no, vibration motor is not a
-> > LED. PWM behaviour is different, for example, motor is likely to stop
-> > at low PWM values. We do not want people to do that.
->=20
-> Could you elaborate on how it can be harmful?
-
-Well, you can safely route low current to the LEDs. What will it to do
-vibration motor, if you leave it on forever? Can the motor safely be
-run forever on high current? Not sure.
-
-> I really don't see any merit in removing this from documentation.
-
-There's right API to use for vibrations, and that's force-feedback
-support in input/. Not here.
-
-> You can convince me by collecting some acks from involved people.
-> I'd like to especially see Rob's opinion. Adding Rob to this thread.
-
-Rob is device tree maintainer. This has little to do with device tree.
-
-> >> Apart from that it's the only documented kernel API for vibrate devices
-> >> AFAICT.
+> > Related patches from Heiner Kallweit are still sitting on devel branch
+> > of linux-leds.git:
 > >=20
-> > Input subsystem has force-feedback protocol, which is very often just
-> > vibrations. Documentation/input/ff.rst . Nokia N900 phone actually
-> > uses that API.
+> > https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds=
+=2Egit/log/?h=3Ddevel
+> >=20
+> > Possibly it can serve as a basis for further development.
 >=20
-> Word "vibration" doesn't appear there, so what this patch does
-> is remove explicit advertisement of kernel support for vibrate
-> devices without redirecting people to the replacement.
+> > I liked that approach because it was compatible with monochrome
+> > LEDs and triggers.
+>=20
+> Yeah, I like that. I don't like the implementation and the sysfs
+> interface.
+>=20
+> Let me try and see if I can turn them into something better...
+>=20
+> I'm using full 32-bits for parameters; that should give us enough
+> precision. In particular, 32-bits is important for "brightness"; I
+> already have light that goes from .1lm to 1000lm -- which is more than
+> 8-bits can handle.
+>=20
+> lp5523 conversion... is a very quick hack.
 
-Well... this is LED documentation. If there's other documentation
-missing somewhere else... we can fix it :-).
-									Pavel
+And here's a better version. I'll still need to adjust white to be
+white... but I guess that would need to be done with any solution.
+
+I've checked, and triggers seem to work as expected (and I can select
+a color for them).
+
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 594b24d..bad8a6e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -19,6 +19,14 @@ config LEDS_CLASS
+ 	  This option enables the led sysfs class in /sys/class/leds.  You'll
+ 	  need this to do anything useful with LEDs.  If unsure, say N.
+=20
++config LEDS_CLASS_RGB
++	bool "LED RGB Class Support"
++	depends on LEDS_CLASS
++	help
++	  This option enables support for RGB LED devices.
++	  Sysfs attribute brightness is interpreted as a HSV color value.
++	  For details see Documentation/leds/leds-class.txt.
++
+ config LEDS_CLASS_FLASH
+ 	tristate "LED Flash Class Support"
+ 	depends on LEDS_CLASS
+@@ -38,6 +46,10 @@ config LEDS_BRIGHTNESS_HW_CHANGED
+=20
+ 	  See Documentation/ABI/testing/sysfs-class-led for details.
+=20
++if LEDS_CLASS_RGB
++comment "RGB LED drivers"
++endif # LEDS_CLASS_RGB
++
+ comment "LED drivers"
+=20
+ config LEDS_88PM860X
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 909dae6..d5b5e76 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -1,6 +1,8 @@
+=20
+ # LED Core
+-obj-$(CONFIG_NEW_LEDS)			+=3D led-core.o
++obj-$(CONFIG_NEW_LEDS)			+=3D led-core-objs.o
++led-core-objs-y				:=3D led-core.o
++led-core-objs-$(CONFIG_LEDS_CLASS_RGB)	+=3D led-rgb-core.o
+ obj-$(CONFIG_LEDS_CLASS)		+=3D led-class.o
+ obj-$(CONFIG_LEDS_CLASS_FLASH)		+=3D led-class-flash.o
+ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D led-triggers.o
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index b0e2d55..0bd68a4 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -65,6 +65,83 @@ static ssize_t brightness_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(brightness);
+=20
++static ssize_t saturation_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++
++	/* no lock needed for this */
++	led_update_brightness(led_cdev);
++
++	return sprintf(buf, "%u\n", led_cdev->saturation);
++}
++
++static ssize_t saturation_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	unsigned long state;
++	ssize_t ret;
++
++	mutex_lock(&led_cdev->led_access);
++
++	if (led_sysfs_is_disabled(led_cdev)) {
++		ret =3D -EBUSY;
++		goto unlock;
++	}
++
++	ret =3D kstrtoul(buf, 10, &state);
++	if (ret)
++		goto unlock;
++
++	led_cdev->saturation =3D state;
++
++	ret =3D size;
++unlock:
++	mutex_unlock(&led_cdev->led_access);
++	return ret;
++}
++static DEVICE_ATTR_RW(saturation);
++
++static ssize_t hue_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++
++	/* no lock needed for this */
++	led_update_brightness(led_cdev);
++
++	return sprintf(buf, "%u\n", led_cdev->hue);
++}
++
++static ssize_t hue_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
++	unsigned long state;
++	ssize_t ret;
++
++	mutex_lock(&led_cdev->led_access);
++
++	if (led_sysfs_is_disabled(led_cdev)) {
++		ret =3D -EBUSY;
++		goto unlock;
++	}
++
++	ret =3D kstrtoul(buf, 10, &state);
++	if (ret)
++		goto unlock;
++
++	led_cdev->hue =3D state;
++
++	ret =3D size;
++unlock:
++	mutex_unlock(&led_cdev->led_access);
++	return ret;
++}
++static DEVICE_ATTR_RW(hue);
++
++
+ static ssize_t max_brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+@@ -88,6 +165,8 @@ static const struct attribute_group led_trigger_group =
+=3D {
+ static struct attribute *led_class_attrs[] =3D {
+ 	&dev_attr_brightness.attr,
+ 	&dev_attr_max_brightness.attr,
++	&dev_attr_hue.attr,
++	&dev_attr_saturation.attr,
+ 	NULL,
+ };
+=20
+diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
+new file mode 100644
+index 0000000..3733032
+--- /dev/null
++++ b/drivers/leds/led-rgb-core.c
+@@ -0,0 +1,64 @@
++/*
++ * LED RGB Class Support
++ *
++ * Author: Heiner Kallweit <hkallweit1@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/leds.h>
++#include "leds.h"
++
++struct led_rgb led_hsv_to_rgb(struct led_hsv hsv)
++{
++	unsigned int h =3D hsv.hue >> 24;
++	unsigned int s =3D hsv.saturation >> 24;
++	unsigned int v =3D hsv.value >> 24;
++	unsigned int f, p, q, t, r, g, b;
++	struct led_rgb res;
++
++	if (!v) {
++		res.red =3D 0;
++		res.green =3D 0;
++		res.blue =3D 0;
++		return res;
++	}
++	if (!s) {
++		res.red =3D v << 24;
++		res.green =3D v << 24;
++		res.blue =3D v << 24;
++		return res;
++	}
++
++	f =3D DIV_ROUND_CLOSEST((h % 42) * 255, 42);
++	p =3D v - DIV_ROUND_CLOSEST(s * v, 255);
++	q =3D v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
++	t =3D v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
++
++	switch (h / 42) {
++	case 0:
++		r =3D v; g =3D t; b =3D p; break;
++	case 1:
++		r =3D q; g =3D v; b =3D p; break;
++	case 2:
++		r =3D p; g =3D v; b =3D t; break;
++	case 3:
++		r =3D p; g =3D q; b =3D v; break;
++	case 4:
++		r =3D t; g =3D p; b =3D v; break;
++	case 5:
++		r =3D v; g =3D p; b =3D q; break;
++	}
++
++	printk("hsv_to: h %5d, s %5d, v %5d -> %5d, %5d, %5d\n",
++	       h*390, s*390, v*390, r*390, g*390, b*390);
++=09
++	res.red =3D r << 24;
++	res.green =3D g << 24;
++	res.blue =3D b << 24;
++	return res;
++}
++EXPORT_SYMBOL_GPL(led_hsv_to_rgb);
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 924e50a..3244c24 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -802,6 +802,26 @@ static ssize_t store_master_fader_leds(struct device *=
+dev,
+ 	return ret;
+ }
+=20
++int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r)
++{
++	struct lp55xx_chip *chip =3D led->chip;
++	int ret;
++
++	mutex_lock(&chip->lock);
++	r.red >>=3D 24;
++	r.green >>=3D 24;
++	r.blue >>=3D 24;=09
++	printk("RGB brightness %d %d %d\n", r.red, r.green, r.blue);
++	ret =3D lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr, r.red);
++	if (!ret)
++		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 1, r.green);
++	if (!ret)
++		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 2, r.blue);
++	mutex_unlock(&chip->lock);
++	return ret;
++
++}
++
+ static int lp5523_led_brightness(struct lp55xx_led *led)
+ {
+ 	struct lp55xx_chip *chip =3D led->chip;
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-c=
+ommon.c
+index 5377f22..16e65dc 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -134,6 +134,8 @@ static struct attribute *lp55xx_led_attrs[] =3D {
+ };
+ ATTRIBUTE_GROUPS(lp55xx_led);
+=20
++extern int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r);
++
+ static int lp55xx_set_brightness(struct led_classdev *cdev,
+ 			     enum led_brightness brightness)
+ {
+@@ -141,6 +143,18 @@ static int lp55xx_set_brightness(struct led_classdev *=
+cdev,
+ 	struct lp55xx_device_config *cfg =3D led->chip->cfg;
+=20
+ 	led->brightness =3D (u8)brightness;
++
++	if (led->chan_nr =3D=3D 6) {
++		struct led_rgb r;
++		struct led_hsv hsv;
++
++		printk("RGB set request: %d %d %d\n", cdev->brightness, cdev->hue >> 24,=
+ cdev->saturation >> 24);
++		hsv.value =3D brightness << 24;
++		hsv.hue =3D cdev->hue;
++		hsv.saturation =3D cdev->saturation;
++		r =3D led_hsv_to_rgb(hsv);
++		return lp5523_rgb_brightness(led, r);
++	}
+ 	return cfg->brightness_fn(led);
+ }
+=20
+@@ -176,6 +190,8 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+ 	led->cdev.brightness_set_blocking =3D lp55xx_set_brightness;
+ 	led->cdev.groups =3D lp55xx_led_groups;
+=20
++	printk("Led %d name %s\n", chan, pdata->led_config[chan].name);
++
+ 	if (pdata->led_config[chan].name) {
+ 		led->cdev.name =3D pdata->led_config[chan].name;
+ 	} else {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 64c56d4..bd0ae46 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -37,6 +37,8 @@ struct led_classdev {
+ 	const char		*name;
+ 	enum led_brightness	 brightness;
+ 	enum led_brightness	 max_brightness;
++	int			 hue;
++	int			 saturation;
+ 	int			 flags;
+=20
+ 	/* Lower 16 bits reflect status */
+@@ -49,6 +51,7 @@ struct led_classdev {
+ #define LED_HW_PLUGGABLE	(1 << 19)
+ #define LED_PANIC_INDICATOR	(1 << 20)
+ #define LED_BRIGHT_HW_CHANGED	(1 << 21)
++#define LED_DEV_CAP_RGB		(1 << 24)
+=20
+ 	/* set_brightness_work / blink_timer flags, atomic, private. */
+ 	unsigned long		work_flags;
+@@ -238,6 +241,26 @@ static inline bool led_sysfs_is_disabled(struct led_cl=
+assdev *led_cdev)
+ 	return led_cdev->flags & LED_SYSFS_DISABLE;
+ }
+=20
++struct led_hsv {
++	u32 hue;
++	u32 saturation;
++	u32 value;
++};
++
++struct led_rgb {
++	u32 red;
++	u32 green;
++	u32 blue;
++};
++
++/**
++ * led_hsv_to_rgb - convert a hsv color value to rgb color model
++ * @hsv: the hsv value to convert
++ *
++ * Returns: the resulting rgb value
++ */
++struct led_rgb led_hsv_to_rgb(struct led_hsv hsv);
++
+ /*
+  * LED Triggers
+  */
+
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---2fHTh5uZTiUOsy+g
+--k+w/mQv8wyuph6w0
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlmnxCcACgkQMOfwapXb+vJ35wCeKe4oQ0hOonEpD7QQmCurtM+Q
-IxIAn3Ufb7XoJVczDZLCczkTXC8g7l5/
-=nagz
+iEYEARECAAYFAlmn18wACgkQMOfwapXb+vLSXQCcDVzlEQyXTOm+YSb7WE6RnlX1
+S0YAoImncvo0MaT8L71i3f+w+VXAwJCR
+=sOEf
 -----END PGP SIGNATURE-----
 
---2fHTh5uZTiUOsy+g--
+--k+w/mQv8wyuph6w0--
