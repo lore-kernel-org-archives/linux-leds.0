@@ -1,188 +1,409 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Subject: Re: [PATCH v2] leds: pca955x: Don't invert requested value in
- pca955x_gpio_set_value()
-Date: Fri, 1 Sep 2017 19:06:30 +0200
-Message-ID: <f07313a1-c609-f760-9578-4d6889fd89d9@kaod.org>
-References: <20170901053858.10070-1-andrew@aj.id.au>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: RGB support prototype
+Date: Sat, 2 Sep 2017 16:36:00 +0200
+Message-ID: <6f08905e-c420-c227-88bc-6370ec7cb27f@gmail.com>
+References: <20170812224818.GA5960@amd>
+ <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
+ <20170813114100.GA6321@xo-6d-61-c0.localdomain>
+ <d295d76a-3a51-cb94-d452-8f68d3d65a67@gmail.com> <20170830145121.GA22595@amd>
+ <20170831093300.GA15759@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170901053858.10070-1-andrew@aj.id.au>
-Content-Language: en-US
+In-Reply-To: <20170831093300.GA15759@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, linux-leds@vger.kernel.org
-Cc: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, bjwyman@gmail.com, openbmc@lists.ozlabs.org
+To: Pavel Machek <pavel@ucw.cz>, hkallweit1@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 09/01/2017 07:38 AM, Andrew Jeffery wrote:
-> The PCA9552 lines can be used either for driving LEDs or as GPIOs. The
-> manual states that for LEDs, the operation is open-drain:
-> 
->          The LSn LED select registers determine the source of the LED data.
-> 
->            00 = output is set LOW (LED on)
->            01 = output is set high-impedance (LED off; default)
->            10 = output blinks at PWM0 rate
->            11 = output blinks at PWM1 rate
-> 
-> For GPIOs it suggests a pull-up so that the open-case drives the line
-> high:
-> 
->          For use as output, connect external pull-up resistor to the pin
->          and size it according to the DC recommended operating
->          characteristics.  LED output pin is HIGH when the output is
->          programmed as high-impedance, and LOW when the output is
->          programmed LOW through the ‘LED selector’ register.  The output
->          can be pulse-width controlled when PWM0 or PWM1 are used.
-> 
-> Now, I have a hardware design that uses the LED controller to control
-> LEDs. However, for $reasons, we're using the leds-gpio driver to drive
-> the them. The reasons are here are a tangent but lead to the discovery
-> of the inversion, which manifested as the LEDs being set to full
-> brightness at boot when we expected them to be off.
-> 
-> As we're driving the LEDs through leds-gpio, this means wending our way
-> through the gpiochip abstractions. So with that in mind we need to
-> describe an active-low GPIO configuration to drive the LEDs as though
-> they were GPIOs.
-> 
-> The set() gpiochip callback in leds-pca955x does the following:
-> 
->          ...
->          if (val)
->                 pca955x_led_set(&led->led_cdev, LED_FULL);
->          else
->                 pca955x_led_set(&led->led_cdev, LED_OFF);
->          ...
-> 
-> Where LED_FULL = 255. pca955x_led_set() in turn does:
-> 
->          ...
->          switch (value) {
->          case LED_FULL:
->                 ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
->                 break;
->          ...
-> 
-> Where PCA955X_LS_LED_ON is defined as:
-> 
->          #define PCA955X_LS_LED_ON	0x0	/* Output LOW */
-> 
-> So here we have some type confusion: We've crossed domains from GPIO
-> behaviour to LED behaviour without accounting for possible inversions
-> in the process.
-> 
-> Stepping back to leds-gpio for a moment, during probe() we call
-> create_gpio_led(), which eventually executes:
-> 
->          if (template->default_state == LEDS_GPIO_DEFSTATE_KEEP) {
->                 state = gpiod_get_value_cansleep(led_dat->gpiod);
->                 if (state < 0)
->                         return state;
->          } else {
->                 state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
->          }
->          ...
->          ret = gpiod_direction_output(led_dat->gpiod, state);
-> 
-> In the devicetree the GPIO is annotated as active-low, and
-> gpiod_get_value_cansleep() handles this for us:
-> 
->          int gpiod_get_value_cansleep(const struct gpio_desc *desc)
->          {
->                  int value;
-> 
->                  might_sleep_if(extra_checks);
->                  VALIDATE_DESC(desc);
->                  value = _gpiod_get_raw_value(desc);
->                  if (value < 0)
->                          return value;
-> 
->                  if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
->                          value = !value;
-> 
->                  return value;
->          }
-> 
-> _gpiod_get_raw_value() in turn calls through the get() callback for the
-> gpiochip implementation, so returning to our get() implementation in
-> leds-pca955x we find we extract the raw value from hardware:
-> 
->          static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
->          {
->                  struct pca955x *pca955x = gpiochip_get_data(gc);
->                  struct pca955x_led *led = &pca955x->leds[offset];
->                  u8 reg = pca955x_read_input(pca955x->client, led->led_num / 8);
-> 
->                  return !!(reg & (1 << (led->led_num % 8)));
->          }
-> 
-> This behaviour is not symmetric with that of set(), where the val is
-> inverted by the driver.
-> 
-> Closing the loop on the GPIO_ACTIVE_LOW inversions,
-> gpiod_direction_output(), like gpiod_get_value_cansleep(), handles it
-> for us:
-> 
->          int gpiod_direction_output(struct gpio_desc *desc, int value)
->          {
->                   VALIDATE_DESC(desc);
->                   if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
->                            value = !value;
->                   else
->                            value = !!value;
->                   return _gpiod_direction_output_raw(desc, value);
->          }
-> 
-> All-in-all, with a value of 'keep' for default-state property in a
-> leds-gpio child node, the current state of the hardware will in-fact be
-> inverted; precisely the opposite of what was intended.
-> 
-> Rework leds-pca955x so that we avoid the incorrect inversion and clarify
-> the semantics with respect to GPIO.
-> 
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Hi Pavel,
 
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
+Thanks for your work. Few comments below.
 
-Thanks for digging into the code, that was a lot of inversions.
-
-C.
-
-> ---
+On 08/31/2017 11:33 AM, Pavel Machek wrote:
+> Hi!
 > 
-> I've rebased on top of "1591caf2d5ea leds: pca955x: check for I2C errors" and
-> resolved the conflicts.
+>>>> We could even export (read-only) hue/saturation for single-color LEDs...
+>>>
+>>> Related patches from Heiner Kallweit are still sitting on devel branch
+>>> of linux-leds.git:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/log/?h=devel
+>>>
+>>> Possibly it can serve as a basis for further development.
+>>
+>>> I liked that approach because it was compatible with monochrome
+>>> LEDs and triggers.
+>>
+>> Yeah, I like that. I don't like the implementation and the sysfs
+>> interface.
+>>
+>> Let me try and see if I can turn them into something better...
+>>
+>> I'm using full 32-bits for parameters; that should give us enough
+>> precision. In particular, 32-bits is important for "brightness"; I
+>> already have light that goes from .1lm to 1000lm -- which is more than
+>> 8-bits can handle.
+>>
+>> lp5523 conversion... is a very quick hack.
 > 
->  drivers/leds/leds-pca955x.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> And here's a better version. I'll still need to adjust white to be
+> white... but I guess that would need to be done with any solution.
 > 
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index 905729191d3e..6dcd2d7cc6a4 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -61,6 +61,9 @@
->  #define PCA955X_LS_BLINK0	0x2	/* Blink at PWM0 rate */
->  #define PCA955X_LS_BLINK1	0x3	/* Blink at PWM1 rate */
+> I've checked, and triggers seem to work as expected (and I can select
+> a color for them).
+> 
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 594b24d..bad8a6e 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -19,6 +19,14 @@ config LEDS_CLASS
+>  	  This option enables the led sysfs class in /sys/class/leds.  You'll
+>  	  need this to do anything useful with LEDs.  If unsure, say N.
 >  
-> +#define PCA955X_GPIO_HIGH	LED_OFF
-> +#define PCA955X_GPIO_LOW	LED_FULL
+> +config LEDS_CLASS_RGB
+> +	bool "LED RGB Class Support"
+> +	depends on LEDS_CLASS
+> +	help
+> +	  This option enables support for RGB LED devices.
+> +	  Sysfs attribute brightness is interpreted as a HSV color value.
+> +	  For details see Documentation/leds/leds-class.txt.
 > +
->  enum pca955x_type {
->  	pca9550,
->  	pca9551,
-> @@ -329,9 +332,9 @@ static int pca955x_set_value(struct gpio_chip *gc, unsigned int offset,
->  	struct pca955x_led *led = &pca955x->leds[offset];
+>  config LEDS_CLASS_FLASH
+>  	tristate "LED Flash Class Support"
+>  	depends on LEDS_CLASS
+> @@ -38,6 +46,10 @@ config LEDS_BRIGHTNESS_HW_CHANGED
 >  
->  	if (val)
-> -		return pca955x_led_set(&led->led_cdev, LED_FULL);
-> -	else
-> -		return pca955x_led_set(&led->led_cdev, LED_OFF);
-> +		return pca955x_led_set(&led->led_cdev, PCA955X_GPIO_HIGH);
+>  	  See Documentation/ABI/testing/sysfs-class-led for details.
+>  
+> +if LEDS_CLASS_RGB
+> +comment "RGB LED drivers"
+> +endif # LEDS_CLASS_RGB
 > +
-> +	return pca955x_led_set(&led->led_cdev, PCA955X_GPIO_LOW);
+>  comment "LED drivers"
+>  
+>  config LEDS_88PM860X
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 909dae6..d5b5e76 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -1,6 +1,8 @@
+>  
+>  # LED Core
+> -obj-$(CONFIG_NEW_LEDS)			+= led-core.o
+> +obj-$(CONFIG_NEW_LEDS)			+= led-core-objs.o
+> +led-core-objs-y				:= led-core.o
+> +led-core-objs-$(CONFIG_LEDS_CLASS_RGB)	+= led-rgb-core.o
+>  obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+>  obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
+>  obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index b0e2d55..0bd68a4 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -65,6 +65,83 @@ static ssize_t brightness_store(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RW(brightness);
+>  
+> +static ssize_t saturation_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +
+> +	/* no lock needed for this */
+> +	led_update_brightness(led_cdev);
+
+We will need to update documentation of brightness_get to
+require updating hue and saturation for RGB LED drivers.
+
+Also hue and saturation attributes will need related ABI
+documentation entries. From what I see you're proposing
+that hue and sat would be written to the device on the
+occasion of brightness setting, right? We're tossing this
+responsibility to to drivers, without exposing an API for
+it, so it would have to be highlighted.
+
+> +
+> +	return sprintf(buf, "%u\n", led_cdev->saturation);
+> +}
+> +
+> +static ssize_t saturation_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	unsigned long state;
+> +	ssize_t ret;
+> +
+> +	mutex_lock(&led_cdev->led_access);
+> +
+> +	if (led_sysfs_is_disabled(led_cdev)) {
+> +		ret = -EBUSY;
+> +		goto unlock;
+> +	}
+> +
+> +	ret = kstrtoul(buf, 10, &state);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	led_cdev->saturation = state;
+> +
+> +	ret = size;
+> +unlock:
+> +	mutex_unlock(&led_cdev->led_access);
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RW(saturation);
+> +
+> +static ssize_t hue_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +
+> +	/* no lock needed for this */
+> +	led_update_brightness(led_cdev);
+> +
+> +	return sprintf(buf, "%u\n", led_cdev->hue);
+> +}
+> +
+> +static ssize_t hue_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	unsigned long state;
+> +	ssize_t ret;
+> +
+> +	mutex_lock(&led_cdev->led_access);
+> +
+> +	if (led_sysfs_is_disabled(led_cdev)) {
+> +		ret = -EBUSY;
+> +		goto unlock;
+> +	}
+> +
+> +	ret = kstrtoul(buf, 10, &state);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	led_cdev->hue = state;
+> +
+> +	ret = size;
+> +unlock:
+> +	mutex_unlock(&led_cdev->led_access);
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RW(hue);
+> +
+> +
+>  static ssize_t max_brightness_show(struct device *dev,
+>  		struct device_attribute *attr, char *buf)
+>  {
+> @@ -88,6 +165,8 @@ static const struct attribute_group led_trigger_group = {
+>  static struct attribute *led_class_attrs[] = {
+>  	&dev_attr_brightness.attr,
+>  	&dev_attr_max_brightness.attr,
+> +	&dev_attr_hue.attr,
+> +	&dev_attr_saturation.attr,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
+> new file mode 100644
+> index 0000000..3733032
+> --- /dev/null
+> +++ b/drivers/leds/led-rgb-core.c
+> @@ -0,0 +1,64 @@
+> +/*
+> + * LED RGB Class Support
+> + *
+> + * Author: Heiner Kallweit <hkallweit1@gmail.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#include <linux/leds.h>
+> +#include "leds.h"
+> +
+> +struct led_rgb led_hsv_to_rgb(struct led_hsv hsv)
+> +{
+> +	unsigned int h = hsv.hue >> 24;
+> +	unsigned int s = hsv.saturation >> 24;
+> +	unsigned int v = hsv.value >> 24;
+> +	unsigned int f, p, q, t, r, g, b;
+> +	struct led_rgb res;
+> +
+> +	if (!v) {
+> +		res.red = 0;
+> +		res.green = 0;
+> +		res.blue = 0;
+> +		return res;
+> +	}
+> +	if (!s) {
+> +		res.red = v << 24;
+> +		res.green = v << 24;
+> +		res.blue = v << 24;
+
+Why the shifting?
+
+> +		return res;
+> +	}
+> +
+> +	f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
+> +	p = v - DIV_ROUND_CLOSEST(s * v, 255);
+> +	q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
+> +	t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
+> +
+> +	switch (h / 42) {
+> +	case 0:
+> +		r = v; g = t; b = p; break;
+> +	case 1:
+> +		r = q; g = v; b = p; break;
+> +	case 2:
+> +		r = p; g = v; b = t; break;
+> +	case 3:
+> +		r = p; g = q; b = v; break;
+> +	case 4:
+> +		r = t; g = p; b = v; break;
+> +	case 5:
+> +		r = v; g = p; b = q; break;
+> +	}
+> +
+> +	printk("hsv_to: h %5d, s %5d, v %5d -> %5d, %5d, %5d\n",
+> +	       h*390, s*390, v*390, r*390, g*390, b*390);
+> +	
+> +	res.red = r << 24;
+> +	res.green = g << 24;
+> +	res.blue = b << 24;
+> +	return res;
+> +}
+> +EXPORT_SYMBOL_GPL(led_hsv_to_rgb);
+> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+> index 924e50a..3244c24 100644
+> --- a/drivers/leds/leds-lp5523.c
+> +++ b/drivers/leds/leds-lp5523.c
+> @@ -802,6 +802,26 @@ static ssize_t store_master_fader_leds(struct device *dev,
+>  	return ret;
 >  }
 >  
->  static void pca955x_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
+> +int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r)
+> +{
+> +	struct lp55xx_chip *chip = led->chip;
+> +	int ret;
+> +
+> +	mutex_lock(&chip->lock);
+> +	r.red >>= 24;
+> +	r.green >>= 24;
+> +	r.blue >>= 24;	
+> +	printk("RGB brightness %d %d %d\n", r.red, r.green, r.blue);
+> +	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr, r.red);
+> +	if (!ret)
+> +		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 1, r.green);
+> +	if (!ret)
+> +		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 2, r.blue);
+> +	mutex_unlock(&chip->lock);
+> +	return ret;
+> +
+> +}
+> +
+>  static int lp5523_led_brightness(struct lp55xx_led *led)
+>  {
+>  	struct lp55xx_chip *chip = led->chip;
+> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+> index 5377f22..16e65dc 100644
+> --- a/drivers/leds/leds-lp55xx-common.c
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -134,6 +134,8 @@ static struct attribute *lp55xx_led_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(lp55xx_led);
+>  
+> +extern int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r);
+> +
+>  static int lp55xx_set_brightness(struct led_classdev *cdev,
+>  			     enum led_brightness brightness)
+>  {
+> @@ -141,6 +143,18 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
+>  	struct lp55xx_device_config *cfg = led->chip->cfg;
+>  
+>  	led->brightness = (u8)brightness;
+> +
+> +	if (led->chan_nr == 6) {
+> +		struct led_rgb r;
+> +		struct led_hsv hsv;
+> +
+> +		printk("RGB set request: %d %d %d\n", cdev->brightness, cdev->hue >> 24, cdev->saturation >> 24);
+> +		hsv.value = brightness << 24;
+> +		hsv.hue = cdev->hue;
+> +		hsv.saturation = cdev->saturation;
+> +		r = led_hsv_to_rgb(hsv);
+> +		return lp5523_rgb_brightness(led, r);
+> +	}
+>  	return cfg->brightness_fn(led);
+>  }
+>  
+> @@ -176,6 +190,8 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+>  	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
+>  	led->cdev.groups = lp55xx_led_groups;
+>  
+> +	printk("Led %d name %s\n", chan, pdata->led_config[chan].name);
+> +
+>  	if (pdata->led_config[chan].name) {
+>  		led->cdev.name = pdata->led_config[chan].name;
+>  	} else {
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 64c56d4..bd0ae46 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -37,6 +37,8 @@ struct led_classdev {
+>  	const char		*name;
+>  	enum led_brightness	 brightness;
+>  	enum led_brightness	 max_brightness;
+> +	int			 hue;
+> +	int			 saturation;
+>  	int			 flags;
+>  
+>  	/* Lower 16 bits reflect status */
+> @@ -49,6 +51,7 @@ struct led_classdev {
+>  #define LED_HW_PLUGGABLE	(1 << 19)
+>  #define LED_PANIC_INDICATOR	(1 << 20)
+>  #define LED_BRIGHT_HW_CHANGED	(1 << 21)
+> +#define LED_DEV_CAP_RGB		(1 << 24)
+>  
+>  	/* set_brightness_work / blink_timer flags, atomic, private. */
+>  	unsigned long		work_flags;
+> @@ -238,6 +241,26 @@ static inline bool led_sysfs_is_disabled(struct led_classdev *led_cdev)
+>  	return led_cdev->flags & LED_SYSFS_DISABLE;
+>  }
+>  
+> +struct led_hsv {
+> +	u32 hue;
+> +	u32 saturation;
+> +	u32 value;
+> +};
+> +
+> +struct led_rgb {
+> +	u32 red;
+> +	u32 green;
+> +	u32 blue;
+> +};
+> +
+> +/**
+> + * led_hsv_to_rgb - convert a hsv color value to rgb color model
+> + * @hsv: the hsv value to convert
+> + *
+> + * Returns: the resulting rgb value
+> + */
+> +struct led_rgb led_hsv_to_rgb(struct led_hsv hsv);
+> +
+>  /*
+>   * LED Triggers
+>   */
 > 
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
