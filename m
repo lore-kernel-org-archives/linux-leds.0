@@ -1,409 +1,74 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: RGB support prototype
-Date: Sat, 2 Sep 2017 16:36:00 +0200
-Message-ID: <6f08905e-c420-c227-88bc-6370ec7cb27f@gmail.com>
-References: <20170812224818.GA5960@amd>
- <87ddf9f2-40b8-fd3a-f106-35b202697391@gmail.com>
- <20170813114100.GA6321@xo-6d-61-c0.localdomain>
- <d295d76a-3a51-cb94-d452-8f68d3d65a67@gmail.com> <20170830145121.GA22595@amd>
- <20170831093300.GA15759@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170831093300.GA15759@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, hkallweit1@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+From: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [RFC 1/2] dt-bindings: pwm-backlight: add brightness-levels-scale property
+Date: Mon,  4 Sep 2017 17:35:03 +0200
+Message-ID: <20170904153504.27963-2-enric.balletbo@collabora.com>
+References: <20170904153504.27963-1-enric.balletbo@collabora.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170904153504.27963-1-enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Brian Norris <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <groeck-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
+Brightness is not perceived linearly; rather, it typically follows some
+kind of parabolic curve. We can support this by skipping values in the
+brightness-levels array in a pseudo-quadratic curve. Typically we used
+less than 256 levels, which yields no more than 1KiB of memory in our
+device tree. But, we've noticed that on some devices the backlight
+performs much smoother at lower ranges if we have more than 256-levels of
+granularity. On kevin device, for example, if we support all 64K, that
+will waste us at least 256KiB in our device tree.
 
-Thanks for your work. Few comments below.
+Let's avoid to waste memory and have a huge table of numbers in our device
+tree of numbers by adding a brightness-levels-scale property to let the
+driver compute the brightness levels based on one algorithm and their
+property parameters.
 
-On 08/31/2017 11:33 AM, Pavel Machek wrote:
-> Hi!
-> 
->>>> We could even export (read-only) hue/saturation for single-color LEDs...
->>>
->>> Related patches from Heiner Kallweit are still sitting on devel branch
->>> of linux-leds.git:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/log/?h=devel
->>>
->>> Possibly it can serve as a basis for further development.
->>
->>> I liked that approach because it was compatible with monochrome
->>> LEDs and triggers.
->>
->> Yeah, I like that. I don't like the implementation and the sysfs
->> interface.
->>
->> Let me try and see if I can turn them into something better...
->>
->> I'm using full 32-bits for parameters; that should give us enough
->> precision. In particular, 32-bits is important for "brightness"; I
->> already have light that goes from .1lm to 1000lm -- which is more than
->> 8-bits can handle.
->>
->> lp5523 conversion... is a very quick hack.
-> 
-> And here's a better version. I'll still need to adjust white to be
-> white... but I guess that would need to be done with any solution.
-> 
-> I've checked, and triggers seem to work as expected (and I can select
-> a color for them).
-> 
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 594b24d..bad8a6e 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -19,6 +19,14 @@ config LEDS_CLASS
->  	  This option enables the led sysfs class in /sys/class/leds.  You'll
->  	  need this to do anything useful with LEDs.  If unsure, say N.
->  
-> +config LEDS_CLASS_RGB
-> +	bool "LED RGB Class Support"
-> +	depends on LEDS_CLASS
-> +	help
-> +	  This option enables support for RGB LED devices.
-> +	  Sysfs attribute brightness is interpreted as a HSV color value.
-> +	  For details see Documentation/leds/leds-class.txt.
-> +
->  config LEDS_CLASS_FLASH
->  	tristate "LED Flash Class Support"
->  	depends on LEDS_CLASS
-> @@ -38,6 +46,10 @@ config LEDS_BRIGHTNESS_HW_CHANGED
->  
->  	  See Documentation/ABI/testing/sysfs-class-led for details.
->  
-> +if LEDS_CLASS_RGB
-> +comment "RGB LED drivers"
-> +endif # LEDS_CLASS_RGB
-> +
->  comment "LED drivers"
->  
->  config LEDS_88PM860X
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 909dae6..d5b5e76 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -1,6 +1,8 @@
->  
->  # LED Core
-> -obj-$(CONFIG_NEW_LEDS)			+= led-core.o
-> +obj-$(CONFIG_NEW_LEDS)			+= led-core-objs.o
-> +led-core-objs-y				:= led-core.o
-> +led-core-objs-$(CONFIG_LEDS_CLASS_RGB)	+= led-rgb-core.o
->  obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
->  obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
->  obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index b0e2d55..0bd68a4 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -65,6 +65,83 @@ static ssize_t brightness_store(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(brightness);
->  
-> +static ssize_t saturation_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +
-> +	/* no lock needed for this */
-> +	led_update_brightness(led_cdev);
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+---
+ .../bindings/leds/backlight/pwm-backlight.txt       | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-We will need to update documentation of brightness_get to
-require updating hue and saturation for RGB LED drivers.
-
-Also hue and saturation attributes will need related ABI
-documentation entries. From what I see you're proposing
-that hue and sat would be written to the device on the
-occasion of brightness setting, right? We're tossing this
-responsibility to to drivers, without exposing an API for
-it, so it would have to be highlighted.
-
-> +
-> +	return sprintf(buf, "%u\n", led_cdev->saturation);
-> +}
-> +
-> +static ssize_t saturation_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t size)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	unsigned long state;
-> +	ssize_t ret;
-> +
-> +	mutex_lock(&led_cdev->led_access);
-> +
-> +	if (led_sysfs_is_disabled(led_cdev)) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-> +
-> +	ret = kstrtoul(buf, 10, &state);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +	led_cdev->saturation = state;
-> +
-> +	ret = size;
-> +unlock:
-> +	mutex_unlock(&led_cdev->led_access);
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(saturation);
-> +
-> +static ssize_t hue_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +
-> +	/* no lock needed for this */
-> +	led_update_brightness(led_cdev);
-> +
-> +	return sprintf(buf, "%u\n", led_cdev->hue);
-> +}
-> +
-> +static ssize_t hue_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t size)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	unsigned long state;
-> +	ssize_t ret;
-> +
-> +	mutex_lock(&led_cdev->led_access);
-> +
-> +	if (led_sysfs_is_disabled(led_cdev)) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-> +
-> +	ret = kstrtoul(buf, 10, &state);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +	led_cdev->hue = state;
-> +
-> +	ret = size;
-> +unlock:
-> +	mutex_unlock(&led_cdev->led_access);
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(hue);
-> +
-> +
->  static ssize_t max_brightness_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> @@ -88,6 +165,8 @@ static const struct attribute_group led_trigger_group = {
->  static struct attribute *led_class_attrs[] = {
->  	&dev_attr_brightness.attr,
->  	&dev_attr_max_brightness.attr,
-> +	&dev_attr_hue.attr,
-> +	&dev_attr_saturation.attr,
->  	NULL,
->  };
->  
-> diff --git a/drivers/leds/led-rgb-core.c b/drivers/leds/led-rgb-core.c
-> new file mode 100644
-> index 0000000..3733032
-> --- /dev/null
-> +++ b/drivers/leds/led-rgb-core.c
-> @@ -0,0 +1,64 @@
-> +/*
-> + * LED RGB Class Support
-> + *
-> + * Author: Heiner Kallweit <hkallweit1@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/leds.h>
-> +#include "leds.h"
-> +
-> +struct led_rgb led_hsv_to_rgb(struct led_hsv hsv)
-> +{
-> +	unsigned int h = hsv.hue >> 24;
-> +	unsigned int s = hsv.saturation >> 24;
-> +	unsigned int v = hsv.value >> 24;
-> +	unsigned int f, p, q, t, r, g, b;
-> +	struct led_rgb res;
-> +
-> +	if (!v) {
-> +		res.red = 0;
-> +		res.green = 0;
-> +		res.blue = 0;
-> +		return res;
-> +	}
-> +	if (!s) {
-> +		res.red = v << 24;
-> +		res.green = v << 24;
-> +		res.blue = v << 24;
-
-Why the shifting?
-
-> +		return res;
-> +	}
-> +
-> +	f = DIV_ROUND_CLOSEST((h % 42) * 255, 42);
-> +	p = v - DIV_ROUND_CLOSEST(s * v, 255);
-> +	q = v - DIV_ROUND_CLOSEST(f * s * v, 255 * 255);
-> +	t = v - DIV_ROUND_CLOSEST((255 - f) * s * v, 255 * 255);
-> +
-> +	switch (h / 42) {
-> +	case 0:
-> +		r = v; g = t; b = p; break;
-> +	case 1:
-> +		r = q; g = v; b = p; break;
-> +	case 2:
-> +		r = p; g = v; b = t; break;
-> +	case 3:
-> +		r = p; g = q; b = v; break;
-> +	case 4:
-> +		r = t; g = p; b = v; break;
-> +	case 5:
-> +		r = v; g = p; b = q; break;
-> +	}
-> +
-> +	printk("hsv_to: h %5d, s %5d, v %5d -> %5d, %5d, %5d\n",
-> +	       h*390, s*390, v*390, r*390, g*390, b*390);
-> +	
-> +	res.red = r << 24;
-> +	res.green = g << 24;
-> +	res.blue = b << 24;
-> +	return res;
-> +}
-> +EXPORT_SYMBOL_GPL(led_hsv_to_rgb);
-> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-> index 924e50a..3244c24 100644
-> --- a/drivers/leds/leds-lp5523.c
-> +++ b/drivers/leds/leds-lp5523.c
-> @@ -802,6 +802,26 @@ static ssize_t store_master_fader_leds(struct device *dev,
->  	return ret;
->  }
->  
-> +int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r)
-> +{
-> +	struct lp55xx_chip *chip = led->chip;
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	r.red >>= 24;
-> +	r.green >>= 24;
-> +	r.blue >>= 24;	
-> +	printk("RGB brightness %d %d %d\n", r.red, r.green, r.blue);
-> +	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr, r.red);
-> +	if (!ret)
-> +		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 1, r.green);
-> +	if (!ret)
-> +		lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + led->chan_nr - 2, r.blue);
-> +	mutex_unlock(&chip->lock);
-> +	return ret;
-> +
-> +}
-> +
->  static int lp5523_led_brightness(struct lp55xx_led *led)
->  {
->  	struct lp55xx_chip *chip = led->chip;
-> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> index 5377f22..16e65dc 100644
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -134,6 +134,8 @@ static struct attribute *lp55xx_led_attrs[] = {
->  };
->  ATTRIBUTE_GROUPS(lp55xx_led);
->  
-> +extern int lp5523_rgb_brightness(struct lp55xx_led *led, struct led_rgb r);
-> +
->  static int lp55xx_set_brightness(struct led_classdev *cdev,
->  			     enum led_brightness brightness)
->  {
-> @@ -141,6 +143,18 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
->  	struct lp55xx_device_config *cfg = led->chip->cfg;
->  
->  	led->brightness = (u8)brightness;
-> +
-> +	if (led->chan_nr == 6) {
-> +		struct led_rgb r;
-> +		struct led_hsv hsv;
-> +
-> +		printk("RGB set request: %d %d %d\n", cdev->brightness, cdev->hue >> 24, cdev->saturation >> 24);
-> +		hsv.value = brightness << 24;
-> +		hsv.hue = cdev->hue;
-> +		hsv.saturation = cdev->saturation;
-> +		r = led_hsv_to_rgb(hsv);
-> +		return lp5523_rgb_brightness(led, r);
-> +	}
->  	return cfg->brightness_fn(led);
->  }
->  
-> @@ -176,6 +190,8 @@ static int lp55xx_init_led(struct lp55xx_led *led,
->  	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
->  	led->cdev.groups = lp55xx_led_groups;
->  
-> +	printk("Led %d name %s\n", chan, pdata->led_config[chan].name);
-> +
->  	if (pdata->led_config[chan].name) {
->  		led->cdev.name = pdata->led_config[chan].name;
->  	} else {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 64c56d4..bd0ae46 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -37,6 +37,8 @@ struct led_classdev {
->  	const char		*name;
->  	enum led_brightness	 brightness;
->  	enum led_brightness	 max_brightness;
-> +	int			 hue;
-> +	int			 saturation;
->  	int			 flags;
->  
->  	/* Lower 16 bits reflect status */
-> @@ -49,6 +51,7 @@ struct led_classdev {
->  #define LED_HW_PLUGGABLE	(1 << 19)
->  #define LED_PANIC_INDICATOR	(1 << 20)
->  #define LED_BRIGHT_HW_CHANGED	(1 << 21)
-> +#define LED_DEV_CAP_RGB		(1 << 24)
->  
->  	/* set_brightness_work / blink_timer flags, atomic, private. */
->  	unsigned long		work_flags;
-> @@ -238,6 +241,26 @@ static inline bool led_sysfs_is_disabled(struct led_classdev *led_cdev)
->  	return led_cdev->flags & LED_SYSFS_DISABLE;
->  }
->  
-> +struct led_hsv {
-> +	u32 hue;
-> +	u32 saturation;
-> +	u32 value;
-> +};
-> +
-> +struct led_rgb {
-> +	u32 red;
-> +	u32 green;
-> +	u32 blue;
-> +};
-> +
-> +/**
-> + * led_hsv_to_rgb - convert a hsv color value to rgb color model
-> + * @hsv: the hsv value to convert
-> + *
-> + * Returns: the resulting rgb value
-> + */
-> +struct led_rgb led_hsv_to_rgb(struct led_hsv hsv);
-> +
->  /*
->   * LED Triggers
->   */
-> 
-> 
-
+diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+index 764db86..11c5583 100644
+--- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
++++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+@@ -17,6 +17,16 @@ Optional properties:
+                "pwms" property (see PWM binding[0])
+   - enable-gpios: contains a single GPIO specifier for the GPIO which enables
+                   and disables the backlight (see GPIO binding[1])
++  - brightness-levels-scale: this can be used instead of 'brightness-levels',
++                             to represent the perceived luminance. So rather
++                             than specifying 'brightness-levels = <0
++                             1 2 ... 65535>', one can simply say
++                             'brightness-levels-scale = <255 65535>', where the
++                             first number is the max number of levels and the
++                             second number is the max PWM value that represent a
++                             100% duty cycle (brightest). The result is a
++                             correction table for PWM values to create linear
++                             brightness based on the CIE1931 algorithm.
+ 
+ [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+ [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -33,3 +43,14 @@ Example:
+ 		power-supply = <&vdd_bl_reg>;
+ 		enable-gpios = <&gpio 58 0>;
+ 	};
++
++	backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 0 5000000>;
++
++		brightness-levels-scale = <255 65535>;
++		default-brightness-level = <128>;
++
++		power-supply = <&vdd_bl_reg>;
++		enable-gpios = <&gpio 58 0>;
++	};
 -- 
-Best regards,
-Jacek Anaszewski
+2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
