@@ -1,87 +1,126 @@
-From: "Jingoo Han" <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 0/2] backlight: pwm_bl: support linear brightness to human eye
-Date: Tue, 5 Sep 2017 12:34:33 -0400
-Message-ID: <000001d32664$db62b2a0$922817e0$@gmail.com>
-References: <20170904153504.27963-1-enric.balletbo@collabora.com> <239c9153-c0ea-319c-b554-3c727b75c8cd@linaro.org>
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: RE: [patch v4 1/2] mfd: Add Mellanox regmap core driver
+Date: Tue, 5 Sep 2017 18:21:27 +0000
+Message-ID: <AM4PR05MB333091C928607B676067B325A2960@AM4PR05MB3330.eurprd05.prod.outlook.com>
+References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
+ <1504029616-192277-2-git-send-email-vadimp@mellanox.com>
+ <20170901161433.gpkrpjx53pjv4mid@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <239c9153-c0ea-319c-b554-3c727b75c8cd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Content-Language: en-us
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Daniel Thompson' <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Enric Balletbo i Serra' <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, 'Lee Jones' <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Richard Purdie' <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, 'Jacek Anaszewski' <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Pavel Machek' <pavel-+ZI9xUNit7I@public.gmane.org>, 'Rob Herring' <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Mark Rutland' <mark.rutland-5wv7dgnIgG8@public.gmane.org>, 'Doug Anderson' <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Brian Norris' <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Guenter Roeck' <groeck-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20170901161433.gpkrpjx53pjv4mid@rob-hp-laptop>
+Content-Language: en-US
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: "lee.jones@linaro.org" <lee.jones@linaro.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tuesday, September 5, 2017 7:06 AM, Daniel Thompson wrote:
-> 
-> On 04/09/17 16:35, Enric Balletbo i Serra wrote:
-> > Dear all,
-> >
-> > This patch series is a first RFC to know your opinion about implement
-> > support to create brightness levels tables dinamically. I tried to argue
-> > in every patch the specific reasons we think this can be interesting, to
-> > sumup, the idea behind these patches is be able to pass via device tree
-> > two parameters to the driver so it can calculate the brightness levels
-> > based on the CIE 1931 lightness formula, which is what actually
-> describes
-> > how we perceive light.
-> >
-> > I think that at least the maths involved can be improved, and I've still
-> > some doubts. With current code if you create a table with a max PWM
-> > value of 255 and 127 steps, the first numbers are repeated so I'm
-> thinking > that maybe we should skip/remove the repeated values. i.e. have
-> a table
-> > like this,
-> >
-> > [0, 1, 2, 3  ...  235, 240, 245, 250, 255]
-> >
-> > instead of
-> >
-> > [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3  ...  235, 240, 245, 250, 255]
-> >
-> > Well, I know there are things to improve but lets see your feedback
-> first
-> > before dedicate more time on it. The patches were tested on a couple of
-> > devices but I'll test on more devices meanwhile we discuss about it.
-> 
-> I'm not fully decided on this one but my initial reaction isn't to
-> question the concept so much as to ask why the number of levels should
-> go in the devicetree at all! We could just make brightness-levels
-> optional and get the driver to pick sane curves by default.
-> 
-> I'm sure we can debate what "sane" means for a couple of e-mails yet but
-> in principle, given it knows the PWM max counter value, the driver
-> should be able to calculate the "right" number of steps too. If we have
-> that your core code remains but we don't have to complexify the device
-> 
-> <strawman>
-> Basically we prefer X (?100 like some of the Intel DRM drivers do for
-> connector properties?) steps but we reduce the number of steps if the
-> PWM is rather course and we can't get sufficiently different steps.
-> </strawman>
-> 
-> I guess the summary of what I'm saying is that if we can
-> programmatically derive brightness curves then the number of steps is
-> not really a property of the hardware and doesn't belong in devicetree.
 
-Yep, I agree with Daniel's opinion. I cannot find the reason
-this feature can be added to the device tree.
 
-In my opinion, this feature can be handled by upper user level layer,
-not backlight framework level. However, we can discuss this topic to
-find how to handle it.
+> > folder;  Comments pointed out by Rob:
+> >  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
+> >  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-
+> core
+> >    and send it within this series;
+>=20
+> Why did you combine this? Bindings should be separate patches.
 
-Best regards,
-Jingoo Han
+Ack.
 
-> 
-> 
-> Daniel.
+>=20
+> > +			spi_burn_bios_ci {
+> > +				reg =3D <0x32>;
+> > +				mask =3D <0xfe>;
+> > +				bit =3D <0x00>;
+> > +				phandles =3D <&spi2>;
+> > +			};
+> > +			spi_burn_ncsi {
+> > +				reg =3D <0x32>;
+>=20
+> You can't have duplicate reg values. This will also generate warnings.
+> Build your dtb with "W=3D2".
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Can I use some logical name for unit, like below?
+			spi_burn_bios_ci: mux@1 {
+				reg =3D <0x32>;
+				mask =3D <0xfe>;
+				bit =3D <0x00>;
+				hotplugs =3D <&spi2>;
+			};
+			spi_burn_ncsi: mux@2 {
+				reg =3D <0x32>;
+				mask =3D <0xfd>;
+				bit =3D <0x00>;
+				hotplugs =3D <&spi2>;
+			};
+
+I verified it with "W=3D2". Also I am running with CONFIG_OF_UNITTEST and
+I don't have unites issues.
+
+>=20
+> Again, this all looks too low level to me. You described the high level
+> differences in terms of number of cards, fans, PSUs, etc., but I don't se=
+e that
+> here. This isn't reviewable for anyone not familiar with your systems.
+
+The below should describe signals, which triggers hotplugable device
+Insertion or removal.
+		pwr: hotplugs@1 {
+			aggr =3D <0x08>;
+			reg =3D <0x64>;
+			mask =3D <0x03>;
+			hotplugs =3D <&psu1_ctrl &psu2_ctrl>;
+		};
+
+		asic: hotplugs@3 {
+			aggr =3D <0x01>;
+			regs =3D <0x50>;
+			mask =3D <0x03>;
+			hotplugs =3D <&asic_thermal>;
+		};
+In DTS I have description for such devices in disabled state and they are
+Connected or disconnected dynamically:
+&i2c3 {
+...
+	psu1_ctrl: dps460@59 {
+		compatible =3D "dps460";
+		reg =3D <0x59>;
+		status =3D "disabled";
+	};
+''
+
+&i2c12 {
+...
+	asic_thermal: mlxsw_minimal@48 {
+		compatible =3D "mlxsw_minimal";
+		reg =3D <0x48>;
+		status =3D "disabled";
+             ...
+
+And the same way I'd like to add spine and leaf cards, but I still don't
+Have support for them in my drivers.
+
+>=20
+> > +				mask =3D <0xfd>;
+> > +				bit =3D <0x00>;
+> > +				phandles =3D <&spi2>;
+>=20
+> Not a good name other than giving type information. Name it for what
+> function is being provided (e.g. clocks, interrupts, gpios).
+
+Would it be OK if to use hotplugs instead of phandles?
+It could be f.e. FAN EEPROM, PSU controller, ASIC, spine or leaf card, all =
+these=20
+are hotplugable device, which could be inserted or removed.
+It could be remote flashes, which are getting available after mux selection=
+, like
+in the above example for spi_burn_bios_ci and spi_burn_ncsi.
+Or it could be some other device at the remote side, which is getting avail=
+able to
+BMC, only when remote side (f.e. COMEX) is getting power good.
+
+Thanks,
+Vadim.
+=20
+=20
